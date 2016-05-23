@@ -17,6 +17,7 @@
 		<constructor-arg ref="threadMemberResourceAccessControl" />
 		<constructor-arg ref="userRepository" />
 		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="auditUserMongoRepository" />
 	</bean>
 
 	<bean name="userService" class="org.linagora.linshare.core.service.impl.UserServiceImpl">
@@ -31,6 +32,7 @@
 		<constructor-arg ref="domainPermissionBusinessService" />
 		<constructor-arg ref="mailingListContactRepository" />
 		<constructor-arg ref="recipientFavouriteRepository" />
+		<constructor-arg ref="auditUserMongoRepository" />
 	</bean>
 
 	<bean name="inconsistentUserService" class="org.linagora.linshare.core.service.impl.InconsistentUserServiceImpl">
@@ -130,6 +132,7 @@
 		<constructor-arg ref="mimePolicyBusinessService" />
 		<constructor-arg ref="welcomeMessagesService" />
 		<constructor-arg value="${linshare.override.global.quota}" />
+		<constructor-arg ref="auditAdminMongoRepository" />
 	</bean>
 
 	<bean name="userAndDomainMultiService" class="org.linagora.linshare.core.service.impl.UserAndDomainMultiServiceImpl">
@@ -147,6 +150,7 @@
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="mailingListResourceAccessControl" />
 		<constructor-arg ref="logEntryService" />
+		<constructor-arg ref="auditUserMongoRepository" />
 	</bean>
 
 	<bean name="uploadRequestService" class="org.linagora.linshare.core.service.impl.UploadRequestServiceImpl">
@@ -163,6 +167,7 @@
 		<constructor-arg ref="uploadRequestResourceAccessControl" />
 		<constructor-arg ref="uploadRequestTemplateResourceAccessControl" />
 		<constructor-arg ref="uploadRequestGroupResourceAccessControl" />
+		<constructor-arg ref="auditUserMongoRepository" />
 	</bean>
 
 	<bean name="guestService" class="org.linagora.linshare.core.service.impl.GuestServiceImpl">
@@ -174,6 +179,7 @@
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="guestResourceAccessControl" />
 		<constructor-arg ref="logEntryService" />
+		<constructor-arg ref="auditUserMongoRepository" />
 	</bean>
 
 	<bean name="technicalAccountService" class="org.linagora.linshare.core.service.impl.TechnicalAccountServiceImpl">
@@ -220,7 +226,7 @@
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="shareEntryGroupService" />
 		<constructor-arg ref="shareExpiryDateService" />
-		<constructor-arg ref="auditMongoRepository" />
+		<constructor-arg ref="auditUserMongoRepository" />
 	</bean>
 	<bean id="shareEntryGroupService" class="org.linagora.linshare.core.service.impl.ShareEntryGroupServiceImpl">
 		<constructor-arg ref="shareEntryGroupBusinessService" />
@@ -236,5 +242,11 @@
 	<bean id="userPreferenceService" class="org.linagora.linshare.core.service.impl.UserPreferenceServiceImpl">
 		<constructor-arg ref="userPreferenceMongoRepository" />
 		<constructor-arg ref="userPreferenceResourceAccessControl" />
+	</bean>
+	<bean id="auditLogEntryService" class="org.linagora.linshare.core.service.impl.AuditLogEntryServiceImpl">
+		<constructor-arg ref="auditAdminMongoRepository" />
+		<constructor-arg ref="auditUserMongoRepository" />
+		<constructor-arg ref="userService" />
+		<constructor-arg ref="abstractDomainService" />
 	</bean>
 </beans>

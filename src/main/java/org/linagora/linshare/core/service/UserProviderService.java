@@ -35,6 +35,7 @@ package org.linagora.linshare.core.service;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
@@ -47,9 +48,9 @@ public interface UserProviderService {
 	UserLdapPattern findDomainPattern(String uuid) throws BusinessException;
 	List<UserLdapPattern> findAllUserDomainPattern() throws BusinessException;
 	List<UserLdapPattern> findAllSystemDomainPattern() throws BusinessException;
-	UserLdapPattern createDomainPattern(UserLdapPattern domainPattern) throws BusinessException;
-	UserLdapPattern updateDomainPattern(UserLdapPattern domainPattern) throws BusinessException;
-	UserLdapPattern deletePattern(String patternToDelete) throws BusinessException;
+	UserLdapPattern createDomainPattern(Account actor, UserLdapPattern domainPattern) throws BusinessException;
+	UserLdapPattern updateDomainPattern(Account actor, UserLdapPattern domainPattern) throws BusinessException;
+	UserLdapPattern deletePattern(Account actor, String patternToDelete) throws BusinessException;
 
 	LdapUserProvider find(String uuid) throws BusinessException;
 	boolean exists(String uuid);

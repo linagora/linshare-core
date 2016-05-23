@@ -32,58 +32,32 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.mongo.entities;
+package org.linagora.linshare.webservice.admin;
 
-import java.util.Date;
+import java.util.List;
 
-import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
-import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.mongo.entities.AuditLogEntryAdmin;
+import org.linagora.linshare.mongo.entities.AuditLogEntryUser;
 
-public abstract class AuditLogEntry {
+public interface AuditLogEntryAdminRestService {
 
-	protected AccountMto actor;
+	List<AuditLogEntryAdmin> findAll();
 
-	private LogAction action;
+	List<AuditLogEntryAdmin> findByAction(String action);
 
-	private Date creationDate;
+	List<AuditLogEntryAdmin> findByDomainUuid(String domainUuid);
 
-	private AuditLogEntryType type;
+	List<AuditLogEntryAdmin> findByActorUuid(String actorUuid);
 
-	public AuditLogEntry() {
-	}
+	List<AuditLogEntryAdmin> findByType(String type);
 
-	public AuditLogEntry(AuditLogEntry log) {
-		this.action = log.getAction();
-	}
+	List<AuditLogEntryUser> userFindAll();
 
-	public AuditLogEntry(AccountMto actor, LogAction action, AuditLogEntryType type) {
-		this.action = action;
-		this.creationDate = new Date();
-		this.actor = actor;
-		this.type = type;
-	}
+	List<AuditLogEntryUser> userFindByAction(String action);
 
-	public LogAction getAction() {
-		return action;
-	}
+	List<AuditLogEntryUser> userFindByOwnerUuid(String domainUuid);
 
-	public void setAction(LogAction action) {
-		this.action = action;
-	}
+	List<AuditLogEntryUser> userFindByActorUuid(String actorUuid);
 
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	public AuditLogEntryType getType() {
-		return type;
-	}
-
-	public void setType(AuditLogEntryType type) {
-		this.type = type;
-	}
+	List<AuditLogEntryUser> userFindByType(String type);
 }

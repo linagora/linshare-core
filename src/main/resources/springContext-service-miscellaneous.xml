@@ -51,6 +51,7 @@
 		<constructor-arg ref="domainBusinessService" />
 		<constructor-arg ref="domainPermissionBusinessService" />
 		<constructor-arg value="${linshare.override.global.quota}" />
+		<constructor-arg ref="auditAdminMongoRepository" />
 	</bean>
 
 	<bean name="mailActivationService"
@@ -91,6 +92,7 @@
 		<constructor-arg ref="ldapQueryService" />
 		<constructor-arg ref="userProviderRepository" />
 		<constructor-arg ref="ldapUserProviderRepository" />
+		<constructor-arg ref="auditAdminMongoRepository" />
 	</bean>
 
 	<bean id="mimePolicyService"

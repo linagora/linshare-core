@@ -52,7 +52,6 @@ public interface AbstractDomainService {
 	public AbstractDomain retrieveDomain(String identifier);
 	AbstractDomain findById(String identifier) throws BusinessException;
 
-
 	public AbstractDomain updateDomain(Account actor, AbstractDomain domain) throws BusinessException;
 	public void deleteDomain(Account actor, String identifier) throws BusinessException;
 	public List<String> getAllDomainIdentifiers();

@@ -41,7 +41,10 @@ import java.util.List;
 import javax.naming.NamingException;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.UserProviderType;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
@@ -55,6 +58,9 @@ import org.linagora.linshare.core.repository.LdapUserProviderRepository;
 import org.linagora.linshare.core.repository.UserProviderRepository;
 import org.linagora.linshare.core.service.LDAPQueryService;
 import org.linagora.linshare.core.service.UserProviderService;
+import org.linagora.linshare.mongo.entities.DomainPatternAuditLogEntry;
+import org.linagora.linshare.mongo.entities.mto.DomainPatternMto;
+import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,19 +77,23 @@ public class UserProviderServiceImpl implements UserProviderService {
 
 	private final LdapUserProviderRepository ldapUserProviderRepository;
 
+	private final AuditAdminMongoRepository mongoRepository;
+
 	public UserProviderServiceImpl(
 			DomainPatternRepository domainPatternRepository,
 			LDAPQueryService ldapQueryService,
 			LdapUserProviderRepository ldapUserProviderRepository,
-			UserProviderRepository userProviderRepository) {
+			UserProviderRepository userProviderRepository,
+			AuditAdminMongoRepository mongoRepository) {
 		this.domainPatternRepository = domainPatternRepository;
 		this.ldapQueryService = ldapQueryService;
 		this.userProviderRepository = userProviderRepository;
 		this.ldapUserProviderRepository = ldapUserProviderRepository;
+		this.mongoRepository = mongoRepository;
 	}
 
 	@Override
-	public UserLdapPattern createDomainPattern(UserLdapPattern domainPattern)
+	public UserLdapPattern createDomainPattern(Account actor, UserLdapPattern domainPattern)
 			throws BusinessException {
 		Validate.notEmpty(domainPattern.getLabel());
 		Validate.notEmpty(domainPattern.getAuthCommand());
@@ -101,6 +111,9 @@ public class UserProviderServiceImpl implements UserProviderService {
 		}
 		UserLdapPattern createdDomain = domainPatternRepository
 				.create(domainPattern);
+		DomainPatternAuditLogEntry log = new DomainPatternAuditLogEntry(actor, actor.getDomainId(),
+				LogAction.CREATE, AuditLogEntryType.DOMAIN_PATTERN, domainPattern);
+		mongoRepository.insert(log);
 		return createdDomain;
 	}
 
@@ -123,7 +136,7 @@ public class UserProviderServiceImpl implements UserProviderService {
 	}
 
 	@Override
-	public UserLdapPattern deletePattern(String patternToDelete) throws BusinessException {
+	public UserLdapPattern deletePattern(Account actor, String patternToDelete) throws BusinessException {
 		UserLdapPattern pattern = findDomainPattern(patternToDelete);
 		if (isUsed(pattern)) {
 			throw new BusinessException(
@@ -131,6 +144,9 @@ public class UserProviderServiceImpl implements UserProviderService {
 					"Cannot delete pattern because still used by domains");
 		}
 		domainPatternRepository.delete(pattern);
+		DomainPatternAuditLogEntry log = new DomainPatternAuditLogEntry(actor, actor.getDomainId(),
+				LogAction.DELETE, AuditLogEntryType.DOMAIN_PATTERN, pattern);
+		mongoRepository.insert(log);
 		return pattern;
 	}
 
@@ -174,10 +190,12 @@ public class UserProviderServiceImpl implements UserProviderService {
 	}
 
 	@Override
-	public UserLdapPattern updateDomainPattern(UserLdapPattern domainPattern)
+	public UserLdapPattern updateDomainPattern(Account actor, UserLdapPattern domainPattern)
 			throws BusinessException {
 		UserLdapPattern pattern = domainPatternRepository
 				.findByUuid(domainPattern.getUuid());
+		DomainPatternAuditLogEntry log = new DomainPatternAuditLogEntry(actor, actor.getDomainId(),
+				LogAction.UPDATE, AuditLogEntryType.DOMAIN_PATTERN, pattern);
 		if (pattern == null) {
 			throw new BusinessException(
 					BusinessErrorCode.DOMAIN_PATTERN_NOT_FOUND,
@@ -225,7 +243,10 @@ public class UserProviderServiceImpl implements UserProviderService {
 				.setAttribute(
 						domainPattern.getAttributes()
 								.get(UserLdapPattern.USER_UID).getAttribute());
-		return domainPatternRepository.update(pattern);
+		pattern = domainPatternRepository.update(pattern);
+		log.setResourceUpdated(new DomainPatternMto(pattern, true));
+		mongoRepository.insert(log);
+		return pattern;
 	}
 
 	@Override

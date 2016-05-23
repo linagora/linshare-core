@@ -128,8 +128,8 @@
 		<constructor-arg ref="wsAdminMailActivationFacade" />
 	</bean>
 
-	<bean id="adminAuditLogEntryRestService" class="org.linagora.linshare.webservice.admin.impl.AuditLogEntryRestServiceImpl">
-		<constructor-arg ref="auditMongoRepository" />
+	<bean id="adminAuditLogEntryRestService" class="org.linagora.linshare.webservice.admin.impl.AuditLogEntryAdminRestServiceImpl">
+		<constructor-arg ref="wsAuditLogEntryFacade" />
 	</bean>
 
 	<jaxrs:server id="restAdminContainer" address="/rest/admin">

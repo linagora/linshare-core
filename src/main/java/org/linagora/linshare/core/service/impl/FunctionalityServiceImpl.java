@@ -44,13 +44,17 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.FunctionalityBusinessService;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.mongo.entities.FunctionalityAuditLogEntry;
+import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,16 +72,18 @@ public class FunctionalityServiceImpl extends AbstractFunctionalityServiceImpl<F
 	protected List<String> excludesForUsers = new ArrayList<String>();
 
 	private boolean overrideGlobalQuota;
+	final private AuditAdminMongoRepository mongoRepository;
 
 	public FunctionalityServiceImpl(
 			FunctionalityBusinessService functionalityBusinessService,
 			DomainBusinessService domainBusinessService,
 			DomainPermissionBusinessService domainPermissionBusinessService,
-			boolean overrideGlobalQuota
-			) {
+			boolean overrideGlobalQuota,
+			AuditAdminMongoRepository mongoRepository) {
 		super(domainBusinessService, domainPermissionBusinessService);
 		this.businessService = functionalityBusinessService;
 		this.overrideGlobalQuota = overrideGlobalQuota;
+		this.mongoRepository = mongoRepository;
 		// Users
 		excludesForUsers.add(FunctionalityNames.SHARE_NOTIFICATION_BEFORE_EXPIRATION.toString());
 		excludesForUsers.add(FunctionalityNames.UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION.toString());
@@ -224,9 +230,13 @@ public class FunctionalityServiceImpl extends AbstractFunctionalityServiceImpl<F
 		Validate.notEmpty(domainId);
 		Validate.notEmpty(functionalityId);
 		Validate.isTrue(actor.hasAdminRole() || actor.hasSuperAdminRole());
+		Functionality func = find(actor, domainId, functionalityId);
 		AbstractDomain domain = getDomain(actor, domainId);
 		checkDeleteRights(domain);
 		businessService.delete(domainId, functionalityId);
+		FunctionalityAuditLogEntry log = new FunctionalityAuditLogEntry(actor, LogAction.DELETE,
+				AuditLogEntryType.FUNCTIONALITY, func);
+		mongoRepository.insert(log);
 	}
 
 	@Override
@@ -236,11 +246,17 @@ public class FunctionalityServiceImpl extends AbstractFunctionalityServiceImpl<F
 		Validate.notEmpty(functionality.getIdentifier());
 		Validate.notNull(actor);
 		Validate.isTrue(actor.hasAdminRole() || actor.hasSuperAdminRole());
+//		AKO : Some refactoring must be made here, because there actually 3  database calls made by this function
+//			We have to make only one call find it first, then the business must returns the functionality.
 		AbstractDomain domain = getDomain(actor, domainId);
 		if (checkUpdateRights(actor, domain, functionality)) {
 			businessService.update(domainId, functionality);
 		}
-		return businessService.getFunctionality(domain, functionality.getIdentifier());
+		Functionality func = businessService.getFunctionality(domain, functionality.getIdentifier());
+		FunctionalityAuditLogEntry log = new FunctionalityAuditLogEntry(actor, LogAction.UPDATE,
+				AuditLogEntryType.FUNCTIONALITY, func);
+		mongoRepository.insert(log);
+		return func;
 	}
 
 	@Override

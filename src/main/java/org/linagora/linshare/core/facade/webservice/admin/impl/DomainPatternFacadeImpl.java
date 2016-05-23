@@ -39,6 +39,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.DomainPatternFacade;
@@ -86,23 +87,25 @@ public class DomainPatternFacadeImpl extends AdminGenericFacadeImpl implements D
 
 	@Override
 	public DomainPatternDto update(DomainPatternDto domainPatternDto) throws BusinessException {
-		checkAuthentication(Role.SUPERADMIN);
+		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(domainPatternDto.getUuid(), "domain pattern uuid must be set.");
-		return new DomainPatternDto(userProviderService.updateDomainPattern(new UserLdapPattern(domainPatternDto)));
+		return new DomainPatternDto(
+				userProviderService.updateDomainPattern(actor, new UserLdapPattern(domainPatternDto)));
 	}
 
 	@Override
 	public DomainPatternDto create(DomainPatternDto domainPatternDto) throws BusinessException {
-		checkAuthentication(Role.SUPERADMIN);
+		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(domainPatternDto.getLabel(), "domain pattern label must be set.");
-		return new DomainPatternDto(userProviderService.createDomainPattern(new UserLdapPattern(domainPatternDto)));
+		return new DomainPatternDto(
+				userProviderService.createDomainPattern(actor, new UserLdapPattern(domainPatternDto)));
 	}
 
 	@Override
 	public DomainPatternDto delete(DomainPatternDto domainPatternDto) throws BusinessException {
-		checkAuthentication(Role.SUPERADMIN);
+		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(domainPatternDto.getUuid(), "domain pattern uuid must be set.");
-		UserLdapPattern pattern = userProviderService.deletePattern(domainPatternDto.getUuid());
+		UserLdapPattern pattern = userProviderService.deletePattern(actor, domainPatternDto.getUuid());
 		return new DomainPatternDto(pattern);
 	}
 

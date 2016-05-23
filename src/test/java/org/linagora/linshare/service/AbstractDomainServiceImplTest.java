@@ -133,7 +133,7 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		domainPattern.setAutoCompleteCommandOnAllAttributes("auto complete command 1");
 		domainPattern.setAutoCompleteCommandOnFirstAndLastName("auto complete command 2");
 		try {
-			domainPattern = userProviderService.createDomainPattern(domainPattern);
+			domainPattern = userProviderService.createDomainPattern(null, domainPattern);
 		} catch (BusinessException e) {
 			e.printStackTrace();
 		}

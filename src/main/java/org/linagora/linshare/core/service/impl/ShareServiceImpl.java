@@ -75,7 +75,7 @@ import org.linagora.linshare.core.service.ShareExpiryDateService;
 import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.ShareAuditLogEntry;
-import org.linagora.linshare.mongo.repository.ShareAuditMongoRepository;
+import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 
 import com.google.common.collect.Sets;
 
@@ -100,7 +100,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 
 	private final MailBuildingService mailBuildingService;
 
-	private final ShareAuditMongoRepository auditMongoRepository;
+	private final AuditUserMongoRepository auditMongoRepository;
 
 	// TODO : To be fix one day.
 	@SuppressWarnings("unused")
@@ -121,7 +121,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			final MailBuildingService mailBuildingService,
 			final ShareExpiryDateService shareExpiryDateService,
 			final ShareEntryGroupService shareEntryGroupService,
-			final ShareAuditMongoRepository auditMongoRepository) {
+			final AuditUserMongoRepository auditMongoRepository) {
 		super(rac);
 		this.funcService = functionalityReadOnlyService;
 		this.documentEntryService = documentEntryService;
@@ -207,10 +207,6 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		// Notification
 		notifierService.sendNotification(shareContainer.getMailContainers());
 
-		// Audit
-		ShareAuditLogEntry log = new ShareAuditLogEntry(actor, entries, LogAction.SHARE_CREATE, AuditLogEntryType.SHARE,
-				shareContainer.getRecipients(), shareContainer.getAnonymousShareRecipients());
-		auditMongoRepository.insert(log);
 		return entries;
 	}
 
@@ -455,7 +451,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			logger.error(msg);
 			throw new BusinessException(BusinessErrorCode.SHARE_NOT_FOUND, msg);
 		}
-		ShareAuditLogEntry log = new ShareAuditLogEntry(actor, Sets.newHashSet(entry), LogAction.SHARE_DELETE, AuditLogEntryType.SHARE);
+		ShareAuditLogEntry log = new ShareAuditLogEntry(actor, owner, entry, LogAction.SHARE_DELETE, AuditLogEntryType.SHARE);
 		auditMongoRepository.insert(log);
 		return entry;
 	}

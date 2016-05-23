@@ -226,7 +226,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public DomainDto update(DomainDto domainDto) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
-		Validate.notEmpty(domainDto.getUuid(),
+		Validate.notEmpty(domainDto.getIdentifier(),
 				"domain identifier must be set.");
 		AbstractDomain domain = getDomain(domainDto);
 		LdapUserProvider ldapUserProvider = updateLdapUserProvider(domainDto);
@@ -237,9 +237,9 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public DomainDto delete(DomainDto domainDto) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
-		Validate.notEmpty(domainDto.getUuid(),
+		Validate.notEmpty(domainDto.getIdentifier(),
 				"domain identifier must be set.");
-		AbstractDomain domain = userAndDomainMultiService.deleteDomainAndUsers(actor, domainDto.getUuid());
+		AbstractDomain domain = userAndDomainMultiService.deleteDomainAndUsers(actor, domainDto.getIdentifier());
 		return DomainDto.getFull(domain);
 	}
 
@@ -265,7 +265,8 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notNull(domainDto.getExternalMailLocale(), "external mail locale must be set.");
 		Validate.notNull(domainDto.getCurrentWelcomeMessages(), "Current messages must be set.");
 		Validate.notEmpty(domainDto.getCurrentWelcomeMessages().getUuid(), "Current message uuid must be set.");
-		Validate.notEmpty(domainDto.getUserRole(), "User role must be set.");
+		Validate.notEmpty(domainDto.getCurrentWelcomeMessages().getUuid(), "Current message uuid must be set.");
+		Validate.notEmpty(domainDto.getType(), "Domain type must be set.");
 
 		DomainType domainType = DomainType.valueOf(domainDto.getType());
 		AbstractDomain parent = abstractDomainService.retrieveDomain(domainDto

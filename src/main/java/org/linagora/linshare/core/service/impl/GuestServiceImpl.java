@@ -41,6 +41,7 @@ import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.GuestBusinessService;
 import org.linagora.linshare.core.business.service.impl.GuestBusinessServiceImpl.GuestWithMetadata;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -62,6 +63,9 @@ import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.mongo.entities.GuestAuditLogEntry;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 
 import com.google.common.collect.Lists;
 
@@ -82,6 +86,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 
 	private final LogEntryService LogEntryService;
 
+	private final AuditUserMongoRepository auditMongoRepository;
+
 	public GuestServiceImpl(final GuestBusinessService guestBusinessService,
 			final AbstractDomainService abstractDomainService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
@@ -89,6 +95,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 			final NotifierService notifierService,
 			final MailBuildingService mailBuildingService,
 			final LogEntryService logEntryService,
+			final AuditUserMongoRepository auditMongoRepository,
 			final GuestResourceAccessControl rac) {
 		super(rac);
 		this.guestBusinessService = guestBusinessService;
@@ -98,6 +105,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		this.notifierService = notifierService;
 		this.mailBuildingService = mailBuildingService;
 		this.LogEntryService = logEntryService;
+		this.auditMongoRepository = auditMongoRepository;
 	}
 
 	@Override
@@ -114,6 +122,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		}
 		checkReadPermission(actor, owner, Guest.class,
 				BusinessErrorCode.GUEST_FORBIDDEN, guest);
+		GuestAuditLogEntry log = new GuestAuditLogEntry(actor, owner, LogAction.GET, AuditLogEntryType.GUEST, guest);
+		auditMongoRepository.insert(log);
 		return guest;
 	}
 
@@ -203,6 +213,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		notifierService.sendNotification(mail);
 		UserLogEntry userLogEntry = new UserLogEntry(actor, LogAction.USER_CREATE, "Creating a guest", create.getGuest());
 		LogEntryService.create(userLogEntry);
+		GuestAuditLogEntry log = new GuestAuditLogEntry(actor, owner, LogAction.CREATE, AuditLogEntryType.GUEST, guest);
+		auditMongoRepository.insert(log);
 		return create.getGuest();
 	}
 
@@ -215,6 +227,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		// In case if guestDto was an existing modified entity.
 		guestBusinessService.evict(guest);
 		Guest entity = find(actor, owner, guest.getLsUuid());
+		GuestAuditLogEntry log = new GuestAuditLogEntry(actor, owner, LogAction.UPDATE, AuditLogEntryType.GUEST,
+				entity);
 		checkUpdatePermission(actor, owner, Guest.class,
 				BusinessErrorCode.CANNOT_UPDATE_USER, entity);
 		AbstractDomain guestDomain = abstractDomainService.getGuestDomain(owner
@@ -242,7 +256,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 				restrictedContacts);
 		UserLogEntry userLogEntry = new UserLogEntry(actor, LogAction.USER_UPDATE, "Updating a guest", entity);
 		LogEntryService.create(userLogEntry);
-
+		log.setResourceUpdated(new AccountMto(result));
+		auditMongoRepository.insert(log);
 		return result;
 	}
 
@@ -299,6 +314,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		UserLogEntry userLogEntry = new UserLogEntry(actor, LogAction.USER_DELETE, "Deleting a guest", original);
 		LogEntryService.create(userLogEntry);
 		guestBusinessService.delete(original);
+		GuestAuditLogEntry log = new GuestAuditLogEntry(actor, owner, LogAction.USER_CREATE, AuditLogEntryType.GUEST, original);
+		auditMongoRepository.insert(log);
 		return original;
 	}
 

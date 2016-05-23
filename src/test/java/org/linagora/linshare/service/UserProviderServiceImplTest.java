@@ -115,7 +115,7 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 		domainPattern.setAutoCompleteCommandOnAllAttributes("auto complete command 1");
 		domainPattern.setAutoCompleteCommandOnFirstAndLastName("auto complete command 2");
 		try {
-			userProviderService.createDomainPattern(domainPattern);
+			userProviderService.createDomainPattern(null, domainPattern);
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assert.fail("Can't create domain pattern.");
@@ -158,7 +158,7 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 		domainPattern.setAutoCompleteCommandOnAllAttributes("auto complete command 1");
 		domainPattern.setAutoCompleteCommandOnFirstAndLastName("auto complete command 2");
 		try {
-			domainPattern = userProviderService.createDomainPattern(domainPattern);
+			domainPattern = userProviderService.createDomainPattern(null, domainPattern);
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assert.fail("Can't create pattern.");
@@ -166,7 +166,7 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 		logger.debug("Current pattern object: " + domainPattern.toString());
 
 		try {
-			userProviderService.deletePattern(domainPattern.getUuid());
+			userProviderService.deletePattern(null, domainPattern.getUuid());
 		} catch (BusinessException e) {
 			logger.error(e.toString());
 			e.printStackTrace();
@@ -191,7 +191,7 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 		Map<String, LdapAttribute> attributes = domainPattern.getAttributes();
 		attributes.get(UserLdapPattern.USER_FIRST_NAME).setAttribute("foo");
 		try {
-			userProviderService.updateDomainPattern(domainPattern);
+			userProviderService.updateDomainPattern(null, domainPattern);
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assert.fail("Can't update pattern.");

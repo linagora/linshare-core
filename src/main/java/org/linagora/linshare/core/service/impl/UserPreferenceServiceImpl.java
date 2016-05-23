@@ -48,7 +48,7 @@ import org.linagora.linshare.mongo.repository.UserPreferenceMongoRepository;
 public class UserPreferenceServiceImpl extends GenericServiceImpl<Account, UserPreference> implements UserPreferenceService {
 
 	protected UserPreferenceMongoRepository repository;
-	
+
 	public UserPreferenceServiceImpl(UserPreferenceMongoRepository repository, UserPreferenceResourceAccessControl rac) {
 		super(rac);
 		this.repository = repository;
@@ -72,7 +72,7 @@ public class UserPreferenceServiceImpl extends GenericServiceImpl<Account, UserP
 
 	@Override
 	public List<UserPreference> findByDomain(Account actor, AbstractDomain domain) {
-		List<UserPreference> list = repository.findByDomainUuid(domain.getIdentifier());
+		List<UserPreference> list = repository.findByDomainUuid(domain.getUuid());
 		return list;
 	}
 
@@ -98,7 +98,7 @@ public class UserPreferenceServiceImpl extends GenericServiceImpl<Account, UserP
 		preChecks(actor, owner);
 		Validate.notNull(dto, "Missing user preference object");
 		dto.validate();
-		dto.setAccountUuid(owner.getLsUuid()+"e");
+		dto.setAccountUuid(owner.getLsUuid());
 		dto.setDomainUuid(owner.getDomainId());
 		dto.setUuid(null);
 //		dto.setUuid(UUID.randomUUID().toString());

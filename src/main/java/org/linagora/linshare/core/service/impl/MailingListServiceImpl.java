@@ -38,6 +38,7 @@ import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.MailingListBusinessService;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.constants.VisibilityType;
@@ -52,6 +53,12 @@ import org.linagora.linshare.core.rac.MailingListResourceAccessControl;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MailingListService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.mongo.entities.MailingListAuditLogEntry;
+import org.linagora.linshare.mongo.entities.MailingListContactAuditLogEntry;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.linagora.linshare.mongo.entities.mto.MailingListContactMto;
+import org.linagora.linshare.mongo.entities.mto.MailingListMto;
+import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,12 +72,16 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 
 	private final LogEntryService logEntryService;
 
+	private final AuditUserMongoRepository mongoRepository;
+
 	public MailingListServiceImpl(MailingListBusinessService mailingListBusinessService, UserService userService,
-			final LogEntryService logEntryService, MailingListResourceAccessControl rac) {
+			final LogEntryService logEntryService, MailingListResourceAccessControl rac,
+			final AuditUserMongoRepository mongoRepository) {
 		super(rac);
 		this.mailingListBusinessService = mailingListBusinessService;
 		this.userService = userService;
 		this.logEntryService = logEntryService;
+		this.mongoRepository = mongoRepository;
 	}
 
 	/**
@@ -82,19 +93,20 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 		Validate.notEmpty(actorUuid);
 		Validate.notEmpty(ownerUuid);
 		Validate.notNull(list);
-
 		User actor = userService.findByLsUuid(actorUuid);
 		User owner = userService.findByLsUuid(ownerUuid);
-
 		if (actor.hasSuperAdminRole())
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to create a list.");
-		return mailingListBusinessService.createList(list, owner);
+		MailingList res = mailingListBusinessService.createList(list, owner);
+		MailingListAuditLogEntry log = new MailingListAuditLogEntry(new AccountMto(actor), new AccountMto(owner),
+				LogAction.CREATE, AuditLogEntryType.LIST, res);
+		mongoRepository.insert(log);
+		return res;
 	}
 
 	@Override
 	public MailingList findByUuid(String actorUuid, String uuid) throws BusinessException {
 		Validate.notEmpty(uuid);
-
 		MailingList list = mailingListBusinessService.findByUuid(uuid);
 		if (list == null)
 			throw new BusinessException(BusinessErrorCode.LIST_DO_NOT_EXIST, "List does not exist : " + uuid);
@@ -104,7 +116,6 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 	@Override
 	public MailingList findByIdentifier(String ownerUuid, String identifier) {
 		Validate.notEmpty(ownerUuid);
-
 		User owner = userService.findByLsUuid(ownerUuid);
 		return mailingListBusinessService.findByIdentifier(owner, identifier);
 	}
@@ -112,14 +123,12 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 	@Override
 	public List<String> getAllContactMails(String actorUuid, String uuid) throws BusinessException {
 		Validate.notEmpty(uuid);
-
 		return mailingListBusinessService.getAllContactMails(findByUuid(actorUuid, uuid));
 	}
 
 	@Override
 	public List<MailingList> findAllListByUser(String actorUuid, String userUuid) {
 		Validate.notEmpty(actorUuid);
-
 		User user = userService.findByLsUuid(userUuid);
 		return mailingListBusinessService.findAllListByUser(user);
 	}
@@ -131,7 +140,6 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 		Validate.notEmpty(pattern);
 
 		User actor = userService.findByLsUuid(actorUuid);
-
 		if (criteriaOnSearch.equals(VisibilityType.All.name()))
 			return mailingListBusinessService.searchListByUser(actor, pattern);
 		if (criteriaOnSearch.equals(VisibilityType.AllMyLists.name()))
@@ -146,7 +154,6 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 		Validate.notEmpty(actorUuid);
 
 		User actor = userService.findByLsUuid(actorUuid);
-
 		if (criteriaOnSearch.equals(VisibilityType.All.name()))
 			return mailingListBusinessService.findAllListByUser(actor);
 		if (criteriaOnSearch.equals(VisibilityType.AllMyLists.name()))
@@ -160,7 +167,6 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 		Validate.notEmpty(ownerUuid);
 
 		User owner = userService.findByLsUuid(ownerUuid);
-
 		return mailingListBusinessService.findAllMyList(owner);
 	}
 
@@ -171,10 +177,12 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 
 		MailingList list = findByUuid(actorUuid, mailingListUuid);
 		User actor = userService.findByLsUuid(actorUuid);
-
 		if (!actor.hasSuperAdminRole())
 			checkRights(actor, list, "You are not authorized to delete this list.");
 		mailingListBusinessService.deleteList(mailingListUuid);
+		MailingListAuditLogEntry log = new MailingListAuditLogEntry(new AccountMto(actor),
+				new AccountMto(list.getOwner()), LogAction.DELETE, AuditLogEntryType.LIST, list);
+		mongoRepository.insert(log);
 		return list;
 	}
 
@@ -188,7 +196,6 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 		if (!actor.hasSuperAdminRole()) {
 			checkRights(actor, listToUpdate, "You are not authorized to update this list.");
 		}
-
 		if (actor.hasSuperAdminRole()) {
 			// only super admin is authorized to modify list owner.
 			User owner = listToUpdate.getOwner();
@@ -196,7 +203,12 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 				listToUpdate.setNewOwner(userService.findByLsUuid(owner.getLsUuid()));
 			}
 		}
-		return mailingListBusinessService.updateList(listToUpdate);
+		MailingListAuditLogEntry log = new MailingListAuditLogEntry(new AccountMto(actor),
+				new AccountMto(listToUpdate.getOwner()), LogAction.UPDATE, AuditLogEntryType.LIST, listToUpdate);
+		MailingList res = mailingListBusinessService.updateList(listToUpdate);
+		log.setResourceUpdated(new MailingListMto(res));
+		mongoRepository.insert(log);
+		return res;
 	}
 
 	/**
@@ -209,18 +221,19 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 		Validate.notEmpty(actorUuid);
 		Validate.notEmpty(mailingListUuid);
 		Validate.notNull(contact);
-
 		User actor = userService.findByLsUuid(actorUuid);
 		MailingList list = mailingListBusinessService.findByUuid(mailingListUuid);
-
 		checkRights(actor, list, "You are not authorized to create a contact");
 		mailingListBusinessService.addContact(list, contact);
+		MailingListContactAuditLogEntry log = new MailingListContactAuditLogEntry(new AccountMto(actor),
+				new AccountMto(list.getOwner()), LogAction.CREATE, AuditLogEntryType.LIST_CONTACT, list,
+				contact);
+		mongoRepository.insert(log);
 	}
 
 	@Override
 	public MailingListContact searchContact(String actorUuid, String uuid) throws BusinessException {
 		Validate.notNull(uuid);
-
 		return mailingListBusinessService.findContact(uuid);
 	}
 
@@ -238,9 +251,14 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 		MailingListContact contact = mailingListBusinessService.findContact(contactToUpdate.getUuid());
 		MailingList list = contact.getMailingList();
 		User actor = userService.findByLsUuid(actorUuid);
-
+		MailingListContactAuditLogEntry log = new MailingListContactAuditLogEntry(new AccountMto(actor),
+				new AccountMto(list.getOwner()), LogAction.UPDATE, AuditLogEntryType.LIST_CONTACT, list,
+				contact);
 		checkRights(actor, list, "You are not authorized to delete a contact");
 		mailingListBusinessService.updateContact(contactToUpdate);
+		contact = mailingListBusinessService.findContact(contactToUpdate.getUuid());
+		log.setResourceUpdated(new MailingListContactMto(contact));
+		mongoRepository.insert(log);
 	}
 
 	@Override
@@ -251,9 +269,12 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 		User actor = userService.findByLsUuid(actorUuid);
 		MailingListContact contact = mailingListBusinessService.findContact(contactUuid);
 		MailingList mailingList = contact.getMailingList();
-
 		checkRights(actor, mailingList, "You are not authorized to delete a contact");
 		mailingListBusinessService.deleteContact(mailingList, contactUuid);
+		MailingListContactAuditLogEntry log = new MailingListContactAuditLogEntry(new AccountMto(actor),
+				new AccountMto(mailingList.getOwner()), LogAction.DELETE, AuditLogEntryType.LIST_CONTACT, mailingList,
+				contact);
+		mongoRepository.insert(log);
 	}
 
 	private void checkRights(User actor, MailingList list, String msg) throws BusinessException {
@@ -293,6 +314,9 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 		MailingListLogEntry logEntry = new MailingListLogEntry(actor, listCreated, LogAction.LIST_CREATE,
 				"Creating a mailing list.");
 		logEntryService.create(logEntry);
+		MailingListAuditLogEntry log = new MailingListAuditLogEntry(new AccountMto(actor),
+				new AccountMto(list.getOwner()), LogAction.CREATE, AuditLogEntryType.LIST, listCreated);
+		mongoRepository.insert(log);
 		return listCreated;
 	}
 
@@ -302,6 +326,8 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 		Validate.notEmpty(list.getUuid(), "Mailing list uuid must be set.");
 
 		MailingList listToUpdate = find(actor, owner, list.getUuid());
+		MailingListAuditLogEntry log = new MailingListAuditLogEntry(new AccountMto(actor),
+				new AccountMto(listToUpdate.getOwner()), LogAction.UPDATE, AuditLogEntryType.LIST, listToUpdate);
 		checkUpdatePermission(actor, owner, MailingList.class, BusinessErrorCode.FORBIDDEN, listToUpdate);
 		if (actor.hasSuperAdminRole()) {
 			// only super admin is authorized to modify list owner.
@@ -315,6 +341,8 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 		MailingListLogEntry logEntry = new MailingListLogEntry(actor, listToUpdate, LogAction.LIST_UPDATE,
 				"Updating a mailing list.");
 		logEntryService.create(logEntry);
+		log.setResourceUpdated(new MailingListMto(listToUpdate));
+		mongoRepository.insert(log);
 		return listToUpdate;
 	}
 
@@ -329,6 +357,9 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 		MailingListLogEntry logEntry = new MailingListLogEntry(actor, listToDelete, LogAction.LIST_DELETE,
 				"Deleting a mailing list.");
 		logEntryService.create(logEntry);
+		MailingListAuditLogEntry log = new MailingListAuditLogEntry(new AccountMto(actor),
+				new AccountMto(listToDelete.getOwner()), LogAction.DELETE, AuditLogEntryType.LIST, listToDelete);
+		mongoRepository.insert(log);
 		return listToDelete;
 	}
 
@@ -343,6 +374,9 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 		mailingListBusinessService.addContact(listToUpdate, contact);
 		MailingListLogEntry logEntry = new MailingListLogEntry(actor, listToUpdate, LogAction.LIST_ADD_CONTACT,
 				"Adding a contact to a mailing list.");
+		MailingListContactAuditLogEntry log = new MailingListContactAuditLogEntry(new AccountMto(actor),
+				new AccountMto(listToUpdate.getOwner()), LogAction.CREATE, AuditLogEntryType.LIST, listToUpdate, contact);
+		mongoRepository.insert(log);
 		logEntryService.create(logEntry);
 	}
 
@@ -354,11 +388,16 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 
 		MailingListContact contactToUpdate = mailingListBusinessService.findContact(contact.getUuid());
 		MailingList list = contactToUpdate.getMailingList();
+		MailingListContactAuditLogEntry log = new MailingListContactAuditLogEntry(new AccountMto(actor),
+				new AccountMto(list.getOwner()), LogAction.UPDATE, AuditLogEntryType.LIST, list, contactToUpdate);
 		checkUpdatePermission(actor, owner, MailingList.class, BusinessErrorCode.FORBIDDEN, list);
 		mailingListBusinessService.updateContact(contact);
 		MailingListLogEntry logEntry = new MailingListLogEntry(actor, contactToUpdate, LogAction.LIST_UPDATE_CONTACT,
 				"Updating a contact of a mailing list.");
+		contactToUpdate = mailingListBusinessService.findContact(contactToUpdate.getUuid());
+		log.setResourceUpdated(new MailingListContactMto(contactToUpdate));
 		logEntryService.create(logEntry);
+		mongoRepository.insert(log);
 	}
 
 	@Override
@@ -373,6 +412,9 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 		MailingListLogEntry logEntry = new MailingListLogEntry(actor, contactToDelete, LogAction.LIST_DELETE_CONTACT,
 				"Deleting a contact from a mailing list.");
 		logEntryService.create(logEntry);
+		MailingListContactAuditLogEntry log = new MailingListContactAuditLogEntry(new AccountMto(actor),
+				new AccountMto(list.getOwner()), LogAction.DELETE, AuditLogEntryType.LIST, list, contactToDelete);
+		mongoRepository.insert(log);
 	}
 
 	@Override

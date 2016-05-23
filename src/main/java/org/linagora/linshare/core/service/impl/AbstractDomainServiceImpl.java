@@ -43,7 +43,9 @@ import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.MailConfigBusinessService;
 import org.linagora.linshare.core.business.service.MimePolicyBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.DomainType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -66,7 +68,9 @@ import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.service.WelcomeMessagesService;
-import org.linagora.linshare.core.utils.LsIdValidator;
+import org.linagora.linshare.mongo.entities.DomainAuditLogEntry;
+import org.linagora.linshare.mongo.entities.mto.DomainMto;
+import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,6 +91,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	private final MailConfigBusinessService mailConfigBusinessService;
 	private final WelcomeMessagesService welcomeMessagesService;
 	private final boolean overrideGlobalQuota;
+	private final AuditAdminMongoRepository auditMongoRepository;
 
 	public AbstractDomainServiceImpl(
 			final AbstractDomainRepository abstractDomainRepository,
@@ -98,7 +103,8 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			final MimePolicyBusinessService mimePolicyBusinessService,
 			final MailConfigBusinessService mailConfigBusinessService,
 			final WelcomeMessagesService welcomeMessagesService,
-			final boolean overrideGlobalQuota) {
+			final boolean overrideGlobalQuota,
+			final AuditAdminMongoRepository auditMongoRepository) {
 		super();
 		this.abstractDomainRepository = abstractDomainRepository;
 		this.domainPolicyService = domainPolicyService;
@@ -110,6 +116,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		this.mailConfigBusinessService = mailConfigBusinessService;
 		this.welcomeMessagesService = welcomeMessagesService;
 		this.overrideGlobalQuota = overrideGlobalQuota;
+		this.auditMongoRepository = auditMongoRepository;
 	}
 
 	@Override
@@ -122,25 +129,11 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		if (!actor.hasSuperAdminRole()) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Only root is authorized to create domains.");
 		}
-//		Validate.notEmpty(domain.getUuid(), "domain identifier must be set.");
-//		if (!LsIdValidator.isValid(domain.getUuid())) {
-//			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_BAD_FORMAT,
-//					"This new domain identifier should only contains at least 4 characters among : "
-//							+ LsIdValidator.getAllowedCharacters());
-//		}
-//		AKO : Can domain label can be the same?
-//		if (retrieveDomain(domain.getUuid()) != null) {
-//			throw new BusinessException(
-//					BusinessErrorCode.DOMAIN_ID_ALREADY_EXISTS,
-//					"This new domain identifier already exists.");
-//		}
-
 		if (domain.getPolicy() == null) {
 			throw new BusinessException(
 					BusinessErrorCode.DOMAIN_POLICY_NOT_FOUND,
 					"This new domain has no domain policy.");
 		}
-
 		if (domain.getCurrentMailConfiguration() == null) {
 			throw new BusinessException(BusinessErrorCode.MAILCONFIG_NOT_FOUND,
 					"This domain has no mail config.");
@@ -149,7 +142,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 					.getCurrentMailConfiguration().getUuid());
 			domain.setCurrentMailConfiguration(mailConfig);
 		}
-
 		if (domain.getMimePolicy() == null) {
 			throw new BusinessException(BusinessErrorCode.MIME_NOT_FOUND,
 					"This domain has no mime policy.");
@@ -158,17 +150,14 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 					.getMimePolicy().getUuid());
 			domain.setMimePolicy(mimePolicy);
 		}
-
 		if (domain.getCurrentWelcomeMessage() == null) {
 			throw new BusinessException(
 					BusinessErrorCode.WELCOME_MESSAGES_NOT_FOUND,
 					"This domain has no current welcome message");
 		}
-
 		if (domain.getDescription() == null) {
 			domain.setDescription("");
 		}
-
 		DomainPolicy policy = domainPolicyService.find(domain.getPolicy()
 				.getIdentifier());
 
@@ -177,17 +166,16 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 					BusinessErrorCode.DOMAIN_POLICY_NOT_FOUND,
 					"This new domain has a wrong domain policy identifier.");
 		}
-
 		domain.setPolicy(policy);
 		domain.setParentDomain(parentDomain);
-
 		domain.setAuthShowOrder(new Long(1));
 		// Object creation
 		domain = abstractDomainRepository.create(domain);
-
 		// Update ancestor relation
 		parentDomain.addSubdomain(domain);
 		abstractDomainRepository.update(parentDomain);
+		DomainAuditLogEntry log = new DomainAuditLogEntry(actor, LogAction.CREATE, AuditLogEntryType.DOMAIN, domain);
+		auditMongoRepository.insert(log);
 		return domain;
 	}
 
@@ -204,7 +192,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	@Override
 	public SubDomain createSubDomain(Account actor, SubDomain subDomain)
 			throws BusinessException {
-
 		logger.debug("SubDomain creation attempt : " + subDomain.toString());
 		if (!(subDomain.getDefaultRole().equals(Role.SIMPLE) || subDomain.getDefaultRole().equals(Role.ADMIN))) {
 			subDomain.setDefaultRole(Role.SIMPLE);
@@ -214,7 +201,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,
 					"This new domain has no parent domain defined.");
 		}
-
 		AbstractDomain parentDomain = retrieveDomain(subDomain
 				.getParentDomain().getUuid());
 		if (parentDomain == null) {
@@ -238,7 +224,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,
 					"This new domain has no parent domain defined.");
 		}
-
 		AbstractDomain parentDomain = retrieveDomain(guestDomain
 				.getParentDomain().getUuid());
 		if (parentDomain == null) {
@@ -265,7 +250,11 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	@Override
 	public AbstractDomain findById(String identifier) throws BusinessException {
 		Validate.notEmpty(identifier, "Domain identifier must be set.");
-		return domainBusinessService.findById(identifier);
+		AbstractDomain domain = domainBusinessService.findById(identifier);
+//		AKO : Find a hack to find the actor
+//		DomainAuditLogEntry log = new DomainAuditLogEntry(actor, LogAction.UPDATE, AuditLogEntryType.DOMAIN, domain);
+//		auditMongoRepository.insert(log);
+		return domain;
 	}
 
 	@Override
@@ -278,6 +267,8 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "No one is authorized to delete root domain.");
 		}
 		abstractDomainRepository.delete(domain);
+		DomainAuditLogEntry log = new DomainAuditLogEntry(actor, LogAction.DELETE, AuditLogEntryType.DOMAIN, domain);
+		auditMongoRepository.insert(log);
 		// Remove element from its ancestor. It does not need to be updated. Do
 		// not know why, implicit update somewhere ?
 		if (domain.getParentDomain() != null) {
@@ -337,6 +328,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 					"This domain has no current identifier.");
 		}
 		AbstractDomain entity = findById(domain.getUuid());
+		DomainAuditLogEntry log = new DomainAuditLogEntry(actor, LogAction.UPDATE, AuditLogEntryType.DOMAIN, entity);
 		if (domain.getPolicy() == null) {
 			throw new BusinessException(
 					BusinessErrorCode.DOMAIN_POLICY_NOT_FOUND,
@@ -389,7 +381,10 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 				}
 			}
 		}
-		return abstractDomainRepository.update(entity);
+		entity = abstractDomainRepository.update(entity);
+		log.setResourceUpdated(new DomainMto(entity));
+		auditMongoRepository.insert(log);
+		return entity;
 	}
 
 	@Override
@@ -803,7 +798,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 				users.addAll(list);
 			} else {
 				logger.debug("UserProvider is null for domain : "
-						+ d.getIdentifier());
+						+ d.getUuid());
 			}
 		}
 		return users;

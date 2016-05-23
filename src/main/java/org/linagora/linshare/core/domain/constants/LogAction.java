@@ -37,7 +37,6 @@ import org.apache.commons.lang.StringUtils;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 
-
 public enum LogAction {
 
 	FILE_UPLOAD,
@@ -57,8 +56,6 @@ public enum LogAction {
 	SHARE_COPY,
 	SHARE_DELETE,
 	ANONYMOUS_SHARE_DOWNLOAD,
-	SHARE_GET_ALL,
-	SHARE_CREATE,
 
 	THREAD_CREATE,
 	THREAD_DELETE,
@@ -76,8 +73,8 @@ public enum LogAction {
 	USER_AUTH,
 	USER_AUTH_FAILED,
 
-	FILE_SIGN, 
-	USER_UPDATE, 
+	FILE_SIGN,
+	USER_UPDATE,
 	FILE_ENCRYPT,
 	FILE_DECRYPT,
 	ANTIVIRUS_SCAN_FAILED,
@@ -90,7 +87,13 @@ public enum LogAction {
 	LIST_UPDATE_CONTACT,
 	LIST_DELETE_CONTACT,
 
-	GET_USER_PREFS;
+	CREATE,
+	UPDATE,
+	DELETE,
+	GET,
+	AUTHENTICATION_SUCCES,
+	AUTHENTICATION_FAILED,
+	LOGICAL_DELETE;
 
 	public static LogAction fromString(String s) {
 		try {

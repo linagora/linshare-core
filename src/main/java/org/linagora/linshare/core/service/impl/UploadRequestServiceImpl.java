@@ -48,7 +48,9 @@ import org.linagora.linshare.core.business.service.UploadRequestBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestGroupBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestHistoryBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestTemplateBusinessService;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.UploadRequestHistoryEventType;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -79,6 +81,11 @@ import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
+import org.linagora.linshare.mongo.entities.UploadRequestAuditLogEntry;
+import org.linagora.linshare.mongo.entities.UploadRequestGroupAuditLogEntry;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.linagora.linshare.mongo.entities.mto.UploadRequestMto;
+import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,6 +108,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	private final FunctionalityReadOnlyService functionalityService;
 	private final UploadRequestTemplateResourceAccessControl templateRac;
 	private final UploadRequestGroupResourceAccessControl groupRac;
+	private final AuditUserMongoRepository mongoRepository;
 
 	public UploadRequestServiceImpl(
 			final AccountRepository<Account> accountRepository,
@@ -115,7 +123,8 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
 			final UploadRequestResourceAccessControl rac,
 			final UploadRequestTemplateResourceAccessControl templateRac,
-			final UploadRequestGroupResourceAccessControl groupRac) {
+			final UploadRequestGroupResourceAccessControl groupRac,
+			final AuditUserMongoRepository mongoRepository) {
 		super(rac);
 		this.accountRepository = accountRepository;
 		this.uploadRequestBusinessService = uploadRequestBusinessService;
@@ -129,6 +138,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		this.functionalityService = functionalityReadOnlyService;
 		this.templateRac = templateRac;
 		this.groupRac = groupRac;
+		this.mongoRepository = mongoRepository;
 	}
 
 	@Override
@@ -184,8 +194,11 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		} else {
 			groupedModeLocal = false;
 		}
-		UploadRequestGroup group = uploadRequestGroupBusinessService
-				.create(new UploadRequestGroup(subject, body));
+		UploadRequestGroup group = uploadRequestGroupBusinessService.create(new UploadRequestGroup(subject, body));
+		UploadRequestGroupAuditLogEntry groupLog = new UploadRequestGroupAuditLogEntry(new AccountMto(actor),
+				new AccountMto(owner), LogAction.CREATE, AuditLogEntryType.UPLOAD_REQUEST_GROUP,
+				group.getUuid(), group);
+		mongoRepository.insert(groupLog);
 		UploadRequest req = initUploadRequest(owner, group, inputRequest);
 		List<UploadRequest> requests = Lists.newArrayList();
 		if (groupedModeLocal) {
@@ -200,6 +213,12 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 				requests.addAll(createRequestGrouped(actor, owner, clone,
 						 Lists.newArrayList(contact), subject, body, group));
 			}
+		}
+		for (UploadRequest r : requests) {
+			UploadRequestAuditLogEntry log = new UploadRequestAuditLogEntry(new AccountMto(actor),
+					new AccountMto(owner), LogAction.CREATE, AuditLogEntryType.UPLOAD_REQUEST,
+					r.getUuid(), r);
+			mongoRepository.insert(log);
 		}
 		return requests;
 	}
@@ -612,8 +631,13 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		Validate.notEmpty(uuid, "Uuid must be set.");
 		Validate.notNull(status, "Status must be set.");
 		UploadRequest req = findRequestByUuid(actor, owner, uuid);
+		UploadRequestAuditLogEntry log = new UploadRequestAuditLogEntry(new AccountMto(actor), new AccountMto(owner),
+				LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST, req.getUuid(), req);
 		req.setStatus(status);
-		return updateRequest(actor, owner, req);
+		req = updateRequest(actor, owner, req);
+		log.setResourceUpdated(new UploadRequestMto(req));
+		mongoRepository.insert(log);
+		return req;
 	}
 
 	@Override
@@ -624,15 +648,18 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		Validate.notEmpty(uuid, "Uuid must be set.");
 		Validate.notNull(object, "Object must be set.");
 		UploadRequest e = findRequestByUuid(actor, owner, uuid);
+		UploadRequestAuditLogEntry log = new UploadRequestAuditLogEntry(new AccountMto(actor), new AccountMto(owner),
+				LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST, e.getUuid(), e);
 		checkUpdatePermission(actor, owner, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, e);
 		e = setHistory(e);
-		e = uploadRequestBusinessService.update(e, object);
-		return e;
+		UploadRequest res = uploadRequestBusinessService.update(e, object);
+		log.setResourceUpdated(new UploadRequestMto(res));
+		mongoRepository.insert(log);
+		return res;
 	}
 
 	@Override
-	public UploadRequest updateRequest(Account actor, Account owner, UploadRequest req)
-			throws BusinessException {
+	public UploadRequest updateRequest(Account actor, Account owner, UploadRequest req) throws BusinessException {
 		req = setHistory(req);
 		checkUpdatePermission(actor, owner, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, req);
 		return uploadRequestBusinessService.update(req);
@@ -668,12 +695,16 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 					"Closing an already closed upload request url : "
 							+ req.getUuid());
 		}
+		UploadRequestAuditLogEntry log = new UploadRequestAuditLogEntry(new AccountMto(actor),
+				new AccountMto(req.getOwner()), LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST, req.getUuid(), req);
 		checkUpdatePermission(actor, req.getOwner(), UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, req);
 		req.updateStatus(UploadRequestStatus.STATUS_CLOSED);
 		UploadRequest update = updateRequest(actor, actor, req);
 		MailContainerWithRecipient mail = mailBuildingService
 				.buildCloseUploadRequestByRecipient((User) req.getOwner(), url);
 		notifierService.sendNotification(mail);
+		log.setResourceUpdated(new UploadRequestMto(update));
+		mongoRepository.insert(log);
 		return update;
 	}
 
