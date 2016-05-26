@@ -126,8 +126,6 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 		sender.getEntries().remove(share);
 
 		documentEntryRepository.update(documentEntry);
-		accountRepository.update(recipient);
-		accountRepository.update(sender);
 	}
 
 	@Override
