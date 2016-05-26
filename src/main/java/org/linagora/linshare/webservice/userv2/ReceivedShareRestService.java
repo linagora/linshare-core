@@ -50,7 +50,7 @@ public interface ReceivedShareRestService {
 
 	void head(String receivedShareUuid) throws BusinessException;
 
-	Response thumbnail(String receivedShareUuid) throws BusinessException;
+	Response thumbnail(String receivedShareUuid, boolean base64) throws BusinessException;
 
 	ShareDto delete(String receivedShareUuid) throws BusinessException;
 

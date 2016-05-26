@@ -39,12 +39,14 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -123,11 +125,12 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public Response thumbnail(@PathParam("uuid") String receivedShareUuid) throws BusinessException {
+	public Response thumbnail(@PathParam("uuid") String receivedShareUuid,
+			@ApiParam(value = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64) throws BusinessException {
 		ShareDto receivedShareDto = shareFacade.getReceivedShare(receivedShareUuid);
 		InputStream receivedShareStream = shareFacade.getThumbnailStream(receivedShareUuid);
-		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(receivedShareStream,
-				receivedShareDto.getName() + "_thumb.png", "image/png", receivedShareDto.getSize());
+		ResponseBuilder response = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(receivedShareStream,
+				receivedShareDto.getName() + "_thumb.png", base64);
 		return response.build();
 	}
 
