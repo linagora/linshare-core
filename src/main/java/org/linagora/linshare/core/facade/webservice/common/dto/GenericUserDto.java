@@ -35,6 +35,7 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.User;
 
@@ -47,24 +48,6 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 		+ "If not, we will use the mail. The domain could be use to restrict the search to a particular domain."
 		+ "This is usefull for a multi-domain LinShare instance.")
 public class GenericUserDto {
-
-	public GenericUserDto() {
-		super();
-	}
-
-	public GenericUserDto(Contact contact) {
-		super();
-		this.mail = contact.getMail();
-	}
-
-	public GenericUserDto(User u) {
-		super();
-		setUuid(u.getLsUuid());
-		setDomain(u.getDomainId());
-		setMail(u.getMail());
-		setFirstName(u.getFirstName());
-		setLastName(u.getLastName());
-	}
 
 	@ApiModelProperty(value = "User uuid")
 	protected String uuid = null;
@@ -80,6 +63,33 @@ public class GenericUserDto {
 
 	@ApiModelProperty(value = "Mail")
 	private String mail = null;
+
+	@ApiModelProperty(value = "AccountType")
+	private AccountType accountType = null;
+
+	@ApiModelProperty(value = "External")
+	private Boolean external = null;
+
+	public GenericUserDto() {
+		super();
+	}
+
+	public GenericUserDto(Contact contact) {
+		super();
+		this.mail = contact.getMail();
+		this.external = true;
+	}
+
+	public GenericUserDto(User u) {
+		super();
+		setUuid(u.getLsUuid());
+		setDomain(u.getDomainId());
+		setMail(u.getMail());
+		setFirstName(u.getFirstName());
+		setLastName(u.getLastName());
+		this.external = false;
+		this.accountType = u.getAccountType();
+	}
 
 	public String getUuid() {
 		return uuid;
@@ -119,5 +129,21 @@ public class GenericUserDto {
 
 	public void setMail(String mail) {
 		this.mail = mail;
+	}
+
+	public AccountType getAccountType() {
+		return accountType;
+	}
+
+	public void setAccountType(AccountType accountType) {
+		this.accountType = accountType;
+	}
+
+	public Boolean getExternal() {
+		return external;
+	}
+
+	public void setExternal(Boolean external) {
+		this.external = external;
 	}
 }
