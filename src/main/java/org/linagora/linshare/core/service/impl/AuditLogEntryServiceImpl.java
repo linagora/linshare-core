@@ -33,10 +33,14 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.service.AbstractDomainService;
@@ -46,6 +50,8 @@ import org.linagora.linshare.mongo.entities.AuditLogEntryAdmin;
 import org.linagora.linshare.mongo.entities.AuditLogEntryUser;
 import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
+
+import com.google.common.collect.Lists;
 
 public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 
@@ -58,8 +64,7 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 	private AbstractDomainService domainService;
 
 	public AuditLogEntryServiceImpl(AuditAdminMongoRepository auditMongoRepository,
-			AuditUserMongoRepository userMongoRepository,
-			UserService userService,
+			AuditUserMongoRepository userMongoRepository, UserService userService,
 			AbstractDomainService domainService) {
 		this.auditMongoRepository = auditMongoRepository;
 		this.userMongoRepository = userMongoRepository;
@@ -105,7 +110,7 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 	@Override
 	public List<AuditLogEntryUser> userFindAll(Account actor) {
 		Validate.notNull(actor);
-		return userMongoRepository.findAll();
+		return (List<AuditLogEntryUser>) userMongoRepository.findAll();
 	}
 
 	@Override
@@ -136,5 +141,72 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 		Validate.notNull(actor);
 		Validate.notNull(type);
 		return userMongoRepository.findByType(type);
+	}
+
+	@Override
+	public List<AuditLogEntryUser> userFindByActorUuidAndAction(String actorUuid, String action, Account actor) {
+		Validate.notEmpty(actorUuid);
+		Validate.notEmpty(action);
+		Validate.notNull(actor);
+		User user = userService.findByLsUuid(actorUuid);
+		return userMongoRepository.findByActorUuidAndAction(user.getLsUuid(), action);
+	}
+
+	@Override
+	public List<AuditLogEntryUser> userFindByActorUuidAndAction(Account actor, String actorUuid, String ownerUuid) {
+		Validate.notEmpty(actorUuid);
+		Validate.notEmpty(ownerUuid);
+		Validate.notNull(actor);
+		User owner = userService.findByLsUuid(ownerUuid);
+		User user = userService.findByLsUuid(actorUuid);
+		return userMongoRepository.findByActorUuidOrOwnerUuid(user.getLsUuid(), owner.getLsUuid());
+	}
+
+	@Override
+	public List<AuditLogEntryUser> findAll(Account actor, List<String> action, List<String> type, boolean forceAll,
+			Date beginDate, Date endDate) {
+		Validate.notNull(actor);
+		Calendar c = new GregorianCalendar();
+		Date d = c.getTime();
+		c.add(Calendar.DATE, -10);
+		Date n = c.getTime();
+		List<LogAction> actions = Lists.newArrayList();
+		List<AuditLogEntryType> types = Lists.newArrayList();
+		List<AuditLogEntryUser> res = Lists.newArrayList();
+		for (String a : action) {
+			if (a != null && !a.isEmpty()) {
+				actions.add(LogAction.fromString(a));
+			} else {
+				actions.add(LogAction.CREATE);
+				actions.add(LogAction.UPDATE);
+				actions.add(LogAction.DELETE);
+				actions.add(LogAction.GET);
+			}
+		}
+		for (String t : type) {
+			if (t != null && !t.isEmpty()) {
+				types.add(AuditLogEntryType.fromString(t));
+			} else {
+				types.addAll(AuditLogEntryType.getAllUSer());
+//				types.add(AuditLogEntryType.DOCUMENT);
+//				types.add(AuditLogEntryType.THREAD);
+//				types.add(AuditLogEntryType.UPLOAD_REQUEST);
+//				types.add(AuditLogEntryType.UPLOAD_REQUEST_GROUP);
+//				types.add(AuditLogEntryType.SHARE_ENTRY);
+//				types.add(AuditLogEntryType.ANONYMOUS_SHARE_ENTRY);
+//				types.add(AuditLogEntryType.GUEST);
+//				types.add(AuditLogEntryType.THREAD_MEMBER);
+//				types.add(AuditLogEntryType.USER_PREFERENCE);
+//				types.add(AuditLogEntryType.USER);
+//				types.add(AuditLogEntryType.LIST);
+//				types.add(AuditLogEntryType.LIST_CONTACT);
+			}
+		}
+		if (forceAll) {
+			res = userMongoRepository.findForUser(actor.getLsUuid(), actions, types);
+		} else {
+			res = userMongoRepository.findForUser(actor.getLsUuid(), actions, types, n, d);
+		}
+		return res;
 	}
 }

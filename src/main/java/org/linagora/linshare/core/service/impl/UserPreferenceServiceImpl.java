@@ -36,6 +36,8 @@ package org.linagora.linshare.core.service.impl;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -43,15 +45,22 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.UserPreferenceResourceAccessControl;
 import org.linagora.linshare.core.service.UserPreferenceService;
 import org.linagora.linshare.mongo.entities.UserPreference;
+import org.linagora.linshare.mongo.entities.UserPreferenceAuditLogEntry;
+import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 import org.linagora.linshare.mongo.repository.UserPreferenceMongoRepository;
 
 public class UserPreferenceServiceImpl extends GenericServiceImpl<Account, UserPreference> implements UserPreferenceService {
 
 	protected UserPreferenceMongoRepository repository;
 
-	public UserPreferenceServiceImpl(UserPreferenceMongoRepository repository, UserPreferenceResourceAccessControl rac) {
+	protected AuditUserMongoRepository mongoRepository;
+
+	public UserPreferenceServiceImpl(UserPreferenceMongoRepository repository,
+			AuditUserMongoRepository mongoRepository,
+			UserPreferenceResourceAccessControl rac) {
 		super(rac);
 		this.repository = repository;
+		this.mongoRepository = mongoRepository;
 	}
 
 	@Override
@@ -103,7 +112,11 @@ public class UserPreferenceServiceImpl extends GenericServiceImpl<Account, UserP
 		dto.setUuid(null);
 //		dto.setUuid(UUID.randomUUID().toString());
 		// Check if it a valid key ?
-		return repository.insert(dto);
+		UserPreference res = repository.insert(dto);
+		UserPreferenceAuditLogEntry log = new UserPreferenceAuditLogEntry(actor, owner, LogAction.CREATE,
+				AuditLogEntryType.USER_PREFERENCE, res);
+		mongoRepository.insert(log);
+		return res;
 	}
 
 	@Override
@@ -112,7 +125,12 @@ public class UserPreferenceServiceImpl extends GenericServiceImpl<Account, UserP
 		Validate.notNull(dto, "Missing user preference object");
 		dto.validate();
 		UserPreference entry = findByUuid(actor, owner, dto.getUuid());
+		UserPreferenceAuditLogEntry log = new UserPreferenceAuditLogEntry(actor, owner, LogAction.CREATE,
+				AuditLogEntryType.USER_PREFERENCE, entry);
 		// TODO
+
+		log.setResourceUpdated(entry);
+		mongoRepository.insert(log);
 		return null;
 	}
 
@@ -122,6 +140,9 @@ public class UserPreferenceServiceImpl extends GenericServiceImpl<Account, UserP
 		Validate.notEmpty(uuid, "Missing user preference uuid");
 		UserPreference entry = findByUuid(actor, owner, uuid);
 		repository.delete(entry);
+		UserPreferenceAuditLogEntry log = new UserPreferenceAuditLogEntry(actor, owner, LogAction.CREATE,
+				AuditLogEntryType.USER_PREFERENCE, entry);
+		mongoRepository.insert(log);
 		return entry;
 	}
 

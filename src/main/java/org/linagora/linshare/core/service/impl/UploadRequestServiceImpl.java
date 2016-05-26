@@ -214,12 +214,13 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 						 Lists.newArrayList(contact), subject, body, group));
 			}
 		}
+		List<UploadRequestAuditLogEntry> log = Lists.newArrayList();
 		for (UploadRequest r : requests) {
-			UploadRequestAuditLogEntry log = new UploadRequestAuditLogEntry(new AccountMto(actor),
-					new AccountMto(owner), LogAction.CREATE, AuditLogEntryType.UPLOAD_REQUEST,
-					r.getUuid(), r);
-			mongoRepository.insert(log);
+			log.add(new UploadRequestAuditLogEntry(new AccountMto(actor),
+				new AccountMto(owner), LogAction.CREATE, AuditLogEntryType.UPLOAD_REQUEST,
+				r.getUuid(), r));
 		}
+		mongoRepository.insert(log);
 		return requests;
 	}
 

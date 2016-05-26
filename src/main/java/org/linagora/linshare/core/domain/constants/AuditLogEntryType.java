@@ -34,13 +34,17 @@
 
 package org.linagora.linshare.core.domain.constants;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 
+import com.google.common.collect.Lists;
+
 public enum AuditLogEntryType {
 
-	SHARE,
+	SHARE_ENTRY,
 	DOCUMENT,
 	GUEST,
 	THREAD,
@@ -52,7 +56,9 @@ public enum AuditLogEntryType {
 	LIST,
 	LIST_CONTACT,
 	UPLOAD_REQUEST,
-	UPLOAD_REQUEST_GROUP;
+	UPLOAD_REQUEST_GROUP,
+	ANONYMOUS_SHARE_ENTRY,
+	USER_PREFERENCE;
 
 	public static AuditLogEntryType fromString(String s) {
 		try {
@@ -60,5 +66,22 @@ public enum AuditLogEntryType {
 		} catch (RuntimeException e) {
 			throw new TechnicalException(TechnicalErrorCode.NO_SUCH_LOG_ACTION, StringUtils.isEmpty(s) ? "null or empty" : s);
 		}
+	}
+
+	public static List<AuditLogEntryType> getAllUSer() {
+		List<AuditLogEntryType> res = Lists.newArrayList();
+		res.add(AuditLogEntryType.DOCUMENT);
+		res.add(AuditLogEntryType.THREAD);
+		res.add(AuditLogEntryType.UPLOAD_REQUEST);
+		res.add(AuditLogEntryType.UPLOAD_REQUEST_GROUP);
+		res.add(AuditLogEntryType.SHARE_ENTRY);
+		res.add(AuditLogEntryType.ANONYMOUS_SHARE_ENTRY);
+		res.add(AuditLogEntryType.GUEST);
+		res.add(AuditLogEntryType.THREAD_MEMBER);
+		res.add(AuditLogEntryType.USER_PREFERENCE);
+		res.add(AuditLogEntryType.USER);
+		res.add(AuditLogEntryType.LIST);
+		res.add(AuditLogEntryType.LIST_CONTACT);
+		return res;
 	}
 }

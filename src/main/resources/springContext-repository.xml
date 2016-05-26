@@ -223,4 +223,9 @@
 	<bean name="asyncTaskRepository" class="org.linagora.linshare.core.repository.hibernate.AsyncTaskRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
+
+<!-- 	<bean id="auditUserMongoRepository" class="org.linagora.linshare.mongo.repository.impl.AuditUserMongoRepositoryImpl"> -->
+<!-- 		<constructor-arg ref="mongoTemplate" /> -->
+<!-- 	</bean> -->
+
 </beans>

@@ -91,6 +91,7 @@
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="recipientFavouriteRepository" />
 		<constructor-arg ref="shareEntryResourceAccessControl" />
+		<constructor-arg ref="auditUserMongoRepository" />
 	</bean>
 
 	<bean id="anonymousShareEntryService" class="org.linagora.linshare.core.service.impl.AnonymousShareEntryServiceImpl">
@@ -102,6 +103,7 @@
 		<constructor-arg ref="documentEntryBusinessService" />
 		<constructor-arg ref="recipientFavouriteRepository" />
 		<constructor-arg ref="anonymousShareEntryResourceAccessControl" />
+		<constructor-arg ref="auditUserMongoRepository" />
 	</bean>
 
 	<bean id="anonymousUrlService" class="org.linagora.linshare.core.service.impl.AnonymousUrlServiceImpl">
@@ -242,6 +244,7 @@
 	<bean id="userPreferenceService" class="org.linagora.linshare.core.service.impl.UserPreferenceServiceImpl">
 		<constructor-arg ref="userPreferenceMongoRepository" />
 		<constructor-arg ref="userPreferenceResourceAccessControl" />
+		<constructor-arg ref="auditUserMongoRepository" />
 	</bean>
 	<bean id="auditLogEntryService" class="org.linagora.linshare.core.service.impl.AuditLogEntryServiceImpl">
 		<constructor-arg ref="auditAdminMongoRepository" />

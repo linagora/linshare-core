@@ -60,4 +60,6 @@ public interface AuditLogEntryFacade extends AdminGenericFacade {
 	List<AuditLogEntryUser> userFindByOwner(String uuid);
 
 	List<AuditLogEntryUser> userFindByType(AuditLogEntryType type);
+
+	List<AuditLogEntryUser> userFindByActorUuidAndAction(String actorUuid, String action);
 }

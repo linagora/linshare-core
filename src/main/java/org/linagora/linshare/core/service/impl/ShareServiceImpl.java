@@ -451,7 +451,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			logger.error(msg);
 			throw new BusinessException(BusinessErrorCode.SHARE_NOT_FOUND, msg);
 		}
-		ShareAuditLogEntry log = new ShareAuditLogEntry(actor, owner, entry, LogAction.SHARE_DELETE, AuditLogEntryType.SHARE);
+		ShareAuditLogEntry log = new ShareAuditLogEntry(actor, owner, entry, LogAction.DELETE, AuditLogEntryType.SHARE_ENTRY);
 		auditMongoRepository.insert(log);
 		return entry;
 	}

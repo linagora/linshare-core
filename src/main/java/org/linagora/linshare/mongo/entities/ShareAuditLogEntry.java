@@ -40,67 +40,66 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Entry;
-import org.linagora.linshare.core.domain.objects.Recipient;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
-import org.linagora.linshare.mongo.entities.mto.EntryMto;
+import org.linagora.linshare.mongo.entities.mto.ShareEntryMto;
 
 @XmlRootElement
 public class ShareAuditLogEntry extends AuditLogEntryUser {
 
-	protected EntryMto resource;
+	protected ShareEntryMto resource;
 
-	protected String contactMail;
+	protected String recipientMail;
 
-	protected String contactUuid;
+	protected String recipientUuid;
 
-	private EntryMto resourceUpdated;
+	private ShareEntryMto resourceUpdated;
 
 	public ShareAuditLogEntry() {
 		super();
 	}
 
-	public ShareAuditLogEntry(Account actor, Account owner, Entry entry, LogAction action, AuditLogEntryType type,
-			Recipient recipient) {
+	public ShareAuditLogEntry(Account actor, Account owner, ShareEntry entry, LogAction action,
+			AuditLogEntryType type) {
 		super(new AccountMto(actor), new AccountMto(owner), action, type, entry.getUuid());
-		this.contactMail = recipient.getMail();
-		this.contactUuid = recipient.getUuid();
-		this.resource = new EntryMto(entry);
+		this.recipientMail = entry.getRecipient().getMail();
+		this.recipientUuid = entry.getRecipient().getLsUuid();
+		this.resource = new ShareEntryMto(entry);
 	}
 
 	public ShareAuditLogEntry(Account actor, Account owner, Entry entry, LogAction action, AuditLogEntryType type) {
 		super(new AccountMto(actor), new AccountMto(owner), action, type, entry.getUuid());
-		this.resource = new EntryMto(entry);
 	}
 
-	public String getContactMail() {
-		return contactMail;
-	}
-
-	public void setContactMail(String contactMail) {
-		this.contactMail = contactMail;
-	}
-
-	public String getContactUuid() {
-		return contactUuid;
-	}
-
-	public void setContactUuid(String contactUuid) {
-		this.contactUuid = contactUuid;
-	}
-
-	public EntryMto getResource() {
+	public ShareEntryMto getResource() {
 		return resource;
 	}
 
-	public void setResource(EntryMto entry) {
-		this.resource = entry;
+	public void setResource(ShareEntryMto resource) {
+		this.resource = resource;
 	}
 
-	public EntryMto getResourceUpdated() {
+	public String getRecipientMail() {
+		return recipientMail;
+	}
+
+	public void setRecipientMail(String recipientMail) {
+		this.recipientMail = recipientMail;
+	}
+
+	public String getRecipientUuid() {
+		return recipientUuid;
+	}
+
+	public void setRecipientUuid(String recipientUuid) {
+		this.recipientUuid = recipientUuid;
+	}
+
+	public ShareEntryMto getResourceUpdated() {
 		return resourceUpdated;
 	}
 
-	public void setResourceUpdated(EntryMto resourceUpdated) {
+	public void setResourceUpdated(ShareEntryMto resourceUpdated) {
 		this.resourceUpdated = resourceUpdated;
 	}
 }

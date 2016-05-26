@@ -33,78 +33,65 @@
  */
 package org.linagora.linshare.mongo.entities.mto;
 
-import org.linagora.linshare.core.domain.entities.Document;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.Entry;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.objects.Recipient;
 
-public class DocumentMto {
+public class ShareEntryMto extends EntryMto {
 
-	protected String uuid;
+	protected AccountMto recipient;
 
-	protected String type;
+	protected DocumentMto documentEntry;
 
-	protected Long size;
+	protected Long downloaded;
 
-	protected String sha256Sum;
+	protected String shareUuid;
 
-	protected String thmbUuid;
-
-	public DocumentMto() {
+	public ShareEntryMto() {
 		super();
 	}
 
-	public DocumentMto(Document document) {
-		this.uuid = document.getUuid();
-		this.type = document.getType();
-		this.sha256Sum = document.getSha256sum();
-		this.thmbUuid = document.getThmbUuid();
-		this.size = document.getSize();
+	public ShareEntryMto(ShareEntry entry) {
+		super(entry);
+		this.recipient = new AccountMto(entry.getRecipient());
+		this.documentEntry = new DocumentMto(entry.getDocumentEntry().getDocument());
+		this.downloaded = entry.getDownloaded();
 	}
 
-	public DocumentMto(DocumentEntry entry) {
-		this.uuid = entry.getUuid();
-		this.type = entry.getType();
-		this.sha256Sum = entry.getSha256sum();
-		this.size = entry.getSize();
-		this.thmbUuid = entry.getDocument().getThmbUuid();
+	public ShareEntryMto(Entry entry, Recipient recipient) {
+		super(entry);
+		this.recipient = new AccountMto(recipient);
 	}
 
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
+	public AccountMto getRecipient() {
+		return recipient;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setRecipient(AccountMto recipient) {
+		this.recipient = recipient;
 	}
 
-	public void setSize(Long size) {
-		this.size = size;
+	public DocumentMto getDocumentEntry() {
+		return documentEntry;
 	}
 
-	public void setSha256Sum(String sha256Sum) {
-		this.sha256Sum = sha256Sum;
+	public void setDocumentEntry(DocumentMto documentEntry) {
+		this.documentEntry = documentEntry;
 	}
 
-	public void setThmbUuid(String thmbUuid) {
-		this.thmbUuid = thmbUuid;
+	public Long getDownloaded() {
+		return downloaded;
 	}
 
-	public String getUuid() {
-		return uuid;
+	public void setDownloaded(Long downloaded) {
+		this.downloaded = downloaded;
 	}
 
-	public String getType() {
-		return type;
+	public String getShareUuid() {
+		return shareUuid;
 	}
 
-	public Long getSize() {
-		return size;
-	}
-
-	public String getSha256Sum() {
-		return sha256Sum;
-	}
-
-	public String getThmbUuid() {
-		return thmbUuid;
+	public void setShareUuid(String shareUuid) {
+		this.shareUuid = shareUuid;
 	}
 }

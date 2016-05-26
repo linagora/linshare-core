@@ -47,9 +47,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.ShareEntryRepository;
-import org.linagora.linshare.mongo.entities.AuditLogEntryUser;
-import org.linagora.linshare.mongo.entities.ShareAuditLogEntry;
-import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,8 +60,6 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 
 	private static final Logger logger = LoggerFactory.getLogger(ShareEntryBusinessServiceImpl.class);
 
-//	protected final AuditUserMongoRepository auditUserMongoRepository;
-
 	public ShareEntryBusinessServiceImpl(ShareEntryRepository shareEntryRepository,
 			AccountRepository<Account> accountRepository,
 			DocumentEntryRepository documentEntryRepository) {
@@ -72,7 +67,6 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 		this.shareEntryRepository = shareEntryRepository;
 		this.accountRepository = accountRepository;
 		this.documentEntryRepository = documentEntryRepository;
-//		this.auditUserMongoRepository = auditUserMongoRepository;
 	}
 
 	@Override

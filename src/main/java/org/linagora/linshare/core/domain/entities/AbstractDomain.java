@@ -364,7 +364,7 @@ public abstract class AbstractDomain {
 	private boolean checkIfManagedByParent(AbstractDomain domain, String accountDomainId) {
 		AbstractDomain d = domain.getParentDomain();
 		if (d != null) {
-			if (d .getUuid().equals(accountDomainId)) {
+			if (d.getUuid().equals(accountDomainId)) {
 				return true;
 			} else {
 				return checkIfManagedByParent(d, accountDomainId);

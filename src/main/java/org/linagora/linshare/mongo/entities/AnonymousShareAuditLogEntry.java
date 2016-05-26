@@ -31,80 +31,56 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.entities.mto;
+package org.linagora.linshare.mongo.entities;
 
-import org.linagora.linshare.core.domain.entities.Document;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import java.util.List;
+import java.util.Set;
 
-public class DocumentMto {
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.linagora.linshare.mongo.entities.mto.AnonymousShareEntryMto;
 
-	protected String uuid;
+import com.google.common.collect.Lists;
 
-	protected String type;
+public class AnonymousShareAuditLogEntry extends AuditLogEntryUser {
 
-	protected Long size;
+	AnonymousShareEntryMto resource;
 
-	protected String sha256Sum;
+	AnonymousShareEntryMto resourceUpdated;
 
-	protected String thmbUuid;
-
-	public DocumentMto() {
+	public AnonymousShareAuditLogEntry() {
 		super();
 	}
 
-	public DocumentMto(Document document) {
-		this.uuid = document.getUuid();
-		this.type = document.getType();
-		this.sha256Sum = document.getSha256sum();
-		this.thmbUuid = document.getThmbUuid();
-		this.size = document.getSize();
+	public AnonymousShareAuditLogEntry(Account actor, Account owner, LogAction action, AuditLogEntryType type, AnonymousShareEntry ase) {
+		super(new AccountMto(actor), new AccountMto(owner), action, type, ase.getUuid());
+		this.resource = new AnonymousShareEntryMto(ase);
 	}
 
-	public DocumentMto(DocumentEntry entry) {
-		this.uuid = entry.getUuid();
-		this.type = entry.getType();
-		this.sha256Sum = entry.getSha256sum();
-		this.size = entry.getSize();
-		this.thmbUuid = entry.getDocument().getThmbUuid();
+	public List<AnonymousShareAuditLogEntry> createList(Account actor, Account owner, LogAction action, AuditLogEntryType type, Set<AnonymousShareEntry> ase) {
+		List<AnonymousShareAuditLogEntry> res = Lists.newArrayList();
+		for (AnonymousShareEntry a : ase) {
+			res.add(new AnonymousShareAuditLogEntry(actor, owner, action, type, a));
+		}
+		return res;
 	}
 
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
+	public AnonymousShareEntryMto getResource() {
+		return resource;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setResource(AnonymousShareEntryMto resource) {
+		this.resource = resource;
 	}
 
-	public void setSize(Long size) {
-		this.size = size;
+	public AnonymousShareEntryMto getResourceUpdated() {
+		return resourceUpdated;
 	}
 
-	public void setSha256Sum(String sha256Sum) {
-		this.sha256Sum = sha256Sum;
-	}
-
-	public void setThmbUuid(String thmbUuid) {
-		this.thmbUuid = thmbUuid;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public Long getSize() {
-		return size;
-	}
-
-	public String getSha256Sum() {
-		return sha256Sum;
-	}
-
-	public String getThmbUuid() {
-		return thmbUuid;
+	public void setResourceUpdated(AnonymousShareEntryMto resourceUpdated) {
+		this.resourceUpdated = resourceUpdated;
 	}
 }

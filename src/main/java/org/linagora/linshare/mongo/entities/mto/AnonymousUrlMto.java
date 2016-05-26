@@ -33,78 +33,69 @@
  */
 package org.linagora.linshare.mongo.entities.mto;
 
-import org.linagora.linshare.core.domain.entities.Document;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 
-public class DocumentMto {
+public class AnonymousUrlMto {
+
+	protected String urlPath;
 
 	protected String uuid;
 
-	protected String type;
+	protected String password;
 
-	protected Long size;
+	protected String contactMail;
 
-	protected String sha256Sum;
+	protected String temporaryPlainTextPassword;
 
-	protected String thmbUuid;
-
-	public DocumentMto() {
+	public AnonymousUrlMto() {
 		super();
 	}
 
-	public DocumentMto(Document document) {
-		this.uuid = document.getUuid();
-		this.type = document.getType();
-		this.sha256Sum = document.getSha256sum();
-		this.thmbUuid = document.getThmbUuid();
-		this.size = document.getSize();
+	public AnonymousUrlMto(AnonymousUrl url) {
+		this.uuid = url.getUuid();
+		this.urlPath = url.getUrlPath();
+		this.password = url.getPassword();
+		this.contactMail = url.getContact().getMail();
+		this.temporaryPlainTextPassword = url.getTemporaryPlainTextPassword();
 	}
 
-	public DocumentMto(DocumentEntry entry) {
-		this.uuid = entry.getUuid();
-		this.type = entry.getType();
-		this.sha256Sum = entry.getSha256sum();
-		this.size = entry.getSize();
-		this.thmbUuid = entry.getDocument().getThmbUuid();
+	public String getUrlPath() {
+		return urlPath;
 	}
 
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public void setSize(Long size) {
-		this.size = size;
-	}
-
-	public void setSha256Sum(String sha256Sum) {
-		this.sha256Sum = sha256Sum;
-	}
-
-	public void setThmbUuid(String thmbUuid) {
-		this.thmbUuid = thmbUuid;
+	public void setUrlPath(String urlPath) {
+		this.urlPath = urlPath;
 	}
 
 	public String getUuid() {
 		return uuid;
 	}
 
-	public String getType() {
-		return type;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
-	public Long getSize() {
-		return size;
+	public String getPassword() {
+		return password;
 	}
 
-	public String getSha256Sum() {
-		return sha256Sum;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
-	public String getThmbUuid() {
-		return thmbUuid;
+	public String getContactMail() {
+		return contactMail;
+	}
+
+	public void setContactMail(String contactMail) {
+		this.contactMail = contactMail;
+	}
+
+	public String getTemporaryPlainTextPassword() {
+		return temporaryPlainTextPassword;
+	}
+
+	public void setTemporaryPlainTextPassword(String temporaryPlainTextPassword) {
+		this.temporaryPlainTextPassword = temporaryPlainTextPassword;
 	}
 }

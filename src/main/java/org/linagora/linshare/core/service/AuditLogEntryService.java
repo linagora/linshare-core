@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -53,12 +54,18 @@ public interface AuditLogEntryService {
 	List<AuditLogEntryAdmin> findByType(Account actor, AuditLogEntryType type);
 
 	List<AuditLogEntryUser> userFindAll(Account actor);
-	
+
 	List<AuditLogEntryUser> userFindByActor(Account actor, String uuid);
-	
+
 	List<AuditLogEntryUser> userFindByAction(Account actor, String action);
-	
+
 	List<AuditLogEntryUser> userFindByOwner(Account actor, String uuid);
-	
+
 	List<AuditLogEntryUser> userFindByType(Account actor, AuditLogEntryType type);
+
+	List<AuditLogEntryUser> userFindByActorUuidAndAction(String actorUuid, String action, Account actor);
+
+	List<AuditLogEntryUser> userFindByActorUuidAndAction(Account actor, String actorUuid, String ownerUuid);
+
+	List<AuditLogEntryUser> findAll(Account actor, List<String> action, List<String> type, boolean forceAll, Date beginDate, Date endDate);
 }

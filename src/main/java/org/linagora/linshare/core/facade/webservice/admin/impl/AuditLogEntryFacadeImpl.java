@@ -48,8 +48,7 @@ public class AuditLogEntryFacadeImpl extends AdminGenericFacadeImpl implements A
 
 	AuditLogEntryService service;
 
-	public AuditLogEntryFacadeImpl(AccountService accountService,
-			AuditLogEntryService service) {
+	public AuditLogEntryFacadeImpl(AccountService accountService, AuditLogEntryService service) {
 		super(accountService);
 		this.service = service;
 	}
@@ -112,5 +111,11 @@ public class AuditLogEntryFacadeImpl extends AdminGenericFacadeImpl implements A
 	public List<AuditLogEntryUser> userFindByType(AuditLogEntryType type) {
 		Account actor = checkAuthentication(Role.ADMIN);
 		return service.userFindByType(actor, type);
+	}
+
+	@Override
+	public List<AuditLogEntryUser> userFindByActorUuidAndAction(String actorUuid, String action) {
+		Account actor = checkAuthentication(Role.ADMIN);
+		return service.userFindByActorUuidAndAction(actorUuid, action, actor);
 	}
 }

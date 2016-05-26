@@ -36,7 +36,7 @@ package org.linagora.linshare.mongo.entities.mto;
 
 import org.linagora.linshare.core.domain.entities.Entry;
 
-public class EntryMto {
+public abstract class EntryMto {
 
 	protected String uuid;
 

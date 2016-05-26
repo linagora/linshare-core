@@ -60,4 +60,6 @@ public interface AuditLogEntryAdminRestService {
 	List<AuditLogEntryUser> userFindByActorUuid(String actorUuid);
 
 	List<AuditLogEntryUser> userFindByType(String type);
+
+	List<AuditLogEntryUser> userFindByActorUuidAndAction(String actorUuid, String action);
 }

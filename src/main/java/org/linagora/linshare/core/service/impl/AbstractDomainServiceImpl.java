@@ -401,7 +401,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			logger.debug("UserProvider is null for domain : "
 					+ domain.getUuid());
 		}
-
 		return user;
 	}
 
@@ -421,7 +420,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	private List<User> findUserRecursivelyWithoutRestriction(
 			AbstractDomain domain, String mail) throws BusinessException {
 		List<User> users = new ArrayList<User>();
-
 		try {
 			// TODO FMA
 			User temp = findUserWithoutRestriction(domain, mail);
@@ -431,11 +429,9 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		} catch (BusinessException e) {
 			logger.error(e.getMessage());
 		}
-
 		for (AbstractDomain subDomain : domain.getSubdomain()) {
 			users.addAll(findUserRecursivelyWithoutRestriction(subDomain, mail));
 		}
-
 		return users;
 	}
 
@@ -526,17 +522,14 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	public List<User> searchUserRecursivelyWithoutRestriction(String mail)
 			throws BusinessException {
 		List<User> users = new ArrayList<User>();
-
 		users.addAll(findUserRecursivelyWithoutRestriction(
 				getUniqueRootDomain(), mail));
-
 		return users;
 	}
 
 	@Override
 	public User searchOneUserRecursivelyWithoutRestriction(
 			String domainIdentifier, String mail) throws BusinessException {
-
 		// search domain
 		AbstractDomain domain = retrieveDomain(domainIdentifier);
 		if (domain == null) {
@@ -544,7 +537,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 					+ domainIdentifier + ". This domain does not exist.");
 			return null;
 		}
-
 		// search user mail in in specific directory and all its SubDomain
 		List<User> users = findUserRecursivelyWithoutRestriction(domain, mail);
 
@@ -580,7 +572,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 					+ ". This domain does not exist.");
 			return null;
 		}
-
 		List<User> users = findUserRecursivelyWithoutRestriction(domain, mail);
 		logger.debug("End searchUserRecursivelyWithoutRestriction");
 		return users;
@@ -592,7 +583,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			throws BusinessException {
 		logger.debug("Begin searchUserRecursivelyWithDomainPolicies");
 		List<User> users = new ArrayList<User>();
-
 		AbstractDomain domain = retrieveDomain(domainIdentifier);
 		if (domain != null) {
 			users.addAll(searchUserWithDomainPolicies(domain, mail, firstName,
@@ -609,11 +599,9 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			String mail, String firstName, String lastName)
 			throws BusinessException {
 		List<User> users = new ArrayList<User>();
-
 		List<AbstractDomain> allAuthorizedDomain = domainPolicyService
 				.getAllAuthorizedDomain(domain);
 		for (AbstractDomain d : allAuthorizedDomain) {
-
 			if (d.getUserProvider() != null) {
 				List<User> ldapUserList = new ArrayList<User>();
 				try {
@@ -623,7 +611,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 					logger.error("can not search users from domain:"
 							+ d.getUuid());
 				}
-
 				// For each user, we set the domain which he came from.
 				for (User ldapUser : ldapUserList) {
 					User userDb = userRepository.findByMailAndDomain(
@@ -693,9 +680,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 
 	@Override
 	public boolean canCreateGuestDomain(AbstractDomain domain) {
-
 		if (domain != null) {
-
 			// search GuestDomain among subdomains
 			if (domain.getSubdomain() != null) {
 				for (AbstractDomain d : domain.getSubdomain()) {

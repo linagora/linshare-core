@@ -111,6 +111,10 @@
 		<constructor-arg ref="wsUserPreferenceFacade"/>
 	</bean>
 
+	<bean id="userAuditLogEntryUserRestService" class="org.linagora.linshare.webservice.userv2.impl.AuditLogEntryUserRestServiceImpl">
+		<constructor-arg ref="wsAuditLogEntryUserFacade"/>
+	</bean>
+
 	<jaxrs:server id="userRestContainer" address="/rest/user">
 		<jaxrs:serviceBeans>
 			<ref bean="userEnumRestService" />
@@ -134,6 +138,7 @@
 			<ref bean="userUploadRequestGroupRestService" />
 			<ref bean="userUploadRequestTemplateRestService" />
 			<ref bean="userUserPreferenceRestService" />
+			<ref bean="userAuditLogEntryUserRestService" />
 <!--
 			<ref bean="pluginCompatibilityRestServiceV2" />
 -->

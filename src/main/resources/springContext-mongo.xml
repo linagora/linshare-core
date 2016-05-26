@@ -32,6 +32,13 @@
 		<constructor-arg name="databaseName" value="${linshare.mongo.database}" />
 	</bean>
 
+<!-- 	<bean id="mappingContext" class="org.springframework.data.mongodb.core.mapping.MongoMappingContext" /> -->
+
+<!-- 	<bean id="mongoEntityInformation" -->
+<!-- 		class="org.springframework.data.mongodb.repository.query.MongoEntityInformation"> -->
+<!-- 		<constructor-arg name="mappingContext" ref="mappingContext" /> -->
+<!-- 	</bean> -->
+
 <!-- 	<mongo:db-factory id="mongoDbFactoryForBigFile" dbname="${linshare.mongo.database.gridfs}" mongo-ref="mongo"/> -->
 <!-- 	<mongo:db-factory id="mongoDbFactoryForBigFile" dbname="${linshare.mongo.database.gridfs}" mongo-ref="mongo"/> -->
 

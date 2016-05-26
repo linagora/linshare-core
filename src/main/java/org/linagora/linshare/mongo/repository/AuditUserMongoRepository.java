@@ -33,16 +33,24 @@
  */
 package org.linagora.linshare.mongo.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.mongo.entities.AuditLogEntryUser;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.NoRepositoryBean;
 
 public interface AuditUserMongoRepository extends MongoRepository<AuditLogEntryUser, String> {
 
 	List<AuditLogEntryUser> findByAction(String action);
+
+	List<AuditLogEntryUser> findByActorUuidAndAction(String actorUuid, String action);
+
+	List<AuditLogEntryUser> findByActorUuidOrOwnerUuid(String actorUuid, String ownerUuid);
 
 	@Query("{ 'owner.uuid' : ?0 }")
 	List<AuditLogEntryUser> findByOwnerUuid(String ownerUuid);
@@ -51,4 +59,11 @@ public interface AuditUserMongoRepository extends MongoRepository<AuditLogEntryU
 	List<AuditLogEntryUser> findByActorUuid(String actor);
 
 	List<AuditLogEntryUser> findByType(AuditLogEntryType type);
+
+	@Query("{ 'owner.uuid' : ?0, 'action' : {'$in' : ?1 }, 'type' : { '$in' : ?2 } , 'creationDate' : { '$gt' : '?4' , '$lt' : '?5'} }")
+	List<AuditLogEntryUser> findForUser(String ownerUuid, List<LogAction> actions, List<AuditLogEntryType> types, Date beginDate,
+			Date endDate);
+
+	@Query("{ 'owner.uuid' : ?0, 'action' : {'$in' : ?1 }, 'type' : { '$in' : ?2 } }")
+	List<AuditLogEntryUser> findForUser(String ownerUuid, List<LogAction> actions, List<AuditLogEntryType> types);
 }

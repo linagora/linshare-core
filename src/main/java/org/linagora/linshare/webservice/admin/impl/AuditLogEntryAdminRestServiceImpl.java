@@ -130,4 +130,12 @@ public class AuditLogEntryAdminRestServiceImpl implements AuditLogEntryAdminRest
 	public List<AuditLogEntryUser> userFindByType(@PathParam("type") String type) {
 		return auditLogFacade.userFindByType(AuditLogEntryType.fromString(type));
 	}
+
+	@Path("/user/{actorUuid}/{action}")
+	@GET
+	@Override
+	public List<AuditLogEntryUser> userFindByActorUuidAndAction(@PathParam("actorUuid") String actorUuid,
+			@PathParam("action") String action) {
+		return auditLogFacade.userFindByActorUuidAndAction(actorUuid, action);
+	}
 }

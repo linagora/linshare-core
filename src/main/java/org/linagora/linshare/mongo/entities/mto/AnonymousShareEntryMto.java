@@ -33,78 +33,47 @@
  */
 package org.linagora.linshare.mongo.entities.mto;
 
-import org.linagora.linshare.core.domain.entities.Document;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 
-public class DocumentMto {
+public class AnonymousShareEntryMto {
 
-	protected String uuid;
+	protected Long dowloaded;
 
-	protected String type;
+	protected DocumentMto documentEntry;
 
-	protected Long size;
+	protected AnonymousUrlMto url;
 
-	protected String sha256Sum;
-
-	protected String thmbUuid;
-
-	public DocumentMto() {
+	public AnonymousShareEntryMto() {
 		super();
 	}
 
-	public DocumentMto(Document document) {
-		this.uuid = document.getUuid();
-		this.type = document.getType();
-		this.sha256Sum = document.getSha256sum();
-		this.thmbUuid = document.getThmbUuid();
-		this.size = document.getSize();
+	public AnonymousShareEntryMto(AnonymousShareEntry entry) {
+		this.dowloaded = entry.getDownloaded();
+		this.url = new AnonymousUrlMto(entry.getAnonymousUrl());
+		this.documentEntry = new DocumentMto(entry.getDocumentEntry());
 	}
 
-	public DocumentMto(DocumentEntry entry) {
-		this.uuid = entry.getUuid();
-		this.type = entry.getType();
-		this.sha256Sum = entry.getSha256sum();
-		this.size = entry.getSize();
-		this.thmbUuid = entry.getDocument().getThmbUuid();
+	public Long getDowloaded() {
+		return dowloaded;
 	}
 
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
+	public void setDowloaded(Long dowloaded) {
+		this.dowloaded = dowloaded;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public DocumentMto getDocumentEntry() {
+		return documentEntry;
 	}
 
-	public void setSize(Long size) {
-		this.size = size;
+	public void setDocumentEntry(DocumentMto documentEntry) {
+		this.documentEntry = documentEntry;
 	}
 
-	public void setSha256Sum(String sha256Sum) {
-		this.sha256Sum = sha256Sum;
+	public AnonymousUrlMto getUrl() {
+		return url;
 	}
 
-	public void setThmbUuid(String thmbUuid) {
-		this.thmbUuid = thmbUuid;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public Long getSize() {
-		return size;
-	}
-
-	public String getSha256Sum() {
-		return sha256Sum;
-	}
-
-	public String getThmbUuid() {
-		return thmbUuid;
+	public void setUrl(AnonymousUrlMto url) {
+		this.url = url;
 	}
 }

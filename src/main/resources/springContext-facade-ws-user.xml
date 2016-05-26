@@ -96,4 +96,9 @@
 		<constructor-arg ref="userPreferenceService"/>
 	</bean>
 
+	<bean id="wsAuditLogEntryUserFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.AuditLogEntryUserFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="auditLogEntryService"/>
+	</bean>
+
 </beans>

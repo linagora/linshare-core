@@ -40,6 +40,7 @@ import java.util.Set;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.AnonymousShareEntryBusinessService;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -65,6 +66,8 @@ import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
+import org.linagora.linshare.mongo.entities.AnonymousShareAuditLogEntry;
+import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 
 import com.google.common.collect.Sets;
 
@@ -86,6 +89,8 @@ public class AnonymousShareEntryServiceImpl extends
 
 	private final FavouriteRepository<String, User, RecipientFavourite> recipientFavouriteRepository;
 
+	private final AuditUserMongoRepository mongoRepository;
+
 	public AnonymousShareEntryServiceImpl(
 			final FunctionalityReadOnlyService functionalityService,
 			final AnonymousShareEntryBusinessService anonymousShareEntryBusinessService,
@@ -94,6 +99,7 @@ public class AnonymousShareEntryServiceImpl extends
 			final MailBuildingService mailBuildingService,
 			final DocumentEntryBusinessService documentEntryBusinessService,
 			final FavouriteRepository<String, User, RecipientFavourite> recipientFavouriteRepository,
+			final AuditUserMongoRepository mongoRepository,
 			final AnonymousShareEntryResourceAccessControl rac) {
 		super(rac);
 		this.functionalityService = functionalityService;
@@ -103,6 +109,7 @@ public class AnonymousShareEntryServiceImpl extends
 		this.mailBuildingService = mailBuildingService;
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.recipientFavouriteRepository = recipientFavouriteRepository;
+		this.mongoRepository = mongoRepository;
 	}
 
 	@Override
@@ -144,7 +151,7 @@ public class AnonymousShareEntryServiceImpl extends
 		sc.setSecured(passwordProtected);
 		for (Recipient recipient : sc.getAnonymousShareRecipients()) {
 			Language mailLocale = recipient.getLocale();
-			if (mailLocale == null){
+			if (mailLocale == null) {
 				mailLocale = targetedAccount.getExternalMailLocale();
 			}
 			MailContainer mailContainer = new MailContainer(
@@ -184,6 +191,8 @@ public class AnonymousShareEntryServiceImpl extends
 					recipient.getMail());
 			entries.addAll(anonymousUrl.getAnonymousShareEntries());
 		}
+		AnonymousShareAuditLogEntry log = new AnonymousShareAuditLogEntry();
+		mongoRepository.insert(log.createList(actor, shareEntryGroup.getOwner(), LogAction.CREATE, AuditLogEntryType.ANONYMOUS_SHARE_ENTRY, entries));
 		return entries;
 	}
 
@@ -200,6 +209,9 @@ public class AnonymousShareEntryServiceImpl extends
 				LogAction.SHARE_DELETE, "Deleting anonymous share");
 		logEntryService.create(logEntry);
 
+		AnonymousShareAuditLogEntry log = new AnonymousShareAuditLogEntry(actor, share.getEntryOwner(),
+				LogAction.DELETE, AuditLogEntryType.ANONYMOUS_SHARE_ENTRY, share);
+		mongoRepository.insert(log);
 		// TODO : anonymous share deletion notification
 		// notifierService.sendNotification();
 	}
