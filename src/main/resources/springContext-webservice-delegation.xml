@@ -100,6 +100,8 @@
 			<ref bean="businessExceptionMapper" />
 			<ref bean="genericExceptionMapper" />
 			<ref bean="webApplicationExceptionMapper" />
+			<ref bean="jsonParseExceptionMapper" />
+			<ref bean="unrecognizedPropertyExceptionMapper" />
 			<!-- Json provider for serialisation -->
 			<ref bean="jsonProvider" />
 		</jaxrs:providers>
