@@ -39,6 +39,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 
 import com.wordnik.swagger.annotations.ApiModel;
 
@@ -55,6 +56,12 @@ public class AutoCompleteResultDto {
 
 	public AutoCompleteResultDto() {
 		super();
+	}
+
+	public AutoCompleteResultDto(RecipientFavourite recipientFavourite) {
+		super();
+		this.identifier = recipientFavourite.getRecipient();
+		this.display = recipientFavourite.getRecipient();
 	}
 
 	public AutoCompleteResultDto(String identifier, String display) {
@@ -77,4 +84,5 @@ public class AutoCompleteResultDto {
 	public void setDisplay(String display) {
 		this.display = display;
 	}
+
 }
