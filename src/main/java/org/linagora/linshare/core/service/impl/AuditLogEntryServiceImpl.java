@@ -191,12 +191,18 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 		} else {
 			if (endDate == null) {
 				Calendar c = new GregorianCalendar();
+				c.set(Calendar.HOUR_OF_DAY, 23);
+				c.set(Calendar.MINUTE, 59);
+				c.set(Calendar.SECOND, 59);
 				endDate = c.getTime();
 			}
 			if (beginDate == null) {
 				Calendar c = new GregorianCalendar();
 				c.setTime(endDate);
 				c.add(Calendar.DAY_OF_MONTH, -30);
+				c.set(Calendar.HOUR_OF_DAY, 0);
+				c.set(Calendar.MINUTE, 0);
+				c.set(Calendar.SECOND, 0);
 				beginDate = c.getTime();
 			}
 			res = userMongoRepository.findForUser(actor.getLsUuid(), actions, types, beginDate, endDate);

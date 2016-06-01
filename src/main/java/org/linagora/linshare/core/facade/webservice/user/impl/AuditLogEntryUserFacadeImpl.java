@@ -35,7 +35,9 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
@@ -60,12 +62,22 @@ public class AuditLogEntryUserFacadeImpl extends GenericFacadeImpl implements Au
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		Date bDate = null;
 		Date eDate = null;
+		Calendar c = new GregorianCalendar();
 		try {
 			if (beginDate != null && !beginDate.isEmpty()) {
 				bDate = format.parse(beginDate);
+				c.setTime(bDate);
+				c.set(Calendar.HOUR_OF_DAY, 0);
+				c.set(Calendar.MINUTE, 0);
+				c.set(Calendar.SECOND, 0);
 			}
 			if (endDate != null && !endDate.isEmpty()) {
 				eDate = format.parse(endDate);
+				c.setTime(eDate);
+				c.set(Calendar.HOUR_OF_DAY, 23);
+				c.set(Calendar.MINUTE, 59);
+				c.set(Calendar.SECOND, 59);
+				eDate = c.getTime();
 			}
 		} catch (ParseException e) {
 			e.printStackTrace();
