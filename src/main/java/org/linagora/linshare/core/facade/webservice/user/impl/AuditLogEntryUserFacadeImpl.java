@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -52,8 +54,22 @@ public class AuditLogEntryUserFacadeImpl extends GenericFacadeImpl implements Au
 	}
 
 	@Override
-	public List<AuditLogEntryUser> findAll(List<String> action, List<String> type, boolean forceAll, Date beginDate, Date endDate) {
+	public List<AuditLogEntryUser> findAll(List<String> action, List<String> type, boolean forceAll, String beginDate,
+			String endDate) {
 		Account actor = checkAuthentication();
-		return service.findAll(actor, action, type, forceAll, beginDate, endDate);
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		Date bDate = null;
+		Date eDate = null;
+		try {
+			if (beginDate != null && !beginDate.isEmpty()) {
+				bDate = format.parse(beginDate);
+			}
+			if (endDate != null && !endDate.isEmpty()) {
+				eDate = format.parse(endDate);
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return service.findAll(actor, action, type, forceAll, bDate, eDate);
 	}
 }

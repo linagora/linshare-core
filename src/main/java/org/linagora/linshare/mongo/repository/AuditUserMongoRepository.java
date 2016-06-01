@@ -60,7 +60,7 @@ public interface AuditUserMongoRepository extends MongoRepository<AuditLogEntryU
 
 	List<AuditLogEntryUser> findByType(AuditLogEntryType type);
 
-	@Query("{ 'owner.uuid' : ?0, 'action' : {'$in' : ?1 }, 'type' : { '$in' : ?2 } , 'creationDate' : { '$gt' : '?4' , '$lt' : '?5'} }")
+	@Query("{ 'owner.uuid' : ?0, 'action' : {'$in' : ?1 }, 'type' : { '$in' : ?2 } , 'creationDate' : { '$gt' : '?3' , '$lt' : '?4'} }")
 	List<AuditLogEntryUser> findForUser(String ownerUuid, List<LogAction> actions, List<AuditLogEntryType> types, Date beginDate,
 			Date endDate);
 

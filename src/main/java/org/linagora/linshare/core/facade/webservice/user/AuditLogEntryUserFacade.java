@@ -33,12 +33,11 @@
  */
 package org.linagora.linshare.core.facade.webservice.user;
 
-import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.mongo.entities.AuditLogEntryUser;
 
 public interface AuditLogEntryUserFacade {
 
-	List<AuditLogEntryUser> findAll(List<String> action, List<String> type, boolean forceAll, Date beginDate, Date endDate);
+	List<AuditLogEntryUser> findAll(List<String> action, List<String> type, boolean forceAll, String beginDate, String endDate);
 }

@@ -166,46 +166,40 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 	public List<AuditLogEntryUser> findAll(Account actor, List<String> action, List<String> type, boolean forceAll,
 			Date beginDate, Date endDate) {
 		Validate.notNull(actor);
-		Calendar c = new GregorianCalendar();
-		Date d = c.getTime();
-		c.add(Calendar.DATE, -10);
-		Date n = c.getTime();
 		List<LogAction> actions = Lists.newArrayList();
 		List<AuditLogEntryType> types = Lists.newArrayList();
 		List<AuditLogEntryUser> res = Lists.newArrayList();
-		for (String a : action) {
-			if (a != null && !a.isEmpty()) {
+		if (action != null && !action.isEmpty()) {
+			for (String a : action) {
 				actions.add(LogAction.fromString(a));
-			} else {
-				actions.add(LogAction.CREATE);
-				actions.add(LogAction.UPDATE);
-				actions.add(LogAction.DELETE);
-				actions.add(LogAction.GET);
 			}
+		} else {
+			actions.add(LogAction.CREATE);
+			actions.add(LogAction.UPDATE);
+			actions.add(LogAction.DELETE);
+			actions.add(LogAction.GET);
 		}
-		for (String t : type) {
-			if (t != null && !t.isEmpty()) {
+		if (type != null && !type.isEmpty()) {
+			for (String t : type) {
 				types.add(AuditLogEntryType.fromString(t));
-			} else {
-				types.addAll(AuditLogEntryType.getAllUSer());
-//				types.add(AuditLogEntryType.DOCUMENT);
-//				types.add(AuditLogEntryType.THREAD);
-//				types.add(AuditLogEntryType.UPLOAD_REQUEST);
-//				types.add(AuditLogEntryType.UPLOAD_REQUEST_GROUP);
-//				types.add(AuditLogEntryType.SHARE_ENTRY);
-//				types.add(AuditLogEntryType.ANONYMOUS_SHARE_ENTRY);
-//				types.add(AuditLogEntryType.GUEST);
-//				types.add(AuditLogEntryType.THREAD_MEMBER);
-//				types.add(AuditLogEntryType.USER_PREFERENCE);
-//				types.add(AuditLogEntryType.USER);
-//				types.add(AuditLogEntryType.LIST);
-//				types.add(AuditLogEntryType.LIST_CONTACT);
 			}
+		} else {
+			types.addAll(AuditLogEntryType.getAllUSer());
 		}
 		if (forceAll) {
 			res = userMongoRepository.findForUser(actor.getLsUuid(), actions, types);
 		} else {
-			res = userMongoRepository.findForUser(actor.getLsUuid(), actions, types, n, d);
+			if (endDate == null) {
+				Calendar c = new GregorianCalendar();
+				endDate = c.getTime();
+			}
+			if (beginDate == null) {
+				Calendar c = new GregorianCalendar();
+				c.setTime(endDate);
+				c.add(Calendar.DAY_OF_MONTH, -30);
+				beginDate = c.getTime();
+			}
+			res = userMongoRepository.findForUser(actor.getLsUuid(), actions, types, beginDate, endDate);
 		}
 		return res;
 	}

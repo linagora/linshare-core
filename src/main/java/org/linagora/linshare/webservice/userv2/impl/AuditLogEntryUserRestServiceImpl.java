@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.webservice.userv2.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -63,8 +62,10 @@ public class AuditLogEntryUserRestServiceImpl implements AuditLogEntryUserRestSe
 	@GET
 	@Override
 	public List<AuditLogEntryUser> findAll(@QueryParam("action") List<String> action,
-			@QueryParam("type") @DefaultValue("") List<String> type,
-			@QueryParam("forceAll") @DefaultValue("false") boolean forceAll) {
-		return auditLogFacade.findAll(action, type, forceAll, null, null);
+			@QueryParam("type") List<String> type,
+			@QueryParam("forceAll") @DefaultValue("false") boolean forceAll,
+			@QueryParam("beginDate") String beginDate,
+			@QueryParam("endDate") String endDate) {
+		return auditLogFacade.findAll(action, type, forceAll, beginDate, endDate);
 	}
 }
