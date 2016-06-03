@@ -798,6 +798,29 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- maven-assembly-plugin for sql files -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<appendAssemblyId>true</appendAssemblyId>
+				</configuration>
+				<executions>
+					<execution>
+						<id>sql</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>src/assembly/sql.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<!-- maven-scm-plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
