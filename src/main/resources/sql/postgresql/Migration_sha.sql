@@ -1,1 +1,0 @@
-UPDATE document SET sha256sum = NULL;
