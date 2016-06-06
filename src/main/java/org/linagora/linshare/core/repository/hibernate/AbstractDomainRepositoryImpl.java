@@ -150,8 +150,8 @@ public class AbstractDomainRepositoryImpl extends
 	public Long getTotalUsedSpace(AbstractDomain domain)
 			throws BusinessException {
 		// Dirty Mode ON
-		String queryString = "select sum(ls_size) from document_entry as d join entry as e on d.entry_id = e.id join account as a on a.id = e.owner_id join domain_abstract as dom on a.domain_id = dom.id where identifier = 'MySubDomain';";
-		queryString = "select sum(ls_size) from document_entry as d join entry as e on d.entry_id = e.id join account as a on a.id = e.owner_id join domain_abstract as dom on a.domain_id = dom.id where identifier = '" + domain.getUuid() + "';";
+		String queryString = "select sum(ls_size) from document_entry as d join entry as e on d.entry_id = e.id join account as a on a.id = e.owner_id join domain_abstract as dom on a.domain_id = dom.id where uuid = 'MySubDomain';";
+		queryString = "select sum(ls_size) from document_entry as d join entry as e on d.entry_id = e.id join account as a on a.id = e.owner_id join domain_abstract as dom on a.domain_id = dom.id where uuid = '" + domain.getUuid() + "';";
 		SQLQuery createSQLQuery = this.getCurrentSession().createSQLQuery(queryString);
 		@SuppressWarnings("rawtypes")
 		List result = createSQLQuery.list();

@@ -68,7 +68,7 @@ public enum AuditLogEntryType {
 		}
 	}
 
-	public static List<AuditLogEntryType> getAllUSer() {
+	public static List<AuditLogEntryType> getAllUserTypes() {
 		List<AuditLogEntryType> res = Lists.newArrayList();
 		res.add(AuditLogEntryType.DOCUMENT);
 		res.add(AuditLogEntryType.THREAD);

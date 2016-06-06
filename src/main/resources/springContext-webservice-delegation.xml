@@ -74,6 +74,10 @@
 		<constructor-arg ref="wsUploadRequestTemplateFacade" />
 	</bean>
 
+	<bean id="delegationAuditLogEntryDelegationRestService" class="org.linagora.linshare.webservice.delegation.impl.AuditLogEntryDelegationRestServiceImpl">
+		<constructor-arg ref="wsAuditLogEntryUserFacade" />
+	</bean>
+
 	<jaxrs:server id="restDelegationContainer" address="/rest/delegation">
 		<jaxrs:serviceBeans>
 			<ref bean="delegationAuthenticationRestService" />
@@ -89,6 +93,7 @@
 			<ref bean="delegationUploadRequestRestService" />
 			<ref bean="delegationUploadRequestGroupRestService" />
 			<ref bean="delegationUploadRequestTemplateRestService" />
+			<ref bean="delegationAuditLogEntryDelegationRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

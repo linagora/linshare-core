@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,75 +31,44 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
+package org.linagora.linshare.webservice.delegation.impl;
 
-import org.apache.commons.lang.StringUtils;
-import org.linagora.linshare.core.exception.TechnicalErrorCode;
-import org.linagora.linshare.core.exception.TechnicalException;
+import java.util.List;
+import java.util.Set;
 
-public enum LogAction {
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 
-	FILE_UPLOAD,
-	FILE_SHARE,
-	FILE_SHARE_WITH_ALERT_FOR_USD,
-	FILE_EXPIRE,
-	FILE_DELETE,
-	FILE_UPDATE,
-	FILE_INCONSISTENCY,
+import org.linagora.linshare.core.facade.webservice.user.AuditLogEntryUserFacade;
+import org.linagora.linshare.mongo.entities.AuditLogEntryUser;
+import org.linagora.linshare.webservice.delegation.AuditLogEntryDelegationRestService;
 
-	SHARE_RECEIVED,
-	SHARE_EXPIRE,
-	SHARE_DOWNLOAD,
-	SHARE_DOWNLOADED,
-	SHARE_WITH_USD_NOT_DOWNLOADED,
-	SHARE_WITH_USD_DOWNLOADED,
-	SHARE_COPY,
-	SHARE_DELETE,
-	ANONYMOUS_SHARE_DOWNLOAD,
+@Path("/audit")
+@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+public class AuditLogEntryDelegationRestServiceImpl implements AuditLogEntryDelegationRestService {
 
-	THREAD_CREATE,
-	THREAD_DELETE,
-	THREAD_RENAME,
-	THREAD_ADD_MEMBER,
-	THREAD_REMOVE_MEMBER,
-	THREAD_UPLOAD_ENTRY,
-	THREAD_DOWNLOAD_ENTRY,
-	THREAD_REMOVE_ENTRY,
-	THREAD_REMOVE_INCONSISTENCY_ENTRY,
+	private final AuditLogEntryUserFacade auditFacade;
 
-	USER_CREATE,
-	USER_DELETE,
-	USER_EXPIRE,
-	USER_AUTH,
-	USER_AUTH_FAILED,
+	public AuditLogEntryDelegationRestServiceImpl(final AuditLogEntryUserFacade auditFacade) {
+		this.auditFacade = auditFacade;
+	}
 
-	FILE_SIGN,
-	USER_UPDATE,
-	FILE_ENCRYPT,
-	FILE_DECRYPT,
-	ANTIVIRUS_SCAN_FAILED,
-	FILE_WITH_VIRUS,
-
-	LIST_CREATE,
-	LIST_DELETE,
-	LIST_UPDATE,
-	LIST_ADD_CONTACT,
-	LIST_UPDATE_CONTACT,
-	LIST_DELETE_CONTACT,
-
-	CREATE,
-	UPDATE,
-	DELETE,
-	GET,
-	AUTHENTICATION_SUCCESS,
-	AUTHENTICATION_FAILED,
-	LOGICAL_DELETE;
-
-	public static LogAction fromString(String s) {
-		try {
-			return LogAction.valueOf(s.toUpperCase());
-		} catch (RuntimeException e) {
-			throw new TechnicalException(TechnicalErrorCode.NO_SUCH_LOG_ACTION, StringUtils.isEmpty(s) ? "null or empty" : s);
-		}
+	@Path("/{ownerUuid}")
+	@GET
+	@Override
+	public Set<AuditLogEntryUser> findAll(@PathParam("ownerUuid") String ownerUuid,
+			@QueryParam("action") List<String> action,
+			@QueryParam("type") List<String> type,
+			@QueryParam("forceAll") @DefaultValue("false") boolean forceAll,
+			@QueryParam("beginDate") String beginDate,
+			@QueryParam("endDate") String endDate) {
+		return auditFacade.findAll(ownerUuid, action, type, forceAll, beginDate, endDate);
 	}
 }

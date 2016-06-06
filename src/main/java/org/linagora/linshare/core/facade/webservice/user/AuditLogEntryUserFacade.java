@@ -34,10 +34,13 @@
 package org.linagora.linshare.core.facade.webservice.user;
 
 import java.util.List;
+import java.util.Set;
 
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.AuditLogEntryUser;
 
 public interface AuditLogEntryUserFacade {
 
-	List<AuditLogEntryUser> findAll(List<String> action, List<String> type, boolean forceAll, String beginDate, String endDate);
+	Set<AuditLogEntryUser> findAll(String ownerUuid, List<String> action, List<String> type, boolean forceAll,
+			String beginDate, String endDate) throws BusinessException;
 }

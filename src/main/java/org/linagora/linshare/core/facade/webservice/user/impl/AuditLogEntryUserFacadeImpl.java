@@ -36,11 +36,13 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.AuditLogEntryUserFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
@@ -56,32 +58,24 @@ public class AuditLogEntryUserFacadeImpl extends GenericFacadeImpl implements Au
 	}
 
 	@Override
-	public List<AuditLogEntryUser> findAll(List<String> action, List<String> type, boolean forceAll, String beginDate,
-			String endDate) {
+	public Set<AuditLogEntryUser> findAll(String ownerUuid, List<String> action, List<String> type, boolean forceAll,
+			String beginDate, String endDate) throws BusinessException {
 		Account actor = checkAuthentication();
+		Account owner = getOwner(actor, ownerUuid);
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		Date bDate = null;
-		Date eDate = null;
-		Calendar c = new GregorianCalendar();
+		Calendar bDate = new GregorianCalendar();
+		Calendar eDate = new GregorianCalendar();
 		try {
 			if (beginDate != null && !beginDate.isEmpty()) {
-				bDate = format.parse(beginDate);
-				c.setTime(bDate);
-				c.set(Calendar.HOUR_OF_DAY, 0);
-				c.set(Calendar.MINUTE, 0);
-				c.set(Calendar.SECOND, 0);
+				bDate.setTime(format.parse(beginDate));
 			}
 			if (endDate != null && !endDate.isEmpty()) {
-				eDate = format.parse(endDate);
-				c.setTime(eDate);
-				c.set(Calendar.HOUR_OF_DAY, 23);
-				c.set(Calendar.MINUTE, 59);
-				c.set(Calendar.SECOND, 59);
-				eDate = c.getTime();
+				eDate.setTime(format.parse(endDate));
 			}
 		} catch (ParseException e) {
 			e.printStackTrace();
+			throw new BusinessException(BusinessErrorCode.BAD_REQUEST, "Can not convert dates.");
 		}
-		return service.findAll(actor, action, type, forceAll, bDate, eDate);
+		return service.findAll(actor, owner, action, type, forceAll, bDate, eDate);
 	}
 }

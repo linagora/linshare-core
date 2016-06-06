@@ -37,6 +37,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -52,6 +53,7 @@ import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 
@@ -163,12 +165,13 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 	}
 
 	@Override
-	public List<AuditLogEntryUser> findAll(Account actor, List<String> action, List<String> type, boolean forceAll,
-			Date beginDate, Date endDate) {
+	public Set<AuditLogEntryUser> findAll(Account actor, Account owner, List<String> action, List<String> type,
+			boolean forceAll, Calendar beginDate, Calendar endDate) {
 		Validate.notNull(actor);
+		Validate.notNull(owner);
 		List<LogAction> actions = Lists.newArrayList();
 		List<AuditLogEntryType> types = Lists.newArrayList();
-		List<AuditLogEntryUser> res = Lists.newArrayList();
+		Set<AuditLogEntryUser> res = Sets.newHashSet();
 		if (action != null && !action.isEmpty()) {
 			for (String a : action) {
 				actions.add(LogAction.fromString(a));
@@ -184,28 +187,28 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 				types.add(AuditLogEntryType.fromString(t));
 			}
 		} else {
-			types.addAll(AuditLogEntryType.getAllUSer());
+			types.addAll(AuditLogEntryType.getAllUserTypes());
 		}
 		if (forceAll) {
 			res = userMongoRepository.findForUser(actor.getLsUuid(), actions, types);
 		} else {
 			if (endDate == null) {
-				Calendar c = new GregorianCalendar();
-				c.set(Calendar.HOUR_OF_DAY, 23);
-				c.set(Calendar.MINUTE, 59);
-				c.set(Calendar.SECOND, 59);
-				endDate = c.getTime();
+				endDate = new GregorianCalendar();
 			}
+			endDate.set(Calendar.HOUR_OF_DAY, 23);
+			endDate.set(Calendar.MINUTE, 59);
+			endDate.set(Calendar.SECOND, 59);
+			Date end = endDate.getTime();
 			if (beginDate == null) {
-				Calendar c = new GregorianCalendar();
-				c.setTime(endDate);
-				c.add(Calendar.DAY_OF_MONTH, -30);
-				c.set(Calendar.HOUR_OF_DAY, 0);
-				c.set(Calendar.MINUTE, 0);
-				c.set(Calendar.SECOND, 0);
-				beginDate = c.getTime();
+				beginDate = new GregorianCalendar();
+				beginDate.setTime(end);
 			}
-			res = userMongoRepository.findForUser(actor.getLsUuid(), actions, types, beginDate, endDate);
+			beginDate.add(Calendar.DAY_OF_MONTH, -30);
+			beginDate.set(Calendar.HOUR_OF_DAY, 0);
+			beginDate.set(Calendar.MINUTE, 0);
+			beginDate.set(Calendar.SECOND, 0);
+			Date begin= beginDate.getTime();
+			res = userMongoRepository.findForUser(owner.getLsUuid(), actions, types, begin, end);
 		}
 		return res;
 	}

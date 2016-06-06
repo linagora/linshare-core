@@ -314,7 +314,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		UserLogEntry userLogEntry = new UserLogEntry(actor, LogAction.USER_DELETE, "Deleting a guest", original);
 		LogEntryService.create(userLogEntry);
 		guestBusinessService.delete(original);
-		GuestAuditLogEntry log = new GuestAuditLogEntry(actor, owner, LogAction.USER_CREATE, AuditLogEntryType.GUEST, original);
+		GuestAuditLogEntry log = new GuestAuditLogEntry(actor, owner, LogAction.DELETE, AuditLogEntryType.GUEST,
+				original);
 		auditMongoRepository.insert(log);
 		return original;
 	}

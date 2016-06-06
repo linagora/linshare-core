@@ -34,11 +34,12 @@
 package org.linagora.linshare.webservice.userv2;
 
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.mongo.entities.AuditLogEntryUser;
 
 public interface AuditLogEntryUserRestService {
 
-	public List<AuditLogEntryUser> findAll(List<String> action, List<String> type, boolean forceAll, String beginDate,
+	public Set<AuditLogEntryUser> findAll(List<String> action, List<String> type, boolean forceAll, String beginDate,
 			String endDate);
 }
