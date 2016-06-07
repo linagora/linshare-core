@@ -64,4 +64,8 @@
 	<bean name="userPreferenceResourceAccessControl" class="org.linagora.linshare.core.rac.impl.UserPreferenceResourceAccessControlImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
+
+	<bean name="auditLogEntryResourceAccessControl" class="org.linagora.linshare.core.rac.impl.AuditLogEntryResourceAccessControlImpl">
+		<constructor-arg ref="functionalityReadOnlyService" />
+	</bean>
 </beans>

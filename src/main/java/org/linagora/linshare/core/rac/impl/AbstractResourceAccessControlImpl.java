@@ -34,8 +34,6 @@
 
 package org.linagora.linshare.core.rac.impl;
 
-import java.util.Iterator;
-
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.PermissionType;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
@@ -152,10 +150,12 @@ public abstract class AbstractResourceAccessControlImpl<A, R, E> implements
 			final TechnicalAccountPermissionType permissionType) {
 		TechnicalAccountPermission p = actor.getPermission();
 		boolean contains = false;
-
-		Iterator<AccountPermission> it = p.getAccountPermissions().iterator();
-		while (!contains && it.hasNext())
-			contains = it.next().getPermission().equals(permissionType);
+		for (AccountPermission permission : p.getAccountPermissions()) {
+			if (permission.getPermission().equals(permissionType)) {
+				contains = true;
+				break;
+			}
+		}
 		logger.debug(permissionType.toString() + " : " + contains);
 		return contains;
 	}

@@ -251,5 +251,6 @@
 		<constructor-arg ref="auditUserMongoRepository" />
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg ref="auditLogEntryResourceAccessControl" />
 	</bean>
 </beans>

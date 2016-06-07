@@ -44,6 +44,8 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.rac.AuditLogEntryResourceAccessControl;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.UserService;
@@ -55,7 +57,7 @@ import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-public class AuditLogEntryServiceImpl implements AuditLogEntryService {
+public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditLogEntryUser> implements AuditLogEntryService {
 
 	private AuditAdminMongoRepository auditMongoRepository;
 
@@ -66,8 +68,11 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 	private AbstractDomainService domainService;
 
 	public AuditLogEntryServiceImpl(AuditAdminMongoRepository auditMongoRepository,
-			AuditUserMongoRepository userMongoRepository, UserService userService,
-			AbstractDomainService domainService) {
+			AuditUserMongoRepository userMongoRepository,
+			UserService userService,
+			AbstractDomainService domainService,
+			final AuditLogEntryResourceAccessControl rac) {
+		super(rac);
 		this.auditMongoRepository = auditMongoRepository;
 		this.userMongoRepository = userMongoRepository;
 		this.userService = userService;
@@ -207,9 +212,11 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 			beginDate.set(Calendar.HOUR_OF_DAY, 0);
 			beginDate.set(Calendar.MINUTE, 0);
 			beginDate.set(Calendar.SECOND, 0);
-			Date begin= beginDate.getTime();
+			Date begin = beginDate.getTime();
 			res = userMongoRepository.findForUser(owner.getLsUuid(), actions, types, begin, end);
 		}
+		checkListPermission(actor, owner, AuditLogEntryUser.class, BusinessErrorCode.BAD_REQUEST,
+				res.iterator().next());
 		return res;
 	}
 }

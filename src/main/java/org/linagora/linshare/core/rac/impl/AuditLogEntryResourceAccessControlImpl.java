@@ -31,51 +31,65 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.user.impl;
+package org.linagora.linshare.core.rac.impl;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Set;
-
+import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.user.AuditLogEntryUserFacade;
-import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.AuditLogEntryService;
+import org.linagora.linshare.core.rac.AuditLogEntryResourceAccessControl;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.mongo.entities.AuditLogEntryUser;
 
-public class AuditLogEntryUserFacadeImpl extends GenericFacadeImpl implements AuditLogEntryUserFacade {
+public class AuditLogEntryResourceAccessControlImpl
+		extends AbstractResourceAccessControlImpl<Account, Account, AuditLogEntryUser>
+		implements AuditLogEntryResourceAccessControl {
 
-	protected final AuditLogEntryService service;
-
-	public AuditLogEntryUserFacadeImpl(AccountService accountService, final AuditLogEntryService service) {
-		super(accountService);
-		this.service = service;
+	public AuditLogEntryResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService) {
+		super(functionalityService);
 	}
 
 	@Override
-	public Set<AuditLogEntryUser> findAll(String ownerUuid, List<String> action, List<String> type, boolean forceAll,
-			String beginDate, String endDate) throws BusinessException {
-		Account actor = checkAuthentication();
-		Account owner = getOwner(actor, ownerUuid);
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		Calendar bDate = new GregorianCalendar();
-		Calendar eDate = new GregorianCalendar();
-		try {
-			if (beginDate != null && !beginDate.isEmpty()) {
-				bDate.setTime(format.parse(beginDate));
+	protected boolean hasReadPermission(Account actor, Account account, AuditLogEntryUser entry, Object... opt) {
+		if (actor.hasSuperAdminRole()) {
+			return true;
+		} else {
+			if (actor.hasDelegationRole()) {
+				if (actor.getPermission().getAccountPermissions().contains(TechnicalAccountPermissionType.AUDIT_LIST)) {
+					return true;
+				}
+			} else if (actor.equals(entry.getOwner())) {
+				return true;
 			}
-			if (endDate != null && !endDate.isEmpty()) {
-				eDate.setTime(format.parse(endDate));
-			}
-		} catch (ParseException e) {
-			logger.error(e.getMessage(), e);
-			throw new BusinessException(BusinessErrorCode.BAD_REQUEST, "Can not convert dates.");
 		}
-		return service.findAll(actor, owner, action, type, forceAll, bDate, eDate);
+		return false;
+	}
+
+	@Override
+	protected boolean hasListPermission(Account actor, Account account, AuditLogEntryUser entry, Object... opt) {
+		return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.AUDIT_LIST);
+	}
+
+	@Override
+	protected boolean hasDeletePermission(Account actor, Account account, AuditLogEntryUser entry, Object... opt) {
+		return false;
+	}
+
+	@Override
+	protected boolean hasCreatePermission(Account actor, Account account, AuditLogEntryUser entry, Object... opt) {
+		return false;
+	}
+
+	@Override
+	protected boolean hasUpdatePermission(Account actor, Account account, AuditLogEntryUser entry, Object... opt) {
+		return false;
+	}
+
+	@Override
+	protected String getTargetedAccountRepresentation(Account targetedAccount) {
+		return targetedAccount.getAccountRepresentation();
+	}
+
+	@Override
+	protected String getEntryRepresentation(AuditLogEntryUser entry) {
+		return entry.getRepresentation(entry);
 	}
 }

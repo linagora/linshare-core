@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,29 +31,12 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
+package org.linagora.linshare.core.rac;
 
-/**
- */
-public enum Role {
-	SIMPLE(0), ADMIN(1), SYSTEM(2), SUPERADMIN(3), DELEGATION(4), UPLOAD_PROPOSITION(5), UPLOAD_REQUEST(6);
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.mongo.entities.AuditLogEntryUser;
 
-	private int value;
+public interface AuditLogEntryResourceAccessControl
+		extends AbstractResourceAccessControl<Account, Account, AuditLogEntryUser> {
 
-	private Role(int value) {
-		this.value = value;
-	}
-
-	public int toInt() {
-		return value;
-	}
-
-	public static Role fromInt(int value) {
-		for (Role role : values()) {
-			if (role.value == value) {
-				return role;
-			}
-		}
-		throw new IllegalArgumentException("Doesn't match an existing Role");
-	}
 }

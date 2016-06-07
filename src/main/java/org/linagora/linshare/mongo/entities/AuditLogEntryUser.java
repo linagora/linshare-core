@@ -57,17 +57,20 @@ import org.springframework.data.mongodb.core.mapping.Document;
 		@Type(value = MailingListContactAuditLogEntry.class, name = "mailing_list_contact_audit"),
 		@Type(value = UploadRequestAuditLogEntry.class, name = "upload_request_audit"),
 		@Type(value = UploadRequestGroupAuditLogEntry.class, name = "upload_request_group_audit"),
-		@Type(value = UserAuditLogEntry.class, name = "user_audit"), })
+		@Type(value = AnonymousShareAuditLogEntry.class, name = "upload_request_group_audit"),
+		@Type(value = UserPreferenceAuditLogEntry.class, name = "upload_request_group_audit")})
 @XmlRootElement(name = "AuditLogEntryUser")
 @XmlSeeAlso({ ShareAuditLogEntry.class,
 	ThreadAuditLogEntry.class,
 	ThreadMemberAuditLogEntry.class,
 	UserAuditLogEntry.class,
+	GuestAuditLogEntry.class,
 	MailingListContactAuditLogEntry.class,
 	MailingListAuditLogEntry.class,
 	UploadRequestAuditLogEntry.class,
 	UploadRequestGroupAuditLogEntry.class,
-	UserAuditLogEntry.class })
+	AnonymousShareAuditLogEntry.class,
+	UserPreferenceAuditLogEntry.class})
 @Document(collection = "auditLogEntry")
 public abstract class AuditLogEntryUser {
 
@@ -169,5 +172,9 @@ public abstract class AuditLogEntryUser {
 
 	public void setOwner(AccountMto owner) {
 		this.owner = owner;
+	}
+
+	public String getRepresentation(AuditLogEntryUser log) {
+		return "action : " + log.getAction().name() + ", type : " + log.getType().name();
 	}
 }
