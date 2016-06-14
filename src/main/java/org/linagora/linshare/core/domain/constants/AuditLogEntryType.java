@@ -45,7 +45,7 @@ import com.google.common.collect.Lists;
 public enum AuditLogEntryType {
 
 	SHARE_ENTRY,
-	DOCUMENT,
+	DOCUMENT_ENTRY,
 	GUEST,
 	THREAD,
 	THREAD_MEMBER,
@@ -70,7 +70,7 @@ public enum AuditLogEntryType {
 
 	public static List<AuditLogEntryType> getAllUserTypes() {
 		List<AuditLogEntryType> res = Lists.newArrayList();
-		res.add(AuditLogEntryType.DOCUMENT);
+		res.add(AuditLogEntryType.DOCUMENT_ENTRY);
 		res.add(AuditLogEntryType.THREAD);
 		res.add(AuditLogEntryType.UPLOAD_REQUEST);
 		res.add(AuditLogEntryType.UPLOAD_REQUEST_GROUP);

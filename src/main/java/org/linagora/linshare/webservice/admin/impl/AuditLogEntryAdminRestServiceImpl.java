@@ -45,8 +45,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.facade.webservice.admin.AuditLogEntryFacade;
-import org.linagora.linshare.mongo.entities.AuditLogEntryAdmin;
-import org.linagora.linshare.mongo.entities.AuditLogEntryUser;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.admin.AuditLogEntryAdminRestService;
 
 @Path("/audit")

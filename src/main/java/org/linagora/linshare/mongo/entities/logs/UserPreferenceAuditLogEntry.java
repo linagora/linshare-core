@@ -31,56 +31,42 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.entities;
-
-import java.util.List;
-import java.util.Set;
+package org.linagora.linshare.mongo.entities.logs;
 
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
+import org.linagora.linshare.mongo.entities.UserPreference;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
-import org.linagora.linshare.mongo.entities.mto.AnonymousShareEntryMto;
 
-import com.google.common.collect.Lists;
+public class UserPreferenceAuditLogEntry extends AuditLogEntryUser {
 
-public class AnonymousShareAuditLogEntry extends AuditLogEntryUser {
+	protected UserPreference resource;
 
-	AnonymousShareEntryMto resource;
+	private UserPreference resourceUpdated;
 
-	AnonymousShareEntryMto resourceUpdated;
-
-	public AnonymousShareAuditLogEntry() {
+	public UserPreferenceAuditLogEntry() {
 		super();
 	}
 
-	public AnonymousShareAuditLogEntry(Account actor, Account owner, LogAction action, AuditLogEntryType type, AnonymousShareEntry ase) {
-		super(new AccountMto(actor), new AccountMto(owner), action, type, ase.getUuid());
-		this.resource = new AnonymousShareEntryMto(ase);
-	}
-
-	public List<AnonymousShareAuditLogEntry> createList(Account actor, Account owner, LogAction action, AuditLogEntryType type, Set<AnonymousShareEntry> ase) {
-		List<AnonymousShareAuditLogEntry> res = Lists.newArrayList();
-		for (AnonymousShareEntry a : ase) {
-			res.add(new AnonymousShareAuditLogEntry(actor, owner, action, type, a));
-		}
-		return res;
-	}
-
-	public AnonymousShareEntryMto getResource() {
-		return resource;
-	}
-
-	public void setResource(AnonymousShareEntryMto resource) {
+	public UserPreferenceAuditLogEntry(Account actor, Account owner, LogAction action, AuditLogEntryType type, UserPreference resource) {
+		super(new AccountMto(actor), new AccountMto(owner), action, type, resource.getUuid());
 		this.resource = resource;
 	}
 
-	public AnonymousShareEntryMto getResourceUpdated() {
+	public UserPreference getResource() {
+		return resource;
+	}
+
+	public void setResource(UserPreference resource) {
+		this.resource = resource;
+	}
+
+	public UserPreference getResourceUpdated() {
 		return resourceUpdated;
 	}
 
-	public void setResourceUpdated(AnonymousShareEntryMto resourceUpdated) {
+	public void setResourceUpdated(UserPreference resourceUpdated) {
 		this.resourceUpdated = resourceUpdated;
 	}
 }

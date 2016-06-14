@@ -41,8 +41,8 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.facade.webservice.admin.AuditLogEntryFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
-import org.linagora.linshare.mongo.entities.AuditLogEntryAdmin;
-import org.linagora.linshare.mongo.entities.AuditLogEntryUser;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public class AuditLogEntryFacadeImpl extends AdminGenericFacadeImpl implements AuditLogEntryFacade {
 

@@ -31,46 +31,56 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.entities;
-
-import javax.xml.bind.annotation.XmlRootElement;
+package org.linagora.linshare.mongo.entities.logs;
 
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.MailingList;
+import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
-import org.linagora.linshare.mongo.entities.mto.ThreadMto;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.linagora.linshare.mongo.entities.mto.MailingListContactMto;
+import org.linagora.linshare.mongo.entities.mto.MailingListMto;
 
-@XmlRootElement
-@Document(collection="auditLogEntry")
-public class ThreadAuditLogEntry extends AuditLogEntryUser {
+public class MailingListContactAuditLogEntry extends AuditLogEntryUser {
 
-	protected ThreadMto resource;
+	private MailingListContactMto resource;
 
-	private ThreadMto resourceUpdated;
+	private MailingListContactMto resourceUpdated;
 
-	public ThreadAuditLogEntry() {
+	protected MailingListMto list;
+
+	public MailingListContactAuditLogEntry() {
 	}
 
-	public ThreadAuditLogEntry(Account actor, Account owner, LogAction action, AuditLogEntryType type, ThreadMto thread) {
-		super(new AccountMto(actor), new AccountMto(owner), action, type, thread.getUuid());
-		this.setResource(thread);
+	public MailingListContactAuditLogEntry(AccountMto actor, AccountMto owner, LogAction action, AuditLogEntryType type,
+			MailingList list, MailingListContact contact) {
+		super(actor, owner, action, type, contact.getUuid());
+		this.resource = new MailingListContactMto(contact);
+		this.list = new MailingListMto(list);
 	}
 
-	public ThreadMto getResource() {
+	public MailingListMto getList() {
+		return list;
+	}
+
+	public void setList(MailingListMto list) {
+		this.list = list;
+	}
+
+	public MailingListContactMto getResource() {
 		return resource;
 	}
 
-	public void setResource(ThreadMto thread) {
-		this.resource = thread;
+	public void setResource(MailingListContactMto resource) {
+		this.resource = resource;
 	}
 
-	public ThreadMto getResourceUpdated() {
+	public MailingListContactMto getResourceUpdated() {
 		return resourceUpdated;
 	}
 
-	public void setResourceUpdated(ThreadMto threadUpdated) {
-		this.resourceUpdated = threadUpdated;
+	public void setResourceUpdated(MailingListContactMto resourceUpdated) {
+		this.resourceUpdated = resourceUpdated;
 	}
+
 }

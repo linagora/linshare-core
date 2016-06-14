@@ -48,10 +48,12 @@ public abstract class EntryMto {
 		super();
 	}
 
-	public EntryMto(Entry entry) {
+	public EntryMto(Entry entry, boolean withOwner) {
 		this.uuid = entry.getUuid();
 		this.name = entry.getName();
-		this.owner = new AccountMto(entry.getEntryOwner());
+		if (withOwner) {
+			this.owner = new AccountMto(entry.getEntryOwner());
+		}
 	}
 
 	public String getUuid() {

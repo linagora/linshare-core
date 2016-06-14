@@ -65,7 +65,7 @@ import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryService;
-import org.linagora.linshare.mongo.entities.ShareAuditLogEntry;
+import org.linagora.linshare.mongo.entities.logs.ShareEntryAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.ShareEntryMto;
 import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 
@@ -91,7 +91,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 
 	private final FavouriteRepository<String, User, RecipientFavourite> recipientFavouriteRepository;
 
-	private final AuditUserMongoRepository mongoRepository;
+	private final AuditUserMongoRepository auditUserMongoRepository;
 
 	public ShareEntryServiceImpl(
 			GuestRepository guestRepository,
@@ -113,7 +113,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		this.notifierService = notifierService;
 		this.mailBuildingService = mailBuildingService;
 		this.recipientFavouriteRepository = recipientFavouriteRepository;
-		this.mongoRepository = mongoRepository;
+		this.auditUserMongoRepository = mongoRepository;
 	}
 
 	@Override
@@ -155,9 +155,9 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 					.buildSharedDocDeleted(share.getRecipient(), share);
 			notifierService.sendNotification(mail);
 		}
-		ShareAuditLogEntry log = new ShareAuditLogEntry(actor, owner, share, LogAction.DELETE,
+		ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, share, LogAction.DELETE,
 				AuditLogEntryType.SHARE_ENTRY);
-		mongoRepository.insert(log);
+		auditUserMongoRepository.insert(log);
 	}
 
 //	AKO : LOG COPY AND DELETE
@@ -216,7 +216,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		String uuid = dto.getUuid();
 		Validate.notEmpty(uuid, "Missing share entry uuid");
 		ShareEntry share = find(actor, owner, uuid);
-		ShareAuditLogEntry log = new ShareAuditLogEntry(actor, owner, share, LogAction.UPDATE,
+		ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, share, LogAction.UPDATE,
 				AuditLogEntryType.SHARE_ENTRY);
 		/*
 		 * Actually the owner have the right to update his own shareEntry. Is it
@@ -227,7 +227,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		share.setComment(dto.getComment());
 		share = shareEntryBusinessService.update(share);
 		log.setResourceUpdated(new ShareEntryMto(share));
-		mongoRepository.insert(log);
+		auditUserMongoRepository.insert(log);
 		return share;
 	}
 
@@ -280,7 +280,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		checkCreatePermission(actor, owner, ShareEntry.class,
 				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, null);
 		Set<ShareEntry> entries = Sets.newHashSet();
-		List<ShareAuditLogEntry> log = Lists.newArrayList();
+		List<ShareEntryAuditLogEntry> log = Lists.newArrayList();
 		for (User recipient : sc.getShareRecipients()) {
 			MailContainer mailContainer = new MailContainer(
 					recipient.getExternalMailLocale(), sc.getMessage(), sc.getSubject());
@@ -302,7 +302,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 				logEntryService.create(new ShareLogEntry(recipient,
 						LogAction.SHARE_RECEIVED, "Receiving a shared file",
 						createShare, owner));
-				log.add(new ShareAuditLogEntry(actor, owner, createShare, LogAction.CREATE,
+				log.add(new ShareEntryAuditLogEntry(actor, owner, createShare, LogAction.CREATE,
 						AuditLogEntryType.SHARE_ENTRY));
 			}
 			entries.addAll(shares);
@@ -316,7 +316,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			}
 			sc.addMailContainer(mail);
 		}
-		mongoRepository.insert(log);
+		auditUserMongoRepository.insert(log);
 		return entries;
 	}
 

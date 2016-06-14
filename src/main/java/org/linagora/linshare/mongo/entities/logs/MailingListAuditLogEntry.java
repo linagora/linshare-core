@@ -31,7 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.entities;
+package org.linagora.linshare.mongo.entities.logs;
 
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -51,7 +51,7 @@ public class MailingListAuditLogEntry extends AuditLogEntryUser {
 	public MailingListAuditLogEntry(AccountMto actor, AccountMto owner, LogAction action, AuditLogEntryType type,
 			MailingList l) {
 		super(actor, owner, action, type, l.getUuid());
-		this.setResource(new MailingListMto(l));
+		this.resource = new MailingListMto(l);
 	}
 
 	public MailingListMto getResource() {

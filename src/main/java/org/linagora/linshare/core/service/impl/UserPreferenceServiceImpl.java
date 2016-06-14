@@ -45,7 +45,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.UserPreferenceResourceAccessControl;
 import org.linagora.linshare.core.service.UserPreferenceService;
 import org.linagora.linshare.mongo.entities.UserPreference;
-import org.linagora.linshare.mongo.entities.UserPreferenceAuditLogEntry;
+import org.linagora.linshare.mongo.entities.logs.UserPreferenceAuditLogEntry;
 import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 import org.linagora.linshare.mongo.repository.UserPreferenceMongoRepository;
 

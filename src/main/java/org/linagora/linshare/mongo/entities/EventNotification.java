@@ -31,75 +31,40 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-
 package org.linagora.linshare.mongo.entities;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
 
-import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
-import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Entry;
-import org.linagora.linshare.core.domain.entities.ShareEntry;
-import org.linagora.linshare.mongo.entities.mto.AccountMto;
-import org.linagora.linshare.mongo.entities.mto.ShareEntryMto;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 
-@XmlRootElement
-public class ShareAuditLogEntry extends AuditLogEntryUser {
+@JsonIgnoreProperties({"relatedAccounts"})
+public class EventNotification {
+	
+	protected AuditLogEntry event;
+	
+	protected List<String> relatedAccounts;
 
-	protected ShareEntryMto resource;
-
-	protected String recipientMail;
-
-	protected String recipientUuid;
-
-	private ShareEntryMto resourceUpdated;
-
-	public ShareAuditLogEntry() {
+	public EventNotification(AuditLogEntry event, List<String> uuids) {
 		super();
+		this.event = event;
+		this.relatedAccounts = uuids;
 	}
 
-	public ShareAuditLogEntry(Account actor, Account owner, ShareEntry entry, LogAction action,
-			AuditLogEntryType type) {
-		super(new AccountMto(actor), new AccountMto(owner), action, type, entry.getUuid());
-		this.recipientMail = entry.getRecipient().getMail();
-		this.recipientUuid = entry.getRecipient().getLsUuid();
-		this.resource = new ShareEntryMto(entry);
+	public AuditLogEntry getEvent() {
+		return event;
 	}
 
-	public ShareAuditLogEntry(Account actor, Account owner, Entry entry, LogAction action, AuditLogEntryType type) {
-		super(new AccountMto(actor), new AccountMto(owner), action, type, entry.getUuid());
+	public void setEvent(AuditLogEntry event) {
+		this.event = event;
 	}
 
-	public ShareEntryMto getResource() {
-		return resource;
+	public List<String> getRelatedAccounts() {
+		return relatedAccounts;
 	}
 
-	public void setResource(ShareEntryMto resource) {
-		this.resource = resource;
+	public void setRelatedAccounts(List<String> relatedAccounts) {
+		this.relatedAccounts = relatedAccounts;
 	}
 
-	public String getRecipientMail() {
-		return recipientMail;
-	}
-
-	public void setRecipientMail(String recipientMail) {
-		this.recipientMail = recipientMail;
-	}
-
-	public String getRecipientUuid() {
-		return recipientUuid;
-	}
-
-	public void setRecipientUuid(String recipientUuid) {
-		this.recipientUuid = recipientUuid;
-	}
-
-	public ShareEntryMto getResourceUpdated() {
-		return resourceUpdated;
-	}
-
-	public void setResourceUpdated(ShareEntryMto resourceUpdated) {
-		this.resourceUpdated = resourceUpdated;
-	}
 }

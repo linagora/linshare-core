@@ -42,6 +42,7 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -74,6 +75,10 @@ import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.MimeTypeService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.VirusScannerService;
+import org.linagora.linshare.mongo.entities.EventNotification;
+import org.linagora.linshare.mongo.entities.logs.DocumentEntryAuditLogEntry;
+import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
+import org.linagora.linshare.mongo.repository.EventNotificationMongoRepository;
 
 import com.google.common.collect.Lists;
 
@@ -82,6 +87,10 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 	private final DocumentEntryBusinessService documentEntryBusinessService;
 
 	private final LogEntryService logEntryService;
+
+	private final AuditUserMongoRepository auditUserMongoRepository;
+
+	private final EventNotificationMongoRepository eventNotificationMongoRepository;
 
 	private final AbstractDomainService abstractDomainService;
 
@@ -108,6 +117,8 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 	public DocumentEntryServiceImpl(
 			DocumentEntryBusinessService documentEntryBusinessService,
 			LogEntryService logEntryService,
+			AuditUserMongoRepository mongoRepository,
+			EventNotificationMongoRepository eventNotificationMongoRepository,
 			AbstractDomainService abstractDomainService,
 			FunctionalityReadOnlyService functionalityReadOnlyService,
 			MimeTypeService mimeTypeService,
@@ -123,6 +134,8 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		super(rac);
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
+		this.auditUserMongoRepository = mongoRepository;
+		this.eventNotificationMongoRepository = eventNotificationMongoRepository;
 		this.abstractDomainService = abstractDomainService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.mimeTypeService = mimeTypeService;
@@ -250,6 +263,11 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 				logger.error("can not delete temp file : " + e.getMessage());
 			}
 		}
+		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, docEntry, LogAction.CREATE,
+				AuditLogEntryType.DOCUMENT_ENTRY);
+		auditUserMongoRepository.insert(log);
+		EventNotification event = new EventNotification(log, Lists.newArrayList(owner.getLsUuid()));
+		eventNotificationMongoRepository.insert(event);
 		return docEntry;
 	}
 

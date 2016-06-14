@@ -68,7 +68,7 @@ import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.service.WelcomeMessagesService;
-import org.linagora.linshare.mongo.entities.DomainAuditLogEntry;
+import org.linagora.linshare.mongo.entities.logs.DomainAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.DomainMto;
 import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 import org.slf4j.Logger;

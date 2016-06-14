@@ -31,15 +31,11 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.userv2;
+package org.linagora.linshare.mongo.repository;
 
-import java.util.List;
-import java.util.Set;
+import org.linagora.linshare.mongo.entities.EventNotification;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+public interface EventNotificationMongoRepository extends MongoRepository<EventNotification, String> {
 
-public interface AuditLogEntryUserRestService {
-
-	public Set<AuditLogEntryUser> findAll(List<String> action, List<String> type, boolean forceAll, String beginDate,
-			String endDate);
 }

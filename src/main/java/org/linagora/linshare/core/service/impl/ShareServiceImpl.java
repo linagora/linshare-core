@@ -74,7 +74,7 @@ import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.ShareExpiryDateService;
 import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.UserService;
-import org.linagora.linshare.mongo.entities.ShareAuditLogEntry;
+import org.linagora.linshare.mongo.entities.logs.ShareEntryAuditLogEntry;
 import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 
 import com.google.common.collect.Sets;
@@ -451,7 +451,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			logger.error(msg);
 			throw new BusinessException(BusinessErrorCode.SHARE_NOT_FOUND, msg);
 		}
-		ShareAuditLogEntry log = new ShareAuditLogEntry(actor, owner, entry, LogAction.DELETE, AuditLogEntryType.SHARE_ENTRY);
+		ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, entry, LogAction.DELETE, AuditLogEntryType.SHARE_ENTRY);
 		auditMongoRepository.insert(log);
 		return entry;
 	}

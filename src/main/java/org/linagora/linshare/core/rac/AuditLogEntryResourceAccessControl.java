@@ -34,7 +34,7 @@
 package org.linagora.linshare.core.rac;
 
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.mongo.entities.AuditLogEntryUser;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface AuditLogEntryResourceAccessControl
 		extends AbstractResourceAccessControl<Account, Account, AuditLogEntryUser> {

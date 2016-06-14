@@ -31,43 +31,56 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.entities;
+package org.linagora.linshare.mongo.entities.logs;
+
+import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
-import org.linagora.linshare.mongo.entities.mto.UploadRequestMto;
+import org.linagora.linshare.mongo.entities.mto.AnonymousShareEntryMto;
 
-public class UploadRequestAuditLogEntry extends AuditLogEntryUser {
+import com.google.common.collect.Lists;
 
-	private UploadRequestMto resource;
+public class AnonymousShareAuditLogEntry extends AuditLogEntryUser {
 
-	private UploadRequestMto resourceUpdated;
+	AnonymousShareEntryMto resource;
 
-	public UploadRequestAuditLogEntry() {
+	AnonymousShareEntryMto resourceUpdated;
+
+	public AnonymousShareAuditLogEntry() {
 		super();
 	}
 
-	public UploadRequestAuditLogEntry(AccountMto actor, AccountMto owner, LogAction action, AuditLogEntryType type,
-			String resourceUuid, UploadRequest req) {
-		super(actor, owner, action, type, req.getUuid());
-		this.setResource(new UploadRequestMto(req));
+	public AnonymousShareAuditLogEntry(Account actor, Account owner, LogAction action, AuditLogEntryType type, AnonymousShareEntry ase) {
+		super(new AccountMto(actor), new AccountMto(owner), action, type, ase.getUuid());
+		this.resource = new AnonymousShareEntryMto(ase);
 	}
 
-	public UploadRequestMto getResource() {
+	public List<AnonymousShareAuditLogEntry> createList(Account actor, Account owner, LogAction action, AuditLogEntryType type, Set<AnonymousShareEntry> ase) {
+		List<AnonymousShareAuditLogEntry> res = Lists.newArrayList();
+		for (AnonymousShareEntry a : ase) {
+			res.add(new AnonymousShareAuditLogEntry(actor, owner, action, type, a));
+		}
+		return res;
+	}
+
+	public AnonymousShareEntryMto getResource() {
 		return resource;
 	}
 
-	public void setResource(UploadRequestMto resource) {
+	public void setResource(AnonymousShareEntryMto resource) {
 		this.resource = resource;
 	}
 
-	public UploadRequestMto getResourceUpdated() {
+	public AnonymousShareEntryMto getResourceUpdated() {
 		return resourceUpdated;
 	}
 
-	public void setResourceUpdated(UploadRequestMto resourceUpdated) {
+	public void setResourceUpdated(AnonymousShareEntryMto resourceUpdated) {
 		this.resourceUpdated = resourceUpdated;
 	}
 }

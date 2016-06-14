@@ -31,15 +31,77 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.userv2;
+package org.linagora.linshare.mongo.entities.logs;
 
-import java.util.List;
-import java.util.Set;
+import java.util.Date;
 
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
 
-public interface AuditLogEntryUserRestService {
+public class AuditLogEntry {
 
-	public Set<AuditLogEntryUser> findAll(List<String> action, List<String> type, boolean forceAll, String beginDate,
-			String endDate);
+	protected AccountMto actor;
+
+	protected String resourceUuid;
+
+	protected LogAction action;
+
+	protected AuditLogEntryType type;
+
+	protected Date creationDate;
+
+	public AuditLogEntry() {
+		super();
+	}
+
+	public AccountMto getActor() {
+		return actor;
+	}
+
+	public void setActor(AccountMto actor) {
+		this.actor = actor;
+	}
+
+	public String getResourceUuid() {
+		return resourceUuid;
+	}
+
+	public void setResourceUuid(String resourceUuid) {
+		this.resourceUuid = resourceUuid;
+	}
+
+	public LogAction getAction() {
+		return action;
+	}
+
+	public void setAction(LogAction action) {
+		this.action = action;
+	}
+
+	public AuditLogEntryType getType() {
+		return type;
+	}
+
+	public void setType(AuditLogEntryType type) {
+		this.type = type;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public String getRepresentation(AuditLogEntryUser log) {
+		return "action : " + log.getAction().name() + ", type : " + log.getType().name();
+	}
+
+	@Override
+	public String toString() {
+		return "AuditLogEntry [actor=" + actor + ", resourceUuid=" + resourceUuid + ", action=" + action + ", type="
+				+ type + ", creationDate=" + creationDate + "]";
+	}
 }

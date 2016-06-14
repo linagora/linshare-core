@@ -39,7 +39,7 @@ import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.mongo.entities.AuditLogEntryUser;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
@@ -59,7 +59,8 @@ public interface AuditUserMongoRepository extends MongoRepository<AuditLogEntryU
 
 	List<AuditLogEntryUser> findByType(AuditLogEntryType type);
 
-	@Query("{'$or' : [{'actor.uuid' : ?0, 'owner.uuid' : ?0}], 'action' : {'$in' : ?1 }, 'type' : { '$in' : ?2 } , 'creationDate' : { '$gt' : '?3' , '$lt' : '?4'} }")
+//	@Query("{'$or' : [ {'actor.uuid' : ?0}, {'owner.uuid' : ?0} ], 'action' : {'$in' : ?1 }, 'type' : { '$in' : ?2 } , 'creationDate' : { '$gt' : '?3' , '$lt' : '?4'} }")
+	@Query("{'relatedAccounts': {'$elemMatch' : { '$eq' : ?0 }}, 'action' : {'$in' : ?1 }, 'type' : { '$in' : ?2 } , 'creationDate' : { '$gt' : '?3' , '$lt' : '?4'} }")
 	Set<AuditLogEntryUser> findForUser(String ownerUuid, List<LogAction> actions, List<AuditLogEntryType> types, Date beginDate,
 			Date endDate);
 

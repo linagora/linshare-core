@@ -31,31 +31,46 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.entities;
+package org.linagora.linshare.mongo.entities.logs;
+
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.linagora.linshare.mongo.entities.mto.ThreadMto;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-public class UserAuditLogEntry extends AuditLogEntryUser {
+@XmlRootElement
+@Document(collection="auditLogEntry")
+public class ThreadAuditLogEntry extends AuditLogEntryUser {
 
-	private AccountMto resource;
+	protected ThreadMto resource;
 
-	public UserAuditLogEntry() {
+	private ThreadMto resourceUpdated;
+
+	public ThreadAuditLogEntry() {
 	}
 
-	public UserAuditLogEntry(Account actor, Account owner, LogAction action, AuditLogEntryType type, Account user) {
-		super(new AccountMto(actor), new AccountMto(owner), action, type, user.getLsUuid());
-		this.setResource(new AccountMto(user));
+	public ThreadAuditLogEntry(Account actor, Account owner, LogAction action, AuditLogEntryType type, ThreadMto thread) {
+		super(new AccountMto(actor), new AccountMto(owner), action, type, thread.getUuid());
+		this.resource = thread;
 	}
 
-	public AccountMto getResource() {
+	public ThreadMto getResource() {
 		return resource;
 	}
 
-	public void setResource(AccountMto resource) {
-		this.resource = resource;
+	public void setResource(ThreadMto thread) {
+		this.resource = thread;
 	}
 
+	public ThreadMto getResourceUpdated() {
+		return resourceUpdated;
+	}
+
+	public void setResourceUpdated(ThreadMto threadUpdated) {
+		this.resourceUpdated = threadUpdated;
+	}
 }

@@ -53,7 +53,7 @@ public class UploadRequestEntryMto {
 
 	public UploadRequestEntryMto(UploadRequestEntry reqEntry) {
 		this.urlUuid = reqEntry.getUploadRequestUrl().getUuid();
-		this.document = new DocumentMto(reqEntry.getDocumentEntry().getDocument());
+		this.document = new DocumentMto(reqEntry.getDocumentEntry());
 		this.type = reqEntry.getDocumentEntry().getType();
 		this.size = reqEntry.getSize();
 		this.sha256sum = reqEntry.getDocumentEntry().getSha256sum();

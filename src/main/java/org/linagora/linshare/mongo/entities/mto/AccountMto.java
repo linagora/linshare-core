@@ -34,14 +34,16 @@
 
 package org.linagora.linshare.mongo.entities.mto;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.Recipient;
 
+@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 public class AccountMto {
 
-	private String firstName;
+	protected String firstName;
 
 	protected String name;
 

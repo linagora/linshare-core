@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.mongo.entities.AuditLogEntryUser;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface AuditLogEntryUserFacade {
 

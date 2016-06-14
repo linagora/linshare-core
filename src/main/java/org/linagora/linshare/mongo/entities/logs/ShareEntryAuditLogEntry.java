@@ -31,98 +31,75 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.entities;
 
-import java.util.Date;
+package org.linagora.linshare.mongo.entities.logs;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
 
-import org.codehaus.jackson.annotate.JsonSubTypes;
-import org.codehaus.jackson.annotate.JsonSubTypes.Type;
-import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Entry;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.linagora.linshare.mongo.entities.mto.ShareEntryMto;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
-@JsonSubTypes({ @Type(value = DomainAuditLogEntry.class, name = "domain_audit"),
-	@Type(value = DomainPatternAuditLogEntry.class, name = "domain_pattern_audit"),
-	@Type(value = LdapConnectionAuditLogEntry.class, name = "ldap_connection_audit"),
-	@Type(value = FunctionalityAuditLogEntry.class, name = "ldap_connection_audit")
-		})
-@XmlRootElement(name = "AuditLogEntryAdmin")
-@XmlSeeAlso({ DomainAuditLogEntry.class,
-	DomainPatternAuditLogEntry.class,
-	LdapConnectionAuditLogEntry.class,
-	FunctionalityAuditLogEntry.class
-	})
-@Document(collection="auditLogEntry")
-public abstract class AuditLogEntryAdmin {
+@XmlRootElement
+public class ShareEntryAuditLogEntry extends AuditLogEntryUser {
 
-	protected AccountMto actor;
+	protected ShareEntryMto resource;
 
-	protected String targetDomainUuid;
+	protected String recipientMail;
 
-	private String resourceUuid;
+	protected String recipientUuid;
 
-	protected LogAction action;
+	private ShareEntryMto resourceUpdated;
 
-	protected AuditLogEntryType type;
-
-	protected Date creationDate;
-
-	public AuditLogEntryAdmin() {
+	public ShareEntryAuditLogEntry() {
+		super();
 	}
 
-	public AuditLogEntryAdmin(Account actor, String targetDomainUuid, LogAction action, AuditLogEntryType type, String resourceUuid) {
-		this.actor = new AccountMto(actor);
-		this.targetDomainUuid = targetDomainUuid;
-		this.type = type;
-		this.action = action;
-		this.creationDate = new Date();
-		this.resourceUuid = resourceUuid;
+	public ShareEntryAuditLogEntry(Account actor, Account owner, ShareEntry entry, LogAction action,
+			AuditLogEntryType type) {
+		super(new AccountMto(actor), new AccountMto(owner), action, type, entry.getUuid());
+		this.recipientMail = entry.getRecipient().getMail();
+		this.recipientUuid = entry.getRecipient().getLsUuid();
+		this.resource = new ShareEntryMto(entry);
 	}
 
-	public AccountMto getActor() {
-		return actor;
+	public ShareEntryAuditLogEntry(Account actor, Account owner, Entry entry, LogAction action, AuditLogEntryType type) {
+		super(new AccountMto(actor), new AccountMto(owner), action, type, entry.getUuid());
 	}
 
-	public void setActor(AccountMto actor) {
-		this.actor = actor;
+	public ShareEntryMto getResource() {
+		return resource;
 	}
 
-	public String getTargetDomainUuid() {
-		return targetDomainUuid;
+	public void setResource(ShareEntryMto resource) {
+		this.resource = resource;
 	}
 
-	public void setTargetDomainUuid(String targetDomainUuid) {
-		this.targetDomainUuid = targetDomainUuid;
+	public String getRecipientMail() {
+		return recipientMail;
 	}
 
-	public LogAction getAction() {
-		return action;
+	public void setRecipientMail(String recipientMail) {
+		this.recipientMail = recipientMail;
 	}
 
-	public void setAction(LogAction action) {
-		this.action = action;
+	public String getRecipientUuid() {
+		return recipientUuid;
 	}
 
-	public AuditLogEntryType getType() {
-		return type;
+	public void setRecipientUuid(String recipientUuid) {
+		this.recipientUuid = recipientUuid;
 	}
 
-	public void setType(AuditLogEntryType type) {
-		this.type = type;
+	public ShareEntryMto getResourceUpdated() {
+		return resourceUpdated;
 	}
 
-	public String getResourceUuid() {
-		return resourceUuid;
-	}
-
-	public void setResourceUuid(String resourceUuid) {
-		this.resourceUuid = resourceUuid;
+	public void setResourceUpdated(ShareEntryMto resourceUpdated) {
+		this.resourceUpdated = resourceUpdated;
 	}
 }

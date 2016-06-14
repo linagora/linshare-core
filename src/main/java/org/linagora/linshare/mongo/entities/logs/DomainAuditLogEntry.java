@@ -31,56 +31,41 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.entities;
+package org.linagora.linshare.mongo.entities.logs;
 
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.entities.MailingList;
-import org.linagora.linshare.core.domain.entities.MailingListContact;
-import org.linagora.linshare.mongo.entities.mto.AccountMto;
-import org.linagora.linshare.mongo.entities.mto.MailingListContactMto;
-import org.linagora.linshare.mongo.entities.mto.MailingListMto;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.mongo.entities.mto.DomainMto;
 
-public class MailingListContactAuditLogEntry extends AuditLogEntryUser {
+public class DomainAuditLogEntry extends AuditLogEntryAdmin {
 
-	private MailingListContactMto resource;
+	private DomainMto resource;
 
-	private MailingListContactMto resourceUpdated;
+	private DomainMto resourceUpdated;
 
-	protected MailingListMto list;
-
-	public MailingListContactAuditLogEntry() {
+	public DomainAuditLogEntry() {
 	}
 
-	public MailingListContactAuditLogEntry(AccountMto actor, AccountMto owner, LogAction action, AuditLogEntryType type,
-			MailingList list, MailingListContact contact) {
-		super(actor, owner, action, type, contact.getUuid());
-		this.setResource(new MailingListContactMto(contact));
-		this.list = new MailingListMto(list);
+	public DomainAuditLogEntry(Account actor, LogAction action, AuditLogEntryType type, AbstractDomain domain) {
+		super(actor, domain.getUuid(), action, type, domain.getUuid());
+		this.setDomain(new DomainMto(domain));
 	}
 
-	public MailingListMto getList() {
-		return list;
-	}
-
-	public void setList(MailingListMto list) {
-		this.list = list;
-	}
-
-	public MailingListContactMto getResource() {
+	public DomainMto getDomain() {
 		return resource;
 	}
 
-	public void setResource(MailingListContactMto resource) {
-		this.resource = resource;
+	public void setDomain(DomainMto domain) {
+		this.resource = domain;
 	}
 
-	public MailingListContactMto getResourceUpdated() {
+	public DomainMto getResourceUpdated() {
 		return resourceUpdated;
 	}
 
-	public void setResourceUpdated(MailingListContactMto resourceUpdated) {
+	public void setResourceUpdated(DomainMto resourceUpdated) {
 		this.resourceUpdated = resourceUpdated;
 	}
-
 }

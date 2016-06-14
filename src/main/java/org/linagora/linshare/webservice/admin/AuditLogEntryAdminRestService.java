@@ -36,8 +36,8 @@ package org.linagora.linshare.webservice.admin;
 
 import java.util.List;
 
-import org.linagora.linshare.mongo.entities.AuditLogEntryAdmin;
-import org.linagora.linshare.mongo.entities.AuditLogEntryUser;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface AuditLogEntryAdminRestService {
 

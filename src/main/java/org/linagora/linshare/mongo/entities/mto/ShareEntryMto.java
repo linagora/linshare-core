@@ -52,14 +52,14 @@ public class ShareEntryMto extends EntryMto {
 	}
 
 	public ShareEntryMto(ShareEntry entry) {
-		super(entry);
+		super(entry, false);
 		this.recipient = new AccountMto(entry.getRecipient());
-		this.documentEntry = new DocumentMto(entry.getDocumentEntry().getDocument());
+		this.documentEntry = new DocumentMto(entry.getDocumentEntry());
 		this.downloaded = entry.getDownloaded();
 	}
 
 	public ShareEntryMto(Entry entry, Recipient recipient) {
-		super(entry);
+		super(entry, false);
 		this.recipient = new AccountMto(recipient);
 	}
 

@@ -31,43 +31,47 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.entities;
+package org.linagora.linshare.mongo.entities.logs;
+
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.LdapConnection;
-import org.linagora.linshare.mongo.entities.mto.LdapConnectionMto;
+import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.linagora.linshare.mongo.entities.mto.ThreadMemberMto;
 
-public class LdapConnectionAuditLogEntry extends AuditLogEntryAdmin {
+@XmlRootElement
+public class ThreadMemberAuditLogEntry extends AuditLogEntryUser {
 
-	private LdapConnectionMto resource;
+	protected ThreadMemberMto resource;
 
-	private LdapConnectionMto resourceUpdated;
+	private ThreadMemberMto resourceUpdated;
 
-	public LdapConnectionAuditLogEntry() {
+	public ThreadMemberAuditLogEntry() {
+		super();
 	}
 
-	public LdapConnectionAuditLogEntry(Account actor, String domainUuid, LogAction action, AuditLogEntryType type,
-			LdapConnection connection) {
-		super(actor, domainUuid, action, type, connection.getUuid());
-		this.setResource(new LdapConnectionMto(connection));
+	public ThreadMemberAuditLogEntry(Account actor, Account owner, LogAction action, AuditLogEntryType type,
+			ThreadMember member) {
+		super(new AccountMto(actor), new AccountMto(owner), action, type, member.getUser().getLsUuid());
+		this.resource = new ThreadMemberMto(member);
 	}
 
-	public LdapConnectionMto getResource() {
+	public ThreadMemberMto getThreadMember() {
 		return resource;
 	}
 
-	public void setResource(LdapConnectionMto resource) {
-		this.resource = resource;
+	public void setThreadMember(ThreadMemberMto threadMember) {
+		this.resource = threadMember;
 	}
 
-	public LdapConnectionMto getResourceUpdated() {
+	public ThreadMemberMto getMemberUpdated() {
 		return resourceUpdated;
 	}
 
-	public void setResourceUpdated(LdapConnectionMto resourceUpdated) {
-		this.resourceUpdated = resourceUpdated;
+	public void setMemberUpdated(ThreadMemberMto memberUpdated) {
+		this.resourceUpdated = memberUpdated;
 	}
-
 }

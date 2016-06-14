@@ -66,7 +66,7 @@ import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
-import org.linagora.linshare.mongo.entities.AnonymousShareAuditLogEntry;
+import org.linagora.linshare.mongo.entities.logs.AnonymousShareAuditLogEntry;
 import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 
 import com.google.common.collect.Sets;

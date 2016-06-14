@@ -31,41 +31,31 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.entities;
+package org.linagora.linshare.mongo.entities.logs;
 
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.mongo.entities.mto.DomainMto;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
 
-public class DomainAuditLogEntry extends AuditLogEntryAdmin {
+public class UserAuditLogEntry extends AuditLogEntryUser {
 
-	private DomainMto resource;
+	private AccountMto resource;
 
-	private DomainMto resourceUpdated;
-
-	public DomainAuditLogEntry() {
+	public UserAuditLogEntry() {
 	}
 
-	public DomainAuditLogEntry(Account actor, LogAction action, AuditLogEntryType type, AbstractDomain domain) {
-		super(actor, domain.getUuid(), action, type, domain.getUuid());
-		this.setDomain(new DomainMto(domain));
+	public UserAuditLogEntry(Account actor, Account owner, LogAction action, AuditLogEntryType type, Account user) {
+		super(new AccountMto(actor), new AccountMto(owner), action, type, user.getLsUuid());
+		this.resource = new AccountMto(user);
 	}
 
-	public DomainMto getDomain() {
+	public AccountMto getResource() {
 		return resource;
 	}
 
-	public void setDomain(DomainMto domain) {
-		this.resource = domain;
+	public void setResource(AccountMto resource) {
+		this.resource = resource;
 	}
 
-	public DomainMto getResourceUpdated() {
-		return resourceUpdated;
-	}
-
-	public void setResourceUpdated(DomainMto resourceUpdated) {
-		this.resourceUpdated = resourceUpdated;
-	}
 }

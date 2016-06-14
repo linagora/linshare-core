@@ -32,23 +32,31 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.mongo.entities;
+package org.linagora.linshare.mongo.entities.logs;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonSubTypes;
 import org.codehaus.jackson.annotate.JsonSubTypes.Type;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.google.common.collect.Lists;
+
+@JsonIgnoreProperties({"relatedAccounts"})
+@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
-@JsonSubTypes({ @Type(value = ShareAuditLogEntry.class, name = "share_audit"),
+@JsonSubTypes({ @Type(value = ShareEntryAuditLogEntry.class, name = "share_audit"),
 		@Type(value = ThreadAuditLogEntry.class, name = "thread_audit"),
 		@Type(value = ThreadMemberAuditLogEntry.class, name = "thread_member_audit"),
 		@Type(value = UserAuditLogEntry.class, name = "user_audit"),
@@ -60,7 +68,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 		@Type(value = AnonymousShareAuditLogEntry.class, name = "upload_request_group_audit"),
 		@Type(value = UserPreferenceAuditLogEntry.class, name = "upload_request_group_audit")})
 @XmlRootElement(name = "AuditLogEntryUser")
-@XmlSeeAlso({ ShareAuditLogEntry.class,
+@XmlSeeAlso({ ShareEntryAuditLogEntry.class,
+	DocumentEntryAuditLogEntry.class,
 	ThreadAuditLogEntry.class,
 	ThreadMemberAuditLogEntry.class,
 	UserAuditLogEntry.class,
@@ -72,98 +81,56 @@ import org.springframework.data.mongodb.core.mapping.Document;
 	AnonymousShareAuditLogEntry.class,
 	UserPreferenceAuditLogEntry.class})
 @Document(collection = "auditLogEntry")
-public abstract class AuditLogEntryUser {
-
-	protected AccountMto actor;
+public abstract class AuditLogEntryUser extends AuditLogEntry {
 
 	protected AccountMto owner;
 
-	protected LogAction action;
-
-	protected Date creationDate;
-
-	protected AuditLogEntryType type;
-
-	protected String resourceUuid;
+	@JsonIgnore
+	protected List<String> relatedAccounts;
 
 	public AuditLogEntryUser() {
 		super();
 	}
 
-	public AuditLogEntryUser(AuditLogEntryUser log) {
-		this.action = log.getAction();
-		this.creationDate = log.getCreationDate();
-		this.type = log.getType();
-		this.actor = log.getActor();
-		this.owner = log.getOwner();
-		this.resourceUuid = log.getResourceUuid();
-	}
-
 	public AuditLogEntryUser(AccountMto actor, AccountMto owner, LogAction action, AuditLogEntryType type,
 			String resourceUuid) {
+		this.actor = actor;
+		this.owner = owner;
 		this.action = action;
 		this.creationDate = new Date();
-		this.setActor(actor);
 		this.type = type;
 		this.resourceUuid = resourceUuid;
-		this.owner = owner;
+		initRelatedAccountField();
 	}
 
-	public AuditLogEntryUser(ShareAuditLogEntry log) {
+	public AuditLogEntryUser(ShareEntryAuditLogEntry log) {
 		this.actor = log.getActor();
+		this.owner = log.getOwner();
 		this.action = log.getAction();
 		this.creationDate = log.getCreationDate();
 		this.type = log.getType();
-		this.owner = log.getOwner();
 		this.resourceUuid = log.getResourceUuid();
+		initRelatedAccountField();
 	}
 
 	public AuditLogEntryUser(ThreadAuditLogEntry log) {
 		this.actor = log.getActor();
+		this.owner = log.getOwner();
 		this.action = log.getAction();
 		this.creationDate = log.getCreationDate();
 		this.type = log.getType();
 		this.resourceUuid = log.getResourceUuid();
+		initRelatedAccountField();
 	}
 
-	public LogAction getAction() {
-		return action;
-	}
-
-	public void setAction(LogAction action) {
-		this.action = action;
-	}
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	public AuditLogEntryType getType() {
-		return type;
-	}
-
-	public void setType(AuditLogEntryType type) {
-		this.type = type;
-	}
-
-	public AccountMto getActor() {
-		return actor;
-	}
-
-	public void setActor(AccountMto actor) {
-		this.actor = actor;
-	}
-
-	public String getResourceUuid() {
-		return resourceUuid;
-	}
-
-	public void setResourceUuid(String resourceUuid) {
-		this.resourceUuid = resourceUuid;
+	protected void initRelatedAccountField() {
+		this.relatedAccounts = Lists.newArrayList();
+		String actorUuid = actor.getUuid();
+		String ownerUuid = owner.getUuid();
+		this.relatedAccounts.add(actorUuid);
+		if (!actorUuid.equals(ownerUuid)) {
+			this.relatedAccounts.add(ownerUuid);
+		}
 	}
 
 	public AccountMto getOwner() {
@@ -174,7 +141,11 @@ public abstract class AuditLogEntryUser {
 		this.owner = owner;
 	}
 
-	public String getRepresentation(AuditLogEntryUser log) {
-		return "action : " + log.getAction().name() + ", type : " + log.getType().name();
+	public List<String> getRelatedAccounts() {
+		return relatedAccounts;
+	}
+
+	public void setRelatedAccounts(List<String> relatedAccounts) {
+		this.relatedAccounts = relatedAccounts;
 	}
 }

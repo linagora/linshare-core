@@ -44,13 +44,12 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.rac.AuditLogEntryResourceAccessControl;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.UserService;
-import org.linagora.linshare.mongo.entities.AuditLogEntryAdmin;
-import org.linagora.linshare.mongo.entities.AuditLogEntryUser;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 
@@ -215,8 +214,8 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 			Date begin = beginDate.getTime();
 			res = userMongoRepository.findForUser(owner.getLsUuid(), actions, types, begin, end);
 		}
-		checkListPermission(actor, owner, AuditLogEntryUser.class, BusinessErrorCode.BAD_REQUEST,
-				res.iterator().next());
+//		checkListPermission(actor, owner, AuditLogEntryUser.class, BusinessErrorCode.BAD_REQUEST,
+//				res.iterator().next());
 		return res;
 	}
 }

@@ -63,7 +63,7 @@ import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UserService;
-import org.linagora.linshare.mongo.entities.GuestAuditLogEntry;
+import org.linagora.linshare.mongo.entities.logs.GuestAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 

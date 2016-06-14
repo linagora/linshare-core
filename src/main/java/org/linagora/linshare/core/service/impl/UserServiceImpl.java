@@ -71,7 +71,7 @@ import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.utils.HashUtils;
-import org.linagora.linshare.mongo.entities.UserAuditLogEntry;
+import org.linagora.linshare.mongo.entities.logs.UserAuditLogEntry;
 import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

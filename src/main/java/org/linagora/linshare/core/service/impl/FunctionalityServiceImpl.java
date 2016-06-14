@@ -53,7 +53,7 @@ import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.FunctionalityService;
-import org.linagora.linshare.mongo.entities.FunctionalityAuditLogEntry;
+import org.linagora.linshare.mongo.entities.logs.FunctionalityAuditLogEntry;
 import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

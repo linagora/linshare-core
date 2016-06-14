@@ -31,15 +31,43 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.userv2;
+package org.linagora.linshare.mongo.entities.logs;
 
-import java.util.List;
-import java.util.Set;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+@Document(collection="auditLogEntry")
+public class GuestAuditLogEntry extends AuditLogEntryUser {
 
-public interface AuditLogEntryUserRestService {
+	private AccountMto resource;
 
-	public Set<AuditLogEntryUser> findAll(List<String> action, List<String> type, boolean forceAll, String beginDate,
-			String endDate);
+	private AccountMto resourceUpdated;
+
+	public GuestAuditLogEntry() {
+	}
+
+	public GuestAuditLogEntry(Account actor, Account owner, LogAction action, AuditLogEntryType type, Guest guest) {
+		super(new AccountMto(actor), new AccountMto(owner), action, type, guest.getLsUuid());
+		this.resource = new AccountMto(guest);
+	}
+
+	public AccountMto getResource() {
+		return resource;
+	}
+
+	public void setResource(AccountMto resource) {
+		this.resource = resource;
+	}
+
+	public AccountMto getResourceUpdated() {
+		return resourceUpdated;
+	}
+
+	public void setResourceUpdated(AccountMto resourceUpdated) {
+		this.resourceUpdated = resourceUpdated;
+	}
 }

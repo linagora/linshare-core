@@ -31,41 +31,44 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.entities;
+package org.linagora.linshare.mongo.entities.logs;
 
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Functionality;
-import org.linagora.linshare.mongo.entities.mto.FunctionalityMto;
+import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.linagora.linshare.mongo.entities.mto.UploadRequestGroupMto;
 
-public class FunctionalityAuditLogEntry extends AuditLogEntryAdmin {
+public class UploadRequestGroupAuditLogEntry extends AuditLogEntryUser {
 
-	protected FunctionalityMto resource;
+	private UploadRequestGroupMto resource;
 
-	private FunctionalityMto resourceUpdated;
+	private UploadRequestGroupMto resourceUpdated;
 
-	public FunctionalityAuditLogEntry() {
+	public UploadRequestGroupAuditLogEntry() {
+		super();
 	}
 
-	public FunctionalityAuditLogEntry(Account actor, LogAction action, AuditLogEntryType type, Functionality func) {
-		super(actor, func.getDomain().getUuid(), action, type, func.getIdentifier());
-		this.setResource(new FunctionalityMto(func));
+	public UploadRequestGroupAuditLogEntry(AccountMto actor, AccountMto owner, LogAction action, AuditLogEntryType type,
+			String resourceUuid, UploadRequestGroup group) {
+		super(actor, owner, action, type, group.getUuid());
+		this.resource = new UploadRequestGroupMto(group);
 	}
 
-	public FunctionalityMto getResource() {
+	public UploadRequestGroupMto getResource() {
 		return resource;
 	}
 
-	public void setResource(FunctionalityMto func) {
-		this.resource = func;
+	public void setResource(UploadRequestGroupMto resource) {
+		this.resource = resource;
 	}
 
-	public FunctionalityMto getResourceUpdated() {
+	public UploadRequestGroupMto getResourceUpdated() {
 		return resourceUpdated;
 	}
 
-	public void setResourceUpdated(FunctionalityMto resourceUpdated) {
+	public void setResourceUpdated(UploadRequestGroupMto resourceUpdated) {
 		this.resourceUpdated = resourceUpdated;
 	}
+
 }

@@ -58,7 +58,7 @@ import org.linagora.linshare.core.repository.LdapUserProviderRepository;
 import org.linagora.linshare.core.repository.UserProviderRepository;
 import org.linagora.linshare.core.service.LDAPQueryService;
 import org.linagora.linshare.core.service.UserProviderService;
-import org.linagora.linshare.mongo.entities.DomainPatternAuditLogEntry;
+import org.linagora.linshare.mongo.entities.logs.DomainPatternAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.DomainPatternMto;
 import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 import org.slf4j.Logger;

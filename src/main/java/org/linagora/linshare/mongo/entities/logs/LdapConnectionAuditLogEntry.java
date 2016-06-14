@@ -31,41 +31,43 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.entities;
+package org.linagora.linshare.mongo.entities.logs;
 
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.linagora.linshare.core.domain.entities.LdapConnection;
+import org.linagora.linshare.mongo.entities.mto.LdapConnectionMto;
 
-public class UserPreferenceAuditLogEntry extends AuditLogEntryUser {
+public class LdapConnectionAuditLogEntry extends AuditLogEntryAdmin {
 
-	protected UserPreference resource;
+	private LdapConnectionMto resource;
 
-	private UserPreference resourceUpdated;
+	private LdapConnectionMto resourceUpdated;
 
-	public UserPreferenceAuditLogEntry() {
-		super();
+	public LdapConnectionAuditLogEntry() {
 	}
 
-	public UserPreferenceAuditLogEntry(Account actor, Account owner, LogAction action, AuditLogEntryType type, UserPreference resource) {
-		super(new AccountMto(actor), new AccountMto(owner), action, type, resource.getUuid());
-		this.setResource(resource);
+	public LdapConnectionAuditLogEntry(Account actor, String domainUuid, LogAction action, AuditLogEntryType type,
+			LdapConnection connection) {
+		super(actor, domainUuid, action, type, connection.getUuid());
+		this.setResource(new LdapConnectionMto(connection));
 	}
 
-	public UserPreference getResource() {
+	public LdapConnectionMto getResource() {
 		return resource;
 	}
 
-	public void setResource(UserPreference resource) {
+	public void setResource(LdapConnectionMto resource) {
 		this.resource = resource;
 	}
 
-	public UserPreference getResourceUpdated() {
+	public LdapConnectionMto getResourceUpdated() {
 		return resourceUpdated;
 	}
 
-	public void setResourceUpdated(UserPreference resourceUpdated) {
+	public void setResourceUpdated(LdapConnectionMto resourceUpdated) {
 		this.resourceUpdated = resourceUpdated;
 	}
+
 }

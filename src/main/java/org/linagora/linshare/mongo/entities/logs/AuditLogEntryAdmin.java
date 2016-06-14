@@ -31,23 +31,56 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.repository;
+package org.linagora.linshare.mongo.entities.logs;
 
-import java.util.List;
+import java.util.Date;
 
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
+
+import org.codehaus.jackson.annotate.JsonSubTypes;
+import org.codehaus.jackson.annotate.JsonSubTypes.Type;
+import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
+import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-public interface AuditAdminMongoRepository extends MongoRepository<AuditLogEntryAdmin, String> {
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonSubTypes({ @Type(value = DomainAuditLogEntry.class, name = "domain_audit"),
+	@Type(value = DomainPatternAuditLogEntry.class, name = "domain_pattern_audit"),
+	@Type(value = LdapConnectionAuditLogEntry.class, name = "ldap_connection_audit"),
+	@Type(value = FunctionalityAuditLogEntry.class, name = "ldap_connection_audit")
+		})
+@XmlRootElement(name = "AuditLogEntryAdmin")
+@XmlSeeAlso({ DomainAuditLogEntry.class,
+	DomainPatternAuditLogEntry.class,
+	LdapConnectionAuditLogEntry.class,
+	FunctionalityAuditLogEntry.class
+	})
+@Document(collection="auditLogEntry")
+public abstract class AuditLogEntryAdmin extends AuditLogEntry {
 
-	List<AuditLogEntryAdmin> findByAction(String action);
+	protected String targetDomainUuid;
 
-	List<AuditLogEntryAdmin> findByTargetDomainUuid(String domain);
+	public AuditLogEntryAdmin() {
+	}
 
-	@Query("{ 'actor.uuid' : ?0 }")
-	List<AuditLogEntryAdmin> findByActor(String actor);
+	public AuditLogEntryAdmin(Account actor, String targetDomainUuid, LogAction action, AuditLogEntryType type, String resourceUuid) {
+		this.actor = new AccountMto(actor);
+		this.targetDomainUuid = targetDomainUuid;
+		this.type = type;
+		this.action = action;
+		this.creationDate = new Date();
+		this.resourceUuid = resourceUuid;
+	}
 
-	List<AuditLogEntryAdmin> findByType(AuditLogEntryType type);
+	public String getTargetDomainUuid() {
+		return targetDomainUuid;
+	}
+
+	public void setTargetDomainUuid(String targetDomainUuid) {
+		this.targetDomainUuid = targetDomainUuid;
+	}
 }

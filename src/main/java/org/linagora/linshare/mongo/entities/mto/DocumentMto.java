@@ -33,12 +33,9 @@
  */
 package org.linagora.linshare.mongo.entities.mto;
 
-import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 
-public class DocumentMto {
-
-	protected String uuid;
+public class DocumentMto extends EntryMto {
 
 	protected String type;
 
@@ -46,30 +43,22 @@ public class DocumentMto {
 
 	protected String sha256Sum;
 
-	protected String thmbUuid;
-
 	public DocumentMto() {
 		super();
 	}
 
-	public DocumentMto(Document document) {
-		this.uuid = document.getUuid();
-		this.type = document.getType();
-		this.sha256Sum = document.getSha256sum();
-		this.thmbUuid = document.getThmbUuid();
-		this.size = document.getSize();
-	}
-
 	public DocumentMto(DocumentEntry entry) {
-		this.uuid = entry.getUuid();
+		super(entry, false);
 		this.type = entry.getType();
 		this.sha256Sum = entry.getSha256sum();
 		this.size = entry.getSize();
-		this.thmbUuid = entry.getDocument().getThmbUuid();
 	}
 
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
+	public DocumentMto(DocumentEntry entry, boolean withOwner) {
+		super(entry, withOwner);
+		this.type = entry.getType();
+		this.sha256Sum = entry.getSha256sum();
+		this.size = entry.getSize();
 	}
 
 	public void setType(String type) {
@@ -84,14 +73,6 @@ public class DocumentMto {
 		this.sha256Sum = sha256Sum;
 	}
 
-	public void setThmbUuid(String thmbUuid) {
-		this.thmbUuid = thmbUuid;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
 	public String getType() {
 		return type;
 	}
@@ -102,9 +83,5 @@ public class DocumentMto {
 
 	public String getSha256Sum() {
 		return sha256Sum;
-	}
-
-	public String getThmbUuid() {
-		return thmbUuid;
 	}
 }

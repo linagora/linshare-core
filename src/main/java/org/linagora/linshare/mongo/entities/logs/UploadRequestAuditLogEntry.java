@@ -31,43 +31,43 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.entities;
+package org.linagora.linshare.mongo.entities.logs;
 
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.linagora.linshare.mongo.entities.mto.UploadRequestMto;
 
-@Document(collection="auditLogEntry")
-public class GuestAuditLogEntry extends AuditLogEntryUser {
+public class UploadRequestAuditLogEntry extends AuditLogEntryUser {
 
-	private AccountMto resource;
+	private UploadRequestMto resource;
 
-	private AccountMto resourceUpdated;
+	private UploadRequestMto resourceUpdated;
 
-	public GuestAuditLogEntry() {
+	public UploadRequestAuditLogEntry() {
+		super();
 	}
 
-	public GuestAuditLogEntry(Account actor, Account owner, LogAction action, AuditLogEntryType type, Guest guest) {
-		super(new AccountMto(actor), new AccountMto(owner), action, type, guest.getLsUuid());
-		this.setResource(new AccountMto(guest));
+	public UploadRequestAuditLogEntry(AccountMto actor, AccountMto owner, LogAction action, AuditLogEntryType type,
+			String resourceUuid, UploadRequest req) {
+		super(actor, owner, action, type, req.getUuid());
+		this.resource = new UploadRequestMto(req);
 	}
 
-	public AccountMto getResource() {
+	public UploadRequestMto getResource() {
 		return resource;
 	}
 
-	public void setResource(AccountMto resource) {
+	public void setResource(UploadRequestMto resource) {
 		this.resource = resource;
 	}
 
-	public AccountMto getResourceUpdated() {
+	public UploadRequestMto getResourceUpdated() {
 		return resourceUpdated;
 	}
 
-	public void setResourceUpdated(AccountMto resourceUpdated) {
+	public void setResourceUpdated(UploadRequestMto resourceUpdated) {
 		this.resourceUpdated = resourceUpdated;
 	}
 }

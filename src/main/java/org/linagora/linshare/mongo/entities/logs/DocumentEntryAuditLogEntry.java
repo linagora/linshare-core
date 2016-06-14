@@ -31,47 +31,49 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.entities;
+package org.linagora.linshare.mongo.entities.logs;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
-import org.linagora.linshare.mongo.entities.mto.ThreadMemberMto;
+import org.linagora.linshare.mongo.entities.mto.DocumentMto;
 
+@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 @XmlRootElement
-public class ThreadMemberAuditLogEntry extends AuditLogEntryUser {
+public class DocumentEntryAuditLogEntry extends AuditLogEntryUser {
 
-	protected ThreadMemberMto resource;
+	protected DocumentMto resource;
 
-	private ThreadMemberMto resourceUpdated;
+	protected DocumentMto resourceUpdated;
 
-	public ThreadMemberAuditLogEntry() {
+	public DocumentEntryAuditLogEntry() {
 		super();
 	}
 
-	public ThreadMemberAuditLogEntry(Account actor, Account owner, LogAction action, AuditLogEntryType type,
-			ThreadMember member) {
-		super(new AccountMto(actor), new AccountMto(owner), action, type, member.getUser().getLsUuid());
-		this.resource = new ThreadMemberMto(member);
+	public DocumentEntryAuditLogEntry(Account actor, Account owner, DocumentEntry entry, LogAction action,
+			AuditLogEntryType type) {
+		super(new AccountMto(actor), new AccountMto(owner), action, type, entry.getUuid());
+		this.resource = new DocumentMto(entry);
 	}
 
-	public ThreadMemberMto getThreadMember() {
+	public DocumentMto getResource() {
 		return resource;
 	}
 
-	public void setThreadMember(ThreadMemberMto threadMember) {
-		this.resource = threadMember;
+	public void setResource(DocumentMto resource) {
+		this.resource = resource;
 	}
 
-	public ThreadMemberMto getMemberUpdated() {
+	public DocumentMto getResourceUpdated() {
 		return resourceUpdated;
 	}
 
-	public void setMemberUpdated(ThreadMemberMto memberUpdated) {
-		this.resourceUpdated = memberUpdated;
+	public void setResourceUpdated(DocumentMto resourceUpdated) {
+		this.resourceUpdated = resourceUpdated;
 	}
 }
