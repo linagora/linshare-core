@@ -38,17 +38,31 @@ import java.util.List;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 
-@JsonIgnoreProperties({"relatedAccounts"})
+import com.google.common.collect.Lists;
+
+@JsonIgnoreProperties({ "relatedAccounts" })
 public class EventNotification {
-	
+
 	protected AuditLogEntry event;
-	
+
 	protected List<String> relatedAccounts;
 
 	public EventNotification(AuditLogEntry event, List<String> uuids) {
 		super();
 		this.event = event;
 		this.relatedAccounts = uuids;
+	}
+
+	public EventNotification(AuditLogEntry event, String... uuids) {
+		super();
+		this.event = event;
+		this.relatedAccounts = Lists.newArrayList(uuids);
+	}
+
+	public EventNotification(AuditLogEntry event) {
+		super();
+		this.event = event;
+		this.relatedAccounts = Lists.newArrayList();
 	}
 
 	public AuditLogEntry getEvent() {

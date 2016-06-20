@@ -35,7 +35,7 @@ package org.linagora.linshare.mongo.entities.mto;
 
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 
-public class AnonymousShareEntryMto {
+public class AnonymousShareEntryMto extends EntryMto {
 
 	protected Long dowloaded;
 
@@ -48,6 +48,11 @@ public class AnonymousShareEntryMto {
 	}
 
 	public AnonymousShareEntryMto(AnonymousShareEntry entry) {
+		super(entry, false);
+	}
+
+	public AnonymousShareEntryMto(AnonymousShareEntry entry, boolean withOwner) {
+		super(entry, withOwner);
 		this.dowloaded = entry.getDownloaded();
 		this.url = new AnonymousUrlMto(entry.getAnonymousUrl());
 		this.documentEntry = new DocumentMto(entry.getDocumentEntry());

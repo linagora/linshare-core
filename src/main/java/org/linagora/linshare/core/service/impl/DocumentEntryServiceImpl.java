@@ -52,7 +52,6 @@ import org.linagora.linshare.core.domain.entities.AntivirusLogEntry;
 import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.FileLogEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.LogEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
@@ -76,9 +75,10 @@ import org.linagora.linshare.core.service.MimeTypeService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.VirusScannerService;
 import org.linagora.linshare.mongo.entities.EventNotification;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.DocumentEntryAuditLogEntry;
-import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
-import org.linagora.linshare.mongo.repository.EventNotificationMongoRepository;
+import org.linagora.linshare.mongo.entities.logs.ShareEntryAuditLogEntry;
+import org.linagora.linshare.mongo.entities.mto.DocumentMto;
 
 import com.google.common.collect.Lists;
 
@@ -87,10 +87,6 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 	private final DocumentEntryBusinessService documentEntryBusinessService;
 
 	private final LogEntryService logEntryService;
-
-	private final AuditUserMongoRepository auditUserMongoRepository;
-
-	private final EventNotificationMongoRepository eventNotificationMongoRepository;
 
 	private final AbstractDomainService abstractDomainService;
 
@@ -117,8 +113,6 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 	public DocumentEntryServiceImpl(
 			DocumentEntryBusinessService documentEntryBusinessService,
 			LogEntryService logEntryService,
-			AuditUserMongoRepository mongoRepository,
-			EventNotificationMongoRepository eventNotificationMongoRepository,
 			AbstractDomainService abstractDomainService,
 			FunctionalityReadOnlyService functionalityReadOnlyService,
 			MimeTypeService mimeTypeService,
@@ -134,8 +128,6 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		super(rac);
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
-		this.auditUserMongoRepository = mongoRepository;
-		this.eventNotificationMongoRepository = eventNotificationMongoRepository;
 		this.abstractDomainService = abstractDomainService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.mimeTypeService = mimeTypeService;
@@ -239,11 +231,6 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 					timeStampingUrl, mimeType,
 					getDocumentExpirationDate(domain), isFromCmis, metadata);
 
-			FileLogEntry logEntry = new FileLogEntry(owner,
-					LogAction.FILE_UPLOAD, "Creation of a file",
-					docEntry.getName(), docEntry.getSize(), docEntry.getType());
-			logEntryService.create(logEntry);
-
 			addDocSizeToGlobalUsedQuota(docEntry.getDocument(), domain);
 			// Extra check to avoid over quota when we authorize multiple upload for fineuploader
 			long availableSize = getAvailableSize(owner);
@@ -263,11 +250,10 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 				logger.error("can not delete temp file : " + e.getMessage());
 			}
 		}
+
 		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, docEntry, LogAction.CREATE,
 				AuditLogEntryType.DOCUMENT_ENTRY);
-		auditUserMongoRepository.insert(log);
-		EventNotification event = new EventNotification(log, Lists.newArrayList(owner.getLsUuid()));
-		eventNotificationMongoRepository.insert(event);
+		logEntryService.insert(log);
 		return docEntry;
 	}
 
@@ -285,6 +271,8 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		preChecks(actor, owner);
 		Validate.notEmpty(docEntryUuid, "document entry uuid is required.");
 		DocumentEntry originalEntry = find(actor, owner, docEntryUuid);
+		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, originalEntry, LogAction.UPDATE,
+				AuditLogEntryType.DOCUMENT_ENTRY);
 		String originalFileName = originalEntry.getName();
 		if (fileName == null || fileName.isEmpty()) {
 			fileName = originalFileName;
@@ -336,36 +324,42 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 					owner, originalEntry, tempFile, size, fileName,
 					checkIfIsCiphered, timeStampingUrl, mimeType,
 					getDocumentExpirationDate(domain));
-
-			// put new file name in log
-			// if the file is updated/replaced with a new file (new file name)
-			// put new file name in log
-			String logText = originalFileName;
-			if (!logText.equalsIgnoreCase(documentEntry.getName())) {
-				logText = documentEntry.getName() + " [" + logText + "]";
-			}
-
-			FileLogEntry logEntry = new FileLogEntry(owner, LogAction.FILE_UPDATE, "Update of a file", logText, documentEntry.getSize(), documentEntry.getType());
-
-			logEntryService.create(logEntry);
+			// add new resource to the log entry
+			log.setResourceUpdated(new DocumentMto(documentEntry));
+			logEntryService.insert(log);
 
 			removeDocSizeFromGlobalUsedQuota(oldDocSize, domain);
 			addDocSizeToGlobalUsedQuota(documentEntry.getDocument(), domain);
 
 			if(documentEntry.getShared() > 0) {
-				//send email, file has been replaced ....
-
+				// send email, file has been replaced ....
+				// When a shared file is updated, we need to log and notify recipients.
+				List<AuditLogEntryUser> logs = Lists.newArrayList();
+				List<EventNotification> events = Lists.newArrayList();
 				List<MailContainerWithRecipient> mails = Lists.newArrayList();
 				for (AnonymousShareEntry anonymousShareEntry : documentEntry
 						.getAnonymousShareEntries()) {
 					mails.add(mailBuildingService.buildSharedDocUpdated(
 							anonymousShareEntry, originalFileName,
 							documentEntry.getSize()));
+					ShareEntryAuditLogEntry shareLog = new ShareEntryAuditLogEntry(actor, owner, anonymousShareEntry, LogAction.UPDATE,
+							AuditLogEntryType.SHARE_ENTRY);
+					shareLog.setTechnicalComment("update of the underlying document");
+					logs.add(shareLog);
 				}
 				for (ShareEntry shareEntry : documentEntry.getShareEntries()) {
 					mails.add(mailBuildingService.buildSharedDocUpdated(
 							shareEntry, originalFileName, documentEntry.getSize()));
+					ShareEntryAuditLogEntry shareLog = new ShareEntryAuditLogEntry(actor, owner, shareEntry, LogAction.UPDATE,
+							AuditLogEntryType.SHARE_ENTRY);
+					shareLog.setTechnicalComment("update of the underlying document");
+					// The recipient must be notified (events) and aware (logs) of this modification.
+					String recipientUuid = shareEntry.getRecipient().getLsUuid();
+					shareLog.addRelatedAccounts(recipientUuid);
+					logs.add(shareLog);
+					events.add(new EventNotification(shareLog, recipientUuid));
 				}
+				logEntryService.insert(logs, events);
 				notifierService.sendNotification(mails);
 			}
 		} finally {
@@ -397,10 +391,12 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 			AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getUuid());
 			removeDocSizeFromGlobalUsedQuota(documentEntry.getSize(), domain);
 
-			FileLogEntry logEntry = new FileLogEntry(owner, LogAction.FILE_INCONSISTENCY, "File removed because of inconsistence. Please contact your administrator.", documentEntry.getName(),
-					documentEntry.getSize(), documentEntry.getType());
-			logEntryService.create(LogEntryService.WARN, logEntry);
 			documentEntryBusinessService.deleteDocumentEntry(documentEntry);
+			// LogAction.FILE_INCONSISTENCY
+			DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, documentEntry,
+					LogAction.DELETE, AuditLogEntryType.DOCUMENT_ENTRY);
+			log.setTechnicalComment("File removed because of inconsistence. Please contact your administrator.");
+			logEntryService.insert(LogEntryService.WARN, log);
 		} catch (IllegalArgumentException e) {
 			logger.error("Could not delete file " + documentEntry.getName() + " of user " + owner.getLsUuid() + ", reason : ", e);
 			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_DELETE_DOCUMENT, "Could not delete document");
@@ -421,9 +417,12 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 			AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getUuid());
 			removeDocSizeFromGlobalUsedQuota(documentEntry.getSize(), domain);
 
-			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_EXPIRE, "Expiration of a file", documentEntry.getName(), documentEntry.getSize(), documentEntry.getType());
-			logEntryService.create(LogEntryService.INFO, logEntry);
 			documentEntryBusinessService.deleteDocumentEntry(documentEntry);
+			// LogAction.FILE_EXPIRE
+			DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, documentEntry,
+					LogAction.DELETE, AuditLogEntryType.DOCUMENT_ENTRY);
+			log.setTechnicalComment("Expiration of a file");
+			logEntryService.insert(log);
 
 		} catch (IllegalArgumentException e) {
 			logger.error("Could not delete file " + documentEntry.getName() + " of user " + owner.getLsUuid() + ", reason : ", e);
@@ -444,9 +443,10 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		}
 		AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getUuid());
 		removeDocSizeFromGlobalUsedQuota(documentEntry.getSize(), domain);
-		FileLogEntry logEntry = new FileLogEntry(owner, LogAction.FILE_DELETE, "Deletion of a file", documentEntry.getName(), documentEntry.getSize(), documentEntry.getType());
-		logEntryService.create(LogEntryService.INFO, logEntry);
 		documentEntryBusinessService.deleteDocumentEntry(documentEntry);
+		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, documentEntry, LogAction.DELETE,
+				AuditLogEntryType.DOCUMENT_ENTRY);
+		logEntryService.insert(log);
 		return documentEntry;
 	}
 
@@ -531,32 +531,6 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		DocumentEntry entry = find(actor, owner, uuid);
 		checkDownloadPermission(actor, owner, DocumentEntry.class,
 				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, entry);
-	}
-
-	@Override
-	public boolean isSignatureActive(Account account) {
-		return functionalityReadOnlyService.getSignatureFunctionality(account.getDomain()).getActivationPolicy().getStatus();
-	}
-
-	@Override
-	public boolean isEnciphermentActive(Account account) {
-		return functionalityReadOnlyService.getEnciphermentFunctionality(account.getDomain()).getActivationPolicy().getStatus();
-	}
-
-	@Override
-	public boolean isGlobalQuotaActive(Account account) throws BusinessException {
-		return functionalityReadOnlyService.getGlobalQuotaFunctionality(account.getDomain()).getActivationPolicy().getStatus();
-	}
-
-	@Override
-	public boolean isUserQuotaActive(Account account) throws BusinessException {
-		return functionalityReadOnlyService.getUserQuotaFunctionality(account.getDomain()).getActivationPolicy().getStatus();
-	}
-
-	@Override
-	public Long getGlobalQuota(Account account) throws BusinessException {
-		SizeUnitValueFunctionality globalQuotaFunctionality = functionalityReadOnlyService.getGlobalQuotaFunctionality(account.getDomain());
-		return globalQuotaFunctionality.getPlainSize();
 	}
 
 	@Override

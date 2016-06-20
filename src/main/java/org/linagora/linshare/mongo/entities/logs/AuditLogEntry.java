@@ -35,6 +35,7 @@ package org.linagora.linshare.mongo.entities.logs;
 
 import java.util.Date;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
@@ -50,6 +51,9 @@ public class AuditLogEntry {
 	protected AuditLogEntryType type;
 
 	protected Date creationDate;
+
+	@JsonIgnore
+	protected String technicalComment;
 
 	public AuditLogEntry() {
 		super();
@@ -97,6 +101,14 @@ public class AuditLogEntry {
 
 	public String getRepresentation(AuditLogEntryUser log) {
 		return "action : " + log.getAction().name() + ", type : " + log.getType().name();
+	}
+
+	public String getTechnicalComment() {
+		return technicalComment;
+	}
+
+	public void setTechnicalComment(String technicalComment) {
+		this.technicalComment = technicalComment;
 	}
 
 	@Override

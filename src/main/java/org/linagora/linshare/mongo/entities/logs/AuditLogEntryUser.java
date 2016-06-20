@@ -148,4 +148,18 @@ public abstract class AuditLogEntryUser extends AuditLogEntry {
 	public void setRelatedAccounts(List<String> relatedAccounts) {
 		this.relatedAccounts = relatedAccounts;
 	}
+
+	public void addRelatedAccounts(List<String> relatedAccounts) {
+		if (this.relatedAccounts == null) {
+			this.relatedAccounts = Lists.newArrayList();
+		}
+		this.relatedAccounts.addAll(relatedAccounts);
+	}
+
+	public void addRelatedAccounts(String... relatedAccounts) {
+		if (this.relatedAccounts == null) {
+			this.relatedAccounts = Lists.newArrayList();
+		}
+		this.relatedAccounts.addAll(Lists.newArrayList(relatedAccounts));
+	}
 }

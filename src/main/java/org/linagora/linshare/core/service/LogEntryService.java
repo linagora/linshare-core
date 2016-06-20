@@ -39,6 +39,8 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.LogEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.mongo.entities.EventNotification;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.view.tapestry.beans.LogCriteriaBean;
 import org.slf4j.spi.LocationAwareLogger;
 
@@ -50,24 +52,25 @@ public interface LogEntryService {
 
 	/**
 	 * 
-	 * @param level : logger level like INFO, WARN
-	 * @param entity : to be create in the database
+	 * @param level
+	 *            : logger level like INFO, WARN
+	 * @param entity
+	 *            : to be create in the database
 	 * @return : the log statement created
 	 * @throws IllegalArgumentException
 	 * @throws BusinessException
 	 */
-	public LogEntry create(int level, LogEntry entity)
-			throws IllegalArgumentException, BusinessException;
+	public LogEntry create(int level, LogEntry entity) throws IllegalArgumentException, BusinessException;
 
 	/**
 	 * 
-	 * @param entity : to be create in the database
+	 * @param entity
+	 *            : to be create in the database
 	 * @return : the log statement created
 	 * @throws IllegalArgumentException
 	 * @throws BusinessException
 	 */
-	public LogEntry create(LogEntry entity) throws IllegalArgumentException,
-			BusinessException;
+	public LogEntry create(LogEntry entity) throws IllegalArgumentException, BusinessException;
 
 	public List<LogEntry> findByCriteria(User actor, LogCriteriaBean criteria);
 
@@ -76,4 +79,21 @@ public interface LogEntryService {
 	public List<LogEntry> findByDate(String mail, Calendar begin, Calendar end);
 
 	public void updateEmailLogEntry(String currentEmail, String newEmail);
+
+	// New methods for new backend
+	AuditLogEntryUser insert(AuditLogEntryUser entry);
+
+	AuditLogEntryUser insert(AuditLogEntryUser entry, EventNotification event);
+
+	AuditLogEntryUser insert(int level, AuditLogEntryUser entry);
+
+	AuditLogEntryUser insert(int level, AuditLogEntryUser entry, EventNotification event);
+
+	List<AuditLogEntryUser> insert(List<AuditLogEntryUser> entities);
+
+	List<AuditLogEntryUser> insert(List<AuditLogEntryUser> entities, List<EventNotification> events);
+
+	List<AuditLogEntryUser> insert(int level, List<AuditLogEntryUser> entities);
+
+	List<AuditLogEntryUser> insert(int level, List<AuditLogEntryUser> entities, List<EventNotification> events);
 }

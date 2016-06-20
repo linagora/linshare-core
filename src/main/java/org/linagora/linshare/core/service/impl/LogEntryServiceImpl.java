@@ -42,6 +42,10 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.LogEntryRepository;
 import org.linagora.linshare.core.service.LogEntryService;
+import org.linagora.linshare.mongo.entities.EventNotification;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
+import org.linagora.linshare.mongo.repository.EventNotificationMongoRepository;
 import org.linagora.linshare.view.tapestry.beans.LogCriteriaBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,16 +60,23 @@ public class LogEntryServiceImpl implements LogEntryService {
 
 	private final DomainBusinessService domainBusinessService;
 
+	private final AuditUserMongoRepository auditUserMongoRepository;
+
+	private final EventNotificationMongoRepository eventNotificationMongoRepository;
+
 	public LogEntryServiceImpl(final LogEntryRepository logEntryRepository,
+			final AuditUserMongoRepository auditUserMongoRepository,
+			final EventNotificationMongoRepository eventNotificationMongoRepository,
 			final DomainBusinessService domainBusinessService) {
 		super();
 		this.logEntryRepository = logEntryRepository;
 		this.domainBusinessService = domainBusinessService;
+		this.auditUserMongoRepository = auditUserMongoRepository;
+		this.eventNotificationMongoRepository = eventNotificationMongoRepository;
 	}
 
 	@Override
-	public LogEntry create(int level, LogEntry entity)
-			throws IllegalArgumentException, BusinessException {
+	public LogEntry create(int level, LogEntry entity) throws IllegalArgumentException, BusinessException {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity must not be null");
 		}
@@ -77,24 +88,21 @@ public class LogEntryServiceImpl implements LogEntryService {
 		} else if (level == ERROR) {
 			logger.error(entity.toString());
 		} else {
-			throw new IllegalArgumentException(
-					"Unknown log level, is neither INFO, WARN nor ERROR");
+			throw new IllegalArgumentException("Unknown log level, is neither INFO, WARN nor ERROR");
 		}
 		// Database trace
 		return logEntryRepository.create(entity);
 	}
 
 	@Override
-	public LogEntry create(LogEntry entity) throws IllegalArgumentException,
-			BusinessException {
+	public LogEntry create(LogEntry entity) throws IllegalArgumentException, BusinessException {
 		return create(INFO, entity);
 	}
 
 	@Override
 	public List<LogEntry> findByCriteria(User actor, LogCriteriaBean criteria) {
 		List<LogEntry> list = Lists.newArrayList();
-		List<String> allMyDomainIdentifiers = domainBusinessService
-				.getAllMyDomainIdentifiers(actor.getDomain());
+		List<String> allMyDomainIdentifiers = domainBusinessService.getAllMyDomainIdentifiers(actor.getDomain());
 		for (String domain : allMyDomainIdentifiers) {
 			list.addAll(logEntryRepository.findByCriteria(criteria, domain));
 		}
@@ -114,5 +122,80 @@ public class LogEntryServiceImpl implements LogEntryService {
 	@Override
 	public void updateEmailLogEntry(String currentEmail, String newEmail) {
 		logEntryRepository.updateMail(currentEmail, newEmail);
+	}
+
+	@Override
+	public AuditLogEntryUser insert(AuditLogEntryUser entity) {
+		return insert(INFO, entity);
+	}
+
+	@Override
+	public List<AuditLogEntryUser> insert(List<AuditLogEntryUser> entities) {
+		return insert(INFO, entities);
+	}
+
+	@Override
+	public AuditLogEntryUser insert(int level, AuditLogEntryUser entity) {
+		if (entity == null) {
+			throw new IllegalArgumentException("Entity must not be null");
+		}
+		// Logger trace
+		if (level == INFO) {
+			logger.info(entity.toString());
+		} else if (level == WARN) {
+			logger.warn(entity.toString());
+		} else if (level == ERROR) {
+			logger.error(entity.toString());
+		} else {
+			throw new IllegalArgumentException("Unknown log level, is neither INFO, WARN nor ERROR");
+		}
+		return auditUserMongoRepository.insert(entity);
+	}
+
+	@Override
+	public List<AuditLogEntryUser> insert(int level, List<AuditLogEntryUser> entities) {
+		if (entities == null || entities.isEmpty()) {
+			throw new IllegalArgumentException("Entity must not be null or empty");
+		}
+		// Logger trace
+		if (level == INFO) {
+			logger.info(entities.toString());
+		} else if (level == WARN) {
+			logger.warn(entities.toString());
+		} else if (level == ERROR) {
+			logger.error(entities.toString());
+		} else {
+			throw new IllegalArgumentException("Unknown log level, is neither INFO, WARN nor ERROR");
+		}
+		return auditUserMongoRepository.insert(entities);
+	}
+
+	@Override
+	public AuditLogEntryUser insert(AuditLogEntryUser entry, EventNotification event) {
+		AuditLogEntryUser log = insert(entry);
+		eventNotificationMongoRepository.insert(event);
+		return log;
+	}
+
+	@Override
+	public AuditLogEntryUser insert(int level, AuditLogEntryUser entry, EventNotification event) {
+		AuditLogEntryUser log = insert(level, entry);
+		eventNotificationMongoRepository.insert(event);
+		return log;
+	}
+
+	@Override
+	public List<AuditLogEntryUser> insert(List<AuditLogEntryUser> entities, List<EventNotification> events) {
+		List<AuditLogEntryUser> log = insert(entities);
+		eventNotificationMongoRepository.insert(events);
+		return log;
+	}
+
+	@Override
+	public List<AuditLogEntryUser> insert(int level, List<AuditLogEntryUser> entities,
+			List<EventNotification> events) {
+		List<AuditLogEntryUser> log = insert(level, entities);
+		eventNotificationMongoRepository.insert(events);
+		return log;
 	}
 }

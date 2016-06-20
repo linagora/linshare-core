@@ -95,43 +95,6 @@ public interface DocumentEntryService {
     public InputStream getDocumentStream(Account actor, Account owner, String uuid) throws BusinessException;
 
 	/**
-	 * return true if the signature functionality is enabled
-	 * @param user
-	 * @return
-	 */
-	public boolean isSignatureActive(Account account);
-	/**
-	 * return true if the encipherment functionality is enabled
-	 * @param user
-	 * @return
-	 */
-	public boolean isEnciphermentActive(Account account);
-
-	/**
-	 * return true if the global quota functionality is enabled
-	 * @param user
-	 * @return
-	 * @throws BusinessException
-	 */
-	public boolean isGlobalQuotaActive(Account account) throws BusinessException;
-
-	/**
-	 * return true if the user quota functionality is enabled
-	 * @param user
-	 * @return
-	 * @throws BusinessException
-	 */
-	public boolean isUserQuotaActive(Account account) throws BusinessException;
-
-	/**
-	 * return the global quota value
-	 * @param user
-	 * @return
-	 * @throws BusinessException
-	 */
-	public Long getGlobalQuota(Account account) throws BusinessException;
-
-	/**
 	 * looking for a document entry using the uuid parameter.
 	 * Owner and actor rights will be check. A {@link BusinessException} 
 	 * could be raise it the entry is not found or the actor is not allowed

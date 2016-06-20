@@ -16,6 +16,8 @@
 		class="org.linagora.linshare.core.service.impl.LogEntryServiceImpl">
 		<constructor-arg ref="logEntryRepository" />
 		<constructor-arg ref="domainBusinessService" />
+		<constructor-arg ref="auditUserMongoRepository" />
+		<constructor-arg ref="eventNotificationMongoRepository" />
 	</bean>
 
 	<bean name="accountService"

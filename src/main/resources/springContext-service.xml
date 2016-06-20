@@ -43,8 +43,6 @@
 	<bean id="documentEntryService" class="org.linagora.linshare.core.service.impl.DocumentEntryServiceImpl">
 		<constructor-arg ref="documentEntryBusinessService" />
 		<constructor-arg ref="logEntryService" />
-		<constructor-arg ref="auditUserMongoRepository" />
-		<constructor-arg ref="eventNotificationMongoRepository" />
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="mimeTypeService" />
