@@ -44,6 +44,7 @@ import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.AnonymousShareEntryMto;
 import org.linagora.linshare.mongo.entities.mto.EntryMto;
+import org.linagora.linshare.mongo.entities.mto.ShareEntryGroupMto;
 import org.linagora.linshare.mongo.entities.mto.ShareEntryMto;
 
 @XmlRootElement
@@ -55,25 +56,29 @@ public class ShareEntryAuditLogEntry extends AuditLogEntryUser {
 
 	protected String recipientUuid;
 
-	private ShareEntryMto resourceUpdated;
+	protected ShareEntryMto resourceUpdated;
+
+	protected ShareEntryGroupMto seg;
 
 	public ShareEntryAuditLogEntry() {
 		super();
 	}
 
-	public ShareEntryAuditLogEntry(Account actor, Account owner, ShareEntry entry, LogAction action,
+	public ShareEntryAuditLogEntry(Account actor, Account owner, LogAction action, ShareEntry entry,
 			AuditLogEntryType type) {
 		super(new AccountMto(actor), new AccountMto(owner), action, type, entry.getUuid());
 		this.recipientMail = entry.getRecipient().getMail();
 		this.recipientUuid = entry.getRecipient().getLsUuid();
 		this.resource = new ShareEntryMto(entry);
+		this.seg = new ShareEntryGroupMto(entry.getShareEntryGroup());
 	}
 
-	public ShareEntryAuditLogEntry(Account actor, Account owner, AnonymousShareEntry entry,
-			LogAction action, AuditLogEntryType type) {
+	public ShareEntryAuditLogEntry(Account actor, Account owner, LogAction action, AnonymousShareEntry entry,
+			AuditLogEntryType type) {
 		super(new AccountMto(actor), new AccountMto(owner), action, type, entry.getUuid());
 		this.recipientMail = entry.getAnonymousUrl().getContact().getMail();
 		this.resource = new AnonymousShareEntryMto(entry);
+		this.seg = new ShareEntryGroupMto(entry.getShareEntryGroup());
 	}
 
 	public EntryMto getResource() {

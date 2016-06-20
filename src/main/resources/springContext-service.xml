@@ -103,7 +103,6 @@
 		<constructor-arg ref="documentEntryBusinessService" />
 		<constructor-arg ref="recipientFavouriteRepository" />
 		<constructor-arg ref="anonymousShareEntryResourceAccessControl" />
-		<constructor-arg ref="auditUserMongoRepository" />
 	</bean>
 
 	<bean id="anonymousUrlService" class="org.linagora.linshare.core.service.impl.AnonymousUrlServiceImpl">

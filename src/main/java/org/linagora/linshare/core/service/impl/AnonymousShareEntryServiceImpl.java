@@ -48,10 +48,8 @@ import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Contact;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
-import org.linagora.linshare.core.domain.entities.ShareLogEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainer;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
@@ -66,8 +64,7 @@ import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
-import org.linagora.linshare.mongo.entities.logs.AnonymousShareAuditLogEntry;
-import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
+import org.linagora.linshare.mongo.entities.logs.ShareEntryAuditLogEntry;
 
 import com.google.common.collect.Sets;
 
@@ -89,8 +86,6 @@ public class AnonymousShareEntryServiceImpl extends
 
 	private final FavouriteRepository<String, User, RecipientFavourite> recipientFavouriteRepository;
 
-	private final AuditUserMongoRepository mongoRepository;
-
 	public AnonymousShareEntryServiceImpl(
 			final FunctionalityReadOnlyService functionalityService,
 			final AnonymousShareEntryBusinessService anonymousShareEntryBusinessService,
@@ -99,7 +94,6 @@ public class AnonymousShareEntryServiceImpl extends
 			final MailBuildingService mailBuildingService,
 			final DocumentEntryBusinessService documentEntryBusinessService,
 			final FavouriteRepository<String, User, RecipientFavourite> recipientFavouriteRepository,
-			final AuditUserMongoRepository mongoRepository,
 			final AnonymousShareEntryResourceAccessControl rac) {
 		super(rac);
 		this.functionalityService = functionalityService;
@@ -109,7 +103,6 @@ public class AnonymousShareEntryServiceImpl extends
 		this.mailBuildingService = mailBuildingService;
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.recipientFavouriteRepository = recipientFavouriteRepository;
-		this.mongoRepository = mongoRepository;
 	}
 
 	@Override
@@ -130,16 +123,16 @@ public class AnonymousShareEntryServiceImpl extends
 		return share;
 	}
 
-	// TODO FMA - Refactoring shares
+	// TODO FMA - Refactoring shares - this code is very ugly !!
 	@Override
-	public Set<AnonymousShareEntry> create(Account actor, User targetedAccount, ShareContainer sc, ShareEntryGroup shareEntryGroup)
+	public Set<AnonymousShareEntry> create(Account actor, User owner, ShareContainer sc, ShareEntryGroup shareEntryGroup)
 			throws BusinessException {
-		preChecks(actor, targetedAccount);
+		preChecks(actor, owner);
 		Validate.notNull(sc, "Share container is required.");
-		checkCreatePermission(actor, targetedAccount, AnonymousShareEntry.class,
+		checkCreatePermission(actor, owner, AnonymousShareEntry.class,
 				BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN, null);
 		Set<AnonymousShareEntry> entries = Sets.newHashSet();
-		BooleanValueFunctionality anonymousUrlFunc = functionalityService.getAnonymousUrl(targetedAccount.getDomain());
+		BooleanValueFunctionality anonymousUrlFunc = functionalityService.getAnonymousUrl(owner.getDomain());
 		Boolean passwordProtected = sc.getSecured();
 		if (passwordProtected == null) {
 			passwordProtected = anonymousUrlFunc.getValue();
@@ -152,47 +145,37 @@ public class AnonymousShareEntryServiceImpl extends
 		for (Recipient recipient : sc.getAnonymousShareRecipients()) {
 			Language mailLocale = recipient.getLocale();
 			if (mailLocale == null) {
-				mailLocale = targetedAccount.getExternalMailLocale();
+				mailLocale = owner.getExternalMailLocale();
 			}
 			MailContainer mailContainer = new MailContainer(
 					mailLocale, sc.getMessage(), sc.getSubject());
 			AnonymousUrl anonymousUrl = anonymousShareEntryBusinessService
-					.create(targetedAccount, recipient, sc.getDocuments(), sc.getExpiryCalendar(),
+					.create(actor, owner, recipient, sc.getDocuments(), sc.getExpiryCalendar(),
 							passwordProtected, shareEntryGroup, sc.getSharingNote());
-			// logs.
-			for (DocumentEntry documentEntry : sc.getDocuments()) {
-				ShareLogEntry logEntry = new ShareLogEntry(targetedAccount, documentEntry,
-						LogAction.FILE_SHARE, "Anonymous sharing of a file",
-						sc.getExpiryCalendar(), recipient);
-				if(sc.getEnableUSDA()){
-					logEntry = new ShareLogEntry(targetedAccount, documentEntry,
-							LogAction.FILE_SHARE_WITH_ALERT_FOR_USD, "Anonymous sharing of a file with a undownloaded shared document alert",
-							sc.getExpiryCalendar(), recipient);
-				}
-				logEntryService.create(logEntry);
-			}
 			// Notifications
 			MailContainerWithRecipient mail = null;
 			if (sc.getSecured() && !sc.isEncrypted()) {
-				mail = mailBuildingService.buildNewSharingProtected(targetedAccount,
+				mail = mailBuildingService.buildNewSharingProtected(owner,
 						mailContainer, anonymousUrl);
 			} else if (sc.getSecured() && sc.isEncrypted()) {
 				mail = mailBuildingService.buildNewSharingCypheredProtected(
-						targetedAccount, mailContainer, anonymousUrl);
+						owner, mailContainer, anonymousUrl);
 			} else if (sc.isEncrypted() && !sc.getSecured()) {
-				mail = mailBuildingService.buildNewSharingCyphered(targetedAccount,
+				mail = mailBuildingService.buildNewSharingCyphered(owner,
 						mailContainer, anonymousUrl);
 			} else {
-				mail = mailBuildingService.buildNewSharing(targetedAccount,
+				mail = mailBuildingService.buildNewSharing(owner,
 						mailContainer, anonymousUrl);
 			}
 			sc.addMailContainer(mail);
-			recipientFavouriteRepository.incAndCreate(targetedAccount,
+			sc.addLogs(anonymousUrl.getLogs());
+			recipientFavouriteRepository.incAndCreate(owner,
 					recipient.getMail());
 			entries.addAll(anonymousUrl.getAnonymousShareEntries());
 		}
-		AnonymousShareAuditLogEntry log = new AnonymousShareAuditLogEntry();
-		mongoRepository.insert(log.createList(actor, shareEntryGroup.getOwner(), LogAction.CREATE, AuditLogEntryType.ANONYMOUS_SHARE_ENTRY, entries));
+		// logs all entries in share container and reset it.
+		logEntryService.insert(sc.getLogs());
+		sc.getLogs().clear();
 		return entries;
 	}
 
@@ -205,13 +188,9 @@ public class AnonymousShareEntryServiceImpl extends
 		checkDeletePermission(actor, targetedAccount, AnonymousShareEntry.class,
 				BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN, share);
 		anonymousShareEntryBusinessService.delete(share);
-		ShareLogEntry logEntry = new ShareLogEntry(targetedAccount, share,
-				LogAction.SHARE_DELETE, "Deleting anonymous share");
-		logEntryService.create(logEntry);
-
-		AnonymousShareAuditLogEntry log = new AnonymousShareAuditLogEntry(actor, share.getEntryOwner(),
-				LogAction.DELETE, AuditLogEntryType.ANONYMOUS_SHARE_ENTRY, share);
-		mongoRepository.insert(log);
+		ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, targetedAccount,
+				LogAction.DELETE, share, AuditLogEntryType.ANONYMOUS_SHARE_ENTRY);
+		logEntryService.insert(log);
 		// TODO : anonymous share deletion notification
 		// notifierService.sendNotification();
 	}
@@ -231,12 +210,6 @@ public class AnonymousShareEntryServiceImpl extends
 		}
 		checkDownloadPermission(actor, null, AnonymousShareEntry.class,
 				BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN, shareEntry);
-		ShareLogEntry logEntry = new ShareLogEntry(shareEntry.getEntryOwner(),
-				shareEntry, LogAction.ANONYMOUS_SHARE_DOWNLOAD,
-				"Anonymous user "
-						+ shareEntry.getEntryOwner().getAccountRepresentation()
-						+ " downloaded a file");
-		logEntryService.create(logEntry);
 		MailContainerWithRecipient mail = null;
 		if (shareEntry.getDownloaded() <= 0) {
 			mail = mailBuildingService.buildAnonymousDownload(shareEntry);
@@ -249,8 +222,11 @@ public class AnonymousShareEntryServiceImpl extends
 				mail = mailBuildingService.buildAnonymousDownload(shareEntry);
 			}
 		}
-		notifierService.sendNotification(mail);
 		shareEntry = anonymousShareEntryBusinessService.updateDownloadCounter(shareEntry);
+		ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, shareEntry.getEntryOwner(),
+				LogAction.DOWNLOAD, shareEntry, AuditLogEntryType.ANONYMOUS_SHARE_ENTRY);
+		logEntryService.insert(log);
+		notifierService.sendNotification(mail);
 		return documentEntryBusinessService.getDocumentStream(shareEntry
 				.getDocumentEntry());
 	}

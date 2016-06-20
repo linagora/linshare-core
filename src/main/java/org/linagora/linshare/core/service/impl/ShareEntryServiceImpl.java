@@ -155,7 +155,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 					.buildSharedDocDeleted(share.getRecipient(), share);
 			notifierService.sendNotification(mail);
 		}
-		ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, share, LogAction.DELETE,
+		ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, LogAction.DELETE, share,
 				AuditLogEntryType.SHARE_ENTRY);
 		auditUserMongoRepository.insert(log);
 	}
@@ -216,7 +216,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		String uuid = dto.getUuid();
 		Validate.notEmpty(uuid, "Missing share entry uuid");
 		ShareEntry share = find(actor, owner, uuid);
-		ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, share, LogAction.UPDATE,
+		ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, LogAction.UPDATE, share,
 				AuditLogEntryType.SHARE_ENTRY);
 		/*
 		 * Actually the owner have the right to update his own shareEntry. Is it
@@ -302,7 +302,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 				logEntryService.create(new ShareLogEntry(recipient,
 						LogAction.SHARE_RECEIVED, "Receiving a shared file",
 						createShare, owner));
-				log.add(new ShareEntryAuditLogEntry(actor, owner, createShare, LogAction.CREATE,
+				log.add(new ShareEntryAuditLogEntry(actor, owner, LogAction.CREATE, createShare,
 						AuditLogEntryType.SHARE_ENTRY));
 			}
 			entries.addAll(shares);

@@ -34,6 +34,7 @@
 package org.linagora.linshare.mongo.entities.mto;
 
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
+import org.springframework.data.annotation.Transient;
 
 public class AnonymousUrlMto {
 
@@ -41,10 +42,13 @@ public class AnonymousUrlMto {
 
 	protected String uuid;
 
+	// TODO : AKO: What is the purpose of these fields ?
+	@Transient
 	protected String password;
 
 	protected String contactMail;
 
+	@Transient
 	protected String temporaryPlainTextPassword;
 
 	public AnonymousUrlMto() {

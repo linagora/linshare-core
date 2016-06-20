@@ -31,56 +31,81 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.entities.logs;
+package org.linagora.linshare.mongo.entities.mto;
 
-import java.util.List;
-import java.util.Set;
+import java.util.Date;
 
-import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
-import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
-import org.linagora.linshare.mongo.entities.mto.AccountMto;
-import org.linagora.linshare.mongo.entities.mto.AnonymousShareEntryMto;
+import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 
-import com.google.common.collect.Lists;
+public class ShareEntryGroupMto {
 
-public class AnonymousShareAuditLogEntry extends AuditLogEntryUser {
+	protected String uuid;
 
-	AnonymousShareEntryMto resource;
+	protected String subject;
 
-	AnonymousShareEntryMto resourceUpdated;
+	protected Date notificationDate;
 
-	public AnonymousShareAuditLogEntry() {
+	protected Date creationDate;
+
+	protected Date expirationDate;
+
+	protected Boolean enabledUSDA;
+
+	public ShareEntryGroupMto(ShareEntryGroup seg) {
 		super();
+		this.uuid = seg.getUuid();
+		this.subject = seg.getSubject();
+		this.notificationDate = seg.getNotificationDate();
+		this.creationDate = seg.getCreationDate();
+		this.expirationDate = seg.getExpirationDate();
+		this.enabledUSDA = (notificationDate == null ? false : true);
 	}
 
-	public AnonymousShareAuditLogEntry(Account actor, Account owner, LogAction action, AuditLogEntryType type, AnonymousShareEntry ase) {
-		super(new AccountMto(actor), new AccountMto(owner), action, type, ase.getUuid());
-		this.resource = new AnonymousShareEntryMto(ase);
+	public String getUuid() {
+		return uuid;
 	}
 
-	public List<AnonymousShareAuditLogEntry> createList(Account actor, Account owner, LogAction action, AuditLogEntryType type, Set<AnonymousShareEntry> ase) {
-		List<AnonymousShareAuditLogEntry> res = Lists.newArrayList();
-		for (AnonymousShareEntry a : ase) {
-			res.add(new AnonymousShareAuditLogEntry(actor, owner, action, type, a));
-		}
-		return res;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
-	public AnonymousShareEntryMto getResource() {
-		return resource;
+	public String getSubject() {
+		return subject;
 	}
 
-	public void setResource(AnonymousShareEntryMto resource) {
-		this.resource = resource;
+	public void setSubject(String subject) {
+		this.subject = subject;
 	}
 
-	public AnonymousShareEntryMto getResourceUpdated() {
-		return resourceUpdated;
+	public Date getNotificationDate() {
+		return notificationDate;
 	}
 
-	public void setResourceUpdated(AnonymousShareEntryMto resourceUpdated) {
-		this.resourceUpdated = resourceUpdated;
+	public void setNotificationDate(Date notificationDate) {
+		this.notificationDate = notificationDate;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Date getExpirationDate() {
+		return expirationDate;
+	}
+
+	public void setExpirationDate(Date expirationDate) {
+		this.expirationDate = expirationDate;
+	}
+
+	public Boolean getEnabledUSDA() {
+		return enabledUSDA;
+	}
+
+	public void setEnabledUSDA(Boolean enabledUSDA) {
+		this.enabledUSDA = enabledUSDA;
 	}
 }

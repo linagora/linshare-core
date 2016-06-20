@@ -206,7 +206,6 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		}
 		// Notification
 		notifierService.sendNotification(shareContainer.getMailContainers());
-
 		return entries;
 	}
 
@@ -444,11 +443,11 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		}
 		if (entry.getEntryType().equals(EntryType.SHARE)) {
 			shareEntryService.delete(actor, owner, entryUuid);
-			ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, (ShareEntry)entry, LogAction.DELETE, AuditLogEntryType.SHARE_ENTRY);
+			ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, LogAction.DELETE, (ShareEntry)entry, AuditLogEntryType.SHARE_ENTRY);
 			auditMongoRepository.insert(log);
 		} else if (entry.getEntryType().equals(EntryType.ANONYMOUS_SHARE)) {
 			anonymousShareEntryService.delete(actor, owner, entryUuid);
-			ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, (AnonymousShareEntry)entry, LogAction.DELETE, AuditLogEntryType.ANONYMOUS_SHARE_ENTRY);
+			ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, LogAction.DELETE, (AnonymousShareEntry)entry, AuditLogEntryType.ANONYMOUS_SHARE_ENTRY);
 			auditMongoRepository.insert(log);
 		} else {
 			String msg = "Can not find the current entry : " + entryUuid;

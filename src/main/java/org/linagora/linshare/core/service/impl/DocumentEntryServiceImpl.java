@@ -340,7 +340,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 					mails.add(mailBuildingService.buildSharedDocUpdated(
 							anonymousShareEntry, originalFileName,
 							documentEntry.getSize()));
-					ShareEntryAuditLogEntry shareLog = new ShareEntryAuditLogEntry(actor, owner, anonymousShareEntry, LogAction.UPDATE,
+					ShareEntryAuditLogEntry shareLog = new ShareEntryAuditLogEntry(actor, owner, LogAction.UPDATE, anonymousShareEntry,
 							AuditLogEntryType.SHARE_ENTRY);
 					shareLog.setTechnicalComment("update of the underlying document");
 					logs.add(shareLog);
@@ -348,7 +348,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 				for (ShareEntry shareEntry : documentEntry.getShareEntries()) {
 					mails.add(mailBuildingService.buildSharedDocUpdated(
 							shareEntry, originalFileName, documentEntry.getSize()));
-					ShareEntryAuditLogEntry shareLog = new ShareEntryAuditLogEntry(actor, owner, shareEntry, LogAction.UPDATE,
+					ShareEntryAuditLogEntry shareLog = new ShareEntryAuditLogEntry(actor, owner, LogAction.UPDATE, shareEntry,
 							AuditLogEntryType.SHARE_ENTRY);
 					shareLog.setTechnicalComment("update of the underlying document");
 					// The recipient must be notified (events) and aware (logs) of this modification.

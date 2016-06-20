@@ -50,6 +50,8 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
+import org.linagora.linshare.mongo.entities.EventNotification;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -115,6 +117,10 @@ public class ShareContainer {
 
 	protected List<MailContainerWithRecipient> mailContainers = Lists
 			.newArrayList();
+
+	protected List<AuditLogEntryUser> logs = Lists.newArrayList();
+
+	protected List<EventNotification> events = Lists.newArrayList();
 
 	public ShareContainer(String subject, String message, Boolean secured, Boolean creationAcknowledgement) {
 		super();
@@ -418,6 +424,30 @@ public class ShareContainer {
 
 	public void setAcknowledgement(Boolean creationAcknowledgement) {
 		this.creationAcknowledgement = creationAcknowledgement;
+	}
+
+	public List<AuditLogEntryUser> getLogs() {
+		return logs;
+	}
+
+	public void addLog(AuditLogEntryUser log) {
+		this.logs.add(log);
+	}
+
+	public void addLogs(List<AuditLogEntryUser> logs) {
+		this.logs.addAll(logs);
+	}
+
+	public List<EventNotification> getEvents() {
+		return events;
+	}
+
+	public void addEvent(EventNotification event) {
+		this.events.add(event);
+	}
+
+	public void addEvents(List<EventNotification> events) {
+		this.events.addAll(events);
 	}
 
 	/*

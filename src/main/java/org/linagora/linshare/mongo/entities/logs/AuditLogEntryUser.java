@@ -65,8 +65,7 @@ import com.google.common.collect.Lists;
 		@Type(value = MailingListContactAuditLogEntry.class, name = "mailing_list_contact_audit"),
 		@Type(value = UploadRequestAuditLogEntry.class, name = "upload_request_audit"),
 		@Type(value = UploadRequestGroupAuditLogEntry.class, name = "upload_request_group_audit"),
-		@Type(value = AnonymousShareAuditLogEntry.class, name = "upload_request_group_audit"),
-		@Type(value = UserPreferenceAuditLogEntry.class, name = "upload_request_group_audit")})
+		@Type(value = UserPreferenceAuditLogEntry.class, name = "user_preference_audit")})
 @XmlRootElement(name = "AuditLogEntryUser")
 @XmlSeeAlso({ ShareEntryAuditLogEntry.class,
 	DocumentEntryAuditLogEntry.class,
@@ -78,7 +77,6 @@ import com.google.common.collect.Lists;
 	MailingListAuditLogEntry.class,
 	UploadRequestAuditLogEntry.class,
 	UploadRequestGroupAuditLogEntry.class,
-	AnonymousShareAuditLogEntry.class,
 	UserPreferenceAuditLogEntry.class})
 @Document(collection = "auditLogEntry")
 public abstract class AuditLogEntryUser extends AuditLogEntry {

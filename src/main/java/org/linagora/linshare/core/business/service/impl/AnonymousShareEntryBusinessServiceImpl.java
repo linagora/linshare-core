@@ -39,6 +39,8 @@ import java.util.Set;
 
 import org.linagora.linshare.core.business.service.AnonymousShareEntryBusinessService;
 import org.linagora.linshare.core.business.service.AnonymousUrlBusinessService;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
@@ -52,9 +54,15 @@ import org.linagora.linshare.core.repository.AnonymousShareEntryRepository;
 import org.linagora.linshare.core.repository.ContactRepository;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.mongo.entities.logs.ShareEntryAuditLogEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The whole business service and service need to be revamped. It is very ugly :(
+ * @author FMartin
+ *
+ */
 public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEntryBusinessService {
 
 	private final AnonymousShareEntryRepository anonymousShareEntryRepository ;
@@ -89,41 +97,17 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 		AnonymousShareEntry share= new AnonymousShareEntry(sender, documentEntry.getName(), sharingNote, documentEntry, anonymousUrl , expirationDate, shareEntryGroup);
 		AnonymousShareEntry anonymousShare = anonymousShareEntryRepository.create(share);
 
-		// If the current document was previously shared, we need to rest its expiration date
+		// If the current document was previously shared, we need to reset its expiration date
 		documentEntry.setExpirationDate(null);
 		documentEntry.incrementShared();
 
 		documentEntry.getAnonymousShareEntries().add(anonymousShare);
 		sender.getEntries().add(anonymousShare);
-		// TODO remove the two next lines for v2
-		documentEntryRepository.update(documentEntry);
-		accountService.update(sender);
-
 		return anonymousShare;
 	}
 
-	@Deprecated
 	@Override
-	public AnonymousUrl createAnonymousShare(List<DocumentEntry> documentEntries, User sender, Contact recipient, Calendar expirationDate, Boolean passwordProtected, ShareEntryGroup shareEntryGroup, String sharingNote) throws BusinessException {
-
-		Contact contact = contactRepository.find(recipient);
-		if(contact == null) {
-			contact = contactRepository.create(recipient);
-		}
-
-		AnonymousUrl anonymousUrl = businessService.create(passwordProtected, contact);
-
-		for (DocumentEntry documentEntry : documentEntries) {
-			AnonymousShareEntry anonymousShareEntry = createAnonymousShare(documentEntry, anonymousUrl, sender, contact, expirationDate, shareEntryGroup, sharingNote);
-			anonymousUrl.getAnonymousShareEntries().add(anonymousShareEntry);
-		}
-		businessService.update(anonymousUrl);
-
-		return anonymousUrl;
-	}
-
-	@Override
-	public AnonymousUrl create(
+	public AnonymousUrl create(Account actor,
 			User sender,
 			Recipient recipient,
 			Set<DocumentEntry> documentEntries,
@@ -139,6 +123,8 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 		for (DocumentEntry documentEntry : documentEntries) {
 			AnonymousShareEntry anonymousShareEntry = createAnonymousShare(documentEntry, anonymousUrl, sender, contact, expirationCalendar, shareEntryGroup, sharingNote);
 			anonymousUrl.getAnonymousShareEntries().add(anonymousShareEntry);
+			ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, sender, LogAction.CREATE, anonymousShareEntry, AuditLogEntryType.ANONYMOUS_SHARE_ENTRY);
+			anonymousUrl.addLog(log);
 		}
 		businessService.update(anonymousUrl);
 		return anonymousUrl;

@@ -37,9 +37,9 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
-import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.domain.entities.User;
@@ -50,10 +50,9 @@ public interface AnonymousShareEntryBusinessService {
 
 	AnonymousShareEntry findByUuid(String uuid);
 
-	@Deprecated
-	AnonymousUrl createAnonymousShare(List<DocumentEntry> documentEntries, User sender, Contact recipient, Calendar expirationDate, Boolean passwordProtected, ShareEntryGroup shareEntryGroup, String sharingNote) throws BusinessException;
-
-	AnonymousUrl create(User sender, Recipient recipient, Set<DocumentEntry> documentEntries, Calendar expirationDate, Boolean passwordProtected, ShareEntryGroup shareEntryGroup, String sharingNote) throws BusinessException;
+	AnonymousUrl create(Account actor, User sender, Recipient recipient, Set<DocumentEntry> documentEntries,
+			Calendar expirationDate, Boolean passwordProtected, ShareEntryGroup shareEntryGroup, String sharingNote)
+			throws BusinessException;
 
 	void delete(AnonymousShareEntry anonymousShare) throws BusinessException;
 

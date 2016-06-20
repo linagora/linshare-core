@@ -38,6 +38,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+
+import com.google.common.collect.Lists;
+
 /**
  * @author fred
  *
@@ -45,22 +49,25 @@ import java.util.Set;
 public class AnonymousUrl {
 
 	private Long id;
-	
+
 	private String urlPath;
-	
+
 	private String uuid;
-	
+
 	private String password;
-	
+
 	private Contact contact;
-	
+
 	private String temporaryPlainTextPassword;
-	
+
 	private Set<AnonymousShareEntry> anonymousShareEntries = new HashSet<AnonymousShareEntry>();
-	
+
+	// Temporary attribute to store log entries (for performance issue).
+	protected List<AuditLogEntryUser> logs = Lists.newArrayList();
+
 	public AnonymousUrl() {
 	}
-	
+
 	public AnonymousUrl(String urlPath, Contact contact) {
 		super();
 		this.urlPath = urlPath;
@@ -116,10 +123,9 @@ public class AnonymousUrl {
 	public void setTemporaryPlainTextPassword(String temporaryPlainTextPassword) {
 		this.temporaryPlainTextPassword = temporaryPlainTextPassword;
 	}
-	
-	
+
 	public String getFullUrl(String baseUrl) {
-		//compose the secured url to give in mail
+		// compose the secured url to give in mail
 		StringBuffer httpUrlBase = new StringBuffer();
 		httpUrlBase.append(baseUrl);
 		if (!baseUrl.endsWith("/")) {
@@ -133,35 +139,31 @@ public class AnonymousUrl {
 		return httpUrlBase.toString();
 	}
 
-	
 	public Contact getContact() {
 		return contact;
 	}
 
-	
 	public void setContact(Contact contact) {
 		this.contact = contact;
 	}
-	
-	
+
 	/** Useful getters */
 	public List<String> getDocumentNames() {
 		List<String> docNames = new ArrayList<String>();
-		for (AnonymousShareEntry anonymousShareEntry: anonymousShareEntries) {
+		for (AnonymousShareEntry anonymousShareEntry : anonymousShareEntries) {
 			docNames.add(anonymousShareEntry.getDocumentEntry().getName());
 		}
 		return docNames;
 	}
-	
-	
+
 	public boolean oneDocumentIsEncrypted() {
 		boolean isOneDocEncrypted = false;
-		for (AnonymousShareEntry anonymousShareEntry: anonymousShareEntries) {
-			if(anonymousShareEntry.getDocumentEntry().getCiphered()) {
+		for (AnonymousShareEntry anonymousShareEntry : anonymousShareEntries) {
+			if (anonymousShareEntry.getDocumentEntry().getCiphered()) {
 				isOneDocEncrypted = true;
 				break;
 			}
-			
+
 		}
 		return isOneDocEncrypted;
 	}
@@ -172,5 +174,13 @@ public class AnonymousUrl {
 
 	public String getReprentation() {
 		return this.uuid;
+	}
+
+	public List<AuditLogEntryUser> getLogs() {
+		return logs;
+	}
+
+	public void addLog(AuditLogEntryUser log) {
+		this.logs.add(log);
 	}
 }
