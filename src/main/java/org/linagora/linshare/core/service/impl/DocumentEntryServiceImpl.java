@@ -45,6 +45,7 @@ import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
@@ -250,9 +251,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 				logger.error("can not delete temp file : " + e.getMessage());
 			}
 		}
-
-		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, docEntry, LogAction.CREATE,
-				AuditLogEntryType.DOCUMENT_ENTRY);
+		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, docEntry, LogAction.CREATE);
 		logEntryService.insert(log);
 		return docEntry;
 	}
@@ -271,8 +270,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		preChecks(actor, owner);
 		Validate.notEmpty(docEntryUuid, "document entry uuid is required.");
 		DocumentEntry originalEntry = find(actor, owner, docEntryUuid);
-		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, originalEntry, LogAction.UPDATE,
-				AuditLogEntryType.DOCUMENT_ENTRY);
+		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, originalEntry, LogAction.UPDATE);
 		String originalFileName = originalEntry.getName();
 		if (fileName == null || fileName.isEmpty()) {
 			fileName = originalFileName;
@@ -392,9 +390,9 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 			removeDocSizeFromGlobalUsedQuota(documentEntry.getSize(), domain);
 
 			documentEntryBusinessService.deleteDocumentEntry(documentEntry);
-			// LogAction.FILE_INCONSISTENCY
 			DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, documentEntry,
-					LogAction.DELETE, AuditLogEntryType.DOCUMENT_ENTRY);
+					LogAction.DELETE);
+			log.setCause(LogActionCause.INCONSISTENCY);
 			log.setTechnicalComment("File removed because of inconsistence. Please contact your administrator.");
 			logEntryService.insert(LogEntryService.WARN, log);
 		} catch (IllegalArgumentException e) {
@@ -420,8 +418,9 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 			documentEntryBusinessService.deleteDocumentEntry(documentEntry);
 			// LogAction.FILE_EXPIRE
 			DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, documentEntry,
-					LogAction.DELETE, AuditLogEntryType.DOCUMENT_ENTRY);
+					LogAction.DELETE);
 			log.setTechnicalComment("Expiration of a file");
+			log.setCause(LogActionCause.EXPIRATION);
 			logEntryService.insert(log);
 
 		} catch (IllegalArgumentException e) {
@@ -444,8 +443,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getUuid());
 		removeDocSizeFromGlobalUsedQuota(documentEntry.getSize(), domain);
 		documentEntryBusinessService.deleteDocumentEntry(documentEntry);
-		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, documentEntry, LogAction.DELETE,
-				AuditLogEntryType.DOCUMENT_ENTRY);
+		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, documentEntry, LogAction.DELETE);
 		logEntryService.insert(log);
 		return documentEntry;
 	}
@@ -516,6 +514,12 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		DocumentEntry entry = find(actor, owner, uuid);
 		checkDownloadPermission(actor, owner, DocumentEntry.class,
 				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, entry);
+		if (!actor.equals(owner)) {
+			// If it is not the current owner, it could be useful to warn the owner.
+			DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, entry, LogAction.DOWNLOAD);
+			EventNotification event = new EventNotification(log, owner.getLsUuid());
+			logEntryService.insert(log, event);
+		}
 		try {
 			return documentEntryBusinessService.getDocumentStream(entry);
 		} catch (Exception e) {
@@ -542,7 +546,10 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		DocumentEntry entry = find(actor, owner, uuid);
 		checkUpdatePermission(actor, owner, DocumentEntry.class,
 				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, entry);
-		documentEntryBusinessService.renameDocumentEntry(entry, newName);
+		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, entry, LogAction.UPDATE);
+		DocumentEntry res = documentEntryBusinessService.renameDocumentEntry(entry, newName);
+		log.setResourceUpdated(new DocumentMto(res));
+		logEntryService.insert(log);
 	}
 
 	@Override
@@ -561,7 +568,11 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		}
 		checkUpdatePermission(actor, owner, DocumentEntry.class,
 				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, entry);
-		return documentEntryBusinessService.updateFileProperties(entry, newName, fileComment, meta);
+		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, entry, LogAction.UPDATE);
+		DocumentEntry res = documentEntryBusinessService.updateFileProperties(entry, newName, fileComment, meta);
+		log.setResourceUpdated(new DocumentMto(res));
+		logEntryService.insert(log);
+		return res;
 	}
 
 	@Override
@@ -576,14 +587,17 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 						"You are not authorized to update this document.");
 			}
 		}
+		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, actor, entry, LogAction.UPDATE);
 		if (!isFromCmisSync)
 			entry.setCmisSync(false);
 		else {
 			documentEntryBusinessService.syncUniqueDocument(actor, newName);
 			entry.setCmisSync(true);
 		}
-		documentEntryBusinessService.updateFileProperties(entry, newName,
+		DocumentEntry res = documentEntryBusinessService.updateFileProperties(entry, newName,
 				fileComment, null);
+		log.setResourceUpdated(new DocumentMto(res));
+		logEntryService.insert(log);
 	}
 
 	private void checkSpace(long size, String fileName, Account owner) throws BusinessException {

@@ -67,7 +67,7 @@ public interface DocumentEntryBusinessService {
 
 	public List<DocumentEntry> findAllMyDocumentEntries(Account owner);
 
-	public void renameDocumentEntry(DocumentEntry entry, String newName) throws BusinessException;
+	public DocumentEntry renameDocumentEntry(DocumentEntry entry, String newName) throws BusinessException;
 
 	public DocumentEntry updateFileProperties(DocumentEntry entry, String newName, String fileComment, String meta) throws BusinessException;
 

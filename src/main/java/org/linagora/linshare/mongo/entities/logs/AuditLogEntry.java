@@ -38,6 +38,7 @@ import java.util.Date;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 
 public class AuditLogEntry {
@@ -47,6 +48,8 @@ public class AuditLogEntry {
 	protected String resourceUuid;
 
 	protected LogAction action;
+
+	protected LogActionCause cause;
 
 	protected AuditLogEntryType type;
 
@@ -109,6 +112,14 @@ public class AuditLogEntry {
 
 	public void setTechnicalComment(String technicalComment) {
 		this.technicalComment = technicalComment;
+	}
+
+	public LogActionCause getCause() {
+		return cause;
+	}
+
+	public void setCause(LogActionCause cause) {
+		this.cause = cause;
 	}
 
 	@Override

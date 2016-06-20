@@ -237,9 +237,9 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	}
 
 	@Override
-	public void renameDocumentEntry(DocumentEntry entry, String newName) throws BusinessException {
+	public DocumentEntry renameDocumentEntry(DocumentEntry entry, String newName) throws BusinessException {
 		entry.setName(newName);
-		documentEntryRepository.update(entry);
+		return documentEntryRepository.update(entry);
 	}
 
 	@Override
