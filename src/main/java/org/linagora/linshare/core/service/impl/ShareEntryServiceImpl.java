@@ -203,13 +203,10 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		docLog.setCause(LogActionCause.COPY);
 		docLog.setFromResourceUuid(shareUuid);
 		// step4 : remove the share
-		MailContainerWithRecipient mail = mailBuildingService
-				.buildSharedDocDeleted(share.getRecipient(), share);
-		notifierService.sendNotification(mail);
 		logger.info("delete share : " + share.getUuid());
 		// step 5 : notification
 		if (share.getDownloaded() < 1) {
-			mail = mailBuildingService
+			MailContainerWithRecipient mail = mailBuildingService
 					.buildRegisteredDownload(share);
 			notifierService.sendNotification(mail);
 		}
