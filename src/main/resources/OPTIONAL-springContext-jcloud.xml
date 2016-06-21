@@ -12,7 +12,7 @@
 		<property name="identity" value="${linshare.documents.storage.swift.identity}" />
 		<property name="credential" value="${linshare.documents.storage.swift.credential}" />
 		<property name="endpoint" value="${linshare.documents.storage.swift.endpoint}" />
-		<property name="bucketIdentifier" value="${linshare.documents.storage.swift.bucket}" />
+		<property name="bucketIdentifier" value="${linshare.documents.storage.bucket}" />
 	</bean>
 
 </beans>
