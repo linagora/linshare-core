@@ -92,8 +92,8 @@ public enum LogAction {
 	DELETE,
 	GET,
 	DOWNLOAD,
-	AUTHENTICATION_SUCCESS,
-	AUTHENTICATION_FAILED,
+	SUCCESS,
+	FAILURE,
 	LOGICAL_DELETE;
 
 	public static LogAction fromString(String s) {

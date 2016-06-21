@@ -181,17 +181,14 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 				actions.add(LogAction.fromString(a));
 			}
 		} else {
-			actions.add(LogAction.CREATE);
-			actions.add(LogAction.UPDATE);
-			actions.add(LogAction.DELETE);
-			actions.add(LogAction.GET);
+			actions = Lists.newArrayList(LogAction.class.getEnumConstants());
 		}
 		if (type != null && !type.isEmpty()) {
 			for (String t : type) {
 				types.add(AuditLogEntryType.fromString(t));
 			}
 		} else {
-			types.addAll(AuditLogEntryType.getAllUserTypes());
+			types = Lists.newArrayList(AuditLogEntryType.class.getEnumConstants());
 		}
 		if (forceAll) {
 			res = userMongoRepository.findForUser(actor.getLsUuid(), actions, types);

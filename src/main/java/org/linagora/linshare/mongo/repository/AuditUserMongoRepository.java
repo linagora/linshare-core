@@ -64,6 +64,6 @@ public interface AuditUserMongoRepository extends MongoRepository<AuditLogEntryU
 	Set<AuditLogEntryUser> findForUser(String ownerUuid, List<LogAction> actions, List<AuditLogEntryType> types, Date beginDate,
 			Date endDate);
 
-	@Query("{ 'owner.uuid' : ?0, 'action' : {'$in' : ?1 }, 'type' : { '$in' : ?2 } }")
+	@Query("{ 'relatedAccounts': {'$elemMatch' : { '$eq' : ?0 }}, 'action' : {'$in' : ?1 }, 'type' : { '$in' : ?2 } }")
 	Set<AuditLogEntryUser> findForUser(String ownerUuid, List<LogAction> actions, List<AuditLogEntryType> types);
 }
