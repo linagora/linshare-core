@@ -118,4 +118,12 @@ public class AccountMto {
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
+
+	public DomainMto getDomain() {
+		return domain;
+	}
+
+	public void setDomain(DomainMto domain) {
+		this.domain = domain;
+	}
 }
