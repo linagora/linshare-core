@@ -36,6 +36,7 @@ package org.linagora.linshare.core.batches.impl;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Entry;
@@ -94,7 +95,7 @@ public class DeleteExpiredShareEntryBatchImpl extends GenericBatchImpl {
 					.getDefaultShareExpiryTimeFunctionality(domain);
 			// test if this functionality is enable for the current domain.
 			if (func.getActivationPolicy().getStatus()) {
-				service.delete(actor, actor, identifier);
+				service.delete(actor, actor, identifier, LogActionCause.EXPIRATION);
 				documentEntryService.deleteOrComputeExpiryDate(actor, domain,
 						resource.getDocumentEntry());
 			} else {

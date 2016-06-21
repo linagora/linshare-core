@@ -58,5 +58,8 @@ public interface ReceivedShareRestService {
 
 	DocumentDto copy(String shareEntryUuid) throws BusinessException;
 
+	@Deprecated
+	DocumentDto copy2(String shareEntryUuid) throws BusinessException;
+
 	Response download(String uuid) throws BusinessException;
 }

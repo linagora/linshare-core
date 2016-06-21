@@ -37,6 +37,8 @@ import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 
 public class AnonymousShareEntryMto extends EntryMto {
 
+	protected AccountMto sender;
+
 	protected Long downloaded;
 
 	protected DocumentMto documentEntry;
@@ -48,14 +50,11 @@ public class AnonymousShareEntryMto extends EntryMto {
 	}
 
 	public AnonymousShareEntryMto(AnonymousShareEntry entry) {
-		this(entry, false);
-	}
-
-	public AnonymousShareEntryMto(AnonymousShareEntry entry, boolean withOwner) {
-		super(entry, withOwner);
+		super(entry);
 		this.downloaded = entry.getDownloaded();
 		this.url = new AnonymousUrlMto(entry.getAnonymousUrl());
 		this.documentEntry = new DocumentMto(entry.getDocumentEntry());
+		this.sender = new AccountMto(entry.getEntryOwner());
 	}
 
 	public Long getDownloaded() {
@@ -80,5 +79,13 @@ public class AnonymousShareEntryMto extends EntryMto {
 
 	public void setUrl(AnonymousUrlMto url) {
 		this.url = url;
+	}
+
+	public AccountMto getSender() {
+		return sender;
+	}
+
+	public void setSender(AccountMto sender) {
+		this.sender = sender;
 	}
 }

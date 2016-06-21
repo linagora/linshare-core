@@ -35,6 +35,7 @@ package org.linagora.linshare.core.domain.constants;
 
 public enum LogActionCause {
 
+	COPY,
 	UNDEFINED,
 	EXPIRATION,
 	INCONSISTENCY;

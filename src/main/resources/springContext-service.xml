@@ -91,7 +91,6 @@
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="recipientFavouriteRepository" />
 		<constructor-arg ref="shareEntryResourceAccessControl" />
-		<constructor-arg ref="auditUserMongoRepository" />
 	</bean>
 
 	<bean id="anonymousShareEntryService" class="org.linagora.linshare.core.service.impl.AnonymousShareEntryServiceImpl">

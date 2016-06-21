@@ -43,13 +43,13 @@ import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.ShareEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
-import org.linagora.linshare.core.domain.entities.ShareLogEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainer;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
@@ -65,11 +65,11 @@ import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryService;
+import org.linagora.linshare.mongo.entities.EventNotification;
+import org.linagora.linshare.mongo.entities.logs.DocumentEntryAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.ShareEntryAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.ShareEntryMto;
-import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, ShareEntry>
@@ -91,8 +91,6 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 
 	private final FavouriteRepository<String, User, RecipientFavourite> recipientFavouriteRepository;
 
-	private final AuditUserMongoRepository auditUserMongoRepository;
-
 	public ShareEntryServiceImpl(
 			GuestRepository guestRepository,
 			FunctionalityReadOnlyService functionalityService,
@@ -102,7 +100,6 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			NotifierService notifierService,
 			MailBuildingService mailBuildingService,
 			FavouriteRepository<String, User, RecipientFavourite> recipientFavouriteRepository,
-			final AuditUserMongoRepository mongoRepository,
 			ShareEntryResourceAccessControl rac) {
 		super(rac);
 		this.guestRepository = guestRepository;
@@ -113,7 +110,6 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		this.notifierService = notifierService;
 		this.mailBuildingService = mailBuildingService;
 		this.recipientFavouriteRepository = recipientFavouriteRepository;
-		this.auditUserMongoRepository = mongoRepository;
 	}
 
 	@Override
@@ -136,31 +132,53 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		return entry;
 	}
 
+	/**
+	 * This method delete a share without specifying LogActionCause. TODO Should be removed.
+	 * @param actor
+	 * @param owner
+	 * @param uuid
+	 * @throws BusinessException
+	 */
+	@Deprecated
 	@Override
-	public void delete(Account actor, Account owner, String uuid)
+	public void delete(Account actor, Account owner, String uuid) throws BusinessException {
+		this.delete(actor, owner, uuid, null);
+	}
+
+	@Override
+	public void delete(Account actor, Account owner, String uuid, LogActionCause cause)
 			throws BusinessException {
 		Validate.notEmpty(uuid, "Missing share entry uuid");
 		ShareEntry share = find(actor, owner, uuid);
 		checkDeletePermission(actor, owner, ShareEntry.class,
 				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, share);
-		ShareLogEntry logEntry = new ShareLogEntry(owner, share,
-				LogAction.SHARE_DELETE, "Delete a sharing");
-		logEntryService.create(logEntry);
 		logger.info("Share deleted : " + share.getUuid());
 		shareEntryBusinessService.delete(share);
-		// No need to send a notification to the recipient if he is the current
-		// owner.
-		if (!share.getRecipient().equals(owner)) {
+		ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, LogAction.DELETE, share,
+				AuditLogEntryType.SHARE_ENTRY);
+		if (cause != null) {
+			log.setCause(cause);
+		}
+		if (share.getRecipient().equals(owner)) {
+			// If the modified account (aka owner parameter) is the recipient of this share.
+			// We does not need to send him a notification.
+			// But we need to warn the sender
+			String senderUuid = share.getEntryOwner().getLsUuid();
+			log.addRelatedAccounts(senderUuid);
+			EventNotification event = new EventNotification(log, senderUuid);
+			logEntryService.insert(log, event);
+		} else {
+			// The sender is deleting the current share, we need to warn the recipient.
+			String recipientUuid = share.getRecipient().getLsUuid();
+			log.addRelatedAccounts(recipientUuid);
+			EventNotification event = new EventNotification(log, recipientUuid);
+			logEntryService.insert(log, event);
 			MailContainerWithRecipient mail = mailBuildingService
 					.buildSharedDocDeleted(share.getRecipient(), share);
 			notifierService.sendNotification(mail);
 		}
-		ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, LogAction.DELETE, share,
-				AuditLogEntryType.SHARE_ENTRY);
-		auditUserMongoRepository.insert(log);
 	}
 
-//	AKO : LOG COPY AND DELETE
 	@Override
 	public DocumentEntry copy(Account actor, Account owner, String shareUuid)
 			throws BusinessException {
@@ -180,32 +198,33 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		// step2 : copy the resource
 		Calendar expiryTime = functionalityService.getDefaultFileExpiryTime(owner.getDomain());
 		documentEntry = documentEntryBusinessService.copyFromShareEntry(owner, share, expiryTime);
-		// step3 : log the copy
-		ShareLogEntry logEntryShare = ShareLogEntry.hasCopiedAShare(owner,
-				share);
-		logEntryService.create(logEntryShare);
+		// step3 : log the document creation
+		DocumentEntryAuditLogEntry docLog = new DocumentEntryAuditLogEntry(actor, owner, documentEntry, LogAction.CREATE);
+		docLog.setCause(LogActionCause.COPY);
+		docLog.setFromResourceUuid(shareUuid);
 		// step4 : remove the share
-		// No need to send a notification to the recipient if he is the current
-		// owner.
-		if (!share.getRecipient().equals(owner)) {
-			// if (share.getDownloaded() < 1) {
-			MailContainerWithRecipient mail = mailBuildingService
-					.buildSharedDocDeleted(share.getRecipient(), share);
-			notifierService.sendNotification(mail);
-		}
-		ShareLogEntry logEntry = new ShareLogEntry(owner, share,
-				LogAction.SHARE_DELETE,
-				"Remove a received sharing (Copy of a sharing)");
-		logEntryService.create(logEntry);
+		MailContainerWithRecipient mail = mailBuildingService
+				.buildSharedDocDeleted(share.getRecipient(), share);
+		notifierService.sendNotification(mail);
 		logger.info("delete share : " + share.getUuid());
 		// step 5 : notification
 		if (share.getDownloaded() < 1) {
-			MailContainerWithRecipient mail = mailBuildingService
+			mail = mailBuildingService
 					.buildRegisteredDownload(share);
 			notifierService.sendNotification(mail);
 		}
 		// The share is now useless. We can delete it.
 		shareEntryBusinessService.delete(share);
+		// step6 : log the share deletion
+		ShareEntryAuditLogEntry shareLog = new ShareEntryAuditLogEntry(actor, owner, LogAction.DELETE, share,
+				AuditLogEntryType.SHARE_ENTRY);
+		String senderUuid = share.getEntryOwner().getLsUuid();
+		shareLog.addRelatedAccounts(senderUuid);
+		shareLog.setCause(LogActionCause.COPY);
+		// step create an event to notify the sender of share deletion.
+		EventNotification event = new EventNotification(shareLog, senderUuid);
+		logEntryService.insert(docLog);
+		logEntryService.insert(shareLog, event);
 		return documentEntry;
 	}
 
@@ -216,18 +235,18 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		String uuid = dto.getUuid();
 		Validate.notEmpty(uuid, "Missing share entry uuid");
 		ShareEntry share = find(actor, owner, uuid);
-		ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, LogAction.UPDATE, share,
-				AuditLogEntryType.SHARE_ENTRY);
 		/*
 		 * Actually the owner have the right to update his own shareEntry. Is it
 		 * really useful ?
 		 */
 		checkUpdatePermission(actor, owner, ShareEntry.class,
 				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, share);
+		ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, LogAction.UPDATE, share,
+				AuditLogEntryType.SHARE_ENTRY);
 		share.setComment(dto.getComment());
 		share = shareEntryBusinessService.update(share);
 		log.setResourceUpdated(new ShareEntryMto(share));
-		auditUserMongoRepository.insert(log);
+		logEntryService.insert(log);
 		return share;
 	}
 
@@ -249,18 +268,18 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		ShareEntry share = find(actor, owner, uuid);
 		checkDownloadPermission(actor, owner, ShareEntry.class,
 				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, share);
-		ShareLogEntry logEntryActor = ShareLogEntry.hasDownloadedAShare(owner,
-				share);
-		ShareLogEntry logEntryTarget = ShareLogEntry.aShareWasDownloaded(owner,
-				share);
-		logEntryService.create(logEntryActor);
-		logEntryService.create(logEntryTarget);
 		if (share.getDownloaded() <= 0) {
 			MailContainerWithRecipient mail = mailBuildingService
 					.buildRegisteredDownload(share);
 			notifierService.sendNotification(mail);
 		}
-		shareEntryBusinessService.updateDownloadCounter(share.getUuid());
+		share = shareEntryBusinessService.updateDownloadCounter(share.getUuid());
+		ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, LogAction.DOWNLOAD, share,
+				AuditLogEntryType.SHARE_ENTRY);
+		String senderUuid = share.getEntryOwner().getLsUuid();
+		log.addRelatedAccounts(senderUuid);
+		EventNotification event = new EventNotification(log, senderUuid);
+		logEntryService.insert(log, event);
 		return documentEntryBusinessService.getDocumentStream(share
 				.getDocumentEntry());
 	}
@@ -280,7 +299,6 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		checkCreatePermission(actor, owner, ShareEntry.class,
 				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, null);
 		Set<ShareEntry> entries = Sets.newHashSet();
-		List<ShareEntryAuditLogEntry> log = Lists.newArrayList();
 		for (User recipient : sc.getShareRecipients()) {
 			MailContainer mailContainer = new MailContainer(
 					recipient.getExternalMailLocale(), sc.getMessage(), sc.getSubject());
@@ -292,18 +310,12 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 				shares.add(createShare);
 				recipientFavouriteRepository.incAndCreate(owner,
 						recipient.getMail());
-				ShareLogEntry logEntry = new ShareLogEntry(owner, createShare,
-						LogAction.FILE_SHARE, "Sharing of a file");
-				if(sc.getEnableUSDA()){
-					logEntry = new ShareLogEntry(owner, createShare,
-							LogAction.FILE_SHARE_WITH_ALERT_FOR_USD, "Anonymous sharing of a file");
-				}
-				logEntryService.create(logEntry);
-				logEntryService.create(new ShareLogEntry(recipient,
-						LogAction.SHARE_RECEIVED, "Receiving a shared file",
-						createShare, owner));
-				log.add(new ShareEntryAuditLogEntry(actor, owner, LogAction.CREATE, createShare,
-						AuditLogEntryType.SHARE_ENTRY));
+				ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, LogAction.CREATE, createShare,
+						AuditLogEntryType.SHARE_ENTRY);
+				String recipientUuid = recipient.getLsUuid();
+				log.addRelatedAccounts(recipientUuid);
+				sc.addLog(log);
+				sc.addEvent(new EventNotification(log, recipientUuid));
 			}
 			entries.addAll(shares);
 			MailContainerWithRecipient mail = null;
@@ -316,7 +328,13 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			}
 			sc.addMailContainer(mail);
 		}
-		auditUserMongoRepository.insert(log);
+		// if there is no shares, ie anonymous shares only, there is no logs neither events.
+		if (!sc.getLogs().isEmpty()) {
+			// logs all logs and events in share container, create them and reset lists.
+			logEntryService.insert(sc.getLogs(), sc.getEvents());
+			sc.getLogs().clear();
+			sc.getEvents().clear();
+		}
 		return entries;
 	}
 

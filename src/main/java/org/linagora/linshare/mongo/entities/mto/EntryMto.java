@@ -40,20 +40,15 @@ public abstract class EntryMto {
 
 	protected String uuid;
 
-	protected AccountMto owner;
-
 	protected String name;
 
 	public EntryMto() {
 		super();
 	}
 
-	public EntryMto(Entry entry, boolean withOwner) {
+	public EntryMto(Entry entry) {
 		this.uuid = entry.getUuid();
 		this.name = entry.getName();
-		if (withOwner) {
-			this.owner = new AccountMto(entry.getEntryOwner());
-		}
 	}
 
 	public String getUuid() {
@@ -62,14 +57,6 @@ public abstract class EntryMto {
 
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
-	}
-
-	public AccountMto getOwner() {
-		return owner;
-	}
-
-	public void setOwner(AccountMto owner) {
-		this.owner = owner;
 	}
 
 	public String getName() {

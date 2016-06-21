@@ -33,11 +33,11 @@
  */
 package org.linagora.linshare.mongo.entities.mto;
 
-import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
-import org.linagora.linshare.core.domain.objects.Recipient;
 
 public class ShareEntryMto extends EntryMto {
+
+	protected AccountMto sender;
 
 	protected AccountMto recipient;
 
@@ -52,15 +52,19 @@ public class ShareEntryMto extends EntryMto {
 	}
 
 	public ShareEntryMto(ShareEntry entry) {
-		super(entry, false);
+		super(entry);
 		this.recipient = new AccountMto(entry.getRecipient());
+		this.sender = new AccountMto(entry.getEntryOwner());
 		this.documentEntry = new DocumentMto(entry.getDocumentEntry());
 		this.downloaded = entry.getDownloaded();
 	}
 
-	public ShareEntryMto(Entry entry, Recipient recipient) {
-		super(entry, false);
-		this.recipient = new AccountMto(recipient);
+	public AccountMto getSender() {
+		return sender;
+	}
+
+	public void setSender(AccountMto sender) {
+		this.sender = sender;
 	}
 
 	public AccountMto getRecipient() {

@@ -198,4 +198,9 @@ public class LogEntryServiceImpl implements LogEntryService {
 		eventNotificationMongoRepository.insert(events);
 		return log;
 	}
+
+	@Override
+	public EventNotification insertEvent(EventNotification event) {
+		return eventNotificationMongoRepository.insert(event);
+	}
 }

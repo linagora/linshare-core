@@ -51,6 +51,8 @@ public class AuditLogEntry {
 
 	protected LogActionCause cause;
 
+	protected String fromResourceUuid;
+
 	protected AuditLogEntryType type;
 
 	protected Date creationDate;
@@ -120,6 +122,14 @@ public class AuditLogEntry {
 
 	public void setCause(LogActionCause cause) {
 		this.cause = cause;
+	}
+
+	public String getFromResourceUuid() {
+		return fromResourceUuid;
+	}
+
+	public void setFromResourceUuid(String fromResourceUuid) {
+		this.fromResourceUuid = fromResourceUuid;
 	}
 
 	@Override

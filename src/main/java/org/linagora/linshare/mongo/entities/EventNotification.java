@@ -47,22 +47,16 @@ public class EventNotification {
 
 	protected List<String> relatedAccounts;
 
-	public EventNotification(AuditLogEntry event, List<String> uuids) {
+	public EventNotification(AuditLogEntry log, List<String> uuids) {
 		super();
-		this.event = event;
+		this.event = log;
 		this.relatedAccounts = uuids;
 	}
 
-	public EventNotification(AuditLogEntry event, String... uuids) {
+	public EventNotification(AuditLogEntry log, String... uuids) {
 		super();
-		this.event = event;
+		this.event = log;
 		this.relatedAccounts = Lists.newArrayList(uuids);
-	}
-
-	public EventNotification(AuditLogEntry event) {
-		super();
-		this.event = event;
-		this.relatedAccounts = Lists.newArrayList();
 	}
 
 	public AuditLogEntry getEvent() {

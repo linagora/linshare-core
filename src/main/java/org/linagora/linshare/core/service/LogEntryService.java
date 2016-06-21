@@ -96,4 +96,6 @@ public interface LogEntryService {
 	List<AuditLogEntryUser> insert(int level, List<AuditLogEntryUser> entities);
 
 	List<AuditLogEntryUser> insert(int level, List<AuditLogEntryUser> entities, List<EventNotification> events);
+
+	EventNotification insertEvent(EventNotification event);
 }

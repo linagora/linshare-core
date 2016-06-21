@@ -123,7 +123,6 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 
 		Account sender = share.getEntryOwner();
 		sender.getEntries().remove(share);
-
 		documentEntryRepository.update(documentEntry);
 	}
 

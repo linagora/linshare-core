@@ -48,14 +48,7 @@ public class DocumentMto extends EntryMto {
 	}
 
 	public DocumentMto(DocumentEntry entry) {
-		super(entry, false);
-		this.type = entry.getType();
-		this.sha256Sum = entry.getSha256sum();
-		this.size = entry.getSize();
-	}
-
-	public DocumentMto(DocumentEntry entry, boolean withOwner) {
-		super(entry, withOwner);
+		super(entry);
 		this.type = entry.getType();
 		this.sha256Sum = entry.getSha256sum();
 		this.size = entry.getSize();

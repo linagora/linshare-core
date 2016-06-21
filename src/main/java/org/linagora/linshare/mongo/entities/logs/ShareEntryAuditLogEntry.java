@@ -58,7 +58,7 @@ public class ShareEntryAuditLogEntry extends AuditLogEntryUser {
 
 	protected ShareEntryMto resourceUpdated;
 
-	protected ShareEntryGroupMto seg;
+	protected ShareEntryGroupMto shareEntryGroup;
 
 	public ShareEntryAuditLogEntry() {
 		super();
@@ -70,7 +70,7 @@ public class ShareEntryAuditLogEntry extends AuditLogEntryUser {
 		this.recipientMail = entry.getRecipient().getMail();
 		this.recipientUuid = entry.getRecipient().getLsUuid();
 		this.resource = new ShareEntryMto(entry);
-		this.seg = new ShareEntryGroupMto(entry.getShareEntryGroup());
+		this.shareEntryGroup = new ShareEntryGroupMto(entry.getShareEntryGroup());
 	}
 
 	public ShareEntryAuditLogEntry(Account actor, Account owner, LogAction action, AnonymousShareEntry entry,
@@ -78,7 +78,7 @@ public class ShareEntryAuditLogEntry extends AuditLogEntryUser {
 		super(new AccountMto(actor), new AccountMto(owner), action, type, entry.getUuid());
 		this.recipientMail = entry.getAnonymousUrl().getContact().getMail();
 		this.resource = new AnonymousShareEntryMto(entry);
-		this.seg = new ShareEntryGroupMto(entry.getShareEntryGroup());
+		this.shareEntryGroup = new ShareEntryGroupMto(entry.getShareEntryGroup());
 	}
 
 	public EntryMto getResource() {
@@ -111,5 +111,13 @@ public class ShareEntryAuditLogEntry extends AuditLogEntryUser {
 
 	public void setResourceUpdated(ShareEntryMto resourceUpdated) {
 		this.resourceUpdated = resourceUpdated;
+	}
+
+	public ShareEntryGroupMto getShareEntryGroup() {
+		return shareEntryGroup;
+	}
+
+	public void setShareEntryGroup(ShareEntryGroupMto shareEntryGroup) {
+		this.shareEntryGroup = shareEntryGroup;
 	}
 }
