@@ -69,7 +69,7 @@ public class ShareCreationDto {
 	protected Date notificationDateForUSDA;
 
 	@ApiModelProperty(value = "enableUSDA")
-	protected boolean enableUSDA;
+	protected Boolean enableUSDA;
 
 	@ApiModelProperty(value = "sharingNote")
 	protected String sharingNote;
@@ -133,11 +133,11 @@ public class ShareCreationDto {
 		this.notificationDateForUSDA = notificationDateForUSDA;
 	}
 
-	public boolean isEnableUSDA() {
+	public Boolean isEnableUSDA() {
 		return enableUSDA;
 	}
 
-	public void setEnableUSDA(boolean enableUSDA) {
+	public void setEnableUSDA(Boolean enableUSDA) {
 		this.enableUSDA = enableUSDA;
 	}
 
