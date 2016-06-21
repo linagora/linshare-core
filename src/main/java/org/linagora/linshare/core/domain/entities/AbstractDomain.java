@@ -135,7 +135,7 @@ public abstract class AbstractDomain {
 	}
 
 	public AbstractDomain(DomainDto domainDto, AbstractDomain parent) {
-		this.uuid = domainDto.getIdentifier();
+		this.uuid = domainDto.getUuid();
 		this.label = domainDto.getLabel();
 		this.description = domainDto.getDescription();
 		this.functionalities = new HashSet<Functionality>();

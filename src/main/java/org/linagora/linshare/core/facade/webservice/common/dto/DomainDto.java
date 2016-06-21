@@ -60,7 +60,7 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 public class DomainDto {
 
 	@ApiModelProperty(value = "Uuid")
-	private String identifier;
+	private String uuid;
 
 	@ApiModelProperty(value = "Label")
 	private String label;
@@ -106,7 +106,7 @@ public class DomainDto {
 
 	protected DomainDto(final AbstractDomain domain, boolean light,
 			boolean recursive) {
-		this.identifier = domain.getUuid();
+		this.uuid = domain.getUuid();
 		this.label = domain.getLabel();
 		this.type = domain.getDomainType().toString();
 		mimePolicyUuid = domain.getMimePolicy().getUuid();
@@ -130,7 +130,7 @@ public class DomainDto {
 			for (AbstractDomain child : domain.getSubdomain()) {
 				DomainDto childDto = new DomainDto(child, light, recursive);
 				this.children.add(childDto);
-				childDto.parent = this.identifier;
+				childDto.parent = this.uuid;
 			}
 		}
 	}
@@ -155,12 +155,12 @@ public class DomainDto {
 		return new DomainDto(domain, false, true);
 	}
 
-	public String getIdentifier() {
-		return identifier;
+	public String getUuid() {
+		return uuid;
 	}
 
-	public void setIdentifier(String uuid) {
-		this.identifier = uuid;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public String getLabel() {
