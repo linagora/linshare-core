@@ -97,6 +97,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	private final UploadRequestEntryBusinessService uploadRequestEntryBusinessService;
 	private final boolean thumbEnabled;
 	private final boolean pdfThumbEnabled;
+	private final boolean deduplication;
 
 	public DocumentEntryBusinessServiceImpl(
 			final FileDataStore fileSystemDao,
@@ -108,7 +109,8 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			final ThreadEntryRepository threadEntryRepository,
 			final UploadRequestEntryBusinessService uploadRequestEntryBusinessService,
 			final boolean thumbEnabled,
-			final boolean pdfThumbEnabled) {
+			final boolean pdfThumbEnabled,
+			final boolean deduplication) {
 		super();
 		this.fileDataStore = fileSystemDao;
 		this.timeStampingService = timeStampingService;
@@ -120,6 +122,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		this.uploadRequestEntryBusinessService = uploadRequestEntryBusinessService;
 		this.thumbEnabled = thumbEnabled;
 		this.pdfThumbEnabled = pdfThumbEnabled;
+		this.deduplication = deduplication;
 	}
 
 	@Override
@@ -411,7 +414,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	private Document createDocument(Account owner, File myFile, Long size, String fileName, String timeStampingUrl, String mimeType) throws BusinessException {
 		String sha256sum = SHA256CheckSumFileStream(myFile);
 		List<Document> documents = documentRepository.findBySha256Sum(sha256sum);
-		if (documents.isEmpty()) {
+		if (documents.isEmpty() || !deduplication) {
 			// Storing file
 			FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, mimeType, size, fileName);
 			metadata = fileDataStore.add(myFile, metadata);
