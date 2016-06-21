@@ -51,6 +51,9 @@ public class ShareEntryGroupMto {
 
 	protected Boolean enabledUSDA;
 
+	public ShareEntryGroupMto() {
+	}
+
 	public ShareEntryGroupMto(ShareEntryGroup seg) {
 		super();
 		this.uuid = seg.getUuid();
