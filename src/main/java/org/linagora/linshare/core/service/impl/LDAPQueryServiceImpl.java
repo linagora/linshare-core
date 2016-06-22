@@ -91,6 +91,7 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 
 		Map<String, Object> vars = new HashMap<String, Object>();
 		vars.put("domain", baseDn);
+		vars.put("logger", logger);
 
 		LqlRequestCtx lqlctx = new LqlRequestCtx(ldapContext, vars, true);
 		IDnList dnList = new LinShareDnList(domainPattern.getSearchPageSize(), domainPattern.getSearchSizeLimit());
@@ -112,6 +113,7 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 
 		Map<String, Object> vars = new HashMap<String, Object>();
 		vars.put("domain", baseDn);
+		vars.put("logger", logger);
 
 		LqlRequestCtx lqlctx = new LqlRequestCtx(ldapContext, vars, true);
 		IDnList dnList = new LinShareDnList(domainPattern.getSearchPageSize(), domainPattern.getSearchSizeLimit());
@@ -134,6 +136,7 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 
 		Map<String, Object> vars = new HashMap<String, Object>();
 		vars.put("domain", baseDn);
+		vars.put("logger", logger);
 
 		LqlRequestCtx lqlctx = new LqlRequestCtx(ldapContext, vars, true);
 		IDnList dnList = new LinShareDnList(domainPattern.getSearchPageSize(), domainPattern.getSearchSizeLimit());
@@ -157,6 +160,7 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 
 		Map<String, Object> vars = new HashMap<String, Object>();
 		vars.put("domain", baseDn);
+		vars.put("logger", logger);
 
 		LqlRequestCtx lqlctx = new LqlRequestCtx(ldapContext, vars, true);
 		IDnList dnList = new LinShareDnList(domainPattern.getSearchPageSize(), domainPattern.getSearchSizeLimit());
@@ -178,6 +182,7 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 
 		Map<String, Object> vars = new HashMap<String, Object>();
 		vars.put("domain", baseDn);
+		vars.put("logger", logger);
 
 		LqlRequestCtx lqlctx = new LqlRequestCtx(ldapContext, vars, true);
 		IDnList dnList = new LinShareDnList(domainPattern.getCompletionPageSize(), domainPattern.getCompletionSizeLimit());
@@ -200,6 +205,7 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 
 		Map<String, Object> vars = new HashMap<String, Object>();
 		vars.put("domain", baseDn);
+		vars.put("logger", logger);
 
 		LqlRequestCtx lqlctx = new LqlRequestCtx(ldapContext, vars, true);
 		IDnList dnList = new LinShareDnList(domainPattern.getCompletionPageSize(), domainPattern.getCompletionSizeLimit());
@@ -221,6 +227,7 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 
 		Map<String, Object> vars = new HashMap<String, Object>();
 		vars.put("domain", baseDn);
+		vars.put("logger", logger);
 
 		LqlRequestCtx lqlctx = new LqlRequestCtx(ldapContext, vars, true);
 		IDnList dnList = new LinShareDnList(domainPattern.getCompletionPageSize(), domainPattern.getCompletionSizeLimit());
