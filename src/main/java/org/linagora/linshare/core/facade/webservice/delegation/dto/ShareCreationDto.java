@@ -77,6 +77,10 @@ public class ShareCreationDto {
 	@ApiModelProperty(value= "mailingListUuid")
 	private Set<String> mailingListUuid;
 
+	public ShareCreationDto() {
+		super();
+	}
+
 	public List<GenericUserDto> getRecipients() {
 		return recipients;
 	}
