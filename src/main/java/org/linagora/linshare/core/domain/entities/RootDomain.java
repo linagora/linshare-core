@@ -43,8 +43,8 @@ public class RootDomain extends AbstractDomain {
 	public RootDomain() {
 	}
 
-	public RootDomain(String identifier, String label) {
-		super(identifier, label);
+	public RootDomain(String label) {
+		super(label);
 		this.defaultRole=Role.SUPERADMIN;
 		this.defaultTapestryLocale=SupportedLanguage.ENGLISH;
 	}

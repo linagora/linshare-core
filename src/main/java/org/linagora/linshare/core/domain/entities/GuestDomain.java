@@ -43,8 +43,8 @@ public class GuestDomain extends AbstractDomain {
 	}
 	
 
-	public GuestDomain(String identifier, String label) {
-		super(identifier, label);
+	public GuestDomain(String label) {
+		super(label);
 	}
 
 	public GuestDomain(DomainDto domainDto, AbstractDomain parent) {

@@ -109,8 +109,7 @@ public abstract class AbstractDomain {
 		this.uuid = null;
 	}
 
-	protected AbstractDomain(String uuid, String label) {
-		this.uuid = uuid;
+	protected AbstractDomain(String label) {
 		this.label = label;
 		this.description = "";
 		this.functionalities = new HashSet<Functionality>();

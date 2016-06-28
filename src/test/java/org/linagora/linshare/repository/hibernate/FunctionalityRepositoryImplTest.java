@@ -104,9 +104,12 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 		logger.debug("Current DomainPolicy : " + defaultPolicy.toString());
 		domainPolicyRepository.create(defaultPolicy);
 
-		currentDomain= new RootDomain(rootDomaineName,"My root domain");
+		currentDomain= new RootDomain("My root domain");
 		currentDomain.setPolicy(defaultPolicy);
 		abstractDomainRepository.create(currentDomain);
+		// FIXME : override uuid with default root domain previous identifier
+		currentDomain.setUuid(rootDomaineName);
+		currentDomain = abstractDomainRepository.update(currentDomain);
 		logger.debug("Current AbstractDomain object: " + currentDomain.toString());
 
 		logger.debug("End setUp");
@@ -280,7 +283,7 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 
 
 		String rootDomaineName2=rootDomaineName+"-0";
-		AbstractDomain currentDomain2= new RootDomain(rootDomaineName2,"My root domain");
+		AbstractDomain currentDomain2= new RootDomain("My root domain");
 
 		DomainAccessPolicy domainAccessPolicy = new DomainAccessPolicy();
 		domainAccessRepository.create(domainAccessPolicy);
@@ -290,6 +293,10 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 
 
 		abstractDomainRepository.create(currentDomain2);
+		// FIXME : override uuid with domain previous identifier
+		currentDomain2.setUuid("Domain0-0");
+		currentDomain2 = abstractDomainRepository.update(currentDomain2);
+
 		logger.debug("Current AbstractDomain object: " + currentDomain2.toString());
 
 		String value2 = "http://server/service";
@@ -512,7 +519,7 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 	@Ignore
 	@Test
 	public void testCloneStringFunctionality() throws BusinessException{
-		AbstractDomain otherDomain= new RootDomain(rootDomaineName+"_other","My root domain");
+		AbstractDomain otherDomain= new RootDomain("My root domain");
 		DomainAccessPolicy domainAccessPolicy = new DomainAccessPolicy();
 		domainAccessRepository.create(domainAccessPolicy);
 		DomainPolicy policy = new DomainPolicy(domainePolicyName1, domainAccessPolicy);
@@ -557,7 +564,7 @@ public class FunctionalityRepositoryImplTest extends AbstractTransactionalJUnit4
 	@Ignore
 	@Test
 	public void testCloneUnitValueFunctionality() throws BusinessException{
-		AbstractDomain otherDomain= new RootDomain(rootDomaineName+"_other","My root domain");
+		AbstractDomain otherDomain= new RootDomain("My root domain");
 		DomainAccessPolicy domainAccessPolicy = new DomainAccessPolicy();
 		domainAccessRepository.create(domainAccessPolicy);
 		DomainPolicy policy = new DomainPolicy(domainePolicyName1, domainAccessPolicy);

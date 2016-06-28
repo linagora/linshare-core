@@ -151,7 +151,7 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 	@Test
 	public void testCreateTopDomain() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		TopDomain topDomain = new TopDomain(topDomaineName,"label");
+		TopDomain topDomain = new TopDomain("label");
 		DomainPolicy policy = domainPolicyRepository.findById(LinShareConstants.defaultDomainPolicyIdentifier);
 		topDomain.setPolicy(policy);
 
@@ -180,7 +180,7 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 	@Test
 	public void testCreateTopDomain2() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		TopDomain topDomain = new TopDomain(topDomaineName + "1", "label");
+		TopDomain topDomain = new TopDomain("label");
 		DomainPolicy policy = domainPolicyRepository
 				.findById(LinShareConstants.defaultDomainPolicyIdentifier);
 		topDomain.setPolicy(policy);

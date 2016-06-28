@@ -92,22 +92,22 @@ public class DomainPolicyServiceImplTest extends AbstractJUnit4SpringContextTest
 		
 		
 		
-		rootDomain = new RootDomain("id_root","root domain");
+		rootDomain = new RootDomain("root domain");
 		rootDomain.setPolicy(domainePolicy1);
 		
-		t1 = new TopDomain("id_top1", "top1", (RootDomain)rootDomain);
+		t1 = new TopDomain("top1", (RootDomain)rootDomain);
 		rootDomain.addSubdomain(t1);
 		t1.setPolicy(domainePolicy1);
 		
-		s1 = new SubDomain("id_sub1","id_sub1",t1);
+		s1 = new SubDomain("id_sub1",t1);
 		t1.addSubdomain(s1);
 		s1.setPolicy(domainePolicy1);
 		
-		SubDomain s2 = new SubDomain("id_sub2","id_sub2",t1);
+		SubDomain s2 = new SubDomain("id_sub2",t1);
 		t1.addSubdomain(s2);
 		s2.setPolicy(domainePolicy1);
 		
-		GuestDomain s3 = new GuestDomain("id_sub3","id_sub3");
+		GuestDomain s3 = new GuestDomain("id_sub3");
 		s3.setParentDomain(t1);
 		t1.addSubdomain(s3);
 		s3.setPolicy(domainePolicy1);
@@ -115,22 +115,22 @@ public class DomainPolicyServiceImplTest extends AbstractJUnit4SpringContextTest
 		
 		
 		
-		t2 = new TopDomain("id_top2", "top2", (RootDomain)rootDomain);
+		t2 = new TopDomain("top2", (RootDomain)rootDomain);
 		rootDomain.addSubdomain(t2);
 		DomainPolicy domainePolicy2 = new DomainPolicy("TestAccessPolicy1", new DomainAccessPolicy());
 		domainePolicy2.getDomainAccessPolicy().addRule(new AllowDomain(t2));
 		domainePolicy2.getDomainAccessPolicy().addRule(new DenyAllDomain());
 		t2.setPolicy(domainePolicy2);
 		
-		s4 = new SubDomain("id_sub4","id_sub4",t2);
+		s4 = new SubDomain("id_sub4",t2);
 		t2.addSubdomain(s4);
 		s4.setPolicy(domainePolicy2);
 		
-		SubDomain s5 = new SubDomain("id_sub5","id_sub5",t2);
+		SubDomain s5 = new SubDomain("id_sub5",t2);
 		t2.addSubdomain(s5);
 		s5.setPolicy(domainePolicy2);
 		
-		SubDomain s6 = new SubDomain("id_sub6","id_sub6",t2);
+		SubDomain s6 = new SubDomain("id_sub6",t2);
 		t2.addSubdomain(s6);
 		s6.setPolicy(domainePolicy2);
 		

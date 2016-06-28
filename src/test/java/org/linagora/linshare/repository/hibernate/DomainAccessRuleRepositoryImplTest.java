@@ -107,9 +107,13 @@ public class DomainAccessRuleRepositoryImplTest extends AbstractTransactionalJUn
 
 		domainPolicyRepository.create(policy);
 
-		AbstractDomain currentDomain= new RootDomain(rootDomaineName + "-" + var,"My root domain");
+		AbstractDomain currentDomain= new RootDomain("My root domain");
 		currentDomain.setPolicy(policy);
 		abstractDomainRepository.create(currentDomain);
+
+		// FIXME : override uuid with default root domain name
+		currentDomain.setUuid(rootDomaineName + "-" + var);
+		currentDomain = abstractDomainRepository.update(currentDomain);
 		logger.debug("Current AbstractDomain object: " + currentDomain.toString());
 		return currentDomain;
 	}

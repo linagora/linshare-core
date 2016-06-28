@@ -46,19 +46,19 @@ public class TopDomain extends AbstractDomain {
 	/*
 	 * For tests only
 	 */
-	public TopDomain(String identifier, String label, RootDomain rootDomain) {
-		super(identifier, label);
+	public TopDomain(String label, RootDomain rootDomain) {
+		super(label);
 		this.defaultRole = Role.ADMIN;
 		this.defaultTapestryLocale = SupportedLanguage.ENGLISH;
 		this.parentDomain = rootDomain;
 	}
 
-	public TopDomain(String identifier, String label) {
-		this(identifier,label,null);
-	}
-
 	public TopDomain(DomainDto domainDto, AbstractDomain parent) {
 		super(domainDto, parent);
+	}
+
+	public TopDomain(String label) {
+		this.label = label;
 	}
 
 	@Override
