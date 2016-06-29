@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2015-2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2016. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -42,7 +42,6 @@ import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.AnonymousUrlRepository;
 import org.linagora.linshare.core.service.PasswordService;
@@ -73,7 +72,7 @@ public class AnonymousUrlBusinessServiceImpl implements AnonymousUrlBusinessServ
 	}
 
 	@Override
-	public AnonymousUrl findByUuid(String uuid) {
+	public AnonymousUrl find(String uuid) {
 		return anonymousUrlRepository.findByUuid(uuid);
 	}
 
@@ -94,16 +93,6 @@ public class AnonymousUrlBusinessServiceImpl implements AnonymousUrlBusinessServ
 	@Override
 	public void update(AnonymousUrl anonymousUrl) throws BusinessException {
 		anonymousUrlRepository.update(anonymousUrl);
-	}
-
-
-	@Override
-	public AnonymousUrl getAnonymousUrl(String uuid) throws LinShareNotSuchElementException {
-		AnonymousUrl anonymousUrl = findByUuid(uuid);
-		if(anonymousUrl == null) {
-			 throw new LinShareNotSuchElementException("anonymousUrl url not found");
-		}
-		return anonymousUrl;
 	}
 
 	@Override

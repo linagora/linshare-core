@@ -156,6 +156,19 @@ public class AnonymousUrl {
 		return docNames;
 	}
 
+	/**
+	 * Get the owner of an anonymous url
+	 * TODO add property Account for the owner
+	 */
+	public Account getOwner() {
+		Account owner = null;
+		for (AnonymousShareEntry anonymousShareEntry : anonymousShareEntries) {
+			owner = anonymousShareEntry.getEntryOwner();
+			break;
+		}
+		return owner;
+	}
+
 	public boolean oneDocumentIsEncrypted() {
 		boolean isOneDocEncrypted = false;
 		for (AnonymousShareEntry anonymousShareEntry : anonymousShareEntries) {

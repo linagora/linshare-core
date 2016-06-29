@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2016 LINAGORA
+ * Copyright (C) 2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,37 +31,80 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.core.facade.webservice.anonymousurl.dto;
 
-import java.io.InputStream;
-import java.util.List;
+import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
-import org.linagora.linshare.core.domain.entities.AnonymousUrl;
-import org.linagora.linshare.core.domain.entities.SystemAccount;
-import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
-public interface AnonymousUrlService {
+@XmlRootElement(name = "AnonymousShareEntry")
+@ApiModel(value = "AnonymousShareEntry", description = "An AnonymousShareEntry")
+public class ShareEntryDto {
 
-	public boolean isProtectedByPassword(Account actor, AnonymousUrl anonymousUrl) throws BusinessException;
+	@ApiModelProperty(value = "Uuid")
+	private String uuid;
 
-	public InputStream downloadDocument(Account actor, Account owner, String anonymousUrlUuid, String anonymousShareEntryUuid, String password) throws BusinessException;
+	@ApiModelProperty(value = "Name")
+	private String name;
 
-	List<String> findAllExpiredEntries(Account actor, Account owner);
+	@ApiModelProperty(value = "Size")
+	private Long size;
 
-	AnonymousUrl find(Account actor, Account owner, String uuid, String password);
+	@ApiModelProperty(value = "Type")
+	private String type;
 
-	AnonymousUrl find(Account actor, Account owner, String uuid);
+	public ShareEntryDto() {
+		super();
+	}
 
-	AnonymousUrl delete(Account actor, Account owner, String uuid);
+	public ShareEntryDto(String uuid, String name, Long size, String type) {
+		super();
+		this.uuid = uuid;
+		this.name = name;
+		this.size = size;
+		this.type = type;
+	}
 
-	InputStream retrieveArchiveZipStream(Account actor, Account owner, String anonymousUrlUuid, String password) throws BusinessException ;
+	public ShareEntryDto(String anonymousShareEntryUuid, DocumentEntry entry) {
+		super();
+		this.uuid = anonymousShareEntryUuid;
+		this.name = entry.getName();
+		this.size = entry.getSize();
+		this.type = entry.getType();
+	}
 
-	InputStream downloadThumbnail(Account actor, Account owner, String anonymousUrlUuid, String anonymousShareEntryUuid, String password) throws BusinessException;
+	public String getName() {
+		return name;
+	}
 
-	SystemAccount getAnonymousURLAccount();
+	public void setName(String name) {
+		this.name = name;
+	}
 
-	AnonymousShareEntry getAnonymousShareEntry(Account actor, Account owner, String anonymousUrlUuid, String anonymousShareEntryUuid, String password);
+	public Long getSize() {
+		return size;
+	}
+
+	public void setSize(Long size) {
+		this.size = size;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
 }

@@ -39,19 +39,15 @@ import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
 
 public interface AnonymousUrlBusinessService {
 
-	AnonymousUrl findByUuid(String uuid);
+	AnonymousUrl find(String uuid);
 
 	AnonymousUrl create(Boolean passwordProtected, Contact contact)
 			throws BusinessException;
 
 	void update(AnonymousUrl anonymousUrl) throws BusinessException;
-
-	AnonymousUrl getAnonymousUrl(String uuid)
-			throws LinShareNotSuchElementException;
 
 	boolean isValidPassword(AnonymousUrl anonymousUrl, String password);
 

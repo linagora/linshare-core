@@ -239,4 +239,15 @@ public class AnonymousShareEntryServiceImpl extends
 		}
 		return anonymousShareEntryBusinessService.findAllExpiredEntries();
 	}
+
+	@Override
+	public InputStream getAnonymousShareEntryThumbnailStream(Account actor,
+			String shareUuid) throws BusinessException {
+		AnonymousShareEntry shareEntry = find(actor, actor, shareUuid);
+		rac.checkThumbNailDownloadPermission(actor, actor,
+				AnonymousShareEntry.class,
+				BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN, shareEntry);
+		return documentEntryBusinessService
+				.getDocumentThumbnailStream(shareEntry.getDocumentEntry());
+	}
 }
