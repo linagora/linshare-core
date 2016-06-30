@@ -120,4 +120,22 @@ public class ThreadMemberRepositoryImpl extends
 		det.setProjection(Projections.rowCount());
 		return DataAccessUtils.longResult(findByCriteria(det));
 	}
+
+	@Override
+	public List<ThreadMember> findAllThreadMembers(Thread thread) {
+		DetachedCriteria det = DetachedCriteria.forClass(ThreadMember.class);
+		det.createAlias("user", "member");
+		det.add(Restrictions.eq("thread", thread));
+		det.add(Restrictions.eq("member.destroyed", 0L));
+		return findByCriteria(det);
+	}
+
+	@Override
+	public List<ThreadMember> findAllInconsistentThreadMembers(Thread thread) {
+		DetachedCriteria det = DetachedCriteria.forClass(ThreadMember.class);
+		det.createAlias("user", "member");
+		det.add(Restrictions.eq("thread", thread));
+		det.add(Restrictions.gt("member.destroyed", 0L));
+		return findByCriteria(det);
+	}
 }

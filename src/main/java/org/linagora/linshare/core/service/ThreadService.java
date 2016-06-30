@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.service;
 
 import java.util.List;
-import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
@@ -54,7 +53,7 @@ public interface ThreadService {
 	
 	ThreadMember getMemberFromUser(Thread thread, User user) throws BusinessException;
 
-	Set<ThreadMember> getMembers(Account actor, User owner, Thread thread) throws BusinessException;
+	List<ThreadMember> findAllThreadMembers(Account actor, User owner, Thread thread) throws BusinessException;
 
 	List<Thread> findAllWhereMember(User user);
 	
@@ -91,4 +90,6 @@ public interface ThreadService {
 	List<Thread> searchByMembers(User actor, String pattern);
 
 	Thread findByLsUuidUnprotected(String uuid);
+
+	List<ThreadMember> findAllInconsistentMembers(Account actor, User owner, Thread thread);
 }

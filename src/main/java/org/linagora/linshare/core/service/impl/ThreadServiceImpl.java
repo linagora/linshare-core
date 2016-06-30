@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
@@ -164,11 +163,19 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 	}
 
 	@Override
-	public Set<ThreadMember> getMembers(Account actor, User owner, Thread thread)
-			throws BusinessException {
+	public List<ThreadMember> findAllThreadMembers(Account actor, User owner,
+			Thread thread) throws BusinessException {
 		threadMemberAC.checkListPermission(actor, owner, ThreadMember.class,
 				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN, null, thread);
-		return thread.getMyMembers();
+		return threadMemberRepository.findAllThreadMembers(thread);
+	}
+
+	@Override
+	public List<ThreadMember> findAllInconsistentMembers(Account actor, User owner,
+			Thread thread) throws BusinessException {
+		threadMemberAC.checkListPermission(actor, owner, ThreadMember.class,
+				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN, null, thread);
+		return threadMemberRepository.findAllInconsistentThreadMembers(thread);
 	}
 
 	@Override
@@ -249,7 +256,13 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		Thread thread = find(actor, owner, threadUuid);
 		User user = userRepository.findByLsUuid(userUuid);
 		if (user == null) {
-			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Can not find user with uuid : " + userUuid);
+			user = userRepository.findDeleted(userUuid);
+			if (user == null) {
+				throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Can not find user with uuid : " + userUuid);
+			} else {
+				logger.info("The member with uuid " + userUuid
+						+ " you are trying to delete is already deleted");
+			}
 		}
 		ThreadMember member = getMemberFromUser(thread,
 				user);

@@ -246,7 +246,7 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 		User actor = findUser(actorVo);
 
 		return Ordering.natural().immutableSortedCopy(
-				toThreadMemberVo(threadService.getMembers(actor,
+				toThreadMemberVo(threadService.findAllThreadMembers(actor,
 						actor, findThread(threadVo))));
 	}
 

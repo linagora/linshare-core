@@ -38,6 +38,7 @@ import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -101,7 +102,8 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		User actor = checkAuthentication();
 
 		Thread thread = threadService.find(actor, actor, uuid);
-		return new ThreadDto(thread, thread.getMyMembers());
+		List<ThreadMember> members = threadService.findAllThreadMembers(actor, actor, thread);
+		return new ThreadDto(thread, members);
 	}
 
 	@Override

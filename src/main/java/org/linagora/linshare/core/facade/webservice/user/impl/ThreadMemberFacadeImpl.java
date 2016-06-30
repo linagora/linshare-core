@@ -69,7 +69,7 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		User actor = checkAuthentication();
 		Thread thread = threadService.find(actor, actor, threadUuid);
 		List<ThreadMemberDto> res = Lists.newArrayList();
-		for (ThreadMember m : threadService.getMembers(actor, actor, thread)) {
+		for (ThreadMember m : threadService.findAllThreadMembers(actor, actor, thread)) {
 			res.add(new ThreadMemberDto(m));
 		}
 		return res;
