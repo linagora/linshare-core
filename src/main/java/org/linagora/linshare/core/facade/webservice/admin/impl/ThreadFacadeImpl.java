@@ -35,6 +35,7 @@
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
@@ -105,9 +106,9 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "uuid must be set.");
 		Set<ThreadMemberDto> ret = new HashSet<ThreadMemberDto>();
-
-		for (ThreadMember m : threadService.find(actor, actor, uuid)
-				.getMyMembers())
+		Thread thread = threadService.find(actor, actor, uuid);
+		List<ThreadMember> threadMember = threadService.findAllThreadMembers(actor, actor, thread);
+		for (ThreadMember m : threadMember)
 			ret.add(new ThreadMemberDto(m));
 		return ret;
 	}

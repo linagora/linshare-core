@@ -98,4 +98,20 @@ public interface ThreadMemberRepository extends AbstractRepository<ThreadMember>
 	 * @return the amount of members
 	 */
 	public long count(Thread thread);
+
+	/**
+	 * Find members with no deleted accounts
+	 *
+	 * @param thread
+	 * @return the List of ThreadMember
+	 */
+	public List<ThreadMember> findAllThreadMembers(Thread thread);
+
+	/**
+	 * Find members with deleted accounts
+	 *
+	 * @param thread
+	 * @return the List of ThreadMember
+	 */
+	public List<ThreadMember> findAllInconsistentThreadMembers(Thread thread);
 }

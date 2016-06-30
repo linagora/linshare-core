@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.facade.webservice.common.dto;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -43,6 +42,7 @@ import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Sets;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -54,17 +54,17 @@ public class ThreadDto extends AccountDto {
 	protected String name;
 
     @ApiModelProperty(value = "Members")
-	protected List<ThreadMemberDto> members;
+	protected Set<ThreadMemberDto> members;
 
 	public ThreadDto(Thread thread) {
 		super(thread, true);
 		this.name = thread.getName();
 	}
 
-	public ThreadDto(Thread thread, Set<ThreadMember> members) {
+	public ThreadDto(Thread thread, List<ThreadMember> members) {
 		super(thread, true);
 		this.name = thread.getName();
-		this.members = new ArrayList<ThreadMemberDto>();
+		this.members = Sets.newHashSet();
 		for (ThreadMember member : members) {
 			this.members.add(new ThreadMemberDto(member));
 		}
@@ -82,11 +82,11 @@ public class ThreadDto extends AccountDto {
 		this.name = name;
 	}
 
-	public List<ThreadMemberDto> getMembers() {
+	public Set<ThreadMemberDto> getMembers() {
 		return members;
 	}
 
-	public void setMembers(List<ThreadMemberDto> members) {
+	public void setMembers(Set<ThreadMemberDto> members) {
 		this.members = members;
 	}
 

@@ -75,7 +75,7 @@ public class ThreadMemberFacadeImpl extends DelegationGenericFacadeImpl
 		Thread thread = threadService.find(actor, owner, threadUuid);
 		List<ThreadMemberDto> res = Lists.newArrayList();
 
-		for (ThreadMember m : threadService.getMembers(actor, owner, thread)) {
+		for (ThreadMember m : threadService.findAllThreadMembers(actor, owner, thread)) {
 			res.add(new ThreadMemberDto(m));
 		}
 		return res;
