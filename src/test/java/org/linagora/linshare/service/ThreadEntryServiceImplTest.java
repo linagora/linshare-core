@@ -66,7 +66,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-rac.xml",
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
-		"classpath:springContext-test2.xml"
+		"classpath:springContext-test.xml"
 		})
 public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
 	private static Logger logger = LoggerFactory

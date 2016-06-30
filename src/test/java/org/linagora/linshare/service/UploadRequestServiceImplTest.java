@@ -76,7 +76,7 @@ import com.google.common.collect.Sets;
 		"classpath:springContext-rac.xml",
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
-		"classpath:springContext-test2.xml", })
+		"classpath:springContext-test.xml", })
 public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
 	private static Logger logger = LoggerFactory.getLogger(UploadRequestServiceImplTest.class);
 

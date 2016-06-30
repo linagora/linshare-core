@@ -88,8 +88,9 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-rac.xml",
-		"classpath:springContext-jackRabbit.xml",
-		"classpath:springContext-test2.xml"
+		"classpath:springContext-fongo.xml",
+		"classpath:springContext-storage-jcloud.xml",
+		"classpath:springContext-test.xml"
 		})
 public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests{
 
