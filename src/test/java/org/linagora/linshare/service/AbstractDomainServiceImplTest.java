@@ -42,6 +42,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
@@ -75,7 +76,8 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-rac.xml",
-		"classpath:springContext-jackRabbit-mock.xml",
+		"classpath:springContext-fongo.xml",
+		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml"
 		})
 public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests{
@@ -119,6 +121,7 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		ldapconnexion  = new LdapConnection(identifier, providerUrl, securityAuth);
+		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
 		LdapAttribute attribute = new LdapAttribute("field", "attribute", false);
 		Map<String, LdapAttribute> attributeList = new HashMap<>();
 			attributeList.put("first", attribute);
@@ -133,7 +136,7 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		domainPattern.setAutoCompleteCommandOnAllAttributes("auto complete command 1");
 		domainPattern.setAutoCompleteCommandOnFirstAndLastName("auto complete command 2");
 		try {
-			domainPattern = userProviderService.createDomainPattern(null, domainPattern);
+			domainPattern = userProviderService.createDomainPattern(actor, domainPattern);
 		} catch (BusinessException e) {
 			e.printStackTrace();
 		}
@@ -145,13 +148,13 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
-	
-	
 
 	@Test
 	public void testCreateTopDomain() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		TopDomain topDomain = new TopDomain("label");
+		topDomain.setDefaultRole(Role.SIMPLE);
+		topDomain.setUsedSpace(0L);
 		DomainPolicy policy = domainPolicyRepository.findById(LinShareConstants.defaultDomainPolicyIdentifier);
 		topDomain.setPolicy(policy);
 
@@ -181,6 +184,8 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 	public void testCreateTopDomain2() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		TopDomain topDomain = new TopDomain("label");
+		topDomain.setDefaultRole(Role.SIMPLE);
+		topDomain.setUsedSpace(0L);
 		DomainPolicy policy = domainPolicyRepository
 				.findById(LinShareConstants.defaultDomainPolicyIdentifier);
 		topDomain.setPolicy(policy);

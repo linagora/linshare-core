@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.constants.Language;
@@ -131,6 +132,7 @@ public abstract class AbstractDomain {
 		this.mailConfigs = new HashSet<MailConfig>();
 		this.mimePolicies = new HashSet<MimePolicy>();
 		this.currentWelcomeMessage = null;
+		this.uuid = UUID.randomUUID().toString();
 	}
 
 	public AbstractDomain(DomainDto domainDto, AbstractDomain parent) {

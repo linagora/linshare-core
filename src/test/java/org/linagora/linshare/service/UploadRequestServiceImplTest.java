@@ -66,11 +66,17 @@ import org.subethamail.wiser.Wiser;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-@ContextConfiguration(locations = { "classpath:springContext-datasource.xml", "classpath:springContext-repository.xml",
-		"classpath:springContext-dao.xml", "classpath:springContext-ldap.xml",
-		"classpath:springContext-business-service.xml", "classpath:springContext-service-miscellaneous.xml",
-		"classpath:springContext-service.xml", "classpath:springContext-rac.xml",
-		"classpath:springContext-jackRabbit-mock.xml", "classpath:springContext-test2.xml", })
+@ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
+		"classpath:springContext-repository.xml",
+		"classpath:springContext-dao.xml",
+		"classpath:springContext-ldap.xml",
+		"classpath:springContext-business-service.xml",
+		"classpath:springContext-service-miscellaneous.xml",
+		"classpath:springContext-service.xml",
+		"classpath:springContext-rac.xml",
+		"classpath:springContext-fongo.xml",
+		"classpath:springContext-storage-jcloud.xml",
+		"classpath:springContext-test2.xml", })
 public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
 	private static Logger logger = LoggerFactory.getLogger(UploadRequestServiceImplTest.class);
 

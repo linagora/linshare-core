@@ -34,6 +34,7 @@
 package org.linagora.linshare.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.After;
@@ -41,10 +42,12 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.LdapConnectionService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +58,8 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
 		"classpath:springContext-repository.xml",
-		"classpath:springContext-jackRabbit-mock.xml",
+		"classpath:springContext-fongo.xml",
+		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-test.xml" })
@@ -74,6 +78,9 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 	@Autowired
 	private UserProviderService userProviderService;
 	
+	@Autowired
+	private AccountService accountService;
+
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
@@ -115,7 +122,8 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 		domainPattern.setAutoCompleteCommandOnAllAttributes("auto complete command 1");
 		domainPattern.setAutoCompleteCommandOnFirstAndLastName("auto complete command 2");
 		try {
-			userProviderService.createDomainPattern(null, domainPattern);
+			Account actor = accountService.findByLsUuid("root@localhost.localdomain");
+			userProviderService.createDomainPattern(actor, domainPattern);
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assert.fail("Can't create domain pattern.");
@@ -157,8 +165,9 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 		UserLdapPattern domainPattern = new UserLdapPattern(identifierP +"2", "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", attributeList);
 		domainPattern.setAutoCompleteCommandOnAllAttributes("auto complete command 1");
 		domainPattern.setAutoCompleteCommandOnFirstAndLastName("auto complete command 2");
+		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
 		try {
-			domainPattern = userProviderService.createDomainPattern(null, domainPattern);
+			domainPattern = userProviderService.createDomainPattern(actor, domainPattern);
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assert.fail("Can't create pattern.");
@@ -166,7 +175,7 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 		logger.debug("Current pattern object: " + domainPattern.toString());
 
 		try {
-			userProviderService.deletePattern(null, domainPattern.getUuid());
+			userProviderService.deletePattern(actor, domainPattern.getUuid());
 		} catch (BusinessException e) {
 			logger.error(e.toString());
 			e.printStackTrace();
@@ -175,7 +184,7 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 		logger.debug(LinShareTestConstants.END_TEST);
 
 	}
-	
+
 	@Test
 	public void testUpdateDomainPattern() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
@@ -183,15 +192,17 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 		UserLdapPattern domainPattern = null;
 		
 		try {
-			domainPattern = userProviderService.findAllUserDomainPattern().get(0);
+			List<UserLdapPattern> listD = userProviderService.findAllUserDomainPattern();
+			domainPattern = listD.get(0);
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assert.fail("Can't retrieve pattern.");
 		}
+		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
 		Map<String, LdapAttribute> attributes = domainPattern.getAttributes();
 		attributes.get(UserLdapPattern.USER_FIRST_NAME).setAttribute("foo");
 		try {
-			userProviderService.updateDomainPattern(null, domainPattern);
+			userProviderService.updateDomainPattern(actor, domainPattern);
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assert.fail("Can't update pattern.");

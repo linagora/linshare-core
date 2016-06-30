@@ -91,7 +91,8 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-rac.xml",
 		"classpath:springContext-start-embedded-ldap.xml",
-		"classpath:springContext-jackRabbit-mock.xml",
+		"classpath:springContext-fongo.xml",
+		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
 public class UserServiceImplTest extends
 		AbstractTransactionalJUnit4SpringContextTests {

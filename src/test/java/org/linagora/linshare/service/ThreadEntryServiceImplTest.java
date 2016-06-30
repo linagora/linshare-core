@@ -64,7 +64,8 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-service.xml",
 		"classpath:springContext-rac.xml",
-		"classpath:springContext-jackRabbit-mock.xml",
+		"classpath:springContext-fongo.xml",
+		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test2.xml"
 		})
 public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {

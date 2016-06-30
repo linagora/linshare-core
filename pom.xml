@@ -622,6 +622,12 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>com.github.fakemongo</groupId>
+			<artifactId>fongo</artifactId>
+			<version>1.6.8</version>
+			<scope>test</scope>
+		</dependency>
 		<!-- Test dependencies - end -->
 
 		<!-- timestamping bouncycastle last release : timestaping and ciphering-->

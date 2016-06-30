@@ -64,7 +64,7 @@ import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UserProviderServiceImpl implements UserProviderService {
+public class UserProviderServiceImpl extends GenericAdminServiceImpl implements UserProviderService {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(UserProviderServiceImpl.class);
@@ -95,6 +95,7 @@ public class UserProviderServiceImpl implements UserProviderService {
 	@Override
 	public UserLdapPattern createDomainPattern(Account actor, UserLdapPattern domainPattern)
 			throws BusinessException {
+		preChecks(actor);
 		Validate.notEmpty(domainPattern.getLabel());
 		Validate.notEmpty(domainPattern.getAuthCommand());
 		Validate.notEmpty(domainPattern.getSearchUserCommand());
@@ -137,6 +138,7 @@ public class UserProviderServiceImpl implements UserProviderService {
 
 	@Override
 	public UserLdapPattern deletePattern(Account actor, String patternToDelete) throws BusinessException {
+		preChecks(actor);
 		UserLdapPattern pattern = findDomainPattern(patternToDelete);
 		if (isUsed(pattern)) {
 			throw new BusinessException(
@@ -192,6 +194,7 @@ public class UserProviderServiceImpl implements UserProviderService {
 	@Override
 	public UserLdapPattern updateDomainPattern(Account actor, UserLdapPattern domainPattern)
 			throws BusinessException {
+		preChecks(actor);
 		UserLdapPattern pattern = domainPatternRepository
 				.findByUuid(domainPattern.getUuid());
 		DomainPatternAuditLogEntry log = new DomainPatternAuditLogEntry(actor, actor.getDomainId(),

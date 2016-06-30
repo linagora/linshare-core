@@ -45,7 +45,8 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.linagora.linshare.core.dao.FileSystemDao;
+import org.linagora.linshare.core.dao.FileDataStore;
+import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.constants.FileSizeUnit;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.Policies;
@@ -61,6 +62,7 @@ import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.TimeUnitClass;
 import org.linagora.linshare.core.domain.entities.UnitValueFunctionality;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
@@ -87,7 +89,8 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-service.xml",
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-rac.xml",
-		"classpath:springContext-jackRabbit-mock.xml",
+		"classpath:springContext-fongo.xml",
+		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml"
 		})
 public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests{
@@ -110,8 +113,9 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 	@Autowired
 	private DocumentRepository documentRepository;
 
+	@Qualifier("jcloudFileDataStore")
 	@Autowired
-	private FileSystemDao fileRepository;
+	private FileDataStore fileDataStore;
 
 	@Autowired
 	private DocumentEntryRepository documentEntryRepository;
@@ -159,7 +163,9 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 		documentEntryRepository.delete(aDocumentEntry);
 		jane.getEntries().clear();
 		userRepository.update(jane);
-		fileRepository.removeFileByUUID(aDocument.getUuid());
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.THUMBNAIL, aDocument, "image/png");
+		metadata.setUuid(aDocument.getUuid());
+		fileDataStore.remove(metadata);
 		documentRepository.delete(aDocument);
 
 		logger.debug(LinShareTestConstants.END_TEST);

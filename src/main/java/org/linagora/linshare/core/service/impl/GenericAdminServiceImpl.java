@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2016. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,40 +31,22 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.service;
+package org.linagora.linshare.core.service.impl;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
-import org.linagora.linshare.core.service.PasswordService;
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
-//@ActiveProfiles(value="jcloud")
-@ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
-		"classpath:springContext-dao.xml",
-		"classpath:springContext-ldap.xml",
-		"classpath:springContext-repository.xml",
-		"classpath:springContext-fongo.xml",
-		"classpath:springContext-storage-jcloud.xml",
-		"classpath:springContext-business-service.xml",
-		"classpath:springContext-service-miscellaneous.xml",
-		"classpath:springContext-test.xml" })
-public class PasswordServiceImpTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class GenericAdminServiceImpl {
 
-private static Logger logger = LoggerFactory.getLogger(UserServiceImplTest.class);
-	
-	@Autowired
-	private PasswordService passwordService;
-	
-	@Test
-	public void testGeneratePassword(){
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Assert.assertNotNull(passwordService.generatePassword());
-		logger.debug(LinShareTestConstants.END_TEST);
+	protected Logger logger = LoggerFactory.getLogger(this.getClass());
+
+	protected void preChecks(Account actor) {
+		Validate.notNull(actor, "Missing actor account");
+		Validate.notEmpty(actor.getLsUuid(), "Missing actor uuid");
+		if (logger.isDebugEnabled()) {
+			logger.debug("Current actor " + actor.getAccountRepresentation());
+		}
 	}
 }
