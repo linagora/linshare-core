@@ -43,6 +43,7 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -58,6 +59,7 @@ import org.apache.commons.lang.Validate;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.domain.constants.AsyncTaskType;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
@@ -95,16 +97,20 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 
 	private org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor taskExecutor;
 
+	private boolean sizeValidation;
+
 	public DocumentRestServiceImpl(
 			DocumentFacade documentFacade,
 			DocumentAsyncFacade documentAsyncFacade,
 			ThreadPoolTaskExecutor taskExecutor,
-			AsyncTaskFacade asyncTaskFacade) {
+			AsyncTaskFacade asyncTaskFacade,
+			boolean sizeValidation) {
 		super();
 		this.documentFacade = documentFacade;
 		this.documentAsyncFacade = documentAsyncFacade;
 		this.asyncTaskFacade = asyncTaskFacade;
 		this.taskExecutor = taskExecutor;
+		this.sizeValidation = sizeValidation;
 	}
 
 	@Path("/")
@@ -127,11 +133,14 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 			@ApiParam(value = "X509 Certificate entity.", required = false) @Multipart(value = "x509cert", required = false) InputStream x509certificate,
 			@ApiParam(value = "The given metadata of the uploaded file.", required = false) @Multipart(value = "metadata", required = false) String metaData,
 			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) @QueryParam("async") Boolean async,
+			@HeaderParam("Content-Length") Long contentLength,
+			@ApiParam(value = "file size (size validation purpose).", required = false) @Multipart(value = "filesize", required = false)  Long fileSize,
 			MultipartBody body) throws BusinessException {
+
 		Long transfertDuration = getTransfertDuration();
 		if (file == null) {
 			logger.error("Missing file (check parameter file)");
-			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check parameter file)");
+			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check multipart parameter named 'file')");
 		}
 		String fileName = getFileName(givenFileName, body);
 		// Default mode. No user input.
@@ -139,6 +148,10 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 			async = false;
 		}
 		File tempFile = getTempFile(file, "rest-userv2-document-entries", fileName);
+		long currSize = tempFile.length();
+		if (sizeValidation) {
+			checkSizeValidation(contentLength, fileSize, currSize);
+		}
 		if (async) {
 			logger.debug("Async mode is used");
 			// Asynchronous mode
@@ -147,7 +160,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 			try {
 				DocumentTaskContext documentTaskContext = new DocumentTaskContext(actorDto, actorDto.getUuid(),
 						tempFile, fileName, metaData, description);
-				asyncTask = asyncTaskFacade.create(tempFile.length(), transfertDuration, fileName, null,
+				asyncTask = asyncTaskFacade.create(currSize, transfertDuration, fileName, null,
 						AsyncTaskType.DOCUMENT_UPLOAD);
 				DocumentUploadAsyncTask task = new DocumentUploadAsyncTask(documentAsyncFacade, documentTaskContext,
 						asyncTask);
@@ -282,6 +295,8 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 			@ApiParam(value = "File stream.", required = true) @Multipart(value = "file", required = true) InputStream file,
 			@ApiParam(value = "The given file name of the uploaded file.", required = false) @Multipart(value = "filename", required = false) String givenFileName,
 			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) @QueryParam("async") Boolean async,
+			@HeaderParam("Content-Length") Long contentLength,
+			@ApiParam(value = "file size (size validation purpose).", required = false) @Multipart(value = "filesize", required = false)  Long fileSize,
 			MultipartBody body) throws BusinessException {
 		Long transfertDuration = getTransfertDuration();
 		if (file == null) {
@@ -294,6 +309,10 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 			async = false;
 		}
 		File tempFile = getTempFile(file, "rest-userv2-document-entries", fileName);
+		long currSize = tempFile.length();
+		if (sizeValidation) {
+			checkSizeValidation(contentLength, fileSize, currSize);
+		}
 		if (async) {
 			logger.debug("Async mode is used");
 			// Asynchronous mode
@@ -302,7 +321,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 			try {
 				DocumentTaskContext dtc = new DocumentTaskContext(actorDto, actorDto.getUuid(), tempFile, fileName);
 				dtc.setDocEntryUuid(uuid);
-				asyncTask = asyncTaskFacade.create(tempFile.length(), transfertDuration, fileName, null,
+				asyncTask = asyncTaskFacade.create(currSize, transfertDuration, fileName, null,
 						AsyncTaskType.DOCUMENT_UPDATE);
 				DocumentUpdateAsyncTask task = new DocumentUpdateAsyncTask(documentAsyncFacade, dtc, asyncTask);
 				taskExecutor.execute(task);

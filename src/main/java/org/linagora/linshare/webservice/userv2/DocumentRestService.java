@@ -49,7 +49,10 @@ public interface DocumentRestService {
 	DocumentDto create(InputStream file, String description,
 			String givenFileName, InputStream theSignature,
 			String signatureFileName, InputStream x509certificate,
-			String metaData, Boolean async, MultipartBody body)
+			String metaData, Boolean async,
+			Long contentLength,
+			Long fileSize,
+			MultipartBody body)
 			throws BusinessException;
 
 	DocumentDto find(String uuid, boolean withShares) throws BusinessException;
@@ -69,7 +72,10 @@ public interface DocumentRestService {
 	Response thumbnail(String uuid, boolean base64) throws BusinessException;
 
 	DocumentDto updateFile(String uuid, InputStream file,
-			String givenFileName, Boolean async, MultipartBody body)
+			String givenFileName, Boolean async,
+			Long contentLength,
+			Long fileSize,
+			MultipartBody body)
 			throws BusinessException;
 
 	AsyncTaskDto findAsync(String uuid) throws BusinessException;

@@ -107,6 +107,8 @@ public class FineUploaderRestServiceImpl extends WebserviceBase implements
 
 	private Integer maxFrequency;
 
+	private boolean sizeValidation;
+
 	private org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor taskExecutor;
 
 	public FineUploaderRestServiceImpl(
@@ -120,7 +122,8 @@ public class FineUploaderRestServiceImpl extends WebserviceBase implements
 			Integer defaultThreshold,
 			Integer defaultFrequency,
 			Integer maxThreshold,
-			Integer maxFrequency
+			Integer maxFrequency,
+			boolean sizeValidation
 			) {
 		super();
 		this.documentFacade = documentFacade;
@@ -134,6 +137,7 @@ public class FineUploaderRestServiceImpl extends WebserviceBase implements
 		this.defaultFrequency = defaultFrequency;
 		this.maxThreshold = maxThreshold;
 		this.maxFrequency = maxFrequency;
+		this.sizeValidation = sizeValidation;
 	}
 
 	@GET
@@ -189,6 +193,16 @@ public class FineUploaderRestServiceImpl extends WebserviceBase implements
 			tempFile = getTempFile(file, "fineuploader", fileName);
 		} catch (BusinessException e) {
 			return processException(e, tempFile, null);
+		}
+		if (sizeValidation) {
+			if (size != null) {
+				long length = tempFile.length();
+				if (length != size) {
+					String msg = String.format("File size does not match, found : %1$d, announced : %2$d", length, size);
+					logger.error(msg);
+					throw giveRestException(HttpStatus.SC_BAD_REQUEST, msg);
+				}
+			}
 		}
 		boolean async= false;
 		int frequency = defaultFrequency;
@@ -292,6 +306,16 @@ public class FineUploaderRestServiceImpl extends WebserviceBase implements
 			tempFile = getTempFile(file, "fineuploader", fileName);
 		} catch (BusinessException e) {
 			return processException(e, tempFile, null);
+		}
+		if (sizeValidation) {
+			if (size != null) {
+				long length = tempFile.length();
+				if (length != size) {
+					String msg = String.format("File size does not match, found : %1$d, announced : %2$d", length, size);
+					logger.error(msg);
+					throw giveRestException(HttpStatus.SC_BAD_REQUEST, msg);
+				}
+			}
 		}
 		boolean async= false;
 		int frequency = defaultFrequency;

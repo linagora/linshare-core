@@ -42,6 +42,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -91,14 +92,19 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 
 	private org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor taskExecutor;
 
+	private boolean sizeValidation;
+
 	public DocumentRestServiceImpl(DocumentFacade documentFacade,
 			DocumentAsyncFacade documentAsyncFacade,
-			AsyncTaskFacade asyncTaskFacade, ThreadPoolTaskExecutor taskExecutor) {
+			AsyncTaskFacade asyncTaskFacade,
+			ThreadPoolTaskExecutor taskExecutor,
+			boolean sizeValidation) {
 		super();
 		this.documentFacade = documentFacade;
 		this.documentAsyncFacade = documentAsyncFacade;
 		this.asyncTaskFacade = asyncTaskFacade;
 		this.taskExecutor = taskExecutor;
+		this.sizeValidation = sizeValidation;
 	}
 
 	@Path("/")
@@ -122,6 +128,8 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "X509 Certificate entity.", required = false) @Multipart(value = "x509cert", required = false) InputStream x509certificate,
 			@ApiParam(value = "The given metadata of the uploaded file.", required = false) @Multipart(value = "metadata", required = false) String metaData,
 			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) @QueryParam("async") Boolean async,
+			@HeaderParam("Content-Length") Long contentLength,
+			@ApiParam(value = "file size (size validation purpose).", required = false) @Multipart(value = "filesize", required = false)  Long fileSize,
 			MultipartBody body)
 			throws BusinessException {
 		Long transfertDuration = getTransfertDuration();
@@ -135,6 +143,10 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			async = false;
 		}
 		File tempFile = getTempFile(file, "rest-delegation-document-entries", fileName);
+		long currSize = tempFile.length();
+		if (sizeValidation) {
+			checkSizeValidation(contentLength, fileSize, currSize);
+		}
 		if (async) {
 			logger.debug("Async mode is used");
 			// Asynchronous mode
@@ -144,7 +156,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 				DocumentTaskContext documentTaskContext = new DocumentTaskContext(
 						actorDto, ownerUuid, tempFile, fileName,
 						metaData, description);
-				asyncTask = asyncTaskFacade.create(ownerUuid, tempFile.length(), transfertDuration, fileName, null, AsyncTaskType.DOCUMENT_UPLOAD);
+				asyncTask = asyncTaskFacade.create(ownerUuid, currSize, transfertDuration, fileName, null, AsyncTaskType.DOCUMENT_UPLOAD);
 				DocumentUploadAsyncTask task = new DocumentUploadAsyncTask(
 						documentAsyncFacade, documentTaskContext, asyncTask);
 				taskExecutor.execute(task);
@@ -254,6 +266,8 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "File stream.", required = true) InputStream theFile,
 			@ApiParam(value = "The given file name of the uploaded file.", required = true) @Multipart(value = "filename", required = false) String givenFileName,
 			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) @QueryParam("async") Boolean async,
+			@HeaderParam("Content-Length") Long contentLength,
+			@ApiParam(value = "file size (size validation purpose).", required = false) @Multipart(value = "filesize", required = false)  Long fileSize,
 			@ApiParam(value = "The given datas.", required = true) MultipartBody body)
 			throws BusinessException {
 		Long transfertDuration = getTransfertDuration();
@@ -263,6 +277,10 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			async = false;
 		}
 		File tempFile = getTempFile(theFile, "rest-delegation-document-entries", fileName);
+		long currSize = tempFile.length();
+		if (sizeValidation) {
+			checkSizeValidation(contentLength, fileSize, currSize);
+		}
 		if (async) {
 			logger.debug("Async mode is used");
 			// Asynchronous mode
@@ -272,7 +290,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 				DocumentTaskContext dtc = new DocumentTaskContext(
 						actorDto, ownerUuid, tempFile, fileName);
 				dtc.setDocEntryUuid(uuid);
-				asyncTask = asyncTaskFacade.create(ownerUuid, tempFile.length(), transfertDuration, fileName, null, AsyncTaskType.DOCUMENT_UPDATE);
+				asyncTask = asyncTaskFacade.create(ownerUuid, currSize, transfertDuration, fileName, null, AsyncTaskType.DOCUMENT_UPDATE);
 				DocumentUpdateAsyncTask task = new DocumentUpdateAsyncTask(documentAsyncFacade, dtc, asyncTask);
 				taskExecutor.execute(task);
 				return new DocumentDto(asyncTask, dtc);

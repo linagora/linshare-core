@@ -54,7 +54,10 @@ public interface DocumentRestService {
 			InputStream theSignature,
 			String signatureFileName, InputStream x509certificate,
 			String metaData,
-			Boolean async, MultipartBody body)
+			Boolean async,
+			Long contentLength,
+			Long fileSize,
+			MultipartBody body)
 			throws BusinessException;
 
 	DocumentDto find(String ownerUuid, String uuid) throws BusinessException;
@@ -72,7 +75,10 @@ public interface DocumentRestService {
 	Response thumbnail(String ownerUuid, String uuid) throws BusinessException;
 
 	DocumentDto updateFile(String ownerUuid, String uuid, InputStream theFile,
-			String givenFileName, Boolean async, MultipartBody body)
+			String givenFileName, Boolean async,
+			Long contentLength,
+			Long fileSize,
+			MultipartBody body)
 					throws BusinessException;
 
 	DocumentDto delete(String ownerUuid, DocumentDto documentDto)

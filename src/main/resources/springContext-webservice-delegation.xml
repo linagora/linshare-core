@@ -29,6 +29,7 @@
 		<constructor-arg ref="wsDelegationAsyncTaskFacade" />
 		<constructor-arg ref="wsDocumentAsyncFacade" />
 		<constructor-arg ref="taskExecutor" />
+		<constructor-arg value="${linshare.rest.files.size.validation}" />
 	</bean>
 
 	<bean id="delegationGuestRestService" class="org.linagora.linshare.webservice.delegation.impl.GuestRestServiceImpl">
@@ -44,6 +45,7 @@
 		<constructor-arg ref="wsThreadEntryAsyncFacade" />
 		<constructor-arg ref="wsDelegationAsyncTaskFacade" />
 		<constructor-arg ref="taskExecutor" />
+		<constructor-arg value="${linshare.rest.files.size.validation}" />
 	</bean>
 
 	<bean id="delegationThreadMemberRestService" class="org.linagora.linshare.webservice.delegation.impl.ThreadMemberRestServiceImpl">

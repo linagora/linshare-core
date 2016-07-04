@@ -34,6 +34,7 @@
 package org.linagora.linshare.webservice.userv2.impl;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -49,6 +50,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang.Validate;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
@@ -83,14 +85,18 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 	private static final String RELATIVE_PATH = "flowRelativePath";
 	private static final String FILE = "file";
 
+	private boolean sizeValidation;
+
 	private final DocumentFacade documentFacade;
 
 	private static final ConcurrentMap<String, ChunkedFile> chunkedFiles = Maps
 			.newConcurrentMap();
 
-	public FlowDocumentUploaderRestServiceImpl(DocumentFacade documentFacade) {
+	public FlowDocumentUploaderRestServiceImpl(DocumentFacade documentFacade,
+			boolean sizeValidation) {
 		super();
 		this.documentFacade = documentFacade;
+		this.sizeValidation = sizeValidation;
 	}
 
 	@Path("/")
@@ -118,9 +124,25 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 					.getTempFile(identifier, chunkedFiles);
 			FileChannel fc = FileChannel.open(tempFile,
 					StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-			byte[] byteArray = IOUtils.toByteArray(file);
-			fc.write(ByteBuffer.wrap(byteArray), (chunkNumber - 1) * chunkSize);
+			ByteArrayOutputStream output = new ByteArrayOutputStream();
+			IOUtils.copy(file, output);
+			fc.write(ByteBuffer.wrap(output.toByteArray()), (chunkNumber - 1) * chunkSize);
 			fc.close();
+			if (sizeValidation) {
+				if (chunkNumber != totalChunks) {
+					// it is not the last chunk
+					if (totalSize >= chunkSize) {
+						// more than one chunk
+						if (output.size() != chunkSize) {
+							String msg = String.format("File size does not match, found : %1$d, announced : %2$d", output.size(), chunkSize);
+							logger.error(msg);
+							flow.setChunkUploadSuccess(false);
+							flow.setErrorMessage(msg);
+							return flow;
+						}
+					}
+				}
+			}
 			chunkedFiles.get(identifier).addChunk(chunkNumber);
 			if (FlowUploaderUtils.isUploadFinished(identifier, chunkSize,
 					totalSize, chunkedFiles)) {
@@ -128,6 +150,16 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 				InputStream inputStream = Files.newInputStream(tempFile,
 						StandardOpenOption.READ);
 				File tempFile2 = getTempFile(inputStream, "rest-flowuploader", filename);
+				if (sizeValidation) {
+					long currSize = tempFile2.length();
+					if (currSize != totalSize) {
+						String msg = String.format("File size does not match, found : %1$d, announced : %2$d", currSize, totalSize);
+						logger.error(msg);
+						flow.setChunkUploadSuccess(false);
+						flow.setErrorMessage(msg);
+						return flow;
+					}
+				}
 				EntryDto uploadedDocument = new EntryDto();
 				try {
 					uploadedDocument = documentFacade.create(tempFile2, filename, "", null);
@@ -141,9 +173,16 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 			} else {
 				logger.debug("upload pending ");
 			}
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+			logger.debug("Exception : ", e);
+			flow.setChunkUploadSuccess(false);
+			flow.setErrorMessage(e.getMessage());
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			logger.debug("Exception : ", e);
+			flow.setChunkUploadSuccess(false);
+			flow.setErrorMessage(e.getMessage());
 		}
 		return flow;
 	}
