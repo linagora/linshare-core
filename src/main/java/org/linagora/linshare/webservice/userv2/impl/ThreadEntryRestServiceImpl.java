@@ -43,6 +43,7 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -93,14 +94,19 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 
 	private org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor taskExecutor;
 
+	private boolean sizeValidation;
+
 	public ThreadEntryRestServiceImpl(ThreadEntryFacade threadEntryFacade,
 			ThreadEntryAsyncFacade threadEntryAsyncFacade,
-			AsyncTaskFacade asyncTaskFacade, ThreadPoolTaskExecutor taskExecutor) {
+			AsyncTaskFacade asyncTaskFacade,
+			ThreadPoolTaskExecutor taskExecutor,
+			boolean sizeValidation) {
 		super();
 		this.threadEntryFacade = threadEntryFacade;
 		this.threadEntryAsyncFacade = threadEntryAsyncFacade;
 		this.asyncTaskFacade = asyncTaskFacade;
 		this.taskExecutor = taskExecutor;
+		this.sizeValidation = sizeValidation;
 	}
 
 	@Path("/")
@@ -118,7 +124,9 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "File stream.", required = true) InputStream file,
 			@ApiParam(value = "An optional description of a thread entry.") @Multipart(value = "description", required = false) String description,
 			@ApiParam(value = "The given file name of the uploaded file.", required = true) @Multipart(value = "filename", required = false) String givenFileName,
-			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) @QueryParam("async") Boolean async, 
+			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) @QueryParam("async") Boolean async,
+			@HeaderParam("Content-Length") Long contentLength,
+			@ApiParam(value = "file size (size validation purpose).", required = false) @Multipart(value = "filesize", required = false)  Long fileSize,
 			MultipartBody body)
 					throws BusinessException {
 		Long transfertDuration = getTransfertDuration();
@@ -132,13 +140,17 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			async = false;
 		}
 		File tempFile = getTempFile(file, "rest-userv2-thread-entries", fileName);
+		long currSize = tempFile.length();
+		if (sizeValidation) {
+			checkSizeValidation(contentLength, fileSize, currSize);
+		}
 		if (async) {
 			logger.debug("Async mode is used");
 			// Asynchronous mode
 			AccountDto actorDto = threadEntryFacade.getAuthenticatedAccountDto();
 			AsyncTaskDto asyncTask = null;
 			try {
-				asyncTask = asyncTaskFacade.create(tempFile.length(), transfertDuration, fileName, null, AsyncTaskType.THREAD_ENTRY_UPLOAD);
+				asyncTask = asyncTaskFacade.create(currSize, transfertDuration, fileName, null, AsyncTaskType.THREAD_ENTRY_UPLOAD);
 				ThreadEntryTaskContext threadEntryTaskContext = new ThreadEntryTaskContext(actorDto, actorDto.getUuid(), threadUuid, tempFile, fileName);
 				ThreadEntryUploadAsyncTask task = new ThreadEntryUploadAsyncTask(threadEntryAsyncFacade, threadEntryTaskContext, asyncTask);
 				taskExecutor.execute(task);

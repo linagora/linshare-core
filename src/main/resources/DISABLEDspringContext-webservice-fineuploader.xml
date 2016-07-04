@@ -26,6 +26,7 @@
 		<constructor-arg value="${linshare.tapestry.fineuploader.async.mode.default.frequency}" />
 		<constructor-arg value="${linshare.tapestry.fineuploader.async.mode.max.threshold}" />
 		<constructor-arg value="${linshare.tapestry.fineuploader.async.mode.max.frequency}" />
+		<constructor-arg value="${linshare.tapestry.fineuploader.size.validation}" />
 	</bean>
 
 	<jaxrs:server id="fineuploaderContainer" address="/fineuploader">

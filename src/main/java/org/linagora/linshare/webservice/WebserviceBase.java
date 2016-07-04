@@ -66,6 +66,11 @@ public class WebserviceBase {
 
 	public static final String NAME_SPACE_NS = "http://org/linagora/linshare/webservice/";
 
+	/**
+	 * 1mo
+	 */
+	public static final int ERROR_THRESHOLD_FOR_FILE_SIZE_DIFFERENCE = 1048576;
+
 	// REST
 
 	protected WebApplicationException giveRestException(int httpErrorCode,
@@ -190,6 +195,29 @@ public class WebserviceBase {
 			logger.error("Can not encode file name " + e1.getMessage());
 		}
 		return fileName;
+	}
+
+	protected void checkSizeValidation(Long contentLength, Long fileSize,
+			long currSize) {
+		if (fileSize != null) {
+			if (!fileSize.equals(currSize)) {
+				String msg = String
+						.format("Invalid file size (check multipart parameter named 'filesize'), size found %1$d, expected %2$d.(diff=%3$d)",
+								currSize, fileSize, Math.abs(fileSize - currSize));
+				logger.error(msg);
+				throw new BusinessException(BusinessErrorCode.WEBSERVICE_BAD_REQUEST, msg);
+			}
+		} else {
+			//	if file size is not supply, we could try an approximation ~1Mo
+			long diff = Math.abs(contentLength - currSize);
+			if (diff - ERROR_THRESHOLD_FOR_FILE_SIZE_DIFFERENCE > 0) {
+				String msg = String
+						.format("Weird file size, size found %1$d, request content length %2$d.(diff=%3$d)",
+								currSize, contentLength, diff);
+				logger.error(msg);
+				throw new BusinessException(BusinessErrorCode.WEBSERVICE_BAD_REQUEST, msg);
+			}
+		}
 	}
 
 }

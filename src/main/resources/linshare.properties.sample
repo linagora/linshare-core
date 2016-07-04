@@ -134,8 +134,10 @@ linshare.multidomain.enable=false
 #****************** LinShare Logo
 linshare.logo.mails.visible=true
 
-
 #****************** Async task management
 # ThreadPoolTaskExecutor for AsyncTask like uploads.
 #linshare.ThreadPoolTaskExecutor.corePoolSize=10
 #linshare.ThreadPoolTaskExecutor.maxPoolSize=30
+
+# enable file size validation on rest API (thread entries, documents and flow).
+linshare.rest.files.size.validation=true

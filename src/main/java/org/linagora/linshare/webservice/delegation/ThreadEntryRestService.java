@@ -48,7 +48,10 @@ public interface ThreadEntryRestService {
 
 	ThreadEntryDto create(String ownerUuid, String threadUuid,
 			InputStream file, String description, String givenFileName,
-			Boolean async, MultipartBody body) throws BusinessException;
+			Boolean async,
+			Long contentLength,
+			Long fileSize,
+			MultipartBody body) throws BusinessException;
 
 	ThreadEntryDto copy(String ownerUuid, String threadUuid, String entryUuid, Boolean async)
 			throws BusinessException;

@@ -32,10 +32,12 @@
 		<constructor-arg ref="wsDocumentAsyncFacade" />
 		<constructor-arg ref="wsAsyncTaskFacade" />
 		<constructor-arg ref="taskExecutor" />
+		<constructor-arg value="${linshare.rest.files.size.validation}" />
 	</bean>
 
 	<bean id="userFlowDocumentUploaderRestService" class="org.linagora.linshare.webservice.userv2.impl.FlowDocumentUploaderRestServiceImpl">
 		<constructor-arg ref="wsDocumentFacade" />
+		<constructor-arg value="${linshare.rest.files.size.validation}" />
 	</bean>
 
 	<bean id="userThreadMemberRestService" class="org.linagora.linshare.webservice.userv2.impl.ThreadMemberRestServiceImpl">
@@ -52,6 +54,7 @@
 		<constructor-arg ref="wsThreadEntryAsyncFacade" />
 		<constructor-arg ref="wsAsyncTaskFacade" />
 		<constructor-arg ref="taskExecutor" />
+		<constructor-arg value="${linshare.rest.files.size.validation}" />
 	</bean>
 
 	<bean id="userGuestRestService" class="org.linagora.linshare.webservice.userv2.impl.GuestRestServiceImpl">
