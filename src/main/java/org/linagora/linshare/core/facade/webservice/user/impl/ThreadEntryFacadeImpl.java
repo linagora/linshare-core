@@ -49,8 +49,8 @@ import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadEntryDto;
-import org.linagora.linshare.core.facade.webservice.user.ThreadEntryFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
+import org.linagora.linshare.core.facade.webservice.user.WorkGroupEntryFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DocumentEntryService;
@@ -62,7 +62,7 @@ import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 import com.google.common.collect.Lists;
 
 public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
-		ThreadEntryFacade {
+		WorkGroupEntryFacade {
 
 	private final ThreadEntryService threadEntryService;
 	private final ThreadService threadService;
@@ -93,7 +93,7 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public ThreadEntryDto create(String threadUuid, File tempFile,
+	public WorkGroupEntryDto create(String threadUuid, File tempFile,
 			String fileName) throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(fileName, "Missing required file name");
@@ -106,11 +106,11 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 		}
 		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor,
 				actor, thread, tempFile, fileName);
-		return new ThreadEntryDto(threadEntry);
+		return new WorkGroupEntryDto(threadEntry);
 	}
 
 	@Override
-	public ThreadEntryDto copy(String threadUuid, String entryUuid)
+	public WorkGroupEntryDto copy(String threadUuid, String entryUuid)
 			throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(entryUuid, "Missing required entry uuid");
@@ -122,7 +122,7 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 		// Check if we have the right to download the specified document entry
 		documentEntryService.checkDownloadPermission(actor, actor, entryUuid);
 		ThreadEntry threadEntry = threadEntryService.copyFromDocumentEntry(actor, actor, thread, doc);
-		return new ThreadEntryDto(threadEntry);
+		return new WorkGroupEntryDto(threadEntry);
 	}
 
 	@Override
@@ -143,7 +143,7 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public ThreadEntryDto find(String threadUuid, String uuid)
+	public WorkGroupEntryDto find(String threadUuid, String uuid)
 			throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(uuid, "Missing required entry uuid");
@@ -152,25 +152,25 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 		Thread thread = threadService.find(actor, actor, threadUuid);
 		ThreadEntry threadEntry = threadEntryService.findById(actor, actor,
 				uuid);
-		return new ThreadEntryDto(threadEntry);
+		return new WorkGroupEntryDto(threadEntry);
 	}
 
 	@Override
-	public List<ThreadEntryDto> findAll(String threadUuid)
+	public List<WorkGroupEntryDto> findAll(String threadUuid)
 			throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		User actor = checkAuthentication();
-		List<ThreadEntryDto> res = Lists.newArrayList();
+		List<WorkGroupEntryDto> res = Lists.newArrayList();
 		Thread thread = threadService.find(actor, actor, threadUuid);
 		for (ThreadEntry threadEntry : threadEntryService.findAllThreadEntries(
 				actor, actor, thread)) {
-			res.add(new ThreadEntryDto(threadEntry));
+			res.add(new WorkGroupEntryDto(threadEntry));
 		}
 		return res;
 	}
 
 	@Override
-	public ThreadEntryDto delete(String threadUuid, ThreadEntryDto threadEntryDto)
+	public WorkGroupEntryDto delete(String threadUuid, WorkGroupEntryDto threadEntryDto)
 			throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notNull(threadEntryDto, "Missing required thread entry");
@@ -180,11 +180,11 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 		ThreadEntry threadEntry = threadEntryService.findById(actor, actor,
 				threadEntryDto.getUuid());
 		threadEntryService.deleteThreadEntry(actor, actor, threadEntry);
-		return new ThreadEntryDto(threadEntry);
+		return new WorkGroupEntryDto(threadEntry);
 	}
 
 	@Override
-	public ThreadEntryDto delete(String threadUuid, String threadEntryUuid)
+	public WorkGroupEntryDto delete(String threadUuid, String threadEntryUuid)
 			throws BusinessException {
 		Validate.notNull(threadEntryUuid, "Missing required thread uuid");
 		Validate.notEmpty(threadEntryUuid, "Missing required thread entry uuid");
@@ -192,7 +192,7 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 		ThreadEntry threadEntry = threadEntryService.findById(actor, actor,
 				threadEntryUuid);
 		threadEntryService.deleteThreadEntry(actor, actor, threadEntry);
-		return new ThreadEntryDto(threadEntry);
+		return new WorkGroupEntryDto(threadEntry);
 	}
 
 	@Override
@@ -228,12 +228,12 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public ThreadEntryDto update(String threadUuid, String threadEntryUuid,
-			ThreadEntryDto threadEntryDto) throws BusinessException {
+	public WorkGroupEntryDto update(String threadUuid, String threadEntryUuid,
+			WorkGroupEntryDto threadEntryDto) throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(threadEntryUuid, "Missing required thread entry uuid");
 		User actor = checkAuthentication();
-		return new ThreadEntryDto(threadEntryService.updateFileProperties(
+		return new WorkGroupEntryDto(threadEntryService.updateFileProperties(
 				actor, threadEntryUuid, threadEntryDto.getDescription(),
 				threadEntryDto.getMetaData(), threadEntryDto.getName()));
 	}

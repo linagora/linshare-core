@@ -43,12 +43,12 @@ import javax.jws.soap.SOAPBinding.ParameterStyle;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.SimpleLongValue;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadMemberDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupMemberDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
 import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
-import org.linagora.linshare.core.facade.webservice.user.ThreadFacade;
+import org.linagora.linshare.core.facade.webservice.user.WorkGroupFacade;
 import org.linagora.linshare.core.facade.webservice.user.UserFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.webservice.WebserviceBase;
@@ -67,14 +67,14 @@ public class SoapServiceImpl extends WebserviceBase implements SoapService {
 
 	private final ShareFacade webServiceShareFacade;
 
-	private final ThreadFacade webServiceThreadFacade;
+	private final WorkGroupFacade webServiceThreadFacade;
 
 	private final UserFacade webServiceUserFacade;
 
 	public SoapServiceImpl(
 			final DocumentFacade webServiceDocumentFacade,
 			final ShareFacade webServiceShareFacade,
-			ThreadFacade webServiceThreadFacade,
+			WorkGroupFacade webServiceThreadFacade,
 			UserFacade webServiceUserFacade) {
 		this.webServiceDocumentFacade = webServiceDocumentFacade;
 		this.webServiceShareFacade = webServiceShareFacade;
@@ -136,12 +136,12 @@ public class SoapServiceImpl extends WebserviceBase implements SoapService {
 	// Threads
 
 	@Override
-	public List<ThreadDto> getAllMyThread() throws BusinessException {
+	public List<WorkGroupDto> getAllMyThread() throws BusinessException {
 		return webServiceThreadFacade.findAll();
 	}
 
 	@Override
-	public void addMember(ThreadMemberDto member) throws BusinessException {
+	public void addMember(WorkGroupMemberDto member) throws BusinessException {
 		webServiceThreadFacade.addMember(member.getThreadUuid(), member.getUserDomainId(),
 				member.getUserMail(), member.isReadonly());
 	}

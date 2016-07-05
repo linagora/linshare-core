@@ -43,7 +43,7 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 
 @XmlRootElement(name = "ThreadMember")
 @ApiModel(value = "ThreadMember", description = "A thread member")
-public class ThreadMemberDto {
+public class WorkGroupMemberDto {
 
     @ApiModelProperty(value = "Admin")
 	private boolean admin;
@@ -72,7 +72,7 @@ public class ThreadMemberDto {
     @ApiModelProperty(value = "ThreadUuid")
 	private String threadUuid;
 
-	public ThreadMemberDto(ThreadMember member) {
+	public WorkGroupMemberDto(ThreadMember member) {
 		this.firstName = member.getUser().getFirstName();
 		this.lastName = member.getUser().getLastName();
 		this.admin = member.getAdmin();
@@ -86,7 +86,7 @@ public class ThreadMemberDto {
 		this.userDomainId = member.getUser().getDomainId();
 	}
 
-	public ThreadMemberDto() {
+	public WorkGroupMemberDto() {
 		super();
 	}
 

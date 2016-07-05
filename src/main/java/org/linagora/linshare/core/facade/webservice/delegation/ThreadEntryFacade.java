@@ -40,26 +40,26 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadEntryDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
 
 public interface ThreadEntryFacade extends DelegationGenericFacade {
 
-	ThreadEntryDto create(String ownerUuid, String threadUuid,
+	WorkGroupEntryDto create(String ownerUuid, String threadUuid,
 			File file, String fileName) throws BusinessException;
 
-	ThreadEntryDto copy(String ownerUuid, String threadUuid, String entryUuid)
+	WorkGroupEntryDto copy(String ownerUuid, String threadUuid, String entryUuid)
 			throws BusinessException;
 
-	ThreadEntryDto find(String ownerUuid, String threadUuid, String uuid)
+	WorkGroupEntryDto find(String ownerUuid, String threadUuid, String uuid)
 			throws BusinessException;
 
-	List<ThreadEntryDto> findAll(String ownerUuid, String threadUuid)
+	List<WorkGroupEntryDto> findAll(String ownerUuid, String threadUuid)
 			throws BusinessException;
 
-	ThreadEntryDto delete(String ownerUuid, String threadUuid, ThreadEntryDto threadEntry)
+	WorkGroupEntryDto delete(String ownerUuid, String threadUuid, WorkGroupEntryDto threadEntry)
 			throws BusinessException;
 
-	ThreadEntryDto delete(String ownerUuid, String threadUuid, String uuid)
+	WorkGroupEntryDto delete(String ownerUuid, String threadUuid, String uuid)
 			throws BusinessException;
 
 	Response download(String ownerUuid, String threadUuid, String uuid)
@@ -68,8 +68,8 @@ public interface ThreadEntryFacade extends DelegationGenericFacade {
 	Response thumbnail(String ownerUuid, String threadUuid, String uuid)
 			throws BusinessException;
 
-	ThreadEntryDto update(String owneruuid, String threadUuid,
-			String threadEntryUuid, ThreadEntryDto threadEntryDto)
+	WorkGroupEntryDto update(String owneruuid, String threadUuid,
+			String threadEntryUuid, WorkGroupEntryDto threadEntryDto)
 			throws BusinessException;
 
 }

@@ -61,10 +61,10 @@ import org.linagora.linshare.core.domain.constants.AsyncTaskType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadEntryDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
 import org.linagora.linshare.core.facade.webservice.user.AsyncTaskFacade;
 import org.linagora.linshare.core.facade.webservice.user.ThreadEntryAsyncFacade;
-import org.linagora.linshare.core.facade.webservice.user.ThreadEntryFacade;
+import org.linagora.linshare.core.facade.webservice.user.WorkGroupEntryFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.user.task.ThreadEntryUploadAsyncTask;
 import org.linagora.linshare.webservice.user.task.context.ThreadEntryTaskContext;
@@ -86,7 +86,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 	WorkGroupEntryRestService {
 
-	private final ThreadEntryFacade threadEntryFacade;
+	private final WorkGroupEntryFacade workGroupEntryFacade;
 
 	private final ThreadEntryAsyncFacade threadEntryAsyncFacade ;
 
@@ -96,13 +96,13 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 
 	private boolean sizeValidation;
 
-	public WorkGroupEntryRestServiceImpl(ThreadEntryFacade threadEntryFacade,
+	public WorkGroupEntryRestServiceImpl(WorkGroupEntryFacade workGroupEntryFacade,
 			ThreadEntryAsyncFacade threadEntryAsyncFacade,
 			AsyncTaskFacade asyncTaskFacade,
 			ThreadPoolTaskExecutor taskExecutor,
 			boolean sizeValidation) {
 		super();
-		this.threadEntryFacade = threadEntryFacade;
+		this.workGroupEntryFacade = workGroupEntryFacade;
 		this.threadEntryAsyncFacade = threadEntryAsyncFacade;
 		this.asyncTaskFacade = asyncTaskFacade;
 		this.taskExecutor = taskExecutor;
@@ -112,14 +112,14 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 	@Path("/")
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@ApiOperation(value = "Create a workgroup entry which will contain the uploaded file.", response = ThreadEntryDto.class)
+	@ApiOperation(value = "Create a workgroup entry which will contain the uploaded file.", response = WorkGroupEntryDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
 					@ApiResponse(code = 404, message = "Workgroup entry not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public ThreadEntryDto create(
+	public WorkGroupEntryDto create(
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workGroupUuid") String workGroupUuid,
 			@ApiParam(value = "File stream.", required = true) InputStream file,
 			@ApiParam(value = "An optional description of a workgroup entry.") @Multipart(value = "description", required = false) String description,
@@ -147,14 +147,14 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 		if (async) {
 			logger.debug("Async mode is used");
 			// Asynchronous mode
-			AccountDto actorDto = threadEntryFacade.getAuthenticatedAccountDto();
+			AccountDto actorDto = workGroupEntryFacade.getAuthenticatedAccountDto();
 			AsyncTaskDto asyncTask = null;
 			try {
 				asyncTask = asyncTaskFacade.create(currSize, transfertDuration, fileName, null, AsyncTaskType.THREAD_ENTRY_UPLOAD);
 				ThreadEntryTaskContext threadEntryTaskContext = new ThreadEntryTaskContext(actorDto, actorDto.getUuid(), workGroupUuid, tempFile, fileName);
 				ThreadEntryUploadAsyncTask task = new ThreadEntryUploadAsyncTask(threadEntryAsyncFacade, threadEntryTaskContext, asyncTask);
 				taskExecutor.execute(task);
-				return new ThreadEntryDto(asyncTask, threadEntryTaskContext);
+				return new WorkGroupEntryDto(asyncTask, threadEntryTaskContext);
 			} catch (Exception e) {
 				logAsyncFailure(asyncTask, e);
 				throw e;
@@ -166,7 +166,7 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 			// Synchronous mode
 			try {
 				logger.debug("Async mode is not used");
-				return threadEntryFacade.create(workGroupUuid, tempFile, fileName);
+				return workGroupEntryFacade.create(workGroupUuid, tempFile, fileName);
 			} finally {
 				deleteTempFile(tempFile);
 			}
@@ -175,34 +175,34 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 
 	@Path("/copy/{entryUuid}")
 	@POST
-	@ApiOperation(value = "Create a threworkgroupry which will contain the uploaded file.", response = ThreadEntryDto.class)
+	@ApiOperation(value = "Create a threworkgroupry which will contain the uploaded file.", response = WorkGroupEntryDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
 					@ApiResponse(code = 404, message = "Workgroup entry not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public ThreadEntryDto copy(
+	public WorkGroupEntryDto copy(
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workGroupUuid") String workGroupUuid,
 			@ApiParam(value = "The document entry uuid.", required = true) @PathParam("entryUuid")  String entryUuid)
 					throws BusinessException {
-		return threadEntryFacade.copy(workGroupUuid, entryUuid);
+		return workGroupEntryFacade.copy(workGroupUuid, entryUuid);
 	}
 
 	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Get a workgroup entry.", response = ThreadEntryDto.class)
+	@ApiOperation(value = "Get a workgroup entry.", response = WorkGroupEntryDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
 					@ApiResponse(code = 404, message = "Workgroup entry not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public ThreadEntryDto find(
+	public WorkGroupEntryDto find(
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workGroupUuid") String workGroupUuid,
 			@ApiParam(value = "The workgroup entry uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		return threadEntryFacade.find(workGroupUuid, uuid);
+		return workGroupEntryFacade.find(workGroupUuid, uuid);
 	}
 
 	@Path("/{uuid}")
@@ -215,54 +215,54 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public void head(String workGroupUuid, String uuid) throws BusinessException {
-		threadEntryFacade.find(workGroupUuid, uuid);
+		workGroupEntryFacade.find(workGroupUuid, uuid);
 	}
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Get all workgroup entries.", response = ThreadEntryDto.class, responseContainer = "Set")
+	@ApiOperation(value = "Get all workgroup entries.", response = WorkGroupEntryDto.class, responseContainer = "Set")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
 					@ApiResponse(code = 404, message = "Workgroup entry not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public List<ThreadEntryDto> findAll(
+	public List<WorkGroupEntryDto> findAll(
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workGroupUuid") String workGroupUuid)
 					throws BusinessException {
-		return threadEntryFacade.findAll(workGroupUuid);
+		return workGroupEntryFacade.findAll(workGroupUuid);
 	}
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a workgroup entry.", response = ThreadEntryDto.class)
+	@ApiOperation(value = "Delete a workgroup entry.", response = WorkGroupEntryDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
 					@ApiResponse(code = 404, message = "Workgroup entry or workgroup entry not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public ThreadEntryDto delete(
+	public WorkGroupEntryDto delete(
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workGroupUuid") String workGroupUuid,
-			@ApiParam(value = "The workgroup entry to delete.", required = true) ThreadEntryDto workGroupEntry)
+			@ApiParam(value = "The workgroup entry to delete.", required = true) WorkGroupEntryDto workGroupEntry)
 					throws BusinessException {
-		return threadEntryFacade.delete(workGroupUuid, workGroupEntry);
+		return workGroupEntryFacade.delete(workGroupUuid, workGroupEntry);
 	}
 
 	@Path("/{uuid}")
 	@DELETE
-	@ApiOperation(value = "Delete a workgroup entry.", response = ThreadEntryDto.class)
+	@ApiOperation(value = "Delete a workgroup entry.", response = WorkGroupEntryDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
 					@ApiResponse(code = 404, message = "Workgroup entry or workgroup entry not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public ThreadEntryDto delete(
+	public WorkGroupEntryDto delete(
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workGroupUuid") String workGroupUuid,
 			@ApiParam(value = "The workgroup entry uuid to delete.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		return threadEntryFacade.delete(workGroupUuid, uuid);
+		return workGroupEntryFacade.delete(workGroupUuid, uuid);
 	}
 
 	@Path("/{uuid}/download")
@@ -278,7 +278,7 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workGroupUuid") String workGroupUuid,
 			@ApiParam(value = "The workgroup entry uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		return threadEntryFacade.download(workGroupUuid, uuid);
+		return workGroupEntryFacade.download(workGroupUuid, uuid);
 	}
 
 	@Path("/{uuid}/thumbnail")
@@ -295,7 +295,7 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid,
 			@ApiParam(value = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64)
 					throws BusinessException {
-		return threadEntryFacade.thumbnail(workGroupUuid, uuid, base64);
+		return workGroupEntryFacade.thumbnail(workGroupUuid, uuid, base64);
 	}
 
 	@Path("/{uuid}")
@@ -307,12 +307,12 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public ThreadEntryDto update(
+	public WorkGroupEntryDto update(
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workGroupUuid") String workGroupUuid,
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("uuid") String workGroupEntryUuid,
-			ThreadEntryDto workGroupEntryDto) throws BusinessException {
+			WorkGroupEntryDto workGroupEntryDto) throws BusinessException {
 
-		return threadEntryFacade.update(workGroupUuid, workGroupEntryUuid,
+		return workGroupEntryFacade.update(workGroupUuid, workGroupEntryUuid,
 				workGroupEntryDto);
 	}
 

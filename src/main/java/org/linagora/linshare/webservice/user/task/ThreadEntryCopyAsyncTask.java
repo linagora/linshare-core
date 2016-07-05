@@ -35,7 +35,7 @@
 package org.linagora.linshare.webservice.user.task;
 
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadEntryDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
 import org.linagora.linshare.core.facade.webservice.user.ThreadEntryAsyncFacade;
 import org.linagora.linshare.webservice.user.task.context.ThreadEntryTaskContext;
 
@@ -57,7 +57,7 @@ public class ThreadEntryCopyAsyncTask extends AsyncTask<ThreadEntryTaskContext> 
 
 	@Override
 	protected String runMyTask(ThreadEntryTaskContext task) {
-		ThreadEntryDto dto = asyncFacade.copy(task);
+		WorkGroupEntryDto dto = asyncFacade.copy(task);
 		return dto.getUuid();
 	}
 

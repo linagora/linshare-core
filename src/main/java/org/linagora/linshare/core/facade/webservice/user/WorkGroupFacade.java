@@ -31,74 +31,28 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.common.dto;
+package org.linagora.linshare.core.facade.webservice.user;
 
 import java.util.List;
-import java.util.Set;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
 
-import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadMember;
+public interface WorkGroupFacade extends GenericFacade {
 
-import com.google.common.base.Function;
-import com.google.common.collect.Sets;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+	List<WorkGroupDto> findAll() throws BusinessException;
 
-@XmlRootElement(name = "Thread")
-@ApiModel(value = "Thread", description = "A thread is a shared space for users to deposit files.")
-public class ThreadDto extends AccountDto {
+	void addMember(String threadUuid, String domainId, String mail,
+			boolean readonly) throws BusinessException;
 
-    @ApiModelProperty(value = "Name")
-	protected String name;
+	WorkGroupDto create(WorkGroupDto threadDto) throws BusinessException;
 
-    @ApiModelProperty(value = "Members")
-	protected Set<ThreadMemberDto> members;
+	WorkGroupDto find(String uuid) throws BusinessException;
 
-	public ThreadDto(Thread thread) {
-		super(thread, true);
-		this.name = thread.getName();
-	}
+	WorkGroupDto delete(WorkGroupDto threadDto) throws BusinessException;
 
-	public ThreadDto(Thread thread, List<ThreadMember> members) {
-		super(thread, true);
-		this.name = thread.getName();
-		this.members = Sets.newHashSet();
-		for (ThreadMember member : members) {
-			this.members.add(new ThreadMemberDto(member));
-		}
-	}
+	WorkGroupDto delete(String threadUuid) throws BusinessException;
 
-	public ThreadDto() {
-		super();
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Set<ThreadMemberDto> getMembers() {
-		return members;
-	}
-
-	public void setMembers(Set<ThreadMemberDto> members) {
-		this.members = members;
-	}
-
-	/*
-	 * Transformers
-	 */
-	public static Function<Thread, ThreadDto> toDto() {
-		return new Function<Thread, ThreadDto>() {
-			@Override
-			public ThreadDto apply(Thread arg0) {
-				return new ThreadDto(arg0);
-			}
-		};
-	}
+	WorkGroupDto update(String threadUuid, WorkGroupDto threadDto)
+			throws BusinessException;
 }

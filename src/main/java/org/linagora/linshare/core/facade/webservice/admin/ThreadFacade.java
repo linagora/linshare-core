@@ -37,21 +37,21 @@ package org.linagora.linshare.core.facade.webservice.admin;
 import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadMemberDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupMemberDto;
 
 public interface ThreadFacade extends AdminGenericFacade {
 
-	ThreadDto find(String uuid) throws BusinessException;
+	WorkGroupDto find(String uuid) throws BusinessException;
 
-	Set<ThreadMemberDto> members(String uuid) throws BusinessException;
+	Set<WorkGroupMemberDto> members(String uuid) throws BusinessException;
 
-	ThreadDto update(ThreadDto threadDto) throws BusinessException;
+	WorkGroupDto update(WorkGroupDto threadDto) throws BusinessException;
 
-	ThreadDto delete(String uuid) throws BusinessException;
+	WorkGroupDto delete(String uuid) throws BusinessException;
 
-	Set<ThreadDto> findAll(String pattern, String threadName, String memberName)
+	Set<WorkGroupDto> findAll(String pattern, String threadName, String memberName)
 			throws BusinessException;
 
-	Set<ThreadDto> findAll() throws BusinessException;
+	Set<WorkGroupDto> findAll() throws BusinessException;
 }

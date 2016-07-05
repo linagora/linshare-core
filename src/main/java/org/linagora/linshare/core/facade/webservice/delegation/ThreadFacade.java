@@ -36,20 +36,20 @@ package org.linagora.linshare.core.facade.webservice.delegation;
 import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
 
 public interface ThreadFacade extends DelegationGenericFacade {
 
-	ThreadDto find(String ownerUuid, String uuid) throws BusinessException;
+	WorkGroupDto find(String ownerUuid, String uuid) throws BusinessException;
 
-	List<ThreadDto> findAll(String ownerUuid) throws BusinessException;
+	List<WorkGroupDto> findAll(String ownerUuid) throws BusinessException;
 
-	ThreadDto create(String ownerUuid, ThreadDto threadDto)
+	WorkGroupDto create(String ownerUuid, WorkGroupDto threadDto)
 			throws BusinessException;
 
-	ThreadDto delete(String ownerUuid, ThreadDto threadDto) throws BusinessException;
+	WorkGroupDto delete(String ownerUuid, WorkGroupDto threadDto) throws BusinessException;
 
-	ThreadDto update(String ownerUuid, String threadUuid, ThreadDto threadDto)
+	WorkGroupDto update(String ownerUuid, String threadUuid, WorkGroupDto threadDto)
 			throws BusinessException;
 
 }

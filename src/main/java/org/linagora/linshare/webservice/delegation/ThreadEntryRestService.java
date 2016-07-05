@@ -42,32 +42,32 @@ import javax.ws.rs.core.Response;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadEntryDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
 
 public interface ThreadEntryRestService {
 
-	ThreadEntryDto create(String ownerUuid, String threadUuid,
+	WorkGroupEntryDto create(String ownerUuid, String threadUuid,
 			InputStream file, String description, String givenFileName,
 			Boolean async,
 			Long contentLength,
 			Long fileSize,
 			MultipartBody body) throws BusinessException;
 
-	ThreadEntryDto copy(String ownerUuid, String threadUuid, String entryUuid, Boolean async)
+	WorkGroupEntryDto copy(String ownerUuid, String threadUuid, String entryUuid, Boolean async)
 			throws BusinessException;
 
-	public ThreadEntryDto find(String ownerUuid, String threadUuid, String uuid)
+	public WorkGroupEntryDto find(String ownerUuid, String threadUuid, String uuid)
 			throws BusinessException;
 
 	void head(String ownerUuid, String threadUuid, String uuid) throws BusinessException;
 
-	public List<ThreadEntryDto> findAll(String ownerUuid, String threadUuid)
+	public List<WorkGroupEntryDto> findAll(String ownerUuid, String threadUuid)
 			throws BusinessException;
 
-	public ThreadEntryDto delete(String ownerUuid, String threadUuid,
-			ThreadEntryDto threadEntry) throws BusinessException;
+	public WorkGroupEntryDto delete(String ownerUuid, String threadUuid,
+			WorkGroupEntryDto threadEntry) throws BusinessException;
 
-	public ThreadEntryDto delete(String ownerUuid, String threadUuid, String uuid)
+	public WorkGroupEntryDto delete(String ownerUuid, String threadUuid, String uuid)
 			throws BusinessException;
 
 	Response download(String ownerUuid, String threadUuid, String uuid)
@@ -76,8 +76,8 @@ public interface ThreadEntryRestService {
 	Response thumbnail(String ownerUuid, String threadUuid, String uuid)
 			throws BusinessException;
 
-	ThreadEntryDto update(String ownerUuid, String threadUuid,
-			String threadEntryuuid, ThreadEntryDto threadEntryDto)
+	WorkGroupEntryDto update(String ownerUuid, String threadUuid,
+			String threadEntryuuid, WorkGroupEntryDto threadEntryDto)
 			throws BusinessException;
 
 	AsyncTaskDto findAsync(String ownerUuid, String uuid)

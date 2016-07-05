@@ -47,7 +47,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.ThreadMemberFacade;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadMemberDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupMemberDto;
 import org.linagora.linshare.webservice.admin.ThreadMemberRestService;
 
 import com.wordnik.swagger.annotations.Api;
@@ -71,10 +71,10 @@ public class ThreadMemberRestServiceImpl implements ThreadMemberRestService {
 
 	@Path("/{id}")
 	@GET
-	@ApiOperation(value = "Find a thread member.", response = ThreadMemberDto.class)
+	@ApiOperation(value = "Find a thread member.", response = WorkGroupMemberDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public ThreadMemberDto find(@PathParam("id") Long id)
+	public WorkGroupMemberDto find(@PathParam("id") Long id)
 			throws BusinessException {
 		return threadMemberFacade.find(id);
 	}
@@ -92,29 +92,29 @@ public class ThreadMemberRestServiceImpl implements ThreadMemberRestService {
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a thread member.", response = ThreadMemberDto.class)
+	@ApiOperation(value = "Create a thread member.", response = WorkGroupMemberDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public ThreadMemberDto create(ThreadMemberDto dto) throws BusinessException {
+	public WorkGroupMemberDto create(WorkGroupMemberDto dto) throws BusinessException {
 		return threadMemberFacade.create(dto);
 	}
 
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update a thread member.", response = ThreadMemberDto.class)
+	@ApiOperation(value = "Update a thread member.", response = WorkGroupMemberDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public ThreadMemberDto update(ThreadMemberDto dto) throws BusinessException {
+	public WorkGroupMemberDto update(WorkGroupMemberDto dto) throws BusinessException {
 		return threadMemberFacade.update(dto);
 	}
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a thread member.", response = ThreadMemberDto.class)
+	@ApiOperation(value = "Delete a thread member.", response = WorkGroupMemberDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public ThreadMemberDto delete(ThreadMemberDto dto) throws BusinessException {
-		ThreadMemberDto ret = threadMemberFacade.delete(dto);
+	public WorkGroupMemberDto delete(WorkGroupMemberDto dto) throws BusinessException {
+		WorkGroupMemberDto ret = threadMemberFacade.delete(dto);
 		return ret;
 	}
 }

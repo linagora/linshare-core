@@ -40,7 +40,7 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
 import org.linagora.linshare.core.facade.webservice.delegation.ThreadFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ThreadService;
@@ -62,41 +62,41 @@ public class ThreadFacadeImpl extends DelegationGenericFacadeImpl implements
 	}
 
 	@Override
-	public ThreadDto find(String ownerUuid, String uuid)
+	public WorkGroupDto find(String ownerUuid, String uuid)
 			throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notEmpty(uuid, "Missing required thread uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		return new ThreadDto(threadService.find(actor, owner, uuid));
+		return new WorkGroupDto(threadService.find(actor, owner, uuid));
 	}
 
 	@Override
-	public List<ThreadDto> findAll(String ownerUuid) throws BusinessException {
+	public List<WorkGroupDto> findAll(String ownerUuid) throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		List<ThreadDto> res = Lists.newArrayList();
+		List<WorkGroupDto> res = Lists.newArrayList();
 		List<Thread> threads = threadService.findAll(actor, owner);
 		for (Thread thread : threads) {
-			res.add(new ThreadDto(thread));
+			res.add(new WorkGroupDto(thread));
 		}
 		return res;
 	}
 
 	@Override
-	public ThreadDto create(String ownerUuid, ThreadDto threadDto)
+	public WorkGroupDto create(String ownerUuid, WorkGroupDto threadDto)
 			throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notNull(threadDto, "Missing required thread dto");
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		return new ThreadDto(threadService.create(actor, owner, threadDto.getName()));
+		return new WorkGroupDto(threadService.create(actor, owner, threadDto.getName()));
 
 	}
 
 	@Override
-	public ThreadDto delete(String ownerUuid, ThreadDto threadDto)
+	public WorkGroupDto delete(String ownerUuid, WorkGroupDto threadDto)
 			throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notNull(threadDto, "Missing required thread dto");
@@ -105,19 +105,19 @@ public class ThreadFacadeImpl extends DelegationGenericFacadeImpl implements
 		User owner = getOwner(ownerUuid);
 		Thread thread = threadService.find(actor, owner, threadDto.getUuid());
 		threadService.deleteThread(actor, owner, thread);
-		return new ThreadDto(thread);
+		return new WorkGroupDto(thread);
 	}
 
 	@Override
-	public ThreadDto update(String ownerUuid, String threadUuid,
-			ThreadDto threadDto) throws BusinessException {
+	public WorkGroupDto update(String ownerUuid, String threadUuid,
+			WorkGroupDto threadDto) throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notNull(threadDto, "Missing required ThreadDto");
 		Validate.notEmpty(threadDto.getName(), "Missing required thread name");
 
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		return new ThreadDto(threadService.update(actor, owner, threadUuid,
+		return new WorkGroupDto(threadService.update(actor, owner, threadUuid,
 				threadDto.getName()));
 	}
 }

@@ -47,7 +47,7 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 
 @XmlRootElement(name = "ThreadEntry")
 @ApiModel(value = "ThreadEntry", description = "A file in a thread.")
-public class ThreadEntryDto extends EntryDto {
+public class WorkGroupEntryDto extends EntryDto {
 
 	@ApiModelProperty(value = "Description")
 	protected String description;
@@ -79,7 +79,7 @@ public class ThreadEntryDto extends EntryDto {
 	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 	protected AsyncTaskDto async;
 
-	public ThreadEntryDto(ThreadEntry te) {
+	public WorkGroupEntryDto(ThreadEntry te) {
 		super();
 		if (te == null) {
 			return;
@@ -97,11 +97,11 @@ public class ThreadEntryDto extends EntryDto {
 		this.hasThumbnail = te.isHasThumbnail();
 	}
 
-	public ThreadEntryDto() {
+	public WorkGroupEntryDto() {
 		super();
 	}
 
-	public ThreadEntryDto(AsyncTaskDto asyncTask,
+	public WorkGroupEntryDto(AsyncTaskDto asyncTask,
 			ThreadEntryTaskContext threadEntryTaskContext) {
 		async = asyncTask;
 		this.name = threadEntryTaskContext.getFileName();

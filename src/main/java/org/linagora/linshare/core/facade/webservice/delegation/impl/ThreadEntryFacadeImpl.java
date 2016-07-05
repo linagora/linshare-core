@@ -48,7 +48,7 @@ import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadEntryDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
 import org.linagora.linshare.core.facade.webservice.delegation.ThreadEntryFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DocumentEntryService;
@@ -79,7 +79,7 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 	}
 
 	@Override
-	public ThreadEntryDto create(String ownerUuid, String threadUuid,
+	public WorkGroupEntryDto create(String ownerUuid, String threadUuid,
 			File file, String fileName) {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
@@ -91,11 +91,11 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 		Thread thread = threadService.find(actor, owner, threadUuid);
 		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor,
 				owner, thread, file, fileName);
-		return new ThreadEntryDto(threadEntry);
+		return new WorkGroupEntryDto(threadEntry);
 	}
 
 	@Override
-	public ThreadEntryDto copy(String ownerUuid, String threadUuid,
+	public WorkGroupEntryDto copy(String ownerUuid, String threadUuid,
 			String entryUuid) {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
@@ -109,11 +109,11 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 		// Check if we have the right to download the specified document entry
 		documentEntryService.checkDownloadPermission(actor, owner, entryUuid);
 		ThreadEntry threadEntry = threadEntryService.copyFromDocumentEntry(actor, owner, thread, doc);
-		return new ThreadEntryDto(threadEntry);
+		return new WorkGroupEntryDto(threadEntry);
 	}
 
 	@Override
-	public ThreadEntryDto find(String ownerUuid, String threadUuid,
+	public WorkGroupEntryDto find(String ownerUuid, String threadUuid,
 			String entryUuid) throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
@@ -122,11 +122,11 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 		ThreadEntry threadEntry = threadEntryService.findById(actor, owner, entryUuid);
-		return new ThreadEntryDto(threadEntry);
+		return new WorkGroupEntryDto(threadEntry);
 	}
 
 	@Override
-	public List<ThreadEntryDto> findAll(String ownerUuid, String threadUuid)
+	public List<WorkGroupEntryDto> findAll(String ownerUuid, String threadUuid)
 			throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
@@ -134,24 +134,24 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 		Thread thread = threadService.find(actor, owner, threadUuid);
-		List<ThreadEntryDto> ret = Lists.newArrayList();
+		List<WorkGroupEntryDto> ret = Lists.newArrayList();
 
 		for (ThreadEntry t : threadEntryService.findAllThreadEntries(actor, owner, thread)) {
-			ret.add(new ThreadEntryDto(t));
+			ret.add(new WorkGroupEntryDto(t));
 		}
 		return ret;
 	}
 
 	@Override
-	public ThreadEntryDto delete(String ownerUuid, String threadUuid,
-			ThreadEntryDto threadEntry) throws BusinessException {
+	public WorkGroupEntryDto delete(String ownerUuid, String threadUuid,
+			WorkGroupEntryDto threadEntry) throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notEmpty(threadUuid, "Missing required entry uuid");
 		return delete(ownerUuid, threadUuid, threadEntry.getUuid());
 	}
 
 	@Override
-	public ThreadEntryDto delete(String ownerUuid, String threadUuid, String uuid)
+	public WorkGroupEntryDto delete(String ownerUuid, String threadUuid, String uuid)
 			throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notEmpty(uuid, "Missing required entry uuid");
@@ -159,7 +159,7 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 		User owner = getOwner(ownerUuid);
 		ThreadEntry threadEntry = threadEntryService.findById(actor, actor, uuid);
 		threadEntryService.deleteThreadEntry(actor, owner, threadEntry);
-		return new ThreadEntryDto(threadEntry);
+		return new WorkGroupEntryDto(threadEntry);
 	}
 
 	@Override
@@ -200,8 +200,8 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 	}
 
 	@Override
-	public ThreadEntryDto update(String ownerUuid, String threadUuid,
-			String threadEntryUuid, ThreadEntryDto threadEntryDto)
+	public WorkGroupEntryDto update(String ownerUuid, String threadUuid,
+			String threadEntryUuid, WorkGroupEntryDto threadEntryDto)
 			throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notEmpty(threadUuid, "Missing required document uuid");
@@ -209,7 +209,7 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 		Validate.notNull(threadEntryDto, "Missing required threadEntryDto");
 
 		User actor = checkAuthentication();
-		return new ThreadEntryDto(threadEntryService.updateFileProperties(
+		return new WorkGroupEntryDto(threadEntryService.updateFileProperties(
 				actor, threadEntryUuid, threadEntryDto.getDescription(),
 				threadEntryDto.getMetaData(), threadEntryDto.getName()));
 	}

@@ -41,7 +41,7 @@ import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadEntryDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
 import org.linagora.linshare.core.facade.webservice.user.ThreadEntryAsyncFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AsyncTaskService;
@@ -70,7 +70,7 @@ public class ThreadEntryAsyncFacadeImpl extends GenericAsyncFacadeImpl implement
 	}
 
 	@Override
-	public ThreadEntryDto upload(ThreadEntryTaskContext tetc) {
+	public WorkGroupEntryDto upload(ThreadEntryTaskContext tetc) {
 		User actor = checkAuthentication(tetc);
 		User owner = getOwner(tetc);
 		Validate.notNull(tetc.getFile(),
@@ -84,11 +84,11 @@ public class ThreadEntryAsyncFacadeImpl extends GenericAsyncFacadeImpl implement
 		}
 		ThreadEntry threadEntry = service.createThreadEntry(actor,
 				owner, thread, tetc.getFile(), tetc.getFileName());
-		return new ThreadEntryDto(threadEntry);
+		return new WorkGroupEntryDto(threadEntry);
 	}
 
 	@Override
-	public ThreadEntryDto copy(ThreadEntryTaskContext tetc) {
+	public WorkGroupEntryDto copy(ThreadEntryTaskContext tetc) {
 		User actor = checkAuthentication(tetc);
 		User owner = getOwner(tetc);
 		Validate.notNull(tetc, "Missing ThreadEntryTaskContext");
@@ -102,6 +102,6 @@ public class ThreadEntryAsyncFacadeImpl extends GenericAsyncFacadeImpl implement
 		// Check if we have the right to download the specified document entry
 		documentEntryService.checkDownloadPermission(actor, owner, tetc.getDocEntryUuid());
 		ThreadEntry threadEntry = service.copyFromDocumentEntry(actor, owner, thread, doc);
-		return new ThreadEntryDto(threadEntry);
+		return new WorkGroupEntryDto(threadEntry);
 	}
 }

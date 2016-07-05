@@ -42,12 +42,12 @@ import javax.ws.rs.core.Response;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadEntryDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 
 public interface ThreadEntryRestService {
 
-	ThreadEntryDto create(String threadUuid,
+	WorkGroupEntryDto create(String threadUuid,
 			InputStream file, String description, String givenFileName,
 			Boolean async,
 			Long contentLength,
@@ -57,18 +57,18 @@ public interface ThreadEntryRestService {
 	DocumentDto copy(String threadUuid, String entryUuid)
 			throws BusinessException;
 
-	ThreadEntryDto find(String threadUuid, String uuid)
+	WorkGroupEntryDto find(String threadUuid, String uuid)
 			throws BusinessException;
 
 	void head(String threadUuid, String uuid) throws BusinessException;
 
-	List<ThreadEntryDto> findAll(String threadUuid)
+	List<WorkGroupEntryDto> findAll(String threadUuid)
 			throws BusinessException;
 
-	ThreadEntryDto delete(String threadUuid,
-			ThreadEntryDto threadEntry) throws BusinessException;
+	WorkGroupEntryDto delete(String threadUuid,
+			WorkGroupEntryDto threadEntry) throws BusinessException;
 
-	ThreadEntryDto delete(String threadUuid,
+	WorkGroupEntryDto delete(String threadUuid,
 			String uuid) throws BusinessException;
 
 	Response download(String threadUuid, String uuid)
@@ -77,7 +77,7 @@ public interface ThreadEntryRestService {
 	Response thumbnail(String threadUuid, String uuid, boolean base64)
 			throws BusinessException;
 
-	ThreadEntryDto update(String threadUuid, String threadEntryUuid, ThreadEntryDto threadEntryDto) throws BusinessException;
+	WorkGroupEntryDto update(String threadUuid, String threadEntryUuid, WorkGroupEntryDto threadEntryDto) throws BusinessException;
 
 	AsyncTaskDto findAsync(String uuid) throws BusinessException;
 }

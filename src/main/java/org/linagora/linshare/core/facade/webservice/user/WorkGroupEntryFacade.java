@@ -31,26 +31,42 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+
 package org.linagora.linshare.core.facade.webservice.user;
 
+import java.io.File;
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadMemberDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 
-public interface ThreadMemberFacade extends GenericFacade {
 
-	List<ThreadMemberDto> findAll(String uuid) throws BusinessException;
+public interface WorkGroupEntryFacade extends GenericFacade {
 
-	ThreadMemberDto find(String threadUuid, String threadMemberUuid)
+	WorkGroupEntryDto create(String threadUuid, File fi,
+			String filename) throws BusinessException;
+
+	WorkGroupEntryDto copy(String threadUuid, String entryUuid)
 			throws BusinessException;
 
-	ThreadMemberDto create(String threadUuid, String domainId, String userMail,
-			boolean readOnly, boolean admin) throws BusinessException;
-
-	ThreadMemberDto update(String threadUuid, ThreadMemberDto threadMember)
+	DocumentDto copyFromThreadEntry(String threadUuid, String entryUuid)
 			throws BusinessException;
 
-	ThreadMemberDto delete(String threadUuid, String userUuid)
+	WorkGroupEntryDto find(String threadUuid, String uuid)
 			throws BusinessException;
+
+	List<WorkGroupEntryDto> findAll(String threadUuid) throws BusinessException;
+
+	WorkGroupEntryDto delete(String threadUuid, String threadEntryUuid) throws BusinessException;
+
+	WorkGroupEntryDto delete(String threadUuid, WorkGroupEntryDto threadEntry) throws BusinessException;
+
+	Response download(String threadUuid, String uuid) throws BusinessException;
+
+	Response thumbnail(String threadUuid, String uuid, boolean base64) throws BusinessException;
+
+	WorkGroupEntryDto update(String threadUuid, String threadEntryUuid, WorkGroupEntryDto threadEntryDto) throws BusinessException;
 }

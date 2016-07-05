@@ -42,7 +42,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.ThreadMemberFacade;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadMemberDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupMemberDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
@@ -61,15 +61,15 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public ThreadMemberDto find(Long id) throws BusinessException {
+	public WorkGroupMemberDto find(Long id) throws BusinessException {
 		@SuppressWarnings("unused")
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(id, "id must be set.");
-		return new ThreadMemberDto(threadService.getThreadMemberById(id));
+		return new WorkGroupMemberDto(threadService.getThreadMemberById(id));
 	}
 
 	@Override
-	public ThreadMemberDto create(ThreadMemberDto dto) throws BusinessException {
+	public WorkGroupMemberDto create(WorkGroupMemberDto dto) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(dto, "thread member must be set.");
 		Validate.notEmpty(dto.getThreadUuid(), "thread member thread id must be set.");
@@ -90,27 +90,27 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		boolean admin = dto.isAdmin();
 		boolean canUpload = !dto.isReadonly();
 
-		return new ThreadMemberDto(threadService.addMember(actor, actor, thread, user, admin, canUpload));
+		return new WorkGroupMemberDto(threadService.addMember(actor, actor, thread, user, admin, canUpload));
 	}
 
 	@Override
-	public ThreadMemberDto update(ThreadMemberDto dto) throws BusinessException {
+	public WorkGroupMemberDto update(WorkGroupMemberDto dto) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(dto, "thread member must be set.");
 		Validate.notNull(dto.getThreadUuid(), "thread uuid must be set.");
 		Validate.notNull(dto.getUserUuid(), "user uuid must be set.");
 		boolean admin = dto.isAdmin();
 		boolean readonly = dto.isReadonly();
-		return new ThreadMemberDto(threadService.updateMember(actor, actor, dto.getThreadUuid(), dto.getUserUuid(), admin, !readonly));
+		return new WorkGroupMemberDto(threadService.updateMember(actor, actor, dto.getThreadUuid(), dto.getUserUuid(), admin, !readonly));
 	}
 
 	@Override
-	public ThreadMemberDto delete(ThreadMemberDto dto) throws BusinessException {
+	public WorkGroupMemberDto delete(WorkGroupMemberDto dto) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(dto, "thread member must be set.");
 		Validate.notNull(dto.getThreadUuid(), "thread uuid must be set.");
 		Validate.notNull(dto.getUserUuid(), "user uuid must be set.");
 		ThreadMember member = this.threadService.deleteMember(actor, actor, dto.getThreadUuid(), dto.getUserUuid());
-		return new ThreadMemberDto(member);
+		return new WorkGroupMemberDto(member);
 	}
 }

@@ -59,7 +59,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.EntryDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.FlowDto;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
-import org.linagora.linshare.core.facade.webservice.user.ThreadEntryFacade;
+import org.linagora.linshare.core.facade.webservice.user.WorkGroupEntryFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.user.FlowDocumentUploaderRestService;
 import org.linagora.linshare.webservice.utils.FlowUploaderUtils;
@@ -91,17 +91,17 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 
 	private final DocumentFacade documentFacade;
 
-	private final ThreadEntryFacade threadEntryFacade;
+	private final WorkGroupEntryFacade threadEntryFacade;
 
 	private static final ConcurrentMap<String, ChunkedFile> chunkedFiles = Maps
 			.newConcurrentMap();
 
-	public FlowDocumentUploaderRestServiceImpl(DocumentFacade documentFacade, ThreadEntryFacade threadEntryFacade,
+	public FlowDocumentUploaderRestServiceImpl(DocumentFacade documentFacade, WorkGroupEntryFacade workGroupEntryFacade,
 			boolean sizeValidation) {
 		super();
 		this.documentFacade = documentFacade;
 		this.sizeValidation = sizeValidation;
-		this.threadEntryFacade = threadEntryFacade;
+		this.threadEntryFacade = workGroupEntryFacade;
 	}
 
 	@Path("/")

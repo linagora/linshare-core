@@ -40,8 +40,8 @@ import javax.jws.WebService;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.SimpleLongValue;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadMemberDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupMemberDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 
@@ -69,9 +69,9 @@ public interface SoapService {
 	String getInformation() throws BusinessException;
 
 	// Threads
-	List<ThreadDto> getAllMyThread() throws BusinessException;
+	List<WorkGroupDto> getAllMyThread() throws BusinessException;
 
-	void addMember(ThreadMemberDto member) throws BusinessException;
+	void addMember(WorkGroupMemberDto member) throws BusinessException;
 
 	// Users
 	List<UserDto> getUsers() throws BusinessException;

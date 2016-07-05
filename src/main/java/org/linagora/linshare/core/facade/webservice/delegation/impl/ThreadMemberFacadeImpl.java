@@ -41,7 +41,7 @@ import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadMemberDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupMemberDto;
 import org.linagora.linshare.core.facade.webservice.delegation.ThreadMemberFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ThreadService;
@@ -66,23 +66,23 @@ public class ThreadMemberFacadeImpl extends DelegationGenericFacadeImpl
 	}
 
 	@Override
-	public List<ThreadMemberDto> findAll(String ownerUuid, String threadUuid)
+	public List<WorkGroupMemberDto> findAll(String ownerUuid, String threadUuid)
 			throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 		Thread thread = threadService.find(actor, owner, threadUuid);
-		List<ThreadMemberDto> res = Lists.newArrayList();
+		List<WorkGroupMemberDto> res = Lists.newArrayList();
 
 		for (ThreadMember m : threadService.findAllThreadMembers(actor, owner, thread)) {
-			res.add(new ThreadMemberDto(m));
+			res.add(new WorkGroupMemberDto(m));
 		}
 		return res;
 	}
 
 	@Override
-	public ThreadMemberDto create(String ownerUuid, String threadUuid,
+	public WorkGroupMemberDto create(String ownerUuid, String threadUuid,
 			String domainId, String mail, boolean readonly, boolean admin)
 			throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
@@ -93,32 +93,32 @@ public class ThreadMemberFacadeImpl extends DelegationGenericFacadeImpl
 		User owner = getOwner(ownerUuid);
 		User user = userService.findOrCreateUser(mail, domainId);
 		Thread thread = threadService.find(actor, owner, threadUuid);
-		return new ThreadMemberDto(threadService.addMember(actor, owner,
+		return new WorkGroupMemberDto(threadService.addMember(actor, owner,
 				thread, user, admin, !readonly));
 	}
 
 	@Override
-	public ThreadMemberDto update(String ownerUuid, String threadUuid,
-			ThreadMemberDto threadMember) {
+	public WorkGroupMemberDto update(String ownerUuid, String threadUuid,
+			WorkGroupMemberDto threadMember) {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notNull(threadMember, "Missing required thread member");
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		return new ThreadMemberDto(threadService.updateMember(actor, owner,
+		return new WorkGroupMemberDto(threadService.updateMember(actor, owner,
 				threadUuid, threadMember.getUserUuid(), threadMember.isAdmin(),
 				!threadMember.isReadonly()));
 	}
 
 	@Override
-	public ThreadMemberDto delete(String ownerUuid, String threadUuid, String userUuid)
+	public WorkGroupMemberDto delete(String ownerUuid, String threadUuid, String userUuid)
 			throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notEmpty(userUuid, "Missing required user uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 		ThreadMember member = threadService.deleteMember(actor, owner, threadUuid, userUuid);
-		return new ThreadMemberDto(member);
+		return new WorkGroupMemberDto(member);
 	}
 
 }

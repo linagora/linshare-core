@@ -42,32 +42,32 @@ import javax.ws.rs.core.Response;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadEntryDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
 
 public interface WorkGroupEntryRestService {
 
-	ThreadEntryDto create(String workGroupUuid,
+	WorkGroupEntryDto create(String workGroupUuid,
 			InputStream file, String description, String givenFileName,
 			Boolean async,
 			Long contentLength,
 			Long fileSize,
 			MultipartBody body) throws BusinessException;
 
-	ThreadEntryDto copy(String workGroupUuid, String entryUuid)
+	WorkGroupEntryDto copy(String workGroupUuid, String entryUuid)
 			throws BusinessException;
 
-	ThreadEntryDto find(String workGroupUuid, String uuid)
+	WorkGroupEntryDto find(String workGroupUuid, String uuid)
 			throws BusinessException;
 
 	void head(String workGroupUuid, String uuid) throws BusinessException;
 
-	List<ThreadEntryDto> findAll(String workGroupUuid)
+	List<WorkGroupEntryDto> findAll(String workGroupUuid)
 			throws BusinessException;
 
-	ThreadEntryDto delete(String workGroupUuid,
-			ThreadEntryDto workGroupEntry) throws BusinessException;
+	WorkGroupEntryDto delete(String workGroupUuid,
+			WorkGroupEntryDto workGroupEntry) throws BusinessException;
 
-	ThreadEntryDto delete(String workGroupUuid,
+	WorkGroupEntryDto delete(String workGroupUuid,
 			String uuid) throws BusinessException;
 
 	Response download(String workGroupUuid, String uuid)
@@ -76,7 +76,7 @@ public interface WorkGroupEntryRestService {
 	Response thumbnail(String workGroupUuid, String uuid, boolean base64)
 			throws BusinessException;
 
-	ThreadEntryDto update(String workGroupUuid, String workGroupEntryUuid, ThreadEntryDto workGroupEntryDto) throws BusinessException;
+	WorkGroupEntryDto update(String workGroupUuid, String workGroupEntryUuid, WorkGroupEntryDto workGroupEntryDto) throws BusinessException;
 
 	AsyncTaskDto findAsync(String uuid) throws BusinessException;
 }

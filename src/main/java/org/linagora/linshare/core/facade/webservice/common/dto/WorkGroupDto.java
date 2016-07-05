@@ -31,28 +31,74 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.user;
+package org.linagora.linshare.core.facade.webservice.common.dto;
 
 import java.util.List;
+import java.util.Set;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadDto;
+import javax.xml.bind.annotation.XmlRootElement;
 
-public interface ThreadFacade extends GenericFacade {
+import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.ThreadMember;
 
-	List<ThreadDto> findAll() throws BusinessException;
+import com.google.common.base.Function;
+import com.google.common.collect.Sets;
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
-	void addMember(String threadUuid, String domainId, String mail,
-			boolean readonly) throws BusinessException;
+@XmlRootElement(name = "Thread")
+@ApiModel(value = "Thread", description = "A thread is a shared space for users to deposit files.")
+public class WorkGroupDto extends AccountDto {
 
-	ThreadDto create(ThreadDto threadDto) throws BusinessException;
+    @ApiModelProperty(value = "Name")
+	protected String name;
 
-	ThreadDto find(String uuid) throws BusinessException;
+    @ApiModelProperty(value = "Members")
+	protected Set<WorkGroupMemberDto> members;
 
-	ThreadDto delete(ThreadDto threadDto) throws BusinessException;
+	public WorkGroupDto(Thread thread) {
+		super(thread, true);
+		this.name = thread.getName();
+	}
 
-	ThreadDto delete(String threadUuid) throws BusinessException;
+	public WorkGroupDto(Thread thread, List<ThreadMember> members) {
+		super(thread, true);
+		this.name = thread.getName();
+		this.members = Sets.newHashSet();
+		for (ThreadMember member : members) {
+			this.members.add(new WorkGroupMemberDto(member));
+		}
+	}
 
-	ThreadDto update(String threadUuid, ThreadDto threadDto)
-			throws BusinessException;
+	public WorkGroupDto() {
+		super();
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Set<WorkGroupMemberDto> getMembers() {
+		return members;
+	}
+
+	public void setMembers(Set<WorkGroupMemberDto> members) {
+		this.members = members;
+	}
+
+	/*
+	 * Transformers
+	 */
+	public static Function<Thread, WorkGroupDto> toDto() {
+		return new Function<Thread, WorkGroupDto>() {
+			@Override
+			public WorkGroupDto apply(Thread arg0) {
+				return new WorkGroupDto(arg0);
+			}
+		};
+	}
 }

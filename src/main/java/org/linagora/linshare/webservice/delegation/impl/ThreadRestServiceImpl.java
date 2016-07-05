@@ -48,7 +48,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
 import org.linagora.linshare.core.facade.webservice.delegation.ThreadFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.delegation.ThreadRestService;
@@ -75,30 +75,30 @@ public class ThreadRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a thread.", response = ThreadDto.class)
+	@ApiOperation(value = "Create a thread.", response = WorkGroupDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
 					@ApiResponse(code = 404, message = "Thread not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public ThreadDto create(
+	public WorkGroupDto create(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
-			@ApiParam(value = "Thread to create.", required = true) ThreadDto thread)
+			@ApiParam(value = "Thread to create.", required = true) WorkGroupDto thread)
 			throws BusinessException {
 		return threadFacade.create(ownerUuid, thread);
 	}
 
 	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Get a thread.", response = ThreadDto.class)
+	@ApiOperation(value = "Get a thread.", response = WorkGroupDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
 					@ApiResponse(code = 404, message = "Thread not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public ThreadDto find(
+	public WorkGroupDto find(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
@@ -107,7 +107,7 @@ public class ThreadRestServiceImpl extends WebserviceBase implements
 
 	@Path("/{uuid}")
 	@HEAD
-	@ApiOperation(value = "Get a thread.", response = ThreadDto.class)
+	@ApiOperation(value = "Get a thread.", response = WorkGroupDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
 					@ApiResponse(code = 404, message = "Thread not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
@@ -123,14 +123,14 @@ public class ThreadRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Get all threads.", response = ThreadDto.class, responseContainer = "Set")
+	@ApiOperation(value = "Get all threads.", response = WorkGroupDto.class, responseContainer = "Set")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
 					@ApiResponse(code = 404, message = "Thread not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public List<ThreadDto> findAll(
+	public List<WorkGroupDto> findAll(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid)
 					throws BusinessException {
 		return threadFacade.findAll(ownerUuid);
@@ -138,51 +138,51 @@ public class ThreadRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a thread.", response = ThreadDto.class)
+	@ApiOperation(value = "Delete a thread.", response = WorkGroupDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
 					@ApiResponse(code = 404, message = "Thread or thread not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public ThreadDto delete(
+	public WorkGroupDto delete(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
-			@ApiParam(value = "Thread to delete.", required = true) ThreadDto thread)
+			@ApiParam(value = "Thread to delete.", required = true) WorkGroupDto thread)
 					throws BusinessException {
 		return threadFacade.delete(ownerUuid, thread);
 	}
 
 	@Path("/{uuid}")
 	@DELETE
-	@ApiOperation(value = "Delete a thread.", response = ThreadDto.class)
+	@ApiOperation(value = "Delete a thread.", response = WorkGroupDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
 					@ApiResponse(code = 404, message = "Thread or thread not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public ThreadDto delete(
+	public WorkGroupDto delete(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		ThreadDto tmp = new ThreadDto();
+		WorkGroupDto tmp = new WorkGroupDto();
 		tmp.setUuid(uuid);
 		return threadFacade.delete(ownerUuid, tmp);
 	}
 
 	@Path("/{uuid}")
 	@PUT
-	@ApiOperation(value = "Update a thread.", response = ThreadDto.class)
+	@ApiOperation(value = "Update a thread.", response = WorkGroupDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
 					@ApiResponse(code = 404, message = "Thread or thread not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public ThreadDto update(
+	public WorkGroupDto update(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("uuid") String threadUuid,
-			@ApiParam(value = "Thread to create.", required = true) ThreadDto threadDto)
+			@ApiParam(value = "Thread to create.", required = true) WorkGroupDto threadDto)
 			throws BusinessException {
 		return threadFacade.update(ownerUuid, threadUuid, threadDto);
 	}

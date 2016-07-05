@@ -40,8 +40,8 @@ import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadMemberDto;
-import org.linagora.linshare.core.facade.webservice.user.ThreadMemberFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupMemberDto;
+import org.linagora.linshare.core.facade.webservice.user.WorkGroupMemberFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
@@ -49,7 +49,7 @@ import org.linagora.linshare.core.service.UserService;
 import com.google.common.collect.Lists;
 
 public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
-		ThreadMemberFacade {
+		WorkGroupMemberFacade {
 
 	private final ThreadService threadService;
 
@@ -63,32 +63,32 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public List<ThreadMemberDto> findAll(String threadUuid)
+	public List<WorkGroupMemberDto> findAll(String threadUuid)
 			throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		User actor = checkAuthentication();
 		Thread thread = threadService.find(actor, actor, threadUuid);
-		List<ThreadMemberDto> res = Lists.newArrayList();
+		List<WorkGroupMemberDto> res = Lists.newArrayList();
 		for (ThreadMember m : threadService.findAllThreadMembers(actor, actor, thread)) {
-			res.add(new ThreadMemberDto(m));
+			res.add(new WorkGroupMemberDto(m));
 		}
 		return res;
 	}
 
 	@Override
-	public ThreadMemberDto find(String threadUuid, String userUuid)
+	public WorkGroupMemberDto find(String threadUuid, String userUuid)
 			throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(userUuid,
 				"Missing required user uuid");
 		User actor = checkAuthentication();
 		Thread thread = threadService.find(actor, actor, threadUuid);
-		return new ThreadMemberDto(threadService.getMemberFromUser(thread,
+		return new WorkGroupMemberDto(threadService.getMemberFromUser(thread,
 				userService.findByLsUuid(userUuid)));
 	}
 
 	@Override
-	public ThreadMemberDto create(String threadUuid, String domainId,
+	public WorkGroupMemberDto create(String threadUuid, String domainId,
 			String userMail, boolean readOnly, boolean admin)
 			throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
@@ -97,28 +97,28 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		User actor = checkAuthentication();
 		User user = userService.findOrCreateUser(userMail, domainId);
 		Thread thread = threadService.find(actor, actor, threadUuid);
-		return new ThreadMemberDto(threadService.addMember(actor, actor,
+		return new WorkGroupMemberDto(threadService.addMember(actor, actor,
 				thread, user, admin, !readOnly));
 	}
 
 	@Override
-	public ThreadMemberDto update(String threadUuid,
-			ThreadMemberDto threadMember) throws BusinessException {
+	public WorkGroupMemberDto update(String threadUuid,
+			WorkGroupMemberDto threadMember) throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notNull(threadMember, "Missing required thread member");
 		User actor = checkAuthentication();
-		return new ThreadMemberDto(threadService.updateMember(actor, actor,
+		return new WorkGroupMemberDto(threadService.updateMember(actor, actor,
 				threadUuid, threadMember.getUserUuid(), threadMember.isAdmin(),
 				!threadMember.isReadonly()));
 	}
 
 	@Override
-	public ThreadMemberDto delete(String threadUuid, String userUuid)
+	public WorkGroupMemberDto delete(String threadUuid, String userUuid)
 			throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(userUuid, "Missing required user uuid");
 		User actor = checkAuthentication();
 		ThreadMember member = threadService.deleteMember(actor, actor, threadUuid, userUuid);
-		return new ThreadMemberDto(member);
+		return new WorkGroupMemberDto(member);
 	}
 }

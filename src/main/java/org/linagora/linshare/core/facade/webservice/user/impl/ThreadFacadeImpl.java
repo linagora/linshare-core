@@ -42,8 +42,8 @@ import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadDto;
-import org.linagora.linshare.core.facade.webservice.user.ThreadFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
+import org.linagora.linshare.core.facade.webservice.user.WorkGroupFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.ThreadService;
@@ -52,7 +52,7 @@ import org.linagora.linshare.core.service.UserService;
 import com.google.common.collect.Lists;
 
 public class ThreadFacadeImpl extends UserGenericFacadeImp implements
-		ThreadFacade {
+		WorkGroupFacade {
 
 	private final ThreadService threadService;
 
@@ -84,26 +84,26 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public List<ThreadDto> findAll() throws BusinessException {
+	public List<WorkGroupDto> findAll() throws BusinessException {
 
 		User actor = checkAuthentication();
 
-		List<ThreadDto> res = Lists.newArrayList();
+		List<WorkGroupDto> res = Lists.newArrayList();
 		for (Thread thread : threadService.findAllWhereMember(actor)) {
-			res.add(new ThreadDto(thread));
+			res.add(new WorkGroupDto(thread));
 		}
 		return res;
 	}
 
 	@Override
-	public ThreadDto find(String uuid) throws BusinessException {
+	public WorkGroupDto find(String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "Missing required thread uuid");
 
 		User actor = checkAuthentication();
 
 		Thread thread = threadService.find(actor, actor, uuid);
 		List<ThreadMember> members = threadService.findAllThreadMembers(actor, actor, thread);
-		return new ThreadDto(thread, members);
+		return new WorkGroupDto(thread, members);
 	}
 
 	@Override
@@ -120,17 +120,17 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public ThreadDto create(ThreadDto threadDto) throws BusinessException {
+	public WorkGroupDto create(WorkGroupDto threadDto) throws BusinessException {
 		Validate.notNull(threadDto, "Missing required thread");
 		Validate.notEmpty(threadDto.getName(),
 				"Missing required thread dto name");
 		User actor = checkAuthentication();
-		return new ThreadDto(threadService.create(actor, actor,
+		return new WorkGroupDto(threadService.create(actor, actor,
 				threadDto.getName()));
 	}
 
 	@Override
-	public ThreadDto delete(ThreadDto threadDto) throws BusinessException {
+	public WorkGroupDto delete(WorkGroupDto threadDto) throws BusinessException {
 		Validate.notNull(threadDto, "Missing required thread dto");
 		Validate.notEmpty(threadDto.getUuid(),
 				"Missing required thread dto uuid");
@@ -138,26 +138,26 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		Thread thread = threadService.find(actor, actor,
 				threadDto.getUuid());
 		threadService.deleteThread(actor, actor, thread);
-		return new ThreadDto(thread);
+		return new WorkGroupDto(thread);
 	}
 
 	@Override
-	public ThreadDto delete(String threadUuid) throws BusinessException {
+	public WorkGroupDto delete(String threadUuid) throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		User actor = checkAuthentication();
 		Thread thread = threadService.find(actor, actor, threadUuid);
 		threadService.deleteThread(actor, actor, thread);
-		return new ThreadDto(thread);
+		return new WorkGroupDto(thread);
 	}
 
 	@Override
-	public ThreadDto update(String threadUuid, ThreadDto threadDto)
+	public WorkGroupDto update(String threadUuid, WorkGroupDto threadDto)
 			throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notNull(threadDto, "Missing required ThreadDto");
 		Validate.notEmpty(threadDto.getName(), "Missing required thread name");
 		User actor = checkAuthentication();
-		return new ThreadDto(threadService.update(actor, actor, threadUuid,
+		return new WorkGroupDto(threadService.update(actor, actor, threadUuid,
 				threadDto.getName()));
 	}
 }
