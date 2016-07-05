@@ -47,5 +47,5 @@ public interface AutoCompleteFacade {
 
 	Set<String> getMail(String pattern) throws BusinessException;
 
-	List<AutoCompleteResultDto> search(String pattern, String type) throws BusinessException;
+	List<AutoCompleteResultDto> search(String pattern, String type, String threadUuid) throws BusinessException;
 }

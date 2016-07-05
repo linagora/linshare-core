@@ -62,6 +62,7 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="mailingListService" />
+		<constructor-arg ref="threadService" />
 	</bean>
 	<bean id="wsShareEntryGroupFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.ShareEntryGroupFacadeImpl">
 		<constructor-arg ref="accountService" />

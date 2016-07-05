@@ -104,6 +104,22 @@ public class ThreadMemberRestServiceImpl extends WebserviceBase implements
 		return threadMemberFacade.findAll(threadUuid);
 	}
 
+	@Path("/{userUuid}")
+	@GET
+	@ApiOperation(value = "Get a thread member.", response = ThreadMemberDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
+					@ApiResponse(code = 404, message = "Member not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+					})
+	@Override
+	public ThreadMemberDto find(
+			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
+			@ApiParam(value = "The user uuid.", required = true) @PathParam("userUuid") String userUuid)
+			throws BusinessException {
+		return threadMemberFacade.find(threadUuid, userUuid);
+	}
+
 	@Path("/")
 	@PUT
 	@ApiOperation(value = "Update a thread member.", response = ThreadMemberDto.class)

@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2016. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -42,15 +42,20 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.SearchType;
 import org.linagora.linshare.core.domain.constants.VisibilityType;
 import org.linagora.linshare.core.domain.entities.MailingList;
+import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.user.AutoCompleteFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.AutoCompleteResultDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.ListAutoCompleteResultDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.ThreadMemberAutoCompleteResultDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.UserAutoCompleteResultDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MailingListService;
+import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
 
 import com.google.common.collect.ImmutableList;
@@ -62,12 +67,18 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 
 	private final UserService userService;
 
+	private final ThreadService threadService;
+
 	private final MailingListService mailingListSerice;
 
-	public AutoCompleteFacadeImpl(final AccountService accountService, final UserService userService, final MailingListService mailingListSerice) {
+	public AutoCompleteFacadeImpl(final AccountService accountService,
+			final UserService userService,
+			final MailingListService mailingListSerice,
+			final ThreadService threadService) {
 		super(accountService);
 		this.userService = userService;
 		this.mailingListSerice = mailingListSerice;
+		this.threadService = threadService;
 	}
 
 	@Override
@@ -107,7 +118,7 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 	}
 
 	@Override
-	public List<AutoCompleteResultDto> search(String pattern, String type) throws BusinessException {
+	public List<AutoCompleteResultDto> search(String pattern, String type, String threadUuid) throws BusinessException {
 		User actor = checkAuthentication();
 		if (pattern.length() > 2) {
 			List<AutoCompleteResultDto> result = Lists.newArrayList();
@@ -121,8 +132,22 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 			} else if (enumType.equals(SearchType.USERS)) {
 				Set<UserDto> userList = findUser(pattern);
 				result.addAll(ImmutableList.copyOf(Lists.transform(Lists.newArrayList(userList), UserAutoCompleteResultDto.toDto())));
+			} else if (enumType.equals(SearchType.THREAD_MEMBERS)) {
+				Validate.notEmpty(threadUuid, "You must fill threadUuid query parameter.");
+				Thread thread = threadService.find(actor, actor, threadUuid);
+				List<User> users = userService.autoCompleteUser(actor, pattern);
+				int range = (users.size() < AUTO_COMPLETE_LIMIT ? users.size() : AUTO_COMPLETE_LIMIT);
+				for (User user : users.subList(0, range)) {
+					User account = userService.findOrCreateUser(user.getMail(), user.getDomainId());
+					ThreadMember member = threadService.getMemberFromUser(thread, account);
+					if (member == null) {
+						result.add(new ThreadMemberAutoCompleteResultDto(account));
+					} else {
+						result.add(new ThreadMemberAutoCompleteResultDto(member));
+					}
+				}
 			} else {
-				throw new BusinessException("Unexpected type.");
+				throw new BusinessException(BusinessErrorCode.WEBSERVICE_BAD_REQUEST, "Unexpected search type.");
 			}
 			return result;
 		} else {
