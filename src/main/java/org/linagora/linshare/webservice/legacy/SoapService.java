@@ -31,17 +31,48 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.webservice.legacy;
 
-package org.linagora.linshare.webservice.user;
+import java.util.List;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import javax.jws.WebService;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.SimpleLongValue;
+import org.linagora.linshare.core.facade.webservice.common.dto.ThreadDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ThreadMemberDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 
-public interface EnumRestService {
+/**
+ * Soap interface
+ */
 
-	Response get(UriInfo info) throws BusinessException;
+@WebService
+public interface SoapService {
 
-	Response options(String enumName) throws BusinessException;
+	// Documents
+	List<DocumentDto> getDocuments() throws BusinessException;
+
+	SimpleLongValue getUserMaxFileSize() throws BusinessException;
+
+	SimpleLongValue getAvailableSize() throws BusinessException;
+
+	// Shares
+	void sharedocument(String targetMail, String uuid, int securedShare)
+			throws BusinessException;
+
+	List<ShareDto> getReceivedShares() throws BusinessException;
+
+	// PluginManagment
+	String getInformation() throws BusinessException;
+
+	// Threads
+	List<ThreadDto> getAllMyThread() throws BusinessException;
+
+	void addMember(ThreadMemberDto member) throws BusinessException;
+
+	// Users
+	List<UserDto> getUsers() throws BusinessException;
 }

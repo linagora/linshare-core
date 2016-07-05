@@ -31,55 +31,26 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.user;
+package org.linagora.linshare.webservice.legacy;
 
-import java.io.InputStream;
+import javax.jws.WebService;
 
-import javax.ws.rs.core.Response;
-
-import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.FineUploaderDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.DocumentAttachement;
+import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 
-public interface FineUploaderRestService {
+/**
+ * This interface was create to support MTOM (XOP) upload. When MTOM is
+ * activated, all SOAP messages are built using multipart format.
+ * 
+ * @author fmartin
+ * 
+ */
+@WebService
+public interface MTOMUploadSoapService {
 
-	/**
-	 * Upload method contains logic for a file upload and return the correct
-	 * DocumentDto if upload was successful.
-	 * 
-	 * @param file
-	 * @param fileName
-	 * @param body
-	 * @return
-	 */
-	public FineUploaderDto upload(InputStream file, Long size, String fileName, MultipartBody body) throws BusinessException;
-
-	public Response status(String uuid) throws BusinessException;
-
-	/**
-	 * Delete an existing file.
-	 * 
-	 * @param file
-	 * @param fileName
-	 * @param body
-	 * @return
-	 */
-	public FineUploaderDto delete(String uuid) throws BusinessException;
-
-	/**
-	 * Upload method contains logic for a file upload and return the correct
-	 * DocumentDto if upload was successful.
-	 * 
-	 * @param threadUuid
-	 * @param file
-	 * @param fileName
-	 * @param body
-	 * 
-	 * @return
-	 */
-	public FineUploaderDto uploadThreadEntry(String threadUuid,
-			InputStream file, Long size, String fileName, Long uploadStartTime, MultipartBody body)
+	DocumentDto addDocumentXop(DocumentAttachement doca)
 			throws BusinessException;
 
-	void destroy();
+	String getInformation() throws BusinessException;
 }

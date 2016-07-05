@@ -31,48 +31,14 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.user.impl;
+package org.linagora.linshare.webservice.legacy;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import javax.jws.WebService;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
-import org.linagora.linshare.core.facade.webservice.user.UserFacade;
-import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.user.AuthenticationRestService;
 
-@Path("/authentication")
-public class AuthenticationRestServiceImpl extends WebserviceBase implements
-		AuthenticationRestService {
+@WebService
+public interface PluginManagmentSoapService {
 
-	private final UserFacade webServiceUserFacade;
-
-	public AuthenticationRestServiceImpl(final UserFacade webServiceUserFacade) {
-		this.webServiceUserFacade = webServiceUserFacade;
-	}
-
-	@Path("/")
-	@GET
-	@Override
-	public void noop() {
-		return; // do nothing
-	}
-
-	@Path("/authorized")
-	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Override
-	public UserDto isAuthorized() throws BusinessException {
-		return webServiceUserFacade.isAuthorized();
-	}
-
-	@Path("/version")
-	@GET
-	@Override
-	public String getVersion() {
-		return getCoreVersion();
-	}
+	String getInformation() throws BusinessException;
 }

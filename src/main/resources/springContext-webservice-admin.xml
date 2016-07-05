@@ -65,7 +65,7 @@
 		<constructor-arg ref="wsAdminAutocompleteFacade" />
 	</bean>
 
-	<bean id="adminEnumRestService" class="org.linagora.linshare.webservice.user.impl.EnumRestServiceImpl">
+	<bean id="adminEnumRestService" class="org.linagora.linshare.webservice.admin.impl.EnumRestServiceImpl">
 	</bean>
 
 	<bean id="adminMailConfigRestService" class="org.linagora.linshare.webservice.admin.impl.MailConfigRestServiceImpl">

@@ -63,4 +63,49 @@
 	<bean id="timingOutInterceptor" class="org.linagora.linshare.webservice.interceptor.TimingOutInterceptor" />
 
 	<bean id="jaxrsNoCacheFilter" class="org.linagora.linshare.webservice.filters.NoCacheFilter"/>
+	
+	<!-- Code legacy -->
+	<!-- Compatibility thunderbird -->
+	<bean id="pluginCompatibilityRestServiceV1" class="org.linagora.linshare.webservice.legacy.impl.PluginCompatibilityRestServiceImpl">
+		<constructor-arg ref="wsShareFacade" />
+		<constructor-arg ref="wsDocumentFacade" />
+	</bean>
+
+	<jaxrs:server id="legacyContainer" address="/rest">
+		<jaxrs:serviceBeans>
+			<ref bean="pluginCompatibilityRestServiceV1" />
+		</jaxrs:serviceBeans>
+		<jaxrs:extensionMappings>
+			<entry key="json" value="application/json" />
+			<entry key="xml" value="application/xml" />
+		</jaxrs:extensionMappings>
+		<jaxrs:providers>
+			<!--  ExceptionMappers. -->
+			<ref bean="businessExceptionMapper" />
+			<ref bean="genericExceptionMapper" />
+			<ref bean="webApplicationExceptionMapper" />
+			<ref bean="illegalArgumentExceptionMapper" />
+			<!-- Json provider for serialisation -->
+			<ref bean="jsonProvider" />
+		</jaxrs:providers>
+		<jaxrs:features>
+<!-- 			<cxf:logging /> -->
+		</jaxrs:features>
+		<jaxrs:inInterceptors>
+			<!-- For debug only : print input message -->
+<!-- 			<ref bean="logInbound" /> -->
+			<!-- This interceptor is designed to store some context properties in message exchange context for timingOutInterceptor -->
+			<ref bean="timingInInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<!-- For debug only : print output  message -->
+<!--             	<ref bean="logOutbound" /> -->
+			<!-- This interceptor is designed compute request execution time.-->
+			<ref bean="timingOutInterceptor" />
+		</jaxrs:outInterceptors>
+		<jaxrs:inFaultInterceptors>
+		</jaxrs:inFaultInterceptors>
+		<jaxrs:outFaultInterceptors>
+		</jaxrs:outFaultInterceptors>
+	</jaxrs:server>
 </beans>

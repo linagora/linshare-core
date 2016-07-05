@@ -31,16 +31,25 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.user;
+package org.linagora.linshare.webservice.legacy;
 
+import java.io.InputStream;
+import java.util.List;
+
+import javax.ws.rs.Path;
+
+import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.SimpleStringValue;
+import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 
-public interface AuthenticationRestService {
+@Path("/")
+public interface PluginCompatibilityRestService {
 
-	void noop();
+	SimpleStringValue getInformation();
 
-	UserDto isAuthorized() throws BusinessException;
+	void multiplesharedocuments(String targetMail, List<String> uuid, int securedShare, String message, String inReplyTo, String references)
+			throws BusinessException;
 
-	String getVersion();
+	DocumentDto uploadfile(InputStream theFile, String description, String givenFileName, MultipartBody body) throws BusinessException;
 }

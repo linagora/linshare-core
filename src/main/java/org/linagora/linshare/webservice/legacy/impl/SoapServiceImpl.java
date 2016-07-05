@@ -31,7 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.impl;
+package org.linagora.linshare.webservice.legacy.impl;
 
 import java.util.List;
 
@@ -51,8 +51,8 @@ import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
 import org.linagora.linshare.core.facade.webservice.user.ThreadFacade;
 import org.linagora.linshare.core.facade.webservice.user.UserFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
-import org.linagora.linshare.webservice.SoapService;
 import org.linagora.linshare.webservice.WebserviceBase;
+import org.linagora.linshare.webservice.legacy.SoapService;
 
 @WebService(serviceName = "SoapWebService",
 			endpointInterface = "org.linagora.linshare.webservice.SoapService",

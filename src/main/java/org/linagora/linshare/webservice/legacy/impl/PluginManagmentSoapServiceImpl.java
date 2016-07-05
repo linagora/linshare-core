@@ -31,48 +31,30 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice;
+package org.linagora.linshare.webservice.legacy.impl;
 
-import java.util.List;
-
+import javax.jws.WebMethod;
 import javax.jws.WebService;
+import javax.jws.soap.SOAPBinding;
+import javax.jws.soap.SOAPBinding.ParameterStyle;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.SimpleLongValue;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.ThreadMemberDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
-import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
+import org.linagora.linshare.webservice.WebserviceBase;
+import org.linagora.linshare.webservice.legacy.PluginManagmentSoapService;
 
-/**
- * Soap interface
- */
+@WebService(serviceName = "PluginManagmentSoapService",
+			endpointInterface = "org.linagora.linshare.webservice.PluginManagmentSoapService",
+			targetNamespace = WebserviceBase.NAME_SPACE_NS,
+			portName = "PluginManagmentSoapServicePort")
+@SOAPBinding(style = SOAPBinding.Style.DOCUMENT,
+			 parameterStyle = ParameterStyle.WRAPPED,
+			 use = SOAPBinding.Use.LITERAL)
+public class PluginManagmentSoapServiceImpl implements PluginManagmentSoapService {
 
-@WebService
-public interface SoapService {
-
-	// Documents
-	List<DocumentDto> getDocuments() throws BusinessException;
-
-	SimpleLongValue getUserMaxFileSize() throws BusinessException;
-
-	SimpleLongValue getAvailableSize() throws BusinessException;
-
-	// Shares
-	void sharedocument(String targetMail, String uuid, int securedShare)
-			throws BusinessException;
-
-	List<ShareDto> getReceivedShares() throws BusinessException;
-
-	// PluginManagment
-	String getInformation() throws BusinessException;
-
-	// Threads
-	List<ThreadDto> getAllMyThread() throws BusinessException;
-
-	void addMember(ThreadMemberDto member) throws BusinessException;
-
-	// Users
-	List<UserDto> getUsers() throws BusinessException;
+	@WebMethod(operationName = "getInformation")
+	// **soap
+	@Override
+	public String getInformation() throws BusinessException {
+		return "undefined";
+	}
 }

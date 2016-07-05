@@ -142,9 +142,6 @@
 			<ref bean="userUploadRequestTemplateRestService" />
 			<ref bean="userUserPreferenceRestService" />
 			<ref bean="userAuditLogEntryUserRestService" />
-<!--
-			<ref bean="pluginCompatibilityRestServiceV2" />
--->
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />
