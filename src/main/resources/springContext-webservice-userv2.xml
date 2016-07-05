@@ -30,26 +30,26 @@
 
 	<jaxrs:server id="userRestContainer" address="/rest/user/v2">
 		<jaxrs:serviceBeans>
-<!-- 			<ref bean="userEnumRestService" /> -->
-<!-- 			<ref bean="userAuthenticationRestService" /> -->
-<!-- 			<ref bean="userDocumentRestService" /> -->
-<!-- 			<ref bean="userThreadRestService" /> -->
-<!-- 			<ref bean="userThreadMemberRestService" /> -->
-<!-- 			<ref bean="userThreadEntryRestService" /> -->
-<!-- 			<ref bean="userGuestRestService" /> -->
-<!-- 			<ref bean="userShareRestService" /> -->
-<!-- 			<ref bean="userRestService" /> -->
-<!-- 			<ref bean="userReceivedShareRestService" /> -->
-<!-- 			<ref bean="userLogRestService" /> -->
-<!-- 			<ref bean="userFunctionalityRestService" /> -->
-<!-- 			<ref bean="userFlowDocumentUploaderRestService" /> -->
-<!-- 			<ref bean="userShareEntryGroupRestService" /> -->
-<!-- 			<ref bean="userMailingListRestService" /> -->
-<!-- 			<ref bean="userMimeTypeRestService" /> -->
-<!-- 			<ref bean="userAutoCompleteRestService" /> -->
-<!-- 			<ref bean="userUploadRequestRestService" /> -->
-<!-- 			<ref bean="userUploadRequestGroupRestService" /> -->
-<!-- 			<ref bean="userUploadRequestTemplateRestService" /> -->
+			<ref bean="userEnumRestService" />
+			<ref bean="userAuthenticationRestService" />
+			<ref bean="userDocumentRestService" />
+			<ref bean="userThreadRestService" />
+			<ref bean="userThreadMemberRestService" />
+			<ref bean="userThreadEntryRestService" />
+			<ref bean="userGuestRestService" />
+			<ref bean="userShareRestService" />
+			<ref bean="userRestService" />
+			<ref bean="userReceivedShareRestService" />
+			<ref bean="userLogRestService" />
+			<ref bean="userFunctionalityRestService" />
+			<ref bean="userFlowDocumentUploaderRestService" />
+			<ref bean="userShareEntryGroupRestService" />
+			<ref bean="userMailingListRestService" />
+			<ref bean="userMimeTypeRestService" />
+			<ref bean="userAutoCompleteRestService" />
+			<ref bean="userUploadRequestRestService" />
+			<ref bean="userUploadRequestGroupRestService" />
+			<ref bean="userUploadRequestTemplateRestService" />
 			<ref bean="userUserPreferenceRestService" />
 			<ref bean="userAuditLogEntryUserRestService" />
 		</jaxrs:serviceBeans>
