@@ -47,6 +47,9 @@ public interface ThreadMemberRestService {
 	public List<ThreadMemberDto> findAll(String threadUuid)
 			throws BusinessException;
 
+	public ThreadMemberDto find(String threadUuid, String threadMemberUuid)
+			throws BusinessException;
+
 	public ThreadMemberDto update(String threadUuid, ThreadMemberDto threadMember)
 			throws BusinessException;
 

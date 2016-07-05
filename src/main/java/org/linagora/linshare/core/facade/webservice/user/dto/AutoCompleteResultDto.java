@@ -37,16 +37,24 @@ package org.linagora.linshare.core.facade.webservice.user.dto;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
+import org.codehaus.jackson.annotate.JsonSubTypes;
+import org.codehaus.jackson.annotate.JsonSubTypes.Type;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 
 import com.wordnik.swagger.annotations.ApiModel;
 
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonSubTypes({
+		@Type(value = UserAutoCompleteResultDto.class, name = "user"),
+		@Type(value = ThreadMemberAutoCompleteResultDto.class, name = "threadmember"),
+		@Type(value = ListAutoCompleteResultDto.class, name = "mailinglist"), })
 @XmlRootElement(name = "AutoCompleteResult")
-@XmlSeeAlso({ UserAutoCompleteResultDto.class, ListAutoCompleteResultDto.class})
+@XmlSeeAlso({ UserAutoCompleteResultDto.class,
+		ThreadMemberAutoCompleteResultDto.class,
+		ListAutoCompleteResultDto.class })
 @ApiModel(value = "AutoCompleteResult", description = "Auto complete result object")
 public class AutoCompleteResultDto {
 

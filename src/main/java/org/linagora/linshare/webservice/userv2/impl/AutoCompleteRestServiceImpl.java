@@ -75,10 +75,14 @@ public class AutoCompleteRestServiceImpl implements AutoCompleteRestService {
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public List<AutoCompleteResultDto> autoComplete(
-			@ApiParam(value = "The pattern.", required = true) @PathParam("pattern") String pattern,
-			@ApiParam(value = "The search type.", required = true) @QueryParam("type") String type) {
+			@ApiParam(value = "The pattern.", required = true)
+				@PathParam("pattern") String pattern,
+			@ApiParam(value = "The search type.", required = true)
+				@QueryParam("type") String type,
+			@ApiParam(value = "If your are looking for thread members, you must fill this parameter.", required = false)
+				@QueryParam("threadUuid") String threadUuid) {
 		Validate.notEmpty(type, "Type must be set.");
 		Validate.notEmpty(pattern, "Pattern must be set.");
-		return autoCompleteFacade.search(pattern, type);
+		return autoCompleteFacade.search(pattern, type, threadUuid);
 	}
 }

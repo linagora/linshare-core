@@ -40,5 +40,6 @@ import org.linagora.linshare.core.facade.webservice.user.dto.AutoCompleteResultD
 
 public interface AutoCompleteRestService {
 
-	List<AutoCompleteResultDto> autoComplete(String pattern, String type);
+	List<AutoCompleteResultDto> autoComplete(String pattern, String type, String threadUuid);
+
 }
