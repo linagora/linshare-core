@@ -256,9 +256,12 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 	}
 
 	@Override
-	public ThreadMember updateMember(Account actor, Account owner,
-			ThreadMember member, boolean admin, boolean canUpload)
+	public ThreadMember updateMember(Account actor, Account owner, String threadUuid, String userUuid,
+			boolean admin, boolean canUpload)
 			throws BusinessException {
+		Thread thread = find(actor, owner, threadUuid);
+		User user = getUserMember(userUuid);
+		ThreadMember member = getMemberFromUser(thread, user);
 		threadMemberAC.checkUpdatePermission(actor, owner, ThreadMember.class,
 				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN, member);
 		ThreadMemberAuditLogEntry log = new ThreadMemberAuditLogEntry(actor, owner, LogAction.UPDATE,
@@ -278,16 +281,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		Validate.notEmpty(userUuid);
 		Validate.notEmpty(threadUuid);
 		Thread thread = find(actor, owner, threadUuid);
-		User user = userRepository.findByLsUuid(userUuid);
-		if (user == null) {
-			user = userRepository.findDeleted(userUuid);
-			if (user == null) {
-				throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Can not find user with uuid : " + userUuid);
-			} else {
-				logger.info("The member with uuid " + userUuid
-						+ " you are trying to delete is already deleted");
-			}
-		}
+		User user = getUserMember(userUuid);
 		ThreadMember member = getMemberFromUser(thread,
 				user);
 		threadMemberAC.checkDeletePermission(actor, owner, ThreadMember.class,
@@ -302,6 +296,20 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 				AuditLogEntryType.THREAD_MEMBER, member);
 		auditMongoRepository.insert(log);
 		return member;
+	}
+
+	private User getUserMember(String userUuid) {
+		User user = userRepository.findByLsUuid(userUuid);
+		if (user == null) {
+			user = userRepository.findDeleted(userUuid);
+			if (user == null) {
+				throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Can not find user with uuid : " + userUuid);
+			} else {
+				logger.info("The member with uuid " + userUuid
+						+ " you are trying to delete is already deleted");
+			}
+		}
+		return user;
 	}
 
 	@Override

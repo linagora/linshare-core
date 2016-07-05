@@ -107,11 +107,9 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notNull(threadMember, "Missing required thread member");
 		User actor = checkAuthentication();
-		Thread thread = threadService.find(actor, actor, threadUuid);
-		User user = userService.findByLsUuid(threadMember.getUserUuid());
-		ThreadMember member = threadService.getMemberFromUser(thread, user);
 		return new ThreadMemberDto(threadService.updateMember(actor, actor,
-				member, threadMember.isAdmin(), !threadMember.isReadonly()));
+				threadUuid, threadMember.getUserUuid(), threadMember.isAdmin(),
+				!threadMember.isReadonly()));
 	}
 
 	@Override
