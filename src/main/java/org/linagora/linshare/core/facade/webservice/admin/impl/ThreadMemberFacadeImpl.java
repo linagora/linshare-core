@@ -36,7 +36,6 @@ package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
-import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
@@ -100,12 +99,9 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notNull(dto, "thread member must be set.");
 		Validate.notNull(dto.getThreadUuid(), "thread uuid must be set.");
 		Validate.notNull(dto.getUserUuid(), "user uuid must be set.");
-		Thread thread = threadService.find(actor, actor, dto.getThreadUuid());
-		User user = userService.findByLsUuid(dto.getUserUuid());
-		ThreadMember member = threadService.getMemberFromUser(thread, user);
 		boolean admin = dto.isAdmin();
 		boolean readonly = dto.isReadonly();
-		return new ThreadMemberDto(this.threadService.updateMember(actor, actor, member, admin, !readonly));
+		return new ThreadMemberDto(threadService.updateMember(actor, actor, dto.getThreadUuid(), dto.getUserUuid(), admin, !readonly));
 	}
 
 	@Override

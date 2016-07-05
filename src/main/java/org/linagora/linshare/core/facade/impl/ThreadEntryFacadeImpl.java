@@ -272,12 +272,8 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 	@Override
 	public void updateMember(UserVo actorVo, ThreadMemberVo memberVo,
 			ThreadVo threadVo) throws BusinessException {
-		Thread thread = findThread(threadVo);
 		Account actor = findUser(actorVo);
-		User user = findUser(memberVo.getUser());
-		ThreadMember member = findMember(thread, user);
-
-		threadService.updateMember(actor, actor, member,
+		threadService.updateMember(actor, actor, threadVo.getLsUuid(), memberVo.getUser().getLsUuid(),
 				memberVo.isAdmin(), memberVo.isCanUpload());
 	}
 

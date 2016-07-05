@@ -105,11 +105,9 @@ public class ThreadMemberFacadeImpl extends DelegationGenericFacadeImpl
 		Validate.notNull(threadMember, "Missing required thread member");
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		Thread thread = threadService.find(actor, owner, threadUuid);
-		User user = userService.findByLsUuid(threadMember.getUserUuid());
-		ThreadMember member = threadService.getMemberFromUser(thread, user);
 		return new ThreadMemberDto(threadService.updateMember(actor, owner,
-				member, threadMember.isAdmin(), !threadMember.isReadonly()));
+				threadUuid, threadMember.getUserUuid(), threadMember.isAdmin(),
+				!threadMember.isReadonly()));
 	}
 
 	@Override

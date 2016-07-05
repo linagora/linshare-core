@@ -130,7 +130,7 @@ public class ListUserThread {
 				try {
 					return !threadEntryFacade.userIsMember(input, thread);
 				} catch (BusinessException e) {
-					logger.error(e.getMessage());
+					logger.error(e.getMessage(), e);
 					return true;
 				}
 			}
