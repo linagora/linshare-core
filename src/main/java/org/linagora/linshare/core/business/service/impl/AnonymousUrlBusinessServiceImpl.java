@@ -100,7 +100,8 @@ public class AnonymousUrlBusinessServiceImpl implements AnonymousUrlBusinessServ
 		if (anonymousUrl == null) throw new IllegalArgumentException("anonymousUrl url cannot be null");
 
 		// Check password validity
-		if (password != null) {
+		if(anonymousUrl.isPasswordProtected()) {
+			if (password == null) return false;
 			String hashedPassword = HashUtils.hashSha1withBase64(password.getBytes());
 			return hashedPassword.equals(anonymousUrl.getPassword());
 		}
