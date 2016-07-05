@@ -28,6 +28,21 @@
 		<constructor-arg value="${linshare.rest.files.size.validation}" />
 	</bean>
 
+	<bean id="userv2WorkGroupMemberRestService" class="org.linagora.linshare.webservice.userv2.impl.WorkGroupMemberRestServiceImpl">
+		<constructor-arg ref="wsThreadMemberFacade" />
+	</bean>
+
+	<bean id="userv2WorkGroupRestService" class="org.linagora.linshare.webservice.userv2.impl.WorkGroupRestServiceImpl">
+		<constructor-arg ref="wsThreadFacade" />
+	</bean>
+
+	<bean id="userv2WorkGroupEntryRestService" class="org.linagora.linshare.webservice.userv2.impl.WorkGroupEntryRestServiceImpl">
+		<constructor-arg ref="wsThreadEntryFacade" />
+		<constructor-arg ref="wsThreadEntryAsyncFacade" />
+		<constructor-arg ref="wsAsyncTaskFacade" />
+		<constructor-arg ref="taskExecutor" />
+		<constructor-arg value="${linshare.rest.files.size.validation}" />
+	</bean>
 
 	<bean id="userUserPreferenceRestService" class="org.linagora.linshare.webservice.userv2.impl.UserPreferenceRestServiceImpl">
 		<constructor-arg ref="wsUserPreferenceFacade"/>
@@ -42,9 +57,9 @@
 			<ref bean="userEnumRestService" />
 			<ref bean="userAuthenticationRestService" />
 			<ref bean="userv2DocumentRestService" />
-			<ref bean="userThreadRestService" />
-			<ref bean="userThreadMemberRestService" />
-			<ref bean="userThreadEntryRestService" />
+			<ref bean="userv2WorkGroupRestService" />
+			<ref bean="userv2WorkGroupMemberRestService" />
+			<ref bean="userv2WorkGroupEntryRestService" />
 			<ref bean="userGuestRestService" />
 			<ref bean="userShareRestService" />
 			<ref bean="userRestService" />
