@@ -20,6 +20,15 @@
 
 	<!-- REST  -->
 
+	<bean id="userv2DocumentRestService" class="org.linagora.linshare.webservice.userv2.impl.DocumentRestServiceImpl">
+		<constructor-arg ref="wsDocumentFacade" />
+		<constructor-arg ref="wsDocumentAsyncFacade" />
+		<constructor-arg ref="wsAsyncTaskFacade" />
+		<constructor-arg ref="taskExecutor" />
+		<constructor-arg value="${linshare.rest.files.size.validation}" />
+	</bean>
+
+
 	<bean id="userUserPreferenceRestService" class="org.linagora.linshare.webservice.userv2.impl.UserPreferenceRestServiceImpl">
 		<constructor-arg ref="wsUserPreferenceFacade"/>
 	</bean>
@@ -32,7 +41,7 @@
 		<jaxrs:serviceBeans>
 			<ref bean="userEnumRestService" />
 			<ref bean="userAuthenticationRestService" />
-			<ref bean="userDocumentRestService" />
+			<ref bean="userv2DocumentRestService" />
 			<ref bean="userThreadRestService" />
 			<ref bean="userThreadMemberRestService" />
 			<ref bean="userThreadEntryRestService" />

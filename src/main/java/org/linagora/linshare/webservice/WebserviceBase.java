@@ -220,4 +220,14 @@ public class WebserviceBase {
 		}
 	}
 
+	protected void checkSizeValidation(Long fileSize, long currSize) {
+		Validate.notNull(fileSize, "filesize must be set");
+		if (!fileSize.equals(currSize)) {
+			String msg = String.format(
+					"Invalid file size (check multipart parameter named 'filesize'), size found %1$d, expected %2$d.(diff=%3$d)",
+					currSize, fileSize, Math.abs(fileSize - currSize));
+			logger.error(msg);
+			throw new BusinessException(BusinessErrorCode.WEBSERVICE_BAD_REQUEST, msg);
+		}
+	}
 }
