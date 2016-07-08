@@ -37,28 +37,25 @@ import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.WorkGroupFolderFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.core.service.WorkGroupFolderService;
 import org.linagora.linshare.mongo.entities.WorkGroupFolder;
-import org.linagora.linshare.mongo.repository.WorkGroupFolderMongoRepository;
-
-import com.google.common.collect.Lists;
 
 public class WorkGroupFolderFacadeImpl extends UserGenericFacadeImp implements WorkGroupFolderFacade {
 
-	protected final WorkGroupFolderMongoRepository repository;
-
 	protected final ThreadService threadService;
 
+	protected final WorkGroupFolderService service;
+
 	public WorkGroupFolderFacadeImpl(AccountService accountService,
-			WorkGroupFolderMongoRepository workGroupFolderMongoRepository, ThreadService threadService) {
+			WorkGroupFolderService service,
+			ThreadService threadService) {
 		super(accountService);
-		this.repository = workGroupFolderMongoRepository;
+		this.service = service;
 		this.threadService = threadService;
 	}
 
@@ -67,10 +64,8 @@ public class WorkGroupFolderFacadeImpl extends UserGenericFacadeImp implements W
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(actor, ownerUuid);
-		// Check existence, rights
-		Thread thread = threadService.find(actor, owner, workGroupUuid);
-		checkWriteRights(owner, thread);
-		return repository.findByWorkGroup(workGroupUuid);
+		Thread workGroup = threadService.find(actor, owner, workGroupUuid);
+		return service.findAll(actor, owner, workGroup);
 	}
 
 	@Override
@@ -80,65 +75,18 @@ public class WorkGroupFolderFacadeImpl extends UserGenericFacadeImp implements W
 		Validate.notEmpty(workGroupFolderUuid, "Missing required workGroup folder uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(actor, ownerUuid);
-		// Check existence, rights
-		Thread thread = threadService.find(actor, owner, workGroupUuid);
-		checkWriteRights(owner, thread);
-		return repository.findByWorkGroupAndUuid(workGroupUuid, workGroupFolderUuid);
+		Thread workGroup = threadService.find(actor, owner, workGroupUuid);
+		return service.find(actor, owner, workGroup, workGroupFolderUuid);
 	}
 
 	@Override
-	public WorkGroupFolder create(String ownerUuid, String workGroupUuidIn, WorkGroupFolder workGroupFolder)
+	public WorkGroupFolder create(String ownerUuid, String workGroupUuid, WorkGroupFolder workGroupFolder)
 			throws BusinessException {
-		Validate.notEmpty(workGroupUuidIn, "Missing required workGroup uuid");
+		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(actor, ownerUuid);
-		// Check existence adn access rights
-		Thread thread = threadService.find(actor, owner, workGroupUuidIn);
-		checkWriteRights(owner, thread);
-		String workGroupUuid = thread.getLsUuid();
-		WorkGroupFolder wgfParent = null;
-		if (workGroupFolder.getParent() == null) {
-			wgfParent = repository.findByWorkGroupAndUuid(workGroupUuid, workGroupUuid);
-			if (wgfParent == null) {
-				// creation of the root folder.
-				wgfParent = new WorkGroupFolder(thread.getName(), workGroupUuid, workGroupUuid);
-				wgfParent = repository.insert(wgfParent);
-			}
-		} else {
-			wgfParent = repository.findByWorkGroupAndUuid(workGroupUuid, workGroupFolder.getParent());
-			if (wgfParent == null) {
-				String msg = "Parent folder not found : " + workGroupFolder.getParent();
-				logger.error(msg);
-				throw new BusinessException(BusinessErrorCode.WORK_GROUP_FOLDER_NOT_FOUND, msg);
-			}
-		}
-		WorkGroupFolder entity = new WorkGroupFolder(workGroupFolder);
-		entity.setParent(wgfParent.getUuid());
-		entity.setWorkGroup(workGroupUuid);
-		entity.setAncestors(Lists.newArrayList(wgfParent.getAncestors()));
-		entity.getAncestors().add(wgfParent.getUuid());
-		try {
-			entity = repository.insert(entity);
-		} catch (org.springframework.dao.DuplicateKeyException e) {
-			throw new BusinessException(BusinessErrorCode.WORK_GROUP_FOLDER_ALREADY_EXISTS,
-					"Can not create a new folder, it already exists.");
-		}
-		return entity;
-	}
-
-	private ThreadMember checkWriteRights(User owner, Thread thread) {
-		ThreadMember member = threadService.getMemberFromUser(thread, owner);
-		if (member == null) {
-			String msg = "You are not authorized to create folder or upload file in this work group.";
-			logger.error(msg);
-			throw new BusinessException(BusinessErrorCode.WORK_GROUP_FOLDER_FORBIDDEN, msg);
-		}
-		if (!member.getCanUpload()) {
-			String msg = "You are not authorized to create folder or upload file in this work group.";
-			logger.error(msg);
-			throw new BusinessException(BusinessErrorCode.WORK_GROUP_FOLDER_FORBIDDEN, msg);
-		}
-		return member;
+		Thread workGroup = threadService.find(actor, owner, workGroupUuid);
+		return service.create(actor, owner, workGroup, workGroupFolder);
 	}
 
 	@Override
@@ -147,14 +95,11 @@ public class WorkGroupFolderFacadeImpl extends UserGenericFacadeImp implements W
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
 		Validate.notNull(workGroupFolder, "Missing required workGroupFolder");
 		Validate.notEmpty(workGroupFolder.getUuid(), "Missing required workGroupFolderUuid");
+		Validate.notEmpty(workGroupFolder.getName(), "Missing required name");
 		User actor = checkAuthentication();
 		User owner = getOwner(actor, ownerUuid);
-		// Check existence, rights
-		threadService.find(actor, owner, workGroupUuid);
-		WorkGroupFolder wgf = repository.findByWorkGroupAndUuid(workGroupUuid, workGroupFolder.getUuid());
-		wgf.setName(workGroupFolder.getName());
-		// workGroupFolderMongoRepository.
-		return wgf;
+		Thread workGroup = threadService.find(actor, owner, workGroupUuid);
+		return service.update(actor, owner, workGroup, workGroupFolder);
 	}
 
 	@Override
@@ -163,24 +108,20 @@ public class WorkGroupFolderFacadeImpl extends UserGenericFacadeImp implements W
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(actor, ownerUuid);
-		// Check existence, rights
-		threadService.find(actor, owner, workGroupUuid);
-		WorkGroupFolder workGroupFolder = repository.findByWorkGroupAndUuid(workGroupUuid, workGroupFolderUuid);
-		repository.delete(workGroupFolder);
-		return workGroupFolder;
+		Thread workGroup = threadService.find(actor, owner, workGroupUuid);
+		return service.delete(actor, owner, workGroup, workGroupFolderUuid);
 	}
 
 	@Override
 	public WorkGroupFolder delete(String ownerUuid, String workGroupUuid, WorkGroupFolder workGroupFolder)
 			throws BusinessException {
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
+		Validate.notNull(workGroupFolder, "Missing required workGroup folder");
+		Validate.notEmpty(workGroupFolder.getUuid(), "Missing required workGroup folder uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(actor, ownerUuid);
-		// Check existence, rights
-		threadService.find(actor, owner, workGroupUuid);
-		WorkGroupFolder wgf = repository.findByWorkGroupAndUuid(workGroupUuid, workGroupFolder.getUuid());
-		repository.delete(wgf);
-		return wgf;
+		Thread workGroup = threadService.find(actor, owner, workGroupUuid);
+		return service.delete(actor, owner, workGroup, workGroupFolder.getUuid());
 	}
 
 }

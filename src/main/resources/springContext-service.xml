@@ -252,4 +252,9 @@
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="auditLogEntryResourceAccessControl" />
 	</bean>
+	<bean id="workGroupFolderService" class="org.linagora.linshare.core.service.impl.WorkGroupFolderServiceImpl">
+		<constructor-arg ref="workGroupFolderMongoRepository" />
+		<constructor-arg ref="threadService" />
+		<constructor-arg ref="logEntryService" />
+	</bean>
 </beans>

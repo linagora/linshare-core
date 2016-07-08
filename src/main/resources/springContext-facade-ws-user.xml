@@ -104,8 +104,8 @@
 
 	<bean id="wsWorkGroupFolderFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.WorkGroupFolderFacadeImpl">
 		<constructor-arg ref="accountService" />
-		<constructor-arg ref="workGroupFolderMongoRepository"/>
 		<constructor-arg ref="threadService" />
+		<constructor-arg ref="workGroupFolderService"/>
 	</bean>
 
 </beans>

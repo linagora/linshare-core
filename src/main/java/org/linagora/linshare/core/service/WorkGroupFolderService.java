@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,88 +31,30 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.repository;
+package org.linagora.linshare.core.service;
 
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.mongo.entities.WorkGroupFolder;
 
-public interface ThreadMemberRepository extends AbstractRepository<ThreadMember> {
+public interface WorkGroupFolderService {
 
-	/**
-	 * Find ThreadMember by id
-	 * 
-	 * @param id
-	 * @return the ThreadMember
-	 */
-	public ThreadMember findById(long id);
+	List<WorkGroupFolder> findAll(Account actor, User owner, Thread workGroup) throws BusinessException;
 
-	/**
-	 * Find ThreadMember corresponding to a User
-	 * 
-	 * @param thread
-	 * @param user
-	 * @return the ThreadMember
-	 */
-	ThreadMember findUserThreadMember(Account thread, User user);
+	WorkGroupFolder find(Account actor, User owner, Thread workGroup, String workGroupFolderUuid)
+			throws BusinessException;
 
-	/**
-	 * Find all ThreadMember corresponding to a User
-	 * 
-	 * @param user
-	 * @return the ThreadMember
-	 */
-	public List<ThreadMember> findAllUserMemberships(User user);
-	
-	/**
-	 * Find all ThreadMember corresponding to a User where he's admin
-	 * 
-	 * @param user
-	 * @return the ThreadMember
-	 */
-	public List<ThreadMember> findAllUserAdminMemberships(User user);
+	WorkGroupFolder create(Account actor, User owner, Thread workGroup, WorkGroupFolder workGroupFolder)
+			throws BusinessException;
 
-	/**
-	 * Find if the User is admin of any Thread
-	 * 
-	 * @param user
-	 * @return true if user is admin of any Thread
-	 */
-	boolean isUserAdminOfAny(User user);
-	
-	/**
-	 * FInd if the user is admin of the thread
-	 * 
-	 * @param user
-	 * @param thread
-	 * @return true if user is admin of the thread
-	 */
-	boolean isUserAdmin(User user, Thread thread);
+	WorkGroupFolder update(Account actor, User owner, Thread workGroup, WorkGroupFolder workGroupFolder)
+			throws BusinessException;
 
-	/**
-	 * Count the amount of members in the thread
-	 * 
-	 * @param thread
-	 * @return the amount of members
-	 */
-	public long count(Thread thread);
+	WorkGroupFolder delete(Account actor, User owner, Thread workGroup, String workGroupFolderUuid)
+			throws BusinessException;
 
-	/**
-	 * Find members with no deleted accounts
-	 *
-	 * @param thread
-	 * @return the List of ThreadMember
-	 */
-	public List<ThreadMember> findAllThreadMembers(Thread thread);
-
-	/**
-	 * Find members with deleted accounts
-	 *
-	 * @param thread
-	 * @return the List of ThreadMember
-	 */
-	public List<ThreadMember> findAllInconsistentThreadMembers(Thread thread);
 }
