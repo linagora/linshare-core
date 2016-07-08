@@ -129,16 +129,16 @@ public class DomainPolicyFacadeImpl extends AdminGenericFacadeImpl implements
 				break;
 			case ALLOW:
 				Validate.notNull(ruleDto.getDomain(), "Domain dto must be set.");
-				Validate.notEmpty(ruleDto.getDomain().getUuid(), "Domain identifier must be set.");
+				Validate.notEmpty(ruleDto.getDomain().getIdentifier(), "Domain identifier must be set.");
 				domain = domainBusinessService.findById(ruleDto.getDomain()
-						.getUuid());
+						.getIdentifier());
 				rule = new AllowDomain(domain);
 				break;
 			case DENY:
 				Validate.notNull(ruleDto.getDomain(), "Domain dto must be set.");
-				Validate.notEmpty(ruleDto.getDomain().getUuid(), "Domain identifier must be set.");
+				Validate.notEmpty(ruleDto.getDomain().getIdentifier(), "Domain identifier must be set.");
 				domain = domainBusinessService.findById(ruleDto.getDomain()
-						.getUuid());
+						.getIdentifier());
 				rule = new DenyDomain(domain);
 				break;
 			default:
