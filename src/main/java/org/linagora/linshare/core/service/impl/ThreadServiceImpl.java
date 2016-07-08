@@ -117,10 +117,10 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 					BusinessErrorCode.THREAD_NOT_FOUND, message);
 		}
 		checkReadPermission(actor, owner, Thread.class,
-				BusinessErrorCode.THREAD_FORBIDDEN, thread);
-		ThreadAuditLogEntry log = new ThreadAuditLogEntry(actor, owner, LogAction.GET, AuditLogEntryType.THREAD,
-				new ThreadMto(thread, false));
-		auditMongoRepository.insert(log);
+				BusinessErrorCode.THREAD_FORBIDDEN, thread, owner);
+//		ThreadAuditLogEntry log = new ThreadAuditLogEntry(actor, owner, LogAction.GET, AuditLogEntryType.THREAD,
+//				new ThreadMto(thread, false));
+//		auditMongoRepository.insert(log);
 		return thread;
 	}
 
