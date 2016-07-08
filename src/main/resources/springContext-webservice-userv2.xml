@@ -36,6 +36,10 @@
 		<constructor-arg ref="wsThreadFacade" />
 	</bean>
 
+	<bean id="userv2WorkGroupFolderRestService" class="org.linagora.linshare.webservice.userv2.impl.WorkGroupFolderRestServiceImpl">
+		<constructor-arg ref="wsWorkGroupFolderFacade" />
+	</bean>
+
 	<bean id="userv2WorkGroupEntryRestService" class="org.linagora.linshare.webservice.userv2.impl.WorkGroupEntryRestServiceImpl">
 		<constructor-arg ref="wsThreadEntryFacade" />
 		<constructor-arg ref="wsThreadEntryAsyncFacade" />
@@ -60,6 +64,7 @@
 			<ref bean="userv2WorkGroupRestService" />
 			<ref bean="userv2WorkGroupMemberRestService" />
 			<ref bean="userv2WorkGroupEntryRestService" />
+			<ref bean="userv2WorkGroupFolderRestService" />
 			<ref bean="userGuestRestService" />
 			<ref bean="userShareRestService" />
 			<ref bean="userRestService" />

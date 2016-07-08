@@ -31,52 +31,24 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.core.facade.webservice.user;
 
-package org.linagora.linshare.webservice.userv2;
-
-import java.io.InputStream;
 import java.util.List;
 
-import javax.ws.rs.core.Response;
-
-import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
+import org.linagora.linshare.mongo.entities.WorkGroupFolder;
 
-public interface WorkGroupEntryRestService {
+public interface WorkGroupFolderFacade extends GenericFacade {
 
-	WorkGroupEntryDto create(String workGroupUuid,
-			InputStream file, String description, String givenFileName,
-			Boolean async,
-			Long contentLength,
-			Long fileSize,
-			MultipartBody body) throws BusinessException;
+	List<WorkGroupFolder> findAll(String ownerUuid, String workGroupUuid) throws BusinessException;
 
-	WorkGroupEntryDto copy(String workGroupUuid, String entryUuid)
-			throws BusinessException;
+	WorkGroupFolder find(String ownerUuid, String workGroupUuid, String workGroupFolderUuid) throws BusinessException;
 
-	WorkGroupEntryDto find(String workGroupUuid, String uuid)
-			throws BusinessException;
+	WorkGroupFolder create(String ownerUuid, String workGroupUuid, WorkGroupFolder workGroupFolder) throws BusinessException;
 
-	void head(String workGroupUuid, String uuid) throws BusinessException;
+	WorkGroupFolder update(String ownerUuid, String workGroupUuid, WorkGroupFolder workGroupFolder) throws BusinessException;
 
-	List<WorkGroupEntryDto> findAll(String workGroupUuid)
-			throws BusinessException;
+	WorkGroupFolder delete(String ownerUuid, String workGroupUuid, String workGroupFolderUuid) throws BusinessException;
 
-	WorkGroupEntryDto delete(String workGroupUuid,
-			WorkGroupEntryDto workGroupEntry) throws BusinessException;
-
-	WorkGroupEntryDto delete(String workGroupUuid,
-			String uuid) throws BusinessException;
-
-	Response download(String workGroupUuid, String uuid)
-			throws BusinessException;
-
-	Response thumbnail(String workGroupUuid, String uuid, boolean base64)
-			throws BusinessException;
-
-	WorkGroupEntryDto update(String workGroupUuid, String workGroupEntryUuid, WorkGroupEntryDto workGroupEntryDto) throws BusinessException;
-
-	AsyncTaskDto findAsync(String uuid) throws BusinessException;
+	WorkGroupFolder delete(String ownerUuid, String workGroupUuid, WorkGroupFolder workGroupFolder) throws BusinessException;
 }

@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2016. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,52 +31,15 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.mongo.repository;
 
-package org.linagora.linshare.webservice.userv2;
-
-import java.io.InputStream;
 import java.util.List;
 
-import javax.ws.rs.core.Response;
+import org.linagora.linshare.mongo.entities.WorkGroupFolder;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
+public interface WorkGroupFolderMongoRepository extends MongoRepository<WorkGroupFolder, String> {
 
-public interface WorkGroupEntryRestService {
+	List<WorkGroupFolder> findByWorkGroupUuid(String workGroupUuid);
 
-	WorkGroupEntryDto create(String workGroupUuid,
-			InputStream file, String description, String givenFileName,
-			Boolean async,
-			Long contentLength,
-			Long fileSize,
-			MultipartBody body) throws BusinessException;
-
-	WorkGroupEntryDto copy(String workGroupUuid, String entryUuid)
-			throws BusinessException;
-
-	WorkGroupEntryDto find(String workGroupUuid, String uuid)
-			throws BusinessException;
-
-	void head(String workGroupUuid, String uuid) throws BusinessException;
-
-	List<WorkGroupEntryDto> findAll(String workGroupUuid)
-			throws BusinessException;
-
-	WorkGroupEntryDto delete(String workGroupUuid,
-			WorkGroupEntryDto workGroupEntry) throws BusinessException;
-
-	WorkGroupEntryDto delete(String workGroupUuid,
-			String uuid) throws BusinessException;
-
-	Response download(String workGroupUuid, String uuid)
-			throws BusinessException;
-
-	Response thumbnail(String workGroupUuid, String uuid, boolean base64)
-			throws BusinessException;
-
-	WorkGroupEntryDto update(String workGroupUuid, String workGroupEntryUuid, WorkGroupEntryDto workGroupEntryDto) throws BusinessException;
-
-	AsyncTaskDto findAsync(String uuid) throws BusinessException;
 }

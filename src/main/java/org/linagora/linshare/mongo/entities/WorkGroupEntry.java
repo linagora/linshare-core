@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2016. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,52 +31,95 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.mongo.entities;
 
-package org.linagora.linshare.webservice.userv2;
+import java.util.Date;
 
-import java.io.InputStream;
-import java.util.List;
+import javax.persistence.GeneratedValue;
 
-import javax.ws.rs.core.Response;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.springframework.data.annotation.Id;
 
-import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
+public class WorkGroupEntry {
 
-public interface WorkGroupEntryRestService {
+	@Id
+	@GeneratedValue
+	protected String uuid;
 
-	WorkGroupEntryDto create(String workGroupUuid,
-			InputStream file, String description, String givenFileName,
-			Boolean async,
-			Long contentLength,
-			Long fileSize,
-			MultipartBody body) throws BusinessException;
+	protected String name;
 
-	WorkGroupEntryDto copy(String workGroupUuid, String entryUuid)
-			throws BusinessException;
+	protected Date creationDate;
 
-	WorkGroupEntryDto find(String workGroupUuid, String uuid)
-			throws BusinessException;
+	protected Date modificationDate;
 
-	void head(String workGroupUuid, String uuid) throws BusinessException;
+	protected String type;
 
-	List<WorkGroupEntryDto> findAll(String workGroupUuid)
-			throws BusinessException;
+	protected Long size;
 
-	WorkGroupEntryDto delete(String workGroupUuid,
-			WorkGroupEntryDto workGroupEntry) throws BusinessException;
+	protected AccountMto lastAuthor;
 
-	WorkGroupEntryDto delete(String workGroupUuid,
-			String uuid) throws BusinessException;
+	public WorkGroupEntry() {
+		super();
+	}
 
-	Response download(String workGroupUuid, String uuid)
-			throws BusinessException;
+	public WorkGroupEntry(String uuid, String name, Date creationDate, Date modificationDate, String type, Long size,
+			AccountMto lastAuthor) {
+		super();
+		this.uuid = uuid;
+		this.name = name;
+		this.creationDate = creationDate;
+		this.modificationDate = modificationDate;
+		this.type = type;
+		this.size = size;
+		this.lastAuthor = lastAuthor;
+	}
 
-	Response thumbnail(String workGroupUuid, String uuid, boolean base64)
-			throws BusinessException;
+	public String getUuid() {
+		return uuid;
+	}
 
-	WorkGroupEntryDto update(String workGroupUuid, String workGroupEntryUuid, WorkGroupEntryDto workGroupEntryDto) throws BusinessException;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
 
-	AsyncTaskDto findAsync(String uuid) throws BusinessException;
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public Long getSize() {
+		return size;
+	}
+
+	public void setSize(Long size) {
+		this.size = size;
+	}
+
+	public AccountMto getLastAuthor() {
+		return lastAuthor;
+	}
+
+	public void setLastAuthor(AccountMto lastAuthor) {
+		this.lastAuthor = lastAuthor;
+	}
+
 }
