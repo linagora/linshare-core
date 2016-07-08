@@ -35,11 +35,21 @@ package org.linagora.linshare.mongo.entities;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import javax.persistence.GeneratedValue;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.google.common.collect.Lists;
+
+@XmlRootElement(name = "WorkGroupFolder")
+@Document(collection = "Work_group_folders")
+@CompoundIndexes({ @CompoundIndex(name = "name", unique = true, def = "{'name': 1, 'parent': 1, 'workGroup': 1}") })
 public class WorkGroupFolder {
 
 	@Id
@@ -48,33 +58,56 @@ public class WorkGroupFolder {
 
 	protected String name;
 
-	protected String parentUuid;
+	protected String parent;
+
+	protected String workGroup;
 
 	protected List<String> ancestors;
 
-	protected String workGroupUuid;
-
+	// @CreatedDate -- to be used
 	protected Date creationDate;
 
+	// @LastModifiedDate -- to be used
 	protected Date modificationDate;
 
 	protected List<WorkGroupEntry> entries;
 
 	public WorkGroupFolder() {
 		super();
+
+	}
+	/*
+	 * @CreatedDate
+	 * 
+	 * @CreatedBy
+	 * 
+	 * @LastModifiedBy
+	 * 
+	 * @LastModifiedDate 11.2. General auditing configuration
+	 */
+
+	public WorkGroupFolder(String name, String parentUuid, String workGroupUuid) {
+		super();
+		this.uuid = UUID.randomUUID().toString();
+		this.name = name;
+		this.parent = parentUuid;
+		this.workGroup = workGroupUuid;
+		this.ancestors = Lists.newArrayList();
+		this.creationDate = new Date();
+		this.modificationDate = new Date();
+		this.entries = Lists.newArrayList();
 	}
 
-	public WorkGroupFolder(String uuid, String name, String parentUuid, List<String> ancestors, String workGroupUuid,
-			Date creationDate, Date modificationDate, List<WorkGroupEntry> entries) {
+	public WorkGroupFolder(WorkGroupFolder wgf) {
 		super();
-		this.uuid = uuid;
-		this.name = name;
-		this.parentUuid = parentUuid;
-		this.ancestors = ancestors;
-		this.workGroupUuid = workGroupUuid;
-		this.creationDate = creationDate;
-		this.modificationDate = modificationDate;
-		this.entries = entries;
+		this.uuid = UUID.randomUUID().toString();
+		this.name = wgf.getName();
+		this.parent = wgf.getParent();
+		this.workGroup = wgf.getWorkGroup();
+		this.ancestors = Lists.newArrayList();
+		this.creationDate = new Date();
+		this.modificationDate = new Date();
+		this.entries = Lists.newArrayList();
 	}
 
 	public String getUuid() {
@@ -93,12 +126,12 @@ public class WorkGroupFolder {
 		this.name = name;
 	}
 
-	public String getParentUuid() {
-		return parentUuid;
+	public String getParent() {
+		return parent;
 	}
 
-	public void setParentUuid(String parentUuid) {
-		this.parentUuid = parentUuid;
+	public void setParent(String parent) {
+		this.parent = parent;
 	}
 
 	public List<String> getAncestors() {
@@ -109,12 +142,12 @@ public class WorkGroupFolder {
 		this.ancestors = ancestors;
 	}
 
-	public String getWorkGroupUuid() {
-		return workGroupUuid;
+	public String getWorkGroup() {
+		return workGroup;
 	}
 
-	public void setWorkGroupUuid(String workGroupUuid) {
-		this.workGroupUuid = workGroupUuid;
+	public void setWorkGroup(String workGroup) {
+		this.workGroup = workGroup;
 	}
 
 	public Date getCreationDate() {

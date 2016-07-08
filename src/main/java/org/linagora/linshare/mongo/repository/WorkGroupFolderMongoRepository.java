@@ -40,6 +40,8 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface WorkGroupFolderMongoRepository extends MongoRepository<WorkGroupFolder, String> {
 
-	List<WorkGroupFolder> findByWorkGroupUuid(String workGroupUuid);
+	List<WorkGroupFolder> findByWorkGroup(String workGroupUuid);
+
+	WorkGroupFolder findByWorkGroupAndUuid(String workGroupUuid, String uuid);
 
 }

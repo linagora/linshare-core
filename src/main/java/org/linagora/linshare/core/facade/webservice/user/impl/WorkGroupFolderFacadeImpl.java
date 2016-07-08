@@ -37,7 +37,9 @@ import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.WorkGroupFolderFacade;
 import org.linagora.linshare.core.service.AccountService;
@@ -45,16 +47,18 @@ import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.mongo.entities.WorkGroupFolder;
 import org.linagora.linshare.mongo.repository.WorkGroupFolderMongoRepository;
 
+import com.google.common.collect.Lists;
+
 public class WorkGroupFolderFacadeImpl extends UserGenericFacadeImp implements WorkGroupFolderFacade {
 
-	protected final WorkGroupFolderMongoRepository workGroupFolderMongoRepository;
+	protected final WorkGroupFolderMongoRepository repository;
 
 	protected final ThreadService threadService;
 
 	public WorkGroupFolderFacadeImpl(AccountService accountService,
 			WorkGroupFolderMongoRepository workGroupFolderMongoRepository, ThreadService threadService) {
 		super(accountService);
-		this.workGroupFolderMongoRepository = workGroupFolderMongoRepository;
+		this.repository = workGroupFolderMongoRepository;
 		this.threadService = threadService;
 	}
 
@@ -64,43 +68,119 @@ public class WorkGroupFolderFacadeImpl extends UserGenericFacadeImp implements W
 		User actor = checkAuthentication();
 		User owner = getOwner(actor, ownerUuid);
 		// Check existence, rights
-		threadService.find(actor, owner, workGroupUuid);
-		return workGroupFolderMongoRepository.findByWorkGroupUuid(workGroupUuid);
+		Thread thread = threadService.find(actor, owner, workGroupUuid);
+		checkWriteRights(owner, thread);
+		return repository.findByWorkGroup(workGroupUuid);
 	}
 
 	@Override
 	public WorkGroupFolder find(String ownerUuid, String workGroupUuid, String workGroupFolderUuid)
 			throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
+		Validate.notEmpty(workGroupFolderUuid, "Missing required workGroup folder uuid");
+		User actor = checkAuthentication();
+		User owner = getOwner(actor, ownerUuid);
+		// Check existence, rights
+		Thread thread = threadService.find(actor, owner, workGroupUuid);
+		checkWriteRights(owner, thread);
+		return repository.findByWorkGroupAndUuid(workGroupUuid, workGroupFolderUuid);
 	}
 
 	@Override
-	public WorkGroupFolder create(String ownerUuid, String workGroupUuid, WorkGroupFolder workGroupFolder)
+	public WorkGroupFolder create(String ownerUuid, String workGroupUuidIn, WorkGroupFolder workGroupFolder)
 			throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		Validate.notEmpty(workGroupUuidIn, "Missing required workGroup uuid");
+		User actor = checkAuthentication();
+		User owner = getOwner(actor, ownerUuid);
+		// Check existence adn access rights
+		Thread thread = threadService.find(actor, owner, workGroupUuidIn);
+		checkWriteRights(owner, thread);
+		String workGroupUuid = thread.getLsUuid();
+		WorkGroupFolder wgfParent = null;
+		if (workGroupFolder.getParent() == null) {
+			wgfParent = repository.findByWorkGroupAndUuid(workGroupUuid, workGroupUuid);
+			if (wgfParent == null) {
+				// creation of the root folder.
+				wgfParent = new WorkGroupFolder(thread.getName(), workGroupUuid, workGroupUuid);
+				wgfParent = repository.insert(wgfParent);
+			}
+		} else {
+			wgfParent = repository.findByWorkGroupAndUuid(workGroupUuid, workGroupFolder.getParent());
+			if (wgfParent == null) {
+				String msg = "Parent folder not found : " + workGroupFolder.getParent();
+				logger.error(msg);
+				throw new BusinessException(BusinessErrorCode.WORK_GROUP_FOLDER_NOT_FOUND, msg);
+			}
+		}
+		WorkGroupFolder entity = new WorkGroupFolder(workGroupFolder);
+		entity.setParent(wgfParent.getUuid());
+		entity.setWorkGroup(workGroupUuid);
+		entity.setAncestors(Lists.newArrayList(wgfParent.getAncestors()));
+		entity.getAncestors().add(wgfParent.getUuid());
+		try {
+			entity = repository.insert(entity);
+		} catch (org.springframework.dao.DuplicateKeyException e) {
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_FOLDER_ALREADY_EXISTS,
+					"Can not create a new folder, it already exists.");
+		}
+		return entity;
+	}
+
+	private ThreadMember checkWriteRights(User owner, Thread thread) {
+		ThreadMember member = threadService.getMemberFromUser(thread, owner);
+		if (member == null) {
+			String msg = "You are not authorized to create folder or upload file in this work group.";
+			logger.error(msg);
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_FOLDER_FORBIDDEN, msg);
+		}
+		if (!member.getCanUpload()) {
+			String msg = "You are not authorized to create folder or upload file in this work group.";
+			logger.error(msg);
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_FOLDER_FORBIDDEN, msg);
+		}
+		return member;
 	}
 
 	@Override
 	public WorkGroupFolder update(String ownerUuid, String workGroupUuid, WorkGroupFolder workGroupFolder)
 			throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
+		Validate.notNull(workGroupFolder, "Missing required workGroupFolder");
+		Validate.notEmpty(workGroupFolder.getUuid(), "Missing required workGroupFolderUuid");
+		User actor = checkAuthentication();
+		User owner = getOwner(actor, ownerUuid);
+		// Check existence, rights
+		threadService.find(actor, owner, workGroupUuid);
+		WorkGroupFolder wgf = repository.findByWorkGroupAndUuid(workGroupUuid, workGroupFolder.getUuid());
+		wgf.setName(workGroupFolder.getName());
+		// workGroupFolderMongoRepository.
+		return wgf;
 	}
 
 	@Override
 	public WorkGroupFolder delete(String ownerUuid, String workGroupUuid, String workGroupFolderUuid)
 			throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
+		User actor = checkAuthentication();
+		User owner = getOwner(actor, ownerUuid);
+		// Check existence, rights
+		threadService.find(actor, owner, workGroupUuid);
+		WorkGroupFolder workGroupFolder = repository.findByWorkGroupAndUuid(workGroupUuid, workGroupFolderUuid);
+		repository.delete(workGroupFolder);
+		return workGroupFolder;
 	}
 
 	@Override
 	public WorkGroupFolder delete(String ownerUuid, String workGroupUuid, WorkGroupFolder workGroupFolder)
 			throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
+		User actor = checkAuthentication();
+		User owner = getOwner(actor, ownerUuid);
+		// Check existence, rights
+		threadService.find(actor, owner, workGroupUuid);
+		WorkGroupFolder wgf = repository.findByWorkGroupAndUuid(workGroupUuid, workGroupFolder.getUuid());
+		repository.delete(wgf);
+		return wgf;
 	}
 
 }
