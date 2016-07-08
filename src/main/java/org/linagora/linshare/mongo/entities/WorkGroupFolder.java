@@ -86,12 +86,12 @@ public class WorkGroupFolder {
 	 * @LastModifiedDate 11.2. General auditing configuration
 	 */
 
-	public WorkGroupFolder(String name, String parentUuid, String workGroupUuid) {
+	public WorkGroupFolder(String name, String parent, String workGroup) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
 		this.name = name;
-		this.parent = parentUuid;
-		this.workGroup = workGroupUuid;
+		this.parent = parent;
+		this.workGroup = workGroup;
 		this.ancestors = Lists.newArrayList();
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
@@ -172,6 +172,12 @@ public class WorkGroupFolder {
 
 	public void setEntries(List<WorkGroupEntry> entries) {
 		this.entries = entries;
+	}
+
+	@Override
+	public String toString() {
+		return "WorkGroupFolder [uuid=" + uuid + ", name=" + name + ", parent=" + parent + ", workGroup=" + workGroup
+				+ ", ancestors=" + ancestors + ", entries=" + entries + "]";
 	}
 
 }

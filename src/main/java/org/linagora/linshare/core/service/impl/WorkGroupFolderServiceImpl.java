@@ -169,7 +169,7 @@ public class WorkGroupFolderServiceImpl extends GenericServiceImpl<Account, Work
 	private WorkGroupFolder getRootFolder(Thread workGroup) {
 		WorkGroupFolder wgfParent;
 		String workGroupUuid = workGroup.getLsUuid();
-		wgfParent = repository.findByWorkGroupAndUuid(workGroupUuid, workGroupUuid);
+		wgfParent = repository.findByWorkGroupAndParent(workGroupUuid, workGroupUuid);
 		if (wgfParent == null) {
 			// creation of the root folder.
 			wgfParent = new WorkGroupFolder(workGroup.getName(), workGroupUuid, workGroupUuid);

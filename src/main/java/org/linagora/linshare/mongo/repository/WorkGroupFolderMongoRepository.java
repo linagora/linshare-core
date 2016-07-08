@@ -44,4 +44,6 @@ public interface WorkGroupFolderMongoRepository extends MongoRepository<WorkGrou
 
 	WorkGroupFolder findByWorkGroupAndUuid(String workGroupUuid, String uuid);
 
+	WorkGroupFolder findByWorkGroupAndParent(String workGroupUuid, String uuid);
+
 }
