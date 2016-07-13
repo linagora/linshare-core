@@ -52,6 +52,7 @@ import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
@@ -74,7 +75,7 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 		User owner = getOwner(ownerUuid);
 
 		List<DocumentEntry> list = documentEntryService.findAll(actor, owner);
-		return Lists.transform(list, DocumentDto.toDelegationVo());
+		return  ImmutableList.copyOf(Lists.transform(list, DocumentDto.toDelegationVo()));
 	}
 
 	@Override
