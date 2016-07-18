@@ -70,10 +70,10 @@ public class DomainPolicyRepositoryImplTest extends AbstractJUnit4SpringContextT
 		domainPolicyRepository.create(policy);
 		Assert.assertNotNull(policy.getPersistenceId());
 
-		DomainPolicy entityPolicy = domainPolicyRepository.findById(policy.getIdentifier());
+		DomainPolicy entityPolicy = domainPolicyRepository.findById(policy.getUuid());
 
 		Assert.assertTrue(entityPolicy != null );
-		logger.debug("My name is : " + entityPolicy.getIdentifier());
+		logger.debug("My name is : " + entityPolicy.getUuid());
 		logger.debug(entityPolicy.getDomainAccessPolicy().toString());
 
 		domainPolicyRepository.delete(entityPolicy);

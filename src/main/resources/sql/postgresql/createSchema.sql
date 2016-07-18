@@ -104,7 +104,8 @@ CREATE TABLE domain_access_rule (
 CREATE TABLE domain_policy (
   id                       int8 NOT NULL,
   description             text,
-  identifier              varchar(255),
+  uuid              varchar(255) NOT NULL,
+  label              varchar(255),
   domain_access_policy_id int8,
   CONSTRAINT linshare_domain_policy_pkey
     PRIMARY KEY (id));

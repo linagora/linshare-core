@@ -54,7 +54,7 @@ UPDATE policy SET status = true where id=27;
 -- default domain policy
 INSERT INTO domain_access_policy(id) VALUES (100001);
 INSERT INTO domain_access_rule(id, domain_access_rule_type, domain_id, domain_access_policy_id, rule_index) VALUES (100001, 0, null, 100001,0);
-INSERT INTO domain_policy(id, identifier, domain_access_policy_id) VALUES (100001, 'TestAccessPolicy0-test', 100001);
+INSERT INTO domain_policy(id, uuid, label, domain_access_policy_id) VALUES (100001, 'TestAccessPolicy0-test', 'TestAccessPolicy0-test', 100001);
 
 
 -- Root domain (application domain)

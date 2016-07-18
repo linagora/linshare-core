@@ -52,13 +52,13 @@ public class DomainPolicyRepositoryImpl extends AbstractRepositoryImpl<DomainPol
 	@Override
 	public DomainPolicy findById(String identifier) {
 		return DataAccessUtils.singleResult(findByCriteria(
-				Restrictions.eq("identifier", identifier)));
+				Restrictions.eq("uuid", identifier)));
 	}
 
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(DomainPolicy entity) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass())
-				.add(Restrictions.eq("identifier", entity.getIdentifier()));
+				.add(Restrictions.eq("uuid", entity.getUuid()));
 
 		return det;
 	}
@@ -66,7 +66,7 @@ public class DomainPolicyRepositoryImpl extends AbstractRepositoryImpl<DomainPol
 	@SuppressWarnings("unchecked")
 	public List<String> findAllIdentifiers() {
 		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass())
-				.setProjection(Projections.property("identifier"));
+				.setProjection(Projections.property("uuid"));
 
 		return listByCriteria(crit);
 	}

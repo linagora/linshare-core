@@ -79,7 +79,7 @@ public class DomainPolicyBusinessServiceImpl implements
 	@Override
 	public DomainPolicy update(DomainPolicy dto) throws BusinessException {
 		DomainPolicy entity = domainPolicyRepository.findById(dto
-				.getIdentifier());
+				.getUuid());
 		entity.setDescription(dto.getDescription());
 		List<DomainAccessRule> rules = dto.getDomainAccessPolicy().getRules();
 
@@ -107,7 +107,7 @@ public class DomainPolicyBusinessServiceImpl implements
 	@Override
 	public boolean policyIsDeletable(String identifier) {
 		for (AbstractDomain domain : abstractDomainRepository.findAll()) {
-			if (domain.getPolicy().getIdentifier().equals(identifier)) {
+			if (domain.getPolicy().getUuid().equals(identifier)) {
 				return false;
 			}
 		}

@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2015-2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2016. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.DomainAccessPolicyBusinessService;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.MailConfigBusinessService;
 import org.linagora.linshare.core.business.service.MimePolicyBusinessService;
@@ -92,6 +93,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	private final WelcomeMessagesService welcomeMessagesService;
 	private final boolean overrideGlobalQuota;
 	private final AuditAdminMongoRepository auditMongoRepository;
+	final private DomainAccessPolicyBusinessService domainAccessPolicyBusinessService;
 
 	public AbstractDomainServiceImpl(
 			final AbstractDomainRepository abstractDomainRepository,
@@ -104,7 +106,8 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			final MailConfigBusinessService mailConfigBusinessService,
 			final WelcomeMessagesService welcomeMessagesService,
 			final boolean overrideGlobalQuota,
-			final AuditAdminMongoRepository auditMongoRepository) {
+			final AuditAdminMongoRepository auditMongoRepository,
+			final DomainAccessPolicyBusinessService domainAccessPolicyBusinessService) {
 		super();
 		this.abstractDomainRepository = abstractDomainRepository;
 		this.domainPolicyService = domainPolicyService;
@@ -117,6 +120,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		this.welcomeMessagesService = welcomeMessagesService;
 		this.overrideGlobalQuota = overrideGlobalQuota;
 		this.auditMongoRepository = auditMongoRepository;
+		this.domainAccessPolicyBusinessService = domainAccessPolicyBusinessService;
 	}
 
 	@Override
@@ -159,7 +163,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			domain.setDescription("");
 		}
 		DomainPolicy policy = domainPolicyService.find(domain.getPolicy()
-				.getIdentifier());
+				.getUuid());
 
 		if (policy == null) {
 			throw new BusinessException(
@@ -266,6 +270,16 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		if (domain.getDomainType().equals(DomainType.ROOTDOMAIN)) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "No one is authorized to delete root domain.");
 		}
+
+		boolean domainHasAccessRules = domainAccessPolicyBusinessService.domainHasPolicyRules(domain);
+		if (domainHasAccessRules) {
+			String errorMessage = "Cannot delete the domain : "
+					+ domain.getLabel() + " (" + domain.getUuid()
+					+ "), delete the affiliated rules to do so ...";
+			logger.info(errorMessage);
+			throw new BusinessException(
+					BusinessErrorCode.DOMAIN_HAS_ACCESS_RULES, errorMessage);
+		}
 		abstractDomainRepository.delete(domain);
 		DomainAuditLogEntry log = new DomainAuditLogEntry(actor, LogAction.DELETE, AuditLogEntryType.DOMAIN, domain);
 		auditMongoRepository.insert(log);
@@ -318,7 +332,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	@Override
 	public AbstractDomain updateDomain(Account actor, AbstractDomain domain) throws BusinessException {
 		Validate.notEmpty(domain.getDescription(), "Description must be set.");
-		Validate.notEmpty(domain.getLabel(), "Domain lqbel must be set.");
+		Validate.notEmpty(domain.getLabel(), "Domain label must be set.");
 		if (!actor.hasSuperAdminRole()) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Only root is authorized to create domains.");
 		}
@@ -354,7 +368,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		}
 
 		DomainPolicy policy = domainPolicyService.find(domain.getPolicy()
-				.getIdentifier());
+				.getUuid());
 		if (policy == null) {
 			throw new BusinessException(
 					BusinessErrorCode.DOMAIN_POLICY_NOT_FOUND,

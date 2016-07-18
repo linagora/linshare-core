@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2015-2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2016. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.UUID;
+
 import org.linagora.linshare.core.facade.webservice.admin.dto.DomainPolicyDto;
 
 public class DomainPolicy {
@@ -42,7 +44,9 @@ public class DomainPolicy {
 	 */
 	private long persistenceId;
 
-	private String identifier;
+	private String uuid;
+
+	private String label;
 
 	private DomainAccessPolicy domainAccessPolicy;
 
@@ -50,35 +54,54 @@ public class DomainPolicy {
 
 	public DomainPolicy() {
 		super();
-		domainAccessPolicy = new DomainAccessPolicy();
+		this.uuid = UUID.randomUUID().toString();
+		this.domainAccessPolicy = new DomainAccessPolicy();
 	}
 
 	public DomainPolicy(DomainPolicyDto dto) {
 		super();
-		this.identifier = dto.getIdentifier();
+		this.uuid = dto.getIdentifier();
+		this.label = dto.getLabel();
 		this.description = dto.getDescription();
-		domainAccessPolicy = new DomainAccessPolicy();
+		this.domainAccessPolicy = new DomainAccessPolicy();
 	}
 
-	public DomainPolicy(String identifier, DomainAccessPolicy policy) {
+	public DomainPolicy(String label) {
 		super();
-		this.identifier = identifier;
+		this.uuid = UUID.randomUUID().toString();
+		this.label = label;
+		this.domainAccessPolicy = new DomainAccessPolicy();
+	}
+
+	public DomainPolicy(String label, DomainAccessPolicy policy) {
+		super();
+		this.uuid = UUID.randomUUID().toString();
+		this.label = label;
 		this.domainAccessPolicy = policy;
 	}
 
-	public DomainPolicy(String identifier, String description,
+	public DomainPolicy(String label, String description,
 			DomainAccessPolicy domainAccessPolicy) {
-		this.identifier = identifier;
+		this.uuid = UUID.randomUUID().toString();
+		this.label = label;
 		this.description = description;
 		this.domainAccessPolicy = domainAccessPolicy;
 	}
 
-	public String getIdentifier() {
-		return identifier;
+	public String getUuid() {
+		return uuid;
 	}
 
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	public String getDescription() {

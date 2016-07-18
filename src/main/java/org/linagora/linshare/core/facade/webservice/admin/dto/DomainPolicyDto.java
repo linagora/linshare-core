@@ -47,6 +47,9 @@ public class DomainPolicyDto {
 	@ApiModelProperty(value = "Identifier")
 	private String identifier;
 
+	@ApiModelProperty(value = "Label")
+	private String label;
+
 	@ApiModelProperty(value = "Description")
 	private String description;
 
@@ -54,7 +57,8 @@ public class DomainPolicyDto {
 	private DomainAccessPolicyDto accessPolicy;
 
 	public DomainPolicyDto(final DomainPolicy p) {
-		this.identifier = p.getIdentifier();
+		this.identifier = p.getUuid();
+		this.label = p.getLabel();
 		this.description = p.getDescription();
 		this.accessPolicy = new DomainAccessPolicyDto(p.getDomainAccessPolicy());
 	}
@@ -85,5 +89,13 @@ public class DomainPolicyDto {
 
 	public void setAccessPolicy(DomainAccessPolicyDto domainAccessPolicy) {
 		this.accessPolicy = domainAccessPolicy;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 }

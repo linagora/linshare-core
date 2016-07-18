@@ -133,6 +133,7 @@
 		<constructor-arg ref="welcomeMessagesService" />
 		<constructor-arg value="${linshare.override.global.quota}" />
 		<constructor-arg ref="auditAdminMongoRepository" />
+		<constructor-arg ref="domainAccessPolicyBusinessService" />
 	</bean>
 
 	<bean name="userAndDomainMultiService" class="org.linagora.linshare.core.service.impl.UserAndDomainMultiServiceImpl">

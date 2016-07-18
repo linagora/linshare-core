@@ -93,8 +93,8 @@ public class DomainPolicyFacadeImpl extends AdminGenericFacadeImpl implements
 	public DomainPolicyDto create(DomainPolicyDto dto) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(dto, "policy dto must be set.");
-		Validate.notEmpty(dto.getIdentifier(), "policy identifier must be set.");
-		DomainPolicy policy = new DomainPolicy(dto);
+		Validate.notEmpty(dto.getLabel(), "policy identifier must be set.");
+		DomainPolicy policy = new DomainPolicy(dto.getLabel());
 		policy.setDomainAccessPolicy(transformToDomainAccessPolicy(dto.getAccessPolicy()));
 		return new DomainPolicyDto(domainPolicyService.create(policy));
 	}
@@ -153,6 +153,7 @@ public class DomainPolicyFacadeImpl extends AdminGenericFacadeImpl implements
 	public DomainPolicyDto delete(String identifier)
 			throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
+		Validate.notEmpty(identifier, "Domain policy identifier must be set");
 		DomainPolicy policy = domainPolicyService.delete(identifier);
 		return new DomainPolicyDto(policy);
 	}

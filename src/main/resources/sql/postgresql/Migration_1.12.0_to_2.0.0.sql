@@ -86,6 +86,11 @@ ALTER TABLE domain_abstract ADD COLUMN uuid CHARACTER VARYING(255);
 UPDATE domain_abstract set uuid = identifier;
 ALTER TABLE domain_abstract ALTER COLUMN uuid SET NOT NULL;
 
+-- domain policy migration from identifier to uuid
+ALTER TABLE domain_policy ADD COLUMN label CHARACTER VARYING(255);
+UPDATE domain_policy SET label = identifier;
+ALTER TABLE domain_policy ALTER COLUMN label SET NOT NULL;
+ALTER TABLE domain_policy RENAME COLUMN identifier TO uuid;
 
 
 
