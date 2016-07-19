@@ -295,7 +295,7 @@ public class UserServiceImpl implements UserService {
 			userRepository.purge(userToDelete);
 
 			UserLogEntry logEntry = new UserLogEntry(actor,
-					LogAction.USER_DELETE, "Deleting an user", userToDelete);
+					LogAction.USER_PURGE, "Purging an user", userToDelete);
 			logEntryService.create(logEntry);
 
 		} catch (IllegalArgumentException e) {
