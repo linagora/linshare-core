@@ -89,14 +89,14 @@ public class UserPreferenceRestServiceImpl implements UserPreferenceRestService 
 	@Path("/{uuid}")
 	@PUT
 	@Override
-	public UserPreference update(UserPreference dto) throws BusinessException {
-		return facade.update(null, dto);
+	public UserPreference update(@PathParam(value = "uuid") String uuid, UserPreference dto) throws BusinessException {
+		return facade.update(null, uuid, dto);
 	}
 
 	@Path("/{uuid}")
 	@DELETE
 	@Override
-	public UserPreference delete(String uuid) throws BusinessException {
+	public UserPreference delete(@PathParam(value = "uuid") String uuid) throws BusinessException {
 		return facade.delete(null, uuid);
 	}
 

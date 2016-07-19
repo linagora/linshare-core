@@ -74,9 +74,16 @@ public class UserPreferenceFacadeImpl extends UserGenericFacadeImp implements Us
 	}
 
 	@Override
-	public UserPreference update(String ownerUuid, UserPreference dto) throws BusinessException {
+	public UserPreference update(String ownerUuid, String uuid, UserPreference dto) throws BusinessException {
 		User actor = checkAuthentication();
 		User owner = getOwner(actor, ownerUuid);
+		Validate.notNull(dto, "Missing user preference object");
+		Validate.notEmpty(uuid, "Missing user preference uuid.");
+		if (dto.getUuid() == null) {
+			dto.setUuid(uuid);
+		} else {
+			Validate.isTrue(dto.getUuid().equals(uuid), "Uuid in path param does not match uuid in dto.");
+		}
 		return service.update(actor, owner, dto);
 	}
 

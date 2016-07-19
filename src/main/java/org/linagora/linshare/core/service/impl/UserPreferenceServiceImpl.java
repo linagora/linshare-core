@@ -89,7 +89,7 @@ public class UserPreferenceServiceImpl extends GenericServiceImpl<Account, UserP
 	public UserPreference findByUuid(Account actor, Account owner, String uuid) {
 		preChecks(actor, owner);
 		Validate.notEmpty(uuid, "Missing uuid");
-		UserPreference entry = repository.findByUuid(uuid);
+		UserPreference entry = repository.findOne(uuid);
 		if (entry == null) {
 			logger.error("Current actor " + actor.getAccountRepresentation()
 					+ " is looking for a misssing user preference (" + uuid
@@ -127,11 +127,13 @@ public class UserPreferenceServiceImpl extends GenericServiceImpl<Account, UserP
 		UserPreference entry = findByUuid(actor, owner, dto.getUuid());
 		UserPreferenceAuditLogEntry log = new UserPreferenceAuditLogEntry(actor, owner, LogAction.CREATE,
 				AuditLogEntryType.USER_PREFERENCE, entry);
-		// TODO
-
+		Validate.isTrue(entry.getKey().equals(dto.getKey()), "Key in dto does not match key in entity object.");
+		dto.setAccountUuid(entry.getAccountUuid());
+		dto.setDomainUuid(entry.getDomainUuid());
+		entry = repository.save(dto);
 		log.setResourceUpdated(entry);
 		mongoRepository.insert(log);
-		return null;
+		return entry;
 	}
 
 	@Override

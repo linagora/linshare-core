@@ -46,7 +46,7 @@ public interface UserPreferenceRestService {
 
 	UserPreference create(UserPreference dto) throws BusinessException;
 
-	UserPreference update(UserPreference dto) throws BusinessException;
+	UserPreference update(String uuid, UserPreference dto) throws BusinessException;
 
 	UserPreference delete(String uuid) throws BusinessException;
 

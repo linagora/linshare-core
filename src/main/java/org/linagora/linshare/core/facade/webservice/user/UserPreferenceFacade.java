@@ -46,7 +46,7 @@ public interface UserPreferenceFacade extends GenericFacade {
 
 	UserPreference create(String ownerUuid, UserPreference dto) throws BusinessException;
 
-	UserPreference update(String ownerUuid, UserPreference dto) throws BusinessException;
+	UserPreference update(String ownerUuid, String uuid, UserPreference dto) throws BusinessException;
 
 	UserPreference delete(String ownerUuid, String uuid) throws BusinessException;
 
