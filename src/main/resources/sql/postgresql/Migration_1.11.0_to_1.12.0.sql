@@ -94,7 +94,7 @@ BEGIN
 		FOR r IN (SELECT id FROM domain_abstract) LOOP
 			FOR t IN (SELECT mail, domain_id FROM account WHERE destroyed > 0  GROUP BY mail, domain_id) LOOP
 				i := 1;
-				FOR v IN (SELECT id FROM account AS a WHERE a.mail = t.mail ORDER BY modification_date) LOOP
+				FOR v IN (SELECT id FROM account AS a WHERE destroyed > 0 AND a.mail = t.mail ORDER BY modification_date) LOOP
 					UPDATE account AS a SET destroyed = i WHERE a.id = v.id;
 					i := i + 1;
 				END LOOP;
