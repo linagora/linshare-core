@@ -294,7 +294,7 @@ public class UserServiceImpl implements UserService {
 			userRepository.purge(userToDelete);
 
 			UserLogEntry logEntry = new UserLogEntry(actor,
-					LogAction.USER_DELETE, "Deleting an user", userToDelete);
+					LogAction.USER_PURGE, "Purging an user", userToDelete);
 			logEntryService.create(logEntry);
 //			AKO : To think about, logical delete, delete, physical delete staging for delete...
 			UserAuditLogEntry log = new UserAuditLogEntry(actor, userToDelete, LogAction.LOGICAL_DELETE, AuditLogEntryType.USER, userToDelete);
