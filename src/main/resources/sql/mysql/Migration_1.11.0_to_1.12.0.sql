@@ -209,7 +209,7 @@ BEGIN
 			END IF;
 			BLOCK2:BEGIN
 				DECLARE v_finish INTEGER DEFAULT 0;
-				DECLARE update_cursor CURSOR FOR SELECT id FROM account AS a WHERE a.mail = v_mail ORDER BY modification_date;
+				DECLARE update_cursor CURSOR FOR SELECT id FROM account AS a WHERE destroyed > 0 AND a.mail = v_mail ORDER BY modification_date;
 				DECLARE CONTINUE HANDLER
 				FOR NOT FOUND SET v_finish = 1;
 				OPEN update_cursor;
