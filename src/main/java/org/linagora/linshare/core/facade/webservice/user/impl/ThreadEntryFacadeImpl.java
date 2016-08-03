@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2015-2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2016. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -51,6 +51,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ThreadEntryDto;
 import org.linagora.linshare.core.facade.webservice.user.ThreadEntryFacade;
+import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -122,6 +123,23 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 		documentEntryService.checkDownloadPermission(actor, actor, entryUuid);
 		ThreadEntry threadEntry = threadEntryService.copyFromDocumentEntry(actor, actor, thread, doc);
 		return new ThreadEntryDto(threadEntry);
+	}
+
+	@Override
+	public DocumentDto copyFromThreadEntry(String threadUuid, String entryUuid)
+			throws BusinessException {
+		Validate.notEmpty(threadUuid, "Missing required thread uuid");
+		Validate.notEmpty(entryUuid, "Missing required entry uuid");
+		User actor = checkAuthentication();
+		// Check if we have the right to access to the specified thread
+		Thread thread = threadService.find(actor, actor, threadUuid);
+		// Check if we have the right to access to the specified thread entry
+		ThreadEntry threadEntry = threadEntryService.findById(actor, actor,
+				entryUuid);
+
+		DocumentEntry docEntry = threadEntryService.copyFromThreadEntry(actor,
+				actor, thread, threadEntry);
+		return new DocumentDto(docEntry);
 	}
 
 	@Override

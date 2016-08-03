@@ -41,6 +41,7 @@ import javax.ws.rs.core.Response;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ThreadEntryDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 
 
 public interface ThreadEntryFacade extends GenericFacade {
@@ -49,6 +50,9 @@ public interface ThreadEntryFacade extends GenericFacade {
 			String filename) throws BusinessException;
 
 	ThreadEntryDto copy(String threadUuid, String entryUuid)
+			throws BusinessException;
+
+	DocumentDto copyFromThreadEntry(String threadUuid, String entryUuid)
 			throws BusinessException;
 
 	ThreadEntryDto find(String threadUuid, String uuid)

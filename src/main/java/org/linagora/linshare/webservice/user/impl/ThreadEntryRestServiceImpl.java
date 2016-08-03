@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2015-2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2016. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -65,6 +65,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.ThreadEntryDto;
 import org.linagora.linshare.core.facade.webservice.user.AsyncTaskFacade;
 import org.linagora.linshare.core.facade.webservice.user.ThreadEntryAsyncFacade;
 import org.linagora.linshare.core.facade.webservice.user.ThreadEntryFacade;
+import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.user.ThreadEntryRestService;
 import org.linagora.linshare.webservice.user.task.ThreadEntryUploadAsyncTask;
@@ -182,11 +183,11 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public ThreadEntryDto copy(
+	public DocumentDto copy(
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The document entry uuid.", required = true) @PathParam("entryUuid")  String entryUuid)
 					throws BusinessException {
-		return threadEntryFacade.copy(threadUuid, entryUuid);
+		return threadEntryFacade.copyFromThreadEntry(threadUuid, entryUuid);
 	}
 
 	@Path("/{uuid}")
