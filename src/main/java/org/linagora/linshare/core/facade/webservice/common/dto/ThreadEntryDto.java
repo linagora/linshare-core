@@ -73,6 +73,9 @@ public class ThreadEntryDto extends EntryDto {
 	@ApiModelProperty(value = "Sha256sum")
 	protected String sha256sum;
 
+	@ApiModelProperty(value = "Sha256sum")
+	protected boolean hasThumbnail;
+
 	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 	protected AsyncTaskDto async;
 
@@ -91,6 +94,7 @@ public class ThreadEntryDto extends EntryDto {
 		this.size = te.getSize();
 		this.metaData = te.getMetaData();
 		this.sha256sum = te.getSha256sum();
+		this.hasThumbnail = te.isHasThumbnail();
 	}
 
 	public ThreadEntryDto() {
@@ -165,6 +169,14 @@ public class ThreadEntryDto extends EntryDto {
 
 	public void setSize(Long size) {
 		this.size = size;
+	}
+
+	public boolean isHasThumbnail() {
+		return hasThumbnail;
+	}
+
+	public void setHasThumbnail(boolean hasThumbnail) {
+		this.hasThumbnail = hasThumbnail;
 	}
 
 	@Override
