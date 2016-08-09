@@ -59,6 +59,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.EntryDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.FlowDto;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
+import org.linagora.linshare.core.facade.webservice.user.ThreadEntryFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.user.FlowDocumentUploaderRestService;
 import org.linagora.linshare.webservice.utils.FlowUploaderUtils;
@@ -84,19 +85,23 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 	private static final String FILENAME = "flowFilename";
 	private static final String RELATIVE_PATH = "flowRelativePath";
 	private static final String FILE = "file";
+	private static final String THREAD_UUID = "threadUuid";
 
 	private boolean sizeValidation;
 
 	private final DocumentFacade documentFacade;
 
+	private final ThreadEntryFacade threadEntryFacade;
+
 	private static final ConcurrentMap<String, ChunkedFile> chunkedFiles = Maps
 			.newConcurrentMap();
 
-	public FlowDocumentUploaderRestServiceImpl(DocumentFacade documentFacade,
+	public FlowDocumentUploaderRestServiceImpl(DocumentFacade documentFacade, ThreadEntryFacade threadEntryFacade,
 			boolean sizeValidation) {
 		super();
 		this.documentFacade = documentFacade;
 		this.sizeValidation = sizeValidation;
+		this.threadEntryFacade = threadEntryFacade;
 	}
 
 	@Path("/")
@@ -110,7 +115,8 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 			@Multipart(IDENTIFIER) String identifier,
 			@Multipart(FILENAME) String filename,
 			@Multipart(RELATIVE_PATH) String relativePath,
-			@Multipart(FILE) InputStream file, MultipartBody body)
+			@Multipart(FILE) InputStream file, MultipartBody body,
+			@Multipart(value=THREAD_UUID, required=false) String threadUuid)
 					throws BusinessException {
 		logger.debug("upload chunk number : " + chunkNumber);
 		identifier = cleanIdentifier(identifier);
@@ -162,7 +168,12 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 				}
 				EntryDto uploadedDocument = new EntryDto();
 				try {
-					uploadedDocument = documentFacade.create(tempFile2, filename, "", null);
+					if(threadUuid != null && !threadUuid.isEmpty()) {
+						uploadedDocument = threadEntryFacade.create(threadUuid, tempFile2, filename);
+					} else {
+						uploadedDocument = documentFacade.create(tempFile2,
+								filename, "", null);
+					}
 					flow.completeTransfert(uploadedDocument);
 				} finally {
 					deleteTempFile(tempFile2);

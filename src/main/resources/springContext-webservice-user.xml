@@ -37,6 +37,7 @@
 
 	<bean id="userFlowDocumentUploaderRestService" class="org.linagora.linshare.webservice.user.impl.FlowDocumentUploaderRestServiceImpl">
 		<constructor-arg ref="wsDocumentFacade" />
+		<constructor-arg ref="wsThreadEntryFacade" />
 		<constructor-arg value="${linshare.rest.files.size.validation}" />
 	</bean>
 
