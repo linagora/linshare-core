@@ -48,6 +48,7 @@ import com.wordnik.swagger.annotations.ApiModel;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
+		@Type(value = AutoCompleteResultDto.class, name = "simple"),
 		@Type(value = UserAutoCompleteResultDto.class, name = "user"),
 		@Type(value = ThreadMemberAutoCompleteResultDto.class, name = "threadmember"),
 		@Type(value = ListAutoCompleteResultDto.class, name = "mailinglist"), })
