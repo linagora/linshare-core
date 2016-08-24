@@ -219,7 +219,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 			throws BusinessException {
 		ThreadMember member = new ThreadMember(canUpload, admin, user, thread);
 		threadMemberAC.checkCreatePermission(actor, owner, ThreadMember.class,
-				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN, member);
+				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN, member, thread);
 		if (getMemberFromUser(thread, user) != null) {
 			logger.warn("The current " + user.getAccountRepresentation()
 					+ " user is already member of the thread : "
