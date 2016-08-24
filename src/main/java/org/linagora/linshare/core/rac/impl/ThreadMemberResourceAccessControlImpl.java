@@ -66,7 +66,8 @@ public class ThreadMemberResourceAccessControlImpl extends
 		if (actor.hasAllRights()) {
 			return true;
 		}
-		return isUserMember(owner, entry);
+		return threadMemberRepository.findUserThreadMember(entry.getThread(),
+				(User) owner) != null;
 	}
 
 	@Override
@@ -90,7 +91,7 @@ public class ThreadMemberResourceAccessControlImpl extends
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.THREAD_MEMBERS_DELETE);
 		}
-		return isUserAdmin(owner, entry);
+		return entry.getAdmin();
 	}
 
 	@Override
@@ -103,7 +104,13 @@ public class ThreadMemberResourceAccessControlImpl extends
 		if (actor.hasAllRights()) {
 			return true;
 		}
-		return isUserAdmin(owner, entry);
+		// entry is the object to be create. Can not be used to check if the
+		// current owner is admin.
+		if (opt.length > 0 && opt[0] instanceof Thread) {
+			return threadMemberRepository.findUserThreadMember((Thread) opt[0],
+					(User) owner) != null;
+		}
+		return false;
 	}
 
 	@Override
@@ -116,23 +123,13 @@ public class ThreadMemberResourceAccessControlImpl extends
 		if (actor.hasAllRights()) {
 			return true;
 		}
-		return isUserAdmin(owner, entry);
+		return entry.getAdmin();
 	}
 
 	@Override
 	protected String getEntryRepresentation(ThreadMember entry) {
 		return '(' + entry.getThread().getLsUuid() + ':'
 				+ entry.getUser().getLsUuid() + ')';
-	}
-
-	private boolean isUserMember(Account user, ThreadMember member) {
-		return threadMemberRepository.findUserThreadMember(member.getThread(),
-				(User) user) != null;
-	}
-
-	private boolean isUserAdmin(Account user, ThreadMember member) {
-		return threadMemberRepository.isUserAdmin((User) user,
-				member.getThread());
 	}
 
 	@Override
