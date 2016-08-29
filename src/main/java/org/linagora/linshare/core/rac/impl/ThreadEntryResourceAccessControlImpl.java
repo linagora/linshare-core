@@ -36,18 +36,25 @@ package org.linagora.linshare.core.rac.impl;
 
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.rac.ThreadEntryResourceAccessControl;
+import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 
 public class ThreadEntryResourceAccessControlImpl extends
 		EntryResourceAccessControlImpl<Account, ThreadEntry> implements
 		ThreadEntryResourceAccessControl {
 
+	private final ThreadMemberRepository threadMemberRepository;
+
 	public ThreadEntryResourceAccessControlImpl(
-			final FunctionalityReadOnlyService functionalityService) {
+			final FunctionalityReadOnlyService functionalityService,
+			final ThreadMemberRepository threadMemberRepository) {
 		super(functionalityService);
+		this.threadMemberRepository = threadMemberRepository;
 	}
 
 	@Override
@@ -73,57 +80,115 @@ public class ThreadEntryResourceAccessControlImpl extends
 	@Override
 	protected boolean hasReadPermission(Account actor, Account owner,
 			ThreadEntry entry, Object... opt) {
-		return defaultPermissionCheck(actor, owner, entry,
-				TechnicalAccountPermissionType.THREAD_ENTRIES_GET);
+		if (actor.hasAllRights()) {
+			return true;
+		}
+		if (actor.hasDelegationRole()) {
+			return hasPermission(actor,
+					TechnicalAccountPermissionType.THREAD_ENTRIES_GET);
+		}
+		return threadMemberRepository.findUserThreadMember(
+				entry.getEntryOwner(), (User) owner) != null;
 	}
 
 	@Override
 	protected boolean hasListPermission(Account actor, Account owner,
 			ThreadEntry entry, Object... opt) {
-		return defaultPermissionCheck(actor, owner, entry,
-				TechnicalAccountPermissionType.THREAD_ENTRIES_LIST);
+		if (actor.hasAllRights()) {
+			return true;
+		}
+		if (actor.hasDelegationRole()) {
+			return hasPermission(actor,
+					TechnicalAccountPermissionType.THREAD_ENTRIES_LIST);
+		}
+		if (opt.length > 0 && opt[0] instanceof Thread) {
+			return threadMemberRepository.findUserThreadMember((Thread) opt[0],
+					(User) owner) != null;
+		}
+		return false;
 	}
 
 	@Override
 	protected boolean hasDeletePermission(Account actor, Account owner,
 			ThreadEntry entry, Object... opt) {
-		return defaultPermissionCheck(actor, owner, entry,
-				TechnicalAccountPermissionType.THREAD_ENTRIES_CREATE);
+		if (actor.hasAllRights()) {
+			return true;
+		}
+		if (actor.hasDelegationRole()) {
+			return hasPermission(actor,
+					TechnicalAccountPermissionType.THREAD_ENTRIES_DELETE);
+		}
+		ThreadMember member = threadMemberRepository.findUserThreadMember(
+				entry.getEntryOwner(), (User) owner);
+		if (member != null && member.getAdmin()) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
 	protected boolean hasCreatePermission(Account actor, Account owner,
 			ThreadEntry entry, Object... opt) {
-		return defaultPermissionCheck(actor, owner, entry,
-				TechnicalAccountPermissionType.THREAD_ENTRIES_CREATE);
+		if (actor.hasAllRights()) {
+			return true;
+		}
+		if (actor.hasDelegationRole()) {
+			return hasPermission(actor,
+					TechnicalAccountPermissionType.THREAD_ENTRIES_CREATE);
+		}
+		if (opt.length > 0 && opt[0] instanceof Thread) {
+			ThreadMember member = threadMemberRepository.findUserThreadMember((Thread) opt[0],
+					(User) owner);
+			if (member != null && member.getCanUpload()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
 	protected boolean hasUpdatePermission(Account actor, Account owner,
 			ThreadEntry entry, Object... opt) {
-		return defaultPermissionCheck(actor, owner, entry,
-				TechnicalAccountPermissionType.THREAD_ENTRIES_UPDATE);
+		if (actor.hasAllRights()) {
+			return true;
+		}
+		if (actor.hasDelegationRole()) {
+			return hasPermission(actor,
+					TechnicalAccountPermissionType.THREAD_ENTRIES_UPDATE);
+		}
+		ThreadMember member = threadMemberRepository.findUserThreadMember(
+				entry.getEntryOwner(), (User) owner);
+		if (member != null && member.getAdmin()) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
 	protected boolean hasDownloadPermission(Account actor, Account owner,
 			ThreadEntry entry, Object... opt) {
-		return defaultPermissionCheck(actor, owner, entry,
-				TechnicalAccountPermissionType.THREAD_ENTRIES_DOWNLOAD);
+		if (actor.hasAllRights()) {
+			return true;
+		}
+		if (actor.hasDelegationRole()) {
+			return hasPermission(actor,
+					TechnicalAccountPermissionType.THREAD_ENTRIES_DOWNLOAD);
+		}
+		return threadMemberRepository.findUserThreadMember(
+				entry.getEntryOwner(), (User) owner) != null;
 	}
 
 	@Override
 	protected boolean hasDownloadTumbnailPermission(Account actor,
 			Account owner, ThreadEntry entry, Object... opt) {
-		return defaultPermissionCheck(
-				actor,
-				owner,
-				entry,
-				TechnicalAccountPermissionType.THREAD_ENTRIES_DOWNLOAD_THUMBNAIL);
-	}
-
-	@Override
-	public void checkDownloadPermission(Account actor, Account owner,
-			Class<ThreadEntry> class1, BusinessErrorCode threadEntryForbidden) {
+		if (actor.hasAllRights()) {
+			return true;
+		}
+		if (actor.hasDelegationRole()) {
+			return hasPermission(actor,
+					TechnicalAccountPermissionType.THREAD_ENTRIES_DOWNLOAD_THUMBNAIL);
+		}
+		return threadMemberRepository.findUserThreadMember(
+				entry.getEntryOwner(), (User) owner) != null;
 	}
 }

@@ -59,12 +59,12 @@ public class ThreadMemberResourceAccessControlImpl extends
 	@Override
 	protected boolean hasReadPermission(Account actor, Account owner,
 			ThreadMember entry, Object... opt) {
+		if (actor.hasAllRights()) {
+			return true;
+		}
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.THREAD_MEMBERS_GET);
-		}
-		if (actor.hasAllRights()) {
-			return true;
 		}
 		return threadMemberRepository.findUserThreadMember(entry.getThread(),
 				(User) owner) != null;
@@ -73,6 +73,9 @@ public class ThreadMemberResourceAccessControlImpl extends
 	@Override
 	protected boolean hasListPermission(Account actor, Account owner,
 			ThreadMember entry, Object... opt) {
+		if (actor.hasAllRights()) {
+			return true;
+		}
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.THREAD_MEMBERS_LIST);
@@ -87,6 +90,9 @@ public class ThreadMemberResourceAccessControlImpl extends
 	@Override
 	protected boolean hasDeletePermission(Account actor, Account owner,
 			ThreadMember entry, Object... opt) {
+		if (actor.hasAllRights()) {
+			return true;
+		}
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.THREAD_MEMBERS_DELETE);
@@ -97,12 +103,12 @@ public class ThreadMemberResourceAccessControlImpl extends
 	@Override
 	protected boolean hasCreatePermission(Account actor, Account owner,
 			ThreadMember entry, Object... opt) {
+		if (actor.hasAllRights()) {
+			return true;
+		}
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.THREAD_MEMBERS_CREATE);
-		}
-		if (actor.hasAllRights()) {
-			return true;
 		}
 		// entry is the object to be create. Can not be used to check if the
 		// current owner is admin.
@@ -116,12 +122,12 @@ public class ThreadMemberResourceAccessControlImpl extends
 	@Override
 	protected boolean hasUpdatePermission(Account actor, Account owner,
 			ThreadMember entry, Object... opt) {
+		if (actor.hasAllRights()) {
+			return true;
+		}
 		if (actor.hasDelegationRole()) {
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.THREAD_MEMBERS_UPDATE);
-		}
-		if (actor.hasAllRights()) {
-			return true;
 		}
 		return entry.getAdmin();
 	}

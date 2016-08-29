@@ -36,12 +36,8 @@ package org.linagora.linshare.core.rac;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
 
 public interface ThreadEntryResourceAccessControl extends
 		EntryResourceAccessControl<Account, ThreadEntry> {
-
-	void checkDownloadPermission(Account actor, Account owner,
-			Class<ThreadEntry> class1, BusinessErrorCode threadEntryForbidden);
 
 }

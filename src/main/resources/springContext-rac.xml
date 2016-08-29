@@ -21,6 +21,7 @@
 
 	<bean name="threadEntryResourceAccessControl" class="org.linagora.linshare.core.rac.impl.ThreadEntryResourceAccessControlImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="threadMemberRepository" />
 	</bean>
 
 	<bean name="threadResourceAccessControl" class="org.linagora.linshare.core.rac.impl.ThreadResourceAccessControlImpl">
