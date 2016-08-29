@@ -35,6 +35,7 @@ package org.linagora.linshare.core.repository;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
@@ -56,7 +57,7 @@ public interface ThreadMemberRepository extends AbstractRepository<ThreadMember>
 	 * @param user
 	 * @return the ThreadMember
 	 */
-    public ThreadMember findUserThreadMember(Thread thread, User user);
+    public ThreadMember findUserThreadMember(Account thread, User user);
 
 	/**
 	 * Find all ThreadMember corresponding to a User

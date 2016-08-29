@@ -38,6 +38,7 @@ import java.util.List;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
@@ -67,7 +68,7 @@ public class ThreadMemberRepositoryImpl extends
 	}
 
 	@Override
-	public ThreadMember findUserThreadMember(Thread thread, User user) {
+	public ThreadMember findUserThreadMember(Account thread, User user) {
 		DetachedCriteria det = DetachedCriteria.forClass(ThreadMember.class);
 
 		det.add(Restrictions.eq("thread", thread));
