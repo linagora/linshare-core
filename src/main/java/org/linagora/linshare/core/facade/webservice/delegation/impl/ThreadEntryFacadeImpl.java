@@ -203,7 +203,7 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 		User owner = getOwner(ownerUuid);
 
 		ThreadEntry threadEntry = threadEntryService.findById(actor, owner, threadEntryUuid);
-		InputStream file = threadEntryService.getDocumentThumbnailStream(owner, threadEntryUuid);
+		InputStream file = threadEntryService.getDocumentThumbnailStream(actor, owner, threadEntryUuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder
 				.getDocumentResponseBuilder(file,
 						threadEntry.getName() + "_thumb.png", "image/png");

@@ -197,8 +197,9 @@ public class ThreadEntryFacadeImpl extends GenericTapestryFacade implements Thre
 	public InputStream getDocumentThumbnail(UserVo actorVo,
 			String docEntryUuid) {
 		try {
+			User actor = findUser(actorVo);
 			return threadEntryService.getDocumentThumbnailStream(
-					findUser(actorVo), docEntryUuid);
+					actor, actor, docEntryUuid);
 		} catch (BusinessException e) {
 			logger.error("Can't get document thumbnail : " + docEntryUuid
 					+ " : " + e.getMessage());
