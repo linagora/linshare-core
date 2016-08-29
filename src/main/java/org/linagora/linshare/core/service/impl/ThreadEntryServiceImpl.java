@@ -35,7 +35,6 @@ package org.linagora.linshare.core.service.impl;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
@@ -251,40 +250,23 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 	public List<ThreadEntry> findAllThreadEntries(Account actor, Account owner, Thread thread) throws BusinessException {
 		checkListPermission(actor, owner, ThreadEntry.class,
 				BusinessErrorCode.THREAD_ENTRY_FORBIDDEN, null, thread);
-		if (!this.isThreadMember(thread, (User) owner)) {
-			if(!owner.hasSuperAdminRole()) {
-				return new ArrayList<ThreadEntry>();
-			}
-		}
 		return documentEntryBusinessService.findAllThreadEntries(thread);
 	}
 
 	@Override
 	public InputStream getDocumentStream(Account actor, Account owner, String uuid) throws BusinessException {
-		ThreadEntry threadEntry = documentEntryBusinessService.findThreadEntryById(uuid);
+		ThreadEntry threadEntry = findById(actor, owner, uuid);
 		checkDownloadPermission(actor, owner, ThreadEntry.class,
 				BusinessErrorCode.THREAD_ENTRY_FORBIDDEN, threadEntry);
-		if (threadEntry == null) {
-			logger.error("Can't find document entry, are you sure it is not a share ? : " + uuid);
-			return null;
-		}
-		if (!this.isThreadMember((Thread) threadEntry.getEntryOwner(), (User) actor)) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get this document.");
-		}
 		logEntryService.create(new ThreadLogEntry(actor, threadEntry, LogAction.THREAD_DOWNLOAD_ENTRY, "Downloading a file in a thread."));
 		return documentEntryBusinessService.getDocumentStream(threadEntry);
 	}
 
 	@Override
-	public InputStream getDocumentThumbnailStream(Account owner, String uuid) throws BusinessException {
-		ThreadEntry threadEntry = documentEntryBusinessService.findThreadEntryById(uuid);
-		if (threadEntry == null) {
-			logger.error("Can't find document entry, are you sure it is not a share ? : " + uuid);
-			return null;
-		}
-		if (!this.isThreadMember((Thread) threadEntry.getEntryOwner(), (User) owner)) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get thumbnail for this document.");
-		}
+	public InputStream getDocumentThumbnailStream(Account actor, Account owner, String uuid) throws BusinessException {
+		ThreadEntry threadEntry = findById(actor, owner, uuid);
+		checkThumbNailDownloadPermission(actor, owner, ThreadEntry.class,
+				BusinessErrorCode.THREAD_ENTRY_FORBIDDEN, threadEntry);
 		return documentEntryBusinessService.getThreadEntryThumbnailStream(threadEntry);
 	}
 

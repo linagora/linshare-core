@@ -220,7 +220,7 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 		User actor = checkAuthentication();
 		ThreadEntry doc = threadEntryService.findById(actor, actor, uuid);
 		InputStream documentStream = threadEntryService
-				.getDocumentThumbnailStream(actor, uuid);
+				.getDocumentThumbnailStream(actor, actor, uuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder
 				.getThumbnailResponseBuilder(documentStream, doc.getName()
 						+ "_thumb.png", base64);

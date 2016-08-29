@@ -69,7 +69,7 @@ public interface ThreadEntryService {
 
 	boolean documentHasThumbnail(Account actor, String identifier);
 
-	InputStream getDocumentThumbnailStream(Account owner, String uuid) throws BusinessException;
+	InputStream getDocumentThumbnailStream(Account actor, Account owner, String uuid) throws BusinessException;
 
 	ThreadEntry updateFileProperties(Account actor, String threadEntryUuid, String fileComment, String metaData, String newName) throws BusinessException;
 }
