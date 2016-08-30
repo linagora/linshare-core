@@ -97,7 +97,12 @@ public class ThreadMemberResourceAccessControlImpl extends
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.THREAD_MEMBERS_DELETE);
 		}
-		return entry.getAdmin();
+		ThreadMember member = threadMemberRepository.findUserThreadMember(
+				entry.getThread(), (User) owner);
+		if (member != null) {
+			return member.getAdmin();
+		}
+		return false;
 	}
 
 	@Override
@@ -110,11 +115,14 @@ public class ThreadMemberResourceAccessControlImpl extends
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.THREAD_MEMBERS_CREATE);
 		}
-		// entry is the object to be create. Can not be used to check if the
+		// entry is the object to be created. Can not be used to check if the
 		// current owner is admin.
 		if (opt.length > 0 && opt[0] instanceof Thread) {
-			return threadMemberRepository.findUserThreadMember((Thread) opt[0],
-					(User) owner) != null;
+			ThreadMember member = threadMemberRepository.findUserThreadMember(
+					(Thread) opt[0], (User) owner);
+			if (member != null) {
+				return member.getAdmin();
+			}
 		}
 		return false;
 	}
@@ -129,7 +137,12 @@ public class ThreadMemberResourceAccessControlImpl extends
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.THREAD_MEMBERS_UPDATE);
 		}
-		return entry.getAdmin();
+		ThreadMember member = threadMemberRepository.findUserThreadMember(
+				entry.getThread(), (User) owner);
+		if (member != null) {
+			return member.getAdmin();
+		}
+		return false;
 	}
 
 	@Override
