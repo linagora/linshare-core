@@ -183,6 +183,7 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 				return flow;
 			} else {
 				logger.debug("upload pending ");
+				flow.setChunkUploadSuccess(true);
 			}
 		} catch (IOException e) {
 			logger.error(e.getMessage());

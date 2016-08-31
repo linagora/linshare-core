@@ -169,5 +169,6 @@ public class FlowDto {
 	public void completeTransfert(EntryDto uploadedEntry) {
 		this.setEntry(uploadedEntry);
 		this.setLastChunk(true);
+		this.setChunkUploadSuccess(true);
 	}
 }
