@@ -177,9 +177,9 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 					flow.completeTransfert(uploadedDocument);
 				} finally {
 					deleteTempFile(tempFile2);
+					ChunkedFile remove = chunkedFiles.remove(identifier);
+					Files.deleteIfExists(remove.getPath());
 				}
-				ChunkedFile remove = chunkedFiles.remove(identifier);
-				Files.deleteIfExists(remove.getPath());
 				return flow;
 			} else {
 				logger.debug("upload pending ");
