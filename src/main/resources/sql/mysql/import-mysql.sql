@@ -238,13 +238,13 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (17, false, false, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (18, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (9, false, 'CUSTOM_LOGO', 17, 18, 1);
-INSERT INTO functionality_string(functionality_id, string_value) VALUES (9, 'http://localhost/images/logo.png');
+INSERT INTO functionality_string(functionality_id, string_value) VALUES (9, 'http://linshare-ui-user.local/custom/images/logo.png');
 
 -- Functionality : CUSTOM_LOGO__LINK
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (59, false, false, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (60, false, false, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param) VALUES (29, false, 'CUSTOM_LOGO__LINK', 59, 60, 1, 'CUSTOM_LOGO', true);
-INSERT INTO functionality_string(functionality_id, string_value) VALUES (29, 'http://localhost:8080/linshare/en');
+INSERT INTO functionality_string(functionality_id, string_value) VALUES (29, 'http://linshare-ui-user.local');
 
 -- Functionality : GUESTS
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (27, false, false, 1, false);
@@ -373,7 +373,7 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (61, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (62, false, false, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param) VALUES(30, false, 'DOMAIN__NOTIFICATION_URL', 61, 62, 1, 'DOMAIN', true);
-INSERT INTO functionality_string(functionality_id, string_value) VALUES (30, 'http://localhost:8080/linshare/');
+INSERT INTO functionality_string(functionality_id, string_value) VALUES (30, 'http://linshare-ui-user.local');
 
 -- Functionality : DOMAIN_MAIL
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (49, true, true, 0, true);
