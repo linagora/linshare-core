@@ -69,7 +69,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml"
 		})
-public class WorkGroupFolderMongoRepositoryTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4SpringContextTests {
 
 	@Autowired
 	private WorkGroupFolderService service;
