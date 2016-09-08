@@ -1108,7 +1108,7 @@
 			<activation>
 				<property>
 					<name>target</name>
-					<value>release</value>
+					<value>release-disabled</value>
 				</property>
 			</activation>
 			<build>
