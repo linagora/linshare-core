@@ -201,7 +201,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 				.getAcknowledgement(actor.getDomain());
 		if (acknowledgementFunc.getFinalValue(shareContainer.isAcknowledgement())) {
 			MailContainerWithRecipient mail = mailBuildingService
-					.buildNewSharingPersonnalNotification(owner,shareContainer, entries);
+					.buildNewSharingAcknowledgement(owner,shareContainer, entries);
 			notifierService.sendNotification(mail);
 		}
 		// Notification

@@ -154,7 +154,7 @@ public interface MailBuildingService {
 	MailContainerWithRecipient buildErrorUploadRequestNoSpaceLeft(User owner, UploadRequestUrl request)
 			throws BusinessException;
 
-	MailContainerWithRecipient buildNewSharingPersonnalNotification(
+	MailContainerWithRecipient buildNewSharingAcknowledgement(
 			User sender, ShareContainer container, Set<Entry> entries) throws BusinessException;
 
 	MailContainerWithRecipient buildNoDocumentHasBeenDownloadedAcknowledgement(

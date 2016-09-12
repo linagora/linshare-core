@@ -37,6 +37,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Formatter;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -108,6 +109,10 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	private final Map<Language, String> shareWith = Maps.newHashMap();
 
 	private final Map<Language, String> anonymouslySharedWith = Maps.newHashMap();
+
+	private final String  receivedSharesUrlSuffix;
+
+	private final String  documentsUrlSuffix;
 
 	private class FileRepresentation {
 
@@ -255,7 +260,10 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			final DomainBusinessService domainBusinessService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
 			final MailActivationBusinessService mailActivationBusinessService,
-			boolean insertLicenceTerm) throws BusinessException {
+			boolean insertLicenceTerm,
+			String receivedSharesUrlSuffix,
+			String documentsUrlSuffix
+			) throws BusinessException {
 		this.displayLogo = displayLogo;
 		this.domainBusinessService = domainBusinessService;
 		this.insertLicenceTerm = insertLicenceTerm;
@@ -269,6 +277,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		this.notDownloaded.put(Language.FRENCH, "NON TÉLÉCHARGÉ");
 		this.shareWith.put(Language.FRENCH, "Partagé avec");
 		this.anonymouslySharedWith.put(Language.FRENCH, "Partagé anonymement avec");
+		this.receivedSharesUrlSuffix = receivedSharesUrlSuffix;
+		this.documentsUrlSuffix = documentsUrlSuffix;
 	}
 
 	private String formatCreationDate(Account account, Entry entry) {
@@ -667,7 +677,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			if (recipient.getLsUuid().equals(share.getRecipient().getLsUuid())) {
 				shareSize += 1;
 				names.append("<li><a href='"
-						+ getDirectDownloadLink(recipient, share) + "'>"
+						+ getReceivedSharedFileDownloadLink(recipient, share) + "'>"
 						+ share.getName() + "</a></li>");
 			}
 		}
@@ -976,7 +986,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			if (recipient.getLsUuid().equals(share.getRecipient().getLsUuid())) {
 				shareSize += 1;
 				names.append("<li><a href='"
-						+ getDirectDownloadLink(recipient, share) + "'>"
+						+ getReceivedSharedFileDownloadLink(recipient, share) + "'>"
 						+ share.getName() + "</a></li>");
 			}
 		}
@@ -1607,18 +1617,21 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.getCustomNotificationUrlFunctionality(senderDomain).getValue();
 	}
 
-	private String getDirectDownloadLink(User recipient, ShareEntry share) {
-		String path = getLinShareUrlForAUserRecipient(recipient);
-		String sep = path.endsWith("/") ? "" : "/";
-		String dl = path + sep + "index.listshareddocument.download/";
-		return dl + share.getUuid();
+	private String getReceivedSharedFileDownloadLink(User recipient, ShareEntry share) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getLinShareUrlForAUserRecipient(recipient));
+		Formatter formatter = new Formatter(sb);
+		formatter.format(receivedSharesUrlSuffix, share.getUuid());
+		formatter.close();
+		return sb.toString();
 	}
 
 	private String getOwnerDocumentLink(User owner, DocumentEntry doc) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(getLinShareUrlForAUserRecipient(owner));
-		sb.append("files.listdocument.download/");
-		sb.append(doc.getUuid());
+		Formatter formatter = new Formatter(sb);
+		formatter.format(documentsUrlSuffix, doc.getUuid());
+		formatter.close();
 		return sb.toString();
 	}
 
@@ -1721,7 +1734,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	}
 
 	@Override
-	public MailContainerWithRecipient buildNewSharingPersonnalNotification(
+	public MailContainerWithRecipient buildNewSharingAcknowledgement(
 			User sender, ShareContainer container, Set<Entry> entries) throws BusinessException {
 		if (isDisable(sender,
 				MailActivationType.SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER)) {
@@ -1743,10 +1756,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		long count = 0;
 		StringBuffer docNames = new StringBuffer();
 		for (DocumentEntry entry : container.getDocuments()) {
-			StringBuffer fileUrl = new StringBuffer();
-			fileUrl.append(getLinShareUrlForAUserRecipient(sender)
-					+ "files/index.listdocument.download/" + entry.getUuid());
-			docNames.append("<li><a href='" + fileUrl + "'>" + entry.getName()
+			docNames.append("<li><a href='" + getOwnerDocumentLink(sender, entry) + "'>" + entry.getName()
 					+ "</a></li>");
 			count++;
 		}

@@ -81,6 +81,8 @@
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="mailActivationBusinessService" />
 		<constructor-arg value="${linshare.display.licenceTerm}" />
+		<constructor-arg value="${linshare.user.downloadurl.receivedshares.suffix}" />
+		<constructor-arg value="${linshare.user.downloadurl.documents.suffix}" />
 	</bean>
 
 	<bean name="ldapConnectionService"
