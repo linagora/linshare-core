@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -157,5 +157,17 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 
 	public void setUserDetailsProvider(LdapUserDetailsProvider userDetailsProvider) {
 		this.userDetailsProvider = userDetailsProvider;
+	}
+
+	public String getPrincipalRequestHeader() {
+		return principalRequestHeader;
+	}
+
+	public String getDomainRequestHeader() {
+		return domainRequestHeader;
+	}
+
+	public List<String> getAuthorizedAddresses() {
+		return authorizedAddresses;
 	}
 }

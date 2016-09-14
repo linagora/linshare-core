@@ -297,4 +297,8 @@
 	</b:bean>
 
 	<b:bean id="roleVoter" class="org.springframework.security.access.vote.RoleVoter" />
+
+	<b:bean class="org.linagora.linshare.auth.sso.SSOInfoLogger"
+		init-method="afterPropertiesSet">
+	</b:bean>
 </b:beans>

@@ -296,4 +296,9 @@
 		<b:property name="rootUserRepository" ref="rootUserRepository" />
 		<b:property name="userDetailsProvider" ref="ldapUserDetailsProvider" />
 	</b:bean>
+
+	<b:bean class="org.linagora.linshare.auth.sso.SSOInfoLogger"
+		init-method="afterPropertiesSet">
+		<b:constructor-arg ref="lemonLDAPFilter"/>
+	</b:bean>
 </b:beans>
