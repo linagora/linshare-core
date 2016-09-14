@@ -55,7 +55,7 @@
 	<context-param>
 		<param-name>spring.profiles.default</param-name>
 		<param-value>default,jcloud</param-value>
-		<!-- You can override this parameter using -Dspring.profiles.default=xxx -->
+		<!-- You can override this parameter using -Dspring.profiles.active=xxx -->
 		<!-- Or you can use environment variable : SPRING_PROFILES_ACTIVE -->
 		<!-- You must enable at least one authentication profile among authentication profiles
 			 and one profile among file data store profiles described below.
