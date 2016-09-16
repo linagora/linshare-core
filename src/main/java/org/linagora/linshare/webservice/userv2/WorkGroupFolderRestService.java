@@ -42,7 +42,7 @@ public interface WorkGroupFolderRestService {
 
 	WorkGroupFolder create(String workGroupUuid, WorkGroupFolder workGroupFolder) throws BusinessException;
 
-	List<WorkGroupFolder> findAll(String workGroupUuid) throws BusinessException;
+	List<WorkGroupFolder> findAll(String workGroupUuid, String parentUuid) throws BusinessException;
 
 	WorkGroupFolder find(String workGroupUuid, String workGroupFolderUuid) throws BusinessException;
 

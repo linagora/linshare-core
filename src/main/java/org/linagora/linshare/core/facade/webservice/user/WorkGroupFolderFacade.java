@@ -40,7 +40,7 @@ import org.linagora.linshare.mongo.entities.WorkGroupFolder;
 
 public interface WorkGroupFolderFacade extends GenericFacade {
 
-	List<WorkGroupFolder> findAll(String ownerUuid, String workGroupUuid) throws BusinessException;
+	List<WorkGroupFolder> findAll(String ownerUuid, String workGroupUuid, String parentUuid) throws BusinessException;
 
 	WorkGroupFolder find(String ownerUuid, String workGroupUuid, String workGroupFolderUuid) throws BusinessException;
 

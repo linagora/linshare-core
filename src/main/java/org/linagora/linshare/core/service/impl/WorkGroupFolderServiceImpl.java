@@ -51,6 +51,7 @@ import org.linagora.linshare.mongo.entities.WorkGroupEntry;
 import org.linagora.linshare.mongo.entities.WorkGroupFolder;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.repository.WorkGroupFolderMongoRepository;
+import org.springframework.dao.support.DataAccessUtils;
 
 import com.google.common.collect.Lists;
 
@@ -77,6 +78,16 @@ public class WorkGroupFolderServiceImpl extends GenericServiceImpl<Account, Work
 		Validate.notNull(workGroup, "Missing workGroup");
 		checkUploadRights(owner, workGroup);
 		return repository.findByWorkGroup(workGroup.getLsUuid());
+	}
+
+	@Override
+	public List<WorkGroupFolder> findAll(Account actor, User owner, Thread workGroup, String parentUuid)
+			throws BusinessException {
+		preChecks(actor, owner);
+		Validate.notNull(workGroup, "Missing workGroup");
+		Validate.notEmpty(parentUuid, "Missing workGroup ancestorUuid");
+		checkUploadRights(owner, workGroup);
+		return repository.findByWorkGroupAndParent(workGroup.getLsUuid(), parentUuid);
 	}
 
 	@Override
@@ -225,9 +236,9 @@ public class WorkGroupFolderServiceImpl extends GenericServiceImpl<Account, Work
 	}
 
 	private WorkGroupFolder getRootFolder(Thread workGroup) {
-		WorkGroupFolder wgfParent;
+		WorkGroupFolder wgfParent = null;
 		String workGroupUuid = workGroup.getLsUuid();
-		wgfParent = repository.findByWorkGroupAndParent(workGroupUuid, workGroupUuid);
+		wgfParent = DataAccessUtils.singleResult(repository.findByWorkGroupAndParent(workGroupUuid, workGroupUuid));
 		if (wgfParent == null) {
 			// creation of the root folder.
 			wgfParent = new WorkGroupFolder(workGroup.getName(), workGroupUuid, workGroupUuid);

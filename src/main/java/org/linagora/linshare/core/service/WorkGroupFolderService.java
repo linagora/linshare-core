@@ -46,6 +46,9 @@ public interface WorkGroupFolderService {
 
 	List<WorkGroupFolder> findAll(Account actor, User owner, Thread workGroup) throws BusinessException;
 
+	List<WorkGroupFolder> findAll(Account actor, User owner, Thread workGroup, String parentUuid)
+			throws BusinessException;
+
 	WorkGroupFolder find(Account actor, User owner, Thread workGroup, String workGroupFolderUuid)
 			throws BusinessException;
 

@@ -60,12 +60,16 @@ public class WorkGroupFolderFacadeImpl extends UserGenericFacadeImp implements W
 	}
 
 	@Override
-	public List<WorkGroupFolder> findAll(String ownerUuid, String workGroupUuid) throws BusinessException {
+	public List<WorkGroupFolder> findAll(String ownerUuid, String workGroupUuid, String parentUuid) throws BusinessException {
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(actor, ownerUuid);
 		Thread workGroup = threadService.find(actor, owner, workGroupUuid);
-		return service.findAll(actor, owner, workGroup);
+		if (parentUuid == null) {
+			return service.findAll(actor, owner, workGroup);
+		} else {
+			return service.findAll(actor, owner, workGroup, parentUuid);
+		}
 	}
 
 	@Override

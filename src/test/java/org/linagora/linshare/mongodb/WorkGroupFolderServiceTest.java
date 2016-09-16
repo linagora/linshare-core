@@ -55,6 +55,7 @@ import org.linagora.linshare.mongo.repository.WorkGroupFolderMongoRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
@@ -186,7 +187,7 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 		WorkGroupFolder folder2 = new WorkGroupFolder("folder2", null, workGroupUuid);
 		folder2 = service.create(jane, jane, workGroup, folder2);
 
-		WorkGroupFolder rootParent = repository.findByWorkGroupAndParent(workGroupUuid, workGroupUuid);
+		WorkGroupFolder rootParent = DataAccessUtils.singleResult(repository.findByWorkGroupAndParent(workGroupUuid, workGroupUuid));
 
 		Assert.assertEquals(3, repository.findAll().size());
 		Assert.assertEquals(rootParent.getUuid(), folder1.getParent());

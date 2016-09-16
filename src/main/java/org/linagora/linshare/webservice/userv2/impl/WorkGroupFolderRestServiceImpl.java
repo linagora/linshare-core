@@ -44,6 +44,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
@@ -100,9 +101,11 @@ public class WorkGroupFolderRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public List<WorkGroupFolder> findAll(
-			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workGroupUuid") String workGroupUuid)
+			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workGroupUuid") String workGroupUuid,
+			@ApiParam(value = "The parent uuid.", required = false) @QueryParam("parent") String parent
+			)
 				throws BusinessException {
-		return workGroupFolderFacade.findAll(null, workGroupUuid);
+		return workGroupFolderFacade.findAll(null, workGroupUuid, parent);
 	}
 
 	@Path("/{workGroupFolderUuid}")
