@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.mongodb;
 
-import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -59,19 +58,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
-@ContextConfiguration(locations = { 
-		"classpath:springContext-datasource.xml",
-		"classpath:springContext-repository.xml",
-		"classpath:springContext-dao.xml",
-		"classpath:springContext-ldap.xml",
-		"classpath:springContext-service.xml",
-		"classpath:springContext-business-service.xml",
-		"classpath:springContext-service-miscellaneous.xml",
-		"classpath:springContext-rac.xml",
-		"classpath:springContext-fongo.xml",
-		"classpath:springContext-storage-jcloud.xml",
-		"classpath:springContext-test.xml"
-		})
+@ContextConfiguration(locations = { "classpath:springContext-datasource.xml", "classpath:springContext-repository.xml",
+		"classpath:springContext-dao.xml", "classpath:springContext-ldap.xml", "classpath:springContext-service.xml",
+		"classpath:springContext-business-service.xml", "classpath:springContext-service-miscellaneous.xml",
+		"classpath:springContext-rac.xml", "classpath:springContext-fongo.xml",
+		"classpath:springContext-storage-jcloud.xml", "classpath:springContext-test.xml" })
 public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4SpringContextTests {
 
 	@Autowired
@@ -246,6 +237,39 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 		// no folder uuid specified, root folder uuid should be used as parent.
 		// => root folder uuid = work group uuid
 		Assert.assertEquals(folder2.getParent(), folder2.getWorkGroup());
+	}
+
+	@Test
+	public void testGetFolder() throws BusinessException {
+		Thread workGroup = threadService.create(jane, jane, "thread1");
+		ThreadEntry threadEntry = new ThreadEntry();
+		threadEntry.setUuid("eb31e21c-38d3-4389-b147-ca49fc4e8ebe");
+		threadEntry.setName("file1");
+		threadEntry.setCreationDate(new GregorianCalendar());
+		threadEntry.setModificationDate(new GregorianCalendar());
+		threadEntry.setType("application/data");
+		threadEntry.setSize(666L);
+		WorkGroupFolder folder2 = service.addEntry(jane, jane, workGroup, null, threadEntry);
+		WorkGroupFolder folder = service.getFolder(jane, jane, workGroup, threadEntry);
+		Assert.assertEquals(folder2.getUuid(), folder.getUuid());
+	}
+
+	@Test
+	public void testDelEntry() throws BusinessException {
+		Thread workGroup = threadService.create(jane, jane, "thread1");
+		ThreadEntry threadEntry = new ThreadEntry();
+		threadEntry.setUuid("eb31e21c-38d3-4389-b147-ca49fc4e8ebe");
+		threadEntry.setName("file1");
+		threadEntry.setCreationDate(new GregorianCalendar());
+		threadEntry.setModificationDate(new GregorianCalendar());
+		threadEntry.setType("application/data");
+		threadEntry.setSize(666L);
+		WorkGroupFolder folder2 = service.addEntry(jane, jane, workGroup, null, threadEntry);
+		logger.debug(folder2);
+		Assert.assertEquals(1, folder2.getEntries().size());
+		folder2 = service.delEntry(jane, jane, workGroup, threadEntry);
+		logger.debug(folder2);
+		Assert.assertEquals(0, folder2.getEntries().size());
 	}
 
 }

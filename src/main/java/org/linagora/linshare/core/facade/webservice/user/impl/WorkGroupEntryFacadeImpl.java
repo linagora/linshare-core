@@ -185,18 +185,20 @@ public class WorkGroupEntryFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public WorkGroupEntryDto delete(String ownerUuid, String threadUuid, WorkGroupEntryDto threadEntryDto)
+	public WorkGroupEntryDto delete(String ownerUuid, String workGroupUuid, WorkGroupEntryDto wgEntryDto)
 			throws BusinessException {
-		Validate.notEmpty(threadUuid, "Missing required thread uuid");
-		Validate.notNull(threadEntryDto, "Missing required thread entry");
-		Validate.notEmpty(threadEntryDto.getUuid(),
+		Validate.notEmpty(workGroupUuid, "Missing required thread uuid");
+		Validate.notNull(wgEntryDto, "Missing required thread entry");
+		Validate.notEmpty(wgEntryDto.getUuid(),
 				"Missing required thread entry");
 		User actor = checkAuthentication();
 		User owner = getOwner(actor, ownerUuid);
-		ThreadEntry threadEntry = threadEntryService.find(actor, owner,
-				threadEntryDto.getUuid());
-		threadEntryService.deleteThreadEntry(actor, owner, threadEntry);
-		return new WorkGroupEntryDto(threadEntry);
+		ThreadEntry wgEntry = threadEntryService.find(actor, owner,
+				wgEntryDto.getUuid());
+		threadEntryService.deleteThreadEntry(actor, owner, wgEntry);
+		Thread workGroup = threadService.find(actor, owner, workGroupUuid);
+		workGroupFolderService.delEntry(actor, owner, workGroup, wgEntry);
+		return new WorkGroupEntryDto(wgEntry);
 	}
 
 	@Override

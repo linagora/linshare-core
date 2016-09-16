@@ -89,6 +89,7 @@ public class WorkGroupFolderRestServiceImpl extends WebserviceBase implements
 		return workGroupFolderFacade.create(null, workGroupUuid, workGroupFolder);
 	}
 
+	// TODO
 	@Path("/")
 	@GET
 	@ApiOperation(value = "Get all workgroup folders.", response = WorkGroupFolder.class, responseContainer = "Set")

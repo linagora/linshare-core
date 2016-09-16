@@ -70,7 +70,7 @@ public interface WorkGroupEntryFacade extends GenericFacade {
 
 	WorkGroupEntryDto delete(String ownerUuid, String threadUuid, String threadEntryUuid) throws BusinessException;
 
-	WorkGroupEntryDto delete(String ownerUuid, String threadUuid, WorkGroupEntryDto threadEntry)
+	WorkGroupEntryDto delete(String ownerUuid, String workGroupUuid, WorkGroupEntryDto wgEntry)
 			throws BusinessException;
 
 	Response download(String ownerUuid, String threadUuid, String uuid) throws BusinessException;

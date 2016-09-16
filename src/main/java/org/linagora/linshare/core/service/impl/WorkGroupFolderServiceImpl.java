@@ -60,12 +60,10 @@ public class WorkGroupFolderServiceImpl extends GenericServiceImpl<Account, Work
 	protected final WorkGroupFolderMongoRepository repository;
 
 	protected final ThreadService threadService;
-	
+
 	protected final LogEntryService logEntryService;
 
-	public WorkGroupFolderServiceImpl(
-			WorkGroupFolderMongoRepository repository,
-			LogEntryService logEntryService,
+	public WorkGroupFolderServiceImpl(WorkGroupFolderMongoRepository repository, LogEntryService logEntryService,
 			ThreadService threadService) {
 		super(null);
 		this.repository = repository;
@@ -142,6 +140,39 @@ public class WorkGroupFolderServiceImpl extends GenericServiceImpl<Account, Work
 		checkUploadRights(owner, workGroup);
 		WorkGroupFolder wgfParent = getRootFolder(workGroup);
 		return wgfParent;
+	}
+
+	@Override
+	public WorkGroupFolder delEntry(Account actor, User owner, Thread workGroup, ThreadEntry threadEntry)
+			throws BusinessException {
+		preChecks(actor, owner);
+		checkUploadRights(owner, workGroup);
+		Validate.notNull(threadEntry, "Missing entry !");
+		Validate.notEmpty(threadEntry.getUuid(), "Missing entry uuid !");
+		WorkGroupFolder folder = getFolder(workGroup, threadEntry);
+		// TODO : KACK : To be improved !
+		folder.getEntries().remove(new WorkGroupEntry(threadEntry, new AccountMto(owner)));
+		repository.save(folder);
+		return folder;
+	}
+
+	@Override
+	public WorkGroupFolder getFolder(Account actor, User owner, Thread workGroup, ThreadEntry threadEntry)
+			throws BusinessException {
+		preChecks(actor, owner);
+		checkUploadRights(owner, workGroup);
+		Validate.notNull(threadEntry, "Missing entry !");
+		Validate.notEmpty(threadEntry.getUuid(), "Missing entry uuid !");
+		return getFolder(workGroup, threadEntry);
+	}
+
+	private WorkGroupFolder getFolder(Thread workGroup, ThreadEntry threadEntry) {
+		WorkGroupFolder folder = repository.findByWorkGroupAndEntriesUuid(workGroup.getLsUuid(), threadEntry.getUuid());
+		if (folder == null) {
+			logger.error("An entry is not linked to a folder : {}, entry {}.", workGroup, threadEntry);
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_FOLDER_NOT_FOUND, "Missing related folder.");
+		}
+		return folder;
 	}
 
 	@Override

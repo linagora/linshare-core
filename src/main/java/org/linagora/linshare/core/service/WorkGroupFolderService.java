@@ -58,9 +58,14 @@ public interface WorkGroupFolderService {
 	WorkGroupFolder addEntry(Account actor, User owner, Thread workGroup, String workGroupFolderUuid,
 			ThreadEntry threadEntry) throws BusinessException;
 
+	WorkGroupFolder delEntry(Account actor, User owner, Thread workGroup, ThreadEntry threadEntry)
+			throws BusinessException;
+
+	WorkGroupFolder getFolder(Account actor, User owner, Thread workGroup, ThreadEntry threadEntry)
+			throws BusinessException;
+
 	WorkGroupFolder delete(Account actor, User owner, Thread workGroup, String workGroupFolderUuid)
 			throws BusinessException;
 
-	WorkGroupFolder getRootFolder(Account actor, User owner, Thread workGroup)
-			throws BusinessException;
+	WorkGroupFolder getRootFolder(Account actor, User owner, Thread workGroup) throws BusinessException;
 }
