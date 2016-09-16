@@ -173,8 +173,8 @@ public class WorkGroupFolderServiceImpl extends GenericServiceImpl<Account, Work
 			throws BusinessException {
 		preChecks(actor, owner);
 		WorkGroupFolder wgf = find(actor, owner, workGroup, workGroupFolderUuid);
+		Validate.isTrue((wgf.getEntries().size() == 0));
 		repository.delete(wgf);
-		// TODO : delete all entries in a folder
 		return wgf;
 	}
 

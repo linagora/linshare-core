@@ -197,7 +197,7 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 		ThreadEntry entry = null;
 		try {
 			entry = threadEntryService
-					.findById(actor, actor, helpers.getObjectUuid(objectId));
+					.find(actor, actor, helpers.getObjectUuid(objectId));
 		} catch (BusinessException e) {
 			throw cmisExceptionMappingService.map(e);
 		}
@@ -240,7 +240,7 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 			ThreadEntry threadEntry = null;
 			try {
 				String threadUuid = helpers.getObjectUuid(objectId);
-				threadEntry = threadEntryService.findById(actor, actor,
+				threadEntry = threadEntryService.find(actor, actor,
 						threadUuid);
 			} catch (BusinessException e) {
 				throw cmisExceptionMappingService.map(e);
@@ -264,7 +264,7 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 		ThreadEntry threadEntry;
 		InputStream inputStream;
 		try {
-			threadEntry = threadEntryService.findById(actor, actor,
+			threadEntry = threadEntryService.find(actor, actor,
 					helpers.getObjectUuid(objectId));
 			inputStream = threadEntryService.getDocumentStream(actor, actor,
 					threadEntry.getUuid());
@@ -292,7 +292,7 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 			}
 			ThreadEntry threadEntry = null;
 			try {
-				threadEntry = threadEntryService.findById(actor, actor,
+				threadEntry = threadEntryService.find(actor, actor,
 						helpers.getObjectUuid(objectId));
 			} catch (BusinessException e) {
 				throw cmisExceptionMappingService.map(e);
@@ -316,7 +316,7 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 			String objectId, Boolean allVersions, ExtensionsData extension) {
 		 Account actor = helpers.prepare(repositoryId, true, false);
 		try {
-			ThreadEntry threadEntry = threadEntryService.findById(actor, actor,
+			ThreadEntry threadEntry = threadEntryService.find(actor, actor,
 					helpers.getObjectUuid(objectId));
 			threadEntryService.deleteThreadEntry(actor, actor, threadEntry);
 		} catch (BusinessException e) {
@@ -361,7 +361,7 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 		String name = (String) properties.getProperties().get(PropertyIds.NAME)
 				.getFirstValue();
 		try {
-			threadEntryService.updateFileProperties(actor, uuid, description,
+			threadEntryService.updateFileProperties(actor, actor, uuid, description,
 					null, name);
 		} catch (BusinessException e) {
 			throw cmisExceptionMappingService.map(e);

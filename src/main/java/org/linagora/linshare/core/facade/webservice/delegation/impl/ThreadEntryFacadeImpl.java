@@ -35,7 +35,6 @@
 package org.linagora.linshare.core.facade.webservice.delegation.impl;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -121,7 +120,7 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		ThreadEntry threadEntry = threadEntryService.findById(actor, owner, entryUuid);
+		ThreadEntry threadEntry = threadEntryService.find(actor, owner, entryUuid);
 		return new WorkGroupEntryDto(threadEntry);
 	}
 
@@ -157,7 +156,7 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 		Validate.notEmpty(uuid, "Missing required entry uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		ThreadEntry threadEntry = threadEntryService.findById(actor, actor, uuid);
+		ThreadEntry threadEntry = threadEntryService.find(actor, owner, uuid);
 		threadEntryService.deleteThreadEntry(actor, owner, threadEntry);
 		return new WorkGroupEntryDto(threadEntry);
 	}
@@ -171,7 +170,7 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 
-		ThreadEntry threadEntry = threadEntryService.findById(actor, owner,
+		ThreadEntry threadEntry = threadEntryService.find(actor, owner,
 				entryUuid);
 		InputStream stream = threadEntryService.getDocumentStream(actor, owner,
 				entryUuid);
@@ -191,7 +190,7 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 
-		ThreadEntry threadEntry = threadEntryService.findById(actor, owner, threadEntryUuid);
+		ThreadEntry threadEntry = threadEntryService.find(actor, owner, threadEntryUuid);
 		InputStream file = threadEntryService.getDocumentThumbnailStream(actor, owner, threadEntryUuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder
 				.getDocumentResponseBuilder(file,
@@ -209,8 +208,9 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 		Validate.notNull(threadEntryDto, "Missing required threadEntryDto");
 
 		User actor = checkAuthentication();
+		User owner = getOwner(ownerUuid);
 		return new WorkGroupEntryDto(threadEntryService.updateFileProperties(
-				actor, threadEntryUuid, threadEntryDto.getDescription(),
+				actor, owner, threadEntryUuid, threadEntryDto.getDescription(),
 				threadEntryDto.getMetaData(), threadEntryDto.getName()));
 	}
 }

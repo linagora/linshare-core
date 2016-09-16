@@ -35,8 +35,6 @@ package org.linagora.linshare.mongo.entities;
 
 import java.util.Date;
 
-import javax.persistence.GeneratedValue;
-
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.springframework.data.annotation.Id;

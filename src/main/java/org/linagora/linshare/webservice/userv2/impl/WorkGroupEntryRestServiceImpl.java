@@ -187,7 +187,7 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workGroupUuid") String workGroupUuid,
 			@ApiParam(value = "The document entry uuid.", required = true) @PathParam("entryUuid")  String entryUuid)
 					throws BusinessException {
-		return workGroupEntryFacade.copy(workGroupUuid, entryUuid);
+		return workGroupEntryFacade.copy(null, workGroupUuid, entryUuid);
 	}
 
 	@Path("/{uuid}")
@@ -203,7 +203,7 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workGroupUuid") String workGroupUuid,
 			@ApiParam(value = "The workgroup entry uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		return workGroupEntryFacade.find(workGroupUuid, uuid);
+		return workGroupEntryFacade.find(null, workGroupUuid, uuid);
 	}
 
 	@Path("/{uuid}")
@@ -216,7 +216,7 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public void head(String workGroupUuid, String uuid) throws BusinessException {
-		workGroupEntryFacade.find(workGroupUuid, uuid);
+		workGroupEntryFacade.find(null, workGroupUuid, uuid);
 	}
 
 	@Path("/")
@@ -231,7 +231,7 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 	public List<WorkGroupEntryDto> findAll(
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workGroupUuid") String workGroupUuid)
 					throws BusinessException {
-		return workGroupEntryFacade.findAll(workGroupUuid);
+		return workGroupEntryFacade.findAll(null, workGroupUuid);
 	}
 
 	@Path("/")
@@ -247,7 +247,7 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workGroupUuid") String workGroupUuid,
 			@ApiParam(value = "The workgroup entry to delete.", required = true) WorkGroupEntryDto workGroupEntry)
 					throws BusinessException {
-		return workGroupEntryFacade.delete(workGroupUuid, workGroupEntry);
+		return workGroupEntryFacade.delete(null, workGroupUuid, workGroupEntry);
 	}
 
 	@Path("/{uuid}")
@@ -263,7 +263,7 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workGroupUuid") String workGroupUuid,
 			@ApiParam(value = "The workgroup entry uuid to delete.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		return workGroupEntryFacade.delete(workGroupUuid, uuid);
+		return workGroupEntryFacade.delete(null, workGroupUuid, uuid);
 	}
 
 	@Path("/{uuid}/download")
@@ -279,7 +279,7 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workGroupUuid") String workGroupUuid,
 			@ApiParam(value = "The workgroup entry uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		return workGroupEntryFacade.download(workGroupUuid, uuid);
+		return workGroupEntryFacade.download(null, workGroupUuid, uuid);
 	}
 
 	@Path("/{uuid}/thumbnail")
@@ -296,7 +296,7 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid,
 			@ApiParam(value = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64)
 					throws BusinessException {
-		return workGroupEntryFacade.thumbnail(workGroupUuid, uuid, base64);
+		return workGroupEntryFacade.thumbnail(null, workGroupUuid, uuid, base64);
 	}
 
 	@Path("/{uuid}")
@@ -313,7 +313,7 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("uuid") String workGroupEntryUuid,
 			WorkGroupEntryDto workGroupEntryDto) throws BusinessException {
 
-		return workGroupEntryFacade.update(workGroupUuid, workGroupEntryUuid,
+		return workGroupEntryFacade.update(null, workGroupUuid, workGroupEntryUuid,
 				workGroupEntryDto);
 	}
 

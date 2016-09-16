@@ -43,39 +43,40 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 
-
 public interface WorkGroupEntryFacade extends GenericFacade {
 
 	/**
-	 * @param ownerUuid : It is used by delegation rest service. if null, current logged in user is used.
+	 * @param ownerUuid
+	 *            : It is used by delegation rest service. if null, current
+	 *            logged in user is used.
 	 * @param workGroupUuid
-	 * @param workGroupFolderUuid : if null, root folder will be use.
+	 * @param workGroupFolderUuid
+	 *            : if null, root folder will be use.
 	 * @param fi
 	 * @param filename
 	 * @return
 	 * @throws BusinessException
 	 */
-	WorkGroupEntryDto create(String ownerUuid, String workGroupUuid,
-			String workGroupFolderUuid, File fi, String filename) throws BusinessException;
+	WorkGroupEntryDto create(String ownerUuid, String workGroupUuid, String workGroupFolderUuid, File fi,
+			String filename) throws BusinessException;
 
-	WorkGroupEntryDto copy(String threadUuid, String entryUuid)
+	WorkGroupEntryDto copy(String ownerUuid, String threadUuid, String entryUuid) throws BusinessException;
+
+	DocumentDto copyFromThreadEntry(String ownerUuid, String threadUuid, String entryUuid) throws BusinessException;
+
+	WorkGroupEntryDto find(String ownerUuid, String threadUuid, String uuid) throws BusinessException;
+
+	List<WorkGroupEntryDto> findAll(String ownerUuid, String threadUuid) throws BusinessException;
+
+	WorkGroupEntryDto delete(String ownerUuid, String threadUuid, String threadEntryUuid) throws BusinessException;
+
+	WorkGroupEntryDto delete(String ownerUuid, String threadUuid, WorkGroupEntryDto threadEntry)
 			throws BusinessException;
 
-	DocumentDto copyFromThreadEntry(String threadUuid, String entryUuid)
-			throws BusinessException;
+	Response download(String ownerUuid, String threadUuid, String uuid) throws BusinessException;
 
-	WorkGroupEntryDto find(String threadUuid, String uuid)
-			throws BusinessException;
+	Response thumbnail(String ownerUuid, String threadUuid, String uuid, boolean base64) throws BusinessException;
 
-	List<WorkGroupEntryDto> findAll(String threadUuid) throws BusinessException;
-
-	WorkGroupEntryDto delete(String threadUuid, String threadEntryUuid) throws BusinessException;
-
-	WorkGroupEntryDto delete(String threadUuid, WorkGroupEntryDto threadEntry) throws BusinessException;
-
-	Response download(String threadUuid, String uuid) throws BusinessException;
-
-	Response thumbnail(String threadUuid, String uuid, boolean base64) throws BusinessException;
-
-	WorkGroupEntryDto update(String threadUuid, String threadEntryUuid, WorkGroupEntryDto threadEntryDto) throws BusinessException;
+	WorkGroupEntryDto update(String ownerUuid, String threadUuid, String threadEntryUuid,
+			WorkGroupEntryDto threadEntryDto) throws BusinessException;
 }

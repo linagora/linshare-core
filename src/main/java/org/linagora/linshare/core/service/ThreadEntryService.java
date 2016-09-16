@@ -55,7 +55,7 @@ public interface ThreadEntryService {
 	DocumentEntry copyFromThreadEntry(Account actor, Account member,
 			Thread thread, ThreadEntry threadEntry) throws BusinessException;
 
-	ThreadEntry findById(Account actor, Account owner, String threadEntryUuid) throws BusinessException;
+	ThreadEntry find(Account actor, Account owner, String threadEntryUuid) throws BusinessException;
 
 	void deleteThreadEntry(Account actor, Account owner, ThreadEntry threadEntry) throws BusinessException;
 
@@ -71,5 +71,5 @@ public interface ThreadEntryService {
 
 	InputStream getDocumentThumbnailStream(Account actor, Account owner, String uuid) throws BusinessException;
 
-	ThreadEntry updateFileProperties(Account actor, String threadEntryUuid, String fileComment, String metaData, String newName) throws BusinessException;
+	ThreadEntry updateFileProperties(Account actor, Account owner, String threadEntryUuid, String fileComment, String metaData, String newName) throws BusinessException;
 }

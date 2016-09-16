@@ -187,7 +187,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The document entry uuid.", required = true) @PathParam("entryUuid")  String entryUuid)
 					throws BusinessException {
-		return workGroupEntryFacade.copyFromThreadEntry(threadUuid, entryUuid);
+		return workGroupEntryFacade.copyFromThreadEntry(null, threadUuid, entryUuid);
 	}
 
 	@Path("/{uuid}")
@@ -203,7 +203,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread entry uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		return workGroupEntryFacade.find(threadUuid, uuid);
+		return workGroupEntryFacade.find(null, threadUuid, uuid);
 	}
 
 	@Path("/{uuid}")
@@ -216,7 +216,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public void head(String threadUuid, String uuid) throws BusinessException {
-		workGroupEntryFacade.find(threadUuid, uuid);
+		workGroupEntryFacade.find(null, threadUuid, uuid);
 	}
 
 	@Path("/")
@@ -231,7 +231,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 	public List<WorkGroupEntryDto> findAll(
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid)
 					throws BusinessException {
-		return workGroupEntryFacade.findAll(threadUuid);
+		return workGroupEntryFacade.findAll(null, threadUuid);
 	}
 
 	@Path("/")
@@ -247,7 +247,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread entry to delete.", required = true) WorkGroupEntryDto threadEntry)
 					throws BusinessException {
-		return workGroupEntryFacade.delete(threadUuid, threadEntry);
+		return workGroupEntryFacade.delete(null, threadUuid, threadEntry);
 	}
 
 	@Path("/{uuid}")
@@ -263,7 +263,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread entry uuid to delete.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		return workGroupEntryFacade.delete(threadUuid, uuid);
+		return workGroupEntryFacade.delete(null, threadUuid, uuid);
 	}
 
 	@Path("/{uuid}/download")
@@ -279,7 +279,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread entry uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		return workGroupEntryFacade.download(threadUuid, uuid);
+		return workGroupEntryFacade.download(null, threadUuid, uuid);
 	}
 
 	@Path("/{uuid}/thumbnail")
@@ -296,7 +296,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid,
 			@ApiParam(value = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64)
 					throws BusinessException {
-		return workGroupEntryFacade.thumbnail(threadUuid, uuid, base64);
+		return workGroupEntryFacade.thumbnail(null, threadUuid, uuid, base64);
 	}
 
 	@Path("/{uuid}")
@@ -313,7 +313,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("uuid") String threadEntryUuid,
 			WorkGroupEntryDto threadEntryDto) throws BusinessException {
 
-		return workGroupEntryFacade.update(threadUuid, threadEntryUuid,
+		return workGroupEntryFacade.update(null, threadUuid, threadEntryUuid,
 				threadEntryDto);
 	}
 

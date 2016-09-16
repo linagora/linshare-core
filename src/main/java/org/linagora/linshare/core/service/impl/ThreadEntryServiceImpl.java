@@ -187,7 +187,7 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 	}
 
 	@Override
-	public ThreadEntry findById(Account actor, Account owner, String threadEntryUuid) throws BusinessException {
+	public ThreadEntry find(Account actor, Account owner, String threadEntryUuid) throws BusinessException {
 		ThreadEntry threadEntry = documentEntryBusinessService
 				.findThreadEntryById(threadEntryUuid);
 		if (threadEntry == null) {
@@ -255,7 +255,7 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 
 	@Override
 	public InputStream getDocumentStream(Account actor, Account owner, String uuid) throws BusinessException {
-		ThreadEntry threadEntry = findById(actor, owner, uuid);
+		ThreadEntry threadEntry = find(actor, owner, uuid);
 		checkDownloadPermission(actor, owner, ThreadEntry.class,
 				BusinessErrorCode.THREAD_ENTRY_FORBIDDEN, threadEntry);
 		logEntryService.create(new ThreadLogEntry(actor, threadEntry, LogAction.THREAD_DOWNLOAD_ENTRY, "Downloading a file in a thread."));
@@ -264,7 +264,7 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 
 	@Override
 	public InputStream getDocumentThumbnailStream(Account actor, Account owner, String uuid) throws BusinessException {
-		ThreadEntry threadEntry = findById(actor, owner, uuid);
+		ThreadEntry threadEntry = find(actor, owner, uuid);
 		checkThumbNailDownloadPermission(actor, owner, ThreadEntry.class,
 				BusinessErrorCode.THREAD_ENTRY_FORBIDDEN, threadEntry);
 		return documentEntryBusinessService.getThreadEntryThumbnailStream(threadEntry);
@@ -286,7 +286,7 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 	}
 
 	@Override
-	public ThreadEntry updateFileProperties(Account actor,
+	public ThreadEntry updateFileProperties(Account actor, Account owner,
 			String threadEntryUuid, String fileComment, String metaData,
 			String newName) throws BusinessException {
 		ThreadEntry threadEntry = documentEntryBusinessService
@@ -302,7 +302,7 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 		if (fileComment == null) {
 			fileComment = threadEntry.getComment();
 		}
-		if (!this.canUpload((Thread) threadEntry.getEntryOwner(), (User) actor)) {
+		if (!this.canUpload((Thread) threadEntry.getEntryOwner(), (User) owner)) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
 					"You are not authorized to update this document.");
 		}
