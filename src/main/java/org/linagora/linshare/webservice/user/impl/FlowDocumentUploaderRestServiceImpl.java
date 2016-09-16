@@ -85,7 +85,10 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 	private static final String FILENAME = "flowFilename";
 	private static final String RELATIVE_PATH = "flowRelativePath";
 	private static final String FILE = "file";
-	private static final String THREAD_UUID = "threadUuid";
+	// TODO: refatoring name
+	private static final String WORK_GROUP_UUID = "threadUuid";
+	private static final String WORK_GROUP_FOLDER_UUID = "workGroupFolderUuid";
+	private static final String ASYNC_TASK = "asyncTask";
 
 	private boolean sizeValidation;
 
@@ -116,7 +119,9 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 			@Multipart(FILENAME) String filename,
 			@Multipart(RELATIVE_PATH) String relativePath,
 			@Multipart(FILE) InputStream file, MultipartBody body,
-			@Multipart(value=THREAD_UUID, required=false) String threadUuid)
+			@Multipart(value=WORK_GROUP_UUID, required=false) String workGroupUuid,
+			@Multipart(value=WORK_GROUP_FOLDER_UUID, required=false) String workGroupFolderUuid,
+			@Multipart(value=ASYNC_TASK, required=false) boolean async)
 					throws BusinessException {
 		logger.debug("upload chunk number : " + chunkNumber);
 		identifier = cleanIdentifier(identifier);
@@ -168,8 +173,8 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 				}
 				EntryDto uploadedDocument = new EntryDto();
 				try {
-					if(threadUuid != null && !threadUuid.isEmpty()) {
-						uploadedDocument = threadEntryFacade.create(threadUuid, tempFile2, filename);
+					if(workGroupUuid != null && !workGroupUuid.isEmpty()) {
+						uploadedDocument = threadEntryFacade.create(null, workGroupUuid, workGroupFolderUuid, tempFile2, filename);
 					} else {
 						uploadedDocument = documentFacade.create(tempFile2,
 								filename, "", null);

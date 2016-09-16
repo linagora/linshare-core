@@ -87,7 +87,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 		ThreadEntryRestService {
 
-	private final WorkGroupEntryFacade threadEntryFacade;
+	private final WorkGroupEntryFacade workGroupEntryFacade;
 
 	private final ThreadEntryAsyncFacade threadEntryAsyncFacade ;
 
@@ -97,13 +97,13 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 
 	private boolean sizeValidation;
 
-	public ThreadEntryRestServiceImpl(WorkGroupEntryFacade threadEntryFacade,
+	public ThreadEntryRestServiceImpl(WorkGroupEntryFacade workGroupEntryFacade,
 			ThreadEntryAsyncFacade threadEntryAsyncFacade,
 			AsyncTaskFacade asyncTaskFacade,
 			ThreadPoolTaskExecutor taskExecutor,
 			boolean sizeValidation) {
 		super();
-		this.threadEntryFacade = threadEntryFacade;
+		this.workGroupEntryFacade = workGroupEntryFacade;
 		this.threadEntryAsyncFacade = threadEntryAsyncFacade;
 		this.asyncTaskFacade = asyncTaskFacade;
 		this.taskExecutor = taskExecutor;
@@ -148,11 +148,11 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 		if (async) {
 			logger.debug("Async mode is used");
 			// Asynchronous mode
-			AccountDto actorDto = threadEntryFacade.getAuthenticatedAccountDto();
+			AccountDto actorDto = workGroupEntryFacade.getAuthenticatedAccountDto();
 			AsyncTaskDto asyncTask = null;
 			try {
 				asyncTask = asyncTaskFacade.create(currSize, transfertDuration, fileName, null, AsyncTaskType.THREAD_ENTRY_UPLOAD);
-				ThreadEntryTaskContext threadEntryTaskContext = new ThreadEntryTaskContext(actorDto, actorDto.getUuid(), threadUuid, tempFile, fileName);
+				ThreadEntryTaskContext threadEntryTaskContext = new ThreadEntryTaskContext(actorDto, actorDto.getUuid(), threadUuid, tempFile, fileName, null);
 				ThreadEntryUploadAsyncTask task = new ThreadEntryUploadAsyncTask(threadEntryAsyncFacade, threadEntryTaskContext, asyncTask);
 				taskExecutor.execute(task);
 				return new WorkGroupEntryDto(asyncTask, threadEntryTaskContext);
@@ -167,7 +167,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			// Synchronous mode
 			try {
 				logger.debug("Async mode is not used");
-				return threadEntryFacade.create(threadUuid, tempFile, fileName);
+				return workGroupEntryFacade.create(null, threadUuid, null, tempFile, fileName);
 			} finally {
 				deleteTempFile(tempFile);
 			}
@@ -187,7 +187,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The document entry uuid.", required = true) @PathParam("entryUuid")  String entryUuid)
 					throws BusinessException {
-		return threadEntryFacade.copyFromThreadEntry(threadUuid, entryUuid);
+		return workGroupEntryFacade.copyFromThreadEntry(threadUuid, entryUuid);
 	}
 
 	@Path("/{uuid}")
@@ -203,7 +203,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread entry uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		return threadEntryFacade.find(threadUuid, uuid);
+		return workGroupEntryFacade.find(threadUuid, uuid);
 	}
 
 	@Path("/{uuid}")
@@ -216,7 +216,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public void head(String threadUuid, String uuid) throws BusinessException {
-		threadEntryFacade.find(threadUuid, uuid);
+		workGroupEntryFacade.find(threadUuid, uuid);
 	}
 
 	@Path("/")
@@ -231,7 +231,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 	public List<WorkGroupEntryDto> findAll(
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid)
 					throws BusinessException {
-		return threadEntryFacade.findAll(threadUuid);
+		return workGroupEntryFacade.findAll(threadUuid);
 	}
 
 	@Path("/")
@@ -247,7 +247,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread entry to delete.", required = true) WorkGroupEntryDto threadEntry)
 					throws BusinessException {
-		return threadEntryFacade.delete(threadUuid, threadEntry);
+		return workGroupEntryFacade.delete(threadUuid, threadEntry);
 	}
 
 	@Path("/{uuid}")
@@ -263,7 +263,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread entry uuid to delete.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		return threadEntryFacade.delete(threadUuid, uuid);
+		return workGroupEntryFacade.delete(threadUuid, uuid);
 	}
 
 	@Path("/{uuid}/download")
@@ -279,7 +279,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread entry uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		return threadEntryFacade.download(threadUuid, uuid);
+		return workGroupEntryFacade.download(threadUuid, uuid);
 	}
 
 	@Path("/{uuid}/thumbnail")
@@ -296,7 +296,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid,
 			@ApiParam(value = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64)
 					throws BusinessException {
-		return threadEntryFacade.thumbnail(threadUuid, uuid, base64);
+		return workGroupEntryFacade.thumbnail(threadUuid, uuid, base64);
 	}
 
 	@Path("/{uuid}")
@@ -313,7 +313,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("uuid") String threadEntryUuid,
 			WorkGroupEntryDto threadEntryDto) throws BusinessException {
 
-		return threadEntryFacade.update(threadUuid, threadEntryUuid,
+		return workGroupEntryFacade.update(threadUuid, threadEntryUuid,
 				threadEntryDto);
 	}
 

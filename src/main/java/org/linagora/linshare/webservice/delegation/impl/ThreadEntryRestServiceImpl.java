@@ -152,7 +152,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			AsyncTaskDto asyncTask = null;
 			try {
 				asyncTask = asyncTaskFacade.create(ownerUuid, currSize, transfertDuration, fileName, null, AsyncTaskType.THREAD_ENTRY_UPLOAD);
-				ThreadEntryTaskContext threadEntryTaskContext = new ThreadEntryTaskContext(actorDto, ownerUuid, threadUuid, tempFile, fileName);
+				ThreadEntryTaskContext threadEntryTaskContext = new ThreadEntryTaskContext(actorDto, ownerUuid, threadUuid, tempFile, fileName, null);
 				ThreadEntryUploadAsyncTask task = new ThreadEntryUploadAsyncTask(threadEntryAsyncFacade, threadEntryTaskContext, asyncTask);
 				taskExecutor.execute(task);
 				return new WorkGroupEntryDto(asyncTask, threadEntryTaskContext);
@@ -200,7 +200,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			AsyncTaskDto asyncTask = null;
 			try {
 				asyncTask = asyncTaskFacade.create(ownerUuid, entryUuid, AsyncTaskType.DOCUMENT_COPY);
-				ThreadEntryTaskContext tetc = new ThreadEntryTaskContext(actorDto, ownerUuid, threadUuid, entryUuid);
+				ThreadEntryTaskContext tetc = new ThreadEntryTaskContext(actorDto, ownerUuid, threadUuid, entryUuid, null);
 				ThreadEntryCopyAsyncTask task = new ThreadEntryCopyAsyncTask(threadEntryAsyncFacade, tetc, asyncTask);
 				taskExecutor.execute(task);
 				return new WorkGroupEntryDto(asyncTask, tetc);

@@ -39,6 +39,7 @@ import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -46,7 +47,9 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.WorkGroupFolderService;
+import org.linagora.linshare.mongo.entities.WorkGroupEntry;
 import org.linagora.linshare.mongo.entities.WorkGroupFolder;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.repository.WorkGroupFolderMongoRepository;
 
 import com.google.common.collect.Lists;
@@ -74,7 +77,7 @@ public class WorkGroupFolderServiceImpl extends GenericServiceImpl<Account, Work
 	public List<WorkGroupFolder> findAll(Account actor, User owner, Thread workGroup) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notNull(workGroup, "Missing workGroup");
-		checkWriteRights(owner, workGroup);
+		checkUploadRights(owner, workGroup);
 		return repository.findByWorkGroup(workGroup.getLsUuid());
 	}
 
@@ -82,15 +85,13 @@ public class WorkGroupFolderServiceImpl extends GenericServiceImpl<Account, Work
 	public WorkGroupFolder find(Account actor, User owner, Thread workGroup, String workGroupFolderUuid)
 			throws BusinessException {
 		preChecks(actor, owner);
-		checkWriteRights(owner, workGroup);
+		checkUploadRights(owner, workGroup);
 		WorkGroupFolder folder = repository.findByWorkGroupAndUuid(workGroup.getLsUuid(), workGroupFolderUuid);
 		if (folder == null) {
+			logger.error("Folder not found " + workGroupFolderUuid);
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_FOLDER_NOT_FOUND,
 					"Folder not found : " + workGroupFolderUuid);
 		}
-		// TODO
-		// checkReadPermission(actor, owner, ThreadEntry.class,
-		// BusinessErrorCode.THREAD_ENTRY_FORBIDDEN, threadEntry);
 		return folder;
 	}
 
@@ -98,7 +99,7 @@ public class WorkGroupFolderServiceImpl extends GenericServiceImpl<Account, Work
 	public WorkGroupFolder create(Account actor, User owner, Thread workGroup, WorkGroupFolder workGroupFolder)
 			throws BusinessException {
 		preChecks(actor, owner);
-		checkWriteRights(owner, workGroup);
+		checkUploadRights(owner, workGroup);
 		String workGroupUuid = workGroup.getLsUuid();
 		WorkGroupFolder wgfParent = null;
 		if (workGroupFolder.getParent() == null) {
@@ -121,6 +122,29 @@ public class WorkGroupFolderServiceImpl extends GenericServiceImpl<Account, Work
 	}
 
 	@Override
+	public WorkGroupFolder addEntry(Account actor, User owner, Thread workGroup, String workGroupFolderUuid,
+			ThreadEntry threadEntry) throws BusinessException {
+		preChecks(actor, owner);
+		checkUploadRights(owner, workGroup);
+		WorkGroupFolder folder = null;
+		if (workGroupFolderUuid == null) {
+			folder = getRootFolder(workGroup);
+		} else {
+			folder = find(actor, owner, workGroup, workGroupFolderUuid);
+		}
+		folder.getEntries().add(new WorkGroupEntry(threadEntry, new AccountMto(owner)));
+		return repository.save(folder);
+	}
+
+	@Override
+	public WorkGroupFolder getRootFolder(Account actor, User owner, Thread workGroup) throws BusinessException {
+		preChecks(actor, owner);
+		checkUploadRights(owner, workGroup);
+		WorkGroupFolder wgfParent = getRootFolder(workGroup);
+		return wgfParent;
+	}
+
+	@Override
 	public WorkGroupFolder update(Account actor, User owner, Thread workGroup, WorkGroupFolder workGroupFolder)
 			throws BusinessException {
 		preChecks(actor, owner);
@@ -128,7 +152,8 @@ public class WorkGroupFolderServiceImpl extends GenericServiceImpl<Account, Work
 		wgf.setName(workGroupFolder.getName());
 		wgf.setModificationDate(new Date());
 		wgf = repository.save(wgf);
-		// Check if we have to move folder to another folder
+		// TODO Check if we have to move folder to another folder
+		// temporary disable : work is incomplete.
 		String parent = workGroupFolder.getParent();
 		if (parent != null) {
 			if (parent != wgf.getParent()) {
@@ -139,6 +164,7 @@ public class WorkGroupFolderServiceImpl extends GenericServiceImpl<Account, Work
 				wgf = repository.save(wgf);
 			}
 		}
+		// TODO: manage WGF entries.
 		return wgf;
 	}
 
@@ -148,10 +174,11 @@ public class WorkGroupFolderServiceImpl extends GenericServiceImpl<Account, Work
 		preChecks(actor, owner);
 		WorkGroupFolder wgf = find(actor, owner, workGroup, workGroupFolderUuid);
 		repository.delete(wgf);
+		// TODO : delete all entries in a folder
 		return wgf;
 	}
 
-	private ThreadMember checkWriteRights(User owner, Thread thread) {
+	private ThreadMember checkUploadRights(User owner, Thread thread) {
 		ThreadMember member = threadService.getMemberFromUser(thread, owner);
 		if (member == null) {
 			String msg = "You are not authorized to create folder or upload file in this work group.";

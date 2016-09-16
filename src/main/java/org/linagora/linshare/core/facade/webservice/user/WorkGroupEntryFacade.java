@@ -46,8 +46,17 @@ import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 
 public interface WorkGroupEntryFacade extends GenericFacade {
 
-	WorkGroupEntryDto create(String threadUuid, File fi,
-			String filename) throws BusinessException;
+	/**
+	 * @param ownerUuid : It is used by delegation rest service. if null, current logged in user is used.
+	 * @param workGroupUuid
+	 * @param workGroupFolderUuid : if null, root folder will be use.
+	 * @param fi
+	 * @param filename
+	 * @return
+	 * @throws BusinessException
+	 */
+	WorkGroupEntryDto create(String ownerUuid, String workGroupUuid,
+			String workGroupFolderUuid, File fi, String filename) throws BusinessException;
 
 	WorkGroupEntryDto copy(String threadUuid, String entryUuid)
 			throws BusinessException;

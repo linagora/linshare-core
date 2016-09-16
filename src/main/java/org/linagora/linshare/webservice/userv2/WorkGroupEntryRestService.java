@@ -47,11 +47,11 @@ import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto
 public interface WorkGroupEntryRestService {
 
 	WorkGroupEntryDto create(String workGroupUuid,
-			InputStream file, String description, String givenFileName,
+			String workGroupFolderUuid, InputStream file, String description,
+			String givenFileName,
 			Boolean async,
 			Long contentLength,
-			Long fileSize,
-			MultipartBody body) throws BusinessException;
+			Long fileSize, MultipartBody body) throws BusinessException;
 
 	WorkGroupEntryDto copy(String workGroupUuid, String entryUuid)
 			throws BusinessException;

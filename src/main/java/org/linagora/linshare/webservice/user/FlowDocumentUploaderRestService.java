@@ -45,7 +45,8 @@ public interface FlowDocumentUploaderRestService {
 
 	FlowDto uploadChunk(long chunkNumber, long totalChunks, long chunkSize,
 			long totalSize, String identifier, String filename,
-			String relativePath, InputStream file, MultipartBody body, String threadUuid)
+			String relativePath, InputStream file, MultipartBody body, String workGroupUuid,
+			String workGroupFolderUuid, boolean async)
 			throws BusinessException;
 
 	Response testChunk(long chunkNumber, long totalChunks, long chunkSize,

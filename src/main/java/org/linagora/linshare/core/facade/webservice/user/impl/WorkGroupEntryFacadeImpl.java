@@ -44,6 +44,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.entities.User;
@@ -57,27 +58,38 @@ import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.ThreadEntryService;
 import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.core.service.WorkGroupFolderService;
+import org.linagora.linshare.mongo.entities.WorkGroupEntry;
+import org.linagora.linshare.mongo.entities.WorkGroupFolder;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 
 import com.google.common.collect.Lists;
 
-public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
+public class WorkGroupEntryFacadeImpl extends UserGenericFacadeImp implements
 		WorkGroupEntryFacade {
 
 	private final ThreadEntryService threadEntryService;
+
 	private final ThreadService threadService;
+
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
+
 	private final DocumentEntryService documentEntryService;
 
-	public ThreadEntryFacadeImpl(AccountService accountService,
+	private final WorkGroupFolderService workGroupFolderService;
+
+	public WorkGroupEntryFacadeImpl(AccountService accountService,
 			ThreadService threadService, ThreadEntryService threadEntryService,
 			FunctionalityReadOnlyService functionalityService,
+			WorkGroupFolderService workGroupFolderService,
 			DocumentEntryService documentEntryService) {
 		super(accountService);
 		this.threadService = threadService;
 		this.threadEntryService = threadEntryService;
 		this.functionalityReadOnlyService = functionalityService;
 		this.documentEntryService = documentEntryService;
+		this.workGroupFolderService = workGroupFolderService;
 	}
 
 	@Override
@@ -93,19 +105,21 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public WorkGroupEntryDto create(String threadUuid, File tempFile,
-			String fileName) throws BusinessException {
-		Validate.notEmpty(threadUuid, "Missing required thread uuid");
+	public WorkGroupEntryDto create(String ownerUuid, String workGroupUuid,
+			String workGroupFolderUuid, File tempFile, String fileName) throws BusinessException {
+		Validate.notEmpty(workGroupUuid, "Missing required thread uuid");
 		Validate.notEmpty(fileName, "Missing required file name");
 		Validate.notNull(tempFile, "Missing required input temp file");
 		User actor = checkAuthentication();
-		Thread thread = threadService.find(actor, actor, threadUuid);
+		User owner = getOwner(actor, ownerUuid);
+		Thread thread = threadService.find(actor, actor, workGroupUuid);
 		if (thread == null) {
 			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT,
-					"Current thread was not found : " + threadUuid);
+					"Current thread was not found : " + workGroupUuid);
 		}
 		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor,
 				actor, thread, tempFile, fileName);
+		workGroupFolderService.addEntry(actor, owner, thread, workGroupFolderUuid, threadEntry);
 		return new WorkGroupEntryDto(threadEntry);
 	}
 
@@ -115,6 +129,7 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(entryUuid, "Missing required entry uuid");
 		User actor = checkAuthentication();
+//		User owner = getOwner(actor, ownerUuid);
 		// Check if we have the right to access to the specified thread
 		Thread thread = threadService.find(actor, actor, threadUuid);
 		// Check if we have the right to access to the specified document entry
@@ -131,6 +146,7 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(entryUuid, "Missing required entry uuid");
 		User actor = checkAuthentication();
+//		User owner = getOwner(actor, ownerUuid);
 		// Check if we have the right to access to the specified thread
 		Thread thread = threadService.find(actor, actor, threadUuid);
 		// Check if we have the right to access to the specified thread entry
@@ -148,6 +164,7 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(uuid, "Missing required entry uuid");
 		User actor = checkAuthentication();
+//		User owner = getOwner(actor, ownerUuid);
 		@SuppressWarnings("unused")
 		Thread thread = threadService.find(actor, actor, threadUuid);
 		ThreadEntry threadEntry = threadEntryService.findById(actor, actor,
@@ -160,6 +177,7 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 			throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		User actor = checkAuthentication();
+//		User owner = getOwner(actor, ownerUuid);
 		List<WorkGroupEntryDto> res = Lists.newArrayList();
 		Thread thread = threadService.find(actor, actor, threadUuid);
 		for (ThreadEntry threadEntry : threadEntryService.findAllThreadEntries(
@@ -177,6 +195,7 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(threadEntryDto.getUuid(),
 				"Missing required thread entry");
 		User actor = checkAuthentication();
+//		User owner = getOwner(actor, ownerUuid);
 		ThreadEntry threadEntry = threadEntryService.findById(actor, actor,
 				threadEntryDto.getUuid());
 		threadEntryService.deleteThreadEntry(actor, actor, threadEntry);
@@ -189,6 +208,7 @@ public class ThreadEntryFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notNull(threadEntryUuid, "Missing required thread uuid");
 		Validate.notEmpty(threadEntryUuid, "Missing required thread entry uuid");
 		User actor = checkAuthentication();
+//		User owner = getOwner(actor, ownerUuid);
 		ThreadEntry threadEntry = threadEntryService.findById(actor, actor,
 				threadEntryUuid);
 		threadEntryService.deleteThreadEntry(actor, actor, threadEntry);

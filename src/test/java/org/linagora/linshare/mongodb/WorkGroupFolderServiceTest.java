@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.mongodb;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.junit.After;
@@ -42,6 +44,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -210,4 +213,39 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 		Assert.assertEquals(folder1.getUuid(), folder2.getParent());
 
 	}
+
+	@Test
+	public void testAddEntry() throws BusinessException {
+		Thread workGroup = threadService.create(jane, jane, "thread1");
+		WorkGroupFolder folder1 = new WorkGroupFolder("folder1", null, workGroup.getLsUuid());
+		folder1 = service.create(jane, jane, workGroup, folder1);
+		ThreadEntry threadEntry = new ThreadEntry();
+		threadEntry.setUuid("eb31e21c-38d3-4389-b147-ca49fc4e8ebe");
+		threadEntry.setName("file1");
+		threadEntry.setCreationDate(new GregorianCalendar());
+		threadEntry.setModificationDate(new GregorianCalendar());
+		threadEntry.setType("application/data");
+		threadEntry.setSize(666L);
+		WorkGroupFolder folder2 = service.addEntry(jane, jane, workGroup, folder1.getUuid(), threadEntry);
+		Assert.assertEquals(1, folder2.getEntries().size());
+		Assert.assertNotEquals(folder2.getParent(), folder2.getWorkGroup());
+	}
+
+	@Test
+	public void testAddEntry2() throws BusinessException {
+		Thread workGroup = threadService.create(jane, jane, "thread1");
+		ThreadEntry threadEntry = new ThreadEntry();
+		threadEntry.setUuid("eb31e21c-38d3-4389-b147-ca49fc4e8ebe");
+		threadEntry.setName("file1");
+		threadEntry.setCreationDate(new GregorianCalendar());
+		threadEntry.setModificationDate(new GregorianCalendar());
+		threadEntry.setType("application/data");
+		threadEntry.setSize(666L);
+		WorkGroupFolder folder2 = service.addEntry(jane, jane, workGroup, null, threadEntry);
+		Assert.assertEquals(1, folder2.getEntries().size());
+		// no folder uuid specified, root folder uuid should be used as parent.
+		// => root folder uuid = work group uuid
+		Assert.assertEquals(folder2.getParent(), folder2.getWorkGroup());
+	}
+
 }

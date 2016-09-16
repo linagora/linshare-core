@@ -38,6 +38,7 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.WorkGroupFolder;
 
@@ -54,7 +55,12 @@ public interface WorkGroupFolderService {
 	WorkGroupFolder update(Account actor, User owner, Thread workGroup, WorkGroupFolder workGroupFolder)
 			throws BusinessException;
 
+	WorkGroupFolder addEntry(Account actor, User owner, Thread workGroup, String workGroupFolderUuid,
+			ThreadEntry threadEntry) throws BusinessException;
+
 	WorkGroupFolder delete(Account actor, User owner, Thread workGroup, String workGroupFolderUuid)
 			throws BusinessException;
 
+	WorkGroupFolder getRootFolder(Account actor, User owner, Thread workGroup)
+			throws BusinessException;
 }

@@ -121,6 +121,7 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 	@Override
 	public WorkGroupEntryDto create(
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workGroupUuid") String workGroupUuid,
+			@ApiParam(value = "The workgroup folder uuid.", required = false) @QueryParam("workGroupUuid") String workGroupFolderUuid,
 			@ApiParam(value = "File stream.", required = true) InputStream file,
 			@ApiParam(value = "An optional description of a workgroup entry.") @Multipart(value = "description", required = false) String description,
 			@ApiParam(value = "The given file name of the uploaded file.", required = true) @Multipart(value = "filename", required = false) String givenFileName,
@@ -151,7 +152,7 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 			AsyncTaskDto asyncTask = null;
 			try {
 				asyncTask = asyncTaskFacade.create(currSize, transfertDuration, fileName, null, AsyncTaskType.THREAD_ENTRY_UPLOAD);
-				ThreadEntryTaskContext threadEntryTaskContext = new ThreadEntryTaskContext(actorDto, actorDto.getUuid(), workGroupUuid, tempFile, fileName);
+				ThreadEntryTaskContext threadEntryTaskContext = new ThreadEntryTaskContext(actorDto, actorDto.getUuid(), workGroupUuid, tempFile, fileName, workGroupFolderUuid);
 				ThreadEntryUploadAsyncTask task = new ThreadEntryUploadAsyncTask(threadEntryAsyncFacade, threadEntryTaskContext, asyncTask);
 				taskExecutor.execute(task);
 				return new WorkGroupEntryDto(asyncTask, threadEntryTaskContext);
@@ -166,7 +167,7 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 			// Synchronous mode
 			try {
 				logger.debug("Async mode is not used");
-				return workGroupEntryFacade.create(workGroupUuid, tempFile, fileName);
+				return workGroupEntryFacade.create(null, workGroupUuid, workGroupFolderUuid, tempFile, fileName);
 			} finally {
 				deleteTempFile(tempFile);
 			}

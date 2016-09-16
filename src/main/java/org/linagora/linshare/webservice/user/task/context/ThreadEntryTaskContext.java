@@ -50,6 +50,8 @@ public class ThreadEntryTaskContext extends TaskContext {
 
 	protected final String threadUuid;
 
+	protected final String workGroupFolderUuid;
+
 	/**
 	 * uuid of the document entry to be copied.
 	 */
@@ -57,27 +59,29 @@ public class ThreadEntryTaskContext extends TaskContext {
 
 	public ThreadEntryTaskContext(AccountDto actorDto, String ownerUuid,
 			String threadUuid, File file, String fileName, String metaData,
-			String description) {
+			String description, String workGroupFolderUuid) {
 		super(actorDto, ownerUuid);
 		this.file = file;
 		this.fileName = fileName;
 		this.metaData = metaData;
 		this.description = description;
 		this.threadUuid = threadUuid;
+		this.workGroupFolderUuid = workGroupFolderUuid;
 	}
 
 	public ThreadEntryTaskContext(AccountDto actorDto, String ownerUuid,
-			String threadUuid, File file, String fileName) {
+			String threadUuid, File file, String fileName, String workGroupFolderUuid) {
 		super(actorDto, ownerUuid);
 		this.file = file;
 		this.fileName = fileName;
 		this.metaData = null;
 		this.description = null;
 		this.threadUuid = threadUuid;
+		this.workGroupFolderUuid = workGroupFolderUuid;
 	}
 
 	public ThreadEntryTaskContext(AccountDto actorDto, String ownerUuid,
-			String threadUuid, String docEntryUuid) {
+			String threadUuid, String docEntryUuid, String workGroupFolderUuid) {
 		super(actorDto, ownerUuid);
 		this.file = null;
 		this.fileName = null;
@@ -85,6 +89,7 @@ public class ThreadEntryTaskContext extends TaskContext {
 		this.description = null;
 		this.threadUuid = threadUuid;
 		this.docEntryUuid = docEntryUuid;
+		this.workGroupFolderUuid = workGroupFolderUuid;
 	}
 
 	public File getFile() {

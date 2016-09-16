@@ -37,13 +37,13 @@ import java.util.Date;
 
 import javax.persistence.GeneratedValue;
 
+import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.springframework.data.annotation.Id;
 
 public class WorkGroupEntry {
 
 	@Id
-	@GeneratedValue
 	protected String uuid;
 
 	protected String name;
@@ -72,6 +72,16 @@ public class WorkGroupEntry {
 		this.type = type;
 		this.size = size;
 		this.lastAuthor = lastAuthor;
+	}
+
+	public WorkGroupEntry(ThreadEntry threadEntry, AccountMto account) {
+		this.uuid = threadEntry.getUuid();
+		this.name = threadEntry.getName();
+		this.creationDate = threadEntry.getCreationDate().getTime();
+		this.modificationDate = threadEntry.getModificationDate().getTime();
+		this.type = threadEntry.getType();
+		this.size = threadEntry.getSize();
+		this.lastAuthor = account;
 	}
 
 	public String getUuid() {

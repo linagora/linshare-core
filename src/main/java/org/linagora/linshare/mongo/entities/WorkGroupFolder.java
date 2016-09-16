@@ -40,6 +40,8 @@ import java.util.UUID;
 import javax.persistence.GeneratedValue;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.entities.ThreadEntry;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
@@ -168,6 +170,13 @@ public class WorkGroupFolder {
 
 	public List<WorkGroupEntry> getEntries() {
 		return entries;
+	}
+
+	public void addWorkGroupEntry(ThreadEntry threadEntry, AccountMto account) {
+		if (entries == null) {
+			entries = Lists.newArrayList();
+		}
+		entries.add(new WorkGroupEntry(threadEntry, account));
 	}
 
 	public void setEntries(List<WorkGroupEntry> entries) {
