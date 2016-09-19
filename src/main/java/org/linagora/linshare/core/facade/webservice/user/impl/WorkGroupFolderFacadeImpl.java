@@ -94,11 +94,14 @@ public class WorkGroupFolderFacadeImpl extends UserGenericFacadeImp implements W
 	}
 
 	@Override
-	public WorkGroupFolder update(String ownerUuid, String workGroupUuid, WorkGroupFolder workGroupFolder)
+	public WorkGroupFolder update(String ownerUuid, String workGroupUuid, String workGroupFolderUuid, WorkGroupFolder workGroupFolder)
 			throws BusinessException {
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
+		Validate.notEmpty(workGroupFolderUuid, "Missing required workGroupFolderUuid in path param");
 		Validate.notNull(workGroupFolder, "Missing required workGroupFolder");
 		Validate.notEmpty(workGroupFolder.getUuid(), "Missing required workGroupFolderUuid");
+		Validate.isTrue(workGroupFolderUuid.equals(workGroupFolder.getUuid()),
+				"workGroupFolderUuid in path param is different than the uuid inside the payload.");
 		Validate.notEmpty(workGroupFolder.getName(), "Missing required name");
 		User actor = checkAuthentication();
 		User owner = getOwner(actor, ownerUuid);

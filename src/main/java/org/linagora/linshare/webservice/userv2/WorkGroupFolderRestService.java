@@ -46,7 +46,7 @@ public interface WorkGroupFolderRestService {
 
 	WorkGroupFolder find(String workGroupUuid, String workGroupFolderUuid) throws BusinessException;
 
-	WorkGroupFolder update(String workGroupUuid, WorkGroupFolder workGroupFolder) throws BusinessException;
+	WorkGroupFolder update(String workGroupUuid, String workGroupFolderUuid, WorkGroupFolder workGroupFolder) throws BusinessException;
 
 	WorkGroupFolder delete(String workGroupUuid, WorkGroupFolder workGroupFolder) throws BusinessException;
 
