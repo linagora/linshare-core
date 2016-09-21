@@ -219,7 +219,7 @@ public class WorkGroupFolderServiceImpl extends GenericServiceImpl<Account, Work
 			throws BusinessException {
 		preChecks(actor, owner);
 		WorkGroupFolder wgf = find(actor, owner, workGroup, workGroupFolderUuid);
-		Validate.isTrue((wgf.getEntries().size() == 0));
+		Validate.isTrue((wgf.getEntries().size() == 0), "You can not delete a folder if it is not empty.");
 		repository.delete(wgf);
 		return wgf;
 	}
