@@ -46,7 +46,7 @@ public interface WorkGroupFolderFacade extends GenericFacade {
 
 	WorkGroupFolder create(String ownerUuid, String workGroupUuid, WorkGroupFolder workGroupFolder) throws BusinessException;
 
-	WorkGroupFolder update(String ownerUuid, String workGroupUuid, String workGroupFolderUuid, WorkGroupFolder workGroupFolder) throws BusinessException;
+	WorkGroupFolder update(String ownerUuid, String workGroupUuid, WorkGroupFolder workGroupFolder) throws BusinessException;
 
 	WorkGroupFolder delete(String ownerUuid, String workGroupUuid, String workGroupFolderUuid) throws BusinessException;
 

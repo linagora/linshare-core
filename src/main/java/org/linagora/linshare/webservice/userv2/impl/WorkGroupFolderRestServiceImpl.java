@@ -124,7 +124,7 @@ public class WorkGroupFolderRestServiceImpl extends WebserviceBase implements
 		return workGroupFolderFacade.find(null, workGroupUuid, workGroupFolderUuid);
 	}
 
-	@Path("/{workGroupFolderUuid}")
+	@Path("/")
 	@PUT
 	@ApiOperation(value = "Update a workgroup folder (name or parent).", response = WorkGroupFolder.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
@@ -135,10 +135,9 @@ public class WorkGroupFolderRestServiceImpl extends WebserviceBase implements
 	@Override
 	public WorkGroupFolder update(
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workGroupUuid") String workGroupUuid,
-			@ApiParam(value = "The workgroup folder uuid.", required = true) @PathParam("workGroupFolderUuid") String workGroupFolderUuid,
 			@ApiParam(value = "The workgroup folder to update. Only name or parent can be updated. Uuid is required, others fields are useless.", required = true) WorkGroupFolder workGroupFolder)
 					throws BusinessException {
-		return workGroupFolderFacade.update(null, workGroupUuid, workGroupFolderUuid, workGroupFolder);
+		return workGroupFolderFacade.update(null, workGroupUuid, workGroupFolder);
 	}
 
 	@Path("/")
