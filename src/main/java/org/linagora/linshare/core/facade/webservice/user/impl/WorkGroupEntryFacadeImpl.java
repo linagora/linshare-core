@@ -115,6 +115,7 @@ public class WorkGroupEntryFacadeImpl extends UserGenericFacadeImp implements
 		}
 		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor,
 				owner, thread, tempFile, fileName);
+		// Business code outside service !
 		workGroupFolderService.addEntry(actor, owner, thread, workGroupFolderUuid, threadEntry);
 		return new WorkGroupEntryDto(threadEntry);
 	}
@@ -215,9 +216,11 @@ public class WorkGroupEntryFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(threadEntryUuid, "Missing required thread entry uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(actor, ownerUuid);
+		Thread workGroup = threadService.find(actor, owner, threadUuid);
 		ThreadEntry threadEntry = threadEntryService.find(actor, owner,
 				threadEntryUuid);
 		threadEntryService.deleteThreadEntry(actor, owner, threadEntry);
+		workGroupFolderService.delEntry(actor, owner, workGroup, threadEntry);
 		return new WorkGroupEntryDto(threadEntry);
 	}
 
