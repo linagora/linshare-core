@@ -114,7 +114,11 @@ public class WorkGroupFolderServiceImpl extends GenericServiceImpl<Account, Work
 		if (workGroupFolder.getParent() == null) {
 			wgfParent = getRootFolder(workGroup);
 		} else {
-			wgfParent = find(actor, owner, workGroup, workGroupFolder.getParent());
+			if (workGroupFolder.getParent().equals(workGroupUuid)) {
+				wgfParent = getRootFolder(workGroup);
+			} else {
+				wgfParent = find(actor, owner, workGroup, workGroupFolder.getParent());
+			}
 		}
 		WorkGroupFolder entity = new WorkGroupFolder(workGroupFolder);
 		entity.setParent(wgfParent.getUuid());
