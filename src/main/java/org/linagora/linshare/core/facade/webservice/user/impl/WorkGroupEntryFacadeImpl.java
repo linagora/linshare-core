@@ -197,7 +197,14 @@ public class WorkGroupEntryFacadeImpl extends UserGenericFacadeImp implements
 				wgEntryDto.getUuid());
 		threadEntryService.deleteThreadEntry(actor, owner, wgEntry);
 		Thread workGroup = threadService.find(actor, owner, workGroupUuid);
-		workGroupFolderService.delEntry(actor, owner, workGroup, wgEntry);
+		try {
+			workGroupFolderService.delEntry(actor, owner, workGroup, wgEntry);
+		} catch (BusinessException e) {
+			if (!e.getErrorCode().equals(BusinessErrorCode.WORK_GROUP_FOLDER_NOT_FOUND)) {
+				logger.error(e.getMessage(), e);
+				throw e;
+			}
+		}
 		return new WorkGroupEntryDto(wgEntry);
 	}
 
