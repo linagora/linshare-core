@@ -265,8 +265,11 @@ public class WorkGroupEntryFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(threadEntryUuid, "Missing required thread entry uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(actor, ownerUuid);
-		return new WorkGroupEntryDto(threadEntryService.updateFileProperties(
+		Thread workGroup = threadService.find(actor, owner, threadUuid);
+		ThreadEntry threadEntry = threadEntryService.updateFileProperties(
 				actor, owner, threadEntryUuid, threadEntryDto.getDescription(),
-				threadEntryDto.getMetaData(), threadEntryDto.getName()));
+				threadEntryDto.getMetaData(), threadEntryDto.getName());
+		workGroupFolderService.updateEntry(actor, owner, workGroup, threadEntry);
+		return new WorkGroupEntryDto(threadEntry);
 	}
 }

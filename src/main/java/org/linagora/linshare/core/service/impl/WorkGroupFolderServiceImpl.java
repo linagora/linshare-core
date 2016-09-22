@@ -165,8 +165,30 @@ public class WorkGroupFolderServiceImpl extends GenericServiceImpl<Account, Work
 		Validate.notNull(threadEntry, "Missing entry !");
 		Validate.notEmpty(threadEntry.getUuid(), "Missing entry uuid !");
 		WorkGroupFolder folder = getFolder(workGroup, threadEntry);
-		// TODO : KACK : To be improved !
+		// TODO : HACK : To be improved !
 		folder.getEntries().remove(new WorkGroupEntry(threadEntry, new AccountMto(owner)));
+		repository.save(folder);
+		return folder;
+	}
+
+	@Override
+	public WorkGroupFolder updateEntry(Account actor, User owner, Thread workGroup, ThreadEntry threadEntry)
+			throws BusinessException {
+		preChecks(actor, owner);
+		checkUploadRights(owner, workGroup);
+		Validate.notNull(threadEntry, "Missing entry !");
+		Validate.notEmpty(threadEntry.getUuid(), "Missing entry uuid !");
+		WorkGroupFolder folder = getFolder(workGroup, threadEntry);
+		// TODO : HACK : Very ugly : To be improved !
+		List<WorkGroupEntry> entries = folder.getEntries();
+		for (WorkGroupEntry workGroupEntry : entries) {
+			if (workGroupEntry.getUuid().equals(threadEntry.getUuid())) {
+				workGroupEntry.setName(threadEntry.getName());
+				workGroupEntry.setModificationDate(threadEntry.getModificationDate().getTime());
+				workGroupEntry.setLastAuthor(new AccountMto(owner));
+				break;
+			}
+		}
 		repository.save(folder);
 		return folder;
 	}

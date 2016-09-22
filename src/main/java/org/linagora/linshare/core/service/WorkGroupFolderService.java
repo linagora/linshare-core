@@ -64,6 +64,9 @@ public interface WorkGroupFolderService {
 	WorkGroupFolder delEntry(Account actor, User owner, Thread workGroup, ThreadEntry threadEntry)
 			throws BusinessException;
 
+	WorkGroupFolder updateEntry(Account actor, User owner, Thread workGroup, ThreadEntry threadEntry)
+			throws BusinessException;
+
 	WorkGroupFolder getFolder(Account actor, User owner, Thread workGroup, ThreadEntry threadEntry)
 			throws BusinessException;
 
