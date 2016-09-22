@@ -201,6 +201,19 @@
 		</b:constructor-arg>
 	</b:bean>
 
+	<b:bean id="logoutFilterUserV2" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+		<b:property name="filterProcessesUrl">
+			<b:value>/webservice/rest/user/v2/authentication/logout</b:value>
+		</b:property>
+		<b:constructor-arg value="/webservice/rest/v2/user/authentication/" />
+		<b:constructor-arg>
+			<b:list>
+				<b:ref bean="rememberMeService" />
+				<b:bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
+			</b:list>
+		</b:constructor-arg>
+	</b:bean>
+
 	<b:bean id="filterSecurityInterceptor" class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
 		<b:property name="authenticationManager" ref="authenticationManager" />
 		<b:property name="accessDecisionManager" ref="accessDecisionManager" />
