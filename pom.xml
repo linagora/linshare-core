@@ -1676,6 +1676,14 @@
 		<repository>
 			<id>Linagora-LinShare-Repositories</id>
 			<url>https://nexus.linagora.com/content/groups/linshare</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>daily</updatePolicy>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>daily</updatePolicy>
+			</releases>
 		</repository>
 	</repositories>
 
