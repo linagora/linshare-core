@@ -1052,6 +1052,9 @@
 			<testResource>
 				<directory>src/apacheds/resources</directory>
 			</testResource>
+			<testResource>
+				<directory>src/fongo/resources</directory>
+			</testResource>
 		</testResources>
 	</build>
 
@@ -1443,6 +1446,37 @@
 					<groupId>org.apache.directory.server</groupId>
 					<artifactId>apacheds-server-jndi</artifactId>
 					<version>${apache-directory-server.version}</version>
+				</dependency>
+			</dependencies>
+		</profile>
+		<!--  profile:id=fongo -->
+		<profile>
+			<id>fongo</id>
+			<activation>
+				<property>
+					<name>target</name>
+					<value>distribution</value>
+				</property>
+			</activation>
+			<build>
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+					</resource>
+					<resource>
+						<directory>src/fongo/resources</directory>
+					</resource>
+				</resources>
+			</build>
+			<dependencies>
+				<dependency>
+					<groupId>com.github.fakemongo</groupId>
+					<artifactId>fongo</artifactId>
+					<version>1.6.8</version>
+				</dependency>
+				<dependency>
+					<groupId>org.springframework.data</groupId>
+					<artifactId>spring-data-mongodb</artifactId>
 				</dependency>
 			</dependencies>
 		</profile>
