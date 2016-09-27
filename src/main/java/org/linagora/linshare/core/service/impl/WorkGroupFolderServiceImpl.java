@@ -143,7 +143,11 @@ public class WorkGroupFolderServiceImpl extends GenericServiceImpl<Account, Work
 		if (workGroupFolderUuid == null) {
 			folder = getRootFolder(workGroup);
 		} else {
-			folder = find(actor, owner, workGroup, workGroupFolderUuid);
+			if (workGroupFolderUuid.equals(workGroup.getLsUuid())) {
+				folder = getRootFolder(workGroup);
+			} else {
+				folder = find(actor, owner, workGroup, workGroupFolderUuid);
+			}
 		}
 		folder.getEntries().add(new WorkGroupEntry(threadEntry, new AccountMto(owner)));
 		return repository.save(folder);
