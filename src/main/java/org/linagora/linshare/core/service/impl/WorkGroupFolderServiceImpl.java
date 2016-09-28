@@ -245,7 +245,11 @@ public class WorkGroupFolderServiceImpl extends GenericServiceImpl<Account, Work
 			throws BusinessException {
 		preChecks(actor, owner);
 		WorkGroupFolder wgf = find(actor, owner, workGroup, workGroupFolderUuid);
-		Validate.isTrue((wgf.getEntries().size() == 0), "You can not delete a folder if it is not empty.");
+		if (wgf.getEntries().size() != 0) {
+			String message = "You can not delete a folder if it is not empty : " + workGroupFolderUuid;
+			logger.error(message);
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_FOLDER_FORBIDDEN_NOT_EMPTY, message);
+		}
 		repository.delete(wgf);
 		return wgf;
 	}
