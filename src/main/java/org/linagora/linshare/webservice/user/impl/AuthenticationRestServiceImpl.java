@@ -42,6 +42,7 @@ import javax.ws.rs.core.MediaType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.user.UserFacade;
+import org.linagora.linshare.core.facade.webservice.user.dto.VersionDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.user.AuthenticationRestService;
 
@@ -91,7 +92,7 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements
 	@Path("/version")
 	@GET
 	@Override
-	public String getVersion() {
-		return getCoreVersion();
+	public VersionDto getVersion() {
+		return new VersionDto(getCoreVersion());
 	}
 }
