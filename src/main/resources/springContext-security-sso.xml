@@ -62,11 +62,12 @@
 			<sec:filter-chain pattern="/webservice/rest/user/authentication/" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/admin/authentication/" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/uploadrequest/**" filters="none" />
+			<sec:filter-chain pattern="/webservice/rest/anonymousurl/**" filters="none" />
 
 			<sec:filter-chain pattern="/webservice/rest/plugin/information" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/cors" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/**"
-				filters="httpSessionIntegrationFilter,CORSRequestFilter,lemonLDAPFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor,logoutFilterAdmin, logoutFilterAdmin" />
+				filters="httpSessionIntegrationFilter,CORSRequestFilter,lemonLDAPFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor,logoutFilterAdmin, logoutFilterUser, logoutFilterUserV2" />
 
 			<sec:filter-chain pattern="/webservice/fineuploader/**"
 				filters="httpSessionIntegrationFilter,CORSRequestFilter,lemonLDAPFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
@@ -150,7 +151,7 @@
 	</b:bean>
 
 	<b:bean id="logoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
-		<b:constructor-arg value="/LogoutSso" />
+		<b:constructor-arg value="/" />
 		<b:constructor-arg>
 			<b:list>
 				<b:ref bean="rememberMeService" />
@@ -177,6 +178,19 @@
 			<b:value>/webservice/rest/user/authentication/logout</b:value>
 		</b:property>
 		<b:constructor-arg value="/webservice/rest/user/authentication/" />
+		<b:constructor-arg>
+			<b:list>
+				<b:ref bean="rememberMeService" />
+				<b:bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
+			</b:list>
+		</b:constructor-arg>
+	</b:bean>
+
+	<b:bean id="logoutFilterUserV2" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+		<b:property name="filterProcessesUrl">
+			<b:value>/webservice/rest/user/v2/authentication/logout</b:value>
+		</b:property>
+		<b:constructor-arg value="/webservice/rest/user/v2/authentication/" />
 		<b:constructor-arg>
 			<b:list>
 				<b:ref bean="rememberMeService" />

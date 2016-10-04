@@ -82,7 +82,7 @@
 			<sec:filter-chain pattern="/webservice/rest/plugin/information" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/cors" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/**"
-				filters="httpSessionIntegrationFilter,CORSRequestFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor, logoutFilterAdmin, logoutFilterUser" />
+				filters="httpSessionIntegrationFilter,CORSRequestFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor, logoutFilterAdmin, logoutFilterUser, logoutFilterUserV2" />
 
 			<sec:filter-chain pattern="/webservice/fineuploader/**"
 				filters="httpSessionIntegrationFilter,CORSRequestFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
@@ -205,7 +205,7 @@
 		<b:property name="filterProcessesUrl">
 			<b:value>/webservice/rest/user/v2/authentication/logout</b:value>
 		</b:property>
-		<b:constructor-arg value="/webservice/rest/v2/user/authentication/" />
+		<b:constructor-arg value="/webservice/rest/user/v2/authentication/" />
 		<b:constructor-arg>
 			<b:list>
 				<b:ref bean="rememberMeService" />
