@@ -50,6 +50,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupLightDto;
 import org.linagora.linshare.core.facade.webservice.user.WorkGroupEntryFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.core.service.AccountService;
@@ -58,6 +59,7 @@ import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.ThreadEntryService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.WorkGroupFolderService;
+import org.linagora.linshare.mongo.entities.WorkGroupFolder;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 
 import com.google.common.collect.Lists;
@@ -116,8 +118,12 @@ public class WorkGroupEntryFacadeImpl extends UserGenericFacadeImp implements
 		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor,
 				owner, thread, tempFile, fileName);
 		// Business code outside service !
-		workGroupFolderService.addEntry(actor, owner, thread, workGroupFolderUuid, threadEntry);
-		return new WorkGroupEntryDto(threadEntry);
+		WorkGroupFolder folder = workGroupFolderService.addEntry(actor, owner, thread, workGroupFolderUuid, threadEntry);
+		WorkGroupEntryDto dto = new WorkGroupEntryDto(threadEntry);
+		dto.setWorkGroup(new WorkGroupLightDto(thread));
+		folder.setEntries(null);
+		dto.setWorkGroupFolder(folder);
+		return dto;
 	}
 
 	@Override

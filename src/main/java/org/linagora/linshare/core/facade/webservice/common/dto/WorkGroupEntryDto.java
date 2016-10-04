@@ -40,6 +40,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
+import org.linagora.linshare.mongo.entities.WorkGroupFolder;
 import org.linagora.linshare.webservice.user.task.context.ThreadEntryTaskContext;
 
 import com.wordnik.swagger.annotations.ApiModel;
@@ -73,11 +74,19 @@ public class WorkGroupEntryDto extends EntryDto {
 	@ApiModelProperty(value = "Sha256sum")
 	protected String sha256sum;
 
-	@ApiModelProperty(value = "Sha256sum")
+	@ApiModelProperty(value = "hasThumbnail")
 	protected boolean hasThumbnail;
 
 	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 	protected AsyncTaskDto async;
+
+	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+	@ApiModelProperty(value = "workGroup")
+	protected WorkGroupLightDto workGroup;
+
+	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+	@ApiModelProperty(value = "workGroupFolder")
+	protected WorkGroupFolder workGroupFolder;
 
 	public WorkGroupEntryDto(ThreadEntry te) {
 		super();
@@ -177,6 +186,22 @@ public class WorkGroupEntryDto extends EntryDto {
 
 	public void setHasThumbnail(boolean hasThumbnail) {
 		this.hasThumbnail = hasThumbnail;
+	}
+
+	public WorkGroupLightDto getWorkGroup() {
+		return workGroup;
+	}
+
+	public void setWorkGroup(WorkGroupLightDto workGroup) {
+		this.workGroup = workGroup;
+	}
+
+	public WorkGroupFolder getWorkGroupFolder() {
+		return workGroupFolder;
+	}
+
+	public void setWorkGroupFolder(WorkGroupFolder workGroupFolder) {
+		this.workGroupFolder = workGroupFolder;
 	}
 
 	@Override

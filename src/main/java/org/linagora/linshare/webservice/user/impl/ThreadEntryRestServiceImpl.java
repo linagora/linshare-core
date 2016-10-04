@@ -167,7 +167,11 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			// Synchronous mode
 			try {
 				logger.debug("Async mode is not used");
-				return workGroupEntryFacade.create(null, threadUuid, null, tempFile, fileName);
+				WorkGroupEntryDto dto = workGroupEntryFacade.create(null, threadUuid, null, tempFile, fileName);
+				// Compatibility code : Reset this field (avoid to display new attribute in old API) 
+				dto.setWorkGroup(null);
+				dto.setWorkGroupFolder(null);
+				return dto;
 			} finally {
 				deleteTempFile(tempFile);
 			}
