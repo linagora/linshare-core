@@ -650,6 +650,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		return users;
 	}
 
+	@Deprecated
 	@Override
 	public List<AbstractDomain> getAllAuthorizedDomains(String domainIdentifier) throws BusinessException {
 		logger.debug("Begin getAllAuthorizedDomains" + domainIdentifier);
@@ -657,6 +658,14 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		List<AbstractDomain> domains = domainPolicyService
 				.getAllAuthorizedDomain(domain);
 		logger.debug("End getAllAuthorizedDomains");
+		return domains;
+	}
+
+	@Override
+	public List<AbstractDomain> getAllAuthorizedDomains(AbstractDomain domain) throws BusinessException {
+		logger.debug("Begin getAllAuthorizedDomains" + domain.getUuid());
+		List<AbstractDomain> domains = domainPolicyService.getAllAuthorizedDomain(domain);
+		logger.debug("End getAllAuthorizedDomains, size : " + domains.size());
 		return domains;
 	}
 

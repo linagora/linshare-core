@@ -88,7 +88,7 @@ public class GuestFacadeImpl extends DelegationGenericFacadeImpl implements
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 		List<GuestDto> res = Lists.newArrayList();
-		List<Guest> guests = guestService.findAllMyGuests(actor, owner);
+		List<Guest> guests = guestService.findAll(actor, owner, false);
 		for (Guest guest : guests) {
 			res.add(GuestDto.getFull(guest));
 		}

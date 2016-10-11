@@ -56,7 +56,6 @@ import org.linagora.linshare.core.domain.entities.UserLogEntry;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.RootUserRepository;
-import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.LogEntryService;
@@ -96,9 +95,9 @@ public class GuestServiceImplTest extends
 	@Autowired
 	private UserService userService;
 
-	@SuppressWarnings("rawtypes")
-	@Autowired
-	private UserRepository userRepository;
+//	@SuppressWarnings("rawtypes")
+//	@Autowired
+//	private UserRepository userRepository;
 
 	@Autowired
 	private FunctionalityService functionalityService;
@@ -323,4 +322,26 @@ public class GuestServiceImplTest extends
 		Assert.assertEquals(0, ac.size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
+
+	@Test
+	public void testSearchGuest() throws IllegalArgumentException, BusinessException {
+		boolean all= true;
+		List<Guest> search = guestService.search(owner1, owner1, "org", all);
+		logger.info("nb guests : " + search.size());
+		Assert.assertEquals(1, search.size());
+
+		search = guestService.search(owner1, owner1, "toto", all);
+		logger.info("nb guests : " + search.size());
+		Assert.assertEquals(0, search.size());
+
+		search = guestService.search(owner1, owner1, "test", all);
+		logger.info("nb guests : " + search.size());
+		Assert.assertEquals(1, search.size());
+
+		search = guestService.search(owner1, owner1, null, null, "guest", all);
+		logger.info("nb guests : " + search.size());
+		Assert.assertEquals(1, search.size());
+
+	}
+
 }

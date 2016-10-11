@@ -101,14 +101,8 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	}
 
 	@Override
-	public List<Guest> findAll() {
-		List<Guest> all = guestRepository.findAll();
-		for (Guest guest : all) {
-			if (guest.isRestricted()) {
-				guest.addContacts(allowedContactRepository.findByOwner(guest));
-			}
-		}
-		return all;
+	public List<Guest> findAll(List<AbstractDomain> authorizedDomains) {
+		return guestRepository.findAll(authorizedDomains);
 	}
 
 	@Override
@@ -227,6 +221,18 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	@Override
 	public void evict(Guest entity) {
 		guestRepository.evict(entity);
+	}
+
+	@Override
+	public List<Guest> search(List<AbstractDomain> authorizedDomains, String firstName, String lastName, String mail, Account owner)
+			throws BusinessException {
+		return guestRepository.search(authorizedDomains, mail, firstName, lastName, owner);
+	}
+
+	@Override
+	public List<Guest> search(List<AbstractDomain> authorizedDomains, String pattern, Account owner)
+			throws BusinessException {
+		return guestRepository.search(authorizedDomains, pattern, owner);
 	}
 
 	/**

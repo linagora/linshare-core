@@ -38,6 +38,7 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
@@ -45,10 +46,14 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 import org.linagora.linshare.core.facade.webservice.user.GuestFacade;
 import org.linagora.linshare.webservice.user.GuestRestService;
 
@@ -79,8 +84,25 @@ public class GuestRestServiceImpl implements GuestRestService {
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public List<GuestDto> findAll() throws BusinessException {
-		return guestFacade.findAll();
+	public List<GuestDto> findAll(
+			@QueryParam("all") @DefaultValue("false") boolean all,
+			@QueryParam("pattern") String pattern) throws BusinessException {
+		return guestFacade.findAll(all, pattern);
+	}
+
+	@Path("/search")
+	@POST
+	@ApiOperation(value = "Search all guests who match with some pattern.", response = GuestDto.class, responseContainer = "List")
+	@Override
+	public List<GuestDto> search(
+			@ApiParam(value = "Patterns to search.", required = true) UserSearchDto userSearchDto)
+			throws BusinessException {
+		Validate.isTrue(!(
+				lessThan3Char(userSearchDto.getFirstName())
+				&& lessThan3Char(userSearchDto.getLastName())
+				&& lessThan3Char(userSearchDto.getMail())),
+				"One pattern is required, pattern must be greater than 3 characters");
+		return guestFacade.search(userSearchDto);
 	}
 
 	@Path("/{uuid}")
@@ -162,5 +184,9 @@ public class GuestRestServiceImpl implements GuestRestService {
 			@ApiParam(value = "Guest's uuid to delete.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		return guestFacade.delete(uuid);
+	}
+
+	private boolean lessThan3Char(String s) {
+		return StringUtils.trimToEmpty(s).length() < 3;
 	}
 }

@@ -151,12 +151,19 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	}
 
 	@Override
-	public List<Guest> findAllMyGuests(Account actor, Account owner)
+	public List<Guest> findAll(Account actor, Account owner, boolean all)
 			throws BusinessException {
 		preChecks(actor, owner);
 		checkListPermission(actor, owner, Guest.class,
 				BusinessErrorCode.GUEST_FORBIDDEN, null);
-		return guestBusinessService.findAllMyGuests(owner);
+		List<AbstractDomain> authorizedDomains = abstractDomainService.getAllAuthorizedDomains(owner.getDomain());
+		List<Guest> list = null;
+		if (all) {
+			list = guestBusinessService.findAll(authorizedDomains);
+		} else {
+			list = guestBusinessService.findAllMyGuests(owner);
+		}
+		return list;
 	}
 
 	@Override
@@ -349,6 +356,46 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		MailContainerWithRecipient mail = mailBuildingService
 				.buildResetPassword(update.getGuest(), update.getPassword());
 		notifierService.sendNotification(mail);
+	}
+
+	@Override
+	public List<Guest> search(Account actor, Account owner, String firstName, String lastName, String mail, boolean all)
+			throws BusinessException {
+		preChecks(actor, owner);
+		if (owner.isGuest()) {
+			throw new BusinessException(BusinessErrorCode.GUEST_FORBIDDEN, "Guests are not allowed to use this method.");
+		}
+		// TODO : check if one of the 3 parameters is not null/empty.
+		List<AbstractDomain> authorizedDomains = abstractDomainService.getAllAuthorizedDomains(owner.getDomain());
+		List<Guest> list = null;
+		if (all) {
+			list = guestBusinessService.search(authorizedDomains,  firstName, lastName, mail, null);
+		} else {
+			list = guestBusinessService.search(authorizedDomains,  firstName, lastName, mail, owner);
+		}
+		return list;
+	}
+
+	@Override
+	public List<Guest> search(Account actor, Account owner, String pattern, boolean all) throws BusinessException {
+		preChecks(actor, owner);
+		if (owner.isGuest()) {
+			throw new BusinessException(BusinessErrorCode.GUEST_FORBIDDEN, "Guests are not allowed to use this method.");
+		}
+		String message = "You must fill a pattern to search ! At least three characters.";
+		Validate.notEmpty(pattern, message);
+		if (pattern.length() < 3) {
+			logger.error(message);
+			throw new BusinessException(BusinessErrorCode.GUEST_INVALID_SEARCH_INPUT, message);
+		}
+		List<AbstractDomain> authorizedDomains = abstractDomainService.getAllAuthorizedDomains(owner.getDomain());
+		List<Guest> list = null;
+		if (all) {
+			list = guestBusinessService.search(authorizedDomains, pattern, null);
+		} else {
+			list = guestBusinessService.search(authorizedDomains, pattern, owner);
+		}
+		return list;
 	}
 
 	/**

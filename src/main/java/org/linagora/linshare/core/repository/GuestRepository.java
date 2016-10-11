@@ -35,6 +35,7 @@ package org.linagora.linshare.core.repository;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 
@@ -46,9 +47,9 @@ public interface GuestRepository extends UserRepository<Guest> {
 	 * @param firstName user first name.
 	 * @param lastName user last name.
 	 * @param ownerLogin login of the user who creates the searched guest(s).
-     * @return a list of matching users.
-     */
-    List<Guest> searchGuest(Account owner, String mail, String firstName, String lastName);
+	 * @return a list of matching users.
+	 */
+	List<Guest> searchGuest(Account owner, String mail, String firstName, String lastName);
 
 	/**
 	 * Find outdated guest account identifiers.
@@ -60,15 +61,21 @@ public interface GuestRepository extends UserRepository<Guest> {
 
 	 /** Search some guests.
 	  * anyWhere matching
-     * @param mail user mail.
-     * @param firstName user first name.
-     * @param lastName user last name.
-     * @param ownerLogin login of the user who creates the searched guest(s).
-     * @return a list of matching users.
-     */
-    List<Guest> searchGuestAnyWhere(String mail, String firstName, String lastName);
-    List<Guest> searchGuestAnyWhere(String firstName, String lastName);
-    List<Guest> searchGuestAnyWhere(String pattern);
+	 * @param mail user mail.
+	 * @param firstName user first name.
+	 * @param lastName user last name.
+	 * @param ownerLogin login of the user who creates the searched guest(s).
+	 * @return a list of matching users.
+	 */
+	List<Guest> searchGuestAnyWhere(String mail, String firstName, String lastName);
+	List<Guest> searchGuestAnyWhere(String firstName, String lastName);
+	List<Guest> searchGuestAnyWhere(String pattern);
 
-    void evict(Guest entity);
+	void evict(Guest entity);
+
+	List<Guest> search(List<AbstractDomain> domains, String mail, String firstName, String lastName, Account owner);
+
+	List<Guest> search(List<AbstractDomain> domains, String pattern, Account owner);
+
+	List<Guest> findAll(List<AbstractDomain> domains);
 }

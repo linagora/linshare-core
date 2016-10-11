@@ -42,6 +42,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 import org.linagora.linshare.core.facade.webservice.user.GuestFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.GuestService;
@@ -61,9 +62,24 @@ public class GuestFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public List<GuestDto> findAll() throws BusinessException {
+	public List<GuestDto> findAll(boolean all, String pattern) throws BusinessException {
 		User actor = checkAuthentication();
-		List<Guest> guests = guestService.findAllMyGuests(actor, actor);
+		User owner = getOwner(actor, null);
+		List<Guest> guests = null;
+		if (pattern == null) {
+			guests = guestService.findAll(actor, owner, all);
+		} else {
+			guests = guestService.search(actor, owner, pattern, all);
+		}
+		return toGuestDto(guests);
+	}
+
+	@Override
+	public List<GuestDto> search(UserSearchDto userSearchDto) throws BusinessException {
+		User actor = checkAuthentication();
+		User owner = getOwner(actor, null);
+		List<Guest> guests = guestService.search(actor, owner, userSearchDto.getFirstName(),
+				userSearchDto.getLastName(), userSearchDto.getMail(), true);
 		return toGuestDto(guests);
 	}
 

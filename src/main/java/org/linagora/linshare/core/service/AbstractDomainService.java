@@ -84,6 +84,15 @@ public interface AbstractDomainService {
 	public List<AbstractDomain> getAllAuthorizedDomains(String domainIdentifier) throws BusinessException;
 
 	/**
+	 * This method returns a list containing all the authorized domains for the input domain.
+	 * This used to filter communications between domains.
+	 * @param user's domain
+	 * @return List of domains.
+	 * @throws BusinessException
+	 */
+	public List<AbstractDomain> getAllAuthorizedDomains(AbstractDomain domain) throws BusinessException;
+
+	/**
 	 * This method is designed to search in a particular domain and its SubDomain.
 	 * @param domainIdentifier
 	 * @param mail

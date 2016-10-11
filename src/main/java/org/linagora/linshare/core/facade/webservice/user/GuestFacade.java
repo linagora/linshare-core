@@ -38,10 +38,13 @@ import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 
 public interface GuestFacade extends GenericFacade {
-	
-	List<GuestDto> findAll() throws BusinessException;
+
+	List<GuestDto> findAll(boolean all, String pattern) throws BusinessException;
+
+	List<GuestDto> search(UserSearchDto userSearchDto) throws BusinessException;
 
 	GuestDto find(String uuid) throws BusinessException;
 

@@ -52,7 +52,7 @@ public interface GuestBusinessService {
 
 	Guest find(AbstractDomain domain, String mail) throws BusinessException;
 
-	List<Guest> findAll();
+	List<Guest> findAll(List<AbstractDomain> authorizedDomains);
 
 	List<Guest> findAllMyGuests(Account owner);
 
@@ -72,4 +72,27 @@ public interface GuestBusinessService {
 	GuestWithMetadata resetPassword(Guest guest) throws BusinessException;
 
 	void evict(Guest entity);
+
+	/**
+	 * search a guest using firstName and lastName and mail as a pattern. If a pattern is null, it is ignored.
+	 * @param authorizedDomains
+	 * @param firstName
+	 * @param lastName
+	 * @param mail
+	 * @param owner : if owner is not null, the search will be limited to all guests managed my the owner parameter.
+	 * @return
+	 * @throws BusinessException
+	 */
+	List<Guest> search(List<AbstractDomain> authorizedDomains, String firstName, String lastName, String mail, Account owner) throws BusinessException;
+
+	/**
+	 * search a guest using input pattern as fragment of firstName or lastName or mail.
+	 * @param authorizedDomains
+	 * @param pattern
+	 * @param owner : if owner is not null, the search will be limited to all guests managed my the owner parameter.
+	 * @return
+	 * @throws BusinessException
+	 */
+	List<Guest> search(List<AbstractDomain> authorizedDomains, String pattern, Account owner) throws BusinessException;
+
 }

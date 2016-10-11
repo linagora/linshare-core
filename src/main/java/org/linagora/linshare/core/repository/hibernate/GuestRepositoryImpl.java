@@ -42,6 +42,7 @@ import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.repository.GuestRepository;
@@ -186,5 +187,61 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 	@Override
 	public Guest findByLoginAndDomain(String domain, String login) {
 		return super.findByMailAndDomain(domain, login);
+	}
+
+	@Override
+	public List<Guest> search(List<AbstractDomain> domains, String mail, String firstName, String lastName, Account owner) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("destroyed", 0L));
+		if (mail != null) {
+			criteria.add(Restrictions.ilike("mail", mail, MatchMode.ANYWHERE));
+		}
+		if (firstName != null) {
+			criteria.add(Restrictions.ilike("firstName", firstName, MatchMode.ANYWHERE));
+		}
+		if (lastName != null) {
+			criteria.add(Restrictions.ilike("lastName", lastName, MatchMode.ANYWHERE));
+		}
+		if (owner != null) {
+			criteria.add(Restrictions.eq("owner", owner));
+		}
+		Disjunction or = Restrictions.disjunction();
+		for (AbstractDomain domain : domains) {
+			or.add(Restrictions.eq("domain", domain));
+		}
+		criteria.add(or);
+		return findByCriteria(criteria);
+	}
+
+	@Override
+	public List<Guest> search(List<AbstractDomain> domains, String pattern, Account owner) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("destroyed", 0L));
+		Disjunction or = Restrictions.disjunction();
+		criteria.add(or);
+		or.add(Restrictions.ilike("mail", pattern, MatchMode.ANYWHERE));
+		or.add(Restrictions.ilike("firstName", pattern, MatchMode.ANYWHERE));
+		or.add(Restrictions.ilike("lastName", pattern, MatchMode.ANYWHERE));
+		if (owner != null) {
+			criteria.add(Restrictions.eq("owner", owner));
+		}
+		Disjunction or2 = Restrictions.disjunction();
+		for (AbstractDomain domain : domains) {
+			or2.add(Restrictions.eq("domain", domain));
+		}
+		criteria.add(or);
+		return findByCriteria(criteria);
+	}
+
+	@Override
+	public List<Guest> findAll(List<AbstractDomain> domains) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("destroyed", 0L));
+		Disjunction or = Restrictions.disjunction();
+		for (AbstractDomain domain : domains) {
+			or.add(Restrictions.eq("domain", domain));
+		}
+		criteria.add(or);
+		return findByCriteria(criteria);
 	}
 }

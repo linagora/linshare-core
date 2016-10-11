@@ -63,7 +63,38 @@ public interface GuestService {
 
 	Guest find(Account actor, Account owner, String domainId, String mail) throws BusinessException;
 
-	List<Guest> findAllMyGuests(Account actor, Account owner) throws BusinessException;
+	/**
+	 * find all guests according to domain access policies
+	 * @param actor
+	 * @param owner
+	 * @return
+	 * @throws BusinessException
+	 */
+	List<Guest> findAll(Account actor, Account owner, boolean all) throws BusinessException;
+
+	/**
+	 * find all guests according to domain access policies, using firstName or lastName or mail, or both.
+	 * fragment pattern for this three parameter are supported.
+	 * @param actor
+	 * @param owner
+	 * @param firstName
+	 * @param lastName
+	 * @param mail
+	 * @return
+	 * @throws BusinessException
+	 */
+	List<Guest> search(Account actor, Account owner, String firstName, String lastName, String mail, boolean all) throws BusinessException;
+
+	/**
+	 * find all guests according to domain access policies, using pattern as a fragment of firstName or lastName or mail.
+	 * @param actor
+	 * @param owner
+	 * @param pattern
+	 * @param all TODO
+	 * @return
+	 * @throws BusinessException
+	 */
+	List<Guest> search(Account actor, Account owner, String pattern, boolean all) throws BusinessException;
 
 	/**
 	 * Test if a guest exists

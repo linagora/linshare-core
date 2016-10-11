@@ -38,6 +38,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 
 public interface GuestRestService {
 
@@ -45,7 +46,7 @@ public interface GuestRestService {
 
 	void head(String uuid) throws BusinessException;
 
-	List<GuestDto> findAll() throws BusinessException;
+	List<GuestDto> findAll(boolean all, String pattern) throws BusinessException;
 
 	GuestDto create(GuestDto guest) throws BusinessException;
 
@@ -54,4 +55,6 @@ public interface GuestRestService {
 	GuestDto delete(GuestDto guest) throws BusinessException;
 
 	GuestDto delete(String uuid) throws BusinessException;
+
+	List<GuestDto> search(UserSearchDto userSearchDto) throws BusinessException;
 }
