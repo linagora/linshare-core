@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2016. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -32,7 +32,7 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.webservice.delegation.impl;
+package org.linagora.linshare.webservice.userv2.impl;
 
 import java.util.Set;
 
@@ -52,7 +52,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.MailingListContactDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.MailingListDto;
 import org.linagora.linshare.core.facade.webservice.user.MailingListFacade;
-import org.linagora.linshare.webservice.delegation.MailingListRestServcice;
+import org.linagora.linshare.webservice.user.MailingListRestService;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -60,11 +60,11 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/{ownerUuid}/lists")
-@Api(value = "/rest/delegaton/{ownerUuid}/lists", description = "Mailing lists delegation api.")
+@Path("/lists")
+@Api(value = "/rest/user/v2/lists", description = "Mailing lists user api.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class MailingListRestServiceImpl implements MailingListRestServcice {
+public class MailingListRestServiceImpl implements MailingListRestService {
 
 	private final MailingListFacade mailingListFacade;
 
@@ -79,11 +79,8 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public Set<MailingListDto> findAll(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid)
-					throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		return mailingListFacade.findAll(ownerUuid, false);
+	public Set<MailingListDto> findAll() throws BusinessException {
+		return mailingListFacade.findAll(null, true);
 	}
 
 	@Path("/{uuid}")
@@ -95,31 +92,21 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public MailingListDto find(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "The mailing list uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		MailingListDto dto = mailingListFacade.find(ownerUuid, uuid);
-		// user/v1 API compatibility.
-		dto.setCreationDate(null);
-		dto.setModificationDate(null);
-		return dto;
+		return mailingListFacade.find(null, uuid);
 	}
 
 	@Path("/{uuid}")
 	@HEAD
-	@ApiOperation(value = "Find an user mailing list.", response = MailingListDto.class)
+	@ApiOperation(value = "Find an user mailing list.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-		@ApiResponse(code = 404, message = "Mailing list not found."),
-		@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-		@ApiResponse(code = 500, message = "Internal server error."), })
+			@ApiResponse(code = 404, message = "Mailing list not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public void head(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
-			@ApiParam(value = "The mailing list uuid.", required = true) @PathParam("uuid") String uuid)
-					throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		mailingListFacade.find(ownerUuid, uuid);
+	public void head(String uuid) throws BusinessException {
+		mailingListFacade.find(null, uuid);
 	}
 
 	@Path("/")
@@ -130,18 +117,12 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public MailingListDto create(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
-			@ApiParam(value = "The mailing list to create.", required = true) MailingListDto dto)
+			@ApiParam(value = "The mailing list to create. Only identifier is required.", required = true) MailingListDto dto)
 					throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		dto = mailingListFacade.create(ownerUuid, dto);
-		// user/v1 API compatibility.
-		dto.setCreationDate(null);
-		dto.setModificationDate(null);
-		return dto;
+		return mailingListFacade.create(null, dto);
 	}
 
-	@Path("/")
+	@Path("/{uuid}")
 	@PUT
 	@ApiOperation(value = "Update a mailing list.", response = MailingListDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
@@ -149,15 +130,9 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public MailingListDto update(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "The mailing list to update.", required = true) MailingListDto dto)
 					throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		dto = mailingListFacade.update(ownerUuid, dto);
-		// user/v1 API compatibility.
-		dto.setCreationDate(null);
-		dto.setModificationDate(null);
-		return dto;
+		return mailingListFacade.update(null, dto);
 	}
 
 	@Path("/")
@@ -169,15 +144,10 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public MailingListDto delete(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "The mailing list to delete.", required = true) MailingListDto dto)
 					throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		dto = mailingListFacade.delete(ownerUuid, dto.getUuid());
-		// user/v1 API compatibility.
-		dto.setCreationDate(null);
-		dto.setModificationDate(null);
-		return dto;
+		Validate.notNull(dto,  "Mailing list dto must be set.");
+		return mailingListFacade.delete(null, dto.getUuid());
 	}
 
 	@Path("/{uuid}")
@@ -189,15 +159,23 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public MailingListDto delete(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The mailing list to delete uuid.", required = true) @PathParam("uuid") String uuid)
+					throws BusinessException {
+		return mailingListFacade.delete(null, uuid);
+	}
+
+	@Path("/{uuid}/contacts")
+	@GET
+	@ApiOperation(value = "Find an user mailing list.", response = MailingListDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 404, message = "Mailing list not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public Set<MailingListContactDto> findAllContacts(
 			@ApiParam(value = "The mailing list uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		MailingListDto dto = mailingListFacade.delete(ownerUuid, uuid);
-		// user/v1 API compatibility.
-		dto.setCreationDate(null);
-		dto.setModificationDate(null);
-		return dto;
+		return mailingListFacade.findAllContacts(null, uuid);
 	}
 
 	@Path("/{uuid}/contacts")
@@ -206,13 +184,10 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 	@ApiResponses({
 			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") })
 	@Override
-	public void createContact(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
-			@ApiParam(value = "The mailing list uuid.", required = true) @PathParam("uuid") String uuid,
-			@ApiParam(value = "The mailing list contact to create.", required = true) MailingListContactDto dto)
+	public void createContact(@ApiParam(value = "Mailing list uuid.", required = true) @PathParam("uuid") String uuid,
+			@ApiParam(value = "Contact to create.", required = true) MailingListContactDto dto)
 					throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		mailingListFacade.addContact(ownerUuid, uuid, dto);
+		mailingListFacade.addContact(null, uuid, dto);
 	}
 
 	@Path("/{uuid}/contacts")
@@ -222,12 +197,10 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") })
 	@Override
 	public void updateContact(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
-			@ApiParam(value = "The mailing list contact uuid.", required = true) @PathParam("uuid") String uuid,
-			@ApiParam(value = "The mailing list contact to create.", required = true) MailingListContactDto dto)
+			@ApiParam(value = "Mailing list contact uuid.", required = true) @PathParam("uuid") String uuid,
+			@ApiParam(value = "Contact to create.", required = true) MailingListContactDto dto)
 					throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		mailingListFacade.updateContact(ownerUuid, dto);
+		mailingListFacade.updateContact(null, dto);
 	}
 
 	@Path("/{uuid}/contacts")
@@ -237,26 +210,10 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") })
 	@Override
 	public void deleteContact(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
-			@ApiParam(value = "The mailing list uuid.", required = true) @PathParam("uuid") String uuid,
-			@ApiParam(value = "The mailing list contact.", required = true) MailingListContactDto dto)
+			@ApiParam(value = "Mailing list contact uuid.", required = true) @PathParam("uuid") String uuid,
+			@ApiParam(value = "Contact to create.", required = true) MailingListContactDto dto)
 					throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		mailingListFacade.deleteContact(ownerUuid, dto.getUuid());
-	}
-
-	@Path("/{uuid}/contacts")
-	@GET
-	@ApiOperation(value = "Delete a contact from a mailing list.")
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") })
-	@Override
-	public Set<MailingListContactDto> findAllContacts(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
-			@ApiParam(value = "The mailing list uuid.", required = true) @PathParam("uuid") String uuid)
-					throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		return mailingListFacade.findAllContacts(ownerUuid, uuid);
+		mailingListFacade.deleteContact(null, dto.getUuid());
 	}
 
 	@Path("/{uuid}/contacts/{contactUuid}")
@@ -266,10 +223,9 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") })
 	@Override
 	public void deleteContact(
-			@ApiParam(value = "Mailing list contact uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
 			@ApiParam(value = "Mailing list contact uuid.", required = true) @PathParam("uuid") String uuid,
 			@ApiParam(value = "Mailing list contact uuid.", required = true) @PathParam("contactUuid") String contactUuid)
 					throws BusinessException {
-		mailingListFacade.deleteContact(ownerUuid, contactUuid);
+		mailingListFacade.deleteContact(null, contactUuid);
 	}
 }

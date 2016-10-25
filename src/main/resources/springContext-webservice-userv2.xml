@@ -56,6 +56,10 @@
 		<constructor-arg ref="wsAuditLogEntryUserFacade"/>
 	</bean>
 
+	<bean id="userv2MailingListRestService" class="org.linagora.linshare.webservice.userv2.impl.MailingListRestServiceImpl">
+		<constructor-arg ref="wsMailingListFacade" />
+	</bean>
+
 	<jaxrs:server id="userRestContainer" address="/rest/user/v2">
 		<jaxrs:serviceBeans>
 			<ref bean="userEnumRestService" />
@@ -73,7 +77,7 @@
 			<ref bean="userFunctionalityRestService" />
 			<ref bean="userFlowDocumentUploaderRestService" />
 			<ref bean="userShareEntryGroupRestService" />
-			<ref bean="userMailingListRestService" />
+			<ref bean="userv2MailingListRestService" />
 			<ref bean="userMimeTypeRestService" />
 			<ref bean="userAutoCompleteRestService" />
 			<ref bean="userUploadRequestRestService" />

@@ -72,7 +72,6 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 		this.mailingListFacade = mailingListFacade;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Path("/")
 	@GET
 	@ApiOperation(value = "Find all an user mailing lists.", response = MailingListDto.class)
@@ -81,7 +80,7 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public Set<MailingListDto> findAll() throws BusinessException {
-		return mailingListFacade.findAll(null);
+		return mailingListFacade.findAll(null, false);
 	}
 
 	@Path("/{uuid}")
@@ -95,7 +94,11 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 	public MailingListDto find(
 			@ApiParam(value = "The mailing list uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		return mailingListFacade.find(null, uuid);
+		MailingListDto dto = mailingListFacade.find(null, uuid);
+		// user/v1 API compatibility.
+		dto.setCreationDate(null);
+		dto.setModificationDate(null);
+		return dto;
 	}
 
 	@Path("/{uuid}")
@@ -118,9 +121,14 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public MailingListDto create(
-			@ApiParam(value = "The mailing list to create.", required = true) MailingListDto dto)
+			@ApiParam(value = "The mailing list to create. Only identifier is required.", required = true) MailingListDto dto)
 					throws BusinessException {
-		return mailingListFacade.create(null, dto);
+		dto = mailingListFacade.create(null, dto);
+		// user/v1 API compatibility.
+		dto.setCreationDate(null);
+		dto.setModificationDate(null);
+		return dto;
+
 	}
 
 	@Path("/{uuid}")
@@ -133,7 +141,11 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 	public MailingListDto update(
 			@ApiParam(value = "The mailing list to update.", required = true) MailingListDto dto)
 					throws BusinessException {
-		return mailingListFacade.update(null, dto);
+		dto = mailingListFacade.update(null, dto);
+		// user/v1 API compatibility.
+		dto.setCreationDate(null);
+		dto.setModificationDate(null);
+		return dto;
 	}
 
 	@Path("/")
@@ -148,7 +160,12 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 			@ApiParam(value = "The mailing list to delete.", required = true) MailingListDto dto)
 					throws BusinessException {
 		Validate.notNull(dto,  "Mailing list dto must be set.");
-		return mailingListFacade.delete(null, dto.getUuid());
+		dto = mailingListFacade.delete(null, dto.getUuid());
+		// user/v1 API compatibility.
+		dto.setCreationDate(null);
+		dto.setModificationDate(null);
+		return dto;
+
 	}
 
 	@Path("/{uuid}")
@@ -162,7 +179,12 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 	public MailingListDto delete(
 			@ApiParam(value = "The mailing list to delete uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		return mailingListFacade.delete(null, uuid);
+		MailingListDto dto = mailingListFacade.delete(null, uuid);
+		// user/v1 API compatibility.
+		dto.setCreationDate(null);
+		dto.setModificationDate(null);
+		return dto;
+
 	}
 
 	@Path("/{uuid}/contacts")

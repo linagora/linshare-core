@@ -34,10 +34,12 @@
 package org.linagora.linshare.core.facade.webservice.common.dto;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 
@@ -70,20 +72,37 @@ public class MailingListDto {
 	@ApiModelProperty(value = "DomainId")
 	private String domainId;
 
+	// should only available in user/v2 API for compatibility support.
+	@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+	@ApiModelProperty(value = "Creation Date")
+	protected Date creationDate;
+
+	// should only available in user/v2 API for compatibility support.
+	@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+	@ApiModelProperty(value = "Modification Date")
+	protected Date modificationDate;
+
 	public MailingListDto() {
 		super();
 	}
 
 	public MailingListDto(MailingList list) {
+		this(list, true);
+	}
+
+	public MailingListDto(MailingList list, boolean full) {
 		this.uuid = list.getUuid();
 		this.identifier = list.getIdentifier();
 		this.description = list.getDescription();
 		this.isPublic = list.isPublic();
 		this.owner = UserDto.getSimple(list.getOwner());
 		this.domainId = list.getDomain().getUuid();
-
-		for (MailingListContact current : list.getMailingListContact()) {
-			contacts.add(new MailingListContactDto(current));
+		this.creationDate = list.getCreationDate();
+		this.modificationDate = list.getModificationDate();
+		if (full) {
+			for (MailingListContact current : list.getMailingListContact()) {
+				contacts.add(new MailingListContactDto(current));
+			}
 		}
 	}
 
@@ -155,6 +174,22 @@ public class MailingListDto {
 		this.domainId = domainId;
 	}
 
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+	}
+
 	/*
 	 * Transformers
 	 */
@@ -162,7 +197,20 @@ public class MailingListDto {
 		return new Function<MailingList, MailingListDto>() {
 			@Override
 			public MailingListDto apply(MailingList arg0) {
-				return new MailingListDto(arg0);
+				MailingListDto dto = new MailingListDto(arg0, true);
+				// user/v1 API compatibility.
+				dto.setCreationDate(null);
+				dto.setModificationDate(null);
+				return dto;
+			}
+		};
+	}
+
+	public static Function<MailingList, MailingListDto> toDtoV2() {
+		return new Function<MailingList, MailingListDto>() {
+			@Override
+			public MailingListDto apply(MailingList arg0) {
+				return new MailingListDto(arg0, false);
 			}
 		};
 	}
