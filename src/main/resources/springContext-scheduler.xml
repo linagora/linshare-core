@@ -152,13 +152,13 @@
 			value="${job.shares.cron.expression}" />
 	</bean>
 
-<bean id="dailyBatchJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+	<bean id="dailyBatchJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
 		<property name="jobClass"
 			value="org.linagora.linshare.core.job.quartz.LinShareJobBean" />
 		<property name="jobDataAsMap">
 			<map>
 				<entry key="batch">
-					<list>
+					<list value-type="org.linagora.linshare.core.job.quartz.LinShareJobBean">
 						<ref bean="statisticDailyUserBatch" />
 						<ref bean="statisticDailyThreadBatch" />
 						<ref bean="statisticDailyDomainBatch" />
@@ -174,7 +174,7 @@
 		</property>
 	</bean>
 
-    <bean id="dailyBatchJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+    <bean id="dailyBatchJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="dailyBatchJob"/>
         <property name="cronExpression" value="${job.updateDailyStatQuota.cron.expression}"/>
     </bean>

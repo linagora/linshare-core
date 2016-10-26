@@ -39,6 +39,7 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -59,11 +60,19 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
-@ContextConfiguration(locations = { "classpath:springContext-datasource.xml", "classpath:springContext-repository.xml",
-		"classpath:springContext-dao.xml", "classpath:springContext-ldap.xml", "classpath:springContext-service.xml",
-		"classpath:springContext-business-service.xml", "classpath:springContext-service-miscellaneous.xml",
-		"classpath:springContext-rac.xml", "classpath:springContext-fongo.xml",
-		"classpath:springContext-storage-jcloud.xml", "classpath:springContext-test.xml" })
+//TODO:  FMA fix tests
+@ContextConfiguration(locations = {
+		"classpath:springContext-datasource.xml",
+		"classpath:springContext-repository.xml",
+		"classpath:springContext-dao.xml",
+		"classpath:springContext-ldap.xml",
+		"classpath:springContext-service.xml",
+		"classpath:springContext-business-service.xml",
+		"classpath:springContext-service-miscellaneous.xml",
+		"classpath:springContext-rac.xml",
+		"classpath:springContext-fongo.xml",
+		"classpath:springContext-storage-jcloud.xml",
+		"classpath:springContext-test.xml" })
 public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4SpringContextTests {
 
 	@Autowired

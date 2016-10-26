@@ -64,7 +64,7 @@ public class AccountQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Accou
 		criteria.add(Restrictions.ge("batchModificationDate", startRange));
 		criteria.add(Restrictions.le("batchModificationDate", endRange));
 		criteria.createAlias("domain", "do");
-		criteria.setProjection(Projections.distinct(Projections.property("do.identifier")));
+		criteria.setProjection(Projections.distinct(Projections.property("do.uuid")));
 		@SuppressWarnings("unchecked")
 		List<String> listIdentifier = (List<String>) getHibernateTemplate().findByCriteria(criteria);
 		return listIdentifier;

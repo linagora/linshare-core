@@ -693,10 +693,6 @@ CREATE TABLE async_task (
   waiting_duration      int8,
   meta_data             text,
   PRIMARY KEY (id));
-<<<<<<< 3c26ad66fd2c446cecae29c9a824bf2c035a1bc4
-=======
-ALTER TABLE account ADD CONSTRAINT account_unique_mail_domain_destroyed UNIQUE (mail, domain_id, destroyed);
-
 CREATE TABLE operation_history (
   id                    int8 NOT NULL,
   creation_date         timestamp(6) NOT NULL,
@@ -752,7 +748,6 @@ CREATE TABLE batch_history (
   unhandled_errors        int8,
   PRIMARY KEY (id));
 
->>>>>>> Cleaning quota branch.
 CREATE UNIQUE INDEX account_lsuid_index
   ON account (ls_uuid);
 CREATE UNIQUE INDEX account_ls_uuid
@@ -768,7 +763,7 @@ CREATE INDEX document_id_index
 CREATE INDEX document_i
   ON document (uuid);
 CREATE INDEX domain_abstract_id_index
-  ON domain_abstract (identifier);
+  ON domain_abstract (uuid);
 CREATE INDEX domain_abstract_i2
   ON domain_abstract (id);
 CREATE INDEX domain_access_policy_index

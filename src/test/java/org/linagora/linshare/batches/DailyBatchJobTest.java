@@ -40,9 +40,10 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-rac.xml",
-		"classpath:springContext-jackRabbit-mock.xml",
 		"classpath:springContext-test.xml",
 		"classpath:springContext-quota-manager.xml",
+		"classpath:springContext-fongo.xml",
+		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-ldap.xml" })
 public class DailyBatchJobTest extends AbstractTransactionalJUnit4SpringContextTests {
