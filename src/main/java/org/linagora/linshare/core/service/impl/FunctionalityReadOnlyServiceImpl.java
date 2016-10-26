@@ -187,7 +187,9 @@ public class FunctionalityReadOnlyServiceImpl implements
 
 	@Override
 	public Functionality getEnciphermentFunctionality(AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.ENCIPHERMENT);
+		Functionality functionality = _getFunctionality(domain, FunctionalityNames.ENCIPHERMENT);
+		functionality = getForbiddenFunctionnality(functionality);
+		return functionality;
 	}
 
 	@Override
@@ -240,21 +242,6 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
-	public Functionality getSignatureFunctionality(AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.SIGNATURE);
-	}
-
-	@Override
-	public StringValueFunctionality getCustomLogoFunctionality(AbstractDomain domain) {
-		return (StringValueFunctionality) _getFunctionality(domain, FunctionalityNames.CUSTOM_LOGO);
-	}
-
-	@Override
-	public StringValueFunctionality getCustomLinkLogoFunctionality(AbstractDomain domain) {
-		return (StringValueFunctionality) _getFunctionality(domain, FunctionalityNames.CUSTOM_LOGO__LINK);
-	}
-
-	@Override
 	public Functionality getUserCanUploadFunctionality(AbstractDomain domain) {
 		return _getFunctionality(domain, FunctionalityNames.INTERNAL_CAN_UPLOAD);
 	}
@@ -265,38 +252,23 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
-	public Functionality getUserTabFunctionality(AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.TAB_USER);
+	public Functionality getWorkGroupCreationRight(AbstractDomain domain) {
+		return _getFunctionality(domain, FunctionalityNames.WORK_GROUP__CREATION_RIGHT);
 	}
 
 	@Override
-	public Functionality getThreadCreationPermission(AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.TAB_THREAD__CREATE_PERMISSION);
+	public Functionality getWorkGroupFunctionality(AbstractDomain domain) {
+		return _getFunctionality(domain, FunctionalityNames.WORK_GROUP);
 	}
 
 	@Override
-	public Functionality getUpdateFilesFunctionality(AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.UPDATE_FILE);
+	public Functionality getContactsListFunctionality(AbstractDomain domain) {
+		return _getFunctionality(domain, FunctionalityNames.CONTACTS_LIST);
 	}
 
 	@Override
-	public Functionality getAuditTabFunctionality(AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.TAB_AUDIT);
-	}
-
-	@Override
-	public Functionality getThreadTabFunctionality(AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.TAB_THREAD);
-	}
-
-	@Override
-	public Functionality getHelpTabFunctionality(AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.TAB_HELP);
-	}
-
-	@Override
-	public Functionality getListTabFunctionality(AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.TAB_LIST);
+	public BooleanValueFunctionality getContactsListCreationFunctionality(AbstractDomain domain) {
+		return (BooleanValueFunctionality)_getFunctionality(domain, FunctionalityNames.CONTACTS_LIST__CREATION_RIGHT);
 	}
 
 	@Override
@@ -426,26 +398,6 @@ public class FunctionalityReadOnlyServiceImpl implements
 			functionality.setConfigurationPolicy(activation);
 		}
 		return functionality;
-	}
-
-	@Override
-	public boolean isCustomLogoActiveInRootDomain() throws BusinessException {
-		return this.getCustomLogoFunctionality(getRootDomain()).getActivationPolicy().getStatus();
-	}
-
-	@Override
-	public String getCustomLogoUrlInRootDomain() throws BusinessException {
-		return this.getCustomLogoFunctionality(getRootDomain()).getValue();
-	}
-
-	@Override
-	public boolean isCustomLinkLogoActiveInRootDomain() throws BusinessException {
-		return this.getCustomLinkLogoFunctionality(getRootDomain()).getActivationPolicy().getStatus();
-	}
-
-	@Override
-	public String getCustomLinkLogoInRootDomain() throws BusinessException {
-		return this.getCustomLinkLogoFunctionality(getRootDomain()).getValue();
 	}
 
 	@Override

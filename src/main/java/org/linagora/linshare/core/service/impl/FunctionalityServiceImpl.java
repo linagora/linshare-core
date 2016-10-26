@@ -92,7 +92,6 @@ public class FunctionalityServiceImpl extends AbstractFunctionalityServiceImpl<F
 		excludesForUsers.add(FunctionalityNames.QUOTA_GLOBAL.toString());
 		excludesForUsers.add(FunctionalityNames.QUOTA_USER.toString());
 		excludesForUsers.add(FunctionalityNames.TIME_STAMPING.toString());
-		excludesForUsers.add(FunctionalityNames.UPDATE_FILE.toString());
 	}
 
 	@Override

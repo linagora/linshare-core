@@ -142,8 +142,8 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 
 	@Override
 	public Thread create(Account actor, Account owner, String name) throws BusinessException {
-		Functionality threadFunc = functionalityReadOnlyService.getThreadTabFunctionality(owner.getDomain());
-		Functionality threadCreation = functionalityReadOnlyService.getThreadCreationPermission(owner.getDomain());
+		Functionality threadFunc = functionalityReadOnlyService.getWorkGroupFunctionality(owner.getDomain());
+		Functionality threadCreation = functionalityReadOnlyService.getWorkGroupCreationRight(owner.getDomain());
 		if (!threadFunc.getActivationPolicy().getStatus()
 				|| !threadCreation.getActivationPolicy().getStatus()) {
 			throw new BusinessException(BusinessErrorCode.THREAD_FORBIDDEN, "Functionality forbideen.");

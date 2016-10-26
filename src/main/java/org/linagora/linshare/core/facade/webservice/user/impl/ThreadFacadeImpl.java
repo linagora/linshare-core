@@ -74,7 +74,7 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 	public User checkAuthentication() throws BusinessException {
 		User user = super.checkAuthentication();
 		Functionality functionality = functionalityReadOnlyService
-				.getThreadTabFunctionality(user.getDomain());
+				.getWorkGroupFunctionality(user.getDomain());
 
 		if (!functionality.getActivationPolicy().getStatus()) {
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,

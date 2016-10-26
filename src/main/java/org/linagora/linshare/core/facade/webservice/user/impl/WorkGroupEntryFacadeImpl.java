@@ -94,7 +94,7 @@ public class WorkGroupEntryFacadeImpl extends UserGenericFacadeImp implements
 	protected User checkAuthentication() throws BusinessException {
 		User actor = super.checkAuthentication();
 		Functionality functionality = functionalityReadOnlyService
-				.getThreadTabFunctionality(actor.getDomain());
+				.getWorkGroupFunctionality(actor.getDomain());
 		if (!functionality.getActivationPolicy().getStatus()) {
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");

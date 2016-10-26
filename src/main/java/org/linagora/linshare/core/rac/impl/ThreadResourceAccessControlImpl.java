@@ -132,7 +132,7 @@ public class ThreadResourceAccessControlImpl extends
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.THREADS_CREATE);
 		}
-		Functionality creation = functionalityService.getThreadCreationPermission(owner.getDomain());
+		Functionality creation = functionalityService.getWorkGroupCreationRight(owner.getDomain());
 		if (!creation.getActivationPolicy().getStatus()){
 			String message = "You can not create thread, you are not authorized.";
 			logger.error(message);

@@ -76,12 +76,8 @@ public interface FunctionalityReadOnlyService {
 	BooleanValueFunctionality getAnonymousUrlNotification(AbstractDomain domain);
 	BooleanValueFunctionality getAnonymousUrl(String domainIdentifier);
 	Functionality getRestrictedGuestFunctionality(AbstractDomain domain);
-	Functionality getSignatureFunctionality(AbstractDomain domain);
-	Functionality getThreadCreationPermission(AbstractDomain domain);
-	Functionality getUpdateFilesFunctionality(AbstractDomain domain);
+	Functionality getWorkGroupCreationRight(AbstractDomain domain);
 	Functionality getUserCanUploadFunctionality(AbstractDomain domain);
-	StringValueFunctionality getCustomLogoFunctionality(AbstractDomain domain);
-	StringValueFunctionality getCustomLinkLogoFunctionality(AbstractDomain domain);
 	StringValueFunctionality getCustomNotificationUrlFunctionality(AbstractDomain domain);
 	StringValueFunctionality getShareNotificationBeforeExpirationFunctionality(AbstractDomain domain);
 	BooleanValueFunctionality getAcknowledgement(String domainIdentifier);
@@ -90,11 +86,9 @@ public interface FunctionalityReadOnlyService {
 	IntegerValueFunctionality getUndownloadedSharedDocumentsAlertDuration(AbstractDomain domain);
 
 	IntegerValueFunctionality getCompletionFunctionality(AbstractDomain domain);
-	Functionality getUserTabFunctionality(AbstractDomain domain);
-	Functionality getAuditTabFunctionality(AbstractDomain domain);
-	Functionality getThreadTabFunctionality(AbstractDomain domain);
-	Functionality getHelpTabFunctionality(AbstractDomain domain);
-	Functionality getListTabFunctionality(AbstractDomain domain);
+	Functionality getWorkGroupFunctionality(AbstractDomain domain);
+	Functionality getContactsListFunctionality(AbstractDomain domain);
+	BooleanValueFunctionality getContactsListCreationFunctionality(AbstractDomain domain);
 
 	// UPLOAD_REQUEST
 	StringValueFunctionality getUploadRequestFunctionality(AbstractDomain domain);
@@ -114,30 +108,6 @@ public interface FunctionalityReadOnlyService {
 
 	// UPLOAD PROPOSITION
 	Functionality getUploadPropositionFunctionality(AbstractDomain domain);
-
-	/**
-	 * Return the status of the custom logo  in root domain
-	 * @return the status
-	 */
-	boolean isCustomLogoActiveInRootDomain() throws BusinessException;
-
-	/**
-	 * Return the status of the custom logo  in root domain
-	 * @return the status
-	 */
-	String getCustomLogoUrlInRootDomain() throws BusinessException;
-
-	/**
-	 * Return the status of the custom link logo  in root domain
-	 * @return the status
-	 */
-	boolean isCustomLinkLogoActiveInRootDomain() throws BusinessException;
-
-	/**
-	 * Return the status of the custom link logo  in root domain
-	 * @return the status
-	 */
-	String getCustomLinkLogoInRootDomain() throws BusinessException;
 
 	/**
 	 * Return the status of the custom Notification URL in root domain

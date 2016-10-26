@@ -99,16 +99,17 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (8, false,
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (4, true, 'MIME_TYPE', 7, 8, 1);
 
 
--- Functionality : SIGNATURE
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (9, false, false, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (10, false, false, 2, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (5, true, 'SIGNATURE', 9, 10, 1);
+--This functionality is not yet available in LinShare 2.0.0
+---- Functionality : SIGNATURE
+--INSERT INTO policy(id, status, default_status, policy, system) VALUES (9, false, false, 1, false);
+--INSERT INTO policy(id, status, default_status, policy, system) VALUES (10, false, false, 2, true);
+--INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (5, true, 'SIGNATURE', 9, 10, 1);
 
-
--- Functionality : ENCIPHERMENT
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (11, false, false, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (12, false, false, 2, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (6, true, 'ENCIPHERMENT', 11, 12, 1);
+--This functionality is not yet available in LinShare 2.0.0
+---- Functionality : ENCIPHERMENT
+--INSERT INTO policy(id, status, default_status, policy, system) VALUES (11, false, false, 1, false);
+--INSERT INTO policy(id, status, default_status, policy, system) VALUES (12, false, false, 2, true);
+--INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (6, true, 'ENCIPHERMENT', 11, 12, 1);
 
 
 -- Functionality : TIME_STAMPING
@@ -123,18 +124,19 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (15, false
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (16, false, false, 2, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (8, true, 'ANTIVIRUS', 15, 16, 1);
 
+--useless - deleted
+---- Functionality : CUSTOM_LOGO
+--INSERT INTO policy(id, status, default_status, policy, system) VALUES (17, false, false, 1, false);
+--INSERT INTO policy(id, status, default_status, policy, system) VALUES (18, true, true, 1, false);
+--INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (9, false, 'CUSTOM_LOGO', 17, 18, 1);
+--INSERT INTO functionality_string(functionality_id, string_value) VALUES (9, 'http://linshare-ui-user.local/custom/images/logo.png');
 
--- Functionality : CUSTOM_LOGO
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (17, false, false, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (18, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (9, false, 'CUSTOM_LOGO', 17, 18, 1);
-INSERT INTO functionality_string(functionality_id, string_value) VALUES (9, 'http://linshare-ui-user.local/custom/images/logo.png');
-
--- Functionality : CUSTOM_LOGO__LINK
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (59, false, false, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (60, false, false, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param) VALUES (29, false, 'CUSTOM_LOGO__LINK', 59, 60, 1, 'CUSTOM_LOGO', true);
-INSERT INTO functionality_string(functionality_id, string_value) VALUES (29, 'http://linshare-ui-user.local');
+--useless - deleted
+---- Functionality : CUSTOM_LOGO__LINK
+--INSERT INTO policy(id, status, default_status, policy, system) VALUES (59, false, false, 1, false);
+--INSERT INTO policy(id, status, default_status, policy, system) VALUES (60, false, false, 1, false);
+--INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param) VALUES (29, false, 'CUSTOM_LOGO__LINK', 59, 60, 1, 'CUSTOM_LOGO', true);
+--INSERT INTO functionality_string(functionality_id, string_value) VALUES (29, 'http://linshare-ui-user.local');
 
 
 -- Functionality : GUESTS
@@ -208,23 +210,23 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (32, true,
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (16, false, 'COMPLETION', 31, 32, 1);
 INSERT INTO functionality_integer(functionality_id, integer_value) VALUES (16, 3);
 
+--useless - deleted
+---- Functionality : TAB_HELP
+--INSERT INTO policy(id, status, default_status, policy, system) VALUES (33, true, true, 1, false);
+--INSERT INTO policy(id, status, default_status, policy, system) VALUES (34, false, false, 1, true);
+--INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (17, true, 'TAB_HELP', 33, 34, 1);
 
--- Functionality : TAB_HELP
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (33, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (34, false, false, 1, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (17, true, 'TAB_HELP', 33, 34, 1);
+--useless - deleted
+---- Functionality : TAB_AUDIT
+--INSERT INTO policy(id, status, default_status, policy, system) VALUES (35, true, true, 1, false);
+--INSERT INTO policy(id, status, default_status, policy, system) VALUES (36, false, false, 1, true);
+--INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (18, true, 'TAB_AUDIT', 35, 36, 1);
 
-
--- Functionality : TAB_AUDIT
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (35, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (36, false, false, 1, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (18, true, 'TAB_AUDIT', 35, 36, 1);
-
-
--- Functionality : TAB_USER
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (37, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (38, false, false, 1, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (19, true, 'TAB_USER', 37, 38, 1);
+--useless - deleted
+---- Functionality : TAB_USER
+--INSERT INTO policy(id, status, default_status, policy, system) VALUES (37, true, true, 1, false);
+--INSERT INTO policy(id, status, default_status, policy, system) VALUES (38, false, false, 1, true);
+--INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (19, true, 'TAB_USER', 37, 38, 1);
 
 -- Functionality : SHARE_NOTIFICATION_BEFORE_EXPIRATION
 -- Policies : MANDATORY(0), ALLOWED(1), FORBIDDEN(2)
@@ -233,28 +235,28 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (44, false
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (22, false, 'SHARE_NOTIFICATION_BEFORE_EXPIRATION', 43, 44, 1);
 INSERT INTO functionality_string(functionality_id, string_value) VALUES (22, '2,7');
 
--- Functionality : TAB_THREAD
+-- Functionality : WORK_GROUP
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (45, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (46, false, false, 1, true);
 -- if a functionality is system, you will not be able see/modify its parameters
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (23, true, 'TAB_THREAD', 45, 46, 1);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (23, true, 'WORK_GROUP', 45, 46, 1);
 
--- Functionality : TAB_THREAD__CREATE_PERMISSION
+-- Functionality : WORK_GROUP__CREATION_RIGHT
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (57, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (58, false, false, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (117, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param) VALUES (28, false, 'TAB_THREAD__CREATE_PERMISSION', 57, 58, 117, 1, 'TAB_THREAD', true);
-INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (28, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param) VALUES (28, false, 'WORK_GROUP__CREATION_RIGHT', 57, 58, 1, 'WORK_GROUP', true);
 
--- Functionality : TAB_LIST
+-- Functionality : CONTACTS_LIST
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (53, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (54, false, false, 1, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (26, true, 'TAB_LIST', 53, 54, 1);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (26, true, 'CONTACTS_LIST', 53, 54, 1);
 
---Functionality : UPDATE_FILE
+--Functionality : CONTACTS_LIST__CREATION_RIGHT
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (55, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (56, false, false, 1, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (27, true, 'UPDATE_FILE', 55, 56, 1);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (56, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (227, false, false, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param) VALUES(27, false, 'CONTACTS_LIST__CREATION_RIGHT', 55, 56, 227, 1, 'CONTACTS_LIST', true);
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (27, false);
 
 -- Functionality : DOMAIN
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (118, true, true, 0, true);

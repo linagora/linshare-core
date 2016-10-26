@@ -66,7 +66,7 @@ public class MailingListResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasDeletePermission(Account actor, Account account, MailingList entry, Object... opt) {
-		if (isEnable(actor)) {
+		if (isEnable(actor) && hasCUDRight(actor)) {
 			return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.LISTS_DELETE);
 		}
 		return false;
@@ -74,22 +74,27 @@ public class MailingListResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasCreatePermission(Account actor, Account account, MailingList entry, Object... opt) {
-		if (isEnable(actor)) {
-			return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.LISTS_CREATE);
+		if (isEnable(actor) && hasCUDRight(actor)) {
+				return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.LISTS_CREATE);
 		}
 		return false;
 	}
 
 	@Override
 	protected boolean hasUpdatePermission(Account actor, Account account, MailingList entry, Object... opt) {
-		if (isEnable(actor)) {
+		if (isEnable(actor) && hasCUDRight(actor)) {
 			return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.LISTS_UPDATE);
 		}
 		return false;
 	}
 
 	private boolean isEnable(Account actor) {
-		Functionality func = functionalityService.getListTabFunctionality(actor.getDomain());
+		Functionality func = functionalityService.getContactsListFunctionality(actor.getDomain());
+		return func.getActivationPolicy().getStatus();
+	}
+
+	private boolean hasCUDRight(Account actor) {
+		Functionality func = functionalityService.getContactsListCreationFunctionality(actor.getDomain());
 		return func.getActivationPolicy().getStatus();
 	}
 
