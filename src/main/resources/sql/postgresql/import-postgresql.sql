@@ -567,6 +567,17 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
  VALUES(56, false, 'ANONYMOUS_URL__NOTIFICATION', 224, 225, 226, 1, 'ANONYMOUS_URL', true);
 INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (56, true);
 
+-- Functionality : ANONYMOUS_URL__NOTIFICATION_URL
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (228, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (229, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (230, false, false, 2, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ 	VALUES(57, false, 'ANONYMOUS_URL__NOTIFICATION_URL', 228, 229, 230, 1, 'ANONYMOUS_URL', true);
+INSERT INTO functionality_string(functionality_id, string_value) VALUES (57, 'http://linshare-ui-user.local/');
+
+
+ANONYMOUS_URL__NOTIFICATION_URL
+
 -- Functionality : END
 
 

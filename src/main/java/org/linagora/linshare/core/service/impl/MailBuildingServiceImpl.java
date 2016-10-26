@@ -64,6 +64,7 @@ import org.linagora.linshare.core.domain.entities.MailContent;
 import org.linagora.linshare.core.domain.entities.MailFooter;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
+import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.UploadProposition;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
@@ -1608,13 +1609,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	}
 
 	private String getLinShareUrlForAContactRecipient(Account sender) {
-		AbstractDomain senderDomain = domainBusinessService.findGuestDomain(sender.getDomain());
-		// guest domain could be inexistent into the database.
-		if (senderDomain == null) {
-			senderDomain = sender.getDomain();
-		}
-		return functionalityReadOnlyService
-				.getCustomNotificationUrlFunctionality(senderDomain).getValue();
+		StringValueFunctionality notificationUrl = functionalityReadOnlyService
+				.getAnonymousURLNotificationUrl(sender.getDomain());
+		return notificationUrl.getValue();
 	}
 
 	private String getReceivedSharedFileDownloadLink(User recipient, ShareEntry share) {
