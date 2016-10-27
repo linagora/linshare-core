@@ -407,11 +407,14 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 
 	private void createQuotaThread(Thread thread) throws BusinessException {
 		Validate.notNull(thread, "Thread must be set.");
-			EnsembleQuota ensembleQuota = ensembleQuotaBusinessService.find(thread.getDomain(), EnsembleType.THREAD);
-			AccountQuota threadQuota = new AccountQuota(thread, thread.getDomain(),
-					thread.getDomain().getParentDomain(), ensembleQuota, ensembleQuota.getQuota(),
-					ensembleQuota.getQuotaWarning(), ensembleQuota.getFileSizeMax(), 0L, 0L);
-			accountQuotaBusinessService.create(threadQuota);
+		EnsembleQuota ensembleQuota = ensembleQuotaBusinessService.find(thread.getDomain(), EnsembleType.THREAD);
+		if (ensembleQuota == null) {
+			throw new BusinessException("Missing ensemble quota entity for current work_group");
+		}
+		AccountQuota threadQuota = new AccountQuota(thread, thread.getDomain(),
+				thread.getDomain().getParentDomain(), ensembleQuota, ensembleQuota.getQuota(),
+				ensembleQuota.getQuotaWarning(), ensembleQuota.getFileSizeMax(), 0L, 0L);
+		accountQuotaBusinessService.create(threadQuota);
 	}
 
     /* ***********************************************************
