@@ -56,7 +56,10 @@ public class EnsembleQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Ense
 
 	@Override
 	public EnsembleQuota find(AbstractDomain domain, EnsembleType ensembleType) {
-		return super.find(domain, null, ensembleType);
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("domain", domain));
+		criteria.add(Restrictions.eq("ensembleType", ensembleType));
+		return DataAccessUtils.singleResult(findByCriteria(criteria));
 	}
 
 	@Override
@@ -73,6 +76,6 @@ public class EnsembleQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Ense
 		if (list.size() > 0 && list.get(0) != null) {
 			return DataAccessUtils.longResult(findByCriteria(criteria));
 		}
-		return (long) 0;
+		return 0L;
 	}
 }
