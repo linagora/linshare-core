@@ -575,9 +575,6 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
  	VALUES(57, false, 'ANONYMOUS_URL__NOTIFICATION_URL', 228, 229, 230, 1, 'ANONYMOUS_URL', true);
 INSERT INTO functionality_string(functionality_id, string_value) VALUES (57, 'http://linshare-ui-user.local/');
 
-
-ANONYMOUS_URL__NOTIFICATION_URL
-
 -- Functionality : END
 
 
