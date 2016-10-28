@@ -714,21 +714,7 @@ public class UserServiceImpl implements UserService {
 			if (existingUser != null) {
 				// update
 				logger.debug("userRepository.update(existingUser)");
-				try {
 					user = userRepository.update(existingUser);
-				} catch (IllegalArgumentException e) {
-					logger.error("Could not update the user " + user.getMail()
-							+ " in the database ", e);
-					throw new TechnicalException(
-							TechnicalErrorCode.USER_INCOHERENCE,
-							"The user could not be update in the DB " + e);
-				} catch (BusinessException e) {
-					logger.error("Could not update the user " + user.getMail()
-							+ " in the database ", e);
-					throw new TechnicalException(
-							TechnicalErrorCode.USER_INCOHERENCE,
-							"The user could not be update in the DB " + e);
-				}
 			} else {
 				logger.debug("userRepository.create(user)");
 				// create
@@ -746,22 +732,8 @@ public class UserServiceImpl implements UserService {
 				Language locale = Language.fromTapestryLocale(user.getLocale().getTapestryLocale());
 				user.setExternalMailLocale(locale);
 				user.setCmisLocale(user.getDomain().getDefaultTapestryLocale().toString());
-				try {
 					user = userRepository.create(user);
 					createQuotaUser(user);
-				} catch (IllegalArgumentException e) {
-					logger.error("Could not create the user " + user.getMail()
-							+ " in the database ", e);
-					throw new TechnicalException(
-							TechnicalErrorCode.USER_INCOHERENCE,
-							"The user could not be created in the DB " + e);
-				} catch (BusinessException e) {
-					logger.error("Could not create the user " + user.getMail()
-							+ " in the database ", e);
-					throw new TechnicalException(
-							TechnicalErrorCode.USER_INCOHERENCE,
-							"The user could not be created in the DB " + e);
-				}
 			}
 			return user;
 		} else {
