@@ -55,4 +55,11 @@ public class AccountQuota extends Quota {
 	public void setEnsembleQuota(EnsembleQuota ensembleQuota) {
 		this.ensembleQuota = ensembleQuota;
 	}
+
+	@Override
+	public String toString() {
+		return "AccountQuota [id=" + id + ", uuid=" + uuid + ", account=" + account + ", domain=" + domain
+				+ ", parentDomain=" + parentDomain + ", quota=" + quota + ", quotaWarning=" + quotaWarning
+				+ ", currentValue=" + currentValue + ", lastValue=" + lastValue + ", fileSizeMax=" + fileSizeMax + "]";
+	}
 }

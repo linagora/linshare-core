@@ -42,4 +42,11 @@ public class PlatformQuota extends Quota {
 	public PlatformQuota(Long quota, Long quotaWarning, Long filSizeeMax, Long currentValue, Long lastValue) {
 		super(null, null, null, quota, quotaWarning, filSizeeMax, currentValue, lastValue);
 	}
+
+	@Override
+	public String toString() {
+		return "PlatformQuota [id=" + id + ", uuid=" + uuid + ", account=" + account + ", domain=" + domain
+				+ ", parentDomain=" + parentDomain + ", quota=" + quota + ", quotaWarning=" + quotaWarning
+				+ ", currentValue=" + currentValue + ", lastValue=" + lastValue + ", fileSizeMax=" + fileSizeMax + "]";
+	}
 }

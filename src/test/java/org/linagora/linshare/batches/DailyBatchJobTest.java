@@ -140,7 +140,10 @@ public class DailyBatchJobTest extends AbstractTransactionalJUnit4SpringContextT
 		List<ThreadDailyStat> listThreadDailyStat = threadDailyStatBusinessService.findBetweenTwoDates(null, new Date(),
 				new Date());
 		assertEquals(0, listThreadDailyStat.size());
+
+		// running all batches.
 		assertTrue("At least one batch failed.", job.executeExternal());
+
 		listOperationHistory = operationHistoryBusinessService.find(null, null, null, yesterday());
 		assertEquals(0, listOperationHistory.size());
 		listUserDailyStat = userdailyStatBusinessService.findBetweenTwoDates(null,

@@ -181,4 +181,11 @@ public abstract class Quota {
 	public void setBatchModificationDate(Date batchModificationDate) {
 		this.batchModificationDate = batchModificationDate;
 	}
+
+	@Override
+	public String toString() {
+		return "Quota [id=" + id + ", uuid=" + uuid + ", account=" + account + ", domain=" + domain + ", parentDomain="
+				+ parentDomain + ", quota=" + quota + ", quotaWarning=" + quotaWarning + ", currentValue="
+				+ currentValue + ", lastValue=" + lastValue + ", fileSizeMax=" + fileSizeMax + "]";
+	}
 }

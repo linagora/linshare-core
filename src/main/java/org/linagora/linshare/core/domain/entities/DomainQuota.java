@@ -43,4 +43,11 @@ public class DomainQuota extends Quota {
 			long quotaWarning, long fileSizeMax, long currentValue, long lastValue) {
 		super(null, domain, parentDomain, quota, quotaWarning, fileSizeMax, currentValue, lastValue);
 	}
+
+	@Override
+	public String toString() {
+		return "DomainQuota [id=" + id + ", uuid=" + uuid + ", account=" + account + ", domain=" + domain
+				+ ", parentDomain=" + parentDomain + ", quota=" + quota + ", quotaWarning=" + quotaWarning
+				+ ", currentValue=" + currentValue + ", lastValue=" + lastValue + ", fileSizeMax=" + fileSizeMax + "]";
+	}
 }
