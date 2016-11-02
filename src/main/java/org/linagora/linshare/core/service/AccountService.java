@@ -42,7 +42,7 @@ public interface AccountService {
 
 	/**
 	 * 
-	 * @param uid
+	 * @param uuid
 	 *            user identifier, should be lsUuid (or mail for compatibility,
 	 *            but this will be remove asap.)
 	 * @return

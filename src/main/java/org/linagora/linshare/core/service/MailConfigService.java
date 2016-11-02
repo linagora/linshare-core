@@ -125,7 +125,7 @@ public interface MailConfigService {
 	 * type.
 	 * 
 	 * @param actor
-	 * @param config
+	 * @param domainId
 	 * @param lang
 	 * @param type
 	 * @return
@@ -179,7 +179,7 @@ public interface MailConfigService {
 	 * Create a new mail content lang and add it to a mail configuration.
 	 * 
 	 * @param actor
-	 * @param content
+	 * @param contentLang
 	 * @return 
 	 * @throws BusinessException
 	 */
@@ -189,7 +189,7 @@ public interface MailConfigService {
 	 * Update an existing mail content lang.
 	 * 
 	 * @param actor
-	 * @param content
+	 * @param contentLang
 	 * @return 
 	 * @throws BusinessException
 	 */
@@ -268,7 +268,7 @@ public interface MailConfigService {
 	 * Create a new mail footer lang and add it to a mail configuration.
 	 * 
 	 * @param actor
-	 * @param footer
+	 * @param footerLang
 	 * @return 
 	 * @throws BusinessException
 	 */
@@ -278,7 +278,7 @@ public interface MailConfigService {
 	 * Update an existing mail footer lang.
 	 * 
 	 * @param actor
-	 * @param footer
+	 * @param footerLang
 	 * @throws BusinessException
 	 */
 	MailFooterLang updateFooterLang(User actor, MailFooterLang footerLang) throws BusinessException;

@@ -77,7 +77,7 @@ public interface AbstractDomainService {
 	/**
 	 * This method returns a list containing all the authorized domains for the input domain.
 	 * This used to filter communications between domains.
-	 * @param domain identifier
+	 * @param domainIdentifier
 	 * @return List of domains.
 	 * @throws BusinessException 
 	 */
@@ -86,7 +86,7 @@ public interface AbstractDomainService {
 	/**
 	 * This method returns a list containing all the authorized domains for the input domain.
 	 * This used to filter communications between domains.
-	 * @param user's domain
+	 * @param domain : user's domain
 	 * @return List of domains.
 	 * @throws BusinessException
 	 */
@@ -138,7 +138,7 @@ public interface AbstractDomainService {
 
 	/**
 	 * This method is designed to search users in a particular domain.
-	 * @param domainIdentifier
+	 * @param domain
 	 * @param mail
 	 * @return An user object List (Ldap entry) containing directory informations. (mail, first name, last name, domain and default role). It is not an entity !
 	 * @throws BusinessException

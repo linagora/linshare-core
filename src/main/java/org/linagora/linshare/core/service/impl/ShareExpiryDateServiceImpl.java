@@ -60,7 +60,8 @@ public class ShareExpiryDateServiceImpl implements ShareExpiryDateService {
 
 	/**
      * Compute the expiration date of a document share
-     * @param doc : the document to be shared
+     * @param document : the document to be shared
+     * @param owner : owner of the document
      * @return the expiration date
      */
 	@Override

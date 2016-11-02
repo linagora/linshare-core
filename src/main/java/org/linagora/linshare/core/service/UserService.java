@@ -53,9 +53,6 @@ public interface UserService {
 	 * Search a user on ldap and database for completion ONLY.
 	 * Search a user using pattern as mail, or the concatenation of first name fragment and last name fragment. 
 	 * The method is using space to split pattern in order to build first name and last name 
-	 * @param actor
-	 * @param pattern
-	 * @return
 	 * @throws BusinessException
 	 */
 	public List<User> autoCompleteUser(Account actor, String pattern) throws BusinessException;
@@ -71,22 +68,10 @@ public interface UserService {
 	 */
 	List<User> searchUser(String mail, String firstName, String lastName,AccountType userType,User currentUser) throws BusinessException;
 
-	/**
-	 * Delete a User (and all the corresponding share )
-	 * @param actor 
-	 * @param uuid
-	 * @param checkOwnership : if true, check that the owner is the creator of the user
-	 * 			useful for the batch
-	 * @return TODO
-	 * @throws BusinessException 
-	 */
 	User deleteUser(Account actor, String uuid) throws BusinessException;
 
 	/**
 	 * Delete all users from domain (and all the related data )
-	 * @param actor
-	 * @param domainIdentifier
-	 * @throws BusinessException
 	 */
 	void deleteAllUsersFromDomain(User actor, String domainIdentifier) throws BusinessException;
 
@@ -101,7 +86,7 @@ public interface UserService {
 	/**
 	 * Update a user externalMailLocale
 	 * @param mail : the user email
-	 * @param locale : the new externalMailLocal
+	 * @param externalMailLocale : the new externalMailLocal
 	 * @throws BusinessException
 	 */
 	public void updateUserExternalMailLocale(String domainId, String mail, Language externalMailLocale) throws BusinessException;
@@ -115,26 +100,18 @@ public interface UserService {
 	public void updateUserLocale(String domainId, String mail, SupportedLanguage locale,Language externalMailLocale, String cmisLocale) throws BusinessException;
 	/**
 	 * change a guest or superadmin password
-	 * @param mail
-	 * @param oldPassword
-	 * @param newPassword
-	 * @param login
 	 * @throws BusinessException : AUTHENTICATION_ERROR if the password supplied is wrong
 	 */
 	public void changePassword(String uuid, String mail, String oldPassword, String newPassword) throws BusinessException;
 
 	/**
 	 * Search user that are internal and in the DB but not in domains (=removed from ldap).
-	 * 
-	 * @param userLoggedIn
 	 * @return
 	 */
 	List<User> searchAllBreakedUsers(User actor);
 	
 	/**
 	 * This method create a new user entity from a valid user object, or update an existing one. 
-	 * @param user
-	 * @return TODO
 	 * @return user entity created or updated.
 	 */
 	public User saveOrUpdateUser(User user) throws TechnicalException ;
@@ -147,7 +124,6 @@ public interface UserService {
 	 * @param domainId domain identifier.
 	 * @return founded user.
 	 * @throws BusinessException if the user could not be found
-	 * @throws TechnicalError if the user cannot be created
 	 */
 	public User findOrCreateUser(String mail, String domainId) throws BusinessException ;
 
@@ -159,7 +135,6 @@ public interface UserService {
 	 * @param domainId domain identifier.
 	 * @return founded user.
 	 * @throws BusinessException if the user could not be found
-	 * @throws TechnicalError if the user cannot be created
 	 */
 	public User findOrCreateUserWithDomainPolicies(String mail, String domainId) throws BusinessException ;
 
@@ -173,7 +148,6 @@ public interface UserService {
 	 * if this parameter is null, domainId is used as starting point for the research.
 	 * @return founded user.
 	 * @throws BusinessException if the user could not be found
-	 * @throws TechnicalError if the user cannot be created
 	 */
 	public User findOrCreateUserWithDomainPolicies(String domainId, String mail, String actorDomainId) throws BusinessException ;
 
@@ -187,9 +161,6 @@ public interface UserService {
 
 	/**
 	 * Check if the actor is authorized to manage the second user (userToManage).
-	 * @param actor
-	 * @param user
-	 * @return
 	 */
 	public boolean isAdminForThisUser(Account actor, User user);
 
@@ -204,20 +175,12 @@ public interface UserService {
 	/**
 	 * Find the user matching updateUser and
 	 * update fields: first name, last name, role, create guest right and upload right
-	 * @param actor
-	 * @param updatedUser
-	 * @param domainId domain id of the user
-	 * @return 
-	 * 
 	 * @throws BusinessException
 	 */
 	User updateUser(Account actor, User updatedUser, String domainId) throws BusinessException;
 
 	/**
 	 * Find destroyed accounts
-	 * @param purge_step
-	 * @return
-	 *
 	 * @throws BusinessException
 	 */
 	List<String> findAllAccountsReadyToPurge() throws BusinessException;

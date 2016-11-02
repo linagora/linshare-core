@@ -61,7 +61,7 @@ public class EnumResourceUtils {
 	 * List all enums name under the {@link EnumResourceUtils#ENUMS_PATH}
 	 * package.
 	 * 
-	 * @return
+	 * @return enums
 	 */
 	@SuppressWarnings("rawtypes")
 	public List<String> getAllEnumsName() {
@@ -80,8 +80,7 @@ public class EnumResourceUtils {
 	 * 
 	 * @param enumName
 	 *            in lower_underscore_format.
-	 * @return
-	 * @throws BusinessException
+	 * @return enums
 	 */
 	public List<String> findEnumConstants(String enumName)
 			throws BusinessException {

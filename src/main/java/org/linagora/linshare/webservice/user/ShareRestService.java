@@ -34,7 +34,6 @@
 
 package org.linagora.linshare.webservice.user;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -52,23 +51,6 @@ import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareCreation
 
 @Path("/shares")
 public interface ShareRestService {
-
-	/**
-	 * Share a document with a user Returns are : -> HttpStatus.SC_UNAUTHORIZED
-	 * if the user is not authentified -> HttpStatus.SC_FORBIDDEN if the user is
-	 * a guest without upload right -> HttpStatus.SC_NOT_FOUND if either the
-	 * document or the target user are not found -> HttpStatus.SC_METHOD_FAILURE
-	 * if the sharing cannot be created (maybe not a proper return type) ->
-	 * HttpStatus.SC_OK if the sharing is successful
-	 * 
-	 * @param targetMail
-	 *            : the email of the target
-	 * @param uuid
-	 *            : the uuid of the document to be shared
-	 * @throws IOException
-	 *             : in case of failure
-	 * 
-	 */
 
 	List<ShareDto> getShares() throws BusinessException;
 

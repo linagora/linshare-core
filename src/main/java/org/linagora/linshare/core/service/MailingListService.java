@@ -43,34 +43,10 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface MailingListService {
 
-	/**
-	 * Basic operations on mailingList
-	 */
-
-	/**
-	 * 
-	 * @param actorUuid
-	 *            : actor
-	 * @param ownerUuid
-	 *            : list owner
-	 * @param mailingList
-	 *            : mailing list to be created
-	 * @return Mailing list created
-	 * @throws BusinessException
-	 *             : could be raised if list already exists or you are not
-	 *             authorized.
-	 */
 	MailingList createList(String actorUuid, String ownerUuid, MailingList mailingList) throws BusinessException;
 
 	MailingList deleteList(String actorUuid, String mailingListUuid) throws BusinessException;
 
-	/**
-	 * 
-	 * @param actorUuid
-	 * @param listToUpdate
-	 * @return 
-	 * @throws BusinessException
-	 */
 	MailingList updateList(String actorUuid, MailingList listToUpdate) throws BusinessException;
 
 	MailingList findByUuid(String actorUuid, String uuid) throws BusinessException;
@@ -78,8 +54,7 @@ public interface MailingListService {
 	/**
 	 * Find all list (private and public) of the selected user
 	 * 
-	 * @param user
-	 * @return
+	 * @return mailing list
 	 */
 	List<MailingList> findAllListByUser(String actorUuid, String userUuid);
 
@@ -87,28 +62,16 @@ public interface MailingListService {
 
 	/**
 	 * Find all list of the user
-	 * 
-	 * @param user
-	 * @return
 	 */
 	List<MailingList> findAllListByOwner(String actorUuid, String ownerUuid);
 
 	/**
 	 * find list of result according to visibility selected and pattern
-	 * 
-	 * @param actor
-	 * @param criteriaOnSearch
-	 * @param pattern
-	 * @return
 	 */
 	List<MailingList> searchListByVisibility(String actorUuid, String criteriaOnSearch, String pattern);
 
 	/**
 	 * Find all user list of the selected visibility
-	 * 
-	 * @param user
-	 * @param criteriaOnSearch
-	 * @return
 	 */
 	List<MailingList> findAllListByVisibility(String actorUuid, String criteriaOnSearch);
 
@@ -118,11 +81,6 @@ public interface MailingListService {
 
 	/**
 	 * Add contact to list
-	 * 
-	 * @param actor
-	 * @param mailingListUuid
-	 * @param contact
-	 * @throws BusinessException
 	 */
 	void addNewContact(String actorUuid, String mailingListUuid, MailingListContact contact) throws BusinessException;
 

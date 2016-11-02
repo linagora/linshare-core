@@ -84,11 +84,6 @@ public class SoapServiceImpl extends WebserviceBase implements SoapService {
 
 	// Documents
 
-	/**
-	 * get the files of the user
-	 * 
-	 * @throws BusinessException
-	 */
 	@WebMethod(operationName = "getDocuments")
 	// **soap
 	@Override

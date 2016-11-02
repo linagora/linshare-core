@@ -65,8 +65,8 @@ public abstract class AsyncTask<R extends TaskContext> implements Runnable {
 
 	/**
 	 * process the task and return the uuid of the created resource.
-	 * @param task
-	 * @return
+	 * @param task : async tack to run.
+	 * @return uuid of created resource.
 	 */
 	protected abstract String runMyTask(R task);
 

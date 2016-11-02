@@ -66,9 +66,7 @@ public class ArchiveZipStream extends InputStream {
 
 	/**
 	 * 
-	 * @param out
 	 * @param allFilesTozip is a map with filename as a key and inputstream associated to this file
-	 * @throws IOException
 	 */
 	public ArchiveZipStream(Map<String,InputStream> allFilesTozip) {
 			try {

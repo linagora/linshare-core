@@ -55,7 +55,7 @@ public interface DocumentEntryService {
 	 * Document suppression due to user action. 
 	 * @param actor TODO
 	 * @param owner
-	 * @param docEntryUuid
+	 * @param documentUuid
 	 * @return TODO
 	 * @throws BusinessException
 	 */
@@ -64,7 +64,7 @@ public interface DocumentEntryService {
 	/**
 	 * This method is designed inconsistent document, the document exists into the database only (no on the file system) 
 	 * @param actor 
-	 * @param docEntryUuid
+	 * @param documentEntry
 	 * @throws BusinessException
 	 */
 	public void deleteInconsistentDocumentEntry(SystemAccount actor, DocumentEntry documentEntry) throws BusinessException;
@@ -73,7 +73,7 @@ public interface DocumentEntryService {
 	/**
 	 * This method is designed to delete expired documents (batches). 
 	 * @param actor 
-	 * @param docEntryUuid
+	 * @param documentEntry
 	 * @throws BusinessException
 	 */
 	public void deleteExpiredDocumentEntry(SystemAccount actor, DocumentEntry documentEntry) throws BusinessException;

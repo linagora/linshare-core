@@ -42,34 +42,16 @@ import org.linagora.linshare.core.exception.BusinessException;
  */
 public interface EnciphermentService {
 
-	/**
-	 * encrypt the content of a document, and change the content in jackrabbit
-	 * @param password based encryption
-	 * @param doc
-	 * @param user
-	 * @return
-	 * @throws BusinessException
-	 */
-	public DocumentEntry encryptDocument(Account actor, Account owner, DocumentEntry documentEntry, String password) throws BusinessException;
-	/**
-	 * encrypt the content of a document, and change the content in jackrabbit
-	 * @param password based encryption
-	 * @param doc
-	 * @param user
-	 * @return
-	 * @throws BusinessException
-	 */
-	public DocumentEntry encryptDocument(Account actor, Account owner, String documentEntryUuid, String password) throws BusinessException;
+	DocumentEntry encryptDocument(Account actor, Account owner, DocumentEntry documentEntry, String password)
+			throws BusinessException;
 
-	/**
-	 * decrypt the content of a document, and change the content in jackrabbit
-	 * @param password based encryption
-	 * @param doc
-	 * @param user
-	 * @return
-	 * @throws BusinessException
-	 */
-	public DocumentEntry decryptDocument(Account actor, Account owner, DocumentEntry documentEntry, String password) throws BusinessException;
-	public DocumentEntry decryptDocument(Account actor, Account owner, String documentEntryUuid, String password) throws BusinessException;
-	
+	DocumentEntry encryptDocument(Account actor, Account owner, String documentEntryUuid, String password)
+			throws BusinessException;
+
+	DocumentEntry decryptDocument(Account actor, Account owner, DocumentEntry documentEntry, String password)
+			throws BusinessException;
+
+	DocumentEntry decryptDocument(Account actor, Account owner, String documentEntryUuid, String password)
+			throws BusinessException;
+
 }

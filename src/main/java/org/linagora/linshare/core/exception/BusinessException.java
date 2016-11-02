@@ -112,7 +112,7 @@ public class BusinessException extends RuntimeException {
     }
 
     /** Add an extra information.
-     * @param the extra information.
+     * @param extra : the extra information.
      */
     public void addExtra(String extra) {
         if (extras == null) {

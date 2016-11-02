@@ -593,12 +593,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		}
 	}
 
-	/**
-	 *
-	 * @param fileStream
-	 * @return String SHA256SUM of fileStream
-	 * @throws IOException 
-	 */
 	@Override
 	public String SHA256CheckSumFileStream(InputStream fis) throws IOException {
 		StringBuffer hexString = new StringBuffer();
@@ -623,12 +617,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		}
 	}
 
-	/**
-	 *
-	 * @param fileStream
-	 * @return String SHA1SUM of fileStream
-	 * @throws IOException 
-	 */
 	@Override
 	public String SHA1CheckSumFileStream(InputStream fs) throws IOException {
 		try {

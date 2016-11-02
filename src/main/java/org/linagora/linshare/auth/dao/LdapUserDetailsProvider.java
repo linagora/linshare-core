@@ -35,7 +35,6 @@ package org.linagora.linshare.auth.dao;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 
 import javax.naming.NamingException;
 
@@ -60,7 +59,7 @@ public class LdapUserDetailsProvider extends UserDetailsProvider {
 	/**
 	 * Looking for an user in the database and then into the LDAP directory.
 	 * @param domainIdentifier : could be null.
-	 * @param login
+	 * @param login : user login, ie mail
 	 * @return User account.
 	 */
 	@Override

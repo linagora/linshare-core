@@ -45,7 +45,7 @@ public interface UserPreferenceService {
 	/**
 	 * Find a specific key for an account. It is unique.
 	 * 
-	 * @param account
+	 * @param actor
 	 * @param key
 	 * @return
 	 */

@@ -74,10 +74,7 @@ public class MTOMUploadSoapServiceImpl implements MTOMUploadSoapService {
 	/**
 	 * here we use XOP method for large file upload
 	 * 
-	 * @param doca
-	 * @throws BusinessException
 	 */
-
 	@Oneway
 	@WebMethod(operationName = "addDocumentXop")
 	// **soap

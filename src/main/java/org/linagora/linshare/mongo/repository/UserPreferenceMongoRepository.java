@@ -43,42 +43,41 @@ public interface UserPreferenceMongoRepository extends MongoRepository<UserPrefe
 	/**
 	 * Find one preference by its uuid.
 	 * 
-	 * @param uuid
-	 * @return
+	 * @param uuid : pref uuid
+	 * @return UserPreference
 	 */
 	UserPreference findByUuid(String uuid);
 
 	/**
 	 * Find all preferences related to one key.
 	 * 
-	 * @param key
-	 * @return
+	 * @param key : pref key
+	 * @return List of UserPreference
 	 */
-
 	List<UserPreference> findByKey(String key);
 
 	/**
 	 * Find a specific key for an account. It is unique.
 	 * 
-	 * @param accountUuid
-	 * @param key
-	 * @return
+	 * @param accountUuid : owner pref uuid
+	 * @param key : pref key
+	 * @return UserPreference
 	 */
 	UserPreference findByAccountUuidAndKey(String accountUuid, String key);
 
 	/**
 	 * Find all preferences for one account
 	 * 
-	 * @param accountUuid
-	 * @return
+	 * @param accountUuid : owner pref uuid
+	 * @return List of UserPreference
 	 */
 	List<UserPreference> findByAccountUuid(String accountUuid);
 
 	/**
 	 * Find all account's preferences from one domain.
 	 * 
-	 * @param domainUuid
-	 * @return
+	 * @param domainUuid  : domain uuid
+	 * @return List of UserPreference
 	 */
 	List<UserPreference> findByDomainUuid(String domainUuid);
 
@@ -86,9 +85,9 @@ public interface UserPreferenceMongoRepository extends MongoRepository<UserPrefe
 	 * It is to check if the UserPreference uuid is really owner by the current
 	 * account.
 	 * 
-	 * @param accountUuid
-	 * @param uuid
-	 * @return
+	 * @param accountUuid : owner pref uuid
+	 * @param uuid : pref uuid
+	 * @return UserPreference
 	 */
 	UserPreference findByAccountUuidAndUuid(String accountUuid, String uuid);
 
