@@ -1149,6 +1149,26 @@
 								</configuration>
 							</execution>
 							<execution>
+								<id>documentation-ws-api-userv1</id>
+								<phase>compile</phase>
+								<goals>
+									<goal>generate</goal>
+								</goals>
+								<configuration>
+									<apiSources>
+										<apiSource>
+											<locations>org.linagora.linshare.webservice.user</locations>
+											<apiVersion>v1</apiVersion>
+											<basePath>http://localhost:8080/linshare/webservice/rest/user</basePath>
+											<outputTemplate>${basedir}/src/docs/resources/userv2/strapdown.html.mustache</outputTemplate>
+											<outputPath>${project.build.directory}/generated-documentation-ws-api-userv1/index.html</outputPath>
+											<swaggerDirectory>${project.build.directory}/generated-documentation-ws-api-userv1/apidocs</swaggerDirectory>
+											<mustacheFileRoot>${basedir}/src/docs/resources/userv2/mustache/</mustacheFileRoot>
+										</apiSource>
+									</apiSources>
+								</configuration>
+							</execution>
+							<execution>
 								<id>documentation-ws-api-userv2</id>
 								<phase>compile</phase>
 								<goals>
@@ -1158,8 +1178,8 @@
 									<apiSources>
 										<apiSource>
 											<locations>org.linagora.linshare.webservice.userv2</locations>
-											<apiVersion>v1</apiVersion>
-											<basePath>http://localhost:8080/linshare/webservice/rest/user</basePath>
+											<apiVersion>v2</apiVersion>
+                                            <basePath>http://localhost:8080/linshare/webservice/rest/user/v2</basePath>
 											<outputTemplate>${basedir}/src/docs/resources/userv2/strapdown.html.mustache</outputTemplate>
 											<outputPath>${project.build.directory}/generated-documentation-ws-api-userv2/index.html</outputPath>
 											<swaggerDirectory>${project.build.directory}/generated-documentation-ws-api-userv2/apidocs</swaggerDirectory>
