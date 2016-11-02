@@ -35,25 +35,26 @@ package org.linagora.linshare.core.domain.entities;
 
 public class AccountQuota extends Quota {
 
-	private EnsembleQuota ensembleQuota;
+	private ContainerQuota containerQuota;
 
 	public AccountQuota() {
 		super();
 	}
 
 	public AccountQuota(Account account, AbstractDomain domain, AbstractDomain parentDomain,
-			EnsembleQuota ensembleQuota, Long quota, Long quotaWarning, Long fileSizeMax, Long currentValue,
+			ContainerQuota ensembleQuota, Long quota, Long quotaWarning, Long fileSizeMax, Long currentValue,
 			Long lastValue) {
 		super(account, domain, parentDomain, quota, quotaWarning, fileSizeMax, currentValue, lastValue);
-		this.ensembleQuota = ensembleQuota;
+		this.containerQuota = ensembleQuota;
+		this.override = false;
 	}
 
-	public EnsembleQuota getEnsembleQuota() {
-		return ensembleQuota;
+	public ContainerQuota getContainerQuota() {
+		return containerQuota;
 	}
 
-	public void setEnsembleQuota(EnsembleQuota ensembleQuota) {
-		this.ensembleQuota = ensembleQuota;
+	public void setContainerQuota(ContainerQuota containerQuota) {
+		this.containerQuota = containerQuota;
 	}
 
 	@Override

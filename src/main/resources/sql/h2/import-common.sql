@@ -825,6 +825,12 @@ INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mai
 
 UPDATE domain_abstract SET mailconfig_id = 1;
 
-INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification_date, domain_quota, ensemble_quota, current_value, last_value, domain_id, account_id, parent_domain_id, quota, quota_warning, file_size_max, ensemble_type, quota_type) VALUES (1, '2a01ac66-a279-11e5-9086-5404a683a462', NOW(), NOW(), NOW(), null, null, 0, 0, null, null, null, 1099511627776, 1045824536576, 10737418240, null, 'PLATFORM_QUOTA');
+
+-- quota for root domain
+INSERT INTO quota( id, uuid, creation_date, modification_date, batch_modification_date, current_value, last_value, domain_id, quota, quota_warning, file_size_max, quota_type) VALUES (1, '2a01ac66-a279-11e5-9086-5404a683a462', NOW(), NOW(), NOW(), 0, 0, 1, 1099511627776, 1045824536576, 10737418240, 'DOMAIN_QUOTA');
 -- quota : 1 To, quota_warning : 950 Go
 -- file_size_max : 10 Go
+-- 'CONTAINER_QUOTA', 'USER' for root domain
+INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification_date, quota_domain_id, current_value, last_value, domain_id, quota, quota_warning, file_size_max, quota_type, container_type) VALUES (11, '26323798-a1a8-11e6-ad47-0800271467bb', NOW(), NOW(), NOW(), 1, 0, 0, 1, 1099511627776, 1045824536576, 10737418240, 'CONTAINER_QUOTA', 'USER');
+-- 'CONTAINER_QUOTA', 'WORK_GROUP' for root domain
+INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification_date, quota_domain_id, current_value, last_value, domain_id, quota, quota_warning, file_size_max, quota_type, container_type) VALUES (12, '63de4f14-a1a8-11e6-a369-0800271467bb', NOW(), NOW(), NOW(), 1, 0, 0, 1, 1099511627776, 1045824536576, 10737418240, 'CONTAINER_QUOTA', 'WORK_GROUP');

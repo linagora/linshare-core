@@ -34,44 +34,42 @@
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
+import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
-import org.linagora.linshare.core.domain.entities.EnsembleQuota;
-import org.linagora.linshare.core.domain.entities.PlatformQuota;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.QuotaFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.AccountQuotaDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.DomainQuotaDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.EnsembleQuotaDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.PlatformQuotaDto;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountQuotaService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DomainQuotaService;
 import org.linagora.linshare.core.service.EnsembleQuotaService;
-import org.linagora.linshare.core.service.PlatformQuotaService;
 
 public class QuotaFacadeImpl extends AdminGenericFacadeImpl implements QuotaFacade {
 
 	private final AccountQuotaService accountQuotaService;
 	private final DomainQuotaService domainQuotaService;
 	private final EnsembleQuotaService ensembleQuotaService;
-	private final PlatformQuotaService platformQuotaService;
 	private final AbstractDomainService abstractDomainService;
 
-	public QuotaFacadeImpl(final AccountService accountService, final AccountQuotaService accountQuotaService,
-			final DomainQuotaService domainQuotaService, final EnsembleQuotaService ensembleQuotaService,
-			final PlatformQuotaService platformQuotaService, final AbstractDomainService abstractDomainService) {
+	public QuotaFacadeImpl(
+			final AccountService accountService,
+			final AccountQuotaService accountQuotaService,
+			final DomainQuotaService domainQuotaService,
+			final EnsembleQuotaService ensembleQuotaService,
+			final AbstractDomainService abstractDomainService) {
 		super(accountService);
 		this.accountQuotaService = accountQuotaService;
 		this.domainQuotaService = domainQuotaService;
 		this.ensembleQuotaService = ensembleQuotaService;
-		this.platformQuotaService = platformQuotaService;
 		this.abstractDomainService = abstractDomainService;
 	}
 
@@ -115,22 +113,10 @@ public class QuotaFacadeImpl extends AdminGenericFacadeImpl implements QuotaFaca
 		Validate.notNull(entity.getFileSizeMax(), "FileSizeMax in EnsembleQuotaDto must be set.");
 		User actor = checkAuthentication(Role.ADMIN);
 		AbstractDomain domain = abstractDomainService.findById(entity.getDomain().getIdentifier());
-		EnsembleQuota ensembleQuota = entity.toObject();
+		ContainerQuota ensembleQuota = entity.toObject();
 		ensembleQuota.setDomain(domain);
 		ensembleQuota = ensembleQuotaService.update(actor, domain, ensembleQuota);
 		return new EnsembleQuotaDto(ensembleQuota);
-	}
-
-	@Override
-	public PlatformQuotaDto update(PlatformQuotaDto entity) throws BusinessException {
-		Validate.notNull(entity, "PlatformQuotaDto must be set.");
-		Validate.notNull(entity.getQuota(), "Quota in PlatformQuotaDto must be set.");
-		Validate.notNull(entity.getQuotaWarning(), "QuotaWarning in PlatformQuotaDto must be set.");
-		Validate.notNull(entity.getFileSizeMax(), "FileSizeMax in PlatformQuotaDto must be set.");
-		User actor = checkAuthentication(Role.SUPERADMIN);
-		PlatformQuota platformQuota = entity.toUserObject();
-		platformQuota = platformQuotaService.update(actor, platformQuota);
-		return new PlatformQuotaDto();
 	}
 
 	@Override
@@ -159,17 +145,10 @@ public class QuotaFacadeImpl extends AdminGenericFacadeImpl implements QuotaFaca
 		Validate.notEmpty(ensembleType, "ensembleType must be set.");
 		User actor = checkAuthentication(Role.ADMIN);
 		AbstractDomain abstractDomain = abstractDomainService.findById(domain);
-		EnsembleType ensembleTypeObject = EnsembleType.fromString(ensembleType);
-		EnsembleQuota ensembleQuota = ensembleQuotaService.find(actor, abstractDomain, ensembleTypeObject);
+		ContainerQuotaType ensembleTypeObject = ContainerQuotaType.fromString(ensembleType);
+		ContainerQuota ensembleQuota = ensembleQuotaService.find(actor, abstractDomain, ensembleTypeObject);
 		EnsembleQuotaDto ensembleQuotaDto = new EnsembleQuotaDto(ensembleQuota);
 		return ensembleQuotaDto;
 	}
 
-	@Override
-	public PlatformQuotaDto findPlatformQuota() throws BusinessException {
-		User actor = checkAuthentication(Role.SUPERADMIN);
-		PlatformQuota platformQuota = platformQuotaService.find(actor);
-		PlatformQuotaDto platformQuotaDto = new PlatformQuotaDto(platformQuota);
-		return platformQuotaDto;
-	}
 }

@@ -112,8 +112,8 @@ public class DomainStatBusinessServiceTest extends AbstractTransactionalJUnit4Sp
 		DomainWeeklyStat entityWeekly = listWeekly.get(1);
 		assertEquals(9, (long) entityWeekly.getOperationCount());
 		assertEquals(200, (long) entityWeekly.getActualOperationSum());
-		assertEquals(6, (long) entityWeekly.getAddOperationCount());
-		assertEquals(300, (long) entityWeekly.getAddOperationSum());
+		assertEquals(6, (long) entityWeekly.getCreateOperationCount());
+		assertEquals(300, (long) entityWeekly.getCreateOperationSum());
 		assertEquals(3, (long) entityWeekly.getDeleteOperationCount());
 		assertEquals(-100, (long) entityWeekly.getDeleteOperationSum());
 		assertEquals(200, (long) entityWeekly.getDiffOperationSum());
@@ -126,8 +126,8 @@ public class DomainStatBusinessServiceTest extends AbstractTransactionalJUnit4Sp
 		DomainMonthlyStat entityMonthly = listMonthly.get(0);
 		assertEquals(14, (long) entityMonthly.getOperationCount());
 		assertEquals(250, (long) entityMonthly.getActualOperationSum());
-		assertEquals(9, (long) entityMonthly.getAddOperationCount());
-		assertEquals(400, (long) entityMonthly.getAddOperationSum());
+		assertEquals(9, (long) entityMonthly.getCreateOperationCount());
+		assertEquals(400, (long) entityMonthly.getCreateOperationSum());
 		assertEquals(5, (long) entityMonthly.getDeleteOperationCount());
 		assertEquals(-150, (long) entityMonthly.getDeleteOperationSum());
 		assertEquals(250, (long) entityMonthly.getDiffOperationSum());

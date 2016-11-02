@@ -47,7 +47,7 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
-import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -241,7 +241,7 @@ public class DocumentEntryServiceImpl
 					.getActivationPolicy().getStatus();
 
 			//check if user can add file
-			quotaService.checkIfUserCanAddFile(actor, owner, size, EnsembleType.USER);
+			quotaService.checkIfUserCanAddFile(actor, owner, size, ContainerQuotaType.USER);
 
 			// We need to set an expiration date in case of file cleaner
 			// activation.
@@ -253,7 +253,7 @@ public class DocumentEntryServiceImpl
 			// add new row in operation History
 			// When we have a creation of documents operationValue=CREATE
 			OperationHistory operationHistory = new OperationHistory(owner, domain, size, OperationHistoryTypeEnum.CREATE,
-					EnsembleType.USER);
+					ContainerQuotaType.USER);
 			operationHistoryBusinessService.create(operationHistory);
 
 			addDocSizeToGlobalUsedQuota(docEntry.getDocument(), domain);
@@ -353,10 +353,10 @@ public class DocumentEntryServiceImpl
 			// add new row in operation History
 			// When we have an update of documents operationValue=UPDATE
 			OperationHistory entityDeleted = new OperationHistory(owner, domain, -oldDocSize,
-					OperationHistoryTypeEnum.DELETE, EnsembleType.USER);
+					OperationHistoryTypeEnum.DELETE, ContainerQuotaType.USER);
 			operationHistoryBusinessService.create(entityDeleted);
 			OperationHistory entityCreated = new OperationHistory(owner, domain, size, OperationHistoryTypeEnum.CREATE,
-					EnsembleType.USER);
+					ContainerQuotaType.USER);
 			operationHistoryBusinessService.create(entityCreated);
 
 			removeDocSizeFromGlobalUsedQuota(oldDocSize, domain);
@@ -496,7 +496,7 @@ public class DocumentEntryServiceImpl
 		// add new row in operation History
 		// When we have a delete of documents operationValue=DELETE
 		OperationHistory entity = new OperationHistory(owner, domain, -documentEntry.getSize(),
-				OperationHistoryTypeEnum.DELETE, EnsembleType.USER);
+				OperationHistoryTypeEnum.DELETE, ContainerQuotaType.USER);
 		operationHistoryBusinessService.create(entity);
 		return documentEntry;
 	}

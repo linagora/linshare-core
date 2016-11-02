@@ -33,7 +33,7 @@
  */
 package org.linagora.linshare.core.repository;
 
-import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Quota;
@@ -42,7 +42,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 public interface GenericQuotaRepository<T extends Quota>
 		extends AbstractRepository<T> {
 
-	T find(AbstractDomain domain, Account account, EnsembleType ensembleType);
+	T find(AbstractDomain domain, Account account, ContainerQuotaType ensembleType);
 
 	T update(T entity, Long curentValue) throws BusinessException;
 

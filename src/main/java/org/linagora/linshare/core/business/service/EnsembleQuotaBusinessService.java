@@ -35,18 +35,18 @@ package org.linagora.linshare.core.business.service;
 
 import java.util.Date;
 
-import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.EnsembleQuota;
+import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface EnsembleQuotaBusinessService {
 
-	EnsembleQuota find(AbstractDomain domain, EnsembleType ensembleType);
+	ContainerQuota find(AbstractDomain domain, ContainerQuotaType containerQuotaType);
 
-	EnsembleQuota create(EnsembleQuota entity) throws BusinessException;
+	ContainerQuota create(ContainerQuota entity) throws BusinessException;
 
-	EnsembleQuota update(EnsembleQuota entity) throws BusinessException;
+	ContainerQuota update(ContainerQuota entity) throws BusinessException;
 
-	EnsembleQuota updateByBatch(EnsembleQuota entity, Date today) throws BusinessException;
+	ContainerQuota updateByBatch(ContainerQuota entity, Date today) throws BusinessException;
 }

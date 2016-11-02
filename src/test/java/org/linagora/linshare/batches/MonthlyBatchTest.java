@@ -155,8 +155,8 @@ public class MonthlyBatchTest extends AbstractTransactionalJUnit4SpringContextTe
 		UserMonthlyStat userMonthlyStat = listUserMonthlyStat.get(0);
 		assertEquals(1200, (long) userMonthlyStat.getActualOperationSum());
 		assertEquals(31, (long) userMonthlyStat.getOperationCount());
-		assertEquals(4200, (long) userMonthlyStat.getAddOperationSum());
-		assertEquals(17, (long) userMonthlyStat.getAddOperationCount());
+		assertEquals(4200, (long) userMonthlyStat.getCreateOperationSum());
+		assertEquals(17, (long) userMonthlyStat.getCreateOperationCount());
 		assertEquals(-3000, (long) userMonthlyStat.getDeleteOperationSum());
 		assertEquals(14, (long) userMonthlyStat.getDeleteOperationCount());
 		assertEquals(1200, (long) userMonthlyStat.getDiffOperationSum());
@@ -164,8 +164,8 @@ public class MonthlyBatchTest extends AbstractTransactionalJUnit4SpringContextTe
 		ThreadMonthlyStat threadMonthlyStat = listThreadMonthlyStat.get(0);
 		assertEquals(100, (long) threadMonthlyStat.getActualOperationSum());
 		assertEquals(10, (long) threadMonthlyStat.getOperationCount());
-		assertEquals(200, (long) threadMonthlyStat.getAddOperationSum());
-		assertEquals(6, (long) threadMonthlyStat.getAddOperationCount());
+		assertEquals(200, (long) threadMonthlyStat.getCreateOperationSum());
+		assertEquals(6, (long) threadMonthlyStat.getCreateOperationCount());
 		assertEquals(-100, (long) threadMonthlyStat.getDeleteOperationSum());
 		assertEquals(4, (long) threadMonthlyStat.getDeleteOperationCount());
 		assertEquals(100, (long) threadMonthlyStat.getDiffOperationSum());
@@ -173,8 +173,8 @@ public class MonthlyBatchTest extends AbstractTransactionalJUnit4SpringContextTe
 		DomainMonthlyStat domainMonthlyStat = listDomainMonthlyStat.get(0);
 		assertEquals(50, (long) domainMonthlyStat.getActualOperationSum());
 		assertEquals(5, (long) domainMonthlyStat.getOperationCount());
-		assertEquals(100, (long) domainMonthlyStat.getAddOperationSum());
-		assertEquals(3, (long) domainMonthlyStat.getAddOperationCount());
+		assertEquals(100, (long) domainMonthlyStat.getCreateOperationSum());
+		assertEquals(3, (long) domainMonthlyStat.getCreateOperationCount());
 		assertEquals(-50, (long) domainMonthlyStat.getDeleteOperationSum());
 		assertEquals(2, (long) domainMonthlyStat.getDeleteOperationCount());
 		assertEquals(50, (long) domainMonthlyStat.getDiffOperationSum());

@@ -44,13 +44,12 @@ import org.linagora.linshare.core.business.service.BatchHistoryBusinessService;
 import org.linagora.linshare.core.business.service.DomainDailyStatBusinessService;
 import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
 import org.linagora.linshare.core.business.service.EnsembleQuotaBusinessService;
-import org.linagora.linshare.core.business.service.PlatformQuotaBusinessService;
 import org.linagora.linshare.core.domain.constants.BatchType;
-import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
-import org.linagora.linshare.core.domain.entities.EnsembleQuota;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.Context;
@@ -67,7 +66,6 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchImpl {
 	private final EnsembleQuotaBusinessService ensembleQuotaBusinessService;
 	private final DomainQuotaBusinessService domainQuotaBusinessService;
 	private final DomainDailyStatBusinessService domainDailyStatBusinessService;
-	private final PlatformQuotaBusinessService platformQuotaBusinessService;
 	private final BatchHistoryBusinessService batchHistoryBusinessService;
 
 	private static final String BATCH_HISTORY_UUID = "BatchHistoryUuid";
@@ -78,7 +76,6 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchImpl {
 			final EnsembleQuotaBusinessService ensembleQuotaBusinessService,
 			final DomainQuotaBusinessService domainQuotaBusinessService,
 			final DomainDailyStatBusinessService domainDailyStatBusinessService,
-			final PlatformQuotaBusinessService platformQuotaBusinessService,
 			final BatchHistoryBusinessService batchHistoryBusinessService) {
 		super(accountRepository);
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
@@ -86,7 +83,6 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchImpl {
 		this.ensembleQuotaBusinessService = ensembleQuotaBusinessService;
 		this.domainQuotaBusinessService = domainQuotaBusinessService;
 		this.domainDailyStatBusinessService = domainDailyStatBusinessService;
-		this.platformQuotaBusinessService = platformQuotaBusinessService;
 		this.batchHistoryBusinessService = batchHistoryBusinessService;
 	}
 
@@ -121,7 +117,7 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchImpl {
 			throw exception;
 		}
 		try {
-			EnsembleQuota userEnsembleQuota = ensembleQuotaBusinessService.find(resource, EnsembleType.USER);
+			ContainerQuota userEnsembleQuota = ensembleQuotaBusinessService.find(resource, ContainerQuotaType.USER);
 			userEnsembleQuota = ensembleQuotaBusinessService.updateByBatch(userEnsembleQuota, today);
 		} catch (BusinessException businessException) {
 			logError(total, position, "Error while trying to update userEnsembleQuota");
@@ -132,7 +128,7 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchImpl {
 			throw exception;
 		}
 		try {
-			EnsembleQuota threadEnsembleQuota = ensembleQuotaBusinessService.find(resource, EnsembleType.THREAD);
+			ContainerQuota threadEnsembleQuota = ensembleQuotaBusinessService.find(resource, ContainerQuotaType.WORK_GROUP);
 			threadEnsembleQuota = ensembleQuotaBusinessService.updateByBatch(threadEnsembleQuota, today);
 		} catch (BusinessException businessException) {
 			logError(total, position, "Error while trying to update threadEnsembleQuota");
@@ -145,7 +141,15 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchImpl {
 		try {
 			DomainQuota domainQuota = domainQuotaBusinessService.find(resource);
 			domainQuota = domainQuotaBusinessService.updateByBatch(domainQuota, today);
-			platformQuotaBusinessService.updateByBatch(domainQuota.getCurrentValue() - domainQuota.getLastValue());
+			// Workaround ? or not ?
+			if (!resource.isRootDomain()) {
+				long diffValue = domainQuota.getCurrentValue() - domainQuota.getLastValue();
+				DomainQuota rootQuota = domainQuotaBusinessService.find(abstractDomainService.getUniqueRootDomain());
+				rootQuota.setBatchModificationDate(new Date());
+				rootQuota.setLastValue(rootQuota.getCurrentValue());
+				rootQuota.setCurrentValue(rootQuota.getCurrentValue() + diffValue);
+				domainQuotaBusinessService.update(rootQuota);
+			}
 		} catch (BusinessException businessException) {
 			logError(total, position, "Error while trying to update domainQuota");
 			logger.info("Error occured while updating a domain quota for domain", businessException);

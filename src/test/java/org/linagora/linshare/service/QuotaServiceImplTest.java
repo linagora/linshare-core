@@ -40,7 +40,7 @@ import java.util.GregorianCalendar;
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
-import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -105,7 +105,7 @@ public class QuotaServiceImplTest extends AbstractTransactionalJUnit4SpringConte
 		AbstractDomain domain = jane.getDomain();
 		Long accountConsumptionOfDay = operationHistoryBusinessService.sumOperationValue(account, null, new GregorianCalendar(2042, 9, 16, 00, 00).getTime(), null, null);
 		Long domainConsumptionOfDay = operationHistoryBusinessService.sumOperationValue(null, domain, new GregorianCalendar(2042, 9, 16, 00, 00).getTime(), null, null);
-		Long ensembleUserConsumptionOfDay = operationHistoryBusinessService.sumOperationValue(null, domain, new GregorianCalendar(2042, 9, 16, 00, 00).getTime(), null, EnsembleType.USER);
+		Long ensembleUserConsumptionOfDay = operationHistoryBusinessService.sumOperationValue(null, domain, new GregorianCalendar(2042, 9, 16, 00, 00).getTime(), null, ContainerQuotaType.USER);
 		Long platformConsumptionOfDay = operationHistoryBusinessService.sumOperationValue(null, null, new GregorianCalendar(2042, 9, 16, 00, 00).getTime(), null, null);
 		assertEquals(1100, (long) accountConsumptionOfDay);
 		assertEquals(2101, (long) domainConsumptionOfDay);

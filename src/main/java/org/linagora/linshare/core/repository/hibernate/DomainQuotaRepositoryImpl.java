@@ -33,9 +33,12 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.repository.DomainQuotaRepository;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class DomainQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<DomainQuota>implements DomainQuotaRepository {
@@ -46,6 +49,8 @@ public class DomainQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Domain
 
 	@Override
 	public DomainQuota find(AbstractDomain domain) {
-		return super.find(domain, null, null);
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("domain", domain));
+		return DataAccessUtils.singleResult(findByCriteria(criteria));
 	}
 }

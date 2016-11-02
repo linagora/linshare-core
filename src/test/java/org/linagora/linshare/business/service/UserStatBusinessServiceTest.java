@@ -114,8 +114,8 @@ public class UserStatBusinessServiceTest extends AbstractTransactionalJUnit4Spri
 		assertEquals(jane, entity.getAccount());
 		assertEquals(5, (long) entity.getOperationCount());
 		assertEquals(50, (long) entity.getActualOperationSum());
-		assertEquals(3, (long) entity.getAddOperationCount());
-		assertEquals(100, (long) entity.getAddOperationSum());
+		assertEquals(3, (long) entity.getCreateOperationCount());
+		assertEquals(100, (long) entity.getCreateOperationSum());
 		assertEquals(2, (long) entity.getDeleteOperationCount());
 		assertEquals(-50, (long) entity.getDeleteOperationSum());
 		assertEquals(50, (long) entity.getDiffOperationSum());
@@ -133,8 +133,8 @@ public class UserStatBusinessServiceTest extends AbstractTransactionalJUnit4Spri
 		assertEquals(jane, entityWeekly.getAccount());
 		assertEquals(21, (long) entityWeekly.getOperationCount());
 		assertEquals(700, (long) entityWeekly.getActualOperationSum());
-		assertEquals(11, (long) entityWeekly.getAddOperationCount());
-		assertEquals(1800, (long) entityWeekly.getAddOperationSum());
+		assertEquals(11, (long) entityWeekly.getCreateOperationCount());
+		assertEquals(1800, (long) entityWeekly.getCreateOperationSum());
 		assertEquals(10, (long) entityWeekly.getDeleteOperationCount());
 		assertEquals(-1100, (long) entityWeekly.getDeleteOperationSum());
 		assertEquals(700, (long) entityWeekly.getDiffOperationSum());
@@ -147,8 +147,8 @@ public class UserStatBusinessServiceTest extends AbstractTransactionalJUnit4Spri
 		assertEquals(jane, entityMonthly.getAccount());
 		assertEquals(30, (long) entityMonthly.getOperationCount());
 		assertEquals(1200, (long) entityMonthly.getActualOperationSum());
-		assertEquals(16, (long) entityMonthly.getAddOperationCount());
-		assertEquals(3300, (long) entityMonthly.getAddOperationSum());
+		assertEquals(16, (long) entityMonthly.getCreateOperationCount());
+		assertEquals(3300, (long) entityMonthly.getCreateOperationSum());
 		assertEquals(14, (long) entityMonthly.getDeleteOperationCount());
 		assertEquals(-2100, (long) entityMonthly.getDeleteOperationSum());
 		assertEquals(1200, (long) entityMonthly.getDiffOperationSum());

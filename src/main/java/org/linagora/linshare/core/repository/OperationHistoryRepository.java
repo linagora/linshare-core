@@ -36,7 +36,7 @@ package org.linagora.linshare.core.repository;
 import java.util.Date;
 import java.util.List;
 
-import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -44,17 +44,17 @@ import org.linagora.linshare.core.domain.entities.OperationHistory;
 
 public interface OperationHistoryRepository extends AbstractRepository<OperationHistory> {
 
-	List<Account> findAccountBeforeDate(Date date, EnsembleType ensembleType);
+	List<Account> findAccountBeforeDate(Date date, ContainerQuotaType containerQuotaType);
 
-	List<OperationHistory> find(Account account, AbstractDomain domain, EnsembleType ensembleType, Date date, OperationHistoryTypeEnum type);
+	List<OperationHistory> find(Account account, AbstractDomain domain, ContainerQuotaType containerQuotaType, Date date, OperationHistoryTypeEnum type);
 
-	Long sumOperationValue(Account account, AbstractDomain domain, Date creationDate, OperationHistoryTypeEnum operationType, EnsembleType ensembleType);
+	Long sumOperationValue(Account account, AbstractDomain domain, Date creationDate, OperationHistoryTypeEnum operationType, ContainerQuotaType containerQuotaType);
 
-	Long countOperationValue(Account account, AbstractDomain domain, Date creationDate, OperationHistoryTypeEnum operationType, EnsembleType ensembleType);
+	Long countOperationValue(Account account, AbstractDomain domain, Date creationDate, OperationHistoryTypeEnum operationType, ContainerQuotaType containerQuotaType);
 
 	List<AbstractDomain> findDomainBeforeDate(Date creationDate);
 
-	List<String> findUuidAccountBeforeDate(Date date, EnsembleType ensembleType);
+	List<String> findUuidAccountBeforeDate(Date date, ContainerQuotaType containerQuotaType);
 
 	void deleteBeforeDateByAccount(Date date, Account account);
 }

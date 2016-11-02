@@ -40,12 +40,12 @@ import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.EnsembleQuotaBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
-import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
-import org.linagora.linshare.core.domain.entities.EnsembleQuota;
+import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadLogEntry;
@@ -407,7 +407,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 
 	private void createQuotaThread(Thread thread) throws BusinessException {
 		Validate.notNull(thread, "Thread must be set.");
-		EnsembleQuota ensembleQuota = ensembleQuotaBusinessService.find(thread.getDomain(), EnsembleType.THREAD);
+		ContainerQuota ensembleQuota = ensembleQuotaBusinessService.find(thread.getDomain(), ContainerQuotaType.WORK_GROUP);
 		if (ensembleQuota == null) {
 			throw new BusinessException("Missing ensemble quota entity for current work_group");
 		}

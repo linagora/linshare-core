@@ -33,16 +33,16 @@
  */
 package org.linagora.linshare.core.service;
 
-import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.EnsembleQuota;
+import org.linagora.linshare.core.domain.entities.ContainerQuota;
 
 public interface EnsembleQuotaService {
 
-	EnsembleQuota create(Account actor, AbstractDomain domain, EnsembleQuota entity);
+	ContainerQuota create(Account actor, AbstractDomain domain, ContainerQuota entity);
 
-	EnsembleQuota update(Account actor, AbstractDomain domain, EnsembleQuota entity);
+	ContainerQuota update(Account actor, AbstractDomain domain, ContainerQuota entity);
 
-	EnsembleQuota find(Account actor, AbstractDomain domain, EnsembleType entity);
+	ContainerQuota find(Account actor, AbstractDomain domain, ContainerQuotaType entity);
 }

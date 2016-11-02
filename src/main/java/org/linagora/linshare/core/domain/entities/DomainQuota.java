@@ -39,9 +39,19 @@ public class DomainQuota extends Quota {
 		super();
 	}
 
-	public DomainQuota(AbstractDomain domain, AbstractDomain parentDomain, long quota,
-			long quotaWarning, long fileSizeMax, long currentValue, long lastValue) {
-		super(null, domain, parentDomain, quota, quotaWarning, fileSizeMax, currentValue, lastValue);
+	public DomainQuota(
+			DomainQuota parentQuota,
+			AbstractDomain domain) {
+		// related domains.
+		this.domain = domain;
+		this.parentDomain = parentQuota.getDomain();
+		// quota configuration
+		this.currentValue = 0L;
+		this.lastValue = 0L;
+		this.quota = parentQuota.getQuota();
+		this.quotaWarning = parentQuota.getQuotaWarning();
+		this.fileSizeMax = parentQuota.getFileSizeMax();
+		this.override = false;
 	}
 
 	@Override

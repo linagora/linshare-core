@@ -44,7 +44,7 @@ import org.linagora.linshare.core.business.service.BatchHistoryBusinessService;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
 import org.linagora.linshare.core.business.service.UserDailyStatBusinessService;
 import org.linagora.linshare.core.domain.constants.BatchType;
-import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.BatchHistory;
 import org.linagora.linshare.core.domain.entities.User;
@@ -85,7 +85,7 @@ public class StatisticDailyUserBatchImpl extends GenericBatchImpl {
 	public List<String> getAll() {
 		logger.info("DailyUserBatchImpl job starting ...");
 		Map<String, List<String>> res = Maps.newHashMap();
-		List<String> users = operationHistoryBusinessService.findUuidAccountBeforeDate(yesterday(), EnsembleType.USER);
+		List<String> users = operationHistoryBusinessService.findUuidAccountBeforeDate(yesterday(), ContainerQuotaType.USER);
 //		BatchHistory batchHistory = new BatchHistory(BatchType.DAILY_USER_BATCH);
 //		batchHistory = batchHistoryBusinessService.create(batchHistory);
 //		res.put(INPUT_LIST, users);

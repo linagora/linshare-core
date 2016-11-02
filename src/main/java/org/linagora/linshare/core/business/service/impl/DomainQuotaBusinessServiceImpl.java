@@ -40,6 +40,7 @@ import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DomainQuotaRepository;
 import org.linagora.linshare.core.repository.EnsembleQuotaRepository;
 
@@ -48,10 +49,14 @@ public class DomainQuotaBusinessServiceImpl
 
 	private final DomainQuotaRepository repository;
 	private final EnsembleQuotaRepository ensembleQuotaRepository;
+	private final AbstractDomainRepository abstractDomainRepository;
 
-	public DomainQuotaBusinessServiceImpl(final DomainQuotaRepository domainQuotaRepository,
+	public DomainQuotaBusinessServiceImpl(
+			final DomainQuotaRepository domainQuotaRepository,
+			final AbstractDomainRepository abstractDomainRepository,
 			final EnsembleQuotaRepository ensembleQuotaRepository) {
 		this.repository = domainQuotaRepository;
+		this.abstractDomainRepository = abstractDomainRepository;
 		this.ensembleQuotaRepository = ensembleQuotaRepository;
 	}
 
@@ -88,4 +93,15 @@ public class DomainQuotaBusinessServiceImpl
 		}
 		return entity;
 	}
+
+	@Override
+	public AbstractDomain getUniqueRootDomain() {
+		return abstractDomainRepository.getUniqueRootDomain();
+	}
+
+	@Override
+	public DomainQuota findRootQuota() throws BusinessException {
+		return find(abstractDomainRepository.getUniqueRootDomain());
+	}
+
 }

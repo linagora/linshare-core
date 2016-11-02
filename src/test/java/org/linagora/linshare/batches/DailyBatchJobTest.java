@@ -154,8 +154,8 @@ public class DailyBatchJobTest extends AbstractTransactionalJUnit4SpringContextT
 		assertEquals(jane, userDailyStat.getAccount());
 		assertEquals(5, (long) userDailyStat.getOperationCount());
 		assertEquals(50, (long) userDailyStat.getActualOperationSum());
-		assertEquals(3, (long) userDailyStat.getAddOperationCount());
-		assertEquals(100, (long) userDailyStat.getAddOperationSum());
+		assertEquals(3, (long) userDailyStat.getCreateOperationCount());
+		assertEquals(100, (long) userDailyStat.getCreateOperationSum());
 		assertEquals(2, (long) userDailyStat.getDeleteOperationCount());
 		assertEquals(-50, (long) userDailyStat.getDeleteOperationSum());
 		assertEquals(50, (long) userDailyStat.getDiffOperationSum());
@@ -173,8 +173,8 @@ public class DailyBatchJobTest extends AbstractTransactionalJUnit4SpringContextT
 		ThreadDailyStat threadDailyStat = listThreadDailyStat.get(0);
 		assertEquals(5, (long) threadDailyStat.getOperationCount());
 		assertEquals(50, (long) threadDailyStat.getActualOperationSum());
-		assertEquals(3, (long) threadDailyStat.getAddOperationCount());
-		assertEquals(100, (long) threadDailyStat.getAddOperationSum());
+		assertEquals(3, (long) threadDailyStat.getCreateOperationCount());
+		assertEquals(100, (long) threadDailyStat.getCreateOperationSum());
 		assertEquals(2, (long) threadDailyStat.getDeleteOperationCount());
 		assertEquals(-50, (long) threadDailyStat.getDeleteOperationSum());
 		assertEquals(50, (long) threadDailyStat.getDiffOperationSum());
@@ -196,8 +196,8 @@ public class DailyBatchJobTest extends AbstractTransactionalJUnit4SpringContextT
 		assertEquals(jane.getDomain(), domainDailyStat.getDomain());
 		assertEquals(5, (long) domainDailyStat.getOperationCount());
 		assertEquals(50, (long) domainDailyStat.getActualOperationSum());
-		assertEquals(3, (long) domainDailyStat.getAddOperationCount());
-		assertEquals(100, (long) domainDailyStat.getAddOperationSum());
+		assertEquals(3, (long) domainDailyStat.getCreateOperationCount());
+		assertEquals(100, (long) domainDailyStat.getCreateOperationSum());
 		assertEquals(2, (long) domainDailyStat.getDeleteOperationCount());
 		assertEquals(-50, (long) domainDailyStat.getDeleteOperationSum());
 		assertEquals(50, (long) domainDailyStat.getDiffOperationSum());

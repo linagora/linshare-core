@@ -41,6 +41,10 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface DomainQuotaBusinessService {
 
+	AbstractDomain getUniqueRootDomain();
+
+	DomainQuota findRootQuota() throws BusinessException;
+
 	DomainQuota find(AbstractDomain domain) throws BusinessException;
 
 	DomainQuota create(DomainQuota entity) throws BusinessException;

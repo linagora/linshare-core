@@ -136,8 +136,8 @@ public class WeeklyBatchTest extends AbstractTransactionalJUnit4SpringContextTes
 		UserWeeklyStat userWeeklyStat = listUserWeeklyStat.get(0);
 		assertEquals(22, (long) userWeeklyStat.getOperationCount());
 		assertEquals(700, (long) userWeeklyStat.getActualOperationSum());
-		assertEquals(12, (long) userWeeklyStat.getAddOperationCount());
-		assertEquals(2700, (long) userWeeklyStat.getAddOperationSum());
+		assertEquals(12, (long) userWeeklyStat.getCreateOperationCount());
+		assertEquals(2700, (long) userWeeklyStat.getCreateOperationSum());
 		assertEquals(10, (long) userWeeklyStat.getDeleteOperationCount());
 		assertEquals(-2000, (long) userWeeklyStat.getDeleteOperationSum());
 		assertEquals(700, (long) userWeeklyStat.getDiffOperationSum());
@@ -145,8 +145,8 @@ public class WeeklyBatchTest extends AbstractTransactionalJUnit4SpringContextTes
 		ThreadWeeklyStat threadWeeklyStat = listThreadWeeklyStat.get(0);
 		assertEquals(10, (long) threadWeeklyStat.getOperationCount());
 		assertEquals(100, (long) threadWeeklyStat.getActualOperationSum());
-		assertEquals(6, (long) threadWeeklyStat.getAddOperationCount());
-		assertEquals(200, (long) threadWeeklyStat.getAddOperationSum());
+		assertEquals(6, (long) threadWeeklyStat.getCreateOperationCount());
+		assertEquals(200, (long) threadWeeklyStat.getCreateOperationSum());
 		assertEquals(4, (long) threadWeeklyStat.getDeleteOperationCount());
 		assertEquals(-100, (long) threadWeeklyStat.getDeleteOperationSum());
 		assertEquals(100, (long) threadWeeklyStat.getDiffOperationSum());
@@ -154,8 +154,8 @@ public class WeeklyBatchTest extends AbstractTransactionalJUnit4SpringContextTes
 		DomainWeeklyStat domainWeeklyStat = listDomainWeeklyStat.get(0);
 		assertEquals(4, (long) domainWeeklyStat.getOperationCount());
 		assertEquals(150, (long) domainWeeklyStat.getActualOperationSum());
-		assertEquals(3, (long) domainWeeklyStat.getAddOperationCount());
-		assertEquals(200, (long) domainWeeklyStat.getAddOperationSum());
+		assertEquals(3, (long) domainWeeklyStat.getCreateOperationCount());
+		assertEquals(200, (long) domainWeeklyStat.getCreateOperationSum());
 		assertEquals(1, (long) domainWeeklyStat.getDeleteOperationCount());
 		assertEquals(-50, (long) domainWeeklyStat.getDeleteOperationSum());
 		assertEquals(150, (long) domainWeeklyStat.getDiffOperationSum());

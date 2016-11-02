@@ -14,8 +14,8 @@
 		<property name="executionDate" column="execution_date" type="timestamp" not-null="true" />
 		<property name="activeDate" column="active_date" type="timestamp" not-null="true" />
 		<property name="status" column="status" type="string" not-null="true" />
-		<property name="batchType" column="batch_type" type="batchType"/>
-		<property name="errors" column="errors"/>
-		<property name="unhandledErrors" column="unhandled_errors"/>
+		<property name="batchType" column="batch_type" type="batchType" not-null="true"/>
+		<property name="errors" column="errors" not-null="true" />
+		<property name="unhandledErrors" column="unhandled_errors" not-null="true" />
 	</class>
 </hibernate-mapping>

@@ -1,4 +1,4 @@
--- topdomain 2, PLATFORM_QUOTA
+-- root domain 1, DOMAIN_QUOTA
 update quota set
 	current_value=1096,
 	last_value=100,
@@ -16,7 +16,7 @@ update quota set
 	file_size_max=5
 	where id=2;
 
--- topdomain 2, ENSEMBLE_QUOTA - USER
+-- topdomain 2, CONTAINER_QUOTA - USER
 update quota set
 	current_value=496,
 	last_value=0,
@@ -25,7 +25,7 @@ update quota set
 	file_size_max=5
 	where id=5;
 
--- topdomain 2, ENSEMBLE_QUOTA - THREAD
+-- topdomain 2, CONTAINER_QUOTA - THREAD
 update quota set
 	current_value=900,
 	last_value=200,
@@ -37,9 +37,9 @@ update quota set
 -- topdomain 2, ACCOUNT_QUOTA - Jane (11)
 INSERT INTO quota (
 	id, uuid, creation_date, modification_date, batch_modification_date,
-	domain_quota, ensemble_quota, current_value, last_value,
-	domain_id, account_id, parent_domain_id, quota,
-	quota_warning, file_size_max, ensemble_type, quota_type)
+	quota_domain_id, quota_container_id, current_value, last_value,
+	domain_id, account_id, domain_parent_id, quota,
+	quota_warning, file_size_max, container_type, quota_type)
 VALUES (
 	101, 'aebe1b64-39c0-11e5-9fa8-080027b8274a', NOW(), NOW(), NOW(),
 	null, 5, 800, 0,
@@ -49,9 +49,9 @@ VALUES (
 -- topdomain 2, ACCOUNT_QUOTA - John (12)
 INSERT INTO quota (
 	id, uuid, creation_date, modification_date, batch_modification_date,
-	domain_quota, ensemble_quota, current_value, last_value,
-	domain_id, account_id, parent_domain_id, quota,
-	quota_warning, file_size_max, ensemble_type, quota_type)
+	quota_domain_id, quota_container_id, current_value, last_value,
+	domain_id, account_id, domain_parent_id, quota,
+	quota_warning, file_size_max, container_type, quota_type)
 VALUES (
 	102, 'aebe1b64-39c0-11e5-9fa8-080027b8274b', NOW(), NOW(), NOW(),
 	null, 5, 900, 100,
@@ -61,9 +61,9 @@ VALUES (
 -- topdomain 2, ACCOUNT_QUOTA - thread (20) cf import-tests-stat.sql
 INSERT INTO quota (
 	id, uuid, creation_date, modification_date, batch_modification_date,
-	domain_quota, ensemble_quota, current_value, last_value,
-	domain_id, account_id, parent_domain_id, quota,
-	quota_warning, file_size_max, ensemble_type, quota_type)
+	quota_domain_id, quota_container_id, current_value, last_value,
+	domain_id, account_id, domain_parent_id, quota,
+	quota_warning, file_size_max, container_type, quota_type)
 VALUES (
 	103, 'aebe1b64-39c0-11e5-9fa8-080027b8274c', NOW(), NOW(), NOW(),
 	null, 6, 700, 0,
@@ -73,9 +73,9 @@ VALUES (
 	-- topdomain 2, ACCOUNT_QUOTA - thread (21) cf import-tests-stat.sql
 INSERT INTO quota (
 	id, uuid, creation_date, modification_date, batch_modification_date,
-	domain_quota, ensemble_quota, current_value, last_value,
-	domain_id, account_id, parent_domain_id, quota,
-	quota_warning, file_size_max, ensemble_type, quota_type)
+	quota_domain_id, quota_container_id, current_value, last_value,
+	domain_id, account_id, domain_parent_id, quota,
+	quota_warning, file_size_max, container_type, quota_type)
 VALUES (
 	104, 'aebe1b64-39c0-11e5-9fa8-080027b8274d', NOW(), NOW(), NOW(),
 	null, 6, 500, 200,

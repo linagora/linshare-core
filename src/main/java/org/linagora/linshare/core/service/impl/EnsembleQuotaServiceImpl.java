@@ -35,10 +35,10 @@ package org.linagora.linshare.core.service.impl;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.EnsembleQuotaBusinessService;
-import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.EnsembleQuota;
+import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.domain.entities.Quota;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -56,21 +56,21 @@ public class EnsembleQuotaServiceImpl extends GenericServiceImpl<Account, Quota>
 	}
 
 	@Override
-	public EnsembleQuota create(Account actor, AbstractDomain domain, EnsembleQuota entity) {
+	public ContainerQuota create(Account actor, AbstractDomain domain, ContainerQuota entity) {
 		Validate.notNull(actor, "Acctor must be set.");
 		Validate.notNull(domain, "Domain must be set.");
 		Validate.notNull(entity, "Entity must be set.");
-		checkCreatePermission(actor, null, EnsembleQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null, domain);
+		checkCreatePermission(actor, null, ContainerQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null, domain);
 		return ensembleQuotaBusinessService.create(entity);
 	}
 
 	@Override
-	public EnsembleQuota update(Account actor, AbstractDomain domain, EnsembleQuota entity) {
+	public ContainerQuota update(Account actor, AbstractDomain domain, ContainerQuota entity) {
 		Validate.notNull(actor, "Acctor must be set.");
 		Validate.notNull(domain, "Domain must be set.");
 		Validate.notNull(entity, "Entity must be set.");
-		checkUpdatePermission(actor, null, EnsembleQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null, domain);
-		EnsembleQuota ensembleQuota = ensembleQuotaBusinessService.find(entity.getDomain(), entity.getEnsembleType());
+		checkUpdatePermission(actor, null, ContainerQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null, domain);
+		ContainerQuota ensembleQuota = ensembleQuotaBusinessService.find(entity.getDomain(), entity.getContainerQuotaType());
 		ensembleQuota.setFileSizeMax(entity.getFileSizeMax());
 		ensembleQuota.setQuota(entity.getQuota());
 		ensembleQuota.setQuotaWarning(entity.getQuotaWarning());
@@ -78,14 +78,14 @@ public class EnsembleQuotaServiceImpl extends GenericServiceImpl<Account, Quota>
 	}
 
 	@Override
-	public EnsembleQuota find(Account actor, AbstractDomain domain, EnsembleType ensembleType) {
+	public ContainerQuota find(Account actor, AbstractDomain domain, ContainerQuotaType containerQuotaType) {
 		Validate.notNull(actor, "Acctor must be set.");
 		Validate.notNull(domain, "Domain must be set.");
-		Validate.notNull(ensembleType, "EnsembleType must be set.");
-		checkReadPermission(actor, null, EnsembleQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null, domain);
-		EnsembleQuota ensembleQuota = ensembleQuotaBusinessService.find(domain, ensembleType);
+		Validate.notNull(containerQuotaType, "EnsembleType must be set.");
+		checkReadPermission(actor, null, ContainerQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null, domain);
+		ContainerQuota ensembleQuota = ensembleQuotaBusinessService.find(domain, containerQuotaType);
 		if(ensembleQuota == null){
-			throw new BusinessException(BusinessErrorCode.ENSEMBLE_QUOTA_NOT_FOUND, "Can not found ensemble " + ensembleType.toString() + " quota of the domain "+domain.getUuid());
+			throw new BusinessException(BusinessErrorCode.CONTAINER_QUOTA_NOT_FOUND, "Can not found ensemble " + containerQuotaType.toString() + " quota of the domain "+domain.getUuid());
 		}
 		return ensembleQuota;
 	}

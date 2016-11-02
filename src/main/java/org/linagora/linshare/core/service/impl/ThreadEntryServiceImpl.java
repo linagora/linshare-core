@@ -41,7 +41,7 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
-import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -139,7 +139,7 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 			Functionality enciphermentFunctionality = functionalityReadOnlyService.getEnciphermentFunctionality(domain);
 			Boolean checkIfIsCiphered = enciphermentFunctionality.getActivationPolicy().getStatus();
 
-			quotaService.checkIfUserCanAddFile(actor, owner, size, EnsembleType.THREAD);
+			quotaService.checkIfUserCanAddFile(actor, owner, size, ContainerQuotaType.WORK_GROUP);
 
 			threadEntry = documentEntryBusinessService.createThreadEntry(thread, tempFile, size, filename,
 					checkIfIsCiphered, timeStampingUrl, mimeType);
@@ -149,7 +149,7 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 			// add new row in operation History
 			// When we have a creation of documents operationValue=CREATE
 			OperationHistory operationHistory = new OperationHistory(thread, thread.getDomain(), size,
-					OperationHistoryTypeEnum.CREATE, EnsembleType.THREAD);
+					OperationHistoryTypeEnum.CREATE, ContainerQuotaType.WORK_GROUP);
 			operationHistoryBusinessService.create(operationHistory);
 		} finally {
 			try {
@@ -176,10 +176,10 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 			mimeTypeService.checkFileMimeType(member, documentEntry.getName(), documentEntry.getType());
 		}
 
-		quotaService.checkIfUserCanAddFile(actor, actor, documentEntry.getSize(), EnsembleType.THREAD);
+		quotaService.checkIfUserCanAddFile(actor, actor, documentEntry.getSize(), ContainerQuotaType.WORK_GROUP);
 
 		ThreadEntry threadEntry = documentEntryBusinessService.copyFromDocumentEntry(thread, documentEntry);
-		OperationHistory operationHistory = new OperationHistory(thread, thread.getDomain(), documentEntry.getSize(), OperationHistoryTypeEnum.CREATE, EnsembleType.THREAD);
+		OperationHistory operationHistory = new OperationHistory(thread, thread.getDomain(), documentEntry.getSize(), OperationHistoryTypeEnum.CREATE, ContainerQuotaType.WORK_GROUP);
 		operationHistoryBusinessService.create(operationHistory);
 
 		logEntryService.create(new ThreadLogEntry(member, threadEntry, LogAction.THREAD_UPLOAD_ENTRY,
@@ -228,7 +228,7 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 			// add new row in operation History
 			// When we have a delete of documents operationValue=DELETE
 			OperationHistory operationHistory = new OperationHistory(thread, thread.getDomain(), -threadEntry.getSize(),
-					OperationHistoryTypeEnum.DELETE, EnsembleType.THREAD);
+					OperationHistoryTypeEnum.DELETE, ContainerQuotaType.WORK_GROUP);
 			operationHistoryBusinessService.create(operationHistory);
 		} catch (IllegalArgumentException e) {
 			logger.error("Could not delete thread entry " + threadEntry.getUuid() + " in thread " + thread.getLsUuid()
@@ -249,7 +249,7 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 			// add new row in operation History
 			// When we have a delete of documents operationValue=DELETE
 			OperationHistory operationHistory = new OperationHistory(owner, owner.getDomain(), -threadEntry.getSize(),
-					OperationHistoryTypeEnum.DELETE, EnsembleType.THREAD);
+					OperationHistoryTypeEnum.DELETE, ContainerQuotaType.WORK_GROUP);
 			operationHistoryBusinessService.create(operationHistory);
 		} catch (IllegalArgumentException e) {
 			logger.error("Could not delete thread entry " + threadEntry.getUuid() + " in thread " + owner.getLsUuid()

@@ -166,7 +166,6 @@
 		<constructor-arg ref="accountQuotaService" />
 		<constructor-arg ref="domainQuotaService" />
 		<constructor-arg ref="ensembleQuotaService" />
-		<constructor-arg ref="platformQuotaService" />
 		<constructor-arg ref="abstractDomainService" />
 	</bean>
 </beans>

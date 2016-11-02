@@ -44,7 +44,7 @@ CREATE TABLE cookie (
 CREATE TABLE document (
   id               int8 NOT NULL,
   uuid            varchar(255) NOT NULL UNIQUE,
-  bucket_uuid            varchar(255),
+  bucket_uuid     varchar(255),
   creation_date   timestamp NOT NULL,
   type            varchar(255) NOT NULL,
   ls_size         int8 NOT NULL,
@@ -104,8 +104,8 @@ CREATE TABLE domain_access_rule (
 CREATE TABLE domain_policy (
   id                       int8 NOT NULL,
   description             text,
-  uuid              varchar(255) NOT NULL,
-  label              varchar(255),
+  uuid                    varchar(255) NOT NULL UNIQUE,
+  label                   varchar(255) NOT NULL,
   domain_access_policy_id int8,
   CONSTRAINT linshare_domain_policy_pkey
     PRIMARY KEY (id));
@@ -693,61 +693,63 @@ CREATE TABLE async_task (
   waiting_duration      int8,
   meta_data             text,
   PRIMARY KEY (id));
+CREATE TABLE quota (
+  id                       int8 NOT NULL,
+  uuid                    varchar(255) NOT NULL UNIQUE,
+  quota                   int8 NOT NULL,
+  quota_warning           int8 NOT NULL,
+  current_value           int8 NOT NULL,
+  last_value              int8 NOT NULL,
+  file_size_max           int8 NOT NULL,
+  creation_date           timestamp(6) NOT NULL,
+  modification_date       timestamp(6) NOT NULL,
+  batch_modification_date timestamp(6) NOT NULL,
+  container_type          varchar(255),
+  quota_type              varchar(255) NOT NULL,
+  override                bool DEFAULT 'false' NOT NULL,
+  account_id              int8,
+  domain_id               int8 NOT NULL,
+  domain_parent_id        int8,
+  quota_domain_id         int8,
+  quota_container_id      int8,
+  PRIMARY KEY (id));
 CREATE TABLE operation_history (
-  id                    int8 NOT NULL,
-  creation_date         timestamp(6) NOT NULL,
-  operation_value       int8,
-  operation_type        int4,
-  ensemble_type         VARCHAR(255),
-  domain_id             int8 NOT NULL REFERENCES domain_abstract(id),
-  account_id            int8 references account(id) NOT NULL,
+  id               int8 NOT NULL,
+  uuid            varchar(255) NOT NULL,
+  operation_value int8 NOT NULL,
+  operation_type  int4 NOT NULL,
+  container_type  varchar(255) NOT NULL,
+  creation_date   timestamp(6) NOT NULL,
+  domain_id       int8 NOT NULL,
+  account_id      int8 NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE statistic (
   id                      int8 NOT NULL,
-  creation_date           timestamp(6) NOT NULL,
-  active_date             timestamp(6) NOT NULL,
-  operation_count         int8,
-  delete_operation_count  int8,
-  add_operation_count     int8,
-  add_operation_sum       int8,
-  delete_operation_sum    int8,
-  diff_operation_sum      int8,
-  actual_operation_sum    int8,
-  domain_id               int8 REFERENCES domain_abstract(id),
-  account_id              int8 references account(id),
-  parent_domain_id        int8 references domain_abstract(id),
-  statistic_type        VARCHAR(255),
-  PRIMARY KEY (id));
-CREATE TABLE quota (
-  id                      int8 NOT NULL,
-  quota                   int8 NOT NULL,
-  quota_warning           int8,
-  file_size_max           int8,
-  quota_type              VARCHAR(255),
-  uuid                    VARCHAR(255) NOT NULL,
-  current_value           int8 NOT NULL,
-  last_value              int8 NOT NULL,
-  ensemble_type           VARCHAR(255),
-  ensemble_quota          int8 references quota(id),
-  domain_quota            int8 references quota(id),
-  creation_date           timestamp(6),
-  modification_date       timestamp(6),
-  batch_modification_date timestamp(6),
-  domain_id               int8 REFERENCES domain_abstract(id),
-  account_id              int8 references account(id),
-  parent_domain_id int8   references domain_abstract(id),
+  uuid                   varchar(255) NOT NULL UNIQUE,
+  statistic_type         varchar(255) NOT NULL,
+  creation_date          timestamp(6) NOT NULL,
+  active_date            timestamp(6) NOT NULL,
+  operation_count        int8 NOT NULL,
+  delete_operation_count int8 NOT NULL,
+  create_operation_count int8 NOT NULL,
+  create_operation_sum   int8 NOT NULL,
+  delete_operation_sum   int8 NOT NULL,
+  diff_operation_sum     int8 NOT NULL,
+  actual_operation_sum   int8 NOT NULL,
+  account_id             int8 NOT NULL,
+  domain_id              int8 NOT NULL,
+  domain_parent_id       int8 NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE batch_history (
-  id                      int8 NOT NULL,
-  uuid                    VARCHAR(255) NOT NULL,
-  execution_date          timestamp(6) NOT NULL,
-  active_date             timestamp(6) NOT NULL,
-  status                  VARCHAR(255) NOT NULL,
-  batch_type              VARCHAR(255),
-  errors                  int8,
-  unhandled_errors        int8,
+  id                int8 NOT NULL,
+  uuid             varchar(255) NOT NULL UNIQUE,
+  status           varchar(255) NOT NULL,
+  batch_type       varchar(255) NOT NULL,
+  execution_date   timestamp(6) NOT NULL,
+  active_date      timestamp(6) NOT NULL,
+  errors           int8 NOT NULL,
+  unhandled_errors int8 NOT NULL,
   PRIMARY KEY (id));
-
 CREATE UNIQUE INDEX account_lsuid_index
   ON account (ls_uuid);
 CREATE UNIQUE INDEX account_ls_uuid
@@ -896,7 +898,7 @@ ALTER TABLE upload_request_url ADD CONSTRAINT FKupload_req833645 FOREIGN KEY (up
 ALTER TABLE upload_request ADD CONSTRAINT FKupload_req916400 FOREIGN KEY (upload_request_group_id) REFERENCES upload_request_group (id);
 ALTER TABLE upload_request_url ADD CONSTRAINT FKupload_req601912 FOREIGN KEY (contact_id) REFERENCES contact (id);
 ALTER TABLE upload_request_history ADD CONSTRAINT FKupload_req678768 FOREIGN KEY (upload_request_id) REFERENCES upload_request (id);
-ALTER TABLE upload_request_entry ADD CONSTRAINT FKupload_req220981 FOREIGN KEY (upload_request_url_id) REFERENCES upload_request_url (id);
+ALTER TABLE upload_request_entry ADD CONSTRAINT upload_request_entry_fk_url FOREIGN KEY (upload_request_url_id) REFERENCES upload_request_url (id);
 ALTER TABLE upload_request_entry ADD CONSTRAINT FKupload_req254795 FOREIGN KEY (entry_id) REFERENCES entry (id);
 ALTER TABLE upload_request_entry ADD CONSTRAINT FKupload_req11781 FOREIGN KEY (document_entry_entry_id) REFERENCES document_entry (entry_id);
 ALTER TABLE upload_proposition_rule ADD CONSTRAINT FKupload_pro672390 FOREIGN KEY (upload_proposition_filter_id) REFERENCES upload_proposition_filter (id);
@@ -904,7 +906,7 @@ ALTER TABLE upload_proposition_action ADD CONSTRAINT FKupload_pro841666 FOREIGN 
 ALTER TABLE functionality ADD CONSTRAINT FKfunctional788903 FOREIGN KEY (policy_delegation_id) REFERENCES policy (id);
 ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li478123 FOREIGN KEY (user_id) REFERENCES users (account_id);
 ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li335663 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
-ALTER TABLE mailing_list_contact ADD CONSTRAINT FKMailingLis595962 FOREIGN KEY (mailing_list_id) REFERENCES mailing_list (id);
+ALTER TABLE mailing_list_contact ADD CONSTRAINT FKMailingListContact FOREIGN KEY (mailing_list_id) REFERENCES mailing_list (id);
 ALTER TABLE upload_request_template ADD CONSTRAINT FKupload_req618325 FOREIGN KEY (account_id) REFERENCES account (id);
 ALTER TABLE mail_notification ADD CONSTRAINT FKmail_notif791766 FOREIGN KEY (configuration_policy_id) REFERENCES policy (id);
 ALTER TABLE upload_proposition ADD CONSTRAINT FKupload_pro226633 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
@@ -924,7 +926,7 @@ ALTER TABLE user_provider ADD CONSTRAINT FKuser_provi1640 FOREIGN KEY (ldap_conn
 ALTER TABLE contact_provider ADD CONSTRAINT FKcontact_pr355176 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
 ALTER TABLE ldap_attribute ADD CONSTRAINT FKldap_attri49928 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
 ALTER TABLE user_provider ADD CONSTRAINT FKuser_provi813203 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
-ALTER TABLE welcome_messages_entry ADD CONSTRAINT FKwelcome_me856948 FOREIGN KEY (welcome_messages_id) REFERENCES welcome_messages (id);
+ALTER TABLE welcome_messages_entry ADD CONSTRAINT welcome_messages_entry_fk_welcome_message FOREIGN KEY (welcome_messages_id) REFERENCES welcome_messages (id);
 ALTER TABLE domain_abstract ADD CONSTRAINT use_customisation FOREIGN KEY (welcome_messages_id) REFERENCES welcome_messages (id);
 ALTER TABLE welcome_messages ADD CONSTRAINT own_welcome_messages FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);
 ALTER TABLE anonymous_share_entry ADD CONSTRAINT FKanonymous_708340 FOREIGN KEY (share_entry_group_id) REFERENCES share_entry_group (id);
@@ -937,3 +939,13 @@ ALTER TABLE share_entry_group ADD CONSTRAINT shareEntryGroup FOREIGN KEY (accoun
 ALTER TABLE async_task ADD CONSTRAINT FKasync_task548996 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE async_task ADD CONSTRAINT FKasync_task706276 FOREIGN KEY (actor_id) REFERENCES account (id);
 ALTER TABLE async_task ADD CONSTRAINT FKasync_task559470 FOREIGN KEY (owner_id) REFERENCES account (id);
+ALTER TABLE quota ADD CONSTRAINT domain FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);
+ALTER TABLE quota ADD CONSTRAINT parentDomain FOREIGN KEY (domain_parent_id) REFERENCES domain_abstract (id);
+ALTER TABLE quota ADD CONSTRAINT account FOREIGN KEY (account_id) REFERENCES account (id);
+ALTER TABLE quota ADD CONSTRAINT FKquota572570 FOREIGN KEY (quota_domain_id) REFERENCES quota (id);
+ALTER TABLE quota ADD CONSTRAINT FKquota430815 FOREIGN KEY (quota_container_id) REFERENCES quota (id);
+ALTER TABLE operation_history ADD CONSTRAINT FKoperation_38651 FOREIGN KEY (account_id) REFERENCES account (id);
+ALTER TABLE operation_history ADD CONSTRAINT FKoperation_531280 FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);
+ALTER TABLE statistic ADD CONSTRAINT FKstatistic57774 FOREIGN KEY (account_id) REFERENCES account (id);
+ALTER TABLE statistic ADD CONSTRAINT FKstatistic343885 FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);
+ALTER TABLE statistic ADD CONSTRAINT FKstatistic161509 FOREIGN KEY (domain_parent_id) REFERENCES domain_abstract (id);

@@ -55,6 +55,8 @@ public abstract class Quota {
 
 	protected Long lastValue;
 
+	protected Boolean override;
+
 	protected Long fileSizeMax;
 
 	protected Date creationDate;
@@ -76,6 +78,7 @@ public abstract class Quota {
 		this.quota = quota;
 		this.quotaWarning = quotaWarning;
 		this.fileSizeMax = fileSizeMax;
+		this.override = false;
 	}
 
 	public Long getId() {
@@ -182,10 +185,18 @@ public abstract class Quota {
 		this.batchModificationDate = batchModificationDate;
 	}
 
+	public Boolean getOverride() {
+		return override;
+	}
+
+	public void setOverride(Boolean override) {
+		this.override = override;
+	}
+
 	@Override
 	public String toString() {
-		return "Quota [id=" + id + ", uuid=" + uuid + ", account=" + account + ", domain=" + domain + ", parentDomain="
-				+ parentDomain + ", quota=" + quota + ", quotaWarning=" + quotaWarning + ", currentValue="
-				+ currentValue + ", lastValue=" + lastValue + ", fileSizeMax=" + fileSizeMax + "]";
+		return "Quota [uuid=" + uuid + ", domain=" + domain + ", quota=" + quota + ", quotaWarning=" + quotaWarning
+				+ ", currentValue=" + currentValue + ", lastValue=" + lastValue + ", override=" + override
+				+ ", fileSizeMax=" + fileSizeMax + "]";
 	}
 }

@@ -35,8 +35,8 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.constants.EnsembleType;
-import org.linagora.linshare.core.domain.entities.EnsembleQuota;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
+import org.linagora.linshare.core.domain.entities.ContainerQuota;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -46,30 +46,30 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 public class EnsembleQuotaDto extends QuotaDto {
 
 	@ApiModelProperty(value = "EnsembleType")
-	private EnsembleType ensembleType;
+	private ContainerQuotaType containerQuotaType;
 
 	public EnsembleQuotaDto() {
 	}
 
-	public EnsembleQuotaDto(EnsembleQuota ensembleQuota) {
+	public EnsembleQuotaDto(ContainerQuota ensembleQuota) {
 		super(ensembleQuota);
-		this.ensembleType = ensembleQuota.getEnsembleType();
+		this.containerQuotaType = ensembleQuota.getContainerQuotaType();
 	}
 
-	public EnsembleType getEnsembleType() {
-		return ensembleType;
+	public ContainerQuotaType getEnsembleType() {
+		return containerQuotaType;
 	}
 
-	public void setEnsembleType(EnsembleType ensembleType) {
-		this.ensembleType = ensembleType;
+	public void setEnsembleType(ContainerQuotaType containerQuotaType) {
+		this.containerQuotaType = containerQuotaType;
 	}
 
-	public EnsembleQuota toObject() {
-		EnsembleQuota ensembleQuota = new EnsembleQuota();
+	public ContainerQuota toObject() {
+		ContainerQuota ensembleQuota = new ContainerQuota();
 		ensembleQuota.setFileSizeMax(getFileSizeMax());
 		ensembleQuota.setQuota(getQuota());
 		ensembleQuota.setQuotaWarning(getQuotaWarning());
-		ensembleQuota.setEnsembleType(getEnsembleType());
+		ensembleQuota.setContainerQuotaType(getEnsembleType());
 		return ensembleQuota;
 	}
 }

@@ -36,7 +36,7 @@ package org.linagora.linshare.core.business.service;
 import java.util.Date;
 import java.util.List;
 
-import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -47,17 +47,17 @@ public interface OperationHistoryBusinessService {
 
 	OperationHistory create(OperationHistory entity) throws BusinessException;
 
-	List<OperationHistory> find(Account account, AbstractDomain domain, EnsembleType ensembleType, Date date)
+	List<OperationHistory> find(Account account, AbstractDomain domain, ContainerQuotaType containerQuotaType, Date date)
 			throws BusinessException;
 
-	List<Account> findAccountBeforeDate(Date creationDate, EnsembleType ensembleType);
+	List<Account> findAccountBeforeDate(Date creationDate, ContainerQuotaType containerQuotaType);
 
 	List<AbstractDomain> findDomainBeforeDate(Date creationDate);
 
 	Long sumOperationValue(Account account, AbstractDomain domain, Date date, OperationHistoryTypeEnum operationType,
-			EnsembleType ensembleType) throws BusinessException;
+			ContainerQuotaType containerQuotaType) throws BusinessException;
 
-	List<String> findUuidAccountBeforeDate(Date creationDate, EnsembleType ensembleType);
+	List<String> findUuidAccountBeforeDate(Date creationDate, ContainerQuotaType containerQuotaType);
 
 	void deleteBeforeDateByAccount(Date date, Account account);
 }

@@ -14,34 +14,21 @@
 			</generator>
 		</id>
 		<discriminator column="statistic_type" type="string" />
-		<property name="statisticType" column="statistic_type"
-			type="statisticType" insert="false" update="false"/>
+		<property name="statisticType" column="statistic_type" type="statisticType" insert="false" update="false"/>
 		<property name="creationDate" column="creation_date" type="timestamp" />
 		<property name="activeDate" column="active_date" type="timestamp" />
-		<property name="operationCount" column="operation_count"
-			type="long" not-null="true" />
-		<property name="deleteOperationCount" column="delete_operation_count"
-			type="long" />
-		<property name="addOperationCount" column="add_operation_count"
-			type="long" />
-		<property name="addOperationSum" column="add_operation_sum"
-			type="long" />
-		<property name="deleteOperationSum" column="delete_operation_sum"
-			type="long" />
-		<property name="diffOperationSum" column="diff_operation_sum"
-			type="long" />
-		<property name="actualOperationSum" column="actual_operation_sum"
-			type="long" />
+		<property name="operationCount" column="operation_count" type="long" not-null="true" />
+		<property name="deleteOperationCount" column="delete_operation_count" type="long" />
+		<property name="createOperationCount" column="create_operation_count" type="long" />
+		<property name="createOperationSum" column="create_operation_sum" type="long" />
+		<property name="deleteOperationSum" column="delete_operation_sum" type="long" />
+		<property name="diffOperationSum" column="diff_operation_sum" type="long" />
+		<property name="actualOperationSum" column="actual_operation_sum" type="long" />
 
-		<many-to-one name="domain" column="domain_id"
-			class="org.linagora.linshare.core.domain.entities.AbstractDomain">
-		</many-to-one>
-		<many-to-one name="account" column="account_id"
-			class="org.linagora.linshare.core.domain.entities.Account">
-		</many-to-one>
-		<many-to-one name="parentDomain" column="parent_domain_id"
-			class="org.linagora.linshare.core.domain.entities.AbstractDomain">
-		</many-to-one>
+		<many-to-one name="domain" column="domain_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" />
+		<many-to-one name="account" column="account_id" class="org.linagora.linshare.core.domain.entities.Account" />
+		<many-to-one name="parentDomain" column="domain_parent_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" />
+
 		<subclass name="org.linagora.linshare.core.domain.entities.UserDailyStat" discriminator-value="USER_DAILY_STAT" lazy="true">
 		</subclass>
 		<subclass name="org.linagora.linshare.core.domain.entities.UserWeeklyStat" discriminator-value="USER_WEEKLY_STAT" lazy="true">

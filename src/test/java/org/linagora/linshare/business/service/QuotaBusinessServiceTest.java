@@ -44,12 +44,12 @@ import org.junit.Test;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
 import org.linagora.linshare.core.business.service.EnsembleQuotaBusinessService;
-import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
-import org.linagora.linshare.core.domain.entities.EnsembleQuota;
+import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.domain.entities.Quota;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.AccountRepository;
@@ -124,7 +124,7 @@ public class QuotaBusinessServiceTest extends AbstractTransactionalJUnit4SpringC
 		assertEquals(1396, (long) domainQuota.getCurrentValue());
 		assertEquals(1096, (long) domainQuota.getLastValue());
 
-		EnsembleQuota ensembleQuota = ensembleQuotaBusinessService.find(domain, EnsembleType.USER);
+		ContainerQuota ensembleQuota = ensembleQuotaBusinessService.find(domain, ContainerQuotaType.USER);
 		assertNotNull(ensembleQuota);
 		assertEquals(496, (long) ensembleQuota.getCurrentValue());
 		assertEquals(0, (long) ensembleQuota.getLastValue());
@@ -132,11 +132,11 @@ public class QuotaBusinessServiceTest extends AbstractTransactionalJUnit4SpringC
 		assertEquals(1300, (long) ensembleQuota.getQuotaWarning());
 		assertEquals(5, (long) ensembleQuota.getFileSizeMax());
 		ensembleQuotaBusinessService.updateByBatch(ensembleQuota, new Date());
-		ensembleQuota = ensembleQuotaBusinessService.find(domain, EnsembleType.USER);
+		ensembleQuota = ensembleQuotaBusinessService.find(domain, ContainerQuotaType.USER);
 		assertEquals(1700, (long) ensembleQuota.getCurrentValue());
 		assertEquals(496, (long) ensembleQuota.getLastValue());
 
-		EnsembleQuota threadEnsembleQuota = ensembleQuotaBusinessService.find(domain, EnsembleType.THREAD);
+		ContainerQuota threadEnsembleQuota = ensembleQuotaBusinessService.find(domain, ContainerQuotaType.WORK_GROUP);
 		assertNotNull(threadEnsembleQuota);
 		assertEquals(900, (long) threadEnsembleQuota.getCurrentValue());
 		assertEquals(200, (long) threadEnsembleQuota.getLastValue());
@@ -144,7 +144,7 @@ public class QuotaBusinessServiceTest extends AbstractTransactionalJUnit4SpringC
 		assertEquals(1500, (long) threadEnsembleQuota.getQuotaWarning());
 		assertEquals(5, (long) threadEnsembleQuota.getFileSizeMax());
 		ensembleQuotaBusinessService.updateByBatch(threadEnsembleQuota, new Date());
-		threadEnsembleQuota = ensembleQuotaBusinessService.find(domain, EnsembleType.THREAD);
+		threadEnsembleQuota = ensembleQuotaBusinessService.find(domain, ContainerQuotaType.WORK_GROUP);
 		assertEquals(1200, (long) threadEnsembleQuota.getCurrentValue());
 		assertEquals(900, (long) threadEnsembleQuota.getLastValue());
 

@@ -109,7 +109,7 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 		if (domain != null) {
 			criteria.add(Restrictions.eq("domain", domain));
 		}
-		criteria.setProjection(Projections.sum("addOperationCount"));
+		criteria.setProjection(Projections.sum("createOperationCount"));
 		List<T> list = findByCriteria(criteria);
 		if (list.size() > 0 && list.get(0) != null)
 			return DataAccessUtils.longResult(findByCriteria(criteria));
@@ -126,7 +126,7 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 		if (domain != null) {
 			criteria.add(Restrictions.eq("domain", domain));
 		}
-		criteria.setProjection(Projections.sum("addOperationSum"));
+		criteria.setProjection(Projections.sum("createOperationSum"));
 		List<T> list = findByCriteria(criteria);
 		if (list.size() > 0 && list.get(0) != null)
 			return DataAccessUtils.longResult(findByCriteria(criteria));

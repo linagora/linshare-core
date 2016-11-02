@@ -35,14 +35,14 @@ package org.linagora.linshare.core.repository;
 
 import java.util.Date;
 
-import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
-import org.linagora.linshare.core.domain.entities.EnsembleQuota;
+import org.linagora.linshare.core.domain.entities.ContainerQuota;
 
-public interface EnsembleQuotaRepository extends GenericQuotaRepository<EnsembleQuota> {
+public interface EnsembleQuotaRepository extends GenericQuotaRepository<ContainerQuota> {
 
-	EnsembleQuota find(AbstractDomain domain, EnsembleType ensembleType);
+	ContainerQuota find(AbstractDomain domain, ContainerQuotaType containerQuotaType);
 
 	Long sumOfCurrentValue(DomainQuota domainQuota, Date modificationDateByBatch);
 }

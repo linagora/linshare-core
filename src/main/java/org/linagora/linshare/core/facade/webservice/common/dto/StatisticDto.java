@@ -92,8 +92,8 @@ public class StatisticDto {
 		this.parentDomain = new DomainLightDto(statistic.getParentDomain());
 		this.creationDate = statistic.getCreationDate();
 		this.actualOperationSum = statistic.getActualOperationSum();
-		this.addOperationCount = statistic.getAddOperationCount();
-		this.addOperationSum = statistic.getAddOperationSum();
+		this.addOperationCount = statistic.getCreateOperationCount();
+		this.addOperationSum = statistic.getCreateOperationSum();
 		this.deleteOperationCount = statistic.getDeleteOperationCount();
 		this.deleteOperaionSum = statistic.getDeleteOperationSum();
 		this.diffOperationSum = statistic.getDiffOperationSum();

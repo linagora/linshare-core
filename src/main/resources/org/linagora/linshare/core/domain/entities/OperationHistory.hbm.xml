@@ -8,8 +8,8 @@
 		<param name="valueOfMethod">fromInt</param>
 	</typedef>
 	<typedef
-		class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="ensembleType">
-		<param name="enumClass">org.linagora.linshare.core.domain.constants.EnsembleType</param>
+		class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="containerQuotaType">
+		<param name="enumClass">org.linagora.linshare.core.domain.constants.ContainerQuotaType</param>
 		<param name="valueOfMethod">fromString</param>
 	</typedef>
 	
@@ -18,20 +18,12 @@
 		<id name="id" column="id" type="long" unsaved-value="0">
 			<generator class="native"></generator>
 		</id>
-		<property name="creationDate" column="creation_date" type="timestamp"
-			not-null="true" />
-		<property name="operationValue" column="operation_value" type="long"
-			not-null="true" />
-		<property access="field" name="operationType" column="operation_type" type="operationType"
-			not-null="true" />
-		<property access="field" name="ensembleType" column="ensemble_type" type="ensembleType"
-			not-null="true" />
-		<many-to-one name="domain" column="domain_id"
-			class="org.linagora.linshare.core.domain.entities.AbstractDomain"
-			not-null="true">
-		</many-to-one>
-		<many-to-one name="account" column="account_id"
-			class="org.linagora.linshare.core.domain.entities.Account" not-null="true">
-		</many-to-one>
+		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false" unique="true" />
+		<property name="creationDate" column="creation_date" type="timestamp" not-null="true" />
+		<property name="operationValue" column="operation_value" type="long" not-null="true" />
+		<property name="operationType" column="operation_type" type="operationType" not-null="true" />
+		<property name="containerQuotaType" column="container_type" type="containerQuotaType" not-null="true" />
+		<many-to-one name="domain" column="domain_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" not-null="true" />
+		<many-to-one name="account" column="account_id" class="org.linagora.linshare.core.domain.entities.Account" not-null="true" />
 	</class>
 </hibernate-mapping>

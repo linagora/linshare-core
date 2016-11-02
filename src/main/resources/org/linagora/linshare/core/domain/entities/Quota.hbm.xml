@@ -1,44 +1,41 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-	<typedef name="ensembleType" class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType">
-		<param name="enumClass">org.linagora.linshare.core.domain.constants.EnsembleType</param>
+	<typedef name="containerQuotaType" class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType">
+		<param name="enumClass">org.linagora.linshare.core.domain.constants.ContainerQuotaType</param>
 		<param name="valueOfMethod">fromString</param>
 	</typedef>
-	<class name="org.linagora.linshare.core.domain.entities.Quota"
-		table="quota" lazy="true" discriminator-value="0">
+	<class name="org.linagora.linshare.core.domain.entities.Quota" table="quota" lazy="true" discriminator-value="0">
 		<id name="id" column="id" type="long" unsaved-value="0">
 			<generator class="native"></generator>
 		</id>
 		<discriminator column="quota_type" type="string"/>
 		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false" unique="true" />
-		<property name="currentValue" column="current_value" type="long"
-			not-null="true" />
-		<property name="lastValue" column="last_value" type="long"
-			not-null="true" />
+		<property name="currentValue" column="current_value" type="long" not-null="true" />
+		<property name="lastValue" column="last_value" type="long" not-null="true" />
+		<property name="override" type="boolean">
+			<column name="override" not-null="true" default="false" />
+		</property>
 		<property name="quota" column="quota"/>
 		<property name="quotaWarning" column="quota_warning"/>
 		<property name="fileSizeMax" column="file_size_max"/>
 		<property name="creationDate" column="creation_date" type = "timestamp"/>
 		<property name="modificationDate" column="modification_date" type = "timestamp"/>
 		<property name="batchModificationDate" column="batch_modification_date" type="timestamp"/>
-		<many-to-one name="domain" column="domain_id"
-			class="org.linagora.linshare.core.domain.entities.AbstractDomain" lazy="proxy" >
-		</many-to-one>
-		<many-to-one name="account" column="account_id"
-			class="org.linagora.linshare.core.domain.entities.Account" lazy="proxy">
-		</many-to-one>
-		<many-to-one name="parentDomain" column="parent_domain_id"
-			class="org.linagora.linshare.core.domain.entities.AbstractDomain" lazy="proxy">
-		</many-to-one>
+		<many-to-one name="account" column="account_id"	class="org.linagora.linshare.core.domain.entities.Account" lazy="proxy" />
+		<many-to-one name="domain" column="domain_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" lazy="proxy" />
+		<many-to-one name="parentDomain" column="domain_parent_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" lazy="proxy" />
+
 		<subclass name="org.linagora.linshare.core.domain.entities.DomainQuota" discriminator-value="DOMAIN_QUOTA" />
+
 		<subclass name="org.linagora.linshare.core.domain.entities.AccountQuota" discriminator-value="ACCOUNT_QUOTA" >
-			<many-to-one name="ensembleQuota" column="ensemble_quota" class="org.linagora.linshare.core.domain.entities.EnsembleQuota" />
+			<many-to-one name="containerQuota" column="quota_container_id" class="org.linagora.linshare.core.domain.entities.ContainerQuota" />
 		</subclass>
-		<subclass name="org.linagora.linshare.core.domain.entities.EnsembleQuota" discriminator-value="ENSEMBLE_QUOTA" >
-			<property name="ensembleType" column="ensemble_type" type="ensembleType"/>
-			<many-to-one name="domainQuota" column="domain_quota" class="org.linagora.linshare.core.domain.entities.DomainQuota"/>
+
+		<subclass name="org.linagora.linshare.core.domain.entities.ContainerQuota" discriminator-value="CONTAINER_QUOTA" >
+			<property name="containerQuotaType" column="container_type" type="containerQuotaType"/>
+			<many-to-one name="domainQuota" column="quota_domain_id" class="org.linagora.linshare.core.domain.entities.DomainQuota"/>
 		</subclass>
-		<subclass name="org.linagora.linshare.core.domain.entities.PlatformQuota" discriminator-value="PLATFORM_QUOTA" />
+
 	</class>
 </hibernate-mapping>

@@ -37,7 +37,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
-import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -54,8 +54,8 @@ public class OperationHistoryBusinessServiceImpl implements OperationHistoryBusi
 	}
 
 	@Override
-	public List<Account> findAccountBeforeDate(Date creationDate, EnsembleType ensembleType) {
-		return repository.findAccountBeforeDate(creationDate, ensembleType);
+	public List<Account> findAccountBeforeDate(Date creationDate, ContainerQuotaType containerQuotaType) {
+		return repository.findAccountBeforeDate(creationDate, containerQuotaType);
 	}
 
 	@Override
@@ -70,20 +70,20 @@ public class OperationHistoryBusinessServiceImpl implements OperationHistoryBusi
 
 //	Method only use by the tests, any other utility?
 	@Override
-	public List<OperationHistory> find(Account account, AbstractDomain domain, EnsembleType ensembleType, Date date)
+	public List<OperationHistory> find(Account account, AbstractDomain domain, ContainerQuotaType containerQuotaType, Date date)
 			throws BusinessException {
-		return repository.find(account, domain, ensembleType, date, null);
+		return repository.find(account, domain, containerQuotaType, date, null);
 	}
 
 	@Override
 	public Long sumOperationValue(Account account, AbstractDomain domain, Date date,
-			OperationHistoryTypeEnum operationType, EnsembleType ensembleType) throws BusinessException {
-		return repository.sumOperationValue(account, domain, date, operationType, ensembleType);
+			OperationHistoryTypeEnum operationType, ContainerQuotaType containerQuotaType) throws BusinessException {
+		return repository.sumOperationValue(account, domain, date, operationType, containerQuotaType);
 	}
 
 	@Override
-	public List<String> findUuidAccountBeforeDate(Date creationDate, EnsembleType ensembleType) {
-		return repository.findUuidAccountBeforeDate(creationDate, ensembleType);
+	public List<String> findUuidAccountBeforeDate(Date creationDate, ContainerQuotaType containerQuotaType) {
+		return repository.findUuidAccountBeforeDate(creationDate, containerQuotaType);
 	}
 
 	@Override

@@ -248,6 +248,7 @@
 	</bean>
 	<bean id="domainQuotaBusinessService" class="org.linagora.linshare.core.business.service.impl.DomainQuotaBusinessServiceImpl">
 		<constructor-arg ref="domainQuotaRepository" />
+		<constructor-arg ref="abstractDomainRepository" />
 		<constructor-arg ref="ensembleQuotaRepository" />
 	</bean>
 	<bean id="accountQuotaBusinessService" class="org.linagora.linshare.core.business.service.impl.AccountQuotaBusinessServiceImpl">
@@ -259,9 +260,6 @@
 	<bean id="ensembleQuotaBusinessService" class="org.linagora.linshare.core.business.service.impl.EnsembleQuotaBusinessServiceImpl">
 		<constructor-arg ref="ensembleQuotaRepository" />
 		<constructor-arg ref="accountQuotaRepository" />
-	</bean>
-	<bean id="platformQuotaBusinessService" class="org.linagora.linshare.core.business.service.impl.PlatformQuotaBusinessServiceImpl">
-		<constructor-arg ref="platformQuotaRepository" />
 	</bean>
 	<bean id="batchHistoryBusinessService" class="org.linagora.linshare.core.business.service.impl.BatchHistoryBusinessServiceImpl">
 		<constructor-arg ref="batchHistoryRepository" />

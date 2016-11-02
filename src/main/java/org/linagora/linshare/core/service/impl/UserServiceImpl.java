@@ -45,7 +45,7 @@ import org.linagora.linshare.core.business.service.DomainPermissionBusinessServi
 import org.linagora.linshare.core.business.service.EnsembleQuotaBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
-import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -54,7 +54,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
-import org.linagora.linshare.core.domain.entities.EnsembleQuota;
+import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
@@ -1009,9 +1009,9 @@ public class UserServiceImpl implements UserService {
 	private void createQuotaUser(User user) throws BusinessException {
 		Validate.notNull(user);
 		Validate.notNull(user.getDomain());
-		EnsembleQuota ensembleQuota = ensembleQuotaBusinessService.find(user.getDomain(), EnsembleType.USER);
+		ContainerQuota ensembleQuota = ensembleQuotaBusinessService.find(user.getDomain(), ContainerQuotaType.USER);
 		if (ensembleQuota == null) {
-			throw new BusinessException(BusinessErrorCode.ENSEMBLE_QUOTA_NOT_FOUND, "No ensemble quota found for the domain : " + user.getDomainId());
+			throw new BusinessException(BusinessErrorCode.CONTAINER_QUOTA_NOT_FOUND, "No ensemble quota found for the domain : " + user.getDomainId());
 		}
 		AccountQuota userQuota = new AccountQuota(user, user.getDomain(), user.getDomain().getParentDomain(),
 				ensembleQuota, ensembleQuota.getQuota(), ensembleQuota.getQuotaWarning(),

@@ -42,7 +42,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
-import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -103,7 +103,7 @@ public class OperationHistoryBusinessServiceTest
 		Account account = jane;
 		AbstractDomain domain = jane.getDomain();
 		OperationHistory entity = new OperationHistory(account, domain, (long) 50, OperationHistoryTypeEnum.CREATE,
-				EnsembleType.USER);
+				ContainerQuotaType.USER);
 		operationHistoryBusinessService.create(entity);
 		List<OperationHistory> result = operationHistoryBusinessService.find(account, null, null, null);
 		assertEquals(1, result.size());
@@ -114,7 +114,7 @@ public class OperationHistoryBusinessServiceTest
 		assertEquals(domain, entity.getDomain());
 		assertEquals(50, (long) entity.getOperationValue());
 		assertEquals(OperationHistoryTypeEnum.CREATE, entity.getOperationType());
-		assertEquals(EnsembleType.USER, entity.getEnsembleType());
+		assertEquals(ContainerQuotaType.USER, entity.getContainerQuotaType());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -124,7 +124,7 @@ public class OperationHistoryBusinessServiceTest
 		Account account = jane;
 		AbstractDomain domain = jane.getDomain();
 		OperationHistory entity = new OperationHistory(account, domain, (long) 50, OperationHistoryTypeEnum.CREATE,
-				EnsembleType.USER);
+				ContainerQuotaType.USER);
 		operationHistoryBusinessService.create(entity);
 		List<OperationHistory> result = operationHistoryBusinessService.find(account, null, null, null);
 		assertEquals(1, result.size());

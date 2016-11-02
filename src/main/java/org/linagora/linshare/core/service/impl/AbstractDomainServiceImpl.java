@@ -45,23 +45,21 @@ import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
 import org.linagora.linshare.core.business.service.EnsembleQuotaBusinessService;
 import org.linagora.linshare.core.business.service.MailConfigBusinessService;
 import org.linagora.linshare.core.business.service.MimePolicyBusinessService;
-import org.linagora.linshare.core.business.service.PlatformQuotaBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.DomainType;
-import org.linagora.linshare.core.domain.constants.EnsembleType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
-import org.linagora.linshare.core.domain.entities.EnsembleQuota;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MimePolicy;
-import org.linagora.linshare.core.domain.entities.PlatformQuota;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
 import org.linagora.linshare.core.domain.entities.User;
@@ -103,7 +101,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	final private DomainAccessPolicyBusinessService domainAccessPolicyBusinessService;
 	private final DomainQuotaBusinessService domainQuotaBusinessService;
 	private final EnsembleQuotaBusinessService ensembleQuotaBusinessService;
-	private final PlatformQuotaBusinessService platformQuotaBusinessService;
 
 	public AbstractDomainServiceImpl(
 			final AbstractDomainRepository abstractDomainRepository,
@@ -119,8 +116,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			final AuditAdminMongoRepository auditMongoRepository,
 			final DomainAccessPolicyBusinessService domainAccessPolicyBusinessService,
 			final DomainQuotaBusinessService domainQuotaBusinessService,
-			final EnsembleQuotaBusinessService ensembleQuotaBusinessService,
-			final PlatformQuotaBusinessService platformQuotaBusinessService) {
+			final EnsembleQuotaBusinessService ensembleQuotaBusinessService) {
 		super();
 		this.abstractDomainRepository = abstractDomainRepository;
 		this.domainPolicyService = domainPolicyService;
@@ -136,7 +132,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		this.domainAccessPolicyBusinessService = domainAccessPolicyBusinessService;
 		this.domainQuotaBusinessService = domainQuotaBusinessService;
 		this.ensembleQuotaBusinessService = ensembleQuotaBusinessService;
-		this.platformQuotaBusinessService = platformQuotaBusinessService;
 	}
 
 	@Override
@@ -830,40 +825,12 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	}
 
 	private void createQuotaDomainAndEnsemble(AbstractDomain domain) throws BusinessException {
-		if (!domain.isRootDomain()) {
-			try {
-			DomainQuota domainQuota = new DomainQuota();
-			domainQuota.setDomain(domain);
-			domainQuota.setParentDomain(domain.getParentDomain());
-			domainQuota.setCurrentValue(0L);
-			domainQuota.setLastValue(0L);
-			Long quota;
-			Long quotaWarning;
-			Long fileSizeMax;
-			if (domain.getParentDomain().isRootDomain()) {
-				PlatformQuota platformQuota = platformQuotaBusinessService.find();
-				quota = platformQuota.getQuota();
-				quotaWarning = platformQuota.getQuotaWarning();
-				fileSizeMax = platformQuota.getFileSizeMax();
-			} else {
-				DomainQuota parentDomainQuota = domainQuotaBusinessService.find(domain.getParentDomain());
-				quota = parentDomainQuota.getQuota();
-				quotaWarning = parentDomainQuota.getQuotaWarning();
-				fileSizeMax = parentDomainQuota.getFileSizeMax();
-			}
-			domainQuota.setQuota(quota);
-			domainQuota.setQuotaWarning(quotaWarning);
-			domainQuota.setFileSizeMax(fileSizeMax);
-			domainQuotaBusinessService.create(domainQuota);
-			EnsembleQuota userEnsembleQuota = new EnsembleQuota(domain, domain.getParentDomain(), domainQuota, quota,
-					quotaWarning, fileSizeMax, 0L, 0L, EnsembleType.USER);
-			EnsembleQuota threadEnsembleQuota = new EnsembleQuota(domain, domain.getParentDomain(), domainQuota, quota,
-					quotaWarning, fileSizeMax, 0L, 0L, EnsembleType.THREAD);
-			ensembleQuotaBusinessService.create(userEnsembleQuota);
-			ensembleQuotaBusinessService.create(threadEnsembleQuota);
-			} catch (Exception exception) {
-				throw new BusinessException(exception.getMessage());
-			}
-		}
+		DomainQuota parentQuota = domainQuotaBusinessService.find(domain.getParentDomain());
+		DomainQuota domainQuota = new DomainQuota(parentQuota, domain);
+		domainQuotaBusinessService.create(domainQuota);
+		ContainerQuota userEnsembleQuota = new ContainerQuota(parentQuota, domain, ContainerQuotaType.USER);
+		ensembleQuotaBusinessService.create(userEnsembleQuota);
+		ContainerQuota threadEnsembleQuota = new ContainerQuota(parentQuota, domain, ContainerQuotaType.WORK_GROUP);
+		ensembleQuotaBusinessService.create(threadEnsembleQuota);
 	}
 }

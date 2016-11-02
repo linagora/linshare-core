@@ -33,31 +33,64 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
-import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 
-public class EnsembleQuota extends Quota {
+public class ContainerQuota extends Quota {
 
-	private EnsembleType ensembleType;
+	private ContainerQuotaType containerQuotaType;
 
 	private DomainQuota domainQuota;
 
-	public EnsembleQuota() {
+	public ContainerQuota() {
 		super();
 	}
 
-	public EnsembleQuota(AbstractDomain domain, AbstractDomain parentDomain, DomainQuota domainQuota, long quota,
-			long quotaWarning, long fileSizeMax, long currentValue, long lastValue, EnsembleType ensembleType) {
+	public ContainerQuota(
+			DomainQuota parentQuota,
+			AbstractDomain domain,
+			ContainerQuotaType containerType) {
+		// Link to the parent
+		this.domainQuota = parentQuota;
+		// related domains.
+		this.domain = domain;
+		this.parentDomain = parentQuota.getDomain();
+		// quota configuration
+		this.currentValue = 0L;
+		this.lastValue = 0L;
+		this.quota = parentQuota.getQuota();
+		this.quotaWarning = parentQuota.getQuotaWarning();
+		this.fileSizeMax = parentQuota.getFileSizeMax();
+		// Kind of container.
+		this.containerQuotaType = containerType;
+		this.override = false;
+	}
+
+	/**
+	 * For tests only.
+	 * @param domain
+	 * @param parentDomain
+	 * @param domainQuota
+	 * @param quota
+	 * @param quotaWarning
+	 * @param fileSizeMax
+	 * @param currentValue
+	 * @param lastValue
+	 * @param containerType
+	 */
+	public ContainerQuota(AbstractDomain domain, AbstractDomain parentDomain, DomainQuota domainQuota, long quota,
+			long quotaWarning, long fileSizeMax, long currentValue, long lastValue, ContainerQuotaType containerType) {
 		super(null, domain, parentDomain, quota, quotaWarning, fileSizeMax, currentValue, lastValue);
-		this.ensembleType = ensembleType;
+		this.containerQuotaType = containerType;
 		this.domainQuota = domainQuota;
+		this.override = false;
 	}
 
-	public EnsembleType getEnsembleType() {
-		return ensembleType;
+	public ContainerQuotaType getContainerQuotaType() {
+		return containerQuotaType;
 	}
 
-	public void setEnsembleType(EnsembleType ensembleType) {
-		this.ensembleType = ensembleType;
+	public void setContainerQuotaType(ContainerQuotaType containerQuotaType) {
+		this.containerQuotaType = containerQuotaType;
 	}
 
 	public DomainQuota getDomainQuota() {
@@ -70,9 +103,9 @@ public class EnsembleQuota extends Quota {
 
 	@Override
 	public String toString() {
-		return "EnsembleQuota [id=" + id + ", uuid=" + uuid + ", account=" + account + ", domain=" + domain
-				+ ", parentDomain=" + parentDomain + ", quota=" + quota + ", quotaWarning=" + quotaWarning
-				+ ", currentValue=" + currentValue + ", lastValue=" + lastValue + ", fileSizeMax=" + fileSizeMax + "]";
+		return "ContainerQuota [containerType=" + containerQuotaType + ", uuid=" + uuid + ", account=" + account + ", quota="
+				+ quota + ", quotaWarning=" + quotaWarning + ", currentValue=" + currentValue + ", lastValue="
+				+ lastValue + ", fileSizeMax=" + fileSizeMax + "]";
 	}
 
 }

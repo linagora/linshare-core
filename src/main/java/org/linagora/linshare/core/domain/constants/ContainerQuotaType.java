@@ -32,18 +32,17 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.business.service;
+package org.linagora.linshare.core.domain.constants;
 
-import org.linagora.linshare.core.domain.entities.PlatformQuota;
-import org.linagora.linshare.core.exception.BusinessException;
+public enum ContainerQuotaType {
 
-public interface PlatformQuotaBusinessService {
+	USER, WORK_GROUP;
 
-	PlatformQuota find() throws BusinessException;
-
-	PlatformQuota updateByBatch(Long addValue) throws BusinessException;
-
-	PlatformQuota create(PlatformQuota entity) throws BusinessException;
-
-	PlatformQuota update(PlatformQuota entity) throws BusinessException;
+	public static ContainerQuotaType fromString(String s) {
+		try {
+			return ContainerQuotaType.valueOf(s.toUpperCase());
+		} catch (RuntimeException e) {
+			throw new IllegalArgumentException("Doesn't match an existing ContainerQuotaType");
+		}
+	}
 }

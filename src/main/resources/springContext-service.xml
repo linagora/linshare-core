@@ -142,7 +142,6 @@
 		<constructor-arg ref="domainAccessPolicyBusinessService" />
 		<constructor-arg ref="domainQuotaBusinessService" />
 		<constructor-arg ref="ensembleQuotaBusinessService"/>
-		<constructor-arg ref="platformQuotaBusinessService"/>
 	</bean>
 
 	<bean name="userAndDomainMultiService" class="org.linagora.linshare.core.service.impl.UserAndDomainMultiServiceImpl">
@@ -277,7 +276,6 @@
 		<constructor-arg ref="accountQuotaBusinessService" />
 		<constructor-arg ref="domainQuotaBusinessService" />
 		<constructor-arg ref="ensembleQuotaBusinessService" />
-		<constructor-arg ref="platformQuotaBusinessService" />
 		<constructor-arg ref="operationHistoryBusinessService" />
 	</bean>
 	<bean id="accountQuotaService" class="org.linagora.linshare.core.service.impl.AccountQuotaServiceImpl">
@@ -290,10 +288,6 @@
 	</bean>
 	<bean id="ensembleQuotaService" class="org.linagora.linshare.core.service.impl.EnsembleQuotaServiceImpl">
 		<constructor-arg ref="ensembleQuotaBusinessService" />
-		<constructor-arg ref="quotaResourceAccessControl" />
-	</bean>
-	<bean id="platformQuotaService" class="org.linagora.linshare.core.service.impl.PlatformQuotaServiceImpl">
-		<constructor-arg ref="platformQuotaBusinessService" />
 		<constructor-arg ref="quotaResourceAccessControl" />
 	</bean>
 </beans>

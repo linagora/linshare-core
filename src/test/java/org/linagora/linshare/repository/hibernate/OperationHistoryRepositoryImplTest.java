@@ -42,7 +42,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -104,7 +104,7 @@ public class OperationHistoryRepositoryImplTest extends AbstractTransactionalJUn
 		result = operationHistoryRepository.find(null, null, null, new GregorianCalendar(2042, 8, 15, 00, 00).getTime(),
 				null);
 		assertEquals(9, result.size());
-		result = operationHistoryRepository.find(jane, domain1, EnsembleType.USER,
+		result = operationHistoryRepository.find(jane, domain1, ContainerQuotaType.USER,
 				new GregorianCalendar(2042, 10, 8, 00, 00).getTime(), null);
 		assertEquals(8, result.size());
 		logger.info(LinShareTestConstants.END_TEST);
@@ -122,16 +122,16 @@ public class OperationHistoryRepositoryImplTest extends AbstractTransactionalJUn
 				type = OperationHistoryTypeEnum.DELETE;
 			}
 			o = new OperationHistory(jane, jane.getDomain(), (long) (Math.random() * (10 - 200)), type,
-					EnsembleType.USER);
+					ContainerQuotaType.USER);
 			operationHistoryRepository.create(o);
 		}
-		List<OperationHistory> result = operationHistoryRepository.find(jane, jane.getDomain(), EnsembleType.USER,
+		List<OperationHistory> result = operationHistoryRepository.find(jane, jane.getDomain(), ContainerQuotaType.USER,
 				new Date(), null);
 		assertEquals(103, result.size());
-		result = operationHistoryRepository.find(jane, jane.getDomain(), EnsembleType.USER, new Date(),
+		result = operationHistoryRepository.find(jane, jane.getDomain(), ContainerQuotaType.USER, new Date(),
 				OperationHistoryTypeEnum.CREATE);
 		assertEquals(68, result.size());
-		result = operationHistoryRepository.find(jane, jane.getDomain(), EnsembleType.USER, new Date(),
+		result = operationHistoryRepository.find(jane, jane.getDomain(), ContainerQuotaType.USER, new Date(),
 				OperationHistoryTypeEnum.DELETE);
 		assertEquals(35, result.size());
 		logger.info(LinShareTestConstants.END_TEST);

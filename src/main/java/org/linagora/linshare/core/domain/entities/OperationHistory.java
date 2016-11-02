@@ -36,11 +36,13 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.Date;
 
 import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
-import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 
 public class OperationHistory {
 
 	private Long id;
+
+	private String uuid;
 
 	private Account account;
 
@@ -52,19 +54,19 @@ public class OperationHistory {
 
 	private OperationHistoryTypeEnum operationType;
 
-	private EnsembleType ensembleType;
+	private ContainerQuotaType containerQuotaType;
 
 	public OperationHistory() {
 
 	}
 
 	public OperationHistory(Account account, AbstractDomain domain,
-			Long operationValue, OperationHistoryTypeEnum operationType, EnsembleType ensembleType) {
+			Long operationValue, OperationHistoryTypeEnum operationType, ContainerQuotaType containerQuotaType) {
 		this.account = account;
 		this.domain = domain;
 		this.operationValue = operationValue;
 		this.operationType = operationType;
-		this.ensembleType = ensembleType;
+		this.containerQuotaType = containerQuotaType;
 	}
 
 	public Long getId() {
@@ -73,6 +75,14 @@ public class OperationHistory {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public Account getAccount() {
@@ -119,11 +129,12 @@ public class OperationHistory {
 		return " "+this.id+" "+this.operationType+" "+this.operationValue+" "+this.creationDate;
 	}
 
-	public EnsembleType getEnsembleType() {
-		return ensembleType;
+	public ContainerQuotaType getContainerQuotaType() {
+		return containerQuotaType;
 	}
 
-	public void setEnsembleType(EnsembleType ensembleType) {
-		this.ensembleType = ensembleType;
+	public void setContainerQuotaType(ContainerQuotaType containerQuotaType) {
+		this.containerQuotaType = containerQuotaType;
 	}
+
 }

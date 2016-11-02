@@ -37,11 +37,11 @@ import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
-import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
-import org.linagora.linshare.core.domain.entities.EnsembleQuota;
+import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountQuotaRepository;
@@ -76,16 +76,16 @@ public class AccountQuotaBusinessServiceImpl implements AccountQuotaBusinessServ
 		AccountQuota entity = find(account);
 		if (entity == null) {
 			DomainQuota domainQuota = domainQuotaRepository.find(account.getDomain());
-			EnsembleType ensembleType;
+			ContainerQuotaType containerQuotaType;
 
 			// TODO to check
 			if (account instanceof User) {
-				ensembleType = EnsembleType.USER;
+				containerQuotaType = ContainerQuotaType.USER;
 			} else {
-				ensembleType = EnsembleType.THREAD;
+				containerQuotaType = ContainerQuotaType.WORK_GROUP;
 			}
 			if (domainQuota != null) {
-				EnsembleQuota ensembleQuota = ensembleQuotaRepository.find(account.getDomain(), ensembleType);
+				ContainerQuota ensembleQuota = ensembleQuotaRepository.find(account.getDomain(), containerQuotaType);
 				if (ensembleQuota != null) {
 					Long quota = domainQuota.getQuota();
 					Long quotaWarning = domainQuota.getQuotaWarning();

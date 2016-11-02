@@ -40,14 +40,12 @@ import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
 import org.linagora.linshare.core.business.service.EnsembleQuotaBusinessService;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
-import org.linagora.linshare.core.business.service.PlatformQuotaBusinessService;
-import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
+import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
-import org.linagora.linshare.core.domain.entities.EnsembleQuota;
-import org.linagora.linshare.core.domain.entities.PlatformQuota;
 import org.linagora.linshare.core.domain.entities.Quota;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -59,7 +57,6 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 	private AccountQuotaBusinessService accountQuotaBusinessService;
 	private DomainQuotaBusinessService domainQuotaBusinessService;
 	private EnsembleQuotaBusinessService ensembleQuotaBusinessService;
-	private PlatformQuotaBusinessService platformQuotaBusinessService;
 	private OperationHistoryBusinessService operationHistoryBusinessService;
 
 	public QuotaServiceImpl(
@@ -67,26 +64,24 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 			AccountQuotaBusinessService accountQuotaBusinessService,
 			DomainQuotaBusinessService domainQuotaBusinessService,
 			EnsembleQuotaBusinessService ensembleQuotaBusinessService,
-			PlatformQuotaBusinessService platformQuotaBusinessService,
 			OperationHistoryBusinessService operationHistoryBusinessService) {
 		super(rac);
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
 		this.domainQuotaBusinessService = domainQuotaBusinessService;
 		this.ensembleQuotaBusinessService = ensembleQuotaBusinessService;
-		this.platformQuotaBusinessService = platformQuotaBusinessService;
 		this.operationHistoryBusinessService = operationHistoryBusinessService;
 	}
 
 	@Override
-	public void checkIfUserCanAddFile(Account actor, Account owner, Long fileSize, EnsembleType ensembleType)
+	public void checkIfUserCanAddFile(Account actor, Account owner, Long fileSize, ContainerQuotaType containerQuotaType)
 			throws BusinessException {
 		Validate.notNull(actor, "Actor must be set.");
 		Validate.notNull(owner, "Owner must be set.");
 		Validate.notNull(fileSize, "FileSize must be set.");
-		Validate.notNull(ensembleType, "EnsembleType must be set.");
+		Validate.notNull(containerQuotaType, "EnsembleType must be set.");
 		checkReadPermission(actor, owner, Quota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null);
 		checkIfUserCanAddInAccountSpace(owner, fileSize);
-		checkIfUserCanAddInEnsembleSpace(owner.getDomain(), ensembleType, fileSize);
+		checkIfUserCanAddInEnsembleSpace(owner.getDomain(), containerQuotaType, fileSize);
 		checkIfUserCanAddInDomainSpace(owner.getDomain(), fileSize);
 		checkIfUserCanAddInPlatform(fileSize);
 	}
@@ -141,11 +136,11 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 		}
 	}
 
-	private void checkIfUserCanAddInEnsembleSpace(AbstractDomain domain, EnsembleType ensembleType, Long fileSize)
+	private void checkIfUserCanAddInEnsembleSpace(AbstractDomain domain, ContainerQuotaType containerQuotaType, Long fileSize)
 			throws BusinessException {
 		Validate.notNull(domain, "Domain must be set.");
 		Validate.notNull(fileSize, "File size must be set.");
-		EnsembleQuota ensembleQuota = ensembleQuotaBusinessService.find(domain, ensembleType);
+		ContainerQuota ensembleQuota = ensembleQuotaBusinessService.find(domain, containerQuotaType);
 		if (ensembleQuota != null) {
 			Long quota = ensembleQuota.getQuota();
 			Long currentValue = ensembleQuota.getCurrentValue();
@@ -155,21 +150,21 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 						"The file size is greater than the file quota.");
 			}
 			Long todayConsumption = operationHistoryBusinessService.sumOperationValue(null, domain, new Date(), null,
-					ensembleType);
+					containerQuotaType);
 			Long totalConsumption = currentValue + todayConsumption + fileSize;
 			if (totalConsumption > quota) {
-				throw new BusinessException(BusinessErrorCode.QUOTA_ENSEMBLE_UNAUTHORIZED,
+				throw new BusinessException(BusinessErrorCode.QUOTA_CONTAINER_UNAUTHORIZED,
 						"The ensemble quota has been reached.");
 			}
 		} else {
-			throw new BusinessException(BusinessErrorCode.QUOTA_ENSEMBLE_UNAUTHORIZED,
+			throw new BusinessException(BusinessErrorCode.QUOTA_CONTAINER_UNAUTHORIZED,
 					"The ensemble quota is not configured yet.");
 		}
 	}
 
 	private void checkIfUserCanAddInPlatform(Long fileSize) throws BusinessException {
 		Validate.notNull(fileSize, "File size must be set.");
-		PlatformQuota platformQuota = platformQuotaBusinessService.find();
+		DomainQuota platformQuota = domainQuotaBusinessService.findRootQuota();
 		if (platformQuota != null) {
 			Long quota = platformQuota.getQuota();
 			Long currentValue = platformQuota.getCurrentValue();

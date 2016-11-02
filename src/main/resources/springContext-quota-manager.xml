@@ -24,7 +24,6 @@
 		<constructor-arg ref="ensembleQuotaBusinessService" />
 		<constructor-arg ref="domainQuotaBusinessService" />
 		<constructor-arg ref="domainDailyStatBusinessService" />
-		<constructor-arg ref="platformQuotaBusinessService" />
 		<constructor-arg ref="batchHistoryBusinessService" />
 	</bean>
 	<bean id="statisticDailyThreadBatch"

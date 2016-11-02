@@ -39,15 +39,15 @@ import java.util.List;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
-import org.linagora.linshare.core.domain.entities.EnsembleQuota;
+import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.repository.EnsembleQuotaRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public class EnsembleQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<EnsembleQuota>
+public class EnsembleQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<ContainerQuota>
 		implements EnsembleQuotaRepository {
 
 	public EnsembleQuotaRepositoryImpl(HibernateTemplate hibernateTemplate) {
@@ -55,10 +55,10 @@ public class EnsembleQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Ense
 	}
 
 	@Override
-	public EnsembleQuota find(AbstractDomain domain, EnsembleType ensembleType) {
+	public ContainerQuota find(AbstractDomain domain, ContainerQuotaType ContainerQuotaType) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("domain", domain));
-		criteria.add(Restrictions.eq("ensembleType", ensembleType));
+		criteria.add(Restrictions.eq("containerQuotaType", ContainerQuotaType));
 		return DataAccessUtils.singleResult(findByCriteria(criteria));
 	}
 
@@ -72,7 +72,7 @@ public class EnsembleQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Ense
 			criteria.add(Restrictions.le("batchModificationDate", modificationDateByBatch));
 		}
 		criteria.setProjection(Projections.sum("currentValue"));
-		List<EnsembleQuota> list = findByCriteria(criteria);
+		List<ContainerQuota> list = findByCriteria(criteria);
 		if (list.size() > 0 && list.get(0) != null) {
 			return DataAccessUtils.longResult(findByCriteria(criteria));
 		}

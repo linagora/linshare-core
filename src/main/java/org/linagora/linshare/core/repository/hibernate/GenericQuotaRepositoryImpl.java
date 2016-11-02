@@ -38,7 +38,7 @@ import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
-import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Quota;
@@ -56,8 +56,8 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 
 	@Override
 	public T create(T entity) throws BusinessException {
-		entity.setLastValue((long) 0);
-		entity.setCurrentValue((long) 0);
+		entity.setLastValue(0L);
+		entity.setCurrentValue(0L);
 		entity.setCreationDate(new Date());
 		entity.setModificationDate(new Date());
 		entity.setBatchModificationDate(new Date());
@@ -85,7 +85,7 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 	}
 
 	@Override
-	public T find(AbstractDomain domain, Account account, EnsembleType ensembleType) {
+	public T find(AbstractDomain domain, Account account, ContainerQuotaType containerQuotaType) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		if (domain != null) {
 			criteria.add(Restrictions.eq("domain", domain));
@@ -93,8 +93,8 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 		if (account != null) {
 			criteria.add(Restrictions.eq("account", account));
 		}
-		if (ensembleType != null) {
-			criteria.add(Restrictions.eq("ensembleType", ensembleType));
+		if (containerQuotaType != null) {
+			criteria.add(Restrictions.eq("containerQuotaType", containerQuotaType));
 		}
 		return DataAccessUtils.singleResult(findByCriteria(criteria));
 	}

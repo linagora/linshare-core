@@ -36,9 +36,9 @@ package org.linagora.linshare.core.business.service.impl;
 import java.util.Date;
 
 import org.linagora.linshare.core.business.service.EnsembleQuotaBusinessService;
-import org.linagora.linshare.core.domain.constants.EnsembleType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.EnsembleQuota;
+import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountQuotaRepository;
 import org.linagora.linshare.core.repository.EnsembleQuotaRepository;
@@ -55,15 +55,15 @@ public class EnsembleQuotaBusinessServiceImpl implements EnsembleQuotaBusinessSe
 	}
 
 	@Override
-	public EnsembleQuota find(AbstractDomain domain, EnsembleType ensembleType) {
-		return repository.find(domain, ensembleType);
+	public ContainerQuota find(AbstractDomain domain, ContainerQuotaType containerQuotaType) {
+		return repository.find(domain, containerQuotaType);
 	}
 
 	@Override
-	public EnsembleQuota create(EnsembleQuota entity) throws BusinessException {
+	public ContainerQuota create(ContainerQuota entity) throws BusinessException {
 		AbstractDomain domain = entity.getDomain();
-		EnsembleType ensembleType = entity.getEnsembleType();
-		if (find(domain, ensembleType) != null) {
+		ContainerQuotaType containerQuotaType = entity.getContainerQuotaType();
+		if (find(domain, containerQuotaType) != null) {
 			throw new BusinessException("It must be only one EnsembleQuota for any entity");
 		} else {
 			return repository.create(entity);
@@ -71,15 +71,15 @@ public class EnsembleQuotaBusinessServiceImpl implements EnsembleQuotaBusinessSe
 	}
 
 	@Override
-	public EnsembleQuota update(EnsembleQuota entity) throws BusinessException {
+	public ContainerQuota update(ContainerQuota entity) throws BusinessException {
 		return repository.update(entity);
 	}
 
 	@Override
-	public EnsembleQuota updateByBatch(EnsembleQuota entity, Date date) throws BusinessException {
+	public ContainerQuota updateByBatch(ContainerQuota entity, Date date) throws BusinessException {
 		AbstractDomain domain = entity.getDomain();
-		EnsembleType ensembleType = entity.getEnsembleType();
-		if (find(domain, ensembleType) != null) {
+		ContainerQuotaType containerQuotaType = entity.getContainerQuotaType();
+		if (find(domain, containerQuotaType) != null) {
 			Long sumCurrentValue = accountQuotaRepository.sumOfCurrentValue(entity, date);
 			entity.setLastValue(entity.getCurrentValue());
 			entity.setCurrentValue(sumCurrentValue);

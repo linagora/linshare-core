@@ -142,19 +142,19 @@ public abstract class GenericStatistic {
 		this.deleteOperationCount = deleteOperationCount;
 	}
 
-	public Long getAddOperationCount() {
+	public Long getCreateOperationCount() {
 		return createOperationCount;
 	}
 
-	public void setAddOperationCount(Long createOperationCount) {
+	public void setCreateOperationCount(Long createOperationCount) {
 		this.createOperationCount = createOperationCount;
 	}
 
-	public Long getAddOperationSum() {
+	public Long getCreateOperationSum() {
 		return createOperationSum;
 	}
 
-	public void setAddOperationSum(Long createOperationSum) {
+	public void setCreateOperationSum(Long createOperationSum) {
 		this.createOperationSum = createOperationSum;
 	}
 

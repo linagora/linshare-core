@@ -38,7 +38,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
-import org.linagora.linshare.core.domain.entities.EnsembleQuota;
+import org.linagora.linshare.core.domain.entities.ContainerQuota;
 
 public interface AccountQuotaRepository extends GenericQuotaRepository<AccountQuota> {
 
@@ -46,5 +46,5 @@ public interface AccountQuotaRepository extends GenericQuotaRepository<AccountQu
 
 	List<String> findDomainByBatchModificationDate(Date startRange, Date endRange);
 
-	Long sumOfCurrentValue(EnsembleQuota ensembleQuota, Date modificationDateByBatch);
+	Long sumOfCurrentValue(ContainerQuota ensembleQuota, Date modificationDateByBatch);
 }

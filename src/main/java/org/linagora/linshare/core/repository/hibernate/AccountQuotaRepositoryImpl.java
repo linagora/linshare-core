@@ -41,7 +41,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
-import org.linagora.linshare.core.domain.entities.EnsembleQuota;
+import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.repository.AccountQuotaRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -71,10 +71,10 @@ public class AccountQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Accou
 	}
 
 	@Override
-	public Long sumOfCurrentValue(EnsembleQuota ensembleQuota, Date modificationDateByBatch) {
+	public Long sumOfCurrentValue(ContainerQuota containerQuota, Date modificationDateByBatch) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		if (ensembleQuota != null) {
-			criteria.add(Restrictions.eq("ensembleQuota", ensembleQuota));
+		if (containerQuota != null) {
+			criteria.add(Restrictions.eq("containerQuota", containerQuota));
 		}
 		if (modificationDateByBatch != null) {
 			criteria.add(Restrictions.le("batchModificationDate", modificationDateByBatch));
