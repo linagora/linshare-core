@@ -119,13 +119,16 @@ public class MailingListFacadeImpl extends GenericFacadeImpl implements MailingL
 	}
 
 	@Override
-	public Set<MailingListContactDto> findAllContacts(String ownerUuid, String listUuid) throws BusinessException {
+	public Set<MailingListContactDto> findAllContacts(String ownerUuid, String listUuid, boolean v2) throws BusinessException {
 		Validate.notEmpty(listUuid, "Mailing list uuid must be set.");
 
 		User actor = checkAuthentication();
 		List<MailingListContact> list;
 		User owner = getOwner(actor, ownerUuid);
 		list = mailingListService.findAllContacts(actor, owner, listUuid);
+		if (v2) {
+			return ImmutableSet.copyOf(Lists.transform(list, MailingListContactDto.toDtoV2()));
+		}
 		return ImmutableSet.copyOf(Lists.transform(list, MailingListContactDto.toDto()));
 	}
 

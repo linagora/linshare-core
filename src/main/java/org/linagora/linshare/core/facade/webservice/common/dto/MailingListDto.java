@@ -87,18 +87,20 @@ public class MailingListDto {
 	}
 
 	public MailingListDto(MailingList list) {
-		this(list, true);
+		this(list, true, false);
 	}
 
-	public MailingListDto(MailingList list, boolean full) {
+	public MailingListDto(MailingList list, boolean full, boolean v2) {
 		this.uuid = list.getUuid();
 		this.identifier = list.getIdentifier();
 		this.description = list.getDescription();
 		this.isPublic = list.isPublic();
 		this.owner = UserDto.getSimple(list.getOwner());
 		this.domainId = list.getDomain().getUuid();
-		this.creationDate = list.getCreationDate();
-		this.modificationDate = list.getModificationDate();
+		if (v2) {
+			this.creationDate = list.getCreationDate();
+			this.modificationDate = list.getModificationDate();
+		}
 		if (full) {
 			for (MailingListContact current : list.getMailingListContact()) {
 				contacts.add(new MailingListContactDto(current));
@@ -197,7 +199,7 @@ public class MailingListDto {
 		return new Function<MailingList, MailingListDto>() {
 			@Override
 			public MailingListDto apply(MailingList arg0) {
-				MailingListDto dto = new MailingListDto(arg0, true);
+				MailingListDto dto = new MailingListDto(arg0);
 				// user/v1 API compatibility.
 				dto.setCreationDate(null);
 				dto.setModificationDate(null);
@@ -210,7 +212,7 @@ public class MailingListDto {
 		return new Function<MailingList, MailingListDto>() {
 			@Override
 			public MailingListDto apply(MailingList arg0) {
-				return new MailingListDto(arg0, false);
+				return new MailingListDto(arg0, false, true);
 			}
 		};
 	}

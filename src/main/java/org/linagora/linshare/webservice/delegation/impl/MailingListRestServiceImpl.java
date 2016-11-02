@@ -256,7 +256,7 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 			@ApiParam(value = "The mailing list uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		return mailingListFacade.findAllContacts(ownerUuid, uuid);
+		return mailingListFacade.findAllContacts(ownerUuid, uuid, false);
 	}
 
 	@Path("/{uuid}/contacts/{contactUuid}")

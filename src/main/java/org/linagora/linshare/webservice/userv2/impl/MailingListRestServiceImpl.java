@@ -175,7 +175,7 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 	public Set<MailingListContactDto> findAllContacts(
 			@ApiParam(value = "The mailing list uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		return mailingListFacade.findAllContacts(null, uuid);
+		return mailingListFacade.findAllContacts(null, uuid, true);
 	}
 
 	@Path("/{uuid}/contacts")

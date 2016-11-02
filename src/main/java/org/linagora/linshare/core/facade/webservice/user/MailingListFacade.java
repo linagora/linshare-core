@@ -52,7 +52,7 @@ public interface MailingListFacade {
 
 	MailingListDto delete(String ownerUuid, String uuid) throws BusinessException;
 
-	Set<MailingListContactDto> findAllContacts(String ownerUuid, String listUuid) throws BusinessException;
+	Set<MailingListContactDto> findAllContacts(String ownerUuid, String listUuid, boolean v2) throws BusinessException;
 
 	void addContact(String ownerUuid, String listUuid, MailingListContactDto dto)
 			throws BusinessException;
