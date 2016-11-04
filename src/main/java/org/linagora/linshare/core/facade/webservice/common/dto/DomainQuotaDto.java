@@ -46,15 +46,16 @@ public class DomainQuotaDto extends QuotaDto {
 	public DomainQuotaDto() {
 	}
 
-	public DomainQuotaDto(DomainQuota domainQuota) {
-		super(domainQuota);
+	public DomainQuotaDto(DomainQuota quota) {
+		super(quota);
 	}
 
 	public DomainQuota toObject() {
-		DomainQuota domainQuota = new DomainQuota();
-		domainQuota.setFileSizeMax(getFileSizeMax());
-		domainQuota.setQuota(getQuota());
-		domainQuota.setQuotaWarning(getQuotaWarning());
-		return domainQuota;
+		DomainQuota quota = new DomainQuota();
+		quota.setFileSizeMax(getFileSizeMax());
+		quota.setQuota(getQuota());
+		quota.setQuotaWarning(getQuotaWarning());
+		quota.setOverride(getOverride());
+		return quota;
 	}
 }

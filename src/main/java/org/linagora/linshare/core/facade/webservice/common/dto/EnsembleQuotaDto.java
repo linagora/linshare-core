@@ -65,11 +65,12 @@ public class EnsembleQuotaDto extends QuotaDto {
 	}
 
 	public ContainerQuota toObject() {
-		ContainerQuota ensembleQuota = new ContainerQuota();
-		ensembleQuota.setFileSizeMax(getFileSizeMax());
-		ensembleQuota.setQuota(getQuota());
-		ensembleQuota.setQuotaWarning(getQuotaWarning());
-		ensembleQuota.setContainerQuotaType(getEnsembleType());
-		return ensembleQuota;
+		ContainerQuota quota = new ContainerQuota();
+		quota.setFileSizeMax(getFileSizeMax());
+		quota.setQuota(getQuota());
+		quota.setQuotaWarning(getQuotaWarning());
+		quota.setContainerQuotaType(getEnsembleType());
+		quota.setOverride(getOverride());
+		return quota;
 	}
 }

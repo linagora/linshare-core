@@ -73,6 +73,7 @@ public class DomainQuotaServiceImpl extends GenericServiceImpl<Account, Quota> i
 		domainQuota.setFileSizeMax(entity.getFileSizeMax());
 		domainQuota.setQuota(entity.getQuota());
 		domainQuota.setQuotaWarning(entity.getQuotaWarning());
+		domainQuota.setOverride(entity.getOverride());
 		return domainQuotaBusinessService.update(domainQuota);
 	}
 

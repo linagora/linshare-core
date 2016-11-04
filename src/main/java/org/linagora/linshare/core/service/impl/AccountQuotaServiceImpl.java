@@ -72,6 +72,7 @@ public class AccountQuotaServiceImpl extends GenericServiceImpl<Account, Quota> 
 		accountQuota.setFileSizeMax(entity.getFileSizeMax());
 		accountQuota.setQuota(entity.getQuota());
 		accountQuota.setQuotaWarning(entity.getQuotaWarning());
+		accountQuota.setOverride(entity.getOverride());
 		return accountQuotaBusinessService.update(accountQuota);
 	}
 

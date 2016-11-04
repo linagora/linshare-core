@@ -74,15 +74,15 @@ public class QuotaFacadeImpl extends AdminGenericFacadeImpl implements QuotaFaca
 	}
 
 	@Override
-	public AccountQuotaDto update(AccountQuotaDto entity) throws BusinessException {
-		Validate.notNull(entity, "AccountQuotaDto must be set.");
-		Validate.notNull(entity.getAccount(), "Account in AccountQuotaDto must be set.");
-		Validate.notNull(entity.getQuota(), "Quota in AccountQuotaDto must be set.");
-		Validate.notNull(entity.getQuotaWarning(), "QuotaWarning in AccountQuotaDto must be set.");
-		Validate.notNull(entity.getFileSizeMax(), "FileSizeMax in AccountQuotaDto must be set.");
+	public AccountQuotaDto update(AccountQuotaDto dto) throws BusinessException {
+		Validate.notNull(dto, "AccountQuotaDto must be set.");
+		Validate.notNull(dto.getAccount(), "Account in AccountQuotaDto must be set.");
+		Validate.notNull(dto.getQuota(), "Quota in AccountQuotaDto must be set.");
+		Validate.notNull(dto.getQuotaWarning(), "QuotaWarning in AccountQuotaDto must be set.");
+		Validate.notNull(dto.getFileSizeMax(), "FileSizeMax in AccountQuotaDto must be set.");
 		User actor = checkAuthentication(Role.ADMIN);
-		Account owner = accountService.findByLsUuid(entity.getAccount().getUuid());
-		AccountQuota accountQuota = entity.toObject();
+		Account owner = accountService.findByLsUuid(dto.getAccount().getUuid());
+		AccountQuota accountQuota = dto.toObject();
 		accountQuota.setAccount(owner);
 		accountQuota = accountQuotaService.update(actor, owner, accountQuota);
 		return new AccountQuotaDto(accountQuota);

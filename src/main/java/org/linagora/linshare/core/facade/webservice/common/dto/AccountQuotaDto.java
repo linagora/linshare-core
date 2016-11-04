@@ -46,15 +46,16 @@ public class AccountQuotaDto extends QuotaDto {
 	public AccountQuotaDto() {
 	}
 
-	public AccountQuotaDto(AccountQuota accountQuota) {
-		super(accountQuota);
+	public AccountQuotaDto(AccountQuota quota) {
+		super(quota);
 	}
 
 	public AccountQuota toObject() {
-		AccountQuota accountQuota = new AccountQuota();
-		accountQuota.setFileSizeMax(getFileSizeMax());
-		accountQuota.setQuota(getQuota());
-		accountQuota.setQuotaWarning(getQuotaWarning());
-		return accountQuota;
+		AccountQuota quota = new AccountQuota();
+		quota.setFileSizeMax(getFileSizeMax());
+		quota.setQuota(getQuota());
+		quota.setQuotaWarning(getQuotaWarning());
+		quota.setOverride(getOverride());
+		return quota;
 	}
 }

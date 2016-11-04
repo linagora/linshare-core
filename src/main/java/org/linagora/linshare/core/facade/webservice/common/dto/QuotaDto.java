@@ -35,6 +35,7 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Quota;
 
 import com.wordnik.swagger.annotations.ApiModel;
@@ -68,18 +69,27 @@ public class QuotaDto {
 	@ApiModelProperty(value = "FileSizeMax")
 	protected Long fileSizeMax;
 
+	@ApiModelProperty(value = "override")
+	protected Boolean override;
+
 	public QuotaDto() {
 	}
 
 	public QuotaDto(Quota quota) {
-		this.account = new AccountDto(quota.getAccount(), true);
+		Account account = quota.getAccount();
+		if (account != null) {
+			this.account = new AccountDto(account, true);
+		}
 		this.domain = new DomainLightDto(quota.getDomain());
-		this.parentDomain = new DomainLightDto(quota.getParentDomain());
+		if (quota.getParentDomain() != null) {
+			this.parentDomain = new DomainLightDto(quota.getParentDomain());
+		}
 		this.quota = quota.getQuota();
 		this.quotaWarning = quota.getQuotaWarning();
 		this.currentValue = quota.getCurrentValue();
 		this.lastValue = quota.getLastValue();
 		this.fileSizeMax = quota.getFileSizeMax();
+		this.override = quota.getOverride();
 	}
 
 	public AccountDto getAccount() {
@@ -144,5 +154,13 @@ public class QuotaDto {
 
 	public void setFileSizeMax(Long fileSizeMax) {
 		this.fileSizeMax = fileSizeMax;
+	}
+
+	public Boolean getOverride() {
+		return override;
+	}
+
+	public void setOverride(Boolean override) {
+		this.override = override;
 	}
 }

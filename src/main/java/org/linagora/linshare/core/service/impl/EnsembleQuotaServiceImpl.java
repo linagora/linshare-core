@@ -74,6 +74,7 @@ public class EnsembleQuotaServiceImpl extends GenericServiceImpl<Account, Quota>
 		ensembleQuota.setFileSizeMax(entity.getFileSizeMax());
 		ensembleQuota.setQuota(entity.getQuota());
 		ensembleQuota.setQuotaWarning(entity.getQuotaWarning());
+		ensembleQuota.setOverride(entity.getOverride());
 		return ensembleQuotaBusinessService.update(ensembleQuota);
 	}
 
