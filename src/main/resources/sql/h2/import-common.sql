@@ -827,7 +827,7 @@ UPDATE domain_abstract SET mailconfig_id = 1;
 
 
 -- quota for root domain
-INSERT INTO quota( id, uuid, creation_date, modification_date, batch_modification_date, current_value, last_value, domain_id, quota, quota_warning, file_size_max, quota_type) VALUES (1, '2a01ac66-a279-11e5-9086-5404a683a462', NOW(), NOW(), NOW(), 0, 0, 1, 1099511627776, 1045824536576, 10737418240, 'DOMAIN_QUOTA');
+INSERT INTO quota( id, uuid, creation_date, modification_date, batch_modification_date, current_value, last_value, domain_id, quota, quota_warning, quota_type) VALUES (1, '2a01ac66-a279-11e5-9086-5404a683a462', NOW(), NOW(), NOW(), 0, 0, 1, 1099511627776, 1045824536576, 'DOMAIN_QUOTA');
 -- quota : 1 To, quota_warning : 950 Go
 -- file_size_max : 10 Go
 -- 'CONTAINER_QUOTA', 'USER' for root domain
