@@ -70,7 +70,6 @@ public class DomainQuotaServiceImpl extends GenericServiceImpl<Account, Quota> i
 		Validate.notNull(entity, "Entity must be set.");
 		checkCreatePermission(actor, null, DomainQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null, domain);
 		DomainQuota domainQuota = domainQuotaBusinessService.find(entity.getDomain());
-		domainQuota.setFileSizeMax(entity.getFileSizeMax());
 		domainQuota.setQuota(entity.getQuota());
 		domainQuota.setQuotaWarning(entity.getQuotaWarning());
 		domainQuota.setOverride(entity.getOverride());

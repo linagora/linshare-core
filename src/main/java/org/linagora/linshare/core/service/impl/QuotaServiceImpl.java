@@ -80,107 +80,78 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 		Validate.notNull(fileSize, "FileSize must be set.");
 		Validate.notNull(containerQuotaType, "EnsembleType must be set.");
 		checkReadPermission(actor, owner, Quota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null);
-		checkIfUserCanAddInAccountSpace(owner, fileSize);
-		checkIfUserCanAddInEnsembleSpace(owner.getDomain(), containerQuotaType, fileSize);
-		checkIfUserCanAddInDomainSpace(owner.getDomain(), fileSize);
-		checkIfUserCanAddInPlatform(fileSize);
+		checkIfUserCanAddInAccountQuota(owner, fileSize);
+		checkIfUserCanAddInContainerQuota(owner.getDomain(), containerQuotaType, fileSize);
+		checkIfUserCanAddInDomainQuota(owner.getDomain(), fileSize);
+		checkIfUserCanAddInPlatformQuota(fileSize);
 	}
 
-	private void checkIfUserCanAddInAccountSpace(Account account, Long fileSize) throws BusinessException {
+	private void checkIfUserCanAddInAccountQuota(Account account, Long fileSize) throws BusinessException {
 		Validate.notNull(account, "Account must be set.");
 		Validate.notNull(fileSize, "File size must be set.");
-		AccountQuota accountQuota = accountQuotaBusinessService.find(account);
-		if (accountQuota != null) {
-			Long quota = accountQuota.getQuota();
-			Long currentValue = accountQuota.getCurrentValue();
-			Long fileSizeMax = accountQuota.getFileSizeMax();
-			if (fileSize > fileSizeMax) {
-				throw new BusinessException(BusinessErrorCode.QUOTA_FILE_UNAUTHORIZED,
-						"The file size is greater than the file quota.");
-			}
-			Long todayConsumption = operationHistoryBusinessService.sumOperationValue(account, null, new Date(), null,
-					null);
-			Long totalConsumption = currentValue + todayConsumption + fileSize;
-			if (totalConsumption > quota) {
-				throw new BusinessException(BusinessErrorCode.QUOTA_ACCOUNT_UNAUTHORIZED,
-						"The account quota has been reached.");
-			}
-		} else {
-			throw new BusinessException(BusinessErrorCode.QUOTA_ACCOUNT_UNAUTHORIZED,
+		AccountQuota aq = accountQuotaBusinessService.find(account);
+		if (aq == null) {
+			throw new BusinessException(BusinessErrorCode.ACCOUNT_QUOTA_NOT_FOUND,
 					"The account quota is not configured yet.");
 		}
-	}
-
-	private void checkIfUserCanAddInDomainSpace(AbstractDomain domain, Long fileSize) throws BusinessException {
-		Validate.notNull(domain, "Domain must be set.");
-		Validate.notNull(fileSize, "File size must be set.");
-		DomainQuota domainQuota = domainQuotaBusinessService.find(domain);
-		if (domainQuota != null) {
-			Long quota = domainQuota.getQuota();
-			Long currentValue = domainQuota.getCurrentValue();
-			Long fileSizeMax = domainQuota.getFileSizeMax();
-			if (fileSize > fileSizeMax) {
-				throw new BusinessException(BusinessErrorCode.QUOTA_FILE_UNAUTHORIZED,
-						"The file size is greater than the file quota.");
-			}
-			Long todayConsumption = operationHistoryBusinessService.sumOperationValue(null, domain, new Date(), null,
-					null);
-			Long totalConsumption = currentValue + todayConsumption + fileSize;
-			if (totalConsumption > quota) {
-				throw new BusinessException(BusinessErrorCode.QUOTA_DOMAIN_UNAUTHORIZED,
-						"The domain quota has been reached.");
-			}
-		} else {
-			throw new BusinessException(BusinessErrorCode.QUOTA_DOMAIN_UNAUTHORIZED,
-					"The domain quota is not configured yet.");
+		if (fileSize > aq.getFileSizeMax()) {
+			throw new BusinessException(BusinessErrorCode.QUOTA_FILE_UNAUTHORIZED,
+					"The file size is greater than the file quota.");
+		}
+		Long todayConsumption = operationHistoryBusinessService.sumOperationValue(account, null, new Date(), null, null);
+		Long totalConsumption = aq.getCurrentValue() + todayConsumption + fileSize;
+		if (totalConsumption > aq.getQuota()) {
+			throw new BusinessException(BusinessErrorCode.QUOTA_ACCOUNT_UNAUTHORIZED,
+					"The account quota has been reached.");
 		}
 	}
 
-	private void checkIfUserCanAddInEnsembleSpace(AbstractDomain domain, ContainerQuotaType containerQuotaType, Long fileSize)
+	private void checkIfUserCanAddInDomainQuota(AbstractDomain domain, Long fileSize) throws BusinessException {
+		Validate.notNull(domain, "Domain must be set.");
+		Validate.notNull(fileSize, "File size must be set.");
+		DomainQuota dq = domainQuotaBusinessService.find(domain);
+		if (dq == null) {
+			throw new BusinessException(BusinessErrorCode.DOMAIN_QUOTA_NOT_FOUND,
+					"The domain quota is not configured yet.");
+		}
+		Long todayConsumption = operationHistoryBusinessService.sumOperationValue(null, domain, new Date(), null,
+				null);
+		Long totalConsumption = dq.getCurrentValue() + todayConsumption + fileSize;
+		if (totalConsumption > dq.getQuota()) {
+			throw new BusinessException(BusinessErrorCode.QUOTA_DOMAIN_UNAUTHORIZED,
+					"The domain quota has been reached.");
+		}
+	}
+
+	private void checkIfUserCanAddInContainerQuota(AbstractDomain domain, ContainerQuotaType containerQuotaType, Long fileSize)
 			throws BusinessException {
 		Validate.notNull(domain, "Domain must be set.");
 		Validate.notNull(fileSize, "File size must be set.");
-		ContainerQuota ensembleQuota = ensembleQuotaBusinessService.find(domain, containerQuotaType);
-		if (ensembleQuota != null) {
-			Long quota = ensembleQuota.getQuota();
-			Long currentValue = ensembleQuota.getCurrentValue();
-			Long fileSizeMax = ensembleQuota.getFileSizeMax();
-			if (fileSize > fileSizeMax) {
-				throw new BusinessException(BusinessErrorCode.QUOTA_FILE_UNAUTHORIZED,
-						"The file size is greater than the file quota.");
-			}
-			Long todayConsumption = operationHistoryBusinessService.sumOperationValue(null, domain, new Date(), null,
-					containerQuotaType);
-			Long totalConsumption = currentValue + todayConsumption + fileSize;
-			if (totalConsumption > quota) {
-				throw new BusinessException(BusinessErrorCode.QUOTA_CONTAINER_UNAUTHORIZED,
-						"The ensemble quota has been reached.");
-			}
-		} else {
+		ContainerQuota cq = ensembleQuotaBusinessService.find(domain, containerQuotaType);
+		if (cq == null) {
+			throw new BusinessException(BusinessErrorCode.CONTAINER_QUOTA_NOT_FOUND,
+					"The container quota is not configured yet.");
+		}
+		Long todayConsumption = operationHistoryBusinessService.sumOperationValue(null, domain, new Date(), null,
+				containerQuotaType);
+		Long totalConsumption = cq.getCurrentValue() + todayConsumption + fileSize;
+		if (totalConsumption > cq.getQuota()) {
 			throw new BusinessException(BusinessErrorCode.QUOTA_CONTAINER_UNAUTHORIZED,
-					"The ensemble quota is not configured yet.");
+					"The container quota has been reached.");
 		}
 	}
 
-	private void checkIfUserCanAddInPlatform(Long fileSize) throws BusinessException {
+	private void checkIfUserCanAddInPlatformQuota(Long fileSize) throws BusinessException {
 		Validate.notNull(fileSize, "File size must be set.");
-		DomainQuota platformQuota = domainQuotaBusinessService.findRootQuota();
-		if (platformQuota != null) {
-			Long quota = platformQuota.getQuota();
-			Long currentValue = platformQuota.getCurrentValue();
-			Long fileSizeMax = platformQuota.getFileSizeMax();
-			if (fileSize > fileSizeMax) {
-				throw new BusinessException(BusinessErrorCode.QUOTA_FILE_UNAUTHORIZED,
-						"The file size is greater than the file quota.");
-			}
-			Long todayConsumption = operationHistoryBusinessService.sumOperationValue(null, null, new Date(), null,
-					null);
-			Long totalConsumption = currentValue + todayConsumption + fileSize;
-			if (totalConsumption > quota) {
-				throw new BusinessException(BusinessErrorCode.QUOTA_PLATFORM_UNAUTHORIZED, "The platforme quota has been reached.");
-			}
-		} else {
+		DomainQuota pq = domainQuotaBusinessService.findRootQuota();
+		if (pq == null) {
 			throw new BusinessException(BusinessErrorCode.QUOTA_PLATFORM_UNAUTHORIZED, "The platform quota is not configured yet.");
+		}
+		Long todayConsumption = operationHistoryBusinessService.sumOperationValue(null, null, new Date(), null,
+				null);
+		Long totalConsumption = pq.getCurrentValue() + todayConsumption + fileSize;
+		if (totalConsumption > pq.getQuota()) {
+			throw new BusinessException(BusinessErrorCode.QUOTA_PLATFORM_UNAUTHORIZED, "The platforme quota has been reached.");
 		}
 	}
 }

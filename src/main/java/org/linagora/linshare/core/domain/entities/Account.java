@@ -40,6 +40,7 @@ import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.AccountPurgeStepEnum;
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
@@ -253,6 +254,8 @@ public abstract class Account {
 	public abstract String getAccountRepresentation();
 
 	public abstract String getFullName();
+
+	public abstract ContainerQuotaType getContainerQuotaType();
 
 	public Language getExternalMailLocale() {
 		return externalMailLocale;

@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.business.service;
 
 import java.util.Date;
+import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -43,6 +44,8 @@ import org.linagora.linshare.core.exception.BusinessException;
 public interface EnsembleQuotaBusinessService {
 
 	ContainerQuota find(AbstractDomain domain, ContainerQuotaType containerQuotaType);
+
+	List<ContainerQuota> findAll(AbstractDomain domain);
 
 	ContainerQuota create(ContainerQuota entity) throws BusinessException;
 

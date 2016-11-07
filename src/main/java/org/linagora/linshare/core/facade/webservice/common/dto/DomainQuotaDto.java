@@ -52,7 +52,6 @@ public class DomainQuotaDto extends QuotaDto {
 
 	public DomainQuota toObject() {
 		DomainQuota quota = new DomainQuota();
-		quota.setFileSizeMax(getFileSizeMax());
 		quota.setQuota(getQuota());
 		quota.setQuotaWarning(getQuotaWarning());
 		quota.setOverride(getOverride());

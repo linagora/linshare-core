@@ -37,32 +37,34 @@ import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
-import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
-import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountQuotaRepository;
-import org.linagora.linshare.core.repository.DomainQuotaRepository;
 import org.linagora.linshare.core.repository.EnsembleQuotaRepository;
 import org.linagora.linshare.core.repository.OperationHistoryRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class AccountQuotaBusinessServiceImpl implements AccountQuotaBusinessService {
 
-	private final AccountQuotaRepository repository;
-	private final OperationHistoryRepository operationHistoryRepository;
-	private final DomainQuotaRepository domainQuotaRepository;
-	private final EnsembleQuotaRepository ensembleQuotaRepository;
+	final private static Logger logger = LoggerFactory
+			.getLogger(AccountQuotaBusinessServiceImpl.class);
+
+	protected final AccountQuotaRepository repository;
+
+	protected final OperationHistoryRepository operationHistoryRepository;
+
+	protected final EnsembleQuotaRepository containerQuotaRepository;
 
 	public AccountQuotaBusinessServiceImpl(final AccountQuotaRepository repository,
 			final OperationHistoryRepository operationHistoryRepository,
-			final DomainQuotaRepository domainQuotaRepository, final EnsembleQuotaRepository ensembleQuotaRepository) {
+			final EnsembleQuotaRepository containerQuotaRepository) {
 		this.repository = repository;
 		this.operationHistoryRepository = operationHistoryRepository;
-		this.domainQuotaRepository = domainQuotaRepository;
-		this.ensembleQuotaRepository = ensembleQuotaRepository;
+		this.containerQuotaRepository = containerQuotaRepository;
 	}
 
 	@Override
@@ -75,31 +77,18 @@ public class AccountQuotaBusinessServiceImpl implements AccountQuotaBusinessServ
 		Long sumOperationValue = operationHistoryRepository.sumOperationValue(account, null, date, null, null);
 		AccountQuota entity = find(account);
 		if (entity == null) {
-			DomainQuota domainQuota = domainQuotaRepository.find(account.getDomain());
-			ContainerQuotaType containerQuotaType;
-
-			// TODO to check
-			if (account instanceof User) {
-				containerQuotaType = ContainerQuotaType.USER;
-			} else {
-				containerQuotaType = ContainerQuotaType.WORK_GROUP;
+			ContainerQuota cq = containerQuotaRepository.find(account.getDomain(), account.getContainerQuotaType());
+			if (cq == null) {
+				throw new BusinessException(
+						account.getDomain().getUuid() + " domain does not have a ensemble quota yet");
 			}
-			if (domainQuota != null) {
-				ContainerQuota ensembleQuota = ensembleQuotaRepository.find(account.getDomain(), containerQuotaType);
-				if (ensembleQuota != null) {
-					Long quota = domainQuota.getQuota();
-					Long quotaWarning = domainQuota.getQuotaWarning();
-					Long fileSizeMax = domainQuota.getFileSizeMax();
-					entity = new AccountQuota(account, account.getDomain(), account.getDomain().getParentDomain(),
-							ensembleQuota, quota, quotaWarning, fileSizeMax, sumOperationValue, (long) 0);
-					entity = repository.create(entity);
-				} else {
-					throw new BusinessException(
-							account.getDomain().getUuid() + " domain does not have a ensemble quota yet");
-				}
-			} else {
-				throw new BusinessException(account.getDomain().getUuid() + " domain does not have a quota yet");
-			}
+			logger.debug("container : " + cq.toString());
+			entity = new AccountQuota(
+						account, account.getDomain(),
+						account.getDomain().getParentDomain(),
+						cq, cq.getQuota(), cq.getQuotaWarning(),
+						cq.getFileSizeMax(), 0L, 0L);
+			entity = repository.create(entity);
 		}
 		entity.setLastValue(entity.getCurrentValue());
 		entity.setCurrentValue(sumOperationValue + entity.getCurrentValue());

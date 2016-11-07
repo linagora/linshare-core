@@ -33,7 +33,8 @@
  */
 package org.linagora.linshare.business.service;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -48,9 +49,9 @@ import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.DomainQuota;
+import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
-import org.linagora.linshare.core.domain.entities.Quota;
+import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.UserRepository;
@@ -118,7 +119,6 @@ public class QuotaBusinessServiceTest extends AbstractTransactionalJUnit4SpringC
 		assertEquals(500, (long) domainQuota.getLastValue());
 		assertEquals(1900, (long) domainQuota.getQuota());
 		assertEquals(1800, (long) domainQuota.getQuotaWarning());
-		assertEquals(5, (long) domainQuota.getFileSizeMax());
 		domainQuotaBusinessService.updateByBatch(domainQuota, new Date());
 		domainQuota = domainQuotaBusinessService.find(domain);
 		assertEquals(1396, (long) domainQuota.getCurrentValue());
@@ -148,7 +148,7 @@ public class QuotaBusinessServiceTest extends AbstractTransactionalJUnit4SpringC
 		assertEquals(1200, (long) threadEnsembleQuota.getCurrentValue());
 		assertEquals(900, (long) threadEnsembleQuota.getLastValue());
 
-		Quota qo = accountQuotaBusinessService.find(account);
+		AccountQuota qo = accountQuotaBusinessService.find(account);
 		assertNotNull(qo);
 		assertEquals(800, (long) qo.getCurrentValue());
 		assertEquals(0, (long) qo.getLastValue());

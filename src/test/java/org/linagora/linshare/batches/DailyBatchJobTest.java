@@ -16,9 +16,9 @@ import org.linagora.linshare.core.business.service.DomainDailyStatBusinessServic
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
 import org.linagora.linshare.core.business.service.ThreadDailyStatBusinessService;
 import org.linagora.linshare.core.business.service.UserDailyStatBusinessService;
+import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.DomainDailyStat;
 import org.linagora.linshare.core.domain.entities.OperationHistory;
-import org.linagora.linshare.core.domain.entities.Quota;
 import org.linagora.linshare.core.domain.entities.ThreadDailyStat;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserDailyStat;
@@ -159,7 +159,7 @@ public class DailyBatchJobTest extends AbstractTransactionalJUnit4SpringContextT
 		assertEquals(2, (long) userDailyStat.getDeleteOperationCount());
 		assertEquals(-50, (long) userDailyStat.getDeleteOperationSum());
 		assertEquals(50, (long) userDailyStat.getDiffOperationSum());
-		Quota quota = accountQuotaBusinessService.find(jane);
+		AccountQuota quota = accountQuotaBusinessService.find(jane);
 		assertNotNull(quota);
 		assertEquals(1100, (long) quota.getCurrentValue());
 		assertEquals(800, (long) quota.getLastValue());
@@ -183,8 +183,8 @@ public class DailyBatchJobTest extends AbstractTransactionalJUnit4SpringContextT
 		assertNotNull(quota);
 		assertEquals(0, (long) quota.getCurrentValue());
 		assertEquals(0, (long) quota.getLastValue());
-		assertEquals(1900, (long) quota.getQuota());
-		assertEquals(1800, (long) quota.getQuotaWarning());
+		assertEquals(2000, (long) quota.getQuota());
+		assertEquals(1500, (long) quota.getQuotaWarning());
 		assertEquals(5, (long) quota.getFileSizeMax());
 		List<DomainDailyStat> listDomaindailyStat = domainDailyStatBusinessService.findBetweenTwoDates(jane.getDomain(),
 				null, null);

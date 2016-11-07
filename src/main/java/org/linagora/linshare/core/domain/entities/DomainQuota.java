@@ -50,14 +50,14 @@ public class DomainQuota extends Quota {
 		this.lastValue = 0L;
 		this.quota = parentQuota.getQuota();
 		this.quotaWarning = parentQuota.getQuotaWarning();
-		this.fileSizeMax = parentQuota.getFileSizeMax();
 		this.override = false;
+		this.maintenance = false;
 	}
 
 	@Override
 	public String toString() {
 		return "DomainQuota [id=" + id + ", uuid=" + uuid + ", account=" + account + ", domain=" + domain
 				+ ", parentDomain=" + parentDomain + ", quota=" + quota + ", quotaWarning=" + quotaWarning
-				+ ", currentValue=" + currentValue + ", lastValue=" + lastValue + ", fileSizeMax=" + fileSizeMax + "]";
+				+ ", currentValue=" + currentValue + ", lastValue=" + lastValue + "]";
 	}
 }

@@ -36,6 +36,7 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 
 public class Thread extends Account {
 
@@ -74,6 +75,11 @@ public class Thread extends Account {
 	@Override
 	public String getAccountRepresentation() {
 		return "Thread name : " + name + "(" + lsUuid + ")";
+	}
+
+	@Override
+	public ContainerQuotaType getContainerQuotaType() {
+		return ContainerQuotaType.WORK_GROUP;
 	}
 
 	@Override

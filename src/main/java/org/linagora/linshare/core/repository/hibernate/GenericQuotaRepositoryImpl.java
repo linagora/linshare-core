@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
@@ -97,6 +98,13 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 			criteria.add(Restrictions.eq("containerQuotaType", containerQuotaType));
 		}
 		return DataAccessUtils.singleResult(findByCriteria(criteria));
+	}
+
+	@Override
+	public List<T> findAll(AbstractDomain domain) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("domain", domain));
+		return findByCriteria(criteria);
 	}
 
 	@Override

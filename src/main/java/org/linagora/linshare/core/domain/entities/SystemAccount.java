@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.domain.entities;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.Role;
 
 public class SystemAccount extends Account {
@@ -56,5 +57,10 @@ public class SystemAccount extends Account {
 	@Override
 	public String getFullName() {
 		return this.lsUuid;
+	}
+
+	@Override
+	public ContainerQuotaType getContainerQuotaType() {
+		return null;
 	}
 }

@@ -38,6 +38,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
@@ -125,6 +126,11 @@ public abstract class User extends Account {
 			b.append(getMail());
 		}
 		return b.toString();
+	}
+
+	@Override
+	public ContainerQuotaType getContainerQuotaType() {
+		return ContainerQuotaType.USER;
 	}
 
 	public void setFirstName(String value) {

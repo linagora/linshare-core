@@ -37,32 +37,33 @@ import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 
 public class ContainerQuota extends Quota {
 
-	private ContainerQuotaType containerQuotaType;
+	protected Long fileSizeMax;
 
-	private DomainQuota domainQuota;
+	protected ContainerQuotaType containerQuotaType;
+
+	protected DomainQuota domainQuota;
 
 	public ContainerQuota() {
 		super();
 	}
 
-	public ContainerQuota(
-			DomainQuota parentQuota,
-			AbstractDomain domain,
-			ContainerQuotaType containerType) {
-		// Link to the parent
-		this.domainQuota = parentQuota;
+	public ContainerQuota(AbstractDomain domain, AbstractDomain parentDomain, DomainQuota domainQuota,
+			ContainerQuota parentContainerQuota) {
 		// related domains.
 		this.domain = domain;
-		this.parentDomain = parentQuota.getDomain();
+		this.parentDomain = parentDomain;
+		// Link to the parent
+		this.domainQuota = domainQuota;
 		// quota configuration
 		this.currentValue = 0L;
 		this.lastValue = 0L;
-		this.quota = parentQuota.getQuota();
-		this.quotaWarning = parentQuota.getQuotaWarning();
-		this.fileSizeMax = parentQuota.getFileSizeMax();
+		this.quota = parentContainerQuota.getQuota();
+		this.quotaWarning = parentContainerQuota.getQuotaWarning();
+		this.fileSizeMax = parentContainerQuota.getFileSizeMax();
 		// Kind of container.
-		this.containerQuotaType = containerType;
+		this.containerQuotaType = parentContainerQuota.getContainerQuotaType();
 		this.override = false;
+		this.maintenance = false;
 	}
 
 	/**
@@ -79,10 +80,20 @@ public class ContainerQuota extends Quota {
 	 */
 	public ContainerQuota(AbstractDomain domain, AbstractDomain parentDomain, DomainQuota domainQuota, long quota,
 			long quotaWarning, long fileSizeMax, long currentValue, long lastValue, ContainerQuotaType containerType) {
-		super(null, domain, parentDomain, quota, quotaWarning, fileSizeMax, currentValue, lastValue);
+		super(null, domain, parentDomain, quota, quotaWarning, currentValue, lastValue);
+		this.fileSizeMax = fileSizeMax;
 		this.containerQuotaType = containerType;
 		this.domainQuota = domainQuota;
 		this.override = false;
+		this.maintenance = false;
+	}
+
+	public Long getFileSizeMax() {
+		return fileSizeMax;
+	}
+
+	public void setFileSizeMax(Long fileSizeMax) {
+		this.fileSizeMax = fileSizeMax;
 	}
 
 	public ContainerQuotaType getContainerQuotaType() {
@@ -103,9 +114,9 @@ public class ContainerQuota extends Quota {
 
 	@Override
 	public String toString() {
-		return "ContainerQuota [containerType=" + containerQuotaType + ", uuid=" + uuid + ", account=" + account + ", quota="
-				+ quota + ", quotaWarning=" + quotaWarning + ", currentValue=" + currentValue + ", lastValue="
-				+ lastValue + ", fileSizeMax=" + fileSizeMax + "]";
+		return "ContainerQuota [containerType=" + containerQuotaType + ", uuid=" + uuid + ", account=" + account
+				+ ", quota=" + quota + ", quotaWarning=" + quotaWarning + ", currentValue=" + currentValue
+				+ ", lastValue=" + lastValue + ", fileSizeMax=" + fileSizeMax + "]";
 	}
 
 }

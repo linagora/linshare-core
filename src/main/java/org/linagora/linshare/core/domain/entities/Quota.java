@@ -57,7 +57,7 @@ public abstract class Quota {
 
 	protected Boolean override;
 
-	protected Long fileSizeMax;
+	protected Boolean maintenance;
 
 	protected Date creationDate;
 
@@ -68,8 +68,8 @@ public abstract class Quota {
 	public Quota() {
 	}
 
-	public Quota(Account account, AbstractDomain domain,
-			AbstractDomain parentDomain, Long quota, Long quotaWarning, Long fileSizeMax, Long currentValue, Long lastValue) {
+	public Quota(Account account, AbstractDomain domain, AbstractDomain parentDomain, Long quota, Long quotaWarning,
+			Long currentValue, Long lastValue) {
 		this.account = account;
 		this.domain = domain;
 		this.parentDomain = parentDomain;
@@ -77,7 +77,6 @@ public abstract class Quota {
 		this.lastValue = lastValue;
 		this.quota = quota;
 		this.quotaWarning = quotaWarning;
-		this.fileSizeMax = fileSizeMax;
 		this.override = false;
 	}
 
@@ -145,14 +144,6 @@ public abstract class Quota {
 		this.quotaWarning = quotaWarning;
 	}
 
-	public Long getFileSizeMax() {
-		return fileSizeMax;
-	}
-
-	public void setFileSizeMax(Long fileSizeMax) {
-		this.fileSizeMax = fileSizeMax;
-	}
-
 	public Date getModificationDate() {
 		return modificationDate;
 	}
@@ -193,10 +184,17 @@ public abstract class Quota {
 		this.override = override;
 	}
 
+	public Boolean getMaintenance() {
+		return maintenance;
+	}
+
+	public void setMaintenance(Boolean maintenance) {
+		this.maintenance = maintenance;
+	}
+
 	@Override
 	public String toString() {
 		return "Quota [uuid=" + uuid + ", domain=" + domain + ", quota=" + quota + ", quotaWarning=" + quotaWarning
-				+ ", currentValue=" + currentValue + ", lastValue=" + lastValue + ", override=" + override
-				+ ", fileSizeMax=" + fileSizeMax + "]";
+				+ ", currentValue=" + currentValue + ", lastValue=" + lastValue + ", override=" + override + "]";
 	}
 }

@@ -53,9 +53,10 @@ import org.linagora.linshare.core.business.service.ThreadDailyStatBusinessServic
 import org.linagora.linshare.core.business.service.UserDailyStatBusinessService;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
+import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.domain.entities.OperationHistory;
-import org.linagora.linshare.core.domain.entities.Quota;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadDailyStat;
 import org.linagora.linshare.core.domain.entities.User;
@@ -170,7 +171,7 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 		assertEquals(-300, (long) threadDailyStat.getDeleteOperationSum());
 		assertEquals(300, (long) threadDailyStat.getDiffOperationSum());
 
-		Quota quota = accountQuotaBusinessService.find(thread1);
+		AccountQuota quota = accountQuotaBusinessService.find(thread1);
 		assertNotNull(quota);
 		assertEquals(1000, (long) quota.getCurrentValue());
 		assertEquals(700, (long) quota.getLastValue());
@@ -250,20 +251,18 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 		assertEquals(1500, (long) ensembleQuota.getQuotaWarning());
 		assertEquals(5, (long) ensembleQuota.getFileSizeMax());
 
-		quota = domainQuotaBusinessService.find(jane.getDomain());
-		assertNotNull(quota);
-		assertEquals(0, (long) quota.getCurrentValue());
-		assertEquals(1096, (long) quota.getLastValue());
-		assertEquals(1900, (long) quota.getQuota());
-		assertEquals(1800, (long) quota.getQuotaWarning());
-		assertEquals(5, (long) quota.getFileSizeMax());
+		DomainQuota quotaD = domainQuotaBusinessService.find(jane.getDomain());
+		assertNotNull(quotaD);
+		assertEquals(0, (long) quotaD.getCurrentValue());
+		assertEquals(1096, (long) quotaD.getLastValue());
+		assertEquals(1900, (long) quotaD.getQuota());
+		assertEquals(1800, (long) quotaD.getQuotaWarning());
 
-		quota = domainQuotaBusinessService.findRootQuota();
-		assertNotNull(quota);
-		assertEquals(0, (long) quota.getCurrentValue());
-		assertEquals(1096, (long) quota.getLastValue());
-		assertEquals(2300, (long) quota.getQuota());
-		assertEquals(2000, (long) quota.getQuotaWarning());
-		assertEquals(10, (long) quota.getFileSizeMax());
+		quotaD = domainQuotaBusinessService.findRootQuota();
+		assertNotNull(quotaD);
+		assertEquals(0, (long) quotaD.getCurrentValue());
+		assertEquals(1096, (long) quotaD.getLastValue());
+		assertEquals(2300, (long) quotaD.getQuota());
+		assertEquals(2000, (long) quotaD.getQuotaWarning());
 	}
 }

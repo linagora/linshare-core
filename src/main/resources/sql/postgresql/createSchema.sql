@@ -700,13 +700,14 @@ CREATE TABLE quota (
   quota_warning           int8 NOT NULL,
   current_value           int8 NOT NULL,
   last_value              int8 NOT NULL,
-  file_size_max           int8 NOT NULL,
+  file_size_max           int8,
   creation_date           timestamp(6) NOT NULL,
   modification_date       timestamp(6) NOT NULL,
   batch_modification_date timestamp(6) NOT NULL,
   container_type          varchar(255),
   quota_type              varchar(255) NOT NULL,
   override                bool DEFAULT 'false' NOT NULL,
+  maintenance             bool DEFAULT 'false' NOT NULL,
   account_id              int8,
   domain_id               int8 NOT NULL,
   domain_parent_id        int8,
@@ -725,7 +726,6 @@ CREATE TABLE operation_history (
   PRIMARY KEY (id));
 CREATE TABLE statistic (
   id                      int8 NOT NULL,
-  uuid                   varchar(255) NOT NULL UNIQUE,
   statistic_type         varchar(255) NOT NULL,
   creation_date          timestamp(6) NOT NULL,
   active_date            timestamp(6) NOT NULL,
@@ -736,7 +736,7 @@ CREATE TABLE statistic (
   delete_operation_sum   int8 NOT NULL,
   diff_operation_sum     int8 NOT NULL,
   actual_operation_sum   int8 NOT NULL,
-  account_id             int8 NOT NULL,
+  account_id             int8,
   domain_id              int8 NOT NULL,
   domain_parent_id       int8 NOT NULL,
   PRIMARY KEY (id));

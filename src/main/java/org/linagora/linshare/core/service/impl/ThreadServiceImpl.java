@@ -87,7 +87,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 
 	private final AccountQuotaBusinessService accountQuotaBusinessService;
 
-	private final EnsembleQuotaBusinessService ensembleQuotaBusinessService;
+	private final EnsembleQuotaBusinessService containerQuotaBusinessService;
 
 	public ThreadServiceImpl(
 			ThreadRepository threadRepository,
@@ -111,7 +111,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.auditMongoRepository = auditMongoRepository;
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
-		this.ensembleQuotaBusinessService = ensembleQuotaBusinessService;
+		this.containerQuotaBusinessService = ensembleQuotaBusinessService;
 	}
 
 	@Override
@@ -407,13 +407,13 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 
 	private void createQuotaThread(Thread thread) throws BusinessException {
 		Validate.notNull(thread, "Thread must be set.");
-		ContainerQuota ensembleQuota = ensembleQuotaBusinessService.find(thread.getDomain(), ContainerQuotaType.WORK_GROUP);
-		if (ensembleQuota == null) {
-			throw new BusinessException("Missing ensemble quota entity for current work_group");
+		ContainerQuota containerQuota = containerQuotaBusinessService.find(thread.getDomain(), ContainerQuotaType.WORK_GROUP);
+		if (containerQuota == null) {
+			throw new BusinessException("Missing container quota entity for current work_group");
 		}
 		AccountQuota threadQuota = new AccountQuota(thread, thread.getDomain(),
-				thread.getDomain().getParentDomain(), ensembleQuota, ensembleQuota.getQuota(),
-				ensembleQuota.getQuotaWarning(), ensembleQuota.getFileSizeMax(), 0L, 0L);
+				thread.getDomain().getParentDomain(), containerQuota, containerQuota.getQuota(),
+				containerQuota.getQuotaWarning(), containerQuota.getFileSizeMax(), 0L, 0L);
 		accountQuotaBusinessService.create(threadQuota);
 	}
 

@@ -54,6 +54,7 @@ public interface OperationHistoryBusinessService {
 
 	List<AbstractDomain> findDomainBeforeDate(Date creationDate);
 
+	// TODO : FMA : Quota
 	Long sumOperationValue(Account account, AbstractDomain domain, Date date, OperationHistoryTypeEnum operationType,
 			ContainerQuotaType containerQuotaType) throws BusinessException;
 

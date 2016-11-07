@@ -47,7 +47,6 @@ import org.linagora.linshare.core.business.service.MailConfigBusinessService;
 import org.linagora.linshare.core.business.service.MimePolicyBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
-import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -100,7 +99,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	private final AuditAdminMongoRepository auditMongoRepository;
 	final private DomainAccessPolicyBusinessService domainAccessPolicyBusinessService;
 	private final DomainQuotaBusinessService domainQuotaBusinessService;
-	private final EnsembleQuotaBusinessService ensembleQuotaBusinessService;
+	private final EnsembleQuotaBusinessService containerQuotaBusinessService;
 
 	public AbstractDomainServiceImpl(
 			final AbstractDomainRepository abstractDomainRepository,
@@ -116,7 +115,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			final AuditAdminMongoRepository auditMongoRepository,
 			final DomainAccessPolicyBusinessService domainAccessPolicyBusinessService,
 			final DomainQuotaBusinessService domainQuotaBusinessService,
-			final EnsembleQuotaBusinessService ensembleQuotaBusinessService) {
+			final EnsembleQuotaBusinessService containerQuotaBusinessService) {
 		super();
 		this.abstractDomainRepository = abstractDomainRepository;
 		this.domainPolicyService = domainPolicyService;
@@ -131,7 +130,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		this.auditMongoRepository = auditMongoRepository;
 		this.domainAccessPolicyBusinessService = domainAccessPolicyBusinessService;
 		this.domainQuotaBusinessService = domainQuotaBusinessService;
-		this.ensembleQuotaBusinessService = ensembleQuotaBusinessService;
+		this.containerQuotaBusinessService = containerQuotaBusinessService;
 	}
 
 	@Override
@@ -186,7 +185,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		domain.setAuthShowOrder(new Long(1));
 		// Object creation
 		domain = abstractDomainRepository.create(domain);
-		createQuotaDomainAndEnsemble(domain);
+		createDomainQuotaAndContainerQuota(domain);
 		// Update ancestor relation
 		parentDomain.addSubdomain(domain);
 		abstractDomainRepository.update(parentDomain);
@@ -824,13 +823,16 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		return users;
 	}
 
-	private void createQuotaDomainAndEnsemble(AbstractDomain domain) throws BusinessException {
-		DomainQuota parentQuota = domainQuotaBusinessService.find(domain.getParentDomain());
-		DomainQuota domainQuota = new DomainQuota(parentQuota, domain);
+	private void createDomainQuotaAndContainerQuota(AbstractDomain domain) throws BusinessException {
+		AbstractDomain parentDomain = domain.getParentDomain();
+		// Quota for the new domain
+		DomainQuota parentDomainQuota = domainQuotaBusinessService.find(parentDomain);
+		DomainQuota domainQuota = new DomainQuota(parentDomainQuota, domain);
 		domainQuotaBusinessService.create(domainQuota);
-		ContainerQuota userEnsembleQuota = new ContainerQuota(parentQuota, domain, ContainerQuotaType.USER);
-		ensembleQuotaBusinessService.create(userEnsembleQuota);
-		ContainerQuota threadEnsembleQuota = new ContainerQuota(parentQuota, domain, ContainerQuotaType.WORK_GROUP);
-		ensembleQuotaBusinessService.create(threadEnsembleQuota);
+		// Quota containers for the new domain.
+		for (ContainerQuota parentContainerQuota : containerQuotaBusinessService.findAll(parentDomain)) {
+			ContainerQuota cq = new ContainerQuota(domain, parentDomain, domainQuota, parentContainerQuota);
+			containerQuotaBusinessService.create(cq);
+		}
 	}
 }

@@ -732,8 +732,8 @@ public class UserServiceImpl implements UserService {
 				Language locale = Language.fromTapestryLocale(user.getLocale().getTapestryLocale());
 				user.setExternalMailLocale(locale);
 				user.setCmisLocale(user.getDomain().getDefaultTapestryLocale().toString());
-					user = userRepository.create(user);
-					createQuotaUser(user);
+				user = userRepository.create(user);
+				createQuotaUser(user);
 			}
 			return user;
 		} else {
@@ -1009,13 +1009,13 @@ public class UserServiceImpl implements UserService {
 	private void createQuotaUser(User user) throws BusinessException {
 		Validate.notNull(user);
 		Validate.notNull(user.getDomain());
-		ContainerQuota ensembleQuota = ensembleQuotaBusinessService.find(user.getDomain(), ContainerQuotaType.USER);
-		if (ensembleQuota == null) {
-			throw new BusinessException(BusinessErrorCode.CONTAINER_QUOTA_NOT_FOUND, "No ensemble quota found for the domain : " + user.getDomainId());
+		ContainerQuota containerQuota = ensembleQuotaBusinessService.find(user.getDomain(), ContainerQuotaType.USER);
+		if (containerQuota == null) {
+			throw new BusinessException(BusinessErrorCode.CONTAINER_QUOTA_NOT_FOUND, "No container quota found for the domain : " + user.getDomainId());
 		}
 		AccountQuota userQuota = new AccountQuota(user, user.getDomain(), user.getDomain().getParentDomain(),
-				ensembleQuota, ensembleQuota.getQuota(), ensembleQuota.getQuotaWarning(),
-				ensembleQuota.getFileSizeMax(), 0L, 0L);
+				containerQuota, containerQuota.getQuota(), containerQuota.getQuotaWarning(),
+				containerQuota.getFileSizeMax(), 0L, 0L);
 		accountQuotaBusinessService.create(userQuota);
 	}
 }

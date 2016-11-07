@@ -16,9 +16,11 @@
 		<property name="override" type="boolean">
 			<column name="override" not-null="true" default="false" />
 		</property>
+		<property name="maintenance" type="boolean">
+			<column name="maintenance" not-null="true" default="false" />
+		</property>
 		<property name="quota" column="quota"/>
 		<property name="quotaWarning" column="quota_warning"/>
-		<property name="fileSizeMax" column="file_size_max"/>
 		<property name="creationDate" column="creation_date" type = "timestamp"/>
 		<property name="modificationDate" column="modification_date" type = "timestamp"/>
 		<property name="batchModificationDate" column="batch_modification_date" type="timestamp"/>
@@ -29,11 +31,15 @@
 		<subclass name="org.linagora.linshare.core.domain.entities.DomainQuota" discriminator-value="DOMAIN_QUOTA" />
 
 		<subclass name="org.linagora.linshare.core.domain.entities.AccountQuota" discriminator-value="ACCOUNT_QUOTA" >
+			<!--  can not declare fileSizeMax as  not null because it impacts the whole class. Why ? maybe a bug. -->
+			<property name="fileSizeMax" column="file_size_max" />
 			<many-to-one name="containerQuota" column="quota_container_id" class="org.linagora.linshare.core.domain.entities.ContainerQuota" />
 		</subclass>
 
 		<subclass name="org.linagora.linshare.core.domain.entities.ContainerQuota" discriminator-value="CONTAINER_QUOTA" >
 			<property name="containerQuotaType" column="container_type" type="containerQuotaType"/>
+			<!--  can not declare fileSizeMax as  not null because it impacts the whole class. Why ? maybe a bug. -->
+			<property name="fileSizeMax" column="file_size_max" />
 			<many-to-one name="domainQuota" column="quota_domain_id" class="org.linagora.linshare.core.domain.entities.DomainQuota"/>
 		</subclass>
 

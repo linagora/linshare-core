@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.linagora.linshare.core.business.service.EnsembleQuotaBusinessService;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
@@ -57,6 +58,11 @@ public class EnsembleQuotaBusinessServiceImpl implements EnsembleQuotaBusinessSe
 	@Override
 	public ContainerQuota find(AbstractDomain domain, ContainerQuotaType containerQuotaType) {
 		return repository.find(domain, containerQuotaType);
+	}
+
+	@Override
+	public List<ContainerQuota> findAll(AbstractDomain domain) {
+		return repository.findAll(domain);
 	}
 
 	@Override

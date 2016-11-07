@@ -88,7 +88,7 @@ public class QuotaDto {
 		this.quotaWarning = quota.getQuotaWarning();
 		this.currentValue = quota.getCurrentValue();
 		this.lastValue = quota.getLastValue();
-		this.fileSizeMax = quota.getFileSizeMax();
+//		this.fileSizeMax = quota.getFileSizeMax();
 		this.override = quota.getOverride();
 	}
 
