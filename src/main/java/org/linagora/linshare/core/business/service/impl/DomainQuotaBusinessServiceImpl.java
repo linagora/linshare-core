@@ -42,22 +42,22 @@ import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DomainQuotaRepository;
-import org.linagora.linshare.core.repository.EnsembleQuotaRepository;
+import org.linagora.linshare.core.repository.ContainerQuotaRepository;
 
 public class DomainQuotaBusinessServiceImpl
 		implements DomainQuotaBusinessService {
 
 	private final DomainQuotaRepository repository;
-	private final EnsembleQuotaRepository ensembleQuotaRepository;
+	private final ContainerQuotaRepository containerQuotaRepository;
 	private final AbstractDomainRepository abstractDomainRepository;
 
 	public DomainQuotaBusinessServiceImpl(
 			final DomainQuotaRepository domainQuotaRepository,
 			final AbstractDomainRepository abstractDomainRepository,
-			final EnsembleQuotaRepository ensembleQuotaRepository) {
+			final ContainerQuotaRepository ensembleQuotaRepository) {
 		this.repository = domainQuotaRepository;
 		this.abstractDomainRepository = abstractDomainRepository;
-		this.ensembleQuotaRepository = ensembleQuotaRepository;
+		this.containerQuotaRepository = ensembleQuotaRepository;
 	}
 
 	@Override
@@ -84,7 +84,7 @@ public class DomainQuotaBusinessServiceImpl
 	public DomainQuota updateByBatch(DomainQuota entity, Date date) throws BusinessException{
 		AbstractDomain domain = entity.getDomain();
 		if (find(entity.getDomain()) != null) {
-			Long sumCurrentValue = ensembleQuotaRepository.sumOfCurrentValue(entity, date);
+			Long sumCurrentValue = containerQuotaRepository.sumOfCurrentValue(entity, date);
 			entity.setLastValue(entity.getCurrentValue());
 			entity.setCurrentValue(sumCurrentValue);
 			entity = repository.updateByBatch(entity);

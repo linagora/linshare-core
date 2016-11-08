@@ -43,14 +43,14 @@ import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
-import org.linagora.linshare.core.repository.EnsembleQuotaRepository;
+import org.linagora.linshare.core.repository.ContainerQuotaRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public class EnsembleQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<ContainerQuota>
-		implements EnsembleQuotaRepository {
+public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<ContainerQuota>
+		implements ContainerQuotaRepository {
 
-	public EnsembleQuotaRepositoryImpl(HibernateTemplate hibernateTemplate) {
+	public ContainerQuotaRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
 	}
 

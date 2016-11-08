@@ -44,7 +44,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
-import org.linagora.linshare.core.business.service.EnsembleQuotaBusinessService;
+import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -86,7 +86,7 @@ public class QuotaBusinessServiceTest extends AbstractTransactionalJUnit4SpringC
 	private AccountQuotaBusinessService accountQuotaBusinessService;
 
 	@Autowired
-	private EnsembleQuotaBusinessService ensembleQuotaBusinessService;
+	private ContainerQuotaBusinessService ensembleQuotaBusinessService;
 
 	@Autowired
 	@Qualifier("userRepository")

@@ -42,7 +42,7 @@ import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountQuotaRepository;
-import org.linagora.linshare.core.repository.EnsembleQuotaRepository;
+import org.linagora.linshare.core.repository.ContainerQuotaRepository;
 import org.linagora.linshare.core.repository.OperationHistoryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,11 +57,11 @@ public class AccountQuotaBusinessServiceImpl implements AccountQuotaBusinessServ
 
 	protected final OperationHistoryRepository operationHistoryRepository;
 
-	protected final EnsembleQuotaRepository containerQuotaRepository;
+	protected final ContainerQuotaRepository containerQuotaRepository;
 
 	public AccountQuotaBusinessServiceImpl(final AccountQuotaRepository repository,
 			final OperationHistoryRepository operationHistoryRepository,
-			final EnsembleQuotaRepository containerQuotaRepository) {
+			final ContainerQuotaRepository containerQuotaRepository) {
 		this.repository = repository;
 		this.operationHistoryRepository = operationHistoryRepository;
 		this.containerQuotaRepository = containerQuotaRepository;

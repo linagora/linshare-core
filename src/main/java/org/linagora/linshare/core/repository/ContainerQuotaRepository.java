@@ -40,7 +40,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
 
-public interface EnsembleQuotaRepository extends GenericQuotaRepository<ContainerQuota> {
+public interface ContainerQuotaRepository extends GenericQuotaRepository<ContainerQuota> {
 
 	ContainerQuota find(AbstractDomain domain, ContainerQuotaType containerQuotaType);
 

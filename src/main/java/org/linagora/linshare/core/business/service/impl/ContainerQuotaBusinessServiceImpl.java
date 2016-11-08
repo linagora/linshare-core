@@ -36,20 +36,20 @@ package org.linagora.linshare.core.business.service.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.linagora.linshare.core.business.service.EnsembleQuotaBusinessService;
+import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountQuotaRepository;
-import org.linagora.linshare.core.repository.EnsembleQuotaRepository;
+import org.linagora.linshare.core.repository.ContainerQuotaRepository;
 
-public class EnsembleQuotaBusinessServiceImpl implements EnsembleQuotaBusinessService {
+public class ContainerQuotaBusinessServiceImpl implements ContainerQuotaBusinessService {
 
-	private final EnsembleQuotaRepository repository;
+	private final ContainerQuotaRepository repository;
 	private final AccountQuotaRepository accountQuotaRepository;
 
-	public EnsembleQuotaBusinessServiceImpl(final EnsembleQuotaRepository repository,
+	public ContainerQuotaBusinessServiceImpl(final ContainerQuotaRepository repository,
 			final AccountQuotaRepository accountQuotaRepository) {
 		this.repository = repository;
 		this.accountQuotaRepository = accountQuotaRepository;

@@ -43,7 +43,7 @@ import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.BatchHistoryBusinessService;
 import org.linagora.linshare.core.business.service.DomainDailyStatBusinessService;
 import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
-import org.linagora.linshare.core.business.service.EnsembleQuotaBusinessService;
+import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.domain.constants.BatchType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -63,7 +63,7 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchImpl {
 
 	private final AccountQuotaBusinessService accountQuotaBusinessService;
 	private final AbstractDomainService abstractDomainService;
-	private final EnsembleQuotaBusinessService ensembleQuotaBusinessService;
+	private final ContainerQuotaBusinessService ensembleQuotaBusinessService;
 	private final DomainQuotaBusinessService domainQuotaBusinessService;
 	private final DomainDailyStatBusinessService domainDailyStatBusinessService;
 	private final BatchHistoryBusinessService batchHistoryBusinessService;
@@ -73,7 +73,7 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchImpl {
 	public StatisticDailyDomainBatchImpl(AccountRepository<Account> accountRepository,
 			final AccountQuotaBusinessService accountQuotaBusinessService,
 			final AbstractDomainService abstractDomainService,
-			final EnsembleQuotaBusinessService ensembleQuotaBusinessService,
+			final ContainerQuotaBusinessService ensembleQuotaBusinessService,
 			final DomainQuotaBusinessService domainQuotaBusinessService,
 			final DomainDailyStatBusinessService domainDailyStatBusinessService,
 			final BatchHistoryBusinessService batchHistoryBusinessService) {

@@ -51,25 +51,25 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountQuotaService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DomainQuotaService;
-import org.linagora.linshare.core.service.EnsembleQuotaService;
+import org.linagora.linshare.core.service.ContainerQuotaService;
 
 public class QuotaFacadeImpl extends AdminGenericFacadeImpl implements QuotaFacade {
 
 	private final AccountQuotaService accountQuotaService;
 	private final DomainQuotaService domainQuotaService;
-	private final EnsembleQuotaService ensembleQuotaService;
+	private final ContainerQuotaService containerQuotaService;
 	private final AbstractDomainService abstractDomainService;
 
 	public QuotaFacadeImpl(
 			final AccountService accountService,
 			final AccountQuotaService accountQuotaService,
 			final DomainQuotaService domainQuotaService,
-			final EnsembleQuotaService ensembleQuotaService,
+			final ContainerQuotaService containerQuotaService,
 			final AbstractDomainService abstractDomainService) {
 		super(accountService);
 		this.accountQuotaService = accountQuotaService;
 		this.domainQuotaService = domainQuotaService;
-		this.ensembleQuotaService = ensembleQuotaService;
+		this.containerQuotaService = containerQuotaService;
 		this.abstractDomainService = abstractDomainService;
 	}
 
@@ -115,7 +115,7 @@ public class QuotaFacadeImpl extends AdminGenericFacadeImpl implements QuotaFaca
 		AbstractDomain domain = abstractDomainService.findById(entity.getDomain().getIdentifier());
 		ContainerQuota ensembleQuota = entity.toObject();
 		ensembleQuota.setDomain(domain);
-		ensembleQuota = ensembleQuotaService.update(actor, domain, ensembleQuota);
+		ensembleQuota = containerQuotaService.update(actor, domain, ensembleQuota);
 		return new EnsembleQuotaDto(ensembleQuota);
 	}
 
@@ -146,7 +146,7 @@ public class QuotaFacadeImpl extends AdminGenericFacadeImpl implements QuotaFaca
 		User actor = checkAuthentication(Role.ADMIN);
 		AbstractDomain abstractDomain = abstractDomainService.findById(domain);
 		ContainerQuotaType ensembleTypeObject = ContainerQuotaType.fromString(ensembleType);
-		ContainerQuota ensembleQuota = ensembleQuotaService.find(actor, abstractDomain, ensembleTypeObject);
+		ContainerQuota ensembleQuota = containerQuotaService.find(actor, abstractDomain, ensembleTypeObject);
 		EnsembleQuotaDto ensembleQuotaDto = new EnsembleQuotaDto(ensembleQuota);
 		return ensembleQuotaDto;
 	}

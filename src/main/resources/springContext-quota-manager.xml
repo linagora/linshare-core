@@ -21,7 +21,7 @@
 		<constructor-arg ref="accountRepository" />
 		<constructor-arg ref="accountQuotaBusinessService" />
 		<constructor-arg ref="abstractDomainService" />
-		<constructor-arg ref="ensembleQuotaBusinessService" />
+		<constructor-arg ref="containerQuotaBusinessService" />
 		<constructor-arg ref="domainQuotaBusinessService" />
 		<constructor-arg ref="domainDailyStatBusinessService" />
 		<constructor-arg ref="batchHistoryBusinessService" />

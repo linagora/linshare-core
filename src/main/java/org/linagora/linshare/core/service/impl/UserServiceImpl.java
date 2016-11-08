@@ -42,7 +42,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
-import org.linagora.linshare.core.business.service.EnsembleQuotaBusinessService;
+import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
@@ -119,7 +119,7 @@ public class UserServiceImpl implements UserService {
 
 	private final AccountQuotaBusinessService accountQuotaBusinessService;
 
-	private final EnsembleQuotaBusinessService ensembleQuotaBusinessService;
+	private final ContainerQuotaBusinessService containerQuotaBusinessService;
 
 	public UserServiceImpl(
 			final UserRepository<User> userRepository,
@@ -135,7 +135,7 @@ public class UserServiceImpl implements UserService {
 			final RecipientFavouriteRepository recipientFavouriteRepository,
 			final AuditUserMongoRepository auditMongoRepository,
 			final AccountQuotaBusinessService accountQuotaBusinessService,
-			final EnsembleQuotaBusinessService ensembleQuotaBusinessService) {
+			final ContainerQuotaBusinessService containerQuotaBusinessService) {
 		this.userRepository = userRepository;
 		this.logEntryService = logEntryService;
 		this.guestRepository = guestRepository;
@@ -149,7 +149,7 @@ public class UserServiceImpl implements UserService {
 		this.recipientFavouriteRepository = recipientFavouriteRepository;
 		this.auditMongoRepository = auditMongoRepository;
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
-		this.ensembleQuotaBusinessService = ensembleQuotaBusinessService;
+		this.containerQuotaBusinessService = containerQuotaBusinessService;
 	}
 
 	@Override
@@ -1009,7 +1009,7 @@ public class UserServiceImpl implements UserService {
 	private void createQuotaUser(User user) throws BusinessException {
 		Validate.notNull(user);
 		Validate.notNull(user.getDomain());
-		ContainerQuota containerQuota = ensembleQuotaBusinessService.find(user.getDomain(), ContainerQuotaType.USER);
+		ContainerQuota containerQuota = containerQuotaBusinessService.find(user.getDomain(), ContainerQuotaType.USER);
 		if (containerQuota == null) {
 			throw new BusinessException(BusinessErrorCode.CONTAINER_QUOTA_NOT_FOUND, "No container quota found for the domain : " + user.getDomainId());
 		}

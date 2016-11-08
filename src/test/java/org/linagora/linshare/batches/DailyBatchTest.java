@@ -47,7 +47,7 @@ import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.BatchHistoryBusinessService;
 import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
-import org.linagora.linshare.core.business.service.EnsembleQuotaBusinessService;
+import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
 import org.linagora.linshare.core.business.service.ThreadDailyStatBusinessService;
 import org.linagora.linshare.core.business.service.UserDailyStatBusinessService;
@@ -107,7 +107,7 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 	private DomainQuotaBusinessService domainQuotaBusinessService;
 
 	@Autowired
-	private EnsembleQuotaBusinessService ensembleQuotaBusinessService;
+	private ContainerQuotaBusinessService ensembleQuotaBusinessService;
 
 	@Autowired
 	private ThreadDailyStatBusinessService threadDailyStatBusinessService;

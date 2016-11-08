@@ -38,7 +38,7 @@ import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
-import org.linagora.linshare.core.business.service.EnsembleQuotaBusinessService;
+import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -87,7 +87,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 
 	private final AccountQuotaBusinessService accountQuotaBusinessService;
 
-	private final EnsembleQuotaBusinessService containerQuotaBusinessService;
+	private final ContainerQuotaBusinessService containerQuotaBusinessService;
 
 	public ThreadServiceImpl(
 			ThreadRepository threadRepository,
@@ -100,7 +100,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 			FunctionalityReadOnlyService functionalityReadOnlyService,
 			AuditUserMongoRepository auditMongoRepository,
 			AccountQuotaBusinessService accountQuotaBusinessService,
-			EnsembleQuotaBusinessService ensembleQuotaBusinessService) {
+			ContainerQuotaBusinessService containerQuotaBusinessService) {
 		super(rac);
 		this.threadRepository = threadRepository;
 		this.threadMemberRepository = threadMemberRepository;
@@ -111,7 +111,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.auditMongoRepository = auditMongoRepository;
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
-		this.containerQuotaBusinessService = ensembleQuotaBusinessService;
+		this.containerQuotaBusinessService = containerQuotaBusinessService;
 	}
 
 	@Override

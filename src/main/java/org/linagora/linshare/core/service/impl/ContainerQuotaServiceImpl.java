@@ -34,7 +34,7 @@
 package org.linagora.linshare.core.service.impl;
 
 import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.business.service.EnsembleQuotaBusinessService;
+import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -43,14 +43,14 @@ import org.linagora.linshare.core.domain.entities.Quota;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.QuotaResourceAccessControl;
-import org.linagora.linshare.core.service.EnsembleQuotaService;
+import org.linagora.linshare.core.service.ContainerQuotaService;
 
-public class EnsembleQuotaServiceImpl extends GenericServiceImpl<Account, Quota> implements EnsembleQuotaService {
+public class ContainerQuotaServiceImpl extends GenericServiceImpl<Account, Quota> implements ContainerQuotaService {
 
-	private EnsembleQuotaBusinessService ensembleQuotaBusinessService;
+	private ContainerQuotaBusinessService ensembleQuotaBusinessService;
 
-	public EnsembleQuotaServiceImpl(QuotaResourceAccessControl rac,
-			EnsembleQuotaBusinessService ensembleQuotaBusinessService) {
+	public ContainerQuotaServiceImpl(QuotaResourceAccessControl rac,
+			ContainerQuotaBusinessService ensembleQuotaBusinessService) {
 		super(rac);
 		this.ensembleQuotaBusinessService = ensembleQuotaBusinessService;
 	}

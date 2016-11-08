@@ -41,7 +41,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.exception.BusinessException;
 
-public interface EnsembleQuotaBusinessService {
+public interface ContainerQuotaBusinessService {
 
 	ContainerQuota find(AbstractDomain domain, ContainerQuotaType containerQuotaType);
 

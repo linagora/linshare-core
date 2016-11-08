@@ -40,7 +40,7 @@ import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
-import org.linagora.linshare.core.business.service.EnsembleQuotaBusinessService;
+import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.business.service.GuestBusinessService;
 import org.linagora.linshare.core.business.service.impl.GuestBusinessServiceImpl.GuestWithMetadata;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -93,7 +93,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 
 	private final AuditUserMongoRepository auditMongoRepository;
 
-	private final EnsembleQuotaBusinessService ensembleQuotaBusinessService;
+	private final ContainerQuotaBusinessService containerQuotaBusinessService;
 
 	private final AccountQuotaBusinessService accountQuotaBusinessService;
 
@@ -106,7 +106,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 			final LogEntryService logEntryService,
 			final AuditUserMongoRepository auditMongoRepository,
 			final GuestResourceAccessControl rac,
-			final EnsembleQuotaBusinessService ensembleQuotaBusinessService,
+			final ContainerQuotaBusinessService containerQuotaBusinessService,
 			final AccountQuotaBusinessService accountQuotaBusinessService) {
 		super(rac);
 		this.guestBusinessService = guestBusinessService;
@@ -117,7 +117,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		this.mailBuildingService = mailBuildingService;
 		this.LogEntryService = logEntryService;
 		this.auditMongoRepository = auditMongoRepository;
-		this.ensembleQuotaBusinessService = ensembleQuotaBusinessService;
+		this.containerQuotaBusinessService = containerQuotaBusinessService;
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
 	}
 
@@ -452,13 +452,13 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	private void createQuotaGuest(Guest guest) throws BusinessException {
 		Validate.notNull(guest);
 		Validate.notNull(guest.getDomain());
-		ContainerQuota ensembleQuota = ensembleQuotaBusinessService.find(guest.getDomain(), ContainerQuotaType.USER);
-		if (ensembleQuota == null) {
-			throw new BusinessException(BusinessErrorCode.CONTAINER_QUOTA_NOT_FOUND, "No ensemble quota found for the domain : " + guest.getDomainId());
+		ContainerQuota containerQuota = containerQuotaBusinessService.find(guest.getDomain(), ContainerQuotaType.USER);
+		if (containerQuota == null) {
+			throw new BusinessException(BusinessErrorCode.CONTAINER_QUOTA_NOT_FOUND, "No container quota found for the domain : " + guest.getDomainId());
 		}
 		AccountQuota userQuota = new AccountQuota(guest, guest.getDomain(), guest.getDomain().getParentDomain(),
-				ensembleQuota, ensembleQuota.getQuota(), ensembleQuota.getQuotaWarning(),
-				ensembleQuota.getFileSizeMax(), 0L, 0L);
+				containerQuota, containerQuota.getQuota(), containerQuota.getQuotaWarning(),
+				containerQuota.getFileSizeMax(), 0L, 0L);
 		accountQuotaBusinessService.create(userQuota);
 	}
 }

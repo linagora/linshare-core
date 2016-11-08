@@ -38,7 +38,7 @@ import java.util.Date;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
-import org.linagora.linshare.core.business.service.EnsembleQuotaBusinessService;
+import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -56,19 +56,19 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 
 	private AccountQuotaBusinessService accountQuotaBusinessService;
 	private DomainQuotaBusinessService domainQuotaBusinessService;
-	private EnsembleQuotaBusinessService ensembleQuotaBusinessService;
+	private ContainerQuotaBusinessService containerQuotaBusinessService;
 	private OperationHistoryBusinessService operationHistoryBusinessService;
 
 	public QuotaServiceImpl(
 			QuotaResourceAccessControl rac,
 			AccountQuotaBusinessService accountQuotaBusinessService,
 			DomainQuotaBusinessService domainQuotaBusinessService,
-			EnsembleQuotaBusinessService ensembleQuotaBusinessService,
+			ContainerQuotaBusinessService containerQuotaBusinessService,
 			OperationHistoryBusinessService operationHistoryBusinessService) {
 		super(rac);
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
 		this.domainQuotaBusinessService = domainQuotaBusinessService;
-		this.ensembleQuotaBusinessService = ensembleQuotaBusinessService;
+		this.containerQuotaBusinessService = containerQuotaBusinessService;
 		this.operationHistoryBusinessService = operationHistoryBusinessService;
 	}
 
@@ -125,7 +125,7 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 			throws BusinessException {
 		Validate.notNull(domain, "Domain must be set.");
 		Validate.notNull(fileSize, "File size must be set.");
-		ContainerQuota cq = ensembleQuotaBusinessService.find(domain, containerQuotaType);
+		ContainerQuota cq = containerQuotaBusinessService.find(domain, containerQuotaType);
 		if (cq == null) {
 			throw new BusinessException(BusinessErrorCode.CONTAINER_QUOTA_NOT_FOUND,
 					"The container quota is not configured yet.");

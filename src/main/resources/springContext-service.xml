@@ -19,7 +19,7 @@
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="auditUserMongoRepository" />
 		<constructor-arg ref="accountQuotaBusinessService"/>
-		<constructor-arg ref="ensembleQuotaBusinessService"/>
+		<constructor-arg ref="containerQuotaBusinessService"/>
 	</bean>
 
 	<bean name="userService" class="org.linagora.linshare.core.service.impl.UserServiceImpl">
@@ -36,7 +36,7 @@
 		<constructor-arg ref="recipientFavouriteRepository" />
 		<constructor-arg ref="auditUserMongoRepository" />
 		<constructor-arg ref="accountQuotaBusinessService"/>
-		<constructor-arg ref="ensembleQuotaBusinessService"/>
+		<constructor-arg ref="containerQuotaBusinessService"/>
 	</bean>
 
 	<bean name="inconsistentUserService" class="org.linagora.linshare.core.service.impl.InconsistentUserServiceImpl">
@@ -138,7 +138,7 @@
 		<constructor-arg ref="auditAdminMongoRepository" />
 		<constructor-arg ref="domainAccessPolicyBusinessService" />
 		<constructor-arg ref="domainQuotaBusinessService" />
-		<constructor-arg ref="ensembleQuotaBusinessService"/>
+		<constructor-arg ref="containerQuotaBusinessService"/>
 	</bean>
 
 	<bean name="userAndDomainMultiService" class="org.linagora.linshare.core.service.impl.UserAndDomainMultiServiceImpl">
@@ -186,7 +186,7 @@
 		<constructor-arg ref="guestResourceAccessControl" />
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="auditUserMongoRepository" />
-		<constructor-arg ref="ensembleQuotaBusinessService"/>
+		<constructor-arg ref="containerQuotaBusinessService"/>
 		<constructor-arg ref="accountQuotaBusinessService"/>
 	</bean>
 
@@ -272,7 +272,7 @@
 		<constructor-arg ref="quotaResourceAccessControl" />
 		<constructor-arg ref="accountQuotaBusinessService" />
 		<constructor-arg ref="domainQuotaBusinessService" />
-		<constructor-arg ref="ensembleQuotaBusinessService" />
+		<constructor-arg ref="containerQuotaBusinessService" />
 		<constructor-arg ref="operationHistoryBusinessService" />
 	</bean>
 	<bean id="accountQuotaService" class="org.linagora.linshare.core.service.impl.AccountQuotaServiceImpl">
@@ -283,8 +283,8 @@
 		<constructor-arg ref="domainQuotaBusinessService" />
 		<constructor-arg ref="quotaResourceAccessControl" />
 	</bean>
-	<bean id="ensembleQuotaService" class="org.linagora.linshare.core.service.impl.EnsembleQuotaServiceImpl">
-		<constructor-arg ref="ensembleQuotaBusinessService" />
+	<bean id="containerQuotaService" class="org.linagora.linshare.core.service.impl.ContainerQuotaServiceImpl">
+		<constructor-arg ref="containerQuotaBusinessService" />
 		<constructor-arg ref="quotaResourceAccessControl" />
 	</bean>
 </beans>

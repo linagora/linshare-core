@@ -42,7 +42,7 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainAccessPolicyBusinessService;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
-import org.linagora.linshare.core.business.service.EnsembleQuotaBusinessService;
+import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.business.service.MailConfigBusinessService;
 import org.linagora.linshare.core.business.service.MimePolicyBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
@@ -98,7 +98,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	private final AuditAdminMongoRepository auditMongoRepository;
 	final private DomainAccessPolicyBusinessService domainAccessPolicyBusinessService;
 	private final DomainQuotaBusinessService domainQuotaBusinessService;
-	private final EnsembleQuotaBusinessService containerQuotaBusinessService;
+	private final ContainerQuotaBusinessService containerQuotaBusinessService;
 
 	public AbstractDomainServiceImpl(
 			final AbstractDomainRepository abstractDomainRepository,
@@ -113,7 +113,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			final AuditAdminMongoRepository auditMongoRepository,
 			final DomainAccessPolicyBusinessService domainAccessPolicyBusinessService,
 			final DomainQuotaBusinessService domainQuotaBusinessService,
-			final EnsembleQuotaBusinessService containerQuotaBusinessService) {
+			final ContainerQuotaBusinessService containerQuotaBusinessService) {
 		super();
 		this.abstractDomainRepository = abstractDomainRepository;
 		this.domainPolicyService = domainPolicyService;

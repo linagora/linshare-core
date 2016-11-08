@@ -51,7 +51,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.AccountQuotaRepository;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.DomainQuotaRepository;
-import org.linagora.linshare.core.repository.EnsembleQuotaRepository;
+import org.linagora.linshare.core.repository.ContainerQuotaRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +77,7 @@ public class QuotaRepositoryImplTest
 	private DomainQuotaRepository domainQuotaRepository;
 
 	@Autowired
-	private EnsembleQuotaRepository ensembleQuotaRepository;
+	private ContainerQuotaRepository ensembleQuotaRepository;
 
 	@Autowired
 	@Qualifier("userRepository")

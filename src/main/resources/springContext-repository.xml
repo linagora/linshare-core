@@ -276,7 +276,7 @@
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 
-	<bean name="ensembleQuotaRepository" class="org.linagora.linshare.core.repository.hibernate.EnsembleQuotaRepositoryImpl">
+	<bean name="containerQuotaRepository" class="org.linagora.linshare.core.repository.hibernate.ContainerQuotaRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 

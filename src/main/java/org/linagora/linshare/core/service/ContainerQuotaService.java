@@ -38,7 +38,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
 
-public interface EnsembleQuotaService {
+public interface ContainerQuotaService {
 
 	ContainerQuota create(Account actor, AbstractDomain domain, ContainerQuota entity);
 
