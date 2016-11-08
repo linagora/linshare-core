@@ -56,7 +56,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class JcloudObjectStorageFileDataStoreImpl implements FileDataStore {
-
 	protected static final Logger logger = LoggerFactory.getLogger(JcloudObjectStorageFileDataStoreImpl.class);
 	protected static String SWIFT_KEYSTONE = "swift-keystone";
 	protected static String FILESYSTEM = "filesystem";
@@ -116,8 +115,13 @@ public class JcloudObjectStorageFileDataStoreImpl implements FileDataStore {
 		return blobStore;
 	}
 
+	/**
+	 * Ugly statistics and debug function :)
+	 */
 	public static void stats(Date start, String title) {
-		System.out.println("diff : " + title + " : " + String.valueOf(new Date().getTime() - start.getTime()));
+		if (logger.isDebugEnabled()) {
+			logger.debug("diff : " + title + " : " + String.valueOf(new Date().getTime() - start.getTime()));
+		}
 	}
 
 	@Override
