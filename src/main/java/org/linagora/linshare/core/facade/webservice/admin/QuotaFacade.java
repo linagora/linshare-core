@@ -36,7 +36,7 @@ package org.linagora.linshare.core.facade.webservice.admin;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AccountQuotaDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.DomainQuotaDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.EnsembleQuotaDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ContainerQuotaDto;
 
 public interface QuotaFacade {
 
@@ -44,12 +44,12 @@ public interface QuotaFacade {
 
 	DomainQuotaDto update(DomainQuotaDto entity) throws BusinessException;
 
-	EnsembleQuotaDto update(EnsembleQuotaDto entity) throws BusinessException;
+	ContainerQuotaDto update(ContainerQuotaDto entity) throws BusinessException;
 
 	AccountQuotaDto findAccountQuota(String accountUuid) throws BusinessException;
 
 	DomainQuotaDto findDomainQuota(String domain) throws BusinessException;
 
-	EnsembleQuotaDto findEnsembleQuota(String domain, String ensembleType) throws BusinessException;
+	ContainerQuotaDto findEnsembleQuota(String domain, String ensembleType) throws BusinessException;
 
 }

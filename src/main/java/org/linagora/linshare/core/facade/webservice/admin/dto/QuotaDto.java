@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,12 +31,14 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.common.dto;
+package org.linagora.linshare.core.facade.webservice.admin.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Quota;
+import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.DomainLightDto;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -45,6 +47,18 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 @ApiModel
 public class QuotaDto {
 
+	@ApiModelProperty(value = "The limit (quota)")
+	protected Long quota;
+
+	@ApiModelProperty(value = "The used space")
+	protected Long usedSpace;
+
+	@ApiModelProperty(value = "The maximum file size accepted.")
+	protected Long maxFileSize;
+
+	@ApiModelProperty(value = "If true, uploads are disable due to server maintenance.")
+	protected Boolean maintenance;
+	
 	@ApiModelProperty(value = "Account")
 	protected AccountDto account;
 
@@ -53,21 +67,12 @@ public class QuotaDto {
 
 	@ApiModelProperty(value = "ParentDomain")
 	protected DomainLightDto parentDomain;
-
-	@ApiModelProperty(value = "Quota")
-	protected Long quota;
-
+	
 	@ApiModelProperty(value = "QuotaWarning")
 	protected Long quotaWarning;
 
-	@ApiModelProperty(value = "CurrentValue")
-	protected Long currentValue;
-
 	@ApiModelProperty(value = "LastValue")
 	protected Long lastValue;
-
-	@ApiModelProperty(value = "FileSizeMax")
-	protected Long fileSizeMax;
 
 	@ApiModelProperty(value = "override")
 	protected Boolean override;
@@ -86,10 +91,42 @@ public class QuotaDto {
 		}
 		this.quota = quota.getQuota();
 		this.quotaWarning = quota.getQuotaWarning();
-		this.currentValue = quota.getCurrentValue();
+		this.usedSpace = quota.getCurrentValue();
 		this.lastValue = quota.getLastValue();
 //		this.fileSizeMax = quota.getFileSizeMax();
 		this.override = quota.getOverride();
+	}
+
+	public Long getQuota() {
+		return quota;
+	}
+
+	public void setQuota(Long quota) {
+		this.quota = quota;
+	}
+
+	public Long getUsedSpace() {
+		return usedSpace;
+	}
+
+	public void setUsedSpace(Long usedSpace) {
+		this.usedSpace = usedSpace;
+	}
+
+	public Long getMaxFileSize() {
+		return maxFileSize;
+	}
+
+	public void setMaxFileSize(Long maxFileSize) {
+		this.maxFileSize = maxFileSize;
+	}
+
+	public Boolean getMaintenance() {
+		return maintenance;
+	}
+
+	public void setMaintenance(Boolean maintenance) {
+		this.maintenance = maintenance;
 	}
 
 	public AccountDto getAccount() {
@@ -116,28 +153,12 @@ public class QuotaDto {
 		this.parentDomain = parentDomain;
 	}
 
-	public Long getQuota() {
-		return quota;
-	}
-
-	public void setQuota(Long quota) {
-		this.quota = quota;
-	}
-
 	public Long getQuotaWarning() {
 		return quotaWarning;
 	}
 
 	public void setQuotaWarning(Long quotaWarning) {
 		this.quotaWarning = quotaWarning;
-	}
-
-	public Long getCurrentValue() {
-		return currentValue;
-	}
-
-	public void setCurrentValue(Long currentValue) {
-		this.currentValue = currentValue;
 	}
 
 	public Long getLastValue() {
@@ -148,14 +169,6 @@ public class QuotaDto {
 		this.lastValue = lastValue;
 	}
 
-	public Long getFileSizeMax() {
-		return fileSizeMax;
-	}
-
-	public void setFileSizeMax(Long fileSizeMax) {
-		this.fileSizeMax = fileSizeMax;
-	}
-
 	public Boolean getOverride() {
 		return override;
 	}
@@ -163,4 +176,5 @@ public class QuotaDto {
 	public void setOverride(Boolean override) {
 		this.override = override;
 	}
+
 }

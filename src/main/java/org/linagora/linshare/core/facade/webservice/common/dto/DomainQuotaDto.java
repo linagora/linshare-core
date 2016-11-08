@@ -36,7 +36,7 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.DomainQuota;
-
+import org.linagora.linshare.core.facade.webservice.admin.dto.QuotaDto;
 import com.wordnik.swagger.annotations.ApiModel;
 
 @XmlRootElement

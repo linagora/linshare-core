@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,25 +31,12 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.admin;
+package org.linagora.linshare.core.facade.webservice.user;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.AccountQuotaDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.DomainQuotaDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.ContainerQuotaDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.QuotaDto;
 
-public interface QuotaRestService {
+public interface QuotaFacade extends GenericFacade {
 
-	AccountQuotaDto update(AccountQuotaDto entity) throws BusinessException;
-
-	DomainQuotaDto update(DomainQuotaDto entity) throws BusinessException;
-
-	ContainerQuotaDto update(ContainerQuotaDto entity) throws BusinessException;
-
-	AccountQuotaDto findAccountQuota(String accountUuid) throws BusinessException;
-
-	DomainQuotaDto findDomainQuota(String domain) throws BusinessException;
-
-	ContainerQuotaDto findEnsembleQuota(String domain, String ensemble) throws BusinessException;
-
+	QuotaDto find(String ownerUuid, String uuid) throws BusinessException;
 }

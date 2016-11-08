@@ -31,25 +31,70 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.admin;
+package org.linagora.linshare.core.facade.webservice.user.dto;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.AccountQuotaDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.DomainQuotaDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.ContainerQuotaDto;
+import javax.xml.bind.annotation.XmlRootElement;
 
-public interface QuotaRestService {
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
-	AccountQuotaDto update(AccountQuotaDto entity) throws BusinessException;
+@XmlRootElement
+@ApiModel
+public class QuotaDto {
 
-	DomainQuotaDto update(DomainQuotaDto entity) throws BusinessException;
+	@ApiModelProperty(value = "The limit (quota)")
+	protected Long quota;
 
-	ContainerQuotaDto update(ContainerQuotaDto entity) throws BusinessException;
+	@ApiModelProperty(value = "The used space")
+	protected Long usedSpace;
 
-	AccountQuotaDto findAccountQuota(String accountUuid) throws BusinessException;
+	@ApiModelProperty(value = "The maximum file size accepted.")
+	protected Long maxFileSize;
 
-	DomainQuotaDto findDomainQuota(String domain) throws BusinessException;
+	@ApiModelProperty(value = "If true, uploads are disable due to server maintenance.")
+	protected Boolean maintenance;
 
-	ContainerQuotaDto findEnsembleQuota(String domain, String ensemble) throws BusinessException;
+	public QuotaDto() {
+	}
+
+	public QuotaDto(Long quota, Long usedSpace, Long maxFileSize, Boolean maintenance) {
+		super();
+		this.quota = quota;
+		this.usedSpace = usedSpace;
+		this.maxFileSize = maxFileSize;
+		this.maintenance = maintenance;
+	}
+
+	public Long getQuota() {
+		return quota;
+	}
+
+	public void setQuota(Long quota) {
+		this.quota = quota;
+	}
+
+	public Long getUsedSpace() {
+		return usedSpace;
+	}
+
+	public void setUsedSpace(Long usedSpace) {
+		this.usedSpace = usedSpace;
+	}
+
+	public Long getMaxFileSize() {
+		return maxFileSize;
+	}
+
+	public void setMaxFileSize(Long maxFileSize) {
+		this.maxFileSize = maxFileSize;
+	}
+
+	public Boolean getMaintenance() {
+		return maintenance;
+	}
+
+	public void setMaintenance(Boolean maintenance) {
+		this.maintenance = maintenance;
+	}
 
 }

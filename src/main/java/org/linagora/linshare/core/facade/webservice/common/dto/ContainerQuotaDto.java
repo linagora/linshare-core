@@ -37,21 +37,22 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
+import org.linagora.linshare.core.facade.webservice.admin.dto.QuotaDto;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 @XmlRootElement
 @ApiModel
-public class EnsembleQuotaDto extends QuotaDto {
+public class ContainerQuotaDto extends QuotaDto {
 
 	@ApiModelProperty(value = "EnsembleType")
 	private ContainerQuotaType containerQuotaType;
 
-	public EnsembleQuotaDto() {
+	public ContainerQuotaDto() {
 	}
 
-	public EnsembleQuotaDto(ContainerQuota ensembleQuota) {
+	public ContainerQuotaDto(ContainerQuota ensembleQuota) {
 		super(ensembleQuota);
 		this.containerQuotaType = ensembleQuota.getContainerQuotaType();
 	}
@@ -66,7 +67,7 @@ public class EnsembleQuotaDto extends QuotaDto {
 
 	public ContainerQuota toObject() {
 		ContainerQuota quota = new ContainerQuota();
-		quota.setFileSizeMax(getFileSizeMax());
+//		quota.setFileSizeMax(getFileSizeMax());
 		quota.setQuota(getQuota());
 		quota.setQuotaWarning(getQuotaWarning());
 		quota.setContainerQuotaType(getEnsembleType());

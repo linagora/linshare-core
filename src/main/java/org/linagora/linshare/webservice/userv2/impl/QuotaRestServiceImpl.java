@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,25 +31,41 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.admin;
+package org.linagora.linshare.webservice.userv2.impl;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.AccountQuotaDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.DomainQuotaDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.ContainerQuotaDto;
+import org.linagora.linshare.core.facade.webservice.user.QuotaFacade;
+import org.linagora.linshare.core.facade.webservice.user.dto.QuotaDto;
+import org.linagora.linshare.webservice.userv2.QuotaRestService;
 
-public interface QuotaRestService {
+import com.wordnik.swagger.annotations.Api;
 
-	AccountQuotaDto update(AccountQuotaDto entity) throws BusinessException;
+@Path("/quota")
+@Api(value = "/quota")
+// @Api(value = "/rest/user/v2/quota")
+@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+public class QuotaRestServiceImpl implements QuotaRestService {
 
-	DomainQuotaDto update(DomainQuotaDto entity) throws BusinessException;
+	protected QuotaFacade facade;
 
-	ContainerQuotaDto update(ContainerQuotaDto entity) throws BusinessException;
+	public QuotaRestServiceImpl(QuotaFacade quotaFacade) {
+		super();
+		this.facade = quotaFacade;
+	}
 
-	AccountQuotaDto findAccountQuota(String accountUuid) throws BusinessException;
-
-	DomainQuotaDto findDomainQuota(String domain) throws BusinessException;
-
-	ContainerQuotaDto findEnsembleQuota(String domain, String ensemble) throws BusinessException;
+	@Path("/{uuid}")
+	@GET
+	@Override
+	public QuotaDto find(@PathParam(value = "uuid") String uuid) throws BusinessException {
+		return facade.find(null, uuid);
+	}
 
 }

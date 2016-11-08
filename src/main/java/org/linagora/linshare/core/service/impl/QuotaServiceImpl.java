@@ -37,8 +37,8 @@ import java.util.Date;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
-import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
 import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
+import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -73,6 +73,18 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 	}
 
 	@Override
+	public AccountQuota find(Account owner) throws BusinessException {
+		// TODO FMA Quota
+		// My account quota. Later we will need to manage delegation.
+		AccountQuota aq = accountQuotaBusinessService.find(owner);
+		if (aq == null) {
+			throw new BusinessException(BusinessErrorCode.ACCOUNT_QUOTA_NOT_FOUND,
+					"The account quota is not configured yet.");
+		}
+		return aq;
+	}
+
+	@Override
 	public void checkIfUserCanAddFile(Account account, Long fileSize, ContainerQuotaType containerQuotaType)
 			throws BusinessException {
 		Validate.notNull(account, "Targeted account must be set.");
@@ -82,6 +94,18 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 		checkIfUserCanAddInContainerQuota(account.getDomain(), containerQuotaType, fileSize);
 		checkIfUserCanAddInDomainQuota(account.getDomain(), fileSize);
 		checkIfUserCanAddInPlatformQuota(fileSize);
+	}
+
+	@Override
+	public Long getRealTimeUsedSpace(Account account) throws BusinessException {
+		Validate.notNull(account, "account must be set.");
+		AccountQuota aq = accountQuotaBusinessService.find(account);
+		if (aq == null) {
+			throw new BusinessException(BusinessErrorCode.ACCOUNT_QUOTA_NOT_FOUND,
+					"The account quota is not configured yet.");
+		}
+		Long todayConsumption = operationHistoryBusinessService.sumOperationValue(account, null, new Date(), null, null);
+		return aq.getCurrentValue() + todayConsumption;
 	}
 
 	private void checkIfUserCanAddInAccountQuota(Account account, Long fileSize) throws BusinessException {

@@ -46,7 +46,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.QuotaFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.AccountQuotaDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.DomainQuotaDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.EnsembleQuotaDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ContainerQuotaDto;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountQuotaService;
 import org.linagora.linshare.core.service.AccountService;
@@ -79,7 +79,7 @@ public class QuotaFacadeImpl extends AdminGenericFacadeImpl implements QuotaFaca
 		Validate.notNull(dto.getAccount(), "Account in AccountQuotaDto must be set.");
 		Validate.notNull(dto.getQuota(), "Quota in AccountQuotaDto must be set.");
 		Validate.notNull(dto.getQuotaWarning(), "QuotaWarning in AccountQuotaDto must be set.");
-		Validate.notNull(dto.getFileSizeMax(), "FileSizeMax in AccountQuotaDto must be set.");
+//		Validate.notNull(dto.getFileSizeMax(), "FileSizeMax in AccountQuotaDto must be set.");
 		User actor = checkAuthentication(Role.ADMIN);
 		Account owner = accountService.findByLsUuid(dto.getAccount().getUuid());
 		AccountQuota accountQuota = dto.toObject();
@@ -94,7 +94,7 @@ public class QuotaFacadeImpl extends AdminGenericFacadeImpl implements QuotaFaca
 		Validate.notNull(entity.getDomain(), "Domain in DomainQuotaDto must be set.");
 		Validate.notNull(entity.getQuota(), "Quota in DomainQuotaDto must be set.");
 		Validate.notNull(entity.getQuotaWarning(), "QuotaWarning in DomainQuotaDto must be set.");
-		Validate.notNull(entity.getFileSizeMax(), "FileSizeMax in DomainQuotaDto must be set.");
+//		Validate.notNull(entity.getFileSizeMax(), "FileSizeMax in DomainQuotaDto must be set.");
 		User actor = checkAuthentication(Role.ADMIN);
 		AbstractDomain domain = abstractDomainService.findById(entity.getDomain().getIdentifier());
 		DomainQuota domainQuota = entity.toObject();
@@ -104,19 +104,19 @@ public class QuotaFacadeImpl extends AdminGenericFacadeImpl implements QuotaFaca
 	}
 
 	@Override
-	public EnsembleQuotaDto update(EnsembleQuotaDto entity) throws BusinessException {
+	public ContainerQuotaDto update(ContainerQuotaDto entity) throws BusinessException {
 		Validate.notNull(entity, "EnsembleQuotaDto must be set.");
 		Validate.notNull(entity.getEnsembleType(), "EnsembleType in EnsembleQuotaDto must be set.");
 		Validate.notNull(entity.getDomain(), "Domain in EnsembleQuotaDto must be set.");
 		Validate.notNull(entity.getQuota(), "Quota in EnsembleQuotaDto must be set.");
 		Validate.notNull(entity.getQuotaWarning(), "QuotaWarning in EnsembleQuotaDto must be set.");
-		Validate.notNull(entity.getFileSizeMax(), "FileSizeMax in EnsembleQuotaDto must be set.");
+//		Validate.notNull(entity.getFileSizeMax(), "FileSizeMax in EnsembleQuotaDto must be set.");
 		User actor = checkAuthentication(Role.ADMIN);
 		AbstractDomain domain = abstractDomainService.findById(entity.getDomain().getIdentifier());
 		ContainerQuota ensembleQuota = entity.toObject();
 		ensembleQuota.setDomain(domain);
 		ensembleQuota = containerQuotaService.update(actor, domain, ensembleQuota);
-		return new EnsembleQuotaDto(ensembleQuota);
+		return new ContainerQuotaDto(ensembleQuota);
 	}
 
 	@Override
@@ -140,14 +140,14 @@ public class QuotaFacadeImpl extends AdminGenericFacadeImpl implements QuotaFaca
 	}
 
 	@Override
-	public EnsembleQuotaDto findEnsembleQuota(String domain, String ensembleType) throws BusinessException {
+	public ContainerQuotaDto findEnsembleQuota(String domain, String ensembleType) throws BusinessException {
 		Validate.notEmpty(domain, "domain identifier must be set.");
 		Validate.notEmpty(ensembleType, "ensembleType must be set.");
 		User actor = checkAuthentication(Role.ADMIN);
 		AbstractDomain abstractDomain = abstractDomainService.findById(domain);
 		ContainerQuotaType ensembleTypeObject = ContainerQuotaType.fromString(ensembleType);
 		ContainerQuota ensembleQuota = containerQuotaService.find(actor, abstractDomain, ensembleTypeObject);
-		EnsembleQuotaDto ensembleQuotaDto = new EnsembleQuotaDto(ensembleQuota);
+		ContainerQuotaDto ensembleQuotaDto = new ContainerQuotaDto(ensembleQuota);
 		return ensembleQuotaDto;
 	}
 

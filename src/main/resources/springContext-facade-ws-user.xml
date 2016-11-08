@@ -117,4 +117,10 @@
 		<constructor-arg ref="workGroupFolderService"/>
 	</bean>
 
+	<bean id="wsQuotaFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.QuotaFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="quotaService" />
+		<constructor-arg ref="threadService" />
+	</bean>
+
 </beans>

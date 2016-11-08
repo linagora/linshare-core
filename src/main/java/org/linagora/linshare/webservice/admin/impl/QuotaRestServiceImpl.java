@@ -45,7 +45,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.QuotaFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.AccountQuotaDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.DomainQuotaDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.EnsembleQuotaDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ContainerQuotaDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.QuotaRestService;
 
@@ -89,10 +89,10 @@ public class QuotaRestServiceImpl extends WebserviceBase implements QuotaRestSer
 
 	@Path("/ensemble_quota")
 	@PUT
-	@ApiOperation(value = "Update an ensemble quota", response = EnsembleQuotaDto.class)
+	@ApiOperation(value = "Update an ensemble quota", response = ContainerQuotaDto.class)
 	@Override
-	public EnsembleQuotaDto update(
-			@ApiParam(value = "Ensemble quota to update.", required = true) EnsembleQuotaDto entity)
+	public ContainerQuotaDto update(
+			@ApiParam(value = "Ensemble quota to update.", required = true) ContainerQuotaDto entity)
 					throws BusinessException {
 		return quotaFacade.update(entity);
 	}
@@ -119,9 +119,9 @@ public class QuotaRestServiceImpl extends WebserviceBase implements QuotaRestSer
 
 	@Path("/domain_quota/{domain}/{ensembleType}")
 	@GET
-	@ApiOperation(value = "Find an ensemble quota", response = EnsembleQuotaDto.class)
+	@ApiOperation(value = "Find an ensemble quota", response = ContainerQuotaDto.class)
 	@Override
-	public EnsembleQuotaDto findEnsembleQuota(
+	public ContainerQuotaDto findEnsembleQuota(
 			@ApiParam(value = "Domain identifier", required = true) @PathParam(DOMAIN) String domain,
 			@ApiParam(value = "Ensemble type", required = true) @PathParam(ENSEMBLE_TYPE) String ensemble)
 					throws BusinessException {

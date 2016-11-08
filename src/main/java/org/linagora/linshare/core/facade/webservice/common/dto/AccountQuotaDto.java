@@ -36,7 +36,7 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.AccountQuota;
-
+import org.linagora.linshare.core.facade.webservice.admin.dto.QuotaDto;
 import com.wordnik.swagger.annotations.ApiModel;
 
 @XmlRootElement
@@ -52,7 +52,7 @@ public class AccountQuotaDto extends QuotaDto {
 
 	public AccountQuota toObject() {
 		AccountQuota quota = new AccountQuota();
-		quota.setFileSizeMax(getFileSizeMax());
+//		quota.setFileSizeMax(getFileSizeMax());
 		quota.setQuota(getQuota());
 		quota.setQuotaWarning(getQuotaWarning());
 		quota.setOverride(getOverride());

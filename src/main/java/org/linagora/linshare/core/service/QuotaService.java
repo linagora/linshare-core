@@ -35,9 +35,16 @@ package org.linagora.linshare.core.service;
 
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface QuotaService {
 
-	void checkIfUserCanAddFile(Account account, Long fileSize, ContainerQuotaType containerQuotaType) throws BusinessException;
+	void checkIfUserCanAddFile(Account account, Long fileSize, ContainerQuotaType containerQuotaType)
+			throws BusinessException;
+
+	AccountQuota find(Account account) throws BusinessException;
+
+	Long getRealTimeUsedSpace(Account account) throws BusinessException;
+
 }
