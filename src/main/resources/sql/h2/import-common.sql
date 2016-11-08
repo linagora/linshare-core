@@ -69,28 +69,28 @@ UPDATE domain_abstract set welcome_messages_id = 1;
 
 -- Functionality : BEGIN
 -- Functionality : FILESIZE_MAX
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (1, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (2, true, true, 1, false);
+-- INSERT INTO policy(id, status, default_status, policy, system) VALUES (1, true, true, 1, false);
+-- INSERT INTO policy(id, status, default_status, policy, system) VALUES (2, true, true, 1, false);
 -- if a functionality is system, you will not be able see/modify its parameters
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (1, false, 'FILESIZE_MAX', 1, 2, 1);
-INSERT INTO unit(id, unit_type, unit_value) VALUES (1, 1, 1);
-INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (1, 10, 1);
+-- INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (1, false, 'FILESIZE_MAX', 1, 2, 1);
+-- INSERT INTO unit(id, unit_type, unit_value) VALUES (1, 1, 1);
+-- INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (1, 10, 1);
 
 
 -- Functionality : QUOTA_GLOBAL
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (3, false, false, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (4, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (2, false, 'QUOTA_GLOBAL', 3, 4, 1);
-INSERT INTO unit(id, unit_type, unit_value) VALUES (2, 1, 1);
-INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (2, 1, 2);
+-- INSERT INTO policy(id, status, default_status, policy, system) VALUES (3, false, false, 1, false);
+-- INSERT INTO policy(id, status, default_status, policy, system) VALUES (4, true, true, 1, false);
+-- INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (2, false, 'QUOTA_GLOBAL', 3, 4, 1);
+-- INSERT INTO unit(id, unit_type, unit_value) VALUES (2, 1, 1);
+-- INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (2, 1, 2);
 
 
 -- Functionality : QUOTA_USER
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (5, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (6, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (3, false, 'QUOTA_USER', 5, 6, 1);
-INSERT INTO unit(id, unit_type, unit_value) VALUES (3, 1, 1);
-INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (3, 100, 3);
+-- INSERT INTO policy(id, status, default_status, policy, system) VALUES (5, true, true, 1, false);
+-- INSERT INTO policy(id, status, default_status, policy, system) VALUES (6, true, true, 1, false);
+-- INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (3, false, 'QUOTA_USER', 5, 6, 1);
+-- INSERT INTO unit(id, unit_type, unit_value) VALUES (3, 1, 1);
+-- INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (3, 100, 3);
 
 
 -- Functionality : MIME_TYPE

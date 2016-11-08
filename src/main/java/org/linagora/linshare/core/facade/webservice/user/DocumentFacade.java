@@ -51,10 +51,6 @@ public interface DocumentFacade extends GenericFacade {
 	DocumentDto addDocumentXop(DocumentAttachement doca)
 			throws BusinessException;
 
-	Long getUserMaxFileSize() throws BusinessException;
-
-	Long getAvailableSize() throws BusinessException;
-
 	DocumentDto create(File tempFile, String fileName,
 			String description, String metadata) throws BusinessException;
 

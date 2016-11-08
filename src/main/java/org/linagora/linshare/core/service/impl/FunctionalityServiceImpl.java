@@ -71,26 +71,21 @@ public class FunctionalityServiceImpl extends AbstractFunctionalityServiceImpl<F
 
 	protected List<String> excludesForUsers = new ArrayList<String>();
 
-	private boolean overrideGlobalQuota;
 	final private AuditAdminMongoRepository mongoRepository;
 
 	public FunctionalityServiceImpl(
 			FunctionalityBusinessService functionalityBusinessService,
 			DomainBusinessService domainBusinessService,
 			DomainPermissionBusinessService domainPermissionBusinessService,
-			boolean overrideGlobalQuota,
 			AuditAdminMongoRepository mongoRepository) {
 		super(domainBusinessService, domainPermissionBusinessService);
 		this.businessService = functionalityBusinessService;
-		this.overrideGlobalQuota = overrideGlobalQuota;
 		this.mongoRepository = mongoRepository;
 		// Users
 		excludesForUsers.add(FunctionalityNames.SHARE_NOTIFICATION_BEFORE_EXPIRATION.toString());
 		excludesForUsers.add(FunctionalityNames.UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION.toString());
 		excludesForUsers.add(FunctionalityNames.DOMAIN__MAIL.toString());
 		excludesForUsers.add(FunctionalityNames.ANTIVIRUS.toString());
-		excludesForUsers.add(FunctionalityNames.QUOTA_GLOBAL.toString());
-		excludesForUsers.add(FunctionalityNames.QUOTA_USER.toString());
 		excludesForUsers.add(FunctionalityNames.TIME_STAMPING.toString());
 	}
 
@@ -122,14 +117,6 @@ public class FunctionalityServiceImpl extends AbstractFunctionalityServiceImpl<F
 		Map<String, Functionality> parents = Maps.newHashMap();
 		List<Functionality> subs = Lists.newArrayList();
 		for (Functionality f : functionalities) {
-			// HOOK : Temporary hook to disable global quota for all domains except root. (Dead locks)
-			if (overrideGlobalQuota) {
-				if (f.equalsIdentifier(FunctionalityNames.QUOTA_GLOBAL)) {
-					if (!f.getDomain().isRootDomain()) {
-						continue;
-					}
-				}
-			}
 			// We check if this a sub functionality (a parameter)
 			if (f.isParam()) {
 				subs.add(f);
@@ -190,13 +177,6 @@ public class FunctionalityServiceImpl extends AbstractFunctionalityServiceImpl<F
 		logger.debug("looking for functionality : " + functionalityId + " in domain "+ domainId);
 		AbstractDomain domain = getDomain(actor, domainId);
 		Functionality entity = businessService.getFunctionality(domain, functionalityId);
-		if (overrideGlobalQuota) {
-			if (entity.getIdentifier().equals(FunctionalityNames.QUOTA_GLOBAL.toString())) {
-				if (!domain.isRootDomain()) {
-					throw new BusinessException(BusinessErrorCode.FUNCTIONALITY_NOT_FOUND, "Functionality not found : " + functionalityId);
-				}
-			}
-		}
 		Set<Functionality> functionalities = businessService.getAllFunctionalities(domain, excludes);
 		for (Functionality f : functionalities) {
 			if (f.isParam()) {

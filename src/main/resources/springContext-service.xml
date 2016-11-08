@@ -53,12 +53,10 @@
 		<constructor-arg ref="clamavVirusScannerService" />
 		<constructor-arg ref="mimeTypeMagicNumberDao" />
 		<constructor-arg ref="antiSamyService" />
-		<constructor-arg ref="domainBusinessService" />
 		<constructor-arg ref="documentEntryResourceAccessControl" />
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="notifierService" />
 		<constructor-arg value="${virusscanner.limit.filesize}" />
-		<constructor-arg value="${linshare.override.global.quota}" />
 		<constructor-arg ref="operationHistoryBusinessService" />
 		<constructor-arg ref="quotaService"/>
 	</bean>
@@ -137,7 +135,6 @@
 		<constructor-arg ref="mailConfigBusinessService" />
 		<constructor-arg ref="mimePolicyBusinessService" />
 		<constructor-arg ref="welcomeMessagesService" />
-		<constructor-arg value="${linshare.override.global.quota}" />
 		<constructor-arg ref="auditAdminMongoRepository" />
 		<constructor-arg ref="domainAccessPolicyBusinessService" />
 		<constructor-arg ref="domainQuotaBusinessService" />

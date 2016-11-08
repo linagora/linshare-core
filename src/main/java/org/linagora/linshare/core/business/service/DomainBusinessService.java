@@ -60,13 +60,9 @@ public interface DomainBusinessService {
 	List<AbstractDomain> loadRelativeDomains(WelcomeMessages welcomeMessage)
 			throws BusinessException;
 
-	long getTotalUsedSpace() throws BusinessException;
-
 	AbstractDomain findGuestDomain(AbstractDomain domain) throws BusinessException;
 
 	List<String> getAllMyDomainIdentifiers(AbstractDomain domain);
-
-	Long dataUsage(String domainId);
 
 	List<String> getAllSubDomainIdentifiers(String domain);
 }

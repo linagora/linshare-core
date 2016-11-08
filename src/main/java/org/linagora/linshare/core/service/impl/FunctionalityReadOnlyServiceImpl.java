@@ -63,16 +63,12 @@ public class FunctionalityReadOnlyServiceImpl implements
 
 	private final FunctionalityRepository functionalityRepository;
 
-	private final boolean overrideGlobalQuota;
-
 	public FunctionalityReadOnlyServiceImpl(
 			DomainBusinessService domainBusinessService,
-			FunctionalityRepository functionalityRepository,
-			boolean overrideGlobalQuota) {
+			FunctionalityRepository functionalityRepository) {
 		super();
 		this.domainBusinessService = domainBusinessService;
 		this.functionalityRepository = functionalityRepository;
-		this.overrideGlobalQuota = overrideGlobalQuota;
 	}
 
 
@@ -130,19 +126,6 @@ public class FunctionalityReadOnlyServiceImpl implements
 		TimeUnitValueFunctionality fileExpirationTimeFunctionality = getDefaultFileExpiryTimeFunctionality(domain);
 		expirationDate.add(fileExpirationTimeFunctionality.toCalendarValue(), fileExpirationTimeFunctionality.getValue());
 		return expirationDate;
-	}
-
-	@Override
-	public SizeUnitValueFunctionality getGlobalQuotaFunctionality(AbstractDomain domain) {
-		if (overrideGlobalQuota) {
-			domain = domainBusinessService.getUniqueRootDomain();
-		}
-		return new SizeUnitValueFunctionality((UnitValueFunctionality)_getFunctionality(domain, FunctionalityNames.QUOTA_GLOBAL));
-	}
-
-	@Override
-	public SizeUnitValueFunctionality getUserQuotaFunctionality(AbstractDomain domain) {
-		return new SizeUnitValueFunctionality((UnitValueFunctionality)_getFunctionality(domain, FunctionalityNames.QUOTA_USER));
 	}
 
 	@Override
@@ -238,11 +221,6 @@ public class FunctionalityReadOnlyServiceImpl implements
 	@Override
 	public Functionality getRestrictedGuestFunctionality(AbstractDomain domain) {
 		return _getFunctionality(domain, FunctionalityNames.GUESTS__RESTRICTED);
-	}
-
-	@Override
-	public SizeUnitValueFunctionality getUserMaxFileSizeFunctionality(AbstractDomain domain) {
-		return new SizeUnitValueFunctionality((UnitValueFunctionality)_getFunctionality(domain, FunctionalityNames.FILESIZE_MAX));
 	}
 
 	@Override

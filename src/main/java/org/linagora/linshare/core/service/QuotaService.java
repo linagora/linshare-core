@@ -39,5 +39,5 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface QuotaService {
 
-	void checkIfUserCanAddFile(Account actor, Account owner, Long fileSize, ContainerQuotaType containerQuotaType) throws BusinessException;
+	void checkIfUserCanAddFile(Account account, Long fileSize, ContainerQuotaType containerQuotaType) throws BusinessException;
 }

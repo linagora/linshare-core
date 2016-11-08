@@ -116,6 +116,7 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 		try {
 			String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
 			AbstractDomain domain = owner.getDomain();
+			checkSpace(thread, size);
 
 			// check if the file MimeType is allowed
 			Functionality mimeFunctionality = functionalityReadOnlyService.getMimeTypeFunctionality(domain);
@@ -139,18 +140,12 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 			Functionality enciphermentFunctionality = functionalityReadOnlyService.getEnciphermentFunctionality(domain);
 			Boolean checkIfIsCiphered = enciphermentFunctionality.getActivationPolicy().getStatus();
 
-			quotaService.checkIfUserCanAddFile(actor, owner, size, ContainerQuotaType.WORK_GROUP);
-
 			threadEntry = documentEntryBusinessService.createThreadEntry(thread, tempFile, size, filename,
 					checkIfIsCiphered, timeStampingUrl, mimeType);
 			logEntryService.create(new ThreadLogEntry(owner, threadEntry, LogAction.THREAD_UPLOAD_ENTRY,
 					"Uploading a file in a thread."));
 
-			// add new row in operation History
-			// When we have a creation of documents operationValue=CREATE
-			OperationHistory operationHistory = new OperationHistory(thread, thread.getDomain(), size,
-					OperationHistoryTypeEnum.CREATE, ContainerQuotaType.WORK_GROUP);
-			operationHistoryBusinessService.create(operationHistory);
+			addToQuota(thread, size);
 		} finally {
 			try {
 				logger.debug("deleting temp file : " + tempFile.getName());
@@ -169,6 +164,7 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 			throws BusinessException {
 		checkCreatePermission(actor, member, ThreadEntry.class,
 				BusinessErrorCode.THREAD_ENTRY_FORBIDDEN, null, thread);
+		checkSpace(thread, documentEntry.getSize());
 		AbstractDomain domain = member.getDomain();
 		// check if the file MimeType is allowed
 		Functionality mimeFunctionality = functionalityReadOnlyService.getMimeTypeFunctionality(domain);
@@ -176,20 +172,17 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 			mimeTypeService.checkFileMimeType(member, documentEntry.getName(), documentEntry.getType());
 		}
 
-		quotaService.checkIfUserCanAddFile(actor, actor, documentEntry.getSize(), ContainerQuotaType.WORK_GROUP);
-
 		ThreadEntry threadEntry = documentEntryBusinessService.copyFromDocumentEntry(thread, documentEntry);
-		OperationHistory operationHistory = new OperationHistory(thread, thread.getDomain(), documentEntry.getSize(), OperationHistoryTypeEnum.CREATE, ContainerQuotaType.WORK_GROUP);
-		operationHistoryBusinessService.create(operationHistory);
-
 		logEntryService.create(new ThreadLogEntry(member, threadEntry, LogAction.THREAD_UPLOAD_ENTRY,
 				"Uploading a file in a thread."));
+		addToQuota(thread, documentEntry.getSize());
 		return threadEntry;
 	}
 
 	public DocumentEntry copyFromThreadEntry(Account actor, Account member, Thread thread, ThreadEntry threadEntry) {
 		checkCreatePermission(actor, member, ThreadEntry.class,
 				BusinessErrorCode.THREAD_ENTRY_FORBIDDEN, null, thread);
+		checkSpace(member, threadEntry.getSize());
 		AbstractDomain domain = member.getDomain();
 		// check if the file MimeType is allowed
 		Functionality mimeFunctionality = functionalityReadOnlyService.getMimeTypeFunctionality(domain);
@@ -199,6 +192,7 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 		DocumentEntry documentEntry = documentEntryBusinessService
 				.copyFromThreadEntry(member, threadEntry,
 						threadEntry.getExpirationDate());
+		addToQuota(member, documentEntry.getSize());
 		return documentEntry;
 	}
 
@@ -224,12 +218,7 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 					"Deleting a thread entry.");
 			documentEntryBusinessService.deleteThreadEntry(threadEntry);
 			logEntryService.create(log);
-
-			// add new row in operation History
-			// When we have a delete of documents operationValue=DELETE
-			OperationHistory operationHistory = new OperationHistory(thread, thread.getDomain(), -threadEntry.getSize(),
-					OperationHistoryTypeEnum.DELETE, ContainerQuotaType.WORK_GROUP);
-			operationHistoryBusinessService.create(operationHistory);
+			delFromQuota(thread, threadEntry.getSize());
 		} catch (IllegalArgumentException e) {
 			logger.error("Could not delete thread entry " + threadEntry.getUuid() + " in thread " + thread.getLsUuid()
 					+ " by account " + owner.getLsUuid() + ", reason : ", e);
@@ -239,20 +228,15 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 
 	@Override
 	public void deleteInconsistentThreadEntry(SystemAccount actor, ThreadEntry threadEntry) throws BusinessException {
-		Thread owner = (Thread) threadEntry.getEntryOwner();
+		Thread thread = (Thread) threadEntry.getEntryOwner();
 		try {
 			ThreadLogEntry log = new ThreadLogEntry(actor, threadEntry, LogAction.THREAD_REMOVE_INCONSISTENCY_ENTRY,
 					"Deleting an inconsistent thread entry.");
 			logEntryService.create(LogEntryService.WARN, log);
 			documentEntryBusinessService.deleteThreadEntry(threadEntry);
-
-			// add new row in operation History
-			// When we have a delete of documents operationValue=DELETE
-			OperationHistory operationHistory = new OperationHistory(owner, owner.getDomain(), -threadEntry.getSize(),
-					OperationHistoryTypeEnum.DELETE, ContainerQuotaType.WORK_GROUP);
-			operationHistoryBusinessService.create(operationHistory);
+			delFromQuota(thread, threadEntry.getSize());
 		} catch (IllegalArgumentException e) {
-			logger.error("Could not delete thread entry " + threadEntry.getUuid() + " in thread " + owner.getLsUuid()
+			logger.error("Could not delete thread entry " + threadEntry.getUuid() + " in thread " + thread.getLsUuid()
 					+ " by account " + actor.getLsUuid() + ", reason : ", e);
 			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_DELETE_DOCUMENT, "Could not delete document");
 		}
@@ -358,6 +342,32 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 			throw new BusinessException(BusinessErrorCode.FILE_CONTAINS_VIRUS, "File contains virus", extras);
 		}
 		return checkStatus;
+	}
+
+	protected void checkSpace(Thread thread, long size) throws BusinessException {
+		quotaService.checkIfUserCanAddFile(thread, size, ContainerQuotaType.WORK_GROUP);
+	}
+
+	protected void checkSpace(Account owner, long size) throws BusinessException {
+		quotaService.checkIfUserCanAddFile(owner, size, ContainerQuotaType.USER);
+	}
+
+	protected void addToQuota(Thread thread, Long size) {
+		OperationHistory oh = new OperationHistory(thread, thread.getDomain(), size, OperationHistoryTypeEnum.CREATE,
+				ContainerQuotaType.WORK_GROUP);
+		operationHistoryBusinessService.create(oh);
+	}
+
+	protected void addToQuota(Account owner, Long size) {
+		OperationHistory oh = new OperationHistory(owner, owner.getDomain(), size, OperationHistoryTypeEnum.CREATE,
+				ContainerQuotaType.USER);
+		operationHistoryBusinessService.create(oh);
+	}
+
+	protected void delFromQuota(Thread thread, Long size) {
+		OperationHistory oh = new OperationHistory(thread, thread.getDomain(), size, OperationHistoryTypeEnum.DELETE,
+				ContainerQuotaType.WORK_GROUP);
+		operationHistoryBusinessService.create(oh);
 	}
 
 	/**

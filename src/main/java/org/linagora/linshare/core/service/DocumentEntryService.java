@@ -78,12 +78,6 @@ public interface DocumentEntryService {
 	 */
 	public void deleteExpiredDocumentEntry(SystemAccount actor, DocumentEntry documentEntry) throws BusinessException;
 
-	public long getUserMaxFileSize(Account account) throws BusinessException;
-
-	public long getAvailableSize(Account account) throws BusinessException;
-
-	public long getTotalSize(Account account) throws BusinessException ;
-
 	 /**
      * Get the thumbnail (InputStream) of the document
 	 * @param actor TODO

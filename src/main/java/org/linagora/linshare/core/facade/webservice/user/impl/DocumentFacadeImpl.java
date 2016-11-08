@@ -178,18 +178,6 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public Long getUserMaxFileSize() throws BusinessException {
-		User actor = checkAuthentication();
-		return documentEntryService.getUserMaxFileSize(actor);
-	}
-
-	@Override
-	public Long getAvailableSize() throws BusinessException {
-		User actor = checkAuthentication();
-		return documentEntryService.getAvailableSize(actor);
-	}
-
-	@Override
 	public InputStream getDocumentStream(String docEntryUuid)
 			throws BusinessException {
 		Validate.notEmpty(docEntryUuid, "Missing required document uuid");

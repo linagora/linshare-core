@@ -187,9 +187,5 @@ public interface AbstractDomainService {
 	 */
 	List<AbstractDomain> loadRelativeDomains(User actor, String uuid) throws BusinessException;
 
-	long getUsedSpace(Account actor) throws BusinessException;
-
-	Long dataUsage(Account actor, String domainId) throws BusinessException;
-
 	List<User> autoCompleteUserWithoutDomainPolicies(Account actor, String pattern) throws BusinessException;
 }

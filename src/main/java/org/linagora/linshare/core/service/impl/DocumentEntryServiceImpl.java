@@ -40,21 +40,18 @@ import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
-import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
-import org.linagora.linshare.core.domain.constants.LinShareConstants;
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
-import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AntivirusLogEntry;
 import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
-import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.LogEntry;
@@ -63,7 +60,6 @@ import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
-import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -110,15 +106,11 @@ public class DocumentEntryServiceImpl
 
 	private final AntiSamyService antiSamyService;
 
-	private final DomainBusinessService domainBusinessService;
-
 	private final MailBuildingService mailBuildingService;
 
 	private final NotifierService notifierService;
 
 	private final Long virusscannerLimitFilesize;
-
-	private final boolean overrideGlobalQuota;
 
 	private final QuotaService quotaService;
 
@@ -131,12 +123,10 @@ public class DocumentEntryServiceImpl
 			VirusScannerService virusScannerService,
 			MimeTypeMagicNumberDao mimeTypeIdentifier,
 			AntiSamyService antiSamyService,
-			DomainBusinessService domainBusinessService,
 			DocumentEntryResourceAccessControl rac,
 			MailBuildingService mailBuildingService,
 			NotifierService notifierService, 
 			Long virusscannerLimitFilesize,
-			boolean overrideGlobalQuota,
 			OperationHistoryBusinessService operationHistoryBusinessService,
 			QuotaService quotaService) {
 		super(rac);
@@ -149,11 +139,9 @@ public class DocumentEntryServiceImpl
 		this.virusScannerService = virusScannerService;
 		this.mimeTypeIdentifier = mimeTypeIdentifier;
 		this.antiSamyService = antiSamyService;
-		this.domainBusinessService = domainBusinessService;
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
 		this.virusscannerLimitFilesize = virusscannerLimitFilesize;
-		this.overrideGlobalQuota = overrideGlobalQuota;
 		this.quotaService = quotaService;
 	}
 
@@ -195,33 +183,35 @@ public class DocumentEntryServiceImpl
 	}
 
 	@Override
-	public DocumentEntry create(Account actor, Account owner, File tempFile, String fileName, String comment, boolean isFromCmis, String metadata) throws BusinessException {
+	public DocumentEntry create(Account actor, Account owner, File tempFile, String fileName, String comment,
+			boolean isFromCmis, String metadata) throws BusinessException {
 		return create(actor, owner, tempFile, fileName, comment, false, isFromCmis, metadata);
 	}
 
 	@Override
-	public DocumentEntry create(Account actor, Account owner, File tempFile, String fileName, String comment, boolean forceAntivirusOff, boolean isFromCmis, String metadata) throws BusinessException {
+	public DocumentEntry create(Account actor, Account owner, File tempFile, String fileName, String comment,
+			boolean forceAntivirusOff, boolean isFromCmis, String metadata) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(fileName, "fileName is required.");
 		checkCreatePermission(actor, owner, DocumentEntry.class,
 				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, null);
-		fileName = sanitizeFileName(fileName); // throws
-		Long size = tempFile.length();
 		DocumentEntry docEntry = null;
 		try {
+			fileName = sanitizeFileName(fileName);
+			Long size = tempFile.length();
+			checkSpace(owner, size);
+
+			// detect file's mime type.
 			String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
-			checkSpace(size, fileName, owner);
 
 			// check if the file MimeType is allowed
-			AbstractDomain domain = abstractDomainService.retrieveDomain(actor
-					.getDomain().getUuid());
-			if (mimeTypeFilteringStatus(actor)) {
+			if (mimeTypeFilteringStatus(owner)) {
 				mimeTypeService.checkFileMimeType(owner, fileName, mimeType);
 			}
 
 			if (!forceAntivirusOff) {
 				Functionality antivirusFunctionality = functionalityReadOnlyService
-						.getAntivirusFunctionality(domain);
+						.getAntivirusFunctionality(owner.getDomain());
 				if (antivirusFunctionality.getActivationPolicy().getStatus()) {
 					checkVirus(fileName, owner, tempFile, size);
 				}
@@ -230,41 +220,24 @@ public class DocumentEntryServiceImpl
 			// want a timestamp on doc ?
 			String timeStampingUrl = null;
 			StringValueFunctionality timeStampingFunctionality = functionalityReadOnlyService
-					.getTimeStampingFunctionality(domain);
+					.getTimeStampingFunctionality(owner.getDomain());
 			if (timeStampingFunctionality.getActivationPolicy().getStatus()) {
 				timeStampingUrl = timeStampingFunctionality.getValue();
 			}
 
 			Functionality enciphermentFunctionality = functionalityReadOnlyService
-					.getEnciphermentFunctionality(domain);
+					.getEnciphermentFunctionality(owner.getDomain());
 			Boolean checkIfIsCiphered = enciphermentFunctionality
 					.getActivationPolicy().getStatus();
-
-			//check if user can add file
-			quotaService.checkIfUserCanAddFile(actor, owner, size, ContainerQuotaType.USER);
 
 			// We need to set an expiration date in case of file cleaner
 			// activation.
 			docEntry = documentEntryBusinessService.createDocumentEntry(owner,
 					tempFile, size, fileName, comment, checkIfIsCiphered,
 					timeStampingUrl, mimeType,
-					getDocumentExpirationDate(domain), isFromCmis, metadata);
+					getDocumentExpirationDate(owner.getDomain()), isFromCmis, metadata);
 
-			// add new row in operation History
-			// When we have a creation of documents operationValue=CREATE
-			OperationHistory operationHistory = new OperationHistory(owner, domain, size, OperationHistoryTypeEnum.CREATE,
-					ContainerQuotaType.USER);
-			operationHistoryBusinessService.create(operationHistory);
-
-			addDocSizeToGlobalUsedQuota(docEntry.getDocument(), domain);
-			// Extra check to avoid over quota when we authorize multiple upload for fineuploader
-			long availableSize = getAvailableSize(owner);
-			logger.debug("availableSize :" + availableSize);
-			if (availableSize < 0) {
-				logger.error("The file  " + fileName + " is too large to fit in " + owner.getAccountRepresentation() + " user's space.");
-				String[] extras = { fileName };
-				throw new BusinessException(BusinessErrorCode.FILE_TOO_LARGE, "The file is too large to fit in user's space.", extras);
-			}
+			addToQuota(owner, size);
 		} finally {
 			try {
 				logger.debug("deleting temp file : " + tempFile.getName());
@@ -294,6 +267,13 @@ public class DocumentEntryServiceImpl
 		preChecks(actor, owner);
 		Validate.notEmpty(docEntryUuid, "document entry uuid is required.");
 		DocumentEntry originalEntry = find(actor, owner, docEntryUuid);
+
+		long newDocSize = tempFile.length();
+		long oldDocSize = originalEntry.getSize();
+		// new size minus old size to compute delta.
+		long delta = newDocSize -oldDocSize;
+		checkSpace(owner, delta);
+
 		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, originalEntry, LogAction.UPDATE);
 		String originalFileName = originalEntry.getName();
 		if (fileName == null || fileName.isEmpty()) {
@@ -302,65 +282,48 @@ public class DocumentEntryServiceImpl
 		checkUpdatePermission(actor, owner, DocumentEntry.class,
 				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, originalEntry);
 		fileName = sanitizeFileName(fileName); // throws
-		Long size = tempFile.length();
 		DocumentEntry documentEntry = null;
 
 		try {
 			String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
 
-			AbstractDomain domain = abstractDomainService.retrieveDomain(owner
-					.getDomain().getUuid());
-
-			long oldDocSize = originalEntry.getSize();
-			checkSpace(size - oldDocSize, fileName, owner);
-
 			// check if the file MimeType is allowed
 			Functionality mimeFunctionality = functionalityReadOnlyService
-					.getMimeTypeFunctionality(domain);
+					.getMimeTypeFunctionality(owner.getDomain());
 			if (mimeFunctionality.getActivationPolicy().getStatus()) {
 				mimeTypeService.checkFileMimeType(owner, fileName, mimeType);
 			}
 
 			Functionality antivirusFunctionality = functionalityReadOnlyService
-					.getAntivirusFunctionality(domain);
+					.getAntivirusFunctionality(owner.getDomain());
 			if (antivirusFunctionality.getActivationPolicy().getStatus()) {
-				checkVirus(fileName, owner, tempFile, size);
+				checkVirus(fileName, owner, tempFile, newDocSize);
 			}
 
 			// want a timestamp on doc ?
 			String timeStampingUrl = null;
 			StringValueFunctionality timeStampingFunctionality = functionalityReadOnlyService
-					.getTimeStampingFunctionality(domain);
+					.getTimeStampingFunctionality(owner.getDomain());
 			if (timeStampingFunctionality.getActivationPolicy().getStatus()) {
 				timeStampingUrl = timeStampingFunctionality.getValue();
 			}
 
 			Functionality enciphermentFunctionality = functionalityReadOnlyService
-					.getEnciphermentFunctionality(domain);
+					.getEnciphermentFunctionality(owner.getDomain());
 			Boolean checkIfIsCiphered = enciphermentFunctionality
 					.getActivationPolicy().getStatus();
 
 			// We need to set an expiration date in case of file cleaner
 			// activation.
 			documentEntry = documentEntryBusinessService.updateDocumentEntry(
-					owner, originalEntry, tempFile, size, fileName,
+					owner, originalEntry, tempFile, newDocSize, fileName,
 					checkIfIsCiphered, timeStampingUrl, mimeType,
-					getDocumentExpirationDate(domain));
+					getDocumentExpirationDate(owner.getDomain()));
 			// add new resource to the log entry
 			log.setResourceUpdated(new DocumentMto(documentEntry));
 			logEntryService.insert(log);
 
-			// add new row in operation History
-			// When we have an update of documents operationValue=UPDATE
-			OperationHistory entityDeleted = new OperationHistory(owner, domain, -oldDocSize,
-					OperationHistoryTypeEnum.DELETE, ContainerQuotaType.USER);
-			operationHistoryBusinessService.create(entityDeleted);
-			OperationHistory entityCreated = new OperationHistory(owner, domain, size, OperationHistoryTypeEnum.CREATE,
-					ContainerQuotaType.USER);
-			operationHistoryBusinessService.create(entityCreated);
-
-			removeDocSizeFromGlobalUsedQuota(oldDocSize, domain);
-			addDocSizeToGlobalUsedQuota(documentEntry.getDocument(), domain);
+			addToQuota(owner, newDocSize, oldDocSize);
 
 			if(documentEntry.getShared() > 0) {
 				// send email, file has been replaced ....
@@ -428,6 +391,8 @@ public class DocumentEntryServiceImpl
 			log.setCause(LogActionCause.INCONSISTENCY);
 			log.setTechnicalComment("File removed because of inconsistence. Please contact your administrator.");
 			logEntryService.insert(LogEntryService.WARN, log);
+			// update quota manager.
+			delFromQuota(owner, documentEntry.getSize());
 		} catch (IllegalArgumentException e) {
 			logger.error(
 					"Could not delete file " + documentEntry.getName()
@@ -453,9 +418,6 @@ public class DocumentEntryServiceImpl
 						"You are not authorized to delete this document. It still exists shares.");
 			}
 
-			AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getUuid());
-			removeDocSizeFromGlobalUsedQuota(documentEntry.getSize(), domain);
-
 			documentEntryBusinessService.deleteDocumentEntry(documentEntry);
 			// LogAction.FILE_EXPIRE
 			DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, documentEntry,
@@ -463,7 +425,8 @@ public class DocumentEntryServiceImpl
 			log.setTechnicalComment("Expiration of a file");
 			log.setCause(LogActionCause.EXPIRATION);
 			logEntryService.insert(log);
-
+			// update quota manager.
+			delFromQuota(owner, documentEntry.getSize());
 		} catch (IllegalArgumentException e) {
 			logger.error(
 					"Could not delete file " + documentEntry.getName()
@@ -488,68 +451,12 @@ public class DocumentEntryServiceImpl
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
 					"You are not authorized to delete this document. There's still existing shares.");
 		}
-		AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getUuid());
-		removeDocSizeFromGlobalUsedQuota(documentEntry.getSize(), domain);
 		documentEntryBusinessService.deleteDocumentEntry(documentEntry);
 		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, documentEntry, LogAction.DELETE);
 		logEntryService.insert(log);
-		// add new row in operation History
-		// When we have a delete of documents operationValue=DELETE
-		OperationHistory entity = new OperationHistory(owner, domain, -documentEntry.getSize(),
-				OperationHistoryTypeEnum.DELETE, ContainerQuotaType.USER);
-		operationHistoryBusinessService.create(entity);
+		// update quota manager.
+		delFromQuota(owner, documentEntry.getSize());
 		return documentEntry;
-	}
-
-	@Override
-	public long getUserMaxFileSize(Account account) throws BusinessException {
-		// if user is not in one domain = BOUM
-		AbstractDomain domain = abstractDomainService.retrieveDomain(account.getDomain().getUuid());
-		SizeUnitValueFunctionality userMaxFileSizeFunctionality = functionalityReadOnlyService.getUserMaxFileSizeFunctionality(domain);
-		if (userMaxFileSizeFunctionality.getActivationPolicy().getStatus()) {
-			long maxSize = userMaxFileSizeFunctionality.getPlainSize();
-			if (maxSize < 0) {
-				maxSize = 0;
-			}
-			return maxSize;
-		}
-		return LinShareConstants.defaultMaxFileSize;
-	}
-
-	@Override
-	public long getAvailableSize(Account account) throws BusinessException {
-		// if user is not in one domain = BOUM
-		AbstractDomain domain = account.getDomain();
-		SizeUnitValueFunctionality globalQuotaFunctionality = functionalityReadOnlyService
-				.getGlobalQuotaFunctionality(domain);
-		SizeUnitValueFunctionality userQuotaFunctionality = functionalityReadOnlyService
-				.getUserQuotaFunctionality(domain);
-		if (globalQuotaFunctionality.getActivationPolicy().getStatus()) {
-			long usedSpace = abstractDomainService.getUsedSpace(account);
-			long availableSize = globalQuotaFunctionality.getPlainSize()
-					- usedSpace;
-			if (availableSize < 0) {
-				availableSize = 0;
-			}
-			return availableSize;
-		} else if (userQuotaFunctionality.getActivationPolicy().getStatus()) {
-			long userQuota = userQuotaFunctionality.getPlainSize();
-			long usedSpace = documentEntryBusinessService.getUsedSpace(account);
-			return userQuota - usedSpace;
-		}
-		return LinShareConstants.defaultFreeSpace;
-	}
-
-	@Override
-	public long getTotalSize(Account account) throws BusinessException {
-		AbstractDomain domain = abstractDomainService.retrieveDomain(account.getDomain().getUuid());
-		SizeUnitValueFunctionality globalQuotaFunctionality = functionalityReadOnlyService.getGlobalQuotaFunctionality(domain);
-		SizeUnitValueFunctionality userQuotaFunctionality = functionalityReadOnlyService.getUserQuotaFunctionality(domain);
-		if (globalQuotaFunctionality.getActivationPolicy().getStatus()) {
-			return globalQuotaFunctionality.getPlainSize();
-		}
-		long userQuota = userQuotaFunctionality.getPlainSize();
-		return userQuota;
 	}
 
 	@Override
@@ -659,24 +566,6 @@ public class DocumentEntryServiceImpl
 		logEntryService.insert(log);
 	}
 
-	private void checkSpace(long size, String fileName, Account owner) throws BusinessException {
-		// check the user quota
-		if (size > getUserMaxFileSize(owner)) {
-			logger.info("The file  " + fileName + " is larger than "
-					+ owner.getLsUuid() + " user's max file size.");
-			String[] extras = { fileName };
-			throw new BusinessException(BusinessErrorCode.FILE_TOO_LARGE,
-					"The file is larger than user's max file size.", extras);
-		}
-		long availableSize = getAvailableSize(owner);
-		if (availableSize < size) {
-			logger.info("The file  " + fileName + " is too large to fit in " + owner.getLsUuid() + " user's space.");
-			String[] extras = { fileName };
-			throw new BusinessException(BusinessErrorCode.FILE_TOO_LARGE,
-					"The file is too large to fit in user's space.", extras);
-		}
-	}
-
 	private String sanitizeFileName(String fileName) throws BusinessException {
 		fileName = fileName.replace("\\", "_");
 		fileName = fileName.replace(":", "_");
@@ -730,25 +619,6 @@ public class DocumentEntryServiceImpl
 		return checkStatus;
 	}
 
-	private void addDocSizeToGlobalUsedQuota(Document docEntity,
-			AbstractDomain domain) throws BusinessException {
-		if (!overrideGlobalQuota) {
-			long newUsedQuota = domain.getUsedSpace().longValue()
-					+ docEntity.getSize();
-			domain.setUsedSpace(newUsedQuota);
-			domainBusinessService.update(domain);
-		}
-	}
-
-	private void removeDocSizeFromGlobalUsedQuota(long docSize,
-			AbstractDomain domain) throws BusinessException {
-		if (!overrideGlobalQuota) {
-			long newUsedQuota = domain.getUsedSpace().longValue() - docSize;
-			domain.setUsedSpace(newUsedQuota);
-			domainBusinessService.update(domain);
-		}
-	}
-
 	@Override
 	public DocumentEntry findMoreRecentByName(Account actor, Account owner,
 			String fileName) throws BusinessException {
@@ -790,5 +660,26 @@ public class DocumentEntryServiceImpl
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You do not have the right to use this method.");
 		}
 		return documentEntryBusinessService.findAllExpiredEntries();
+	}
+
+	protected void checkSpace(Account owner, long size) throws BusinessException {
+		quotaService.checkIfUserCanAddFile(owner, size, ContainerQuotaType.USER);
+	}
+
+	protected void addToQuota(Account owner, Long size) {
+		OperationHistory oh = new OperationHistory(owner, owner.getDomain(), size, OperationHistoryTypeEnum.CREATE,
+				ContainerQuotaType.USER);
+		operationHistoryBusinessService.create(oh);
+	}
+
+	protected void delFromQuota(Account owner, Long size) {
+		OperationHistory oh = new OperationHistory(owner, owner.getDomain(), size, OperationHistoryTypeEnum.DELETE,
+				ContainerQuotaType.USER);
+		operationHistoryBusinessService.create(oh);
+	}
+
+	protected void addToQuota(Account owner, long newDocSize, long oldDocSize) {
+		delFromQuota(owner, oldDocSize);
+		addToQuota(owner, newDocSize);
 	}
 }

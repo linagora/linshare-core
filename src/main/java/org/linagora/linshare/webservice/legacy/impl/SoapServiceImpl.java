@@ -95,15 +95,14 @@ public class SoapServiceImpl extends WebserviceBase implements SoapService {
 	// **soap
 	@Override
 	public SimpleLongValue getUserMaxFileSize() throws BusinessException {
-		return new SimpleLongValue(
-				webServiceDocumentFacade.getUserMaxFileSize());
+		return null;
 	}
 
 	@WebMethod(operationName = "getAvailableSize")
 	// **soap
 	@Override
 	public SimpleLongValue getAvailableSize() throws BusinessException {
-		return new SimpleLongValue(webServiceDocumentFacade.getAvailableSize());
+		return null;
 	}
 
 	// Shares

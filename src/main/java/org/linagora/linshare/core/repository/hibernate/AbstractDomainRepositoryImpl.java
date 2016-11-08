@@ -36,15 +36,12 @@ package org.linagora.linshare.core.repository.hibernate;
 import java.util.List;
 import java.util.UUID;
 
-import org.hibernate.SQLQuery;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
@@ -133,43 +130,14 @@ public class AbstractDomainRepositoryImpl extends
 	}
 
 	@Override
-	public Long getTotalUsedSpace() throws BusinessException {
-		DetachedCriteria det = DetachedCriteria.forClass(DocumentEntry.class);
-		det.createAlias("document", "doc");
-		ProjectionList columns = Projections.projectionList()
-				.add(Projections.sum("doc.size"));
-		det.setProjection(columns);
-		List<AbstractDomain> result = findByCriteria(det);
-		if (result == null || result.isEmpty() || result.get(0) == null) {
-			return new Long(0);
-		}
-		return DataAccessUtils.longResult(result);
-	}
-
-	@Override
-	public Long getTotalUsedSpace(AbstractDomain domain)
-			throws BusinessException {
-		// Dirty Mode ON
-		String queryString = "select sum(ls_size) from document_entry as d join entry as e on d.entry_id = e.id join account as a on a.id = e.owner_id join domain_abstract as dom on a.domain_id = dom.id where uuid = 'MySubDomain';";
-		queryString = "select sum(ls_size) from document_entry as d join entry as e on d.entry_id = e.id join account as a on a.id = e.owner_id join domain_abstract as dom on a.domain_id = dom.id where uuid = '" + domain.getUuid() + "';";
-		SQLQuery createSQLQuery = this.getCurrentSession().createSQLQuery(queryString);
-		@SuppressWarnings("rawtypes")
-		List result = createSQLQuery.list();
-		// Dirty Mode OFF
-		if (result == null || result.isEmpty() || result.get(0) == null) {
-			return new Long(0);
-		}
-		return DataAccessUtils.longResult(result);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
 	public List<String> getAllSubDomainIdentifiers(String domain) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 		det.createAlias("parentDomain", "parent");
 		det.add(Restrictions.eq("parent.uuid", domain));
 		det.setProjection(Projections.property("uuid"));
-		return listByCriteria(det);
+		@SuppressWarnings("unchecked")
+		List<String> ret = (List<String>)listByCriteria(det);
+		return ret;
 	}
 
 	@Override

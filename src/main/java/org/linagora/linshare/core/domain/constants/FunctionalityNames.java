@@ -35,9 +35,6 @@ package org.linagora.linshare.core.domain.constants;
 
 public enum FunctionalityNames {
 
-	FILESIZE_MAX,
-	QUOTA_GLOBAL,
-	QUOTA_USER,
 	MIME_TYPE,
 	ENCIPHERMENT,
 	TIME_STAMPING,

@@ -174,26 +174,6 @@ public class ShaBatchImplTest extends AbstractTransactionalJUnit4SpringContextTe
 		Integer value = 1;
 		ArrayList<Functionality> functionalities = new ArrayList<Functionality>();
 		functionalities.add(
-			new UnitValueFunctionality("QUOTA_GLOBAL",
-				true,
-				new Policy(Policies.ALLOWED, false),
-				new Policy(Policies.ALLOWED, false),
-				jane.getDomain(),
-				value,
-				new FileSizeUnitClass(FileSizeUnit.GIGA)
-			)
-		);
-		functionalities.add(
-			new UnitValueFunctionality("QUOTA_USER",
-				true,
-				new Policy(Policies.ALLOWED, false),
-				new Policy(Policies.ALLOWED, false),
-				jane.getDomain(),
-				value,
-				new FileSizeUnitClass(FileSizeUnit.GIGA)
-			)
-		);
-		functionalities.add(
 				new UnitValueFunctionality("MIME_TYPE",
 					true,
 					new Policy(Policies.ALLOWED, false),
@@ -240,16 +220,6 @@ public class ShaBatchImplTest extends AbstractTransactionalJUnit4SpringContextTe
 					jane.getDomain(),
 					value,
 					new TimeUnitClass(TimeUnit.DAY)
-				)
-		);
-		functionalities.add(
-				new UnitValueFunctionality("FILESIZE_MAX",
-					true,
-					new Policy(Policies.ALLOWED, true),
-					new Policy(Policies.ALLOWED, true),
-					jane.getDomain(),
-					5,
-					new FileSizeUnitClass(FileSizeUnit.GIGA)
 				)
 		);
 		for (Functionality functionality : functionalities) {

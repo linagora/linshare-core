@@ -95,7 +95,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	private final MimePolicyBusinessService mimePolicyBusinessService;
 	private final MailConfigBusinessService mailConfigBusinessService;
 	private final WelcomeMessagesService welcomeMessagesService;
-	private final boolean overrideGlobalQuota;
 	private final AuditAdminMongoRepository auditMongoRepository;
 	final private DomainAccessPolicyBusinessService domainAccessPolicyBusinessService;
 	private final DomainQuotaBusinessService domainQuotaBusinessService;
@@ -111,7 +110,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			final MimePolicyBusinessService mimePolicyBusinessService,
 			final MailConfigBusinessService mailConfigBusinessService,
 			final WelcomeMessagesService welcomeMessagesService,
-			final boolean overrideGlobalQuota,
 			final AuditAdminMongoRepository auditMongoRepository,
 			final DomainAccessPolicyBusinessService domainAccessPolicyBusinessService,
 			final DomainQuotaBusinessService domainQuotaBusinessService,
@@ -126,7 +124,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		this.mimePolicyBusinessService = mimePolicyBusinessService;
 		this.mailConfigBusinessService = mailConfigBusinessService;
 		this.welcomeMessagesService = welcomeMessagesService;
-		this.overrideGlobalQuota = overrideGlobalQuota;
 		this.auditMongoRepository = auditMongoRepository;
 		this.domainAccessPolicyBusinessService = domainAccessPolicyBusinessService;
 		this.domainQuotaBusinessService = domainQuotaBusinessService;
@@ -772,27 +769,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			return domainBusinessService.loadRelativeDomains(welcomeMessage);
 		} else
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "actor has no rights");
-	}
-
-	@Override
-	public long getUsedSpace(Account actor) throws BusinessException {
-		long totalUsedSpace;
-		if (overrideGlobalQuota) {
-			totalUsedSpace = domainBusinessService.getTotalUsedSpace();
-		} else {
-			 totalUsedSpace = actor.getDomain().getUsedSpace();
-		}
-		return totalUsedSpace;
-	}
-
-	@Override
-	public Long dataUsage(Account actor, String domainId)
-			throws BusinessException {
-		if (actor.hasSuperAdminRole()) {
-			return domainBusinessService.dataUsage(domainId);
-		} else {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "actor has no rights");
-		}
 	}
 
 	@Override

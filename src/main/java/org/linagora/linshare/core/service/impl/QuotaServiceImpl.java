@@ -73,16 +73,14 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 	}
 
 	@Override
-	public void checkIfUserCanAddFile(Account actor, Account owner, Long fileSize, ContainerQuotaType containerQuotaType)
+	public void checkIfUserCanAddFile(Account account, Long fileSize, ContainerQuotaType containerQuotaType)
 			throws BusinessException {
-		Validate.notNull(actor, "Actor must be set.");
-		Validate.notNull(owner, "Owner must be set.");
+		Validate.notNull(account, "Targeted account must be set.");
 		Validate.notNull(fileSize, "FileSize must be set.");
 		Validate.notNull(containerQuotaType, "EnsembleType must be set.");
-		checkReadPermission(actor, owner, Quota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null);
-		checkIfUserCanAddInAccountQuota(owner, fileSize);
-		checkIfUserCanAddInContainerQuota(owner.getDomain(), containerQuotaType, fileSize);
-		checkIfUserCanAddInDomainQuota(owner.getDomain(), fileSize);
+		checkIfUserCanAddInAccountQuota(account, fileSize);
+		checkIfUserCanAddInContainerQuota(account.getDomain(), containerQuotaType, fileSize);
+		checkIfUserCanAddInDomainQuota(account.getDomain(), fileSize);
 		checkIfUserCanAddInPlatformQuota(fileSize);
 	}
 
@@ -96,7 +94,7 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 		}
 		if (fileSize > aq.getFileSizeMax()) {
 			throw new BusinessException(BusinessErrorCode.QUOTA_FILE_UNAUTHORIZED,
-					"The file size is greater than the file quota.");
+					"The file size is greater than the max file size.");
 		}
 		Long todayConsumption = operationHistoryBusinessService.sumOperationValue(account, null, new Date(), null, null);
 		Long totalConsumption = aq.getCurrentValue() + todayConsumption + fileSize;

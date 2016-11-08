@@ -25,7 +25,6 @@
 		<constructor-arg ref="functionalityBusinessService" />
 		<constructor-arg ref="domainBusinessService" />
 		<constructor-arg ref="domainPermissionBusinessService" />
-		<constructor-arg value="${linshare.override.global.quota}" />
 	</bean>
 	<bean id="domainPermissionBusinessService" class="org.linagora.linshare.core.business.service.impl.DomainPermissionBusinessServiceImpl">
 		<constructor-arg ref="domainBusinessService" />
@@ -34,6 +33,5 @@
 	<bean name="functionalityReadOnlyService" class="org.linagora.linshare.core.service.impl.FunctionalityReadOnlyServiceImpl">
 		<constructor-arg ref="functionalityRepository" />
 		<constructor-arg ref="domainBusinessService" />
-		<constructor-arg value="${linshare.override.global.quota}" />
 	</bean>
 </beans>

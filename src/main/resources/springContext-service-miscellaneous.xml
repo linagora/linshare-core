@@ -44,7 +44,6 @@
 		class="org.linagora.linshare.core.service.impl.FunctionalityReadOnlyServiceImpl">
 		<constructor-arg ref="functionalityRepository" />
 		<constructor-arg ref="domainBusinessService" />
-		<constructor-arg value="${linshare.override.global.quota}" />
 	</bean>
 
 	<bean name="functionalityService"
@@ -52,7 +51,6 @@
 		<constructor-arg ref="functionalityBusinessService" />
 		<constructor-arg ref="domainBusinessService" />
 		<constructor-arg ref="domainPermissionBusinessService" />
-		<constructor-arg value="${linshare.override.global.quota}" />
 		<constructor-arg ref="auditAdminMongoRepository" />
 	</bean>
 

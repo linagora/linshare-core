@@ -53,9 +53,6 @@ public interface FunctionalityReadOnlyService {
 	 * Shortcuts to functionalities
 	 */
 
-	SizeUnitValueFunctionality getGlobalQuotaFunctionality (AbstractDomain domain);
-	SizeUnitValueFunctionality getUserQuotaFunctionality (AbstractDomain domain);
-	SizeUnitValueFunctionality getUserMaxFileSizeFunctionality (AbstractDomain domain);
 	TimeUnitValueFunctionality getDefaultShareExpiryTimeFunctionality (AbstractDomain domain);
 	BooleanValueFunctionality getDefaultShareExpiryTimeDeletionFunctionality (AbstractDomain domain);
 	TimeUnitValueFunctionality getDefaultFileExpiryTimeFunctionality (AbstractDomain domain);

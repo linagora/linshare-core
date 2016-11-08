@@ -137,4 +137,10 @@ public class OperationHistory {
 		this.containerQuotaType = containerQuotaType;
 	}
 
+	@Override
+	public String toString() {
+		return "OperationHistory [uuid=" + uuid + ", account=" + account + ", operationValue=" + operationValue + ", operationType=" + operationType
+				+ ", containerQuotaType=" + containerQuotaType + "]";
+	}
+
 }
