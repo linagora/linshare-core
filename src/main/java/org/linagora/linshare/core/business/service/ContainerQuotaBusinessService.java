@@ -43,9 +43,13 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface ContainerQuotaBusinessService {
 
-	ContainerQuota find(AbstractDomain domain, ContainerQuotaType containerQuotaType);
+	List<ContainerQuota> findAll();
 
 	List<ContainerQuota> findAll(AbstractDomain domain);
+
+	ContainerQuota find(AbstractDomain domain, ContainerQuotaType containerQuotaType);
+
+	ContainerQuota find(String uuid);
 
 	ContainerQuota create(ContainerQuota entity) throws BusinessException;
 

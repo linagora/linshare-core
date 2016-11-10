@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.util.List;
+
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
@@ -47,47 +49,58 @@ import org.linagora.linshare.core.service.ContainerQuotaService;
 
 public class ContainerQuotaServiceImpl extends GenericServiceImpl<Account, Quota> implements ContainerQuotaService {
 
-	private ContainerQuotaBusinessService ensembleQuotaBusinessService;
+	private ContainerQuotaBusinessService business;
 
 	public ContainerQuotaServiceImpl(QuotaResourceAccessControl rac,
 			ContainerQuotaBusinessService ensembleQuotaBusinessService) {
 		super(rac);
-		this.ensembleQuotaBusinessService = ensembleQuotaBusinessService;
+		this.business = ensembleQuotaBusinessService;
 	}
 
 	@Override
-	public ContainerQuota create(Account actor, AbstractDomain domain, ContainerQuota entity) {
-		Validate.notNull(actor, "Acctor must be set.");
-		Validate.notNull(domain, "Domain must be set.");
-		Validate.notNull(entity, "Entity must be set.");
-		checkCreatePermission(actor, null, ContainerQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null, domain);
-		return ensembleQuotaBusinessService.create(entity);
+	public List<ContainerQuota> findAll(Account actor) {
+		return business.findAll();
 	}
 
 	@Override
-	public ContainerQuota update(Account actor, AbstractDomain domain, ContainerQuota entity) {
-		Validate.notNull(actor, "Acctor must be set.");
-		Validate.notNull(domain, "Domain must be set.");
-		Validate.notNull(entity, "Entity must be set.");
-		checkUpdatePermission(actor, null, ContainerQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null, domain);
-		ContainerQuota ensembleQuota = ensembleQuotaBusinessService.find(entity.getDomain(), entity.getContainerQuotaType());
-		ensembleQuota.setFileSizeMax(entity.getFileSizeMax());
-		ensembleQuota.setQuota(entity.getQuota());
-		ensembleQuota.setQuotaWarning(entity.getQuotaWarning());
-		ensembleQuota.setOverride(entity.getOverride());
-		return ensembleQuotaBusinessService.update(ensembleQuota);
+	public List<ContainerQuota> findAll(Account actor, AbstractDomain domain) {
+		return business.findAll(domain);
 	}
 
 	@Override
 	public ContainerQuota find(Account actor, AbstractDomain domain, ContainerQuotaType containerQuotaType) {
 		Validate.notNull(actor, "Acctor must be set.");
 		Validate.notNull(domain, "Domain must be set.");
-		Validate.notNull(containerQuotaType, "EnsembleType must be set.");
-		checkReadPermission(actor, null, ContainerQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null, domain);
-		ContainerQuota ensembleQuota = ensembleQuotaBusinessService.find(domain, containerQuotaType);
+		Validate.notNull(containerQuotaType, "ContainerQuotaType must be set.");
+//		checkReadPermission(actor, null, ContainerQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null, domain);
+		ContainerQuota ensembleQuota = business.find(domain, containerQuotaType);
 		if(ensembleQuota == null){
 			throw new BusinessException(BusinessErrorCode.CONTAINER_QUOTA_NOT_FOUND, "Can not found ensemble " + containerQuotaType.toString() + " quota of the domain "+domain.getUuid());
 		}
 		return ensembleQuota;
 	}
+
+	@Override
+	public ContainerQuota find(Account actor, String uuid) {
+		ContainerQuota entity = business.find(uuid);
+		if(entity == null){
+			throw new BusinessException(BusinessErrorCode.CONTAINER_QUOTA_NOT_FOUND, "Can not found quota container : " + uuid);
+		}
+		return entity;
+	}
+
+	@Override
+	public ContainerQuota update(Account actor, ContainerQuota cq) {
+		Validate.notNull(actor, "Acctor must be set.");
+		Validate.notNull(cq, "Entity must be set.");
+		// checkUpdatePermission(actor, null, ContainerQuota.class,
+		// BusinessErrorCode.QUOTA_UNAUTHORIZED, null, domain);
+		ContainerQuota entity = find(actor, cq.getUuid());
+		entity.setBusinessMaxFileSize(cq.getMaxFileSize());
+		entity.setBusinessQuota(cq.getQuota());
+		entity.setBusinessOverride(cq.getOverride());
+		entity.setBusinessMaintenance(cq.getMaintenance());
+		return business.update(entity);
+	}
+
 }

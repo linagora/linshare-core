@@ -939,7 +939,6 @@ ALTER TABLE share_entry_group ADD CONSTRAINT shareEntryGroup FOREIGN KEY (accoun
 ALTER TABLE async_task ADD CONSTRAINT FKasync_task548996 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE async_task ADD CONSTRAINT FKasync_task706276 FOREIGN KEY (actor_id) REFERENCES account (id);
 ALTER TABLE async_task ADD CONSTRAINT FKasync_task559470 FOREIGN KEY (owner_id) REFERENCES account (id);
-ALTER TABLE quota ADD CONSTRAINT domain FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);
 ALTER TABLE quota ADD CONSTRAINT parentDomain FOREIGN KEY (domain_parent_id) REFERENCES domain_abstract (id);
 ALTER TABLE quota ADD CONSTRAINT account FOREIGN KEY (account_id) REFERENCES account (id);
 ALTER TABLE quota ADD CONSTRAINT FKquota572570 FOREIGN KEY (quota_domain_id) REFERENCES quota (id);
@@ -949,3 +948,4 @@ ALTER TABLE operation_history ADD CONSTRAINT FKoperation_531280 FOREIGN KEY (dom
 ALTER TABLE statistic ADD CONSTRAINT FKstatistic57774 FOREIGN KEY (account_id) REFERENCES account (id);
 ALTER TABLE statistic ADD CONSTRAINT FKstatistic343885 FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);
 ALTER TABLE statistic ADD CONSTRAINT FKstatistic161509 FOREIGN KEY (domain_parent_id) REFERENCES domain_abstract (id);
+ALTER TABLE quota ADD CONSTRAINT domain FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);

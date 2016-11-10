@@ -58,6 +58,7 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 	private DomainQuotaBusinessService domainQuotaBusinessService;
 	private ContainerQuotaBusinessService containerQuotaBusinessService;
 	private OperationHistoryBusinessService operationHistoryBusinessService;
+	// threadService ?
 
 	public QuotaServiceImpl(
 			QuotaResourceAccessControl rac,
@@ -72,17 +73,32 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 		this.operationHistoryBusinessService = operationHistoryBusinessService;
 	}
 
+
 	@Override
-	public AccountQuota find(Account owner) throws BusinessException {
+	public AccountQuota find(Account actor, Account owner, String uuid) throws BusinessException {
 		// TODO FMA Quota
 		// My account quota. Later we will need to manage delegation.
-		AccountQuota aq = accountQuotaBusinessService.find(owner);
+		AccountQuota aq = accountQuotaBusinessService.find(uuid);
 		if (aq == null) {
 			throw new BusinessException(BusinessErrorCode.ACCOUNT_QUOTA_NOT_FOUND,
 					"The account quota is not configured yet.");
 		}
+		// TODO FMA Quota : Resource Access control ?
 		return aq;
 	}
+
+	@Override
+	public AccountQuota findByRelatedAccount(Account account) throws BusinessException {
+		// TODO FMA Quota
+		AccountQuota aq = accountQuotaBusinessService.find(account);
+		if (aq == null) {
+			throw new BusinessException(BusinessErrorCode.ACCOUNT_QUOTA_NOT_FOUND,
+					"The account quota is not configured yet.");
+		}
+		// TODO FMA Quota : Resource Access control ?
+		return aq;
+	}
+
 
 	@Override
 	public void checkIfUserCanAddFile(Account account, Long fileSize, ContainerQuotaType containerQuotaType)
@@ -97,16 +113,24 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 	}
 
 	@Override
-	public Long getRealTimeUsedSpace(Account account) throws BusinessException {
-		Validate.notNull(account, "account must be set.");
-		AccountQuota aq = accountQuotaBusinessService.find(account);
+	public Long getRealTimeUsedSpace(Account actor, Account owner, String uuid) throws BusinessException {
+		preChecks(actor, owner);
+		Validate.notNull(uuid, "quota uuid must be set.");
+		AccountQuota aq = accountQuotaBusinessService.find(uuid);
 		if (aq == null) {
 			throw new BusinessException(BusinessErrorCode.ACCOUNT_QUOTA_NOT_FOUND,
 					"The account quota is not configured yet.");
 		}
-		Long todayConsumption = operationHistoryBusinessService.sumOperationValue(account, null, new Date(), null, null);
+		// TODO FMA Quota : Resource Access control ?
+		Long todayConsumption = operationHistoryBusinessService.sumOperationValue(aq.getAccount(), null, new Date(), null, null);
 		return aq.getCurrentValue() + todayConsumption;
 	}
+
+	@Override
+	public DomainQuota find(AbstractDomain domain) throws BusinessException {
+		return domainQuotaBusinessService.find(domain);
+	}
+
 
 	private void checkIfUserCanAddInAccountQuota(Account account, Long fileSize) throws BusinessException {
 		Validate.notNull(account, "Account must be set.");
@@ -116,7 +140,7 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 			throw new BusinessException(BusinessErrorCode.ACCOUNT_QUOTA_NOT_FOUND,
 					"The account quota is not configured yet.");
 		}
-		if (fileSize > aq.getFileSizeMax()) {
+		if (fileSize > aq.getMaxFileSize()) {
 			throw new BusinessException(BusinessErrorCode.QUOTA_FILE_UNAUTHORIZED,
 					"The file size is greater than the max file size.");
 		}

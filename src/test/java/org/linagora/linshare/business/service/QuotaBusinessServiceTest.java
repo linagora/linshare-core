@@ -130,7 +130,7 @@ public class QuotaBusinessServiceTest extends AbstractTransactionalJUnit4SpringC
 		assertEquals(0, (long) ensembleQuota.getLastValue());
 		assertEquals(1900, (long) ensembleQuota.getQuota());
 		assertEquals(1300, (long) ensembleQuota.getQuotaWarning());
-		assertEquals(5, (long) ensembleQuota.getFileSizeMax());
+		assertEquals(5, (long) ensembleQuota.getMaxFileSize());
 		ensembleQuotaBusinessService.updateByBatch(ensembleQuota, new Date());
 		ensembleQuota = ensembleQuotaBusinessService.find(domain, ContainerQuotaType.USER);
 		assertEquals(1700, (long) ensembleQuota.getCurrentValue());
@@ -142,7 +142,7 @@ public class QuotaBusinessServiceTest extends AbstractTransactionalJUnit4SpringC
 		assertEquals(200, (long) threadEnsembleQuota.getLastValue());
 		assertEquals(2000, (long) threadEnsembleQuota.getQuota());
 		assertEquals(1500, (long) threadEnsembleQuota.getQuotaWarning());
-		assertEquals(5, (long) threadEnsembleQuota.getFileSizeMax());
+		assertEquals(5, (long) threadEnsembleQuota.getMaxFileSize());
 		ensembleQuotaBusinessService.updateByBatch(threadEnsembleQuota, new Date());
 		threadEnsembleQuota = ensembleQuotaBusinessService.find(domain, ContainerQuotaType.WORK_GROUP);
 		assertEquals(1200, (long) threadEnsembleQuota.getCurrentValue());
@@ -154,7 +154,7 @@ public class QuotaBusinessServiceTest extends AbstractTransactionalJUnit4SpringC
 		assertEquals(0, (long) qo.getLastValue());
 		assertEquals(1600, (long) qo.getQuota());
 		assertEquals(1480, (long) qo.getQuotaWarning());
-		assertEquals(5, (long) qo.getFileSizeMax());
+		assertEquals(5, (long) qo.getMaxFileSize());
 		accountQuotaBusinessService.createOrUpdate(account, new GregorianCalendar(2042, 10, 11, 00, 00).getTime());
 		qo = accountQuotaBusinessService.find(account);
 		assertNotNull(qo);

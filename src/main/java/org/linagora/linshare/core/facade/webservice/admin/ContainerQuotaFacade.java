@@ -31,25 +31,27 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.admin;
+package org.linagora.linshare.core.facade.webservice.admin;
 
+import java.util.List;
+
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.AccountQuotaDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.DomainQuotaDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ContainerQuotaDto;
 
-public interface QuotaRestService {
+public interface ContainerQuotaFacade {
 
-	AccountQuotaDto update(AccountQuotaDto entity) throws BusinessException;
+	ContainerQuotaDto find(String uuid) throws BusinessException;
 
-	DomainQuotaDto update(DomainQuotaDto entity) throws BusinessException;
+	/**
+	 * Find all quota containers, you can filter them by domain and or by type.
+	 * @param domainUuid
+	 * @param type ContainerQuotaType
+	 * @return
+	 * @throws BusinessException
+	 */
+	List<ContainerQuotaDto> findAll(String domainUuid, ContainerQuotaType type) throws BusinessException;
 
-	ContainerQuotaDto update(ContainerQuotaDto entity) throws BusinessException;
-
-	AccountQuotaDto findAccountQuota(String accountUuid) throws BusinessException;
-
-	DomainQuotaDto findDomainQuota(String domain) throws BusinessException;
-
-	ContainerQuotaDto findEnsembleQuota(String domain, String ensemble) throws BusinessException;
+	ContainerQuotaDto update(ContainerQuotaDto dto, String uuid) throws BusinessException;
 
 }

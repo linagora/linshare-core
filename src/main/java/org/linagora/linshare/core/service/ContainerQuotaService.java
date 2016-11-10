@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.service;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -40,9 +42,13 @@ import org.linagora.linshare.core.domain.entities.ContainerQuota;
 
 public interface ContainerQuotaService {
 
-	ContainerQuota create(Account actor, AbstractDomain domain, ContainerQuota entity);
+	List<ContainerQuota> findAll(Account actor);
 
-	ContainerQuota update(Account actor, AbstractDomain domain, ContainerQuota entity);
+	List<ContainerQuota> findAll(Account actor, AbstractDomain domain);
 
-	ContainerQuota find(Account actor, AbstractDomain domain, ContainerQuotaType entity);
+	ContainerQuota find(Account actor, String uuid);
+
+	ContainerQuota find(Account actor, AbstractDomain domain, ContainerQuotaType containerQuotaType);
+
+	ContainerQuota update(Account actor, ContainerQuota cq);
 }

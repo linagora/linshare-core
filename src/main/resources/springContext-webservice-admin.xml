@@ -132,8 +132,12 @@
 		<constructor-arg ref="wsAdminStatisticFacade" />
 	</bean>
 
-	<bean id="adminQuotaRestService" class="org.linagora.linshare.webservice.admin.impl.QuotaRestServiceImpl">
-		<constructor-arg ref="wsAdminQuotaFacade" />
+	<bean id="adminDomainQuotaRestService" class="org.linagora.linshare.webservice.admin.impl.DomainQuotaRestServiceImpl">
+		<constructor-arg ref="wsAdminDomainQuotaFacade" />
+	</bean>
+
+	<bean id="adminContainerQuotaRestService" class="org.linagora.linshare.webservice.admin.impl.ContainerQuotaRestServiceImpl">
+		<constructor-arg ref="wsAdminContainerQuotaFacade" />
 	</bean>
 
 	<jaxrs:server id="restAdminContainer" address="/rest/admin">
@@ -167,7 +171,8 @@
 			<ref bean="adminMailActivationRestService" />
 			<ref bean="adminAuditLogEntryRestService" />
 			<ref bean="adminStatisticRestService" />
-			<ref bean="adminQuotaRestService" />
+			<ref bean="adminDomainQuotaRestService" />
+			<ref bean="adminContainerQuotaRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

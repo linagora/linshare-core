@@ -33,15 +33,26 @@
  */
 package org.linagora.linshare.core.facade.webservice.common.dto;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.facade.webservice.admin.dto.QuotaDto;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
 @XmlRootElement
 @ApiModel
 public class DomainQuotaDto extends QuotaDto {
+
+	@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+	@ApiModelProperty(value = "List of all quota containers.")
+	List<String> containerUuids;
 
 	public DomainQuotaDto() {
 	}
@@ -52,9 +63,38 @@ public class DomainQuotaDto extends QuotaDto {
 
 	public DomainQuota toObject() {
 		DomainQuota quota = new DomainQuota();
+		quota.setUuid(getUuid());
 		quota.setQuota(getQuota());
-		quota.setQuotaWarning(getQuotaWarning());
 		quota.setOverride(getOverride());
+		quota.setMaintenance(getMaintenance());
 		return quota;
 	}
+
+	public List<String> getContainerUuids() {
+		return containerUuids;
+	}
+
+	public void setContainerUuids(List<String> containerUuids) {
+		this.containerUuids = containerUuids;
+	}
+
+	public void addContainerUuids(String containerUuid) {
+		if (this.containerUuids == null) {
+			this.containerUuids = Lists.newArrayList();
+		}
+		this.containerUuids.add(containerUuid);
+	}
+
+	/*
+	 * Transformers
+	 */
+	public static Function<DomainQuota, DomainQuotaDto> toDto() {
+		return new Function<DomainQuota, DomainQuotaDto>() {
+			@Override
+			public DomainQuotaDto apply(DomainQuota arg0) {
+				return new DomainQuotaDto(arg0);
+			}
+		};
+	}
+
 }

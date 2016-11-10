@@ -458,7 +458,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		}
 		AccountQuota userQuota = new AccountQuota(guest, guest.getDomain(), guest.getDomain().getParentDomain(),
 				containerQuota, containerQuota.getQuota(), containerQuota.getQuotaWarning(),
-				containerQuota.getFileSizeMax(), 0L, 0L);
+				containerQuota.getMaxFileSize(), 0L, 0L);
 		accountQuotaBusinessService.create(userQuota);
 	}
 }

@@ -36,27 +36,28 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.user.UserFacade;
 import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
+import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UserService;
 
-public class UserFacadeImpl extends UserGenericFacadeImp
-		implements UserFacade {
+public class UserFacadeImpl extends UserGenericFacadeImp implements UserFacade {
 
 	private final UserService userService;
 
-	private final FunctionalityReadOnlyService functionalityReadOnlyService;
+	protected final QuotaService quotaService;
 
-	public UserFacadeImpl(final UserService userService,
+	public UserFacadeImpl(
 			final AccountService accountService,
-			FunctionalityReadOnlyService functionalityService) {
+			final UserService userService,
+			final QuotaService quotaService) {
 		super(accountService);
 		this.userService = userService;
-		this.functionalityReadOnlyService = functionalityService;
+		this.quotaService = quotaService;
 	}
 
 	@Override
@@ -70,8 +71,7 @@ public class UserFacadeImpl extends UserGenericFacadeImp
 		User actor = checkAuthentication();
 		List<UserDto> res = new ArrayList<UserDto>();
 		// we return all users without any filters
-		List<User> users = userService
-				.searchUser(null, null, null, null, actor);
+		List<User> users = userService.searchUser(null, null, null, null, actor);
 
 		for (User user : users)
 			res.add(UserDto.getSimple(user));
@@ -81,6 +81,11 @@ public class UserFacadeImpl extends UserGenericFacadeImp
 
 	@Override
 	public UserDto isAuthorized() throws BusinessException {
-		return UserDto.getFull(checkAuthentication());
+		User owner = checkAuthentication();
+		UserDto dto = UserDto.getFull(owner);
+		// get the quota for the current logged in user.
+		AccountQuota quota = quotaService.findByRelatedAccount(owner);
+		dto.setQuotaUuid(quota.getUuid());
+		return dto;
 	}
 }

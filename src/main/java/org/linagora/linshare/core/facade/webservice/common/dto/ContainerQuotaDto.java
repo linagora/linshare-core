@@ -39,6 +39,7 @@ import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.facade.webservice.admin.dto.QuotaDto;
 
+import com.google.common.base.Function;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -46,32 +47,58 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 @ApiModel
 public class ContainerQuotaDto extends QuotaDto {
 
-	@ApiModelProperty(value = "EnsembleType")
-	private ContainerQuotaType containerQuotaType;
+	@ApiModelProperty(value = "type (ContainerQuotaType)")
+	protected ContainerQuotaType type;
+
+	@ApiModelProperty(value = "The maximum file size accepted.")
+	protected Long maxFileSize;
 
 	public ContainerQuotaDto() {
 	}
 
-	public ContainerQuotaDto(ContainerQuota ensembleQuota) {
-		super(ensembleQuota);
-		this.containerQuotaType = ensembleQuota.getContainerQuotaType();
+	public ContainerQuotaDto(ContainerQuota cq) {
+		super(cq);
+		this.type = cq.getContainerQuotaType();
+		this.maxFileSize = cq.getMaxFileSize();
 	}
 
-	public ContainerQuotaType getEnsembleType() {
-		return containerQuotaType;
+	public ContainerQuotaType getType() {
+		return type;
 	}
 
-	public void setEnsembleType(ContainerQuotaType containerQuotaType) {
-		this.containerQuotaType = containerQuotaType;
+	public void setType(ContainerQuotaType type) {
+		this.type = type;
+	}
+
+	public Long getMaxFileSize() {
+		return maxFileSize;
+	}
+
+	public void setMaxFileSize(Long maxFileSize) {
+		this.maxFileSize = maxFileSize;
 	}
 
 	public ContainerQuota toObject() {
 		ContainerQuota quota = new ContainerQuota();
-//		quota.setFileSizeMax(getFileSizeMax());
+		quota.setUuid(getUuid());
+		quota.setMaxFileSize(getMaxFileSize());
 		quota.setQuota(getQuota());
-		quota.setQuotaWarning(getQuotaWarning());
-		quota.setContainerQuotaType(getEnsembleType());
+		quota.setContainerQuotaType(getType());
 		quota.setOverride(getOverride());
+		quota.setMaintenance(getMaintenance());
 		return quota;
 	}
+
+	/*
+	 * Transformers
+	 */
+	public static Function<ContainerQuota, ContainerQuotaDto> toDto() {
+		return new Function<ContainerQuota, ContainerQuotaDto>() {
+			@Override
+			public ContainerQuotaDto apply(ContainerQuota arg0) {
+				return new ContainerQuotaDto(arg0);
+			}
+		};
+	}
+
 }

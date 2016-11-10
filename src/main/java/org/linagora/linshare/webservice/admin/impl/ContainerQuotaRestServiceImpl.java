@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.webservice.admin.impl;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -42,90 +44,54 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.QuotaFacade;
+import org.linagora.linshare.core.facade.webservice.admin.ContainerQuotaFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.AccountQuotaDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.DomainQuotaDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ContainerQuotaDto;
 import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.admin.QuotaRestService;
+import org.linagora.linshare.webservice.admin.ContainerQuotaRestService;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 
-@Api(value = "/rest/admin/quota", description = "Quota administration service.")
+@Api(value = "/rest/admin/quotas", description = "Quota administration service.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Path("/quotas")
-public class QuotaRestServiceImpl extends WebserviceBase implements QuotaRestService {
+public class ContainerQuotaRestServiceImpl extends WebserviceBase implements ContainerQuotaRestService {
 
-	private static final String DOMAIN = "domain";
-	private static final String ACCOUNT = "account";
-	private static final String ENSEMBLE_TYPE = "ensembleType";
+	private ContainerQuotaFacade facade;
 
-	private QuotaFacade quotaFacade;
-
-	public QuotaRestServiceImpl(QuotaFacade quotaFacade) {
-		this.quotaFacade = quotaFacade;
+	public ContainerQuotaRestServiceImpl(ContainerQuotaFacade facade) {
+		this.facade = facade;
 	}
 
-	@Path("/account_quota")
-	@PUT
-	@ApiOperation(value = "Update an account quota", response = AccountQuotaDto.class)
+	@Path("/containers")
+	@GET
 	@Override
-	public AccountQuotaDto update(@ApiParam(value = "Account quota to update.", required = true) AccountQuotaDto entity)
-			throws BusinessException {
-		return quotaFacade.update(entity);
+	public List<ContainerQuotaDto> findAll() throws BusinessException {
+		// TODO FMA Quota manage containers filters on findAll method.
+		return facade.findAll(null, null);
 	}
 
-	@Path("/domain_quota")
-	@PUT
-	@ApiOperation(value = "Update a domain quota", response = DomainQuotaDto.class)
+	@Path("/containers/{uuid}")
+	@GET
+	@ApiOperation(value = "find container quota", response = AccountQuotaDto.class)
 	@Override
-	public DomainQuotaDto update(@ApiParam(value = "Domain quota to update.", required = true) DomainQuotaDto entity)
-			throws BusinessException {
-		return quotaFacade.update(entity);
+	public ContainerQuotaDto find(
+			@ApiParam(value = "Container quota Uuid", required = true) @PathParam("uuid") String uuid) throws BusinessException {
+		return facade.find(uuid);
 	}
 
-	@Path("/ensemble_quota")
+	@Path("/containers/{uuid : .* }")
 	@PUT
-	@ApiOperation(value = "Update an ensemble quota", response = ContainerQuotaDto.class)
+	@ApiOperation(value = "Update a container quota", response = ContainerQuotaDto.class)
 	@Override
 	public ContainerQuotaDto update(
-			@ApiParam(value = "Ensemble quota to update.", required = true) ContainerQuotaDto entity)
-					throws BusinessException {
-		return quotaFacade.update(entity);
-	}
-
-	@Path("/account_quota/{account}")
-	@GET
-	@ApiOperation(value = "find an account quota", response = AccountQuotaDto.class)
-	@Override
-	public AccountQuotaDto findAccountQuota(
-			@ApiParam(value = "Account Uuid", required = true) @PathParam(ACCOUNT) String accountUuid)
-					throws BusinessException {
-		return quotaFacade.findAccountQuota(accountUuid);
-	}
-
-	@Path("/domain_quota/{domain}")
-	@GET
-	@ApiOperation(value = "Find a domain quota", response = DomainQuotaDto.class)
-	@Override
-	public DomainQuotaDto findDomainQuota(
-			@ApiParam(value = "Domain identifier", required = true) @PathParam(DOMAIN) String domain)
-					throws BusinessException {
-		return quotaFacade.findDomainQuota(domain);
-	}
-
-	@Path("/domain_quota/{domain}/{ensembleType}")
-	@GET
-	@ApiOperation(value = "Find an ensemble quota", response = ContainerQuotaDto.class)
-	@Override
-	public ContainerQuotaDto findEnsembleQuota(
-			@ApiParam(value = "Domain identifier", required = true) @PathParam(DOMAIN) String domain,
-			@ApiParam(value = "Ensemble type", required = true) @PathParam(ENSEMBLE_TYPE) String ensemble)
-					throws BusinessException {
-		return quotaFacade.findEnsembleQuota(domain, ensemble);
+			@ApiParam(value = "Container quota to update. Only quota, maxFileSize, override and maintenance fields can be updated. If null they will be ignored.", required = true) ContainerQuotaDto dto,
+			@ApiParam(value = "Container quota Uuid, if null dto.uuid is used.", required = false)
+				@PathParam("uuid") String  uuid) throws BusinessException {
+		return facade.update(dto, uuid);
 	}
 
 }

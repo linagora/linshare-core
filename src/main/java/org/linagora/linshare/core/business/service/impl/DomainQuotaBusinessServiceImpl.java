@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
@@ -44,8 +45,7 @@ import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DomainQuotaRepository;
 import org.linagora.linshare.core.repository.ContainerQuotaRepository;
 
-public class DomainQuotaBusinessServiceImpl
-		implements DomainQuotaBusinessService {
+public class DomainQuotaBusinessServiceImpl implements DomainQuotaBusinessService {
 
 	private final DomainQuotaRepository repository;
 	private final ContainerQuotaRepository containerQuotaRepository;
@@ -63,6 +63,16 @@ public class DomainQuotaBusinessServiceImpl
 	@Override
 	public DomainQuota find(AbstractDomain domain) throws BusinessException {
 		return repository.find(domain);
+	}
+
+	@Override
+	public DomainQuota find(String uuid) throws BusinessException {
+		return repository.find(uuid);
+	}
+
+	@Override
+	public List<DomainQuota> findAll() throws BusinessException {
+		return repository.findAll();
 	}
 
 	@Override

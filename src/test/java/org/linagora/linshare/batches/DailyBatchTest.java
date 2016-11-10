@@ -177,7 +177,7 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 		assertEquals(700, (long) quota.getLastValue());
 		assertEquals(1000, (long) quota.getQuota());
 		assertEquals(800, (long) quota.getQuotaWarning());
-		assertEquals(5, (long) quota.getFileSizeMax());
+		assertEquals(5, (long) quota.getMaxFileSize());
 
 		dailyThreadBatch.execute(thread2.getLsUuid(), listThreadIdentifier.size(), 1);
 
@@ -202,7 +202,7 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 		assertEquals(500, (long) quota.getLastValue());
 		assertEquals(1300, (long) quota.getQuota());
 		assertEquals(1000, (long) quota.getQuotaWarning());
-		assertEquals(6, (long) quota.getFileSizeMax());
+		assertEquals(6, (long) quota.getMaxFileSize());
 
 		listOperationHistory = operationHistoryBusinessService.find(jane, null, null, new Date());
 		assertNotEquals(0, listOperationHistory.size());
@@ -228,7 +228,7 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 		assertEquals(800, (long) quota.getLastValue());
 		assertEquals(1600, (long) quota.getQuota());
 		assertEquals(1480, (long) quota.getQuotaWarning());
-		assertEquals(5, (long) quota.getFileSizeMax());
+		assertEquals(5, (long) quota.getMaxFileSize());
 
 		listOperationHistory = operationHistoryBusinessService.find(jane, null, null, new Date());
 		assertEquals(0, listOperationHistory.size());
@@ -241,7 +241,7 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 		assertEquals(496, (long) ensembleQuota.getLastValue());
 		assertEquals(1900, (long) ensembleQuota.getQuota());
 		assertEquals(1300, (long) ensembleQuota.getQuotaWarning());
-		assertEquals(5, (long) ensembleQuota.getFileSizeMax());
+		assertEquals(5, (long) ensembleQuota.getMaxFileSize());
 
 		ensembleQuota = ensembleQuotaBusinessService.find(jane.getDomain(), ContainerQuotaType.WORK_GROUP);
 		assertNotNull(ensembleQuota);
@@ -249,7 +249,7 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 		assertEquals(900, (long) ensembleQuota.getLastValue());
 		assertEquals(2000, (long) ensembleQuota.getQuota());
 		assertEquals(1500, (long) ensembleQuota.getQuotaWarning());
-		assertEquals(5, (long) ensembleQuota.getFileSizeMax());
+		assertEquals(5, (long) ensembleQuota.getMaxFileSize());
 
 		DomainQuota quotaD = domainQuotaBusinessService.find(jane.getDomain());
 		assertNotNull(quotaD);

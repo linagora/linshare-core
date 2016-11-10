@@ -34,9 +34,9 @@
 package org.linagora.linshare.webservice.userv2;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.user.dto.QuotaDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.AccountQuotaDto;
 
 public interface QuotaRestService {
 
-	QuotaDto find(String uuid) throws BusinessException;
+	AccountQuotaDto find(String uuid) throws BusinessException;
 }

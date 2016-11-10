@@ -33,14 +33,17 @@
  */
 package org.linagora.linshare.core.service;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 
 public interface AccountQuotaService {
 
-	AccountQuota create(Account actor, Account owner, AccountQuota entity);
+	AccountQuota find(Account actor, String uuid);
 
-	AccountQuota update(Account actor, Account owner, AccountQuota entity);
+	List<AccountQuota> findAll(Account actor);
 
-	AccountQuota find(Account actor, Account owner);
+	AccountQuota update(Account actor, AccountQuota entity);
+
 }

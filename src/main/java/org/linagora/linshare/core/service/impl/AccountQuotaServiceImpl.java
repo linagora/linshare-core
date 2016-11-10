@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.util.List;
+
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -45,47 +47,46 @@ import org.linagora.linshare.core.service.AccountQuotaService;
 
 public class AccountQuotaServiceImpl extends GenericServiceImpl<Account, Quota> implements AccountQuotaService {
 
-	private AccountQuotaBusinessService accountQuotaBusinessService;
+	private AccountQuotaBusinessService business;
 
 	public AccountQuotaServiceImpl(QuotaResourceAccessControl rac,
 			AccountQuotaBusinessService accountQuotaBusinessService) {
 		super(rac);
-		this.accountQuotaBusinessService = accountQuotaBusinessService;
+		this.business = accountQuotaBusinessService;
 	}
 
 	@Override
-	public AccountQuota create(Account actor, Account owner, AccountQuota entity) {
+	public AccountQuota find(Account actor, String uuid) {
 		Validate.notNull(actor, "Actor must be set.");
-		Validate.notNull(owner, "Owner must be set.");
-		Validate.notNull(entity, "Entity must be set.");
-		checkCreatePermission(actor, owner, AccountQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null);
-		return accountQuotaBusinessService.create(entity);
-	}
-
-	@Override
-	public AccountQuota update(Account actor, Account owner, AccountQuota entity) {
-		Validate.notNull(actor, "Actor must be set.");
-		Validate.notNull(owner, "Owner must be set.");
-		Validate.notNull(entity, "Entity must be set.");
-		checkUpdatePermission(actor, owner, AccountQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null);
-		AccountQuota accountQuota = accountQuotaBusinessService.find(entity.getAccount());
-		accountQuota.setFileSizeMax(entity.getFileSizeMax());
-		accountQuota.setQuota(entity.getQuota());
-		accountQuota.setQuotaWarning(entity.getQuotaWarning());
-		accountQuota.setOverride(entity.getOverride());
-		return accountQuotaBusinessService.update(accountQuota);
-	}
-
-	@Override
-	public AccountQuota find(Account actor, Account owner) {
-		Validate.notNull(actor, "Actor must be set.");
-		Validate.notNull(owner, "Owner must be set.");
-		checkReadPermission(actor, owner, AccountQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null);
-		AccountQuota accountQuota = accountQuotaBusinessService.find(owner);
+		Validate.notEmpty(uuid, "Uuid must be set.");
+//		checkReadPermission(actor, owner, AccountQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null);
+		AccountQuota accountQuota = business.find(uuid);
 		if (accountQuota == null) {
 			throw new BusinessException(BusinessErrorCode.ACCOUNT_QUOTA_NOT_FOUND,
-					"Can not found account quota of the owner : " + owner.getFullName());
+					"Can not found account quota with uuid : " + uuid);
 		}
 		return accountQuota;
 	}
+
+	@Override
+	public List<AccountQuota> findAll(Account actor) {
+		Validate.notNull(actor, "Actor must be set.");
+		return business.findAll();
+	}
+
+	@Override
+	public AccountQuota update(Account actor, AccountQuota aq) {
+		Validate.notNull(actor, "Actor must be set.");
+		Validate.notNull(aq, "Account quota must be set.");
+		Validate.notEmpty(aq.getUuid(), "Account quota uuid must be set.");
+		AccountQuota entity = find(actor, aq.getUuid());
+		// checkUpdatePermission(actor, owner, AccountQuota.class,
+		// BusinessErrorCode.QUOTA_UNAUTHORIZED, null);
+		entity.setBusinessMaxFileSize(aq.getMaxFileSize());
+		entity.setBusinessQuota(aq.getQuota());
+		entity.setBusinessOverride(aq.getOverride());
+		entity.setBusinessMaintenance(aq.getMaintenance());
+		return business.update(entity);
+	}
+
 }

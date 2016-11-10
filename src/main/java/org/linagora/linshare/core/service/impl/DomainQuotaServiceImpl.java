@@ -33,9 +33,10 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.util.List;
+
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.domain.entities.Quota;
@@ -46,45 +47,45 @@ import org.linagora.linshare.core.service.DomainQuotaService;
 
 public class DomainQuotaServiceImpl extends GenericServiceImpl<Account, Quota> implements DomainQuotaService {
 
-	DomainQuotaBusinessService domainQuotaBusinessService;
+	DomainQuotaBusinessService business;
 
 	public DomainQuotaServiceImpl(QuotaResourceAccessControl rac,
 			DomainQuotaBusinessService domainQuotaBusinessService) {
 		super(rac);
-		this.domainQuotaBusinessService = domainQuotaBusinessService;
+		this.business = domainQuotaBusinessService;
 	}
 
 	@Override
-	public DomainQuota create(Account actor, AbstractDomain domain, DomainQuota entity) {
-		Validate.notNull(actor, "Actor must be set.");
-		Validate.notNull(domain, "Domain must be set.");
-		Validate.notNull(entity, "Entity must be set.");
-		checkCreatePermission(actor, null, DomainQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null, domain);
-		return domainQuotaBusinessService.create(entity);
+	public List<DomainQuota> findAll(Account actor) {
+		return business.findAll();
 	}
 
 	@Override
-	public DomainQuota update(Account actor, AbstractDomain domain, DomainQuota entity) {
+	public DomainQuota find(Account actor, String uuid) {
 		Validate.notNull(actor, "Actor must be set.");
-		Validate.notNull(domain, "Domain must be set.");
-		Validate.notNull(entity, "Entity must be set.");
-		checkCreatePermission(actor, null, DomainQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null, domain);
-		DomainQuota domainQuota = domainQuotaBusinessService.find(entity.getDomain());
-		domainQuota.setQuota(entity.getQuota());
-		domainQuota.setQuotaWarning(entity.getQuotaWarning());
-		domainQuota.setOverride(entity.getOverride());
-		return domainQuotaBusinessService.update(domainQuota);
-	}
-
-	@Override
-	public DomainQuota find(Account actor, AbstractDomain domain) {
-		Validate.notNull(actor, "Actor must be set.");
-		Validate.notNull(domain, "Domain must be set.");
-		checkCreatePermission(actor, null, DomainQuota.class, BusinessErrorCode.QUOTA_UNAUTHORIZED, null, domain);
-		DomainQuota domainQuota =  domainQuotaBusinessService.find(domain);
-		if(domainQuota == null){
-			throw new BusinessException(BusinessErrorCode.DOMAIN_QUOTA_NOT_FOUND, "Can not found domain quota of the domain "+domain.getUuid());
+		Validate.notNull(uuid, "Domain quota uuid must be set.");
+		// checkReadPermission(actor, null, DomainQuota.class,
+		// BusinessErrorCode.QUOTA_UNAUTHORIZED, null);
+		DomainQuota domainQuota = business.find(uuid);
+		if (domainQuota == null) {
+			throw new BusinessException(BusinessErrorCode.DOMAIN_QUOTA_NOT_FOUND, "Can not found domain quota " + uuid);
 		}
 		return domainQuota;
 	}
+
+	@Override
+	public DomainQuota update(Account actor, DomainQuota dq) {
+		Validate.notNull(actor, "Actor must be set.");
+		Validate.notNull(dq, "Entity must be set.");
+		// checkCreatePermission(actor, null, DomainQuota.class,
+		// BusinessErrorCode.QUOTA_UNAUTHORIZED, null, domain);
+		// TODO FMA Quota manage override and maintenance flags.
+		DomainQuota entity = find(actor, dq.getUuid());
+		entity.setBusinessQuota(dq.getQuota());
+//		entity.setBusinessQuotaWarning(dq.getQuotaWarning());
+		entity.setBusinessOverride(dq.getOverride());
+		entity.setBusinessMaintenance(dq.getMaintenance());
+		return business.update(entity);
+	}
+
 }

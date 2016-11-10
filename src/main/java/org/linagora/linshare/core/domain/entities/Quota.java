@@ -192,6 +192,24 @@ public abstract class Quota {
 		this.maintenance = maintenance;
 	}
 
+	public void setBusinessQuota(Long quota) {
+		if (quota != null) {
+			this.quota = quota;
+		}
+	}
+
+	public void setBusinessOverride(Boolean override) {
+		if (override != null) {
+			this.override = override;
+		}
+	}
+
+	public void setBusinessMaintenance(Boolean maintenance) {
+		if (maintenance != null) {
+			this.maintenance = maintenance;
+		}
+	}
+
 	@Override
 	public String toString() {
 		return "Quota [uuid=" + uuid + ", domain=" + domain + ", quota=" + quota + ", quotaWarning=" + quotaWarning

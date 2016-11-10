@@ -165,7 +165,7 @@ public class DailyBatchJobTest extends AbstractTransactionalJUnit4SpringContextT
 		assertEquals(800, (long) quota.getLastValue());
 		assertEquals(1600, (long) quota.getQuota());
 		assertEquals(1480, (long) quota.getQuotaWarning());
-		assertEquals(5, (long) quota.getFileSizeMax());
+		assertEquals(5, (long) quota.getMaxFileSize());
 		listThreadDailyStat = threadDailyStatBusinessService.findBetweenTwoDates(null,
 				new GregorianCalendar(2042, 10, 01, 00, 00).getTime(),
 				new GregorianCalendar(2042, 10, 16, 00, 00).getTime());
@@ -185,7 +185,7 @@ public class DailyBatchJobTest extends AbstractTransactionalJUnit4SpringContextT
 		assertEquals(0, (long) quota.getLastValue());
 		assertEquals(2000, (long) quota.getQuota());
 		assertEquals(1500, (long) quota.getQuotaWarning());
-		assertEquals(5, (long) quota.getFileSizeMax());
+		assertEquals(5, (long) quota.getMaxFileSize());
 		List<DomainDailyStat> listDomaindailyStat = domainDailyStatBusinessService.findBetweenTwoDates(jane.getDomain(),
 				null, null);
 		assertEquals(5, listDomaindailyStat.size());

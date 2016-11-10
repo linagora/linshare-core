@@ -48,7 +48,7 @@
 	<bean id="wsUserFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.UserFacadeImpl">
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="accountService" />
-		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="quotaService" />
 	</bean>
 	<bean id="wsGuestFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.GuestFacadeImpl">
 		<constructor-arg ref="accountService" />
@@ -117,10 +117,9 @@
 		<constructor-arg ref="workGroupFolderService"/>
 	</bean>
 
-	<bean id="wsQuotaFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.QuotaFacadeImpl">
+	<bean id="wsAccountQuotaFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.AccountQuotaFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="quotaService" />
-		<constructor-arg ref="threadService" />
 	</bean>
 
 </beans>

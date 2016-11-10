@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.business.service;
 
 import java.util.Date;
+import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
@@ -46,6 +47,10 @@ public interface DomainQuotaBusinessService {
 	DomainQuota findRootQuota() throws BusinessException;
 
 	DomainQuota find(AbstractDomain domain) throws BusinessException;
+
+	DomainQuota find(String uuid) throws BusinessException;
+
+	List<DomainQuota> findAll() throws BusinessException;
 
 	DomainQuota create(DomainQuota entity) throws BusinessException;
 

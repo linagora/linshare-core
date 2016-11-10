@@ -68,6 +68,11 @@ public class AccountQuotaBusinessServiceImpl implements AccountQuotaBusinessServ
 	}
 
 	@Override
+	public AccountQuota find(String uuid) throws BusinessException {
+		return repository.find(uuid);
+	}
+
+	@Override
 	public AccountQuota find(Account account) throws BusinessException {
 		return repository.find(account);
 	}
@@ -87,7 +92,7 @@ public class AccountQuotaBusinessServiceImpl implements AccountQuotaBusinessServ
 						account, account.getDomain(),
 						account.getDomain().getParentDomain(),
 						cq, cq.getQuota(), cq.getQuotaWarning(),
-						cq.getFileSizeMax(), 0L, 0L);
+						cq.getMaxFileSize(), 0L, 0L);
 			entity = repository.create(entity);
 		}
 		entity.setLastValue(entity.getCurrentValue());
@@ -113,5 +118,10 @@ public class AccountQuotaBusinessServiceImpl implements AccountQuotaBusinessServ
 	@Override
 	public List<String> findDomainByBatchModificationDate(Date startRange, Date endRange) {
 		return repository.findDomainByBatchModificationDate(startRange, endRange);
+	}
+
+	@Override
+	public List<AccountQuota> findAll() throws BusinessException {
+		return repository.findAll();
 	}
 }

@@ -37,7 +37,7 @@ import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 
 public class ContainerQuota extends Quota {
 
-	protected Long fileSizeMax;
+	protected Long maxFileSize;
 
 	protected ContainerQuotaType containerQuotaType;
 
@@ -59,7 +59,7 @@ public class ContainerQuota extends Quota {
 		this.lastValue = 0L;
 		this.quota = parentContainerQuota.getQuota();
 		this.quotaWarning = parentContainerQuota.getQuotaWarning();
-		this.fileSizeMax = parentContainerQuota.getFileSizeMax();
+		this.maxFileSize = parentContainerQuota.getMaxFileSize();
 		// Kind of container.
 		this.containerQuotaType = parentContainerQuota.getContainerQuotaType();
 		this.override = false;
@@ -81,19 +81,19 @@ public class ContainerQuota extends Quota {
 	public ContainerQuota(AbstractDomain domain, AbstractDomain parentDomain, DomainQuota domainQuota, long quota,
 			long quotaWarning, long fileSizeMax, long currentValue, long lastValue, ContainerQuotaType containerType) {
 		super(null, domain, parentDomain, quota, quotaWarning, currentValue, lastValue);
-		this.fileSizeMax = fileSizeMax;
+		this.maxFileSize = fileSizeMax;
 		this.containerQuotaType = containerType;
 		this.domainQuota = domainQuota;
 		this.override = false;
 		this.maintenance = false;
 	}
 
-	public Long getFileSizeMax() {
-		return fileSizeMax;
+	public Long getMaxFileSize() {
+		return maxFileSize;
 	}
 
-	public void setFileSizeMax(Long fileSizeMax) {
-		this.fileSizeMax = fileSizeMax;
+	public void setMaxFileSize(Long maxFileSize) {
+		this.maxFileSize = maxFileSize;
 	}
 
 	public ContainerQuotaType getContainerQuotaType() {
@@ -112,11 +112,17 @@ public class ContainerQuota extends Quota {
 		this.domainQuota = domainQuota;
 	}
 
+	public void setBusinessMaxFileSize(Long maxFileSize) {
+		if (maxFileSize != null) {
+			this.maxFileSize = maxFileSize;
+		}
+	}
+
 	@Override
 	public String toString() {
 		return "ContainerQuota [containerType=" + containerQuotaType + ", uuid=" + uuid + ", account=" + account
 				+ ", quota=" + quota + ", quotaWarning=" + quotaWarning + ", currentValue=" + currentValue
-				+ ", lastValue=" + lastValue + ", fileSizeMax=" + fileSizeMax + "]";
+				+ ", lastValue=" + lastValue + ", fileSizeMax=" + maxFileSize + "]";
 	}
 
 }

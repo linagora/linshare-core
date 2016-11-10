@@ -42,7 +42,11 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface AccountQuotaBusinessService {
 
+	AccountQuota find(String uuid) throws BusinessException;
+
 	AccountQuota find(Account account) throws BusinessException;
+
+	List<AccountQuota> findAll() throws BusinessException;
 
 	AccountQuota createOrUpdate(Account account, Date today) throws BusinessException;
 

@@ -66,6 +66,16 @@ public class ContainerQuotaBusinessServiceImpl implements ContainerQuotaBusiness
 	}
 
 	@Override
+	public List<ContainerQuota> findAll() {
+		return repository.findAll();
+	}
+
+	@Override
+	public ContainerQuota find(String uuid) {
+		return repository.find(uuid);
+	}
+
+	@Override
 	public ContainerQuota create(ContainerQuota entity) throws BusinessException {
 		AbstractDomain domain = entity.getDomain();
 		ContainerQuotaType containerQuotaType = entity.getContainerQuotaType();

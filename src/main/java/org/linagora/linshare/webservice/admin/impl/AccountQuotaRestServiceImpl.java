@@ -31,80 +31,64 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.userv2.impl;
+package org.linagora.linshare.webservice.admin.impl;
 
 import java.util.List;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.user.UserPreferenceFacade;
-import org.linagora.linshare.mongo.entities.UserPreference;
-import org.linagora.linshare.webservice.userv2.UserPreferenceRestService;
+import org.linagora.linshare.core.facade.webservice.admin.AccountQuotaFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.AccountQuotaDto;
+import org.linagora.linshare.webservice.admin.AccountQuotaRestService;
 
 import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 
-@Path("/prefs")
-@Api(value = "/rest/user/prefs")
-@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-public class UserPreferenceRestServiceImpl implements UserPreferenceRestService {
+@Api(value = "/rest/admin/quotas", description = "Quota administration service.")
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Path("/quotas")
+public class AccountQuotaRestServiceImpl implements AccountQuotaRestService {
 
-	protected UserPreferenceFacade facade;
+	private AccountQuotaFacade facade;
 
-	public UserPreferenceRestServiceImpl(UserPreferenceFacade facade) {
-		super();
+	public AccountQuotaRestServiceImpl(AccountQuotaFacade facade) {
 		this.facade = facade;
 	}
 
-	@Path("/")
+	@Path("/accounts")
 	@GET
 	@Override
-	public List<UserPreference> findAll() throws BusinessException {
-		return facade.findAll(null);
+	public List<AccountQuotaDto> findAll(String domainUuid, ContainerQuotaType type) throws BusinessException {
+		return facade.findAll(domainUuid, type);
 	}
 
-	@Path("/{uuid}")
+	@Path("/accounts/{uuid}")
 	@GET
+	@ApiOperation(value = "find account quota", response = AccountQuotaDto.class)
 	@Override
-	public UserPreference find(@PathParam(value = "uuid") String uuid) throws BusinessException {
-		return facade.find(null, uuid);
+	public AccountQuotaDto find(
+			@ApiParam(value = "Account quota Uuid", required = true) @PathParam("uuid") String uuid) throws BusinessException {
+		return facade.find(uuid);
 	}
 
-	@Path("/")
-	@POST
-	@Override
-	public UserPreference create(UserPreference dto) throws BusinessException {
-		return facade.create(null, dto);
-	}
-
-	@Path("/")
+	@Path("/accounts/{uuid : .*}")
 	@PUT
+	@ApiOperation(value = "Update a account quota", response = AccountQuotaDto.class)
 	@Override
-	public UserPreference update(String uuid, UserPreference dto) throws BusinessException {
-		return facade.update(null, uuid, dto);
+	public AccountQuotaDto update(
+			@ApiParam(value = "Account quota to update. Only quota, maxFileSize, override and maintenance fields can be updated. If null they will be ignored.", required = true) AccountQuotaDto dto,
+			@ApiParam(value = "Account quota Uuid, if null dto.uuid is used.", required = false)
+			@PathParam("uuid") String uuid) throws BusinessException {
+		return facade.update(dto, uuid);
 	}
-
-	@Path("/{uuid}")
-	@DELETE
-	@Override
-	public UserPreference delete(@PathParam(value = "uuid") String uuid) throws BusinessException {
-		return facade.delete(null, uuid);
-	}
-
-	@Path("/")
-	@DELETE
-	@Override
-	public UserPreference delete(UserPreference dto) throws BusinessException {
-		return facade.delete(null, dto.getUuid());
-	}
-
 }

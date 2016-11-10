@@ -31,26 +31,62 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.repository;
+package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Quota;
+import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.entities.AccountQuota;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.admin.AccountQuotaFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.AccountQuotaDto;
+import org.linagora.linshare.core.service.AccountQuotaService;
+import org.linagora.linshare.core.service.AccountService;
 
-public interface GenericQuotaRepository<T extends Quota>
-		extends AbstractRepository<T> {
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
-	T find(String uuid);
+public class AccountQuotaFacadeImpl extends AdminGenericFacadeImpl implements AccountQuotaFacade {
 
-	T find(AbstractDomain domain, Account account, ContainerQuotaType ensembleType);
+	private final AccountQuotaService service;
 
-	List<T> findAll(AbstractDomain domain);
+	public AccountQuotaFacadeImpl(
+			final AccountService accountService,
+			final AccountQuotaService service) {
+		super(accountService);
+		this.service = service;
+	}
 
-	T update(T entity, Long curentValue) throws BusinessException;
+	@Override
+	public AccountQuotaDto find(String uuid) throws BusinessException {
+		Validate.notNull(uuid, "Account quota uuid must be set.");
+		User actor = checkAuthentication(Role.ADMIN);
+		AccountQuota quota = service.find(actor, uuid);
+		return new AccountQuotaDto(quota);
+	}
 
-	T updateByBatch(T entity) throws BusinessException;
+	@Override
+	public List<AccountQuotaDto> findAll(String domainUuid, ContainerQuotaType type) throws BusinessException {
+		// TODO FMA Quota manage type and domains filters.
+		User actor = checkAuthentication(Role.ADMIN);
+		List<AccountQuota> all = service.findAll(actor);
+		return ImmutableList.copyOf(Lists.transform(all, AccountQuotaDto.toDto()));
+	}
+
+	@Override
+	public AccountQuotaDto update(AccountQuotaDto dto, String uuid) throws BusinessException {
+		Validate.notNull(dto, "AccountQuotaDto must be set.");
+		if (!Strings.isNullOrEmpty(uuid)) {
+			dto.setUuid(uuid);
+		}
+		Validate.notEmpty(dto.getUuid(), "Quota uuid must be set.");
+		User actor = checkAuthentication(Role.ADMIN);
+		AccountQuota aq = service.update(actor, dto.toObject());
+		return new AccountQuotaDto(aq);
+	}
+
 }

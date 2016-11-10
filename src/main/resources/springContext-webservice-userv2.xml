@@ -68,8 +68,8 @@
 		<constructor-arg ref="wsStatisticFacade" />
 	</bean>
 
-	<bean id="userv2QuotaRestService" class="org.linagora.linshare.webservice.userv2.impl.QuotaRestServiceImpl">
-		<constructor-arg ref="wsQuotaFacade" />
+	<bean id="userv2AccountQuotaRestService" class="org.linagora.linshare.webservice.userv2.impl.QuotaRestServiceImpl">
+		<constructor-arg ref="wsAccountQuotaFacade" />
 	</bean>
 
 	<jaxrs:server id="userRestContainer" address="/rest/user/v2">
@@ -98,7 +98,7 @@
 			<ref bean="userUserPreferenceRestService" />
 			<ref bean="userAuditLogEntryUserRestService" />
 			<ref bean="userv2StatisticRestService" />
-			<ref bean="userv2QuotaRestService" />
+			<ref bean="userv2AccountQuotaRestService" />
 <!--
 			<ref bean="pluginCompatibilityRestServiceV2" />
 -->

@@ -41,6 +41,7 @@ import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
+import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
@@ -60,6 +61,7 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.core.service.LdapConnectionService;
+import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UserAndDomainMultiService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.service.WelcomeMessagesService;
@@ -79,6 +81,8 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private final UserAndDomainMultiService userAndDomainMultiService;
 
+	private final QuotaService quotaService;
+
 	private final WelcomeMessagesService welcomeMessagesService;
 
 	public DomainFacadeImpl(final AccountService accountService,
@@ -87,6 +91,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 			final DomainPolicyService domainPolicyService,
 			final WelcomeMessagesService welcomeMessagesService,
 			final LdapConnectionService ldapConnectionService,
+			final QuotaService quotaService,
 			final UserAndDomainMultiService userAndDomainMultiService) {
 		super(accountService);
 		this.abstractDomainService = abstractDomainService;
@@ -94,6 +99,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		this.domainPolicyService = domainPolicyService;
 		this.userAndDomainMultiService = userAndDomainMultiService;
 		this.welcomeMessagesService = welcomeMessagesService;
+		this.quotaService = quotaService;
 		this.ldapConnectionService = ldapConnectionService;
 	}
 
@@ -139,6 +145,8 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		 } else {
 			 res = DomainDto.getSimple(entity);
 		 }
+		 DomainQuota quota = quotaService.find(entity);
+		 res.setQuota(quota.getUuid());
 		 DomainDto rootdomain = res;
 		 if (parent) {
 			 if (entity.getParentDomain() != null) {
@@ -263,9 +271,9 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notEmpty(domainDto.getLabel(), "label must be set.");
 		Validate.notNull(domainDto.getLanguage(), "language must be set.");
 		Validate.notNull(domainDto.getExternalMailLocale(), "external mail locale must be set.");
-		Validate.notNull(domainDto.getCurrentWelcomeMessages(), "Current messages must be set.");
-		Validate.notEmpty(domainDto.getCurrentWelcomeMessages().getUuid(), "Current message uuid must be set.");
-		Validate.notEmpty(domainDto.getCurrentWelcomeMessages().getUuid(), "Current message uuid must be set.");
+		Validate.notNull(domainDto.getCurrentWelcomeMessage(), "Current messages must be set.");
+		Validate.notEmpty(domainDto.getCurrentWelcomeMessage().getUuid(), "Current message uuid must be set.");
+		Validate.notEmpty(domainDto.getCurrentWelcomeMessage().getUuid(), "Current message uuid must be set.");
 		Validate.notEmpty(domainDto.getType(), "Domain type must be set.");
 
 		DomainType domainType = DomainType.valueOf(domainDto.getType());
@@ -276,7 +284,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 				.find(domainDto.getPolicy().getIdentifier());
 		domain.setPolicy(policy);
 
-		WelcomeMessages wlcm = welcomeMessagesService.find(actor, domainDto.getCurrentWelcomeMessages().getUuid());
+		WelcomeMessages wlcm = welcomeMessagesService.find(actor, domainDto.getCurrentWelcomeMessage().getUuid());
 		domain.setCurrentWelcomeMessages(wlcm);
 
 		if (domainDto.getMailConfigUuid() != null) {

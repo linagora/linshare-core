@@ -413,7 +413,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		}
 		AccountQuota threadQuota = new AccountQuota(thread, thread.getDomain(),
 				thread.getDomain().getParentDomain(), containerQuota, containerQuota.getQuota(),
-				containerQuota.getQuotaWarning(), containerQuota.getFileSizeMax(), 0L, 0L);
+				containerQuota.getQuotaWarning(), containerQuota.getMaxFileSize(), 0L, 0L);
 		accountQuotaBusinessService.create(threadQuota);
 	}
 

@@ -37,25 +37,63 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.facade.webservice.admin.dto.QuotaDto;
+
+import com.google.common.base.Function;
 import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
 @XmlRootElement
 @ApiModel
 public class AccountQuotaDto extends QuotaDto {
+
+	@ApiModelProperty(value = "The maximum file size accepted.")
+	protected Long maxFileSize;
+
+	protected AccountDto account;
 
 	public AccountQuotaDto() {
 	}
 
 	public AccountQuotaDto(AccountQuota quota) {
 		super(quota);
+		this.maxFileSize = quota.getMaxFileSize();
+		this.account = new AccountDto(quota.getAccount(), true);
 	}
 
 	public AccountQuota toObject() {
 		AccountQuota quota = new AccountQuota();
-//		quota.setFileSizeMax(getFileSizeMax());
+		quota.setMaxFileSize(getMaxFileSize());
 		quota.setQuota(getQuota());
-		quota.setQuotaWarning(getQuotaWarning());
 		quota.setOverride(getOverride());
+		quota.setMaintenance(getMaintenance());
 		return quota;
+	}
+
+	public Long getMaxFileSize() {
+		return maxFileSize;
+	}
+
+	public void setMaxFileSize(Long maxFileSize) {
+		this.maxFileSize = maxFileSize;
+	}
+
+	public AccountDto getAccount() {
+		return account;
+	}
+
+	public void setAccount(AccountDto account) {
+		this.account = account;
+	}
+
+	/*
+	 * Transformers
+	 */
+	public static Function<AccountQuota, AccountQuotaDto> toDto() {
+		return new Function<AccountQuota, AccountQuotaDto>() {
+			@Override
+			public AccountQuotaDto apply(AccountQuota arg0) {
+				return new AccountQuotaDto(arg0);
+			}
+		};
 	}
 }

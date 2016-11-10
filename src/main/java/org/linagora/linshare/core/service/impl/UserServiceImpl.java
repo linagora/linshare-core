@@ -1015,7 +1015,7 @@ public class UserServiceImpl implements UserService {
 		}
 		AccountQuota userQuota = new AccountQuota(user, user.getDomain(), user.getDomain().getParentDomain(),
 				containerQuota, containerQuota.getQuota(), containerQuota.getQuotaWarning(),
-				containerQuota.getFileSizeMax(), 0L, 0L);
+				containerQuota.getMaxFileSize(), 0L, 0L);
 		accountQuotaBusinessService.create(userQuota);
 	}
 }

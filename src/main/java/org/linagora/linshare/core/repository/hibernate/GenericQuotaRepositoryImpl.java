@@ -86,6 +86,13 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 	}
 
 	@Override
+	public T find(String uuid) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("uuid", uuid));
+		return DataAccessUtils.singleResult(findByCriteria(criteria));
+	}
+
+	@Override
 	public T find(AbstractDomain domain, Account account, ContainerQuotaType containerQuotaType) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		if (domain != null) {

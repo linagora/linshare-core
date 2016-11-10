@@ -33,8 +33,11 @@
  */
 package org.linagora.linshare.mongo.entities;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.apache.commons.lang.Validate;
 
+@XmlRootElement(name = "StringUserPreference")
 public class StringUserPreference extends UserPreference {
 
 	protected String value;

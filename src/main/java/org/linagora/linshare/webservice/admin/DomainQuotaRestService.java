@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2016 LINAGORA
+ * Copyright (C) 2015 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,54 +31,19 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.user.impl;
+package org.linagora.linshare.webservice.admin;
 
-import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.domain.entities.AccountQuota;
-import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.User;
+import java.util.List;
+
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.user.QuotaFacade;
-import org.linagora.linshare.core.facade.webservice.user.dto.QuotaDto;
-import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.QuotaService;
-import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.core.facade.webservice.common.dto.DomainQuotaDto;
 
-public class QuotaFacadeImpl extends UserGenericFacadeImp implements QuotaFacade {
+public interface DomainQuotaRestService {
 
-	protected final QuotaService quotaService;
+	DomainQuotaDto find(String uuid) throws BusinessException;
 
-	protected ThreadService threadService;
+	List<DomainQuotaDto> findAll() throws BusinessException;
 
-	public QuotaFacadeImpl(
-			final AccountService accountService,
-			final QuotaService service,
-			final ThreadService threadService) {
-		super(accountService);
-		this.quotaService = service;
-		this.threadService = threadService;
-	}
-
-	@Override
-	public QuotaDto find(String ownerUuid, String uuid) throws BusinessException {
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
-		Validate.notEmpty(uuid, "Missing account uuid");
-
-		AccountQuota aq = null;
-		Long usedSpace = null;
-		if (uuid.equals(owner.getLsUuid())) {
-			// Same person, looking for my quota.
-			aq = quotaService.find(owner);
-			usedSpace = quotaService.getRealTimeUsedSpace(owner);
-		} else {
-			// looking for somebody 's quota : workgroup ? delegation ?
-			Thread workgroup = threadService.find(actor, owner, uuid);
-			aq = quotaService.find(workgroup);
-			usedSpace = quotaService.getRealTimeUsedSpace(workgroup);
-		}
-		QuotaDto dto = new QuotaDto(aq.getQuota(), usedSpace, aq.getFileSizeMax(), aq.getMaintenance());
-		return dto;
-	}
+	DomainQuotaDto update(DomainQuotaDto dto, String uuid) throws BusinessException;
 
 }

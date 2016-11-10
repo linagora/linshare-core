@@ -87,6 +87,9 @@ public class UserDto extends AccountDto {
 	@ApiModelProperty(value = "RestrictedContacts")
 	private List<UserDto> restrictedContacts = Lists.newArrayList();
 
+	@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+	private String quotaUuid;
+
 	public UserDto() {
 		super();
 	}
@@ -254,6 +257,14 @@ public class UserDto extends AccountDto {
 
 	public void setRestrictedContacts(List<UserDto> restrictedContacts) {
 		this.restrictedContacts = restrictedContacts;
+	}
+
+	public String getQuotaUuid() {
+		return quotaUuid;
+	}
+
+	public void setQuotaUuid(String quotaUuid) {
+		this.quotaUuid = quotaUuid;
 	}
 
 	@Override

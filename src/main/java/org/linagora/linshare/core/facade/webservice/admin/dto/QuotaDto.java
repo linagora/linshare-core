@@ -33,13 +33,14 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin.dto;
 
+import java.util.Date;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Quota;
-import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.DomainLightDto;
 
+import com.google.common.base.Function;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -47,54 +48,54 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 @ApiModel
 public class QuotaDto {
 
+	@ApiModelProperty(value = "uuid")
+	protected String uuid;
+
+	@ApiModelProperty(value = "The domain which this quota belongs to.")
+	protected DomainLightDto domain;
+
 	@ApiModelProperty(value = "The limit (quota)")
 	protected Long quota;
 
-	@ApiModelProperty(value = "The used space")
+	// @ApiModelProperty(value = "")
+	// protected Long quotaWarning;
+
+	@ApiModelProperty(value = "The used space. Read only.")
 	protected Long usedSpace;
 
-	@ApiModelProperty(value = "The maximum file size accepted.")
-	protected Long maxFileSize;
+	@ApiModelProperty(value = "Yesterday used space. Read only.")
+	protected Long yersterdayUsedSpace;
 
-	@ApiModelProperty(value = "If true, uploads are disable due to server maintenance.")
-	protected Boolean maintenance;
-	
-	@ApiModelProperty(value = "Account")
-	protected AccountDto account;
-
-	@ApiModelProperty(value = "Domain")
-	protected DomainLightDto domain;
-
-	@ApiModelProperty(value = "ParentDomain")
-	protected DomainLightDto parentDomain;
-	
-	@ApiModelProperty(value = "QuotaWarning")
-	protected Long quotaWarning;
-
-	@ApiModelProperty(value = "LastValue")
-	protected Long lastValue;
-
-	@ApiModelProperty(value = "override")
+	@ApiModelProperty(value = "Override domaine inheritance. All modifications to  a parent domain are propagated to the current doamin and its subdomains if override = false.")
 	protected Boolean override;
+
+	@ApiModelProperty(value = "If set to true, uploads are disable due to server maintenance.")
+	protected Boolean maintenance;
+
+	@ApiModelProperty(value = "Quota creation date. Read only.")
+	protected Date creationDate;
+
+	@ApiModelProperty(value = "Quota last modification date. Read only.")
+	protected Date modificationDate;
+
+	@ApiModelProperty(value = "Quota last modification date by a batch. Read only.")
+	protected Date batchModificationDate;
 
 	public QuotaDto() {
 	}
 
 	public QuotaDto(Quota quota) {
-		Account account = quota.getAccount();
-		if (account != null) {
-			this.account = new AccountDto(account, true);
-		}
+		this.uuid = quota.getUuid();
 		this.domain = new DomainLightDto(quota.getDomain());
-		if (quota.getParentDomain() != null) {
-			this.parentDomain = new DomainLightDto(quota.getParentDomain());
-		}
 		this.quota = quota.getQuota();
-		this.quotaWarning = quota.getQuotaWarning();
+//		this.quotaWarning = quota.getQuotaWarning();
 		this.usedSpace = quota.getCurrentValue();
-		this.lastValue = quota.getLastValue();
-//		this.fileSizeMax = quota.getFileSizeMax();
+		this.yersterdayUsedSpace = quota.getLastValue();
 		this.override = quota.getOverride();
+		this.maintenance = quota.getMaintenance();
+		this.creationDate = quota.getCreationDate();
+		this.modificationDate = quota.getModificationDate();
+		this.batchModificationDate = quota.getBatchModificationDate();
 	}
 
 	public Long getQuota() {
@@ -113,28 +114,12 @@ public class QuotaDto {
 		this.usedSpace = usedSpace;
 	}
 
-	public Long getMaxFileSize() {
-		return maxFileSize;
-	}
-
-	public void setMaxFileSize(Long maxFileSize) {
-		this.maxFileSize = maxFileSize;
-	}
-
 	public Boolean getMaintenance() {
 		return maintenance;
 	}
 
 	public void setMaintenance(Boolean maintenance) {
 		this.maintenance = maintenance;
-	}
-
-	public AccountDto getAccount() {
-		return account;
-	}
-
-	public void setAccount(AccountDto account) {
-		this.account = account;
 	}
 
 	public DomainLightDto getDomain() {
@@ -145,28 +130,44 @@ public class QuotaDto {
 		this.domain = domain;
 	}
 
-	public DomainLightDto getParentDomain() {
-		return parentDomain;
+	public String getUuid() {
+		return uuid;
 	}
 
-	public void setParentDomain(DomainLightDto parentDomain) {
-		this.parentDomain = parentDomain;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
-	public Long getQuotaWarning() {
-		return quotaWarning;
+	public Long getYersterdayUsedSpace() {
+		return yersterdayUsedSpace;
 	}
 
-	public void setQuotaWarning(Long quotaWarning) {
-		this.quotaWarning = quotaWarning;
+	public void setYersterdayUsedSpace(Long yersterdayUsedSpace) {
+		this.yersterdayUsedSpace = yersterdayUsedSpace;
 	}
 
-	public Long getLastValue() {
-		return lastValue;
+	public Date getCreationDate() {
+		return creationDate;
 	}
 
-	public void setLastValue(Long lastValue) {
-		this.lastValue = lastValue;
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+	}
+
+	public Date getBatchModificationDate() {
+		return batchModificationDate;
+	}
+
+	public void setBatchModificationDate(Date batchModificationDate) {
+		this.batchModificationDate = batchModificationDate;
 	}
 
 	public Boolean getOverride() {
@@ -176,5 +177,17 @@ public class QuotaDto {
 	public void setOverride(Boolean override) {
 		this.override = override;
 	}
+
+//	/*
+//	 * Transformers
+//	 */
+//	public static Function<Quota, QuotaDto> toDto() {
+//		return new Function<Quota, QuotaDto>() {
+//			@Override
+//			public QuotaDto apply(Quota arg0) {
+//				return new QuotaDto(arg0);
+//			}
+//		};
+//	}
 
 }

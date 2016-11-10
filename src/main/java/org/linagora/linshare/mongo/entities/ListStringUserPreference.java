@@ -35,10 +35,13 @@ package org.linagora.linshare.mongo.entities;
 
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.apache.commons.lang.Validate;
 
 import com.google.common.collect.Lists;
 
+@XmlRootElement(name = "ListStringUserPreference")
 public class ListStringUserPreference extends UserPreference {
 
 	protected List<String> values;

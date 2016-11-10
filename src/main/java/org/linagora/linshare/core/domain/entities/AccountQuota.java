@@ -35,7 +35,7 @@ package org.linagora.linshare.core.domain.entities;
 
 public class AccountQuota extends Quota {
 
-	protected Long fileSizeMax;
+	protected Long maxFileSize;
 
 	protected ContainerQuota containerQuota;
 
@@ -47,18 +47,18 @@ public class AccountQuota extends Quota {
 			ContainerQuota ensembleQuota, Long quota, Long quotaWarning, Long fileSizeMax, Long currentValue,
 			Long lastValue) {
 		super(account, domain, parentDomain, quota, quotaWarning, currentValue, lastValue);
-		this.fileSizeMax = fileSizeMax;
+		this.maxFileSize = fileSizeMax;
 		this.containerQuota = ensembleQuota;
 		this.override = false;
 		this.maintenance = false;
 	}
 
-	public Long getFileSizeMax() {
-		return fileSizeMax;
+	public Long getMaxFileSize() {
+		return maxFileSize;
 	}
 
-	public void setFileSizeMax(Long fileSizeMax) {
-		this.fileSizeMax = fileSizeMax;
+	public void setMaxFileSize(Long maxFileSize) {
+		this.maxFileSize = maxFileSize;
 	}
 
 	public ContainerQuota getContainerQuota() {
@@ -69,10 +69,16 @@ public class AccountQuota extends Quota {
 		this.containerQuota = containerQuota;
 	}
 
+	public void setBusinessMaxFileSize(Long maxFileSize) {
+		if (maxFileSize != null) {
+			this.maxFileSize = maxFileSize;
+		}
+	}
+
 	@Override
 	public String toString() {
 		return "AccountQuota [id=" + id + ", uuid=" + uuid + ", account=" + account + ", domain=" + domain
 				+ ", parentDomain=" + parentDomain + ", quota=" + quota + ", quotaWarning=" + quotaWarning
-				+ ", currentValue=" + currentValue + ", lastValue=" + lastValue + ", fileSizeMax=" + fileSizeMax + "]";
+				+ ", currentValue=" + currentValue + ", lastValue=" + lastValue + ", fileSizeMax=" + maxFileSize + "]";
 	}
 }

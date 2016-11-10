@@ -31,80 +31,12 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.userv2.impl;
-
-import java.util.List;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+package org.linagora.linshare.core.facade.webservice.user;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.user.UserPreferenceFacade;
-import org.linagora.linshare.mongo.entities.UserPreference;
-import org.linagora.linshare.webservice.userv2.UserPreferenceRestService;
+import org.linagora.linshare.core.facade.webservice.user.dto.AccountQuotaDto;
 
-import com.wordnik.swagger.annotations.Api;
+public interface AccountQuotaFacade extends GenericFacade {
 
-@Path("/prefs")
-@Api(value = "/rest/user/prefs")
-@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-public class UserPreferenceRestServiceImpl implements UserPreferenceRestService {
-
-	protected UserPreferenceFacade facade;
-
-	public UserPreferenceRestServiceImpl(UserPreferenceFacade facade) {
-		super();
-		this.facade = facade;
-	}
-
-	@Path("/")
-	@GET
-	@Override
-	public List<UserPreference> findAll() throws BusinessException {
-		return facade.findAll(null);
-	}
-
-	@Path("/{uuid}")
-	@GET
-	@Override
-	public UserPreference find(@PathParam(value = "uuid") String uuid) throws BusinessException {
-		return facade.find(null, uuid);
-	}
-
-	@Path("/")
-	@POST
-	@Override
-	public UserPreference create(UserPreference dto) throws BusinessException {
-		return facade.create(null, dto);
-	}
-
-	@Path("/")
-	@PUT
-	@Override
-	public UserPreference update(String uuid, UserPreference dto) throws BusinessException {
-		return facade.update(null, uuid, dto);
-	}
-
-	@Path("/{uuid}")
-	@DELETE
-	@Override
-	public UserPreference delete(@PathParam(value = "uuid") String uuid) throws BusinessException {
-		return facade.delete(null, uuid);
-	}
-
-	@Path("/")
-	@DELETE
-	@Override
-	public UserPreference delete(UserPreference dto) throws BusinessException {
-		return facade.delete(null, dto.getUuid());
-	}
-
+	AccountQuotaDto find(String ownerUuid, String uuid) throws BusinessException;
 }

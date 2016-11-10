@@ -38,9 +38,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-@XmlRootElement
+@XmlRootElement(name="Quota")
 @ApiModel
-public class QuotaDto {
+public class AccountQuotaDto {
 
 	@ApiModelProperty(value = "The limit (quota)")
 	protected Long quota;
@@ -54,10 +54,10 @@ public class QuotaDto {
 	@ApiModelProperty(value = "If true, uploads are disable due to server maintenance.")
 	protected Boolean maintenance;
 
-	public QuotaDto() {
+	public AccountQuotaDto() {
 	}
 
-	public QuotaDto(Long quota, Long usedSpace, Long maxFileSize, Boolean maintenance) {
+	public AccountQuotaDto(Long quota, Long usedSpace, Long maxFileSize, Boolean maintenance) {
 		super();
 		this.quota = quota;
 		this.usedSpace = usedSpace;

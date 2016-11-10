@@ -41,11 +41,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.user.QuotaFacade;
-import org.linagora.linshare.core.facade.webservice.user.dto.QuotaDto;
+import org.linagora.linshare.core.facade.webservice.user.AccountQuotaFacade;
+import org.linagora.linshare.core.facade.webservice.user.dto.AccountQuotaDto;
 import org.linagora.linshare.webservice.userv2.QuotaRestService;
 
 import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiParam;
 
 @Path("/quota")
 @Api(value = "/quota")
@@ -54,9 +55,9 @@ import com.wordnik.swagger.annotations.Api;
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public class QuotaRestServiceImpl implements QuotaRestService {
 
-	protected QuotaFacade facade;
+	protected AccountQuotaFacade facade;
 
-	public QuotaRestServiceImpl(QuotaFacade quotaFacade) {
+	public QuotaRestServiceImpl(AccountQuotaFacade quotaFacade) {
 		super();
 		this.facade = quotaFacade;
 	}
@@ -64,7 +65,9 @@ public class QuotaRestServiceImpl implements QuotaRestService {
 	@Path("/{uuid}")
 	@GET
 	@Override
-	public QuotaDto find(@PathParam(value = "uuid") String uuid) throws BusinessException {
+	public AccountQuotaDto find(
+			@ApiParam(value = "Quota Uuid.", required = false)
+				@PathParam("uuid") String uuid) throws BusinessException {
 		return facade.find(null, uuid);
 	}
 

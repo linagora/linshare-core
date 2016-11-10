@@ -35,10 +35,13 @@ package org.linagora.linshare.mongo.entities;
 
 import java.util.Map;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.apache.commons.lang.Validate;
 
 import com.google.common.collect.Maps;
 
+@XmlRootElement(name = "MapStringUserPreference")
 public class MapStringUserPreference<V> extends UserPreference {
 
 	protected Map<String, V> values;

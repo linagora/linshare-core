@@ -120,17 +120,17 @@
 		</set>
 
 		<list name="shareExpiryRules" table="share_expiry_rules" lazy="true">
-      		<key>
-	     		<column name="domain_id" not-null="true" index="index_share_expiry_rule_id"/>
-    		</key>
-      		<list-index column="rule_sort_order"/>
-	      	<composite-element class="ShareExpiryRule">
-		        <property column="expiry_time" name="shareExpiryTime"/>
-		        <property column="time_unit_id" name="shareExpiryUnit" type="timeUnitEnumType"/>
-		        <property column="share_size" name="shareSize"/>
-		        <property column="size_unit_id" name="shareSizeUnit" type="fileSizeEnumType"/>
-	      	</composite-element>
-	    </list>
+			<key>
+				<column name="domain_id" not-null="true" index="index_share_expiry_rule_id" />
+			</key>
+			<list-index column="rule_sort_order" />
+			<composite-element class="ShareExpiryRule">
+				<property column="expiry_time" name="shareExpiryTime" />
+				<property column="time_unit_id" name="shareExpiryUnit" type="timeUnitEnumType" />
+				<property column="share_size" name="shareSize" />
+				<property column="size_unit_id" name="shareSizeUnit" type="fileSizeEnumType" />
+			</composite-element>
+		</list>
 
 		<subclass discriminator-value="0" name="org.linagora.linshare.core.domain.entities.RootDomain"></subclass>
 		<subclass discriminator-value="1" name="org.linagora.linshare.core.domain.entities.TopDomain"></subclass>

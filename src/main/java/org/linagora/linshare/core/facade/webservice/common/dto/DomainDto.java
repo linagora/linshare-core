@@ -102,7 +102,10 @@ public class DomainDto {
 	private String mailConfigUuid;
 
 	@ApiModelProperty(value = "currentWelcomeMessage")
-	private WelcomeMessagesDto currentWelcomeWessage;
+	private WelcomeMessagesDto currentWelcomeMessage;
+
+	@ApiModelProperty(value = "Quota uuid")
+	private String quota;
 
 	protected DomainDto(final AbstractDomain domain, boolean light,
 			boolean recursive) {
@@ -111,7 +114,7 @@ public class DomainDto {
 		this.type = domain.getDomainType().toString();
 		mimePolicyUuid = domain.getMimePolicy().getUuid();
 		mailConfigUuid = domain.getCurrentMailConfiguration().getUuid();
-		this.currentWelcomeWessage = new WelcomeMessagesDto(domain.getCurrentWelcomeMessage(), false);
+		this.currentWelcomeMessage = new WelcomeMessagesDto(domain.getCurrentWelcomeMessage(), false);
 		if (!light) {
 			this.description = domain.getDescription();
 			this.language = domain.getDefaultTapestryLocale();
@@ -274,11 +277,19 @@ public class DomainDto {
 		this.mailConfigUuid = mailConfigUuid;
 	}
 
-	public void setCurrentWelcomeMessages (WelcomeMessagesDto welcomeMessageDto) {
-		this.currentWelcomeWessage = welcomeMessageDto;
+	public void setCurrentWelcomeMessage (WelcomeMessagesDto welcomeMessageDto) {
+		this.currentWelcomeMessage = welcomeMessageDto;
 	}
 
-	public WelcomeMessagesDto getCurrentWelcomeMessages() {
-		return currentWelcomeWessage;
+	public WelcomeMessagesDto getCurrentWelcomeMessage() {
+		return currentWelcomeMessage;
+	}
+
+	public String getQuota() {
+		return quota;
+	}
+
+	public void setQuota(String quota) {
+		this.quota = quota;
 	}
 }
