@@ -85,7 +85,8 @@ public class DomainQuotaFacadeImpl extends AdminGenericFacadeImpl implements Dom
 	@Override
 	public List<DomainQuotaDto> findAll() throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
-		return ImmutableList.copyOf(Lists.transform(service.findAll(actor), DomainQuotaDto.toDto()));
+		List<DomainQuota> findAll = service.findAll(actor);
+		return ImmutableList.copyOf(Lists.transform(findAll, DomainQuotaDto.toDto()));
 	}
 
 	@Override

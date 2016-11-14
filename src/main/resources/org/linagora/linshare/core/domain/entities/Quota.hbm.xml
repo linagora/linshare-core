@@ -25,7 +25,7 @@
 		<property name="modificationDate" column="modification_date" type = "timestamp"/>
 		<property name="batchModificationDate" column="batch_modification_date" type="timestamp"/>
 		<many-to-one name="account" column="account_id"	class="org.linagora.linshare.core.domain.entities.Account" lazy="proxy" />
-		<many-to-one name="domain" column="domain_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" lazy="proxy" />
+		<many-to-one name="domain" column="domain_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" lazy="false" fetch="join" />
 		<many-to-one name="parentDomain" column="domain_parent_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" lazy="proxy" />
 
 		<subclass name="org.linagora.linshare.core.domain.entities.DomainQuota" discriminator-value="DOMAIN_QUOTA" />
