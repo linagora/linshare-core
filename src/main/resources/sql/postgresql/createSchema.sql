@@ -700,7 +700,7 @@ CREATE TABLE quota (
   quota_warning           int8 NOT NULL,
   current_value           int8 NOT NULL,
   last_value              int8 NOT NULL,
-  file_size_max           int8,
+  max_file_size           int8,
   creation_date           timestamp(6) NOT NULL,
   modification_date       timestamp(6) NOT NULL,
   batch_modification_date timestamp(6) NOT NULL,

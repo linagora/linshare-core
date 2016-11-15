@@ -4,7 +4,7 @@ update quota set
 	last_value=100,
 	quota=2300,
 	quota_warning=2000,
-	file_size_max=10
+	max_file_size=10
 	where id=1;
 
 -- topdomain 2, DOMAIN_QUOTA
@@ -13,7 +13,7 @@ update quota set
 	last_value=500,
 	quota=1900,
 	quota_warning=1800,
-	file_size_max=5
+	max_file_size=5
 	where id=2;
 
 -- topdomain 2, CONTAINER_QUOTA - USER
@@ -22,7 +22,7 @@ update quota set
 	last_value=0,
 	quota=1900,
 	quota_warning=1300,
-	file_size_max=5
+	max_file_size=5
 	where id=5;
 
 -- topdomain 2, CONTAINER_QUOTA - THREAD
@@ -31,7 +31,7 @@ update quota set
 	last_value=200,
 	quota=2000,
 	quota_warning=1500,
-	file_size_max=5
+	max_file_size=5
 	where id=6;
 
 -- topdomain 2, ACCOUNT_QUOTA - Jane (11)
@@ -39,7 +39,7 @@ INSERT INTO quota (
 	id, uuid, creation_date, modification_date, batch_modification_date,
 	quota_domain_id, quota_container_id, current_value, last_value,
 	domain_id, account_id, domain_parent_id, quota,
-	quota_warning, file_size_max, container_type, quota_type)
+	quota_warning, max_file_size, container_type, quota_type)
 VALUES (
 	101, 'aebe1b64-39c0-11e5-9fa8-080027b8274a', NOW(), NOW(), NOW(),
 	null, 5, 800, 0,
@@ -51,7 +51,7 @@ INSERT INTO quota (
 	id, uuid, creation_date, modification_date, batch_modification_date,
 	quota_domain_id, quota_container_id, current_value, last_value,
 	domain_id, account_id, domain_parent_id, quota,
-	quota_warning, file_size_max, container_type, quota_type)
+	quota_warning, max_file_size, container_type, quota_type)
 VALUES (
 	102, 'aebe1b64-39c0-11e5-9fa8-080027b8274b', NOW(), NOW(), NOW(),
 	null, 5, 900, 100,
@@ -63,7 +63,7 @@ INSERT INTO quota (
 	id, uuid, creation_date, modification_date, batch_modification_date,
 	quota_domain_id, quota_container_id, current_value, last_value,
 	domain_id, account_id, domain_parent_id, quota,
-	quota_warning, file_size_max, container_type, quota_type)
+	quota_warning, max_file_size, container_type, quota_type)
 VALUES (
 	103, 'aebe1b64-39c0-11e5-9fa8-080027b8274c', NOW(), NOW(), NOW(),
 	null, 6, 700, 0,
@@ -75,7 +75,7 @@ INSERT INTO quota (
 	id, uuid, creation_date, modification_date, batch_modification_date,
 	quota_domain_id, quota_container_id, current_value, last_value,
 	domain_id, account_id, domain_parent_id, quota,
-	quota_warning, file_size_max, container_type, quota_type)
+	quota_warning, max_file_size, container_type, quota_type)
 VALUES (
 	104, 'aebe1b64-39c0-11e5-9fa8-080027b8274d', NOW(), NOW(), NOW(),
 	null, 6, 500, 200,

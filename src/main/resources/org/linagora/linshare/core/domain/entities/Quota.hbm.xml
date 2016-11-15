@@ -32,14 +32,14 @@
 
 		<subclass name="org.linagora.linshare.core.domain.entities.AccountQuota" discriminator-value="ACCOUNT_QUOTA" >
 			<!--  can not declare fileSizeMax as  not null because it impacts the whole class. Why ? maybe a bug. -->
-			<property name="maxFileSize" column="file_size_max" />
+			<property name="maxFileSize" column="max_file_size" />
 			<many-to-one name="containerQuota" column="quota_container_id" class="org.linagora.linshare.core.domain.entities.ContainerQuota" />
 		</subclass>
 
 		<subclass name="org.linagora.linshare.core.domain.entities.ContainerQuota" discriminator-value="CONTAINER_QUOTA" >
 			<property name="containerQuotaType" column="container_type" type="containerQuotaType"/>
 			<!--  can not declare fileSizeMax as  not null because it impacts the whole class. Why ? maybe a bug. -->
-			<property name="maxFileSize" column="file_size_max" />
+			<property name="maxFileSize" column="max_file_size" />
 			<many-to-one name="domainQuota" column="quota_domain_id" class="org.linagora.linshare.core.domain.entities.DomainQuota"/>
 		</subclass>
 
