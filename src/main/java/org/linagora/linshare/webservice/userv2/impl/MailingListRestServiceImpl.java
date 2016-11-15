@@ -52,7 +52,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.MailingListContactDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.MailingListDto;
 import org.linagora.linshare.core.facade.webservice.user.MailingListFacade;
-import org.linagora.linshare.webservice.user.MailingListRestService;
+import org.linagora.linshare.webservice.userv2.MailingListRestService;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -122,7 +122,7 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 		return mailingListFacade.create(null, dto);
 	}
 
-	@Path("/{uuid}")
+	@Path("/{uuid : .*}")
 	@PUT
 	@ApiOperation(value = "Update a mailing list.", response = MailingListDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
@@ -130,9 +130,11 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public MailingListDto update(
-			@ApiParam(value = "The mailing list to update.", required = true) MailingListDto dto)
+			@ApiParam(value = "The mailing list to update.", required = true) MailingListDto dto,
+			@ApiParam(value = "Mailing list uuid, if null dto.uuid is used.", required = false)
+				@PathParam("uuid") String uuid)
 					throws BusinessException {
-		return mailingListFacade.update(null, dto);
+		return mailingListFacade.update(null, dto, uuid);
 	}
 
 	@Path("/")

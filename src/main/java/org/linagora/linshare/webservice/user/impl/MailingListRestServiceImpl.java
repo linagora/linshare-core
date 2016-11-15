@@ -141,7 +141,7 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 	public MailingListDto update(
 			@ApiParam(value = "The mailing list to update.", required = true) MailingListDto dto)
 					throws BusinessException {
-		dto = mailingListFacade.update(null, dto);
+		dto = mailingListFacade.update(null, dto, null);
 		// user/v1 API compatibility.
 		dto.setCreationDate(null);
 		dto.setModificationDate(null);

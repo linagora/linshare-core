@@ -153,7 +153,7 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 			@ApiParam(value = "The mailing list to update.", required = true) MailingListDto dto)
 					throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		dto = mailingListFacade.update(ownerUuid, dto);
+		dto = mailingListFacade.update(ownerUuid, dto, null);
 		// user/v1 API compatibility.
 		dto.setCreationDate(null);
 		dto.setModificationDate(null);

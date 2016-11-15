@@ -48,6 +48,7 @@ import org.linagora.linshare.core.facade.webservice.user.MailingListFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MailingListService;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
@@ -96,10 +97,12 @@ public class MailingListFacadeImpl extends GenericFacadeImpl implements MailingL
 	}
 
 	@Override
-	public MailingListDto update(String ownerUuid, MailingListDto dto) throws BusinessException {
+	public MailingListDto update(String ownerUuid, MailingListDto dto, String uuid) throws BusinessException {
 		Validate.notNull(dto, "Mailing list must be set.");
+		if (!Strings.isNullOrEmpty(uuid)) {
+			dto.setUuid(uuid);
+		}
 		Validate.notEmpty(dto.getUuid(), "Mailing list uuid must be set.");
-
 		User actor = checkAuthentication();
 		MailingList list = dto.toObject();
 		User owner = getOwner(actor, ownerUuid);
