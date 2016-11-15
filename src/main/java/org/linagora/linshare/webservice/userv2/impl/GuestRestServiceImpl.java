@@ -143,7 +143,7 @@ public class GuestRestServiceImpl implements GuestRestService {
 		return guestFacade.create(guest);
 	}
 
-	@Path("/{uuid : (\\w+)?}")
+	@Path("/{uuid : .*}")
 	@PUT
 	@ApiOperation(value = "Update a guest.", response = GuestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to update."),
