@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2016. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -32,7 +32,7 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.webservice.user.impl;
+package org.linagora.linshare.webservice.userv2.impl;
 
 import java.util.List;
 
@@ -55,7 +55,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 import org.linagora.linshare.core.facade.webservice.user.GuestFacade;
-import org.linagora.linshare.webservice.user.GuestRestService;
+import org.linagora.linshare.webservice.userv2.GuestRestService;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -64,7 +64,7 @@ import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/guests")
-@Api(value = "/rest/user/guests", description = "Guests service")
+@Api(value = "/rest/user/v2/guests", description = "Guests service")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class GuestRestServiceImpl implements GuestRestService {
@@ -143,7 +143,7 @@ public class GuestRestServiceImpl implements GuestRestService {
 		return guestFacade.create(guest);
 	}
 
-	@Path("/")
+	@Path("/{uuid : (\\w+)?}")
 	@PUT
 	@ApiOperation(value = "Update a guest.", response = GuestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to update."),
@@ -151,9 +151,13 @@ public class GuestRestServiceImpl implements GuestRestService {
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public GuestDto update(@ApiParam(value = "Guest to update.", required = true) GuestDto guest)
+	public GuestDto update(
+			@ApiParam(value = "Guest to update.", required = true) GuestDto guest,
+			@ApiParam(value = "Guest uuid, if null dto.uuid is used.", required = false)
+				@PathParam("uuid") String uuid)
 			throws BusinessException {
-		return guestFacade.update(guest, null);
+		return guestFacade.update(guest, uuid);
+
 	}
 
 	@Path("/")

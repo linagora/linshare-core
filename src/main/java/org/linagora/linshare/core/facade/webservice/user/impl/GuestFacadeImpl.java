@@ -47,6 +47,7 @@ import org.linagora.linshare.core.facade.webservice.user.GuestFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.GuestService;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
@@ -108,14 +109,17 @@ public class GuestFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public GuestDto update(GuestDto guestDto) throws BusinessException {
-		Validate.notNull(guestDto, "guest dto is required");
-		Validate.notEmpty(guestDto.getUuid(), "guest uuid is required");
+	public GuestDto update(GuestDto dto, String uuid) throws BusinessException {
+		Validate.notNull(dto, "guest dto is required");
+		if (!Strings.isNullOrEmpty(uuid)) {
+			dto.setUuid(uuid);
+		}
+		Validate.notEmpty(dto.getUuid(), "guest uuid is required");
 		User actor = checkAuthentication();
-		Guest guest = guestDto.toUserObject();
+		Guest guest = dto.toUserObject();
 		List<String> ac = Lists.newArrayList();
 		if (guest.isRestricted()) {
-			for (GenericUserDto contactDto : guestDto.getRestrictedContacts()) {
+			for (GenericUserDto contactDto : dto.getRestrictedContacts()) {
 				ac.add(contactDto.getMail());
 			}
 		}
