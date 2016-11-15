@@ -22,7 +22,7 @@
 		</list>
 
 		<many-to-one name="domain" class="org.linagora.linshare.core.domain.entities.AbstractDomain" column="domain_abstract_id"
-			lazy="no-proxy" cascade="lock"></many-to-one>
+			lazy="false" fetch="join" cascade="lock"></many-to-one>
 		<many-to-one name="owner" class="org.linagora.linshare.core.domain.entities.User" cascade="lock" column="user_id"
 			lazy="no-proxy"></many-to-one>
 

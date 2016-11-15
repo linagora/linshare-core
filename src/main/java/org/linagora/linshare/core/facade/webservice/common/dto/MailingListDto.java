@@ -69,8 +69,13 @@ public class MailingListDto {
 	@ApiModelProperty(value = "Uuid")
 	private String uuid;
 
-	@ApiModelProperty(value = "DomainId")
+	@ApiModelProperty(value = "Domain uuid")
 	private String domainId;
+
+	// should only available in user/v2 API for compatibility support.
+	@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+	@ApiModelProperty(value = "Domain label")
+	private String domainLabel;
 
 	// should only available in user/v2 API for compatibility support.
 	@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
@@ -98,6 +103,7 @@ public class MailingListDto {
 		this.owner = UserDto.getSimple(list.getOwner());
 		this.domainId = list.getDomain().getUuid();
 		if (v2) {
+			this.domainLabel = list.getDomain().getLabel();
 			this.creationDate = list.getCreationDate();
 			this.modificationDate = list.getModificationDate();
 		}
