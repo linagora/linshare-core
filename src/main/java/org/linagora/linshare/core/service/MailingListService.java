@@ -39,6 +39,7 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface MailingListService {
@@ -69,11 +70,6 @@ public interface MailingListService {
 	 * find list of result according to visibility selected and pattern
 	 */
 	List<MailingList> searchListByVisibility(String actorUuid, String criteriaOnSearch, String pattern);
-
-	/**
-	 * Find all user list of the selected visibility
-	 */
-	List<MailingList> findAllListByVisibility(String actorUuid, String criteriaOnSearch);
 
 	/**
 	 * Basic operations on mailingListContact
@@ -115,4 +111,7 @@ public interface MailingListService {
 	void deleteContact(Account actor, Account owner, String contactUuid) throws BusinessException;
 
 	List<MailingListContact> findAllContacts(Account actor, Account owner, String listUuid) throws BusinessException;
+
+	List<MailingList> findAll(Account actor, User owner, Boolean mine);
+
 }

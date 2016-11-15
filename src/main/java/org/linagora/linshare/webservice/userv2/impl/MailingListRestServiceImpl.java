@@ -45,6 +45,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.Validate;
@@ -79,8 +80,10 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public Set<MailingListDto> findAll() throws BusinessException {
-		return mailingListFacade.findAll(null, true);
+	public Set<MailingListDto> findAll(
+			@ApiParam(value = "filter mailing list by my mailing list(true), others (false) or all (null).", required = false)
+				@QueryParam("mine") Boolean mine) throws BusinessException {
+		return mailingListFacade.findAll(null, true, mine);
 	}
 
 	@Path("/{uuid}")

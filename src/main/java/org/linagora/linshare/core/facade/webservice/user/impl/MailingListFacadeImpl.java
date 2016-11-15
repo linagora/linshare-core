@@ -62,14 +62,15 @@ public class MailingListFacadeImpl extends GenericFacadeImpl implements MailingL
 	}
 
 	@Override
-	public Set<MailingListDto> findAll(String ownerUuid, boolean v2) throws BusinessException {
+	public Set<MailingListDto> findAll(String ownerUuid, boolean v2, Boolean mine) throws BusinessException {
 		User actor = checkAuthentication();
 		List<MailingList> lists;
 		User owner = getOwner(actor, ownerUuid);
-		lists = mailingListService.findAllByUser(actor, owner);
 		if (v2) {
+			lists = mailingListService.findAll(actor, owner, mine);
 			return ImmutableSet.copyOf(Lists.transform(lists, MailingListDto.toDtoV2()));
 		} else {
+			lists = mailingListService.findAllByUser(actor, owner);
 			return ImmutableSet.copyOf(Lists.transform(lists, MailingListDto.toDto()));
 		}
 	}

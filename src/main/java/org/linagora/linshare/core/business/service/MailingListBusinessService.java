@@ -35,6 +35,7 @@ package org.linagora.linshare.core.business.service;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.domain.entities.User;
@@ -151,4 +152,10 @@ public interface MailingListBusinessService {
 	MailingList update(MailingList entity, MailingList object) throws BusinessException;
 
 	MailingList delete(MailingList entity) throws BusinessException;
+
+	List<MailingList> findAll(Account actor, User user);
+
+	List<MailingList> findAllMine(Account actor, User user);
+
+	List<MailingList> findAllOthers(Account actor, User user);
 }

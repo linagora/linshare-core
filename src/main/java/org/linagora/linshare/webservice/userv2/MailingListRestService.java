@@ -42,7 +42,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.MailingListDto;
 
 public interface MailingListRestService {
 
-	Set<MailingListDto> findAll() throws BusinessException;
+	Set<MailingListDto> findAll(Boolean mine) throws BusinessException;
 
 	MailingListDto find(String uuid) throws BusinessException;
 

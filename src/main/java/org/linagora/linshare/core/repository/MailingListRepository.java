@@ -50,6 +50,12 @@ public interface MailingListRepository extends AbstractRepository<MailingList> {
 
 	List<MailingList> findAllMyList(User user);
 
+	List<MailingList> findAll(User user);
+
+	List<MailingList> findAllMine(User user);
+
+	List<MailingList> findAllOthers(User user);
+
 	List<MailingList> searchListByVisibility(User user, boolean isPublic);
 
 	List<MailingList> searchListWithInput(User user, String input);

@@ -38,6 +38,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Property;
@@ -129,11 +130,44 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 	}
 
 	@Override
+	public List<MailingList> findAll(User user) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		// all public lists owned by others people than current user.
+		Conjunction public_others = Restrictions.conjunction();
+		public_others.add(Restrictions.eq("domain", user.getDomain()));
+		public_others.add(Restrictions.eq("isPublic", true));
+		public_others.add(Restrictions.ne("owner", user));
+		det.add(public_others);
+		// all private lists owned by the current user.
+		Conjunction private_mine = Restrictions.conjunction();
+		private_mine.add(Restrictions.eq("domain", user.getDomain()));
+		private_mine.add(Restrictions.eq("owner", user));
+		det.add(private_mine);
+		return findByCriteria(det);
+	}
+
+	@Override
+	public List<MailingList> findAllMine(User user) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		det.add(Restrictions.eq("domain", user.getDomain()));
+		det.add(Restrictions.eq("owner", user));
+		return findByCriteria(det);
+	}
+
+	@Override
+	public List<MailingList> findAllOthers(User user) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		det.add(Restrictions.eq("domain", user.getDomain()));
+		det.add(Restrictions.eq("isPublic", true));
+		det.add(Restrictions.ne("owner", user));
+		return findByCriteria(det);
+	}
+
+	@Override
 	public List<MailingList> findAllMyList(User user) {
 		if (user.hasSuperAdminRole()) {
 			return findAll();
 		}
-
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 
 		// all public lists that belong to my domain.

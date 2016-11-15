@@ -149,20 +149,6 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 	}
 
 	@Override
-	public List<MailingList> findAllListByVisibility(String actorUuid, String criteriaOnSearch) {
-		Validate.notEmpty(criteriaOnSearch);
-		Validate.notEmpty(actorUuid);
-
-		User actor = userService.findByLsUuid(actorUuid);
-		if (criteriaOnSearch.equals(VisibilityType.All.name()))
-			return mailingListBusinessService.findAllListByUser(actor);
-		if (criteriaOnSearch.equals(VisibilityType.AllMyLists.name()))
-			return mailingListBusinessService.findAllMyList(actor);
-		return mailingListBusinessService.findAllListByVisibility(actor,
-				criteriaOnSearch.equals(VisibilityType.Public.name()));
-	}
-
-	@Override
 	public List<MailingList> findAllListByOwner(String actorUuid, String ownerUuid) {
 		Validate.notEmpty(ownerUuid);
 
@@ -422,5 +408,18 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 			throws BusinessException {
 		MailingList list = find(actor, owner, listUuid);
 		return mailingListBusinessService.findAllContacts(list);
+	}
+
+	@Override
+	public List<MailingList> findAll(Account actor, User owner, Boolean mine) {
+		List<MailingList> all = null;
+		if (mine == null) {
+			all = mailingListBusinessService.findAll(actor, owner);
+		} else if (mine) {
+			all = mailingListBusinessService.findAllMine(actor, owner);
+		} else {
+			all = mailingListBusinessService.findAllOthers(actor, owner);
+		}
+		return all;
 	}
 }

@@ -37,6 +37,7 @@ package org.linagora.linshare.core.business.service.impl;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.MailingListBusinessService;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.domain.entities.User;
@@ -259,5 +260,20 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 		logger.debug("List to delete: " + entity.getUuid());
 		listRepository.delete(entity);
 		return entity;
+	}
+
+	@Override
+	public List<MailingList> findAll(Account actor, User user) {
+		return listRepository.findAll(user);
+	}
+
+	@Override
+	public List<MailingList> findAllMine(Account actor, User user) {
+		return listRepository.findAllMine(user);
+	}
+
+	@Override
+	public List<MailingList> findAllOthers(Account actor, User user) {
+		return listRepository.findAllOthers(user);
 	}
 }

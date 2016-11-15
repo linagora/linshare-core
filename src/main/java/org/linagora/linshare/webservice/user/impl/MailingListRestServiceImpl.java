@@ -80,7 +80,7 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public Set<MailingListDto> findAll() throws BusinessException {
-		return mailingListFacade.findAll(null, false);
+		return mailingListFacade.findAll(null, false, null);
 	}
 
 	@Path("/{uuid}")
