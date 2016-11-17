@@ -31,7 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.user.impl;
+package org.linagora.linshare.webservice.userv2.impl;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,13 +55,15 @@ import org.apache.commons.lang.Validate;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.domain.objects.ChunkedFile;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.EntryDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.FlowDto;
+import org.linagora.linshare.core.facade.webservice.user.AccountQuotaFacade;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
 import org.linagora.linshare.core.facade.webservice.user.WorkGroupEntryFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.user.FlowDocumentUploaderRestService;
+import org.linagora.linshare.webservice.userv2.FlowDocumentUploaderRestService;
 import org.linagora.linshare.webservice.utils.FlowUploaderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,15 +98,21 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 
 	private final WorkGroupEntryFacade threadEntryFacade;
 
+	private final AccountQuotaFacade accountQuotaFacade;
+
 	private static final ConcurrentMap<String, ChunkedFile> chunkedFiles = Maps
 			.newConcurrentMap();
 
-	public FlowDocumentUploaderRestServiceImpl(DocumentFacade documentFacade, WorkGroupEntryFacade workGroupEntryFacade,
+	public FlowDocumentUploaderRestServiceImpl(
+			DocumentFacade documentFacade,
+			WorkGroupEntryFacade workGroupEntryFacade,
+			AccountQuotaFacade accountQuotaFacade,
 			boolean sizeValidation) {
 		super();
 		this.documentFacade = documentFacade;
 		this.sizeValidation = sizeValidation;
 		this.threadEntryFacade = workGroupEntryFacade;
+		this.accountQuotaFacade = accountQuotaFacade;
 	}
 
 	@Path("/")
@@ -128,6 +136,13 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 		boolean isValid = FlowUploaderUtils.isValid(chunkNumber, chunkSize,
 				totalSize, identifier, filename);
 		Validate.isTrue(isValid);
+		boolean maintenance = accountQuotaFacade.maintenaceModeIsEnabled();
+		if (maintenance) {
+			 // Http error 501
+			throw new BusinessException(
+					BusinessErrorCode.MODE_MAINTENANCE_ENABLED,
+					"Maintenance mode is enable for this user. Uploads are disabled.");
+		}
 		FlowDto flow = new FlowDto(chunkNumber);
 		try {
 			logger.debug("writing chunk number : " + chunkNumber);
@@ -214,8 +229,9 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 			@QueryParam(IDENTIFIER) String identifier,
 			@QueryParam(FILENAME) String filename,
 			@QueryParam(RELATIVE_PATH) String relativePath) {
+		boolean maintenance = accountQuotaFacade.maintenaceModeIsEnabled();
 		return FlowUploaderUtils.testChunk(chunkNumber, totalChunks, chunkSize,
-				totalSize, identifier, filename, relativePath, chunkedFiles);
+				totalSize, identifier, filename, relativePath, chunkedFiles, maintenance);
 	}
 
 	/**

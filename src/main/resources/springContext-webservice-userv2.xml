@@ -72,6 +72,13 @@
 		<constructor-arg ref="wsAccountQuotaFacade" />
 	</bean>
 
+	<bean id="userv2FlowDocumentUploaderRestService" class="org.linagora.linshare.webservice.userv2.impl.FlowDocumentUploaderRestServiceImpl">
+		<constructor-arg ref="wsDocumentFacade" />
+		<constructor-arg ref="wsThreadEntryFacade" />
+		<constructor-arg ref="wsAccountQuotaFacade" />
+		<constructor-arg value="${linshare.rest.files.size.validation}" />
+	</bean>
+
 	<jaxrs:server id="userRestContainer" address="/rest/user/v2">
 		<jaxrs:serviceBeans>
 			<ref bean="userEnumRestService" />
@@ -87,7 +94,7 @@
 			<ref bean="userReceivedShareRestService" />
 			<ref bean="userLogRestService" />
 			<ref bean="userFunctionalityRestService" />
-			<ref bean="userFlowDocumentUploaderRestService" />
+			<ref bean="userv2FlowDocumentUploaderRestService" />
 			<ref bean="userShareEntryGroupRestService" />
 			<ref bean="userv2ContactListRestService" />
 			<ref bean="userMimeTypeRestService" />

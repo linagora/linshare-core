@@ -116,7 +116,7 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 			@QueryParam(RELATIVE_PATH) String relativePath) {
 
 		return FlowUploaderUtils.testChunk(chunkNumber, totalChunks, chunkSize,
-				totalSize, identifier, filename, relativePath, chunkedFiles);
+				totalSize, identifier, filename, relativePath, chunkedFiles, false);
 	}
 
 	@Path("/")

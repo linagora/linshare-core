@@ -50,16 +50,27 @@ public class FlowUploaderUtils {
 	public static Response testChunk(long chunkNumber, long totalChunks,
 			long chunkSize, long totalSize, String identifier, String filename,
 			String relativePath,
-			ConcurrentMap<String, ChunkedFile> chunkedFiles) {
+			ConcurrentMap<String, ChunkedFile> chunkedFiles, boolean maintenance) {
+		if (maintenance) {
+			return buildReponse(Status.NOT_IMPLEMENTED); // 501
+			// If request returns a permanent error status, (50x) upload is stopped.
+		}
 		identifier = cleanIdentifier(identifier);
 		boolean isValid = isValid(chunkNumber, chunkSize, totalSize, identifier,
 				filename);
+		// Throw HTTP 400 error code.
 		Validate.isTrue(isValid);
 		if (chunkedFiles.containsKey(identifier)
 				&& chunkedFiles.get(identifier).hasChunk(chunkNumber)) {
-			return Response.ok().build();
+			// HTTP 200 : ok, we already get this chunk.
+			return buildReponse(Status.ACCEPTED);
 		}
-		ResponseBuilder builder = Response.status(Status.NO_CONTENT);
+		// HTTP 204 We did not have this chunk
+		return buildReponse(Status.NO_CONTENT);
+	}
+
+	private static Response buildReponse(Status status) {
+		ResponseBuilder builder = Response.status(status);
 		// Fixing IE cache issue.
 		CacheControl cc = new CacheControl();
 		cc.setNoCache(true);

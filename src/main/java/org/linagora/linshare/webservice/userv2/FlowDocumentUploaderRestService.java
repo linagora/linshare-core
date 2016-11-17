@@ -31,7 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.user;
+package org.linagora.linshare.webservice.userv2;
 
 import java.io.InputStream;
 
