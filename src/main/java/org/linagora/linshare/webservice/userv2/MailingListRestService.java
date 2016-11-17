@@ -58,7 +58,7 @@ public interface MailingListRestService {
 
 	Set<MailingListContactDto> findAllContacts(String listUuid) throws BusinessException;
 
-	void createContact(String uuid, MailingListContactDto dto) throws BusinessException;
+	MailingListContactDto createContact(String uuid, MailingListContactDto dto) throws BusinessException;
 
 	void updateContact(String uuid, MailingListContactDto dto) throws BusinessException;
 

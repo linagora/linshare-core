@@ -131,9 +131,10 @@ public interface MailingListBusinessService {
 	 * 
 	 * @param mailingList
 	 * @param contact
+	 * @return TODO
 	 * @throws BusinessException
 	 */
-	void addContact(MailingList mailingList, MailingListContact contact) throws BusinessException;
+	MailingListContact addContact(MailingList mailingList, MailingListContact contact) throws BusinessException;
 
 	MailingListContact findContact(String contactUuid) throws BusinessException;
 

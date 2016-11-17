@@ -189,10 +189,10 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 	@ApiResponses({
 			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") })
 	@Override
-	public void createContact(@ApiParam(value = "Mailing list uuid.", required = true) @PathParam("uuid") String uuid,
+	public MailingListContactDto createContact(@ApiParam(value = "Mailing list uuid.", required = true) @PathParam("uuid") String uuid,
 			@ApiParam(value = "Contact to create.", required = true) MailingListContactDto dto)
 					throws BusinessException {
-		mailingListFacade.addContact(null, uuid, dto);
+		return mailingListFacade.addContact(null, uuid, dto);
 	}
 
 	@Path("/{uuid}/contacts")

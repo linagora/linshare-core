@@ -218,13 +218,16 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	}
 
 	@Override
-	public void addContact(MailingList mailingList, MailingListContact contact) throws BusinessException {
+	public MailingListContact addContact(MailingList mailingList, MailingListContact contact) throws BusinessException {
 		if (!mailingList.getMailingListContact().contains(contact)) {
 			mailingList.addMailingListContact(contact);
-			contactRepository.create(contact);
+			contact.setMailingList(mailingList);
+			contact = contactRepository.create(contact);
 			listRepository.update(mailingList);
+			return contact;
 		} else {
 			logger.debug("Contact already present : " + contact.getMail());
+			throw new BusinessException(BusinessErrorCode.MAILING_LIST_CONTACT_ALREADY_EXISTS, "Contact already exists.");
 		}
 	}
 

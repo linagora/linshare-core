@@ -350,20 +350,21 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 	}
 
 	@Override
-	public void addContact(Account actor, Account owner, String listUuid, MailingListContact contact)
+	public MailingListContact addContact(Account actor, Account owner, String listUuid, MailingListContact contact)
 			throws BusinessException {
 		Validate.notNull(contact, "Contact list must be set.");
 		Validate.notEmpty(listUuid, "Mailing list uuid must be set.");
 
 		MailingList listToUpdate = find(actor, owner, listUuid);
 		checkUpdatePermission(actor, owner, MailingList.class, BusinessErrorCode.FORBIDDEN, listToUpdate);
-		mailingListBusinessService.addContact(listToUpdate, contact);
+		contact = mailingListBusinessService.addContact(listToUpdate, contact);
 		MailingListLogEntry logEntry = new MailingListLogEntry(actor, listToUpdate, LogAction.LIST_ADD_CONTACT,
 				"Adding a contact to a mailing list.");
 		MailingListContactAuditLogEntry log = new MailingListContactAuditLogEntry(new AccountMto(actor),
 				new AccountMto(listToUpdate.getOwner()), LogAction.CREATE, AuditLogEntryType.LIST, listToUpdate, contact);
 		mongoRepository.insert(log);
 		logEntryService.create(logEntry);
+		return contact;
 	}
 
 	@Override

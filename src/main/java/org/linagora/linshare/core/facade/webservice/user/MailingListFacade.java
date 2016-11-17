@@ -54,7 +54,7 @@ public interface MailingListFacade {
 
 	Set<MailingListContactDto> findAllContacts(String ownerUuid, String listUuid, boolean v2) throws BusinessException;
 
-	void addContact(String ownerUuid, String listUuid, MailingListContactDto dto)
+	MailingListContactDto addContact(String ownerUuid, String listUuid, MailingListContactDto dto)
 			throws BusinessException;
 
 	void updateContact(String ownerUuid, MailingListContactDto dto) throws BusinessException;

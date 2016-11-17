@@ -104,7 +104,7 @@ public interface MailingListService {
 
 	MailingList delete(Account actor, Account owner, String uuid) throws BusinessException;
 
-	void addContact(Account actor, Account owner, String listUuid, MailingListContact contact) throws BusinessException;
+	MailingListContact addContact(Account actor, Account owner, String listUuid, MailingListContact contact) throws BusinessException;
 
 	void updateContact(Account actor, Account owner, MailingListContact contact) throws BusinessException;
 
