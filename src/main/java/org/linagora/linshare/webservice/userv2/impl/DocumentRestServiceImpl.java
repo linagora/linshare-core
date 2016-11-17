@@ -58,9 +58,11 @@ import org.apache.commons.lang.Validate;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.domain.constants.AsyncTaskType;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
+import org.linagora.linshare.core.facade.webservice.user.AccountQuotaFacade;
 import org.linagora.linshare.core.facade.webservice.user.AsyncTaskFacade;
 import org.linagora.linshare.core.facade.webservice.user.DocumentAsyncFacade;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
@@ -96,6 +98,8 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 
 	private org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor taskExecutor;
 
+	private final AccountQuotaFacade accountQuotaFacade;
+
 	private boolean sizeValidation;
 
 	public DocumentRestServiceImpl(
@@ -103,12 +107,14 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 			DocumentAsyncFacade documentAsyncFacade,
 			ThreadPoolTaskExecutor taskExecutor,
 			AsyncTaskFacade asyncTaskFacade,
+			AccountQuotaFacade accountQuotaFacade,
 			boolean sizeValidation) {
 		super();
 		this.documentFacade = documentFacade;
 		this.documentAsyncFacade = documentAsyncFacade;
 		this.asyncTaskFacade = asyncTaskFacade;
 		this.taskExecutor = taskExecutor;
+		this.accountQuotaFacade = accountQuotaFacade;
 		this.sizeValidation = sizeValidation;
 	}
 
@@ -134,7 +140,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) @QueryParam("async") Boolean async,
 			@ApiParam(value = "file size (size validation purpose).", required = true) @Multipart(value = "filesize", required = true)  Long fileSize,
 			MultipartBody body) throws BusinessException {
-
+		checkMaintenanceMode();
 		Long transfertDuration = getTransfertDuration();
 		if (file == null) {
 			logger.error("Missing file (check parameter file)");
@@ -296,6 +302,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) @QueryParam("async") Boolean async,
 			@ApiParam(value = "file size (size validation purpose).", required = true) @Multipart(value = "filesize", required = true)  Long fileSize,
 			MultipartBody body) throws BusinessException {
+		checkMaintenanceMode();
 		Long transfertDuration = getTransfertDuration();
 		if (file == null) {
 			logger.error("Missing file (check parameter file)");
@@ -390,6 +397,16 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 		logger.debug("Exception : ", e);
 		if (asyncTask != null) {
 			asyncTaskFacade.fail(asyncTask, e);
+		}
+	}
+
+	private void checkMaintenanceMode() {
+		boolean maintenance = accountQuotaFacade.maintenaceModeIsEnabled();
+		if (maintenance) {
+			 // HTTP error 501
+			throw new BusinessException(
+					BusinessErrorCode.MODE_MAINTENANCE_ENABLED,
+					"Maintenance mode is enable, uploads are disabled.");
 		}
 	}
 }

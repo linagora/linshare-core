@@ -58,10 +58,12 @@ import org.apache.commons.lang.Validate;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.domain.constants.AsyncTaskType;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
+import org.linagora.linshare.core.facade.webservice.user.AccountQuotaFacade;
 import org.linagora.linshare.core.facade.webservice.user.AsyncTaskFacade;
 import org.linagora.linshare.core.facade.webservice.user.ThreadEntryAsyncFacade;
 import org.linagora.linshare.core.facade.webservice.user.WorkGroupEntryFacade;
@@ -95,18 +97,22 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 
 	private org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor taskExecutor;
 
+	private final AccountQuotaFacade accountQuotaFacade;
+
 	private boolean sizeValidation;
 
 	public ThreadEntryRestServiceImpl(WorkGroupEntryFacade workGroupEntryFacade,
 			ThreadEntryAsyncFacade threadEntryAsyncFacade,
 			AsyncTaskFacade asyncTaskFacade,
 			ThreadPoolTaskExecutor taskExecutor,
+			AccountQuotaFacade accountQuotaFacade,
 			boolean sizeValidation) {
 		super();
 		this.workGroupEntryFacade = workGroupEntryFacade;
 		this.threadEntryAsyncFacade = threadEntryAsyncFacade;
 		this.asyncTaskFacade = asyncTaskFacade;
 		this.taskExecutor = taskExecutor;
+		this.accountQuotaFacade = accountQuotaFacade;
 		this.sizeValidation = sizeValidation;
 	}
 
@@ -122,7 +128,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 	@Override
 	public WorkGroupEntryDto create(
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
-			@ApiParam(value = "File stream.", required = true) InputStream file,
+			@ApiParam(value = "File stream.", required = true) @Multipart(value = "file", required = true) InputStream file,
 			@ApiParam(value = "An optional description of a thread entry.") @Multipart(value = "description", required = false) String description,
 			@ApiParam(value = "The given file name of the uploaded file.", required = true) @Multipart(value = "filename", required = false) String givenFileName,
 			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) @QueryParam("async") Boolean async,
@@ -130,6 +136,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "file size (size validation purpose).", required = false) @Multipart(value = "filesize", required = false)  Long fileSize,
 			MultipartBody body)
 					throws BusinessException {
+		checkMaintenanceMode();
 		Long transfertDuration = getTransfertDuration();
 		if (file == null) {
 			logger.error("Missing file (check parameter file)");
@@ -338,4 +345,15 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			asyncTaskFacade.fail(asyncTask, e);
 		}
 	}
+
+	private void checkMaintenanceMode() {
+		boolean maintenance = accountQuotaFacade.maintenaceModeIsEnabled();
+		if (maintenance) {
+			 // HTTP error 501
+			throw new BusinessException(
+					BusinessErrorCode.MODE_MAINTENANCE_ENABLED,
+					"Maintenance mode is enable, uploads are disabled.");
+		}
+	}
+
 }

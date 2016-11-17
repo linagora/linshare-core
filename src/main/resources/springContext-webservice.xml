@@ -69,6 +69,7 @@
 	<bean id="pluginCompatibilityRestServiceV1" class="org.linagora.linshare.webservice.legacy.impl.PluginCompatibilityRestServiceImpl">
 		<constructor-arg ref="wsShareFacade" />
 		<constructor-arg ref="wsDocumentFacade" />
+		<constructor-arg ref="wsAccountQuotaFacade" />
 	</bean>
 
 	<jaxrs:server id="legacyContainer" address="/rest">

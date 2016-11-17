@@ -63,6 +63,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
+import org.linagora.linshare.core.facade.webservice.user.AccountQuotaFacade;
 import org.linagora.linshare.core.facade.webservice.user.AsyncTaskFacade;
 import org.linagora.linshare.core.facade.webservice.user.DocumentAsyncFacade;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
@@ -98,12 +99,15 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 
 	private org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor taskExecutor;
 
+	private final AccountQuotaFacade accountQuotaFacade;
+
 	private boolean sizeValidation;
 
 	public DocumentRestServiceImpl(
 			DocumentFacade documentFacade,
 			DocumentAsyncFacade documentAsyncFacade,
 			ThreadPoolTaskExecutor taskExecutor,
+			AccountQuotaFacade accountQuotaFacade,
 			AsyncTaskFacade asyncTaskFacade,
 			boolean sizeValidation) {
 		super();
@@ -111,6 +115,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 		this.documentAsyncFacade = documentAsyncFacade;
 		this.asyncTaskFacade = asyncTaskFacade;
 		this.taskExecutor = taskExecutor;
+		this.accountQuotaFacade = accountQuotaFacade;
 		this.sizeValidation = sizeValidation;
 	}
 
@@ -138,6 +143,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 			@ApiParam(value = "file size (size validation purpose).", required = false) @Multipart(value = "filesize", required = false)  Long fileSize,
 			MultipartBody body) throws BusinessException {
 
+		checkMaintenanceMode();
 		Long transfertDuration = getTransfertDuration();
 		if (file == null) {
 			logger.error("Missing file (check parameter file)");
@@ -300,6 +306,8 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 			@HeaderParam("Content-Length") Long contentLength,
 			@ApiParam(value = "file size (size validation purpose).", required = false) @Multipart(value = "filesize", required = false)  Long fileSize,
 			MultipartBody body) throws BusinessException {
+
+		checkMaintenanceMode();
 		Long transfertDuration = getTransfertDuration();
 		if (file == null) {
 			logger.error("Missing file (check parameter file)");
@@ -394,6 +402,16 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 		logger.debug("Exception : ", e);
 		if (asyncTask != null) {
 			asyncTaskFacade.fail(asyncTask, e);
+		}
+	}
+
+	private void checkMaintenanceMode() {
+		boolean maintenance = accountQuotaFacade.maintenaceModeIsEnabled();
+		if (maintenance) {
+			 // HTTP error 501
+			throw new BusinessException(
+					BusinessErrorCode.MODE_MAINTENANCE_ENABLED,
+					"Maintenance mode is enable, uploads are disabled.");
 		}
 	}
 }

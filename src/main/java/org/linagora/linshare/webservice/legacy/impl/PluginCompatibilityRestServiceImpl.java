@@ -50,8 +50,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.SimpleStringValue;
+import org.linagora.linshare.core.facade.webservice.user.AccountQuotaFacade;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
 import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
@@ -67,10 +69,15 @@ public class PluginCompatibilityRestServiceImpl extends WebserviceBase implement
 
 	private final DocumentFacade webServiceDocumentFacade;
 	private final ShareFacade webServiceShareFacade;
+	private final AccountQuotaFacade accountQuotaFacade;
 
-	public PluginCompatibilityRestServiceImpl(final DocumentFacade webServiceDocumentFacade, final ShareFacade facade) {
+	public PluginCompatibilityRestServiceImpl(
+			final DocumentFacade webServiceDocumentFacade,
+			final ShareFacade facade,
+			final AccountQuotaFacade accountQuotaFacade) {
 		this.webServiceDocumentFacade = webServiceDocumentFacade;
 		this.webServiceShareFacade = facade;
+		this.accountQuotaFacade = accountQuotaFacade;
 	}
 
 	@GET
@@ -105,6 +112,7 @@ public class PluginCompatibilityRestServiceImpl extends WebserviceBase implement
 	public DocumentDto uploadfile(@Multipart(value = "file") InputStream theFile,
 			@Multipart(value = "description", required = false) String description,
 			@Multipart(value = "filename", required = false) String givenFileName, MultipartBody body) throws BusinessException {
+		checkMaintenanceMode();
 		String comment = (description == null) ? "" : description;
 		if (theFile == null) {
 			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check parameter file)");
@@ -115,6 +123,16 @@ public class PluginCompatibilityRestServiceImpl extends WebserviceBase implement
 			return webServiceDocumentFacade.create(tempFile, fileName, comment, null);
 		} finally {
 			deleteTempFile(tempFile);
+		}
+	}
+
+	private void checkMaintenanceMode() {
+		boolean maintenance = accountQuotaFacade.maintenaceModeIsEnabled();
+		if (maintenance) {
+			 // HTTP error 501
+			throw new BusinessException(
+					BusinessErrorCode.MODE_MAINTENANCE_ENABLED,
+					"Maintenance mode is enable, uploads are disabled.");
 		}
 	}
 }
