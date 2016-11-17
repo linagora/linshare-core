@@ -73,9 +73,9 @@ public class AccountDto {
 	public AccountDto(Account a, boolean full) {
 		this.uuid = a.getLsUuid();
 		this.domain = a.getDomainId();
+		this.creationDate = a.getCreationDate();
+		this.modificationDate = a.getModificationDate();
 		if (full) {
-			this.creationDate = a.getCreationDate();
-			this.modificationDate = a.getModificationDate();
 			this.locale = a.getLocale();
 			this.externalMailLocale = a.getExternalMailLocale();
 		}
