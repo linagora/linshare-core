@@ -33,11 +33,8 @@
  */
 package org.linagora.linshare.core.facade.webservice.common.dto;
 
-import java.util.Date;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 
 import com.google.common.base.Function;
@@ -63,33 +60,15 @@ public class MailingListContactDto {
 	@ApiModelProperty(value = "MailingListUuid")
 	private String mailingListUuid;
 
-	// should only available in user/v2 API for compatibility support.
-	@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-	@ApiModelProperty(value = "Creation Date")
-	protected Date creationDate;
-
-	// should only available in user/v2 API for compatibility support.
-	@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-	@ApiModelProperty(value = "Modification Date")
-	protected Date modificationDate;
-
 	public MailingListContactDto() {
 	}
 
 	public MailingListContactDto(MailingListContact contact) {
-		this(contact, false);
-	}
-
-	public MailingListContactDto(MailingListContact contact, boolean v2) {
 		this.mail = contact.getMail();
 		this.uuid = contact.getUuid();
 		this.lastName = contact.getLastName();
 		this.firstName = contact.getFirstName();
 		this.mailingListUuid = contact.getMailingList().getUuid();
-		if (v2) {
-			this.creationDate = contact.getCreationDate();
-			this.modificationDate = contact.getModificationDate();
-		}
 	}
 
 	public MailingListContact toObject() {
@@ -141,22 +120,6 @@ public class MailingListContactDto {
 		this.mailingListUuid = mailingListUuid;
 	}
 
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	public Date getModificationDate() {
-		return modificationDate;
-	}
-
-	public void setModificationDate(Date modificationDate) {
-		this.modificationDate = modificationDate;
-	}
-
 	/*
 	 * Transformers
 	 */
@@ -165,15 +128,6 @@ public class MailingListContactDto {
 			@Override
 			public MailingListContactDto apply(MailingListContact arg0) {
 				return new MailingListContactDto(arg0);
-			}
-		};
-	}
-
-	public static Function<MailingListContact, MailingListContactDto> toDtoV2() {
-		return new Function<MailingListContact, MailingListContactDto>() {
-			@Override
-			public MailingListContactDto apply(MailingListContact arg0) {
-				return new MailingListContactDto(arg0, true);
 			}
 		};
 	}

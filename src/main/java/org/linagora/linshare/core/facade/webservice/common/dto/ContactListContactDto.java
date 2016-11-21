@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2016. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -33,27 +33,25 @@
  */
 package org.linagora.linshare.core.facade.webservice.common.dto;
 
+import java.util.Date;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.constants.AccountType;
-import org.linagora.linshare.core.domain.entities.Contact;
-import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.MailingListContact;
 
+import com.google.common.base.Function;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-@XmlRootElement(name = "GenericUser")
-@ApiModel(value = "GenericUser", description = "This class is a container to display or identify a user."
-		+ "If the uuid is set, it will be used as the key for retrieve the user profile from the database."
-		+ "If not, we will use the mail. The domain could be use to restrict the search to a particular domain."
-		+ "This is usefull for a multi-domain LinShare instance.")
-public class GenericUserDto {
+@XmlRootElement(name = "ContactListContact")
+@ApiModel(value = "ContactListContact", description = "Contacts of contact list")
+public class ContactListContactDto {
 
-	@ApiModelProperty(value = "User uuid")
-	protected String uuid = null;
+	@ApiModelProperty(value = "Mail")
+	private String mail;
 
-	@ApiModelProperty(value = "Domain")
-	protected String domain = null;
+	@ApiModelProperty(value = "Uuid")
+	private String uuid;
 
 	@ApiModelProperty(value = "FirstName")
 	private String firstName;
@@ -61,34 +59,43 @@ public class GenericUserDto {
 	@ApiModelProperty(value = "LastName")
 	private String lastName;
 
-	@ApiModelProperty(value = "Mail")
-	private String mail = null;
+	@ApiModelProperty(value = "MailingListUuid")
+	private String mailingListUuid;
 
-	@ApiModelProperty(value = "AccountType")
-	private AccountType accountType = null;
+	@ApiModelProperty(value = "Creation Date")
+	protected Date creationDate;
 
-	@ApiModelProperty(value = "External")
-	private Boolean external = null;
+	@ApiModelProperty(value = "Modification Date")
+	protected Date modificationDate;
 
-	public GenericUserDto() {
-		super();
+	public ContactListContactDto() {
 	}
 
-	public GenericUserDto(Contact contact) {
-		super();
+	public ContactListContactDto(MailingListContact contact) {
 		this.mail = contact.getMail();
-		this.external = true;
+		this.uuid = contact.getUuid();
+		this.lastName = contact.getLastName();
+		this.firstName = contact.getFirstName();
+		this.mailingListUuid = contact.getMailingList().getUuid();
+		this.creationDate = contact.getCreationDate();
+		this.modificationDate = contact.getModificationDate();
 	}
 
-	public GenericUserDto(User u) {
-		super();
-		setUuid(u.getLsUuid());
-		setMail(u.getMail());
-		setFirstName(u.getFirstName());
-		setLastName(u.getLastName());
-		this.external = false;
-		this.accountType = u.getAccountType();
-		this.domain = u.getDomain().getUuid();
+	public MailingListContact toObject() {
+		MailingListContact contact = new MailingListContact();
+		contact.setUuid(getUuid());
+		contact.setMail(getMail());
+		contact.setFirstName(getFirstName());
+		contact.setLastName(getLastName());
+		return contact;
+	}
+
+	public String getMail() {
+		return mail;
+	}
+
+	public void setMail(String mail) {
+		this.mail = mail;
 	}
 
 	public String getUuid() {
@@ -97,14 +104,6 @@ public class GenericUserDto {
 
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
-	}
-
-	public String getDomain() {
-		return domain;
-	}
-
-	public void setDomain(String domain) {
-		this.domain = domain;
 	}
 
 	public String getFirstName() {
@@ -123,27 +122,40 @@ public class GenericUserDto {
 		this.lastName = lastName;
 	}
 
-	public String getMail() {
-		return mail;
+	public String getMailingListUuid() {
+		return mailingListUuid;
 	}
 
-	public void setMail(String mail) {
-		this.mail = mail;
+	public void setMailingListUuid(String mailingListUuid) {
+		this.mailingListUuid = mailingListUuid;
 	}
 
-	public AccountType getAccountType() {
-		return accountType;
+	public Date getCreationDate() {
+		return creationDate;
 	}
 
-	public void setAccountType(AccountType accountType) {
-		this.accountType = accountType;
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
 	}
 
-	public Boolean getExternal() {
-		return external;
+	public Date getModificationDate() {
+		return modificationDate;
 	}
 
-	public void setExternal(Boolean external) {
-		this.external = external;
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+	}
+
+	/*
+	 * Transformers
+	 */
+	public static Function<MailingListContact, ContactListContactDto> toDto() {
+		return new Function<MailingListContact, ContactListContactDto>() {
+			@Override
+			public ContactListContactDto apply(MailingListContact arg0) {
+				return new ContactListContactDto(arg0);
+			}
+		};
 	}
 }
+

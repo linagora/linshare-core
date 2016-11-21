@@ -83,7 +83,7 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid)
 					throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		return mailingListFacade.findAll(ownerUuid, false, null);
+		return mailingListFacade.findAll(ownerUuid, null);
 	}
 
 	@Path("/{uuid}")
@@ -99,11 +99,7 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 			@ApiParam(value = "The mailing list uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		MailingListDto dto = mailingListFacade.find(ownerUuid, uuid);
-		// user/v1 API compatibility.
-		dto.setCreationDate(null);
-		dto.setModificationDate(null);
-		return dto;
+		return mailingListFacade.find(ownerUuid, uuid);
 	}
 
 	@Path("/{uuid}")
@@ -134,11 +130,7 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 			@ApiParam(value = "The mailing list to create.", required = true) MailingListDto dto)
 					throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		dto = mailingListFacade.create(ownerUuid, dto);
-		// user/v1 API compatibility.
-		dto.setCreationDate(null);
-		dto.setModificationDate(null);
-		return dto;
+		return mailingListFacade.create(ownerUuid, dto);
 	}
 
 	@Path("/")
@@ -153,11 +145,7 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 			@ApiParam(value = "The mailing list to update.", required = true) MailingListDto dto)
 					throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		dto = mailingListFacade.update(ownerUuid, dto, null);
-		// user/v1 API compatibility.
-		dto.setCreationDate(null);
-		dto.setModificationDate(null);
-		return dto;
+		return mailingListFacade.update(ownerUuid, dto, null);
 	}
 
 	@Path("/")
@@ -173,11 +161,7 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 			@ApiParam(value = "The mailing list to delete.", required = true) MailingListDto dto)
 					throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		dto = mailingListFacade.delete(ownerUuid, dto.getUuid());
-		// user/v1 API compatibility.
-		dto.setCreationDate(null);
-		dto.setModificationDate(null);
-		return dto;
+		return mailingListFacade.delete(ownerUuid, dto.getUuid());
 	}
 
 	@Path("/{uuid}")
@@ -193,11 +177,7 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 			@ApiParam(value = "The mailing list uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		MailingListDto dto = mailingListFacade.delete(ownerUuid, uuid);
-		// user/v1 API compatibility.
-		dto.setCreationDate(null);
-		dto.setModificationDate(null);
-		return dto;
+		return mailingListFacade.delete(ownerUuid, uuid);
 	}
 
 	@Path("/{uuid}/contacts")
@@ -256,7 +236,7 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 			@ApiParam(value = "The mailing list uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		return mailingListFacade.findAllContacts(ownerUuid, uuid, false);
+		return mailingListFacade.findAllContacts(ownerUuid, uuid);
 	}
 
 	@Path("/{uuid}/contacts/{contactUuid}")

@@ -56,8 +56,8 @@
 		<constructor-arg ref="wsAuditLogEntryUserFacade"/>
 	</bean>
 
-	<bean id="userv2MailingListRestService" class="org.linagora.linshare.webservice.userv2.impl.MailingListRestServiceImpl">
-		<constructor-arg ref="wsMailingListFacade" />
+	<bean id="userv2ContactListRestService" class="org.linagora.linshare.webservice.userv2.impl.ContactListRestServiceImpl">
+		<constructor-arg ref="wsContactListFacade" />
 	</bean>
 
 	<bean id="userv2GuestRestService" class="org.linagora.linshare.webservice.userv2.impl.GuestRestServiceImpl">
@@ -81,7 +81,7 @@
 			<ref bean="userFunctionalityRestService" />
 			<ref bean="userFlowDocumentUploaderRestService" />
 			<ref bean="userShareEntryGroupRestService" />
-			<ref bean="userv2MailingListRestService" />
+			<ref bean="userv2ContactListRestService" />
 			<ref bean="userMimeTypeRestService" />
 			<ref bean="userAutoCompleteRestService" />
 			<ref bean="userUploadRequestRestService" />

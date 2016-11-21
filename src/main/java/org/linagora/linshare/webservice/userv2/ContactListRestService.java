@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2016. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -32,33 +32,37 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.facade.webservice.user;
+package org.linagora.linshare.webservice.userv2;
 
 import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.MailingListContactDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.MailingListDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ContactListContactDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ContactListDto;
 
-public interface MailingListFacade {
+public interface ContactListRestService {
 
-	Set<MailingListDto> findAll(String ownerUuid, Boolean mine) throws BusinessException;
+	Set<ContactListDto> findAll(Boolean mine) throws BusinessException;
 
-	MailingListDto find(String ownerUuid, String uuid) throws BusinessException;
+	ContactListDto find(String uuid) throws BusinessException;
 
-	MailingListDto create(String ownerUuid, MailingListDto dto) throws BusinessException;
+	void head(String uuid) throws BusinessException;
 
-	MailingListDto update(String ownerUuid, MailingListDto dto, String uuid) throws BusinessException;
+	ContactListDto create(ContactListDto dto) throws BusinessException;
 
-	MailingListDto delete(String ownerUuid, String uuid) throws BusinessException;
+	ContactListDto update(ContactListDto dto, String uuid) throws BusinessException;
 
-	Set<MailingListContactDto> findAllContacts(String ownerUuid, String listUuid) throws BusinessException;
+	ContactListDto delete(ContactListDto dto) throws BusinessException;
 
-	MailingListContactDto addContact(String ownerUuid, String listUuid, MailingListContactDto dto)
-			throws BusinessException;
+	ContactListDto delete(String uuid) throws BusinessException;
 
-	void updateContact(String ownerUuid, MailingListContactDto dto) throws BusinessException;
+	Set<ContactListContactDto> findAllContacts(String listUuid) throws BusinessException;
 
-	void deleteContact(String ownerUuid, String uuid) throws BusinessException;
+	ContactListContactDto createContact(String uuid, ContactListContactDto dto) throws BusinessException;
 
+	void updateContact(String uuid, ContactListContactDto dto) throws BusinessException;
+
+	void deleteContact(String uuid, ContactListContactDto dto) throws BusinessException;
+
+	void deleteContact(String uuid, String contactUuid) throws BusinessException;
 }
