@@ -12,7 +12,7 @@
 	http://cxf.apache.org/schemas/jaxws.xsd
 	http://cxf.apache.org/jaxrs
 	http://cxf.apache.org/schemas/jaxrs.xsd">
-	<description>New user api exposed on /webservice/rest/user endpoint.</description>
+	<description>User v1 api exposed on /webservice/rest/user endpoint.</description>
 
 	<!-- cxf -->
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
