@@ -48,12 +48,15 @@ import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupLightDto;
 import org.linagora.linshare.core.facade.webservice.delegation.ThreadEntryFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.ThreadEntryService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.core.service.WorkGroupFolderService;
+import org.linagora.linshare.mongo.entities.WorkGroupFolder;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 
 import com.google.common.collect.Lists;
@@ -67,13 +70,17 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 
 	private final DocumentEntryService documentEntryService;
 
+	private final WorkGroupFolderService workGroupFolderService;
+
 	public ThreadEntryFacadeImpl(final AccountService accountService,
 			final UserService userService, final ThreadService threadService,
 			final ThreadEntryService threadEntryService,
+			final WorkGroupFolderService workGroupFolderService,
 			final DocumentEntryService documentEntryService) {
 		super(accountService, userService);
 		this.threadService = threadService;
 		this.threadEntryService = threadEntryService;
+		this.workGroupFolderService = workGroupFolderService;
 		this.documentEntryService = documentEntryService;
 	}
 
@@ -90,7 +97,13 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 		Thread thread = threadService.find(actor, owner, threadUuid);
 		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor,
 				owner, thread, file, fileName);
-		return new WorkGroupEntryDto(threadEntry);
+		// TODO FIXME Business code outside service !
+		WorkGroupFolder folder = workGroupFolderService.addEntry(actor, owner, thread, null, threadEntry);
+		WorkGroupEntryDto dto = new WorkGroupEntryDto(threadEntry);
+		dto.setWorkGroup(new WorkGroupLightDto(thread));
+		folder.setEntries(null);
+		dto.setWorkGroupFolder(folder);
+		return dto;
 	}
 
 	@Override

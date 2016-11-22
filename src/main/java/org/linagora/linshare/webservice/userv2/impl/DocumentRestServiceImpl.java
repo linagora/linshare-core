@@ -137,7 +137,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 			@ApiParam(value = "The given file name of the signature uploaded file.", required = false) @Multipart(value = "signatureFileName", required = false) String signatureFileName,
 			@ApiParam(value = "X509 Certificate entity.", required = false) @Multipart(value = "x509cert", required = false) InputStream x509certificate,
 			@ApiParam(value = "The given metadata of the uploaded file.", required = false) @Multipart(value = "metadata", required = false) String metaData,
-			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) @QueryParam("async") Boolean async,
+			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) @DefaultValue("false") @QueryParam("async") boolean async,
 			@ApiParam(value = "file size (size validation purpose).", required = true) @Multipart(value = "filesize", required = true)  Long fileSize,
 			MultipartBody body) throws BusinessException {
 		checkMaintenanceMode();
@@ -147,10 +147,6 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check multipart parameter named 'file')");
 		}
 		String fileName = getFileName(givenFileName, body);
-		// Default mode. No user input.
-		if (async == null) {
-			async = false;
-		}
 		File tempFile = getTempFile(file, "rest-userv2-document-entries", fileName);
 		long currSize = tempFile.length();
 		if (sizeValidation) {
@@ -401,7 +397,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	}
 
 	private void checkMaintenanceMode() {
-		boolean maintenance = accountQuotaFacade.maintenaceModeIsEnabled();
+		boolean maintenance = accountQuotaFacade.maintenanceModeIsEnabled();
 		if (maintenance) {
 			 // HTTP error 501
 			throw new BusinessException(

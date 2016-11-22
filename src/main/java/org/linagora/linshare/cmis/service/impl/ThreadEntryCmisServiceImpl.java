@@ -79,6 +79,8 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.ThreadEntryService;
 import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.core.service.WorkGroupFolderService;
+import org.linagora.linshare.mongo.entities.WorkGroupFolder;
 
 public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 	private final ThreadEntryService threadEntryService;
@@ -86,13 +88,16 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 	private final ThreadService threadService;
 	private final CmisStrings cmisStrings;
 	private final CmisHelpers helpers;
+	private final WorkGroupFolderService workGroupFolderService;
 
 	public ThreadEntryCmisServiceImpl(ThreadEntryService threadEntryService,
+			WorkGroupFolderService workGroupFolderService,
 			CmisExceptionMappingService cmisExceptionMappingService,
 			ThreadService threadService, CmisStrings cmisStrings,
 			CmisHelpers cmisHelpers) {
 		super();
 		this.threadEntryService = threadEntryService;
+		this.workGroupFolderService = workGroupFolderService;
 		this.cmisExceptionMappingService = cmisExceptionMappingService;
 		this.threadService = threadService;
 		this.cmisStrings = cmisStrings;
@@ -340,6 +345,8 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 				ThreadEntry threadEntry = threadEntryService.createThreadEntry(
 						actor, actor, thread, tempFile,
 						contentStream.getFileName());
+				// TODO FIXME Business code outside service !
+				WorkGroupFolder folder = workGroupFolderService.addEntry(actor, (User)actor, thread, null, threadEntry);
 				return CmisConstants.tagThreadEntry + threadEntry.getUuid();
 			} catch (BusinessException e) {
 				throw cmisExceptionMappingService.map(e);

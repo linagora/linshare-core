@@ -39,12 +39,15 @@ import com.google.common.collect.Lists;
 
 public class ChunkedFile {
 
+	private long startTime;
+
 	private final ArrayList<Long> chunks = Lists.newArrayList();
 
 	private final java.nio.file.Path path;
 
 	public ChunkedFile(java.nio.file.Path path) {
 		this.path = path;
+		this.startTime = System.currentTimeMillis();
 	}
 
 	public boolean hasChunk(long chunkNumber) {
@@ -62,4 +65,13 @@ public class ChunkedFile {
 	public java.nio.file.Path getPath() {
 		return path;
 	}
+
+	public long getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(long startTime) {
+		this.startTime = startTime;
+	}
+
 }

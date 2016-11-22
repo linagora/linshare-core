@@ -343,7 +343,7 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 	}
 
 	private void checkMaintenanceMode() {
-		boolean maintenance = accountQuotaFacade.maintenaceModeIsEnabled();
+		boolean maintenance = accountQuotaFacade.maintenanceModeIsEnabled();
 		if (maintenance) {
 			 // HTTP error 501
 			throw new BusinessException(

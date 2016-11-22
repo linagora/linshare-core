@@ -39,6 +39,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.FlowDto;
 
 public interface FlowDocumentUploaderRestService {
@@ -52,4 +53,6 @@ public interface FlowDocumentUploaderRestService {
 	Response testChunk(long chunkNumber, long totalChunks, long chunkSize,
 			long totalSize, String identifier, String filename,
 			String relativePath);
+
+	AsyncTaskDto findAsync(String uuid) throws BusinessException;
 }

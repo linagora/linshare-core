@@ -78,6 +78,10 @@
 		<constructor-arg ref="wsDocumentFacade" />
 		<constructor-arg ref="wsThreadEntryFacade" />
 		<constructor-arg ref="wsAccountQuotaFacade" />
+		<constructor-arg ref="wsDocumentAsyncFacade" />
+		<constructor-arg ref="wsThreadEntryAsyncFacade" />
+		<constructor-arg ref="wsAsyncTaskFacade" />
+		<constructor-arg ref="taskExecutor" />
 		<constructor-arg value="${linshare.rest.files.size.validation}" />
 	</bean>
 

@@ -32,6 +32,7 @@
 	</bean>
 	<bean id="threadEntryCmisService" class="org.linagora.linshare.cmis.service.impl.ThreadEntryCmisServiceImpl">
 		<constructor-arg ref="threadEntryService"></constructor-arg>
+		<constructor-arg ref="workGroupFolderService" />
 		<constructor-arg ref="cmisExceptionMappingService"></constructor-arg>
 		<constructor-arg ref="threadService"></constructor-arg>
 		<constructor-arg ref="cmisStrings"></constructor-arg>

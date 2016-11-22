@@ -19,6 +19,7 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="threadService" />
 		<constructor-arg ref="threadEntryService" />
+		<constructor-arg ref="workGroupFolderService" />
 		<constructor-arg ref="documentEntryService" />
 		<constructor-arg ref="asyncTaskService" />
 	</bean>

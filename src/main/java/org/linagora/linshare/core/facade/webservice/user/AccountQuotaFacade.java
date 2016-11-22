@@ -40,5 +40,5 @@ public interface AccountQuotaFacade extends GenericFacade {
 
 	AccountQuotaDto find(String ownerUuid, String uuid) throws BusinessException;
 
-	boolean maintenaceModeIsEnabled() throws BusinessException;
+	boolean maintenanceModeIsEnabled() throws BusinessException;
 }

@@ -40,13 +40,17 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.util.Date;
 import java.util.concurrent.ConcurrentMap;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
@@ -54,25 +58,37 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang.Validate;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
+import org.linagora.linshare.core.domain.constants.AsyncTaskType;
 import org.linagora.linshare.core.domain.objects.ChunkedFile;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.EntryDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.FlowDto;
 import org.linagora.linshare.core.facade.webservice.user.AccountQuotaFacade;
+import org.linagora.linshare.core.facade.webservice.user.AsyncTaskFacade;
+import org.linagora.linshare.core.facade.webservice.user.DocumentAsyncFacade;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
+import org.linagora.linshare.core.facade.webservice.user.ThreadEntryAsyncFacade;
 import org.linagora.linshare.core.facade.webservice.user.WorkGroupEntryFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
+import org.linagora.linshare.webservice.user.task.DocumentUploadAsyncTask;
+import org.linagora.linshare.webservice.user.task.ThreadEntryUploadAsyncTask;
+import org.linagora.linshare.webservice.user.task.context.DocumentTaskContext;
+import org.linagora.linshare.webservice.user.task.context.ThreadEntryTaskContext;
 import org.linagora.linshare.webservice.userv2.FlowDocumentUploaderRestService;
 import org.linagora.linshare.webservice.utils.FlowUploaderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiParam;
 
 @Path("/flow")
-@Api(value = "/rest/user/flow", basePath = "/rest/user/", description = "Flow Upload Documents service", produces = "application/json,application/xml", consumes = "application/json,application/xml")
+@Api(value = "/rest/user/v2/flow", basePath = "/rest/user/v2/", description = "Flow Upload Documents service", produces = "application/json,application/xml", consumes = "application/json,application/xml")
 public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 		implements FlowDocumentUploaderRestService {
 
@@ -103,16 +119,32 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 	private static final ConcurrentMap<String, ChunkedFile> chunkedFiles = Maps
 			.newConcurrentMap();
 
+	private final DocumentAsyncFacade documentAsyncFacade;
+
+	private final ThreadEntryAsyncFacade threadEntryAsyncFacade ;
+
+	private final AsyncTaskFacade asyncTaskFacade;
+
+	private org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor taskExecutor;
+
 	public FlowDocumentUploaderRestServiceImpl(
 			DocumentFacade documentFacade,
 			WorkGroupEntryFacade workGroupEntryFacade,
 			AccountQuotaFacade accountQuotaFacade,
+			DocumentAsyncFacade documentAsyncFacade,
+			ThreadEntryAsyncFacade threadEntryAsyncFacade,
+			AsyncTaskFacade asyncTaskFacade,
+			org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor taskExecutor,
 			boolean sizeValidation) {
 		super();
 		this.documentFacade = documentFacade;
 		this.sizeValidation = sizeValidation;
 		this.threadEntryFacade = workGroupEntryFacade;
 		this.accountQuotaFacade = accountQuotaFacade;
+		this.documentAsyncFacade = documentAsyncFacade;
+		this.threadEntryAsyncFacade = threadEntryAsyncFacade;
+		this.asyncTaskFacade = asyncTaskFacade;
+		this.taskExecutor = taskExecutor;
 	}
 
 	@Path("/")
@@ -131,18 +163,13 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 			@Multipart(value=WORK_GROUP_FOLDER_UUID, required=false) String workGroupFolderUuid,
 			@Multipart(value=ASYNC_TASK, required=false) boolean async)
 					throws BusinessException {
+		async = true;
 		logger.debug("upload chunk number : " + chunkNumber);
 		identifier = cleanIdentifier(identifier);
 		boolean isValid = FlowUploaderUtils.isValid(chunkNumber, chunkSize,
 				totalSize, identifier, filename);
 		Validate.isTrue(isValid);
-		boolean maintenance = accountQuotaFacade.maintenaceModeIsEnabled();
-		if (maintenance) {
-			 // Http error 501
-			throw new BusinessException(
-					BusinessErrorCode.MODE_MAINTENANCE_ENABLED,
-					"Maintenance mode is enable for this user. Uploads are disabled.");
-		}
+		checkIfMaintenanceIsEnabled();
 		FlowDto flow = new FlowDto(chunkNumber);
 		try {
 			logger.debug("writing chunk number : " + chunkNumber);
@@ -187,18 +214,47 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 					}
 				}
 				EntryDto uploadedDocument = new EntryDto();
-				try {
-					if(workGroupUuid != null && !workGroupUuid.isEmpty()) {
-						uploadedDocument = threadEntryFacade.create(null, workGroupUuid, workGroupFolderUuid, tempFile2, filename);
-					} else {
-						uploadedDocument = documentFacade.create(tempFile2,
-								filename, "", null);
+				flow.setIsAsync(async);
+				boolean isWorkGroup = !Strings.isNullOrEmpty(workGroupUuid);
+				if (async) {
+					logger.debug("Async mode is used");
+					// Asynchronous mode
+					AccountDto actorDto = documentFacade.getAuthenticatedAccountDto();
+					AsyncTaskDto asyncTask = null;
+					try {
+						if(isWorkGroup) {
+							ThreadEntryTaskContext threadEntryTaskContext = new ThreadEntryTaskContext(actorDto, actorDto.getUuid(), workGroupUuid, tempFile2, filename, workGroupFolderUuid);
+							asyncTask = asyncTaskFacade.create(totalSize, getTransfertDuration(identifier), filename, null, AsyncTaskType.THREAD_ENTRY_UPLOAD);
+							ThreadEntryUploadAsyncTask task = new ThreadEntryUploadAsyncTask(threadEntryAsyncFacade, threadEntryTaskContext, asyncTask);
+							taskExecutor.execute(task);
+							flow.completeAsyncTransfert(asyncTask);
+						} else {
+							DocumentTaskContext documentTaskContext = new DocumentTaskContext(actorDto, actorDto.getUuid(), tempFile2, filename, null, null);
+							asyncTask = asyncTaskFacade.create(totalSize, getTransfertDuration(identifier), filename, null, AsyncTaskType.DOCUMENT_UPLOAD);
+							DocumentUploadAsyncTask task = new DocumentUploadAsyncTask(documentAsyncFacade, documentTaskContext, asyncTask);
+							taskExecutor.execute(task);
+							flow.completeAsyncTransfert(asyncTask);
+						}
+					} catch (Exception e) {
+						logAsyncFailure(asyncTask, e);
+						deleteTempFile(tempFile2);
+						ChunkedFile remove = chunkedFiles.remove(identifier);
+						Files.deleteIfExists(remove.getPath());
+						throw e;
 					}
-					flow.completeTransfert(uploadedDocument);
-				} finally {
-					deleteTempFile(tempFile2);
-					ChunkedFile remove = chunkedFiles.remove(identifier);
-					Files.deleteIfExists(remove.getPath());
+				} else {
+					try {
+						if(isWorkGroup) {
+							uploadedDocument = threadEntryFacade.create(null, workGroupUuid, workGroupFolderUuid, tempFile2, filename);
+						} else {
+							uploadedDocument = documentFacade.create(tempFile2, filename, "", null);
+						}
+						flow.completeTransfert(uploadedDocument);
+					} finally {
+						deleteTempFile(tempFile2);
+						ChunkedFile remove = chunkedFiles.remove(identifier);
+						Files.deleteIfExists(remove.getPath());
+					}
 				}
 				return flow;
 			} else {
@@ -229,9 +285,19 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 			@QueryParam(IDENTIFIER) String identifier,
 			@QueryParam(FILENAME) String filename,
 			@QueryParam(RELATIVE_PATH) String relativePath) {
-		boolean maintenance = accountQuotaFacade.maintenaceModeIsEnabled();
+		boolean maintenance = accountQuotaFacade.maintenanceModeIsEnabled();
 		return FlowUploaderUtils.testChunk(chunkNumber, totalChunks, chunkSize,
 				totalSize, identifier, filename, relativePath, chunkedFiles, maintenance);
+	}
+
+	@Path("/{uuid}")
+	@GET
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
+	public AsyncTaskDto findAsync(
+			@ApiParam(value = "Get the async task created at the end of an upload.", required = true) @PathParam("uuid") String uuid) throws BusinessException {
+		Validate.notEmpty(uuid, "Missing uuid");
+		return asyncTaskFacade.find(uuid);
 	}
 
 	/**
@@ -240,5 +306,36 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 
 	private String cleanIdentifier(String identifier) {
 		return identifier.replaceAll("[^0-9A-Za-z_-]", "");
+	}
+
+	private long getTransfertDuration(String identifier) {
+		Date endDate = new Date();
+		long uploadStartTime = chunkedFiles.get(identifier).getStartTime();
+		long transfertDuration = endDate.getTime() - uploadStartTime;
+		if (logger.isDebugEnabled()) {
+			Date beginDate = new Date(uploadStartTime);
+			logger.debug("Upload was begining at : " + beginDate);
+			logger.debug("Upload was ending at : " + endDate);
+		}
+		logger.info("statistics:upload time:" + transfertDuration + "ms.");
+		return transfertDuration;
+	}
+
+	private void checkIfMaintenanceIsEnabled() {
+		boolean maintenance = accountQuotaFacade.maintenanceModeIsEnabled();
+		if (maintenance) {
+			 // Http error 501
+			throw new BusinessException(
+					BusinessErrorCode.MODE_MAINTENANCE_ENABLED,
+					"Maintenance mode is enable for this user. Uploads are disabled.");
+		}
+	}
+
+	protected void logAsyncFailure(AsyncTaskDto asyncTask, Exception e) {
+		logger.error(e.getMessage());
+		logger.debug("Exception : ", e);
+		if (asyncTask != null) {
+			asyncTaskFacade.fail(asyncTask, e);
+		}
 	}
 }

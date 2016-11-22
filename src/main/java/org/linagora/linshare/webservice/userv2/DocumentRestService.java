@@ -49,7 +49,7 @@ public interface DocumentRestService {
 	DocumentDto create(InputStream file, String description,
 			String givenFileName, InputStream theSignature,
 			String signatureFileName, InputStream x509certificate,
-			String metaData, Boolean async,
+			String metaData, boolean async,
 			Long fileSize,
 			MultipartBody body)
 			throws BusinessException;

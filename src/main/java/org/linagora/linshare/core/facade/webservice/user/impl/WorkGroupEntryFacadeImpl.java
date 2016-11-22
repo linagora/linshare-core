@@ -117,7 +117,7 @@ public class WorkGroupEntryFacadeImpl extends UserGenericFacadeImp implements
 		}
 		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor,
 				owner, thread, tempFile, fileName);
-		// Business code outside service !
+		// TODO FIXME Business code outside service !
 		WorkGroupFolder folder = workGroupFolderService.addEntry(actor, owner, thread, workGroupFolderUuid, threadEntry);
 		WorkGroupEntryDto dto = new WorkGroupEntryDto(threadEntry);
 		dto.setWorkGroup(new WorkGroupLightDto(thread));

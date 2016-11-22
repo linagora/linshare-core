@@ -65,7 +65,7 @@ public class AccountQuotaFacadeImpl extends UserGenericFacadeImp implements Acco
 	}
 
 	@Override
-	public boolean maintenaceModeIsEnabled() throws BusinessException {
+	public boolean maintenanceModeIsEnabled() throws BusinessException {
 		User actor = checkAuthentication();
 		AccountQuota aq = quotaService.findByRelatedAccount(actor);
 		return aq.getMaintenance();

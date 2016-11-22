@@ -35,9 +35,12 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
+@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 @XmlRootElement(name = "Flowjs")
 @ApiModel(value = "FlowjsDto", description = "Response Object for Flowjs file uploads")
 public class FlowDto {
@@ -77,20 +80,6 @@ public class FlowDto {
 	public FlowDto(long chunkNumber) {
 		super();
 		this.chunkNumber = chunkNumber;
-		this.isLastChunk = false;
-	}
-
-	public FlowDto(long chunkNumber, String asyncUuid, String fileName) {
-		super();
-		this.chunkNumber = chunkNumber;
-		this.asyncTaskUuid = asyncUuid;
-		this.fileName = fileName;
-		this.isLastChunk = false;
-	}
-
-	public FlowDto(long chunkNumber, AsyncTaskDto asyncTaskDto) {
-		this(chunkNumber, asyncTaskDto.getUuid(), asyncTaskDto.getFileName());
-		this.isAsync = true;
 		this.isLastChunk = false;
 	}
 
@@ -164,6 +153,14 @@ public class FlowDto {
 
 	public void setFrequence(Integer frequence) {
 		this.frequence = frequence;
+	}
+
+	public void completeAsyncTransfert(AsyncTaskDto asyncTask) {
+		this.isAsync = true;
+		this.asyncTaskUuid = asyncTask.getUuid();
+		setFilename(asyncTask.getFileName());
+		this.setLastChunk(true);
+		this.setChunkUploadSuccess(true);
 	}
 
 	public void completeTransfert(EntryDto uploadedEntry) {
