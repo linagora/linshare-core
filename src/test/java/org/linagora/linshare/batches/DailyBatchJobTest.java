@@ -41,7 +41,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-rac.xml",
 		"classpath:springContext-test.xml",
-		"classpath:springContext-quota-manager.xml",
+		"classpath:springContext-batches-quota-and-statistics.xml",
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-service-miscellaneous.xml",

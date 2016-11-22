@@ -42,8 +42,8 @@ import com.google.common.base.Function;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-@XmlRootElement
-@ApiModel
+@XmlRootElement(name="AccountQuota")
+@ApiModel(value = "AccountQuota", description = "A quota instance for accounts like users or workgroups.")
 public class AccountQuotaDto extends QuotaDto {
 
 	@ApiModelProperty(value = "The maximum file size accepted.")

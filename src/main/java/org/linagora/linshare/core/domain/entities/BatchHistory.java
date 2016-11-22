@@ -126,4 +126,11 @@ public class BatchHistory {
 	public void setActiveDate(Date activeDate) {
 		this.activeDate = activeDate;
 	}
+
+	@Override
+	public String toString() {
+		return "BatchHistory [id=" + id + ", uuid=" + uuid + ", executionDate=" + executionDate + ", activeDate="
+				+ activeDate + ", status=" + status + ", batchType=" + batchType + ", errors=" + errors
+				+ ", unhandledErrors=" + unhandledErrors + "]";
+	}
 }

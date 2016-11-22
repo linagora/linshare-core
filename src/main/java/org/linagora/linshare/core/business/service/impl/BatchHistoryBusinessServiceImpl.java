@@ -75,11 +75,6 @@ public class BatchHistoryBusinessServiceImpl implements BatchHistoryBusinessServ
 	}
 
 	@Override
-	public void deleteBeforeDate(Date date) throws BusinessException {
-		batchHistoryRepository.deleteBeforeDate(date);
-	}
-
-	@Override
 	public BatchHistory findByUuid(String lsUuid) throws BusinessException {
 		return batchHistoryRepository.findByUuid(lsUuid);
 	}

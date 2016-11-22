@@ -39,9 +39,7 @@ import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
-import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Quota;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.GenericQuotaRepository;
@@ -89,21 +87,6 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 	public T find(String uuid) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("uuid", uuid));
-		return DataAccessUtils.singleResult(findByCriteria(criteria));
-	}
-
-	@Override
-	public T find(AbstractDomain domain, Account account, ContainerQuotaType containerQuotaType) {
-		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		if (domain != null) {
-			criteria.add(Restrictions.eq("domain", domain));
-		}
-		if (account != null) {
-			criteria.add(Restrictions.eq("account", account));
-		}
-		if (containerQuotaType != null) {
-			criteria.add(Restrictions.eq("containerQuotaType", containerQuotaType));
-		}
 		return DataAccessUtils.singleResult(findByCriteria(criteria));
 	}
 

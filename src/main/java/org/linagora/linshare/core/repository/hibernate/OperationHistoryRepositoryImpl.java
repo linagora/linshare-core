@@ -50,6 +50,7 @@ import org.linagora.linshare.core.repository.OperationHistoryRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
+//TODO FIXME Quota & Statistics
 public class OperationHistoryRepositoryImpl extends AbstractRepositoryImpl<OperationHistory>
 		implements OperationHistoryRepository {
 

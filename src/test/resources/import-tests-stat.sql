@@ -30,19 +30,19 @@ INSERT INTO thread (account_id, name) VALUES (23, 'THREAD_TEST_B');
 
 INSERT INTO statistic (id, creation_date, active_date, operation_count, delete_operation_count, create_operation_count, create_operation_sum, delete_operation_sum, diff_operation_sum, actual_operation_sum, domain_id, account_id, domain_parent_id, statistic_type)
 VALUES (
-15,'2042-11-29', '2042-11-28', 5,2,3,100,-50, 50, 50,2, 23, 1, 'THREAD_WEEKLY_STAT'),
-(16,'2042-11-22','2042-11-21',4,1,3,200,-50, 150, 150,4, 22, 3, 'THREAD_WEEKLY_STAT'),
-(17,'2042-11-15', '2042-11-14',5,2,3,100,-50, 50, 50,4, 23, 3, 'THREAD_WEEKLY_STAT'),
-(18,'2042-11-08', '2042-11-07',5,2,3,100,-50, 50, 50,4, 22, 3, 'THREAD_DAILY_STAT'),
-(19,'2042-11-01', '2042-10-31',5,2,3,100,-50, 50, 50,3, 23, 2, 'THREAD_DAILY_STAT');
+15,'2042-11-29', '2042-11-28', 5,2,3,100,-50, 50, 50,2, 23, 1, 'WORK_GROUP_WEEKLY_STAT'),
+(16,'2042-11-22','2042-11-21',4,1,3,200,-50, 150, 150,4, 22, 3, 'WORK_GROUP_WEEKLY_STAT'),
+(17,'2042-11-15', '2042-11-14',5,2,3,100,-50, 50, 50,4, 23, 3, 'WORK_GROUP_WEEKLY_STAT'),
+(18,'2042-11-08', '2042-11-07',5,2,3,100,-50, 50, 50,4, 22, 3, 'WORK_GROUP_DAILY_STAT'),
+(19,'2042-11-01', '2042-10-31',5,2,3,100,-50, 50, 50,3, 23, 2, 'WORK_GROUP_DAILY_STAT');
 
 INSERT INTO statistic (id, creation_date, active_date, operation_count, delete_operation_count, create_operation_count, create_operation_sum, delete_operation_sum, diff_operation_sum, actual_operation_sum, domain_id, account_id, domain_parent_id, statistic_type)
 VALUES (
-25,'2042-11-06', '2042-11-05', 5,2,3,100,-50, 50, 50,2, 23, 1, 'THREAD_DAILY_STAT'),
-(26,'2042-11-05','2042-11-04',4,1,3,200,-50, 150, 150,4, 22, 3, 'THREAD_DAILY_STAT'),
-(27,'2042-11-04', '2042-11-03',5,2,3,100,-50, 50, 50,4, 23, 3, 'THREAD_DAILY_STAT'),
-(28,'2042-11-03', '2042-11-02',5,2,3,100,-50, 50, 50,4, 22, 3, 'THREAD_DAILY_STAT'),
-(29,'2042-11-01', '2042-10-31',5,2,3,100,-50, 50, 50,3, 23, 2, 'THREAD_DAILY_STAT');
+25,'2042-11-06', '2042-11-05', 5,2,3,100,-50, 50, 50,2, 23, 1, 'WORK_GROUP_DAILY_STAT'),
+(26,'2042-11-05','2042-11-04',4,1,3,200,-50, 150, 150,4, 22, 3, 'WORK_GROUP_DAILY_STAT'),
+(27,'2042-11-04', '2042-11-03',5,2,3,100,-50, 50, 50,4, 23, 3, 'WORK_GROUP_DAILY_STAT'),
+(28,'2042-11-03', '2042-11-02',5,2,3,100,-50, 50, 50,4, 22, 3, 'WORK_GROUP_DAILY_STAT'),
+(29,'2042-11-01', '2042-10-31',5,2,3,100,-50, 50, 50,3, 23, 2, 'WORK_GROUP_DAILY_STAT');
 
 INSERT INTO statistic (id, creation_date, active_date, operation_count, delete_operation_count, create_operation_count, create_operation_sum, delete_operation_sum, diff_operation_sum, actual_operation_sum, domain_id, account_id, domain_parent_id, statistic_type)
 VALUES (20,'2042-11-15', '2042-11-14', 5,2,3,100,-50, 50, 50,2, null, 1, 'DOMAIN_WEEKLY_STAT'),

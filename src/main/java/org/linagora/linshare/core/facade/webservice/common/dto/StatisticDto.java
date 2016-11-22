@@ -44,8 +44,8 @@ import com.google.common.base.Function;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-@XmlRootElement
-@ApiModel
+@XmlRootElement(name="Statistic")
+@ApiModel(value = "Statistic", description = "Statistic object for users, workgroups or domains.")
 public class StatisticDto {
 
 	@ApiModelProperty(value = "Domain")

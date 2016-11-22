@@ -43,8 +43,8 @@ import com.google.common.base.Function;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-@XmlRootElement
-@ApiModel
+@XmlRootElement(name="ContainerQuota")
+@ApiModel(value = "ContainerQuota", description = "A container quota instance for accounts like users in a domain.")
 public class ContainerQuotaDto extends QuotaDto {
 
 	@ApiModelProperty(value = "type (ContainerQuotaType)")

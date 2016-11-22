@@ -53,5 +53,4 @@ public interface BatchHistoryBusinessService {
 
 	boolean exist(Date beginDate, Date endDate, BatchType batchType);
 
-	void deleteBeforeDate(Date date) throws BusinessException;
 }

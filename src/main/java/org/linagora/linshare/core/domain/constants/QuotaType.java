@@ -35,7 +35,7 @@ package org.linagora.linshare.core.domain.constants;
 
 public enum QuotaType {
 
-	DOMAIN_QUOTA, ACCOUNT_QUOTA, CONTAINER_QUOTA, PLATFORM_QUOTA;
+	DOMAIN_QUOTA, ACCOUNT_QUOTA, CONTAINER_QUOTA;
 
 	public static QuotaType fromString(String s) {
 		try {

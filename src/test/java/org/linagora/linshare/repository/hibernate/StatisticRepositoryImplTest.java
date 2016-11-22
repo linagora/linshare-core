@@ -206,7 +206,7 @@ public class StatisticRepositoryImplTest extends AbstractTransactionalJUnit4Spri
 		assertEquals(29, result.size());
 		result = statRepository.findBetweenTwoDates(account, null, null, null, null, null);
 		assertEquals(10, result.size());
-		result = statRepository.findBetweenTwoDates(null, null, null, null, null, StatisticType.THREAD_WEEKLY_STAT);
+		result = statRepository.findBetweenTwoDates(null, null, null, null, null, StatisticType.WORK_GROUP_WEEKLY_STAT);
 		assertEquals(3, result.size());
 		result = statRepository.findBetweenTwoDates(null, null, null, null, null, StatisticType.DOMAIN_DAILY_STAT);
 		assertEquals(4, result.size());

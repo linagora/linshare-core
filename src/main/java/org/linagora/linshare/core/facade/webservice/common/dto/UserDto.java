@@ -88,6 +88,7 @@ public class UserDto extends AccountDto {
 	private List<UserDto> restrictedContacts = Lists.newArrayList();
 
 	@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+	@ApiModelProperty(value = "user's quota uuid, only available in v2.")
 	private String quotaUuid;
 
 	public UserDto() {

@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2016. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -37,13 +37,12 @@ package org.linagora.linshare.core.batches.impl;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Map;
 
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.BatchHistoryBusinessService;
+import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DomainDailyStatBusinessService;
 import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
-import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.domain.constants.BatchType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -57,30 +56,32 @@ import org.linagora.linshare.core.job.quartz.DomainBatchResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 
-import com.google.common.collect.Maps;
-
 public class StatisticDailyDomainBatchImpl extends GenericBatchImpl {
 
 	private final AccountQuotaBusinessService accountQuotaBusinessService;
+
 	private final AbstractDomainService abstractDomainService;
-	private final ContainerQuotaBusinessService ensembleQuotaBusinessService;
+
+	private final ContainerQuotaBusinessService containerQuotaBusinessService;
+
 	private final DomainQuotaBusinessService domainQuotaBusinessService;
+
 	private final DomainDailyStatBusinessService domainDailyStatBusinessService;
+
 	private final BatchHistoryBusinessService batchHistoryBusinessService;
 
-	private static final String BATCH_HISTORY_UUID = "BatchHistoryUuid";
-
-	public StatisticDailyDomainBatchImpl(AccountRepository<Account> accountRepository,
+	public StatisticDailyDomainBatchImpl(
+			final AccountRepository<Account> accountRepository,
 			final AccountQuotaBusinessService accountQuotaBusinessService,
 			final AbstractDomainService abstractDomainService,
-			final ContainerQuotaBusinessService ensembleQuotaBusinessService,
+			final ContainerQuotaBusinessService containerQuotaBusinessService,
 			final DomainQuotaBusinessService domainQuotaBusinessService,
 			final DomainDailyStatBusinessService domainDailyStatBusinessService,
 			final BatchHistoryBusinessService batchHistoryBusinessService) {
 		super(accountRepository);
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
 		this.abstractDomainService = abstractDomainService;
-		this.ensembleQuotaBusinessService = ensembleQuotaBusinessService;
+		this.containerQuotaBusinessService = containerQuotaBusinessService;
 		this.domainQuotaBusinessService = domainQuotaBusinessService;
 		this.domainDailyStatBusinessService = domainDailyStatBusinessService;
 		this.batchHistoryBusinessService = batchHistoryBusinessService;
@@ -89,13 +90,9 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchImpl {
 	@Override
 	public List<String> getAll() {
 		logger.info("DailyDomainBatchImpl job starting ...");
-		Map<String, List<String>> res = Maps.newHashMap();
+		// TODO is it between yesterday and now ? or yseterday 00h00 and today 00h00 ?
 		List<String> domains = accountQuotaBusinessService.findDomainByBatchModificationDate(yesterday(), new Date());
 		logger.info(domains.size() + " domain(s) have been found in accountQuota table and modified by batch today");
-//		BatchHistory batchHistory = new BatchHistory(BatchType.DAILY_DOMAIN_BATCH);
-//		batchHistory = batchHistoryBusinessService.create(batchHistory);
-//		res.put(INPUT_LIST, domains);
-//		res.put(BATCH_HISTORY_UUID, Lists.newArrayList(batchHistory.getUuid()));
 		return domains;
 	}
 
@@ -117,22 +114,22 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchImpl {
 			throw exception;
 		}
 		try {
-			ContainerQuota userEnsembleQuota = ensembleQuotaBusinessService.find(resource, ContainerQuotaType.USER);
-			userEnsembleQuota = ensembleQuotaBusinessService.updateByBatch(userEnsembleQuota, today);
+			ContainerQuota userContainerQuota = containerQuotaBusinessService.find(resource, ContainerQuotaType.USER);
+			userContainerQuota = containerQuotaBusinessService.updateByBatch(userContainerQuota, today);
 		} catch (BusinessException businessException) {
-			logError(total, position, "Error while trying to update userEnsembleQuota");
-			logger.info("Error occured while updating an user ensemble quota for domain", businessException);
+			logError(total, position, "Error while trying to update userContainerQuota");
+			logger.info("Error occured while updating an user container quota for domain", businessException);
 			BatchBusinessException exception = new BatchBusinessException(context,
 					"Error while trying to update a userEnsebleQuota");
 			exception.setBusinessException(businessException);
 			throw exception;
 		}
 		try {
-			ContainerQuota threadEnsembleQuota = ensembleQuotaBusinessService.find(resource, ContainerQuotaType.WORK_GROUP);
-			threadEnsembleQuota = ensembleQuotaBusinessService.updateByBatch(threadEnsembleQuota, today);
+			ContainerQuota threadContainerQuota = containerQuotaBusinessService.find(resource, ContainerQuotaType.WORK_GROUP);
+			threadContainerQuota = containerQuotaBusinessService.updateByBatch(threadContainerQuota, today);
 		} catch (BusinessException businessException) {
-			logError(total, position, "Error while trying to update threadEnsembleQuota");
-			logger.info("Error occured while updating a thread ensemble quota for domain", businessException);
+			logError(total, position, "Error while trying to update threadContainerQuota");
+			logger.info("Error occured while updating a thread container quota for domain", businessException);
 			BatchBusinessException exception = new BatchBusinessException(context,
 					"Error while trying to update a threadEnsebleQuota");
 			exception.setBusinessException(businessException);
@@ -165,7 +162,7 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchImpl {
 	public void notify(Context context, long total, long position) {
 		DomainBatchResultContext domainContext = (DomainBatchResultContext) context;
 		AbstractDomain domain = domainContext.getResource();
-		logInfo(total, position, "DailyDomainStatistics, EnsembleQuota and DomainQuota of the domain : "
+		logInfo(total, position, "DailyDomainStatistics, ContainerQuota and DomainQuota of the domain : "
 				+ domain.getUuid() + " have been successfully created");
 	}
 
@@ -174,32 +171,24 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchImpl {
 		DomainBatchResultContext context = (DomainBatchResultContext) exception.getContext();
 		AbstractDomain domain = context.getResource();
 		logError(total, position,
-				"creating DailyDomainStatistic, EnsembleQuota and DomainQuota have failed for the domain : "
+				"creating DailyDomainStatistic, ContainerQuota and DomainQuota have failed for the domain : "
 						+ domain.getUuid());
-		logger.error("Error occured while creating DailyDomainStatistics, EnsembleQuota and DomainQuota for a domain "
+		logger.error("Error occured while creating DailyDomainStatistics, ContainerQuota and DomainQuota for a domain "
 				+ domain.getUuid() + ". BatchBusinessException ", exception);
 	}
 
 	@Override
 	public void terminate(List<String> all, long errors, long unhandled_errors, long total, long processed) {
 		long success = total - errors - unhandled_errors;
-		logger.info(success + " DailyDomainStatistic, EnsembleQuota and DomainQuota for domain(s) have bean created.");
+		logger.info(success + " DailyDomainStatistic, ContainerQuota and DomainQuota for domain(s) have bean created.");
 		if (errors > 0) {
 			logger.info(errors
-					+ "  DailyDomainStatistic, EnsembleQuota and DomainQuota for domain(s) failed to be created");
+					+ "  DailyDomainStatistic, ContainerQuota and DomainQuota for domain(s) failed to be created");
 		}
 		if (unhandled_errors > 0) {
 			logger.error(unhandled_errors
-					+ "  DailyDomainStatistic, EnsembleQuota and DomainQuota for domain(s) failed to be created (unhandled error.)");
+					+ "  DailyDomainStatistic, ContainerQuota and DomainQuota for domain(s) failed to be created (unhandled error.)");
 		}
-
-//		BatchHistory batchHistory = batchHistoryBusinessService.findByUuid(context.get(BATCH_HISTORY_UUID).get(0));
-//		if (batchHistory != null) {
-//			batchHistory.setStatus("terminated");
-//			batchHistory.setErrors(errors);
-//			batchHistory.setUnhandledErrors(unhandled_errors);
-//			batchHistory = batchHistoryBusinessService.update(batchHistory);
-//		}
 		logger.info("DailyDomainBatchImpl job terminated");
 	}
 

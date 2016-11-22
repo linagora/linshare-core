@@ -45,11 +45,11 @@ public class ThreadDailyStat extends AccountStatistic {
 			Long deleteOperationCount, Long addOperationCount, Long addOperationSum, Long deleteOperationSum,
 			Long diffOperationSum, Long actualOperationSum) {
 		super(thread, domain, parentDomain, operationCount, deleteOperationCount, addOperationCount, addOperationSum,
-				deleteOperationSum, diffOperationSum, actualOperationSum, StatisticType.THREAD_DAILY_STAT);
+				deleteOperationSum, diffOperationSum, actualOperationSum, StatisticType.WORK_GROUP_DAILY_STAT);
 	}
 
 	@Override
 	public StatisticType getStatisticType() {
-		return StatisticType.THREAD_DAILY_STAT;
+		return StatisticType.WORK_GROUP_DAILY_STAT;
 	}
 }

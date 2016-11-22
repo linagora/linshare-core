@@ -118,6 +118,8 @@ public enum TechnicalAccountPermissionType {
 	UPLOAD_REQUEST_TEMPLATE_LIST,
 
 	AUDIT_LIST,
+
+	// TODO FIXME Quota & Statistics
 	QUOTA_GET,
 	QUOTA_LIST,
 	QUOTA_CREATE,

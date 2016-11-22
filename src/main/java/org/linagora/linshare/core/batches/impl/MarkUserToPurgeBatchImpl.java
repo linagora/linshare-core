@@ -35,7 +35,6 @@ package org.linagora.linshare.core.batches.impl;
 
 import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
@@ -46,8 +45,6 @@ import org.linagora.linshare.core.job.quartz.AccountBatchResultContext;
 import org.linagora.linshare.core.job.quartz.Context;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.UserService;
-
-import com.google.common.collect.Maps;
 
 public class MarkUserToPurgeBatchImpl extends GenericBatchImpl {
 
@@ -71,8 +68,6 @@ public class MarkUserToPurgeBatchImpl extends GenericBatchImpl {
 		List<String> allUsers = service.findAllDeletedAccountsToPurge(expiryLimit.getTime());
 		logger.info(allUsers.size()
 				+ " destroyed user(s) have been found. If any, they will be moved into users to purge");
-//		Map<String, List<String>> res = Maps.newHashMap();
-//		res.put(INPUT_LIST, allUsers);
 		return allUsers;
 	}
 

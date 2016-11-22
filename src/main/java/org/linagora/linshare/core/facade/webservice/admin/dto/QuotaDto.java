@@ -40,11 +40,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.entities.Quota;
 import org.linagora.linshare.core.facade.webservice.common.dto.DomainLightDto;
 
-import com.google.common.base.Function;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-@XmlRootElement
+@XmlRootElement(name="Quota")
 @ApiModel
 public class QuotaDto {
 

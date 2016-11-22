@@ -110,7 +110,8 @@
 			<ref bean="userUploadRequestTemplateRestService" />
 			<ref bean="userUserPreferenceRestService" />
 			<ref bean="userAuditLogEntryUserRestService" />
-			<ref bean="userv2StatisticRestService" />
+<!-- 			Disable because it is fully tested. -->
+<!-- 			<ref bean="userv2StatisticRestService" /> -->
 			<ref bean="userv2AccountQuotaRestService" />
 <!--
 			<ref bean="pluginCompatibilityRestServiceV2" />

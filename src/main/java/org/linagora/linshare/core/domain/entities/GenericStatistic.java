@@ -195,4 +195,13 @@ public abstract class GenericStatistic {
 	public void setActiveDate(Date activeDate) {
 		this.activeDate = activeDate;
 	}
+
+	@Override
+	public String toString() {
+		return "GenericStatistic [id=" + id + ", account=" + account + ", domain=" + domain + ", actualOperationSum="
+				+ actualOperationSum + ", creationDate=" + creationDate + ", operationCount=" + operationCount
+				+ ", deleteOperationCount=" + deleteOperationCount + ", createOperationCount=" + createOperationCount
+				+ ", createOperationSum=" + createOperationSum + ", deleteOperationSum=" + deleteOperationSum
+				+ ", diffOperationSum=" + diffOperationSum + ", statisticType=" + statisticType + "]";
+	}
 }

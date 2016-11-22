@@ -45,12 +45,12 @@ public class ThreadMonthlyStat extends AccountStatistic {
 			Long deleteOperationCount, Long addOperationCount, Long addOperationSum, Long deleteOperationSum,
 			Long diffOperationSum, Long actualOperationSum) {
 		super(thread, domain, parentDomain, operationCount, deleteOperationCount, addOperationCount, addOperationSum,
-				deleteOperationSum, diffOperationSum, actualOperationSum, StatisticType.THREAD_MONTHLY_STAT);
+				deleteOperationSum, diffOperationSum, actualOperationSum, StatisticType.WORK_GROUP_MONTHLY_STAT);
 	}
 
 	@Override
 	public StatisticType getStatisticType() {
-		return StatisticType.THREAD_MONTHLY_STAT;
+		return StatisticType.WORK_GROUP_MONTHLY_STAT;
 	}
 
 }

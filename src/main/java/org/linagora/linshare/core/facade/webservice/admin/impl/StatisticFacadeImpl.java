@@ -70,6 +70,7 @@ public class StatisticFacadeImpl extends AdminGenericFacadeImpl implements Stati
 			StatisticType statisticType) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		AbstractDomain domain = null;
+		// TODO FIXME Quota & Statistics
 		Account owner = null;
 		if(domainUuid != null){
 			domain = abstractDomainService.findById(domainUuid);

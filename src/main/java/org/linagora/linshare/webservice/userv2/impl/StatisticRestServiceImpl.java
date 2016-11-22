@@ -58,7 +58,7 @@ import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/statistic")
-@Api(value = "/rest/user/statistic", description = "Statistic service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
+@Api(value = "/rest/user/v2/statistic", description = "Statistic service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
 public class StatisticRestServiceImpl extends WebserviceBase implements StatisticRestService {
 
 	private static final String STATISTIC_TYPE = "statisticType";

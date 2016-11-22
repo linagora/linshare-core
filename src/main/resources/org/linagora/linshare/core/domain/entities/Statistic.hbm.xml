@@ -41,11 +41,11 @@
 		</subclass>
 		<subclass name="org.linagora.linshare.core.domain.entities.DomainMonthlyStat" discriminator-value="DOMAIN_MONTHLY_STAT" lazy="true">
 		</subclass>
-		<subclass name="org.linagora.linshare.core.domain.entities.ThreadDailyStat" discriminator-value="THREAD_DAILY_STAT" lazy="true">
+		<subclass name="org.linagora.linshare.core.domain.entities.ThreadDailyStat" discriminator-value="WORK_GROUP_DAILY_STAT" lazy="true">
 		</subclass>
-		<subclass name="org.linagora.linshare.core.domain.entities.ThreadWeeklyStat" discriminator-value="THREAD_WEEKLY_STAT" lazy="true">
+		<subclass name="org.linagora.linshare.core.domain.entities.ThreadWeeklyStat" discriminator-value="WORK_GROUP_WEEKLY_STAT" lazy="true">
 		</subclass>
-		<subclass name="org.linagora.linshare.core.domain.entities.ThreadMonthlyStat" discriminator-value="THREAD_MONTHLY_STAT" lazy="true">
+		<subclass name="org.linagora.linshare.core.domain.entities.ThreadMonthlyStat" discriminator-value="WORK_GROUP_MONTHLY_STAT" lazy="true">
 		</subclass>
 	</class>
 </hibernate-mapping>

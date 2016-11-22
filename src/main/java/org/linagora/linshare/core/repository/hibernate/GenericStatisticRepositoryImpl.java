@@ -50,6 +50,7 @@ import org.linagora.linshare.core.repository.GenericStatisticRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
+// TODO FIXME Quota & Statistics
 public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic> extends AbstractRepositoryImpl<T>
 		implements GenericStatisticRepository<T> {
 
@@ -59,6 +60,7 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 
 	@Override
 	public void deleteBeforeDate(Date date) {
+		// TODO FIXME Quota & Statistics : Very ugly.
 		List<T> list = findBetweenTwoDates(null, null, null, null, date, null);
 		for (T entity : list) {
 			delete(entity);

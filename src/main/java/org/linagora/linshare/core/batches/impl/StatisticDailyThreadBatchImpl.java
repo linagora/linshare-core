@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2016. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -37,7 +37,6 @@ package org.linagora.linshare.core.batches.impl;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Map;
 
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.BatchHistoryBusinessService;
@@ -46,7 +45,6 @@ import org.linagora.linshare.core.business.service.ThreadDailyStatBusinessServic
 import org.linagora.linshare.core.domain.constants.BatchType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.BatchHistory;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -55,24 +53,25 @@ import org.linagora.linshare.core.job.quartz.Context;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.ThreadService;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 public class StatisticDailyThreadBatchImpl extends GenericBatchImpl {
 
 	private final ThreadService threadService;
+
 	private final OperationHistoryBusinessService operationHistoryBusinessService;
+
 	private final AccountQuotaBusinessService accountQuotaBusinessService;
+
 	private final ThreadDailyStatBusinessService threadDailyStatBusinessService;
+
 	private final BatchHistoryBusinessService batchHistoryBusinessService;
 
-	private static final String BATCH_HISTORY_UUID = "BatchHistoryUuid";
-
-	public StatisticDailyThreadBatchImpl(final ThreadService threadService,
+	public StatisticDailyThreadBatchImpl(
+			final ThreadService threadService,
 			final OperationHistoryBusinessService operationHistoryBusinessService,
 			final AccountQuotaBusinessService accountQuotaBusinessService,
 			final ThreadDailyStatBusinessService threadDailyStatBusinessService,
-			final AccountRepository<Account> accountRepository, final BatchHistoryBusinessService batchHistoryBusinessService) {
+			final AccountRepository<Account> accountRepository,
+			final BatchHistoryBusinessService batchHistoryBusinessService) {
 		super(accountRepository);
 		this.threadService = threadService;
 		this.operationHistoryBusinessService = operationHistoryBusinessService;
@@ -84,14 +83,8 @@ public class StatisticDailyThreadBatchImpl extends GenericBatchImpl {
 	@Override
 	public List<String> getAll() {
 		logger.info("DailyThreadBatchImpl job starting ...");
-		Map<String, List<String>> res = Maps.newHashMap();
 		List<String> threads = operationHistoryBusinessService.findUuidAccountBeforeDate(yesterday(),
 				ContainerQuotaType.WORK_GROUP);
-//		BatchHistory batchHistory = new BatchHistory(BatchType.DAILY_THREAD_BATCH);
-//		batchHistory = batchHistoryBusinessService.create(batchHistory);
-//		res.put(INPUT_LIST, threads);
-//		res.put(BATCH_HISTORY_UUID, Lists.newArrayList(batchHistory.getUuid()));
-//		logger.info(threads.size() + "thread(s) have been found in OperationHistory table.");
 		return threads;
 	}
 
@@ -166,14 +159,6 @@ public class StatisticDailyThreadBatchImpl extends GenericBatchImpl {
 			logger.error(unhandled_errors
 					+ " DailyThreadStatistic and ThreadQuota for thread(s) failed to be created (unhandled error.)");
 		}
-
-//		BatchHistory batchHistory = batchHistoryBusinessService.findByUuid(context.get(BATCH_HISTORY_UUID).get(0));
-//		if (batchHistory != null) {
-//			batchHistory.setStatus("terminated");
-//			batchHistory.setErrors(errors);
-//			batchHistory.setUnhandledErrors(unhandled_errors);
-//			batchHistory = batchHistoryBusinessService.update(batchHistory);
-//		}
 		logger.info("DailyThreadBatchImpl job terminated");
 	}
 

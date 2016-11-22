@@ -45,12 +45,12 @@ public class ThreadWeeklyStat extends AccountStatistic {
 			Long deleteOperationCount, Long addOperationCount, Long addOperationSum, Long deleteOperationSum,
 			Long diffOperationSum, Long actualOperationSum) {
 		super(thread, domain, parentDomain, operationCount, deleteOperationCount, addOperationCount, addOperationSum,
-				deleteOperationSum, diffOperationSum, actualOperationSum, StatisticType.THREAD_WEEKLY_STAT);
+				deleteOperationSum, diffOperationSum, actualOperationSum, StatisticType.WORK_GROUP_WEEKLY_STAT);
 	}
 
 	@Override
 	public StatisticType getStatisticType() {
-		return StatisticType.THREAD_WEEKLY_STAT;
+		return StatisticType.WORK_GROUP_WEEKLY_STAT;
 	}
 
 }

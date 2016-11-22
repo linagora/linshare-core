@@ -46,8 +46,8 @@ import com.google.common.collect.Lists;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-@XmlRootElement
-@ApiModel
+@XmlRootElement(name="DomainQuota")
+@ApiModel(value = "DomainQuota", description = "A domain quota instance for a domain.")
 public class DomainQuotaDto extends QuotaDto {
 
 	@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)

@@ -59,13 +59,11 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-service.xml",
 		"classpath:springContext-business-service.xml",
-		"classpath:springContext-facade.xml",
 		"classpath:springContext-rac.xml",
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
-		"classpath:springContext-start-embedded-ldap.xml",
+		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-test.xml",
-		"classpath:springContext-quota-manager.xml", "classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-ldap.xml" })
 public class QuotaServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
 

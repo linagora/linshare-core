@@ -55,7 +55,9 @@ public class AccountQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Accou
 
 	@Override
 	public AccountQuota find(Account account) {
-		return super.find(null, account, null);
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("account", account));
+		return DataAccessUtils.singleResult(findByCriteria(criteria));
 	}
 
 	@Override
@@ -73,12 +75,8 @@ public class AccountQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Accou
 	@Override
 	public Long sumOfCurrentValue(ContainerQuota containerQuota, Date modificationDateByBatch) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		if (containerQuota != null) {
-			criteria.add(Restrictions.eq("containerQuota", containerQuota));
-		}
-		if (modificationDateByBatch != null) {
-			criteria.add(Restrictions.le("batchModificationDate", modificationDateByBatch));
-		}
+		criteria.add(Restrictions.eq("containerQuota", containerQuota));
+		criteria.add(Restrictions.le("batchModificationDate", modificationDateByBatch));
 		criteria.setProjection(Projections.sum("currentValue"));
 		List<AccountQuota> list = findByCriteria(criteria);
 		if (list.size() > 0 && list.get(0) != null) {

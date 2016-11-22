@@ -43,9 +43,6 @@ import org.linagora.linshare.core.job.quartz.Context;
 
 public interface GenericBatch {
 
-	static String INPUT_LIST = "INPUT_LIST";
-	static String FAIL_EXCEPTION = "FAIL_EXCEPTION";
-
 	List<String> getAll();
 
 	Context execute(String identifier, long total, long position)

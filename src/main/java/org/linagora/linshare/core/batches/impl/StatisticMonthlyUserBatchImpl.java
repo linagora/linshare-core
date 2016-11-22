@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2016. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -38,14 +38,12 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.linagora.linshare.core.business.service.BatchHistoryBusinessService;
 import org.linagora.linshare.core.business.service.UserMonthlyStatBusinessService;
 import org.linagora.linshare.core.business.service.UserWeeklyStatBusinessService;
 import org.linagora.linshare.core.domain.constants.BatchType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.BatchHistory;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -54,21 +52,22 @@ import org.linagora.linshare.core.job.quartz.Context;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.UserService;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 public class StatisticMonthlyUserBatchImpl extends GenericBatchImpl {
 
 	private final UserWeeklyStatBusinessService userWeeklyStatBusinessService;
+
 	private final UserMonthlyStatBusinessService userMonthlyStatBusinessService;
+
 	private final UserService userService;
+
 	private final BatchHistoryBusinessService batchHistoryBusinessService;
 
-	private static final String BATCH_HISTORY_UUID = "BatchHistoryUuid";
-
-	public StatisticMonthlyUserBatchImpl(final UserWeeklyStatBusinessService userWeeklyStatBusinessService,
-			final UserMonthlyStatBusinessService userMonthlyStatBusinessService, final UserService userService,
-			AccountRepository<Account> accountRepository, BatchHistoryBusinessService batchHistoryBusinessService) {
+	public StatisticMonthlyUserBatchImpl(
+			final UserWeeklyStatBusinessService userWeeklyStatBusinessService,
+			final UserMonthlyStatBusinessService userMonthlyStatBusinessService,
+			final UserService userService,
+			final AccountRepository<Account> accountRepository,
+			final BatchHistoryBusinessService batchHistoryBusinessService) {
 		super(accountRepository);
 		this.userMonthlyStatBusinessService = userMonthlyStatBusinessService;
 		this.userWeeklyStatBusinessService = userWeeklyStatBusinessService;
@@ -82,11 +81,6 @@ public class StatisticMonthlyUserBatchImpl extends GenericBatchImpl {
 		List<String> users = userWeeklyStatBusinessService.findUuidAccountBetweenTwoDates(getFirstDayOfLastMonth(),
 				getLastDayOfLastMonth());
 		logger.info(users.size() + " user(s) have been found in UserWeeklyStat table.");
-//		BatchHistory batchHistory = new BatchHistory(BatchType.MONTHLY_USER_BATCH);
-//		batchHistory = batchHistoryBusinessService.create(batchHistory);
-//		Map<String, List<String>> res = Maps.newHashMap();
-//		res.put(INPUT_LIST, users);
-//		res.put(BATCH_HISTORY_UUID, Lists.newArrayList(batchHistory.getUuid()));
 		return users;
 	}
 
@@ -148,13 +142,6 @@ public class StatisticMonthlyUserBatchImpl extends GenericBatchImpl {
 		if (unhandled_errors > 0) {
 			logger.error(unhandled_errors + " MonthlyUserStatistic failed to be created (unhandled error.)");
 		}
-//		BatchHistory batchHistory = batchHistoryBusinessService.findByUuid(context.get(BATCH_HISTORY_UUID).get(0));
-//		if (batchHistory != null) {
-//			batchHistory.setStatus("terminated");
-//			batchHistory.setErrors(errors);
-//			batchHistory.setUnhandledErrors(unhandled_errors);
-//			batchHistory = batchHistoryBusinessService.update(batchHistory);
-//		}
 		logger.info("MonthlyUserBatchImpl job terminated");
 	}
 

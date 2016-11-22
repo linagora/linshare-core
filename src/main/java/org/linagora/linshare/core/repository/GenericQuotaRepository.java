@@ -35,9 +35,7 @@ package org.linagora.linshare.core.repository;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Quota;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -45,8 +43,6 @@ public interface GenericQuotaRepository<T extends Quota>
 		extends AbstractRepository<T> {
 
 	T find(String uuid);
-
-	T find(AbstractDomain domain, Account account, ContainerQuotaType ensembleType);
 
 	List<T> findAll(AbstractDomain domain);
 
