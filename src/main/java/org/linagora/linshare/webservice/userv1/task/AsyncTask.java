@@ -32,67 +32,70 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.facade.webservice.delegation.dto;
+package org.linagora.linshare.webservice.userv1.task;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
-import org.linagora.linshare.webservice.userv1.task.context.DocumentTaskContext;
+import org.linagora.linshare.core.facade.webservice.user.GenericAsyncFacade;
+import org.linagora.linshare.webservice.userv1.task.context.TaskContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+public abstract class AsyncTask<R extends TaskContext> implements Runnable {
 
-/*
- * The objects document DTO and delegation document DTO has the same outside name.
- * JaxB does not allow this.
- * That's why we have to set the name space to Delegation.
- */
-@XmlType(namespace = "Delegation")
-@XmlRootElement(name = "Document")
-@ApiModel(value = "Document", description = "A Document")
-public class DocumentDto extends
-		org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto {
+	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	@ApiModelProperty(value = "Owner")
-	protected GenericUserDto owner;
+	protected final GenericAsyncFacade asyncFacade;
 
-	public DocumentDto() {
+	protected final String uuid;
+
+	protected R task;
+
+	public AsyncTask(GenericAsyncFacade asyncFacade, R task,
+			AsyncTaskDto asyncTaskDto) {
 		super();
+		this.asyncFacade = asyncFacade;
+		this.uuid = asyncTaskDto.getUuid();
+		this.task = task;
 	}
 
-	public DocumentDto(AsyncTaskDto asyncTask,
-			DocumentTaskContext documentTaskContext) {
-		super(asyncTask, documentTaskContext);
+	public String getUuid() {
+		return uuid;
 	}
 
-	public DocumentDto(DocumentEntry de) {
-		super(de);
-		this.owner = new GenericUserDto((User) de.getEntryOwner());
-	}
-
-	public GenericUserDto getOwner() {
-		return owner;
-	}
-
-	public void setOwner(GenericUserDto owner) {
-		this.owner = owner;
-	}
-
-	/*
-	 * Transformers
+	/**
+	 * process the task and return the uuid of the created resource.
+	 * @param task : async tack to run.
+	 * @return uuid of created resource.
 	 */
-	public static Function<DocumentEntry, DocumentDto> toDelegationVo() {
-		return new Function<DocumentEntry, DocumentDto>() {
-			@Override
-			public DocumentDto apply(DocumentEntry arg0) {
-				return new DocumentDto(arg0);
+	protected abstract String runMyTask(R task);
+
+	@Override
+	public void run() {
+		logger.info("Begin processing async task : " + getUuid());
+		asyncFacade.processing(task, getUuid());
+		try {
+			String resourceUuid = runMyTask(task);
+			asyncFacade.success(task, getUuid(), resourceUuid);
+			logger.info("Async task '" + getUuid()
+					+ "' processed with final status : SUCCESS");
+		} catch (BusinessException e) {
+			logger.error(e.getMessage());
+			logger.debug("BusinessException : ", e);
+			asyncFacade.fail(task, getUuid(), e.getErrorCode().getCode(), e.getErrorCode().name(), e.getMessage());
+			logger.error("Async task '" + getUuid()
+					+ "' processed with final status : FAILED");
+		} catch (Exception e) {
+			String message = e.getMessage();
+			if (message == null) {
+				message = e.toString();
 			}
-		};
+			logger.error(message);
+			logger.debug("Exception : ", e);
+			asyncFacade.fail(task, getUuid(),  message);
+			logger.error("Async task '" + getUuid()
+					+ "' processed with final status : FAILED");
+		}
 	}
 
 }

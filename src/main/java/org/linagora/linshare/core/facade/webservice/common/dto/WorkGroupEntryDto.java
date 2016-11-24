@@ -41,7 +41,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.mongo.entities.WorkGroupFolder;
-import org.linagora.linshare.webservice.user.task.context.ThreadEntryTaskContext;
+import org.linagora.linshare.webservice.userv1.task.context.ThreadEntryTaskContext;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;

@@ -44,7 +44,7 @@ import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AsyncTaskService;
 import org.linagora.linshare.core.service.DocumentEntryService;
-import org.linagora.linshare.webservice.user.task.context.DocumentTaskContext;
+import org.linagora.linshare.webservice.userv1.task.context.DocumentTaskContext;
 
 public class DocumentAsyncFacadeImpl extends
 		GenericAsyncFacadeImpl implements DocumentAsyncFacade {

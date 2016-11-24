@@ -32,67 +32,77 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.facade.webservice.delegation.dto;
+package org.linagora.linshare.webservice.userv1.task.context;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import java.io.File;
 
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
-import org.linagora.linshare.webservice.userv1.task.context.DocumentTaskContext;
+import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
 
-import com.google.common.base.Function;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+public class DocumentTaskContext extends TaskContext {
 
-/*
- * The objects document DTO and delegation document DTO has the same outside name.
- * JaxB does not allow this.
- * That's why we have to set the name space to Delegation.
- */
-@XmlType(namespace = "Delegation")
-@XmlRootElement(name = "Document")
-@ApiModel(value = "Document", description = "A Document")
-public class DocumentDto extends
-		org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto {
+	protected File file;
 
-	@ApiModelProperty(value = "Owner")
-	protected GenericUserDto owner;
+	protected final String fileName;
 
-	public DocumentDto() {
-		super();
-	}
+	protected final String metaData;
 
-	public DocumentDto(AsyncTaskDto asyncTask,
-			DocumentTaskContext documentTaskContext) {
-		super(asyncTask, documentTaskContext);
-	}
+	protected final String description;
 
-	public DocumentDto(DocumentEntry de) {
-		super(de);
-		this.owner = new GenericUserDto((User) de.getEntryOwner());
-	}
-
-	public GenericUserDto getOwner() {
-		return owner;
-	}
-
-	public void setOwner(GenericUserDto owner) {
-		this.owner = owner;
-	}
-
-	/*
-	 * Transformers
+	/**
+	 * uuid of the updated document entry.
 	 */
-	public static Function<DocumentEntry, DocumentDto> toDelegationVo() {
-		return new Function<DocumentEntry, DocumentDto>() {
-			@Override
-			public DocumentDto apply(DocumentEntry arg0) {
-				return new DocumentDto(arg0);
-			}
-		};
+	protected String docEntryUuid;
+
+	public DocumentTaskContext(AccountDto actorDto, String ownerUuid,
+			File file, String fileName, String metaData, String description) {
+		super(actorDto, ownerUuid);
+		this.file = file;
+		this.fileName = fileName;
+		this.metaData = metaData;
+		this.description = description;
+	}
+
+	public DocumentTaskContext(AccountDto actorDto, String ownerUuid,
+			File file, String fileName) {
+		super(actorDto, ownerUuid);
+		this.file = file;
+		this.fileName = fileName;
+		this.metaData = null;
+		this.description = null;
+	}
+
+	public File getFile() {
+		return file;
+	}
+
+	public void setFile(File file) {
+		this.file = file;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public String getMetaData() {
+		return metaData;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public String getDocEntryUuid() {
+		return docEntryUuid;
+	}
+
+	public void setDocEntryUuid(String docEntryUuid) {
+		this.docEntryUuid = docEntryUuid;
+	}
+
+	@Override
+	public String toString() {
+		return "DocumentTaskContext [fileName=" + fileName + ", docEntryUuid="
+				+ docEntryUuid + ", ownerUuid=" + ownerUuid + "]";
 	}
 
 }

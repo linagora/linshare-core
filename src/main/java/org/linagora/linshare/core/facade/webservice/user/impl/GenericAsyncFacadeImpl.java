@@ -45,7 +45,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
 import org.linagora.linshare.core.facade.webservice.user.GenericAsyncFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AsyncTaskService;
-import org.linagora.linshare.webservice.user.task.context.TaskContext;
+import org.linagora.linshare.webservice.userv1.task.context.TaskContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

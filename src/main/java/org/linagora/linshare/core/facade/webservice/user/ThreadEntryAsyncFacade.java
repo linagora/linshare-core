@@ -35,7 +35,7 @@
 package org.linagora.linshare.core.facade.webservice.user;
 
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
-import org.linagora.linshare.webservice.user.task.context.ThreadEntryTaskContext;
+import org.linagora.linshare.webservice.userv1.task.context.ThreadEntryTaskContext;
 
 public interface ThreadEntryAsyncFacade extends GenericAsyncFacade {
 

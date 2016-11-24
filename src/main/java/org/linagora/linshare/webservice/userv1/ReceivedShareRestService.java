@@ -32,67 +32,31 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.facade.webservice.delegation.dto;
+package org.linagora.linshare.webservice.userv1;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
-import org.linagora.linshare.webservice.userv1.task.context.DocumentTaskContext;
+import javax.ws.rs.core.Response;
 
-import com.google.common.base.Function;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 
-/*
- * The objects document DTO and delegation document DTO has the same outside name.
- * JaxB does not allow this.
- * That's why we have to set the name space to Delegation.
- */
-@XmlType(namespace = "Delegation")
-@XmlRootElement(name = "Document")
-@ApiModel(value = "Document", description = "A Document")
-public class DocumentDto extends
-		org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto {
+public interface ReceivedShareRestService {
 
-	@ApiModelProperty(value = "Owner")
-	protected GenericUserDto owner;
+	List<ShareDto> getReceivedShares() throws BusinessException;
 
-	public DocumentDto() {
-		super();
-	}
+	ShareDto getReceivedShare(String receivedShareUuid) throws BusinessException;
 
-	public DocumentDto(AsyncTaskDto asyncTask,
-			DocumentTaskContext documentTaskContext) {
-		super(asyncTask, documentTaskContext);
-	}
+	void head(String receivedShareUuid) throws BusinessException;
 
-	public DocumentDto(DocumentEntry de) {
-		super(de);
-		this.owner = new GenericUserDto((User) de.getEntryOwner());
-	}
+	Response thumbnail(String receivedShareUuid, boolean base64) throws BusinessException;
 
-	public GenericUserDto getOwner() {
-		return owner;
-	}
+	ShareDto delete(String receivedShareUuid) throws BusinessException;
 
-	public void setOwner(GenericUserDto owner) {
-		this.owner = owner;
-	}
+	ShareDto delete(ShareDto shareDto) throws BusinessException;
 
-	/*
-	 * Transformers
-	 */
-	public static Function<DocumentEntry, DocumentDto> toDelegationVo() {
-		return new Function<DocumentEntry, DocumentDto>() {
-			@Override
-			public DocumentDto apply(DocumentEntry arg0) {
-				return new DocumentDto(arg0);
-			}
-		};
-	}
+	DocumentDto copy(String shareEntryUuid) throws BusinessException;
 
+	Response download(String uuid) throws BusinessException;
 }

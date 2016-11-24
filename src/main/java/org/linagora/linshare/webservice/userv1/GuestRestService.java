@@ -32,67 +32,29 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.facade.webservice.delegation.dto;
+package org.linagora.linshare.webservice.userv1;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
-import org.linagora.linshare.webservice.userv1.task.context.DocumentTaskContext;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 
-import com.google.common.base.Function;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+public interface GuestRestService {
 
-/*
- * The objects document DTO and delegation document DTO has the same outside name.
- * JaxB does not allow this.
- * That's why we have to set the name space to Delegation.
- */
-@XmlType(namespace = "Delegation")
-@XmlRootElement(name = "Document")
-@ApiModel(value = "Document", description = "A Document")
-public class DocumentDto extends
-		org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto {
+	GuestDto find(String uuid) throws BusinessException;
 
-	@ApiModelProperty(value = "Owner")
-	protected GenericUserDto owner;
+	void head(String uuid) throws BusinessException;
 
-	public DocumentDto() {
-		super();
-	}
+	List<GuestDto> findAll(boolean all, String pattern) throws BusinessException;
 
-	public DocumentDto(AsyncTaskDto asyncTask,
-			DocumentTaskContext documentTaskContext) {
-		super(asyncTask, documentTaskContext);
-	}
+	GuestDto create(GuestDto guest) throws BusinessException;
 
-	public DocumentDto(DocumentEntry de) {
-		super(de);
-		this.owner = new GenericUserDto((User) de.getEntryOwner());
-	}
+	GuestDto update(GuestDto guest) throws BusinessException;
 
-	public GenericUserDto getOwner() {
-		return owner;
-	}
+	GuestDto delete(GuestDto guest) throws BusinessException;
 
-	public void setOwner(GenericUserDto owner) {
-		this.owner = owner;
-	}
+	GuestDto delete(String uuid) throws BusinessException;
 
-	/*
-	 * Transformers
-	 */
-	public static Function<DocumentEntry, DocumentDto> toDelegationVo() {
-		return new Function<DocumentEntry, DocumentDto>() {
-			@Override
-			public DocumentDto apply(DocumentEntry arg0) {
-				return new DocumentDto(arg0);
-			}
-		};
-	}
-
+	List<GuestDto> search(UserSearchDto userSearchDto) throws BusinessException;
 }

@@ -32,67 +32,57 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.facade.webservice.delegation.dto;
+package org.linagora.linshare.webservice.userv1.impl;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import java.util.List;
+import java.util.Set;
 
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
-import org.linagora.linshare.webservice.userv1.task.context.DocumentTaskContext;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
-import com.google.common.base.Function;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
+import org.linagora.linshare.core.facade.webservice.user.AutoCompleteFacade;
+import org.linagora.linshare.core.facade.webservice.user.UserFacade;
+import org.linagora.linshare.webservice.userv1.UserRestService;
 
-/*
- * The objects document DTO and delegation document DTO has the same outside name.
- * JaxB does not allow this.
- * That's why we have to set the name space to Delegation.
- */
-@XmlType(namespace = "Delegation")
-@XmlRootElement(name = "Document")
-@ApiModel(value = "Document", description = "A Document")
-public class DocumentDto extends
-		org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto {
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 
-	@ApiModelProperty(value = "Owner")
-	protected GenericUserDto owner;
+@Path("/users")
+@Api(value = "/rest/user/users")
+@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+public class UserRestServiceImpl implements UserRestService {
 
-	public DocumentDto() {
-		super();
+	private final UserFacade webServiceUserFacade;
+
+	private final AutoCompleteFacade autocompleteFacade;
+
+	public UserRestServiceImpl(final UserFacade webServiceUserFacade, final AutoCompleteFacade autocompleteFacade) {
+		this.webServiceUserFacade = webServiceUserFacade;
+		this.autocompleteFacade = autocompleteFacade;
 	}
 
-	public DocumentDto(AsyncTaskDto asyncTask,
-			DocumentTaskContext documentTaskContext) {
-		super(asyncTask, documentTaskContext);
+	@Path("/")
+	@GET
+	@Override
+	public List<UserDto> findAll() throws BusinessException {
+		return webServiceUserFacade.findAll();
 	}
 
-	public DocumentDto(DocumentEntry de) {
-		super(de);
-		this.owner = new GenericUserDto((User) de.getEntryOwner());
+	@Path("/autocomplete/{pattern}")
+	@GET
+	@ApiOperation(value = "Provide user autocompletion.", response = UserDto.class, responseContainer = "Set")
+	@Override
+	public Set<UserDto> autocomplete(
+			@ApiParam(value = "Pattern to complete.", required = true) @PathParam("pattern") String pattern)
+					throws BusinessException {
+		return autocompleteFacade.findUser(pattern);
 	}
-
-	public GenericUserDto getOwner() {
-		return owner;
-	}
-
-	public void setOwner(GenericUserDto owner) {
-		this.owner = owner;
-	}
-
-	/*
-	 * Transformers
-	 */
-	public static Function<DocumentEntry, DocumentDto> toDelegationVo() {
-		return new Function<DocumentEntry, DocumentDto>() {
-			@Override
-			public DocumentDto apply(DocumentEntry arg0) {
-				return new DocumentDto(arg0);
-			}
-		};
-	}
-
 }

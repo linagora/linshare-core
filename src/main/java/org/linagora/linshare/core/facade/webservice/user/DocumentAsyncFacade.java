@@ -35,7 +35,7 @@
 package org.linagora.linshare.core.facade.webservice.user;
 
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
-import org.linagora.linshare.webservice.user.task.context.DocumentTaskContext;
+import org.linagora.linshare.webservice.userv1.task.context.DocumentTaskContext;
 
 public interface DocumentAsyncFacade extends GenericAsyncFacade {
 

@@ -31,68 +31,59 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.webservice.userv1.impl;
 
-package org.linagora.linshare.core.facade.webservice.delegation.dto;
+import java.util.List;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
-import org.linagora.linshare.webservice.userv1.task.context.DocumentTaskContext;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.user.FunctionalityFacade;
+import org.linagora.linshare.core.facade.webservice.user.dto.FunctionalityDto;
+import org.linagora.linshare.webservice.WebserviceBase;
+import org.linagora.linshare.webservice.userv1.FunctionalityRestService;
 
-import com.google.common.base.Function;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
 
-/*
- * The objects document DTO and delegation document DTO has the same outside name.
- * JaxB does not allow this.
- * That's why we have to set the name space to Delegation.
- */
-@XmlType(namespace = "Delegation")
-@XmlRootElement(name = "Document")
-@ApiModel(value = "Document", description = "A Document")
-public class DocumentDto extends
-		org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto {
+@Path("/functionalities")
+@Api(value = "/rest/user/functionalities", description = "functionality service.")
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+public class FunctionalityRestServiceImpl extends WebserviceBase implements FunctionalityRestService {
 
-	@ApiModelProperty(value = "Owner")
-	protected GenericUserDto owner;
+	private FunctionalityFacade functionalityFacade;
 
-	public DocumentDto() {
+	public FunctionalityRestServiceImpl(FunctionalityFacade functionalityFacade) {
 		super();
+		this.functionalityFacade = functionalityFacade;
 	}
 
-	public DocumentDto(AsyncTaskDto asyncTask,
-			DocumentTaskContext documentTaskContext) {
-		super(asyncTask, documentTaskContext);
+	@Path("/")
+	@GET
+	@ApiOperation(value = "Find all domain's functionalities.", response = FunctionalityDto.class, responseContainer = "Set")
+	@Override
+	public List<FunctionalityDto> findAll() throws BusinessException {
+		return functionalityFacade.findAll();
 	}
 
-	public DocumentDto(DocumentEntry de) {
-		super(de);
-		this.owner = new GenericUserDto((User) de.getEntryOwner());
+	@Path("/{funcId}")
+	@GET
+	@ApiOperation(value = "Find a functionality.", response = FunctionalityDto.class)
+	@Override
+	public FunctionalityDto find(@PathParam(value = "funcId") String funcId) throws BusinessException {
+		return functionalityFacade.find(funcId);
 	}
 
-	public GenericUserDto getOwner() {
-		return owner;
+	@Path("/{funcId}")
+	@HEAD
+	@ApiOperation(value = "Find a functionality.")
+	@Override
+	public void head(@PathParam(value = "funcId") String identifier) throws BusinessException {
+		functionalityFacade.find(identifier);
 	}
-
-	public void setOwner(GenericUserDto owner) {
-		this.owner = owner;
-	}
-
-	/*
-	 * Transformers
-	 */
-	public static Function<DocumentEntry, DocumentDto> toDelegationVo() {
-		return new Function<DocumentEntry, DocumentDto>() {
-			@Override
-			public DocumentDto apply(DocumentEntry arg0) {
-				return new DocumentDto(arg0);
-			}
-		};
-	}
-
 }

@@ -32,67 +32,33 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.facade.webservice.delegation.dto;
+package org.linagora.linshare.webservice.userv1.task.context;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
 
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
-import org.linagora.linshare.webservice.userv1.task.context.DocumentTaskContext;
+public class TaskContext {
 
-import com.google.common.base.Function;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+	protected final AccountDto actorDto;
 
-/*
- * The objects document DTO and delegation document DTO has the same outside name.
- * JaxB does not allow this.
- * That's why we have to set the name space to Delegation.
- */
-@XmlType(namespace = "Delegation")
-@XmlRootElement(name = "Document")
-@ApiModel(value = "Document", description = "A Document")
-public class DocumentDto extends
-		org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto {
+	protected final String ownerUuid;
 
-	@ApiModelProperty(value = "Owner")
-	protected GenericUserDto owner;
-
-	public DocumentDto() {
+	public TaskContext(AccountDto actorDto, String ownerUuid) {
 		super();
+		this.actorDto = actorDto;
+		this.ownerUuid = ownerUuid;
 	}
 
-	public DocumentDto(AsyncTaskDto asyncTask,
-			DocumentTaskContext documentTaskContext) {
-		super(asyncTask, documentTaskContext);
+	public AccountDto getActorDto() {
+		return actorDto;
 	}
 
-	public DocumentDto(DocumentEntry de) {
-		super(de);
-		this.owner = new GenericUserDto((User) de.getEntryOwner());
+	public String getOwnerUuid() {
+		return ownerUuid;
 	}
 
-	public GenericUserDto getOwner() {
-		return owner;
-	}
-
-	public void setOwner(GenericUserDto owner) {
-		this.owner = owner;
-	}
-
-	/*
-	 * Transformers
-	 */
-	public static Function<DocumentEntry, DocumentDto> toDelegationVo() {
-		return new Function<DocumentEntry, DocumentDto>() {
-			@Override
-			public DocumentDto apply(DocumentEntry arg0) {
-				return new DocumentDto(arg0);
-			}
-		};
+	@Override
+	public String toString() {
+		return "TaskContext [ownerUuid=" + ownerUuid + "]";
 	}
 
 }

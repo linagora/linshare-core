@@ -65,9 +65,9 @@ import org.linagora.linshare.core.facade.webservice.delegation.dto.DocumentDto;
 import org.linagora.linshare.core.facade.webservice.user.DocumentAsyncFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.delegationv2.DocumentRestService;
-import org.linagora.linshare.webservice.user.task.DocumentUpdateAsyncTask;
-import org.linagora.linshare.webservice.user.task.DocumentUploadAsyncTask;
-import org.linagora.linshare.webservice.user.task.context.DocumentTaskContext;
+import org.linagora.linshare.webservice.userv1.task.DocumentUpdateAsyncTask;
+import org.linagora.linshare.webservice.userv1.task.DocumentUploadAsyncTask;
+import org.linagora.linshare.webservice.userv1.task.context.DocumentTaskContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.wordnik.swagger.annotations.Api;

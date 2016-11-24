@@ -32,67 +32,40 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.facade.webservice.delegation.dto;
+package org.linagora.linshare.webservice.userv1.impl;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
-import org.linagora.linshare.webservice.userv1.task.context.DocumentTaskContext;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 
-import com.google.common.base.Function;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import org.linagora.linshare.core.facade.webservice.common.dto.MimeTypeDto;
+import org.linagora.linshare.core.facade.webservice.user.MimeTypeFacade;
+import org.linagora.linshare.webservice.userv1.MimeTypeRestService;
 
-/*
- * The objects document DTO and delegation document DTO has the same outside name.
- * JaxB does not allow this.
- * That's why we have to set the name space to Delegation.
- */
-@XmlType(namespace = "Delegation")
-@XmlRootElement(name = "Document")
-@ApiModel(value = "Document", description = "A Document")
-public class DocumentDto extends
-		org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto {
+import com.wordnik.swagger.annotations.Api;
 
-	@ApiModelProperty(value = "Owner")
-	protected GenericUserDto owner;
+@Path("/mime_types")
+@Api(value = "/rest/user/mime_types", description = "Mime types service.")
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+public class MimeTypeRestServiceImpl implements MimeTypeRestService {
 
-	public DocumentDto() {
-		super();
+	private final MimeTypeFacade facade;
+
+	public MimeTypeRestServiceImpl(final MimeTypeFacade facade) {
+		this.facade = facade;
 	}
 
-	public DocumentDto(AsyncTaskDto asyncTask,
-			DocumentTaskContext documentTaskContext) {
-		super(asyncTask, documentTaskContext);
+	@GET
+	@Path("/")
+	@Override
+	public List<MimeTypeDto> find(@QueryParam("disabled") @DefaultValue("false") boolean disabled) {
+		return facade.find(null, disabled);
 	}
-
-	public DocumentDto(DocumentEntry de) {
-		super(de);
-		this.owner = new GenericUserDto((User) de.getEntryOwner());
-	}
-
-	public GenericUserDto getOwner() {
-		return owner;
-	}
-
-	public void setOwner(GenericUserDto owner) {
-		this.owner = owner;
-	}
-
-	/*
-	 * Transformers
-	 */
-	public static Function<DocumentEntry, DocumentDto> toDelegationVo() {
-		return new Function<DocumentEntry, DocumentDto>() {
-			@Override
-			public DocumentDto apply(DocumentEntry arg0) {
-				return new DocumentDto(arg0);
-			}
-		};
-	}
-
 }

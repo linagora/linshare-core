@@ -43,7 +43,7 @@ import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.EntryDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
-import org.linagora.linshare.webservice.user.task.context.DocumentTaskContext;
+import org.linagora.linshare.webservice.userv1.task.context.DocumentTaskContext;
 
 import com.google.common.base.Function;
 import com.wordnik.swagger.annotations.ApiModel;

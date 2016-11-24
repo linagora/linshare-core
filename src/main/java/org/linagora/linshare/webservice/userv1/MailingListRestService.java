@@ -32,67 +32,37 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.facade.webservice.delegation.dto;
+package org.linagora.linshare.webservice.userv1;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import java.util.Set;
 
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
-import org.linagora.linshare.webservice.userv1.task.context.DocumentTaskContext;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.MailingListContactDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.MailingListDto;
 
-import com.google.common.base.Function;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+public interface MailingListRestService {
 
-/*
- * The objects document DTO and delegation document DTO has the same outside name.
- * JaxB does not allow this.
- * That's why we have to set the name space to Delegation.
- */
-@XmlType(namespace = "Delegation")
-@XmlRootElement(name = "Document")
-@ApiModel(value = "Document", description = "A Document")
-public class DocumentDto extends
-		org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto {
+	Set<MailingListDto> findAll() throws BusinessException;
 
-	@ApiModelProperty(value = "Owner")
-	protected GenericUserDto owner;
+	MailingListDto find(String uuid) throws BusinessException;
 
-	public DocumentDto() {
-		super();
-	}
+	void head(String uuid) throws BusinessException;
 
-	public DocumentDto(AsyncTaskDto asyncTask,
-			DocumentTaskContext documentTaskContext) {
-		super(asyncTask, documentTaskContext);
-	}
+	MailingListDto create(MailingListDto dto) throws BusinessException;
 
-	public DocumentDto(DocumentEntry de) {
-		super(de);
-		this.owner = new GenericUserDto((User) de.getEntryOwner());
-	}
+	MailingListDto update(MailingListDto dto) throws BusinessException;
 
-	public GenericUserDto getOwner() {
-		return owner;
-	}
+	MailingListDto delete(MailingListDto dto) throws BusinessException;
 
-	public void setOwner(GenericUserDto owner) {
-		this.owner = owner;
-	}
+	MailingListDto delete(String uuid) throws BusinessException;
 
-	/*
-	 * Transformers
-	 */
-	public static Function<DocumentEntry, DocumentDto> toDelegationVo() {
-		return new Function<DocumentEntry, DocumentDto>() {
-			@Override
-			public DocumentDto apply(DocumentEntry arg0) {
-				return new DocumentDto(arg0);
-			}
-		};
-	}
+	Set<MailingListContactDto> findAllContacts(String listUuid) throws BusinessException;
 
+	void createContact(String uuid, MailingListContactDto dto) throws BusinessException;
+
+	void updateContact(String uuid, MailingListContactDto dto) throws BusinessException;
+
+	void deleteContact(String uuid, MailingListContactDto dto) throws BusinessException;
+
+	void deleteContact(String uuid, String contactUuid) throws BusinessException;
 }

@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2015-2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2016. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -32,67 +32,52 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.facade.webservice.delegation.dto;
+package org.linagora.linshare.webservice.userv1;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import java.io.InputStream;
+import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.User;
+import javax.ws.rs.core.Response;
+
+import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
-import org.linagora.linshare.webservice.userv1.task.context.DocumentTaskContext;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 
-import com.google.common.base.Function;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+public interface ThreadEntryRestService {
 
-/*
- * The objects document DTO and delegation document DTO has the same outside name.
- * JaxB does not allow this.
- * That's why we have to set the name space to Delegation.
- */
-@XmlType(namespace = "Delegation")
-@XmlRootElement(name = "Document")
-@ApiModel(value = "Document", description = "A Document")
-public class DocumentDto extends
-		org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto {
+	WorkGroupEntryDto create(String threadUuid,
+			InputStream file, String description, String givenFileName,
+			Boolean async,
+			Long contentLength,
+			Long fileSize,
+			MultipartBody body) throws BusinessException;
 
-	@ApiModelProperty(value = "Owner")
-	protected GenericUserDto owner;
+	DocumentDto copy(String threadUuid, String entryUuid)
+			throws BusinessException;
 
-	public DocumentDto() {
-		super();
-	}
+	WorkGroupEntryDto find(String threadUuid, String uuid)
+			throws BusinessException;
 
-	public DocumentDto(AsyncTaskDto asyncTask,
-			DocumentTaskContext documentTaskContext) {
-		super(asyncTask, documentTaskContext);
-	}
+	void head(String threadUuid, String uuid) throws BusinessException;
 
-	public DocumentDto(DocumentEntry de) {
-		super(de);
-		this.owner = new GenericUserDto((User) de.getEntryOwner());
-	}
+	List<WorkGroupEntryDto> findAll(String threadUuid)
+			throws BusinessException;
 
-	public GenericUserDto getOwner() {
-		return owner;
-	}
+	WorkGroupEntryDto delete(String threadUuid,
+			WorkGroupEntryDto threadEntry) throws BusinessException;
 
-	public void setOwner(GenericUserDto owner) {
-		this.owner = owner;
-	}
+	WorkGroupEntryDto delete(String threadUuid,
+			String uuid) throws BusinessException;
 
-	/*
-	 * Transformers
-	 */
-	public static Function<DocumentEntry, DocumentDto> toDelegationVo() {
-		return new Function<DocumentEntry, DocumentDto>() {
-			@Override
-			public DocumentDto apply(DocumentEntry arg0) {
-				return new DocumentDto(arg0);
-			}
-		};
-	}
+	Response download(String threadUuid, String uuid)
+			throws BusinessException;
 
+	Response thumbnail(String threadUuid, String uuid, boolean base64)
+			throws BusinessException;
+
+	WorkGroupEntryDto update(String threadUuid, String threadEntryUuid, WorkGroupEntryDto threadEntryDto) throws BusinessException;
+
+	AsyncTaskDto findAsync(String uuid) throws BusinessException;
 }

@@ -51,7 +51,7 @@ import org.linagora.linshare.core.service.ThreadEntryService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.WorkGroupFolderService;
 import org.linagora.linshare.mongo.entities.WorkGroupFolder;
-import org.linagora.linshare.webservice.user.task.context.ThreadEntryTaskContext;
+import org.linagora.linshare.webservice.userv1.task.context.ThreadEntryTaskContext;
 
 public class ThreadEntryAsyncFacadeImpl extends GenericAsyncFacadeImpl implements ThreadEntryAsyncFacade {
 
