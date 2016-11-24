@@ -44,8 +44,6 @@ import org.linagora.linshare.core.domain.entities.OperationHistory;
 
 public interface OperationHistoryRepository extends AbstractRepository<OperationHistory> {
 
-	List<Account> findAccountBeforeDate(Date date, ContainerQuotaType containerQuotaType);
-
 	List<OperationHistory> find(Account account, AbstractDomain domain, ContainerQuotaType containerQuotaType, Date date, OperationHistoryTypeEnum type);
 
 	Long sumOperationValue(Account account, AbstractDomain domain, Date creationDate, OperationHistoryTypeEnum operationType, ContainerQuotaType containerQuotaType);

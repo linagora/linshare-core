@@ -33,10 +33,14 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -48,6 +52,7 @@ import org.linagora.linshare.core.domain.entities.OperationHistory;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.OperationHistoryRepository;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 //TODO FIXME Quota & Statistics
@@ -69,19 +74,6 @@ public class OperationHistoryRepositoryImpl extends AbstractRepositoryImpl<Opera
 	protected DetachedCriteria getNaturalKeyCriteria(OperationHistory entity) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		return criteria.add(Restrictions.eq("id", entity.getId()));
-	}
-
-	@Override
-	public List<Account> findAccountBeforeDate(Date Date, ContainerQuotaType containerQuotaType) {
-		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		if (containerQuotaType != null) {
-			criteria.add(Restrictions.eq("containerQuotaType", containerQuotaType));
-		}
-		criteria.add(Restrictions.le("creationDate", Date));
-		criteria.setProjection(Projections.distinct(Projections.property("account")));
-		@SuppressWarnings("unchecked")
-		List<Account> result = (List<Account>) getHibernateTemplate().findByCriteria(criteria);
-		return result;
 	}
 
 	@Override
@@ -168,9 +160,7 @@ public class OperationHistoryRepositoryImpl extends AbstractRepositoryImpl<Opera
 	@Override
 	public List<String> findUuidAccountBeforeDate(Date date, ContainerQuotaType containerQuotaType) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		if (containerQuotaType != null) {
-			criteria.add(Restrictions.eq("containerQuotaType", containerQuotaType));
-		}
+		criteria.add(Restrictions.eq("containerQuotaType", containerQuotaType));
 		criteria.add(Restrictions.le("creationDate", date));
 		criteria.createAlias("account", "ac");
 		criteria.setProjection(Projections.distinct(Projections.property("ac.lsUuid")));
@@ -181,9 +171,15 @@ public class OperationHistoryRepositoryImpl extends AbstractRepositoryImpl<Opera
 
 	@Override
 	public void deleteBeforeDateByAccount(Date date, Account account) {
-		List<OperationHistory> list = find(account, null, null, date, null);
-		for (OperationHistory entity : list) {
-			super.delete(entity);
-		}
+		HibernateCallback<Long> action = new HibernateCallback<Long>() {
+			public Long doInHibernate(final Session session) throws HibernateException, SQLException {
+				final Query query = session.createQuery("DELETE from OperationHistory WHERE account = :account and creationDate <= :date");
+				query.setParameter("date", date);
+				query.setParameter("account", account);
+				return (long) query.executeUpdate();
+			}
+		};
+		Long execute = getHibernateTemplate().execute(action);
+		logger.info("{} OperationHistory deleted for account {} for operation history created before  {}", execute, account, date);
 	}
 }

@@ -50,8 +50,6 @@ public interface OperationHistoryBusinessService {
 	List<OperationHistory> find(Account account, AbstractDomain domain, ContainerQuotaType containerQuotaType, Date date)
 			throws BusinessException;
 
-	List<Account> findAccountBeforeDate(Date creationDate, ContainerQuotaType containerQuotaType);
-
 	List<AbstractDomain> findDomainBeforeDate(Date creationDate);
 
 	// TODO : FMA : Quota

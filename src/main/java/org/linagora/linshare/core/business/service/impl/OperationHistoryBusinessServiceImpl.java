@@ -54,11 +54,6 @@ public class OperationHistoryBusinessServiceImpl implements OperationHistoryBusi
 	}
 
 	@Override
-	public List<Account> findAccountBeforeDate(Date creationDate, ContainerQuotaType containerQuotaType) {
-		return repository.findAccountBeforeDate(creationDate, containerQuotaType);
-	}
-
-	@Override
 	public OperationHistory create(OperationHistory entity) throws BusinessException {
 		return repository.create(entity);
 	}
