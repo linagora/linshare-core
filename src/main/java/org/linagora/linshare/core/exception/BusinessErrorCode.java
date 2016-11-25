@@ -196,7 +196,11 @@ public enum BusinessErrorCode implements ErrorCode {
 
 	INVALID_INPUT_FOR_X509_CERTIFICATE(39000),
 
-	MODE_MAINTENANCE_ENABLED(39001, Status.NOT_IMPLEMENTED),
+	MODE_MAINTENANCE_ENABLED(39001, Status.UNSUPPORTED_MEDIA_TYPE),
+	// https://github.com/flowjs/flow.js
+	// 200, 201, 202: The chunk was accepted and correct. No need to re-upload.
+	// 404, 415. 500, 501: The file for which the chunk was uploaded is not supported, cancel the entire upload.
+	// Anything else: Something went wrong, but try reuploading the file.
 
 	ASYNC_TASK_NOT_FOUND(40404, Status.NOT_FOUND),
 	ASYNC_TASK_FORBIDDEN(40403, Status.FORBIDDEN),

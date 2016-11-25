@@ -52,8 +52,11 @@ public class FlowUploaderUtils {
 			String relativePath,
 			ConcurrentMap<String, ChunkedFile> chunkedFiles, boolean maintenance) {
 		if (maintenance) {
-			return buildReponse(Status.NOT_IMPLEMENTED); // 501
-			// If request returns a permanent error status, (50x) upload is stopped.
+			return buildReponse(Status.NO_CONTENT); // 204
+			// https://github.com/flowjs/flow.js
+			// If this request returns a 200, 201 or 202 HTTP code, the chunks is assumed to have been completed.
+			// If request returns a permanent error status, upload is stopped.
+			// If request returns anything else, the chunk will be uploaded in the standard fashion.
 		}
 		identifier = cleanIdentifier(identifier);
 		boolean isValid = isValid(chunkNumber, chunkSize, totalSize, identifier,
