@@ -95,7 +95,7 @@ public enum LogAction {
 	DOWNLOAD,
 	SUCCESS,
 	FAILURE,
-	LOGICAL_DELETE;
+	PURGE;
 
 	public static LogAction fromString(String s) {
 		try {

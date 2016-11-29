@@ -310,7 +310,7 @@ public class UserServiceImpl implements UserService {
 					LogAction.USER_PURGE, "Purging an user", userToDelete);
 			logEntryService.create(logEntry);
 //			AKO : To think about, logical delete, delete, physical delete staging for delete...
-			UserAuditLogEntry log = new UserAuditLogEntry(actor, userToDelete, LogAction.LOGICAL_DELETE, AuditLogEntryType.USER, userToDelete);
+			UserAuditLogEntry log = new UserAuditLogEntry(actor, userToDelete, LogAction.PURGE, AuditLogEntryType.USER, userToDelete);
 			auditMongoRepository.insert(log);
 
 		} catch (IllegalArgumentException e) {
