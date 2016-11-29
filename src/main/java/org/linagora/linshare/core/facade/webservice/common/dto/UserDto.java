@@ -85,7 +85,7 @@ public class UserDto extends AccountDto {
 	private Date expirationDate;
 
 	@ApiModelProperty(value = "RestrictedContacts")
-	private List<UserDto> restrictedContacts = Lists.newArrayList();
+	private List<UserDto> restrictedContacts;
 
 	@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 	@ApiModelProperty(value = "user's quota uuid, only available in v2.")
@@ -109,6 +109,7 @@ public class UserDto extends AccountDto {
 				this.comment = g.getComment();
 				this.expirationDate = g.getExpirationDate();
 				if (g.isRestricted()) {
+					restrictedContacts = Lists.newArrayList();
 					for (AllowedContact contact : g.getRestrictedContacts()) {
 						this.restrictedContacts.add(getSimple(contact
 								.getContact()));
