@@ -163,7 +163,6 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 			@Multipart(value=WORK_GROUP_FOLDER_UUID, required=false) String workGroupFolderUuid,
 			@Multipart(value=ASYNC_TASK, required=false) boolean async)
 					throws BusinessException {
-		async = true;
 		logger.debug("upload chunk number : " + chunkNumber);
 		identifier = cleanIdentifier(identifier);
 		boolean isValid = FlowUploaderUtils.isValid(chunkNumber, chunkSize,
