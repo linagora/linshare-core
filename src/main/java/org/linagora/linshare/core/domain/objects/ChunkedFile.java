@@ -33,15 +33,15 @@
  */
 package org.linagora.linshare.core.domain.objects;
 
-import java.util.ArrayList;
+import java.util.Set;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class ChunkedFile {
 
 	private long startTime;
 
-	private final ArrayList<Long> chunks = Lists.newArrayList();
+	private final Set<Long> chunks = Sets.newConcurrentHashSet();
 
 	private final java.nio.file.Path path;
 
@@ -58,7 +58,7 @@ public class ChunkedFile {
 		chunks.add(chunkNumber);
 	}
 
-	public ArrayList<Long> getChunks() {
+	public Set<Long> getChunks() {
 		return chunks;
 	}
 
@@ -72,6 +72,11 @@ public class ChunkedFile {
 
 	public void setStartTime(long startTime) {
 		this.startTime = startTime;
+	}
+
+	@Override
+	public String toString() {
+		return "ChunkedFile [startTime=" + startTime + ", chunks=" + chunks + ", path=" + path + "]";
 	}
 
 }

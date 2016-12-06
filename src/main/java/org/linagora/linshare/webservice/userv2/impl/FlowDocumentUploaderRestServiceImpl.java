@@ -98,6 +98,7 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 	private static final String CHUNK_NUMBER = "flowChunkNumber";
 	private static final String TOTAL_CHUNKS = "flowTotalChunks";
 	private static final String CHUNK_SIZE = "flowChunkSize";
+	private static final String CURRENT_CHUNK_SIZE = "flowCurrentChunkSize";
 	private static final String TOTAL_SIZE = "flowTotalSize";
 	private static final String IDENTIFIER = "flowIdentifier";
 	private static final String FILENAME = "flowFilename";
@@ -154,6 +155,7 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 	public FlowDto uploadChunk(@Multipart(CHUNK_NUMBER) long chunkNumber,
 			@Multipart(TOTAL_CHUNKS) long totalChunks,
 			@Multipart(CHUNK_SIZE) long chunkSize,
+			@Multipart(CURRENT_CHUNK_SIZE) long currentChunkSize,
 			@Multipart(TOTAL_SIZE) long totalSize,
 			@Multipart(IDENTIFIER) String identifier,
 			@Multipart(FILENAME) String filename,
@@ -172,33 +174,34 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 		FlowDto flow = new FlowDto(chunkNumber);
 		try {
 			logger.debug("writing chunk number : " + chunkNumber);
-			java.nio.file.Path tempFile = FlowUploaderUtils
-					.getTempFile(identifier, chunkedFiles);
-			FileChannel fc = FileChannel.open(tempFile,
-					StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-			ByteArrayOutputStream output = new ByteArrayOutputStream();
-			IOUtils.copy(file, output);
-			fc.write(ByteBuffer.wrap(output.toByteArray()), (chunkNumber - 1) * chunkSize);
-			fc.close();
-			if (sizeValidation) {
-				if (chunkNumber != totalChunks) {
-					// it is not the last chunk
-					if (totalSize >= chunkSize) {
-						// more than one chunk
-						if (output.size() != chunkSize) {
-							String msg = String.format("File size does not match, found : %1$d, announced : %2$d", output.size(), chunkSize);
-							logger.error(msg);
-							flow.setChunkUploadSuccess(false);
-							flow.setErrorMessage(msg);
-							return flow;
-						}
+			java.nio.file.Path tempFile = FlowUploaderUtils.getTempFile(identifier, chunkedFiles);
+			ChunkedFile currentChunkedFile = chunkedFiles.get(identifier);
+			if (!currentChunkedFile.hasChunk(chunkNumber)) {
+				FileChannel fc = FileChannel.open(tempFile, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+				ByteArrayOutputStream output = new ByteArrayOutputStream();
+				IOUtils.copy(file, output);
+				fc.write(ByteBuffer.wrap(output.toByteArray()), (chunkNumber - 1) * chunkSize);
+				fc.close();
+				if (sizeValidation) {
+					if (output.size() != currentChunkSize) {
+						String msg = String.format("File size does not match, found : %1$d, announced : %2$d", output.size(), currentChunkSize);
+						logger.error(msg);
+						flow.setChunkUploadSuccess(false);
+						flow.setErrorMessage(msg);
+						return flow;
 					}
 				}
+				currentChunkedFile.addChunk(chunkNumber);
+			} else {
+				logger.error("currentChunkedFile.hasChunk(chunkNumber) !!! " + currentChunkedFile);
+				logger.error("chunkedNumber skipped : " + chunkNumber);
 			}
-			chunkedFiles.get(identifier).addChunk(chunkNumber);
-			if (FlowUploaderUtils.isUploadFinished(identifier, chunkSize,
-					totalSize, chunkedFiles)) {
-				logger.debug("upload finished ");
+
+			logger.debug("nb uploading files : " + chunkedFiles.size());
+			logger.debug("current chuckedfile uuid : " + identifier);
+			logger.debug("current chuckedfiles" + chunkedFiles.toString());
+			if (FlowUploaderUtils.isUploadFinished(identifier, chunkSize, totalSize, chunkedFiles)) {
+				logger.debug("upload finished : " + chunkNumber + " : " + identifier);
 				InputStream inputStream = Files.newInputStream(tempFile,
 						StandardOpenOption.READ);
 				File tempFile2 = getTempFile(inputStream, "rest-flowuploader", filename);
@@ -252,7 +255,15 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 					} finally {
 						deleteTempFile(tempFile2);
 						ChunkedFile remove = chunkedFiles.remove(identifier);
-						Files.deleteIfExists(remove.getPath());
+						if (remove != null) {
+							Files.deleteIfExists(remove.getPath());
+						} else {
+							logger.error("Should not happen !!!");
+							logger.error("chunk number: " + chunkNumber);
+							logger.error("chunk identifier: " + identifier);
+							logger.error("chunk filename: " + filename);
+							logger.error("chunks : " + chunkedFiles.toString());
+						}
 					}
 				}
 				return flow;
@@ -285,8 +296,12 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 			@QueryParam(FILENAME) String filename,
 			@QueryParam(RELATIVE_PATH) String relativePath) {
 		boolean maintenance = accountQuotaFacade.maintenanceModeIsEnabled();
-		return FlowUploaderUtils.testChunk(chunkNumber, totalChunks, chunkSize,
+		Response testChunk = FlowUploaderUtils.testChunk(chunkNumber, totalChunks, chunkSize,
 				totalSize, identifier, filename, relativePath, chunkedFiles, maintenance);
+		if (chunkNumber == 1 || (chunkNumber % 20) == 0 || chunkNumber == totalChunks) {
+			logger.info(String.format("GET: .../webservice/rest/user/v2/flow.json:%s: chunkNumber:%s/%s", identifier, chunkNumber, totalChunks));
+		}
+		return testChunk;
 	}
 
 	@Path("/{uuid}")

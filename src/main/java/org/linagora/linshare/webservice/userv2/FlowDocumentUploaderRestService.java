@@ -45,6 +45,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.FlowDto;
 public interface FlowDocumentUploaderRestService {
 
 	FlowDto uploadChunk(long chunkNumber, long totalChunks, long chunkSize,
+			long currentChunkSize,
 			long totalSize, String identifier, String filename,
 			String relativePath, InputStream file, MultipartBody body, String workGroupUuid,
 			String workGroupFolderUuid, boolean async)
