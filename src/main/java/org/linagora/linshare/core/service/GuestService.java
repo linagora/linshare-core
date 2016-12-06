@@ -61,7 +61,7 @@ public interface GuestService {
 
 	List<AllowedContact> load(Account actor, User owner) throws BusinessException;
 
-	Guest find(Account actor, Account owner, String domainId, String mail) throws BusinessException;
+	Guest find(Account actor, Account owner, String domainUuid, String mail) throws BusinessException;
 
 	/**
 	 * find all guests according to domain access policies
@@ -149,7 +149,18 @@ public interface GuestService {
 	 *            guest lsUuid
 	 * @throws BusinessException
 	 */
-	void resetPassword(String lsUuid) throws BusinessException;
+	void triggerResetPassword(String lsUuid) throws BusinessException;
+
+	/**
+	 * Create a new token to reset guest password.
+	 * 
+	 * @param mail
+	 *            : mail of the guest you want to reset
+	 * @param domainUuid
+	 *            : optional domain uuid (multidomain purpose)
+	 * @throws BusinessException
+	 */
+	void triggerResetPassword(SystemAccount systemAccount, String mail, String domainUuid) throws BusinessException;
 
 	List<String> findOudatedGuests(SystemAccount systemAccount) throws BusinessException;
 
@@ -158,4 +169,8 @@ public interface GuestService {
 	void deleteUser(SystemAccount systemAccount, String uuid) throws BusinessException;
 
 	Date getGuestExpirationDate(Account actor, Date currentGuestExpirationDate) throws BusinessException;
+
+	SystemAccount getGuestSystemAccount();
+
+	Guest resetPassword(Guest guest, String password) throws BusinessException;
 }

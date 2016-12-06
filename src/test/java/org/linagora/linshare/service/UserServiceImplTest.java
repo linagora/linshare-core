@@ -484,9 +484,10 @@ public class UserServiceImplTest extends
 		guest.setPassword(HashUtils.hashSha1withBase64(oldPassword.getBytes()));
 
 		guest = guestRepository.create(guest);
-		guestService.resetPassword(guest.getLsUuid());
-		Assert.assertFalse(guest.getPassword().equals(
-				HashUtils.hashSha1withBase64(oldPassword.getBytes())));
+		// Disable. We don't change guest password anymore, we send him a link to reset it.
+//		guestService.triggerResetPassword(guest.getLsUuid());
+//		Assert.assertFalse(guest.getPassword().equals(
+//				HashUtils.hashSha1withBase64(oldPassword.getBytes())));
 
 		logger.debug(LinShareTestConstants.END_TEST);
 	}

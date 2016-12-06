@@ -31,32 +31,18 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.core.service;
 
-package org.linagora.linshare.webservice.userv2;
-
-import java.util.List;
-
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
+import org.linagora.linshare.mongo.entities.ResetGuestPassword;
 
-public interface GuestRestService {
+public interface ResetGuestPasswordService {
 
-	GuestDto find(String uuid) throws BusinessException;
+	SystemAccount getGuestSystemAccount();
 
-	void head(String uuid) throws BusinessException;
+	ResetGuestPassword find(Account actor,  Account owner, String uuid) throws BusinessException;
 
-	List<GuestDto> findAll(boolean all, String pattern) throws BusinessException;
-
-	GuestDto create(GuestDto guest) throws BusinessException;
-
-	GuestDto update(GuestDto guest, String uuid) throws BusinessException;
-
-	GuestDto delete(GuestDto guest) throws BusinessException;
-
-	GuestDto delete(String uuid) throws BusinessException;
-
-	List<GuestDto> search(UserSearchDto userSearchDto) throws BusinessException;
-
-	void resetPassword(GuestDto dto, String uuid) throws BusinessException;
+	ResetGuestPassword update(Account actor,  Account owner, ResetGuestPassword reset) throws BusinessException;
 }

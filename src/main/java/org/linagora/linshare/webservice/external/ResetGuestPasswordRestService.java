@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2016. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,32 +31,17 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-
-package org.linagora.linshare.webservice.userv2;
-
-import java.util.List;
+package org.linagora.linshare.webservice.external;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ResetPasswordDto;
+import org.linagora.linshare.mongo.entities.ResetGuestPassword;
 
-public interface GuestRestService {
+public interface ResetGuestPasswordRestService {
 
-	GuestDto find(String uuid) throws BusinessException;
+	ResetGuestPassword find(String uuid) throws BusinessException;
 
-	void head(String uuid) throws BusinessException;
+	ResetGuestPassword update(String uuid, ResetGuestPassword reset) throws BusinessException;
 
-	List<GuestDto> findAll(boolean all, String pattern) throws BusinessException;
-
-	GuestDto create(GuestDto guest) throws BusinessException;
-
-	GuestDto update(GuestDto guest, String uuid) throws BusinessException;
-
-	GuestDto delete(GuestDto guest) throws BusinessException;
-
-	GuestDto delete(String uuid) throws BusinessException;
-
-	List<GuestDto> search(UserSearchDto userSearchDto) throws BusinessException;
-
-	void resetPassword(GuestDto dto, String uuid) throws BusinessException;
+	void create(String domainUuid, ResetPasswordDto resetDto) throws BusinessException;
 }

@@ -46,7 +46,7 @@
 
 		<many-to-one name="owner" column="owner_id" class="org.linagora.linshare.core.domain.entities.Account" lazy="proxy"/>
 		<many-to-one name="domain" column="domain_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" not-null="true"
-			lazy="proxy" access="field">
+			lazy="no-proxy" fetch="join" >
 		</many-to-one>
 		<set name="entries" lazy="true" inverse="true">
 			<key column="owner_id" not-null="true"/>

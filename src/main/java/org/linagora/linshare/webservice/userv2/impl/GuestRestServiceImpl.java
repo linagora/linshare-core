@@ -190,6 +190,21 @@ public class GuestRestServiceImpl implements GuestRestService {
 		return guestFacade.delete(uuid);
 	}
 
+	@Path("/{uuid}/reset")
+	@POST
+	@ApiOperation(value = "Reset guest password.", response = GuestDto.class)
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "No permission to reset."),
+			@ApiResponse(code = 404, message = "Guest not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public void resetPassword(
+			@ApiParam(value = "reset password for the guest.", required = true) GuestDto guest,
+			@ApiParam(value = "Guest's uuid to reset.", required = true) @PathParam("uuid") String uuid) throws BusinessException {
+		guestFacade.resetPassword(guest, uuid);
+	}
+
 	private boolean lessThan3Char(String s) {
 		return StringUtils.trimToEmpty(s).length() < 3;
 	}

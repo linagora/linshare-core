@@ -31,7 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.anonymousurl.impl;
+package org.linagora.linshare.webservice.external.impl;
 
 import java.io.InputStream;
 
@@ -47,10 +47,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
-import org.linagora.linshare.core.facade.webservice.anonymousurl.AnonymousUrlFacade;
-import org.linagora.linshare.core.facade.webservice.anonymousurl.dto.AnonymousUrlDto;
-import org.linagora.linshare.core.facade.webservice.anonymousurl.dto.ShareEntryDto;
-import org.linagora.linshare.webservice.anonymousurl.AnonymousUrlRestService;
+import org.linagora.linshare.core.facade.webservice.external.AnonymousUrlFacade;
+import org.linagora.linshare.core.facade.webservice.external.dto.AnonymousUrlDto;
+import org.linagora.linshare.core.facade.webservice.external.dto.ShareEntryDto;
+import org.linagora.linshare.webservice.external.AnonymousUrlRestService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 
 import com.wordnik.swagger.annotations.Api;
@@ -58,7 +58,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/")
+@Path("/anonymousurl")
 @Api(value = "/rest/external/anonymousurl/", description = "anonymous url API")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })

@@ -143,6 +143,16 @@ public class GuestFacadeImpl extends UserGenericFacadeImp implements
 		return GuestDto.getSimple(guest);
 	}
 
+	@Override
+	public void resetPassword(GuestDto dto, String uuid) throws BusinessException {
+		Validate.notNull(dto, "guest is required");
+		if (!Strings.isNullOrEmpty(uuid)) {
+			dto.setUuid(uuid);
+		}
+		Validate.notEmpty(dto.getUuid(), "guest uuid is required");
+		guestService.triggerResetPassword(dto.getUuid());
+	}
+
 	private List<GuestDto> toGuestDto(List<Guest> col) {
 		return ImmutableList.copyOf(Lists.transform(col, GuestDto.toDto()));
 	}

@@ -41,6 +41,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -52,13 +53,15 @@ public interface GuestBusinessService {
 
 	Guest find(AbstractDomain domain, String mail) throws BusinessException;
 
+	Guest findByMail(String mail) throws BusinessException;
+
 	List<Guest> findAll(List<AbstractDomain> authorizedDomains);
 
 	List<Guest> findAllMyGuests(Account owner);
 
 	List<String> findOutdatedGuestIdentifiers();
 
-	GuestWithMetadata create(Account owner, Guest guest, AbstractDomain domain,
+	Guest create(Account owner, Guest guest, AbstractDomain domain,
 			List<User> allowedContacts)
 			throws BusinessException;
 
@@ -70,6 +73,8 @@ public interface GuestBusinessService {
 	boolean exist(String domainId, String mail);
 
 	GuestWithMetadata resetPassword(Guest guest) throws BusinessException;
+
+	Guest resetPassword(Guest guest, String password) throws BusinessException;
 
 	void evict(Guest entity);
 
@@ -95,4 +100,5 @@ public interface GuestBusinessService {
 	 */
 	List<Guest> search(List<AbstractDomain> authorizedDomains, String pattern, Account owner) throws BusinessException;
 
+	SystemAccount getGuestSystemAccount();
 }

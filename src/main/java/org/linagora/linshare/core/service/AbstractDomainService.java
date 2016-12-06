@@ -68,9 +68,8 @@ public interface AbstractDomainService {
 	public List<AbstractDomain> getAllTopAndSubDomain();
 	public List<AbstractDomain> getAllTopDomain();
 	public List<AbstractDomain> getAllSubDomain();
-	public AbstractDomain getGuestDomain(String identifier);
 
-
+	AbstractDomain findGuestDomain(String uuid);
 
 	public AbstractDomain getUniqueRootDomain()throws BusinessException;
 

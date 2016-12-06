@@ -78,4 +78,6 @@ public interface GuestRepository extends UserRepository<Guest> {
 	List<Guest> search(List<AbstractDomain> domains, String pattern, Account owner);
 
 	List<Guest> findAll(List<AbstractDomain> domains);
+
+	Guest findByDomainAndMail(AbstractDomain domain, String mail);
 }

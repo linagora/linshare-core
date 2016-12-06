@@ -31,7 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.anonymousurl.impl;
+package org.linagora.linshare.core.facade.webservice.external.impl;
 
 import java.io.InputStream;
 
@@ -40,9 +40,9 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
-import org.linagora.linshare.core.facade.webservice.anonymousurl.AnonymousUrlFacade;
-import org.linagora.linshare.core.facade.webservice.anonymousurl.dto.AnonymousUrlDto;
-import org.linagora.linshare.core.facade.webservice.anonymousurl.dto.ShareEntryDto;
+import org.linagora.linshare.core.facade.webservice.external.AnonymousUrlFacade;
+import org.linagora.linshare.core.facade.webservice.external.dto.AnonymousUrlDto;
+import org.linagora.linshare.core.facade.webservice.external.dto.ShareEntryDto;
 import org.linagora.linshare.core.service.AnonymousUrlService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

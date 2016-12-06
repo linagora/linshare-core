@@ -31,20 +31,80 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.anonymousurl;
+package org.linagora.linshare.core.facade.webservice.external.dto;
 
-import javax.ws.rs.core.Response;
+import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.facade.webservice.anonymousurl.dto.AnonymousUrlDto;
-import org.linagora.linshare.core.facade.webservice.anonymousurl.dto.ShareEntryDto;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 
-public interface AnonymousUrlRestService {
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
-	AnonymousUrlDto getAnonymousUrl(String uuid, String password);
+@XmlRootElement(name = "AnonymousShareEntry")
+@ApiModel(value = "AnonymousShareEntry", description = "An AnonymousShareEntry")
+public class ShareEntryDto {
 
-	ShareEntryDto getAnonymousShareEntry(String anonymousUrlUuid, String shareEntryUuid, String password);
+	@ApiModelProperty(value = "Uuid")
+	private String uuid;
 
-	Response download(String uuid, String shareEntryUuid, String password);
+	@ApiModelProperty(value = "Name")
+	private String name;
 
-	Response getAnonymousShareEntryThumbnail(String anonymousUrlUuid, String shareEntryUuid, String password, boolean base64);
+	@ApiModelProperty(value = "Size")
+	private Long size;
+
+	@ApiModelProperty(value = "Type")
+	private String type;
+
+	public ShareEntryDto() {
+		super();
+	}
+
+	public ShareEntryDto(String uuid, String name, Long size, String type) {
+		super();
+		this.uuid = uuid;
+		this.name = name;
+		this.size = size;
+		this.type = type;
+	}
+
+	public ShareEntryDto(String anonymousShareEntryUuid, DocumentEntry entry) {
+		super();
+		this.uuid = anonymousShareEntryUuid;
+		this.name = entry.getName();
+		this.size = entry.getSize();
+		this.type = entry.getType();
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Long getSize() {
+		return size;
+	}
+
+	public void setSize(Long size) {
+		this.size = size;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
 }

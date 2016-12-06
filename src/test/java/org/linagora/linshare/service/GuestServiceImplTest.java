@@ -225,7 +225,7 @@ public class GuestServiceImplTest extends
 		guest.setPassword(HashUtils.hashSha1withBase64(oldPassword.getBytes()));
 		guest.setCmisLocale("en");
 		guest = guestService.create(owner1, owner1, guest, null);
-		guestService.resetPassword(guest.getLsUuid());
+		guestService.triggerResetPassword(guest.getLsUuid());
 		Assert.assertFalse(guest.getPassword().equals(
 				HashUtils.hashSha1withBase64(oldPassword.getBytes())));
 		logger.debug(LinShareTestConstants.END_TEST);

@@ -187,6 +187,7 @@
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="auditUserMongoRepository" />
 		<constructor-arg ref="containerQuotaBusinessService"/>
+		<constructor-arg ref="resetGuestPasswordMongoRepository"/>
 		<constructor-arg ref="accountQuotaBusinessService"/>
 	</bean>
 
@@ -286,5 +287,9 @@
 	<bean id="containerQuotaService" class="org.linagora.linshare.core.service.impl.ContainerQuotaServiceImpl">
 		<constructor-arg ref="containerQuotaBusinessService" />
 		<constructor-arg ref="quotaResourceAccessControl" />
+	</bean>
+	<bean id="resetGuestPasswordService" class="org.linagora.linshare.core.service.impl.ResetGuestPasswordServiceImpl">
+		<constructor-arg ref="resetGuestPasswordMongoRepository" />
+		<constructor-arg ref="guestService" />
 	</bean>
 </beans>

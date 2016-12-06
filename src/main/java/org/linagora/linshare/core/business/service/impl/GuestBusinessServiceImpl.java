@@ -42,6 +42,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -85,14 +86,18 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	@Override
 	public Guest find(AbstractDomain domain, String mail)
 			throws BusinessException {
-		Guest guest = guestRepository.findByMailAndDomain(
-				domain.getUuid(), mail);
+		Guest guest = guestRepository.findByDomainAndMail(domain, mail);
 		if (guest != null) {
 			if (guest.isRestricted()) {
 				guest.addContacts(allowedContactRepository.findByOwner(guest));
 			}
 		}
 		return guest;
+	}
+
+	@Override
+	public Guest findByMail(String mail) throws BusinessException {
+		return guestRepository.findByMail(mail);
 	}
 
 	@Override
@@ -111,7 +116,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	}
 
 	@Override
-	public GuestWithMetadata create(Account owner, Guest guest,
+	public Guest create(Account owner, Guest guest,
 			AbstractDomain domain, List<User> allowedContacts) throws BusinessException {
 		String password = passwordService.generatePassword();
 		String hashedPassword = HashUtils.hashSha1withBase64(password
@@ -134,7 +139,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 				}
 			}
 		}
-		return new GuestWithMetadata(password, create);
+		return create;
 	}
 
 	@Override
@@ -219,6 +224,14 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	}
 
 	@Override
+	public Guest resetPassword(Guest guest, String password) throws BusinessException {
+		String hashedPassword = HashUtils.hashSha1withBase64(password.getBytes());
+		guest.setPassword(hashedPassword);
+		Guest update = guestRepository.update(guest);
+		return update;
+	}
+
+	@Override
 	public void evict(Guest entity) {
 		guestRepository.evict(entity);
 	}
@@ -233,6 +246,12 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	public List<Guest> search(List<AbstractDomain> authorizedDomains, String pattern, Account owner)
 			throws BusinessException {
 		return guestRepository.search(authorizedDomains, pattern, owner);
+	}
+
+	@Override
+	public SystemAccount getGuestSystemAccount() {
+		// TODO create a dedicated guest account.
+		return guestRepository.getBatchSystemAccount();
 	}
 
 	/**

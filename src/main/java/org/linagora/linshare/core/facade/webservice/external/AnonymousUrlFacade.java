@@ -31,12 +31,12 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.anonymousurl;
+package org.linagora.linshare.core.facade.webservice.external;
 
 import java.io.InputStream;
 
-import org.linagora.linshare.core.facade.webservice.anonymousurl.dto.AnonymousUrlDto;
-import org.linagora.linshare.core.facade.webservice.anonymousurl.dto.ShareEntryDto;
+import org.linagora.linshare.core.facade.webservice.external.dto.AnonymousUrlDto;
+import org.linagora.linshare.core.facade.webservice.external.dto.ShareEntryDto;
 
 public interface AnonymousUrlFacade {
 

@@ -727,11 +727,11 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	}
 
 	@Override
-	public AbstractDomain getGuestDomain(String identifier) {
-		AbstractDomain domain = domainBusinessService.find(identifier);
+	public AbstractDomain findGuestDomain(String uuid) {
+		AbstractDomain domain = domainBusinessService.find(uuid);
 		if (domain == null) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,
-					"The current domain does not exist : " + identifier);
+					"The current domain does not exist : " + uuid);
 		}
 		return domainBusinessService.findGuestDomain(domain);
 	}

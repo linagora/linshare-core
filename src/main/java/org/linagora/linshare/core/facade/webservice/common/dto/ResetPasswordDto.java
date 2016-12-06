@@ -31,32 +31,30 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.core.facade.webservice.common.dto;
 
-package org.linagora.linshare.webservice.userv2;
+import javax.xml.bind.annotation.XmlRootElement;
 
-import java.util.List;
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
+@XmlRootElement(name = "ResetPassword")
+@ApiModel(value = "ResetPassword", description = "Reset password for guest account.")
+public class ResetPasswordDto {
 
-public interface GuestRestService {
+	@ApiModelProperty(value = "Mail")
+	protected String mail;
 
-	GuestDto find(String uuid) throws BusinessException;
+	public ResetPasswordDto() {
+		super();
+	}
 
-	void head(String uuid) throws BusinessException;
+	public String getMail() {
+		return mail;
+	}
 
-	List<GuestDto> findAll(boolean all, String pattern) throws BusinessException;
+	public void setMail(String mail) {
+		this.mail = mail;
+	}
 
-	GuestDto create(GuestDto guest) throws BusinessException;
-
-	GuestDto update(GuestDto guest, String uuid) throws BusinessException;
-
-	GuestDto delete(GuestDto guest) throws BusinessException;
-
-	GuestDto delete(String uuid) throws BusinessException;
-
-	List<GuestDto> search(UserSearchDto userSearchDto) throws BusinessException;
-
-	void resetPassword(GuestDto dto, String uuid) throws BusinessException;
 }

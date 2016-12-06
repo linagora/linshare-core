@@ -46,6 +46,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.repository.GuestRepository;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implements GuestRepository {
@@ -243,5 +244,14 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 		}
 		criteria.add(or);
 		return findByCriteria(criteria);
+	}
+
+	@Override
+	public Guest findByDomainAndMail(AbstractDomain domain, String mail) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("destroyed", 0L));
+		criteria.add(Restrictions.eq("domain", domain));
+		criteria.add(Restrictions.eq("mail", mail));
+		return DataAccessUtils.singleResult(findByCriteria(criteria));
 	}
 }

@@ -56,4 +56,5 @@ public interface GuestFacade extends GenericFacade {
 
 	GuestDto delete(String uuid) throws BusinessException;
 
+	void resetPassword(GuestDto dto, String uuid) throws BusinessException;
 }

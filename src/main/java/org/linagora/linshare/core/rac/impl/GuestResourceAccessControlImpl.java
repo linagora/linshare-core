@@ -169,7 +169,7 @@ public class GuestResourceAccessControlImpl extends
 	}
 
 	private boolean hasGuestDomain(String topDomainId) {
-		boolean status = abstractDomainService.getGuestDomain(topDomainId) != null;
+		boolean status = abstractDomainService.findGuestDomain(topDomainId) != null;
 		if (!status) {
 			logger.warn("guest domain do not exist.");
 		}

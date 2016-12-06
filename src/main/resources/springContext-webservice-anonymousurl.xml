@@ -14,12 +14,20 @@
 	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
 
-	<jaxrs:server id="restAnonymousUrlContainer" address="/rest/anonymousurl">
+	<jaxrs:server id="restAnonymousUrlContainer" address="/rest/external">
 		<jaxrs:serviceBeans>
-			<bean class="org.linagora.linshare.webservice.anonymousurl.impl.AnonymousUrlRestServiceImpl">
+			<bean class="org.linagora.linshare.webservice.external.impl.AnonymousUrlRestServiceImpl">
 				<constructor-arg>
-					<bean class="org.linagora.linshare.core.facade.webservice.anonymousurl.impl.AnonymousUrlFacadeImpl">
+					<bean class="org.linagora.linshare.core.facade.webservice.external.impl.AnonymousUrlFacadeImpl">
 						<constructor-arg ref="anonymousUrlService" />
+					</bean>
+				</constructor-arg>
+			</bean>
+			<bean class="org.linagora.linshare.webservice.external.impl.ResetGuestPasswordRestServiceImpl">
+				<constructor-arg>
+					<bean class="org.linagora.linshare.core.facade.webservice.external.impl.ResetGuestPasswordFacadeImpl">
+						<constructor-arg ref="resetGuestPasswordService" />
+						<constructor-arg ref="guestService" />
 					</bean>
 				</constructor-arg>
 			</bean>

@@ -36,6 +36,7 @@ package org.linagora.linshare.core.repository;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.view.tapestry.beans.AccountOccupationCriteriaBean;
 
@@ -54,7 +55,7 @@ public interface UserRepository<T extends User> extends AccountRepository<T> {
      * @return user, null if not found.
      */
     T findByMailAndDomain(String domain, String mail);
-    
+
     /**
      * Return a list of mails beginning with the text
      * @param beginWith

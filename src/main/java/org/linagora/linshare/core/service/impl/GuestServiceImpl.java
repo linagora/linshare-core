@@ -42,10 +42,9 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.business.service.GuestBusinessService;
-import org.linagora.linshare.core.business.service.impl.GuestBusinessServiceImpl.GuestWithMetadata;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
-import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -68,10 +67,13 @@ import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.mongo.entities.ResetGuestPassword;
 import org.linagora.linshare.mongo.entities.logs.GuestAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
+import org.linagora.linshare.mongo.repository.ResetGuestPasswordMongoRepository;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
@@ -97,6 +99,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 
 	private final AccountQuotaBusinessService accountQuotaBusinessService;
 
+	protected final ResetGuestPasswordMongoRepository resetGuestPasswordMongoRepository;
+
 	public GuestServiceImpl(final GuestBusinessService guestBusinessService,
 			final AbstractDomainService abstractDomainService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
@@ -107,6 +111,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 			final AuditUserMongoRepository auditMongoRepository,
 			final GuestResourceAccessControl rac,
 			final ContainerQuotaBusinessService containerQuotaBusinessService,
+			final ResetGuestPasswordMongoRepository resetGuestPasswordMongoRepository,
 			final AccountQuotaBusinessService accountQuotaBusinessService) {
 		super(rac);
 		this.guestBusinessService = guestBusinessService;
@@ -119,6 +124,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		this.auditMongoRepository = auditMongoRepository;
 		this.containerQuotaBusinessService = containerQuotaBusinessService;
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
+		this.resetGuestPasswordMongoRepository = resetGuestPasswordMongoRepository;
 	}
 
 	@Override
@@ -135,8 +141,6 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		}
 		checkReadPermission(actor, owner, Guest.class,
 				BusinessErrorCode.GUEST_FORBIDDEN, guest);
-		GuestAuditLogEntry log = new GuestAuditLogEntry(actor, owner, LogAction.GET, AuditLogEntryType.GUEST, guest);
-		auditMongoRepository.insert(log);
 		return guest;
 	}
 
@@ -151,15 +155,15 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	}
 
 	@Override
-	public Guest find(Account actor, Account owner, String domainId, String mail)
+	public Guest find(Account actor, Account owner, String domainUuid, String mail)
 			throws BusinessException {
-		if (domainId == null) {
-			domainId = owner.getDomainId();
+		AbstractDomain domain = null;
+		if (Strings.isNullOrEmpty(domainUuid)) {
+			domain= owner.getDomain();
+		} else {
+			domain = abstractDomainService.findGuestDomain(domainUuid);
+
 		}
-		// Ugly. getGuestDomain should check if input domain exists. if not, an
-		// exception should be throw
-		AbstractDomain domain = abstractDomainService.findById(domainId);
-		domain = abstractDomainService.getGuestDomain(domain.getUuid());
 		return guestBusinessService.find(domain, mail);
 	}
 
@@ -210,7 +214,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 			expiryDate = calculateUserExpiryDate(owner, null);
 			guest.setExpirationDate(expiryDate);
 		}
-		AbstractDomain guestDomain = abstractDomainService.getGuestDomain(owner
+		AbstractDomain guestDomain = abstractDomainService.findGuestDomain(owner
 				.getDomainId());
 		if (!guestBusinessService.exist(guestDomain.getUuid(),
 				guest.getMail())) {
@@ -227,17 +231,19 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 						"Can not create a restricted guest without restricted contacts (internal or guest users only).");
 			}
 		}
-		GuestWithMetadata create = guestBusinessService.create(owner, guest,
+		Guest create = guestBusinessService.create(owner, guest,
 				guestDomain, restrictedContacts);
 		createQuotaGuest(guest);
+		ResetGuestPassword resetGuestPassword = new ResetGuestPassword(create);
+		resetGuestPasswordMongoRepository.insert(resetGuestPassword);
 		MailContainerWithRecipient mail = mailBuildingService.buildNewGuest(
-				owner, create.getGuest(), create.getPassword());
+				owner, create, resetGuestPassword.getUuid());
 		notifierService.sendNotification(mail);
-		UserLogEntry userLogEntry = new UserLogEntry(actor, LogAction.USER_CREATE, "Creating a guest", create.getGuest());
+		UserLogEntry userLogEntry = new UserLogEntry(actor, LogAction.USER_CREATE, "Creating a guest", create);
 		LogEntryService.create(userLogEntry);
 		GuestAuditLogEntry log = new GuestAuditLogEntry(actor, owner, LogAction.CREATE, AuditLogEntryType.GUEST, guest);
 		auditMongoRepository.insert(log);
-		return create.getGuest();
+		return create;
 	}
 
 	@Override
@@ -253,7 +259,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 				entity);
 		checkUpdatePermission(actor, owner, Guest.class,
 				BusinessErrorCode.CANNOT_UPDATE_USER, entity);
-		AbstractDomain guestDomain = abstractDomainService.getGuestDomain(owner
+		AbstractDomain guestDomain = abstractDomainService.findGuestDomain(owner
 				.getDomainId());
 		if (guestDomain == null) {
 			throw new BusinessException(
@@ -363,13 +369,32 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	}
 
 	@Override
-	public void resetPassword(String lsUuid) throws BusinessException {
+	public void triggerResetPassword(String lsUuid) throws BusinessException {
 		Validate.notEmpty(lsUuid);
-		Guest guest = retrieveGuest(lsUuid);
 		// TODO : create a log entry for this action
-		GuestWithMetadata update = guestBusinessService.resetPassword(guest);
-		MailContainerWithRecipient mail = mailBuildingService
-				.buildResetPassword(update.getGuest(), update.getPassword());
+		Guest guest = retrieveGuest(lsUuid);
+		ResetGuestPassword resetGuestPassword = resetGuestPasswordMongoRepository.insert(new ResetGuestPassword(guest));
+		MailContainerWithRecipient mail = mailBuildingService.buildResetPassword(guest, resetGuestPassword.getUuid());
+		notifierService.sendNotification(mail);
+	}
+
+	@Override
+	public void triggerResetPassword(SystemAccount actor, String email, String domainUuid) throws BusinessException {
+		Validate.notEmpty(email);
+		Guest guest = null;
+		if (Strings.isNullOrEmpty(domainUuid)) {
+			guest = guestBusinessService.findByMail(email);
+		} else {
+			AbstractDomain domain = abstractDomainService.findById(domainUuid);
+			guest = guestBusinessService.find(domain, email);
+		}
+		if (guest == null) {
+			throw new BusinessException(BusinessErrorCode.GUEST_NOT_FOUND,
+					"Guest does not exist");
+		}
+		// TODO: find if there is already a valid token for this guest, and reuse it if not expired.
+		ResetGuestPassword resetGuestPassword = resetGuestPasswordMongoRepository.insert(new ResetGuestPassword(guest));
+		MailContainerWithRecipient mail = mailBuildingService.buildResetPassword(guest, resetGuestPassword.getUuid());
 		notifierService.sendNotification(mail);
 	}
 
@@ -427,7 +452,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	}
 
 	private boolean hasGuestDomain(String topDomainId) {
-		return abstractDomainService.getGuestDomain(topDomainId) != null;
+		return abstractDomainService.findGuestDomain(topDomainId) != null;
 	}
 
 	private Date calculateUserExpiryDate(Account owner, Date guestCreationDate) {
@@ -447,6 +472,17 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	public Date getGuestExpirationDate(Account actor,
 			Date currentGuestExpirationDate) throws BusinessException {
 		return calculateUserExpiryDate(actor, currentGuestExpirationDate);
+	}
+
+	@Override
+	public SystemAccount getGuestSystemAccount() {
+		return guestBusinessService.getGuestSystemAccount();
+	}
+
+	@Override
+	public Guest resetPassword(Guest guest, String password) throws BusinessException {
+		// TODO : Check password complexity.
+		return guestBusinessService.resetPassword(guest, password);
 	}
 
 	private void createQuotaGuest(Guest guest) throws BusinessException {
