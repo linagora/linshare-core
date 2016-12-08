@@ -141,13 +141,13 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 					"The account quota is not configured yet.");
 		}
 		if (fileSize > aq.getMaxFileSize()) {
-			throw new BusinessException(BusinessErrorCode.QUOTA_FILE_UNAUTHORIZED,
+			throw new BusinessException(BusinessErrorCode.QUOTA_FILE_FORBIDDEN_FILE_SIZE,
 					"The file size is greater than the max file size.");
 		}
 		Long todayConsumption = operationHistoryBusinessService.sumOperationValue(account, null, new Date(), null, null);
 		Long totalConsumption = aq.getCurrentValue() + todayConsumption + fileSize;
 		if (totalConsumption > aq.getQuota()) {
-			throw new BusinessException(BusinessErrorCode.QUOTA_ACCOUNT_UNAUTHORIZED,
+			throw new BusinessException(BusinessErrorCode.QUOTA_ACCOUNT_FORBIDDEN_NO_MORE_SPACE_AVALAIBLE,
 					"The account quota has been reached.");
 		}
 	}
@@ -164,7 +164,7 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 				null);
 		Long totalConsumption = dq.getCurrentValue() + todayConsumption + fileSize;
 		if (totalConsumption > dq.getQuota()) {
-			throw new BusinessException(BusinessErrorCode.QUOTA_DOMAIN_UNAUTHORIZED,
+			throw new BusinessException(BusinessErrorCode.QUOTA_DOMAIN_FORBIDDEN_NO_MORE_SPACE_AVALAIBLE,
 					"The domain quota has been reached.");
 		}
 	}
@@ -182,7 +182,7 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 				containerQuotaType);
 		Long totalConsumption = cq.getCurrentValue() + todayConsumption + fileSize;
 		if (totalConsumption > cq.getQuota()) {
-			throw new BusinessException(BusinessErrorCode.QUOTA_CONTAINER_UNAUTHORIZED,
+			throw new BusinessException(BusinessErrorCode.QUOTA_CONTAINER_FORBIDDEN_NO_MORE_SPACE_AVALAIBLE,
 					"The container quota has been reached.");
 		}
 	}
@@ -197,7 +197,7 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 				null);
 		Long totalConsumption = pq.getCurrentValue() + todayConsumption + fileSize;
 		if (totalConsumption > pq.getQuota()) {
-			throw new BusinessException(BusinessErrorCode.QUOTA_PLATFORM_UNAUTHORIZED, "The platforme quota has been reached.");
+			throw new BusinessException(BusinessErrorCode.QUOTA_GLOBAL_FORBIDDEN_NO_MORE_SPACE_AVALAIBLE, "The platforme quota has been reached.");
 		}
 	}
 }
