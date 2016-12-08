@@ -34,7 +34,6 @@
 package org.linagora.linshare.webservice.userv2.impl;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -201,6 +200,7 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 			logger.debug("current chuckedfile uuid : " + identifier);
 			logger.debug("current chuckedfiles" + chunkedFiles.toString());
 			if (FlowUploaderUtils.isUploadFinished(identifier, chunkSize, totalSize, chunkedFiles)) {
+				flow.setLastChunk(true);
 				logger.debug("upload finished : " + chunkNumber + " : " + identifier);
 				InputStream inputStream = Files.newInputStream(tempFile,
 						StandardOpenOption.READ);
@@ -271,11 +271,12 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 				logger.debug("upload pending ");
 				flow.setChunkUploadSuccess(true);
 			}
-		} catch (IOException e) {
+		} catch (BusinessException e) {
 			logger.error(e.getMessage());
 			logger.debug("Exception : ", e);
 			flow.setChunkUploadSuccess(false);
 			flow.setErrorMessage(e.getMessage());
+			flow.setErrCode(e.getErrorCode().getCode());
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			logger.debug("Exception : ", e);

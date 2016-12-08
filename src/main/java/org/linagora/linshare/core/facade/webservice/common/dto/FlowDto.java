@@ -69,6 +69,9 @@ public class FlowDto {
 	@ApiModelProperty(value = "Error message")
 	protected String errorMessage;
 
+	@ApiModelProperty(value = "Optional error code")
+	protected Integer errCode;
+
 	@ApiModelProperty(value = "The delay between every request to ask if upload is complete.")
 	protected Integer frequence;
 
@@ -153,6 +156,22 @@ public class FlowDto {
 
 	public void setFrequence(Integer frequence) {
 		this.frequence = frequence;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public Integer getErrCode() {
+		return errCode;
+	}
+
+	public void setErrCode(Integer errCode) {
+		this.errCode = errCode;
 	}
 
 	public void completeAsyncTransfert(AsyncTaskDto asyncTask) {
