@@ -64,7 +64,9 @@ public class AccountQuotaDto extends QuotaDto {
 		AccountQuota quota = new AccountQuota();
 		quota.setMaxFileSize(getMaxFileSize());
 		quota.setQuota(getQuota());
-		quota.setOverride(getOverride());
+		quota.setQuotaOverride(getQuotaOverride());
+		quota.setDefaultQuota(getDefaultQuota());
+		quota.setDefaultQuotaOverride(getDefaultQuotaOverride());
 		quota.setMaintenance(getMaintenance());
 		return quota;
 	}

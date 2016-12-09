@@ -492,9 +492,10 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		if (containerQuota == null) {
 			throw new BusinessException(BusinessErrorCode.CONTAINER_QUOTA_NOT_FOUND, "No container quota found for the domain : " + guest.getDomainId());
 		}
-		AccountQuota userQuota = new AccountQuota(guest, guest.getDomain(), guest.getDomain().getParentDomain(),
-				containerQuota, containerQuota.getQuota(), containerQuota.getQuotaWarning(),
-				containerQuota.getMaxFileSize(), 0L, 0L);
+		AccountQuota userQuota = new AccountQuota(
+				guest.getDomain(),
+				guest.getDomain().getParentDomain(),
+				guest, containerQuota);
 		accountQuotaBusinessService.create(userQuota);
 	}
 }

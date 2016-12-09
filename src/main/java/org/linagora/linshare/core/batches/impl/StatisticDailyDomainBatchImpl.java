@@ -103,7 +103,7 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchImpl {
 		AbstractDomain resource = abstractDomainService.findById(identifier);
 		Context context = new DomainBatchResultContext(resource);
 		try {
-			logInfo(total, position, "processing domain : " + resource.getDescription());
+			logInfo(total, position, "processing domain : " + resource.toString());
 			domainDailyStatBusinessService.create(resource, today);
 		} catch (BusinessException businessException) {
 			logError(total, position, "Error while trying to create DomainDailyStat");

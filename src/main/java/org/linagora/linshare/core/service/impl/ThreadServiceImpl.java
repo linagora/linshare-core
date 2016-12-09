@@ -411,9 +411,10 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		if (containerQuota == null) {
 			throw new BusinessException("Missing container quota entity for current work_group");
 		}
-		AccountQuota threadQuota = new AccountQuota(thread, thread.getDomain(),
-				thread.getDomain().getParentDomain(), containerQuota, containerQuota.getQuota(),
-				containerQuota.getQuotaWarning(), containerQuota.getMaxFileSize(), 0L, 0L);
+		AccountQuota threadQuota = new AccountQuota(
+				thread.getDomain(),
+				thread.getDomain().getParentDomain(),
+				thread, containerQuota);
 		accountQuotaBusinessService.create(threadQuota);
 	}
 

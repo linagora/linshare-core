@@ -49,13 +49,17 @@ public abstract class Quota {
 
 	protected Long quota;
 
+	protected Boolean quotaOverride;
+
+	protected Long defaultQuota;
+
+	protected Boolean defaultQuotaOverride;
+
 	protected Long quotaWarning;
 
 	protected Long currentValue;
 
 	protected Long lastValue;
-
-	protected Boolean override;
 
 	protected Boolean maintenance;
 
@@ -68,16 +72,19 @@ public abstract class Quota {
 	public Quota() {
 	}
 
-	public Quota(Account account, AbstractDomain domain, AbstractDomain parentDomain, Long quota, Long quotaWarning,
-			Long currentValue, Long lastValue) {
-		this.account = account;
+	public Quota(AbstractDomain domain, AbstractDomain parentDomain, Long quota, Long quotaWarning) {
+		// related domains.
 		this.domain = domain;
 		this.parentDomain = parentDomain;
-		this.currentValue = currentValue;
-		this.lastValue = lastValue;
+		// quota configuration
+		this.currentValue = 0L;
+		this.lastValue = 0L;
 		this.quota = quota;
+		this.defaultQuota = quota;
+		this.quotaOverride = false;
+		this.defaultQuotaOverride = false;
 		this.quotaWarning = quotaWarning;
-		this.override = false;
+		this.maintenance = false;
 	}
 
 	public Long getId() {
@@ -176,14 +183,6 @@ public abstract class Quota {
 		this.batchModificationDate = batchModificationDate;
 	}
 
-	public Boolean getOverride() {
-		return override;
-	}
-
-	public void setOverride(Boolean override) {
-		this.override = override;
-	}
-
 	public Boolean getMaintenance() {
 		return maintenance;
 	}
@@ -198,21 +197,39 @@ public abstract class Quota {
 		}
 	}
 
-	public void setBusinessOverride(Boolean override) {
-		if (override != null) {
-			this.override = override;
-		}
-	}
-
 	public void setBusinessMaintenance(Boolean maintenance) {
 		if (maintenance != null) {
 			this.maintenance = maintenance;
 		}
 	}
 
+	public Boolean getDefaultQuotaOverride() {
+		return defaultQuotaOverride;
+	}
+
+	public void setDefaultQuotaOverride(Boolean defaultQuotaOverride) {
+		this.defaultQuotaOverride = defaultQuotaOverride;
+	}
+
+	public Long getDefaultQuota() {
+		return defaultQuota;
+	}
+
+	public void setDefaultQuota(Long defaultQuota) {
+		this.defaultQuota = defaultQuota;
+	}
+
+	public Boolean getQuotaOverride() {
+		return quotaOverride;
+	}
+
+	public void setQuotaOverride(Boolean quotaOverride) {
+		this.quotaOverride = quotaOverride;
+	}
+
 	@Override
 	public String toString() {
 		return "Quota [uuid=" + uuid + ", domain=" + domain + ", quota=" + quota + ", quotaWarning=" + quotaWarning
-				+ ", currentValue=" + currentValue + ", lastValue=" + lastValue + ", override=" + override + "]";
+				+ ", currentValue=" + currentValue + ", lastValue=" + lastValue + "]";
 	}
 }

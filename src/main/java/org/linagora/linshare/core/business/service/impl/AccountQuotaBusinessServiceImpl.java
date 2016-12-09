@@ -89,10 +89,9 @@ public class AccountQuotaBusinessServiceImpl implements AccountQuotaBusinessServ
 			}
 			logger.debug("container : " + cq.toString());
 			entity = new AccountQuota(
-						account, account.getDomain(),
+						account.getDomain(),
 						account.getDomain().getParentDomain(),
-						cq, cq.getQuota(), cq.getQuotaWarning(),
-						cq.getMaxFileSize(), 0L, 0L);
+						account, cq);
 			entity = repository.create(entity);
 		}
 		entity.setLastValue(entity.getCurrentValue());

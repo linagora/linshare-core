@@ -56,6 +56,18 @@ public class QuotaDto {
 	@ApiModelProperty(value = "The limit (quota)")
 	protected Long quota;
 
+	@ApiModelProperty(value = "If true, allow to override quota field for the current object (domain, container or account)"
+			+ "Othervise the quota value can/will be updated by cascade by the defaultQuota field of your parent."
+			+ "Useless for root domain quota")
+	protected Boolean quotaOverride;
+
+	@ApiModelProperty(value = "The limit (quota) for each child quota")
+	protected Long defaultQuota;
+
+	@ApiModelProperty(value = "By default, defaultQuota equal quota, every modification of the quota field will be apply to defaultQuota too."
+			+ "If true, the defaultQuota value is unlinked from quota field.")
+	protected Boolean defaultQuotaOverride;
+
 	// @ApiModelProperty(value = "")
 	// protected Long quotaWarning;
 
@@ -64,9 +76,6 @@ public class QuotaDto {
 
 	@ApiModelProperty(value = "Yesterday used space. Read only.")
 	protected Long yersterdayUsedSpace;
-
-	@ApiModelProperty(value = "Override domaine inheritance. All modifications to  a parent domain are propagated to the current doamin and its subdomains if override = false.")
-	protected Boolean override;
 
 	@ApiModelProperty(value = "If set to true, uploads are disable due to server maintenance.")
 	protected Boolean maintenance;
@@ -87,10 +96,12 @@ public class QuotaDto {
 		this.uuid = quota.getUuid();
 		this.domain = new DomainLightDto(quota.getDomain());
 		this.quota = quota.getQuota();
+		this.quotaOverride = quota.getQuotaOverride();
+		this.defaultQuota = quota.getDefaultQuota();
+		this.defaultQuotaOverride = quota.getDefaultQuotaOverride();
 //		this.quotaWarning = quota.getQuotaWarning();
 		this.usedSpace = quota.getCurrentValue();
 		this.yersterdayUsedSpace = quota.getLastValue();
-		this.override = quota.getOverride();
 		this.maintenance = quota.getMaintenance();
 		this.creationDate = quota.getCreationDate();
 		this.modificationDate = quota.getModificationDate();
@@ -169,24 +180,28 @@ public class QuotaDto {
 		this.batchModificationDate = batchModificationDate;
 	}
 
-	public Boolean getOverride() {
-		return override;
+	public Boolean getQuotaOverride() {
+		return quotaOverride;
 	}
 
-	public void setOverride(Boolean override) {
-		this.override = override;
+	public void setQuotaOverride(Boolean quotaOverride) {
+		this.quotaOverride = quotaOverride;
 	}
 
-//	/*
-//	 * Transformers
-//	 */
-//	public static Function<Quota, QuotaDto> toDto() {
-//		return new Function<Quota, QuotaDto>() {
-//			@Override
-//			public QuotaDto apply(Quota arg0) {
-//				return new QuotaDto(arg0);
-//			}
-//		};
-//	}
+	public Long getDefaultQuota() {
+		return defaultQuota;
+	}
+
+	public void setDefaultQuota(Long defaultQuota) {
+		this.defaultQuota = defaultQuota;
+	}
+
+	public Boolean getDefaultQuotaOverride() {
+		return defaultQuotaOverride;
+	}
+
+	public void setDefaultQuotaOverride(Boolean defaultQuotaOverride) {
+		this.defaultQuotaOverride = defaultQuotaOverride;
+	}
 
 }

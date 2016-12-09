@@ -83,7 +83,6 @@ public class DomainQuotaServiceImpl extends GenericServiceImpl<Account, Quota> i
 		DomainQuota entity = find(actor, dq.getUuid());
 		entity.setBusinessQuota(dq.getQuota());
 //		entity.setBusinessQuotaWarning(dq.getQuotaWarning());
-		entity.setBusinessOverride(dq.getOverride());
 		entity.setBusinessMaintenance(dq.getMaintenance());
 		return business.update(entity);
 	}

@@ -13,13 +13,17 @@
 		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false" unique="true" />
 		<property name="currentValue" column="current_value" type="long" not-null="true" />
 		<property name="lastValue" column="last_value" type="long" not-null="true" />
-		<property name="override" type="boolean">
-			<column name="override" not-null="true" default="false" />
-		</property>
 		<property name="maintenance" type="boolean">
 			<column name="maintenance" not-null="true" default="false" />
 		</property>
 		<property name="quota" column="quota"/>
+		<property name="quotaOverride" type="boolean">
+			<column name="quota_override" not-null="true" default="false" />
+		</property>
+		<property name="defaultQuota" column="default_quota"/>
+		<property name="defaultQuotaOverride" type="boolean">
+			<column name="default_quota_override" not-null="true" default="false" />
+		</property>
 		<property name="quotaWarning" column="quota_warning"/>
 		<property name="creationDate" column="creation_date" type = "timestamp"/>
 		<property name="modificationDate" column="modification_date" type = "timestamp"/>
@@ -31,15 +35,20 @@
 		<subclass name="org.linagora.linshare.core.domain.entities.DomainQuota" discriminator-value="DOMAIN_QUOTA" />
 
 		<subclass name="org.linagora.linshare.core.domain.entities.AccountQuota" discriminator-value="ACCOUNT_QUOTA" >
-			<!--  can not declare fileSizeMax as  not null because it impacts the whole class. Why ? maybe a bug. -->
 			<property name="maxFileSize" column="max_file_size" />
 			<many-to-one name="containerQuota" column="quota_container_id" class="org.linagora.linshare.core.domain.entities.ContainerQuota" />
 		</subclass>
 
 		<subclass name="org.linagora.linshare.core.domain.entities.ContainerQuota" discriminator-value="CONTAINER_QUOTA" >
 			<property name="containerQuotaType" column="container_type" type="containerQuotaType"/>
-			<!--  can not declare fileSizeMax as  not null because it impacts the whole class. Why ? maybe a bug. -->
-			<property name="maxFileSize" column="max_file_size" />
+			<property name="defaultMaxFileSize" column="default_max_file_size" />
+			<property name="defaultMaxFileSizeOverride" type="boolean">
+				<column name="default_max_file_size_override" not-null="true" default="false" />
+			</property>
+			<property name="defaultAccountQuota" column="default_account_quota" />
+			<property name="defaultAccountQuotaOverride" type="boolean">
+				<column name="default_account_quota_override" not-null="true" default="false" />
+			</property>
 			<many-to-one name="domainQuota" column="quota_domain_id" class="org.linagora.linshare.core.domain.entities.DomainQuota"/>
 		</subclass>
 

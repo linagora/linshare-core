@@ -37,7 +37,13 @@ import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 
 public class ContainerQuota extends Quota {
 
-	protected Long maxFileSize;
+	protected Long defaultMaxFileSize;
+
+	protected Boolean defaultMaxFileSizeOverride;
+
+	protected Long defaultAccountQuota;
+
+	protected Boolean defaultAccountQuotaOverride;
 
 	protected ContainerQuotaType containerQuotaType;
 
@@ -47,53 +53,57 @@ public class ContainerQuota extends Quota {
 		super();
 	}
 
+	/**
+	 * Initialization of a new container.
+	 * @param domain
+	 * @param parentDomain
+	 * @param domainQuota
+	 * @param parentContainerQuota
+	 */
 	public ContainerQuota(AbstractDomain domain, AbstractDomain parentDomain, DomainQuota domainQuota,
 			ContainerQuota parentContainerQuota) {
-		// related domains.
-		this.domain = domain;
-		this.parentDomain = parentDomain;
+		super(domain, parentDomain,
+				parentContainerQuota.getDefaultQuota(),
+				parentContainerQuota.getQuotaWarning());
+
 		// Link to the parent
 		this.domainQuota = domainQuota;
-		// quota configuration
-		this.currentValue = 0L;
-		this.lastValue = 0L;
-		this.quota = parentContainerQuota.getQuota();
-		this.quotaWarning = parentContainerQuota.getQuotaWarning();
-		this.maxFileSize = parentContainerQuota.getMaxFileSize();
+
+		// max file size for account quota children.
+		this.defaultMaxFileSize = parentContainerQuota.getDefaultMaxFileSize();
+		this.defaultMaxFileSizeOverride = false;
+
+		// quota for account quota children.
+		this.defaultAccountQuota = parentContainerQuota.getDefaultAccountQuota();
+		this.defaultAccountQuotaOverride = false;
+
 		// Kind of container.
 		this.containerQuotaType = parentContainerQuota.getContainerQuotaType();
-		this.override = false;
-		this.maintenance = false;
 	}
 
 	/**
 	 * For tests only.
-	 * @param domain
-	 * @param parentDomain
-	 * @param domainQuota
-	 * @param quota
-	 * @param quotaWarning
-	 * @param fileSizeMax
-	 * @param currentValue
-	 * @param lastValue
-	 * @param containerType
 	 */
 	public ContainerQuota(AbstractDomain domain, AbstractDomain parentDomain, DomainQuota domainQuota, long quota,
 			long quotaWarning, long fileSizeMax, long currentValue, long lastValue, ContainerQuotaType containerType) {
-		super(null, domain, parentDomain, quota, quotaWarning, currentValue, lastValue);
-		this.maxFileSize = fileSizeMax;
-		this.containerQuotaType = containerType;
+		super(domain, parentDomain, quota, quotaWarning);
+
+		// Link to the parent
 		this.domainQuota = domainQuota;
-		this.override = false;
-		this.maintenance = false;
-	}
 
-	public Long getMaxFileSize() {
-		return maxFileSize;
-	}
+		// max file size for account quota children.
+		this.defaultMaxFileSize = fileSizeMax;
+		this.defaultMaxFileSizeOverride = false;
 
-	public void setMaxFileSize(Long maxFileSize) {
-		this.maxFileSize = maxFileSize;
+		// quota for account quota children.
+		this.defaultAccountQuota = quota;
+		this.defaultAccountQuotaOverride = false;
+
+		// Kind of container.
+		this.containerQuotaType = containerType;
+
+		this.currentValue = currentValue;
+		this.lastValue = lastValue;
 	}
 
 	public ContainerQuotaType getContainerQuotaType() {
@@ -112,17 +122,49 @@ public class ContainerQuota extends Quota {
 		this.domainQuota = domainQuota;
 	}
 
-	public void setBusinessMaxFileSize(Long maxFileSize) {
+	public void setBusinessDefaultMaxFileSize(Long maxFileSize) {
 		if (maxFileSize != null) {
-			this.maxFileSize = maxFileSize;
+			this.defaultMaxFileSize = maxFileSize;
 		}
+	}
+
+	public Long getDefaultMaxFileSize() {
+		return defaultMaxFileSize;
+	}
+
+	public void setDefaultMaxFileSize(Long defaultMaxFileSize) {
+		this.defaultMaxFileSize = defaultMaxFileSize;
+	}
+
+	public Boolean getDefaultMaxFileSizeOverride() {
+		return defaultMaxFileSizeOverride;
+	}
+
+	public void setDefaultMaxFileSizeOverride(Boolean defaultMaxFileSizeOverride) {
+		this.defaultMaxFileSizeOverride = defaultMaxFileSizeOverride;
+	}
+
+	public Long getDefaultAccountQuota() {
+		return defaultAccountQuota;
+	}
+
+	public void setDefaultAccountQuota(Long defaultAccountQuota) {
+		this.defaultAccountQuota = defaultAccountQuota;
+	}
+
+	public Boolean getDefaultAccountQuotaOverride() {
+		return defaultAccountQuotaOverride;
+	}
+
+	public void setDefaultAccountQuotaOverride(Boolean defaultAccountQuotaOverride) {
+		this.defaultAccountQuotaOverride = defaultAccountQuotaOverride;
 	}
 
 	@Override
 	public String toString() {
 		return "ContainerQuota [containerType=" + containerQuotaType + ", uuid=" + uuid + ", account=" + account
 				+ ", quota=" + quota + ", quotaWarning=" + quotaWarning + ", currentValue=" + currentValue
-				+ ", lastValue=" + lastValue + ", fileSizeMax=" + maxFileSize + "]";
+				+ ", lastValue=" + lastValue + ", fileSizeMax=" + defaultMaxFileSize + "]";
 	}
 
 }

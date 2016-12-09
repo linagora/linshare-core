@@ -22,7 +22,7 @@ update quota set
 	last_value=0,
 	quota=1900,
 	quota_warning=1300,
-	max_file_size=5
+	default_max_file_size=5
 	where id=5;
 
 -- topdomain 2, CONTAINER_QUOTA - THREAD
@@ -31,7 +31,8 @@ update quota set
 	last_value=200,
 	quota=2000,
 	quota_warning=1500,
-	max_file_size=5
+	default_max_file_size=5,
+	default_account_quota=2000
 	where id=6;
 
 -- topdomain 2, ACCOUNT_QUOTA - Jane (11)

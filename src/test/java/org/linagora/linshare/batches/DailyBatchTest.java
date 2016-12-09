@@ -112,7 +112,6 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 	@Autowired
 	private ThreadDailyStatBusinessService threadDailyStatBusinessService;
 
-
 	@Autowired
 	@Qualifier("statisticDailyThreadBatch")
 	private GenericBatch dailyThreadBatch;
@@ -241,7 +240,7 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 		assertEquals(496, (long) ensembleQuota.getLastValue());
 		assertEquals(1900, (long) ensembleQuota.getQuota());
 		assertEquals(1300, (long) ensembleQuota.getQuotaWarning());
-		assertEquals(5, (long) ensembleQuota.getMaxFileSize());
+		assertEquals(5, (long) ensembleQuota.getDefaultMaxFileSize());
 
 		ensembleQuota = ensembleQuotaBusinessService.find(jane.getDomain(), ContainerQuotaType.WORK_GROUP);
 		assertNotNull(ensembleQuota);
@@ -249,7 +248,7 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 		assertEquals(900, (long) ensembleQuota.getLastValue());
 		assertEquals(2000, (long) ensembleQuota.getQuota());
 		assertEquals(1500, (long) ensembleQuota.getQuotaWarning());
-		assertEquals(5, (long) ensembleQuota.getMaxFileSize());
+		assertEquals(5, (long) ensembleQuota.getDefaultMaxFileSize());
 
 		DomainQuota quotaD = domainQuotaBusinessService.find(jane.getDomain());
 		assertNotNull(quotaD);

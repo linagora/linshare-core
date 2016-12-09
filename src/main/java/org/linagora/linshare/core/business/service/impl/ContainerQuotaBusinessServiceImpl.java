@@ -92,17 +92,17 @@ public class ContainerQuotaBusinessServiceImpl implements ContainerQuotaBusiness
 	}
 
 	@Override
-	public ContainerQuota updateByBatch(ContainerQuota entity, Date date) throws BusinessException {
-		AbstractDomain domain = entity.getDomain();
-		ContainerQuotaType containerQuotaType = entity.getContainerQuotaType();
+	public ContainerQuota updateByBatch(ContainerQuota quota, Date date) throws BusinessException {
+		AbstractDomain domain = quota.getDomain();
+		ContainerQuotaType containerQuotaType = quota.getContainerQuotaType();
 		if (find(domain, containerQuotaType) != null) {
-			Long sumCurrentValue = accountQuotaRepository.sumOfCurrentValue(entity, date);
-			entity.setLastValue(entity.getCurrentValue());
-			entity.setCurrentValue(sumCurrentValue);
-			entity = repository.updateByBatch(entity);
+			Long sumCurrentValue = accountQuotaRepository.sumOfCurrentValue(quota, date);
+			quota.setLastValue(quota.getCurrentValue());
+			quota.setCurrentValue(sumCurrentValue);
+			quota = repository.updateByBatch(quota);
 		} else {
 			throw new BusinessException("Domain with identifier : " + domain.getUuid() + " does not have an ensemble quota yet.");
 		}
-		return entity;
+		return quota;
 	}
 }

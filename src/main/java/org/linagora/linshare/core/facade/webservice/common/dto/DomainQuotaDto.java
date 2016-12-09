@@ -46,7 +46,7 @@ import com.google.common.collect.Lists;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-@XmlRootElement(name="DomainQuota")
+@XmlRootElement(name = "DomainQuota")
 @ApiModel(value = "DomainQuota", description = "A domain quota instance for a domain.")
 public class DomainQuotaDto extends QuotaDto {
 
@@ -59,15 +59,6 @@ public class DomainQuotaDto extends QuotaDto {
 
 	public DomainQuotaDto(DomainQuota quota) {
 		super(quota);
-	}
-
-	public DomainQuota toObject() {
-		DomainQuota quota = new DomainQuota();
-		quota.setUuid(getUuid());
-		quota.setQuota(getQuota());
-		quota.setOverride(getOverride());
-		quota.setMaintenance(getMaintenance());
-		return quota;
 	}
 
 	public List<String> getContainerUuids() {
@@ -83,6 +74,17 @@ public class DomainQuotaDto extends QuotaDto {
 			this.containerUuids = Lists.newArrayList();
 		}
 		this.containerUuids.add(containerUuid);
+	}
+
+	public DomainQuota toObject() {
+		DomainQuota quota = new DomainQuota();
+		quota.setUuid(getUuid());
+		quota.setQuota(getQuota());
+		quota.setQuotaOverride(getQuotaOverride());
+		quota.setDefaultQuota(getDefaultQuota());
+		quota.setDefaultQuotaOverride(getDefaultQuotaOverride());
+		quota.setMaintenance(getMaintenance());
+		return quota;
 	}
 
 	/*

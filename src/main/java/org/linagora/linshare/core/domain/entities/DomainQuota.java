@@ -39,19 +39,10 @@ public class DomainQuota extends Quota {
 		super();
 	}
 
-	public DomainQuota(
-			DomainQuota parentQuota,
-			AbstractDomain domain) {
-		// related domains.
-		this.domain = domain;
-		this.parentDomain = parentQuota.getDomain();
-		// quota configuration
-		this.currentValue = 0L;
-		this.lastValue = 0L;
-		this.quota = parentQuota.getQuota();
-		this.quotaWarning = parentQuota.getQuotaWarning();
-		this.override = false;
-		this.maintenance = false;
+	public DomainQuota(DomainQuota parentQuota, AbstractDomain domain) {
+		super(domain, parentQuota.getDomain(),
+				parentQuota.getDefaultQuota(),
+				parentQuota.getQuotaWarning());
 	}
 
 	@Override

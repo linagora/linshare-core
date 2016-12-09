@@ -1013,9 +1013,10 @@ public class UserServiceImpl implements UserService {
 		if (containerQuota == null) {
 			throw new BusinessException(BusinessErrorCode.CONTAINER_QUOTA_NOT_FOUND, "No container quota found for the domain : " + user.getDomainId());
 		}
-		AccountQuota userQuota = new AccountQuota(user, user.getDomain(), user.getDomain().getParentDomain(),
-				containerQuota, containerQuota.getQuota(), containerQuota.getQuotaWarning(),
-				containerQuota.getMaxFileSize(), 0L, 0L);
+		AccountQuota userQuota = new AccountQuota(
+				user.getDomain(),
+				user.getDomain().getParentDomain(),
+				user, containerQuota);
 		accountQuotaBusinessService.create(userQuota);
 	}
 }
