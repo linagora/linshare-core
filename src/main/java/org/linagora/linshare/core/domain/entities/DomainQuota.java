@@ -35,6 +35,8 @@ package org.linagora.linshare.core.domain.entities;
 
 public class DomainQuota extends Quota {
 
+	protected Long currentValueForSubdomains;
+
 	public DomainQuota() {
 		super();
 	}
@@ -43,6 +45,15 @@ public class DomainQuota extends Quota {
 		super(domain, parentQuota.getDomain(),
 				parentQuota.getDefaultQuota(),
 				parentQuota.getQuotaWarning());
+		this.currentValueForSubdomains = 0L;
+	}
+
+	public Long getCurrentValueForSubdomains() {
+		return currentValueForSubdomains;
+	}
+
+	public void setCurrentValueForSubdomains(Long currentValueForSubdomains) {
+		this.currentValueForSubdomains = currentValueForSubdomains;
 	}
 
 	@Override

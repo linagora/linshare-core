@@ -59,8 +59,14 @@ public class AccountQuotaFacadeImpl extends UserGenericFacadeImp implements Acco
 		User owner = getOwner(actor, ownerUuid);
 		Validate.notEmpty(uuid, "Missing account uuid");
 		AccountQuota aq = quotaService.find(actor, owner, uuid);
-		Long usedSpace = quotaService.getRealTimeUsedSpace(actor, owner, uuid);
-		AccountQuotaDto dto = new AccountQuotaDto(aq.getQuota(), usedSpace, aq.getMaxFileSize(), aq.getMaintenance());
+		AccountQuotaDto dto = null;
+		if (aq.getShared()) {
+			Long usedSpace = quotaService.getRealTimeUsedSpace(actor, owner, aq.getContainerQuota());
+			dto = new AccountQuotaDto(aq.getContainerQuota().getQuota(), usedSpace, aq.getMaxFileSize(), aq.getMaintenance());
+		} else {
+			Long usedSpace = quotaService.getRealTimeUsedSpace(actor, owner, uuid);
+			dto = new AccountQuotaDto(aq.getQuota(), usedSpace, aq.getMaxFileSize(), aq.getMaintenance());
+		}
 		return dto;
 	}
 

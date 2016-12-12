@@ -127,6 +127,17 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 	}
 
 	@Override
+	public Long getRealTimeUsedSpace(Account actor, Account owner, ContainerQuota cq) throws BusinessException {
+		preChecks(actor, owner);
+		Validate.notNull(cq, "quota container must be set.");
+		// TODO FMA Quota : Resource Access control ?
+		Long todayConsumption = operationHistoryBusinessService.sumOperationValue(null, cq.getDomain(), new Date(),
+				null, cq.getContainerQuotaType());
+		return cq.getCurrentValue() + todayConsumption;
+	}
+
+
+	@Override
 	public DomainQuota find(AbstractDomain domain) throws BusinessException {
 		return domainQuotaBusinessService.find(domain);
 	}
@@ -144,11 +155,14 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 			throw new BusinessException(BusinessErrorCode.QUOTA_FILE_FORBIDDEN_FILE_SIZE,
 					"The file size is greater than the max file size.");
 		}
-		Long todayConsumption = operationHistoryBusinessService.sumOperationValue(account, null, new Date(), null, null);
-		Long totalConsumption = aq.getCurrentValue() + todayConsumption + fileSize;
-		if (totalConsumption > aq.getQuota()) {
-			throw new BusinessException(BusinessErrorCode.QUOTA_ACCOUNT_FORBIDDEN_NO_MORE_SPACE_AVALAIBLE,
-					"The account quota has been reached.");
+		if (!aq.getShared()) {
+			// No need to check account used space because it is shared for all account form one container
+			Long todayConsumption = operationHistoryBusinessService.sumOperationValue(account, null, new Date(), null, null);
+			Long totalConsumption = aq.getCurrentValue() + todayConsumption + fileSize;
+			if (totalConsumption > aq.getQuota()) {
+				throw new BusinessException(BusinessErrorCode.QUOTA_ACCOUNT_FORBIDDEN_NO_MORE_SPACE_AVALAIBLE,
+						"The account quota has been reached.");
+			}
 		}
 	}
 

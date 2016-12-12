@@ -37,6 +37,7 @@ import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
+import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -52,5 +53,7 @@ public interface QuotaService {
 	AccountQuota find(Account actor, Account owner, String uuid) throws BusinessException;
 
 	Long getRealTimeUsedSpace(Account actor, Account owner, String uuid) throws BusinessException;
+
+	Long getRealTimeUsedSpace(Account actor, Account owner, ContainerQuota cq) throws BusinessException;
 
 }

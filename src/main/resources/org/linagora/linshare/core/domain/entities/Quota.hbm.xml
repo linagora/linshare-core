@@ -18,12 +18,10 @@
 		</property>
 		<property name="quota" column="quota"/>
 		<property name="quotaOverride" type="boolean">
-			<column name="quota_override" not-null="true" default="false" />
+			<column name="quota_override" not-null="false"/>
 		</property>
 		<property name="defaultQuota" column="default_quota"/>
-		<property name="defaultQuotaOverride" type="boolean">
-			<column name="default_quota_override" not-null="true" default="false" />
-		</property>
+		<property name="defaultQuotaOverride" type="boolean" column="default_quota_override" not-null="false" />
 		<property name="quotaWarning" column="quota_warning"/>
 		<property name="creationDate" column="creation_date" type = "timestamp"/>
 		<property name="modificationDate" column="modification_date" type = "timestamp"/>
@@ -32,10 +30,18 @@
 		<many-to-one name="domain" column="domain_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" lazy="false" fetch="join" />
 		<many-to-one name="parentDomain" column="domain_parent_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" lazy="proxy" />
 
-		<subclass name="org.linagora.linshare.core.domain.entities.DomainQuota" discriminator-value="DOMAIN_QUOTA" />
+		<subclass name="org.linagora.linshare.core.domain.entities.DomainQuota" discriminator-value="DOMAIN_QUOTA" >
+			<property name="currentValueForSubdomains" column="current_value_for_subdomains"/>
+		</subclass>
 
 		<subclass name="org.linagora.linshare.core.domain.entities.AccountQuota" discriminator-value="ACCOUNT_QUOTA" >
 			<property name="maxFileSize" column="max_file_size" />
+			<property name="maxFileSizeOverride" type="boolean">
+				<column name="max_file_size_override" not-null="true" default="false" />
+			</property>
+			<property name="shared" type="boolean">
+				<column name="shared" not-null="true" default="false" />
+			</property>
 			<many-to-one name="containerQuota" column="quota_container_id" class="org.linagora.linshare.core.domain.entities.ContainerQuota" />
 		</subclass>
 
@@ -48,6 +54,9 @@
 			<property name="defaultAccountQuota" column="default_account_quota" />
 			<property name="defaultAccountQuotaOverride" type="boolean">
 				<column name="default_account_quota_override" not-null="true" default="false" />
+			</property>
+			<property name="shared" type="boolean">
+				<column name="shared" not-null="true" default="false" />
 			</property>
 			<many-to-one name="domainQuota" column="quota_domain_id" class="org.linagora.linshare.core.domain.entities.DomainQuota"/>
 		</subclass>

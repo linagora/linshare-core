@@ -37,6 +37,10 @@ public class AccountQuota extends Quota {
 
 	protected Long maxFileSize;
 
+	protected Boolean maxFileSizeOverride;
+
+	protected Boolean shared;
+
 	protected ContainerQuota containerQuota;
 
 	public AccountQuota() {
@@ -49,6 +53,11 @@ public class AccountQuota extends Quota {
 		this.account = account;
 		this.containerQuota = containerQuota;
 		this.maxFileSize = containerQuota.getDefaultMaxFileSize();
+		this.maxFileSizeOverride = false;
+		this.shared = false;
+		if (this.containerQuota.getShared()) {
+			this.shared = true;
+		}
 	}
 
 	public Long getMaxFileSize() {
@@ -71,6 +80,22 @@ public class AccountQuota extends Quota {
 		if (maxFileSize != null) {
 			this.maxFileSize = maxFileSize;
 		}
+	}
+
+	public Boolean getShared() {
+		return shared;
+	}
+
+	public void setShared(Boolean shared) {
+		this.shared = shared;
+	}
+
+	public Boolean getMaxFileSizeOverride() {
+		return maxFileSizeOverride;
+	}
+
+	public void setMaxFileSizeOverride(Boolean maxFileSizeOverride) {
+		this.maxFileSizeOverride = maxFileSizeOverride;
 	}
 
 	@Override

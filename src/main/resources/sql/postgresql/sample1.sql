@@ -3,6 +3,8 @@ SET statement_timeout = 0;
 SET client_encoding = 'UTF8';
 SET client_min_messages = warning;
 SET default_with_oids = false;
+-- SET ON_ERROR_STOP = on;
+
 
 
 -- Jeu de données de tests
@@ -126,154 +128,259 @@ INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modi
 INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modification_date, user_id) VALUES (5, 54, false, true, current_timestamp(3), current_timestamp(3), 53); 
 
 -- MyDomain QUOTA
-INSERT INTO quota(
-    id, uuid, creation_date, modification_date, batch_modification_date,
-    current_value, last_value,
+INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification_date,
+	current_value, last_value,
     domain_id, domain_parent_id,
-    quota, quota_warning, quota_type)
+    quota, quota_override,
+    quota_warning,
+    default_quota, default_quota_override,
+    quota_type, current_value_for_subdomains)
 VALUES (
     2, '164783e8-b9d1-11e5-87e9-bfc0aac925c2', NOW(), NOW(), NOW(),
-    0,0,
+	0, 0,
     2, 1,
-    1099511627776, 1045824536576, 'DOMAIN_QUOTA');
+	1099511627776, false,
+	1099511627776,
+    1099511627776, false,
+    'DOMAIN_QUOTA', 0);
+-- quota : 1 To
+-- quota_warning : 1099511627776 : 1 To
+-- default_quota : 1099511627776 : 1 To (1 To per sub domain)
 
--- MyDomain QUOTA - USER
-INSERT INTO quota(
-    id, uuid,
-    creation_date, modification_date, batch_modification_date,
-    quota_domain_id, current_value, last_value,
-    domain_id, domain_parent_id,
-    quota, quota_warning, max_file_size,
-    container_type, quota_type)
-VALUES (
-    3, '37226d66-b9d2-11e5-b4d8-f7b730449724',
-    NOW(), NOW(), NOW(),
-    2, 0, 0,
-    2, 1,
-    1099511627776, 1045824536576, 10737418240,
-    'USER', 'CONTAINER_QUOTA');
 
--- MyDomain QUOTA - WORK_GROUP
-INSERT INTO quota(
-    id, uuid,
-    creation_date, modification_date, batch_modification_date,
-    quota_domain_id, current_value, last_value,
+-- 'CONTAINER_QUOTA', 'USER' for MyDomain
+INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification_date,
+	quota_domain_id, current_value, last_value,
     domain_id, domain_parent_id,
-    quota, quota_warning, max_file_size,
-    container_type, quota_type)
+    quota, quota_override,
+    quota_warning,
+    default_quota, default_quota_override,
+    default_max_file_size, default_max_file_size_override,
+    default_account_quota, default_account_quota_override,
+    quota_type, container_type, shared)
 VALUES (
-    4, '6a442450-b9d2-11e5-8c67-5b2367500fc4',
-    NOW(), NOW(), NOW(),
-    2, 0, 0,
+    3, '37226d66-b9d2-11e5-b4d8-f7b730449724', NOW(), NOW(), NOW(),
+	2, 0, 0,
     2, 1,
-    1099511627776, 1045824536576, 10737418240,
-    'WORK_GROUP', 'CONTAINER_QUOTA');
+	429496729600, false,
+    429496729600,
+    429496729600, false,
+    10737418240, false,
+    107374182400, false,
+    'CONTAINER_QUOTA', 'USER', false);
+-- quota : 429496729600 : 400 Go for all users
+-- quota_warning : 429496729600 : 400 Go
+-- default_quota : 429496729600 : 400 Go
+-- default_max_file_size : 10737418240  : 10 Go
+-- default_account_quota : 107374182400 : 100 Go
+
+
+-- 'CONTAINER_QUOTA', 'WORK_GROUP' for MyDomain
+INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification_date,
+	quota_domain_id, current_value, last_value,
+    domain_id, domain_parent_id,
+    quota, quota_override,
+    quota_warning,
+    default_quota, default_quota_override,
+    default_max_file_size, default_max_file_size_override,
+    default_account_quota, default_account_quota_override,
+    quota_type, container_type, shared)
+VALUES (
+    4, '6a442450-b9d2-11e5-8c67-5b2367500fc4', NOW(), NOW(), NOW(),
+	2, 0, 0,
+    2, 1,
+	429496729600, false,
+    429496729600,
+    429496729600, false,
+    10737418240, false,
+    429496729600, false,
+    'CONTAINER_QUOTA', 'WORK_GROUP', true);
+-- quota : 429496729600 : 400 Go for all workgroups
+-- quota_warning : 429496729600 : 400 Go
+-- default_quota : 429496729600 : 400 Go
+-- default_max_file_size : 10737418240  : 10 Go
+-- default_account_quota : 429496729600 : 400 Go, also 400 Go for one workgroup
+
 
 
 -- MySubDomain QUOTA
-INSERT INTO quota(
-    id, uuid,
-    creation_date, modification_date, batch_modification_date,
-    current_value, last_value,
+INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification_date,
+	current_value, last_value,
     domain_id, domain_parent_id,
-    quota, quota_warning, quota_type)
+    quota, quota_override,
+    quota_warning,
+    default_quota, default_quota_override,
+    quota_type, current_value_for_subdomains)
 VALUES (
-    5, 'b69b9d1a-b9d2-11e5-aab9-e337a9ab2b58',
-    NOW(), NOW(), NOW(),
-    0,0,
+    5, 'b69b9d1a-b9d2-11e5-aab9-e337a9ab2b58', NOW(), NOW(), NOW(),
+	0, 0,
     3, 2,
-    1099511627776, 1045824536576, 'DOMAIN_QUOTA');
+	1099511627776, false,
+	1099511627776,
+    1099511627776, false,
+    'DOMAIN_QUOTA', 0);
+-- quota : 1 To
+-- quota_warning : 1099511627776 : 1 To
+-- default_quota : 1099511627776 : 1 To (1 To per sub domain)
 
 
--- MySubDomain QUOTA - USER
-INSERT INTO quota(
-    id, uuid,
-    creation_date, modification_date, batch_modification_date,
-    quota_domain_id, current_value, last_value,
-    domain_id, domain_parent_id,
-    quota, quota_warning, max_file_size,
-    container_type, quota_type)
-VALUES (
-    6, 'f8733bd0-b9d2-11e5-a247-2b9505cfdddf',
-    NOW(), NOW(), NOW(),
-    5, 0, 0,
-    3, 2,
-    1099511627776, 1045824536576, 10737418240,
-    'USER', 'CONTAINER_QUOTA');
 
--- MySubDomain QUOTA - WORK_GROUP
-INSERT INTO quota(
-    id, uuid,
-    creation_date, modification_date, batch_modification_date,
-    quota_domain_id, current_value, last_value,
+-- 'CONTAINER_QUOTA', 'USER' for MySubDomain
+INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification_date,
+	quota_domain_id, current_value, last_value,
     domain_id, domain_parent_id,
-    quota, quota_warning, max_file_size,
-    container_type, quota_type)
+    quota, quota_override,
+    quota_warning,
+    default_quota, default_quota_override,
+    default_max_file_size, default_max_file_size_override,
+    default_account_quota, default_account_quota_override,
+    quota_type, container_type, shared)
 VALUES (
-    7, '002310d0-b9d3-11e5-9413-d3f63c53e650',
-    NOW(), NOW(), NOW(),
-    5, 0, 0,
+    6, 'f8733bd0-b9d2-11e5-a247-2b9505cfdddf', NOW(), NOW(), NOW(),
+	5, 0, 0,
     3, 2,
-    1099511627776, 1045824536576, 10737418240,
-    'WORK_GROUP', 'CONTAINER_QUOTA');
+	429496729600, false,
+    429496729600,
+    429496729600, false,
+    10737418240, false,
+    107374182400, false,
+    'CONTAINER_QUOTA', 'USER', false);
+-- quota : 429496729600 : 400 Go for all users
+-- quota_warning : 429496729600 : 400 Go
+-- default_quota : 429496729600 : 400 Go
+-- default_max_file_size : 10737418240  : 10 Go
+-- default_account_quota : 107374182400 : 100 Go
+
+
+-- 'CONTAINER_QUOTA', 'WORK_GROUP' for MyDomain
+INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification_date,
+	quota_domain_id, current_value, last_value,
+    domain_id, domain_parent_id,
+    quota, quota_override,
+    quota_warning,
+    default_quota, default_quota_override,
+    default_max_file_size, default_max_file_size_override,
+    default_account_quota, default_account_quota_override,
+    quota_type, container_type, shared)
+VALUES (
+    7, '002310d0-b9d3-11e5-9413-d3f63c53e650', NOW(), NOW(), NOW(),
+	5, 0, 0,
+    3, 2,
+	429496729600, false,
+    429496729600,
+    429496729600, false,
+    10737418240, false,
+    429496729600, false,
+    'CONTAINER_QUOTA', 'WORK_GROUP', true);
+-- quota : 429496729600 : 400 Go for all workgroups
+-- quota_warning : 429496729600 : 400 Go
+-- default_quota : 429496729600 : 400 Go
+-- default_max_file_size : 10737418240  : 10 Go
+-- default_account_quota : 429496729600 : 400 Go, also 400 Go for one workgroup
+
+
+
+
+
+
+
 
 -- GuestDomain QUOTA
-INSERT INTO quota(
-    id, uuid, creation_date, modification_date, batch_modification_date,
-    current_value, last_value,
+INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification_date,
+	current_value, last_value,
     domain_id, domain_parent_id,
-    quota, quota_warning, quota_type)
+    quota, quota_override,
+    quota_warning,
+    default_quota, default_quota_override,
+    quota_type, current_value_for_subdomains)
 VALUES (
     8, '0b866494-b9d4-11e5-be35-afca154efca0', NOW(), NOW(), NOW(),
-    0,0,
+	0, 0,
     4, 2,
-    1099511627776, 1045824536576, 'DOMAIN_QUOTA');
+	1099511627776, false,
+	1099511627776,
+    1099511627776, false,
+    'DOMAIN_QUOTA', 0);
+-- quota : 1 To
+-- quota_warning : 1099511627776 : 1 To
+-- default_quota : 1099511627776 : 1 To (1 To per sub domain)
 
--- GuestDomain QUOTA - USER
-INSERT INTO quota(
-    id, uuid,
-    creation_date, modification_date, batch_modification_date,
-    quota_domain_id, current_value, last_value,
-    domain_id, domain_parent_id,
-    quota, quota_warning, max_file_size,
-    container_type, quota_type)
-VALUES (
-    9, '1515e6e2-b9d4-11e5-997e-0b5792ea886a',
-    NOW(), NOW(), NOW(),
-    8, 0, 0,
-    4, 2,
-    1099511627776, 1045824536576, 10737418240,
-    'USER', 'CONTAINER_QUOTA');
 
--- GuestDomain QUOTA - WORK_GROUP
-INSERT INTO quota(
-    id, uuid,
-    creation_date, modification_date, batch_modification_date,
-    quota_domain_id, current_value, last_value,
+
+-- 'CONTAINER_QUOTA', 'USER' for GuestDomain
+INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification_date,
+	quota_domain_id, current_value, last_value,
     domain_id, domain_parent_id,
-    quota, quota_warning, max_file_size,
-    container_type, quota_type)
+    quota, quota_override,
+    quota_warning,
+    default_quota, default_quota_override,
+    default_max_file_size, default_max_file_size_override,
+    default_account_quota, default_account_quota_override,
+    quota_type, container_type, shared)
 VALUES (
-    10, '1f468522-b9d4-11e5-916d-a713a67dd225',
-    NOW(), NOW(), NOW(),
-    8, 0, 0,
+    9, '1515e6e2-b9d4-11e5-997e-0b5792ea886a', NOW(), NOW(), NOW(),
+	8, 0, 0,
     4, 2,
-    1099511627776, 1045824536576, 10737418240,
-    'WORK_GROUP', 'CONTAINER_QUOTA');
+	429496729600, false,
+    429496729600,
+    429496729600, false,
+    10737418240, false,
+    107374182400, false,
+    'CONTAINER_QUOTA', 'USER', false);
+-- quota : 429496729600 : 400 Go for all users
+-- quota_warning : 429496729600 : 400 Go
+-- default_quota : 429496729600 : 400 Go
+-- default_max_file_size : 10737418240  : 10 Go
+-- default_account_quota : 107374182400 : 100 Go
+
+
+
+-- 'CONTAINER_QUOTA', 'WORK_GROUP' for GuestDomain
+INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification_date,
+	quota_domain_id, current_value, last_value,
+    domain_id, domain_parent_id,
+    quota, quota_override,
+    quota_warning,
+    default_quota, default_quota_override,
+    default_max_file_size, default_max_file_size_override,
+    default_account_quota, default_account_quota_override,
+    quota_type, container_type, shared)
+VALUES (
+    10, '1f468522-b9d4-11e5-916d-a713a67dd225', NOW(), NOW(), NOW(),
+	8, 0, 0,
+    4, 2,
+	429496729600, false,
+    429496729600,
+    429496729600, false,
+    10737418240, false,
+    429496729600, false,
+    'CONTAINER_QUOTA', 'WORK_GROUP', true);
+-- quota : 429496729600 : 400 Go for all workgroups
+-- quota_warning : 429496729600 : 400 Go
+-- default_quota : 429496729600 : 400 Go
+-- default_max_file_size : 10737418240  : 10 Go
+-- default_account_quota : 429496729600 : 400 Go, also 400 Go for one workgroup
+
 
 -- Bart ACCOUNT QUOTA
 INSERT INTO quota(
-    id, uuid,
-    creation_date, modification_date, batch_modification_date,
+    id, uuid, creation_date, modification_date, batch_modification_date,
     quota_container_id, current_value, last_value,
     domain_id, account_id, domain_parent_id,
-    quota, quota_warning, max_file_size, quota_type)
+    quota, quota_override,
+    quota_warning,
+    default_quota, default_quota_override,
+    max_file_size, max_file_size_override,
+    shared, quota_type)
 VALUES (
-    43, '1f468522-b9d4-11e5-916d-a713a67dd226',
-    NOW(), NOW(), NOW(),
+    43, '1f468522-b9d4-11e5-916d-a713a67dd226', NOW(), NOW(), NOW(),
     6, 0, 0,
     3, 50, 2,
-    1099511627776, 1045824536576, 10737418240, 'ACCOUNT_QUOTA');
+    107374182400, false,
+    107374182400,
+    107374182400, false,
+    10737418240, false,
+    false, 'ACCOUNT_QUOTA');
 
 -- -- thread-entry-1-no-dl
 -- INSERT INTO document (id, uuid, creation_date, type, size, thmb_uuid, timestamp) VALUES (1, 'a09e6bea-edcb-11e1-86e7-5404a6202d2c', current_timestamp(3), 'image/png', 49105, null, null);

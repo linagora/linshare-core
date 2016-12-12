@@ -47,6 +47,8 @@ public class ContainerQuota extends Quota {
 
 	protected ContainerQuotaType containerQuotaType;
 
+	protected Boolean shared;
+
 	protected DomainQuota domainQuota;
 
 	public ContainerQuota() {
@@ -79,6 +81,10 @@ public class ContainerQuota extends Quota {
 
 		// Kind of container.
 		this.containerQuotaType = parentContainerQuota.getContainerQuotaType();
+		this.shared = false;
+		if (this.containerQuotaType.equals(ContainerQuotaType.WORK_GROUP)) {
+			this.shared = true;
+		}
 	}
 
 	/**
@@ -104,6 +110,10 @@ public class ContainerQuota extends Quota {
 
 		this.currentValue = currentValue;
 		this.lastValue = lastValue;
+		this.shared = false;
+		if (this.containerQuotaType.equals(ContainerQuotaType.WORK_GROUP)) {
+			this.shared = true;
+		}
 	}
 
 	public ContainerQuotaType getContainerQuotaType() {
@@ -158,6 +168,18 @@ public class ContainerQuota extends Quota {
 
 	public void setDefaultAccountQuotaOverride(Boolean defaultAccountQuotaOverride) {
 		this.defaultAccountQuotaOverride = defaultAccountQuotaOverride;
+	}
+
+	public Boolean getShared() {
+		return shared;
+	}
+
+	public void setShared(Boolean shared) {
+		this.shared = shared;
+	}
+
+	public boolean isWorkgroup() {
+		return (getContainerQuotaType().equals(ContainerQuotaType.WORK_GROUP));
 	}
 
 	@Override
