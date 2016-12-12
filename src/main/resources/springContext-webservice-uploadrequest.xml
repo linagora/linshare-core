@@ -38,7 +38,6 @@
 			<ref bean="unrecognizedPropertyExceptionMapper" />
 			<!-- Json provider for serialisation -->
 			<ref bean="jsonProvider" />
-			<ref bean="textPlainJsonProvider" />
 		</jaxrs:providers>
 		<jaxrs:features>
 <!-- 			<cxf:logging /> -->
