@@ -77,7 +77,7 @@
 			<sec:filter-chain pattern="/webservice/rest/user/authentication/" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/admin/authentication/" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/uploadrequest/**" filters="none" />
-			<sec:filter-chain pattern="/webservice/rest/anonymousurl/**" filters="none" />
+			<sec:filter-chain pattern="/webservice/rest/external/**" filters="none" />
 
 			<sec:filter-chain pattern="/webservice/rest/plugin/information" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/cors" filters="none" />
