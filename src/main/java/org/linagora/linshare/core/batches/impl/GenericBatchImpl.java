@@ -85,6 +85,11 @@ public abstract class GenericBatchImpl implements GenericBatch {
 	}
 
 	@Override
+	public String getBatchClassName() {
+		return this.getClass().toString().split(" ")[1];
+	}
+
+	@Override
 	public boolean needToRun() {
 		return true;
 	}

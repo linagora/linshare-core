@@ -43,6 +43,8 @@ import org.linagora.linshare.core.job.quartz.Context;
 
 public interface GenericBatch {
 
+	String getBatchClassName();
+
 	List<String> getAll();
 
 	Context execute(String identifier, long total, long position)
