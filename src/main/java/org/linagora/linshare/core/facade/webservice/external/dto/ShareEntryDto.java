@@ -107,4 +107,9 @@ public class ShareEntryDto {
 	public void setType(String type) {
 		this.type = type;
 	}
+
+	@Override
+	public String toString() {
+		return "ShareEntryDto [uuid=" + uuid + ", name=" + name + ", size=" + size + ", type=" + type + "]";
+	}
 }

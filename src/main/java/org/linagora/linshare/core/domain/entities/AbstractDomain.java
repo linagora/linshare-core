@@ -244,7 +244,7 @@ public abstract class AbstractDomain {
 
 	@Override
 	public String toString() {
-		return "[Domain with id: " + uuid + "]";
+		return "Domain [uuid=" + uuid + ", label=" + label + "]";
 	}
 
 	public AbstractDomain getParentDomain() {
