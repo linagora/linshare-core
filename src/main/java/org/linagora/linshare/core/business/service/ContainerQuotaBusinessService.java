@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.business.service;
 
-import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
@@ -55,5 +54,5 @@ public interface ContainerQuotaBusinessService {
 
 	ContainerQuota update(ContainerQuota entity) throws BusinessException;
 
-	ContainerQuota updateByBatch(ContainerQuota entity, Date today) throws BusinessException;
+	ContainerQuota updateByBatch(ContainerQuota entity) throws BusinessException;
 }

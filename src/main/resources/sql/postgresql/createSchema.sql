@@ -737,7 +737,7 @@ CREATE TABLE statistic (
   id                      int8 NOT NULL,
   statistic_type         varchar(255) NOT NULL,
   creation_date          timestamp(6) NOT NULL,
-  active_date            timestamp(6) NOT NULL,
+  statistic_date         timestamp(6) NOT NULL,
   operation_count        int8 NOT NULL,
   delete_operation_count int8 NOT NULL,
   create_operation_count int8 NOT NULL,

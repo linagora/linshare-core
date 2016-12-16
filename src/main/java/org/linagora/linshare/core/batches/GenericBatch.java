@@ -62,5 +62,10 @@ public interface GenericBatch {
 
 	boolean needToRun();
 
+	void start();
+
+	void fail(List<String> all, long errors, long unhandled_errors,
+			long total, long processed);
+
 	void fail(Map<String, List<String>> context, Exception exception);
 }

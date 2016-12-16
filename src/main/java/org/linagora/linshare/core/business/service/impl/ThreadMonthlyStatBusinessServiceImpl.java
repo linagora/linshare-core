@@ -69,7 +69,7 @@ public class ThreadMonthlyStatBusinessServiceImpl implements ThreadMonthlyStatBu
 		ThreadMonthlyStat entity = new ThreadMonthlyStat(thread, thread.getDomain(),
 				thread.getDomain().getParentDomain(), operationCount, deleteOperationCount, createOperationCount,
 				createOperationSum, deleteOperationSum, diffOperationSum, actualOperationSum);
-		entity.setActiveDate(endDate);
+		entity.setStatisticDate(endDate);
 		entity = repository.create(entity);
 		return entity;
 	}

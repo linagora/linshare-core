@@ -95,8 +95,20 @@ public abstract class GenericBatchImpl implements GenericBatch {
 	}
 
 	@Override
+	public void start() {
+		logger.info("{} job starting ...", this.getBatchClassName());
+	}
+
+	@Override
 	public void fail(Map<String, List<String>> context, Exception exception) {
 		logger.error("Batch error in " + this.getClass().getName());
 		logger.error(exception.getMessage(), exception);
+	}
+
+	@Override
+	public void fail(List<String> all, long errors, long unhandled_errors, long total, long processed) {
+		logger.error("Critical error for batch : " + this.getClass().getName() + ". Batch stopped.");
+		logger.error("Processed {}/{}, errors : ", processed, total, errors);
+		logger.error("Job failed");
 	}
 }

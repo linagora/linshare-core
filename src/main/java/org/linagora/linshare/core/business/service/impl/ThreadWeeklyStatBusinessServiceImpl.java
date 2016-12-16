@@ -69,7 +69,7 @@ public class ThreadWeeklyStatBusinessServiceImpl implements ThreadWeeklyStatisti
 		ThreadWeeklyStat entity = new ThreadWeeklyStat(thread, thread.getDomain(), thread.getDomain().getParentDomain(),
 				operationCount, deleteOperationCount, createOperationCount, createOperationSum, deleteOperationSum,
 				diffOperationSum, actualOperationSum);
-		entity.setActiveDate(endDate);
+		entity.setStatisticDate(endDate);
 		entity = repository.create(entity);
 		return entity;
 	}

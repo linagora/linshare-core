@@ -114,7 +114,7 @@ public class QuotaRepositoryImplTest
 		assertEquals(new Long(100), result3.getLastValue());
 		assertEquals(new Long(2300), result3.getQuota());
 		assertEquals(new Long(2000), result3.getQuotaWarning());
-		List<String> listIdentifier = accountQuotaRepository.findDomainByBatchModificationDate(yesterday(), new Date());
+		List<String> listIdentifier = accountQuotaRepository.findDomainUuidByBatchModificationDate(yesterday());
 		assertEquals(1, listIdentifier.size());
 		logger.debug(" domain identifier : "+listIdentifier.get(0));
 	}

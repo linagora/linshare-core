@@ -85,6 +85,10 @@ public class DailyBatchJobTest extends AbstractTransactionalJUnit4SpringContextT
 	private GenericBatch dailyDomainBatch;
 
 	@Autowired
+	@Qualifier("computeSubDomainQuotaBatch")
+	private GenericBatch computeSubDomainQuotaBatch;
+
+	@Autowired
 	private OperationHistoryBusinessService operationHistoryBusinessService;
 
 	@Autowired
@@ -123,6 +127,7 @@ public class DailyBatchJobTest extends AbstractTransactionalJUnit4SpringContextT
 		batches.add(dailyUserBatch);
 		batches.add(dailyThreadBatch);
 		batches.add(dailyDomainBatch);
+		batches.add(computeSubDomainQuotaBatch);
 		batches.add(weeklyUserBatch);
 		batches.add(weeklyThreadBatch);
 		batches.add(weeklyDomainBatch);

@@ -51,6 +51,8 @@ public interface BatchHistoryBusinessService {
 
 	BatchHistory findByUuid(String lsUuid) throws BusinessException;
 
-	boolean exist(Date beginDate, Date endDate, BatchType batchType);
+	BatchHistory findByBatchType(Date beginDate, Date endDate, BatchType batchType) throws BusinessException;
+
+	boolean exist(Date beginDate, BatchType batchType);
 
 }

@@ -77,7 +77,7 @@ public class UserDailyStatBusinessServiceImpl implements UserDailyStatBusinessSe
 		UserDailyStat entity = new UserDailyStat(user, user.getDomain(), user.getDomain().getParentDomain(),
 				countOperationValue, countDeleteOperationValue, countCreateOperationValue, sumCreateOperationValue,
 				sumDeleteOperationValue, diffOperationValue, sumOperationValue);
-		entity.setActiveDate(date);
+		entity.setStatisticDate(date);
 		entity = repository.create(entity);
 		return entity;
 	}

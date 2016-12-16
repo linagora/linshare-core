@@ -34,8 +34,6 @@
 
 package org.linagora.linshare.core.batches.impl;
 
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
@@ -56,7 +54,7 @@ import org.linagora.linshare.core.job.quartz.DomainBatchResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 
-public class StatisticDailyDomainBatchImpl extends GenericBatchImpl {
+public class StatisticDailyDomainBatchImpl extends GenericBatchWithHistoryImpl {
 
 	private final AccountQuotaBusinessService accountQuotaBusinessService;
 
@@ -68,8 +66,6 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchImpl {
 
 	private final DomainDailyStatBusinessService domainDailyStatBusinessService;
 
-	private final BatchHistoryBusinessService batchHistoryBusinessService;
-
 	public StatisticDailyDomainBatchImpl(
 			final AccountRepository<Account> accountRepository,
 			final AccountQuotaBusinessService accountQuotaBusinessService,
@@ -78,20 +74,21 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchImpl {
 			final DomainQuotaBusinessService domainQuotaBusinessService,
 			final DomainDailyStatBusinessService domainDailyStatBusinessService,
 			final BatchHistoryBusinessService batchHistoryBusinessService) {
-		super(accountRepository);
+		super(accountRepository, batchHistoryBusinessService);
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
 		this.abstractDomainService = abstractDomainService;
 		this.containerQuotaBusinessService = containerQuotaBusinessService;
 		this.domainQuotaBusinessService = domainQuotaBusinessService;
 		this.domainDailyStatBusinessService = domainDailyStatBusinessService;
-		this.batchHistoryBusinessService = batchHistoryBusinessService;
 	}
 
 	@Override
+	public BatchType getBatchType() {
+		return BatchType.DAILY_DOMAIN_BATCH;
+	}
+	@Override
 	public List<String> getAll() {
-		logger.info("DailyDomainBatchImpl job starting ...");
-		// TODO is it between yesterday and now ? or yseterday 00h00 and today 00h00 ?
-		List<String> domains = accountQuotaBusinessService.findDomainByBatchModificationDate(yesterday(), new Date());
+		List<String> domains = accountQuotaBusinessService.findDomainUuidByBatchModificationDate(getYesterdayEnd());
 		logger.info(domains.size() + " domain(s) have been found in accountQuota table and modified by batch today");
 		return domains;
 	}
@@ -99,54 +96,25 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchImpl {
 	@Override
 	public Context execute(String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
-		Date today = today();
 		AbstractDomain resource = abstractDomainService.findById(identifier);
 		Context context = new DomainBatchResultContext(resource);
 		try {
 			logInfo(total, position, "processing domain : " + resource.toString());
-			domainDailyStatBusinessService.create(resource, today);
-		} catch (BusinessException businessException) {
-			logError(total, position, "Error while trying to create DomainDailyStat");
-			logger.info("Error occured while creating daily statistics for domain", businessException);
-			BatchBusinessException exception = new BatchBusinessException(context,
-					"Error while trying to create a DomainDailyStat");
-			exception.setBusinessException(businessException);
-			throw exception;
-		}
-		try {
+
+			// creation of domain statistic for the past day using account statistic of the past day
+			domainDailyStatBusinessService.create(resource, getYesterdayBegin(), getYesterdayEnd());
+
+			//updating user quota with account quotas only updated this morning. I suppose this batch is run every morning. 
 			ContainerQuota userContainerQuota = containerQuotaBusinessService.find(resource, ContainerQuotaType.USER);
-			userContainerQuota = containerQuotaBusinessService.updateByBatch(userContainerQuota, today);
-		} catch (BusinessException businessException) {
-			logError(total, position, "Error while trying to update userContainerQuota");
-			logger.info("Error occured while updating an user container quota for domain", businessException);
-			BatchBusinessException exception = new BatchBusinessException(context,
-					"Error while trying to update a userEnsebleQuota");
-			exception.setBusinessException(businessException);
-			throw exception;
-		}
-		try {
+			userContainerQuota = containerQuotaBusinessService.updateByBatch(userContainerQuota);
+
+			//updating workgroup quota with account quotas only updated this morning. I suppose this batch is run every morning.
 			ContainerQuota threadContainerQuota = containerQuotaBusinessService.find(resource, ContainerQuotaType.WORK_GROUP);
-			threadContainerQuota = containerQuotaBusinessService.updateByBatch(threadContainerQuota, today);
-		} catch (BusinessException businessException) {
-			logError(total, position, "Error while trying to update threadContainerQuota");
-			logger.info("Error occured while updating a thread container quota for domain", businessException);
-			BatchBusinessException exception = new BatchBusinessException(context,
-					"Error while trying to update a threadEnsebleQuota");
-			exception.setBusinessException(businessException);
-			throw exception;
-		}
-		try {
+			threadContainerQuota = containerQuotaBusinessService.updateByBatch(threadContainerQuota);
+
 			DomainQuota domainQuota = domainQuotaBusinessService.find(resource);
-			domainQuota = domainQuotaBusinessService.updateByBatch(domainQuota, today);
-			// Workaround ? or not ?
-			if (!resource.isRootDomain()) {
-				long diffValue = domainQuota.getCurrentValue() - domainQuota.getLastValue();
-				DomainQuota rootQuota = domainQuotaBusinessService.find(abstractDomainService.getUniqueRootDomain());
-				rootQuota.setBatchModificationDate(new Date());
-				rootQuota.setLastValue(rootQuota.getCurrentValue());
-				rootQuota.setCurrentValue(rootQuota.getCurrentValue() + diffValue);
-				domainQuotaBusinessService.update(rootQuota);
-			}
+			domainQuota = domainQuotaBusinessService.updateByBatch(domainQuota);
+
 		} catch (BusinessException businessException) {
 			logError(total, position, "Error while trying to update domainQuota");
 			logger.info("Error occured while updating a domain quota for domain", businessException);
@@ -175,42 +143,5 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchImpl {
 						+ domain.getUuid());
 		logger.error("Error occured while creating DailyDomainStatistics, ContainerQuota and DomainQuota for a domain "
 				+ domain.getUuid() + ". BatchBusinessException ", exception);
-	}
-
-	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors, long total, long processed) {
-		long success = total - errors - unhandled_errors;
-		logger.info(success + " DailyDomainStatistic, ContainerQuota and DomainQuota for domain(s) have bean created.");
-		if (errors > 0) {
-			logger.info(errors
-					+ "  DailyDomainStatistic, ContainerQuota and DomainQuota for domain(s) failed to be created");
-		}
-		if (unhandled_errors > 0) {
-			logger.error(unhandled_errors
-					+ "  DailyDomainStatistic, ContainerQuota and DomainQuota for domain(s) failed to be created (unhandled error.)");
-		}
-		logger.info("DailyDomainBatchImpl job terminated");
-	}
-
-	private Date today() {
-		GregorianCalendar dateCalender = new GregorianCalendar();
-		dateCalender.set(GregorianCalendar.HOUR_OF_DAY, 0);
-		dateCalender.set(GregorianCalendar.MINUTE, 0);
-		dateCalender.set(GregorianCalendar.SECOND, 0);
-		return dateCalender.getTime();
-	}
-
-	private Date yesterday() {
-		GregorianCalendar dateCalender = new GregorianCalendar();
-		dateCalender.add(GregorianCalendar.DATE, -1);
-		dateCalender.set(GregorianCalendar.HOUR_OF_DAY, 23);
-		dateCalender.set(GregorianCalendar.MINUTE, 59);
-		dateCalender.set(GregorianCalendar.SECOND, 59);
-		return dateCalender.getTime();
-	}
-
-	@Override
-	public boolean needToRun() {
-		return !batchHistoryBusinessService.exist(today(), null, BatchType.DAILY_DOMAIN_BATCH);
 	}
 }

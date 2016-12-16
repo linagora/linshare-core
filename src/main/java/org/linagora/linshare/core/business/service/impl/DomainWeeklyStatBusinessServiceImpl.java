@@ -68,7 +68,7 @@ public class DomainWeeklyStatBusinessServiceImpl implements DomainWeeklyStatBusi
 		DomainWeeklyStat entity = new DomainWeeklyStat(domain, domain.getParentDomain(), operationCount,
 				deleteOperationCount, createOperationCount, createOperationSum, deleteOperationSum, diffOperationSum,
 				actualOperationSum);
-		entity.setActiveDate(endDate);
+		entity.setStatisticDate(endDate);
 		entity = repository.create(entity);
 		return entity;
 	}

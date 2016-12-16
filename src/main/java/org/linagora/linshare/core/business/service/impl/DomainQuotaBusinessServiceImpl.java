@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
@@ -91,16 +90,11 @@ public class DomainQuotaBusinessServiceImpl implements DomainQuotaBusinessServic
 	}
 
 	@Override
-	public DomainQuota updateByBatch(DomainQuota entity, Date date) throws BusinessException{
-		AbstractDomain domain = entity.getDomain();
-		if (find(entity.getDomain()) != null) {
-			Long sumCurrentValue = containerQuotaRepository.sumOfCurrentValue(entity, date);
-			entity.setLastValue(entity.getCurrentValue());
-			entity.setCurrentValue(sumCurrentValue);
-			entity = repository.updateByBatch(entity);
-		} else {
-			throw new BusinessException("Domain : " + domain.getUuid() + " does not have a quota yet.");
-		}
+	public DomainQuota updateByBatch(DomainQuota entity) throws BusinessException{
+		Long sumCurrentValue = containerQuotaRepository.sumOfCurrentValue(entity);
+		entity.setLastValue(entity.getCurrentValue());
+		entity.setCurrentValue(sumCurrentValue);
+		entity = repository.updateByBatch(entity);
 		return entity;
 	}
 

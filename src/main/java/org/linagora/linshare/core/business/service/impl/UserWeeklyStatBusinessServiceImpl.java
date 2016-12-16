@@ -67,7 +67,7 @@ public class UserWeeklyStatBusinessServiceImpl implements UserWeeklyStatBusiness
 		UserWeeklyStat entity = new UserWeeklyStat(user, user.getDomain(), user.getDomain().getParentDomain(),
 				operationCount, deleteOperationCount, createOperationCount, createOperationSum, deleteOperationSum,
 				diffOperationSum, actualOperationSum);
-		entity.setActiveDate(endDate);
+		entity.setStatisticDate(endDate);
 		entity = repository.create(entity);
 		return entity;
 	}

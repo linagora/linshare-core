@@ -44,7 +44,16 @@ public interface AccountQuotaRepository extends GenericQuotaRepository<AccountQu
 
 	AccountQuota find(Account account);
 
-	List<String> findDomainByBatchModificationDate(Date startRange, Date endRange);
+	/**
+	 * Return all domain's uuid from all updated quota accounts today (between
+	 * today 00:00:00 and now) Precondition : StatisticDailyUserBatchImpl and
+	 * StatisticDailyThreadBatchImpl batches were run previously to update these
+	 * quota accounts.
+	 * @param startDate TODO
+	 * 
+	 * @return
+	 */
+	List<String> findDomainUuidByBatchModificationDate(Date startDate);
 
-	Long sumOfCurrentValue(ContainerQuota ensembleQuota, Date modificationDateByBatch);
+	Long sumOfCurrentValue(ContainerQuota ensembleQuota);
 }

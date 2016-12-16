@@ -197,6 +197,6 @@ public class StatisticWeeklyThreadBatchImpl extends GenericBatchImpl {
 
 	@Override
 	public boolean needToRun() {
-		return !batchHistoryBusinessService.exist(getFirstDayOfWeek(), new Date(), BatchType.WEEKLY_THREAD_BATCH);
+		return !batchHistoryBusinessService.exist(getFirstDayOfWeek(), BatchType.WEEKLY_THREAD_BATCH);
 	}
 }

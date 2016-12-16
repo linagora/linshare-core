@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.business.service;
 
-import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -56,5 +55,5 @@ public interface DomainQuotaBusinessService {
 
 	DomainQuota update(DomainQuota entity) throws BusinessException;
 
-	DomainQuota updateByBatch(DomainQuota entity, Date today);
+	DomainQuota updateByBatch(DomainQuota entity);
 }

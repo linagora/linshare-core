@@ -16,7 +16,7 @@
 		<discriminator column="statistic_type" type="string" />
 		<property name="statisticType" column="statistic_type" type="statisticType" insert="false" update="false"/>
 		<property name="creationDate" column="creation_date" type="timestamp" />
-		<property name="activeDate" column="active_date" type="timestamp" />
+		<property name="statisticDate" column="statistic_date" type="timestamp" />
 		<property name="operationCount" column="operation_count" type="long" not-null="true" />
 		<property name="deleteOperationCount" column="delete_operation_count" type="long" />
 		<property name="createOperationCount" column="create_operation_count" type="long" />

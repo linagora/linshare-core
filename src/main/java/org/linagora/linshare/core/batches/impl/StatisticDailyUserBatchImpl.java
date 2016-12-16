@@ -35,7 +35,6 @@
 package org.linagora.linshare.core.batches.impl;
 
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
@@ -53,7 +52,15 @@ import org.linagora.linshare.core.job.quartz.Context;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.UserService;
 
-public class StatisticDailyUserBatchImpl extends GenericBatchImpl {
+/**
+ * For each account with activity yesterday (uploading or deleting files) :
+ * yesterday = from 00:00:00 to 23:59:59.
+ * - create daily statistic
+ * - update account quota with the new current value of used space.
+ * - delete all operation in operation_history table related to the current account.
+ * This batch is only run once a day.
+ */
+public class StatisticDailyUserBatchImpl extends GenericBatchWithHistoryImpl {
 
 	private final UserService userService;
 
@@ -63,8 +70,6 @@ public class StatisticDailyUserBatchImpl extends GenericBatchImpl {
 
 	private final UserDailyStatBusinessService userDailyStatBusinessService;
 
-	private final BatchHistoryBusinessService batchHistoryBusinessService;
-
 	public StatisticDailyUserBatchImpl(
 			final UserService userService,
 			final OperationHistoryBusinessService operationHistoryBusinessService,
@@ -72,58 +77,41 @@ public class StatisticDailyUserBatchImpl extends GenericBatchImpl {
 			final UserDailyStatBusinessService userDailyStatBusinessService,
 			final AccountRepository<Account> accountRepository,
 			final BatchHistoryBusinessService batchHistoryBusinessService) {
-		super(accountRepository);
+		super(accountRepository, batchHistoryBusinessService);
 		this.userService = userService;
 		this.operationHistoryBusinessService = operationHistoryBusinessService;
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
 		this.userDailyStatBusinessService = userDailyStatBusinessService;
-		this.batchHistoryBusinessService = batchHistoryBusinessService;
+	}
+
+	@Override
+	public BatchType getBatchType() {
+		return BatchType.DAILY_USER_BATCH;
 	}
 
 	@Override
 	public List<String> getAll() {
-		logger.info("DailyUserBatchImpl job starting ...");
-		List<String> users = operationHistoryBusinessService.findUuidAccountBeforeDate(yesterday(), ContainerQuotaType.USER);
-		logger.info(users.size() + " user(s) have been found in OperationHistory table.");
-		return users;
+		return operationHistoryBusinessService.findUuidAccountBeforeDate(getYesterdayEnd(), ContainerQuotaType.USER);
 	}
 
 	@Override
 	public Context execute(String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
-		Date yesterday = yesterday();
 		User resource = userService.findByLsUuid(identifier);
 		Context context = new AccountBatchResultContext(resource);
 		try {
 			logInfo(total, position, "processing user : " + resource.getAccountRepresentation());
+			// compute once, used three times
+			Date yesterday = getYesterdayEnd();
 			userDailyStatBusinessService.create(resource, yesterday);
-		} catch (BusinessException businessException) {
-			logError(total, position, "Error while trying to create a UserDailyStat");
-			logger.info("Error occured while creating a daily statistics for an user", businessException);
-			BatchBusinessException exception = new BatchBusinessException(context,
-					"Error while trying to create a UserDailyStat");
-			exception.setBusinessException(businessException);
-			throw exception;
-		}
-		try {
-			logInfo(total, position, "processing user : " + resource.getAccountRepresentation());
 			accountQuotaBusinessService.createOrUpdate(resource, yesterday);
-		} catch (BusinessException businessException) {
-			logError(total, position, "Error while trying to update or create userQuota");
-			logger.info("Error occured while updating or creating an user quota for user", businessException);
-			BatchBusinessException exception = new BatchBusinessException(context,
-					"Error while trying to update or create a userQuota");
-			exception.setBusinessException(businessException);
-			throw exception;
-		}
-		try {
-			logInfo(total, position, "processing user : " + resource.getAccountRepresentation());
 			operationHistoryBusinessService.deleteBeforeDateByAccount(yesterday, resource);
 		} catch (BusinessException businessException) {
-			logError(total, position, "Error while trying to delete operationHistory for an user");
-			logger.info("Error occured while cleaning operation history for an user", businessException);
-			BatchBusinessException exception = new BatchBusinessException(context,
-					"Error while trying to delete operationHistory for an user");
+			String batchClassName = this.getBatchClassName();
+			logError(total, position, "Error while trying to process batch " + batchClassName + "for an user ");
+			String msg = "Error occured while running batch : " + batchClassName;
+			logger.info(msg, businessException);
+			BatchBusinessException exception = new BatchBusinessException(context, msg);
 			exception.setBusinessException(businessException);
 			throw exception;
 		}
@@ -134,8 +122,7 @@ public class StatisticDailyUserBatchImpl extends GenericBatchImpl {
 	public void notify(Context context, long total, long position) {
 		AccountBatchResultContext userContext = (AccountBatchResultContext) context;
 		Account user = userContext.getResource();
-		logInfo(total, position, "the DailyUserStatistic and the UserQuota for " + user.getAccountRepresentation()
-				+ " have been successfully created");
+		logInfo(total, position, "DailyUserStatistic was created and AccountQuota updated for " + user.getAccountRepresentation());
 	}
 
 	@Override
@@ -143,44 +130,9 @@ public class StatisticDailyUserBatchImpl extends GenericBatchImpl {
 		AccountBatchResultContext context = (AccountBatchResultContext) exception.getContext();
 		Account user = context.getResource();
 		logError(total, position,
-				"creating DailyUserStatistic and UserQuota has failed : " + user.getAccountRepresentation());
+				"creating DailyUserStatistic and AccountQuota has failed : " + user.getAccountRepresentation());
 		logger.error("Error occured while creating DailyUserStatistic and UserQuota for an user "
 				+ user.getAccountRepresentation() + ". BatchBusinessException ", exception);
 	}
 
-	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors, long total, long processed) {
-		long success = total - errors - unhandled_errors;
-		logger.info(success + " DailyUserStatistic and UserQuota for user(s) have bean created.");
-		if (errors > 0) {
-			logger.info(errors + " DailyUserStatistic and UserQuota for user(s) failed to be created");
-		}
-		if (unhandled_errors > 0) {
-			logger.error(unhandled_errors
-					+ " DailyUserStatistic and UserQuota for user(s) failed to be created (unhandled error.)");
-		}
-		logger.info("DailyUserBatchImpl job terminated");
-	}
-
-	private Date yesterday() {
-		GregorianCalendar dateCalender = new GregorianCalendar();
-		dateCalender.add(GregorianCalendar.DATE, -1);
-		dateCalender.set(GregorianCalendar.HOUR_OF_DAY, 23);
-		dateCalender.set(GregorianCalendar.MINUTE, 59);
-		dateCalender.set(GregorianCalendar.SECOND, 59);
-		return dateCalender.getTime();
-	}
-
-	@Override
-	public boolean needToRun() {
-		return !batchHistoryBusinessService.exist(today(), null, BatchType.DAILY_USER_BATCH);
-	}
-
-	private Date today() {
-		GregorianCalendar dateCalendar = new GregorianCalendar();
-		dateCalendar.set(GregorianCalendar.HOUR_OF_DAY, 0);
-		dateCalendar.set(GregorianCalendar.MINUTE, 0);
-		dateCalendar.set(GregorianCalendar.SECOND, 0);
-		return dateCalendar.getTime();
-	}
 }

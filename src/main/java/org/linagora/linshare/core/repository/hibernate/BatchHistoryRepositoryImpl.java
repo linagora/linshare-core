@@ -70,8 +70,24 @@ public class BatchHistoryRepositoryImpl extends AbstractRepositoryImpl<BatchHist
 	}
 
 	@Override
-	public boolean exist(Date beginDate, Date endDate, BatchType batchType) {
-		List<BatchHistory> list = this.find(beginDate, endDate, batchType, null);
+	public BatchHistory findByBatchType(Date beginDate, Date endDate, BatchType batchType) throws BusinessException {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		if (beginDate != null) {
+			criteria.add(Restrictions.ge("executionDate", beginDate));
+		} if (endDate != null) {
+			criteria.add(Restrictions.le("executionDate", endDate));
+		}
+		criteria.add(Restrictions.eq("batchType", batchType));
+		return DataAccessUtils.singleResult(findByCriteria(criteria));
+	}
+
+	@Override
+	public boolean exist(Date beginDate, BatchType batchType) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.ge("executionDate", beginDate));
+		criteria.add(Restrictions.le("executionDate", new Date()));
+		criteria.add(Restrictions.eq("batchType", batchType));
+		List<BatchHistory> list = findByCriteria(criteria);
 		if (list != null && list.size() > 0) {
 			return true;
 		}
@@ -81,6 +97,7 @@ public class BatchHistoryRepositoryImpl extends AbstractRepositoryImpl<BatchHist
 	@Override
 	public BatchHistory create(BatchHistory entity) throws BusinessException {
 		entity.setUuid(UUID.randomUUID().toString());
+		entity.setActiveDate(new Date());
 		entity.setExecutionDate(new Date());
 		entity.setStatus("starting");
 		entity.setErrors(0L);

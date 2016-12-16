@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,78 +31,67 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.repository.hibernate;
+package org.linagora.linshare.core.batches.impl;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.UUID;
 
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Restrictions;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Quota;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.GenericQuotaRepository;
-import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.linagora.linshare.core.business.service.BatchHistoryBusinessService;
+import org.linagora.linshare.core.domain.constants.BatchType;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.BatchHistory;
+import org.linagora.linshare.core.repository.AccountRepository;
 
-public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends AbstractRepositoryImpl<T>
-		implements GenericQuotaRepository<T> {
+public abstract class GenericBatchWithHistoryImpl extends GenericBatchImpl {
 
-	public GenericQuotaRepositoryImpl(HibernateTemplate hibernateTemplate) {
-		super(hibernateTemplate);
+	protected BatchHistoryBusinessService batchHistoryBusinessService;
+
+	public abstract BatchType getBatchType();
+
+	public GenericBatchWithHistoryImpl(AccountRepository<Account> accountRepository, BatchHistoryBusinessService batchHistoryBusinessService) {
+		super(accountRepository);
+		this.batchHistoryBusinessService = batchHistoryBusinessService;
 	}
 
 	@Override
-	public T create(T entity) throws BusinessException {
-		entity.setLastValue(0L);
-		entity.setCurrentValue(0L);
-		entity.setCreationDate(new Date());
-		entity.setModificationDate(new Date());
-		entity.setBatchModificationDate(new Date());
-		entity.setUuid(UUID.randomUUID().toString());
-		return super.create(entity);
+	public boolean needToRun() {
+		return !batchHistoryBusinessService.exist(getTodayBegin(), getBatchType());
 	}
 
 	@Override
-	public T update(T entity) throws BusinessException {
-		entity.setModificationDate(new Date());
-		return super.update(entity);
+	public void start() {
+		super.start();
+		batchHistoryBusinessService.create(new BatchHistory(getBatchType()));
 	}
 
 	@Override
-	public T updateByBatch(T entity) throws BusinessException {
-		entity.setBatchModificationDate(new Date());
-		return super.update(entity);
+	public void terminate(List<String> all, long errors, long unhandled_errors, long total, long processed) {
+		long success = total - errors - unhandled_errors;
+		logger.info("{} resources  have bean processed.", success);
+		if (errors > 0) {
+			logger.info("There were {} error (s) durring the batch processing." , errors);
+		}
+		if (unhandled_errors > 0) {
+			logger.error("There were {} at least one unhandled error durring the batch processing whoich stop it.");
+		}
+		BatchHistory batchHistory = batchHistoryBusinessService.findByBatchType(getTodayBegin(), null, getBatchType());
+		if (batchHistory != null) {
+			batchHistory.setStatus("OK");
+			batchHistoryBusinessService.update(batchHistory);
+		}
+		logger.info("Job terminated.");
 	}
 
 	@Override
-	public T update(T entity, Long curentValue) throws BusinessException{
-		entity.setLastValue(entity.getCurrentValue());
-		entity.setCurrentValue(curentValue + entity.getCurrentValue());
-		return super.update(entity);
-	}
-
-	@Override
-	public T find(String uuid) {
-		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.add(Restrictions.eq("uuid", uuid));
-		return DataAccessUtils.singleResult(findByCriteria(criteria));
-	}
-
-	@Override
-	public List<T> findAll(AbstractDomain domain) {
-		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.add(Restrictions.eq("domain", domain));
-		return findByCriteria(criteria);
-	}
-
-	@Override
-	protected DetachedCriteria getNaturalKeyCriteria(T entity) {
-		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		return criteria.add(Restrictions.eq("id", entity.getId()));
+	public void fail(List<String> all, long errors, long unhandled_errors, long total, long processed) {
+		BatchHistory batchHistory = batchHistoryBusinessService.findByBatchType(getTodayBegin(), null, getBatchType());
+		if (batchHistory != null) {
+			batchHistory.setStatus("FAILED");
+			batchHistoryBusinessService.update(batchHistory);
+		}
+		super.fail(all, errors, unhandled_errors, total, processed);
 	}
 
 	protected  Date getYesterdayBegin() {

@@ -70,7 +70,7 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 	@Override
 	public Long sumOfOperationCount(AbstractDomain domain, Account account, Date beginDate, Date endDate) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.add(Restrictions.between("activeDate", beginDate, endDate));
+		criteria.add(Restrictions.between("statisticDate", beginDate, endDate));
 		if (account != null) {
 			criteria.add(Restrictions.eq("account", account));
 		}
@@ -87,7 +87,7 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 	@Override
 	public Long sumOfDeleteOperationCount(AbstractDomain domain, Account account, Date beginDate, Date endDate) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.add(Restrictions.between("activeDate", beginDate, endDate));
+		criteria.add(Restrictions.between("statisticDate", beginDate, endDate));
 		if (account != null) {
 			criteria.add(Restrictions.eq("account", account));
 		}
@@ -104,7 +104,7 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 	@Override
 	public Long sumOfCreateOperationCount(AbstractDomain domain, Account account, Date beginDate, Date endDate) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.add(Restrictions.between("activeDate", beginDate, endDate));
+		criteria.add(Restrictions.between("statisticDate", beginDate, endDate));
 		if (account != null) {
 			criteria.add(Restrictions.eq("account", account));
 		}
@@ -121,7 +121,7 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 	@Override
 	public Long sumOfCreateOperationSum(AbstractDomain domain, Account account, Date beginDate, Date endDate) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.add(Restrictions.between("activeDate", beginDate, endDate));
+		criteria.add(Restrictions.between("statisticDate", beginDate, endDate));
 		if (account != null) {
 			criteria.add(Restrictions.eq("account", account));
 		}
@@ -138,7 +138,7 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 	@Override
 	public Long sumOfDeleteOperationSum(AbstractDomain domain, Account account, Date beginDate, Date endDate) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.add(Restrictions.between("activeDate", beginDate, endDate));
+		criteria.add(Restrictions.between("statisticDate", beginDate, endDate));
 		if (account != null) {
 			criteria.add(Restrictions.eq("account", account));
 		}
@@ -155,7 +155,7 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 	@Override
 	public Long sumOfDiffOperationSum(AbstractDomain domain, Account account, Date beginDate, Date endDate) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.add(Restrictions.between("activeDate", beginDate, endDate));
+		criteria.add(Restrictions.between("statisticDate", beginDate, endDate));
 		if (account != null) {
 			criteria.add(Restrictions.eq("account", account));
 		}
@@ -172,7 +172,7 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 	@Override
 	public Long sumOfActualOperationSum(AbstractDomain domain, Account account, Date beginDate, Date endDate) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.add(Restrictions.between("activeDate", beginDate, endDate));
+		criteria.add(Restrictions.between("statisticDate", beginDate, endDate));
 		if (account != null) {
 			criteria.add(Restrictions.eq("account", account));
 		}
@@ -196,10 +196,10 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 			}
 		}
 		if (beginDate != null) {
-			criteria.add(Restrictions.ge("activeDate", beginDate));
+			criteria.add(Restrictions.ge("statisticDate", beginDate));
 		}
 		if (endDate != null) {
-			criteria.add(Restrictions.le("activeDate", endDate));
+			criteria.add(Restrictions.le("statisticDate", endDate));
 		}
 		if (account != null) {
 			criteria.add(Restrictions.eq("account", account));
@@ -220,10 +220,10 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 	public List<AbstractDomain> findDomainBetweenTwoDates(Date beginDate, Date endDate) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		if (beginDate != null) {
-			criteria.add(Restrictions.ge("activeDate", beginDate));
+			criteria.add(Restrictions.ge("statisticDate", beginDate));
 		}
 		if (endDate != null) {
-			criteria.add(Restrictions.le("activeDate", endDate));
+			criteria.add(Restrictions.le("statisticDate", endDate));
 		}
 		criteria.setProjection(Projections.property("domain"));
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
@@ -236,10 +236,10 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 	public List<Account> findAccountBetweenTwoDates(Date beginDate, Date endDate) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		if (beginDate != null) {
-			criteria.add(Restrictions.ge("activeDate", beginDate));
+			criteria.add(Restrictions.ge("statisticDate", beginDate));
 		}
 		if (endDate != null) {
-			criteria.add(Restrictions.le("activeDate", endDate));
+			criteria.add(Restrictions.le("statisticDate", endDate));
 		}
 		criteria.setProjection(Projections.property("account"));
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
@@ -264,10 +264,10 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 	public List<String> findUuidAccountBetweenTwoDates(Date beginDate, Date endDate) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		if (beginDate != null) {
-			criteria.add(Restrictions.ge("activeDate", beginDate));
+			criteria.add(Restrictions.ge("statisticDate", beginDate));
 		}
 		if (endDate != null) {
-			criteria.add(Restrictions.le("activeDate", endDate));
+			criteria.add(Restrictions.le("statisticDate", endDate));
 		}
 		criteria.setProjection(Projections.property("account"));
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
@@ -285,10 +285,10 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 	public List<String> findIdentifierDomainBetweenTwoDates(Date beginDate, Date endDate) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		if (beginDate != null) {
-			criteria.add(Restrictions.ge("activeDate", beginDate));
+			criteria.add(Restrictions.ge("statisticDate", beginDate));
 		}
 		if (endDate != null) {
-			criteria.add(Restrictions.le("activeDate", endDate));
+			criteria.add(Restrictions.le("statisticDate", endDate));
 		}
 		criteria.setProjection(Projections.property("domain"));
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);

@@ -72,7 +72,7 @@ public class ThreadDailyStatBusinessServiceImpl implements ThreadDailyStatBusine
 		ThreadDailyStat entity = new ThreadDailyStat(thread, thread.getDomain(), thread.getDomain().getParentDomain(),
 				operationCount, deleteOperationCount, createOperationCount, createOperationSum, deleteOperationSum,
 				diffOperationSum, actualOperationSum);
-		entity.setActiveDate(date);;
+		entity.setStatisticDate(date);
 		entity = repository.create(entity);
 		return entity;
 	}

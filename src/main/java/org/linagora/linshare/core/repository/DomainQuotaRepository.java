@@ -39,4 +39,6 @@ import org.linagora.linshare.core.domain.entities.DomainQuota;
 public interface DomainQuotaRepository extends GenericQuotaRepository<DomainQuota> {
 
 	DomainQuota find(AbstractDomain domain);
+
+	Long sumOfCurrentValueForSubdomains(AbstractDomain domain);
 }

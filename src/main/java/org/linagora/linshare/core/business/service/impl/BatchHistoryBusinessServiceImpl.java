@@ -70,8 +70,13 @@ public class BatchHistoryBusinessServiceImpl implements BatchHistoryBusinessServ
 	}
 
 	@Override
-	public boolean exist(Date beginDate, Date endDate, BatchType batchType) {
-		return batchHistoryRepository.exist(beginDate, endDate, batchType);
+	public boolean exist(Date beginDate, BatchType batchType) {
+		return batchHistoryRepository.exist(beginDate, batchType);
+	}
+
+	@Override
+	public BatchHistory findByBatchType(Date beginDate, Date endDate, BatchType batchType) throws BusinessException {
+		return batchHistoryRepository.findByBatchType(beginDate, endDate, batchType);
 	}
 
 	@Override

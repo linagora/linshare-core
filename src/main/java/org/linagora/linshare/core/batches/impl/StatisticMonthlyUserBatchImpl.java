@@ -177,6 +177,6 @@ public class StatisticMonthlyUserBatchImpl extends GenericBatchImpl {
 
 	@Override
 	public boolean needToRun() {
-		return !batchHistoryBusinessService.exist(getFirstDayOfMonth(), new Date(), BatchType.MONTHLY_USER_BATCH);
+		return !batchHistoryBusinessService.exist(getFirstDayOfMonth(), BatchType.MONTHLY_USER_BATCH);
 	}
 }

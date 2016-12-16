@@ -83,4 +83,10 @@
 		<constructor-arg ref="domainWeeklyStatBusinessService" />
 		<constructor-arg ref="batchHistoryBusinessService" />
 	</bean>
+	<bean id="computeSubDomainQuotaBatch"
+		class="org.linagora.linshare.core.batches.impl.ComputeSubDomainQuotaBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="abstractDomainRepository" />
+		<constructor-arg ref="domainQuotaRepository" />
+	</bean>
 </beans>

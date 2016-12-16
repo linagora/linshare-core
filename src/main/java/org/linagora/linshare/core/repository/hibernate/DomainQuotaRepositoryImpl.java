@@ -33,7 +33,10 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.util.List;
+
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
@@ -41,7 +44,8 @@ import org.linagora.linshare.core.repository.DomainQuotaRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public class DomainQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<DomainQuota>implements DomainQuotaRepository {
+public class DomainQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<DomainQuota>
+		implements DomainQuotaRepository {
 
 	public DomainQuotaRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
@@ -52,5 +56,32 @@ public class DomainQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Domain
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("domain", domain));
 		return DataAccessUtils.singleResult(findByCriteria(criteria));
+	}
+
+	@Override
+	public Long sumOfCurrentValueForSubdomains(AbstractDomain domain) {
+		return sumOfCurrentValueForAllMySubdomains(domain) + sumOfcurrentValueForSubdomainsOfAllMySubdomains(domain);
+	}
+
+	private Long sumOfCurrentValueForAllMySubdomains(AbstractDomain domain) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("parentDomain", domain));
+		criteria.setProjection(Projections.sum("currentValue"));
+		List<DomainQuota> list = findByCriteria(criteria);
+		if (list.size() > 0 && list.get(0) != null) {
+			return DataAccessUtils.longResult(findByCriteria(criteria));
+		}
+		return 0L;
+	}
+
+	private Long sumOfcurrentValueForSubdomainsOfAllMySubdomains(AbstractDomain domain) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("parentDomain", domain));
+		criteria.setProjection(Projections.sum("currentValueForSubdomains"));
+		List<DomainQuota> list = findByCriteria(criteria);
+		if (list.size() > 0 && list.get(0) != null) {
+			return DataAccessUtils.longResult(findByCriteria(criteria));
+		}
+		return 0L;
 	}
 }

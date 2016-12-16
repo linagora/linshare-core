@@ -54,5 +54,5 @@ public interface AccountQuotaBusinessService {
 
 	AccountQuota update(AccountQuota entity) throws BusinessException;
 
-	List<String> findDomainByBatchModificationDate(Date startRange, Date endRange);
+	List<String> findDomainUuidByBatchModificationDate(Date startDate);
 }

@@ -673,7 +673,7 @@ public class DocumentEntryServiceImpl
 	}
 
 	protected void delFromQuota(Account owner, Long size) {
-		OperationHistory oh = new OperationHistory(owner, owner.getDomain(), size, OperationHistoryTypeEnum.DELETE,
+		OperationHistory oh = new OperationHistory(owner, owner.getDomain(), - size, OperationHistoryTypeEnum.DELETE,
 				ContainerQuotaType.USER);
 		operationHistoryBusinessService.create(oh);
 	}

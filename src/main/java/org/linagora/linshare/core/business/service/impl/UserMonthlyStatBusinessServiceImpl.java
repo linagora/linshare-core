@@ -67,7 +67,7 @@ public class UserMonthlyStatBusinessServiceImpl implements UserMonthlyStatBusine
 		UserMonthlyStat entity = new UserMonthlyStat(user, user.getDomain(), user.getDomain().getParentDomain(),
 				actualOperationCount, deleteOperationCount, createOperationCount, createOperationSum,
 				deleteOperationSum, diffOperationSum, actualOperationSum);
-		entity.setActiveDate(endDate);
+		entity.setStatisticDate(endDate);
 		entity = repository.create(entity);
 		return entity;
 	}

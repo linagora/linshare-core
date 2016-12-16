@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-import java.util.Date;
 import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
@@ -63,14 +62,10 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 	}
 
 	@Override
-	public Long sumOfCurrentValue(DomainQuota domainQuota, Date modificationDateByBatch) {
+	public Long sumOfCurrentValue(DomainQuota domainQuota) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		if (domainQuota != null) {
-			criteria.add(Restrictions.eq("domainQuota", domainQuota));
-		}
-		if (modificationDateByBatch != null) {
-			criteria.add(Restrictions.le("batchModificationDate", modificationDateByBatch));
-		}
+		criteria.add(Restrictions.eq("domainQuota", domainQuota));
+		criteria.add(Restrictions.ge("batchModificationDate", getTodayBegin()));
 		criteria.setProjection(Projections.sum("currentValue"));
 		List<ContainerQuota> list = findByCriteria(criteria);
 		if (list.size() > 0 && list.get(0) != null) {

@@ -195,6 +195,6 @@ public class StatisticWeeklyUserBatchImpl extends GenericBatchImpl {
 
 	@Override
 	public boolean needToRun() {
-		return !batchHistoryBusinessService.exist(getFirstDayOfWeek(), new Date(), BatchType.WEEKLY_USER_BATCH);
+		return !batchHistoryBusinessService.exist(getFirstDayOfWeek(), BatchType.WEEKLY_USER_BATCH);
 	}
 }

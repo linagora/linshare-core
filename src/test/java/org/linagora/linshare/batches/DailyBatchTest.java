@@ -235,8 +235,10 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 		dailyDomainBatch.execute(jane.getDomain().getUuid(), 20, 1);
 
 		ContainerQuota ensembleQuota = ensembleQuotaBusinessService.find(jane.getDomain(), ContainerQuotaType.USER);
+		quota = accountQuotaBusinessService.find(jane);
 		assertNotNull(ensembleQuota);
-		assertEquals(0, (long) ensembleQuota.getCurrentValue());
+		// jane : 1100 + john 900
+		assertEquals(2000, (long) ensembleQuota.getCurrentValue());
 		assertEquals(496, (long) ensembleQuota.getLastValue());
 		assertEquals(1900, (long) ensembleQuota.getQuota());
 		assertEquals(1300, (long) ensembleQuota.getQuotaWarning());
@@ -244,7 +246,8 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 
 		ensembleQuota = ensembleQuotaBusinessService.find(jane.getDomain(), ContainerQuotaType.WORK_GROUP);
 		assertNotNull(ensembleQuota);
-		assertEquals(0, (long) ensembleQuota.getCurrentValue());
+		// 1900 ? how ?
+		assertEquals(1900, (long) ensembleQuota.getCurrentValue());
 		assertEquals(900, (long) ensembleQuota.getLastValue());
 		assertEquals(2000, (long) ensembleQuota.getQuota());
 		assertEquals(1500, (long) ensembleQuota.getQuotaWarning());
@@ -252,15 +255,17 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 
 		DomainQuota quotaD = domainQuotaBusinessService.find(jane.getDomain());
 		assertNotNull(quotaD);
-		assertEquals(0, (long) quotaD.getCurrentValue());
+		// container user 2000  + container workgroup 1900
+		assertEquals(3900, (long) quotaD.getCurrentValue());
 		assertEquals(1096, (long) quotaD.getLastValue());
 		assertEquals(1900, (long) quotaD.getQuota());
 		assertEquals(1800, (long) quotaD.getQuotaWarning());
 
 		quotaD = domainQuotaBusinessService.findRootQuota();
 		assertNotNull(quotaD);
-		assertEquals(0, (long) quotaD.getCurrentValue());
-		assertEquals(1096, (long) quotaD.getLastValue());
+		// cf sql import-tests-quota.sql
+		assertEquals(1096, (long) quotaD.getCurrentValue());
+		assertEquals(100, (long) quotaD.getLastValue());
 		assertEquals(2300, (long) quotaD.getQuota());
 		assertEquals(2000, (long) quotaD.getQuotaWarning());
 	}

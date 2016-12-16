@@ -35,7 +35,6 @@
 package org.linagora.linshare.core.batches.impl;
 
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
@@ -53,7 +52,7 @@ import org.linagora.linshare.core.job.quartz.Context;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.ThreadService;
 
-public class StatisticDailyThreadBatchImpl extends GenericBatchImpl {
+public class StatisticDailyThreadBatchImpl extends GenericBatchWithHistoryImpl {
 
 	private final ThreadService threadService;
 
@@ -63,8 +62,6 @@ public class StatisticDailyThreadBatchImpl extends GenericBatchImpl {
 
 	private final ThreadDailyStatBusinessService threadDailyStatBusinessService;
 
-	private final BatchHistoryBusinessService batchHistoryBusinessService;
-
 	public StatisticDailyThreadBatchImpl(
 			final ThreadService threadService,
 			final OperationHistoryBusinessService operationHistoryBusinessService,
@@ -72,58 +69,40 @@ public class StatisticDailyThreadBatchImpl extends GenericBatchImpl {
 			final ThreadDailyStatBusinessService threadDailyStatBusinessService,
 			final AccountRepository<Account> accountRepository,
 			final BatchHistoryBusinessService batchHistoryBusinessService) {
-		super(accountRepository);
+		super(accountRepository, batchHistoryBusinessService);
 		this.threadService = threadService;
 		this.operationHistoryBusinessService = operationHistoryBusinessService;
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
 		this.threadDailyStatBusinessService = threadDailyStatBusinessService;
-		this.batchHistoryBusinessService = batchHistoryBusinessService;
+	}
+
+	@Override
+	public BatchType getBatchType() {
+		return BatchType.DAILY_THREAD_BATCH;
 	}
 
 	@Override
 	public List<String> getAll() {
-		logger.info("DailyThreadBatchImpl job starting ...");
-		List<String> threads = operationHistoryBusinessService.findUuidAccountBeforeDate(yesterday(),
-				ContainerQuotaType.WORK_GROUP);
-		return threads;
+		return operationHistoryBusinessService.findUuidAccountBeforeDate(getYesterdayEnd(), ContainerQuotaType.WORK_GROUP);
 	}
 
 	@Override
 	public Context execute(String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
-		Date yesterday = yesterday();
+		Date yesterday = getYesterdayEnd();
 		Thread resource = threadService.findByLsUuidUnprotected(identifier);
 		Context context = new AccountBatchResultContext(resource);
 		try {
-			logInfo(total, position, "processing thread : " + resource.getAccountRepresentation());
+			logInfo(total, position, "processing workgroup : " + resource.getAccountRepresentation());
 			threadDailyStatBusinessService.create(resource, yesterday);
-		} catch (BusinessException businessException) {
-			logError(total, position, "Error while trying to create a threadDailyStat.");
-			logger.info("Error occured while creating a daily statistics for a thread.", businessException);
-			BatchBusinessException exception = new BatchBusinessException(context,
-					"Error while trying to create a ThreadDailyStat.");
-			exception.setBusinessException(businessException);
-			throw exception;
-		}
-		try {
-			logInfo(total, position, "processing thread : " + resource.getAccountRepresentation());
 			accountQuotaBusinessService.createOrUpdate(resource, yesterday);
-		} catch (BusinessException businessException) {
-			logError(total, position, "Error while trying to update or create a threadQuota.");
-			logger.info("Error occurred while updating or creating a thread quota.", businessException);
-			BatchBusinessException exception = new BatchBusinessException(context,
-					"Error while trying to update or create a ThreadQuota.");
-			exception.setBusinessException(businessException);
-			throw exception;
-		}
-		try {
-			logInfo(total, position, "processing thread : " + resource.getAccountRepresentation());
 			operationHistoryBusinessService.deleteBeforeDateByAccount(yesterday, resource);
 		} catch (BusinessException businessException) {
-			logError(total, position, "Error while trying to delete operationHistory for a thread.");
-			logger.info("Error occurred while cleaning operation history dor a thread.", businessException);
-			BatchBusinessException exception = new BatchBusinessException(context,
-					"Error while trying to delete operationHistory for a thread.");
+			String batchClassName = this.getBatchClassName();
+			logError(total, position, "Error while trying to process batch " + batchClassName + "for an user ");
+			String msg = "Error occured while running batch : " + batchClassName; 
+			logger.info(msg, businessException);
+			BatchBusinessException exception = new BatchBusinessException(context, msg);
 			exception.setBusinessException(businessException);
 			throw exception;
 		}
@@ -134,8 +113,7 @@ public class StatisticDailyThreadBatchImpl extends GenericBatchImpl {
 	public void notify(Context context, long total, long position) {
 		AccountBatchResultContext threadContext = (AccountBatchResultContext) context;
 		Account thread = threadContext.getResource();
-		logInfo(total, position, "the DailyThreadStatistics and the ThreadQuota for " + thread.getAccountRepresentation()
-				+ " have been successfully created.");
+		logInfo(total, position, "DailyThreadStatistics was created and AccountQuota updated for " + thread.getAccountRepresentation());
 	}
 
 	@Override
@@ -143,44 +121,9 @@ public class StatisticDailyThreadBatchImpl extends GenericBatchImpl {
 		AccountBatchResultContext context = (AccountBatchResultContext) exception.getContext();
 		Account thread = context.getResource();
 		logError(total, position,
-				"creating DailyThreadStatistic and threadQuota has failed : " + thread.getAccountRepresentation());
-		logger.error("Error occured while creating DailyThreadStatisticand ThreadQuota for a thread "
+				"creating DailyThreadStatistic and AccountQuota has failed : " + thread.getAccountRepresentation());
+		logger.error("Error occured while creating DailyUserStatistic and AccountQuota for an thread "
 				+ thread.getAccountRepresentation() + ". BatchBusinessException ", exception);
 	}
 
-	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors, long total, long processed) {
-		long success = total - errors - unhandled_errors;
-		logger.info(success + " DailyThreadStatistic and ThreadQuota for thread(s) have bean created.");
-		if (errors > 0) {
-			logger.info(errors + " DailyThreadStatistic and ThreadQuota for thread(s) failed to be created");
-		}
-		if (unhandled_errors > 0) {
-			logger.error(unhandled_errors
-					+ " DailyThreadStatistic and ThreadQuota for thread(s) failed to be created (unhandled error.)");
-		}
-		logger.info("DailyThreadBatchImpl job terminated");
-	}
-
-	private Date yesterday() {
-		GregorianCalendar dateCalender = new GregorianCalendar();
-		dateCalender.add(GregorianCalendar.DATE, -1);
-		dateCalender.set(GregorianCalendar.HOUR_OF_DAY, 23);
-		dateCalender.set(GregorianCalendar.MINUTE, 59);
-		dateCalender.set(GregorianCalendar.SECOND, 59);
-		return dateCalender.getTime();
-	}
-
-	@Override
-	public boolean needToRun() {
-		return !batchHistoryBusinessService.exist(today(), new Date(), BatchType.DAILY_THREAD_BATCH);
-	}
-
-	private Date today() {
-		GregorianCalendar dateCalendar = new GregorianCalendar();
-		dateCalendar.set(GregorianCalendar.HOUR_OF_DAY, 0);
-		dateCalendar.set(GregorianCalendar.MINUTE, 0);
-		dateCalendar.set(GregorianCalendar.SECOND, 0);
-		return dateCalendar.getTime();
-	}
 }

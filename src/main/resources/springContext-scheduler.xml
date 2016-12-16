@@ -158,10 +158,11 @@
 		<property name="jobDataAsMap">
 			<map>
 				<entry key="batch">
-					<list value-type="org.linagora.linshare.core.job.quartz.LinShareJobBean">
+					<list value-type="org.linagora.linshare.core.batches.GenericBatch">
 						<ref bean="statisticDailyUserBatch" />
 						<ref bean="statisticDailyThreadBatch" />
 						<ref bean="statisticDailyDomainBatch" />
+						<ref bean="computeSubDomainQuotaBatch" />
 						<ref bean="statisticWeeklyUserBatch" />
 						<ref bean="statisticWeeklyThreadBatch" />
 						<ref bean="statisticWeeklyDomainBatch" />

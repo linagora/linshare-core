@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
@@ -92,17 +91,11 @@ public class ContainerQuotaBusinessServiceImpl implements ContainerQuotaBusiness
 	}
 
 	@Override
-	public ContainerQuota updateByBatch(ContainerQuota quota, Date date) throws BusinessException {
-		AbstractDomain domain = quota.getDomain();
-		ContainerQuotaType containerQuotaType = quota.getContainerQuotaType();
-		if (find(domain, containerQuotaType) != null) {
-			Long sumCurrentValue = accountQuotaRepository.sumOfCurrentValue(quota, date);
-			quota.setLastValue(quota.getCurrentValue());
-			quota.setCurrentValue(sumCurrentValue);
-			quota = repository.updateByBatch(quota);
-		} else {
-			throw new BusinessException("Domain with identifier : " + domain.getUuid() + " does not have an ensemble quota yet.");
-		}
+	public ContainerQuota updateByBatch(ContainerQuota quota) throws BusinessException {
+		Long sumCurrentValue = accountQuotaRepository.sumOfCurrentValue(quota);
+		quota.setLastValue(quota.getCurrentValue());
+		quota.setCurrentValue(sumCurrentValue);
+		quota = repository.updateByBatch(quota);
 		return quota;
 	}
 }

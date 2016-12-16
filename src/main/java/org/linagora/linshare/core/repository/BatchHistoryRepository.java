@@ -49,6 +49,7 @@ public interface BatchHistoryRepository extends AbstractRepository<BatchHistory>
 
 	BatchHistory findByUuid(String lsUuid) throws BusinessException;
 
-	boolean exist(Date beginDate, Date endDate, BatchType batchType);
+	boolean exist(Date beginDate, BatchType batchType);
 
+	BatchHistory findByBatchType(Date beginDate, Date endDate, BatchType batchType) throws BusinessException;
 }

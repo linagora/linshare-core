@@ -61,10 +61,10 @@ public class AccountQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Accou
 	}
 
 	@Override
-	public List<String> findDomainByBatchModificationDate(Date startRange, Date endRange) {
+	public List<String> findDomainUuidByBatchModificationDate(Date startDate) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.add(Restrictions.ge("batchModificationDate", startRange));
-		criteria.add(Restrictions.le("batchModificationDate", endRange));
+		criteria.add(Restrictions.ge("batchModificationDate", startDate));
+		criteria.add(Restrictions.le("batchModificationDate", new Date()));
 		criteria.createAlias("domain", "do");
 		criteria.setProjection(Projections.distinct(Projections.property("do.uuid")));
 		@SuppressWarnings("unchecked")
@@ -73,10 +73,10 @@ public class AccountQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Accou
 	}
 
 	@Override
-	public Long sumOfCurrentValue(ContainerQuota containerQuota, Date modificationDateByBatch) {
+	public Long sumOfCurrentValue(ContainerQuota containerQuota) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("containerQuota", containerQuota));
-		criteria.add(Restrictions.le("batchModificationDate", modificationDateByBatch));
+		criteria.add(Restrictions.ge("batchModificationDate", getTodayBegin()));
 		criteria.setProjection(Projections.sum("currentValue"));
 		List<AccountQuota> list = findByCriteria(criteria);
 		if (list.size() > 0 && list.get(0) != null) {

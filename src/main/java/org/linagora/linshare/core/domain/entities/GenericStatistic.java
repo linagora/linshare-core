@@ -51,7 +51,7 @@ public abstract class GenericStatistic {
 
 	protected Date creationDate;
 
-	protected Date activeDate;
+	protected Date statisticDate;
 
 	protected Long operationCount;
 
@@ -188,12 +188,12 @@ public abstract class GenericStatistic {
 		this.account = account;
 	}
 
-	public Date getActiveDate() {
-		return activeDate;
+	public Date getStatisticDate() {
+		return statisticDate;
 	}
 
-	public void setActiveDate(Date activeDate) {
-		this.activeDate = activeDate;
+	public void setStatisticDate(Date statisticDate) {
+		this.statisticDate = statisticDate;
 	}
 
 	@Override

@@ -115,8 +115,8 @@ public class AccountQuotaBusinessServiceImpl implements AccountQuotaBusinessServ
 	}
 
 	@Override
-	public List<String> findDomainByBatchModificationDate(Date startRange, Date endRange) {
-		return repository.findDomainByBatchModificationDate(startRange, endRange);
+	public List<String> findDomainUuidByBatchModificationDate(Date startDate) {
+		return repository.findDomainUuidByBatchModificationDate(startDate);
 	}
 
 	@Override

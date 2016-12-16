@@ -67,7 +67,7 @@ public class DomainMonthlyStatBusinessServiceImpl implements DomainMonthlyStatBu
 		Long diffOperationSum = domainWeeklyStatRepository.sumOfDiffOperationSum(domain, null, beginDate, endDate);
 		DomainMonthlyStat entity = new DomainMonthlyStat(domain, domain.getParentDomain(), operationCount, deleteOperationCount,
 				createOperationCount, createOperationSum, deleteOperationSum, diffOperationSum, actualOperationSum);
-		entity.setActiveDate(endDate);
+		entity.setStatisticDate(endDate);
 		entity = repository.create(entity);
 		return entity;
 	}
