@@ -398,12 +398,13 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		builder.getGreetingsChain()
 				.add("firstName", recipientUser.getFirstName())
 				.add("lastName", recipientUser.getLastName());
+		String linShareUrl = getLinShareUrlForAUserRecipient(recipientUser);
 		builder.getBodyChain()
-				.add("url", getLinShareUrlForAUserRecipient(recipientUser))
+				.add("url", linShareUrl)
 				.add("ownerFirstName", sender.getFirstName())
 				.add("ownerLastName", sender.getLastName())
 				.add("mail", recipientUser.getMail())
-				.add("password", password);
+				.add("password", linShareUrl + "#/external/reset/" + password);
 		container.setRecipient(recipientUser);
 		container.setReplyTo(sender);
 		container.setFrom(getFromMailAddress(recipientUser));
@@ -426,10 +427,11 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		builder.getGreetingsChain()
 				.add("firstName", recipient.getFirstName())
 				.add("lastName", recipient.getLastName());
+		String linShareUrl = getLinShareUrlForAUserRecipient(recipient);
 		builder.getBodyChain()
-				.add("url", getLinShareUrlForAUserRecipient(recipient))
+				.add("url", linShareUrl)
 				.add("mail", recipient.getMail())
-				.add("password", password);
+				.add("password", linShareUrl + "#/external/reset/" + password);
 		container.setRecipient(recipient.getMail());
 		container.setFrom(getFromMailAddress(recipient));
 
