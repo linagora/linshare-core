@@ -40,6 +40,7 @@ import java.util.UUID;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.linagora.linshare.core.domain.constants.ResetTokenKind;
 import org.linagora.linshare.core.domain.entities.Guest;
 
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -74,6 +75,9 @@ public class ResetGuestPassword {
 
 	@ApiModelProperty(value = "New password.")
 	protected String password;
+
+	@ApiModelProperty(value = "Reset password or new password.")
+	protected ResetTokenKind kind;
 
 	@JsonIgnore
 	protected String guestUuid;
@@ -178,6 +182,14 @@ public class ResetGuestPassword {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public ResetTokenKind getKind() {
+		return kind;
+	}
+
+	public void setKind(ResetTokenKind kind) {
+		this.kind = kind;
 	}
 
 	@Override

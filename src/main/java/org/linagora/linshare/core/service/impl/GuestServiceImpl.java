@@ -45,6 +45,7 @@ import org.linagora.linshare.core.business.service.GuestBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.ResetTokenKind;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -235,6 +236,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 				guestDomain, restrictedContacts);
 		createQuotaGuest(guest);
 		ResetGuestPassword resetGuestPassword = new ResetGuestPassword(create);
+		resetGuestPassword.setKind(ResetTokenKind.NEW_PASSWORD);
 		resetGuestPasswordMongoRepository.insert(resetGuestPassword);
 		MailContainerWithRecipient mail = mailBuildingService.buildNewGuest(
 				owner, create, resetGuestPassword.getUuid());
@@ -374,6 +376,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		// TODO : create a log entry for this action
 		Guest guest = retrieveGuest(lsUuid);
 		ResetGuestPassword resetGuestPassword = resetGuestPasswordMongoRepository.insert(new ResetGuestPassword(guest));
+		resetGuestPassword.setKind(ResetTokenKind.RESET_PASSWORD);
 		MailContainerWithRecipient mail = mailBuildingService.buildResetPassword(guest, resetGuestPassword.getUuid());
 		notifierService.sendNotification(mail);
 	}
@@ -393,7 +396,9 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 					"Guest does not exist");
 		}
 		// TODO: find if there is already a valid token for this guest, and reuse it if not expired.
-		ResetGuestPassword resetGuestPassword = resetGuestPasswordMongoRepository.insert(new ResetGuestPassword(guest));
+		ResetGuestPassword resetGuestPassword = new ResetGuestPassword(guest);
+		resetGuestPassword.setKind(ResetTokenKind.RESET_PASSWORD);
+		resetGuestPassword = resetGuestPasswordMongoRepository.insert(resetGuestPassword);
 		MailContainerWithRecipient mail = mailBuildingService.buildResetPassword(guest, resetGuestPassword.getUuid());
 		notifierService.sendNotification(mail);
 	}
