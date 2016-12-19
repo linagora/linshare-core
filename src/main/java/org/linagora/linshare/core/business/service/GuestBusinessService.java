@@ -59,6 +59,8 @@ public interface GuestBusinessService {
 
 	List<Guest> findAllMyGuests(Account owner);
 
+	List<Guest> findAllOthersGuests(List<AbstractDomain> domains, Account owner);
+
 	List<String> findOutdatedGuestIdentifiers();
 
 	Guest create(Account owner, Guest guest, AbstractDomain domain,
@@ -98,7 +100,11 @@ public interface GuestBusinessService {
 	 * @return
 	 * @throws BusinessException
 	 */
-	List<Guest> search(List<AbstractDomain> authorizedDomains, String pattern, Account owner) throws BusinessException;
+	List<Guest> search(List<AbstractDomain> authorizedDomains, String pattern) throws BusinessException;
+
+	List<Guest> searchMyGuests(List<AbstractDomain> authorizedDomains, String pattern, Account owner) throws BusinessException;
+
+	List<Guest> searchExceptGuests(List<AbstractDomain> authorizedDomains, String pattern, Account owner) throws BusinessException;
 
 	SystemAccount getGuestSystemAccount();
 }

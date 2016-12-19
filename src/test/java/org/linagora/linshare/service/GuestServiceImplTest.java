@@ -326,20 +326,24 @@ public class GuestServiceImplTest extends
 
 	@Test
 	public void testSearchGuest() throws IllegalArgumentException, BusinessException {
-		boolean all= true;
-		List<Guest> search = guestService.search(owner1, owner1, "org", all);
-		logger.info("nb guests : " + search.size());
-		Assert.assertEquals(1, search.size());
-
-		search = guestService.search(owner1, owner1, "toto", all);
+		boolean mine= true;
+		List<Guest> search = guestService.search(owner1, owner1, "org", mine);
 		logger.info("nb guests : " + search.size());
 		Assert.assertEquals(0, search.size());
 
-		search = guestService.search(owner1, owner1, "test", all);
+		search = guestService.search(owner1, owner1, "org", null);
 		logger.info("nb guests : " + search.size());
 		Assert.assertEquals(1, search.size());
 
-		search = guestService.search(owner1, owner1, null, null, "guest", all);
+		search = guestService.search(owner1, owner1, "toto", mine);
+		logger.info("nb guests : " + search.size());
+		Assert.assertEquals(0, search.size());
+
+		search = guestService.search(owner1, owner1, "test", null);
+		logger.info("nb guests : " + search.size());
+		Assert.assertEquals(1, search.size());
+
+		search = guestService.search(owner1, owner1, null, null, "guest", mine);
 		logger.info("nb guests : " + search.size());
 		Assert.assertEquals(1, search.size());
 

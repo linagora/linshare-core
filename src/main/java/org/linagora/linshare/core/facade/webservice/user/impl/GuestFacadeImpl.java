@@ -63,14 +63,14 @@ public class GuestFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public List<GuestDto> findAll(boolean all, String pattern) throws BusinessException {
+	public List<GuestDto> findAll(Boolean mine, String pattern) throws BusinessException {
 		User actor = checkAuthentication();
 		User owner = getOwner(actor, null);
 		List<Guest> guests = null;
 		if (pattern == null) {
-			guests = guestService.findAll(actor, owner, all);
+			guests = guestService.findAll(actor, owner, mine);
 		} else {
-			guests = guestService.search(actor, owner, pattern, all);
+			guests = guestService.search(actor, owner, pattern, mine);
 		}
 		return toGuestDto(guests);
 	}

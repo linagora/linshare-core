@@ -46,7 +46,7 @@ public interface GuestRestService {
 
 	void head(String uuid) throws BusinessException;
 
-	List<GuestDto> findAll(boolean all, String pattern) throws BusinessException;
+	List<GuestDto> findAll(Boolean mine, String pattern) throws BusinessException;
 
 	GuestDto create(GuestDto guest) throws BusinessException;
 

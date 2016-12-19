@@ -87,7 +87,10 @@ public class GuestRestServiceImpl implements GuestRestService {
 	public List<GuestDto> findAll(
 			@QueryParam("all") @DefaultValue("false") boolean all,
 			@QueryParam("pattern") String pattern) throws BusinessException {
-		return guestFacade.findAll(all, pattern);
+		if (all) {
+			return guestFacade.findAll(null, pattern);
+		}
+		return guestFacade.findAll(true, pattern);
 	}
 
 	@Path("/search")

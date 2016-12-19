@@ -169,17 +169,19 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	}
 
 	@Override
-	public List<Guest> findAll(Account actor, Account owner, boolean all)
+	public List<Guest> findAll(Account actor, Account owner, Boolean mine)
 			throws BusinessException {
 		preChecks(actor, owner);
 		checkListPermission(actor, owner, Guest.class,
 				BusinessErrorCode.GUEST_FORBIDDEN, null);
 		List<AbstractDomain> authorizedDomains = abstractDomainService.getAllAuthorizedDomains(owner.getDomain());
 		List<Guest> list = null;
-		if (all) {
+		if (mine == null) {
 			list = guestBusinessService.findAll(authorizedDomains);
-		} else {
+		} else if (mine) {
 			list = guestBusinessService.findAllMyGuests(owner);
+		} else {
+			list = guestBusinessService.findAllOthersGuests(authorizedDomains, owner);
 		}
 		return list;
 	}
@@ -422,7 +424,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 	}
 
 	@Override
-	public List<Guest> search(Account actor, Account owner, String pattern, boolean all) throws BusinessException {
+	public List<Guest> search(Account actor, Account owner, String pattern, Boolean mine) throws BusinessException {
 		preChecks(actor, owner);
 		if (owner.isGuest()) {
 			throw new BusinessException(BusinessErrorCode.GUEST_FORBIDDEN, "Guests are not allowed to use this method.");
@@ -435,10 +437,12 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		}
 		List<AbstractDomain> authorizedDomains = abstractDomainService.getAllAuthorizedDomains(owner.getDomain());
 		List<Guest> list = null;
-		if (all) {
-			list = guestBusinessService.search(authorizedDomains, pattern, null);
+		if (mine == null) {
+			list = guestBusinessService.search(authorizedDomains, pattern);
+		} else if (mine) {
+			list = guestBusinessService.searchMyGuests(authorizedDomains, pattern, owner);
 		} else {
-			list = guestBusinessService.search(authorizedDomains, pattern, owner);
+			list = guestBusinessService.searchExceptGuests(authorizedDomains, pattern, owner);
 		}
 		return list;
 	}

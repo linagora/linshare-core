@@ -102,7 +102,12 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 
 	@Override
 	public List<Guest> findAllMyGuests(Account owner) {
-		return guestRepository.searchGuest(owner, null, null, null);
+		return guestRepository.findAllMyGuests(owner);
+	}
+
+	@Override
+	public List<Guest> findAllOthersGuests(List<AbstractDomain> authorizedDomains, Account owner) {
+		return guestRepository.findAllOthersGuests(authorizedDomains, owner);
 	}
 
 	@Override
@@ -243,9 +248,20 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	}
 
 	@Override
-	public List<Guest> search(List<AbstractDomain> authorizedDomains, String pattern, Account owner)
+	public List<Guest> search(List<AbstractDomain> authorizedDomains, String pattern) throws BusinessException {
+		return guestRepository.search(authorizedDomains, pattern);
+	}
+
+	@Override
+	public List<Guest> searchMyGuests(List<AbstractDomain> authorizedDomains, String pattern, Account owner)
 			throws BusinessException {
-		return guestRepository.search(authorizedDomains, pattern, owner);
+		return guestRepository.searchMyGuests(authorizedDomains, pattern, owner);
+	}
+
+	@Override
+	public List<Guest> searchExceptGuests(List<AbstractDomain> authorizedDomains, String pattern, Account owner)
+			throws BusinessException {
+		return guestRepository.searchExceptGuests(authorizedDomains, pattern, owner);
 	}
 
 	@Override

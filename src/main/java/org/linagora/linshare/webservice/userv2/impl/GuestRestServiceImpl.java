@@ -38,7 +38,6 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
@@ -85,9 +84,9 @@ public class GuestRestServiceImpl implements GuestRestService {
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public List<GuestDto> findAll(
-			@QueryParam("all") @DefaultValue("false") boolean all,
+			@QueryParam("mine") Boolean mine,
 			@QueryParam("pattern") String pattern) throws BusinessException {
-		return guestFacade.findAll(all, pattern);
+		return guestFacade.findAll(mine, pattern);
 	}
 
 	@Path("/search")

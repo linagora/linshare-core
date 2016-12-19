@@ -42,7 +42,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 
 public interface GuestFacade extends GenericFacade {
 
-	List<GuestDto> findAll(boolean all, String pattern) throws BusinessException;
+	List<GuestDto> findAll(Boolean mine, String pattern) throws BusinessException;
 
 	List<GuestDto> search(UserSearchDto userSearchDto) throws BusinessException;
 

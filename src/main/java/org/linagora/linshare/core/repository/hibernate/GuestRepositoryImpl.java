@@ -45,6 +45,7 @@ import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -215,7 +216,7 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 	}
 
 	@Override
-	public List<Guest> search(List<AbstractDomain> domains, String pattern, Account owner) {
+	public List<Guest> search(List<AbstractDomain> domains, String pattern) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("destroyed", 0L));
 		Disjunction or = Restrictions.disjunction();
@@ -223,9 +224,44 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 		or.add(Restrictions.ilike("mail", pattern, MatchMode.ANYWHERE));
 		or.add(Restrictions.ilike("firstName", pattern, MatchMode.ANYWHERE));
 		or.add(Restrictions.ilike("lastName", pattern, MatchMode.ANYWHERE));
-		if (owner != null) {
-			criteria.add(Restrictions.eq("owner", owner));
+		Disjunction or2 = Restrictions.disjunction();
+		for (AbstractDomain domain : domains) {
+			or2.add(Restrictions.eq("domain", domain));
 		}
+		criteria.add(or);
+		return findByCriteria(criteria);
+	}
+
+	@Override
+	public List<Guest> searchMyGuests(List<AbstractDomain> domains, String pattern, Account owner)
+			throws BusinessException {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("destroyed", 0L));
+		Disjunction or = Restrictions.disjunction();
+		criteria.add(or);
+		or.add(Restrictions.ilike("mail", pattern, MatchMode.ANYWHERE));
+		or.add(Restrictions.ilike("firstName", pattern, MatchMode.ANYWHERE));
+		or.add(Restrictions.ilike("lastName", pattern, MatchMode.ANYWHERE));
+		criteria.add(Restrictions.eq("owner", owner));
+		Disjunction or2 = Restrictions.disjunction();
+		for (AbstractDomain domain : domains) {
+			or2.add(Restrictions.eq("domain", domain));
+		}
+		criteria.add(or);
+		return findByCriteria(criteria);
+	}
+
+	@Override
+	public List<Guest> searchExceptGuests(List<AbstractDomain> domains, String pattern, Account owner)
+			throws BusinessException {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("destroyed", 0L));
+		Disjunction or = Restrictions.disjunction();
+		criteria.add(or);
+		or.add(Restrictions.ilike("mail", pattern, MatchMode.ANYWHERE));
+		or.add(Restrictions.ilike("firstName", pattern, MatchMode.ANYWHERE));
+		or.add(Restrictions.ilike("lastName", pattern, MatchMode.ANYWHERE));
+		criteria.add(Restrictions.ne("owner", owner));
 		Disjunction or2 = Restrictions.disjunction();
 		for (AbstractDomain domain : domains) {
 			or2.add(Restrictions.eq("domain", domain));
@@ -238,6 +274,27 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 	public List<Guest> findAll(List<AbstractDomain> domains) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("destroyed", 0L));
+		Disjunction or = Restrictions.disjunction();
+		for (AbstractDomain domain : domains) {
+			or.add(Restrictions.eq("domain", domain));
+		}
+		criteria.add(or);
+		return findByCriteria(criteria);
+	}
+
+	@Override
+	public List<Guest> findAllMyGuests(Account owner) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("destroyed", 0L));
+		criteria.add(Restrictions.eq("owner", owner));
+		return findByCriteria(criteria);
+	}
+
+	@Override
+	public List<Guest> findAllOthersGuests(List<AbstractDomain> domains, Account owner) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("destroyed", 0L));
+		criteria.add(Restrictions.ne("owner", owner));
 		Disjunction or = Restrictions.disjunction();
 		for (AbstractDomain domain : domains) {
 			or.add(Restrictions.eq("domain", domain));

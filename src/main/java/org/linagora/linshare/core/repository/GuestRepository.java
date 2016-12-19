@@ -38,6 +38,7 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.exception.BusinessException;
 
 
 public interface GuestRepository extends UserRepository<Guest> {
@@ -75,9 +76,17 @@ public interface GuestRepository extends UserRepository<Guest> {
 
 	List<Guest> search(List<AbstractDomain> domains, String mail, String firstName, String lastName, Account owner);
 
-	List<Guest> search(List<AbstractDomain> domains, String pattern, Account owner);
+	List<Guest> search(List<AbstractDomain> domains, String pattern) throws BusinessException;
+
+	List<Guest> searchMyGuests(List<AbstractDomain> domains, String pattern, Account owner) throws BusinessException;
+
+	List<Guest> searchExceptGuests(List<AbstractDomain> domains, String pattern, Account owner) throws BusinessException;
 
 	List<Guest> findAll(List<AbstractDomain> domains);
+
+	List<Guest> findAllMyGuests(Account owner);
+
+	List<Guest> findAllOthersGuests(List<AbstractDomain> domains, Account owner);
 
 	Guest findByDomainAndMail(AbstractDomain domain, String mail);
 }

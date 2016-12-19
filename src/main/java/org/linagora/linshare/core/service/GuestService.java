@@ -70,7 +70,7 @@ public interface GuestService {
 	 * @return
 	 * @throws BusinessException
 	 */
-	List<Guest> findAll(Account actor, Account owner, boolean all) throws BusinessException;
+	List<Guest> findAll(Account actor, Account owner, Boolean mine) throws BusinessException;
 
 	/**
 	 * find all guests according to domain access policies, using firstName or lastName or mail, or both.
@@ -90,11 +90,11 @@ public interface GuestService {
 	 * @param actor
 	 * @param owner
 	 * @param pattern
-	 * @param all TODO
+	 * @param mine TODO
 	 * @return
 	 * @throws BusinessException
 	 */
-	List<Guest> search(Account actor, Account owner, String pattern, boolean all) throws BusinessException;
+	List<Guest> search(Account actor, Account owner, String pattern, Boolean mine) throws BusinessException;
 
 	/**
 	 * Test if a guest exists
