@@ -37,11 +37,14 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
+import javax.persistence.GeneratedValue;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.linagora.linshare.core.domain.constants.ResetTokenKind;
 import org.linagora.linshare.core.domain.entities.Guest;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -50,7 +53,12 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
  *
  */
 @XmlRootElement(name = "ResetGuestPassword")
+@Document(collection = "reset_guest_password")
 public class ResetGuestPassword {
+
+	@JsonIgnore
+	@Id @GeneratedValue
+	protected String id;
 
 	@ApiModelProperty(value = "Uuid")
 	protected String uuid;
@@ -70,7 +78,7 @@ public class ResetGuestPassword {
 	@ApiModelProperty(value = "Expiration date for this token")
 	protected Date expirationDate;
 
-	@ApiModelProperty(value = "True if this token was already used.")
+	@JsonIgnore
 	protected Boolean alreadyUsed;
 
 	@ApiModelProperty(value = "New password.")
@@ -102,6 +110,14 @@ public class ResetGuestPassword {
 
 	public ResetGuestPassword() {
 		super();
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getUuid() {

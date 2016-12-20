@@ -97,7 +97,8 @@ public class ResetGuestPasswordServiceImpl implements ResetGuestPasswordService 
 	@Override
 	public ResetGuestPassword update(Account actor, Account owner, ResetGuestPassword dto) throws BusinessException {
 		Validate.notNull(dto);
-		Validate.notEmpty(dto.getUuid());
+		Validate.notEmpty(dto.getUuid(), "Missing uuid");
+		Validate.notEmpty(dto.getPassword(), "Missing password");
 		ResetGuestPassword reset = find(actor, owner, dto.getUuid());
 		reset.setAlreadyUsed(true);
 		Guest guest = guestService.find(actor, owner, reset.getGuestUuid());

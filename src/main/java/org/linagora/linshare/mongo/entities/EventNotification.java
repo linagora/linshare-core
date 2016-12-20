@@ -35,13 +35,25 @@ package org.linagora.linshare.mongo.entities;
 
 import java.util.List;
 
+import javax.persistence.GeneratedValue;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.google.common.collect.Lists;
 
+@XmlRootElement(name = "EventNotification")
+@Document(collection = "event_notifications")
 @JsonIgnoreProperties({ "relatedAccounts" })
 public class EventNotification {
+
+	@JsonIgnore
+	@Id @GeneratedValue
+	protected String id;
 
 	protected AuditLogEntry event;
 
@@ -57,6 +69,14 @@ public class EventNotification {
 		super();
 		this.event = log;
 		this.relatedAccounts = Lists.newArrayList(uuids);
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public AuditLogEntry getEvent() {

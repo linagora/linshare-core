@@ -44,12 +44,11 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonSubTypes;
 import org.codehaus.jackson.annotate.JsonSubTypes.Type;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.google.common.collect.Lists;
 
@@ -78,7 +77,6 @@ import com.google.common.collect.Lists;
 	UploadRequestAuditLogEntry.class,
 	UploadRequestGroupAuditLogEntry.class,
 	UserPreferenceAuditLogEntry.class})
-@Document(collection = "auditLogEntry")
 public abstract class AuditLogEntryUser extends AuditLogEntry {
 
 	protected AccountMto owner;
@@ -92,6 +90,7 @@ public abstract class AuditLogEntryUser extends AuditLogEntry {
 
 	public AuditLogEntryUser(AccountMto actor, AccountMto owner, LogAction action, AuditLogEntryType type,
 			String resourceUuid) {
+		super();
 		this.actor = actor;
 		this.owner = owner;
 		this.action = action;
@@ -102,6 +101,7 @@ public abstract class AuditLogEntryUser extends AuditLogEntry {
 	}
 
 	public AuditLogEntryUser(ShareEntryAuditLogEntry log) {
+		super();
 		this.actor = log.getActor();
 		this.owner = log.getOwner();
 		this.action = log.getAction();
@@ -112,6 +112,7 @@ public abstract class AuditLogEntryUser extends AuditLogEntry {
 	}
 
 	public AuditLogEntryUser(ThreadAuditLogEntry log) {
+		super();
 		this.actor = log.getActor();
 		this.owner = log.getOwner();
 		this.action = log.getAction();

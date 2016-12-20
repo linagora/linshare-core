@@ -35,13 +35,23 @@ package org.linagora.linshare.mongo.entities;
 
 import java.util.Date;
 
+import javax.persistence.GeneratedValue;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@XmlRootElement(name = "WorkGroupEntry")
+@Document(collection = "work_group_entries")
 public class WorkGroupEntry {
 
-	@Id
+	@JsonIgnore
+	@Id @GeneratedValue
+	protected String id;
+
 	protected String uuid;
 
 	protected String name;
@@ -80,6 +90,14 @@ public class WorkGroupEntry {
 		this.type = threadEntry.getType();
 		this.size = threadEntry.getSize();
 		this.lastAuthor = account;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getUuid() {

@@ -45,7 +45,6 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({ @Type(value = DomainAuditLogEntry.class, name = "domain_audit"),
@@ -59,15 +58,16 @@ import org.springframework.data.mongodb.core.mapping.Document;
 	LdapConnectionAuditLogEntry.class,
 	FunctionalityAuditLogEntry.class
 	})
-@Document(collection="auditLogEntry")
 public abstract class AuditLogEntryAdmin extends AuditLogEntry {
 
 	protected String targetDomainUuid;
 
 	public AuditLogEntryAdmin() {
+		super();
 	}
 
 	public AuditLogEntryAdmin(Account actor, String targetDomainUuid, LogAction action, AuditLogEntryType type, String resourceUuid) {
+		super();
 		this.actor = new AccountMto(actor);
 		this.targetDomainUuid = targetDomainUuid;
 		this.type = type;

@@ -61,7 +61,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @CompoundIndexes({ @CompoundIndex(name = "account_key", unique = true, def = "{'key': 1, 'accountUuid': 1}") })
 public abstract class UserPreference {
 
+	@JsonIgnore
 	@Id @GeneratedValue
+	protected String id;
+
 	protected String uuid;
 
 	@JsonIgnore
@@ -80,6 +83,14 @@ public abstract class UserPreference {
 		super();
 		this.key = key;
 //		this.uuid = UUID.randomUUID().toString();
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getUuid() {

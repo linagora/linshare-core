@@ -34,14 +34,26 @@
 package org.linagora.linshare.mongo.entities.logs;
 
 import java.util.Date;
+import java.util.UUID;
+
+import javax.persistence.GeneratedValue;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document(collection="audit_log_entries")
 public class AuditLogEntry {
+
+	@JsonIgnore
+	@Id @GeneratedValue
+	protected String id;
+
+	protected String uuid;
 
 	protected AccountMto actor;
 
@@ -62,6 +74,23 @@ public class AuditLogEntry {
 
 	public AuditLogEntry() {
 		super();
+		this.uuid = UUID.randomUUID().toString();
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public AccountMto getActor() {

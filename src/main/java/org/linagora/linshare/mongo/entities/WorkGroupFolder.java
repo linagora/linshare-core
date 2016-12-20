@@ -40,6 +40,7 @@ import java.util.UUID;
 import javax.persistence.GeneratedValue;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.springframework.data.annotation.Id;
@@ -50,12 +51,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import com.google.common.collect.Lists;
 
 @XmlRootElement(name = "WorkGroupFolder")
-@Document(collection = "Work_group_folders")
+@Document(collection = "work_group_folders")
 @CompoundIndexes({ @CompoundIndex(name = "name", unique = true, def = "{'name': 1, 'parent': 1, 'workGroup': 1}") })
 public class WorkGroupFolder {
 
-	@Id
-	@GeneratedValue
+	@JsonIgnore
+	@Id @GeneratedValue
+	protected String id;
+
 	protected String uuid;
 
 	protected String name;
@@ -110,6 +113,14 @@ public class WorkGroupFolder {
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
 		this.entries = Lists.newArrayList();
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getUuid() {
