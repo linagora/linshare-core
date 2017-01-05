@@ -31,13 +31,12 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.common.dto;
+package org.linagora.linshare.core.facade.webservice.admin.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
-import org.linagora.linshare.core.facade.webservice.admin.dto.QuotaDto;
 
 import com.google.common.base.Function;
 import com.wordnik.swagger.annotations.ApiModel;

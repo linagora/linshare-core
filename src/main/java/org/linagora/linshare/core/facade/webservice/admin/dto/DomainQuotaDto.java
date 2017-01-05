@@ -31,38 +31,53 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.common.dto;
+package org.linagora.linshare.core.facade.webservice.admin.dto;
+
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.entities.AccountQuota;
-import org.linagora.linshare.core.facade.webservice.admin.dto.QuotaDto;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.linagora.linshare.core.domain.entities.DomainQuota;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-@XmlRootElement(name="AccountQuota")
-@ApiModel(value = "AccountQuota", description = "A quota instance for accounts like users or workgroups.")
-public class AccountQuotaDto extends QuotaDto {
+@XmlRootElement(name = "DomainQuota")
+@ApiModel(value = "DomainQuota", description = "A domain quota instance for a domain.")
+public class DomainQuotaDto extends QuotaDto {
 
-	@ApiModelProperty(value = "The maximum file size accepted.")
-	protected Long maxFileSize;
+	@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+	@ApiModelProperty(value = "List of all quota containers.")
+	List<String> containerUuids;
 
-	protected AccountDto account;
-
-	public AccountQuotaDto() {
+	public DomainQuotaDto() {
 	}
 
-	public AccountQuotaDto(AccountQuota quota) {
+	public DomainQuotaDto(DomainQuota quota) {
 		super(quota);
-		this.maxFileSize = quota.getMaxFileSize();
-		this.account = new AccountDto(quota.getAccount(), true);
 	}
 
-	public AccountQuota toObject() {
-		AccountQuota quota = new AccountQuota();
-		quota.setMaxFileSize(getMaxFileSize());
+	public List<String> getContainerUuids() {
+		return containerUuids;
+	}
+
+	public void setContainerUuids(List<String> containerUuids) {
+		this.containerUuids = containerUuids;
+	}
+
+	public void addContainerUuids(String containerUuid) {
+		if (this.containerUuids == null) {
+			this.containerUuids = Lists.newArrayList();
+		}
+		this.containerUuids.add(containerUuid);
+	}
+
+	public DomainQuota toObject() {
+		DomainQuota quota = new DomainQuota();
+		quota.setUuid(getUuid());
 		quota.setQuota(getQuota());
 		quota.setQuotaOverride(getQuotaOverride());
 		quota.setDefaultQuota(getDefaultQuota());
@@ -71,31 +86,16 @@ public class AccountQuotaDto extends QuotaDto {
 		return quota;
 	}
 
-	public Long getMaxFileSize() {
-		return maxFileSize;
-	}
-
-	public void setMaxFileSize(Long maxFileSize) {
-		this.maxFileSize = maxFileSize;
-	}
-
-	public AccountDto getAccount() {
-		return account;
-	}
-
-	public void setAccount(AccountDto account) {
-		this.account = account;
-	}
-
 	/*
 	 * Transformers
 	 */
-	public static Function<AccountQuota, AccountQuotaDto> toDto() {
-		return new Function<AccountQuota, AccountQuotaDto>() {
+	public static Function<DomainQuota, DomainQuotaDto> toDto() {
+		return new Function<DomainQuota, DomainQuotaDto>() {
 			@Override
-			public AccountQuotaDto apply(AccountQuota arg0) {
-				return new AccountQuotaDto(arg0);
+			public DomainQuotaDto apply(DomainQuota arg0) {
+				return new DomainQuotaDto(arg0);
 			}
 		};
 	}
+
 }

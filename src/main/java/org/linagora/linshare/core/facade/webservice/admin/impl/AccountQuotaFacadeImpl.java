@@ -42,7 +42,7 @@ import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.AccountQuotaFacade;
-import org.linagora.linshare.core.facade.webservice.common.dto.AccountQuotaDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.AccountQuotaDto;
 import org.linagora.linshare.core.service.AccountQuotaService;
 import org.linagora.linshare.core.service.AccountService;
 

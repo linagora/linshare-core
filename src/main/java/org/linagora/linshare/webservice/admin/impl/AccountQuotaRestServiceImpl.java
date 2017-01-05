@@ -46,7 +46,7 @@ import javax.ws.rs.core.MediaType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.AccountQuotaFacade;
-import org.linagora.linshare.core.facade.webservice.common.dto.AccountQuotaDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.AccountQuotaDto;
 import org.linagora.linshare.webservice.admin.AccountQuotaRestService;
 
 import com.wordnik.swagger.annotations.Api;

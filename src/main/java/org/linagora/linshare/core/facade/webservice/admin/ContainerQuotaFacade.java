@@ -37,7 +37,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ContainerQuotaDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.ContainerQuotaDto;
 
 public interface ContainerQuotaFacade {
 

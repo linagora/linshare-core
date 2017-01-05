@@ -45,8 +45,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.ContainerQuotaFacade;
-import org.linagora.linshare.core.facade.webservice.common.dto.AccountQuotaDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.ContainerQuotaDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.AccountQuotaDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.ContainerQuotaDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.ContainerQuotaRestService;
 
