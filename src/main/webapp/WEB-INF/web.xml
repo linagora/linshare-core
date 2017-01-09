@@ -54,11 +54,11 @@
 
 	<context-param>
 		<param-name>spring.profiles.default</param-name>
-		<param-value>default,jcloud</param-value>
+		<param-value>default,jcloud,mongo</param-value>
 		<!-- You can override this parameter using -Dspring.profiles.active=xxx -->
 		<!-- Or you can use environment variable : SPRING_PROFILES_ACTIVE -->
-		<!-- You must enable at least one authentication profile among authentication profiles
-			 and one profile among file data store profiles described below.
+		<!-- You must enable at least one authentication profile among authentication profiles,
+			 one profile among file data store profiles and one among mongodb profiles described below.
 
 		Available authentication profiles :
 			* default : default authentication process.
@@ -72,6 +72,9 @@
 			* jackrabbit-to-gridfs : Using Jcloud as new file data store, jackrabbit as fallback file data store.
 			Recommended profile for production is jcloud with Swift.
 			The default profile is jcloud with filesystem for tests purpose.
+		Available mongodb profiles :
+			* mongo : mongo with authentication disable
+			* mongo-auth : mongo with authentication enable
 		 -->
 	</context-param>
 

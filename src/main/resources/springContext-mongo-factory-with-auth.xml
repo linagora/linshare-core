@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<b:beans xmlns:b="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+	http://www.springframework.org/schema/data/mongo
+	http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd"
+	profile="mongo-auth">
+
+	<mongo:db-factory
+		id="mongoDbFactory"
+		mongo-ref="mongo"
+		host="${linshare.mongo.host}"
+		port="${linshare.mongo.port}"
+		dbname="${linshare.mongo.database}"
+		username="${linshare.mongo.user}"
+		password="${linshare.mongo.password}"
+		/>
+
+	<mongo:db-factory
+		id="mongoDbFactoryForBigFiles"
+		mongo-ref="mongo"
+		host="${linshare.mongo.host}"
+		port="${linshare.mongo.port}"
+		dbname="${linshare.mongo.gridfs.database.bigfiles}"
+		username="${linshare.mongo.user}"
+		password="${linshare.mongo.password}"
+		/>
+
+	<mongo:db-factory
+		id="mongoDbFactoryForFiles"
+		mongo-ref="mongo"
+		host="${linshare.mongo.host}"
+		port="${linshare.mongo.port}"
+		dbname="${linshare.mongo.gridfs.database.files}"
+		username="${linshare.mongo.user}"
+		password="${linshare.mongo.password}"
+		/>
+
+</b:beans>

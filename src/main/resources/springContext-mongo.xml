@@ -28,8 +28,7 @@
 	<mongo:repositories base-package="org.linagora.linshare.mongo" />
 
 	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
-		<constructor-arg ref="mongo" />
-		<constructor-arg name="databaseName" value="${linshare.mongo.database}" />
+		<constructor-arg name="mongoDbFactory" ref="mongoDbFactory" />
 	</bean>
 
 <!-- 	<bean id="mappingContext" class="org.springframework.data.mongodb.core.mapping.MongoMappingContext" /> -->
@@ -39,28 +38,8 @@
 <!-- 		<constructor-arg name="mappingContext" ref="mappingContext" /> -->
 <!-- 	</bean> -->
 
-<!-- 	<mongo:db-factory id="mongoDbFactoryForBigFile" dbname="${linshare.mongo.database.gridfs}" mongo-ref="mongo"/> -->
-<!-- 	<mongo:db-factory id="mongoDbFactoryForBigFile" dbname="${linshare.mongo.database.gridfs}" mongo-ref="mongo"/> -->
-
-
-
-	<mongo:db-factory id="mongoDbFactoryForBigFiles"
-                  host="${linshare.mongo.host}"
-                  port="${linshare.mongo.port}"
-                  dbname="${linshare.mongo.gridfs.database.bigfiles}"
-                  />
-<!--                   username="joe" -->
-<!--                   password="secret" -->
-	<mongo:db-factory id="mongoDbFactoryForFiles"
-                  host="${linshare.mongo.host}"
-                  port="${linshare.mongo.port}"
-                  dbname="${linshare.mongo.gridfs.database.files}"
-                  />
-<!--                   username="joe" -->
-<!--                   password="secret" -->
-
-		<mongo:mapping-converter id="converterBigFiles" db-factory-ref="mongoDbFactoryForBigFiles"/>
-		<mongo:mapping-converter id="converterFiles" db-factory-ref="mongoDbFactoryForFiles"/>
+	<mongo:mapping-converter id="converterBigFiles" db-factory-ref="mongoDbFactoryForBigFiles"/>
+	<mongo:mapping-converter id="converterFiles" db-factory-ref="mongoDbFactoryForFiles"/>
 
 	<bean id="gridFsTemplateForBigFiles" class="org.springframework.data.mongodb.gridfs.GridFsTemplate">
 		<constructor-arg ref="mongoDbFactoryForBigFiles" />
