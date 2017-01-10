@@ -68,7 +68,7 @@ public class MailFooterLangDto {
 		language = Language.fromInt(footerLang.getLanguage());
 		uuid = footerLang.getUuid();
 		mailFooter = footerLang.getMailFooter().getUuid();
-		setMailFooterName(footerLang.getMailFooter().getName());
+		setMailFooterName(footerLang.getMailFooter().getDescription());
 	}
 
 	public String getUuid() {

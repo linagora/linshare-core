@@ -37,7 +37,6 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.MailFooter;
 
 import com.wordnik.swagger.annotations.ApiModel;
@@ -48,16 +47,13 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 public class MailFooterDto {
 
 	@ApiModelProperty(value = "Name")
-	private String name;
+	private String description;
 
 	@ApiModelProperty(value = "Domain")
 	private String domain;
 
 	@ApiModelProperty(value = "Visible")
 	private boolean visible;
-
-	@ApiModelProperty(value = "Language")
-	private Language language;
 
 	@ApiModelProperty(value = "Footer")
 	private String footer;
@@ -74,27 +70,38 @@ public class MailFooterDto {
 	@ApiModelProperty(value = "Plaintext")
 	private boolean plaintext;
 
+	@ApiModelProperty(value = "readonly")
+	private boolean readonly;
+
+	@ApiModelProperty(value = "messagesFrench")
+	private String messagesFrench;
+
+	@ApiModelProperty(value = "messagesEnglish")
+	private String messagesEnglish;
+
 	public MailFooterDto() {
 	}
 
 	public MailFooterDto(MailFooter footer) {
 		this.uuid = footer.getUuid();
 		this.domain = footer.getDomain().getUuid();
-		this.name = footer.getName();
+		this.description = footer.getDescription();
 		this.footer = footer.getFooter();
-		this.language = Language.fromInt(footer.getLanguage());
 		this.plaintext = footer.getPlaintext();
 		this.visible = footer.getVisible();
 		this.creationDate = new Date(footer.getCreationDate().getTime());
 		this.modificationDate = new Date(footer.getModificationDate().getTime());
+		this.readonly = footer.isReadonly();
+		this.messagesFrench = footer.getMessagesFrench();
+		this.messagesEnglish = footer.getMessagesEnglish();
 	}
 
-	public void setName(String value) {
-		this.name = value;
+	public void setDescription(String value) {
+		this.description = value;
 	}
 
-	public String getName() {
-		return name;
+	public String getDescription() {
+		return description;
 	}
 
 	public String getDomain() {
@@ -111,14 +118,6 @@ public class MailFooterDto {
 
 	public boolean isVisible() {
 		return visible;
-	}
-
-	public void setLanguage(Language value) {
-		this.language = value;
-	}
-
-	public Language getLanguage() {
-		return language;
 	}
 
 	public void setFooter(String value) {
@@ -159,5 +158,29 @@ public class MailFooterDto {
 
 	public boolean isPlaintext() {
 		return plaintext;
+	}
+
+	public boolean isReadonly() {
+		return readonly;
+	}
+
+	public void setReadonly(boolean readonly) {
+		this.readonly = readonly;
+	}
+
+	public String getMessagesFrench() {
+		return messagesFrench;
+	}
+
+	public void setMessagesFrench(String messagesFrench) {
+		this.messagesFrench = messagesFrench;
+	}
+
+	public String getMessagesEnglish() {
+		return messagesEnglish;
+	}
+
+	public void setMessagesEnglish(String messagesEnglish) {
+		this.messagesEnglish = messagesEnglish;
 	}
 }

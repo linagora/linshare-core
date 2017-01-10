@@ -55,10 +55,10 @@ public interface MailConfigRestService {
 
 	MailConfigDto delete(MailConfigDto dto) throws BusinessException;
 
-	Set<MailFooterDto> findAllFooters(String mailConfigUuid, String language)
+	Set<MailFooterDto> findAllFooters(String mailConfigUuid)
 			throws BusinessException;
 
 	Set<MailContentDto> findAllContents(String mailConfigUuid,
-			String mailContentType, String language) throws BusinessException;
+			String mailContentType) throws BusinessException;
 
 }

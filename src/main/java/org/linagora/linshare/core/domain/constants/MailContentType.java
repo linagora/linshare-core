@@ -86,4 +86,14 @@ public enum MailContentType {
 		throw new IllegalArgumentException(
 				"Value : " + value + " doesn't match an existing MailContentType");
 	}
+
+	public static boolean contains(String test) {
+		String str= test.toUpperCase();
+		for (MailContentType c : MailContentType.values()) {
+			if (c.name().equals(str)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

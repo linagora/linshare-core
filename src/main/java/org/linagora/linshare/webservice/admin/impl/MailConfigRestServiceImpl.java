@@ -147,10 +147,9 @@ public class MailConfigRestServiceImpl extends WebserviceBase implements
 	@Override
 	public Set<MailContentDto> findAllContents(
 			@ApiParam(value = "Mail configuration's uuid.", required = true) @PathParam("mailConfigUuid") String mailConfigUuid,
-			@ApiParam(value = "Mail content type.", required = true) @QueryParam("mailContentType") String mailContentType,
-			@ApiParam(value = "Mail content language.", required = true) @QueryParam("language") String language)
+			@ApiParam(value = "Mail content type.", required = true) @QueryParam("mailContentType") String mailContentType)
 			throws BusinessException {
-		return mailConfigFacade.findAllContents(mailConfigUuid, mailContentType, language);
+		return mailConfigFacade.findAllContents(mailConfigUuid, mailContentType);
 	}
 
 	@Path("/{mailConfigUuid}/mail_footers")
@@ -158,9 +157,8 @@ public class MailConfigRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Find all mail footers.", response = MailContentDto.class, responseContainer = "Set")
 	@Override
 	public Set<MailFooterDto> findAllFooters(
-			@ApiParam(value = "Mail configuration's uuid.", required = true) @PathParam("mailConfigUuid") String mailConfigUuid,
-			@ApiParam(value = "Mail footer language.", required = true) @QueryParam("language") String language)
+			@ApiParam(value = "Mail configuration's uuid.", required = true) @PathParam("mailConfigUuid") String mailConfigUuid)
 			throws BusinessException {
-		return mailConfigFacade.findAllFooters(mailConfigUuid, language);
+		return mailConfigFacade.findAllFooters(mailConfigUuid);
 	}
 }

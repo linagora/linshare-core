@@ -69,6 +69,13 @@ public enum Language {
 		return ENGLISH;
 	}
 
+	public static Locale toLocale(Language language) {
+		if (language.equals(FRENCH)) {
+			return Locale.FRENCH;
+		}
+		return Locale.ENGLISH;
+	}
+
 	public static Language fromTapestryLocale(String locale) {
 		if (locale == null)
 			return null;

@@ -53,7 +53,7 @@ public class MailLayoutDto {
 	private String domain;
 
 	@ApiModelProperty(value = "Name")
-	private String name;
+	private String description;
 
 	@ApiModelProperty(value = "Layout")
 	private String layout;
@@ -70,18 +70,30 @@ public class MailLayoutDto {
 	@ApiModelProperty(value = "ModificationDate")
 	private Date modificationDate;
 
+	@ApiModelProperty(value = "readonly")
+	private boolean readonly;
+
+	@ApiModelProperty(value = "messagesFrench")
+	private String messagesFrench;
+
+	@ApiModelProperty(value = "messagesEnglish")
+	private String messagesEnglish;
+
 	public MailLayoutDto() {
 	}
 
 	public MailLayoutDto(MailLayout ml) {
 		this.uuid = ml.getUuid();
 		this.domain = ml.getDomain().getUuid();
-		this.name = ml.getName();
+		this.description = ml.getDescription();
 		this.layout = ml.getLayout();
 		this.plaintext = ml.isPlaintext();
 		this.visible = ml.isVisible();
 		this.creationDate = new Date(ml.getCreationDate().getTime());
 		this.modificationDate = new Date(ml.getModificationDate().getTime());
+		this.readonly = ml.isReadonly();
+		this.messagesFrench = ml.getMessagesFrench();
+		this.messagesEnglish = ml.getMessagesEnglish();
 	}
 
 	public String getUuid() {
@@ -100,12 +112,12 @@ public class MailLayoutDto {
 		this.domain = domain;
 	}
 
-	public String getName() {
-		return name;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public String getLayout() {
@@ -146,5 +158,29 @@ public class MailLayoutDto {
 
 	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
+	}
+
+	public boolean isReadonly() {
+		return readonly;
+	}
+
+	public void setReadonly(boolean readonly) {
+		this.readonly = readonly;
+	}
+
+	public String getMessagesFrench() {
+		return messagesFrench;
+	}
+
+	public void setMessagesFrench(String messagesFrench) {
+		this.messagesFrench = messagesFrench;
+	}
+
+	public String getMessagesEnglish() {
+		return messagesEnglish;
+	}
+
+	public void setMessagesEnglish(String messagesEnglish) {
+		this.messagesEnglish = messagesEnglish;
 	}
 }

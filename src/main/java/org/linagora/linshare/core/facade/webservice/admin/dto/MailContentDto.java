@@ -37,7 +37,6 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.MailContent;
 
@@ -49,7 +48,7 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 public class MailContentDto {
 
 	@ApiModelProperty(value = "Name")
-	private String name;
+	private String description;
 
 	@ApiModelProperty(value = "Domain")
 	private String domain;
@@ -59,9 +58,6 @@ public class MailContentDto {
 
 	@ApiModelProperty(value = "MailContentType")
 	private String mailContentType;
-
-	@ApiModelProperty(value = "Language")
-	private Language language;
 
 	@ApiModelProperty(value = "Subject")
 	private String subject;
@@ -84,11 +80,15 @@ public class MailContentDto {
 	@ApiModelProperty(value = "Plaintext")
 	private boolean plaintext;
 
-	@ApiModelProperty(value = "AlternativeSubject")
-	private String alternativeSubject;
+	@ApiModelProperty(value = "readonly")
+	private boolean readonly;
 
-	@ApiModelProperty(value = "EnableAS")
-	private boolean enableAS;
+	@ApiModelProperty(value = "messagesFrench")
+	private String messagesFrench;
+
+	@ApiModelProperty(value = "messagesEnglish")
+	private String messagesEnglish;
+
 
 	public MailContentDto() {
 	}
@@ -96,27 +96,26 @@ public class MailContentDto {
 	public MailContentDto(MailContent cont) {
 		this.uuid = cont.getUuid();
 		this.domain = cont.getDomain().getUuid();
-		this.name = cont.getName();
+		this.description = cont.getDescription();
 		this.body = cont.getBody();
 		this.subject = cont.getSubject();
-		this.greetings = cont.getGreetings();
-		this.language = Language.fromInt(cont.getLanguage());
 		this.plaintext = cont.isPlaintext();
 		this.visible = cont.isVisible();
 		this.mailContentType = MailContentType.fromInt(
 				cont.getMailContentType()).toString();
 		this.creationDate = new Date(cont.getCreationDate().getTime());
 		this.modificationDate = new Date(cont.getModificationDate().getTime());
-		this.alternativeSubject = cont.getAlternativeSubject();
-		this.enableAS = cont.isEnableAS();
+		this.readonly = cont.isReadonly();
+		this.messagesFrench = cont.getMessagesFrench();
+		this.messagesEnglish = cont.getMessagesEnglish();
 	}
 
-	public String getName() {
-		return name;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public String getDomain() {
@@ -141,14 +140,6 @@ public class MailContentDto {
 
 	public void setMailContentType(String mailContentType) {
 		this.mailContentType = mailContentType;
-	}
-
-	public Language getLanguage() {
-		return language;
-	}
-
-	public void setLanguage(Language language) {
-		this.language = language;
 	}
 
 	public String getSubject() {
@@ -207,19 +198,28 @@ public class MailContentDto {
 		this.plaintext = plaintext;
 	}
 
-	public String getAlternativeSubject() {
-		return alternativeSubject;
+	public boolean isReadonly() {
+		return readonly;
 	}
 
-	public void setAlternativeSubject(String alternativeSubject) {
-		this.alternativeSubject = alternativeSubject;
+	public void setReadonly(boolean readonly) {
+		this.readonly = readonly;
 	}
 
-	public boolean isEnableAS() {
-		return enableAS;
+	public String getMessagesFrench() {
+		return messagesFrench;
 	}
 
-	public void setEnableAS(boolean asUsed) {
-		this.enableAS = asUsed;
+	public void setMessagesFrench(String messagesFrench) {
+		this.messagesFrench = messagesFrench;
 	}
+
+	public String getMessagesEnglish() {
+		return messagesEnglish;
+	}
+
+	public void setMessagesEnglish(String messagesEnglish) {
+		this.messagesEnglish = messagesEnglish;
+	}
+
 }

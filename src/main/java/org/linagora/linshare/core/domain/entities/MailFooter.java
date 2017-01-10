@@ -35,17 +35,17 @@ package org.linagora.linshare.core.domain.entities;
 
 import java.util.Date;
 
+import org.linagora.linshare.core.domain.constants.Language;
+
 public class MailFooter {
 
 	private long id;
 
-	private String name;
+	private String description;
 
 	private AbstractDomain domain;
 
 	private boolean visible;
-
-	private int language;
 
 	private String footer;
 
@@ -56,6 +56,12 @@ public class MailFooter {
 	private String uuid;
 
 	private boolean plaintext;
+
+	private boolean readonly;
+
+	private String messagesFrench;
+
+	private String messagesEnglish;
 
 	public MailFooter() {
 	}
@@ -68,12 +74,12 @@ public class MailFooter {
 		return id;
 	}
 
-	public void setName(String value) {
-		this.name = value;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
-	public String getName() {
-		return name;
+	public String getDescription() {
+		return description;
 	}
 
 	public AbstractDomain getDomain() {
@@ -90,14 +96,6 @@ public class MailFooter {
 
 	public boolean getVisible() {
 		return visible;
-	}
-
-	public void setLanguage(int value) {
-		this.language = value;
-	}
-
-	public int getLanguage() {
-		return language;
 	}
 
 	public void setFooter(String value) {
@@ -139,4 +137,47 @@ public class MailFooter {
 	public boolean getPlaintext() {
 		return plaintext;
 	}
+
+	public boolean isReadonly() {
+		return readonly;
+	}
+
+	public void setReadonly(boolean readonly) {
+		this.readonly = readonly;
+	}
+
+	public String getMessagesFrench() {
+		return messagesFrench;
+	}
+
+	public void setMessagesFrench(String messagesFrench) {
+		this.messagesFrench = messagesFrench;
+	}
+
+	public String getMessagesEnglish() {
+		return messagesEnglish;
+	}
+
+	public void setMessagesEnglish(String messagesEnglish) {
+		this.messagesEnglish = messagesEnglish;
+	}
+
+	@Override
+	public String toString() {
+		return "MailFooter [id=" + id + ", name=" + description + ", domain=" + domain + ", visible=" + visible
+				+ ", footer=" + footer + ", creationDate=" + creationDate + ", modificationDate="
+				+ modificationDate + ", uuid=" + uuid + ", plaintext=" + plaintext + "]";
+	}
+
+	/**
+	 * Helpers
+	 */
+	public String getMessages(Language lang) {
+		if (lang.equals(Language.FRENCH)) {
+			return getMessagesFrench();
+		} else {
+			return getMessagesEnglish();
+		}
+	}
+
 }

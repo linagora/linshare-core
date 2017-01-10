@@ -123,17 +123,15 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 	private void transform(MailContent content, MailContentDto dto)
 			throws BusinessException {
 		content.setDomain(findDomain(dto.getDomain()));
-		content.setName(dto.getName());
+		content.setDescription(dto.getDescription());
 		content.setVisible(dto.isVisible());
 		content.setPlaintext(dto.isPlaintext());
-		content.setLanguage(dto.getLanguage().toInt());
-		content.setGreetings(dto.getGreetings());
 		content.setSubject(dto.getSubject());
 		content.setBody(dto.getBody());
 		content.setMailContentType(MailContentType.valueOf(
 				dto.getMailContentType()).toInt());
-		if (content.isEnableAS() == true)
-			content.setAlternativeSubject(dto.getAlternativeSubject());
+		content.setMessagesEnglish(dto.getMessagesEnglish());
+		content.setMessagesFrench(dto.getMessagesFrench());
 	}
 
 	private MailContent findContent(User actor, String uuid)

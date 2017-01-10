@@ -74,7 +74,7 @@ public class MailContentLangDto {
 		mailContent = contentLang.getMailContent().getUuid();
 		mailContentType = MailContentType.fromInt(
 				contentLang.getMailContentType()).toString();
-		mailContentName = contentLang.getMailContent().getName();
+		mailContentName = contentLang.getMailContent().getDescription();
 	}
 
 	public String getMailContentType() {

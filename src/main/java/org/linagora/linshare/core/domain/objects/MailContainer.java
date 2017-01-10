@@ -160,4 +160,12 @@ public class MailContainer {
 	public void setReferences(String references) {
 		this.references = references;
 	}
+
+	/**
+	 * Helpers
+	 */
+	public Locale getLocale() {
+		return Language.toLocale(language);
+	}
+
 }

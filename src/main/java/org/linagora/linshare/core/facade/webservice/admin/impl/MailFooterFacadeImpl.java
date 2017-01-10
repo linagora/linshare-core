@@ -123,11 +123,12 @@ public class MailFooterFacadeImpl extends AdminGenericFacadeImpl implements
 	private void transform(MailFooter footer, MailFooterDto dto)
 			throws BusinessException {
 		footer.setDomain(findDomain(dto.getDomain()));
-		footer.setName(dto.getName());
+		footer.setDescription(dto.getDescription());
 		footer.setVisible(dto.isVisible());
 		footer.setPlaintext(dto.isPlaintext());
-		footer.setLanguage(dto.getLanguage().toInt());
 		footer.setFooter(dto.getFooter());
+		footer.setMessagesEnglish(dto.getMessagesEnglish());
+		footer.setMessagesFrench(dto.getMessagesFrench());
 	}
 
 	private MailFooter findFooter(User actor, String uuid)

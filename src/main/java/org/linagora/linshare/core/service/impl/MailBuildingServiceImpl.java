@@ -47,6 +47,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.MailActivationBusinessService;
+import org.linagora.linshare.core.business.service.MailConfigBusinessService;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
@@ -77,9 +78,13 @@ import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.MailBuildingService;
+import org.linagora.linshare.core.service.thymeleaf.LinShareStringTemplateResolver;
 import org.linagora.linshare.core.utils.DocumentUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.TemplateSpec;
+import org.thymeleaf.context.Context;
 
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
@@ -90,6 +95,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 
 	private final static Logger logger = LoggerFactory
 			.getLogger(MailBuildingServiceImpl.class);
+
+	private final TemplateEngine templateEngine;
 
 	private final boolean displayLogo;
 
@@ -130,22 +137,14 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private class ContactRepresentation {
 		private String mail;
 		private String firstName;
 		private String lastName;
 
-		@SuppressWarnings("unused")
-		public ContactRepresentation(String mail, String firstName,
-				String lastName) {
-			super();
-			this.mail = StringUtils.trimToNull(mail);
-			this.firstName = StringUtils.trimToNull(firstName);
-			this.lastName = StringUtils.trimToNull(lastName);
-		}
-
-		public ContactRepresentation(String mail) {
-			this.mail = StringUtils.trimToNull(mail);
+		public ContactRepresentation(Contact c) {
+			this.mail = StringUtils.trimToNull(c.getMail());
 			this.firstName = null;
 			this.lastName = null;
 		}
@@ -154,18 +153,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			this.mail = StringUtils.trimToNull(user.getMail());
 			this.firstName = StringUtils.trimToNull(user.getFirstName());
 			this.lastName = StringUtils.trimToNull(user.getLastName());
-		}
-
-		@SuppressWarnings("unused")
-		public ContactRepresentation(Account account) {
-			this.mail = StringUtils
-					.trimToNull(account.getAccountRepresentation());
-			if (account instanceof User) {
-				User user = (User) account;
-				this.firstName = StringUtils.trimToNull(user.getFirstName());
-				this.lastName = StringUtils.trimToNull(user.getLastName());
-				this.mail = StringUtils.trimToNull(user.getMail());
-			}
 		}
 
 		public String getContactRepresentation() {
@@ -185,6 +172,31 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				res.append(")");
 			}
 			return res.toString();
+		}
+
+		
+		public String getMail() {
+			return mail;
+		}
+
+		public void setMail(String mail) {
+			this.mail = mail;
+		}
+
+		public String getFirstName() {
+			return firstName;
+		}
+
+		public void setFirstName(String firstName) {
+			this.firstName = firstName;
+		}
+
+		public String getLastName() {
+			return lastName;
+		}
+
+		public void setLastName(String lastName) {
+			this.lastName = lastName;
 		}
 	}
 
@@ -257,7 +269,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		}
 	}
 
-	public MailBuildingServiceImpl(boolean displayLogo,
+	public MailBuildingServiceImpl(
+			boolean displayLogo,
+			final MailConfigBusinessService mailConfigBusinessService,
 			final DomainBusinessService domainBusinessService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
 			final MailActivationBusinessService mailActivationBusinessService,
@@ -280,7 +294,12 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		this.anonymouslySharedWith.put(Language.FRENCH, "Partagé anonymement avec");
 		this.receivedSharesUrlSuffix = receivedSharesUrlSuffix;
 		this.documentsUrlSuffix = documentsUrlSuffix;
+		this.templateEngine = new TemplateEngine();
+		LinShareStringTemplateResolver templateResolver = new LinShareStringTemplateResolver(insertLicenceTerm);
+//		templateResolver.setTemplateMode(TemplateMode.TEXT);
+		templateEngine.setTemplateResolver(templateResolver);
 	}
+
 
 	private String formatCreationDate(Account account, Entry entry) {
 		Locale locale = account.getJavaExternalMailLocale();
@@ -326,7 +345,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		}
 		String documentName = shareEntry.getDocumentEntry().getName();
 		String email = shareEntry.getAnonymousUrl().getContact().getMail();
-		String actorRepresentation = new ContactRepresentation(email)
+		String actorRepresentation = new ContactRepresentation(shareEntry.getAnonymousUrl().getContact())
 				.getContactRepresentation();
 
 		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
@@ -665,14 +684,11 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		if (isDisable(recipient, MailActivationType.NEW_SHARING)) {
 			return null;
 		}
-		String actorRepresentation = new ContactRepresentation(sender)
-				.getContactRepresentation();
 		String url = getLinShareUrlForAUserRecipient(recipient);
 
 		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				recipient.getExternalMailLocale());
-		MailContainerBuilder builder = new MailContainerBuilder();
 
 		StringBuffer names = new StringBuffer();
 		long shareSize = 0;
@@ -684,28 +700,28 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 						+ share.getName() + "</a></li>");
 			}
 		}
+		Context ctx = new Context(input.getLocale());
+		ctx.setVariable("number", "" + shareSize);
+		ctx.setVariable("documentNames", names.toString());
+		ctx.setVariable("url", url);
+		ctx.setVariable("urlparam", "");
+//		-- new format
+		ctx.setVariable("sender", new ContactRepresentation(sender));
+		ctx.setVariable("recipient", new ContactRepresentation(recipient));
+		ctx.setVariable("customSubject", input.getSubject());
+		ctx.setVariable("shares", shares);
+		ctx.setVariable("sharesCount", shareSize);
+		ctx.setVariable("recipientServerUrl", getLinShareUrlForAUserRecipient(recipient));
+		// TODO getReceivedSharedFileDownloadLink
 
-		builder.getSubjectChain()
-				.add("actorSubject", input.getSubject())
-				.add("actorRepresentation", actorRepresentation);
-		builder.getGreetingsChain()
-				.add("firstName", recipient.getFirstName())
-				.add("lastName", recipient.getLastName());
-		builder.getBodyChain()
-				.add("firstName", sender.getFirstName())
-				.add("lastName", sender.getLastName())
-				.add("number", "" + shareSize)
-				.add("documentNames", names.toString())
-				.add("url", url)
-				.add("urlparam", "");
 		container.setSubject(input.getSubject());
 		container.setRecipient(recipient);
 		container.setFrom(getFromMailAddress(sender));
 		container.setReplyTo(sender.getMail());
 
-		return buildMailContainer(cfg, container,
-				input.getPersonalMessage(), MailContentType.NEW_SHARING,
-				builder);
+		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, container,
+				input.getPersonalMessage(), MailContentType.NEW_SHARING, ctx);
+		return buildMailContainer;
 	}
 
 	@Override
@@ -1651,11 +1667,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	/*
 	 * MAIL CONTAINER BUILDER SECTION
 	 */
-	private String formatSubjectTemplate(String subject, MailContent mailContent) {
-		if (StringUtils.isBlank(subject) || mailContent.isEnableAS() == false)
-			return mailContent.getSubject();
-		return mailContent.getAlternativeSubject();
-	}
 
 	private String formatPersonalMessage(String pm, Language lang) {
 		if (StringUtils.isBlank(pm))
@@ -1674,6 +1685,42 @@ public class MailBuildingServiceImpl implements MailBuildingService {
         return footer;
 	}
 
+	private MailContainerWithRecipient buildMailContainerThymeleaf(MailConfig cfg,
+			final MailContainerWithRecipient input, String pm,
+			MailContentType type, Context ctx)
+			throws BusinessException {
+		logger.debug("Building mail content: " + type);
+		Language lang = input.getLanguage();
+		MailContent mailContent = cfg.findContent(lang, type);
+		MailContainerWithRecipient container = new MailContainerWithRecipient(input);
+
+		// default context
+		Map<String, Object> templateResolutionAttributes = Maps.newHashMap();
+		templateResolutionAttributes.put("mailConfig", cfg);
+		templateResolutionAttributes.put("lang", input.getLanguage());
+
+		// TODO manage  org.thymeleaf.exceptions.TemplateInputException:
+
+		// suject processing
+		String subject = templateEngine.process(mailContent.getSubject(), ctx);
+		ctx.setVariable("mailSubject", subject);
+
+		// TODO manage images integration.
+//		  "<img src='cid:image.part.1@linshare.org' /><br/><br/>";
+//				.add("image", displayLogo ? LINSHARE_LOGO : "")
+
+		TemplateSpec templateSpec = new TemplateSpec(type.toString(), null, null, templateResolutionAttributes);
+		String body = templateEngine.process(templateSpec, ctx);
+
+		container.setSubject(subject);
+		container.setContentHTML(body);
+		container.setContentTXT(container.getContentHTML());
+		// Message IDs from Web service API (ex Plugin Thunderbird)
+		container.setInReplyTo(input.getInReplyTo());
+		container.setReferences(input.getReferences());
+		return container;
+	}
+
 	private MailContainerWithRecipient buildMailContainer(MailConfig cfg,
 			final MailContainerWithRecipient input, String pm,
 			MailContentType type, MailContainerBuilder builder)
@@ -1682,8 +1729,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				input);
 		MailContent mailContent = cfg.findContent(lang, type);
-		String subjectTemplate = formatSubjectTemplate(input.getSubject(), mailContent);
-		String greetings = mailContent.getGreetings();
+		String subjectTemplate = mailContent.getSubject();
 		String body = mailContent.getBody();
 		MailFooter f = cfg.findFooter(lang);
 		String footer = formatFooter(f.getFooter(), lang);
@@ -1692,13 +1738,11 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		logger.debug("Building mail content: " + type);
 		pm = formatPersonalMessage(pm, lang);
 		String subject = builder.getSubjectChain().build(subjectTemplate);
-		greetings = builder.getGreetingsChain().build(greetings);
 		body = builder.getBodyChain().build(body);
 		footer = builder.getFooterChain().build(footer);
 		layout = builder.getLayoutChain()
 				.add("image", displayLogo ? LINSHARE_LOGO : "")
 				.add("personalMessage", pm)
-				.add("greetings", greetings)
 				.add("body", body)
 				.add("footer", footer)
 				.add("mailSubject", subject)

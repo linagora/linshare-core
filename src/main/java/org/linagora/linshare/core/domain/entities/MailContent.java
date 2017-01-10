@@ -35,11 +35,13 @@ package org.linagora.linshare.core.domain.entities;
 
 import java.util.Date;
 
+import org.linagora.linshare.core.domain.constants.Language;
+
 public class MailContent {
 
 	private long id;
 
-	private String name;
+	private String description;
 
 	private AbstractDomain domain;
 
@@ -47,11 +49,7 @@ public class MailContent {
 
 	private int mailContentType;
 
-	private int language;
-
 	private String subject;
-
-	private String greetings;
 
 	private String body;
 
@@ -63,9 +61,11 @@ public class MailContent {
 
 	private boolean plaintext;
 
-	private String alternativeSubject;
+	private boolean readonly;
 
-	private boolean enableAS;
+	private String messagesFrench;
+
+	private String messagesEnglish;
 
 	public MailContent() {
 	}
@@ -78,12 +78,12 @@ public class MailContent {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public AbstractDomain getDomain() {
@@ -110,28 +110,12 @@ public class MailContent {
 		this.mailContentType = mailContentType;
 	}
 
-	public int getLanguage() {
-		return language;
-	}
-
-	public void setLanguage(int language) {
-		this.language = language;
-	}
-
 	public String getSubject() {
 		return subject;
 	}
 
 	public void setSubject(String subject) {
 		this.subject = subject;
-	}
-
-	public String getGreetings() {
-		return greetings;
-	}
-
-	public void setGreetings(String greetings) {
-		this.greetings = greetings;
 	}
 
 	public String getBody() {
@@ -174,19 +158,39 @@ public class MailContent {
 		this.plaintext = plaintext;
 	}
 
-	public String getAlternativeSubject() {
-		return alternativeSubject;
+	public boolean isReadonly() {
+		return readonly;
 	}
 
-	public void setAlternativeSubject (String alternativeSubject) {
-		this.alternativeSubject = alternativeSubject;
+	public void setReadonly(boolean readonly) {
+		this.readonly = readonly;
 	}
 
-	public boolean isEnableAS() {
-		return enableAS;
+	public String getMessagesFrench() {
+		return messagesFrench;
 	}
 
-	public void setEnableAS(boolean asUsed) {
-		this.enableAS = asUsed;
+	public void setMessagesFrench(String messagesFrench) {
+		this.messagesFrench = messagesFrench;
 	}
+
+	public String getMessagesEnglish() {
+		return messagesEnglish;
+	}
+
+	public void setMessagesEnglish(String messagesEnglish) {
+		this.messagesEnglish = messagesEnglish;
+	}
+
+	/**
+	 * Helpers
+	 */
+	public String getMessages(Language lang) {
+		if (lang.equals(Language.FRENCH)) {
+			return getMessagesFrench();
+		} else {
+			return getMessagesEnglish();
+		}
+	}
+
 }

@@ -35,11 +35,13 @@ package org.linagora.linshare.core.domain.entities;
 
 import java.util.Date;
 
+import org.linagora.linshare.core.domain.constants.Language;
+
 public class MailLayout {
 
 	private long id;
 
-	private String name;
+	private String description;
 
 	private AbstractDomain domain;
 
@@ -55,6 +57,12 @@ public class MailLayout {
 
 	private boolean plaintext;
 
+	private boolean readonly;
+
+	private String messagesFrench;
+
+	private String messagesEnglish;
+
 	public MailLayout() {
 	}
 
@@ -66,12 +74,12 @@ public class MailLayout {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public AbstractDomain getDomain() {
@@ -129,4 +137,40 @@ public class MailLayout {
 	public void setPlaintext(boolean plaintext) {
 		this.plaintext = plaintext;
 	}
+
+	public boolean isReadonly() {
+		return readonly;
+	}
+
+	public void setReadonly(boolean readonly) {
+		this.readonly = readonly;
+	}
+
+	public String getMessagesFrench() {
+		return messagesFrench;
+	}
+
+	public void setMessagesFrench(String messagesFrench) {
+		this.messagesFrench = messagesFrench;
+	}
+
+	public String getMessagesEnglish() {
+		return messagesEnglish;
+	}
+
+	public void setMessagesEnglish(String messagesEnglish) {
+		this.messagesEnglish = messagesEnglish;
+	}
+
+	/**
+	 * Helpers
+	 */
+	public String getMessages(Language lang) {
+		if (lang.equals(Language.FRENCH)) {
+			return getMessagesFrench();
+		} else {
+			return getMessagesEnglish();
+		}
+	}
+
 }
