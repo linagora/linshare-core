@@ -89,6 +89,7 @@ import org.thymeleaf.context.Context;
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class MailBuildingServiceImpl implements MailBuildingService {
@@ -134,6 +135,111 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		@Override
 		public String toString() {
 			return name;
+		}
+	}
+
+	@SuppressWarnings("unused")
+	private class Document {
+		protected String uuid;
+		protected String name;
+
+		public Document(DocumentEntry de) {
+			super();
+			this.uuid = de.getUuid();
+			this.name = de.getName();
+		}
+
+		public Document(String name) {
+			super();
+			this.name = name;
+		}
+
+		public String getUuid() {
+			return uuid;
+		}
+
+		public void setUuid(String uuid) {
+			this.uuid = uuid;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+	}
+
+	@SuppressWarnings("unused")
+	private class Share {
+		protected String uuid;
+		protected String name;
+		protected boolean downloaded;
+		protected Date creationDate;
+		protected Date expirationDate;
+
+		public Share(ShareEntry se) {
+			super();
+			this.uuid = se.getUuid();
+			this.name = se.getName();
+			this.downloaded = se.getDownloaded() > 0;
+			this.creationDate = se.getCreationDate().getTime();
+			this.expirationDate = se.getExpirationDate().getTime();
+		}
+
+		public Share(AnonymousShareEntry se) {
+			super();
+			this.uuid = se.getUuid();
+			this.name = se.getName();
+			this.downloaded = se.getDownloaded() > 0;
+			this.creationDate = se.getCreationDate().getTime();
+			this.expirationDate = se.getExpirationDate().getTime();
+		}
+
+		public Share(String name) {
+			super();
+			this.name = name;
+		}
+
+		public String getUuid() {
+			return uuid;
+		}
+
+		public void setUuid(String uuid) {
+			this.uuid = uuid;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public boolean isDownloaded() {
+			return downloaded;
+		}
+
+		public void setDownloaded(boolean downloaded) {
+			this.downloaded = downloaded;
+		}
+
+		public Date getCreationDate() {
+			return creationDate;
+		}
+
+		public void setCreationDate(Date creationDate) {
+			this.creationDate = creationDate;
+		}
+
+		public Date getExpirationDate() {
+			return expirationDate;
+		}
+
+		public void setExpirationDate(Date expirationDate) {
+			this.expirationDate = expirationDate;
 		}
 	}
 
@@ -343,30 +449,35 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		if (isDisable(sender, MailActivationType.ANONYMOUS_DOWNLOAD)) {
 			return null;
 		}
-		String documentName = shareEntry.getDocumentEntry().getName();
 		String email = shareEntry.getAnonymousUrl().getContact().getMail();
-		String actorRepresentation = new ContactRepresentation(shareEntry.getAnonymousUrl().getContact())
-				.getContactRepresentation();
 
 		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
 				sender.getExternalMailLocale());
-		MailContainerBuilder builder = new MailContainerBuilder();
 
-		builder.getSubjectChain()
-				.add("actorRepresentation", actorRepresentation);
-		builder.getGreetingsChain()
-				.add("firstName", sender.getFirstName())
-				.add("lastName", sender.getLastName());
-		builder.getBodyChain()
-				.add("email", email)
-				.add("documentNames", documentName);
+		Context ctx = new Context(container.getLocale());
+		ctx.setVariable("sender", new ContactRepresentation(sender));
+		ctx.setVariable("recipient", new ContactRepresentation(shareEntry.getAnonymousUrl().getContact()));
+		ctx.setVariable("document", new Document(shareEntry.getDocumentEntry()));
+		ctx.setVariable("share", new Share(shareEntry));
+
+		// LinShare URL for the email recipient.
+		ctx.setVariable("linshareURL", getLinShareUrlForAUserRecipient(sender));
+
+		Set<AnonymousShareEntry> anonymousShareEntries = shareEntry.getAnonymousUrl().getAnonymousShareEntries();
+		List<Share> shares = Lists.newArrayList();
+		for (AnonymousShareEntry anonymousShareEntry : anonymousShareEntries) {
+			shares.add(new Share(anonymousShareEntry));
+		}
+		ctx.setVariable("shares", shares);
+
 		container.setRecipient(sender.getMail());
 		container.setFrom(getFromMailAddress(sender));
 		container.setReplyTo(email);
 
-		return buildMailContainer(cfg, container, null,
-				MailContentType.ANONYMOUS_DOWNLOAD, builder);
+		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, container,
+				null, MailContentType.ANONYMOUS_DOWNLOAD, ctx);
+		return buildMailContainer;
 	}
 
 	@Override
