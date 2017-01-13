@@ -21,7 +21,7 @@
 				<prop key="hibernate.format_sql">${linshare.db.format_sql}</prop>
 				<prop key="hibernate.generate_statistics">${linshare.db.gen_stats}</prop>
 				<prop key="hibernate.hbm2ddl.auto">${linshare.db.hbm2ddl.auto}</prop>
-				<prop key="hibernate.hbm2ddl.import_files">sql/h2/import-common.sql,sql/h2/import-tests.sql</prop>
+				<prop key="hibernate.hbm2ddl.import_files">sql/h2/import-common.sql,sql/h2/import-mails.sql,sql/h2/import-tests.sql</prop>
 			</props>
 		</property>
 	</bean>
