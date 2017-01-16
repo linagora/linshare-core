@@ -49,17 +49,29 @@ public class ContainerQuotaDto extends QuotaDto {
 	@ApiModelProperty(value = "type (ContainerQuotaType)")
 	protected ContainerQuotaType type;
 
-	@ApiModelProperty(value = "The maximum file size accepted.")
+	@ApiModelProperty(value = "The maximum file size accepted, default value sub containers")
 	protected Long defaultMaxFileSize;
 
 	@ApiModelProperty(value = "If true, it is unlinked from its parent.")
 	protected Boolean defaultMaxFileSizeOverride;
 
-	@ApiModelProperty(value = "The default quota value for an account.")
+	@ApiModelProperty(value = "The default quota value for defaultAccountQuota inside sub containers.")
 	protected Long defaultAccountQuota;
 
 	@ApiModelProperty(value = "If true, it is unlinked from its parent.")
 	protected Boolean defaultAccountQuotaOverride;
+
+	@ApiModelProperty(value = "The maximum file size accepted, default value sub containers")
+	protected Long maxFileSize;
+
+	@ApiModelProperty(value = "If true, it is unlinked from its parent.")
+	protected Boolean maxFileSizeOverride;
+
+	@ApiModelProperty(value = "The default quota value for an account created inside the current container.")
+	protected Long accountQuota;
+
+	@ApiModelProperty(value = "If true, it is unlinked from its parent.")
+	protected Boolean accountQuotaOverride;
 
 	public ContainerQuotaDto() {
 	}
@@ -71,6 +83,10 @@ public class ContainerQuotaDto extends QuotaDto {
 		this.defaultMaxFileSizeOverride = cq.getDefaultMaxFileSizeOverride();
 		this.defaultAccountQuota = cq.getDefaultAccountQuota();
 		this.defaultAccountQuotaOverride = cq.getDefaultAccountQuotaOverride();
+		this.maxFileSize = cq.getMaxFileSize();
+		this.maxFileSizeOverride = cq.getMaxFileSizeOverride();
+		this.accountQuota = cq.getAccountQuota();
+		this.accountQuotaOverride = cq.getAccountQuotaOverride();
 	}
 
 	public ContainerQuotaType getType() {
@@ -117,6 +133,38 @@ public class ContainerQuotaDto extends QuotaDto {
 		this.defaultMaxFileSize = defaultMaxFileSize;
 	}
 
+	public Long getMaxFileSize() {
+		return maxFileSize;
+	}
+
+	public void setMaxFileSize(Long maxFileSize) {
+		this.maxFileSize = maxFileSize;
+	}
+
+	public Boolean getMaxFileSizeOverride() {
+		return maxFileSizeOverride;
+	}
+
+	public void setMaxFileSizeOverride(Boolean maxFileSizeOverride) {
+		this.maxFileSizeOverride = maxFileSizeOverride;
+	}
+
+	public Long getAccountQuota() {
+		return accountQuota;
+	}
+
+	public void setAccountQuota(Long accountQuota) {
+		this.accountQuota = accountQuota;
+	}
+
+	public Boolean getAccountQuotaOverride() {
+		return accountQuotaOverride;
+	}
+
+	public void setAccountQuotaOverride(Boolean accountQuotaOverride) {
+		this.accountQuotaOverride = accountQuotaOverride;
+	}
+
 	public ContainerQuota toObject() {
 		ContainerQuota quota = new ContainerQuota();
 		quota.setUuid(getUuid());
@@ -131,6 +179,10 @@ public class ContainerQuotaDto extends QuotaDto {
 		quota.setDefaultMaxFileSizeOverride(getDefaultMaxFileSizeOverride());
 		quota.setDefaultAccountQuota(getDefaultAccountQuota());
 		quota.setDefaultAccountQuotaOverride(getDefaultAccountQuotaOverride());
+		quota.setMaxFileSize(getMaxFileSize());
+		quota.setMaxFileSizeOverride(getMaxFileSizeOverride());
+		quota.setAccountQuota(getAccountQuota());
+		quota.setAccountQuotaOverride(getAccountQuotaOverride());
 		quota.setMaintenance(getMaintenance());
 		return quota;
 	}
