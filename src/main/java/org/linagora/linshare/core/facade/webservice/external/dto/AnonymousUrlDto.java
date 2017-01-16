@@ -70,25 +70,8 @@ public class AnonymousUrlDto {
 	@ApiModelProperty(value = "Recipient")
 	private ContactDto recipient;
 
-	@ApiModelProperty(value = "ProtectedByPassword")
-	private boolean protectedByPassword;
-
 	public AnonymousUrlDto() {
 		super();
-	}
-
-	public AnonymousUrlDto(String uuid, ContactDto actor,
-			List<ShareEntryDto> documents,
-			Date creationDate, Date expirationDate, ContactDto recipient,
-			boolean protectedByPassword) {
-		super();
-		this.uuid = uuid;
-		this.actor = actor;
-		this.documents = documents;
-		this.creationDate = creationDate;
-		this.expirationDate = expirationDate;
-		this.recipient = recipient;
-		this.protectedByPassword = protectedByPassword;
 	}
 
 	public AnonymousUrlDto(Account owner, AnonymousUrl url) {
@@ -96,7 +79,6 @@ public class AnonymousUrlDto {
 		this.uuid = url.getUuid();
 		this.actor = new ContactDto(url.getOwner());
 		this.recipient = new ContactDto(url.getContact());
-		this.protectedByPassword = url.isPasswordProtected();
 		this.documents = transformListShareEntriesToDto(url.getAnonymousShareEntries());
 	}
 
@@ -146,14 +128,6 @@ public class AnonymousUrlDto {
 
 	public void setRecipient(ContactDto recipient) {
 		this.recipient = recipient;
-	}
-
-	public boolean isProtectedByPassword() {
-		return protectedByPassword;
-	}
-
-	public void setProtectedByPassword(boolean protectedByPassword) {
-		this.protectedByPassword = protectedByPassword;
 	}
 
 	private List<ShareEntryDto> transformListShareEntriesToDto(
