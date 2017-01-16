@@ -73,7 +73,7 @@
 	</bean>
 
 	<bean name="mailBuildingService"
-		class="org.linagora.linshare.core.service.impl.MailBuildingServiceImpl">
+		class="org.linagora.linshare.core.notifications.service.impl.MailBuildingServiceImpl">
 		<constructor-arg value="${linshare.logo.mails.visible}" />
 		<constructor-arg ref="mailConfigBusinessService" />
 		<constructor-arg ref="domainBusinessService" />
@@ -82,6 +82,8 @@
 		<constructor-arg value="${linshare.display.licenceTerm}" />
 		<constructor-arg value="${linshare.user.downloadurl.receivedshares.suffix}" />
 		<constructor-arg value="${linshare.user.downloadurl.documents.suffix}" />
+		<constructor-arg value="${linshare.notifications.email.templating.strict.mode}" />
+		<constructor-arg value="${linshare.notifications.email.templating.subject.prefix.enable}" />
 	</bean>
 
 	<bean name="ldapConnectionService"
@@ -121,5 +123,6 @@
 		<constructor-arg ref="mailFooterBusinessService" />
 		<constructor-arg ref="mailLayoutBusinessService" />
 		<constructor-arg ref="domainPermissionBusinessService" />
+		<constructor-arg value="${linshare.notifications.email.templating.readonly.mode}" />
 	</bean>
 </beans>

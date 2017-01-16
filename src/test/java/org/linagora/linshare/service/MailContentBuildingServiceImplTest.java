@@ -46,12 +46,15 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainer;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.context.AnonymousDownloadEmailContext;
+import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.context.NewSharingEmailContext;
+import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.repository.AnonymousShareEntryRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.ShareEntryGroupRepository;
 import org.linagora.linshare.core.repository.ShareEntryRepository;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -151,7 +154,7 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		for (Language lang : Language.values()) {
 			john.setExternalMailLocale(lang);
 			MailContainerWithRecipient mail = mailBuildingService
-					.buildAnonymousDownload(anonymousShareEntry);
+					.build(new AnonymousDownloadEmailContext(anonymousShareEntry));
 			testMailGenerate(mail);
 			sendMail(mail);
 		}
@@ -190,8 +193,8 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		MailContainer mailContainer = new MailContainer(Language.ENGLISH);
 		for (Language lang : Language.values()) {
 			john.setExternalMailLocale(lang);
-			MailContainerWithRecipient mail = mailBuildingService.buildNewSharing(
-					john, mailContainer, jane, getSeg().getShareEntries());
+			EmailContext context = new NewSharingEmailContext(mailContainer, john, jane, getSeg().getShareEntries());
+			MailContainerWithRecipient mail = mailBuildingService.build(context);
 			testMailGenerate(mail);
 			sendMail(mail);
 		}

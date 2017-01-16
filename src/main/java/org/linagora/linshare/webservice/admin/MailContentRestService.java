@@ -36,6 +36,7 @@ package org.linagora.linshare.webservice.admin;
 import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.admin.dto.MailContainerDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailContentDto;
 
 public interface MailContentRestService {
@@ -52,4 +53,8 @@ public interface MailContentRestService {
 	MailContentDto update(MailContentDto dto) throws BusinessException;
 
 	MailContentDto delete(MailContentDto dto) throws BusinessException;
+
+	MailContainerDto fakeBuild(String mailContentUuid, String language, String mailConfigUuid);
+
+	MailContainerDto fakeBuild(MailContentDto dto, String language, String mailConfigUuid);
 }

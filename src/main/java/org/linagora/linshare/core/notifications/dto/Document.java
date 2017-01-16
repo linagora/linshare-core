@@ -31,41 +31,43 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service.thymeleaf;
+package org.linagora.linshare.core.notifications.dto;
 
-import java.io.IOException;
-import java.io.Reader;
+import java.util.UUID;
 
-import org.thymeleaf.templateresource.ITemplateResource;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 
-public class LinShareEmptyTemplateResource implements ITemplateResource {
+public class Document {
 
+	protected String uuid;
 
-	public LinShareEmptyTemplateResource() {
+	protected String name;
+
+	public Document(String name) {
 		super();
+		this.uuid = UUID.randomUUID().toString();
+		this.name = name;
 	}
 
-	@Override
-	public String getDescription() {
-		return null;
+	public Document(DocumentEntry de) {
+		super();
+		this.uuid = de.getUuid();
+		this.name = de.getName();
 	}
 
-	@Override
-	public String getBaseName() {
-		return null;
+	public String getUuid() {
+		return uuid;
 	}
 
-	@Override
-	public boolean exists() {
-		return false;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
-	public Reader reader() throws IOException {
-		return null;
+	public String getName() {
+		return name;
 	}
 
-	public ITemplateResource relative(final String relativeLocation) {
-		return null;
+	public void setName(String name) {
+		this.name = name;
 	}
-
 }

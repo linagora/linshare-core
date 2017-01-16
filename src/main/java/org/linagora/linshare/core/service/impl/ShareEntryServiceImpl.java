@@ -57,12 +57,14 @@ import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.context.NewSharingEmailContext;
+import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.ShareEntryResourceAccessControl;
 import org.linagora.linshare.core.repository.FavouriteRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
-import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.mongo.entities.EventNotification;
@@ -320,8 +322,8 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 				mail = mailBuildingService.buildNewSharingCyphered(owner,
 						mailContainer, recipient, shares);
 			} else {
-				mail = mailBuildingService.buildNewSharing(owner,
-						mailContainer, recipient, shares);
+				EmailContext context = new NewSharingEmailContext(mailContainer, owner, recipient, shares);
+				mail = mailBuildingService.build(context);
 			}
 			sc.addMailContainer(mail);
 		}

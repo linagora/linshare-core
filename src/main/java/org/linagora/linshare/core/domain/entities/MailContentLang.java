@@ -38,7 +38,7 @@ import java.util.UUID;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 
-public class MailContentLang {
+public class MailContentLang implements Cloneable {
 
 	private long id;
 
@@ -131,5 +131,18 @@ public class MailContentLang {
 		if (mailContentType != other.mailContentType)
 			return false;
 		return true;
+	}
+
+	@Override
+	public MailContentLang clone() {
+		MailContentLang p = null;
+		try {
+			p = (MailContentLang) super.clone();
+			p.id = 0;
+			p.mailContent = mailContent.clone();
+		} catch (CloneNotSupportedException cnse) {
+			cnse.printStackTrace(System.err);
+		}
+		return p;
 	}
 }

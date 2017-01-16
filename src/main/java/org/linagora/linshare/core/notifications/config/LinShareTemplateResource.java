@@ -31,7 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service.thymeleaf;
+package org.linagora.linshare.core.notifications.config;
 
 import java.io.IOException;
 import java.io.Reader;

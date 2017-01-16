@@ -36,8 +36,9 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.Date;
 
 import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.constants.MailContentType;
 
-public class MailContent {
+public class MailContent implements Cloneable {
 
 	private long id;
 
@@ -182,6 +183,18 @@ public class MailContent {
 		this.messagesEnglish = messagesEnglish;
 	}
 
+	@Override
+	public MailContent clone() {
+		MailContent p = null;
+		try {
+			p = (MailContent) super.clone();
+			p.id = 0;
+		} catch (CloneNotSupportedException cnse) {
+			cnse.printStackTrace(System.err);
+		}
+		return p;
+	}
+
 	/**
 	 * Helpers
 	 */
@@ -191,6 +204,10 @@ public class MailContent {
 		} else {
 			return getMessagesEnglish();
 		}
+	}
+
+	public MailContentType getType() {
+		return MailContentType.fromInt(mailContentType);
 	}
 
 }

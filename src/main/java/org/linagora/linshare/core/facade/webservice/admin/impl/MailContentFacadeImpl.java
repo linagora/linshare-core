@@ -36,15 +36,20 @@ package org.linagora.linshare.core.facade.webservice.admin.impl;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MailContent;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.MailContentFacade;
+import org.linagora.linshare.core.facade.webservice.admin.dto.MailContainerDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailContentDto;
+import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MailConfigService;
@@ -56,12 +61,16 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private final AbstractDomainService abstractDomainService;
 
+	private final MailBuildingService mailBuildingService;
+
 	public MailContentFacadeImpl(final AccountService accountService,
 			final MailConfigService mailConfigService,
-			final AbstractDomainService abstractDomainService) {
+			final AbstractDomainService abstractDomainService,
+			final MailBuildingService mailBuildingService) {
 		super(accountService);
 		this.mailConfigService = mailConfigService;
 		this.abstractDomainService = abstractDomainService;
+		this.mailBuildingService = mailBuildingService;
 	}
 
 	@Override
@@ -114,6 +123,64 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 			mailContentsDto.add(new MailContentDto(mailContent));
 		}
 		return mailContentsDto;
+	}
+
+	@Override
+	public MailContainerDto fakeBuild(String mailContentUuid, String language, String mailConfigUuid) {
+		User actor = checkAuthentication(Role.ADMIN);
+		MailConfig config = findMailConfig(mailConfigUuid, actor);
+		MailContent content = findContent(actor, mailContentUuid);
+		MailContentType type = content.getType();
+		Language languageEnum = null;
+		if (language != null) {
+			languageEnum = Language.valueOf(language);
+		}
+		MailContainerWithRecipient build = mailBuildingService.fakeBuild(type, config, languageEnum);
+		return new MailContainerDto(build, content.getType());
+	}
+
+	@Override
+	public MailContainerDto fakeBuild(MailContentDto dto, String language, String mailConfigUuid) {
+		User actor = checkAuthentication(Role.ADMIN);
+		MailConfig config = findMailConfig(mailConfigUuid, actor);
+		try {
+			config.clone();
+		} catch (CloneNotSupportedException e) {
+			logger.error(e.getMessage(), e);
+			e.printStackTrace();
+			throw new BusinessException("unexpected error");
+		}
+		MailContent content = toFakeObject(dto);
+		MailContentType type = content.getType();
+		Language languageEnum = null;
+		if (language != null) {
+			languageEnum = Language.valueOf(language);
+		}
+		config.replaceMailContent(languageEnum, type, content);
+		MailContainerWithRecipient build = mailBuildingService.fakeBuild(type, config, languageEnum);
+		return new MailContainerDto(build, type);
+	}
+
+	private MailContent toFakeObject(MailContentDto dto) {
+		MailContent content = new MailContent();
+		content.setPlaintext(dto.isPlaintext());
+		content.setSubject(dto.getSubject());
+		content.setBody(dto.getBody());
+		content.setMailContentType(MailContentType.valueOf(
+				dto.getMailContentType()).toInt());
+		content.setMessagesEnglish(dto.getMessagesEnglish());
+		content.setMessagesFrench(dto.getMessagesFrench());
+		return content;
+	}
+
+	private MailConfig findMailConfig(String mailConfigUuid, User actor) {
+		MailConfig config = null;
+		if (mailConfigUuid != null) {
+			config = mailConfigService.findConfigByUuid(actor, mailConfigUuid);
+		} else {
+			config = abstractDomainService.getUniqueRootDomain().getCurrentMailConfiguration();
+		}
+		return config;
 	}
 
 	/*

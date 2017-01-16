@@ -57,12 +57,13 @@ import org.linagora.linshare.core.domain.objects.Recipient;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.context.AnonymousDownloadEmailContext;
+import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.AnonymousShareEntryResourceAccessControl;
 import org.linagora.linshare.core.repository.FavouriteRepository;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
-import org.linagora.linshare.core.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.mongo.entities.logs.ShareEntryAuditLogEntry;
 
@@ -211,15 +212,16 @@ public class AnonymousShareEntryServiceImpl extends
 		checkDownloadPermission(actor, null, AnonymousShareEntry.class,
 				BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN, shareEntry);
 		MailContainerWithRecipient mail = null;
+		AnonymousDownloadEmailContext context = new AnonymousDownloadEmailContext(shareEntry);
 		if (shareEntry.getDownloaded() <= 0) {
-			mail = mailBuildingService.buildAnonymousDownload(shareEntry);
+			mail = mailBuildingService.build(context);
 		} else {
 			// share entry was downloaded at least once.
 			Boolean send = functionalityService.getAnonymousUrlNotification(
 					shareEntry.getEntryOwner().getDomain()).getValue();
 			if (send) {
 				// send a notification by mail to the owner for every download
-				mail = mailBuildingService.buildAnonymousDownload(shareEntry);
+				mail = mailBuildingService.build(context);
 			}
 		}
 		shareEntry = anonymousShareEntryBusinessService.updateDownloadCounter(shareEntry);

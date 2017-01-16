@@ -852,6 +852,7 @@ INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy
 
 
 
+
 INSERT INTO mail_layout (id, domain_abstract_id, description, visible, layout, creation_date, modification_date, uuid, plaintext, readonly, messages_french, messages_english) VALUES (2, 1, 'Default plaintext layout', true, '${personalMessage}
 
 ${greetings}
@@ -891,7 +892,7 @@ INSERT INTO mail_config (id, mail_layout_html_id, domain_abstract_id, name, visi
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, plaintext, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (4, 1, 'Password reset', true, 3, 'Your password has been reset', 'Your LinShare account:<ul><li>Login: <code>${mail}</code> &nbsp;(your e-mail address)</li><li>Password: <code>${password}</code></li></ul><br/>', '753d57a8-4fcc-4346-ac92-f71828aca77c', false, now(), now(), true, NULL, NULL);
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, plaintext, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (2, 1, 'Registered user downloaded a file', true, 1, 'A user ${actorRepresentation} has just downloaded a file you made available for sharing', '${recipientFirstName} ${recipientLastName} has just downloaded the following file(s) you made available to her/him via LinShare:<ul>${documentNames}</ul><br/>', '403e5d8b-bc38-443d-8b94-bab39a4460af', false, now(), now(), true, NULL, NULL);
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, plaintext, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (3, 1, 'New guest', true, 2, 'Your LinShare account has been sucessfully created', '<strong>${ownerFirstName} ${ownerLastName}</strong> invites you to use and enjoy LinShare!<br/><br/>To login, please go to: <a href="${url}">${url}</a><br/><br/>Your LinShare account:<ul><li>Login: <code>${mail}</code> &nbsp;(your e-mail address)</li><li>Password: <code>${password}</code></li></ul><br/>', 'a1ca74a5-433d-444a-8e53-8daa08fa0ddb', false, now(), now(), true, NULL, NULL);
-INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, plaintext, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (1, 1, 'Anonymous user downloaded a file', true, 0, 'An unknown user ${actorRepresentation} has just downloaded a file you made available for sharing', '<!DOCTYPE html>
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, plaintext, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (1, 1, 'Anonymous user downloaded a file', true, 0, '[(#{subject(${recipient.mail})})]', '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <header>
      <div data-th-insert="layout :: header"></div>
@@ -934,10 +935,10 @@ An unknown user ${email} has just downloaded the following file(s) you made avai
                     <td align="center" bgcolor="#ffffff"
                         style="border-collapse:collapse;color:#202020;background-color:#ffffff;font-family:Arial;font-size:34px;font-weight:bold;line-height:100%;padding:0;text-align:center;vertical-align:middle">
                       <div align="center" style="text-align:center">
-                        <a href="" title="LinShare homepage" target="_blank">
+                        <a href="" title="LinShare homepage"  target="_blank">
                           <img alt="Logo LinShare english" height="49" src="img/email-logo-linshare-en.png"
                                 style="border:0;line-height:100%;outline:none;text-decoration:none;width:198px;height:49px;padding:20px 0 20px 0"
-                                width="198">
+                                width="198" />
                         </a>
                       </div>
                     </td>
@@ -1121,7 +1122,10 @@ An unknown user ${email} has just downloaded the following file(s) you made avai
 </div>
 
  </body>
- </html>', '938f91ab-b33c-4184-900f-c8a595fc6cd9', false, now(), now(), true, 'welcomeMessage=[FR] Hello fr {0} {1},', 'welcomeMessage=[EN]Hello {0} {1},');
+ </html>', '938f91ab-b33c-4184-900f-c8a595fc6cd9', false, now(), now(), true, 'welcomeMessage=[FR] Hello fr {0} {1},
+subject=[Translate in french] An unknown user {0} has just downloaded a file you made available for sharing.', 'subject=An unknown user {0} has just downloaded a file you made available for sharing.
+welcomeMessage=[EN]Hello {0} {1},
+');
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, plaintext, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (5, 1, 'Shared document was updated', true, 4, 'A user ${actorRepresentation} has just modified a shared file you still have access to', '<strong>${firstName} ${lastName}</strong> has just modified the following shared file <strong>${fileOldName}</strong>:<ul><li>New file name: ${fileName}</li><li>File size: ${fileSize}</li><li>MIME type: <code>${mimeType}</code></li></ul><br/>To download the file(s), simply click on the following link or copy/paste it into your favorite browser: <a href="${url}${urlparam}">${url}${urlparam}</a><br/>', '09a50c58-b430-4ccf-ab3e-0257c463d8df', false, now(), now(), true, NULL, NULL);
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, plaintext, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (6, 1, 'Shared document was deleted', true, 5, 'A user ${actorRepresentation} has just deleted a shared file you had access to!', '<strong>${firstName} ${lastName}</strong> has just deleted a previously shared file <strong>${documentName}</strong>.<br/>', '554a3a2b-53b1-4ec8-9462-2d6053b80078', false, now(), now(), true, NULL, NULL);
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, plaintext, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (7, 1, 'Shared document is soon to be outdated', true, 6, 'A LinShare workspace is about to be deleted', 'Your access to the shared file ${documentName}, granted by ${firstName} ${lastName}, will expire in ${nbDays} days. Remember to download it before!<br/>To download the file(s), simply click on the following link or copy/paste it into your favorite browser: <a href="${url}${urlparam}">${url}${urlparam}</a><br/>', 'e7bf56c2-b015-4e64-9f07-3c7e2f3f9ca8', false, now(), now(), true, NULL, NULL);
@@ -1200,6 +1204,38 @@ INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, ma
 INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (32, 0, 32, 1, 31, '1837a6f0-e8c7-11e4-b36a-08002722e7b1');
 INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (33, 0, 33, 1, 32, 'bfcced12-7325-49df-bf84-65ed90ff7f59');
 INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (9, 0, 9, 1, 8, 'befd8182-88a6-4c72-8bae-5fcb7a79b8e7');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (51, 1, 1, 1, 0, 'd0af96a7-6a9c-4c3f-8b8c-7c8e2d0449e1');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (52, 1, 2, 1, 1, '28e5855a-c0e7-40fc-8401-9cf25eb53f03');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (53, 1, 3, 1, 2, '41d0f03d-57dd-420e-84b0-7908179c8329');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (54, 1, 4, 1, 3, '72c0fff4-4638-4e98-8223-df27f8f8ea8b');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (55, 1, 5, 1, 4, '8b7f57c1-b4a1-4896-8e19-d3ebf3af4831');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (56, 1, 6, 1, 5, '6fbabf1a-58c0-49b9-859e-d24b0af38c87');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (57, 1, 7, 1, 6, 'b85fc62f-d9eb-454b-9289-fec5eab51a76');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (58, 1, 8, 1, 7, '25540d2d-b3b8-46a9-811b-0549ad300fe0');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (59, 1, 9, 1, 8, '72ae03e7-5865-433c-a2be-a95c655a8e17');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (60, 1, 10, 1, 9, 'e2af2ff6-585b-4cdc-a887-1755e42fcde6');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (61, 1, 11, 1, 10, '1ee1c8bc-75e9-4fbe-a34b-893a86704ec9');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (62, 1, 12, 1, 11, '12242aa8-b75e-404d-85df-68e7bb8c04af');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (63, 1, 13, 1, 12, '4f2ad41c-3969-461d-a6dc-8f692a1738e9');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (64, 1, 14, 1, 13, '362cf576-30ab-41a5-85d0-3d9175935b14');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (65, 1, 15, 1, 14, '35b81d85-0ee7-44f9-b478-20c8429c2b6d');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (66, 1, 16, 1, 15, '92e0a55e-e4e8-43c9-94f0-0d4e74d5748f');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (67, 1, 17, 1, 16, 'eb8a1b1e-758d-4261-8616-8ead644f70b0');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (68, 1, 18, 1, 17, '50ae2621-556c-446d-a399-55ed799022c3');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (69, 1, 19, 1, 18, '6580009b-36fd-472d-9937-41d0097ead91');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (70, 1, 20, 1, 19, 'ed471d9b-6f64-4d36-97cb-654b73579fe9');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (71, 1, 21, 1, 20, '86fdc43c-5fd7-4aba-b01a-90fccbfb5489');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (72, 1, 22, 1, 21, 'ea3f9814-6da9-49bf-94e5-7ff2c789e07b');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (73, 1, 23, 1, 22, 'f9455b1d-3582-4998-8675-bc0a8137fc73');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (74, 1, 24, 1, 23, '8f91e46b-1cee-45bc-8712-23ea0298db87');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (75, 1, 25, 1, 24, 'e5a9f689-c005-47c2-958f-b68071b1bf6f');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (76, 1, 26, 1, 25, 'a7994bd1-bd67-4cc6-93f3-be935c1cdb67');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (77, 1, 27, 1, 26, '5e1fb460-1efc-497c-96d8-6adf162cbc4e');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (78, 1, 28, 1, 27, '2daaea2a-1b13-48b4-89a6-032f7e034a2d');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (80, 1, 30, 1, 29, 'd6e18c3b-e9cb-11e4-b6b4-5404a6202d2c');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (81, 1, 31, 1, 30, '8f579a8a-e352-11e4-99b3-08002722e7b1');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (82, 1, 32, 1, 31, '2d3a0e80-e8c7-11e4-8349-08002722e7b1');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid) VALUES (83, 1, 33, 1, 32, 'fa7a23cb-f545-45b4-b9dc-c39586cb2398');
 
 
 
@@ -1216,6 +1252,7 @@ INSERT INTO mail_footer (id, domain_abstract_id, description, visible, footer, c
 
 
 INSERT INTO mail_footer_lang (id, mail_config_id, mail_footer_id, language, uuid) VALUES (1, 1, 1, 0, 'bf87e580-fb25-49bb-8d63-579a31a8f81e');
+INSERT INTO mail_footer_lang (id, mail_config_id, mail_footer_id, language, uuid) VALUES (2, 1, 1, 1, 'a6c8ee84-b5a8-4c96-b148-43301fbccdd9');
 
 
 

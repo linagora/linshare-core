@@ -35,6 +35,7 @@ package org.linagora.linshare.core.domain.entities;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.Language;
@@ -44,7 +45,7 @@ import org.linagora.linshare.core.exception.TechnicalException;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-public class MailConfig {
+public class MailConfig implements Cloneable {
 
 	private long id;
 
@@ -159,6 +160,29 @@ public class MailConfig {
 		this.mailContentLangs = mailContents;
 	}
 
+	@Override
+	public MailConfig clone() throws CloneNotSupportedException {
+		// Every properties are clones, except domain.
+		MailConfig func = null;
+		try {
+			func = (MailConfig) super.clone();
+			func.id = 0;
+			func.mailLayoutHtml = mailLayoutHtml.clone();
+			func.mailLayoutText = mailLayoutText.clone();
+			func.mailFooters = Maps.newHashMap();
+			Set<Entry<Integer,MailFooterLang>> entrySet = mailFooters.entrySet();
+			for (Entry<Integer, MailFooterLang> entry : entrySet) {
+				func.mailFooters.put(entry.getKey(), entry.getValue().clone());
+			}
+			func.mailContentLangs = Sets.newHashSet();
+			for (MailContentLang mailContentLang : mailContentLangs) {
+				func.mailContentLangs.add(mailContentLang.clone());
+			}
+		} catch (CloneNotSupportedException cnse) {
+			cnse.printStackTrace(System.err);
+		}
+		return func;
+}
 
 	/*
 	 * Helpers
@@ -196,5 +220,26 @@ public class MailConfig {
 		throw new TechnicalException(
 				"No MailContent matching the [Language,MailContentType] pair: ["
 						+ lang + "," + type + "]");
+	}
+
+	public void replaceMailContent(final Language lang,
+			final MailContentType type, MailContent replace) {
+
+		MailContentLang needle = new MailContentLang(lang, type);
+		needle.setMailContent(replace);
+		boolean found = false;
+		for (MailContentLang mcl : mailContentLangs) {
+			if (mcl.businessEquals(needle)) {
+				mailContentLangs.remove(mcl);
+				mailContentLangs.add(needle);
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
+			throw new TechnicalException(
+					"No MailContent matching the [Language,MailContentType] pair: ["
+							+ lang + "," + type + "]");
+		}
 	}
 }

@@ -50,6 +50,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.MailContentFacade;
+import org.linagora.linshare.core.facade.webservice.admin.dto.MailContainerDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailContentDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.MailContentRestService;
@@ -138,5 +139,34 @@ public class MailContentRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "Mail content to delete.", required = true) MailContentDto dto)
 			throws BusinessException {
 		return mailContentFacade.delete(dto.getUuid());
+	}
+
+	@Path("/{uuid}/build")
+	@GET
+	@ApiOperation(value = "build a mail content.", response = MailContainerDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Override
+	public MailContainerDto fakeBuild(
+			@ApiParam(value = "Mail content's uuid.", required = true)
+				@PathParam("uuid") String mailContentUuid,
+			@ApiParam(value = "Language to use for the build")
+				@QueryParam(value = "language") String language,
+			@ApiParam(value = "Mail config's uuid.")
+				@QueryParam(value = "mailConfig") String mailConfigUuid) {
+		return mailContentFacade.fakeBuild(mailContentUuid, language, mailConfigUuid);
+	}
+
+	@Path("/build")
+	@POST
+	@ApiOperation(value = "build a mail content.", response = MailContainerDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Override
+	public MailContainerDto fakeBuild(
+			MailContentDto dto,
+			@ApiParam(value = "Language to use for the build")
+				@QueryParam(value = "language") String language,
+			@ApiParam(value = "Mail config's uuid.")
+				@QueryParam(value = "mailConfig") String mailConfigUuid) {
+		return mailContentFacade.fakeBuild(dto, language, mailConfigUuid);
 	}
 }

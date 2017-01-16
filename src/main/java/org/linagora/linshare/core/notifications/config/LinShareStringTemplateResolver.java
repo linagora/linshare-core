@@ -31,7 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service.thymeleaf;
+package org.linagora.linshare.core.notifications.config;
 
 import java.util.Map;
 
@@ -49,9 +49,12 @@ public class LinShareStringTemplateResolver extends StringTemplateResolver {
 
 	final protected boolean insertLicenceTerm;
 
-	public LinShareStringTemplateResolver(boolean insertLicenseTerm) {
+	final protected boolean templatingSubjectPrefix;
+
+	public LinShareStringTemplateResolver(boolean insertLicenseTerm, boolean templatingSubjectPrefix) {
 		super();
 		this.insertLicenceTerm = insertLicenseTerm;
+		this.templatingSubjectPrefix = templatingSubjectPrefix;
 	}
 
 	@Override
@@ -66,10 +69,22 @@ public class LinShareStringTemplateResolver extends StringTemplateResolver {
 			if (lang == null) {
 				return null;
 			}
+			boolean isSubject = false;
+			if (template.contains(":subject")) {
+				isSubject = true;
+				template = template.split(":")[0];
+			}
 			if (MailContentType.contains(template)) {
 				MailContentType mailKind = MailContentType.valueOf(template);
 				MailContent mailContent = cfg.findContent(lang, mailKind);
 				String content = mailContent.getBody();
+				if (isSubject) {
+					if (templatingSubjectPrefix) {
+						content =  "[" + mailKind.name() + "] " + mailContent.getSubject();
+					} else {
+						content =  mailContent.getSubject();
+					}
+				}
 				LinShareTemplateResource resource = new LinShareTemplateResource(content, template);
 				resource.setMessages(getMessages(cfg, lang, mailContent));
 				return resource;

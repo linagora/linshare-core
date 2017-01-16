@@ -37,7 +37,7 @@ import java.util.Date;
 
 import org.linagora.linshare.core.domain.constants.Language;
 
-public class MailLayout {
+public class MailLayout implements Cloneable {
 
 	private long id;
 
@@ -160,6 +160,18 @@ public class MailLayout {
 
 	public void setMessagesEnglish(String messagesEnglish) {
 		this.messagesEnglish = messagesEnglish;
+	}
+
+	@Override
+	public MailLayout clone() {
+		MailLayout p = null;
+		try {
+			p = (MailLayout) super.clone();
+			p.id = 0;
+		} catch (CloneNotSupportedException cnse) {
+			cnse.printStackTrace(System.err);
+		}
+		return p;
 	}
 
 	/**

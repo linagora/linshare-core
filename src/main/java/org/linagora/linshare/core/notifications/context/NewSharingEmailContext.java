@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2017 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2017. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,81 +31,73 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.notifications.context;
 
-import java.util.UUID;
+import java.util.Set;
 
-public class MailFooterLang {
+import org.linagora.linshare.core.domain.constants.MailActivationType;
+import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.MailContainer;
 
-	private long id;
+public class NewSharingEmailContext extends EmailContext {
 
-	private int language;
+	protected MailContainer container;
 
-	private MailFooter mailFooter;
+	protected User sender;
 
-	private String uuid;
+	protected User recipient;
 
-	private MailConfig mailConfig;
+	protected Set<ShareEntry> shares;
 
-	public MailFooterLang() {
-	}
-
-	public MailFooterLang(MailFooterLang copied) {
-		this.language = copied.language;
-		this.mailFooter = copied.mailFooter;
-		this.uuid = UUID.randomUUID().toString();
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public int getLanguage() {
-		return language;
-	}
-
-	public void setLanguage(int language) {
-		this.language = language;
-	}
-
-	public MailFooter getMailFooter() {
-		return mailFooter;
-	}
-
-	public void setMailFooter(MailFooter mailFooter) {
-		this.mailFooter = mailFooter;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-	public MailConfig getMailConfig() {
-		return mailConfig;
-	}
-
-	public void setMailConfig(MailConfig mailConfig) {
-		this.mailConfig = mailConfig;
+	public NewSharingEmailContext(MailContainer container, User sender, User recipient, Set<ShareEntry> shares) {
+		this.container = container;
+		this.sender = sender;
+		this.recipient = recipient;
+		this.shares = shares;
 	}
 
 	@Override
-	public MailFooterLang clone() {
-		MailFooterLang p = null;
-		try {
-			p = (MailFooterLang) super.clone();
-			p.id = 0;
-			p.mailFooter = mailFooter.clone();
-		} catch (CloneNotSupportedException cnse) {
-			cnse.printStackTrace(System.err);
-		}
-		return p;
+	public MailContentType getType() {
+		return MailContentType.NEW_SHARING;
 	}
+
+	@Override
+	public MailActivationType getActivation() {
+		return MailActivationType.NEW_SHARING;
+	}
+
+	public User getSender() {
+		return sender;
+	}
+
+	public void setSender(User sender) {
+		this.sender = sender;
+	}
+
+	public User getRecipient() {
+		return recipient;
+	}
+
+	public void setRecipient(User recipient) {
+		this.recipient = recipient;
+	}
+
+	public Set<ShareEntry> getShares() {
+		return shares;
+	}
+
+	public void setShares(Set<ShareEntry> shares) {
+		this.shares = shares;
+	}
+
+	public MailContainer getContainer() {
+		return container;
+	}
+
+	public void setContainer(MailContainer container) {
+		this.container = container;
+	}
+
 }

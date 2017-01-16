@@ -37,7 +37,7 @@ import java.util.Date;
 
 import org.linagora.linshare.core.domain.constants.Language;
 
-public class MailFooter {
+public class MailFooter implements Cloneable {
 
 	private long id;
 
@@ -167,6 +167,18 @@ public class MailFooter {
 		return "MailFooter [id=" + id + ", name=" + description + ", domain=" + domain + ", visible=" + visible
 				+ ", footer=" + footer + ", creationDate=" + creationDate + ", modificationDate="
 				+ modificationDate + ", uuid=" + uuid + ", plaintext=" + plaintext + "]";
+	}
+
+	@Override
+	public MailFooter clone() {
+		MailFooter p = null;
+		try {
+			p = (MailFooter) super.clone();
+			p.id = 0;
+		} catch (CloneNotSupportedException cnse) {
+			cnse.printStackTrace(System.err);
+		}
+		return p;
 	}
 
 	/**

@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2017 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2017. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,81 +31,76 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.facade.webservice.admin.dto;
 
-import java.util.UUID;
+import javax.xml.bind.annotation.XmlRootElement;
 
-public class MailFooterLang {
+import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 
-	private long id;
+import com.wordnik.swagger.annotations.ApiModel;
 
-	private int language;
 
-	private MailFooter mailFooter;
+@XmlRootElement(name = "MailContainer")
+@ApiModel(value = "MailContainer", description = "")
+public class MailContainerDto {
 
-	private String uuid;
+	protected String subject;
 
-	private MailConfig mailConfig;
+	protected String content;
 
-	public MailFooterLang() {
+	protected String language;
+
+	protected String type;
+
+	public MailContainerDto(String subject, String content, String language, String type) {
+		super();
+		this.subject = subject;
+		this.content = content;
+		this.language = language;
+		this.type = type;
 	}
 
-	public MailFooterLang(MailFooterLang copied) {
-		this.language = copied.language;
-		this.mailFooter = copied.mailFooter;
-		this.uuid = UUID.randomUUID().toString();
+	public MailContainerDto(MailContainerWithRecipient build, MailContentType type) {
+		super();
+		if (build != null) {
+			this.subject = build.getSubject();
+			this.content = build.getContentHTML();
+			this.language = build.getLanguage().toString();
+			this.type = type.toString();
+		}
 	}
 
-	public long getId() {
-		return id;
+	public String getSubject() {
+		return subject;
 	}
 
-	public void setId(long id) {
-		this.id = id;
+	public void setSubject(String subject) {
+		this.subject = subject;
 	}
 
-	public int getLanguage() {
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public String getLanguage() {
 		return language;
 	}
 
-	public void setLanguage(int language) {
+	public void setLanguage(String language) {
 		this.language = language;
 	}
 
-	public MailFooter getMailFooter() {
-		return mailFooter;
+	public String getType() {
+		return type;
 	}
 
-	public void setMailFooter(MailFooter mailFooter) {
-		this.mailFooter = mailFooter;
+	public void setType(String type) {
+		this.type = type;
 	}
 
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-	public MailConfig getMailConfig() {
-		return mailConfig;
-	}
-
-	public void setMailConfig(MailConfig mailConfig) {
-		this.mailConfig = mailConfig;
-	}
-
-	@Override
-	public MailFooterLang clone() {
-		MailFooterLang p = null;
-		try {
-			p = (MailFooterLang) super.clone();
-			p.id = 0;
-			p.mailFooter = mailFooter.clone();
-		} catch (CloneNotSupportedException cnse) {
-			cnse.printStackTrace(System.err);
-		}
-		return p;
-	}
 }

@@ -71,13 +71,16 @@ public class MailConfigServiceImpl implements MailConfigService {
 
 	private final DomainPermissionBusinessService permissionService;
 
+	protected final boolean templatingReadonlyMode;
+
 	public MailConfigServiceImpl(
 			final DomainBusinessService domainBusinessService,
 			final MailConfigBusinessService mailConfigBusinessService,
 			final MailContentBusinessService mailContentBusinessService,
 			final MailFooterBusinessService mailFooterBusinessService,
 			final MailLayoutBusinessService mailLayoutBusinessService,
-			final DomainPermissionBusinessService domainPermissionBusinessService) {
+			final DomainPermissionBusinessService domainPermissionBusinessService,boolean templatingReadonlyMode
+			) {
 		super();
 		this.domainBusinessService = domainBusinessService;
 		this.mailConfigBusinessService = mailConfigBusinessService;
@@ -85,6 +88,9 @@ public class MailConfigServiceImpl implements MailConfigService {
 		this.mailFooterBusinessService = mailFooterBusinessService;
 		this.mailLayoutBusinessService = mailLayoutBusinessService;
 		this.permissionService = domainPermissionBusinessService;
+		// TODO manage this flag to block all updates or deletion of mail
+		// configuration related to root domain / default configuration
+		this.templatingReadonlyMode = templatingReadonlyMode;
 	}
 
 	@Override

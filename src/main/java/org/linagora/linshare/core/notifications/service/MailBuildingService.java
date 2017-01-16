@@ -32,16 +32,18 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.core.notifications.service;
 
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.domain.entities.UploadProposition;
@@ -53,11 +55,13 @@ import org.linagora.linshare.core.domain.objects.MailContainer;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.context.EmailContext;
 
 public interface MailBuildingService {
 
-	MailContainerWithRecipient buildAnonymousDownload(
-			AnonymousShareEntry shareEntry) throws BusinessException;
+	MailContainerWithRecipient build(EmailContext context) throws BusinessException;
+
+	MailContainerWithRecipient fakeBuild(MailContentType type, MailConfig cfg, Language language) throws BusinessException;
 
 	MailContainerWithRecipient buildRegisteredDownload(ShareEntry shareEntry)
 			throws BusinessException;
@@ -80,10 +84,7 @@ public interface MailBuildingService {
 	MailContainerWithRecipient buildDocUpcomingOutdated(DocumentEntry document,
 			Integer days) throws BusinessException;
 
-	MailContainerWithRecipient buildNewSharing(User sender,
-			MailContainer inputMailContainer, User recipient,
-			Set<ShareEntry> shares) throws BusinessException;
-
+	@Deprecated
 	MailContainerWithRecipient buildNewSharingCyphered(User sender,
 			MailContainer inputMailContainer, User recipient,
 			Set<ShareEntry> shares) throws BusinessException;
@@ -92,6 +93,7 @@ public interface MailBuildingService {
 			MailContainer inputMailContainer, AnonymousUrl anonymousUrl)
 			throws BusinessException;
 
+	@Deprecated
 	MailContainerWithRecipient buildNewSharingProtected(User sender,
 			MailContainer inputMailContainer, AnonymousUrl anonymousUrl)
 			throws BusinessException;

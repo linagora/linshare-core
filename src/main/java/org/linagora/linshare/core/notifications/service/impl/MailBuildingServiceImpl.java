@@ -31,7 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service.impl;
+package org.linagora.linshare.core.notifications.service.impl;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -45,6 +45,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.MailActivationBusinessService;
 import org.linagora.linshare.core.business.service.MailConfigBusinessService;
@@ -76,20 +77,22 @@ import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.Recipient;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.config.LinShareStringTemplateResolver;
+import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.emails.AnonymousDownloadEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.EmailBuilder;
+import org.linagora.linshare.core.notifications.emails.NewSharingEmailBuilder;
+import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
-import org.linagora.linshare.core.service.MailBuildingService;
-import org.linagora.linshare.core.service.thymeleaf.LinShareStringTemplateResolver;
 import org.linagora.linshare.core.utils.DocumentUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.TemplateSpec;
-import org.thymeleaf.context.Context;
+import org.thymeleaf.templatemode.TemplateMode;
 
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class MailBuildingServiceImpl implements MailBuildingService {
@@ -98,6 +101,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			.getLogger(MailBuildingServiceImpl.class);
 
 	private final TemplateEngine templateEngine;
+
+	private final Map<MailContentType, EmailBuilder> emailBuilders;
 
 	private final boolean displayLogo;
 
@@ -383,7 +388,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			final MailActivationBusinessService mailActivationBusinessService,
 			boolean insertLicenceTerm,
 			String receivedSharesUrlSuffix,
-			String documentsUrlSuffix
+			String documentsUrlSuffix,
+			boolean templatingStrictMode,
+			boolean templatingSubjectPrefix
 			) throws BusinessException {
 		this.displayLogo = displayLogo;
 		this.domainBusinessService = domainBusinessService;
@@ -400,12 +407,43 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		this.anonymouslySharedWith.put(Language.FRENCH, "Partagé anonymement avec");
 		this.receivedSharesUrlSuffix = receivedSharesUrlSuffix;
 		this.documentsUrlSuffix = documentsUrlSuffix;
+
 		this.templateEngine = new TemplateEngine();
-		LinShareStringTemplateResolver templateResolver = new LinShareStringTemplateResolver(insertLicenceTerm);
-//		templateResolver.setTemplateMode(TemplateMode.TEXT);
+		LinShareStringTemplateResolver templateResolver = new LinShareStringTemplateResolver(insertLicenceTerm, templatingSubjectPrefix);
+		if (templatingStrictMode) {
+			templateResolver.setTemplateMode(TemplateMode.XML);
+		}
 		templateEngine.setTemplateResolver(templateResolver);
+
+		this.emailBuilders = Maps.newHashMap();
+		this.emailBuilders.put(MailContentType.NEW_SHARING, new NewSharingEmailBuilder(templateEngine, insertLicenceTerm,
+				mailActivationBusinessService, functionalityReadOnlyService));
+		this.emailBuilders.put(MailContentType.ANONYMOUS_DOWNLOAD, new AnonymousDownloadEmailBuilder(templateEngine, insertLicenceTerm,
+				mailActivationBusinessService, functionalityReadOnlyService));
 	}
 
+	@Override
+	public MailContainerWithRecipient build(EmailContext context) throws BusinessException {
+		Validate.notNull(context, "Email context can't be null");
+		MailContentType type = context.getType();
+		EmailBuilder builder = emailBuilders.get(type);
+		Validate.notNull(builder, "Missing email builder!");
+		return builder.build(context);
+	}
+
+	@Override
+	public MailContainerWithRecipient fakeBuild(MailContentType type, MailConfig cfg, Language language) throws BusinessException {
+		Validate.notNull(type, "MailContentType can't be null");
+		if (cfg != null) {
+			cfg = this.domainBusinessService.getUniqueRootDomain().getCurrentMailConfiguration();
+		}
+		if (language == null) {
+			language = Language.FRENCH;
+		}
+		EmailBuilder builder = emailBuilders.get(type);
+		cfg.findContent(language, type);
+		return builder.fakeBuild(cfg, language);
+	}
 
 	private String formatCreationDate(Account account, Entry entry) {
 		Locale locale = account.getJavaExternalMailLocale();
@@ -442,43 +480,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		return "";
 	}
 
-	@Override
-	public MailContainerWithRecipient buildAnonymousDownload(
-			AnonymousShareEntry shareEntry) throws BusinessException {
-		User sender = (User) shareEntry.getEntryOwner();
-		if (isDisable(sender, MailActivationType.ANONYMOUS_DOWNLOAD)) {
-			return null;
-		}
-		String email = shareEntry.getAnonymousUrl().getContact().getMail();
 
-		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
-		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				sender.getExternalMailLocale());
-
-		Context ctx = new Context(container.getLocale());
-		ctx.setVariable("sender", new ContactRepresentation(sender));
-		ctx.setVariable("recipient", new ContactRepresentation(shareEntry.getAnonymousUrl().getContact()));
-		ctx.setVariable("document", new Document(shareEntry.getDocumentEntry()));
-		ctx.setVariable("share", new Share(shareEntry));
-
-		// LinShare URL for the email recipient.
-		ctx.setVariable("linshareURL", getLinShareUrlForAUserRecipient(sender));
-
-		Set<AnonymousShareEntry> anonymousShareEntries = shareEntry.getAnonymousUrl().getAnonymousShareEntries();
-		List<Share> shares = Lists.newArrayList();
-		for (AnonymousShareEntry anonymousShareEntry : anonymousShareEntries) {
-			shares.add(new Share(anonymousShareEntry));
-		}
-		ctx.setVariable("shares", shares);
-
-		container.setRecipient(sender.getMail());
-		container.setFrom(getFromMailAddress(sender));
-		container.setReplyTo(email);
-
-		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, container,
-				null, MailContentType.ANONYMOUS_DOWNLOAD, ctx);
-		return buildMailContainer;
-	}
 
 	@Override
 	public MailContainerWithRecipient buildRegisteredDownload(
@@ -788,52 +790,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				MailContentType.DOC_UPCOMING_OUTDATED, builder);
 	}
 
-	@Override
-	public MailContainerWithRecipient buildNewSharing(User sender,
-			MailContainer input, User recipient,
-			Set<ShareEntry> shares) throws BusinessException {
-		if (isDisable(recipient, MailActivationType.NEW_SHARING)) {
-			return null;
-		}
-		String url = getLinShareUrlForAUserRecipient(recipient);
-
-		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
-		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				recipient.getExternalMailLocale());
-
-		StringBuffer names = new StringBuffer();
-		long shareSize = 0;
-		for (ShareEntry share : shares) {
-			if (recipient.getLsUuid().equals(share.getRecipient().getLsUuid())) {
-				shareSize += 1;
-				names.append("<li><a href='"
-						+ getReceivedSharedFileDownloadLink(recipient, share) + "'>"
-						+ share.getName() + "</a></li>");
-			}
-		}
-		Context ctx = new Context(input.getLocale());
-		ctx.setVariable("number", "" + shareSize);
-		ctx.setVariable("documentNames", names.toString());
-		ctx.setVariable("url", url);
-		ctx.setVariable("urlparam", "");
-//		-- new format
-		ctx.setVariable("sender", new ContactRepresentation(sender));
-		ctx.setVariable("recipient", new ContactRepresentation(recipient));
-		ctx.setVariable("customSubject", input.getSubject());
-		ctx.setVariable("shares", shares);
-		ctx.setVariable("sharesCount", shareSize);
-		ctx.setVariable("recipientServerUrl", getLinShareUrlForAUserRecipient(recipient));
-		// TODO getReceivedSharedFileDownloadLink
-
-		container.setSubject(input.getSubject());
-		container.setRecipient(recipient);
-		container.setFrom(getFromMailAddress(sender));
-		container.setReplyTo(sender.getMail());
-
-		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, container,
-				input.getPersonalMessage(), MailContentType.NEW_SHARING, ctx);
-		return buildMailContainer;
-	}
 
 	@Override
 	public MailContainerWithRecipient buildNoDocumentHasBeenDownloadedAcknowledgement(
@@ -1796,41 +1752,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
         return footer;
 	}
 
-	private MailContainerWithRecipient buildMailContainerThymeleaf(MailConfig cfg,
-			final MailContainerWithRecipient input, String pm,
-			MailContentType type, Context ctx)
-			throws BusinessException {
-		logger.debug("Building mail content: " + type);
-		Language lang = input.getLanguage();
-		MailContent mailContent = cfg.findContent(lang, type);
-		MailContainerWithRecipient container = new MailContainerWithRecipient(input);
-
-		// default context
-		Map<String, Object> templateResolutionAttributes = Maps.newHashMap();
-		templateResolutionAttributes.put("mailConfig", cfg);
-		templateResolutionAttributes.put("lang", input.getLanguage());
-
-		// TODO manage  org.thymeleaf.exceptions.TemplateInputException:
-
-		// suject processing
-		String subject = templateEngine.process(mailContent.getSubject(), ctx);
-		ctx.setVariable("mailSubject", subject);
-
-		// TODO manage images integration.
-//		  "<img src='cid:image.part.1@linshare.org' /><br/><br/>";
-//				.add("image", displayLogo ? LINSHARE_LOGO : "")
-
-		TemplateSpec templateSpec = new TemplateSpec(type.toString(), null, null, templateResolutionAttributes);
-		String body = templateEngine.process(templateSpec, ctx);
-
-		container.setSubject(subject);
-		container.setContentHTML(body);
-		container.setContentTXT(container.getContentHTML());
-		// Message IDs from Web service API (ex Plugin Thunderbird)
-		container.setInReplyTo(input.getInReplyTo());
-		container.setReferences(input.getReferences());
-		return container;
-	}
+	
 
 	private MailContainerWithRecipient buildMailContainer(MailConfig cfg,
 			final MailContainerWithRecipient input, String pm,
