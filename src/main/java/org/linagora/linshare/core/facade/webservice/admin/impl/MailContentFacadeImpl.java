@@ -76,7 +76,7 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public MailContentDto find(String uuid) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
-		return new MailContentDto(findContent(actor, uuid));
+		return new MailContentDto(findContent(actor, uuid), getOverrideReadonly());
 	}
 
 	@Override
@@ -120,7 +120,7 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 		Iterable<MailContent> contents = only ? domain.getMailContents()
 				: mailConfigService.findAllContents(user, domainIdentifier);
 		for (MailContent mailContent : contents) {
-			mailContentsDto.add(new MailContentDto(mailContent));
+			mailContentsDto.add(new MailContentDto(mailContent, getOverrideReadonly()));
 		}
 		return mailContentsDto;
 	}
@@ -163,7 +163,6 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private MailContent toFakeObject(MailContentDto dto) {
 		MailContent content = new MailContent();
-		content.setPlaintext(dto.isPlaintext());
 		content.setSubject(dto.getSubject());
 		content.setBody(dto.getBody());
 		content.setMailContentType(MailContentType.valueOf(
@@ -192,7 +191,6 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 		content.setDomain(findDomain(dto.getDomain()));
 		content.setDescription(dto.getDescription());
 		content.setVisible(dto.isVisible());
-		content.setPlaintext(dto.isPlaintext());
 		content.setSubject(dto.getSubject());
 		content.setBody(dto.getBody());
 		content.setMailContentType(MailContentType.valueOf(
@@ -221,5 +219,9 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 					"Domain " + id + "doesn't exist.");
 		}
 		return domain;
+	}
+
+	private boolean getOverrideReadonly() {
+		return mailConfigService.isTemplatingOverrideReadonlyMode();
 	}
 }

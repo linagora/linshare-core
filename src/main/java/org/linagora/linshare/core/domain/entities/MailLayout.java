@@ -55,8 +55,6 @@ public class MailLayout implements Cloneable {
 
 	private String uuid;
 
-	private boolean plaintext;
-
 	private boolean readonly;
 
 	private String messagesFrench;
@@ -128,14 +126,6 @@ public class MailLayout implements Cloneable {
 
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
-	}
-
-	public boolean isPlaintext() {
-		return plaintext;
-	}
-
-	public void setPlaintext(boolean plaintext) {
-		this.plaintext = plaintext;
 	}
 
 	public boolean isReadonly() {

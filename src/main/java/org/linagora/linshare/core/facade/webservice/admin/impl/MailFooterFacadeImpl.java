@@ -66,7 +66,7 @@ public class MailFooterFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public MailFooterDto find(String uuid) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
-		return new MailFooterDto(findFooter(actor, uuid));
+		return new MailFooterDto(findFooter(actor, uuid), getOverrideReadonly());
 	}
 
 	@Override
@@ -110,7 +110,7 @@ public class MailFooterFacadeImpl extends AdminGenericFacadeImpl implements
 		Iterable<MailFooter> footers = only ? domain.getMailFooters()
 				: mailConfigService.findAllFooters(user, domainIdentifier);
 		for (MailFooter mailFooter : footers) {
-			mailFootersDto.add(new MailFooterDto(mailFooter));
+			mailFootersDto.add(new MailFooterDto(mailFooter, getOverrideReadonly()));
 		}
 		return mailFootersDto;
 
@@ -125,7 +125,6 @@ public class MailFooterFacadeImpl extends AdminGenericFacadeImpl implements
 		footer.setDomain(findDomain(dto.getDomain()));
 		footer.setDescription(dto.getDescription());
 		footer.setVisible(dto.isVisible());
-		footer.setPlaintext(dto.isPlaintext());
 		footer.setFooter(dto.getFooter());
 		footer.setMessagesEnglish(dto.getMessagesEnglish());
 		footer.setMessagesFrench(dto.getMessagesFrench());
@@ -149,5 +148,9 @@ public class MailFooterFacadeImpl extends AdminGenericFacadeImpl implements
 					"Domain " + id + "doesn't exist.");
 		}
 		return domain;
+	}
+
+	private boolean getOverrideReadonly() {
+		return mailConfigService.isTemplatingOverrideReadonlyMode();
 	}
 }

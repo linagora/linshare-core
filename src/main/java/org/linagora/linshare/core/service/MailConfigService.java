@@ -377,4 +377,6 @@ public interface MailConfigService {
 	 * @return
 	 */
 	boolean hasRights(User actor, MailLayout layout);
+
+	boolean isTemplatingOverrideReadonlyMode();
 }

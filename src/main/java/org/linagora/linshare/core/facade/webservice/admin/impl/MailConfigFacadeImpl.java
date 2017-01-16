@@ -88,7 +88,7 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 		Iterable<MailConfig> configs = only ? domain.getMailConfigs()
 				: mailConfigService.findAllConfigs(user, domainId);
 		for (MailConfig mailConfig : configs) {
-			mailConfigsDto.add(new MailConfigDto(mailConfig));
+			mailConfigsDto.add(new MailConfigDto(mailConfig, getOverrideReadonly()));
 		}
 		return mailConfigsDto;
 	}
@@ -96,7 +96,7 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public MailConfigDto find(String uuid) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
-		return new MailConfigDto(findConfig(actor, uuid));
+		return new MailConfigDto(findConfig(actor, uuid), getOverrideReadonly());
 	}
 
 	@Override
@@ -139,7 +139,7 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 		// TODO Optimization needed.
 		for (MailContent mc : all) {
 			if (mc.getMailContentType() == type.toInt()) {
-				ret.add(new MailContentDto(mc));
+				ret.add(new MailContentDto(mc, getOverrideReadonly()));
 			}
 		}
 		return ret;
@@ -156,7 +156,7 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 		List<MailFooter> all = mailConfigService.findAllFooters(actor, cfg
 				.getDomain().getUuid());
 		for (MailFooter footer : all) {
-			ret.add(new MailFooterDto(footer));
+			ret.add(new MailFooterDto(footer, getOverrideReadonly()));
 		}
 		return ret;
 	}
@@ -201,5 +201,9 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 					"Domain " + id + "doesn't exist.");
 		}
 		return domain;
+	}
+
+	private boolean getOverrideReadonly() {
+		return mailConfigService.isTemplatingOverrideReadonlyMode();
 	}
 }

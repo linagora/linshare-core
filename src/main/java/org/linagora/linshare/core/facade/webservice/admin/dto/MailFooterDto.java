@@ -83,15 +83,21 @@ public class MailFooterDto {
 	}
 
 	public MailFooterDto(MailFooter footer) {
+		this(footer, false);
+	}
+
+	public MailFooterDto(MailFooter footer, boolean overrideReadonly) {
 		this.uuid = footer.getUuid();
 		this.domain = footer.getDomain().getUuid();
 		this.description = footer.getDescription();
 		this.footer = footer.getFooter();
-		this.plaintext = footer.getPlaintext();
 		this.visible = footer.getVisible();
 		this.creationDate = new Date(footer.getCreationDate().getTime());
 		this.modificationDate = new Date(footer.getModificationDate().getTime());
 		this.readonly = footer.isReadonly();
+		if (overrideReadonly) {
+			readonly = false;
+		}
 		this.messagesFrench = footer.getMessagesFrench();
 		this.messagesEnglish = footer.getMessagesEnglish();
 	}

@@ -59,7 +59,7 @@ public class MailContentLangFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public MailContentLangDto find(String uuid) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
-		return new MailContentLangDto(findContentLang(actor, uuid));
+		return new MailContentLangDto(findContentLang(actor, uuid), getOverrideReadonly());
 	}
 
 	@Override
@@ -122,5 +122,9 @@ public class MailContentLangFacadeImpl extends AdminGenericFacadeImpl implements
 					BusinessErrorCode.MAILCONTENTLANG_NOT_FOUND, uuid
 							+ " not found.");
 		return mailContentLang;
+	}
+
+	private boolean getOverrideReadonly() {
+		return mailConfigService.isTemplatingOverrideReadonlyMode();
 	}
 }

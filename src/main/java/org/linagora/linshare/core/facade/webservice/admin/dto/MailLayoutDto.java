@@ -58,9 +58,6 @@ public class MailLayoutDto {
 	@ApiModelProperty(value = "Layout")
 	private String layout;
 
-	@ApiModelProperty(value = "Plaintext")
-	private boolean plaintext;
-
 	@ApiModelProperty(value = "Visible")
 	private boolean visible;
 
@@ -83,15 +80,21 @@ public class MailLayoutDto {
 	}
 
 	public MailLayoutDto(MailLayout ml) {
+		this(ml, false);
+	}
+
+	public MailLayoutDto(MailLayout ml, boolean overrideReadonly) {
 		this.uuid = ml.getUuid();
 		this.domain = ml.getDomain().getUuid();
 		this.description = ml.getDescription();
 		this.layout = ml.getLayout();
-		this.plaintext = ml.isPlaintext();
 		this.visible = ml.isVisible();
 		this.creationDate = new Date(ml.getCreationDate().getTime());
 		this.modificationDate = new Date(ml.getModificationDate().getTime());
 		this.readonly = ml.isReadonly();
+		if (overrideReadonly) {
+			readonly = false;
+		}
 		this.messagesFrench = ml.getMessagesFrench();
 		this.messagesEnglish = ml.getMessagesEnglish();
 	}
@@ -126,14 +129,6 @@ public class MailLayoutDto {
 
 	public void setLayout(String layout) {
 		this.layout = layout;
-	}
-
-	public boolean isPlaintext() {
-		return plaintext;
-	}
-
-	public void setPlaintext(boolean plaintext) {
-		this.plaintext = plaintext;
 	}
 
 	public boolean isVisible() {

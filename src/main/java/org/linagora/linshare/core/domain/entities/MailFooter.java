@@ -55,8 +55,6 @@ public class MailFooter implements Cloneable {
 
 	private String uuid;
 
-	private boolean plaintext;
-
 	private boolean readonly;
 
 	private String messagesFrench;
@@ -130,14 +128,6 @@ public class MailFooter implements Cloneable {
 		return uuid;
 	}
 
-	public void setPlaintext(boolean value) {
-		this.plaintext = value;
-	}
-
-	public boolean getPlaintext() {
-		return plaintext;
-	}
-
 	public boolean isReadonly() {
 		return readonly;
 	}
@@ -166,7 +156,7 @@ public class MailFooter implements Cloneable {
 	public String toString() {
 		return "MailFooter [id=" + id + ", name=" + description + ", domain=" + domain + ", visible=" + visible
 				+ ", footer=" + footer + ", creationDate=" + creationDate + ", modificationDate="
-				+ modificationDate + ", uuid=" + uuid + ", plaintext=" + plaintext + "]";
+				+ modificationDate + ", uuid=" + uuid + "]";
 	}
 
 	@Override

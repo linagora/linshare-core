@@ -59,15 +59,13 @@ public class MailFooterLangFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public MailFooterLangDto find(String uuid) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
-
-		return new MailFooterLangDto(findFooterLang(actor, uuid));
+		return new MailFooterLangDto(findFooterLang(actor, uuid), getOverrideReadonly());
 	}
 
 	@Override
 	public MailFooterLangDto create(MailFooterLangDto dto) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		MailFooterLang footerLang = new MailFooterLang();
-
 		transform(actor, footerLang, dto);
 		return new MailFooterLangDto(mailConfigService.createFooterLang(actor, footerLang));
 	}
@@ -128,5 +126,9 @@ public class MailFooterLangFacadeImpl extends AdminGenericFacadeImpl implements
 					BusinessErrorCode.MAILFOOTERLANG_NOT_FOUND, uuid
 							+ " not found.");
 		return mailFooterLang;
+	}
+
+	private boolean getOverrideReadonly() {
+		return mailConfigService.isTemplatingOverrideReadonlyMode();
 	}
 }

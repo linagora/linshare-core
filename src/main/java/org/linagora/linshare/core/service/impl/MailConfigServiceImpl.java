@@ -71,7 +71,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 
 	private final DomainPermissionBusinessService permissionService;
 
-	protected final boolean templatingReadonlyMode;
+	protected final boolean templatingOverrideReadonlyMode;
 
 	public MailConfigServiceImpl(
 			final DomainBusinessService domainBusinessService,
@@ -88,9 +88,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 		this.mailFooterBusinessService = mailFooterBusinessService;
 		this.mailLayoutBusinessService = mailLayoutBusinessService;
 		this.permissionService = domainPermissionBusinessService;
-		// TODO manage this flag to block all updates or deletion of mail
-		// configuration related to root domain / default configuration
-		this.templatingReadonlyMode = templatingReadonlyMode;
+		this.templatingOverrideReadonlyMode = templatingReadonlyMode;
 	}
 
 	@Override
@@ -118,7 +116,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 		MailConfig ret = mailConfigBusinessService.findByUuid(uuid);
 
 		if (ret != null && !hasRights(actor, ret))
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+			throw new BusinessException(BusinessErrorCode.MAILCONFIG_FORBIDDEN, "Actor "
 					+ actor + " cannot see this mail config : " + ret.getUuid());
 		return ret;
 	}
@@ -127,7 +125,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 	public MailConfig createConfig(User actor, MailConfig config)
 			throws BusinessException {
 		if (!permissionService.isAdminforThisDomain(actor, config.getDomain()))
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+			throw new BusinessException(BusinessErrorCode.MAILCONFIG_FORBIDDEN, "Actor "
 					+ actor + " cannot create a mail config in this domain "
 					+ actor.getDomainId());
 		return mailConfigBusinessService.create(config.getDomain(), config);
@@ -136,20 +134,22 @@ public class MailConfigServiceImpl implements MailConfigService {
 	@Override
 	public MailConfig updateConfig(User actor, MailConfig config)
 			throws BusinessException {
-		if (!permissionService.isAdminforThisDomain(actor, config.getDomain()))
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+		if (isForbidden(actor, config.getDomain(), config.isReadonly())) {
+			throw new BusinessException(BusinessErrorCode.MAILCONFIG_FORBIDDEN, "Actor "
 					+ actor + " cannot update a mail config in this domain "
 					+ actor.getDomainId());
+		}
 		return mailConfigBusinessService.update(config);
 	}
 
 	@Override
 	public MailConfig deleteConfig(User actor, String uuid) throws BusinessException {
 		MailConfig config = mailConfigBusinessService.findByUuid(uuid);
-		if (!permissionService.isAdminforThisDomain(actor, config.getDomain()))
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+		if (isForbidden(actor, config.getDomain(), config.isReadonly())) {
+			throw new BusinessException(BusinessErrorCode.MAILCONFIG_FORBIDDEN, "Actor "
 					+ actor + " cannot delete a mail config in this domain "
 					+ actor.getDomainId());
+		}
 		mailConfigBusinessService.delete(config);
 		return config;
 	}
@@ -178,7 +178,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 			throws BusinessException {
 		MailContent ret = mailContentBusinessService.findByUuid(uuid);
 		if (ret != null && !hasRights(actor, ret))
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+			throw new BusinessException(BusinessErrorCode.MAILCONTENT_FORBIDDEN, "Actor "
 					+ actor + " cannot see this mail content : "
 					+ ret.getUuid());
 		return ret;
@@ -190,7 +190,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 		MailContent ret = mailContentBusinessService.find(domainId, lang, type);
 
 		if (ret != null && !hasRights(actor, ret))
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+			throw new BusinessException(BusinessErrorCode.MAILCONTENT_FORBIDDEN, "Actor "
 					+ actor + " cannot see this mail content : "
 					+ ret.getUuid());
 		return ret;
@@ -200,7 +200,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 	public MailContent createContent(User actor, MailContent content)
 			throws BusinessException {
 		if (!permissionService.isAdminforThisDomain(actor, content.getDomain()))
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+			throw new BusinessException(BusinessErrorCode.MAILCONTENT_FORBIDDEN, "Actor "
 					+ actor + " cannot create a mail content in this domain "
 					+ actor.getDomainId());
 		return mailContentBusinessService.create(content.getDomain(), content);
@@ -209,20 +209,22 @@ public class MailConfigServiceImpl implements MailConfigService {
 	@Override
 	public MailContent updateContent(User actor, MailContent content)
 			throws BusinessException {
-		if (!permissionService.isAdminforThisDomain(actor, content.getDomain()))
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+		if (isForbidden(actor, content.getDomain(), content.isReadonly())) {
+			throw new BusinessException(BusinessErrorCode.MAILCONTENT_FORBIDDEN, "Actor "
 					+ actor + " cannot update a mail content in this domain "
 					+ actor.getDomainId());
+		}
 		return mailContentBusinessService.update(content);
 	}
 
 	@Override
 	public MailContent deleteContent(User actor, String uuid) throws BusinessException {
 		MailContent val = mailContentBusinessService.findByUuid(uuid);
-		if (!permissionService.isAdminforThisDomain(actor, val.getDomain()))
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+		if (isForbidden(actor, val.getDomain(), val.isReadonly())) {
+			throw new BusinessException(BusinessErrorCode.MAILCONTENT_FORBIDDEN, "Actor "
 					+ actor + " cannot delete a mail content in this domain "
 					+ actor.getDomainId());
+		}
 		mailContentBusinessService.delete(val);
 		return val;
 	}
@@ -234,7 +236,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 				.findContentLangByUuid(uuid);
 
 		if (ret != null && !hasRights(actor, ret.getMailConfig())) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+			throw new BusinessException(BusinessErrorCode.MAILCONTENTLANG_FORBIDDEN, "Actor "
 					+ actor + " cannot see this mail config : "
 					+ ret.getMailConfig().getUuid());
 		}
@@ -247,7 +249,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 		MailConfig config = contentLang.getMailConfig();
 
 		if (!permissionService.isAdminforThisDomain(actor, config.getDomain()))
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+			throw new BusinessException(BusinessErrorCode.MAILCONTENTLANG_FORBIDDEN, "Actor "
 					+ actor + " cannot update a mail config in this domain "
 					+ actor.getDomainId());
 		return mailConfigBusinessService.createContentLang(contentLang);
@@ -256,26 +258,24 @@ public class MailConfigServiceImpl implements MailConfigService {
 	@Override
 	public MailContentLang updateContentLang(User actor, MailContentLang contentLang)
 			throws BusinessException {
-		MailConfig config = contentLang.getMailConfig();
-
-		if (!permissionService.isAdminforThisDomain(actor, config.getDomain()))
+		if (isForbidden(actor, contentLang.getMailConfig().getDomain(), contentLang.isReadonly())) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
 					+ actor + " cannot update a mail config in this domain "
 					+ actor.getDomainId());
+		}
 		return mailConfigBusinessService.updateContentLang(contentLang);
 	}
 
 	@Override
 	public void deleteContentLang(User actor, String uuid)
 			throws BusinessException {
-		try {
-			MailContentLang contentLang = findContentLangByUuid(actor, uuid);
-			mailConfigBusinessService.deleteContentLang(contentLang);
-		} catch (BusinessException e) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+		MailContentLang contentLang = findContentLangByUuid(actor, uuid);
+		if (isForbidden(actor, contentLang.getMailConfig().getDomain(), contentLang.isReadonly())) {
+			throw new BusinessException(BusinessErrorCode.MAILCONTENTLANG_FORBIDDEN, "Actor "
 					+ actor + " cannot update a mail config in this domain "
 					+ actor.getDomainId());
 		}
+		mailConfigBusinessService.deleteContentLang(contentLang);
 	}
 
 	@Override
@@ -303,7 +303,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 		MailFooter ret = mailFooterBusinessService.findByUuid(uuid);
 
 		if (ret != null && !hasRights(actor, ret))
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+			throw new BusinessException(BusinessErrorCode.MAILFOOTER_FORBIDDEN, "Actor "
 					+ actor + " cannot see this mail footer : " + ret.getUuid());
 		return ret;
 	}
@@ -312,7 +312,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 	public MailFooter createFooter(User actor, MailFooter footer)
 			throws BusinessException {
 		if (!permissionService.isAdminforThisDomain(actor, footer.getDomain()))
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+			throw new BusinessException(BusinessErrorCode.MAILFOOTER_FORBIDDEN, "Actor "
 					+ actor + " cannot create a mail footer in this domain "
 					+ actor.getDomainId());
 		return mailFooterBusinessService.create(footer.getDomain(), footer);
@@ -321,23 +321,24 @@ public class MailConfigServiceImpl implements MailConfigService {
 	@Override
 	public MailFooter updateFooter(User actor, MailFooter footer)
 			throws BusinessException {
-		if (!permissionService.isAdminforThisDomain(actor, footer.getDomain()))
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+		if (isForbidden(actor, footer.getDomain(), footer.isReadonly())) {
+			throw new BusinessException(BusinessErrorCode.MAILFOOTER_FORBIDDEN, "Actor "
 					+ actor + " cannot update a mail footer in this domain "
 					+ actor.getDomainId());
+		}
 		return mailFooterBusinessService.update(footer);
 	}
 
 	@Override
 	public MailFooter deleteFooter(User actor, String uuid) throws BusinessException {
-		MailFooter val = mailFooterBusinessService.findByUuid(uuid);
-
-		if (!permissionService.isAdminforThisDomain(actor, val.getDomain()))
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+		MailFooter footer = mailFooterBusinessService.findByUuid(uuid);
+		if (isForbidden(actor, footer.getDomain(), footer.isReadonly())) {
+			throw new BusinessException(BusinessErrorCode.MAILFOOTER_FORBIDDEN, "Actor "
 					+ actor + " cannot delete a mail footer in this domain "
 					+ actor.getDomainId());
-		mailFooterBusinessService.delete(val);
-		return val;
+		}
+		mailFooterBusinessService.delete(footer);
+		return footer;
 	}
 
 	@Override
@@ -347,7 +348,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 				.findFooterLangByUuid(uuid);
 
 		if (ret != null && !hasRights(actor, ret.getMailConfig())) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+			throw new BusinessException(BusinessErrorCode.MAILFOOTERLANG_FORBIDDEN, "Actor "
 					+ actor + " cannot see this mail config : "
 					+ ret.getMailConfig().getUuid());
 		}
@@ -360,7 +361,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 		MailConfig config = footerLang.getMailConfig();
 
 		if (!permissionService.isAdminforThisDomain(actor, config.getDomain()))
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+			throw new BusinessException(BusinessErrorCode.MAILFOOTERLANG_FORBIDDEN, "Actor "
 					+ actor + " cannot update a mail config in this domain "
 					+ actor.getDomainId());
 		return mailConfigBusinessService.createFooterLang(footerLang);
@@ -369,26 +370,24 @@ public class MailConfigServiceImpl implements MailConfigService {
 	@Override
 	public MailFooterLang updateFooterLang(User actor, MailFooterLang footerLang)
 			throws BusinessException {
-		MailConfig config = footerLang.getMailConfig();
-
-		if (!permissionService.isAdminforThisDomain(actor, config.getDomain()))
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+		if (isForbidden(actor, footerLang.getMailConfig().getDomain(), footerLang.isReadonly())) {
+			throw new BusinessException(BusinessErrorCode.MAILFOOTERLANG_FORBIDDEN, "Actor "
 					+ actor + " cannot update a mail config in this domain "
 					+ actor.getDomainId());
+		}
 		return mailConfigBusinessService.updateFooterLang(footerLang);
 	}
 
 	@Override
 	public void deleteFooterLang(User actor, String uuid)
 			throws BusinessException {
-		try {
-			MailFooterLang footerLang = findFooterLangByUuid(actor, uuid);
-			mailConfigBusinessService.deleteFooterLang(footerLang);
-		} catch (BusinessException e) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+		MailFooterLang footerLang = findFooterLangByUuid(actor, uuid);
+		if (isForbidden(actor, footerLang.getMailConfig().getDomain(), footerLang.isReadonly())) {
+			throw new BusinessException(BusinessErrorCode.MAILFOOTERLANG_FORBIDDEN, "Actor "
 					+ actor + " cannot update a mail config in this domain "
 					+ actor.getDomainId());
 		}
+		mailConfigBusinessService.deleteFooterLang(footerLang);
 	}
 
 	@Override
@@ -416,7 +415,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 		MailLayout ret = mailLayoutBusinessService.findByUuid(uuid);
 
 		if (ret != null && !hasRights(actor, ret))
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+			throw new BusinessException(BusinessErrorCode.MAILLAYOUT_FORBIDDEN, "Actor "
 					+ actor + " cannot see this mail layout : " + ret.getUuid());
 		return ret;
 	}
@@ -425,7 +424,7 @@ public class MailConfigServiceImpl implements MailConfigService {
 	public MailLayout createLayout(User actor, MailLayout layout)
 			throws BusinessException {
 		if (!permissionService.isAdminforThisDomain(actor, layout.getDomain()))
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+			throw new BusinessException(BusinessErrorCode.MAILLAYOUT_FORBIDDEN, "Actor "
 					+ actor + " cannot create a mail layout in this domain "
 					+ actor.getDomainId());
 		return mailLayoutBusinessService.create(layout.getDomain(), layout);
@@ -434,23 +433,24 @@ public class MailConfigServiceImpl implements MailConfigService {
 	@Override
 	public MailLayout updateLayout(User actor, MailLayout layout)
 			throws BusinessException {
-		if (!permissionService.isAdminforThisDomain(actor, layout.getDomain()))
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+		if (isForbidden(actor, layout.getDomain(), layout.isReadonly())) {
+			throw new BusinessException(BusinessErrorCode.MAILLAYOUT_FORBIDDEN, "Actor "
 					+ actor + " cannot update a mail layout in this domain "
 					+ actor.getDomainId());
+		}
 		return mailLayoutBusinessService.update(layout);
 	}
 
 	@Override
 	public MailLayout deleteLayout(User actor, String uuid) throws BusinessException {
-		MailLayout val = mailLayoutBusinessService.findByUuid(uuid);
-
-		if (!permissionService.isAdminforThisDomain(actor, val.getDomain()))
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor "
+		MailLayout layout = mailLayoutBusinessService.findByUuid(uuid);
+		if (isForbidden(actor, layout.getDomain(), layout.isReadonly())) {
+			throw new BusinessException(BusinessErrorCode.MAILLAYOUT_FORBIDDEN, "Actor "
 					+ actor + " cannot delete a mail layout in this domain "
 					+ actor.getDomainId());
-		mailLayoutBusinessService.delete(val);
-		return val;
+		}
+		mailLayoutBusinessService.delete(layout);
+		return layout;
 	}
 
 	@Override
@@ -495,6 +495,11 @@ public class MailConfigServiceImpl implements MailConfigService {
 //		}
 	}
 
+	@Override
+	public boolean isTemplatingOverrideReadonlyMode() {
+		return this.templatingOverrideReadonlyMode;
+	}
+
 	/*
 	 * Helpers
 	 */
@@ -518,4 +523,18 @@ public class MailConfigServiceImpl implements MailConfigService {
 		}
 		return parents;
 	}
+
+	private boolean isForbidden(User actor, AbstractDomain domain, boolean readonly) {
+		boolean forbidden = false;
+		if (readonly) {
+			if (!templatingOverrideReadonlyMode) {
+				forbidden = true;
+			}
+		}
+		if (!permissionService.isAdminforThisDomain(actor, domain)) {
+			forbidden = true;
+		}
+		return forbidden;
+	}
+
 }

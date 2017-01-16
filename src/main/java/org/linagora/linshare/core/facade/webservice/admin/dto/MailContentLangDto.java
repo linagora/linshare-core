@@ -71,9 +71,16 @@ public class MailContentLangDto {
 	}
 
 	public MailContentLangDto(MailContentLang contentLang) {
+		this(contentLang, false);
+	}
+
+	public MailContentLangDto(MailContentLang contentLang, boolean overrideReadonly) {
 		mailConfig = contentLang.getMailConfig().getUuid();
 		language = Language.fromInt(contentLang.getLanguage());
 		readonly = contentLang.isReadonly();
+		if (overrideReadonly) {
+			readonly = false;
+		}
 		uuid = contentLang.getUuid();
 		mailContent = contentLang.getMailContent().getUuid();
 		mailContentType = MailContentType.fromInt(

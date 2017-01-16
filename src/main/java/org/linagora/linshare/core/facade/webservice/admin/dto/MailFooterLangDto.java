@@ -67,9 +67,16 @@ public class MailFooterLangDto {
 	}
 
 	public MailFooterLangDto(MailFooterLang footerLang) {
+		this(footerLang, false);
+	}
+
+	public MailFooterLangDto(MailFooterLang footerLang, boolean overrideReadonly) {
 		mailConfig = footerLang.getMailConfig().getUuid();
 		language = Language.fromInt(footerLang.getLanguage());
 		readonly = footerLang.isReadonly();
+		if (overrideReadonly) {
+			readonly = false;
+		}
 		uuid = footerLang.getUuid();
 		mailFooter = footerLang.getMailFooter().getUuid();
 		setMailFooterName(footerLang.getMailFooter().getDescription());

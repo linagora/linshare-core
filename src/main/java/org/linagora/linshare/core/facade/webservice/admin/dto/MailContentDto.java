@@ -62,9 +62,6 @@ public class MailContentDto {
 	@ApiModelProperty(value = "Subject")
 	private String subject;
 
-	@ApiModelProperty(value = "Greetings")
-	private String greetings;
-
 	@ApiModelProperty(value = "Body")
 	private String body;
 
@@ -76,9 +73,6 @@ public class MailContentDto {
 
 	@ApiModelProperty(value = "Uuid")
 	private String uuid;
-
-	@ApiModelProperty(value = "Plaintext")
-	private boolean plaintext;
 
 	@ApiModelProperty(value = "readonly")
 	private boolean readonly;
@@ -94,18 +88,24 @@ public class MailContentDto {
 	}
 
 	public MailContentDto(MailContent cont) {
+		this(cont, false);
+	}
+
+	public MailContentDto(MailContent cont, boolean overrideReadonly) {
 		this.uuid = cont.getUuid();
 		this.domain = cont.getDomain().getUuid();
 		this.description = cont.getDescription();
 		this.body = cont.getBody();
 		this.subject = cont.getSubject();
-		this.plaintext = cont.isPlaintext();
 		this.visible = cont.isVisible();
 		this.mailContentType = MailContentType.fromInt(
 				cont.getMailContentType()).toString();
 		this.creationDate = new Date(cont.getCreationDate().getTime());
 		this.modificationDate = new Date(cont.getModificationDate().getTime());
 		this.readonly = cont.isReadonly();
+		if (overrideReadonly) {
+			readonly = false;
+		}
 		this.messagesFrench = cont.getMessagesFrench();
 		this.messagesEnglish = cont.getMessagesEnglish();
 	}
@@ -150,14 +150,6 @@ public class MailContentDto {
 		this.subject = subject;
 	}
 
-	public String getGreetings() {
-		return greetings;
-	}
-
-	public void setGreetings(String greetings) {
-		this.greetings = greetings;
-	}
-
 	public String getBody() {
 		return body;
 	}
@@ -188,14 +180,6 @@ public class MailContentDto {
 
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
-	}
-
-	public boolean isPlaintext() {
-		return plaintext;
-	}
-
-	public void setPlaintext(boolean plaintext) {
-		this.plaintext = plaintext;
 	}
 
 	public boolean isReadonly() {

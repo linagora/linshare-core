@@ -66,7 +66,7 @@ public class MailLayoutFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public MailLayoutDto find(String uuid) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
-		return new MailLayoutDto(findLayout(actor, uuid));
+		return new MailLayoutDto(findLayout(actor, uuid), getOverrideReadonly());
 	}
 
 	@Override
@@ -109,7 +109,7 @@ public class MailLayoutFacadeImpl extends AdminGenericFacadeImpl implements
 		Iterable<MailLayout> layouts = only ? domain.getMailLayouts()
 				: mailConfigService.findAllLayouts(user, domainIdentifier);
 		for (MailLayout mailLayout : layouts) {
-			mailLayoutsDto.add(new MailLayoutDto(mailLayout));
+			mailLayoutsDto.add(new MailLayoutDto(mailLayout, getOverrideReadonly()));
 		}
 		return mailLayoutsDto;
 	}
@@ -124,7 +124,6 @@ public class MailLayoutFacadeImpl extends AdminGenericFacadeImpl implements
 		layout.setDescription(dto.getDescription());
 		layout.setVisible(dto.isVisible());
 		layout.setLayout(dto.getLayout());
-		layout.setPlaintext(dto.isPlaintext());
 		layout.setMessagesEnglish(dto.getMessagesEnglish());
 		layout.setMessagesFrench(dto.getMessagesFrench());
 	}
@@ -147,5 +146,9 @@ public class MailLayoutFacadeImpl extends AdminGenericFacadeImpl implements
 					"Domain " + id + "doesn't exist.");
 		}
 		return domain;
+	}
+
+	private boolean getOverrideReadonly() {
+		return mailConfigService.isTemplatingOverrideReadonlyMode();
 	}
 }

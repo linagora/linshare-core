@@ -88,12 +88,19 @@ public class MailConfigDto {
 	}
 
 	public MailConfigDto(MailConfig config) {
+		this(config, false);
+	}
+
+	public MailConfigDto(MailConfig config, boolean overrideReadonly) {
 		super();
 		this.uuid = config.getUuid();
 		this.domain = config.getDomain().getUuid();
 		this.name = config.getName();
 		this.visible = config.isVisible();
 		this.readonly = config.isReadonly();
+		if (overrideReadonly) {
+			readonly = false;
+		}
 		this.creationDate = new Date(config.getCreationDate().getTime());
 		this.modificationDate = new Date(config.getModificationDate().getTime());
 		this.mailLayout = config.getMailLayoutHtml().getUuid();
@@ -102,7 +109,7 @@ public class MailConfigDto {
 		Map<Integer, MailFooterLang> mfls = config.getMailFooters();
 
 		for (MailContentLang mcl : mcls) {
-			this.mailContentLangs.add(new MailContentLangDto(mcl));
+			this.mailContentLangs.add(new MailContentLangDto(mcl, overrideReadonly));
 		}
 		for (Entry<Integer, MailFooterLang> e : mfls.entrySet()) {
 			this.mailFooterLangs.put(Language.fromInt(e.getKey()),
