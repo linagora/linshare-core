@@ -35,15 +35,35 @@ package org.linagora.linshare.core.notifications.context;
 
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 
 public abstract class EmailContext {
 
-	public EmailContext() {
+	/**
+	 * Domain of the mail recipient use to retrieve related configuration like
+	 * LinShare URL, mail activation, ...
+	 * 
+	 */
+	protected final AbstractDomain domain;
+
+	protected final boolean needToRetrieveGuestDomain;
+
+	public EmailContext(AbstractDomain domain, boolean needToRetrieveGuestDomain) {
 		super();
+		this.domain = domain;
+		this.needToRetrieveGuestDomain = needToRetrieveGuestDomain;
 	}
 
 	public abstract MailContentType getType();
 
 	public abstract MailActivationType getActivation();
+
+	public AbstractDomain getDomain() {
+		return domain;
+	}
+
+	public boolean isNeedToRetrieveGuestDomain() {
+		return needToRetrieveGuestDomain;
+	}
 
 }

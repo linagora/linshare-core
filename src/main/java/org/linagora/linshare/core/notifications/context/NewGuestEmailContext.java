@@ -33,40 +33,33 @@
  */
 package org.linagora.linshare.core.notifications.context;
 
-import java.util.Set;
-
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
-import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.objects.MailContainer;
 
-public class NewSharingEmailContext extends EmailContext {
-
-	protected MailContainer container;
+public class NewGuestEmailContext extends EmailContext {
 
 	protected User sender;
 
 	protected User recipient;
 
-	protected Set<ShareEntry> shares;
+	protected String resetPasswordTokenUuid;
 
-	public NewSharingEmailContext(MailContainer container, User sender, User recipient, Set<ShareEntry> shares) {
+	public NewGuestEmailContext(User sender, User recipient, String resetPasswordTokenUuid) {
 		super(recipient.getDomain(), false);
-		this.container = container;
 		this.sender = sender;
 		this.recipient = recipient;
-		this.shares = shares;
+		this.resetPasswordTokenUuid= resetPasswordTokenUuid;
 	}
 
 	@Override
 	public MailContentType getType() {
-		return MailContentType.NEW_SHARING;
+		return MailContentType.NEW_GUEST;
 	}
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.NEW_SHARING;
+		return MailActivationType.NEW_GUEST;
 	}
 
 	public User getSender() {
@@ -85,20 +78,12 @@ public class NewSharingEmailContext extends EmailContext {
 		this.recipient = recipient;
 	}
 
-	public Set<ShareEntry> getShares() {
-		return shares;
+	public String getResetPasswordTokenUuid() {
+		return resetPasswordTokenUuid;
 	}
 
-	public void setShares(Set<ShareEntry> shares) {
-		this.shares = shares;
-	}
-
-	public MailContainer getContainer() {
-		return container;
-	}
-
-	public void setContainer(MailContainer container) {
-		this.container = container;
+	public void setResetPasswordTokenUuid(String resetPasswordTokenUuid) {
+		this.resetPasswordTokenUuid = resetPasswordTokenUuid;
 	}
 
 }

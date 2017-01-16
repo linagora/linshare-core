@@ -40,7 +40,9 @@ import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainer;
+import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.context.NewGuestEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.slf4j.Logger;
@@ -107,9 +109,9 @@ public class MailBuildingServiceImplTest extends
 	@Test
 	public void testBuildMailNewGuest() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		MailContainer mailContainerBuild = mailBuildingService.buildNewGuest(
-				john, jane, "password");
-		testMailGenerate(mailContainerBuild);
+		NewGuestEmailContext mailContext = new NewGuestEmailContext(john, jane, "password");
+		MailContainerWithRecipient mail = mailBuildingService.build(mailContext);
+		testMailGenerate(mail);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }

@@ -31,14 +31,15 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.notifications.emails;
+package org.linagora.linshare.core.notifications.emails.impl;
 
 import java.util.Map;
 
+import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.MailActivationBusinessService;
 import org.linagora.linshare.core.domain.constants.Language;
-import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MailActivation;
 import org.linagora.linshare.core.domain.entities.MailConfig;
@@ -47,6 +48,7 @@ import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.emails.IEmailBuilder;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,36 +60,95 @@ import org.thymeleaf.templatemode.TemplateMode;
 
 import com.google.common.collect.Maps;
 
-public abstract class EmailBuilder {
+public abstract class EmailBuilder  implements IEmailBuilder {
 
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	protected final TemplateEngine templateEngine;
+	protected TemplateEngine templateEngine;
 
-	protected final boolean insertLicenceTerm;
+	protected boolean insertLicenceTerm;
 
-	protected final MailActivationBusinessService mailActivationBusinessService;
+	protected MailActivationBusinessService mailActivationBusinessService;
 
-	protected final FunctionalityReadOnlyService functionalityReadOnlyService;
+	protected FunctionalityReadOnlyService functionalityReadOnlyService;
 
-	public abstract MailContainerWithRecipient build(EmailContext context) throws BusinessException;
+	private DomainBusinessService domainBusinessService;
 
-	public abstract MailContainerWithRecipient fakeBuild(MailConfig cfg, Language language) throws BusinessException;
+	public EmailBuilder() {
+	}
 
 	public EmailBuilder(TemplateEngine templateEngine, boolean insertLicenceTerm,
 			MailActivationBusinessService mailActivationBusinessService,
-			FunctionalityReadOnlyService functionalityReadOnlyService) {
+			FunctionalityReadOnlyService functionalityReadOnlyService, DomainBusinessService domainBusinessService) {
 		super();
 		this.templateEngine = templateEngine;
 		this.insertLicenceTerm = insertLicenceTerm;
 		this.mailActivationBusinessService = mailActivationBusinessService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
+		this.domainBusinessService = domainBusinessService;
 	}
 
-	protected boolean isDisable(Account recipient, MailActivationType type) {
-		MailActivation mailActivation = mailActivationBusinessService.findForInternalUsage(recipient.getDomain(), type);
-		boolean enable = mailActivation.isEnable();
-		return !enable;
+	public void setTemplateEngine(TemplateEngine templateEngine) {
+		this.templateEngine = templateEngine;
+	}
+
+	public void setInsertLicenceTerm(boolean insertLicenceTerm) {
+		this.insertLicenceTerm = insertLicenceTerm;
+	}
+
+	public void setMailActivationBusinessService(MailActivationBusinessService mailActivationBusinessService) {
+		this.mailActivationBusinessService = mailActivationBusinessService;
+	}
+
+	public void setFunctionalityReadOnlyService(FunctionalityReadOnlyService functionalityReadOnlyService) {
+		this.functionalityReadOnlyService = functionalityReadOnlyService;
+	}
+
+	public void setDomainBusinessService(DomainBusinessService domainBusinessService) {
+		this.domainBusinessService = domainBusinessService;
+	}
+
+	protected abstract MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException;
+
+	protected abstract Context getContextForFakeBuild(Language language);
+
+	@Override
+	public MailContainerWithRecipient build(EmailContext context) throws BusinessException {
+		checkSupportedTemplateType(context);
+		if (isDisable(context)) {
+			return null;
+		}
+		return buildMailContainer(context);
+	}
+
+	@Override
+	public MailContainerWithRecipient fakeBuild(MailConfig cfg, Language language) throws BusinessException {
+		Context ctx = getContextForFakeBuild(language);
+		MailContainerWithRecipient container = new MailContainerWithRecipient(language);
+		return buildMailContainerThymeleaf(cfg, container, getSupportedType(), ctx);
+	}
+
+	protected void checkSupportedTemplateType(EmailContext context) {
+		if (!context.getType().equals(getSupportedType())) {
+			logger.error("You can not use this builder {} with the current context {}.", getSupportedType(),
+					context.getType());
+			throw new BusinessException(BusinessErrorCode.TEMPLATE_PROCESSING_ERROR_INVALID_CONTEXT,
+					"You can not use this builder with the current context.");
+		}
+	}
+
+	protected boolean isDisable(EmailContext context) {
+		AbstractDomain recipientDomain = context.getDomain();
+		if (context.isNeedToRetrieveGuestDomain()) {
+			recipientDomain = domainBusinessService.findGuestDomain(recipientDomain);
+			// guest domain could be inexistent into the database.
+			if (recipientDomain == null) {
+				recipientDomain = context.getDomain();
+			}
+		}
+		MailActivation mailActivation = mailActivationBusinessService.findForInternalUsage(recipientDomain,
+				context.getActivation());
+		return !mailActivation.isEnable();
 	}
 
 	protected String getLinShareUrlForAUserRecipient(Account recipient) {
@@ -105,6 +166,11 @@ public abstract class EmailBuilder {
 	}
 
 	protected MailContainerWithRecipient buildMailContainerThymeleaf(MailConfig cfg,
+			final MailContainerWithRecipient input, MailContentType type, Context ctx) {
+		return buildMailContainerThymeleaf(cfg, input, null, type, ctx);
+	}
+
+	protected MailContainerWithRecipient buildMailContainerThymeleaf(MailConfig cfg,
 			final MailContainerWithRecipient input, String pm, MailContentType type, Context ctx)
 			throws BusinessException {
 		logger.debug("Building mail content: " + type);
@@ -116,7 +182,8 @@ public abstract class EmailBuilder {
 		templateResolutionAttributes.put("lang", input.getLanguage());
 
 		try {
-			TemplateSpec subjectSpec = new TemplateSpec(type.toString() + ":subject", null, TemplateMode.TEXT, templateResolutionAttributes);
+			TemplateSpec subjectSpec = new TemplateSpec(type.toString() + ":subject", null, TemplateMode.TEXT,
+					templateResolutionAttributes);
 			String subject = templateEngine.process(subjectSpec, ctx);
 			ctx.setVariable("mailSubject", subject);
 
@@ -125,7 +192,8 @@ public abstract class EmailBuilder {
 			// .add("image", displayLogo ? LINSHARE_LOGO : "")
 
 			TemplateSpec templateSpec = new TemplateSpec(type.toString(), null, null, templateResolutionAttributes);
-			// TemplateSpec templateSpec = new TemplateSpec(type.toString(), null, TemplateMode.XML, templateResolutionAttributes);
+			// TemplateSpec templateSpec = new TemplateSpec(type.toString(),
+			// null, TemplateMode.XML, templateResolutionAttributes);
 			String body = templateEngine.process(templateSpec, ctx);
 			container.setSubject(subject);
 			container.setContentHTML(body);
@@ -136,7 +204,7 @@ public abstract class EmailBuilder {
 			return container;
 		} catch (org.thymeleaf.exceptions.TemplateInputException e) {
 			String message = "[" + type.toString() + "]" + getCauseMsessage(e);
-			logger.debug( message);
+			logger.debug(message);
 			BusinessException businessException = new BusinessException(getBusinessErrorCodeRecursif(e), message, e);
 			throw businessException;
 		}
@@ -196,4 +264,5 @@ public abstract class EmailBuilder {
 		}
 		return BusinessErrorCode.TEMPLATE_PARSING_ERROR;
 	}
+
 }

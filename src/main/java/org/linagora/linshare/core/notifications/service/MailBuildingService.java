@@ -66,9 +66,6 @@ public interface MailBuildingService {
 	MailContainerWithRecipient buildRegisteredDownload(ShareEntry shareEntry)
 			throws BusinessException;
 
-	MailContainerWithRecipient buildNewGuest(Account sender, User recipient,
-			String password) throws BusinessException;
-
 	MailContainerWithRecipient buildResetPassword(Guest recipient,
 			String password) throws BusinessException;
 

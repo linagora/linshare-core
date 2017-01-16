@@ -60,6 +60,7 @@ import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.context.NewGuestEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.GuestResourceAccessControl;
 import org.linagora.linshare.core.service.AbstractDomainService;
@@ -240,8 +241,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		ResetGuestPassword resetGuestPassword = new ResetGuestPassword(create);
 		resetGuestPassword.setKind(ResetTokenKind.NEW_PASSWORD);
 		resetGuestPasswordMongoRepository.insert(resetGuestPassword);
-		MailContainerWithRecipient mail = mailBuildingService.buildNewGuest(
-				owner, create, resetGuestPassword.getUuid());
+		NewGuestEmailContext mailContext = new NewGuestEmailContext((User)owner, create, resetGuestPassword.getUuid());
+		MailContainerWithRecipient mail = mailBuildingService.build(mailContext);
 		notifierService.sendNotification(mail);
 		UserLogEntry userLogEntry = new UserLogEntry(actor, LogAction.USER_CREATE, "Creating a guest", create);
 		LogEntryService.create(userLogEntry);

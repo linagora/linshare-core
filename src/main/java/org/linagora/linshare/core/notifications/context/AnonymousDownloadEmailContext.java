@@ -42,6 +42,7 @@ public class AnonymousDownloadEmailContext extends EmailContext {
 	protected AnonymousShareEntry shareEntry;
 
 	public AnonymousDownloadEmailContext(AnonymousShareEntry shareEntry) {
+		super(shareEntry.getEntryOwner().getDomain(), true);
 		this.shareEntry = shareEntry;
 	}
 

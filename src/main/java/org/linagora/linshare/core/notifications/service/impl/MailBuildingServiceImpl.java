@@ -36,6 +36,7 @@ package org.linagora.linshare.core.notifications.service.impl;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.LinkedHashMap;
@@ -79,9 +80,10 @@ import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.config.LinShareStringTemplateResolver;
 import org.linagora.linshare.core.notifications.context.EmailContext;
-import org.linagora.linshare.core.notifications.emails.AnonymousDownloadEmailBuilder;
-import org.linagora.linshare.core.notifications.emails.EmailBuilder;
-import org.linagora.linshare.core.notifications.emails.NewSharingEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.AnonymousDownloadEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.EmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.NewGuestEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.NewSharingEmailBuilder;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.utils.DocumentUtils;
@@ -391,7 +393,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			String documentsUrlSuffix,
 			boolean templatingStrictMode,
 			boolean templatingSubjectPrefix
-			) throws BusinessException {
+			) throws Exception {
 		this.displayLogo = displayLogo;
 		this.domainBusinessService = domainBusinessService;
 		this.insertLicenceTerm = insertLicenceTerm;
@@ -415,11 +417,22 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		}
 		templateEngine.setTemplateResolver(templateResolver);
 
-		this.emailBuilders = Maps.newHashMap();
-		this.emailBuilders.put(MailContentType.NEW_SHARING, new NewSharingEmailBuilder(templateEngine, insertLicenceTerm,
-				mailActivationBusinessService, functionalityReadOnlyService));
-		this.emailBuilders.put(MailContentType.ANONYMOUS_DOWNLOAD, new AnonymousDownloadEmailBuilder(templateEngine, insertLicenceTerm,
-				mailActivationBusinessService, functionalityReadOnlyService));
+		emailBuilders = Maps.newHashMap();
+		emailBuilders.put(MailContentType.NEW_SHARING, new NewSharingEmailBuilder());
+		emailBuilders.put(MailContentType.NEW_GUEST, new NewGuestEmailBuilder());
+		emailBuilders.put(MailContentType.ANONYMOUS_DOWNLOAD, new AnonymousDownloadEmailBuilder());
+		initMailBuilders();
+	}
+
+	private void initMailBuilders() {
+		Collection<EmailBuilder> values = emailBuilders.values();
+		for (EmailBuilder emailBuilder : values) {
+			emailBuilder.setTemplateEngine(templateEngine);
+			emailBuilder.setInsertLicenceTerm(insertLicenceTerm);
+			emailBuilder.setMailActivationBusinessService(mailActivationBusinessService);
+			emailBuilder.setFunctionalityReadOnlyService(functionalityReadOnlyService);
+			emailBuilder.setDomainBusinessService(domainBusinessService);
+		}
 	}
 
 	@Override
@@ -514,36 +527,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				MailContentType.REGISTERED_DOWNLOAD, builder);
 	}
 
-	@Override
-	public MailContainerWithRecipient buildNewGuest(Account s,
-			User recipient, String password) throws BusinessException {
-		if (isDisable(recipient, MailActivationType.NEW_GUEST)) {
-			return null;
-		}
-		User recipientUser = (User)recipient;
-		User sender = (User) s;
-		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
-		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				recipientUser.getExternalMailLocale());
-		MailContainerBuilder builder = new MailContainerBuilder();
-
-		builder.getGreetingsChain()
-				.add("firstName", recipientUser.getFirstName())
-				.add("lastName", recipientUser.getLastName());
-		String linShareUrl = getLinShareUrlForAUserRecipient(recipientUser);
-		builder.getBodyChain()
-				.add("url", linShareUrl)
-				.add("ownerFirstName", sender.getFirstName())
-				.add("ownerLastName", sender.getLastName())
-				.add("mail", recipientUser.getMail())
-				.add("password", linShareUrl + "#/external/reset/" + password);
-		container.setRecipient(recipientUser);
-		container.setReplyTo(sender);
-		container.setFrom(getFromMailAddress(recipientUser));
-
-		return buildMailContainer(cfg, container, null,
-				MailContentType.NEW_GUEST, builder);
-	}
 
 	@Override
 	public MailContainerWithRecipient buildResetPassword(Guest recipient,
@@ -755,6 +738,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				MailContentType.SHARED_DOC_UPCOMING_OUTDATED, builder);
 	}
 
+	// TODO : To be used : method is not called.
 	@Override
 	public MailContainerWithRecipient buildDocUpcomingOutdated(
 			DocumentEntry document, Integer days) throws BusinessException {

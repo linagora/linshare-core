@@ -31,74 +31,20 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.notifications.context;
+package org.linagora.linshare.core.notifications.emails;
 
-import java.util.Set;
-
-import org.linagora.linshare.core.domain.constants.MailActivationType;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
-import org.linagora.linshare.core.domain.entities.ShareEntry;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.objects.MailContainer;
+import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.context.EmailContext;
 
-public class NewSharingEmailContext extends EmailContext {
+public interface IEmailBuilder {
 
-	protected MailContainer container;
+	MailContentType getSupportedType();
 
-	protected User sender;
+	MailContainerWithRecipient build(EmailContext context) throws BusinessException;
 
-	protected User recipient;
-
-	protected Set<ShareEntry> shares;
-
-	public NewSharingEmailContext(MailContainer container, User sender, User recipient, Set<ShareEntry> shares) {
-		super(recipient.getDomain(), false);
-		this.container = container;
-		this.sender = sender;
-		this.recipient = recipient;
-		this.shares = shares;
-	}
-
-	@Override
-	public MailContentType getType() {
-		return MailContentType.NEW_SHARING;
-	}
-
-	@Override
-	public MailActivationType getActivation() {
-		return MailActivationType.NEW_SHARING;
-	}
-
-	public User getSender() {
-		return sender;
-	}
-
-	public void setSender(User sender) {
-		this.sender = sender;
-	}
-
-	public User getRecipient() {
-		return recipient;
-	}
-
-	public void setRecipient(User recipient) {
-		this.recipient = recipient;
-	}
-
-	public Set<ShareEntry> getShares() {
-		return shares;
-	}
-
-	public void setShares(Set<ShareEntry> shares) {
-		this.shares = shares;
-	}
-
-	public MailContainer getContainer() {
-		return container;
-	}
-
-	public void setContainer(MailContainer container) {
-		this.container = container;
-	}
-
+	MailContainerWithRecipient fakeBuild(MailConfig cfg, Language language) throws BusinessException;
 }
