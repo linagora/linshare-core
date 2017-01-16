@@ -64,14 +64,14 @@ public class NewSharingEmailBuilder extends EmailBuilder{
 	public MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
 		NewSharingEmailContext emailCtx = (NewSharingEmailContext)context;
 
-		User recipient = emailCtx.getRecipient();
-		User sender = emailCtx.getSender();
+		User shareRecipient = emailCtx.getRecipient();
+		User shareOwner = emailCtx.getSender();
 		MailContainer input = emailCtx.getContainer();
 		Set<ShareEntry> shareEntries = emailCtx.getShares();
 
-		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
+		MailConfig cfg = shareOwner.getDomain().getCurrentMailConfiguration();
 		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				recipient.getExternalMailLocale());
+				shareRecipient.getExternalMailLocale());
 
 //		StringBuffer names = new StringBuffer();
 //		long shareSize = 0;
@@ -85,8 +85,8 @@ public class NewSharingEmailBuilder extends EmailBuilder{
 //		}
 
 		Context ctx = new Context(input.getLocale());
-		ctx.setVariable("sender", new MailContact(sender));
-		ctx.setVariable("recipient", new MailContact(recipient));
+		ctx.setVariable("shareOwner", new MailContact(shareOwner));
+		ctx.setVariable("shareRecipient", new MailContact(shareRecipient));
 		ctx.setVariable("customSubject", input.getSubject());
 
 		List<Share> shares = Lists.newArrayList();
@@ -96,13 +96,13 @@ public class NewSharingEmailBuilder extends EmailBuilder{
 		ctx.setVariable("shares", shares);
 		ctx.setVariable("sharesCount", shares.size());
 
-		ctx.setVariable("linshareURL", getLinShareUrlForAUserRecipient(recipient));
+		ctx.setVariable("linshareURL", getLinShareUrlForAUserRecipient(shareRecipient));
 		// TODO getReceivedSharedFileDownloadLink
 
 		container.setSubject(input.getSubject());
-		container.setRecipient(recipient);
-		container.setFrom(getFromMailAddress(sender));
-		container.setReplyTo(sender.getMail());
+		container.setRecipient(shareRecipient);
+		container.setFrom(getFromMailAddress(shareOwner));
+		container.setReplyTo(shareOwner.getMail());
 
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, container,
 				input.getPersonalMessage(), getSupportedType(), ctx);
@@ -112,8 +112,8 @@ public class NewSharingEmailBuilder extends EmailBuilder{
 	@Override
 	public Context getContextForFakeBuild(Language language) {
 		Context ctx = new Context(Language.toLocale(language));
-		ctx.setVariable("sender", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
-		ctx.setVariable("recipient", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
+		ctx.setVariable("shareOwner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
+		ctx.setVariable("shareRecipient", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
 		ctx.setVariable("customSubject", "Some personal subject");
 
 		ctx.setVariable("document", new Document("a-shared-file.txt"));

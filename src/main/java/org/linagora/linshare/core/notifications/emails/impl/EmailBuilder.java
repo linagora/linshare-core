@@ -239,6 +239,8 @@ public abstract class EmailBuilder  implements IEmailBuilder {
 			message = "[NoSuchPropertyException]";
 		} else if (e.getClass().getSimpleName().equals("TemplateProcessingException")) {
 			message = "[TemplateProcessingException]";
+		} else {
+			message = "[" + e.getClass().getSimpleName() + "]" +e.getMessage();
 		}
 		return message;
 	}

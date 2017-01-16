@@ -80,7 +80,7 @@ import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.config.LinShareStringTemplateResolver;
 import org.linagora.linshare.core.notifications.context.EmailContext;
-import org.linagora.linshare.core.notifications.emails.impl.AnonymousDownloadEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.AnonymousShareEntryDownloadEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.EmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.NewGuestEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.NewSharingEmailBuilder;
@@ -420,7 +420,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		emailBuilders = Maps.newHashMap();
 		emailBuilders.put(MailContentType.NEW_SHARING, new NewSharingEmailBuilder());
 		emailBuilders.put(MailContentType.NEW_GUEST, new NewGuestEmailBuilder());
-		emailBuilders.put(MailContentType.ANONYMOUS_DOWNLOAD, new AnonymousDownloadEmailBuilder());
+		emailBuilders.put(MailContentType.ANONYMOUS_DOWNLOAD, new AnonymousShareEntryDownloadEmailBuilder());
 		initMailBuilders();
 	}
 

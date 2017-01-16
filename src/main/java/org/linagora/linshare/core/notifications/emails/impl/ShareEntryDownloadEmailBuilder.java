@@ -33,48 +33,53 @@
  */
 package org.linagora.linshare.core.notifications.emails.impl;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
-import org.linagora.linshare.core.notifications.context.NewGuestEmailContext;
+import org.linagora.linshare.core.notifications.context.ShareEntryDownloadEmailContext;
+import org.linagora.linshare.core.notifications.dto.Document;
 import org.linagora.linshare.core.notifications.dto.MailContact;
+import org.linagora.linshare.core.notifications.dto.Share;
 import org.thymeleaf.context.Context;
 
-public class NewGuestEmailBuilder extends EmailBuilder {
+import com.google.common.collect.Lists;
+
+public class ShareEntryDownloadEmailBuilder extends EmailBuilder {
 
 	@Override
 	public MailContentType getSupportedType() {
-		return MailContentType.NEW_GUEST;
+		return MailContentType.REGISTERED_DOWNLOAD;
 	}
 
 	@Override
 	public MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		NewGuestEmailContext emailCtx = (NewGuestEmailContext) context;
-		User creator = emailCtx.getCreator();
-		User guest = emailCtx.getGuest();
+		ShareEntryDownloadEmailContext emailCtx = (ShareEntryDownloadEmailContext) context;
+		ShareEntry shareEntry = emailCtx.getShareEntry();
 
-		MailConfig cfg = creator.getDomain().getCurrentMailConfiguration();
-		MailContainerWithRecipient container = new MailContainerWithRecipient(guest.getExternalMailLocale());
+		User shareRecipient = shareEntry.getRecipient();
+		User shareOwner = (User) shareEntry.getEntryOwner();
+		MailContainerWithRecipient container = new MailContainerWithRecipient(shareOwner.getExternalMailLocale());
+		MailConfig cfg = shareOwner.getDomain().getCurrentMailConfiguration();
 
 		Context ctx = new Context(container.getLocale());
-		ctx.setVariable("creator", new MailContact(creator));
-		ctx.setVariable("guest", new MailContact(guest));
+		ctx.setVariable("shareOwner", new MailContact(shareOwner));
+		ctx.setVariable("shareRecipient", new MailContact(shareRecipient));
+		ctx.setVariable("document", new Document(shareEntry.getDocumentEntry()));
+		ctx.setVariable("share", new Share(shareEntry));
 
 		// LinShare URL for the email recipient.
-		ctx.setVariable("linshareURL", getLinShareUrlForAUserRecipient(guest));
-		ctx.setVariable("prefixURL", "#/external/reset/");
-		ctx.setVariable("passwordTokenUuid", emailCtx.getResetPasswordTokenUuid());
-		// TODO FIXME
-		// linShareUrl + "#/external/reset/" +
-		// emailCtx.getResetPasswordTokenUuid());
+		ctx.setVariable("linshareURL", getLinShareUrlForAUserRecipient(shareOwner));
 
-		container.setRecipient(guest);
-		container.setReplyTo(creator);
-		container.setFrom(getFromMailAddress(guest));
+		container.setRecipient(shareOwner);
+		container.setFrom(getFromMailAddress(shareOwner));
+		container.setReplyTo(shareRecipient);
 
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, container, getSupportedType(),
 				ctx);
@@ -84,13 +89,20 @@ public class NewGuestEmailBuilder extends EmailBuilder {
 	@Override
 	public Context getContextForFakeBuild(Language language) {
 		Context ctx = new Context(Language.toLocale(language));
-		ctx.setVariable("creator", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
-		ctx.setVariable("guest", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
+		ctx.setVariable("shareOwner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
+		ctx.setVariable("shareRecipient", new MailContact("unknown@linshare.org"));
+		ctx.setVariable("document", new Document("a-shared-file.txt"));
+		ctx.setVariable("share", new Share("a-shared-file.txt", true));
 
 		// LinShare URL for the email recipient.
 		ctx.setVariable("linshareURL", "http://127.0.0.1/");
-		ctx.setVariable("prefixURL", "#/external/reset/");
-		ctx.setVariable("passwordTokenUuid", "cb1443d0-a34f-4d0b-92e4-c19d4eeb7fae");
+
+		List<Share> shares = Lists.newArrayList();
+		shares.add(new Share("a-shared-file.txt", true));
+		shares.add(new Share("second-shared-file.txt", false));
+		shares.add(new Share("third-shared-file.txt", true));
+		ctx.setVariable("shares", shares);
+		ctx.setVariable("sharesCount", shares.size());
 		return ctx;
 	}
 

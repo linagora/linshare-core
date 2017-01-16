@@ -57,7 +57,7 @@ import org.linagora.linshare.core.domain.objects.Recipient;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.notifications.context.AnonymousDownloadEmailContext;
+import org.linagora.linshare.core.notifications.context.AnonymousShareEntryDownloadEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.AnonymousShareEntryResourceAccessControl;
 import org.linagora.linshare.core.repository.FavouriteRepository;
@@ -212,7 +212,7 @@ public class AnonymousShareEntryServiceImpl extends
 		checkDownloadPermission(actor, null, AnonymousShareEntry.class,
 				BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN, shareEntry);
 		MailContainerWithRecipient mail = null;
-		AnonymousDownloadEmailContext context = new AnonymousDownloadEmailContext(shareEntry);
+		AnonymousShareEntryDownloadEmailContext context = new AnonymousShareEntryDownloadEmailContext(shareEntry);
 		if (shareEntry.getDownloaded() <= 0) {
 			mail = mailBuildingService.build(context);
 		} else {

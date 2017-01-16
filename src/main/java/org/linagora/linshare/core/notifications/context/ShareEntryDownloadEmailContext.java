@@ -35,32 +35,32 @@ package org.linagora.linshare.core.notifications.context;
 
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
-import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
 
-public class AnonymousDownloadEmailContext extends EmailContext {
+public class ShareEntryDownloadEmailContext extends EmailContext {
 
-	protected AnonymousShareEntry shareEntry;
+	protected ShareEntry shareEntry;
 
-	public AnonymousDownloadEmailContext(AnonymousShareEntry shareEntry) {
+	public ShareEntryDownloadEmailContext(ShareEntry shareEntry) {
 		super(shareEntry.getEntryOwner().getDomain(), true);
 		this.shareEntry = shareEntry;
 	}
 
 	@Override
 	public MailContentType getType() {
-		return MailContentType.ANONYMOUS_DOWNLOAD;
+		return MailContentType.REGISTERED_DOWNLOAD;
 	}
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.ANONYMOUS_DOWNLOAD;
+		return MailActivationType.REGISTERED_DOWNLOAD;
 	}
 
-	public AnonymousShareEntry getShareEntry() {
+	public ShareEntry getShareEntry() {
 		return shareEntry;
 	}
 
-	public void setShareEntry(AnonymousShareEntry shareEntry) {
+	public void setShareEntry(ShareEntry shareEntry) {
 		this.shareEntry = shareEntry;
 	}
 

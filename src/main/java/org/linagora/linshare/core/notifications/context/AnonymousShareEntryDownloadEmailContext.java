@@ -35,55 +35,33 @@ package org.linagora.linshare.core.notifications.context;
 
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
-import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 
-public class NewGuestEmailContext extends EmailContext {
+public class AnonymousShareEntryDownloadEmailContext extends EmailContext {
 
-	protected User creator;
+	protected AnonymousShareEntry shareEntry;
 
-	protected User guest;
-
-	protected String resetPasswordTokenUuid;
-
-	public NewGuestEmailContext(User creator, User guest, String resetPasswordTokenUuid) {
-		super(guest.getDomain(), false);
-		this.creator = creator;
-		this.guest = guest;
-		this.resetPasswordTokenUuid= resetPasswordTokenUuid;
+	public AnonymousShareEntryDownloadEmailContext(AnonymousShareEntry shareEntry) {
+		super(shareEntry.getEntryOwner().getDomain(), true);
+		this.shareEntry = shareEntry;
 	}
 
 	@Override
 	public MailContentType getType() {
-		return MailContentType.NEW_GUEST;
+		return MailContentType.ANONYMOUS_DOWNLOAD;
 	}
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.NEW_GUEST;
+		return MailActivationType.ANONYMOUS_DOWNLOAD;
 	}
 
-	public User getCreator() {
-		return creator;
+	public AnonymousShareEntry getShareEntry() {
+		return shareEntry;
 	}
 
-	public void setCreator(User creator) {
-		this.creator = creator;
-	}
-
-	public User getGuest() {
-		return guest;
-	}
-
-	public void setGuest(User guest) {
-		this.guest = guest;
-	}
-
-	public String getResetPasswordTokenUuid() {
-		return resetPasswordTokenUuid;
-	}
-
-	public void setResetPasswordTokenUuid(String resetPasswordTokenUuid) {
-		this.resetPasswordTokenUuid = resetPasswordTokenUuid;
+	public void setShareEntry(AnonymousShareEntry shareEntry) {
+		this.shareEntry = shareEntry;
 	}
 
 }

@@ -43,7 +43,7 @@ import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.notifications.context.AnonymousDownloadEmailContext;
+import org.linagora.linshare.core.notifications.context.AnonymousShareEntryDownloadEmailContext;
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.dto.Document;
 import org.linagora.linshare.core.notifications.dto.MailContact;
@@ -52,7 +52,7 @@ import org.thymeleaf.context.Context;
 
 import com.google.common.collect.Lists;
 
-public class AnonymousDownloadEmailBuilder extends EmailBuilder {
+public class AnonymousShareEntryDownloadEmailBuilder extends EmailBuilder {
 
 	@Override
 	public MailContentType getSupportedType() {
@@ -61,23 +61,23 @@ public class AnonymousDownloadEmailBuilder extends EmailBuilder {
 
 	@Override
 	public MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		AnonymousDownloadEmailContext emailCtx = (AnonymousDownloadEmailContext) context;
+		AnonymousShareEntryDownloadEmailContext emailCtx = (AnonymousShareEntryDownloadEmailContext) context;
 		AnonymousShareEntry shareEntry = emailCtx.getShareEntry();
 
-		User sender = (User) shareEntry.getEntryOwner();
+		User shareOwner = (User) shareEntry.getEntryOwner();
 		String email = shareEntry.getAnonymousUrl().getContact().getMail();
 
-		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
-		MailContainerWithRecipient container = new MailContainerWithRecipient(sender.getExternalMailLocale());
+		MailConfig cfg = shareOwner.getDomain().getCurrentMailConfiguration();
+		MailContainerWithRecipient container = new MailContainerWithRecipient(shareOwner.getExternalMailLocale());
 
 		Context ctx = new Context(container.getLocale());
-		ctx.setVariable("sender", new MailContact(sender));
-		ctx.setVariable("recipient", new MailContact(shareEntry.getAnonymousUrl().getContact()));
+		ctx.setVariable("shareOwner", new MailContact(shareOwner));
+		ctx.setVariable("shareRecipient", new MailContact(shareEntry.getAnonymousUrl().getContact()));
 		ctx.setVariable("document", new Document(shareEntry.getDocumentEntry()));
 		ctx.setVariable("share", new Share(shareEntry));
 
 		// LinShare URL for the email recipient.
-		ctx.setVariable("linshareURL", getLinShareUrlForAUserRecipient(sender));
+		ctx.setVariable("linshareURL", getLinShareUrlForAUserRecipient(shareOwner));
 
 		Set<AnonymousShareEntry> anonymousShareEntries = shareEntry.getAnonymousUrl().getAnonymousShareEntries();
 		List<Share> shares = Lists.newArrayList();
@@ -87,8 +87,8 @@ public class AnonymousDownloadEmailBuilder extends EmailBuilder {
 		ctx.setVariable("shares", shares);
 		ctx.setVariable("sharesCount", shares.size());
 
-		container.setRecipient(sender.getMail());
-		container.setFrom(getFromMailAddress(sender));
+		container.setRecipient(shareOwner.getMail());
+		container.setFrom(getFromMailAddress(shareOwner));
 		container.setReplyTo(email);
 
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, container, getSupportedType(),
@@ -99,8 +99,8 @@ public class AnonymousDownloadEmailBuilder extends EmailBuilder {
 	@Override
 	public Context getContextForFakeBuild(Language language) {
 		Context ctx = new Context(Language.toLocale(language));
-		ctx.setVariable("sender", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
-		ctx.setVariable("recipient", new MailContact("unknown@linshare.org"));
+		ctx.setVariable("shareOwner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
+		ctx.setVariable("shareRecipient", new MailContact("unknown@linshare.org"));
 		ctx.setVariable("document", new Document("a-shared-file.txt"));
 		ctx.setVariable("share", new Share("a-shared-file.txt", true));
 

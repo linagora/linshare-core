@@ -46,7 +46,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainer;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.notifications.context.AnonymousDownloadEmailContext;
+import org.linagora.linshare.core.notifications.context.AnonymousShareEntryDownloadEmailContext;
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.NewGuestEmailContext;
 import org.linagora.linshare.core.notifications.context.NewSharingEmailContext;
@@ -155,7 +155,7 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		for (Language lang : Language.values()) {
 			john.setExternalMailLocale(lang);
 			MailContainerWithRecipient mail = mailBuildingService
-					.build(new AnonymousDownloadEmailContext(anonymousShareEntry));
+					.build(new AnonymousShareEntryDownloadEmailContext(anonymousShareEntry));
 			testMailGenerate(mail);
 			sendMail(mail);
 		}
