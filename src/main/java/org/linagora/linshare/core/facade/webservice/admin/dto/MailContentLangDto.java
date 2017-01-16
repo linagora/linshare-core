@@ -52,6 +52,9 @@ public class MailContentLangDto {
 	@ApiModelProperty(value = "Language")
 	private Language language;
 
+	@ApiModelProperty(value = "Readonly")
+	private boolean readonly;
+
 	@ApiModelProperty(value = "MailContent")
 	private String mailContent;
 
@@ -70,6 +73,7 @@ public class MailContentLangDto {
 	public MailContentLangDto(MailContentLang contentLang) {
 		mailConfig = contentLang.getMailConfig().getUuid();
 		language = Language.fromInt(contentLang.getLanguage());
+		readonly = contentLang.isReadonly();
 		uuid = contentLang.getUuid();
 		mailContent = contentLang.getMailContent().getUuid();
 		mailContentType = MailContentType.fromInt(
@@ -99,6 +103,14 @@ public class MailContentLangDto {
 
 	public void setLanguage(Language language) {
 		this.language = language;
+	}
+
+	public boolean isReadonly() {
+		return readonly;
+	}
+
+	public void setReadonly(boolean readonly) {
+		this.readonly = readonly;
 	}
 
 	public String getMailContent() {

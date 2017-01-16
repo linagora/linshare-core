@@ -44,6 +44,8 @@ public class MailContentLang implements Cloneable {
 
 	private int language;
 
+	private boolean readonly;
+
 	private MailContent mailContent;
 
 	private int mailContentType;
@@ -60,6 +62,7 @@ public class MailContentLang implements Cloneable {
 		this.mailContent = copied.mailContent;
 		this.mailContentType = copied.mailContentType;
 		this.uuid = UUID.randomUUID().toString();
+		this.readonly = false;
 	}
 
 	/*
@@ -84,6 +87,14 @@ public class MailContentLang implements Cloneable {
 
 	public int getLanguage() {
 		return language;
+	}
+
+	public boolean isReadonly() {
+		return readonly;
+	}
+
+	public void setReadonly(boolean readonly) {
+		this.readonly = readonly;
 	}
 
 	public void setMailContentType(int value) {

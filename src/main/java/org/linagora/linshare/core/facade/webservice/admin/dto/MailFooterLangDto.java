@@ -51,6 +51,9 @@ public class MailFooterLangDto {
 	@ApiModelProperty(value = "Language")
 	private Language language;
 
+	@ApiModelProperty(value = "Readonly")
+	private boolean readonly;
+
 	@ApiModelProperty(value = "MailFooter")
 	private String mailFooter;
 
@@ -66,6 +69,7 @@ public class MailFooterLangDto {
 	public MailFooterLangDto(MailFooterLang footerLang) {
 		mailConfig = footerLang.getMailConfig().getUuid();
 		language = Language.fromInt(footerLang.getLanguage());
+		readonly = footerLang.isReadonly();
 		uuid = footerLang.getUuid();
 		mailFooter = footerLang.getMailFooter().getUuid();
 		setMailFooterName(footerLang.getMailFooter().getDescription());
@@ -85,6 +89,14 @@ public class MailFooterLangDto {
 
 	public void setLanguage(Language language) {
 		this.language = language;
+	}
+
+	public boolean isReadonly() {
+		return readonly;
+	}
+
+	public void setReadonly(boolean readonly) {
+		this.readonly = readonly;
 	}
 
 	public String getMailFooter() {

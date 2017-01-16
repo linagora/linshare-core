@@ -90,7 +90,7 @@ public class MailConfigBusinessServiceImpl implements MailConfigBusinessService 
 
 		// copy root domain's mailconfig
 		cfg.setMailLayoutHtml(rootCfg.getMailLayoutHtml());
-		cfg.setMailLayoutText(rootCfg.getMailLayoutText());
+		cfg.setReadonly(false);
 
 		for (MailContentLang mcl : rootMcl) {
 			MailContentLang tmp = new MailContentLang(mcl);

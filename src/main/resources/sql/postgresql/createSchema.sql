@@ -331,15 +331,15 @@ CREATE TABLE mail_notification (
   uuid                    varchar(255) NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE mail_config (
-  id                   int8 NOT NULL,
-  mail_layout_html_id int8 NOT NULL,
-  domain_abstract_id  int8 NOT NULL,
-  name                varchar(255) NOT NULL,
-  visible             bool NOT NULL,
-  mail_layout_text_id int8 NOT NULL,
-  uuid                varchar(255) NOT NULL,
-  creation_date       timestamp(6) NOT NULL,
-  modification_date   timestamp(6) NOT NULL,
+  id                  int8 NOT NULL,
+  mail_layout_id     int8 NOT NULL,
+  domain_abstract_id int8 NOT NULL,
+  name               varchar(255) NOT NULL,
+  visible            bool NOT NULL,
+  uuid               varchar(255) NOT NULL,
+  creation_date      timestamp(6) NOT NULL,
+  modification_date  timestamp(6) NOT NULL,
+  readonly           bool DEFAULT 'false' NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE mail_layout (
   id                  int8 NOT NULL,
@@ -350,7 +350,6 @@ CREATE TABLE mail_layout (
   creation_date      timestamp(6) NOT NULL,
   modification_date  timestamp(6) NOT NULL,
   uuid               varchar(255) NOT NULL,
-  plaintext          bool NOT NULL,
   readonly           bool DEFAULT 'false' NOT NULL,
   messages_french    text,
   messages_english   text,
@@ -364,7 +363,6 @@ CREATE TABLE mail_footer (
   creation_date      timestamp(6) NOT NULL,
   modification_date  timestamp(6) NOT NULL,
   uuid               varchar(255) NOT NULL,
-  plaintext          bool NOT NULL,
   readonly           bool DEFAULT 'false' NOT NULL,
   messages_french    text,
   messages_english   text,
@@ -375,6 +373,7 @@ CREATE TABLE mail_footer_lang (
   mail_footer_id int8 NOT NULL,
   language       int4 NOT NULL,
   uuid           varchar(255) NOT NULL,
+  readonly       bool DEFAULT 'false' NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE mail_content (
   id                  int8 NOT NULL,
@@ -385,7 +384,6 @@ CREATE TABLE mail_content (
   subject            text NOT NULL,
   body               text NOT NULL,
   uuid               varchar(255) NOT NULL,
-  plaintext          bool NOT NULL,
   creation_date      timestamp(6) NOT NULL,
   modification_date  timestamp(6) NOT NULL,
   readonly           bool DEFAULT 'false' NOT NULL,
@@ -399,6 +397,7 @@ CREATE TABLE mail_content_lang (
   mail_config_id    int8 NOT NULL,
   mail_content_type int4 NOT NULL,
   uuid              varchar(255) NOT NULL,
+  readonly          bool DEFAULT 'false' NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE upload_request (
   id                               int8 NOT NULL,
@@ -716,6 +715,8 @@ CREATE TABLE quota (
   default_max_file_size_override bool,
   default_account_quota          int8,
   default_account_quota_override bool,
+  account_quota                  int8,
+  account_quota_override         bool,
   creation_date                  timestamp(6) NOT NULL,
   modification_date              timestamp(6) NOT NULL,
   batch_modification_date        timestamp(6) NOT NULL,
@@ -901,12 +902,8 @@ ALTER TABLE mail_footer ADD CONSTRAINT FKmail_foote767112 FOREIGN KEY (domain_ab
 ALTER TABLE mail_footer_lang ADD CONSTRAINT FKmail_foote801249 FOREIGN KEY (mail_footer_id) REFERENCES mail_footer (id);
 ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs160138 FOREIGN KEY (mailconfig_id) REFERENCES mail_config (id);
 ALTER TABLE mail_config ADD CONSTRAINT FKmail_confi697783 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
-ALTER TABLE mail_footer_lang ADD CONSTRAINT FKmail_foote321102 FOREIGN KEY (mail_config_id) REFERENCES mail_config (id);
 ALTER TABLE mail_content ADD CONSTRAINT FKmail_conte385227 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
-ALTER TABLE mail_content_lang ADD CONSTRAINT FKmail_conte910199 FOREIGN KEY (mail_config_id) REFERENCES mail_config (id);
 ALTER TABLE mail_content_lang ADD CONSTRAINT FKmail_conte33952 FOREIGN KEY (mail_content_id) REFERENCES mail_content (id);
-ALTER TABLE mail_config ADD CONSTRAINT FKmail_confi541299 FOREIGN KEY (mail_layout_html_id) REFERENCES mail_layout (id);
-ALTER TABLE mail_config ADD CONSTRAINT FKmail_confi612314 FOREIGN KEY (mail_layout_text_id) REFERENCES mail_layout (id);
 ALTER TABLE upload_request_url ADD CONSTRAINT FKupload_req833645 FOREIGN KEY (upload_request_id) REFERENCES upload_request (id);
 ALTER TABLE upload_request ADD CONSTRAINT FKupload_req916400 FOREIGN KEY (upload_request_group_id) REFERENCES upload_request_group (id);
 ALTER TABLE upload_request_url ADD CONSTRAINT FKupload_req601912 FOREIGN KEY (contact_id) REFERENCES contact (id);
@@ -962,3 +959,6 @@ ALTER TABLE statistic ADD CONSTRAINT FKstatistic57774 FOREIGN KEY (account_id) R
 ALTER TABLE statistic ADD CONSTRAINT FKstatistic343885 FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);
 ALTER TABLE statistic ADD CONSTRAINT FKstatistic161509 FOREIGN KEY (domain_parent_id) REFERENCES domain_abstract (id);
 ALTER TABLE quota ADD CONSTRAINT domain FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);
+ALTER TABLE mail_footer_lang ADD CONSTRAINT mailconfig_mailfooterlang FOREIGN KEY (mail_config_id) REFERENCES mail_config (id);
+ALTER TABLE mail_content_lang ADD CONSTRAINT FKmail_conte910199 FOREIGN KEY (mail_config_id) REFERENCES mail_config (id);
+ALTER TABLE mail_config ADD CONSTRAINT FKmail_confi688067 FOREIGN KEY (mail_layout_id) REFERENCES mail_layout (id);

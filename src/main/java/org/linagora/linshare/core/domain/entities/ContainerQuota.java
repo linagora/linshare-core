@@ -51,12 +51,21 @@ public class ContainerQuota extends Quota {
 
 	protected DomainQuota domainQuota;
 
+	protected Long maxFileSize;
+
+	protected Boolean maxFileSizeOverride;
+
+	protected Long accountQuota;
+
+	protected Boolean accountQuotaOverride;
+
 	public ContainerQuota() {
 		super();
 	}
 
 	/**
 	 * Initialization of a new container.
+	 * 
 	 * @param domain
 	 * @param parentDomain
 	 * @param domainQuota
@@ -64,9 +73,7 @@ public class ContainerQuota extends Quota {
 	 */
 	public ContainerQuota(AbstractDomain domain, AbstractDomain parentDomain, DomainQuota domainQuota,
 			ContainerQuota parentContainerQuota) {
-		super(domain, parentDomain,
-				parentContainerQuota.getDefaultQuota(),
-				parentContainerQuota.getQuotaWarning());
+		super(domain, parentDomain, parentContainerQuota.getDefaultQuota(), parentContainerQuota.getQuotaWarning());
 
 		// Link to the parent
 		this.domainQuota = domainQuota;
@@ -85,6 +92,11 @@ public class ContainerQuota extends Quota {
 		if (this.containerQuotaType.equals(ContainerQuotaType.WORK_GROUP)) {
 			this.shared = true;
 		}
+
+		this.maxFileSize = parentContainerQuota.getMaxFileSize();
+		this.maxFileSizeOverride = parentContainerQuota.getMaxFileSizeOverride();
+		this.accountQuota = parentContainerQuota.getAccountQuota();
+		this.accountQuotaOverride = parentContainerQuota.getAccountQuotaOverride();
 	}
 
 	/**
@@ -114,6 +126,10 @@ public class ContainerQuota extends Quota {
 		if (this.containerQuotaType.equals(ContainerQuotaType.WORK_GROUP)) {
 			this.shared = true;
 		}
+		this.maxFileSize = fileSizeMax;
+		this.maxFileSizeOverride = false;
+		this.accountQuota = quota;
+		this.accountQuotaOverride = false;
 	}
 
 	public ContainerQuotaType getContainerQuotaType() {
@@ -176,6 +192,38 @@ public class ContainerQuota extends Quota {
 
 	public void setShared(Boolean shared) {
 		this.shared = shared;
+	}
+
+	public Long getMaxFileSize() {
+		return maxFileSize;
+	}
+
+	public void setMaxFileSize(Long maxFileSize) {
+		this.maxFileSize = maxFileSize;
+	}
+
+	public Boolean getMaxFileSizeOverride() {
+		return maxFileSizeOverride;
+	}
+
+	public void setMaxFileSizeOverride(Boolean maxFileSizeOverride) {
+		this.maxFileSizeOverride = maxFileSizeOverride;
+	}
+
+	public Long getAccountQuota() {
+		return accountQuota;
+	}
+
+	public void setAccountQuota(Long accountQuota) {
+		this.accountQuota = accountQuota;
+	}
+
+	public Boolean getAccountQuotaOverride() {
+		return accountQuotaOverride;
+	}
+
+	public void setAccountQuotaOverride(Boolean accountQuotaOverride) {
+		this.accountQuotaOverride = accountQuotaOverride;
 	}
 
 	public boolean isWorkgroup() {

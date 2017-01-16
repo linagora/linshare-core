@@ -112,8 +112,7 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 		User actor = checkAuthentication(Role.ADMIN);
 		MailConfig config = findConfig(actor, dto.getUuid());
 		transform(config, dto);
-		config.setMailLayoutHtml(findLayout(actor, dto.getMailLayoutHtml()));
-		config.setMailLayoutText(findLayout(actor, dto.getMailLayoutText()));
+		config.setMailLayoutHtml(findLayout(actor, dto.getMailLayout()));
 		return new MailConfigDto(mailConfigService.updateConfig(actor, config));
 	}
 

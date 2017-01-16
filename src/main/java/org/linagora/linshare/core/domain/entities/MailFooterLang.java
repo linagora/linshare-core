@@ -41,6 +41,8 @@ public class MailFooterLang {
 
 	private int language;
 
+	private boolean readonly;
+
 	private MailFooter mailFooter;
 
 	private String uuid;
@@ -54,6 +56,7 @@ public class MailFooterLang {
 		this.language = copied.language;
 		this.mailFooter = copied.mailFooter;
 		this.uuid = UUID.randomUUID().toString();
+		this.readonly = false;
 	}
 
 	public long getId() {
@@ -70,6 +73,14 @@ public class MailFooterLang {
 
 	public void setLanguage(int language) {
 		this.language = language;
+	}
+
+	public boolean isReadonly() {
+		return readonly;
+	}
+
+	public void setReadonly(boolean readonly) {
+		this.readonly = readonly;
 	}
 
 	public MailFooter getMailFooter() {

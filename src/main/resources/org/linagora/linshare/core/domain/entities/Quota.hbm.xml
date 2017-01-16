@@ -59,6 +59,14 @@
 				<column name="shared" not-null="true" default="false" />
 			</property>
 			<many-to-one name="domainQuota" column="quota_domain_id" class="org.linagora.linshare.core.domain.entities.DomainQuota"/>
+			<property name="accountQuota" column="account_quota"/>
+			<property name="accountQuotaOverride" type="boolean">
+				<column name="account_quota_override" not-null="false"/>
+			</property>
+			<property name="maxFileSize" column="max_file_size" />
+			<property name="maxFileSizeOverride" type="boolean">
+				<column name="max_file_size_override" not-null="true" default="false" />
+			</property>
 		</subclass>
 
 	</class>

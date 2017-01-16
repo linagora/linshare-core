@@ -142,7 +142,6 @@ public class MailConfigServiceImplTest extends AbstractTransactionalJUnit4Spring
 		}
 
 		Assert.assertNotNull(current.getMailLayoutHtml());
-		Assert.assertNotNull(current.getMailLayoutText());
 	}
 
 	@Test

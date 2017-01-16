@@ -6,7 +6,7 @@
 			<generator class="native">
 			</generator>
 		</id>
-		<property name="description" column="description" type="string" length="255" not-null="true" lazy="false"/>
+		<property name="description" column="description" type="text" not-null="false" />
 		<many-to-one name="domain" cascade="lock" column="domain_abstract_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" not-null="true" lazy="no-proxy" insert="false" update="false">
 		</many-to-one>
 		<property name="visible" column="visible" type="boolean" not-null="true" lazy="false"/>
@@ -16,7 +16,6 @@
 		<property name="creationDate" column="creation_date" type="timestamp" not-null="true" lazy="false"/>
 		<property name="modificationDate" column="modification_date" type="timestamp" not-null="true" lazy="false"/>
 		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false"/>
-		<property name="plaintext" column="plaintext" type="boolean" not-null="true" lazy="false"/>
 		<property name="readonly" column="readonly" type="boolean" not-null="true" lazy="false"/>
 		<property name="messagesFrench" column="messages_french" type="text" not-null="false" lazy="false"/>
 		<property name="messagesEnglish" column="messages_english" type="text" not-null="false" lazy="false"/>

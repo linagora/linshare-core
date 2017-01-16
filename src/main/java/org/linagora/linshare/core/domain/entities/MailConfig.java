@@ -57,7 +57,7 @@ public class MailConfig implements Cloneable {
 
 	private boolean visible;
 
-	private MailLayout mailLayoutText;
+	private boolean readonly;
 
 	private Date creationDate;
 
@@ -112,16 +112,16 @@ public class MailConfig implements Cloneable {
 		this.visible = visible;
 	}
 
-	public MailLayout getMailLayoutText() {
-		return mailLayoutText;
-	}
-
-	public void setMailLayoutText(MailLayout mailLayoutText) {
-		this.mailLayoutText = mailLayoutText;
-	}
-
 	public Date getCreationDate() {
 		return creationDate;
+	}
+
+	public boolean isReadonly() {
+		return readonly;
+	}
+
+	public void setReadonly(boolean readonly) {
+		this.readonly = readonly;
 	}
 
 	public void setCreationDate(Date creationDate) {
@@ -163,25 +163,24 @@ public class MailConfig implements Cloneable {
 	@Override
 	public MailConfig clone() throws CloneNotSupportedException {
 		// Every properties are clones, except domain.
-		MailConfig func = null;
+		MailConfig mc = null;
 		try {
-			func = (MailConfig) super.clone();
-			func.id = 0;
-			func.mailLayoutHtml = mailLayoutHtml.clone();
-			func.mailLayoutText = mailLayoutText.clone();
-			func.mailFooters = Maps.newHashMap();
+			mc = (MailConfig) super.clone();
+			mc.id = 0;
+			mc.mailLayoutHtml = mailLayoutHtml.clone();
+			mc.mailFooters = Maps.newHashMap();
 			Set<Entry<Integer,MailFooterLang>> entrySet = mailFooters.entrySet();
 			for (Entry<Integer, MailFooterLang> entry : entrySet) {
-				func.mailFooters.put(entry.getKey(), entry.getValue().clone());
+				mc.mailFooters.put(entry.getKey(), entry.getValue().clone());
 			}
-			func.mailContentLangs = Sets.newHashSet();
+			mc.mailContentLangs = Sets.newHashSet();
 			for (MailContentLang mailContentLang : mailContentLangs) {
-				func.mailContentLangs.add(mailContentLang.clone());
+				mc.mailContentLangs.add(mailContentLang.clone());
 			}
 		} catch (CloneNotSupportedException cnse) {
 			cnse.printStackTrace(System.err);
 		}
-		return func;
+		return mc;
 }
 
 	/*

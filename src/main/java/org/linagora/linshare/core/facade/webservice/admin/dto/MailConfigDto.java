@@ -66,17 +66,17 @@ public class MailConfigDto {
 	@ApiModelProperty(value = "Visible")
 	private boolean visible;
 
+	@ApiModelProperty(value = "Readonly")
+	private boolean readonly;
+
 	@ApiModelProperty(value = "CreationDate")
 	private Date creationDate;
 
 	@ApiModelProperty(value = "ModificationDate")
 	private Date modificationDate;
 
-	@ApiModelProperty(value = "MailLayoutHtml")
-	private String mailLayoutHtml;
-
-	@ApiModelProperty(value = "MailLayoutText")
-	private String mailLayoutText;
+	@ApiModelProperty(value = "MailLayout")
+	private String mailLayout;
 
 	@ApiModelProperty(value = "MailFooters")
 	private Map<Language, MailFooterLangDto> mailFooterLangs = Maps.newHashMap();
@@ -93,10 +93,10 @@ public class MailConfigDto {
 		this.domain = config.getDomain().getUuid();
 		this.name = config.getName();
 		this.visible = config.isVisible();
+		this.readonly = config.isReadonly();
 		this.creationDate = new Date(config.getCreationDate().getTime());
 		this.modificationDate = new Date(config.getModificationDate().getTime());
-		this.mailLayoutHtml = config.getMailLayoutHtml().getUuid();
-		this.mailLayoutText = config.getMailLayoutText().getUuid();
+		this.mailLayout = config.getMailLayoutHtml().getUuid();
 
 		Set<MailContentLang> mcls = config.getMailContentLangs();
 		Map<Integer, MailFooterLang> mfls = config.getMailFooters();
@@ -158,20 +158,12 @@ public class MailConfigDto {
 		this.modificationDate = modificationDate;
 	}
 
-	public String getMailLayoutHtml() {
-		return mailLayoutHtml;
+	public String getMailLayout() {
+		return mailLayout;
 	}
 
-	public void setMailLayoutHtml(String mailLayoutHtml) {
-		this.mailLayoutHtml = mailLayoutHtml;
-	}
-
-	public String getMailLayoutText() {
-		return mailLayoutText;
-	}
-
-	public void setMailLayoutText(String mailLayoutText) {
-		this.mailLayoutText = mailLayoutText;
+	public void setMailLayout(String mailLayout) {
+		this.mailLayout = mailLayout;
 	}
 
 	public Map<Language, MailFooterLangDto> getMailFooterLangs() {
