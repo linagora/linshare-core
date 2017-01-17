@@ -56,12 +56,15 @@ import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.dto.ContextMetadata;
 
 public interface MailBuildingService {
 
 	MailContainerWithRecipient build(EmailContext context) throws BusinessException;
 
 	MailContainerWithRecipient fakeBuild(MailContentType type, MailConfig cfg, Language language) throws BusinessException;
+
+	ContextMetadata getAvailableVariables(MailContentType type);
 
 	MailContainerWithRecipient buildRegisteredDownload(ShareEntry shareEntry)
 			throws BusinessException;

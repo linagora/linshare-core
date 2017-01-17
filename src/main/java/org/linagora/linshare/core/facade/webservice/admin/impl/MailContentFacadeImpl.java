@@ -33,9 +33,15 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+
+import org.apache.commons.io.IOUtils;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -49,6 +55,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.MailContentFacade;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailContainerDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailContentDto;
+import org.linagora.linshare.core.notifications.dto.ContextMetadata;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
@@ -161,6 +168,34 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 		return new MailContainerDto(build, type);
 	}
 
+	@Override
+	public Response fakeBuildHtml(String mailContentUuid, String language, String mailConfigUuid, boolean subject) {
+		MailContainerDto fakeBuild = fakeBuild(mailContentUuid, language, mailConfigUuid);
+		InputStream stream = null;
+		try {
+			if (subject) {
+				stream = IOUtils.toInputStream(fakeBuild.getSubject(), "UTF-8");
+			} else {
+				stream = IOUtils.toInputStream(fakeBuild.getContent(), "UTF-8");
+			}
+		} catch (IOException e) {
+			logger.error(e.getMessage(), e);
+		}
+		ResponseBuilder response = Response.ok(stream);
+		response.header("Content-Type", "text/html; charset=UTF-8");
+		response.header("Content-Transfer-Encoding", "binary");
+		return response.build();
+	}
+
+	@Override
+	public ContextMetadata getAvailableVariables(String mailContentUuid) {
+		User actor = checkAuthentication(Role.ADMIN);
+		MailContent content = findContent(actor, mailContentUuid);
+		MailContentType type = content.getType();
+		ContextMetadata metadata = mailBuildingService.getAvailableVariables(type);
+		return metadata;
+	}
+
 	private MailContent toFakeObject(MailContentDto dto) {
 		MailContent content = new MailContent();
 		content.setSubject(dto.getSubject());
@@ -224,4 +259,5 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 	private boolean getOverrideReadonly() {
 		return mailConfigService.isTemplatingOverrideReadonlyMode();
 	}
+
 }

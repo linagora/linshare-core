@@ -39,6 +39,7 @@ import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.dto.ContextMetadata;
 
 public interface IEmailBuilder {
 
@@ -47,4 +48,6 @@ public interface IEmailBuilder {
 	MailContainerWithRecipient build(EmailContext context) throws BusinessException;
 
 	MailContainerWithRecipient fakeBuild(MailConfig cfg, Language language) throws BusinessException;
+
+	ContextMetadata getAvailableVariables();
 }

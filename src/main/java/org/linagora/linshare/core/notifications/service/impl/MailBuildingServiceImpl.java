@@ -80,6 +80,7 @@ import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.config.LinShareStringTemplateResolver;
 import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.dto.ContextMetadata;
 import org.linagora.linshare.core.notifications.emails.impl.AnonymousShareEntryDownloadEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.EmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.NewGuestEmailBuilder;
@@ -456,6 +457,13 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		EmailBuilder builder = emailBuilders.get(type);
 		cfg.findContent(language, type);
 		return builder.fakeBuild(cfg, language);
+	}
+
+	@Override
+	public ContextMetadata getAvailableVariables(MailContentType type) {
+		Validate.notNull(type, "MailContentType can't be null");
+		EmailBuilder builder = emailBuilders.get(type);
+		return builder.getAvailableVariables();
 	}
 
 	private String formatCreationDate(Account account, Entry entry) {

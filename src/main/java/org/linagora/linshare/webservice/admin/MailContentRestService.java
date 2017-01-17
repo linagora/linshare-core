@@ -35,14 +35,16 @@ package org.linagora.linshare.webservice.admin;
 
 import java.util.Set;
 
+import javax.ws.rs.core.Response;
+
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailContainerDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailContentDto;
+import org.linagora.linshare.core.notifications.dto.ContextMetadata;
 
 public interface MailContentRestService {
 
-	Set<MailContentDto> findAll(String domain, boolean onlyCurrentDomain)
-			throws BusinessException;
+	Set<MailContentDto> findAll(String domain, boolean onlyCurrentDomain) throws BusinessException;
 
 	MailContentDto find(String uuid) throws BusinessException;
 
@@ -55,6 +57,10 @@ public interface MailContentRestService {
 	MailContentDto delete(MailContentDto dto) throws BusinessException;
 
 	MailContainerDto fakeBuild(String mailContentUuid, String language, String mailConfigUuid);
+
+	Response fakeBuildHtml(String mailContentUuid, String language, String mailConfigUuid, boolean subject);
+
+	ContextMetadata getAvailableVariables(String mailContentUuid);
 
 	MailContainerDto fakeBuild(MailContentDto dto, String language, String mailConfigUuid);
 }

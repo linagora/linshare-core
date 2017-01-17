@@ -47,11 +47,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.MailContentFacade;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailContainerDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailContentDto;
+import org.linagora.linshare.core.notifications.dto.ContextMetadata;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.MailContentRestService;
 
@@ -169,4 +171,34 @@ public class MailContentRestServiceImpl extends WebserviceBase implements
 				@QueryParam(value = "mailConfig") String mailConfigUuid) {
 		return mailContentFacade.fakeBuild(dto, language, mailConfigUuid);
 	}
+
+	@Path("/{uuid}/build/html")
+	@GET
+	@ApiOperation(value = "build a mail content and return a html file.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Override
+	public Response fakeBuildHtml(
+			@ApiParam(value = "Mail content's uuid.", required = true)
+				@PathParam("uuid") String mailContentUuid,
+			@ApiParam(value = "Language to use for the build")
+				@QueryParam(value = "language") String language,
+			@ApiParam(value = "Mail config's uuid.")
+				@QueryParam(value = "mailConfig") String mailConfigUuid,
+			@ApiParam(value = "build subject instead body")
+				@QueryParam(value = "subject") @DefaultValue("false") boolean subject
+			) {
+		return mailContentFacade.fakeBuildHtml(mailContentUuid, language, mailConfigUuid, subject);
+	}
+
+	@Path("/{uuid}/vars")
+	@GET
+	@ApiOperation(value = "Return available variables and their types in the context of the current mail content.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@Override
+	public ContextMetadata getAvailableVariables(
+			@ApiParam(value = "Mail content's uuid.", required = true)
+				@PathParam("uuid") String mailContentUuid) {
+		return mailContentFacade.getAvailableVariables(mailContentUuid);
+	}
+
 }

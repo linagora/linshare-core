@@ -35,9 +35,12 @@ package org.linagora.linshare.core.facade.webservice.admin;
 
 import java.util.Set;
 
+import javax.ws.rs.core.Response;
+
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailContainerDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailContentDto;
+import org.linagora.linshare.core.notifications.dto.ContextMetadata;
 
 public interface MailContentFacade {
 
@@ -54,4 +57,8 @@ public interface MailContentFacade {
 	MailContainerDto fakeBuild(String mailContentUuid, String language, String mailConfigUuid);
 
 	MailContainerDto fakeBuild(MailContentDto dto, String language, String mailConfigUuid);
+
+	Response fakeBuildHtml(String mailContentUuid, String language, String mailConfigUuid, boolean subject);
+
+	ContextMetadata getAvailableVariables(String mailContentUuid);
 }

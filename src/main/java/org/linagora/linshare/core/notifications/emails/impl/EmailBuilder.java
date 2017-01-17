@@ -33,7 +33,11 @@
  */
 package org.linagora.linshare.core.notifications.emails.impl;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.MailActivationBusinessService;
@@ -48,6 +52,12 @@ import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.dto.Attribute;
+import org.linagora.linshare.core.notifications.dto.ContextMetadata;
+import org.linagora.linshare.core.notifications.dto.Document;
+import org.linagora.linshare.core.notifications.dto.MailContact;
+import org.linagora.linshare.core.notifications.dto.Share;
+import org.linagora.linshare.core.notifications.dto.Variable;
 import org.linagora.linshare.core.notifications.emails.IEmailBuilder;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.slf4j.Logger;
@@ -58,9 +68,10 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.exceptions.TemplateInputException;
 import org.thymeleaf.templatemode.TemplateMode;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-public abstract class EmailBuilder  implements IEmailBuilder {
+public abstract class EmailBuilder implements IEmailBuilder {
 
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -240,7 +251,7 @@ public abstract class EmailBuilder  implements IEmailBuilder {
 		} else if (e.getClass().getSimpleName().equals("TemplateProcessingException")) {
 			message = "[TemplateProcessingException]";
 		} else {
-			message = "[" + e.getClass().getSimpleName() + "]" +e.getMessage();
+			message = "[" + e.getClass().getSimpleName() + "]" + e.getMessage();
 		}
 		return message;
 	}
@@ -265,6 +276,58 @@ public abstract class EmailBuilder  implements IEmailBuilder {
 			return BusinessErrorCode.TEMPLATE_PARSING_ERROR_TEMPLATE_PROCESSING_EXCEPTION;
 		}
 		return BusinessErrorCode.TEMPLATE_PARSING_ERROR;
+	}
+
+	@Override
+	public ContextMetadata getAvailableVariables() {
+		Context ctx = getContextForFakeBuild(Language.ENGLISH);
+		ContextMetadata metadata = new ContextMetadata(getSupportedType().toString());
+		if (ctx == null) {
+			return metadata;
+		}
+		Set<String> variableNames = ctx.getVariableNames();
+		for (String name : variableNames) {
+			Object obj = ctx.getVariable(name);
+			Variable variable = new Variable(name, obj.getClass().getSimpleName());
+			logger.debug(variable.toString());
+			if (obj instanceof ArrayList) {
+				List<?> array = (List<?>) obj;
+				if (!array.isEmpty()) {
+					Object next = array.iterator().next();
+					String parametrizedClassName = next.getClass().getSimpleName();
+					variable.setType(variable.getType() + "<" + parametrizedClassName + ">");
+					variable.setAttributes(getFields(next));
+				}
+			} else {
+				variable.setAttributes(getFields(obj));
+			}
+			metadata.addVariable(variable);
+		}
+		return metadata;
+	}
+
+	private List<Attribute> getFields(Object obj) {
+		List<Attribute> attributes = null;
+		if (isSupportedFieldType(obj)) {
+			attributes = Lists.newArrayList();
+			for (Field field : obj.getClass().getDeclaredFields()) {
+				String typeName = field.getGenericType().getTypeName();
+				try {
+					Class<?> act = Class.forName(typeName);
+					typeName = act.getSimpleName();
+				} catch (ClassNotFoundException e) {
+					// Do not care.
+				}
+				Attribute attr = new Attribute(field.getName(), typeName);
+				logger.debug(attr.toString());
+				attributes.add(attr);
+			}
+		}
+		return attributes;
+	}
+
+	private boolean isSupportedFieldType(Object obj) {
+		return obj instanceof Document || obj instanceof Share || obj instanceof MailContact;
 	}
 
 }

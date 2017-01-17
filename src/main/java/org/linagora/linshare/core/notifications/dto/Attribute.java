@@ -31,75 +31,29 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.admin.dto;
+package org.linagora.linshare.core.notifications.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.linagora.linshare.core.domain.constants.MailContentType;
-import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
-
-import com.wordnik.swagger.annotations.ApiModel;
-
 
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
-@XmlRootElement(name = "MailContainer")
-@ApiModel(value = "MailContainer", description = "")
-public class MailContainerDto {
+@XmlRootElement(name = "Attribute")
+public class Attribute {
 
-	protected String subject;
-
-	protected String content;
-
-	protected String language;
+	protected String name;
 
 	protected String type;
 
-	public MailContainerDto(MailContentType type) {
+	public Attribute(String name, String type) {
 		super();
-		this.type = type.toString();
-	}
-
-	public MailContainerDto(String subject, String content, String language, String type) {
-		super();
-		this.subject = subject;
-		this.content = content;
-		this.language = language;
+		this.name = name;
 		this.type = type;
 	}
 
-	public MailContainerDto(MailContainerWithRecipient build, MailContentType type) {
-		super();
-		if (build != null) {
-			this.subject = build.getSubject();
-			this.content = build.getContentHTML();
-			this.language = build.getLanguage().toString();
-			this.type = type.toString();
-		}
-	}
-
-	public String getSubject() {
-		return subject;
-	}
-
-	public void setSubject(String subject) {
-		this.subject = subject;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
-
-	public String getLanguage() {
-		return language;
-	}
-
-	public void setLanguage(String language) {
-		this.language = language;
+	@Override
+	public String toString() {
+		return "Attribute [name=" + name + ", type=" + type + "]";
 	}
 
 	public String getType() {
@@ -110,4 +64,11 @@ public class MailContainerDto {
 		this.type = type;
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 }

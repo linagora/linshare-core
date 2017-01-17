@@ -31,75 +31,42 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.admin.dto;
+package org.linagora.linshare.core.notifications.dto;
+
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.linagora.linshare.core.domain.constants.MailContentType;
-import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 
-import com.wordnik.swagger.annotations.ApiModel;
+import com.google.common.collect.Lists;
 
-
+/**
+ * @author FMartin
+ *
+ */
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
-@XmlRootElement(name = "MailContainer")
-@ApiModel(value = "MailContainer", description = "")
-public class MailContainerDto {
+@XmlRootElement(name = "Variable")
+public class Variable {
 
-	protected String subject;
-
-	protected String content;
-
-	protected String language;
+	protected String name;
 
 	protected String type;
 
-	public MailContainerDto(MailContentType type) {
-		super();
-		this.type = type.toString();
-	}
+	protected List<Attribute> attributes;
 
-	public MailContainerDto(String subject, String content, String language, String type) {
+	public Variable(String name, String type) {
 		super();
-		this.subject = subject;
-		this.content = content;
-		this.language = language;
+		this.name = name;
 		this.type = type;
 	}
 
-	public MailContainerDto(MailContainerWithRecipient build, MailContentType type) {
-		super();
-		if (build != null) {
-			this.subject = build.getSubject();
-			this.content = build.getContentHTML();
-			this.language = build.getLanguage().toString();
-			this.type = type.toString();
-		}
+	public String getName() {
+		return name;
 	}
 
-	public String getSubject() {
-		return subject;
-	}
-
-	public void setSubject(String subject) {
-		this.subject = subject;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
-
-	public String getLanguage() {
-		return language;
-	}
-
-	public void setLanguage(String language) {
-		this.language = language;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getType() {
@@ -108,6 +75,26 @@ public class MailContainerDto {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public List<Attribute> getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes(List<Attribute> attributes) {
+		this.attributes = attributes;
+	}
+
+	public void addAttribute(Attribute attribute) {
+		if (this.attributes == null) {
+			this.attributes = Lists.newArrayList();
+		}
+		this.attributes.add(attribute);
+	}
+
+	@Override
+	public String toString() {
+		return "Variable [name=" + name + ", type=" + type + ", attributes=" + attributes + "]";
 	}
 
 }
