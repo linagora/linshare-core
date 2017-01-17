@@ -51,15 +51,13 @@ import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.objects.MailContainer;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.NewSharingEmailContext;
-import org.linagora.linshare.core.notifications.context.ShareEntryDownloadEmailContext;
+import org.linagora.linshare.core.notifications.context.ShareEntryDownloadedEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.ShareEntryResourceAccessControl;
 import org.linagora.linshare.core.repository.FavouriteRepository;
@@ -209,7 +207,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		logger.info("delete share : " + share.getUuid());
 		// step 5 : notification
 		if (share.getDownloaded() < 1) {
-			ShareEntryDownloadEmailContext context = new ShareEntryDownloadEmailContext(share);
+			ShareEntryDownloadedEmailContext context = new ShareEntryDownloadedEmailContext(share);
 			MailContainerWithRecipient mail = mailBuildingService.build(context);
 			notifierService.sendNotification(mail);
 		}
@@ -269,7 +267,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		checkDownloadPermission(actor, owner, ShareEntry.class,
 				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, share);
 		if (share.getDownloaded() <= 0) {
-			ShareEntryDownloadEmailContext context = new ShareEntryDownloadEmailContext(share);
+			ShareEntryDownloadedEmailContext context = new ShareEntryDownloadedEmailContext(share);
 			MailContainerWithRecipient mail = mailBuildingService.build(context);
 			notifierService.sendNotification(mail);
 		}
@@ -300,8 +298,6 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, null);
 		Set<ShareEntry> entries = Sets.newHashSet();
 		for (User recipient : sc.getShareRecipients()) {
-			MailContainer mailContainer = new MailContainer(
-					recipient.getExternalMailLocale(), sc.getMessage(), sc.getSubject());
 			Set<ShareEntry> shares = Sets.newHashSet();
 			for (DocumentEntry documentEntry : sc.getDocuments()) {
 				ShareEntry createShare = shareEntryBusinessService.create(
@@ -318,14 +314,8 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 				sc.addEvent(new EventNotification(log, recipientUuid));
 			}
 			entries.addAll(shares);
-			MailContainerWithRecipient mail = null;
-			if (sc.isEncrypted()) {
-				mail = mailBuildingService.buildNewSharingCyphered(owner,
-						mailContainer, recipient, shares);
-			} else {
-				EmailContext context = new NewSharingEmailContext(mailContainer, owner, recipient, shares);
-				mail = mailBuildingService.build(context);
-			}
+			NewSharingEmailContext context = new NewSharingEmailContext(owner, recipient, shares, sc);
+			MailContainerWithRecipient mail = mailBuildingService.build(context);
 			sc.addMailContainer(mail);
 		}
 		// if there is no shares, ie anonymous shares only, there is no logs neither events.

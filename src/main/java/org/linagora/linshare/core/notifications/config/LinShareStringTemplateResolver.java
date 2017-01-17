@@ -40,12 +40,16 @@ import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MailContent;
 import org.linagora.linshare.core.domain.entities.MailFooter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.templateresolver.StringTemplateResolver;
 import org.thymeleaf.templateresource.ITemplateResource;
 import org.thymeleaf.templateresource.StringTemplateResource;
 
 public class LinShareStringTemplateResolver extends StringTemplateResolver {
+
+	private final static Logger logger = LoggerFactory.getLogger(LinShareStringTemplateResolver.class);
 
 	final protected boolean insertLicenceTerm;
 
@@ -63,10 +67,14 @@ public class LinShareStringTemplateResolver extends StringTemplateResolver {
 		if (templateResolutionAttributes != null) {
 			MailConfig cfg = (MailConfig) templateResolutionAttributes.get("mailConfig");
 			if (cfg == null) {
+				logger.error("critical error : missing mail configuration");
+				logger.error("Template resolution aborted");
 				return null;
 			}
 			Language lang = (Language) templateResolutionAttributes.get("lang");
 			if (lang == null) {
+				logger.error("critical error : missing language");
+				logger.error("Template resolution aborted");
 				return null;
 			}
 			boolean isSubject = false;
@@ -80,9 +88,9 @@ public class LinShareStringTemplateResolver extends StringTemplateResolver {
 				String content = mailContent.getBody();
 				if (isSubject) {
 					if (templatingSubjectPrefix) {
-						content =  "[" + mailKind.name() + "] " + mailContent.getSubject();
+						content = "[" + mailKind.name() + "] " + mailContent.getSubject();
 					} else {
-						content =  mailContent.getSubject();
+						content = mailContent.getSubject();
 					}
 				}
 				LinShareTemplateResource resource = new LinShareTemplateResource(content, template);

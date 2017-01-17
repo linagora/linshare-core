@@ -33,30 +33,103 @@
  */
 package org.linagora.linshare.core.notifications.context;
 
+import java.util.Locale;
 import java.util.Set;
 
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.objects.MailContainer;
+import org.linagora.linshare.core.domain.objects.ShareContainer;
+import org.linagora.linshare.core.notifications.dto.MailContact;
 
 public class NewSharingEmailContext extends EmailContext {
 
-	protected MailContainer container;
+	protected User shareOwner;
 
-	protected User sender;
-
-	protected User recipient;
+	protected User shareRecipient;
 
 	protected Set<ShareEntry> shares;
 
-	public NewSharingEmailContext(MailContainer container, User sender, User recipient, Set<ShareEntry> shares) {
-		super(recipient.getDomain(), false);
-		this.container = container;
-		this.sender = sender;
-		this.recipient = recipient;
+	protected ShareContainer shareContainer;
+
+	protected AnonymousUrl anonymousUrl;
+
+	protected boolean isAnonymous;
+
+	public NewSharingEmailContext(User shareOwner, User shareRecipient, Set<ShareEntry> shares,
+			ShareContainer shareContainer) {
+		super(shareRecipient.getDomain(), false);
+		this.shareOwner = shareOwner;
+		this.shareRecipient = shareRecipient;
 		this.shares = shares;
+		this.language = null;
+		this.anonymousUrl = null;
+		this.isAnonymous = false;
+		this.shareContainer = shareContainer;
+	}
+
+	public NewSharingEmailContext(User shareOwner, AnonymousUrl anonymousUrl, ShareContainer shareContainer,
+			Language language) {
+		super(shareOwner.getDomain(), true);
+		this.shareOwner = shareOwner;
+		this.anonymousUrl = anonymousUrl;
+		this.language = language;
+		this.shareRecipient = null;
+		this.shares = null;
+		this.isAnonymous = true;
+		this.shareContainer = shareContainer;
+	}
+
+	public User getShareOwner() {
+		return shareOwner;
+	}
+
+	public void setShareOwner(User shareOwner) {
+		this.shareOwner = shareOwner;
+	}
+
+	public User getShareRecipient() {
+		return shareRecipient;
+	}
+
+	public void setShareRecipient(User shareRecipient) {
+		this.shareRecipient = shareRecipient;
+	}
+
+	public Set<ShareEntry> getShares() {
+		return shares;
+	}
+
+	public void setShares(Set<ShareEntry> shares) {
+		this.shares = shares;
+	}
+
+	public AnonymousUrl getAnonymousUrl() {
+		return anonymousUrl;
+	}
+
+	public void setAnonymousUrl(AnonymousUrl anonymousUrl) {
+		this.anonymousUrl = anonymousUrl;
+	}
+
+	public ShareContainer getShareContainer() {
+		return shareContainer;
+	}
+
+	public void setShareContainer(ShareContainer shareContainer) {
+		this.shareContainer = shareContainer;
+	}
+
+	public boolean isAnonymous() {
+		return isAnonymous;
+	}
+
+	public void setAnonymous(boolean isAnonymous) {
+		this.isAnonymous = isAnonymous;
 	}
 
 	@Override
@@ -69,36 +142,50 @@ public class NewSharingEmailContext extends EmailContext {
 		return MailActivationType.NEW_SHARING;
 	}
 
-	public User getSender() {
-		return sender;
+	@Override
+	public String getMailRcpt() {
+		if (isAnonymous) {
+			return anonymousUrl.getContact().getMail();
+		}
+		return shareRecipient.getMail();
 	}
 
-	public void setSender(User sender) {
-		this.sender = sender;
+	@Override
+	public String getMailReplyTo() {
+		return shareOwner.getMail();
 	}
 
-	public User getRecipient() {
-		return recipient;
+	@Override
+	public void validateRequiredField() {
+		Validate.notNull(shareOwner, "Missing shareOwner");
+		Validate.notNull(shareContainer, "Missing shareContainer");
 	}
 
-	public void setRecipient(User recipient) {
-		this.recipient = recipient;
+	/**
+	 * Helpers
+	 */
+
+	public Locale getLocale() {
+		if (language == null) {
+			// Locale was not override by the current logged in user.
+			if (isAnonymous) {
+				return Language.toLocale(shareOwner.getExternalMailLocale());
+			} else {
+				return Language.toLocale(shareRecipient.getExternalMailLocale());
+			}
+		}
+		return super.getLocale();
 	}
 
-	public Set<ShareEntry> getShares() {
-		return shares;
+	public MailContact getMailContactShareOwner() {
+		return new MailContact(shareOwner);
 	}
 
-	public void setShares(Set<ShareEntry> shares) {
-		this.shares = shares;
-	}
-
-	public MailContainer getContainer() {
-		return container;
-	}
-
-	public void setContainer(MailContainer container) {
-		this.container = container;
+	public MailContact getMailContactShareRecipient() {
+		if (isAnonymous) {
+			return new MailContact(anonymousUrl.getContact());
+		}
+		return new MailContact(shareRecipient);
 	}
 
 }

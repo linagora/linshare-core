@@ -43,6 +43,8 @@ public class Document {
 
 	protected String name;
 
+	protected String href;
+
 	public Document(String name) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
@@ -69,5 +71,13 @@ public class Document {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getHref() {
+		return href;
+	}
+
+	public void setHref(String href) {
+		this.href = href;
 	}
 }

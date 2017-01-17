@@ -45,11 +45,12 @@ import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainer;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
+import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.AnonymousShareEntryDownloadEmailContext;
-import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.NewGuestEmailContext;
 import org.linagora.linshare.core.notifications.context.NewSharingEmailContext;
+import org.linagora.linshare.core.notifications.context.ResetGuestPasswordEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.repository.AnonymousShareEntryRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
@@ -182,7 +183,8 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		Guest guest = guestRepository.findByLsUuid(IMPORT_TEST_GUEST_UUID);
 		for (Language lang : Language.values()) {
 			john.setExternalMailLocale(lang);
-			MailContainerWithRecipient mail =  mailBuildingService.buildResetPassword(guest, "password");
+			ResetGuestPasswordEmailContext context = new ResetGuestPasswordEmailContext(guest, "0ca4a63e-6916-44b2-89dd-3f156fe1dbc9");
+			MailContainerWithRecipient mail = mailBuildingService.build(context);
 			testMailGenerate(mail);
 			sendMail(mail);
 		}
@@ -192,10 +194,10 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 	@Test
 	public void testBuildMailNewSharing() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		MailContainer mailContainer = new MailContainer(Language.ENGLISH);
 		for (Language lang : Language.values()) {
 			john.setExternalMailLocale(lang);
-			EmailContext context = new NewSharingEmailContext(mailContainer, john, jane, getSeg().getShareEntries());
+			NewSharingEmailContext context = new NewSharingEmailContext(john, jane, getSeg().getShareEntries(), new ShareContainer());
+			context.setLanguage(lang);
 			MailContainerWithRecipient mail = mailBuildingService.build(context);
 			testMailGenerate(mail);
 			sendMail(mail);

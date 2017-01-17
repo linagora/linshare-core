@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.notifications.context;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
@@ -46,6 +47,14 @@ public class AnonymousShareEntryDownloadEmailContext extends EmailContext {
 		this.shareEntry = shareEntry;
 	}
 
+	public AnonymousShareEntry getShareEntry() {
+		return shareEntry;
+	}
+
+	public void setShareEntry(AnonymousShareEntry shareEntry) {
+		this.shareEntry = shareEntry;
+	}
+
 	@Override
 	public MailContentType getType() {
 		return MailContentType.ANONYMOUS_DOWNLOAD;
@@ -56,12 +65,20 @@ public class AnonymousShareEntryDownloadEmailContext extends EmailContext {
 		return MailActivationType.ANONYMOUS_DOWNLOAD;
 	}
 
-	public AnonymousShareEntry getShareEntry() {
-		return shareEntry;
+	@Override
+	public String getMailRcpt() {
+		// shareOwner
+		return shareEntry.getEntryOwner().getMail();
 	}
 
-	public void setShareEntry(AnonymousShareEntry shareEntry) {
-		this.shareEntry = shareEntry;
+	@Override
+	public String getMailReplyTo() {
+		return shareEntry.getAnonymousUrl().getContact().getMail();
+	}
+
+	@Override
+	public void validateRequiredField() {
+		Validate.notNull(shareEntry, "Missing shareEntry");
 	}
 
 }

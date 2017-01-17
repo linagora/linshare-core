@@ -36,6 +36,7 @@ package org.linagora.linshare.core.notifications.dto;
 import org.apache.commons.lang.StringUtils;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.Recipient;
 
 public class MailContact {
 
@@ -67,6 +68,12 @@ public class MailContact {
 		this.mail = StringUtils.trimToNull(user.getMail());
 		this.firstName = StringUtils.trimToNull(user.getFirstName());
 		this.lastName = StringUtils.trimToNull(user.getLastName());
+	}
+
+	public MailContact(Recipient recipient) {
+		this.mail = recipient.getMail();
+		this.firstName = recipient.getFirstName();
+		this.lastName = recipient.getLastName();
 	}
 
 	public String getMail() {

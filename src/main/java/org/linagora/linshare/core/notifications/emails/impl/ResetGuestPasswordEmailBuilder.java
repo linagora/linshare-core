@@ -40,27 +40,25 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
-import org.linagora.linshare.core.notifications.context.NewGuestEmailContext;
+import org.linagora.linshare.core.notifications.context.ResetGuestPasswordEmailContext;
 import org.linagora.linshare.core.notifications.dto.MailContact;
 import org.thymeleaf.context.Context;
 
-public class NewGuestEmailBuilder extends EmailBuilder {
+public class ResetGuestPasswordEmailBuilder extends EmailBuilder {
 
 	@Override
 	public MailContentType getSupportedType() {
-		return MailContentType.NEW_GUEST;
+		return MailContentType.RESET_PASSWORD;
 	}
 
 	@Override
 	public MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		NewGuestEmailContext emailCtx = (NewGuestEmailContext) context;
-		User creator = emailCtx.getCreator();
+		ResetGuestPasswordEmailContext emailCtx = (ResetGuestPasswordEmailContext) context;
 		User guest = emailCtx.getGuest();
 
-		MailConfig cfg = creator.getDomain().getCurrentMailConfiguration();
+		MailConfig cfg = guest.getDomain().getCurrentMailConfiguration();
 
 		Context ctx = new Context(emailCtx.getLocale());
-		ctx.setVariable("creator", new MailContact(creator));
 		ctx.setVariable("guest", new MailContact(guest));
 
 		// LinShare URL for the email recipient.
@@ -79,7 +77,6 @@ public class NewGuestEmailBuilder extends EmailBuilder {
 	@Override
 	public Context getContextForFakeBuild(Language language) {
 		Context ctx = new Context(Language.toLocale(language));
-		ctx.setVariable("creator", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
 		ctx.setVariable("guest", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
 
 		// LinShare URL for the email recipient.

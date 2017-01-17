@@ -66,12 +66,6 @@ public interface MailBuildingService {
 
 	ContextMetadata getAvailableVariables(MailContentType type);
 
-	MailContainerWithRecipient buildRegisteredDownload(ShareEntry shareEntry)
-			throws BusinessException;
-
-	MailContainerWithRecipient buildResetPassword(Guest recipient,
-			String password) throws BusinessException;
-
 	MailContainerWithRecipient buildSharedDocUpdated(Entry shareEntry,
 			String oldDocName, long size) throws BusinessException;
 
@@ -155,9 +149,6 @@ public interface MailBuildingService {
 
 	MailContainerWithRecipient buildErrorUploadRequestNoSpaceLeft(User owner, UploadRequestUrl request)
 			throws BusinessException;
-
-	MailContainerWithRecipient buildNewSharingAcknowledgement(
-			User sender, ShareContainer container, Set<Entry> entries) throws BusinessException;
 
 	MailContainerWithRecipient buildNoDocumentHasBeenDownloadedAcknowledgement(
 			ShareEntryGroup shareEntryGroup)

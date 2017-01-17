@@ -33,77 +33,98 @@
  */
 package org.linagora.linshare.core.notifications.emails.impl;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.MailConfig;
-import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
+import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
-import org.linagora.linshare.core.notifications.context.ShareEntryDownloadEmailContext;
+import org.linagora.linshare.core.notifications.context.SharingAcknowledgementEmailContext;
 import org.linagora.linshare.core.notifications.dto.Document;
 import org.linagora.linshare.core.notifications.dto.MailContact;
-import org.linagora.linshare.core.notifications.dto.Share;
 import org.thymeleaf.context.Context;
 
 import com.google.common.collect.Lists;
 
-public class ShareEntryDownloadEmailBuilder extends EmailBuilder {
+public class SharingAcknowledgementEmailBuilder extends EmailBuilder {
 
 	@Override
 	public MailContentType getSupportedType() {
-		return MailContentType.REGISTERED_DOWNLOAD;
+		return MailContentType.SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER;
 	}
 
 	@Override
 	public MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		ShareEntryDownloadEmailContext emailCtx = (ShareEntryDownloadEmailContext) context;
-		ShareEntry shareEntry = emailCtx.getShareEntry();
+		SharingAcknowledgementEmailContext emailCtx = (SharingAcknowledgementEmailContext) context;
 
-		User shareRecipient = shareEntry.getRecipient();
-		User shareOwner = (User) shareEntry.getEntryOwner();
-		MailContainerWithRecipient container = new MailContainerWithRecipient(shareOwner.getExternalMailLocale());
+		User shareOwner = emailCtx.getShareOwner();
+		Set<Entry> shareEntries = emailCtx.getShares();
+		ShareContainer shareContainer = emailCtx.getShareContainer();
+
 		MailConfig cfg = shareOwner.getDomain().getCurrentMailConfiguration();
 
-		Context ctx = new Context(container.getLocale());
+		Context ctx = new Context(emailCtx.getLocale());
 		ctx.setVariable("shareOwner", new MailContact(shareOwner));
-		ctx.setVariable("shareRecipient", new MailContact(shareRecipient));
-		ctx.setVariable("document", new Document(shareEntry.getDocumentEntry()));
-		ctx.setVariable("share", new Share(shareEntry));
+		ctx.setVariable("expirationDate", shareContainer.getExpiryDate());
+		ctx.setVariable("creationDate", shareEntries.iterator().next().getCreationDate().getTime());
 
-		// LinShare URL for the email recipient.
-		ctx.setVariable("linshareURL", getLinShareUrlForAUserRecipient(shareOwner));
+		List<Document> documents = transform(shareContainer.getDocuments(), true, getLinShareUrl(shareOwner));
+		ctx.setVariable("documents", documents);
+		ctx.setVariable("documents", documents.size());
 
-		container.setRecipient(shareOwner);
-		container.setFrom(getFromMailAddress(shareOwner));
-		container.setReplyTo(shareRecipient);
+		List<MailContact> recipients = shareContainer.getMailContactRecipients();
+		ctx.setVariable("recipients", recipients);
+		ctx.setVariable("recipients", recipients.size());
 
-		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, container, getSupportedType(),
-				ctx);
+		ctx.setVariable("linshareURL", getLinShareUrl(shareOwner));
+
+		ctx.setVariable("customSubject", shareContainer.getSubject());
+		ctx.setVariable("customMessage", shareContainer.getMessage());
+		ctx.setVariable("sharingNote", shareContainer.getSharingNote());
+
+		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(),
+				ctx, emailCtx);
 		return buildMailContainer;
 	}
 
 	@Override
 	public Context getContextForFakeBuild(Language language) {
 		Context ctx = new Context(Language.toLocale(language));
+		Calendar c = Calendar.getInstance();
+		c.add(Calendar.MONDAY, 3);
+		String linshareURL = "http://127.0.0.1/";
+
 		ctx.setVariable("shareOwner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
-		ctx.setVariable("shareRecipient", new MailContact("unknown@linshare.org"));
-		ctx.setVariable("document", new Document("a-shared-file.txt"));
-		ctx.setVariable("share", new Share("a-shared-file.txt", true));
+		ctx.setVariable("expirationDate", c.getTime());
+		ctx.setVariable("creationDate", new Date());
 
-		// LinShare URL for the email recipient.
-		ctx.setVariable("linshareURL", "http://127.0.0.1/");
+		List<Document> documents = Lists.newArrayList();
+		documents.add(getNewFakeDocument("a-shared-file.txt", linshareURL));
+		documents.add(getNewFakeDocument("second-shared-file.txt", linshareURL));
+		documents.add(getNewFakeDocument("third-shared-file.txt", linshareURL));
+		ctx.setVariable("documents", documents);
+		ctx.setVariable("documents", documents.size());
 
-		List<Share> shares = Lists.newArrayList();
-		shares.add(new Share("a-shared-file.txt", true));
-		shares.add(new Share("second-shared-file.txt", false));
-		shares.add(new Share("third-shared-file.txt", true));
-		ctx.setVariable("shares", shares);
-		ctx.setVariable("sharesCount", shares.size());
+		List<MailContact> recipients = Lists.newArrayList();
+		recipients.add(new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
+		recipients.add(new MailContact("unknown@linshare.org"));
+		ctx.setVariable("recipients", recipients);
+		ctx.setVariable("recipients", recipients.size());
+
+		ctx.setVariable("linshareURL", linshareURL);
+
+		ctx.setVariable("customSubject", "Some personal subject");
+		ctx.setVariable("customMessage", "Some personal message");
+		ctx.setVariable("sharingNote", "a sharing note");
+
 		return ctx;
 	}
-
 }

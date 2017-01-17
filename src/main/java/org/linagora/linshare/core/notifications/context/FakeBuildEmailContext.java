@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2017 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2017. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,60 +31,41 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
+package org.linagora.linshare.core.notifications.context;
 
-import java.util.Locale;
+import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.constants.MailActivationType;
+import org.linagora.linshare.core.domain.constants.MailContentType;
 
-/**
- * Defines supported languages.
- */
-public enum Language {
-	ENGLISH(0, "en"), FRENCH(1, "fr");
+public class FakeBuildEmailContext extends EmailContext {
 
-	private int value;
-	private String tapestryLocale;
-
-	private Language(int value, String tapestryLocale) {
-		this.value = value;
-		this.tapestryLocale = tapestryLocale;
+	public FakeBuildEmailContext(Language language) {
+		super(null, false);
+		this.language = language;
 	}
 
-	public int toInt() {
-		return value;
+	@Override
+	public MailContentType getType() {
+		return null;
 	}
 
-	public static Language fromInt(int value) {
-		for (Language lang : values()) {
-			if (lang.value == value) {
-				return lang;
-			}
-		}
-		throw new IllegalArgumentException("Doesn't match an existing Language");
+	@Override
+	public MailActivationType getActivation() {
+		return null;
 	}
 
-	public static Language fromLocale(Locale locale) {
-		if (Locale.FRENCH.equals(locale) || Locale.FRANCE.equals(locale)) {
-			return FRENCH;
-		}
-		return ENGLISH;
+	@Override
+	public String getMailRcpt() {
+		return null;
 	}
 
-	public static Locale toLocale(Language language) {
-		if (language != null) {
-			if (language.equals(FRENCH)) {
-				return Locale.FRENCH;
-			}
-		}
-		return Locale.ENGLISH;
+	@Override
+	public String getMailReplyTo() {
+		return null;
 	}
 
-	public static Language fromTapestryLocale(String locale) {
-		if (locale == null)
-			return null;
-		return Language.fromLocale(new Locale(locale));
+	@Override
+	public void validateRequiredField() {
 	}
 
-	public String getTapestryLocale() {
-		return tapestryLocale;
-	}
 }

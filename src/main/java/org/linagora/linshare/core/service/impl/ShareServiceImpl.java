@@ -41,9 +41,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.EntryBusinessService;
-import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.EntryType;
-import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
@@ -62,6 +60,7 @@ import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.context.SharingAcknowledgementEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.ShareEntryResourceAccessControl;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
@@ -74,7 +73,6 @@ import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.ShareExpiryDateService;
 import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.UserService;
-import org.linagora.linshare.mongo.entities.logs.ShareEntryAuditLogEntry;
 import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 
 import com.google.common.collect.Sets;
@@ -200,8 +198,8 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		BooleanValueFunctionality acknowledgementFunc = funcService
 				.getAcknowledgement(actor.getDomain());
 		if (acknowledgementFunc.getFinalValue(shareContainer.isAcknowledgement())) {
-			MailContainerWithRecipient mail = mailBuildingService
-					.buildNewSharingAcknowledgement(owner,shareContainer, entries);
+			SharingAcknowledgementEmailContext context = new SharingAcknowledgementEmailContext(owner, shareContainer, entries);
+			MailContainerWithRecipient mail = mailBuildingService.build(context);
 			notifierService.sendNotification(mail);
 		}
 		// Notification

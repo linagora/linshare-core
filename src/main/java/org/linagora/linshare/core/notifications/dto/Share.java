@@ -52,6 +52,8 @@ public class Share {
 
 	protected Date expirationDate;
 
+	protected String href;
+
 	public Share(String name, boolean downloaded) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
@@ -82,8 +84,7 @@ public class Share {
 	}
 
 	public Share(String name) {
-		super();
-		this.name = name;
+		this(name, false);
 	}
 
 	public String getUuid() {
@@ -124,5 +125,13 @@ public class Share {
 
 	public void setExpirationDate(Date expirationDate) {
 		this.expirationDate = expirationDate;
+	}
+
+	public String getHref() {
+		return href;
+	}
+
+	public void setHref(String href) {
+		this.href = href;
 	}
 }

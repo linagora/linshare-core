@@ -60,7 +60,6 @@ import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
-import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.MailActivation;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MailContent;
@@ -85,6 +84,8 @@ import org.linagora.linshare.core.notifications.emails.impl.AnonymousShareEntryD
 import org.linagora.linshare.core.notifications.emails.impl.EmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.NewGuestEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.NewSharingEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.ResetGuestPasswordEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.SharingAcknowledgementEmailBuilder;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.utils.DocumentUtils;
@@ -422,6 +423,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		emailBuilders.put(MailContentType.NEW_SHARING, new NewSharingEmailBuilder());
 		emailBuilders.put(MailContentType.NEW_GUEST, new NewGuestEmailBuilder());
 		emailBuilders.put(MailContentType.ANONYMOUS_DOWNLOAD, new AnonymousShareEntryDownloadEmailBuilder());
+		emailBuilders.put(MailContentType.RESET_PASSWORD, new ResetGuestPasswordEmailBuilder());
+		emailBuilders.put(MailContentType.SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER, new SharingAcknowledgementEmailBuilder());
 		initMailBuilders();
 	}
 
@@ -433,6 +436,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			emailBuilder.setMailActivationBusinessService(mailActivationBusinessService);
 			emailBuilder.setFunctionalityReadOnlyService(functionalityReadOnlyService);
 			emailBuilder.setDomainBusinessService(domainBusinessService);
+			emailBuilder.setDocumentsUrlSuffix(documentsUrlSuffix);
+			emailBuilder.setReceivedSharesUrlSuffix(receivedSharesUrlSuffix);
 		}
 	}
 
@@ -499,67 +504,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			return formatter.format(uploadRequest.getExpiryDate().getTime());
 		}
 		return "";
-	}
-
-
-
-	@Override
-	public MailContainerWithRecipient buildRegisteredDownload(
-			ShareEntry shareEntry) throws BusinessException {
-		User sender = (User) shareEntry.getEntryOwner();
-		if (isDisable(sender, MailActivationType.REGISTERED_DOWNLOAD)) {
-			return null;
-		}
-		String documentName = shareEntry.getDocumentEntry().getName();
-		String actorRepresentation = new ContactRepresentation(shareEntry.getRecipient())
-				.getContactRepresentation();
-
-		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
-		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				sender.getExternalMailLocale());
-		MailContainerBuilder builder = new MailContainerBuilder();
-
-		builder.getSubjectChain()
-				.add("actorRepresentation", actorRepresentation);
-		builder.getGreetingsChain()
-				.add("firstName", sender.getFirstName())
-				.add("lastName", sender.getLastName());
-		builder.getBodyChain()
-				.add("recipientFirstName", shareEntry.getRecipient().getFirstName())
-				.add("recipientLastName", shareEntry.getRecipient().getLastName())
-				.add("documentNames", documentName);
-		container.setRecipient(sender);
-		container.setFrom(getFromMailAddress(sender));
-		container.setReplyTo(shareEntry.getRecipient());
-		return buildMailContainer(cfg, container, null,
-				MailContentType.REGISTERED_DOWNLOAD, builder);
-	}
-
-
-	@Override
-	public MailContainerWithRecipient buildResetPassword(Guest recipient,
-			String password) throws BusinessException {
-		if (isDisable(recipient, MailActivationType.RESET_PASSWORD)) {
-			return null;
-		}
-		MailConfig cfg = recipient.getDomain().getCurrentMailConfiguration();
-		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				recipient.getExternalMailLocale());
-		MailContainerBuilder builder = new MailContainerBuilder();
-
-		builder.getGreetingsChain()
-				.add("firstName", recipient.getFirstName())
-				.add("lastName", recipient.getLastName());
-		String linShareUrl = getLinShareUrlForAUserRecipient(recipient);
-		builder.getBodyChain()
-				.add("url", linShareUrl)
-				.add("mail", recipient.getMail())
-				.add("password", linShareUrl + "#/external/reset/" + password);
-		container.setRecipient(recipient.getMail());
-		container.setFrom(getFromMailAddress(recipient));
-
-		return buildMailContainer(cfg, container, null,
-				MailContentType.RESET_PASSWORD, builder);
 	}
 
 	@Override
@@ -1801,71 +1745,4 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		return !enable;
 	}
 
-	@Override
-	public MailContainerWithRecipient buildNewSharingAcknowledgement(
-			User sender, ShareContainer container, Set<Entry> entries) throws BusinessException {
-		if (isDisable(sender,
-				MailActivationType.SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER)) {
-			return null;
-		}
-		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
-		MailContainerWithRecipient mailContainer = new MailContainerWithRecipient(
-				sender.getExternalMailLocale());
-		MailContainerBuilder builder = new MailContainerBuilder();
-
-		SimpleDateFormat formater = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-		String creationDate = formater.format(entries.iterator().next().getCreationDate().getTime());
-		Calendar tempExpirationDate = entries.iterator().next().getExpirationDate();
-		String expirationDate = "None";
-		if (tempExpirationDate != null) {
-			expirationDate = formater.format(tempExpirationDate.getTime());
-		}
-
-		long count = 0;
-		StringBuffer docNames = new StringBuffer();
-		for (DocumentEntry entry : container.getDocuments()) {
-			docNames.append("<li><a href='" + getOwnerDocumentLink(sender, entry) + "'>" + entry.getName()
-					+ "</a></li>");
-			count++;
-		}
-
-		StringBuffer recipientNames = new StringBuffer();
-		for (User rec : container.getShareRecipients()) {
-			recipientNames.append("<li>" + rec.getFullName()
-					+ "</li>");
-		}
-
-		for (Recipient recipient : container.getAnonymousShareRecipients()) {
-			recipientNames.append("<li>" + recipient.getMail() + "</li>");
-		}
-
-		builder.getSubjectChain().add("subject", container.getSubject());
-		builder.getSubjectChain().add("date", creationDate.toString());
-		builder.getGreetingsChain().add("firstName", sender.getFirstName())
-				.add("lastName", sender.getLastName());
-		builder.getBodyChain()
-				.add("message", container.getMessage())
-				.add("sharingNote", container.getSharingNote())
-				.add("documentNames", docNames.toString())
-				.add("creationDate", creationDate.toString())
-				.add("expirationDate", expirationDate)
-//				FIX: 1.9.0
-				.add("expirationdate", expirationDate)
-				.add("fileNumber", "" + count)
-				.add("recipientNames", recipientNames.toString());
-		mailContainer.setSubject(container.getSubject());
-		mailContainer.setRecipient(sender);
-		mailContainer.setFrom(getFromMailAddress(sender));
-		mailContainer.setReplyTo(sender.getMail());
-
-		if (container.getMessage() == null) {
-			return buildMailContainer(cfg, mailContainer,
-					null, MailContentType.SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER,
-					builder);
-		} else {
-			return buildMailContainer(cfg, mailContainer,
-					null, MailContentType.SHARE_CREATION_ACKNOWLEDGEMENT_WITH_SPECIAL_MESSAGE_FOR_OWNER,
-					builder);
-		}
-	}
 }

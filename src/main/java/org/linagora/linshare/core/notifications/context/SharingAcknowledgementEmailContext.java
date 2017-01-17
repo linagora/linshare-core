@@ -33,35 +33,79 @@
  */
 package org.linagora.linshare.core.notifications.context;
 
+import java.util.Set;
+
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
-import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.Entry;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.ShareContainer;
 
-public class ShareEntryDownloadEmailContext extends EmailContext {
+public class SharingAcknowledgementEmailContext extends EmailContext {
 
-	protected ShareEntry shareEntry;
+	protected User shareOwner;
 
-	public ShareEntryDownloadEmailContext(ShareEntry shareEntry) {
-		super(shareEntry.getEntryOwner().getDomain(), true);
-		this.shareEntry = shareEntry;
+	protected ShareContainer shareContainer;
+
+	protected Set<Entry> shares;
+
+	public SharingAcknowledgementEmailContext(User sender, ShareContainer shareContainer, Set<Entry> shares) {
+		super(sender.getDomain(), false);
+		this.shareOwner = sender;
+		this.shares = shares;
+		this.shareContainer = shareContainer;
+	}
+
+	public User getShareOwner() {
+		return shareOwner;
+	}
+
+	public void setShareOwner(User shareOwner) {
+		this.shareOwner = shareOwner;
+	}
+
+	public Set<Entry> getShares() {
+		return shares;
+	}
+
+	public void setShares(Set<Entry> shares) {
+		this.shares = shares;
+	}
+
+	public ShareContainer getShareContainer() {
+		return shareContainer;
+	}
+
+	public void setShareContainer(ShareContainer shareContainer) {
+		this.shareContainer = shareContainer;
 	}
 
 	@Override
 	public MailContentType getType() {
-		return MailContentType.REGISTERED_DOWNLOAD;
+		return MailContentType.SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER;
 	}
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.REGISTERED_DOWNLOAD;
+		return MailActivationType.SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER;
 	}
 
-	public ShareEntry getShareEntry() {
-		return shareEntry;
+	@Override
+	public String getMailRcpt() {
+		return shareOwner.getMail();
 	}
 
-	public void setShareEntry(ShareEntry shareEntry) {
-		this.shareEntry = shareEntry;
+	@Override
+	public String getMailReplyTo() {
+		return null;
+	}
+
+	@Override
+	public void validateRequiredField() {
+		Validate.notNull(shareOwner, "Missing shareEntry");
+		Validate.notNull(shareContainer, "Missing shareEntry");
+		Validate.notNull(shares, "Missing shareEntry");
 	}
 
 }

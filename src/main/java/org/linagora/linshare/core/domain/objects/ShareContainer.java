@@ -50,6 +50,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
+import org.linagora.linshare.core.notifications.dto.MailContact;
 import org.linagora.linshare.mongo.entities.EventNotification;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
@@ -268,6 +269,18 @@ public class ShareContainer {
 
 	public Set<Recipient> getAnonymousShareRecipients() {
 		return anonymousShareRecipients;
+	}
+
+	public List<MailContact> getMailContactRecipients() {
+		List<MailContact> contacts = Lists.newArrayList();
+		for (User rec : getShareRecipients()) {
+			contacts.add(new MailContact(rec));
+		}
+
+		for (Recipient recipient : getAnonymousShareRecipients()) {
+			contacts.add(new MailContact(recipient));
+		}
+		return contacts;
 	}
 
 	public Set<String> getDocumentUuids() {

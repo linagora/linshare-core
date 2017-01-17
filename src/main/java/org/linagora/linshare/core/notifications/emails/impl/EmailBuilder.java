@@ -35,6 +35,7 @@ package org.linagora.linshare.core.notifications.emails.impl;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Formatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,14 +46,16 @@ import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.MailActivation;
 import org.linagora.linshare.core.domain.entities.MailConfig;
-import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.dto.Attribute;
+import org.linagora.linshare.core.notifications.context.FakeBuildEmailContext;
 import org.linagora.linshare.core.notifications.dto.ContextMetadata;
 import org.linagora.linshare.core.notifications.dto.Document;
 import org.linagora.linshare.core.notifications.dto.MailContact;
@@ -84,6 +87,10 @@ public abstract class EmailBuilder implements IEmailBuilder {
 	protected FunctionalityReadOnlyService functionalityReadOnlyService;
 
 	private DomainBusinessService domainBusinessService;
+
+	private String receivedSharesUrlSuffix;
+
+	private String documentsUrlSuffix;
 
 	public EmailBuilder() {
 	}
@@ -119,6 +126,22 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		this.domainBusinessService = domainBusinessService;
 	}
 
+	public void setReceivedSharesUrlSuffix(String receivedSharesUrlSuffix) {
+		this.receivedSharesUrlSuffix = receivedSharesUrlSuffix;
+	}
+
+	public void setDocumentsUrlSuffix(String documentsUrlSuffix) {
+		this.documentsUrlSuffix = documentsUrlSuffix;
+	}
+
+	public String getReceivedSharesUrlSuffix() {
+		return receivedSharesUrlSuffix;
+	}
+
+	public String getDocumentsUrlSuffix() {
+		return documentsUrlSuffix;
+	}
+
 	protected abstract MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException;
 
 	protected abstract Context getContextForFakeBuild(Language language);
@@ -126,6 +149,11 @@ public abstract class EmailBuilder implements IEmailBuilder {
 	@Override
 	public MailContainerWithRecipient build(EmailContext context) throws BusinessException {
 		checkSupportedTemplateType(context);
+		computeFromDomain(context);
+		context.validateRequiredField();
+		if (context.getLanguage() == null) {
+			context.setLanguage(Language.ENGLISH);
+		}
 		if (isDisable(context)) {
 			return null;
 		}
@@ -135,8 +163,8 @@ public abstract class EmailBuilder implements IEmailBuilder {
 	@Override
 	public MailContainerWithRecipient fakeBuild(MailConfig cfg, Language language) throws BusinessException {
 		Context ctx = getContextForFakeBuild(language);
-		MailContainerWithRecipient container = new MailContainerWithRecipient(language);
-		return buildMailContainerThymeleaf(cfg, container, getSupportedType(), ctx);
+		EmailContext emailContext = new FakeBuildEmailContext(language);
+		return buildMailContainerThymeleaf(cfg, getSupportedType(), ctx, emailContext);
 	}
 
 	protected void checkSupportedTemplateType(EmailContext context) {
@@ -148,21 +176,26 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		}
 	}
 
-	protected boolean isDisable(EmailContext context) {
-		AbstractDomain recipientDomain = context.getDomain();
+	protected void computeFromDomain(EmailContext context) {
+		AbstractDomain recipientDomain = context.getFromDomain();
 		if (context.isNeedToRetrieveGuestDomain()) {
 			recipientDomain = domainBusinessService.findGuestDomain(recipientDomain);
 			// guest domain could be inexistent into the database.
 			if (recipientDomain == null) {
-				recipientDomain = context.getDomain();
+				recipientDomain = context.getFromDomain();
 			}
+			context.updateFromDomain(recipientDomain);
 		}
-		MailActivation mailActivation = mailActivationBusinessService.findForInternalUsage(recipientDomain,
+	}
+
+	protected boolean isDisable(EmailContext context) {
+		MailActivation mailActivation = mailActivationBusinessService.findForInternalUsage(
+				context.getFromDomain(),
 				context.getActivation());
 		return !mailActivation.isEnable();
 	}
 
-	protected String getLinShareUrlForAUserRecipient(Account recipient) {
+	protected String getLinShareUrl(Account recipient) {
 		String value = functionalityReadOnlyService.getCustomNotificationUrlFunctionality(recipient.getDomain())
 				.getValue();
 		if (!value.endsWith("/")) {
@@ -171,26 +204,30 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		return value;
 	}
 
-	protected String getFromMailAddress(User owner) {
-		String fromMail = functionalityReadOnlyService.getDomainMailFunctionality(owner.getDomain()).getValue();
+	protected String getLinShareAnonymousURL(Account sender) {
+		StringValueFunctionality notificationUrl = functionalityReadOnlyService
+				.getAnonymousURLNotificationUrl(sender.getDomain());
+		return notificationUrl.getValue();
+	}
+
+	protected String getFromMailAddress(AbstractDomain domain) {
+		if (domain == null) {
+			return null;
+		}
+		String fromMail = functionalityReadOnlyService.getDomainMailFunctionality(domain).getValue();
 		return fromMail;
 	}
 
 	protected MailContainerWithRecipient buildMailContainerThymeleaf(MailConfig cfg,
-			final MailContainerWithRecipient input, MailContentType type, Context ctx) {
-		return buildMailContainerThymeleaf(cfg, input, null, type, ctx);
-	}
-
-	protected MailContainerWithRecipient buildMailContainerThymeleaf(MailConfig cfg,
-			final MailContainerWithRecipient input, String pm, MailContentType type, Context ctx)
+			MailContentType type, Context ctx, EmailContext emailCtx)
 			throws BusinessException {
 		logger.debug("Building mail content: " + type);
-		MailContainerWithRecipient container = new MailContainerWithRecipient(input);
+		MailContainerWithRecipient container = new MailContainerWithRecipient(emailCtx.getLanguage());
 
 		// default context
 		Map<String, Object> templateResolutionAttributes = Maps.newHashMap();
 		templateResolutionAttributes.put("mailConfig", cfg);
-		templateResolutionAttributes.put("lang", input.getLanguage());
+		templateResolutionAttributes.put("lang", emailCtx.getLanguage());
 
 		try {
 			TemplateSpec subjectSpec = new TemplateSpec(type.toString() + ":subject", null, TemplateMode.TEXT,
@@ -209,9 +246,14 @@ public abstract class EmailBuilder implements IEmailBuilder {
 			container.setSubject(subject);
 			container.setContentHTML(body);
 			container.setContentTXT(container.getContentHTML());
+
+			container.setFrom(getFromMailAddress(emailCtx.getFromDomain()));
+			container.setReplyTo(emailCtx.getMailReplyTo());
+			container.setRecipient(emailCtx.getMailRcpt());
+
 			// Message IDs from Web service API (ex Plugin Thunderbird)
-			container.setInReplyTo(input.getInReplyTo());
-			container.setReferences(input.getReferences());
+			container.setInReplyTo(emailCtx.getInReplyTo());
+			container.setReferences(emailCtx.getReferences());
 			return container;
 		} catch (org.thymeleaf.exceptions.TemplateInputException e) {
 			String message = "[" + type.toString() + "]" + getCauseMsessage(e);
@@ -328,6 +370,57 @@ public abstract class EmailBuilder implements IEmailBuilder {
 
 	private boolean isSupportedFieldType(Object obj) {
 		return obj instanceof Document || obj instanceof Share || obj instanceof MailContact;
+	}
+
+	protected String getOwnerDocumentLink(String linshareURL, String documentUuid) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(linshareURL);
+		Formatter formatter = new Formatter(sb);
+		formatter.format(documentsUrlSuffix, documentUuid);
+		formatter.close();
+		return sb.toString();
+	}
+
+	protected List<Document> transformDocuments(Set<DocumentEntry> documentEntries) {
+		return transform(documentEntries, false, null);
+	}
+
+	protected List<Document> transform(Set<DocumentEntry> documentEntries, boolean withLink, String linshareURL) {
+		List<Document> documents = Lists.newArrayList();
+		for (DocumentEntry documentEntry : documentEntries) {
+			Document d = new Document(documentEntry);
+			if (withLink) {
+				d.setHref(getOwnerDocumentLink(linshareURL, documentEntry.getUuid()));
+			}
+			documents.add(d);
+
+		}
+		return documents;
+	}
+
+	protected Document getNewFakeDocument(String name) {
+		return getNewFakeDocument(name, null);
+	}
+
+	protected Document getNewFakeDocument(String name, String linshareURL) {
+		Document document = new Document(name);
+		if (linshareURL != null) {
+			document.setHref(getOwnerDocumentLink(linshareURL, document.getUuid()));
+		}
+		return document;
+	}
+
+	protected Share getNewFakeShare(String name) {
+		return getNewFakeShare(name, null);
+	}
+
+	protected Share getNewFakeShare(String name, String linshareURL) {
+		Share share = new Share(name);
+		if (linshareURL != null) {
+			share.setHref("Unkown");
+//			share.setHref(getOwnerDocumentLink(linshareURL, share.getUuid()));
+		}
+		return share;
 	}
 
 }

@@ -33,6 +33,9 @@
  */
 package org.linagora.linshare.core.notifications.context;
 
+import java.util.Locale;
+
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -44,13 +47,19 @@ public abstract class EmailContext {
 	 * LinShare URL, mail activation, ...
 	 * 
 	 */
-	protected final AbstractDomain domain;
+	protected AbstractDomain fromDomain;
 
-	protected final boolean needToRetrieveGuestDomain;
+	protected boolean needToRetrieveGuestDomain;
+
+	protected Language language;
+
+	protected String inReplyTo = "";
+
+	protected String references = "";
 
 	public EmailContext(AbstractDomain domain, boolean needToRetrieveGuestDomain) {
 		super();
-		this.domain = domain;
+		this.fromDomain = domain;
 		this.needToRetrieveGuestDomain = needToRetrieveGuestDomain;
 	}
 
@@ -58,12 +67,58 @@ public abstract class EmailContext {
 
 	public abstract MailActivationType getActivation();
 
-	public AbstractDomain getDomain() {
-		return domain;
+	public abstract String getMailRcpt();
+
+	public abstract String getMailReplyTo();
+
+	public abstract void validateRequiredField();
+
+	public AbstractDomain getFromDomain() {
+		return fromDomain;
 	}
 
 	public boolean isNeedToRetrieveGuestDomain() {
 		return needToRetrieveGuestDomain;
+	}
+
+	public Language getLanguage() {
+		if (language == null) {
+			return Language.ENGLISH;
+		}
+		return language;
+	}
+
+	public void setLanguage(Language language) {
+		this.language = language;
+	}
+
+	public Locale getLocale() {
+		return Language.toLocale(language);
+	}
+
+	public String getInReplyTo() {
+		return inReplyTo;
+	}
+
+	public void setInReplyTo(String inReplyTo) {
+		this.inReplyTo = inReplyTo;
+	}
+
+	public String getReferences() {
+		return references;
+	}
+
+	public void setReferences(String references) {
+		this.references = references;
+	}
+
+	/**
+	 * Helpers
+	 */
+
+	public void updateFromDomain(AbstractDomain fromDomain) {
+		this.fromDomain = fromDomain;
+		this.needToRetrieveGuestDomain = false;
 	}
 
 }

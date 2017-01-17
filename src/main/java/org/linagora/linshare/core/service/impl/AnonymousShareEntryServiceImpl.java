@@ -51,13 +51,13 @@ import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.objects.MailContainer;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.Recipient;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.AnonymousShareEntryDownloadEmailContext;
+import org.linagora.linshare.core.notifications.context.NewSharingEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.AnonymousShareEntryResourceAccessControl;
 import org.linagora.linshare.core.repository.FavouriteRepository;
@@ -148,26 +148,12 @@ public class AnonymousShareEntryServiceImpl extends
 			if (mailLocale == null) {
 				mailLocale = owner.getExternalMailLocale();
 			}
-			MailContainer mailContainer = new MailContainer(
-					mailLocale, sc.getMessage(), sc.getSubject());
 			AnonymousUrl anonymousUrl = anonymousShareEntryBusinessService
 					.create(actor, owner, recipient, sc.getDocuments(), sc.getExpiryCalendar(),
 							passwordProtected, shareEntryGroup, sc.getSharingNote());
 			// Notifications
-			MailContainerWithRecipient mail = null;
-			if (sc.getSecured() && !sc.isEncrypted()) {
-				mail = mailBuildingService.buildNewSharingProtected(owner,
-						mailContainer, anonymousUrl);
-			} else if (sc.getSecured() && sc.isEncrypted()) {
-				mail = mailBuildingService.buildNewSharingCypheredProtected(
-						owner, mailContainer, anonymousUrl);
-			} else if (sc.isEncrypted() && !sc.getSecured()) {
-				mail = mailBuildingService.buildNewSharingCyphered(owner,
-						mailContainer, anonymousUrl);
-			} else {
-				mail = mailBuildingService.buildNewSharing(owner,
-						mailContainer, anonymousUrl);
-			}
+			NewSharingEmailContext context = new NewSharingEmailContext(owner, anonymousUrl, sc, mailLocale);
+			MailContainerWithRecipient mail = mailBuildingService.build(context);
 			sc.addMailContainer(mail);
 			sc.addLogs(anonymousUrl.getLogs());
 			recipientFavouriteRepository.incAndCreate(owner,
