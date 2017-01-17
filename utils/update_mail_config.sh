@@ -9,7 +9,7 @@ g_port=5432
 g_database=linshare
 
 if [ -f update_mail_config.cfg ] ; then
-    source makeone.cfg
+    source update_mail_config.cfg
 fi
 
 echo "############ Config #########"
