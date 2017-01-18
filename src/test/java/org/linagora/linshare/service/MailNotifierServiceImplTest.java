@@ -67,10 +67,10 @@ import org.subethamail.wiser.WiserMessage;
 		})
 public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
 	private static Logger logger = LoggerFactory.getLogger(MailNotifierServiceImplTest.class);
-	
+
 	@Autowired
 	private NotifierService mailNotifierService;
-	
+
     private Wiser wiser;
     
 	private static String LINSHARE_MAIL = "linShare@yourdomain.com"; 
@@ -104,13 +104,12 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
     	String fromUser = "foobar@foodomain.com";
     	String fromDomain = LINSHARE_MAIL;
     	String recipient = "johndoe@unknow.com";
-    	
+
     	MailContainer mailContainer = new MailContainer(locale,txtContent,subject);
-    	mailContainer.setContentHTML("");
-    	mailContainer.setContentTXT("");
-    	
+		mailContainer.setContent("");
+
     	mailNotifierService.sendNotification(fromDomain, fromUser, recipient, mailContainer);
-    	
+
         if (wiser.getMessages().size() > 0) {
             WiserMessage wMsg = wiser.getMessages().get(0);
             MimeMessage msg = wMsg.getMimeMessage();
@@ -126,7 +125,7 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
         	Assert.fail();
         }
         
-        mailNotifierService.sendNotification(fromDomain, fromUser, recipient, subject, "<span>htmlContent</span>", txtContent,null,null);
+        mailNotifierService.sendNotification(fromDomain, fromUser, recipient, subject, "<span>htmlContent</span>", null,null);
         
         if (wiser.getMessages().size() > 0) {
             WiserMessage wMsg = wiser.getMessages().get(1);
@@ -157,19 +156,19 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
     	String fromDomain = LINSHARE_MAIL;
     	String recipient = "johndoe@unknow.com";
     	String recipient2 = "janesmith@unknow.com";
-    	
+ 
     	MailContainer mailContainer = new MailContainer(locale,contentTxt,subject);
-    	
+ 
     	MailContainerWithRecipient mailContainerWithRecipient = new MailContainerWithRecipient(mailContainer, recipient, LINSHARE_MAIL, fromDomain);
     	MailContainerWithRecipient mailContainerWithRecipient2 = new MailContainerWithRecipient(mailContainer, recipient2, LINSHARE_MAIL, fromDomain);
 
     	List<MailContainerWithRecipient> mailContainerWithRecipientList = new ArrayList<MailContainerWithRecipient>();
-    	
+
 		mailContainerWithRecipientList.add(mailContainerWithRecipient);
 		mailContainerWithRecipientList.add(mailContainerWithRecipient2);
-		
+
 		mailNotifierService.sendNotification(mailContainerWithRecipientList);
-    	
+
         if (wiser.getMessages().size() > 0) {
             WiserMessage wMsg = wiser.getMessages().get(0);
             MimeMessage msg = wMsg.getMimeMessage();
@@ -201,7 +200,7 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
         mailContainerWithRecipientList.get(0).setReplyTo(fromUser);
         mailContainerWithRecipientList.get(1).setReplyTo(fromUser);
 		mailNotifierService.sendNotification(mailContainerWithRecipientList);
-    	
+
         if (wiser.getMessages().size() > 0) {
             WiserMessage wMsg = wiser.getMessages().get(2);
             MimeMessage msg = wMsg.getMimeMessage();

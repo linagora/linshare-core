@@ -52,10 +52,6 @@ public class MailContainerWithRecipient extends MailContainer {
 	private String replyTo;
 	private String from;
 
-	private StringBuffer bufferTXT = new StringBuffer();
-	private StringBuffer bufferHTML = new StringBuffer();
-
-
 	public MailContainerWithRecipient(MailContainerWithRecipient mailContainer) {
 		super(mailContainer);
 		this.recipient		=	mailContainer.getRecipient();
@@ -121,35 +117,6 @@ public class MailContainerWithRecipient extends MailContainer {
 
 	public void setFrom(String from) {
 		this.from = from;
-	}
-
-
-	/**
-	 * Stuffs 
-	 */
-
-	@Override
-	public String getContentTXT() {
-		contentTXT = bufferTXT.toString();
-		return super.getContentTXT();
-	}
-
-	@Override
-	public String getContentHTML() {
-		contentHTML= bufferHTML.toString();
-		return super.getContentHTML();
-	}
-
-	@Override
-	public void setContentTXT(String contentTXT) {
-		this.bufferTXT= new StringBuffer(contentTXT);
-		super.setContentTXT(contentTXT);
-	}
-
-	@Override
-	public void setContentHTML(String contentHTML) {
-		this.bufferHTML = new StringBuffer(contentHTML);
-		super.setContentHTML(contentHTML);
 	}
 
 }

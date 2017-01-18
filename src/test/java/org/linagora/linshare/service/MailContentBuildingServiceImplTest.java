@@ -33,35 +33,21 @@
  */
 package org.linagora.linshare.service;
 
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
+import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
-import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
-import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
-import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.objects.MailContainer;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
-import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.notifications.context.AnonymousShareEntryDownloadEmailContext;
-import org.linagora.linshare.core.notifications.context.NewGuestEmailContext;
-import org.linagora.linshare.core.notifications.context.NewSharingEmailContext;
-import org.linagora.linshare.core.notifications.context.ResetGuestPasswordEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
-import org.linagora.linshare.core.repository.AnonymousShareEntryRepository;
-import org.linagora.linshare.core.repository.GuestRepository;
-import org.linagora.linshare.core.repository.ShareEntryGroupRepository;
-import org.linagora.linshare.core.repository.ShareEntryRepository;
-import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.NotifierService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
@@ -77,37 +63,14 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-test.xml"
 		})
 public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests{
-	
-	private static final String IMPORT_LOCAL_TEST_SEG_UUID = "7d0ba756-ac50-4803-ba4f-c5bea7f46f5c";
-
-	private static final String IMPORT_LOCAL_TEST_ASE_UUID = "3a2a4d4e-9939-4d12-8c72-6b4b5180cd87";
-
-	private static final String IMPORT_TEST_GUEST_UUID = "46455499-f703-46a2-9659-24ed0fa0d63c";
 
 	private static Logger logger = LoggerFactory.getLogger(MailContentBuildingServiceImplTest.class);
-	
-	@Autowired
-	private GuestRepository guestRepository;
-
-	@Qualifier("userRepository")
-	@Autowired
-	private UserRepository<User> userRepository;
 
 	@Autowired
 	private MailBuildingService mailBuildingService;
 
 	@Autowired
-	private ShareEntryGroupRepository shareEntryGroupRepository;
-	
-	@Autowired
-	private AnonymousShareEntryRepository anonymousShareEntryRepository;
-
-	@Autowired
-	private ShareEntryRepository shareEntryRepository;
-
-	private User john;
-
-	private User jane;
+	private DomainBusinessService domainBusinessService;
 
 	@Autowired
 	private NotifierService notifierService;
@@ -123,110 +86,36 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 
 	private String recipientForSendMail = "bart.simpson@int1.linshare.dev";
 
-	@Before
-	public void setUp() throws Exception {
-		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		john = userRepository.findByMail("user1@linshare.org");
-		jane = userRepository.findByMail("user2@linshare.org");
-		this.executeSqlScript("import-tests-mailbuildingservice.sql", false);
-		logger.debug(LinShareTestConstants.END_SETUP);
-	}
-
-	@After
-	public void tearDown() throws Exception {
-		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		logger.debug(LinShareTestConstants.END_TEARDOWN);
-	}
-	
 	private void testMailGenerate(MailContainer mailContainer){
 		Assert.assertNotNull(mailContainer);
+		logger.debug("Subject: {}", mailContainer.getSubject());
+		logger.debug("Content: {}", mailContainer.getContent());
 		Assert.assertNotNull(mailContainer.getSubject());
-		Assert.assertNotNull(mailContainer.getContentHTML());
-		Assert.assertNotNull(mailContainer.getContentTXT());
+		Assert.assertNotNull(mailContainer.getContent());
 		Assert.assertFalse(mailContainer.getSubject().contains("${"));
-		Assert.assertFalse(mailContainer.getContentHTML().contains("${"));
-		Assert.assertFalse(mailContainer.getContentTXT().contains("${"));
+		Assert.assertFalse(mailContainer.getSubject().contains("??"));
+		Assert.assertFalse(mailContainer.getContent().contains("${"));
+		Assert.assertFalse(mailContainer.getContent().contains("??"));
 	}
 
 	@Test
-	public void testBuildMailAnonymousDownload() throws BusinessException {
+	public void testBuildMail() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		AnonymousShareEntry anonymousShareEntry = anonymousShareEntryRepository
-				.findById(IMPORT_LOCAL_TEST_ASE_UUID);
-		for (Language lang : Language.values()) {
-			john.setExternalMailLocale(lang);
-			MailContainerWithRecipient mail = mailBuildingService
-					.build(new AnonymousShareEntryDownloadEmailContext(anonymousShareEntry));
-			testMailGenerate(mail);
-			sendMail(mail);
+		MailConfig cfg = domainBusinessService.getUniqueRootDomain().getCurrentMailConfiguration();
+		for (MailContentType type : MailContentType.values()) {
+			logger.info("Building mail {} ", type);
+			if (mailBuildingService.fakeBuildIsSupported(type)){
+				for (Language lang : Language.values()) {
+					logger.info("Building mail {} with language {}", type, lang);
+					MailContainerWithRecipient build = mailBuildingService.fakeBuild(type, cfg, lang);
+					testMailGenerate(build);
+					sendMail(build);
+				}
+			} else {
+				logger.warn("Building mail {} was skipped. Not yet supported ?", type);
+			}
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
-	}
-
-	@Test
-	public void testBuildMailNewGuest() throws BusinessException{
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Guest guest = guestRepository.findByLsUuid(IMPORT_TEST_GUEST_UUID);
-		for (Language lang : Language.values()) {
-			john.setExternalMailLocale(lang);
-			NewGuestEmailContext mailContext = new NewGuestEmailContext(john, guest, "password");
-			MailContainerWithRecipient mail = mailBuildingService.build(mailContext);
-			testMailGenerate(mail);
-			sendMail(mail);
-		}
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
-
-	@Test
-	public void testBuildMailResetPassword() throws BusinessException{
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Guest guest = guestRepository.findByLsUuid(IMPORT_TEST_GUEST_UUID);
-		for (Language lang : Language.values()) {
-			john.setExternalMailLocale(lang);
-			ResetGuestPasswordEmailContext context = new ResetGuestPasswordEmailContext(guest, "0ca4a63e-6916-44b2-89dd-3f156fe1dbc9");
-			MailContainerWithRecipient mail = mailBuildingService.build(context);
-			testMailGenerate(mail);
-			sendMail(mail);
-		}
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
-
-	@Test
-	public void testBuildMailNewSharing() throws BusinessException {
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		for (Language lang : Language.values()) {
-			john.setExternalMailLocale(lang);
-			NewSharingEmailContext context = new NewSharingEmailContext(john, jane, getSeg().getShareEntries(), new ShareContainer());
-			context.setLanguage(lang);
-			MailContainerWithRecipient mail = mailBuildingService.build(context);
-			testMailGenerate(mail);
-			sendMail(mail);
-		}
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
-
-	@Test
-	public void testBuildMailNoDocumentHasBeenDownloaded()
-			throws BusinessException {
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		ShareEntryGroup seg = getSeg();
-		// Force initialization of tmp* members.
-		seg.needNotification();
-		for (Language lang : Language.values()) {
-			john.setExternalMailLocale(lang);
-			MailContainerWithRecipient mail = mailBuildingService
-					.buildNoDocumentHasBeenDownloadedAcknowledgement(seg);
-			testMailGenerate(mail);
-			sendMail(mail);
-		}
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
-
-	private ShareEntryGroup getSeg() {
-		ShareEntryGroup seg = shareEntryGroupRepository
-				.findByUuid(IMPORT_LOCAL_TEST_SEG_UUID);
-		Assert.assertNotNull(seg);
-		return seg;
 	}
 
 	private void sendMail(MailContainerWithRecipient mail) {

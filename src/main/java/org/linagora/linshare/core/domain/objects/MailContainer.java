@@ -47,8 +47,7 @@ import org.linagora.linshare.core.domain.constants.Language;
  */
 public class MailContainer {
 	protected String subject;
-	protected String contentTXT;
-	protected String contentHTML;
+	protected String content;
 	protected String personalMessage;
 	protected Language language;
 
@@ -63,8 +62,7 @@ public class MailContainer {
 	 */
 	public MailContainer(MailContainer mailContainer) {
 		this.subject = mailContainer.getSubject();
-		this.contentTXT = mailContainer.getContentTXT();
-		this.contentHTML = mailContainer.getContentHTML();
+		this.content = mailContainer.getContent();
 		this.personalMessage = mailContainer.getPersonalMessage();
 		this.language = mailContainer.getLanguage();
 	}
@@ -74,8 +72,7 @@ public class MailContainer {
 		this.personalMessage = "";
 		this.language = language;
 		this.subject = null;
-		this.contentTXT = null;
-		this.contentHTML = null;
+		this.content = null;
 	}
 
 	public MailContainer(String locale) {
@@ -83,17 +80,14 @@ public class MailContainer {
 		this.personalMessage = "";
 		this.language = Language.fromLocale(new Locale(locale));
 		this.subject = null;
-		this.contentTXT = null;
-		this.contentHTML = null;
+		this.content = null;
 	}
 
-	public MailContainer(Language locale, String message, String subject) {
+	public MailContainer(Language locale, String content, String subject) {
 		super();
-		this.personalMessage = message;
+		this.content = content;
 		this.language = locale;
 		this.subject = subject;
-		this.contentTXT = null;
-		this.contentHTML = null;
 	}
 
 	public MailContainer(String locale, String message) {
@@ -101,32 +95,22 @@ public class MailContainer {
 		this.personalMessage = message;
 		this.language = Language.fromLocale(new Locale(locale));
 		this.subject = null;
-		this.contentTXT = null;
-		this.contentHTML = null;
 	}
 
 	public void setSubject(String subject) {
 		this.subject = subject;
 	}
 
-	public void setContentTXT(String contentTXT) {
-		this.contentTXT = contentTXT;
-	}
-
-	public void setContentHTML(String contentHTML) {
-		this.contentHTML = contentHTML;
+	public void setContent(String content) {
+		this.content = content;
 	}
 
 	public String getSubject() {
 		return subject;
 	}
 
-	public String getContentTXT() {
-		return contentTXT;
-	}
-
-	public String getContentHTML() {
-		return contentHTML;
+	public String getContent() {
+		return content;
 	}
 
 	public void setLanguage(Language language) {

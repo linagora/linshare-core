@@ -244,8 +244,7 @@ public abstract class EmailBuilder implements IEmailBuilder {
 			// null, TemplateMode.XML, templateResolutionAttributes);
 			String body = templateEngine.process(templateSpec, ctx);
 			container.setSubject(subject);
-			container.setContentHTML(body);
-			container.setContentTXT(container.getContentHTML());
+			container.setContent(body);
 
 			container.setFrom(getFromMailAddress(emailCtx.getFromDomain()));
 			container.setReplyTo(emailCtx.getMailReplyTo());

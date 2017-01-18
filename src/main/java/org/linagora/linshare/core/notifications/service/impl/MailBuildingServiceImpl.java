@@ -34,8 +34,6 @@
 package org.linagora.linshare.core.notifications.service.impl;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Formatter;
@@ -74,8 +72,6 @@ import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainer;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
-import org.linagora.linshare.core.domain.objects.Recipient;
-import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.config.LinShareStringTemplateResolver;
 import org.linagora.linshare.core.notifications.context.EmailContext;
@@ -448,6 +444,16 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		EmailBuilder builder = emailBuilders.get(type);
 		Validate.notNull(builder, "Missing email builder!");
 		return builder.build(context);
+	}
+
+	@Override
+	public boolean fakeBuildIsSupported(MailContentType type) throws BusinessException {
+		Validate.notNull(type, "MailContentType can't be null");
+		EmailBuilder builder = emailBuilders.get(type);
+		if (builder == null) {
+			return false;
+		}
+		return true;
 	}
 
 	@Override
@@ -1718,8 +1724,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				.build(layout);
 
 		container.setSubject(subject);
-		container.setContentHTML(layout);
-		container.setContentTXT(container.getContentHTML());
+		container.setContent(layout);
 		// Message IDs from Web service API (ex Plugin Thunderbird)
 		container.setInReplyTo(input.getInReplyTo());
 		container.setReferences(input.getReferences());

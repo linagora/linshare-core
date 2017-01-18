@@ -99,11 +99,9 @@ public class MailBuildingServiceImplTest extends
 	private void testMailGenerate(MailContainer mailContainer) {
 		Assert.assertNotNull(mailContainer);
 		Assert.assertNotNull(mailContainer.getSubject());
-		Assert.assertNotNull(mailContainer.getContentHTML());
-		Assert.assertNotNull(mailContainer.getContentTXT());
+		Assert.assertNotNull(mailContainer.getContent());
 		Assert.assertFalse(mailContainer.getSubject().contains("${"));
-		Assert.assertFalse(mailContainer.getContentHTML().contains("${"));
-		Assert.assertFalse(mailContainer.getContentTXT().contains("${"));
+		Assert.assertFalse(mailContainer.getContent().contains("${"));
 	}
 
 	@Test

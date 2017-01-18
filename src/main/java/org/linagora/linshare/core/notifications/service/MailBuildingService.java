@@ -42,7 +42,6 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
-import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
@@ -53,7 +52,6 @@ import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainer;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
-import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.dto.ContextMetadata;
@@ -61,6 +59,8 @@ import org.linagora.linshare.core.notifications.dto.ContextMetadata;
 public interface MailBuildingService {
 
 	MailContainerWithRecipient build(EmailContext context) throws BusinessException;
+
+	boolean fakeBuildIsSupported(MailContentType type) throws BusinessException;
 
 	MailContainerWithRecipient fakeBuild(MailContentType type, MailConfig cfg, Language language) throws BusinessException;
 

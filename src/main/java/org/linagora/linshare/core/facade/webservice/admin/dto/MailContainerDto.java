@@ -72,7 +72,7 @@ public class MailContainerDto {
 		super();
 		if (build != null) {
 			this.subject = build.getSubject();
-			this.content = build.getContentHTML();
+			this.content = build.getContent();
 			this.language = build.getLanguage().toString();
 			this.type = type.toString();
 		}
