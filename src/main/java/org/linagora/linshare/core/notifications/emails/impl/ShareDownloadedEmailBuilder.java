@@ -33,17 +33,19 @@
  */
 package org.linagora.linshare.core.notifications.emails.impl;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.MailConfig;
-import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
-import org.linagora.linshare.core.notifications.context.ShareEntryDownloadedEmailContext;
+import org.linagora.linshare.core.notifications.context.ShareDownloadedEmailContext;
 import org.linagora.linshare.core.notifications.dto.Document;
 import org.linagora.linshare.core.notifications.dto.MailContact;
 import org.linagora.linshare.core.notifications.dto.Share;
@@ -51,7 +53,7 @@ import org.thymeleaf.context.Context;
 
 import com.google.common.collect.Lists;
 
-public class ShareEntryDownloadedEmailBuilder extends EmailBuilder {
+public class ShareDownloadedEmailBuilder extends EmailBuilder {
 
 	@Override
 	public MailContentType getSupportedType() {
@@ -60,48 +62,100 @@ public class ShareEntryDownloadedEmailBuilder extends EmailBuilder {
 
 	@Override
 	public MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		ShareEntryDownloadedEmailContext emailCtx = (ShareEntryDownloadedEmailContext) context;
-		ShareEntry shareEntry = emailCtx.getShareEntry();
+		ShareDownloadedEmailContext emailCtx = (ShareDownloadedEmailContext) context;
 
-		User shareRecipient = shareEntry.getRecipient();
-		User shareOwner = (User) shareEntry.getEntryOwner();
-
+		User shareOwner = (User) emailCtx.getEntry().getEntryOwner();
 		MailConfig cfg = shareOwner.getDomain().getCurrentMailConfiguration();
+		Boolean isAnonymous = emailCtx.getAnonymous();
+		String linshareURL = getLinShareUrl(shareOwner);
+		Share downloadedShare = emailCtx.getShare();
+		Document document = emailCtx.getDocument();
+		document.setHref(getOwnerDocumentLink(linshareURL, document.getUuid()));
 
 		Context ctx = new Context(emailCtx.getLocale());
+		ctx.setVariable("actionDate", emailCtx.getActionDate());
+		ctx.setVariable("anonymous", isAnonymous);
+		ctx.setVariable("document", document);
+		ctx.setVariable("expiryDate", emailCtx.getEntry().getExpirationDate());
+		ctx.setVariable("linshareURL", linshareURL);
+		ctx.setVariable("share", downloadedShare);
+		ctx.setVariable("shareDate", emailCtx.getEntry().getCreationDate());
 		ctx.setVariable("shareOwner", new MailContact(shareOwner));
-		ctx.setVariable("shareRecipient", new MailContact(shareRecipient));
-		ctx.setVariable("document", new Document(shareEntry.getDocumentEntry()));
-		ctx.setVariable("share", new Share(shareEntry));
+		ctx.setVariable("shareRecipient", emailCtx.getRecipient());
 
-		// LinShare URL for the email recipient.
-		ctx.setVariable("linshareURL", getLinShareUrl(shareOwner));
-
-		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
-				emailCtx);
-		return buildMailContainer;
+		List<Share> shares = Lists.newArrayList();
+		if (isAnonymous) {
+			AnonymousShareEntry shareEntry = emailCtx.getAnonymousShareEntry();
+			Set<AnonymousShareEntry> anonymousShareEntries = shareEntry.getAnonymousUrl().getAnonymousShareEntries();
+			for (AnonymousShareEntry anonymousShareEntry : anonymousShareEntries) {
+				Share share = new Share(anonymousShareEntry);
+				if (share.equals(downloadedShare)) {
+					share.setDownloading(true);
+				}
+				shares.add(share);
+			}
+		} else {
+			// TODO add share present in SEG related to the current share
+			// recipient
+			// ShareEntry shareEntry = emailCtx.getShareEntry();
+			// ShareEntryGroup shareEntryGroup =
+			// shareEntry.getShareEntryGroup();
+			// Set<ShareEntry> shareEntries = shareEntryGroup.getShareEntries();
+		}
+		ctx.setVariable("shares", shares);
+		ctx.setVariable("sharesCount", shares.size());
+		return buildMailContainerThymeleaf(cfg, getSupportedType(), ctx, emailCtx);
 	}
 
 	@Override
 	public List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
+		// share with an internal
+		res.add(getUserFakeContext(language));
+		// share with an external
+		res.add(getExternalFakeContext(language));
+		return res;
+	}
+
+	protected Context getExternalFakeContext(Language language) {
 		Context ctx = new Context(Language.toLocale(language));
+		ctx.setVariable("actionDate", new Date());
+		ctx.setVariable("anonymous", false);
+		ctx.setVariable("document", new Document("a-shared-file.txt"));
+		ctx.setVariable("expiryDate", getFakeExpirationDate());
+		ctx.setVariable("linshareURL", fakeLinshareURL);
+		ctx.setVariable("share", new Share("a-shared-file.txt", true));
+		ctx.setVariable("shareDate", new Date());
 		ctx.setVariable("shareOwner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
 		ctx.setVariable("shareRecipient", new MailContact("unknown@linshare.org"));
-		ctx.setVariable("document", new Document("a-shared-file.txt"));
-		ctx.setVariable("share", new Share("a-shared-file.txt", true));
-
-		// LinShare URL for the email recipient.
-		ctx.setVariable("linshareURL", "http://127.0.0.1/");
-
 		List<Share> shares = Lists.newArrayList();
 		shares.add(new Share("a-shared-file.txt", true));
 		shares.add(new Share("second-shared-file.txt", false));
 		shares.add(new Share("third-shared-file.txt", true));
 		ctx.setVariable("shares", shares);
 		ctx.setVariable("sharesCount", shares.size());
-		res.add(ctx);
-		return res;
+		return ctx;
+	}
+
+	protected Context getUserFakeContext(Language language) {
+		Context ctx = new Context(Language.toLocale(language));
+		ctx.setVariable("actionDate", new Date());
+		ctx.setVariable("anonymous", false);
+		ctx.setVariable("document", new Document("a-shared-file.txt"));
+		ctx.setVariable("expiryDate", getFakeExpirationDate());
+		ctx.setVariable("linshareURL", fakeLinshareURL);
+		ctx.setVariable("share", new Share("a-shared-file.txt", true));
+		ctx.setVariable("shareDate", new Date());
+		ctx.setVariable("shareOwner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
+		ctx.setVariable("shareRecipient", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
+
+		List<Share> shares = Lists.newArrayList();
+		// shares.add(new Share("a-shared-file.txt", true));
+		// shares.add(new Share("second-shared-file.txt", false));
+		// shares.add(new Share("third-shared-file.txt", true));
+		ctx.setVariable("shares", shares);
+		ctx.setVariable("sharesCount", shares.size());
+		return ctx;
 	}
 
 }

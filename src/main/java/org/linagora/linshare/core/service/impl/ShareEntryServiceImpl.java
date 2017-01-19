@@ -57,7 +57,7 @@ import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.NewSharingEmailContext;
-import org.linagora.linshare.core.notifications.context.ShareEntryDownloadedEmailContext;
+import org.linagora.linshare.core.notifications.context.ShareDownloadedEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.ShareEntryResourceAccessControl;
 import org.linagora.linshare.core.repository.FavouriteRepository;
@@ -207,7 +207,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		logger.info("delete share : " + share.getUuid());
 		// step 5 : notification
 		if (share.getDownloaded() < 1) {
-			ShareEntryDownloadedEmailContext context = new ShareEntryDownloadedEmailContext(share);
+			ShareDownloadedEmailContext context = new ShareDownloadedEmailContext(share);
 			MailContainerWithRecipient mail = mailBuildingService.build(context);
 			notifierService.sendNotification(mail);
 		}
@@ -267,7 +267,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		checkDownloadPermission(actor, owner, ShareEntry.class,
 				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, share);
 		if (share.getDownloaded() <= 0) {
-			ShareEntryDownloadedEmailContext context = new ShareEntryDownloadedEmailContext(share);
+			ShareDownloadedEmailContext context = new ShareDownloadedEmailContext(share);
 			MailContainerWithRecipient mail = mailBuildingService.build(context);
 			notifierService.sendNotification(mail);
 		}

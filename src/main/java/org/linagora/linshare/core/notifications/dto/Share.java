@@ -54,6 +54,8 @@ public class Share {
 
 	protected boolean displayHref;
 
+	protected boolean isDownloading;
+
 	protected String href;
 
 	public Share(String name, boolean downloaded) {
@@ -65,6 +67,7 @@ public class Share {
 		Calendar instance = Calendar.getInstance();
 		instance.add(Calendar.MONTH, 1);
 		this.expirationDate = instance.getTime();
+		this.isDownloading = false;
 	}
 
 	public Share(ShareEntry se) {
@@ -74,6 +77,7 @@ public class Share {
 		this.downloaded = se.getDownloaded() > 0;
 		this.creationDate = se.getCreationDate().getTime();
 		this.expirationDate = se.getExpirationDate().getTime();
+		this.isDownloading = false;
 	}
 
 	public Share(AnonymousShareEntry se) {
@@ -83,6 +87,7 @@ public class Share {
 		this.downloaded = se.getDownloaded() > 0;
 		this.creationDate = se.getCreationDate().getTime();
 		this.expirationDate = se.getExpirationDate().getTime();
+		this.isDownloading = false;
 	}
 
 	public Share(String name) {
@@ -148,6 +153,39 @@ public class Share {
 
 	public void setDisplayHref(boolean displayHref) {
 		this.displayHref = displayHref;
+	}
+
+	public boolean isDownloading() {
+		return isDownloading;
+	}
+
+	public void setDownloading(boolean isDownloading) {
+		this.isDownloading = isDownloading;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Share other = (Share) obj;
+		if (uuid == null) {
+			if (other.uuid != null)
+				return false;
+		} else if (!uuid.equals(other.uuid))
+			return false;
+		return true;
 	}
 
 	@Override

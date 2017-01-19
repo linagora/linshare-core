@@ -72,15 +72,16 @@ import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainer;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.config.LinShareStringTemplateResolver;
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.dto.ContextMetadata;
-import org.linagora.linshare.core.notifications.emails.impl.AnonymousShareEntryDownloadEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.EmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.NewGuestEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.NewSharingEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.ResetGuestPasswordEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.ShareDownloadedEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.SharingAcknowledgementEmailBuilder;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -422,7 +423,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		newGuestBuilder.setUrlGuestReset(urlGuestReset);
 		emailBuilders.put(MailContentType.NEW_GUEST, newGuestBuilder);
 
-		emailBuilders.put(MailContentType.ANONYMOUS_DOWNLOAD, new AnonymousShareEntryDownloadEmailBuilder());
+		emailBuilders.put(MailContentType.REGISTERED_DOWNLOAD, new ShareDownloadedEmailBuilder());
+//		emailBuilders.put(MailContentType.ANONYMOUS_DOWNLOAD, new ShareDownloadedEmailBuilder());
 
 		ResetGuestPasswordEmailBuilder resetGuestBuilder = new ResetGuestPasswordEmailBuilder();
 		resetGuestBuilder.setUrlGuestReset(urlGuestReset);
@@ -483,6 +485,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	public List<ContextMetadata> getAvailableVariables(MailContentType type) {
 		Validate.notNull(type, "MailContentType can't be null");
 		EmailBuilder builder = emailBuilders.get(type);
+		if (builder == null) {
+			throw new BusinessException(BusinessErrorCode.TEMPLATE_PARSING_ERROR, "Missing template builder");
+		}
 		return builder.getAvailableVariables();
 	}
 
