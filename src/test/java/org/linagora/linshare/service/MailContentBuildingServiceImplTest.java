@@ -54,18 +54,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
-@ContextConfiguration(locations = { 
-		"classpath:springContext-datasource.xml",
-		"classpath:springContext-dao.xml",
-		"classpath:springContext-ldap.xml",
-		"classpath:springContext-repository.xml",
-		"classpath:springContext-fongo.xml",
-		"classpath:springContext-storage-jcloud.xml",
-		"classpath:springContext-business-service.xml",
-		"classpath:springContext-service-miscellaneous.xml",
-		"classpath:springContext-test.xml"
-		})
-public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests{
+@ContextConfiguration(locations = { "classpath:springContext-datasource.xml", "classpath:springContext-dao.xml",
+		"classpath:springContext-ldap.xml", "classpath:springContext-repository.xml",
+		"classpath:springContext-fongo.xml", "classpath:springContext-storage-jcloud.xml",
+		"classpath:springContext-business-service.xml", "classpath:springContext-service-miscellaneous.xml",
+		"classpath:springContext-test.xml" })
+public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
 
 	private static Logger logger = LoggerFactory.getLogger(MailContentBuildingServiceImplTest.class);
 
@@ -80,16 +74,14 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 
 	/**
 	 * If you want send generated emails to a webmail, enable this field and
-	 * configure file : src/test/resources/linshare-test.properties
-	 * with properties :
-	 * - mail.smtp.host=
-	 * - mail.smtp.port=
+	 * configure file : src/test/resources/linshare-test.properties with
+	 * properties : - mail.smtp.host= - mail.smtp.port=
 	 */
 	private boolean sendMail = false;
 
 	private String recipientForSendMail = "bart.simpson@int1.linshare.dev";
 
-	private void testMailGenerate(MailContainer mailContainer){
+	private void testMailGenerate(MailContainer mailContainer) {
 		Assert.assertNotNull(mailContainer);
 		logger.debug("Subject: {}", mailContainer.getSubject());
 		logger.debug("Content: {}", mailContainer.getContent());
@@ -107,7 +99,7 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		MailConfig cfg = domainBusinessService.getUniqueRootDomain().getCurrentMailConfiguration();
 		for (MailContentType type : MailContentType.values()) {
 			logger.info("Building mail {} ", type);
-			if (mailBuildingService.fakeBuildIsSupported(type)){
+			if (mailBuildingService.fakeBuildIsSupported(type)) {
 				for (Language lang : Language.values()) {
 					logger.info("Building mail {} with language {}", type, lang);
 					List<ContextMetadata> contexts = mailBuildingService.getAvailableVariables(type);
@@ -120,6 +112,21 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 			} else {
 				logger.warn("Building mail {} was skipped. Not yet supported ?", type);
 			}
+		}
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testBuildOneMail() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		MailConfig cfg = domainBusinessService.getUniqueRootDomain().getCurrentMailConfiguration();
+		MailContentType type = MailContentType.RESET_PASSWORD;
+		logger.info("Building mail {} ", type);
+		List<ContextMetadata> contexts = mailBuildingService.getAvailableVariables(type);
+		for (int flavor = 0; flavor < contexts.size(); flavor++) {
+			MailContainerWithRecipient build = mailBuildingService.fakeBuild(type, cfg, Language.ENGLISH, flavor);
+			testMailGenerate(build);
+			sendMail(build);
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}

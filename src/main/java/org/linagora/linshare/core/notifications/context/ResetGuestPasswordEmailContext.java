@@ -36,25 +36,25 @@ package org.linagora.linshare.core.notifications.context;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
-import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.Guest;
 
 public class ResetGuestPasswordEmailContext extends EmailContext {
 
-	protected User guest;
+	protected Guest guest;
 
 	protected String resetPasswordTokenUuid;
 
-	public ResetGuestPasswordEmailContext(User guest, String resetPasswordTokenUuid) {
+	public ResetGuestPasswordEmailContext(Guest guest, String resetPasswordTokenUuid) {
 		super(guest.getDomain(), false);
 		this.guest = guest;
 		this.resetPasswordTokenUuid= resetPasswordTokenUuid;
 	}
 
-	public User getGuest() {
+	public Guest getGuest() {
 		return guest;
 	}
 
-	public void setGuest(User guest) {
+	public void setGuest(Guest guest) {
 		this.guest = guest;
 	}
 

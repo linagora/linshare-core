@@ -80,8 +80,9 @@
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="mailActivationBusinessService" />
 		<constructor-arg value="${linshare.display.licenceTerm}" />
-		<constructor-arg value="${linshare.user.downloadurl.receivedshares.suffix}" />
-		<constructor-arg value="${linshare.user.downloadurl.documents.suffix}" />
+		<constructor-arg value="${linshare.user.url.download.receivedshares}" />
+		<constructor-arg value="${linshare.user.url.download.documents}" />
+		<constructor-arg value="${linshare.user.url.guest.reset}" />
 		<constructor-arg value="${linshare.notifications.email.templating.strict.mode}" />
 		<constructor-arg value="${linshare.notifications.email.templating.subject.prefix.enable}" />
 	</bean>

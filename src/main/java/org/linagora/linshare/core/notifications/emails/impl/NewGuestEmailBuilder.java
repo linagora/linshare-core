@@ -33,10 +33,12 @@
  */
 package org.linagora.linshare.core.notifications.emails.impl;
 
+import java.util.Formatter;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
@@ -50,6 +52,16 @@ import com.google.common.collect.Lists;
 
 public class NewGuestEmailBuilder extends EmailBuilder {
 
+	protected String urlGuestReset;
+
+	public String getUrlGuestReset() {
+		return urlGuestReset;
+	}
+
+	public void setUrlGuestReset(String urlGuestReset) {
+		this.urlGuestReset = urlGuestReset;
+	}
+
 	@Override
 	public MailContentType getSupportedType() {
 		return MailContentType.NEW_GUEST;
@@ -59,22 +71,17 @@ public class NewGuestEmailBuilder extends EmailBuilder {
 	public MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
 		NewGuestEmailContext emailCtx = (NewGuestEmailContext) context;
 		User creator = emailCtx.getCreator();
-		User guest = emailCtx.getGuest();
-
+		Guest guest = emailCtx.getGuest();
+		String linshareURL = getLinShareUrl(guest);
 		MailConfig cfg = creator.getDomain().getCurrentMailConfiguration();
 
 		Context ctx = new Context(emailCtx.getLocale());
 		ctx.setVariable("creator", new MailContact(creator));
+		ctx.setVariable("customMessage", null);
 		ctx.setVariable("guest", new MailContact(guest));
-
-		// LinShare URL for the email recipient.
-		ctx.setVariable("linshareURL", getLinShareUrl(guest));
-		ctx.setVariable("prefixURL", "#/external/reset/");
-		ctx.setVariable("passwordTokenUuid", emailCtx.getResetPasswordTokenUuid());
-		// TODO FIXME
-		// linShareUrl + "#/external/reset/" +
-		// emailCtx.getResetPasswordTokenUuid());
-
+		ctx.setVariable("guestExpirationDate", guest.getExpirationDate());
+		ctx.setVariable("linshareURL", linshareURL);
+		ctx.setVariable("resetLink", getResetLink(linshareURL, emailCtx.getResetPasswordTokenUuid()));
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
 				emailCtx);
 		return buildMailContainer;
@@ -86,13 +93,18 @@ public class NewGuestEmailBuilder extends EmailBuilder {
 		Context ctx = new Context(Language.toLocale(language));
 		ctx.setVariable("creator", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
 		ctx.setVariable("guest", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
-
-		// LinShare URL for the email recipient.
-		ctx.setVariable("linshareURL", "http://127.0.0.1/");
-		ctx.setVariable("prefixURL", "#/external/reset/");
-		ctx.setVariable("passwordTokenUuid", "cb1443d0-a34f-4d0b-92e4-c19d4eeb7fae");
+		ctx.setVariable("linshareURL", fakeLinshareURL);
+		ctx.setVariable("resetLink", getResetLink(fakeLinshareURL, "cb1443d0-a34f-4d0b-92e4-c19d4eeb7fae"));
 		res.add(ctx);
 		return res;
 	}
 
+	protected String getResetLink(String linshareURL, String token) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(linshareURL);
+		Formatter formatter = new Formatter(sb);
+		formatter.format(urlGuestReset, token);
+		formatter.close();
+		return sb.toString();
+	}
 }

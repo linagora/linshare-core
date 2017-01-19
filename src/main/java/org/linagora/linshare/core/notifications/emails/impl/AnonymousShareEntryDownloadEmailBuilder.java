@@ -99,8 +99,7 @@ public class AnonymousShareEntryDownloadEmailBuilder extends EmailBuilder {
 		ctx.setVariable("document", new Document("a-shared-file.txt"));
 		ctx.setVariable("share", new Share("a-shared-file.txt", true));
 
-		// LinShare URL for the email recipient.
-		ctx.setVariable("linshareURL", "http://127.0.0.1/");
+		ctx.setVariable("linshareURL", fakeLinshareURL);
 
 		List<Share> shares = Lists.newArrayList();
 		shares.add(new Share("a-shared-file.txt", true));

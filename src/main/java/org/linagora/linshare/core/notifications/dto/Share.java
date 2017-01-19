@@ -52,6 +52,8 @@ public class Share {
 
 	protected Date expirationDate;
 
+	protected boolean displayHref;
+
 	protected String href;
 
 	public Share(String name, boolean downloaded) {
@@ -132,6 +134,25 @@ public class Share {
 	}
 
 	public void setHref(String href) {
+		if (href == null) {
+			displayHref = false;
+		} else {
+			displayHref = true;
+		}
 		this.href = href;
+	}
+
+	public boolean isDisplayHref() {
+		return displayHref;
+	}
+
+	public void setDisplayHref(boolean displayHref) {
+		this.displayHref = displayHref;
+	}
+
+	@Override
+	public String toString() {
+		return "Share [uuid=" + uuid + ", name=" + name + ", downloaded=" + downloaded + ", creationDate="
+				+ creationDate + ", expirationDate=" + expirationDate + ", href=" + href + "]";
 	}
 }

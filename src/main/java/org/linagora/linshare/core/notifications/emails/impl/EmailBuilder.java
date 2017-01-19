@@ -35,6 +35,8 @@ package org.linagora.linshare.core.notifications.emails.impl;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Map;
@@ -91,6 +93,8 @@ public abstract class EmailBuilder implements IEmailBuilder {
 	private String receivedSharesUrlSuffix;
 
 	private String documentsUrlSuffix;
+
+	protected String fakeLinshareURL = "http://127.0.0.1/";
 
 	public EmailBuilder() {
 	}
@@ -344,18 +348,25 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		Set<String> variableNames = ctx.getVariableNames();
 		for (String name : variableNames) {
 			Object obj = ctx.getVariable(name);
-			Variable variable = new Variable(name, obj.getClass().getSimpleName());
-			logger.debug(variable.toString());
-			if (obj instanceof ArrayList) {
-				List<?> array = (List<?>) obj;
-				if (!array.isEmpty()) {
-					Object next = array.iterator().next();
-					String parametrizedClassName = next.getClass().getSimpleName();
-					variable.setType(variable.getType() + "<" + parametrizedClassName + ">");
-					variable.setAttributes(getFields(next));
-				}
+			Variable variable = null;
+			if (obj == null) {
+				// variable could exists but not defined.
+				variable = new Variable(name, "Undefined");
 			} else {
-				variable.setAttributes(getFields(obj));
+				logger.debug(obj.toString());
+				variable = new Variable(name, obj.getClass().getSimpleName());
+				logger.debug(variable.toString());
+				if (obj instanceof ArrayList) {
+					List<?> array = (List<?>) obj;
+					if (!array.isEmpty()) {
+						Object next = array.iterator().next();
+						String parametrizedClassName = next.getClass().getSimpleName();
+						variable.setType(variable.getType() + "<" + parametrizedClassName + ">");
+						variable.setAttributes(getFields(next));
+					}
+				} else {
+					variable.setAttributes(getFields(obj));
+				}
 			}
 			metadata.addVariable(variable);
 		}
@@ -438,4 +449,9 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		return share;
 	}
 
+	protected Date getFakeExpirationDate() {
+		Calendar c = Calendar.getInstance();
+		c.add(Calendar.MONDAY, 3);
+		return c.getTime();
+	}
 }

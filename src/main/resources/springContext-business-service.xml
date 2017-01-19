@@ -51,7 +51,7 @@
 
 	<bean id="anonymousUrlBusinessService" class="org.linagora.linshare.core.business.service.impl.AnonymousUrlBusinessServiceImpl">
 		<constructor-arg ref="anonymousUrlRepository" />
-		<constructor-arg value="${linshare.user.downloadurl.anonymousurl.suffix}" />
+		<constructor-arg value="${linshare.user.url.anonymousurl.link}" />
 		<constructor-arg ref="passwordService" />
 		<constructor-arg ref="accountRepository" />
 	</bean>

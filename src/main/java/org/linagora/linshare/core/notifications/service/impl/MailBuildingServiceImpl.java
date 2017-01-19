@@ -389,6 +389,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			boolean insertLicenceTerm,
 			String receivedSharesUrlSuffix,
 			String documentsUrlSuffix,
+			String urlGuestReset,
 			boolean templatingStrictMode,
 			boolean templatingSubjectPrefix
 			) throws Exception {
@@ -407,7 +408,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		this.anonymouslySharedWith.put(Language.FRENCH, "Partagé anonymement avec");
 		this.receivedSharesUrlSuffix = receivedSharesUrlSuffix;
 		this.documentsUrlSuffix = documentsUrlSuffix;
-
 		this.templateEngine = new TemplateEngine();
 		LinShareStringTemplateResolver templateResolver = new LinShareStringTemplateResolver(insertLicenceTerm, templatingSubjectPrefix);
 		if (templatingStrictMode) {
@@ -417,10 +417,19 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 
 		emailBuilders = Maps.newHashMap();
 		emailBuilders.put(MailContentType.NEW_SHARING, new NewSharingEmailBuilder());
-		emailBuilders.put(MailContentType.NEW_GUEST, new NewGuestEmailBuilder());
+
+		NewGuestEmailBuilder newGuestBuilder = new NewGuestEmailBuilder();
+		newGuestBuilder.setUrlGuestReset(urlGuestReset);
+		emailBuilders.put(MailContentType.NEW_GUEST, newGuestBuilder);
+
 		emailBuilders.put(MailContentType.ANONYMOUS_DOWNLOAD, new AnonymousShareEntryDownloadEmailBuilder());
-		emailBuilders.put(MailContentType.RESET_PASSWORD, new ResetGuestPasswordEmailBuilder());
-		emailBuilders.put(MailContentType.SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER, new SharingAcknowledgementEmailBuilder());
+
+		ResetGuestPasswordEmailBuilder resetGuestBuilder = new ResetGuestPasswordEmailBuilder();
+		resetGuestBuilder.setUrlGuestReset(urlGuestReset);
+		emailBuilders.put(MailContentType.RESET_PASSWORD, resetGuestBuilder);
+
+		emailBuilders.put(MailContentType.SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER,
+				new SharingAcknowledgementEmailBuilder());
 		initMailBuilders();
 	}
 

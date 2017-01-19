@@ -36,17 +36,18 @@ package org.linagora.linshare.core.notifications.context;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 
 public class NewGuestEmailContext extends EmailContext {
 
 	protected User creator;
 
-	protected User guest;
+	protected Guest guest;
 
 	protected String resetPasswordTokenUuid;
 
-	public NewGuestEmailContext(User creator, User guest, String resetPasswordTokenUuid) {
+	public NewGuestEmailContext(User creator, Guest guest, String resetPasswordTokenUuid) {
 		super(guest.getDomain(), false);
 		this.creator = creator;
 		this.guest = guest;
@@ -61,11 +62,11 @@ public class NewGuestEmailContext extends EmailContext {
 		this.creator = creator;
 	}
 
-	public User getGuest() {
+	public Guest getGuest() {
 		return guest;
 	}
 
-	public void setGuest(User guest) {
+	public void setGuest(Guest guest) {
 		this.guest = guest;
 	}
 

@@ -45,6 +45,8 @@ public class Document {
 
 	protected String href;
 
+	protected boolean displayHref;
+
 	public Document(String name) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
@@ -78,6 +80,25 @@ public class Document {
 	}
 
 	public void setHref(String href) {
+		if (href == null) {
+			displayHref = false;
+		} else {
+			displayHref = true;
+		}
 		this.href = href;
 	}
+
+	public boolean isDisplayHref() {
+		return displayHref;
+	}
+
+	public void setDisplayHref(boolean displayHref) {
+		this.displayHref = displayHref;
+	}
+
+	@Override
+	public String toString() {
+		return "Document [uuid=" + uuid + ", name=" + name + ", href=" + href + "]";
+	}
+
 }

@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.notifications.emails.impl;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -74,6 +73,8 @@ public class SharingAcknowledgementEmailBuilder extends EmailBuilder {
 		Context ctx = new Context(emailCtx.getLocale());
 		ctx.setVariable("shareOwner", new MailContact(shareOwner));
 		ctx.setVariable("expirationDate", shareContainer.getExpiryDate());
+		// TODO to be improve : sharingDate should be store inside the container
+		// or retrieve from SEG.
 		ctx.setVariable("creationDate", shareEntries.iterator().next().getCreationDate().getTime());
 
 		List<Document> documents = transform(shareContainer.getDocuments(), true, getLinShareUrl(shareOwner));
@@ -90,8 +91,8 @@ public class SharingAcknowledgementEmailBuilder extends EmailBuilder {
 		ctx.setVariable("customMessage", shareContainer.getMessage());
 		ctx.setVariable("sharingNote", shareContainer.getSharingNote());
 
-		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(),
-				ctx, emailCtx);
+		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
+				emailCtx);
 		return buildMailContainer;
 	}
 
@@ -99,18 +100,15 @@ public class SharingAcknowledgementEmailBuilder extends EmailBuilder {
 	public List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
 		Context ctx = new Context(Language.toLocale(language));
-		Calendar c = Calendar.getInstance();
-		c.add(Calendar.MONDAY, 3);
-		String linshareURL = "http://127.0.0.1/";
 
 		ctx.setVariable("shareOwner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
-		ctx.setVariable("expirationDate", c.getTime());
+		ctx.setVariable("expirationDate", getFakeExpirationDate());
 		ctx.setVariable("creationDate", new Date());
 
 		List<Document> documents = Lists.newArrayList();
-		documents.add(getNewFakeDocument("a-shared-file.txt", linshareURL));
-		documents.add(getNewFakeDocument("second-shared-file.txt", linshareURL));
-		documents.add(getNewFakeDocument("third-shared-file.txt", linshareURL));
+		documents.add(getNewFakeDocument("a-shared-file.txt", fakeLinshareURL));
+		documents.add(getNewFakeDocument("second-shared-file.txt", fakeLinshareURL));
+		documents.add(getNewFakeDocument("third-shared-file.txt", fakeLinshareURL));
 		ctx.setVariable("documents", documents);
 		ctx.setVariable("documents", documents.size());
 
@@ -120,7 +118,7 @@ public class SharingAcknowledgementEmailBuilder extends EmailBuilder {
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipients", recipients.size());
 
-		ctx.setVariable("linshareURL", linshareURL);
+		ctx.setVariable("linshareURL", fakeLinshareURL);
 
 		ctx.setVariable("customSubject", "Some personal subject");
 		ctx.setVariable("customMessage", "Some personal message");
