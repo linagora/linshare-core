@@ -109,7 +109,8 @@ public class NewSharingEmailBuilder extends EmailBuilder{
 	}
 
 	@Override
-	public Context getContextForFakeBuild(Language language) {
+	public List<Context> getContextForFakeBuild(Language language) {
+		List<Context> res = Lists.newArrayList();
 		Context ctx = new Context(Language.toLocale(language));
 		String linshareURL = "http://127.0.0.1/";
 		ctx.setVariable("shareOwner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
@@ -130,6 +131,7 @@ public class NewSharingEmailBuilder extends EmailBuilder{
 		ctx.setVariable("shares", shares);
 		ctx.setVariable("sharesCount", shares.size());
 
-		return ctx;
+		res.add(ctx);
+		return res;
 	}
 }

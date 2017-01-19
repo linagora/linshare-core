@@ -45,9 +45,9 @@ import com.google.common.collect.Lists;
 @XmlRootElement(name = "ContextMetadata")
 public class ContextMetadata {
 
-	String mailType;
+	protected String mailType;
 
-	List<Variable> variables;
+	protected List<Variable> variables;
 
 	public ContextMetadata(String mailType) {
 		super();

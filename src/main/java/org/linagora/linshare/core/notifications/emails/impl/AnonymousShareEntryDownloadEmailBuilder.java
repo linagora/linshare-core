@@ -91,7 +91,8 @@ public class AnonymousShareEntryDownloadEmailBuilder extends EmailBuilder {
 	}
 
 	@Override
-	public Context getContextForFakeBuild(Language language) {
+	public List<Context> getContextForFakeBuild(Language language) {
+		List<Context> res = Lists.newArrayList();
 		Context ctx = new Context(Language.toLocale(language));
 		ctx.setVariable("shareOwner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
 		ctx.setVariable("shareRecipient", new MailContact("unknown@linshare.org"));
@@ -107,7 +108,8 @@ public class AnonymousShareEntryDownloadEmailBuilder extends EmailBuilder {
 		shares.add(new Share("third-shared-file.txt", true));
 		ctx.setVariable("shares", shares);
 		ctx.setVariable("sharesCount", shares.size());
-		return ctx;
+		res.add(ctx);
+		return res;
 	}
 
 }

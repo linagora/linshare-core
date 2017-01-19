@@ -457,21 +457,21 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	}
 
 	@Override
-	public MailContainerWithRecipient fakeBuild(MailContentType type, MailConfig cfg, Language language) throws BusinessException {
+	public MailContainerWithRecipient fakeBuild(MailContentType type, MailConfig cfg, Language language, Integer flavor) throws BusinessException {
 		Validate.notNull(type, "MailContentType can't be null");
 		if (cfg == null) {
 			cfg = this.domainBusinessService.getUniqueRootDomain().getCurrentMailConfiguration();
 		}
 		if (language == null) {
-			language = Language.FRENCH;
+			language = Language.ENGLISH;
 		}
 		EmailBuilder builder = emailBuilders.get(type);
 		cfg.findContent(language, type);
-		return builder.fakeBuild(cfg, language);
+		return builder.fakeBuild(cfg, language, flavor);
 	}
 
 	@Override
-	public ContextMetadata getAvailableVariables(MailContentType type) {
+	public List<ContextMetadata> getAvailableVariables(MailContentType type) {
 		Validate.notNull(type, "MailContentType can't be null");
 		EmailBuilder builder = emailBuilders.get(type);
 		return builder.getAvailableVariables();

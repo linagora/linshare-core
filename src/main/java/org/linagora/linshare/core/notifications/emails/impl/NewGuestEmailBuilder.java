@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.notifications.emails.impl;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.MailConfig;
@@ -43,6 +45,8 @@ import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.NewGuestEmailContext;
 import org.linagora.linshare.core.notifications.dto.MailContact;
 import org.thymeleaf.context.Context;
+
+import com.google.common.collect.Lists;
 
 public class NewGuestEmailBuilder extends EmailBuilder {
 
@@ -77,7 +81,8 @@ public class NewGuestEmailBuilder extends EmailBuilder {
 	}
 
 	@Override
-	public Context getContextForFakeBuild(Language language) {
+	public List<Context> getContextForFakeBuild(Language language) {
+		List<Context> res = Lists.newArrayList();
 		Context ctx = new Context(Language.toLocale(language));
 		ctx.setVariable("creator", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
 		ctx.setVariable("guest", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
@@ -86,7 +91,8 @@ public class NewGuestEmailBuilder extends EmailBuilder {
 		ctx.setVariable("linshareURL", "http://127.0.0.1/");
 		ctx.setVariable("prefixURL", "#/external/reset/");
 		ctx.setVariable("passwordTokenUuid", "cb1443d0-a34f-4d0b-92e4-c19d4eeb7fae");
-		return ctx;
+		res.add(ctx);
+		return res;
 	}
 
 }

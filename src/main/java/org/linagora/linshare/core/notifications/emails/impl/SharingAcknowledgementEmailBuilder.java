@@ -96,7 +96,8 @@ public class SharingAcknowledgementEmailBuilder extends EmailBuilder {
 	}
 
 	@Override
-	public Context getContextForFakeBuild(Language language) {
+	public List<Context> getContextForFakeBuild(Language language) {
+		List<Context> res = Lists.newArrayList();
 		Context ctx = new Context(Language.toLocale(language));
 		Calendar c = Calendar.getInstance();
 		c.add(Calendar.MONDAY, 3);
@@ -125,6 +126,7 @@ public class SharingAcknowledgementEmailBuilder extends EmailBuilder {
 		ctx.setVariable("customMessage", "Some personal message");
 		ctx.setVariable("sharingNote", "a sharing note");
 
-		return ctx;
+		res.add(ctx);
+		return res;
 	}
 }

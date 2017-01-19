@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.webservice.admin.impl;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.ws.rs.Consumes;
@@ -154,8 +155,10 @@ public class MailContentRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "Language to use for the build")
 				@QueryParam(value = "language") String language,
 			@ApiParam(value = "Mail config's uuid.")
-				@QueryParam(value = "mailConfig") String mailConfigUuid) {
-		return mailContentFacade.fakeBuild(mailContentUuid, language, mailConfigUuid);
+				@QueryParam(value = "mailConfig") String mailConfigUuid,
+			@ApiParam(value = "Mail flavor.")
+				@QueryParam(value = "flavor") Integer flavor) {
+		return mailContentFacade.fakeBuild(mailContentUuid, language, mailConfigUuid, flavor);
 	}
 
 	@Path("/build")
@@ -168,8 +171,10 @@ public class MailContentRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "Language to use for the build")
 				@QueryParam(value = "language") String language,
 			@ApiParam(value = "Mail config's uuid.")
-				@QueryParam(value = "mailConfig") String mailConfigUuid) {
-		return mailContentFacade.fakeBuild(dto, language, mailConfigUuid);
+				@QueryParam(value = "mailConfig") String mailConfigUuid,
+			@ApiParam(value = "Mail flavor.")
+				@QueryParam(value = "flavor") Integer flavor) {
+		return mailContentFacade.fakeBuild(dto, language, mailConfigUuid, flavor);
 	}
 
 	@Path("/{uuid}/build/html")
@@ -185,9 +190,11 @@ public class MailContentRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "Mail config's uuid.")
 				@QueryParam(value = "mailConfig") String mailConfigUuid,
 			@ApiParam(value = "build subject instead body")
-				@QueryParam(value = "subject") @DefaultValue("false") boolean subject
+				@QueryParam(value = "subject") @DefaultValue("false") boolean subject,
+			@ApiParam(value = "Mail flavor.")
+				@QueryParam(value = "flavor") Integer flavor
 			) {
-		return mailContentFacade.fakeBuildHtml(mailContentUuid, language, mailConfigUuid, subject);
+		return mailContentFacade.fakeBuildHtml(mailContentUuid, language, mailConfigUuid, subject, flavor);
 	}
 
 	@Path("/{uuid}/vars")
@@ -195,7 +202,7 @@ public class MailContentRestServiceImpl extends WebserviceBase implements
 	@ApiOperation(value = "Return available variables and their types in the context of the current mail content.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public ContextMetadata getAvailableVariables(
+	public List<ContextMetadata> getAvailableVariables(
 			@ApiParam(value = "Mail content's uuid.", required = true)
 				@PathParam("uuid") String mailContentUuid) {
 		return mailContentFacade.getAvailableVariables(mailContentUuid);

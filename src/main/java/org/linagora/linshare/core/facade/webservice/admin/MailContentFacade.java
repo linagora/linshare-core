@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.ws.rs.core.Response;
@@ -54,11 +55,11 @@ public interface MailContentFacade {
 
 	Set<MailContentDto> findAll(String domainIdentifier, boolean only) throws BusinessException;
 
-	MailContainerDto fakeBuild(String mailContentUuid, String language, String mailConfigUuid);
+	MailContainerDto fakeBuild(String mailContentUuid, String language, String mailConfigUuid, Integer flavor);
 
-	MailContainerDto fakeBuild(MailContentDto dto, String language, String mailConfigUuid);
+	MailContainerDto fakeBuild(MailContentDto dto, String language, String mailConfigUuid, Integer flavor);
 
-	Response fakeBuildHtml(String mailContentUuid, String language, String mailConfigUuid, boolean subject);
+	Response fakeBuildHtml(String mailContentUuid, String language, String mailConfigUuid, boolean subject, Integer flavor);
 
-	ContextMetadata getAvailableVariables(String mailContentUuid);
+	List<ContextMetadata> getAvailableVariables(String mailContentUuid);
 }

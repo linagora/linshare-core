@@ -36,6 +36,7 @@ package org.linagora.linshare.core.facade.webservice.admin.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.ws.rs.core.Response;
@@ -48,12 +49,10 @@ import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MailContent;
-import org.linagora.linshare.core.domain.entities.MailContentLang;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.facade.webservice.admin.MailContentFacade;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailContainerDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailContentDto;
@@ -135,22 +134,22 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public MailContainerDto fakeBuild(String mailContentUuid, String language, String mailConfigUuid) {
+	public MailContainerDto fakeBuild(String mailContentUuid, String language, String mailConfigUuid, Integer flavor) {
 		User actor = checkAuthentication(Role.ADMIN);
 		MailContent content = findContent(actor, mailContentUuid);
-		return fakeBuild(language, mailConfigUuid, actor, content);
+		return fakeBuild(language, mailConfigUuid, actor, content, flavor);
 	}
 
 	@Override
-	public MailContainerDto fakeBuild(MailContentDto dto, String language, String mailConfigUuid) {
+	public MailContainerDto fakeBuild(MailContentDto dto, String language, String mailConfigUuid, Integer flavor) {
 		User actor = checkAuthentication(Role.ADMIN);
 		MailContent content = toFakeObject(dto);
-		return fakeBuild(language, mailConfigUuid, actor, content);
+		return fakeBuild(language, mailConfigUuid, actor, content, flavor);
 	}
 
 	@Override
-	public Response fakeBuildHtml(String mailContentUuid, String language, String mailConfigUuid, boolean subject) {
-		MailContainerDto fakeBuild = fakeBuild(mailContentUuid, language, mailConfigUuid);
+	public Response fakeBuildHtml(String mailContentUuid, String language, String mailConfigUuid, boolean subject, Integer flavor) {
+		MailContainerDto fakeBuild = fakeBuild(mailContentUuid, language, mailConfigUuid, flavor);
 		InputStream stream = null;
 		try {
 			if (subject) {
@@ -168,12 +167,11 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public ContextMetadata getAvailableVariables(String mailContentUuid) {
+	public List<ContextMetadata> getAvailableVariables(String mailContentUuid) {
 		User actor = checkAuthentication(Role.ADMIN);
 		MailContent content = findContent(actor, mailContentUuid);
 		MailContentType type = content.getType();
-		ContextMetadata metadata = mailBuildingService.getAvailableVariables(type);
-		return metadata;
+		return mailBuildingService.getAvailableVariables(type);
 	}
 
 	private MailContent toFakeObject(MailContentDto dto) {
@@ -197,12 +195,12 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 		return config;
 	}
 
-	private MailContainerDto fakeBuild(String language, String mailConfigUuid, User actor, MailContent content) {
+	private MailContainerDto fakeBuild(String language, String mailConfigUuid, User actor, MailContent content, Integer flavor) {
 		MailConfig config = getFakeConfig(mailConfigUuid, actor);
 		Language languageEnum = getLanguage(language);
 		MailContentType type = content.getType();
 		config.replaceMailContent(languageEnum, type, content);
-		MailContainerWithRecipient build = mailBuildingService.fakeBuild(type, config, languageEnum);
+		MailContainerWithRecipient build = mailBuildingService.fakeBuild(type, config, languageEnum, flavor);
 		return new MailContainerDto(build, type);
 	}
 

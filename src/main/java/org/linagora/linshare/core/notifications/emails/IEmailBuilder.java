@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.notifications.emails;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.MailConfig;
@@ -47,7 +49,7 @@ public interface IEmailBuilder {
 
 	MailContainerWithRecipient build(EmailContext context) throws BusinessException;
 
-	MailContainerWithRecipient fakeBuild(MailConfig cfg, Language language) throws BusinessException;
+	MailContainerWithRecipient fakeBuild(MailConfig cfg, Language language, Integer flavor) throws BusinessException;
 
-	ContextMetadata getAvailableVariables();
+	List<ContextMetadata> getAvailableVariables();
 }

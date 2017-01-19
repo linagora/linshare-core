@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.service;
 
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
@@ -43,6 +45,7 @@ import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.objects.MailContainer;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.dto.ContextMetadata;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.slf4j.Logger;
@@ -107,9 +110,12 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 			if (mailBuildingService.fakeBuildIsSupported(type)){
 				for (Language lang : Language.values()) {
 					logger.info("Building mail {} with language {}", type, lang);
-					MailContainerWithRecipient build = mailBuildingService.fakeBuild(type, cfg, lang);
-					testMailGenerate(build);
-					sendMail(build);
+					List<ContextMetadata> contexts = mailBuildingService.getAvailableVariables(type);
+					for (int flavor = 0; flavor < contexts.size(); flavor++) {
+						MailContainerWithRecipient build = mailBuildingService.fakeBuild(type, cfg, lang, flavor);
+						testMailGenerate(build);
+						sendMail(build);
+					}
 				}
 			} else {
 				logger.warn("Building mail {} was skipped. Not yet supported ?", type);

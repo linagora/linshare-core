@@ -34,6 +34,7 @@
 
 package org.linagora.linshare.core.notifications.service;
 
+import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.Language;
@@ -62,9 +63,9 @@ public interface MailBuildingService {
 
 	boolean fakeBuildIsSupported(MailContentType type) throws BusinessException;
 
-	MailContainerWithRecipient fakeBuild(MailContentType type, MailConfig cfg, Language language) throws BusinessException;
+	MailContainerWithRecipient fakeBuild(MailContentType type, MailConfig cfg, Language language, Integer flavor) throws BusinessException;
 
-	ContextMetadata getAvailableVariables(MailContentType type);
+	List<ContextMetadata> getAvailableVariables(MailContentType type);
 
 	MailContainerWithRecipient buildSharedDocUpdated(Entry shareEntry,
 			String oldDocName, long size) throws BusinessException;

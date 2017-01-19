@@ -144,7 +144,7 @@ public abstract class EmailBuilder implements IEmailBuilder {
 
 	protected abstract MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException;
 
-	protected abstract Context getContextForFakeBuild(Language language);
+	protected abstract List<Context> getContextForFakeBuild(Language language);
 
 	@Override
 	public MailContainerWithRecipient build(EmailContext context) throws BusinessException {
@@ -161,9 +161,18 @@ public abstract class EmailBuilder implements IEmailBuilder {
 	}
 
 	@Override
-	public MailContainerWithRecipient fakeBuild(MailConfig cfg, Language language) throws BusinessException {
-		Context ctx = getContextForFakeBuild(language);
+	public MailContainerWithRecipient fakeBuild(MailConfig cfg, Language language, Integer flavor)
+			throws BusinessException {
+		List<Context> contexts = getContextForFakeBuild(language);
 		EmailContext emailContext = new FakeBuildEmailContext(language);
+		if (contexts == null || contexts.isEmpty()) {
+			throw new BusinessException(BusinessErrorCode.TEMPLATE_PARSING_ERROR,
+					"Missing or empty context for fake build.");
+		}
+		Context ctx = contexts.get(0);
+		if (flavor != null) {
+			ctx = contexts.get(flavor);
+		}
 		return buildMailContainerThymeleaf(cfg, getSupportedType(), ctx, emailContext);
 	}
 
@@ -189,8 +198,7 @@ public abstract class EmailBuilder implements IEmailBuilder {
 	}
 
 	protected boolean isDisable(EmailContext context) {
-		MailActivation mailActivation = mailActivationBusinessService.findForInternalUsage(
-				context.getFromDomain(),
+		MailActivation mailActivation = mailActivationBusinessService.findForInternalUsage(context.getFromDomain(),
 				context.getActivation());
 		return !mailActivation.isEnable();
 	}
@@ -218,9 +226,8 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		return fromMail;
 	}
 
-	protected MailContainerWithRecipient buildMailContainerThymeleaf(MailConfig cfg,
-			MailContentType type, Context ctx, EmailContext emailCtx)
-			throws BusinessException {
+	protected MailContainerWithRecipient buildMailContainerThymeleaf(MailConfig cfg, MailContentType type, Context ctx,
+			EmailContext emailCtx) throws BusinessException {
 		logger.debug("Building mail content: " + type);
 		MailContainerWithRecipient container = new MailContainerWithRecipient(emailCtx.getLanguage());
 
@@ -320,8 +327,16 @@ public abstract class EmailBuilder implements IEmailBuilder {
 	}
 
 	@Override
-	public ContextMetadata getAvailableVariables() {
-		Context ctx = getContextForFakeBuild(Language.ENGLISH);
+	public List<ContextMetadata> getAvailableVariables() {
+		List<ContextMetadata> res = Lists.newArrayList();
+		List<Context> ctx = getContextForFakeBuild(Language.ENGLISH);
+		for (Context context : ctx) {
+			res.add(getAvailableVariables(context));
+		}
+		return res;
+	}
+
+	private ContextMetadata getAvailableVariables(Context ctx) {
 		ContextMetadata metadata = new ContextMetadata(getSupportedType().toString());
 		if (ctx == null) {
 			return metadata;
@@ -417,7 +432,8 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		Share share = new Share(name);
 		if (linshareURL != null) {
 			share.setHref("Unkown");
-//			share.setHref(getOwnerDocumentLink(linshareURL, share.getUuid()));
+			// share.setHref(getOwnerDocumentLink(linshareURL,
+			// share.getUuid()));
 		}
 		return share;
 	}
