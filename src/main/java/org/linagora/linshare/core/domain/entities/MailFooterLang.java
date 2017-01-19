@@ -35,7 +35,7 @@ package org.linagora.linshare.core.domain.entities;
 
 import java.util.UUID;
 
-public class MailFooterLang {
+public class MailFooterLang implements Cloneable {
 
 	private long id;
 

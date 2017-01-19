@@ -48,10 +48,12 @@ import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MailContent;
+import org.linagora.linshare.core.domain.entities.MailContentLang;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.facade.webservice.admin.MailContentFacade;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailContainerDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailContentDto;
@@ -135,37 +137,15 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public MailContainerDto fakeBuild(String mailContentUuid, String language, String mailConfigUuid) {
 		User actor = checkAuthentication(Role.ADMIN);
-		MailConfig config = findMailConfig(mailConfigUuid, actor);
 		MailContent content = findContent(actor, mailContentUuid);
-		MailContentType type = content.getType();
-		Language languageEnum = null;
-		if (language != null) {
-			languageEnum = Language.valueOf(language);
-		}
-		MailContainerWithRecipient build = mailBuildingService.fakeBuild(type, config, languageEnum);
-		return new MailContainerDto(build, content.getType());
+		return fakeBuild(language, mailConfigUuid, actor, content);
 	}
 
 	@Override
 	public MailContainerDto fakeBuild(MailContentDto dto, String language, String mailConfigUuid) {
 		User actor = checkAuthentication(Role.ADMIN);
-		MailConfig config = findMailConfig(mailConfigUuid, actor);
-		try {
-			config.clone();
-		} catch (CloneNotSupportedException e) {
-			logger.error(e.getMessage(), e);
-			e.printStackTrace();
-			throw new BusinessException("unexpected error");
-		}
 		MailContent content = toFakeObject(dto);
-		MailContentType type = content.getType();
-		Language languageEnum = null;
-		if (language != null) {
-			languageEnum = Language.valueOf(language);
-		}
-		config.replaceMailContent(languageEnum, type, content);
-		MailContainerWithRecipient build = mailBuildingService.fakeBuild(type, config, languageEnum);
-		return new MailContainerDto(build, type);
+		return fakeBuild(language, mailConfigUuid, actor, content);
 	}
 
 	@Override
@@ -215,6 +195,34 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 			config = abstractDomainService.getUniqueRootDomain().getCurrentMailConfiguration();
 		}
 		return config;
+	}
+
+	private MailContainerDto fakeBuild(String language, String mailConfigUuid, User actor, MailContent content) {
+		MailConfig config = getFakeConfig(mailConfigUuid, actor);
+		Language languageEnum = getLanguage(language);
+		MailContentType type = content.getType();
+		config.replaceMailContent(languageEnum, type, content);
+		MailContainerWithRecipient build = mailBuildingService.fakeBuild(type, config, languageEnum);
+		return new MailContainerDto(build, type);
+	}
+
+	private Language getLanguage(String language) {
+		Language languageEnum = Language.ENGLISH;
+		if (language != null) {
+			languageEnum = Language.valueOf(language);
+		}
+		return languageEnum;
+	}
+
+	private MailConfig getFakeConfig(String mailConfigUuid, User actor) {
+		MailConfig config = findMailConfig(mailConfigUuid, actor);
+		try {
+			return config.clone();
+		} catch (CloneNotSupportedException e) {
+			logger.error(e.getMessage(), e);
+			e.printStackTrace();
+			throw new BusinessException("unexpected error");
+		}
 	}
 
 	/*

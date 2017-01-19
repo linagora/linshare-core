@@ -55,6 +55,10 @@ public class MailContainerDto {
 
 	protected String type;
 
+	public MailContainerDto() {
+		super();
+	}
+
 	public MailContainerDto(MailContentType type) {
 		super();
 		this.type = type.toString();
