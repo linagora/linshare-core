@@ -80,7 +80,7 @@ public class NewGuestEmailContext extends EmailContext {
 
 	@Override
 	public MailContentType getType() {
-		return MailContentType.NEW_GUEST;
+		return MailContentType.GUEST_ACCOUNT_NEW_CREATION;
 	}
 
 	@Override

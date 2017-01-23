@@ -57,7 +57,7 @@ public class ShareDownloadedEmailBuilder extends EmailBuilder {
 
 	@Override
 	public MailContentType getSupportedType() {
-		return MailContentType.REGISTERED_DOWNLOAD;
+		return MailContentType.SHARE_FILE_DOWNLOAD;
 	}
 
 	@Override

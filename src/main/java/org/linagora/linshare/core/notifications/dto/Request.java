@@ -34,105 +34,57 @@
 package org.linagora.linshare.core.notifications.dto;
 
 import java.util.Date;
-import java.util.UUID;
 
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 
-/**
- * @author FMartin
- *
- */
-public class Document {
+public class Request {
 
-	protected String uuid;
+	final protected String subject;
 
-	protected String name;
+	final protected Date activationDate;
 
-	protected Long size;
+	final protected Date expirationDate;
 
-	protected String href;
+	final protected Integer authorizedFiles;
 
-	protected Date creationDate;
+	final protected Integer filesCount;
 
-	protected boolean displayHref;
-
-	public Document(String name) {
+	public Request(UploadRequestUrl url) {
 		super();
-		this.uuid = UUID.randomUUID().toString();
-		this.name = name;
+		UploadRequest request = url.getUploadRequest();
+		this.subject = request.getUploadRequestGroup().getSubject();
+		this.activationDate = request.getActivationDate();
+		this.expirationDate = request.getExpiryDate();
+		this.authorizedFiles = request.getMaxFileCount();
+		this.filesCount = url.getUploadRequestEntries().size();
 	}
 
-	public Document(DocumentEntry de) {
+	public Request(String subject, Date activationDate, Date expirationDate, Integer authorizedFiles,
+			Integer filesCount) {
 		super();
-		this.uuid = de.getUuid();
-		this.name = de.getName();
+		this.subject = subject;
+		this.activationDate = activationDate;
+		this.expirationDate = expirationDate;
+		this.authorizedFiles = authorizedFiles;
+		this.filesCount = filesCount;
 	}
 
-	public Document(UploadRequestEntry entry) {
-		super();
-		this.uuid = entry.getUuid();
-		this.name = entry.getName();
-		this.size = entry.getSize();
-		this.creationDate = entry.getCreationDate().getTime();
+
+	public String getSubject() {
+		return subject;
 	}
 
-	public String getUuid() {
-		return uuid;
+	public Date getActivationDate() {
+		return activationDate;
 	}
 
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
+	public Date getExpirationDate() {
+		return expirationDate;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getHref() {
-		return href;
-	}
-
-	public Long getSize() {
-		return size;
-	}
-
-	public void setSize(Long size) {
-		this.size = size;
-	}
-
-	public void setHref(String href) {
-		if (href == null) {
-			displayHref = false;
-		} else {
-			displayHref = true;
-		}
-		this.href = href;
-	}
-
-	public boolean isDisplayHref() {
-		return displayHref;
-	}
-
-	public void setDisplayHref(boolean displayHref) {
-		this.displayHref = displayHref;
-	}
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	@Override
-	public String toString() {
-		return "Document [uuid=" + uuid + ", name=" + name + ", href=" + href + "]";
+	public Integer getAuthorizedFiles() {
+		return authorizedFiles;
 	}
 
 }

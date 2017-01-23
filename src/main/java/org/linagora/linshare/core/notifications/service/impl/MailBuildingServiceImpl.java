@@ -54,7 +54,6 @@ import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
-import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
@@ -70,7 +69,6 @@ import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.objects.MailContainer;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -83,6 +81,7 @@ import org.linagora.linshare.core.notifications.emails.impl.NewSharingEmailBuild
 import org.linagora.linshare.core.notifications.emails.impl.ResetGuestPasswordEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.ShareDownloadedEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.SharingAcknowledgementEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.UploadRequestUploadedFileEmailBuilder;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.utils.DocumentUtils;
@@ -381,6 +380,21 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		}
 	}
 
+	/**
+	 * Constructor
+	 * @param displayLogo
+	 * @param mailConfigBusinessService
+	 * @param domainBusinessService
+	 * @param functionalityReadOnlyService
+	 * @param mailActivationBusinessService
+	 * @param insertLicenceTerm
+	 * @param receivedSharesUrlSuffix
+	 * @param documentsUrlSuffix
+	 * @param urlGuestReset
+	 * @param templatingStrictMode
+	 * @param templatingSubjectPrefix
+	 * @throws Exception
+	 */
 	public MailBuildingServiceImpl(
 			boolean displayLogo,
 			final MailConfigBusinessService mailConfigBusinessService,
@@ -417,22 +431,30 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		templateEngine.setTemplateResolver(templateResolver);
 
 		emailBuilders = Maps.newHashMap();
-		emailBuilders.put(MailContentType.NEW_SHARING, new NewSharingEmailBuilder());
+		emailBuilders.put(MailContentType.SHARE_NEW_SHARE_FOR_RECIPIENT, new NewSharingEmailBuilder());
 
 		NewGuestEmailBuilder newGuestBuilder = new NewGuestEmailBuilder();
 		newGuestBuilder.setUrlGuestReset(urlGuestReset);
-		emailBuilders.put(MailContentType.NEW_GUEST, newGuestBuilder);
+		emailBuilders.put(MailContentType.GUEST_ACCOUNT_NEW_CREATION, newGuestBuilder);
 
-		emailBuilders.put(MailContentType.REGISTERED_DOWNLOAD, new ShareDownloadedEmailBuilder());
-//		emailBuilders.put(MailContentType.ANONYMOUS_DOWNLOAD, new ShareDownloadedEmailBuilder());
+		emailBuilders.put(MailContentType.SHARE_FILE_DOWNLOAD, new ShareDownloadedEmailBuilder());
+		emailBuilders.put(MailContentType.DEPRECATED_ANONYMOUS_DOWNLOAD, new ShareDownloadedEmailBuilder());
 
 		ResetGuestPasswordEmailBuilder resetGuestBuilder = new ResetGuestPasswordEmailBuilder();
 		resetGuestBuilder.setUrlGuestReset(urlGuestReset);
-		emailBuilders.put(MailContentType.RESET_PASSWORD, resetGuestBuilder);
+		emailBuilders.put(MailContentType.GUEST_ACCOUNT_RESET_PASSWORD_LINK, resetGuestBuilder);
 
-		emailBuilders.put(MailContentType.SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER,
+		emailBuilders.put(MailContentType.SHARE_NEW_SHARE_ACKNOWLEDGEMENT_FOR_SENDER,
 				new SharingAcknowledgementEmailBuilder());
+		emailBuilders.put(MailContentType.UPLOAD_REQUEST_UPLOADED_FILE, new UploadRequestUploadedFileEmailBuilder());
+
 		initMailBuilders();
+		Set<MailContentType> keySet = emailBuilders.keySet();
+		logger.debug("mail content loaded : size : {}", keySet.size());
+		for (MailContentType mailContentType : keySet) {
+			logger.debug(" mailContentType : {}", mailContentType );
+		}
+		logger.debug("end");
 	}
 
 	private void initMailBuilders() {
@@ -486,15 +508,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		Validate.notNull(type, "MailContentType can't be null");
 		EmailBuilder builder = emailBuilders.get(type);
 		if (builder == null) {
-			throw new BusinessException(BusinessErrorCode.TEMPLATE_PARSING_ERROR, "Missing template builder");
+			throw new BusinessException(BusinessErrorCode.TEMPLATE_MISSING_TEMPLATE_BUILDER, "Missing template builder");
 		}
 		return builder.getAvailableVariables();
-	}
-
-	private String formatCreationDate(Account account, Entry entry) {
-		Locale locale = account.getJavaExternalMailLocale();
-		DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.SHORT, locale);
-		return formatter.format(entry.getCreationDate().getTime());
 	}
 
 	private String formatDeletionDate(Account account) {
@@ -644,7 +660,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		container.setFrom(getFromMailAddress(sender));
 		container.setReplyTo(sender.getMail());
 		return buildMailContainer(cfg, container, null,
-				MailContentType.SHARED_DOC_DELETED, builder);
+				MailContentType.SHARE_FILE_SHARE_DELETED, builder);
 	}
 
 	@Override
@@ -707,7 +723,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		container.setReplyTo(sender.getMail());
 
 		return buildMailContainer(cfg, container, null,
-				MailContentType.SHARED_DOC_UPCOMING_OUTDATED, builder);
+				MailContentType.SHARE_WARN_SENDER_BEFORE_EXPIRY, builder);
 	}
 
 	// TODO : To be used : method is not called.
@@ -743,7 +759,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		container.setFrom(getFromMailAddress(owner));
 
 		return buildMailContainer(cfg, container, null,
-				MailContentType.DOC_UPCOMING_OUTDATED, builder);
+				MailContentType.FILE_WARN_OWNER_BEFORE_FILE_EXPIRY, builder);
 	}
 
 
@@ -806,7 +822,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		container.setFrom(getFromMailAddress((User) owner));
 
 		return buildMailContainer(cfg, container, "",
-				MailContentType.UNDOWNLOADED_SHARED_DOCUMENT_ALERT, builder);
+				MailContentType.SHARE_WARN_UNDOWNLOADED_FILESHARES, builder);
 	}
 
 	private boolean allSharesWereDownloaded(DocumentEntry documentEntry,
@@ -933,128 +949,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			.append(downloaded.get(userLocale))
 			.append("</h5>");
 		return sb.toString();
-	}
-
-	private MailContainerWithRecipient buildNewAnonymousSharing(User sender, MailContainer input,
-			AnonymousUrl anonUrl, MailContentType mailContentType) throws BusinessException {
-		if (isDisable(anonUrl.getContact(), sender, MailActivationType.NEW_SHARING)) {
-			return null;
-		}
-		String actorRepresentation = new ContactRepresentation(sender)
-				.getContactRepresentation();
-		String url = anonUrl
-				.getFullUrl(getLinShareUrlForAContactRecipient(sender));
-		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
-		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				sender.getExternalMailLocale());
-		MailContainerBuilder builder = new MailContainerBuilder();
-		StringBuffer names = new StringBuffer();
-		for (String n : anonUrl.getDocumentNames()) {
-			names.append("<li>" + n + "</li>");
-		}
-		builder.getSubjectChain()
-				.add("actorSubject", input.getSubject())
-				.add("actorRepresentation", actorRepresentation);
-		builder.getGreetingsChain()
-				.add("firstName", "")
-				.add("lastName", anonUrl.getContact().getMail());
-		builder.getBodyChain()
-				.add("firstName", sender.getFirstName())
-				.add("lastName", sender.getLastName())
-				.add("number", "" + anonUrl.getDocumentNames().size())
-				.add("documentNames", names.toString())
-				.add("password", anonUrl.getTemporaryPlainTextPassword())
-				.add("jwsEncryptUrl", getJwsEncryptUrlString(getLinShareUrlForAContactRecipient(sender)))
-				.add("url", url)
-				.add("urlparam", "");
-		container.setSubject(input.getSubject());
-		container.setRecipient(anonUrl.getContact());
-		container.setFrom(getFromMailAddress(sender));
-		container.setReplyTo(sender.getMail());
-
-		return buildMailContainer(cfg, container, input.getPersonalMessage(),
-				mailContentType, builder);
-	}
-
-	@Override
-	public MailContainerWithRecipient buildNewSharing(User sender,
-			MailContainer input, AnonymousUrl anonUrl) throws BusinessException {
-		return buildNewAnonymousSharing(sender, input, anonUrl,
-				MailContentType.NEW_SHARING);
-	}
-
-	@Override
-	public MailContainerWithRecipient buildNewSharingProtected(User sender,
-			MailContainer input, AnonymousUrl anonUrl) throws BusinessException {
-		return buildNewAnonymousSharing(sender, input, anonUrl,
-				MailContentType.NEW_SHARING_PROTECTED);
-	}
-
-	@Override
-	public MailContainerWithRecipient buildNewSharingCyphered(
-			User sender, MailContainer input, AnonymousUrl anonUrl)
-			throws BusinessException {
-		return buildNewAnonymousSharing(sender, input, anonUrl,
-				MailContentType.NEW_SHARING_CYPHERED);
-	}
-
-	@Override
-	public MailContainerWithRecipient buildNewSharingCypheredProtected(
-			User sender, MailContainer input, AnonymousUrl anonUrl)
-			throws BusinessException {
-		return buildNewAnonymousSharing(sender, input, anonUrl,
-				MailContentType.NEW_SHARING_CYPHERED_PROTECTED);
-	}
-
-	@Override
-	public MailContainerWithRecipient buildNewSharingCyphered(User sender,
-			MailContainer input, User recipient,
-			Set<ShareEntry> shares) throws BusinessException {
-		if (isDisable(recipient, MailActivationType.NEW_SHARING)) {
-			return null;
-		}
-		String actorRepresentation = new ContactRepresentation(sender)
-				.getContactRepresentation();
-		String url = getLinShareUrlForAUserRecipient(recipient);
-
-		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
-		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				recipient.getExternalMailLocale());
-		MailContainerBuilder builder = new MailContainerBuilder();
-
-		StringBuffer names = new StringBuffer();
-		long shareSize = 0;
-		for (ShareEntry share : shares) {
-			if (recipient.getLsUuid().equals(share.getRecipient().getLsUuid())) {
-				shareSize += 1;
-				names.append("<li><a href='"
-						+ getReceivedSharedFileDownloadLink(recipient, share) + "'>"
-						+ share.getName() + "</a></li>");
-			}
-		}
-
-		builder.getSubjectChain()
-				.add("actorSubject", input.getSubject())
-				.add("actorRepresentation", actorRepresentation);
-		builder.getGreetingsChain()
-				.add("firstName", recipient.getFirstName())
-				.add("lastName", recipient.getLastName());
-		builder.getBodyChain()
-				.add("firstName", sender.getFirstName())
-				.add("lastName", sender.getLastName())
-				.add("number", "" + shareSize)
-				.add("documentNames", names.toString())
-				.add("jwsEncryptUrl", getJwsEncryptUrlString(url))
-				.add("url", url)
-				.add("urlparam", "");
-		container.setSubject(input.getSubject());
-		container.setRecipient(recipient);
-		container.setFrom(getFromMailAddress(sender));
-		container.setReplyTo(sender.getMail());
-
-		return buildMailContainer(cfg, container,
-				input.getPersonalMessage(),
-				MailContentType.NEW_SHARING_CYPHERED, builder);
 	}
 
 	@Override
@@ -1250,38 +1144,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 
 		return buildMailContainer(cfg, container, null,
 				MailContentType.UPLOAD_REQUEST_CREATED, builder);
-	}
-
-	@Override
-	public MailContainerWithRecipient buildAckUploadRequest(User owner, UploadRequestUrl request, UploadRequestEntry entry)
-			throws BusinessException {
-		if (isDisable(owner, MailActivationType.UPLOAD_REQUEST_ACKNOWLEDGEMENT)) {
-			return null;
-		}
-		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
-		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				owner.getExternalMailLocale());
-		MailContainerBuilder builder = new MailContainerBuilder();
-
-		String contact = request.getContact().getMail();
-		builder.getSubjectChain()
-				.add("actorRepresentation", contact)
-				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject());
-		builder.getGreetingsChain()
-				.add("firstName", owner.getFirstName())
-				.add("lastName", owner.getLastName());
-		builder.getBodyChain()
-				.add("firstName", contact)
-				.add("lastName", "")
-				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
-				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
-				.add("fileSize", DocumentUtils.humanReadableByteCount(entry.getDocumentEntry().getSize(), false, owner.getExternalMailLocale()))
-				.add("fileName", entry.getDocumentEntry().getName())
-				.add("depositDate", formatCreationDate(owner, entry));
-		container.setRecipient(owner.getMail());
-		container.setFrom(getFromMailAddress(owner));
-		container.setReplyTo(contact);
-		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_ACKNOWLEDGMENT, builder);
 	}
 
 	@Override
@@ -1615,7 +1477,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(request.getContact());
 
-		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_NO_SPACE_LEFT, builder);
+		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_UNAVAILABLE_SPACE, builder);
 	}
 
 	/*
@@ -1655,15 +1517,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		return notificationUrl.getValue();
 	}
 
-	private String getReceivedSharedFileDownloadLink(User recipient, ShareEntry share) {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getLinShareUrlForAUserRecipient(recipient));
-		Formatter formatter = new Formatter(sb);
-		formatter.format(receivedSharesUrlSuffix, share.getUuid());
-		formatter.close();
-		return sb.toString();
-	}
-
 	private String getOwnerDocumentLink(User owner, DocumentEntry doc) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(getLinShareUrlForAUserRecipient(owner));
@@ -1671,20 +1524,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		formatter.format(documentsUrlSuffix, doc.getUuid());
 		formatter.close();
 		return sb.toString();
-	}
-
-	private String getJwsEncryptUrlString(String rootUrl) {
-		String jwsEncryptUrlString = "";
-		StringBuffer jwsEncryptUrl = new StringBuffer();
-
-		jwsEncryptUrl.append(rootUrl);
-		if (!rootUrl.endsWith("/")) {
-			jwsEncryptUrl.append('/');
-		}
-		jwsEncryptUrl.append("localDecrypt");
-		jwsEncryptUrlString = jwsEncryptUrl.toString();
-
-		return jwsEncryptUrlString;
 	}
 
 	/*

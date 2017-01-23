@@ -61,6 +61,7 @@ import org.linagora.linshare.core.notifications.context.FakeBuildEmailContext;
 import org.linagora.linshare.core.notifications.dto.ContextMetadata;
 import org.linagora.linshare.core.notifications.dto.Document;
 import org.linagora.linshare.core.notifications.dto.MailContact;
+import org.linagora.linshare.core.notifications.dto.Request;
 import org.linagora.linshare.core.notifications.dto.Share;
 import org.linagora.linshare.core.notifications.dto.Variable;
 import org.linagora.linshare.core.notifications.emails.IEmailBuilder;
@@ -340,7 +341,7 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		return res;
 	}
 
-	private ContextMetadata getAvailableVariables(Context ctx) {
+	protected ContextMetadata getAvailableVariables(Context ctx) {
 		ContextMetadata metadata = new ContextMetadata(getSupportedType().toString());
 		if (ctx == null) {
 			return metadata;
@@ -378,23 +379,27 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		if (isSupportedFieldType(obj)) {
 			attributes = Lists.newArrayList();
 			for (Field field : obj.getClass().getDeclaredFields()) {
+				field.setAccessible(true);
 				String typeName = field.getGenericType().getTypeName();
 				try {
 					Class<?> act = Class.forName(typeName);
 					typeName = act.getSimpleName();
-				} catch (ClassNotFoundException e) {
-					// Do not care.
+					Object value = field.get(obj);
+					if (value != null) {
+						Attribute attr = new Attribute(field.getName(), typeName);
+						logger.debug(attr.toString());
+						attributes.add(attr);
+					}
+				} catch (ClassNotFoundException | IllegalArgumentException | IllegalAccessException e) {
+					logger.trace(e.getMessage(), e);
 				}
-				Attribute attr = new Attribute(field.getName(), typeName);
-				logger.debug(attr.toString());
-				attributes.add(attr);
 			}
 		}
 		return attributes;
 	}
 
-	private boolean isSupportedFieldType(Object obj) {
-		return obj instanceof Document || obj instanceof Share || obj instanceof MailContact;
+	protected boolean isSupportedFieldType(Object obj) {
+		return obj instanceof Document || obj instanceof Share || obj instanceof MailContact || obj instanceof Request;
 	}
 
 	protected String getOwnerDocumentLink(String linshareURL, String documentUuid) {

@@ -31,108 +31,67 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.notifications.dto;
+package org.linagora.linshare.core.notifications.context;
 
-import java.util.Date;
-import java.util.UUID;
-
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.MailActivationType;
+import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
+import org.linagora.linshare.core.domain.entities.User;
 
-/**
- * @author FMartin
- *
- */
-public class Document {
+public class UploadRequestUploadedFileEmailContext extends EmailContext {
 
-	protected String uuid;
+	final protected User owner;
 
-	protected String name;
+	final protected UploadRequestUrl requestUrl;
 
-	protected Long size;
+	final protected UploadRequestEntry entry;
 
-	protected String href;
-
-	protected Date creationDate;
-
-	protected boolean displayHref;
-
-	public Document(String name) {
-		super();
-		this.uuid = UUID.randomUUID().toString();
-		this.name = name;
+	public UploadRequestUploadedFileEmailContext(User owner, UploadRequestUrl requestUrl, UploadRequestEntry entry) {
+		super(owner.getDomain(), false);
+		this.owner = owner;
+		this.requestUrl = requestUrl;
+		this.entry = entry;
 	}
 
-	public Document(DocumentEntry de) {
-		super();
-		this.uuid = de.getUuid();
-		this.name = de.getName();
+	public User getOwner() {
+		return owner;
 	}
 
-	public Document(UploadRequestEntry entry) {
-		super();
-		this.uuid = entry.getUuid();
-		this.name = entry.getName();
-		this.size = entry.getSize();
-		this.creationDate = entry.getCreationDate().getTime();
+	public UploadRequestUrl getRequestUrl() {
+		return requestUrl;
 	}
 
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getHref() {
-		return href;
-	}
-
-	public Long getSize() {
-		return size;
-	}
-
-	public void setSize(Long size) {
-		this.size = size;
-	}
-
-	public void setHref(String href) {
-		if (href == null) {
-			displayHref = false;
-		} else {
-			displayHref = true;
-		}
-		this.href = href;
-	}
-
-	public boolean isDisplayHref() {
-		return displayHref;
-	}
-
-	public void setDisplayHref(boolean displayHref) {
-		this.displayHref = displayHref;
-	}
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
+	public UploadRequestEntry getEntry() {
+		return entry;
 	}
 
 	@Override
-	public String toString() {
-		return "Document [uuid=" + uuid + ", name=" + name + ", href=" + href + "]";
+	public MailContentType getType() {
+		return MailContentType.UPLOAD_REQUEST_UPLOADED_FILE;
+	}
+
+	@Override
+	public MailActivationType getActivation() {
+		return MailActivationType.UPLOAD_REQUEST_ACKNOWLEDGEMENT;
+	}
+
+	@Override
+	public String getMailRcpt() {
+		return owner.getOwner().getMail();
+	}
+
+	@Override
+	public String getMailReplyTo() {
+		return requestUrl.getContact().getMail();
+	}
+
+	@Override
+	public void validateRequiredField() {
+		Validate.notNull(requestUrl, "Missing upload request url");
+		Validate.notNull(owner, "Missing upload request owner");
+		Validate.notNull(entry, "Missing upload request entry");
 	}
 
 }

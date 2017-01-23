@@ -93,7 +93,7 @@ public class ShareDownloadedEmailContext extends EmailContext {
 
 	@Override
 	public MailContentType getType() {
-		return MailContentType.REGISTERED_DOWNLOAD;
+		return MailContentType.SHARE_FILE_DOWNLOAD;
 	}
 
 	@Override

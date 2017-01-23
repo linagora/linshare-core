@@ -63,7 +63,7 @@ public class ResetGuestPasswordEmailBuilder extends EmailBuilder {
 
 	@Override
 	public MailContentType getSupportedType() {
-		return MailContentType.RESET_PASSWORD;
+		return MailContentType.GUEST_ACCOUNT_RESET_PASSWORD_LINK;
 	}
 
 	@Override

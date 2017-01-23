@@ -56,7 +56,7 @@ public class NewSharingEmailBuilder extends EmailBuilder{
 
 	@Override
 	public MailContentType getSupportedType() {
-		return MailContentType.NEW_SHARING;
+		return MailContentType.SHARE_NEW_SHARE_FOR_RECIPIENT;
 	}
 
 	@Override

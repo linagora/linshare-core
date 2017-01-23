@@ -68,7 +68,7 @@ public class ResetGuestPasswordEmailContext extends EmailContext {
 
 	@Override
 	public MailContentType getType() {
-		return MailContentType.RESET_PASSWORD;
+		return MailContentType.GUEST_ACCOUNT_RESET_PASSWORD_LINK;
 	}
 
 	@Override

@@ -134,7 +134,7 @@ public class NewSharingEmailContext extends EmailContext {
 
 	@Override
 	public MailContentType getType() {
-		return MailContentType.NEW_SHARING;
+		return MailContentType.SHARE_NEW_SHARE_FOR_RECIPIENT;
 	}
 
 	@Override

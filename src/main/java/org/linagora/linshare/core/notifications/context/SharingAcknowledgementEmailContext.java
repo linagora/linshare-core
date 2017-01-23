@@ -83,7 +83,7 @@ public class SharingAcknowledgementEmailContext extends EmailContext {
 
 	@Override
 	public MailContentType getType() {
-		return MailContentType.SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER;
+		return MailContentType.SHARE_NEW_SHARE_ACKNOWLEDGEMENT_FOR_SENDER;
 	}
 
 	@Override

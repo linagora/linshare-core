@@ -33,78 +33,76 @@
  */
 package org.linagora.linshare.core.notifications.emails.impl;
 
-import java.util.Formatter;
+import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
-import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
-import org.linagora.linshare.core.notifications.context.NewGuestEmailContext;
+import org.linagora.linshare.core.notifications.context.UploadRequestUploadedFileEmailContext;
+import org.linagora.linshare.core.notifications.dto.Document;
 import org.linagora.linshare.core.notifications.dto.MailContact;
+import org.linagora.linshare.core.notifications.dto.Request;
 import org.thymeleaf.context.Context;
 
 import com.google.common.collect.Lists;
 
-public class NewGuestEmailBuilder extends EmailBuilder {
-
-	protected String urlGuestReset;
-
-	public String getUrlGuestReset() {
-		return urlGuestReset;
-	}
-
-	public void setUrlGuestReset(String urlGuestReset) {
-		this.urlGuestReset = urlGuestReset;
-	}
+public class UploadRequestUploadedFileEmailBuilder extends EmailBuilder {
 
 	@Override
 	public MailContentType getSupportedType() {
-		return MailContentType.GUEST_ACCOUNT_NEW_CREATION;
+		return MailContentType.UPLOAD_REQUEST_UPLOADED_FILE;
 	}
 
 	@Override
-	public MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		NewGuestEmailContext emailCtx = (NewGuestEmailContext) context;
-		User creator = emailCtx.getCreator();
-		Guest guest = emailCtx.getGuest();
-		String linshareURL = getLinShareUrl(guest);
-		MailConfig cfg = creator.getDomain().getCurrentMailConfiguration();
+	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
+		UploadRequestUploadedFileEmailContext emailCtx = (UploadRequestUploadedFileEmailContext) context;
+
+		User owner = emailCtx.getOwner();
+		UploadRequestUrl requestUrl = emailCtx.getRequestUrl();
+		UploadRequestEntry entry = emailCtx.getEntry();
+
+		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 
 		Context ctx = new Context(emailCtx.getLocale());
-		ctx.setVariable("creator", new MailContact(creator));
-		ctx.setVariable("customMessage", null);
-		ctx.setVariable("guest", new MailContact(guest));
-		ctx.setVariable("guestExpirationDate", guest.getExpirationDate());
-		ctx.setVariable("linshareURL", linshareURL);
-		ctx.setVariable("resetLink", getResetLink(linshareURL, emailCtx.getResetPasswordTokenUuid()));
+		ctx.setVariable("requestOwner", new MailContact(owner));
+		ctx.setVariable("requestRecipient", new MailContact(requestUrl.getContact()));
+		String href = getOwnerDocumentLink(getDocumentsUrlSuffix(), entry.getDocumentEntry().getUuid());
+		Document document = new Document(entry);
+		document.setHref(href);
+		ctx.setVariable("document", document);
+		ctx.setVariable("request", new Request(requestUrl));
+
+		ctx.setVariable("linshareURL", getLinShareUrl(owner));
+
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
 				emailCtx);
 		return buildMailContainer;
 	}
 
 	@Override
-	public List<Context> getContextForFakeBuild(Language language) {
+	protected List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
 		Context ctx = new Context(Language.toLocale(language));
-		ctx.setVariable("creator", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
-		ctx.setVariable("guest", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
+
+		ctx.setVariable("requestOwner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
+		ctx.setVariable("requestRecipient", new MailContact("unknown@linshare.org"));
+		Document document = getNewFakeDocument("a-shared-file.txt", fakeLinshareURL);
+		document.setSize(65985L);
+		document.setCreationDate(new Date());
+		ctx.setVariable("document", document);
+		ctx.setVariable("request", new Request("My test subject", new Date(), getFakeExpirationDate(), 8, 5));
+
 		ctx.setVariable("linshareURL", fakeLinshareURL);
-		ctx.setVariable("resetLink", getResetLink(fakeLinshareURL, "cb1443d0-a34f-4d0b-92e4-c19d4eeb7fae"));
+
 		res.add(ctx);
 		return res;
 	}
 
-	protected String getResetLink(String linshareURL, String token) {
-		StringBuilder sb = new StringBuilder();
-		sb.append(linshareURL);
-		Formatter formatter = new Formatter(sb);
-		formatter.format(urlGuestReset, token);
-		formatter.close();
-		return sb.toString();
-	}
 }

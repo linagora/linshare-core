@@ -120,7 +120,7 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 	public void testBuildOneMail() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		MailConfig cfg = domainBusinessService.getUniqueRootDomain().getCurrentMailConfiguration();
-		MailContentType type = MailContentType.RESET_PASSWORD;
+		MailContentType type = MailContentType.GUEST_ACCOUNT_RESET_PASSWORD_LINK;
 		logger.info("Building mail {} ", type);
 		List<ContextMetadata> contexts = mailBuildingService.getAvailableVariables(type);
 		for (int flavor = 0; flavor < contexts.size(); flavor++) {
