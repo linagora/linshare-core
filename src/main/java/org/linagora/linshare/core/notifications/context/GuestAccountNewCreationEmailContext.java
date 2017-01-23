@@ -33,79 +33,76 @@
  */
 package org.linagora.linshare.core.notifications.context;
 
-import java.util.Set;
-
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
-import org.linagora.linshare.core.domain.entities.Entry;
+import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.objects.ShareContainer;
 
-public class SharingAcknowledgementEmailContext extends EmailContext {
+public class GuestAccountNewCreationEmailContext extends EmailContext {
 
-	protected User shareOwner;
+	protected User creator;
 
-	protected ShareContainer shareContainer;
+	protected Guest guest;
 
-	protected Set<Entry> shares;
+	protected String resetPasswordTokenUuid;
 
-	public SharingAcknowledgementEmailContext(User sender, ShareContainer shareContainer, Set<Entry> shares) {
-		super(sender.getDomain(), false);
-		this.shareOwner = sender;
-		this.shares = shares;
-		this.shareContainer = shareContainer;
+	public GuestAccountNewCreationEmailContext(User creator, Guest guest, String resetPasswordTokenUuid) {
+		super(guest.getDomain(), false);
+		this.creator = creator;
+		this.guest = guest;
+		this.resetPasswordTokenUuid= resetPasswordTokenUuid;
 	}
 
-	public User getShareOwner() {
-		return shareOwner;
+	public User getCreator() {
+		return creator;
 	}
 
-	public void setShareOwner(User shareOwner) {
-		this.shareOwner = shareOwner;
+	public void setCreator(User creator) {
+		this.creator = creator;
 	}
 
-	public Set<Entry> getShares() {
-		return shares;
+	public Guest getGuest() {
+		return guest;
 	}
 
-	public void setShares(Set<Entry> shares) {
-		this.shares = shares;
+	public void setGuest(Guest guest) {
+		this.guest = guest;
 	}
 
-	public ShareContainer getShareContainer() {
-		return shareContainer;
+	public String getResetPasswordTokenUuid() {
+		return resetPasswordTokenUuid;
 	}
 
-	public void setShareContainer(ShareContainer shareContainer) {
-		this.shareContainer = shareContainer;
+	public void setResetPasswordTokenUuid(String resetPasswordTokenUuid) {
+		this.resetPasswordTokenUuid = resetPasswordTokenUuid;
 	}
 
 	@Override
 	public MailContentType getType() {
-		return MailContentType.SHARE_NEW_SHARE_ACKNOWLEDGEMENT_FOR_SENDER;
+		return MailContentType.GUEST_ACCOUNT_NEW_CREATION;
 	}
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER;
+		return MailActivationType.NEW_GUEST;
 	}
 
 	@Override
 	public String getMailRcpt() {
-		return shareOwner.getMail();
+		return guest.getMail();
 	}
 
 	@Override
 	public String getMailReplyTo() {
-		return null;
+		return creator.getMail();
 	}
 
 	@Override
 	public void validateRequiredField() {
-		Validate.notNull(shareOwner, "Missing shareEntry");
-		Validate.notNull(shareContainer, "Missing shareEntry");
-		Validate.notNull(shares, "Missing shareEntry");
+		Validate.notNull(creator, "Missing creator");
+		Validate.notNull(guest, "Missing guest");
+		Validate.notNull(resetPasswordTokenUuid, "Missing resetPasswordTokenUuid");
 	}
 
 }

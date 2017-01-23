@@ -33,122 +33,79 @@
  */
 package org.linagora.linshare.core.notifications.context;
 
-import java.util.Date;
+import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
-import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
-import org.linagora.linshare.core.domain.entities.ShareEntry;
-import org.linagora.linshare.core.notifications.dto.Document;
-import org.linagora.linshare.core.notifications.dto.MailContact;
-import org.linagora.linshare.core.notifications.dto.Share;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.ShareContainer;
 
-public class ShareDownloadedEmailContext extends EmailContext {
+public class ShareNewShareAcknowledgementEmailContext extends EmailContext {
 
-	protected Boolean anonymous = null;
+	protected User shareOwner;
 
-	protected Entry entry;
+	protected ShareContainer shareContainer;
 
-	protected Date actionDate;
+	protected Set<Entry> shares;
 
-	public ShareDownloadedEmailContext(ShareEntry shareEntry) {
-		super(shareEntry.getEntryOwner().getDomain(), true);
-		this.entry = shareEntry;
-		this.anonymous = false;
-		this.actionDate = new Date();
+	public ShareNewShareAcknowledgementEmailContext(User sender, ShareContainer shareContainer, Set<Entry> shares) {
+		super(sender.getDomain(), false);
+		this.shareOwner = sender;
+		this.shares = shares;
+		this.shareContainer = shareContainer;
 	}
 
-	public ShareDownloadedEmailContext(AnonymousShareEntry shareEntry) {
-		super(shareEntry.getEntryOwner().getDomain(), true);
-		this.entry = shareEntry;
-		this.anonymous = true;
-		this.actionDate = new Date();
+	public User getShareOwner() {
+		return shareOwner;
 	}
 
-	public Entry getEntry() {
-		return entry;
+	public void setShareOwner(User shareOwner) {
+		this.shareOwner = shareOwner;
 	}
 
-	public void setEntry(Entry entry) {
-		this.entry = entry;
+	public Set<Entry> getShares() {
+		return shares;
 	}
 
-	public Boolean getAnonymous() {
-		return anonymous;
+	public void setShares(Set<Entry> shares) {
+		this.shares = shares;
 	}
 
-	public void setAnonymous(Boolean anonymous) {
-		this.anonymous = anonymous;
+	public ShareContainer getShareContainer() {
+		return shareContainer;
 	}
 
-	public Date getActionDate() {
-		return actionDate;
-	}
-
-	public void setActionDate(Date actionDate) {
-		this.actionDate = actionDate;
+	public void setShareContainer(ShareContainer shareContainer) {
+		this.shareContainer = shareContainer;
 	}
 
 	@Override
 	public MailContentType getType() {
-		return MailContentType.SHARE_FILE_DOWNLOAD;
+		return MailContentType.SHARE_NEW_SHARE_ACKNOWLEDGEMENT_FOR_SENDER;
 	}
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.REGISTERED_DOWNLOAD;
+		return MailActivationType.SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER;
 	}
 
 	@Override
 	public String getMailRcpt() {
-		// shareOwner
-		return entry.getEntryOwner().getMail();
+		return shareOwner.getMail();
 	}
 
 	@Override
 	public String getMailReplyTo() {
-		if (anonymous) {
-			return ((AnonymousShareEntry) entry).getAnonymousUrl().getContact().getMail();
-		}
-		return ((ShareEntry) entry).getRecipient().getMail();
+		return null;
 	}
 
 	@Override
 	public void validateRequiredField() {
-		Validate.notNull(entry, "Missing shareEntry");
-		Validate.notNull(actionDate, "Missing actionDate");
-		Validate.notNull(anonymous, "Missing shareEntry / anonymousShareEntry");
-	}
-
-	public Share getShare() {
-		if (anonymous) {
-			return new Share((AnonymousShareEntry) entry);
-		}
-		return new Share((ShareEntry) entry);
-	}
-
-	public Document getDocument() {
-		if (anonymous) {
-			return new Document(((AnonymousShareEntry) entry).getDocumentEntry());
-		}
-		return new Document(((ShareEntry) entry).getDocumentEntry());
-	}
-
-	public MailContact getRecipient() {
-		if (anonymous) {
-			return new MailContact(((AnonymousShareEntry) entry).getAnonymousUrl().getContact());
-		}
-		return new MailContact(((ShareEntry) entry).getRecipient());
-	}
-
-	public AnonymousShareEntry getAnonymousShareEntry() {
-		return (AnonymousShareEntry) entry;
-	}
-
-	public ShareEntry getShareEntry() {
-		return (ShareEntry) entry;
+		Validate.notNull(shareOwner, "Missing shareEntry");
+		Validate.notNull(shareContainer, "Missing shareEntry");
+		Validate.notNull(shares, "Missing shareEntry");
 	}
 
 }

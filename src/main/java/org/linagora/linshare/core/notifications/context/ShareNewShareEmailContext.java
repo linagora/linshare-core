@@ -46,7 +46,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.notifications.dto.MailContact;
 
-public class NewSharingEmailContext extends EmailContext {
+public class ShareNewShareEmailContext extends EmailContext {
 
 	protected User shareOwner;
 
@@ -60,7 +60,7 @@ public class NewSharingEmailContext extends EmailContext {
 
 	protected boolean isAnonymous;
 
-	public NewSharingEmailContext(User shareOwner, User shareRecipient, Set<ShareEntry> shares,
+	public ShareNewShareEmailContext(User shareOwner, User shareRecipient, Set<ShareEntry> shares,
 			ShareContainer shareContainer) {
 		super(shareRecipient.getDomain(), false);
 		this.shareOwner = shareOwner;
@@ -72,7 +72,7 @@ public class NewSharingEmailContext extends EmailContext {
 		this.shareContainer = shareContainer;
 	}
 
-	public NewSharingEmailContext(User shareOwner, AnonymousUrl anonymousUrl, ShareContainer shareContainer,
+	public ShareNewShareEmailContext(User shareOwner, AnonymousUrl anonymousUrl, ShareContainer shareContainer,
 			Language language) {
 		super(shareOwner.getDomain(), true);
 		this.shareOwner = shareOwner;

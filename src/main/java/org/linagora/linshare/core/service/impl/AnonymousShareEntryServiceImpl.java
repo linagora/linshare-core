@@ -56,8 +56,8 @@ import org.linagora.linshare.core.domain.objects.Recipient;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.notifications.context.NewSharingEmailContext;
-import org.linagora.linshare.core.notifications.context.ShareDownloadedEmailContext;
+import org.linagora.linshare.core.notifications.context.ShareNewShareEmailContext;
+import org.linagora.linshare.core.notifications.context.ShareFileDownloadEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.AnonymousShareEntryResourceAccessControl;
 import org.linagora.linshare.core.repository.FavouriteRepository;
@@ -152,7 +152,7 @@ public class AnonymousShareEntryServiceImpl extends
 					.create(actor, owner, recipient, sc.getDocuments(), sc.getExpiryCalendar(),
 							passwordProtected, shareEntryGroup, sc.getSharingNote());
 			// Notifications
-			NewSharingEmailContext context = new NewSharingEmailContext(owner, anonymousUrl, sc, mailLocale);
+			ShareNewShareEmailContext context = new ShareNewShareEmailContext(owner, anonymousUrl, sc, mailLocale);
 			MailContainerWithRecipient mail = mailBuildingService.build(context);
 			sc.addMailContainer(mail);
 			sc.addLogs(anonymousUrl.getLogs());
@@ -198,7 +198,7 @@ public class AnonymousShareEntryServiceImpl extends
 		checkDownloadPermission(actor, null, AnonymousShareEntry.class,
 				BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN, shareEntry);
 		MailContainerWithRecipient mail = null;
-		ShareDownloadedEmailContext context = new ShareDownloadedEmailContext(shareEntry);
+		ShareFileDownloadEmailContext context = new ShareFileDownloadEmailContext(shareEntry);
 		if (shareEntry.getDownloaded() <= 0) {
 			mail = mailBuildingService.build(context);
 		} else {

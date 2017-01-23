@@ -76,11 +76,11 @@ import org.linagora.linshare.core.notifications.config.LinShareStringTemplateRes
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.dto.ContextMetadata;
 import org.linagora.linshare.core.notifications.emails.impl.EmailBuilder;
-import org.linagora.linshare.core.notifications.emails.impl.NewGuestEmailBuilder;
-import org.linagora.linshare.core.notifications.emails.impl.NewSharingEmailBuilder;
-import org.linagora.linshare.core.notifications.emails.impl.ResetGuestPasswordEmailBuilder;
-import org.linagora.linshare.core.notifications.emails.impl.ShareDownloadedEmailBuilder;
-import org.linagora.linshare.core.notifications.emails.impl.SharingAcknowledgementEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.GuestAccountNewCreationEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.ShareNewShareEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.GuestAccountResetPasswordEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.ShareFileDownloadEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.ShareNewShareAcknowledgementEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.UploadRequestUploadedFileEmailBuilder;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -431,21 +431,21 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		templateEngine.setTemplateResolver(templateResolver);
 
 		emailBuilders = Maps.newHashMap();
-		emailBuilders.put(MailContentType.SHARE_NEW_SHARE_FOR_RECIPIENT, new NewSharingEmailBuilder());
+		emailBuilders.put(MailContentType.SHARE_NEW_SHARE_FOR_RECIPIENT, new ShareNewShareEmailBuilder());
 
-		NewGuestEmailBuilder newGuestBuilder = new NewGuestEmailBuilder();
+		GuestAccountNewCreationEmailBuilder newGuestBuilder = new GuestAccountNewCreationEmailBuilder();
 		newGuestBuilder.setUrlGuestReset(urlGuestReset);
 		emailBuilders.put(MailContentType.GUEST_ACCOUNT_NEW_CREATION, newGuestBuilder);
 
-		emailBuilders.put(MailContentType.SHARE_FILE_DOWNLOAD, new ShareDownloadedEmailBuilder());
-		emailBuilders.put(MailContentType.DEPRECATED_ANONYMOUS_DOWNLOAD, new ShareDownloadedEmailBuilder());
+		emailBuilders.put(MailContentType.SHARE_FILE_DOWNLOAD, new ShareFileDownloadEmailBuilder());
+		emailBuilders.put(MailContentType.DEPRECATED_ANONYMOUS_DOWNLOAD, new ShareFileDownloadEmailBuilder());
 
-		ResetGuestPasswordEmailBuilder resetGuestBuilder = new ResetGuestPasswordEmailBuilder();
+		GuestAccountResetPasswordEmailBuilder resetGuestBuilder = new GuestAccountResetPasswordEmailBuilder();
 		resetGuestBuilder.setUrlGuestReset(urlGuestReset);
 		emailBuilders.put(MailContentType.GUEST_ACCOUNT_RESET_PASSWORD_LINK, resetGuestBuilder);
 
 		emailBuilders.put(MailContentType.SHARE_NEW_SHARE_ACKNOWLEDGEMENT_FOR_SENDER,
-				new SharingAcknowledgementEmailBuilder());
+				new ShareNewShareAcknowledgementEmailBuilder());
 		emailBuilders.put(MailContentType.UPLOAD_REQUEST_UPLOADED_FILE, new UploadRequestUploadedFileEmailBuilder());
 
 		initMailBuilders();

@@ -33,64 +33,55 @@
  */
 package org.linagora.linshare.core.notifications.emails.impl;
 
-import java.util.Date;
+import java.util.Formatter;
 import java.util.List;
-import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
-import org.linagora.linshare.core.domain.entities.Entry;
+import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
-import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
-import org.linagora.linshare.core.notifications.context.SharingAcknowledgementEmailContext;
-import org.linagora.linshare.core.notifications.dto.Document;
+import org.linagora.linshare.core.notifications.context.GuestAccountNewCreationEmailContext;
 import org.linagora.linshare.core.notifications.dto.MailContact;
 import org.thymeleaf.context.Context;
 
 import com.google.common.collect.Lists;
 
-public class SharingAcknowledgementEmailBuilder extends EmailBuilder {
+public class GuestAccountNewCreationEmailBuilder extends EmailBuilder {
+
+	protected String urlGuestReset;
+
+	public String getUrlGuestReset() {
+		return urlGuestReset;
+	}
+
+	public void setUrlGuestReset(String urlGuestReset) {
+		this.urlGuestReset = urlGuestReset;
+	}
 
 	@Override
 	public MailContentType getSupportedType() {
-		return MailContentType.SHARE_NEW_SHARE_ACKNOWLEDGEMENT_FOR_SENDER;
+		return MailContentType.GUEST_ACCOUNT_NEW_CREATION;
 	}
 
 	@Override
 	public MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		SharingAcknowledgementEmailContext emailCtx = (SharingAcknowledgementEmailContext) context;
-
-		User shareOwner = emailCtx.getShareOwner();
-		Set<Entry> shareEntries = emailCtx.getShares();
-		ShareContainer shareContainer = emailCtx.getShareContainer();
-
-		MailConfig cfg = shareOwner.getDomain().getCurrentMailConfiguration();
+		GuestAccountNewCreationEmailContext emailCtx = (GuestAccountNewCreationEmailContext) context;
+		User creator = emailCtx.getCreator();
+		Guest guest = emailCtx.getGuest();
+		String linshareURL = getLinShareUrl(guest);
+		MailConfig cfg = creator.getDomain().getCurrentMailConfiguration();
 
 		Context ctx = new Context(emailCtx.getLocale());
-		ctx.setVariable("shareOwner", new MailContact(shareOwner));
-		ctx.setVariable("expirationDate", shareContainer.getExpiryDate());
-		// TODO to be improve : sharingDate should be store inside the container
-		// or retrieve from SEG.
-		ctx.setVariable("creationDate", shareEntries.iterator().next().getCreationDate().getTime());
-
-		List<Document> documents = transform(shareContainer.getDocuments(), true, getLinShareUrl(shareOwner));
-		ctx.setVariable("documents", documents);
-		ctx.setVariable("documents", documents.size());
-
-		List<MailContact> recipients = shareContainer.getMailContactRecipients();
-		ctx.setVariable("recipients", recipients);
-		ctx.setVariable("recipients", recipients.size());
-
-		ctx.setVariable("linshareURL", getLinShareUrl(shareOwner));
-
-		ctx.setVariable("customSubject", shareContainer.getSubject());
-		ctx.setVariable("customMessage", shareContainer.getMessage());
-		ctx.setVariable("sharingNote", shareContainer.getSharingNote());
-
+		ctx.setVariable("creator", new MailContact(creator));
+		ctx.setVariable("customMessage", null);
+		ctx.setVariable("guest", new MailContact(guest));
+		ctx.setVariable("guestExpirationDate", guest.getExpirationDate());
+		ctx.setVariable("linshareURL", linshareURL);
+		ctx.setVariable("resetLink", getResetLink(linshareURL, emailCtx.getResetPasswordTokenUuid()));
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
 				emailCtx);
 		return buildMailContainer;
@@ -100,31 +91,20 @@ public class SharingAcknowledgementEmailBuilder extends EmailBuilder {
 	public List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
 		Context ctx = new Context(Language.toLocale(language));
-
-		ctx.setVariable("shareOwner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
-		ctx.setVariable("expirationDate", getFakeExpirationDate());
-		ctx.setVariable("creationDate", new Date());
-
-		List<Document> documents = Lists.newArrayList();
-		documents.add(getNewFakeDocument("a-shared-file.txt", fakeLinshareURL));
-		documents.add(getNewFakeDocument("second-shared-file.txt", fakeLinshareURL));
-		documents.add(getNewFakeDocument("third-shared-file.txt", fakeLinshareURL));
-		ctx.setVariable("documents", documents);
-		ctx.setVariable("documents", documents.size());
-
-		List<MailContact> recipients = Lists.newArrayList();
-		recipients.add(new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
-		recipients.add(new MailContact("unknown@linshare.org"));
-		ctx.setVariable("recipients", recipients);
-		ctx.setVariable("recipients", recipients.size());
-
+		ctx.setVariable("creator", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
+		ctx.setVariable("guest", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
 		ctx.setVariable("linshareURL", fakeLinshareURL);
-
-		ctx.setVariable("customSubject", "Some personal subject");
-		ctx.setVariable("customMessage", "Some personal message");
-		ctx.setVariable("sharingNote", "a sharing note");
-
+		ctx.setVariable("resetLink", getResetLink(fakeLinshareURL, "cb1443d0-a34f-4d0b-92e4-c19d4eeb7fae"));
 		res.add(ctx);
 		return res;
+	}
+
+	protected String getResetLink(String linshareURL, String token) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(linshareURL);
+		Formatter formatter = new Formatter(sb);
+		formatter.format(urlGuestReset, token);
+		formatter.close();
+		return sb.toString();
 	}
 }

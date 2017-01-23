@@ -44,7 +44,7 @@ import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
-import org.linagora.linshare.core.notifications.context.NewSharingEmailContext;
+import org.linagora.linshare.core.notifications.context.ShareNewShareEmailContext;
 import org.linagora.linshare.core.notifications.dto.Document;
 import org.linagora.linshare.core.notifications.dto.MailContact;
 import org.linagora.linshare.core.notifications.dto.Share;
@@ -52,7 +52,7 @@ import org.thymeleaf.context.Context;
 
 import com.google.common.collect.Lists;
 
-public class NewSharingEmailBuilder extends EmailBuilder{
+public class ShareNewShareEmailBuilder extends EmailBuilder{
 
 	@Override
 	public MailContentType getSupportedType() {
@@ -61,7 +61,7 @@ public class NewSharingEmailBuilder extends EmailBuilder{
 
 	@Override
 	public MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		NewSharingEmailContext emailCtx = (NewSharingEmailContext)context;
+		ShareNewShareEmailContext emailCtx = (ShareNewShareEmailContext)context;
 
 		User shareOwner = emailCtx.getShareOwner();
 		ShareContainer shareContainer = emailCtx.getShareContainer();

@@ -37,29 +37,17 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.User;
 
-public class NewGuestEmailContext extends EmailContext {
-
-	protected User creator;
+public class GuestAccountResetPasswordEmailContext extends EmailContext {
 
 	protected Guest guest;
 
 	protected String resetPasswordTokenUuid;
 
-	public NewGuestEmailContext(User creator, Guest guest, String resetPasswordTokenUuid) {
+	public GuestAccountResetPasswordEmailContext(Guest guest, String resetPasswordTokenUuid) {
 		super(guest.getDomain(), false);
-		this.creator = creator;
 		this.guest = guest;
 		this.resetPasswordTokenUuid= resetPasswordTokenUuid;
-	}
-
-	public User getCreator() {
-		return creator;
-	}
-
-	public void setCreator(User creator) {
-		this.creator = creator;
 	}
 
 	public Guest getGuest() {
@@ -80,12 +68,12 @@ public class NewGuestEmailContext extends EmailContext {
 
 	@Override
 	public MailContentType getType() {
-		return MailContentType.GUEST_ACCOUNT_NEW_CREATION;
+		return MailContentType.GUEST_ACCOUNT_RESET_PASSWORD_LINK;
 	}
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.NEW_GUEST;
+		return MailActivationType.RESET_PASSWORD;
 	}
 
 	@Override
@@ -95,12 +83,11 @@ public class NewGuestEmailContext extends EmailContext {
 
 	@Override
 	public String getMailReplyTo() {
-		return creator.getMail();
+		return null;
 	}
 
 	@Override
 	public void validateRequiredField() {
-		Validate.notNull(creator, "Missing creator");
 		Validate.notNull(guest, "Missing guest");
 		Validate.notNull(resetPasswordTokenUuid, "Missing resetPasswordTokenUuid");
 	}

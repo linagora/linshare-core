@@ -43,13 +43,13 @@ import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
-import org.linagora.linshare.core.notifications.context.ResetGuestPasswordEmailContext;
+import org.linagora.linshare.core.notifications.context.GuestAccountResetPasswordEmailContext;
 import org.linagora.linshare.core.notifications.dto.MailContact;
 import org.thymeleaf.context.Context;
 
 import com.google.common.collect.Lists;
 
-public class ResetGuestPasswordEmailBuilder extends EmailBuilder {
+public class GuestAccountResetPasswordEmailBuilder extends EmailBuilder {
 
 	protected String urlGuestReset;
 
@@ -68,7 +68,7 @@ public class ResetGuestPasswordEmailBuilder extends EmailBuilder {
 
 	@Override
 	public MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		ResetGuestPasswordEmailContext emailCtx = (ResetGuestPasswordEmailContext) context;
+		GuestAccountResetPasswordEmailContext emailCtx = (GuestAccountResetPasswordEmailContext) context;
 		Guest guest = emailCtx.getGuest();
 		String linshareURL = getLinShareUrl(guest);
 		MailConfig cfg = guest.getDomain().getCurrentMailConfiguration();

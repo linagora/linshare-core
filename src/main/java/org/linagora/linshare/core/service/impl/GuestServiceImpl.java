@@ -60,8 +60,8 @@ import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.notifications.context.NewGuestEmailContext;
-import org.linagora.linshare.core.notifications.context.ResetGuestPasswordEmailContext;
+import org.linagora.linshare.core.notifications.context.GuestAccountNewCreationEmailContext;
+import org.linagora.linshare.core.notifications.context.GuestAccountResetPasswordEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.GuestResourceAccessControl;
 import org.linagora.linshare.core.service.AbstractDomainService;
@@ -242,7 +242,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		ResetGuestPassword resetGuestPassword = new ResetGuestPassword(create);
 		resetGuestPassword.setKind(ResetTokenKind.NEW_PASSWORD);
 		resetGuestPasswordMongoRepository.insert(resetGuestPassword);
-		NewGuestEmailContext mailContext = new NewGuestEmailContext((User)owner, create, resetGuestPassword.getUuid());
+		GuestAccountNewCreationEmailContext mailContext = new GuestAccountNewCreationEmailContext((User)owner, create, resetGuestPassword.getUuid());
 		MailContainerWithRecipient mail = mailBuildingService.build(mailContext);
 		notifierService.sendNotification(mail);
 		UserLogEntry userLogEntry = new UserLogEntry(actor, LogAction.USER_CREATE, "Creating a guest", create);
@@ -381,7 +381,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		Guest guest = retrieveGuest(lsUuid);
 		ResetGuestPassword resetGuestPassword = resetGuestPasswordMongoRepository.insert(new ResetGuestPassword(guest));
 		resetGuestPassword.setKind(ResetTokenKind.RESET_PASSWORD);
-		ResetGuestPasswordEmailContext context = new ResetGuestPasswordEmailContext(guest, resetGuestPassword.getUuid());
+		GuestAccountResetPasswordEmailContext context = new GuestAccountResetPasswordEmailContext(guest, resetGuestPassword.getUuid());
 		MailContainerWithRecipient mail = mailBuildingService.build(context);
 		notifierService.sendNotification(mail);
 	}
@@ -404,7 +404,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		ResetGuestPassword resetGuestPassword = new ResetGuestPassword(guest);
 		resetGuestPassword.setKind(ResetTokenKind.RESET_PASSWORD);
 		resetGuestPassword = resetGuestPasswordMongoRepository.insert(resetGuestPassword);
-		ResetGuestPasswordEmailContext context = new ResetGuestPasswordEmailContext(guest, resetGuestPassword.getUuid());
+		GuestAccountResetPasswordEmailContext context = new GuestAccountResetPasswordEmailContext(guest, resetGuestPassword.getUuid());
 		MailContainerWithRecipient mail = mailBuildingService.build(context);
 		notifierService.sendNotification(mail);
 	}
