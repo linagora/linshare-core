@@ -47,6 +47,8 @@ import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.BatchResultContext;
 import org.linagora.linshare.core.job.quartz.Context;
+import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.context.ShareWarnUndownloadedFilesharesEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.LogEntryService;
@@ -98,7 +100,8 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 			logger.info("needNotification : " + shareEntryGroup.needNotification());
 			if (shareEntryGroup.needNotification()) {
 				// log action and notification
-				mail = mailService.buildNoDocumentHasBeenDownloadedAcknowledgement(shareEntryGroup);
+				EmailContext emailContext = new ShareWarnUndownloadedFilesharesEmailContext(shareEntryGroup);
+				mail = mailService.build(emailContext);
 				shareEntryGroup.setNotified(true);
 				service.update(actor, actor, shareEntryGroup);
 				logActions(shareEntryGroup, LogAction.SHARE_WITH_USD_NOT_DOWNLOADED);

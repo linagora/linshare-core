@@ -119,7 +119,4 @@ public interface MailBuildingService {
 	MailContainerWithRecipient buildErrorUploadRequestNoSpaceLeft(User owner, UploadRequestUrl request)
 			throws BusinessException;
 
-	MailContainerWithRecipient buildNoDocumentHasBeenDownloadedAcknowledgement(
-			ShareEntryGroup shareEntryGroup)
-					throws BusinessException;
 }

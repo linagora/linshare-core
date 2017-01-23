@@ -36,7 +36,6 @@ package org.linagora.linshare.core.notifications.service.impl;
 import java.text.DateFormat;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Formatter;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -59,10 +58,7 @@ import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.MailActivation;
 import org.linagora.linshare.core.domain.entities.MailConfig;
-import org.linagora.linshare.core.domain.entities.MailContent;
-import org.linagora.linshare.core.domain.entities.MailFooter;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
-import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.UploadProposition;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
@@ -82,6 +78,7 @@ import org.linagora.linshare.core.notifications.emails.impl.ShareFileDownloadEma
 import org.linagora.linshare.core.notifications.emails.impl.ShareFileShareDeletedEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.ShareNewShareAcknowledgementEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.ShareNewShareEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.ShareWarnUndownloadedFilesharesEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.UploadRequestUploadedFileEmailBuilder;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -105,29 +102,11 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 
 	private final Map<MailContentType, EmailBuilder> emailBuilders;
 
-	private final boolean displayLogo;
-
-	private final boolean insertLicenceTerm;
-
 	private final DomainBusinessService domainBusinessService;
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
 	private final MailActivationBusinessService mailActivationBusinessService;
-
-	private static final String LINSHARE_LOGO = "<img src='cid:image.part.1@linshare.org' /><br/><br/>";
-
-	private final Map<Language, String> downloaded = Maps.newHashMap();
-
-	private final Map<Language, String> notDownloaded = Maps.newHashMap();
-
-	private final Map<Language, String> shareWith = Maps.newHashMap();
-
-	private final Map<Language, String> anonymouslySharedWith = Maps.newHashMap();
-
-	private final String  receivedSharesUrlSuffix;
-
-	private final String  documentsUrlSuffix;
 
 	private class FileRepresentation {
 
@@ -144,122 +123,11 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		}
 	}
 
-	@SuppressWarnings("unused")
-	private class Document {
-		protected String uuid;
-		protected String name;
 
-		public Document(DocumentEntry de) {
-			super();
-			this.uuid = de.getUuid();
-			this.name = de.getName();
-		}
-
-		public Document(String name) {
-			super();
-			this.name = name;
-		}
-
-		public String getUuid() {
-			return uuid;
-		}
-
-		public void setUuid(String uuid) {
-			this.uuid = uuid;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
-	}
-
-	@SuppressWarnings("unused")
-	private class Share {
-		protected String uuid;
-		protected String name;
-		protected boolean downloaded;
-		protected Date creationDate;
-		protected Date expirationDate;
-
-		public Share(ShareEntry se) {
-			super();
-			this.uuid = se.getUuid();
-			this.name = se.getName();
-			this.downloaded = se.getDownloaded() > 0;
-			this.creationDate = se.getCreationDate().getTime();
-			this.expirationDate = se.getExpirationDate().getTime();
-		}
-
-		public Share(AnonymousShareEntry se) {
-			super();
-			this.uuid = se.getUuid();
-			this.name = se.getName();
-			this.downloaded = se.getDownloaded() > 0;
-			this.creationDate = se.getCreationDate().getTime();
-			this.expirationDate = se.getExpirationDate().getTime();
-		}
-
-		public Share(String name) {
-			super();
-			this.name = name;
-		}
-
-		public String getUuid() {
-			return uuid;
-		}
-
-		public void setUuid(String uuid) {
-			this.uuid = uuid;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		public boolean isDownloaded() {
-			return downloaded;
-		}
-
-		public void setDownloaded(boolean downloaded) {
-			this.downloaded = downloaded;
-		}
-
-		public Date getCreationDate() {
-			return creationDate;
-		}
-
-		public void setCreationDate(Date creationDate) {
-			this.creationDate = creationDate;
-		}
-
-		public Date getExpirationDate() {
-			return expirationDate;
-		}
-
-		public void setExpirationDate(Date expirationDate) {
-			this.expirationDate = expirationDate;
-		}
-	}
-
-	@SuppressWarnings("unused")
 	private class ContactRepresentation {
 		private String mail;
 		private String firstName;
 		private String lastName;
-
-		public ContactRepresentation(Contact c) {
-			this.mail = StringUtils.trimToNull(c.getMail());
-			this.firstName = null;
-			this.lastName = null;
-		}
 
 		public ContactRepresentation(User user) {
 			this.mail = StringUtils.trimToNull(user.getMail());
@@ -383,18 +251,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 
 	/**
 	 * Constructor
-	 * @param displayLogo
-	 * @param mailConfigBusinessService
-	 * @param domainBusinessService
-	 * @param functionalityReadOnlyService
-	 * @param mailActivationBusinessService
-	 * @param insertLicenceTerm
-	 * @param receivedSharesUrlSuffix
-	 * @param documentsUrlSuffix
-	 * @param urlGuestReset
-	 * @param templatingStrictMode
-	 * @param templatingSubjectPrefix
-	 * @throws Exception
 	 */
 	public MailBuildingServiceImpl(
 			boolean displayLogo,
@@ -409,21 +265,10 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			boolean templatingStrictMode,
 			boolean templatingSubjectPrefix
 			) throws Exception {
-		this.displayLogo = displayLogo;
+//		this.displayLogo = displayLogo;
 		this.domainBusinessService = domainBusinessService;
-		this.insertLicenceTerm = insertLicenceTerm;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.mailActivationBusinessService = mailActivationBusinessService;
-		this.downloaded.put(Language.ENGLISH, "DOWNLOADED");
-		this.notDownloaded.put(Language.ENGLISH, "NOT DOWNLOADED");
-		this.shareWith.put(Language.ENGLISH, "Shared with");
-		this.anonymouslySharedWith.put(Language.ENGLISH, "Anonymously shared with");
-		this.downloaded.put(Language.FRENCH, "TÉLÉCHARGÉ");
-		this.notDownloaded.put(Language.FRENCH, "NON TÉLÉCHARGÉ");
-		this.shareWith.put(Language.FRENCH, "Partagé avec");
-		this.anonymouslySharedWith.put(Language.FRENCH, "Partagé anonymement avec");
-		this.receivedSharesUrlSuffix = receivedSharesUrlSuffix;
-		this.documentsUrlSuffix = documentsUrlSuffix;
 		this.templateEngine = new TemplateEngine();
 		LinShareStringTemplateResolver templateResolver = new LinShareStringTemplateResolver(insertLicenceTerm, templatingSubjectPrefix);
 		if (templatingStrictMode) {
@@ -449,8 +294,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				new ShareNewShareAcknowledgementEmailBuilder());
 		emailBuilders.put(MailContentType.UPLOAD_REQUEST_UPLOADED_FILE, new UploadRequestUploadedFileEmailBuilder());
 		emailBuilders.put(MailContentType.SHARE_FILE_SHARE_DELETED, new ShareFileShareDeletedEmailBuilder());
+		emailBuilders.put(MailContentType.SHARE_WARN_UNDOWNLOADED_FILESHARES, new ShareWarnUndownloadedFilesharesEmailBuilder());
 
-		initMailBuilders();
+		initMailBuilders(insertLicenceTerm, domainBusinessService, functionalityReadOnlyService, mailActivationBusinessService, receivedSharesUrlSuffix, documentsUrlSuffix);
 		Set<MailContentType> keySet = emailBuilders.keySet();
 		logger.debug("mail content loaded : size : {}", keySet.size());
 		for (MailContentType mailContentType : keySet) {
@@ -459,7 +305,13 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		logger.debug("end");
 	}
 
-	private void initMailBuilders() {
+	private void initMailBuilders(boolean insertLicenceTerm,
+		DomainBusinessService domainBusinessService,
+		FunctionalityReadOnlyService functionalityReadOnlyService,
+		MailActivationBusinessService mailActivationBusinessService,
+		String  receivedSharesUrlSuffix,
+		String  documentsUrlSuffix
+	) {
 		Collection<EmailBuilder> values = emailBuilders.values();
 		for (EmailBuilder emailBuilder : values) {
 			emailBuilder.setTemplateEngine(templateEngine);
@@ -710,192 +562,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	}
 
 
-	@Override
-	public MailContainerWithRecipient buildNoDocumentHasBeenDownloadedAcknowledgement(
-			ShareEntryGroup shareEntryGroup) throws BusinessException {
-		if (isDisable(shareEntryGroup.getOwner(),
-				MailActivationType.UNDOWNLOADED_SHARED_DOCUMENTS_ALERT)) {
-			return null;
-		}
-		User owner = (User) shareEntryGroup.getOwner();
-		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
-		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				owner.getExternalMailLocale());
-		MailContainerBuilder builder = new MailContainerBuilder();
-		Language userLocale = owner.getExternalMailLocale();
-		DateFormat df = DateFormat.getDateInstance(DateFormat.FULL,
-				Locale.forLanguageTag(userLocale.getTapestryLocale()));
-		String creationDate = df.format(shareEntryGroup.getCreationDate());
-		String expirationDate = "";
-		if (shareEntryGroup.getExpirationDate() != null) {
-			expirationDate = df.format(shareEntryGroup.getExpirationDate());
-		}
-		StringBuffer shareInfoBuffer = new StringBuffer();
-		Map<DocumentEntry, List<Entry>> tmpDocuments = shareEntryGroup.getTmpDocuments();
-		for (Map.Entry<DocumentEntry, List<Entry>> tmpDocument : tmpDocuments
-				.entrySet()) {
-			DocumentEntry documentEntry = tmpDocument.getKey();
-			boolean oneShareWasDownloaded = oneShareWasDownloaded(documentEntry, shareEntryGroup);
-			boolean allSharesWereDownloaded = allSharesWereDownloaded(documentEntry, shareEntryGroup);
-			shareInfoBuffer
-					.append("<tr style='height: 10px;' ></tr>")
-					.append("<tr style='border-bottom: 1px solid black;'>")
-					.append("<td style='margin-bottom: 5px; padding-bottom: 3px; padding-top: 10px;'>")
-					.append("<a style='text-decoration: none; font-size: 13px;' href='")
-					.append(getOwnerDocumentLink(owner, documentEntry))
-					.append("'>")
-					.append(documentEntry.getName())
-					.append("</a> :")
-					.append("</td>")
-					.append("<td style='padding: 5px 0px; width: 130px;'>")
-					.append(flagDocumentDownloadedOrNotForUSDA(userLocale, oneShareWasDownloaded, allSharesWereDownloaded, false))
-					.append("</td>")
-					.append("</tr>");
-			for (Entry entry : tmpDocuments.get(documentEntry)) {
-				shareInfoBuffer.append(flagShareRowOrNotForUSDA(entry, userLocale, oneShareWasDownloaded, allSharesWereDownloaded));
-			}
-				shareInfoBuffer.append("<tr style='height: 5px;' ></tr>");
-		}
-		builder.getSubjectChain().add("subject", shareEntryGroup.getSubject())
-				.add("date", creationDate);
-		builder.getGreetingsChain().add("firstName", owner.getFirstName())
-				.add("lastName", owner.getLastName());
-		builder.getBodyChain().add("creationDate", creationDate)
-				.add("expirationDate", expirationDate)
-				.add("shareInfo", shareInfoBuffer.toString());
-		container.setSubject(shareEntryGroup.getSubject());
-		container.setRecipient(owner.getMail());
-		container.setFrom(getFromMailAddress((User) owner));
-
-		return buildMailContainer(cfg, container, "",
-				MailContentType.SHARE_WARN_UNDOWNLOADED_FILESHARES, builder);
-	}
-
-	private boolean allSharesWereDownloaded(DocumentEntry documentEntry,
-			ShareEntryGroup shareEntryGroup) {
-		Map<DocumentEntry, Boolean> map = shareEntryGroup
-				.getTmpAllSharesWereNotDownloaded();
-		boolean allSharesWereDownloaded = false;
-		if (map.get(documentEntry) == null) {
-			allSharesWereDownloaded = true;
-		}
-		return allSharesWereDownloaded;
-	}
-
-	private Boolean oneShareWasDownloaded(DocumentEntry documentEntry,
-			ShareEntryGroup shareEntryGroup) {
-		Boolean wasDownloaded = false;
-		Map<DocumentEntry, Boolean> map = shareEntryGroup
-				.getTmpDocumentsWereDownloaded();
-		if (map.size() > 0) {
-			wasDownloaded = map.get(documentEntry);
-			if (wasDownloaded == null) {
-				wasDownloaded = false;
-			}
-		}
-		return wasDownloaded;
-	}
-
-	private String flagShareRowOrNotForUSDA(Entry entry, Language userLocale, boolean oneShareWasDownloaded, boolean allSharesWereDownloaded) {
-		StringBuffer sb = new StringBuffer();
-		sb.append("<tr>");
-		sb.append("<td style='padding: 5px 40px 5px 10px;'>");
-		if (entry instanceof ShareEntry) {
-			ShareEntry share = (ShareEntry) entry;
-			boolean shareDownloaded = share.getDownloaded() > 0;
-			sb.append(shareWith.get(userLocale))
-			.append(" : <b>")
-			.append(share.getRecipient().getFullName())
-			.append("</b>  (")
-			.append(share.getRecipient().getMail() + ")")
-			.append("</td>")
-			.append("<td>")
-			.append(flagShareDownloadedOrNotForUSDA(oneShareWasDownloaded, shareDownloaded, userLocale, allSharesWereDownloaded));
-		} else {
-			AnonymousShareEntry aShare = (AnonymousShareEntry) entry;
-			boolean shareDownloaded = aShare.getDownloaded() > 0;
-			sb.append(anonymouslySharedWith.get(userLocale))
-			.append(" : <b>")
-			.append(aShare.getAnonymousUrl().getContact().getMail())
-			.append("</b>")
-			.append("</td>")
-			.append("<td>")
-			.append(flagShareDownloadedOrNotForUSDA(oneShareWasDownloaded, shareDownloaded, userLocale, allSharesWereDownloaded));
-		}
-		sb.append("</td>");
-		sb.append("</tr>");
-		return sb.toString();
-	}
-
-	private String flagShareDownloadedOrNotForUSDA(
-			boolean oneShareWasDownloaded, boolean shareDownloaded,
-			Language userLocale, boolean allSharesWereDownloaded) {
-		String res = "";
-		if (!allSharesWereDownloaded) {
-			// check if there is at least one download
-			if (oneShareWasDownloaded) {
-				if (shareDownloaded) {
-					res = downloadedFlag(userLocale);
-				} else {
-					res = unDownloadedFlag(userLocale, true);
-				}
-			}
-		}
-		return res;
-	}
-
-	private String flagDocumentDownloadedOrNotForUSDA(Language userLocale,
-			boolean oneShareWasDownloaded, boolean allSharesWereDownloaded,
-			boolean warning) {
-		String res = "";
-		if (allSharesWereDownloaded) {
-			res = downloadedFlag(userLocale);
-		} else {
-			if (!oneShareWasDownloaded) {
-				// No download at all.
-				res = unDownloadedFlag(userLocale, false);
-			}
-		}
-		return res;
-	}
-
-
-
-	private String unDownloadedFlag(Language userLocale, boolean warning) {
-		StringBuffer sb = new StringBuffer();
-		sb.append("<h5 ")
-			.append("style='")
-			.append(" display: inline-block; color: white;")
-			.append(" padding: 3px 0px;")
-			.append(" margin: 0px; width: 100%; text-align: center;");
-			if (warning) {
-				// Orange
-				sb.append(" background-color: #FF8C00;");
-				sb.append("' >");
-				sb.append(notDownloaded.get(userLocale));
-			} else {
-				// Red
-				sb.append(" background-color: #EE0037;");
-				sb.append("' >");
-				sb.append(notDownloaded.get(userLocale));
-			}
-		sb.append("</h5>");
-		return sb.toString();
-	}
-
-	private String downloadedFlag(Language userLocale) {
-		StringBuffer sb = new StringBuffer();
-		sb.append("<h5 ")
-			.append("style='")
-			.append(" display: inline-block; color: white;")
-			.append(" padding: 3px 0px;")
-			.append(" background-color: #00A114;")
-			.append(" margin: 0px; width: 100%; text-align: center;")
-			.append("' >")
-			.append(downloaded.get(userLocale))
-			.append("</h5>");
-		return sb.toString();
-	}
 
 	@Override
 	public MailContainerWithRecipient buildCreateUploadProposition(User recipient, UploadProposition proposition)
@@ -1463,35 +1129,12 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		return notificationUrl.getValue();
 	}
 
-	private String getOwnerDocumentLink(User owner, DocumentEntry doc) {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getLinShareUrlForAUserRecipient(owner));
-		Formatter formatter = new Formatter(sb);
-		formatter.format(documentsUrlSuffix, doc.getUuid());
-		formatter.close();
-		return sb.toString();
-	}
 
 	/*
 	 * MAIL CONTAINER BUILDER SECTION
 	 */
 
-	private String formatPersonalMessage(String pm, Language lang) {
-		if (StringUtils.isBlank(pm))
-			return "";
-		return "<p>" + pm.replace("\n", "<br/>") + "</p><hr/><br/>";
-	}
 
-	private String formatFooter(String footer, Language lang) {
-        if (insertLicenceTerm) {
-    		if (lang.equals(Language.FRENCH)) {
-				footer += "<br/>Vous utilisez la version libre et gratuite de <a href=\"http://www.linshare.org/\" title=\"LinShare\"><strong>LinShare</strong></a>™, développée par Linagora © 2009–2015. Contribuez à la R&D du produit en souscrivant à une offre entreprise.<br/>";
-			} else {
-				footer += "<br/>You are using the Open Source and free version of <a href=\"http://www.linshare.org/\" title=\"LinShare\"><strong>LinShare</strong></a>™, powered by Linagora © 2009–2015. Contribute to Linshare R&D by subscribing to an Enterprise offer.<br/>";
-    		}
-        }
-        return footer;
-	}
 
 	
 
@@ -1499,30 +1142,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			final MailContainerWithRecipient input, String pm,
 			MailContentType type, MailContainerBuilder builder)
 			throws BusinessException {
-		Language lang = input.getLanguage();
-		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				input);
-		MailContent mailContent = cfg.findContent(lang, type);
-		String subjectTemplate = mailContent.getSubject();
-		String body = mailContent.getBody();
-		MailFooter f = cfg.findFooter(lang);
-		String footer = formatFooter(f.getFooter(), lang);
+		MailContainerWithRecipient container = new MailContainerWithRecipient(input);
 		String layout = cfg.getMailLayoutHtml().getLayout();
-
-		logger.debug("Building mail content: " + type);
-		pm = formatPersonalMessage(pm, lang);
-		String subject = builder.getSubjectChain().build(subjectTemplate);
-		body = builder.getBodyChain().build(body);
-		footer = builder.getFooterChain().build(footer);
-		layout = builder.getLayoutChain()
-				.add("image", displayLogo ? LINSHARE_LOGO : "")
-				.add("personalMessage", pm)
-				.add("body", body)
-				.add("footer", footer)
-				.add("mailSubject", subject)
-				.build(layout);
-
-		container.setSubject(subject);
 		container.setContent(layout);
 		// Message IDs from Web service API (ex Plugin Thunderbird)
 		container.setInReplyTo(input.getInReplyTo());
