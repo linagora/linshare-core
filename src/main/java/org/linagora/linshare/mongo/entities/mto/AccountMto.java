@@ -45,6 +45,8 @@ public class AccountMto {
 
 	protected String firstName;
 
+	protected String lastName;
+
 	protected String name;
 
 	protected String mail;
@@ -64,27 +66,28 @@ public class AccountMto {
 	}
 
 	public AccountMto(User user) {
-		this.name = user.getLastName();
 		this.uuid = user.getLsUuid();
 		this.mail = user.getMail();
 		this.domain = new DomainMto(user.getDomain());
+		this.name = user.getFullName();
 		this.firstName = user.getFirstName();
+		this.lastName = user.getLastName();
 	}
 
 	public AccountMto(Recipient recipient) {
-		this.name = recipient.getLastName();
 		this.uuid = recipient.getUuid();
 		this.mail = recipient.getMail();
+		this.name = recipient.getMail();
 		this.domain = new DomainMto(recipient.getDomain());
-		this.firstName = recipient.getFirstName();
 	}
 
 	public AccountMto(Guest guest) {
-		this.name = guest.getLastName();
-		this.firstName = guest.getFirstName();
 		this.uuid = guest.getLsUuid();
 		this.domain = new DomainMto(guest.getDomain());
 		this.mail = guest.getMail();
+		this.name = guest.getFullName();
+		this.firstName = guest.getFirstName();
+		this.lastName = guest.getLastName();
 	}
 
 	public String getName() {
@@ -125,5 +128,13 @@ public class AccountMto {
 
 	public void setDomain(DomainMto domain) {
 		this.domain = domain;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 }
