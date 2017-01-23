@@ -48,7 +48,7 @@ import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.ShareWarnUndownloadedFilesharesEmailContext;
-import org.linagora.linshare.core.notifications.dto.ShareGroupDocument;
+import org.linagora.linshare.core.notifications.dto.SEGDocument;
 import org.linagora.linshare.core.notifications.dto.MailContact;
 import org.linagora.linshare.core.notifications.dto.ShareGroup;
 import org.thymeleaf.context.Context;
@@ -78,11 +78,11 @@ public class ShareWarnUndownloadedFilesharesEmailBuilder extends EmailBuilder {
 
 		ctx.setVariable("linshareURL", linshareURL);
 
-		List<ShareGroupDocument> documents = Lists.newArrayList();
+		List<SEGDocument> documents = Lists.newArrayList();
 		Map<DocumentEntry, List<Entry>> tmpDocuments = group.getTmpDocuments();
 		for (Map.Entry<DocumentEntry, List<Entry>> tmpDocument : tmpDocuments.entrySet()) {
 			DocumentEntry documentEntry = tmpDocument.getKey();
-			ShareGroupDocument d = new ShareGroupDocument(documentEntry);
+			SEGDocument d = new SEGDocument(documentEntry);
 			d.setHref(getOwnerDocumentLink(linshareURL, d.getUuid()));
 			d.setAllDownloaded(allSharesWereDownloaded(documentEntry, group));
 			d.setOneDownloaded(oneShareWasDownloaded(documentEntry, group));
@@ -109,12 +109,12 @@ public class ShareWarnUndownloadedFilesharesEmailBuilder extends EmailBuilder {
 		ctx.setVariable("shareGroup",
 				new ShareGroup("My test subject", new Date(), getFakeExpirationDate(), getFakeExpirationDate()));
 
-		List<ShareGroupDocument> documents = Lists.newArrayList();
+		List<SEGDocument> documents = Lists.newArrayList();
 
-		ShareGroupDocument d = null;
+		SEGDocument d = null;
 
 		// first document
-		d = new ShareGroupDocument("a-shared-file.txt", 653347L);
+		d = new SEGDocument("a-shared-file.txt", 653347L);
 		d.setHref(getOwnerDocumentLink(fakeLinshareURL, d.getUuid()));
 		d.setAllDownloaded(true);
 		d.setOneDownloaded(true);
@@ -124,7 +124,7 @@ public class ShareWarnUndownloadedFilesharesEmailBuilder extends EmailBuilder {
 		documents.add(d);
 
 		// second document
-		d = new ShareGroupDocument("a-shared-file2.txt", 6533L);
+		d = new SEGDocument("a-shared-file2.txt", 6533L);
 		d.setHref(getOwnerDocumentLink(fakeLinshareURL, d.getUuid()));
 		d.setAllDownloaded(false);
 		d.setOneDownloaded(false);
@@ -134,7 +134,7 @@ public class ShareWarnUndownloadedFilesharesEmailBuilder extends EmailBuilder {
 		documents.add(d);
 
 		// third document
-		d = new ShareGroupDocument("a-shared-file3.txt", 653347L);
+		d = new SEGDocument("a-shared-file3.txt", 653347L);
 		d.setHref(getOwnerDocumentLink(fakeLinshareURL, d.getUuid()));
 		d.setAllDownloaded(false);
 		d.setOneDownloaded(true);

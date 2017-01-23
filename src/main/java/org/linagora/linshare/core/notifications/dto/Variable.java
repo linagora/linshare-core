@@ -53,7 +53,7 @@ public class Variable {
 
 	protected String type;
 
-	protected List<Attribute> attributes;
+	protected List<Variable> variables;
 
 	public Variable(String name, String type) {
 		super();
@@ -77,24 +77,24 @@ public class Variable {
 		this.type = type;
 	}
 
-	public List<Attribute> getAttributes() {
-		return attributes;
+	public List<Variable> getVariables() {
+		return variables;
 	}
 
-	public void setAttributes(List<Attribute> attributes) {
-		this.attributes = attributes;
+	public void setVariables(List<Variable> variables) {
+		this.variables = variables;
 	}
 
-	public void addAttribute(Attribute attribute) {
-		if (this.attributes == null) {
-			this.attributes = Lists.newArrayList();
+	public void addVariable(Variable variable) {
+		if (this.variables == null) {
+			this.variables = Lists.newArrayList();
 		}
-		this.attributes.add(attribute);
+		this.variables.add(variable);
 	}
 
 	@Override
 	public String toString() {
-		return "Variable [name=" + name + ", type=" + type + ", attributes=" + attributes + "]";
+		return "Variable [name=" + name + ", type=" + type + ", variables=" + variables + "]";
 	}
 
 }

@@ -47,7 +47,7 @@ import com.google.common.collect.Lists;
  * @author FMartin
  *
  */
-public class ShareGroupDocument {
+public class SEGDocument {
 
 	protected String uuid;
 
@@ -61,9 +61,9 @@ public class ShareGroupDocument {
 
 	protected Boolean allDownloaded = false;
 
-	protected List<ShareForShareGroup> shares;
+	protected List<SEGShare> shares;
 
-	public ShareGroupDocument(DocumentEntry de) {
+	public SEGDocument(DocumentEntry de) {
 		super();
 		this.uuid = de.getUuid();
 		this.name = de.getName();
@@ -71,7 +71,7 @@ public class ShareGroupDocument {
 		this.shares = Lists.newArrayList();
 	}
 
-	public ShareGroupDocument(String name, Long size) {
+	public SEGDocument(String name, Long size) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
 		this.name = name;
@@ -123,26 +123,26 @@ public class ShareGroupDocument {
 		this.allDownloaded = allDownloaded;
 	}
 
-	public List<ShareForShareGroup> getShares() {
+	public List<SEGShare> getShares() {
 		return shares;
 	}
 
-	public void setShares(List<ShareForShareGroup> shares) {
+	public void setShares(List<SEGShare> shares) {
 		this.shares = shares;
 	}
 
 	public void addShare(Entry entry) {
 		if (entry instanceof ShareEntry) {
 			ShareEntry share = (ShareEntry) entry;
-			shares.add(new ShareForShareGroup(share.getRecipient(), share.getDownloaded() > 0));
+			shares.add(new SEGShare(share.getRecipient(), share.getDownloaded() > 0));
 		} else {
 			AnonymousShareEntry share = (AnonymousShareEntry) entry;
-			shares.add(new ShareForShareGroup(share.getAnonymousUrl().getContact(), share.getDownloaded() > 0));
+			shares.add(new SEGShare(share.getAnonymousUrl().getContact(), share.getDownloaded() > 0));
 		}
 	}
 
 	public void addShare(MailContact mailContact, boolean downloaded) {
-		shares.add(new ShareForShareGroup(mailContact, downloaded));
+		shares.add(new SEGShare(mailContact, downloaded));
 	}
 
 	public void setHref(String href) {

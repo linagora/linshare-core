@@ -57,7 +57,6 @@ import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
-import org.linagora.linshare.core.notifications.dto.Attribute;
 import org.linagora.linshare.core.notifications.context.FakeBuildEmailContext;
 import org.linagora.linshare.core.notifications.dto.ContextMetadata;
 import org.linagora.linshare.core.notifications.dto.Document;
@@ -386,40 +385,52 @@ public abstract class EmailBuilder implements IEmailBuilder {
 				variable = new Variable(name, "Undefined");
 			} else {
 				logger.trace(obj.toString());
-				variable = new Variable(name, obj.getClass().getSimpleName());
-				logger.trace(variable.toString());
-				if (obj instanceof ArrayList) {
-					List<?> array = (List<?>) obj;
-					if (!array.isEmpty()) {
-						Object next = array.iterator().next();
-						String parametrizedClassName = next.getClass().getSimpleName();
-						variable.setType(variable.getType() + "<" + parametrizedClassName + ">");
-						variable.setAttributes(getFields(next));
-					}
-				} else {
-					variable.setAttributes(getFields(obj));
-				}
+				variable = getVariable(name, obj);
 			}
 			metadata.addVariable(variable);
 		}
 		return metadata;
 	}
 
-	private List<Attribute> getFields(Object obj) {
-		List<Attribute> attributes = null;
+	private Variable getVariable(String name, Object obj) {
+		Variable variable = new Variable(name, obj.getClass().getSimpleName());
+		logger.trace(variable.toString());
+		if (obj instanceof ArrayList) {
+			List<?> array = (List<?>) obj;
+			if (!array.isEmpty()) {
+				Object next = array.iterator().next();
+				String parametrizedClassName = next.getClass().getSimpleName();
+				variable.setType(variable.getType() + "<" + parametrizedClassName + ">");
+				variable.setVariables(getFields(next));
+			}
+		} else {
+			variable.setVariables(getFields(obj));
+		}
+		return variable;
+	}
+
+	private List<Variable> getFields(Object obj) {
+		List<Variable> attributes = null;
 		if (isSupportedFieldType(obj)) {
 			attributes = Lists.newArrayList();
 			for (Field field : obj.getClass().getDeclaredFields()) {
 				field.setAccessible(true);
 				String typeName = field.getGenericType().getTypeName();
 				try {
-					Class<?> act = Class.forName(typeName);
-					typeName = act.getSimpleName();
-					Object value = field.get(obj);
-					if (value != null) {
-						Attribute attr = new Attribute(field.getName(), typeName);
+					Object subObject = field.get(obj);
+					if (subObject instanceof ArrayList) {
+						Variable attr = getVariable(field.getName(), subObject);
 						logger.trace(attr.toString());
 						attributes.add(attr);
+					} else {
+						Class<?> act = Class.forName(typeName);
+						typeName = act.getSimpleName();
+						Object value = field.get(obj);
+						if (value != null) {
+							Variable attr = new Variable(field.getName(), typeName);
+							logger.trace(attr.toString());
+							attributes.add(attr);
+						}
 					}
 				} catch (ClassNotFoundException | IllegalArgumentException | IllegalAccessException e) {
 					logger.trace(e.getMessage(), e);

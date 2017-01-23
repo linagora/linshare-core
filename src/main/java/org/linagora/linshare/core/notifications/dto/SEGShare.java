@@ -41,7 +41,7 @@ import org.linagora.linshare.core.domain.entities.User;
  * @author FMartin
  *
  */
-public class ShareForShareGroup {
+public class SEGShare {
 
 	protected String mail;
 
@@ -49,23 +49,23 @@ public class ShareForShareGroup {
 
 	protected String lastName;
 
-	protected boolean downloaded = false;
+	protected Boolean downloaded = false;
 
-	public ShareForShareGroup(Contact c, boolean downloaded) {
+	public SEGShare(Contact c, Boolean downloaded) {
 		this.mail = StringUtils.trimToNull(c.getMail());
 		this.firstName = null;
 		this.lastName = null;
 		this.downloaded = downloaded;
 	}
 
-	public ShareForShareGroup(User user, boolean downloaded) {
+	public SEGShare(User user, Boolean downloaded) {
 		this.mail = StringUtils.trimToNull(user.getMail());
 		this.firstName = StringUtils.trimToNull(user.getFirstName());
 		this.lastName = StringUtils.trimToNull(user.getLastName());
 		this.downloaded = downloaded;
 	}
 
-	public ShareForShareGroup(MailContact mailContact, boolean downloaded) {
+	public SEGShare(MailContact mailContact, Boolean downloaded) {
 		this.mail = mailContact.getMail();
 		this.firstName = mailContact.getFirstName();
 		this.lastName = mailContact.getLastName();
@@ -96,17 +96,17 @@ public class ShareForShareGroup {
 		this.lastName = lastName;
 	}
 
-	public boolean isDownloaded() {
+	public Boolean isDownloaded() {
 		return downloaded;
 	}
 
-	public void setDownloaded(boolean downloaded) {
+	public void setDownloaded(Boolean downloaded) {
 		this.downloaded = downloaded;
 	}
 
 	@Override
 	public String toString() {
-		return "ShareForShareGroup [mail=" + mail + ", firstName=" + firstName + ", lastName=" + lastName + ", downloaded="
-				+ downloaded + "]";
+		return "ShareForShareGroup [mail=" + mail + ", firstName=" + firstName + ", lastName=" + lastName
+				+ ", downloaded=" + downloaded + "]";
 	}
 }
