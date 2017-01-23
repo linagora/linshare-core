@@ -77,10 +77,11 @@ import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.dto.ContextMetadata;
 import org.linagora.linshare.core.notifications.emails.impl.EmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.GuestAccountNewCreationEmailBuilder;
-import org.linagora.linshare.core.notifications.emails.impl.ShareNewShareEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.GuestAccountResetPasswordEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.ShareFileDownloadEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.ShareFileShareDeletedEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.ShareNewShareAcknowledgementEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.ShareNewShareEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.UploadRequestUploadedFileEmailBuilder;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -447,6 +448,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		emailBuilders.put(MailContentType.SHARE_NEW_SHARE_ACKNOWLEDGEMENT_FOR_SENDER,
 				new ShareNewShareAcknowledgementEmailBuilder());
 		emailBuilders.put(MailContentType.UPLOAD_REQUEST_UPLOADED_FILE, new UploadRequestUploadedFileEmailBuilder());
+		emailBuilders.put(MailContentType.SHARE_FILE_SHARE_DELETED, new ShareFileShareDeletedEmailBuilder());
 
 		initMailBuilders();
 		Set<MailContentType> keySet = emailBuilders.keySet();
@@ -609,61 +611,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	}
 
 	@Override
-	public MailContainerWithRecipient buildSharedDocDeleted(Account actor,
-			Entry shareEntry) throws BusinessException {
-		/*
-		 * XXX very very ugly
-		 */
-		User sender = (User) shareEntry.getEntryOwner();
-		String actorRepresentation = new ContactRepresentation(sender)
-				.getContactRepresentation();
-		String firstName, lastName, fileName, recipient; // ugly
-		Language locale;
-		if (shareEntry instanceof AnonymousShareEntry) {
-			AnonymousShareEntry e = (AnonymousShareEntry) shareEntry;
-			recipient = e.getAnonymousUrl().getContact().getMail();
-			if (isDisable(e.getAnonymousUrl().getContact(), sender,
-					MailActivationType.SHARED_DOC_DELETED)) {
-				return null;
-			}
-			locale = sender.getExternalMailLocale();
-			firstName = "";
-			lastName = recipient;
-			fileName = e.getDocumentEntry().getName();
-		} else {
-			ShareEntry e = (ShareEntry) shareEntry;
-			recipient = e.getRecipient().getMail();
-			if (isDisable(e.getRecipient(), MailActivationType.SHARED_DOC_DELETED)) {
-				return null;
-			}
-			locale = e.getRecipient().getExternalMailLocale();
-			firstName = e.getRecipient().getFirstName();
-			lastName = e.getRecipient().getLastName();
-			fileName = e.getDocumentEntry().getName();
-		}
-
-		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
-		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				locale);
-		MailContainerBuilder builder = new MailContainerBuilder();
-
-		builder.getSubjectChain()
-				.add("actorRepresentation", actorRepresentation);
-		builder.getGreetingsChain()
-				.add("firstName", firstName)
-				.add("lastName", lastName);
-		builder.getBodyChain()
-				.add("firstName", sender.getFirstName())
-				.add("lastName", sender.getLastName())
-				.add("documentName", fileName);
-		container.setRecipient(recipient);
-		container.setFrom(getFromMailAddress(sender));
-		container.setReplyTo(sender.getMail());
-		return buildMailContainer(cfg, container, null,
-				MailContentType.SHARE_FILE_SHARE_DELETED, builder);
-	}
-
-	@Override
 	public MailContainerWithRecipient buildSharedDocUpcomingOutdated(
 			Entry shareEntry, Integer days) throws BusinessException {
 		/*
@@ -784,8 +731,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			expirationDate = df.format(shareEntryGroup.getExpirationDate());
 		}
 		StringBuffer shareInfoBuffer = new StringBuffer();
-		Map<DocumentEntry, List<Entry>> tmpDocuments = shareEntryGroup
-				.getTmpDocuments();
+		Map<DocumentEntry, List<Entry>> tmpDocuments = shareEntryGroup.getTmpDocuments();
 		for (Map.Entry<DocumentEntry, List<Entry>> tmpDocument : tmpDocuments
 				.entrySet()) {
 			DocumentEntry documentEntry = tmpDocument.getKey();

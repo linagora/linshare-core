@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.notifications.emails.impl;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -60,8 +61,6 @@ import org.linagora.linshare.core.notifications.dto.Attribute;
 import org.linagora.linshare.core.notifications.context.FakeBuildEmailContext;
 import org.linagora.linshare.core.notifications.dto.ContextMetadata;
 import org.linagora.linshare.core.notifications.dto.Document;
-import org.linagora.linshare.core.notifications.dto.MailContact;
-import org.linagora.linshare.core.notifications.dto.Request;
 import org.linagora.linshare.core.notifications.dto.Share;
 import org.linagora.linshare.core.notifications.dto.Variable;
 import org.linagora.linshare.core.notifications.emails.IEmailBuilder;
@@ -76,8 +75,13 @@ import org.thymeleaf.templatemode.TemplateMode;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.reflect.ClassPath;
 
 public abstract class EmailBuilder implements IEmailBuilder {
+
+	protected final static String MAIL_DTO_PATH = "org.linagora.linshare.core.notifications.dto.";
+
+	protected static List<String> supportedClass = null;
 
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -98,6 +102,7 @@ public abstract class EmailBuilder implements IEmailBuilder {
 	protected String fakeLinshareURL = "http://127.0.0.1/";
 
 	public EmailBuilder() {
+		initSupportedTypes();
 	}
 
 	public EmailBuilder(TemplateEngine templateEngine, boolean insertLicenceTerm,
@@ -109,6 +114,32 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		this.mailActivationBusinessService = mailActivationBusinessService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.domainBusinessService = domainBusinessService;
+		initSupportedTypes();
+	}
+
+	/*
+	 * FIXME : it is a little bit ugly, but it does the job :)
+	 */
+	private void initSupportedTypes() {
+		Date date_before = new Date();
+		if (supportedClass == null) {
+			supportedClass = Lists.newArrayList();
+			final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+			try {
+				for (final ClassPath.ClassInfo info : ClassPath.from(loader).getTopLevelClasses()) {
+					if (info.getName().startsWith(MAIL_DTO_PATH)) {
+						final Class<?> clazz = info.load();
+						supportedClass.add(clazz.getCanonicalName());
+					}
+				}
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+		if (logger.isTraceEnabled()) {
+			Date date_after = new Date();
+			logger.trace("diff : " + String.valueOf(date_after.getTime() - date_before.getTime()));
+		}
 	}
 
 	public void setTemplateEngine(TemplateEngine templateEngine) {
@@ -354,9 +385,9 @@ public abstract class EmailBuilder implements IEmailBuilder {
 				// variable could exists but not defined.
 				variable = new Variable(name, "Undefined");
 			} else {
-				logger.debug(obj.toString());
+				logger.trace(obj.toString());
 				variable = new Variable(name, obj.getClass().getSimpleName());
-				logger.debug(variable.toString());
+				logger.trace(variable.toString());
 				if (obj instanceof ArrayList) {
 					List<?> array = (List<?>) obj;
 					if (!array.isEmpty()) {
@@ -387,7 +418,7 @@ public abstract class EmailBuilder implements IEmailBuilder {
 					Object value = field.get(obj);
 					if (value != null) {
 						Attribute attr = new Attribute(field.getName(), typeName);
-						logger.debug(attr.toString());
+						logger.trace(attr.toString());
 						attributes.add(attr);
 					}
 				} catch (ClassNotFoundException | IllegalArgumentException | IllegalAccessException e) {
@@ -399,7 +430,7 @@ public abstract class EmailBuilder implements IEmailBuilder {
 	}
 
 	protected boolean isSupportedFieldType(Object obj) {
-		return obj instanceof Document || obj instanceof Share || obj instanceof MailContact || obj instanceof Request;
+		return supportedClass.contains(obj.getClass().getCanonicalName());
 	}
 
 	protected String getOwnerDocumentLink(String linshareURL, String documentUuid) {

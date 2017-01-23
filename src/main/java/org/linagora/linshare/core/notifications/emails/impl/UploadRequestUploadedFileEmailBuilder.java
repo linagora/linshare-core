@@ -67,6 +67,7 @@ public class UploadRequestUploadedFileEmailBuilder extends EmailBuilder {
 		User owner = emailCtx.getOwner();
 		UploadRequestUrl requestUrl = emailCtx.getRequestUrl();
 		UploadRequestEntry entry = emailCtx.getEntry();
+		String linshareURL = getLinShareUrl(owner);
 
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 
@@ -79,7 +80,7 @@ public class UploadRequestUploadedFileEmailBuilder extends EmailBuilder {
 		ctx.setVariable("document", document);
 		ctx.setVariable("request", new Request(requestUrl));
 
-		ctx.setVariable("linshareURL", getLinShareUrl(owner));
+		ctx.setVariable("linshareURL", linshareURL);
 
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
 				emailCtx);

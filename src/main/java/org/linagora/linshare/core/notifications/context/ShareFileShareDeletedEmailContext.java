@@ -31,115 +31,53 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.notifications.dto;
+package org.linagora.linshare.core.notifications.context;
 
-import java.util.Date;
-import java.util.UUID;
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.MailActivationType;
+import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
 
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
+public class ShareFileShareDeletedEmailContext extends EmailContext {
 
-/**
- * @author FMartin
- *
- */
-public class Document {
+	protected ShareEntry shareEntry;
 
-	protected String uuid;
-
-	protected String name;
-
-	protected Long size;
-
-	protected String href;
-
-	protected Date creationDate;
-
-	protected boolean displayHref;
-
-	public Document(String name) {
-		super();
-		this.uuid = UUID.randomUUID().toString();
-		this.name = name;
+	public ShareFileShareDeletedEmailContext(ShareEntry shareEntry) {
+		super(shareEntry.getEntryOwner().getDomain(), false);
+		this.shareEntry = shareEntry;
 	}
 
-	public Document(DocumentEntry de) {
-		super();
-		this.uuid = de.getUuid();
-		this.name = de.getName();
+	public ShareEntry getShareEntry() {
+		return shareEntry;
 	}
 
-	public Document(DocumentEntry de, String href) {
-		super();
-		this.uuid = de.getUuid();
-		this.name = de.getName();
-		setHref(href);
-	}
-
-	public Document(UploadRequestEntry entry) {
-		super();
-		this.uuid = entry.getUuid();
-		this.name = entry.getName();
-		this.size = entry.getSize();
-		this.creationDate = entry.getCreationDate().getTime();
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getHref() {
-		return href;
-	}
-
-	public Long getSize() {
-		return size;
-	}
-
-	public void setSize(Long size) {
-		this.size = size;
-	}
-
-	public void setHref(String href) {
-		if (href == null) {
-			displayHref = false;
-		} else {
-			displayHref = true;
-		}
-		this.href = href;
-	}
-
-	public boolean isDisplayHref() {
-		return displayHref;
-	}
-
-	public void setDisplayHref(boolean displayHref) {
-		this.displayHref = displayHref;
-	}
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
+	public void setShareEntry(ShareEntry shareEntry) {
+		this.shareEntry = shareEntry;
 	}
 
 	@Override
-	public String toString() {
-		return "Document [uuid=" + uuid + ", name=" + name + ", href=" + href + "]";
+	public MailContentType getType() {
+		return MailContentType.SHARE_FILE_SHARE_DELETED;
+	}
+
+	@Override
+	public MailActivationType getActivation() {
+		return MailActivationType.SHARED_DOC_DELETED;
+	}
+
+	@Override
+	public String getMailRcpt() {
+		return shareEntry.getRecipient().getMail();
+	}
+
+	@Override
+	public String getMailReplyTo() {
+		return shareEntry.getEntryOwner().getMail();
+	}
+
+	@Override
+	public void validateRequiredField() {
+		Validate.notNull(shareEntry, "Missing shareEntry");
 	}
 
 }

@@ -67,6 +67,7 @@ public class ShareNewShareAcknowledgementEmailBuilder extends EmailBuilder {
 		User shareOwner = emailCtx.getShareOwner();
 		Set<Entry> shareEntries = emailCtx.getShares();
 		ShareContainer shareContainer = emailCtx.getShareContainer();
+		String linshareURL = getLinShareUrl(shareOwner);
 
 		MailConfig cfg = shareOwner.getDomain().getCurrentMailConfiguration();
 
@@ -85,7 +86,7 @@ public class ShareNewShareAcknowledgementEmailBuilder extends EmailBuilder {
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipients", recipients.size());
 
-		ctx.setVariable("linshareURL", getLinShareUrl(shareOwner));
+		ctx.setVariable("linshareURL", linshareURL);
 
 		ctx.setVariable("customSubject", shareContainer.getSubject());
 		ctx.setVariable("customMessage", shareContainer.getMessage());

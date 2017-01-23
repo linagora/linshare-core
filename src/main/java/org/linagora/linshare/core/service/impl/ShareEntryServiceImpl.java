@@ -56,8 +56,10 @@ import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.notifications.context.ShareNewShareEmailContext;
+import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.ShareFileDownloadEmailContext;
+import org.linagora.linshare.core.notifications.context.ShareFileShareDeletedEmailContext;
+import org.linagora.linshare.core.notifications.context.ShareNewShareEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.ShareEntryResourceAccessControl;
 import org.linagora.linshare.core.repository.FavouriteRepository;
@@ -174,8 +176,8 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			log.addRelatedAccounts(recipientUuid);
 			EventNotification event = new EventNotification(log, recipientUuid);
 			logEntryService.insert(log, event);
-			MailContainerWithRecipient mail = mailBuildingService
-					.buildSharedDocDeleted(share.getRecipient(), share);
+			EmailContext context = new ShareFileShareDeletedEmailContext(share);
+			MailContainerWithRecipient mail = mailBuildingService.build(context);
 			notifierService.sendNotification(mail);
 		}
 	}
