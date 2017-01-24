@@ -55,6 +55,8 @@ public class Document {
 
 	protected Date creationDate;
 
+	protected Date expirationDate;
+
 	protected boolean displayHref;
 
 	public Document(String name) {
@@ -67,6 +69,16 @@ public class Document {
 		super();
 		this.uuid = de.getUuid();
 		this.name = de.getName();
+	}
+
+	public Document(DocumentEntry de, boolean full) {
+		this(de);
+		if (full) {
+			this.creationDate = de.getCreationDate().getTime();
+			if (de.getExpirationDate() != null) {
+				this.expirationDate = de.getExpirationDate().getTime();
+			}
+		}
 	}
 
 	public Document(DocumentEntry de, String href) {
@@ -135,6 +147,14 @@ public class Document {
 
 	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
+	}
+
+	public Date getExpirationDate() {
+		return expirationDate;
+	}
+
+	public void setExpirationDate(Date expirationDate) {
+		this.expirationDate = expirationDate;
 	}
 
 	@Override

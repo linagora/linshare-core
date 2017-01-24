@@ -38,10 +38,8 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.MailConfig;
-import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.domain.entities.UploadProposition;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
@@ -64,9 +62,6 @@ public interface MailBuildingService {
 
 	MailContainerWithRecipient buildSharedDocUpdated(Entry shareEntry,
 			String oldDocName, long size) throws BusinessException;
-
-	MailContainerWithRecipient buildDocUpcomingOutdated(DocumentEntry document,
-			Integer days) throws BusinessException;
 
 	MailContainerWithRecipient buildCreateUploadProposition(User recipient, UploadProposition proposition)
 			throws BusinessException;

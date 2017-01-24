@@ -54,7 +54,6 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.Contact;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.MailActivation;
 import org.linagora.linshare.core.domain.entities.MailConfig;
@@ -72,6 +71,7 @@ import org.linagora.linshare.core.notifications.config.LinShareStringTemplateRes
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.dto.ContextMetadata;
 import org.linagora.linshare.core.notifications.emails.impl.EmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.FileWarnOwnerBeforeExpiryEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.GuestAccountNewCreationEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.GuestAccountResetPasswordEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.ShareFileDownloadEmailBuilder;
@@ -297,6 +297,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		emailBuilders.put(MailContentType.SHARE_FILE_SHARE_DELETED, new ShareFileShareDeletedEmailBuilder());
 		emailBuilders.put(MailContentType.SHARE_WARN_RECIPIENT_BEFORE_EXPIRY, new ShareWarnRecipientBeforeExpiryEmailBuilder());
 		emailBuilders.put(MailContentType.SHARE_WARN_UNDOWNLOADED_FILESHARES, new ShareWarnUndownloadedFilesharesEmailBuilder());
+		emailBuilders.put(MailContentType.FILE_WARN_OWNER_BEFORE_FILE_EXPIRY, new FileWarnOwnerBeforeExpiryEmailBuilder());
 
 		initMailBuilders(insertLicenceTerm, domainBusinessService, functionalityReadOnlyService, mailActivationBusinessService, receivedSharesUrlSuffix, documentsUrlSuffix);
 		Set<MailContentType> keySet = emailBuilders.keySet();
@@ -467,44 +468,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		return buildMailContainer(cfg, container, null,
 				MailContentType.SHARED_DOC_UPDATED, builder);
 	}
-
-	// TODO : To be used : method is not called.
-	@Override
-	public MailContainerWithRecipient buildDocUpcomingOutdated(
-			DocumentEntry document, Integer days) throws BusinessException {
-		User owner = (User) document.getEntryOwner();
-		if (isDisable(owner, MailActivationType.DOC_UPCOMING_OUTDATED)) {
-			return null;
-		}
-		String actorRepresentation = new ContactRepresentation(owner)
-				.getContactRepresentation();
-		String url = getLinShareUrlForAUserRecipient(owner);
-
-		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
-		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				owner.getExternalMailLocale());
-		MailContainerBuilder builder = new MailContainerBuilder();
-
-		builder.getSubjectChain()
-				.add("actorRepresentation", actorRepresentation);
-		builder.getGreetingsChain()
-				.add("firstName", owner.getFirstName())
-				.add("lastName", owner.getLastName());
-		builder.getBodyChain()
-				.add("firstName", owner.getFirstName())
-				.add("lastName", owner.getLastName())
-				.add("documentName", document.getName())
-				.add("nbDays", days.toString())
-				.add("url", url)
-				.add("urlparam", "");
-		container.setRecipient(owner.getMail());
-		container.setFrom(getFromMailAddress(owner));
-
-		return buildMailContainer(cfg, container, null,
-				MailContentType.FILE_WARN_OWNER_BEFORE_FILE_EXPIRY, builder);
-	}
-
-
 
 	@Override
 	public MailContainerWithRecipient buildCreateUploadProposition(User recipient, UploadProposition proposition)
