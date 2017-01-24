@@ -90,8 +90,7 @@ public class UploadRequestUploadedFileEmailBuilder extends EmailBuilder {
 	@Override
 	protected List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
-		Context ctx = new Context(Language.toLocale(language));
-
+		Context ctx = newFakeContext(language);
 		ctx.setVariable("requestOwner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
 		ctx.setVariable("requestRecipient", new MailContact("unknown@linshare.org"));
 		Document document = getNewFakeDocument("a-shared-file.txt", fakeLinshareURL);
@@ -99,9 +98,6 @@ public class UploadRequestUploadedFileEmailBuilder extends EmailBuilder {
 		document.setCreationDate(new Date());
 		ctx.setVariable("document", document);
 		ctx.setVariable("request", new Request("My test subject", new Date(), getFakeExpirationDate(), 8, 5));
-
-		ctx.setVariable("linshareURL", fakeLinshareURL);
-
 		res.add(ctx);
 		return res;
 	}

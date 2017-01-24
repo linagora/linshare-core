@@ -86,11 +86,10 @@ public class GuestAccountResetPasswordEmailBuilder extends EmailBuilder {
 	@Override
 	public List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
-		Context ctx = new Context(Language.toLocale(language));
+		Context ctx = newFakeContext(language);
 		ctx.setVariable("customMessage", null);
 		ctx.setVariable("guest", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
 		ctx.setVariable("guestExpirationDate", getFakeExpirationDate());
-		ctx.setVariable("linshareURL", fakeLinshareURL);
 		ctx.setVariable("resetLink", getResetLink(fakeLinshareURL, "cb1443d0-a34f-4d0b-92e4-c19d4eeb7fae"));
 		res.add(ctx);
 		return res;

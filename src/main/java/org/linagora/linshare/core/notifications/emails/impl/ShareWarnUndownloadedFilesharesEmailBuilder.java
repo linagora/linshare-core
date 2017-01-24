@@ -103,7 +103,7 @@ public class ShareWarnUndownloadedFilesharesEmailBuilder extends EmailBuilder {
 	@Override
 	protected List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
-		Context ctx = new Context(Language.toLocale(language));
+		Context ctx = newFakeContext(language);
 
 		ctx.setVariable("shareOwner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
 		ctx.setVariable("shareGroup",
@@ -145,9 +145,6 @@ public class ShareWarnUndownloadedFilesharesEmailBuilder extends EmailBuilder {
 
 		ctx.setVariable("documents", documents);
 		ctx.setVariable("documentsCount", documents.size());
-
-		ctx.setVariable("linshareURL", fakeLinshareURL);
-
 		res.add(ctx);
 		return res;
 	}

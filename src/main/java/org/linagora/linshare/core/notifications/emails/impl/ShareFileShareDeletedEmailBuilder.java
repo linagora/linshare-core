@@ -81,13 +81,10 @@ public class ShareFileShareDeletedEmailBuilder extends EmailBuilder {
 	@Override
 	protected List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
-		Context ctx = new Context(Language.toLocale(language));
-
+		Context ctx = newFakeContext(language);
 		ctx.setVariable("shareOwner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
 		ctx.setVariable("shareRecipient", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
 		ctx.setVariable("share", new Share("a-shared-file.txt", true));
-		ctx.setVariable("linshareURL", fakeLinshareURL);
-
 		res.add(ctx);
 		return res;
 	}

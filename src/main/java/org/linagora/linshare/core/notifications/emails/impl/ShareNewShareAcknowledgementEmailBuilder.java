@@ -100,7 +100,7 @@ public class ShareNewShareAcknowledgementEmailBuilder extends EmailBuilder {
 	@Override
 	public List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
-		Context ctx = new Context(Language.toLocale(language));
+		Context ctx = newFakeContext(language);
 
 		ctx.setVariable("shareOwner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
 		ctx.setVariable("expirationDate", getFakeExpirationDate());
@@ -118,8 +118,6 @@ public class ShareNewShareAcknowledgementEmailBuilder extends EmailBuilder {
 		recipients.add(new MailContact("unknown@linshare.org"));
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipients", recipients.size());
-
-		ctx.setVariable("linshareURL", fakeLinshareURL);
 
 		ctx.setVariable("customSubject", "Some personal subject");
 		ctx.setVariable("customMessage", "Some personal message");

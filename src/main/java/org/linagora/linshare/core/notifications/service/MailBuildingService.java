@@ -65,9 +65,6 @@ public interface MailBuildingService {
 	MailContainerWithRecipient buildSharedDocUpdated(Entry shareEntry,
 			String oldDocName, long size) throws BusinessException;
 
-	MailContainerWithRecipient buildSharedDocUpcomingOutdated(
-			Entry shareEntry, Integer days) throws BusinessException;
-
 	MailContainerWithRecipient buildDocUpcomingOutdated(DocumentEntry document,
 			Integer days) throws BusinessException;
 

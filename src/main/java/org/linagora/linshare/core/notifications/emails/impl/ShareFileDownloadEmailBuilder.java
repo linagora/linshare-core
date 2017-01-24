@@ -118,12 +118,11 @@ public class ShareFileDownloadEmailBuilder extends EmailBuilder {
 	}
 
 	protected Context getExternalFakeContext(Language language) {
-		Context ctx = new Context(Language.toLocale(language));
+		Context ctx = newFakeContext(language);
 		ctx.setVariable("actionDate", new Date());
 		ctx.setVariable("anonymous", false);
 		ctx.setVariable("document", new Document("a-shared-file.txt"));
 		ctx.setVariable("expiryDate", getFakeExpirationDate());
-		ctx.setVariable("linshareURL", fakeLinshareURL);
 		ctx.setVariable("share", new Share("a-shared-file.txt", true));
 		ctx.setVariable("shareDate", new Date());
 		ctx.setVariable("shareOwner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
@@ -138,12 +137,11 @@ public class ShareFileDownloadEmailBuilder extends EmailBuilder {
 	}
 
 	protected Context getUserFakeContext(Language language) {
-		Context ctx = new Context(Language.toLocale(language));
+		Context ctx = newFakeContext(language);
 		ctx.setVariable("actionDate", new Date());
 		ctx.setVariable("anonymous", false);
 		ctx.setVariable("document", new Document("a-shared-file.txt"));
 		ctx.setVariable("expiryDate", getFakeExpirationDate());
-		ctx.setVariable("linshareURL", fakeLinshareURL);
 		ctx.setVariable("share", new Share("a-shared-file.txt", true));
 		ctx.setVariable("shareDate", new Date());
 		ctx.setVariable("shareOwner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));

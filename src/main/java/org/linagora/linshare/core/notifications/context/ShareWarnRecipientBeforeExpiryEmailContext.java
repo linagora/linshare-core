@@ -1,0 +1,155 @@
+/*
+ * LinShare is an open source filesharing software, part of the LinPKI software
+ * suite, developed by Linagora.
+ * 
+ * Copyright (C) 2017 LINAGORA
+ * 
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version, provided you comply with the Additional Terms applicable for
+ * LinShare software by Linagora pursuant to Section 7 of the GNU Affero General
+ * Public License, subsections (b), (c), and (e), pursuant to which you must
+ * notably (i) retain the display of the “LinShare™” trademark/logo at the top
+ * of the interface window, the display of the “You are using the Open Source
+ * and free version of LinShare™, powered by Linagora © 2009–2017. Contribute to
+ * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
+ * e-mails sent with the Program, (ii) retain all hypertext links between
+ * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
+ * refrain from infringing Linagora intellectual property rights over its
+ * trademarks and commercial brands. Other Additional Terms apply, see
+ * <http://www.linagora.com/licenses/> for more details.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License and
+ * its applicable Additional Terms for LinShare along with this program. If not,
+ * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
+ * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
+ * applicable to LinShare software.
+ */
+package org.linagora.linshare.core.notifications.context;
+
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.MailActivationType;
+import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
+import org.linagora.linshare.core.domain.entities.Entry;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.notifications.dto.MailContact;
+import org.linagora.linshare.core.notifications.dto.Share;
+
+public class ShareWarnRecipientBeforeExpiryEmailContext extends EmailContext {
+
+	protected Entry entry;
+	
+	protected User shareOwner;
+
+	protected Integer day;
+
+	protected boolean isAnonymous;
+
+	public ShareWarnRecipientBeforeExpiryEmailContext(ShareEntry shareEntry, Integer day) {
+		super(shareEntry.getEntryOwner().getDomain(), false);
+		this.entry = shareEntry;
+		this.shareOwner = (User) shareEntry.getEntryOwner();
+		this.day = day;
+		this.isAnonymous = false;
+	}
+
+	public ShareWarnRecipientBeforeExpiryEmailContext(AnonymousShareEntry shareEntry, Integer day) {
+		super(shareEntry.getEntryOwner().getDomain(), false);
+		this.entry = shareEntry;
+		this.shareOwner = (User) shareEntry.getEntryOwner();
+		this.day = day;
+		this.isAnonymous = true;
+	}
+
+	public ShareEntry getShareEntry() {
+		return (ShareEntry) entry;
+	}
+
+	public AnonymousShareEntry getAnonymousShareEntry() {
+		return (AnonymousShareEntry) entry;
+	}
+
+	public Entry getEntry() {
+		return entry;
+	}
+
+	public void setEntry(Entry shareEntry) {
+		this.entry = shareEntry;
+	}
+
+	public boolean isAnonymous() {
+		return isAnonymous;
+	}
+
+	public void setAnonymous(boolean isAnonymous) {
+		this.isAnonymous = isAnonymous;
+	}
+
+	public Integer getDay() {
+		return day;
+	}
+
+	public void setDay(Integer day) {
+		this.day = day;
+	}
+
+	public User getShareOwner() {
+		return shareOwner;
+	}
+
+	public void setShareOwner(User shareOwner) {
+		this.shareOwner = shareOwner;
+	}
+
+	public MailContact getMailContactRecipient() {
+		if (isAnonymous) {
+			return new MailContact(getAnonymousShareEntry().getAnonymousUrl().getContact());
+		}
+		return new MailContact(getShareEntry().getRecipient());
+	}
+
+	public Share getShare() {
+		if (isAnonymous) {
+			return new Share(getAnonymousShareEntry());
+		}
+		return new Share(getShareEntry());
+	}
+
+	@Override
+	public MailContentType getType() {
+		return MailContentType.SHARE_WARN_RECIPIENT_BEFORE_EXPIRY;
+	}
+
+	@Override
+	public MailActivationType getActivation() {
+		return MailActivationType.SHARED_DOC_UPCOMING_OUTDATED;
+	}
+
+	@Override
+	public String getMailRcpt() {
+		if (isAnonymous) {
+			return getAnonymousShareEntry().getAnonymousUrl().getContact().getMail();
+		}
+		return getShareEntry().getRecipient().getMail();
+	}
+
+	@Override
+	public String getMailReplyTo() {
+		return shareOwner.getMail();
+	}
+
+	@Override
+	public void validateRequiredField() {
+		Validate.notNull(entry, "Missing shareEntry");
+		Validate.notNull(day, "Missing days");
+	}
+
+}

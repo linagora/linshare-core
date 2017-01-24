@@ -78,6 +78,7 @@ import org.linagora.linshare.core.notifications.emails.impl.ShareFileDownloadEma
 import org.linagora.linshare.core.notifications.emails.impl.ShareFileShareDeletedEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.ShareNewShareAcknowledgementEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.ShareNewShareEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.ShareWarnRecipientBeforeExpiryEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.ShareWarnUndownloadedFilesharesEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.UploadRequestUploadedFileEmailBuilder;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
@@ -294,6 +295,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				new ShareNewShareAcknowledgementEmailBuilder());
 		emailBuilders.put(MailContentType.UPLOAD_REQUEST_UPLOADED_FILE, new UploadRequestUploadedFileEmailBuilder());
 		emailBuilders.put(MailContentType.SHARE_FILE_SHARE_DELETED, new ShareFileShareDeletedEmailBuilder());
+		emailBuilders.put(MailContentType.SHARE_WARN_RECIPIENT_BEFORE_EXPIRY, new ShareWarnRecipientBeforeExpiryEmailBuilder());
 		emailBuilders.put(MailContentType.SHARE_WARN_UNDOWNLOADED_FILESHARES, new ShareWarnUndownloadedFilesharesEmailBuilder());
 
 		initMailBuilders(insertLicenceTerm, domainBusinessService, functionalityReadOnlyService, mailActivationBusinessService, receivedSharesUrlSuffix, documentsUrlSuffix);
@@ -366,6 +368,10 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		}
 		return builder.getAvailableVariables();
 	}
+
+	/**
+	 * Old and ugly code, to be removed.
+	 */
 
 	private String formatDeletionDate(Account account) {
 		Locale locale = account.getJavaExternalMailLocale();
@@ -460,69 +466,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 
 		return buildMailContainer(cfg, container, null,
 				MailContentType.SHARED_DOC_UPDATED, builder);
-	}
-
-	@Override
-	public MailContainerWithRecipient buildSharedDocUpcomingOutdated(
-			Entry shareEntry, Integer days) throws BusinessException {
-		/*
-		 * XXX very very ugly
-		 */
-		User sender = (User) shareEntry.getEntryOwner();
-		String actorRepresentation = new ContactRepresentation(sender)
-				.getContactRepresentation();
-		String url, firstName, lastName, fileName, recipient; // ugly
-		Language locale;
-		if (shareEntry instanceof AnonymousShareEntry) {
-			AnonymousShareEntry e = (AnonymousShareEntry) shareEntry;
-			recipient = e.getAnonymousUrl().getContact().getMail();
-			if (isDisable(e.getAnonymousUrl().getContact(), sender,
-					MailActivationType.SHARED_DOC_UPCOMING_OUTDATED)) {
-				return null;
-			}
-			url = e.getAnonymousUrl()
-					.getFullUrl(getLinShareUrlForAContactRecipient(sender));
-			locale = sender.getExternalMailLocale();
-			firstName = "";
-			lastName = recipient;
-			fileName = e.getDocumentEntry().getName();
-		} else {
-			ShareEntry e = (ShareEntry) shareEntry;
-			if (isDisable(e.getRecipient(), MailActivationType.SHARED_DOC_UPCOMING_OUTDATED)) {
-				return null;
-			}
-			url = getLinShareUrlForAUserRecipient(
-					e.getRecipient());
-			recipient = e.getRecipient().getMail();
-			locale = e.getRecipient().getExternalMailLocale();
-			firstName = e.getRecipient().getFirstName();
-			lastName = e.getRecipient().getLastName();
-			fileName = e.getDocumentEntry().getName();
-		}
-
-		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
-		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				locale);
-		MailContainerBuilder builder = new MailContainerBuilder();
-
-		builder.getSubjectChain()
-				.add("actorRepresentation", actorRepresentation);
-		builder.getGreetingsChain()
-				.add("firstName", firstName)
-				.add("lastName", lastName);
-		builder.getBodyChain()
-				.add("firstName", sender.getFirstName())
-				.add("lastName", sender.getLastName())
-				.add("documentName", fileName)
-				.add("nbDays", days.toString())
-				.add("url", url)
-				.add("urlparam", "");
-		container.setRecipient(recipient);
-		container.setFrom(getFromMailAddress(sender));
-		container.setReplyTo(sender.getMail());
-
-		return buildMailContainer(cfg, container, null,
-				MailContentType.SHARE_WARN_SENDER_BEFORE_EXPIRY, builder);
 	}
 
 	// TODO : To be used : method is not called.

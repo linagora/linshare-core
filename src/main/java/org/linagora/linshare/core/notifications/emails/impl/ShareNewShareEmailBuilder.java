@@ -113,8 +113,7 @@ public class ShareNewShareEmailBuilder extends EmailBuilder{
 	@Override
 	public List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
-		Context ctx = new Context(Language.toLocale(language));
-		String linshareURL = "http://127.0.0.1/";
+		Context ctx = newFakeContext(language);
 		ctx.setVariable("shareOwner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
 		ctx.setVariable("shareRecipient", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
 		ctx.setVariable("customSubject", "Some personal subject");
@@ -124,12 +123,10 @@ public class ShareNewShareEmailBuilder extends EmailBuilder{
 		ctx.setVariable("document", new Document("a-shared-file.txt"));
 		ctx.setVariable("share", new Share("a-shared-file.txt", true));
 
-		ctx.setVariable("linshareURL", linshareURL);
-
 		List<Share> shares = Lists.newArrayList();
-		shares.add(getNewFakeShare("a-shared-file.txt", linshareURL));
-		shares.add(getNewFakeShare("second-shared-file.txt", linshareURL));
-		shares.add(getNewFakeShare("third-shared-file.txt", linshareURL));
+		shares.add(getNewFakeShare("a-shared-file.txt", fakeLinshareURL));
+		shares.add(getNewFakeShare("second-shared-file.txt", fakeLinshareURL));
+		shares.add(getNewFakeShare("third-shared-file.txt", fakeLinshareURL));
 		ctx.setVariable("shares", shares);
 		ctx.setVariable("sharesCount", shares.size());
 

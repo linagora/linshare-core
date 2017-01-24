@@ -78,6 +78,8 @@ import com.google.common.reflect.ClassPath;
 
 public abstract class EmailBuilder implements IEmailBuilder {
 
+	protected final static String CST_MAIL_SUBJECT_VAR_NAME = "mailSubject";
+
 	protected final static String MAIL_DTO_PATH = "org.linagora.linshare.core.notifications.dto.";
 
 	protected static List<String> supportedClass = null;
@@ -275,7 +277,7 @@ public abstract class EmailBuilder implements IEmailBuilder {
 			TemplateSpec subjectSpec = new TemplateSpec(type.toString() + ":subject", null, TemplateMode.TEXT,
 					templateResolutionAttributes);
 			String subject = templateEngine.process(subjectSpec, ctx);
-			ctx.setVariable("mailSubject", subject);
+			ctx.setVariable(CST_MAIL_SUBJECT_VAR_NAME, subject);
 
 			// TODO manage images integration.
 			// "<img src='cid:image.part.1@linshare.org' /><br/><br/>";
@@ -500,5 +502,12 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		Calendar c = Calendar.getInstance();
 		c.add(Calendar.MONDAY, 3);
 		return c.getTime();
+	}
+
+	protected Context newFakeContext(Language language) {
+		Context ctx = new Context(Language.toLocale(language));
+		ctx.setVariable("linshareURL", fakeLinshareURL);
+		ctx.setVariable(CST_MAIL_SUBJECT_VAR_NAME, "Some defaut and fake subject");
+		return ctx;
 	}
 }

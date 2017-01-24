@@ -44,6 +44,8 @@ import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.context.ShareWarnRecipientBeforeExpiryEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.AnonymousShareEntryRepository;
@@ -113,8 +115,8 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 			for (ShareEntry share : shares) {
 				if (share.getDownloaded() < 1) {
 					try {
-						MailContainerWithRecipient mail = mailBuildingService
-								.buildSharedDocUpcomingOutdated(share, day);
+						EmailContext contex = new ShareWarnRecipientBeforeExpiryEmailContext(share, day);
+						MailContainerWithRecipient mail = mailBuildingService.build(contex);
 						notifierService.sendNotification(mail);
 					} catch (BusinessException e) {
 						logger.error(
@@ -134,8 +136,8 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 			for (AnonymousShareEntry anonymousShareEntry : anonymousShareEntries) {
 				if (anonymousShareEntry.getDownloaded() < 1) {
 					try {
-						MailContainerWithRecipient mail = mailBuildingService
-								.buildSharedDocUpcomingOutdated(anonymousShareEntry, day);
+						EmailContext contex = new ShareWarnRecipientBeforeExpiryEmailContext(anonymousShareEntry, day);
+						MailContainerWithRecipient mail = mailBuildingService.build(contex);
 						notifierService.sendNotification(mail);
 					} catch (BusinessException e) {
 						logger.error("Error while trying to notify upcoming outdated share", e);
