@@ -52,14 +52,10 @@ import com.google.common.collect.Lists;
 
 public class GuestAccountNewCreationEmailBuilder extends EmailBuilder {
 
-	protected String urlGuestReset;
+	protected String urlTemplateForGuestReset;
 
-	public String getUrlGuestReset() {
-		return urlGuestReset;
-	}
-
-	public void setUrlGuestReset(String urlGuestReset) {
-		this.urlGuestReset = urlGuestReset;
+	public void setUrlTemplateForGuestReset(String urlTemplateForGuestReset) {
+		this.urlTemplateForGuestReset = urlTemplateForGuestReset;
 	}
 
 	@Override
@@ -102,7 +98,7 @@ public class GuestAccountNewCreationEmailBuilder extends EmailBuilder {
 		StringBuilder sb = new StringBuilder();
 		sb.append(linshareURL);
 		Formatter formatter = new Formatter(sb);
-		formatter.format(urlGuestReset, token);
+		formatter.format(urlTemplateForGuestReset, token);
 		formatter.close();
 		return sb.toString();
 	}

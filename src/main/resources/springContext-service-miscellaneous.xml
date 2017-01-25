@@ -83,6 +83,7 @@
 		<constructor-arg value="${linshare.user.url.download.receivedshares}" />
 		<constructor-arg value="${linshare.user.url.download.documents}" />
 		<constructor-arg value="${linshare.user.url.guest.reset}" />
+		<constructor-arg value="${linshare.user.url.anonymousurl.link}" />
 		<constructor-arg value="${linshare.notifications.email.templating.strict.mode}" />
 		<constructor-arg value="${linshare.notifications.email.templating.subject.prefix.enable}" />
 	</bean>

@@ -74,7 +74,7 @@ public class UploadRequestUploadedFileEmailBuilder extends EmailBuilder {
 		Context ctx = new Context(emailCtx.getLocale());
 		ctx.setVariable("requestOwner", new MailContact(owner));
 		ctx.setVariable("requestRecipient", new MailContact(requestUrl.getContact()));
-		String href = getOwnerDocumentLink(getDocumentsUrlSuffix(), entry.getDocumentEntry().getUuid());
+		String href = getOwnerDocumentLink(getUrlTemplateForDocuments(), entry.getDocumentEntry().getUuid());
 		Document document = new Document(entry);
 		document.setHref(href);
 		ctx.setVariable("document", document);

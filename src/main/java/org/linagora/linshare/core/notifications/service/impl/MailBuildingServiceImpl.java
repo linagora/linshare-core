@@ -154,31 +154,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			}
 			return res.toString();
 		}
-
-		
-		public String getMail() {
-			return mail;
-		}
-
-		public void setMail(String mail) {
-			this.mail = mail;
-		}
-
-		public String getFirstName() {
-			return firstName;
-		}
-
-		public void setFirstName(String firstName) {
-			this.firstName = firstName;
-		}
-
-		public String getLastName() {
-			return lastName;
-		}
-
-		public void setLastName(String lastName) {
-			this.lastName = lastName;
-		}
 	}
 
 	/**
@@ -199,34 +174,17 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 				super.put(key, StringUtils.defaultString(value));
 				return this;
 			}
-
-			public String build(String input) {
-				logger.debug("Building mail template.");
-				logger.debug("\tinput: " + input);
-				String ret = input;
-
-				for (Map.Entry<String, String> e : entrySet()) {
-					ret = StringUtils.replace(ret, "${" + e.getKey() + "}",
-							e.getValue());
-				}
-				logger.debug("\tret: " + ret);
-				return ret;
-			}
 		}
 
 		private KeyValueChain subjectChain;
 		private KeyValueChain greetingsChain;
 		private KeyValueChain bodyChain;
-		private KeyValueChain footerChain;
-		private KeyValueChain layoutChain;
 
 		public MailContainerBuilder() {
 			super();
 			subjectChain = new KeyValueChain();
 			greetingsChain = new KeyValueChain();
 			bodyChain = new KeyValueChain();
-			footerChain = new KeyValueChain();
-			layoutChain = new KeyValueChain();
 		}
 
 		public KeyValueChain getSubjectChain() {
@@ -240,14 +198,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		public KeyValueChain getBodyChain() {
 			return bodyChain;
 		}
-
-		public KeyValueChain getFooterChain() {
-			return footerChain;
-		}
-
-		public KeyValueChain getLayoutChain() {
-			return layoutChain;
-		}
 	}
 
 	/**
@@ -260,9 +210,10 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
 			final MailActivationBusinessService mailActivationBusinessService,
 			boolean insertLicenceTerm,
-			String receivedSharesUrlSuffix,
-			String documentsUrlSuffix,
-			String urlGuestReset,
+			String urlTemplateForReceivedShares,
+			String urlTemplateForDocuments,
+			String urlTemplateForGuestReset,
+			String urlTemplateForAnonymousUrl,
 			boolean templatingStrictMode,
 			boolean templatingSubjectPrefix
 			) throws Exception {
@@ -281,14 +232,14 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		emailBuilders.put(MailContentType.SHARE_NEW_SHARE_FOR_RECIPIENT, new ShareNewShareEmailBuilder());
 
 		GuestAccountNewCreationEmailBuilder newGuestBuilder = new GuestAccountNewCreationEmailBuilder();
-		newGuestBuilder.setUrlGuestReset(urlGuestReset);
+		newGuestBuilder.setUrlTemplateForGuestReset(urlTemplateForGuestReset);
 		emailBuilders.put(MailContentType.GUEST_ACCOUNT_NEW_CREATION, newGuestBuilder);
 
 		emailBuilders.put(MailContentType.SHARE_FILE_DOWNLOAD, new ShareFileDownloadEmailBuilder());
 		emailBuilders.put(MailContentType.DEPRECATED_ANONYMOUS_DOWNLOAD, new ShareFileDownloadEmailBuilder());
 
 		GuestAccountResetPasswordEmailBuilder resetGuestBuilder = new GuestAccountResetPasswordEmailBuilder();
-		resetGuestBuilder.setUrlGuestReset(urlGuestReset);
+		resetGuestBuilder.setUrlTemplateForGuestReset(urlTemplateForGuestReset);
 		emailBuilders.put(MailContentType.GUEST_ACCOUNT_RESET_PASSWORD_LINK, resetGuestBuilder);
 
 		emailBuilders.put(MailContentType.SHARE_NEW_SHARE_ACKNOWLEDGEMENT_FOR_SENDER,
@@ -299,7 +250,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		emailBuilders.put(MailContentType.SHARE_WARN_UNDOWNLOADED_FILESHARES, new ShareWarnUndownloadedFilesharesEmailBuilder());
 		emailBuilders.put(MailContentType.FILE_WARN_OWNER_BEFORE_FILE_EXPIRY, new FileWarnOwnerBeforeExpiryEmailBuilder());
 
-		initMailBuilders(insertLicenceTerm, domainBusinessService, functionalityReadOnlyService, mailActivationBusinessService, receivedSharesUrlSuffix, documentsUrlSuffix);
+		initMailBuilders(insertLicenceTerm, domainBusinessService, functionalityReadOnlyService, mailActivationBusinessService, urlTemplateForReceivedShares, urlTemplateForDocuments, urlTemplateForAnonymousUrl);
 		Set<MailContentType> keySet = emailBuilders.keySet();
 		logger.debug("mail content loaded : size : {}", keySet.size());
 		for (MailContentType mailContentType : keySet) {
@@ -312,8 +263,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		DomainBusinessService domainBusinessService,
 		FunctionalityReadOnlyService functionalityReadOnlyService,
 		MailActivationBusinessService mailActivationBusinessService,
-		String  receivedSharesUrlSuffix,
-		String  documentsUrlSuffix
+		String urlTemplateForReceivedShares,
+		String urlTemplateForDocuments,
+		String urlTemplateForAnonymousUrl
 	) {
 		Collection<EmailBuilder> values = emailBuilders.values();
 		for (EmailBuilder emailBuilder : values) {
@@ -322,8 +274,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			emailBuilder.setMailActivationBusinessService(mailActivationBusinessService);
 			emailBuilder.setFunctionalityReadOnlyService(functionalityReadOnlyService);
 			emailBuilder.setDomainBusinessService(domainBusinessService);
-			emailBuilder.setDocumentsUrlSuffix(documentsUrlSuffix);
-			emailBuilder.setReceivedSharesUrlSuffix(receivedSharesUrlSuffix);
+			emailBuilder.setUrlTemplateForDocuments(urlTemplateForDocuments);
+			emailBuilder.setUrlTemplateForReceivedShares(urlTemplateForReceivedShares);
+			emailBuilder.setUrlTemplateForAnonymousUrl(urlTemplateForAnonymousUrl);
 		}
 	}
 
@@ -758,7 +711,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		container.setRecipient(owner.getMail());
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(owner);
-		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_WARN_OWNER_BEFORE_EXPIRY, builder);
+		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_WARN_BEFORE_EXPIRY, builder);
 	}
 
 	@Override
@@ -790,7 +743,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		container.setRecipient(request.getContact());
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(owner);
-		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_WARN_RECIPIENT_BEFORE_EXPIRY, builder);
+		return buildMailContainer(cfg, container, null, MailContentType.DEPRECATED_UPLOAD_REQUEST_WARN_RECIPIENT_BEFORE_EXPIRY, builder);
 	}
 
 	@Override
@@ -825,7 +778,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(owner);
 
-		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_WARN_OWNER_EXPIRY, builder);
+		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_WARN_EXPIRY, builder);
 	}
 
 	@Override
@@ -859,7 +812,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(owner);
 
-		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_WARN_RECIPIENT_EXPIRY, builder);
+		return buildMailContainer(cfg, container, null, MailContentType.DEPRECATED_UPLOAD_REQUEST_WARN_RECIPIENT_EXPIRY, builder);
 	}
 
 	@Override

@@ -81,24 +81,30 @@ public interface MailBuildingService {
 	MailContainerWithRecipient buildCreateUploadRequest(User owner, UploadRequestUrl request)
 			throws BusinessException;
 
+	// TODO
 	MailContainerWithRecipient buildAckDeleteFileUploadRequest(User owner, UploadRequestUrl request, UploadRequestEntry entry)
 			throws BusinessException;
 
 	MailContainerWithRecipient buildRemindUploadRequest(User owner, UploadRequestUrl request)
 			throws BusinessException;
 
+	// TODO
 	MailContainerWithRecipient buildUploadRequestBeforeExpiryWarnOwner(User owner, UploadRequest request)
 			throws BusinessException;
 
+	// TODO
 	MailContainerWithRecipient buildUploadRequestBeforeExpiryWarnRecipient(User owner, UploadRequestUrl request)
 			throws BusinessException;
 
+	// TODO
 	MailContainerWithRecipient buildUploadRequestExpiryWarnOwner(User owner, UploadRequest request)
 			throws BusinessException;
 
+	// TODO
 	MailContainerWithRecipient buildUploadRequestExpiryWarnRecipient(User owner, UploadRequestUrl request)
 			throws BusinessException;
 
+	// TODO
 	MailContainerWithRecipient buildCloseUploadRequestByRecipient(User owner, UploadRequestUrl request)
 			throws BusinessException;
 
@@ -108,6 +114,7 @@ public interface MailBuildingService {
 	MailContainerWithRecipient buildDeleteUploadRequestByOwner(User owner, UploadRequestUrl request)
 			throws BusinessException;
 
+	// TODO
 	MailContainerWithRecipient buildErrorUploadRequestNoSpaceLeft(User owner, UploadRequestUrl request)
 			throws BusinessException;
 

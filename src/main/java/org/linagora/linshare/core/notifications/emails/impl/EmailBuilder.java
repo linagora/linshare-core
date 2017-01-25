@@ -94,11 +94,25 @@ public abstract class EmailBuilder implements IEmailBuilder {
 
 	protected FunctionalityReadOnlyService functionalityReadOnlyService;
 
-	private DomainBusinessService domainBusinessService;
+	protected DomainBusinessService domainBusinessService;
 
-	private String receivedSharesUrlSuffix;
+	protected String urlTemplateForReceivedShares;
 
-	private String documentsUrlSuffix;
+	public String getUrlTemplateForReceivedShares() {
+		return urlTemplateForReceivedShares;
+	}
+
+	public String getUrlTemplateForDocuments() {
+		return urlTemplateForDocuments;
+	}
+
+	public String getUrlTemplateForAnonymousUrl() {
+		return urlTemplateForAnonymousUrl;
+	}
+
+	protected String urlTemplateForDocuments;
+
+	protected String urlTemplateForAnonymousUrl;
 
 	protected String fakeLinshareURL = "http://127.0.0.1/";
 
@@ -163,20 +177,16 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		this.domainBusinessService = domainBusinessService;
 	}
 
-	public void setReceivedSharesUrlSuffix(String receivedSharesUrlSuffix) {
-		this.receivedSharesUrlSuffix = receivedSharesUrlSuffix;
+	public void setUrlTemplateForReceivedShares(String urlTemplateForReceivedShares) {
+		this.urlTemplateForReceivedShares = urlTemplateForReceivedShares;
 	}
 
-	public void setDocumentsUrlSuffix(String documentsUrlSuffix) {
-		this.documentsUrlSuffix = documentsUrlSuffix;
+	public void setUrlTemplateForDocuments(String urlTemplateForDocuments) {
+		this.urlTemplateForDocuments = urlTemplateForDocuments;
 	}
 
-	public String getReceivedSharesUrlSuffix() {
-		return receivedSharesUrlSuffix;
-	}
-
-	public String getDocumentsUrlSuffix() {
-		return documentsUrlSuffix;
+	public void setUrlTemplateForAnonymousUrl(String urlTemplateForAnonymousUrl) {
+		this.urlTemplateForAnonymousUrl = urlTemplateForAnonymousUrl;
 	}
 
 	protected abstract MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException;
@@ -450,7 +460,16 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		StringBuilder sb = new StringBuilder();
 		sb.append(linshareURL);
 		Formatter formatter = new Formatter(sb);
-		formatter.format(documentsUrlSuffix, documentUuid);
+		formatter.format(urlTemplateForDocuments, documentUuid);
+		formatter.close();
+		return sb.toString();
+	}
+
+	protected String getRecipientShareLink(String linshareURL, String shareUuid) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(linshareURL);
+		Formatter formatter = new Formatter(sb);
+		formatter.format(urlTemplateForReceivedShares, shareUuid);
 		formatter.close();
 		return sb.toString();
 	}
