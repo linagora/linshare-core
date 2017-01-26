@@ -46,19 +46,19 @@ public class Share {
 
 	protected String name;
 
-	protected boolean downloaded;
+	protected Boolean downloaded;
 
 	protected Date creationDate;
 
 	protected Date expirationDate;
 
-	protected boolean displayHref;
+	protected Boolean displayHref;
 
-	protected boolean isDownloading;
+	protected Boolean isDownloading;
 
 	protected String href;
 
-	public Share(String name, boolean downloaded) {
+	public Share(String name, Boolean downloaded) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
 		this.name = name;
@@ -110,11 +110,11 @@ public class Share {
 		this.name = name;
 	}
 
-	public boolean isDownloaded() {
+	public Boolean isDownloaded() {
 		return downloaded;
 	}
 
-	public void setDownloaded(boolean downloaded) {
+	public void setDownloaded(Boolean downloaded) {
 		this.downloaded = downloaded;
 	}
 
@@ -147,19 +147,19 @@ public class Share {
 		this.href = href;
 	}
 
-	public boolean isDisplayHref() {
+	public Boolean isDisplayHref() {
 		return displayHref;
 	}
 
-	public void setDisplayHref(boolean displayHref) {
+	public void setDisplayHref(Boolean displayHref) {
 		this.displayHref = displayHref;
 	}
 
-	public boolean isDownloading() {
+	public Boolean isDownloading() {
 		return isDownloading;
 	}
 
-	public void setDownloading(boolean isDownloading) {
+	public void setDownloading(Boolean isDownloading) {
 		this.isDownloading = isDownloading;
 	}
 

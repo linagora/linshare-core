@@ -128,6 +128,7 @@ public class ShareNewShareEmailBuilder extends EmailBuilder {
 	protected Context getExternalFakeContext(Language language) {
 		Context ctx = newFakeContext(language);
 		ctx.setVariable("anonymous", true);
+		ctx.setVariable("anonymousURL", fakeLinshareURL + "/#external/test");
 		ctx.setVariable("customMessage", "Some personal message");
 		ctx.setVariable("customSubject", "Some personal subject");
 		ctx.setVariable("expiryDate", getFakeExpirationDate());
@@ -148,7 +149,7 @@ public class ShareNewShareEmailBuilder extends EmailBuilder {
 	protected Context getExternalFakeContext2(Language language) {
 		Context ctx = newFakeContext(language);
 		ctx.setVariable("anonymous", true);
-		ctx.setVariable("anonymousURL", fakeLinshareURL + "/");
+		ctx.setVariable("anonymousURL", fakeLinshareURL + "/#external/test");
 		ctx.setVariable("customMessage", "Some personal message");
 		ctx.setVariable("customSubject", "Some personal subject");
 		ctx.setVariable("expiryDate", getFakeExpirationDate());

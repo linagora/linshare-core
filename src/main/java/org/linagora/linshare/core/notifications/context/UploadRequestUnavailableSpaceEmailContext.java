@@ -33,35 +33,27 @@
  */
 package org.linagora.linshare.core.notifications.context;
 
-import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 
-public class UploadRequestUploadedFileEmailContext extends GenericUploadRequestEmailContext {
+public class UploadRequestUnavailableSpaceEmailContext extends GenericUploadRequestEmailContext {
 
-	protected UploadRequestEntry entry;
-
-	public UploadRequestUploadedFileEmailContext(User owner, UploadRequest uploadRequest, UploadRequestUrl requestUrl,
-			UploadRequestEntry entry) {
+	public UploadRequestUnavailableSpaceEmailContext(User owner, UploadRequest uploadRequest,
+			UploadRequestUrl requestUrl) {
 		super(owner.getDomain(), false, owner, requestUrl, uploadRequest, true);
-	}
-
-	public UploadRequestEntry getEntry() {
-		return entry;
 	}
 
 	@Override
 	public MailContentType getType() {
-		return MailContentType.UPLOAD_REQUEST_UPLOADED_FILE;
+		return MailContentType.UPLOAD_REQUEST_UNAVAILABLE_SPACE;
 	}
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.UPLOAD_REQUEST_ACKNOWLEDGEMENT;
+		return MailActivationType.UPLOAD_REQUEST_NO_SPACE_LEFT;
 	}
 
 	@Override
@@ -72,12 +64,6 @@ public class UploadRequestUploadedFileEmailContext extends GenericUploadRequestE
 	@Override
 	public String getMailReplyTo() {
 		return requestUrl.getContact().getMail();
-	}
-
-	@Override
-	public void validateRequiredField() {
-		super.validateRequiredField();
-		Validate.notNull(entry, "Missing upload request entry");
 	}
 
 }

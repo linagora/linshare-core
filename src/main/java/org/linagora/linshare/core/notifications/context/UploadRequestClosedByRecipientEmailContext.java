@@ -37,31 +37,24 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 
-public class UploadRequestUploadedFileEmailContext extends GenericUploadRequestEmailContext {
+public class UploadRequestClosedByRecipientEmailContext extends GenericUploadRequestEmailContext {
 
-	protected UploadRequestEntry entry;
-
-	public UploadRequestUploadedFileEmailContext(User owner, UploadRequest uploadRequest, UploadRequestUrl requestUrl,
-			UploadRequestEntry entry) {
+	public UploadRequestClosedByRecipientEmailContext(User owner, UploadRequest uploadRequest,
+			UploadRequestUrl requestUrl) {
 		super(owner.getDomain(), false, owner, requestUrl, uploadRequest, true);
-	}
-
-	public UploadRequestEntry getEntry() {
-		return entry;
 	}
 
 	@Override
 	public MailContentType getType() {
-		return MailContentType.UPLOAD_REQUEST_UPLOADED_FILE;
+		return MailContentType.UPLOAD_REQUEST_CLOSED_BY_RECIPIENT;
 	}
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.UPLOAD_REQUEST_ACKNOWLEDGEMENT;
+		return MailActivationType.UPLOAD_REQUEST_CLOSED_BY_RECIPIENT;
 	}
 
 	@Override
@@ -76,8 +69,8 @@ public class UploadRequestUploadedFileEmailContext extends GenericUploadRequestE
 
 	@Override
 	public void validateRequiredField() {
-		super.validateRequiredField();
-		Validate.notNull(entry, "Missing upload request entry");
+		Validate.notNull(requestUrl, "Missing upload request url");
+		Validate.notNull(owner, "Missing upload request owner");
 	}
 
 }

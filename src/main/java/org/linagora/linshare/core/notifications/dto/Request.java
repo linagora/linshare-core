@@ -48,7 +48,7 @@ public class Request {
 
 	final protected Integer authorizedFiles;
 
-	final protected Integer filesCount;
+	final protected Integer documentsCount;
 
 	public Request(UploadRequestUrl url) {
 		super();
@@ -57,17 +57,17 @@ public class Request {
 		this.activationDate = request.getActivationDate();
 		this.expirationDate = request.getExpiryDate();
 		this.authorizedFiles = request.getMaxFileCount();
-		this.filesCount = url.getUploadRequestEntries().size();
+		this.documentsCount = url.getUploadRequestEntries().size();
 	}
 
 	public Request(String subject, Date activationDate, Date expirationDate, Integer authorizedFiles,
-			Integer filesCount) {
+			Integer documentsCount) {
 		super();
 		this.subject = subject;
 		this.activationDate = activationDate;
 		this.expirationDate = expirationDate;
 		this.authorizedFiles = authorizedFiles;
-		this.filesCount = filesCount;
+		this.documentsCount = documentsCount;
 	}
 
 
@@ -85,6 +85,10 @@ public class Request {
 
 	public Integer getAuthorizedFiles() {
 		return authorizedFiles;
+	}
+
+	public Integer getDocumentsCount() {
+		return documentsCount;
 	}
 
 }

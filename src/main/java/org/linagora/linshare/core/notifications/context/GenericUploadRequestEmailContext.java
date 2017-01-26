@@ -34,50 +34,49 @@
 package org.linagora.linshare.core.notifications.context;
 
 import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.domain.constants.MailActivationType;
-import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 
-public class UploadRequestUploadedFileEmailContext extends GenericUploadRequestEmailContext {
+public abstract class GenericUploadRequestEmailContext extends EmailContext {
 
-	protected UploadRequestEntry entry;
+	protected final User owner;
 
-	public UploadRequestUploadedFileEmailContext(User owner, UploadRequest uploadRequest, UploadRequestUrl requestUrl,
-			UploadRequestEntry entry) {
-		super(owner.getDomain(), false, owner, requestUrl, uploadRequest, true);
+	protected final UploadRequestUrl requestUrl;
+
+	protected final UploadRequest uploadRequest;
+
+	protected final boolean warnOwner;
+
+	public GenericUploadRequestEmailContext(AbstractDomain domain, boolean needToRetrieveGuestDomain, User owner,
+			UploadRequestUrl requestUrl, UploadRequest uploadRequest, boolean warnOwner) {
+		super(domain, needToRetrieveGuestDomain);
+		this.owner = owner;
+		this.requestUrl = requestUrl;
+		this.warnOwner = warnOwner;
+		this.uploadRequest = uploadRequest;
 	}
 
-	public UploadRequestEntry getEntry() {
-		return entry;
+	public User getOwner() {
+		return owner;
 	}
 
-	@Override
-	public MailContentType getType() {
-		return MailContentType.UPLOAD_REQUEST_UPLOADED_FILE;
+	public boolean isWarnOwner() {
+		return warnOwner;
 	}
 
-	@Override
-	public MailActivationType getActivation() {
-		return MailActivationType.UPLOAD_REQUEST_ACKNOWLEDGEMENT;
+	public UploadRequestUrl getRequestUrl() {
+		return requestUrl;
 	}
 
-	@Override
-	public String getMailRcpt() {
-		return owner.getMail();
-	}
-
-	@Override
-	public String getMailReplyTo() {
-		return requestUrl.getContact().getMail();
+	public UploadRequest getUploadRequest() {
+		return uploadRequest;
 	}
 
 	@Override
 	public void validateRequiredField() {
-		super.validateRequiredField();
-		Validate.notNull(entry, "Missing upload request entry");
+		Validate.notNull(uploadRequest, "Missing upload request");
+		Validate.notNull(owner, "Missing upload request owner");
 	}
-
 }

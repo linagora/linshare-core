@@ -35,7 +35,6 @@ package org.linagora.linshare.core.notifications.service.impl;
 
 import java.text.DateFormat;
 import java.util.Collection;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -80,7 +79,12 @@ import org.linagora.linshare.core.notifications.emails.impl.ShareNewShareAcknowl
 import org.linagora.linshare.core.notifications.emails.impl.ShareNewShareEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.ShareWarnRecipientBeforeExpiryEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.ShareWarnUndownloadedFilesharesEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.UploadRequestClosedByRecipientEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.UploadRequestDeleteFileEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.UploadRequestUnavailableSpaceEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.UploadRequestUploadedFileEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.UploadRequestWarnBeforeExpiryEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.UploadRequestWarnExpiryEmailBuilder;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.utils.DocumentUtils;
@@ -244,11 +248,18 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 
 		emailBuilders.put(MailContentType.SHARE_NEW_SHARE_ACKNOWLEDGEMENT_FOR_SENDER,
 				new ShareNewShareAcknowledgementEmailBuilder());
-		emailBuilders.put(MailContentType.UPLOAD_REQUEST_UPLOADED_FILE, new UploadRequestUploadedFileEmailBuilder());
 		emailBuilders.put(MailContentType.SHARE_FILE_SHARE_DELETED, new ShareFileShareDeletedEmailBuilder());
 		emailBuilders.put(MailContentType.SHARE_WARN_RECIPIENT_BEFORE_EXPIRY, new ShareWarnRecipientBeforeExpiryEmailBuilder());
 		emailBuilders.put(MailContentType.SHARE_WARN_UNDOWNLOADED_FILESHARES, new ShareWarnUndownloadedFilesharesEmailBuilder());
 		emailBuilders.put(MailContentType.FILE_WARN_OWNER_BEFORE_FILE_EXPIRY, new FileWarnOwnerBeforeExpiryEmailBuilder());
+
+		emailBuilders.put(MailContentType.UPLOAD_REQUEST_UPLOADED_FILE, new UploadRequestUploadedFileEmailBuilder());
+		emailBuilders.put(MailContentType.UPLOAD_REQUEST_WARN_EXPIRY, new UploadRequestWarnExpiryEmailBuilder());
+		emailBuilders.put(MailContentType.UPLOAD_REQUEST_WARN_BEFORE_EXPIRY, new UploadRequestWarnBeforeExpiryEmailBuilder());
+		emailBuilders.put(MailContentType.UPLOAD_REQUEST_CLOSED_BY_RECIPIENT, new UploadRequestClosedByRecipientEmailBuilder());
+		emailBuilders.put(MailContentType.UPLOAD_REQUEST_FILE_DELETED_BY_RECIPIENT, new UploadRequestDeleteFileEmailBuilder());
+		emailBuilders.put(MailContentType.UPLOAD_REQUEST_UNAVAILABLE_SPACE, new UploadRequestUnavailableSpaceEmailBuilder());
+
 
 		initMailBuilders(insertLicenceTerm, domainBusinessService, functionalityReadOnlyService, mailActivationBusinessService, urlTemplateForReceivedShares, urlTemplateForDocuments, urlTemplateForAnonymousUrl);
 		Set<MailContentType> keySet = emailBuilders.keySet();
@@ -326,18 +337,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	/**
 	 * Old and ugly code, to be removed.
 	 */
-
-	private String formatDeletionDate(Account account) {
-		Locale locale = account.getJavaExternalMailLocale();
-		DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.SHORT, locale);
-		return formatter.format(new Date());
-	}
-
-	private String formatCreationDate(Account account, UploadRequest uploadRequest) {
-		Locale locale = account.getJavaExternalMailLocale();
-		DateFormat formatter = DateFormat.getDateInstance(DateFormat.FULL, locale);
-		return formatter.format(uploadRequest.getCreationDate().getTime());
-	}
 
 	private String formatActivationDate(Account account, UploadRequest uploadRequest) {
 		Locale locale = account.getJavaExternalMailLocale();
@@ -618,38 +617,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	}
 
 	@Override
-	public MailContainerWithRecipient buildAckDeleteFileUploadRequest(User owner, UploadRequestUrl request, UploadRequestEntry entry)
-			throws BusinessException {
-		if (isDisable(owner, MailActivationType.UPLOAD_REQUEST_FILE_DELETED_BY_SENDER)) {
-			return null;
-		}
-		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
-		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				request.getLocale());
-		MailContainerBuilder builder = new MailContainerBuilder();
-
-		String contact = request.getContact().getMail();
-		builder.getSubjectChain()
-				.add("actorRepresentation", contact)
-				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject());
-		builder.getGreetingsChain()
-				.add("firstName", owner.getFirstName())
-				.add("lastName", owner.getLastName());
-		builder.getBodyChain()
-				.add("firstName", contact)
-				.add("lastName", "")
-				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
-				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
-				.add("fileSize", DocumentUtils.humanReadableByteCount(entry.getSize(), false, owner.getExternalMailLocale()))
-				.add("fileName", entry.getName())
-				.add("deleteDate", formatDeletionDate(owner));
-		container.setRecipient(owner.getMail());
-		container.setFrom(getFromMailAddress(owner));
-		container.setReplyTo(contact);
-		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_FILE_DELETED_BY_SENDER, builder);
-	}
-
-	@Override
 	public MailContainerWithRecipient buildRemindUploadRequest(User owner, UploadRequestUrl request)
 			throws BusinessException {
 		if (isDisable(request.getContact(), owner, MailActivationType.UPLOAD_REQUEST_REMINDER)) {
@@ -678,171 +645,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		container.setReplyTo(owner);
 
 		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_REMINDER, builder);
-	}
-
-	@Override
-	public MailContainerWithRecipient buildUploadRequestBeforeExpiryWarnOwner(User owner, UploadRequest request)
-			throws BusinessException {
-		if (isDisable(owner, MailActivationType.UPLOAD_REQUEST_WARN_OWNER_BEFORE_EXPIRY)) {
-			return null;
-		}
-		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
-		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				request.getLocale());
-		MailContainerBuilder builder = new MailContainerBuilder();
-
-		builder.getSubjectChain()
-				.add("subject", request.getUploadRequestGroup().getSubject());
-		builder.getGreetingsChain()
-				.add("firstName", owner.getFirstName())
-				.add("lastName", owner.getLastName());
-		builder.getBodyChain()
-				.add("subject", request.getUploadRequestGroup().getSubject())
-				.add("body", request.getUploadRequestGroup().getBody())
-				.add("expirationDate", formatExpirationDate(owner, request))
-				.add("creationDate", formatCreationDate(owner, request));
-		for (UploadRequestUrl uru : request.getUploadRequestURLs()) {
-			builder.getBodyChain().add(
-					"recipientMail",
-					uru.getContact().getMail()
-			)
-			.add("files", getFileNames(uru));
-		}
-		container.setRecipient(owner.getMail());
-		container.setFrom(getFromMailAddress(owner));
-		container.setReplyTo(owner);
-		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_WARN_BEFORE_EXPIRY, builder);
-	}
-
-	@Override
-	public MailContainerWithRecipient buildUploadRequestBeforeExpiryWarnRecipient(User owner, UploadRequestUrl request)
-			throws BusinessException {
-		if (isDisable(request.getContact(), owner, MailActivationType.UPLOAD_REQUEST_WARN_RECIPIENT_BEFORE_EXPIRY)) {
-			return null;
-		}
-		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
-		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				request.getLocale());
-		MailContainerBuilder builder = new MailContainerBuilder();
-		builder.getSubjectChain()
-				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject());
-		builder.getGreetingsChain()
-				.add("firstName", request.getContact().getMail())
-				.add("lastName", "");
-		builder.getBodyChain()
-				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
-				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
-				.add("files", getFileNames(request))
-				.add("ownerFirstName",owner.getFirstName())
-				.add("ownerLastName",owner.getLastName())
-				.add("ownerMail",owner.getMail())
-				.add("ownerRepresentation", new ContactRepresentation(owner).getContactRepresentation())
-				.add("expirationDate", formatExpirationDate(owner, request.getUploadRequest()))
-				.add("creationDate", formatCreationDate(owner, request.getUploadRequest()))
-				.add("url", request.getFullUrl(getLinShareUploadRequestUrl(owner)));
-		container.setRecipient(request.getContact());
-		container.setFrom(getFromMailAddress(owner));
-		container.setReplyTo(owner);
-		return buildMailContainer(cfg, container, null, MailContentType.DEPRECATED_UPLOAD_REQUEST_WARN_RECIPIENT_BEFORE_EXPIRY, builder);
-	}
-
-	@Override
-	public MailContainerWithRecipient buildUploadRequestExpiryWarnOwner(User owner, UploadRequest request)
-			throws BusinessException {
-		if (isDisable(owner, MailActivationType.UPLOAD_REQUEST_WARN_OWNER_EXPIRY)) {
-			return null;
-		}
-		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
-		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				request.getLocale());
-		MailContainerBuilder builder = new MailContainerBuilder();
-
-		builder.getSubjectChain()
-				.add("subject", request.getUploadRequestGroup().getSubject());
-		builder.getGreetingsChain()
-				.add("firstName", owner.getFirstName())
-				.add("lastName", owner.getLastName());
-		builder.getBodyChain()
-				.add("subject", request.getUploadRequestGroup().getSubject())
-				.add("body", request.getUploadRequestGroup().getBody())
-				.add("expirationDate", formatExpirationDate(owner, request))
-				.add("creationDate", formatCreationDate(owner, request));
-		for (UploadRequestUrl uru : request.getUploadRequestURLs()) {
-			builder.getBodyChain().add(
-					"recipientMail",
-					uru.getContact().getMail()
-			)
-			.add("files", getFileNames(uru));
-		}
-		container.setRecipient(owner.getMail());
-		container.setFrom(getFromMailAddress(owner));
-		container.setReplyTo(owner);
-
-		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_WARN_EXPIRY, builder);
-	}
-
-	@Override
-	public MailContainerWithRecipient buildUploadRequestExpiryWarnRecipient(User owner, UploadRequestUrl request)
-			throws BusinessException {
-		if (isDisable(request.getContact(), owner, MailActivationType.UPLOAD_REQUEST_WARN_RECIPIENT_EXPIRY)) {
-			return null;
-		}
-		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
-		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				request.getLocale());
-		MailContainerBuilder builder = new MailContainerBuilder();
-
-		builder.getSubjectChain()
-				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject());
-		builder.getGreetingsChain()
-				.add("firstName", request.getContact().getMail())
-				.add("lastName", "");
-		builder.getBodyChain()
-				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
-				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
-				.add("files", getFileNames(request))
-				.add("ownerFirstName",owner.getFirstName())
-				.add("ownerLastName",owner.getLastName())
-				.add("ownerMail",owner.getMail())
-				.add("ownerRepresentation", new ContactRepresentation(owner).getContactRepresentation())
-				.add("expirationDate", formatExpirationDate(owner, request.getUploadRequest()))
-				.add("creationDate", formatCreationDate(owner, request.getUploadRequest()))
-				.add("url", request.getFullUrl(getLinShareUploadRequestUrl(owner)));
-		container.setRecipient(request.getContact());
-		container.setFrom(getFromMailAddress(owner));
-		container.setReplyTo(owner);
-
-		return buildMailContainer(cfg, container, null, MailContentType.DEPRECATED_UPLOAD_REQUEST_WARN_RECIPIENT_EXPIRY, builder);
-	}
-
-	@Override
-	public MailContainerWithRecipient buildCloseUploadRequestByRecipient(User owner, UploadRequestUrl request)
-			throws BusinessException {
-		if (isDisable(owner, MailActivationType.UPLOAD_REQUEST_CLOSED_BY_RECIPIENT)) {
-			return null;
-		}
-		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
-		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				request.getLocale());
-		MailContainerBuilder builder = new MailContainerBuilder();
-
-		builder.getSubjectChain()
-				.add("actorRepresentation", request.getContact().getMail())
-				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject());
-		builder.getGreetingsChain()
-				.add("firstName", owner.getFirstName())
-				.add("lastName", owner.getLastName());
-		builder.getBodyChain()
-				.add("firstName", request.getContact().getMail())
-				.add("lastName", "")
-				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
-				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
-				.add("files", getFileNames(request));
-		container.setRecipient(owner);
-		container.setFrom(getFromMailAddress(owner));
-		container.setReplyTo(request.getContact());
-
-		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_CLOSED_BY_RECIPIENT, builder);
 	}
 
 	private String getFileNames(
@@ -919,36 +721,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		container.setReplyTo(owner);
 
 		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_DELETED_BY_OWNER, builder);
-	}
-
-	// TODO : to be use
-	@Override
-	public MailContainerWithRecipient buildErrorUploadRequestNoSpaceLeft(User owner, UploadRequestUrl request)
-			throws BusinessException {
-		if (isDisable(owner, MailActivationType.UPLOAD_REQUEST_NO_SPACE_LEFT)) {
-			return null;
-		}
-		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
-		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				request.getLocale());
-		MailContainerBuilder builder = new MailContainerBuilder();
-
-		builder.getSubjectChain()
-				.add("actorRepresentation", request.getContact().getMail())
-				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject());
-		builder.getGreetingsChain()
-				.add("firstName", owner.getFirstName())
-				.add("lastName", owner.getLastName());
-		builder.getBodyChain()
-				.add("firstName", request.getContact().getMail())
-				.add("lastName", "")
-				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
-				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody());
-		container.setRecipient(owner.getMail());
-		container.setFrom(getFromMailAddress(owner));
-		container.setReplyTo(request.getContact());
-
-		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_UNAVAILABLE_SPACE, builder);
 	}
 
 	/*

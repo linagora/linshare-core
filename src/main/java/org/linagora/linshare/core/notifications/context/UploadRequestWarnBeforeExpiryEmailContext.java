@@ -33,51 +33,45 @@
  */
 package org.linagora.linshare.core.notifications.context;
 
-import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 
-public class UploadRequestUploadedFileEmailContext extends GenericUploadRequestEmailContext {
+public class UploadRequestWarnBeforeExpiryEmailContext extends GenericUploadRequestEmailContext {
 
-	protected UploadRequestEntry entry;
-
-	public UploadRequestUploadedFileEmailContext(User owner, UploadRequest uploadRequest, UploadRequestUrl requestUrl,
-			UploadRequestEntry entry) {
-		super(owner.getDomain(), false, owner, requestUrl, uploadRequest, true);
-	}
-
-	public UploadRequestEntry getEntry() {
-		return entry;
+	public UploadRequestWarnBeforeExpiryEmailContext(User owner, UploadRequest uploadRequest,
+			UploadRequestUrl requestUrl, boolean warnOwner) {
+		super(owner.getDomain(), false, owner, requestUrl, uploadRequest, warnOwner);
 	}
 
 	@Override
 	public MailContentType getType() {
-		return MailContentType.UPLOAD_REQUEST_UPLOADED_FILE;
+		return MailContentType.UPLOAD_REQUEST_WARN_BEFORE_EXPIRY;
 	}
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.UPLOAD_REQUEST_ACKNOWLEDGEMENT;
+		return MailActivationType.UPLOAD_REQUEST_WARN_OWNER_BEFORE_EXPIRY;
 	}
 
 	@Override
 	public String getMailRcpt() {
-		return owner.getMail();
-	}
-
-	@Override
-	public String getMailReplyTo() {
+		if (warnOwner) {
+			return owner.getMail();
+		}
 		return requestUrl.getContact().getMail();
 	}
 
 	@Override
-	public void validateRequiredField() {
-		super.validateRequiredField();
-		Validate.notNull(entry, "Missing upload request entry");
+	public String getMailReplyTo() {
+		if (warnOwner) {
+			if (requestUrl != null) {
+				return requestUrl.getContact().getMail();
+			}
+		}
+		return owner.getMail();
 	}
 
 }

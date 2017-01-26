@@ -46,6 +46,9 @@ import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.context.UploadRequestWarnBeforeExpiryEmailContext;
+import org.linagora.linshare.core.notifications.context.UploadRequestWarnExpiryEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.UploadRequestRepository;
@@ -101,10 +104,12 @@ public class UploadRequestBatchImpl implements UploadRequestBatch {
 			if (DateUtils.isSameDay(r.getNotificationDate(), new Date()) && !DateUtils.isSameDay(r.getNotificationDate(), r.getExpiryDate())) {
 				logger.debug("date de notification == today..." + r.getExpiryDate() + " == " + new Date());
 				try {
-					for (UploadRequestUrl u: r.getUploadRequestURLs()) {
-						notifications.add(mailBuildingService.buildUploadRequestBeforeExpiryWarnRecipient((User) r.getOwner(), u));
+					for (UploadRequestUrl u : r.getUploadRequestURLs()) {
+						EmailContext ctx = new UploadRequestWarnBeforeExpiryEmailContext((User)r.getOwner(), r, u, false);
+						notifications.add(mailBuildingService.build(ctx));
 					}
-					notifications.add(mailBuildingService.buildUploadRequestBeforeExpiryWarnOwner((User) r.getOwner(), r));
+					EmailContext ctx = new UploadRequestWarnBeforeExpiryEmailContext((User)r.getOwner(), r, null, true);
+					notifications.add(mailBuildingService.build(ctx));
 				} catch (BusinessException e) {
 					logger.error("Fail to update upload request status of the request : " + r.getUuid());
 				}
@@ -113,10 +118,12 @@ public class UploadRequestBatchImpl implements UploadRequestBatch {
 				try {
 					r.updateStatus(UploadRequestStatus.STATUS_CLOSED);
 					r = uploadRequestService.updateRequest(systemAccount, systemAccount, r);
-					for (UploadRequestUrl u: r.getUploadRequestURLs()) {
-						notifications.add(mailBuildingService.buildUploadRequestExpiryWarnRecipient((User) r.getOwner(), u));
+					for (UploadRequestUrl u : r.getUploadRequestURLs()) {
+						EmailContext ctx = new UploadRequestWarnExpiryEmailContext((User)r.getOwner(), r, u, false);
+						notifications.add(mailBuildingService.build(ctx));
 					}
-					notifications.add(mailBuildingService.buildUploadRequestExpiryWarnOwner((User) r.getOwner(), r));
+					EmailContext ctx = new UploadRequestWarnExpiryEmailContext((User)r.getOwner(), r, null, true);
+					notifications.add(mailBuildingService.build(ctx));
 				} catch (BusinessException e) {
 					logger.error("Fail to update upload request status of the request : " + r.getUuid());
 				}

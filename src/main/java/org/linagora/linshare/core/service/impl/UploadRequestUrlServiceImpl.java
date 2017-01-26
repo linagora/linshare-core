@@ -54,6 +54,7 @@ import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.context.UploadRequestDeleteFileEmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestUploadedFileEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.repository.AccountRepository;
@@ -152,9 +153,10 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 			}
 			uploadRequestEntryBusinessService.delete(found);
 
-			MailContainerWithRecipient mail = mailBuildingService.buildAckDeleteFileUploadRequest(
+			EmailContext context = new UploadRequestDeleteFileEmailContext(
 					(User) requestUrl.getUploadRequest().getOwner(),
-					requestUrl, found);
+					requestUrl.getUploadRequest(), requestUrl, found);
+			MailContainerWithRecipient mail = mailBuildingService.build(context);
 			notifierService.sendNotification(mail);
 
 		} else {
@@ -184,6 +186,7 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 				.create(uploadRequestEntry);
 		EmailContext context = new UploadRequestUploadedFileEmailContext(
 				(User) requestUrl.getUploadRequest().getOwner(),
+				requestUrl.getUploadRequest(),
 				requestUrl, requestEntry);
 		MailContainerWithRecipient mail = mailBuildingService.build(context);
 		notifierService.sendNotification(mail);

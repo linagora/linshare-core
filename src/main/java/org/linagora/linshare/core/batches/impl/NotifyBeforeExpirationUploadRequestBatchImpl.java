@@ -47,6 +47,8 @@ import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.Context;
 import org.linagora.linshare.core.job.quartz.UploadRequestBatchResultContext;
+import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.context.UploadRequestWarnBeforeExpiryEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.NotifierService;
@@ -91,9 +93,11 @@ public class NotifyBeforeExpirationUploadRequestBatchImpl extends GenericBatchIm
 		Context context = new UploadRequestBatchResultContext(r);
 		if (!r.isNotified()) {
 			for (UploadRequestUrl u : r.getUploadRequestURLs()) {
-				notifications.add(mailBuildingService.buildUploadRequestBeforeExpiryWarnRecipient((User) r.getOwner(), u));
+				EmailContext ctx = new UploadRequestWarnBeforeExpiryEmailContext((User)r.getOwner(), r, u, false);
+				notifications.add(mailBuildingService.build(ctx));
 			}
-			notifications.add(mailBuildingService.buildUploadRequestBeforeExpiryWarnOwner((User) r.getOwner(), r));
+			EmailContext ctx = new UploadRequestWarnBeforeExpiryEmailContext((User)r.getOwner(), r, null, true);
+			notifications.add(mailBuildingService.build(ctx));
 			r.setNotified(true);
 			service.updateRequest(getSystemAccount(), r.getOwner(), r);
 			notifierService.sendNotification(notifications);

@@ -117,42 +117,55 @@ public class ShareFileDownloadEmailBuilder extends EmailBuilder {
 		return res;
 	}
 
-	protected Context getExternalFakeContext(Language language) {
+	protected Share getNewFakeShare(String name, String linshareURL) {
+		Share share = new Share(name);
+		if (linshareURL != null) {
+			share.setHref(getOwnerDocumentLink(linshareURL, share.getUuid()));
+		}
+		return share;
+	}
+
+	protected Context getInitialFakeContext(Language language) {
+		Date fakeExpirationDate = getFakeExpirationDate();
 		Context ctx = newFakeContext(language);
+		// first share
+		Share first = getNewFakeShare("first-shared-file.txt", fakeLinshareURL);
+		first.setDownloading(true);
+		first.setDownloaded(true);
+		first.setExpirationDate(fakeExpirationDate);
+		// second share
+		Share second = getNewFakeShare("second-shared-file.txt", fakeLinshareURL);
+		second.setDownloaded(false);
+		// third share
+		Share third = getNewFakeShare("third-shared-file.txt", fakeLinshareURL);
+		third.setDownloaded(true);
+		// shares list
+		List<Share> shares = Lists.newArrayList();
+		shares.add(first);
+		shares.add(second);
+		shares.add(third);
 		ctx.setVariable("actionDate", new Date());
 		ctx.setVariable("anonymous", false);
-		ctx.setVariable("document", new Document("a-shared-file.txt"));
-		ctx.setVariable("expiryDate", getFakeExpirationDate());
-		ctx.setVariable("share", new Share("a-shared-file.txt", true));
+		ctx.setVariable("expiryDate", fakeExpirationDate);
+		ctx.setVariable("share", first);
 		ctx.setVariable("shareDate", new Date());
 		ctx.setVariable("shareOwner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
-		ctx.setVariable("shareRecipient", new MailContact("unknown@linshare.org"));
-		List<Share> shares = Lists.newArrayList();
-		shares.add(new Share("a-shared-file.txt", true));
-		shares.add(new Share("second-shared-file.txt", false));
-		shares.add(new Share("third-shared-file.txt", true));
 		ctx.setVariable("shares", shares);
 		ctx.setVariable("sharesCount", shares.size());
 		return ctx;
 	}
 
 	protected Context getUserFakeContext(Language language) {
-		Context ctx = newFakeContext(language);
-		ctx.setVariable("actionDate", new Date());
-		ctx.setVariable("anonymous", false);
-		ctx.setVariable("document", new Document("a-shared-file.txt"));
-		ctx.setVariable("expiryDate", getFakeExpirationDate());
-		ctx.setVariable("share", new Share("a-shared-file.txt", true));
-		ctx.setVariable("shareDate", new Date());
-		ctx.setVariable("shareOwner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
-		ctx.setVariable("shareRecipient", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
+		Context ctx = getInitialFakeContext(language);
+		ctx.setVariable("anonymous", true);
+		ctx.setVariable("shareRecipient", new MailContact("unknown@linshare.org"));
+		return ctx;
+	}
 
-		List<Share> shares = Lists.newArrayList();
-		// shares.add(new Share("a-shared-file.txt", true));
-		// shares.add(new Share("second-shared-file.txt", false));
-		// shares.add(new Share("third-shared-file.txt", true));
-		ctx.setVariable("shares", shares);
-		ctx.setVariable("sharesCount", shares.size());
+	protected Context getExternalFakeContext(Language language) {
+		Context ctx = getInitialFakeContext(language);
+		ctx.setVariable("anonymous", false);
+		ctx.setVariable("shareRecipient", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
 		return ctx;
 	}
 

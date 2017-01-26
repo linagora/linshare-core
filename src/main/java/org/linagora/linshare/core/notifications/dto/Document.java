@@ -59,6 +59,8 @@ public class Document {
 
 	protected boolean displayHref;
 
+	protected Boolean mine;
+
 	public Document(String name) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
@@ -155,6 +157,14 @@ public class Document {
 
 	public void setExpirationDate(Date expirationDate) {
 		this.expirationDate = expirationDate;
+	}
+
+	public Boolean getMine() {
+		return mine;
+	}
+
+	public void setMine(Boolean mine) {
+		this.mine = mine;
 	}
 
 	@Override

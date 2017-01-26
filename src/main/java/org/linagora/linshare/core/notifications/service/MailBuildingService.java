@@ -41,8 +41,6 @@ import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.UploadProposition;
-import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
@@ -78,44 +76,17 @@ public interface MailBuildingService {
 	MailContainerWithRecipient buildFilterUploadRequest(User owner, UploadRequestUrl request)
 			throws BusinessException;
 
+	// TODO ?
 	MailContainerWithRecipient buildCreateUploadRequest(User owner, UploadRequestUrl request)
 			throws BusinessException;
 
-	// TODO
-	MailContainerWithRecipient buildAckDeleteFileUploadRequest(User owner, UploadRequestUrl request, UploadRequestEntry entry)
-			throws BusinessException;
-
 	MailContainerWithRecipient buildRemindUploadRequest(User owner, UploadRequestUrl request)
-			throws BusinessException;
-
-	// TODO
-	MailContainerWithRecipient buildUploadRequestBeforeExpiryWarnOwner(User owner, UploadRequest request)
-			throws BusinessException;
-
-	// TODO
-	MailContainerWithRecipient buildUploadRequestBeforeExpiryWarnRecipient(User owner, UploadRequestUrl request)
-			throws BusinessException;
-
-	// TODO
-	MailContainerWithRecipient buildUploadRequestExpiryWarnOwner(User owner, UploadRequest request)
-			throws BusinessException;
-
-	// TODO
-	MailContainerWithRecipient buildUploadRequestExpiryWarnRecipient(User owner, UploadRequestUrl request)
-			throws BusinessException;
-
-	// TODO
-	MailContainerWithRecipient buildCloseUploadRequestByRecipient(User owner, UploadRequestUrl request)
 			throws BusinessException;
 
 	MailContainerWithRecipient buildCloseUploadRequestByOwner(User owner, UploadRequestUrl request)
 			throws BusinessException;
 
 	MailContainerWithRecipient buildDeleteUploadRequestByOwner(User owner, UploadRequestUrl request)
-			throws BusinessException;
-
-	// TODO
-	MailContainerWithRecipient buildErrorUploadRequestNoSpaceLeft(User owner, UploadRequestUrl request)
 			throws BusinessException;
 
 }

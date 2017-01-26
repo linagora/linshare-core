@@ -510,9 +510,7 @@ public abstract class EmailBuilder implements IEmailBuilder {
 	protected Share getNewFakeShare(String name, String linshareURL) {
 		Share share = new Share(name);
 		if (linshareURL != null) {
-			share.setHref("Unkown");
-			// share.setHref(getOwnerDocumentLink(linshareURL,
-			// share.getUuid()));
+			share.setHref(getOwnerDocumentLink(linshareURL, share.getUuid()));
 		}
 		return share;
 	}

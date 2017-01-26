@@ -72,6 +72,8 @@ import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.context.UploadRequestClosedByRecipientEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.UploadRequestGroupResourceAccessControl;
 import org.linagora.linshare.core.rac.UploadRequestResourceAccessControl;
@@ -701,8 +703,8 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		checkUpdatePermission(actor, req.getOwner(), UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, req);
 		req.updateStatus(UploadRequestStatus.STATUS_CLOSED);
 		UploadRequest update = updateRequest(actor, actor, req);
-		MailContainerWithRecipient mail = mailBuildingService
-				.buildCloseUploadRequestByRecipient((User) req.getOwner(), url);
+		EmailContext ctx = new UploadRequestClosedByRecipientEmailContext((User)req.getOwner(), req, url);
+		MailContainerWithRecipient mail = mailBuildingService.build(ctx);
 		notifierService.sendNotification(mail);
 		log.setResourceUpdated(new UploadRequestMto(update));
 		mongoRepository.insert(log);

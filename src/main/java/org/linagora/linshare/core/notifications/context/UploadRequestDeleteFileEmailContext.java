@@ -41,13 +41,14 @@ import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 
-public class UploadRequestUploadedFileEmailContext extends GenericUploadRequestEmailContext {
+public class UploadRequestDeleteFileEmailContext extends GenericUploadRequestEmailContext {
 
-	protected UploadRequestEntry entry;
+	final protected UploadRequestEntry entry;
 
-	public UploadRequestUploadedFileEmailContext(User owner, UploadRequest uploadRequest, UploadRequestUrl requestUrl,
+	public UploadRequestDeleteFileEmailContext(User owner, UploadRequest uploadRequest, UploadRequestUrl requestUrl,
 			UploadRequestEntry entry) {
 		super(owner.getDomain(), false, owner, requestUrl, uploadRequest, true);
+		this.entry = entry;
 	}
 
 	public UploadRequestEntry getEntry() {
@@ -56,12 +57,12 @@ public class UploadRequestUploadedFileEmailContext extends GenericUploadRequestE
 
 	@Override
 	public MailContentType getType() {
-		return MailContentType.UPLOAD_REQUEST_UPLOADED_FILE;
+		return MailContentType.UPLOAD_REQUEST_FILE_DELETED_BY_RECIPIENT;
 	}
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.UPLOAD_REQUEST_ACKNOWLEDGEMENT;
+		return MailActivationType.UPLOAD_REQUEST_FILE_DELETED_BY_SENDER;
 	}
 
 	@Override
