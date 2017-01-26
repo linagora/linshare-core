@@ -42,6 +42,7 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.SearchType;
 import org.linagora.linshare.core.domain.constants.VisibilityType;
 import org.linagora.linshare.core.domain.entities.MailingList;
+import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
@@ -53,6 +54,7 @@ import org.linagora.linshare.core.facade.webservice.user.dto.AutoCompleteResultD
 import org.linagora.linshare.core.facade.webservice.user.dto.ListAutoCompleteResultDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.ThreadMemberAutoCompleteResultDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.UserAutoCompleteResultDto;
+import org.linagora.linshare.core.repository.RecipientFavouriteRepository;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MailingListService;
 import org.linagora.linshare.core.service.ThreadService;
@@ -65,20 +67,27 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 
 	final private static int AUTO_COMPLETE_LIMIT = 20;
 
+	final private static int FAVOURTITE_RECIPIENT_LIMIT = 100;
+
 	private final UserService userService;
 
 	private final ThreadService threadService;
 
 	private final MailingListService mailingListSerice;
 
+	private final RecipientFavouriteRepository favourite;
+
 	public AutoCompleteFacadeImpl(final AccountService accountService,
 			final UserService userService,
 			final MailingListService mailingListSerice,
-			final ThreadService threadService) {
+			final ThreadService threadService,
+			RecipientFavouriteRepository favourite
+			) {
 		super(accountService);
 		this.userService = userService;
 		this.mailingListSerice = mailingListSerice;
 		this.threadService = threadService;
+		this.favourite = favourite;
 	}
 
 	@Override
@@ -124,11 +133,15 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 			List<AutoCompleteResultDto> result = Lists.newArrayList();
 			SearchType enumType = SearchType.fromString(type);
 			if (enumType.equals(SearchType.SHARING)) {
-				List<MailingList> list = mailingListSerice.searchListByVisibility(actor.getLsUuid(), VisibilityType.All.name(), pattern);
-				int range = (list.size() < AUTO_COMPLETE_LIMIT ? list.size() : AUTO_COMPLETE_LIMIT);
+				List<MailingList> mailingListsList = mailingListSerice.searchListByVisibility(actor.getLsUuid(), VisibilityType.All.name(), pattern);
+				int range = (mailingListsList.size() < AUTO_COMPLETE_LIMIT ? mailingListsList.size() : AUTO_COMPLETE_LIMIT);
 				Set<UserDto> userList = findUser(pattern);
 				result.addAll(ImmutableList.copyOf(Lists.transform(Lists.newArrayList(userList), UserAutoCompleteResultDto.toDto())));
-				result.addAll(ImmutableList.copyOf(Lists.transform(list.subList(0, range), ListAutoCompleteResultDto.toDto())));
+				result.addAll(ImmutableList.copyOf(Lists.transform(mailingListsList.subList(0, range), ListAutoCompleteResultDto.toDto())));
+				// TODO : Fix this dirty hack ! :(
+				List<RecipientFavourite> favouriteRecipeints = favourite.findMatchElementsOrderByWeight(pattern, actor, FAVOURTITE_RECIPIENT_LIMIT);
+				int range2 = (favouriteRecipeints.size() < AUTO_COMPLETE_LIMIT ? favouriteRecipeints.size() : AUTO_COMPLETE_LIMIT);
+				result.addAll(ImmutableList.copyOf(Lists.transform(favouriteRecipeints.subList(0, range2), AutoCompleteResultDto.toRFDto())));
 			} else if (enumType.equals(SearchType.USERS)) {
 				Set<UserDto> userList = findUser(pattern);
 				result.addAll(ImmutableList.copyOf(Lists.transform(Lists.newArrayList(userList), UserAutoCompleteResultDto.toDto())));

@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
-
 /**
  * The recipient favourite.
  * @author ngapaillard

@@ -41,7 +41,9 @@ import org.codehaus.jackson.annotate.JsonSubTypes;
 import org.codehaus.jackson.annotate.JsonSubTypes.Type;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 
+import com.google.common.base.Function;
 import com.wordnik.swagger.annotations.ApiModel;
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
@@ -71,6 +73,11 @@ public class AutoCompleteResultDto {
 		this.display = display;
 	}
 
+	public AutoCompleteResultDto(RecipientFavourite recipientFavourite) {
+		identifier = recipientFavourite.getRecipient();
+		display = recipientFavourite.getRecipient();
+	}
+
 	public String getIdentifier() {
 		return identifier;
 	}
@@ -85,5 +92,14 @@ public class AutoCompleteResultDto {
 
 	public void setDisplay(String display) {
 		this.display = display;
+	}
+
+	public static Function<RecipientFavourite, AutoCompleteResultDto> toRFDto() {
+		return new Function<RecipientFavourite, AutoCompleteResultDto>() {
+			@Override
+			public AutoCompleteResultDto apply(RecipientFavourite arg0) {
+				return new AutoCompleteResultDto(arg0);
+			}
+		};
 	}
 }
