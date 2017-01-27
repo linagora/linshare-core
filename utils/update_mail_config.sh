@@ -6,6 +6,9 @@ g_import_new=../src/main/resources/sql/postgresql/import-postgresql.sql.new
 g_host=127.0.0.1
 g_port=5432
 g_database=linshare
+g_user=linshare
+g_pg_dump=/usr/lib/postgresql/9.4/bin/pg_dump
+g_pg_dump=/usr/bin/pg_dump
 g_step="$@"
 g_output=mails.sql
 g_output_clean=mails.clean.sql
@@ -18,13 +21,15 @@ echo "############ Config #########"
 echo "host : $g_host"
 echo "port : $g_port"
 echo "database : $g_database"
+echo "user : $g_user"
+echo "pg_dump : $g_pg_dump"
 echo "#############################"
 
 
 function dump_and_clean ()
 {
-    echo dump and clean database : $g_host : $g_port : $g_database
-    pg_dump -h $g_host -p $g_port -U linshare -t mail_layout -t mail_footer -t mail_content -t mail_config -t mail_content_lang -t mail_footer_lang  -a --inserts --attribute-inserts  $g_database -f ${g_output}
+    echo dump and clean database : $g_host : $g_port : $g_database  : $g_user
+    ${g_pg_dump} -h $g_host -p $g_port -U ${g_user} -t mail_layout -t mail_footer -t mail_content -t mail_config -t mail_content_lang -t mail_footer_lang  -a --inserts --attribute-inserts  $g_database -f ${g_output}
     grep -v "^-- " ${g_output} | grep -v "^--$" | grep -v "^SET" | sed -e '/^$/ d'>> ${g_output_clean}
 echo "UPDATE domain_abstract SET mailconfig_id = 1;
 UPDATE mail_footer SET readonly = true;
