@@ -70,16 +70,18 @@ public class ShareFileDownloadEmailBuilder extends EmailBuilder {
 		String linshareURL = getLinShareUrl(shareOwner);
 		Share downloadedShare = emailCtx.getShare();
 		Document document = emailCtx.getDocument();
+		Date shareDate = emailCtx.getEntry().getCreationDate().getTime();
+		Date expiryDate = emailCtx.getEntry().getExpirationDate().getTime();
 		document.setHref(getOwnerDocumentLink(linshareURL, document.getUuid()));
 
 		Context ctx = new Context(emailCtx.getLocale());
 		ctx.setVariable("actionDate", emailCtx.getActionDate());
 		ctx.setVariable("anonymous", isAnonymous);
 		ctx.setVariable("document", document);
-		ctx.setVariable("expiryDate", emailCtx.getEntry().getExpirationDate());
+		ctx.setVariable("expiryDate", expiryDate);
 		ctx.setVariable("linshareURL", linshareURL);
 		ctx.setVariable("share", downloadedShare);
-		ctx.setVariable("shareDate", emailCtx.getEntry().getCreationDate());
+		ctx.setVariable("shareDate", shareDate);
 		ctx.setVariable("shareOwner", new MailContact(shareOwner));
 		ctx.setVariable("shareRecipient", emailCtx.getRecipient());
 
