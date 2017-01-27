@@ -87,10 +87,7 @@ public class MailConfigRepositoryImpl extends
 
 	@Override
 	public boolean isMailLayoutReferenced(MailLayout layout) {
-		return !findByCriteria(
-				Restrictions.disjunction()
-						.add(Restrictions.eq("mailLayoutHtml", layout))
-						.add(Restrictions.eq("mailLayoutText", layout)))
+		return !findByCriteria(Restrictions.eq("mailLayoutHtml", layout))
 				.isEmpty();
 	}
 }
