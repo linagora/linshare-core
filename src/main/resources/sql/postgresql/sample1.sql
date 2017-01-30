@@ -138,7 +138,7 @@ INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification
     default_quota, default_quota_override,
     quota_type, current_value_for_subdomains)
 VALUES (
-    2, '164783e8-b9d1-11e5-87e9-bfc0aac925c2', NOW(), NOW(), NOW(),
+    2, '164783e8-b9d1-11e5-87e9-bfc0aac925c2', NOW(), NOW(), null,
 	0, 0,
     2, 1,
 	1000000000000, false,
@@ -163,7 +163,7 @@ INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification
     account_quota, account_quota_override,
     quota_type, container_type, shared)
 VALUES (
-    3, '37226d66-b9d2-11e5-b4d8-f7b730449724', NOW(), NOW(), NOW(),
+    3, '37226d66-b9d2-11e5-b4d8-f7b730449724', NOW(), NOW(), null,
 	2, 0, 0,
     2, 1,
 	400000000000, false,
@@ -196,7 +196,7 @@ INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification
     account_quota, account_quota_override,
     quota_type, container_type, shared)
 VALUES (
-    4, '6a442450-b9d2-11e5-8c67-5b2367500fc4', NOW(), NOW(), NOW(),
+    4, '6a442450-b9d2-11e5-8c67-5b2367500fc4', NOW(), NOW(), null,
 	2, 0, 0,
     2, 1,
 	400000000000, false,
@@ -226,7 +226,7 @@ INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification
     default_quota, default_quota_override,
     quota_type, current_value_for_subdomains)
 VALUES (
-    5, 'b69b9d1a-b9d2-11e5-aab9-e337a9ab2b58', NOW(), NOW(), NOW(),
+    5, 'b69b9d1a-b9d2-11e5-aab9-e337a9ab2b58', NOW(), NOW(), null,
 	0, 0,
     3, 2,
 	1000000000000, false,
@@ -252,7 +252,7 @@ INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification
     account_quota, account_quota_override,
     quota_type, container_type, shared)
 VALUES (
-    6, 'f8733bd0-b9d2-11e5-a247-2b9505cfdddf', NOW(), NOW(), NOW(),
+    6, 'f8733bd0-b9d2-11e5-a247-2b9505cfdddf', NOW(), NOW(), null,
 	5, 0, 0,
     3, 2,
 	400000000000, false,
@@ -285,7 +285,7 @@ INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification
     account_quota, account_quota_override,
     quota_type, container_type, shared)
 VALUES (
-    7, '002310d0-b9d3-11e5-9413-d3f63c53e650', NOW(), NOW(), NOW(),
+    7, '002310d0-b9d3-11e5-9413-d3f63c53e650', NOW(), NOW(), null,
 	5, 0, 0,
     3, 2,
 	400000000000, false,
@@ -314,7 +314,7 @@ INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification
     default_quota, default_quota_override,
     quota_type, current_value_for_subdomains)
 VALUES (
-    8, '0b866494-b9d4-11e5-be35-afca154efca0', NOW(), NOW(), NOW(),
+    8, '0b866494-b9d4-11e5-be35-afca154efca0', NOW(), NOW(), null,
 	0, 0,
     4, 2,
 	1000000000000, false,
@@ -340,7 +340,7 @@ INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification
     account_quota, account_quota_override,
     quota_type, container_type, shared)
 VALUES (
-    9, '1515e6e2-b9d4-11e5-997e-0b5792ea886a', NOW(), NOW(), NOW(),
+    9, '1515e6e2-b9d4-11e5-997e-0b5792ea886a', NOW(), NOW(), null,
 	8, 0, 0,
     4, 2,
 	400000000000, false,
@@ -373,7 +373,7 @@ INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification
     account_quota, account_quota_override,
     quota_type, container_type, shared)
 VALUES (
-    10, '1f468522-b9d4-11e5-916d-a713a67dd225', NOW(), NOW(), NOW(),
+    10, '1f468522-b9d4-11e5-916d-a713a67dd225', NOW(), NOW(), null,
 	8, 0, 0,
     4, 2,
 	400000000000, false,
@@ -404,7 +404,7 @@ INSERT INTO quota(
     max_file_size, max_file_size_override,
     shared, quota_type)
 VALUES (
-    43, '1f468522-b9d4-11e5-916d-a713a67dd226', NOW(), NOW(), NOW(),
+    43, '1f468522-b9d4-11e5-916d-a713a67dd226', NOW(), NOW(), null,
     6, 0, 0,
     3, 50, 2,
     100000000000, false,

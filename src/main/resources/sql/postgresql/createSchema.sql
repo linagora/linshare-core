@@ -719,7 +719,7 @@ CREATE TABLE quota (
   account_quota_override         bool,
   creation_date                  timestamp(6) NOT NULL,
   modification_date              timestamp(6) NOT NULL,
-  batch_modification_date        timestamp(6) NOT NULL,
+  batch_modification_date        timestamp(6),
   container_type                 varchar(255),
   shared                         bool,
   account_id                     int8,
