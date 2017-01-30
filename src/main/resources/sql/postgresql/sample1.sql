@@ -10,7 +10,9 @@ SET default_with_oids = false;
 -- Jeu de données de tests
 
 INSERT INTO ldap_connection(id, uuid, label, provider_url, security_auth, security_principal, security_credentials, creation_date, modification_date)
-VALUES (1, 'a9b2058f-811f-44b7-8fe5-7a51961eb098', 'linshare-obm', 'ldap://linshare-obm2.linagora.dc1:389', 'simple', '', '', now(), now());
+	VALUES (1, 'a9b2058f-811f-44b7-8fe5-7a51961eb098', 'linshare-obm', 'ldap://linshare-obm2.linagora.dc1:389', 'simple', '', '', now(), now());
+INSERT INTO ldap_connection(id, uuid, label, provider_url, security_auth, security_principal, security_credentials, creation_date, modification_date)
+	VALUES (2, 'f5550163-8f06-4310-91c4-1e174f5c62fd', 'linshare-obm-ip', 'ldap://172.16.18.67:389', 'simple', '', '', now(), now());
 
 
 -- system domain pattern
@@ -157,6 +159,8 @@ INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification
     default_quota, default_quota_override,
     default_max_file_size, default_max_file_size_override,
     default_account_quota, default_account_quota_override,
+    max_file_size, max_file_size_override,
+    account_quota, account_quota_override,
     quota_type, container_type, shared)
 VALUES (
     3, '37226d66-b9d2-11e5-b4d8-f7b730449724', NOW(), NOW(), NOW(),
@@ -167,12 +171,16 @@ VALUES (
     400000000000, false,
     10000000000, false,
     100000000000, false,
+    10000000000, false,
+    100000000000, false,
     'CONTAINER_QUOTA', 'USER', false);
 -- quota : 400000000000 : 400 Go for all users
 -- quota_warning : 400000000000 : 400 Go
 -- default_quota : 400000000000 : 400 Go
 -- default_max_file_size : 10000000000  : 10 Go
 -- default_account_quota : 100000000000 : 100 Go
+-- max_file_size : 10000000000  : 10 Go
+-- account_quota : 100000000000 : 100 Go
 
 
 -- 'CONTAINER_QUOTA', 'WORK_GROUP' for MyDomain
@@ -184,6 +192,8 @@ INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification
     default_quota, default_quota_override,
     default_max_file_size, default_max_file_size_override,
     default_account_quota, default_account_quota_override,
+    max_file_size, max_file_size_override,
+    account_quota, account_quota_override,
     quota_type, container_type, shared)
 VALUES (
     4, '6a442450-b9d2-11e5-8c67-5b2367500fc4', NOW(), NOW(), NOW(),
@@ -194,12 +204,16 @@ VALUES (
     400000000000, false,
     10000000000, false,
     400000000000, false,
+    10000000000, false,
+    400000000000, false,
     'CONTAINER_QUOTA', 'WORK_GROUP', true);
 -- quota : 400000000000 : 400 Go for all workgroups
 -- quota_warning : 400000000000 : 400 Go
 -- default_quota : 400000000000 : 400 Go
 -- default_max_file_size : 10000000000  : 10 Go
 -- default_account_quota : 400000000000 : 400 Go, also 400 Go for one workgroup
+-- max_file_size : 10000000000  : 10 Go
+-- account_quota : 400000000000 : 400 Go, also 400 Go for one workgroup
 
 
 
@@ -234,6 +248,8 @@ INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification
     default_quota, default_quota_override,
     default_max_file_size, default_max_file_size_override,
     default_account_quota, default_account_quota_override,
+    max_file_size, max_file_size_override,
+    account_quota, account_quota_override,
     quota_type, container_type, shared)
 VALUES (
     6, 'f8733bd0-b9d2-11e5-a247-2b9505cfdddf', NOW(), NOW(), NOW(),
@@ -244,12 +260,16 @@ VALUES (
     400000000000, false,
     10000000000, false,
     100000000000, false,
+    10000000000, false,
+    100000000000, false,
     'CONTAINER_QUOTA', 'USER', false);
 -- quota : 400000000000 : 400 Go for all users
 -- quota_warning : 400000000000 : 400 Go
 -- default_quota : 400000000000 : 400 Go
 -- default_max_file_size : 10000000000  : 10 Go
 -- default_account_quota : 100000000000 : 100 Go
+-- max_file_size : 10000000000  : 10 Go
+-- account_quota : 100000000000 : 100 Go
 
 
 -- 'CONTAINER_QUOTA', 'WORK_GROUP' for MyDomain
@@ -261,6 +281,8 @@ INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification
     default_quota, default_quota_override,
     default_max_file_size, default_max_file_size_override,
     default_account_quota, default_account_quota_override,
+    max_file_size, max_file_size_override,
+    account_quota, account_quota_override,
     quota_type, container_type, shared)
 VALUES (
     7, '002310d0-b9d3-11e5-9413-d3f63c53e650', NOW(), NOW(), NOW(),
@@ -271,18 +293,16 @@ VALUES (
     400000000000, false,
     10000000000, false,
     400000000000, false,
+    10000000000, false,
+    400000000000, false,
     'CONTAINER_QUOTA', 'WORK_GROUP', true);
 -- quota : 400000000000 : 400 Go for all workgroups
 -- quota_warning : 400000000000 : 400 Go
 -- default_quota : 400000000000 : 400 Go
 -- default_max_file_size : 10000000000  : 10 Go
 -- default_account_quota : 400000000000 : 400 Go, also 400 Go for one workgroup
-
-
-
-
-
-
+-- max_file_size : 10000000000  : 10 Go
+-- account_quota : 400000000000 : 400 Go, also 400 Go for one workgroup
 
 
 -- GuestDomain QUOTA
@@ -316,6 +336,8 @@ INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification
     default_quota, default_quota_override,
     default_max_file_size, default_max_file_size_override,
     default_account_quota, default_account_quota_override,
+    max_file_size, max_file_size_override,
+    account_quota, account_quota_override,
     quota_type, container_type, shared)
 VALUES (
     9, '1515e6e2-b9d4-11e5-997e-0b5792ea886a', NOW(), NOW(), NOW(),
@@ -326,13 +348,16 @@ VALUES (
     400000000000, false,
     10000000000, false,
     100000000000, false,
+    10000000000, false,
+    100000000000, false,
     'CONTAINER_QUOTA', 'USER', false);
 -- quota : 400000000000 : 400 Go for all users
 -- quota_warning : 400000000000 : 400 Go
 -- default_quota : 400000000000 : 400 Go
 -- default_max_file_size : 10000000000  : 10 Go
 -- default_account_quota : 100000000000 : 100 Go
-
+-- max_file_size : 10000000000  : 10 Go
+-- account_quota : 100000000000 : 100 Go
 
 
 -- 'CONTAINER_QUOTA', 'WORK_GROUP' for GuestDomain
@@ -344,6 +369,8 @@ INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification
     default_quota, default_quota_override,
     default_max_file_size, default_max_file_size_override,
     default_account_quota, default_account_quota_override,
+    max_file_size, max_file_size_override,
+    account_quota, account_quota_override,
     quota_type, container_type, shared)
 VALUES (
     10, '1f468522-b9d4-11e5-916d-a713a67dd225', NOW(), NOW(), NOW(),
@@ -354,12 +381,16 @@ VALUES (
     400000000000, false,
     10000000000, false,
     400000000000, false,
+    10000000000, false,
+    400000000000, false,
     'CONTAINER_QUOTA', 'WORK_GROUP', true);
 -- quota : 400000000000 : 400 Go for all workgroups
 -- quota_warning : 400000000000 : 400 Go
 -- default_quota : 400000000000 : 400 Go
 -- default_max_file_size : 10000000000  : 10 Go
 -- default_account_quota : 400000000000 : 400 Go, also 400 Go for one workgroup
+-- max_file_size : 10000000000  : 10 Go
+-- account_quota : 400000000000 : 400 Go, also 400 Go for one workgroup
 
 
 -- Bart ACCOUNT QUOTA
@@ -381,53 +412,6 @@ VALUES (
     100000000000, false,
     10000000000, false,
     false, 'ACCOUNT_QUOTA');
-
--- -- thread-entry-1-no-dl
--- INSERT INTO document (id, uuid, creation_date, type, size, thmb_uuid, timestamp) VALUES (1, 'a09e6bea-edcb-11e1-86e7-5404a6202d2c', current_timestamp(3), 'image/png', 49105, null, null);
--- INSERT INTO entry (id, owner_id, creation_date, modification_date, name, comment, expiration_date, uuid) VALUES (1, 51, current_timestamp(3), current_timestamp(3), 'thread-entry-1-no-dl', '', current_timestamp(3), '5a663f86-edcb-11e1-a9fd-5404a6202d2c'); 
--- INSERT INTO thread_entry (entry_id, document_id, ciphered) VALUES (1, 1, false); 
--- 
--- 
--- -- thread-entry-2-no-dl
--- INSERT INTO document (id, uuid, creation_date, type, size, thmb_uuid, timestamp) VALUES (2, '026e60fa-edcc-11e1-acb9-5404a6202d2c', current_timestamp(3), 'image/png', 49105, null, null);
--- INSERT INTO entry (id, owner_id, creation_date, modification_date, name, comment, expiration_date, uuid) VALUES (2, 51, current_timestamp(3), current_timestamp(3), 'thread-entry-2-no-dl', '', current_timestamp(3), '187f5ef8-edcc-11e1-8ed2-5404a6202d2c'); 
--- INSERT INTO thread_entry (entry_id, document_id, ciphered) VALUES (2, 2, false); 
--- 
--- -- thread-entry-3-no-dl
--- INSERT INTO document (id, uuid, creation_date, type, size, thmb_uuid, timestamp) VALUES (3, '79eb3356-edcc-11e1-b379-5404a6202d2c', current_timestamp(3), 'image/png', 49105, null, null);
--- INSERT INTO entry (id, owner_id, creation_date, modification_date, name, comment, expiration_date, uuid) VALUES (3, 51, current_timestamp(3), current_timestamp(3), 'thread-entry-3-no-dl', '', current_timestamp(3), '82169142-edcc-11e1-9686-5404a6202d2c'); 
--- INSERT INTO thread_entry (entry_id, document_id, ciphered) VALUES (3, 3, false); 
--- 
--- 
--- -- thread-entry-4-no-dl
--- INSERT INTO document (id, uuid, creation_date, type, size, thmb_uuid, timestamp) VALUES (4, '92169010-edcc-11e1-8494-5404a6202d2c', current_timestamp(3), 'image/png', 49105, null, null);
--- INSERT INTO entry (id, owner_id, creation_date, modification_date, name, comment, expiration_date, uuid) VALUES (4, 51, current_timestamp(3), current_timestamp(3), 'thread-entry-4-no-dl', '', current_timestamp(3), '996eb78e-edcc-11e1-a48f-5404a6202d2c'); 
--- INSERT INTO thread_entry (entry_id, document_id, ciphered) VALUES (4, 4, false); 
--- 
--- 
--- 
--- 
--- 
--- -- doc 1: réponse, projet:ratp, phase:Instruction
--- INSERT INTO entry_tag_association (id, entry_id, tag_id, enum_value_id) VALUES (1, 1, 1, null); 
--- INSERT INTO entry_tag_association (id, entry_id, tag_id, enum_value_id) VALUES (2, 1, 3, 1); 
--- INSERT INTO entry_tag_association (id, entry_id, tag_id, enum_value_id) VALUES (3, 1, 4, 3); 
--- 
--- -- doc 2: réponse, projet:ratp, phase:Contraction
--- INSERT INTO entry_tag_association (id, entry_id, tag_id, enum_value_id) VALUES (4, 2, 1, null); 
--- INSERT INTO entry_tag_association (id, entry_id, tag_id, enum_value_id) VALUES (5, 2, 3, 1); 
--- INSERT INTO entry_tag_association (id, entry_id, tag_id, enum_value_id) VALUES (6, 2, 4, 4); 
--- 
--- -- doc 3: réponse, projet:3mi, phase:Instruction
--- INSERT INTO entry_tag_association (id, entry_id, tag_id, enum_value_id) VALUES (7, 3, 1, null); 
--- INSERT INTO entry_tag_association (id, entry_id, tag_id, enum_value_id) VALUES (8, 3, 3, 2); 
--- INSERT INTO entry_tag_association (id, entry_id, tag_id, enum_value_id) VALUES (9, 3, 4, 3); 
--- 
--- -- doc 3: question, projet:3m1, phase:Recommandation
--- INSERT INTO entry_tag_association (id, entry_id, tag_id, enum_value_id) VALUES (10, 4, 2, null); 
--- INSERT INTO entry_tag_association (id, entry_id, tag_id, enum_value_id) VALUES (11, 4, 3, 2); 
--- INSERT INTO entry_tag_association (id, entry_id, tag_id, enum_value_id) VALUES (12, 4, 4, 5); 
--- 
 
 -- enable guests
 UPDATE policy SET status=true where id=27;
