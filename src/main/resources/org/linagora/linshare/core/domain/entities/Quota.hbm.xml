@@ -37,7 +37,7 @@
 		<subclass name="org.linagora.linshare.core.domain.entities.AccountQuota" discriminator-value="ACCOUNT_QUOTA" >
 			<property name="maxFileSize" column="max_file_size" />
 			<property name="maxFileSizeOverride" type="boolean">
-				<column name="max_file_size_override" not-null="true" default="false" />
+				<column name="max_file_size_override" not-null="false" default="false" />
 			</property>
 			<property name="shared" type="boolean">
 				<column name="shared" not-null="true" default="false" />
@@ -49,11 +49,11 @@
 			<property name="containerQuotaType" column="container_type" type="containerQuotaType"/>
 			<property name="defaultMaxFileSize" column="default_max_file_size" />
 			<property name="defaultMaxFileSizeOverride" type="boolean">
-				<column name="default_max_file_size_override" not-null="true" default="false" />
+				<column name="default_max_file_size_override" not-null="false" default="false" />
 			</property>
 			<property name="defaultAccountQuota" column="default_account_quota" />
 			<property name="defaultAccountQuotaOverride" type="boolean">
-				<column name="default_account_quota_override" not-null="true" default="false" />
+				<column name="default_account_quota_override" not-null="false" default="false" />
 			</property>
 			<property name="shared" type="boolean">
 				<column name="shared" not-null="true" default="false" />
@@ -61,11 +61,11 @@
 			<many-to-one name="domainQuota" column="quota_domain_id" class="org.linagora.linshare.core.domain.entities.DomainQuota"/>
 			<property name="accountQuota" column="account_quota"/>
 			<property name="accountQuotaOverride" type="boolean">
-				<column name="account_quota_override" not-null="false"/>
+				<column name="account_quota_override" not-null="false" default="false" />
 			</property>
 			<property name="maxFileSize" column="max_file_size" />
 			<property name="maxFileSizeOverride" type="boolean">
-				<column name="max_file_size_override" not-null="true" default="false" />
+				<column name="max_file_size_override" not-null="false" default="false" />
 			</property>
 		</subclass>
 
