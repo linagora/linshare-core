@@ -23,13 +23,13 @@ INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification
     quota_type, current_value_for_subdomains)
 VALUES (1, '2a01ac66-a279-11e5-9086-5404a683a462', NOW(), NOW(), NOW(),
 	0, 0, 1,
-	10995116277760, null,
-	10995116277760,
-    1099511627776, true,
+	10000000000000, null,
+	10000000000000,
+    1000000000000, true,
     'DOMAIN_QUOTA', 0);
 -- quota : 10 To
--- quota_warning : 10995116277760 : 10 To
--- default_quota : 1099511627776 : 1 To (1 To per sub domain)
+-- quota_warning : 10000000000000 : 10 To
+-- default_quota : 1000000000000 : 1 To (1 To per sub domain)
 
 
 -- 'CONTAINER_QUOTA', 'USER' for root domain
@@ -43,17 +43,17 @@ INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification
     quota_type, container_type, shared)
 VALUES (11, '26323798-a1a8-11e6-ad47-0800271467bb', NOW(), NOW(), NOW(),
 	1, 0, 0, 1,
-	429496729600, null,
-    429496729600,
-    429496729600, false,
-    10737418240, null,
-    107374182400, null,
+	400000000000, null,
+    400000000000,
+    400000000000, false,
+    10000000000, null,
+    100000000000, null,
     'CONTAINER_QUOTA', 'USER', false);
--- quota : 429496729600 : 400 Go for all users
--- quota_warning : 429496729600 : 400 Go
--- default_quota : 429496729600 : 400 Go
--- default_max_file_size : 10737418240  : 10 Go
--- default_account_quota : 107374182400 : 100 Go
+-- quota : 400000000000 : 400 Go for all users
+-- quota_warning : 400000000000 : 400 Go
+-- default_quota : 400000000000 : 400 Go
+-- default_max_file_size : 10000000000  : 10 Go
+-- default_account_quota : 100000000000 : 100 Go
 
 
 -- 'CONTAINER_QUOTA', 'WORK_GROUP' for root domain
@@ -67,17 +67,17 @@ INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification
     quota_type, container_type, shared)
 VALUES (12, '63de4f14-a1a8-11e6-a369-0800271467bb', NOW(), NOW(), NOW(),
 	1, 0, 0, 1,
-	429496729600, null,
-    429496729600,
-    429496729600, false,
-    10737418240, null,
-    429496729600, null,
+	400000000000, null,
+    400000000000,
+    400000000000, false,
+    10000000000, null,
+    400000000000, null,
     'CONTAINER_QUOTA', 'WORK_GROUP', true);
--- quota : 429496729600 : 400 Go for all workgroups
--- quota_warning : 429496729600 : 400 Go
--- default_quota : 429496729600 : 400 Go
--- default_max_file_size : 10737418240  : 10 Go
--- default_account_quota : 429496729600 : 400 Go, also 400 Go for one workgroup
+-- quota : 400000000000 : 400 Go for all workgroups
+-- quota_warning : 400000000000 : 400 Go
+-- default_quota : 400000000000 : 400 Go
+-- default_max_file_size : 10000000000  : 10 Go
+-- default_account_quota : 400000000000 : 400 Go, also 400 Go for one workgroup
 
 
 

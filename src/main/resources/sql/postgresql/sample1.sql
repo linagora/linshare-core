@@ -139,13 +139,13 @@ VALUES (
     2, '164783e8-b9d1-11e5-87e9-bfc0aac925c2', NOW(), NOW(), NOW(),
 	0, 0,
     2, 1,
-	1099511627776, false,
-	1099511627776,
-    1099511627776, false,
+	1000000000000, false,
+	1000000000000,
+    1000000000000, false,
     'DOMAIN_QUOTA', 0);
 -- quota : 1 To
--- quota_warning : 1099511627776 : 1 To
--- default_quota : 1099511627776 : 1 To (1 To per sub domain)
+-- quota_warning : 1000000000000 : 1 To
+-- default_quota : 1000000000000 : 1 To (1 To per sub domain)
 
 
 -- 'CONTAINER_QUOTA', 'USER' for MyDomain
@@ -162,17 +162,17 @@ VALUES (
     3, '37226d66-b9d2-11e5-b4d8-f7b730449724', NOW(), NOW(), NOW(),
 	2, 0, 0,
     2, 1,
-	429496729600, false,
-    429496729600,
-    429496729600, false,
-    10737418240, false,
-    107374182400, false,
+	400000000000, false,
+    400000000000,
+    400000000000, false,
+    10000000000, false,
+    100000000000, false,
     'CONTAINER_QUOTA', 'USER', false);
--- quota : 429496729600 : 400 Go for all users
--- quota_warning : 429496729600 : 400 Go
--- default_quota : 429496729600 : 400 Go
--- default_max_file_size : 10737418240  : 10 Go
--- default_account_quota : 107374182400 : 100 Go
+-- quota : 400000000000 : 400 Go for all users
+-- quota_warning : 400000000000 : 400 Go
+-- default_quota : 400000000000 : 400 Go
+-- default_max_file_size : 10000000000  : 10 Go
+-- default_account_quota : 100000000000 : 100 Go
 
 
 -- 'CONTAINER_QUOTA', 'WORK_GROUP' for MyDomain
@@ -189,17 +189,17 @@ VALUES (
     4, '6a442450-b9d2-11e5-8c67-5b2367500fc4', NOW(), NOW(), NOW(),
 	2, 0, 0,
     2, 1,
-	429496729600, false,
-    429496729600,
-    429496729600, false,
-    10737418240, false,
-    429496729600, false,
+	400000000000, false,
+    400000000000,
+    400000000000, false,
+    10000000000, false,
+    400000000000, false,
     'CONTAINER_QUOTA', 'WORK_GROUP', true);
--- quota : 429496729600 : 400 Go for all workgroups
--- quota_warning : 429496729600 : 400 Go
--- default_quota : 429496729600 : 400 Go
--- default_max_file_size : 10737418240  : 10 Go
--- default_account_quota : 429496729600 : 400 Go, also 400 Go for one workgroup
+-- quota : 400000000000 : 400 Go for all workgroups
+-- quota_warning : 400000000000 : 400 Go
+-- default_quota : 400000000000 : 400 Go
+-- default_max_file_size : 10000000000  : 10 Go
+-- default_account_quota : 400000000000 : 400 Go, also 400 Go for one workgroup
 
 
 
@@ -215,13 +215,13 @@ VALUES (
     5, 'b69b9d1a-b9d2-11e5-aab9-e337a9ab2b58', NOW(), NOW(), NOW(),
 	0, 0,
     3, 2,
-	1099511627776, false,
-	1099511627776,
-    1099511627776, false,
+	1000000000000, false,
+	1000000000000,
+    1000000000000, false,
     'DOMAIN_QUOTA', 0);
 -- quota : 1 To
--- quota_warning : 1099511627776 : 1 To
--- default_quota : 1099511627776 : 1 To (1 To per sub domain)
+-- quota_warning : 1000000000000 : 1 To
+-- default_quota : 1000000000000 : 1 To (1 To per sub domain)
 
 
 
@@ -239,17 +239,17 @@ VALUES (
     6, 'f8733bd0-b9d2-11e5-a247-2b9505cfdddf', NOW(), NOW(), NOW(),
 	5, 0, 0,
     3, 2,
-	429496729600, false,
-    429496729600,
-    429496729600, false,
-    10737418240, false,
-    107374182400, false,
+	400000000000, false,
+    400000000000,
+    400000000000, false,
+    10000000000, false,
+    100000000000, false,
     'CONTAINER_QUOTA', 'USER', false);
--- quota : 429496729600 : 400 Go for all users
--- quota_warning : 429496729600 : 400 Go
--- default_quota : 429496729600 : 400 Go
--- default_max_file_size : 10737418240  : 10 Go
--- default_account_quota : 107374182400 : 100 Go
+-- quota : 400000000000 : 400 Go for all users
+-- quota_warning : 400000000000 : 400 Go
+-- default_quota : 400000000000 : 400 Go
+-- default_max_file_size : 10000000000  : 10 Go
+-- default_account_quota : 100000000000 : 100 Go
 
 
 -- 'CONTAINER_QUOTA', 'WORK_GROUP' for MyDomain
@@ -266,17 +266,17 @@ VALUES (
     7, '002310d0-b9d3-11e5-9413-d3f63c53e650', NOW(), NOW(), NOW(),
 	5, 0, 0,
     3, 2,
-	429496729600, false,
-    429496729600,
-    429496729600, false,
-    10737418240, false,
-    429496729600, false,
+	400000000000, false,
+    400000000000,
+    400000000000, false,
+    10000000000, false,
+    400000000000, false,
     'CONTAINER_QUOTA', 'WORK_GROUP', true);
--- quota : 429496729600 : 400 Go for all workgroups
--- quota_warning : 429496729600 : 400 Go
--- default_quota : 429496729600 : 400 Go
--- default_max_file_size : 10737418240  : 10 Go
--- default_account_quota : 429496729600 : 400 Go, also 400 Go for one workgroup
+-- quota : 400000000000 : 400 Go for all workgroups
+-- quota_warning : 400000000000 : 400 Go
+-- default_quota : 400000000000 : 400 Go
+-- default_max_file_size : 10000000000  : 10 Go
+-- default_account_quota : 400000000000 : 400 Go, also 400 Go for one workgroup
 
 
 
@@ -297,13 +297,13 @@ VALUES (
     8, '0b866494-b9d4-11e5-be35-afca154efca0', NOW(), NOW(), NOW(),
 	0, 0,
     4, 2,
-	1099511627776, false,
-	1099511627776,
-    1099511627776, false,
+	1000000000000, false,
+	1000000000000,
+    1000000000000, false,
     'DOMAIN_QUOTA', 0);
 -- quota : 1 To
--- quota_warning : 1099511627776 : 1 To
--- default_quota : 1099511627776 : 1 To (1 To per sub domain)
+-- quota_warning : 1000000000000 : 1 To
+-- default_quota : 1000000000000 : 1 To (1 To per sub domain)
 
 
 
@@ -321,17 +321,17 @@ VALUES (
     9, '1515e6e2-b9d4-11e5-997e-0b5792ea886a', NOW(), NOW(), NOW(),
 	8, 0, 0,
     4, 2,
-	429496729600, false,
-    429496729600,
-    429496729600, false,
-    10737418240, false,
-    107374182400, false,
+	400000000000, false,
+    400000000000,
+    400000000000, false,
+    10000000000, false,
+    100000000000, false,
     'CONTAINER_QUOTA', 'USER', false);
--- quota : 429496729600 : 400 Go for all users
--- quota_warning : 429496729600 : 400 Go
--- default_quota : 429496729600 : 400 Go
--- default_max_file_size : 10737418240  : 10 Go
--- default_account_quota : 107374182400 : 100 Go
+-- quota : 400000000000 : 400 Go for all users
+-- quota_warning : 400000000000 : 400 Go
+-- default_quota : 400000000000 : 400 Go
+-- default_max_file_size : 10000000000  : 10 Go
+-- default_account_quota : 100000000000 : 100 Go
 
 
 
@@ -349,17 +349,17 @@ VALUES (
     10, '1f468522-b9d4-11e5-916d-a713a67dd225', NOW(), NOW(), NOW(),
 	8, 0, 0,
     4, 2,
-	429496729600, false,
-    429496729600,
-    429496729600, false,
-    10737418240, false,
-    429496729600, false,
+	400000000000, false,
+    400000000000,
+    400000000000, false,
+    10000000000, false,
+    400000000000, false,
     'CONTAINER_QUOTA', 'WORK_GROUP', true);
--- quota : 429496729600 : 400 Go for all workgroups
--- quota_warning : 429496729600 : 400 Go
--- default_quota : 429496729600 : 400 Go
--- default_max_file_size : 10737418240  : 10 Go
--- default_account_quota : 429496729600 : 400 Go, also 400 Go for one workgroup
+-- quota : 400000000000 : 400 Go for all workgroups
+-- quota_warning : 400000000000 : 400 Go
+-- default_quota : 400000000000 : 400 Go
+-- default_max_file_size : 10000000000  : 10 Go
+-- default_account_quota : 400000000000 : 400 Go, also 400 Go for one workgroup
 
 
 -- Bart ACCOUNT QUOTA
@@ -376,10 +376,10 @@ VALUES (
     43, '1f468522-b9d4-11e5-916d-a713a67dd226', NOW(), NOW(), NOW(),
     6, 0, 0,
     3, 50, 2,
-    107374182400, false,
-    107374182400,
-    107374182400, false,
-    10737418240, false,
+    100000000000, false,
+    100000000000,
+    100000000000, false,
+    10000000000, false,
     false, 'ACCOUNT_QUOTA');
 
 -- -- thread-entry-1-no-dl
