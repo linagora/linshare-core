@@ -41,7 +41,6 @@ import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.notifications.dto.MailContact;
-import org.linagora.linshare.core.notifications.dto.Share;
 
 public class ShareWarnRecipientBeforeExpiryEmailContext extends EmailContext {
 
@@ -114,13 +113,6 @@ public class ShareWarnRecipientBeforeExpiryEmailContext extends EmailContext {
 			return new MailContact(getAnonymousShareEntry().getAnonymousUrl().getContact());
 		}
 		return new MailContact(getShareEntry().getRecipient());
-	}
-
-	public Share getShare() {
-		if (isAnonymous) {
-			return new Share(getAnonymousShareEntry());
-		}
-		return new Share(getShareEntry());
 	}
 
 	@Override

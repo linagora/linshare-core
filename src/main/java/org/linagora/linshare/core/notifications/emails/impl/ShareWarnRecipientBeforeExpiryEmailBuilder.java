@@ -63,11 +63,21 @@ public class ShareWarnRecipientBeforeExpiryEmailBuilder extends EmailBuilder {
 		User shareOwner = emailCtx.getShareOwner();
 		String linshareURL = getLinShareUrl(shareOwner);
 
+		Share share = null;
+		boolean anonymous = emailCtx.isAnonymous();
+		if (anonymous) {
+			share = new Share(emailCtx.getAnonymousShareEntry());
+		} else {
+			share = new Share(emailCtx.getShareEntry());
+			share.setHref(getRecipientShareLink(linshareURL, share.getUuid()));
+		}
+
 		MailConfig cfg = shareOwner.getDomain().getCurrentMailConfiguration();
 		Context ctx = new Context(emailCtx.getLocale());
+		ctx.setVariable("anonymous", anonymous);
 		ctx.setVariable("daysLeft", emailCtx.getDay());
 		ctx.setVariable("linshareURL", linshareURL);
-		ctx.setVariable("share", emailCtx.getShare());
+		ctx.setVariable("share", share);
 		ctx.setVariable("shareOwner", new MailContact(shareOwner));
 		ctx.setVariable("shareRecipient", emailCtx.getMailContactRecipient());
 
@@ -79,15 +89,19 @@ public class ShareWarnRecipientBeforeExpiryEmailBuilder extends EmailBuilder {
 	@Override
 	protected List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
+		Share share = new Share("a-shared-file.txt", true);
+		share.setHref(getRecipientShareLink(fakeLinshareURL, share.getUuid()));
 		Context ctx = newFakeContext(language);
+		ctx.setVariable("anonymous", false);
 		ctx.setVariable("daysLeft", new Integer(8));
-		ctx.setVariable("share", new Share("a-shared-file.txt", true));
+		ctx.setVariable("share", share);
 		ctx.setVariable("shareOwner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
 		ctx.setVariable("shareRecipient", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
 		res.add(ctx);
 		Context ctx2 = newFakeContext(language);
+		ctx2.setVariable("anonymous", true);
 		ctx2.setVariable("daysLeft", new Integer(8));
-		ctx2.setVariable("share", new Share("a-shared-file.txt", true));
+		ctx2.setVariable("share", share);
 		ctx2.setVariable("shareOwner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
 		ctx2.setVariable("shareRecipient", new MailContact("unkown@linshare.org"));
 		res.add(ctx2);
