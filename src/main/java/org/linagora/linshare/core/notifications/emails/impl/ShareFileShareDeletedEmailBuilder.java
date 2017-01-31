@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.notifications.emails.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.Language;
@@ -72,6 +73,7 @@ public class ShareFileShareDeletedEmailBuilder extends EmailBuilder {
 		ctx.setVariable("shareRecipient", new MailContact(shareRecipient));
 		ctx.setVariable("share", new Share(shareEntry));
 		ctx.setVariable("linshareURL", linshareURL);
+		ctx.setVariable("deletionDate", new Date());
 
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
 				emailCtx);
@@ -85,6 +87,7 @@ public class ShareFileShareDeletedEmailBuilder extends EmailBuilder {
 		ctx.setVariable("shareOwner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
 		ctx.setVariable("shareRecipient", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
 		ctx.setVariable("share", new Share("a-shared-file.txt", true));
+		ctx.setVariable("deletionDate", new Date());
 		res.add(ctx);
 		return res;
 	}

@@ -80,11 +80,11 @@ public class ShareNewShareAcknowledgementEmailBuilder extends EmailBuilder {
 
 		List<Document> documents = transform(shareContainer.getDocuments(), true, getLinShareUrl(shareOwner));
 		ctx.setVariable("documents", documents);
-		ctx.setVariable("documents", documents.size());
+		ctx.setVariable("documentsCount", documents.size());
 
 		List<MailContact> recipients = shareContainer.getMailContactRecipients();
 		ctx.setVariable("recipients", recipients);
-		ctx.setVariable("recipients", recipients.size());
+		ctx.setVariable("recipientsCount", recipients.size());
 
 		ctx.setVariable("linshareURL", linshareURL);
 
@@ -111,13 +111,13 @@ public class ShareNewShareAcknowledgementEmailBuilder extends EmailBuilder {
 		documents.add(getNewFakeDocument("second-shared-file.txt", fakeLinshareURL));
 		documents.add(getNewFakeDocument("third-shared-file.txt", fakeLinshareURL));
 		ctx.setVariable("documents", documents);
-		ctx.setVariable("documents", documents.size());
+		ctx.setVariable("documentsCount", documents.size());
 
 		List<MailContact> recipients = Lists.newArrayList();
 		recipients.add(new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
 		recipients.add(new MailContact("unknown@linshare.org"));
 		ctx.setVariable("recipients", recipients);
-		ctx.setVariable("recipients", recipients.size());
+		ctx.setVariable("recipientsCount", recipients.size());
 
 		ctx.setVariable("customSubject", "Some personal subject");
 		ctx.setVariable("customMessage", "Some personal message");
