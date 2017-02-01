@@ -77,6 +77,7 @@ public class UploadRequestUnavailableSpaceEmailBuilder extends GenericUploadRequ
 		ctx.setVariable("body", request.getUploadRequestGroup().getBody());
 		ctx.setVariable("documents", documents);
 		ctx.setVariable("documentsCount", documents.size());
+		ctx.setVariable("maxDepositSize", request.getMaxDepositSize());
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
 		ctx.setVariable("subject", request.getUploadRequestGroup().getSubject());
@@ -115,6 +116,7 @@ public class UploadRequestUnavailableSpaceEmailBuilder extends GenericUploadRequ
 		ctx.setVariable("body", "upload request body message");
 		ctx.setVariable("documents", documents);
 		ctx.setVariable("documentsCount", documents.size());
+		ctx.setVariable("maxDepositSize", new Long(566135489));
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
 		ctx.setVariable("subject", "upload request sujet");

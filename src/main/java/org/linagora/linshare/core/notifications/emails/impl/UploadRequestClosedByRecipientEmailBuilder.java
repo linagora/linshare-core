@@ -72,14 +72,19 @@ public class UploadRequestClosedByRecipientEmailBuilder extends GenericUploadReq
 
 		List<MailContact> recipients = getRecipients(request);
 		List<Document> documents = getDocuments(warnOwner, request, requestUrl);
-
+		long totalSize = 0;
+		for (Document document : documents) {
+			totalSize += document.getSize();
+		}
 		Context ctx = newTmlContext(emailCtx);
 		ctx.setVariable("body", request.getUploadRequestGroup().getBody());
 		ctx.setVariable("documents", documents);
 		ctx.setVariable("documentsCount", documents.size());
+		ctx.setVariable("isgrouped", request.getUploadRequestURLs().size() > 1);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
 		ctx.setVariable("subject", request.getUploadRequestGroup().getSubject());
+		ctx.setVariable("totalSize", totalSize);
 
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
 				emailCtx);
@@ -89,12 +94,12 @@ public class UploadRequestClosedByRecipientEmailBuilder extends GenericUploadReq
 	@Override
 	protected List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
-		res.add(getFakeRecipient(language));
-		res.add(getFakeOwner(language));
+		res.add(getFakeSingleForRecipient(language));
+		res.add(getFakeGroupedForRecipient(language));
 		return res;
 	}
 
-	private Context getFakeOwner(Language language) {
+	private Context getFakeGroupedForRecipient(Language language) {
 		List<MailContact> recipients = Lists.newArrayList();
 		recipients.add(new MailContact("unknown@linshare.org"));
 		recipients.add(new MailContact("unknown2@linshare.org"));
@@ -112,18 +117,20 @@ public class UploadRequestClosedByRecipientEmailBuilder extends GenericUploadReq
 		document.setMine(true);
 		documents.add(document);
 
-		Context ctx = newFakeContext(language, true);
+		Context ctx = newFakeContext(language, false);
 		ctx.setVariable("body", "upload request body message");
 		ctx.setVariable("documents", documents);
 		ctx.setVariable("documentsCount", documents.size());
+		ctx.setVariable("isgrouped", true);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
 		ctx.setVariable("subject", "upload request sujet");
+		ctx.setVariable("totalSize", new Long(5682642));
 
 		return ctx;
 	}
 
-	private Context getFakeRecipient(Language language) {
+	private Context getFakeSingleForRecipient(Language language) {
 		List<MailContact> recipients = Lists.newArrayList();
 		recipients.add(new MailContact("unknown@linshare.org"));
 		recipients.add(new MailContact("unknown2@linshare.org"));
@@ -144,9 +151,11 @@ public class UploadRequestClosedByRecipientEmailBuilder extends GenericUploadReq
 		ctx.setVariable("body", "upload request body message");
 		ctx.setVariable("documents", documents);
 		ctx.setVariable("documentsCount", documents.size());
+		ctx.setVariable("isgrouped", false);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
 		ctx.setVariable("subject", "upload request sujet");
+		ctx.setVariable("totalSize", new Long(5682642));
 
 		return ctx;
 	}
