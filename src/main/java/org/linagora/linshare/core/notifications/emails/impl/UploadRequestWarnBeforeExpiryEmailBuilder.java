@@ -77,6 +77,7 @@ public class UploadRequestWarnBeforeExpiryEmailBuilder extends GenericUploadRequ
 		ctx.setVariable("body", request.getUploadRequestGroup().getBody());
 		ctx.setVariable("documents", documents);
 		ctx.setVariable("documentsCount", documents.size());
+		ctx.setVariable("isgrouped", request.getUploadRequestURLs().size() > 1);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
 		ctx.setVariable("subject", request.getUploadRequestGroup().getSubject());
@@ -89,12 +90,43 @@ public class UploadRequestWarnBeforeExpiryEmailBuilder extends GenericUploadRequ
 	@Override
 	protected List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
-		res.add(getFakeRecipient(language));
 		res.add(getFakeOwner(language));
+		res.add(getFakeRecipient(language));
+		res.add(getFakeOwnerGrouped(language));
+		res.add(getFakeRecipientGrouped(language));
 		return res;
 	}
 
 	private Context getFakeOwner(Language language) {
+		List<MailContact> recipients = Lists.newArrayList();
+		recipients.add(new MailContact("unknown@linshare.org"));
+		
+		List<Document> documents = Lists.newArrayList();
+		Document document = getNewFakeDocument("a-upload-request-file.txt", fakeLinshareURL);
+		document.setSize(65985L);
+		document.setCreationDate(new Date());
+		document.setHref(fakeLinshareURL + "/#ownerlink");
+		documents.add(document);
+		document = getNewFakeDocument("my-upload-request-file.txt", fakeLinshareURL);
+		document.setSize(659L);
+		document.setCreationDate(new Date());
+		document.setHref(fakeLinshareURL + "/#ownerlink");
+		document.setMine(true);
+		documents.add(document);
+		
+		Context ctx = newFakeContext(language, true, false);
+		ctx.setVariable("body", "upload request body message");
+		ctx.setVariable("documents", documents);
+		ctx.setVariable("documentsCount", documents.size());
+		ctx.setVariable("isgrouped", false);
+		ctx.setVariable("recipients", recipients);
+		ctx.setVariable("recipientsCount", recipients.size());
+		ctx.setVariable("subject", "upload request sujet");
+		
+		return ctx;
+	}
+
+	private Context getFakeOwnerGrouped(Language language) {
 		List<MailContact> recipients = Lists.newArrayList();
 		recipients.add(new MailContact("unknown@linshare.org"));
 		recipients.add(new MailContact("unknown2@linshare.org"));
@@ -112,10 +144,11 @@ public class UploadRequestWarnBeforeExpiryEmailBuilder extends GenericUploadRequ
 		document.setMine(true);
 		documents.add(document);
 
-		Context ctx = newFakeContext(language, true);
+		Context ctx = newFakeContext(language, true, false);
 		ctx.setVariable("body", "upload request body message");
 		ctx.setVariable("documents", documents);
 		ctx.setVariable("documentsCount", documents.size());
+		ctx.setVariable("isgrouped", true);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
 		ctx.setVariable("subject", "upload request sujet");
@@ -126,12 +159,12 @@ public class UploadRequestWarnBeforeExpiryEmailBuilder extends GenericUploadRequ
 	private Context getFakeRecipient(Language language) {
 		List<MailContact> recipients = Lists.newArrayList();
 		recipients.add(new MailContact("unknown@linshare.org"));
-		recipients.add(new MailContact("unknown2@linshare.org"));
 
 		List<Document> documents = Lists.newArrayList();
 		Document document = getNewFakeDocument("a-upload-request-file.txt", fakeLinshareURL);
 		document.setSize(65985L);
 		document.setCreationDate(new Date());
+		document.setMine(false);
 		documents.add(document);
 		document = getNewFakeDocument("my-upload-request-file.txt", fakeLinshareURL);
 		document.setSize(659L);
@@ -144,6 +177,37 @@ public class UploadRequestWarnBeforeExpiryEmailBuilder extends GenericUploadRequ
 		ctx.setVariable("body", "upload request body message");
 		ctx.setVariable("documents", documents);
 		ctx.setVariable("documentsCount", documents.size());
+		ctx.setVariable("isgrouped", false);
+		ctx.setVariable("recipients", recipients);
+		ctx.setVariable("recipientsCount", recipients.size());
+		ctx.setVariable("subject", "upload request sujet");
+
+		return ctx;
+	}
+
+	private Context getFakeRecipientGrouped(Language language) {
+		List<MailContact> recipients = Lists.newArrayList();
+		recipients.add(new MailContact("unknown@linshare.org"));
+		recipients.add(new MailContact("unknown2@linshare.org"));
+
+		List<Document> documents = Lists.newArrayList();
+		Document document = getNewFakeDocument("a-upload-request-file.txt", fakeLinshareURL);
+		document.setSize(65985L);
+		document.setCreationDate(new Date());
+		document.setMine(false);
+		documents.add(document);
+		document = getNewFakeDocument("my-upload-request-file.txt", fakeLinshareURL);
+		document.setSize(659L);
+		document.setCreationDate(new Date());
+		document.setHref(fakeLinshareURL + "/#ownerlink");
+		document.setMine(true);
+		documents.add(document);
+
+		Context ctx = newFakeContext(language, false);
+		ctx.setVariable("body", "upload request body message");
+		ctx.setVariable("documents", documents);
+		ctx.setVariable("documentsCount", documents.size());
+		ctx.setVariable("isgrouped", true);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
 		ctx.setVariable("subject", "upload request sujet");

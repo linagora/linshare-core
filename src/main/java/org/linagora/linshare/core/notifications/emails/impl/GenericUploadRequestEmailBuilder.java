@@ -138,10 +138,16 @@ public abstract class GenericUploadRequestEmailBuilder extends EmailBuilder {
 	}
 
 	protected Context newFakeContext(Language language, boolean warnOwner) {
+		return newFakeContext(language, warnOwner, true);
+	}
+
+	protected Context newFakeContext(Language language, boolean warnOwner, boolean addRecipient) {
 		Context ctx = super.newFakeContext(language);
 		ctx.setVariable("requestOwner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
-		ctx.setVariable("requestRecipient", new MailContact("unknown@linshare.org"));
-		ctx.setVariable("request", new Request("My test subject", new Date(), getFakeExpirationDate(), 8, 5));
+		if (addRecipient) {
+			ctx.setVariable("requestRecipient", new MailContact("unknown@linshare.org"));
+		}
+		ctx.setVariable("request", new Request("My test subject", new Date(), getFakeExpirationDate(), 8, 1));
 		if (warnOwner) {
 			ctx.setVariable("requestUrl", fakeLinshareURL);
 		} else {

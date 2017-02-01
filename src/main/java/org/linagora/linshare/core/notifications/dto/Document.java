@@ -57,7 +57,7 @@ public class Document {
 
 	protected Date expirationDate;
 
-	protected boolean displayHref;
+	protected Boolean displayHref;
 
 	protected Boolean mine;
 
@@ -135,11 +135,11 @@ public class Document {
 		this.href = href;
 	}
 
-	public boolean isDisplayHref() {
+	public Boolean isDisplayHref() {
 		return displayHref;
 	}
 
-	public void setDisplayHref(boolean displayHref) {
+	public void setDisplayHref(Boolean displayHref) {
 		this.displayHref = displayHref;
 	}
 
@@ -157,6 +157,10 @@ public class Document {
 
 	public void setExpirationDate(Date expirationDate) {
 		this.expirationDate = expirationDate;
+	}
+
+	public Boolean getDisplayHref() {
+		return displayHref;
 	}
 
 	public Boolean getMine() {
