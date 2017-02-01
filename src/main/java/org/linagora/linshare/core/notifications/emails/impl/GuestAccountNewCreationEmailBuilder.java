@@ -73,7 +73,6 @@ public class GuestAccountNewCreationEmailBuilder extends EmailBuilder {
 
 		Context ctx = new Context(emailCtx.getLocale());
 		ctx.setVariable("creator", new MailContact(creator));
-		ctx.setVariable("customMessage", null);
 		ctx.setVariable("guest", new MailContact(guest));
 		ctx.setVariable("guestExpirationDate", guest.getExpirationDate());
 		ctx.setVariable("linshareURL", linshareURL);
@@ -89,6 +88,7 @@ public class GuestAccountNewCreationEmailBuilder extends EmailBuilder {
 		Context ctx = newFakeContext(language);
 		ctx.setVariable("creator", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
 		ctx.setVariable("guest", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
+		ctx.setVariable("guestExpirationDate", getFakeExpirationDate());
 		ctx.setVariable("resetLink", getResetLink(fakeLinshareURL, "cb1443d0-a34f-4d0b-92e4-c19d4eeb7fae"));
 		res.add(ctx);
 		return res;
