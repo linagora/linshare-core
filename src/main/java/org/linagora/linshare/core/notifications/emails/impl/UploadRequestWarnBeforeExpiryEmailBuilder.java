@@ -68,6 +68,10 @@ public class UploadRequestWarnBeforeExpiryEmailBuilder extends GenericUploadRequ
 		UploadRequestUrl requestUrl = emailCtx.getRequestUrl();
 		UploadRequest request = emailCtx.getUploadRequest();
 
+		Date d2 = request.getNotificationDate();
+		Date d1 = request.getExpiryDate();
+		int days = (int)( (d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
+
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 
 		List<MailContact> recipients = getRecipients(request);
@@ -80,6 +84,7 @@ public class UploadRequestWarnBeforeExpiryEmailBuilder extends GenericUploadRequ
 		ctx.setVariable("isgrouped", request.getUploadRequestURLs().size() > 1);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
+		ctx.setVariable("remainingDays", days);
 		ctx.setVariable("subject", request.getUploadRequestGroup().getSubject());
 
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
@@ -113,7 +118,7 @@ public class UploadRequestWarnBeforeExpiryEmailBuilder extends GenericUploadRequ
 		document.setHref(fakeLinshareURL + "/#ownerlink");
 		document.setMine(true);
 		documents.add(document);
-		
+
 		Context ctx = newFakeContext(language, true, false);
 		ctx.setVariable("body", "upload request body message");
 		ctx.setVariable("documents", documents);
@@ -121,6 +126,7 @@ public class UploadRequestWarnBeforeExpiryEmailBuilder extends GenericUploadRequ
 		ctx.setVariable("isgrouped", false);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
+		ctx.setVariable("remainingDays", 8);
 		ctx.setVariable("subject", "upload request sujet");
 		
 		return ctx;
@@ -145,12 +151,14 @@ public class UploadRequestWarnBeforeExpiryEmailBuilder extends GenericUploadRequ
 		documents.add(document);
 
 		Context ctx = newFakeContext(language, true, false);
+		ctx.setVariable("remainingDays", 8);
 		ctx.setVariable("body", "upload request body message");
 		ctx.setVariable("documents", documents);
 		ctx.setVariable("documentsCount", documents.size());
 		ctx.setVariable("isgrouped", true);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
+		ctx.setVariable("remainingDays", 8);
 		ctx.setVariable("subject", "upload request sujet");
 
 		return ctx;
@@ -180,6 +188,7 @@ public class UploadRequestWarnBeforeExpiryEmailBuilder extends GenericUploadRequ
 		ctx.setVariable("isgrouped", false);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
+		ctx.setVariable("remainingDays", 8);
 		ctx.setVariable("subject", "upload request sujet");
 
 		return ctx;
@@ -210,6 +219,7 @@ public class UploadRequestWarnBeforeExpiryEmailBuilder extends GenericUploadRequ
 		ctx.setVariable("isgrouped", true);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
+		ctx.setVariable("remainingDays", 8);
 		ctx.setVariable("subject", "upload request sujet");
 
 		return ctx;
