@@ -287,11 +287,10 @@ public abstract class EmailBuilder implements IEmailBuilder {
 			TemplateSpec subjectSpec = new TemplateSpec(type.toString() + ":subject", null, TemplateMode.TEXT,
 					templateResolutionAttributes);
 			String subject = templateEngine.process(subjectSpec, ctx);
+			// Remove all carriage return because email RFC does not supported
+			// carriage return in the subject field.
+			subject = subject.replace("\n", "").trim();
 			ctx.setVariable(CST_MAIL_SUBJECT_VAR_NAME, subject);
-
-			// TODO manage images integration.
-			// "<img src='cid:image.part.1@linshare.org' /><br/><br/>";
-			// .add("image", displayLogo ? LINSHARE_LOGO : "")
 
 			TemplateSpec templateSpec = new TemplateSpec(type.toString(), null, null, templateResolutionAttributes);
 			// TemplateSpec templateSpec = new TemplateSpec(type.toString(),
