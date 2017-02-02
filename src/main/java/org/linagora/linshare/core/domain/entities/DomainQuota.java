@@ -48,6 +48,19 @@ public class DomainQuota extends Quota {
 		this.currentValueForSubdomains = 0L;
 	}
 
+	public DomainQuota(DomainQuota quota) {
+		this.domain = quota.getDomain();
+		this.parentDomain = quota.getParentDomain();
+		this.currentValue = quota.getCurrentValue();
+		this.lastValue = quota.getLastValue();
+		this.quota = quota.getQuota();
+		this.defaultQuota = quota.getDefaultQuota();
+		this.quotaOverride = quota.getQuotaOverride();
+		this.defaultQuotaOverride = quota.getDefaultQuotaOverride();
+		this.quotaWarning = quota.getQuotaWarning();
+		this.maintenance = quota.getMaintenance();
+	}
+
 	public Long getCurrentValueForSubdomains() {
 		return currentValueForSubdomains;
 	}

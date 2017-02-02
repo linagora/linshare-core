@@ -120,6 +120,7 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
+		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
 		this.executeSqlScript("import-tests-quota-other.sql", false);
 		ldapconnexion  = new LdapConnection(identifier, providerUrl, securityAuth);
 		Account actor = accountService.findByLsUuid("root@localhost.localdomain");

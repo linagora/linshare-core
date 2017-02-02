@@ -82,9 +82,9 @@ public class AccountQuotaServiceImpl extends GenericServiceImpl<Account, Quota> 
 		AccountQuota entity = find(actor, aq.getUuid());
 		// checkUpdatePermission(actor, owner, AccountQuota.class,
 		// BusinessErrorCode.QUOTA_UNAUTHORIZED, null);
-		entity.setBusinessMaxFileSize(aq.getMaxFileSize());
-		entity.setBusinessQuota(aq.getQuota());
-		entity.setBusinessMaintenance(aq.getMaintenance());
+		entity.setMaxFileSize(aq.getMaxFileSize());
+		entity.setQuota(aq.getQuota());
+		entity.setMaintenance(aq.getMaintenance());
 		return business.update(entity);
 	}
 

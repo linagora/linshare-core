@@ -126,6 +126,7 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 
 	@Before
 	public void setUp() throws Exception {
+		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
 		this.executeSqlScript("import-tests-quota-other.sql", false);
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		datas = new LoadingServiceTestDatas(userRepository);

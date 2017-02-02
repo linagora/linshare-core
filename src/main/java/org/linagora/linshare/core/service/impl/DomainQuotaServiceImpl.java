@@ -81,10 +81,7 @@ public class DomainQuotaServiceImpl extends GenericServiceImpl<Account, Quota> i
 		// BusinessErrorCode.QUOTA_UNAUTHORIZED, null, domain);
 		// TODO FMA Quota manage override and maintenance flags.
 		DomainQuota entity = find(actor, dq.getUuid());
-		entity.setBusinessQuota(dq.getQuota());
-//		entity.setBusinessQuotaWarning(dq.getQuotaWarning());
-		entity.setBusinessMaintenance(dq.getMaintenance());
-		return business.update(entity);
+		return business.update(entity, dq);
 	}
 
 }

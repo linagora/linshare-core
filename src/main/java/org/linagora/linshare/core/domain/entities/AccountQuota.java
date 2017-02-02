@@ -76,12 +76,6 @@ public class AccountQuota extends Quota {
 		this.containerQuota = containerQuota;
 	}
 
-	public void setBusinessMaxFileSize(Long maxFileSize) {
-		if (maxFileSize != null) {
-			this.maxFileSize = maxFileSize;
-		}
-	}
-
 	public Boolean getShared() {
 		return shared;
 	}

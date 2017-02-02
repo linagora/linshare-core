@@ -41,4 +41,9 @@ public interface DomainQuotaRepository extends GenericQuotaRepository<DomainQuot
 	DomainQuota find(AbstractDomain domain);
 
 	Long sumOfCurrentValueForSubdomains(AbstractDomain domain);
+
+	Long cascadeMaintenanceMode(AbstractDomain domain, boolean maintenance);
+
+	Long cascadeDefaultQuota(AbstractDomain domain, Long quota);
+
 }

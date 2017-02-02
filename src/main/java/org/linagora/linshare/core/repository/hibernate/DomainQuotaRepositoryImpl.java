@@ -33,15 +33,23 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.sql.SQLException;
 import java.util.List;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.type.LongType;
+import org.linagora.linshare.core.domain.constants.QuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.repository.DomainQuotaRepository;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class DomainQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<DomainQuota>
@@ -55,7 +63,11 @@ public class DomainQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Domain
 	public DomainQuota find(AbstractDomain domain) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("domain", domain));
-		return DataAccessUtils.singleResult(findByCriteria(criteria));
+		DomainQuota quota = DataAccessUtils.singleResult(findByCriteria(criteria));
+		if (quota != null) {
+			this.getHibernateTemplate().refresh(quota);
+		}
+		return quota;
 	}
 
 	@Override
@@ -83,5 +95,167 @@ public class DomainQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Domain
 			return DataAccessUtils.longResult(findByCriteria(criteria));
 		}
 		return 0L;
+	}
+
+	@Override
+	public  Long cascadeMaintenanceMode(AbstractDomain domain, boolean maintenance) {
+		HibernateCallback<Long> action = null;
+		if (domain.isRootDomain()) {
+			action = new HibernateCallback<Long>() {
+				public Long doInHibernate(final Session session)
+						throws HibernateException, SQLException {
+					final Query query = session.createQuery("UPDATE Quota SET maintenance = :maintenance");
+					query.setParameter("maintenance", maintenance);
+					return (long) query.executeUpdate();
+				}
+			};
+		} else {
+			action = new HibernateCallback<Long>() {
+				public Long doInHibernate(final Session session)
+						throws HibernateException, SQLException {
+					final Query query = session.createQuery("UPDATE Quota SET maintenance = :maintenance WHERE domain = :domain OR parentDomain = :domain");
+					query.setParameter("domain", domain);
+					query.setParameter("maintenance", maintenance);
+					return (long) query.executeUpdate();
+				}
+			};
+		}
+		Long updatedCounter = getHibernateTemplate().execute(action);
+		logger.debug(updatedCounter + " Quota have been updated.");
+		return updatedCounter;
+	}
+
+	@Override
+	public Long cascadeDefaultQuota(AbstractDomain domain, Long quota) {
+		// update quota of children
+		Long count = 0L;
+		count += cascadeDefaultQuotaToQuotaOfChildrenDomains(domain, quota);
+		// update default quota of children
+		count += cascadeDefaultQuotaToDefaultQuotaOfChildrenDomains(domain, quota);
+		// update default quota of children of children if exists
+		// TODO manage sub domains
+		List<Long> quotaIdList = getQuotaIdforDefaultQuotaInSubDomains(domain, quota, QuotaType.DOMAIN_QUOTA);
+		count += cascadeDefaultQuotaToSubDomainsDefaultQuota(domain, quota, quotaIdList);
+		quotaIdList = getQuotaIdforQuotaInSubDomains(domain, quota, QuotaType.DOMAIN_QUOTA);
+		count += cascadeDefaultQuotaToSubDomainsQuota(domain, quota, quotaIdList);
+		return count;
+	}
+
+	public Long cascadeDefaultQuotaToQuotaOfChildrenDomains(AbstractDomain domain, Long quota) {
+		HibernateCallback<Long> action = new HibernateCallback<Long>() {
+			public Long doInHibernate(final Session session)
+					throws HibernateException, SQLException {
+				final Query query = session.createQuery("UPDATE DomainQuota SET quota = :quota WHERE parentDomain = :parentDomain AND quotaOverride = false");
+				query.setParameter("quota", quota);
+				query.setParameter("parentDomain", domain);
+				return (long) query.executeUpdate();
+			}
+		};
+		Long updatedCounter = getHibernateTemplate().execute(action);
+		logger.debug(" {} quota of DomainQuota have been updated.", updatedCounter);
+		return updatedCounter;
+	}
+
+	public Long cascadeDefaultQuotaToDefaultQuotaOfChildrenDomains(AbstractDomain domain, Long quota) {
+		HibernateCallback<Long> action = new HibernateCallback<Long>() {
+			public Long doInHibernate(final Session session)
+					throws HibernateException, SQLException {
+				final Query query = session.createQuery("UPDATE DomainQuota SET defaultQuota = :defaultQuota WHERE parentDomain = :parentDomain AND defaultQuotaOverride = false");
+				query.setParameter("defaultQuota", quota);
+				query.setParameter("parentDomain", domain);
+				return (long) query.executeUpdate();
+			}
+		};
+		Long updatedCounter = getHibernateTemplate().execute(action);
+		logger.debug(" {} quota of DomainQuota have been updated.", updatedCounter);
+		return updatedCounter;
+	}
+
+	public List<Long> getQuotaIdforDefaultQuotaInSubDomains(AbstractDomain domain, Long quota, QuotaType type) {
+		HibernateCallback<List<Long>> action = new HibernateCallback<List<Long>>() {
+			public List<Long> doInHibernate(final Session session)
+					throws HibernateException, SQLException {
+				StringBuilder sb = new StringBuilder();
+				sb.append("SELECT child.id AS child_id FROM quota AS father");
+				sb.append(" JOIN quota AS child");
+				sb.append(" ON child.domain_parent_id = father.domain_id");
+				sb.append(" AND child.quota_type = :domainType ");
+				sb.append(" AND father.domain_parent_id = :domainId ");
+				sb.append(" AND father.default_quota_override = false");
+				sb.append(" WHERE father.quota_type = :domainType");
+				sb.append(" AND child.default_quota_override = false");
+				sb.append(";");
+				final SQLQuery query = session.createSQLQuery(sb.toString());
+				query.setLong("domainId", domain.getPersistenceId());
+				query.addScalar("child_id", LongType.INSTANCE);
+				query.setString("domainType", type.name());
+				@SuppressWarnings("unchecked")
+				List<Long> res = query.list();
+				logger.debug("child_ids :"  + res);
+				return res;
+			}
+		};
+		return getHibernateTemplate().execute(action);
+	}
+
+	public Long cascadeDefaultQuotaToSubDomainsDefaultQuota(AbstractDomain domain, Long quota, List<Long> quotaIdList) {
+		HibernateCallback<Long> action = new HibernateCallback<Long>() {
+			public Long doInHibernate(final Session session)
+					throws HibernateException, SQLException {
+				StringBuilder sb = new StringBuilder();
+				sb.append("UPDATE Quota SET default_quota = :quota WHERE id IN :list_quota_id ;");
+				final Query query = session.createSQLQuery(sb.toString());
+				query.setLong("quota", quota);
+				query.setParameterList("list_quota_id", quotaIdList);
+				return (long) query.executeUpdate();
+			}
+		};
+		long updatedCounter = getHibernateTemplate().execute(action);
+		logger.debug(" {} defaultQuota of DomainQuota have been updated.", updatedCounter );
+		return updatedCounter;
+	}
+
+	public List<Long> getQuotaIdforQuotaInSubDomains(AbstractDomain domain, Long quota, QuotaType type) {
+		HibernateCallback<List<Long>> action = new HibernateCallback<List<Long>>() {
+			public List<Long> doInHibernate(final Session session)
+					throws HibernateException, SQLException {
+				StringBuilder sb = new StringBuilder();
+				sb.append("SELECT child.id AS child_id FROM quota AS father");
+				sb.append(" JOIN quota AS child");
+				sb.append(" ON child.domain_parent_id = father.domain_id");
+				sb.append(" AND child.quota_type = :domainType ");
+				sb.append(" AND father.domain_parent_id = :domainId ");
+				sb.append(" AND father.quota_override = false");
+				sb.append(" WHERE father.quota_type = :domainType");
+				sb.append(" AND child.quota_override = false");
+				sb.append(";");
+				final SQLQuery query = session.createSQLQuery(sb.toString());
+				query.setLong("domainId", domain.getPersistenceId());
+				query.addScalar("child_id", LongType.INSTANCE);
+				query.setString("domainType", type.name());
+				@SuppressWarnings("unchecked")
+				List<Long> res = query.list();
+				logger.debug("child_ids :"  + res);
+				return res;
+			}
+		};
+		return getHibernateTemplate().execute(action);
+	}
+
+	public Long cascadeDefaultQuotaToSubDomainsQuota(AbstractDomain domain, Long quota, List<Long> quotaIdList) {
+		HibernateCallback<Long> action = new HibernateCallback<Long>() {
+			public Long doInHibernate(final Session session)
+					throws HibernateException, SQLException {
+				StringBuilder sb = new StringBuilder();
+				sb.append("UPDATE Quota SET quota = :quota WHERE id IN :list_quota_id ;");
+				final Query query = session.createSQLQuery(sb.toString());
+				query.setLong("quota", quota);
+				query.setParameterList("list_quota_id", quotaIdList);
+				return (long) query.executeUpdate();
+			}
+		};
+		long updatedCounter = getHibernateTemplate().execute(action);
+		logger.debug(" {} quota of DomainQuota have been updated.", updatedCounter );
+		return updatedCounter;
 	}
 }

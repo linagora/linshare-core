@@ -801,13 +801,22 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 
 	private void createDomainQuotaAndContainerQuota(AbstractDomain domain) throws BusinessException {
 		AbstractDomain parentDomain = domain.getParentDomain();
+		boolean isSubdomain = domain.getDomainType().equals(DomainType.SUBDOMAIN);
 		// Quota for the new domain
 		DomainQuota parentDomainQuota = domainQuotaBusinessService.find(parentDomain);
 		DomainQuota domainQuota = new DomainQuota(parentDomainQuota, domain);
+		if (isSubdomain) {
+			domainQuota.setDefaultQuota(null);
+			domainQuota.setDefaultQuotaOverride(null);
+		}
 		domainQuotaBusinessService.create(domainQuota);
 		// Quota containers for the new domain.
 		for (ContainerQuota parentContainerQuota : containerQuotaBusinessService.findAll(parentDomain)) {
 			ContainerQuota cq = new ContainerQuota(domain, parentDomain, domainQuota, parentContainerQuota);
+			if (isSubdomain) {
+				cq.setDefaultQuota(null);
+				cq.setDefaultQuotaOverride(null);
+			}
 			containerQuotaBusinessService.create(cq);
 		}
 	}

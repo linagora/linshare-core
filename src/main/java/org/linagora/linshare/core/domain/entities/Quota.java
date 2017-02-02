@@ -191,18 +191,6 @@ public abstract class Quota {
 		this.maintenance = maintenance;
 	}
 
-	public void setBusinessQuota(Long quota) {
-		if (quota != null) {
-			this.quota = quota;
-		}
-	}
-
-	public void setBusinessMaintenance(Boolean maintenance) {
-		if (maintenance != null) {
-			this.maintenance = maintenance;
-		}
-	}
-
 	public Boolean getDefaultQuotaOverride() {
 		return defaultQuotaOverride;
 	}

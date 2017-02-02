@@ -58,7 +58,11 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("domain", domain));
 		criteria.add(Restrictions.eq("containerQuotaType", ContainerQuotaType));
-		return DataAccessUtils.singleResult(findByCriteria(criteria));
+		ContainerQuota quota = DataAccessUtils.singleResult(findByCriteria(criteria));
+		if (quota != null) {
+			this.getHibernateTemplate().refresh(quota);
+		}
+		return quota;
 	}
 
 	@Override

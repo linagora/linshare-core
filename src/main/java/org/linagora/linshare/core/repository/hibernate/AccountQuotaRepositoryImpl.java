@@ -57,7 +57,11 @@ public class AccountQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Accou
 	public AccountQuota find(Account account) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("account", account));
-		return DataAccessUtils.singleResult(findByCriteria(criteria));
+		AccountQuota quota = DataAccessUtils.singleResult(findByCriteria(criteria));
+		if (quota != null) {
+			this.getHibernateTemplate().refresh(quota);
+		}
+		return quota;
 	}
 
 	@Override

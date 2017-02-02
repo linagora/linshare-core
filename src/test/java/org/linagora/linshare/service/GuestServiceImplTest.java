@@ -127,6 +127,7 @@ public class GuestServiceImplTest extends
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
+		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
 		this.executeSqlScript("import-tests-quota-other.sql", false);
 		wiser.start();
 		root = rootUserRepository

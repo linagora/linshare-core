@@ -93,10 +93,10 @@ public class ContainerQuota extends Quota {
 			this.shared = true;
 		}
 
-		this.maxFileSize = parentContainerQuota.getMaxFileSize();
-		this.maxFileSizeOverride = parentContainerQuota.getMaxFileSizeOverride();
-		this.accountQuota = parentContainerQuota.getAccountQuota();
-		this.accountQuotaOverride = parentContainerQuota.getAccountQuotaOverride();
+		this.maxFileSize = parentContainerQuota.getDefaultMaxFileSize();
+		this.maxFileSizeOverride = false;
+		this.accountQuota = parentContainerQuota.getDefaultAccountQuota();
+		this.accountQuotaOverride = false;
 	}
 
 	/**

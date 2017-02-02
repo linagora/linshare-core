@@ -151,6 +151,7 @@ public class UserServiceImplTest extends
 		wiser.start();
 
 		logger.debug(LinShareTestConstants.END_SETUP);
+		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
 		this.executeSqlScript("import-tests-quota-other.sql", false);
 	}
 

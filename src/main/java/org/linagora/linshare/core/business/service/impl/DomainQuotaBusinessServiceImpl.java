@@ -41,10 +41,14 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
-import org.linagora.linshare.core.repository.DomainQuotaRepository;
 import org.linagora.linshare.core.repository.ContainerQuotaRepository;
+import org.linagora.linshare.core.repository.DomainQuotaRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DomainQuotaBusinessServiceImpl implements DomainQuotaBusinessService {
+
+	Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	private final DomainQuotaRepository repository;
 	private final ContainerQuotaRepository containerQuotaRepository;
@@ -85,7 +89,33 @@ public class DomainQuotaBusinessServiceImpl implements DomainQuotaBusinessServic
 	}
 
 	@Override
-	public DomainQuota update(DomainQuota entity) throws BusinessException {
+	public DomainQuota update(DomainQuota entity, DomainQuota dq) throws BusinessException {
+
+		// quota
+		entity.setQuota(dq.getQuota());
+		entity.setQuotaOverride(dq.getQuotaOverride());
+
+		// maintenance
+		if (!entity.getMaintenance().equals(dq.getMaintenance())) {
+			repository.cascadeMaintenanceMode(entity.getDomain(), dq.getMaintenance());
+		}
+		entity.setMaintenance(dq.getMaintenance());
+
+		// default quota
+		if (!entity.getDefaultQuotaOverride().equals(dq.getDefaultQuotaOverride())) {
+			if (dq.getDefaultQuotaOverride()) {
+				// from false to true => need to cascade
+				repository.cascadeDefaultQuota(entity.getDomain(), dq.getDefaultQuota());
+			} else {
+				// from true to false => need to cascade
+				// restore default value from parent ?
+				repository.cascadeDefaultQuota(entity.getDomain(), dq.getDefaultQuota());
+			}
+		} else if (!entity.getDefaultQuota().equals(dq.getDefaultQuota())) {
+			repository.cascadeDefaultQuota(entity.getDomain(), dq.getDefaultQuota());
+		}
+		entity.setDefaultQuota(dq.getDefaultQuota());
+		entity.setDefaultQuotaOverride(dq.getDefaultQuotaOverride());
 		return repository.update(entity);
 	}
 

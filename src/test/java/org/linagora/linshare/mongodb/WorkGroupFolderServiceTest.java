@@ -95,6 +95,7 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 	@Before
 	public void setUp() throws Exception {
 		logger.debug("Begin setUp");
+		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		jane = datas.getUser2();

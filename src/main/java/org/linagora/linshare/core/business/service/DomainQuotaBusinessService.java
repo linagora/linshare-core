@@ -53,7 +53,8 @@ public interface DomainQuotaBusinessService {
 
 	DomainQuota create(DomainQuota entity) throws BusinessException;
 
-	DomainQuota update(DomainQuota entity) throws BusinessException;
+	DomainQuota update(DomainQuota entity, DomainQuota dq) throws BusinessException;
 
 	DomainQuota updateByBatch(DomainQuota entity);
+
 }
