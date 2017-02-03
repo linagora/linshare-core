@@ -43,7 +43,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountQuotaRepository;
 import org.linagora.linshare.core.repository.ContainerQuotaRepository;
 
-public class ContainerQuotaBusinessServiceImpl implements ContainerQuotaBusinessService {
+public class ContainerQuotaBusinessServiceImpl extends GenericQuotaBusinessServiceImpl implements ContainerQuotaBusinessService {
 
 	private final ContainerQuotaRepository repository;
 	private final AccountQuotaRepository accountQuotaRepository;
@@ -86,8 +86,62 @@ public class ContainerQuotaBusinessServiceImpl implements ContainerQuotaBusiness
 	}
 
 	@Override
-	public ContainerQuota update(ContainerQuota entity) throws BusinessException {
+	public ContainerQuota update(ContainerQuota entity, ContainerQuota dto) throws BusinessException {
+		// carefull you and not update xxxxOverride fields for root domain and its relative quota containers
+		// quota
+		entity.setQuota(dto.getQuota());
+		entity.setQuotaOverride(dto.getQuotaOverride());
+
+		// maintenance
+		if (!entity.getMaintenance().equals(dto.getMaintenance())) {
+			repository.cascadeMaintenanceMode(entity, dto.getMaintenance());
+		}
+		entity.setMaintenance(dto.getMaintenance());
+
+		entity.setMaxFileSize(dto.getMaxFileSize());
+		entity.setMaxFileSizeOverride(dto.getMaxFileSizeOverride());
+
+		entity.setAccountQuota(dto.getAccountQuota());
+		entity.setAccountQuotaOverride(dto.getAccountQuotaOverride());
+
+		cascadeDefaultQuota(entity, dto);
+		cascadeDefaultMaxFileSize(entity, dto);
+		cascadeDefaultAccountQuota(entity, dto);
+
 		return repository.update(entity);
+	}
+
+	private void cascadeDefaultAccountQuota(ContainerQuota entity, ContainerQuota dto) {
+		Long toDefaultAccountQuota = dto.getDefaultAccountQuota();
+		Boolean toDefaultAccountQuotaOverride = dto.getDefaultAccountQuotaOverride();
+		if (needCascade(entity.getDefaultAccountQuota(), toDefaultAccountQuota,
+				entity.getDefaultAccountQuotaOverride(), toDefaultAccountQuotaOverride)) {
+			repository.cascadeDefaultAccountQuota(entity.getDomain(), toDefaultAccountQuota, entity.getContainerQuotaType());
+		}
+		entity.setDefaultAccountQuota(toDefaultAccountQuota);
+		entity.setDefaultAccountQuotaOverride(toDefaultAccountQuotaOverride);
+	}
+
+	private void cascadeDefaultQuota(ContainerQuota entity, ContainerQuota dto) {
+		Long toDefaultQuota = dto.getDefaultQuota();
+		Boolean toDefaultQuotaOverride = dto.getDefaultQuotaOverride();
+		if (needCascade(entity.getDefaultQuota(), toDefaultQuota,
+				entity.getDefaultQuotaOverride(), toDefaultQuotaOverride)) {
+			repository.cascadeDefaultQuota(entity.getDomain(), toDefaultQuota, entity.getContainerQuotaType());
+		}
+		entity.setDefaultQuota(toDefaultQuota);
+		entity.setDefaultQuotaOverride(toDefaultQuotaOverride);
+	}
+
+	private void cascadeDefaultMaxFileSize(ContainerQuota entity, ContainerQuota dto) {
+		Long toDefaultMaxFileSize = dto.getDefaultMaxFileSize();
+		Boolean toDefaultMaxFileSizeOverride = dto.getDefaultMaxFileSizeOverride();
+		if (needCascade(entity.getDefaultMaxFileSize(), toDefaultMaxFileSize,
+				entity.getDefaultMaxFileSizeOverride(), toDefaultMaxFileSizeOverride)) {
+			repository.cascadeDefaultMaxFileSize(entity.getDomain(), toDefaultMaxFileSize, entity.getContainerQuotaType());
+		}
+		entity.setDefaultMaxFileSize(toDefaultMaxFileSize);
+		entity.setDefaultMaxFileSizeOverride(toDefaultMaxFileSizeOverride);
 	}
 
 	@Override

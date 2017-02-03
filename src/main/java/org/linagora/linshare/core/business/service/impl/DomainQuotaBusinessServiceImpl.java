@@ -46,7 +46,7 @@ import org.linagora.linshare.core.repository.DomainQuotaRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DomainQuotaBusinessServiceImpl implements DomainQuotaBusinessService {
+public class DomainQuotaBusinessServiceImpl extends GenericQuotaBusinessServiceImpl implements DomainQuotaBusinessService {
 
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -90,7 +90,6 @@ public class DomainQuotaBusinessServiceImpl implements DomainQuotaBusinessServic
 
 	@Override
 	public DomainQuota update(DomainQuota entity, DomainQuota dq) throws BusinessException {
-
 		// quota
 		entity.setQuota(dq.getQuota());
 		entity.setQuotaOverride(dq.getQuotaOverride());

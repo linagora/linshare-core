@@ -132,6 +132,35 @@ public class ContainerQuota extends Quota {
 		this.accountQuotaOverride = false;
 	}
 
+	public ContainerQuota(ContainerQuota quota) {
+		this.domain = quota.getDomain();
+		this.parentDomain = quota.getParentDomain();
+		this.currentValue = quota.getCurrentValue();
+		this.lastValue = quota.getLastValue();
+		this.quota = quota.getQuota();
+		this.defaultQuota = quota.getDefaultQuota();
+		this.quotaOverride = quota.getQuotaOverride();
+		this.defaultQuotaOverride = quota.getDefaultQuotaOverride();
+		this.quotaWarning = quota.getQuotaWarning();
+		this.maintenance = quota.getMaintenance();
+
+		this.defaultMaxFileSize = quota.getDefaultMaxFileSize();
+		this.defaultMaxFileSizeOverride = quota.getDefaultMaxFileSizeOverride();
+
+		// quota for account quota children.
+		this.defaultAccountQuota = quota.getDefaultAccountQuota();
+		this.defaultAccountQuotaOverride = quota.getDefaultAccountQuotaOverride();
+
+		// Kind of container.
+		this.containerQuotaType = quota.getContainerQuotaType();
+		this.shared = quota.getShared();
+
+		this.maxFileSize = quota.getDefaultMaxFileSize();
+		this.maxFileSizeOverride = quota.getDefaultMaxFileSizeOverride();
+		this.accountQuota = quota.getDefaultAccountQuota();
+		this.accountQuotaOverride = quota.getDefaultAccountQuotaOverride();
+	}
+
 	public ContainerQuotaType getContainerQuotaType() {
 		return containerQuotaType;
 	}
@@ -146,12 +175,6 @@ public class ContainerQuota extends Quota {
 
 	public void setDomainQuota(DomainQuota domainQuota) {
 		this.domainQuota = domainQuota;
-	}
-
-	public void setBusinessDefaultMaxFileSize(Long maxFileSize) {
-		if (maxFileSize != null) {
-			this.defaultMaxFileSize = maxFileSize;
-		}
 	}
 
 	public Long getDefaultMaxFileSize() {

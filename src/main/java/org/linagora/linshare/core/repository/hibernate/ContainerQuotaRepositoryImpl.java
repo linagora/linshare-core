@@ -33,17 +33,23 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.sql.SQLException;
 import java.util.List;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
+import org.linagora.linshare.core.domain.constants.QuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.repository.ContainerQuotaRepository;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<ContainerQuota>
@@ -76,5 +82,78 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 			return DataAccessUtils.longResult(findByCriteria(criteria));
 		}
 		return 0L;
+	}
+
+	@Override
+	public Long cascadeMaintenanceMode(ContainerQuota container, boolean maintenance) {
+		HibernateCallback<Long> action = new HibernateCallback<Long>() {
+			public Long doInHibernate(final Session session)
+					throws HibernateException, SQLException {
+				final Query query = session.createQuery("UPDATE AccountQuota SET maintenance = :maintenance WHERE containerQuota = :containerQuota");
+				query.setParameter("containerQuota", container);
+				query.setParameter("maintenance", maintenance);
+				return (long) query.executeUpdate();
+			}
+		};
+		Long updatedCounter = getHibernateTemplate().execute(action);
+		logger.debug(updatedCounter + " AccountQuota have been updated.");
+		return updatedCounter;
+	}
+
+	@Override
+	public Long cascadeDefaultQuota(AbstractDomain domain, Long quota, ContainerQuotaType containerType) {
+		// update quota of children
+		Long count = 0L;
+		count += cascadeDefaultQuotaToQuotaOfChildrenDomains(domain, quota);
+		// update default quota of children
+		count += cascadeDefaultQuotaToDefaultQuotaOfChildrenDomains(domain, quota);
+		// update default quota of children of children if exists
+		List<Long> quotaIdList = getQuotaIdforDefaultQuotaInSubDomains(domain, quota, QuotaType.CONTAINER_QUOTA, containerType);
+		count += cascadeDefaultQuotaToSubDomainsDefaultQuota(domain, quota, quotaIdList);
+		quotaIdList = getQuotaIdforQuotaInSubDomains(domain, quota, QuotaType.CONTAINER_QUOTA, containerType);
+		count += cascadeDefaultQuotaToSubDomainsQuota(domain, quota, quotaIdList);
+		return count;
+	}
+
+	public Long cascadeDefaultQuotaToQuotaOfChildrenDomains(AbstractDomain domain, Long quota) {
+		HibernateCallback<Long> action = new HibernateCallback<Long>() {
+			public Long doInHibernate(final Session session)
+					throws HibernateException, SQLException {
+				final Query query = session.createQuery("UPDATE ContainerQuota SET quota = :quota WHERE parentDomain = :parentDomain AND quotaOverride = false");
+				query.setParameter("quota", quota);
+				query.setParameter("parentDomain", domain);
+				return (long) query.executeUpdate();
+			}
+		};
+		Long updatedCounter = getHibernateTemplate().execute(action);
+		logger.debug(" {} quota of ContainerQuota have been updated.", updatedCounter);
+		return updatedCounter;
+	}
+
+	public Long cascadeDefaultQuotaToDefaultQuotaOfChildrenDomains(AbstractDomain domain, Long quota) {
+		HibernateCallback<Long> action = new HibernateCallback<Long>() {
+			public Long doInHibernate(final Session session)
+					throws HibernateException, SQLException {
+				final Query query = session.createQuery("UPDATE ContainerQuota SET defaultQuota = :defaultQuota WHERE parentDomain = :parentDomain AND defaultQuotaOverride = false");
+				query.setParameter("defaultQuota", quota);
+				query.setParameter("parentDomain", domain);
+				return (long) query.executeUpdate();
+			}
+		};
+		Long updatedCounter = getHibernateTemplate().execute(action);
+		logger.debug(" {} quota of ContainerQuota have been updated.", updatedCounter);
+		return updatedCounter;
+	}
+
+	@Override
+	public Long cascadeDefaultMaxFileSize(AbstractDomain domain, Long quota, ContainerQuotaType containerType) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Long cascadeDefaultAccountQuota(AbstractDomain domain, Long quota, ContainerQuotaType containerType) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

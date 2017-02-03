@@ -52,7 +52,7 @@ public interface ContainerQuotaBusinessService {
 
 	ContainerQuota create(ContainerQuota entity) throws BusinessException;
 
-	ContainerQuota update(ContainerQuota entity) throws BusinessException;
+	ContainerQuota update(ContainerQuota entity, ContainerQuota dto) throws BusinessException;
 
 	ContainerQuota updateByBatch(ContainerQuota entity) throws BusinessException;
 }

@@ -43,4 +43,12 @@ public interface ContainerQuotaRepository extends GenericQuotaRepository<Contain
 	ContainerQuota find(AbstractDomain domain, ContainerQuotaType containerQuotaType);
 
 	Long sumOfCurrentValue(DomainQuota domainQuota);
+
+	Long cascadeMaintenanceMode(ContainerQuota container, boolean maintenance);
+
+	Long cascadeDefaultQuota(AbstractDomain domain, Long quota, ContainerQuotaType containerType);
+
+	Long cascadeDefaultMaxFileSize(AbstractDomain domain, Long quota, ContainerQuotaType containerType);
+
+	Long cascadeDefaultAccountQuota(AbstractDomain domain, Long quota, ContainerQuotaType containerType);
 }

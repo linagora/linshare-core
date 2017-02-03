@@ -96,10 +96,7 @@ public class ContainerQuotaServiceImpl extends GenericServiceImpl<Account, Quota
 		// checkUpdatePermission(actor, null, ContainerQuota.class,
 		// BusinessErrorCode.QUOTA_UNAUTHORIZED, null, domain);
 		ContainerQuota entity = find(actor, cq.getUuid());
-		entity.setBusinessDefaultMaxFileSize(cq.getDefaultMaxFileSize());
-		entity.setQuota(cq.getQuota());
-		entity.setMaintenance(cq.getMaintenance());
-		return business.update(entity);
+		return business.update(entity, cq);
 	}
 
 }

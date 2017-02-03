@@ -107,9 +107,8 @@ public class DomainQuotaRepositoryImplTest extends AbstractTransactionalJUnit4Sp
 		Long count = domainQuotaRepository.cascadeMaintenanceMode(root.getDomain(), true);
 		// LinShareRootDomain : 1 domain, 2 containers, 1 account
 		// MyDomain : 1 domain, 2 containers, 2 accounts
-		// subomains: GuestDomain (1 domain and 2 containers), MySubDomain(1
-		// domain and 2 containers)
-		assertEquals(new Long(15), count);
+		// subomains: GuestDomain (1 domain and 2 containers), MySubDomain(1 domain, 2 containers, 1 account)
+		assertEquals(new Long(16), count);
 		Quota quota = accountQuotaRepository.find(jane);
 		assertEquals(true, quota.getMaintenance());
 		quota = accountQuotaRepository.find(root);
@@ -122,9 +121,8 @@ public class DomainQuotaRepositoryImplTest extends AbstractTransactionalJUnit4Sp
 		AbstractDomain myDomain = jane.getDomain();
 		Long count = domainQuotaRepository.cascadeMaintenanceMode(myDomain, true);
 		// MyDomain : 1 domain, 2 containers, 2 accounts
-		// subomains: GuestDomain (1 domain and 2 containers), MySubDomain(1
-		// domain and 2 containers)
-		assertEquals(new Long(11), count);
+		// subomains: GuestDomain (1 domain and 2 containers), MySubDomain(1 domain, 2 containers, 1 account)
+		assertEquals(new Long(12), count);
 		Quota quota = accountQuotaRepository.find(jane);
 		assertEquals(true, quota.getMaintenance());
 		quota = accountQuotaRepository.find(root);
@@ -135,25 +133,13 @@ public class DomainQuotaRepositoryImplTest extends AbstractTransactionalJUnit4Sp
 		List<DomainQuota> domains = domainQuotaRepository.findAll();
 		List<ContainerQuota> containers = containerQuotaRepository.findAll();
 		List<AccountQuota> accounts = accountQuotaRepository.findAll();
-
-		/*
-		 * for (DomainQuota q : domains) { logger.debug("domain : " +
-		 * q.getDomain().getLabel()); logger.debug("maintenance: " +
-		 * q.getMaintenance()); logger.debug(q.toString()); } for
-		 * (ContainerQuota q : containers) { logger.debug("domain : " +
-		 * q.getDomain().getLabel()); logger.debug("maintenance: " +
-		 * q.getMaintenance()); logger.debug(q.toString()); } for (AccountQuota
-		 * q : accounts) { logger.debug("domain : " + q.getDomain().getLabel());
-		 * logger.debug("maintenance: " + q.getMaintenance());
-		 * logger.debug(q.toString()); } /
-		 **/
 		// check initial conditions
 		/// LinShareRootDomain, MyDomain, MySubDomain and GuestDomain
 		assertEquals(4, domains.size());
 		// 2 containers by domain
 		assertEquals(8, containers.size());
 		// root , jane and john
-		assertEquals(3, accounts.size());
+		assertEquals(4, accounts.size());
 	}
 
 	@Test
