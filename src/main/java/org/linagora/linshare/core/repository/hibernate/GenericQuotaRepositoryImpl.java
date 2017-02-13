@@ -152,6 +152,9 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 	}
 
 	public Long cascadeDefaultQuotaToSubDomainsDefaultQuota(AbstractDomain domain, Long quota, List<Long> quotaIdList) {
+		if (quotaIdList == null || quotaIdList.isEmpty()) {
+			return 0L;
+		}
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session)
 					throws HibernateException, SQLException {
@@ -209,6 +212,9 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 	}
 
 	public Long cascadeDefaultQuotaToSubDomainsQuota(AbstractDomain domain, Long quota, List<Long> quotaIdList) {
+		if (quotaIdList == null || quotaIdList.isEmpty()) {
+			return 0L;
+		}
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session)
 					throws HibernateException, SQLException {
