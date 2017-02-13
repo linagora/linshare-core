@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.List;
@@ -60,6 +59,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.ShareEntryResourceAccessControl;
 import org.linagora.linshare.core.repository.FavouriteRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
+import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MailBuildingService;
@@ -79,6 +79,8 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 
 	private final LogEntryService logEntryService;
 
+	private final DocumentEntryService documentEntryService;
+
 	private final DocumentEntryBusinessService documentEntryBusinessService;
 
 	private final NotifierService notifierService;
@@ -92,6 +94,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			FunctionalityReadOnlyService functionalityService,
 			ShareEntryBusinessService shareEntryBusinessService,
 			LogEntryService logEntryService,
+			DocumentEntryService documentEntryService,
 			DocumentEntryBusinessService documentEntryBusinessService,
 			NotifierService notifierService,
 			MailBuildingService mailBuildingService,
@@ -102,6 +105,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		this.functionalityService = functionalityService;
 		this.shareEntryBusinessService = shareEntryBusinessService;
 		this.logEntryService = logEntryService;
+		this.documentEntryService = documentEntryService;
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.notifierService = notifierService;
 		this.mailBuildingService = mailBuildingService;
@@ -164,26 +168,14 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			throw new BusinessException(BusinessErrorCode.NO_UPLOAD_RIGHTS_FOR_ACTOR, "Actor do not have upload rights.");
 		}
 		// Check if we have the right to download the specified document entry
-		InputStream stream = null;
 		DocumentEntry documentEntry = null;
-		try {
-			// step2 : copy the resource
-			stream = documentEntryBusinessService.getDocumentStream(share.getDocumentEntry());
-			Calendar expiryTime = functionalityService.getDefaultFileExpiryTime(owner.getDomain());
-			documentEntry = documentEntryBusinessService.copyFromShareEntry(owner, share, stream, expiryTime);
-			// step3 : log the copy
-			ShareLogEntry logEntryShare = ShareLogEntry.hasCopiedAShare(owner,
-					share);
-			logEntryService.create(logEntryShare);
-		} finally {
-			if (stream != null) {
-				try {
-					stream.close();
-				} catch (IOException e) {
-					logger.error(e.getMessage(), e);
-				}
-			}
-		}
+		// step2 : copy the resource
+		Calendar expiryTime = functionalityService.getDefaultFileExpiryTime(owner.getDomain());
+		documentEntry = documentEntryService.copyFromShareEntry(owner, share, share.getDocumentEntry(), expiryTime);
+		// step3 : log the copy
+		ShareLogEntry logEntryShare = ShareLogEntry.hasCopiedAShare(owner,
+				share);
+		logEntryService.create(logEntryShare);
 		// step4 : remove the share
 		// No need to send a notification to the recipient if he is the current
 		// owner.

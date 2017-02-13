@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.List;
@@ -504,6 +505,31 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 			logger.error(e.getMessage(), e);
 			throw new BusinessException(BusinessErrorCode.FILE_UNREACHABLE, "no stream available.");
 		}
+	}
+
+	@Override
+	public DocumentEntry copyFromShareEntry(Account owner, ShareEntry share, DocumentEntry de,
+			Calendar expirationDate) throws BusinessException {
+		InputStream stream = null;
+		DocumentEntry documentEntry = null;
+		checkSpace(share.getSize(), share.getName(), owner);
+		try {
+			stream = documentEntryBusinessService.getDocumentStream(share.getDocumentEntry());
+			documentEntry = documentEntryBusinessService.copyFromShareEntry(owner, share, stream, expirationDate);
+			addDocSizeToGlobalUsedQuota(documentEntry.getDocument(), owner.getDomain());
+		} catch ( org.springmodules.jcr.JcrSystemException e) {
+			logger.error("unable to copy a shared file, file is missing on the filesystem");
+			throw new BusinessException(BusinessErrorCode.FILE_UNREACHABLE, "copy failed, file missing on the filesystem.");
+		} finally {
+			if (stream != null) {
+				try {
+					stream.close();
+				} catch (IOException e) {
+					logger.error(e.getMessage(), e);
+				}
+			}
+		}
+		return documentEntry;
 	}
 
 	@Override

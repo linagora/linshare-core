@@ -35,11 +35,13 @@ package org.linagora.linshare.core.service;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Calendar;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -167,4 +169,7 @@ public interface DocumentEntryService {
 
 	List<String> findAllExpiredEntries(Account actor, Account owner);
 
+	DocumentEntry copyFromShareEntry(Account owner,
+			ShareEntry shareEntry, DocumentEntry de, Calendar expirationDate)
+			throws BusinessException;
 }

@@ -85,6 +85,7 @@
 		<constructor-arg ref="shareEntryBusinessService" />
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="notifierService" />
+		<constructor-arg ref="documentEntryService" />
 		<constructor-arg ref="documentEntryBusinessService" />
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="recipientFavouriteRepository" />
