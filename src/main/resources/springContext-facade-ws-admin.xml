@@ -76,6 +76,7 @@
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="inconsistentUserService" />
 		<constructor-arg ref="guestService" />
+		<constructor-arg ref="quotaService" />
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="userProviderService" />
 	</bean>

@@ -41,6 +41,7 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
@@ -55,6 +56,7 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.InconsistentUserService;
+import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.service.UserService;
 
@@ -70,6 +72,8 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private final GuestService guestService;
 
+	protected final QuotaService quotaService;
+
 	private final InconsistentUserService inconsistentUserService;
 
 	private final AbstractDomainService abstractDomainService;
@@ -80,12 +84,14 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 			final UserService userService,
 			final InconsistentUserService inconsistentUserService,
 			final GuestService guestService,
+			final QuotaService quotaService,
 			final AbstractDomainService abstractDomainService,
 			final UserProviderService userProviderService) {
 		super(accountService);
 		this.userService = userService;
 		this.inconsistentUserService = inconsistentUserService;
 		this.guestService = guestService;
+		this.quotaService = quotaService;
 		this.abstractDomainService = abstractDomainService;
 		this.userProviderService = userProviderService;
 	}
@@ -293,6 +299,9 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		} else {
 			userDto = UserDto.getFull(user);
 		}
+		// get the quota for the current user.
+		AccountQuota quota = quotaService.findByRelatedAccount(user);
+		userDto.setQuotaUuid(quota.getUuid());
 		return userDto;
 	}
 
