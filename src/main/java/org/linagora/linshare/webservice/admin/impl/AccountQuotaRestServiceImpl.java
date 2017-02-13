@@ -41,6 +41,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
@@ -68,7 +69,7 @@ public class AccountQuotaRestServiceImpl implements AccountQuotaRestService {
 	@Path("/accounts")
 	@GET
 	@Override
-	public List<AccountQuotaDto> findAll(String domainUuid, ContainerQuotaType type) throws BusinessException {
+	public List<AccountQuotaDto> findAll(@QueryParam("domainUuid") String domainUuid, @QueryParam("type") ContainerQuotaType type) throws BusinessException {
 		return facade.findAll(domainUuid, type);
 	}
 
