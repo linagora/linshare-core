@@ -248,8 +248,9 @@ public class ContainerQuotaRepositoryImplTest extends AbstractTransactionalJUnit
 
 
 		Long newQuotaValue = 8L;
-		count = containerQuotaRepository.cascadeDefaultQuotaToDefaultQuotaOfChildrenDomains(root.getDomain(), newQuotaValue);
-		assertEquals(new Long(2), count);
+		count = containerQuotaRepository.cascadeDefaultQuotaToDefaultQuotaOfChildrenDomains(root.getDomain(), newQuotaValue, ContainerQuotaType.USER);
+		// Only one top domain.
+		assertEquals(new Long(1), count);
 
 		container = containerQuotaRepository.find(topDomain, ContainerQuotaType.USER);
 		assertEquals(newQuotaValue, container.getDefaultQuota());
@@ -291,8 +292,9 @@ public class ContainerQuotaRepositoryImplTest extends AbstractTransactionalJUnit
 
 
 		Long newQuotaValue = 8L;
-		count = containerQuotaRepository.cascadeDefaultQuotaToQuotaOfChildrenDomains(root.getDomain(), newQuotaValue);
-		assertEquals(new Long(2), count);
+		count = containerQuotaRepository.cascadeDefaultQuotaToQuotaOfChildrenDomains(root.getDomain(), newQuotaValue, ContainerQuotaType.USER);
+		// Only one top domain.
+		assertEquals(new Long(1), count);
 
 		container = containerQuotaRepository.find(topDomain, ContainerQuotaType.USER);
 		assertEquals(quotaValue, container.getDefaultQuota());
@@ -331,7 +333,8 @@ public class ContainerQuotaRepositoryImplTest extends AbstractTransactionalJUnit
 
 		Long newQuotaValue = 8L;
 		count = containerQuotaRepository.cascadeDefaultQuota(container.getDomain(), newQuotaValue, container.getContainerQuotaType());
-		assertEquals(new Long(8), count);
+		// 2 in topdomain ( 1 quota and 1 defaultquota), 2 in subdomain, 2 in guestdomain 
+		assertEquals(new Long(6), count);
 
 		container = containerQuotaRepository.find(guestDomain, ContainerQuotaType.USER);
 		assertEquals(newQuotaValue, container.getDefaultQuota());

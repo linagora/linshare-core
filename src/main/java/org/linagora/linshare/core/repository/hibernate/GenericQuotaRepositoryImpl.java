@@ -123,7 +123,7 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 			public List<Long> doInHibernate(final Session session)
 					throws HibernateException, SQLException {
 				StringBuilder sb = new StringBuilder();
-				sb.append("SELECT child.id AS child_id FROM quota AS father");
+				sb.append("SELECT DISTINCT child.id AS child_id FROM quota AS father");
 				sb.append(" JOIN quota AS child");
 				sb.append(" ON child.domain_parent_id = father.domain_id");
 				sb.append(" AND child.quota_type = :domainType ");
@@ -180,7 +180,7 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 			public List<Long> doInHibernate(final Session session)
 					throws HibernateException, SQLException {
 				StringBuilder sb = new StringBuilder();
-				sb.append("SELECT child.id AS child_id FROM quota AS father");
+				sb.append("SELECT DISTINCT child.id AS child_id FROM quota AS father");
 				sb.append(" JOIN quota AS child");
 				sb.append(" ON child.domain_parent_id = father.domain_id");
 				sb.append(" AND child.quota_type = :domainType ");

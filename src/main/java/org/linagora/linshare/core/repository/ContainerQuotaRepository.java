@@ -48,7 +48,7 @@ public interface ContainerQuotaRepository extends GenericQuotaRepository<Contain
 
 	Long cascadeDefaultQuota(AbstractDomain domain, Long quota, ContainerQuotaType containerType);
 
-	Long cascadeDefaultMaxFileSize(AbstractDomain domain, Long quota, ContainerQuotaType containerType);
+	Long cascadeDefaultMaxFileSize(AbstractDomain domain, Long maxFileSize, ContainerQuotaType containerType);
 
 	Long cascadeMaxFileSize(ContainerQuota container, Long maxFileSize);
 
