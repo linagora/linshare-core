@@ -53,6 +53,9 @@ public class QuotaDto {
 	@ApiModelProperty(value = "The domain which this quota belongs to.")
 	protected DomainLightDto domain;
 
+	@ApiModelProperty(value = "The parent domain which this quota belongs to.")
+	protected DomainLightDto parentDomain;
+
 	@ApiModelProperty(value = "The limit (quota)")
 	protected Long quota;
 
@@ -95,6 +98,9 @@ public class QuotaDto {
 	public QuotaDto(Quota quota) {
 		this.uuid = quota.getUuid();
 		this.domain = new DomainLightDto(quota.getDomain());
+		if (quota.getParentDomain() != null) {
+			this.parentDomain = new DomainLightDto(quota.getParentDomain());
+		}
 		this.quota = quota.getQuota();
 		this.quotaOverride = quota.getQuotaOverride();
 		this.defaultQuota = quota.getDefaultQuota();
@@ -202,6 +208,14 @@ public class QuotaDto {
 
 	public void setDefaultQuotaOverride(Boolean defaultQuotaOverride) {
 		this.defaultQuotaOverride = defaultQuotaOverride;
+	}
+
+	public DomainLightDto getParentDomain() {
+		return parentDomain;
+	}
+
+	public void setParentDomain(DomainLightDto parentDomain) {
+		this.parentDomain = parentDomain;
 	}
 
 }
