@@ -91,6 +91,8 @@ public class ContainerQuotaBusinessServiceImplTest extends AbstractTransactional
 
 	private AbstractDomain topDomain;
 
+	private AbstractDomain rootDomain;
+
 	private User jane;
 
 	public ContainerQuotaBusinessServiceImplTest() {
@@ -107,6 +109,7 @@ public class ContainerQuotaBusinessServiceImplTest extends AbstractTransactional
 //		root = userRepository.findByMailAndDomain(LoadingServiceTestDatas.sqlRootDomain, "root@localhost.localdomain");
 		guestDomain = domainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
 		topDomain = domainRepository.findById(LoadingServiceTestDatas.sqlDomain);
+		rootDomain = domainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);
 	}
 
 	@Test
@@ -211,6 +214,28 @@ public class ContainerQuotaBusinessServiceImplTest extends AbstractTransactional
 		quota = businessService.find(topDomain, ContainerQuotaType.USER);
 		assertEquals(quotaValue, quota.getAccountQuota());
 		assertEquals(true, quota.getAccountQuotaOverride());
+
+		AccountQuota aq = accountBusinessService.find(jane);
+		assertEquals(quotaValue, aq.getQuota());
+		assertEquals(false, aq.getQuotaOverride());
+
+	}
+
+	@Test
+	public void testCascadeDefaultAccountQuota() {
+		Long quotaValue = 698L;
+
+		ContainerQuota quota = businessService.find(rootDomain, ContainerQuotaType.USER);
+		ContainerQuota dto = new ContainerQuota(quota);
+
+		dto.setDefaultAccountQuotaOverride(true);
+		dto.setDefaultAccountQuota(quotaValue);
+
+		businessService.update(quota, dto);
+
+		quota = businessService.find(topDomain, ContainerQuotaType.USER);
+		assertEquals(quotaValue, quota.getDefaultAccountQuota());
+		assertEquals(false, quota.getDefaultAccountQuotaOverride());
 
 		AccountQuota aq = accountBusinessService.find(jane);
 		assertEquals(quotaValue, aq.getQuota());
