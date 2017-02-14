@@ -49,10 +49,10 @@ public class AccountQuota extends Quota {
 
 	public AccountQuota(AbstractDomain domain, AbstractDomain parentDomain, Account account,
 			ContainerQuota containerQuota) {
-		super(domain, parentDomain, containerQuota.getDefaultAccountQuota(), containerQuota.getQuotaWarning());
+		super(domain, parentDomain, containerQuota.getAccountQuota(), containerQuota.getQuotaWarning());
 		this.account = account;
 		this.containerQuota = containerQuota;
-		this.maxFileSize = containerQuota.getDefaultMaxFileSize();
+		this.maxFileSize = containerQuota.getMaxFileSize();
 		this.maxFileSizeOverride = false;
 		this.shared = false;
 		if (this.containerQuota.getShared()) {
