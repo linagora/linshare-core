@@ -60,7 +60,7 @@ public class AccountQuotaDto extends QuotaDto {
 	public AccountQuotaDto(AccountQuota quota) {
 		super(quota);
 		this.maxFileSize = quota.getMaxFileSize();
-		this.maxFileSizeOverride = quota.getDefaultQuotaOverride();
+		this.maxFileSizeOverride = quota.getMaxFileSizeOverride();
 		this.account = new AccountDto(quota.getAccount(), true);
 	}
 
