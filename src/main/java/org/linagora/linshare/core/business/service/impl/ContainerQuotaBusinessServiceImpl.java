@@ -98,12 +98,8 @@ public class ContainerQuotaBusinessServiceImpl extends GenericQuotaBusinessServi
 		}
 		entity.setMaintenance(dto.getMaintenance());
 
-		entity.setMaxFileSize(dto.getMaxFileSize());
-		entity.setMaxFileSizeOverride(dto.getMaxFileSizeOverride());
-
-		entity.setAccountQuota(dto.getAccountQuota());
-		entity.setAccountQuotaOverride(dto.getAccountQuotaOverride());
-
+		cascadeMaxFileSize(entity, dto);
+		cascadeAccountQuota(entity, dto);
 		cascadeDefaultQuota(entity, dto);
 		cascadeDefaultMaxFileSize(entity, dto);
 		cascadeDefaultAccountQuota(entity, dto);
@@ -120,6 +116,17 @@ public class ContainerQuotaBusinessServiceImpl extends GenericQuotaBusinessServi
 		}
 		entity.setDefaultAccountQuota(toDefaultAccountQuota);
 		entity.setDefaultAccountQuotaOverride(toDefaultAccountQuotaOverride);
+	}
+
+	private void cascadeAccountQuota(ContainerQuota entity, ContainerQuota dto) {
+		Long toAccountQuota = dto.getAccountQuota();
+		Boolean toAccountQuotaOverride = dto.getAccountQuotaOverride();
+		if (needCascade(entity.getAccountQuota(), toAccountQuota,
+				entity.getAccountQuotaOverride(), toAccountQuotaOverride)) {
+			repository.cascadeAccountQuota(entity, toAccountQuota);
+		}
+		entity.setAccountQuota(toAccountQuota);
+		entity.setAccountQuotaOverride(toAccountQuotaOverride);
 	}
 
 	private void cascadeDefaultQuota(ContainerQuota entity, ContainerQuota dto) {
@@ -142,6 +149,17 @@ public class ContainerQuotaBusinessServiceImpl extends GenericQuotaBusinessServi
 		}
 		entity.setDefaultMaxFileSize(toDefaultMaxFileSize);
 		entity.setDefaultMaxFileSizeOverride(toDefaultMaxFileSizeOverride);
+	}
+
+	private void cascadeMaxFileSize(ContainerQuota entity, ContainerQuota dto) {
+		Long toMaxFileSize = dto.getMaxFileSize();
+		Boolean toMaxFileSizeOverride = dto.getMaxFileSizeOverride();
+		if (needCascade(entity.getMaxFileSize(), toMaxFileSize,
+				entity.getMaxFileSizeOverride(), toMaxFileSizeOverride)) {
+			repository.cascadeMaxFileSize(entity, toMaxFileSize);
+		}
+		entity.setMaxFileSize(toMaxFileSize);
+		entity.setMaxFileSizeOverride(toMaxFileSizeOverride);
 	}
 
 	@Override
