@@ -54,6 +54,9 @@ public class AccountQuota extends Quota {
 		this.containerQuota = containerQuota;
 		this.maxFileSize = containerQuota.getMaxFileSize();
 		this.maxFileSizeOverride = false;
+		this.quotaOverride = false;
+		this.defaultQuota = null;
+		this.defaultQuotaOverride = null;
 		this.shared = false;
 		if (this.containerQuota.getShared()) {
 			this.shared = true;

@@ -34,7 +34,8 @@ update quota set
 	last_value=500,
 	quota=1900,
 	quota_warning=1800,
-	max_file_size=5
+	max_file_size=5,
+	default_max_file_size=5
 	where id=2;
 
 -- topdomain 2, CONTAINER_QUOTA - USER
@@ -43,6 +44,7 @@ update quota set
 	last_value=0,
 	quota=1900,
 	quota_warning=1300,
+	max_file_size=5,
 	default_max_file_size=5,
 	batch_modification_date=now()
 	where id=5;
@@ -53,8 +55,10 @@ update quota set
 	last_value=200,
 	quota=2000,
 	quota_warning=1500,
+	max_file_size=5,
 	default_max_file_size=5,
 	default_account_quota=2000,
+	account_quota=2000,
 	batch_modification_date=now()
 	where id=6;
 
