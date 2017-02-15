@@ -41,8 +41,10 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -55,7 +57,6 @@ import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
-import org.linagora.linshare.core.domain.entities.ThreadLogEntry;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -71,6 +72,7 @@ import org.linagora.linshare.core.service.MimeTypeService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.ThreadEntryService;
 import org.linagora.linshare.core.service.VirusScannerService;
+import org.linagora.linshare.mongo.entities.logs.WorkGroupEntryAuditLogEntry;
 
 public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, ThreadEntry>
 		implements ThreadEntryService {
@@ -142,9 +144,9 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 
 			threadEntry = documentEntryBusinessService.createThreadEntry(thread, tempFile, size, filename,
 					checkIfIsCiphered, timeStampingUrl, mimeType);
-			logEntryService.create(new ThreadLogEntry(owner, threadEntry, LogAction.THREAD_UPLOAD_ENTRY,
-					"Uploading a file in a thread."));
-
+			WorkGroupEntryAuditLogEntry log = new WorkGroupEntryAuditLogEntry(actor, owner, LogAction.CREATE,
+					AuditLogEntryType.WORKGROUP_ENTRY, threadEntry);
+			logEntryService.insert(log);
 			addToQuota(thread, size);
 		} finally {
 			try {
@@ -154,7 +156,6 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 				logger.error("can not delete temp file : " + e.getMessage());
 			}
 		}
-
 		return threadEntry;
 	}
 
@@ -173,8 +174,10 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 		}
 
 		ThreadEntry threadEntry = documentEntryBusinessService.copyFromDocumentEntry(thread, documentEntry);
-		logEntryService.create(new ThreadLogEntry(member, threadEntry, LogAction.THREAD_UPLOAD_ENTRY,
-				"Uploading a file in a thread."));
+		WorkGroupEntryAuditLogEntry log = new WorkGroupEntryAuditLogEntry(actor, member, LogAction.CREATE,
+				AuditLogEntryType.WORKGROUP_ENTRY, threadEntry);
+		log.setCause(LogActionCause.COPY);
+		logEntryService.insert(log);
 		addToQuota(thread, documentEntry.getSize());
 		return threadEntry;
 	}
@@ -214,10 +217,10 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 		try {
 			checkDeletePermission(actor, owner, ThreadEntry.class, BusinessErrorCode.THREAD_ENTRY_FORBIDDEN,
 					threadEntry, thread);
-			ThreadLogEntry log = new ThreadLogEntry(owner, threadEntry, LogAction.THREAD_REMOVE_ENTRY,
-					"Deleting a thread entry.");
+			WorkGroupEntryAuditLogEntry log = new WorkGroupEntryAuditLogEntry(actor, owner, LogAction.DELETE,
+					AuditLogEntryType.WORKGROUP_ENTRY, threadEntry);
+			logEntryService.insert(log);
 			documentEntryBusinessService.deleteThreadEntry(threadEntry);
-			logEntryService.create(log);
 			delFromQuota(thread, threadEntry.getSize());
 		} catch (IllegalArgumentException e) {
 			logger.error("Could not delete thread entry " + threadEntry.getUuid() + " in thread " + thread.getLsUuid()
@@ -230,9 +233,10 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 	public void deleteInconsistentThreadEntry(SystemAccount actor, ThreadEntry threadEntry) throws BusinessException {
 		Thread thread = (Thread) threadEntry.getEntryOwner();
 		try {
-			ThreadLogEntry log = new ThreadLogEntry(actor, threadEntry, LogAction.THREAD_REMOVE_INCONSISTENCY_ENTRY,
-					"Deleting an inconsistent thread entry.");
-			logEntryService.create(LogEntryService.WARN, log);
+			WorkGroupEntryAuditLogEntry log = new WorkGroupEntryAuditLogEntry(actor, actor, LogAction.DELETE,
+					AuditLogEntryType.WORKGROUP_ENTRY, threadEntry);
+			log.setCause(LogActionCause.INCONSISTENCY);
+			logEntryService.insert(LogEntryService.WARN, log);
 			documentEntryBusinessService.deleteThreadEntry(threadEntry);
 			delFromQuota(thread, threadEntry.getSize());
 		} catch (IllegalArgumentException e) {
@@ -255,7 +259,9 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 		ThreadEntry threadEntry = find(actor, owner, uuid);
 		checkDownloadPermission(actor, owner, ThreadEntry.class,
 				BusinessErrorCode.THREAD_ENTRY_FORBIDDEN, threadEntry);
-		logEntryService.create(new ThreadLogEntry(actor, threadEntry, LogAction.THREAD_DOWNLOAD_ENTRY, "Downloading a file in a thread."));
+		WorkGroupEntryAuditLogEntry log = new WorkGroupEntryAuditLogEntry(actor, owner, LogAction.DOWNLOAD,
+				AuditLogEntryType.WORKGROUP_ENTRY, threadEntry);
+		logEntryService.insert(log);
 		return documentEntryBusinessService.getDocumentStream(threadEntry);
 	}
 
@@ -287,6 +293,8 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 			String threadEntryUuid, String fileComment, String metaData,
 			String newName) throws BusinessException {
 		ThreadEntry threadEntry = documentEntryBusinessService.findThreadEntryById(threadEntryUuid);
+		WorkGroupEntryAuditLogEntry log = new WorkGroupEntryAuditLogEntry(actor, owner, LogAction.UPDATE,
+				AuditLogEntryType.WORKGROUP_ENTRY, threadEntry);
 		// Avoid overwritting metadata in database to null when update
 		// threadEntry from interface.
 		if (metaData == null) {
@@ -302,6 +310,8 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
 					"You are not authorized to update this document.");
 		}
+		log.setResourceUpdated(threadEntry, owner);
+		logEntryService.insert(log);
 		return documentEntryBusinessService.updateFileProperties(threadEntry, fileComment, metaData,
 				sanitizeFileName(newName));
 	}

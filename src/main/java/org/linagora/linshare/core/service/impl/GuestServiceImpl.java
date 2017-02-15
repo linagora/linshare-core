@@ -45,6 +45,7 @@ import org.linagora.linshare.core.business.service.GuestBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.ResetTokenKind;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -55,7 +56,6 @@ import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.entities.UserLogEntry;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -73,7 +73,6 @@ import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.ResetGuestPassword;
 import org.linagora.linshare.mongo.entities.logs.GuestAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
-import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 import org.linagora.linshare.mongo.repository.ResetGuestPasswordMongoRepository;
 
 import com.google.common.base.Strings;
@@ -94,9 +93,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 
 	private final MailBuildingService mailBuildingService;
 
-	private final LogEntryService LogEntryService;
-
-	private final AuditUserMongoRepository auditMongoRepository;
+	private final LogEntryService logEntryService;
 
 	private final ContainerQuotaBusinessService containerQuotaBusinessService;
 
@@ -111,7 +108,6 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 			final NotifierService notifierService,
 			final MailBuildingService mailBuildingService,
 			final LogEntryService logEntryService,
-			final AuditUserMongoRepository auditMongoRepository,
 			final GuestResourceAccessControl rac,
 			final ContainerQuotaBusinessService containerQuotaBusinessService,
 			final ResetGuestPasswordMongoRepository resetGuestPasswordMongoRepository,
@@ -123,8 +119,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		this.userService = userService;
 		this.notifierService = notifierService;
 		this.mailBuildingService = mailBuildingService;
-		this.LogEntryService = logEntryService;
-		this.auditMongoRepository = auditMongoRepository;
+		this.logEntryService = logEntryService;
 		this.containerQuotaBusinessService = containerQuotaBusinessService;
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
 		this.resetGuestPasswordMongoRepository = resetGuestPasswordMongoRepository;
@@ -245,10 +240,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		GuestAccountNewCreationEmailContext mailContext = new GuestAccountNewCreationEmailContext((User)owner, create, resetGuestPassword.getUuid());
 		MailContainerWithRecipient mail = mailBuildingService.build(mailContext);
 		notifierService.sendNotification(mail);
-		UserLogEntry userLogEntry = new UserLogEntry(actor, LogAction.USER_CREATE, "Creating a guest", create);
-		LogEntryService.create(userLogEntry);
 		GuestAuditLogEntry log = new GuestAuditLogEntry(actor, owner, LogAction.CREATE, AuditLogEntryType.GUEST, guest);
-		auditMongoRepository.insert(log);
+		logEntryService.insert(log);
 		return create;
 	}
 
@@ -288,10 +281,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		}
 		Guest result = guestBusinessService.update(owner, entity, guest, guestDomain,
 				restrictedContacts);
-		UserLogEntry userLogEntry = new UserLogEntry(actor, LogAction.USER_UPDATE, "Updating a guest", entity);
-		LogEntryService.create(userLogEntry);
 		log.setResourceUpdated(new AccountMto(result));
-		auditMongoRepository.insert(log);
+		logEntryService.insert(log);
 		return result;
 	}
 
@@ -345,18 +336,21 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		Guest original = find(actor, owner, lsUuid);
 		checkDeletePermission(actor, owner, Guest.class,
 				BusinessErrorCode.CANNOT_DELETE_USER, original);
-		UserLogEntry userLogEntry = new UserLogEntry(actor, LogAction.USER_DELETE, "Deleting a guest", original);
-		LogEntryService.create(userLogEntry);
 		guestBusinessService.delete(original);
 		GuestAuditLogEntry log = new GuestAuditLogEntry(actor, owner, LogAction.DELETE, AuditLogEntryType.GUEST,
 				original);
-		auditMongoRepository.insert(log);
+		logEntryService.insert(log);
 		return original;
 	}
 
 	@Override
 	public void deleteUser(SystemAccount systemAccount, String uuid) {
+		Guest original = guestBusinessService.findByLsUuid(uuid);
 		userService.deleteUser(systemAccount, uuid);
+		GuestAuditLogEntry log = new GuestAuditLogEntry(systemAccount, systemAccount, LogAction.DELETE, AuditLogEntryType.GUEST,
+				original);
+		log.setCause(LogActionCause.EXPIRATION);
+		logEntryService.insert(log);
 	}
 
 	@Override

@@ -17,7 +17,6 @@
 		<constructor-arg ref="threadMemberResourceAccessControl" />
 		<constructor-arg ref="userRepository" />
 		<constructor-arg ref="functionalityReadOnlyService" />
-		<constructor-arg ref="auditUserMongoRepository" />
 		<constructor-arg ref="accountQuotaBusinessService"/>
 		<constructor-arg ref="containerQuotaBusinessService"/>
 	</bean>
@@ -185,7 +184,6 @@
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="guestResourceAccessControl" />
 		<constructor-arg ref="logEntryService" />
-		<constructor-arg ref="auditUserMongoRepository" />
 		<constructor-arg ref="containerQuotaBusinessService"/>
 		<constructor-arg ref="resetGuestPasswordMongoRepository"/>
 		<constructor-arg ref="accountQuotaBusinessService"/>

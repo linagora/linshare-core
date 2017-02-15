@@ -31,61 +31,51 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.entities.mto;
+package org.linagora.linshare.mongo.entities.logs;
 
-import org.linagora.linshare.core.domain.entities.ThreadMember;
+import javax.xml.bind.annotation.XmlRootElement;
 
-public class ThreadMemberMto extends AccountMto {
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.ThreadEntry;
+import org.linagora.linshare.mongo.entities.WorkGroupEntry;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
 
-	protected String threadUuid;
+@XmlRootElement
+public class WorkGroupEntryAuditLogEntry extends AuditLogEntryUser {
 
-	protected String threadName;
+	protected WorkGroupEntry resource;
 
-	private boolean canUpload;
+	private WorkGroupEntry resourceUpdated;
 
-	private boolean admin;
-
-	public ThreadMemberMto() {
+	public WorkGroupEntryAuditLogEntry() {
+		super();
 	}
 
-	public ThreadMemberMto(ThreadMember member) {
-		super(member.getUser());
-		this.threadName = member.getThread().getName();
-		this.threadUuid = member.getThread().getLsUuid();
-		this.canUpload = member.getCanUpload();
-		this.admin = member.getAdmin();
+	public WorkGroupEntryAuditLogEntry(Account actor, Account owner, LogAction action, AuditLogEntryType type,
+			ThreadEntry threadEntry) {
+		super(new AccountMto(actor), new AccountMto(owner), action, type, threadEntry.getUuid());
+		this.resource = new WorkGroupEntry(threadEntry, new AccountMto(owner));
 	}
 
-	public String getThreadName() {
-		return threadName;
+	public WorkGroupEntry getResource() {
+		return resource;
 	}
 
-	public void setThreadName(String threadName) {
-		this.threadName = threadName;
+	public void setResource(WorkGroupEntry resource) {
+		this.resource = resource;
 	}
 
-	public String getThreadUuid() {
-		return threadUuid;
+	public WorkGroupEntry getResourceUpdated() {
+		return resourceUpdated;
 	}
 
-	public void setThreadUuid(String threadUuid) {
-		this.threadUuid = threadUuid;
+	public void setResourceUpdated(WorkGroupEntry resourceUpdated) {
+		this.resourceUpdated = resourceUpdated;
 	}
 
-	public boolean isCanUpload() {
-		return canUpload;
+	public void setResourceUpdated(ThreadEntry threadEntry, Account owner) {
+		this.resource = new WorkGroupEntry(threadEntry, new AccountMto(owner));
 	}
-
-	public void setCanUpload(boolean canUpload) {
-		this.canUpload = canUpload;
-	}
-
-	public boolean isAdmin() {
-		return admin;
-	}
-
-	public void setAdmin(boolean admin) {
-		this.admin = admin;
-	}
-
 }

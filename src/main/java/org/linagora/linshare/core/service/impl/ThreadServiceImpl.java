@@ -37,8 +37,8 @@ import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
-import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
+import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -48,7 +48,6 @@ import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadLogEntry;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -61,11 +60,13 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.ThreadAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.ThreadMemberAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.ThreadMemberMto;
 import org.linagora.linshare.mongo.entities.mto.ThreadMto;
-import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
+
+import com.google.common.collect.Lists;
 
 public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> implements ThreadService {
 
@@ -83,8 +84,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
-	private final AuditUserMongoRepository auditMongoRepository;
-
 	private final AccountQuotaBusinessService accountQuotaBusinessService;
 
 	private final ContainerQuotaBusinessService containerQuotaBusinessService;
@@ -98,7 +97,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 			ThreadMemberResourceAccessControl threadMemberResourceAccessControl,
 			UserRepository<User> userRepository,
 			FunctionalityReadOnlyService functionalityReadOnlyService,
-			AuditUserMongoRepository auditMongoRepository,
 			AccountQuotaBusinessService accountQuotaBusinessService,
 			ContainerQuotaBusinessService containerQuotaBusinessService) {
 		super(rac);
@@ -109,7 +107,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		this.threadMemberAC = threadMemberResourceAccessControl;
 		this.userRepository = userRepository;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
-		this.auditMongoRepository = auditMongoRepository;
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
 		this.containerQuotaBusinessService = containerQuotaBusinessService;
 	}
@@ -131,9 +128,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		}
 		checkReadPermission(actor, owner, Thread.class,
 				BusinessErrorCode.THREAD_FORBIDDEN, thread, owner);
-//		ThreadAuditLogEntry log = new ThreadAuditLogEntry(actor, owner, LogAction.GET, AuditLogEntryType.THREAD,
-//				new ThreadMto(thread, false));
-//		auditMongoRepository.insert(log);
 		return thread;
 	}
 
@@ -169,16 +163,17 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		thread = new Thread(owner.getDomain(), owner, name);
 		threadRepository.create(thread);
 		createQuotaThread(thread);
-		logEntryService.create(new ThreadLogEntry(owner, thread, LogAction.THREAD_CREATE, "Creation of a new thread."));
-		// creator = first member = default admin
 		member = new ThreadMember(true, true, (User) owner, thread);
 		thread.getMyMembers().add(member);
 		thread = threadRepository.update(thread);
-		logEntryService.create(new ThreadLogEntry(owner, member, LogAction.THREAD_ADD_MEMBER,
-				"Creating the first member of the newly created thread."));
+		// workgroup creation
 		ThreadAuditLogEntry log = new ThreadAuditLogEntry(actor, owner, LogAction.CREATE, AuditLogEntryType.WORKGROUP,
 				new ThreadMto(thread, false));
-		auditMongoRepository.insert(log);
+		logEntryService.insert(log);
+		// first workgroup member
+		ThreadMemberAuditLogEntry log2 = new ThreadMemberAuditLogEntry(actor, owner, LogAction.CREATE,
+				AuditLogEntryType.WORKGROUP_MEMBER, member);
+		logEntryService.insert(log2);
 		return thread;
 	}
 
@@ -259,13 +254,9 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		}
 		thread.getMyMembers().add(member);
 		threadRepository.update(thread);
-		logEntryService.create(new ThreadLogEntry(owner, member,
-				LogAction.THREAD_ADD_MEMBER,
-				"Adding a new member to a thread : "
-						+ member.getUser().getAccountRepresentation()));
 		ThreadMemberAuditLogEntry log = new ThreadMemberAuditLogEntry(actor, owner, LogAction.CREATE,
 				AuditLogEntryType.WORKGROUP_MEMBER, member);
-		auditMongoRepository.insert(log);
+		logEntryService.insert(log);
 		return member;
 	}
 
@@ -284,7 +275,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		member.setCanUpload(canUpload);
 		ThreadMember res = threadMemberRepository.update(member);
 		log.setMemberUpdated(new ThreadMemberMto(res));
-		auditMongoRepository.insert(log);
+		logEntryService.insert(log);
 		return res;
 	}
 
@@ -303,12 +294,9 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		thread.getMyMembers().remove(member);
 		threadRepository.update(thread);
 		threadMemberRepository.delete(member);
-		logEntryService.create(new ThreadLogEntry(owner, member,
-				LogAction.THREAD_REMOVE_MEMBER,
-				"Deleting a member in a thread."));
 		ThreadMemberAuditLogEntry log = new ThreadMemberAuditLogEntry(actor, owner, LogAction.DELETE,
 				AuditLogEntryType.WORKGROUP_MEMBER, member);
-		auditMongoRepository.insert(log);
+		logEntryService.insert(log);
 		return member;
 	}
 
@@ -331,12 +319,17 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		// permission check
 		checkUserIsAdmin(actor, thread);
 		Object[] myMembers = thread.getMyMembers().toArray();
+		List<AuditLogEntryUser> audits = Lists.newArrayList();
 		for (Object threadMember : myMembers) {
 			thread.getMyMembers().remove(threadMember);
 			threadRepository.update(thread);
 			threadMemberRepository.delete((ThreadMember) threadMember);
+			audits.add(
+					new ThreadMemberAuditLogEntry(actor, actor, LogAction.DELETE,
+							AuditLogEntryType.WORKGROUP_MEMBER, (ThreadMember)threadMember)
+					);
 		}
-		logEntryService.create(new ThreadLogEntry(actor, thread, LogAction.THREAD_REMOVE_MEMBER, "Deleting all members in a thread."));
+		logEntryService.insert(audits);
 	}
 
 	@Override
@@ -355,8 +348,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 			throws BusinessException {
 		checkDeletePermission(actor, owner, Thread.class,
 				BusinessErrorCode.THREAD_FORBIDDEN, thread);
-		ThreadLogEntry log = new ThreadLogEntry(actor, thread,
-				LogAction.THREAD_DELETE, "Deleting a thread.");
 		// Delete all entries
 		documentEntryBusinessService.deleteSetThreadEntry(thread.getEntries());
 		thread.setEntries(null);
@@ -367,8 +358,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		threadRepository.delete(thread);
 		ThreadAuditLogEntry threadAuditLog = new ThreadAuditLogEntry(actor, owner, LogAction.DELETE,
 				AuditLogEntryType.WORKGROUP, new ThreadMto(thread, true));
-		auditMongoRepository.insert(threadAuditLog);
-		logEntryService.create(log);
+		logEntryService.insert(threadAuditLog);
 	}
 
 	@Override
@@ -379,14 +369,10 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 				BusinessErrorCode.THREAD_FORBIDDEN, thread);
 		ThreadAuditLogEntry log = new ThreadAuditLogEntry(actor, owner, LogAction.UPDATE, AuditLogEntryType.WORKGROUP,
 				new ThreadMto(thread, false));
-		String oldname = thread.getName();
 		thread.setName(threadName);
 		Thread update = threadRepository.update(thread);
-		logEntryService.create(new ThreadLogEntry(actor, thread,
-				LogAction.THREAD_RENAME, "Renamed thread from " + oldname
-						+ " to " + threadName));
 		log.setResourceUpdated(new ThreadMto(update, false));
-		auditMongoRepository.insert(log);
+		logEntryService.insert(log);
 		return update;
 	}
 
