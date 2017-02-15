@@ -149,6 +149,14 @@ public class MailConfigDto {
 		this.visible = visible;
 	}
 
+	public boolean isReadonly() {
+		return readonly;
+	}
+
+	public void setReadonly(boolean readonly) {
+		this.readonly = readonly;
+	}
+
 	public Date getCreationDate() {
 		return creationDate;
 	}
