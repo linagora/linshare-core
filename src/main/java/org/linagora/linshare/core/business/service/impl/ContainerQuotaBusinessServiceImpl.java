@@ -39,6 +39,7 @@ import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
+import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountQuotaRepository;
 import org.linagora.linshare.core.repository.ContainerQuotaRepository;
@@ -87,8 +88,11 @@ public class ContainerQuotaBusinessServiceImpl extends GenericQuotaBusinessServi
 
 	@Override
 	public ContainerQuota update(ContainerQuota entity, ContainerQuota dto) throws BusinessException {
-		// carefull you and not update xxxxOverride fields for root domain and its relative quota containers
 		// quota
+		if (needToRestore(entity.getQuotaOverride(), dto.getQuotaOverride())) {
+			ContainerQuota ancestor = repository.find(entity.getParentDomain(), entity.getContainerQuotaType());
+			dto.setQuota(ancestor.getDefaultQuota());
+		}
 		entity.setQuota(dto.getQuota());
 		entity.setQuotaOverride(dto.getQuotaOverride());
 
@@ -110,6 +114,10 @@ public class ContainerQuotaBusinessServiceImpl extends GenericQuotaBusinessServi
 	private void cascadeDefaultAccountQuota(ContainerQuota entity, ContainerQuota dto) {
 		Long toDefaultAccountQuota = dto.getDefaultAccountQuota();
 		Boolean toDefaultAccountQuotaOverride = dto.getDefaultAccountQuotaOverride();
+		if (needToRestore(entity.getDefaultAccountQuotaOverride(), toDefaultAccountQuotaOverride)) {
+			ContainerQuota ancestor = repository.find(entity.getParentDomain(), entity.getContainerQuotaType());
+			toDefaultAccountQuota = ancestor.getDefaultAccountQuota();
+		}
 		if (needCascade(entity.getDefaultAccountQuota(), toDefaultAccountQuota,
 				entity.getDefaultAccountQuotaOverride(), toDefaultAccountQuotaOverride)) {
 			repository.cascadeDefaultAccountQuota(entity.getDomain(), toDefaultAccountQuota, entity.getContainerQuotaType());
@@ -121,6 +129,10 @@ public class ContainerQuotaBusinessServiceImpl extends GenericQuotaBusinessServi
 	private void cascadeAccountQuota(ContainerQuota entity, ContainerQuota dto) {
 		Long toAccountQuota = dto.getAccountQuota();
 		Boolean toAccountQuotaOverride = dto.getAccountQuotaOverride();
+		if (needToRestore(entity.getAccountQuotaOverride(), toAccountQuotaOverride)) {
+			ContainerQuota ancestor = repository.find(entity.getParentDomain(), entity.getContainerQuotaType());
+			toAccountQuota = ancestor.getAccountQuota();
+		}
 		if (needCascade(entity.getAccountQuota(), toAccountQuota,
 				entity.getAccountQuotaOverride(), toAccountQuotaOverride)) {
 			repository.cascadeAccountQuota(entity, toAccountQuota);
@@ -132,6 +144,10 @@ public class ContainerQuotaBusinessServiceImpl extends GenericQuotaBusinessServi
 	private void cascadeDefaultQuota(ContainerQuota entity, ContainerQuota dto) {
 		Long toDefaultQuota = dto.getDefaultQuota();
 		Boolean toDefaultQuotaOverride = dto.getDefaultQuotaOverride();
+		if (needToRestore(entity.getDefaultQuotaOverride(), toDefaultQuotaOverride)) {
+			ContainerQuota ancestor = repository.find(entity.getParentDomain(), entity.getContainerQuotaType());
+			toDefaultQuota = ancestor.getDefaultQuota();
+		}
 		if (needCascade(entity.getDefaultQuota(), toDefaultQuota,
 				entity.getDefaultQuotaOverride(), toDefaultQuotaOverride)) {
 			repository.cascadeDefaultQuota(entity.getDomain(), toDefaultQuota, entity.getContainerQuotaType());
@@ -143,6 +159,10 @@ public class ContainerQuotaBusinessServiceImpl extends GenericQuotaBusinessServi
 	private void cascadeDefaultMaxFileSize(ContainerQuota entity, ContainerQuota dto) {
 		Long toDefaultMaxFileSize = dto.getDefaultMaxFileSize();
 		Boolean toDefaultMaxFileSizeOverride = dto.getDefaultMaxFileSizeOverride();
+		if (needToRestore(entity.getDefaultMaxFileSizeOverride(), toDefaultMaxFileSizeOverride)) {
+			ContainerQuota ancestor = repository.find(entity.getParentDomain(), entity.getContainerQuotaType());
+			toDefaultMaxFileSize = ancestor.getDefaultMaxFileSize();
+		}
 		if (needCascade(entity.getDefaultMaxFileSize(), toDefaultMaxFileSize,
 				entity.getDefaultMaxFileSizeOverride(), toDefaultMaxFileSizeOverride)) {
 			repository.cascadeDefaultMaxFileSize(entity.getDomain(), toDefaultMaxFileSize, entity.getContainerQuotaType());
@@ -154,6 +174,10 @@ public class ContainerQuotaBusinessServiceImpl extends GenericQuotaBusinessServi
 	private void cascadeMaxFileSize(ContainerQuota entity, ContainerQuota dto) {
 		Long toMaxFileSize = dto.getMaxFileSize();
 		Boolean toMaxFileSizeOverride = dto.getMaxFileSizeOverride();
+		if (needToRestore(entity.getMaxFileSizeOverride(), toMaxFileSizeOverride)) {
+			ContainerQuota ancestor = repository.find(entity.getParentDomain(), entity.getContainerQuotaType());
+			toMaxFileSize = ancestor.getMaxFileSize();
+		}
 		if (needCascade(entity.getMaxFileSize(), toMaxFileSize,
 				entity.getMaxFileSizeOverride(), toMaxFileSizeOverride)) {
 			repository.cascadeMaxFileSize(entity, toMaxFileSize);

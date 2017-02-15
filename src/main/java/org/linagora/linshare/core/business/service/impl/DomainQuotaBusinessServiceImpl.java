@@ -91,6 +91,10 @@ public class DomainQuotaBusinessServiceImpl extends GenericQuotaBusinessServiceI
 	@Override
 	public DomainQuota update(DomainQuota entity, DomainQuota dq) throws BusinessException {
 		// quota
+		if (needToRestore(entity.getQuotaOverride(), dq.getQuotaOverride())) {
+			DomainQuota ancestor = repository.find(entity.getParentDomain());
+			dq.setQuota(ancestor.getDefaultQuota());
+		}
 		entity.setQuota(dq.getQuota());
 		entity.setQuotaOverride(dq.getQuotaOverride());
 
@@ -108,6 +112,10 @@ public class DomainQuotaBusinessServiceImpl extends GenericQuotaBusinessServiceI
 			} else {
 				// from true to false => need to cascade
 				// restore default value from parent ?
+				if (entity.getParentDomain() != null) {
+					DomainQuota ancestor = repository.find(entity.getParentDomain());
+					dq.setDefaultQuota(ancestor.getDefaultQuota());
+				}
 				repository.cascadeDefaultQuota(entity.getDomain(), dq.getDefaultQuota());
 			}
 		} else if (!entity.getDefaultQuota().equals(dq.getDefaultQuota())) {

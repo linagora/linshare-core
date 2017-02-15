@@ -59,4 +59,22 @@ public abstract class GenericQuotaBusinessServiceImpl {
 		}
 		return doIt;
 	}
+
+	protected boolean needToRestore(Boolean fromOverride, Boolean toOverride) {
+		boolean doIt = false;
+		if (fromOverride == null) {
+			// root
+			return doIt;
+		}
+		if (toOverride != null) {
+			if (!toOverride.equals(fromOverride)) {
+				if (!toOverride) {
+					// from true to false => need to cascade
+					// Do we need to restore 'fromValue' with parent default value ?
+					doIt = true;
+				}
+			}
+		}
+		return doIt;
+	}
 }

@@ -48,7 +48,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class AccountQuotaBusinessServiceImpl implements AccountQuotaBusinessService {
+public class AccountQuotaBusinessServiceImpl extends GenericQuotaBusinessServiceImpl implements AccountQuotaBusinessService {
 
 	final private static Logger logger = LoggerFactory
 			.getLogger(AccountQuotaBusinessServiceImpl.class);
@@ -110,7 +110,22 @@ public class AccountQuotaBusinessServiceImpl implements AccountQuotaBusinessServ
 	}
 
 	@Override
-	public AccountQuota update(AccountQuota entity) throws BusinessException {
+	public AccountQuota update(AccountQuota entity, AccountQuota dto) throws BusinessException {
+		if (needToRestore(entity.getMaxFileSizeOverride(), dto.getMaxFileSizeOverride())) {
+			ContainerQuota ancestor = containerQuotaRepository.find(entity.getDomain(),
+					entity.getAccount().getContainerQuotaType());
+			dto.setMaxFileSize(ancestor.getMaxFileSize());
+		}
+		entity.setMaxFileSize(dto.getMaxFileSize());
+		entity.setMaxFileSizeOverride(dto.getMaxFileSizeOverride());
+		if (needToRestore(entity.getQuotaOverride(), dto.getQuotaOverride())) {
+			ContainerQuota ancestor = containerQuotaRepository.find(entity.getDomain(),
+					entity.getAccount().getContainerQuotaType());
+			dto.setQuota(ancestor.getDefaultAccountQuota());
+		}
+		entity.setQuota(dto.getQuota());
+		entity.setQuotaOverride(dto.getQuotaOverride());
+
 		return repository.update(entity);
 	}
 

@@ -52,7 +52,7 @@ public interface AccountQuotaBusinessService {
 
 	AccountQuota create(AccountQuota entity) throws BusinessException;
 
-	AccountQuota update(AccountQuota entity) throws BusinessException;
+	AccountQuota update(AccountQuota entity, AccountQuota dto) throws BusinessException;
 
 	List<String> findDomainUuidByBatchModificationDate(Date startDate);
 }
