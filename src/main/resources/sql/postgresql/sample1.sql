@@ -102,7 +102,7 @@ INSERT INTO upload_request_group (id, subject, body, uuid, creation_date, modifi
 INSERT INTO upload_request (id, domain_abstract_id, account_id, upload_request_group_id, uuid, max_file, max_deposit_size, max_file_size, status, activation_date, creation_date, modification_date, notification_date, expiry_date, upload_proposition_request_uuid, can_delete, can_close, can_edit_expiry_date, locale, secured, mail_message_id)
 	VALUES (1, 3, 50, 1, '916a6e65-deb8-4120-b2ab-c64bfcbf4e02', 3, 31457280, 10485760, 'STATUS_ENABLED', now(), now(), now(), '2014-08-10 00:00:00', '2014-09-10 00:00:00', null, true, true, true, 'fr', true, null); 
 
-INSERT INTO contact (id, mail) VALUES (1,'ctjhoa@linagora.com');
+INSERT INTO contact (id, mail) VALUES (1,'yoda@int4.linshare.dev');
 -- password : 1qm6xtpyu93qp
 INSERT INTO upload_request_url (id, contact_id, upload_request_id, uuid, path, password, creation_date, modification_date)
 	VALUES (1, 1, 1, '90b8a0f8-af07-4052-8bb8-bc5179f64b72', 'upload_request', 'kITh6Jk+FiuyGQtdtaeFxvYnzug=', now(), now());
