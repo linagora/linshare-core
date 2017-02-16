@@ -73,7 +73,6 @@ import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.ShareExpiryDateService;
 import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.UserService;
-import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 
 import com.google.common.collect.Sets;
 
@@ -98,8 +97,6 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 
 	private final MailBuildingService mailBuildingService;
 
-	private final AuditUserMongoRepository auditMongoRepository;
-
 	// TODO : To be fix one day.
 	@SuppressWarnings("unused")
 	private final ShareExpiryDateService shareExpiryDateService;
@@ -118,8 +115,8 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			final ShareEntryResourceAccessControl rac,
 			final MailBuildingService mailBuildingService,
 			final ShareExpiryDateService shareExpiryDateService,
-			final ShareEntryGroupService shareEntryGroupService,
-			final AuditUserMongoRepository auditMongoRepository) {
+			final ShareEntryGroupService shareEntryGroupService
+			) {
 		super(rac);
 		this.funcService = functionalityReadOnlyService;
 		this.documentEntryService = documentEntryService;
@@ -132,7 +129,6 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		this.mailBuildingService = mailBuildingService;
 		this.shareExpiryDateService = shareExpiryDateService;
 		this.shareEntryGroupService = shareEntryGroupService;
-		this.auditMongoRepository = auditMongoRepository;
 	}
 
 	// TODO FMA - Refactoring shares

@@ -340,9 +340,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		if(hasBeenUpdated) {
 			logger.info("Step 2: start updateMailingListEmail ...");
 			userService.updateMailingListEmail(actor, currentEmail, newEmail);
-			logger.info("Step 3: start updateEmailLogEntry ...");
-			userService.updateEmailLogEntry(actor, currentEmail, newEmail);
-			logger.info("Step 4: start updateRecipientFavourite ...");
+			logger.info("Step 3: start updateRecipientFavourite ...");
 			userService.updateRecipientFavourite(actor, currentEmail, newEmail);
 		}
 		logger.info("End of email migration...");

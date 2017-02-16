@@ -33,29 +33,44 @@
  */
 package org.linagora.linshare.mongo.entities.logs;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.linagora.linshare.mongo.entities.mto.UserMto;
 
+@XmlRootElement
 public class UserAuditLogEntry extends AuditLogEntryUser {
 
-	private AccountMto resource;
+	protected UserMto resource;
+
+	protected UserMto resourceUpdated;
 
 	public UserAuditLogEntry() {
 	}
 
-	public UserAuditLogEntry(Account actor, Account owner, LogAction action, AuditLogEntryType type, Account user) {
+	public UserAuditLogEntry(Account actor, Account owner, LogAction action, AuditLogEntryType type, User user) {
 		super(new AccountMto(actor), new AccountMto(owner), action, type, user.getLsUuid());
-		this.resource = new AccountMto(user);
+		this.resource = new UserMto(user);
 	}
 
 	public AccountMto getResource() {
 		return resource;
 	}
 
-	public void setResource(AccountMto resource) {
+	public void setResource(UserMto resource) {
 		this.resource = resource;
+	}
+
+	public UserMto getResourceUpdated() {
+		return resourceUpdated;
+	}
+
+	public void setResourceUpdated(UserMto resourceUpdated) {
+		this.resourceUpdated = resourceUpdated;
 	}
 
 }

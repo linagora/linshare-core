@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2017 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2017. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,57 +31,88 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.mongo.entities.mto;
 
-import java.util.Calendar;
+import java.util.Date;
 
-/**
- * log entry for the users
- * 
- * @author ncharles
- *
- */
-public class UserLogEntry extends LogEntry {
+import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.User;
 
-	private static final long serialVersionUID = -8388034589530890111L;
+public class UserMto extends AccountMto {
 
-	protected final String targetMail;
+	protected String ldapUid;
 
-	protected final String targetFirstname;
+	protected Boolean canUpload;
 
-	protected final String targetLastname;
+	protected Boolean inconsistent;
 
-	protected final String targetDomain;
+	protected Boolean canCreateGuest;
 
-	protected final Calendar expirationDate;
+	protected boolean restricted;
 
-	protected UserLogEntry() {
-		super();
-		this.targetMail = null;
-		this.targetFirstname = null;
-		this.targetLastname = null;
-		this.targetDomain = null;
-		this.expirationDate = null;
+	protected Date expirationDate;
+
+	public UserMto() {
 	}
 
-	public String getTargetMail() {
-		return targetMail;
+	public UserMto(User user) {
+		super(user);
+		this.ldapUid = user.getLdapUid();
+		this.canUpload = user.getCanUpload();
+		this.inconsistent = user.isInconsistent();
+		this.canCreateGuest = user.getCanCreateGuest();
+		if (user instanceof Guest) {
+			Guest guest = (Guest) user;
+			this.restricted = guest.isRestricted();
+			this.expirationDate = guest.getExpirationDate();
+		}
 	}
 
-	public String getTargetFirstname() {
-		return targetFirstname;
+	public String getLdapUid() {
+		return ldapUid;
 	}
 
-	public String getTargetLastname() {
-		return targetLastname;
+	public void setLdapUid(String ldapUid) {
+		this.ldapUid = ldapUid;
 	}
 
-	public Calendar getExpirationDate() {
+	public Boolean getCanUpload() {
+		return canUpload;
+	}
+
+	public void setCanUpload(Boolean canUpload) {
+		this.canUpload = canUpload;
+	}
+
+	public Boolean getInconsistent() {
+		return inconsistent;
+	}
+
+	public void setInconsistent(Boolean inconsistent) {
+		this.inconsistent = inconsistent;
+	}
+
+	public Boolean getCanCreateGuest() {
+		return canCreateGuest;
+	}
+
+	public void setCanCreateGuest(Boolean canCreateGuest) {
+		this.canCreateGuest = canCreateGuest;
+	}
+
+	public boolean isRestricted() {
+		return restricted;
+	}
+
+	public void setRestricted(boolean restricted) {
+		this.restricted = restricted;
+	}
+
+	public Date getExpirationDate() {
 		return expirationDate;
 	}
 
-	public String getTargetDomain() {
-		return targetDomain;
+	public void setExpirationDate(Date expirationDate) {
+		this.expirationDate = expirationDate;
 	}
-
 }

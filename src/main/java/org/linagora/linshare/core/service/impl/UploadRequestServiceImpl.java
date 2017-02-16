@@ -80,14 +80,15 @@ import org.linagora.linshare.core.rac.UploadRequestResourceAccessControl;
 import org.linagora.linshare.core.rac.UploadRequestTemplateResourceAccessControl;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
+import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.UploadRequestAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.UploadRequestGroupAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.UploadRequestMto;
-import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,7 +111,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	private final FunctionalityReadOnlyService functionalityService;
 	private final UploadRequestTemplateResourceAccessControl templateRac;
 	private final UploadRequestGroupResourceAccessControl groupRac;
-	private final AuditUserMongoRepository mongoRepository;
+	private final LogEntryService logEntryService;
 
 	public UploadRequestServiceImpl(
 			final AccountRepository<Account> accountRepository,
@@ -126,7 +127,8 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 			final UploadRequestResourceAccessControl rac,
 			final UploadRequestTemplateResourceAccessControl templateRac,
 			final UploadRequestGroupResourceAccessControl groupRac,
-			final AuditUserMongoRepository mongoRepository) {
+			final LogEntryService logEntryService
+			) {
 		super(rac);
 		this.accountRepository = accountRepository;
 		this.uploadRequestBusinessService = uploadRequestBusinessService;
@@ -140,7 +142,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		this.functionalityService = functionalityReadOnlyService;
 		this.templateRac = templateRac;
 		this.groupRac = groupRac;
-		this.mongoRepository = mongoRepository;
+		this.logEntryService = logEntryService;
 	}
 
 	@Override
@@ -200,7 +202,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		UploadRequestGroupAuditLogEntry groupLog = new UploadRequestGroupAuditLogEntry(new AccountMto(actor),
 				new AccountMto(owner), LogAction.CREATE, AuditLogEntryType.UPLOAD_REQUEST_GROUP,
 				group.getUuid(), group);
-		mongoRepository.insert(groupLog);
+		logEntryService.insert(groupLog);
 		UploadRequest req = initUploadRequest(owner, group, inputRequest);
 		List<UploadRequest> requests = Lists.newArrayList();
 		if (groupedModeLocal) {
@@ -216,13 +218,13 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 						 Lists.newArrayList(contact), subject, body, group));
 			}
 		}
-		List<UploadRequestAuditLogEntry> log = Lists.newArrayList();
+		List<AuditLogEntryUser> log = Lists.newArrayList();
 		for (UploadRequest r : requests) {
 			log.add(new UploadRequestAuditLogEntry(new AccountMto(actor),
 				new AccountMto(owner), LogAction.CREATE, AuditLogEntryType.UPLOAD_REQUEST,
 				r.getUuid(), r));
 		}
-		mongoRepository.insert(log);
+		logEntryService.insert(log);
 		return requests;
 	}
 
@@ -639,7 +641,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		req.setStatus(status);
 		req = updateRequest(actor, owner, req);
 		log.setResourceUpdated(new UploadRequestMto(req));
-		mongoRepository.insert(log);
+		logEntryService.insert(log);
 		return req;
 	}
 
@@ -657,7 +659,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		e = setHistory(e);
 		UploadRequest res = uploadRequestBusinessService.update(e, object);
 		log.setResourceUpdated(new UploadRequestMto(res));
-		mongoRepository.insert(log);
+		logEntryService.insert(log);
 		return res;
 	}
 
@@ -707,7 +709,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		MailContainerWithRecipient mail = mailBuildingService.build(ctx);
 		notifierService.sendNotification(mail);
 		log.setResourceUpdated(new UploadRequestMto(update));
-		mongoRepository.insert(log);
+		logEntryService.insert(log);
 		return update;
 	}
 

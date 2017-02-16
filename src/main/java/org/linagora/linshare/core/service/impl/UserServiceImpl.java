@@ -41,8 +41,8 @@ import java.util.StringTokenizer;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
-import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
@@ -59,7 +59,6 @@ import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.entities.UserLogEntry;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
@@ -77,7 +76,7 @@ import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.utils.HashUtils;
 import org.linagora.linshare.mongo.entities.logs.UserAuditLogEntry;
-import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
+import org.linagora.linshare.mongo.entities.mto.UserMto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -115,8 +114,6 @@ public class UserServiceImpl implements UserService {
 
 	private final RecipientFavouriteRepository recipientFavouriteRepository;
 
-	private final AuditUserMongoRepository auditMongoRepository;
-
 	private final AccountQuotaBusinessService accountQuotaBusinessService;
 
 	private final ContainerQuotaBusinessService containerQuotaBusinessService;
@@ -133,7 +130,6 @@ public class UserServiceImpl implements UserService {
 			final DomainPermissionBusinessService domainPermissionBusinessService,
 			final MailingListContactRepository mailingListContactRepository,
 			final RecipientFavouriteRepository recipientFavouriteRepository,
-			final AuditUserMongoRepository auditMongoRepository,
 			final AccountQuotaBusinessService accountQuotaBusinessService,
 			final ContainerQuotaBusinessService containerQuotaBusinessService) {
 		this.userRepository = userRepository;
@@ -147,7 +143,6 @@ public class UserServiceImpl implements UserService {
 		this.domainPermisionService = domainPermissionBusinessService;
 		this.mailingListContactRepository = mailingListContactRepository;
 		this.recipientFavouriteRepository = recipientFavouriteRepository;
-		this.auditMongoRepository = auditMongoRepository;
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
 		this.containerQuotaBusinessService = containerQuotaBusinessService;
 	}
@@ -205,8 +200,6 @@ public class UserServiceImpl implements UserService {
 			} else {
 				setUserToDestroy(actor, user);
 			}
-			UserAuditLogEntry log = new UserAuditLogEntry(actor, user, LogAction.USER_DELETE, AuditLogEntryType.USER, user);
-			auditMongoRepository.insert(log);
 			return user;
 		} else {
 			logger.debug("User not found in DB : " + lsUuid);
@@ -236,11 +229,10 @@ public class UserServiceImpl implements UserService {
 			throws BusinessException {
 		try {
 			// clear all thread memberships
+			UserAuditLogEntry log = new UserAuditLogEntry(actor, actor, LogAction.DELETE, AuditLogEntryType.USER, userToDelete);
 			threadService.deleteAllUserMemberships(actor, userToDelete);
 			userRepository.delete(userToDelete);
-			UserLogEntry logEntry = new UserLogEntry(actor,
-					LogAction.USER_DELETE, "Deleting an user", userToDelete);
-			logEntryService.create(logEntry);
+			logEntryService.insert(log);
 		} catch (IllegalArgumentException e) {
 			logger.error(
 					"Couldn't find the user "
@@ -277,7 +269,7 @@ public class UserServiceImpl implements UserService {
 //			AKO : an account marked to be purge is it consider as deleted?
 			UserAuditLogEntry log = new UserAuditLogEntry(actor, user, LogAction.DELETE,
 					AuditLogEntryType.USER, user);
-			auditMongoRepository.insert(log);
+			logEntryService.insert(log);
 		}
 	}
 
@@ -306,12 +298,9 @@ public class UserServiceImpl implements UserService {
 
 			userRepository.purge(userToDelete);
 
-			UserLogEntry logEntry = new UserLogEntry(actor,
-					LogAction.USER_PURGE, "Purging an user", userToDelete);
-			logEntryService.create(logEntry);
 //			AKO : To think about, logical delete, delete, physical delete staging for delete...
 			UserAuditLogEntry log = new UserAuditLogEntry(actor, userToDelete, LogAction.PURGE, AuditLogEntryType.USER, userToDelete);
-			auditMongoRepository.insert(log);
+			logEntryService.insert(log);
 
 		} catch (IllegalArgumentException e) {
 			logger.error(
@@ -887,6 +876,7 @@ public class UserServiceImpl implements UserService {
 	public User updateUser(Account actor, User updatedUser, String domainId)
 			throws BusinessException {
 		User user = find(updatedUser, domainId);
+		UserAuditLogEntry log = new UserAuditLogEntry(actor, actor, LogAction.UPDATE, AuditLogEntryType.USER, user);
 		Assert.notNull(updatedUser.getRole());
 
 		user.setFirstName(updatedUser.getFirstName());
@@ -915,11 +905,8 @@ public class UserServiceImpl implements UserService {
 			user.setRole(updatedUser.getRole());
 		}
 		User update = userRepository.update(user);
-		UserLogEntry logEntry = new UserLogEntry(actor, LogAction.USER_UPDATE,
-				"Update of a user:" + user.getMail(), user);
-		logEntryService.create(logEntry);
-		UserAuditLogEntry log = new UserAuditLogEntry(actor, user, LogAction.USER_UPDATE, AuditLogEntryType.USER, user);
-		auditMongoRepository.insert(log);
+		log.setResourceUpdated(new UserMto(update));
+		logEntryService.insert(log);
 		return update;
 	}
 
@@ -956,7 +943,7 @@ public class UserServiceImpl implements UserService {
 			logger.warn("There is no user matching the email " + currentEmail);
 			return false;
 		}
-
+		UserAuditLogEntry log = new UserAuditLogEntry(actor, userWithOldEmail, LogAction.UPDATE, AuditLogEntryType.USER, userWithOldEmail);
 		logger.info("The user " + userWithOldEmail.getAccountRepresentation()
 				+ "has been found.");
 
@@ -964,9 +951,9 @@ public class UserServiceImpl implements UserService {
 				+ " to the new one: " + newEmail);
 		userWithOldEmail.setMail(newEmail);
 		logger.info("updating the tab users ...");
-		userRepository.update(userWithOldEmail);
-		UserAuditLogEntry log = new UserAuditLogEntry(actor, userWithOldEmail, LogAction.USER_DELETE, AuditLogEntryType.USER, userWithOldEmail);
-		auditMongoRepository.insert(log);
+		User update = userRepository.update(userWithOldEmail);
+		log.setResourceUpdated(new UserMto(update ));
+		logEntryService.insert(log);
 		return true;
 	}
 
@@ -980,18 +967,6 @@ public class UserServiceImpl implements UserService {
 		logger.info("updating mailing_list_contact tab ...");
 		mailingListContactRepository.updateEmail(currentEmail, newEmail);
 		logger.info("End of updateMailingListEmail");
-	}
-
-	@Override
-	public void updateEmailLogEntry(Account actor, String currentEmail, String newEmail) {
-		Validate.notNull(actor);
-		if (!actor.hasSuperAdminRole()) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
-					"Role not authorized.");
-		}
-		logger.info("updating log_entry tab ...");
-		logEntryService.updateEmailLogEntry(currentEmail, newEmail);
-		logger.info("End of updateEmailLogEntry");
 	}
 
 	@Override

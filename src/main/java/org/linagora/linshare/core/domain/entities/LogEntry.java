@@ -35,7 +35,6 @@ package org.linagora.linshare.core.domain.entities;
 
 import java.io.Serializable;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 import org.linagora.linshare.core.domain.constants.LogAction;
 
@@ -82,38 +81,6 @@ public abstract class LogEntry implements Serializable {
 		this.actorLastname = null;
 		this.logAction = null;
 		this.description = null;
-	}
-
-	public LogEntry(Account actor, LogAction logAction, String description) {
-
-		this.actorDomain = actor.getDomainId();
-		if (isUser(actor)) {
-			User user = (User) actor;
-			this.actorMail = user.getMail();
-			this.actorFirstname = user.getFirstName();
-			this.actorLastname = user.getLastName();
-
-		} else {
-			this.actorMail = actor.getLsUuid();
-			this.actorFirstname = "";
-			this.actorLastname = "";
-		}
-		this.logAction = logAction;
-		this.description = description;
-		this.actionDate = new GregorianCalendar();
-
-	}
-
-	public LogEntry(String actorMail, String actorFirstname,
-			String actorLastname, String actorDomain, LogAction logAction,
-			String description) {
-		this.actionDate = new GregorianCalendar();
-		this.actorMail = actorMail;
-		this.actorFirstname = actorFirstname;
-		this.actorLastname = actorLastname;
-		this.actorDomain = actorDomain;
-		this.logAction = logAction;
-		this.description = description;
 	}
 
 	public static boolean isUser(Account actor) {

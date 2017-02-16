@@ -38,10 +38,8 @@ import java.io.InputStream;
 import java.security.cert.X509Certificate;
 
 import org.linagora.linshare.core.business.service.SignatureBusinessService;
-import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
-import org.linagora.linshare.core.domain.entities.FileLogEntry;
 import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.LogEntryService;
@@ -79,8 +77,8 @@ public class SignatureServiceImpl implements SignatureService {
 		try {
 			String mimeType = "text/xml";
 			signature = signatureBusinessService.createSignature(actor, document, tempFile, size, fileName, mimeType, signerCertificate);
-			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_SIGN, "signature of a file", fileName, document.getSize(), mimeType);
-			logEntryService.create(logEntry);
+//			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_SIGN, "signature of a file", fileName, document.getSize(), mimeType);
+//			logEntryService.create(logEntry);
 		} finally {
 			try{
 				logger.debug("deleting temp file : " + tempFile.getName());

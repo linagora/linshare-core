@@ -33,13 +33,11 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import java.util.Calendar;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.domain.entities.LogEntry;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.LogEntryRepository;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.mongo.entities.EventNotification;
@@ -76,30 +74,6 @@ public class LogEntryServiceImpl implements LogEntryService {
 	}
 
 	@Override
-	public LogEntry create(int level, LogEntry entity) throws IllegalArgumentException, BusinessException {
-		if (entity == null) {
-			throw new IllegalArgumentException("Entity must not be null");
-		}
-		// Logger trace
-		if (level == INFO) {
-			logger.info(entity.toString());
-		} else if (level == WARN) {
-			logger.warn(entity.toString());
-		} else if (level == ERROR) {
-			logger.error(entity.toString());
-		} else {
-			throw new IllegalArgumentException("Unknown log level, is neither INFO, WARN nor ERROR");
-		}
-		// Database trace
-		return logEntryRepository.create(entity);
-	}
-
-	@Override
-	public LogEntry create(LogEntry entity) throws IllegalArgumentException, BusinessException {
-		return create(INFO, entity);
-	}
-
-	@Override
 	public List<LogEntry> findByCriteria(User actor, LogCriteriaBean criteria) {
 		List<LogEntry> list = Lists.newArrayList();
 		List<String> allMyDomainIdentifiers = domainBusinessService.getAllMyDomainIdentifiers(actor.getDomain());
@@ -107,21 +81,6 @@ public class LogEntryServiceImpl implements LogEntryService {
 			list.addAll(logEntryRepository.findByCriteria(criteria, domain));
 		}
 		return list;
-	}
-
-	@Override
-	public List<LogEntry> findByUser(String mail) {
-		return logEntryRepository.findByUser(mail);
-	}
-
-	@Override
-	public List<LogEntry> findByDate(String mail, Calendar begin, Calendar end) {
-		return logEntryRepository.findByDate(mail, begin, end);
-	}
-
-	@Override
-	public void updateEmailLogEntry(String currentEmail, String newEmail) {
-		logEntryRepository.updateMail(currentEmail, newEmail);
 	}
 
 	@Override

@@ -36,7 +36,6 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.Calendar;
 
 import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.objects.Recipient;
 
 public class ShareLogEntry extends FileLogEntry {
 
@@ -61,77 +60,6 @@ public class ShareLogEntry extends FileLogEntry {
 		this.expirationDate = null;
 	}
 
-
-	public ShareLogEntry(Account actor, ShareEntry share, LogAction logAction, String description) {
-
-		super(actor, logAction, description, share.getName(), share.getSize(), share.getType());
-
-		Account target = share.getRecipient();
-		this.targetDomain = target.getDomainId();
-		if(isUser(target)) {
-			User user = (User)target;
-			this.targetMail = user.getMail();
-			this.targetFirstname = user.getFirstName();
-			this.targetLastname = user.getLastName();
-		} else {
-			this.targetMail = target.getLsUuid();
-			this.targetFirstname = "";
-			this.targetLastname = "";
-		}
-		this.expirationDate = share.getExpirationDate();
-
-	}
-
-	public ShareLogEntry(Account actor, AnonymousShareEntry share,	LogAction logAction, String description) {
-
-		super(actor, logAction, description, share.getName(), share.getSize(), share.getType());
-
-		this.targetDomain = "";
-		this.targetMail = share.getAnonymousUrl().getContact().getMail();
-		this.targetFirstname = "";
-		this.targetLastname = "";
-		this.expirationDate = share.getExpirationDate();
-	}
-
-	public ShareLogEntry(Account actor, DocumentEntry document, LogAction logAction, String description, Calendar expirationDate, Recipient recipient) {
-		super(actor, logAction, description, document.getName(), document.getSize(), document.getType());
-		this.targetDomain = actor.getDomainId();
-		this.targetMail = recipient.getMail();
-		this.targetFirstname = "";
-		this.targetLastname = "";
-		this.expirationDate = expirationDate;
-	}
-
-	public ShareLogEntry(Account actor, LogAction logAction, String description, String fileName, Long fileSize, String fileType, Account target, Calendar expirationDate) {
-		super(actor, logAction, description, fileName, fileSize, fileType);
-
-		this.targetDomain = target.getDomainId();
-		if(isUser(target)) {
-			User user = (User)target;
-			this.targetMail = user.getMail();
-			this.targetFirstname = user.getFirstName();
-			this.targetLastname = user.getLastName();
-		} else {
-			this.targetMail = target.getLsUuid();
-			this.targetFirstname = "";
-			this.targetLastname = "";
-		}
-		this.expirationDate = expirationDate;
-	}
-
-	/*
-	 * Wrapper for ease of use
-	 * 
-	 * This constructor is used for Share Download logging
-	 */
-	public ShareLogEntry(Account actor, LogAction logAction, String description, ShareEntry shareEntry, Account target) {
-		this(actor, logAction, description, shareEntry.getDocumentEntry().getName(),
-				shareEntry.getDocumentEntry().getSize(),
-				shareEntry.getDocumentEntry().getType(),
-				target,
-				shareEntry.getExpirationDate());
-	}
-
 	public String getTargetMail() {
 		return targetMail;
 	}
@@ -151,50 +79,4 @@ public class ShareLogEntry extends FileLogEntry {
 		return targetDomain;
 	}
 
-	public ShareLogEntry(Account actor, LogAction logAction, String description, ShareEntry share) {
-		super(actor, logAction, description, share.getName(), share.getSize(), share.getType());
-		this.expirationDate = share.getExpirationDate();
-		this.targetMail = "";
-		this.targetFirstname = "";
-		this.targetLastname = "";
-		this.targetDomain = "";
-	}
-
-	public static ShareLogEntry hasCopiedAShare(Account actor, ShareEntry share) {
-		ShareLogEntry res = new ShareLogEntry(actor, LogAction.SHARE_COPY, "Copy of a sharing", share);
-		return res;
-	}
-
-	public static ShareLogEntry hasDownloadedAShare(Account actor, ShareEntry share) {
-		Account target = share.getEntryOwner();
-		ShareLogEntry res = new ShareLogEntry(actor, LogAction.SHARE_DOWNLOAD, "Download of a sharing, shared by " + target.getAccountRepresentation(), share);
-		res.targetDomain = target.getDomainId();
-		if(isUser(target)) {
-			User user = (User)target;
-			res.targetMail = user.getMail();
-			res.targetFirstname = user.getFirstName();
-			res.targetLastname = user.getLastName();
-		} else {
-			res.targetMail = target.getLsUuid();
-			res.targetFirstname = "";
-			res.targetLastname = "";
-		}
-		return res;
-	}
-
-	public static ShareLogEntry aShareWasDownloaded(Account actor, ShareEntry share) {
-		ShareLogEntry res = new ShareLogEntry(share.getEntryOwner(), LogAction.SHARE_DOWNLOADED, "Share was downloaded by " + actor.getAccountRepresentation(), share);
-		res.targetDomain = actor.getDomainId();
-		if(isUser(actor)) {
-			User user = (User)actor;
-			res.targetMail = user.getMail();
-			res.targetFirstname = user.getFirstName();
-			res.targetLastname = user.getLastName();
-		} else {
-			res.targetMail = actor.getLsUuid();
-			res.targetFirstname = "";
-			res.targetLastname = "";
-		}
-		return res;
-	}
 }

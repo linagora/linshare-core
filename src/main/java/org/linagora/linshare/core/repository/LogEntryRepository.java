@@ -33,33 +33,13 @@
  */
 package org.linagora.linshare.core.repository;
 
-import java.util.Calendar;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.LogEntry;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.view.tapestry.beans.LogCriteriaBean;
 
 public interface LogEntryRepository extends AbstractRepository<LogEntry> {
 
-	/**
-	 * Return all the log entries of a specific user (actor or target)
-	 * @param mail
-	 * @return
-	 */
-	public List<LogEntry> findByUser(String mail);
+	List<LogEntry> findByCriteria(LogCriteriaBean criteria, String domainId);
 
-	/**
-	 * Return all the log entries of a specific user, between two date (one may be null)
-	 * @param mail 
-	 * @param beginDate
-	 * @param endDate
-	 * @return
-	 */
-	public List<LogEntry> findByDate(String mail, Calendar beginDate, Calendar endDate);
-	
-	
-	public List<LogEntry> findByCriteria(LogCriteriaBean criteria, String domainId);
-
-	public void updateMail(String currentEmail, String newEmail) throws BusinessException;
 }

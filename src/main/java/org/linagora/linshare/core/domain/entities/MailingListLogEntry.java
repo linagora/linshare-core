@@ -34,8 +34,6 @@
 
 package org.linagora.linshare.core.domain.entities;
 
-import org.linagora.linshare.core.domain.constants.LogAction;
-
 public class MailingListLogEntry extends LogEntry {
 
 	private static final long serialVersionUID = -8388034589530890111L;
@@ -51,18 +49,6 @@ public class MailingListLogEntry extends LogEntry {
 		super();
 		this.identifier = null;
 		this.uuid = null;
-	}
-
-	public MailingListLogEntry(Account actor, MailingList list, LogAction logAction, String description) {
-		super(actor, logAction, description);
-		this.identifier = list.getIdentifier();
-		this.uuid = list.getUuid();
-	}
-
-	public MailingListLogEntry(Account actor, MailingListContact listContact, LogAction logAction, String description) {
-		super(actor, logAction, description);
-		this.identifier = listContact.getMailingList().getIdentifier();
-		this.uuid = listContact.getMailingList().getUuid();
 	}
 
 	public String getListName() {

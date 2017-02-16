@@ -51,6 +51,10 @@ public class ShareEntryGroupMto {
 
 	protected Boolean enabledUSDA;
 
+	protected Boolean notified;
+
+	protected Boolean processed;
+
 	public ShareEntryGroupMto() {
 	}
 
@@ -62,6 +66,8 @@ public class ShareEntryGroupMto {
 		this.creationDate = seg.getCreationDate();
 		this.expirationDate = seg.getExpirationDate();
 		this.enabledUSDA = (notificationDate == null ? false : true);
+		this.notified = seg.getNotified();
+		this.processed = seg.getProcessed();
 	}
 
 	public String getUuid() {
@@ -110,5 +116,21 @@ public class ShareEntryGroupMto {
 
 	public void setEnabledUSDA(Boolean enabledUSDA) {
 		this.enabledUSDA = enabledUSDA;
+	}
+
+	public Boolean getNotified() {
+		return notified;
+	}
+
+	public void setNotified(Boolean notified) {
+		this.notified = notified;
+	}
+
+	public Boolean getProcessed() {
+		return processed;
+	}
+
+	public void setProcessed(Boolean processed) {
+		this.processed = processed;
 	}
 }

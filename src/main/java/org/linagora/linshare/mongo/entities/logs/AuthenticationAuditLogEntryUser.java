@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2017 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2017. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,57 +31,64 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.mongo.entities.logs;
 
-import java.util.Calendar;
+import javax.xml.bind.annotation.XmlRootElement;
 
-/**
- * log entry for the users
- * 
- * @author ncharles
- *
- */
-public class UserLogEntry extends LogEntry {
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
 
-	private static final long serialVersionUID = -8388034589530890111L;
+@XmlRootElement
+public class AuthenticationAuditLogEntryUser extends AuditLogEntryUser {
 
-	protected final String targetMail;
+	protected String message;
 
-	protected final String targetFirstname;
+	protected String login;
 
-	protected final String targetLastname;
+	protected String domainIdentifier;
 
-	protected final String targetDomain;
-
-	protected final Calendar expirationDate;
-
-	protected UserLogEntry() {
+	public AuthenticationAuditLogEntryUser() {
 		super();
-		this.targetMail = null;
-		this.targetFirstname = null;
-		this.targetLastname = null;
-		this.targetDomain = null;
-		this.expirationDate = null;
 	}
 
-	public String getTargetMail() {
-		return targetMail;
+	public AuthenticationAuditLogEntryUser(Account actor, LogAction action, AuditLogEntryType type, String message) {
+		super(new AccountMto(actor), new AccountMto(actor), action, type, actor.getLsUuid());
+		this.message = message;
 	}
 
-	public String getTargetFirstname() {
-		return targetFirstname;
+	public AuthenticationAuditLogEntryUser(String login, String domainIdentifier, LogAction action,
+			AuditLogEntryType type, String message) {
+		this.login = login;
+		this.domainIdentifier = domainIdentifier;
+		this.message = message;
+		this.action = action;
+		this.type = type;
 	}
 
-	public String getTargetLastname() {
-		return targetLastname;
+	public String getMessage() {
+		return message;
 	}
 
-	public Calendar getExpirationDate() {
-		return expirationDate;
+	public void setMessage(String message) {
+		this.message = message;
 	}
 
-	public String getTargetDomain() {
-		return targetDomain;
+	public String getLogin() {
+		return login;
+	}
+
+	public void setLogin(String login) {
+		this.login = login;
+	}
+
+	public String getDomainIdentifier() {
+		return domainIdentifier;
+	}
+
+	public void setDomainIdentifier(String domainIdentifier) {
+		this.domainIdentifier = domainIdentifier;
 	}
 
 }

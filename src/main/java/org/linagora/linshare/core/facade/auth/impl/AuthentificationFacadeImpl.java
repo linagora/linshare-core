@@ -35,12 +35,12 @@ package org.linagora.linshare.core.facade.auth.impl;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.entities.UserLogEntry;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
 import org.linagora.linshare.core.repository.InternalRepository;
@@ -48,6 +48,7 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.mongo.entities.logs.AuthenticationAuditLogEntryUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,18 +89,18 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 	}
 
 	@Override
-	public void logAuthError(String login, String domainIdentifier,
-			String message) throws BusinessException {
-		logEntryService.create(new UserLogEntry(login, domainIdentifier,
-				LogAction.USER_AUTH_FAILED, message));
+	public void logAuthError(String login, String domainIdentifier, String message) throws BusinessException {
+		AuthenticationAuditLogEntryUser log = new AuthenticationAuditLogEntryUser(login, domainIdentifier,
+				LogAction.FAILURE, AuditLogEntryType.AUTHENTICATION, message);
+		logEntryService.insert(log);
 	}
 
 	@Override
 	public void logAuthError(User user, String message)
 			throws BusinessException {
 		user = userService.findByLsUuid(user.getLsUuid());
-		logEntryService.create(new UserLogEntry(user,
-				LogAction.USER_AUTH_FAILED, message, user));
+		AuthenticationAuditLogEntryUser log = new AuthenticationAuditLogEntryUser(user, LogAction.FAILURE, AuditLogEntryType.AUTHENTICATION, message);
+		logEntryService.insert(log);
 	}
 
 	@Override
@@ -107,16 +108,16 @@ public class AuthentificationFacadeImpl implements AuthentificationFacade {
 			throws BusinessException {
 		// Reloading entity inside a new transaction/session.
 		user = userService.findByLsUuid(user.getLsUuid());
-		logEntryService.create(new UserLogEntry(user,
-				LogAction.USER_AUTH_FAILED, message, user));
+		AuthenticationAuditLogEntryUser log = new AuthenticationAuditLogEntryUser(user, LogAction.FAILURE, AuditLogEntryType.AUTHENTICATION, message);
+		logEntryService.insert(log);
 	}
 
 	@Override
 	public void logAuthSuccess(User user) throws BusinessException {
 		// Reloading entity inside a new transaction/session.
 		user = userService.findByLsUuid(user.getLsUuid());
-		logEntryService.create(new UserLogEntry(user,
-				LogAction.USER_AUTH, "Successfull authentification"));
+		AuthenticationAuditLogEntryUser log = new AuthenticationAuditLogEntryUser(user, LogAction.SUCCESS, AuditLogEntryType.AUTHENTICATION, "Successfull authentification");
+		logEntryService.insert(log);
 	}
 
 	@Override

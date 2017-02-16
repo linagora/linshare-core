@@ -199,7 +199,5 @@ public interface UserService {
 
 	void updateMailingListEmail(Account actor, String currentEmail, String newEmail);
 
-	void updateEmailLogEntry(Account actor, String currentEmail, String newEmail);
-
 	void updateRecipientFavourite(Account actor, String currentEmail, String newEmail);
 }

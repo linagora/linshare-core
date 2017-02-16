@@ -35,12 +35,12 @@ package org.linagora.linshare.core.batches.impl;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
-import org.linagora.linshare.core.domain.entities.ShareLogEntry;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BatchBusinessException;
@@ -54,6 +54,10 @@ import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryGroupService;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.mongo.entities.logs.ShareEntryAuditLogEntry;
+
+import com.google.common.collect.Lists;
 
 public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 
@@ -63,19 +67,19 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 
 	private final NotifierService notifierService;
 
-	private final LogEntryService logService;
+	private final LogEntryService logEntryService;
 
 	public UndownloadedSharedDocumentsBatchImpl(
 			final ShareEntryGroupService service,
 			final MailBuildingService mailBuildingService,
 			final NotifierService notifierService,
-			final LogEntryService logService,
+			final LogEntryService logEntryService,
 			AccountRepository<Account> accountRepository) {
 		super(accountRepository);
 		this.service = service;
 		this.mailService = mailBuildingService;
 		this.notifierService = notifierService;
-		this.logService = logService;
+		this.logEntryService = logEntryService;
 	}
 
 	@Override
@@ -94,24 +98,26 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 
 		Context context = new BatchResultContext<ShareEntryGroup>(shareEntryGroup);
 		MailContainerWithRecipient mail = null;
+		List<AuditLogEntryUser> logs = null;
 		try {
 			// No more info ?
 			logInfo(total, position, "processing shareEntryGroup : " + shareEntryGroup.getUuid());
 			logger.info("needNotification : " + shareEntryGroup.needNotification());
+			shareEntryGroup.setProcessed(true);
 			if (shareEntryGroup.needNotification()) {
 				// log action and notification
 				EmailContext emailContext = new ShareWarnUndownloadedFilesharesEmailContext(shareEntryGroup);
 				mail = mailService.build(emailContext);
 				shareEntryGroup.setNotified(true);
-				service.update(actor, actor, shareEntryGroup);
-				logActions(shareEntryGroup, LogAction.SHARE_WITH_USD_NOT_DOWNLOADED);
+				logs = getLogActions(actor, shareEntryGroup, LogAction.SHARE_WITH_USD_NOT_DOWNLOADED);
 			} else {
 				// only log action
-				logActions(shareEntryGroup, LogAction.SHARE_WITH_USD_DOWNLOADED);
+				logs = getLogActions(actor, shareEntryGroup, LogAction.SHARE_WITH_USD_DOWNLOADED);
 				// Nothing to do ? set notified to true ? or set expiration to
 				// null ?
 				// How to exclude them from finders ?
 			}
+			service.update(actor, actor, shareEntryGroup);
 		} catch (BusinessException businessException) {
 			logError(total, position, "Error while trying to send a notification for undownloaded shared documents");
 			logger.error("Error occured while sending notification ", businessException);
@@ -123,18 +129,22 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 		// Once every thing is ok, transaction is about to be committed, we can
 		// send the notification.
 		notifierService.sendNotification(mail);
+		logEntryService.insert(logs);
 		return context;
 	}
 
-	private void logActions(ShareEntryGroup shareEntryGroup, LogAction logAction) {
+	private List<AuditLogEntryUser> getLogActions(SystemAccount actor, ShareEntryGroup shareEntryGroup, LogAction logAction) {
+		List<AuditLogEntryUser> logs = Lists.newArrayList();
+		Account owner = shareEntryGroup.getOwner();
 		for (ShareEntry share : shareEntryGroup.getShareEntries()) {
-			ShareLogEntry logEntry = new ShareLogEntry(shareEntryGroup.getOwner(), share, logAction, "");
-			logService.create(logEntry);
+			ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, LogAction.UPDATE, share, AuditLogEntryType.SHARE_ENTRY);
+			logs.add(log);
 		}
 		for (AnonymousShareEntry anonymousShare : shareEntryGroup.getAnonymousShareEntries()) {
-			ShareLogEntry logEntry = new ShareLogEntry(shareEntryGroup.getOwner(), anonymousShare, logAction, "");
-			logService.create(logEntry);
+			ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, LogAction.UPDATE, anonymousShare, AuditLogEntryType.SHARE_ENTRY);
+			logs.add(log);
 		}
+		return logs;
 	}
 
 	@Override

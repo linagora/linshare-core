@@ -33,8 +33,6 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
-import org.linagora.linshare.core.domain.constants.LogAction;
-
 /**
  * Log class for uploading/deleting/expiring files
  * 
@@ -56,14 +54,6 @@ public class FileLogEntry extends LogEntry {
 		this.fileName = null;
 		this.fileSize = null;
 		this.fileType = null;
-	}
-
-	public FileLogEntry(Account actor, LogAction logAction, String description,
-			String fileName, Long fileSize, String fileType) {
-		super(actor, logAction, description);
-		this.fileName = fileName;
-		this.fileSize = fileSize;
-		this.fileType = fileType;
 	}
 
 	public String getFileName() {

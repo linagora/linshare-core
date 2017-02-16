@@ -33,12 +33,10 @@
  */
 package org.linagora.linshare.core.service;
 
-import java.util.Calendar;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.LogEntry;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.EventNotification;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.view.tapestry.beans.LogCriteriaBean;
@@ -47,40 +45,13 @@ import org.slf4j.spi.LocationAwareLogger;
 public interface LogEntryService {
 
 	final public int INFO = LocationAwareLogger.INFO_INT;
+
 	final public int WARN = LocationAwareLogger.WARN_INT;
+
 	final public int ERROR = LocationAwareLogger.ERROR_INT;
-
-	/**
-	 * 
-	 * @param level
-	 *            : logger level like INFO, WARN
-	 * @param entity
-	 *            : to be create in the database
-	 * @return : the log statement created
-	 * @throws IllegalArgumentException
-	 * @throws BusinessException
-	 */
-	public LogEntry create(int level, LogEntry entity) throws IllegalArgumentException, BusinessException;
-
-	/**
-	 * 
-	 * @param entity
-	 *            : to be create in the database
-	 * @return : the log statement created
-	 * @throws IllegalArgumentException
-	 * @throws BusinessException
-	 */
-	public LogEntry create(LogEntry entity) throws IllegalArgumentException, BusinessException;
 
 	public List<LogEntry> findByCriteria(User actor, LogCriteriaBean criteria);
 
-	public List<LogEntry> findByUser(String mail);
-
-	public List<LogEntry> findByDate(String mail, Calendar begin, Calendar end);
-
-	public void updateEmailLogEntry(String currentEmail, String newEmail);
-
-	// New methods for new backend
 	AuditLogEntryUser insert(AuditLogEntryUser entry);
 
 	AuditLogEntryUser insert(AuditLogEntryUser entry, EventNotification event);

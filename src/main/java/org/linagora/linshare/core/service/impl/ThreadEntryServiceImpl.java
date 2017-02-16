@@ -48,10 +48,8 @@ import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.AntivirusLogEntry;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
-import org.linagora.linshare.core.domain.entities.LogEntry;
 import org.linagora.linshare.core.domain.entities.OperationHistory;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
@@ -335,9 +333,9 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 		try {
 			checkStatus = virusScannerService.check(file);
 		} catch (TechnicalException e) {
-			LogEntry logEntry = new AntivirusLogEntry(actor, LogAction.ANTIVIRUS_SCAN_FAILED, e.getMessage());
+//			LogEntry logEntry = new AntivirusLogEntry(actor, LogAction.ANTIVIRUS_SCAN_FAILED, e.getMessage());
+//			logEntryService.create(LogEntryService.ERROR, logEntry);
 			logger.error("File scan failed: antivirus enabled but not available ?");
-			logEntryService.create(LogEntryService.ERROR, logEntry);
 			throw new BusinessException(BusinessErrorCode.FILE_SCAN_FAILED, "File scan failed", e);
 		}
 		if (logger.isDebugEnabled()) {
@@ -345,8 +343,8 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 		}
 		// check if the file contains virus
 		if (!checkStatus) {
-			LogEntry logEntry = new AntivirusLogEntry(actor, LogAction.FILE_WITH_VIRUS, fileName);
-			logEntryService.create(LogEntryService.WARN, logEntry);
+//			LogEntry logEntry = new AntivirusLogEntry(actor, LogAction.FILE_WITH_VIRUS, fileName);
+//			logEntryService.create(LogEntryService.WARN, logEntry);
 			logger.warn(actor.getLsUuid() + " tried to upload a file containing virus:" + fileName);
 			String[] extras = { fileName };
 			throw new BusinessException(BusinessErrorCode.FILE_CONTAINS_VIRUS, "File contains virus", extras);

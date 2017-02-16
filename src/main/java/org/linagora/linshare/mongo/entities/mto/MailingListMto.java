@@ -44,7 +44,7 @@ public class MailingListMto {
 
 	protected String uuid;
 
-	protected String identifier;
+	protected String name;
 
 	protected String description;
 
@@ -60,7 +60,7 @@ public class MailingListMto {
 	public MailingListMto(MailingList list) {
 		this.uuid = list.getUuid();
 		this.description = list.getDescription();
-		this.identifier = list.getIdentifier();
+		this.name = list.getIdentifier();
 		this.owner = new AccountMto(list.getOwner());
 		this.domain = new DomainMto(list.getDomain());
 		this.contacts = Lists.newArrayList();
@@ -77,12 +77,12 @@ public class MailingListMto {
 		this.uuid = uuid;
 	}
 
-	public String getIdentifier() {
-		return identifier;
+	public String getName() {
+		return name;
 	}
 
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getDescription() {

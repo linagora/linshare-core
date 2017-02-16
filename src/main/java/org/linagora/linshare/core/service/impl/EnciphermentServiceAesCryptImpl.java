@@ -41,10 +41,8 @@ import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.util.UUID;
 
-import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.FileLogEntry;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.DocumentEntryService;
@@ -118,8 +116,8 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 
 			resdoc = documentEntryService.update(actor, owner, documentEntry.getUuid(), f, finalFileName);
 
-			FileLogEntry logEntry = new FileLogEntry(owner, LogAction.FILE_DECRYPT, "Decrypt file Content", documentEntry.getName(), documentEntry.getSize(), documentEntry.getType());
-			logEntryService.create(logEntry);
+//			FileLogEntry logEntry = new FileLogEntry(owner, LogAction.FILE_DECRYPT, "Decrypt file Content", documentEntry.getName(), documentEntry.getSize(), documentEntry.getType());
+//			logEntryService.create(logEntry);
 
 		} catch (IOException e) {
 			logger.error(e.toString(),e);
@@ -173,8 +171,8 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 
 			resdoc = documentEntryService.update(actor, owner, documentEntry.getUuid(), f, finalFileName);
 
-			FileLogEntry logEntry = new FileLogEntry(owner, LogAction.FILE_ENCRYPT, "Encrypt file Content", documentEntry.getName(), documentEntry.getSize(), documentEntry.getType());
-			logEntryService.create(logEntry);
+//			FileLogEntry logEntry = new FileLogEntry(owner, LogAction.FILE_ENCRYPT, "Encrypt file Content", documentEntry.getName(), documentEntry.getSize(), documentEntry.getType());
+//			logEntryService.create(logEntry);
 
 		} catch (IOException e) {
 			logger.error(e.toString(),e);

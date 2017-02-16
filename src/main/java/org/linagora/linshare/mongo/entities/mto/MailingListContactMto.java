@@ -41,6 +41,10 @@ public class MailingListContactMto {
 
 	protected String mail;
 
+	protected String firstName;
+
+	protected String lastName;
+
 	protected String listUuid;
 
 	public MailingListContactMto() {
@@ -50,6 +54,8 @@ public class MailingListContactMto {
 		this.uuid = contact.getUuid();
 		this.mail = contact.getMail();
 		this.listUuid = contact.getMailingList().getUuid();
+		this.firstName = contact.getFirstName();
+		this.lastName = contact.getLastName();
 	}
 
 	public String getUuid() {
@@ -74,5 +80,21 @@ public class MailingListContactMto {
 
 	public void setListUuid(String listUuid) {
 		this.listUuid = listUuid;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 }
