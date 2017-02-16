@@ -49,7 +49,22 @@ UPDATE mail_footer_lang SET readonly = true;
 function update_embedded ()
 {
     echo update embedded sql file :
-    cp -v ${g_output_clean} ../src/main/resources/sql/h2/import-mails.sql
+    # We can not update this file without hibernate4
+    # cp -v ${g_output_clean} ../src/main/resources/sql/h2/import-mails.sql
+    l_output="../src/test/resources/import-mails-hibernate3.sql"
+
+    echo "
+UPDATE domain_abstract SET mailconfig_id = null;
+DELETE FROM mail_content_lang ;
+DELETE FROM mail_footer_lang ;
+DELETE FROM mail_config ;
+DELETE FROM mail_content;
+DELETE FROM mail_footer;
+DELETE FROM mail_layout ;
+" > $l_output
+    cat ${g_output_clean} >> ${l_output}
+    echo "Embedded file updated : ${l_output}"
+
 }
 
 function update_postgresql ()
