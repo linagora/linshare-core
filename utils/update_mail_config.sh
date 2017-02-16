@@ -35,6 +35,9 @@ echo "UPDATE domain_abstract SET mailconfig_id = 1;
 UPDATE mail_footer SET readonly = true;
 UPDATE mail_layout SET readonly = true;
 UPDATE mail_content SET readonly = true;
+UPDATE mail_config SET readonly = true;
+UPDATE mail_content_lang SET readonly = true;
+UPDATE mail_footer_lang SET readonly = true;
 " >> ${g_output_clean}
 #UPDATE mail_activation SET enable = false;
 
