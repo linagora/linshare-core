@@ -70,6 +70,13 @@ public class Request {
 		this.uploadedFilesCount = documentsCount;
 	}
 
+	public Request(UploadRequest uploadRequest) {
+		this.activationDate = uploadRequest.getActivationDate();
+		this.expirationDate = uploadRequest.getExpiryDate();
+		this.subject = null;
+		this.authorizedFiles = null;
+		this.uploadedFilesCount = null;
+	}
 
 	public String getSubject() {
 		return subject;
@@ -89,6 +96,13 @@ public class Request {
 
 	public Integer getUploadedFilesCount() {
 		return uploadedFilesCount;
+	}
+
+	@Override
+	public String toString() {
+		return "Request [subject=" + subject + ", activationDate=" + activationDate + ", expirationDate="
+				+ expirationDate + ", authorizedFiles=" + authorizedFiles + ", uploadedFilesCount=" + uploadedFilesCount
+				+ "]";
 	}
 
 }

@@ -241,4 +241,10 @@ public class MailConfig implements Cloneable {
 							+ lang + "," + type + "]");
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "MailConfig [domain=" + domain + ", name=" + name + ", visible=" + visible + ", readonly=" + readonly
+				+ ", uuid=" + uuid + "]";
+	}
 }

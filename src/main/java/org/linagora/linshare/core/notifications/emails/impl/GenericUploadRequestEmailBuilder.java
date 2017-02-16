@@ -125,6 +125,8 @@ public abstract class GenericUploadRequestEmailBuilder extends EmailBuilder {
 		if (requestUrl != null) {
 			ctx.setVariable("request", new Request(requestUrl));
 			ctx.setVariable("requestRecipient", new MailContact(requestUrl.getContact()));
+		} else {
+			ctx.setVariable("request", new Request(emailCtx.getUploadRequest()));
 		}
 		if (emailCtx.isWarnOwner()) {
 			// there is no UI in the current user interface for now.
