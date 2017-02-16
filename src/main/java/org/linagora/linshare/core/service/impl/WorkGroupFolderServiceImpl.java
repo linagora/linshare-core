@@ -37,6 +37,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
@@ -49,6 +51,7 @@ import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.WorkGroupFolderService;
 import org.linagora.linshare.mongo.entities.WorkGroupEntry;
 import org.linagora.linshare.mongo.entities.WorkGroupFolder;
+import org.linagora.linshare.mongo.entities.logs.WorkGroupFolderAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.repository.WorkGroupFolderMongoRepository;
 import org.springframework.dao.support.DataAccessUtils;
@@ -131,6 +134,8 @@ public class WorkGroupFolderServiceImpl extends GenericServiceImpl<Account, Work
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_FOLDER_ALREADY_EXISTS,
 					"Can not create a new folder, it already exists.");
 		}
+		WorkGroupFolderAuditLogEntry log = new WorkGroupFolderAuditLogEntry(actor, owner, LogAction.CREATE, AuditLogEntryType.WORKGROUP_FOLDER, entity);
+		logEntryService.insert(log);
 		return entity;
 	}
 
@@ -221,6 +226,7 @@ public class WorkGroupFolderServiceImpl extends GenericServiceImpl<Account, Work
 			throws BusinessException {
 		preChecks(actor, owner);
 		WorkGroupFolder wgf = find(actor, owner, workGroup, workGroupFolder.getUuid());
+		WorkGroupFolderAuditLogEntry log = new WorkGroupFolderAuditLogEntry(actor, owner, LogAction.UPDATE, AuditLogEntryType.WORKGROUP_FOLDER, wgf);
 		wgf.setName(workGroupFolder.getName());
 		wgf.setModificationDate(new Date());
 		wgf = repository.save(wgf);
@@ -236,6 +242,8 @@ public class WorkGroupFolderServiceImpl extends GenericServiceImpl<Account, Work
 				wgf = repository.save(wgf);
 			}
 		}
+		log.setResourceUpdated(wgf);
+		logEntryService.insert(log);
 		// TODO: manage WGF entries.
 		return wgf;
 	}
@@ -250,6 +258,8 @@ public class WorkGroupFolderServiceImpl extends GenericServiceImpl<Account, Work
 			logger.error(message);
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_FOLDER_FORBIDDEN_NOT_EMPTY, message);
 		}
+		WorkGroupFolderAuditLogEntry log = new WorkGroupFolderAuditLogEntry(actor, owner, LogAction.DELETE, AuditLogEntryType.WORKGROUP_FOLDER, wgf);
+		logEntryService.insert(log);
 		repository.delete(wgf);
 		return wgf;
 	}
