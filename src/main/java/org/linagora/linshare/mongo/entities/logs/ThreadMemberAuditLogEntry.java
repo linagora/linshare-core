@@ -59,19 +59,19 @@ public class ThreadMemberAuditLogEntry extends AuditLogEntryUser {
 		this.resource = new ThreadMemberMto(member);
 	}
 
-	public ThreadMemberMto getThreadMember() {
+	public ThreadMemberMto getResource() {
 		return resource;
 	}
 
-	public void setThreadMember(ThreadMemberMto threadMember) {
-		this.resource = threadMember;
+	public void setResource(ThreadMemberMto resource) {
+		this.resource = resource;
 	}
 
-	public ThreadMemberMto getMemberUpdated() {
+	public ThreadMemberMto getResourceUpdated() {
 		return resourceUpdated;
 	}
 
-	public void setMemberUpdated(ThreadMemberMto memberUpdated) {
-		this.resourceUpdated = memberUpdated;
+	public void setResourceUpdated(ThreadMemberMto resourceUpdated) {
+		this.resourceUpdated = resourceUpdated;
 	}
 }

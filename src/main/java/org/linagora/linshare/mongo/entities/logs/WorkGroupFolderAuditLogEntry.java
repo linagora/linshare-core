@@ -31,57 +31,47 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.common.dto;
+package org.linagora.linshare.mongo.entities.logs;
 
-import java.util.Date;
+import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.mongo.entities.WorkGroupFolder;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
 
-import com.wordnik.swagger.annotations.ApiModelProperty;
+@XmlRootElement
+public class WorkGroupFolderAuditLogEntry extends AuditLogEntryUser {
 
-public class WorkGroupLightDto {
+	protected WorkGroupFolder resource;
 
-	@ApiModelProperty(value = "Uuid")
-	protected String uuid;
+	private WorkGroupFolder resourceUpdated;
 
-	@ApiModelProperty(value = "CreationDate")
-	protected Date creationDate;
-
-	@ApiModelProperty(value = "Name")
-	protected String name;
-
-	public WorkGroupLightDto() {
-	}
-
-	public WorkGroupLightDto(Thread thread) {
+	public WorkGroupFolderAuditLogEntry() {
 		super();
-		this.uuid = thread.getLsUuid();
-		this.name = thread.getName();
-		this.creationDate = thread.getCreationDate();
 	}
 
-	public String getUuid() {
-		return uuid;
+	public WorkGroupFolderAuditLogEntry(Account actor, Account owner, LogAction action, AuditLogEntryType type,
+			WorkGroupFolder folder) {
+		super(new AccountMto(actor), new AccountMto(owner), action, type, folder.getUuid());
+		this.resource = folder;
 	}
 
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
+	public WorkGroupFolder getResource() {
+		return resource;
 	}
 
-	public Date getCreationDate() {
-		return creationDate;
+	public void setResource(WorkGroupFolder resource) {
+		this.resource = resource;
 	}
 
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
+	public WorkGroupFolder getResourceUpdated() {
+		return resourceUpdated;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
+	public void setResourceUpdated(WorkGroupFolder resourceUpdated) {
+		this.resourceUpdated = resourceUpdated;
 	}
 
 }

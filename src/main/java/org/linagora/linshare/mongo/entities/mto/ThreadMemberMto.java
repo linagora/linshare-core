@@ -34,42 +34,42 @@
 package org.linagora.linshare.mongo.entities.mto;
 
 import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupLightDto;
 
-public class ThreadMemberMto extends AccountMto {
+public class ThreadMemberMto {
 
-	protected String threadUuid;
+	protected WorkGroupLightDto workgroup;
 
-	protected String threadName;
+	protected AccountMto user;
 
-	private boolean canUpload;
+	protected boolean canUpload;
 
-	private boolean admin;
+	protected boolean admin;
 
 	public ThreadMemberMto() {
 	}
 
 	public ThreadMemberMto(ThreadMember member) {
-		super(member.getUser());
-		this.threadName = member.getThread().getName();
-		this.threadUuid = member.getThread().getLsUuid();
+		this.workgroup = new WorkGroupLightDto(member.getThread());
+		this.user = new AccountMto(member.getUser(), true);
 		this.canUpload = member.getCanUpload();
 		this.admin = member.getAdmin();
 	}
 
-	public String getThreadName() {
-		return threadName;
+	public WorkGroupLightDto getWorkgroup() {
+		return workgroup;
 	}
 
-	public void setThreadName(String threadName) {
-		this.threadName = threadName;
+	public void setWorkgroup(WorkGroupLightDto workgroup) {
+		this.workgroup = workgroup;
 	}
 
-	public String getThreadUuid() {
-		return threadUuid;
+	public AccountMto getUser() {
+		return user;
 	}
 
-	public void setThreadUuid(String threadUuid) {
-		this.threadUuid = threadUuid;
+	public void setUser(AccountMto user) {
+		this.user = user;
 	}
 
 	public boolean isCanUpload() {

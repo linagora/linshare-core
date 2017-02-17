@@ -308,10 +308,11 @@ public class ThreadEntryServiceImpl extends GenericEntryServiceImpl<Account, Thr
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
 					"You are not authorized to update this document.");
 		}
+		threadEntry = documentEntryBusinessService.updateFileProperties(threadEntry, fileComment, metaData,
+				sanitizeFileName(newName));
 		log.setResourceUpdated(threadEntry, owner);
 		logEntryService.insert(log);
-		return documentEntryBusinessService.updateFileProperties(threadEntry, fileComment, metaData,
-				sanitizeFileName(newName));
+		return threadEntry;
 	}
 
 	private String sanitizeFileName(String fileName) throws BusinessException {

@@ -35,6 +35,8 @@
 package org.linagora.linshare.mongo.entities.mto;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
@@ -53,6 +55,10 @@ public class AccountMto {
 
 	protected String uuid;
 
+	protected Role role;
+
+	protected AccountType accountType;
+
 	protected DomainMto domain;
 
 	public AccountMto() {
@@ -63,15 +69,25 @@ public class AccountMto {
 		this.mail = account.getMail();
 		this.uuid = account.getLsUuid();
 		this.domain = new DomainMto(account.getDomain());
+		this.role = account.getRole();
+		this.accountType = account.getAccountType();
 	}
 
 	public AccountMto(User user) {
+		this(user, false);
+	}
+
+	public AccountMto(User user, boolean light) {
 		this.uuid = user.getLsUuid();
 		this.mail = user.getMail();
-		this.domain = new DomainMto(user.getDomain());
 		this.name = user.getFullName();
 		this.firstName = user.getFirstName();
 		this.lastName = user.getLastName();
+		if (!light) {
+			this.domain = new DomainMto(user.getDomain());
+			this.role = user.getRole();
+			this.accountType = user.getAccountType();
+		}
 	}
 
 	public AccountMto(Recipient recipient) {
@@ -88,6 +104,8 @@ public class AccountMto {
 		this.name = guest.getFullName();
 		this.firstName = guest.getFirstName();
 		this.lastName = guest.getLastName();
+		this.role = guest.getRole();
+		this.accountType = guest.getAccountType();
 	}
 
 	public String getName() {
@@ -136,5 +154,21 @@ public class AccountMto {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
+	}
+
+	public AccountType getAccountType() {
+		return accountType;
+	}
+
+	public void setAccountType(AccountType accountType) {
+		this.accountType = accountType;
 	}
 }

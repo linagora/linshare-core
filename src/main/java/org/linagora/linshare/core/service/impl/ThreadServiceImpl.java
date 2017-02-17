@@ -274,7 +274,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		member.setAdmin(admin);
 		member.setCanUpload(canUpload);
 		ThreadMember res = threadMemberRepository.update(member);
-		log.setMemberUpdated(new ThreadMemberMto(res));
+		log.setResourceUpdated(new ThreadMemberMto(res));
 		logEntryService.insert(log);
 		return res;
 	}
