@@ -72,7 +72,7 @@ import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.ResetGuestPassword;
 import org.linagora.linshare.mongo.entities.logs.GuestAuditLogEntry;
-import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.linagora.linshare.mongo.entities.mto.UserMto;
 import org.linagora.linshare.mongo.repository.ResetGuestPasswordMongoRepository;
 
 import com.google.common.base.Strings;
@@ -281,7 +281,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		}
 		Guest result = guestBusinessService.update(owner, entity, guest, guestDomain,
 				restrictedContacts);
-		log.setResourceUpdated(new AccountMto(result));
+		log.setResourceUpdated(new UserMto(result));
 		logEntryService.insert(log);
 		return result;
 	}

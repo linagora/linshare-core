@@ -38,36 +38,37 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.linagora.linshare.mongo.entities.mto.UserMto;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection="auditLogEntry")
 public class GuestAuditLogEntry extends AuditLogEntryUser {
 
-	private AccountMto resource;
+	private UserMto resource;
 
-	private AccountMto resourceUpdated;
+	private UserMto resourceUpdated;
 
 	public GuestAuditLogEntry() {
 	}
 
 	public GuestAuditLogEntry(Account actor, Account owner, LogAction action, AuditLogEntryType type, Guest guest) {
 		super(new AccountMto(actor), new AccountMto(owner), action, type, guest.getLsUuid());
-		this.resource = new AccountMto(guest);
+		this.resource = new UserMto(guest);
 	}
 
 	public AccountMto getResource() {
 		return resource;
 	}
 
-	public void setResource(AccountMto resource) {
+	public void setResource(UserMto resource) {
 		this.resource = resource;
 	}
 
-	public AccountMto getResourceUpdated() {
+	public UserMto getResourceUpdated() {
 		return resourceUpdated;
 	}
 
-	public void setResourceUpdated(AccountMto resourceUpdated) {
+	public void setResourceUpdated(UserMto resourceUpdated) {
 		this.resourceUpdated = resourceUpdated;
 	}
 }

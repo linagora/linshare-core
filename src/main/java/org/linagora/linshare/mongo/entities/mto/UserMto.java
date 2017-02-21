@@ -68,6 +68,23 @@ public class UserMto extends AccountMto {
 		}
 	}
 
+	public UserMto(Guest user) {
+		this.uuid = user.getLsUuid();
+		this.domain = new DomainMto(user.getDomain());
+		this.mail = user.getMail();
+		this.name = user.getFullName();
+		this.firstName = user.getFirstName();
+		this.lastName = user.getLastName();
+		this.role = user.getRole();
+		this.accountType = user.getAccountType();
+		this.ldapUid = user.getLdapUid();
+		this.canUpload = user.getCanUpload();
+		this.inconsistent = user.isInconsistent();
+		this.canCreateGuest = user.getCanCreateGuest();
+		this.restricted = user.isRestricted();
+		this.expirationDate = user.getExpirationDate();
+	}
+
 	public String getLdapUid() {
 		return ldapUid;
 	}
