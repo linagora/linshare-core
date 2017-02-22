@@ -133,6 +133,13 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		this.domainBusinessService = domainBusinessService;
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
+		// if the file size equal the limit of the virus scanner limit, or very close,
+		// the file size more the protocol overhead of the clamavLib could reach the StreamMaxLength of clamav
+		// and raise a Exception.
+		// That's why we retrieve 1024bytes to avoid this corner case.
+		if (virusscannerLimitFilesize != null) {
+			virusscannerLimitFilesize = virusscannerLimitFilesize - 1024L;
+		}
 		this.virusscannerLimitFilesize = virusscannerLimitFilesize;
 		this.overrideGlobalQuota = overrideGlobalQuota;
 	}
@@ -639,7 +646,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 
 	private Boolean checkVirus(String fileName, Account owner, File file, Long size) throws BusinessException {
 		if (logger.isDebugEnabled()) {
-			logger.debug("antivirus activation:" + !virusScannerService.isDisabled());
+			logger.debug("antivirus is deactivated :" + virusScannerService.isDisabled());
 		}
 		if (virusscannerLimitFilesize != null
 				&& size > virusscannerLimitFilesize) {
