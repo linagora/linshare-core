@@ -14,6 +14,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.Context;
 import org.linagora.linshare.core.job.quartz.LinShareJobBean;
 import org.linagora.linshare.core.repository.UploadRequestRepository;
+import org.linagora.linshare.utils.LinShareWiser;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
-import org.subethamail.wiser.Wiser;
 
 import com.google.common.collect.Lists;
 
@@ -57,17 +57,18 @@ public class UploadRequestNewBatchImplTest extends
 	@Autowired
 	private UploadRequestRepository uploadRequestRepository;
 
-	private Wiser wiser;
+	private LinShareWiser wiser;
 
 	public UploadRequestNewBatchImplTest() {
 		super();
-		wiser = new Wiser(2525);
+		wiser = new LinShareWiser(2525);
 	}
 
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		this.executeSqlScript("import-tests-close-expired-upload-requests.sql", false);
+		this.executeSqlScript("import-mails-hibernate3.sql", false);
 		wiser.start();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
@@ -89,6 +90,7 @@ public class UploadRequestNewBatchImplTest extends
 		batches.add(notifyBeforeExpirationUploadResquestBatch);
 		job.setBatch(batches);
 		Assert.assertTrue("At least one batch failed.", job.executeExternal());
+		wiser.checkGeneratedMessages();
 	}
 
 	@Test
@@ -129,5 +131,6 @@ public class UploadRequestNewBatchImplTest extends
 			Assert.assertEquals(u.getStatus(), UploadRequestStatus.STATUS_ENABLED);
 			Assert.assertEquals(u.isNotified(), true);
 		}
+		wiser.checkGeneratedMessages();
 	}
 }

@@ -133,6 +133,7 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 		this.executeSqlScript("import-tests-operationHistory.sql", false);
 		this.executeSqlScript("import-tests-quota.sql", false);
 		this.executeSqlScript("import-tests-stat.sql", false);
+		this.executeSqlScript("import-mails-hibernate3.sql", false);
 		dates = new LoadingServiceTestDatas(userRepository);
 		dates.loadUsers();
 		jane = dates.getUser2();

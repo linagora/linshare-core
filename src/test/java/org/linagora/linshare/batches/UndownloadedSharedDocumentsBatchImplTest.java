@@ -10,6 +10,7 @@ import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.LinShareJobBean;
+import org.linagora.linshare.utils.LinShareWiser;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
-import org.subethamail.wiser.Wiser;
 
 import com.google.common.collect.Lists;
 
@@ -43,17 +43,18 @@ public class UndownloadedSharedDocumentsBatchImplTest extends
 	@Autowired
 	private GenericBatch undownloadedSharedDocumentsBatch;
 
-	private Wiser wiser;
+	private LinShareWiser wiser;
 
 	public UndownloadedSharedDocumentsBatchImplTest() {
 		super();
-		wiser = new Wiser(2525);
+		wiser = new LinShareWiser(2525);
 	}
 
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		this.executeSqlScript("import-tests-share-entry-group-setup.sql", false);
+		this.executeSqlScript("import-mails-hibernate3.sql", false);
 		wiser.start();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
@@ -72,5 +73,6 @@ public class UndownloadedSharedDocumentsBatchImplTest extends
 		batches.add(undownloadedSharedDocumentsBatch);
 		job.setBatch(batches);
 		Assert.assertTrue("At least one batch failed.", job.executeExternal());
+		wiser.checkGeneratedMessages();
 	}
 }

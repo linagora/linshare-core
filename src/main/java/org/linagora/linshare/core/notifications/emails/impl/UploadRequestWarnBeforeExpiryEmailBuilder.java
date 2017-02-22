@@ -85,7 +85,6 @@ public class UploadRequestWarnBeforeExpiryEmailBuilder extends GenericUploadRequ
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
 		ctx.setVariable("remainingDays", days);
-		ctx.setVariable("subject", request.getUploadRequestGroup().getSubject());
 
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
 				emailCtx);
@@ -127,8 +126,7 @@ public class UploadRequestWarnBeforeExpiryEmailBuilder extends GenericUploadRequ
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
 		ctx.setVariable("remainingDays", 8);
-		ctx.setVariable("subject", "upload request sujet");
-		
+
 		return ctx;
 	}
 
@@ -159,7 +157,6 @@ public class UploadRequestWarnBeforeExpiryEmailBuilder extends GenericUploadRequ
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
 		ctx.setVariable("remainingDays", 8);
-		ctx.setVariable("subject", "upload request sujet");
 
 		return ctx;
 	}
@@ -189,7 +186,6 @@ public class UploadRequestWarnBeforeExpiryEmailBuilder extends GenericUploadRequ
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
 		ctx.setVariable("remainingDays", 8);
-		ctx.setVariable("subject", "upload request sujet");
 
 		return ctx;
 	}
@@ -220,7 +216,6 @@ public class UploadRequestWarnBeforeExpiryEmailBuilder extends GenericUploadRequ
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
 		ctx.setVariable("remainingDays", 8);
-		ctx.setVariable("subject", "upload request sujet");
 
 		return ctx;
 	}

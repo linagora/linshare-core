@@ -55,13 +55,13 @@ import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.ContactRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.UploadRequestService;
+import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
-import org.subethamail.wiser.Wiser;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -80,11 +80,11 @@ import com.google.common.collect.Sets;
 public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
 	private static Logger logger = LoggerFactory.getLogger(UploadRequestServiceImplTest.class);
 
-	private Wiser wiser;
+	private LinShareWiser wiser;
 
 	public UploadRequestServiceImplTest() {
 		super();
-		wiser = new Wiser(2525);
+		wiser = new LinShareWiser(2525);
 	}
 
 	@Qualifier("userRepository")
@@ -120,6 +120,7 @@ public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4Spr
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		this.executeSqlScript("import-tests-upload-request.sql", false);
+		this.executeSqlScript("import-mails-hibernate3.sql", false);
 		wiser.start();
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
@@ -211,6 +212,7 @@ public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4Spr
 		Assert.assertEquals(tmp.isCanDelete(), false);
 		Assert.assertEquals(tmp.isCanEditExpiryDate(), false);
 		Assert.assertEquals(tmp.getMaxFileCount(), new Integer(2));
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -236,6 +238,7 @@ public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4Spr
 		Assert.assertEquals(new Long(2), tmp.getUnitBeforeExpiry());
 		Assert.assertEquals(true, tmp.getGroupMode());
 		Assert.assertEquals("templateName", tmp.getName());
+		wiser.checkGeneratedMessages();
 	}
 
 	@Test
@@ -253,6 +256,7 @@ public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4Spr
 		tmp = service.updateStatus(john, john, tmp.getUuid(), UploadRequestStatus.STATUS_DELETED);
 		Assert.assertEquals(tmp.getStatus(), UploadRequestStatus.STATUS_DELETED);
 		Assert.assertEquals(john, (User) e.getOwner());
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -263,6 +267,7 @@ public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4Spr
 		tmp = service.closeRequestByRecipient(e.getUploadRequestURLs().iterator().next());
 		Assert.assertEquals(tmp.getStatus(), UploadRequestStatus.STATUS_CLOSED);
 		Assert.assertEquals(john, (User) e.getOwner());
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -278,6 +283,7 @@ public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4Spr
 		} catch (BusinessException ex) {
 			Assert.assertEquals("Cannot transition from STATUS_CLOSED to STATUS_ENABLED.", ex.getMessage());
 		}
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

@@ -80,7 +80,6 @@ public class UploadRequestDeleteFileEmailBuilder extends GenericUploadRequestEma
 		ctx.setVariable("documentsCount", documents.size());
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
-		ctx.setVariable("subject", request.getUploadRequestGroup().getSubject());
 
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
 				emailCtx);
@@ -123,7 +122,6 @@ public class UploadRequestDeleteFileEmailBuilder extends GenericUploadRequestEma
 		ctx.setVariable("documentsCount", documents.size());
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
-		ctx.setVariable("subject", "upload request sujet");
 
 		return ctx;
 	}

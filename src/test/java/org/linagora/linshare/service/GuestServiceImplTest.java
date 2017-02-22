@@ -57,12 +57,12 @@ import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.utils.HashUtils;
+import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
-import org.subethamail.wiser.Wiser;
 
 import com.google.common.collect.Lists;
 
@@ -106,7 +106,7 @@ public class GuestServiceImplTest extends
 
 	private User root;
 
-	private Wiser wiser;
+	private LinShareWiser wiser;
 
 	private User owner1;
 
@@ -114,7 +114,7 @@ public class GuestServiceImplTest extends
 
 	public GuestServiceImplTest() {
 		super();
-		wiser = new Wiser(2525);
+		wiser = new LinShareWiser(2525);
 	}
 
 	@Before
@@ -122,6 +122,7 @@ public class GuestServiceImplTest extends
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
 		this.executeSqlScript("import-tests-quota-other.sql", false);
+		this.executeSqlScript("import-mails-hibernate3.sql", false);
 		wiser.start();
 		root = rootUserRepository
 				.findByLsUuid("root@localhost.localdomain@test");
@@ -166,6 +167,7 @@ public class GuestServiceImplTest extends
 		Guest find = guestService.find(owner1, owner1, guest.getLsUuid());
 		Assert.assertNotNull(find);
 		Assert.assertEquals(Role.SIMPLE, find.getRole());
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -184,6 +186,7 @@ public class GuestServiceImplTest extends
 		Assert.assertEquals(Role.SIMPLE, update.getRole());
 		Assert.assertEquals("First", update.getFirstName());
 		Assert.assertEquals("Last", update.getLastName());
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -199,6 +202,7 @@ public class GuestServiceImplTest extends
 		guestService.triggerResetPassword(guest.getLsUuid());
 		Assert.assertFalse(guest.getPassword().equals(
 				HashUtils.hashSha1withBase64(oldPassword.getBytes())));
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -219,6 +223,7 @@ public class GuestServiceImplTest extends
 		Assert.assertTrue(guest.isGuest());
 		List<AllowedContact> ac = guestService.load(owner1, guest);
 		Assert.assertEquals(3, ac.size());
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -241,6 +246,7 @@ public class GuestServiceImplTest extends
 		Assert.assertTrue(guest.isGuest());
 		List<AllowedContact> ac = guestService.load(owner1, guest);
 		Assert.assertEquals(2, ac.size());
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -264,6 +270,7 @@ public class GuestServiceImplTest extends
 		guest = guestService.update(owner1, owner1, guest, restrictedContacts);
 		List<AllowedContact> ac = guestService.load(owner1, guest);
 		Assert.assertEquals(1, ac.size());
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -292,6 +299,7 @@ public class GuestServiceImplTest extends
 
 		ac = guestService.load(owner1, guest);
 		Assert.assertEquals(0, ac.size());
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -317,7 +325,6 @@ public class GuestServiceImplTest extends
 		search = guestService.search(owner1, owner1, null, null, "guest", mine);
 		logger.info("nb guests : " + search.size());
 		Assert.assertEquals(1, search.size());
-
 	}
 
 }

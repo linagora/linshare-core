@@ -135,6 +135,7 @@ public abstract class GenericUploadRequestEmailBuilder extends EmailBuilder {
 			ctx.setVariable("requestUrl", getUploadRequestUrl(emailCtx));
 		}
 		ctx.setVariable("requestOwner", new MailContact(emailCtx.getOwner()));
+		ctx.setVariable("subject", emailCtx.getUploadRequest().getUploadRequestGroup().getSubject());
 		ctx.setVariable("warnOwner", emailCtx.isWarnOwner());
 		return ctx;
 	}
@@ -155,6 +156,7 @@ public abstract class GenericUploadRequestEmailBuilder extends EmailBuilder {
 		} else {
 			ctx.setVariable("requestUrl", fakeLinshareURL + "/#fakeURL/uuid");
 		}
+		ctx.setVariable("subject", "upload request sujet");
 		ctx.setVariable("warnOwner", warnOwner);
 		return ctx;
 	}

@@ -63,6 +63,10 @@ DELETE FROM mail_footer;
 DELETE FROM mail_layout ;
 " > $l_output
     cat ${g_output_clean} >> ${l_output}
+    # it seems to be ok with it. we do not replace it anymore
+    #sed -i -r -e "s/''Open Sans''/Open Sans/g" ${l_output}
+    sed -i -r -e "s/\\\''''/ /g" ${l_output}
+#    sed -i -r -e "s/''/ /g" ${l_output}
     echo "Embedded file updated : ${l_output}"
 
 }

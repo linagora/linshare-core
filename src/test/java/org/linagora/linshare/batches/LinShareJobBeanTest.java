@@ -10,6 +10,7 @@ import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.LinShareJobBean;
+import org.linagora.linshare.utils.LinShareWiser;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
-import org.subethamail.wiser.Wiser;
 
 import com.google.common.collect.Lists;
 
@@ -51,11 +51,11 @@ public class LinShareJobBeanTest extends
 	@Autowired
 	private GenericBatch purgeUserBatch;
 
-	private Wiser wiser;
+	private LinShareWiser wiser;
 
 	public LinShareJobBeanTest() {
 		super();
-		wiser = new Wiser(2525);
+		wiser = new LinShareWiser(2525);
 	}
 
 	@Before
@@ -63,6 +63,7 @@ public class LinShareJobBeanTest extends
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		int countBefore = this.countRowsInTable("users");
 		this.executeSqlScript("import-tests-batches-accounts.sql", false);
+		this.executeSqlScript("import-mails-hibernate3.sql", false);
 		int countAfter = this.countRowsInTable("users");
 		Assert.assertEquals(3, countAfter - countBefore);
 		wiser.start();
@@ -86,5 +87,6 @@ public class LinShareJobBeanTest extends
 		batches.add(purgeUserBatch);
 		job.setBatch(batches);
 		Assert.assertTrue("At least one batch failed.", job.executeExternal());
+		wiser.checkGeneratedMessages();
 	}
 }

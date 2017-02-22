@@ -295,7 +295,15 @@ public abstract class EmailBuilder implements IEmailBuilder {
 			TemplateSpec templateSpec = new TemplateSpec(type.toString(), null, null, templateResolutionAttributes);
 			// TemplateSpec templateSpec = new TemplateSpec(type.toString(),
 			// null, TemplateMode.XML, templateResolutionAttributes);
+			Date date_before = new Date();
 			String body = templateEngine.process(templateSpec, ctx);
+			if (logger.isTraceEnabled()) {
+				Date date_after = new Date();
+				logger.trace("diff : " + String.valueOf(date_after.getTime() - date_before.getTime()));
+				logger.trace("subject : {}", subject);
+				logger.trace("body : ");
+				logger.trace(body);
+			}
 			container.setSubject(subject);
 			container.setContent(body);
 

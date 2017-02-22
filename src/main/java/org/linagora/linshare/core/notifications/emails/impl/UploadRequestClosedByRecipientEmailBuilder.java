@@ -83,7 +83,6 @@ public class UploadRequestClosedByRecipientEmailBuilder extends GenericUploadReq
 		ctx.setVariable("isgrouped", request.getUploadRequestURLs().size() > 1);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
-		ctx.setVariable("subject", request.getUploadRequestGroup().getSubject());
 		ctx.setVariable("totalSize", totalSize);
 
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
@@ -124,7 +123,6 @@ public class UploadRequestClosedByRecipientEmailBuilder extends GenericUploadReq
 		ctx.setVariable("isgrouped", true);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
-		ctx.setVariable("subject", "upload request sujet");
 		ctx.setVariable("totalSize", new Long(5682642));
 
 		return ctx;
@@ -154,7 +152,6 @@ public class UploadRequestClosedByRecipientEmailBuilder extends GenericUploadReq
 		ctx.setVariable("isgrouped", false);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
-		ctx.setVariable("subject", "upload request sujet");
 		ctx.setVariable("totalSize", new Long(5682642));
 
 		return ctx;

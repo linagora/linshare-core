@@ -80,7 +80,6 @@ public class UploadRequestWarnExpiryEmailBuilder extends GenericUploadRequestEma
 		ctx.setVariable("isgrouped", request.getUploadRequestURLs().size() > 1);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
-		ctx.setVariable("subject", request.getUploadRequestGroup().getSubject());
 
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
 				emailCtx);
@@ -121,7 +120,6 @@ public class UploadRequestWarnExpiryEmailBuilder extends GenericUploadRequestEma
 		ctx.setVariable("isgrouped", false);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
-		ctx.setVariable("subject", "upload request sujet");
 
 		return ctx;
 	}
@@ -130,7 +128,7 @@ public class UploadRequestWarnExpiryEmailBuilder extends GenericUploadRequestEma
 		List<MailContact> recipients = Lists.newArrayList();
 		recipients.add(new MailContact("unknown@linshare.org"));
 		recipients.add(new MailContact("unknown2@linshare.org"));
-		
+
 		List<Document> documents = Lists.newArrayList();
 		Document document = getNewFakeDocument("a-upload-request-file.txt", fakeLinshareURL);
 		document.setSize(65985L);
@@ -143,7 +141,7 @@ public class UploadRequestWarnExpiryEmailBuilder extends GenericUploadRequestEma
 		document.setHref(fakeLinshareURL + "/#ownerlink");
 		document.setMine(true);
 		documents.add(document);
-		
+
 		Context ctx = newFakeContext(language, true);
 		ctx.setVariable("body", "upload request body message");
 		ctx.setVariable("documents", documents);
@@ -151,8 +149,7 @@ public class UploadRequestWarnExpiryEmailBuilder extends GenericUploadRequestEma
 		ctx.setVariable("isgrouped", true);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
-		ctx.setVariable("subject", "upload request sujet");
-		
+
 		return ctx;
 	}
 
@@ -179,7 +176,6 @@ public class UploadRequestWarnExpiryEmailBuilder extends GenericUploadRequestEma
 		ctx.setVariable("isgrouped", false);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
-		ctx.setVariable("subject", "upload request sujet");
 
 		return ctx;
 	}
@@ -188,7 +184,7 @@ public class UploadRequestWarnExpiryEmailBuilder extends GenericUploadRequestEma
 		List<MailContact> recipients = Lists.newArrayList();
 		recipients.add(new MailContact("unknown@linshare.org"));
 		recipients.add(new MailContact("unknown2@linshare.org"));
-		
+
 		List<Document> documents = Lists.newArrayList();
 		Document document = getNewFakeDocument("a-upload-request-file.txt", fakeLinshareURL);
 		document.setSize(65985L);
@@ -200,7 +196,7 @@ public class UploadRequestWarnExpiryEmailBuilder extends GenericUploadRequestEma
 		document.setHref(fakeLinshareURL + "/#ownerlink");
 		document.setMine(true);
 		documents.add(document);
-		
+
 		Context ctx = newFakeContext(language, false);
 		ctx.setVariable("body", "upload request body message");
 		ctx.setVariable("documents", documents);
@@ -208,8 +204,7 @@ public class UploadRequestWarnExpiryEmailBuilder extends GenericUploadRequestEma
 		ctx.setVariable("isgrouped", true);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
-		ctx.setVariable("subject", "upload request sujet");
-		
+
 		return ctx;
 	}
 }

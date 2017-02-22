@@ -71,6 +71,7 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.utils.HashUtils;
+import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +79,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
-import org.subethamail.wiser.Wiser;
 
 import com.google.common.collect.Lists;
 
@@ -137,11 +137,11 @@ public class UserServiceImplTest extends
 	@Autowired
 	private GuestService guestService;
 
-	private Wiser wiser;
+	private LinShareWiser wiser;
 
 	public UserServiceImplTest() {
 		super();
-		wiser = new Wiser(2525);
+		wiser = new LinShareWiser(2525);
 
 	}
 
@@ -153,6 +153,7 @@ public class UserServiceImplTest extends
 		logger.debug(LinShareTestConstants.END_SETUP);
 		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
 		this.executeSqlScript("import-tests-quota-other.sql", false);
+		this.executeSqlScript("import-mails-hibernate3.sql", false);
 	}
 
 	@After
@@ -192,7 +193,7 @@ public class UserServiceImplTest extends
 			logger.info("Impossible to send mail, normal in test environment");
 		}
 		Assert.assertNotNull(userRepository.findByMail("guest1@linshare.org"));
-
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -265,7 +266,7 @@ public class UserServiceImplTest extends
 				LoadingServiceTestDatas.sqlSubDomain, "user2@linshare.org"));
 		Assert.assertNotNull(userService.findUserInDB(
 				LoadingServiceTestDatas.sqlDomain, "user1@linshare.org"));
-
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -309,7 +310,7 @@ public class UserServiceImplTest extends
 
 		Assert.assertNotNull(userService.findUserInDB(
 				LoadingServiceTestDatas.sqlDomain, "user1@linshare.org"));
-
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -399,6 +400,7 @@ public class UserServiceImplTest extends
 		guest.setCanCreateGuest(true);
 		guestService.update(user2, user2, guest, restricted);
 		Assert.assertTrue(guest.getCanCreateGuest());
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -428,6 +430,7 @@ public class UserServiceImplTest extends
 		user2.setRole(Role.ADMIN);
 		user2 = userService.updateUser(user2, user2, user2.getDomainId());
 		Assert.assertTrue(user2.getRole() == Role.ADMIN);
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -451,7 +454,7 @@ public class UserServiceImplTest extends
 				oldPassword, newPassword);
 		Assert.assertTrue(user1.getPassword().equals(
 				HashUtils.hashSha1withBase64(newPassword.getBytes())));
-
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -489,7 +492,7 @@ public class UserServiceImplTest extends
 //		guestService.triggerResetPassword(guest.getLsUuid());
 //		Assert.assertFalse(guest.getPassword().equals(
 //				HashUtils.hashSha1withBase64(oldPassword.getBytes())));
-
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -525,7 +528,7 @@ public class UserServiceImplTest extends
 		guest.setRestricted(false);
 		guest = guestService.update(user1, user1, guest, null);
 		Assert.assertFalse(guest.isRestricted());
-
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -580,7 +583,7 @@ public class UserServiceImplTest extends
 			}
 		}
 		Assert.assertTrue(test);
-
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -754,7 +757,7 @@ public class UserServiceImplTest extends
 		user2.setDomain(subDomain);
 		user2.setCmisLocale("en");
 		userService.saveOrUpdateUser(user2);
-
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -801,6 +804,7 @@ public class UserServiceImplTest extends
 		} catch (BusinessException e) {
 			logger.debug("Test succeed");
 		}
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -854,6 +858,7 @@ public class UserServiceImplTest extends
 			logger.error("userService can not find an user ");
 			logger.error(e.toString());
 		}
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -883,5 +888,6 @@ public class UserServiceImplTest extends
 		userService.saveOrUpdateUser(user);
 		Assert.assertFalse(user.getCanUpload());
 		logger.debug(LinShareTestConstants.END_TEST);
+		wiser.checkGeneratedMessages();
 	}
 }

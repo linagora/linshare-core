@@ -48,11 +48,15 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.dto.ContextMetadata;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
+import org.linagora.linshare.utils.LinShareWiser;
+import org.linagora.linshare.utils.TestMailResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+
+import com.google.common.collect.Lists;
 
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml", "classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml", "classpath:springContext-repository.xml",
@@ -81,23 +85,13 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 
 	private String recipientForSendMail = "bart.simpson@int1.linshare.dev";
 
-	private void testMailGenerate(MailContainer mailContainer) {
-		Assert.assertNotNull(mailContainer);
-		logger.debug("Subject: {}", mailContainer.getSubject());
-		logger.debug("Content: {}", mailContainer.getContent());
-		Assert.assertNotNull(mailContainer.getSubject());
-		Assert.assertNotNull(mailContainer.getContent());
-		Assert.assertFalse(mailContainer.getSubject().contains("${"));
-		Assert.assertFalse(mailContainer.getSubject().contains("??"));
-		Assert.assertFalse(mailContainer.getContent().contains("${"));
-		Assert.assertFalse(mailContainer.getContent().contains("??"));
-	}
-
 	@Test
-	public void testBuildMail() throws BusinessException {
+	public void testBuildAllMails() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
+		this.executeSqlScript("import-mails-hibernate3.sql", false);
+		List<TestMailResult> findErrors = Lists.newArrayList();
 		MailConfig cfg = domainBusinessService.getUniqueRootDomain().getCurrentMailConfiguration();
-		for (MailContentType type : MailContentType.values()) {
+		for (MailContentType type : getMailContentTypes()) {
 			logger.info("Building mail {} ", type);
 			if (mailBuildingService.fakeBuildIsSupported(type)) {
 				for (Language lang : Language.values()) {
@@ -105,7 +99,7 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 					List<ContextMetadata> contexts = mailBuildingService.getAvailableVariables(type);
 					for (int flavor = 0; flavor < contexts.size(); flavor++) {
 						MailContainerWithRecipient build = mailBuildingService.fakeBuild(type, cfg, lang, flavor);
-						testMailGenerate(build);
+						findErrors.addAll(testMailGenerate(type, build));
 						sendMail(build);
 					}
 				}
@@ -113,21 +107,46 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 				logger.warn("Building mail {} was skipped. Not yet supported ?", type);
 			}
 		}
+		logger.info("test testBuildAllMails is complete.");
+		if (!findErrors.isEmpty()) {
+			logger.error("Some errors were found :");
+			for (TestMailResult result : findErrors) {
+				logger.error(result.toString());
+				if (logger.isTraceEnabled()) {
+					logger.trace("StrPattern : {}", result.getStrPattern());
+					logger.trace("Data : {}", result.getData());
+				}
+			}
+		}
+		Assert.assertTrue(findErrors.isEmpty());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
 	public void testBuildOneMail() throws BusinessException {
+		this.executeSqlScript("import-mails-hibernate3.sql", false);
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		MailConfig cfg = domainBusinessService.getUniqueRootDomain().getCurrentMailConfiguration();
-		MailContentType type = MailContentType.GUEST_ACCOUNT_RESET_PASSWORD_LINK;
+		MailContentType type = MailContentType.SHARE_WARN_UNDOWNLOADED_FILESHARES;
 		logger.info("Building mail {} ", type);
+		List<TestMailResult> findErrors = Lists.newArrayList();
 		List<ContextMetadata> contexts = mailBuildingService.getAvailableVariables(type);
 		for (int flavor = 0; flavor < contexts.size(); flavor++) {
-			MailContainerWithRecipient build = mailBuildingService.fakeBuild(type, cfg, Language.ENGLISH, flavor);
-			testMailGenerate(build);
+			MailContainerWithRecipient build = mailBuildingService.fakeBuild(type, cfg, Language.FRENCH, flavor);
+			findErrors.addAll(testMailGenerate(type, build));
 			sendMail(build);
 		}
+		if (!findErrors.isEmpty()) {
+			for (TestMailResult result : findErrors) {
+				logger.error(result.toString());
+				logger.error(result.toString());
+				if (logger.isTraceEnabled()) {
+					logger.trace("StrPattern : {}", result.getStrPattern());
+					logger.trace("Data : {}", result.getData());
+				}
+			}
+		}
+		Assert.assertTrue(findErrors.isEmpty());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -136,5 +155,38 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 			mail.setRecipient(recipientForSendMail);
 			notifierService.sendNotification(mail);
 		}
+	}
+
+	public List<TestMailResult> testMailGenerate(MailContentType type, MailContainer mailContainer) {
+		Assert.assertNotNull(mailContainer);
+		logger.debug("Subject: {}", mailContainer.getSubject());
+		logger.debug("Content: {}", mailContainer.getContent());
+		Assert.assertNotNull(mailContainer.getSubject());
+		Assert.assertNotNull(mailContainer.getContent());
+		List<TestMailResult> findErrors = Lists.newArrayList();
+		findErrors.addAll(LinShareWiser.testMailGenerate(type, mailContainer.getSubject()));
+		findErrors.addAll(LinShareWiser.testMailGenerate(type, mailContainer.getContent()));
+		return findErrors;
+	}
+
+	private List<MailContentType> getMailContentTypes() {
+		MailContentType[] list = MailContentType.values();
+		List<MailContentType> excludes = Lists.newArrayList(MailContentType.SHARED_DOC_UPDATED,
+				MailContentType.DEPRECATED_ANONYMOUS_DOWNLOAD, MailContentType.DEPRECATED_NEW_SHARING_PROTECTED,
+				MailContentType.DEPRECATED_NEW_SHARING_CYPHERED,
+				MailContentType.DEPRECATED_NEW_SHARING_CYPHERED_PROTECTED,
+				MailContentType.DEPRECATED_UPLOAD_REQUEST_WARN_RECIPIENT_BEFORE_EXPIRY,
+				MailContentType.DEPRECATED_UPLOAD_REQUEST_WARN_RECIPIENT_EXPIRY,
+				MailContentType.DEPRECATED_SHARE_CREATION_ACKNOWLEDGEMENT_WITH_SPECIAL_MESSAGE_FOR_OWNER);
+		List<MailContentType> values = Lists.newArrayList();
+		for (int i = 0; i < list.length; i++) {
+			MailContentType mailContentType = list[i];
+			if (!values.contains(mailContentType)) {
+				if (!excludes.contains(mailContentType)) {
+					values.add(mailContentType);
+				}
+			}
+		}
+		return values;
 	}
 }

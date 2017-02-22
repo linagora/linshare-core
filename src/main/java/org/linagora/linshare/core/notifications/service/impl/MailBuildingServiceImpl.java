@@ -782,7 +782,12 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		return container;
 	}
 
+	@SuppressWarnings("unused")
 	private boolean isDisable(Contact contact, Account sender, MailActivationType type) {
+		// Disable old deprecated notifications !!
+		if (true) {
+			return true;
+		}
 		AbstractDomain recipientDomain = domainBusinessService.findGuestDomain(sender.getDomain());
 		// guest domain could be inexistent into the database.
 		if (recipientDomain == null) {
@@ -794,7 +799,12 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		return !enable;
 	}
 
+	@SuppressWarnings("unused")
 	private boolean isDisable(Account recipient, MailActivationType type) {
+		// Disable old deprecated notifications !!
+		if (true) {
+			return true;
+		}
 		MailActivation mailActivation = mailActivationBusinessService
 				.findForInternalUsage(recipient.getDomain(), type);
 		boolean enable = mailActivation.isEnable();

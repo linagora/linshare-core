@@ -80,7 +80,6 @@ public class UploadRequestUnavailableSpaceEmailBuilder extends GenericUploadRequ
 		ctx.setVariable("maxDepositSize", request.getMaxDepositSize());
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
-		ctx.setVariable("subject", request.getUploadRequestGroup().getSubject());
 
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
 				emailCtx);
@@ -119,7 +118,6 @@ public class UploadRequestUnavailableSpaceEmailBuilder extends GenericUploadRequ
 		ctx.setVariable("maxDepositSize", new Long(566135489));
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
-		ctx.setVariable("subject", "upload request sujet");
 
 		return ctx;
 	}
