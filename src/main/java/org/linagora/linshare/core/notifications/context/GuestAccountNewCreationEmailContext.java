@@ -85,7 +85,7 @@ public class GuestAccountNewCreationEmailContext extends EmailContext {
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.NEW_GUEST;
+		return MailActivationType.GUEST_ACCOUNT_NEW_CREATION;
 	}
 
 	@Override

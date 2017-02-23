@@ -88,7 +88,7 @@ public class ShareNewShareAcknowledgementEmailContext extends EmailContext {
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.SHARE_CREATION_ACKNOWLEDGEMENT_FOR_OWNER;
+		return MailActivationType.SHARE_NEW_SHARE_ACKNOWLEDGEMENT_FOR_SENDER;
 	}
 
 	@Override

@@ -354,7 +354,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	@Override
 	public MailContainerWithRecipient buildCreateUploadProposition(User recipient, UploadProposition proposition)
 			throws BusinessException {
-		if (isDisable(recipient, MailActivationType.UPLOAD_PROPOSITION_CREATED)) {
+//		if (isDisable(recipient, MailActivationType.UPLOAD_PROPOSITION_CREATED)) {
+		if (isDisable(recipient, null)) {
 			return null;
 		}
 		MailConfig cfg = recipient.getDomain().getCurrentMailConfiguration();
@@ -384,7 +385,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	@Override
 	public MailContainerWithRecipient buildRejectUploadProposition(User sender, UploadProposition proposition)
 			throws BusinessException {
-		if (isDisable(sender, MailActivationType.UPLOAD_PROPOSITION_REJECTED)) {
+		// MailActivationType.UPLOAD_PROPOSITION_REJECTED
+		if (isDisable(sender, null)) {
 			return null;
 		}
 		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
@@ -415,7 +417,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	@Override
 	public MailContainerWithRecipient buildUpdateUploadRequest(User owner, UploadRequestUrl request)
 			throws BusinessException {
-		if (isDisable(request.getContact(), owner, MailActivationType.UPLOAD_REQUEST_UPDATED)) {
+		// MailActivationType.UPLOAD_REQUEST_UPDATED
+		if (isDisable(request.getContact(), owner, null)) {
 			return null;
 		}
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
@@ -444,7 +447,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	@Override
 	public MailContainerWithRecipient buildActivateUploadRequest(User owner, UploadRequestUrl request)
 			throws BusinessException {
-		if (isDisable(request.getContact(), owner, MailActivationType.UPLOAD_REQUEST_ACTIVATED)) {
+		// MailActivationType.UPLOAD_REQUEST_ACTIVATED
+		if (isDisable(request.getContact(), owner, null)) {
 			return null;
 		}
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
@@ -487,7 +491,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	@Override
 	public MailContainerWithRecipient buildFilterUploadRequest(User owner, UploadRequestUrl request)
 			throws BusinessException {
-		if (isDisable(request.getContact(), owner, MailActivationType.UPLOAD_REQUEST_AUTO_FILTER)) {
+		// MailActivationType.UPLOAD_REQUEST_AUTO_FILTER
+		if (isDisable(request.getContact(), owner, null)) {
 			return null;
 		}
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
@@ -513,7 +518,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	@Override
 	public MailContainerWithRecipient buildCreateUploadRequest(User owner, UploadRequestUrl request)
 			throws BusinessException {
-		if (isDisable(request.getContact(), owner, MailActivationType.UPLOAD_REQUEST_CREATED)) {
+		// MailActivationType.UPLOAD_REQUEST_CREATED
+		if (isDisable(request.getContact(), owner, null)) {
 			return null;
 		}
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
@@ -549,7 +555,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	@Override
 	public MailContainerWithRecipient buildRemindUploadRequest(User owner, UploadRequestUrl request)
 			throws BusinessException {
-		if (isDisable(request.getContact(), owner, MailActivationType.UPLOAD_REQUEST_REMINDER)) {
+		// MailActivationType.UPLOAD_REQUEST_REMINDER
+		if (isDisable(request.getContact(), owner, null)) {
 			return null;
 		}
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
@@ -597,7 +604,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	@Override
 	public MailContainerWithRecipient buildCloseUploadRequestByOwner(User owner, UploadRequestUrl request)
 			throws BusinessException {
-		if (isDisable(request.getContact(), owner, MailActivationType.UPLOAD_REQUEST_CLOSED_BY_OWNER)) {
+		// MailActivationType.UPLOAD_REQUEST_CLOSED_BY_OWNER
+		if (isDisable(request.getContact(), owner, null)) {
 			return null;
 		}
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
@@ -627,7 +635,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	@Override
 	public MailContainerWithRecipient buildDeleteUploadRequestByOwner(User owner, UploadRequestUrl request)
 			throws BusinessException {
-		if (isDisable(request.getContact(), owner, MailActivationType.UPLOAD_REQUEST_DELETED_BY_OWNER)) {
+		// MailActivationType.UPLOAD_REQUEST_DELETED_BY_OWNER
+		if (isDisable(request.getContact(), owner, null)) {
 			return null;
 		}
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();

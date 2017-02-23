@@ -73,7 +73,7 @@ public class GuestAccountResetPasswordEmailContext extends EmailContext {
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.RESET_PASSWORD;
+		return MailActivationType.GUEST_ACCOUNT_RESET_PASSWORD_LINK;
 	}
 
 	@Override

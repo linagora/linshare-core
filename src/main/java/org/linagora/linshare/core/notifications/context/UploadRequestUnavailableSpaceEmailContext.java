@@ -53,7 +53,7 @@ public class UploadRequestUnavailableSpaceEmailContext extends GenericUploadRequ
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.UPLOAD_REQUEST_NO_SPACE_LEFT;
+		return MailActivationType.UPLOAD_REQUEST_UNAVAILABLE_SPACE;
 	}
 
 	@Override

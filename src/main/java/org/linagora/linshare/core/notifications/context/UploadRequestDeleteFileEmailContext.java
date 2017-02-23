@@ -62,7 +62,7 @@ public class UploadRequestDeleteFileEmailContext extends GenericUploadRequestEma
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.UPLOAD_REQUEST_FILE_DELETED_BY_SENDER;
+		return MailActivationType.UPLOAD_REQUEST_FILE_DELETED_BY_RECIPIENT;
 	}
 
 	@Override

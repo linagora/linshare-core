@@ -61,7 +61,7 @@ public class UploadRequestUploadedFileEmailContext extends GenericUploadRequestE
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.UPLOAD_REQUEST_ACKNOWLEDGEMENT;
+		return MailActivationType.UPLOAD_REQUEST_UPLOADED_FILE;
 	}
 
 	@Override

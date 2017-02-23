@@ -53,7 +53,7 @@ public class UploadRequestWarnBeforeExpiryEmailContext extends GenericUploadRequ
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.UPLOAD_REQUEST_WARN_OWNER_BEFORE_EXPIRY;
+		return MailActivationType.UPLOAD_REQUEST_WARN_BEFORE_EXPIRY;
 	}
 
 	@Override

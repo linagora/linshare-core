@@ -40,7 +40,6 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.MailActivationBusinessService;
-import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MailActivation;
@@ -66,16 +65,6 @@ public class MailActivationServiceImpl extends
 			MailActivationBusinessService mailActivationBusinessService) {
 		super(domainBusinessService, domainPermissionBusinessService);
 		this.businessService = mailActivationBusinessService;
-		// Admins
-		excludes.add(MailActivationType.UPLOAD_REQUEST_CLOSED_BY_OWNER
-				.toString());
-		excludes.add(MailActivationType.UPLOAD_REQUEST_DELETED_BY_OWNER
-				.toString());
-		excludes.add(MailActivationType.UPLOAD_REQUEST_NO_SPACE_LEFT.toString());
-		excludes.add(MailActivationType.UPLOAD_REQUEST_REMINDER.toString());
-		excludes.add(MailActivationType.DOC_UPCOMING_OUTDATED.toString());
-		excludes.add(MailActivationType.UPLOAD_REQUEST_UPDATED.toString());
-		excludes.add(MailActivationType.UPLOAD_REQUEST_AUTO_FILTER.toString());
 	}
 
 	@Override

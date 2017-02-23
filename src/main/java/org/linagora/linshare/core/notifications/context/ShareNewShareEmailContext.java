@@ -139,7 +139,7 @@ public class ShareNewShareEmailContext extends EmailContext {
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.NEW_SHARING;
+		return MailActivationType.SHARE_NEW_SHARE_FOR_RECIPIENT;
 	}
 
 	@Override

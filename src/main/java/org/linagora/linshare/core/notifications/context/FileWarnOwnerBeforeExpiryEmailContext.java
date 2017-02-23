@@ -77,7 +77,7 @@ public class FileWarnOwnerBeforeExpiryEmailContext extends EmailContext {
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.DOC_UPCOMING_OUTDATED;
+		return MailActivationType.FILE_WARN_OWNER_BEFORE_FILE_EXPIRY;
 	}
 
 	@Override

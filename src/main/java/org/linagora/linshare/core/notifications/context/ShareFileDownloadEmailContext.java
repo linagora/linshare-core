@@ -98,7 +98,10 @@ public class ShareFileDownloadEmailContext extends EmailContext {
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.REGISTERED_DOWNLOAD;
+		if (anonymous) {
+			return MailActivationType.SHARE_FILE_DOWNLOAD_ANONYMOUS;
+		}
+		return MailActivationType.SHARE_FILE_DOWNLOAD_USERS;
 	}
 
 	@Override

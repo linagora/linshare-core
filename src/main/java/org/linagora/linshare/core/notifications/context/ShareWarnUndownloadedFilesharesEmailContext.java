@@ -62,7 +62,7 @@ public class ShareWarnUndownloadedFilesharesEmailContext extends EmailContext {
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.UNDOWNLOADED_SHARED_DOCUMENTS_ALERT;
+		return MailActivationType.SHARE_WARN_UNDOWNLOADED_FILESHARES;
 	}
 
 	@Override

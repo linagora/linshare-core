@@ -62,7 +62,7 @@ public class ShareFileShareDeletedEmailContext extends EmailContext {
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.SHARED_DOC_DELETED;
+		return MailActivationType.SHARE_FILE_SHARE_DELETED;
 	}
 
 	@Override

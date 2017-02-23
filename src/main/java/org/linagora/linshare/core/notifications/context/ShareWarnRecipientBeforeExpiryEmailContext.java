@@ -122,7 +122,7 @@ public class ShareWarnRecipientBeforeExpiryEmailContext extends EmailContext {
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.SHARED_DOC_UPCOMING_OUTDATED;
+		return MailActivationType.SHARE_WARN_RECIPIENT_BEFORE_EXPIRY;
 	}
 
 	@Override
