@@ -60,8 +60,6 @@ public interface DocumentRestService {
 
 	List<DocumentDto> findAll() throws BusinessException;
 
-	DocumentDto update(String uuid, DocumentDto documentDto) throws BusinessException;
-
 	DocumentDto delete(String uuid) throws BusinessException;
 
 	DocumentDto delete(DocumentDto documentDto) throws BusinessException;
@@ -70,11 +68,7 @@ public interface DocumentRestService {
 
 	Response thumbnail(String uuid, boolean base64) throws BusinessException;
 
-	DocumentDto updateFile(String uuid, InputStream file,
-			String givenFileName, Boolean async,
-			Long fileSize,
-			MultipartBody body)
-			throws BusinessException;
+	DocumentDto update(String uuid, DocumentDto documentDto) throws BusinessException;
 
 	AsyncTaskDto findAsync(String uuid) throws BusinessException;
 }

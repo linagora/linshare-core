@@ -65,19 +65,13 @@ public interface DocumentRestService {
 
 	List<DocumentDto> findAll(String ownerUuid) throws BusinessException;
 
-	DocumentDto update(String ownerUuid, String uuid, DocumentDto documentDto) throws BusinessException;
-
 	DocumentDto delete(String ownerUuid, String uuid) throws BusinessException;
 
 	Response download(String ownerUuid, String uuid) throws BusinessException;
 
 	Response thumbnail(String ownerUuid, String uuid) throws BusinessException;
 
-	DocumentDto updateFile(String ownerUuid, String uuid, InputStream theFile,
-			String givenFileName, Boolean async,
-			Long fileSize,
-			MultipartBody body)
-					throws BusinessException;
+	DocumentDto update(String ownerUuid, String uuid, DocumentDto documentDto) throws BusinessException;
 
 	DocumentDto delete(String ownerUuid, DocumentDto documentDto)
 			throws BusinessException;

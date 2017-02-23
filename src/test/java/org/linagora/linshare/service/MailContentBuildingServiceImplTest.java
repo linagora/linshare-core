@@ -91,7 +91,7 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		this.executeSqlScript("import-mails-hibernate3.sql", false);
 		List<TestMailResult> findErrors = Lists.newArrayList();
 		MailConfig cfg = domainBusinessService.getUniqueRootDomain().getCurrentMailConfiguration();
-		for (MailContentType type : getMailContentTypes()) {
+		for (MailContentType type : MailContentType.values()) {
 			logger.info("Building mail {} ", type);
 			if (mailBuildingService.fakeBuildIsSupported(type)) {
 				for (Language lang : Language.values()) {
@@ -169,24 +169,4 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		return findErrors;
 	}
 
-	private List<MailContentType> getMailContentTypes() {
-		MailContentType[] list = MailContentType.values();
-		List<MailContentType> excludes = Lists.newArrayList(MailContentType.SHARED_DOC_UPDATED,
-				MailContentType.DEPRECATED_ANONYMOUS_DOWNLOAD, MailContentType.DEPRECATED_NEW_SHARING_PROTECTED,
-				MailContentType.DEPRECATED_NEW_SHARING_CYPHERED,
-				MailContentType.DEPRECATED_NEW_SHARING_CYPHERED_PROTECTED,
-				MailContentType.DEPRECATED_UPLOAD_REQUEST_WARN_RECIPIENT_BEFORE_EXPIRY,
-				MailContentType.DEPRECATED_UPLOAD_REQUEST_WARN_RECIPIENT_EXPIRY,
-				MailContentType.DEPRECATED_SHARE_CREATION_ACKNOWLEDGEMENT_WITH_SPECIAL_MESSAGE_FOR_OWNER);
-		List<MailContentType> values = Lists.newArrayList();
-		for (int i = 0; i < list.length; i++) {
-			MailContentType mailContentType = list[i];
-			if (!values.contains(mailContentType)) {
-				if (!excludes.contains(mailContentType)) {
-					values.add(mailContentType);
-				}
-			}
-		}
-		return values;
-	}
 }

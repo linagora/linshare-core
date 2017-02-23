@@ -58,9 +58,6 @@ public interface MailBuildingService {
 
 	List<ContextMetadata> getAvailableVariables(MailContentType type);
 
-	MailContainerWithRecipient buildSharedDocUpdated(Entry shareEntry,
-			String oldDocName, long size) throws BusinessException;
-
 	MailContainerWithRecipient buildCreateUploadProposition(User recipient, UploadProposition proposition)
 			throws BusinessException;
 

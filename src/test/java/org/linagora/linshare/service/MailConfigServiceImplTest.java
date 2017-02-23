@@ -34,6 +34,7 @@
 
 package org.linagora.linshare.service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -57,6 +58,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
@@ -115,7 +117,7 @@ public class MailConfigServiceImplTest extends AbstractTransactionalJUnit4Spring
 		 * iterate over mailcontent langs, searching for all <Language,
 		 * MailContentType> pair
 		 */
-		for (MailContentType type : MailContentType.values()) {
+		for (MailContentType type : getMailContentTypes()) {
 			for (Language lang : supportedLangs) {
 				boolean found = false;
 
@@ -143,6 +145,30 @@ public class MailConfigServiceImplTest extends AbstractTransactionalJUnit4Spring
 		}
 
 		Assert.assertNotNull(current.getMailLayoutHtml());
+	}
+
+	private List<MailContentType> getMailContentTypes() {
+		MailContentType[] list = MailContentType.values();
+		List<MailContentType> excludes = Lists.newArrayList(
+				MailContentType.UPLOAD_PROPOSITION_CREATED,
+				MailContentType.UPLOAD_PROPOSITION_REJECTED,
+				MailContentType.UPLOAD_REQUEST_UPDATED,
+				MailContentType.UPLOAD_REQUEST_ACTIVATED,
+				MailContentType.UPLOAD_REQUEST_AUTO_FILTER,
+				MailContentType.UPLOAD_REQUEST_CREATED,
+				MailContentType.UPLOAD_REQUEST_REMINDER,
+				MailContentType.UPLOAD_REQUEST_CLOSED_BY_OWNER,
+				MailContentType.UPLOAD_REQUEST_DELETED_BY_OWNER);
+		List<MailContentType> values = Lists.newArrayList();
+		for (int i = 0; i < list.length; i++) {
+			MailContentType mailContentType = list[i];
+			if (!values.contains(mailContentType)) {
+				if (!excludes.contains(mailContentType)) {
+					values.add(mailContentType);
+				}
+			}
+		}
+		return values;
 	}
 
 	@Test

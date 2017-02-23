@@ -331,17 +331,17 @@ public class DocumentEntryServiceImpl
 				List<MailContainerWithRecipient> mails = Lists.newArrayList();
 				for (AnonymousShareEntry anonymousShareEntry : documentEntry
 						.getAnonymousShareEntries()) {
-					mails.add(mailBuildingService.buildSharedDocUpdated(
-							anonymousShareEntry, originalFileName,
-							documentEntry.getSize()));
+//					mails.add(mailBuildingService.buildSharedDocUpdated(
+//							anonymousShareEntry, originalFileName,
+//							documentEntry.getSize()));
 					ShareEntryAuditLogEntry shareLog = new ShareEntryAuditLogEntry(actor, owner, LogAction.UPDATE, anonymousShareEntry,
 							AuditLogEntryType.SHARE_ENTRY);
 					shareLog.setTechnicalComment("update of the underlying document");
 					logs.add(shareLog);
 				}
 				for (ShareEntry shareEntry : documentEntry.getShareEntries()) {
-					mails.add(mailBuildingService.buildSharedDocUpdated(
-							shareEntry, originalFileName, documentEntry.getSize()));
+//					mails.add(mailBuildingService.buildSharedDocUpdated(
+//							shareEntry, originalFileName, documentEntry.getSize()));
 					ShareEntryAuditLogEntry shareLog = new ShareEntryAuditLogEntry(actor, owner, LogAction.UPDATE, shareEntry,
 							AuditLogEntryType.SHARE_ENTRY);
 					shareLog.setTechnicalComment("update of the underlying document");

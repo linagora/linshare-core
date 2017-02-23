@@ -84,7 +84,7 @@ public class ShareNewShareEmailBuilder extends EmailBuilder {
 		List<Share> shares = Lists.newArrayList();
 		if (emailCtx.isAnonymous()) {
 			AnonymousUrl url = emailCtx.getAnonymousUrl();
-			ctx.setVariable("anonymousURL", url.getUrlPath());
+			ctx.setVariable("anonymousURL", emailCtx.getAnonymousUrl().getFullUrl(linshareURL));
 			ctx.setVariable("protected", url.getTemporaryPlainTextPassword() != null);
 			ctx.setVariable("password", url.getTemporaryPlainTextPassword());
 			for (AnonymousShareEntry s : url.getAnonymousShareEntries()) {

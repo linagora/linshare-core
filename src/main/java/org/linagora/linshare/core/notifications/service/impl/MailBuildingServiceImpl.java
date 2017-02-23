@@ -51,12 +51,9 @@ import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.Contact;
-import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.MailActivation;
 import org.linagora.linshare.core.domain.entities.MailConfig;
-import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.UploadProposition;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
@@ -87,7 +84,6 @@ import org.linagora.linshare.core.notifications.emails.impl.UploadRequestWarnBef
 import org.linagora.linshare.core.notifications.emails.impl.UploadRequestWarnExpiryEmailBuilder;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
-import org.linagora.linshare.core.utils.DocumentUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.thymeleaf.TemplateEngine;
@@ -240,7 +236,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		emailBuilders.put(MailContentType.GUEST_ACCOUNT_NEW_CREATION, newGuestBuilder);
 
 		emailBuilders.put(MailContentType.SHARE_FILE_DOWNLOAD, new ShareFileDownloadEmailBuilder());
-		emailBuilders.put(MailContentType.DEPRECATED_ANONYMOUS_DOWNLOAD, new ShareFileDownloadEmailBuilder());
 
 		GuestAccountResetPasswordEmailBuilder resetGuestBuilder = new GuestAccountResetPasswordEmailBuilder();
 		resetGuestBuilder.setUrlTemplateForGuestReset(urlTemplateForGuestReset);
@@ -355,71 +350,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		return "";
 	}
 
-	@Override
-	public MailContainerWithRecipient buildSharedDocUpdated(
-			Entry shareEntry, String oldDocName, long size) throws BusinessException {
-		/*
-		 * XXX ugly
-		 */
-		User sender = (User) shareEntry.getEntryOwner();
-		String actorRepresentation = new ContactRepresentation(sender)
-				.getContactRepresentation();
-		String url, firstName, lastName, mimeType, fileName, recipient; // ugly
-		Language locale;
-		if (shareEntry instanceof AnonymousShareEntry) {
-			AnonymousShareEntry e = (AnonymousShareEntry) shareEntry;
-			if (isDisable(e.getAnonymousUrl().getContact(), sender, MailActivationType.SHARED_DOC_UPDATED)) {
-				return null;
-			}
-			url = e.getAnonymousUrl()
-					.getFullUrl(getLinShareUrlForAContactRecipient(sender));
-			recipient = e.getAnonymousUrl().getContact().getMail();
-			locale = sender.getExternalMailLocale();
-			firstName = "";
-			lastName = recipient;
-			mimeType = e.getDocumentEntry().getType();
-			fileName = e.getDocumentEntry().getName();
-		} else {
-			ShareEntry e = (ShareEntry) shareEntry;
-			if (isDisable(e.getRecipient(), MailActivationType.SHARED_DOC_UPDATED)) {
-				return null;
-			}
-			url = getLinShareUrlForAUserRecipient(
-					e.getRecipient());
-			recipient = e.getRecipient().getMail();
-			locale = e.getRecipient().getExternalMailLocale();
-			firstName = e.getRecipient().getFirstName();
-			lastName = e.getRecipient().getLastName();
-			mimeType = e.getDocumentEntry().getType();
-			fileName = e.getDocumentEntry().getName();
-		}
-
-		MailConfig cfg = sender.getDomain().getCurrentMailConfiguration();
-		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				locale);
-		MailContainerBuilder builder = new MailContainerBuilder();
-
-		builder.getSubjectChain()
-				.add("actorRepresentation", actorRepresentation);
-		builder.getGreetingsChain()
-				.add("firstName", firstName)
-				.add("lastName", lastName);
-		builder.getBodyChain()
-				.add("firstName", sender.getFirstName())
-				.add("lastName", sender.getLastName())
-				.add("fileName", fileName)
-				.add("fileSize", DocumentUtils.humanReadableByteCount(size, false, locale))
-				.add("fileOldName", oldDocName)
-				.add("mimeType", mimeType)
-				.add("url", url)
-				.add("urlparam", "");
-		container.setRecipient(recipient);
-		container.setFrom(getFromMailAddress(sender));
-		container.setReplyTo(sender.getMail());
-
-		return buildMailContainer(cfg, container, null,
-				MailContentType.SHARED_DOC_UPDATED, builder);
-	}
 
 	@Override
 	public MailContainerWithRecipient buildCreateUploadProposition(User recipient, UploadProposition proposition)

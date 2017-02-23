@@ -69,7 +69,6 @@ import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.annotations.NoCache;
-import org.linagora.linshare.webservice.userv1.task.DocumentUpdateAsyncTask;
 import org.linagora.linshare.webservice.userv1.task.DocumentUploadAsyncTask;
 import org.linagora.linshare.webservice.userv1.task.context.DocumentTaskContext;
 import org.linagora.linshare.webservice.userv2.DocumentRestService;
@@ -235,22 +234,6 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 		return documentFacade.findAll();
 	}
 
-	@Path("/{uuid}")
-	@PUT
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "Update a document.", response = DocumentDto.class)
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Document not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
-	@Override
-	public DocumentDto update(@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid,
-			@ApiParam(value = "The document dto.", required = true) DocumentDto documentDto) throws BusinessException {
-		return documentFacade.update(uuid, documentDto);
-	}
-
 	@DELETE
 	@Path("/{uuid}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -280,67 +263,20 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 		return documentFacade.delete(documentDto.getUuid());
 	}
 
-	@Path("/{uuid}/upload")
+	@Path("/{uuid}")
 	@PUT
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "Update the file inside the document.", response = DocumentDto.class)
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+	@ApiOperation(value = "Update a document.", response = DocumentDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
 			@ApiResponse(code = 404, message = "Document not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public DocumentDto updateFile(
+	public DocumentDto update(
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid,
-			@ApiParam(value = "File stream.", required = true) @Multipart(value = "file", required = true) InputStream file,
-			@ApiParam(value = "The given file name of the uploaded file.", required = false) @Multipart(value = "filename", required = false) String givenFileName,
-			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) @QueryParam("async") Boolean async,
-			@ApiParam(value = "file size (size validation purpose).", required = true) @Multipart(value = "filesize", required = true)  Long fileSize,
-			MultipartBody body) throws BusinessException {
-		checkMaintenanceMode();
-		Long transfertDuration = getTransfertDuration();
-		if (file == null) {
-			logger.error("Missing file (check parameter file)");
-			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check parameter file)");
-		}
-		String fileName = getFileName(givenFileName, body);
-		// Default mode. No user input.
-		if (async == null) {
-			async = false;
-		}
-		File tempFile = getTempFile(file, "rest-userv2-document-entries", fileName);
-		long currSize = tempFile.length();
-		if (sizeValidation) {
-			checkSizeValidation(fileSize, currSize);
-		}
-		if (async) {
-			logger.debug("Async mode is used");
-			// Asynchronous mode
-			AccountDto actorDto = documentFacade.getAuthenticatedAccountDto();
-			AsyncTaskDto asyncTask = null;
-			try {
-				DocumentTaskContext dtc = new DocumentTaskContext(actorDto, actorDto.getUuid(), tempFile, fileName);
-				dtc.setDocEntryUuid(uuid);
-				asyncTask = asyncTaskFacade.create(currSize, transfertDuration, fileName, null,
-						AsyncTaskType.DOCUMENT_UPDATE);
-				DocumentUpdateAsyncTask task = new DocumentUpdateAsyncTask(documentAsyncFacade, dtc, asyncTask);
-				taskExecutor.execute(task);
-				return new DocumentDto(asyncTask, dtc);
-			} catch (Exception e) {
-				logAsyncFailure(asyncTask, e);
-				deleteTempFile(tempFile);
-				throw e;
-			}
-		} else {
-			// TODO : manage transfertDuration
-			// Synchronous mode
-			try {
-				return documentFacade.updateFile(tempFile, givenFileName, uuid);
-			} finally {
-				deleteTempFile(tempFile);
-			}
-		}
+			@ApiParam(value = "The document dto.", required = true) DocumentDto documentDto) throws BusinessException {
+		return documentFacade.update(uuid, documentDto);
 	}
 
 	@Path("/{uuid}/download")
