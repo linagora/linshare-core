@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -44,6 +46,8 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.AuditLogEntryResourceAccessControl;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
@@ -170,7 +174,7 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 
 	@Override
 	public Set<AuditLogEntryUser> findAll(Account actor, Account owner, List<String> action, List<String> type,
-			boolean forceAll, Calendar beginDate, Calendar endDate) {
+			boolean forceAll, String beginDate, String endDate) {
 		Validate.notNull(actor);
 		Validate.notNull(owner);
 		List<LogAction> actions = Lists.newArrayList();
@@ -193,22 +197,39 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 		if (forceAll) {
 			res = userMongoRepository.findForUser(actor.getLsUuid(), actions, types);
 		} else {
+			Date end = null;
+			Date begin = null;
 			if (endDate == null) {
-				endDate = new GregorianCalendar();
+				Calendar cal = new GregorianCalendar();
+				cal.set(Calendar.HOUR_OF_DAY, 23);
+				cal.set(Calendar.MINUTE, 59);
+				cal.set(Calendar.SECOND, 59);
+				cal.add(Calendar.SECOND, 1);
+				end = cal.getTime();
+			} else {
+				try {
+					end = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(endDate);
+				} catch (ParseException e) {
+					logger.error(e.getMessage(), e);
+					throw new BusinessException(BusinessErrorCode.BAD_REQUEST, "Can not convert end date.");
+				}
 			}
-			endDate.set(Calendar.HOUR_OF_DAY, 23);
-			endDate.set(Calendar.MINUTE, 59);
-			endDate.set(Calendar.SECOND, 59);
-			Date end = endDate.getTime();
 			if (beginDate == null) {
-				beginDate = new GregorianCalendar();
-				beginDate.setTime(end);
+				Calendar cal = new GregorianCalendar();
+				cal.setTime(end);
+				cal.add(Calendar.DAY_OF_MONTH, -7);
+				cal.set(Calendar.HOUR_OF_DAY, 0);
+				cal.set(Calendar.MINUTE, 0);
+				cal.set(Calendar.SECOND, 0);
+				begin = cal.getTime();
+			} else {
+				try {
+					begin = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(beginDate);
+				} catch (ParseException e) {
+					logger.error(e.getMessage(), e);
+					throw new BusinessException(BusinessErrorCode.BAD_REQUEST, "Can not convert begin date.");
+				}
 			}
-			beginDate.add(Calendar.DAY_OF_MONTH, -30);
-			beginDate.set(Calendar.HOUR_OF_DAY, 0);
-			beginDate.set(Calendar.MINUTE, 0);
-			beginDate.set(Calendar.SECOND, 0);
-			Date begin = beginDate.getTime();
 			res = userMongoRepository.findForUser(owner.getLsUuid(), actions, types, begin, end);
 		}
 //		checkListPermission(actor, owner, AuditLogEntryUser.class, BusinessErrorCode.BAD_REQUEST,

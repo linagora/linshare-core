@@ -33,15 +33,10 @@
  */
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.AuditLogEntryUserFacade;
 import org.linagora.linshare.core.service.AccountService;
@@ -62,20 +57,6 @@ public class AuditLogEntryUserFacadeImpl extends GenericFacadeImpl implements Au
 			String beginDate, String endDate) throws BusinessException {
 		Account actor = checkAuthentication();
 		Account owner = getOwner(actor, ownerUuid);
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		Calendar bDate = new GregorianCalendar();
-		Calendar eDate = new GregorianCalendar();
-		try {
-			if (beginDate != null && !beginDate.isEmpty()) {
-				bDate.setTime(format.parse(beginDate));
-			}
-			if (endDate != null && !endDate.isEmpty()) {
-				eDate.setTime(format.parse(endDate));
-			}
-		} catch (ParseException e) {
-			logger.error(e.getMessage(), e);
-			throw new BusinessException(BusinessErrorCode.BAD_REQUEST, "Can not convert dates.");
-		}
-		return service.findAll(actor, owner, action, type, forceAll, bDate, eDate);
+		return service.findAll(actor, owner, action, type, forceAll, beginDate, endDate);
 	}
 }
