@@ -17,22 +17,12 @@
 		<constructor-arg ref="mailBuildingService"/>
 	</bean>
 
-	<bean name="documentManagementBatch"
-		class="org.linagora.linshare.core.batches.impl.DocumentManagementBatchImpl">
-		<constructor-arg value="${job.jackrabbit.keep.alive.activation}" />
-		<constructor-arg ref="documentRepository" />
-		<constructor-arg ref="documentEntryRepository" />
-		<constructor-arg ref="documentEntryBusinessService" />
+	<bean name="uploadRequestBatch" class="org.linagora.linshare.core.batches.impl.UploadRequestBatchImpl">
+		<constructor-arg ref="uploadRequestRepository" />
+		<constructor-arg ref="mailBuildingService" />
+		<constructor-arg ref="notifierService" />
+		<constructor-arg ref="uploadRequestService" />
 		<constructor-arg ref="accountRepository" />
-		<constructor-arg ref="fileDataStore" />
 	</bean>
-
-    <bean name="uploadRequestBatch" class="org.linagora.linshare.core.batches.impl.UploadRequestBatchImpl">
-        <constructor-arg ref="uploadRequestRepository" />
-        <constructor-arg ref="mailBuildingService" />
-        <constructor-arg ref="notifierService" />
-        <constructor-arg ref="uploadRequestService" />
-        <constructor-arg ref="accountRepository" />
-    </bean>
 
 </beans>
