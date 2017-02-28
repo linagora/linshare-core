@@ -15,7 +15,6 @@
 			<props>
 				<prop key="virusscanner.clamav.host" />
 				<prop key="virusscanner.clamav.port">3310</prop>
-				<prop key="tsa.url" />
 				<!-- Override this property if you want to set properties outside the webapp -->
 				<prop key="LINSHARE_HOME">target/</prop>
 			</props>

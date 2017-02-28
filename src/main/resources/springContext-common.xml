@@ -14,7 +14,6 @@
 		      <prop key="virusscanner.clamav.port">3310</prop>
 		      <!--  Override this property if you want to set properties outside the webapp -->
 		      <prop key="linshare.config.path"/>
-		      <prop key="tsa.url" />
 		    </props>
 		  </property>
         <property name="locations">
