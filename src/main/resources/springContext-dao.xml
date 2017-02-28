@@ -22,8 +22,5 @@
 		<constructor-arg index="3" value="${mail.smtp.password}" />
 		<constructor-arg index="4" value="${mail.smtp.auth.needed}" />
 		<constructor-arg index="5" value="${mail.smtp.charset}" />
-		<constructor-arg index="6" value="${linshare.logo.mails.visible}" />
-		<constructor-arg index="7" value="${linshare.display.licenceTerm}" />
-		<constructor-arg index="8" value="${linshare.mail.customlogo.path}" />
 	</bean>
 </beans>

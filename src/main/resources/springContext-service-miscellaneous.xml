@@ -74,7 +74,6 @@
 
 	<bean name="mailBuildingService"
 		class="org.linagora.linshare.core.notifications.service.impl.MailBuildingServiceImpl">
-		<constructor-arg value="${linshare.logo.mails.visible}" />
 		<constructor-arg ref="mailConfigBusinessService" />
 		<constructor-arg ref="domainBusinessService" />
 		<constructor-arg ref="functionalityReadOnlyService" />

@@ -158,9 +158,6 @@ job.document.cleaner.cron.expression=0 0 0 1 1 ?
 linshare.multidomain.enable=false
 
 
-#****************** LinShare Logo
-linshare.logo.mails.visible=true
-
 #****************** Async task management
 # ThreadPoolTaskExecutor for AsyncTask like uploads.
 #linshare.ThreadPoolTaskExecutor.corePoolSize=10

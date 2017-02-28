@@ -33,8 +33,6 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import java.io.File;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.util.GregorianCalendar;
@@ -93,15 +91,6 @@ public class MailNotifierServiceImpl implements NotifierService {
 
 	/** Mail charset. */
 	private final String charset;
-	
-	/** Display LinShare logo ? */
-	private final boolean displayLogo;
-	
-	/** Display LinShare logo ? */
-	private final boolean displayLicenceLogo;
-
-	/** External logo to display */
-	private final String externalLogo;
 
 	/** Class logger */
 	private static final Logger logger = LoggerFactory.getLogger(MailNotifierServiceImpl.class);
@@ -114,16 +103,13 @@ public class MailNotifierServiceImpl implements NotifierService {
 	 */
 	public MailNotifierServiceImpl(String smtpServer, int smtpPort,
 			String smtpUser, String smtpPassword, boolean needsAuth,
-			String charset, boolean displayLogo, boolean displayLicenceLogo, String externalLogo) {
+			String charset) {
 		this.smtpServer = smtpServer;
 		this.smtpPort = smtpPort;
 		this.smtpUser = smtpUser;
 		this.smtpPassword = smtpPassword;
 		this.needsAuth = needsAuth;
 		this.charset = charset;
-		this.displayLogo = displayLogo;
-		this.displayLicenceLogo = displayLicenceLogo;
-		this.externalLogo = externalLogo;
 	}
 
 	public static boolean isPureAscii(String v) {
@@ -193,40 +179,6 @@ public class MailNotifierServiceImpl implements NotifierService {
 			rel_bph.setDataHandler(new DataHandler(new ByteArrayDataSource(
 					htmlContent, "text/html; charset=" + charset)));
 			html_mp.addBodyPart(rel_bph);
-
-			// inline image ?
-			if (displayLogo || displayLicenceLogo ) {
-				String cid = "image.part.1@linshare.org";
-				MimeBodyPart rel_bpi = new MimeBodyPart();
-			
-				// Initialize and add the image file to the html body part
-				rel_bpi.setFileName("mail_logo.png");
-				rel_bpi.setText("linshare");
-				URL resource  = null;
-				if (displayLicenceLogo) {
-					resource = getClass().getResource("/org/linagora/linshare/core/service/mail_logo_licence.png");
-				} else {
-					if (externalLogo != null && !"".equals(externalLogo)){
-						File file = new File(externalLogo);
-						if (file.canRead()) {
-							resource = file.toURI().toURL();
-						} else {
-							logger.error("Can not read your personal logo.");
-						}
-					}
-					if (resource == null) {
-						resource = getClass().getResource("/org/linagora/linshare/core/service/mail_logo.png");
-					}
-				}
-				if(resource == null) {
-					logger.error("Embedded logo was not found.");
-					throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION, "Error sending notification : embedded logo was not found.");
-				}
-				rel_bpi.setDataHandler(new DataHandler(resource));
-				rel_bpi.setHeader("Content-ID", "<" + cid + ">");
-				rel_bpi.setDisposition("inline");
-				html_mp.addBodyPart(rel_bpi);
-			}
 
 			// Create the second BodyPart of the multipart/alternative,
 			// set its content to the html multipart, and add the
