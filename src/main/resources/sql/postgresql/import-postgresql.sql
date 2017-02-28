@@ -2211,7 +2211,7 @@ UPDATE mail_layout SET readonly = true;
 UPDATE mail_content SET readonly = true;
 
 -- LinShare version
-INSERT INTO version (id, version) VALUES (1, '1.12.0');
+INSERT INTO version (id, version) VALUES (1, '2.0.0-rc1');
 
 -- Sequence for hibernate
 SELECT setval('hibernate_sequence', 1000);
