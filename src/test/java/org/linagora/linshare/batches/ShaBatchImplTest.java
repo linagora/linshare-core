@@ -89,10 +89,10 @@ public class ShaBatchImplTest extends AbstractTransactionalJUnit4SpringContextTe
 	private FunctionalityRepository functionalityRepository;
 
 	private User jane;
-	private final InputStream stream2 = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare.properties.sample");
+	private final InputStream stream2 = Thread.currentThread().getContextClassLoader().getResourceAsStream("jackRabbit.properties");
 	private final String fileName2 = "linshare-mailContainer.properties";
 	private final String comment2 = "file description sample";
-	private final InputStream stream1 = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
+	private final InputStream stream1 = Thread.currentThread().getContextClassLoader().getResourceAsStream("OPTIONAL-springContext-jackRabbit.xml");
 	private final String fileName1 = "linshare-default.properties";
 	private final String comment1 = "file description default";
 
@@ -165,8 +165,8 @@ public class ShaBatchImplTest extends AbstractTransactionalJUnit4SpringContextTe
 			c = shaSumBatch.execute(l.get(i), l.size(), i);
 			Assert.assertEquals(c.getIdentifier(), l.get(i));
 			Document doc = documentRepository.findByUuid(l.get(i));
-			Assert.assertEquals("369bedb238d63e4d02e923e237e923e0422717c70c55bc3d8db4144973855349", doc.getSha256sum());
-			Assert.assertEquals("52df9dc13cfb7f20ea7e431e35656eb9121876a6", doc.getSha1sum());
+			Assert.assertEquals("0679aeee7c0c5c4a9a4322326f0243c29025a696a4c2436758470d30ec9488a0", doc.getSha256sum());
+			Assert.assertEquals("b09efecaccbf880c60539f04659489df54698afd", doc.getSha1sum());
 		}
 		logger.info(LinShareTestConstants.END_TEST);
 	}

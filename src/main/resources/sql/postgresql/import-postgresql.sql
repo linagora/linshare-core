@@ -911,7 +911,7 @@ INSERT INTO mail_layout (id, domain_abstract_id, description, visible, layout, c
                               <div align="center"
                                    style="color:#707070;font-size:12px;line-height:125%;text-align:center">
                                 <!--/* Do not remove the copyright  ! */-->
-                                <div data-th-insert="layout :: copyright">
+                                <div data-th-insert="copyright :: copyright">
                                   <p
                                     style="line-height:15px;font-weight:300;margin-bottom:0;color:#b2b2b2;font-size:10px;margin-top:0">
                                     You are using the Open Source and free version of
@@ -951,14 +951,6 @@ INSERT INTO mail_layout (id, domain_abstract_id, description, visible, layout, c
   <title data-th-text="${mailSubject}">Mail subject</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
-<!--/* Common copyright template : NOT TO BE REMOVED*/-->
-<div data-th-fragment="copyright">
-  <p                         style="line-height:15px;font-weight:300;margin-bottom:0;color:#9b9b9b;font-size:10px;margin-top:0">
-                                You are using the Open Source and free version of
-                                <a href="http://www.linshare.org/"style="text-decoration:none;color:#b2b2b2;"><strong>LinShare</strong>™</a>, powered by <a href="http://www.linshare.org/" style="text-decoration:none;color:#b2b2b2;"><strong>Linagora</strong></a> ©&nbsp;2009–2015.Contribute to
-                                  Linshare R&amp;D by subscribing to an Enterprise offer.
-                                </p>
-</div>
 <!--/* Common greeting  template */-->
 <div data-th-fragment="greetings(currentFirstName)">
   <p style="color:#505050;margin-top:0;font-weight:300;margin-bottom:10px"

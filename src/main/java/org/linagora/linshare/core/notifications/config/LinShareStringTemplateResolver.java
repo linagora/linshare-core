@@ -103,9 +103,13 @@ public class LinShareStringTemplateResolver extends StringTemplateResolver {
 					LinShareTemplateResource resource = new LinShareTemplateResource(footer, template);
 					resource.setMessages(f.getMessages(lang));
 					return resource;
-				}
-				if ("layout".equals(template)) {
+				} else if ("layout".equals(template)) {
 					return new LinShareTemplateResource(cfg.getMailLayoutHtml().getLayout(), template);
+				} else if ("copyright".equals(template)) {
+					if (insertLicenceTerm) {
+						return new FooterCopyrightResource(template, lang);
+					}
+					return new FooterCopyrightEmptyResource(template, lang);
 				}
 			}
 		}

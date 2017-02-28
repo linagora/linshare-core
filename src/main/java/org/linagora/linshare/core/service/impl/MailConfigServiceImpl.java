@@ -34,6 +34,8 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
@@ -54,6 +56,8 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.MailConfigService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
@@ -72,6 +76,8 @@ public class MailConfigServiceImpl implements MailConfigService {
 	private final DomainPermissionBusinessService permissionService;
 
 	protected final boolean templatingOverrideReadonlyMode;
+
+	protected static Logger logger = LoggerFactory.getLogger(MailConfigServiceImpl.class);
 
 	public MailConfigServiceImpl(
 			final DomainBusinessService domainBusinessService,
@@ -437,6 +443,13 @@ public class MailConfigServiceImpl implements MailConfigService {
 			throw new BusinessException(BusinessErrorCode.MAILLAYOUT_FORBIDDEN, "Actor "
 					+ actor + " cannot update a mail layout in this domain "
 					+ actor.getDomainId());
+		}
+		String strPattern = "<div data-th-insert=\"copyright :: copyright\">";
+		Pattern pattern = Pattern.compile(strPattern);
+		Matcher matcher = pattern.matcher(layout.getLayout());
+		if(!matcher.find()) {
+			logger.error("Missing copyright footer : {}", strPattern);
+			throw new BusinessException(BusinessErrorCode.MAILLAYOUT_DO_NOT_REMOVE_COPYRIGHT_FOOTER, "You do not have the right to remove copyright footer.");
 		}
 		return mailLayoutBusinessService.update(layout);
 	}
