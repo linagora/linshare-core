@@ -1143,6 +1143,54 @@ productName=LinShare
 welcomeMessage = Hello {0},
 logoLinShareBase64=data:image/png;base64, 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');
 INSERT INTO mail_config (id, mail_layout_id, domain_abstract_id, name, visible, uuid, creation_date, modification_date, readonly) VALUES (1, 1, 1, 'Default mail config', true, '946b190d-4c95-485f-bfe6-d288a2de1edd', now(), now(), true);
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (9, 1, NULL, true, 9, '[( #{subject})]', '<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head  data-th-replace="layout :: header"></head>
+<body>
+<div th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+  <!--/* Upper main-content*/-->
+  <section id="main-content">
+    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+      <div id="section-content">
+        <!--/* Greetings */-->
+        <th:block data-th-replace="layout :: greetings(${guest.firstName})"/>
+        <!--/* End of Greetings  */-->
+        <!--/* Main email  message content*/-->
+        <p style="font-weight:bold;font-size:15px;"  data-th-utext="#{mainTile}">Did you forget your password ?</p>
+        <p>
+          <span data-th-utext="#{beginingMainMsg}"></span>
+          <!--/* Activation link for initialisation of the guest account */-->
+          <th:block data-th-replace="layout :: actionButtonLink(#{changePasswordBtn},${resetLink})"/>
+          <br/>
+        </p>
+        <p  data-th-utext="#{endingMainMsg}"></p>
+        <!--/* End of Main email  message content*/-->
+      </div><!--/* End of section-content*/-->
+    </div><!--/* End of main-content container*/-->
+  </section> <!--/* End of upper main-content*/-->
+  <!--/* Secondary content for  bottom email section */-->
+  <section id="secondary-content">
+    <th:block data-th-replace="layout :: infoStandardArea(#{userNameTitle},${guest.mail})"/>
+    <th:block data-th-replace="layout :: infoActionLink(#{resetLinkTitle},${resetLink})"/>
+    <th:block data-th-replace="layout :: infoDateArea(#{accountExpiryDateTitle},${guestExpirationDate})"/>
+  </section>  <!--/* End of Secondary content for bottom email section */-->
+</div>
+</body>
+</html>', '753d57a8-4fcc-4346-ac92-f71828aca77c', now(), now(), true, 'accountExpiryDateTitle = Compte disponible jusqu\''''au
+beginingMainMsg =  Suivez le lien ci-dessous afin de réinitialiser le mot de passe de votre compte LinShare.
+changePasswordBtn = Réinitialiser
+endingMainMsg = Si vous n\''''avez pas sollicité ce changement de mot de passe, merci d\''''ignorer cet email. Votre mot de passe ne sera pas mis à jour tant que vous n\''''en créé pas un nouveau, via le lien ci-dessus.
+mainTile = Vous avez oublié votre mot de Passe ?
+resetLinkTitle = Lien de réinitialisation
+subject =  LinShare instruction de réinitialisation de mot de passe
+userNameTitle = Identifiant', 'accountExpiryDateTitle = Account available until
+beginingMainMsg =  Follow the link below to reset your Linshare Account password.
+changePasswordBtn = Change password
+endingMainMsg = If you did not request a password reset, please ignore this email. Your password will not change until you create a new one it within the link above.
+mainTile = Did you forget your password ?
+resetLinkTitle = LinShare reset password link
+subject =  LinShare reset password instructions
+userNameTitle = Username');
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (11, 1, NULL, true, 11, '[( #{subject(${requestRecipient.mail},${subject})})]', '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head data-th-replace="layout :: header"></head>
@@ -1203,6 +1251,89 @@ maxUploadDepotSize = Max size of the depot
 msgTitle = Upload request\''''s  attached message :
 recipientsURequest = Recipients of the upload request
 subject =  {0} could not upload a file since there is no more space left : {1}');
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (14, 1, NULL, true, 14, '[( #{subject(${requestRecipient.mail},${subject})})]', '<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head data-th-replace="layout :: header"></head>
+<body>
+<div
+  th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+  <section id="main-content">
+    <!--/* Upper main-content*/-->
+    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+      <div id="section-content">
+        <!--/* Greetings */-->
+        <th:block data-th-replace="layout :: greetings(${requestOwner.firstName})"/>
+        <!--/* End of Greetings  */-->
+        <!--/* Main email  message content*/-->
+        <p>
+          <span data-th-if="(${isgrouped})" data-th-utext="#{groupedBeginningMainMsg(${requestRecipient.mail})}"></span>
+          <span data-th-if="(${!isgrouped})"
+                data-th-utext="#{ungroupedBeginningMainMsg(${requestRecipient.mail})}"></span>
+          <span data-th-if="(${documentsCount} == 1)" data-th-utext="#{endingMainMsgSingular}"></span>
+          <span data-th-if="(${documentsCount} > 1)" data-th-utext="#{endingMainMsgPlural(${documentsCount})}"></span>
+        </p> <!--/* End of Main email  message content*/-->
+      </div><!--/* End of section-content*/-->
+    </div><!--/* End of main-content container*/-->
+    <!--/* If the sender has added a  customized message */-->
+    <div th:assert="${!#strings.isEmpty(body)}"
+         th:replace="layout :: contentMessageSection( ~{::#message-title}, ~{::#message-content})">
+        <span id="message-title">
+          <span data-th-text="#{msgTitle}">You have a message from</span>
+        </span>
+      <span id="message-content" data-th-text="*{body}">
+          Hi design team,<br>
+          Could you send me some screenshots of the app please. I am sending you a file depot link so that you can upload the files
+          within my LinShare space.  <br>Best regards, Peter.
+        </span>
+    </div> <!--/* End of customized message */-->
+  </section> <!--/* End of upper main-content*/-->
+  <!--/* Secondary content for  bottom email section */-->
+  <section id="secondary-content">
+    <th:block data-th-if="(${isgrouped})">
+       <th:block data-th-replace="layout :: infoRecipientListingArea(#{recipientsURequest},${recipients})"/>
+    </th:block>
+    <th:block data-th-replace="layout :: infoFileLinksListingArea(#{filesInURDepot},${documents}, false)"/>
+    <th:block data-th-replace="layout :: infoStandardArea(#{fileSize}, ${totalSize})"/>
+    <th:block data-th-if="(${request.authorizedFiles})">
+       <th:block data-th-replace="layout :: infoStandardArea(#{numFilesInDepot},
+        #{uploadedOverTotal(${request.uploadedFilesCount},${request.authorizedFiles})})"/>
+    </th:block>
+    <th:block data-th-if="(${!request.authorizedFiles})">
+       <th:block data-th-replace="layout :: infoStandardArea(#{numFilesInDepot},
+        #{totalUploaded(${request.uploadedFilesCount})})"/>
+    </th:block>
+    <th:block data-th-replace="layout :: infoDateArea(#{invitationCreationDate},${request.activationDate})"/>
+    <th:block data-th-replace="layout :: infoDateArea(#{invitationClosureDate},${request.expirationDate})"/>
+  </section> <!--/* End of Secondary content for bottom email section */-->
+</div>
+</body>
+</html>', '6c0c1214-0a77-46d0-92c5-c41d225bf9aa', now(), now(), true, 'endingMainMsgPlural =  Il y a au total <b> {0} fichiers </b> dans le dépôt.
+endingMainMsgSingular = Il y a au total  <b>1 fichier </b> dans le dépôt.
+filesInURDepot =  Fichiers déposés dans le dépot
+fileSize =  Taille total
+groupedBeginningMainMsg =  <b>{0}</b> a clôturé votre invitation de dépôt groupé.
+invitationClosureDate = Invitation disponible jusqu\''''au
+invitationCreationDate = Invitation activé le
+msgTitle = Message lié à l\''''invitation de dépôt :
+numFilesInDepot = Nombre de fichiers déposés
+recipientsURequest = Destinataires de l\''''invitation du dépôt
+subject = {0} a clôturé votre invitation de dépôt :  {1}
+ungroupedBeginningMainMsg = <b>{0}</b> a clôturé votre invitation de dépôt.
+uploadedOverTotal = {0} / {1} fichiers
+totalUploaded = {0} files', 'endingMainMsgPlural = There are in total <b> {0} files </b> in the depot.
+endingMainMsgSingular =  There is  in total <b>1 file </b> in the depot.
+filesInURDepot = Files uploaded to the depot
+fileSize =  Total filesize
+groupedBeginningMainMsg = <b>{0}</b> has closed your grouped upload request depot.
+invitationClosureDate = Invitation opened until
+invitationCreationDate = Invitation activation date
+msgTitle =  Upload request\''''s  attached message :
+numFilesInDepot = Number of files within the depot
+recipientsURequest = Recipients of the upload request
+subject =  {0}  has closed  your upload request depot : {1}
+ungroupedBeginningMainMsg  = <b>{0}</b> has closed your  upload request depot.
+uploadedOverTotal = {0} / {1} files
+totalUploaded = {0} files');
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (5, 1, NULL, true, 5, '[( #{subject(${shareOwner.firstName},${shareOwner.lastName},${share.name})})]', '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head  data-th-replace="layout :: header"></head>
@@ -1239,6 +1370,119 @@ mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span> </b> a suppr
 subject = {0} {1} a supprimé le partage de : {2}', 'deletedDate = Deletion date
 mainMsg = <b>{0} <span style="text-transform:uppercase">{1}</span> </b> has deleted the  fileshare :
 subject = {0} {1} has deleted the fileshare  :  {2}');
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (2, 1, NULL, true, 2, '[# th:if="${#strings.isEmpty(customSubject)}"]
+       [# th:if="${sharesCount} > 1"]
+          [( #{subjectPlural(${shareOwner.firstName},${ shareOwner.lastName})})]
+       [/]
+        [# th:if="${sharesCount} ==  1"]
+          [( #{subjectSingular(${shareOwner.firstName },${ shareOwner.lastName})})]
+       [/]
+[/]
+  [# th:if="${!#strings.isEmpty(customSubject)}"]
+    [(${customSubject})]   [( #{subjectCustomAlt(${shareOwner.firstName },${shareOwner.lastName})})]
+[/]', '<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head data-th-replace="layout :: header"></head>
+<body>
+<div
+  th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+  <!--/*  Upper main-content */-->
+  <section id="main-content">
+    <!--/* If the sender has added a  customized message */-->
+    <th:block data-th-if="${!#strings.isEmpty(customMessage)}">
+      <div th:replace="layout :: contentMessageSection( ~{::#message-title}, ~{::#message-content})">
+        <span id="message-title">
+          <span data-th-text="#{msgFrom}">You have a message from</span>
+          <b data-th-text="#{name(${shareOwner.firstName} , ${shareOwner.lastName})}">Peter Wilson</b> :
+        </span>name = {0} {1}
+        <span id="message-content" data-th-text="*{customMessage}">
+          Hi Amy,<br>
+          As agreed,  i am sending you the report as well as the related files. Feel free to contact me if need be. <br>Best regards, Peter.
+        </span>
+      </div>
+    </th:block>
+    <!--/* End of customized message */-->
+    <!--/* main-content container */-->
+    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+      <div id="section-content">
+        <!--/* Greetings for external or internal user */-->
+        <div data-th-if="(${!anonymous})">
+          <th:block data-th-replace="layout :: greetings(${shareRecipient.firstName})"/>
+        </div>
+        <div data-th-if="(${anonymous})">
+          <th:block data-th-replace="layout :: greetings(${shareRecipient.mail})"/>
+        </div> <!--/* End of Greetings for external or internal recipient */-->
+        <!--/* Main email  message content*/-->
+        <p>
+            <span data-th-if="(${sharesCount} ==  1)"
+                  data-th-utext="#{mainMsgSingular(${shareOwner.firstName},${shareOwner.lastName},${sharesCount})}">
+            Peter WILSON has shared 4 file with you
+            </span>
+          <span data-th-if="(${sharesCount} > 1)"
+                data-th-utext="#{mainMsgPlural(${shareOwner.firstName},${shareOwner.lastName},${sharesCount})}">
+            Peter WILSON has shared 4 files with you
+            </span>
+          <br/>
+          <!--/* Check if the external user has a password protected file share */-->
+          <span data-th-if="(${protected})">
+       <span data-th-if="(${sharesCount} ==  1)" data-th-text="#{helpPasswordMsgSingular}">Click on the link below in order to download it     </span>
+            <span data-th-if="(${sharesCount} >  1)" data-th-text="#{helpPasswordMsgPlural}">Click on the links below in order to download them </span>
+            </span>
+            </span>
+          <span data-th-if="(${!anonymous})">
+            <span data-th-if="(${sharesCount} ==  1)" data-th-text="#{helpMsgSingular}">Click on the link below in order to download it     </span>
+            <span data-th-if="(${sharesCount} >  1)" data-th-text="#{helpMsgPlural}">Click on the links below in order to download them </span>
+            </span>
+        </p>
+        <!--/* Single download link for external recipient */-->
+        <div data-th-if="(${anonymous})">
+          <th:block data-th-replace="layout :: actionButtonLink(#{downloadBtn},${anonymousURL})"/>
+        </div>
+        <!--/* End of Main email message content*/-->
+      </div><!--/* End of section-content*/-->
+    </div><!--/* End of main-content container */-->
+  </section> <!--/* End of upper main-content*/-->
+  <!--/* Secondary content for  bottom email section */-->
+  <section id="secondary-content">
+    <div data-th-if="(${protected})">
+      <th:block data-th-replace="layout :: infoStandardArea(#{password},${password})"/>
+    </div>
+    <div data-th-if="(${anonymous})">
+      <th:block data-th-replace="layout :: infoActionLink(#{downloadLink},${anonymousURL})"/>
+    </div>
+    <th:block data-th-replace="layout :: infoDateArea(#{common.titleSharedThe},${shares[0].creationDate})"/>
+    <th:block data-th-replace="layout :: infoDateArea(#{common.availableUntil},${shares[0].expirationDate})"/>
+     <th:block data-th-replace="layout :: infoFileLinksListingArea(#{common.filesInShare},${shares},${anonymous})"/>
+  </section>  <!--/* End of Secondary content for bottom email section */-->
+  </div>
+</body>
+</html>', '250e4572-7bb9-4735-84ff-6a8af93e3a42', now(), now(), true, 'downloadBtn = Téléchargé
+downloadLink = Lien de téléchargement
+helpMsg = Cliquez sur le lien pour le télécharger.
+helpMsgPlural = Cliquez sur les liens pour les télécharger.
+helpPasswordMsgSingular = Cliquez sur le lien pour le télécharger et saisissez le mot de passe ci-dessous.
+helpPasswordMsgPlural = Cliquez sur le lien pour les télécharger et saisissez le mot de passe ci-dessous.
+mainMsgPlural = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>vous a partagé {2} fichiers.
+mainMsgSingular = <b> {0} <span style="text-transform:uppercase">{1}</span> </b> vous a partagé {2} fichier.
+msgFrom = Vous avez un message de
+name = {0} {1}
+password = Mot de passe
+subjectCustomAlt = de {0} {1}
+subjectPlural =  {0} {1} vous a partagé des fichiers
+subjectSingular =  {0} {1} vous a partagé un fichier', 'downloadBtn = Download
+downloadLink = Download link
+helpMsgPlural = Click on the links below in order to download them.
+helpMsgSingular = Click on the link below in order to download.
+helpPasswordMsgSingular = Click on the link below in order to download it and enter the following password.
+helpPasswordMsgPlural = Click on the link below in order to download them and enter the following password.
+mainMsgPlural = <b> {0} <span style="text-transform:uppercase">{1}</span> </b> has shared <b>{2} files</b> with you.
+mainMsgSingular = <b> {0} <span style="text-transform:uppercase">{1}</span> </b> has shared <b>{2} file</b> with you.
+msgFrom = You have a message from
+name = {0} {1}
+password = Password
+subjectCustomAlt = by {0} {1}
+subjectPlural = {0} {1} has shared some files with you
+subjectSingular = {0} {1} has shared a file with you');
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (10, 1, NULL, true, 10, '[( #{subject(${requestRecipient.mail},${document.name},${subject})})]', '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head  data-th-replace="layout :: header"></head>
@@ -1341,89 +1585,6 @@ uploadedThe = Déposé le', 'beginningMainMsgInt =  Your file :
 endingMainMsgInt = will automatically be deleted in <b> {0} days</b>,  from your Personal Space.
 subject = The file :  {0}  is about to be deleted
 uploadedThe = Upload date');
-INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (14, 1, NULL, true, 14, '[( #{subject(${requestRecipient.mail},${subject})})]', '<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head data-th-replace="layout :: header"></head>
-<body>
-<div
-  th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
-  <section id="main-content">
-    <!--/* Upper main-content*/-->
-    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
-      <div id="section-content">
-        <!--/* Greetings */-->
-        <th:block data-th-replace="layout :: greetings(${requestOwner.firstName})"/>
-        <!--/* End of Greetings  */-->
-        <!--/* Main email  message content*/-->
-        <p>
-          <span data-th-if="(${isgrouped})" data-th-utext="#{groupedBeginningMainMsg(${requestRecipient.mail})}"></span>
-          <span data-th-if="(${!isgrouped})"
-                data-th-utext="#{ungroupedBeginningMainMsg(${requestRecipient.mail})}"></span>
-          <span data-th-if="(${documentsCount} == 1)" data-th-utext="#{endingMainMsgSingular}"></span>
-          <span data-th-if="(${documentsCount} > 1)" data-th-utext="#{endingMainMsgPlural(${documentsCount})}"></span>
-        </p> <!--/* End of Main email  message content*/-->
-      </div><!--/* End of section-content*/-->
-    </div><!--/* End of main-content container*/-->
-    <!--/* If the sender has added a  customized message */-->
-    <div th:assert="${!#strings.isEmpty(body)}"
-         th:replace="layout :: contentMessageSection( ~{::#message-title}, ~{::#message-content})">
-        <span id="message-title">
-          <span data-th-text="#{msgTitle}">You have a message from</span>
-        </span>
-      <span id="message-content" data-th-text="*{body}">
-          Hi design team,<br>
-          Could you send me some screenshots of the app please. I am sending you a file depot link so that you can upload the files
-          within my LinShare space.  <br>Best regards, Peter.
-        </span>
-    </div> <!--/* End of customized message */-->
-  </section> <!--/* End of upper main-content*/-->
-  <!--/* Secondary content for  bottom email section */-->
-  <section id="secondary-content">
-    <th:block data-th-if="(${isgrouped})">
-       <th:block data-th-replace="layout :: infoRecipientListingArea(#{recipientsURequest},${recipients})"/>
-    </th:block>
-    <th:block data-th-replace="layout :: infoFileLinksListingArea(#{filesInURDepot},${documents}, false)"/>
-    <th:block data-th-replace="layout :: infoStandardArea(#{fileSize}, ${totalSize})"/>
-    <th:block data-th-if="(${request.authorizedFiles})">
-       <th:block data-th-replace="layout :: infoStandardArea(#{numFilesInDepot},
-        #{uploadedOverTotal(${request.uploadedFilesCount},${request.authorizedFiles})})"/>
-    </th:block>
-    <th:block data-th-if="(${!request.authorizedFiles})">
-       <th:block data-th-replace="layout :: infoStandardArea(#{numFilesInDepot},
-        #{totalUploaded(${request.uploadedFilesCount})})"/>
-    </th:block>
-    <th:block data-th-replace="layout :: infoDateArea(#{invitationCreationDate},${request.activationDate})"/>
-    <th:block data-th-replace="layout :: infoDateArea(#{invitationClosureDate},${request.expirationDate})"/>
-  </section> <!--/* End of Secondary content for bottom email section */-->
-</div>
-</body>
-</html>', '6c0c1214-0a77-46d0-92c5-c41d225bf9aa', now(), now(), true, 'endingMainMsgPlural =  Il y a au total <b> {0} fichiers </b> dans le dépôt.
-endingMainMsgSingular = Il y a au total  <b>1 fichier </b> dans le dépôt.
-filesInURDepot =  Fichiers déposés dans le dépot
-fileSize =  Taille total
-groupedBeginningMainMsg =  <b>{0}</b> a clôturé votre invitation de dépôt groupé.
-invitationClosureDate = Invitation disponible jusqu\''''au
-invitationCreationDate = Invitation activé le
-msgTitle = Message lié à l\''''invitation de dépôt :
-numFilesInDepot = Nombre de fichiers déposés
-recipientsURequest = Destinataires de l\''''invitation du dépôt
-subject = {0} a clôturé votre invitation de dépôt :  {1}
-ungroupedBeginningMainMsg = <b>{0}</b> a clôturé votre invitation de dépôt.
-uploadedOverTotal = {0} / {1} fichiers
-totalUploaded = {0} files', 'endingMainMsgPlural = There are in total <b> {0} files </b> in the depot.
-endingMainMsgSingular =  There is  in total <b>1 file </b> in the depot.
-filesInURDepot = Files uploaded to the depot
-fileSize =  Total filesize
-groupedBeginningMainMsg = <b>{0}</b> has closed your grouped upload request depot.
-invitationClosureDate = Invitation opened until
-invitationCreationDate = Invitation activation date
-msgTitle =  Upload request\''''s  attached message :
-numFilesInDepot = Number of files within the depot
-recipientsURequest = Recipients of the upload request
-subject =  {0}  has closed  your upload request depot : {1}
-ungroupedBeginningMainMsg  = <b>{0}</b> has closed your  upload request depot.
-uploadedOverTotal = {0} / {1} files
-totalUploaded = {0} files');
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (6, 1, NULL, true, 6, '[( #{subject(${share.name})})]', '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head data-th-replace="layout :: header"></head>
@@ -1655,54 +1816,6 @@ invitationCreationDate = Invitation activation date
 mainMsg = <b>{0}</b> has deleted the file : <b> {1} </b> from your upload request depot.
 msgTitle = Upload request\''''s  attached message :
 subject = {0}  has deleted a file from the upload request depot :  {1}');
-INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (9, 1, NULL, true, 9, '[( #{subject})]', '<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head  data-th-replace="layout :: header"></head>
-<body>
-<div th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
-  <!--/* Upper main-content*/-->
-  <section id="main-content">
-    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
-      <div id="section-content">
-        <!--/* Greetings */-->
-        <th:block data-th-replace="layout :: greetings(${guest.firstName})"/>
-        <!--/* End of Greetings  */-->
-        <!--/* Main email  message content*/-->
-        <p style="font-weight:bold;font-size:15px;"  data-th-utext="#{mainTile}">Did you forget your password ?</p>
-        <p>
-          <span data-th-utext="#{beginingMainMsg}"></span>
-          <!--/* Activation link for initialisation of the guest account */-->
-          <th:block data-th-replace="layout :: actionButtonLink(#{changePasswordBtn},${resetLink})"/>
-          <br/>
-        </p>
-        <p  data-th-utext="#{endingMainMsg}"></p>
-        <!--/* End of Main email  message content*/-->
-      </div><!--/* End of section-content*/-->
-    </div><!--/* End of main-content container*/-->
-  </section> <!--/* End of upper main-content*/-->
-  <!--/* Secondary content for  bottom email section */-->
-  <section id="secondary-content">
-    <th:block data-th-replace="layout :: infoStandardArea(#{userNameTitle},${guest.mail})"/>
-    <th:block data-th-replace="layout :: infoActionLink(#{resetLinkTitle},${resetLink})"/>
-    <th:block data-th-replace="layout :: infoDateArea(#{accountExpiryDateTitle},${guestExpirationDate})"/>
-  </section>  <!--/* End of Secondary content for bottom email section */-->
-</div>
-</body>
-</html>', '753d57a8-4fcc-4346-ac92-f71828aca77c', now(), now(), true, 'accountExpiryDateTitle = Compte disponible jusqu\''''au
-beginingMainMsg =  Suivez le lien ci-dessous afin de réinitialiser le mot de passe de votre compte LinShare.
-changePasswordBtn = Réinitialiser
-endingMainMsg = Si vous n\''''avez pas sollicité ce changement de mot de passe, merci d\''''ignorer cet email. Votre mot de passe ne sera pas mis à jour tant que vous n\''''en créé pas un nouveau, via le lien ci-dessus.
-mainTile = Vous avez oublié votre mot de Passe ?
-resetLinkTitle = Lien de réinitialisation
-subject =  LinShare instruction de réinitialisation de mot de passe
-userNameTitle = Identifiant', 'accountExpiryDateTitle = Account available until
-beginingMainMsg =  Follow the link below to reset your Linshare Account password.
-changePasswordBtn = Change password
-endingMainMsg = If you did not request a password reset, please ignore this email. Your password will not change until you create a new one it within the link above.
-mainTile = Did you forget your password ?
-resetLinkTitle = LinShare reset password link
-subject =  LinShare reset password instructions
-userNameTitle = Username');
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (4, 1, NULL, true, 4, '[# th:if="${!anonymous}"] 
       [( #{subject(${shareRecipient.firstName},${shareRecipient.lastName},${share.name})})]
 [/]
@@ -1763,67 +1876,6 @@ mainMsgExt = The external recipient <b>{0}</b> has downloaded your file:
 mainMsgInt = <b> {0} <span style="text-transform:uppercase">{1}</span> </b> has downloaded your file :
 subject = {0} {1} has downloaded {2}
 subjectAnonymous = {0} has downloaded : {1}');
-INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (3, 1, NULL, true, 3, '[# th:if="${documentsCount} > 1"] 
-           [( #{subjectPlural})]
-       [/]
-        [# th:if="${documentsCount} ==  1"]
-           [( #{subjectSingular})]
-       [/]
-[# th:if="${!#strings.isEmpty(customSubject)}"]
-[(${ ": " +customSubject})]
-[/]', '<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head data-th-replace="layout :: header"></head>
-<body>
-<div
-  th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
-  <!--/*  Upper main-content */-->
-  <section id="main-content">
-    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
-      <div id="section-content">
-        <!--/* Greetings */-->
-        <th:block data-th-replace="layout :: greetings(${shareOwner.firstName})"/>
-        <!--/* End of Greetings  */-->
-        <!--/* Main email  message content*/-->
-        <p>
-          <span data-th-if="(${documentsCount} > 1)" data-th-utext="#{numFilesMsgPlural(${documentsCount})}">
-            Peter WILSON has  shared 4 files
-            </span>
-          <span data-th-if="(${documentsCount} ==  1)" data-th-utext="#{numFilesMsgSingular(${documentsCount})}">
-            Peter WILSON has  shared 1 file
-            </span>
-          <span data-th-if="(${recipientsCount} >  1)" th:with="df=#{date.format}"
-                data-th-utext="#{recipientCountMsgPlural(${#dates.format(expirationDate,df)},${recipientsCount})}">
-             to 3 recipients set to expire for the 7th December 2017
-            </span>
-          <span data-th-if="(${recipientsCount} ==  1)" th:with="df=#{date.format}"
-                data-th-utext="#{recipientCountMsgSingular(${#dates.format(expirationDate,df)},${recipientsCount})}">
-            to 1 recipient set to expire for the 7th December 2017
-            </span>
-        </p> <!--/* End of Main email  message content*/-->
-      </div><!--/* End of section-content*/-->
-    </div><!--/* End of main-content container*/-->
-  </section> <!--/* End upper of main-content*/-->
-  <!--/* Secondary content for  bottom email section */-->
-  <section id="secondary-content">
-    <th:block data-th-replace="layout :: infoRecipientListingArea(#{common.recipients},${recipients})"/>
-    <th:block data-th-replace="layout :: infoFileLinksListingArea(#{common.filesInShare},${documents},false)"/>
-    <th:block data-th-replace="layout :: infoDateArea(#{common.titleSharedThe},${creationDate})"/>
-    <th:block data-th-replace="layout :: infoDateArea(#{common.availableUntil},${expirationDate})"/>
-  </section>  <!--/* End of Secondary content for bottom email section */-->
-</div>
-</body>
-</html>', '01e0ac2e-f7ba-11e4-901b-08002722e7b1', now(), now(), true, 'numFilesMsgPlural = Vous avez partagé <b>{0} fichiers</b>
-numFilesMsgSingular = Vous avez partagé <b>{0} fichier</b>
-recipientCountMsgPlural =  expirant le : <b>{0} </b> à <b>{1} destinataires</b>.</b>
-recipientCountMsgSingular =  expirant le : <b>{0} </b> à <b>{1} destinataire</b>.</b>
-subjectPlural = Vous avez partagé des fichiers
-subjectSingular = Vous avez partagé un fichier', 'numFilesMsgPlural = You have shared  <b>{0} files</b>
-numFilesMsgSingular = You have shared  <b>{0} file</b>
-recipientCountMsgPlural =   to <b>{1} recipients</b>, set to expire on : {0}.
-recipientCountMsgSingular =   to <b>{1} recipient</b>, set to expire on : {0}.
-subjectPlural =  You have shared some files
-subjectSingular = You have shared a file');
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (13, 1, NULL, true, 13, '[# th:if="${warnOwner}"] 
            [( #{subjectForOwner})]
        [/]
@@ -1938,6 +1990,46 @@ recipientsURequest = Recipients of the upload request
 subjectForOwner = Your upload request depot is now closed
 subjectForRecipient =  {0}\''''s  upload request is now closed
 subjectForRecipient =  {0} {1}\''''s  upload request is now closed');
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (8, 1, NULL, true, 8, '[( #{subject(${creator.firstName},${creator.lastName}, #{productName})})]', '<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head  data-th-replace="layout :: header"></head>
+<body>
+<div th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+  <!--/* Upper main-content*/-->
+  <section id="main-content">
+    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+      <div id="section-content">
+        <!--/* Greetings */-->
+        <th:block data-th-replace="layout :: greetings(${guest.firstName})"/>
+        <!--/* End of Greetings  */-->
+        <!--/* Main email  message content*/-->
+        <p>
+          <span data-th-utext="#{mainMsg(${creator.firstName},${creator.lastName},#{productName})}"></span>
+          <!--/* Activation link for initialisation of the guest account */-->
+          <th:block  data-th-replace="layout :: actionButtonLink(#{accessToLinshareBTn},${resetLink})"/>
+        </p> <!--/* End of Main email  message content*/-->
+      </div><!--/* End of section-content*/-->
+    </div><!--/* End of main-content container*/-->
+  </section> <!--/* End of upper main-content*/-->
+  <!--/* Secondary content for  bottom email section */-->
+  <section id="secondary-content">
+    <th:block data-th-replace="layout :: infoStandardArea(#{userNameTitle},${guest.mail})"/>
+    <th:block data-th-replace="layout :: infoActionLink(#{activationLinkTitle},${resetLink})"/>
+    <th:block data-th-replace="layout :: infoDateArea(#{accountExpiryDateTitle},${guestExpirationDate})"/>
+  </section>  <!--/* End of Secondary content for bottom email section */-->
+</div>
+</body>
+</html>', 'a1ca74a5-433d-444a-8e53-8daa08fa0ddb', now(), now(), true, 'accessToLinshareBTn = Activé mon compte
+accountExpiryDateTitle = Compte disponible jusqu\''''au
+activationLinkTitle = Lien d\''''initialisation
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> vous a créé un compte invité sur <b>LinShare</b> qui vous permet de partager des fichiers de façon sécurisé. <br/> Pour vous connecter, vous devez finaliser votre inscription en créant votre mot de passe à l\''''aide du lien  ci-dessous.
+subject = {0}  {1} vous invite a activer votre compte {1}
+userNameTitle = Identifiant', 'accessToLinshareBTn = Activate account
+accountExpiryDateTitle = Account available until
+activationLinkTitle = Initialization link
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> has created a <b>{2}</b> guest account for you, which enables you to transfer files more securely. <br/>To log into your account, you will need to finalize your subscription by creating your password using the following link.
+subject = {0}  {1} invited you to activate your {2} account
+userNameTitle = Username');
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (7, 1, NULL, true, 7, '[# th:if="${documentsCount} > 1"] 
           [( #{subjectPlural(${documentsCount})})]
        [/]
@@ -1988,56 +2080,14 @@ mainMsgSingular = Some recipients have not downloaded <b>{0} file</b> yet. You m
 subjectPlural = Undownloaded shared files alert : {0} files have not been downloaded yet.
 subjectSingular = Undownloaded shared files alert : {0} file have not been downloaded yet.
 undownloadedDateTitle = Reminder date of the Undownloaded files');
-INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (8, 1, NULL, true, 8, '[( #{subject(${creator.firstName},${creator.lastName}, #{productName})})]', '<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head  data-th-replace="layout :: header"></head>
-<body>
-<div th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
-  <!--/* Upper main-content*/-->
-  <section id="main-content">
-    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
-      <div id="section-content">
-        <!--/* Greetings */-->
-        <th:block data-th-replace="layout :: greetings(${guest.firstName})"/>
-        <!--/* End of Greetings  */-->
-        <!--/* Main email  message content*/-->
-        <p>
-          <span data-th-utext="#{mainMsg(${creator.firstName},${creator.lastName},#{productName})}"></span>
-          <!--/* Activation link for initialisation of the guest account */-->
-          <th:block  data-th-replace="layout :: actionButtonLink(#{accessToLinshareBTn},${resetLink})"/>
-        </p> <!--/* End of Main email  message content*/-->
-      </div><!--/* End of section-content*/-->
-    </div><!--/* End of main-content container*/-->
-  </section> <!--/* End of upper main-content*/-->
-  <!--/* Secondary content for  bottom email section */-->
-  <section id="secondary-content">
-    <th:block data-th-replace="layout :: infoStandardArea(#{userNameTitle},${guest.mail})"/>
-    <th:block data-th-replace="layout :: infoActionLink(#{activationLinkTitle},${resetLink})"/>
-    <th:block data-th-replace="layout :: infoDateArea(#{accountExpiryDateTitle},${guestExpirationDate})"/>
-  </section>  <!--/* End of Secondary content for bottom email section */-->
-</div>
-</body>
-</html>', 'a1ca74a5-433d-444a-8e53-8daa08fa0ddb', now(), now(), true, 'accessToLinshareBTn = Activé mon compte
-accountExpiryDateTitle = Compte disponible jusqu\''''au
-activationLinkTitle = Lien d\''''initialisation
-mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> vous a créé un compte invité sur <b>LinShare</b> qui vous permet de partager des fichiers de façon sécurisé. <br/> Pour vous connecter, vous devez finaliser votre inscription en créant votre mot de passe à l\''''aide du lien  ci-dessous.
-subject = {0}  {1} vous invite a activer votre compte {1}
-userNameTitle = Identifiant', 'accessToLinshareBTn = Activate account
-accountExpiryDateTitle = Account available until
-activationLinkTitle = Initialization link
-mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> has created a <b>{2}</b> guest account for you, which enables you to transfer files more securely. <br/>To log into your account, you will need to finalize your subscription by creating your password using the following link.
-subject = {0}  {1} invited you to activate your {2} account
-userNameTitle = Username');
-INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (2, 1, NULL, true, 2, '[# th:if="${#strings.isEmpty(customSubject)}"]
-       [# th:if="${sharesCount} > 1"]
-          [( #{subjectPlural(${shareOwner.firstName},${ shareOwner.lastName})})]
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (3, 1, NULL, true, 3, '[# th:if="${documentsCount} > 1"] 
+           [( #{subjectPlural})]
        [/]
-        [# th:if="${sharesCount} ==  1"]
-          [( #{subjectSingular(${shareOwner.firstName },${ shareOwner.lastName})})]
+        [# th:if="${documentsCount} ==  1"]
+           [( #{subjectSingular})]
        [/]
-[/]
-  [# th:if="${!#strings.isEmpty(customSubject)}"]
-    [(${customSubject})]   [( #{subjectCustomAlt(${shareOwner.firstName },${shareOwner.lastName})})]
+[# th:if="${!#strings.isEmpty(customSubject)}"]
+[(${ ": " +customSubject})]
 [/]', '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head data-th-replace="layout :: header"></head>
@@ -2046,103 +2096,51 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
   th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
   <!--/*  Upper main-content */-->
   <section id="main-content">
-    <!--/* If the sender has added a  customized message */-->
-    <th:block data-th-if="${!#strings.isEmpty(customMessage)}">
-      <div th:replace="layout :: contentMessageSection( ~{::#message-title}, ~{::#message-content})">
-        <span id="message-title">
-          <span data-th-text="#{msgFrom}">You have a message from</span>
-          <b data-th-text="#{name(${shareOwner.firstName} , ${shareOwner.lastName})}">Peter Wilson</b> :
-        </span>name = {0} {1}
-        <span id="message-content" data-th-text="*{customMessage}">
-          Hi Amy,<br>
-          As agreed,  i am sending you the report as well as the related files. Feel free to contact me if need be. <br>Best regards, Peter.
-        </span>
-      </div>
-    </th:block>
-    <!--/* End of customized message */-->
-    <!--/* main-content container */-->
     <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
       <div id="section-content">
-        <!--/* Greetings for external or internal user */-->
-        <div data-th-if="(${!anonymous})">
-          <th:block data-th-replace="layout :: greetings(${shareRecipient.firstName})"/>
-        </div>
-        <div data-th-if="(${anonymous})">
-          <th:block data-th-replace="layout :: greetings(${shareRecipient.mail})"/>
-        </div> <!--/* End of Greetings for external or internal recipient */-->
+        <!--/* Greetings */-->
+        <th:block data-th-replace="layout :: greetings(${shareOwner.firstName})"/>
+        <!--/* End of Greetings  */-->
         <!--/* Main email  message content*/-->
         <p>
-            <span data-th-if="(${sharesCount} ==  1)"
-                  data-th-utext="#{mainMsgSingular(${shareOwner.firstName},${shareOwner.lastName},${sharesCount})}">
-            Peter WILSON has shared 4 file with you
+          <span data-th-if="(${documentsCount} > 1)" data-th-utext="#{numFilesMsgPlural(${documentsCount})}">
+            Peter WILSON has  shared 4 files
             </span>
-          <span data-th-if="(${sharesCount} > 1)"
-                data-th-utext="#{mainMsgPlural(${shareOwner.firstName},${shareOwner.lastName},${sharesCount})}">
-            Peter WILSON has shared 4 files with you
+          <span data-th-if="(${documentsCount} ==  1)" data-th-utext="#{numFilesMsgSingular(${documentsCount})}">
+            Peter WILSON has  shared 1 file
             </span>
-          <br/>
-          <!--/* Check if the external user has a password protected file share */-->
-          <span data-th-if="(${protected})">
-       <span data-th-if="(${sharesCount} ==  1)" data-th-text="#{helpPasswordMsgSingular}">Click on the link below in order to download it     </span>
-            <span data-th-if="(${sharesCount} >  1)" data-th-text="#{helpPasswordMsgPlural}">Click on the links below in order to download them </span>
+          <span data-th-if="(${recipientsCount} >  1)" th:with="df=#{date.format}"
+                data-th-utext="#{recipientCountMsgPlural(${#dates.format(expirationDate,df)},${recipientsCount})}">
+             to 3 recipients set to expire for the 7th December 2017
             </span>
+          <span data-th-if="(${recipientsCount} ==  1)" th:with="df=#{date.format}"
+                data-th-utext="#{recipientCountMsgSingular(${#dates.format(expirationDate,df)},${recipientsCount})}">
+            to 1 recipient set to expire for the 7th December 2017
             </span>
-          <span data-th-if="(${!anonymous})">
-            <span data-th-if="(${sharesCount} ==  1)" data-th-text="#{helpMsgSingular}">Click on the link below in order to download it     </span>
-            <span data-th-if="(${sharesCount} >  1)" data-th-text="#{helpMsgPlural}">Click on the links below in order to download them </span>
-            </span>
-        </p>
-        <!--/* Single download link for external recipient */-->
-        <div data-th-if="(${anonymous})">
-          <th:block data-th-replace="layout :: actionButtonLink(#{downloadBtn},${anonymousURL})"/>
-        </div>
-        <!--/* End of Main email message content*/-->
+        </p> <!--/* End of Main email  message content*/-->
       </div><!--/* End of section-content*/-->
-    </div><!--/* End of main-content container */-->
-  </section> <!--/* End of upper main-content*/-->
+    </div><!--/* End of main-content container*/-->
+  </section> <!--/* End upper of main-content*/-->
   <!--/* Secondary content for  bottom email section */-->
   <section id="secondary-content">
-    <div data-th-if="(${protected})">
-      <th:block data-th-replace="layout :: infoStandardArea(#{password},${password})"/>
-    </div>
-    <div data-th-if="(${anonymous})">
-      <th:block data-th-replace="layout :: infoActionLink(#{downloadLink},${anonymousURL})"/>
-    </div>
-    <th:block data-th-replace="layout :: infoDateArea(#{common.titleSharedThe},${shares[0].creationDate})"/>
-    <th:block data-th-replace="layout :: infoDateArea(#{common.availableUntil},${shares[0].expirationDate})"/>
-     <th:block th:if="${sharesCount}  > 1 ">
-        <th:block data-th-replace="layout :: infoFileLinksListingArea(#{common.filesInShare},${shares},${anonymous})"/>
-   </th:block>
+    <th:block data-th-replace="layout :: infoRecipientListingArea(#{common.recipients},${recipients})"/>
+    <th:block data-th-replace="layout :: infoFileLinksListingArea(#{common.filesInShare},${documents},false)"/>
+    <th:block data-th-replace="layout :: infoDateArea(#{common.titleSharedThe},${creationDate})"/>
+    <th:block data-th-replace="layout :: infoDateArea(#{common.availableUntil},${expirationDate})"/>
   </section>  <!--/* End of Secondary content for bottom email section */-->
-  </div>
+</div>
 </body>
-</html>', '250e4572-7bb9-4735-84ff-6a8af93e3a42', now(), now(), true, 'downloadBtn = Téléchargé
-downloadLink = Lien de téléchargement
-helpMsg = Cliquez sur le lien pour le télécharger.
-helpMsgPlural = Cliquez sur les liens pour les télécharger.
-helpPasswordMsgSingular = Cliquez sur le lien pour le télécharger et saisissez le mot de passe ci-dessous.
-helpPasswordMsgPlural = Cliquez sur le lien pour les télécharger et saisissez le mot de passe ci-dessous.
-mainMsgPlural = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>vous a partagé {2} fichiers.
-mainMsgSingular = <b> {0} <span style="text-transform:uppercase">{1}</span> </b> vous a partagé {2} fichier.
-msgFrom = Vous avez un message de
-name = {0} {1}
-password = Mot de passe
-subjectCustomAlt = de {0} {1}
-subjectPlural =  {0} {1} vous a partagé des fichiers
-subjectSingular =  {0} {1} vous a partagé un fichier', 'downloadBtn = Download
-downloadLink = Download link
-helpMsgPlural = Click on the links below in order to download them.
-helpMsgSingular = Click on the link below in order to download.
-helpPasswordMsgSingular = Click on the link below in order to download it and enter the following password.
-helpPasswordMsgPlural = Click on the link below in order to download them and enter the following password.
-mainMsgPlural = <b> {0} <span style="text-transform:uppercase">{1}</span> </b> has shared <b>{2} files</b> with you.
-mainMsgSingular = <b> {0} <span style="text-transform:uppercase">{1}</span> </b> has shared <b>{2} file</b> with you.
-msgFrom = You have a message from
-name = {0} {1}
-password = Password
-subjectCustomAlt = by {0} {1}
-subjectPlural = {0} {1} has shared some files with you
-subjectSingular = {0} {1} has shared a file with you');
+</html>', '01e0ac2e-f7ba-11e4-901b-08002722e7b1', now(), now(), true, 'numFilesMsgPlural = Vous avez partagé <b>{0} fichiers</b>
+numFilesMsgSingular = Vous avez partagé <b>{0} fichier</b>
+recipientCountMsgPlural =  expirant le : <b>{0} </b> à <b>{1} destinataires</b>.</b>
+recipientCountMsgSingular =  expirant le : <b>{0} </b> à <b>{1} destinataire</b>.</b>
+subjectPlural = Vous avez partagé des fichiers
+subjectSingular = Vous avez partagé un fichier', 'numFilesMsgPlural = You have shared  <b>{0} files</b>
+numFilesMsgSingular = You have shared  <b>{0} file</b>
+recipientCountMsgPlural =   to <b>{1} recipients</b>, set to expire on : {0}.
+recipientCountMsgSingular =   to <b>{1} recipient</b>, set to expire on : {0}.
+subjectPlural =  You have shared some files
+subjectSingular = You have shared a file');
 INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (1, 0, 1, 1, 1, '4f3c4723-531e-449b-a1ae-d304fd3d2387', true);
 INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (2, 0, 2, 1, 2, '81041673-c699-4849-8be4-58eea4507305', true);
 INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (3, 0, 3, 1, 3, '85538234-1fc1-47a2-850d-7f7b59f1640e', true);
