@@ -123,4 +123,8 @@
 		<constructor-arg ref="quotaService" />
 	</bean>
 
+	<bean id="wsWelcomeMessagesFacadeImpl" class="org.linagora.linshare.core.facade.webservice.user.impl.WelcomeMessagesFacadeImpl">
+		<constructor-arg ref="accountService" />
+	</bean>
+
 </beans>

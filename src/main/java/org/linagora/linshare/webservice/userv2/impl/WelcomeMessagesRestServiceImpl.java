@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2017 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2017. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,72 +31,48 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
+package org.linagora.linshare.webservice.userv2.impl;
 
-import java.util.Locale;
+import java.util.List;
+import java.util.Map;
 
-/**
- * Defines supported languages.
- */
-public enum SupportedLanguage {
-	ENGLISH(0, "en"), FRENCH(1, "fr"), VIETNAMESE(3, "vi");
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
-	private int value;
-	private String tapestryLocale;
+import org.linagora.linshare.core.domain.constants.SupportedLanguage;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.user.WelcomeMessagesFacade;
+import org.linagora.linshare.webservice.userv2.WelcomeMessagesRestService;
 
-	private SupportedLanguage(int value, String tapestryLocale) {
-		this.value = value;
-		this.tapestryLocale = tapestryLocale;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
+
+@Path("/welcome_messages")
+@Api(value = "/rest/user/v2/welcome_messages", description = "Welcome messages user service.")
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+public class WelcomeMessagesRestServiceImpl implements WelcomeMessagesRestService {
+
+	protected WelcomeMessagesFacade welcomeMessagesFacade;
+
+	public WelcomeMessagesRestServiceImpl(WelcomeMessagesFacade welcomeMessagesFacade) {
+		super();
+		this.welcomeMessagesFacade = welcomeMessagesFacade;
 	}
 
-	public int toInt() {
-		return value;
+	@Path("/")
+	@GET
+	@ApiOperation(value = "Find all welcome message entries.", response = List.class, responseContainer = "Set")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin."),
+			@ApiResponse(code = 400, message = "Bad request.") })
+	@Override
+	public List<Map<SupportedLanguage, String>>  findAll() throws BusinessException {
+		return welcomeMessagesFacade.findAll(null);
 	}
 
-	public static SupportedLanguage fromInt(int value) {
-		for (SupportedLanguage lang : values()) {
-			if (lang.value == value) {
-				return lang;
-			}
-		}
-		throw new IllegalArgumentException("Doesn't match an existing Language");
-	}
-
-	public static SupportedLanguage fromLocale(Locale locale) {
-		if (Locale.FRENCH.equals(locale) || Locale.FRANCE.equals(locale)) {
-			return FRENCH;
-		}
-		if (locale.toString().equals("vi"))
-			return VIETNAMESE;
-		return ENGLISH;
-	}
-
-	public static SupportedLanguage fromTapestryLocale(String locale) {
-		if (locale == null)
-			return null;
-		if (locale.equals("fr")) {
-			return FRENCH;
-		}
-		if (locale.equals("vi"))
-			return VIETNAMESE;
-		return ENGLISH;
-	}
-
-	public String getTapestryLocale() {
-		return tapestryLocale;
-	}
-	
-	public static SupportedLanguage fromLanguage(Language language){
-		if (language == Language.FRENCH){
-			return SupportedLanguage.FRENCH;
-		}
-		return SupportedLanguage.ENGLISH;
-	}
-
-	public static Language toLanguage(SupportedLanguage language){
-		if (language == SupportedLanguage.FRENCH){
-			return Language.FRENCH;
-		}
-		return Language.ENGLISH;
-	}
 }

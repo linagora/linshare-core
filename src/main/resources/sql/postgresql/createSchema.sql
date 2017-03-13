@@ -647,7 +647,7 @@ CREATE TABLE welcome_messages (
 CREATE TABLE welcome_messages_entry (
   id                   int8 NOT NULL,
   lang                varchar(255) NOT NULL,
-  value               varchar(255) NOT NULL,
+  value               text NOT NULL,
   welcome_messages_id int8 NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE share_entry_group (

@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2017 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2017. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,72 +31,41 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
+package org.linagora.linshare.core.facade.webservice.user.impl;
 
-import java.util.Locale;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-/**
- * Defines supported languages.
- */
-public enum SupportedLanguage {
-	ENGLISH(0, "en"), FRENCH(1, "fr"), VIETNAMESE(3, "vi");
+import org.linagora.linshare.core.domain.constants.SupportedLanguage;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WelcomeMessages;
+import org.linagora.linshare.core.domain.entities.WelcomeMessagesEntry;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.user.WelcomeMessagesFacade;
+import org.linagora.linshare.core.service.AccountService;
 
-	private int value;
-	private String tapestryLocale;
+import com.google.common.collect.Lists;
 
-	private SupportedLanguage(int value, String tapestryLocale) {
-		this.value = value;
-		this.tapestryLocale = tapestryLocale;
+public class WelcomeMessagesFacadeImpl extends UserGenericFacadeImp implements WelcomeMessagesFacade {
+
+	public WelcomeMessagesFacadeImpl(AccountService accountService) {
+		super(accountService);
 	}
 
-	public int toInt() {
-		return value;
-	}
-
-	public static SupportedLanguage fromInt(int value) {
-		for (SupportedLanguage lang : values()) {
-			if (lang.value == value) {
-				return lang;
-			}
+	@Override
+	public List<Map<SupportedLanguage, String>> findAll(String ownerUuid) throws BusinessException {
+		User actor = checkAuthentication();
+		User owner = getOwner(actor, ownerUuid);
+		WelcomeMessages currentWelcomeMessage = owner.getDomain().getCurrentWelcomeMessage();
+		List<Map<SupportedLanguage, String>> resList = Lists.newArrayList();
+		Map<SupportedLanguage, String> res = new HashMap<SupportedLanguage, String>();
+		for (WelcomeMessagesEntry entry : currentWelcomeMessage
+				.getWelcomeMessagesEntries().values()) {
+			res.put(entry.getLang(), entry.getValue());
 		}
-		throw new IllegalArgumentException("Doesn't match an existing Language");
+		resList.add(res);
+		return resList;
 	}
 
-	public static SupportedLanguage fromLocale(Locale locale) {
-		if (Locale.FRENCH.equals(locale) || Locale.FRANCE.equals(locale)) {
-			return FRENCH;
-		}
-		if (locale.toString().equals("vi"))
-			return VIETNAMESE;
-		return ENGLISH;
-	}
-
-	public static SupportedLanguage fromTapestryLocale(String locale) {
-		if (locale == null)
-			return null;
-		if (locale.equals("fr")) {
-			return FRENCH;
-		}
-		if (locale.equals("vi"))
-			return VIETNAMESE;
-		return ENGLISH;
-	}
-
-	public String getTapestryLocale() {
-		return tapestryLocale;
-	}
-	
-	public static SupportedLanguage fromLanguage(Language language){
-		if (language == Language.FRENCH){
-			return SupportedLanguage.FRENCH;
-		}
-		return SupportedLanguage.ENGLISH;
-	}
-
-	public static Language toLanguage(SupportedLanguage language){
-		if (language == SupportedLanguage.FRENCH){
-			return Language.FRENCH;
-		}
-		return Language.ENGLISH;
-	}
 }

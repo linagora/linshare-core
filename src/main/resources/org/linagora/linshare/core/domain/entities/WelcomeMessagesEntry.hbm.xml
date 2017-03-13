@@ -13,6 +13,6 @@
 			</generator>
 		</id>
 		<property name="lang" column="lang" type="languageType" length="255" not-null="true" lazy="false" insert="false" update="false"/>
-		<property name="value" column="value" type="string" length="255" not-null="true" lazy="false"/>
+		<property name="value" column="value" type="text" not-null="true" lazy="false"/>
 	</class>
 </hibernate-mapping>

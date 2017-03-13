@@ -85,6 +85,10 @@
 		<constructor-arg value="${linshare.rest.files.size.validation}" />
 	</bean>
 
+	<bean id="userv2WelcomeMessagesRestService" class="org.linagora.linshare.webservice.userv2.impl.WelcomeMessagesRestServiceImpl">
+		<constructor-arg ref="wsWelcomeMessagesFacadeImpl" />
+	</bean>
+
 	<jaxrs:server id="userRestContainer" address="/rest/user/v2">
 		<jaxrs:serviceBeans>
 			<ref bean="userEnumRestService" />
@@ -113,6 +117,7 @@
 <!-- 			Disable because it is fully tested. -->
 <!-- 			<ref bean="userv2StatisticRestService" /> -->
 			<ref bean="userv2AccountQuotaRestService" />
+			<ref bean="userv2WelcomeMessagesRestService" />
 <!--
 			<ref bean="pluginCompatibilityRestServiceV2" />
 -->
