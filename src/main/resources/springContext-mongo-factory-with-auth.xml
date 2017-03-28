@@ -21,22 +21,22 @@
 
 	<mongo:db-factory
 		id="mongoDbFactoryForBigFiles"
-		mongo-ref="mongo"
-		host="${linshare.mongo.host}"
-		port="${linshare.mongo.port}"
-		dbname="${linshare.mongo.gridfs.database.bigfiles}"
-		username="${linshare.mongo.user}"
-		password="${linshare.mongo.password}"
+		mongo-ref="mongobig"
+		host="${linshare.mongo.gridfs.bigfiles.host}"
+		port="${linshare.mongo.gridfs.bigfiles.port}"
+		dbname="${linshare.mongo.gridfs.bigfiles.database}"
+		username="${linshare.mongo.gridfs.bigfiles.user}"
+		password="${linshare.mongo.gridfs.bigfiles.password}"
 		/>
 
 	<mongo:db-factory
 		id="mongoDbFactoryForFiles"
-		mongo-ref="mongo"
-		host="${linshare.mongo.host}"
-		port="${linshare.mongo.port}"
-		dbname="${linshare.mongo.gridfs.database.files}"
-		username="${linshare.mongo.user}"
-		password="${linshare.mongo.password}"
+		mongo-ref="mongosmall"
+		host="${linshare.mongo.gridfs.smallfiles.host}"
+		port="${linshare.mongo.gridfs.smallfiles.port}"
+		dbname="${linshare.mongo.gridfs.smallfiles.database}"
+		username="${linshare.mongo.gridfs.smallfiles.user}"
+		password="${linshare.mongo.gridfs.smallfiles.password}"
 		/>
 
 </b:beans>

@@ -19,17 +19,17 @@
 
 	<mongo:db-factory
 		id="mongoDbFactoryForBigFiles"
-		mongo-ref="mongo"
-		host="${linshare.mongo.host}"
-		port="${linshare.mongo.port}"
-		dbname="${linshare.mongo.gridfs.database.bigfiles}"
+		mongo-ref="mongobig"
+		host="${linshare.mongo.gridfs.bigfiles.host}"
+		port="${linshare.mongo.gridfs.bigfiles.port}"
+		dbname="${linshare.mongo.gridfs.bigfiles.database}"
 		/>
 
 	<mongo:db-factory
 		id="mongoDbFactoryForFiles"
-		mongo-ref="mongo"
-		host="${linshare.mongo.host}"
-		port="${linshare.mongo.port}"
-		dbname="${linshare.mongo.gridfs.database.files}"
+		mongo-ref="mongosmall"
+		host="${linshare.mongo.gridfs.smallfiles.host}"
+		port="${linshare.mongo.gridfs.smallfiles.port}"
+		dbname="${linshare.mongo.gridfs.smallfiles.database}"
 		/>
 </b:beans>

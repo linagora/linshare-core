@@ -25,6 +25,34 @@
 			write-fsync="true" />
 	</mongo:mongo>
 
+	<mongo:mongo id="mongosmall" host="${linshare.mongo.gridfs.smallfiles.host}" port="${linshare.mongo.gridfs.smallfiles.port}">
+		<mongo:options connections-per-host="8"
+			threads-allowed-to-block-for-connection-multiplier="4"
+			connect-timeout="1000"
+			max-wait-time="1500"
+			auto-connect-retry="true"
+			socket-keep-alive="true"
+			socket-timeout="1500"
+			slave-ok="true"
+			write-number="1"
+			write-timeout="0"
+			write-fsync="true" />
+	</mongo:mongo>
+
+	<mongo:mongo id="mongobig" host="${linshare.mongo.gridfs.bigfiles.host}" port="${linshare.mongo.gridfs.bigfiles.port}">
+		<mongo:options connections-per-host="8"
+			threads-allowed-to-block-for-connection-multiplier="4"
+			connect-timeout="1000"
+			max-wait-time="1500"
+			auto-connect-retry="true"
+			socket-keep-alive="true"
+			socket-timeout="1500"
+			slave-ok="true"
+			write-number="1"
+			write-timeout="0"
+			write-fsync="true" />
+	</mongo:mongo>
+
 	<mongo:repositories base-package="org.linagora.linshare.mongo" />
 
 	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
