@@ -11,7 +11,11 @@
           http://www.springframework.org/schema/beans
           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-	<mongo:mongo id="mongo" host="${linshare.mongo.host}" port="${linshare.mongo.port}">
+	<mongo:mongo id="mongo"
+		host="${linshare.mongo.host}"
+		port="${linshare.mongo.port}"
+		replica-set="${linshare.mongo.replicatset}">
+
 		<mongo:options connections-per-host="8"
 			threads-allowed-to-block-for-connection-multiplier="4"
 			connect-timeout="1000"
@@ -25,7 +29,11 @@
 			write-fsync="true" />
 	</mongo:mongo>
 
-	<mongo:mongo id="mongosmall" host="${linshare.mongo.gridfs.smallfiles.host}" port="${linshare.mongo.gridfs.smallfiles.port}">
+	<mongo:mongo id="mongosmall"
+		host="${linshare.mongo.gridfs.smallfiles.host}"
+		port="${linshare.mongo.gridfs.smallfiles.port}"
+		replica-set="${linshare.mongo.gridfs.smallfiles.replicatset}">
+
 		<mongo:options connections-per-host="8"
 			threads-allowed-to-block-for-connection-multiplier="4"
 			connect-timeout="1000"
@@ -39,7 +47,11 @@
 			write-fsync="true" />
 	</mongo:mongo>
 
-	<mongo:mongo id="mongobig" host="${linshare.mongo.gridfs.bigfiles.host}" port="${linshare.mongo.gridfs.bigfiles.port}">
+	<mongo:mongo id="mongobig"
+		host="${linshare.mongo.gridfs.bigfiles.host}"
+		port="${linshare.mongo.gridfs.bigfiles.port}"
+		replica-set="${linshare.mongo.gridfs.bigfiles.replicatset}">
+
 		<mongo:options connections-per-host="8"
 			threads-allowed-to-block-for-connection-multiplier="4"
 			connect-timeout="1000"
