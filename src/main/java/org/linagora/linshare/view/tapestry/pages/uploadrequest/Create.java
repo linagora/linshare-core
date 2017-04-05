@@ -280,7 +280,7 @@ public class Create {
 	}
 
 	private String formatSizeValue(long value) {
-		FileSizeUnit unit = FileSizeUnit.getMaxExactPlainSizeUnit(_s);
+		FileSizeUnit unit = FileSizeUnit.getMaxExactPlainSizeUnit(value);
 		return String.format("%d %s", unit.fromPlainSize(value), messages.get("FileSizeUnit." + unit.name() + ".short"));
 	}
 
