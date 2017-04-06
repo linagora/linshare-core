@@ -86,18 +86,20 @@ sso.header.allowfrom=127.0.0.1
 
 
 #******************** Syntax for CRON
-# 	 Field				Mandatory	Allowed Values			Allowed Special Characters
-# 1. Second				yes			0-59					, - * /	
-# 2. Minutes			yes			0-59					, - * /
-# 3. Hours				yes			0-23					, - * /
-# 4. Day of month		yes			1-31					, - * ? / L W
-# 5. Month				yes			1-2 or JAN-DEC			, - * /
-# 6. Day of week		yes			1-7 or SUN-SAT			, - * ? / L #
-# 7. Year 				no			empty, 1970-2099		, - * /
+# Syntax:
+# Field            Mandatory    Allowed Values     Allowed Special Characters
+# 1. Second         yes          0-59               , - * /
+# 2. Minutes        yes          0-59               , - * /
+# 3. Hours          yes          0-23               , - * /
+# 4. Day of month   yes          1-31               , - * ? / L W
+# 5. Month          yes          1-2 or JAN-DEC     , - * /
+# 6. Day of week    yes          1-7 or SUN-SAT     , - * ? / L #
+# 7. Year           no           empty, 1970-2099   , - * /
 #
-# Legend : ? : no specific value
-#		 : L : last
-#		 : W : weekday
+# Legend:
+#    ? : no specific value
+#    L : last
+#    W : weekday
 
 #******** Document cleaner
 job.document.cleaner.activation=false
