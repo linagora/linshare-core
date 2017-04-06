@@ -103,7 +103,6 @@ sso.header.allowfrom=127.0.0.1
 
 #******** Document cleaner
 job.document.cleaner.activation=false
-job.document.cleaner.cron.expression=0 0 0 1 1 ?
 
 
 #******** Domain
