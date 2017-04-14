@@ -109,28 +109,25 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 
 	@Override
 	public void jackRabbitKeepAlive() {
-		logger.debug("jackRabbitKeepAlive - begin");
 		if (cronJackRabbitKeepAlive) {
 			SystemAccount actor = accountRepository.getBatchSystemAccount();
 			List<DocumentEntry> findAllMyDocumentEntries = documentEntryRepository.findAllMyDocumentEntries(actor);
 			for (DocumentEntry documentEntry : findAllMyDocumentEntries) {
 				String uuid = documentEntry.getDocument().getUuid();
-				logger.debug("removing resource : " + uuid);
 				try {
 					documentEntryBusinessService.deleteDocumentEntry(documentEntry);
+					logger.debug(String.format("Fake document removed:  %s (jackRabbit keepalive hack)", uuid));
 				} catch (Exception e) {
-					logger.error("exception : ", e);
+					logger.error(String.format("Failed to remove fake document %s (jackRabbit keepalive hack)", uuid), e);
 				}
 			}
 			uploadTestFile(actor);
 		} else {
-			logger.debug("jackRabbitKeepAlive - skip");
+			logger.debug("jackRabbit keepalive hack disabled");
 		}
-		logger.debug("jackRabbitKeepAlive - end");
 	}
 
 	private void uploadTestFile(SystemAccount actor) {
-		logger.debug("uploading file ...");
 		String filePath = "jackRabbit.properties";
 		InputStream inputStream = java.lang.Thread.currentThread().getContextClassLoader().getResourceAsStream(filePath);
 		String uuid = fileSystemDao.insertFile(actor.getLsUuid(), inputStream, 561, "keep alive file", "test/plain");
@@ -140,13 +137,13 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 			document.setSha256sum(documentEntryBusinessService.SHA256CheckSumFileStream(inputStream));
 			inputStream.close();
 			documentRepository.create(document);
-			DocumentEntry docEntry = new DocumentEntry(actor, "inputStream test", "", document);
+			DocumentEntry docEntry = new DocumentEntry(actor, "JackRabbit keepalive hack", "", document);
 			docEntry = documentEntryRepository.create(docEntry);
 			actor.getEntries().add(docEntry );
+			logger.debug(String.format("Fake document uploaded: %s (jackRabbit keepalive hack)", docEntry.getDocument().getUuid()));
 		} catch (IOException e) {
-			logger.error("exception : ", e);
+			logger.error("Failed to upload fake document (jackRabbit keepalive hack)", e);
 		}
-		logger.debug("file uploaded");
 	}
 
 }
