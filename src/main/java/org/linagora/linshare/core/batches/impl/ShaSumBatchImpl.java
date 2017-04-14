@@ -82,6 +82,9 @@ public class ShaSumBatchImpl extends GenericBatchImpl implements ShaSumBatch {
 	public Context execute(String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		Document doc = documentRepository.findByUuid(identifier);
+		if (doc == null) {
+			return null;
+		}
 		logInfo(total, position, "processing document : "
 				+ doc.getUuid());
 		Context context = new DocumentBatchResultContext(doc);

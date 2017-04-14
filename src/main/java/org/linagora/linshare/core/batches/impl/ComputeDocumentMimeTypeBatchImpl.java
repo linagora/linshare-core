@@ -82,6 +82,9 @@ public class ComputeDocumentMimeTypeBatchImpl extends GenericBatchImpl {
 	public Context execute(String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		Document resource = documentRepository.findByUuid(identifier);
+		if (resource == null) {
+			return null;
+		}
 		logInfo(total, position,
 				"processing document : " + resource.getRepresentation());
 		Context context = new BatchResultContext<Document>(resource);
