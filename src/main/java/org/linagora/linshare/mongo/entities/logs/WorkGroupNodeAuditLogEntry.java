@@ -31,19 +31,76 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.mongo.entities.logs;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupLightDto;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
 
-public interface WorkGroupFolderService extends WorkGroupNodeAbstractService {
+@XmlRootElement
+public class WorkGroupNodeAuditLogEntry extends AuditLogEntryUser {
 
-	WorkGroupNode create(Account actor, User owner, Thread workGroup, WorkGroupNode workGroupFolder,
-			WorkGroupNode nodeParent, Boolean strict, Boolean dryRun) throws BusinessException;
+	protected WorkGroupLightDto workGroup;
 
-	WorkGroupNode delete(Account actor, User owner, Thread workGroup, WorkGroupNode workGroupNode)
-			throws BusinessException;
+	protected WorkGroupNode resource;
+
+	protected WorkGroupNode resourceUpdated;
+
+	public WorkGroupNodeAuditLogEntry() {
+		super();
+	}
+
+	public WorkGroupNodeAuditLogEntry(Account actor, Account owner, LogAction action, AuditLogEntryType type,
+			WorkGroupNode node, Thread workGroup) {
+		super(new AccountMto(actor), new AccountMto(owner), action, type, node.getUuid());
+		this.resource = buildCopy(node);
+		this.workGroup = new WorkGroupLightDto(workGroup);
+	}
+
+	private WorkGroupNode buildCopy(WorkGroupNode node) {
+		WorkGroupNode copy = null;
+		try {
+			copy = (WorkGroupNode) node.clone();
+			copy.setLastAuthor(null);
+		} catch (CloneNotSupportedException e) {
+			// Should never happen
+			e.printStackTrace();
+			copy = node;
+		}
+		return copy;
+	}
+
+	public WorkGroupNode getResource() {
+		return resource;
+	}
+
+	public void setResource(WorkGroupNode resource) {
+		this.resource = resource;
+	}
+
+	public WorkGroupNode getResourceUpdated() {
+		return resourceUpdated;
+	}
+
+	public void initResourceUpdated(WorkGroupNode resourceUpdated) {
+		this.resourceUpdated = buildCopy(resourceUpdated);
+	}
+
+	public void setResourceUpdated(WorkGroupNode resourceUpdated) {
+		this.resourceUpdated = resourceUpdated;
+	}
+
+	public WorkGroupLightDto getWorkGroup() {
+		return workGroup;
+	}
+
+	public void setWorkGroup(WorkGroupLightDto workGroup) {
+		this.workGroup = workGroup;
+	}
 }

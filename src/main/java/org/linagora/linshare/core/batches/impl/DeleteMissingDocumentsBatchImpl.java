@@ -44,7 +44,6 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
-import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -54,7 +53,7 @@ import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.ShareService;
-import org.linagora.linshare.core.service.ThreadEntryService;
+import org.linagora.linshare.core.service.WorkGroupDocumentService;
 
 public class DeleteMissingDocumentsBatchImpl extends GenericBatchImpl {
 
@@ -68,7 +67,7 @@ public class DeleteMissingDocumentsBatchImpl extends GenericBatchImpl {
 
 	private final FileDataStore fileDataStore;
 
-	private final ThreadEntryService threadEntryService;
+	private final WorkGroupDocumentService threadEntryService;
 
 	public DeleteMissingDocumentsBatchImpl(
 			AccountRepository<Account> accountRepository,
@@ -76,7 +75,7 @@ public class DeleteMissingDocumentsBatchImpl extends GenericBatchImpl {
 			DocumentEntryService service,
 			DocumentEntryBusinessService documentEntryBusinessService,
 			ShareService shareService,
-			ThreadEntryService threadEntryService,
+			WorkGroupDocumentService threadEntryService,
 			FileDataStore fileDataStore) {
 		super(accountRepository);
 		this.documentRepository = documentRepository;
@@ -124,17 +123,18 @@ public class DeleteMissingDocumentsBatchImpl extends GenericBatchImpl {
 							resource.getRepresentation());
 				}
 			}
-			Set<ThreadEntry> threadEntries = resource.getThreadEntries();
-			for (ThreadEntry threadEntry : threadEntries) {
-				if (threadEntry != null) {
-					threadEntryService.deleteInconsistentThreadEntry(actor,
-							threadEntry);
-					logWarn(total,
-							position,
-							"The inconsistent document (thread entry related) {} has been successfully deleted.",
-							resource.getRepresentation());
-				}
-			}
+			// TODO:FMA:Workgroups
+//			Set<ThreadEntry> threadEntries = resource.getThreadEntries();
+//			for (ThreadEntry threadEntry : threadEntries) {
+//				if (threadEntry != null) {
+//					threadEntryService.deleteInconsistentThreadEntry(actor,
+//							threadEntry);
+//					logWarn(total,
+//							position,
+//							"The inconsistent document (thread entry related) {} has been successfully deleted.",
+//							resource.getRepresentation());
+//				}
+//			}
 			try {
 				documentEntryBusinessService.deleteDocument(resource);
 			} catch (org.springmodules.jcr.JcrSystemException e) {

@@ -37,12 +37,8 @@
 		<constructor-arg ref="wsThreadFacade" />
 	</bean>
 
-	<bean id="userv2WorkGroupFolderRestService" class="org.linagora.linshare.webservice.userv2.impl.WorkGroupFolderRestServiceImpl">
-		<constructor-arg ref="wsWorkGroupFolderFacade" />
-	</bean>
-
-	<bean id="userv2WorkGroupEntryRestService" class="org.linagora.linshare.webservice.userv2.impl.WorkGroupEntryRestServiceImpl">
-		<constructor-arg ref="wsThreadEntryFacade" />
+	<bean id="userv2WorkGroupNodeRestService" class="org.linagora.linshare.webservice.userv2.impl.WorkGroupNodeRestServiceImpl">
+		<constructor-arg ref="wsWorkGroupNodeFacade" />
 		<constructor-arg ref="wsThreadEntryAsyncFacade" />
 		<constructor-arg ref="wsAsyncTaskFacade" />
 		<constructor-arg ref="taskExecutor" />
@@ -76,7 +72,7 @@
 
 	<bean id="userv2FlowDocumentUploaderRestService" class="org.linagora.linshare.webservice.userv2.impl.FlowDocumentUploaderRestServiceImpl">
 		<constructor-arg ref="wsDocumentFacade" />
-		<constructor-arg ref="wsThreadEntryFacade" />
+		<constructor-arg ref="wsWorkGroupNodeFacade" />
 		<constructor-arg ref="wsAccountQuotaFacade" />
 		<constructor-arg ref="wsDocumentAsyncFacade" />
 		<constructor-arg ref="wsThreadEntryAsyncFacade" />
@@ -96,8 +92,7 @@
 			<ref bean="userv2DocumentRestService" />
 			<ref bean="userv2WorkGroupRestService" />
 			<ref bean="userv2WorkGroupMemberRestService" />
-			<ref bean="userv2WorkGroupEntryRestService" />
-			<ref bean="userv2WorkGroupFolderRestService" />
+			<ref bean="userv2WorkGroupNodeRestService" />
 			<ref bean="userv2GuestRestService" />
 			<ref bean="userShareRestService" />
 			<ref bean="userRestService" />

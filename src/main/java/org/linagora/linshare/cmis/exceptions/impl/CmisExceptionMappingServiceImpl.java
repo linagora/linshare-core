@@ -64,7 +64,7 @@ public class CmisExceptionMappingServiceImpl implements
 			exception = new CmisRuntimeException(businessException.getMessage());
 			break;
 
-		case THREAD_ENTRY_NOT_FOUND:
+		case WORK_GROUP_DOCUMENT_NOT_FOUND:
 			exception = new CmisObjectNotFoundException(
 					businessException.getMessage());
 			break;

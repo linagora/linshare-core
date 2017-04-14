@@ -32,14 +32,6 @@
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
-	<bean id="wsThreadEntryFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.WorkGroupEntryFacadeImpl">
-		<constructor-arg ref="accountService" />
-		<constructor-arg ref="threadService" />
-		<constructor-arg ref="threadEntryService" />
-		<constructor-arg ref="functionalityReadOnlyService" />
-		<constructor-arg ref="workGroupFolderService" />
-		<constructor-arg ref="documentEntryService" />
-	</bean>
 	<bean id="wsThreadMemberFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.ThreadMemberFacadeImpl">
 		<constructor-arg ref="threadService" />
 		<constructor-arg ref="accountService" />
@@ -112,10 +104,11 @@
 		<constructor-arg ref="auditLogEntryService"/>
 	</bean>
 
-	<bean id="wsWorkGroupFolderFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.WorkGroupFolderFacadeImpl">
+	<bean id="wsWorkGroupNodeFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.WorkGroupNodeFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="threadService" />
-		<constructor-arg ref="workGroupFolderService"/>
+		<constructor-arg ref="workGroupNodeService"/>
+		<constructor-arg ref="functionalityReadOnlyService"/>
 	</bean>
 
 	<bean id="wsAccountQuotaFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.AccountQuotaFacadeImpl">

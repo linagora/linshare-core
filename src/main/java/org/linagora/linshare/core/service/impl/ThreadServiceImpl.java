@@ -234,11 +234,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 	}
 
 	@Override
-	public long countEntries(Thread thread) {
-		return documentEntryBusinessService.countThreadEntries(thread);
-	}
-
-	@Override
 	public ThreadMember addMember(Account actor, Account owner, Thread thread,
 			User user, boolean admin, boolean canUpload)
 			throws BusinessException {
@@ -349,7 +344,8 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		checkDeletePermission(actor, owner, Thread.class,
 				BusinessErrorCode.THREAD_FORBIDDEN, thread);
 		// Delete all entries
-		documentEntryBusinessService.deleteSetThreadEntry(thread.getEntries());
+		// TODO:FMA:Workgroups
+//		documentEntryBusinessService.deleteSetThreadEntry(thread.getEntries());
 		thread.setEntries(null);
 		threadRepository.update(thread);
 		// Deleting members

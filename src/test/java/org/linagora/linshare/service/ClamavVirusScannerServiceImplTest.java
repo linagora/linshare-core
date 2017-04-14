@@ -41,11 +41,11 @@ import java.util.Properties;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.linagora.linshare.core.business.service.VirusScannerBusinessService;
+import org.linagora.linshare.core.business.service.impl.ClamavVirusScannerBusinessServiceImpl;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
-import org.linagora.linshare.core.service.VirusScannerService;
-import org.linagora.linshare.core.service.impl.ClamavVirusScannerServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +53,7 @@ public class ClamavVirusScannerServiceImplTest {
 
 	private static Logger logger = LoggerFactory.getLogger(ClamavVirusScannerServiceImplTest.class);
 	
-	private static VirusScannerService virusScannerService;
+	private static VirusScannerBusinessService virusScannerService;
 
 	private static String fileNameToCheck;
 
@@ -73,7 +73,7 @@ public class ClamavVirusScannerServiceImplTest {
 		String clamavHost = (String) properties.get("test.virusscanner.clamav.host");
 		Integer clamavPort = new Integer((String) properties.get("test.virusscanner.clamav.port"));
 		fileNameToCheck = properties.getProperty("test.virusscanner.clamav.filetocheck");
-		virusScannerService = new ClamavVirusScannerServiceImpl(clamavHost,clamavPort.intValue());
+		virusScannerService = new ClamavVirusScannerBusinessServiceImpl(clamavHost,clamavPort.intValue());
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -82,7 +82,7 @@ public class ClamavVirusScannerServiceImplTest {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		boolean hasFailed=false;
 		try {
-			VirusScannerService wrongVirusScannerService = new ClamavVirusScannerServiceImpl("localhost",1234);
+			VirusScannerBusinessService wrongVirusScannerService = new ClamavVirusScannerBusinessServiceImpl("localhost",1234);
 			wrongVirusScannerService.check(this.getClass().getResourceAsStream("/linshare-test.properties"));
 		} catch (TechnicalException e) {
 			hasFailed = true;
@@ -139,7 +139,7 @@ public class ClamavVirusScannerServiceImplTest {
 		
 		boolean hasFailed=false;
 		try {
-			VirusScannerService disabledVirusScannerService = new ClamavVirusScannerServiceImpl("",1234);
+			VirusScannerBusinessService disabledVirusScannerService = new ClamavVirusScannerBusinessServiceImpl("",1234);
 			disabledVirusScannerService.check(this.getClass().getResourceAsStream("/linshare-test.properties"));
 		} catch (TechnicalException e) {
 			if (TechnicalErrorCode.VIRUS_SCANNER_IS_DISABLED.equals(e.getErrorCode()))

@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2015-2016 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2016. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,52 +31,37 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-
-package org.linagora.linshare.core.facade.webservice.user;
+package org.linagora.linshare.core.service;
 
 import java.io.File;
-import java.util.List;
+import java.io.InputStream;
 
-import javax.ws.rs.core.Response;
-
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
-import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
+import org.linagora.linshare.mongo.entities.WorkGroupDocument;
+import org.linagora.linshare.mongo.entities.WorkGroupNode;
 
-public interface WorkGroupEntryFacade extends GenericFacade {
+public interface WorkGroupDocumentService extends WorkGroupNodeAbstractService {
 
-	/**
-	 * @param ownerUuid
-	 *            : It is used by delegation rest service. if null, current
-	 *            logged in user is used.
-	 * @param workGroupUuid
-	 * @param workGroupFolderUuid
-	 *            : if null, root folder will be use.
-	 * @param fi
-	 * @param filename
-	 * @return
-	 * @throws BusinessException
-	 */
-	WorkGroupEntryDto create(String ownerUuid, String workGroupUuid, String workGroupFolderUuid, File fi,
-			String filename) throws BusinessException;
+	WorkGroupNode create(Account actor, Account owner, Thread thread, File tempFile, String filename,
+			WorkGroupNode nodeParent) throws BusinessException;
 
-	WorkGroupEntryDto copy(String ownerUuid, String threadUuid, String entryUuid) throws BusinessException;
+	WorkGroupNode copy(Account actor, Account owner, Thread workGroup, DocumentEntry documentEntry,
+			WorkGroupNode nodeParent) throws BusinessException;
 
-	DocumentDto copyFromThreadEntry(String ownerUuid, String threadUuid, String entryUuid) throws BusinessException;
+	WorkGroupNode copy(Account actor, Account owner, Thread workGroup, WorkGroupDocument nodeSource,
+			WorkGroupNode nodeParent, String newName) throws BusinessException;
 
-	WorkGroupEntryDto find(String ownerUuid, String threadUuid, String uuid) throws BusinessException;
-
-	List<WorkGroupEntryDto> findAll(String ownerUuid, String threadUuid) throws BusinessException;
-
-	WorkGroupEntryDto delete(String ownerUuid, String threadUuid, String threadEntryUuid) throws BusinessException;
-
-	WorkGroupEntryDto delete(String ownerUuid, String workGroupUuid, WorkGroupEntryDto wgEntry)
+	WorkGroupNode delete(Account actor, User owner, Thread workGroup, WorkGroupNode workGroupNode)
 			throws BusinessException;
 
-	Response download(String ownerUuid, String threadUuid, String uuid) throws BusinessException;
+	InputStream getDocumentStream(Account actor, Account owner, Thread workGroup, WorkGroupDocument node)
+			throws BusinessException;
 
-	Response thumbnail(String ownerUuid, String threadUuid, String uuid, boolean base64) throws BusinessException;
+	InputStream getThumbnailStream(Account actor, Account owner, Thread workGroup, WorkGroupDocument node)
+			throws BusinessException;
 
-	WorkGroupEntryDto update(String ownerUuid, String threadUuid, String threadEntryUuid,
-			WorkGroupEntryDto threadEntryDto) throws BusinessException;
 }

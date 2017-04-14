@@ -46,7 +46,7 @@
 	</bean>
 
 	<bean id="userThreadEntryRestService" class="org.linagora.linshare.webservice.userv1.impl.ThreadEntryRestServiceImpl">
-		<constructor-arg ref="wsThreadEntryFacade" />
+		<constructor-arg ref="wsWorkGroupNodeFacade" />
 		<constructor-arg ref="wsThreadEntryAsyncFacade" />
 		<constructor-arg ref="wsAsyncTaskFacade" />
 		<constructor-arg ref="taskExecutor" />

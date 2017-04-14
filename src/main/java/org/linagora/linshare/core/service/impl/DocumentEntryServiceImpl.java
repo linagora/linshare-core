@@ -63,7 +63,6 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
-import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.DocumentEntryResourceAccessControl;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AntiSamyService;
@@ -104,11 +103,7 @@ public class DocumentEntryServiceImpl
 
 	private final AntiSamyService antiSamyService;
 
-	private final MailBuildingService mailBuildingService;
-
 	private final NotifierService notifierService;
-
-	private final Long virusscannerLimitFilesize;
 
 	private final QuotaService quotaService;
 
@@ -122,9 +117,7 @@ public class DocumentEntryServiceImpl
 			MimeTypeMagicNumberDao mimeTypeIdentifier,
 			AntiSamyService antiSamyService,
 			DocumentEntryResourceAccessControl rac,
-			MailBuildingService mailBuildingService,
 			NotifierService notifierService, 
-			Long virusscannerLimitFilesize,
 			OperationHistoryBusinessService operationHistoryBusinessService,
 			QuotaService quotaService) {
 		super(rac);
@@ -137,9 +130,7 @@ public class DocumentEntryServiceImpl
 		this.virusScannerService = virusScannerService;
 		this.mimeTypeIdentifier = mimeTypeIdentifier;
 		this.antiSamyService = antiSamyService;
-		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
-		this.virusscannerLimitFilesize = virusscannerLimitFilesize;
 		this.quotaService = quotaService;
 	}
 
@@ -183,12 +174,6 @@ public class DocumentEntryServiceImpl
 	@Override
 	public DocumentEntry create(Account actor, Account owner, File tempFile, String fileName, String comment,
 			boolean isFromCmis, String metadata) throws BusinessException {
-		return create(actor, owner, tempFile, fileName, comment, false, isFromCmis, metadata);
-	}
-
-	@Override
-	public DocumentEntry create(Account actor, Account owner, File tempFile, String fileName, String comment,
-			boolean forceAntivirusOff, boolean isFromCmis, String metadata) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(fileName, "fileName is required.");
 		checkCreatePermission(actor, owner, DocumentEntry.class,
@@ -207,13 +192,7 @@ public class DocumentEntryServiceImpl
 				mimeTypeService.checkFileMimeType(owner, fileName, mimeType);
 			}
 
-			if (!forceAntivirusOff) {
-				Functionality antivirusFunctionality = functionalityReadOnlyService
-						.getAntivirusFunctionality(owner.getDomain());
-				if (antivirusFunctionality.getActivationPolicy().getStatus()) {
-					checkVirus(fileName, owner, tempFile, size);
-				}
-			}
+			virusScannerService.checkVirus(fileName, owner, tempFile, size);
 
 			// want a timestamp on doc ?
 			String timeStampingUrl = null;
@@ -292,11 +271,7 @@ public class DocumentEntryServiceImpl
 				mimeTypeService.checkFileMimeType(owner, fileName, mimeType);
 			}
 
-			Functionality antivirusFunctionality = functionalityReadOnlyService
-					.getAntivirusFunctionality(owner.getDomain());
-			if (antivirusFunctionality.getActivationPolicy().getStatus()) {
-				checkVirus(fileName, owner, tempFile, newDocSize);
-			}
+			virusScannerService.checkVirus(fileName, owner, tempFile, newDocSize);
 
 			// want a timestamp on doc ?
 			String timeStampingUrl = null;
@@ -573,48 +548,6 @@ public class DocumentEntryServiceImpl
 					"fileName is empty after the xss filter");
 		}
 		return fileName;
-	}
-
-	private Boolean checkVirus(String fileName, Account owner, File file,
-			Long size) throws BusinessException {
-		if (logger.isDebugEnabled()) {
-			logger.debug("antivirus activation:"
-					+ !virusScannerService.isDisabled());
-		}
-		if (virusscannerLimitFilesize != null
-				&& size > virusscannerLimitFilesize) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("antivirus skipped.");
-			}
-			return true;
-		}
-		boolean checkStatus = false;
-		try {
-			checkStatus = virusScannerService.check(file);
-		} catch (TechnicalException e) {
-//			LogEntry logEntry = new AntivirusLogEntry(owner,
-//					LogAction.ANTIVIRUS_SCAN_FAILED, e.getMessage());
-			logger.error(
-					"File scan failed: antivirus enabled but not available ?");
-//			logEntryService.create(LogEntryService.ERROR, logEntry);
-			throw new BusinessException(BusinessErrorCode.FILE_SCAN_FAILED,
-					"File scan failed", e);
-		}
-		if (logger.isDebugEnabled()) {
-			logger.debug("antivirus scan result : " + checkStatus);
-		}
-		// check if the file contains virus
-		if (!checkStatus) {
-//			LogEntry logEntry = new AntivirusLogEntry(owner,
-//					LogAction.FILE_WITH_VIRUS, fileName);
-//			logEntryService.create(LogEntryService.WARN, logEntry);
-			logger.warn(owner.getLsUuid()
-					+ " tried to upload a file containing virus:" + fileName);
-			String[] extras = { fileName };
-			throw new BusinessException(BusinessErrorCode.FILE_CONTAINS_VIRUS,
-					"File contains virus", extras);
-		}
-		return checkStatus;
 	}
 
 	@Override

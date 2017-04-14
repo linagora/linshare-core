@@ -19,11 +19,6 @@
 		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 
-	<bean name="threadEntryResourceAccessControl" class="org.linagora.linshare.core.rac.impl.ThreadEntryResourceAccessControlImpl">
-		<constructor-arg ref="functionalityReadOnlyService" />
-		<constructor-arg ref="threadMemberRepository" />
-	</bean>
-
 	<bean name="threadResourceAccessControl" class="org.linagora.linshare.core.rac.impl.ThreadResourceAccessControlImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="threadMemberRepository" />
@@ -78,4 +73,11 @@
 	<bean name="auditLogEntryResourceAccessControl" class="org.linagora.linshare.core.rac.impl.AuditLogEntryResourceAccessControlImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
+
+	<bean name="workGroupNodeResourceAccessControl" class="org.linagora.linshare.core.rac.impl.WorkGroupNodeResourceAccessControlImpl">
+		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="threadMemberRepository" />
+		<constructor-arg ref="threadRepository" />
+	</bean>
+
 </beans>

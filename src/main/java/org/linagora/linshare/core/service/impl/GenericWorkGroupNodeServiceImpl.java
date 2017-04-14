@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2016 LINAGORA
+ * Copyright (C) 2017 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2016. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2017. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,45 +31,31 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
-
-import java.io.File;
-import java.io.InputStream;
-import java.util.List;
+package org.linagora.linshare.core.service.impl;
 
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.SystemAccount;
-import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadEntry;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.rac.WorkGroupNodeResourceAccessControl;
+import org.linagora.linshare.mongo.entities.WorkGroupNode;
 
-public interface ThreadEntryService {
+public class GenericWorkGroupNodeServiceImpl extends GenericServiceImpl<Account, WorkGroupNode> {
 
-	ThreadEntry createThreadEntry(Account actor, Account owner, Thread thread, File tempFile, String filename) throws BusinessException;
+	protected final WorkGroupNodeResourceAccessControl<Account, WorkGroupNode> rac;
 
-	ThreadEntry copyFromDocumentEntry(Account actor, Account member,
-			Thread thread, DocumentEntry documentEntry)
-			throws BusinessException;
+	public GenericWorkGroupNodeServiceImpl(WorkGroupNodeResourceAccessControl<Account, WorkGroupNode> rac) {
+		super(rac);
+		this.rac = rac;
+	}
 
-	DocumentEntry copyFromThreadEntry(Account actor, Account member,
-			Thread thread, ThreadEntry threadEntry) throws BusinessException;
+	protected void checkDownloadPermission(Account actor, Account targetedAccount, Class<?> clazz,
+			BusinessErrorCode errCode, WorkGroupNode entry, Object... opt) throws BusinessException {
+		rac.checkDownloadPermission(actor, targetedAccount, clazz, errCode, entry, opt);
+	}
 
-	ThreadEntry find(Account actor, Account owner, String threadEntryUuid) throws BusinessException;
+	protected void checkThumbNailDownloadPermission(Account actor, Account targetedAccount, Class<?> clazz,
+			BusinessErrorCode errCode, WorkGroupNode entry, Object... opt) throws BusinessException {
+		rac.checkThumbNailDownloadPermission(actor, targetedAccount, clazz, errCode, entry, opt);
+	}
 
-	void deleteThreadEntry(Account actor, Account owner, ThreadEntry threadEntry) throws BusinessException;
-
-	void deleteInconsistentThreadEntry(SystemAccount actor, ThreadEntry threadEntry) throws BusinessException;
-
-	List<ThreadEntry> findAllThreadEntries(Account actor, Account owner, Thread thread) throws BusinessException;
-
-	List<ThreadEntry> findMoreRecentByName(Account actor, Thread thread) throws BusinessException;
-
-	InputStream getDocumentStream(Account actor, Account owner, String uuid) throws BusinessException;
-
-	boolean documentHasThumbnail(Account actor, String identifier);
-
-	InputStream getDocumentThumbnailStream(Account actor, Account owner, String uuid) throws BusinessException;
-
-	ThreadEntry updateFileProperties(Account actor, Account owner, String threadEntryUuid, String fileComment, String metaData, String newName) throws BusinessException;
 }

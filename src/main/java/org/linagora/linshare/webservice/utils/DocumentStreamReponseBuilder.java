@@ -45,6 +45,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +55,10 @@ public class DocumentStreamReponseBuilder {
 
 	public static ResponseBuilder getDocumentResponseBuilder(InputStream inputStream, String fileName, String mimeType) {
 		return getDocumentResponseBuilder(inputStream, fileName, mimeType, null);
+	}
+
+	public static ResponseBuilder getThumbnailResponseBuilder(FileAndMetaData data, boolean base64) {
+		return getThumbnailResponseBuilder(data.getStream(), data.getName() + "_thumb.png", base64);
 	}
 
 	public static ResponseBuilder getThumbnailResponseBuilder(InputStream inputStream, String fileName, boolean base64) {
@@ -74,6 +79,10 @@ public class DocumentStreamReponseBuilder {
 		ResponseBuilder response = Response.ok(inputStream);
 		setHeaderToResponse(response, fileName, mimeType, fileSize);
 		return response;
+	}
+
+	public static ResponseBuilder getDocumentResponseBuilder(FileAndMetaData data) {
+		return getDocumentResponseBuilder(data.getStream(), data.getName(), data.getMimeType(), data.getSize());
 	}
 
 	public static ResponseBuilder getDocumentResponseBuilderBase64(

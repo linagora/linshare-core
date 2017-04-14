@@ -32,7 +32,7 @@
 <!-- 		<constructor-arg ref="statisticsService" /> -->
 <!-- 	</bean> -->
 	<bean name="linshareConfigAntivirus" class="org.linagora.linshare.jmx.impl.AntivirusServerConfigImpl">
-		<constructor-arg ref="clamavVirusScannerService" />
+		<constructor-arg ref="virusScannerBusinessService" />
 	</bean>
 	<bean name="linshareConfigEmailServer" class="org.linagora.linshare.jmx.impl.EmailServerConfigImpl">
 		<constructor-arg ref="notifierService" />

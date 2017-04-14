@@ -85,7 +85,7 @@
 		<constructor-arg ref="documentRepository" />
 		<constructor-arg ref="documentEntryBusinessService" />
 		<constructor-arg ref="documentEntryService" />
-		<constructor-arg ref="threadEntryService" />
+		<constructor-arg ref="workGroupDocumentService" />
 		<constructor-arg ref="shareService" />
 		<constructor-arg ref="fileDataStore" />
 	</bean>

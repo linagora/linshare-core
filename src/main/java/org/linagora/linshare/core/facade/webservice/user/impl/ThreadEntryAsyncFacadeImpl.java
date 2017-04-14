@@ -37,7 +37,6 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -47,33 +46,29 @@ import org.linagora.linshare.core.facade.webservice.user.ThreadEntryAsyncFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AsyncTaskService;
 import org.linagora.linshare.core.service.DocumentEntryService;
-import org.linagora.linshare.core.service.ThreadEntryService;
 import org.linagora.linshare.core.service.ThreadService;
-import org.linagora.linshare.core.service.WorkGroupFolderService;
-import org.linagora.linshare.mongo.entities.WorkGroupFolder;
+import org.linagora.linshare.core.service.WorkGroupNodeService;
+import org.linagora.linshare.mongo.entities.WorkGroupDocument;
+import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.webservice.userv1.task.context.ThreadEntryTaskContext;
 
 public class ThreadEntryAsyncFacadeImpl extends GenericAsyncFacadeImpl implements ThreadEntryAsyncFacade {
 
-	private final ThreadEntryService service;
+	private final WorkGroupNodeService service;
 
 	private final DocumentEntryService documentEntryService;
 
 	private final ThreadService threadService;
 
-	private final WorkGroupFolderService workGroupFolderService;
-
 	public ThreadEntryAsyncFacadeImpl(AccountService accountService,
 			AsyncTaskService asyncTaskService,
 			ThreadService threadService,
 			DocumentEntryService documentEntryService,
-			WorkGroupFolderService workGroupFolderService,
-			ThreadEntryService service) {
+			WorkGroupNodeService service) {
 		super(accountService, asyncTaskService);
 		this.service = service;
 		this.threadService = threadService;
 		this.documentEntryService = documentEntryService;
-		this.workGroupFolderService = workGroupFolderService;
 	}
 
 	@Override
@@ -89,14 +84,9 @@ public class ThreadEntryAsyncFacadeImpl extends GenericAsyncFacadeImpl implement
 			throw new BusinessException(BusinessErrorCode.THREAD_NOT_FOUND,
 					"Current thread was not found : " + tetc.getThreadUuid());
 		}
-		ThreadEntry threadEntry = service.createThreadEntry(actor,
-				owner, thread, tetc.getFile(), tetc.getFileName());
-		// TODO FIXME Business code outside service !
-		WorkGroupFolder folder = workGroupFolderService.addEntry(actor, owner, thread, null, threadEntry);
-		WorkGroupEntryDto dto = new WorkGroupEntryDto(threadEntry);
+		WorkGroupNode node = service.create(actor, owner, thread, tetc.getFile(), tetc.getFileName(), tetc.getWorkGroupFolderUuid(), false);
+		WorkGroupEntryDto dto = new WorkGroupEntryDto((WorkGroupDocument) node);
 		dto.setWorkGroup(new WorkGroupLightDto(thread));
-		folder.setEntries(null);
-		dto.setWorkGroupFolder(folder);
 		return dto;
 	}
 
@@ -114,7 +104,9 @@ public class ThreadEntryAsyncFacadeImpl extends GenericAsyncFacadeImpl implement
 		DocumentEntry doc = documentEntryService.find(actor, owner, tetc.getDocEntryUuid());
 		// Check if we have the right to download the specified document entry
 		documentEntryService.checkDownloadPermission(actor, owner, tetc.getDocEntryUuid());
-		ThreadEntry threadEntry = service.copyFromDocumentEntry(actor, owner, thread, doc);
-		return new WorkGroupEntryDto(threadEntry);
+		WorkGroupNode node = service.copy(actor, owner, thread, doc, null);
+		WorkGroupEntryDto dto = new WorkGroupEntryDto((WorkGroupDocument) node);
+		dto.setWorkGroup(new WorkGroupLightDto(thread));
+		return dto;
 	}
 }

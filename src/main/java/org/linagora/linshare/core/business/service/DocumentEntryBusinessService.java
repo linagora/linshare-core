@@ -38,16 +38,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.mongo.entities.WorkGroupDocument;
+import org.linagora.linshare.mongo.entities.WorkGroupNode;
 
 public interface DocumentEntryBusinessService {
 
@@ -73,10 +73,11 @@ public interface DocumentEntryBusinessService {
 
 	public long getRelatedEntriesCount(DocumentEntry documentEntry);
 
-	public ThreadEntry createThreadEntry(Thread owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType) throws BusinessException;
+	WorkGroupDocument createWorkGroupDocument(Account actor, Thread workGroup, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl,
+			String mimeType, WorkGroupNode nodeParent) throws BusinessException;
 
-	ThreadEntry copyFromDocumentEntry(Thread thread,
-			DocumentEntry documentEntry)
+	WorkGroupDocument copy(Account actor, Thread workgroup, WorkGroupNode nodeParent,
+			String documentUuid, String name)
 			throws BusinessException;
 
 	DocumentEntry copyFromThreadEntry(Account owner,
@@ -87,27 +88,13 @@ public interface DocumentEntryBusinessService {
 			ShareEntry shareEntry, Calendar expirationDate)
 			throws BusinessException;
 
-	public ThreadEntry findThreadEntryById(String docEntryUuid);
+	InputStream getDocumentStream(WorkGroupDocument entry);
 
-	public List<ThreadEntry> findAllThreadEntries(Thread owner);
-
-	public long countThreadEntries(Thread thread);
-
-	public InputStream getDocumentStream(ThreadEntry entry);
-
-	public InputStream getThreadEntryThumbnailStream(ThreadEntry entry);
-
-	public void deleteThreadEntry(ThreadEntry threadEntry) throws BusinessException;
-
-	public void deleteSetThreadEntry(Set<Entry> setThreadEntry) throws BusinessException;
-
-	public ThreadEntry updateFileProperties(ThreadEntry entry, String fileComment, String metaData, String newName) throws BusinessException;
+	InputStream getThreadEntryThumbnailStream(WorkGroupDocument entry);
 
 	long getUsedSpace(Account owner) throws BusinessException;
 
 	public void update(DocumentEntry docEntry) throws BusinessException;
-
-	List<ThreadEntry> findMoreRecentByName(Thread thread) throws BusinessException;
 
 	DocumentEntry findMoreRecentByName(Account owner, String fileName) throws BusinessException;
 

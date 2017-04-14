@@ -33,22 +33,42 @@
  */
 package org.linagora.linshare.webservice.userv2;
 
+import java.io.InputStream;
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
+import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.mongo.entities.WorkGroupFolder;
+import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
+import org.linagora.linshare.mongo.entities.WorkGroupNode;
 
 public interface WorkGroupFolderRestService {
 
-	WorkGroupFolder create(String workGroupUuid, WorkGroupFolder workGroupFolder) throws BusinessException;
+	WorkGroupNode create(String workGroupUuid, WorkGroupNode workGroupNode, Boolean strict, Boolean dryRun) throws BusinessException;
 
-	List<WorkGroupFolder> findAll(String workGroupUuid, String parentUuid) throws BusinessException;
+	WorkGroupNode create(String workGroupUuid, String parentNodeUuid, InputStream file, String description,
+			String givenFileName, Boolean async, Long contentLength, Long fileSize, MultipartBody body, Boolean strict)
+			throws BusinessException;
 
-	WorkGroupFolder find(String workGroupUuid, String workGroupFolderUuid) throws BusinessException;
+	List<WorkGroupNode> findAll(String workGroupUuid, String parentNodeUuid) throws BusinessException;
 
-	WorkGroupFolder update(String workGroupUuid, WorkGroupFolder workGroupFolder) throws BusinessException;
+	WorkGroupNode find(String workGroupUuid, String workGroupNodeUuid, Boolean withTree) throws BusinessException;
 
-	WorkGroupFolder delete(String workGroupUuid, WorkGroupFolder workGroupFolder) throws BusinessException;
+	WorkGroupNode update(String workGroupUuid, String workGroupNodeUuid, WorkGroupNode workGroupNode) throws BusinessException;
 
-	WorkGroupFolder delete(String workGroupUuid, String uuid) throws BusinessException;
+	WorkGroupNode delete(String workGroupUuid, WorkGroupNode workGroupNode) throws BusinessException;
+
+	WorkGroupNode delete(String workGroupUuid, String uuid) throws BusinessException;
+
+	WorkGroupNode copy(String workGroupUuid, String entryUuid, String destinationNodeUuid, WorkGroupNode workGroupNode) throws BusinessException;
+
+	void head(String workGroupUuid, String uuid) throws BusinessException;
+
+	Response download(String workGroupUuid, String uuid) throws BusinessException;
+
+	Response thumbnail(String workGroupUuid, String uuid, boolean base64) throws BusinessException;
+
+	AsyncTaskDto findAsync(String uuid) throws BusinessException;
+
 }

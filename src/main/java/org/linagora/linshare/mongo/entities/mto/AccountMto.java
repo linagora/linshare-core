@@ -65,11 +65,17 @@ public class AccountMto {
 	}
 
 	public AccountMto(Account account) {
+		this(account, false);
+	}
+
+	public AccountMto(Account account, boolean light) {
 		this.name = account.getFullName();
 		this.mail = account.getMail();
 		this.uuid = account.getLsUuid();
-		this.domain = new DomainMto(account.getDomain());
-		this.role = account.getRole();
+		if (!light) {
+			this.domain = new DomainMto(account.getDomain());
+			this.role = account.getRole();
+		}
 		this.accountType = account.getAccountType();
 	}
 
@@ -86,8 +92,8 @@ public class AccountMto {
 		if (!light) {
 			this.domain = new DomainMto(user.getDomain());
 			this.role = user.getRole();
-			this.accountType = user.getAccountType();
 		}
+		this.accountType = user.getAccountType();
 	}
 
 	public AccountMto(Recipient recipient) {

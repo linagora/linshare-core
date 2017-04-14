@@ -37,6 +37,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -44,11 +45,13 @@ import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
 
+import org.apache.cxf.helpers.IOUtils;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.linagora.LinThumbnail.FileResource;
@@ -63,7 +66,6 @@ import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.domain.entities.Thread;
@@ -74,12 +76,14 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
-import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
-import org.linagora.linshare.core.repository.ThreadEntryRepository;
 import org.linagora.linshare.core.service.TimeStampingService;
 import org.linagora.linshare.core.utils.AESCrypt;
+import org.linagora.linshare.mongo.entities.WorkGroupDocument;
+import org.linagora.linshare.mongo.entities.WorkGroupNode;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,39 +94,36 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	private final FileDataStore fileDataStore;
 	private final TimeStampingService timeStampingService;
 	private final DocumentEntryRepository documentEntryRepository;
-	private final ThreadEntryRepository threadEntryRepository;
 	private final DocumentRepository documentRepository;
-	private final AccountRepository<Account> accountRepository; 
 	private final SignatureBusinessService signatureBusinessService;
 	private final UploadRequestEntryBusinessService uploadRequestEntryBusinessService;
 	private final boolean thumbEnabled;
 	private final boolean pdfThumbEnabled;
 	private final boolean deduplication;
+	protected final WorkGroupNodeMongoRepository repository;
 
 	public DocumentEntryBusinessServiceImpl(
 			final FileDataStore fileSystemDao,
 			final TimeStampingService timeStampingService,
 			final DocumentEntryRepository documentEntryRepository,
 			final DocumentRepository documentRepository,
-			final AccountRepository<Account> accountRepository,
 			final SignatureBusinessService signatureBusinessService,
-			final ThreadEntryRepository threadEntryRepository,
 			final UploadRequestEntryBusinessService uploadRequestEntryBusinessService,
 			final boolean thumbEnabled,
 			final boolean pdfThumbEnabled,
-			final boolean deduplication) {
+			final boolean deduplication,
+			final WorkGroupNodeMongoRepository repository) {
 		super();
 		this.fileDataStore = fileSystemDao;
 		this.timeStampingService = timeStampingService;
 		this.documentEntryRepository = documentEntryRepository;
 		this.documentRepository = documentRepository;
-		this.accountRepository = accountRepository;
 		this.signatureBusinessService = signatureBusinessService;
-		this.threadEntryRepository = threadEntryRepository;
 		this.uploadRequestEntryBusinessService = uploadRequestEntryBusinessService;
 		this.thumbEnabled = thumbEnabled;
 		this.pdfThumbEnabled = pdfThumbEnabled;
 		this.deduplication = deduplication;
+		this.repository = repository;
 	}
 
 	@Override
@@ -196,9 +197,13 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	@Override
 	public InputStream getDocumentThumbnailStream(DocumentEntry entry) {
 		Document doc = entry.getDocument();
+		return getDocumentThumbnailStream(doc);
+	}
+
+	private InputStream getDocumentThumbnailStream(Document doc) {
 		String thmbUuid = doc.getThmbUuid();
 		if (thmbUuid != null && thmbUuid.length()>0) {
-			FileMetaData metadata = new FileMetaData(FileMetaDataKind.THUMBNAIL, entry.getDocument());
+			FileMetaData metadata = new FileMetaData(FileMetaDataKind.THUMBNAIL, doc);
 			InputStream stream = fileDataStore.get(metadata);
 			return stream;
 		}
@@ -206,11 +211,11 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	}
 
 	@Override
-	public InputStream getThreadEntryThumbnailStream(ThreadEntry entry) {
-		Document doc = documentRepository.findByUuid(entry.getDocument().getUuid());
+	public InputStream getThreadEntryThumbnailStream(WorkGroupDocument entry) {
+		Document doc = documentRepository.findByUuid(entry.getDocumentUuid());
 		String thmbUuid = doc.getThmbUuid();
 		if (thmbUuid != null && thmbUuid.length()>0) {
-			FileMetaData metadata = new FileMetaData(FileMetaDataKind.THUMBNAIL, entry.getDocument());
+			FileMetaData metadata = new FileMetaData(FileMetaDataKind.THUMBNAIL, doc);
 			InputStream stream = fileDataStore.get(metadata);
 			return stream;
 		}
@@ -251,14 +256,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		entry.setBusinessComment(fileComment);
 		entry.setBusinessMetaData(meta);
 		return documentEntryRepository.update(entry);
-	}
-
-	@Override
-	public ThreadEntry updateFileProperties(ThreadEntry entry, String fileComment, String metaData, String newName) throws BusinessException {
-		entry.setBusinessComment(fileComment);
-		entry.setBusinessMetaData(metaData);
-		entry.setBusinessName(newName);
-		return threadEntryRepository.update(entry);
 	}
 
 	@Override
@@ -326,31 +323,56 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	}
 
 	@Override
-	public ThreadEntry createThreadEntry(Thread owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType) throws BusinessException {
-		// add an entry for the file in DB
-		ThreadEntry entity = null;
-		Document document = createDocument(owner, myFile, size, fileName, timeStampingUrl, mimeType);
-		ThreadEntry docEntry = new ThreadEntry(owner, fileName, document);
-
+	public WorkGroupDocument createWorkGroupDocument(Account actor, Thread workGroup, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, WorkGroupNode nodeParent) throws BusinessException {
+		if (exists(workGroup, fileName, nodeParent)) {
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_ALREADY_EXISTS,
+					"Can not create a new document, it already exists.");
+		}
+		Document document = createDocument(workGroup, myFile, size, fileName, timeStampingUrl, mimeType);
+		WorkGroupDocument node = new WorkGroupDocument(actor, fileName, document, workGroup, nodeParent);
 		//aes encrypt ? check headers
 		if (checkIfIsCiphered) {
-			docEntry.setCiphered(checkIfFileIsCiphered(fileName, myFile));
+			node.setCiphered(checkIfFileIsCiphered(fileName, myFile));
 		}
-		entity = threadEntryRepository.create(docEntry);
-		owner.getEntries().add(entity);
-		return entity;
+		node.setCreationDate(new Date());
+		node.setModificationDate(new Date());
+		node.setUploadDate(new Date());
+		node.setPathFromParent(nodeParent);
+		node.setLastAuthor(new AccountMto(actor, true));
+		try {
+			node = repository.insert(node);
+		} catch (org.springframework.dao.DuplicateKeyException e) {
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_ALREADY_EXISTS,
+					"Can not create a new document, it already exists.");
+		}		
+		return node;
 	}
 
 	@Override
-	public ThreadEntry copyFromDocumentEntry(Thread thread, DocumentEntry documentEntry)
-			throws BusinessException {
-		String name = documentEntry.getName();
-		Document document = documentEntry.getDocument();
-		ThreadEntry threadEntry = new ThreadEntry(thread, name, document);
-		threadEntry.setCiphered(documentEntry.getCiphered());
-		threadEntry = threadEntryRepository.create(threadEntry);
-		thread.getEntries().add(threadEntry);
-		return threadEntry;
+	public WorkGroupDocument copy(Account actor, Thread workgroup, WorkGroupNode nodeParent, String documentUuid,
+			String name) throws BusinessException {
+		if (exists(workgroup, name, nodeParent)) {
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_ALREADY_EXISTS,
+					"Can not create a new document, it already exists.");
+		}
+		Document document = documentRepository.findByUuid(documentUuid);
+		if (document == null) {
+			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT,
+					"Can not create a new document, mising underlying document.");
+		}
+		Document createDocument = createDocument(workgroup, document, name);
+		WorkGroupDocument node = new WorkGroupDocument(actor, name, createDocument, workgroup, nodeParent);
+		node.setCreationDate(new Date());
+		node.setModificationDate(new Date());
+		node.setUploadDate(new Date());
+		node.setPathFromParent(nodeParent);
+		try {
+			node = repository.insert(node);
+		} catch (org.springframework.dao.DuplicateKeyException e) {
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_ALREADY_EXISTS,
+					"Can not create a new document, it already exists.");
+		}
+		return node;
 	}
 
 	@Override
@@ -385,26 +407,12 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	}
 
 	@Override
-	public ThreadEntry findThreadEntryById(String docEntryUuid) {
-		return threadEntryRepository.findByUuid(docEntryUuid);
-	}
-
-	@Override
-	public List<ThreadEntry> findAllThreadEntries(Thread owner) {
-		return threadEntryRepository.findAllThreadEntries(owner);
-	}
-
-	@Override
-	public long countThreadEntries(Thread thread) {
-		return threadEntryRepository.count(thread);
-	}
-
-	@Override
-	public InputStream getDocumentStream(ThreadEntry entry) {
-		String UUID = entry.getDocument().getUuid();
+	public InputStream getDocumentStream(WorkGroupDocument entry) {
+		String UUID = entry.getDocumentUuid();
 		if (UUID!=null && UUID.length()>0) {
+			Document document = documentRepository.findByUuid(UUID);
 			logger.debug("retrieve from jackrabbit : " + UUID);
-			FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, entry.getDocument());
+			FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, document);
 			InputStream stream = fileDataStore.get(metadata);
 			return stream;
 		}
@@ -441,6 +449,56 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 					fileDataStore.remove(metadataThmb);
 				throw e;
 			}
+		} else {
+			// we return the first one, the others will be removed by time (expiration, users, ...)
+			return documents.get(0);
+		}
+	}
+
+	protected Document createDocument(Account owner, Document srcDocument, String fileName) throws BusinessException {
+		List<Document> documents = documentRepository.findBySha256Sum(srcDocument.getSha256sum());
+		if (documents.isEmpty() || !deduplication) {
+			FileMetaData metadataSrc = new FileMetaData(FileMetaDataKind.DATA, srcDocument);
+
+			// copy document
+			FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, srcDocument.getType(), srcDocument.getSize(), fileName);
+			try (InputStream docStream = fileDataStore.get(metadataSrc)) {
+				metadata = fileDataStore.add(docStream, metadata);
+			} catch (IOException e1) {
+				logger.error(e1.getMessage(), e1);
+				throw new BusinessException("Can not create a copy of existing document.");
+			}
+
+			// dirty copy thumbnail
+			FileMetaData metadataThmb = null;
+			try (InputStream inputStream = getDocumentThumbnailStream(srcDocument)) {
+				if (inputStream != null) {
+					File tempThumbFile = null;
+					try {
+						tempThumbFile = File.createTempFile("linthumbnail", owner + "_thumb.png");
+						tempThumbFile.createNewFile();
+						try (FileOutputStream fos = new FileOutputStream(tempThumbFile)) {
+							IOUtils.copyAndCloseInput(inputStream, fos);
+							metadataThmb = computeAndStoreThumbnail(owner, tempThumbFile, metadata);
+						}
+					} catch (Exception e) {
+						logger.error("Can not create a copy thumbnail of existing document.");
+						logger.error(e.getMessage(), e);
+						if (tempThumbFile != null) {
+							tempThumbFile.delete();
+						}
+					}
+				}
+			} catch (IOException e1) {
+				logger.error("Can not create a copy thumbnail of existing document.");
+				logger.error(e1.getMessage(), e1);
+			}
+			Document document = new Document(metadata);
+			document.setSha256sum(srcDocument.getSha256sum());
+			document.setSha1sum(srcDocument.getSha1sum());
+			if (metadataThmb != null)
+				document.setThmbUuid(metadataThmb.getUuid());
+			return documentRepository.create(document);
 		} else {
 			// we return the first one, the others will be removed by time (expiration, users, ...)
 			return documents.get(0);
@@ -554,21 +612,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	}
 
 	@Override
-	public void deleteThreadEntry(ThreadEntry threadEntry) throws BusinessException {
-		Account owner = threadEntry.getEntryOwner();
-		owner.getEntries().remove(threadEntry);
-		accountRepository.update(owner);
-		threadEntryRepository.delete(threadEntry);
-	}
-
-	@Override
-	public void deleteSetThreadEntry(Set<Entry> setThreadEntry) throws BusinessException {
-		for (Object threadEntry : setThreadEntry.toArray()) {
-			this.deleteThreadEntry((ThreadEntry) threadEntry);
-		}
-	}
-
-	@Override
 	public long getUsedSpace(Account owner) throws BusinessException {
 		return documentEntryRepository.getUsedSpace(owner);
 	}
@@ -647,12 +690,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	}
 
 	@Override
-	public List<ThreadEntry> findMoreRecentByName(Thread thread)
-			throws BusinessException {
-		return threadEntryRepository.findAllDistinctEntries(thread);
-	}
-
-	@Override
 	public DocumentEntry findMoreRecentByName(Account owner, String fileName)
 			throws BusinessException {
 		return documentEntryRepository.findMoreRecentByName(owner, fileName);
@@ -673,5 +710,14 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	@Override
 	public List<String> findAllExpiredEntries() {
 		return documentEntryRepository.findAllExpiredEntries();
+	}
+
+	protected boolean exists(Thread workGroup, String fileName, WorkGroupNode nodeParent) {
+		List<WorkGroupNode> nodes = repository.findByWorkGroupAndParentAndName(workGroup.getLsUuid(),
+				nodeParent.getUuid(), fileName);
+		if (nodes != null && !nodes.isEmpty()) {
+			return true;
+		}
+		return false;
 	}
 }

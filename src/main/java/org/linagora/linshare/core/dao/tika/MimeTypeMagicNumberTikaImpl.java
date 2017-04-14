@@ -39,6 +39,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -149,6 +150,28 @@ public class MimeTypeMagicNumberTikaImpl implements MimeTypeMagicNumberDao {
 			}
 		}
 		return mimeTypes;
+	}
+
+	@Override
+	public boolean isKnownExtension(String extension) {
+		MimeTypes defaultMimeTypes = MimeTypes.getDefaultMimeTypes();
+		SortedSet<MediaType> types = defaultMimeTypes.getMediaTypeRegistry().getTypes();
+		for (MediaType mediaType : types) {
+			String strMimeType = mediaType.toString();
+			try {
+				org.apache.tika.mime.MimeType forName = defaultMimeTypes.forName(strMimeType);
+				List<String> extensions = forName.getExtensions();
+				for (String found : extensions) {
+					if (extension.equals(found)) {
+						return true;
+					}
+				}
+			} catch (MimeTypeException e) {
+				logger.error("Can not find extension(s) for mime type : " + strMimeType);
+				logger.debug(e.getMessage());
+			}
+		}
+		return false;
 	}
 
 }

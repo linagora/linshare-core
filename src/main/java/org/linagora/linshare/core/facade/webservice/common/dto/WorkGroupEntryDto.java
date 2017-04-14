@@ -40,7 +40,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
-import org.linagora.linshare.mongo.entities.WorkGroupFolder;
+import org.linagora.linshare.mongo.entities.WorkGroupDocument;
+import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.webservice.userv1.task.context.ThreadEntryTaskContext;
 
 import com.wordnik.swagger.annotations.ApiModel;
@@ -86,7 +87,7 @@ public class WorkGroupEntryDto extends EntryDto {
 
 	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 	@ApiModelProperty(value = "workGroupFolder")
-	protected WorkGroupFolder workGroupFolder;
+	protected WorkGroupNode workGroupFolder;
 
 	public WorkGroupEntryDto(ThreadEntry te) {
 		super();
@@ -104,6 +105,24 @@ public class WorkGroupEntryDto extends EntryDto {
 		this.metaData = te.getMetaData();
 		this.sha256sum = te.getSha256sum();
 		this.hasThumbnail = te.isHasThumbnail();
+	}
+
+	public WorkGroupEntryDto(WorkGroupDocument te) {
+		super();
+		if (te == null) {
+			return;
+		}
+		this.uuid = te.getUuid();
+		this.name = te.getName();
+		this.creationDate = te.getCreationDate();
+		this.modificationDate = te.getModificationDate();
+		this.description = te.getDescription();
+		this.ciphered = te.getCiphered();
+		this.type = te.getMimeType();
+		this.size = te.getSize();
+		this.metaData = te.getMetaData();
+		this.sha256sum = te.getSha256sum();
+		this.hasThumbnail = te.getHasRevision();
 	}
 
 	public WorkGroupEntryDto() {
@@ -196,11 +215,11 @@ public class WorkGroupEntryDto extends EntryDto {
 		this.workGroup = workGroup;
 	}
 
-	public WorkGroupFolder getWorkGroupFolder() {
+	public WorkGroupNode getWorkGroupFolder() {
 		return workGroupFolder;
 	}
 
-	public void setWorkGroupFolder(WorkGroupFolder workGroupFolder) {
+	public void setWorkGroupFolder(WorkGroupNode workGroupFolder) {
 		this.workGroupFolder = workGroupFolder;
 	}
 

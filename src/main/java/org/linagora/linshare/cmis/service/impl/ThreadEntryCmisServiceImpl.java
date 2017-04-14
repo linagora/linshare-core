@@ -34,10 +34,10 @@
 package org.linagora.linshare.cmis.service.impl;
 
 import java.io.File;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -77,27 +77,25 @@ import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.service.ThreadEntryService;
 import org.linagora.linshare.core.service.ThreadService;
-import org.linagora.linshare.core.service.WorkGroupFolderService;
-import org.linagora.linshare.mongo.entities.WorkGroupFolder;
+import org.linagora.linshare.core.service.WorkGroupNodeService;
+import org.linagora.linshare.core.utils.FileAndMetaData;
+import org.linagora.linshare.mongo.entities.WorkGroupDocument;
+import org.linagora.linshare.mongo.entities.WorkGroupNode;
 
 public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
-	private final ThreadEntryService threadEntryService;
+	private final WorkGroupNodeService workGroupNodeService;
 	private final CmisExceptionMappingService cmisExceptionMappingService;
 	private final ThreadService threadService;
 	private final CmisStrings cmisStrings;
 	private final CmisHelpers helpers;
-	private final WorkGroupFolderService workGroupFolderService;
 
-	public ThreadEntryCmisServiceImpl(ThreadEntryService threadEntryService,
-			WorkGroupFolderService workGroupFolderService,
+	public ThreadEntryCmisServiceImpl(WorkGroupNodeService workGroupNodeService,
 			CmisExceptionMappingService cmisExceptionMappingService,
 			ThreadService threadService, CmisStrings cmisStrings,
 			CmisHelpers cmisHelpers) {
 		super();
-		this.threadEntryService = threadEntryService;
-		this.workGroupFolderService = workGroupFolderService;
+		this.workGroupNodeService = workGroupNodeService;
 		this.cmisExceptionMappingService = cmisExceptionMappingService;
 		this.threadService = threadService;
 		this.cmisStrings = cmisStrings;
@@ -161,13 +159,13 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 		ObjectInFolderListImpl objList = new ObjectInFolderListImpl();
 		String threadId = helpers.getObjectUuid(folderId);
 		Thread thread = threadService.find(actor, actor, threadId);
-		List<ThreadEntry> entries;
+		List<WorkGroupNode> entries;
 		try {
-			entries = threadEntryService.findMoreRecentByName(actor, thread);
+			entries = workGroupNodeService.findAll(actor, (User) actor, thread);
 		} catch (BusinessException e) {
 			throw cmisExceptionMappingService.map(e);
 		}
-		for (ThreadEntry entry : entries) {
+		for (WorkGroupNode entry : entries) {
 			ObjectInFolderDataImpl objData = new ObjectInFolderDataImpl(
 					getObject(actor.getLsUuid(),
 							CmisConstants.tagThreadEntry + entry.getUuid(), null, null, null,
@@ -199,15 +197,14 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 			IncludeRelationships includeRelationships, String renditionFilter,
 			Boolean includeRelativePathSegment, ExtensionsData extension) {
 		Account actor = helpers.prepare(repositoryId, true, false);
-		ThreadEntry entry = null;
+		WorkGroupNode entry = null;
 		try {
-			entry = threadEntryService
-					.find(actor, actor, helpers.getObjectUuid(objectId));
+			entry = workGroupNodeService.find(actor, (User) actor, helpers.getObjectUuid(objectId));
 		} catch (BusinessException e) {
 			throw cmisExceptionMappingService.map(e);
 		}
 		ObjectParentDataImpl opd = new ObjectParentDataImpl(getObject(
-				repositoryId, CmisConstants.tagThreadChildren + entry.getEntryOwner().getLsUuid(),
+				repositoryId, CmisConstants.tagThreadChildren + entry.getWorkGroup(),
 				filter, includeAllowableActions, includeRelationships,
 				renditionFilter, false, false, extension));
 		opd.setRelativePathSegment(entry.getName());
@@ -242,15 +239,14 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 									.getCmisLocale())) + "/" + name;
 			res.setProperties(helpers.setEntryProperty(objectId, path, name));
 		} else {
-			ThreadEntry threadEntry = null;
+			WorkGroupNode node = null;
 			try {
 				String threadUuid = helpers.getObjectUuid(objectId);
-				threadEntry = threadEntryService.find(actor, actor,
-						threadUuid);
+				node = workGroupNodeService.find(actor, (User) actor, threadUuid);
 			} catch (BusinessException e) {
 				throw cmisExceptionMappingService.map(e);
 			}
-
+			ThreadEntry threadEntry = new ThreadEntry((WorkGroupDocument)node);
 			PropertiesImpl properties = helpers.setAllPropertyToEntry(actor,
 					objectId, threadEntry, threadEntry.getType(),
 					threadEntry.getSize());
@@ -266,19 +262,15 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 			String streamId, BigInteger offset, BigInteger length,
 			ExtensionsData extension) {
 		Account actor = helpers.prepare(repositoryId, true, false);
-		ThreadEntry threadEntry;
-		InputStream inputStream;
+		FileAndMetaData f;
 		try {
-			threadEntry = threadEntryService.find(actor, actor,
-					helpers.getObjectUuid(objectId));
-			inputStream = threadEntryService.getDocumentStream(actor, actor,
-					threadEntry.getUuid());
+			f = workGroupNodeService.download(actor, (User)actor, helpers.getObjectUuid(objectId));
 		} catch (BusinessException e) {
 			throw cmisExceptionMappingService.map(e);
 		}
-		ContentStream res = new ContentStreamImpl(threadEntry.getName(),
-				BigInteger.valueOf(threadEntry.getSize()),
-				threadEntry.getType(), inputStream);
+		ContentStream res = new ContentStreamImpl(f.getName(),
+				BigInteger.valueOf(f.getSize()),
+				f.getMimeType(), f.getStream());
 		return res;
 	}
 
@@ -295,21 +287,27 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 			if (!objectId.startsWith(CmisConstants.tagThreadEntry)) {
 				throw new CmisObjectNotFoundException();
 			}
-			ThreadEntry threadEntry = null;
+			WorkGroupNode threadEntry = null;
 			try {
-				threadEntry = threadEntryService.find(actor, actor,
+				threadEntry = workGroupNodeService.find(actor, (User) actor,
 						helpers.getObjectUuid(objectId));
 			} catch (BusinessException e) {
 				throw cmisExceptionMappingService.map(e);
 			}
 			res = new ObjectInfoImpl(objectId, BaseTypeId.CMIS_DOCUMENT);
-			res.setContentType(threadEntry.getType());
+			res.setContentType(((WorkGroupDocument)threadEntry).getMimeType());
 			User user = (User) actor;
 			res.setCreatedBy(user.getFirstName() + " " + user.getLastName());
-			res.setCreationDate((GregorianCalendar) threadEntry.getCreationDate());
 			res.setFileName(threadEntry.getName());
-			res.setLastModificationDate((GregorianCalendar) threadEntry
-					.getDocument().getCreationDate());
+
+			Calendar cal1 = GregorianCalendar.getInstance();
+			cal1.setTime(threadEntry.getCreationDate());
+			res.setCreationDate((GregorianCalendar) cal1);
+
+			Calendar cal2 = GregorianCalendar.getInstance();
+			cal2.setTime(threadEntry.getModificationDate());
+			res.setLastModificationDate((GregorianCalendar)cal2);
+
 			res.setObject(getObject(repositoryId, objectId, null, null, null, null,
 					null, null, null));
 		}
@@ -321,9 +319,7 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 			String objectId, Boolean allVersions, ExtensionsData extension) {
 		 Account actor = helpers.prepare(repositoryId, true, false);
 		try {
-			ThreadEntry threadEntry = threadEntryService.find(actor, actor,
-					helpers.getObjectUuid(objectId));
-			threadEntryService.deleteThreadEntry(actor, actor, threadEntry);
+			workGroupNodeService.delete(actor, (User) actor, helpers.getObjectUuid(objectId));
 		} catch (BusinessException e) {
 			 throw cmisExceptionMappingService.map(e);
 		}
@@ -342,12 +338,8 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 			thread = threadService.find(actor, actor, helpers.getObjectUuid(folderId));
 			try {
 				tempFile = getTempFile(contentStream.getStream(), contentStream.getFileName());
-				ThreadEntry threadEntry = threadEntryService.createThreadEntry(
-						actor, actor, thread, tempFile,
-						contentStream.getFileName());
-				// TODO FIXME Business code outside service !
-				WorkGroupFolder folder = workGroupFolderService.addEntry(actor, (User)actor, thread, null, threadEntry);
-				return CmisConstants.tagThreadEntry + threadEntry.getUuid();
+				WorkGroupNode node = workGroupNodeService.create(actor, (User)actor, thread, tempFile, contentStream.getFileName(), null, true);
+				return CmisConstants.tagThreadEntry + node.getUuid();
 			} catch (BusinessException e) {
 				throw cmisExceptionMappingService.map(e);
 			} finally {
@@ -368,8 +360,11 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 		String name = (String) properties.getProperties().get(PropertyIds.NAME)
 				.getFirstValue();
 		try {
-			threadEntryService.updateFileProperties(actor, actor, uuid, description,
-					null, name);
+			WorkGroupDocument node = new WorkGroupDocument();
+			node.setUuid(uuid);
+			node.setDescription(description);
+			node.setName(name);
+			workGroupNodeService.update(actor, (User)actor, node);
 		} catch (BusinessException e) {
 			throw cmisExceptionMappingService.map(e);
 		}

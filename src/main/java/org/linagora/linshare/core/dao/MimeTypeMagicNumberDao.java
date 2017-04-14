@@ -48,5 +48,7 @@ public interface MimeTypeMagicNumberDao {
 	public String getMimeType(File file) throws BusinessException;
 
 	public Set<MimeType> getAllMimeType();
+
+	public boolean isKnownExtension(String extension);
 }
 

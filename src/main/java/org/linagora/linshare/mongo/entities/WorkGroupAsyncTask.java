@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2016 LINAGORA
+ * Copyright (C) 2017 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2017. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,47 +31,32 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.entities.logs;
+package org.linagora.linshare.mongo.entities;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
+import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
+import org.linagora.linshare.webservice.userv1.task.context.ThreadEntryTaskContext;
+import org.springframework.data.annotation.Transient;
 
-import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
-import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.mongo.entities.WorkGroupFolder;
-import org.linagora.linshare.mongo.entities.mto.AccountMto;
+public class WorkGroupAsyncTask extends WorkGroupNode {
 
-@XmlRootElement
-public class WorkGroupFolderAuditLogEntry extends AuditLogEntryUser {
+	@Transient
+	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+	protected AsyncTaskDto async;
 
-	protected WorkGroupFolder resource;
-
-	private WorkGroupFolder resourceUpdated;
-
-	public WorkGroupFolderAuditLogEntry() {
-		super();
+	public WorkGroupAsyncTask(AsyncTaskDto asyncTask,
+			ThreadEntryTaskContext threadEntryTaskContext) {
+		this.async = asyncTask;
+		this.name = threadEntryTaskContext.getFileName();
+		this.nodeType = WorkGroupNodeType.ASYNC_TASK;
 	}
 
-	public WorkGroupFolderAuditLogEntry(Account actor, Account owner, LogAction action, AuditLogEntryType type,
-			WorkGroupFolder folder) {
-		super(new AccountMto(actor), new AccountMto(owner), action, type, folder.getUuid());
-		this.resource = folder;
+	public AsyncTaskDto getAsync() {
+		return async;
 	}
 
-	public WorkGroupFolder getResource() {
-		return resource;
+	public void setAsync(AsyncTaskDto async) {
+		this.async = async;
 	}
-
-	public void setResource(WorkGroupFolder resource) {
-		this.resource = resource;
-	}
-
-	public WorkGroupFolder getResourceUpdated() {
-		return resourceUpdated;
-	}
-
-	public void setResourceUpdated(WorkGroupFolder resourceUpdated) {
-		this.resourceUpdated = resourceUpdated;
-	}
-
 }

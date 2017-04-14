@@ -35,260 +35,90 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
-import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadEntry;
-import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.service.AntiSamyService;
 import org.linagora.linshare.core.service.LogEntryService;
-import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.WorkGroupFolderService;
-import org.linagora.linshare.mongo.entities.WorkGroupEntry;
-import org.linagora.linshare.mongo.entities.WorkGroupFolder;
-import org.linagora.linshare.mongo.entities.logs.WorkGroupFolderAuditLogEntry;
+import org.linagora.linshare.mongo.entities.WorkGroupNode;
+import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
-import org.linagora.linshare.mongo.repository.WorkGroupFolderMongoRepository;
-import org.springframework.dao.support.DataAccessUtils;
+import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
-import com.google.common.collect.Lists;
+public class WorkGroupFolderServiceImpl extends WorkGroupNodeAbstractServiceImpl implements WorkGroupFolderService {
 
-public class WorkGroupFolderServiceImpl extends GenericServiceImpl<Account, WorkGroupFolder>
-		implements WorkGroupFolderService {
-
-	protected final WorkGroupFolderMongoRepository repository;
-
-	protected final ThreadService threadService;
-
-	protected final LogEntryService logEntryService;
-
-	public WorkGroupFolderServiceImpl(WorkGroupFolderMongoRepository repository, LogEntryService logEntryService,
-			ThreadService threadService) {
-		super(null);
-		this.repository = repository;
-		this.threadService = threadService;
-		this.logEntryService = logEntryService;
+	public WorkGroupFolderServiceImpl(
+			WorkGroupNodeMongoRepository repository,
+			MongoTemplate mongoTemplate,
+			AntiSamyService antiSamyService,
+			LogEntryService logEntryService) {
+		super(repository, mongoTemplate, antiSamyService, logEntryService);
 	}
 
 	@Override
-	public List<WorkGroupFolder> findAll(Account actor, User owner, Thread workGroup) throws BusinessException {
-		preChecks(actor, owner);
-		Validate.notNull(workGroup, "Missing workGroup");
-		checkUploadRights(owner, workGroup);
-		return repository.findByWorkGroup(workGroup.getLsUuid());
+	protected BusinessErrorCode getBusinessExceptionAlreadyExists() {
+		return BusinessErrorCode.WORK_GROUP_FOLDER_ALREADY_EXISTS;
 	}
 
 	@Override
-	public List<WorkGroupFolder> findAll(Account actor, User owner, Thread workGroup, String parentUuid)
+	protected BusinessErrorCode getBusinessExceptionNotFound() {
+		return BusinessErrorCode.WORK_GROUP_FOLDER_NOT_FOUND;
+	}
+
+	@Override
+	protected BusinessErrorCode getBusinessExceptionForbidden() {
+		return BusinessErrorCode.WORK_GROUP_FOLDER_FORBIDDEN;
+	}
+
+	@Override
+	public WorkGroupNode create(Account actor, User owner, Thread workGroup, WorkGroupNode workGroupNode, WorkGroupNode nodeParent, Boolean strict, Boolean dryRun)
 			throws BusinessException {
-		preChecks(actor, owner);
-		Validate.notNull(workGroup, "Missing workGroup");
-		Validate.notEmpty(parentUuid, "Missing workGroup ancestorUuid");
-		checkUploadRights(owner, workGroup);
-		return repository.findByWorkGroupAndParent(workGroup.getLsUuid(), parentUuid);
-	}
-
-	@Override
-	public WorkGroupFolder find(Account actor, User owner, Thread workGroup, String workGroupFolderUuid)
-			throws BusinessException {
-		preChecks(actor, owner);
-		checkUploadRights(owner, workGroup);
-		WorkGroupFolder folder = repository.findByWorkGroupAndUuid(workGroup.getLsUuid(), workGroupFolderUuid);
-		if (folder == null) {
-			logger.error("Folder not found " + workGroupFolderUuid);
-			throw new BusinessException(BusinessErrorCode.WORK_GROUP_FOLDER_NOT_FOUND,
-					"Folder not found : " + workGroupFolderUuid);
+		List<WorkGroupNode> node = repository.findByWorkGroupAndParentAndName(
+				workGroup.getLsUuid(),
+				nodeParent.getUuid(),
+				workGroupNode.getName());
+		if (node != null && !node.isEmpty()) {
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_FOLDER_ALREADY_EXISTS,
+					"Can not create a new folder, it already exists.");
 		}
-		return folder;
-	}
-
-	@Override
-	public WorkGroupFolder create(Account actor, User owner, Thread workGroup, WorkGroupFolder workGroupFolder)
-			throws BusinessException {
-		preChecks(actor, owner);
-		checkUploadRights(owner, workGroup);
-		String workGroupUuid = workGroup.getLsUuid();
-		WorkGroupFolder wgfParent = null;
-		if (workGroupFolder.getParent() == null) {
-			wgfParent = getRootFolder(workGroup);
-		} else {
-			if (workGroupFolder.getParent().equals(workGroupUuid)) {
-				wgfParent = getRootFolder(workGroup);
-			} else {
-				wgfParent = find(actor, owner, workGroup, workGroupFolder.getParent());
-			}
-		}
-		WorkGroupFolder entity = new WorkGroupFolder(workGroupFolder);
-		entity.setParent(wgfParent.getUuid());
-		entity.setWorkGroup(workGroupUuid);
-		entity.setAncestors(Lists.newArrayList(wgfParent.getAncestors()));
-		entity.getAncestors().add(wgfParent.getUuid());
 		try {
-			entity = repository.insert(entity);
+			workGroupNode.setId(null);
+			workGroupNode.setParent(nodeParent.getUuid());
+			workGroupNode.setWorkGroup(workGroup.getLsUuid());
+			workGroupNode.setPathFromParent(nodeParent);
+			workGroupNode.setUuid(UUID.randomUUID().toString());
+			workGroupNode.setCreationDate(new Date());
+			workGroupNode.setModificationDate(new Date());
+			workGroupNode.setLastAuthor(new AccountMto(owner, true));
+			if (dryRun) {
+				return workGroupNode;
+			}
+			workGroupNode = repository.insert(workGroupNode);
 		} catch (org.springframework.dao.DuplicateKeyException e) {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_FOLDER_ALREADY_EXISTS,
 					"Can not create a new folder, it already exists.");
 		}
-		WorkGroupFolderAuditLogEntry log = new WorkGroupFolderAuditLogEntry(actor, owner, LogAction.CREATE, AuditLogEntryType.WORKGROUP_FOLDER, entity);
+		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE, AuditLogEntryType.WORKGROUP_FOLDER, workGroupNode, workGroup);
 		logEntryService.insert(log);
-		return entity;
+		return workGroupNode;
 	}
 
 	@Override
-	public WorkGroupFolder addEntry(Account actor, User owner, Thread workGroup, String workGroupFolderUuid,
-			ThreadEntry threadEntry) throws BusinessException {
-		preChecks(actor, owner);
-		checkUploadRights(owner, workGroup);
-		WorkGroupFolder folder = null;
-		if (workGroupFolderUuid == null) {
-			folder = getRootFolder(workGroup);
-		} else {
-			if (workGroupFolderUuid.equals(workGroup.getLsUuid())) {
-				folder = getRootFolder(workGroup);
-			} else {
-				folder = find(actor, owner, workGroup, workGroupFolderUuid);
-			}
-		}
-		folder.getEntries().add(new WorkGroupEntry(threadEntry, new AccountMto(owner)));
-		return repository.save(folder);
-	}
-
-	@Override
-	public WorkGroupFolder getRootFolder(Account actor, User owner, Thread workGroup) throws BusinessException {
-		preChecks(actor, owner);
-		checkUploadRights(owner, workGroup);
-		WorkGroupFolder wgfParent = getRootFolder(workGroup);
-		return wgfParent;
-	}
-
-	@Override
-	public WorkGroupFolder delEntry(Account actor, User owner, Thread workGroup, ThreadEntry threadEntry)
+	public WorkGroupNode delete(Account actor, User owner, Thread workGroup, WorkGroupNode workGroupNode)
 			throws BusinessException {
-		preChecks(actor, owner);
-		checkUploadRights(owner, workGroup);
-		Validate.notNull(threadEntry, "Missing entry !");
-		Validate.notEmpty(threadEntry.getUuid(), "Missing entry uuid !");
-		WorkGroupFolder folder = getFolder(workGroup, threadEntry);
-		// TODO : HACK : To be improved !
-		folder.getEntries().remove(new WorkGroupEntry(threadEntry, new AccountMto(owner)));
-		repository.save(folder);
-		return folder;
-	}
-
-	@Override
-	public WorkGroupFolder updateEntry(Account actor, User owner, Thread workGroup, ThreadEntry threadEntry)
-			throws BusinessException {
-		preChecks(actor, owner);
-		checkUploadRights(owner, workGroup);
-		Validate.notNull(threadEntry, "Missing entry !");
-		Validate.notEmpty(threadEntry.getUuid(), "Missing entry uuid !");
-		WorkGroupFolder folder = getFolder(workGroup, threadEntry);
-		// TODO : HACK : Very ugly : To be improved !
-		List<WorkGroupEntry> entries = folder.getEntries();
-		for (WorkGroupEntry workGroupEntry : entries) {
-			if (workGroupEntry.getUuid().equals(threadEntry.getUuid())) {
-				workGroupEntry.setName(threadEntry.getName());
-				workGroupEntry.setModificationDate(threadEntry.getModificationDate().getTime());
-				workGroupEntry.setLastAuthor(new AccountMto(owner));
-				break;
-			}
-		}
-		repository.save(folder);
-		return folder;
-	}
-
-	@Override
-	public WorkGroupFolder getFolder(Account actor, User owner, Thread workGroup, ThreadEntry threadEntry)
-			throws BusinessException {
-		preChecks(actor, owner);
-		checkUploadRights(owner, workGroup);
-		Validate.notNull(threadEntry, "Missing entry !");
-		Validate.notEmpty(threadEntry.getUuid(), "Missing entry uuid !");
-		return getFolder(workGroup, threadEntry);
-	}
-
-	private WorkGroupFolder getFolder(Thread workGroup, ThreadEntry threadEntry) {
-		WorkGroupFolder folder = repository.findByWorkGroupAndEntriesUuid(workGroup.getLsUuid(), threadEntry.getUuid());
-		if (folder == null) {
-			logger.error("An entry is not linked to a folder : {}, entry {}.", workGroup, threadEntry);
-			throw new BusinessException(BusinessErrorCode.WORK_GROUP_FOLDER_NOT_FOUND, "Missing related folder.");
-		}
-		return folder;
-	}
-
-	@Override
-	public WorkGroupFolder update(Account actor, User owner, Thread workGroup, WorkGroupFolder workGroupFolder)
-			throws BusinessException {
-		preChecks(actor, owner);
-		WorkGroupFolder wgf = find(actor, owner, workGroup, workGroupFolder.getUuid());
-		WorkGroupFolderAuditLogEntry log = new WorkGroupFolderAuditLogEntry(actor, owner, LogAction.UPDATE, AuditLogEntryType.WORKGROUP_FOLDER, wgf);
-		wgf.setName(workGroupFolder.getName());
-		wgf.setModificationDate(new Date());
-		wgf = repository.save(wgf);
-		// TODO Check if we have to move folder to another folder
-		// temporary disable : work is incomplete.
-		String parent = workGroupFolder.getParent();
-		if (parent != null) {
-			if (parent != wgf.getParent()) {
-				WorkGroupFolder newParent = find(actor, owner, workGroup, parent);
-				wgf.setParent(newParent.getUuid());
-				wgf.setAncestors(newParent.getAncestors());
-				wgf.getAncestors().add(newParent.getUuid());
-				wgf = repository.save(wgf);
-			}
-		}
-		log.setResourceUpdated(wgf);
+		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DELETE,
+				AuditLogEntryType.WORKGROUP_FOLDER, workGroupNode, workGroup);
 		logEntryService.insert(log);
-		// TODO: manage WGF entries.
-		return wgf;
-	}
-
-	@Override
-	public WorkGroupFolder delete(Account actor, User owner, Thread workGroup, String workGroupFolderUuid)
-			throws BusinessException {
-		preChecks(actor, owner);
-		WorkGroupFolder wgf = find(actor, owner, workGroup, workGroupFolderUuid);
-		if (wgf.getEntries().size() != 0) {
-			String message = "You can not delete a folder if it is not empty : " + workGroupFolderUuid;
-			logger.error(message);
-			throw new BusinessException(BusinessErrorCode.WORK_GROUP_FOLDER_FORBIDDEN_NOT_EMPTY, message);
-		}
-		WorkGroupFolderAuditLogEntry log = new WorkGroupFolderAuditLogEntry(actor, owner, LogAction.DELETE, AuditLogEntryType.WORKGROUP_FOLDER, wgf);
-		logEntryService.insert(log);
-		repository.delete(wgf);
-		return wgf;
-	}
-
-	private ThreadMember checkUploadRights(User owner, Thread thread) {
-		ThreadMember member = threadService.getMemberFromUser(thread, owner);
-		if (member == null) {
-			String msg = "You are not authorized to create folder or upload file in this work group.";
-			logger.error(msg);
-			throw new BusinessException(BusinessErrorCode.WORK_GROUP_FOLDER_FORBIDDEN, msg);
-		}
-		if (!member.getCanUpload()) {
-			String msg = "You are not authorized to create folder or upload file in this work group.";
-			logger.error(msg);
-			throw new BusinessException(BusinessErrorCode.WORK_GROUP_FOLDER_FORBIDDEN, msg);
-		}
-		return member;
-	}
-
-	private WorkGroupFolder getRootFolder(Thread workGroup) {
-		WorkGroupFolder wgfParent = null;
-		String workGroupUuid = workGroup.getLsUuid();
-		wgfParent = DataAccessUtils.singleResult(repository.findByWorkGroupAndParent(workGroupUuid, workGroupUuid));
-		if (wgfParent == null) {
-			// creation of the root folder.
-			wgfParent = new WorkGroupFolder(workGroup.getName(), workGroupUuid, workGroupUuid);
-			wgfParent = repository.insert(wgfParent);
-		}
-		return wgfParent;
+		repository.delete(workGroupNode);
+		return workGroupNode;
 	}
 
 }

@@ -30,12 +30,6 @@
 		<constructor-arg ref="antiSamyPolicy" />
 	</bean>
 
-	<bean id="clamavVirusScannerService"
-		class="org.linagora.linshare.core.service.impl.ClamavVirusScannerServiceImpl">
-		<constructor-arg index="0" value="${virusscanner.clamav.host}" />
-		<constructor-arg index="1" value="${virusscanner.clamav.port}" />
-	</bean>
-
 	<bean id="timeStampingService"
 		class="org.linagora.linshare.core.service.impl.TimeStampingServiceImpl">
 	</bean>
@@ -125,5 +119,11 @@
 		<constructor-arg ref="mailLayoutBusinessService" />
 		<constructor-arg ref="domainPermissionBusinessService" />
 		<constructor-arg value="${linshare.notifications.email.templating.override.readonly.mode}" />
+	</bean>
+
+	<bean id="virusScannerService" class="org.linagora.linshare.core.service.impl.VirusScannerServiceImpl">
+		<constructor-arg ref="virusScannerBusinessService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg value="${virusscanner.limit.filesize}" />
 	</bean>
 </beans>

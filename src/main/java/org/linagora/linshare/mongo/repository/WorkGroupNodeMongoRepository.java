@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2016. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,24 +31,26 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.user;
+package org.linagora.linshare.mongo.repository;
 
 import java.util.List;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.mongo.entities.WorkGroupFolder;
+import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
+import org.linagora.linshare.mongo.entities.WorkGroupNode;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface WorkGroupFolderFacade extends GenericFacade {
+public interface WorkGroupNodeMongoRepository extends MongoRepository<WorkGroupNode, String> {
 
-	List<WorkGroupFolder> findAll(String ownerUuid, String workGroupUuid, String parentUuid) throws BusinessException;
+	List<WorkGroupNode> findByWorkGroup(String workGroupUuid);
 
-	WorkGroupFolder find(String ownerUuid, String workGroupUuid, String workGroupFolderUuid) throws BusinessException;
+	WorkGroupNode findByUuid(String uuid);
 
-	WorkGroupFolder create(String ownerUuid, String workGroupUuid, WorkGroupFolder workGroupFolder) throws BusinessException;
+	WorkGroupNode findByWorkGroupAndUuid(String workGroupUuid, String uuid);
 
-	WorkGroupFolder update(String ownerUuid, String workGroupUuid, WorkGroupFolder workGroupFolder) throws BusinessException;
+	List<WorkGroupNode> findByWorkGroupAndParent(String workGroupUuid, String parentUuid);
 
-	WorkGroupFolder delete(String ownerUuid, String workGroupUuid, String workGroupFolderUuid) throws BusinessException;
+	List<WorkGroupNode> findByWorkGroupAndNodeType(String workGroupUuid, WorkGroupNodeType type);
 
-	WorkGroupFolder delete(String ownerUuid, String workGroupUuid, WorkGroupFolder workGroupFolder) throws BusinessException;
+	List<WorkGroupNode> findByWorkGroupAndParentAndName(String workGroupUuid, String parentUuid, String name);
+
 }

@@ -43,6 +43,7 @@ import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.EntryDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
+import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.webservice.userv1.task.context.DocumentTaskContext;
 
 import com.google.common.base.Function;
@@ -121,6 +122,21 @@ public class DocumentDto extends EntryDto {
 
 	public DocumentDto() {
 		super();
+	}
+
+	public DocumentDto(WorkGroupDocument de) {
+		this.uuid = de.getUuid();
+		this.name = de.getName();
+		this.creationDate = de.getCreationDate();
+		this.modificationDate = de.getModificationDate();
+		this.description = de.getDescription();
+		this.ciphered = de.getCiphered();
+		this.type = de.getMimeType();
+		this.size = de.getSize();
+		this.metaData = de.getMetaData();
+		this.sha256sum = de.getSha256sum();
+		this.hasThumbnail = de.getHasThumbnail();
+		this.shared = 0L;
 	}
 
 	public String getType() {

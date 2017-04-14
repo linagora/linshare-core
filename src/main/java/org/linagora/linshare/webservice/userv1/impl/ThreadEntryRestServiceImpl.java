@@ -58,6 +58,7 @@ import org.apache.commons.lang.Validate;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.domain.constants.AsyncTaskType;
+import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
@@ -66,14 +67,17 @@ import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto
 import org.linagora.linshare.core.facade.webservice.user.AccountQuotaFacade;
 import org.linagora.linshare.core.facade.webservice.user.AsyncTaskFacade;
 import org.linagora.linshare.core.facade.webservice.user.ThreadEntryAsyncFacade;
-import org.linagora.linshare.core.facade.webservice.user.WorkGroupEntryFacade;
+import org.linagora.linshare.core.facade.webservice.user.WorkGroupNodeFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
+import org.linagora.linshare.mongo.entities.WorkGroupDocument;
+import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.userv1.ThreadEntryRestService;
 import org.linagora.linshare.webservice.userv1.task.ThreadEntryUploadAsyncTask;
 import org.linagora.linshare.webservice.userv1.task.context.ThreadEntryTaskContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import com.google.common.collect.Lists;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
@@ -89,7 +93,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 		ThreadEntryRestService {
 
-	private final WorkGroupEntryFacade workGroupEntryFacade;
+	private final WorkGroupNodeFacade facade;
 
 	private final ThreadEntryAsyncFacade threadEntryAsyncFacade ;
 
@@ -101,14 +105,14 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 
 	private boolean sizeValidation;
 
-	public ThreadEntryRestServiceImpl(WorkGroupEntryFacade workGroupEntryFacade,
+	public ThreadEntryRestServiceImpl(WorkGroupNodeFacade workGroupNodeFacade,
 			ThreadEntryAsyncFacade threadEntryAsyncFacade,
 			AsyncTaskFacade asyncTaskFacade,
 			ThreadPoolTaskExecutor taskExecutor,
 			AccountQuotaFacade accountQuotaFacade,
 			boolean sizeValidation) {
 		super();
-		this.workGroupEntryFacade = workGroupEntryFacade;
+		this.facade = workGroupNodeFacade;
 		this.threadEntryAsyncFacade = threadEntryAsyncFacade;
 		this.asyncTaskFacade = asyncTaskFacade;
 		this.taskExecutor = taskExecutor;
@@ -155,7 +159,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 		if (async) {
 			logger.debug("Async mode is used");
 			// Asynchronous mode
-			AccountDto actorDto = workGroupEntryFacade.getAuthenticatedAccountDto();
+			AccountDto actorDto = facade.getAuthenticatedAccountDto();
 			AsyncTaskDto asyncTask = null;
 			try {
 				asyncTask = asyncTaskFacade.create(currSize, transfertDuration, fileName, null, AsyncTaskType.THREAD_ENTRY_UPLOAD);
@@ -174,7 +178,8 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			// Synchronous mode
 			try {
 				logger.debug("Async mode is not used");
-				WorkGroupEntryDto dto = workGroupEntryFacade.create(null, threadUuid, null, tempFile, fileName);
+				WorkGroupNode node = facade.create(null, threadUuid, null, tempFile, fileName, false);
+				WorkGroupEntryDto dto = toDto(node);
 				// Compatibility code : Reset this field (avoid to display new attribute in old API) 
 				dto.setWorkGroup(null);
 				dto.setWorkGroupFolder(null);
@@ -198,7 +203,8 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The document entry uuid.", required = true) @PathParam("entryUuid")  String entryUuid)
 					throws BusinessException {
-		return workGroupEntryFacade.copyFromThreadEntry(null, threadUuid, entryUuid);
+		WorkGroupNode node = facade.copy(null, threadUuid, entryUuid, null, null);
+		return toDocumentDto(node);
 	}
 
 	@Path("/{uuid}")
@@ -214,7 +220,8 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread entry uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		return workGroupEntryFacade.find(null, threadUuid, uuid);
+		WorkGroupNode node = facade.find(null, threadUuid, uuid, false);
+		return toDto(node);
 	}
 
 	@Path("/{uuid}")
@@ -227,7 +234,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public void head(String threadUuid, String uuid) throws BusinessException {
-		workGroupEntryFacade.find(null, threadUuid, uuid);
+		facade.find(null, threadUuid, uuid, false);
 	}
 
 	@Path("/")
@@ -242,7 +249,14 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 	public List<WorkGroupEntryDto> findAll(
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid)
 					throws BusinessException {
-		return workGroupEntryFacade.findAll(null, threadUuid);
+		List<WorkGroupEntryDto> res = Lists.newArrayList();
+		List<WorkGroupNode> all = facade.findAll(null, threadUuid, null, true);
+		for (WorkGroupNode node : all) {
+			if (node.getNodeType().equals(WorkGroupNodeType.DOCUMENT)) {
+				res.add(new WorkGroupEntryDto((WorkGroupDocument) node));
+			}
+		}
+		return res;
 	}
 
 	@Path("/")
@@ -258,7 +272,9 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread entry to delete.", required = true) WorkGroupEntryDto threadEntry)
 					throws BusinessException {
-		return workGroupEntryFacade.delete(null, threadUuid, threadEntry);
+		Validate.notNull(threadEntry, "WorkGroupEntry must be set");
+		WorkGroupNode node = facade.delete(null, threadUuid, threadEntry.getUuid());
+		return toDto(node);
 	}
 
 	@Path("/{uuid}")
@@ -274,7 +290,8 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread entry uuid to delete.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		return workGroupEntryFacade.delete(null, threadUuid, uuid);
+		WorkGroupNode node = facade.delete(null, threadUuid, uuid);
+		return toDto(node);
 	}
 
 	@Path("/{uuid}/download")
@@ -290,7 +307,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread entry uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		return workGroupEntryFacade.download(null, threadUuid, uuid);
+		return facade.download(null, threadUuid, uuid);
 	}
 
 	@Path("/{uuid}/thumbnail")
@@ -307,7 +324,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid,
 			@ApiParam(value = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64)
 					throws BusinessException {
-		return workGroupEntryFacade.thumbnail(null, threadUuid, uuid, base64);
+		return facade.thumbnail(null, threadUuid, uuid, base64);
 	}
 
 	@Path("/{uuid}")
@@ -323,9 +340,14 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("uuid") String threadEntryUuid,
 			WorkGroupEntryDto threadEntryDto) throws BusinessException {
-
-		return workGroupEntryFacade.update(null, threadUuid, threadEntryUuid,
-				threadEntryDto);
+		Validate.notNull(threadEntryDto, "Missing threadEntry");
+		WorkGroupDocument dto = new WorkGroupDocument();
+		dto.setUuid(threadEntryDto.getUuid());
+		dto.setDescription(threadEntryDto.getDescription());
+		dto.setName(threadEntryDto.getName());
+		dto.setMetaData(threadEntryDto.getMetaData());
+		WorkGroupNode node = facade.update(null, threadUuid, dto);
+		return toDto(node);
 	}
 
 	@Path("/{uuid}/async")
@@ -354,6 +376,26 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 					BusinessErrorCode.MODE_MAINTENANCE_ENABLED,
 					"Maintenance mode is enable, uploads are disabled.");
 		}
+	}
+
+	private WorkGroupEntryDto toDto(WorkGroupNode node) {
+		WorkGroupEntryDto dto = null;
+		if (node != null) {
+			if (node.getNodeType().equals(WorkGroupNodeType.DOCUMENT)) {
+				dto = new WorkGroupEntryDto((WorkGroupDocument) node);
+			}
+		}
+		return dto;
+	}
+
+	private DocumentDto toDocumentDto(WorkGroupNode node) {
+		DocumentDto dto = null;
+		if (node != null) {
+			if (node.getNodeType().equals(WorkGroupNodeType.DOCUMENT)) {
+				dto = new DocumentDto((WorkGroupDocument) node);
+			}
+		}
+		return dto;
 	}
 
 }

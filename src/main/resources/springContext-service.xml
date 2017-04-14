@@ -48,27 +48,11 @@
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="mimeTypeService" />
-		<constructor-arg ref="clamavVirusScannerService" />
+		<constructor-arg ref="virusScannerService" />
 		<constructor-arg ref="mimeTypeMagicNumberDao" />
 		<constructor-arg ref="antiSamyService" />
 		<constructor-arg ref="documentEntryResourceAccessControl" />
-		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="notifierService" />
-		<constructor-arg value="${virusscanner.limit.filesize}" />
-		<constructor-arg ref="operationHistoryBusinessService" />
-		<constructor-arg ref="quotaService"/>
-	</bean>
-
-	<bean id="threadEntryService" class="org.linagora.linshare.core.service.impl.ThreadEntryServiceImpl">
-		<constructor-arg ref="documentEntryBusinessService" />
-		<constructor-arg ref="logEntryService" />
-		<constructor-arg ref="functionalityReadOnlyService" />
-		<constructor-arg ref="mimeTypeService" />
-		<constructor-arg ref="clamavVirusScannerService" />
-		<constructor-arg ref="threadMemberRepository" />
-		<constructor-arg ref="mimeTypeMagicNumberDao" />
-		<constructor-arg ref="antiSamyService" />
-		<constructor-arg ref="threadEntryResourceAccessControl" />
 		<constructor-arg ref="operationHistoryBusinessService" />
 		<constructor-arg ref="quotaService"/>
 	</bean>
@@ -255,11 +239,6 @@
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="auditLogEntryResourceAccessControl" />
 	</bean>
-	<bean id="workGroupFolderService" class="org.linagora.linshare.core.service.impl.WorkGroupFolderServiceImpl">
-		<constructor-arg ref="workGroupFolderMongoRepository" />
-		<constructor-arg ref="threadService" />
-		<constructor-arg ref="logEntryService" />
-	</bean>
 	<bean id="statisticService" class="org.linagora.linshare.core.service.impl.StatisticServiceImpl">
 		<constructor-arg ref="statisticBusinessService" />
 		<constructor-arg ref="statisticResourceAccessControl" />
@@ -286,5 +265,37 @@
 	<bean id="resetGuestPasswordService" class="org.linagora.linshare.core.service.impl.ResetGuestPasswordServiceImpl">
 		<constructor-arg ref="resetGuestPasswordMongoRepository" />
 		<constructor-arg ref="guestService" />
+	</bean>
+
+	<bean id="workGroupFolderService" class="org.linagora.linshare.core.service.impl.WorkGroupFolderServiceImpl">
+		<constructor-arg ref="workGroupNodeMongoRepository" />
+		<constructor-arg ref="mongoTemplate" />
+		<constructor-arg ref="antiSamyService" />
+		<constructor-arg ref="logEntryService" />
+	</bean>
+
+	<bean id="workGroupNodeService" class="org.linagora.linshare.core.service.impl.WorkGroupNodeServiceImpl">
+		<constructor-arg ref="workGroupNodeMongoRepository" />
+		<constructor-arg ref="workGroupDocumentService" />
+		<constructor-arg ref="workGroupFolderService" />
+		<constructor-arg ref="threadService" />
+		<constructor-arg ref="logEntryService" />
+		<constructor-arg ref="antiSamyService" />
+		<constructor-arg ref="mongoTemplate" />
+		<constructor-arg ref="workGroupNodeResourceAccessControl" />
+	</bean>
+
+	<bean id="workGroupDocumentService" class="org.linagora.linshare.core.service.impl.WorkGroupDocumentServiceImpl">
+		<constructor-arg ref="workGroupNodeMongoRepository" />
+		<constructor-arg ref="mongoTemplate" />
+		<constructor-arg ref="documentEntryBusinessService" />
+		<constructor-arg ref="logEntryService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="mimeTypeService" />
+		<constructor-arg ref="virusScannerService" />
+		<constructor-arg ref="mimeTypeMagicNumberDao" />
+		<constructor-arg ref="antiSamyService" />
+		<constructor-arg ref="operationHistoryBusinessService" />
+		<constructor-arg ref="quotaService"/>
 	</bean>
 </beans>

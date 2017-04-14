@@ -33,14 +33,14 @@
  */
 package org.linagora.linshare.jmx.impl;
 
-import org.linagora.linshare.core.service.VirusScannerService;
+import org.linagora.linshare.core.business.service.VirusScannerBusinessService;
 import org.linagora.linshare.jmx.AntivirusServerConfig;
 
 public class AntivirusServerConfigImpl implements AntivirusServerConfig {
 
-	private VirusScannerService virusScannerService;
+	private VirusScannerBusinessService virusScannerService;
 
-	public AntivirusServerConfigImpl(VirusScannerService virusScannerService) {
+	public AntivirusServerConfigImpl(VirusScannerBusinessService virusScannerService) {
 		super();
 		this.virusScannerService = virusScannerService;
 	}

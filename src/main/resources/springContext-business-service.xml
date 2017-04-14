@@ -19,12 +19,11 @@
 		<constructor-arg ref="documentEntryRepository" />
 		<constructor-arg ref="documentRepository" />
 		<constructor-arg ref="signatureBusinessService" />
-		<constructor-arg ref="accountRepository" />
-		<constructor-arg ref="threadEntryRepository" />
 		<constructor-arg ref="uploadRequestEntryBusinessService" />
 		<constructor-arg value="${linshare.documents.thumbnail.enable}" />
 		<constructor-arg value="${linshare.documents.thumbnail.pdf.enable}" />
 		<constructor-arg value="${linshare.documents.storage.deduplication}" />
+		<constructor-arg ref="workGroupNodeMongoRepository" />
 	</bean>
 
 
@@ -262,5 +261,9 @@
 	</bean>
 	<bean id="batchHistoryBusinessService" class="org.linagora.linshare.core.business.service.impl.BatchHistoryBusinessServiceImpl">
 		<constructor-arg ref="batchHistoryRepository" />
+	</bean>
+	<bean id="virusScannerBusinessService" class="org.linagora.linshare.core.business.service.impl.ClamavVirusScannerBusinessServiceImpl">
+		<constructor-arg index="0" value="${virusscanner.clamav.host}" />
+		<constructor-arg index="1" value="${virusscanner.clamav.port}" />
 	</bean>
 </beans>

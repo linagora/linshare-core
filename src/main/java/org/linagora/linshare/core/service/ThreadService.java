@@ -69,8 +69,6 @@ public interface ThreadService {
 
 	long countMembers(Thread thread);
 
-	long countEntries(Thread thread);
-
 	ThreadMember addMember(Account actor, Account owner, Thread thread, User user, boolean admin, boolean canUpload) throws BusinessException;
 
 	ThreadMember updateMember(Account actor, Account owner, String threadUuid, String userUuid, boolean admin, boolean canUpload) throws BusinessException;

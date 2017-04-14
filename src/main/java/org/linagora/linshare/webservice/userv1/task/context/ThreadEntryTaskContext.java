@@ -120,6 +120,10 @@ public class ThreadEntryTaskContext extends TaskContext {
 		return docEntryUuid;
 	}
 
+	public String getWorkGroupFolderUuid() {
+		return workGroupFolderUuid;
+	}
+
 	@Override
 	public String toString() {
 		return "ThreadEntryTaskContext [fileName=" + fileName + ", threadUuid="

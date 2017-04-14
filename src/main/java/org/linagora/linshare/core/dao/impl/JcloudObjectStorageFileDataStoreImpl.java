@@ -127,6 +127,10 @@ public class JcloudObjectStorageFileDataStoreImpl implements FileDataStore {
 	@Override
 	public void remove(FileMetaData metadata) {
 		String containerName = metadata.getBucketUuid();
+		if (containerName == null) {
+			logger.error("Can not remove file because bucket is null : {}", metadata);
+			return;
+		}
 		BlobStore blobStore = getBlobStore(containerName);
 		Date start = new Date();
 		try {

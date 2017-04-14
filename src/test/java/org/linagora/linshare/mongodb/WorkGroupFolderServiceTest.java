@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.mongodb;
 
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.junit.After;
@@ -42,16 +41,18 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.ThreadService;
-import org.linagora.linshare.core.service.WorkGroupFolderService;
+import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.mongo.entities.WorkGroupFolder;
-import org.linagora.linshare.mongo.repository.WorkGroupFolderMongoRepository;
+import org.linagora.linshare.mongo.entities.WorkGroupNode;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -74,10 +75,10 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4SpringContextTests {
 
 	@Autowired
-	private WorkGroupFolderService service;
+	private WorkGroupNodeService service;
 
 	@Autowired
-	protected WorkGroupFolderMongoRepository repository;
+	protected WorkGroupNodeMongoRepository repository;
 
 	@Qualifier("userRepository")
 	@Autowired
@@ -91,6 +92,8 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 
 	private LoadingServiceTestDatas datas;
 	private User jane;
+
+	private boolean dryRun = false;
 
 	@Before
 	public void setUp() throws Exception {
@@ -112,34 +115,51 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 	public void testCreation() throws BusinessException {
 		logger.info("Begin coucou");
 		Thread workGroup = threadService.create(jane, jane, "thread1");
-		WorkGroupFolder workGroupFolder = new WorkGroupFolder("folder1", null, workGroup.getLsUuid());
-		service.create(jane, jane, workGroup, workGroupFolder);
+		AccountMto author = new AccountMto(jane);
+		WorkGroupNode workGroupFolder = new WorkGroupFolder(author, "folder1", null, workGroup.getLsUuid());
+		service.create(jane, jane, workGroup, workGroupFolder, false, dryRun);
 
-		List<WorkGroupFolder> findAll = repository.findAll();
-		for (WorkGroupFolder w : findAll) {
+		List<WorkGroupNode> findAll = repository.findAll();
+		for (WorkGroupNode w : findAll) {
 			logger.debug(w);
 		}
 		Assert.assertEquals(2, findAll.size());
 	}
 
 	@Test
+	public void testCreationStrict() throws BusinessException {
+		logger.info("Begin coucou");
+		Thread workGroup = threadService.create(jane, jane, "thread1");
+		AccountMto author = new AccountMto(jane);
+		service.create(jane, jane, workGroup, new WorkGroupFolder(author, "folder1", null, workGroup.getLsUuid()), true, dryRun);
+		try {
+			service.create(jane, jane, workGroup, new WorkGroupFolder(author, "folder1", null, workGroup.getLsUuid()), true, dryRun);
+			Assert.assertTrue(false);
+		} catch (BusinessException e) {
+			Assert.assertEquals(BusinessErrorCode.WORK_GROUP_FOLDER_ALREADY_EXISTS, e.getErrorCode());
+		}
+		Assert.assertEquals(2, repository.findAll().size());
+	}
+
+	@Test
 	public void testCreation2() throws BusinessException {
 		logger.info("Begin coucou");
 		Thread workGroup = threadService.create(jane, jane, "thread1");
-		WorkGroupFolder folder1 = new WorkGroupFolder("folder1", null, workGroup.getLsUuid());
+		AccountMto author = new AccountMto(jane);
+		WorkGroupNode folder1 = new WorkGroupFolder(author, "folder1", null, workGroup.getLsUuid());
 		logger.debug(folder1.toString());
-		service.create(jane, jane, workGroup, folder1);
+		service.create(jane, jane, workGroup, folder1, false, dryRun);
 
-		List<WorkGroupFolder> findAll = repository.findAll();
-		for (WorkGroupFolder w : findAll) {
+		List<WorkGroupNode> findAll = repository.findAll();
+		for (WorkGroupNode w : findAll) {
 			logger.debug(w);
 		}
-		WorkGroupFolder folder2 = new WorkGroupFolder("folder2", null, workGroup.getLsUuid());
+		WorkGroupNode folder2 = new WorkGroupFolder(author, "folder2", null, workGroup.getLsUuid());
 		logger.debug(folder2.toString());
-		service.create(jane, jane, workGroup, folder2);
+		service.create(jane, jane, workGroup, folder2, false, dryRun);
 
 		findAll = repository.findAll();
-		for (WorkGroupFolder w : findAll) {
+		for (WorkGroupNode w : findAll) {
 			logger.debug(w);
 		}
 
@@ -147,39 +167,81 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 	}
 
 	@Test
+	public void testCreationNonStrict() throws BusinessException {
+		logger.info("Begin coucou");
+		Thread workGroup = threadService.create(jane, jane, "thread1");
+		AccountMto author = new AccountMto(jane);
+		service.create(jane, jane, workGroup, new WorkGroupFolder(author, "folder1", null, workGroup.getLsUuid()), false, dryRun);
+		WorkGroupNode create = service.create(jane, jane, workGroup, new WorkGroupFolder(author, "folder1", null, workGroup.getLsUuid()), false, dryRun);
+		Assert.assertEquals("folder1 (1)", create.getName());
+		WorkGroupNode create2 = service.create(jane, jane, workGroup, new WorkGroupFolder(author, "folder1", null, workGroup.getLsUuid()), false, dryRun);
+		Assert.assertEquals("folder1 (2)", create2.getName());
+		// three folders plus root folder
+		Assert.assertEquals(4, repository.findAll().size());
+	}
+
+	@Test
+	public void testCreationNonStrict2() throws BusinessException {
+		logger.info("Begin coucou");
+		Thread workGroup = threadService.create(jane, jane, "thread1");
+		AccountMto author = new AccountMto(jane);
+
+		// Init
+		String currName = "my.folder";
+		boolean strict = true;
+		service.create(jane, jane, workGroup, new WorkGroupFolder(author, currName, null, workGroup.getLsUuid()), strict, dryRun);
+		service.create(jane, jane, workGroup, new WorkGroupFolder(author, "my.folder (1)", null, workGroup.getLsUuid()), strict, dryRun);
+		service.create(jane, jane, workGroup, new WorkGroupFolder(author, "other folder 1", null, workGroup.getLsUuid()), strict, dryRun);
+		service.create(jane, jane, workGroup, new WorkGroupFolder(author, "other folder 2", null, workGroup.getLsUuid()), strict, dryRun);
+		service.create(jane, jane, workGroup, new WorkGroupFolder(author, "coucou", null, workGroup.getLsUuid()), strict, dryRun);
+		service.create(jane, jane, workGroup, new WorkGroupFolder(author, "not.my.folder", null, workGroup.getLsUuid()), strict, dryRun);
+		service.create(jane, jane, workGroup, new WorkGroupFolder(author, "myyfolder", null, workGroup.getLsUuid()), strict, dryRun);
+		service.create(jane, jane, workGroup, new WorkGroupFolder(author, "my.folder (5)", null, workGroup.getLsUuid()), strict, dryRun);
+
+		String newName = "my.folder (6)";
+		logger.info(newName);
+		WorkGroupNode create = service.create(jane, jane, workGroup, new WorkGroupFolder(author, currName, null, workGroup.getLsUuid()), false, dryRun);
+		Assert.assertEquals(newName, create.getName());
+		Assert.assertEquals(newName, "my.folder (6)");
+	}
+
+	@Test
 	public void testUpdate1() throws BusinessException {
 		logger.info("Begin coucou");
 		Thread workGroup = threadService.create(jane, jane, "thread1");
-		WorkGroupFolder workGroupFolder = new WorkGroupFolder("folder1", null, workGroup.getLsUuid());
-		WorkGroupFolder create = service.create(jane, jane, workGroup, workGroupFolder);
+		AccountMto author = new AccountMto(jane);
+		WorkGroupNode workGroupFolder = new WorkGroupFolder(author, "folder1", workGroup.getLsUuid(), workGroup.getLsUuid());
+		WorkGroupNode create = service.create(jane, jane, workGroup, workGroupFolder, false, dryRun);
 
-		WorkGroupFolder update = new WorkGroupFolder();
+		WorkGroupNode update = new WorkGroupFolder();
 		update.setName("folder-renamed");
 		update.setUuid(create.getUuid());
 
-		WorkGroupFolder updated = service.update(jane, jane, workGroup, update);
+		WorkGroupNode updated = service.update(jane, jane, workGroup, update);
+		Assert.assertNotNull(updated);
 		Assert.assertEquals("folder-renamed", updated.getName());
-		Assert.assertEquals("folder-renamed", service.find(jane, jane, workGroup, create.getUuid()).getName());
+		Assert.assertEquals("folder-renamed", service.find(jane, jane, workGroup, create.getUuid(), false).getName());
 		Assert.assertEquals(2, repository.findAll().size());
 	}
 
 	@Test
 	public void testUpdateParentNotFound() throws BusinessException {
 		Thread workGroup = threadService.create(jane, jane, "thread1");
-		WorkGroupFolder workGroupFolder = new WorkGroupFolder("folder1", null, workGroup.getLsUuid());
-		WorkGroupFolder create = service.create(jane, jane, workGroup, workGroupFolder);
+		AccountMto author = new AccountMto(jane);
+		WorkGroupNode workGroupFolder = new WorkGroupFolder(author, "folder1", null, workGroup.getLsUuid());
+		WorkGroupNode create = service.create(jane, jane, workGroup, workGroupFolder, false, dryRun);
 
-		WorkGroupFolder update = new WorkGroupFolder();
+		WorkGroupNode update = new WorkGroupFolder();
 		update.setName(create.getName());
 		update.setUuid(create.getUuid());
 		update.setParent("fddsfsdf");
 		// exception.expect(BusinessException.class);
 		try {
-			service.update(jane, jane, workGroup, update);
+			Assert.assertNotNull(service.update(jane, jane, workGroup, update));
 			Assert.assertTrue(false);
 		} catch (BusinessException e) {
 			logger.debug(e.getMessage(), e);
-			Assert.assertEquals(BusinessErrorCode.WORK_GROUP_FOLDER_NOT_FOUND, e.getErrorCode());
+			Assert.assertEquals(BusinessErrorCode.WORK_GROUP_NODE_NOT_FOUND, e.getErrorCode());
 		}
 	}
 
@@ -188,14 +250,14 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 		logger.info("Begin coucou");
 		Thread workGroup = threadService.create(jane, jane, "thread1");
 		String workGroupUuid = workGroup.getLsUuid();
+		AccountMto author = new AccountMto(jane);
+		WorkGroupNode folder1 = new WorkGroupFolder(author, "folder1", null, workGroupUuid);
+		folder1 = service.create(jane, jane, workGroup, folder1, false, dryRun);
 
-		WorkGroupFolder folder1 = new WorkGroupFolder("folder1", null, workGroupUuid);
-		folder1 = service.create(jane, jane, workGroup, folder1);
+		WorkGroupNode folder2 = new WorkGroupFolder(author, "folder2", null, workGroupUuid);
+		folder2 = service.create(jane, jane, workGroup, folder2, false, dryRun);
 
-		WorkGroupFolder folder2 = new WorkGroupFolder("folder2", null, workGroupUuid);
-		folder2 = service.create(jane, jane, workGroup, folder2);
-
-		WorkGroupFolder rootParent = DataAccessUtils.singleResult(repository.findByWorkGroupAndParent(workGroupUuid, workGroupUuid));
+		WorkGroupNode rootParent = DataAccessUtils.singleResult(repository.findByWorkGroupAndParent(workGroupUuid, workGroupUuid));
 
 		Assert.assertEquals(3, repository.findAll().size());
 		Assert.assertEquals(rootParent.getUuid(), folder1.getParent());
@@ -203,11 +265,12 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 
 		folder2.setParent(folder1.getUuid());
 		folder2 = service.update(jane, jane, workGroup, folder2);
+		Assert.assertNotNull(folder2);
 		Assert.assertEquals(rootParent.getUuid(), folder1.getParent());
 		Assert.assertNotEquals(rootParent.getUuid(), folder2.getParent());
 		Assert.assertEquals(folder1.getUuid(), folder2.getParent());
 
-		folder2 = service.find(jane, jane, workGroup, folder2.getUuid());
+		folder2 = service.find(jane, jane, workGroup, folder2.getUuid(), false);
 		Assert.assertEquals(rootParent.getUuid(), folder1.getParent());
 		Assert.assertNotEquals(rootParent.getUuid(), folder2.getParent());
 		Assert.assertEquals(folder1.getUuid(), folder2.getParent());
@@ -215,70 +278,57 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 	}
 
 	@Test
-	public void testAddEntry() throws BusinessException {
+	public void testUpdateRename() throws BusinessException {
+		logger.info("Begin coucou");
 		Thread workGroup = threadService.create(jane, jane, "thread1");
-		WorkGroupFolder folder1 = new WorkGroupFolder("folder1", null, workGroup.getLsUuid());
-		folder1 = service.create(jane, jane, workGroup, folder1);
-		ThreadEntry threadEntry = new ThreadEntry();
-		threadEntry.setUuid("eb31e21c-38d3-4389-b147-ca49fc4e8ebe");
-		threadEntry.setName("file1");
-		threadEntry.setCreationDate(new GregorianCalendar());
-		threadEntry.setModificationDate(new GregorianCalendar());
-		threadEntry.setType("application/data");
-		threadEntry.setSize(666L);
-		WorkGroupFolder folder2 = service.addEntry(jane, jane, workGroup, folder1.getUuid(), threadEntry);
-		Assert.assertEquals(1, folder2.getEntries().size());
-		Assert.assertNotEquals(folder2.getParent(), folder2.getWorkGroup());
+		AccountMto author = new AccountMto(jane);
+
+		WorkGroupNode rootFolder = service.getRootFolder(jane, jane, workGroup);
+		rootFolder.setUuid(rootFolder.getName());
+		rootFolder.setParent(rootFolder.getName());
+		rootFolder = repository.save(rootFolder);
+
+		// Init
+		boolean strict = true;
+		WorkGroupNode nodea1 = createWrapper(jane, jane, workGroup, new WorkGroupFolder(author, "my.folder-a-1", workGroup.getName(), workGroup.getLsUuid()), strict);
+		createWrapper(jane, jane, workGroup, new WorkGroupFolder(author, "my.folder-a-2", null, workGroup.getLsUuid()), strict);
+		createWrapper(jane, jane, workGroup, new WorkGroupFolder(author, "my.folder-a-3", null, workGroup.getLsUuid()), strict);
+
+		WorkGroupNode nodeab1 = createWrapper(jane, jane, workGroup, new WorkGroupFolder(author, "my.folder-a-b-1", nodea1.getUuid(), workGroup.getLsUuid()), strict);
+		createWrapper(jane, jane, workGroup, new WorkGroupFolder(author, "my.folder-a-b-2", nodea1.getUuid(), workGroup.getLsUuid()), strict);
+		createWrapper(jane, jane, workGroup, new WorkGroupFolder(author, "my.folder-a-b-3", nodea1.getUuid(), workGroup.getLsUuid()), strict);
+
+		WorkGroupNode nodeabc1 = createWrapper(jane, jane, workGroup, new WorkGroupFolder(author, "my.folder-a-b-c-1", nodeab1.getUuid(), workGroup.getLsUuid()), strict);
+		WorkGroupNode nodeabcd1 = createWrapper(jane, jane, workGroup, new WorkGroupFolder(author, "my.folder-a-b-c-d-1", nodeabc1.getUuid(), workGroup.getLsUuid()), strict);
+		createWrapper(jane, jane, workGroup, new WorkGroupFolder(author, "my.folder-a-b-c-d-2", nodeabc1.getUuid(), workGroup.getLsUuid()), strict);
+
+		Assert.assertEquals(",thread1," , nodea1.getPath());
+		Assert.assertEquals(",thread1,my.folder-a-1,my.folder-a-b-1,", nodeabc1.getPath());
+		Assert.assertEquals(",thread1,my.folder-a-1,my.folder-a-b-1,my.folder-a-b-c-1,", nodeabcd1.getPath());
+
+		// just update without move.
+		nodea1.setName("coucou");
+		service.update(jane, jane, nodea1);
+		Assert.assertEquals(",thread1,", service.find(jane, jane, nodea1.getUuid()).getPath());
+		Assert.assertEquals(",thread1,my.folder-a-1,my.folder-a-b-1,", service.find(jane, jane, nodeabc1.getUuid()).getPath());
+
+		// updating node moving folder abc1 from ab1 to a1.
+		nodeabc1.setParent(nodea1.getUuid());
+		nodeabc1.setName("coucou");
+		WorkGroupNode updateNodeabc1 = service.update(jane, jane, nodeabc1);
+
+		Assert.assertEquals(",thread1,my.folder-a-1,", updateNodeabc1.getPath());
+		Assert.assertEquals(nodea1.getUuid(), updateNodeabc1.getParent());
+
+		Assert.assertEquals(",thread1,my.folder-a-1,my.folder-a-b-c-1,", service.find(jane, jane, nodeabcd1.getUuid()).getPath());
 	}
 
-	@Test
-	public void testAddEntry2() throws BusinessException {
-		Thread workGroup = threadService.create(jane, jane, "thread1");
-		ThreadEntry threadEntry = new ThreadEntry();
-		threadEntry.setUuid("eb31e21c-38d3-4389-b147-ca49fc4e8ebe");
-		threadEntry.setName("file1");
-		threadEntry.setCreationDate(new GregorianCalendar());
-		threadEntry.setModificationDate(new GregorianCalendar());
-		threadEntry.setType("application/data");
-		threadEntry.setSize(666L);
-		WorkGroupFolder folder2 = service.addEntry(jane, jane, workGroup, null, threadEntry);
-		Assert.assertEquals(1, folder2.getEntries().size());
-		// no folder uuid specified, root folder uuid should be used as parent.
-		// => root folder uuid = work group uuid
-		Assert.assertEquals(folder2.getParent(), folder2.getWorkGroup());
-	}
-
-	@Test
-	public void testGetFolder() throws BusinessException {
-		Thread workGroup = threadService.create(jane, jane, "thread1");
-		ThreadEntry threadEntry = new ThreadEntry();
-		threadEntry.setUuid("eb31e21c-38d3-4389-b147-ca49fc4e8ebe");
-		threadEntry.setName("file1");
-		threadEntry.setCreationDate(new GregorianCalendar());
-		threadEntry.setModificationDate(new GregorianCalendar());
-		threadEntry.setType("application/data");
-		threadEntry.setSize(666L);
-		WorkGroupFolder folder2 = service.addEntry(jane, jane, workGroup, null, threadEntry);
-		WorkGroupFolder folder = service.getFolder(jane, jane, workGroup, threadEntry);
-		Assert.assertEquals(folder2.getUuid(), folder.getUuid());
-	}
-
-	@Test
-	public void testDelEntry() throws BusinessException {
-		Thread workGroup = threadService.create(jane, jane, "thread1");
-		ThreadEntry threadEntry = new ThreadEntry();
-		threadEntry.setUuid("eb31e21c-38d3-4389-b147-ca49fc4e8ebe");
-		threadEntry.setName("file1");
-		threadEntry.setCreationDate(new GregorianCalendar());
-		threadEntry.setModificationDate(new GregorianCalendar());
-		threadEntry.setType("application/data");
-		threadEntry.setSize(666L);
-		WorkGroupFolder folder2 = service.addEntry(jane, jane, workGroup, null, threadEntry);
-		logger.debug(folder2);
-		Assert.assertEquals(1, folder2.getEntries().size());
-		folder2 = service.delEntry(jane, jane, workGroup, threadEntry);
-		logger.debug(folder2);
-		Assert.assertEquals(0, folder2.getEntries().size());
+	public WorkGroupNode createWrapper(Account actor, User owner, Thread workGroup, WorkGroupNode workGroupNode, Boolean strict)
+			throws BusinessException {
+		WorkGroupNode node = service.create(actor, owner, workGroup, workGroupNode, strict, dryRun);
+		node.setUuid(node.getName());
+		node = repository.save(node);
+		return node;
 	}
 
 }

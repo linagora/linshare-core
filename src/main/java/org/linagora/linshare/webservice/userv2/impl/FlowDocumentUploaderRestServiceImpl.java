@@ -70,7 +70,7 @@ import org.linagora.linshare.core.facade.webservice.user.AsyncTaskFacade;
 import org.linagora.linshare.core.facade.webservice.user.DocumentAsyncFacade;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
 import org.linagora.linshare.core.facade.webservice.user.ThreadEntryAsyncFacade;
-import org.linagora.linshare.core.facade.webservice.user.WorkGroupEntryFacade;
+import org.linagora.linshare.core.facade.webservice.user.WorkGroupNodeFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.userv1.task.DocumentUploadAsyncTask;
 import org.linagora.linshare.webservice.userv1.task.ThreadEntryUploadAsyncTask;
@@ -103,16 +103,13 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 	private static final String FILENAME = "flowFilename";
 	private static final String RELATIVE_PATH = "flowRelativePath";
 	private static final String FILE = "file";
-	// TODO: refatoring name
-	private static final String WORK_GROUP_UUID = "threadUuid";
-	private static final String WORK_GROUP_FOLDER_UUID = "workGroupFolderUuid";
+	private static final String WORK_GROUP_UUID = "workGroupUuid";
+	private static final String WORK_GROUP_PARENT_NODE_UUID = "workGroupParentNodeUuid";
 	private static final String ASYNC_TASK = "asyncTask";
 
 	private boolean sizeValidation;
 
 	private final DocumentFacade documentFacade;
-
-	private final WorkGroupEntryFacade threadEntryFacade;
 
 	private final AccountQuotaFacade accountQuotaFacade;
 
@@ -124,24 +121,26 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 	private final ThreadEntryAsyncFacade threadEntryAsyncFacade ;
 
 	private final AsyncTaskFacade asyncTaskFacade;
+	
+	private final WorkGroupNodeFacade workGroupNodeFacade;
 
 	private org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor taskExecutor;
 
 	public FlowDocumentUploaderRestServiceImpl(
 			DocumentFacade documentFacade,
-			WorkGroupEntryFacade workGroupEntryFacade,
 			AccountQuotaFacade accountQuotaFacade,
 			DocumentAsyncFacade documentAsyncFacade,
 			ThreadEntryAsyncFacade threadEntryAsyncFacade,
 			AsyncTaskFacade asyncTaskFacade,
+			WorkGroupNodeFacade workGroupNodeFacade,
 			org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor taskExecutor,
 			boolean sizeValidation) {
 		super();
 		this.documentFacade = documentFacade;
 		this.sizeValidation = sizeValidation;
-		this.threadEntryFacade = workGroupEntryFacade;
 		this.accountQuotaFacade = accountQuotaFacade;
 		this.documentAsyncFacade = documentAsyncFacade;
+		this.workGroupNodeFacade = workGroupNodeFacade;
 		this.threadEntryAsyncFacade = threadEntryAsyncFacade;
 		this.asyncTaskFacade = asyncTaskFacade;
 		this.taskExecutor = taskExecutor;
@@ -161,7 +160,7 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 			@Multipart(RELATIVE_PATH) String relativePath,
 			@Multipart(FILE) InputStream file, MultipartBody body,
 			@Multipart(value=WORK_GROUP_UUID, required=false) String workGroupUuid,
-			@Multipart(value=WORK_GROUP_FOLDER_UUID, required=false) String workGroupFolderUuid,
+			@Multipart(value=WORK_GROUP_PARENT_NODE_UUID, required=false) String workGroupParentNodeUuid,
 			@Multipart(value=ASYNC_TASK, required=false) boolean async)
 					throws BusinessException {
 		logger.debug("upload chunk number : " + chunkNumber);
@@ -225,7 +224,7 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 					AsyncTaskDto asyncTask = null;
 					try {
 						if(isWorkGroup) {
-							ThreadEntryTaskContext threadEntryTaskContext = new ThreadEntryTaskContext(actorDto, actorDto.getUuid(), workGroupUuid, tempFile2, filename, workGroupFolderUuid);
+							ThreadEntryTaskContext threadEntryTaskContext = new ThreadEntryTaskContext(actorDto, actorDto.getUuid(), workGroupUuid, tempFile2, filename, workGroupParentNodeUuid);
 							asyncTask = asyncTaskFacade.create(totalSize, getTransfertDuration(identifier), filename, null, AsyncTaskType.THREAD_ENTRY_UPLOAD);
 							ThreadEntryUploadAsyncTask task = new ThreadEntryUploadAsyncTask(threadEntryAsyncFacade, threadEntryTaskContext, asyncTask);
 							taskExecutor.execute(task);
@@ -247,7 +246,7 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 				} else {
 					try {
 						if(isWorkGroup) {
-							uploadedDocument = threadEntryFacade.create(null, workGroupUuid, workGroupFolderUuid, tempFile2, filename);
+							workGroupNodeFacade.create(null, workGroupUuid, workGroupParentNodeUuid, tempFile2, filename, false);
 						} else {
 							uploadedDocument = documentFacade.create(tempFile2, filename, "", null);
 						}

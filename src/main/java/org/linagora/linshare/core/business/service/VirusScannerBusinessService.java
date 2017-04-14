@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2016 LINAGORA
+ * Copyright (C) 2015 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,19 +31,46 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.core.business.service;
 
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.mongo.entities.WorkGroupNode;
+import java.io.File;
+import java.io.InputStream;
 
-public interface WorkGroupFolderService extends WorkGroupNodeAbstractService {
+import org.linagora.linshare.core.exception.TechnicalException;
 
-	WorkGroupNode create(Account actor, User owner, Thread workGroup, WorkGroupNode workGroupFolder,
-			WorkGroupNode nodeParent, Boolean strict, Boolean dryRun) throws BusinessException;
+/**
+ * Interface to VirusScanner
+ */
+public interface VirusScannerBusinessService {
+	
+	/**
+	 * @return true if the virusScanner is disabled
+	 */
+	boolean isDisabled();
+	
+	/**
+	 * Check if a file is safe
+	 * @param fileToCheck a file to check
+	 * @return return true if the file is safe. return false if the file contains a virus
+	 */
+	boolean check(File fileToCheck) throws TechnicalException;
+	
+	/**
+	 * Check if a stream is safe
+	 * @param steamToCheck a stream to check
+	 * @return return true if the stream is safe. return false if the stream contains a virus
+	 */
+	boolean check(InputStream steamToCheck);
 
-	WorkGroupNode delete(Account actor, User owner, Thread workGroup, WorkGroupNode workGroupNode)
-			throws BusinessException;
+	/**
+	 * For JMX purpose.
+	 */
+
+	String getHost();
+
+	void setHost(String host);
+
+	Integer getPort();
+
+	void setPort(Integer port) throws Exception;
 }

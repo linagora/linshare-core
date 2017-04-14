@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2017 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2017. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -34,43 +34,21 @@
 package org.linagora.linshare.core.service;
 
 import java.io.File;
-import java.io.InputStream;
 
-import org.linagora.linshare.core.exception.TechnicalException;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.exception.BusinessException;
 
-/**
- * Interface to VirusScanner
- */
 public interface VirusScannerService {
-	
-	/**
-	 * @return true if the virusScanner is disabled
-	 */
-	boolean isDisabled();
-	
-	/**
-	 * Check if a file is safe
-	 * @param fileToCheck a file to check
-	 * @return return true if the file is safe. return false if the file contains a virus
-	 */
-	boolean check(File fileToCheck) throws TechnicalException;
-	
-	/**
-	 * Check if a stream is safe
-	 * @param steamToCheck a stream to check
-	 * @return return true if the stream is safe. return false if the stream contains a virus
-	 */
-	boolean check(InputStream steamToCheck);
 
 	/**
-	 * For JMX purpose.
+	 * 
+	 * @param fileName
+	 * @param owner
+	 * @param file
+	 * @param size
+	 * @return true if file was scan
+	 * @throws BusinessException if scanner failed or a virus was found.
 	 */
-
-	String getHost();
-
-	void setHost(String host);
-
-	Integer getPort();
-
-	void setPort(Integer port) throws Exception;
+	Boolean checkVirus(String fileName, Account owner, File file,
+			Long size) throws BusinessException;
 }

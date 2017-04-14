@@ -34,8 +34,10 @@
 package org.linagora.linshare.core.domain.entities;
 
 import java.io.Serializable;
+import java.util.Calendar;
 
 import org.linagora.linshare.core.domain.constants.EntryType;
+import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 
 public class ThreadEntry extends Entry implements Serializable {
 
@@ -65,6 +67,22 @@ public class ThreadEntry extends Entry implements Serializable {
 		this.size = document.getSize();
 		this.type = document.getType();
 		this.hasThumbnail = document.getThmbUuid() != null;
+	}
+
+	// cmis
+	public ThreadEntry(WorkGroupDocument node) {
+		this.ciphered = false;
+		this.sha256sum = node.getSha256sum();
+		this.size = node.getSize();
+		this.type = node.getMimeType();
+		this.hasThumbnail = document.getThmbUuid() != null;
+		this.name = node.getName();
+		this.comment = node.getDescription();
+		this.uuid = node.getUuid();
+		this.creationDate = Calendar.getInstance();
+		this.creationDate.setTime(node.getCreationDate());
+		this.modificationDate = Calendar.getInstance();
+		this.modificationDate.setTime(node.getModificationDate());
 	}
 
 	public Document getDocument() {

@@ -31,7 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service.impl;
+package org.linagora.linshare.core.business.service.impl;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -41,9 +41,9 @@ import java.io.InputStream;
 import net.taldius.clamav.ScannerException;
 import net.taldius.clamav.impl.NetworkScanner;
 
+import org.linagora.linshare.core.business.service.VirusScannerBusinessService;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
-import org.linagora.linshare.core.service.VirusScannerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,9 +52,9 @@ import org.slf4j.LoggerFactory;
  * implementation you must run the ClamavDaemon and configure it to be opened on
  * a TCP port by adding "TCPSocket 3310" to your clamad.conf
  */
-public class ClamavVirusScannerServiceImpl implements VirusScannerService {
+public class ClamavVirusScannerBusinessServiceImpl implements VirusScannerBusinessService {
 	
-	private static final Logger logger = LoggerFactory.getLogger(ClamavVirusScannerServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(ClamavVirusScannerBusinessServiceImpl.class);
 
 	private static final int defaultConnectionTimeout = 90;
 
@@ -64,7 +64,7 @@ public class ClamavVirusScannerServiceImpl implements VirusScannerService {
 
 	private Integer clamdPort = 3310;
 
-	public ClamavVirusScannerServiceImpl(String clamdHost, int clamdPort) {
+	public ClamavVirusScannerBusinessServiceImpl(String clamdHost, int clamdPort) {
 		this.clamdHost = clamdHost;
 		this.clamdPort = clamdPort;
 		if (clamdHost.length() == 0) {
