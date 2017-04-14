@@ -130,7 +130,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 	private void uploadTestFile(SystemAccount actor) {
 		String filePath = "jackRabbit.properties";
 		InputStream inputStream = java.lang.Thread.currentThread().getContextClassLoader().getResourceAsStream(filePath);
-		String uuid = fileSystemDao.insertFile(actor.getLsUuid(), inputStream, 561, "keep alive file", "test/plain");
+		String uuid = fileSystemDao.insertFile(actor.getLsUuid(), inputStream, 561, "keep alive file", "text/plain");
 		Document document = new Document(uuid, "text/plain", new Long(561));
 		try {
 			inputStream = java.lang.Thread.currentThread().getContextClassLoader().getResourceAsStream(filePath);
