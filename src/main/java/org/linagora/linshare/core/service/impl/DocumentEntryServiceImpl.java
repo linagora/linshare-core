@@ -387,7 +387,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 			AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getIdentifier());
 			removeDocSizeFromGlobalUsedQuota(documentEntry.getSize(), domain);
 
-			FileLogEntry logEntry = new FileLogEntry(owner, LogAction.FILE_INCONSISTENCY, "File removed because of inconsistence. Please contact your administrator.", documentEntry.getName(),
+			FileLogEntry logEntry = new FileLogEntry(owner, LogAction.FILE_INCONSISTENCY, "File removed because of inconsistency. Please contact your administrator.", documentEntry.getName(),
 					documentEntry.getSize(), documentEntry.getType());
 			logEntryService.create(LogEntryService.WARN, logEntry);
 			documentEntryBusinessService.deleteDocumentEntry(documentEntry);
