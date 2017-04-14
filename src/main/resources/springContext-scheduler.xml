@@ -176,6 +176,8 @@
                 <ref bean="nofifyUndownloadedSharedDocumentsJobTrigger"/>
                 <ref bean="jackRabbitKeepAliveJobTrigger"/>
                 <ref bean="deleteMissingDocumentsBatchJobTrigger"/>
+                <ref bean="computeDocumentMimeTypeBatchJobTrigger" />
+                <ref bean="cleaningShareEntriesJobTrigger"/>
             </list>
         </property>
     </bean>
