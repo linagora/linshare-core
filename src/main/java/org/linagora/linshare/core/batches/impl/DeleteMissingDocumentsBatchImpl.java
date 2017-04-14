@@ -99,10 +99,13 @@ public class DeleteMissingDocumentsBatchImpl extends GenericBatchImpl {
 			throws BatchBusinessException, BusinessException {
 		SystemAccount actor = getSystemAccount();
 		Document resource = documentRepository.findByUuid(identifier);
-		logInfo(total, position,
-				"processing document : " + resource.getRepresentation());
+		if (resource == null) {
+			return null;
+		}
 		Context context = new BatchResultContext<Document>(resource);
 		if (!exists(resource)) {
+			logInfo(total, position,
+					"processing document : " + resource.getRepresentation());
 			DocumentEntry documentEntry = resource.getDocumentEntry();
 			if (documentEntry != null) {
 				logger.debug("Document entry : {}", documentEntry);

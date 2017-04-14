@@ -81,12 +81,15 @@ public class LinShareJobBean extends QuartzJobBean {
 				try {
 					batch.logDebug(total, position, "processing resource '" + resource + "' ...");
 					Context batchResult = batch.execute(resource, total, position);
-					if (batchResult.getProcessed() != null) {
-						if (batchResult.getProcessed().equals(true)) {
+					if (batchResult == null) {
+						logger.warn(String.format("Ignoring resource %s because it has vanished.", resource));
+					} else {
+						if (batchResult.getProcessed() != null
+							&& batchResult.getProcessed().equals(true)) {
 							processed ++;
 						}
+						batch.notify(batchResult, total, position);
 					}
-					batch.notify(batchResult, total, position);
 				} catch (BatchBusinessException ex) {
 					errors++;
 					batch.notifyError(ex, resource, total, position);
