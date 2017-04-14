@@ -173,6 +173,8 @@
                 <ref bean="updateUploadRequestJobTrigger"/>
                 <ref bean="nofifyUndownloadedSharedDocumentsJobTrigger"/>
                 <ref bean="deleteMissingDocumentsBatchJobTrigger"/>
+                <ref bean="computeDocumentMimeTypeBatchJobTrigger" />
+                <ref bean="cleaningShareEntriesJobTrigger"/>
                 <ref bean="dailyBatchJobTrigger"/>
             </list>
         </property>
