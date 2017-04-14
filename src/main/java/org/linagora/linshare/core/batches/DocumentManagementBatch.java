@@ -37,7 +37,13 @@ package org.linagora.linshare.core.batches;
 public interface DocumentManagementBatch {
 
 	/**
-	 * Hack.
+	 * Dirty hack to keep connection alive between jackrabbit and its database.
+	 * 
+	 * <p>
+	 * A fake document is created and immediately destroyed. This is enough to
+	 * produce TCP activity and avoid connection stopped by any network
+	 * filtering device in between.
+	 * </p>
 	 */
 	void jackRabbitKeepAlive();
 }

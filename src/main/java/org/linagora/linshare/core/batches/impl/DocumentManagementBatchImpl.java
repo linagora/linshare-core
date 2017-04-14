@@ -44,8 +44,6 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
-import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
@@ -111,20 +109,26 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 	public void jackRabbitKeepAlive() {
 		if (cronJackRabbitKeepAlive) {
 			SystemAccount actor = accountRepository.getBatchSystemAccount();
-			List<DocumentEntry> findAllMyDocumentEntries = documentEntryRepository.findAllMyDocumentEntries(actor);
-			for (DocumentEntry documentEntry : findAllMyDocumentEntries) {
-				String uuid = documentEntry.getDocument().getUuid();
-				try {
-					documentEntryBusinessService.deleteDocumentEntry(documentEntry);
-					logger.debug(String.format("Fake document removed:  %s (jackRabbit keepalive hack)", uuid));
-				} catch (Exception e) {
-					logger.error(String.format("Failed to remove fake document %s (jackRabbit keepalive hack)", uuid), e);
-				}
-			}
+			deleteExistingTestFiles(actor);
 			uploadTestFile(actor);
+			deleteExistingTestFiles(actor);
 		} else {
 			logger.debug("jackRabbit keepalive hack disabled");
 		}
+	}
+	
+	private void deleteExistingTestFiles(SystemAccount actor) {
+		List<DocumentEntry> findAllMyDocumentEntries = documentEntryRepository.findAllMyDocumentEntries(actor);
+		for (DocumentEntry documentEntry : findAllMyDocumentEntries) {
+			String uuid = documentEntry.getDocument().getUuid();
+			try {
+				documentEntryBusinessService.deleteDocumentEntry(documentEntry);
+				logger.debug(String.format("Fake document removed:  %s (jackRabbit keepalive hack)", uuid));
+			} catch (Exception e) {
+				logger.error(String.format("Failed to remove fake document %s (jackRabbit keepalive hack)", uuid), e);
+			}
+		}
+
 	}
 
 	private void uploadTestFile(SystemAccount actor) {
