@@ -124,19 +124,4 @@ public class CloseExpiredUploadRequestBatchImpl extends GenericBatchImpl impleme
 						+ ". BatchBusinessException ", exception);
 	}
 
-	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors, long total, long processed) {
-		long success = total - errors - unhandled_errors;
-		logger.info(success
-				+ " upload request(s) have been closed.");
-		if (errors > 0) {
-			logger.error(errors
-					+ " upload request(s) failed to be closed.");
-		}
-		if (unhandled_errors > 0) {
-			logger.error(unhandled_errors
-					+ " upload request(s) failed to be closed (unhandled error).");
-		}
-		logger.info("CloseExpiredUploadRequestBatchImpl job terminated.");
-	}
 }

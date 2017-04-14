@@ -124,19 +124,4 @@ public class ShaSumBatchImpl extends GenericBatchImpl implements ShaSumBatch {
 				". BatchBusinessException", exception);
 	}
 
-	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors, long total, long processed) {
-		long success = total - errors - unhandled_errors;
-		logger.info(success
-				+ " document(s) have been updated.");
-		if (errors > 0) {
-			logger.error(errors
-					+ " document(s) failed to be updated.");
-		}
-		if (unhandled_errors > 0) {
-			logger.error(unhandled_errors
-					+ " document(s) failed to be updated (unhandled error).");
-		}
-		logger.info("Sha256SumBatchImpl job terminated.");
-	}
 }

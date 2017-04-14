@@ -113,17 +113,4 @@ public class InconsistentUserBatchImpl extends GenericBatchImpl implements Incon
 		logError(total, position, "Flaging user has failed " + u.getLsUuid() + ". BatchBusinessException ", exception);
 	}
 
-	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors, long total, long processed) {
-		long success = total - errors - unhandled_errors;
-		logger.info(success + " user(s) have been checked.");
-		logger.info(processed + " user(s) have been flagged as inconsistent.");
-		if (errors > 0) {
-			logger.error(errors + " user(s) failed to be flagged as inconsistent.");
-		}
-		if (unhandled_errors > 0) {
-			logger.error(unhandled_errors + " user(s) failed to be flagged as inconsistent (unhandled error)");
-		}
-		logger.info(getClass().toString() + " job terminated.");
-	}
 }

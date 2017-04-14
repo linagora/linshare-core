@@ -139,19 +139,4 @@ public class DeleteExpiredShareEntryBatchImpl extends GenericBatchImpl {
 				exception);
 	}
 
-	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors,
-			long total, long processed) {
-		long success = total - errors - unhandled_errors;
-		logger.info(success + " share(s) have been deleted.");
-		if (errors > 0) {
-			logger.error(errors + " share(s) failed to be deleted.");
-		}
-		if (unhandled_errors > 0) {
-			logger.error(unhandled_errors
-					+ " share(s) failed to be deleted (unhandled error).");
-		}
-		logger.info(getClass().toString() + " job terminated.");
-	}
-
 }

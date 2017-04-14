@@ -118,18 +118,4 @@ public class DeleteShareEntryGroupBatchImpl extends GenericBatchImpl {
 				+ ". BatchBusinessException ", exception);
 	}
 
-	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors,
-			long total, long processed) {
-		long success = total - errors - unhandled_errors;
-		logger.info(success + " ShareEntryGroup have been deleted");
-		if (errors > 0) {
-			logger.error(errors + " shareEntryGroup failed to delete");
-		}
-		if (unhandled_errors > 0) {
-			logger.error(unhandled_errors
-					+ " shareEntryGroup failed to delete (unhandled error).");
-		}
-		logger.info("DeleteShareEntryGroupBatchImpl job terminated.");
-	}
 }

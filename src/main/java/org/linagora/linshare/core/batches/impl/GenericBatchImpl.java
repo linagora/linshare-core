@@ -34,6 +34,8 @@
 
 package org.linagora.linshare.core.batches.impl;
 
+import java.util.List;
+
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
@@ -79,5 +81,14 @@ public abstract class GenericBatchImpl implements GenericBatch {
 
 	protected SystemAccount getSystemAccount() {
 		return accountRepository.getBatchSystemAccount();
+	}
+
+	@Override
+	public final void terminate(List<String> all, long errors, long unhandled_errors,
+			long total, long processed) {
+		long success = total - errors - unhandled_errors;
+		logger.info(String.format(
+				"%s job finished, success: %d, errors: %d, unhandled errors: %d",
+				this.getClass().getName(), success, errors, unhandled_errors));
 	}
 }

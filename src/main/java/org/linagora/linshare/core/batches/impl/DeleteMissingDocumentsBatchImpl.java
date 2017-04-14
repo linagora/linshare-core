@@ -100,12 +100,13 @@ public class DeleteMissingDocumentsBatchImpl extends GenericBatchImpl {
 		SystemAccount actor = getSystemAccount();
 		Document resource = documentRepository.findByUuid(identifier);
 		if (resource == null) {
+			logDebug(total, position,
+					"Ignoring document with uuid = '{}' because it has vanished.",
+					identifier);
 			return null;
 		}
 		Context context = new BatchResultContext<Document>(resource);
 		if (!exists(resource)) {
-			logInfo(total, position,
-					"processing document : " + resource.getRepresentation());
 			DocumentEntry documentEntry = resource.getDocumentEntry();
 			if (documentEntry != null) {
 				logger.debug("Document entry : {}", documentEntry);
@@ -119,14 +120,14 @@ public class DeleteMissingDocumentsBatchImpl extends GenericBatchImpl {
 						documentEntry);
 				logWarn(total,
 						position,
-						"The inconsistent document (document entry related){} has been successfully deleted.",
+						"Inconsistent document entry successfully deleted: {}.",
 						resource.getRepresentation());
 			} else if (resource.getThreadEntry() != null) {
 				threadEntryService.deleteInconsistentThreadEntry(actor,
 						resource.getThreadEntry());
 				logWarn(total,
 						position,
-						"The inconsistent document (thread entry related) {} has been successfully deleted.",
+						"Inconsistent thread entry successfully deleted: {}.",
 						resource.getRepresentation());
 			} else {
 				try {
@@ -137,9 +138,13 @@ public class DeleteMissingDocumentsBatchImpl extends GenericBatchImpl {
 				}
 				logWarn(total,
 						position,
-						"Removing a document unrelated to an entry  {} because of inconsistency",
+						"Document deleted because it was not related to any entry: {}",
 						resource.getRepresentation());
 			}
+		} else {
+			logDebug(total, position,
+					"Nothing done with document {}",
+					resource.getRepresentation());
 		}
 		return context;
 	}
@@ -190,18 +195,4 @@ public class DeleteMissingDocumentsBatchImpl extends GenericBatchImpl {
 				entry.getRepresentation(), exception);
 	}
 
-	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors,
-			long total, long processed) {
-		long success = total - errors - unhandled_errors;
-		logger.info(success + " document(s) have been checked.");
-		if (errors > 0) {
-			logger.error(errors + " document(s) failed to be checked.");
-		}
-		if (unhandled_errors > 0) {
-			logger.error(unhandled_errors
-					+ " document(s) failed to be checked (unhandled error).");
-		}
-		logger.info(getClass().toString() + " job terminated.");
-	}
 }

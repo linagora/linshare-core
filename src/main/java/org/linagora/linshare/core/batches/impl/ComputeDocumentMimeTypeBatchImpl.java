@@ -124,18 +124,4 @@ public class ComputeDocumentMimeTypeBatchImpl extends GenericBatchImpl {
 				entry.getRepresentation(), exception);
 	}
 
-	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors,
-			long total, long processed) {
-		long success = total - errors - unhandled_errors;
-		logger.info(success + " document(s) have been checked.");
-		if (errors > 0) {
-			logger.error(errors + " document(s) failed to be checked.");
-		}
-		if (unhandled_errors > 0) {
-			logger.error(unhandled_errors
-					+ " document(s) failed to be checked (unhandled error).");
-		}
-		logger.info(getClass().toString() + " job terminated.");
-	}
 }

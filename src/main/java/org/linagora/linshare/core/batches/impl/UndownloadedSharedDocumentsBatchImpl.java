@@ -165,18 +165,4 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 				exception);
 	}
 
-	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors,
-			long total, long processed) {
-		long success = total - errors - unhandled_errors;
-		logger.info(success + " notification have been sent.");
-		if (errors > 0) {
-			logger.error(errors + " notifications has not been sent.");
-		}
-		if (unhandled_errors > 0) {
-			logger.error(unhandled_errors
-					+ " notification failed to be sent (unhandled error).");
-		}
-		logger.info("UndownloadedSharedDocumentsBatchImpl job terminated.");
-	}
 }

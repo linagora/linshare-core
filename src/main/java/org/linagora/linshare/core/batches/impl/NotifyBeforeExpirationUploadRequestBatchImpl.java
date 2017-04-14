@@ -117,16 +117,4 @@ public class NotifyBeforeExpirationUploadRequestBatchImpl extends GenericBatchIm
 				exception);
 	}
 
-	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors, long total, long processed) {
-		long success = total - errors - unhandled_errors;
-		logger.info(success + " upload request(s) have been processed.");
-		if (errors > 0) {
-			logger.error(errors + " notification(s) failed to sent.");
-		}
-		if (unhandled_errors > 0) {
-			logger.error(unhandled_errors + " notification(s) failed to sent(unhandled error).");
-		}
-		logger.info(getClass().toString() + " job terminated.");
-	}
 }

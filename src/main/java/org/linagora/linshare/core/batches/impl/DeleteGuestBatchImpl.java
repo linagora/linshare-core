@@ -116,20 +116,4 @@ public class DeleteGuestBatchImpl extends GenericBatchImpl {
 						+ ". BatchBusinessException ", exception);
 	}
 
-	@Override
-	public void terminate(List<String> all, long errors,
-			long unhandled_errors, long total, long processed) {
-		long success = total - errors - unhandled_errors;
-		logger.info(success
-				+ " guest(s) have been removed.");
-		if (errors > 0) {
-			logger.error(errors
-					+ " guest(s) failed to be removed.");
-		}
-		if (unhandled_errors > 0) {
-			logger.error(unhandled_errors
-					+ " guest(s) failed to be removed (unhandled error).");
-		}
-		logger.info("DeleteGuestBatchImpl job terminated.");
-	}
 }

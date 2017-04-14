@@ -112,17 +112,4 @@ public class CheckIfUserStillInconsistentBatchImpl extends GenericBatchImpl impl
 		logError(total, position, "Flaging user has failed " + u.getLsUuid() + ". BatchBusinessException ", exception);
 	}
 
-	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors, long total, long processed) {
-		long success = total - errors - unhandled_errors;
-		logger.info(success + " user(s) have been checked.");
-		logger.info(processed + " user(s) have been unflagged.");
-		if (errors > 0) {
-			logger.error(errors + " user(s) failed to be unflagged.");
-		}
-		if (unhandled_errors > 0) {
-			logger.error(unhandled_errors + " user(s) failed to be unflagged (unhandled error)");
-		}
-		logger.info(getClass().toString() + " job terminated.");
-	}
 }
