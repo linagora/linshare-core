@@ -116,7 +116,7 @@ public class DocumentRepositoryImpl extends AbstractRepositoryImpl<Document> imp
 	public List<Document> findBySha256Sum(String sha256sum) {
 		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass());
 		crit.add(Restrictions.eq("sha256sum", sha256sum));
-		crit.addOrder(Order.asc("creationDate"));
+		crit.addOrder(Order.desc("creationDate"));
 		@SuppressWarnings("unchecked")
 		List<Document> list = listByCriteria(crit);
 		return list;

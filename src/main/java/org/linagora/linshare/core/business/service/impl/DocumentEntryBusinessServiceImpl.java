@@ -456,10 +456,21 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	}
 
 	protected Document createDocument(Account owner, Document srcDocument, String fileName) throws BusinessException {
+		boolean createIt = false;
+		Document document = null;
 		List<Document> documents = documentRepository.findBySha256Sum(srcDocument.getSha256sum());
 		if (documents.isEmpty() || !deduplication) {
-			FileMetaData metadataSrc = new FileMetaData(FileMetaDataKind.DATA, srcDocument);
+			createIt = true;
+		} else {
+			// we return the first one, the others will be removed by time (expiration, users, ...)
+			document = documents.get(0);
+			if (!fileDataStore.exists(new FileMetaData(FileMetaDataKind.DATA, document))) {
+				createIt = true;
+			}
+		}
 
+		if (createIt) {
+			FileMetaData metadataSrc = new FileMetaData(FileMetaDataKind.DATA, srcDocument);
 			// copy document
 			FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, srcDocument.getType(), srcDocument.getSize(), fileName);
 			try (InputStream docStream = fileDataStore.get(metadataSrc)) {
@@ -468,7 +479,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 				logger.error(e1.getMessage(), e1);
 				throw new BusinessException("Can not create a copy of existing document.");
 			}
-
 			// dirty copy thumbnail
 			FileMetaData metadataThmb = null;
 			try (InputStream inputStream = getDocumentThumbnailStream(srcDocument)) {
@@ -493,16 +503,14 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 				logger.error("Can not create a copy thumbnail of existing document.");
 				logger.error(e1.getMessage(), e1);
 			}
-			Document document = new Document(metadata);
+			document = new Document(metadata);
 			document.setSha256sum(srcDocument.getSha256sum());
 			document.setSha1sum(srcDocument.getSha1sum());
 			if (metadataThmb != null)
 				document.setThmbUuid(metadataThmb.getUuid());
-			return documentRepository.create(document);
-		} else {
-			// we return the first one, the others will be removed by time (expiration, users, ...)
-			return documents.get(0);
+			document = documentRepository.create(document);
 		}
+		return document;
 	}
 
 	@Override
