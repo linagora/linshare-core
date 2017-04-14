@@ -326,7 +326,7 @@ public abstract class Account {
 
 	public void setBusinessMail(String value) {
 		if (value != null) {
-			this.setMail(value);
+			this.setMail(value.toLowerCase());
 		}
 	}
 

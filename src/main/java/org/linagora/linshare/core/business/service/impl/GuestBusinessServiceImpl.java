@@ -126,6 +126,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 		String password = passwordService.generatePassword();
 		String hashedPassword = HashUtils.hashSha1withBase64(password
 				.getBytes());
+		guest.setMail(guest.getMail().toLowerCase());
 		guest.setOwner(owner);
 		guest.setDomain(domain);
 		guest.setLocale(domain.getDefaultTapestryLocale());
