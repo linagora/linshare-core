@@ -33,12 +33,13 @@
  */
 package org.linagora.linshare.core.service;
 
-import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
@@ -69,4 +70,7 @@ public interface AuditLogEntryService {
 	List<AuditLogEntryUser> userFindByActorUuidAndAction(Account actor, String actorUuid, String ownerUuid);
 
 	Set<AuditLogEntryUser> findAll(Account actor, Account owner, List<String> action, List<String> type, boolean forceAll, String beginDate, String endDate);
+
+	Set<AuditLogEntryUser> findAll(Account actor, Account owner, Thread workGroup, WorkGroupNode workGroupNode, List<String> actions, List<String> types, String beginDate, String endDate);
+
 }

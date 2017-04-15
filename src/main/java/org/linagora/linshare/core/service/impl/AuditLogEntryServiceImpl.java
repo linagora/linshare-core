@@ -45,6 +45,7 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -52,15 +53,19 @@ import org.linagora.linshare.core.rac.AuditLogEntryResourceAccessControl;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
+import org.springframework.data.domain.Sort;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditLogEntryUser> implements AuditLogEntryService {
+
+	private static final String CREATION_DATE = "creationDate";
 
 	private AuditAdminMongoRepository auditMongoRepository;
 
@@ -177,63 +182,136 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 			boolean forceAll, String beginDate, String endDate) {
 		Validate.notNull(actor);
 		Validate.notNull(owner);
-		List<LogAction> actions = Lists.newArrayList();
-		List<AuditLogEntryType> types = Lists.newArrayList();
 		Set<AuditLogEntryUser> res = Sets.newHashSet();
-		if (action != null && !action.isEmpty()) {
-			for (String a : action) {
-				actions.add(LogAction.fromString(a));
-			}
-		} else {
-			actions = Lists.newArrayList(LogAction.class.getEnumConstants());
-		}
-		if (type != null && !type.isEmpty()) {
-			for (String t : type) {
-				types.add(AuditLogEntryType.fromString(t));
-			}
-		} else {
-			types = Lists.newArrayList(AuditLogEntryType.class.getEnumConstants());
-		}
+		List<LogAction> actions = getActions(action);
+		List<AuditLogEntryType> types = getEntryTypes(type, null);
 		if (forceAll) {
 			res = userMongoRepository.findForUser(actor.getLsUuid(), actions, types);
 		} else {
-			Date end = null;
-			Date begin = null;
-			if (endDate == null) {
-				Calendar cal = new GregorianCalendar();
-				cal.set(Calendar.HOUR_OF_DAY, 23);
-				cal.set(Calendar.MINUTE, 59);
-				cal.set(Calendar.SECOND, 59);
-				cal.add(Calendar.SECOND, 1);
-				end = cal.getTime();
-			} else {
-				try {
-					end = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(endDate);
-				} catch (ParseException e) {
-					logger.error(e.getMessage(), e);
-					throw new BusinessException(BusinessErrorCode.BAD_REQUEST, "Can not convert end date.");
-				}
-			}
-			if (beginDate == null) {
-				Calendar cal = new GregorianCalendar();
-				cal.setTime(end);
-				cal.add(Calendar.DAY_OF_MONTH, -7);
-				cal.set(Calendar.HOUR_OF_DAY, 0);
-				cal.set(Calendar.MINUTE, 0);
-				cal.set(Calendar.SECOND, 0);
-				begin = cal.getTime();
-			} else {
-				try {
-					begin = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(beginDate);
-				} catch (ParseException e) {
-					logger.error(e.getMessage(), e);
-					throw new BusinessException(BusinessErrorCode.BAD_REQUEST, "Can not convert begin date.");
-				}
-			}
+			Date end = getEndDate(endDate);
+			Date begin = getBeginDate(beginDate, end);
 			res = userMongoRepository.findForUser(owner.getLsUuid(), actions, types, begin, end);
 		}
 //		checkListPermission(actor, owner, AuditLogEntryUser.class, BusinessErrorCode.BAD_REQUEST,
 //				res.iterator().next());
 		return res;
+	}
+
+	@Override
+	public Set<AuditLogEntryUser> findAll(Account actor, Account owner, Thread workGroup, WorkGroupNode workGroupNode,
+			List<String> action, List<String> type, String beginDate, String endDate) {
+		Validate.notNull(actor);
+		Validate.notNull(owner);
+		Validate.notNull(workGroup);
+		Set<AuditLogEntryUser> res = Sets.newHashSet();
+		List<AuditLogEntryType> supportedTypes = Lists.newArrayList();
+		supportedTypes.add(AuditLogEntryType.WORKGROUP);
+		supportedTypes.add(AuditLogEntryType.WORKGROUP_DOCUMENT);
+		supportedTypes.add(AuditLogEntryType.WORKGROUP_FOLDER);
+		supportedTypes.add(AuditLogEntryType.WORKGROUP_MEMBER);
+		List<AuditLogEntryType> types = getEntryTypes(type, supportedTypes);
+		List<LogAction> actions = getActions(action);
+		Date end = getEndDate(endDate);
+		Date begin = getBeginDate(beginDate, end);
+		// TODO:workgroups: use limit (Pageable query).
+		if (workGroupNode != null) {
+			res = userMongoRepository.findWorgGroupNodeHistoryForUser(
+					workGroup.getLsUuid(), workGroupNode.getUuid(),
+					actions, types,
+					begin, end,
+					new Sort(Sort.Direction.DESC, CREATION_DATE));
+		} else {
+			res = userMongoRepository.findWorgGroupHistoryForUser(
+					workGroup.getLsUuid(),
+					actions, types,
+					begin, end,
+					new Sort(Sort.Direction.DESC, CREATION_DATE));
+		}
+		return res;
+	}
+
+	protected List<AuditLogEntryType> getEntryTypes(List<String> type, List<AuditLogEntryType> supportedTypes) {
+		List<AuditLogEntryType> types = Lists.newArrayList();
+		if (type != null && !type.isEmpty()) {
+			for (String t : type) {
+				AuditLogEntryType entryType = AuditLogEntryType.fromString(t);
+				if (supportedTypes != null) {
+					if (supportedTypes.contains(entryType)) {
+						types.add(entryType);
+					}
+				} else {
+					types.add(entryType);
+				}
+			}
+		} else {
+			if (supportedTypes != null) {
+				types = supportedTypes;
+			} else {
+				types = Lists.newArrayList(AuditLogEntryType.class.getEnumConstants());
+			}
+		}
+		return types;
+	}
+
+	protected Date getBeginDate(String beginDate, Date end) {
+		Date begin = null;
+		if (beginDate == null) {
+			Calendar cal = new GregorianCalendar();
+			cal.setTime(end);
+			cal.add(Calendar.DAY_OF_MONTH, -7);
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			begin = cal.getTime();
+		} else {
+			try {
+				begin = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(beginDate);
+			} catch (ParseException e) {
+				logger.error(e.getMessage(), e);
+				throw new BusinessException(BusinessErrorCode.BAD_REQUEST, "Can not convert begin date.");
+			}
+		}
+		return begin;
+	}
+
+	protected Date getEndDate(String endDate) {
+		Date end = null;
+		if (endDate == null) {
+			Calendar cal = new GregorianCalendar();
+			cal.set(Calendar.HOUR_OF_DAY, 23);
+			cal.set(Calendar.MINUTE, 59);
+			cal.set(Calendar.SECOND, 59);
+			cal.add(Calendar.SECOND, 1);
+			end = cal.getTime();
+		} else {
+			try {
+				end = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(endDate);
+			} catch (ParseException e) {
+				logger.error(e.getMessage(), e);
+				throw new BusinessException(BusinessErrorCode.BAD_REQUEST, "Can not convert end date.");
+			}
+		}
+		return end;
+	}
+
+	protected List<LogAction> getActions(List<String> action) {
+		List<LogAction> actions = Lists.newArrayList();
+		if (action != null && !action.isEmpty()) {
+			for (String a : action) {
+				actions.add(LogAction.fromString(a));
+			}
+		} else {
+//			actions = Lists.newArrayList(LogAction.class.getEnumConstants());
+			actions = Lists.newArrayList();
+			actions.add(LogAction.CREATE);
+			actions.add(LogAction.DELETE);
+			actions.add(LogAction.UPDATE);
+			actions.add(LogAction.DOWNLOAD);
+			actions.add(LogAction.FAILURE);
+			actions.add(LogAction.GET);
+			actions.add(LogAction.SUCCESS);
+			actions.add(LogAction.PURGE);
+		}
+		return actions;
 	}
 }

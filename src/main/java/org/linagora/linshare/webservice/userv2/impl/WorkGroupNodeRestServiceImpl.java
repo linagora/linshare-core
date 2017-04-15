@@ -37,6 +37,7 @@ package org.linagora.linshare.webservice.userv2.impl;
 import java.io.File;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -69,6 +70,7 @@ import org.linagora.linshare.core.facade.webservice.user.ThreadEntryAsyncFacade;
 import org.linagora.linshare.core.facade.webservice.user.WorkGroupNodeFacade;
 import org.linagora.linshare.mongo.entities.WorkGroupAsyncTask;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.userv1.task.ThreadEntryUploadAsyncTask;
 import org.linagora.linshare.webservice.userv1.task.context.ThreadEntryTaskContext;
@@ -363,6 +365,29 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 			throws BusinessException {
 		Validate.notEmpty(uuid, "Missing uuid");
 		return asyncTaskFacade.find(uuid);
+	}
+
+	@Path("/{workGroupNodeUuid}/audit")
+	@GET
+	@ApiOperation(value = "Get all traces for a workgroup node.", response = AuditLogEntryUser.class, responseContainer="Set")
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
+					@ApiResponse(code = 404, message = "Workgroup or folder not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+					})
+	@Override
+	public Set<AuditLogEntryUser> findAll(
+			@ApiParam(value = "The workGroupNodeUuid.", required = true)
+				@PathParam("workGroupUuid") String workGroupUuid,
+			@ApiParam(value = "The workGroup node uuid.", required = true)
+				@PathParam("workGroupNodeUuid") String workGroupNodeUuid,
+			@ApiParam(value = "Filter by type of actions..", required = false)
+				@QueryParam("actions") List<String> actions,
+			@ApiParam(value = "Filter by type of resource's types.", required = false)
+				@QueryParam("types") List<String> types,
+				@QueryParam("beginDate") String beginDate,
+				@QueryParam("endDate") String endDate) {
+		return workGroupNodeFacade.findAll(null, workGroupUuid, workGroupNodeUuid, actions, types, beginDate, endDate);
 	}
 
 	protected void logAsyncFailure(AsyncTaskDto asyncTask, Exception e) {

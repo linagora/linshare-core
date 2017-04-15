@@ -35,11 +35,13 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.User;
@@ -47,11 +49,13 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.WorkGroupNodeFacade;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 
 public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements WorkGroupNodeFacade {
@@ -62,14 +66,18 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 
 	protected final FunctionalityReadOnlyService functionalityService;
 
+	protected final AuditLogEntryService auditLogEntryService;
+
 	public WorkGroupNodeFacadeImpl(AccountService accountService,
 			WorkGroupNodeService service,
 			ThreadService threadService,
-			FunctionalityReadOnlyService functionalityService) {
+			FunctionalityReadOnlyService functionalityService,
+			AuditLogEntryService auditLogEntryService) {
 		super(accountService);
 		this.service = service;
 		this.threadService = threadService;
 		this.functionalityService = functionalityService;
+		this.auditLogEntryService = auditLogEntryService;
 	}
 
 	@Override
@@ -204,6 +212,16 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		ResponseBuilder builder = DocumentStreamReponseBuilder
 				.getThumbnailResponseBuilder(data, base64);
 		return builder.build();
+	}
+
+	@Override
+	public Set<AuditLogEntryUser> findAll(String ownerUuid, String workGroupUuid, String workGroupNodeUuid,
+			List<String> actions, List<String> types, String beginDate, String endDate) {
+		Account actor = checkAuthentication();
+		User owner = (User) getOwner(actor, ownerUuid);
+		Thread workGroup = threadService.find(actor, owner, workGroupUuid);
+		WorkGroupNode workGroupNode = service.find(actor, owner, workGroup, workGroupNodeUuid, false);
+		return auditLogEntryService.findAll(actor, owner, workGroup, workGroupNode, actions, types, beginDate, endDate);
 	}
 
 }

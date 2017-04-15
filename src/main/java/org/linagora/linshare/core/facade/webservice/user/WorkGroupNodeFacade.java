@@ -35,11 +35,13 @@ package org.linagora.linshare.core.facade.webservice.user;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.core.Response;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface WorkGroupNodeFacade extends GenericFacade {
 
@@ -73,4 +75,6 @@ public interface WorkGroupNodeFacade extends GenericFacade {
 //
 //	WorkGroupEntryDto update(String ownerUuid, String threadUuid, String threadEntryUuid,
 //			WorkGroupEntryDto threadEntryDto) throws BusinessException;
+
+	Set<AuditLogEntryUser> findAll(String ownerUuid, String workGroupUuid, String workGroupNodeUuid, List<String> actions, List<String> types, String beginDate, String endDate);
 }

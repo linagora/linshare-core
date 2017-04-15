@@ -34,8 +34,10 @@
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
@@ -45,29 +47,36 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
 import org.linagora.linshare.core.facade.webservice.user.WorkGroupFacade;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 import com.google.common.collect.Lists;
 
 public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		WorkGroupFacade {
 
-	private final ThreadService threadService;
+	protected final ThreadService threadService;
 
-	private final UserService userService;
+	protected final UserService userService;
 
-	private final FunctionalityReadOnlyService functionalityReadOnlyService;
+	protected final FunctionalityReadOnlyService functionalityReadOnlyService;
+
+	protected final AuditLogEntryService auditLogEntryService;
 
 	public ThreadFacadeImpl(
 			final ThreadService threadService,
-			final AccountService accountService, final UserService userService,
-			final FunctionalityReadOnlyService functionalityService) {
+			final AccountService accountService,
+			final UserService userService,
+			final FunctionalityReadOnlyService functionalityService,
+			final AuditLogEntryService auditLogEntryService) {
 		super(accountService);
 		this.threadService = threadService;
 		this.functionalityReadOnlyService = functionalityService;
 		this.userService = userService;
+		this.auditLogEntryService = auditLogEntryService;
 	}
 
 	@Override
@@ -159,5 +168,14 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		User actor = checkAuthentication();
 		return new WorkGroupDto(threadService.update(actor, actor, threadUuid,
 				threadDto.getName()));
+	}
+
+	@Override
+	public Set<AuditLogEntryUser> findAll(String workGroupUuid, List<String> actions, List<String> types,
+			String beginDate, String endDate) {
+		Account actor = checkAuthentication();
+		User owner = (User) getOwner(actor, null);
+		Thread workGroup = threadService.find(actor, owner, workGroupUuid);
+		return auditLogEntryService.findAll(actor, owner, workGroup, null, actions, types, beginDate, endDate);
 	}
 }

@@ -35,6 +35,7 @@
 package org.linagora.linshare.webservice.userv2.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -45,11 +46,13 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
 import org.linagora.linshare.core.facade.webservice.user.WorkGroupFacade;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.userv2.WorkGroupRestService;
 
@@ -165,4 +168,24 @@ public class WorkGroupRestServiceImpl extends WebserviceBase implements WorkGrou
 		return workGroupFacade.update(workGroupUuid, workGroupDto);
 	}
 
+	@Path("/{uuid}/audit")
+	@GET
+	@ApiOperation(value = "Get all traces for a workgroup.", response = AuditLogEntryUser.class, responseContainer="Set")
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
+					@ApiResponse(code = 404, message = "Workgroup not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+					})
+	@Override
+	public Set<AuditLogEntryUser> findAll(
+			@ApiParam(value = "The workgroup uuid.", required = true)
+				@PathParam("uuid") String workGroupUuid,
+			@ApiParam(value = "Filter by type of actions..", required = false)
+				@QueryParam("actions") List<String> actions,
+			@ApiParam(value = "Filter by type of resource's types.", required = false)
+				@QueryParam("types") List<String> types,
+				@QueryParam("beginDate") String beginDate,
+				@QueryParam("endDate") String endDate) {
+		return workGroupFacade.findAll(workGroupUuid, actions, types, beginDate, endDate);
+	}
 }
