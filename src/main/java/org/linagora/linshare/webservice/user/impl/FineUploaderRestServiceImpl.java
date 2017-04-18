@@ -365,8 +365,7 @@ public class FineUploaderRestServiceImpl extends WebserviceBase implements
 		if (asyncTask != null) {
 			asyncTaskFacade.fail(asyncTask, e);
 		}
-		logger.error(e.getMessage());
-		logger.debug("Exception : ", e);
+		logger.error("Upload failed.", e);
 		return new FineUploaderDto(e);
 	}
 

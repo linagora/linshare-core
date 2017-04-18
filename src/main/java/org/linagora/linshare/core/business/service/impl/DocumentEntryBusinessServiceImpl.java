@@ -166,17 +166,13 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			TimeStampResponse resp =  timeStampingService.getTimeStamp(timeStampingUrl, fis);
 			timestampToken  = resp.getEncoded();
 		} catch (TSPException e) {
-			logger.error(e.toString());
-			throw new BusinessException(BusinessErrorCode.FILE_TIMESTAMP_NOT_COMPUTED,"TimeStamp on file is not computed", new String[] {fileName});
+			throw new BusinessException(BusinessErrorCode.FILE_TIMESTAMP_NOT_COMPUTED, String.format("Could not compute timestamp on file '%s' using TSA URL: '%s'.", fileName, timeStampingUrl), e);
 		} catch (FileNotFoundException e) {
-			logger.error(e.toString());
-			throw new BusinessException(BusinessErrorCode.FILE_TIMESTAMP_NOT_COMPUTED,"TimeStamp on file is not computed", new String[] {fileName});
+			throw new BusinessException(BusinessErrorCode.FILE_TIMESTAMP_NOT_COMPUTED, String.format("Could not compute timestamp on file '%s' using TSA URL: '%s'.", fileName, timeStampingUrl), e);
 		} catch (IOException e) {
-			logger.error(e.toString());
-			throw new BusinessException(BusinessErrorCode.FILE_TIMESTAMP_NOT_COMPUTED,"TimeStamp on file is not computed", new String[] {fileName});
+			throw new BusinessException(BusinessErrorCode.FILE_TIMESTAMP_NOT_COMPUTED, String.format("Could not compute timestamp on file '%s' using TSA URL: '%s'.", fileName, timeStampingUrl), e);
 		} catch (URISyntaxException e) {
-			logger.error(e.toString());
-			throw new BusinessException(BusinessErrorCode.FILE_TIMESTAMP_WRONG_TSA_URL,"The Tsa Url is empty or invalid", new String[] {fileName});
+			throw new BusinessException(BusinessErrorCode.FILE_TIMESTAMP_WRONG_TSA_URL, String.format("Could not compute timestamp on file '%s'. TSA URL is invalid: '%s'.", fileName, timeStampingUrl), e);
 		} finally {
 			try {
 				if (fis != null)
