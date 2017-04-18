@@ -128,27 +128,22 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			Calendar expirationDate, boolean isFromCmis, String metadata) throws BusinessException {
 		// add an entry for the file in DB
 		DocumentEntry entity = null;
-		try {
-			Document document = createDocument(owner, myFile, size, fileName, timeStampingUrl, mimeType);
+		Document document = createDocument(owner, myFile, size, fileName, timeStampingUrl, mimeType);
 
-			if (comment == null)
-				comment = "";
-			DocumentEntry docEntry = new DocumentEntry(owner, fileName, comment, document);
-			// We need to set an expiration date in case of file cleaner activation.
-			docEntry.setExpirationDate(expirationDate);
-			docEntry.setMetaData(metadata);
+		if (comment == null)
+			comment = "";
+		DocumentEntry docEntry = new DocumentEntry(owner, fileName, comment, document);
+		// We need to set an expiration date in case of file cleaner activation.
+		docEntry.setExpirationDate(expirationDate);
+		docEntry.setMetaData(metadata);
 
-			//aes encrypt ? check headers
-			if(checkIfIsCiphered) {
-				docEntry.setCiphered(checkIfFileIsCiphered(fileName, myFile));
-			}
-			docEntry.setCmisSync(isFromCmis);
-			entity = documentEntryRepository.create(docEntry);
-			owner.getEntries().add(entity);
-		} catch (BusinessException e) {
-			logger.error("Could not add  " + fileName + " to user " + owner.getLsUuid() + ", reason : ", e);
-			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_INSERT_DOCUMENT, "couldn't register the file in the database");
+		//aes encrypt ? check headers
+		if(checkIfIsCiphered) {
+			docEntry.setCiphered(checkIfFileIsCiphered(fileName, myFile));
 		}
+		docEntry.setCmisSync(isFromCmis);
+		entity = documentEntryRepository.create(docEntry);
+		owner.getEntries().add(entity);
 		return entity;
 	}
 
