@@ -192,7 +192,7 @@ public class FineUploaderRestServiceImpl extends WebserviceBase implements
 		try {
 			tempFile = getTempFile(file, "fineuploader", fileName);
 		} catch (BusinessException e) {
-			return processException(e, tempFile, null);
+			return processException(e, tempFile, fileName, null);
 		}
 		if (sizeValidation) {
 			if (size != null) {
@@ -232,7 +232,7 @@ public class FineUploaderRestServiceImpl extends WebserviceBase implements
 				taskExecutor.execute(task);
 				return new FineUploaderDto(asyncTask);
 			} catch (Exception e) {
-				return processException(e, tempFile, asyncTask);
+				return processException(e, tempFile, fileName, asyncTask);
 			}
 		} else {
 			logger.debug("Async mode is not used");
@@ -241,7 +241,7 @@ public class FineUploaderRestServiceImpl extends WebserviceBase implements
 				FineUploaderDto dto = new FineUploaderDto(true, doc.getUuid(), doc.getName());
 				return dto;
 			} catch (Exception e) {
-				return processException(e, tempFile, null);
+				return processException(e, tempFile, fileName, null);
 			}
 		}
 	}
@@ -305,7 +305,7 @@ public class FineUploaderRestServiceImpl extends WebserviceBase implements
 		try {
 			tempFile = getTempFile(file, "fineuploader", fileName);
 		} catch (BusinessException e) {
-			return processException(e, tempFile, null);
+			return processException(e, tempFile, fileName, null);
 		}
 		if (sizeValidation) {
 			if (size != null) {
@@ -345,7 +345,7 @@ public class FineUploaderRestServiceImpl extends WebserviceBase implements
 				taskExecutor.execute(task);
 				return new FineUploaderDto(asyncTask);
 			} catch (Exception e) {
-				return processException(e, tempFile, asyncTask);
+				return processException(e, tempFile, fileName, asyncTask);
 			}
 		} else {
 			logger.debug("Async mode is not used");
@@ -354,18 +354,18 @@ public class FineUploaderRestServiceImpl extends WebserviceBase implements
 				FineUploaderDto dto = new FineUploaderDto(true, doc.getUuid(), doc.getName());
 				return dto;
 			} catch (Exception e) {
-				return processException(e, tempFile, null);
+				return processException(e, tempFile, fileName, null);
 			}
 		}
 	}
 
 	private FineUploaderDto processException(Exception e,
-			File tempFile, AsyncTaskDto asyncTask) {
+			File tempFile, String filename, AsyncTaskDto asyncTask) {
 		deleteTempFile(tempFile);
 		if (asyncTask != null) {
 			asyncTaskFacade.fail(asyncTask, e);
 		}
-		logger.error("Upload failed.", e);
+		logger.error(String.format("Upload failed for file '%s'.", filename), e);
 		return new FineUploaderDto(e);
 	}
 
