@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-  <typedef class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="LogAction">
-    <param name="enumClass">org.linagora.linshare.core.domain.constants.LogAction</param>
+  <typedef class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="LogActionV1">
+    <param name="enumClass">org.linagora.linshare.core.domain.constants.LogActionV1</param>
     <param name="identifierMethod">name</param>
     <param name="valueOfMethod">fromString</param>
   </typedef>
@@ -27,7 +27,7 @@
     <property access="field" index="index_log_entry_actor_domain" name="actorDomain" type="string">
       <column name="actor_domain" not-null="false"/>
     </property>
-    <property access="field" index="index_log_entry_action" name="logAction" type="LogAction">
+    <property access="field" index="index_log_entry_action" name="logAction" type="LogActionV1">
       <column name="log_action" not-null="true"/>
     </property>
     <property access="field" name="description" type="text">

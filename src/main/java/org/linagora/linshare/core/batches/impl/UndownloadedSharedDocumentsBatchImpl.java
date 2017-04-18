@@ -109,10 +109,10 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 				EmailContext emailContext = new ShareWarnUndownloadedFilesharesEmailContext(shareEntryGroup);
 				mail = mailService.build(emailContext);
 				shareEntryGroup.setNotified(true);
-				logs = getLogActions(actor, shareEntryGroup, LogAction.SHARE_WITH_USD_NOT_DOWNLOADED);
+				logs = getLogActions(actor, shareEntryGroup);
 			} else {
 				// only log action
-				logs = getLogActions(actor, shareEntryGroup, LogAction.SHARE_WITH_USD_DOWNLOADED);
+				logs = getLogActions(actor, shareEntryGroup);
 				// Nothing to do ? set notified to true ? or set expiration to
 				// null ?
 				// How to exclude them from finders ?
@@ -133,7 +133,7 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 		return context;
 	}
 
-	private List<AuditLogEntryUser> getLogActions(SystemAccount actor, ShareEntryGroup shareEntryGroup, LogAction logAction) {
+	private List<AuditLogEntryUser> getLogActions(SystemAccount actor, ShareEntryGroup shareEntryGroup) {
 		List<AuditLogEntryUser> logs = Lists.newArrayList();
 		Account owner = shareEntryGroup.getOwner();
 		for (ShareEntry share : shareEntryGroup.getShareEntries()) {

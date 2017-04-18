@@ -38,7 +38,7 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.LogActionV1;
 import org.linagora.linshare.core.domain.entities.AntivirusLogEntry;
 import org.linagora.linshare.core.domain.entities.FileLogEntry;
 import org.linagora.linshare.core.domain.entities.ShareLogEntry;
@@ -66,7 +66,7 @@ public class LogDto {
 	private String actorLastname;
 
 	@ApiModelProperty(value = "The action")
-	private LogAction logAction;
+	private LogActionV1 logAction;
 
 	@ApiModelProperty(value = "A description of the action")
 	private String description;
@@ -96,7 +96,7 @@ public class LogDto {
 	}
 
 	public LogDto(final Date actionDate, String actorMail,
-				  String actorFirstname, String actorLastname, LogAction logAction,
+				  String actorFirstname, String actorLastname, LogActionV1 logAction,
 				  String description, String targetMail, String targetFirstname,
 				  String targetLastname, String fileName, Long fileSize,
 				  String fileType, final Calendar expirationDate) {
@@ -173,7 +173,7 @@ public class LogDto {
 		return actorLastname;
 	}
 
-	public LogAction getLogAction() {
+	public LogActionV1 getLogAction() {
 		return logAction;
 	}
 

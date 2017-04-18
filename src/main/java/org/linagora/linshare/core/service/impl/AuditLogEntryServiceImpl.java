@@ -301,16 +301,7 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 				actions.add(LogAction.fromString(a));
 			}
 		} else {
-//			actions = Lists.newArrayList(LogAction.class.getEnumConstants());
-			actions = Lists.newArrayList();
-			actions.add(LogAction.CREATE);
-			actions.add(LogAction.DELETE);
-			actions.add(LogAction.UPDATE);
-			actions.add(LogAction.DOWNLOAD);
-			actions.add(LogAction.FAILURE);
-			actions.add(LogAction.GET);
-			actions.add(LogAction.SUCCESS);
-			actions.add(LogAction.PURGE);
+			actions = Lists.newArrayList(LogAction.class.getEnumConstants());
 		}
 		return actions;
 	}

@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2017 LINAGORA
+ * Copyright (C) 2015 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2017. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -37,20 +37,60 @@ import org.apache.commons.lang.StringUtils;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 
-public enum LogAction {
+public enum LogActionV1 {
 
-	CREATE,
-	UPDATE,
-	DELETE,
-	GET,
-	DOWNLOAD,
-	SUCCESS,
-	FAILURE,
-	PURGE;
+	FILE_UPLOAD,
+	FILE_SHARE,
+	FILE_SHARE_WITH_ALERT_FOR_USD,
+	FILE_EXPIRE,
+	FILE_DELETE,
+	FILE_UPDATE,
+	FILE_INCONSISTENCY,
 
-	public static LogAction fromString(String s) {
+	SHARE_RECEIVED,
+	SHARE_EXPIRE,
+	SHARE_DOWNLOAD,
+	SHARE_DOWNLOADED,
+	SHARE_WITH_USD_NOT_DOWNLOADED,
+	SHARE_WITH_USD_DOWNLOADED,
+	SHARE_COPY,
+	SHARE_DELETE,
+	ANONYMOUS_SHARE_DOWNLOAD,
+
+	THREAD_CREATE,
+	THREAD_DELETE,
+	THREAD_RENAME,
+	THREAD_ADD_MEMBER,
+	THREAD_REMOVE_MEMBER,
+	THREAD_UPLOAD_ENTRY,
+	THREAD_DOWNLOAD_ENTRY,
+	THREAD_REMOVE_ENTRY,
+	THREAD_REMOVE_INCONSISTENCY_ENTRY,
+
+	USER_CREATE,
+	USER_DELETE,
+	USER_PURGE,
+	USER_EXPIRE,
+	USER_AUTH,
+	USER_AUTH_FAILED,
+
+	FILE_SIGN,
+	USER_UPDATE,
+	FILE_ENCRYPT,
+	FILE_DECRYPT,
+	ANTIVIRUS_SCAN_FAILED,
+	FILE_WITH_VIRUS,
+
+	LIST_CREATE,
+	LIST_DELETE,
+	LIST_UPDATE,
+	LIST_ADD_CONTACT,
+	LIST_UPDATE_CONTACT,
+	LIST_DELETE_CONTACT;
+
+	public static LogActionV1 fromString(String s) {
 		try {
-			return LogAction.valueOf(s.toUpperCase());
+			return LogActionV1.valueOf(s.toUpperCase());
 		} catch (RuntimeException e) {
 			throw new TechnicalException(TechnicalErrorCode.NO_SUCH_LOG_ACTION, StringUtils.isEmpty(s) ? "null or empty" : s);
 		}

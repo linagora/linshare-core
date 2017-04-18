@@ -36,7 +36,7 @@ package org.linagora.linshare.core.domain.entities;
 import java.io.Serializable;
 import java.util.Calendar;
 
-import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.LogActionV1;
 
 /**
  * Abstract class for the log entry. Extended as FileLogEntry, UserLogEntry,
@@ -64,7 +64,7 @@ public abstract class LogEntry implements Serializable {
 
 	protected String actorDomain;
 
-	protected LogAction logAction;
+	protected LogActionV1 logAction;
 
 	protected String description;
 
@@ -107,7 +107,7 @@ public abstract class LogEntry implements Serializable {
 		return actorDomain;
 	}
 
-	public LogAction getLogAction() {
+	public LogActionV1 getLogAction() {
 		return logAction;
 	}
 
