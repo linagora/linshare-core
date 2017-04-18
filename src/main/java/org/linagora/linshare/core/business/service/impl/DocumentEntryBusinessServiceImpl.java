@@ -541,7 +541,9 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			return documentRepository.create(document);
 		} catch (Exception e) {
 			fileSystemDao.removeFileByUUID(uuid);
-			fileSystemDao.removeFileByUUID(uuidThmb);
+			if (uuidThmb != null) {
+				fileSystemDao.removeFileByUUID(uuidThmb);
+			}
 			throw e;
 		}
 	}
