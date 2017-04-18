@@ -52,14 +52,13 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.impl.WorkGroupNodeResourceAccessControlImpl;
 import org.linagora.linshare.core.service.AntiSamyService;
 import org.linagora.linshare.core.service.LogEntryService;
-import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.WorkGroupDocumentService;
 import org.linagora.linshare.core.service.WorkGroupFolderService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
-import org.linagora.linshare.mongo.entities.WorkGroupFolder;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
+import org.linagora.linshare.mongo.entities.WorkGroupFolder;
 import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.WorkGroupLightNode;
@@ -80,8 +79,6 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 
 	protected final WorkGroupFolderService workGroupFolderService;
 
-	protected final ThreadService threadService;
-
 	protected final LogEntryService logEntryService;
 
 	protected final AntiSamyService antiSamyService;
@@ -91,13 +88,11 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 	public WorkGroupNodeServiceImpl(WorkGroupNodeMongoRepository repository, LogEntryService logEntryService,
 			WorkGroupDocumentService workGroupDocumentService,
 			WorkGroupFolderService workGroupFolderService,
-			ThreadService threadService,
 			WorkGroupNodeResourceAccessControlImpl rac,
 			AntiSamyService antiSamyService,
 			MongoTemplate mongoTemplate) {
 		super(rac);
 		this.repository = repository;
-		this.threadService = threadService;
 		this.workGroupDocumentService = workGroupDocumentService;
 		this.workGroupFolderService = workGroupFolderService;
 		this.logEntryService = logEntryService;
@@ -147,7 +142,11 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 
 	protected List<WorkGroupLightNode> getTreePath(Thread workGroup, WorkGroupNode node) {
 		List<WorkGroupLightNode> tree = Lists.newArrayList();
-		String[] split = node.getPath().split(",");
+		String path = node.getPath();
+		if (path == null) {
+			return tree;
+		}
+		String[] split = path.split(",");
 		for (int i = 0; i < split.length; i++) {
 			String uuid = split[i];
 			if (!uuid.isEmpty()) {
@@ -168,7 +167,8 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 	}
 
 	@Override
-	public WorkGroupNode find(Account actor, User owner, String workGroupNodeUuid) throws BusinessException {
+	public String findWorkGroupUuid(Account actor, User owner, String workGroupNodeUuid)
+			throws BusinessException {
 		preChecks(actor, owner);
 		WorkGroupNode node = repository.findByUuid(workGroupNodeUuid);
 		if (node == null) {
@@ -176,9 +176,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_NODE_NOT_FOUND,
 					"Node not found : " + workGroupNodeUuid);
 		}
-		Thread workGroup = threadService.find(actor, owner, node.getWorkGroup());
-		checkReadPermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, node, workGroup);
-		return node;
+		return node.getWorkGroup();
 	}
 
 	@Override
@@ -223,17 +221,6 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 	}
 
 	@Override
-	public WorkGroupNode update(Account actor, User owner, WorkGroupNode dto) throws BusinessException {
-		preChecks(actor, owner);
-		Validate.notNull(dto);
-		Validate.notEmpty(dto.getUuid(), "Missing uuid");
-		Validate.notEmpty(dto.getName(), "Missing name");
-		WorkGroupNode node = find(actor, owner, dto.getUuid());
-		Thread workGroup = threadService.find(actor, owner, node.getWorkGroup());
-		return update(actor, owner, workGroup, dto);
-	}
-
-	@Override
 	public WorkGroupNode update(Account actor, User owner, Thread workGroup, WorkGroupNode dto)
 			throws BusinessException {
 		preChecks(actor, owner);
@@ -256,6 +243,9 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		// Just in case.
 		node.setTreePath(null);
 
+		if (node.getNodeType().equals(WorkGroupNodeType.ROOT_FOLDER)) {
+			return repository.save(node);
+		}
 		boolean updatePath = false;
 		WorkGroupNode nodeParent = null;
 		// Check if we have to move the current node
@@ -267,11 +257,14 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 				if (!isFolder(nodeParent)) {
 					throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not move the current node to this kind of node.");
 				}
-				// Check if name is unique in the parent node (current or target)
+				// Check if name is unique in the parent node (target)
 				checkUniqueName(workGroup, nodeParent, dto.getName(), node.getNodeType());
 				node.setParent(nodeParent.getUuid());
 				node.setPathFromParent(nodeParent);
 				updatePath = true;
+			} else {
+				// Check if name is unique in the parent node (current)
+				checkUniqueName(workGroup, nodeParent, dto.getName(), node.getNodeType());
 			}
 		} else {
 			nodeParent = find(actor, owner, workGroup, node.getParent(), false);
@@ -312,30 +305,13 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 	}
 
 	protected AuditLogEntryType getAuditLogEntryType(WorkGroupNodeType type) {
-		if (type.equals(WorkGroupNodeType.FOLDER)) {
+		if (type.equals(WorkGroupNodeType.FOLDER) || type.equals(WorkGroupNodeType.ROOT_FOLDER)) {
 			return AuditLogEntryType.WORKGROUP_FOLDER;
 		} else if (type.equals(WorkGroupNodeType.DOCUMENT)) {
 			return AuditLogEntryType.WORKGROUP_DOCUMENT;
 		} else {
 			throw new BusinessException(BusinessErrorCode.UNKNOWN, "invalid type");
 		}
-	}
-
-	@Override
-	public WorkGroupNode delete(Account actor, User owner, String workGroupNodeUuid) throws BusinessException {
-		preChecks(actor, owner);
-		Validate.notEmpty(workGroupNodeUuid, "missing workGroupNodeUuid");
-		WorkGroupNode node = repository.findByUuid(workGroupNodeUuid);
-		if (node == null) {
-			logger.error("Node  not found " + workGroupNodeUuid);
-			throw new BusinessException(BusinessErrorCode.WORK_GROUP_NODE_NOT_FOUND,
-					"Node not found : " + workGroupNodeUuid);
-		}
-		Thread workGroup = threadService.find(actor, owner, node.getWorkGroup());
-		checkDeletePermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN,
-				node, workGroup);
-		deleteNode(actor, owner, workGroup, node);
-		return node;
 	}
 
 	@Override
@@ -382,20 +358,6 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 			throws BusinessException {
 		preChecks(actor, owner);
 		WorkGroupNode node = find(actor, owner, workGroup, workGroupNodeUuid, false);
-		checkDownloadPermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, node, workGroup);
-		if (isDocument(node)) {
-			InputStream stream = workGroupDocumentService.getDocumentStream(actor, owner, workGroup, (WorkGroupDocument) node);
-			return new FileAndMetaData((WorkGroupDocument)node, stream);
-		} else {
-			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not download this kind of node.");
-		}
-	}
-
-	@Override
-	public FileAndMetaData download(Account actor, User owner, String workGroupNodeUuid) throws BusinessException {
-		preChecks(actor, owner);
-		WorkGroupNode node = find(actor, owner, workGroupNodeUuid);
-		Thread workGroup = threadService.find(actor, owner, node.getWorkGroup());
 		checkDownloadPermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, node, workGroup);
 		if (isDocument(node)) {
 			InputStream stream = workGroupDocumentService.getDocumentStream(actor, owner, workGroup, (WorkGroupDocument) node);
@@ -462,6 +424,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		if (wgnParent == null) {
 			// creation of the root folder.
 			wgnParent = new WorkGroupFolder(new AccountMto(owner), workGroup.getName(), workGroupUuid, workGroupUuid);
+			wgnParent.setNodeType(WorkGroupNodeType.ROOT_FOLDER);
 			wgnParent.setUuid(UUID.randomUUID().toString());
 			wgnParent.setCreationDate(new Date());
 			wgnParent.setModificationDate(new Date());
@@ -508,7 +471,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 	}
 
 	protected boolean isFolder(WorkGroupNode node) {
-		return node.getNodeType().equals(WorkGroupNodeType.FOLDER);
+		return node.getNodeType().equals(WorkGroupNodeType.FOLDER) || node.getNodeType().equals(WorkGroupNodeType.ROOT_FOLDER);
 	}
 
 	protected boolean isRevison(WorkGroupNode node) {

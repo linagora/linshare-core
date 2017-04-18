@@ -11,7 +11,6 @@
 	<bean name="threadService" class="org.linagora.linshare.core.service.impl.ThreadServiceImpl">
 		<constructor-arg ref="threadRepository" />
 		<constructor-arg ref="threadMemberRepository" />
-		<constructor-arg ref="documentEntryBusinessService" />
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="threadResourceAccessControl" />
 		<constructor-arg ref="threadMemberResourceAccessControl" />
@@ -19,6 +18,7 @@
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="accountQuotaBusinessService"/>
 		<constructor-arg ref="containerQuotaBusinessService"/>
+		<constructor-arg ref="workGroupNodeService"/>
 	</bean>
 
 	<bean name="userService" class="org.linagora.linshare.core.service.impl.UserServiceImpl">
@@ -278,7 +278,6 @@
 		<constructor-arg ref="workGroupNodeMongoRepository" />
 		<constructor-arg ref="workGroupDocumentService" />
 		<constructor-arg ref="workGroupFolderService" />
-		<constructor-arg ref="threadService" />
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="antiSamyService" />
 		<constructor-arg ref="mongoTemplate" />

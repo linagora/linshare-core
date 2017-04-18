@@ -290,6 +290,7 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 
 		// Init
 		boolean strict = true;
+		boolean tree = false;
 		WorkGroupNode nodea1 = createWrapper(jane, jane, workGroup, new WorkGroupFolder(author, "my.folder-a-1", workGroup.getName(), workGroup.getLsUuid()), strict);
 		createWrapper(jane, jane, workGroup, new WorkGroupFolder(author, "my.folder-a-2", null, workGroup.getLsUuid()), strict);
 		createWrapper(jane, jane, workGroup, new WorkGroupFolder(author, "my.folder-a-3", null, workGroup.getLsUuid()), strict);
@@ -308,19 +309,19 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 
 		// just update without move.
 		nodea1.setName("coucou");
-		service.update(jane, jane, nodea1);
-		Assert.assertEquals(",thread1,", service.find(jane, jane, nodea1.getUuid()).getPath());
-		Assert.assertEquals(",thread1,my.folder-a-1,my.folder-a-b-1,", service.find(jane, jane, nodeabc1.getUuid()).getPath());
+		service.update(jane, jane, workGroup, nodea1);
+		Assert.assertEquals(",thread1,", service.find(jane, jane, workGroup, nodea1.getUuid(), tree).getPath());
+		Assert.assertEquals(",thread1,my.folder-a-1,my.folder-a-b-1,", service.find(jane, jane, workGroup, nodeabc1.getUuid(), tree).getPath());
 
 		// updating node moving folder abc1 from ab1 to a1.
 		nodeabc1.setParent(nodea1.getUuid());
 		nodeabc1.setName("coucou");
-		WorkGroupNode updateNodeabc1 = service.update(jane, jane, nodeabc1);
+		WorkGroupNode updateNodeabc1 = service.update(jane, jane, workGroup, nodeabc1);
 
 		Assert.assertEquals(",thread1,my.folder-a-1,", updateNodeabc1.getPath());
 		Assert.assertEquals(nodea1.getUuid(), updateNodeabc1.getParent());
 
-		Assert.assertEquals(",thread1,my.folder-a-1,my.folder-a-b-c-1,", service.find(jane, jane, nodeabcd1.getUuid()).getPath());
+		Assert.assertEquals(",thread1,my.folder-a-1,my.folder-a-b-c-1,", service.find(jane, jane, workGroup, nodeabcd1.getUuid(), tree).getPath());
 	}
 
 	public WorkGroupNode createWrapper(Account actor, User owner, Thread workGroup, WorkGroupNode workGroupNode, Boolean strict)

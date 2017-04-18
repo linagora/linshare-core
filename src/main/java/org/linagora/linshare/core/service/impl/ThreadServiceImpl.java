@@ -38,7 +38,6 @@ import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
-import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -60,6 +59,8 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.core.service.WorkGroupNodeService;
+import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.ThreadAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.ThreadMemberAuditLogEntry;
@@ -74,8 +75,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 
 	private final ThreadMemberRepository threadMemberRepository;
 
-	private final DocumentEntryBusinessService documentEntryBusinessService;
-
 	private final LogEntryService logEntryService;
 
 	private final ThreadMemberResourceAccessControl threadMemberAC;
@@ -88,27 +87,29 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 
 	private final ContainerQuotaBusinessService containerQuotaBusinessService;
 
+	private final WorkGroupNodeService workGroupNodeService;
+
 	public ThreadServiceImpl(
 			ThreadRepository threadRepository,
 			ThreadMemberRepository threadMemberRepository,
-			DocumentEntryBusinessService documentEntryBusinessService,
 			LogEntryService logEntryService,
 			ThreadResourceAccessControl rac,
 			ThreadMemberResourceAccessControl threadMemberResourceAccessControl,
 			UserRepository<User> userRepository,
 			FunctionalityReadOnlyService functionalityReadOnlyService,
 			AccountQuotaBusinessService accountQuotaBusinessService,
-			ContainerQuotaBusinessService containerQuotaBusinessService) {
+			ContainerQuotaBusinessService containerQuotaBusinessService,
+			WorkGroupNodeService workGroupNodeService) {
 		super(rac);
 		this.threadRepository = threadRepository;
 		this.threadMemberRepository = threadMemberRepository;
-		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
 		this.threadMemberAC = threadMemberResourceAccessControl;
 		this.userRepository = userRepository;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
 		this.containerQuotaBusinessService = containerQuotaBusinessService;
+		this.workGroupNodeService = workGroupNodeService;
 	}
 
 	@Override
@@ -343,9 +344,9 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 			throws BusinessException {
 		checkDeletePermission(actor, owner, Thread.class,
 				BusinessErrorCode.THREAD_FORBIDDEN, thread);
-		// Delete all entries
-		// TODO:FMA:Workgroups
-//		documentEntryBusinessService.deleteSetThreadEntry(thread.getEntries());
+		User owner2 = (User) owner;
+		WorkGroupNode rootFolder = workGroupNodeService.getRootFolder(actor, owner2, thread);
+		workGroupNodeService.delete(actor, owner2, thread, rootFolder.getUuid());
 		thread.setEntries(null);
 		threadRepository.update(thread);
 		// Deleting members
@@ -367,6 +368,10 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 				new ThreadMto(thread, false));
 		thread.setName(threadName);
 		Thread update = threadRepository.update(thread);
+		User owner2 = (User) owner;
+		WorkGroupNode rootFolder = workGroupNodeService.getRootFolder(actor, owner2, thread);
+		rootFolder.setName(threadName);
+		workGroupNodeService.update(actor, owner2, thread, rootFolder);
 		log.setResourceUpdated(new ThreadMto(update, false));
 		logEntryService.insert(log);
 		return update;

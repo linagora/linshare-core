@@ -53,8 +53,7 @@ public interface WorkGroupNodeService {
 
 	WorkGroupNode find(Account actor, User owner, Thread workGroup, String workGroupNodeUuid, boolean withTree) throws BusinessException;
 
-	// cmis
-	WorkGroupNode find(Account actor, User owner, String workGroupNodeUuid) throws BusinessException;
+	String findWorkGroupUuid(Account actor, User owner, String workGroupNodeUuid) throws BusinessException;
 
 	WorkGroupNode create(Account actor, User owner, Thread workGroup, WorkGroupNode workGroupNode, Boolean strict, Boolean dryRun)
 			throws BusinessException;
@@ -64,20 +63,11 @@ public interface WorkGroupNodeService {
 
 	WorkGroupNode update(Account actor, User owner, Thread workGroup, WorkGroupNode workGroupNode)
 			throws BusinessException;
-	// cmis
-	WorkGroupNode update(Account actor, User owner, WorkGroupNode workGroupNode)
-			throws BusinessException;
 
 	WorkGroupNode delete(Account actor, User owner, Thread workGroup, String workGroupNodeUuid)
 			throws BusinessException;
 
-	WorkGroupNode delete(Account actor, User owner, String workGroupNodeUuid)
-			throws BusinessException;
-
 	FileAndMetaData download(Account actor, User owner, Thread workGroup, String workGroupNodeUuid)
-			throws BusinessException;
-	// cmis
-	FileAndMetaData download(Account actor, User owner, String workGroupNodeUuid)
 			throws BusinessException;
 
 	FileAndMetaData thumbnail(Account actor, User owner, Thread workGroup, String workGroupNodeUuid)

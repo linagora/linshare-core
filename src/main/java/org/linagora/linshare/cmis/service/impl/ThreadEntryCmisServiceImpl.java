@@ -199,7 +199,11 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 		Account actor = helpers.prepare(repositoryId, true, false);
 		WorkGroupNode entry = null;
 		try {
-			entry = workGroupNodeService.find(actor, (User) actor, helpers.getObjectUuid(objectId));
+			String workGroupNodeUuid = helpers.getObjectUuid(objectId);
+			String workGroupUuid = workGroupNodeService.findWorkGroupUuid(actor, (User) actor, workGroupNodeUuid);
+			Thread thread = threadService.find(actor, actor, workGroupUuid);
+			entry = workGroupNodeService.find(actor, (User) actor,
+					thread, workGroupNodeUuid, false);
 		} catch (BusinessException e) {
 			throw cmisExceptionMappingService.map(e);
 		}
@@ -241,8 +245,11 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 		} else {
 			WorkGroupNode node = null;
 			try {
-				String threadUuid = helpers.getObjectUuid(objectId);
-				node = workGroupNodeService.find(actor, (User) actor, threadUuid);
+				String workGroupNodeUuid = helpers.getObjectUuid(objectId);
+				String workGroupUuid = workGroupNodeService.findWorkGroupUuid(actor, (User) actor, workGroupNodeUuid);
+				Thread thread = threadService.find(actor, actor, workGroupUuid);
+				node = workGroupNodeService.find(actor, (User) actor,
+						thread, workGroupNodeUuid, false);
 			} catch (BusinessException e) {
 				throw cmisExceptionMappingService.map(e);
 			}
@@ -264,7 +271,10 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 		Account actor = helpers.prepare(repositoryId, true, false);
 		FileAndMetaData f;
 		try {
-			f = workGroupNodeService.download(actor, (User)actor, helpers.getObjectUuid(objectId));
+			String workGroupNodeUuid = helpers.getObjectUuid(objectId);
+			String workGroupUuid = workGroupNodeService.findWorkGroupUuid(actor, (User) actor, workGroupNodeUuid);
+			Thread thread = threadService.find(actor, actor, workGroupUuid);
+			f = workGroupNodeService.download(actor, (User)actor, thread, workGroupNodeUuid);
 		} catch (BusinessException e) {
 			throw cmisExceptionMappingService.map(e);
 		}
@@ -289,8 +299,11 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 			}
 			WorkGroupNode threadEntry = null;
 			try {
+				String workGroupNodeUuid = helpers.getObjectUuid(objectId);
+				String workGroupUuid = workGroupNodeService.findWorkGroupUuid(actor, (User) actor, workGroupNodeUuid);
+				Thread thread = threadService.find(actor, actor, workGroupUuid);
 				threadEntry = workGroupNodeService.find(actor, (User) actor,
-						helpers.getObjectUuid(objectId));
+						thread, workGroupNodeUuid, false);
 			} catch (BusinessException e) {
 				throw cmisExceptionMappingService.map(e);
 			}
@@ -315,13 +328,16 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 	}
 
 	@Override
-	public void deleteObjectOrCancelCheckOut(String repositoryId,
-			String objectId, Boolean allVersions, ExtensionsData extension) {
-		 Account actor = helpers.prepare(repositoryId, true, false);
+	public void deleteObjectOrCancelCheckOut(String repositoryId, String objectId, Boolean allVersions,
+			ExtensionsData extension) {
+		Account actor = helpers.prepare(repositoryId, true, false);
 		try {
-			workGroupNodeService.delete(actor, (User) actor, helpers.getObjectUuid(objectId));
+			String workGroupNodeUuid = helpers.getObjectUuid(objectId);
+			String workGroupUuid = workGroupNodeService.findWorkGroupUuid(actor, (User) actor, workGroupNodeUuid);
+			Thread thread = threadService.find(actor, actor, workGroupUuid);
+			workGroupNodeService.delete(actor, (User) actor, thread, workGroupNodeUuid);
 		} catch (BusinessException e) {
-			 throw cmisExceptionMappingService.map(e);
+			throw cmisExceptionMappingService.map(e);
 		}
 	}
 
@@ -333,9 +349,8 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 		Account actor = helpers.prepare(repositoryId, true, false);
 		String res = folderId;
 		if (contentStream.getFileName() != null) {
-			Thread thread = null;
 			File tempFile = null;
-			thread = threadService.find(actor, actor, helpers.getObjectUuid(folderId));
+			Thread thread = threadService.find(actor, actor, helpers.getObjectUuid(folderId));
 			try {
 				tempFile = getTempFile(contentStream.getStream(), contentStream.getFileName());
 				WorkGroupNode node = workGroupNodeService.create(actor, (User)actor, thread, tempFile, contentStream.getFileName(), null, true);
@@ -360,11 +375,13 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 		String name = (String) properties.getProperties().get(PropertyIds.NAME)
 				.getFirstValue();
 		try {
+			String workGroupUuid = workGroupNodeService.findWorkGroupUuid(actor, (User) actor, uuid);
+			Thread thread = threadService.find(actor, actor, workGroupUuid);
 			WorkGroupDocument node = new WorkGroupDocument();
 			node.setUuid(uuid);
 			node.setDescription(description);
 			node.setName(name);
-			workGroupNodeService.update(actor, (User)actor, node);
+			workGroupNodeService.update(actor, (User)actor, thread, node);
 		} catch (BusinessException e) {
 			throw cmisExceptionMappingService.map(e);
 		}

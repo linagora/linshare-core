@@ -40,6 +40,7 @@ import org.linagora.linshare.core.exception.TechnicalException;
 public enum WorkGroupNodeType {
 
 	FOLDER,
+	ROOT_FOLDER,
 	DOCUMENT,
 	DOCUMENT_REVISION,
 	ASYNC_TASK;
