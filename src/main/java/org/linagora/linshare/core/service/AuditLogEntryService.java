@@ -73,4 +73,7 @@ public interface AuditLogEntryService {
 
 	Set<AuditLogEntryUser> findAll(Account actor, Account owner, Thread workGroup, WorkGroupNode workGroupNode, List<String> actions, List<String> types, String beginDate, String endDate);
 
+	Set<AuditLogEntryUser> findAll(Account actor, Account owner, String entryUuid, List<String> actions,
+			List<String> types, String beginDate, String endDate);
+
 }

@@ -47,6 +47,7 @@ import javax.activation.DataHandler;
 import org.apache.commons.lang.Validate;
 import org.apache.cxf.helpers.IOUtils;
 import org.linagora.linshare.core.business.service.EntryBusinessService;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.MimeType;
@@ -60,10 +61,12 @@ import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.MimePolicyService;
 import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.SignatureService;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -83,11 +86,14 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 
 	private final EntryBusinessService entryBusinessService;
 
+	protected final AuditLogEntryService auditLogEntryService;
+
 	public DocumentFacadeImpl(final DocumentEntryService documentEntryService,
 			final AccountService accountService,
 			final MimePolicyService mimePolicyService,
 			final ShareService shareService,
 			final EntryBusinessService entryBusinessService,
+			final AuditLogEntryService auditLogEntryService,
 			final SignatureService signatureService) {
 		super(accountService);
 		this.documentEntryService = documentEntryService;
@@ -95,6 +101,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 		this.shareService = shareService;
 		this.signatureService = signatureService;
 		this.entryBusinessService = entryBusinessService;
+		this.auditLogEntryService = auditLogEntryService;
 	}
 
 	@Override
@@ -280,5 +287,14 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 		documentEntryService.updateFileProperties(actor, actor, res.getUuid(),
 				res.getName(), description, null);
 		return new DocumentDto(res);
+	}
+
+	@Override
+	public Set<AuditLogEntryUser> findAll(String ownerUuid, String uuid, List<String> actions, List<String> types,
+			String beginDate, String endDate) {
+		Account actor = checkAuthentication();
+		User owner = (User) getOwner(actor, ownerUuid);
+		DocumentEntry entry = documentEntryService.find(actor, owner, uuid);
+		return auditLogEntryService.findAll(actor, owner, entry.getUuid(), actions, types, beginDate, endDate);
 	}
 }

@@ -36,11 +36,13 @@ package org.linagora.linshare.core.facade.webservice.user;
 import java.io.File;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.DocumentAttachement;
 import org.linagora.linshare.core.facade.webservice.common.dto.MimeTypeDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface DocumentFacade extends GenericFacade {
 
@@ -74,4 +76,6 @@ public interface DocumentFacade extends GenericFacade {
 	DocumentDto updateFile(File file, String givenFileName,
 			String documentUuid) throws BusinessException;
 
+	Set<AuditLogEntryUser> findAll(String ownerUuid, String uuid, List<String> actions, List<String> types,
+			String beginDate, String endDate);
 }

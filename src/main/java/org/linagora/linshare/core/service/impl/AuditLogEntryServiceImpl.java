@@ -230,6 +230,26 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 		return res;
 	}
 
+	@Override
+	public Set<AuditLogEntryUser> findAll(Account actor, Account owner, String entryUuid, List<String> action,
+			List<String> type, String beginDate, String endDate) {
+		Validate.notNull(actor);
+		Validate.notNull(owner);
+		Validate.notNull(entryUuid);
+		Set<AuditLogEntryUser> res = Sets.newHashSet();
+		List<AuditLogEntryType> supportedTypes = Lists.newArrayList();
+		supportedTypes.add(AuditLogEntryType.DOCUMENT_ENTRY);
+		supportedTypes.add(AuditLogEntryType.SHARE_ENTRY);
+		supportedTypes.add(AuditLogEntryType.ANONYMOUS_SHARE_ENTRY);
+		List<AuditLogEntryType> types = getEntryTypes(type, supportedTypes);
+		List<LogAction> actions = getActions(action);
+		res = userMongoRepository.findDocumentHistoryForUser(
+				owner.getLsUuid(), entryUuid,
+				actions, types,
+				new Sort(Sort.Direction.DESC, CREATION_DATE));
+		return res;
+	}
+
 	protected List<AuditLogEntryType> getEntryTypes(List<String> type, List<AuditLogEntryType> supportedTypes) {
 		List<AuditLogEntryType> types = Lists.newArrayList();
 		if (type != null && !type.isEmpty()) {

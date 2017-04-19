@@ -36,6 +36,7 @@ package org.linagora.linshare.webservice.userv2;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.core.Response;
 
@@ -43,6 +44,7 @@ import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface DocumentRestService {
 
@@ -71,4 +73,7 @@ public interface DocumentRestService {
 	DocumentDto update(String uuid, DocumentDto documentDto) throws BusinessException;
 
 	AsyncTaskDto findAsync(String uuid) throws BusinessException;
+
+	Set<AuditLogEntryUser> findAll(String uuid, List<String> actions, List<String> types, String beginDate,
+			String endDate);
 }

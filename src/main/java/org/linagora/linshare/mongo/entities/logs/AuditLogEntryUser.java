@@ -84,6 +84,9 @@ public abstract class AuditLogEntryUser extends AuditLogEntry {
 	@JsonIgnore
 	protected List<String> relatedAccounts;
 
+	@JsonIgnore
+	protected List<String> relatedResources;
+
 	public AuditLogEntryUser() {
 		super();
 	}
@@ -160,5 +163,23 @@ public abstract class AuditLogEntryUser extends AuditLogEntry {
 			this.relatedAccounts = Lists.newArrayList();
 		}
 		this.relatedAccounts.addAll(Lists.newArrayList(relatedAccounts));
+	}
+
+	public void setRelatedResources(List<String> relatedResources) {
+		this.relatedResources = relatedResources;
+	}
+
+	public void addRelatedResources(List<String> relatedResources) {
+		if (this.relatedResources == null) {
+			this.relatedResources = Lists.newArrayList();
+		}
+		this.relatedResources.addAll(relatedResources);
+	}
+
+	public void addRelatedResources(String... relatedResources) {
+		if (this.relatedResources == null) {
+			this.relatedResources = Lists.newArrayList();
+		}
+		this.relatedResources.addAll(Lists.newArrayList(relatedResources));
 	}
 }

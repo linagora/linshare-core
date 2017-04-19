@@ -55,7 +55,7 @@ public class ShareEntryMto extends EntryMto {
 		super(entry);
 		this.recipient = new AccountMto(entry.getRecipient());
 		this.sender = new AccountMto(entry.getEntryOwner());
-		this.documentEntry = new DocumentMto(entry.getDocumentEntry());
+		this.documentEntry = DocumentMto.buildForShare(entry.getDocumentEntry());
 		this.downloaded = entry.getDownloaded();
 	}
 

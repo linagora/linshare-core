@@ -37,6 +37,7 @@ package org.linagora.linshare.webservice.userv2.impl;
 import java.io.File;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -67,6 +68,7 @@ import org.linagora.linshare.core.facade.webservice.user.AsyncTaskFacade;
 import org.linagora.linshare.core.facade.webservice.user.DocumentAsyncFacade;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.annotations.NoCache;
 import org.linagora.linshare.webservice.userv1.task.DocumentUploadAsyncTask;
@@ -322,6 +324,27 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	public AsyncTaskDto findAsync(@PathParam("uuid") String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "Missing uuid");
 		return asyncTaskFacade.find(uuid);
+	}
+
+	@Path("/{uuid}/audit")
+	@GET
+	@ApiOperation(value = "Get all traces for a document.", response = AuditLogEntryUser.class, responseContainer="Set")
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
+					@ApiResponse(code = 404, message = "Document not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+					})
+	@Override
+	public Set<AuditLogEntryUser> findAll(
+			@ApiParam(value = "The document uuid.", required = true)
+				@PathParam("uuid") String uuid,
+			@ApiParam(value = "Filter by type of actions..", required = false)
+				@QueryParam("actions") List<String> actions,
+			@ApiParam(value = "Filter by type of resource's types.", required = false)
+				@QueryParam("types") List<String> types,
+				@QueryParam("beginDate") String beginDate,
+				@QueryParam("endDate") String endDate) {
+		return documentFacade.findAll(null, uuid, actions, types, beginDate, endDate);
 	}
 
 	protected void logAsyncFailure(AsyncTaskDto asyncTask, Exception e) {

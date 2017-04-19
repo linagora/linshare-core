@@ -53,7 +53,7 @@ public class AnonymousShareEntryMto extends EntryMto {
 		super(entry);
 		this.downloaded = entry.getDownloaded();
 		this.url = new AnonymousUrlMto(entry.getAnonymousUrl());
-		this.documentEntry = new DocumentMto(entry.getDocumentEntry());
+		this.documentEntry = DocumentMto.buildForShare(entry.getDocumentEntry());
 		this.sender = new AccountMto(entry.getEntryOwner());
 	}
 
