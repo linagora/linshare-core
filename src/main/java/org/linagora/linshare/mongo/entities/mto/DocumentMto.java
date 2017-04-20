@@ -54,10 +54,6 @@ public class DocumentMto extends EntryMto {
 		this.size = entry.getSize();
 	}
 
-	public static DocumentMto buildForShare(DocumentEntry entry) {
-		return new DocumentMto(entry);
-	}
-
 	public void setType(String type) {
 		this.type = type;
 	}

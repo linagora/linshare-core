@@ -41,9 +41,11 @@ public class AnonymousShareEntryMto extends EntryMto {
 
 	protected Long downloaded;
 
-	protected DocumentMto documentEntry;
+	protected String type;
 
-	protected AnonymousUrlMto url;
+	protected Long size;
+
+	protected String sha256Sum;
 
 	public AnonymousShareEntryMto() {
 		super();
@@ -52,8 +54,9 @@ public class AnonymousShareEntryMto extends EntryMto {
 	public AnonymousShareEntryMto(AnonymousShareEntry entry) {
 		super(entry);
 		this.downloaded = entry.getDownloaded();
-		this.url = new AnonymousUrlMto(entry.getAnonymousUrl());
-		this.documentEntry = DocumentMto.buildForShare(entry.getDocumentEntry());
+		this.type = entry.getType();
+		this.size = entry.getSize();
+		this.sha256Sum = entry.getDocumentEntry().getSha256sum();
 		this.sender = new AccountMto(entry.getEntryOwner());
 	}
 
@@ -63,22 +66,6 @@ public class AnonymousShareEntryMto extends EntryMto {
 
 	public void setDownloaded(Long downloaded) {
 		this.downloaded = downloaded;
-	}
-
-	public DocumentMto getDocumentEntry() {
-		return documentEntry;
-	}
-
-	public void setDocumentEntry(DocumentMto documentEntry) {
-		this.documentEntry = documentEntry;
-	}
-
-	public AnonymousUrlMto getUrl() {
-		return url;
-	}
-
-	public void setUrl(AnonymousUrlMto url) {
-		this.url = url;
 	}
 
 	public AccountMto getSender() {

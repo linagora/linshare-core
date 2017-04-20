@@ -34,6 +34,9 @@
 
 package org.linagora.linshare.mongo.entities.mto;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import org.linagora.linshare.core.domain.entities.Entry;
 
 public abstract class EntryMto {
@@ -42,6 +45,12 @@ public abstract class EntryMto {
 
 	protected String name;
 
+	protected Date creationDate;
+
+	protected Date modificationDate;
+
+	protected Date expirationDate;
+
 	public EntryMto() {
 		super();
 	}
@@ -49,6 +58,12 @@ public abstract class EntryMto {
 	public EntryMto(Entry entry) {
 		this.uuid = entry.getUuid();
 		this.name = entry.getName();
+		this.creationDate = entry.getCreationDate().getTime();
+		this.modificationDate = entry.getModificationDate().getTime();
+		Calendar expDate = entry.getExpirationDate();
+		if (expDate != null) {
+			this.expirationDate = expDate.getTime();
+		}
 	}
 
 	public String getUuid() {
@@ -65,5 +80,29 @@ public abstract class EntryMto {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+	}
+
+	public Date getExpirationDate() {
+		return expirationDate;
+	}
+
+	public void setExpirationDate(Date expirationDate) {
+		this.expirationDate = expirationDate;
 	}
 }

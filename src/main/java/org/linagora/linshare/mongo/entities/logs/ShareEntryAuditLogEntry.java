@@ -56,7 +56,7 @@ public class ShareEntryAuditLogEntry extends AuditLogEntryUser {
 
 	protected String recipientUuid;
 
-	protected ShareEntryMto resourceUpdated;
+	protected EntryMto resourceUpdated;
 
 	protected ShareEntryGroupMto shareEntryGroup;
 
@@ -107,11 +107,11 @@ public class ShareEntryAuditLogEntry extends AuditLogEntryUser {
 		this.recipientUuid = recipientUuid;
 	}
 
-	public ShareEntryMto getResourceUpdated() {
+	public EntryMto getResourceUpdated() {
 		return resourceUpdated;
 	}
 
-	public void setResourceUpdated(ShareEntryMto resourceUpdated) {
+	public void setResourceUpdated(EntryMto resourceUpdated) {
 		this.resourceUpdated = resourceUpdated;
 	}
 

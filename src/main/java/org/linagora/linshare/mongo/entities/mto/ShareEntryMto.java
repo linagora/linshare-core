@@ -41,11 +41,15 @@ public class ShareEntryMto extends EntryMto {
 
 	protected AccountMto recipient;
 
-	protected DocumentMto documentEntry;
-
 	protected Long downloaded;
 
 	protected String shareUuid;
+
+	protected String type;
+
+	protected Long size;
+
+	protected String sha256Sum;
 
 	public ShareEntryMto() {
 		super();
@@ -55,7 +59,9 @@ public class ShareEntryMto extends EntryMto {
 		super(entry);
 		this.recipient = new AccountMto(entry.getRecipient());
 		this.sender = new AccountMto(entry.getEntryOwner());
-		this.documentEntry = DocumentMto.buildForShare(entry.getDocumentEntry());
+		this.type = entry.getType();
+		this.size = entry.getSize();
+		this.sha256Sum = entry.getDocumentEntry().getSha256sum();
 		this.downloaded = entry.getDownloaded();
 	}
 
@@ -73,14 +79,6 @@ public class ShareEntryMto extends EntryMto {
 
 	public void setRecipient(AccountMto recipient) {
 		this.recipient = recipient;
-	}
-
-	public DocumentMto getDocumentEntry() {
-		return documentEntry;
-	}
-
-	public void setDocumentEntry(DocumentMto documentEntry) {
-		this.documentEntry = documentEntry;
 	}
 
 	public Long getDownloaded() {
