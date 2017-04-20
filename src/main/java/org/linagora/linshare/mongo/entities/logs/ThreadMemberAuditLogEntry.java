@@ -39,11 +39,14 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupLightDto;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.ThreadMemberMto;
 
 @XmlRootElement
 public class ThreadMemberAuditLogEntry extends AuditLogEntryUser {
+
+	protected WorkGroupLightDto workGroup;
 
 	protected ThreadMemberMto resource;
 
@@ -57,6 +60,7 @@ public class ThreadMemberAuditLogEntry extends AuditLogEntryUser {
 			ThreadMember member) {
 		super(new AccountMto(actor), new AccountMto(owner), action, type, member.getUser().getLsUuid());
 		this.resource = new ThreadMemberMto(member);
+		this.workGroup = new WorkGroupLightDto(member.getThread());
 	}
 
 	public ThreadMemberMto getResource() {
@@ -73,5 +77,13 @@ public class ThreadMemberAuditLogEntry extends AuditLogEntryUser {
 
 	public void setResourceUpdated(ThreadMemberMto resourceUpdated) {
 		this.resourceUpdated = resourceUpdated;
+	}
+
+	public WorkGroupLightDto getWorkGroup() {
+		return workGroup;
+	}
+
+	public void setWorkGroup(WorkGroupLightDto workGroup) {
+		this.workGroup = workGroup;
 	}
 }

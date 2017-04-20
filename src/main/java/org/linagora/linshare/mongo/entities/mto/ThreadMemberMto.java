@@ -38,7 +38,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupLightDto
 
 public class ThreadMemberMto {
 
-	protected WorkGroupLightDto workgroup;
+	protected WorkGroupLightDto workGroup;
 
 	protected AccountMto user;
 
@@ -50,18 +50,18 @@ public class ThreadMemberMto {
 	}
 
 	public ThreadMemberMto(ThreadMember member) {
-		this.workgroup = new WorkGroupLightDto(member.getThread());
+		this.workGroup = new WorkGroupLightDto(member.getThread());
 		this.user = new AccountMto(member.getUser(), true);
 		this.canUpload = member.getCanUpload();
 		this.admin = member.getAdmin();
 	}
 
-	public WorkGroupLightDto getWorkgroup() {
-		return workgroup;
+	public WorkGroupLightDto getWorkGroup() {
+		return workGroup;
 	}
 
-	public void setWorkgroup(WorkGroupLightDto workgroup) {
-		this.workgroup = workgroup;
+	public void setWorkGroup(WorkGroupLightDto workGroup) {
+		this.workGroup = workGroup;
 	}
 
 	public AccountMto getUser() {

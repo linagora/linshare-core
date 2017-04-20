@@ -365,14 +365,14 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		checkUpdatePermission(actor, owner, Thread.class,
 				BusinessErrorCode.THREAD_FORBIDDEN, thread);
 		ThreadAuditLogEntry log = new ThreadAuditLogEntry(actor, owner, LogAction.UPDATE, AuditLogEntryType.WORKGROUP,
-				new ThreadMto(thread, false));
+				new ThreadMto(thread, true));
 		thread.setName(threadName);
 		Thread update = threadRepository.update(thread);
 		User owner2 = (User) owner;
 		WorkGroupNode rootFolder = workGroupNodeService.getRootFolder(actor, owner2, thread);
 		rootFolder.setName(threadName);
 		workGroupNodeService.update(actor, owner2, thread, rootFolder);
-		log.setResourceUpdated(new ThreadMto(update, false));
+		log.setResourceUpdated(new ThreadMto(update, true));
 		logEntryService.insert(log);
 		return update;
 	}
