@@ -214,7 +214,7 @@ public class ShaBatchImplTest extends AbstractTransactionalJUnit4SpringContextTe
 				)
 		);
 		functionalities.add(
-				new UnitValueFunctionality("FILE_EXPIRATION",
+				new UnitValueFunctionality("DOCUMENT_EXPIRATION",
 					true,
 					new Policy(Policies.ALLOWED, false),
 					new Policy(Policies.ALLOWED, false),

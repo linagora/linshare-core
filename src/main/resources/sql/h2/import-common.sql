@@ -113,7 +113,7 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 
 
 -- Functionality : TIME_STAMPING
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (13, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (13, false, false, 2, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (14, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (7, false, 'TIME_STAMPING', 13, 14, 1);
 INSERT INTO functionality_string(functionality_id, string_value) VALUES (7, 'http://localhost:8080/signserver/tsa?signerId=1');
@@ -167,10 +167,10 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (48, true);
 
 
--- Functionality : FILE_EXPIRATION
+-- Functionality : DOCUMENT_EXPIRATION
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (21, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (22, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (11, false, 'FILE_EXPIRATION', 21, 22, 1);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (11, false, 'DOCUMENT_EXPIRATION', 21, 22, 1);
 INSERT INTO unit(id, unit_type, unit_value) VALUES (5, 0, 2);
 INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (11, 3, 5);
 
@@ -205,7 +205,7 @@ INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (15, t
 
 
 -- Functionality : COMPLETION
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (31, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (31, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (32, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (16, false, 'COMPLETION', 31, 32, 1);
 INSERT INTO functionality_integer(functionality_id, integer_value) VALUES (16, 3);
@@ -277,7 +277,7 @@ INSERT INTO functionality_string(functionality_id, string_value) VALUES (25, 'li
 
 
 -- Functionality : UPLOAD_REQUEST
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (63, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (63, false, false, 2, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (64, true, true, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES(31, false, 'UPLOAD_REQUEST', 63, 64, 1);
 INSERT INTO functionality_string(functionality_id, string_value) VALUES (31, 'http://linshare-upload-request.local');
@@ -380,7 +380,7 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (43, true);
 
 -- Functionality : UPLOAD_PROPOSITION
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (101, false, false, 2, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (101, false, false, 2, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (102, true, true, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES(44, false, 'UPLOAD_PROPOSITION', 101, 102, 1);
 
@@ -392,7 +392,7 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (51, true);
 
 -- Functionality : UPLOAD_REQUEST_ENABLE_TEMPLATE
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (129, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (129, false, false, 2, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (130, true, true, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, param) VALUES(53, false, 'UPLOAD_REQUEST_ENABLE_TEMPLATE', 129, 130, 1, false);
 

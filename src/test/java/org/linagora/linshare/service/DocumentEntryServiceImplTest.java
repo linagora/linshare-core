@@ -192,7 +192,7 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 				new Policy(Policies.ALLOWED, false),
 				new Policy(Policies.ALLOWED, false), jane.getDomain(), ""));
 
-		functionalities.add(new UnitValueFunctionality("FILE_EXPIRATION", true,
+		functionalities.add(new UnitValueFunctionality("DOCUMENT_EXPIRATION", true,
 				new Policy(Policies.ALLOWED, false),
 				new Policy(Policies.ALLOWED, false), jane.getDomain(), value,
 				new TimeUnitClass(TimeUnit.DAY)));

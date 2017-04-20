@@ -117,7 +117,7 @@ public class FunctionalityReadOnlyServiceImpl implements
 
 	@Override
 	public TimeUnitValueFunctionality getDefaultFileExpiryTimeFunctionality(AbstractDomain domain) {
-		return new TimeUnitValueFunctionality((UnitValueFunctionality)_getFunctionality(domain, FunctionalityNames.FILE_EXPIRATION));
+		return new TimeUnitValueFunctionality((UnitValueFunctionality)_getFunctionality(domain, FunctionalityNames.DOCUMENT_EXPIRATION));
 	}
 
 	@Override
