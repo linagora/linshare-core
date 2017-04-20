@@ -107,6 +107,7 @@ public interface ThreadMemberRepository extends AbstractRepository<ThreadMember>
 	 * @return the List of ThreadMember
 	 */
 	public List<ThreadMember> findAllThreadMembers(Thread thread);
+	public List<String> findAllAccountUuidForThreadMembers(Thread thread);
 
 	/**
 	 * Find members with deleted accounts

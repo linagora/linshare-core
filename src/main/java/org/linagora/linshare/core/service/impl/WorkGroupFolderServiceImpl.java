@@ -44,6 +44,7 @@ import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.service.AntiSamyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.WorkGroupFolderService;
@@ -57,10 +58,11 @@ public class WorkGroupFolderServiceImpl extends WorkGroupNodeAbstractServiceImpl
 
 	public WorkGroupFolderServiceImpl(
 			WorkGroupNodeMongoRepository repository,
+			ThreadMemberRepository threadMemberRepository,
 			MongoTemplate mongoTemplate,
 			AntiSamyService antiSamyService,
 			LogEntryService logEntryService) {
-		super(repository, mongoTemplate, antiSamyService, logEntryService);
+		super(repository, mongoTemplate, antiSamyService, threadMemberRepository, logEntryService);
 	}
 
 	@Override
@@ -106,7 +108,9 @@ public class WorkGroupFolderServiceImpl extends WorkGroupNodeAbstractServiceImpl
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_FOLDER_ALREADY_EXISTS,
 					"Can not create a new folder, it already exists.");
 		}
-		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE, AuditLogEntryType.WORKGROUP_FOLDER, workGroupNode, workGroup);
+		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
+				AuditLogEntryType.WORKGROUP_FOLDER, workGroupNode, workGroup);
+		addMembersToLog(workGroup, log);
 		logEntryService.insert(log);
 		return workGroupNode;
 	}
@@ -116,6 +120,7 @@ public class WorkGroupFolderServiceImpl extends WorkGroupNodeAbstractServiceImpl
 			throws BusinessException {
 		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DELETE,
 				AuditLogEntryType.WORKGROUP_FOLDER, workGroupNode, workGroup);
+		addMembersToLog(workGroup, log);
 		logEntryService.insert(log);
 		repository.delete(workGroupNode);
 		return workGroupNode;

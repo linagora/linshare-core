@@ -252,6 +252,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		threadRepository.update(thread);
 		ThreadMemberAuditLogEntry log = new ThreadMemberAuditLogEntry(actor, owner, LogAction.CREATE,
 				AuditLogEntryType.WORKGROUP_MEMBER, member);
+		addMembersToLog(thread, log);
 		logEntryService.insert(log);
 		return member;
 	}
@@ -267,6 +268,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN, member);
 		ThreadMemberAuditLogEntry log = new ThreadMemberAuditLogEntry(actor, owner, LogAction.UPDATE,
 				AuditLogEntryType.WORKGROUP_MEMBER, member);
+		addMembersToLog(thread, log);
 		member.setAdmin(admin);
 		member.setCanUpload(canUpload);
 		ThreadMember res = threadMemberRepository.update(member);
@@ -292,6 +294,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		threadMemberRepository.delete(member);
 		ThreadMemberAuditLogEntry log = new ThreadMemberAuditLogEntry(actor, owner, LogAction.DELETE,
 				AuditLogEntryType.WORKGROUP_MEMBER, member);
+		addMembersToLog(thread, log);
 		logEntryService.insert(log);
 		return member;
 	}
@@ -320,10 +323,10 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 			thread.getMyMembers().remove(threadMember);
 			threadRepository.update(thread);
 			threadMemberRepository.delete((ThreadMember) threadMember);
-			audits.add(
-					new ThreadMemberAuditLogEntry(actor, actor, LogAction.DELETE,
-							AuditLogEntryType.WORKGROUP_MEMBER, (ThreadMember)threadMember)
-					);
+			ThreadMemberAuditLogEntry log = new ThreadMemberAuditLogEntry(actor, actor, LogAction.DELETE,
+					AuditLogEntryType.WORKGROUP_MEMBER, (ThreadMember) threadMember);
+			addMembersToLog(thread, log);
+			audits.add(log);
 		}
 		logEntryService.insert(audits);
 	}
@@ -345,6 +348,9 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		checkDeletePermission(actor, owner, Thread.class,
 				BusinessErrorCode.THREAD_FORBIDDEN, thread);
 		User owner2 = (User) owner;
+		ThreadAuditLogEntry threadAuditLog = new ThreadAuditLogEntry(actor, owner, LogAction.DELETE,
+				AuditLogEntryType.WORKGROUP, new ThreadMto(thread, true));
+		addMembersToLog(thread, threadAuditLog);
 		WorkGroupNode rootFolder = workGroupNodeService.getRootFolder(actor, owner2, thread);
 		workGroupNodeService.delete(actor, owner2, thread, rootFolder.getUuid());
 		thread.setEntries(null);
@@ -353,8 +359,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		this.deleteAllMembers(actor, thread);
 		// Deleting the thread
 		threadRepository.delete(thread);
-		ThreadAuditLogEntry threadAuditLog = new ThreadAuditLogEntry(actor, owner, LogAction.DELETE,
-				AuditLogEntryType.WORKGROUP, new ThreadMto(thread, true));
 		logEntryService.insert(threadAuditLog);
 	}
 
@@ -367,6 +371,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		ThreadAuditLogEntry log = new ThreadAuditLogEntry(actor, owner, LogAction.UPDATE, AuditLogEntryType.WORKGROUP,
 				new ThreadMto(thread, true));
 		thread.setName(threadName);
+		addMembersToLog(thread, log);
 		Thread update = threadRepository.update(thread);
 		User owner2 = (User) owner;
 		WorkGroupNode rootFolder = workGroupNodeService.getRootFolder(actor, owner2, thread);
@@ -409,6 +414,10 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
      *                   Helpers
      ************************************************************ */
 
+	protected void addMembersToLog(Thread thread, AuditLogEntryUser log) {
+		List<String> members = threadMemberRepository.findAllAccountUuidForThreadMembers(thread);
+		log.addRelatedAccounts(members);
+	}
 
 	/**
 	 * Check if actor is admin of the thread and so has the right to perform any action.

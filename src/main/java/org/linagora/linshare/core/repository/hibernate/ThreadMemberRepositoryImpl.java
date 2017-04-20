@@ -132,6 +132,18 @@ public class ThreadMemberRepositoryImpl extends
 	}
 
 	@Override
+	public List<String> findAllAccountUuidForThreadMembers(Thread thread) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		det.createAlias("user", "member");
+		det.add(Restrictions.eq("thread", thread));
+		det.add(Restrictions.eq("member.destroyed", 0L));
+		det.setProjection(Projections.property("member.lsUuid"));
+		@SuppressWarnings("unchecked")
+		List<String> ret = (List<String>)listByCriteria(det);
+		return ret;
+	}
+
+	@Override
 	public List<ThreadMember> findAllInconsistentThreadMembers(Thread thread) {
 		DetachedCriteria det = DetachedCriteria.forClass(ThreadMember.class);
 		det.createAlias("user", "member");

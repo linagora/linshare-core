@@ -55,6 +55,7 @@ import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.service.AntiSamyService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
@@ -88,10 +89,11 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 			MimeTypeMagicNumberDao mimeTypeIdentifier,
 			AntiSamyService antiSamyService,
 			WorkGroupNodeMongoRepository workGroupNodeMongoRepository,
+			ThreadMemberRepository threadMemberRepository,
 			MongoTemplate mongoTemplate,
 			OperationHistoryBusinessService operationHistoryBusinessService,
 			QuotaService quotaService) {
-		super(workGroupNodeMongoRepository, mongoTemplate, antiSamyService, logEntryService);
+		super(workGroupNodeMongoRepository, mongoTemplate, antiSamyService, threadMemberRepository, logEntryService);
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
@@ -138,6 +140,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 
 			WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
 					AuditLogEntryType.WORKGROUP_DOCUMENT, document, workgroup);
+			addMembersToLog(workgroup, log);
 			logEntryService.insert(log);
 			addToQuota(workgroup, size);
 		} finally {
@@ -161,6 +164,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
 				AuditLogEntryType.WORKGROUP_DOCUMENT, node, workGroup);
 		log.setCause(LogActionCause.COPY);
+		addMembersToLog(workGroup, log);
 		logEntryService.insert(log);
 		addToQuota(workGroup, documentEntry.getSize());
 		return node;
@@ -176,6 +180,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
 				AuditLogEntryType.WORKGROUP_DOCUMENT, node, workGroup);
 		log.setCause(LogActionCause.COPY);
+		addMembersToLog(workGroup, log);
 		logEntryService.insert(log);
 		addToQuota(workGroup, nodeSource.getSize());
 		return node;
@@ -186,6 +191,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 			throws BusinessException {
 		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DELETE,
 				AuditLogEntryType.WORKGROUP_DOCUMENT, workGroupNode, workGroup);
+		addMembersToLog(workGroup, log);
 		logEntryService.insert(log);
 		delFromQuota(workGroup, ((WorkGroupDocument)workGroupNode).getSize());
 		repository.delete(workGroupNode);
@@ -197,6 +203,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 			throws BusinessException {
 		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DOWNLOAD,
 				AuditLogEntryType.WORKGROUP_DOCUMENT, node, workGroup);
+		addMembersToLog(workGroup, log);
 		logEntryService.insert(log);
 		return documentEntryBusinessService.getDocumentStream(node);
 	}

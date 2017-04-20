@@ -41,11 +41,13 @@ import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.service.AntiSamyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.WorkGroupNodeAbstractService;
 import org.linagora.linshare.core.utils.UniqueName;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +61,8 @@ public abstract class WorkGroupNodeAbstractServiceImpl implements WorkGroupNodeA
 
 	protected final WorkGroupNodeMongoRepository repository;
 
+	protected final ThreadMemberRepository threadMemberRepository;
+
 	protected final MongoTemplate mongoTemplate;
 
 	protected final LogEntryService logEntryService;
@@ -69,12 +73,14 @@ public abstract class WorkGroupNodeAbstractServiceImpl implements WorkGroupNodeA
 			WorkGroupNodeMongoRepository repository,
 			MongoTemplate mongoTemplate,
 			AntiSamyService antiSamyService,
+			ThreadMemberRepository threadMemberRepository,
 			LogEntryService logEntryService) {
 		super();
 		this.repository = repository;
 		this.mongoTemplate = mongoTemplate;
 		this.logEntryService = logEntryService;
 		this.antiSamyService = antiSamyService;
+		this.threadMemberRepository = threadMemberRepository;
 	}
 
 	protected abstract BusinessErrorCode getBusinessExceptionAlreadyExists();
@@ -146,5 +152,10 @@ public abstract class WorkGroupNodeAbstractServiceImpl implements WorkGroupNodeA
 
 	protected boolean isRevison(WorkGroupNode node) {
 		return node.getNodeType().equals(WorkGroupNodeType.DOCUMENT_REVISION);
+	}
+
+	protected void addMembersToLog(Thread thread, AuditLogEntryUser log) {
+		List<String> members = threadMemberRepository.findAllAccountUuidForThreadMembers(thread);
+		log.addRelatedAccounts(members);
 	}
 }
