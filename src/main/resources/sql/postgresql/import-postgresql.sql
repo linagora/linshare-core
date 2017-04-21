@@ -479,10 +479,9 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 
 --Functionality : CONTACTS_LIST__CREATION_RIGHT
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (55, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (56, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (227, false, false, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param) VALUES(27, false, 'CONTACTS_LIST__CREATION_RIGHT', 55, 56, 227, 1, 'CONTACTS_LIST', true);
-INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (27, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (56, false, false, 2, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param) VALUES(27, false, 'CONTACTS_LIST__CREATION_RIGHT', 55, 56, null, 1, 'CONTACTS_LIST', true);
+
 
 -- Functionality : DOMAIN
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (118, true, true, 0, true);
