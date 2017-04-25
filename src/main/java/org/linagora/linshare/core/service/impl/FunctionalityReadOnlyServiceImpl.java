@@ -149,8 +149,8 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
-	public BooleanValueFunctionality getGuestsExpirationDateProlongation(AbstractDomain domain) {
-		return (BooleanValueFunctionality)_getFunctionality(domain, FunctionalityNames.GUESTS__EXPIRATION_ALLOW_PROLONGATION);
+	public Functionality getGuestsExpirationDateProlongation(AbstractDomain domain) {
+		return _getFunctionality(domain, FunctionalityNames.GUESTS__EXPIRATION_ALLOW_PROLONGATION);
 	}
 
 	@Override
@@ -249,8 +249,8 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
-	public BooleanValueFunctionality getContactsListCreationFunctionality(AbstractDomain domain) {
-		return (BooleanValueFunctionality)_getFunctionality(domain, FunctionalityNames.CONTACTS_LIST__CREATION_RIGHT);
+	public Functionality getContactsListCreationFunctionality(AbstractDomain domain) {
+		return _getFunctionality(domain, FunctionalityNames.CONTACTS_LIST__CREATION_RIGHT);
 	}
 
 	@Override

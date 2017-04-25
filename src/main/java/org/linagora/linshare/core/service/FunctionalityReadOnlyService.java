@@ -62,7 +62,7 @@ public interface FunctionalityReadOnlyService {
 	TimeUnitValueFunctionality getGuestsExpiration (AbstractDomain domain);
 	BooleanValueFunctionality getGuestsRestricted(AbstractDomain domain);
 	BooleanValueFunctionality getGuestsCanUpload(AbstractDomain domain);
-	BooleanValueFunctionality getGuestsExpirationDateProlongation(AbstractDomain domain);
+	Functionality getGuestsExpirationDateProlongation(AbstractDomain domain);
 
 	StringValueFunctionality getTimeStampingFunctionality(AbstractDomain domain);
 	StringValueFunctionality getDomainMailFunctionality(AbstractDomain domain);
@@ -86,7 +86,7 @@ public interface FunctionalityReadOnlyService {
 	IntegerValueFunctionality getCompletionFunctionality(AbstractDomain domain);
 	Functionality getWorkGroupFunctionality(AbstractDomain domain);
 	Functionality getContactsListFunctionality(AbstractDomain domain);
-	BooleanValueFunctionality getContactsListCreationFunctionality(AbstractDomain domain);
+	Functionality getContactsListCreationFunctionality(AbstractDomain domain);
 
 	// UPLOAD_REQUEST
 	StringValueFunctionality getUploadRequestFunctionality(AbstractDomain domain);

@@ -274,7 +274,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 					newExpirationDate,
 					functionalityReadOnlyService
 							.getGuestsExpirationDateProlongation(
-									owner.getDomain()).getDelegationPolicy()
+									owner.getDomain()).getActivationPolicy()
 							.getStatus(), entity);
 		} else {
 			guest.setExpirationDate(entity.getExpirationDate());
