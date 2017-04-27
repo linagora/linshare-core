@@ -46,7 +46,6 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.AuditLogEntryResourceAccessControl;
@@ -95,12 +94,6 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 	}
 
 	@Override
-	public List<AuditLogEntryAdmin> findByActor(Account actor, String uuid) {
-		Validate.notNull(actor);
-		return auditMongoRepository.findByActor(uuid);
-	}
-
-	@Override
 	public List<AuditLogEntryAdmin> findByAction(Account actor, String action) {
 		Validate.notNull(actor);
 		Validate.notEmpty(action);
@@ -129,14 +122,6 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 	}
 
 	@Override
-	public List<AuditLogEntryUser> userFindByActor(Account actor, String uuid) {
-		Validate.notNull(actor);
-		Validate.notEmpty(uuid);
-		User user = userService.findByLsUuid(uuid);
-		return userMongoRepository.findByActorUuid(user.getLsUuid());
-	}
-
-	@Override
 	public List<AuditLogEntryUser> userFindByAction(Account actor, String action) {
 		Validate.notNull(actor);
 		Validate.notEmpty(action);
@@ -144,37 +129,10 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 	}
 
 	@Override
-	public List<AuditLogEntryUser> userFindByOwner(Account actor, String uuid) {
-		Validate.notNull(actor);
-		Validate.notEmpty(uuid);
-		User user = userService.findByLsUuid(uuid);
-		return userMongoRepository.findByOwnerUuid(user.getLsUuid());
-	}
-
-	@Override
 	public List<AuditLogEntryUser> userFindByType(Account actor, AuditLogEntryType type) {
 		Validate.notNull(actor);
 		Validate.notNull(type);
 		return userMongoRepository.findByType(type);
-	}
-
-	@Override
-	public List<AuditLogEntryUser> userFindByActorUuidAndAction(String actorUuid, String action, Account actor) {
-		Validate.notEmpty(actorUuid);
-		Validate.notEmpty(action);
-		Validate.notNull(actor);
-		User user = userService.findByLsUuid(actorUuid);
-		return userMongoRepository.findByActorUuidAndAction(user.getLsUuid(), action);
-	}
-
-	@Override
-	public List<AuditLogEntryUser> userFindByActorUuidAndAction(Account actor, String actorUuid, String ownerUuid) {
-		Validate.notEmpty(actorUuid);
-		Validate.notEmpty(ownerUuid);
-		Validate.notNull(actor);
-		User owner = userService.findByLsUuid(ownerUuid);
-		User user = userService.findByLsUuid(actorUuid);
-		return userMongoRepository.findByActorUuidOrOwnerUuid(user.getLsUuid(), owner.getLsUuid());
 	}
 
 	@Override

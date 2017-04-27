@@ -53,8 +53,8 @@ public class AuthenticationAuditLogEntryUser extends AuditLogEntryUser {
 		super();
 	}
 
-	public AuthenticationAuditLogEntryUser(Account actor, LogAction action, AuditLogEntryType type, String message) {
-		super(new AccountMto(actor), new AccountMto(actor), action, type, actor.getLsUuid());
+	public AuthenticationAuditLogEntryUser(Account authUser, LogAction action, AuditLogEntryType type, String message) {
+		super(new AccountMto(authUser), new AccountMto(authUser), action, type, authUser.getLsUuid());
 		this.message = message;
 	}
 

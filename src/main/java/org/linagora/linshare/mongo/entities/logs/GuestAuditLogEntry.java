@@ -51,8 +51,8 @@ public class GuestAuditLogEntry extends AuditLogEntryUser {
 	public GuestAuditLogEntry() {
 	}
 
-	public GuestAuditLogEntry(Account actor, Account owner, LogAction action, AuditLogEntryType type, Guest guest) {
-		super(new AccountMto(actor), new AccountMto(owner), action, type, guest.getLsUuid());
+	public GuestAuditLogEntry(Account authUser, Account owner, LogAction action, AuditLogEntryType type, Guest guest) {
+		super(new AccountMto(authUser), new AccountMto(owner), action, type, guest.getLsUuid());
 		this.resource = new UserMto(guest);
 	}
 

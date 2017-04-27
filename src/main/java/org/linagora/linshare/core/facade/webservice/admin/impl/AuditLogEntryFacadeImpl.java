@@ -55,67 +55,44 @@ public class AuditLogEntryFacadeImpl extends AdminGenericFacadeImpl implements A
 
 	@Override
 	public List<AuditLogEntryAdmin> findAll() {
-		Account actor = checkAuthentication(Role.ADMIN);
-		return service.findAll(actor);
-	}
-
-	@Override
-	public List<AuditLogEntryAdmin> findByActor(String uuid) {
-		Account actor = checkAuthentication(Role.ADMIN);
-		return service.findByActor(actor, uuid);
+		Account authUser = checkAuthentication(Role.ADMIN);
+		return service.findAll(authUser);
 	}
 
 	@Override
 	public List<AuditLogEntryAdmin> findByDomain(String uuid) {
-		Account actor = checkAuthentication(Role.ADMIN);
-		return service.findByDomain(actor, uuid);
+		Account authUser = checkAuthentication(Role.ADMIN);
+		return service.findByDomain(authUser, uuid);
 	}
 
 	@Override
 	public List<AuditLogEntryAdmin> findByType(AuditLogEntryType type) {
-		Account actor = checkAuthentication(Role.ADMIN);
-		return service.findByType(actor, type);
+		Account authUser = checkAuthentication(Role.ADMIN);
+		return service.findByType(authUser, type);
 	}
 
 	@Override
 	public List<AuditLogEntryAdmin> findByAction(String action) {
-		Account actor = checkAuthentication(Role.ADMIN);
-		return service.findByAction(actor, action);
+		Account authUser = checkAuthentication(Role.ADMIN);
+		return service.findByAction(authUser, action);
 	}
 
 	@Override
 	public List<AuditLogEntryUser> userFindAll() {
-		Account actor = checkAuthentication(Role.ADMIN);
-		return service.userFindAll(actor);
-	}
-
-	@Override
-	public List<AuditLogEntryUser> userFindByActor(String uuid) {
-		Account actor = checkAuthentication(Role.ADMIN);
-		return service.userFindByActor(actor, uuid);
+		Account authUser = checkAuthentication(Role.ADMIN);
+		return service.userFindAll(authUser);
 	}
 
 	@Override
 	public List<AuditLogEntryUser> userFindByAction(String action) {
-		Account actor = checkAuthentication(Role.ADMIN);
-		return service.userFindByAction(actor, action);
-	}
-
-	@Override
-	public List<AuditLogEntryUser> userFindByOwner(String uuid) {
-		Account actor = checkAuthentication(Role.ADMIN);
-		return service.userFindByOwner(actor, uuid);
+		Account authUser = checkAuthentication(Role.ADMIN);
+		return service.userFindByAction(authUser, action);
 	}
 
 	@Override
 	public List<AuditLogEntryUser> userFindByType(AuditLogEntryType type) {
-		Account actor = checkAuthentication(Role.ADMIN);
-		return service.userFindByType(actor, type);
+		Account authUser = checkAuthentication(Role.ADMIN);
+		return service.userFindByType(authUser, type);
 	}
 
-	@Override
-	public List<AuditLogEntryUser> userFindByActorUuidAndAction(String actorUuid, String action) {
-		Account actor = checkAuthentication(Role.ADMIN);
-		return service.userFindByActorUuidAndAction(actorUuid, action, actor);
-	}
 }

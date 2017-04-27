@@ -64,9 +64,9 @@ public class ShareEntryAuditLogEntry extends AuditLogEntryUser {
 		super();
 	}
 
-	public ShareEntryAuditLogEntry(Account actor, Account owner, LogAction action, ShareEntry entry,
+	public ShareEntryAuditLogEntry(Account authUser, Account owner, LogAction action, ShareEntry entry,
 			AuditLogEntryType type) {
-		super(new AccountMto(actor), new AccountMto(owner), action, type, entry.getUuid());
+		super(new AccountMto(authUser), new AccountMto(owner), action, type, entry.getUuid());
 		this.recipientMail = entry.getRecipient().getMail();
 		this.recipientUuid = entry.getRecipient().getLsUuid();
 		this.resource = new ShareEntryMto(entry);
@@ -74,9 +74,9 @@ public class ShareEntryAuditLogEntry extends AuditLogEntryUser {
 		this.addRelatedResources(entry.getDocumentEntry().getUuid());
 	}
 
-	public ShareEntryAuditLogEntry(Account actor, Account owner, LogAction action, AnonymousShareEntry entry,
+	public ShareEntryAuditLogEntry(Account authUser, Account owner, LogAction action, AnonymousShareEntry entry,
 			AuditLogEntryType type) {
-		super(new AccountMto(actor), new AccountMto(owner), action, type, entry.getUuid());
+		super(new AccountMto(authUser), new AccountMto(owner), action, type, entry.getUuid());
 		this.recipientMail = entry.getAnonymousUrl().getContact().getMail();
 		this.resource = new AnonymousShareEntryMto(entry);
 		this.shareEntryGroup = new ShareEntryGroupMto(entry.getShareEntryGroup());

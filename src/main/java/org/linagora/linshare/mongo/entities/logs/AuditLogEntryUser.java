@@ -79,7 +79,7 @@ import com.google.common.collect.Lists;
 	UserPreferenceAuditLogEntry.class})
 public abstract class AuditLogEntryUser extends AuditLogEntry {
 
-	protected AccountMto owner;
+	protected AccountMto actor;
 
 	@JsonIgnore
 	protected List<String> relatedAccounts;
@@ -91,11 +91,11 @@ public abstract class AuditLogEntryUser extends AuditLogEntry {
 		super();
 	}
 
-	public AuditLogEntryUser(AccountMto actor, AccountMto owner, LogAction action, AuditLogEntryType type,
+	public AuditLogEntryUser(AccountMto authUser, AccountMto actor, LogAction action, AuditLogEntryType type,
 			String resourceUuid) {
 		super();
+		this.authUser = authUser;
 		this.actor = actor;
-		this.owner = owner;
 		this.action = action;
 		this.creationDate = new Date();
 		this.type = type;
@@ -105,8 +105,8 @@ public abstract class AuditLogEntryUser extends AuditLogEntry {
 
 	public AuditLogEntryUser(ShareEntryAuditLogEntry log) {
 		super();
+		this.authUser = log.getAuthUser();
 		this.actor = log.getActor();
-		this.owner = log.getOwner();
 		this.action = log.getAction();
 		this.creationDate = log.getCreationDate();
 		this.type = log.getType();
@@ -116,8 +116,8 @@ public abstract class AuditLogEntryUser extends AuditLogEntry {
 
 	public AuditLogEntryUser(ThreadAuditLogEntry log) {
 		super();
+		this.authUser = log.getAuthUser();
 		this.actor = log.getActor();
-		this.owner = log.getOwner();
 		this.action = log.getAction();
 		this.creationDate = log.getCreationDate();
 		this.type = log.getType();
@@ -127,20 +127,20 @@ public abstract class AuditLogEntryUser extends AuditLogEntry {
 
 	protected void initRelatedAccountField() {
 		this.relatedAccounts = Lists.newArrayList();
-		String actorUuid = actor.getUuid();
-		String ownerUuid = owner.getUuid();
+		String actorUuid = authUser.getUuid();
+		String ownerUuid = actor.getUuid();
 		this.relatedAccounts.add(actorUuid);
 		if (!actorUuid.equals(ownerUuid)) {
 			this.relatedAccounts.add(ownerUuid);
 		}
 	}
 
-	public AccountMto getOwner() {
-		return owner;
+	public AccountMto getActor() {
+		return actor;
 	}
 
-	public void setOwner(AccountMto owner) {
-		this.owner = owner;
+	public void setActor(AccountMto actor) {
+		this.actor = actor;
 	}
 
 	public List<String> getRelatedAccounts() {

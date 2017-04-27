@@ -48,19 +48,15 @@ public interface AuditUserMongoRepository extends MongoRepository<AuditLogEntryU
 
 	List<AuditLogEntryUser> findByAction(String action);
 
-	List<AuditLogEntryUser> findByActorUuidAndAction(String actorUuid, String action);
-
-	List<AuditLogEntryUser> findByActorUuidOrOwnerUuid(String actorUuid, String ownerUuid);
-
-	@Query("{ 'owner.uuid' : ?0 }")
-	List<AuditLogEntryUser> findByOwnerUuid(String ownerUuid);
-
 	@Query("{ 'actor.uuid' : ?0 }")
 	List<AuditLogEntryUser> findByActorUuid(String actor);
 
+	@Query("{ 'authUser.uuid' : ?0 }")
+	List<AuditLogEntryUser> findByAuthUserUuid(String authUser);
+
 	List<AuditLogEntryUser> findByType(AuditLogEntryType type);
 
-//	@Query("{'$or' : [ {'actor.uuid' : ?0}, {'owner.uuid' : ?0} ], 'action' : {'$in' : ?1 }, 'type' : { '$in' : ?2 } , 'creationDate' : { '$gt' : '?3' , '$lt' : '?4'} }")
+//	@Query("{'$or' : [ {'authUser.uuid' : ?0}, {'actor.uuid' : ?0} ], 'action' : {'$in' : ?1 }, 'type' : { '$in' : ?2 } , 'creationDate' : { '$gt' : '?3' , '$lt' : '?4'} }")
 	@Query("{'relatedAccounts': {'$elemMatch' : { '$eq' : ?0 }}, 'action' : {'$in' : ?1 }, 'type' : { '$in' : ?2 } , 'creationDate' : { '$gt' : '?3' , '$lt' : '?4'} }")
 	Set<AuditLogEntryUser> findForUser(String ownerUuid, List<LogAction> actions, List<AuditLogEntryType> types, Date beginDate,
 			Date endDate);

@@ -56,9 +56,9 @@ public class WorkGroupNodeAuditLogEntry extends AuditLogEntryUser {
 		super();
 	}
 
-	public WorkGroupNodeAuditLogEntry(Account actor, Account owner, LogAction action, AuditLogEntryType type,
+	public WorkGroupNodeAuditLogEntry(Account authUser, Account owner, LogAction action, AuditLogEntryType type,
 			WorkGroupNode node, Thread workGroup) {
-		super(new AccountMto(actor), new AccountMto(owner), action, type, node.getUuid());
+		super(new AccountMto(authUser), new AccountMto(owner), action, type, node.getUuid());
 		this.resource = buildCopy(node);
 		this.workGroup = new WorkGroupLightDto(workGroup);
 	}

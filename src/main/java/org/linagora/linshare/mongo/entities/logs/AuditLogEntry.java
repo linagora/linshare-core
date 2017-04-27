@@ -55,7 +55,7 @@ public class AuditLogEntry {
 
 	protected String uuid;
 
-	protected AccountMto actor;
+	protected AccountMto authUser;
 
 	protected String resourceUuid;
 
@@ -93,12 +93,12 @@ public class AuditLogEntry {
 		this.uuid = uuid;
 	}
 
-	public AccountMto getActor() {
-		return actor;
+	public AccountMto getAuthUser() {
+		return authUser;
 	}
 
 	public void setActor(AccountMto actor) {
-		this.actor = actor;
+		this.authUser = actor;
 	}
 
 	public String getResourceUuid() {
@@ -163,7 +163,7 @@ public class AuditLogEntry {
 
 	@Override
 	public String toString() {
-		return "AuditLogEntry [actor=" + actor + ", resourceUuid=" + resourceUuid + ", action=" + action + ", type="
+		return "AuditLogEntry [AuthUser=" + authUser + ", resourceUuid=" + resourceUuid + ", action=" + action + ", type="
 				+ type + ", creationDate=" + creationDate + "]";
 	}
 }

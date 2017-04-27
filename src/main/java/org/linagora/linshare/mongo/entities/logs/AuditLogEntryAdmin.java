@@ -66,9 +66,9 @@ public abstract class AuditLogEntryAdmin extends AuditLogEntry {
 		super();
 	}
 
-	public AuditLogEntryAdmin(Account actor, String targetDomainUuid, LogAction action, AuditLogEntryType type, String resourceUuid) {
+	public AuditLogEntryAdmin(Account authUser, String targetDomainUuid, LogAction action, AuditLogEntryType type, String resourceUuid) {
 		super();
-		this.actor = new AccountMto(actor);
+		this.authUser = new AccountMto(authUser);
 		this.targetDomainUuid = targetDomainUuid;
 		this.type = type;
 		this.action = action;

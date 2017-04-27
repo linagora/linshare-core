@@ -56,7 +56,7 @@ public class AuditLogEntryResourceAccessControlImpl
 				if (actor.getPermission().getAccountPermissions().contains(TechnicalAccountPermissionType.AUDIT_LIST)) {
 					return true;
 				}
-			} else if (actor.equals(entry.getOwner())) {
+			} else if (actor.equals(entry.getActor())) {
 				return true;
 			}
 		}

@@ -53,8 +53,8 @@ public class ThreadAuditLogEntry extends AuditLogEntryUser {
 	public ThreadAuditLogEntry() {
 	}
 
-	public ThreadAuditLogEntry(Account actor, Account owner, LogAction action, AuditLogEntryType type, ThreadMto thread) {
-		super(new AccountMto(actor), new AccountMto(owner), action, type, thread.getUuid());
+	public ThreadAuditLogEntry(Account authUser, Account owner, LogAction action, AuditLogEntryType type, ThreadMto thread) {
+		super(new AccountMto(authUser), new AccountMto(owner), action, type, thread.getUuid());
 		this.resource = thread;
 	}
 

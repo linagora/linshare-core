@@ -47,8 +47,6 @@ public interface AuditLogEntryService {
 
 	List<AuditLogEntryAdmin> findAll(Account actor);
 
-	List<AuditLogEntryAdmin> findByActor(Account actor, String uuid);
-
 	List<AuditLogEntryAdmin> findByAction(Account actor, String action);
 
 	List<AuditLogEntryAdmin> findByDomain(Account actor, String uuid);
@@ -57,17 +55,9 @@ public interface AuditLogEntryService {
 
 	List<AuditLogEntryUser> userFindAll(Account actor);
 
-	List<AuditLogEntryUser> userFindByActor(Account actor, String uuid);
-
 	List<AuditLogEntryUser> userFindByAction(Account actor, String action);
 
-	List<AuditLogEntryUser> userFindByOwner(Account actor, String uuid);
-
 	List<AuditLogEntryUser> userFindByType(Account actor, AuditLogEntryType type);
-
-	List<AuditLogEntryUser> userFindByActorUuidAndAction(String actorUuid, String action, Account actor);
-
-	List<AuditLogEntryUser> userFindByActorUuidAndAction(Account actor, String actorUuid, String ownerUuid);
 
 	Set<AuditLogEntryUser> findAll(Account actor, Account owner, List<String> action, List<String> type, boolean forceAll, String beginDate, String endDate);
 

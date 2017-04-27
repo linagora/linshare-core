@@ -43,8 +43,6 @@ public interface AuditLogEntryFacade extends AdminGenericFacade {
 
 	List<AuditLogEntryAdmin> findAll();
 
-	List<AuditLogEntryAdmin> findByActor(String uuid);
-
 	List<AuditLogEntryAdmin> findByAction(String action);
 
 	List<AuditLogEntryAdmin> findByDomain(String uuid);
@@ -53,13 +51,8 @@ public interface AuditLogEntryFacade extends AdminGenericFacade {
 
 	List<AuditLogEntryUser> userFindAll();
 
-	List<AuditLogEntryUser> userFindByActor(String uuid);
-
 	List<AuditLogEntryUser> userFindByAction(String action);
-
-	List<AuditLogEntryUser> userFindByOwner(String uuid);
 
 	List<AuditLogEntryUser> userFindByType(AuditLogEntryType type);
 
-	List<AuditLogEntryUser> userFindByActorUuidAndAction(String actorUuid, String action);
 }

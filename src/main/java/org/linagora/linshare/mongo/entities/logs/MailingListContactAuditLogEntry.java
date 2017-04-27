@@ -52,9 +52,9 @@ public class MailingListContactAuditLogEntry extends AuditLogEntryUser {
 	public MailingListContactAuditLogEntry() {
 	}
 
-	public MailingListContactAuditLogEntry(AccountMto actor, AccountMto owner, LogAction action, AuditLogEntryType type,
+	public MailingListContactAuditLogEntry(AccountMto authUser, AccountMto owner, LogAction action, AuditLogEntryType type,
 			MailingList list, MailingListContact contact) {
-		super(actor, owner, action, type, contact.getUuid());
+		super(authUser, owner, action, type, contact.getUuid());
 		this.resource = new MailingListContactMto(contact);
 		this.list = new MailingListMto(list);
 	}

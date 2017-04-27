@@ -48,9 +48,9 @@ public class LdapConnectionAuditLogEntry extends AuditLogEntryAdmin {
 	public LdapConnectionAuditLogEntry() {
 	}
 
-	public LdapConnectionAuditLogEntry(Account actor, String domainUuid, LogAction action, AuditLogEntryType type,
+	public LdapConnectionAuditLogEntry(Account authUser, String domainUuid, LogAction action, AuditLogEntryType type,
 			LdapConnection connection) {
-		super(actor, domainUuid, action, type, connection.getUuid());
+		super(authUser, domainUuid, action, type, connection.getUuid());
 		this.setResource(new LdapConnectionMto(connection));
 	}
 

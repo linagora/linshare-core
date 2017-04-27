@@ -48,15 +48,15 @@ public class DomainPatternAuditLogEntry extends AuditLogEntryAdmin {
 	public DomainPatternAuditLogEntry() {
 	}
 
-	public DomainPatternAuditLogEntry(Account actor, String domainUuid, LogAction action, AuditLogEntryType type,
+	public DomainPatternAuditLogEntry(Account authUser, String domainUuid, LogAction action, AuditLogEntryType type,
 			UserLdapPattern pattern) {
-		super(actor, domainUuid, action, type, pattern.getUuid());
+		super(authUser, domainUuid, action, type, pattern.getUuid());
 		this.resource = new DomainPatternMto(pattern, false);
 	}
 
-	public DomainPatternAuditLogEntry(Account actor, String domainUuid, LogAction action, AuditLogEntryType type,
+	public DomainPatternAuditLogEntry(Account authUser, String domainUuid, LogAction action, AuditLogEntryType type,
 			UserLdapPattern resource, UserLdapPattern update) {
-		super(actor, domainUuid, action, type, resource.getUuid());
+		super(authUser, domainUuid, action, type, resource.getUuid());
 		this.resource = new DomainPatternMto(resource, true);
 		this.setResourceUpdated(new DomainPatternMto(update, true));
 	}

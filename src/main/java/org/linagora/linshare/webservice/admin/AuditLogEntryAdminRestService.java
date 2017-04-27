@@ -47,19 +47,12 @@ public interface AuditLogEntryAdminRestService {
 
 	List<AuditLogEntryAdmin> findByDomainUuid(String domainUuid);
 
-	List<AuditLogEntryAdmin> findByActorUuid(String actorUuid);
-
 	List<AuditLogEntryAdmin> findByType(String type);
 
 	List<AuditLogEntryUser> userFindAll();
 
 	List<AuditLogEntryUser> userFindByAction(String action);
 
-	List<AuditLogEntryUser> userFindByOwnerUuid(String domainUuid);
-
-	List<AuditLogEntryUser> userFindByActorUuid(String actorUuid);
-
 	List<AuditLogEntryUser> userFindByType(String type);
 
-	List<AuditLogEntryUser> userFindByActorUuidAndAction(String actorUuid, String action);
 }

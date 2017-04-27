@@ -56,9 +56,9 @@ public class ThreadMemberAuditLogEntry extends AuditLogEntryUser {
 		super();
 	}
 
-	public ThreadMemberAuditLogEntry(Account actor, Account owner, LogAction action, AuditLogEntryType type,
+	public ThreadMemberAuditLogEntry(Account authUser, Account owner, LogAction action, AuditLogEntryType type,
 			ThreadMember member) {
-		super(new AccountMto(actor), new AccountMto(owner), action, type, member.getUser().getLsUuid());
+		super(new AccountMto(authUser), new AccountMto(owner), action, type, member.getUser().getLsUuid());
 		this.resource = new ThreadMemberMto(member);
 		this.workGroup = new WorkGroupLightDto(member.getThread());
 	}

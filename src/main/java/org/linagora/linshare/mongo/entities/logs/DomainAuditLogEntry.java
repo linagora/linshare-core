@@ -48,8 +48,8 @@ public class DomainAuditLogEntry extends AuditLogEntryAdmin {
 	public DomainAuditLogEntry() {
 	}
 
-	public DomainAuditLogEntry(Account actor, LogAction action, AuditLogEntryType type, AbstractDomain domain) {
-		super(actor, domain.getUuid(), action, type, domain.getUuid());
+	public DomainAuditLogEntry(Account authUser, LogAction action, AuditLogEntryType type, AbstractDomain domain) {
+		super(authUser, domain.getUuid(), action, type, domain.getUuid());
 		this.setDomain(new DomainMto(domain));
 	}
 

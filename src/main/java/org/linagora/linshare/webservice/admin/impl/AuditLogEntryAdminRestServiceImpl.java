@@ -82,13 +82,6 @@ public class AuditLogEntryAdminRestServiceImpl implements AuditLogEntryAdminRest
 		return auditLogFacade.findByDomain(domainUuid);
 	}
 
-	@Path("/byActor/{actorUuid}")
-	@GET
-	@Override
-	public List<AuditLogEntryAdmin> findByActorUuid(@PathParam("actorUuid") String actorUuid) {
-		return auditLogFacade.findByActor(actorUuid);
-	}
-
 	@Path("byType/{type}")
 	@GET
 	@Override
@@ -110,20 +103,6 @@ public class AuditLogEntryAdminRestServiceImpl implements AuditLogEntryAdminRest
 		return auditLogFacade.userFindByAction(action);
 	}
 
-	@Path("/user/byOwner/{ownerUuid}")
-	@GET
-	@Override
-	public List<AuditLogEntryUser> userFindByOwnerUuid(@PathParam("ownerUuid") String ownerUuid) {
-		return auditLogFacade.userFindByOwner(ownerUuid);
-	}
-
-	@Path("/user/byActor/{actorUuid}")
-	@GET
-	@Override
-	public List<AuditLogEntryUser> userFindByActorUuid(@PathParam("actorUuid") String actorUuid) {
-		return auditLogFacade.userFindByActor(actorUuid);
-	}
-
 	@Path("/user/byType/{type}")
 	@GET
 	@Override
@@ -131,11 +110,4 @@ public class AuditLogEntryAdminRestServiceImpl implements AuditLogEntryAdminRest
 		return auditLogFacade.userFindByType(AuditLogEntryType.fromString(type));
 	}
 
-	@Path("/user/{actorUuid}/{action}")
-	@GET
-	@Override
-	public List<AuditLogEntryUser> userFindByActorUuidAndAction(@PathParam("actorUuid") String actorUuid,
-			@PathParam("action") String action) {
-		return auditLogFacade.userFindByActorUuidAndAction(actorUuid, action);
-	}
 }

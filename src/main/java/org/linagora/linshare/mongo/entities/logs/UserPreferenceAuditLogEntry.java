@@ -49,8 +49,8 @@ public class UserPreferenceAuditLogEntry extends AuditLogEntryUser {
 		super();
 	}
 
-	public UserPreferenceAuditLogEntry(Account actor, Account owner, LogAction action, AuditLogEntryType type, UserPreference resource) {
-		super(new AccountMto(actor), new AccountMto(owner), action, type, resource.getUuid());
+	public UserPreferenceAuditLogEntry(Account authUser, Account owner, LogAction action, AuditLogEntryType type, UserPreference resource) {
+		super(new AccountMto(authUser), new AccountMto(owner), action, type, resource.getUuid());
 		this.resource = resource;
 	}
 
