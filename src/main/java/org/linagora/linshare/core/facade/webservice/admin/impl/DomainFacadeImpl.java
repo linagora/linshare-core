@@ -146,7 +146,10 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 			 res = DomainDto.getSimple(entity);
 		 }
 		 DomainQuota quota = quotaService.find(entity);
-		 res.setQuota(quota.getUuid());
+		 // Workaround from 1.12 to 2.00. quota could be null.
+		 if (quota != null) {
+			 res.setQuota(quota.getUuid());
+		 }
 		 DomainDto rootdomain = res;
 		 if (parent) {
 			 if (entity.getParentDomain() != null) {
