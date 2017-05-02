@@ -96,7 +96,7 @@ public class LdapUserDetailsProvider extends UserDetailsProvider {
 			}
 		} catch (BusinessException e) {
 			logger.error("Couldn't find user during authentication process : "
-					+ e.getMessage());
+					+ e.getMessage(), e);
 			logAuthError(login, null, e.getMessage());
 			throw new AuthenticationServiceException(
 					"Could not authenticate user: " + login);

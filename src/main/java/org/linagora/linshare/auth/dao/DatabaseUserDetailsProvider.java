@@ -34,7 +34,6 @@
 package org.linagora.linshare.auth.dao;
 
 import java.util.List;
-import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
