@@ -46,7 +46,8 @@ import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.BatchResultContext;
-import org.linagora.linshare.core.job.quartz.Context;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
+import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.ShareWarnUndownloadedFilesharesEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
@@ -83,7 +84,7 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public List<String> getAll() {
+	public List<String> getAll(BatchRunContext batchRunContext) {
 		logger.info("UndownloadedSharedDocumentsBatchImpl job starting ...");
 		List<String> allUuids = service.findAllAboutToBeNotified(getSystemAccount(), getSystemAccount());
 		logger.info(allUuids.size() + " shareEntryGroup with undownloaded documents");
@@ -91,17 +92,17 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public Context execute(String identifier, long total, long position)
+	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		SystemAccount actor = getSystemAccount();
 		ShareEntryGroup shareEntryGroup = service.find(actor, actor, identifier);
 
-		Context context = new BatchResultContext<ShareEntryGroup>(shareEntryGroup);
+		ResultContext context = new BatchResultContext<ShareEntryGroup>(shareEntryGroup);
 		MailContainerWithRecipient mail = null;
 		List<AuditLogEntryUser> logs = null;
 		try {
 			// No more info ?
-			logInfo(total, position, "processing shareEntryGroup : " + shareEntryGroup.getUuid());
+			logInfo(batchRunContext, total, position, "processing shareEntryGroup : " + shareEntryGroup.getUuid());
 			logger.info("needNotification : " + shareEntryGroup.needNotification());
 			shareEntryGroup.setProcessed(true);
 			if (shareEntryGroup.needNotification()) {
@@ -119,7 +120,7 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 			}
 			service.update(actor, actor, shareEntryGroup);
 		} catch (BusinessException businessException) {
-			logError(total, position, "Error while trying to send a notification for undownloaded shared documents");
+			logError(total, position, "Error while trying to send a notification for undownloaded shared documents", batchRunContext);
 			logger.error("Error occured while sending notification ", businessException);
 			BatchBusinessException exception = new BatchBusinessException(context,
 					"Error while trying to send a notification for undownloaded shared documents");
@@ -148,26 +149,26 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public void notify(Context context, long total, long position) {
+	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		@SuppressWarnings("unchecked")
 		BatchResultContext<ShareEntryGroup> shareEntryGroupContext = (BatchResultContext<ShareEntryGroup>) context;
 
-		logInfo(total, position, "The notification for the shareEntryGroup "
+		logInfo(batchRunContext, total, position, "The notification for the shareEntryGroup "
 				+ shareEntryGroupContext.getResource().getUuid() + " has been successfully sent ");
 	}
 
 	@Override
-	public void notifyError(BatchBusinessException exception, String identifier, long total, long position) {
+	public void notifyError(BatchBusinessException exception, String identifier, long total, long position, BatchRunContext batchRunContext) {
 		@SuppressWarnings("unchecked")
 		BatchResultContext<ShareEntryGroup> context = (BatchResultContext<ShareEntryGroup>) exception.getContext();
 		logError(total, position,
-				"Sending undownload shared documents notification has failed : " + context.getResource().getUuid());
+				"Sending undownload shared documents notification has failed : " + context.getResource().getUuid(), batchRunContext);
 		logger.error("Error occured while Sending undownload shared documents notification "
 				+ context.getResource().getUuid() + ". BatchBusinessException ", exception);
 	}
 
 	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors, long total, long processed) {
+	public void terminate(BatchRunContext batchRunContext, List<String> all, long errors, long unhandled_errors, long total, long processed) {
 		long success = total - errors - unhandled_errors;
 		logger.info(success + " notification have been sent.");
 		if (errors > 0) {

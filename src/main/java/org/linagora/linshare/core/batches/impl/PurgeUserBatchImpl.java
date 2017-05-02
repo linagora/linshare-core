@@ -41,7 +41,8 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.AccountBatchResultContext;
-import org.linagora.linshare.core.job.quartz.Context;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
+import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.UserService;
 
@@ -57,7 +58,7 @@ public class PurgeUserBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public List<String> getAll() {
+	public List<String> getAll(BatchRunContext batchRunContext) {
 		logger.info("PurgeUserBatchImpl job starting ...");
 		List<String> allUsers = service.findAllAccountsReadyToPurge();
 		logger.info(allUsers.size() + " user(s) have been found to be purged");
@@ -65,19 +66,19 @@ public class PurgeUserBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public Context execute(String identifier, long total, long position)
+	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		SystemAccount actor = getSystemAccount();
 		User resource = service.findAccountsReadyToPurge(actor, identifier);
-		Context context = new AccountBatchResultContext(resource);
+		ResultContext context = new AccountBatchResultContext(resource);
 		try {
-			logInfo(total, position, "processing user : " + resource.getAccountRepresentation());
+			logInfo(batchRunContext, total, position, "processing user : " + resource.getAccountRepresentation());
 			service.purge(actor, resource.getLsUuid());
 			logger.info("Deleted user " + resource.getAccountRepresentation()
 					+ " has been purged.");
 		} catch (BusinessException businessException) {
 			logError(total, position,
-					"Error while trying to purge users");
+					"Error while trying to purge users", batchRunContext);
 			logger.info("Error occured while purging users ",
 					businessException);
 			BatchBusinessException exception = new BatchBusinessException(
@@ -89,24 +90,24 @@ public class PurgeUserBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public void notify(Context context, long total, long position) {
+	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		AccountBatchResultContext guestContext = (AccountBatchResultContext) context;
 		Account user = guestContext.getResource();
-		logInfo(total, position, "The User "
+		logInfo(batchRunContext, total, position, "The User "
 				+ user.getAccountRepresentation()
 				+ " has been successfully purged ");
 	}
 
 	@Override
 	public void notifyError(BatchBusinessException exception,
-			String identifier, long total, long position) {
+			String identifier, long total, long position, BatchRunContext batchRunContext) {
 		AccountBatchResultContext context = (AccountBatchResultContext) exception.getContext();
 		Account user = context.getResource();
 		logError(
 				total,
 				position,
 				"Purging User has failed : "
-						+ user.getAccountRepresentation());
+						+ user.getAccountRepresentation(), batchRunContext);
 		logger.error(
 				"Error occured while purging user "
 						+ user.getAccountRepresentation()
@@ -114,8 +115,8 @@ public class PurgeUserBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors,
-			long total, long processed) {
+	public void terminate(BatchRunContext batchRunContext, List<String> all, long errors,
+			long unhandled_errors, long total, long processed) {
 		long success = total - errors - unhandled_errors;
 		logger.info(success
 				+ " user(s) have been purged.");

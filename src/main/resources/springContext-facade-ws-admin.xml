@@ -179,4 +179,8 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="accountQuotaService" />
 	</bean>
+	<bean id="wsAdminUpgradeTaskFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.UpgradeTaskFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="upgradeTaskService" />
+	</bean>
 </beans>

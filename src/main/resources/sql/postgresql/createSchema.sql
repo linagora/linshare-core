@@ -53,6 +53,7 @@ CREATE TABLE document (
   check_mime_type bool DEFAULT 'false' NOT NULL,
   sha1sum         varchar(255),
   sha256sum       varchar(255),
+  to_upgrade      bool DEFAULT 'false' NOT NULL,
   CONSTRAINT linshare_document_pkey
     PRIMARY KEY (id));
 CREATE TABLE document_entry (
@@ -251,6 +252,7 @@ CREATE TABLE ldap_attribute (
 CREATE TABLE thread (
   account_id int8 NOT NULL,
   name       varchar(255) NOT NULL,
+  to_upgrade bool DEFAULT 'false' NOT NULL,
   PRIMARY KEY (account_id));
 CREATE TABLE thread_entry (
   entry_id      int8 NOT NULL,
@@ -674,6 +676,7 @@ CREATE TABLE mail_activation (
   PRIMARY KEY (id));
 CREATE TABLE async_task (
   id                     int8 NOT NULL,
+  upgrade_task_id       int8,
   owner_id              int8 NOT NULL,
   actor_id              int8 NOT NULL,
   domain_abstract_id    int8 NOT NULL,
@@ -763,6 +766,23 @@ CREATE TABLE batch_history (
   active_date      timestamp(6) NOT NULL,
   errors           int8 NOT NULL,
   unhandled_errors int8 NOT NULL,
+  once             bool DEFAULT 'false' NOT NULL,
+  async_task_uuid  varchar(255),
+  extras           text,
+  PRIMARY KEY (id));
+CREATE TABLE upgrade_task (
+  id                 int8 NOT NULL,
+  uuid              varchar(255) NOT NULL,
+  identifier        varchar(255) NOT NULL,
+  task_group        varchar(255) NOT NULL,
+  parent_uuid       varchar(255),
+  parent_identifier varchar(255),
+  task_order        int4 NOT NULL,
+  status            varchar(255) NOT NULL,
+  creation_date     date NOT NULL,
+  modification_date date NOT NULL,
+  extras            text,
+  async_task_uuid   varchar(255),
   PRIMARY KEY (id));
 CREATE UNIQUE INDEX account_lsuid_index
   ON account (ls_uuid);
@@ -962,3 +982,4 @@ ALTER TABLE quota ADD CONSTRAINT domain FOREIGN KEY (domain_id) REFERENCES domai
 ALTER TABLE mail_footer_lang ADD CONSTRAINT mailconfig_mailfooterlang FOREIGN KEY (mail_config_id) REFERENCES mail_config (id);
 ALTER TABLE mail_content_lang ADD CONSTRAINT FKmail_conte910199 FOREIGN KEY (mail_config_id) REFERENCES mail_config (id);
 ALTER TABLE mail_config ADD CONSTRAINT FKmail_confi688067 FOREIGN KEY (mail_layout_id) REFERENCES mail_layout (id);
+ALTER TABLE async_task ADD CONSTRAINT FKasync_task970702 FOREIGN KEY (upgrade_task_id) REFERENCES upgrade_task (id);

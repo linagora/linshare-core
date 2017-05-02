@@ -283,4 +283,9 @@
 	<bean name="batchHistoryRepository" class="org.linagora.linshare.core.repository.hibernate.BatchHistoryRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
+
+	<bean name="upgradeTaskRepository" class="org.linagora.linshare.core.repository.hibernate.UpgradeTaskRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
 </beans>

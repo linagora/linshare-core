@@ -99,6 +99,8 @@ public class Document implements Serializable {
 
 	protected String sha256sum;
 
+	protected Boolean toUpgrade;
+
 	/* Constructor for tests */
 	public Document(String uuid, String name, String type, Calendar creationDate,
 			Calendar expirationDate, User owner, Boolean encrypted,
@@ -111,6 +113,7 @@ public class Document implements Serializable {
 		this.timeStamp = null;
 		this.thmbUuid = null;
 		this.checkMimeType = false;
+		this.toUpgrade = false;
 	}
 
 	/**
@@ -131,6 +134,7 @@ public class Document implements Serializable {
 		this.thmbUuid = null;
 		this.checkMimeType = false;
 		this.bucketUuid = metadata.getBucketUuid();
+		this.toUpgrade = false;
 	}
 
 	@Deprecated
@@ -143,6 +147,7 @@ public class Document implements Serializable {
 		this.timeStamp = null;
 		this.thmbUuid = null;
 		this.checkMimeType = false;
+		this.toUpgrade = false;
 	}
 
 	@Override
@@ -293,5 +298,13 @@ public class Document implements Serializable {
 		return "Document [uuid=" + uuid
 				+ ", type=" + type + ", size=" + size + ", sha256sum="
 				+ sha256sum + "]";
+	}
+
+	public Boolean getToUpgrade() {
+		return toUpgrade;
+	}
+
+	public void setToUpgrade(Boolean toUpgrade) {
+		this.toUpgrade = toUpgrade;
 	}
 }

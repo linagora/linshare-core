@@ -41,7 +41,8 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.job.quartz.Context;
+import org.linagora.linshare.core.job.quartz.ResultContext;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.DomainBatchResultContext;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.AccountRepository;
@@ -62,7 +63,7 @@ public class ComputeSubDomainQuotaBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public List<String> getAll() {
+	public List<String> getAll(BatchRunContext batchRunContext) {
 		logger.info(getClass().toString() + " job starting ...");
 		// First all top domains (aka root domain children.
 		List<String> entries = domainRepository.getAllSubDomainIdentifiers(LinShareConstants.rootDomainIdentifier);
@@ -73,19 +74,19 @@ public class ComputeSubDomainQuotaBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public Context execute(String identifier, long total, long position)
+	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		AbstractDomain domain = domainRepository.findById(identifier);
-		Context context = new DomainBatchResultContext(domain);
+		ResultContext context = new DomainBatchResultContext(domain);
 		try {
-			logDebug(total, position, "processing domain : " + domain.toString());
+			logDebug(batchRunContext, total, position, "processing domain : " + domain.toString());
 			Long subdomains = domainQuotaRepository.sumOfCurrentValueForSubdomains(domain);
 			DomainQuota quota = domainQuotaRepository.find(domain);
 			quota.setCurrentValueForSubdomains(subdomains);
 			domainQuotaRepository.update(quota);
 		} catch (BusinessException businessException) {
 			logError(total, position,
-					"Error while trying to update domain: " + domain.toString());
+					"Error while trying to update domain: " + domain.toString(), batchRunContext);
 			logger.info("Error occured while processing quota domain :", businessException);
 			BatchBusinessException exception = new BatchBusinessException(
 					context, "Error while trying to updating domain.");
@@ -97,23 +98,23 @@ public class ComputeSubDomainQuotaBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public void notify(Context context, long total, long position) {
+	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		DomainBatchResultContext domainContext = (DomainBatchResultContext) context;
-		logDebug(total, position, "Subdomains used space updated for domain : " + domainContext.getResource().toString());
+		logDebug(batchRunContext, total, position, "Subdomains used space updated for domain : " + domainContext.getResource().toString());
 	}
 
 	@Override
-	public void notifyError(BatchBusinessException exception, String identifier, long total, long position) {
+	public void notifyError(BatchBusinessException exception, String identifier, long total, long position, BatchRunContext batchRunContext) {
 		DomainBatchResultContext domainContext = (DomainBatchResultContext) exception.getContext();
 		String ressource = domainContext.getResource().toString();
-		logError(total, position, "Subdomains used space update failed for domain : " + ressource);
+		logError(total, position, "Subdomains used space update failed for domain : " + ressource, batchRunContext);
 		logger.error(
 				"Error occured while updating Subdomains used space for domain "+ ressource + ". BatchBusinessException ",
 				exception);
 	}
 
 	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors, long total, long processed) {
+	public void terminate(BatchRunContext batchRunContext, List<String> all, long errors, long unhandled_errors, long total, long processed) {
 		long success = total - errors - unhandled_errors;
 		logger.info(success + " domain(s) have been updated.");
 		if (errors > 0) {

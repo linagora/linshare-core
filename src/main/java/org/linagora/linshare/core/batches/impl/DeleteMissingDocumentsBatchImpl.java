@@ -48,7 +48,8 @@ import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.BatchResultContext;
-import org.linagora.linshare.core.job.quartz.Context;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
+import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.service.DocumentEntryService;
@@ -87,7 +88,7 @@ public class DeleteMissingDocumentsBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public List<String> getAll() {
+	public List<String> getAll(BatchRunContext batchRunContext) {
 		logger.info(getClass().toString() + " job starting ...");
 		List<String> entries = documentRepository.findAllIdentifiers();
 		logger.info(entries.size()
@@ -96,16 +97,16 @@ public class DeleteMissingDocumentsBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public Context execute(String identifier, long total, long position)
+	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		SystemAccount actor = getSystemAccount();
 		Document resource = documentRepository.findByUuid(identifier);
 		if (resource == null) {
 			return null;
 		}
-		logDebug(total, position,
+		logDebug(batchRunContext, total, position,
 				"processing document : " + resource.getRepresentation());
-		Context context = new BatchResultContext<Document>(resource);
+		ResultContext context = new BatchResultContext<Document>(resource);
 		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, resource);
 		if (!fileDataStore.exists(metadata)) {
 			Set<DocumentEntry> documentEntries = resource.getDocumentEntries();
@@ -123,7 +124,7 @@ public class DeleteMissingDocumentsBatchImpl extends GenericBatchImpl {
 					logWarn(total,
 							position,
 							"The inconsistent document (document entry related){} has been successfully deleted.",
-							resource.getRepresentation());
+							batchRunContext, resource.getRepresentation());
 				}
 			}
 			// TODO:FMA:Workgroups
@@ -147,30 +148,30 @@ public class DeleteMissingDocumentsBatchImpl extends GenericBatchImpl {
 			logWarn(total,
 					position,
 					"Removing a document unrelated to an entry  {} because of inconsistency",
-					resource.getRepresentation());
+					batchRunContext, resource.getRepresentation());
 		}
 		return context;
 	}
 
 	@Override
-	public void notify(Context context, long total, long position) {
+	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		// Nothing to notify.
 	}
 
 	@Override
 	public void notifyError(BatchBusinessException exception,
-			String identifier, long total, long position) {
+			String identifier, long total, long position, BatchRunContext batchRunContext) {
 		@SuppressWarnings("unchecked")
 		BatchResultContext<Document> context = (BatchResultContext<Document>) exception
 				.getContext();
 		Document entry = context.getResource();
 		logError(total, position, "cleaning document has failed : {}",
-				entry.getRepresentation(), exception);
+				batchRunContext, entry.getRepresentation(), exception);
 	}
 
 	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors,
-			long total, long processed) {
+	public void terminate(BatchRunContext batchRunContext, List<String> all, long errors,
+			long unhandled_errors, long total, long processed) {
 		long success = total - errors - unhandled_errors;
 		logger.info(success + " document(s) have been checked.");
 		if (errors > 0) {

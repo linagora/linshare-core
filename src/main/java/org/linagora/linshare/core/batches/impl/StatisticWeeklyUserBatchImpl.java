@@ -49,7 +49,8 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.AccountBatchResultContext;
-import org.linagora.linshare.core.job.quartz.Context;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
+import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.UserService;
 
@@ -77,7 +78,7 @@ public class StatisticWeeklyUserBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public List<String> getAll() {
+	public List<String> getAll(BatchRunContext batchRunContext) {
 		logger.info("WeeklyUserBathImpl job starting");
 		List<String> users = userDailyStatBusinessService.findUuidAccountBetweenTwoDates(getFirstDayOfLastWeek(),
 				getLastDayOfLastWeek());
@@ -86,12 +87,12 @@ public class StatisticWeeklyUserBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public Context execute(String identifier, long total, long position)
+	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		User resource = userService.findByLsUuid(identifier);
-		Context context = new AccountBatchResultContext(resource);
+		ResultContext context = new AccountBatchResultContext(resource);
 		try {
-			logInfo(total, position, "processing user : " + resource.getAccountRepresentation());
+			logInfo(batchRunContext, total, position, "processing user : " + resource.getAccountRepresentation());
 			userWeeklyStatBusinessService.create(resource, getFirstDayOfLastWeek(), getLastDayOfLastWeek());
 		} catch (BusinessException businessException) {
 			GregorianCalendar calendar = new GregorianCalendar();
@@ -99,7 +100,7 @@ public class StatisticWeeklyUserBatchImpl extends GenericBatchImpl {
 			logError(total, position,
 					"Error while trying to create a UserWeeklyStat for user " + resource
 							.getAccountRepresentation() + " in the week "
-					+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US));
+					+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US), batchRunContext);
 			logger.info("Error occurred while creating a weekly statistics for user "
 					+ resource.getAccountRepresentation() + " in the week "
 					+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US),
@@ -113,21 +114,21 @@ public class StatisticWeeklyUserBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public void notify(Context context, long total, long position) {
+	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		AccountBatchResultContext userContext = (AccountBatchResultContext) context;
 		Account user = userContext.getResource();
-		logInfo(total, position,
-				"the WeeklyUserStat for " + user.getAccountRepresentation() + " has been successfully created.");
+		logInfo(batchRunContext, total,
+				position, "the WeeklyUserStat for " + user.getAccountRepresentation() + " has been successfully created.");
 	}
 
 	@Override
-	public void notifyError(BatchBusinessException exception, String identifier, long total, long position) {
+	public void notifyError(BatchBusinessException exception, String identifier, long total, long position, BatchRunContext batchRunContext) {
 		AccountBatchResultContext context = (AccountBatchResultContext) exception.getContext();
 		Account user = context.getResource();
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.add(GregorianCalendar.DATE, -7);
 		logError(total, position, "creating WeeklyUserStatistic has failed for user " + user.getAccountRepresentation()
-				+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US));
+				+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US), batchRunContext);
 		logger.error("Error occured while creating WeeklyUserStatistic for user " + user.getAccountRepresentation()
 				+ " in the week "
 				+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US)
@@ -135,8 +136,8 @@ public class StatisticWeeklyUserBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors, long total,
-			long processed) {
+	public void terminate(BatchRunContext batchRunContext, List<String> all, long errors, long unhandled_errors,
+			long total, long processed) {
 		long success = total - errors - unhandled_errors;
 		logger.info(success + " WeeklyUserStatistic for user(s) have bean created.");
 		if (errors > 0) {

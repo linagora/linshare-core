@@ -44,7 +44,8 @@ import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.job.quartz.Context;
+import org.linagora.linshare.core.job.quartz.ResultContext;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.EntryBatchResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
@@ -71,7 +72,7 @@ public class DeleteExpiredAnonymousShareEntryBatchImpl extends GenericBatchImpl 
 	}
 
 	@Override
-	public List<String> getAll() {
+	public List<String> getAll(BatchRunContext batchRunContext) {
 		logger.info(getClass().toString() + " job starting ...");
 		SystemAccount actor = getSystemAccount();
 		List<String> allShares = service.findAllExpiredEntries(actor, actor);
@@ -81,16 +82,16 @@ public class DeleteExpiredAnonymousShareEntryBatchImpl extends GenericBatchImpl 
 	}
 
 	@Override
-	public Context execute(String identifier, long total, long position)
+	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 
 		SystemAccount actor = getSystemAccount();
 		AnonymousShareEntry resource = service.find(actor, actor, identifier);
-		Context context = new EntryBatchResultContext(resource);
+		ResultContext context = new EntryBatchResultContext(resource);
 		try {
-			logInfo(total,
-					position,
-					"processing anonymous share : "
+			logInfo(batchRunContext,
+					total,
+					position, "processing anonymous share : "
 							+ resource.getRepresentation());
 			AbstractDomain domain = resource.getEntryOwner().getDomain();
 			TimeUnitValueFunctionality func = functionalityService
@@ -109,7 +110,7 @@ public class DeleteExpiredAnonymousShareEntryBatchImpl extends GenericBatchImpl 
 					+ resource.getRepresentation());
 		} catch (BusinessException businessException) {
 			logError(total, position,
-					"Error while trying to delete expired shares");
+					"Error while trying to delete expired shares", batchRunContext);
 			logger.info("Error occured while cleaning expired shares",
 					businessException);
 			BatchBusinessException exception = new BatchBusinessException(
@@ -121,30 +122,30 @@ public class DeleteExpiredAnonymousShareEntryBatchImpl extends GenericBatchImpl 
 	}
 
 	@Override
-	public void notify(Context context, long total, long position) {
+	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		EntryBatchResultContext shareContext = (EntryBatchResultContext) context;
 		Entry share = shareContext.getResource();
-		logInfo(total, position,
-				"The anonymous share " + share.getRepresentation()
+		logInfo(batchRunContext, total,
+				position, "The anonymous share " + share.getRepresentation()
 						+ " has been successfully deleted.");
 	}
 
 	@Override
 	public void notifyError(BatchBusinessException exception,
-			String identifier, long total, long position) {
+			String identifier, long total, long position, BatchRunContext batchRunContext) {
 		EntryBatchResultContext shareContext = (EntryBatchResultContext) exception
 				.getContext();
 		Entry entry = shareContext.getResource();
 		logError(total, position, "cleaning anonymous share has failed : "
-				+ entry.getRepresentation());
+				+ entry.getRepresentation(), batchRunContext);
 		logger.error("Error occured while cleaning expired anonymous share "
 				+ entry.getRepresentation() + ". BatchBusinessException ",
 				exception);
 	}
 
 	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors,
-			long total, long processed) {
+	public void terminate(BatchRunContext batchRunContext, List<String> all, long errors,
+			long unhandled_errors, long total, long processed) {
 		long success = total - errors - unhandled_errors;
 		logger.info(success + " anonymous share(s) have been deleted.");
 		if (errors > 0) {

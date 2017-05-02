@@ -35,37 +35,36 @@
 package org.linagora.linshare.core.batches;
 
 import java.util.List;
-import java.util.Map;
 
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.job.quartz.Context;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
+import org.linagora.linshare.core.job.quartz.ResultContext;
 
 public interface GenericBatch {
 
 	String getBatchClassName();
 
-	List<String> getAll();
-
-	Context execute(String identifier, long total, long position)
-			throws BatchBusinessException, BusinessException;
-
-	void notify(Context context, long total, long position);
-
-	void notifyError(BatchBusinessException exception, String identifier,
-			long total, long position);
-
-	void terminate(List<String> all, long errors, long unhandled_errors,
-			long total, long processed);
-
-	void logDebug(long total, long position, String message, Object... args);
+	void logDebug(BatchRunContext batchRunContext, long total, long position, String message, Object... args);
 
 	boolean needToRun();
 
-	void start();
+	void start(BatchRunContext batchRunContext);
 
-	void fail(List<String> all, long errors, long unhandled_errors,
-			long total, long processed);
+	List<String> getAll(BatchRunContext batchRunContext);
 
-	void fail(Map<String, List<String>> context, Exception exception);
+	ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
+			throws BatchBusinessException, BusinessException;
+
+	void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position);
+
+	void notifyError(BatchBusinessException exception, String identifier,
+			long total, long position, BatchRunContext batchRunContext);
+
+	void terminate(BatchRunContext batchRunContext, List<String> all, long errors,
+			long unhandled_errors, long total, long processed);
+
+	void fail(BatchRunContext batchRunContext, List<String> all, long errors,
+			long unhandled_errors, long total, long processed);
+
 }

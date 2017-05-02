@@ -34,8 +34,11 @@
 
 package org.linagora.linshare.core.service;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AsyncTask;
+import org.linagora.linshare.core.domain.entities.UpgradeTask;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface AsyncTaskService {
@@ -58,4 +61,6 @@ public interface AsyncTaskService {
 
 	AsyncTask fail(Account actor, Account owner, String asyncTaskUuid,
 			Integer errorCode, String errorName, String errorMsg);
+
+	List<AsyncTask> findAll(Account actor, Account owner, UpgradeTask upgradeTask);
 }

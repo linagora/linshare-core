@@ -139,6 +139,7 @@
 	<bean id="adminContainerQuotaRestService" class="org.linagora.linshare.webservice.admin.impl.ContainerQuotaRestServiceImpl">
 		<constructor-arg ref="wsAdminContainerQuotaFacade" />
 	</bean>
+
 	<bean id="adminAccountQuotaRestService" class="org.linagora.linshare.webservice.admin.impl.AccountQuotaRestServiceImpl">
 		<constructor-arg ref="wsAdminAccountQuotaFacade" />
 	</bean>
@@ -177,6 +178,7 @@
 			<ref bean="adminDomainQuotaRestService" />
 			<ref bean="adminContainerQuotaRestService" />
 			<ref bean="adminAccountQuotaRestService" />
+			<ref bean="adminUpgradeTaskRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

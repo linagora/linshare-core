@@ -82,6 +82,7 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 	@Override
 	public List<Thread> findAll() {
 		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
+		det.add(Restrictions.eq("toUpgrade", false));
 
 		// filter enabled thread only.
 		det.add(Restrictions.eq("enable", true));
@@ -94,7 +95,7 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 	public List<Thread> findAllWhereMember(User actor) {
 		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
 		det.add(Restrictions.eq("destroyed", 0L));
-
+		det.add(Restrictions.eq("toUpgrade", false));
 		// query
 		det.createAlias("myMembers", "member");
 		det.add(Restrictions.eq("member.user", actor));
@@ -105,6 +106,7 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 	public List<Thread> findAllWhereAdmin(User actor) {
 		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
 		det.add(Restrictions.eq("destroyed", 0L));
+		det.add(Restrictions.eq("toUpgrade", false));
 
 		// query
 		det.createAlias("myMembers", "member");
@@ -117,6 +119,7 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 	public List<Thread> findAllWhereCanUpload(User actor) {
 		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
 		det.add(Restrictions.eq("destroyed", 0L));
+		det.add(Restrictions.eq("toUpgrade", false));
 
 		// query
 		det.createAlias("myMembers", "member");
@@ -129,6 +132,7 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 	public List<Thread> findLatestWhereMember(User actor, int limit) {
 		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
 		det.add(Restrictions.eq("destroyed", 0L));
+		det.add(Restrictions.eq("toUpgrade", false));
 
 		if (limit < 1)
 			 limit = 1;
@@ -143,6 +147,7 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 	public List<Thread> searchByName(User actor, String pattern) {
 		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
 		det.add(Restrictions.eq("destroyed", 0L));
+		det.add(Restrictions.eq("toUpgrade", false));
 
 		// query
 		det.createAlias("myMembers", "member");
@@ -157,6 +162,7 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 	public List<Thread> searchAmongMembers(User actor, String pattern) {
 		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
 		det.add(Restrictions.eq("destroyed", 0L));
+		det.add(Restrictions.eq("toUpgrade", false));
 
 		Disjunction or = Restrictions.disjunction();
 

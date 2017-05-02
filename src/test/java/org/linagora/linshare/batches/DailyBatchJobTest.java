@@ -24,6 +24,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserDailyStat;
 import org.linagora.linshare.core.job.quartz.LinShareJobBean;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.runner.BatchRunner;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,12 +42,16 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-rac.xml",
 		"classpath:springContext-test.xml",
+		"classpath:springContext-batches.xml",
 		"classpath:springContext-batches-quota-and-statistics.xml",
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-ldap.xml" })
 public class DailyBatchJobTest extends AbstractTransactionalJUnit4SpringContextTests {
+
+	@Autowired
+	private BatchRunner batchRunner;
 
 	@Autowired
 	@Qualifier("statisticMonthlyUserBatch")
@@ -124,6 +129,7 @@ public class DailyBatchJobTest extends AbstractTransactionalJUnit4SpringContextT
 	@Test
 	public void test() throws JobExecutionException {
 		LinShareJobBean job = new LinShareJobBean();
+		job.setBatchRunner(batchRunner);
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(dailyUserBatch);
 		batches.add(dailyThreadBatch);

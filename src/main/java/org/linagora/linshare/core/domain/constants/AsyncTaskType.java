@@ -40,6 +40,7 @@ import org.linagora.linshare.core.exception.TechnicalException;
 
 public enum AsyncTaskType {
 
+	UPGRADE_TASK,
 	DOCUMENT_UPLOAD,
 	DOCUMENT_UPDATE,
 	DOCUMENT_COPY,

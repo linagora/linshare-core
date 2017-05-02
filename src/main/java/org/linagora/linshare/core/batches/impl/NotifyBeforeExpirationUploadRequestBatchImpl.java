@@ -45,7 +45,8 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.job.quartz.Context;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
+import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.job.quartz.UploadRequestBatchResultContext;
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestWarnBeforeExpiryEmailContext;
@@ -77,7 +78,7 @@ public class NotifyBeforeExpirationUploadRequestBatchImpl extends GenericBatchIm
 	}
 
 	@Override
-	public List<String> getAll() {
+	public List<String> getAll(BatchRunContext batchRunContext) {
 		SystemAccount account = getSystemAccount();
 		logger.info(getClass().toString() + " job starting ...");
 		List<String> entries = service.findAllRequestsToBeNotified(account);
@@ -86,11 +87,11 @@ public class NotifyBeforeExpirationUploadRequestBatchImpl extends GenericBatchIm
 	}
 
 	@Override
-	public Context execute(String identifier, long total, long position)
+	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		List<MailContainerWithRecipient> notifications = Lists.newArrayList();
 		UploadRequest r = service.findRequestByUuid(getSystemAccount(), null, identifier);
-		Context context = new UploadRequestBatchResultContext(r);
+		ResultContext context = new UploadRequestBatchResultContext(r);
 		if (!r.isNotified()) {
 			for (UploadRequestUrl u : r.getUploadRequestURLs()) {
 				EmailContext ctx = new UploadRequestWarnBeforeExpiryEmailContext((User)r.getOwner(), r, u, false);
@@ -106,23 +107,23 @@ public class NotifyBeforeExpirationUploadRequestBatchImpl extends GenericBatchIm
 	}
 
 	@Override
-	public void notify(Context context, long total, long position) {
+	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		UploadRequestBatchResultContext uploadRequestContext = (UploadRequestBatchResultContext) context;
 		UploadRequest r = uploadRequestContext.getResource();
-		logInfo(total, position, "The Upload Request " + r.getUuid() + " has been successfully processed.");
+		logInfo(batchRunContext, total, position, "The Upload Request " + r.getUuid() + " has been successfully processed.");
 	}
 
 	@Override
-	public void notifyError(BatchBusinessException exception, String identifier, long total, long position) {
+	public void notifyError(BatchBusinessException exception, String identifier, long total, long position, BatchRunContext batchRunContext) {
 		UploadRequestBatchResultContext uploadRequestContext = (UploadRequestBatchResultContext) exception.getContext();
 		UploadRequest r = uploadRequestContext.getResource();
-		logError(total, position, "Sending notifications for upload request has failed : " + r.getUuid());
+		logError(total, position, "Sending notifications for upload request has failed : " + r.getUuid(), batchRunContext);
 		logger.error("Error occured while sending notification for upload request " + r.getUuid() + ". BatchBusinessException ",
 				exception);
 	}
 
 	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors, long total, long processed) {
+	public void terminate(BatchRunContext batchRunContext, List<String> all, long errors, long unhandled_errors, long total, long processed) {
 		long success = total - errors - unhandled_errors;
 		logger.info(success + " upload request(s) have been processed.");
 		if (errors > 0) {

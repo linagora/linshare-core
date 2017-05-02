@@ -10,6 +10,7 @@ import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.LinShareJobBean;
+import org.linagora.linshare.core.runner.BatchRunner;
 import org.linagora.linshare.utils.LinShareWiser;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
@@ -38,6 +39,9 @@ public class UndownloadedSharedDocumentsBatchImplTest extends
 
 	private static Logger logger = LoggerFactory
 			.getLogger(UndownloadedSharedDocumentsBatchImplTest.class);
+
+	@Autowired
+	private BatchRunner batchRunner;
 
 	@Qualifier("undownloadedSharedDocumentsBatch")
 	@Autowired
@@ -69,6 +73,7 @@ public class UndownloadedSharedDocumentsBatchImplTest extends
 	@Test
 	public void testBatch() throws BusinessException, JobExecutionException {
 		LinShareJobBean job = new LinShareJobBean();
+		job.setBatchRunner(batchRunner);
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(undownloadedSharedDocumentsBatch);
 		job.setBatch(batches);

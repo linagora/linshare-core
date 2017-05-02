@@ -34,12 +34,18 @@
 
 package org.linagora.linshare.core.business.service;
 
+import java.util.List;
+
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AsyncTask;
+import org.linagora.linshare.core.domain.entities.UpgradeTask;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface AsyncTaskBusinessService {
 
 	AsyncTask find(String uuid);
+
+	List<AsyncTask> findAll(Account owner, UpgradeTask upgradeTask);
 
 	void delete(AsyncTask asyncUploadStatus) throws BusinessException;
 

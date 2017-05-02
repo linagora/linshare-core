@@ -23,6 +23,8 @@
 		<many-to-one name="domain" column="domain_abstract_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain"
 			not-null="true" >
 		</many-to-one>
+		<many-to-one name="upgradeTask" column="upgrade_task_id" class="UpgradeTask" not-null="false" lazy="proxy">
+		</many-to-one>
 		<property name="uuid" column="uuid" unique="true" type="string" length="255" not-null="true" lazy="false"/>
 		<property name="taskType" column="task_type" type="asyncTaskTypeEnum" length="255" not-null="true" lazy="false"/>
 		<property name="status" column="status" type="asyncTaskStatusEnum" length="255" not-null="true" lazy="false"/>

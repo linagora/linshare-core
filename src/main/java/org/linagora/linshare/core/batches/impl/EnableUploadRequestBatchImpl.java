@@ -46,7 +46,8 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.job.quartz.Context;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
+import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.job.quartz.UploadRequestBatchResultContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.repository.AccountRepository;
@@ -73,7 +74,7 @@ public class EnableUploadRequestBatchImpl extends GenericBatchImpl implements En
 	}
 
 	@Override
-	public List<String> getAll() {
+	public List<String> getAll(BatchRunContext batchRunContext) {
 		SystemAccount account = getSystemAccount();
 		logger.info(getClass().toString() + " job starting ...");
 		List<String> entries = uploadRequestService.findUnabledRequests(account);
@@ -83,13 +84,13 @@ public class EnableUploadRequestBatchImpl extends GenericBatchImpl implements En
 	}
 
 	@Override
-	public Context execute(String identifier, long total, long position)
+	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		List<MailContainerWithRecipient> notifications = Lists.newArrayList();
 		SystemAccount account = getSystemAccount();
 		UploadRequest r = uploadRequestService.findRequestByUuid(account, null, identifier);
-		Context context = new UploadRequestBatchResultContext(r);
-		logInfo(total, position, "processing uplaod request : ", r.getUuid());
+		ResultContext context = new UploadRequestBatchResultContext(r);
+		logInfo(batchRunContext, total, position, "processing uplaod request : ", r.getUuid());
 		r.updateStatus(UploadRequestStatus.STATUS_ENABLED);
 		r = uploadRequestService.updateRequest(account, r.getOwner(), r);
 		for (UploadRequestUrl u: r.getUploadRequestURLs()) {
@@ -101,23 +102,23 @@ public class EnableUploadRequestBatchImpl extends GenericBatchImpl implements En
 	}
 
 	@Override
-	public void notify(Context context, long total, long position) {
+	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		UploadRequestBatchResultContext uploadRequestContext = (UploadRequestBatchResultContext) context;
 		UploadRequest r = uploadRequestContext.getResource();
-		logInfo(total, position, "The Upload Request "
+		logInfo(batchRunContext, total, position, "The Upload Request "
 				+ r.getUuid()
 				+ " has been successfully enabled.");
 	}
 
 	@Override
-	public void notifyError(BatchBusinessException exception, String identifier, long total, long position) {
+	public void notifyError(BatchBusinessException exception, String identifier, long total, long position, BatchRunContext batchRunContext) {
 		UploadRequestBatchResultContext uploadRequestContext = (UploadRequestBatchResultContext) exception.getContext();
 		UploadRequest r = uploadRequestContext.getResource();
 		logError(
 				total,
 				position,
 				"Enabling upload request has failed : "
-						+ r.getUuid());
+						+ r.getUuid(), batchRunContext);
 		logger.error(
 				"Error occured while enabling upload request "
 						+ r.getUuid()
@@ -125,7 +126,7 @@ public class EnableUploadRequestBatchImpl extends GenericBatchImpl implements En
 	}
 
 	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors, long total, long processed) {
+	public void terminate(BatchRunContext batchRunContext, List<String> all, long errors, long unhandled_errors, long total, long processed) {
 		long success = total - errors - unhandled_errors;
 		logger.info(success
 				+ " upload request(s) have been enabled.");

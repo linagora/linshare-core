@@ -42,7 +42,8 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.AccountBatchResultContext;
-import org.linagora.linshare.core.job.quartz.Context;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
+import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.UserService;
 
@@ -61,7 +62,7 @@ public class MarkUserToPurgeBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public List<String> getAll() {
+	public List<String> getAll(BatchRunContext batchRunContext) {
 		logger.info("MarkUserToDeleteBatchImpl job starting ...");
 		Calendar expiryLimit = Calendar.getInstance();
 		expiryLimit.add(Calendar.DAY_OF_YEAR, -cron);
@@ -72,19 +73,19 @@ public class MarkUserToPurgeBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public Context execute(String identifier, long total,
-			long position) throws BatchBusinessException, BusinessException {
+	public ResultContext execute(BatchRunContext batchRunContext, String identifier,
+			long total, long position) throws BatchBusinessException, BusinessException {
 		SystemAccount actor = getSystemAccount();
 		User resource = service.findDeleted(actor, identifier);
-		Context context = new AccountBatchResultContext(resource);
+		ResultContext context = new AccountBatchResultContext(resource);
 		try {
-			logInfo(total, position, "processing user : " + resource.getAccountRepresentation());
+			logInfo(batchRunContext, total, position, "processing user : " + resource.getAccountRepresentation());
 			service.markToPurge(actor, resource.getLsUuid());
 			logger.info("expired user set to purge (purge_step to 1) : "
 					+ resource.getAccountRepresentation());
 		} catch (BusinessException businessException) {
 			logError(total, position,
-					"Error while trying to mark expired users to purge");
+					"Error while trying to mark expired users to purge", batchRunContext);
 			logger.info("Error occured while cleaning outdated users ",
 					businessException);
 			BatchBusinessException exception = new BatchBusinessException(
@@ -96,25 +97,25 @@ public class MarkUserToPurgeBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public void notify(Context context, long total,
-			long position) {
+	public void notify(BatchRunContext batchRunContext, ResultContext context,
+			long total, long position) {
 		AccountBatchResultContext guestContext = (AccountBatchResultContext) context;
 		Account user = guestContext.getResource();
-		logInfo(total, position, "The User "
+		logInfo(batchRunContext, total, position, "The User "
 				+ user.getAccountRepresentation()
 				+ " has been successfully placed into users to purge ");
 	}
 
 	@Override
 	public void notifyError(BatchBusinessException exception, String resource,
-			long total, long position) {
+			long total, long position, BatchRunContext batchRunContext) {
 		AccountBatchResultContext context = (AccountBatchResultContext) exception.getContext();
 		Account user = context.getResource();
 		logError(
 				total,
 				position,
 				"cleaning User has failed : "
-						+ user.getAccountRepresentation());
+						+ user.getAccountRepresentation(), batchRunContext);
 		logger.error(
 				"Error occured while cleaning outdated user "
 						+ user.getAccountRepresentation()
@@ -122,8 +123,8 @@ public class MarkUserToPurgeBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors,
-			long total, long processed) {
+	public void terminate(BatchRunContext batchRunContext, List<String> all, long errors,
+			long unhandled_errors, long total, long processed) {
 		long success = total - errors - unhandled_errors;
 		logger.info(success
 				+ " user(s) have been marked to purge.");

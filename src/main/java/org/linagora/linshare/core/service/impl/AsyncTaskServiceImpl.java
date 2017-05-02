@@ -35,12 +35,14 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.AsyncTaskBusinessService;
 import org.linagora.linshare.core.domain.constants.AsyncTaskStatus;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AsyncTask;
+import org.linagora.linshare.core.domain.entities.UpgradeTask;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.AsyncTaskResourceAccessControl;
@@ -139,6 +141,14 @@ public class AsyncTaskServiceImpl extends
 		task.setOwner(owner);
 		task.setDomain(owner.getDomain());
 		return businessService.create(task);
+	}
+
+	@Override
+	public List<AsyncTask> findAll(Account actor, Account owner, UpgradeTask upgradeTask) {
+		preChecks(actor, owner);
+		checkListPermission(actor, owner, AsyncTask.class, BusinessErrorCode.ASYNC_TASK_FORBIDDEN, null);
+		Validate.notNull(upgradeTask, "Upgrade task must not be null");
+		return businessService.findAll(owner, upgradeTask);
 	}
 
 }

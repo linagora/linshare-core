@@ -48,7 +48,8 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.AccountBatchResultContext;
-import org.linagora.linshare.core.job.quartz.Context;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
+import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.UserService;
 
@@ -90,17 +91,17 @@ public class StatisticDailyUserBatchImpl extends GenericBatchWithHistoryImpl {
 	}
 
 	@Override
-	public List<String> getAll() {
+	public List<String> getAll(BatchRunContext batchRunContext) {
 		return operationHistoryBusinessService.findUuidAccountBeforeDate(getYesterdayEnd(), ContainerQuotaType.USER);
 	}
 
 	@Override
-	public Context execute(String identifier, long total, long position)
+	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		User resource = userService.findByLsUuid(identifier);
-		Context context = new AccountBatchResultContext(resource);
+		ResultContext context = new AccountBatchResultContext(resource);
 		try {
-			logInfo(total, position, "processing user : " + resource.getAccountRepresentation());
+			logInfo(batchRunContext, total, position, "processing user : " + resource.getAccountRepresentation());
 			// compute once, used three times
 			Date yesterday = getYesterdayEnd();
 			userDailyStatBusinessService.create(resource, yesterday);
@@ -108,7 +109,7 @@ public class StatisticDailyUserBatchImpl extends GenericBatchWithHistoryImpl {
 			operationHistoryBusinessService.deleteBeforeDateByAccount(yesterday, resource);
 		} catch (BusinessException businessException) {
 			String batchClassName = this.getBatchClassName();
-			logError(total, position, "Error while trying to process batch " + batchClassName + "for an user ");
+			logError(total, position, "Error while trying to process batch " + batchClassName + "for an user ", batchRunContext);
 			String msg = "Error occured while running batch : " + batchClassName;
 			logger.info(msg, businessException);
 			BatchBusinessException exception = new BatchBusinessException(context, msg);
@@ -119,18 +120,18 @@ public class StatisticDailyUserBatchImpl extends GenericBatchWithHistoryImpl {
 	}
 
 	@Override
-	public void notify(Context context, long total, long position) {
+	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		AccountBatchResultContext userContext = (AccountBatchResultContext) context;
 		Account user = userContext.getResource();
-		logInfo(total, position, "DailyUserStatistic was created and AccountQuota updated for " + user.getAccountRepresentation());
+		logInfo(batchRunContext, total, position, "DailyUserStatistic was created and AccountQuota updated for " + user.getAccountRepresentation());
 	}
 
 	@Override
-	public void notifyError(BatchBusinessException exception, String identifier, long total, long position) {
+	public void notifyError(BatchBusinessException exception, String identifier, long total, long position, BatchRunContext batchRunContext) {
 		AccountBatchResultContext context = (AccountBatchResultContext) exception.getContext();
 		Account user = context.getResource();
 		logError(total, position,
-				"creating DailyUserStatistic and AccountQuota has failed : " + user.getAccountRepresentation());
+				"creating DailyUserStatistic and AccountQuota has failed : " + user.getAccountRepresentation(), batchRunContext);
 		logger.error("Error occured while creating DailyUserStatistic and UserQuota for an user "
 				+ user.getAccountRepresentation() + ". BatchBusinessException ", exception);
 	}

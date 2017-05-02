@@ -48,7 +48,8 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.job.quartz.Context;
+import org.linagora.linshare.core.job.quartz.ResultContext;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.DomainBatchResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
@@ -77,7 +78,7 @@ public class StatisticWeeklyDomainBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public List<String> getAll() {
+	public List<String> getAll(BatchRunContext batchRunContext) {
 		logger.info("WeeklyDomainBatchImpl job starting");
 		List<String> domains = domainDailyStatBusinessService
 				.findIdentifierDomainBetweenTwoDates(getFirstDayOfLastWeek(), getLastDayOfLastWeek());
@@ -86,12 +87,12 @@ public class StatisticWeeklyDomainBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public Context execute(String identifier, long total, long position)
+	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		AbstractDomain resource = abstractDomainService.findById(identifier);
-		Context context = new DomainBatchResultContext(resource);
+		ResultContext context = new DomainBatchResultContext(resource);
 		try {
-			logInfo(total, position, "processing domain : " + resource.getDescription());
+			logInfo(batchRunContext, total, position, "processing domain : " + resource.getDescription());
 			domainWeeklyStatBusinessService.create(resource, getFirstDayOfLastWeek(), getLastDayOfLastWeek());
 		} catch (BusinessException businessException) {
 			GregorianCalendar calendar = new GregorianCalendar();
@@ -99,7 +100,7 @@ public class StatisticWeeklyDomainBatchImpl extends GenericBatchImpl {
 			logError(total, position,
 					"Error while trying to create a DomainWeeklyStat for domain " + resource
 							.getDescription() + " in the week "
-					+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US));
+					+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US), batchRunContext);
 			logger.info("Error occurred while creating a weekly statistics for domain " + resource.getDescription()
 					+ " in the week "
 					+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US),
@@ -115,22 +116,22 @@ public class StatisticWeeklyDomainBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public void notify(Context context, long total, long position) {
+	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		DomainBatchResultContext domainContext = (DomainBatchResultContext) context;
 		AbstractDomain domain = domainContext.getResource();
-		logInfo(total, position,
-				"the WeeklyDomainStat for " + domain.getUuid() + "has been successfully created.");
+		logInfo(batchRunContext, total,
+				position, "the WeeklyDomainStat for " + domain.getUuid() + "has been successfully created.");
 	}
 
 	@Override
-	public void notifyError(BatchBusinessException exception, String identifier, long total, long position) {
+	public void notifyError(BatchBusinessException exception, String identifier, long total, long position, BatchRunContext batchRunContext) {
 		DomainBatchResultContext domainContext = (DomainBatchResultContext) exception.getContext();
 		AbstractDomain domain = domainContext.getResource();
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.add(GregorianCalendar.DATE, -7);
 		logError(total, position,
 				"creating WeeklyDomainStatistic has failed for domain " + domain.getDescription() + " in the week "
-						+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US));
+						+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US), batchRunContext);
 		logger.error("Error occured while creating WeeklyDomainStatistic for domain " + domain.getDescription()
 				+ " in the week "
 				+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US)
@@ -138,8 +139,8 @@ public class StatisticWeeklyDomainBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors, long total,
-			long processed) {
+	public void terminate(BatchRunContext batchRunContext, List<String> all, long errors, long unhandled_errors,
+			long total, long processed) {
 		long success = total - errors - unhandled_errors;
 		logger.info(success + " WeeklyDomainStatistic for domain(s) have bean created.");
 		if (errors > 0) {

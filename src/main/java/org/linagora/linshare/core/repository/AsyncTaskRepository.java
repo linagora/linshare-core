@@ -34,9 +34,15 @@
 
 package org.linagora.linshare.core.repository;
 
+import java.util.List;
+
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AsyncTask;
+import org.linagora.linshare.core.domain.entities.UpgradeTask;
 
 public interface AsyncTaskRepository extends AbstractRepository<AsyncTask> {
 
 	AsyncTask findByUuid(String uuid);
+
+	List<AsyncTask> findAll(Account owner, UpgradeTask upgradeTask);
 }

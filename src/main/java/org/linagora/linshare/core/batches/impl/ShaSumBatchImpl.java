@@ -47,7 +47,8 @@ import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.job.quartz.Context;
+import org.linagora.linshare.core.job.quartz.ResultContext;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.DocumentBatchResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
@@ -70,7 +71,7 @@ public class ShaSumBatchImpl extends GenericBatchImpl implements ShaSumBatch {
 	}
 
 	@Override
-	public List<String> getAll() {
+	public List<String> getAll(BatchRunContext batchRunContext) {
 		logger.info("Sha256SumBatchImpl job starting ...");
 		List<String> list = documentRepository.findAllSha256CheckNeededDocuments();
 		list.addAll(documentRepository.findAllSha1CheckNeededDocuments());
@@ -79,15 +80,15 @@ public class ShaSumBatchImpl extends GenericBatchImpl implements ShaSumBatch {
 	}
 
 	@Override
-	public Context execute(String identifier, long total, long position)
+	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		Document doc = documentRepository.findByUuid(identifier);
 		if (doc == null) {
 			return null;
 		}
-		logInfo(total, position, "processing document : "
+		logInfo(batchRunContext, total, position, "processing document : "
 				+ doc.getUuid());
-		Context context = new DocumentBatchResultContext(doc);
+		ResultContext context = new DocumentBatchResultContext(doc);
 		logger.debug("retrieve from JackRabbit : " + doc.getUuid());
 		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, doc);
 		try (InputStream fileContentByUUID = fileDataStore.get(metadata)) {
@@ -107,28 +108,28 @@ public class ShaSumBatchImpl extends GenericBatchImpl implements ShaSumBatch {
 	}
 
 	@Override
-	public void notify(Context context, long total, long position) {
+	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		DocumentBatchResultContext documentContext = (DocumentBatchResultContext) context;
 		Document doc = documentContext.getResource();
-		logInfo(total, position, "The document : "
+		logInfo(batchRunContext, total, position, "The document : "
 				+ doc.getUuid() +
 				" has been successfully updated ");
 	}
 
 	@Override
-	public void notifyError(BatchBusinessException exception, String identifier, long total, long position) {
+	public void notifyError(BatchBusinessException exception, String identifier, long total, long position, BatchRunContext batchRunContext) {
 		DocumentBatchResultContext documentContext = (DocumentBatchResultContext) exception.getContext();
 		Document doc = documentContext.getResource();
 		logError(total, position, 
 				"Updating document has failed : "
-				+ doc.getUuid());
+				+ doc.getUuid(), batchRunContext);
 		logger.error("Error occured while updating the document : "
 				+ doc.getUuid() + 
 				". BatchBusinessException", exception);
 	}
 
 	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors, long total, long processed) {
+	public void terminate(BatchRunContext batchRunContext, List<String> all, long errors, long unhandled_errors, long total, long processed) {
 		long success = total - errors - unhandled_errors;
 		logger.info(success
 				+ " document(s) have been updated.");

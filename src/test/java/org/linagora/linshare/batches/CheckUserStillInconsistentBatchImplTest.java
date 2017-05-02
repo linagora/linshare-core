@@ -9,8 +9,10 @@ import org.junit.Test;
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.job.quartz.Context;
+import org.linagora.linshare.core.job.quartz.ResultContext;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.LinShareJobBean;
+import org.linagora.linshare.core.runner.BatchRunner;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -34,6 +36,9 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-test.xml" })
 public class CheckUserStillInconsistentBatchImplTest extends AbstractTransactionalJUnit4SpringContextTests {
 
+	@Autowired
+	private BatchRunner batchRunner;
+
 	@Qualifier("checkIfUserStillInconsistentBatch")
 	@Autowired
 	private GenericBatch checkIfUserStillInconsistentBatch;
@@ -54,6 +59,7 @@ public class CheckUserStillInconsistentBatchImplTest extends AbstractTransaction
 	@Test
 	public void testBatch() throws BusinessException, JobExecutionException {
 		LinShareJobBean job = new LinShareJobBean();
+		job.setBatchRunner(batchRunner);
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(checkIfUserStillInconsistentBatch);
 		job.setBatch(batches);
@@ -62,14 +68,15 @@ public class CheckUserStillInconsistentBatchImplTest extends AbstractTransaction
 
 	@Test
 	public void testBatchExecution() throws BusinessException, JobExecutionException {
-		List<String> l = checkIfUserStillInconsistentBatch.getAll();
+		BatchRunContext batchRunContext = new BatchRunContext();
+		List<String> l = checkIfUserStillInconsistentBatch.getAll(batchRunContext);
 		Assert.assertEquals(l.size(), 4);
-		Context c;
+		ResultContext c;
 		for (int i = 0; i < l.size(); i++) {
-			c = checkIfUserStillInconsistentBatch.execute(l.get(i), l.size(), i);
+			c = checkIfUserStillInconsistentBatch.execute(batchRunContext, l.get(i), l.size(), i);
 			Assert.assertEquals(c.getIdentifier(), l.get(i));
 		}
-		l = checkIfUserStillInconsistentBatch.getAll();
+		l = checkIfUserStillInconsistentBatch.getAll(batchRunContext);
 		Assert.assertEquals(l.size(), 1);
 	}
 }

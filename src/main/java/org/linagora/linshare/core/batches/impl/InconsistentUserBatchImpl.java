@@ -42,7 +42,8 @@ import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.job.quartz.Context;
+import org.linagora.linshare.core.job.quartz.ResultContext;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.InconsistentUserBatchResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
@@ -68,7 +69,7 @@ public class InconsistentUserBatchImpl extends GenericBatchImpl implements Incon
 	}
 
 	@Override
-	public List<String> getAll() {
+	public List<String> getAll(BatchRunContext batchRunContext) {
 		logger.info(getClass().toString() + " job is starting ...");
 		SystemAccount account = getSystemAccount();
 		List<String> entries = service.findAllUserUuids(account);
@@ -77,19 +78,19 @@ public class InconsistentUserBatchImpl extends GenericBatchImpl implements Incon
 	}
 
 	@Override
-	public Context execute(String identifier, long total, long position)
+	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		SystemAccount account = getSystemAccount();
 		User u = userService.findByLsUuid(identifier);
-		Context context = new InconsistentUserBatchResultContext(u);
+		ResultContext context = new InconsistentUserBatchResultContext(u);
 		context.setProcessed(false);
-		logInfo(total,
-				position,
-				"processing internal : "
+		logInfo(batchRunContext,
+				total,
+				position, "processing internal : "
 						+ u.getAccountRepresentation());
 		if (!abstractDomainService.isUserExist(u.getDomain(),
 				u.getMail())) {
-			logInfo(total, position, "Flagging as inconsistent internal : " + u.getAccountRepresentation());
+			logInfo(batchRunContext, total, position, "Flagging as inconsistent internal : " + u.getAccountRepresentation());
 			u.setInconsistent(true);
 			userService.updateUser(account, u, u.getDomainId());
 			context.setProcessed(true);
@@ -98,23 +99,23 @@ public class InconsistentUserBatchImpl extends GenericBatchImpl implements Incon
 	}
 
 	@Override
-	public void notify(Context context, long total, long position) {
+	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		InconsistentUserBatchResultContext c = (InconsistentUserBatchResultContext) context;
 		if (c.getProcessed()) {
 			User u = c.getResource();
-			logInfo(total, position, "The inconsistent user " + u.getLsUuid() + " has been successfully checked.");
+			logInfo(batchRunContext, total, position, "The inconsistent user " + u.getLsUuid() + " has been successfully checked.");
 		}
 	}
 
 	@Override
-	public void notifyError(BatchBusinessException exception, String identifier, long total, long position) {
+	public void notifyError(BatchBusinessException exception, String identifier, long total, long position, BatchRunContext batchRunContext) {
 		InconsistentUserBatchResultContext c = (InconsistentUserBatchResultContext) exception.getContext();
 		User u = c.getResource();
-		logError(total, position, "Flaging user has failed " + u.getLsUuid() + ". BatchBusinessException ", exception);
+		logError(total, position, "Flaging user has failed " + u.getLsUuid() + ". BatchBusinessException ", batchRunContext, exception);
 	}
 
 	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors, long total, long processed) {
+	public void terminate(BatchRunContext batchRunContext, List<String> all, long errors, long unhandled_errors, long total, long processed) {
 		long success = total - errors - unhandled_errors;
 		logger.info(success + " user(s) have been checked.");
 		logger.info(processed + " user(s) have been flagged as inconsistent.");

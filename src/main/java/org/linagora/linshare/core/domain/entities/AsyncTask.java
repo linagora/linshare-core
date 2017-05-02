@@ -90,6 +90,8 @@ public class AsyncTask {
 
 	protected String metaData;
 
+	protected UpgradeTask upgradeTask;
+
 	public AsyncTask(Long size, Long transfertDuration, String fileName,
 			Integer frequency, AsyncTaskType taskType) {
 		super();
@@ -110,6 +112,13 @@ public class AsyncTask {
 		this.fileName = fileName;
 		this.frequency = frequency;
 		this.taskType = taskType;
+	}
+
+	public AsyncTask(UpgradeTask upgradeTask, AsyncTaskType taskType) {
+		this.status = AsyncTaskStatus.PENDING;
+		this.fileName = upgradeTask.getIdentifier().name();
+		this.taskType = taskType;
+		this.upgradeTask = upgradeTask;
 	}
 
 	@Override
@@ -317,5 +326,13 @@ public class AsyncTask {
 
 	public void setWaitingDuration(Long waitingDuration) {
 		this.waitingDuration = waitingDuration;
+	}
+
+	public UpgradeTask getUpgradeTask() {
+		return upgradeTask;
+	}
+
+	public void setUpgradeTask(UpgradeTask upgradeTask) {
+		this.upgradeTask = upgradeTask;
 	}
 }

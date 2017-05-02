@@ -137,5 +137,8 @@
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="abstractDomainService" />
 	</bean>
+	<bean name="batchRunner"
+		class="org.linagora.linshare.core.runner.impl.BatchRunnerImpl">
+	</bean>
 
 </beans>

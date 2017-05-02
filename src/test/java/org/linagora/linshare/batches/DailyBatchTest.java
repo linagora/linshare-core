@@ -61,6 +61,7 @@ import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadDailyStat;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserDailyStat;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
@@ -141,8 +142,8 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 
 	@Test
 	public void test() {
-
-		List<String> listThreadIdentifier = dailyThreadBatch.getAll();
+		BatchRunContext batchRunContext = new BatchRunContext();
+		List<String> listThreadIdentifier = dailyThreadBatch.getAll(batchRunContext);
 		assertEquals(2, listThreadIdentifier.size());
 
 		Thread thread1 = (Thread) accountRepository.findByLsUuid(listThreadIdentifier.get(0));
@@ -154,7 +155,7 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 		listOperationHistory = operationHistoryBusinessService.find(thread2, null, null, new Date());
 		assertEquals(2, listOperationHistory.size());
 
-		dailyThreadBatch.execute(thread1.getLsUuid(), listThreadIdentifier.size(), 0);
+		dailyThreadBatch.execute(batchRunContext, thread1.getLsUuid(), listThreadIdentifier.size(), 0);
 
 		Calendar d = Calendar.getInstance();
 		d.add(Calendar.DATE, -1);
@@ -179,7 +180,7 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 		assertEquals(800, (long) quota.getQuotaWarning());
 		assertEquals(5, (long) quota.getMaxFileSize());
 
-		dailyThreadBatch.execute(thread2.getLsUuid(), listThreadIdentifier.size(), 1);
+		dailyThreadBatch.execute(batchRunContext, thread2.getLsUuid(), listThreadIdentifier.size(), 1);
 
 		batchHistoryBusinessService.findByUuid(thread2.getLsUuid());
 
@@ -207,7 +208,7 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 		listOperationHistory = operationHistoryBusinessService.find(jane, null, null, new Date());
 		assertNotEquals(0, listOperationHistory.size());
 
-		dailyUserBatch.execute(jane.getLsUuid(), 10, 1);
+		dailyUserBatch.execute(batchRunContext, jane.getLsUuid(), 10, 1);
 
 		List<UserDailyStat> listUserdailyStat = userdailyStatBusinessService.findBetweenTwoDates(jane, d.getTime(), new Date());
 
@@ -233,7 +234,7 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 		listOperationHistory = operationHistoryBusinessService.find(jane, null, null, new Date());
 		assertEquals(0, listOperationHistory.size());
 
-		dailyDomainBatch.execute(jane.getDomain().getUuid(), 20, 1);
+		dailyDomainBatch.execute(batchRunContext, jane.getDomain().getUuid(), 20, 1);
 
 		ContainerQuota ensembleQuota = ensembleQuotaBusinessService.find(jane.getDomain(), ContainerQuotaType.USER);
 		quota = accountQuotaBusinessService.find(jane);

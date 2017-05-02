@@ -45,7 +45,8 @@ import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.job.quartz.Context;
+import org.linagora.linshare.core.job.quartz.ResultContext;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.EntryBatchResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.DocumentEntryService;
@@ -72,7 +73,7 @@ public class DeleteExpiredShareEntryBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public List<String> getAll() {
+	public List<String> getAll(BatchRunContext batchRunContext) {
 		logger.info(getClass().toString() + " job starting ...");
 		SystemAccount actor = getSystemAccount();
 		List<String> allShares = service.findAllExpiredEntries(actor, actor);
@@ -82,14 +83,14 @@ public class DeleteExpiredShareEntryBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public Context execute(String identifier, long total, long position)
+	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		SystemAccount actor = getSystemAccount();
 		ShareEntry resource = service.find(actor, actor, identifier);
-		Context context = new EntryBatchResultContext(resource);
+		ResultContext context = new EntryBatchResultContext(resource);
 		try {
-			logInfo(total, position,
-					"processing share : " + resource.getRepresentation());
+			logInfo(batchRunContext, total,
+					position, "processing share : " + resource.getRepresentation());
 			AbstractDomain domain = resource.getEntryOwner().getDomain();
 			TimeUnitValueFunctionality func = functionalityService
 					.getDefaultShareExpiryTimeFunctionality(domain);
@@ -107,7 +108,7 @@ public class DeleteExpiredShareEntryBatchImpl extends GenericBatchImpl {
 					+ resource.getRepresentation());
 		} catch (BusinessException businessException) {
 			logError(total, position,
-					"Error while trying to delete expired share : " + resource.getRepresentation());
+					"Error while trying to delete expired share : " + resource.getRepresentation(), batchRunContext);
 			logger.info("Error occured while cleaning expired shares",
 					businessException);
 			BatchBusinessException exception = new BatchBusinessException(
@@ -119,21 +120,21 @@ public class DeleteExpiredShareEntryBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public void notify(Context context, long total, long position) {
+	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		EntryBatchResultContext shareContext = (EntryBatchResultContext) context;
 		Entry entry = shareContext.getResource();
-		logInfo(total, position, "The share " + entry.getRepresentation()
+		logInfo(batchRunContext, total, position, "The share " + entry.getRepresentation()
 				+ " has been successfully deleted.");
 	}
 
 	@Override
 	public void notifyError(BatchBusinessException exception,
-			String identifier, long total, long position) {
+			String identifier, long total, long position, BatchRunContext batchRunContext) {
 		EntryBatchResultContext shareContext = (EntryBatchResultContext) exception
 				.getContext();
 		Entry entry = shareContext.getResource();
 		logError(total, position,
-				"cleaning share has failed : " + entry.getRepresentation());
+				"cleaning share has failed : " + entry.getRepresentation(), batchRunContext);
 		logger.error(
 				"Error occured while cleaning expired share "
 						+ entry.getRepresentation() + ". BatchBusinessException ",
@@ -141,8 +142,8 @@ public class DeleteExpiredShareEntryBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors,
-			long total, long processed) {
+	public void terminate(BatchRunContext batchRunContext, List<String> all, long errors,
+			long unhandled_errors, long total, long processed) {
 		long success = total - errors - unhandled_errors;
 		logger.info(success + " share(s) have been deleted.");
 		if (errors > 0) {

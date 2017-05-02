@@ -42,6 +42,7 @@ import org.linagora.linshare.core.business.service.BatchHistoryBusinessService;
 import org.linagora.linshare.core.domain.constants.BatchType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.BatchHistory;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 
 public abstract class GenericBatchWithHistoryImpl extends GenericBatchImpl {
@@ -61,13 +62,13 @@ public abstract class GenericBatchWithHistoryImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public void start() {
-		super.start();
+	public void start(BatchRunContext batchRunContext) {
+		super.start(batchRunContext);
 		batchHistoryBusinessService.create(new BatchHistory(getBatchType()));
 	}
 
 	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors, long total, long processed) {
+	public void terminate(BatchRunContext batchRunContext, List<String> all, long errors, long unhandled_errors, long total, long processed) {
 		long success = total - errors - unhandled_errors;
 		logger.info("{} resources  have bean processed.", success);
 		if (errors > 0) {
@@ -85,13 +86,13 @@ public abstract class GenericBatchWithHistoryImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public void fail(List<String> all, long errors, long unhandled_errors, long total, long processed) {
+	public void fail(BatchRunContext batchRunContext, List<String> all, long errors, long unhandled_errors, long total, long processed) {
 		BatchHistory batchHistory = batchHistoryBusinessService.findByBatchType(getTodayBegin(), null, getBatchType());
 		if (batchHistory != null) {
 			batchHistory.setStatus("FAILED");
 			batchHistoryBusinessService.update(batchHistory);
 		}
-		super.fail(all, errors, unhandled_errors, total, processed);
+		super.fail(batchRunContext, all, errors, unhandled_errors, total, processed);
 	}
 
 	protected  Date getYesterdayBegin() {

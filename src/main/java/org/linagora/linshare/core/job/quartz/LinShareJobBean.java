@@ -36,9 +36,7 @@ package org.linagora.linshare.core.job.quartz;
 import java.util.List;
 
 import org.linagora.linshare.core.batches.GenericBatch;
-import org.linagora.linshare.core.exception.BatchBusinessException;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.exception.TechnicalException;
+import org.linagora.linshare.core.runner.BatchRunner;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
@@ -51,6 +49,8 @@ public class LinShareJobBean extends QuartzJobBean {
 
 	protected List<GenericBatch> batchs;
 
+	protected BatchRunner batchRunner;
+
 	public LinShareJobBean() {
 		super();
 	}
@@ -59,74 +59,24 @@ public class LinShareJobBean extends QuartzJobBean {
 		this.batchs = batchs;
 	}
 
+	public void setBatchRunner(BatchRunner batchRunner) {
+		this.batchRunner = batchRunner;
+	}
+
 	@Override
 	protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
 		executeExternal();
 	}
 
+	// TODO:FMA: remove it.
 	public boolean executeExternal()
 			throws JobExecutionException {
 		logger.debug("number of batches : " + batchs.size());
 		boolean finalResult = true;
 		for (GenericBatch batch : batchs) {
-			if (!batch.needToRun())  {
-				logger.info("batch skipped : " + batch.getBatchClassName());
-				continue;
-			}
-			batch.start();
-			List<String> all = batch.getAll();
-			logger.debug(all.size() + " resources(s) have been found.");
-			long position = 1;
-			long errors = 0;
-			long processed = 0;
-			long unhandled_errors = 0;
-			long total = all.size();
-			for (String resource : all) {
-				try {
-					batch.logDebug(total, position, "processing resource '" + resource + "' ...");
-					Context batchResult = batch.execute(resource, total, position);
-					if (batchResult == null) {
-						logger.warn(String.format("Ignoring resource %s because it has vanished.", resource));
-					} else {
-						if (batchResult.getProcessed() != null
-							&& batchResult.getProcessed().equals(true)) {
-							processed ++;
-						}
-						batch.notify(batchResult, total, position);
-					}
-				} catch (BatchBusinessException ex) {
-					errors++;
-					batch.notifyError(ex, resource, total, position);
-				} catch (BusinessException ex) {
-					unhandled_errors++;
-					logger.error("Unhandled BusinessException in batch : {}", batch);
-					logger.error(ex.getMessage(), ex);
-					logger.error("Cannot process resource '{}' ", resource);
-					finalResult = false;
-				} catch (TechnicalException ex) {
-					unhandled_errors++;
-					logger.error("Unhandled TechnicalException in batch : {}", batch);
-					logger.error(ex.getMessage(), ex);
-					logger.error("Cannot process resource '{}' ", resource);
-					logger.error("CRITICAL ERROR : Batch stopped !");
-					finalResult = false;
-					break;
-				} catch (Exception ex) {
-					unhandled_errors++;
-					logger.error("Unhandled Exception in batch : {}", batch);
-					logger.error(ex.getMessage(), ex);
-					logger.error("Cannot process resource '{}' ", resource);
-					logger.error("CRITICAL ERROR : Batch stopped !");
-					finalResult = false;
-					break;
-				}
-				batch.logDebug(total, position, "resource processed.");
-				position++;
-			}
-			if (finalResult) {
-				batch.terminate(all, errors, unhandled_errors, total, processed);
-			} else {
-				batch.fail(all, errors, unhandled_errors, total, processed);
+			boolean execute = batchRunner.execute(batch);
+			if (!execute) {
+				finalResult = false;
 			}
 		}
 		return finalResult;

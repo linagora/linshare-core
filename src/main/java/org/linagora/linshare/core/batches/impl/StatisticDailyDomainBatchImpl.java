@@ -49,7 +49,8 @@ import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.job.quartz.Context;
+import org.linagora.linshare.core.job.quartz.ResultContext;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.DomainBatchResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
@@ -87,19 +88,19 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchWithHistoryImpl {
 		return BatchType.DAILY_DOMAIN_BATCH;
 	}
 	@Override
-	public List<String> getAll() {
+	public List<String> getAll(BatchRunContext batchRunContext) {
 		List<String> domains = accountQuotaBusinessService.findDomainUuidByBatchModificationDate(getYesterdayEnd());
 		logger.info(domains.size() + " domain(s) have been found in accountQuota table and modified by batch today");
 		return domains;
 	}
 
 	@Override
-	public Context execute(String identifier, long total, long position)
+	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		AbstractDomain resource = abstractDomainService.findById(identifier);
-		Context context = new DomainBatchResultContext(resource);
+		ResultContext context = new DomainBatchResultContext(resource);
 		try {
-			logInfo(total, position, "processing domain : " + resource.toString());
+			logInfo(batchRunContext, total, position, "processing domain : " + resource.toString());
 
 			// creation of domain statistic for the past day using account statistic of the past day
 			domainDailyStatBusinessService.create(resource, getYesterdayBegin(), getYesterdayEnd());
@@ -116,7 +117,7 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchWithHistoryImpl {
 			domainQuota = domainQuotaBusinessService.updateByBatch(domainQuota);
 
 		} catch (BusinessException businessException) {
-			logError(total, position, "Error while trying to update domainQuota");
+			logError(total, position, "Error while trying to update domainQuota", batchRunContext);
 			logger.info("Error occured while updating a domain quota for domain", businessException);
 			BatchBusinessException exception = new BatchBusinessException(context,
 					"Error while trying to update a domainQuota");
@@ -127,20 +128,20 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchWithHistoryImpl {
 	}
 
 	@Override
-	public void notify(Context context, long total, long position) {
+	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		DomainBatchResultContext domainContext = (DomainBatchResultContext) context;
 		AbstractDomain domain = domainContext.getResource();
-		logInfo(total, position, "DailyDomainStatistics, ContainerQuota and DomainQuota of the domain : "
+		logInfo(batchRunContext, total, position, "DailyDomainStatistics, ContainerQuota and DomainQuota of the domain : "
 				+ domain.getUuid() + " have been successfully created");
 	}
 
 	@Override
-	public void notifyError(BatchBusinessException exception, String identifier, long total, long position) {
+	public void notifyError(BatchBusinessException exception, String identifier, long total, long position, BatchRunContext batchRunContext) {
 		DomainBatchResultContext context = (DomainBatchResultContext) exception.getContext();
 		AbstractDomain domain = context.getResource();
 		logError(total, position,
 				"creating DailyDomainStatistic, ContainerQuota and DomainQuota have failed for the domain : "
-						+ domain.getUuid());
+						+ domain.getUuid(), batchRunContext);
 		logger.error("Error occured while creating DailyDomainStatistics, ContainerQuota and DomainQuota for a domain "
 				+ domain.getUuid() + ". BatchBusinessException ", exception);
 	}

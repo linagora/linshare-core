@@ -35,11 +35,11 @@
 package org.linagora.linshare.core.batches.impl;
 
 import java.util.List;
-import java.util.Map;
 
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,23 +60,23 @@ public abstract class GenericBatchImpl implements GenericBatch {
 	}
 
 	@Override
-	public void logDebug(long total, long position, String message,
-			Object... args) {
+	public void logDebug(BatchRunContext batchRunContext, long total, long position,
+			String message, Object... args) {
 		logger.debug(getStringPosition(total, position) + message, args);
 	}
 
-	protected void logInfo(long total, long position, String message,
-			Object... args) {
+	protected void logInfo(BatchRunContext batchRunContext, long total, long position,
+			String message, Object... args) {
 		logger.info(getStringPosition(total, position) + message, args);
 	}
 
 	protected void logWarn(long total, long position, String message,
-			Object... args) {
+			BatchRunContext batchRunContext, Object... args) {
 		logger.warn(getStringPosition(total, position) + message, args);
 	}
 
 	protected void logError(long total, long position, String message,
-			Object... args) {
+			BatchRunContext batchRunContext, Object... args) {
 		logger.error(getStringPosition(total, position) + message, args);
 	}
 
@@ -95,18 +95,12 @@ public abstract class GenericBatchImpl implements GenericBatch {
 	}
 
 	@Override
-	public void start() {
+	public void start(BatchRunContext batchRunContext) {
 		logger.info("{} job starting ...", this.getBatchClassName());
 	}
 
 	@Override
-	public void fail(Map<String, List<String>> context, Exception exception) {
-		logger.error("Batch error in " + this.getClass().getName());
-		logger.error(exception.getMessage(), exception);
-	}
-
-	@Override
-	public void fail(List<String> all, long errors, long unhandled_errors, long total, long processed) {
+	public void fail(BatchRunContext batchRunContext, List<String> all, long errors, long unhandled_errors, long total, long processed) {
 		logger.error("Critical error for batch : " + this.getClass().getName() + ". Batch stopped.");
 		logger.error("Processed {}/{}, errors : ", processed, total, errors);
 		logger.error("Job failed");

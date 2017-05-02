@@ -11,9 +11,11 @@ import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.job.quartz.Context;
+import org.linagora.linshare.core.job.quartz.ResultContext;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.LinShareJobBean;
 import org.linagora.linshare.core.repository.UploadRequestRepository;
+import org.linagora.linshare.core.runner.BatchRunner;
 import org.linagora.linshare.utils.LinShareWiser;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
@@ -41,6 +43,9 @@ public class UploadRequestNewBatchImplTest extends
 	AbstractTransactionalJUnit4SpringContextTests {
 
 	private static Logger logger = LoggerFactory.getLogger(UploadRequestNewBatchImplTest.class);
+
+	@Autowired
+	private BatchRunner batchRunner;
 
 	@Qualifier("closeExpiredUploadRequestBatch")
 	@Autowired
@@ -84,6 +89,7 @@ public class UploadRequestNewBatchImplTest extends
 	public void testLaunching() throws BusinessException,
 		JobExecutionException {
 		LinShareJobBean job = new LinShareJobBean();
+		job.setBatchRunner(batchRunner);
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(closeExpiredUploadResquestBatch);
 		batches.add(enableUploadResquestBatch);
@@ -96,35 +102,36 @@ public class UploadRequestNewBatchImplTest extends
 	@Test
 	public void testBatches() throws BusinessException,
 		JobExecutionException {
-		List<String> l = closeExpiredUploadResquestBatch.getAll();
+		BatchRunContext batchRunContext = new BatchRunContext();
+		List<String> l = closeExpiredUploadResquestBatch.getAll(batchRunContext);
 		Assert.assertEquals(l.size(), 2);
-		Context c;
+		ResultContext c;
 		UploadRequest u;
 		int i;
 		for (i = 0; i < l.size(); i++) {
 			u = uploadRequestRepository.findByUuid(l.get(i));
 			Assert.assertEquals(u.getStatus(), UploadRequestStatus.STATUS_ENABLED);
-			c = closeExpiredUploadResquestBatch.execute(l.get(i), l.size(), i);
+			c = closeExpiredUploadResquestBatch.execute(batchRunContext, l.get(i), l.size(), i);
 			Assert.assertEquals(c.getIdentifier(), l.get(i));
 			u = uploadRequestRepository.findByUuid(l.get(i));
 			Assert.assertEquals(u.getUuid(), l.get(i));
 			Assert.assertEquals(u.getStatus(), UploadRequestStatus.STATUS_CLOSED);
 		}
-		l = enableUploadResquestBatch.getAll();
+		l = enableUploadResquestBatch.getAll(batchRunContext);
 		Assert.assertEquals(l.size(), 3);
 		for (i = 0; i < l.size(); i++) {
 			u = uploadRequestRepository.findByUuid(l.get(i));
 			Assert.assertEquals(u.getStatus(), UploadRequestStatus.STATUS_CREATED);
-			c = enableUploadResquestBatch.execute(l.get(i), l.size(), i);
+			c = enableUploadResquestBatch.execute(batchRunContext, l.get(i), l.size(), i);
 			Assert.assertEquals(c.getIdentifier(), l.get(i));
 			u = uploadRequestRepository.findByUuid(l.get(i));
 			Assert.assertEquals(u.getUuid(), l.get(i));
 			Assert.assertEquals(u.getStatus(), UploadRequestStatus.STATUS_ENABLED);
 		}
-		l = notifyBeforeExpirationUploadResquestBatch.getAll();
+		l = notifyBeforeExpirationUploadResquestBatch.getAll(batchRunContext);
 		Assert.assertEquals(l.size(), 3);
 		for (i = 0; i < l.size(); i++) {
-			c = notifyBeforeExpirationUploadResquestBatch.execute(l.get(i), l.size(), i);
+			c = notifyBeforeExpirationUploadResquestBatch.execute(batchRunContext, l.get(i), l.size(), i);
 			Assert.assertEquals(c.getIdentifier(), l.get(i));
 			u = uploadRequestRepository.findByUuid(l.get(i));
 			Assert.assertEquals(u.getUuid(), l.get(i));

@@ -34,25 +34,25 @@
 
 package org.linagora.linshare.core.exception;
 
-import org.linagora.linshare.core.job.quartz.Context;
+import org.linagora.linshare.core.job.quartz.ResultContext;
 
 public class BatchBusinessException extends RuntimeException {
 
 	private static final long serialVersionUID = -2766223512640837573L;
 
-	protected Context context;
+	protected ResultContext context;
 
 	protected String message;
 
 	protected BusinessException businessException;
 
-	public BatchBusinessException(Context context, String message) {
+	public BatchBusinessException(ResultContext context, String message) {
 		super();
 		this.context = context;
 		this.message = message;
 	}
 
-	public Context getContext() {
+	public ResultContext getContext() {
 		return context;
 	}
 

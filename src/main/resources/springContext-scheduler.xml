@@ -15,6 +15,7 @@
 						<ref bean="purgeUserBatch" />
 					</list>
 				</entry>
+				<entry key="batchRunner" value-ref="batchRunner" />
 			</map>
 		</property>
 	</bean>
@@ -35,6 +36,7 @@
 						<ref bean="computeDocumentMimeTypeBatch" />
 					</list>
 				</entry>
+				<entry key="batchRunner" value-ref="batchRunner" />
 			</map>
 		</property>
 	</bean>
@@ -68,6 +70,7 @@
 						<ref bean="inconsistentUserBatch" />
 					</list>
 				</entry>
+				<entry key="batchRunner" value-ref="batchRunner" />
 			</map>
 		</property>
 	</bean>
@@ -87,6 +90,7 @@
 						<ref bean="notifyBeforeExpirationUploadRequestBatch" />
 					</list>
 				</entry>
+				<entry key="batchRunner" value-ref="batchRunner" />
             </map>
         </property>
     </bean>
@@ -101,6 +105,7 @@
 		<property name="jobDataAsMap">
 			<map>
 				<entry key="batch" value-ref="undownloadedSharedDocumentsBatch" />
+				<entry key="batchRunner" value-ref="batchRunner" />
 			</map>
 		</property>
 	</bean>
@@ -127,6 +132,7 @@
 						<ref bean="shaSumBatch" />
 					</list>
 				</entry>
+				<entry key="batchRunner" value-ref="batchRunner" />
 			</map>
 		</property>
 	</bean>
@@ -156,6 +162,7 @@
 						<ref bean="statisticMonthlyDomainBatch" />
 					</list>
 				</entry>
+				<entry key="batchRunner" value-ref="batchRunner" />
 			</map>
 		</property>
 	</bean>

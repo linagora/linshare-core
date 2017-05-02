@@ -51,6 +51,7 @@ import org.linagora.linshare.core.domain.entities.DomainMonthlyStat;
 import org.linagora.linshare.core.domain.entities.ThreadMonthlyStat;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserMonthlyStat;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
@@ -121,7 +122,8 @@ public class MonthlyBatchTest extends AbstractTransactionalJUnit4SpringContextTe
 
 	@Test
 	public void test() {
-		monthlyUserBatch.execute(jane.getLsUuid(), 10, 1);
+		BatchRunContext batchRunContext = new BatchRunContext();
+		monthlyUserBatch.execute(batchRunContext, jane.getLsUuid(), 10, 1);
 		userMonthlyStatBusinessService.create(jane, new GregorianCalendar(2042, 8, 1, 00, 00).getTime(), new GregorianCalendar(2042, 8, 30, 00, 00).getTime());
 		List<String> listThreadIdentifier = threadWeeklyBusinessService.findUuidAccountBetweenTwoDates(
 				new GregorianCalendar(2042, 10, 1, 00, 00).getTime(),

@@ -10,6 +10,7 @@ import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.LinShareJobBean;
+import org.linagora.linshare.core.runner.BatchRunner;
 import org.linagora.linshare.utils.LinShareWiser;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
@@ -38,6 +39,9 @@ public class LinShareJobBeanTest extends
 
 	private static Logger logger = LoggerFactory
 			.getLogger(LinShareJobBeanTest.class);
+
+	@Autowired
+	private BatchRunner batchRunner;
 
 	@Qualifier("deleteGuestBatch")
 	@Autowired
@@ -81,6 +85,7 @@ public class LinShareJobBeanTest extends
 	public void testAccountCleaning() throws BusinessException,
 			JobExecutionException {
 		LinShareJobBean job = new LinShareJobBean();
+		job.setBatchRunner(batchRunner);
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(deleteGuestBatch);
 		batches.add(markUserToPurgeBatch);

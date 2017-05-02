@@ -34,25 +34,36 @@
 
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
+import java.util.List;
+
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.AsyncTaskType;
 import org.linagora.linshare.core.domain.entities.AsyncTask;
+import org.linagora.linshare.core.domain.entities.UpgradeTask;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.admin.dto.UpgradeTaskDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
 import org.linagora.linshare.core.facade.webservice.user.AsyncTaskFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AsyncTaskService;
+import org.linagora.linshare.core.service.UpgradeTaskService;
+
+import com.google.common.collect.Lists;
 
 public class AsyncTaskFacadeImpl extends UserGenericFacadeImp implements
 		AsyncTaskFacade {
 
 	protected final AsyncTaskService service;
 
+	protected UpgradeTaskService upgradeTaskService;
+
 	public AsyncTaskFacadeImpl(AccountService accountService,
+			UpgradeTaskService upgradeTaskService,
 			AsyncTaskService asyncTaskService) {
 		super(accountService);
 		this.service = asyncTaskService;
+		this.upgradeTaskService = upgradeTaskService;
 	}
 
 	@Override
@@ -75,6 +86,14 @@ public class AsyncTaskFacadeImpl extends UserGenericFacadeImp implements
 	public AsyncTaskDto create(String fileName, AsyncTaskType taskType) {
 		User actor = checkAuthentication();
 		AsyncTask task =  new AsyncTask(fileName, null, taskType);
+		return new AsyncTaskDto(service.create(actor, actor, task));
+	}
+
+	@Override
+	public AsyncTaskDto create(UpgradeTaskDto upgradeTaskDto, AsyncTaskType taskType) {
+		User actor = checkAuthentication();
+		UpgradeTask upgradeTask = upgradeTaskService.find(actor, upgradeTaskDto.getUuid());
+		AsyncTask task =  new AsyncTask(upgradeTask, taskType);
 		return new AsyncTaskDto(service.create(actor, actor, task));
 	}
 
@@ -104,5 +123,18 @@ public class AsyncTaskFacadeImpl extends UserGenericFacadeImp implements
 			task = service.fail(actor, actor, asyncTask.getUuid(), message);
 		}
 		return new AsyncTaskDto(task);
+	}
+
+	@Override
+	public List<AsyncTaskDto> findAll(String upgradeTaskUuid) {
+		User actor = checkAuthentication();
+		Validate.notEmpty(upgradeTaskUuid, "Missing AsyncTask uuid");
+		UpgradeTask upgradeTask = upgradeTaskService.find(actor, upgradeTaskUuid);
+		List<AsyncTask> findAll = service.findAll(actor, actor, upgradeTask);
+		List<AsyncTaskDto> res = Lists.newArrayList();
+		for (AsyncTask asyncTask : findAll) {
+			res.add(new AsyncTaskDto(asyncTask));
+		}
+		return res;
 	}
 }

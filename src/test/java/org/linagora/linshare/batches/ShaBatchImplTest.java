@@ -27,12 +27,14 @@ import org.linagora.linshare.core.domain.entities.TimeUnitClass;
 import org.linagora.linshare.core.domain.entities.UnitValueFunctionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.job.quartz.Context;
+import org.linagora.linshare.core.job.quartz.ResultContext;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.LinShareJobBean;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.runner.BatchRunner;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.quartz.JobExecutionException;
@@ -61,6 +63,9 @@ public class ShaBatchImplTest extends AbstractTransactionalJUnit4SpringContextTe
 
 	private static Logger logger = LoggerFactory
 			.getLogger(ShaBatchImplTest.class);
+
+	@Autowired
+	private BatchRunner batchRunner;
 
 	@Qualifier("shaSumBatch")
 	@Autowired
@@ -117,6 +122,7 @@ public class ShaBatchImplTest extends AbstractTransactionalJUnit4SpringContextTe
 	public void testLaunch() throws BusinessException, JobExecutionException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		LinShareJobBean job = new LinShareJobBean();
+		job.setBatchRunner(batchRunner);
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(shaSumBatch);
 		job.setBatch(batches);
@@ -127,6 +133,7 @@ public class ShaBatchImplTest extends AbstractTransactionalJUnit4SpringContextTe
 	@Test
 	public void testShaGetAll() throws BusinessException, JobExecutionException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
+		BatchRunContext batchRunContext = new BatchRunContext();
 		Account actor = jane;
 		createFunctionalities();
 		File tempFile1 = File.createTempFile("linshare-test-", ".tmp");
@@ -140,13 +147,14 @@ public class ShaBatchImplTest extends AbstractTransactionalJUnit4SpringContextTe
 		Assert.assertTrue(documentEntryRepository.findById(bDocumentEntry.getUuid()) != null);
 		aDocumentEntry.getDocument().setSha256sum(null);
 		bDocumentEntry.getDocument().setSha256sum(null);
-		l = shaSumBatch.getAll();
+		l = shaSumBatch.getAll(batchRunContext);
 		Assert.assertEquals(l.size(), 2);
 	}
 
 	@Test
 	public void testSha256Batch() throws BusinessException, JobExecutionException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
+		BatchRunContext batchRunContext = new BatchRunContext();
 		Account actor = jane;
 		createFunctionalities();
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
@@ -158,11 +166,11 @@ public class ShaBatchImplTest extends AbstractTransactionalJUnit4SpringContextTe
 		Assert.assertTrue(documentEntryRepository.findById(aDocumentEntry.getUuid()) != null);
 		aDocumentEntry.getDocument().setSha256sum(null);
 		documentRepository.update(aDocumentEntry.getDocument());
-		l = shaSumBatch.getAll();
+		l = shaSumBatch.getAll(batchRunContext);
 		int i;
-		Context c;
+		ResultContext c;
 		for (i = 0; i < l.size(); i++) {
-			c = shaSumBatch.execute(l.get(i), l.size(), i);
+			c = shaSumBatch.execute(batchRunContext, l.get(i), l.size(), i);
 			Assert.assertEquals(c.getIdentifier(), l.get(i));
 			Document doc = documentRepository.findByUuid(l.get(i));
 			Assert.assertEquals("0679aeee7c0c5c4a9a4322326f0243c29025a696a4c2436758470d30ec9488a0", doc.getSha256sum());

@@ -266,4 +266,7 @@
 		<constructor-arg index="0" value="${virusscanner.clamav.host}" />
 		<constructor-arg index="1" value="${virusscanner.clamav.port}" />
 	</bean>
+	<bean id="upgradeTaskBusinessService" class="org.linagora.linshare.core.business.service.impl.UpgradeTaskBusinessServiceImpl">
+		<constructor-arg ref="upgradeTaskRepository" />
+	</bean>
 </beans>

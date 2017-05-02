@@ -89,12 +89,12 @@ INSERT INTO technical_account_permission (id, uuid, creation_date, modification_
 
 
 -- Users
--- bart simpson
+-- amy.wolsh
 INSERT INTO account(id, Mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale,cmis_locale, enable, destroyed, domain_id) VALUES (50, 'amy.wolsh@int6.linshare.dev', 2, '9a9ece25-7a0e-4d75-bb55-d4070e25e1e1', current_timestamp(3), current_timestamp(3), 0, 'fr', 'en','fr', true, 0, 3);
 INSERT INTO users(account_id, First_name, Last_name, Can_upload, Comment, Restricted, CAN_CREATE_GUEST) VALUES (50, 'Amy', 'Wolsh', true, '', false, true);
 -- pierre mongin : 15kn60njvhdjh
-INSERT INTO account(id, Mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale,cmis_locale, enable, destroyed, domain_id, owner_id , password ) VALUES (53, 'pmongin@ratp.fr', 3, 'fa2cab19-2cd7-44f5-96f6-418455899d3e', current_timestamp(3), current_timestamp(3), 0, 'fr', 'fr','en', true, 0, 4, 50 , 'OsFTxoUjd62imwHnaV/4zQfrJ5s=');
-INSERT INTO users(account_id, First_name, Last_name, Can_upload, Comment, Restricted, CAN_CREATE_GUEST, expiration_date) VALUES (53, 'Pierre', 'Mongin', true, '', false, false, current_timestamp(3));
+-- INSERT INTO account(id, Mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale,cmis_locale, enable, destroyed, domain_id, owner_id , password ) VALUES (53, 'pmongin@ratp.fr', 3, 'fa2cab19-2cd7-44f5-96f6-418455899d3e', current_timestamp(3), current_timestamp(3), 0, 'fr', 'fr','en', true, 0, 4, 50 , 'OsFTxoUjd62imwHnaV/4zQfrJ5s=');
+-- INSERT INTO users(account_id, First_name, Last_name, Can_upload, Comment, Restricted, CAN_CREATE_GUEST, expiration_date) VALUES (53, 'Pierre', 'Mongin', true, '', false, false, current_timestamp(3));
 
 -- Upload Requests.
 INSERT INTO upload_request_group (id, subject, body, uuid, creation_date, modification_date)
@@ -108,26 +108,6 @@ INSERT INTO upload_request_url (id, contact_id, upload_request_id, uuid, path, p
 	VALUES (1, 1, 1, '90b8a0f8-af07-4052-8bb8-bc5179f64b72', 'upload_request', 'kITh6Jk+FiuyGQtdtaeFxvYnzug=', now(), now());
 
 
-
--- Thread : projet : RATP
-INSERT INTO account(id, Mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale,cmis_locale, enable, destroyed, domain_id) VALUES (51, '9806de10-ed0b-11e1-877a-5404a6202d2c', 5, '9806de10-ed0b-11e1-877a-5404a6202d2c', current_timestamp(3), current_timestamp(3), 0, 'fr', 'fr','fr', true, 0, 1);
-INSERT INTO thread (account_id, name) VALUES (51, 'RATP');
-INSERT INTO account(id, Mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale,cmis_locale, enable, destroyed, domain_id) VALUES (52, '34544580-f0ec-11e1-a62a-080027c0eef0', 5, '34544580-f0ec-11e1-a62a-080027c0eef0', current_timestamp(3), current_timestamp(3), 0, 'fr', 'fr','fr', true, 0, 1);
--- Thread : projet : 3MI
-INSERT INTO thread (account_id, name) VALUES (52, 'Ministère de l''intérieur');
--- Thread : projet : Test Thread
-INSERT INTO account(id, Mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale,cmis_locale, enable, destroyed, domain_id) VALUES (54, 'c4570914-d004-4506-8abf-04527f342e88', 5, 'c4570914-d004-4506-8abf-04527f342e88', current_timestamp(3), current_timestamp(3), 0, 'en', 'en','en', true, 0, 1);
-INSERT INTO thread (account_id, name) VALUES (54, 'Test Thread');
-
-
---Thread members
-INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modification_date, user_id) VALUES (1, 51, false, false, current_timestamp(3), current_timestamp(3), 50); 
-INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modification_date, user_id) VALUES (2, 51, true, true, current_timestamp(3), current_timestamp(3), 53); 
-
-INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modification_date, user_id) VALUES (3, 52, true, true, current_timestamp(3), current_timestamp(3), 50); 
-
-INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modification_date, user_id) VALUES (4, 54, true, true, current_timestamp(3), current_timestamp(3), 50); 
-INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modification_date, user_id) VALUES (5, 54, false, true, current_timestamp(3), current_timestamp(3), 53); 
 
 -- MyDomain QUOTA
 INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification_date,

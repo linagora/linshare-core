@@ -12,8 +12,10 @@ import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.LinShareJobBean;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.runner.BatchRunner;
 import org.linagora.linshare.core.service.InconsistentUserService;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.quartz.JobExecutionException;
@@ -42,6 +44,9 @@ import com.google.common.collect.Lists;
 public class InconsistentUserBatchImplTest extends AbstractTransactionalJUnit4SpringContextTests{
 
 	private static Logger logger = LoggerFactory.getLogger(UploadRequestNewBatchImplTest.class);
+
+	@Autowired
+	private BatchRunner batchRunner;
 
 	@Qualifier("inconsistentUserBatch")
 	@Autowired
@@ -82,6 +87,7 @@ public class InconsistentUserBatchImplTest extends AbstractTransactionalJUnit4Sp
 	public void testLaunching() throws JobExecutionException {
 		logger.debug(LinShareTestConstants.BEGIN_TEST);
 		LinShareJobBean job = new LinShareJobBean();
+		job.setBatchRunner(batchRunner);
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(inconsistentUserBatch);
 		job.setBatch(batches);
@@ -91,11 +97,12 @@ public class InconsistentUserBatchImplTest extends AbstractTransactionalJUnit4Sp
 
 	@Test
 	public void testInconsistentBatch() {
+		BatchRunContext batchRunContext = new BatchRunContext();
 		logger.debug(LinShareTestConstants.BEGIN_TEST);
-		List<String> list = inconsistentUserBatch.getAll();
+		List<String> list = inconsistentUserBatch.getAll(batchRunContext);
 		int i = 0;
 		for (String s : list) {
-			inconsistentUserBatch.execute(s, list.size(), i);
+			inconsistentUserBatch.execute(batchRunContext, s, list.size(), i);
 		}
 		List<Internal> l = inService.findAllInconsistent((User)root);
 		Assert.assertEquals(l.size(), 5);

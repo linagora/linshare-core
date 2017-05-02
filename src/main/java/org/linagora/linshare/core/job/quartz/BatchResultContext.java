@@ -34,7 +34,7 @@
 
 package org.linagora.linshare.core.job.quartz;
 
-public class BatchResultContext<T> extends Context {
+public class BatchResultContext<T> extends ResultContext {
 
 	protected T resource;
 

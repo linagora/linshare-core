@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.linagora.linshare.core.domain.entities">
+	<typedef name="upgradeTaskType" class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType">
+		<param name="enumClass">org.linagora.linshare.core.domain.constants.UpgradeTaskType</param>
+		<param name="valueOfMethod">fromString</param>
+	</typedef>
+	<typedef name="upgradeTaskStatus" class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType">
+		<param name="enumClass">org.linagora.linshare.core.domain.constants.UpgradeTaskStatus</param>
+		<param name="valueOfMethod">fromString</param>
+	</typedef>
+	<typedef name="upgradeTaskGroup" class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType">
+		<param name="enumClass">org.linagora.linshare.core.domain.constants.UpgradeTaskGroup</param>
+		<param name="valueOfMethod">fromString</param>
+	</typedef>
+	<class name="UpgradeTask" table="upgrade_task" lazy="false">
+		<id name="id" column="id" type="long" unsaved-value="0">
+			<generator class="native">
+			</generator>
+		</id>
+		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false"/>
+		<property name="identifier" column="identifier" type="upgradeTaskType" length="255" not-null="true" lazy="false"/>
+		<property name="taskGroup" column="task_group" type="upgradeTaskGroup" length="255" not-null="false" lazy="false"/>
+		<property name="parentUuid" column="parent_uuid" type="string" length="255" not-null="false" lazy="false"/>
+		<property name="parentIdentifier" column="parent_identifier" type="upgradeTaskType" length="255" not-null="false" lazy="false"/>
+		<property name="taskOrder" column="task_order" type="integer" not-null="true" lazy="false"/>
+		<property name="status" column="status" type="upgradeTaskStatus" length="255" not-null="true" lazy="false"/>
+		<property name="creationDate" column="creation_date" type="date" not-null="true" lazy="false"/>
+		<property name="modificationDate" column="modification_date" type="date" not-null="true" lazy="false"/>
+		<property name="extras" column="extras" type="string" length="255" not-null="false" lazy="false"/>
+		<property name="asyncTaskUuid" column="async_task_uuid" type="string" length="255" not-null="false" lazy="false"/>
+		<set name="upgradeAsyncTask" lazy="true" inverse="true">
+			<key column="upgrade_task_id" not-null="false"/>
+			<one-to-many class="AsyncTask"/>
+		</set>
+	</class>
+</hibernate-mapping>

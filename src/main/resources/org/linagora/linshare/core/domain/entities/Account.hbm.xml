@@ -153,6 +153,9 @@
 					<column name="account_id"/>
 				</key>
 				<property name="name" column="name" type="string" length="255" not-null="true" lazy="false"/>
+				<property name="toUpgrade" type="boolean" not-null="true" lazy="false">
+					<column name="to_upgrade" not-null="false" default="false" />
+				</property>
 			</join>
 		</subclass>
 	</class>

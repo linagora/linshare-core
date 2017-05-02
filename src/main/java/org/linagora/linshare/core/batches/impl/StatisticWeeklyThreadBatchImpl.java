@@ -49,7 +49,8 @@ import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.AccountBatchResultContext;
-import org.linagora.linshare.core.job.quartz.Context;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
+import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.ThreadService;
 
@@ -77,7 +78,7 @@ public class StatisticWeeklyThreadBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public List<String> getAll() {
+	public List<String> getAll(BatchRunContext batchRunContext) {
 		logger.info("WeeklyThreadBatchImpl job starting");
 		List<String> threads = threadDailyStatBusinessService.findUuidAccountBetweenTwoDates(getFirstDayOfLastWeek(),
 				getLastDayOfLastWeek());
@@ -86,12 +87,12 @@ public class StatisticWeeklyThreadBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public Context execute(String identifier, long total, long position)
+	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		Thread resource = threadService.findByLsUuidUnprotected(identifier);
-		Context context = new AccountBatchResultContext(resource);
+		ResultContext context = new AccountBatchResultContext(resource);
 		try {
-			logInfo(total, position, "processing thread : " + resource.getAccountRepresentation());
+			logInfo(batchRunContext, total, position, "processing thread : " + resource.getAccountRepresentation());
 			threadWeeklyStatBusinessService.create(resource, getFirstDayOfLastWeek(), getLastDayOfLastWeek());
 		} catch (BusinessException businessException) {
 			GregorianCalendar calendar = new GregorianCalendar();
@@ -99,7 +100,7 @@ public class StatisticWeeklyThreadBatchImpl extends GenericBatchImpl {
 			logError(total, position,
 					"Error while trying to create a ThreadWeeklyStat for user " + resource
 							.getAccountRepresentation() + " in the week "
-					+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US));
+					+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US), batchRunContext);
 			logger.info("Error occurred while creating a weekly statistics for thread "
 					+ resource.getAccountRepresentation() + " int the week "
 					+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US),
@@ -113,15 +114,15 @@ public class StatisticWeeklyThreadBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public void notify(Context context, long total, long position) {
+	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		AccountBatchResultContext threadContext = (AccountBatchResultContext) context;
 		Account thread = threadContext.getResource();
-		logInfo(total, position,
-				"the WeeklyThreadStat for " + thread.getAccountRepresentation() + " has been successfully created.");
+		logInfo(batchRunContext, total,
+				position, "the WeeklyThreadStat for " + thread.getAccountRepresentation() + " has been successfully created.");
 	}
 
 	@Override
-	public void notifyError(BatchBusinessException exception, String identifier, long total, long position) {
+	public void notifyError(BatchBusinessException exception, String identifier, long total, long position, BatchRunContext batchRunContext) {
 		AccountBatchResultContext context = (AccountBatchResultContext) exception.getContext();
 		Account thread = context.getResource();
 		GregorianCalendar calendar = new GregorianCalendar();
@@ -129,7 +130,7 @@ public class StatisticWeeklyThreadBatchImpl extends GenericBatchImpl {
 		logError(total, position,
 				"creating WeeklyThreadStatistic has failed for thread " + thread.getAccountRepresentation()
 						+ " in the week "
-						+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US));
+						+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US), batchRunContext);
 		logger.error("Error occured while creating WeeklyThreadStatistic for thread " + thread.getAccountRepresentation()
 				+ "int the week "
 				+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US)
@@ -137,8 +138,8 @@ public class StatisticWeeklyThreadBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors, long total,
-			long processed) {
+	public void terminate(BatchRunContext batchRunContext, List<String> all, long errors, long unhandled_errors,
+			long total, long processed) {
 		long success = total - errors - unhandled_errors;
 		logger.info(success + " WeeklyThreadStatistic for thread(s) have bean created.");
 		if (errors > 0) {

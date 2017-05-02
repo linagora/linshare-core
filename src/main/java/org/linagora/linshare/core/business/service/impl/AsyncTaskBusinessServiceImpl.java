@@ -34,8 +34,12 @@
 
 package org.linagora.linshare.core.business.service.impl;
 
+import java.util.List;
+
 import org.linagora.linshare.core.business.service.AsyncTaskBusinessService;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AsyncTask;
+import org.linagora.linshare.core.domain.entities.UpgradeTask;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AsyncTaskRepository;
 
@@ -68,5 +72,10 @@ public class AsyncTaskBusinessServiceImpl implements AsyncTaskBusinessService {
 	public AsyncTask create(AsyncTask asyncUploadStatus)
 			throws BusinessException {
 		return repository.create(asyncUploadStatus);
+	}
+
+	@Override
+	public List<AsyncTask> findAll(Account owner, UpgradeTask upgradeTask) {
+		return repository.findAll(owner, upgradeTask);
 	}
 }

@@ -45,7 +45,7 @@ public interface AbstractDomainRepository extends AbstractRepository<AbstractDom
 	public AbstractDomain findById(String identifier);
 
 	/**
-	 * return all TopDomain and SubDomain identifiers
+	 * return all TopDomain, SubDomain, GuestDomain and root domain identifiers
 	 * @return
 	 */
 	public List<String> findAllDomainIdentifiers();

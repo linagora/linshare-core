@@ -47,7 +47,8 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.job.quartz.Context;
+import org.linagora.linshare.core.job.quartz.ResultContext;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.DomainBatchResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
@@ -76,7 +77,7 @@ public class StatisticMonthlyDomainBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public List<String> getAll() {
+	public List<String> getAll(BatchRunContext batchRunContext) {
 		logger.info("MonthlyDomainBatchImpl job starting");
 		List<String> domains = domainWeeklyStatBusinessService
 				.findIdentifierDomainBetweenTwoDates(getFirstDayOfLastMonth(), getLastDayOfLastMonth());
@@ -85,19 +86,19 @@ public class StatisticMonthlyDomainBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public Context execute(String identifier, long total, long position)
+	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		AbstractDomain resource = abstractDomainService.findById(identifier);
-		Context context = new DomainBatchResultContext(resource);
+		ResultContext context = new DomainBatchResultContext(resource);
 		try {
-			logInfo(total, position, " processing domain : " + resource.getDescription());
+			logInfo(batchRunContext, total, position, " processing domain : " + resource.getDescription());
 			domainMonthlyStatBusinessService.create(resource, getFirstDayOfLastMonth(), getLastDayOfLastMonth());
 		} catch (BusinessException businessException) {
 			GregorianCalendar calendar = new GregorianCalendar();
 			calendar.add(GregorianCalendar.MONTH, -1);
 			logError(total, position,
 					"Error while trying to create a DomainMonthlyStat for domain" + resource.getDescription()
-							+ " in the month " + calendar.getTime().toString());
+							+ " in the month " + calendar.getTime().toString(), batchRunContext);
 			logger.info(
 					"Error occurred while creating a monthly statistics for domain " + resource.getDescription()
 							+ " in the month "
@@ -112,30 +113,30 @@ public class StatisticMonthlyDomainBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public void notify(Context context, long total, long position) {
+	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		DomainBatchResultContext domainContext = (DomainBatchResultContext) context;
 		AbstractDomain domain = domainContext.getResource();
-		logInfo(total, position,
-				"the MonthlyDomainStat for " + domain.getUuid() + "has been successfully created.");
+		logInfo(batchRunContext, total,
+				position, "the MonthlyDomainStat for " + domain.getUuid() + "has been successfully created.");
 	}
 
 	@Override
-	public void notifyError(BatchBusinessException exception, String identifier, long total, long position) {
+	public void notifyError(BatchBusinessException exception, String identifier, long total, long position, BatchRunContext batchRunContext) {
 		DomainBatchResultContext domainContext = (DomainBatchResultContext) exception.getContext();
 		AbstractDomain domain = domainContext.getResource();
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.add(GregorianCalendar.MONTH, -1);
 		logError(total, position,
 				"creating MonthlyDomainStatistic has failed for domain" + domain.getDescription() + " in the month "
-						+ calendar.getDisplayName(GregorianCalendar.MONTH, GregorianCalendar.LONG, Locale.US));
+						+ calendar.getDisplayName(GregorianCalendar.MONTH, GregorianCalendar.LONG, Locale.US), batchRunContext);
 		logger.error("Error occured while creating MonthlyDomainStatistic for domain " + domain.getDescription()
 				+ " in the month " + calendar.getDisplayName(GregorianCalendar.MONTH, GregorianCalendar.LONG, Locale.US)
 				+ ". BatchBudinessException ", exception);
 	}
 
 	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors, long total,
-			long processed) {
+	public void terminate(BatchRunContext batchRunContext, List<String> all, long errors, long unhandled_errors,
+			long total, long processed) {
 		long success = total - errors - unhandled_errors;
 		logger.info(success + " MonthlyDomainStatistic for domain(s) have bean created.");
 		if (errors > 0) {

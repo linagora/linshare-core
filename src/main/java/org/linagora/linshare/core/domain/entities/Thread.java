@@ -42,6 +42,8 @@ public class Thread extends Account {
 
 	protected String name;
 
+	protected Boolean toUpgrade;
+
 	protected Set<ThreadMember> myMembers = new java.util.HashSet<ThreadMember>();
 
 	public Thread() {
@@ -53,6 +55,7 @@ public class Thread extends Account {
 		this.setName(name);
 		this.domain = domain;
 		this.enable = true;
+		this.toUpgrade = false;
 		this.destroyed = 0;
 		this.locale = owner.locale;
 		this.cmisLocale=owner.cmisLocale;
@@ -93,5 +96,13 @@ public class Thread extends Account {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Boolean getToUpgrade() {
+		return toUpgrade;
+	}
+
+	public void setToUpgrade(Boolean toUpgrade) {
+		this.toUpgrade = toUpgrade;
 	}
 }

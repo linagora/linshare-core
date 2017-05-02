@@ -42,7 +42,8 @@ import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.AnonymousUrlBatchResultContext;
-import org.linagora.linshare.core.job.quartz.Context;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
+import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.AnonymousUrlService;
 
@@ -58,7 +59,7 @@ public class DeleteExpiredAnonymousUrlBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public List<String> getAll() {
+	public List<String> getAll(BatchRunContext batchRunContext) {
 		logger.info(getClass().toString() + " job starting ...");
 		SystemAccount actor = getSystemAccount();
 		List<String> allExpiredUrl = service
@@ -69,20 +70,20 @@ public class DeleteExpiredAnonymousUrlBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public Context execute(String identifier, long total, long position)
+	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		SystemAccount actor = getSystemAccount();
 		AnonymousUrl resource = service.find(actor, actor, identifier);
-		Context context = new AnonymousUrlBatchResultContext(resource);
+		ResultContext context = new AnonymousUrlBatchResultContext(resource);
 		try {
-			logInfo(total, position,
-					"processing anonymous url : " + resource.getReprentation());
+			logInfo(batchRunContext, total,
+					position, "processing anonymous url : " + resource.getReprentation());
 			service.delete(actor, actor, identifier);
 			logger.info("Expired anonymous url was deleted : "
 					+ resource.getReprentation());
 		} catch (BusinessException businessException) {
 			logError(total, position,
-					"Error while trying to delete expired anonymous url");
+					"Error while trying to delete expired anonymous url", batchRunContext);
 			logger.info("Error occured while cleaning expired anonymous url",
 					businessException);
 			BatchBusinessException exception = new BatchBusinessException(
@@ -95,29 +96,29 @@ public class DeleteExpiredAnonymousUrlBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public void notify(Context context, long total, long position) {
+	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		AnonymousUrlBatchResultContext auContext = (AnonymousUrlBatchResultContext) context;
 		AnonymousUrl url = auContext.getResource();
-		logInfo(total, position, "The anonymous url " + url.getReprentation()
+		logInfo(batchRunContext, total, position, "The anonymous url " + url.getReprentation()
 				+ " has been successfully deleted.");
 	}
 
 	@Override
 	public void notifyError(BatchBusinessException exception,
-			String identifier, long total, long position) {
+			String identifier, long total, long position, BatchRunContext batchRunContext) {
 		AnonymousUrlBatchResultContext auContext = (AnonymousUrlBatchResultContext) exception
 				.getContext();
 		AnonymousUrl url = auContext.getResource();
 		logError(total, position,
-				"cleaning anonymous url has failed : " + url.getReprentation());
+				"cleaning anonymous url has failed : " + url.getReprentation(), batchRunContext);
 		logger.error("Error occured while cleaning expired anonymous url "
 				+ url.getReprentation() + ". BatchBusinessException ",
 				exception);
 	}
 
 	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors,
-			long total, long processed) {
+	public void terminate(BatchRunContext batchRunContext, List<String> all, long errors,
+			long unhandled_errors, long total, long processed) {
 		long success = total - errors - unhandled_errors;
 		logger.info(success + " anonymous url(s) have been deleted.");
 		if (errors > 0) {

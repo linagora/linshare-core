@@ -299,4 +299,8 @@
 		<constructor-arg ref="operationHistoryBusinessService" />
 		<constructor-arg ref="quotaService"/>
 	</bean>
+
+	<bean id="upgradeTaskService" class="org.linagora.linshare.core.service.impl.UpgradeTaskServiceImpl">
+		<constructor-arg ref="upgradeTaskBusinessService" />
+	</bean>
 </beans>

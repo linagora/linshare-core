@@ -45,7 +45,8 @@ import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.job.quartz.Context;
+import org.linagora.linshare.core.job.quartz.ResultContext;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.EntryBatchResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.DocumentEntryService;
@@ -73,7 +74,7 @@ public class DeleteExpiredDocumentEntryBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public List<String> getAll() {
+	public List<String> getAll(BatchRunContext batchRunContext) {
 		logger.info(getClass().toString() + " job starting ...");
 		SystemAccount actor = getSystemAccount();
 		if (cronActivated) {
@@ -88,14 +89,14 @@ public class DeleteExpiredDocumentEntryBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public Context execute(String identifier, long total, long position)
+	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		SystemAccount actor = getSystemAccount();
 		DocumentEntry resource = service.find(actor, actor, identifier);
-		logInfo(total, position,
-				"processing document entry : " + resource.getRepresentation());
+		logInfo(batchRunContext, total,
+				position, "processing document entry : " + resource.getRepresentation());
 		AbstractDomain domain = resource.getEntryOwner().getDomain();
-		Context context = new EntryBatchResultContext(resource);
+		ResultContext context = new EntryBatchResultContext(resource);
 		try {
 			if (resource.getShared() == 0) {
 				TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityService
@@ -115,7 +116,7 @@ public class DeleteExpiredDocumentEntryBatchImpl extends GenericBatchImpl {
 					+ resource.getRepresentation());
 		} catch (BusinessException businessException) {
 			logError(total, position,
-					"Error while trying to delete expired document entry");
+					"Error while trying to delete expired document entry", batchRunContext);
 			logger.info("Error occured while cleaning expired document entry",
 					businessException);
 			BatchBusinessException exception = new BatchBusinessException(
@@ -128,30 +129,30 @@ public class DeleteExpiredDocumentEntryBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public void notify(Context context, long total, long position) {
+	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		EntryBatchResultContext shareContext = (EntryBatchResultContext) context;
 		Entry entry = shareContext.getResource();
-		logInfo(total, position,
-				"The document entry " + entry.getRepresentation()
+		logInfo(batchRunContext, total,
+				position, "The document entry " + entry.getRepresentation()
 						+ " has been successfully deleted.");
 	}
 
 	@Override
 	public void notifyError(BatchBusinessException exception,
-			String identifier, long total, long position) {
+			String identifier, long total, long position, BatchRunContext batchRunContext) {
 		EntryBatchResultContext context = (EntryBatchResultContext) exception
 				.getContext();
 		Entry entry = context.getResource();
 		logError(total, position, "cleaning document entry has failed : "
-				+ entry.getRepresentation());
+				+ entry.getRepresentation(), batchRunContext);
 		logger.error("Error occured while cleaning expired document entry "
 				+ entry.getRepresentation() + ". BatchBusinessException ",
 				exception);
 	}
 
 	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors,
-			long total, long processed) {
+	public void terminate(BatchRunContext batchRunContext, List<String> all, long errors,
+			long unhandled_errors, long total, long processed) {
 		long success = total - errors - unhandled_errors;
 		logger.info(success + " document entry(s) have been deleted.");
 		if (errors > 0) {

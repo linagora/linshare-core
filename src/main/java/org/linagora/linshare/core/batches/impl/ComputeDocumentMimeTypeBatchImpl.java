@@ -46,7 +46,8 @@ import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.BatchResultContext;
-import org.linagora.linshare.core.job.quartz.Context;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
+import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 
@@ -70,7 +71,7 @@ public class ComputeDocumentMimeTypeBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public List<String> getAll() {
+	public List<String> getAll(BatchRunContext batchRunContext) {
 		logger.info(getClass().toString() + " job starting ...");
 		List<String> entries = documentRepository.findAllDocumentWithMimeTypeCheckEnabled();
 		logger.info(entries.size()
@@ -79,15 +80,15 @@ public class ComputeDocumentMimeTypeBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public Context execute(String identifier, long total, long position)
+	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		Document resource = documentRepository.findByUuid(identifier);
 		if (resource == null) {
 			return null;
 		}
-		logInfo(total, position,
-				"processing document : " + resource.getRepresentation());
-		Context context = new BatchResultContext<Document>(resource);
+		logInfo(batchRunContext, total,
+				position, "processing document : " + resource.getRepresentation());
+		ResultContext context = new BatchResultContext<Document>(resource);
 		context.setProcessed(false);
 		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, resource);
 		if (fileDataStore.exists(metadata)) {
@@ -107,29 +108,29 @@ public class ComputeDocumentMimeTypeBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public void notify(Context context, long total, long position) {
+	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		@SuppressWarnings("unchecked")
 		BatchResultContext<Document> cc = (BatchResultContext<Document>) context;
 		if (cc.getProcessed()) {
 			Document entry = cc.getResource();
-			logInfo(total, position, "Document mime type was updated {}.", entry.getRepresentation());
+			logInfo(batchRunContext, total, position, "Document mime type was updated {}.", entry.getRepresentation());
 		}
 	}
 
 	@Override
 	public void notifyError(BatchBusinessException exception,
-			String identifier, long total, long position) {
+			String identifier, long total, long position, BatchRunContext batchRunContext) {
 		@SuppressWarnings("unchecked")
 		BatchResultContext<Document> context = (BatchResultContext<Document>) exception
 				.getContext();
 		Document entry = context.getResource();
 		logError(total, position, "Document mime type was not updated, batch has failed : {}",
-				entry.getRepresentation(), exception);
+				batchRunContext, entry.getRepresentation(), exception);
 	}
 
 	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors,
-			long total, long processed) {
+	public void terminate(BatchRunContext batchRunContext, List<String> all, long errors,
+			long unhandled_errors, long total, long processed) {
 		long success = total - errors - unhandled_errors;
 		logger.info(success + " document(s) have been checked.");
 		if (errors > 0) {

@@ -42,7 +42,8 @@ import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.BatchResultContext;
-import org.linagora.linshare.core.job.quartz.Context;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
+import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.ShareEntryGroupService;
 
@@ -58,7 +59,7 @@ public class DeleteShareEntryGroupBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public List<String> getAll() {
+	public List<String> getAll(BatchRunContext batchRunContext) {
 		logger.info("DeleteShareEntryGroupBatchImpl job starting ...");
 		SystemAccount actor = getSystemAccount();
 		List<String> allShareEntries = service
@@ -69,14 +70,14 @@ public class DeleteShareEntryGroupBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public Context execute(String identifier, long total, long position)
+	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		SystemAccount actor = getSystemAccount();
 		ShareEntryGroup shareEntryGroup = service.find(actor, actor, identifier);
-		Context context = new BatchResultContext<ShareEntryGroup>(
+		ResultContext context = new BatchResultContext<ShareEntryGroup>(
 				shareEntryGroup);
 		try {
-			logInfo(total, position, "processing shareEntryGroup : "
+			logInfo(batchRunContext, total, position, "processing shareEntryGroup : "
 					+ shareEntryGroup.getUuid());
 			service.delete(actor, actor,
 					shareEntryGroup);
@@ -84,7 +85,7 @@ public class DeleteShareEntryGroupBatchImpl extends GenericBatchImpl {
 					+ " has been deleted");
 		} catch (BusinessException businessException) {
 			logError(total, position,
-					"Error while trying to delete shareEntryGroup");
+					"Error while trying to delete shareEntryGroup", batchRunContext);
 			logger.info("Error occured while deleting shareEntryGroup ",
 					businessException);
 			BatchBusinessException exception = new BatchBusinessException(
@@ -96,31 +97,31 @@ public class DeleteShareEntryGroupBatchImpl extends GenericBatchImpl {
 	}
 
 	@Override
-	public void notify(Context context, long total, long position) {
+	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		@SuppressWarnings("unchecked")
 		BatchResultContext<ShareEntryGroup> shareEntryGroupContext = (BatchResultContext<ShareEntryGroup>) context;
-		logInfo(total, position,
-				"The shareEntryGroup "
+		logInfo(batchRunContext, total,
+				position, "The shareEntryGroup "
 						+ shareEntryGroupContext.getResource().getUuid()
 						+ " has been successfully deleted");
 	}
 
 	@Override
 	public void notifyError(BatchBusinessException exception, String identifier,
-			long total, long position) {
+			long total, long position, BatchRunContext batchRunContext) {
 		@SuppressWarnings("unchecked")
 		BatchResultContext<ShareEntryGroup> shareEntryGroupContext = (BatchResultContext<ShareEntryGroup>) exception
 				.getContext();
 		logError(total, position, "Deleting shareEntryGroup has failed "
-				+ shareEntryGroupContext.getResource().getUuid());
+				+ shareEntryGroupContext.getResource().getUuid(), batchRunContext);
 		logger.error("Error occured while deleting shareEntryGroup "
 				+ shareEntryGroupContext.getResource().getUuid()
 				+ ". BatchBusinessException ", exception);
 	}
 
 	@Override
-	public void terminate(List<String> all, long errors, long unhandled_errors,
-			long total, long processed) {
+	public void terminate(BatchRunContext batchRunContext, List<String> all, long errors,
+			long unhandled_errors, long total, long processed) {
 		long success = total - errors - unhandled_errors;
 		logger.info(success + " ShareEntryGroup have been deleted");
 		if (errors > 0) {
