@@ -156,7 +156,6 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		TopDomain topDomain = new TopDomain("label");
 		topDomain.setDefaultRole(Role.SIMPLE);
-		topDomain.setUsedSpace(0L);
 		DomainPolicy policy = domainPolicyRepository.findById(LinShareConstants.defaultDomainPolicyIdentifier);
 		topDomain.setPolicy(policy);
 
@@ -187,7 +186,6 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		TopDomain topDomain = new TopDomain("label");
 		topDomain.setDefaultRole(Role.SIMPLE);
-		topDomain.setUsedSpace(0L);
 		DomainPolicy policy = domainPolicyRepository
 				.findById(LinShareConstants.defaultDomainPolicyIdentifier);
 		topDomain.setPolicy(policy);

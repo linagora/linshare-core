@@ -79,8 +79,6 @@ public abstract class AbstractDomain {
 
 	protected List<ShareExpiryRule> shareExpiryRules;
 
-	protected Long usedSpace;
-
 	protected Long authShowOrder;
 
 	//mail configurations
@@ -122,7 +120,6 @@ public abstract class AbstractDomain {
 		this.externalMailLocale = Language.ENGLISH;
 		this.enable = true;
 		this.template = false;
-		this.usedSpace = new Long(0);
 		this.shareExpiryRules = new ArrayList<ShareExpiryRule>();
 		this.policy = null;
 		this.authShowOrder = new Long(1);
@@ -144,7 +141,6 @@ public abstract class AbstractDomain {
 		this.parentDomain = parent;
 		this.enable = true;
 		this.template = false;
-		this.usedSpace = new Long(0);
 		this.subdomain = new HashSet<AbstractDomain>();
 		this.defaultRole = Role.valueOf(domainDto.getUserRole());
 		this.defaultTapestryLocale = domainDto.getLanguage();
@@ -305,14 +301,6 @@ public abstract class AbstractDomain {
 
 	public void setShareExpiryRules(List<ShareExpiryRule> shareExpiryRules) {
 		this.shareExpiryRules = shareExpiryRules;
-	}
-
-	public Long getUsedSpace() {
-		return usedSpace;
-	}
-
-	public void setUsedSpace(Long usedSpace) {
-		this.usedSpace = usedSpace;
 	}
 
 	public abstract DomainType getDomainType();

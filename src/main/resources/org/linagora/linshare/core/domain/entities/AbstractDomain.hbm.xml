@@ -35,7 +35,6 @@
 		<property access="field" column="default_role" name="defaultRole" type="roleEnumType" />
 		<property access="field" column="default_locale" name="defaultTapestryLocale" type="supportedLanguageType"/>
 		<property access="field" column="default_mail_locale" name="externalMailLocale" type="languageType"/>
-		<property access="field" column="used_space" name="usedSpace" not-null="true"/>
 		<property access="field" column="auth_show_order" name="authShowOrder" />
 
 		<many-to-one name="policy" class="org.linagora.linshare.core.domain.entities.DomainPolicy" 

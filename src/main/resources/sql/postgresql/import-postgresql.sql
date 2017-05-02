@@ -11,8 +11,8 @@ INSERT INTO domain_policy(id, uuid, label, domain_access_policy_id) VALUES (1, '
 
 
 -- Root domain (application domain)
-INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, default_mail_locale, used_space, user_provider_id, domain_policy_id, parent_id,
-	auth_show_order) VALUES (1, 0, 'LinShareRootDomain', 'LinShareRootDomain', true, false, 'The root application domain', 3, 'en', 'en', 0, null, 1, null, 0);
+INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, default_mail_locale, user_provider_id, domain_policy_id, parent_id,
+	auth_show_order) VALUES (1, 0, 'LinShareRootDomain', 'LinShareRootDomain', true, false, 'The root application domain', 3, 'en', 'en', null, 1, null, 0);
 
 -- root domain quota
 INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification_date,
