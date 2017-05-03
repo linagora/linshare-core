@@ -211,8 +211,8 @@ public class AnonymousShareEntryServiceImpl extends
 			}
 		}
 		shareEntry = anonymousShareEntryBusinessService.updateDownloadCounter(shareEntry);
-		ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, shareEntry.getEntryOwner(),
-				LogAction.DOWNLOAD, shareEntry, AuditLogEntryType.ANONYMOUS_SHARE_ENTRY);
+		ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, shareEntry.getAnonymousUrl().getContact(),
+				shareEntry, AuditLogEntryType.ANONYMOUS_SHARE_ENTRY);
 		logEntryService.insert(log);
 		notifierService.sendNotification(mail);
 		return documentEntryBusinessService.getDocumentStream(shareEntry

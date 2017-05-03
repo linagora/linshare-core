@@ -127,11 +127,13 @@ public abstract class AuditLogEntryUser extends AuditLogEntry {
 
 	protected void initRelatedAccountField() {
 		this.relatedAccounts = Lists.newArrayList();
-		String actorUuid = authUser.getUuid();
-		String ownerUuid = actor.getUuid();
-		this.relatedAccounts.add(actorUuid);
-		if (!actorUuid.equals(ownerUuid)) {
-			this.relatedAccounts.add(ownerUuid);
+		String authUserUuid = authUser.getUuid();
+		String actorUuid = actor.getUuid();
+		this.relatedAccounts.add(authUserUuid);
+		if (actorUuid != null) {
+			if (!authUserUuid.equals(actorUuid)) {
+				this.relatedAccounts.add(actorUuid);
+			}
 		}
 	}
 

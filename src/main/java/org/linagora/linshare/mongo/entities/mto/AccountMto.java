@@ -38,6 +38,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.Recipient;
@@ -66,6 +67,10 @@ public class AccountMto {
 
 	public AccountMto(Account account) {
 		this(account, false);
+	}
+
+	public AccountMto(Contact contact) {
+		this.mail = contact.getMail();
 	}
 
 	public AccountMto(Account account, boolean light) {

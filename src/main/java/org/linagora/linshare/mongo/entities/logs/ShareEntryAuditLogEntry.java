@@ -40,6 +40,7 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
+import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.AnonymousShareEntryMto;
@@ -64,23 +65,36 @@ public class ShareEntryAuditLogEntry extends AuditLogEntryUser {
 		super();
 	}
 
-	public ShareEntryAuditLogEntry(Account authUser, Account owner, LogAction action, ShareEntry entry,
+	public ShareEntryAuditLogEntry(Account authUser, Account actor, LogAction action, ShareEntry entry,
 			AuditLogEntryType type) {
-		super(new AccountMto(authUser), new AccountMto(owner), action, type, entry.getUuid());
+		super(new AccountMto(authUser), new AccountMto(actor), action, type, entry.getUuid());
 		this.recipientMail = entry.getRecipient().getMail();
 		this.recipientUuid = entry.getRecipient().getLsUuid();
 		this.resource = new ShareEntryMto(entry);
 		this.shareEntryGroup = new ShareEntryGroupMto(entry.getShareEntryGroup());
 		this.addRelatedResources(entry.getDocumentEntry().getUuid());
+		if (!actor.getLsUuid().equals(entry.getEntryOwner().getLsUuid())) {
+			this.addRelatedAccounts(entry.getEntryOwner().getLsUuid());
+		}
 	}
 
-	public ShareEntryAuditLogEntry(Account authUser, Account owner, LogAction action, AnonymousShareEntry entry,
+	public ShareEntryAuditLogEntry(Account authUser, Account actor, LogAction action, AnonymousShareEntry entry,
 			AuditLogEntryType type) {
-		super(new AccountMto(authUser), new AccountMto(owner), action, type, entry.getUuid());
+		super(new AccountMto(authUser), new AccountMto(actor), action, type, entry.getUuid());
 		this.recipientMail = entry.getAnonymousUrl().getContact().getMail();
 		this.resource = new AnonymousShareEntryMto(entry);
 		this.shareEntryGroup = new ShareEntryGroupMto(entry.getShareEntryGroup());
 		this.addRelatedResources(entry.getDocumentEntry().getUuid());
+	}
+
+	public ShareEntryAuditLogEntry(Account authUser, Contact actor, AnonymousShareEntry entry,
+			AuditLogEntryType type) {
+		super(new AccountMto(authUser), new AccountMto(actor), LogAction.DOWNLOAD, type, entry.getUuid());
+		this.recipientMail = entry.getAnonymousUrl().getContact().getMail();
+		this.resource = new AnonymousShareEntryMto(entry);
+		this.shareEntryGroup = new ShareEntryGroupMto(entry.getShareEntryGroup());
+		this.addRelatedResources(entry.getDocumentEntry().getUuid());
+		this.addRelatedAccounts(entry.getEntryOwner().getLsUuid());
 	}
 
 	public EntryMto getResource() {
