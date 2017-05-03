@@ -22,7 +22,6 @@ import org.linagora.linshare.core.domain.entities.OperationHistory;
 import org.linagora.linshare.core.domain.entities.ThreadDailyStat;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserDailyStat;
-import org.linagora.linshare.core.job.quartz.LinShareJobBean;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.runner.BatchRunner;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
@@ -128,8 +127,6 @@ public class DailyBatchJobTest extends AbstractTransactionalJUnit4SpringContextT
 
 	@Test
 	public void test() throws JobExecutionException {
-		LinShareJobBean job = new LinShareJobBean();
-		job.setBatchRunner(batchRunner);
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(dailyUserBatch);
 		batches.add(dailyThreadBatch);
@@ -141,7 +138,6 @@ public class DailyBatchJobTest extends AbstractTransactionalJUnit4SpringContextT
 		batches.add(monthlyUserBatch);
 		batches.add(monthlyThreadBatch);
 		batches.add(monthlyDomainBatch);
-		job.setBatch(batches);
 
 		List<OperationHistory> listOperationHistory = operationHistoryBusinessService.find(null, null, null,
 				yesterday());
@@ -154,7 +150,7 @@ public class DailyBatchJobTest extends AbstractTransactionalJUnit4SpringContextT
 		assertEquals(0, listThreadDailyStat.size());
 
 		// running all batches.
-		assertTrue("At least one batch failed.", job.executeExternal());
+		assertTrue("At least one batch failed.", batchRunner.execute(batches));
 
 		listOperationHistory = operationHistoryBusinessService.find(null, null, null, yesterday());
 		assertEquals(0, listOperationHistory.size());

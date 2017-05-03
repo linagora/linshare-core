@@ -13,7 +13,6 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
-import org.linagora.linshare.core.job.quartz.LinShareJobBean;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.runner.BatchRunner;
 import org.linagora.linshare.core.service.InconsistentUserService;
@@ -86,12 +85,9 @@ public class InconsistentUserBatchImplTest extends AbstractTransactionalJUnit4Sp
 	@Test
 	public void testLaunching() throws JobExecutionException {
 		logger.debug(LinShareTestConstants.BEGIN_TEST);
-		LinShareJobBean job = new LinShareJobBean();
-		job.setBatchRunner(batchRunner);
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(inconsistentUserBatch);
-		job.setBatch(batches);
-		Assert.assertTrue("At least one batch failed.", job.executeExternal());
+		Assert.assertTrue("At least one batch failed.", batchRunner.execute(batches));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

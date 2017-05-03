@@ -33,12 +33,16 @@
  */
 package org.linagora.linshare.core.runner;
 
+import java.util.List;
+
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
 
 public interface BatchRunner {
 
 	boolean execute(GenericBatch batch);
+
+	boolean execute(List<GenericBatch> batchs);
 
 	boolean execute(GenericBatch batch, BatchRunContext batchRunContext);
 

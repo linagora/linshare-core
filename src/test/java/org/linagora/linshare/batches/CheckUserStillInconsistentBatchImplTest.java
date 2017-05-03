@@ -9,9 +9,8 @@ import org.junit.Test;
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
-import org.linagora.linshare.core.job.quartz.LinShareJobBean;
+import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.runner.BatchRunner;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,12 +57,9 @@ public class CheckUserStillInconsistentBatchImplTest extends AbstractTransaction
 
 	@Test
 	public void testBatch() throws BusinessException, JobExecutionException {
-		LinShareJobBean job = new LinShareJobBean();
-		job.setBatchRunner(batchRunner);
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(checkIfUserStillInconsistentBatch);
-		job.setBatch(batches);
-		Assert.assertTrue("At least one batch failed.", job.executeExternal());
+		Assert.assertTrue("At least one batch failed.", batchRunner.execute(batches));
 	}
 
 	@Test

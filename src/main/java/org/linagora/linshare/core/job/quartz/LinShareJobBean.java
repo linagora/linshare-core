@@ -39,13 +39,9 @@ import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.runner.BatchRunner;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
 public class LinShareJobBean extends QuartzJobBean {
-
-	private static final Logger logger = LoggerFactory.getLogger(LinShareJobBean.class);
 
 	protected List<GenericBatch> batchs;
 
@@ -65,20 +61,6 @@ public class LinShareJobBean extends QuartzJobBean {
 
 	@Override
 	protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
-		executeExternal();
-	}
-
-	// TODO:FMA: remove it.
-	public boolean executeExternal()
-			throws JobExecutionException {
-		logger.debug("number of batches : " + batchs.size());
-		boolean finalResult = true;
-		for (GenericBatch batch : batchs) {
-			boolean execute = batchRunner.execute(batch);
-			if (!execute) {
-				finalResult = false;
-			}
-		}
-		return finalResult;
+		batchRunner.execute(batchs);
 	}
 }

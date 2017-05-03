@@ -27,9 +27,8 @@ import org.linagora.linshare.core.domain.entities.TimeUnitClass;
 import org.linagora.linshare.core.domain.entities.UnitValueFunctionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
-import org.linagora.linshare.core.job.quartz.LinShareJobBean;
+import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
@@ -121,12 +120,9 @@ public class ShaBatchImplTest extends AbstractTransactionalJUnit4SpringContextTe
 	@Test
 	public void testLaunch() throws BusinessException, JobExecutionException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		LinShareJobBean job = new LinShareJobBean();
-		job.setBatchRunner(batchRunner);
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(shaSumBatch);
-		job.setBatch(batches);
-		Assert.assertTrue("At least one batch failed.", job.executeExternal());
+		Assert.assertTrue("At least one batch failed.", batchRunner.execute(batches));
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 

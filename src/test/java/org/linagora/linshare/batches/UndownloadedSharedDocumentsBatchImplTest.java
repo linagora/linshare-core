@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.job.quartz.LinShareJobBean;
 import org.linagora.linshare.core.runner.BatchRunner;
 import org.linagora.linshare.utils.LinShareWiser;
 import org.quartz.JobExecutionException;
@@ -72,12 +71,9 @@ public class UndownloadedSharedDocumentsBatchImplTest extends
 
 	@Test
 	public void testBatch() throws BusinessException, JobExecutionException {
-		LinShareJobBean job = new LinShareJobBean();
-		job.setBatchRunner(batchRunner);
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(undownloadedSharedDocumentsBatch);
-		job.setBatch(batches);
-		Assert.assertTrue("At least one batch failed.", job.executeExternal());
+		Assert.assertTrue("At least one batch failed.", batchRunner.execute(batches));
 		wiser.checkGeneratedMessages();
 	}
 }

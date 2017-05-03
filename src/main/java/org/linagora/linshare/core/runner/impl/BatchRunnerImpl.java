@@ -56,6 +56,20 @@ public class BatchRunnerImpl implements BatchRunner {
 	}
 
 	@Override
+	public boolean execute(List<GenericBatch> batchs) {
+		logger.debug("number of batches : " + batchs.size());
+		boolean finalResult = true;
+		for (GenericBatch batch : batchs) {
+			BatchRunContext batchRunContext = new BatchRunContext();
+			boolean execute = execute(batch, batchRunContext);
+			if (!execute) {
+				finalResult = false;
+			}
+		}
+		return finalResult;
+	}
+
+	@Override
 	public boolean execute(GenericBatch batch, BatchRunContext batchRunContext) {
 		boolean finalResult = true;
 		if (!batch.needToRun()) {

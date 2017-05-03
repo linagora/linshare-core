@@ -11,9 +11,8 @@ import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
-import org.linagora.linshare.core.job.quartz.LinShareJobBean;
+import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.UploadRequestRepository;
 import org.linagora.linshare.core.runner.BatchRunner;
 import org.linagora.linshare.utils.LinShareWiser;
@@ -88,14 +87,11 @@ public class UploadRequestNewBatchImplTest extends
 	@Test
 	public void testLaunching() throws BusinessException,
 		JobExecutionException {
-		LinShareJobBean job = new LinShareJobBean();
-		job.setBatchRunner(batchRunner);
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(closeExpiredUploadResquestBatch);
 		batches.add(enableUploadResquestBatch);
 		batches.add(notifyBeforeExpirationUploadResquestBatch);
-		job.setBatch(batches);
-		Assert.assertTrue("At least one batch failed.", job.executeExternal());
+		Assert.assertTrue("At least one batch failed.", batchRunner.execute(batches));
 		wiser.checkGeneratedMessages();
 	}
 
