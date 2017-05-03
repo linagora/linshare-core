@@ -437,7 +437,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 				// add an document for the file in DB
 				Document document = new Document(metadata);
 				document.setSha256sum(sha256sum);
-				document.setSha1sum(SHA1CheckSumFileStream(myFile));
 				if (metadataThmb != null)
 					document.setThmbUuid(metadataThmb.getUuid());
 				document.setTimeStamp(timestampToken);
@@ -635,16 +634,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	}
 
 	@Override
-	public String SHA1CheckSumFileStream(File file) {
-		try(InputStream fs = new FileInputStream(file)) {
-			return SHA1CheckSumFileStream(fs);
-		} catch (IOException e) {
-			logger.error("Could not found the file : " + file.getName(), e);
-			throw new BusinessException(BusinessErrorCode.FILE_UNREACHABLE, "Coul not found the file " + file.getName());
-		}
-	}
-
-	@Override
 	public String SHA256CheckSumFileStream(InputStream fis) throws IOException {
 		StringBuffer hexString = new StringBuffer();
 		try {
@@ -653,30 +642,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 
 			int nread = 0;
 			while ((nread = fis.read(dataBytes)) != -1) {
-				md.update(dataBytes, 0, nread);
-			}
-			byte[] mdbytes = md.digest();
-			// convert the byte to hex format
-			for (int i = 0; i < mdbytes.length; i++) {
-				hexString.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16)
-						.substring(1));
-			}
-			return hexString.toString();
-		} catch (NoSuchAlgorithmException e) {
-			logger.error(e.getMessage(), e);
-			throw new TechnicalException(e.getMessage());
-		}
-	}
-
-	@Override
-	public String SHA1CheckSumFileStream(InputStream fs) throws IOException {
-		try {
-			StringBuffer hexString = new StringBuffer();
-			MessageDigest md = MessageDigest.getInstance("SHA-1");
-			byte[] dataBytes = new byte[1024];
-
-			int nread = 0;
-			while ((nread = fs.read(dataBytes)) != -1) {
 				md.update(dataBytes, 0, nread);
 			}
 			byte[] mdbytes = md.digest();

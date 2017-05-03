@@ -96,17 +96,7 @@ public class DocumentRepositoryImpl extends AbstractRepositoryImpl<Document> imp
 	public List<String> findAllSha256CheckNeededDocuments() {
 		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass());
 		crit.setProjection(Projections.property("uuid"));
-		crit.add(Restrictions.isNull("sha256sum"));
-		@SuppressWarnings("unchecked")
-		List<String> list = listByCriteria(crit);
-		return list;
-	}
-
-	@Override
-	public List<String> findAllSha1CheckNeededDocuments() {
-		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass());
-		crit.setProjection(Projections.property("uuid"));
-		crit.add(Restrictions.isNull("sha1sum"));
+		crit.add(Restrictions.eq("sha256sum", "UNDEFINED"));
 		@SuppressWarnings("unchecked")
 		List<String> list = listByCriteria(crit);
 		return list;

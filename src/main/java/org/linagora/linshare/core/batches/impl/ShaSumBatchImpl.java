@@ -44,12 +44,13 @@ import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.DocumentBatchResultContext;
+import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 
@@ -74,8 +75,7 @@ public class ShaSumBatchImpl extends GenericBatchImpl implements ShaSumBatch {
 	public List<String> getAll(BatchRunContext batchRunContext) {
 		logger.info("Sha256SumBatchImpl job starting ...");
 		List<String> list = documentRepository.findAllSha256CheckNeededDocuments();
-		list.addAll(documentRepository.findAllSha1CheckNeededDocuments());
-		logger.info(list.size() + " document(s) have been found to treated.");
+		logger.info(list.size() + " document(s) have been found to processed..");
 		return list;
 	}
 
@@ -92,18 +92,17 @@ public class ShaSumBatchImpl extends GenericBatchImpl implements ShaSumBatch {
 		logger.debug("retrieve from JackRabbit : " + doc.getUuid());
 		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, doc);
 		try (InputStream fileContentByUUID = fileDataStore.get(metadata)) {
-			doc.setSha256sum(docEntryBusinessService.SHA256CheckSumFileStream(fileContentByUUID));
+			String sha256sum = docEntryBusinessService.SHA256CheckSumFileStream(fileContentByUUID);
+			doc.setSha256sum(sha256sum);
+			documentRepository.update(doc);
+			for (DocumentEntry documentEntry : doc.getDocumentEntries()) {
+				documentEntry.setSha256sum(sha256sum);
+				docEntryBusinessService.update(documentEntry);
+			}
 		} catch (IOException e) {
 			logger.error(e.getMessage(), e);
 			throw new BatchBusinessException(context, e.getMessage());
 		};
-		try (InputStream fileContentByUUID = fileDataStore.get(metadata)) {
-			doc.setSha1sum(docEntryBusinessService.SHA1CheckSumFileStream(fileContentByUUID));
-		} catch (IOException e) {
-			logger.error(e.getMessage(), e);
-			throw new BatchBusinessException(context, e.getMessage());
-		};
-		documentRepository.update(doc);
 		return context;
 	}
 

@@ -68,5 +68,4 @@ public interface DocumentRepository extends AbstractRepository<Document>{
 
 	public List<String> findAllSha256CheckNeededDocuments();
 
-	public List<String> findAllSha1CheckNeededDocuments();
 }

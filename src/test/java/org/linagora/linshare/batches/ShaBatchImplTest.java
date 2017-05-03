@@ -141,8 +141,8 @@ public class ShaBatchImplTest extends AbstractTransactionalJUnit4SpringContextTe
 		bDocumentEntry = documentEntryService.create(actor, actor, tempFile2, fileName2, comment2, false, null);
 		Assert.assertTrue(documentEntryRepository.findById(aDocumentEntry.getUuid()) != null);
 		Assert.assertTrue(documentEntryRepository.findById(bDocumentEntry.getUuid()) != null);
-		aDocumentEntry.getDocument().setSha256sum(null);
-		bDocumentEntry.getDocument().setSha256sum(null);
+		aDocumentEntry.getDocument().setSha256sum("UNDEFINED");
+		bDocumentEntry.getDocument().setSha256sum("UNDEFINED");
 		l = shaSumBatch.getAll(batchRunContext);
 		Assert.assertEquals(l.size(), 2);
 	}

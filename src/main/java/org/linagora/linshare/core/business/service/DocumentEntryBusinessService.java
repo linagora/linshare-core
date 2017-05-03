@@ -104,11 +104,7 @@ public interface DocumentEntryBusinessService {
 
 	String SHA256CheckSumFileStream(File file);
 
-	String SHA1CheckSumFileStream(File file);
-
 	String SHA256CheckSumFileStream(InputStream fs) throws IOException;
-
-	String SHA1CheckSumFileStream(InputStream fs) throws IOException;
 
 	List<String> findAllExpiredEntries();
 
