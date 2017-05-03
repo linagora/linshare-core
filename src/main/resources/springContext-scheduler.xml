@@ -66,7 +66,7 @@
 			<map>
 				<entry key="batch">
 					<list value-type="org.linagora.linshare.core.job.quartz.LinShareJobBean">
-						<ref bean="deleteMissingDocumentsBatch" />
+<!-- 						<ref bean="deleteMissingDocumentsBatch" /> -->
 						<ref bean="inconsistentUserBatch" />
 					</list>
 				</entry>
@@ -128,7 +128,7 @@
 						<ref bean="deleteExpiredAnonymousUrlBatch" />
 						<ref bean="deleteShareEntryGroupBatch" />
 						<ref bean="deleteExpiredDocumentEntryBatch" />
-						<ref bean="deleteMissingDocumentsBatch" />
+<!-- 						<ref bean="deleteMissingDocumentsBatch" /> -->
 						<ref bean="shaSumBatch" />
 					</list>
 				</entry>
