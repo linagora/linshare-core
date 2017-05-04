@@ -101,6 +101,7 @@ public abstract class GenericBatchWithHistoryImpl extends GenericBatchImpl {
 		calendar.set(GregorianCalendar.HOUR_OF_DAY, 0);
 		calendar.set(GregorianCalendar.MINUTE, 0);
 		calendar.set(GregorianCalendar.SECOND, 0);
+		calendar.set(GregorianCalendar.MILLISECOND, 0);
 		return calendar.getTime();
 	}
 
@@ -110,6 +111,7 @@ public abstract class GenericBatchWithHistoryImpl extends GenericBatchImpl {
 		calendar.set(GregorianCalendar.HOUR_OF_DAY, 23);
 		calendar.set(GregorianCalendar.MINUTE, 59);
 		calendar.set(GregorianCalendar.SECOND, 59);
+		calendar.set(GregorianCalendar.MILLISECOND, 999);
 		return calendar.getTime();
 	}
 
@@ -118,6 +120,7 @@ public abstract class GenericBatchWithHistoryImpl extends GenericBatchImpl {
 		calendar.set(GregorianCalendar.HOUR_OF_DAY, 0);
 		calendar.set(GregorianCalendar.MINUTE, 0);
 		calendar.set(GregorianCalendar.SECOND, 0);
+		calendar.set(GregorianCalendar.MILLISECOND, 0);
 		return calendar.getTime();
 	}
 
@@ -126,6 +129,7 @@ public abstract class GenericBatchWithHistoryImpl extends GenericBatchImpl {
 		calendar.set(GregorianCalendar.HOUR_OF_DAY, 23);
 		calendar.set(GregorianCalendar.MINUTE, 59);
 		calendar.set(GregorianCalendar.SECOND, 59);
+		calendar.set(GregorianCalendar.MILLISECOND, 999);
 		return calendar.getTime();
 	}
 }
