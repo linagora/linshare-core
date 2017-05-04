@@ -7,6 +7,7 @@ INSERT INTO upgrade_task
   parent_identifier,
   task_order,
   status,
+  priority,
   creation_date,
   modification_date,
   extras)
@@ -19,6 +20,7 @@ VALUES
   null,
   1,
   'NEW',
+  'MANDATORY',
   now(),
   now(),
   null);
@@ -33,6 +35,7 @@ INSERT INTO upgrade_task
   parent_identifier,
   task_order,
   status,
+  priority,
   creation_date,
   modification_date,
   extras)
@@ -45,6 +48,7 @@ VALUES
   null,
   2,
   'NEW',
+  'MANDATORY',
   now(),
   now(),
   null);
@@ -58,6 +62,7 @@ INSERT INTO upgrade_task
   parent_identifier,
   task_order,
   status,
+  priority,
   creation_date,
   modification_date,
   extras)
@@ -70,6 +75,7 @@ VALUES
   'UPGRADE_2_0_DOMAIN_QUOTA',
   3,
   'NEW',
+  'MANDATORY',
   now(),
   now(),
   null);
@@ -83,6 +89,7 @@ INSERT INTO upgrade_task
   parent_identifier,
   task_order,
   status,
+  priority,
   creation_date,
   modification_date,
   extras)
@@ -95,6 +102,7 @@ VALUES
   null,
   4,
   'NEW',
+  'MANDATORY',
   now(),
   now(),
   null);
@@ -108,6 +116,7 @@ INSERT INTO upgrade_task
   parent_identifier,
   task_order,
   status,
+  priority,
   creation_date,
   modification_date,
   extras)
@@ -120,6 +129,7 @@ VALUES
   null,
   5,
   'NEW',
+  'REQUIRED',
   now(),
   now(),
   null);

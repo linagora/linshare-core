@@ -9,6 +9,10 @@
 		<param name="enumClass">org.linagora.linshare.core.domain.constants.UpgradeTaskStatus</param>
 		<param name="valueOfMethod">fromString</param>
 	</typedef>
+	<typedef name="upgradeTaskPriority" class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType">
+		<param name="enumClass">org.linagora.linshare.core.domain.constants.UpgradeTaskPriority</param>
+		<param name="valueOfMethod">fromString</param>
+	</typedef>
 	<typedef name="upgradeTaskGroup" class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType">
 		<param name="enumClass">org.linagora.linshare.core.domain.constants.UpgradeTaskGroup</param>
 		<param name="valueOfMethod">fromString</param>
@@ -25,6 +29,7 @@
 		<property name="parentIdentifier" column="parent_identifier" type="upgradeTaskType" length="255" not-null="false" lazy="false"/>
 		<property name="taskOrder" column="task_order" type="integer" not-null="true" lazy="false"/>
 		<property name="status" column="status" type="upgradeTaskStatus" length="255" not-null="true" lazy="false"/>
+		<property name="priority" column="priority" type="upgradeTaskPriority" length="255" not-null="true" lazy="false"/>
 		<property name="creationDate" column="creation_date" type="date" not-null="true" lazy="false"/>
 		<property name="modificationDate" column="modification_date" type="date" not-null="true" lazy="false"/>
 		<property name="extras" column="extras" type="string" length="255" not-null="false" lazy="false"/>

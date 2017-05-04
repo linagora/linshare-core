@@ -36,6 +36,7 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.UpgradeTaskGroup;
+import org.linagora.linshare.core.domain.constants.UpgradeTaskPriority;
 import org.linagora.linshare.core.domain.constants.UpgradeTaskStatus;
 import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 
@@ -56,6 +57,8 @@ public class UpgradeTask {
 	protected Integer taskOrder;
 
 	protected UpgradeTaskStatus status;
+
+	protected UpgradeTaskPriority priority;
 
 	protected java.util.Date creationDate;
 
@@ -176,12 +179,21 @@ public class UpgradeTask {
 		this.upgradeAsyncTask = upgradeAsyncTask;
 	}
 
+	public UpgradeTaskPriority getPriority() {
+		return priority;
+	}
+
+	public void setPriority(UpgradeTaskPriority priority) {
+		this.priority = priority;
+	}
+
 	@Override
 	public String toString() {
-		return "UpgradeTask [uuid=" + uuid + ", identifier=" + identifier + ", taskGroup=" + taskGroup + ", parentUuid="
-				+ parentUuid + ", parentIdentifier=" + parentIdentifier + ", taskOrder=" + taskOrder + ", status="
-				+ status + ", creationDate=" + creationDate + ", modificationDate=" + modificationDate + ", extras="
-				+ extras + "]";
+		return "UpgradeTask [id=" + id + ", uuid=" + uuid + ", identifier=" + identifier + ", taskGroup=" + taskGroup
+				+ ", parentUuid=" + parentUuid + ", parentIdentifier=" + parentIdentifier + ", taskOrder=" + taskOrder
+				+ ", status=" + status + ", priority=" + priority + ", creationDate=" + creationDate
+				+ ", modificationDate=" + modificationDate + ", extras=" + extras + ", asyncTaskUuid=" + asyncTaskUuid
+				+ ", upgradeAsyncTask=" + upgradeAsyncTask + "]";
 	}
 
 }
