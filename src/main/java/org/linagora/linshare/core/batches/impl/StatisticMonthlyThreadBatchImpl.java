@@ -159,6 +159,7 @@ public class StatisticMonthlyThreadBatchImpl extends GenericBatchImpl {
 		dateCalendar.set(GregorianCalendar.HOUR_OF_DAY, 23);
 		dateCalendar.set(GregorianCalendar.MINUTE, 59);
 		dateCalendar.set(GregorianCalendar.SECOND, 59);
+		dateCalendar.set(GregorianCalendar.MILLISECOND, 999);
 		return dateCalendar.getTime();
 	}
 
@@ -169,6 +170,7 @@ public class StatisticMonthlyThreadBatchImpl extends GenericBatchImpl {
 		dateCalendar.set(GregorianCalendar.HOUR_OF_DAY, 0);
 		dateCalendar.set(GregorianCalendar.MINUTE, 0);
 		dateCalendar.set(GregorianCalendar.SECOND, 0);
+		dateCalendar.set(GregorianCalendar.MILLISECOND, 0);
 		return dateCalendar.getTime();
 	}
 
@@ -178,6 +180,7 @@ public class StatisticMonthlyThreadBatchImpl extends GenericBatchImpl {
 		dateCalendar.set(GregorianCalendar.HOUR_OF_DAY, 0);
 		dateCalendar.set(GregorianCalendar.MINUTE, 0);
 		dateCalendar.set(GregorianCalendar.SECOND, 0);
+		dateCalendar.set(GregorianCalendar.MILLISECOND, 0);
 		return dateCalendar.getTime();
 	}
 
