@@ -49,43 +49,28 @@ public class MailingListResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected boolean hasReadPermission(Account actor, Account account, MailingList entry, Object... opt) {
-		if (isEnable(actor)) {
-			return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.LISTS_GET);
-		}
-		return false;
+	protected boolean hasReadPermission(Account authUser, Account actor, MailingList entry, Object... opt) {
+		return defaultPermissionCheckListReadRight(authUser, actor, entry, TechnicalAccountPermissionType.LISTS_GET);
 	}
 
 	@Override
-	protected boolean hasListPermission(Account actor, Account account, MailingList entry, Object... opt) {
-		if (isEnable(actor)) {
-			return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.LISTS_LIST);
-		}
-		return false;
+	protected boolean hasListPermission(Account authUser, Account actor, MailingList entry, Object... opt) {
+		return defaultPermissionCheckListReadRight(authUser, actor, entry, TechnicalAccountPermissionType.LISTS_LIST);
 	}
 
 	@Override
-	protected boolean hasDeletePermission(Account actor, Account account, MailingList entry, Object... opt) {
-		if (isEnable(actor) && hasCUDRight(actor)) {
-			return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.LISTS_DELETE);
-		}
-		return false;
+	protected boolean hasDeletePermission(Account authUser, Account actor, MailingList entry, Object... opt) {
+		return defaultPermissionCheckCreateUpdateDeleteRight(authUser, actor, entry, TechnicalAccountPermissionType.LISTS_DELETE);
 	}
 
 	@Override
-	protected boolean hasCreatePermission(Account actor, Account account, MailingList entry, Object... opt) {
-		if (isEnable(actor) && hasCUDRight(actor)) {
-				return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.LISTS_CREATE);
-		}
-		return false;
+	protected boolean hasCreatePermission(Account authUser, Account actor, MailingList entry, Object... opt) {
+		return defaultPermissionCheckCreateUpdateDeleteRight(authUser, actor, entry, TechnicalAccountPermissionType.LISTS_CREATE);
 	}
 
 	@Override
-	protected boolean hasUpdatePermission(Account actor, Account account, MailingList entry, Object... opt) {
-		if (isEnable(actor) && hasCUDRight(actor)) {
-			return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.LISTS_UPDATE);
-		}
-		return false;
+	protected boolean hasUpdatePermission(Account authUser, Account actor, MailingList entry, Object... opt) {
+		return defaultPermissionCheckCreateUpdateDeleteRight(authUser, actor, entry, TechnicalAccountPermissionType.LISTS_UPDATE);
 	}
 
 	private boolean isEnable(Account actor) {
@@ -93,7 +78,7 @@ public class MailingListResourceAccessControlImpl extends
 		return func.getActivationPolicy().getStatus();
 	}
 
-	private boolean hasCUDRight(Account actor) {
+	private boolean isEnableRW(Account actor) {
 		Functionality func = functionalityService.getContactsListCreationFunctionality(actor.getDomain());
 		return func.getActivationPolicy().getStatus();
 	}
@@ -106,6 +91,70 @@ public class MailingListResourceAccessControlImpl extends
 	@Override
 	protected String getEntryRepresentation(MailingList entry) {
 		return entry.getUuid();
+	}
+
+	@Override
+	protected Account getOwner(MailingList entry, Object... opt) {
+		return entry.getOwner();
+	}
+
+	@Override
+	protected boolean defaultPermissionCheck(Account authUser, Account actor, MailingList entry,
+		TechnicalAccountPermissionType permission) {
+		if (authUser.hasDelegationRole())
+			return hasPermission(authUser, permission);
+		if (authUser.isInternal() || authUser.isGuest()) {
+			if (actor != null && authUser.equals(actor)) {
+				if (entry != null) {
+					return actor.equals(entry.getOwner());
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+
+	protected boolean defaultPermissionCheckCreateUpdateDeleteRight(Account authUser, Account actor, MailingList entry,
+			TechnicalAccountPermissionType permission) {
+		if (authUser.hasDelegationRole())
+			return hasPermission(authUser, permission);
+		if (!isEnable(actor)) {
+			return false;
+		}
+		if (!isEnableRW(actor)) {
+			return false;
+		}
+		if (authUser.isInternal() || authUser.isGuest()) {
+			if (actor != null && authUser.equals(actor)) {
+				if (entry != null) {
+					return actor.equals(entry.getOwner());
+				} else {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	protected boolean defaultPermissionCheckListReadRight(Account authUser, Account actor, MailingList entry,
+			TechnicalAccountPermissionType permission) {
+		if (authUser.hasDelegationRole())
+			return hasPermission(authUser, permission);
+		if (!isEnable(actor)) {
+			return false;
+		}
+		if (authUser.isInternal() || authUser.isGuest()) {
+			if (actor != null && authUser.equals(actor)) {
+				if (entry != null) {
+					if (actor.equals(entry.getOwner()) || entry.isPublic()) {
+						return true;
+					}
+				} else {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 }

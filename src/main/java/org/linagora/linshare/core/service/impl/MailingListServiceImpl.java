@@ -391,6 +391,7 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 	@Override
 	public List<MailingList> findAll(Account actor, User owner, Boolean mine) {
 		List<MailingList> all = null;
+		checkListPermission(actor, owner, MailingList.class, BusinessErrorCode.FORBIDDEN, null);
 		if (mine == null) {
 			all = mailingListBusinessService.findAll(actor, owner);
 		} else if (mine) {
