@@ -170,12 +170,12 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 	@Override
 	public void terminate(BatchRunContext batchRunContext, List<String> all, long errors, long unhandled_errors, long total, long processed) {
 		long success = total - errors - unhandled_errors;
-		logger.info(success + " notification have been sent.");
+		logger.info(success + " share entry group have been processed.");
 		if (errors > 0) {
-			logger.error(errors + " notifications has not been sent.");
+			logger.error(errors + " share entry groups has not been processed.");
 		}
 		if (unhandled_errors > 0) {
-			logger.error(unhandled_errors + " notification failed to be sent (unhandled error).");
+			logger.error(unhandled_errors + " share entry group failed to be processed (unhandled error).");
 		}
 		logger.info("UndownloadedSharedDocumentsBatchImpl job terminated.");
 	}
