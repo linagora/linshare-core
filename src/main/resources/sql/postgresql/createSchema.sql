@@ -778,6 +778,7 @@ CREATE TABLE upgrade_task (
   parent_identifier varchar(255),
   task_order        int4 NOT NULL,
   status            varchar(255) NOT NULL,
+  priority            varchar(255) NOT NULL,
   creation_date     date NOT NULL,
   modification_date date NOT NULL,
   extras            text,
