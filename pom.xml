@@ -1077,7 +1077,7 @@
 			<activation>
 				<property>
 					<name>target</name>
-					<value>release-disabled</value>
+					<value>release</value>
 				</property>
 			</activation>
 			<build>
