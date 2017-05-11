@@ -43,6 +43,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
+import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.facade.webservice.common.dto.ContactDto;
 
 import com.wordnik.swagger.annotations.ApiModel;
@@ -132,11 +133,20 @@ public class AnonymousUrlDto {
 
 	private List<ShareEntryDto> transformListShareEntriesToDto(
 			Set<AnonymousShareEntry> anonymousShareEntries) {
+		boolean checkIt = true;
 		List<ShareEntryDto> shareEntry = new ArrayList<ShareEntryDto>();
 		for (AnonymousShareEntry anonymousShareEntry : anonymousShareEntries) {
 			ShareEntryDto shareEntrydto = new ShareEntryDto(anonymousShareEntry.getUuid(),
 					anonymousShareEntry.getDocumentEntry());
 			shareEntry.add(shareEntrydto);
+			if (checkIt) {
+				ShareEntryGroup entryGroup = anonymousShareEntry.getShareEntryGroup();
+				if (entryGroup != null) {
+					this.creationDate = entryGroup.getCreationDate();
+					this.expirationDate = entryGroup.getExpirationDate();
+				}
+			}
+			checkIt = false;
 		}
 		return shareEntry;
 	}
