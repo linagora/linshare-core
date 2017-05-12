@@ -33,9 +33,13 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.HibernateException;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -48,6 +52,7 @@ import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.util.Assert;
 
@@ -227,5 +232,26 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 		det.add(Restrictions.ilike("mail", pattern, MatchMode.ANYWHERE));
 		det.setProjection(Projections.distinct(Projections.property("mail")));
 		return listByCriteria(det);
+	}
+
+	@Override
+	public List<String> findAllAccountWithMissingQuota() {
+		HibernateCallback<List<String>> action = new HibernateCallback<List<String>>() {
+			public List<String> doInHibernate(final Session session)
+					throws HibernateException, SQLException {
+				StringBuilder sb = new StringBuilder();
+				sb.append("SELECT DISTINCT ls_uuid AS uuid FROM account AS a");
+				sb.append(" LEFT JOIN quota AS q");
+				sb.append(" ON q.account_id = a.id");
+				sb.append(" WHERE destroyed = 0");
+				sb.append(" AND q.account_id is null");
+				sb.append(";");
+				final SQLQuery query = session.createSQLQuery(sb.toString());
+				@SuppressWarnings("unchecked")
+				List<String> res = query.list();
+				return res;
+			}
+		};
+		return getHibernateTemplate().execute(action);
 	}
 }

@@ -12,6 +12,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.batches.GenericBatch;
+import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
+import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.FileSizeUnit;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.Policies;
@@ -29,12 +31,16 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
+import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
+import org.linagora.linshare.core.repository.ThreadEntryRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.runner.BatchRunner;
 import org.linagora.linshare.core.service.DocumentEntryService;
+import org.linagora.linshare.core.upgrade.v2_0.Sha256SumUpgradeTaskImpl;
+import org.linagora.linshare.mongo.repository.UpgradeTaskLogMongoRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
@@ -66,9 +72,27 @@ public class ShaBatchImplTest extends AbstractTransactionalJUnit4SpringContextTe
 	@Autowired
 	private BatchRunner batchRunner;
 
-	@Qualifier("shaSumBatch")
-	@Autowired
 	private GenericBatch shaSumBatch;
+
+	/*
+	 * beans related to shaSumBatch
+	 */
+	@Qualifier("accountRepository")
+	@Autowired
+	private AccountRepository<Account> accountRepository;
+
+	@Autowired
+	private ThreadEntryRepository threadEntryRepository;
+
+	@Autowired
+	private DocumentEntryBusinessService documentEntryBusinessService;
+
+	@Autowired
+	private UpgradeTaskLogMongoRepository upgradeTaskLogMongoRepository;
+
+	@Autowired
+	private FileDataStore fileDataStore;
+
 
 	@Autowired
 	private DocumentRepository documentRepository;
@@ -108,6 +132,7 @@ public class ShaBatchImplTest extends AbstractTransactionalJUnit4SpringContextTe
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		jane = datas.getUser2();
+		shaSumBatch = new Sha256SumUpgradeTaskImpl(accountRepository, documentRepository, fileDataStore, threadEntryRepository, upgradeTaskLogMongoRepository, documentEntryBusinessService);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 

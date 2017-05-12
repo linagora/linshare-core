@@ -182,4 +182,10 @@ public class AccountMto {
 	public void setAccountType(AccountType accountType) {
 		this.accountType = accountType;
 	}
+
+	@Override
+	public String toString() {
+		return "AccountMto [firstName=" + firstName + ", lastName=" + lastName + ", name=" + name + ", mail=" + mail
+				+ ", uuid=" + uuid + ", role=" + role + ", accountType=" + accountType + ", domain=" + domain + "]";
+	}
 }

@@ -40,8 +40,10 @@ import java.util.UUID;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -109,5 +111,20 @@ public class ThreadEntryRepositoryImpl extends
 		crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		res = findByCriteria(crit);
 		return res;
+	}
+
+	@Override
+	public long getUsedSpace(Account account) {
+		DetachedCriteria det = DetachedCriteria.forClass(ThreadEntry.class);
+		det.add(Restrictions.eq("entryOwner", account));
+		det.createAlias("document", "doc");
+		ProjectionList columns = Projections.projectionList()
+				.add(Projections.sum("doc.size"));
+		det.setProjection(columns);
+		List<ThreadEntry> result = findByCriteria(det);
+		if (result == null || result.isEmpty() || result.get(0) == null) {
+			return 0;
+		}
+		return DataAccessUtils.longResult(result);
 	}
 }

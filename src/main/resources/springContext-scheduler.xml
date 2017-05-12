@@ -129,7 +129,6 @@
 						<ref bean="deleteShareEntryGroupBatch" />
 						<ref bean="deleteExpiredDocumentEntryBatch" />
 <!-- 						<ref bean="deleteMissingDocumentsBatch" /> -->
-						<ref bean="shaSumBatch" />
 					</list>
 				</entry>
 				<entry key="batchRunner" value-ref="batchRunner" />

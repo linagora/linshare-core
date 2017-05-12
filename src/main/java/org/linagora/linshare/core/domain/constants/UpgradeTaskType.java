@@ -39,17 +39,27 @@ import org.linagora.linshare.core.exception.TechnicalException;
 
 public enum UpgradeTaskType {
 
-	// uuid generation for domains instead of identifier/label
+	/*
+	 * uuid generation for domains instead of identifier/label
+	 */
 	UPGRADE_2_0_DOMAIN_UUID,
 
-	// uuid generation for domains instead of identifier/label
+	/*
+	 * uuid generation for domains instead of identifier/label
+	 */
 	UPGRADE_2_0_DOMAIN_POLICIES_UUID,
+
+	/*
+	 * Compute sha256sum for all stored document (this value may be undefined)
+	 */
+	UPGRADE_2_0_SHA256SUM,
 
 	/*
 	 * initialization quota structure (domain quota and container quota) for all
 	 * existing domains
 	 */
-	UPGRADE_2_0_DOMAIN_QUOTA,
+	UPGRADE_2_0_DOMAIN_QUOTA_TOPDOMAINS,
+	UPGRADE_2_0_DOMAIN_QUOTA_SUBDOMAINS,
 
 	/*
 	 * initialization quota structure for all existing accounts (users and
@@ -57,17 +67,7 @@ public enum UpgradeTaskType {
 	 */
 	UPGRADE_2_0_ACCOUNT_QUOTA,
 
-	/*
-	 * build a operation history with sum of all documents size in order to
-	 * initialization default used space.
-	 */
-	UPGRADE_2_0_SUM_OPERATION_HISTORY,
-
-	/*
-	 * Uuid generation for all restricted contacts. Property did not exist in
-	 * v1.
-	 */
-	UPGRADE_2_0_RESTRICTED_CONTACT,
+	UPGRADE_2_0_THREAD_TO_WORKGROUP,
 
 	/*
 	 * Trigger the migration of all documents from the old datastore to the new

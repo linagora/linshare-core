@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2017 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2017. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,56 +31,36 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.repository;
-
-
+package org.linagora.linshare.core.upgrade.v2_0;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
+import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
+import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
+import org.linagora.linshare.core.repository.AbstractDomainRepository;
+import org.linagora.linshare.core.repository.AccountRepository;
+import org.linagora.linshare.mongo.repository.UpgradeTaskLogMongoRepository;
 
-public interface ThreadRepository extends AccountRepository<Thread> {
+public class SubDomainQuotaUpgradeTaskImpl extends DomainQuotaUpgradeTaskImpl {
 
-	/**
-	 * Find all Thread where the actor is member
-	 * 
-	 * @param actor
-	 * @return the list of Thread where actor is member
-	 */
-	List<Thread> findAllWhereMember(User actor);
-	
-	/**
-	 * Find all Thread where the actor is admin
-	 * 
-	 * @param actor
-	 * @return the list of Thread where actor is admin
-	 */
-	List<Thread> findAllWhereAdmin(User actor);
+	public SubDomainQuotaUpgradeTaskImpl(AccountRepository<Account> accountRepository,
+			UpgradeTaskLogMongoRepository upgradeTaskLogMongoRepository,
+			DomainQuotaBusinessService domainQuotaBusinessService,
+			ContainerQuotaBusinessService containerQuotaBusinessService, AbstractDomainRepository repository) {
+		super(accountRepository, upgradeTaskLogMongoRepository, domainQuotaBusinessService, containerQuotaBusinessService,
+				repository);
+	}
 
-	/**
-	 * Find all Thread where the actor can upload
-	 * 
-	 * @param actor
-	 * @return the list of Thread where actor can upload
-	 */
-	List<Thread> findAllWhereCanUpload(User actor);
-	
-	/**
-	 * Find all threads modified by the actor on last 15 days
-	 * @param actor
-	 * @param limit
-	 * @param date
-	 * @return
-	 */
-	List<Thread> findLatestWhereMember(User actor, int limit);
+	@Override
+	public UpgradeTaskType getUpgradeTaskType() {
+		return UpgradeTaskType.UPGRADE_2_0_DOMAIN_QUOTA_SUBDOMAINS;
+	}
 
-	public List<Thread> searchByName(User actor, String pattern);
-
-	public List<Thread> searchAmongMembers(User actor, String pattern);
-
-	List<String> findAllThreadToUpgrade();
-
-	Thread setAsUpgraded(Thread entity);
-
-} 
+	@Override
+	public List<String> getAll(BatchRunContext batchRunContext) {
+		return repository.findAllGuestAndSubDomainIdentifiers();
+	}
+}

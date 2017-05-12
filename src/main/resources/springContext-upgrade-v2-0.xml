@@ -21,8 +21,53 @@
 					<constructor-arg ref="abstractDomainRepository" />
 					<constructor-arg ref="upgradeTaskLogMongoRepository" />
 				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v2_0.DomainPoliciesUuidUpgradeTaskImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="domainPolicyRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v2_0.Sha256SumUpgradeTaskImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="documentRepository" />
+					<constructor-arg ref="threadEntryRepository" />
+					<constructor-arg ref="documentEntryBusinessService" />
+					<constructor-arg ref="fileDataStore" />
+				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v2_0.TopDomainQuotaUpgradeTaskImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="abstractDomainRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="domainQuotaBusinessService" />
+					<constructor-arg ref="containerQuotaBusinessService" />
+				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v2_0.SubDomainQuotaUpgradeTaskImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="abstractDomainRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="domainQuotaBusinessService" />
+					<constructor-arg ref="containerQuotaBusinessService" />
+				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v2_0.AccountQuotaUpgradeTaskImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="abstractDomainRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="accountQuotaBusinessService" />
+					<constructor-arg ref="containerQuotaBusinessService" />
+					<constructor-arg ref="documentEntryRepository" />
+					<constructor-arg ref="threadEntryRepository" />
+					<constructor-arg ref="operationHistoryBusinessService" />
+				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v2_0.ThreadToWorkgroupUpgradeTaskImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="threadRepository" />
+					<constructor-arg ref="threadEntryRepository" />
+					<constructor-arg ref="workGroupDocumentService" />
+					<constructor-arg ref="workGroupNodeMongoRepository" />
+					<constructor-arg ref="logEntryRepository" />
+				</bean>
 			</list>
 		</constructor-arg>
 	</bean>
-
 </beans>

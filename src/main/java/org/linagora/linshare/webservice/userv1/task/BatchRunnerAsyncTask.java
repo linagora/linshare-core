@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.webservice.userv1.task;
 
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
 import org.linagora.linshare.core.facade.webservice.user.GenericAsyncFacade;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
@@ -61,7 +63,11 @@ public class BatchRunnerAsyncTask extends AsyncTask<BatchTaskContext> {
 
 	@Override
 	protected String runMyTask(BatchTaskContext task) {
-		batchRunner.execute(task.getBatch(), batchRunContext);
+		boolean execute = batchRunner.execute(task.getBatch(), batchRunContext);
+		if (!execute) {
+			logger.error("asyncTask for batches failed : " + task.getBatch().getBatchClassName());
+			throw new BusinessException(BusinessErrorCode.BATCH_INCOMPLETE, "asyncTask for batches failed");
+		}
 		return batchRunContext.getUuid();
 	}
 }

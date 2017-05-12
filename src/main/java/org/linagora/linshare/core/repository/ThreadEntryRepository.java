@@ -35,6 +35,7 @@ package org.linagora.linshare.core.repository;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 
@@ -53,4 +54,6 @@ public interface ThreadEntryRepository extends AbstractRepository<ThreadEntry> {
 	long count(Thread thread);
 
 	List<ThreadEntry> findAllDistinctEntries(Thread thread);
+
+	long getUsedSpace(Account account);
 }

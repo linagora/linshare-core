@@ -39,7 +39,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.LogActionV1;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -67,7 +67,7 @@ public class LogCriteriaDto {
 	private Date afterDate; // The end date for the search
 
 	@ApiModelProperty(value = "A list of actions")
-	private List<LogAction> logActions; // The list of Actions to retrieve
+	private List<LogActionV1> logActions; // The list of Actions to retrieve
 
 	@ApiModelProperty(value = "The file name")
 	private String fileName; // file name to find
@@ -81,7 +81,7 @@ public class LogCriteriaDto {
 
 	public LogCriteriaDto(List<String> targetMails,
 			String targetFirstname, String targetLastname, String targetDomain,
-			Date beforeDate, Date afterDate, List<LogAction> logActions) {
+			Date beforeDate, Date afterDate, List<LogActionV1> logActions) {
 		this.targetMails = targetMails;
 		this.targetFirstName = targetFirstname;
 		this.targetLastName = targetLastname;
@@ -107,11 +107,11 @@ public class LogCriteriaDto {
 		this.afterDate = afterDate;
 	}
 
-	public List<LogAction> getLogActions() {
+	public List<LogActionV1> getLogActions() {
 		return logActions;
 	}
 
-	public void setLogActions(List<LogAction> logActions) {
+	public void setLogActions(List<LogActionV1> logActions) {
 		this.logActions = logActions;
 	}
 

@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2016 LINAGORA
+ * Copyright (C) 2016-2017 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2017. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -32,19 +32,21 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.batches.impl;
+package org.linagora.linshare.core.upgrade.v2_0;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import org.linagora.linshare.core.batches.ShaSumBatch;
+import org.linagora.linshare.core.batches.impl.GenericUpgradeTaskImpl;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
+import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -53,29 +55,38 @@ import org.linagora.linshare.core.job.quartz.DocumentBatchResultContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
+import org.linagora.linshare.core.repository.ThreadEntryRepository;
+import org.linagora.linshare.mongo.repository.UpgradeTaskLogMongoRepository;
 
-public class ShaSumBatchImpl extends GenericBatchImpl implements ShaSumBatch {
+public class Sha256SumUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 
 	private final DocumentRepository documentRepository;
 	private final FileDataStore fileDataStore;
-	private final DocumentEntryBusinessService docEntryBusinessService;
+	private final DocumentEntryBusinessService documentEntryBusinessService;
+	private final ThreadEntryRepository threadEntryRepository;
 
-	public ShaSumBatchImpl(
+	public Sha256SumUpgradeTaskImpl(
 			AccountRepository<Account> accountRepository,
 			final DocumentRepository documentRepository,
 			final FileDataStore fileDataStore,
-			final DocumentEntryBusinessService docEntryBusinessService) {
-		super(accountRepository);
+			final ThreadEntryRepository threadEntryRepository,
+			UpgradeTaskLogMongoRepository upgradeTaskLogMongoRepository,
+			final DocumentEntryBusinessService documentEntryBusinessService) {
+		super(accountRepository, upgradeTaskLogMongoRepository);
 		this.documentRepository = documentRepository;
 		this.fileDataStore = fileDataStore;
-		this.docEntryBusinessService = docEntryBusinessService;
+		this.documentEntryBusinessService = documentEntryBusinessService;
+		this.threadEntryRepository = threadEntryRepository;
+	}
+
+	@Override
+	public UpgradeTaskType getUpgradeTaskType() {
+		return UpgradeTaskType.UPGRADE_2_0_SHA256SUM;
 	}
 
 	@Override
 	public List<String> getAll(BatchRunContext batchRunContext) {
-		logger.info("Sha256SumBatchImpl job starting ...");
 		List<String> list = documentRepository.findAllSha256CheckNeededDocuments();
-		logger.info(list.size() + " document(s) have been found to processed..");
 		return list;
 	}
 
@@ -86,19 +97,22 @@ public class ShaSumBatchImpl extends GenericBatchImpl implements ShaSumBatch {
 		if (doc == null) {
 			return null;
 		}
-		logInfo(batchRunContext, total, position, "processing document : "
-				+ doc.getUuid());
+		logInfo(batchRunContext, total, position, "processing document : " + doc.getUuid());
 		ResultContext context = new DocumentBatchResultContext(doc);
-		logger.debug("retrieve from JackRabbit : " + doc.getUuid());
 		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, doc);
 		try (InputStream fileContentByUUID = fileDataStore.get(metadata)) {
-			String sha256sum = docEntryBusinessService.SHA256CheckSumFileStream(fileContentByUUID);
+			String sha256sum = documentEntryBusinessService.SHA256CheckSumFileStream(fileContentByUUID);
 			doc.setSha256sum(sha256sum);
 			documentRepository.update(doc);
 			for (DocumentEntry documentEntry : doc.getDocumentEntries()) {
 				documentEntry.setSha256sum(sha256sum);
-				docEntryBusinessService.update(documentEntry);
+				documentEntryBusinessService.update(documentEntry);
 			}
+			for (ThreadEntry threadEntry : doc.getThreadEntries()) {
+				threadEntry.setSha256sum(sha256sum);
+				threadEntryRepository.update(threadEntry);
+			}
+			context.setProcessed(true);
 		} catch (IOException e) {
 			logger.error(e.getMessage(), e);
 			throw new BatchBusinessException(context, e.getMessage());
@@ -119,27 +133,11 @@ public class ShaSumBatchImpl extends GenericBatchImpl implements ShaSumBatch {
 	public void notifyError(BatchBusinessException exception, String identifier, long total, long position, BatchRunContext batchRunContext) {
 		DocumentBatchResultContext documentContext = (DocumentBatchResultContext) exception.getContext();
 		Document doc = documentContext.getResource();
-		logError(total, position, 
+		logError(total, position,
 				"Updating document has failed : "
 				+ doc.getUuid(), batchRunContext);
 		logger.error("Error occured while updating the document : "
-				+ doc.getUuid() + 
+				+ doc.getUuid() +
 				". BatchBusinessException", exception);
-	}
-
-	@Override
-	public void terminate(BatchRunContext batchRunContext, List<String> all, long errors, long unhandled_errors, long total, long processed) {
-		long success = total - errors - unhandled_errors;
-		logger.info(success
-				+ " document(s) have been updated.");
-		if (errors > 0) {
-			logger.error(errors
-					+ " document(s) failed to be updated.");
-		}
-		if (unhandled_errors > 0) {
-			logger.error(unhandled_errors
-					+ " document(s) failed to be updated (unhandled error).");
-		}
-		logger.info("Sha256SumBatchImpl job terminated.");
 	}
 }

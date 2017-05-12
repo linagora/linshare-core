@@ -41,14 +41,6 @@
 		<constructor-arg ref="accountRepository" />
 	</bean>
 
-	<bean name="shaSumBatch"
-		class="org.linagora.linshare.core.batches.impl.ShaSumBatchImpl">
-		<constructor-arg ref="accountRepository" />
-		<constructor-arg ref="documentRepository" />
-		<constructor-arg ref="documentEntryBusinessService" />
-		<constructor-arg ref="fileDataStore" />
-	</bean>
-
 	<bean name="deleteExpiredShareEntryBatch"
 		class="org.linagora.linshare.core.batches.impl.DeleteExpiredShareEntryBatchImpl">
 		<constructor-arg ref="accountRepository" />

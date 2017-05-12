@@ -77,7 +77,7 @@ public class Thread extends Account {
 
 	@Override
 	public String getAccountRepresentation() {
-		return "Thread name : " + name + "(" + lsUuid + ")";
+		return "Workgroup : " + name + " (" + lsUuid + ")";
 	}
 
 	@Override

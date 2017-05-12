@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.LogActionV1;
 import org.linagora.linshare.view.tapestry.enums.CriterionMatchMode;
 
 
@@ -62,7 +62,7 @@ public class LogCriteriaBean {
 	
 	private Calendar afterDate; //The end date for the search
 	
-	private List<LogAction> logActions; //The list of Actions to retrieve
+	private List<LogActionV1> logActions; //The list of Actions to retrieve
 
 	private String fileName; //file name to find
 
@@ -79,7 +79,7 @@ public class LogCriteriaBean {
 	
 	public LogCriteriaBean(List<String> actorMails, String actorFirstname, String actorLastname, String actorDomain,
 			List<String> targetMails, String targetFirstname, String targetLastname, String targetDomain,
-			Calendar beforeDate, Calendar afterDate, List<LogAction> logActions, String fileName, String fileExtension) {
+			Calendar beforeDate, Calendar afterDate, List<LogActionV1> logActions, String fileName, String fileExtension) {
 		this.actorMails = actorMails;
 		this.actorFirstname = actorFirstname;
 		this.actorLastname = actorLastname;
@@ -123,12 +123,19 @@ public class LogCriteriaBean {
 		this.afterDate = afterDate;
 	}
 
-	public List<LogAction> getLogActions() {
+	public List<LogActionV1> getLogActions() {
 		return logActions;
 	}
 
-	public void setLogActions(List<LogAction> logActions) {
+	public void setLogActions(List<LogActionV1> logActions) {
 		this.logActions = logActions;
+	}
+
+	public void addLogActions(LogActionV1 logAction) {
+		if (this.logActions == null) {
+			this.logActions = new ArrayList<LogActionV1>();
+		}
+		this.logActions.add(logAction);
 	}
 
 	public String getActorFirstname() {

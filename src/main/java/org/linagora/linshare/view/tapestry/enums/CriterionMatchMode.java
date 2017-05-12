@@ -35,7 +35,7 @@ package org.linagora.linshare.view.tapestry.enums;
 
 public enum CriterionMatchMode {
 
-	START(0), ANYWHERE(1);
+	START(0), ANYWHERE(1), EXACT(2);
 
 	private int value;
 

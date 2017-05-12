@@ -88,12 +88,17 @@ public class BatchRunnerImpl implements BatchRunner {
 			try {
 				batch.logDebug(batchRunContext, total, position, "processing resource '" + resource + "' ...");
 				ResultContext batchResult = batch.execute(batchRunContext, resource, total, position);
-				if (batchResult.getProcessed() != null) {
-					if (batchResult.getProcessed().equals(true)) {
-						processed++;
+				// null if resource was skipped (nothing to do or not found)
+				if (batchResult != null) {
+					if (batchResult.getProcessed() != null) {
+						if (batchResult.getProcessed().equals(true)) {
+							processed++;
+						}
 					}
+					batch.notify(batchRunContext, batchResult, total, position);
+				} else {
+					batch.logDebug(batchRunContext, total, position, "Resource not found, skipped : " + resource);
 				}
-				batch.notify(batchRunContext, batchResult, total, position);
 			} catch (BatchBusinessException ex) {
 				errors++;
 				batch.notifyError(ex, resource, total, position, batchRunContext);
@@ -120,7 +125,6 @@ public class BatchRunnerImpl implements BatchRunner {
 				finalResult = false;
 				break;
 			}
-			batch.logDebug(batchRunContext, total, position, "resource processed.");
 			position++;
 		}
 		if (finalResult) {

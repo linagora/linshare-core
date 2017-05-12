@@ -42,6 +42,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
@@ -94,6 +95,17 @@ public class AbstractDomainRepositoryImpl extends
 		return findByCriteria(Restrictions.disjunction()
 				.add(Restrictions.eq("class", TopDomain.class))
 				.add(Restrictions.eq("class", SubDomain.class)));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> findAllGuestAndSubDomainIdentifiers() {
+		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass());
+		crit.setProjection(Projections.property("uuid"));
+		crit.add(Restrictions.disjunction()
+				.add(Restrictions.eq("class", GuestDomain.class))
+				.add(Restrictions.eq("class", SubDomain.class)));
+		return listByCriteria(crit);
 	}
 
 	@Override

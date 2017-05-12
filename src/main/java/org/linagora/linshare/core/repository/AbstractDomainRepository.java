@@ -63,6 +63,12 @@ public interface AbstractDomainRepository extends AbstractRepository<AbstractDom
 	public List<AbstractDomain> findAllTopAndSubDomain();
 
 	/**
+	 * return all SubDomain and GuestDomain identifiers, excluding Top and Root domains
+	 * @return
+	 */
+	public List<String> findAllGuestAndSubDomainIdentifiers();
+
+	/**
 	 * return all TopDomain objects
 	 * @return
 	 */

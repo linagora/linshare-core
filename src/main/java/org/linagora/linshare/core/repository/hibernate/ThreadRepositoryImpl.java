@@ -181,4 +181,28 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 		det.add(Subqueries.propertyIn("id", sub));
 		return findByCriteria(det);
 	}
+
+	@Override
+	public List<String> findAllThreadToUpgrade() {
+		DetachedCriteria criteria = DetachedCriteria.forClass(Thread.class);
+		criteria.setProjection(Projections.property("lsUuid"));
+		criteria.add(Restrictions.eq("destroyed", 0L));
+		criteria.add(Restrictions.eq("toUpgrade", true));
+		@SuppressWarnings("unchecked")
+		List<String> list = listByCriteria(criteria);
+		return list;
+	}
+
+	@Override
+	public Thread setAsUpgraded(Thread entity) {
+		if (entity == null) {
+			throw new IllegalArgumentException("Entity must not be null");
+		}
+		entity.setToUpgrade(false);
+		// check that entity is not transient :
+		load(entity);
+		getHibernateTemplate().update(entity);
+		return entity;
+	}
+
 }

@@ -145,6 +145,15 @@ public class LogEntryRepositoryImpl extends AbstractRepositoryImpl<LogEntry>
 				criteria.add(Restrictions.like("fileName",
 						logCriteria.getFileName(), MatchMode.ANYWHERE)
 						.ignoreCase());
+			} else if (logCriteria.getFileNameMatchMode().equals(
+					CriterionMatchMode.START)){
+				criteria.add(Restrictions.like("fileName",
+						logCriteria.getFileName(), MatchMode.START)
+						.ignoreCase());
+			} else if (logCriteria.getFileNameMatchMode().equals(
+					CriterionMatchMode.EXACT)){
+				criteria.add(Restrictions.like("fileName",
+						logCriteria.getFileName(), MatchMode.EXACT));
 			} else {
 				criteria.add(Restrictions.like("fileName",
 						logCriteria.getFileName(), MatchMode.ANYWHERE)

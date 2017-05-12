@@ -378,6 +378,10 @@ public abstract class Account {
 		return this.getAccountType().equals(AccountType.GUEST);
 	}
 
+	public boolean isWorkGroup() {
+		return this.getAccountType().equals(AccountType.THREAD);
+	}
+
 	public boolean isRoot() {
 		return this.getAccountType().equals(AccountType.ROOT);
 	}
