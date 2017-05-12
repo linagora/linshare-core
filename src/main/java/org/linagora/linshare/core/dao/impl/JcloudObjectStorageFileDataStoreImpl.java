@@ -181,6 +181,10 @@ public class JcloudObjectStorageFileDataStoreImpl implements FileDataStore {
 	@Override
 	public InputStream get(FileMetaData metadata) {
 		String containerName = metadata.getBucketUuid();
+		if (containerName == null) {
+			logger.error("document's BucketUuid can not be null.");
+			throw new TechnicalException(TechnicalErrorCode.MISSING_FILEDATASTORE_BUCKET, "document's BucketUuid can not be null.");
+		}
 		BlobStore blobStore = getBlobStore(containerName);
 		Date start = new Date();
 		Blob blobRetrieved = blobStore.getBlob(containerName, metadata.getUuid());
@@ -189,7 +193,7 @@ public class JcloudObjectStorageFileDataStoreImpl implements FileDataStore {
 			return blobRetrieved.getPayload().openStream();
 		} catch (IOException e) {
 			logger.error(e.getMessage(), e);
-			throw new TechnicalException(TechnicalErrorCode.GENERIC, "Can not add a new file : " + e.getMessage());
+			throw new TechnicalException(TechnicalErrorCode.GENERIC, "Can not get a file : " + e.getMessage());
 		}
 	}
 
