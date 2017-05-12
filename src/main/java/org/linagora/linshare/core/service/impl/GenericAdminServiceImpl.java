@@ -45,8 +45,8 @@ public class GenericAdminServiceImpl {
 	protected void preChecks(Account actor) {
 		Validate.notNull(actor, "Missing actor account");
 		Validate.notEmpty(actor.getLsUuid(), "Missing actor uuid");
-		if (logger.isDebugEnabled()) {
-			logger.debug("Current actor " + actor.getAccountRepresentation());
+		if (logger.isTraceEnabled()) {
+			logger.trace("Current actor " + actor.getAccountRepresentation());
 		}
 	}
 }

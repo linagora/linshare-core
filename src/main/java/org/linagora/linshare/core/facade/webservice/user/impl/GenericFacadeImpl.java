@@ -108,7 +108,7 @@ public class GenericFacadeImpl implements GenericFacade {
 
 	protected User getOwner(Account actor, String ownerUuid) {
 		if (ownerUuid != null) {
-			logger.debug("trying to find owner with uuid : " + ownerUuid);
+			logger.trace("trying to find owner with uuid : " + ownerUuid);
 			User owner = (User) accountService.findByLsUuid(ownerUuid);
 			if (owner == null) {
 				logger.error("owner with uuid : " + ownerUuid + " not found.");
@@ -117,7 +117,7 @@ public class GenericFacadeImpl implements GenericFacade {
 			}
 			return owner;
 		} else {
-			logger.debug("Owner uuid null, returning the actor as owner.");
+			logger.trace("Owner uuid null, returning the actor as owner.");
 			return (User) actor;
 		}
 	}
