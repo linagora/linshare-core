@@ -33,7 +33,10 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.util.List;
+
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.UpgradeTask;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -45,6 +48,13 @@ public class UpgradeTaskRepositoryImpl extends AbstractRepositoryImpl<UpgradeTas
 
 	public UpgradeTaskRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
+	}
+
+	@Override
+	public List<UpgradeTask> findAll() {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		det.addOrder(Order.asc("taskOrder"));
+		return findByCriteria(det);
 	}
 
 	@Override
