@@ -204,7 +204,12 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		String thmbUuid = doc.getThmbUuid();
 		if (thmbUuid != null && thmbUuid.length()>0) {
 			FileMetaData metadata = new FileMetaData(FileMetaDataKind.THUMBNAIL, doc);
-			InputStream stream = fileDataStore.get(metadata);
+			InputStream stream = null;
+			try {
+				stream = fileDataStore.get(metadata);
+			} catch (TechnicalException ex) {
+				logger.debug(ex.getMessage(), ex);
+			}
 			return stream;
 		}
 		return null;
@@ -216,7 +221,12 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		String thmbUuid = doc.getThmbUuid();
 		if (thmbUuid != null && thmbUuid.length()>0) {
 			FileMetaData metadata = new FileMetaData(FileMetaDataKind.THUMBNAIL, doc);
-			InputStream stream = fileDataStore.get(metadata);
+			InputStream stream = null;
+			try {
+				stream = fileDataStore.get(metadata);
+			} catch (TechnicalException ex) {
+				logger.debug(ex.getMessage(), ex);
+			}
 			return stream;
 		}
 		return null;

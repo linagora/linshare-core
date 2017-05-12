@@ -91,7 +91,9 @@ public class DocumentStreamReponseBuilder {
 		ResponseBuilder response = null;
 		byte[] byteArray = null;
 		try {
-			byteArray = IOUtils.toByteArray(inputStream);
+			if (inputStream != null) {
+				byteArray = IOUtils.toByteArray(inputStream);
+			}
 			response = Response.ok(Base64.encodeBase64(byteArray));
 		} catch (IOException e) {
 			logger.error(e.getMessage(), e);
