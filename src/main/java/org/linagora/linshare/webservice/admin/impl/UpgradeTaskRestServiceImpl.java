@@ -156,6 +156,15 @@ public class UpgradeTaskRestServiceImpl implements UpgradeTaskRestService {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "The current upgrade task can not be launch, current status : " + taskDto.getStatus());
 		}
 
+		// Check if previous task was successful
+		if (taskDto.getParentUuid() != null) {
+			UpgradeTaskDto parentTaskDto = facade.find(taskDto.getParentUuid());
+			if (!parentTaskDto.getStatus().equals(UpgradeTaskStatus.SUCCESS)) {
+				throw new BusinessException(BusinessErrorCode.FORBIDDEN,
+						"The current upgrade task can not be launch, parent task not complete : " + parentTaskDto.getIdentifier() + " : " +parentTaskDto.getStatus());
+			}
+		}
+
 		// Finding the good one
 		GenericUpgradeTask upgradeTask = this.tasks.get(taskDto.getIdentifier());
 		if (upgradeTask == null) {
