@@ -38,6 +38,7 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.UpgradeTaskGroup;
+import org.linagora.linshare.core.domain.constants.UpgradeTaskPriority;
 import org.linagora.linshare.core.domain.constants.UpgradeTaskStatus;
 import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 import org.linagora.linshare.core.domain.entities.UpgradeTask;
@@ -70,6 +71,9 @@ public class UpgradeTaskDto {
 	@ApiModelProperty(value = "Status")
 	protected UpgradeTaskStatus status;
 
+	@ApiModelProperty(value = "Priority")
+	protected UpgradeTaskPriority priority;
+
 	@ApiModelProperty(value = "CreationDate")
 	protected Date creationDate;
 
@@ -92,6 +96,7 @@ public class UpgradeTaskDto {
 		this.parentIdentifier = upgradeTask.getParentIdentifier();
 		this.taskOrder = upgradeTask.getTaskOrder();
 		this.status = upgradeTask.getStatus();
+		this.priority = upgradeTask.getPriority();
 		this.creationDate = upgradeTask.getCreationDate();
 		this.modificationDate = upgradeTask.getModificationDate();
 		this.asyncTaskUuid = upgradeTask.getAsyncTaskUuid();
@@ -177,11 +182,19 @@ public class UpgradeTaskDto {
 		this.asyncTaskUuid = asyncTaskUuid;
 	}
 
+	public UpgradeTaskPriority getPriority() {
+		return priority;
+	}
+
+	public void setPriority(UpgradeTaskPriority priority) {
+		this.priority = priority;
+	}
+
 	@Override
 	public String toString() {
 		return "UpgradeTaskDto [uuid=" + uuid + ", identifier=" + identifier + ", taskGroup=" + taskGroup
 				+ ", parentUuid=" + parentUuid + ", parentIdentifier=" + parentIdentifier + ", taskOrder=" + taskOrder
-				+ ", status=" + status + ", creationDate=" + creationDate + ", modificationDate=" + modificationDate
-				+ ", asyncTaskUuid=" + asyncTaskUuid + "]";
+				+ ", status=" + status + ", priority=" + priority + ", creationDate=" + creationDate
+				+ ", modificationDate=" + modificationDate + ", asyncTaskUuid=" + asyncTaskUuid + "]";
 	}
 }
