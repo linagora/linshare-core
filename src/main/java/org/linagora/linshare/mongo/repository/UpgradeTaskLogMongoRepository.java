@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.mongo.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.mongo.entities.UpgradeTaskLog;
@@ -41,4 +42,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 public interface UpgradeTaskLogMongoRepository extends MongoRepository<UpgradeTaskLog, String> {
 
 	List<UpgradeTaskLog> findAllByUpgradeTaskAndAsyncTask(String upgradeTaskUuid, String asyncTaskUuid);
+
+	List<UpgradeTaskLog> findAllByUpgradeTaskAndAsyncTaskAndCreationDateAfter(String upgradeTaskUuid, String asyncTaskUuid, Date fromDate);
 }

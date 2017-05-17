@@ -33,6 +33,9 @@
  */
 package org.linagora.linshare.webservice.admin.impl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -249,9 +252,22 @@ public class UpgradeTaskRestServiceImpl implements UpgradeTaskRestService {
 			@ApiParam(value = "The upgrade tasks uuid.", required = true)
 				@PathParam("upgradeTaskUuid") String upgradeTaskUuid,
 				@ApiParam(value = "The async task uuid.", required = true)
-				@PathParam("uuid") String  asyncTaskUuid
+				@PathParam("uuid") String  asyncTaskUuid,
+				@QueryParam("fromDate") String fromDate
 			) throws BusinessException {
-		return upgradeTaskLogMongoRepository.findAllByUpgradeTaskAndAsyncTask(upgradeTaskUuid, asyncTaskUuid);
+		if (fromDate == null) {
+			return upgradeTaskLogMongoRepository.findAllByUpgradeTaskAndAsyncTask(upgradeTaskUuid, asyncTaskUuid);
+		} else {
+			return upgradeTaskLogMongoRepository.findAllByUpgradeTaskAndAsyncTaskAndCreationDateAfter(upgradeTaskUuid, asyncTaskUuid, getDate(fromDate));
+		}
 	}
 
+	protected Date getDate(String fromDate) {
+		try {
+			return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(fromDate);
+		} catch (ParseException e) {
+			logger.error(e.getMessage(), e);
+			throw new BusinessException(BusinessErrorCode.BAD_REQUEST, "Can not convert begin date.");
+		}
+	}
 }

@@ -52,5 +52,5 @@ public interface UpgradeTaskRestService {
 
 	AsyncTaskDto findAsyncTask(String upgradeTaskUuid, String uuid) throws BusinessException;
 
-	List<UpgradeTaskLog> console(String upgradeTaskUuid, String asyncTaskUuid) throws BusinessException;
+	List<UpgradeTaskLog> console(String upgradeTaskUuid, String asyncTaskUuid, String fromDate) throws BusinessException;
 }
