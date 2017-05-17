@@ -132,7 +132,13 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 	public WorkGroupNode find(Account actor, User owner, Thread workGroup, String workGroupNodeUuid, boolean withTree)
 			throws BusinessException {
 		preChecks(actor, owner);
-		WorkGroupNode node = findNode(workGroup, workGroupNodeUuid);
+		WorkGroupNode node = null;
+		if (workGroup.getLsUuid().equals(workGroupNodeUuid)) {
+			// It means we want the root folder.
+			node = getRootFolder(owner, workGroup);
+		} else {
+			node = findNode(workGroup, workGroupNodeUuid);
+		}
 		checkReadPermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, node, workGroup);
 		if (withTree) {
 			node.setTreePath(getTreePath(workGroup, node));
