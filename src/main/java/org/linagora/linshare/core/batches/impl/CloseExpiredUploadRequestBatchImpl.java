@@ -37,6 +37,7 @@ package org.linagora.linshare.core.batches.impl;
 import java.util.List;
 
 import org.linagora.linshare.core.batches.CloseExpiredUploadRequestBatch;
+import org.linagora.linshare.core.batches.utils.OperationKind;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
@@ -73,6 +74,7 @@ public class CloseExpiredUploadRequestBatchImpl extends GenericBatchImpl impleme
 		this.uploadRequestService = uploadRequestService;
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
+		this.operationKind = OperationKind.CLOSED;
 	}
 
 	@Override
@@ -127,21 +129,5 @@ public class CloseExpiredUploadRequestBatchImpl extends GenericBatchImpl impleme
 				"Error occured while closing outdated upload request "
 						+ r.getUuid()
 						+ ". BatchBusinessException ", exception);
-	}
-
-	@Override
-	public void terminate(BatchRunContext batchRunContext, List<String> all, long errors, long unhandled_errors, long total, long processed) {
-		long success = total - errors - unhandled_errors;
-		logger.info(success
-				+ " upload request(s) have been closed.");
-		if (errors > 0) {
-			logger.error(errors
-					+ " upload request(s) failed to be closed.");
-		}
-		if (unhandled_errors > 0) {
-			logger.error(unhandled_errors
-					+ " upload request(s) failed to be closed (unhandled error).");
-		}
-		logger.info("CloseExpiredUploadRequestBatchImpl job terminated.");
 	}
 }

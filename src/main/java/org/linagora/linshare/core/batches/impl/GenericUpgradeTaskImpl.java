@@ -33,91 +33,17 @@
  */
 package org.linagora.linshare.core.batches.impl;
 
-import java.util.List;
-
 import org.linagora.linshare.core.batches.GenericUpgradeTask;
-import org.linagora.linshare.core.domain.constants.UpgradeLogCriticity;
+import org.linagora.linshare.core.batches.utils.impl.UpgradeTaskConsoleImpl;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.repository.AccountRepository;
-import org.linagora.linshare.mongo.entities.UpgradeTaskLog;
 import org.linagora.linshare.mongo.repository.UpgradeTaskLogMongoRepository;
 
 public abstract class GenericUpgradeTaskImpl extends GenericBatchImpl implements GenericUpgradeTask {
 
-	protected UpgradeTaskLogMongoRepository upgradeTaskLogMongoRepository;
-
 	public GenericUpgradeTaskImpl(AccountRepository<Account> accountRepository,
 			UpgradeTaskLogMongoRepository upgradeTaskLogMongoRepository) {
 		super(accountRepository);
-		this.upgradeTaskLogMongoRepository = upgradeTaskLogMongoRepository;
-	}
-
-
-	@Override
-	public void logDebug(BatchRunContext batchRunContext, long total, long position, String message, Object... args) {
-		super.logDebug(batchRunContext, total, position, message, args);
-		String msg = getStringPosition(total, position) + message;
-		UpgradeTaskLog log = new UpgradeTaskLog(batchRunContext, UpgradeLogCriticity.DEBUG, msg);
-		upgradeTaskLogMongoRepository.insert(log);
-	}
-
-	@Override
-	protected void logInfo(BatchRunContext batchRunContext, long total, long position, String message, Object... args) {
-		super.logInfo(batchRunContext, total, position, message, args);
-		String msg = getStringPosition(total, position) + message;
-		UpgradeTaskLog log = new UpgradeTaskLog(batchRunContext, UpgradeLogCriticity.INFO, msg);
-		upgradeTaskLogMongoRepository.insert(log);
-	}
-
-	@Override
-	protected void logWarn(long total, long position, String message, BatchRunContext batchRunContext, Object... args) {
-		super.logWarn(total, position, message, batchRunContext, args);
-		String msg = getStringPosition(total, position) + message;
-		UpgradeTaskLog log = new UpgradeTaskLog(batchRunContext, UpgradeLogCriticity.WARN, msg);
-		upgradeTaskLogMongoRepository.insert(log);
-	}
-
-	@Override
-	protected void logError(long total, long position, String message, BatchRunContext batchRunContext, Object... args) {
-		super.logError(total, position, message, batchRunContext, args);
-		String msg = getStringPosition(total, position) + message;
-		UpgradeTaskLog log = new UpgradeTaskLog(batchRunContext, UpgradeLogCriticity.ERROR, msg);
-		upgradeTaskLogMongoRepository.insert(log);
-	}
-
-	@Override
-	public void fail(BatchRunContext batchRunContext, List<String> all, long errors, long unhandled_errors, long total,
-			long processed) {
-		super.fail(batchRunContext, all, errors, unhandled_errors, total, processed);
-		UpgradeTaskLog log = new UpgradeTaskLog(batchRunContext, UpgradeLogCriticity.ERROR, "Critical error for upgrade task : " + this.getClass().getName());
-		upgradeTaskLogMongoRepository.insert(log);
-	}
-
-	@Override
-	public void start(BatchRunContext batchRunContext) {
-		super.start(batchRunContext);
-		upgradeTaskLogMongoRepository.insert(new UpgradeTaskLog(batchRunContext, UpgradeLogCriticity.INFO,
-				String.format("%1$s upgrade task starting ...", this.getBatchClassName())));
-	}
-
-	@Override
-	public void terminate(BatchRunContext batchRunContext, List<String> all, long errors, long unhandled_errors, long total, long processed) {
-		long success = total - errors - unhandled_errors;
-		String msg = String.format("%1$d resource(s) have been processed.", success);
-		logger.info(msg);
-		upgradeTaskLogMongoRepository.insert(new UpgradeTaskLog(batchRunContext, UpgradeLogCriticity.INFO, msg));
-		if (errors > 0) {
-			msg = String.format("There were %1$d error (s) durring the upgrade task processing.", errors);
-			logger.warn(msg);
-			upgradeTaskLogMongoRepository.insert(new UpgradeTaskLog(batchRunContext, UpgradeLogCriticity.WARN, msg));
-		}
-		if (unhandled_errors > 0) {
-			msg = String.format("There were %1$d at least one unhandled error durring the upgrade task processing which stop it.", unhandled_errors);
-			logger.error(msg);
-			upgradeTaskLogMongoRepository.insert(new UpgradeTaskLog(batchRunContext, UpgradeLogCriticity.ERROR, msg));
-		}
-		upgradeTaskLogMongoRepository.insert(new UpgradeTaskLog(batchRunContext, UpgradeLogCriticity.INFO, "Upgrade task terminated."));
-		logger.info("Upgrade task complete.");
+		this.console = new UpgradeTaskConsoleImpl(this.getClass(), upgradeTaskLogMongoRepository);
 	}
 }

@@ -36,6 +36,7 @@ package org.linagora.linshare.core.runner.impl;
 import java.util.List;
 
 import org.linagora.linshare.core.batches.GenericBatch;
+import org.linagora.linshare.core.batches.utils.BatchConsole;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalException;
@@ -48,6 +49,10 @@ import org.slf4j.LoggerFactory;
 public class BatchRunnerImpl implements BatchRunner {
 
 	private static final Logger logger = LoggerFactory.getLogger(BatchRunnerImpl.class);
+
+	public BatchRunnerImpl() {
+		super();
+	}
 
 	@Override
 	public boolean execute(GenericBatch batch) {
@@ -72,8 +77,9 @@ public class BatchRunnerImpl implements BatchRunner {
 	@Override
 	public boolean execute(GenericBatch batch, BatchRunContext batchRunContext) {
 		boolean finalResult = true;
+		BatchConsole console = batch.getConsole();
 		if (!batch.needToRun()) {
-			logger.info("batch skipped : " + batch.getBatchClassName());
+			console.logInfo(batchRunContext, "batch skipped.");
 			return finalResult;
 		}
 		batch.start(batchRunContext);
@@ -86,7 +92,7 @@ public class BatchRunnerImpl implements BatchRunner {
 		long total = all.size();
 		for (String resource : all) {
 			try {
-				batch.logDebug(batchRunContext, total, position, "processing resource '" + resource + "' ...");
+				console.logDebug(batchRunContext, total, position, "processing resource '" + resource + "' ...");
 				ResultContext batchResult = batch.execute(batchRunContext, resource, total, position);
 				// null if resource was skipped (nothing to do or not found)
 				if (batchResult != null) {
@@ -97,20 +103,20 @@ public class BatchRunnerImpl implements BatchRunner {
 					}
 					batch.notify(batchRunContext, batchResult, total, position);
 				} else {
-					batch.logDebug(batchRunContext, total, position, "Resource not found, skipped : " + resource);
+					console.logDebug(batchRunContext, total, position, "Resource not found, skipped : " + resource);
 				}
 			} catch (BatchBusinessException ex) {
 				errors++;
 				batch.notifyError(ex, resource, total, position, batchRunContext);
 			} catch (BusinessException ex) {
 				unhandled_errors++;
-				logger.error("Unhandled BusinessException in batch : {}", batch);
+				console.logError(batchRunContext, total, position, "Unhandled BusinessException in batch :  " + batch.getBatchClassName());
 				logger.error(ex.getMessage(), ex);
 				logger.error("Cannot process resource '{}' ", resource);
 				finalResult = false;
 			} catch (TechnicalException ex) {
 				unhandled_errors++;
-				logger.error("Unhandled TechnicalException in batch : {}", batch);
+				console.logError(batchRunContext, total, position, "Unhandled TechnicalException in batch : " + batch.getBatchClassName());
 				logger.error(ex.getMessage(), ex);
 				logger.error("Cannot process resource '{}' ", resource);
 				logger.error("CRITICAL ERROR : Batch stopped !");
@@ -118,7 +124,7 @@ public class BatchRunnerImpl implements BatchRunner {
 				break;
 			} catch (Exception ex) {
 				unhandled_errors++;
-				logger.error("Unhandled Exception in batch : {}", batch);
+				console.logError(batchRunContext, total, position, "Unhandled Exception in batch : " + batch.getBatchClassName());
 				logger.error(ex.getMessage(), ex);
 				logger.error("Cannot process resource '{}' ", resource);
 				logger.error("CRITICAL ERROR : Batch stopped !");

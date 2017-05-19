@@ -37,6 +37,9 @@ package org.linagora.linshare.core.batches.impl;
 import java.util.List;
 
 import org.linagora.linshare.core.batches.GenericBatch;
+import org.linagora.linshare.core.batches.utils.BatchConsole;
+import org.linagora.linshare.core.batches.utils.OperationKind;
+import org.linagora.linshare.core.batches.utils.impl.BatchConsoleImpl;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
@@ -50,34 +53,45 @@ public abstract class GenericBatchImpl implements GenericBatch {
 
 	protected final AccountRepository<Account> accountRepository;
 
+	protected BatchConsole console;
+
+	protected OperationKind operationKind;
+
 	public GenericBatchImpl(AccountRepository<Account> accountRepository) {
 		super();
 		this.accountRepository = accountRepository;
+		this.console = new BatchConsoleImpl(this.getClass());
+		this.operationKind = OperationKind.UPDATED;
+	}
+
+	@Override
+	public BatchConsole getConsole() {
+		return console;
 	}
 
 	protected String getStringPosition(long total, long position) {
 		return position + "/" + total + ":";
 	}
 
-	@Override
-	public void logDebug(BatchRunContext batchRunContext, long total, long position,
+	// legacy wrappers.
+	protected void logDebug(BatchRunContext batchRunContext, long total, long position,
 			String message, Object... args) {
-		logger.debug(getStringPosition(total, position) + message, args);
+		console.logDebug(batchRunContext, total, position, message, args);
 	}
 
 	protected void logInfo(BatchRunContext batchRunContext, long total, long position,
 			String message, Object... args) {
-		logger.info(getStringPosition(total, position) + message, args);
+		console.logInfo(batchRunContext, total, position, message, args);
 	}
 
 	protected void logWarn(long total, long position, String message,
 			BatchRunContext batchRunContext, Object... args) {
-		logger.warn(getStringPosition(total, position) + message, args);
+		console.logWarn(batchRunContext, total, position, message, args);
 	}
 
 	protected void logError(long total, long position, String message,
 			BatchRunContext batchRunContext, Object... args) {
-		logger.error(getStringPosition(total, position) + message, args);
+		console.logError(batchRunContext, total, position, message, args);
 	}
 
 	protected SystemAccount getSystemAccount() {
@@ -96,13 +110,35 @@ public abstract class GenericBatchImpl implements GenericBatch {
 
 	@Override
 	public void start(BatchRunContext batchRunContext) {
-		logger.info("{} job starting ...", this.getBatchClassName());
+		console.logInfo(batchRunContext, "Task is starting ...");
 	}
 
 	@Override
 	public void fail(BatchRunContext batchRunContext, List<String> all, long errors, long unhandled_errors, long total, long processed) {
-		logger.error("Critical error for batch : " + this.getClass().getName() + ". Batch stopped.");
-		logger.error("Processed {}/{}, errors : ", processed, total, errors);
-		logger.error("Job failed");
+		console.logError(batchRunContext, "Critical error for the current task. Task stopped.");
+		console.logError(batchRunContext, "Processed {}/{}, errors : {}, unhandled_errors : {}, ", processed, total, errors, unhandled_errors);
+	}
+
+	@Override
+	public void terminate(BatchRunContext batchRunContext, List<String> all, long errors, long unhandled_errors, long total, long processed) {
+		String msg = String.format("Total resource(s) : %1$d", total);
+		console.logInfo(batchRunContext, msg);
+		String operation = operationKind.toString().toLowerCase();
+		msg = String.format("%1$d resource(s) have been %2$s.", processed, operation);
+		console.logInfo(batchRunContext, msg);
+		long skipped = total - processed - errors -unhandled_errors;
+		if (skipped > 0) {
+			msg = String.format("%1$d resource(s) have been skipped.", skipped);
+			console.logInfo(batchRunContext, msg);
+		}
+		if (errors > 0) {
+			msg = String.format("%1$d resource(s) can not be %2$s.", errors, operation);
+			console.logWarn(batchRunContext, msg);
+		}
+		if (unhandled_errors > 0) {
+			msg = String.format("There were %1$d unhandled error durring the task processing which stop it.", unhandled_errors);
+			console.logError(batchRunContext, msg);
+		}
+		console.logInfo(batchRunContext, "Task complete.");
 	}
 }

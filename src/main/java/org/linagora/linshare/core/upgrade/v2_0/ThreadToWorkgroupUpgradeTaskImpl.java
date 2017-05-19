@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.linagora.linshare.core.batches.impl.GenericUpgradeTaskImpl;
+import org.linagora.linshare.core.batches.utils.OperationKind;
 import org.linagora.linshare.core.domain.constants.LogActionV1;
 import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
@@ -95,6 +96,7 @@ public class ThreadToWorkgroupUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 		this.workGroupDocumentService = workGroupDocumentService;
 		this.repository = repository;
 		this.logEntryRepository = logEntryRepository;
+		this.operationKind = OperationKind.UPGRADED;
 	}
 
 	@Override

@@ -106,6 +106,7 @@ public class AccountQuotaUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 			throws BatchBusinessException, BusinessException {
 		Account account = accountRepository.findByLsUuid(identifier);
 		BatchResultContext<Account> res = new BatchResultContext<Account>(account);
+		res.setProcessed(false);
 		if (account == null) {
 			res.setIdentifier(identifier);
 			return res;
@@ -133,8 +134,6 @@ public class AccountQuotaUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 				operationHistoryBusinessService.create(oh);
 			}
 			res.setProcessed(true);
-		} else {
-			logInfo(batchRunContext, total, position, "account skipped : " + account.toString());
 		}
 		return res;
 	}
@@ -145,7 +144,11 @@ public class AccountQuotaUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 		BatchResultContext<Account> res = (BatchResultContext<Account>) context;
 		Account resource = res.getResource();
 		if (resource != null) {
-			logInfo(batchRunContext, total, position, "Account quota was created for: " + resource.toString());
+			if (res.getProcessed()) {
+				logInfo(batchRunContext, total, position, "Account quota was created for: " + resource.toString());
+			} else {
+				logInfo(batchRunContext, total, position, "Account skipped : " + resource.toString());
+			}
 		} else {
 			logInfo(batchRunContext, total, position, "Account quota creation skipped, can not find related account : " + res.getIdentifier());
 		}
