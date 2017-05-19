@@ -41,6 +41,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Thread;
@@ -93,12 +94,12 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 	}
 
 	@Override
-	public List<WorkGroupNode> findAll(String ownerUuid, String workGroupUuid, String parentNodeUuid, Boolean flatDocumentMode) throws BusinessException {
+	public List<WorkGroupNode> findAll(String ownerUuid, String workGroupUuid, String parentNodeUuid, Boolean flatDocumentMode, WorkGroupNodeType nodeType) throws BusinessException {
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(actor, ownerUuid);
 		Thread workGroup = threadService.find(actor, owner, workGroupUuid);
-		return service.findAll(actor, owner, workGroup, parentNodeUuid, flatDocumentMode);
+		return service.findAll(actor, owner, workGroup, parentNodeUuid, flatDocumentMode, nodeType);
 	}
 
 	@Override

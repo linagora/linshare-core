@@ -102,11 +102,11 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 
 	@Override
 	public List<WorkGroupNode> findAll(Account actor, User owner, Thread workGroup) throws BusinessException {
-		return findAll(actor, owner, workGroup, null, true);
+		return findAll(actor, owner, workGroup, null, true, null);
 	}
 
 	@Override
-	public List<WorkGroupNode> findAll(Account actor, User owner, Thread workGroup, String parentUuid, Boolean flatDocumentMode)
+	public List<WorkGroupNode> findAll(Account actor, User owner, Thread workGroup, String parentUuid, Boolean flatDocumentMode, WorkGroupNodeType nodeType)
 			throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notNull(workGroup, "Missing workGroup");
@@ -119,12 +119,15 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		if (parentUuid == null) {
 			List<WorkGroupNode> rootList = repository.findByWorkGroupAndParent(workGroup.getLsUuid(), workGroup.getLsUuid());
 			if (rootList.isEmpty()) {
-				return Lists.newArrayList();
+				return rootList;
 			}
 			WorkGroupNode root = rootList.get(0);
-			return repository.findByWorkGroupAndParent(workGroup.getLsUuid(), root.getUuid());
+			parentUuid = root.getUuid();
 		}
 		Validate.notEmpty(parentUuid, "Missing workGroup parentUuid");
+		if (nodeType != null) {
+			return repository.findByWorkGroupAndParentAndNodeType(workGroup.getLsUuid(), parentUuid, nodeType);
+		}
 		return repository.findByWorkGroupAndParent(workGroup.getLsUuid(), parentUuid);
 	}
 
@@ -334,7 +337,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 
 	private void deleteNode(Account actor, User owner, Thread workGroup, WorkGroupNode workGroupNode) {
 		if (isFolder(workGroupNode)) {
-			List<WorkGroupNode> findAll = findAll(actor, owner, workGroup, workGroupNode.getUuid(), false);
+			List<WorkGroupNode> findAll = findAll(actor, owner, workGroup, workGroupNode.getUuid(), false, null);
 			for (WorkGroupNode node : findAll) {
 				deleteNode(actor, owner, workGroup, node);
 			}

@@ -36,6 +36,7 @@ package org.linagora.linshare.core.service;
 import java.io.File;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Thread;
@@ -48,7 +49,7 @@ public interface WorkGroupNodeService {
 
 	List<WorkGroupNode> findAll(Account actor, User owner, Thread workGroup) throws BusinessException;
 
-	List<WorkGroupNode> findAll(Account actor, User owner, Thread workGroup, String parentUuid, Boolean flatDocumentMode)
+	List<WorkGroupNode> findAll(Account actor, User owner, Thread workGroup, String parentUuid, Boolean flatDocumentMode, WorkGroupNodeType nodeType)
 			throws BusinessException;
 
 	WorkGroupNode find(Account actor, User owner, Thread workGroup, String workGroupNodeUuid, boolean withTree) throws BusinessException;

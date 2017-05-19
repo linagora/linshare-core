@@ -141,7 +141,7 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 
 		// Check if we have the right to access to the specified thread
 		Thread workGroup = threadService.find(actor, owner, threadUuid);
-		List<WorkGroupNode> all = workGroupNodeService.findAll(actor, owner, workGroup, null, true);
+		List<WorkGroupNode> all = workGroupNodeService.findAll(actor, owner, workGroup, null, true, null);
 		List<WorkGroupEntryDto> ret = Lists.newArrayList();
 		for (WorkGroupNode node : all) {
 			if (node.getNodeType().equals(WorkGroupNodeType.DOCUMENT)) {

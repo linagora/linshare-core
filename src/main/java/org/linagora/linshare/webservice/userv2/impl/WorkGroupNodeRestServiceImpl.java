@@ -59,6 +59,7 @@ import org.apache.commons.lang.Validate;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.domain.constants.AsyncTaskType;
+import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
@@ -147,10 +148,11 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 	@Override
 	public List<WorkGroupNode> findAll(
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workGroupUuid") String workGroupUuid,
-			@ApiParam(value = "The parent uuid.", required = false) @QueryParam("parent") String parent
+			@ApiParam(value = "The parent uuid.", required = false) @QueryParam("parent") String parent,
+			@ApiParam(value = "Filter by node type.", required = false) @QueryParam("type") WorkGroupNodeType nodeType
 			)
 				throws BusinessException {
-		return workGroupNodeFacade.findAll(null, workGroupUuid, parent, false);
+		return workGroupNodeFacade.findAll(null, workGroupUuid, parent, false, nodeType);
 	}
 
 	@Path("/{workGroupNodeUuid}")

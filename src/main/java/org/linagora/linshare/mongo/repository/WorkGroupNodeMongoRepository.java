@@ -49,6 +49,8 @@ public interface WorkGroupNodeMongoRepository extends MongoRepository<WorkGroupN
 
 	List<WorkGroupNode> findByWorkGroupAndParent(String workGroupUuid, String parentUuid);
 
+	List<WorkGroupNode> findByWorkGroupAndParentAndNodeType(String workGroupUuid, String parentUuid, WorkGroupNodeType type);
+
 	List<WorkGroupNode> findByWorkGroupAndNodeType(String workGroupUuid, WorkGroupNodeType type);
 
 	List<WorkGroupNode> findByWorkGroupAndParentAndName(String workGroupUuid, String parentUuid, String name);

@@ -39,13 +39,14 @@ import java.util.Set;
 
 import javax.ws.rs.core.Response;
 
+import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface WorkGroupNodeFacade extends GenericFacade {
 
-	List<WorkGroupNode> findAll(String ownerUuid, String workGroupUuid, String parentNodeUuid, Boolean flatDocumentMode) throws BusinessException;
+	List<WorkGroupNode> findAll(String ownerUuid, String workGroupUuid, String parentNodeUuid, Boolean flatDocumentMode, WorkGroupNodeType nodeType) throws BusinessException;
 
 	WorkGroupNode find(String ownerUuid, String workGroupUuid, String workGroupNodeUuid, Boolean withTree) throws BusinessException;
 

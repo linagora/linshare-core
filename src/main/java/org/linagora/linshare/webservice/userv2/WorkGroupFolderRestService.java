@@ -40,6 +40,7 @@ import java.util.Set;
 import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
+import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
@@ -53,7 +54,7 @@ public interface WorkGroupFolderRestService {
 			String givenFileName, Boolean async, Long contentLength, Long fileSize, MultipartBody body, Boolean strict)
 			throws BusinessException;
 
-	List<WorkGroupNode> findAll(String workGroupUuid, String parentNodeUuid) throws BusinessException;
+	List<WorkGroupNode> findAll(String workGroupUuid, String parentNodeUuid, WorkGroupNodeType nodeType) throws BusinessException;
 
 	WorkGroupNode find(String workGroupUuid, String workGroupNodeUuid, Boolean withTree) throws BusinessException;
 
