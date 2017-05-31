@@ -75,14 +75,13 @@ public class DomainPoliciesUuidUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 	@Override
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
-		BatchResultContext<String> res = new BatchResultContext<String>(identifier);
-		if (LinShareConstants.defaultDomainPolicyIdentifier.equals(identifier)) {
-			// skip default domain policy
-			res.setProcessed(true);
-			return res;
-		}
 		DomainPolicy policy = repository.findById(identifier);
-		policy.setUuid(UUID.randomUUID().toString());
+		BatchResultContext<DomainPolicy> res = new BatchResultContext<DomainPolicy>(policy);
+		if (LinShareConstants.defaultDomainPolicyIdentifier.equals(policy.getLabel())) {
+			policy.setUuid(LinShareConstants.defaultDomainPolicyIdentifier);
+		} else {
+			policy.setUuid(UUID.randomUUID().toString());
+		}
 		repository.update(policy);
 		res.setProcessed(true);
 		return res;
@@ -91,9 +90,9 @@ public class DomainPoliciesUuidUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 	@Override
 	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		@SuppressWarnings("unchecked")
-		BatchResultContext<String> res = (BatchResultContext<String>) context;
-		String resource = res.getResource();
-		logInfo(batchRunContext, total, position, "The upgrade task : " + resource + " has been successfully completed.");
+		BatchResultContext<DomainPolicy> res = (BatchResultContext<DomainPolicy>) context;
+		DomainPolicy resource = res.getResource();
+		logInfo(batchRunContext, total, position, resource + " has been updated.");
 	}
 
 	@Override
