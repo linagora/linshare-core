@@ -50,8 +50,6 @@ import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.mongo.repository.UpgradeTaskLogMongoRepository;
 
-import com.google.common.collect.Lists;
-
 public class DomainUuidUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 
 	protected AbstractDomainRepository repository;
@@ -71,22 +69,23 @@ public class DomainUuidUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 
 	@Override
 	public List<String> getAll(BatchRunContext batchRunContext) {
-		return Lists.newArrayList(this.getClass().getName());
+		List<String> domainIdentifiers = repository.findAllDomainIdentifiers();
+		return domainIdentifiers;
 	}
 
 	@Override
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
-		BatchResultContext<String> res = new BatchResultContext<String>(identifier);
-		List<String> domainIdentifiers = repository.findAllDomainIdentifiers();
-		for (String domainIdentifier: domainIdentifiers) {
-			if (LinShareConstants.rootDomainIdentifier.equals(domainIdentifier)) {
-				// skip root domain
-				continue;
-			}
-			AbstractDomain abstractDomain = repository.findById(domainIdentifier);
+		AbstractDomain abstractDomain = repository.findById(identifier);
+		BatchResultContext<AbstractDomain> res = new BatchResultContext<AbstractDomain>(abstractDomain);
+		console.logDebug(batchRunContext, total, position, "Processing domain : " + abstractDomain.toString());
+		if (LinShareConstants.rootDomainIdentifier.equals(identifier)) {
+			// skip root domain
+			res.setProcessed(false);
+		} else {
 			abstractDomain.setUuid(UUID.randomUUID().toString());
 			repository.update(abstractDomain);
+			res.setProcessed(true);
 		}
 		return res;
 	}
@@ -94,9 +93,13 @@ public class DomainUuidUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 	@Override
 	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		@SuppressWarnings("unchecked")
-		BatchResultContext<String> res = (BatchResultContext<String>) context;
-		String resource = res.getResource();
-		logInfo(batchRunContext, total, position, "The upgrade task : " + resource + " has been successfully completed.");
+		BatchResultContext<AbstractDomain> res = (BatchResultContext<AbstractDomain>) context;
+		AbstractDomain resource = res.getResource();
+		if (res.getProcessed()) {
+			logInfo(batchRunContext, total, position, resource + " has been updated.");
+		} else {
+			logInfo(batchRunContext, total, position, resource + " has been skipped.");
+		}
 	}
 
 	@Override
@@ -105,7 +108,7 @@ public class DomainUuidUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 		BatchResultContext<String> res = (BatchResultContext<String>) exception.getContext();
 		String resource = res.getResource();
 		logError(total, position, "The upgrade task : " + resource + " failed.", batchRunContext);
-		logger.error("Error occured while updating the document : "
+		logger.error("Error occured while updating the domain : "
 				+ resource +
 				". BatchBusinessException", exception);
 	}
