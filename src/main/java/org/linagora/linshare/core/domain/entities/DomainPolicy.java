@@ -127,4 +127,10 @@ public class DomainPolicy {
 	public void setPersistenceId(long persistenceId) {
 		this.persistenceId = persistenceId;
 	}
+
+	@Override
+	public String toString() {
+		return "DomainPolicy [uuid=" + uuid + ", label=" + label + "]";
+	}
+
 }
