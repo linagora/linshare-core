@@ -67,4 +67,6 @@ public interface DocumentEntryRepository extends
 	long getUsedSpace(Account owner) throws BusinessException;
 
 	void syncUniqueDocument(Account owner, String fileName) throws BusinessException;
+
+	List<String> findAllEntriesWithoutExpirationDate();
 }

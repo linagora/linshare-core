@@ -124,6 +124,8 @@ public interface DocumentEntryBusinessService {
 	String SHA1CheckSumFileStream(InputStream fs) throws IOException;
 
 	List<String> findAllExpiredEntries();
+	
+	List<String> findAllEntriesWithoutExpirationDate();
 
 	void deleteDocument(Document document)
 			throws BusinessException;

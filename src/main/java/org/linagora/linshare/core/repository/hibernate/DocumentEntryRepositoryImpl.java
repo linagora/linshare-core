@@ -156,6 +156,17 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 		List<String> list = listByCriteria(criteria);
 		return list;
 	}
+	
+
+	@Override
+	public List<String> findAllEntriesWithoutExpirationDate() {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.setProjection(Projections.property("uuid"));
+		criteria.add(Restrictions.isNull("expirationDate"));
+		@SuppressWarnings("unchecked")
+		List<String> list = listByCriteria(criteria);
+		return list;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override

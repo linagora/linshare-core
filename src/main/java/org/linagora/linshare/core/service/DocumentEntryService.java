@@ -172,4 +172,6 @@ public interface DocumentEntryService {
 	DocumentEntry copyFromShareEntry(Account owner,
 			ShareEntry shareEntry, DocumentEntry de, Calendar expirationDate)
 			throws BusinessException;
+
+	public List<String> findAllEntriesWithoutExpirationDate(Account actor, Account owner);
 }

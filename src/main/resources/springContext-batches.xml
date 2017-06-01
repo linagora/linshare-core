@@ -57,6 +57,13 @@
 		<constructor-arg ref="documentEntryService" />
 	</bean>
 
+	<bean name="computeDocumentExpirationBatch"
+		class="org.linagora.linshare.core.batches.impl.ComputeDocumentExpirationBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="documentEntryService" />
+	</bean>
+
 	<bean name="deleteExpiredAnonymousShareEntryBatch"
 		class="org.linagora.linshare.core.batches.impl.DeleteExpiredAnonymousShareEntryBatchImpl">
 		<constructor-arg ref="accountRepository" />

@@ -825,4 +825,9 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	public List<String> findAllExpiredEntries() {
 		return documentEntryRepository.findAllExpiredEntries();
 	}
+
+	@Override
+	public List<String> findAllEntriesWithoutExpirationDate() {
+		return documentEntryRepository.findAllEntriesWithoutExpirationDate();
+	}
 }

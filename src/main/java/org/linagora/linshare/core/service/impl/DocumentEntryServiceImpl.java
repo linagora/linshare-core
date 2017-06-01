@@ -736,4 +736,13 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		}
 		return documentEntryBusinessService.findAllExpiredEntries();
 	}
+
+	@Override
+	public List<String> findAllEntriesWithoutExpirationDate(Account actor, Account owner) {
+		preChecks(actor, owner);
+		if (!actor.hasAllRights()) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You do not have the right to use this method.");
+		}
+		return documentEntryBusinessService.findAllEntriesWithoutExpirationDate();
+	}
 }
