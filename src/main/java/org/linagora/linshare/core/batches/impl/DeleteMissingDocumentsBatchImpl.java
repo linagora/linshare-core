@@ -56,6 +56,8 @@ import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.WorkGroupDocumentService;
 
+import com.google.common.collect.Lists;
+
 public class DeleteMissingDocumentsBatchImpl extends GenericBatchImpl {
 
 	private final DocumentRepository documentRepository;
@@ -93,7 +95,8 @@ public class DeleteMissingDocumentsBatchImpl extends GenericBatchImpl {
 		List<String> entries = documentRepository.findAllIdentifiers();
 		logger.info(entries.size()
 				+ " document(s) have been found to be checked");
-		return entries;
+		// FIXME
+		return Lists.newArrayList();
 	}
 
 	@Override
