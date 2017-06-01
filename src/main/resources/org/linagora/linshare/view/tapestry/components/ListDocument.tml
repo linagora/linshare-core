@@ -101,6 +101,9 @@
 				</t:if>
 				<span class="friendlySize">${friendlySize},</span>${message:global.space}
 				<span class="creationDate">${message:components.listDocument.uploadOn} ${creationDate}</span>${message:global.space}
+				<t:if test="expirationDate">
+					<span class="expirationDate">(${message:components.listDocument.expiresOn} ${expirationDate})</span>${message:global.space}
+				</t:if>
 			</div>
 			</t:parameter>
 			<t:parameter t:name="updateDocCell">

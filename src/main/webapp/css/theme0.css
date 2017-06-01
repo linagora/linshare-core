@@ -2641,10 +2641,15 @@ div#blocDL ul li {
 }
 
 #content td.fileProperties .creationDate,
+#content td.fileProperties .expirationDate,
 #content td.fileProperties .friendlySize,
 #content td.fileProperties .ownerLogin,
 #content td.fileProperties .sharedBy {
 	color: #888;
+}
+
+#content td.fileProperties .expirationDate {
+	font-style: italic;
 }
 
 #content td.fileProperties .ownerLogin a:link, #content td.fileProperties .ownerLogin a:visited,

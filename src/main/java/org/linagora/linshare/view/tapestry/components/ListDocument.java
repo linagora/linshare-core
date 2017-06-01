@@ -731,6 +731,20 @@ public class ListDocument {
 	}
 
 	/**
+	 * Format the expiration date.
+	 * 
+	 * @return the date expiration date in localized format.
+	 */
+	public String getExpirationDate(){
+		Calendar documentExpirationDate = this.document.getExpirationDate();
+		if (documentExpirationDate != null) {
+			SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.date"));
+			return formatter.format(documentExpirationDate.getTime());
+		}
+		return "";
+	}
+
+	/**
 	 * 
 	 * @return false (the document is never filesSelected by default)
 	 */
