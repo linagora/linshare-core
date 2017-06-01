@@ -35,6 +35,7 @@ package org.linagora.linshare.core.batches.impl;
 
 import java.util.List;
 
+import org.linagora.linshare.core.batches.utils.OperationKind;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
@@ -57,13 +58,13 @@ public class DeleteGuestBatchImpl extends GenericBatchImpl {
 			AccountRepository<Account> accountRepository) {
 		super(accountRepository);
 		this.service = guestService;
+		this.operationKind = OperationKind.REMOVED;
 	}
 
 	@Override
 	public List<String> getAll(BatchRunContext batchRunContext) {
-		logger.info("DeleteGuestBatchImpl job starting ...");
 		List<String> guests = service.findOudatedGuests(getSystemAccount());
-		logger.info(guests.size() + " guest(s) have been found to be removed");
+		console.logInfo(batchRunContext, guests.size() + " guest(s) have been found to be removed");
 		return guests;
 	}
 
@@ -74,13 +75,14 @@ public class DeleteGuestBatchImpl extends GenericBatchImpl {
 		Guest resource = service.findOudatedGuest(actor, identifier);
 		ResultContext context = new AccountBatchResultContext(resource);
 		try {
-			logInfo(batchRunContext, total,
+			console.logInfo(batchRunContext, total,
 					position, "processing guest : " + resource.getAccountRepresentation());
 			service.deleteUser(actor, resource.getLsUuid());
 			logger.info("Removed expired user : "
 					+ resource.getAccountRepresentation());
+			context.setProcessed(true);
 		} catch (BusinessException businessException) {
-			logError(total, position,
+			console.logError(batchRunContext, total, position,
 					"Error while trying to delete expired guest ", batchRunContext);
 			logger.info("Error occured while cleaning outdated guests ",
 					businessException);
@@ -96,7 +98,7 @@ public class DeleteGuestBatchImpl extends GenericBatchImpl {
 	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		AccountBatchResultContext guestContext = (AccountBatchResultContext) context;
 		Account guest = guestContext.getResource();
-		logInfo(batchRunContext, total, position, "The Guest "
+		console.logInfo(batchRunContext, total, position, "The Guest "
 				+ guest.getAccountRepresentation()
 				+ " has been successfully removed ");
 	}
@@ -106,7 +108,8 @@ public class DeleteGuestBatchImpl extends GenericBatchImpl {
 			String identifier, long total, long position, BatchRunContext batchRunContext) {
 		AccountBatchResultContext context = (AccountBatchResultContext) exception.getContext();
 		Account guest = context.getResource();
-		logError(
+		console.logError(
+				batchRunContext,
 				total,
 				position,
 				"cleaning Guest has failed : "
@@ -117,20 +120,4 @@ public class DeleteGuestBatchImpl extends GenericBatchImpl {
 						+ ". BatchBusinessException ", exception);
 	}
 
-	@Override
-	public void terminate(BatchRunContext batchRunContext, List<String> all,
-			long errors, long unhandled_errors, long total, long processed) {
-		long success = total - errors - unhandled_errors;
-		logger.info(success
-				+ " guest(s) have been removed.");
-		if (errors > 0) {
-			logger.error(errors
-					+ " guest(s) failed to be removed.");
-		}
-		if (unhandled_errors > 0) {
-			logger.error(unhandled_errors
-					+ " guest(s) failed to be removed (unhandled error).");
-		}
-		logger.info("DeleteGuestBatchImpl job terminated.");
-	}
 }

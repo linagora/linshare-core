@@ -69,6 +69,11 @@ public abstract class GenericBatchImpl implements GenericBatch {
 		return console;
 	}
 
+	@Override
+	public void setConsole(BatchConsole console) {
+		this.console = console;
+	}
+
 	protected String getStringPosition(long total, long position) {
 		return position + "/" + total + ":";
 	}
@@ -116,7 +121,10 @@ public abstract class GenericBatchImpl implements GenericBatch {
 	@Override
 	public void fail(BatchRunContext batchRunContext, List<String> all, long errors, long unhandled_errors, long total, long processed) {
 		console.logError(batchRunContext, "Critical error for the current task. Task stopped.");
-		console.logError(batchRunContext, "Processed {}/{}, errors : {}, unhandled_errors : {}, ", processed, total, errors, unhandled_errors);
+		long skipped = total - processed - errors -unhandled_errors;
+		String msg = String.format("Summary : success: %d, skipped: %d, errors: %d, unhandled errors: %d",
+				processed, skipped, errors, unhandled_errors);
+		console.logError(batchRunContext, msg);
 	}
 
 	@Override
@@ -132,13 +140,16 @@ public abstract class GenericBatchImpl implements GenericBatch {
 			console.logInfo(batchRunContext, msg);
 		}
 		if (errors > 0) {
-			msg = String.format("%1$d resource(s) can not be %2$s.", errors, operation);
-			console.logWarn(batchRunContext, msg);
+			msg = String.format("%1$d resource(s) can not be %2$s. Look for more information into tomcat server logs.", errors, operation);
+			console.logError(batchRunContext, msg);
 		}
 		if (unhandled_errors > 0) {
 			msg = String.format("There were %1$d unhandled error durring the task processing which stop it.", unhandled_errors);
 			console.logError(batchRunContext, msg);
 		}
 		console.logInfo(batchRunContext, "Task complete.");
+		msg = String.format("Summary : success: %d, skipped: %d, errors: %d, unhandled errors: %d",
+				processed, skipped, errors, unhandled_errors);
+		console.logInfo(batchRunContext, msg);
 	}
 }

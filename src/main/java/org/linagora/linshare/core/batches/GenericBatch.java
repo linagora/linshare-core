@@ -48,6 +48,8 @@ public interface GenericBatch {
 
 	BatchConsole getConsole();
 
+	void setConsole(BatchConsole  console);
+
 	boolean needToRun();
 
 	void start(BatchRunContext batchRunContext);

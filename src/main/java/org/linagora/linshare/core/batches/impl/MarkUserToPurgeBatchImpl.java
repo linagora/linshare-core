@@ -36,6 +36,7 @@ package org.linagora.linshare.core.batches.impl;
 import java.util.Calendar;
 import java.util.List;
 
+import org.linagora.linshare.core.batches.utils.OperationKind;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
@@ -59,16 +60,16 @@ public class MarkUserToPurgeBatchImpl extends GenericBatchImpl {
 		super(accountRepository);
 		this.service = userService;
 		this.cron = cron;
+		this.operationKind = OperationKind.MARKED_TO_PURGE;
 	}
 
 	@Override
 	public List<String> getAll(BatchRunContext batchRunContext) {
-		logger.info("MarkUserToDeleteBatchImpl job starting ...");
 		Calendar expiryLimit = Calendar.getInstance();
 		expiryLimit.add(Calendar.DAY_OF_YEAR, -cron);
 		List<String> allUsers = service.findAllDeletedAccountsToPurge(expiryLimit.getTime());
-		logger.info(allUsers.size()
-				+ " destroyed user(s) have been found. If any, they will be moved into users to purge");
+		console.logInfo(batchRunContext, allUsers.size()
+				+ " destroyed user(s) have been found. If any, they will be moved into users to purge (marked)");
 		return allUsers;
 	}
 
@@ -79,14 +80,15 @@ public class MarkUserToPurgeBatchImpl extends GenericBatchImpl {
 		User resource = service.findDeleted(actor, identifier);
 		ResultContext context = new AccountBatchResultContext(resource);
 		try {
-			logInfo(batchRunContext, total, position, "processing user : " + resource.getAccountRepresentation());
+			console.logInfo(batchRunContext, total, position, "processing user : " + resource.getAccountRepresentation());
 			service.markToPurge(actor, resource.getLsUuid());
 			logger.info("expired user set to purge (purge_step to 1) : "
 					+ resource.getAccountRepresentation());
+			context.setProcessed(true);
 		} catch (BusinessException businessException) {
-			logError(total, position,
-					"Error while trying to mark expired users to purge", batchRunContext);
-			logger.info("Error occured while cleaning outdated users ",
+			console.logError(batchRunContext, total, position,
+					"Error while trying to mark expired users to purge");
+			logger.error("Error occured while cleaning outdated users ",
 					businessException);
 			BatchBusinessException exception = new BatchBusinessException(
 					context, "Error while trying to move the expired user into those to purge");
@@ -101,7 +103,7 @@ public class MarkUserToPurgeBatchImpl extends GenericBatchImpl {
 			long total, long position) {
 		AccountBatchResultContext guestContext = (AccountBatchResultContext) context;
 		Account user = guestContext.getResource();
-		logInfo(batchRunContext, total, position, "The User "
+		console.logInfo(batchRunContext, total, position, "The User "
 				+ user.getAccountRepresentation()
 				+ " has been successfully placed into users to purge ");
 	}
@@ -111,31 +113,15 @@ public class MarkUserToPurgeBatchImpl extends GenericBatchImpl {
 			long total, long position, BatchRunContext batchRunContext) {
 		AccountBatchResultContext context = (AccountBatchResultContext) exception.getContext();
 		Account user = context.getResource();
-		logError(
+		console.logError(
+				batchRunContext,
 				total,
 				position,
 				"cleaning User has failed : "
-						+ user.getAccountRepresentation(), batchRunContext);
+						+ user.getAccountRepresentation());
 		logger.error(
 				"Error occured while cleaning outdated user "
 						+ user.getAccountRepresentation()
 						+ ". BatchBusinessException ", exception);
-	}
-
-	@Override
-	public void terminate(BatchRunContext batchRunContext, List<String> all, long errors,
-			long unhandled_errors, long total, long processed) {
-		long success = total - errors - unhandled_errors;
-		logger.info(success
-				+ " user(s) have been marked to purge.");
-		if (errors > 0) {
-			logger.error(errors
-					+ " user(s) failed to be marked to purge.");
-		}
-		if (unhandled_errors > 0) {
-			logger.error(unhandled_errors
-					+ " user(s) failed to be removed (unhandled error).");
-		}
-		logger.info("MarkUserToPurgeBatchImpl job terminated.");
 	}
 }

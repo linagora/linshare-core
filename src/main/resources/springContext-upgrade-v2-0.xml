@@ -67,6 +67,24 @@
 					<constructor-arg ref="workGroupNodeMongoRepository" />
 					<constructor-arg ref="logEntryRepository" />
 				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.utils.UpgradeTaskBatchWrapperImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg value="UPGRADE_2_0_CLEANUP_EXPIRED_GUEST" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="deleteGuestBatch" />
+				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.utils.UpgradeTaskBatchWrapperImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg value="UPGRADE_2_0_CLEANUP_EXPIRED_ACCOUNT" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="markUserToPurgeBatch" />
+				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.utils.UpgradeTaskBatchWrapperImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg value="UPGRADE_2_0_PURGE_ACCOUNT" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="purgeUserBatch" />
+				</bean>
 			</list>
 		</constructor-arg>
 	</bean>

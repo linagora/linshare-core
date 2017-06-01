@@ -54,6 +54,12 @@ public enum UpgradeTaskType {
 	 */
 	UPGRADE_2_0_SHA256SUM,
 
+	UPGRADE_2_0_CLEANUP_EXPIRED_GUEST,
+
+	UPGRADE_2_0_CLEANUP_EXPIRED_ACCOUNT,
+
+	UPGRADE_2_0_PURGE_ACCOUNT,
+
 	/*
 	 * initialization quota structure (domain quota and container quota) for all
 	 * existing domains

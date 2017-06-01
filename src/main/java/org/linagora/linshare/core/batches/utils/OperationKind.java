@@ -40,5 +40,7 @@ public enum OperationKind {
 	CLOSED,
 	UPGRADED,
 	DELETED,
+	REMOVED,
+	MARKED_TO_PURGE,
 	PURGED;
 }
