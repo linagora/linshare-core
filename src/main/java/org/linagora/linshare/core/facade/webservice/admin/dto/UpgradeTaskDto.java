@@ -50,17 +50,11 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "UpgradeTask", description = "each object represents a task to accomplish in order to complete the upgrade process.")
 public class UpgradeTaskDto {
 
-	@ApiModelProperty(value = "Uuid")
-	protected String uuid;
-
 	@ApiModelProperty(value = "Identifier")
 	protected UpgradeTaskType identifier;
 
 	@ApiModelProperty(value = "TaskGroup")
 	protected UpgradeTaskGroup taskGroup;
-
-	@ApiModelProperty(value = "ParentUuid")
-	protected String parentUuid;
 
 	@ApiModelProperty(value = "ParentIdentifier")
 	protected UpgradeTaskType parentIdentifier;
@@ -89,10 +83,8 @@ public class UpgradeTaskDto {
 
 	public UpgradeTaskDto(UpgradeTask upgradeTask) {
 		super();
-		this.uuid = upgradeTask.getUuid();
 		this.identifier = upgradeTask.getIdentifier();
 		this.taskGroup = upgradeTask.getTaskGroup();
-		this.parentUuid = upgradeTask.getParentUuid();
 		this.parentIdentifier = upgradeTask.getParentIdentifier();
 		this.taskOrder = upgradeTask.getTaskOrder();
 		this.status = upgradeTask.getStatus();
@@ -100,14 +92,6 @@ public class UpgradeTaskDto {
 		this.creationDate = upgradeTask.getCreationDate();
 		this.modificationDate = upgradeTask.getModificationDate();
 		this.asyncTaskUuid = upgradeTask.getAsyncTaskUuid();
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
 	}
 
 	public UpgradeTaskType getIdentifier() {
@@ -124,14 +108,6 @@ public class UpgradeTaskDto {
 
 	public void setTaskGroup(UpgradeTaskGroup taskGroup) {
 		this.taskGroup = taskGroup;
-	}
-
-	public String getParentUuid() {
-		return parentUuid;
-	}
-
-	public void setParentUuid(String parentUuid) {
-		this.parentUuid = parentUuid;
 	}
 
 	public UpgradeTaskType getParentIdentifier() {
@@ -192,8 +168,8 @@ public class UpgradeTaskDto {
 
 	@Override
 	public String toString() {
-		return "UpgradeTaskDto [uuid=" + uuid + ", identifier=" + identifier + ", taskGroup=" + taskGroup
-				+ ", parentUuid=" + parentUuid + ", parentIdentifier=" + parentIdentifier + ", taskOrder=" + taskOrder
+		return "UpgradeTaskDto [identifier=" + identifier + ", taskGroup=" + taskGroup
+				+ ", parentIdentifier=" + parentIdentifier + ", taskOrder=" + taskOrder
 				+ ", status=" + status + ", priority=" + priority + ", creationDate=" + creationDate
 				+ ", modificationDate=" + modificationDate + ", asyncTaskUuid=" + asyncTaskUuid + "]";
 	}

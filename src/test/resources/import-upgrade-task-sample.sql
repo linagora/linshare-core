@@ -16,7 +16,7 @@ INSERT INTO upgrade_task
   extras)
 VALUES
   (1,
-  '5303f31d-1c55-4395-8873-0b6c06c16ec3',
+  'UNDEFINED',
   'UPGRADE_2_0_DOMAIN_UUID',
   'UPGRADE_2_0',
   null,
@@ -44,7 +44,7 @@ INSERT INTO upgrade_task
   extras)
 VALUES
   (2,
-  '838f6b35-df62-4a5d-aafa-749581a2ee33',
+  'UNDEFINED',
   'UPGRADE_2_0_DOMAIN_POLICIES_UUID',
   'UPGRADE_2_0',
   null,
@@ -72,7 +72,7 @@ INSERT INTO upgrade_task
   extras)
 VALUES
   (3,
-  'c4e67db6-242a-4b8a-bc4a-245c23134909',
+  'UNDEFINED',
   'UPGRADE_2_0_SHA256SUM',
   'UPGRADE_2_0',
   null,
@@ -100,10 +100,10 @@ INSERT INTO upgrade_task
   extras)
 VALUES
   (4,
-  '257e56f7-810a-407a-ba71-2f10fbd3d9a0',
+  'UNDEFINED',
   'UPGRADE_2_0_DOMAIN_QUOTA_TOPDOMAINS',
   'UPGRADE_2_0',
-  'c4e67db6-242a-4b8a-bc4a-245c23134909',
+  null,
   'UPGRADE_2_0_SHA256SUM',
   4,
   'NEW',
@@ -128,10 +128,10 @@ INSERT INTO upgrade_task
   extras)
 VALUES
   (5,
-  '11df000a-dde6-4f86-9582-e46498515251',
+  'UNDEFINED',
   'UPGRADE_2_0_DOMAIN_QUOTA_SUBDOMAINS',
   'UPGRADE_2_0',
-  '257e56f7-810a-407a-ba71-2f10fbd3d9a0',
+  null,
   'UPGRADE_2_0_DOMAIN_QUOTA_TOPDOMAINS',
   5,
   'NEW',
@@ -156,12 +156,96 @@ INSERT INTO upgrade_task
   extras)
 VALUES
   (6,
-  '8705ccae-84ea-493b-8c1d-ee45b49a3eca',
+  'UNDEFINED',
   'UPGRADE_2_0_ACCOUNT_QUOTA',
   'UPGRADE_2_0',
-  '11df000a-dde6-4f86-9582-e46498515251',
+  null,
   'UPGRADE_2_0_DOMAIN_QUOTA_SUBDOMAINS',
   6,
+  'NEW',
+  'MANDATORY',
+  now(),
+  now(),
+  null);
+
+-- TASK: UPGRADE_2_0_CLEANUP_EXPIRED_GUEST
+INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+  (7,
+  'UNDEFINED',
+  'UPGRADE_2_0_CLEANUP_EXPIRED_GUEST',
+  'UPGRADE_2_0',
+  null,
+  null,
+  7,
+  'NEW',
+  'MANDATORY',
+  now(),
+  now(),
+  null);
+
+-- TASK: UPGRADE_2_0_CLEANUP_EXPIRED_ACCOUNT
+INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+  (8,
+  'UNDEFINED',
+  'UPGRADE_2_0_CLEANUP_EXPIRED_ACCOUNT',
+  'UPGRADE_2_0',
+  null,
+  'UPGRADE_2_0_CLEANUP_EXPIRED_GUEST',
+  8,
+  'NEW',
+  'MANDATORY',
+  now(),
+  now(),
+  null);
+
+-- TASK: UPGRADE_2_0_PURGE_ACCOUNT
+INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+  (9,
+  'UNDEFINED',
+  'UPGRADE_2_0_PURGE_ACCOUNT',
+  'UPGRADE_2_0',
+  null,
+  'UPGRADE_2_0_CLEANUP_EXPIRED_ACCOUNT',
+  9,
   'NEW',
   'MANDATORY',
   now(),
@@ -183,13 +267,13 @@ INSERT INTO upgrade_task
   modification_date,
   extras)
 VALUES
-  (7,
-   '36b592ca-3476-44c7-a546-ce62d2c84b9b',
+  (10,
+   'UNDEFINED',
   'UPGRADE_2_0_THREAD_TO_WORKGROUP',
   'UPGRADE_2_0',
-  '8705ccae-84ea-493b-8c1d-ee45b49a3eca',
+  null,
   'UPGRADE_2_0_ACCOUNT_QUOTA',
-  7,
+  10,
   'NEW',
   'MANDATORY',
   now(),

@@ -35,12 +35,13 @@ package org.linagora.linshare.core.business.service;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 import org.linagora.linshare.core.domain.entities.UpgradeTask;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface UpgradeTaskBusinessService {
 
-	UpgradeTask find(String uuid);
+	UpgradeTask find(UpgradeTaskType identifier);
 
 	List<UpgradeTask> findAll();
 

@@ -37,6 +37,7 @@ import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 import org.linagora.linshare.core.domain.entities.UpgradeTask;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -57,10 +58,10 @@ public class UpgradeTaskFacadeImpl extends AdminGenericFacadeImpl implements Upg
 	}
 
 	@Override
-	public UpgradeTaskDto find(String uuid) throws BusinessException {
-		Validate.notEmpty(uuid, "Missing upgrade task uuid");
+	public UpgradeTaskDto find(UpgradeTaskType identifier) throws BusinessException {
+		Validate.notNull(identifier, "Missing upgrade task uuid");
 		User root = checkAuthentication(Role.SUPERADMIN);
-		UpgradeTask task = service.find(root, uuid);
+		UpgradeTask task = service.find(root, identifier);
 		return new UpgradeTaskDto(task);
 	}
 
@@ -76,12 +77,10 @@ public class UpgradeTaskFacadeImpl extends AdminGenericFacadeImpl implements Upg
 	}
 
 	@Override
-	public UpgradeTaskDto update(UpgradeTaskDto upgradeTaskDto, String uuid) throws BusinessException {
-		Validate.notEmpty(uuid, "Missing upgrade task uuid");
+	public UpgradeTaskDto update(UpgradeTaskDto upgradeTaskDto) throws BusinessException {
 		Validate.notNull(upgradeTaskDto, "Missing upgrade task");
-		upgradeTaskDto.setUuid(uuid);
 		User root = checkAuthentication(Role.SUPERADMIN);
-		UpgradeTask task = service.find(root, upgradeTaskDto.getUuid());
+		UpgradeTask task = service.find(root, upgradeTaskDto.getIdentifier());
 		task.setAsyncTaskUuid(upgradeTaskDto.getAsyncTaskUuid());
 		task.setStatus(upgradeTaskDto.getStatus());
 		return new UpgradeTaskDto(service.update(root, task));

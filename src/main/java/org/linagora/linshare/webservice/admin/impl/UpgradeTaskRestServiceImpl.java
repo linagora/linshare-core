@@ -123,14 +123,14 @@ public class UpgradeTaskRestServiceImpl implements UpgradeTaskRestService {
 		}
 	}
 
-	@Path("/{uuid}")
+	@Path("/{identifier}")
 	@GET
 	@ApiOperation(value = "find upgrade task", response = UpgradeTaskDto.class)
 	@Override
 	public UpgradeTaskDto find(
 			@ApiParam(value = "upgrade task Uuid", required = true)
-				@PathParam("uuid") String uuid) throws BusinessException {
-		return facade.find(uuid);
+				@PathParam("identifier") UpgradeTaskType identifier) throws BusinessException {
+		return facade.find(identifier);
 	}
 
 	@Path("/")
@@ -141,27 +141,27 @@ public class UpgradeTaskRestServiceImpl implements UpgradeTaskRestService {
 		return facade.findAll();
 	}
 
-	@Path("/{uuid}")
+	@Path("/{identifier}")
 	@PUT
 	@ApiOperation(value = "update an upgrade task", response = UpgradeTaskDto.class)
 	@Override
 	public UpgradeTaskDto trigger(
 			@ApiParam(value = "upgrade task to update.", required = true) UpgradeTaskDto upgradeTaskDto,
 			@ApiParam(value = "upgrade task uuid", required = true)
-				@PathParam("uuid") String uuid,
+				@PathParam("identifier") UpgradeTaskType identifier,
 			@ApiParam(value = "Force running the task even it may be alreadys running. Be careful.")
 				@DefaultValue(value="false") @QueryParam("force") Boolean force
 			) throws BusinessException {
 		AccountDto actorDto = facade.getAuthenticatedAccountDto();
-		UpgradeTaskDto taskDto = facade.find(uuid);
+		UpgradeTaskDto taskDto = facade.find(identifier);
 
 		if (!isAllowed(taskDto, force)) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "The current upgrade task can not be launch, current status : " + taskDto.getStatus());
 		}
 
 		// Check if previous task was successful
-		if (taskDto.getParentUuid() != null) {
-			UpgradeTaskDto parentTaskDto = facade.find(taskDto.getParentUuid());
+		if (taskDto.getParentIdentifier() != null) {
+			UpgradeTaskDto parentTaskDto = facade.find(taskDto.getParentIdentifier());
 			if (!parentTaskDto.getStatus().equals(UpgradeTaskStatus.SUCCESS)) {
 				throw new BusinessException(BusinessErrorCode.FORBIDDEN,
 						"The current upgrade task can not be launch, parent task not complete : " + parentTaskDto.getIdentifier() + " : " +parentTaskDto.getStatus());
@@ -178,14 +178,14 @@ public class UpgradeTaskRestServiceImpl implements UpgradeTaskRestService {
 		AsyncTaskDto asyncTask = asyncTaskFacade.create(taskDto, AsyncTaskType.UPGRADE_TASK);
 		taskDto.setStatus(UpgradeTaskStatus.PENDING);
 		taskDto.setAsyncTaskUuid(asyncTask.getUuid());
-		taskDto = facade.update(taskDto, uuid);
+		taskDto = facade.update(taskDto);
 
 		// new running context (what to run)
 		BatchTaskContext batchTaskContext = new BatchTaskContext(actorDto, actorDto.getUuid(), upgradeTask);
 
 		// new task to run the task in asynchronous mode (taskScheduler)
 		BatchRunnerAsyncTask task = new BatchRunnerAsyncTask(batchRunnerAsyncFacade, batchTaskContext, asyncTask,
-				actorDto.getUuid(), taskDto.getUuid(), batchRunner);
+				actorDto.getUuid(), taskDto.getIdentifier().name(), batchRunner);
 
 		// adding task to the pool
 		taskExecutor.execute(task);
@@ -206,9 +206,9 @@ public class UpgradeTaskRestServiceImpl implements UpgradeTaskRestService {
 			result = true;
 		}
 		if (result) {
-			String parentUuid = taskDto.getParentUuid();
-			if (parentUuid != null) {
-				UpgradeTaskDto parentTaskDto = facade.find(parentUuid);
+			UpgradeTaskType parentIdentifier = taskDto.getParentIdentifier();
+			if (parentIdentifier != null) {
+				UpgradeTaskDto parentTaskDto = facade.find(parentIdentifier);
 				if (parentTaskDto.getStatus().equals(UpgradeTaskStatus.SUCCESS)) {
 					result = true;
 				}
@@ -223,42 +223,43 @@ public class UpgradeTaskRestServiceImpl implements UpgradeTaskRestService {
 	@Override
 	public List<AsyncTaskDto> findAllAsyncTask(
 			@ApiParam(value = "The upgrade tasks uuid.", required = true)
-				@PathParam("upgradeTaskUuid") String upgradeTaskUuid) throws BusinessException {
-		Validate.notEmpty(upgradeTaskUuid, "Missing upgradeTaskUuid");
-		return asyncTaskFacade.findAll(upgradeTaskUuid);
+				@PathParam("upgradeTaskUuid") UpgradeTaskType upgradeTaskIdentifier) throws BusinessException {
+		Validate.notNull(upgradeTaskIdentifier, "Missing upgradeTaskIdentifier");
+		return asyncTaskFacade.findAll(upgradeTaskIdentifier);
 	}
 
-	@Path("/{upgradeTaskUuid}/async_tasks/{uuid}")
+	@Path("/{upgradeTaskIdentifier}/async_tasks/{uuid}")
 	@GET
 	@ApiOperation(value = "Get one async task created by an upgrade task.", response = AsyncTaskDto.class)
 	@Override
 	public AsyncTaskDto findAsyncTask(
-			@ApiParam(value = "The upgrade tasks uuid.", required = true)
-				@PathParam("upgradeTaskUuid") String upgradeTaskUuid,
+			@ApiParam(value = "The upgrade task identifier.", required = true)
+				@PathParam("upgradeTaskIdentifier") UpgradeTaskType upgradeTaskIdentifier,
 			@ApiParam(value = "The async task uuid.", required = true)
 				@PathParam("uuid") String  uuid) throws BusinessException {
-		Validate.notEmpty(upgradeTaskUuid, "Missing upgradeTaskUuid");
-		Validate.notEmpty(uuid, "Missing upgradeTaskUuid");
+		Validate.notNull(upgradeTaskIdentifier, "Missing upgradeTaskUuid");
+		Validate.notEmpty(uuid, "Missing async task uuid");
 		// Just check if exists.
-		facade.find(upgradeTaskUuid);
+		facade.find(upgradeTaskIdentifier);
 		return asyncTaskFacade.find(uuid);
 	}
 
-	@Path("/{upgradeTaskUuid}/async_tasks/{uuid}/console")
+	@Path("/{upgradeTaskIdentifier}/async_tasks/{uuid}/console")
 	@GET
 	@ApiOperation(value = "Get one async task created by an upgrade task.", response = UpgradeTaskLog.class, responseContainer = "List")
 	@Override
 	public List<UpgradeTaskLog> console(
-			@ApiParam(value = "The upgrade tasks uuid.", required = true)
-				@PathParam("upgradeTaskUuid") String upgradeTaskUuid,
+			@ApiParam(value = "The upgrade task identifier.", required = true)
+				@PathParam("upgradeTaskIdentifier") UpgradeTaskType upgradeTaskIdentifier,
 				@ApiParam(value = "The async task uuid.", required = true)
 				@PathParam("uuid") String  asyncTaskUuid,
 				@QueryParam("fromDate") String fromDate
 			) throws BusinessException {
+		UpgradeTaskDto dto = facade.find(upgradeTaskIdentifier);
 		if (fromDate == null) {
-			return upgradeTaskLogMongoRepository.findAllByUpgradeTaskAndAsyncTask(upgradeTaskUuid, asyncTaskUuid);
+			return upgradeTaskLogMongoRepository.findAllByUpgradeTaskAndAsyncTask(dto.getIdentifier().name(), asyncTaskUuid);
 		} else {
-			return upgradeTaskLogMongoRepository.findAllByUpgradeTaskAndAsyncTaskAndCreationDateAfter(upgradeTaskUuid, asyncTaskUuid, getDate(fromDate));
+			return upgradeTaskLogMongoRepository.findAllByUpgradeTaskAndAsyncTaskAndCreationDateAfter(dto.getIdentifier().name(), asyncTaskUuid, getDate(fromDate));
 		}
 	}
 

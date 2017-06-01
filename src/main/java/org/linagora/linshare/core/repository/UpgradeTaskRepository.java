@@ -33,10 +33,11 @@
  */
 package org.linagora.linshare.core.repository;
 
+import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 import org.linagora.linshare.core.domain.entities.UpgradeTask;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface UpgradeTaskRepository extends AbstractRepository <UpgradeTask>{
 
-	UpgradeTask find(String uuid) throws BusinessException;
+	UpgradeTask find(UpgradeTaskType identifier) throws BusinessException;
 }

@@ -38,6 +38,7 @@ import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.AsyncTaskType;
+import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 import org.linagora.linshare.core.domain.entities.AsyncTask;
 import org.linagora.linshare.core.domain.entities.UpgradeTask;
 import org.linagora.linshare.core.domain.entities.User;
@@ -92,7 +93,7 @@ public class AsyncTaskFacadeImpl extends UserGenericFacadeImp implements
 	@Override
 	public AsyncTaskDto create(UpgradeTaskDto upgradeTaskDto, AsyncTaskType taskType) {
 		User actor = checkAuthentication();
-		UpgradeTask upgradeTask = upgradeTaskService.find(actor, upgradeTaskDto.getUuid());
+		UpgradeTask upgradeTask = upgradeTaskService.find(actor, upgradeTaskDto.getIdentifier());
 		AsyncTask task =  new AsyncTask(upgradeTask, taskType);
 		return new AsyncTaskDto(service.create(actor, actor, task));
 	}
@@ -126,10 +127,10 @@ public class AsyncTaskFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public List<AsyncTaskDto> findAll(String upgradeTaskUuid) {
+	public List<AsyncTaskDto> findAll(UpgradeTaskType upgradeTaskIdentifier) {
 		User actor = checkAuthentication();
-		Validate.notEmpty(upgradeTaskUuid, "Missing AsyncTask uuid");
-		UpgradeTask upgradeTask = upgradeTaskService.find(actor, upgradeTaskUuid);
+		Validate.notNull(upgradeTaskIdentifier, "Missing AsyncTask identifier");
+		UpgradeTask upgradeTask = upgradeTaskService.find(actor, upgradeTaskIdentifier);
 		List<AsyncTask> findAll = service.findAll(actor, actor, upgradeTask);
 		List<AsyncTaskDto> res = Lists.newArrayList();
 		for (AsyncTask asyncTask : findAll) {

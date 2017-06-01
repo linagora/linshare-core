@@ -36,6 +36,7 @@ package org.linagora.linshare.core.service.impl;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.UpgradeTaskBusinessService;
+import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UpgradeTask;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -52,11 +53,11 @@ public class UpgradeTaskServiceImpl extends GenericAdminServiceImpl implements U
 	}
 
 	@Override
-	public UpgradeTask find(Account actor, String uuid) {
+	public UpgradeTask find(Account actor, UpgradeTaskType identifier) {
 		preChecks(actor);
-		UpgradeTask task = businessService.find(uuid);
+		UpgradeTask task = businessService.find(identifier);
 		if (task == null) {
-			throw new BusinessException(BusinessErrorCode.UPGRADE_TASK_NOT_FOUND, "Can not find upgrade task  : " + uuid );
+			throw new BusinessException(BusinessErrorCode.UPGRADE_TASK_NOT_FOUND, "Can not find upgrade task  : " + identifier );
 		}
 		return task;
 	}

@@ -36,6 +36,7 @@ package org.linagora.linshare.core.business.service.impl;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.UpgradeTaskBusinessService;
+import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 import org.linagora.linshare.core.domain.entities.UpgradeTask;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UpgradeTaskRepository;
@@ -50,8 +51,8 @@ public class UpgradeTaskBusinessServiceImpl implements UpgradeTaskBusinessServic
 	}
 
 	@Override
-	public UpgradeTask find(String uuid) {
-		return repository.find(uuid);
+	public UpgradeTask find(UpgradeTaskType identifier) {
+		return repository.find(identifier);
 	}
 
 	@Override

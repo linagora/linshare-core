@@ -35,6 +35,7 @@ package org.linagora.linshare.webservice.admin;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.dto.UpgradeTaskDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
@@ -42,15 +43,15 @@ import org.linagora.linshare.mongo.entities.UpgradeTaskLog;
 
 public interface UpgradeTaskRestService {
 
-	UpgradeTaskDto find(String uuid) throws BusinessException;
+	UpgradeTaskDto find(UpgradeTaskType identifier) throws BusinessException;
 
 	List<UpgradeTaskDto> findAll() throws BusinessException;
 
-	UpgradeTaskDto trigger(UpgradeTaskDto upgradeTaskDto, String uuid, Boolean force) throws BusinessException;
+	UpgradeTaskDto trigger(UpgradeTaskDto upgradeTaskDto, UpgradeTaskType identifier, Boolean force) throws BusinessException;
 
-	List<AsyncTaskDto> findAllAsyncTask(String upgradeTaskUuid) throws BusinessException;
+	List<AsyncTaskDto> findAllAsyncTask(UpgradeTaskType upgradeTaskIdentifier) throws BusinessException;
 
-	AsyncTaskDto findAsyncTask(String upgradeTaskUuid, String uuid) throws BusinessException;
+	AsyncTaskDto findAsyncTask(UpgradeTaskType upgradeTaskIdentifier, String uuid) throws BusinessException;
 
-	List<UpgradeTaskLog> console(String upgradeTaskUuid, String asyncTaskUuid, String fromDate) throws BusinessException;
+	List<UpgradeTaskLog> console(UpgradeTaskType upgradeTaskIdentifier, String asyncTaskUuid, String fromDate) throws BusinessException;
 }

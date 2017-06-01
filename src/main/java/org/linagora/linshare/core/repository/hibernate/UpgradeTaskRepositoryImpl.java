@@ -38,6 +38,7 @@ import java.util.List;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 import org.linagora.linshare.core.domain.entities.UpgradeTask;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UpgradeTaskRepository;
@@ -65,8 +66,8 @@ public class UpgradeTaskRepositoryImpl extends AbstractRepositoryImpl<UpgradeTas
 	}
 
 	@Override
-	public UpgradeTask find(String uuid) throws BusinessException {
+	public UpgradeTask find(UpgradeTaskType identifier) throws BusinessException {
 		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
-				"uuid", uuid)));
+				"identifier", identifier)));
 	}
 }

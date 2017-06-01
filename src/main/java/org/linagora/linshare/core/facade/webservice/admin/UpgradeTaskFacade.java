@@ -35,15 +35,16 @@ package org.linagora.linshare.core.facade.webservice.admin;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.dto.UpgradeTaskDto;
 
 public interface UpgradeTaskFacade extends AdminGenericFacade {
 
-	UpgradeTaskDto find(String uuid) throws BusinessException;
+	UpgradeTaskDto find(UpgradeTaskType identifier) throws BusinessException;
 
 	List<UpgradeTaskDto> findAll() throws BusinessException;
 
-	UpgradeTaskDto update(UpgradeTaskDto upgradeTaskDto, String uuid) throws BusinessException;
+	UpgradeTaskDto update(UpgradeTaskDto upgradeTaskDto) throws BusinessException;
 
 }

@@ -37,6 +37,7 @@ package org.linagora.linshare.core.facade.webservice.user;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.AsyncTaskType;
+import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 import org.linagora.linshare.core.facade.webservice.admin.dto.UpgradeTaskDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
 
@@ -44,7 +45,7 @@ public interface AsyncTaskFacade extends GenericFacade {
 
 	AsyncTaskDto find(String uuid);
 
-	List<AsyncTaskDto> findAll(String upgradeTaskUuid);
+	List<AsyncTaskDto> findAll(UpgradeTaskType upgradeTaskIdentifier);
 
 	AsyncTaskDto create(Long size, Long transfertDuration, String fileName,
 			Integer frequency, AsyncTaskType taskType);
