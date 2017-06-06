@@ -86,7 +86,13 @@
 					<constructor-arg ref="accountRepository" />
 					<constructor-arg value="UPGRADE_2_0_CLEANUP_EXPIRED_ACCOUNT" />
 					<constructor-arg ref="upgradeTaskLogMongoRepository" />
-					<constructor-arg ref="markUserToPurgeBatch" />
+					<constructor-arg>
+						<bean class="org.linagora.linshare.core.batches.impl.MarkUserToPurgeBatchImpl">
+							<constructor-arg ref="userService" />
+							<constructor-arg ref="accountRepository" />
+							<constructor-arg value="0" />
+						</bean>
+					</constructor-arg>
 				</bean>
 				<bean class="org.linagora.linshare.core.upgrade.utils.UpgradeTaskBatchWrapperImpl">
 					<constructor-arg ref="accountRepository" />

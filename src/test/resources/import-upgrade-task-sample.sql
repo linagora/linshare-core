@@ -48,36 +48,8 @@ VALUES
   'UPGRADE_2_0_DOMAIN_POLICIES_UUID',
   'UPGRADE_2_0',
   null,
-  null,
+  'UPGRADE_2_0_DOMAIN_UUID',
   2,
-  'NEW',
-  'MANDATORY',
-  now(),
-  now(),
-  null);
-
--- TASK: UPGRADE_2_0_SHA256SUM
-INSERT INTO upgrade_task
-  (id,
-  uuid,
-  identifier,
-  task_group,
-  parent_uuid,
-  parent_identifier,
-  task_order,
-  status,
-  priority,
-  creation_date,
-  modification_date,
-  extras)
-VALUES
-  (3,
-  'UNDEFINED',
-  'UPGRADE_2_0_SHA256SUM',
-  'UPGRADE_2_0',
-  null,
-  null,
-  3,
   'NEW',
   'MANDATORY',
   now(),
@@ -104,7 +76,7 @@ VALUES
   'UPGRADE_2_0_DOMAIN_QUOTA_TOPDOMAINS',
   'UPGRADE_2_0',
   null,
-  'UPGRADE_2_0_SHA256SUM',
+  'UPGRADE_2_0_DOMAIN_POLICIES_UUID',
   4,
   'NEW',
   'MANDATORY',
@@ -188,10 +160,10 @@ VALUES
   'UPGRADE_2_0_CLEANUP_EXPIRED_GUEST',
   'UPGRADE_2_0',
   null,
-  null,
+  'UPGRADE_2_0_ACCOUNT_QUOTA',
   7,
   'NEW',
-  'MANDATORY',
+  'REQUIRED',
   now(),
   now(),
   null);
@@ -219,7 +191,7 @@ VALUES
   'UPGRADE_2_0_CLEANUP_EXPIRED_GUEST',
   8,
   'NEW',
-  'MANDATORY',
+  'REQUIRED',
   now(),
   now(),
   null);
@@ -247,12 +219,12 @@ VALUES
   'UPGRADE_2_0_CLEANUP_EXPIRED_ACCOUNT',
   9,
   'NEW',
-  'MANDATORY',
+  'REQUIRED',
   now(),
   now(),
   null);
 
--- TASK: UPGRADE_2_0_THREAD_TO_WORKGROUP
+  -- TASK: UPGRADE_2_0_SHA256SUM
 INSERT INTO upgrade_task
   (id,
   uuid,
@@ -268,19 +240,19 @@ INSERT INTO upgrade_task
   extras)
 VALUES
   (10,
-   'UNDEFINED',
-  'UPGRADE_2_0_THREAD_TO_WORKGROUP',
+  'UNDEFINED',
+  'UPGRADE_2_0_SHA256SUM',
   'UPGRADE_2_0',
   null,
-  'UPGRADE_2_0_ACCOUNT_QUOTA',
+  'UPGRADE_2_0_PURGE_ACCOUNT',
   10,
   'NEW',
-  'MANDATORY',
+  'REQUIRED',
   now(),
   now(),
   null);
 
--- TASK: UPGRADE_2_0_STORAGE
+-- TASK: UPGRADE_2_0_UPGRADE_STORAGE
 INSERT INTO upgrade_task
   (id,
   uuid,
@@ -302,6 +274,34 @@ VALUES
   null,
   'UPGRADE_2_0_SHA256SUM',
   11,
+  'NEW',
+  'REQUIRED',
+  now(),
+  now(),
+  null);
+
+-- TASK: UPGRADE_2_0_THREAD_TO_WORKGROUP
+INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+  (12,
+   'UNDEFINED',
+  'UPGRADE_2_0_THREAD_TO_WORKGROUP',
+  'UPGRADE_2_0',
+  null,
+  'UPGRADE_2_0_UPGRADE_STORAGE',
+  12,
   'NEW',
   'REQUIRED',
   now(),

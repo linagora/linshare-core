@@ -145,7 +145,7 @@ public class AccountQuotaUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 		Account resource = res.getResource();
 		if (resource != null) {
 			if (res.getProcessed()) {
-				logInfo(batchRunContext, total, position, "Account quota was created for: " + resource.toString());
+				logInfo(batchRunContext, total, position, "Quota was created for: " + resource.toString());
 			} else {
 				logInfo(batchRunContext, total, position, "Account skipped : " + resource.toString());
 			}
