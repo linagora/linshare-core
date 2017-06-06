@@ -111,4 +111,15 @@ public class DocumentRepositoryImpl extends AbstractRepositoryImpl<Document> imp
 		List<Document> list = listByCriteria(crit);
 		return list;
 	}
+
+	@Override
+	public List<String> findAllDocumentsToUpgrade() {
+		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass());
+		crit.setProjection(Projections.property("uuid"));
+		crit.add(Restrictions.eq("toUpgrade", true));
+		crit.addOrder(Order.desc("creationDate"));
+		@SuppressWarnings("unchecked")
+		List<String> list = listByCriteria(crit);
+		return list;
+	}
 }

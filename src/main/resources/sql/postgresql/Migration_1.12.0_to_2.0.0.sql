@@ -96,7 +96,8 @@ DROP VIEW IF EXISTS alias_threads_list_destroyed;
 TRUNCATE functionality_boolean CASCADE;
 TRUNCATE functionality_unit CASCADE;
 TRUNCATE functionality_string CASCADE;
-TRUNCATE functionality_range_unit CASCADE;
+-- from 1.12 scratch, do not exist !
+-- TRUNCATE functionality_range_unit CASCADE;
 TRUNCATE functionality_integer CASCADE;
 TRUNCATE functionality_enum_lang CASCADE;
 TRUNCATE mail_activation;
@@ -148,12 +149,12 @@ ALTER TABLE thread ADD COLUMN to_upgrade bool DEFAULT 'false' NOT NULL;
 
 -- sha256sum upgrade
 UPDATE document SET sha256sum = 'UNDEFINED' WHERE sha256sum IS NULL;
+UPDATE document set to_upgrade = true;
 ALTER TABLE document ALTER COLUMN sha256sum SET NOT NULL;
 ALTER TABLE document ALTER COLUMN sha256sum SET DEFAULT 'UNDEFINED';
 UPDATE document_entry SET sha256sum = 'UNDEFINED' WHERE sha256sum IS NULL;
 ALTER TABLE document_entry ALTER COLUMN sha256sum SET NOT NULL;
 ALTER TABLE document_entry ALTER COLUMN sha256sum SET DEFAULT 'UNDEFINED';
-
 
 
 UPDATE thread set to_upgrade = true;
@@ -168,7 +169,7 @@ ALTER TABLE mail_config DROP COLUMN mail_layout_html_id;
 ALTER TABLE mail_config DROP COLUMN mail_layout_text_id;
 ALTER TABLE mail_config DROP COLUMN name;
 ALTER TABLE mail_config ADD COLUMN name text;
-ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs160138 FOREIGN KEY (mailconfig_id) REFERENCES mail_config (id);
+-- ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs160138 FOREIGN KEY (mailconfig_id) REFERENCES mail_config (id);
 ALTER TABLE mail_config ADD CONSTRAINT FKmail_confi688067 FOREIGN KEY (mail_layout_id) REFERENCES mail_layout (id);
 
 -- mail_layout
@@ -188,7 +189,7 @@ ALTER TABLE mail_footer ADD COLUMN readonly bool DEFAULT 'false' NOT NULL;
 ALTER TABLE mail_footer ADD COLUMN messages_french text;
 ALTER TABLE mail_footer ADD COLUMN messages_english text;
 ALTER TABLE mail_footer_lang ADD COLUMN readonly bool DEFAULT 'false' NOT NULL;
-ALTER TABLE mail_footer_lang ADD CONSTRAINT FKmail_foote801249 FOREIGN KEY (mail_footer_id) REFERENCES mail_footer (id);
+-- ALTER TABLE mail_footer_lang ADD CONSTRAINT FKmail_foote801249 FOREIGN KEY (mail_footer_id) REFERENCES mail_footer (id);
 ALTER TABLE mail_footer_lang ADD CONSTRAINT mailconfig_mailfooterlang FOREIGN KEY (mail_config_id) REFERENCES mail_config (id);
 
 -- mail_content
@@ -201,8 +202,8 @@ ALTER TABLE mail_content ADD COLUMN readonly bool DEFAULT 'false' NOT NULL;
 ALTER TABLE mail_content ADD COLUMN messages_french text;
 ALTER TABLE mail_content ADD COLUMN messages_english text;
 ALTER TABLE mail_content_lang ADD COLUMN readonly bool DEFAULT 'false' NOT NULL;
-ALTER TABLE mail_content_lang ADD CONSTRAINT FKmail_conte33952 FOREIGN KEY (mail_content_id) REFERENCES mail_content (id);
-ALTER TABLE mail_content_lang ADD CONSTRAINT FKmail_conte910199 FOREIGN KEY (mail_config_id) REFERENCES mail_config (id);
+-- ALTER TABLE mail_content_lang ADD CONSTRAINT FKmail_conte33952 FOREIGN KEY (mail_content_id) REFERENCES mail_content (id);
+-- ALTER TABLE mail_content_lang ADD CONSTRAINT FKmail_conte910199 FOREIGN KEY (mail_config_id) REFERENCES mail_config (id);
 
 -- upload_request
 ALTER TABLE upload_request ALTER COLUMN notification_date drop NOT NULL;
@@ -315,9 +316,9 @@ CREATE TABLE upgrade_task (
   PRIMARY KEY (id));
 
 ALTER TABLE upload_request_entry ADD CONSTRAINT upload_request_entry_fk_url FOREIGN KEY (upload_request_url_id) REFERENCES upload_request_url (id);
-ALTER TABLE functionality ADD CONSTRAINT FKfunctional788903 FOREIGN KEY (policy_delegation_id) REFERENCES policy (id);
+-- ALTER TABLE functionality ADD CONSTRAINT FKfunctional788903 FOREIGN KEY (policy_delegation_id) REFERENCES policy (id);
 ALTER TABLE mailing_list_contact ADD CONSTRAINT FKMailingListContact FOREIGN KEY (mailing_list_id) REFERENCES mailing_list (id);
-ALTER TABLE mail_notification ADD CONSTRAINT FKmail_notif791766 FOREIGN KEY (configuration_policy_id) REFERENCES policy (id);
+-- ALTER TABLE mail_notification ADD CONSTRAINT FKmail_notif791766 FOREIGN KEY (configuration_policy_id) REFERENCES policy (id);
 ALTER TABLE welcome_messages_entry ADD CONSTRAINT welcome_messages_entry_fk_welcome_message FOREIGN KEY (welcome_messages_id) REFERENCES welcome_messages (id);
 ALTER TABLE async_task ADD CONSTRAINT FKasync_task970702 FOREIGN KEY (upgrade_task_id) REFERENCES upgrade_task (id);
 

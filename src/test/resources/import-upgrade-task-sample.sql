@@ -279,3 +279,31 @@ VALUES
   now(),
   now(),
   null);
+
+-- TASK: UPGRADE_2_0_STORAGE
+INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+  (11,
+   'UNDEFINED',
+  'UPGRADE_2_0_UPGRADE_STORAGE',
+  'UPGRADE_2_0',
+  null,
+  'UPGRADE_2_0_SHA256SUM',
+  11,
+  'NEW',
+  'REQUIRED',
+  now(),
+  now(),
+  null);

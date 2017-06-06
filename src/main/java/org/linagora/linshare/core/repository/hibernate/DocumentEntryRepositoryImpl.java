@@ -105,12 +105,6 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 	}
 
 	@Override
-	public DocumentEntry update(DocumentEntry entity) throws BusinessException {
-		entity.setModificationDate(new GregorianCalendar());
-		return super.update(entity);
-	}
-
-	@Override
 	public long getRelatedEntriesCount(final DocumentEntry documentEntry) {
 		long result  = 0 ;
 

@@ -58,6 +58,15 @@
 					<constructor-arg ref="threadEntryRepository" />
 					<constructor-arg ref="operationHistoryBusinessService" />
 				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v2_0.FileDataStoreMigrationUpgradeTaskImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="fileDataStore" />
+					<constructor-arg ref="documentRepository" />
+					<constructor-arg value="${linshare.documents.storage.deduplication}" />
+					<constructor-arg ref="documentEntryRepository" />
+					<constructor-arg ref="threadEntryRepository" />
+				</bean>
 				<bean class="org.linagora.linshare.core.upgrade.v2_0.ThreadToWorkgroupUpgradeTaskImpl">
 					<constructor-arg ref="accountRepository" />
 					<constructor-arg ref="upgradeTaskLogMongoRepository" />

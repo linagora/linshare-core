@@ -46,6 +46,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
 
@@ -257,6 +258,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	@Override
 	public DocumentEntry renameDocumentEntry(DocumentEntry entry, String newName) throws BusinessException {
 		entry.setName(newName);
+		entry.setModificationDate(new GregorianCalendar());
 		return documentEntryRepository.update(entry);
 	}
 
@@ -265,6 +267,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		entry.setBusinessName(newName);
 		entry.setBusinessComment(fileComment);
 		entry.setBusinessMetaData(meta);
+		entry.setModificationDate(new GregorianCalendar());
 		return documentEntryRepository.update(entry);
 	}
 
@@ -309,6 +312,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			if(checkIfIsCiphered) {
 				docEntry.setCiphered(checkIfFileIsCiphered(fileName, myFile));
 			}
+			docEntry.setModificationDate(new GregorianCalendar());
 			documentEntryRepository.update(docEntry);
 			return docEntry;
 		} catch (BusinessException e) {
@@ -669,6 +673,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 
 	@Override
 	public void update(DocumentEntry docEntry) throws BusinessException {
+		docEntry.setModificationDate(new GregorianCalendar());
 		documentEntryRepository.update(docEntry);
 	}
 

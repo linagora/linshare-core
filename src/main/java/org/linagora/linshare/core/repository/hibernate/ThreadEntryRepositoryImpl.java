@@ -83,12 +83,6 @@ public class ThreadEntryRepositoryImpl extends
 	}
 
 	@Override
-	public ThreadEntry update(ThreadEntry entity) throws BusinessException {
-		entity.setModificationDate(new GregorianCalendar());
-		return super.update(entity);
-	}
-
-	@Override
 	public List<ThreadEntry> findAllThreadEntries(Thread owner) {
 		return findByCriteria(Restrictions.eq("entryOwner", owner));
 	}

@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
 
@@ -140,7 +141,7 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 
 		Account sender = anonymousShare.getEntryOwner();
 		sender.getEntries().remove(anonymousShare);
-
+		documentEntry.setModificationDate(new GregorianCalendar());
 		documentEntryRepository.update(documentEntry);
 		accountService.update(sender);
 	}

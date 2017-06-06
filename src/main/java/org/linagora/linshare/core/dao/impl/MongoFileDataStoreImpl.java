@@ -93,7 +93,9 @@ public class MongoFileDataStoreImpl implements FileDataStore {
 		DBObject meta = new BasicDBObject();
 		// It is not used/useful for mongo.
 		// meta.put("bucketUuid", metadata.getBucketUuid());
-		metadata.setUuid(UUID.randomUUID().toString());
+		if (metadata.getUuid() == null) {
+			metadata.setUuid(UUID.randomUUID().toString());
+		}
 		meta.put("uuid", metadata.getUuid());
 		// Mongo does not support empty file name.
 		if (metadata.getFileName() == null) {

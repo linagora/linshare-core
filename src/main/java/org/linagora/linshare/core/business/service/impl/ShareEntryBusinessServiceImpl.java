@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.ShareEntryBusinessService;
@@ -103,6 +104,7 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 		documentEntry.getShareEntries().add(shareEntity);
 		recipient.getShareEntries().add(shareEntity);
 		sender.getEntries().add(shareEntity);
+		documentEntry.setModificationDate(new GregorianCalendar());
 		documentEntryRepository.update(documentEntry);
 		accountRepository.update(recipient);
 		accountRepository.update(sender);
@@ -123,6 +125,7 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 
 		Account sender = share.getEntryOwner();
 		sender.getEntries().remove(share);
+		documentEntry.setModificationDate(new GregorianCalendar());
 		documentEntryRepository.update(documentEntry);
 	}
 

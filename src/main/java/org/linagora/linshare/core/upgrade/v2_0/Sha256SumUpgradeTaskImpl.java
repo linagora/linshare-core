@@ -36,6 +36,7 @@ package org.linagora.linshare.core.upgrade.v2_0;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.linagora.linshare.core.batches.impl.GenericUpgradeTaskImpl;
@@ -110,6 +111,7 @@ public class Sha256SumUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 			}
 			for (ThreadEntry threadEntry : doc.getThreadEntries()) {
 				threadEntry.setSha256sum(sha256sum);
+				threadEntry.setModificationDate(new GregorianCalendar());
 				threadEntryRepository.update(threadEntry);
 			}
 			context.setProcessed(true);

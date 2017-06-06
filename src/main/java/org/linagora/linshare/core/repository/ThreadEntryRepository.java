@@ -38,6 +38,7 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
+import org.linagora.linshare.core.exception.BusinessException;
 
 public interface ThreadEntryRepository extends AbstractRepository<ThreadEntry> {
 
@@ -56,4 +57,7 @@ public interface ThreadEntryRepository extends AbstractRepository<ThreadEntry> {
 	List<ThreadEntry> findAllDistinctEntries(Thread thread);
 
 	long getUsedSpace(Account account);
+
+	ThreadEntry update(ThreadEntry entity) throws BusinessException, IllegalArgumentException;
+
 }

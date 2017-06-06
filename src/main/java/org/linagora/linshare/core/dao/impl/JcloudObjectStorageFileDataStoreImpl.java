@@ -163,7 +163,9 @@ public class JcloudObjectStorageFileDataStoreImpl implements FileDataStore {
 
 		start = new Date();
 		Blob blob;
-		metadata.setUuid(UUID.randomUUID().toString());
+		if (metadata.getUuid() == null) {
+			metadata.setUuid(UUID.randomUUID().toString());
+		}
 		metadata.setBucketUuid(bucketIdentifier);
 		blob = blobStore.blobBuilder(metadata.getUuid()).payload(payload)
 				// .contentLength(file.size())

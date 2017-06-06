@@ -79,7 +79,7 @@ public enum UpgradeTaskType {
 	 * Trigger the migration of all documents from the old datastore to the new
 	 * datastore.
 	 */
-	UPGRADE_2_0_STORAGE;
+	UPGRADE_2_0_UPGRADE_STORAGE;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {
