@@ -55,7 +55,6 @@ public class JackRabbitFileSystemMock implements FileSystemDao {
 	public JackRabbitFileSystemMock() {
 		super();
 		this.files = Maps.newConcurrentMap();
-//		files.put("fdb962e8-52b6-44e6-b977-f5e638cbcfa8", "linshare-mailContainer.properties");
 //		files.put("b5edf244-8b39-4f6a-8caa-559bec48407a", "linshare-default.properties");
 	}
 

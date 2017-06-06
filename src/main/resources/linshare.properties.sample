@@ -19,7 +19,7 @@
 # Available file data store profiles :
 #	* jcloud : Using jcloud as file data store : Amazon S3, Swift, Ceph, filesystem (test only).
 #	* gridfs : Using gridfs (mongodb) as file data store.
-#	* jackrabbit2 : Using jackrabbit as file data store.
+#	* jackrabbit2 : Using jackrabbit as file data store. (deprecated)
 #	* jackrabbit-to-jcloud : Using Jcloud as new file data store, jackrabbit as fallback file data store.
 #	* jackrabbit-to-gridfs : Using Jcloud as new file data store, jackrabbit as fallback file data store.
 #	Recommended profile for production is jcloud with Swift.
@@ -49,15 +49,6 @@ linshare.db.password=linshare
 linshare.db.driver.class=org.postgresql.Driver
 linshare.db.url=jdbc:postgresql://localhost:5432/linshare
 linshare.db.dialect=org.hibernate.dialect.PostgreSQLDialect
-linshare.db.persistence_manager=org.apache.jackrabbit.core.persistence.pool.PostgreSQLPersistenceManager
-
-### MySQL
-#linshare.db.username=linshare
-#linshare.db.password=linshare
-#linshare.db.driver.class=com.mysql.jdbc.Driver
-#linshare.db.url=jdbc:mysql://localhost:3306/linshare
-#linshare.db.dialect=org.hibernate.dialect.MySQL5Dialect
-#linshare.db.persistence_manager=org.apache.jackrabbit.core.persistence.pool.MySqlPersistenceManager
 
 #show sql command in console (true in debug mode)
 linshare.db.show_sql=false
@@ -80,8 +71,6 @@ linshare.db.hbm2ddl.auto=validate
 # * swift-keystone : storing documents into swift
 linshare.documents.storage.mode=filesystem
 linshare.documents.storage.bucket=e0531829-8a75-49f8-bb30-4539574d66c7
-# Experimental : use this key with caution !
-linshare.documents.storage.deduplication=true
 
 # Temporary directory : local work directory to encrypt/decrypt data
 linshare.encipherment.tmp.dir=/var/lib/linshare/tmp
@@ -89,8 +78,14 @@ linshare.encipherment.tmp.dir=/var/lib/linshare/tmp
 #### File system storage options - default backend####
 linshare.documents.storage.filesystem.directory=/var/lib/linshare/filesystemstorage
 
-
 ######## Extended storage options ########
+
+#### JackRabbit storage options ####
+# JackRabbit is deprecated but is is still in LinShare for upgrade purpose from v1 to v2.
+# you have to uncomment and set the directory parameter according to your previous configuration file.
+# linshare.files.directory=${LINSHARE_HOME}/var/lib/linshare/repository
+# linshare.db.persistence_manager=org.apache.jackrabbit.core.persistence.pool.PostgreSQLPersistenceManager
+
 
 #### Swift storage options ####
 linshare.documents.storage.swift.identity=tenant_name:user_name

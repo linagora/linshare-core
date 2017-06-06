@@ -118,7 +118,7 @@ public class ShaBatchImplTest extends AbstractTransactionalJUnit4SpringContextTe
 
 	private User jane;
 	private final InputStream stream2 = Thread.currentThread().getContextClassLoader().getResourceAsStream("jackRabbit.properties");
-	private final String fileName2 = "linshare-mailContainer.properties";
+	private final String fileName2 = "jackRabbit.properties";
 	private final String comment2 = "file description sample";
 	private final InputStream stream1 = Thread.currentThread().getContextClassLoader().getResourceAsStream("OPTIONAL-springContext-jackRabbit.xml");
 	private final String fileName1 = "linshare-default.properties";

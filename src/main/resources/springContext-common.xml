@@ -19,7 +19,6 @@
         <property name="locations">
             <list>
                 <value>classpath:version.properties</value>
-                <value>classpath:linshare-mailContainer.properties</value>
                 <value>classpath:linshare-default.properties</value>
                 <value>classpath:linshare.properties</value>
                 <value>classpath:jackRabbit.properties</value>
