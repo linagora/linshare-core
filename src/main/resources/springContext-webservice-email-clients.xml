@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:http-conf="http://cxf.apache.org/transports/http/configuration"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xsi:schemaLocation=" http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://cxf.apache.org/transports/http/configuration
+	http://cxf.apache.org/schemas/configuration/http-conf.xsd
+	http://cxf.apache.org/jaxws
+	http://cxf.apache.org/schemas/jaxws.xsd
+	http://cxf.apache.org/jaxrs
+	http://cxf.apache.org/schemas/jaxrs.xsd">
+	<description>Email clients api dedicated to email client like Outlook, Thunderbird, ... exposed on /webservice/rest/email-clients endpoint.</description>
+
+	<!-- cxf -->
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+
+	<jaxrs:server id="emailClientRestContainer" address="/rest/email-clients">
+		<jaxrs:serviceBeans>
+			<ref bean="userAuthenticationRestService" />
+			<ref bean="userv2DocumentRestService" />
+			<ref bean="userFunctionalityRestService" />
+			<ref bean="userv2AccountQuotaRestService" />
+			<ref bean="userMimeTypeRestService" />
+			<ref bean="userShareRestService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:extensionMappings>
+			<entry key="json" value="application/json" />
+			<entry key="xml" value="application/xml" />
+		</jaxrs:extensionMappings>
+		<jaxrs:providers>
+			<!--  ExceptionMappers. -->
+			<ref bean="businessExceptionMapper" />
+			<ref bean="genericExceptionMapper" />
+			<ref bean="webApplicationExceptionMapper" />
+			<ref bean="illegalArgumentExceptionMapper" />
+			<ref bean="jaxrsNoCacheFilter" />
+			<ref bean="jsonParseExceptionMapper" />
+			<ref bean="unrecognizedPropertyExceptionMapper" />
+			<!-- Json provider for serialisation -->
+			<ref bean="jsonProvider" />
+		</jaxrs:providers>
+		<jaxrs:features>
+<!-- 			<cxf:logging /> -->
+		</jaxrs:features>
+		<jaxrs:inInterceptors>
+			<!-- For debug only : print input message -->
+<!-- 			<ref bean="logInbound" /> -->
+			<!-- This interceptor is designed to store some context properties in message exchange context for timingOutInterceptor -->
+			<ref bean="timingInInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<!-- For debug only : print output  message -->
+<!--             	<ref bean="logOutbound" /> -->
+			<!-- This interceptor is designed compute request execution time.-->
+			<ref bean="timingOutInterceptor" />
+		</jaxrs:outInterceptors>
+		<jaxrs:inFaultInterceptors>
+		</jaxrs:inFaultInterceptors>
+		<jaxrs:outFaultInterceptors>
+		</jaxrs:outFaultInterceptors>
+	</jaxrs:server>
+</beans>
