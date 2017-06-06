@@ -397,7 +397,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		WorkGroupNode nodeParent = find(actor, owner, workGroup, destinationNodeUuid, false);
 		if (isDocument(node)) {
 			if (isFolder(nodeParent)) {
-				String fileName = workGroupFolderService.getNewName(actor, owner, workGroup, nodeParent, node.getName());
+				String fileName = workGroupDocumentService.getNewName(actor, owner, workGroup, nodeParent, node.getName());
 				return workGroupDocumentService.copy(actor, owner, workGroup, (WorkGroupDocument) node, nodeParent, fileName);
 			} else if (isDocument(nodeParent)) {
 				// TODO new feature : create a new revision for this file.
