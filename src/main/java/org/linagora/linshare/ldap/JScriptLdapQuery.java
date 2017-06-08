@@ -577,6 +577,7 @@ public class JScriptLdapQuery {
 			return null;
 		}
 
+		logger.debug("One ldap entry found, trying to make a bind to check user's password.");
 		LdapContextSource ldapContextSource = new LdapContextSource();
 		ldapContextSource.setUrl(ldapConnection.getProviderUrl());
 		String securityPrincipal = ldapConnection.getSecurityPrincipal();
@@ -593,6 +594,7 @@ public class JScriptLdapQuery {
 		BindAuthenticator authenticator = new BindAuthenticator(ldapContextSource);
 		String  searchFilter= "(objectClass=*)";
 		String localBaseDn = userDn + "," + baseDn;
+		logger.debug("looking for ldap entry with dn : " + localBaseDn + " and ldap filter : " + searchFilter);
 		LdapUserSearch userSearch = new FilterBasedLdapUserSearch(localBaseDn, searchFilter, ldapContextSource);
 		authenticator.setUserSearch(userSearch);
 		try {
