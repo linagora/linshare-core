@@ -38,6 +38,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
@@ -49,6 +50,7 @@ import org.linagora.linshare.core.facade.webservice.user.WorkGroupFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
+import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
@@ -62,6 +64,8 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 
 	protected final UserService userService;
 
+	protected final QuotaService quotaService;
+
 	protected final FunctionalityReadOnlyService functionalityReadOnlyService;
 
 	protected final AuditLogEntryService auditLogEntryService;
@@ -70,6 +74,7 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 			final ThreadService threadService,
 			final AccountService accountService,
 			final UserService userService,
+			final QuotaService quotaService,
 			final FunctionalityReadOnlyService functionalityService,
 			final AuditLogEntryService auditLogEntryService) {
 		super(accountService);
@@ -77,6 +82,7 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		this.functionalityReadOnlyService = functionalityService;
 		this.userService = userService;
 		this.auditLogEntryService = auditLogEntryService;
+		this.quotaService = quotaService;
 	}
 
 	@Override
@@ -105,14 +111,20 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public WorkGroupDto find(String uuid) throws BusinessException {
+	public WorkGroupDto find(String uuid, Boolean members) throws BusinessException {
 		Validate.notEmpty(uuid, "Missing required thread uuid");
-
 		User actor = checkAuthentication();
-
 		Thread thread = threadService.find(actor, actor, uuid);
-		List<ThreadMember> members = threadService.findAllThreadMembers(actor, actor, thread);
-		return new WorkGroupDto(thread, members);
+		WorkGroupDto dto = null;
+		if (members) {
+			List<ThreadMember> threadMembers = threadService.findAllThreadMembers(actor, actor, thread);
+			dto = new WorkGroupDto(thread, threadMembers);
+		} else {
+			dto = new WorkGroupDto(thread);
+		}
+		AccountQuota quota = quotaService.findByRelatedAccount(thread);
+		dto.setQuotaUuid(quota.getUuid());
+		return dto;
 	}
 
 	@Override

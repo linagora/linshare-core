@@ -38,6 +38,7 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 
@@ -50,10 +51,15 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "Thread", description = "A thread is a shared space for users to deposit files.")
 public class WorkGroupDto extends AccountDto {
 
-    @ApiModelProperty(value = "Name")
+	@ApiModelProperty(value = "Name")
 	protected String name;
 
-    @ApiModelProperty(value = "Members")
+	@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+	@ApiModelProperty(value = "Workgroup's quota uuid, only available in v2.")
+	protected String quotaUuid;
+
+	@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+	@ApiModelProperty(value = "Members")
 	protected Set<WorkGroupMemberDto> members;
 
 	public WorkGroupDto(Thread thread) {
@@ -88,6 +94,14 @@ public class WorkGroupDto extends AccountDto {
 
 	public void setMembers(Set<WorkGroupMemberDto> members) {
 		this.members = members;
+	}
+
+	public String getQuotaUuid() {
+		return quotaUuid;
+	}
+
+	public void setQuotaUuid(String quotaUuid) {
+		this.quotaUuid = quotaUuid;
 	}
 
 	/*

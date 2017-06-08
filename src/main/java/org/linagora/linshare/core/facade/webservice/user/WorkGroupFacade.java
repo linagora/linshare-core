@@ -49,7 +49,7 @@ public interface WorkGroupFacade extends GenericFacade {
 
 	WorkGroupDto create(WorkGroupDto threadDto) throws BusinessException;
 
-	WorkGroupDto find(String uuid) throws BusinessException;
+	WorkGroupDto find(String uuid, Boolean members) throws BusinessException;
 
 	WorkGroupDto delete(WorkGroupDto threadDto) throws BusinessException;
 

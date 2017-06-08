@@ -33,6 +33,7 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="threadService" />
+		<constructor-arg ref="quotaService" />
 	</bean>
 
 	<!--  deprecated bean -->

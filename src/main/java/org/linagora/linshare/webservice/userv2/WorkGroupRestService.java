@@ -44,7 +44,7 @@ public interface WorkGroupRestService {
 
 	WorkGroupDto create(WorkGroupDto workGroup) throws BusinessException;
 
-	WorkGroupDto find(String uuid) throws BusinessException;
+	WorkGroupDto find(String uuid, Boolean members) throws BusinessException;
 
 	void head(String uuid) throws BusinessException;
 

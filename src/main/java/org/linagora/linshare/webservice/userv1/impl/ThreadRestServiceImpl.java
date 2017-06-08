@@ -94,7 +94,7 @@ public class ThreadRestServiceImpl extends WebserviceBase implements ThreadRestS
 	@Override
 	public WorkGroupDto find(@ApiParam(value = "The thread uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		return threadFacade.find(uuid);
+		return threadFacade.find(uuid, false);
 	}
 
 	@Path("/{uuid}")
@@ -107,7 +107,7 @@ public class ThreadRestServiceImpl extends WebserviceBase implements ThreadRestS
 	@Override
 	public void head(@ApiParam(value = "The thread uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		threadFacade.find(uuid);
+		threadFacade.find(uuid, false);
 	}
 
 	@Path("/")

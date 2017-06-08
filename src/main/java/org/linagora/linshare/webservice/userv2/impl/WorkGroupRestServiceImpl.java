@@ -39,6 +39,7 @@ import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
@@ -95,9 +96,13 @@ public class WorkGroupRestServiceImpl extends WebserviceBase implements WorkGrou
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public WorkGroupDto find(@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("uuid") String uuid)
+	public WorkGroupDto find(
+			@ApiParam(value = "The workgroup uuid.", required = true)
+				@PathParam("uuid") String uuid,
+			@ApiParam(value = "Return also all workgroup members if true.", required = false)
+				@QueryParam("members") @DefaultValue("false") Boolean members)
 			throws BusinessException {
-		return workGroupFacade.find(uuid);
+		return workGroupFacade.find(uuid, members);
 	}
 
 	@Path("/{uuid}")
@@ -110,7 +115,7 @@ public class WorkGroupRestServiceImpl extends WebserviceBase implements WorkGrou
 	@Override
 	public void head(@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		workGroupFacade.find(uuid);
+		workGroupFacade.find(uuid, false);
 	}
 
 	@Path("/")

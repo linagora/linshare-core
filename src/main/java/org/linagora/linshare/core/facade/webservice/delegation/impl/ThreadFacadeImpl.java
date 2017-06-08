@@ -37,12 +37,14 @@ package org.linagora.linshare.core.facade.webservice.delegation.impl;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
 import org.linagora.linshare.core.facade.webservice.delegation.ThreadFacade;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
 
@@ -53,12 +55,16 @@ public class ThreadFacadeImpl extends DelegationGenericFacadeImpl implements
 
 	private final ThreadService threadService;
 
+	protected final QuotaService quotaService;
+
 	public ThreadFacadeImpl(
 			final AccountService accountService,
 			final UserService userService,
+			final QuotaService quotaService,
 			final ThreadService threadService) {
 		super(accountService, userService);
 		this.threadService = threadService;
+		this.quotaService = quotaService;
 	}
 
 	@Override
@@ -68,7 +74,11 @@ public class ThreadFacadeImpl extends DelegationGenericFacadeImpl implements
 		Validate.notEmpty(uuid, "Missing required thread uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		return new WorkGroupDto(threadService.find(actor, owner, uuid));
+		Thread thread = threadService.find(actor, owner, uuid);
+		WorkGroupDto dto = new WorkGroupDto(thread);
+		AccountQuota quota = quotaService.findByRelatedAccount(thread);
+		dto.setQuotaUuid(quota.getUuid());
+		return dto;
 	}
 
 	@Override
