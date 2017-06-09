@@ -229,7 +229,7 @@ public class WorkGroupNodeResourceAccessControlImpl
 		Account workGroup = getOwner(entry, opt);
 		ThreadMember member = threadMemberRepository.findUserThreadMember(
 				workGroup, (User) account);
-		if (member != null && member.getAdmin()) {
+		if (member != null && member.getCanUpload()) {
 			return true;
 		}
 		return false;
