@@ -59,6 +59,7 @@ import org.apache.commons.lang.Validate;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.domain.constants.AsyncTaskType;
+import org.linagora.linshare.core.domain.constants.ThumbnailKind;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
@@ -314,7 +315,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 		return response.build();
 	}
 
-	@Path("/{uuid}/thumbnail")
+	@Path("/{uuid}/thumbnail{kind:(small)?|(medium)?|(large)?}")
 	@GET
 	@ApiOperation(value = "Download the thumbnail of a file.", response = Response.class)
 	@ApiResponses({
@@ -324,10 +325,14 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public Response thumbnail(@PathParam("uuid") String documentUuid,
+			@ApiParam(value = "This parameter allows you to choose which thumbnail you want : Small, Medium or Large. Default value is Medium", required = false) @PathParam("kind") ThumbnailKind thumbnailKind,
 			@ApiParam(value = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64)
-					throws BusinessException {
+			throws BusinessException {
+		if (thumbnailKind == null) {
+			thumbnailKind = ThumbnailKind.MEDIUM;
+		}
 		DocumentDto documentDto = documentFacade.find(documentUuid, false);
-		InputStream documentStream = documentFacade.getThumbnailStream(documentUuid);
+		InputStream documentStream = documentFacade.getThumbnailStream(documentUuid, thumbnailKind);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(documentStream,
 				documentDto.getName() + "_thumb.png", base64);
 		return response.build();

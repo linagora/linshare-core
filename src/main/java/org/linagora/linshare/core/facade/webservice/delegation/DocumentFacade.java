@@ -39,6 +39,7 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import org.linagora.linshare.core.domain.constants.ThumbnailKind;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.delegation.dto.DocumentDto;
 
@@ -67,7 +68,7 @@ public interface DocumentFacade extends DelegationGenericFacade {
 	Response download(String ownerUuid, String documentUuuid)
 			throws BusinessException;
 
-	Response thumbnail(String ownerUuid, String documentUuuid)
+	Response thumbnail(String ownerUuid, String documentUuuid, ThumbnailKind kind)
 			throws BusinessException;
 
 }

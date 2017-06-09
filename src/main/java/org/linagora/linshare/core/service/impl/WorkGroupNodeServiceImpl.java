@@ -42,6 +42,7 @@ import java.util.UUID;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.ThumbnailKind;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
@@ -363,12 +364,12 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 	}
 
 	@Override
-	public FileAndMetaData thumbnail(Account actor, User owner, Thread workGroup, String workGroupNodeUuid) throws BusinessException {
+	public FileAndMetaData thumbnail(Account actor, User owner, Thread workGroup, String workGroupNodeUuid, ThumbnailKind kind) throws BusinessException {
 		preChecks(actor, owner);
 		WorkGroupNode node = find(actor, owner, workGroup, workGroupNodeUuid, false);
 		checkThumbNailDownloadPermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, node, workGroup);
 		if (isDocument(node)) {
-			InputStream stream = workGroupDocumentService.getThumbnailStream(actor, owner, workGroup, (WorkGroupDocument) node);
+			InputStream stream = workGroupDocumentService.getThumbnailStream(actor, owner, workGroup, (WorkGroupDocument) node, kind);
 			return new FileAndMetaData((WorkGroupDocument)node, stream);
 		} else {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not get thumbnail for this kind of node.");

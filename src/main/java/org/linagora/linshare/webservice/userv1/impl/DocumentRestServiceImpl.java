@@ -59,6 +59,7 @@ import org.apache.commons.lang.Validate;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.domain.constants.AsyncTaskType;
+import org.linagora.linshare.core.domain.constants.ThumbnailKind;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
@@ -316,7 +317,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 			@ApiParam(value = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64)
 					throws BusinessException {
 		DocumentDto documentDto = documentFacade.find(documentUuid, false);
-		InputStream documentStream = documentFacade.getThumbnailStream(documentUuid);
+		InputStream documentStream = documentFacade.getThumbnailStream(documentUuid, ThumbnailKind.MEDIUM);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(documentStream,
 				documentDto.getName() + "_thumb.png", base64);
 		return response.build();

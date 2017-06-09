@@ -155,7 +155,7 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 		documentEntryRepository.delete(aDocumentEntry);
 		jane.getEntries().clear();
 		userRepository.update(jane);
-		FileMetaData metadata = new FileMetaData(FileMetaDataKind.THUMBNAIL, aDocument, "image/png");
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.THUMBNAIL_SMALL, aDocument, "image/png");
 		metadata.setUuid(aDocument.getUuid());
 		fileDataStore.remove(metadata);
 		documentRepository.delete(aDocument);

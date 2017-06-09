@@ -56,6 +56,7 @@ import org.apache.commons.lang.Validate;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.domain.constants.AsyncTaskType;
+import org.linagora.linshare.core.domain.constants.ThumbnailKind;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
@@ -297,7 +298,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 		return documentFacade.download(ownerUuid, uuid);
 	}
 
-	@Path("/{uuid}/thumbnail")
+	@Path("/{uuid}/thumbnail{kind:(small)?|(medium)?|(large)?}")
 	@GET
 	@ApiOperation(value = "Download the thumbnail of a file.")
 	@ApiResponses({
@@ -308,9 +309,10 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	@Override
 	public Response thumbnail(
 			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
-			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid)
-			throws BusinessException {
-		return documentFacade.thumbnail(ownerUuid, uuid);
+			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid,
+			@ApiParam(value = "This parameter allows you to choose which thumbnail you want : Small, Medium or Large. Default value is Medium", required = false) @PathParam("kind") ThumbnailKind thumbnailKind
+			) throws BusinessException {
+		return documentFacade.thumbnail(ownerUuid, uuid, thumbnailKind);
 	}
 
 	@Path("/{uuid}/async")

@@ -36,6 +36,7 @@ package org.linagora.linshare.core.service;
 import java.io.InputStream;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.ThumbnailKind;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
@@ -59,7 +60,7 @@ public interface AnonymousUrlService {
 
 	InputStream retrieveArchiveZipStream(Account actor, Account owner, String anonymousUrlUuid, String password) throws BusinessException ;
 
-	InputStream downloadThumbnail(Account actor, Account owner, String anonymousUrlUuid, String anonymousShareEntryUuid, String password) throws BusinessException;
+	InputStream downloadThumbnail(Account actor, Account owner, String anonymousUrlUuid, String anonymousShareEntryUuid, String password, ThumbnailKind kind) throws BusinessException;
 
 	SystemAccount getAnonymousURLAccount();
 

@@ -20,8 +20,7 @@
 		<constructor-arg ref="documentRepository" />
 		<constructor-arg ref="signatureBusinessService" />
 		<constructor-arg ref="uploadRequestEntryBusinessService" />
-		<constructor-arg value="${linshare.documents.thumbnail.enable}" />
-		<constructor-arg value="${linshare.documents.thumbnail.pdf.enable}" />
+		<constructor-arg ref="thumbnailGeneratorService" />
 		<constructor-arg value="${linshare.documents.storage.deduplication}" />
 		<constructor-arg ref="workGroupNodeMongoRepository" />
 		<constructor-arg ref="documentGarbageCollecteurMongoRepository" />
@@ -269,5 +268,11 @@
 	</bean>
 	<bean id="upgradeTaskBusinessService" class="org.linagora.linshare.core.business.service.impl.UpgradeTaskBusinessServiceImpl">
 		<constructor-arg ref="upgradeTaskRepository" />
+	</bean>
+	<bean id="thumbnailGeneratorService" class="org.linagora.linshare.core.business.service.impl.ThumbnailGeneratorServiceImpl"
+		init-method="thumbnailServiceStart" destroy-method="thumbnailServiceStop">
+		<constructor-arg ref="fileDataStore" />
+		<constructor-arg value="${linshare.documents.thumbnail.enable}" />
+		<constructor-arg value="${linshare.documents.thumbnail.pdf.enable}" />
 	</bean>
 </beans>

@@ -73,8 +73,7 @@ public interface ThreadEntryRestService {
 	Response download(String ownerUuid, String threadUuid, String uuid)
 			throws BusinessException;
 
-	Response thumbnail(String ownerUuid, String threadUuid, String uuid)
-			throws BusinessException;
+	Response thumbnail(String ownerUuid, String threadUuid, String uuid) throws BusinessException;
 
 	WorkGroupEntryDto update(String ownerUuid, String threadUuid,
 			String threadEntryuuid, WorkGroupEntryDto threadEntryDto)

@@ -33,11 +33,9 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -48,22 +46,19 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-import javax.imageio.ImageIO;
-
-import org.apache.cxf.helpers.IOUtils;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.linagora.LinThumbnail.FileResource;
-import org.linagora.LinThumbnail.FileResourceFactory;
-import org.linagora.LinThumbnail.utils.Constants;
-import org.linagora.LinThumbnail.utils.ImageUtils;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.SignatureBusinessService;
+import org.linagora.linshare.core.business.service.ThumbnailGeneratorService;
 import org.linagora.linshare.core.business.service.UploadRequestEntryBusinessService;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
+import org.linagora.linshare.core.domain.constants.ThumbnailKind;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -88,6 +83,8 @@ import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Maps;
+
 public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessService {
 
 	private static final Logger logger = LoggerFactory.getLogger(DocumentEntryBusinessServiceImpl.class);
@@ -98,8 +95,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	private final DocumentRepository documentRepository;
 	private final SignatureBusinessService signatureBusinessService;
 	private final UploadRequestEntryBusinessService uploadRequestEntryBusinessService;
-	private final boolean thumbEnabled;
-	private final boolean pdfThumbEnabled;
+	private final ThumbnailGeneratorService thumbnailGeneratorService;
 	private final boolean deduplication;
 	protected final WorkGroupNodeMongoRepository repository;
 	protected final DocumentGarbageCollecteurMongoRepository documentGarbageCollecteur;
@@ -111,8 +107,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			final DocumentRepository documentRepository,
 			final SignatureBusinessService signatureBusinessService,
 			final UploadRequestEntryBusinessService uploadRequestEntryBusinessService,
-			final boolean thumbEnabled,
-			final boolean pdfThumbEnabled,
+			final ThumbnailGeneratorService thumbnailGeneratorService,
 			final boolean deduplication,
 			final WorkGroupNodeMongoRepository repository,
 			final DocumentGarbageCollecteurMongoRepository documentGarbageCollecteur) {
@@ -123,8 +118,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		this.documentRepository = documentRepository;
 		this.signatureBusinessService = signatureBusinessService;
 		this.uploadRequestEntryBusinessService = uploadRequestEntryBusinessService;
-		this.thumbEnabled = thumbEnabled;
-		this.pdfThumbEnabled = pdfThumbEnabled;
+		this.thumbnailGeneratorService = thumbnailGeneratorService;
 		this.deduplication = deduplication;
 		this.repository = repository;
 		this.documentGarbageCollecteur = documentGarbageCollecteur;
@@ -203,15 +197,16 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	}
 
 	@Override
-	public InputStream getDocumentThumbnailStream(DocumentEntry entry) {
+	public InputStream getDocumentThumbnailStream(DocumentEntry entry, ThumbnailKind kind) {
 		Document doc = entry.getDocument();
-		return getDocumentThumbnailStream(doc);
+		FileMetaDataKind fileMetaDataKind = ThumbnailKind.toFileMetaDataKind(kind);
+		return getDocumentThumbnailStream(doc, fileMetaDataKind);
 	}
 
-	private InputStream getDocumentThumbnailStream(Document doc) {
-		String thmbUuid = doc.getThmbUuid();
+	protected InputStream getDocumentThumbnailStream(Document doc, FileMetaDataKind fileMetaDataKind) {
+		String thmbUuid = ThumbnailKind.getThmbUuid(fileMetaDataKind, doc);
 		if (thmbUuid != null && thmbUuid.length()>0) {
-			FileMetaData metadata = new FileMetaData(FileMetaDataKind.THUMBNAIL, doc);
+			FileMetaData metadata = new FileMetaData(fileMetaDataKind, doc);
 			InputStream stream = null;
 			try {
 				stream = fileDataStore.get(metadata);
@@ -224,11 +219,12 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	}
 
 	@Override
-	public InputStream getThreadEntryThumbnailStream(WorkGroupDocument entry) {
+	public InputStream getThreadEntryThumbnailStream(WorkGroupDocument entry, ThumbnailKind kind) {
 		Document doc = documentRepository.findByUuid(entry.getDocumentUuid());
-		String thmbUuid = doc.getThmbUuid();
-		if (thmbUuid != null && thmbUuid.length()>0) {
-			FileMetaData metadata = new FileMetaData(FileMetaDataKind.THUMBNAIL, doc);
+		FileMetaDataKind fileMetaDataKind = ThumbnailKind.toFileMetaDataKind(kind);
+		String thmbUuid = ThumbnailKind.getThmbUuid(fileMetaDataKind, doc);
+		if (thmbUuid != null && thmbUuid.length() > 0) {
+			FileMetaData metadata = new FileMetaData(fileMetaDataKind, doc);
 			InputStream stream = null;
 			try {
 				stream = fileDataStore.get(metadata);
@@ -286,8 +282,9 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 
 		String sha256sum = SHA256CheckSumFileStream(myFile);
 		FileMetaData metadata = null;
-		FileMetaData metadataThmb = null;
-		// want a timestamp on doc ? if timeStamping url is null, time stamp will be null
+		Map<ThumbnailKind, FileMetaData> fileMetaDataThumbnail = Maps.newHashMap();
+		// want a timestamp on doc ? if timeStamping url is null, time stamp
+		// will be null
 		try {
 			Document document = null;
 			List<Document> documents = documentRepository.findBySha256Sum(sha256sum);
@@ -298,11 +295,11 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 				metadata = fileDataStore.add(myFile, metadata);
 
 				// Computing and storing thumbnail
-				metadataThmb = computeAndStoreThumbnail(owner, myFile, metadata, fileName);
+				FileResource fileResource = thumbnailGeneratorService.getFileResourceFactory().getFileResource(myFile, mimeType);
+				fileMetaDataThumbnail = thumbnailGeneratorService.getThumbnails(owner, myFile, metadata, fileResource);
 				byte[] timestampToken = getTimeStamp(fileName, myFile, timeStampingUrl);
-
 				document = new Document(metadata);
-				document.setThmbUuid(metadataThmb.getUuid());
+				documentSetThumbnailUuid(document, fileMetaDataThumbnail);
 				document.setTimeStamp(timestampToken);
 				document.setSha256sum(sha256sum);
 				document = documentRepository.create(document);
@@ -315,18 +312,36 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			docEntry.setSize(size);
 			docEntry.setType(mimeType);
 			docEntry.setSha256sum(sha256sum);
-			//aes encrypt ? check headers
-			if(checkIfIsCiphered) {
+			// aes encrypt ? check headers
+			if (checkIfIsCiphered) {
 				docEntry.setCiphered(checkIfFileIsCiphered(fileName, myFile));
 			}
 			docEntry.setModificationDate(new GregorianCalendar());
 			documentEntryRepository.update(docEntry);
 			return docEntry;
 		} catch (BusinessException e) {
-			logger.error("Could not add  " + fileName + " to user " + owner.getAccountRepresentation() + ", reason : ", e);
-			if (metadata != null)	fileDataStore.remove(metadata);
-			if (metadataThmb != null)	fileDataStore.remove(metadataThmb);
+			logger.error("Could not add  " + fileName + " to user " + owner.getAccountRepresentation() + ", reason : ",
+					e);
+			if (metadata != null)
+				fileDataStore.remove(metadata);
+			fileMetaDataThumbnail.forEach((k, v) -> {
+				if (v != null) {
+					fileDataStore.remove(v);
+				}
+			});
 			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_INSERT_DOCUMENT, "couldn't register the file in the database");
+		}
+	}
+
+	private void documentSetThumbnailUuid(Document document, Map<ThumbnailKind, FileMetaData> fileMetaDataThumbnail) {
+		if (fileMetaDataThumbnail.get(ThumbnailKind.SMALL) != null) {
+			document.setThmbUuidSmall(fileMetaDataThumbnail.get(ThumbnailKind.SMALL).getUuid());
+		}
+		if (fileMetaDataThumbnail.get(ThumbnailKind.MEDIUM) != null) {
+			document.setThmbUuidMedium(fileMetaDataThumbnail.get(ThumbnailKind.MEDIUM).getUuid());
+		}
+		if (fileMetaDataThumbnail.get(ThumbnailKind.LARGE) != null) {
+			document.setThmbUuidLarge(fileMetaDataThumbnail.get(ThumbnailKind.LARGE).getUuid());
 		}
 	}
 
@@ -438,30 +453,35 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	private Document createDocument(Account owner, File myFile, Long size, String fileName, String timeStampingUrl, String mimeType) throws BusinessException {
 		String sha256sum = SHA256CheckSumFileStream(myFile);
 		List<Document> documents = documentRepository.findBySha256Sum(sha256sum);
+		Map<ThumbnailKind, FileMetaData> fileMetaDataThumbnail = Maps.newHashMap();
 		if (documents.isEmpty() || !deduplication) {
 			// Storing file
 			FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, mimeType, size, fileName);
 			metadata = fileDataStore.add(myFile, metadata);
+
 			// Computing and storing thumbnail
-			FileMetaData metadataThmb = computeAndStoreThumbnail(owner, myFile, metadata, fileName);
+			FileResource fileResource = thumbnailGeneratorService.getFileResourceFactory().getFileResource(myFile, mimeType);
+			fileMetaDataThumbnail = thumbnailGeneratorService.getThumbnails(owner, myFile, metadata, fileResource);
 			try {
 				// want a timestamp on doc ?
 				byte[] timestampToken = null;
-				if(timeStampingUrl != null) {
+				if (timeStampingUrl != null) {
 					timestampToken = getTimeStamp(fileName, myFile, timeStampingUrl);
 				}
 				// add an document for the file in DB
 				Document document = new Document(metadata);
 				document.setSha256sum(sha256sum);
-				if (metadataThmb != null)
-					document.setThmbUuid(metadataThmb.getUuid());
+				documentSetThumbnailUuid(document, fileMetaDataThumbnail);
 				document.setTimeStamp(timestampToken);
 				return documentRepository.create(document);
 			} catch (Exception e) {
 				if (metadata != null)
 					fileDataStore.remove(metadata);
-				if (metadataThmb != null)
-					fileDataStore.remove(metadataThmb);
+				fileMetaDataThumbnail.forEach((k, v) -> {
+					if (v != null) {
+						fileDataStore.remove(v);
+					}
+				});
 				throw e;
 			}
 		} else {
@@ -495,34 +515,12 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 				throw new BusinessException("Can not create a copy of existing document.");
 			}
 			// dirty copy thumbnail
-			FileMetaData metadataThmb = null;
-			try (InputStream inputStream = getDocumentThumbnailStream(srcDocument)) {
-				if (inputStream != null) {
-					File tempThumbFile = null;
-					try {
-						tempThumbFile = File.createTempFile("linthumbnail", owner + "_thumb.png");
-						tempThumbFile.createNewFile();
-						try (FileOutputStream fos = new FileOutputStream(tempThumbFile)) {
-							IOUtils.copyAndCloseInput(inputStream, fos);
-							metadataThmb = computeAndStoreThumbnail(owner, tempThumbFile, metadata, fileName);
-						}
-					} catch (Exception e) {
-						logger.error("Can not create a copy thumbnail of existing document.");
-						logger.error(e.getMessage(), e);
-						if (tempThumbFile != null) {
-							tempThumbFile.delete();
-						}
-					}
-				}
-			} catch (IOException e1) {
-				logger.error("Can not create a copy thumbnail of existing document.");
-				logger.error(e1.getMessage(), e1);
-			}
+			Map<ThumbnailKind, FileMetaData> fileMetaDataThumbnail = Maps.newHashMap();
+			fileMetaDataThumbnail = thumbnailGeneratorService.copyThumbnail(srcDocument, owner, metadata);
 			document = new Document(metadata);
 			document.setSha256sum(srcDocument.getSha256sum());
 			document.setSha1sum(srcDocument.getSha1sum());
-			if (metadataThmb != null)
-				document.setThmbUuid(metadataThmb.getUuid());
+			documentSetThumbnailUuid(document, fileMetaDataThumbnail);
 			document = documentRepository.create(document);
 		}
 		return document;
@@ -530,14 +528,8 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 
 	@Override
 	public void deleteDocument(Document document) throws BusinessException {
-		// delete old thumbnail in JCR
-		String oldThumbUuid = document.getThmbUuid();
-		if (oldThumbUuid != null && oldThumbUuid.length() > 0) {
-			logger.debug("suppression of Thumb, Uuid : " + oldThumbUuid);
-			FileMetaData metadata = new FileMetaData(FileMetaDataKind.THUMBNAIL, document, "image/png");
-			fileDataStore.remove(metadata);
-		}
-
+		// delete old thumbnail in JCR (Small, Medium and Large)
+		deleteThumbnail(document);
 		// remove old document in JCR
 		logger.debug("suppression of doc, Uuid : " + document.getUuid());
 		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, document);
@@ -555,60 +547,16 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		documentRepository.delete(document);
 	}
 
-	private FileMetaData computeAndStoreThumbnail(Account owner, File tempFile, FileMetaData metadata, String fileName) {
-		if (!thumbEnabled || (!pdfThumbEnabled && metadata.getMimeType().contains("pdf"))) {
-			logger.warn("Thumbnail generation is disabled.");
-			return null;
-		}
-
-		FileMetaData ret = null;
-		FileResourceFactory fileResourceFactory = FileResourceFactory.getInstance();
-		FileResource fileResource = fileResourceFactory.getFileResource(tempFile, fileName);
-		InputStream fisThmb = null;
-		BufferedImage bufferedImage=null;
-		File tempThumbFile = null;
-		if (fileResource != null) {
-			try {
-				try {
-					bufferedImage = fileResource.generateThumbnailImage();
-				} catch (Exception e) {
-					logger.error(e.getLocalizedMessage());
-					logger.debug(e.toString());
-				}
-				if (bufferedImage != null) {
-					fisThmb = ImageUtils.getInputStreamFromImage(bufferedImage, "png");
-					tempThumbFile = File.createTempFile("linthumbnail", owner+"_thumb.png");
-					tempThumbFile.createNewFile();
-
-					if (bufferedImage!=null)
-						ImageIO.write(bufferedImage, Constants.THMB_DEFAULT_FORMAT, tempThumbFile);
-
-					if (logger.isDebugEnabled()) {
-						logger.debug("5.1)start insert of thumbnail in jack rabbit:" + tempThumbFile.getName());
-					}
-					ret = new FileMetaData(FileMetaDataKind.THUMBNAIL, "image/png", tempThumbFile.length(), metadata.getFileName());
-					ret = fileDataStore.add(tempThumbFile, ret);
-				}
-			} catch (FileNotFoundException e) {
-				logger.error(e.toString());
-				// if the thumbnail generation fails, it's not big deal, it has not to block
-				// the entire process, we just don't have a thumbnail for this document
-			} catch (IOException e) {
-				logger.error(e.toString());
-			} finally {
-				try {
-					if (fisThmb != null)
-						fisThmb.close();
-				} catch (IOException e) {
-					// Do nothing Happy java :)
-					logger.error(e.toString());
-				}
-				if(tempThumbFile!=null){
-					tempThumbFile.delete();
-				}
+	private void deleteThumbnail(Document document) {
+		for (ThumbnailKind kind : ThumbnailKind.values()) {
+			FileMetaDataKind fileMetaDataKind = ThumbnailKind.toFileMetaDataKind(kind);
+			String oldThmbUuid = ThumbnailKind.getThmbUuid(fileMetaDataKind, document);
+			if (oldThmbUuid != null && oldThmbUuid.length() > 0) {
+				logger.debug("suppression of " + fileMetaDataKind + " Thumb, Uuid : " + oldThmbUuid);
+				FileMetaData metadata = new FileMetaData(fileMetaDataKind, document, "image/png");
+				fileDataStore.remove(metadata);
 			}
 		}
-		return ret;
 	}
 
 	private boolean checkIfFileIsCiphered(String fileName, File tempFile) throws BusinessException {

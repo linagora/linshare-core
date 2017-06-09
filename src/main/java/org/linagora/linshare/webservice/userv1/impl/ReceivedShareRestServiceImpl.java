@@ -53,6 +53,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.TargetKind;
+import org.linagora.linshare.core.domain.constants.ThumbnailKind;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.CopyDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
@@ -135,7 +136,7 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 	public Response thumbnail(@PathParam("uuid") String receivedShareUuid,
 			@ApiParam(value = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64) throws BusinessException {
 		ShareDto receivedShareDto = shareFacade.getReceivedShare(receivedShareUuid);
-		InputStream receivedShareStream = shareFacade.getThumbnailStream(receivedShareUuid);
+		InputStream receivedShareStream = shareFacade.getThumbnailStream(receivedShareUuid, ThumbnailKind.MEDIUM);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(receivedShareStream,
 				receivedShareDto.getName() + "_thumb.png", base64);
 		return response.build();

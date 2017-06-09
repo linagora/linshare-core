@@ -79,8 +79,12 @@ public class FileMetaData {
 	public FileMetaData(FileMetaDataKind kind, Document document) {
 		super();
 		this.uuid = document.getUuid();
-		if (kind.equals(FileMetaDataKind.THUMBNAIL)) {
-			this.uuid = document.getThmbUuid();
+		if (FileMetaDataKind.THUMBNAIL_SMALL.equals(kind)) {
+			this.uuid = document.getThmbUuidSmall();
+		} else if (FileMetaDataKind.THUMBNAIL_MEDIUM.equals(kind)) {
+			this.uuid = document.getThmbUuidMedium();
+		} else if (FileMetaDataKind.THUMBNAIL_LARGE.equals(kind)) {
+			this.uuid = document.getThmbUuidLarge();
 		}
 		this.kind = kind;
 		this.mimeType = document.getType();
@@ -91,8 +95,12 @@ public class FileMetaData {
 	public FileMetaData(FileMetaDataKind kind, Document document, String mimeType) {
 		super();
 		this.uuid = document.getUuid();
-		if (kind.equals(FileMetaDataKind.THUMBNAIL)) {
-			this.uuid = document.getThmbUuid();
+		if (FileMetaDataKind.THUMBNAIL_SMALL.equals(kind)) {
+			this.uuid = document.getThmbUuidSmall();
+		} else if (FileMetaDataKind.THUMBNAIL_MEDIUM.equals(kind)) {
+			this.uuid = document.getThmbUuidMedium();
+		} else if (FileMetaDataKind.THUMBNAIL_LARGE.equals(kind)) {
+			this.uuid = document.getThmbUuidLarge();
 		}
 		this.kind = kind;
 		this.mimeType = mimeType;

@@ -77,9 +77,19 @@ public class Document implements Serializable {
 	private Set<Signature> signatures = new HashSet<Signature>();
 
 	/**
-	 * UUID of the thumbnail file
+	 * UUID of the small thumbnail file
 	 */
-	private String thmbUuid;
+	private String thmbUuidSmall;
+
+	/**
+	 * UUID of the medium thumbnail file
+	 */
+	private String thmbUuidMedium;
+
+	/**
+	 * UUID of the large thumbnail file
+	 */
+	private String thmbUuidLarge;
 
 	/**
 	 * Use by LinShare v2 as container/bucket
@@ -111,7 +121,9 @@ public class Document implements Serializable {
 		this.type = type;
 		this.size = size;
 		this.timeStamp = null;
-		this.thmbUuid = null;
+		this.thmbUuidSmall = null;
+		this.thmbUuidMedium = null;
+		this.thmbUuidLarge = null;
 		this.checkMimeType = false;
 		this.toUpgrade = false;
 	}
@@ -131,7 +143,9 @@ public class Document implements Serializable {
 		this.creationDate = new GregorianCalendar();
 		this.size = metadata.getSize();
 		this.timeStamp = null;
-		this.thmbUuid = null;
+		this.thmbUuidSmall = null;
+		this.thmbUuidMedium = null;
+		this.thmbUuidLarge = null;
 		this.checkMimeType = false;
 		this.bucketUuid = metadata.getBucketUuid();
 		this.toUpgrade = false;
@@ -145,7 +159,9 @@ public class Document implements Serializable {
 		this.creationDate = new GregorianCalendar();
 		this.size = size;
 		this.timeStamp = null;
-		this.thmbUuid = null;
+		this.thmbUuidSmall = null;
+		this.thmbUuidMedium = null;
+		this.thmbUuidLarge = null;
 		this.checkMimeType = false;
 		this.toUpgrade = false;
 	}
@@ -189,14 +205,30 @@ public class Document implements Serializable {
 		this.signatures = signatures;
 	}
 
-	public void setThmbUuid(String thmbUUID) {
-		this.thmbUuid = thmbUUID;
+	public void setThmbUuidSmall(String thmbUuidSmall) {
+		this.thmbUuidSmall = thmbUuidSmall;
 	}
-	
-	public String getThmbUuid() {
-		return thmbUuid;
+
+	public String getThmbUuidSmall() {
+		return thmbUuidSmall;
 	}
-	
+
+	public String getThmbUuidMedium() {
+		return thmbUuidMedium;
+	}
+
+	public void setThmbUuidMedium(String thmbUuidMedium) {
+		this.thmbUuidMedium = thmbUuidMedium;
+	}
+
+	public String getThmbUuidLarge() {
+		return thmbUuidLarge;
+	}
+
+	public void setThmbUuidLarge(String thmbUuidLarge) {
+		this.thmbUuidLarge = thmbUuidLarge;
+	}
+
 	public byte[] getTimeStamp() {
 		return timeStamp;
 	}

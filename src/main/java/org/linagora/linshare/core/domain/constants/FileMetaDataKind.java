@@ -36,5 +36,5 @@ package org.linagora.linshare.core.domain.constants;
 
 public enum FileMetaDataKind {
 
-	DATA, THUMBNAIL, PREVIEW, SIGNATURE;
+	DATA, THUMBNAIL_SMALL, THUMBNAIL_MEDIUM, THUMBNAIL_LARGE, PREVIEW, SIGNATURE;
 }

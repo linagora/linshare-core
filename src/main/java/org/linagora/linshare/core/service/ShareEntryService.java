@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.LogActionCause;
+import org.linagora.linshare.core.domain.constants.ThumbnailKind;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
@@ -66,7 +67,7 @@ public interface ShareEntryService {
 
 	ShareEntry update(Account actor, Account owner, ShareEntry shareEntry) throws BusinessException;
 
-	InputStream getThumbnailStream(Account actor, Account owner, String shareEntryUuid) throws BusinessException;
+	InputStream getThumbnailStream(Account actor, Account owner, String shareEntryUuid, ThumbnailKind kind) throws BusinessException;
 
 	InputStream getStream(Account actor, Account owner, String shareEntryUuid) throws BusinessException;
 
