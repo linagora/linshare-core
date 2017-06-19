@@ -54,11 +54,11 @@ import javax.naming.directory.SearchResult;
 import javax.naming.ldap.Control;
 import javax.naming.ldap.HasControls;
 
-import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.domain.entities.Internal;
-import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
+import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linid.dm.authorization.lql.JScriptEvaluator;
 import org.linid.dm.authorization.lql.LqlRequestCtx;
 import org.linid.dm.authorization.lql.dnlist.IDnList;
@@ -69,7 +69,6 @@ import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
-import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
 import org.springframework.security.ldap.search.LdapUserSearch;
 
 import com.google.common.base.Function;
@@ -592,10 +591,10 @@ public class JScriptLdapQuery {
 		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDn, userPasswd);
 
 		BindAuthenticator authenticator = new BindAuthenticator(ldapContextSource);
-		String  searchFilter= "(objectClass=*)";
 		String localBaseDn = userDn + "," + baseDn;
+		String searchFilter = "(objectClass=*)";
 		logger.debug("looking for ldap entry with dn : " + localBaseDn + " and ldap filter : " + searchFilter);
-		LdapUserSearch userSearch = new FilterBasedLdapUserSearch(localBaseDn, searchFilter, ldapContextSource);
+		LdapUserSearch userSearch = new LinShareFilterBasedLdapUserSearch(localBaseDn, searchFilter, ldapContextSource);
 		authenticator.setUserSearch(userSearch);
 		try {
 			ldapContextSource.afterPropertiesSet();
