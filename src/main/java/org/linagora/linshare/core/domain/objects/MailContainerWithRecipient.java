@@ -33,16 +33,22 @@
  */
 package org.linagora.linshare.core.domain.objects;
 
+import java.util.Map;
+
+import javax.activation.DataSource;
+
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.User;
 
+import com.google.common.collect.Maps;
+
 /**
  * Object that contains the informations used to build the email
- * content and recipient address mail. Information hiding principle: for example, the view does 
- * not have to know that the services have to build two types of email 
+ * content and recipient address mail. Information hiding principle: for example, the view does
+ * not have to know that the services have to build two types of email
  * contents (txt and html).
- * 
+ *
  * @author ctjhoa
  *
  */
@@ -51,6 +57,8 @@ public class MailContainerWithRecipient extends MailContainer {
 	private String recipient;
 	private String replyTo;
 	private String from;
+
+	protected Map<String, DataSource> attachments = Maps.newHashMap();
 
 	public MailContainerWithRecipient(MailContainerWithRecipient mailContainer) {
 		super(mailContainer);
@@ -117,6 +125,18 @@ public class MailContainerWithRecipient extends MailContainer {
 
 	public void setFrom(String from) {
 		this.from = from;
+	}
+
+	public Map<String, DataSource> getAttachments() {
+		return attachments;
+	}
+
+	public void setAttachments(Map<String, DataSource> attachments) {
+		this.attachments = attachments;
+	}
+
+	public void addAttachment(String identifier, DataSource attachment) {
+		this.attachments.put(identifier, attachment);
 	}
 
 }

@@ -34,10 +34,11 @@
 package org.linagora.linshare.core.service;
 
 import java.util.List;
+import java.util.Map;
 
+import javax.activation.DataSource;
 import javax.mail.SendFailedException;
 
-import org.linagora.linshare.core.domain.objects.MailContainer;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -58,16 +59,8 @@ public interface NotifierService {
      * @param references : message ID list
 	 * @throws SendFailedException
      */
-    public void sendNotification(String smtpSender, String replyTo, String recipient, String subject,String htmlContent, String inReplyTo, String references) throws SendFailedException;
-    
-    /**
-	 * @param smtpSender the smtp sender mail, for the "From" field of the mail.
-     * @param replyTo user who send the mail. can be null. if null put generic Linshare account.
-     * @param recipient the recipient mail
-     * @param mailContainer the mail container
-     * @throws SendFailedException 
-     */
-    public void sendNotification(String smtpSender, String replyTo, String recipient, MailContainer mailContainer) throws SendFailedException;
+	public void sendNotification(String smtpSender, String replyTo, String recipient, String subject,String htmlContent,
+			String inReplyTo, String references, Map<String, DataSource> attachments) throws SendFailedException;
 
     
     /**

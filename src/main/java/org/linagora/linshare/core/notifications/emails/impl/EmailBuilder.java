@@ -34,7 +34,9 @@
 package org.linagora.linshare.core.notifications.emails.impl;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -43,6 +45,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.MailActivationBusinessService;
 import org.linagora.linshare.core.domain.constants.Language;
@@ -56,6 +63,8 @@ import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.exception.TechnicalErrorCode;
+import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.FakeBuildEmailContext;
 import org.linagora.linshare.core.notifications.dto.ContextMetadata;
@@ -220,7 +229,22 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		if (flavor != null) {
 			ctx = contexts.get(flavor);
 		}
-		return buildMailContainerThymeleaf(cfg, getSupportedType(), ctx, emailContext);
+		MailContainerWithRecipient container = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx, emailContext);
+		Set<String> keySet = container.getAttachments().keySet();
+		for (String identifier : keySet) {
+			DataSource dataSource = container.getAttachments().get(identifier);
+			try (InputStream stream = dataSource.getInputStream()) {
+				String base64String = Base64.encodeBase64String(IOUtils.toByteArray(stream));
+				String content = container.getContent().replaceAll("cid:" + identifier, "data:image/png;base64, " + base64String);
+				container.setContent(content);
+			} catch (IOException e) {
+				logger.error(e.getMessage(), e);
+				throw new BusinessException(
+						BusinessErrorCode.BASE64_INPUTSTREAM_ENCODE_ERROR,
+						e.getMessage());
+			}
+		}
+		return container;
 	}
 
 	protected void checkSupportedTemplateType(EmailContext context) {
@@ -314,6 +338,16 @@ public abstract class EmailBuilder implements IEmailBuilder {
 			// Message IDs from Web service API (ex Plugin Thunderbird)
 			container.setInReplyTo(emailCtx.getInReplyTo());
 			container.setReferences(emailCtx.getReferences());
+
+			// Add attachments
+			if (emailCtx.getLanguage().equals(Language.FRENCH)) {
+				addAttachment(container, "logo.linshare@linshare.org", "/org/linagora/linshare/core/service/email-logo-fr.png");
+			} else {
+				addAttachment(container, "logo.linshare@linshare.org", "/org/linagora/linshare/core/service/email-logo-en.png");
+			}
+			addAttachment(container, "logo.libre.and.free@linshare.org", "/org/linagora/linshare/core/service/email-libre-and-free.png");
+			addAttachment(container, "logo.arrow@linshare.org", "/org/linagora/linshare/core/service/email-arrow.png");
+
 			return container;
 		} catch (org.thymeleaf.exceptions.TemplateInputException e) {
 			String message = "[" + type.toString() + "]" + getCauseMsessage(e);
@@ -321,6 +355,15 @@ public abstract class EmailBuilder implements IEmailBuilder {
 			BusinessException businessException = new BusinessException(getBusinessErrorCodeRecursif(e), message, e);
 			throw businessException;
 		}
+	}
+
+	protected void addAttachment(MailContainerWithRecipient container, String identifier, String path) {
+		URL resource  = getClass().getResource(path);
+		if(resource == null) {
+			logger.error("Embedded logo was not found : " + identifier + " : " + path);
+			throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION, "Error sending notification : embedded logo was not found.");
+		}
+		container.addAttachment(identifier, new FileDataSource(resource.getFile()));
 	}
 
 	protected String getCauseMsessage(TemplateInputException e) {

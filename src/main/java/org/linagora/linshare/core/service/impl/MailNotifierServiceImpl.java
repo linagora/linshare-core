@@ -37,9 +37,12 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.activation.DataHandler;
+import javax.activation.DataSource;
 import javax.mail.BodyPart;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -53,7 +56,6 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.linagora.linshare.core.domain.objects.MailContainer;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -117,7 +119,8 @@ public class MailNotifierServiceImpl implements NotifierService {
 	}
 	  
 	@Override
-	public void sendNotification(String smtpSender, String replyTo, String recipient, String subject, String htmlContent, String inReplyTo, String references) throws SendFailedException {
+	public void sendNotification(String smtpSender, String replyTo, String recipient, String subject, String htmlContent,
+			String inReplyTo, String references, Map<String, DataSource> attachments) throws SendFailedException {
 
 		if (smtpServer.equals("")) {
 			logger.warn("Mail notifications are disabled.");
@@ -187,6 +190,21 @@ public class MailNotifierServiceImpl implements NotifierService {
 			alt_bp2.setContent(html_mp);
 			mp.addBodyPart(alt_bp2);
 
+			if (attachments != null) {
+				// <img src="cid:image.part.1@linshare.org" />
+				Set<String> keySet = attachments.keySet();
+				for (String identifier : keySet) {
+					DataSource dataSource = attachments.get(identifier);
+					MimeBodyPart rel_bpi = new MimeBodyPart();
+					rel_bpi.setFileName(dataSource.getName());
+					rel_bpi.setText(dataSource.getName());
+					rel_bpi.setDataHandler(new DataHandler(dataSource));
+					rel_bpi.setHeader("Content-ID", "<" + identifier + ">");
+					rel_bpi.setDisposition("inline");
+					html_mp.addBodyPart(rel_bpi);
+				}
+			}
+
 			messageMim.setContent(mp);
 			
 			// RFC 822 "Date" header field
@@ -248,16 +266,6 @@ public class MailNotifierServiceImpl implements NotifierService {
 	}
 
 	/**
-	 * Send notification giving a mailContainer object.
-	 */
-	@Override
-	public void sendNotification(String smtpSender, String replyTo, String recipient, MailContainer mailContainer) throws SendFailedException{
-		sendNotification(smtpSender, replyTo, recipient, mailContainer.getSubject(), mailContainer.getContent(), mailContainer.getInReplyTo(), mailContainer.getReferences());
-
-	}
-	
-	
-	/**
 	 * Send multiple notifications giving a mailContainerWithRecipient object.
 	 */	
 	@Override
@@ -272,7 +280,9 @@ public class MailNotifierServiceImpl implements NotifierService {
 					if (mailContainer.getRecipient() == null) {
 						logger.error("can not send mails, no recipient");
 					} else {
-						sendNotification(mailContainer.getFrom(), mailContainer.getReplyTo(), mailContainer.getRecipient(), mailContainer);
+						sendNotification(mailContainer.getFrom(), mailContainer.getReplyTo(), mailContainer.getRecipient(),
+								mailContainer.getSubject(), mailContainer.getContent(),
+								mailContainer.getInReplyTo(), mailContainer.getReferences(), mailContainer.getAttachments());
 					}
 				} catch (SendFailedException e) {
 					unknownRecipients.add(mailContainer.getRecipient());

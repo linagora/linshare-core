@@ -99,16 +99,19 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
     	String subject = "subject";
-    	String txtContent = "content";
     	Language locale = Language.ENGLISH;
     	String fromUser = "foobar@foodomain.com";
     	String fromDomain = LINSHARE_MAIL;
     	String recipient = "johndoe@unknow.com";
 
-    	MailContainer mailContainer = new MailContainer(locale,txtContent,subject);
+		MailContainerWithRecipient mailContainer = new MailContainerWithRecipient(locale);
+		mailContainer.setSubject(subject);
 		mailContainer.setContent("");
+		mailContainer.setFrom(fromDomain);
+		mailContainer.setReplyTo(fromUser);
+		mailContainer.setRecipient(recipient);
 
-    	mailNotifierService.sendNotification(fromDomain, fromUser, recipient, mailContainer);
+		mailNotifierService.sendNotification(mailContainer);
 
         if (wiser.getMessages().size() > 0) {
             WiserMessage wMsg = wiser.getMessages().get(0);
@@ -124,8 +127,8 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
         }else {
         	Assert.fail();
         }
-        
-        mailNotifierService.sendNotification(fromDomain, fromUser, recipient, subject, "<span>htmlContent</span>", null,null);
+
+        mailNotifierService.sendNotification(fromDomain, fromUser, recipient, subject, "<span>htmlContent</span>", null,null, null);
         
         if (wiser.getMessages().size() > 0) {
             WiserMessage wMsg = wiser.getMessages().get(1);
