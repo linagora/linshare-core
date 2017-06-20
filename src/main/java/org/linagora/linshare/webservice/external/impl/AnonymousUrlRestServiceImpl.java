@@ -43,7 +43,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Cookie;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
@@ -76,10 +80,15 @@ public class AnonymousUrlRestServiceImpl implements AnonymousUrlRestService{
 	@ApiOperation(value = "Find an anonymous Url", response = AnonymousUrlDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
 	@Override
-	public AnonymousUrlDto getAnonymousUrl(@PathParam(value = "urlUuid") String urlUuid,
-			@HeaderParam("linshare-anonymousurl-password") String password) {
+	public Response getAnonymousUrl(
+			@PathParam(value = "urlUuid") String urlUuid,
+			@HeaderParam("linshare-anonymousurl-password") String password,
+			@Context HttpHeaders headers) {
+		password = loadPasswordFromCookie(urlUuid, password, headers);
 		AnonymousUrlDto anonymousUrl = anonymousUrlFacade.find(urlUuid, password);
-		return anonymousUrl;
+		NewCookie cookie = new NewCookie(anonymousUrl.getUuid(), password);
+		Response.ResponseBuilder rb = Response.ok(anonymousUrl);
+		return rb.cookie(cookie).build();
 	}
 
 	@GET
@@ -91,7 +100,9 @@ public class AnonymousUrlRestServiceImpl implements AnonymousUrlRestService{
 	public ShareEntryDto getAnonymousShareEntry(
 			@PathParam(value = "urlUuid") String anonymousUrlUuid,
 			@PathParam(value = "shareEntryUuid") String shareEntryUuid,
-			@HeaderParam("linshare-anonymousurl-password") String password) {
+			@HeaderParam("linshare-anonymousurl-password") String password,
+			@Context HttpHeaders headers) {
+		password = loadPasswordFromCookie(anonymousUrlUuid, password, headers);
 		ShareEntryDto shareEntry = anonymousUrlFacade
 				.getShareEntry(anonymousUrlUuid, shareEntryUuid, password);
 		return shareEntry;
@@ -105,7 +116,9 @@ public class AnonymousUrlRestServiceImpl implements AnonymousUrlRestService{
 	@Override
 	public Response download(@PathParam(value = "urlUuid") String urlUuid,
 			@PathParam(value = "shareEntryUuid") String shareEntryUuid,
-			@HeaderParam("linshare-anonymousurl-password") String password) {
+			@HeaderParam("linshare-anonymousurl-password") String password,
+			@Context HttpHeaders headers) {
+		password = loadPasswordFromCookie(urlUuid, password, headers);
 		ShareEntryDto shareEntry = anonymousUrlFacade.getShareEntry(urlUuid,
 				shareEntryUuid, password);
 		InputStream documentStream = anonymousUrlFacade.download(urlUuid,
@@ -127,7 +140,9 @@ public class AnonymousUrlRestServiceImpl implements AnonymousUrlRestService{
 			@PathParam(value = "urlUuid") String anonymousUrlUuid,
 			@PathParam(value = "shareEntryUuid") String shareEntryUuid,
 			@HeaderParam("linshare-anonymousurl-password") String password,
-			@QueryParam("base64") @DefaultValue("false") boolean base64) {
+			@QueryParam("base64") @DefaultValue("false") boolean base64,
+			@Context HttpHeaders headers) {
+		password = loadPasswordFromCookie(anonymousUrlUuid, password, headers);
 		ShareEntryDto shareEntry = anonymousUrlFacade.getShareEntry(anonymousUrlUuid,
 				shareEntryUuid, password);
 		InputStream documentStream = anonymousUrlFacade
@@ -136,5 +151,16 @@ public class AnonymousUrlRestServiceImpl implements AnonymousUrlRestService{
 				.getThumbnailResponseBuilder(documentStream,
 						shareEntry.getName(), base64);
 		return response.build();
+	}
+
+	protected String loadPasswordFromCookie(String urlUuid, String password, HttpHeaders headers) {
+		if (password == null) {
+			Cookie cookiePwd = headers.getCookies().get(urlUuid);
+			if (cookiePwd != null) {
+				// first time cookie does not exist.
+				password = cookiePwd.getValue();
+			}
+		}
+		return password;
 	}
 }
