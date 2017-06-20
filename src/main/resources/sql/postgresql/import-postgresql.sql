@@ -1450,7 +1450,7 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
   </section>  <!--/* End of Secondary content for bottom email section */-->
   </div>
 </body>
-</html>', '250e4572-7bb9-4735-84ff-6a8af93e3a42', now(), now(), true, 'downloadBtn = Téléchargé
+</html>', '250e4572-7bb9-4735-84ff-6a8af93e3a42', now(), now(), true, 'downloadBtn = Télécharger
 downloadLink = Lien de téléchargement
 helpMsg = Cliquez sur le lien pour le télécharger.
 helpMsgPlural = Cliquez sur les liens pour les télécharger.
