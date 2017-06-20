@@ -122,6 +122,8 @@ public class ShareNewShareEmailBuilder extends EmailBuilder {
 		res.add(getExternalFakeContext2(language));
 		// share without subject and custom message
 		res.add(getUserFakeContextWithoutSubject(language));
+		// share without subject and custom message (one doc only)
+		res.add(getUserFakeContextWithoutSubject2(language));
 		return res;
 	}
 
@@ -201,6 +203,23 @@ public class ShareNewShareEmailBuilder extends EmailBuilder {
 		shares.add(getNewFakeShare("a-shared-file.txt", fakeLinshareURL));
 		shares.add(getNewFakeShare("second-shared-file.txt", fakeLinshareURL));
 		shares.add(getNewFakeShare("third-shared-file.txt", fakeLinshareURL));
+		ctx.setVariable("shares", shares);
+		ctx.setVariable("sharesCount", shares.size());
+		return ctx;
+	}
+
+	protected Context getUserFakeContextWithoutSubject2(Language language) {
+		Context ctx = newFakeContext(language);
+		ctx.setVariable("anonymous", false);
+		ctx.setVariable("customMessage", null);
+		ctx.setVariable("customSubject", null);
+		ctx.setVariable("expiryDate", getFakeExpirationDate());
+		ctx.setVariable("shareDate", new Date());
+		ctx.setVariable("shareNote", "a note for a share");
+		ctx.setVariable("shareOwner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
+		ctx.setVariable("shareRecipient", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
+		List<Share> shares = Lists.newArrayList();
+		shares.add(getNewFakeShare("a-shared-file.txt", fakeLinshareURL));
 		ctx.setVariable("shares", shares);
 		ctx.setVariable("sharesCount", shares.size());
 		return ctx;
