@@ -95,7 +95,7 @@ UPDATE domain_abstract SET mime_policy_id=1 WHERE id >= 100001;
 
 
 INSERT INTO account(id, Mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, cmis_locale, enable, password, destroyed, domain_id, purge_step) VALUES (100001, 'root@localhost.localdomain@test', 6, 'root@localhost.localdomain@test', current_date(), current_date(), 3, 'en', 'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', 0, 100001, 'IN_USE');
-INSERT INTO users(account_id, First_name, Last_name, Can_upload, Comment, Restricted, CAN_CREATE_GUEST, inconsistent) VALUES (100001, 'Administrator', 'LinShare', false, '', false, false, false);
+INSERT INTO users(account_id, First_name, Last_name, Can_upload, Comment, Restricted, CAN_CREATE_GUEST, inconsistent) VALUES (100001, 'Administrator', 'LinShare', true, '', false, false, false);
 
 
 -- root domain de test
