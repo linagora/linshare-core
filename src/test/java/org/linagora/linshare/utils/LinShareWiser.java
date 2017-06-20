@@ -59,7 +59,7 @@ public class LinShareWiser extends Wiser {
 		// \$\{[a-zA-Z]+\}
 		strPatterns.add("\\$\\{[a-zA-Z]+\\}");
 		// \?\?[a-zA-Z]+\?\?
-		strPatterns.add("\\?\\?[a-zA-Z]+\\?\\?");
+		strPatterns.add("\\?\\?[a-zA-Z_]+\\?\\?");
 		// \{[0-9]+\}
 		strPatterns.add("\\{[0-9]+\\}");
 		strPatterns.add("null");
