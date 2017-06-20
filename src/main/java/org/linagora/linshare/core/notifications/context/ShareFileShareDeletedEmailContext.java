@@ -45,6 +45,7 @@ public class ShareFileShareDeletedEmailContext extends EmailContext {
 	public ShareFileShareDeletedEmailContext(ShareEntry shareEntry) {
 		super(shareEntry.getEntryOwner().getDomain(), false);
 		this.shareEntry = shareEntry;
+		this.language = shareEntry.getRecipient().getExternalMailLocale();
 	}
 
 	public ShareEntry getShareEntry() {

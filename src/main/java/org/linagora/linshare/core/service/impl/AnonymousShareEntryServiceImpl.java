@@ -41,7 +41,6 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.AnonymousShareEntryBusinessService;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
-import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
@@ -56,8 +55,8 @@ import org.linagora.linshare.core.domain.objects.Recipient;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.notifications.context.ShareNewShareEmailContext;
 import org.linagora.linshare.core.notifications.context.ShareFileDownloadEmailContext;
+import org.linagora.linshare.core.notifications.context.ShareNewShareEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.AnonymousShareEntryResourceAccessControl;
 import org.linagora.linshare.core.repository.FavouriteRepository;
@@ -144,15 +143,11 @@ public class AnonymousShareEntryServiceImpl extends
 		}
 		sc.setSecured(passwordProtected);
 		for (Recipient recipient : sc.getAnonymousShareRecipients()) {
-			Language mailLocale = recipient.getLocale();
-			if (mailLocale == null) {
-				mailLocale = owner.getExternalMailLocale();
-			}
 			AnonymousUrl anonymousUrl = anonymousShareEntryBusinessService
 					.create(actor, owner, recipient, sc.getDocuments(), sc.getExpiryCalendar(),
 							passwordProtected, shareEntryGroup, sc.getSharingNote());
 			// Notifications
-			ShareNewShareEmailContext context = new ShareNewShareEmailContext(owner, anonymousUrl, sc, mailLocale);
+			ShareNewShareEmailContext context = new ShareNewShareEmailContext(owner, anonymousUrl, sc);
 			MailContainerWithRecipient mail = mailBuildingService.build(context);
 			sc.addMailContainer(mail);
 			sc.addLogs(anonymousUrl.getLogs());

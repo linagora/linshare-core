@@ -45,6 +45,7 @@ public class ShareWarnUndownloadedFilesharesEmailContext extends EmailContext {
 	public ShareWarnUndownloadedFilesharesEmailContext(ShareEntryGroup shareEntryGroup) {
 		super(shareEntryGroup.getOwner().getDomain(), false);
 		this.shareEntryGroup = shareEntryGroup;
+		this.language = shareEntryGroup.getOwner().getExternalMailLocale();
 	}
 
 	public ShareEntryGroup getShareEntryGroup() {

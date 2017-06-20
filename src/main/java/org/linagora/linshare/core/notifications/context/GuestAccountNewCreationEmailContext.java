@@ -52,6 +52,7 @@ public class GuestAccountNewCreationEmailContext extends EmailContext {
 		this.creator = creator;
 		this.guest = guest;
 		this.resetPasswordTokenUuid= resetPasswordTokenUuid;
+		this.language = guest.getExternalMailLocale();
 	}
 
 	public User getCreator() {

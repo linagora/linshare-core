@@ -58,6 +58,7 @@ public class ShareWarnRecipientBeforeExpiryEmailContext extends EmailContext {
 		this.shareOwner = (User) shareEntry.getEntryOwner();
 		this.day = day;
 		this.isAnonymous = false;
+		this.language = shareEntry.getRecipient().getExternalMailLocale();
 	}
 
 	public ShareWarnRecipientBeforeExpiryEmailContext(AnonymousShareEntry shareEntry, Integer day) {
@@ -66,6 +67,7 @@ public class ShareWarnRecipientBeforeExpiryEmailContext extends EmailContext {
 		this.shareOwner = (User) shareEntry.getEntryOwner();
 		this.day = day;
 		this.isAnonymous = true;
+		this.language = shareEntry.getEntryOwner().getExternalMailLocale();
 	}
 
 	public ShareEntry getShareEntry() {

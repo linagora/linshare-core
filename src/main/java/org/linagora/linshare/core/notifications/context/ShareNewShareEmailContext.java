@@ -72,12 +72,11 @@ public class ShareNewShareEmailContext extends EmailContext {
 		this.shareContainer = shareContainer;
 	}
 
-	public ShareNewShareEmailContext(User shareOwner, AnonymousUrl anonymousUrl, ShareContainer shareContainer,
-			Language language) {
+	public ShareNewShareEmailContext(User shareOwner, AnonymousUrl anonymousUrl, ShareContainer shareContainer) {
 		super(shareOwner.getDomain(), true);
 		this.shareOwner = shareOwner;
 		this.anonymousUrl = anonymousUrl;
-		this.language = language;
+		this.language = shareOwner.getExternalMailLocale();
 		this.shareRecipient = null;
 		this.shares = null;
 		this.isAnonymous = true;

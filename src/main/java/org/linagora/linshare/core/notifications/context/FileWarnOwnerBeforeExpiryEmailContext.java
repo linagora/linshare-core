@@ -48,6 +48,7 @@ public class FileWarnOwnerBeforeExpiryEmailContext extends EmailContext {
 		super(document.getEntryOwner().getDomain(), false);
 		this.document = document;
 		this.day = day;
+		this.language = document.getEntryOwner().getExternalMailLocale();
 	}
 
 	public DocumentEntry getDocument() {
