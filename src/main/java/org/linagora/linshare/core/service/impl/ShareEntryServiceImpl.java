@@ -149,7 +149,15 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		if (!share.getRecipient().equals(owner)) {
 			MailContainerWithRecipient mail = mailBuildingService
 					.buildSharedDocDeleted(share.getRecipient(), share);
-			notifierService.sendNotification(mail);
+			try {
+				notifierService.sendNotification(mail);
+			} catch (BusinessException e) {
+				if (e.getErrorCode().equals(BusinessErrorCode.RELAY_HOST_NOT_ENABLE)) {
+					logger.debug(e.getMessage(), e);
+				} else {
+					logger.warn(e.getMessage(), e);
+				}
+			}
 		}
 	}
 
