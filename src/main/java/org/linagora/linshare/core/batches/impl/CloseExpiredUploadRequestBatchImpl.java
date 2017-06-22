@@ -45,6 +45,7 @@ import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BatchBusinessException;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.Context;
 import org.linagora.linshare.core.job.quartz.UploadRequestBatchResultContext;
@@ -96,7 +97,15 @@ public class CloseExpiredUploadRequestBatchImpl extends GenericBatchImpl impleme
 			notifications.add(mailBuildingService.buildUploadRequestExpiryWarnRecipient((User) r.getOwner(), u));
 		}
 		notifications.add(mailBuildingService.buildUploadRequestExpiryWarnOwner((User) r.getOwner(), r));
-		notifierService.sendNotification(notifications);
+		try {
+			notifierService.sendNotification(notifications);
+		} catch (BusinessException e) {
+			if (e.getErrorCode().equals(BusinessErrorCode.RELAY_HOST_NOT_ENABLE)) {
+				logger.debug(e.getMessage(), e);
+			} else {
+				logger.warn(e.getMessage(), e);
+			}
+		}
 		return context;
 	}
 
