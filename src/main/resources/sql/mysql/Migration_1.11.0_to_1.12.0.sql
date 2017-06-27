@@ -103,7 +103,7 @@ BEGIN
     DECLARE local_ls_constraint_name varchar(255) DEFAULT ls_constraint_name;
     DECLARE _stmt VARCHAR(1024);
     SELECT DATABASE() INTO ls_database_name;
-    IF EXISTS (SELECT * FROM information_schema.TABLE_CONSTRAINTS WHERE table_schema = ls_database_name AND table_name = ls_table_name AND LOWER(constraint_name) = LOWER(ls_constraint_name) AND constraint_type <> 'UNIQUE' ) THEN
+    IF EXISTS (SELECT * FROM information_schema.TABLE_CONSTRAINTS WHERE table_schema = ls_database_name AND table_name = ls_table_name AND constraint_name = ls_constraint_name AND constraint_type <> 'UNIQUE' ) THEN
         SET @SQL := CONCAT('ALTER TABLE ', local_ls_table_name, ' DROP FOREIGN KEY ', local_ls_constraint_name , ";");
         select @SQL;
         PREPARE _stmt FROM @SQL;
