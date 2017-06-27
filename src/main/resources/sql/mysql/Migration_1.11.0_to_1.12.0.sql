@@ -1,6 +1,6 @@
 -- MySQL migration script from 1.11.0 to 1.12.0
 
-SET storage_engine=INNODB;
+SET default_storage_engine=INNODB;
 SET NAMES UTF8 COLLATE utf8_general_ci;
 SET CHARACTER SET UTF8;
 SET AUTOCOMMIT=0;
@@ -110,7 +110,7 @@ BEGIN
         EXECUTE _stmt;
         DEALLOCATE PREPARE _stmt;
     END IF;
-    IF EXISTS (SELECT * FROM information_schema.TABLE_CONSTRAINTS WHERE table_schema = ls_database_name AND table_name = ls_table_name AND LOWER(constraint_name) = LOWER(ls_constraint_name) AND constraint_type = 'UNIQUE' ) THEN
+    IF EXISTS (SELECT * FROM information_schema.TABLE_CONSTRAINTS WHERE table_schema = ls_database_name AND table_name = ls_table_name AND constraint_name = ls_constraint_name AND constraint_type = 'UNIQUE' ) THEN
         SET @SQL := CONCAT('ALTER TABLE ', local_ls_table_name, ' DROP INDEX ', local_ls_constraint_name , ";");
         select @SQL;
         PREPARE _stmt FROM @SQL;
@@ -204,7 +204,7 @@ BEGIN
 		get_destroyed: LOOP
 			FETCH destroyed_cursor INTO v_mail;
 
-			IF v_finished = 1 THEN 
+			IF v_finished = 1 THEN
 				LEAVE get_destroyed;
 			END IF;
 			BLOCK2:BEGIN
@@ -299,12 +299,14 @@ ALTER TABLE users DROP COLUMN mail;
 ALTER TABLE account MODIFY destroyed bigint(8) NOT NULL;
 UPDATE account AS a SET mail = ls_uuid WHERE ls_uuid = 'system';
 UPDATE account AS a SET mail = ls_uuid WHERE ls_uuid = 'system-account-uploadrequest';
+DELETE FROM account WHERE mail IS NULL;
 ALTER TABLE account MODIFY mail varchar(255) NOT NULL;
 ALTER TABLE account ADD CONSTRAINT account_unique_mail_domain_destroyed UNIQUE (mail, domain_id, destroyed);
 
 ALTER TABLE upload_request_entry ADD COLUMN upload_request_url_id bigint(8);
-ALTER TABLE upload_request_entry DROP FOREIGN KEY FKupload_req220981;
-ALTER TABLE upload_request_entry DROP INDEX FKupload_req220981;
+call ls_drop_constraint_if_exists("upload_request_entry", "fkupload_req220981");
+call ls_drop_constraint_if_exists("upload_request_entry", "FKupload_req220981");
+ALTER TABLE upload_request_entry DROP INDEX fkupload_req220981;
 
 delimiter '$$'
 CREATE PROCEDURE ls_update_upload_request_entry()
