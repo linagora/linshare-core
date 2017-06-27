@@ -272,127 +272,177 @@ INSERT INTO version (version) VALUES ('1.7.0');
 
 
 -- Functionality : UPLOAD_REQUEST
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (63, false, false, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (64, true, true, 1, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES(31, false, 'UPLOAD_REQUEST', 63, 64, 1);
-INSERT INTO functionality_string(functionality_id, string_value) VALUES (31, 'http://linshare-upload-request.local');
+INSERT INTO policy(status, default_status, policy, system) VALUES (false, false, 1, false);
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, true);
+INSERT INTO functionality(system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES(false, 'UPLOAD_REQUEST', last_insert_id() - 1, last_insert_id(), 1);
+INSERT INTO functionality_string(functionality_id, string_value) VALUES (last_insert_id(), 'http://linshare-upload-request.local');
 
 
 
 -- Functionality : UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (65, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (66, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (67, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
- VALUES(32, false, 'UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION', 65, 66, 67, 1, 'UPLOAD_REQUEST', true);
-INSERT INTO unit(id, unit_type, unit_value) VALUES (7, 0, 2);
-INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (32, 0, 7);
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+SET @policy_activation_id = last_insert_id();
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+SET @policy_configuration_id = last_insert_id();
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+SET @policy_delegation_id = last_insert_id();
+INSERT INTO functionality(system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(false, 'UPLOAD_REQUEST__DELAY_BEFORE_ACTIVATION', @policy_activation_id, @policy_configuration_id, @policy_delegation_id, 1, 'UPLOAD_REQUEST', true);
+SET @functionality_id = last_insert_id();
+INSERT INTO unit(unit_type, unit_value) VALUES (0, 2);
+INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (@functionality_id, 0, last_insert_id());
 
 -- Functionality : UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (68, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (69, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (70, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
- VALUES(33, false, 'UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION', 68, 69, 70, 1, 'UPLOAD_REQUEST', true);
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+SET @policy_activation_id = last_insert_id();
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+SET @policy_configuration_id = last_insert_id();
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+SET @policy_delegation_id = last_insert_id();
+INSERT INTO functionality(system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(false, 'UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION', @policy_activation_id, @policy_configuration_id, @policy_delegation_id, 1, 'UPLOAD_REQUEST', true);
+SET @functionality_id = last_insert_id();
 -- time unit : month
- INSERT INTO unit(id, unit_type, unit_value) VALUES (8, 0, 2);
+ INSERT INTO unit(unit_type, unit_value) VALUES (0, 2);
 -- month : 1 month
-INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (33, 1, 8);
+INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (@functionality_id, 1, last_insert_id());
 
 -- Functionality : UPLOAD_REQUEST__GROUPED_MODE
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (71, false, false, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (72, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (73, false, false, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
- VALUES(34, false, 'UPLOAD_REQUEST__GROUPED_MODE', 71, 72, 73, 1, 'UPLOAD_REQUEST', true);
-INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (34, false);
+INSERT INTO policy(status, default_status, policy, system) VALUES (false, false, 1, false);
+SET @policy_activation_id = last_insert_id();
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+SET @policy_configuration_id = last_insert_id();
+INSERT INTO policy(status, default_status, policy, system) VALUES (false, false, 1, false);
+SET @policy_delegation_id = last_insert_id();
+INSERT INTO functionality(system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(false, 'UPLOAD_REQUEST__GROUPED_MODE', @policy_activation_id, @policy_configuration_id, @policy_delegation_id, 1, 'UPLOAD_REQUEST', true);
+SET @functionality_id = last_insert_id();
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (@functionality_id, false);
 
 -- Functionality : UPLOAD_REQUEST__MAXIMUM_FILE_COUNT
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (74, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (75, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (76, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
- VALUES(35, false, 'UPLOAD_REQUEST__MAXIMUM_FILE_COUNT', 74, 75, 76, 1, 'UPLOAD_REQUEST', true);
-INSERT INTO functionality_integer(functionality_id, integer_value) VALUES (35, 3);
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+SET @policy_activation_id = last_insert_id();
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+SET @policy_configuration_id = last_insert_id();
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+SET @policy_delegation_id = last_insert_id();
+INSERT INTO functionality(system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(false, 'UPLOAD_REQUEST__MAXIMUM_FILE_COUNT', @policy_activation_id, @policy_configuration_id, @policy_delegation_id, 1, 'UPLOAD_REQUEST', true);
+INSERT INTO functionality_integer(functionality_id, integer_value) VALUES (last_insert_id(), 3);
 
 -- Functionality : UPLOAD_REQUEST__MAXIMUM_FILE_SIZE
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (77, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (78, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (79, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
- VALUES(36, false, 'UPLOAD_REQUEST__MAXIMUM_FILE_SIZE', 77, 78, 79, 1, 'UPLOAD_REQUEST', true);
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+SET @policy_activation_id = last_insert_id();
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+SET @policy_configuration_id = last_insert_id();
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+SET @policy_delegation_id = last_insert_id();
+INSERT INTO functionality(system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(false, 'UPLOAD_REQUEST__MAXIMUM_FILE_SIZE', @policy_activation_id, @policy_configuration_id, @policy_delegation_id, 1, 'UPLOAD_REQUEST', true);
+SET @functionality_id = last_insert_id();
  -- file size unit : Mega
-INSERT INTO unit(id, unit_type, unit_value) VALUES (9, 1, 1);
+INSERT INTO unit(unit_type, unit_value) VALUES (1, 1);
+SET @unit_id = last_insert_id();
 -- size : 10 Mega
-INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (36, 10, 9);
+INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (@functionality_id, 10, @unit_id);
 
 -- Functionality : UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (80, false, false, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (81, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (82, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
- VALUES(37, false, 'UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE', 80, 81, 82, 1, 'UPLOAD_REQUEST', true);
+INSERT INTO policy(status, default_status, policy, system) VALUES (false, false, 1, false);
+SET @policy_activation_id = last_insert_id();
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+SET @policy_configuration_id = last_insert_id();
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+SET @policy_delegation_id = last_insert_id();
+INSERT INTO functionality(system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(false, 'UPLOAD_REQUEST__MAXIMUM_DEPOSIT_SIZE', @policy_activation_id, @policy_configuration_id, @policy_delegation_id, 1, 'UPLOAD_REQUEST', true);
+SET @functionality_id = last_insert_id();
  -- file size unit : Mega
-INSERT INTO unit(id, unit_type, unit_value) VALUES (10, 1, 1);
+INSERT INTO unit(unit_type, unit_value) VALUES (1, 1);
 -- size : 30 Mega
-INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (37, 30, 10);
+INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (@functionality_id, 30, last_insert_id());
 
 -- Functionality : UPLOAD_REQUEST__NOTIFICATION_LANGUAGE
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (83, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (84, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (85, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
- VALUES(38, false, 'UPLOAD_REQUEST__NOTIFICATION_LANGUAGE', 83, 84, 85, 1, 'UPLOAD_REQUEST', true);
-INSERT INTO functionality_string(functionality_id, string_value) VALUES (38, 'en');
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+SET @policy_activation_id = last_insert_id();
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+SET @policy_configuration_id = last_insert_id();
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+SET @policy_delegation_id = last_insert_id();
+INSERT INTO functionality(system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(false, 'UPLOAD_REQUEST__NOTIFICATION_LANGUAGE', @policy_activation_id, @policy_configuration_id, @policy_delegation_id, 1, 'UPLOAD_REQUEST', true);
+SET @functionality_id = last_insert_id();
+INSERT INTO functionality_string(functionality_id, string_value) VALUES (@functionality_id, 'en');
 
 -- Functionality : UPLOAD_REQUEST__SECURED_URL
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (86, false, false, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (87, false, false, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (88, false, false, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
- VALUES(39, false, 'UPLOAD_REQUEST__SECURED_URL', 86, 87, 88, 1, 'UPLOAD_REQUEST', true);
-INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (39, false);
+INSERT INTO policy(status, default_status, policy, system) VALUES (false, false, 1, false);
+SET @policy_activation_id = last_insert_id();
+INSERT INTO policy(status, default_status, policy, system) VALUES (false, false, 1, false);
+SET @policy_configuration_id = last_insert_id();
+INSERT INTO policy(status, default_status, policy, system) VALUES (false, false, 1, false);
+SET @policy_delegation_id = last_insert_id();
+INSERT INTO functionality(system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(false, 'UPLOAD_REQUEST__SECURED_URL', @policy_activation_id, @policy_configuration_id, @policy_delegation_id, 1, 'UPLOAD_REQUEST', true);
+SET @functionality_id = last_insert_id();
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (@functionality_id, false);
 
 -- Functionality : UPLOAD_REQUEST__PROLONGATION
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (89, false, false, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (90, false, false, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (91, false, false, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
- VALUES(40, false, 'UPLOAD_REQUEST__PROLONGATION', 89, 90, 91, 1, 'UPLOAD_REQUEST', true);
-INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (40, false);
+INSERT INTO policy(status, default_status, policy, system) VALUES (false, false, 1, false);
+SET @policy_activation_id = last_insert_id();
+INSERT INTO policy(status, default_status, policy, system) VALUES (false, false, 1, false);
+SET @policy_configuration_id = last_insert_id();
+INSERT INTO policy(status, default_status, policy, system) VALUES (false, false, 1, false);
+SET @policy_delegation_id = last_insert_id();
+INSERT INTO functionality(system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(false, 'UPLOAD_REQUEST__PROLONGATION', @policy_activation_id, @policy_configuration_id, @policy_delegation_id, 1, 'UPLOAD_REQUEST', true);
+SET @functionality_id = last_insert_id();
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (@functionality_id, false);
 
 -- Functionality : UPLOAD_REQUEST__CAN_DELETE
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (92, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (93, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (94, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
- VALUES(41, false, 'UPLOAD_REQUEST__CAN_DELETE', 92, 93, 94, 1, 'UPLOAD_REQUEST', true);
-INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (41, true);
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+SET @policy_activation_id = last_insert_id();
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+SET @policy_configuration_id = last_insert_id();
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+SET @policy_delegation_id = last_insert_id();
+INSERT INTO functionality(system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(false, 'UPLOAD_REQUEST__CAN_DELETE', @policy_activation_id, @policy_configuration_id, @policy_delegation_id, 1, 'UPLOAD_REQUEST', true);
+SET @functionality_id = last_insert_id();
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (@functionality_id, true);
 
 -- Functionality : UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (95, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (96, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (97, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
- VALUES(42, false, 'UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION', 95, 96, 97, 1, 'UPLOAD_REQUEST', true);
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+SET @policy_activation_id = last_insert_id();
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+SET @policy_configuration_id = last_insert_id();
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+SET @policy_delegation_id = last_insert_id();
+INSERT INTO functionality(system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(false, 'UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION', @policy_activation_id, @policy_configuration_id, @policy_delegation_id, 1, 'UPLOAD_REQUEST', true);
+SET @functionality_id = last_insert_id();
 -- time unit : day
-INSERT INTO unit(id, unit_type, unit_value) VALUES (11, 0, 0);
+INSERT INTO unit(unit_type, unit_value) VALUES (0, 0);
 -- time : 7 days
-INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (42, 7, 11);
+INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (@functionality_id, 7, last_insert_id());
 
 -- Functionality : UPLOAD_REQUEST__CAN_CLOSE
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (98, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (99, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (100, true, true, 1, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
- VALUES(43, false, 'UPLOAD_REQUEST__CAN_CLOSE', 98, 99, 100, 1, 'UPLOAD_REQUEST', true);
-INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (43, true);
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+SET @policy_activation_id = last_insert_id();
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+SET @policy_configuration_id = last_insert_id();
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, false);
+SET @policy_delegation_id = last_insert_id();
+INSERT INTO functionality(system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+ VALUES(false, 'UPLOAD_REQUEST__CAN_CLOSE', @policy_activation_id, @policy_configuration_id, @policy_delegation_id, 1, 'UPLOAD_REQUEST', true);
+SET @functionality_id = last_insert_id();
+INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (@functionality_id, true);
 
  -- Functionality : UPLOAD_PROPOSITION
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (101, false, false, 2, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (102, true, true, 1, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id)
- VALUES(44, false, 'UPLOAD_PROPOSITION', 101, 102, 1);
+INSERT INTO policy(status, default_status, policy, system) VALUES (false, false, 2, false);
+SET @policy_activation_id = last_insert_id();
+INSERT INTO policy(status, default_status, policy, system) VALUES (true, true, 1, true);
+SET @policy_configuration_id = last_insert_id();
+INSERT INTO functionality(system, identifier, policy_activation_id, policy_configuration_id, domain_id)
+ VALUES(false, 'UPLOAD_PROPOSITION', @policy_activation_id, @policy_configuration_id, 1);
 
 
 TRUNCATE mail_content_lang;
@@ -525,13 +575,14 @@ INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mai
 INSERT INTO mail_content_lang(id, mail_config_id, language, mail_content_id, mail_content_type, uuid) VALUES (78, 1, 1, 78, 27, '2daaea2a-1b13-48b4-89a6-032f7e034a2d');
 
 -- system account for upload-request:
-INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id) VALUES (3, 7, 'system-account-uploadrequest', now(),now(), 3, 'en', 'en', true, false, 1);
+INSERT INTO account(account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id) VALUES (7, 'system-account-uploadrequest', now(),now(), 3, 'en', 'en', true, false, 1);
 
 -- system account for upload-proposition
-INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, password, destroyed, domain_id)
-	VALUES (4, 4, '89877610-574a-4e79-aeef-5606b96bde35', now(),now(), 5, 'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1);
+INSERT INTO account(account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, password, destroyed, domain_id)
+	VALUES (4, '89877610-574a-4e79-aeef-5606b96bde35', now(),now(), 5, 'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1);
+SET @account_id = last_insert_id();
 INSERT INTO users(account_id, first_name, last_name, mail, can_upload, comment, restricted, can_create_guest)
-	VALUES (4, null, 'Technical Account for upload proposition', 'linshare-noreply@linagora.com', false, '', false, false);
+	VALUES (@account_id, null, 'Technical Account for upload proposition', 'linshare-noreply@linagora.com', false, '', false, false);
 
 COMMIT;
 SET AUTOCOMMIT=1;
