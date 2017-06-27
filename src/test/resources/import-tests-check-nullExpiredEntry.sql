@@ -1,0 +1,22 @@
+-- entry with expiration_date is null
+INSERT INTO document(id, uuid, creation_date, type, ls_size, timestamp, check_mime_type, sha1sum, sha256sum) VALUES (5070, 'a0ef4ga3-f0b4-426a-9d19-e9c531ce53fa', '2017-06-07 17:33:45.955', 'text/plain', 75, null, false, '2434fc558b5c9000b459cb5892d92fa77fccba9c', '711072e4a7c5f7aa996848bcf8573bcc5c14e5a8d8342ae7c6393752er18a64f')
+INSERT INTO entry(id, owner_id, creation_date, modification_date, name, comment, expiration_date, uuid, meta_data, cmis_sync) VALUES (5071, 20, '2017-06-07 17:33:45.955',  '2017-06-07 17:33:45.955',  'COMETE-connectioncategoryFaux.csv', 'test', null, '7aabbcb3-df84-3cc6-820e-283008376767', null ,false)
+INSERT INTO document_entry(entry_id, document_id, ciphered, type, ls_size, sha256sum, has_thumbnail, shared)   VALUES (5071, 5070, false, 'text/plain', 75, '711072e4r7c5f7aa996848bcf8573bcc5c14e5a8d8342ae7c6393752e718a64q', false, 0)
+
+-- entry with expiration_date is null
+INSERT INTO document(id, uuid, creation_date, type, ls_size, timestamp, check_mime_type, sha1sum, sha256sum) VALUES (5073, 'a0ef4aa3-f0b4-426a-9d19-e9c531ce53fa', '2017-06-07 17:33:45.955', 'text/plain', 75, null, false, '2434fc558b5c9000b459cb5892d92fa77fccba9c', '711072e4a7c5f7aa996848bcf8573bcc5c14e5a8d8342ae7c6393752e718a64f')
+INSERT INTO entry(id, owner_id, creation_date, modification_date, name, comment, expiration_date, uuid, meta_data, cmis_sync) VALUES (5074, 20, '2017-06-07 17:33:45.955',  '2017-06-07 17:33:45.955',  'COMETE-connectioncategoryFaux.csv1', 'test', null, '7aabbcb3-df84-4cc6-820e-283008376767', null ,false)
+INSERT INTO document_entry(entry_id, document_id, ciphered, type, ls_size, sha256sum, has_thumbnail, shared)   VALUES (5074, 5073, false, 'text/plain', 75, '711072e4a7c5f7aa996848bcf8573bcc5c14e5a8d8342ae7c6393752e718a64f', false, 0)
+
+-- entry with expiration_date is setted in pass
+INSERT INTO document(id, uuid, creation_date, type, ls_size, timestamp, check_mime_type, sha1sum, sha256sum) VALUES (5075, 'a0ef4aa3-f0b4-426a-9d19-e9c531ce53f2', '2017-06-07 17:33:45.955', 'text/plain', 75, null, false, '2434fc558b5c9000b459cb5892d92fa77fccba9f', '711072e4a7c5f7aa996848bcf8573bcc5c14e5a8d8342ae7c6393752e718a64fe')
+INSERT INTO entry(id, owner_id, creation_date, modification_date, name, comment, expiration_date, uuid, meta_data, cmis_sync) VALUES (5076, 20, '2017-06-07 17:33:45.955',  '2017-06-07 17:33:45.955',  'data1.csv', 'test', '2017-06-10 17:33:45.955', '7aabbcb3-df84-4cc6-820e-2830083f6767', null ,false)
+INSERT INTO document_entry(entry_id, document_id, ciphered, type, ls_size, sha256sum, has_thumbnail, shared)   VALUES (5076, 5075, false, 'text/plain', 75, '711072e4a7c5f7aa996848bcf8573bcc5c14e5a8d8342ae7c6393752e718a64y', false, 0)
+
+-- entry with shared expired document 
+INSERT INTO document(id, uuid, creation_date, type, ls_size, timestamp, check_mime_type, sha1sum, sha256sum) VALUES (5077, 'a0ef4aa3-f0b4-426a-9d19-e9c531ce53f9', '2017-06-07 17:33:45.955', 'text/plain', 75, null, false, '2434fc558b5c9000b459cb5892d92fa77fccba9f', '711072e4a7c5f7aa996848bcf8573bcc5c14e5a8d8342ae7c6393752e718a64fr')
+INSERT INTO entry(id, owner_id, creation_date, modification_date, name, comment, expiration_date, uuid, meta_data, cmis_sync) VALUES (5078, 20, '2017-06-07 17:33:45.955',  '2017-06-07 17:33:45.955',  'data5', 'test', null, '7aabbcb3-df84-4cg6-820e-2830083f6767', null ,false)
+INSERT INTO entry(id, owner_id, creation_date, modification_date, name, comment, expiration_date, uuid, meta_data, cmis_sync) VALUES (5079, 20, '2017-06-07 17:33:45.955',  '2017-06-07 17:33:45.955',  'data5', 'test', '2017-09-19 23:59:59', '8aabbcb3-df84-4cg6-820e-2830083f6767', null ,false)
+INSERT INTO document_entry(entry_id, document_id, ciphered, type, ls_size, sha256sum, has_thumbnail, shared)   VALUES (5078, 5077, false, 'text/plain', 75, '711072e4a7c5f7aa996q48bcf8573bcc5c14e5a8d8342ae7c6393752e718a64y', false, 0)
+INSERT INTO share_entry_group(id, account_id, uuid, subject, notification_date, creation_date, modification_date, notified, processed, expiration_date) VALUES (1700, 20, '96a3f4c7-9c0e-4c9b-8c2d-b002287d61db', null, '2017-06-22 23:59:59', '2017-06-19 17:25:57.62', '2017-06-19 17:25:57.62', false, false, '2017-09-19 23:59:59')
+INSERT INTO share_entry(entry_id, document_entry_id, downloaded, recipient_id, share_entry_group_id) VALUES (5079, 5078, 0, 21, 1700)
