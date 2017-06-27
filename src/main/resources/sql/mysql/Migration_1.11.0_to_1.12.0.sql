@@ -361,6 +361,10 @@ UPDATE account set role_id = 6 WHERE id = 3;
 
 UPDATE document SET sha256sum = NULL;
 
+-- force all domains to use default mail config. Other mail config can be
+-- broken.
+UPDATE domain_abstract set mailconfig_id = 1;
+
 -- End of your migration instructions.
 
 -- LinShare version
