@@ -299,7 +299,6 @@ ALTER TABLE users DROP COLUMN mail;
 ALTER TABLE account MODIFY destroyed bigint(8) NOT NULL;
 UPDATE account AS a SET mail = ls_uuid WHERE ls_uuid = 'system';
 UPDATE account AS a SET mail = ls_uuid WHERE ls_uuid = 'system-account-uploadrequest';
-DELETE FROM account WHERE mail IS NULL;
 ALTER TABLE account MODIFY mail varchar(255) NOT NULL;
 ALTER TABLE account ADD CONSTRAINT account_unique_mail_domain_destroyed UNIQUE (mail, domain_id, destroyed);
 
