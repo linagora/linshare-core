@@ -129,7 +129,6 @@ webservice.attachment-directory=/tmp/
 
 
 #******************** SSO 
-# sso.button.hide=true
 # LemonLDAP::NG / SiteMinder HTTP request authenticator
 sso.header.user=Auth-User
 # comma separated list of ip address to be trusted :  
