@@ -53,11 +53,14 @@ public class DomainQuotaDto extends QuotaDto {
 	@ApiModelProperty(value = "List of all quota containers.")
 	List<String> containerUuids;
 
+	protected Long currentValueForSubdomains;
+
 	public DomainQuotaDto() {
 	}
 
 	public DomainQuotaDto(DomainQuota quota) {
 		super(quota);
+		this.currentValueForSubdomains = quota.getCurrentValueForSubdomains();
 	}
 
 	public List<String> getContainerUuids() {
@@ -66,6 +69,14 @@ public class DomainQuotaDto extends QuotaDto {
 
 	public void setContainerUuids(List<String> containerUuids) {
 		this.containerUuids = containerUuids;
+	}
+
+	public Long getCurrentValueForSubdomains() {
+		return currentValueForSubdomains;
+	}
+
+	public void setCurrentValueForSubdomains(Long currentValueForSubdomains) {
+		this.currentValueForSubdomains = currentValueForSubdomains;
 	}
 
 	public void addContainerUuids(String containerUuid) {
