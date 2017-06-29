@@ -98,7 +98,7 @@ public class ShareEntryGroupServiceImpl extends GenericServiceImpl<Account, Shar
 			// AKO : Remove the entry from the list first to avoid hibernate
 			// ObjectDeleted exception.
 			seg.getShareEntries().remove(se);
-			shareEntryService.delete(actor, actor, se.getUuid());
+			shareEntryService.delete(actor, actor, se.getUuid(), null);
 		}
 		for (AnonymousShareEntry ase : seg.getAnonymousShareEntries()) {
 //			AKO : Remove the entry from the list first to avoid hibernate ObjectDeleted exception.

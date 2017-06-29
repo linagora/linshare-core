@@ -34,65 +34,30 @@
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import java.util.List;
+import java.util.Set;
 
-import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.facade.webservice.admin.AuditLogEntryFacade;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.admin.AuditLogEntryAdminFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 
-public class AuditLogEntryFacadeImpl extends AdminGenericFacadeImpl implements AuditLogEntryFacade {
+public class AuditLogEntryAdminFacadeImpl extends AdminGenericFacadeImpl implements AuditLogEntryAdminFacade {
 
 	AuditLogEntryService service;
 
-	public AuditLogEntryFacadeImpl(AccountService accountService, AuditLogEntryService service) {
+	public AuditLogEntryAdminFacadeImpl(AccountService accountService, AuditLogEntryService service) {
 		super(accountService);
 		this.service = service;
 	}
 
 	@Override
-	public List<AuditLogEntryAdmin> findAll() {
-		Account authUser = checkAuthentication(Role.ADMIN);
-		return service.findAll(authUser);
-	}
-
-	@Override
-	public List<AuditLogEntryAdmin> findByDomain(String uuid) {
-		Account authUser = checkAuthentication(Role.ADMIN);
-		return service.findByDomain(authUser, uuid);
-	}
-
-	@Override
-	public List<AuditLogEntryAdmin> findByType(AuditLogEntryType type) {
-		Account authUser = checkAuthentication(Role.ADMIN);
-		return service.findByType(authUser, type);
-	}
-
-	@Override
-	public List<AuditLogEntryAdmin> findByAction(String action) {
-		Account authUser = checkAuthentication(Role.ADMIN);
-		return service.findByAction(authUser, action);
-	}
-
-	@Override
-	public List<AuditLogEntryUser> userFindAll() {
-		Account authUser = checkAuthentication(Role.ADMIN);
-		return service.userFindAll(authUser);
-	}
-
-	@Override
-	public List<AuditLogEntryUser> userFindByAction(String action) {
-		Account authUser = checkAuthentication(Role.ADMIN);
-		return service.userFindByAction(authUser, action);
-	}
-
-	@Override
-	public List<AuditLogEntryUser> userFindByType(AuditLogEntryType type) {
-		Account authUser = checkAuthentication(Role.ADMIN);
-		return service.userFindByType(authUser, type);
+	public Set<AuditLogEntry> findAll(List<String> action, List<String> type, boolean forceAll, String beginDate,
+			String endDate) throws BusinessException {
+		Account authUser = checkAuthentication(Role.SUPERADMIN);
+		return service.findAll(authUser, action, type, forceAll, beginDate, endDate);
 	}
 
 }

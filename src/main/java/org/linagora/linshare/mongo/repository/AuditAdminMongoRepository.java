@@ -33,21 +33,32 @@
  */
 package org.linagora.linshare.mongo.repository;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
+import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
-public interface AuditAdminMongoRepository extends MongoRepository<AuditLogEntryAdmin, String> {
+public interface AuditAdminMongoRepository extends MongoRepository<AuditLogEntry, String> {
 
-	List<AuditLogEntryAdmin> findByAction(String action);
+	List<AuditLogEntry> findByAction(String action);
 
-	List<AuditLogEntryAdmin> findByTargetDomainUuid(String domain);
+//	List<AuditLogEntry> findByTargetDomainUuid(String domain);
 
 	@Query("{ 'actor.uuid' : ?0 }")
-	List<AuditLogEntryAdmin> findByActor(String actor);
+	List<AuditLogEntry> findByActor(String actor);
 
-	List<AuditLogEntryAdmin> findByType(AuditLogEntryType type);
+	List<AuditLogEntry> findByType(AuditLogEntryType type);
+
+	@Query("{'action' : {'$in' : ?0 }, 'type' : { '$in' : ?1 } , 'creationDate' : { '$gt' : '?2' , '$lt' : '?3'} }")
+	Set<AuditLogEntry> findAll(List<LogAction> actions, List<AuditLogEntryType> types, Date beginDate,
+			Date endDate);
+
+	@Query("{ 'action' : {'$in' : ?0 }, 'type' : { '$in' : ?1 } }")
+	Set<AuditLogEntry> findAll(List<LogAction> actions, List<AuditLogEntryType> types);
+
 }

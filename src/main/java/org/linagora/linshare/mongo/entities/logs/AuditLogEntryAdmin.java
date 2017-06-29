@@ -36,28 +36,13 @@ package org.linagora.linshare.mongo.entities.logs;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
 
-import org.codehaus.jackson.annotate.JsonSubTypes;
-import org.codehaus.jackson.annotate.JsonSubTypes.Type;
-import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
-@JsonSubTypes({ @Type(value = DomainAuditLogEntry.class, name = "domain_audit"),
-	@Type(value = DomainPatternAuditLogEntry.class, name = "domain_pattern_audit"),
-	@Type(value = LdapConnectionAuditLogEntry.class, name = "ldap_connection_audit"),
-	@Type(value = FunctionalityAuditLogEntry.class, name = "ldap_connection_audit")
-		})
 @XmlRootElement(name = "AuditLogEntryAdmin")
-@XmlSeeAlso({ DomainAuditLogEntry.class,
-	DomainPatternAuditLogEntry.class,
-	LdapConnectionAuditLogEntry.class,
-	FunctionalityAuditLogEntry.class
-	})
 public abstract class AuditLogEntryAdmin extends AuditLogEntry {
 
 	protected String targetDomainUuid;

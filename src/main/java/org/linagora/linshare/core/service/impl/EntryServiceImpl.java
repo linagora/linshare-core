@@ -78,11 +78,6 @@ public class EntryServiceImpl implements EntryService {
 		documentEntryService.delete(actor, owner, documentEntry.getUuid());
 	}
 
-	@Override
-	public void deleteAllInconsistentShareEntries(Account actor, DocumentEntry documentEntry) throws BusinessException {
-			deleteAllShareEntries(actor, documentEntry.getEntryOwner(), documentEntry);
-	}
-
 	private void deleteAllShareEntries(Account actor, Account owner, DocumentEntry entry) throws BusinessException {
 		List<String> a = new ArrayList<String>();
 		List<String> b = new ArrayList<String>();
@@ -100,7 +95,7 @@ public class EntryServiceImpl implements EntryService {
 		}
 
 		for (String uuid : b) {
-			shareEntryService.delete(owner, owner, uuid);
+			shareEntryService.delete(owner, owner, uuid, null);
 		}
 	}
 
@@ -115,7 +110,7 @@ public class EntryServiceImpl implements EntryService {
 	@Override
 	public void deleteAllReceivedShareEntries(Account actor, User recipient) throws BusinessException {
 		for (ShareEntry shareEntry : shareEntryService.findAllMyRecievedShareEntries(actor, recipient)) {
-			shareEntryService.delete(actor, actor, shareEntry.getUuid());
+			shareEntryService.delete(actor, actor, shareEntry.getUuid(), null);
 		}
 	}
 }

@@ -155,7 +155,7 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="mailActivationService" />
 	</bean>
-	<bean id="wsAuditLogEntryFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.AuditLogEntryFacadeImpl">
+	<bean id="wsAuditLogEntryFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.AuditLogEntryAdminFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="auditLogEntryService" />
 	</bean>

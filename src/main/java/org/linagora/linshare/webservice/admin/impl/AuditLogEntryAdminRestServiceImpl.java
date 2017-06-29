@@ -35,18 +35,18 @@
 package org.linagora.linshare.webservice.admin.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
-import org.linagora.linshare.core.facade.webservice.admin.AuditLogEntryFacade;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.core.facade.webservice.admin.AuditLogEntryAdminFacade;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 import org.linagora.linshare.webservice.admin.AuditLogEntryAdminRestService;
 
 @Path("/audit")
@@ -54,9 +54,9 @@ import org.linagora.linshare.webservice.admin.AuditLogEntryAdminRestService;
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public class AuditLogEntryAdminRestServiceImpl implements AuditLogEntryAdminRestService {
 
-	private AuditLogEntryFacade auditLogFacade;
+	private AuditLogEntryAdminFacade auditLogFacade;
 
-	public AuditLogEntryAdminRestServiceImpl(AuditLogEntryFacade facade) {
+	public AuditLogEntryAdminRestServiceImpl(AuditLogEntryAdminFacade facade) {
 		super();
 		this.auditLogFacade = facade;
 	}
@@ -64,50 +64,12 @@ public class AuditLogEntryAdminRestServiceImpl implements AuditLogEntryAdminRest
 	@Path("/")
 	@GET
 	@Override
-	public List<AuditLogEntryAdmin> findAll() {
-		return auditLogFacade.findAll();
-	}
-
-	@Path("/{action}")
-	@GET
-	@Override
-	public List<AuditLogEntryAdmin> findByAction(@PathParam("action") String action) {
-		return auditLogFacade.findByAction(action);
-	}
-
-	@Path("/byDomain/{domainUuid}")
-	@GET
-	@Override
-	public List<AuditLogEntryAdmin> findByDomainUuid(@PathParam("domainUuid") String domainUuid) {
-		return auditLogFacade.findByDomain(domainUuid);
-	}
-
-	@Path("byType/{type}")
-	@GET
-	@Override
-	public List<AuditLogEntryAdmin> findByType(@PathParam("type") String type) {
-		return auditLogFacade.findByType(AuditLogEntryType.fromString(type));
-	}
-
-	@Path("/user")
-	@GET
-	@Override
-	public List<AuditLogEntryUser> userFindAll() {
-		return auditLogFacade.userFindAll();
-	}
-
-	@Path("/user/{action}")
-	@GET
-	@Override
-	public List<AuditLogEntryUser> userFindByAction(@PathParam("action") String action) {
-		return auditLogFacade.userFindByAction(action);
-	}
-
-	@Path("/user/byType/{type}")
-	@GET
-	@Override
-	public List<AuditLogEntryUser> userFindByType(@PathParam("type") String type) {
-		return auditLogFacade.userFindByType(AuditLogEntryType.fromString(type));
+	public Set<AuditLogEntry> findAll(@QueryParam("action") List<String> action,
+			@QueryParam("type") List<String> type,
+			@QueryParam("forceAll") @DefaultValue("false") boolean forceAll,
+			@QueryParam("beginDate") String beginDate,
+			@QueryParam("endDate") String endDate) {
+		return auditLogFacade.findAll(action, type, forceAll, beginDate, endDate);
 	}
 
 }

@@ -35,24 +35,12 @@
 package org.linagora.linshare.webservice.admin;
 
 import java.util.List;
+import java.util.Set;
 
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 
 public interface AuditLogEntryAdminRestService {
 
-	List<AuditLogEntryAdmin> findAll();
-
-	List<AuditLogEntryAdmin> findByAction(String action);
-
-	List<AuditLogEntryAdmin> findByDomainUuid(String domainUuid);
-
-	List<AuditLogEntryAdmin> findByType(String type);
-
-	List<AuditLogEntryUser> userFindAll();
-
-	List<AuditLogEntryUser> userFindByAction(String action);
-
-	List<AuditLogEntryUser> userFindByType(String type);
-
+	public Set<AuditLogEntry> findAll(List<String> action, List<String> type, boolean forceAll, String beginDate,
+			String endDate);
 }

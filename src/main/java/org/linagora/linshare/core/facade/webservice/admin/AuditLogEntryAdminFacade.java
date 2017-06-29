@@ -34,25 +34,13 @@
 package org.linagora.linshare.core.facade.webservice.admin;
 
 import java.util.List;
+import java.util.Set;
 
-import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 
-public interface AuditLogEntryFacade extends AdminGenericFacade {
+public interface AuditLogEntryAdminFacade extends AdminGenericFacade {
 
-	List<AuditLogEntryAdmin> findAll();
-
-	List<AuditLogEntryAdmin> findByAction(String action);
-
-	List<AuditLogEntryAdmin> findByDomain(String uuid);
-
-	List<AuditLogEntryAdmin> findByType(AuditLogEntryType type);
-
-	List<AuditLogEntryUser> userFindAll();
-
-	List<AuditLogEntryUser> userFindByAction(String action);
-
-	List<AuditLogEntryUser> userFindByType(AuditLogEntryType type);
-
+	Set<AuditLogEntry> findAll(List<String> action, List<String> type, boolean forceAll,
+			String beginDate, String endDate) throws BusinessException;
 }

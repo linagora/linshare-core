@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.service;
 
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -48,8 +47,6 @@ public interface EntryService {
 	 * @throws BusinessException
 	 */
 	public void deleteAllShareEntriesWithDocumentEntry(Account actor, Account owner, String docEntryUuid) throws BusinessException;
-
-	public void deleteAllInconsistentShareEntries(Account actor, DocumentEntry documentEntry) throws BusinessException;
 
 	/**
 	 * All The document entries own by the user "owner" and all its shares will be removed. No mail will be sent.

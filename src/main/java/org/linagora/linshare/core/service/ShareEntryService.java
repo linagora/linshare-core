@@ -50,16 +50,6 @@ public interface ShareEntryService {
 
 	ShareEntry find(Account actor, Account owner, String uuid)  throws BusinessException ;
 
-	/**
-	 * This method delete a share without specifying LogActionCause. TODO Should be removed.
-	 * @param actor
-	 * @param owner
-	 * @param uuid
-	 * @throws BusinessException
-	 */
-	@Deprecated
-	void delete(Account actor, Account owner, String uuid) throws BusinessException;
-
 	void delete(Account actor, Account owner, String uuid, LogActionCause cause) throws BusinessException;
 
 	DocumentEntry copy(Account actor, Account owner, String shareUuid) throws BusinessException;

@@ -36,28 +36,13 @@ package org.linagora.linshare.core.service;
 import java.util.List;
 import java.util.Set;
 
-import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface AuditLogEntryService {
-
-	List<AuditLogEntryAdmin> findAll(Account actor);
-
-	List<AuditLogEntryAdmin> findByAction(Account actor, String action);
-
-	List<AuditLogEntryAdmin> findByDomain(Account actor, String uuid);
-
-	List<AuditLogEntryAdmin> findByType(Account actor, AuditLogEntryType type);
-
-	List<AuditLogEntryUser> userFindAll(Account actor);
-
-	List<AuditLogEntryUser> userFindByAction(Account actor, String action);
-
-	List<AuditLogEntryUser> userFindByType(Account actor, AuditLogEntryType type);
 
 	Set<AuditLogEntryUser> findAll(Account actor, Account owner, List<String> action, List<String> type, boolean forceAll, String beginDate, String endDate);
 
@@ -66,4 +51,5 @@ public interface AuditLogEntryService {
 	Set<AuditLogEntryUser> findAll(Account actor, Account owner, String entryUuid, List<String> actions,
 			List<String> types, String beginDate, String endDate);
 
+	Set<AuditLogEntry> findAll(Account actor, List<String> action, List<String> type, boolean forceAll, String beginDate, String endDate);
 }

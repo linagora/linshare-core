@@ -53,7 +53,7 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
@@ -87,55 +87,6 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 	}
 
 	@Override
-	public List<AuditLogEntryAdmin> findAll(Account actor) {
-		Validate.notNull(actor);
-		List<AuditLogEntryAdmin> res = auditMongoRepository.findAll();
-		return res;
-	}
-
-	@Override
-	public List<AuditLogEntryAdmin> findByAction(Account actor, String action) {
-		Validate.notNull(actor);
-		Validate.notEmpty(action);
-		return auditMongoRepository.findByAction(action);
-	}
-
-	@Override
-	public List<AuditLogEntryAdmin> findByDomain(Account actor, String uuid) {
-		Validate.notNull(actor);
-		Validate.notEmpty(uuid);
-		domainService.findById(uuid);
-		return auditMongoRepository.findByTargetDomainUuid(uuid);
-	}
-
-	@Override
-	public List<AuditLogEntryAdmin> findByType(Account actor, AuditLogEntryType type) {
-		Validate.notNull(actor);
-		Validate.notNull(type);
-		return auditMongoRepository.findByType(type);
-	}
-
-	@Override
-	public List<AuditLogEntryUser> userFindAll(Account actor) {
-		Validate.notNull(actor);
-		return (List<AuditLogEntryUser>) userMongoRepository.findAll();
-	}
-
-	@Override
-	public List<AuditLogEntryUser> userFindByAction(Account actor, String action) {
-		Validate.notNull(actor);
-		Validate.notEmpty(action);
-		return userMongoRepository.findByAction(action);
-	}
-
-	@Override
-	public List<AuditLogEntryUser> userFindByType(Account actor, AuditLogEntryType type) {
-		Validate.notNull(actor);
-		Validate.notNull(type);
-		return userMongoRepository.findByType(type);
-	}
-
-	@Override
 	public Set<AuditLogEntryUser> findAll(Account actor, Account owner, List<String> action, List<String> type,
 			boolean forceAll, String beginDate, String endDate) {
 		Validate.notNull(actor);
@@ -144,7 +95,7 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 		List<LogAction> actions = getActions(action);
 		List<AuditLogEntryType> types = getEntryTypes(type, null);
 		if (forceAll) {
-			res = userMongoRepository.findForUser(actor.getLsUuid(), actions, types);
+			res = userMongoRepository.findForUser(owner.getLsUuid(), actions, types);
 		} else {
 			Date end = getEndDate(endDate);
 			Date begin = getBeginDate(beginDate, end);
@@ -152,6 +103,28 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 		}
 //		checkListPermission(actor, owner, AuditLogEntryUser.class, BusinessErrorCode.BAD_REQUEST,
 //				res.iterator().next());
+		return res;
+	}
+
+	@Override
+	public Set<AuditLogEntry> findAll(Account actor, List<String> action, List<String> type,
+			boolean forceAll, String beginDate, String endDate) {
+		Validate.notNull(actor);
+		if (!actor.hasSuperAdminRole()) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not allowed to use this api."); 
+		}
+		Set<AuditLogEntry> res = Sets.newHashSet();
+		List<LogAction> actions = getActions(action);
+		List<AuditLogEntryType> types = getEntryTypes(type, null);
+		if (actor.hasSuperAdminRole()) {
+			if (forceAll) {
+				res = auditMongoRepository.findAll(actions, types);
+			} else {
+				Date end = getEndDate(endDate);
+				Date begin = getBeginDate(beginDate, end);
+				res = auditMongoRepository.findAll(actions, types, begin, end);
+			}
+		}
 		return res;
 	}
 

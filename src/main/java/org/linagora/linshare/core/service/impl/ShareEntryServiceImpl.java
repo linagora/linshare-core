@@ -135,19 +135,6 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		return entry;
 	}
 
-	/**
-	 * This method delete a share without specifying LogActionCause. TODO Should be removed.
-	 * @param actor
-	 * @param owner
-	 * @param uuid
-	 * @throws BusinessException
-	 */
-	@Deprecated
-	@Override
-	public void delete(Account actor, Account owner, String uuid) throws BusinessException {
-		this.delete(actor, owner, uuid, null);
-	}
-
 	@Override
 	public void delete(Account actor, Account owner, String uuid, LogActionCause cause)
 			throws BusinessException {
@@ -170,6 +157,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			log.addRelatedAccounts(senderUuid);
 			EventNotification event = new EventNotification(log, senderUuid);
 			logEntryService.insert(log, event);
+			// Mail to the sender ?
 		} else {
 			// The sender is deleting the current share, we need to warn the recipient.
 			String recipientUuid = share.getRecipient().getLsUuid();

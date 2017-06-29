@@ -37,6 +37,7 @@ package org.linagora.linshare.core.service;
 import java.util.Date;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
@@ -50,7 +51,7 @@ public interface ShareService {
 			throws BusinessException;
 
 	public DocumentEntry deleteAllShareEntries(Account actor, Account owner,
-			String docEntryUuid) throws BusinessException;
+			String docEntryUuid, LogActionCause actionCause) throws BusinessException;
 
 	public Entry delete(Account actor, Account owner, String entryUuid) throws BusinessException;
 

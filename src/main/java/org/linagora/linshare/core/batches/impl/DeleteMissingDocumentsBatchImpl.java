@@ -40,6 +40,7 @@ import java.util.Set;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
+import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -120,7 +121,7 @@ public class DeleteMissingDocumentsBatchImpl extends GenericBatchImpl {
 					if (documentEntryService.getRelatedEntriesCount(actor, owner,
 							documentEntry) > 0) {
 						shareService.deleteAllShareEntries(actor, owner,
-								documentEntry.getUuid());
+								documentEntry.getUuid(), LogActionCause.INCONSISTENCY);
 					}
 					documentEntryService.deleteInconsistentDocumentEntry(actor,
 							documentEntry);

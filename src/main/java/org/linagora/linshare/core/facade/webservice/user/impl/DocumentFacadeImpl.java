@@ -47,6 +47,7 @@ import javax.activation.DataHandler;
 import org.apache.commons.lang.Validate;
 import org.apache.cxf.helpers.IOUtils;
 import org.linagora.linshare.core.business.service.EntryBusinessService;
+import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -209,7 +210,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(uuid, "Missing required document uuid");
 		logger.debug("deleting for document : " + uuid);
 		User actor = checkAuthentication();
-		DocumentEntry documentEntry = shareService.deleteAllShareEntries(actor, actor, uuid);
+		DocumentEntry documentEntry = shareService.deleteAllShareEntries(actor, actor, uuid, LogActionCause.UNDEFINED);
 		documentEntryService.delete(actor, actor, uuid);
 		return new DocumentDto(documentEntry);
 	}

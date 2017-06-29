@@ -42,6 +42,7 @@ import java.util.Set;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.EntryBusinessService;
 import org.linagora.linshare.core.domain.constants.EntryType;
+import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
@@ -410,7 +411,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 
 	@Override
 	public DocumentEntry deleteAllShareEntries(Account actor, Account owner,
-			String docEntryUuid) throws BusinessException {
+			String docEntryUuid, LogActionCause actionCause) throws BusinessException {
 		DocumentEntry entry = documentEntryService.find(actor, owner,
 				docEntryUuid);
 		List<AnonymousShareEntry> list1 = entryBusinessService.findAllMyAnonymousShareEntries((User)owner, entry);
@@ -419,7 +420,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			anonymousShareEntryService.delete(actor, owner, share.getUuid());
 		}
 		for (ShareEntry share : list2) {
-			shareEntryService.delete(actor, owner, share.getUuid());
+			shareEntryService.delete(actor, owner, share.getUuid(), actionCause);
 		}
 		return documentEntryService.find(actor, owner, entry.getUuid());
 	}
@@ -436,7 +437,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			throw new BusinessException(BusinessErrorCode.SHARE_NOT_FOUND, msg);
 		}
 		if (entry.getEntryType().equals(EntryType.SHARE)) {
-			shareEntryService.delete(actor, owner, entryUuid);
+			shareEntryService.delete(actor, owner, entryUuid, LogActionCause.UNDEFINED);
 		} else if (entry.getEntryType().equals(EntryType.ANONYMOUS_SHARE)) {
 			anonymousShareEntryService.delete(actor, owner, entryUuid);
 		} else {

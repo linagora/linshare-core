@@ -37,8 +37,13 @@ import java.util.Date;
 import java.util.UUID;
 
 import javax.persistence.GeneratedValue;
+import javax.xml.bind.annotation.XmlSeeAlso;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonSubTypes;
+import org.codehaus.jackson.annotate.JsonTypeInfo;
+import org.codehaus.jackson.annotate.JsonSubTypes.Type;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
@@ -46,6 +51,39 @@ import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonSubTypes({ @Type(value = ShareEntryAuditLogEntry.class, name = "share_audit"),
+		@Type(value = ThreadAuditLogEntry.class, name = "thread_audit"),
+		@Type(value = ThreadMemberAuditLogEntry.class, name = "thread_member_audit"),
+		@Type(value = UserAuditLogEntry.class, name = "user_audit"),
+		@Type(value = GuestAuditLogEntry.class, name = "guest_audit"),
+		@Type(value = MailingListAuditLogEntry.class, name = "mailing_list_audit"),
+		@Type(value = MailingListContactAuditLogEntry.class, name = "mailing_list_contact_audit"),
+		@Type(value = UploadRequestAuditLogEntry.class, name = "upload_request_audit"),
+		@Type(value = UploadRequestGroupAuditLogEntry.class, name = "upload_request_group_audit"),
+		@Type(value = UserPreferenceAuditLogEntry.class, name = "user_preference_audit"),
+		@Type(value = DomainAuditLogEntry.class, name = "domain_audit"),
+		@Type(value = DomainPatternAuditLogEntry.class, name = "domain_pattern_audit"),
+		@Type(value = LdapConnectionAuditLogEntry.class, name = "ldap_connection_audit"),
+		@Type(value = FunctionalityAuditLogEntry.class, name = "ldap_connection_audit")
+	})
+@XmlSeeAlso({ ShareEntryAuditLogEntry.class,
+	DocumentEntryAuditLogEntry.class,
+	ThreadAuditLogEntry.class,
+	ThreadMemberAuditLogEntry.class,
+	UserAuditLogEntry.class,
+	GuestAuditLogEntry.class,
+	MailingListContactAuditLogEntry.class,
+	MailingListAuditLogEntry.class,
+	UploadRequestAuditLogEntry.class,
+	UploadRequestGroupAuditLogEntry.class,
+	UserPreferenceAuditLogEntry.class,
+	DomainAuditLogEntry.class,
+	DomainPatternAuditLogEntry.class,
+	LdapConnectionAuditLogEntry.class,
+	FunctionalityAuditLogEntry.class
+	})
 @Document(collection="audit_log_entries")
 public class AuditLogEntry {
 
