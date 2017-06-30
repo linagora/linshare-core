@@ -104,6 +104,17 @@ function update_postgresql ()
 
 }
 
+function update_migration_1_12 ()
+{
+    l_upgrade_1_12_src=../src/main/resources/sql/postgresql/Migration_1.12.0_to_2.0.0.sql
+    l_upgrade_1_12_dest=../src/main/resources/sql/postgresql/Migration_1.12.0_to_2.0.0.sql.new
+    sed -r -e '1,/-- ###BEGIN-PART-2###/ !d' ${l_upgrade_1_12_src} > ${l_upgrade_1_12_dest}
+    cat ${g_output_clean} >> ${l_upgrade_1_12_dest}
+    sed -r -e '/###END-PART-2###/,$ !d' ${l_upgrade_1_12_src} >> ${l_upgrade_1_12_dest}
+    echo update update_migration_1_12 sql file :
+    mv -v ${l_upgrade_1_12_dest} ${l_upgrade_1_12_src}
+}
+
 
 
 ####### MAIN
@@ -127,6 +138,7 @@ if [ -z "${g_step}" ] ; then
     update_postgresql
     update_embedded
     update_reset_script
+    update_migration_1_12
 else
     for func in ${g_step}
     do
