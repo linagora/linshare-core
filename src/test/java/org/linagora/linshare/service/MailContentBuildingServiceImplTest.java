@@ -83,7 +83,7 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 	 */
 	private boolean sendMail = false;
 
-	private String recipientForSendMail = "bart.simpson@int1.linshare.dev";
+	private String recipientForSendMail = "felton.gumper@int6.linshare.dev";
 
 	@Test
 	public void testBuildAllMails() throws BusinessException {
@@ -100,6 +100,8 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 					for (int flavor = 0; flavor < contexts.size(); flavor++) {
 						MailContainerWithRecipient build = mailBuildingService.fakeBuild(type, cfg, lang, flavor);
 						findErrors.addAll(testMailGenerate(type, build));
+						String subject = type + " : CONTEXT=" + flavor + " : " + "LANG=" + lang + " : ";
+						build.setSubject(subject + build.getSubject());
 						sendMail(build);
 					}
 				}
@@ -124,8 +126,8 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 
 	@Test
 	public void testBuildOneMail() throws BusinessException {
-		this.executeSqlScript("import-mails-hibernate3.sql", false);
 		logger.info(LinShareTestConstants.BEGIN_TEST);
+		this.executeSqlScript("import-mails-hibernate3.sql", false);
 		MailConfig cfg = domainBusinessService.getUniqueRootDomain().getCurrentMailConfiguration();
 		MailContentType type = MailContentType.SHARE_WARN_UNDOWNLOADED_FILESHARES;
 		logger.info("Building mail {} ", type);
@@ -134,6 +136,8 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		for (int flavor = 0; flavor < contexts.size(); flavor++) {
 			MailContainerWithRecipient build = mailBuildingService.fakeBuild(type, cfg, Language.FRENCH, flavor);
 			findErrors.addAll(testMailGenerate(type, build));
+			String subject = type + " : CONTEXT=" + flavor + " : " + "LANG=" + Language.FRENCH + " : ";
+			build.setSubject(subject + build.getSubject());
 			sendMail(build);
 		}
 		if (!findErrors.isEmpty()) {
@@ -153,6 +157,7 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 	private void sendMail(MailContainerWithRecipient mail) {
 		if (sendMail) {
 			mail.setRecipient(recipientForSendMail);
+			mail.setFrom("linshare-noreply@linagora.com");
 			notifierService.sendNotification(mail);
 		}
 	}
