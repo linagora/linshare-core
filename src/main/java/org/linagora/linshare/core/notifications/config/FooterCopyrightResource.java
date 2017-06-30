@@ -54,7 +54,7 @@ public class FooterCopyrightResource extends LinShareTemplateResource {
 					, "copyrightText =  Vous utilisez la version libre et gratuite de "
 					, "<a href=\"http://www.linshare.org/\" style=\"text-decoration:none;color:#b2b2b2;\" target=\"_blank\">"
 					, "<strong>LinShare</strong>™</a>"
-					, ", développé par "
+					, ", développée par "
 					, "<a href=\"http://www.linagora.com/\" style=\"text-decoration:none;color:#b2b2b2;\" target=\"_blank\">"
 					, "<strong>Linagora</strong> ©</a>"
 					, " 2009–2017."
@@ -70,7 +70,7 @@ public class FooterCopyrightResource extends LinShareTemplateResource {
 					, "<a href=\"http://www.linagora.com/\" style=\"text-decoration:none;color:#b2b2b2;\" target=\"_blank\">"
 					, "<strong>Linagora</strong> ©</a>"
 					, " 2009–2017."
-					, " Contribute to Linshare R&amp;D by subscribing to an Enterprise offer."
+					, " Contribute to LinShare R&amp;D by subscribing to an Enterprise offer."
 					, "\n"
 					);
 		}
