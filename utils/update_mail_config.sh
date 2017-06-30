@@ -3,6 +3,7 @@ set -e
 
 g_import_src=../src/main/resources/sql/postgresql/import-postgresql.sql
 g_import_new=../src/main/resources/sql/postgresql/import-postgresql.sql.new
+g_reset_default_emails=../src/main/resources/sql/postgresql/reset-default-emails-config.sql
 g_host=127.0.0.1
 g_port=5432
 g_database=linshare
@@ -71,6 +72,26 @@ DELETE FROM mail_layout ;
 
 }
 
+function update_reset_script ()
+{
+    echo update reset default emails sql file :
+    echo "
+    BEGIN;
+UPDATE domain_abstract SET mailconfig_id = null where mailconfig_id = 1;
+DELETE FROM mail_content_lang WHERE id < 1000;
+DELETE FROM mail_footer_lang WHERE id < 1000;
+DELETE FROM mail_config WHERE id = 1;
+DELETE FROM mail_content WHERE id < 1000;
+DELETE FROM mail_footer WHERE id < 1000;
+DELETE FROM mail_layout WHERE id < 1000;
+" > ${g_reset_default_emails}
+    cat ${g_output_clean} >> ${g_reset_default_emails}
+    sed -i -e '/UPDATE domain_abstract SET mailconfig_id = 1;/ d' ${g_reset_default_emails}
+    echo "UPDATE domain_abstract SET mailconfig_id = 1 where mailconfig_id is null;
+COMMIT;" >> ${g_reset_default_emails}
+    echo "reset default emails file updated : ${g_reset_default_emails}"
+}
+
 function update_postgresql ()
 {
     sed -r -e '/-- ###BEGIN-PART-1###/,/###END-PART-1###/ !d' ${g_import_src} > ${g_import_new}
@@ -105,6 +126,7 @@ if [ -z "${g_step}" ] ; then
     dump_and_clean
     update_postgresql
     update_embedded
+    update_reset_script
 else
     for func in ${g_step}
     do
