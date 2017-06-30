@@ -42,7 +42,7 @@ UPDATE mail_footer_lang SET readonly = true;
 " >> ${g_output_clean}
 #UPDATE mail_activation SET enable = false;
 
-    sed -i -r -e "s/'2017-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3,6}'/now()/g" ${g_output_clean}
+    sed -i -r -e "s/'2017-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{2,6}'/now()/g" ${g_output_clean}
 
     echo generated files : ${g_output} ${g_output_clean}
 }
