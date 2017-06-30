@@ -197,6 +197,8 @@ ALTER TABLE mail_content DROP COLUMN name;
 ALTER TABLE mail_content DROP COLUMN plaintext;
 ALTER TABLE mail_content DROP COLUMN language;
 ALTER TABLE mail_content DROP COLUMN greetings;
+ALTER TABLE mail_content DROP COLUMN enable_as;
+ALTER TABLE mail_content DROP COLUMN alternative_subject;
 ALTER TABLE mail_content ADD COLUMN description text;
 ALTER TABLE mail_content ADD COLUMN readonly bool DEFAULT 'false' NOT NULL;
 ALTER TABLE mail_content ADD COLUMN messages_french text;
