@@ -47,9 +47,17 @@ import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.entities.MailContent;
 import org.linagora.linshare.core.domain.entities.MailContentLang;
+import org.linagora.linshare.core.domain.entities.MailFooter;
 import org.linagora.linshare.core.domain.entities.MailFooterLang;
+import org.linagora.linshare.core.domain.entities.MailLayout;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
+import org.linagora.linshare.core.repository.MailContentLangRepository;
+import org.linagora.linshare.core.repository.MailContentRepository;
+import org.linagora.linshare.core.repository.MailFooterLangRepository;
+import org.linagora.linshare.core.repository.MailFooterRepository;
+import org.linagora.linshare.core.repository.MailLayoutRepository;
 import org.linagora.linshare.core.service.MailConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,6 +84,25 @@ public class MailConfigServiceImplTest extends AbstractTransactionalJUnit4Spring
 
 	@Autowired
 	private MailConfigService mailConfigService;
+
+	@Autowired
+	private MailContentRepository mailContentRepository;
+
+	@Autowired
+	private MailContentLangRepository mailContentLangRepository;
+
+	@Autowired
+	private MailFooterRepository mailFooterRepository;
+
+	@Autowired
+	private MailFooterLangRepository mailFooterLangRepository;
+
+	@Autowired
+	private MailLayoutRepository mailLayoutRepository;
+
+	private static int NB_LANG = 2;
+
+	private static int NB_CONTENT = 15;
 
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
@@ -145,6 +172,36 @@ public class MailConfigServiceImplTest extends AbstractTransactionalJUnit4Spring
 		}
 
 		Assert.assertNotNull(current.getMailLayoutHtml());
+	}
+
+	@Test
+	public void testMailLayoutCount() {
+		List<MailLayout> findAll = mailLayoutRepository.findAll();
+		Assert.assertEquals(1, findAll.size());
+	}
+
+	@Test
+	public void testMailContentCount() {
+		List<MailContent> findAll = mailContentRepository.findAll();
+		Assert.assertEquals(NB_CONTENT, findAll.size());
+	}
+
+	@Test
+	public void testMailContentLangCount() {
+		List<MailContentLang> findAll = mailContentLangRepository.findAll();
+		Assert.assertEquals(NB_LANG * NB_CONTENT, findAll.size());
+	}
+
+	@Test
+	public void testMailFooterCount() {
+		List<MailFooter> findAll = mailFooterRepository.findAll();
+		Assert.assertEquals(1, findAll.size());
+	}
+
+	@Test
+	public void testMailFooterLangCount() {
+		List<MailFooterLang> findAll = mailFooterLangRepository.findAll();
+		Assert.assertEquals(NB_LANG, findAll.size());
 	}
 
 	private List<MailContentType> getMailContentTypes() {

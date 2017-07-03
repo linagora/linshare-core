@@ -200,4 +200,9 @@ public class MailContent implements Cloneable {
 		return MailContentType.fromInt(mailContentType);
 	}
 
+	@Override
+	public String toString() {
+		return "MailContent [id=" + id + ", mailContentType=" + getType() + ", uuid=" + uuid + "]";
+	}
+
 }
