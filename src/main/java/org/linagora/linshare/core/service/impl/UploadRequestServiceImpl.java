@@ -197,7 +197,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 //					It results that if you have 5 contacts, the first will receive 5 mails,
 //					the second 4 mails, etc...
 				UploadRequest clone = req.clone();
-				requests.addAll(createRequestGrouped(actor, owner, clone,
+				requests.addAll(createRequestNotGrouped(actor, owner, clone,
 						 Lists.newArrayList(contact), subject, body, group));
 			}
 		}
@@ -205,6 +205,40 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	}
 
 	private List<UploadRequest> createRequestGrouped(Account actor, User owner,
+			UploadRequest req, List<Contact> contacts, String subject,
+			String body, UploadRequestGroup group) throws BusinessException {
+		UploadRequestHistory hist = new UploadRequestHistory(req,
+				UploadRequestHistoryEventType.EVENT_CREATED);
+		req.getUploadRequestHistory().add(hist);
+		req = uploadRequestBusinessService.create(req);
+		List<MailContainerWithRecipient> mails = Lists.newArrayList();
+		for (Contact c : contacts) {
+			UploadRequestUrl requestUrl = uploadRequestUrlService
+					.create(req, c);
+			if (!DateUtils.isSameDay(req.getActivationDate(), req.getCreationDate())) {
+				mails.add(mailBuildingService.buildCreateUploadRequest(
+						(User) req.getOwner(), requestUrl));
+			}
+		}
+		notifierService.sendNotification(mails);
+		mails.clear();
+		req = uploadRequestBusinessService.findByUuid(req.getUuid());
+		if (req.getActivationDate().before(new Date())) {
+			try {
+				req.updateStatus(UploadRequestStatus.STATUS_ENABLED);
+				updateRequest(actor, owner, req);
+				for (UploadRequestUrl u: req.getUploadRequestURLs()) {
+					mails.add(mailBuildingService.buildActivateUploadRequest((User) req.getOwner(), u));
+				}
+				notifierService.sendNotification(mails);
+			} catch (BusinessException e) {
+				logger.error("Fail to update upload request status of the request : " + req.getUuid());
+			}
+		}
+		return Lists.newArrayList(req);
+	}
+
+	private List<UploadRequest> createRequestNotGrouped(Account actor, User owner,
 			UploadRequest req, List<Contact> contacts, String subject,
 			String body, UploadRequestGroup group) throws BusinessException {
 		UploadRequestHistory hist = new UploadRequestHistory(req,
