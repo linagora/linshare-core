@@ -138,7 +138,8 @@ if [ -z "${g_step}" ] ; then
     update_postgresql
     update_embedded
     update_reset_script
-    update_migration_1_12
+    # Only useful to upgrade migration script 1.12 to 2.0
+    # update_migration_1_12
 else
     for func in ${g_step}
     do
