@@ -75,9 +75,18 @@ import org.linagora.linshare.core.notifications.emails.impl.ShareNewShareAcknowl
 import org.linagora.linshare.core.notifications.emails.impl.ShareNewShareEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.ShareWarnRecipientBeforeExpiryEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.ShareWarnUndownloadedFilesharesEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.UploadRequestActivationForOwnerEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.UploadRequestActivationForRecipientEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.UploadRequestCloseByOwnerEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.UploadRequestClosedByRecipientEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.UploadRequestCreatedEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.UploadRequestDeleteFileEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.UploadRequestFileDeletedByOwnerEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.UploadRequestPasswordRenewalEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.UploadRequestRecipientRemovedEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.UploadRequestReminderEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.UploadRequestUnavailableSpaceEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.UploadRequestUpdatedSettingsEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.UploadRequestUploadedFileEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.UploadRequestWarnBeforeExpiryEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.UploadRequestWarnExpiryEmailBuilder;
@@ -252,6 +261,15 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		emailBuilders.put(MailContentType.UPLOAD_REQUEST_FILE_DELETED_BY_RECIPIENT, new UploadRequestDeleteFileEmailBuilder());
 		emailBuilders.put(MailContentType.UPLOAD_REQUEST_UNAVAILABLE_SPACE, new UploadRequestUnavailableSpaceEmailBuilder());
 
+		emailBuilders.put(MailContentType.UPLOAD_REQUEST_ACTIVATED_FOR_RECIPIENT, new UploadRequestActivationForRecipientEmailBuilder());
+		emailBuilders.put(MailContentType.UPLOAD_REQUEST_ACTIVATED_FOR_OWNER, new UploadRequestActivationForOwnerEmailBuilder());
+		emailBuilders.put(MailContentType.UPLOAD_REQUEST_REMINDER, new UploadRequestReminderEmailBuilder());
+		emailBuilders.put(MailContentType.UPLOAD_REQUEST_PASSWORD_RENEWAL, new UploadRequestPasswordRenewalEmailBuilder());
+		emailBuilders.put(MailContentType.UPLOAD_REQUEST_CREATED, new UploadRequestCreatedEmailBuilder());
+		emailBuilders.put(MailContentType.UPLOAD_REQUEST_CLOSED_BY_OWNER, new UploadRequestCloseByOwnerEmailBuilder());
+		emailBuilders.put(MailContentType.UPLOAD_REQUEST_RECIPIENT_REMOVED, new UploadRequestRecipientRemovedEmailBuilder());
+		emailBuilders.put(MailContentType.UPLOAD_REQUEST_UPDATED_SETTINGS, new UploadRequestUpdatedSettingsEmailBuilder());
+		emailBuilders.put(MailContentType.UPLOAD_REQUEST_FILE_DELETED_BY_OWNER, new UploadRequestFileDeletedByOwnerEmailBuilder());
 
 		initMailBuilders(insertLicenceTerm, domainBusinessService, functionalityReadOnlyService, mailActivationBusinessService, urlTemplateForReceivedShares, urlTemplateForDocuments, urlTemplateForAnonymousUrl);
 		Set<MailContentType> keySet = emailBuilders.keySet();
@@ -438,7 +456,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(owner);
 
-		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_UPDATED, builder);
+		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_UPDATED_SETTINGS, builder);
 	}
 
 	@Override
@@ -475,7 +493,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		container.setRecipient(request.getContact());
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(owner);
-		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_ACTIVATED, builder);
+		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_ACTIVATED_FOR_RECIPIENT, builder);
 	}
 
 	private String getFromMailAddress(User owner) {
@@ -656,7 +674,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		container.setFrom(getFromMailAddress(owner));
 		container.setReplyTo(owner);
 
-		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_DELETED_BY_OWNER, builder);
+		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_FILE_DELETED_BY_OWNER, builder);
 	}
 
 	/*

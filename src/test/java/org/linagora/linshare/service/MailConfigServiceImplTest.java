@@ -102,7 +102,7 @@ public class MailConfigServiceImplTest extends AbstractTransactionalJUnit4Spring
 
 	private static int NB_LANG = 2;
 
-	private static int NB_CONTENT = 15;
+	private static int NB_CONTENT = 24;
 
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
@@ -209,13 +209,7 @@ public class MailConfigServiceImplTest extends AbstractTransactionalJUnit4Spring
 		List<MailContentType> excludes = Lists.newArrayList(
 				MailContentType.UPLOAD_PROPOSITION_CREATED,
 				MailContentType.UPLOAD_PROPOSITION_REJECTED,
-				MailContentType.UPLOAD_REQUEST_UPDATED,
-				MailContentType.UPLOAD_REQUEST_ACTIVATED,
-				MailContentType.UPLOAD_REQUEST_AUTO_FILTER,
-				MailContentType.UPLOAD_REQUEST_CREATED,
-				MailContentType.UPLOAD_REQUEST_REMINDER,
-				MailContentType.UPLOAD_REQUEST_CLOSED_BY_OWNER,
-				MailContentType.UPLOAD_REQUEST_DELETED_BY_OWNER);
+				MailContentType.UPLOAD_REQUEST_AUTO_FILTER);
 		List<MailContentType> values = Lists.newArrayList();
 		for (int i = 0; i < list.length; i++) {
 			MailContentType mailContentType = list[i];

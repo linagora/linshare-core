@@ -451,6 +451,14 @@ mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> a suppri
 subject = {0} {1} a supprimé le partage de {2}', 'deletedDate = Deletion date
 mainMsg = <b>{0} <span style="text-transform:uppercase">{1}</span></b> has deleted the  fileshare
 subject = {0} {1} has deleted the fileshare {2}');
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (16, 1, '', true, 16, '', '<!DOCTYPE html><html
+        xmlns:th=http://www.thymeleaf.org><body>layout</body></html>', '9f00708c-60e7-11e7-a8eb-0800271467bb', now(), now(), true, NULL, NULL);
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (17, 1, '', true, 17, '', '<!DOCTYPE html><html
+        xmlns:th=http://www.thymeleaf.org><body>layout</body></html>', '9f03b0bc-60e7-11e7-a512-0800271467bb', now(), now(), true, NULL, NULL);
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (18, 1, '', true, 18, '', '<!DOCTYPE html><html
+        xmlns:th=http://www.thymeleaf.org><body>layout</body></html>', '9f06f22c-60e7-11e7-a753-0800271467bb', now(), now(), true, NULL, NULL);
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (19, 1, '', true, 19, '', '<!DOCTYPE html><html
+        xmlns:th=http://www.thymeleaf.org><body>layout</body></html>', '9f0a2758-60e7-11e7-b1e9-0800271467bb', now(), now(), true, NULL, NULL);
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (9, 1, NULL, true, 9, '[( #{subject})]', '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head  data-th-replace="layout :: header"></head>
@@ -1343,6 +1351,16 @@ mainMsgExt = The external recipient <b>{0}</b> has downloaded your file
 mainMsgInt = <b> {0} <span style="text-transform:uppercase">{1}</span> </b> has downloaded your file
 subject = {0} {1} has downloaded {2}
 subjectAnonymous = {0} has downloaded {1}');
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (20, 1, '', true, 20, '', '<!DOCTYPE html><html
+        xmlns:th=http://www.thymeleaf.org><body>layout</body></html>', '9f0d6ac6-60e7-11e7-b1b6-0800271467bb', now(), now(), true, NULL, NULL);
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (21, 1, '', true, 21, '', '<!DOCTYPE html><html
+        xmlns:th=http://www.thymeleaf.org><body>layout</body></html>', '9f10ba3c-60e7-11e7-9a73-0800271467bb', now(), now(), true, NULL, NULL);
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (22, 1, '', true, 22, '', '<!DOCTYPE html><html
+        xmlns:th=http://www.thymeleaf.org><body>layout</body></html>', '9f146074-60e7-11e7-94ba-0800271467bb', now(), now(), true, NULL, NULL);
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (23, 1, '', true, 23, '', '<!DOCTYPE html><html
+        xmlns:th=http://www.thymeleaf.org><body>layout</body></html>', '9f17d614-60e7-11e7-94e3-0800271467bb', now(), now(), true, NULL, NULL);
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (24, 1, '', true, 24, '', '<!DOCTYPE html><html
+        xmlns:th=http://www.thymeleaf.org><body>layout</body></html>', '9f1aca72-60e7-11e7-a75f-0800271467bb', now(), now(), true, NULL, NULL);
 INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (1, 0, 1, 1, 1, '4f3c4723-531e-449b-a1ae-d304fd3d2387', true);
 INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (2, 0, 2, 1, 2, '81041673-c699-4849-8be4-58eea4507305', true);
 INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (3, 0, 3, 1, 3, '85538234-1fc1-47a2-850d-7f7b59f1640e', true);
@@ -1373,6 +1391,24 @@ INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, ma
 INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (113, 1, 13, 1, 13, 'fa7a23cb-f545-45b4-b9dc-c39586cb2398', true);
 INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (114, 1, 14, 1, 14, '44bc0912-cf91-4fc0-b376-f0ebb82acd51', true);
 INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (115, 1, 15, 1, 15, 'cccb263e-1c24-4eb9-bff7-298713cc3ab7', true);
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (16, 0, 16, 1, 16, '9f017ae0-60e7-11e7-b430-0800271467bb', true);
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (116, 1, 16, 1, 16, '9f02736e-60e7-11e7-bf58-0800271467bb', true);
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (17, 0, 17, 1, 17, '9f04eafe-60e7-11e7-813f-0800271467bb', true);
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (117, 1, 17, 1, 17, '9f05d3ec-60e7-11e7-98a3-0800271467bb', true);
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (18, 0, 18, 1, 18, '9f07da3e-60e7-11e7-94a2-0800271467bb', true);
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (118, 1, 18, 1, 18, '9f08b468-60e7-11e7-87e7-0800271467bb', true);
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (19, 0, 19, 1, 19, '9f0b1a00-60e7-11e7-bac1-0800271467bb', true);
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (119, 1, 19, 1, 19, '9f0c0672-60e7-11e7-ba0a-0800271467bb', true);
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (20, 0, 20, 1, 20, '9f0e565c-60e7-11e7-b12b-0800271467bb', true);
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (120, 1, 20, 1, 20, '9f0f3ea0-60e7-11e7-a25e-0800271467bb', true);
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (21, 0, 21, 1, 21, '9f11f578-60e7-11e7-8f05-0800271467bb', true);
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (121, 1, 21, 1, 21, '9f12e0f0-60e7-11e7-8c20-0800271467bb', true);
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (22, 0, 22, 1, 22, '9f15538a-60e7-11e7-9782-0800271467bb', true);
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (122, 1, 22, 1, 22, '9f164a06-60e7-11e7-998e-0800271467bb', true);
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (23, 0, 23, 1, 23, '9f18c682-60e7-11e7-a184-0800271467bb', true);
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (123, 1, 23, 1, 23, '9f199652-60e7-11e7-a9cf-0800271467bb', true);
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (24, 0, 24, 1, 24, '9f1bae1a-60e7-11e7-9c81-0800271467bb', true);
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (124, 1, 24, 1, 24, '9f1c879a-60e7-11e7-95d8-0800271467bb', true);
 INSERT INTO mail_footer (id, domain_abstract_id, description, visible, footer, creation_date, modification_date, uuid, readonly, messages_french, messages_english) VALUES (1, 1, 'footer html', true, '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
   <body>
