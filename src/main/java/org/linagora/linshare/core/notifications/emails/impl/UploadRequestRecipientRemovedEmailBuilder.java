@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.notifications.emails.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.Language;
@@ -41,6 +42,8 @@ import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.thymeleaf.context.Context;
+
+import com.google.common.collect.Lists;
 
 public class UploadRequestRecipientRemovedEmailBuilder extends GenericUploadRequestEmailBuilder {
 
@@ -51,14 +54,30 @@ public class UploadRequestRecipientRemovedEmailBuilder extends GenericUploadRequ
 
 	@Override
 	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		// TODO Auto-generated method stub
+		// TODO UploadRequests : new email
 		return null;
 	}
 
 	@Override
 	protected List<Context> getContextForFakeBuild(Language language) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Context> res = Lists.newArrayList();
+		res.add(getFakeSingleForRecipient(language));
+		res.add(getFakeGroupedForRecipient(language));
+		return res;
+	}
+
+	private Context getFakeGroupedForRecipient(Language language) {
+		Context ctx = newFakeContext(language, false, true);
+		ctx.setVariable("body", "upload request body message");
+		ctx.setVariable("deletionDate", new Date());
+		return ctx;
+	}
+
+	private Context getFakeSingleForRecipient(Language language) {
+		Context ctx = newFakeContext(language, false, true);
+		ctx.setVariable("body", "upload request body message");
+		ctx.setVariable("deletionDate", new Date());
+		return ctx;
 	}
 
 }
