@@ -42,6 +42,8 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.thymeleaf.context.Context;
 
+import com.google.common.collect.Lists;
+
 public class UploadRequestPasswordRenewalEmailBuilder extends GenericUploadRequestEmailBuilder {
 
 	@Override
@@ -51,14 +53,22 @@ public class UploadRequestPasswordRenewalEmailBuilder extends GenericUploadReque
 
 	@Override
 	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		// TODO Auto-generated method stub
+		// TODO UploadRequests : new email
 		return null;
 	}
 
 	@Override
 	protected List<Context> getContextForFakeBuild(Language language) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Context> res = Lists.newArrayList();
+		res.add(getForRecipient(language));
+		return res;
+	}
+
+	private Context getForRecipient(Language language) {
+		Context ctx = newFakeContext(language, false, true);
+		ctx.setVariable("body", "upload request body message");
+		ctx.setVariable("password", "a new generated password");
+		return ctx;
 	}
 
 }
