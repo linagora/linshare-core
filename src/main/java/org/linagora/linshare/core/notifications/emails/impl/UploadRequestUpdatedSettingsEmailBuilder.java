@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.notifications.emails.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.Language;
@@ -40,7 +41,14 @@ import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.dto.BooleanParameter;
+import org.linagora.linshare.core.notifications.dto.DateParameter;
+import org.linagora.linshare.core.notifications.dto.IntegerParameter;
+import org.linagora.linshare.core.notifications.dto.MailContact;
+import org.linagora.linshare.core.notifications.dto.StringParameter;
 import org.thymeleaf.context.Context;
+
+import com.google.common.collect.Lists;
 
 public class UploadRequestUpdatedSettingsEmailBuilder extends GenericUploadRequestEmailBuilder {
 
@@ -57,8 +65,64 @@ public class UploadRequestUpdatedSettingsEmailBuilder extends GenericUploadReque
 
 	@Override
 	protected List<Context> getContextForFakeBuild(Language language) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Context> res = Lists.newArrayList();
+		res.add(getFakeSingleForRecipient(language));
+		res.add(getFakeGroupedForRecipient(language));
+		return res;
+	}
+
+	private Context getFakeGroupedForRecipient(Language language) {
+		List<MailContact> recipients = Lists.newArrayList();
+		recipients.add(new MailContact("unknown@linshare.org"));
+		recipients.add(new MailContact("unknown2@linshare.org"));
+
+		Context ctx = newFakeContext(language, false, true);
+		ctx.setVariable("body", "upload request body message");
+		ctx.setVariable("isgrouped", true);
+		ctx.setVariable("recipients", recipients);
+
+		ctx.setVariable("recipientsCount", recipients.size());
+
+		ctx.setVariable("totalMaxDepotSize", new IntegerParameter(8, 30));
+		ctx.setVariable("maxFileNum", new IntegerParameter(50, 48));
+		ctx.setVariable("maxFileSize", new IntegerParameter(70, 69));
+
+		ctx.setVariable("subject", new StringParameter("a subject", "a modified subject "));
+		ctx.setVariable("message", new StringParameter("a message", "a modified message"));
+
+		ctx.setVariable("expiryDate", new DateParameter(new Date(), true));
+		ctx.setVariable("activationDate", new DateParameter(new Date(), true));
+
+		ctx.setVariable("deletionRight", new BooleanParameter(true, false));
+		ctx.setVariable("closureRight", new BooleanParameter(true, false));
+		return ctx;
+	}
+
+	private Context getFakeSingleForRecipient(Language language) {
+		List<MailContact> recipients = Lists.newArrayList();
+		recipients.add(new MailContact("unknown@linshare.org"));
+
+		Context ctx = newFakeContext(language, false, true);
+		ctx.setVariable("body", "upload request body message");
+		ctx.setVariable("isgrouped", false);
+		ctx.setVariable("protected", false);
+		ctx.setVariable("recipients", recipients);
+		ctx.setVariable("recipientsCount", recipients.size());
+
+		ctx.setVariable("totalMaxDepotSize", new IntegerParameter(8, 30));
+		ctx.setVariable("maxFileNum", new IntegerParameter(50, false));
+		ctx.setVariable("maxFileSize", new IntegerParameter(70, false));
+
+		ctx.setVariable("subject", new StringParameter("a subject", false));
+		ctx.setVariable("message", new StringParameter("a message", false));
+
+		ctx.setVariable("expiryDate", new DateParameter(new Date(), false));
+		ctx.setVariable("activationDate", new DateParameter(new Date(), false));
+
+		ctx.setVariable("deletionRight", new BooleanParameter(false, false));
+		ctx.setVariable("closureRight", new BooleanParameter(false, false));
+
+		return ctx;
 	}
 
 }
