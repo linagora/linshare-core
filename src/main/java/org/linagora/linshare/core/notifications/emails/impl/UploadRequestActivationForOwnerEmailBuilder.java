@@ -40,7 +40,10 @@ import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.dto.MailContact;
 import org.thymeleaf.context.Context;
+
+import com.google.common.collect.Lists;
 
 public class UploadRequestActivationForOwnerEmailBuilder extends GenericUploadRequestEmailBuilder {
 
@@ -51,14 +54,49 @@ public class UploadRequestActivationForOwnerEmailBuilder extends GenericUploadRe
 
 	@Override
 	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		// TODO Auto-generated method stub
+		// TODO UploadRequests : new email
 		return null;
 	}
 
 	@Override
 	protected List<Context> getContextForFakeBuild(Language language) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Context> res = Lists.newArrayList();
+		res.add(getFakeSingleForRecipient(language));
+		res.add(getFakeGroupedForRecipient(language));
+		return res;
 	}
+
+	private Context getFakeGroupedForRecipient(Language language) {
+		List<MailContact> recipients = Lists.newArrayList();
+		recipients.add(new MailContact("unknown@linshare.org"));
+		recipients.add(new MailContact("unknown2@linshare.org"));
+
+		Context ctx = newFakeContext(language, true, false);
+		ctx.setVariable("body", "upload request body message");
+		ctx.setVariable("isgrouped", true);
+		ctx.setVariable("recipients", recipients);
+		ctx.setVariable("protected", true);
+		ctx.setVariable("password", "a generated password");
+		ctx.setVariable("totalMaxDepotSize", new Long(45687656));
+		ctx.setVariable("recipientsCount", recipients.size());
+
+		return ctx;
+	}
+
+	private Context getFakeSingleForRecipient(Language language) {
+		List<MailContact> recipients = Lists.newArrayList();
+		recipients.add(new MailContact("unknown@linshare.org"));
+
+		Context ctx = newFakeContext(language, true, false);
+		ctx.setVariable("body", "upload request body message");
+		ctx.setVariable("isgrouped", false);
+		ctx.setVariable("protected", false);
+		ctx.setVariable("recipients", recipients);
+		ctx.setVariable("totalMaxDepotSize", null);
+		ctx.setVariable("recipientsCount", recipients.size());
+
+		return ctx;
+	}
+
 
 }
