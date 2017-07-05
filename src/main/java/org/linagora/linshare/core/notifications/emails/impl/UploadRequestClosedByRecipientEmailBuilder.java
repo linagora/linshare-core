@@ -131,7 +131,6 @@ public class UploadRequestClosedByRecipientEmailBuilder extends GenericUploadReq
 	private Context getFakeSingleForRecipient(Language language) {
 		List<MailContact> recipients = Lists.newArrayList();
 		recipients.add(new MailContact("unknown@linshare.org"));
-		recipients.add(new MailContact("unknown2@linshare.org"));
 
 		List<Document> documents = Lists.newArrayList();
 		Document document = getNewFakeDocument("a-upload-request-file.txt", fakeLinshareURL);
