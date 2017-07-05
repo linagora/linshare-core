@@ -56,7 +56,7 @@ public class UploadRequestCloseByOwnerEmailBuilder extends GenericUploadRequestE
 
 	@Override
 	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		// TODO Auto-generated method stub
+		// TODO UploadRequests : new email
 		return null;
 	}
 
@@ -101,7 +101,6 @@ public class UploadRequestCloseByOwnerEmailBuilder extends GenericUploadRequestE
 	private Context getFakeSingleForRecipient(Language language) {
 		List<MailContact> recipients = Lists.newArrayList();
 		recipients.add(new MailContact("unknown@linshare.org"));
-		recipients.add(new MailContact("unknown2@linshare.org"));
 
 		List<Document> documents = Lists.newArrayList();
 		Document document = new Document("a-upload-request-file.txt");
