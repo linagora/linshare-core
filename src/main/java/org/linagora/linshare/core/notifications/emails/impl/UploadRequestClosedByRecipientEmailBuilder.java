@@ -116,7 +116,7 @@ public class UploadRequestClosedByRecipientEmailBuilder extends GenericUploadReq
 		document.setMine(true);
 		documents.add(document);
 
-		Context ctx = newFakeContext(language, false);
+		Context ctx = newFakeContext(language, true);
 		ctx.setVariable("body", "upload request body message");
 		ctx.setVariable("documents", documents);
 		ctx.setVariable("documentsCount", documents.size());
@@ -145,7 +145,7 @@ public class UploadRequestClosedByRecipientEmailBuilder extends GenericUploadReq
 		document.setMine(true);
 		documents.add(document);
 
-		Context ctx = newFakeContext(language, false);
+		Context ctx = newFakeContext(language, true);
 		ctx.setVariable("body", "upload request body message");
 		ctx.setVariable("documents", documents);
 		ctx.setVariable("documentsCount", documents.size());
