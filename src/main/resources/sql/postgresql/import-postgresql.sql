@@ -788,6 +788,63 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (183, true
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (184, false, false, 2, true);
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
  VALUES(16, false, 'UPLOAD_REQUEST_FILE_DELETED_BY_RECIPIENT', 182, 183, 184, 1, true);
+
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (231, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (232, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (233, false, false, 2, true);
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
+ VALUES(17, false, 'de36a0fe-6250-11e7-b406-0800271467bb', 231, 232, 233, 1, true);
+
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (234, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (235, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (236, false, false, 2, true);
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
+ VALUES(18, false, 'de38a19c-6250-11e7-b34d-0800271467bb', 234, 235, 236, 1, true);
+
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (237, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (238, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (239, false, false, 2, true);
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
+ VALUES(19, false, 'de3b707a-6250-11e7-9d3e-0800271467bb', 237, 238, 239, 1, true);
+
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (240, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (241, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (242, false, false, 2, true);
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
+ VALUES(20, false, 'de3e5d6c-6250-11e7-a169-0800271467bb', 240, 241, 242, 1, true);
+
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (243, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (244, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (245, false, false, 2, true);
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
+ VALUES(21, false, 'de414856-6250-11e7-863b-0800271467bb', 243, 244, 245, 1, true);
+
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (246, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (247, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (248, false, false, 2, true);
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
+ VALUES(22, false, 'de441176-6250-11e7-885d-0800271467bb', 246, 247, 248, 1, true);
+
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (249, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (250, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (251, false, false, 2, true);
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
+ VALUES(23, false, 'de46c0c4-6250-11e7-af6d-0800271467bb', 249, 250, 251, 1, true);
+
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (252, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (253, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (254, false, false, 2, true);
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
+ VALUES(24, false, 'de4920ee-6250-11e7-89e3-0800271467bb', 252, 253, 254, 1, true);
+
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (255, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (256, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (257, false, false, 2, true);
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
+ VALUES(25, false, 'de4c30f4-6250-11e7-a934-0800271467bb', 255, 256, 257, 1, true);
+
+
+
 -- MailActivation : END
 
 -- ###END-PART-1###
