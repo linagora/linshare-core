@@ -49,6 +49,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.job.quartz.UploadRequestBatchResultContext;
+import org.linagora.linshare.core.notifications.context.UploadRequestActivationEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.NotifierService;
@@ -94,8 +95,11 @@ public class EnableUploadRequestBatchImpl extends GenericBatchImpl implements En
 		r.updateStatus(UploadRequestStatus.STATUS_ENABLED);
 		r = uploadRequestService.updateRequest(account, r.getOwner(), r);
 		for (UploadRequestUrl u: r.getUploadRequestURLs()) {
-			notifications.add(mailBuildingService.buildActivateUploadRequest((User) r.getOwner(), u));
+			UploadRequestActivationEmailContext mailContext = new UploadRequestActivationEmailContext((User) r.getOwner(), r, u);
+			notifications.add(mailBuildingService.build(mailContext));
 		}
+		UploadRequestActivationEmailContext mailContext = new UploadRequestActivationEmailContext((User) r.getOwner(), r);
+		notifications.add(mailBuildingService.build(mailContext));
 		notifierService.sendNotification(notifications);
 		logger.error("Fail to update upload request status of the request : " + r.getUuid());
 		return context;

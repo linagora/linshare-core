@@ -47,6 +47,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.context.UploadRequestActivationEmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestWarnBeforeExpiryEmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestWarnExpiryEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
@@ -93,7 +94,8 @@ public class UploadRequestBatchImpl implements UploadRequestBatch {
 					r.updateStatus(UploadRequestStatus.STATUS_ENABLED);
 					r = uploadRequestService.updateRequest(systemAccount, systemAccount, r);
 					for (UploadRequestUrl u: r.getUploadRequestURLs()) {
-						notifications.add(mailBuildingService.buildActivateUploadRequest((User) r.getOwner(), u));
+						UploadRequestActivationEmailContext mailContext = new UploadRequestActivationEmailContext((User) r.getOwner(), r, u);
+						notifications.add(mailBuildingService.build(mailContext));
 					}
 				} catch (BusinessException e) {
 					logger.error("Fail to update upload request status of the request : " + r.getUuid());

@@ -73,6 +73,7 @@ import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.context.UploadRequestActivationEmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestClosedByRecipientEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.UploadRequestGroupResourceAccessControl;
@@ -253,7 +254,8 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 				updateRequest(actor, owner, req);
 				for (UploadRequestUrl u: req.getUploadRequestURLs()) {
 					if (u.getContact().equals(contacts.get(0))) {
-						mails.add(mailBuildingService.buildActivateUploadRequest((User) req.getOwner(), u));
+						UploadRequestActivationEmailContext mailContext = new UploadRequestActivationEmailContext((User) req.getOwner(), req, u);
+						mails.add(mailBuildingService.build(mailContext));
 					}
 				}
 				notifierService.sendNotification(mails);

@@ -459,42 +459,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_UPDATED_SETTINGS, builder);
 	}
 
-	@Override
-	public MailContainerWithRecipient buildActivateUploadRequest(User owner, UploadRequestUrl request)
-			throws BusinessException {
-		// MailActivationType.UPLOAD_REQUEST_ACTIVATED
-		if (isDisable(request.getContact(), owner, null)) {
-			return null;
-		}
-		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
-		MailContainerWithRecipient container = new MailContainerWithRecipient(
-				request.getLocale());
-		MailContainerBuilder builder = new MailContainerBuilder();
-
-		builder.getSubjectChain()
-				.add("actorRepresentation", new ContactRepresentation(owner).getContactRepresentation())
-				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject());
-		builder.getGreetingsChain()
-				.add("firstName", request.getContact().getMail())
-				.add("lastName", "");
-		//  Why first name and last name ?
-		builder.getBodyChain()
-				.add("firstName", owner.getFirstName())
-				.add("lastName", owner.getLastName())
-				.add("subject", request.getUploadRequest().getUploadRequestGroup().getSubject())
-				.add("body", request.getUploadRequest().getUploadRequestGroup().getBody())
-				.add("url", request.getFullUrl(getLinShareUploadRequestUrl(owner)))
-				.add("expirationDate", formatExpirationDate(owner, request.getUploadRequest()))
-				.add("ownerFirstName", owner.getFirstName())
-				.add("ownerLastName", owner.getLastName())
-				.add("ownerMail", owner.getMail())
-				.add("maxFileCount", request.getUploadRequest().getMaxFileCount().toString())
-				.add("password", request.getTemporaryPlainTextPassword());
-		container.setRecipient(request.getContact());
-		container.setFrom(getFromMailAddress(owner));
-		container.setReplyTo(owner);
-		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_REQUEST_ACTIVATED_FOR_RECIPIENT, builder);
-	}
 
 	private String getFromMailAddress(User owner) {
 		String fromMail = functionalityReadOnlyService

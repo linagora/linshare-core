@@ -67,9 +67,6 @@ public interface MailBuildingService {
 	MailContainerWithRecipient buildUpdateUploadRequest(User owner, UploadRequestUrl request)
 			throws BusinessException;
 
-	MailContainerWithRecipient buildActivateUploadRequest(User owner, UploadRequestUrl request)
-			throws BusinessException;
-
 	MailContainerWithRecipient buildFilterUploadRequest(User owner, UploadRequestUrl request)
 			throws BusinessException;
 
