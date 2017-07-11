@@ -254,27 +254,17 @@ public class Document implements Serializable {
 	public void setSha256sum(String sha256sum) {
 		this.sha256sum = sha256sum;
 	}
-	
-	private String guessName() {
-		if (this.documentEntry != null) {
-			return this.documentEntry.getName();
-		} else if (this.threadEntry != null) {
-			return "[Thread entry] " + this.threadEntry.getName();
-		} else {
-			return "";
-		}
-	}
 
 	@Override
 	public String toString() {
-		return "Document [uuid=" + uuid + " name='" + this.guessName() +"', creationDate=" + creationDate
+		return "Document [uuid=" + uuid + ", creationDate=" + creationDate
 				+ ", type=" + type + ", size=" + size + ", sha256sum="
 				+ sha256sum + "]";
 	}
 
 	public String getRepresentation() {
 		return "Document [uuid=" + uuid
-				+ ", name='" + this.guessName() +"', type=" + type + ", size=" + size + ", sha256sum="
+				+ ", type=" + type + ", size=" + size + ", sha256sum="
 				+ sha256sum + "]";
 	}
 }

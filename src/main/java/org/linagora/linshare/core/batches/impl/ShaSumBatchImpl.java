@@ -84,9 +84,9 @@ public class ShaSumBatchImpl extends GenericBatchImpl implements ShaSumBatch {
 			return null;
 		}
 		logInfo(total, position, "processing document : "
-				+ doc.getRepresentation());
+				+ doc.getUuid());
 		Context context = new DocumentBatchResultContext(doc);
-		logger.debug("retrieve from JackRabbit : " + doc.getRepresentation());
+		logger.debug("retrieve from JackRabbit : " + doc.getUuid());
 		try (InputStream fileContentByUUID = fileSystemDao.getFileContentByUUID(doc.getUuid())) {
 			doc.setSha256sum(docEntryBusinessService.SHA256CheckSumFileStream(fileContentByUUID));
 		} catch (IOException e) {
@@ -107,9 +107,9 @@ public class ShaSumBatchImpl extends GenericBatchImpl implements ShaSumBatch {
 	public void notify(Context context, long total, long position) {
 		DocumentBatchResultContext documentContext = (DocumentBatchResultContext) context;
 		Document doc = documentContext.getResource();
-		logInfo(total, position, 
-				"Document successfully updated: "
-				+ doc.getRepresentation() );
+		logInfo(total, position, "The document : "
+				+ doc.getUuid() +
+				" has been successfully updated ");
 	}
 
 	@Override
@@ -117,10 +117,10 @@ public class ShaSumBatchImpl extends GenericBatchImpl implements ShaSumBatch {
 		DocumentBatchResultContext documentContext = (DocumentBatchResultContext) exception.getContext();
 		Document doc = documentContext.getResource();
 		logError(total, position, 
-				"Failed to update document : "
-				+ doc.getRepresentation());
+				"Updating document has failed : "
+				+ doc.getUuid());
 		logger.error("Error occured while updating the document : "
-				+ doc.getRepresentation() + 
+				+ doc.getUuid() + 
 				". BatchBusinessException", exception);
 	}
 

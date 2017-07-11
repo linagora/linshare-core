@@ -144,7 +144,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 			DocumentEntry docEntry = new DocumentEntry(actor, "JackRabbit keepalive hack", "", document);
 			docEntry = documentEntryRepository.create(docEntry);
 			actor.getEntries().add(docEntry );
-			logger.debug(String.format("Fake document uploaded: %s (jackRabbit keepalive hack)", docEntry.getDocument().getRepresentation()));
+			logger.debug(String.format("Fake document uploaded: %s (jackRabbit keepalive hack)", docEntry.getDocument().getUuid()));
 		} catch (IOException e) {
 			logger.error("Failed to upload fake document (jackRabbit keepalive hack)", e);
 		}

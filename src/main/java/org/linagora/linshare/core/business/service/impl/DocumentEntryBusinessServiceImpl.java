@@ -208,7 +208,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	public InputStream getDocumentStream(DocumentEntry entry) {
 		String UUID = entry.getDocument().getUuid();
 		if (UUID!=null && UUID.length()>0) {
-			logger.debug("retrieve from jackrabbity : " + entry.getDocument().getRepresentation());
+			logger.debug("retrieve from jackrabbity : " + UUID);
 			InputStream stream = fileSystemDao.getFileContentByUUID(UUID);
 			return stream;
 		}
@@ -509,7 +509,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	public InputStream getDocumentStream(ThreadEntry entry) {
 		String UUID = entry.getDocument().getUuid();
 		if (UUID!=null && UUID.length()>0) {
-			logger.debug("retrieve from jackrabbit : " + entry.getDocument().getRepresentation());
+			logger.debug("retrieve from jackrabbit : " + UUID);
 			InputStream stream = fileSystemDao.getFileContentByUUID(UUID);
 			return stream;
 		}
@@ -553,7 +553,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			try {
 				fileSystemDao.removeFileByUUID(oldThumbUuid);
 			} catch (org.springframework.dao.DataRetrievalFailureException e) {
-				logger.error("Can not suppress document {}", document.getRepresentation());
+				logger.error("Can not suppress document {}", document.getUuid());
 				logger.debug(e.toString());
 			}
 		}

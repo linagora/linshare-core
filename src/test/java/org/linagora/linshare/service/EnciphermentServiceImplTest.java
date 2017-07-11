@@ -258,7 +258,7 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 	@After
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		logger.debug("aDocument.getIdentifier : " + aDocument.getRepresentation());
+		logger.debug("aDocument.getIdentifier : " + aDocument.getUuid());
 		printDocs(jane);
 		documentEntryRepository.delete(aDocumentEntry);
 		jane.getEntries().clear();
@@ -275,11 +275,11 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 		// Add 2 years from the actual date
 		expirationDate.add(Calendar.YEAR, -2);
 		logger.debug("inputStreamUuid : " + uuid);
-		logger.debug("aDocument.getIdentifier : " + aDocument.getRepresentation());
+		logger.debug("aDocument.getIdentifier : " + aDocument.getUuid());
 		printDocs(jane);
 		DocumentEntry encryptedDocumentEntry = enciphermentService.encryptDocument(jane, jane, aDocumentEntry, "password");
 		logger.debug("encryptedDoc.getIdentifier : " + encryptedDocumentEntry.getUuid());
-		logger.debug("aDocument.getIdentifier : " + aDocument.getRepresentation());
+		logger.debug("aDocument.getIdentifier : " + aDocument.getUuid());
 		logger.debug("inputStreamUuid : " + uuid);
 		printDocs(jane);
 		aDocumentEntry = encryptedDocumentEntry;
@@ -293,7 +293,7 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 		logger.debug("begin : " + user.getLogin());
 		for (Entry doc : user.getEntries()) {
 			if (doc.getEntryType() == EntryType.DOCUMENT) {
-				logger.debug("doc : " + ((DocumentEntry)doc).getDocument().getRepresentation());
+				logger.debug("doc : " + ((DocumentEntry)doc).getDocument().getUuid());
 			}
 		}
 		logger.debug("end");
