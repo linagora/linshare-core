@@ -372,7 +372,11 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		Calendar expirationDate = Calendar.getInstance();
 		expirationDate.add(shareExpiration.toCalendarValue(),
 				shareExpiration.getValue());
-		Date result = setEndOfDayTime(expirationDate.getTime());
+		expirationDate.add(Calendar.DAY_OF_MONTH, 1);
+		expirationDate.set(Calendar.HOUR_OF_DAY, 0);
+		expirationDate.set(Calendar.MINUTE, 0);
+		expirationDate.set(Calendar.SECOND, 0);
+		Date highLimit = expirationDate.getTime();
 		if (shareExpiration.getDelegationPolicy().getStatus()) {
 			if (userExpiryDate != null) {
 				userExpiryDate = setEndOfDayTime(userExpiryDate);
@@ -381,15 +385,15 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 							BusinessErrorCode.SHARE_WRONG_EXPIRY_DATE_BEFORE,
 							"Can not share documents, expiry date is before today.");
 				}
-				if (userExpiryDate.after(result)) {
+				if (userExpiryDate.after(highLimit)) {
 					throw new BusinessException(
 							BusinessErrorCode.SHARE_WRONG_EXPIRY_DATE_AFTER,
 							"Can not share documents, expiry date is after the max date.");
 				}
-				result = userExpiryDate;
+				highLimit = userExpiryDate;
 			}
 		}
-		return result;
+		return highLimit;
 	}
 
 	private Date setEndOfDayTime(Date date) {
