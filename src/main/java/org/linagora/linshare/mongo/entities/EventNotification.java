@@ -37,6 +37,7 @@ import java.util.List;
 
 import javax.persistence.GeneratedValue;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -71,6 +72,7 @@ public class EventNotification {
 		this.relatedAccounts = Lists.newArrayList(uuids);
 	}
 
+	@XmlTransient
 	public String getId() {
 		return id;
 	}

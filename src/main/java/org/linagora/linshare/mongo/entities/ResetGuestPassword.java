@@ -39,6 +39,7 @@ import java.util.UUID;
 
 import javax.persistence.GeneratedValue;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.linagora.linshare.core.domain.constants.ResetTokenKind;
@@ -112,6 +113,7 @@ public class ResetGuestPassword {
 		super();
 	}
 
+	@XmlTransient
 	public String getId() {
 		return id;
 	}
@@ -168,6 +170,7 @@ public class ResetGuestPassword {
 		this.expirationDate = expirationDate;
 	}
 
+	@XmlTransient
 	public String getGuestUuid() {
 		return guestUuid;
 	}
@@ -176,6 +179,7 @@ public class ResetGuestPassword {
 		this.guestUuid = guestUuid;
 	}
 
+	@XmlTransient
 	public String getDomainUuid() {
 		return domainUuid;
 	}
@@ -184,6 +188,7 @@ public class ResetGuestPassword {
 		this.domainUuid = domainUuid;
 	}
 
+	@XmlTransient
 	public Boolean getAlreadyUsed() {
 		return alreadyUsed;
 	}

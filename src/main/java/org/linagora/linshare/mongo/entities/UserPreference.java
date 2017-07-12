@@ -36,6 +36,7 @@ package org.linagora.linshare.mongo.entities;
 import javax.persistence.GeneratedValue;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.lang.Validate;
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -85,6 +86,7 @@ public abstract class UserPreference {
 //		this.uuid = UUID.randomUUID().toString();
 	}
 
+	@XmlTransient
 	public String getId() {
 		return id;
 	}
@@ -109,6 +111,7 @@ public abstract class UserPreference {
 		this.key = key;
 	}
 
+	@XmlTransient
 	public String getAccountUuid() {
 		return accountUuid;
 	}
@@ -117,6 +120,7 @@ public abstract class UserPreference {
 		this.accountUuid = accountUuid;
 	}
 
+	@XmlTransient
 	public String getDomainUuid() {
 		return domainUuid;
 	}

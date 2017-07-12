@@ -37,6 +37,7 @@ import java.util.Date;
 
 import javax.persistence.GeneratedValue;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.linagora.linshare.core.domain.constants.UpgradeLogCriticity;
@@ -83,6 +84,7 @@ public class UpgradeTaskLog {
 		super();
 	}
 
+	@XmlTransient
 	public String getId() {
 		return id;
 	}
@@ -131,6 +133,7 @@ public class UpgradeTaskLog {
 		this.creationDate = creationDate;
 	}
 
+	@XmlTransient
 	public String getActor() {
 		return actor;
 	}

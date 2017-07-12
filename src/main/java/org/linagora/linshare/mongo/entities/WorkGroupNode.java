@@ -40,6 +40,7 @@ import java.util.UUID;
 import javax.persistence.GeneratedValue;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonSubTypes;
@@ -138,6 +139,7 @@ public class WorkGroupNode implements Cloneable {
 		this.lastAuthor = wgf.getLastAuthor();
 	}
 
+	@XmlTransient
 	public String getId() {
 		return id;
 	}
@@ -170,6 +172,7 @@ public class WorkGroupNode implements Cloneable {
 		this.parent = parent;
 	}
 
+	@XmlTransient
 	public String getPath() {
 		return path;
 	}
@@ -226,6 +229,7 @@ public class WorkGroupNode implements Cloneable {
 		this.lastAuthor = lastAuthor;
 	}
 
+	@XmlTransient
 	public WorkGroupNodeType getNodeType() {
 		return nodeType;
 	}

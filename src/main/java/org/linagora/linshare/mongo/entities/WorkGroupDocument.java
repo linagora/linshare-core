@@ -36,6 +36,7 @@ package org.linagora.linshare.mongo.entities;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
@@ -106,6 +107,7 @@ public class WorkGroupDocument extends WorkGroupNode {
 		this.mimeType = mimeType;
 	}
 
+	@XmlTransient
 	public String getDocumentUuid() {
 		return documentUuid;
 	}
@@ -114,6 +116,7 @@ public class WorkGroupDocument extends WorkGroupNode {
 		this.documentUuid = documentUuid;
 	}
 
+	@XmlTransient
 	public Boolean getHasRevision() {
 		return hasRevision;
 	}
@@ -122,6 +125,7 @@ public class WorkGroupDocument extends WorkGroupNode {
 		this.hasRevision = hasRevision;
 	}
 
+	@XmlTransient
 	public Long getLastRevision() {
 		return lastRevision;
 	}
@@ -146,6 +150,7 @@ public class WorkGroupDocument extends WorkGroupNode {
 		this.uploadDate = uploadDate;
 	}
 
+	@XmlTransient
 	public Boolean getCiphered() {
 		return ciphered;
 	}

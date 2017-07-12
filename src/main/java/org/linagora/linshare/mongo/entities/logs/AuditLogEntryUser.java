@@ -38,6 +38,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -117,6 +118,7 @@ public abstract class AuditLogEntryUser extends AuditLogEntry {
 		this.actor = actor;
 	}
 
+	@XmlTransient
 	public List<String> getRelatedAccounts() {
 		return relatedAccounts;
 	}

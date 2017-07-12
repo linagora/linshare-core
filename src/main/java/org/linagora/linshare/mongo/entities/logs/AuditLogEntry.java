@@ -38,11 +38,12 @@ import java.util.UUID;
 
 import javax.persistence.GeneratedValue;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonSubTypes;
-import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.annotate.JsonSubTypes.Type;
+import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -115,6 +116,7 @@ public class AuditLogEntry {
 		this.uuid = UUID.randomUUID().toString();
 	}
 
+	@XmlTransient
 	public String getId() {
 		return id;
 	}
@@ -175,6 +177,7 @@ public class AuditLogEntry {
 		return "action : " + log.getAction().name() + ", type : " + log.getType().name();
 	}
 
+	@XmlTransient
 	public String getTechnicalComment() {
 		return technicalComment;
 	}
