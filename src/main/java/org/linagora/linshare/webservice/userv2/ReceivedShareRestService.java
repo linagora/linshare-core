@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2017 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2017. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,47 +31,36 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.user;
+package org.linagora.linshare.webservice.userv2;
 
-import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 
+import javax.ws.rs.core.Response;
+
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
-import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareCreationDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
+public interface ReceivedShareRestService {
 
-public interface ShareFacade extends GenericFacade {
+	List<ShareDto> getReceivedShares() throws BusinessException;
 
-	public void sharedocument (String targetMail, String uuid, int securedShare) throws BusinessException;
+	ShareDto getReceivedShare(String receivedShareUuid) throws BusinessException;
 
-	void multiplesharedocuments(String targetMail, List<String> uuid, int securedShare, String messageOpt, String inReplyToOpt, String referencesOpt) throws BusinessException;
+	void head(String receivedShareUuid) throws BusinessException;
 
-	void multiplesharedocuments(List<String> mails, List<String> uuid, int securedShare, String messageOpt, String inReplyToOpt, String referencesOpt) throws BusinessException;
+	Response thumbnail(String receivedShareUuid, boolean base64) throws BusinessException;
 
-	void multiplesharedocuments(List<ShareDto> shares, boolean secured, String message) throws BusinessException;
+	ShareDto delete(String receivedShareUuid) throws BusinessException;
 
-	public List<ShareDto> getReceivedShares() throws BusinessException;
-
-	public ShareDto getReceivedShare(String shareEntryUuid) throws BusinessException;
-
-	public List<ShareDto> getShares() throws BusinessException;
-
-	public ShareDto getShare(String shareUuid) throws BusinessException;
-
-	public InputStream getDocumentStream(String shareEntryUuid) throws BusinessException;
-
-	public InputStream getThumbnailStream(String shareEntryUuid) throws BusinessException;
-
-	Set<ShareDto> create(ShareCreationDto createDto);
-
-	ShareDto delete(String shareUuid, Boolean received) throws BusinessException;
+	ShareDto delete(ShareDto shareDto) throws BusinessException;
 
 	DocumentDto copy(String shareEntryUuid) throws BusinessException;
 
-	Set<AuditLogEntryUser> findAll(String ownerUuid, String uuid, List<String> actions, List<String> types,
-			String beginDate, String endDate);
+	Response download(String uuid) throws BusinessException;
+
+	Set<AuditLogEntryUser> findAll(String uuid, List<String> actions, List<String> types, String beginDate,
+			String endDate);
 }

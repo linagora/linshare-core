@@ -26,6 +26,7 @@
 		<constructor-arg ref="shareEntryService" />
 		<constructor-arg ref="entryBusinessService" />
 		<constructor-arg ref="mailingListService" />
+		<constructor-arg ref="auditLogEntryService" />
 	</bean>
 	<bean id="wsThreadFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.ThreadFacadeImpl">
 		<constructor-arg ref="threadService" />

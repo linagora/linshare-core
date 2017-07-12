@@ -54,9 +54,11 @@ import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareCreation
 import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.MailingListService;
 import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.ShareService;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -73,17 +75,21 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 
 	private final MailingListService listService;
 
+	private final AuditLogEntryService auditLogEntryService;
+
 	public ShareFacadeImpl(
 			final AccountService accountService, 
 			final ShareEntryService shareEntryService,
 			final ShareService shareService,
 			final EntryBusinessService entryBusinessService,
-			final MailingListService listService) {
+			final MailingListService listService,
+			final AuditLogEntryService auditLogEntryService) {
 		super(accountService);
 		this.shareEntryService = shareEntryService;
 		this.shareService = shareService;
 		this.entryBusinessService = entryBusinessService;
 		this.listService = listService;
+		this.auditLogEntryService = auditLogEntryService;
 	}
 
 	@Override
@@ -250,4 +256,15 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 		Account actor = checkAuthentication();
 		return new DocumentDto(shareEntryService.copy(actor, actor, shareEntryUuid));
 	}
+
+	@Override
+	public Set<AuditLogEntryUser> findAll(String ownerUuid, String uuid, List<String> actions, List<String> types,
+			String beginDate, String endDate) {
+		Account actor = checkAuthentication();
+		User owner = (User) getOwner(actor, ownerUuid);
+		ShareEntry entry = shareEntryService.find(actor, owner, uuid);
+		Set<AuditLogEntryUser> findAll = auditLogEntryService.findAll(actor, owner, entry.getUuid(), actions, types, beginDate, endDate);
+		return findAll;
+	}
+
 }
