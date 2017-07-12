@@ -35,11 +35,14 @@ package org.linagora.linshare.mongo.entities.mto;
 
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 
 import com.google.common.collect.Lists;
 
+@XmlRootElement(name = "MailingList")
 public class MailingListMto {
 
 	protected String uuid;

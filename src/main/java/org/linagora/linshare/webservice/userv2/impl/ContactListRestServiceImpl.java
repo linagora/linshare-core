@@ -53,6 +53,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ContactListContactDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ContactListDto;
 import org.linagora.linshare.core.facade.webservice.user.ContactListFacade;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.userv2.ContactListRestService;
 
 import com.wordnik.swagger.annotations.Api;
@@ -232,5 +233,20 @@ public class ContactListRestServiceImpl implements ContactListRestService {
 			@ApiParam(value = "Mailing list contact uuid.", required = true) @PathParam("contactUuid") String contactUuid)
 					throws BusinessException {
 		contactListFacade.deleteContact(null, contactUuid);
+	}
+
+	@Path("/{uuid}/audit")
+	@GET
+	@ApiOperation(value = "Get all traces for a document.", response = AuditLogEntryUser.class, responseContainer="Set")
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
+					@ApiResponse(code = 404, message = "Contact List not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+					})
+	@Override
+	public Set<AuditLogEntryUser> audit(
+			@ApiParam(value = "The contact list uuid.", required = true)
+				@PathParam("uuid") String uuid) {
+		return contactListFacade.audit(null, uuid);
 	}
 }

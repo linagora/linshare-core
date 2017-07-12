@@ -33,8 +33,11 @@
  */
 package org.linagora.linshare.mongo.entities.mto;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 
+@XmlRootElement(name = "MailingListContact")
 public class MailingListContactMto {
 
 	protected String uuid;

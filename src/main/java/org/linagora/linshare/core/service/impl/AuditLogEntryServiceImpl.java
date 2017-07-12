@@ -162,6 +162,22 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 	}
 
 	@Override
+	public Set<AuditLogEntryUser> findAllContactLists(Account actor, Account owner, String contactListUuid) {
+		Validate.notNull(actor);
+		Validate.notNull(owner);
+		Validate.notNull(contactListUuid);
+		Set<AuditLogEntryUser> res = Sets.newHashSet();
+		List<AuditLogEntryType> supportedTypes = Lists.newArrayList();
+		supportedTypes.add(AuditLogEntryType.CONTACTS_LISTS);
+		supportedTypes.add(AuditLogEntryType.CONTACTS_LISTS_CONTACTS);
+		res = userMongoRepository.findContactListsActivity(
+				contactListUuid,
+				supportedTypes,
+				new Sort(Sort.Direction.DESC, CREATION_DATE));
+		return res;
+	}
+
+	@Override
 	public Set<AuditLogEntryUser> findAll(Account actor, Account owner, String entryUuid, List<String> action,
 			List<String> type, String beginDate, String endDate) {
 		Validate.notNull(actor);

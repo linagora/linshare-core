@@ -52,4 +52,6 @@ public interface AuditLogEntryService {
 			List<String> types, String beginDate, String endDate);
 
 	Set<AuditLogEntry> findAll(Account actor, List<String> action, List<String> type, boolean forceAll, String beginDate, String endDate);
+
+	Set<AuditLogEntryUser> findAllContactLists(Account actor, Account owner, String contactListUuid);
 }

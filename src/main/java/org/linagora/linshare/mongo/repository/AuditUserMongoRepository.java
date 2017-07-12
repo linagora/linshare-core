@@ -76,4 +76,8 @@ public interface AuditUserMongoRepository extends MongoRepository<AuditLogEntryU
 	@Query("{ 'relatedAccounts': {'$elemMatch' : { '$eq' : ?0 }}, 'action' : {'$in' : ?2 }, 'type' : { '$in' : ?3 } , $or: [ {'resourceUuid' : ?1} , { 'relatedResources': {'$elemMatch' : { '$eq' : ?1 }} } ] }")
 	Set<AuditLogEntryUser> findDocumentHistoryForUser(String ownerUuid, String entryUuid,
 			List<LogAction> actions, List<AuditLogEntryType> types, Sort sort);
+
+	@Query("{ $or: [ {'resourceUuid' : ?0 } , { 'list.uuid' : ?0 } ], 'type' : { '$in' : ?1 } }")
+	Set<AuditLogEntryUser> findContactListsActivity(String entryUuid,
+			List<AuditLogEntryType> types, Sort sort);
 }

@@ -39,6 +39,7 @@ import java.util.Set;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ContactListContactDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ContactListDto;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface ContactListFacade {
 
@@ -61,4 +62,5 @@ public interface ContactListFacade {
 
 	void deleteContact(String ownerUuid, String uuid) throws BusinessException;
 
+	Set<AuditLogEntryUser> audit(String ownerUuid, String uuid);
 }

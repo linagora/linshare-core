@@ -38,15 +38,18 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ContactListDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ContactListContactDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.ContactListDto;
 import org.linagora.linshare.core.facade.webservice.user.ContactListFacade;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.MailingListService;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
@@ -56,9 +59,14 @@ public class ContactListFacadeImpl extends GenericFacadeImpl implements ContactL
 
 	private final MailingListService mailingListService;
 
-	public ContactListFacadeImpl(final AccountService accountService, final MailingListService mailingListservice) {
+	private final AuditLogEntryService auditLogEntryService;
+
+	public ContactListFacadeImpl(final AccountService accountService,
+			final MailingListService mailingListservice,
+			final AuditLogEntryService auditLogEntryService) {
 		super(accountService);
 		this.mailingListService = mailingListservice;
+		this.auditLogEntryService = auditLogEntryService;
 	}
 
 	@Override
@@ -158,5 +166,13 @@ public class ContactListFacadeImpl extends GenericFacadeImpl implements ContactL
 		User actor = checkAuthentication();
 		User owner = getOwner(actor, ownerUuid);
 		mailingListService.deleteContact(actor, owner, uuid);
+	}
+
+	@Override
+	public Set<AuditLogEntryUser> audit(String ownerUuid, String uuid) {
+		Account actor = checkAuthentication();
+		User owner = (User) getOwner(actor, ownerUuid);
+		mailingListService.find(actor, owner, uuid);
+		return auditLogEntryService.findAllContactLists(actor, owner, uuid);
 	}
 }

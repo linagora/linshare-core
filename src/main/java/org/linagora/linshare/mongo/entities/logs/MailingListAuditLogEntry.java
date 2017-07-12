@@ -33,12 +33,15 @@
  */
 package org.linagora.linshare.mongo.entities.logs;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.MailingListMto;
 
+@XmlRootElement(name = "MailingListAuditLogEntry")
 public class MailingListAuditLogEntry extends AuditLogEntryUser {
 
 	private MailingListMto resource;
