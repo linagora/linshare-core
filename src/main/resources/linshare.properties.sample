@@ -126,6 +126,8 @@ webservice.attachment-directory=/tmp/
 #uncomment those properties if you want to enable clamav virus scanner feature
 #virusscanner.clamav.host=localhost
 #virusscanner.clamav.port=3310
+# Every file which size is over than the value below (in bytes) will skip the virus scanner.
+# virusscanner.limit.filesize=50000000
 
 
 #******************** SSO 
