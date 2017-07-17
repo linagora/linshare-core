@@ -98,6 +98,7 @@ public class QuotaDto {
 	public QuotaDto(Quota quota) {
 		this.uuid = quota.getUuid();
 		this.domain = new DomainLightDto(quota.getDomain());
+		this.domain.setType(quota.getDomain().getDomainType());
 		if (quota.getParentDomain() != null) {
 			this.parentDomain = new DomainLightDto(quota.getParentDomain());
 		}

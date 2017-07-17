@@ -36,6 +36,8 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 
 import com.wordnik.swagger.annotations.ApiModel;
@@ -47,6 +49,9 @@ public class DomainLightDto {
 	private String label;
 
 	private String identifier;
+
+	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+	private DomainType type;
 
 	public DomainLightDto(){}
 
@@ -69,6 +74,14 @@ public class DomainLightDto {
 
 	public void setLabel(String label) {
 		this.label = label;
+	}
+
+	public DomainType getType() {
+		return type;
+	}
+
+	public void setType(DomainType type) {
+		this.type = type;
 	}
 
 	@Override
