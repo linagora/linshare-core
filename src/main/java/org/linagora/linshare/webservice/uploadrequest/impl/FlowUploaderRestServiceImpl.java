@@ -175,7 +175,7 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 			throws IOException {
 		ChunkedFile chunkedFile = chunkedFiles.get(identifier);
 		if (chunkedFile == null) {
-			java.nio.file.Path path = Files.createTempFile("ls-chunks-"
+			java.nio.file.Path path = Files.createTempFile("linshare-chunks-"
 					+ identifier, ".temp");
 			chunkedFiles.putIfAbsent(identifier, new ChunkedFile(path));
 			chunkedFile = chunkedFiles.get(identifier);
