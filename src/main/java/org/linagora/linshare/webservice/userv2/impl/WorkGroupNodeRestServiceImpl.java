@@ -273,9 +273,8 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 				return new WorkGroupAsyncTask(asyncTask, threadEntryTaskContext);
 			} catch (Exception e) {
 				logAsyncFailure(asyncTask, e);
-				throw e;
-			} finally {
 				deleteTempFile(tempFile);
+				throw e;
 			}
 		} else {
 			// TODO : manage transfertDuration

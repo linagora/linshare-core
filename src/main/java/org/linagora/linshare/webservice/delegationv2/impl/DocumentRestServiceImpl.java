@@ -160,6 +160,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 				return new DocumentDto(asyncTask, documentTaskContext);
 			} catch (Exception e) {
 				logAsyncFailure(ownerUuid, asyncTask, e);
+				deleteTempFile(tempFile);
 				throw e;
 			}
 		} else {
