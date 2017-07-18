@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.webservice.userv2.impl;
 
-import java.io.File;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -158,7 +157,7 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 			@Multipart(IDENTIFIER) String identifier,
 			@Multipart(FILENAME) String filename,
 			@Multipart(RELATIVE_PATH) String relativePath,
-			@Multipart(FILE) InputStream file, MultipartBody body,
+			@Multipart(FILE) InputStream inputStreamCxf, MultipartBody body,
 			@Multipart(value=WORK_GROUP_UUID, required=false) String workGroupUuid,
 			@Multipart(value=WORK_GROUP_PARENT_NODE_UUID, required=false) String workGroupParentNodeUuid,
 			@Multipart(value=ASYNC_TASK, required=false) boolean async)
@@ -177,9 +176,10 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 			if (!currentChunkedFile.hasChunk(chunkNumber)) {
 				FileChannel fc = FileChannel.open(tempFile, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
 				ByteArrayOutputStream output = new ByteArrayOutputStream();
-				IOUtils.copy(file, output);
+				IOUtils.copy(inputStreamCxf, output);
 				fc.write(ByteBuffer.wrap(output.toByteArray()), (chunkNumber - 1) * chunkSize);
 				fc.close();
+				inputStreamCxf.close();
 				if (sizeValidation) {
 					if (output.size() != currentChunkSize) {
 						String msg = String.format("File size does not match, found : %1$d, announced : %2$d", output.size(), currentChunkSize);
@@ -201,11 +201,8 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 			if (FlowUploaderUtils.isUploadFinished(identifier, chunkSize, totalSize, chunkedFiles)) {
 				flow.setLastChunk(true);
 				logger.debug("upload finished : " + chunkNumber + " : " + identifier);
-				InputStream inputStream = Files.newInputStream(tempFile,
-						StandardOpenOption.READ);
-				File tempFile2 = getTempFile(inputStream, "rest-flowuploader", filename);
 				if (sizeValidation) {
-					long currSize = tempFile2.length();
+					long currSize = tempFile.toFile().length();
 					if (currSize != totalSize) {
 						String msg = String.format("File size does not match, found : %1$d, announced : %2$d", currSize, totalSize);
 						logger.error(msg);
@@ -224,13 +221,13 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 					AsyncTaskDto asyncTask = null;
 					try {
 						if(isWorkGroup) {
-							ThreadEntryTaskContext threadEntryTaskContext = new ThreadEntryTaskContext(actorDto, actorDto.getUuid(), workGroupUuid, tempFile2, filename, workGroupParentNodeUuid);
+							ThreadEntryTaskContext threadEntryTaskContext = new ThreadEntryTaskContext(actorDto, actorDto.getUuid(), workGroupUuid, tempFile.toFile(), filename, workGroupParentNodeUuid);
 							asyncTask = asyncTaskFacade.create(totalSize, getTransfertDuration(identifier), filename, null, AsyncTaskType.THREAD_ENTRY_UPLOAD);
 							ThreadEntryUploadAsyncTask task = new ThreadEntryUploadAsyncTask(threadEntryAsyncFacade, threadEntryTaskContext, asyncTask);
 							taskExecutor.execute(task);
 							flow.completeAsyncTransfert(asyncTask);
 						} else {
-							DocumentTaskContext documentTaskContext = new DocumentTaskContext(actorDto, actorDto.getUuid(), tempFile2, filename, null, null);
+							DocumentTaskContext documentTaskContext = new DocumentTaskContext(actorDto, actorDto.getUuid(), tempFile.toFile(), filename, null, null);
 							asyncTask = asyncTaskFacade.create(totalSize, getTransfertDuration(identifier), filename, null, AsyncTaskType.DOCUMENT_UPLOAD);
 							DocumentUploadAsyncTask task = new DocumentUploadAsyncTask(documentAsyncFacade, documentTaskContext, asyncTask);
 							taskExecutor.execute(task);
@@ -238,7 +235,7 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 						}
 					} catch (Exception e) {
 						logAsyncFailure(asyncTask, e);
-						deleteTempFile(tempFile2);
+						deleteTempFile(tempFile.toFile());
 						ChunkedFile remove = chunkedFiles.remove(identifier);
 						Files.deleteIfExists(remove.getPath());
 						throw e;
@@ -246,13 +243,13 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 				} else {
 					try {
 						if(isWorkGroup) {
-							workGroupNodeFacade.create(null, workGroupUuid, workGroupParentNodeUuid, tempFile2, filename, false);
+							workGroupNodeFacade.create(null, workGroupUuid, workGroupParentNodeUuid, tempFile.toFile(), filename, false);
 						} else {
-							uploadedDocument = documentFacade.create(tempFile2, filename, "", null);
+							uploadedDocument = documentFacade.create(tempFile.toFile(), filename, "", null);
 						}
 						flow.completeTransfert(uploadedDocument);
 					} finally {
-						deleteTempFile(tempFile2);
+						deleteTempFile(tempFile.toFile());
 						ChunkedFile remove = chunkedFiles.remove(identifier);
 						if (remove != null) {
 							Files.deleteIfExists(remove.getPath());
