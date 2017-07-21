@@ -36,7 +36,6 @@ package org.linagora.linshare.core.business.service.impl;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,10 +49,7 @@ import org.linagora.LinThumbnail.FileResourceFactory;
 import org.linagora.LinThumbnail.ThumbnailService;
 import org.linagora.LinThumbnail.utils.Constants;
 import org.linagora.LinThumbnail.utils.ImageUtils;
-import org.linagora.LinThumbnail.utils.LargeThumbnail;
-import org.linagora.LinThumbnail.utils.MediumThumbnail;
-import org.linagora.LinThumbnail.utils.SmallThumbnail;
-import org.linagora.LinThumbnail.utils.Thumbnail;
+import org.linagora.LinThumbnail.utils.ThumbnailEnum;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.constants.ThumbnailKind;
@@ -78,8 +74,6 @@ public class ThumbnailGeneratorServiceImpl implements ThumbnailGeneratorService 
 
 	protected final boolean pdfThumbEnabled;
 
-	protected DocumentEntryBusinessServiceImpl documentEntryBusiness;
-
 	public ThumbnailGeneratorServiceImpl(FileDataStore fileDataStore, boolean thumbEnabled, boolean pdfThumbEnabled) {
 		this.fileDataStore = fileDataStore;
 		this.thumbEnabled = thumbEnabled;
@@ -88,20 +82,13 @@ public class ThumbnailGeneratorServiceImpl implements ThumbnailGeneratorService 
 	}
 
 	@Override
-	public Map<ThumbnailKind, FileMetaData> getThumbnails(Account owner, File myFile, FileMetaData metadata,
+	public Map<String, FileMetaData> getThumbnails(Account owner, File myFile, FileMetaData metadata,
 			FileResource fileResource) {
 		if (!thumbEnabled || (!pdfThumbEnabled && metadata.getMimeType().contains("pdf"))) {
 			logger.warn("Thumbnail generation is disabled.");
 			return null;
 		}
-		Thumbnail smallThumb = new SmallThumbnail(myFile.getAbsolutePath());
-		Thumbnail mediumThumb = new MediumThumbnail(myFile.getAbsolutePath());
-		Thumbnail largeThumb = new LargeThumbnail(myFile.getAbsolutePath());
-		Map<ThumbnailKind, FileMetaData> thumbnails = Maps.newHashMap();
-		thumbnails.put(ThumbnailKind.SMALL, computeAndStoreThumbnail(smallThumb, owner, myFile, metadata, fileResource));
-		thumbnails.put(ThumbnailKind.MEDIUM, computeAndStoreThumbnail(mediumThumb, owner, myFile, metadata, fileResource));
-		thumbnails.put(ThumbnailKind.LARGE, computeAndStoreThumbnail(largeThumb, owner, myFile, metadata, fileResource));
-		return thumbnails;
+		return computeAndStoreThumbnail(owner, metadata, fileResource);
 	}
 
 	@Override
@@ -119,112 +106,41 @@ public class ThumbnailGeneratorServiceImpl implements ThumbnailGeneratorService 
 		return this.thumbnailService.getFactory();
 	}
 
-	@Override
-	public Map<ThumbnailKind, FileMetaData> copyThumbnail(Document srcDocument, Account owner, FileMetaData metadata) {
-		Map<ThumbnailKind, FileMetaData> thumbnailMetaData = Maps.newHashMap();
-		Thumbnail thumbnail = null;
-		File tempThumbFile = null;
-		String mimeType = "image/png";
-		for (ThumbnailKind kind : ThumbnailKind.values()) {
-			try {
-				tempThumbFile = getFileCopyThumbnail(srcDocument, owner, metadata, kind);
-				FileResource fileResource = getFileResourceFactory().getFileResource(tempThumbFile, mimeType);
-				if (kind.equals(ThumbnailKind.SMALL)) {
-					thumbnail = new SmallThumbnail(tempThumbFile.getAbsolutePath());
-				} else if (kind.equals(ThumbnailKind.MEDIUM)) {
-					thumbnail = new MediumThumbnail(tempThumbFile.getAbsolutePath());
-				} else if (kind.equals(ThumbnailKind.LARGE)) {
-					thumbnail = new LargeThumbnail(tempThumbFile.getAbsolutePath());
-				}
-				thumbnailMetaData.put(kind,
-						computeAndStoreThumbnail(thumbnail, owner, tempThumbFile, metadata, fileResource));
-
-			} catch (Exception e) {
-				logger.error("Copy thumbnail failed");
-				logger.error(e.getMessage(), e);
-				if (tempThumbFile != null) {
-					tempThumbFile.delete();
-				}
-			} 
-		}
-		return thumbnailMetaData;
-	}
-
-	private File getFileCopyThumbnail(Document srcDocument, Account owner, FileMetaData metadata, ThumbnailKind kind){
-		FileMetaDataKind fileMetaDataKind = ThumbnailKind.toFileMetaDataKind(kind);
-		try (InputStream inputStream = documentEntryBusiness.getDocumentThumbnailStream(srcDocument, fileMetaDataKind)) {
-			if (inputStream != null) {
-				File tempThumbFile = null;
-				try {
-					tempThumbFile = File.createTempFile("linthumbnail", owner + "_thumb.png");
-					tempThumbFile.createNewFile();
-					try (FileOutputStream fos = new FileOutputStream(tempThumbFile)) {
-						IOUtils.copyAndCloseInput(inputStream, fos);
-						return tempThumbFile;
-					}
-				} catch (Exception e) {
-					logger.error("Can not create a copy thumbnail of existing document.");
-					logger.error(e.getMessage(), e);
-					if (tempThumbFile != null) {
-						tempThumbFile.delete();
-					}
-				}
-			}
-		} catch (IOException e1) {
-			logger.error("Can not create a copy thumbnail of existing document.");
-			logger.error(e1.getMessage(), e1);
-		}
-		return null;
-	}
-
-	private FileMetaData computeAndStoreThumbnail(Thumbnail thumbnail, Account owner, File myFile,
-			FileMetaData metadata, FileResource fileResource) {
-		FileMetaData ret = null;
-		InputStream fisThmb = null;
-		BufferedImage bufferedImage = null;
-		File tempThumbFile = null;
+	private Map<String, FileMetaData> computeAndStoreThumbnail(Account owner, FileMetaData metadata,
+			FileResource fileResource) {
+		FileMetaData metadataThumb = null;
+		Map<String, FileMetaData> thumbnailMap = Maps.newHashMap();
 		if (fileResource != null) {
+			Map<ThumbnailEnum, BufferedImage> imageMap = null;
 			try {
-				try {
-					bufferedImage = fileResource.generateThumbnailImage(thumbnail);
-				} catch (Exception e) {
-					logger.error(e.getLocalizedMessage());
-					logger.debug(e.toString());
-				}
-				if (bufferedImage != null) {
-					fisThmb = ImageUtils.getInputStreamFromImage(bufferedImage, "png");
-					tempThumbFile = File.createTempFile("linthumbnail", owner + "_thumb.png");
-					tempThumbFile.createNewFile();
-					if (bufferedImage != null) {
-						ImageIO.write(bufferedImage, Constants.THMB_DEFAULT_FORMAT, tempThumbFile);
+				imageMap = fileResource.generateThumbnailImageMap();
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+				logger.debug(e.getMessage(), e);
+			}
+			for (Map.Entry<ThumbnailEnum, BufferedImage> entry : imageMap.entrySet()) {
+				if (entry.getValue() != null) {
+					File tempThumbFile = null;
+					try (InputStream fisThmb = ImageUtils.getInputStreamFromImage(entry.getValue(), "png")) {
+						tempThumbFile = File.createTempFile("linthumbnail", owner + "_thumb.png");
+						tempThumbFile.createNewFile();
+						tempThumbFile.deleteOnExit();
+						ImageIO.write(entry.getValue(), Constants.THMB_DEFAULT_FORMAT, tempThumbFile);
+						metadataThumb = new FileMetaData(FileMetaDataKind.THUMBNAIL_SMALL, "image/png",
+								tempThumbFile.length(), metadata.getFileName());
+						metadataThumb = fileDataStore.add(tempThumbFile, metadataThumb);
+						thumbnailMap.put(entry.getKey().toString(), metadataThumb);
+					} catch (IOException e) {
+						logger.error("Failled to generate the thumbnail files ", e);
+						e.printStackTrace();
+					} finally {
+						if (tempThumbFile != null) {
+							tempThumbFile.delete();
+						}
 					}
-					if (logger.isDebugEnabled()) {
-						logger.debug("5.1)start insert of thumbnail in jack rabbit:" + tempThumbFile.getName());
-					}
-					ret = new FileMetaData(FileMetaDataKind.THUMBNAIL_SMALL, "image/png", tempThumbFile.length(),
-							metadata.getFileName());
-					ret = fileDataStore.add(tempThumbFile, ret);
-				}
-			} catch (FileNotFoundException e) {
-				logger.error(e.toString());
-				// if the thumbnail generation fails, it's not big deal, it has
-				// not to block
-				// the entire process, we just don't have a thumbnail for this
-				// document
-			} catch (IOException e) {
-				logger.error(e.toString());
-			} finally {
-				try {
-					if (fisThmb != null)
-						fisThmb.close();
-				} catch (IOException e) {
-					logger.error(e.toString());
-				}
-				if (tempThumbFile != null) {
-					tempThumbFile.delete();
 				}
 			}
 		}
-		return ret;
+		return thumbnailMap;
 	}
 }

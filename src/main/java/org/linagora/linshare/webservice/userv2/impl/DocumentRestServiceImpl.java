@@ -328,9 +328,6 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 			@ApiParam(value = "This parameter allows you to choose which thumbnail you want : Small, Medium or Large. Default value is Medium", required = false) @PathParam("kind") ThumbnailKind thumbnailKind,
 			@ApiParam(value = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64)
 			throws BusinessException {
-		if (thumbnailKind == null) {
-			thumbnailKind = ThumbnailKind.MEDIUM;
-		}
 		DocumentDto documentDto = documentFacade.find(documentUuid, false);
 		InputStream documentStream = documentFacade.getThumbnailStream(documentUuid, thumbnailKind);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(documentStream,

@@ -38,10 +38,13 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.utils.DocumentUtils;
+
+import com.beust.jcommander.internal.Maps;
 
 public class Document implements Serializable {
 
@@ -77,21 +80,6 @@ public class Document implements Serializable {
 	private Set<Signature> signatures = new HashSet<Signature>();
 
 	/**
-	 * UUID of the small thumbnail file
-	 */
-	private String thmbUuidSmall;
-
-	/**
-	 * UUID of the medium thumbnail file
-	 */
-	private String thmbUuidMedium;
-
-	/**
-	 * UUID of the large thumbnail file
-	 */
-	private String thmbUuidLarge;
-
-	/**
 	 * Use by LinShare v2 as container/bucket
 	 */
 	private String bucketUuid;
@@ -111,6 +99,8 @@ public class Document implements Serializable {
 
 	protected Boolean toUpgrade;
 
+	private Map<String, Thumbnail> thumbnail = Maps.newHashMap();
+
 	/* Constructor for tests */
 	public Document(String uuid, String name, String type, Calendar creationDate,
 			Calendar expirationDate, User owner, Boolean encrypted,
@@ -121,9 +111,6 @@ public class Document implements Serializable {
 		this.type = type;
 		this.size = size;
 		this.timeStamp = null;
-		this.thmbUuidSmall = null;
-		this.thmbUuidMedium = null;
-		this.thmbUuidLarge = null;
 		this.checkMimeType = false;
 		this.toUpgrade = false;
 	}
@@ -143,9 +130,6 @@ public class Document implements Serializable {
 		this.creationDate = new GregorianCalendar();
 		this.size = metadata.getSize();
 		this.timeStamp = null;
-		this.thmbUuidSmall = null;
-		this.thmbUuidMedium = null;
-		this.thmbUuidLarge = null;
 		this.checkMimeType = false;
 		this.bucketUuid = metadata.getBucketUuid();
 		this.toUpgrade = false;
@@ -159,9 +143,6 @@ public class Document implements Serializable {
 		this.creationDate = new GregorianCalendar();
 		this.size = size;
 		this.timeStamp = null;
-		this.thmbUuidSmall = null;
-		this.thmbUuidMedium = null;
-		this.thmbUuidLarge = null;
 		this.checkMimeType = false;
 		this.toUpgrade = false;
 	}
@@ -203,30 +184,6 @@ public class Document implements Serializable {
 
 	public void setSignatures(Set<Signature> signatures) {
 		this.signatures = signatures;
-	}
-
-	public void setThmbUuidSmall(String thmbUuidSmall) {
-		this.thmbUuidSmall = thmbUuidSmall;
-	}
-
-	public String getThmbUuidSmall() {
-		return thmbUuidSmall;
-	}
-
-	public String getThmbUuidMedium() {
-		return thmbUuidMedium;
-	}
-
-	public void setThmbUuidMedium(String thmbUuidMedium) {
-		this.thmbUuidMedium = thmbUuidMedium;
-	}
-
-	public String getThmbUuidLarge() {
-		return thmbUuidLarge;
-	}
-
-	public void setThmbUuidLarge(String thmbUuidLarge) {
-		this.thmbUuidLarge = thmbUuidLarge;
 	}
 
 	public byte[] getTimeStamp() {
@@ -338,5 +295,13 @@ public class Document implements Serializable {
 
 	public void setToUpgrade(Boolean toUpgrade) {
 		this.toUpgrade = toUpgrade;
+	}
+
+	public Map<String, Thumbnail> getThumbnail() {
+		return thumbnail;
+	}
+
+	public void setThumbnail(Map<String, Thumbnail> thumbnail) {
+		this.thumbnail = thumbnail;
 	}
 }

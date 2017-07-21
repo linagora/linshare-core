@@ -1,9 +1,9 @@
 /*
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
- *
- * Copyright (C) 2017 LINAGORA
- *
+ * 
+ * Copyright (C) 2010-2017 LINAGORA
+ * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any
@@ -19,12 +19,12 @@
  * refrain from infringing Linagora intellectual property rights over its
  * trademarks and commercial brands. Other Additional Terms apply, see
  * <http://www.linagora.com/licenses/> for more details.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
  * details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License and
  * its applicable Additional Terms for LinShare along with this program. If not,
  * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
@@ -32,25 +32,43 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.business.service;
+package org.linagora.linshare.core.repository.hibernate;
 
-import java.io.File;
-import java.util.Map;
+import java.util.UUID;
 
-import org.linagora.LinThumbnail.FileResource;
-import org.linagora.LinThumbnail.FileResourceFactory;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.objects.FileMetaData;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.Thumbnail;
+import org.linagora.linshare.core.repository.ThumbnailRepository;
+import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public interface ThumbnailGeneratorService {
+/**
+ * @author linagora
+ *
+ */
+public class ThumbnailRepositoryImpl extends AbstractRepositoryImpl<Thumbnail> implements ThumbnailRepository {
 
-	public Map<String, FileMetaData> getThumbnails(Account owner, File myFile, FileMetaData metadata, FileResource fileResource);
+	public ThumbnailRepositoryImpl(HibernateTemplate hibernateTemplate) {
+		super(hibernateTemplate);
+	}
 
-	//public Map<String, FileMetaData> copyThumbnail(Document srcDocument, Account owner, FileMetaData metadata);
+	@Override
+	protected DetachedCriteria getNaturalKeyCriteria(Thumbnail thumbnail) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass()).add(
+				Restrictions.eq("id", thumbnail.getId()));
+		return det;
+	}
 
-	public void thumbnailServiceStart();
+	@Override
+	public Thumbnail findById(String uuid) {
+		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
+				"uuid", uuid)));
+	}
 
-	public void thumbnailServiceStop();
-
-	public FileResourceFactory getFileResourceFactory();
+	@Override
+	public Thumbnail create(Thumbnail entity) {
+		entity.setThumbnailUuid(UUID.randomUUID().toString());
+		return super.create(entity);
+	}
 }

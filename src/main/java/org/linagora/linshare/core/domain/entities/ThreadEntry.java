@@ -66,7 +66,7 @@ public class ThreadEntry extends Entry implements Serializable {
 		this.sha256sum = document.getSha256sum();
 		this.size = document.getSize();
 		this.type = document.getType();
-		this.hasThumbnail = document.getThmbUuidSmall() != null;
+		this.hasThumbnail = document.getThumbnail() != null;
 	}
 
 	// cmis
@@ -75,7 +75,7 @@ public class ThreadEntry extends Entry implements Serializable {
 		this.sha256sum = node.getSha256sum();
 		this.size = node.getSize();
 		this.type = node.getMimeType();
-		this.hasThumbnail = document.getThmbUuidMedium() != null;
+		this.hasThumbnail = document.getThumbnail() != null;
 		this.name = node.getName();
 		this.comment = node.getDescription();
 		this.uuid = node.getUuid();

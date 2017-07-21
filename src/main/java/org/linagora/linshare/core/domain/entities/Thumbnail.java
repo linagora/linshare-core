@@ -1,9 +1,9 @@
 /*
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
- *
- * Copyright (C) 2017 LINAGORA
- *
+ * 
+ * Copyright (C) 2010-2017 LINAGORA
+ * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any
@@ -19,12 +19,12 @@
  * refrain from infringing Linagora intellectual property rights over its
  * trademarks and commercial brands. Other Additional Terms apply, see
  * <http://www.linagora.com/licenses/> for more details.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
  * details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License and
  * its applicable Additional Terms for LinShare along with this program. If not,
  * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
@@ -32,25 +32,65 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.business.service;
+package org.linagora.linshare.core.domain.entities;
 
-import java.io.File;
-import java.util.Map;
+public class Thumbnail {
 
-import org.linagora.LinThumbnail.FileResource;
-import org.linagora.LinThumbnail.FileResourceFactory;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.objects.FileMetaData;
+	private long id;
 
-public interface ThumbnailGeneratorService {
+	/**
+	 * the identifier of the thumbnail.
+	 */
+	private String thumbnailUuid;
 
-	public Map<String, FileMetaData> getThumbnails(Account owner, File myFile, FileMetaData metadata, FileResource fileResource);
+	/**
+	 * the type of the thumbnail (Small, Medium, Large ...)
+	 */
+	private String thumbnailType;
 
-	//public Map<String, FileMetaData> copyThumbnail(Document srcDocument, Account owner, FileMetaData metadata);
+	/**
+	 * the document id
+	 */
+	private Document documentId;
 
-	public void thumbnailServiceStart();
+	public Thumbnail() {
+		super();
+	}
 
-	public void thumbnailServiceStop();
+	public Thumbnail(String thumbnailUuid) {
+		super();
+		this.thumbnailUuid = thumbnailUuid;
+	}
 
-	public FileResourceFactory getFileResourceFactory();
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getThumbnailUuid() {
+		return thumbnailUuid;
+	}
+
+	public void setThumbnailUuid(String thumbnailUuid) {
+		this.thumbnailUuid = thumbnailUuid;
+	}
+
+	public String getThumbnailType() {
+		return thumbnailType;
+	}
+
+	public void setThumbnailType(String thumbnailType) {
+		this.thumbnailType = thumbnailType;
+	}
+
+	public Document getDocumentId() {
+		return documentId;
+	}
+
+	public void setDocumentId(Document documentId) {
+		this.documentId = documentId;
+	}
 }

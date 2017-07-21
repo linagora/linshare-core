@@ -35,6 +35,7 @@
 package org.linagora.linshare.core.domain.objects;
 
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
+import org.linagora.linshare.core.domain.constants.ThumbnailKind;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.Signature;
 
@@ -79,12 +80,8 @@ public class FileMetaData {
 	public FileMetaData(FileMetaDataKind kind, Document document) {
 		super();
 		this.uuid = document.getUuid();
-		if (FileMetaDataKind.THUMBNAIL_SMALL.equals(kind)) {
-			this.uuid = document.getThmbUuidSmall();
-		} else if (FileMetaDataKind.THUMBNAIL_MEDIUM.equals(kind)) {
-			this.uuid = document.getThmbUuidMedium();
-		} else if (FileMetaDataKind.THUMBNAIL_LARGE.equals(kind)) {
-			this.uuid = document.getThmbUuidLarge();
+		if (ThumbnailKind.getKindString(kind) != null ) {
+			this.uuid = document.getThumbnail().get(ThumbnailKind.getKindString(kind)).getThumbnailUuid();
 		}
 		this.kind = kind;
 		this.mimeType = document.getType();
@@ -95,12 +92,8 @@ public class FileMetaData {
 	public FileMetaData(FileMetaDataKind kind, Document document, String mimeType) {
 		super();
 		this.uuid = document.getUuid();
-		if (FileMetaDataKind.THUMBNAIL_SMALL.equals(kind)) {
-			this.uuid = document.getThmbUuidSmall();
-		} else if (FileMetaDataKind.THUMBNAIL_MEDIUM.equals(kind)) {
-			this.uuid = document.getThmbUuidMedium();
-		} else if (FileMetaDataKind.THUMBNAIL_LARGE.equals(kind)) {
-			this.uuid = document.getThmbUuidLarge();
+		if (ThumbnailKind.getKindString(kind) != null ) {
+			this.uuid = document.getThumbnail().get(ThumbnailKind.getKindString(kind)).getThumbnailUuid();
 		}
 		this.kind = kind;
 		this.mimeType = mimeType;

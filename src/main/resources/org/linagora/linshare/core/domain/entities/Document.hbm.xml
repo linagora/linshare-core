@@ -15,9 +15,9 @@
 		<property name="type" column="type" type="string" length="255" not-null="true" lazy="false" />
 		<property name="checkMimeType" column="check_mime_type" type="boolean" not-null="true" lazy="false" />
 		<property name="size" column="ls_size" type="long" not-null="true" lazy="false" />
-		<property name="thmbUuidSmall" column="small_thumbnail_uuid" type="string" length="255" not-null="false" lazy="false" />
-		<property name="thmbUuidMedium" column="medium_thumbnail_uuid" type="string" length="255" not-null="false" lazy="false" />
-		<property name="thmbUuidLarge" column="large_thumbnail_uuid" type="string" length="255" not-null="false" lazy="false" />
+<!-- 		<property name="thmbUuidSmall" column="small_thumbnail_uuid" type="string" length="255" not-null="false" lazy="false" /> -->
+<!-- 		<property name="thmbUuidMedium" column="medium_thumbnail_uuid" type="string" length="255" not-null="false" lazy="false" /> -->
+<!-- 		<property name="thmbUuidLarge" column="large_thumbnail_uuid" type="string" length="255" not-null="false" lazy="false" /> -->
 		<property name="sha1sum" column="sha1sum" type="string" length="255" lazy="false"/>
 		<property name="sha256sum" column="sha256sum" type="string" length="255" lazy="false"/>
 		<property access="field" column="timestamp" name="timeStamp" type="binary" length="65535" />
@@ -36,6 +36,11 @@
 		<property name="toUpgrade" type="boolean" not-null="true" lazy="false">
 				<column name="to_upgrade" not-null="false" default="false" />
 		</property>
+		<map name="thumbnail" lazy="true" cascade="all" inverse="false" >
+			<key column="document_id" not-null="true"/>
+			<index column="thumbnail_type" type="string"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.Thumbnail" />
+		</map>
 	</class>
 
 </hibernate-mapping>

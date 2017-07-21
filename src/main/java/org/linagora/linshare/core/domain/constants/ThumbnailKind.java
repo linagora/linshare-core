@@ -48,20 +48,39 @@ public enum ThumbnailKind {
 		}
 	}
 
+	public static FileMetaDataKind toFileMetaDataKind(String thumbnailEKind) {
+		try {
+			return FileMetaDataKind.valueOf("THUMBNAIL_" + thumbnailEKind);
+		} catch (RuntimeException e) {
+			throw new IllegalArgumentException("Doesn't match an existing ThumbnailEkind");
+		}
+	}
+
 	public static String getThmbUuid(FileMetaDataKind dataKind, Document doc) {
 		try {
 			String thmbUuid = null;
-			if (FileMetaDataKind.THUMBNAIL_SMALL.equals(dataKind)) {
-				thmbUuid = doc.getThmbUuidSmall();
-			} else if (FileMetaDataKind.THUMBNAIL_MEDIUM.equals(dataKind)) {
-				thmbUuid = doc.getThmbUuidMedium();
-			} else if (FileMetaDataKind.THUMBNAIL_LARGE.equals(dataKind)) {
-				thmbUuid = doc.getThmbUuidLarge();
-			}
+//			if (FileMetaDataKind.THUMBNAIL_SMALL.equals(dataKind)) {
+//				thmbUuid = doc.getThmbUuidSmall();
+//			} else if (FileMetaDataKind.THUMBNAIL_MEDIUM.equals(dataKind)) {
+//				thmbUuid = doc.getThmbUuidMedium();
+//			} else if (FileMetaDataKind.THUMBNAIL_LARGE.equals(dataKind)) {
+//				thmbUuid = doc.getThmbUuidLarge();
+//			}
 			return thmbUuid;
 		} catch (RuntimeException e) {
 			throw new IllegalArgumentException("Doesn't match an existing ThumbnailEkind");
 		}
+	}
+
+	public static String getKindString(FileMetaDataKind kind) {
+		if (kind.equals(FileMetaDataKind.THUMBNAIL_SMALL)) {
+			return "SMALL";
+		} else if (kind.equals(FileMetaDataKind.THUMBNAIL_MEDIUM)) {
+			return "MEDIUM";
+		} else if (kind.equals(FileMetaDataKind.THUMBNAIL_LARGE)) {
+			return "LARGE";
+		}
+		return null;
 	}
 
 }
