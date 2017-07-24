@@ -35,9 +35,11 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
 
+import org.linagora.linshare.core.business.service.MailingListBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Internal;
+import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -55,17 +57,22 @@ public class InconsistentUserServiceImpl implements InconsistentUserService {
 	private final InternalRepository internateRepository;
 
 	private final AbstractDomainService abstractDomainService;
-
+	
+	private final MailingListBusinessService mailingListBusinessService;
+	
 	public InconsistentUserServiceImpl(
 			final InternalRepository internalRepository,
-			final AbstractDomainService abstractDomainService) {
+			final AbstractDomainService abstractDomainService,
+			final MailingListBusinessService mailingListBusinessService
+			) {
 		super();
 		this.internateRepository = internalRepository;
 		this.abstractDomainService = abstractDomainService;
+		this.mailingListBusinessService = mailingListBusinessService;
 	}
 
 	@Override
-	public void updateDomain(User actor, String uuid, String domain)
+	public void updateDomain(Account actor, String uuid, String domain)
 			throws BusinessException {
 		checkPermissions(actor);
 		if (!actor.hasSuperAdminRole()) {
@@ -96,6 +103,16 @@ public class InconsistentUserServiceImpl implements InconsistentUserService {
 		}
 		u.setDomain(d);
 		internateRepository.update(u);
+				
+		List<MailingList> mailingListByOwner = mailingListBusinessService.findAllListByUser(u);
+		
+		if (mailingListByOwner != null){
+			for (MailingList mailingList : mailingListByOwner){
+				mailingList.setDomain(d);
+				mailingListBusinessService.updateList(mailingList);
+			}			
+		}
+		
 	}
 
 	@Override
@@ -120,7 +137,7 @@ public class InconsistentUserServiceImpl implements InconsistentUserService {
 		return internateRepository.findAllInconsistentsUuid();
 	}
 
-	private void checkPermissions(User actor) throws BusinessException {
+	private void checkPermissions(Account actor) throws BusinessException {
 		if (!actor.hasSuperAdminRole()) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Actor must be either superadmin.");
 		}

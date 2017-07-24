@@ -35,6 +35,7 @@
 
 	<bean name="inconsistentUserService" class="org.linagora.linshare.core.service.impl.InconsistentUserServiceImpl">
 		<constructor-arg ref="internalRepository" />
+		<constructor-arg ref="mailingListBusinessService" />
 		<constructor-arg ref="abstractDomainService" />
 	</bean>
 

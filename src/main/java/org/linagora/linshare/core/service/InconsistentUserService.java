@@ -53,7 +53,7 @@ public interface InconsistentUserService {
 	 * 
 	 * @throws BusinessException
 	 */
-	void updateDomain(User actor, String uuid, String domain)
+	void updateDomain(Account actor, String uuid, String domain)
 			throws BusinessException;
 
 	List<String> findAllUserUuids(Account actor) throws BusinessException;

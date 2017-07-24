@@ -223,3 +223,8 @@ INSERT INTO unit(id, unit_type, unit_value) VALUES (113003, 1, 1);
 INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (113003, 125, 113003);
 
 UPDATE domain_abstract SET mailconfig_id = 1;
+
+-- mailling list
+INSERT INTO mailing_list(id, domain_abstract_id, user_id, is_public, identifier, description, uuid, creation_date, modification_date) VALUES (2057, 2, 10, true, 'test_list', 'test vip list', '19b7a46f-4a9f-4295-b13f-83a14722ee31', '2017-07-20 14:47:04.032', '2017-07-21 10:15:04.52');
+INSERT INTO mailing_list(id, domain_abstract_id, user_id, is_public, identifier, description, uuid, creation_date, modification_date) VALUES (2058, 2, 10, false, 'test_list_2', 'test list 2', '20b7a46f-4a9f-4295-b13f-83a14722ee32', '2017-07-21 14:47:04.032', '2017-07-22 10:15:04.52');
+INSERT INTO mailing_list(id, domain_abstract_id, user_id, is_public, identifier, description, uuid, creation_date, modification_date) VALUES (2053, 100003, 12, false, 'test_list_3', 'test list 3', '25b7a46f-4a9f-4295-b13f-83a14722ff45', '2017-07-23 14:47:04.032', '2017-07-24 10:15:04.52');
