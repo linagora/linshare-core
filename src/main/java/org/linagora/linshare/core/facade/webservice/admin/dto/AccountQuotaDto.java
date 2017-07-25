@@ -35,6 +35,7 @@ package org.linagora.linshare.core.facade.webservice.admin.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
 
@@ -49,6 +50,10 @@ public class AccountQuotaDto extends QuotaDto {
 	@ApiModelProperty(value = "The maximum file size accepted.")
 	protected Long maxFileSize;
 
+	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+	@ApiModelProperty(value = "The default maximum file size accepted.")
+	protected Long defaultMaxFileSize;
+
 	@ApiModelProperty(value = "If true, it is unlinked from its parent.")
 	protected Boolean maxFileSizeOverride;
 
@@ -62,6 +67,8 @@ public class AccountQuotaDto extends QuotaDto {
 		this.maxFileSize = quota.getMaxFileSize();
 		this.maxFileSizeOverride = quota.getMaxFileSizeOverride();
 		this.account = new AccountDto(quota.getAccount(), true);
+		this.defaultMaxFileSize = quota.getContainerQuota().getMaxFileSize();
+		this.defaultQuota = quota.getContainerQuota().getAccountQuota();
 	}
 
 	public AccountQuota toObject() {
@@ -96,6 +103,14 @@ public class AccountQuotaDto extends QuotaDto {
 
 	public void setMaxFileSizeOverride(Boolean maxFileSizeOverride) {
 		this.maxFileSizeOverride = maxFileSizeOverride;
+	}
+
+	public Long getDefaultMaxFileSize() {
+		return defaultMaxFileSize;
+	}
+
+	public void setDefaultMaxFileSize(Long defaultMaxFileSize) {
+		this.defaultMaxFileSize = defaultMaxFileSize;
 	}
 
 	/*
