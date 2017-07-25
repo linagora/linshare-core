@@ -54,6 +54,7 @@ CREATE TABLE document (
   sha1sum         varchar(255),
   sha256sum       varchar(255),
   to_upgrade      bool DEFAULT 'false' NOT NULL,
+  has_thumbnail   bool DEFAULT 'false' NOT NULL,
   CONSTRAINT linshare_document_pkey
     PRIMARY KEY (id));
 CREATE TABLE document_entry (
@@ -766,8 +767,8 @@ CREATE TABLE batch_history (
   errors           int8 NOT NULL,
   unhandled_errors int8 NOT NULL,
   once             bool DEFAULT 'false' NOT NULL,
-  async_task_uuid  varchar(255),
   extras           text,
+  async_task_uuid  varchar(255),
   PRIMARY KEY (id));
 CREATE TABLE upgrade_task (
   id                 int8 NOT NULL,
@@ -778,11 +779,18 @@ CREATE TABLE upgrade_task (
   parent_identifier varchar(255),
   task_order        int4 NOT NULL,
   status            varchar(255) NOT NULL,
-  priority            varchar(255) NOT NULL,
   creation_date     date NOT NULL,
   modification_date date NOT NULL,
   extras            text,
   async_task_uuid   varchar(255),
+  priority          varchar(255) NOT NULL,
+  PRIMARY KEY (id));
+CREATE TABLE thumbnail (
+  id              int8 NOT NULL,
+  document_id    int8 NOT NULL,
+  uuid           varchar(255) NOT NULL,
+  thumbnail_type varchar(255) NOT NULL,
+  creationdate   date NOT NULL,
   PRIMARY KEY (id));
 CREATE UNIQUE INDEX account_lsuid_index
   ON account (ls_uuid);
@@ -983,3 +991,4 @@ ALTER TABLE mail_footer_lang ADD CONSTRAINT mailconfig_mailfooterlang FOREIGN KE
 ALTER TABLE mail_content_lang ADD CONSTRAINT FKmail_conte910199 FOREIGN KEY (mail_config_id) REFERENCES mail_config (id);
 ALTER TABLE mail_config ADD CONSTRAINT FKmail_confi688067 FOREIGN KEY (mail_layout_id) REFERENCES mail_layout (id);
 ALTER TABLE async_task ADD CONSTRAINT FKasync_task970702 FOREIGN KEY (upgrade_task_id) REFERENCES upgrade_task (id);
+ALTER TABLE thumbnail ADD CONSTRAINT FKthumbnail35163 FOREIGN KEY (document_id) REFERENCES document (id);
