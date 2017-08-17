@@ -94,8 +94,9 @@ public class AccountQuotaBusinessServiceImpl extends GenericQuotaBusinessService
 						account, cq);
 			entity = repository.create(entity);
 		}
-		entity.setLastValue(entity.getCurrentValue());
-		entity.setCurrentValue(sumOperationValue + entity.getCurrentValue());
+		Long usedSpace = entity.getCurrentValue();
+		entity.setLastValue(usedSpace);
+		entity.setCurrentValue(sumOperationValue + usedSpace);
 		entity = repository.updateByBatch(entity);
 		return entity;
 	}

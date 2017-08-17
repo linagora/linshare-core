@@ -70,6 +70,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
+// TODO: Full refactoring needed ! Tests are not human readable, neither understandable ! :(
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -239,27 +240,29 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 		ContainerQuota ensembleQuota = ensembleQuotaBusinessService.find(jane.getDomain(), ContainerQuotaType.USER);
 		quota = accountQuotaBusinessService.find(jane);
 		assertNotNull(ensembleQuota);
-		// jane : 1100 + john 900
-		assertEquals(2000, (long) ensembleQuota.getCurrentValue());
 		assertEquals(496, (long) ensembleQuota.getLastValue());
+		// jane : 1100 + john 900 + last value = 2496
+		assertEquals(2496, (long) ensembleQuota.getCurrentValue());
 		assertEquals(1900, (long) ensembleQuota.getQuota());
 		assertEquals(1300, (long) ensembleQuota.getQuotaWarning());
 		assertEquals(5, (long) ensembleQuota.getDefaultMaxFileSize());
 
 		ensembleQuota = ensembleQuotaBusinessService.find(jane.getDomain(), ContainerQuotaType.WORK_GROUP);
 		assertNotNull(ensembleQuota);
-		// 1900 ? how ?
-		assertEquals(1900, (long) ensembleQuota.getCurrentValue());
+
 		assertEquals(900, (long) ensembleQuota.getLastValue());
+		// last value(900) + 1900 ? = 2800
+		assertEquals(2800, (long) ensembleQuota.getCurrentValue());
 		assertEquals(2000, (long) ensembleQuota.getQuota());
 		assertEquals(1500, (long) ensembleQuota.getQuotaWarning());
 		assertEquals(5, (long) ensembleQuota.getDefaultMaxFileSize());
 
 		DomainQuota quotaD = domainQuotaBusinessService.find(jane.getDomain());
 		assertNotNull(quotaD);
-		// container user 2000  + container workgroup 1900
-		assertEquals(3900, (long) quotaD.getCurrentValue());
 		assertEquals(1096, (long) quotaD.getLastValue());
+		// container user 2496  + container workgroup 2800 = 5296
+		// 5296 + lastvalue = 6392
+		assertEquals(6392, (long) quotaD.getCurrentValue());
 		assertEquals(1900, (long) quotaD.getQuota());
 		assertEquals(1800, (long) quotaD.getQuotaWarning());
 
