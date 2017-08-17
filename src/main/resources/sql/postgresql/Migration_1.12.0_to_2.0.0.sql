@@ -49,9 +49,10 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION ls_check_user_connected() RETURNS void AS $$
 BEGIN
 	DECLARE database VARCHAR := (SELECT current_database());
-	DECLARE user_connected VARCHAR = (SELECT usename FROM pg_stat_activity where datname = database);
+	DECLARE user_connected VARCHAR := (SELECT current_user);
 	DECLARE error VARCHAR := ('You are actually connected with the user "postgres", you should be connected with your LinShare database user, we are about to stop the migration script.');
 	BEGIN
+		RAISE INFO 'Connected to "%" with user "%"', database, user_connected;
 		IF (user_connected = 'postgres') THEN
 			RAISE WARNING '%', error;
 		--	DIRTY: did it to stop the process cause there is no clean way to do it.
@@ -62,8 +63,8 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
--- TODO:FMA
--- SELECT ls_check_user_connected();
+
+SELECT ls_check_user_connected();
 SELECT ls_prechecks();
 
 SET client_min_messages = warning;
