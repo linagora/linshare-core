@@ -105,24 +105,27 @@ public class DomainQuotaBusinessServiceImpl extends GenericQuotaBusinessServiceI
 		entity.setMaintenance(dq.getMaintenance());
 
 		// default quota
-		if (!entity.getDefaultQuotaOverride().equals(dq.getDefaultQuotaOverride())) {
-			if (dq.getDefaultQuotaOverride()) {
-				// from false to true => need to cascade
-				repository.cascadeDefaultQuota(entity.getDomain(), dq.getDefaultQuota());
-			} else {
-				// from true to false => need to cascade
-				// restore default value from parent ?
-				if (entity.getParentDomain() != null) {
-					DomainQuota ancestor = repository.find(entity.getParentDomain());
-					dq.setDefaultQuota(ancestor.getDefaultQuota());
+		Boolean defaultQuotaOverride = entity.getDefaultQuotaOverride();
+		if (defaultQuotaOverride != null) {
+			if (!defaultQuotaOverride.equals(dq.getDefaultQuotaOverride())) {
+				if (dq.getDefaultQuotaOverride()) {
+					// from false to true => need to cascade
+					repository.cascadeDefaultQuota(entity.getDomain(), dq.getDefaultQuota());
+				} else {
+					// from true to false => need to cascade
+					// restore default value from parent ?
+					if (entity.getParentDomain() != null) {
+						DomainQuota ancestor = repository.find(entity.getParentDomain());
+						dq.setDefaultQuota(ancestor.getDefaultQuota());
+					}
+					repository.cascadeDefaultQuota(entity.getDomain(), dq.getDefaultQuota());
 				}
+			} else if (!entity.getDefaultQuota().equals(dq.getDefaultQuota())) {
 				repository.cascadeDefaultQuota(entity.getDomain(), dq.getDefaultQuota());
 			}
-		} else if (!entity.getDefaultQuota().equals(dq.getDefaultQuota())) {
-			repository.cascadeDefaultQuota(entity.getDomain(), dq.getDefaultQuota());
+			entity.setDefaultQuota(dq.getDefaultQuota());
+			entity.setDefaultQuotaOverride(dq.getDefaultQuotaOverride());
 		}
-		entity.setDefaultQuota(dq.getDefaultQuota());
-		entity.setDefaultQuotaOverride(dq.getDefaultQuotaOverride());
 		return repository.update(entity);
 	}
 
