@@ -37,6 +37,7 @@ import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.domain.entities.User;
@@ -83,9 +84,15 @@ public class DomainQuotaFacadeImpl extends AdminGenericFacadeImpl implements Dom
 	}
 
 	@Override
-	public List<DomainQuotaDto> findAll() throws BusinessException {
+	public List<DomainQuotaDto> findAll(String parentUuid) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
-		List<DomainQuota> findAll = service.findAll(actor);
+		List<DomainQuota> findAll = null;
+		if (parentUuid != null) {
+			AbstractDomain domain = abstractDomainService.findById(parentUuid);
+			findAll = service.findAll(actor, domain);
+		} else {
+			findAll = service.findAll(actor);
+		}
 		return ImmutableList.copyOf(Lists.transform(findAll, DomainQuotaDto.toDto()));
 	}
 

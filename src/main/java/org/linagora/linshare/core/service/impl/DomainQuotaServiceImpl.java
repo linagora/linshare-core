@@ -37,6 +37,7 @@ import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.domain.entities.Quota;
@@ -58,6 +59,11 @@ public class DomainQuotaServiceImpl extends GenericServiceImpl<Account, Quota> i
 	@Override
 	public List<DomainQuota> findAll(Account actor) {
 		return business.findAll();
+	}
+
+	@Override
+	public List<DomainQuota> findAll(Account actor, AbstractDomain parentDomain) {
+		return business.findAll(parentDomain);
 	}
 
 	@Override

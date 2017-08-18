@@ -79,6 +79,11 @@ public class DomainQuotaBusinessServiceImpl extends GenericQuotaBusinessServiceI
 	}
 
 	@Override
+	public List<DomainQuota> findAll(AbstractDomain parentDomain) throws BusinessException {
+		return repository.findAllByParent(parentDomain);
+	}
+
+	@Override
 	public DomainQuota create(DomainQuota entity) throws BusinessException {
 		Validate.notNull(entity, "Domain quota must be set.");
 		if (find(entity.getDomain()) != null) {

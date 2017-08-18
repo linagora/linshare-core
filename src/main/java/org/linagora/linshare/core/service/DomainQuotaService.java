@@ -35,6 +35,7 @@ package org.linagora.linshare.core.service;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
 
@@ -43,6 +44,8 @@ public interface DomainQuotaService {
 	DomainQuota find(Account actor, String uuid);
 
 	List<DomainQuota> findAll(Account actor);
+
+	List<DomainQuota> findAll(Account actor, AbstractDomain parentDomain);
 
 	DomainQuota update(Account actor, DomainQuota dq);
 

@@ -42,7 +42,7 @@ public interface DomainQuotaRestService {
 
 	DomainQuotaDto find(String uuid) throws BusinessException;
 
-	List<DomainQuotaDto> findAll() throws BusinessException;
+	List<DomainQuotaDto> findAll(String parentUuid) throws BusinessException;
 
 	DomainQuotaDto update(DomainQuotaDto dto, String uuid) throws BusinessException;
 

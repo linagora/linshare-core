@@ -51,6 +51,8 @@ public interface DomainQuotaBusinessService {
 
 	List<DomainQuota> findAll() throws BusinessException;
 
+	List<DomainQuota> findAll(AbstractDomain parentDomain) throws BusinessException;
+
 	DomainQuota create(DomainQuota entity) throws BusinessException;
 
 	DomainQuota update(DomainQuota entity, DomainQuota dto) throws BusinessException;

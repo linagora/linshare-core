@@ -41,11 +41,11 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.DomainQuotaFacade;
-import org.linagora.linshare.core.facade.webservice.admin.dto.AccountQuotaDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.DomainQuotaDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.DomainQuotaRestService;
@@ -68,14 +68,17 @@ public class DomainQuotaRestServiceImpl extends WebserviceBase implements Domain
 
 	@Path("/domains")
 	@GET
+	@ApiOperation(value = "Return domain quotas.", response = DomainQuotaDto.class, responseContainer="List")
 	@Override
-	public List<DomainQuotaDto> findAll() throws BusinessException {
-		return facade.findAll();
+	public List<DomainQuotaDto> findAll(
+			@ApiParam(value = "Filter domain quotas by its parent uuid.", required = false) 
+				@QueryParam("parent") String parentUuid) throws BusinessException {
+		return facade.findAll(parentUuid);
 	}
 
 	@Path("/domains/{uuid}")
 	@GET
-	@ApiOperation(value = "find domain quota", response = AccountQuotaDto.class)
+	@ApiOperation(value = "find domain quota", response = DomainQuotaDto.class)
 	@Override
 	public DomainQuotaDto find(
 			@ApiParam(value = "Domain quota Uuid", required = true) @PathParam("uuid") String uuid) throws BusinessException {
