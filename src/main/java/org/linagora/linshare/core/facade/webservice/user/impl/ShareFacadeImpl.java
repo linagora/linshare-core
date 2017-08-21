@@ -40,7 +40,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.EntryBusinessService;
-import org.linagora.linshare.core.domain.constants.ThumbnailKind;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.MailingList;
@@ -187,10 +187,10 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 	}
 
 	@Override
-	public InputStream getThumbnailStream(String shareEntryUuid, ThumbnailKind kind) throws BusinessException {
+	public InputStream getThumbnailStream(String shareEntryUuid, ThumbnailType kind) throws BusinessException {
 		User actor = checkAuthentication();
 		if (kind == null) {
-			kind = ThumbnailKind.MEDIUM;
+			kind = ThumbnailType.MEDIUM;
 		}
 		return shareEntryService.getThumbnailStream(actor, actor, shareEntryUuid, kind);
 	}

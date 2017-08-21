@@ -38,7 +38,5 @@ import org.linagora.linshare.core.domain.entities.Thumbnail;
 
 public interface ThumbnailRepository extends AbstractRepository<Thumbnail> {
 
-	public Thumbnail findById(String uuid);
-
-	public Thumbnail create(Thumbnail entity);
+	public Thumbnail findByUuid(String uuid);
 }

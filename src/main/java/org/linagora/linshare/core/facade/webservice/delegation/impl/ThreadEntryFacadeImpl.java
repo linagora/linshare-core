@@ -44,7 +44,7 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.TargetKind;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.constants.ThumbnailKind;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.CopyResource;
@@ -196,13 +196,13 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 	}
 
 	@Override
-	public Response thumbnail(String ownerUuid, String threadUuid, String threadEntryUuid, ThumbnailKind kind)
+	public Response thumbnail(String ownerUuid, String threadUuid, String threadEntryUuid, ThumbnailType kind)
 			throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notEmpty(threadUuid, "Missing required document uuid");
 		Validate.notEmpty(threadEntryUuid, "Missing required document uuid");
 		if (kind == null) {
-			kind = ThumbnailKind.MEDIUM;
+			kind = ThumbnailType.MEDIUM;
 		}
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);

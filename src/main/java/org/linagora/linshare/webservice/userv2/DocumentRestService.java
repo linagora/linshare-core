@@ -41,7 +41,7 @@ import java.util.Set;
 import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
-import org.linagora.linshare.core.domain.constants.ThumbnailKind;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.CopyDto;
@@ -72,7 +72,7 @@ public interface DocumentRestService {
 
 	Response download(String uuid) throws BusinessException;
 
-	Response thumbnail(String uuid, ThumbnailKind thumbnailKind, boolean base64) throws BusinessException;
+	Response thumbnail(String uuid, ThumbnailType thumbnailType, boolean base64) throws BusinessException;
 
 	DocumentDto update(String uuid, DocumentDto documentDto) throws BusinessException;
 

@@ -48,9 +48,6 @@ CREATE TABLE document (
   creation_date          timestamp NOT NULL,
   type                   varchar(255) NOT NULL,
   ls_size                int8 NOT NULL,
-  small_thumbnail_uuid   varchar(255),
-  medium_thumbnail_uuid  varchar(255),
-  large_thumbnail_uuid   varchar(255),
   timestamp       bytea,
   check_mime_type bool DEFAULT 'false' NOT NULL,
   sha1sum         varchar(255),
@@ -71,6 +68,14 @@ CREATE TABLE document_entry (
   PRIMARY KEY (entry_id),
   CONSTRAINT "unique document entry"
     UNIQUE (entry_id, document_id));
+CREATE TABLE thumbnail (
+  id                      int8 NOT NULL,
+  thumbnail_uuid         varchar(255) NOT NULL UNIQUE,
+  thumbnail_type         varchar(255) NOT NULL,
+  creation_date          timestamp NOT NULL,
+  document_id            int8,
+  CONSTRAINT linshare_thumbnail_pkey
+    PRIMARY KEY (id));
 CREATE TABLE domain_abstract (
   id                   int8 NOT NULL,
   type                int4 NOT NULL,

@@ -38,7 +38,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 
-import org.linagora.linshare.core.domain.constants.ThumbnailKind;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.CopyDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.DocumentAttachement;
@@ -64,7 +64,7 @@ public interface DocumentFacade extends GenericFacade {
 	InputStream getDocumentStream(String docEntryUuid)
 			throws BusinessException;
 
-	InputStream getThumbnailStream(String docEntryUuid, ThumbnailKind kind)
+	InputStream getThumbnailStream(String docEntryUuid, ThumbnailType kind)
 			throws BusinessException;
 
 	DocumentDto delete(String uuid) throws BusinessException;

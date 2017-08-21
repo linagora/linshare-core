@@ -34,8 +34,6 @@
 
 package org.linagora.linshare.core.repository.hibernate;
 
-import java.util.UUID;
-
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Thumbnail;
@@ -61,14 +59,8 @@ public class ThumbnailRepositoryImpl extends AbstractRepositoryImpl<Thumbnail> i
 	}
 
 	@Override
-	public Thumbnail findById(String uuid) {
+	public Thumbnail findByUuid(String uuid) {
 		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
 				"uuid", uuid)));
-	}
-
-	@Override
-	public Thumbnail create(Thumbnail entity) {
-		entity.setThumbnailUuid(UUID.randomUUID().toString());
-		return super.create(entity);
 	}
 }

@@ -8,10 +8,6 @@
 	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
 	default-autowire="no">
 
-	<bean name="passwordService"
-		class="org.linagora.linshare.core.service.impl.PasswordServiceImpl">
-	</bean>
-
 	<bean id="logEntryService"
 		class="org.linagora.linshare.core.service.impl.LogEntryServiceImpl">
 		<constructor-arg ref="logEntryRepository" />
@@ -21,18 +17,9 @@
 		<constructor-arg ref="eventNotificationMongoRepository" />
 	</bean>
 
-	<bean name="accountService"
-		class="org.linagora.linshare.core.service.impl.AccountServiceImpl">
-		<constructor-arg ref="accountRepository" />
-	</bean>
-
 	<bean id="antiSamyService"
 		class="org.linagora.linshare.core.service.impl.AntiSamyServiceImpl">
 		<constructor-arg ref="antiSamyPolicy" />
-	</bean>
-
-	<bean id="timeStampingService"
-		class="org.linagora.linshare.core.service.impl.TimeStampingServiceImpl">
 	</bean>
 
 	<bean name="functionalityReadOnlyService"

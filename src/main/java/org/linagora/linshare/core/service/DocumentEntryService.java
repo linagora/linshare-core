@@ -37,7 +37,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
-import org.linagora.linshare.core.domain.constants.ThumbnailKind;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -90,7 +90,7 @@ public interface DocumentEntryService {
 	 * @param uuid the identifier of the document
      * @return InputStream of the thumbnail
      */
-    public InputStream getDocumentThumbnailStream(Account actor, Account owner, String uuid, ThumbnailKind kind) throws BusinessException;
+    public InputStream getDocumentThumbnailStream(Account actor, Account owner, String uuid, ThumbnailType kind) throws BusinessException;
 
     public InputStream getDocumentStream(Account actor, Account owner, String uuid) throws BusinessException;
 

@@ -47,7 +47,7 @@ import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
-import org.linagora.linshare.core.domain.constants.ThumbnailKind;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
@@ -469,7 +469,7 @@ public class DocumentEntryServiceImpl
 
 	@Override
 	public InputStream getDocumentThumbnailStream(Account actor, Account owner,
-			String uuid, ThumbnailKind kind) throws BusinessException {
+			String uuid, ThumbnailType kind) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(uuid, "document entry uuid is required.");
 		DocumentEntry entry = find(actor, owner, uuid);

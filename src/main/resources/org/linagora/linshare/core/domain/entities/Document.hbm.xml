@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-	<!-- old mapping <property access="field" column="creation_date" name="creationDate" not-null="true" type="calendar"/> <property access="field" 
-		column="expiration_date" index="index_document_expiration_date" name="expirationDate" not-null="true" type="calendar"/> <property access="field" 
-		column="deletion_date" name="deletionDate" type="calendar"/> -->
+	<typedef
+		class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="thumbnailType">
+		<param name="enumClass">org.linagora.linshare.core.domain.constants.ThumbnailType</param>
+		<param name="identifierMethod">name</param>
+		<param name="valueOfMethod">fromString</param>
+	</typedef>
+
 	<class name="org.linagora.linshare.core.domain.entities.Document" table="document" lazy="true">
 		<id name="id" type="long" unsaved-value="0">
 			<column name="id" not-null="true" index="index_document_id" />
@@ -15,12 +19,10 @@
 		<property name="type" column="type" type="string" length="255" not-null="true" lazy="false" />
 		<property name="checkMimeType" column="check_mime_type" type="boolean" not-null="true" lazy="false" />
 		<property name="size" column="ls_size" type="long" not-null="true" lazy="false" />
-<!-- 		<property name="thmbUuidSmall" column="small_thumbnail_uuid" type="string" length="255" not-null="false" lazy="false" /> -->
-<!-- 		<property name="thmbUuidMedium" column="medium_thumbnail_uuid" type="string" length="255" not-null="false" lazy="false" /> -->
-<!-- 		<property name="thmbUuidLarge" column="large_thumbnail_uuid" type="string" length="255" not-null="false" lazy="false" /> -->
 		<property name="sha1sum" column="sha1sum" type="string" length="255" lazy="false"/>
 		<property name="sha256sum" column="sha256sum" type="string" length="255" lazy="false"/>
 		<property access="field" column="timestamp" name="timeStamp" type="binary" length="65535" />
+		<property name="hasThumbnail" column="has_thumbnail" type="boolean" not-null="true" lazy="false" />
 		<set name="threadEntries" lazy="true" inverse="true">
 			<key column="document_id" not-null="true" />
 			<one-to-many class="org.linagora.linshare.core.domain.entities.ThreadEntry" />
@@ -36,9 +38,9 @@
 		<property name="toUpgrade" type="boolean" not-null="true" lazy="false">
 				<column name="to_upgrade" not-null="false" default="false" />
 		</property>
-		<map name="thumbnail" lazy="true" cascade="all" inverse="false" >
-			<key column="document_id" not-null="true"/>
-			<index column="thumbnail_type" type="string"/>
+		<map name="thumbnail" lazy="true" cascade="all" inverse="false">
+			<key column="document_id" not-null="true" />
+			<index column="thumbnail_type" type="thumbnailType" />
 			<one-to-many class="org.linagora.linshare.core.domain.entities.Thumbnail" />
 		</map>
 	</class>

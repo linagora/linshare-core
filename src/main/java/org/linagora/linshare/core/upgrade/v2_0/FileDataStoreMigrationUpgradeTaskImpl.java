@@ -41,7 +41,7 @@ import org.linagora.linshare.core.batches.impl.GenericUpgradeTaskImpl;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.dao.impl.MigrationFileDataStoreImpl;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
-import org.linagora.linshare.core.domain.constants.ThumbnailKind;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
@@ -146,9 +146,9 @@ public class FileDataStoreMigrationUpgradeTaskImpl extends GenericUpgradeTaskImp
 	}
 
 	protected void upgrade(BatchRunContext batchRunContext, Document document, BatchResultContext<Document> res) {
-		for (ThumbnailKind kind : ThumbnailKind.values()) {
-			FileMetaDataKind fileMetaDataKind = ThumbnailKind.toFileMetaDataKind(kind);
-			String thmbUuid = ThumbnailKind.getThmbUuid(fileMetaDataKind, document);
+		for (ThumbnailType kind : ThumbnailType.values()) {
+			FileMetaDataKind fileMetaDataKind = ThumbnailType.toFileMetaDataKind(kind);
+			String thmbUuid = ThumbnailType.getThmbUuid(fileMetaDataKind, document);
 			FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, document);
 			FileMetaData metadataTmb = new FileMetaData(fileMetaDataKind, document);
 			if (thmbUuid != null) {

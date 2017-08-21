@@ -60,7 +60,7 @@ import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.domain.constants.AsyncTaskType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
-import org.linagora.linshare.core.domain.constants.ThumbnailKind;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
@@ -374,10 +374,10 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 	public Response thumbnail(
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workGroupUuid") String workGroupUuid,
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid,
-			@ApiParam(value = "This parameter allows you to choose which thumbnail you want : Small, Medium or Large. Default value is Medium", required = false) @PathParam("kind") ThumbnailKind thumbnailKind,
+			@ApiParam(value = "This parameter allows you to choose which thumbnail you want : Small, Medium or Large. Default value is Medium", required = false) @PathParam("kind") ThumbnailType thumbnailType,
 			@ApiParam(value = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64)
 					throws BusinessException {
-		return workGroupNodeFacade.thumbnail(null, workGroupUuid, uuid, base64, thumbnailKind);
+		return workGroupNodeFacade.thumbnail(null, workGroupUuid, uuid, base64, thumbnailType);
 	}
 
 	@Path("/{uuid}/async")

@@ -36,7 +36,7 @@ package org.linagora.linshare.core.facade.webservice.external.impl;
 import java.io.InputStream;
 
 import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.domain.constants.ThumbnailKind;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
@@ -91,14 +91,14 @@ public class AnonymousUrlFacadeImpl implements AnonymousUrlFacade{
 
 	@Override
 	public InputStream getThumbnail(String anonymousUrlUuid,
-			String anonymousShareEntryUuid, String password, ThumbnailKind kind) {
+			String anonymousShareEntryUuid, String password, ThumbnailType kind) {
 		Validate.notEmpty(anonymousUrlUuid,
 				"Missing required anonymousUrl uuid");
 		Validate.notEmpty(anonymousShareEntryUuid,
 				"Missing required anonymousShareEntry uuid");
 		SystemAccount actor = anonymousUrlService.getAnonymousURLAccount();
 		if (kind == null) {
-			kind = ThumbnailKind.MEDIUM;
+			kind = ThumbnailType.MEDIUM;
 		}
 		return anonymousUrlService.downloadThumbnail(actor,
 				actor, anonymousUrlUuid, anonymousShareEntryUuid, password, kind);

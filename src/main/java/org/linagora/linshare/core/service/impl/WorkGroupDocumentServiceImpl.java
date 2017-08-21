@@ -45,7 +45,7 @@ import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
-import org.linagora.linshare.core.domain.constants.ThumbnailKind;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
@@ -217,8 +217,8 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 	}
 
 	@Override
-	public InputStream getThumbnailStream(Account actor, Account owner, Thread workGroup, WorkGroupDocument node, ThumbnailKind thumbnailKind) throws BusinessException {
-		return documentEntryBusinessService.getThreadEntryThumbnailStream(node, thumbnailKind);
+	public InputStream getThumbnailStream(Account actor, Account owner, Thread workGroup, WorkGroupDocument node, ThumbnailType thumbnailType) throws BusinessException {
+		return documentEntryBusinessService.getThreadEntryThumbnailStream(node, thumbnailType);
 	}
 
 	protected void checkSpace(Thread thread, long size) throws BusinessException {

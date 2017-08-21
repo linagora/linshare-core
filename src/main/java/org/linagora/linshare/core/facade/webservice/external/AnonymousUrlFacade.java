@@ -35,7 +35,7 @@ package org.linagora.linshare.core.facade.webservice.external;
 
 import java.io.InputStream;
 
-import org.linagora.linshare.core.domain.constants.ThumbnailKind;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.facade.webservice.external.dto.AnonymousUrlDto;
 import org.linagora.linshare.core.facade.webservice.external.dto.ShareEntryDto;
 
@@ -47,5 +47,5 @@ public interface AnonymousUrlFacade {
 
 	InputStream download(String anonymousUrlUuid, String anonymousShareEntryUuid, String password);
 
-	InputStream getThumbnail(String anonymousUrlUuid, String anonymousShareEntryUuid, String password, ThumbnailKind kind);
+	InputStream getThumbnail(String anonymousUrlUuid, String anonymousShareEntryUuid, String password, ThumbnailType kind);
 }

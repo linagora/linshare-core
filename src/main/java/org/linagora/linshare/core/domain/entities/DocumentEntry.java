@@ -76,7 +76,7 @@ public class DocumentEntry extends Entry implements Serializable {
 		this.sha256sum = document.getSha256sum();
 		this.size = document.getSize();
 		this.type = document.getType();
-		this.hasThumbnail = document.getThumbnail() != null;
+		this.hasThumbnail = document.getHasThumbnail();
 		this.shared = 0;
 	}
 
@@ -87,7 +87,7 @@ public class DocumentEntry extends Entry implements Serializable {
 		this.sha256sum = document.getSha256sum();
 		this.size = document.getSize();
 		this.type = document.getType();
-		this.hasThumbnail = document.getThumbnail() != null;
+		this.hasThumbnail = document.getHasThumbnail();
 		this.shared = 0;
 	}
 

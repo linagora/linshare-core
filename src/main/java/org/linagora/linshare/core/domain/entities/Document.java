@@ -41,10 +41,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.utils.DocumentUtils;
-
-import com.beust.jcommander.internal.Maps;
 
 public class Document implements Serializable {
 
@@ -99,7 +98,9 @@ public class Document implements Serializable {
 
 	protected Boolean toUpgrade;
 
-	private Map<String, Thumbnail> thumbnail = Maps.newHashMap();
+	protected Boolean hasThumbnail;
+
+	protected Map<ThumbnailType, Thumbnail> thumbnail;
 
 	/* Constructor for tests */
 	public Document(String uuid, String name, String type, Calendar creationDate,
@@ -113,6 +114,7 @@ public class Document implements Serializable {
 		this.timeStamp = null;
 		this.checkMimeType = false;
 		this.toUpgrade = false;
+		this.hasThumbnail = false;
 	}
 
 	/**
@@ -133,6 +135,7 @@ public class Document implements Serializable {
 		this.checkMimeType = false;
 		this.bucketUuid = metadata.getBucketUuid();
 		this.toUpgrade = false;
+		this.hasThumbnail = false;
 	}
 
 	@Deprecated
@@ -145,6 +148,7 @@ public class Document implements Serializable {
 		this.timeStamp = null;
 		this.checkMimeType = false;
 		this.toUpgrade = false;
+		this.hasThumbnail = false;
 	}
 
 	@Override
@@ -297,11 +301,19 @@ public class Document implements Serializable {
 		this.toUpgrade = toUpgrade;
 	}
 
-	public Map<String, Thumbnail> getThumbnail() {
+	public Boolean getHasThumbnail() {
+		return hasThumbnail;
+	}
+
+	public void setHasThumbnail(Boolean hasThumbnail) {
+		this.hasThumbnail = hasThumbnail;
+	}
+
+	public Map<ThumbnailType, Thumbnail> getThumbnail() {
 		return thumbnail;
 	}
 
-	public void setThumbnail(Map<String, Thumbnail> thumbnail) {
+	public void setThumbnail(Map<ThumbnailType, Thumbnail> thumbnail) {
 		this.thumbnail = thumbnail;
 	}
 }

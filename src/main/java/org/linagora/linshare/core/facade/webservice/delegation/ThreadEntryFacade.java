@@ -39,7 +39,7 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
-import org.linagora.linshare.core.domain.constants.ThumbnailKind;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
 
@@ -66,7 +66,7 @@ public interface ThreadEntryFacade extends DelegationGenericFacade {
 	Response download(String ownerUuid, String threadUuid, String uuid)
 			throws BusinessException;
 
-	Response thumbnail(String ownerUuid, String threadUuid, String uuid, ThumbnailKind kind)
+	Response thumbnail(String ownerUuid, String threadUuid, String uuid, ThumbnailType kind)
 			throws BusinessException;
 
 	WorkGroupEntryDto update(String owneruuid, String threadUuid,

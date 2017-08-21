@@ -53,7 +53,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.domain.constants.ThumbnailKind;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
 import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareCreationDto;
@@ -128,7 +128,7 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 			@ApiParam(value = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64)
 					throws BusinessException {
 		ShareDto shareDto = webServiceShareFacade.getShare(shareUuid);
-		InputStream documentStream = webServiceShareFacade.getThumbnailStream(shareUuid, ThumbnailKind.MEDIUM);
+		InputStream documentStream = webServiceShareFacade.getThumbnailStream(shareUuid, ThumbnailType.MEDIUM);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(documentStream,
 				shareDto.getName() + "_thumb.png", base64);
 		return response.build();

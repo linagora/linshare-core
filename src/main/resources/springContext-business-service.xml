@@ -270,10 +270,24 @@
 	<bean id="upgradeTaskBusinessService" class="org.linagora.linshare.core.business.service.impl.UpgradeTaskBusinessServiceImpl">
 		<constructor-arg ref="upgradeTaskRepository" />
 	</bean>
-	<bean id="thumbnailGeneratorService" class="org.linagora.linshare.core.business.service.impl.ThumbnailGeneratorServiceImpl"
-		init-method="thumbnailServiceStart" destroy-method="thumbnailServiceStop">
+	<bean id="thumbnailGeneratorService" class="org.linagora.linshare.core.business.service.impl.ThumbnailGeneratorBusinessServiceImpl">
 		<constructor-arg ref="fileDataStore" />
+		<constructor-arg ref="thumbnailService" />
 		<constructor-arg value="${linshare.documents.thumbnail.enable}" />
 		<constructor-arg value="${linshare.documents.thumbnail.pdf.enable}" />
+	</bean>
+	<bean name="thumbnailService" class="org.linagora.LinThumbnail.impl.ThumbnailServiceImpl"
+		init-method="start" destroy-method="stop">
+	</bean>
+	<bean id="timeStampingService"
+		class="org.linagora.linshare.core.service.impl.TimeStampingServiceImpl">
+	</bean>
+	<!--  Ugly workaround -->
+	<bean name="accountService"
+		class="org.linagora.linshare.core.service.impl.AccountServiceImpl">
+		<constructor-arg ref="accountRepository" />
+	</bean>
+	<bean name="passwordService"
+		class="org.linagora.linshare.core.service.impl.PasswordServiceImpl">
 	</bean>
 </beans>

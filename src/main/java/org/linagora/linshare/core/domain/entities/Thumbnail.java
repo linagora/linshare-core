@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2010-2017 LINAGORA
+ * Copyright (C) 2017 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -34,6 +34,10 @@
 
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.Date;
+
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
+
 public class Thumbnail {
 
 	private long id;
@@ -46,12 +50,14 @@ public class Thumbnail {
 	/**
 	 * the type of the thumbnail (Small, Medium, Large ...)
 	 */
-	private String thumbnailType;
+	private ThumbnailType thumbnailType;
 
 	/**
-	 * the document id
+	 * the creation date of the thumbnail.
 	 */
-	private Document documentId;
+	private Date creationDate;
+
+	private Document document;
 
 	public Thumbnail() {
 		super();
@@ -60,6 +66,13 @@ public class Thumbnail {
 	public Thumbnail(String thumbnailUuid) {
 		super();
 		this.thumbnailUuid = thumbnailUuid;
+	}
+
+	public Thumbnail(String thumbnailUuid, ThumbnailType thumbnailType, Document document) {
+		this.thumbnailUuid = thumbnailUuid;
+		this.creationDate = new Date();
+		this.document = document;
+		this.thumbnailType = thumbnailType;
 	}
 
 	public long getId() {
@@ -78,19 +91,28 @@ public class Thumbnail {
 		this.thumbnailUuid = thumbnailUuid;
 	}
 
-	public String getThumbnailType() {
+	public ThumbnailType getThumbnailType() {
 		return thumbnailType;
 	}
 
-	public void setThumbnailType(String thumbnailType) {
+	public void setThumbnailType(ThumbnailType thumbnailType) {
 		this.thumbnailType = thumbnailType;
 	}
 
-	public Document getDocumentId() {
-		return documentId;
+	public Date getCreationDate() {
+		return creationDate;
 	}
 
-	public void setDocumentId(Document documentId) {
-		this.documentId = documentId;
+	public void setCreationDate(Date date) {
+		this.creationDate = date;
 	}
+
+	public Document getDocument() {
+		return document;
+	}
+
+	public void setDocument(Document document) {
+		this.document = document;
+	}
+
 }

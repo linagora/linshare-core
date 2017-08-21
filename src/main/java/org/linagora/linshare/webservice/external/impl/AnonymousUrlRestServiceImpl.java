@@ -51,7 +51,7 @@ import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
-import org.linagora.linshare.core.domain.constants.ThumbnailKind;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.facade.webservice.external.AnonymousUrlFacade;
 import org.linagora.linshare.core.facade.webservice.external.dto.AnonymousUrlDto;
 import org.linagora.linshare.core.facade.webservice.external.dto.ShareEntryDto;
@@ -139,14 +139,14 @@ public class AnonymousUrlRestServiceImpl implements AnonymousUrlRestService{
 	public Response getAnonymousShareEntryThumbnail(
 			@PathParam(value = "urlUuid") String anonymousUrlUuid,
 			@PathParam(value = "shareEntryUuid") String shareEntryUuid,
-			@PathParam(value = "kind") ThumbnailKind thumbnailKind,
+			@PathParam(value = "kind") ThumbnailType thumbnailType,
 			@HeaderParam("linshare-anonymousurl-password") String password,
 			@QueryParam("base64") @DefaultValue("false") boolean base64, 
 			@Context HttpHeaders headers) {
 		password = loadPasswordFromCookie(anonymousUrlUuid, password, headers);
 		ShareEntryDto shareEntry = anonymousUrlFacade.getShareEntry(anonymousUrlUuid, shareEntryUuid, password);
 		InputStream documentStream = anonymousUrlFacade.getThumbnail(anonymousUrlUuid, shareEntryUuid, password,
-				thumbnailKind);
+				thumbnailType);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(documentStream,
 				shareEntry.getName(), base64);
 		return response.build();

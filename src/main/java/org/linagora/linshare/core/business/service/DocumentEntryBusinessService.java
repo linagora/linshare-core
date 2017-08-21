@@ -39,7 +39,7 @@ import java.io.InputStream;
 import java.util.Calendar;
 import java.util.List;
 
-import org.linagora.linshare.core.domain.constants.ThumbnailKind;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -65,7 +65,7 @@ public interface DocumentEntryBusinessService {
 
 	public byte[] getTimeStamp(String fileName, File tempFile, String timeStampingUrl) throws BusinessException;
 
-	public InputStream getDocumentThumbnailStream(DocumentEntry entry, ThumbnailKind kind) ;
+	public InputStream getDocumentThumbnailStream(DocumentEntry entry, ThumbnailType kind) ;
 
 	public InputStream getDocumentStream(DocumentEntry entry) ;
 
@@ -88,7 +88,7 @@ public interface DocumentEntryBusinessService {
 
 	InputStream getDocumentStream(WorkGroupDocument entry);
 
-	public InputStream getThreadEntryThumbnailStream(WorkGroupDocument entry, ThumbnailKind kind);
+	public InputStream getThreadEntryThumbnailStream(WorkGroupDocument entry, ThumbnailType kind);
 
 	@Deprecated
 	long getUsedSpace(Account owner) throws BusinessException;

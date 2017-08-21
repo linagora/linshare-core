@@ -34,53 +34,56 @@
 
 package org.linagora.linshare.core.domain.constants;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.sis.util.NullArgumentException;
+import org.linagora.LinThumbnail.utils.ThumbnailKind;
 import org.linagora.linshare.core.domain.entities.Document;
+import org.linagora.linshare.core.exception.TechnicalErrorCode;
+import org.linagora.linshare.core.exception.TechnicalException;
 
-public enum ThumbnailKind {
+public enum ThumbnailType {
 
 	SMALL, MEDIUM, LARGE;
 
-	public static FileMetaDataKind toFileMetaDataKind(ThumbnailKind thumbnailEKind) {
+	public static FileMetaDataKind toFileMetaDataKind(ThumbnailType thumbnailEKind) {
 		try {
 			return FileMetaDataKind.valueOf("THUMBNAIL_" + thumbnailEKind.name());
 		} catch (RuntimeException e) {
-			throw new IllegalArgumentException("Doesn't match an existing ThumbnailEkind");
-		}
-	}
-
-	public static FileMetaDataKind toFileMetaDataKind(String thumbnailEKind) {
-		try {
-			return FileMetaDataKind.valueOf("THUMBNAIL_" + thumbnailEKind);
-		} catch (RuntimeException e) {
-			throw new IllegalArgumentException("Doesn't match an existing ThumbnailEkind");
+			throw new IllegalArgumentException("Doesn't match an existing Thumbnailkind");
 		}
 	}
 
 	public static String getThmbUuid(FileMetaDataKind dataKind, Document doc) {
 		try {
-			String thmbUuid = null;
-//			if (FileMetaDataKind.THUMBNAIL_SMALL.equals(dataKind)) {
-//				thmbUuid = doc.getThmbUuidSmall();
-//			} else if (FileMetaDataKind.THUMBNAIL_MEDIUM.equals(dataKind)) {
-//				thmbUuid = doc.getThmbUuidMedium();
-//			} else if (FileMetaDataKind.THUMBNAIL_LARGE.equals(dataKind)) {
-//				thmbUuid = doc.getThmbUuidLarge();
-//			}
-			return thmbUuid;
+			if (getThumbnailKind(dataKind) != null) {
+				return doc.getThumbnail().get(getThumbnailKind(dataKind)).getThumbnailUuid();
+			}
 		} catch (RuntimeException e) {
-			throw new IllegalArgumentException("Doesn't match an existing ThumbnailEkind");
+			throw new IllegalArgumentException("Doesn't match an existing Thumbnailkind");
+		}
+		throw new NullArgumentException("there is not thumbnailUuid match");
+	}
+
+	public static ThumbnailType toThumbnailKind(ThumbnailKind key) {
+		try {
+			return ThumbnailType.valueOf(key.toString());
+		} catch (RuntimeException e) {
+			throw new IllegalArgumentException("Doesn't match an existing Thumbnailkind");
 		}
 	}
 
-	public static String getKindString(FileMetaDataKind kind) {
-		if (kind.equals(FileMetaDataKind.THUMBNAIL_SMALL)) {
-			return "SMALL";
-		} else if (kind.equals(FileMetaDataKind.THUMBNAIL_MEDIUM)) {
-			return "MEDIUM";
-		} else if (kind.equals(FileMetaDataKind.THUMBNAIL_LARGE)) {
-			return "LARGE";
+	public static ThumbnailType fromString(String s) {
+		try {
+			return ThumbnailType.valueOf(s.toUpperCase());
+		} catch (RuntimeException e) {
+			throw new TechnicalException(TechnicalErrorCode.DATABASE_INCOHERENCE, StringUtils.isEmpty(s) ? "null or empty" : s);
+		}
+	}
+
+	public static ThumbnailType getThumbnailKind(FileMetaDataKind kind) {
+		if (kind.toString().contains("THUMBNAIL_")) {
+			return ThumbnailType.valueOf(kind.toString().split("THUMBNAIL_")[1]);
 		}
 		return null;
 	}
-
 }

@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+
 public class LdapAttribute {
 
 	private Long id;

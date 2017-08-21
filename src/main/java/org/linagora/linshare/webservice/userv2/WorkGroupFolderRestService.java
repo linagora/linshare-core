@@ -40,7 +40,7 @@ import java.util.Set;
 import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
-import org.linagora.linshare.core.domain.constants.ThumbnailKind;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
@@ -74,7 +74,7 @@ public interface WorkGroupFolderRestService {
 
 	Response download(String workGroupUuid, String uuid) throws BusinessException;
 
-	Response thumbnail(String workGroupUuid, String uuid, ThumbnailKind thumbnailKind, boolean base64) throws BusinessException;
+	Response thumbnail(String workGroupUuid, String uuid, ThumbnailType thumbnailType, boolean base64) throws BusinessException;
 
 	AsyncTaskDto findAsync(String uuid) throws BusinessException;
 

@@ -37,7 +37,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 
-import org.linagora.linshare.core.domain.constants.ThumbnailKind;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
@@ -59,7 +59,7 @@ public interface AnonymousShareEntryService {
 	InputStream getAnonymousShareEntryStream(Account actor, String shareUuid)
 			throws BusinessException;
 
-	InputStream getAnonymousShareEntryThumbnailStream(Account actor, String shareUuid, ThumbnailKind kind)
+	InputStream getAnonymousShareEntryThumbnailStream(Account actor, String shareUuid, ThumbnailType kind)
 			throws BusinessException;
 
 	List<String> findAllExpiredEntries(Account actor, Account owner);

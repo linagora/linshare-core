@@ -36,35 +36,32 @@ package org.linagora.linshare.core.business.service.impl;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
 
-import org.apache.cxf.helpers.IOUtils;
 import org.linagora.LinThumbnail.FileResource;
 import org.linagora.LinThumbnail.FileResourceFactory;
 import org.linagora.LinThumbnail.ThumbnailService;
 import org.linagora.LinThumbnail.utils.Constants;
 import org.linagora.LinThumbnail.utils.ImageUtils;
-import org.linagora.LinThumbnail.utils.ThumbnailEnum;
+import org.linagora.LinThumbnail.utils.ThumbnailKind;
+import org.linagora.linshare.core.business.service.ThumbnailGeneratorBusinessService;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
-import org.linagora.linshare.core.domain.constants.ThumbnailKind;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
-import org.linagora.linshare.core.business.service.ThumbnailGeneratorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 
-public class ThumbnailGeneratorServiceImpl implements ThumbnailGeneratorService {
+public class ThumbnailGeneratorBusinessServiceImpl implements ThumbnailGeneratorBusinessService {
 
-	private static final Logger logger = LoggerFactory.getLogger(ThumbnailGeneratorServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(ThumbnailGeneratorBusinessServiceImpl.class);
 
 	protected ThumbnailService thumbnailService;
 
@@ -74,15 +71,18 @@ public class ThumbnailGeneratorServiceImpl implements ThumbnailGeneratorService 
 
 	protected final boolean pdfThumbEnabled;
 
-	public ThumbnailGeneratorServiceImpl(FileDataStore fileDataStore, boolean thumbEnabled, boolean pdfThumbEnabled) {
+	public ThumbnailGeneratorBusinessServiceImpl(FileDataStore fileDataStore,
+			ThumbnailService thumbnailService,
+			boolean thumbEnabled,
+			boolean pdfThumbEnabled) {
 		this.fileDataStore = fileDataStore;
 		this.thumbEnabled = thumbEnabled;
 		this.pdfThumbEnabled = pdfThumbEnabled;
-		this.thumbnailService = new ThumbnailService();
+		this.thumbnailService = thumbnailService;
 	}
 
 	@Override
-	public Map<String, FileMetaData> getThumbnails(Account owner, File myFile, FileMetaData metadata,
+	public Map<ThumbnailType, FileMetaData> getThumbnails(Account owner, File myFile, FileMetaData metadata,
 			FileResource fileResource) {
 		if (!thumbEnabled || (!pdfThumbEnabled && metadata.getMimeType().contains("pdf"))) {
 			logger.warn("Thumbnail generation is disabled.");
@@ -92,33 +92,25 @@ public class ThumbnailGeneratorServiceImpl implements ThumbnailGeneratorService 
 	}
 
 	@Override
-	public void thumbnailServiceStart() {
-		thumbnailService.start();
-	}
-
-	@Override
-	public void thumbnailServiceStop() {
-		thumbnailService.stop();
-	}
-
-	@Override
 	public FileResourceFactory getFileResourceFactory() {
 		return this.thumbnailService.getFactory();
 	}
 
-	private Map<String, FileMetaData> computeAndStoreThumbnail(Account owner, FileMetaData metadata,
+	private Map<ThumbnailType, FileMetaData> computeAndStoreThumbnail(Account owner, FileMetaData metadata,
 			FileResource fileResource) {
 		FileMetaData metadataThumb = null;
-		Map<String, FileMetaData> thumbnailMap = Maps.newHashMap();
+		Map<ThumbnailType, FileMetaData> thumbnailMap = Maps.newHashMap();
 		if (fileResource != null) {
-			Map<ThumbnailEnum, BufferedImage> imageMap = null;
+			Map<ThumbnailKind, BufferedImage> imageMap = null;
 			try {
 				imageMap = fileResource.generateThumbnailImageMap();
 			} catch (Exception e) {
+				// We catch all exception to avoid failure when uploading
+				// a new document. thumbnails are optionals.
 				logger.error(e.getMessage());
 				logger.debug(e.getMessage(), e);
 			}
-			for (Map.Entry<ThumbnailEnum, BufferedImage> entry : imageMap.entrySet()) {
+			for (Map.Entry<ThumbnailKind, BufferedImage> entry : imageMap.entrySet()) {
 				if (entry.getValue() != null) {
 					File tempThumbFile = null;
 					try (InputStream fisThmb = ImageUtils.getInputStreamFromImage(entry.getValue(), "png")) {
@@ -129,10 +121,10 @@ public class ThumbnailGeneratorServiceImpl implements ThumbnailGeneratorService 
 						metadataThumb = new FileMetaData(FileMetaDataKind.THUMBNAIL_SMALL, "image/png",
 								tempThumbFile.length(), metadata.getFileName());
 						metadataThumb = fileDataStore.add(tempThumbFile, metadataThumb);
-						thumbnailMap.put(entry.getKey().toString(), metadataThumb);
+						thumbnailMap.put(ThumbnailType.toThumbnailKind(entry.getKey()), metadataThumb);
 					} catch (IOException e) {
 						logger.error("Failled to generate the thumbnail files ", e);
-						e.printStackTrace();
+						logger.debug(e.getMessage(), e);
 					} finally {
 						if (tempThumbFile != null) {
 							tempThumbFile.delete();

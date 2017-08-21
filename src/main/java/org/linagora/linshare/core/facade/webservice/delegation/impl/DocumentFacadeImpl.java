@@ -42,7 +42,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.domain.constants.ThumbnailKind;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -151,12 +151,12 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 	}
 
 	@Override
-	public Response thumbnail(String ownerUuid, String documentUuid, ThumbnailKind kind)
+	public Response thumbnail(String ownerUuid, String documentUuid, ThumbnailType kind)
 			throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notEmpty(documentUuid, "Missing required document uuid");
 		if (kind == null) {
-			kind = ThumbnailKind.MEDIUM;
+			kind = ThumbnailType.MEDIUM;
 		}
 
 		User actor = checkAuthentication();
