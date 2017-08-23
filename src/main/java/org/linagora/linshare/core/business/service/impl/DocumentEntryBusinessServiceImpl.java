@@ -136,7 +136,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		DocumentEntry entity = null;
 		try {
 			Document document = createDocument(owner, myFile, size, fileName, timeStampingUrl, mimeType);
-
 			if (comment == null)
 				comment = "";
 			DocumentEntry docEntry = new DocumentEntry(owner, fileName, comment, document);
@@ -291,7 +290,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 				metadata = fileDataStore.add(myFile, metadata);
 
 				// Computing and storing thumbnail
-				metadataThmb = computeAndStoreThumbnail(owner, myFile, metadata);
+				metadataThmb = computeAndStoreThumbnail(owner, myFile, metadata, fileName);
 				byte[] timestampToken = getTimeStamp(fileName, myFile, timeStampingUrl);
 
 				document = new Document(metadata);
@@ -441,7 +440,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, mimeType, size, fileName);
 			metadata = fileDataStore.add(myFile, metadata);
 			// Computing and storing thumbnail
-			FileMetaData metadataThmb = computeAndStoreThumbnail(owner, myFile, metadata);
+			FileMetaData metadataThmb = computeAndStoreThumbnail(owner, myFile, metadata, fileName);
 			try {
 				// want a timestamp on doc ?
 				byte[] timestampToken = null;
@@ -502,7 +501,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 						tempThumbFile.createNewFile();
 						try (FileOutputStream fos = new FileOutputStream(tempThumbFile)) {
 							IOUtils.copyAndCloseInput(inputStream, fos);
-							metadataThmb = computeAndStoreThumbnail(owner, tempThumbFile, metadata);
+							metadataThmb = computeAndStoreThumbnail(owner, tempThumbFile, metadata, fileName);
 						}
 					} catch (Exception e) {
 						logger.error("Can not create a copy thumbnail of existing document.");
@@ -553,7 +552,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		documentRepository.delete(document);
 	}
 
-	private FileMetaData computeAndStoreThumbnail(Account owner, File tempFile, FileMetaData metadata) {
+	private FileMetaData computeAndStoreThumbnail(Account owner, File tempFile, FileMetaData metadata, String fileName) {
 		if (!thumbEnabled || (!pdfThumbEnabled && metadata.getMimeType().contains("pdf"))) {
 			logger.warn("Thumbnail generation is disabled.");
 			return null;
@@ -561,7 +560,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 
 		FileMetaData ret = null;
 		FileResourceFactory fileResourceFactory = FileResourceFactory.getInstance();
-		FileResource fileResource = fileResourceFactory.getFileResource(tempFile);
+		FileResource fileResource = fileResourceFactory.getFileResource(tempFile, fileName);
 		InputStream fisThmb = null;
 		BufferedImage bufferedImage=null;
 		File tempThumbFile = null;
