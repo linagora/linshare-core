@@ -89,7 +89,7 @@ public class ThumbnailGeneratorRemoteBusinessServiceImpl implements ThumbnailGen
 		if (!isSupportedMimetype(mimeType) || !thumbEnabled
 				|| (!pdfThumbEnabled && metadata.getMimeType().contains("pdf"))) {
 			logger.warn("Thumbnail generation is disabled.");
-			return null;
+			return Maps.newHashMap();
 		}
 		return computeAndStoreThumbnail(owner, metadata, mimeType, myFile);
 	}
@@ -193,6 +193,14 @@ public class ThumbnailGeneratorRemoteBusinessServiceImpl implements ThumbnailGen
 				}
 			});
 		}
+	}
+
+	@Override
+	public void start() {
+	}
+
+	@Override
+	public void stop() {
 	}
 
 }

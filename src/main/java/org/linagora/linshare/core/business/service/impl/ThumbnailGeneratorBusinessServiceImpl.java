@@ -86,7 +86,7 @@ public class ThumbnailGeneratorBusinessServiceImpl implements ThumbnailGenerator
 			String mimeType) {
 		if (!thumbEnabled || (!pdfThumbEnabled && metadata.getMimeType().contains("pdf"))) {
 			logger.warn("Thumbnail generation is disabled.");
-			return null;
+			return Maps.newHashMap();
 		}
 		FileResource fileResource = getFileResourceFactory().getFileResource(myFile, mimeType);
 		return computeAndStoreThumbnail(owner, metadata, fileResource);
@@ -148,4 +148,13 @@ public class ThumbnailGeneratorBusinessServiceImpl implements ThumbnailGenerator
 		}
 	}
 
+	@Override
+	public void start() {
+		this.thumbnailService.start();
+	}
+
+	@Override
+	public void stop() {
+		this.thumbnailService.stop();
+	}
 }

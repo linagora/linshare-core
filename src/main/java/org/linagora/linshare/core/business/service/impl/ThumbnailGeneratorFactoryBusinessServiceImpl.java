@@ -1,9 +1,9 @@
 /*
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
- *
+ * 
  * Copyright (C) 2017 LINAGORA
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any
@@ -19,12 +19,12 @@
  * refrain from infringing Linagora intellectual property rights over its
  * trademarks and commercial brands. Other Additional Terms apply, see
  * <http://www.linagora.com/licenses/> for more details.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
  * details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License and
  * its applicable Additional Terms for LinShare along with this program. If not,
  * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
@@ -32,20 +32,27 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.business.service;
+package org.linagora.linshare.core.business.service.impl;
 
-import java.io.File;
-import java.util.Map;
+import org.linagora.LinThumbnail.ThumbnailService;
+import org.linagora.linshare.core.business.service.ThumbnailGeneratorBusinessService;
+import org.linagora.linshare.core.dao.FileDataStore;
 
-import org.linagora.linshare.core.domain.constants.ThumbnailType;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.objects.FileMetaData;
+public class ThumbnailGeneratorFactoryBusinessServiceImpl {
 
-public interface ThumbnailGeneratorBusinessService {
+	public ThumbnailGeneratorBusinessService createInstance(Boolean remoteMode, FileDataStore fileDataStore,
+			Boolean thumbEnabled, Boolean pdfThumbEnabled, String thumbnailWebServiceUrl) {
+		ThumbnailGeneratorBusinessService thumbnailGeneratorBusinessService = null;
+		if (remoteMode) {
+			thumbnailGeneratorBusinessService = new ThumbnailGeneratorRemoteBusinessServiceImpl(fileDataStore,
+					thumbEnabled, pdfThumbEnabled, thumbnailWebServiceUrl);
+		} else {
+			ThumbnailService thumbnailService = new org.linagora.LinThumbnail.impl.ThumbnailServiceImpl();
+			thumbnailGeneratorBusinessService = new ThumbnailGeneratorBusinessServiceImpl(fileDataStore,
+					thumbnailService, thumbEnabled, pdfThumbEnabled);
+		}
 
-	public Map<ThumbnailType, FileMetaData> getThumbnails(Account owner, File myFile, FileMetaData metadata, String mimeType);
+		return thumbnailGeneratorBusinessService;
+	}
 
-	void start();
-
-	void stop();
 }

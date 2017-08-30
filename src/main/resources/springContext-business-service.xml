@@ -270,21 +270,17 @@
 	<bean id="upgradeTaskBusinessService" class="org.linagora.linshare.core.business.service.impl.UpgradeTaskBusinessServiceImpl">
 		<constructor-arg ref="upgradeTaskRepository" />
 	</bean>
-<!-- 	<bean id="thumbnailGeneratorService" class="org.linagora.linshare.core.business.service.impl.ThumbnailGeneratorRemoteBusinessServiceImpl"> -->
-<!-- 		<constructor-arg ref="fileDataStore" /> -->
-<!-- 		<constructor-arg value="${linshare.documents.thumbnail.enable}" /> -->
-<!-- 		<constructor-arg value="${linshare.documents.thumbnail.pdf.enable}" /> -->
-<!-- 		<constructor-arg value="${linshare.linthumbnail.dropwizard.server}" /> -->
-<!-- 	</bean> -->
-	<bean id="thumbnailGeneratorService" class="org.linagora.linshare.core.business.service.impl.ThumbnailGeneratorBusinessServiceImpl">
+	<bean name="thumbnailFactoryService" class="org.linagora.linshare.core.business.service.impl.ThumbnailGeneratorFactoryBusinessServiceImpl">
+	</bean>
+	<bean name="thumbnailGeneratorService" class="org.linagora.linshare.core.business.service.impl.ThumbnailGeneratorFactoryBusinessServiceImpl"
+		init-method="start" destroy-method="stop" factory-method="createInstance" factory-bean="thumbnailFactoryService">
+		<constructor-arg value="${linshare.linthumbnail.remote.mode}" />
 		<constructor-arg ref="fileDataStore" />
-		<constructor-arg ref="thumbnailService" />
 		<constructor-arg value="${linshare.documents.thumbnail.enable}" />
 		<constructor-arg value="${linshare.documents.thumbnail.pdf.enable}" />
+		<constructor-arg value="${linshare.linthumbnail.dropwizard.server}" />
 	</bean>
-	<bean name="thumbnailService" class="org.linagora.LinThumbnail.impl.ThumbnailServiceImpl"
-		init-method="start" destroy-method="stop">
-	</bean>
+
 	<bean id="timeStampingService"
 		class="org.linagora.linshare.core.service.impl.TimeStampingServiceImpl">
 	</bean>
