@@ -270,6 +270,12 @@
 	<bean id="upgradeTaskBusinessService" class="org.linagora.linshare.core.business.service.impl.UpgradeTaskBusinessServiceImpl">
 		<constructor-arg ref="upgradeTaskRepository" />
 	</bean>
+<!-- 	<bean id="thumbnailGeneratorService" class="org.linagora.linshare.core.business.service.impl.ThumbnailGeneratorRemoteBusinessServiceImpl"> -->
+<!-- 		<constructor-arg ref="fileDataStore" /> -->
+<!-- 		<constructor-arg value="${linshare.documents.thumbnail.enable}" /> -->
+<!-- 		<constructor-arg value="${linshare.documents.thumbnail.pdf.enable}" /> -->
+<!-- 		<constructor-arg value="${linshare.linthumbnail.dropwizard.server}" /> -->
+<!-- 	</bean> -->
 	<bean id="thumbnailGeneratorService" class="org.linagora.linshare.core.business.service.impl.ThumbnailGeneratorBusinessServiceImpl">
 		<constructor-arg ref="fileDataStore" />
 		<constructor-arg ref="thumbnailService" />

@@ -80,8 +80,8 @@ public class FileMetaData {
 	public FileMetaData(FileMetaDataKind kind, Document document) {
 		super();
 		this.uuid = document.getUuid();
-		if (document.getHasThumbnail() && ThumbnailType.getThumbnailKind(kind) != null) {
-			this.uuid = document.getThumbnail().get(ThumbnailType.getThumbnailKind(kind)).getThumbnailUuid();
+		if (document.getHasThumbnail() && ThumbnailType.getThumbnailType(kind) != null) {
+			this.uuid = document.getThumbnail().get(ThumbnailType.getThumbnailType(kind)).getThumbnailUuid();
 		}
 		this.kind = kind;
 		this.mimeType = document.getType();
@@ -92,8 +92,8 @@ public class FileMetaData {
 	public FileMetaData(FileMetaDataKind kind, Document document, String mimeType) {
 		super();
 		this.uuid = document.getUuid();
-		if (document.getHasThumbnail() && ThumbnailType.getThumbnailKind(kind) != null) {
-			this.uuid = document.getThumbnail().get(ThumbnailType.getThumbnailKind(kind)).getThumbnailUuid();
+		if (document.getHasThumbnail() && ThumbnailType.getThumbnailType(kind) != null) {
+			this.uuid = document.getThumbnail().get(ThumbnailType.getThumbnailType(kind)).getThumbnailUuid();
 		}
 		this.kind = kind;
 		this.mimeType = mimeType;

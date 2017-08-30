@@ -37,15 +37,12 @@ package org.linagora.linshare.core.business.service;
 import java.io.File;
 import java.util.Map;
 
-import org.linagora.LinThumbnail.FileResource;
-import org.linagora.LinThumbnail.FileResourceFactory;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
 
 public interface ThumbnailGeneratorBusinessService {
 
-	public Map<ThumbnailType, FileMetaData> getThumbnails(Account owner, File myFile, FileMetaData metadata, FileResource fileResource);
+	public Map<ThumbnailType, FileMetaData> getThumbnails(Account owner, File myFile, FileMetaData metadata, String mimeType);
 
-	public FileResourceFactory getFileResourceFactory();
 }

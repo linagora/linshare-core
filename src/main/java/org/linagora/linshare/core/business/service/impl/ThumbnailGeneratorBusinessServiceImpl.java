@@ -83,20 +83,20 @@ public class ThumbnailGeneratorBusinessServiceImpl implements ThumbnailGenerator
 
 	@Override
 	public Map<ThumbnailType, FileMetaData> getThumbnails(Account owner, File myFile, FileMetaData metadata,
-			FileResource fileResource) {
+			String mimeType) {
 		if (!thumbEnabled || (!pdfThumbEnabled && metadata.getMimeType().contains("pdf"))) {
 			logger.warn("Thumbnail generation is disabled.");
 			return null;
 		}
+		FileResource fileResource = getFileResourceFactory().getFileResource(myFile, mimeType);
 		return computeAndStoreThumbnail(owner, metadata, fileResource);
 	}
 
-	@Override
-	public FileResourceFactory getFileResourceFactory() {
+	protected FileResourceFactory getFileResourceFactory() {
 		return this.thumbnailService.getFactory();
 	}
 
-	private Map<ThumbnailType, FileMetaData> computeAndStoreThumbnail(Account owner, FileMetaData metadata,
+	protected Map<ThumbnailType, FileMetaData> computeAndStoreThumbnail(Account owner, FileMetaData metadata,
 			FileResource fileResource) {
 		FileMetaData metadataThumb = null;
 		Map<ThumbnailType, FileMetaData> thumbnailMap = Maps.newHashMap();
@@ -121,10 +121,12 @@ public class ThumbnailGeneratorBusinessServiceImpl implements ThumbnailGenerator
 						metadataThumb = new FileMetaData(FileMetaDataKind.THUMBNAIL_SMALL, "image/png",
 								tempThumbFile.length(), metadata.getFileName());
 						metadataThumb = fileDataStore.add(tempThumbFile, metadataThumb);
-						thumbnailMap.put(ThumbnailType.toThumbnailKind(entry.getKey()), metadataThumb);
+						thumbnailMap.put(ThumbnailType.toThumbnailType(entry.getKey()), metadataThumb);
 					} catch (IOException e) {
-						logger.error("Failled to generate the thumbnail files ", e);
+						logger.error("Failed to generate the thumbnail files ", e);
 						logger.debug(e.getMessage(), e);
+						cleanMap(thumbnailMap);
+						return null;
 					} finally {
 						if (tempThumbFile != null) {
 							tempThumbFile.delete();
@@ -135,4 +137,15 @@ public class ThumbnailGeneratorBusinessServiceImpl implements ThumbnailGenerator
 		}
 		return thumbnailMap;
 	}
+
+	protected void cleanMap(Map<ThumbnailType, FileMetaData> thumbnailMap) {
+		if (!thumbnailMap.isEmpty()) {
+			thumbnailMap.forEach((thumbnailType, metadata) -> {
+				if (metadata != null) {
+					fileDataStore.remove(metadata);
+				}
+			});
+		}
+	}
+
 }

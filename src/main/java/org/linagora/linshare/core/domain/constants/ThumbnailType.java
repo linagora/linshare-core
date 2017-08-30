@@ -55,8 +55,8 @@ public enum ThumbnailType {
 
 	public static String getThmbUuid(FileMetaDataKind dataKind, Document doc) {
 		try {
-			if (getThumbnailKind(dataKind) != null) {
-				return doc.getThumbnail().get(getThumbnailKind(dataKind)).getThumbnailUuid();
+			if (getThumbnailType(dataKind) != null) {
+				return doc.getThumbnail().get(getThumbnailType(dataKind)).getThumbnailUuid();
 			}
 		} catch (RuntimeException e) {
 			throw new IllegalArgumentException("Doesn't match an existing Thumbnailkind");
@@ -64,11 +64,11 @@ public enum ThumbnailType {
 		throw new NullArgumentException("there is not thumbnailUuid match");
 	}
 
-	public static ThumbnailType toThumbnailKind(ThumbnailKind key) {
+	public static ThumbnailType toThumbnailType(ThumbnailKind key) {
 		try {
 			return ThumbnailType.valueOf(key.toString());
 		} catch (RuntimeException e) {
-			throw new IllegalArgumentException("Doesn't match an existing Thumbnailkind");
+			throw new IllegalArgumentException("Doesn't match an existing ThumbnailType");
 		}
 	}
 
@@ -80,10 +80,21 @@ public enum ThumbnailType {
 		}
 	}
 
-	public static ThumbnailType getThumbnailKind(FileMetaDataKind kind) {
+	public static ThumbnailType getThumbnailType(FileMetaDataKind kind) {
 		if (kind.toString().contains("THUMBNAIL_")) {
 			return ThumbnailType.valueOf(kind.toString().split("THUMBNAIL_")[1]);
 		}
 		return null;
+	}
+
+	public static ThumbnailType getThumbnailType(String fileName) {
+		try {
+			if (fileName != null) {
+				return ThumbnailType.valueOf(fileName.split(".png")[0]);
+			}
+			return null;
+		} catch (RuntimeException re){
+			throw new IllegalArgumentException("Doesn't match an existing ThumbnailType");
+		}
 	}
 }

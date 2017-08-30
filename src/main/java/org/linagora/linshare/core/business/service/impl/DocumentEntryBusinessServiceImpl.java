@@ -53,7 +53,6 @@ import java.util.Set;
 import org.apache.cxf.helpers.IOUtils;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampResponse;
-import org.linagora.LinThumbnail.FileResource;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.SignatureBusinessService;
 import org.linagora.linshare.core.business.service.ThumbnailGeneratorBusinessService;
@@ -303,15 +302,14 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 				metadata.setFileName(fileName);
 				metadata = fileDataStore.add(myFile, metadata);
 				// Computing and storing thumbnail
-				FileResource fileResource = thumbnailGeneratorService.getFileResourceFactory().getFileResource(myFile, mimeType);
-				fileMetadataThumbnail = thumbnailGeneratorService.getThumbnails(owner, myFile, metadata, fileResource);
+				fileMetadataThumbnail = thumbnailGeneratorService.getThumbnails(owner, myFile, metadata, mimeType);
 				byte[] timestampToken = getTimeStamp(fileName, myFile, timeStampingUrl);
 				document = new Document(metadata);
 				document.setTimeStamp(timestampToken);
 				document.setSha256sum(sha256sum);
 				document.setHasThumbnail(false);
-				Map<ThumbnailType, Thumbnail> fileThumbnails = toFileThumbnail(document, fileMetadataThumbnail);
-				if (!fileThumbnails.isEmpty()) {
+				if (!fileMetadataThumbnail.isEmpty()) {
+					Map<ThumbnailType, Thumbnail> fileThumbnails = toFileThumbnail(document, fileMetadataThumbnail);
 					document.setHasThumbnail(true);
 					document.setThumbnail(fileThumbnails);
 				}
@@ -464,14 +462,14 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	private Document createDocument(Account owner, File myFile, Long size, String fileName, String timeStampingUrl, String mimeType) throws BusinessException {
 		String sha256sum = SHA256CheckSumFileStream(myFile);
 		List<Document> documents = documentRepository.findBySha256Sum(sha256sum);
+		Map<ThumbnailType, FileMetaData> fileMetadataThumbnail = Maps.newHashMap();
 		if (documents.isEmpty() || !deduplication) {
 			// Storing file
 			FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, mimeType, size, fileName);
 			metadata = fileDataStore.add(myFile, metadata);
 
 			// Computing and storing thumbnail
-			FileResource fileResource = thumbnailGeneratorService.getFileResourceFactory().getFileResource(myFile, mimeType);
-			Map<ThumbnailType, FileMetaData> fileMetadataThumbnail = thumbnailGeneratorService.getThumbnails(owner, myFile, metadata, fileResource);
+			fileMetadataThumbnail = thumbnailGeneratorService.getThumbnails(owner, myFile, metadata, mimeType);
 			try {
 				// want a timestamp on doc ?
 				byte[] timestampToken = null;
@@ -483,8 +481,8 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 				document.setSha256sum(sha256sum);
 				document.setTimeStamp(timestampToken);
 				document.setHasThumbnail(false);
-				Map<ThumbnailType, Thumbnail> fileThumbnails = toFileThumbnail(document, fileMetadataThumbnail);
-				if (!fileThumbnails.isEmpty()) {
+				if (!fileMetadataThumbnail.isEmpty()) {
+					Map<ThumbnailType, Thumbnail> fileThumbnails = toFileThumbnail(document, fileMetadataThumbnail);
 					document.setHasThumbnail(true);
 					document.setThumbnail(fileThumbnails);
 				}
@@ -622,7 +620,9 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	@Override
 	public void deleteDocument(Document document) throws BusinessException {
 		// delete old thumbnail in JCR (Small, Medium and Large)
-		deleteThumbnail(document);
+		if (document.getHasThumbnail()) {
+			deleteThumbnail(document);
+		}
 		// remove old document in JCR
 		logger.debug("suppression of doc, Uuid : " + document.getUuid());
 		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, document);
