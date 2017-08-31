@@ -35,6 +35,7 @@ package org.linagora.linshare.core.notifications.dto;
 
 import java.util.Date;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 
@@ -45,6 +46,8 @@ public class Request {
 	final protected Date activationDate;
 
 	final protected Date expirationDate;
+
+	final protected Boolean wasPreviouslyCreated;
 
 	final protected Integer authorizedFiles;
 
@@ -58,6 +61,7 @@ public class Request {
 		this.expirationDate = request.getExpiryDate();
 		this.authorizedFiles = request.getMaxFileCount();
 		this.uploadedFilesCount = url.getUploadRequestEntries().size();
+		this.wasPreviouslyCreated = DateUtils.isSameDay(request.getActivationDate(), request.getCreationDate());
 	}
 
 	public Request(String subject, Date activationDate, Date expirationDate, Integer authorizedFiles,
@@ -68,6 +72,7 @@ public class Request {
 		this.expirationDate = expirationDate;
 		this.authorizedFiles = authorizedFiles;
 		this.uploadedFilesCount = documentsCount;
+		this.wasPreviouslyCreated = DateUtils.isSameDay(activationDate, expirationDate);
 	}
 
 	public Request(UploadRequest uploadRequest) {
@@ -76,6 +81,7 @@ public class Request {
 		this.subject = null;
 		this.authorizedFiles = null;
 		this.uploadedFilesCount = null;
+		this.wasPreviouslyCreated = DateUtils.isSameDay(uploadRequest.getActivationDate(), uploadRequest.getCreationDate());
 	}
 
 	public String getSubject() {
@@ -96,6 +102,10 @@ public class Request {
 
 	public Integer getUploadedFilesCount() {
 		return uploadedFilesCount;
+	}
+
+	public Boolean getWasPreviouslyCreated() {
+		return wasPreviouslyCreated;
 	}
 
 	@Override
