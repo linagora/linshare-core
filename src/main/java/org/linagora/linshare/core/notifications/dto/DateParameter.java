@@ -35,13 +35,19 @@ package org.linagora.linshare.core.notifications.dto;
 
 import java.util.Date;
 
-public class DateParameter extends Parameter<Date> {
+public class DateParameter implements Parameter {
+
+	protected Boolean modified;
+
+	protected Date value;
+
+	protected Date oldValue;
 
 	public DateParameter(Date value, Date oldValue) {
 		super();
 		this.value = value;
 		this.oldValue = oldValue;
-		this.modified = !(oldValue.equals(oldValue));
+		this.modified = !(value.equals(oldValue));
 	}
 
 	public DateParameter(Date value, boolean modified) {
@@ -51,4 +57,32 @@ public class DateParameter extends Parameter<Date> {
 		this.modified = modified;
 	}
 
+	public Boolean getModified() {
+		return modified;
+	}
+
+	public void setModified(Boolean modified) {
+		this.modified = modified;
+	}
+
+	public Date getValue() {
+		return value;
+	}
+
+	public void setValue(Date value) {
+		this.value = value;
+	}
+
+	public Date getOldValue() {
+		return oldValue;
+	}
+
+	public void setOldValue(Date oldValue) {
+		this.oldValue = oldValue;
+	}
+
+	@Override
+	public String toString() {
+		return "Parameter [modified=" + modified + ", value=" + value + ", oldValue=" + oldValue + "]";
+	}
 }

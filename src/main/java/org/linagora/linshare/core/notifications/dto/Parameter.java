@@ -33,37 +33,6 @@
  */
 package org.linagora.linshare.core.notifications.dto;
 
-public abstract class Parameter<T> {
-
-	protected boolean modified;
-
-	protected T value;
-
-	protected T oldValue;
-
-	public Parameter() {
-		super();
-	}
-
-	public boolean isModified() {
-		return modified;
-	}
-
-	public void setModified(boolean modified) {
-		this.modified = modified;
-	}
-
-	public T getOldValue() {
-		return oldValue;
-	}
-
-	public void setOldValue(T oldValue) {
-		this.oldValue = oldValue;
-	}
-
-	@Override
-	public String toString() {
-		return "Parameter [modified=" + modified + ", value=" + value + ", oldValue=" + oldValue + "]";
-	}
+public interface Parameter {
 
 }

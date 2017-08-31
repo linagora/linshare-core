@@ -33,13 +33,19 @@
  */
 package org.linagora.linshare.core.notifications.dto;
 
-public class IntegerParameter extends Parameter<Integer> {
+public class IntegerParameter implements Parameter {
+
+	protected Boolean modified;
+
+	protected Integer value;
+
+	protected Integer oldValue;
 
 	public IntegerParameter(Integer value, Integer oldValue) {
 		super();
 		this.value = value;
 		this.oldValue = oldValue;
-		this.modified = !(oldValue.equals(oldValue));
+		this.modified = !(value.equals(oldValue));
 	}
 
 	public IntegerParameter(Integer value, boolean modified) {
@@ -47,6 +53,35 @@ public class IntegerParameter extends Parameter<Integer> {
 		this.value = value;
 		this.oldValue = null;
 		this.modified = modified;
+	}
+
+	public Boolean getModified() {
+		return modified;
+	}
+
+	public void setModified(Boolean modified) {
+		this.modified = modified;
+	}
+
+	public Integer getValue() {
+		return value;
+	}
+
+	public void setValue(Integer value) {
+		this.value = value;
+	}
+
+	public Integer getOldValue() {
+		return oldValue;
+	}
+
+	public void setOldValue(Integer oldValue) {
+		this.oldValue = oldValue;
+	}
+
+	@Override
+	public String toString() {
+		return "Parameter [modified=" + modified + ", value=" + value + ", oldValue=" + oldValue + "]";
 	}
 
 }

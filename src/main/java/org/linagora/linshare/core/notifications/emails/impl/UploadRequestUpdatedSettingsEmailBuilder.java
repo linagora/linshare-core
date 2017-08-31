@@ -59,7 +59,7 @@ public class UploadRequestUpdatedSettingsEmailBuilder extends GenericUploadReque
 
 	@Override
 	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		// TODO Auto-generated method stub
+		// TODO UploadRequests : new email
 		return null;
 	}
 
@@ -90,8 +90,8 @@ public class UploadRequestUpdatedSettingsEmailBuilder extends GenericUploadReque
 		ctx.setVariable("subject", new StringParameter("a subject", "a modified subject "));
 		ctx.setVariable("message", new StringParameter("a message", "a modified message"));
 
-		ctx.setVariable("expiryDate", new DateParameter(new Date(), true));
-		ctx.setVariable("activationDate", new DateParameter(new Date(), true));
+		ctx.setVariable("expiryDate", new DateParameter(new Date(), getFakeExpirationDate()));
+		ctx.setVariable("activationDate", new DateParameter(new Date(), false));
 
 		ctx.setVariable("deletionRight", new BooleanParameter(true, false));
 		ctx.setVariable("closureRight", new BooleanParameter(true, false));

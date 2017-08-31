@@ -33,13 +33,48 @@
  */
 package org.linagora.linshare.core.notifications.dto;
 
-public class BooleanParameter extends Parameter<Boolean> {
+public class BooleanParameter implements Parameter {
+
+	protected Boolean modified;
+
+	protected Boolean value;
+
+	protected Boolean oldValue;
 
 	public BooleanParameter(Boolean value, Boolean oldValue) {
 		super();
 		this.value = value;
 		this.oldValue = oldValue;
-		this.modified = !(oldValue.equals(oldValue));
+		this.modified = !(value.equals(oldValue));
+	}
+
+	public Boolean getModified() {
+		return modified;
+	}
+
+	public void setModified(Boolean modified) {
+		this.modified = modified;
+	}
+
+	public Boolean getValue() {
+		return value;
+	}
+
+	public void setValue(Boolean value) {
+		this.value = value;
+	}
+
+	public Boolean getOldValue() {
+		return oldValue;
+	}
+
+	public void setOldValue(Boolean oldValue) {
+		this.oldValue = oldValue;
+	}
+
+	@Override
+	public String toString() {
+		return "Parameter [modified=" + modified + ", value=" + value + ", oldValue=" + oldValue + "]";
 	}
 
 }
