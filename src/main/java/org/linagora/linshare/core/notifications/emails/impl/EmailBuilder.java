@@ -464,9 +464,15 @@ public abstract class EmailBuilder implements IEmailBuilder {
 				String parametrizedClassName = next.getClass().getSimpleName();
 				variable.setType(variable.getType() + "<" + parametrizedClassName + ">");
 				variable.setVariables(getFields(next));
+				if (variable.getVariables() == null) {
+					variable.setStringValue(next.toString());
+				}
 			}
 		} else {
 			variable.setVariables(getFields(obj));
+			if (variable.getVariables() == null) {
+				variable.setStringValue(obj.toString());
+			}
 		}
 		return variable;
 	}
@@ -491,6 +497,8 @@ public abstract class EmailBuilder implements IEmailBuilder {
 						if (value != null) {
 							Variable attr = new Variable(field.getName(), typeName);
 							logger.trace(attr.toString());
+							// FMA
+							attr.setStringValue(value.toString());
 							attributes.add(attr);
 						}
 					}

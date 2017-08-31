@@ -55,6 +55,8 @@ public class Variable {
 
 	protected List<Variable> variables;
 
+	protected String stringValue;
+
 	public Variable(String name, String type) {
 		super();
 		this.name = name;
@@ -90,6 +92,14 @@ public class Variable {
 			this.variables = Lists.newArrayList();
 		}
 		this.variables.add(variable);
+	}
+
+	public String getStringValue() {
+		return stringValue;
+	}
+
+	public void setStringValue(String stringValue) {
+		this.stringValue = stringValue;
 	}
 
 	@Override
