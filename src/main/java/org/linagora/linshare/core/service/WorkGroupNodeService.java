@@ -36,9 +36,9 @@ package org.linagora.linshare.core.service;
 import java.io.File;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.TargetKind;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -54,10 +54,21 @@ public interface WorkGroupNodeService {
 
 	WorkGroupNode find(Account actor, User owner, Thread workGroup, String workGroupNodeUuid, boolean withTree) throws BusinessException;
 
+	WorkGroupNode findForDownloadOrCopyRight(Account actor, User owner, Thread workGroup, String workGroupNodeUuid) throws BusinessException;
+
+	void markAsCopied(Account actor, Account owner, Thread workGroup, WorkGroupNode node) throws BusinessException; 
+
 	String findWorkGroupUuid(Account actor, User owner, String workGroupNodeUuid) throws BusinessException;
 
 	WorkGroupNode create(Account actor, User owner, Thread workGroup, WorkGroupNode workGroupNode, Boolean strict, Boolean dryRun)
 			throws BusinessException;
+
+	WorkGroupNode copy(Account actor, User owner, Thread toWorkGroup, String toNodeUuid, String documentUuid,
+			String fileName, String comment, String metadata, boolean ciphered, Long size, String resourceUuid,
+			TargetKind fromResourceKind) throws BusinessException;
+
+	WorkGroupNode copy(Account actor, User owner, Thread fromWorkGroup, String fromNodeUuid, Thread toWorkGroup,
+			String toNodeUuid) throws BusinessException;
 
 	WorkGroupNode create(Account actor, User owner, Thread workGroup, File tempFile, String fileName,
 			String parentNodeUuid, Boolean strict) throws BusinessException;
@@ -72,11 +83,6 @@ public interface WorkGroupNodeService {
 			throws BusinessException;
 
 	FileAndMetaData thumbnail(Account actor, User owner, Thread workGroup, String workGroupNodeUuid)
-			throws BusinessException;
-
-	WorkGroupNode copy(Account actor, User owner, Thread workGroup, String workGroupNodeUuid, String destinationNodeUuid) throws BusinessException;
-
-	WorkGroupNode copy(Account actor, User owner, Thread workGroup, DocumentEntry documentEntry, WorkGroupNode nodeParent)
 			throws BusinessException;
 
 	WorkGroupNode getRootFolder(Account actor, User owner, Thread workGroup);

@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.CopyDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.DocumentAttachement;
 import org.linagora.linshare.core.facade.webservice.common.dto.MimeTypeDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
@@ -78,4 +79,6 @@ public interface DocumentFacade extends GenericFacade {
 
 	Set<AuditLogEntryUser> findAll(String ownerUuid, String uuid, List<String> actions, List<String> types,
 			String beginDate, String endDate);
+
+	List<DocumentDto> copy(String ownerUuid, CopyDto  copy, boolean deleteShare) throws BusinessException;
 }

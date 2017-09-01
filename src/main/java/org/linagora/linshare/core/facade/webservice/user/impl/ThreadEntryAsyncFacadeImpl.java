@@ -35,6 +35,7 @@
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.TargetKind;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.User;
@@ -100,11 +101,11 @@ public class ThreadEntryAsyncFacadeImpl extends GenericAsyncFacadeImpl implement
 		Validate.notEmpty(tetc.getDocEntryUuid(), "Missing required document entry uuid");
 		// Check if we have the right to access to the specified thread
 		Thread thread = threadService.find(actor, owner, tetc.getThreadUuid());
-		// Check if we have the right to access to the specified document entry
-		DocumentEntry doc = documentEntryService.find(actor, owner, tetc.getDocEntryUuid());
 		// Check if we have the right to download the specified document entry
-		documentEntryService.checkDownloadPermission(actor, owner, tetc.getDocEntryUuid());
-		WorkGroupNode node = service.copy(actor, owner, thread, doc, null);
+		DocumentEntry de = documentEntryService.findForDownloadOrCopyRight(actor, owner, tetc.getDocEntryUuid());
+		WorkGroupNode node = service.copy(actor, owner, thread, null, de.getDocument().getUuid(),
+				de.getName(), de.getComment(), de.getMetaData(), de.getCiphered(), de.getSize(), tetc.getDocEntryUuid(),
+				TargetKind.PERSONAL_SPACE);
 		WorkGroupEntryDto dto = new WorkGroupEntryDto((WorkGroupDocument) node);
 		dto.setWorkGroup(new WorkGroupLightDto(thread));
 		return dto;

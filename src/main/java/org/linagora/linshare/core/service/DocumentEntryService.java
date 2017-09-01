@@ -42,10 +42,17 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.CopyDto;
 
 public interface DocumentEntryService {
 
-	public DocumentEntry create(Account actor, Account owner, File tempFile, String fileName, String comment, boolean isFromCmis, String metadata) throws BusinessException;
+	DocumentEntry create(Account actor, Account owner, File tempFile, String fileName, String comment,
+			boolean isFromCmis, String metadata) throws BusinessException;
+
+	DocumentEntry copy(Account actor, Account owner, String documentUuid, String fileName, String comment,
+			String metadata, boolean ciphered, Long size, CopyDto context) throws BusinessException;
+
+	void markAsCopied(Account actor, Account owner, DocumentEntry entry) throws BusinessException;
 
 	public DocumentEntry update(Account actor, Account owner, String docEntryUuid, File tempFile, String fileName) throws BusinessException ;
 
@@ -99,6 +106,8 @@ public interface DocumentEntryService {
 	 */
 	public DocumentEntry find(Account actor, Account owner, String uuid) throws BusinessException;
 
+	DocumentEntry findForDownloadOrCopyRight(Account actor, Account owner, String uuid)  throws BusinessException;
+
 	public List<DocumentEntry> findAll(Account actor, Account owner) throws BusinessException;
 
 	public List<DocumentEntry> findAllMySyncEntries(Account actor, Account owner) throws BusinessException;
@@ -121,6 +130,4 @@ public interface DocumentEntryService {
 			AbstractDomain domain, DocumentEntry documentEntry);
 
 	List<String> findAllExpiredEntries(Account actor, Account owner);
-
-	void checkDownloadPermission(Account actor, Account owner, String uuid);
 }

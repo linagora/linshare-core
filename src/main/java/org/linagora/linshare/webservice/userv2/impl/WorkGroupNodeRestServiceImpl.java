@@ -64,11 +64,13 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.CopyDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
 import org.linagora.linshare.core.facade.webservice.user.AccountQuotaFacade;
 import org.linagora.linshare.core.facade.webservice.user.AsyncTaskFacade;
 import org.linagora.linshare.core.facade.webservice.user.ThreadEntryAsyncFacade;
 import org.linagora.linshare.core.facade.webservice.user.WorkGroupNodeFacade;
+import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.mongo.entities.WorkGroupAsyncTask;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
@@ -289,6 +291,22 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 		}
 	}
 
+	@Path("/copy")
+	@POST
+	@ApiOperation(value = "Create a workgroup document from an existing document or received share.", response = DocumentDto.class)
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 404, message = "Document not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public List<WorkGroupNode> copy(
+			@ApiParam(value = "The workgroup uuid.", required = true)
+				@PathParam("workGroupUuid") String workGroupUuid,
+			CopyDto  copy) throws BusinessException {
+		return workGroupNodeFacade.copy(null, workGroupUuid, null, copy);
+	}
+
 	@Path("/{uuid}/copy")
 	@POST
 	@ApiOperation(value = "Create a threworkgroupry which will contain the uploaded file.", response = WorkGroupEntryDto.class)
@@ -298,17 +316,14 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public WorkGroupNode copy(
+	public List<WorkGroupNode> copy(
 			@ApiParam(value = "The workgroup uuid.", required = true)
 				@PathParam("workGroupUuid") String workGroupUuid,
-			@ApiParam(value = "The document node uuid.", required = true)
-				@PathParam("uuid")  String nodeUuid,
-			@ApiParam(value = "The destination node uuid.", required = false)
-				@QueryParam("destinationNodeUuid")  String destinationNodeUuid,
-			@ApiParam(value = "The workgroup folder to delete. Only uuid is required", required = true)
-				WorkGroupNode workGroupNode)
-				throws BusinessException {
-		return workGroupNodeFacade.copy(null, workGroupUuid, nodeUuid, destinationNodeUuid, workGroupNode);
+			@ApiParam(value = "The parent node uuid.", required = true)
+				@PathParam("uuid")  String parentNodeUuid,
+				CopyDto copy)
+			throws BusinessException {
+		return workGroupNodeFacade.copy(null, workGroupUuid, parentNodeUuid, copy);
 	}
 
 	@Path("/{uuid}")

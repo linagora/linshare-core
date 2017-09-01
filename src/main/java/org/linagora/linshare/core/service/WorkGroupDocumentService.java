@@ -36,8 +36,8 @@ package org.linagora.linshare.core.service;
 import java.io.File;
 import java.io.InputStream;
 
+import org.linagora.linshare.core.domain.constants.TargetKind;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -46,14 +46,14 @@ import org.linagora.linshare.mongo.entities.WorkGroupNode;
 
 public interface WorkGroupDocumentService extends WorkGroupNodeAbstractService {
 
-	WorkGroupNode create(Account actor, Account owner, Thread thread, File tempFile, String filename,
+	WorkGroupNode create(Account actor, Account owner, Thread thread, File tempFile, String fileName,
 			WorkGroupNode nodeParent) throws BusinessException;
 
-	WorkGroupNode copy(Account actor, Account owner, Thread workGroup, DocumentEntry documentEntry,
-			WorkGroupNode nodeParent) throws BusinessException;
+	WorkGroupNode copy(Account actor, Account owner, Thread toWorkGroup, String documentUuid, String fileName,
+			WorkGroupNode nodeParent, boolean ciphered, Long size, String fromResourceUuid, TargetKind fromResourceKind,
+			String fromWorkGroupUuid) throws BusinessException;
 
-	WorkGroupNode copy(Account actor, Account owner, Thread workGroup, WorkGroupDocument nodeSource,
-			WorkGroupNode nodeParent, String newName) throws BusinessException;
+	void markAsCopied(Account actor, Account owner, Thread workGroup, WorkGroupNode node) throws BusinessException;
 
 	WorkGroupNode delete(Account actor, User owner, Thread workGroup, WorkGroupNode workGroupNode)
 			throws BusinessException;

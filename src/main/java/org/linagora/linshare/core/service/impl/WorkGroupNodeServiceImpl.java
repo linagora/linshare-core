@@ -42,9 +42,9 @@ import java.util.UUID;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.TargetKind;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -57,8 +57,8 @@ import org.linagora.linshare.core.service.WorkGroupFolderService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
-import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.WorkGroupFolder;
+import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.WorkGroupLightNode;
@@ -145,6 +145,18 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		checkReadPermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, node, workGroup);
 		if (withTree) {
 			node.setTreePath(getTreePath(workGroup, node));
+		}
+		return node;
+	}
+
+	@Override
+	public WorkGroupNode findForDownloadOrCopyRight(Account actor, User owner, Thread workGroup,
+			String workGroupNodeUuid) throws BusinessException {
+		preChecks(actor, owner);
+		WorkGroupNode node = find(actor, owner, workGroup, workGroupNodeUuid, false);
+		checkDownloadPermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, node, workGroup);
+		if (!isDocument(node)) {
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not download this kind of node.");
 		}
 		return node;
 	}
@@ -377,41 +389,74 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 	}
 
 	@Override
-	public WorkGroupNode copy(Account actor, User owner, Thread workGroup, DocumentEntry documentEntry,
-			WorkGroupNode nodeParent) throws BusinessException {
-		return workGroupDocumentService.copy(actor, owner, workGroup, documentEntry, nodeParent);
+	public WorkGroupNode copy(Account actor, User owner, Thread toWorkGroup, String toNodeUuid, String documentUuid, String fileName,
+			String comment, String metadata, boolean ciphered, Long size, String resourceUuid, TargetKind fromResourceKind) throws BusinessException {
+		preChecks(actor, owner);
+		Validate.notEmpty(documentUuid, "Missing documentUuid");
+		Validate.notEmpty(fileName, "Missing fileName");
+		checkCreatePermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, null, toWorkGroup);
+		fileName = sanitizeFileName(fileName);
+		if (toNodeUuid != null) {
+			if (toNodeUuid.isEmpty()) {
+				toNodeUuid = null;
+			}
+		}
+		WorkGroupNode nodeParent = getParentNode(actor, owner, toWorkGroup, toNodeUuid);
+		fileName = workGroupDocumentService.getNewName(actor, owner, toWorkGroup, nodeParent, fileName);
+		WorkGroupNode dto = workGroupDocumentService.copy(actor, owner, toWorkGroup, documentUuid, fileName, nodeParent,
+				ciphered, size, resourceUuid, fromResourceKind, null);
+		return dto;
 	}
 
 	@Override
-	public WorkGroupNode copy(Account actor, User owner, Thread workGroup, String workGroupNodeUuid, String destinationNodeUuid)
-			throws BusinessException {
-		WorkGroupNode node = find(actor, owner, workGroup, workGroupNodeUuid, false);
-		checkCreatePermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, null, workGroup);
-		if (destinationNodeUuid != null) {
-			if (destinationNodeUuid.isEmpty()) {
-				destinationNodeUuid = node.getParent();
-			}
-		} else {
-			destinationNodeUuid = node.getParent();
-		}
-		WorkGroupNode nodeParent = find(actor, owner, workGroup, destinationNodeUuid, false);
+	public void markAsCopied(Account actor, Account owner, Thread workGroup, WorkGroupNode node) throws BusinessException {
 		if (isDocument(node)) {
-			if (isFolder(nodeParent)) {
-				String fileName = workGroupDocumentService.getNewName(actor, owner, workGroup, nodeParent, node.getName());
-				return workGroupDocumentService.copy(actor, owner, workGroup, (WorkGroupDocument) node, nodeParent, fileName);
-			} else if (isDocument(nodeParent)) {
+			workGroupDocumentService.markAsCopied(actor, owner, workGroup, node);
+		} else {
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not copy this kind of node.");
+		}
+	}
+
+	@Override
+	public WorkGroupNode copy(Account actor, User owner, Thread fromWorkGroup, String fromNodeUuid,
+			Thread toWorkGroup, String toNodeUuid) throws BusinessException {
+		// step 1 : check the source
+		WorkGroupNode fromNode = find(actor, owner, fromWorkGroup, fromNodeUuid, false);
+		checkDownloadPermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, fromNode, fromWorkGroup);
+		if (!isDocument(fromNode)) {
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not download this kind of node.");
+		}
+
+		// step 2 : check the destination
+		WorkGroupNode toNode = null;
+		// Check if we have the right to read and write in it ?? TODO
+		if (toNodeUuid == null ||toNodeUuid.isEmpty()) {
+			// in the root folder
+			toNode = getRootFolder(owner, toWorkGroup);
+		} else {
+			toNode = find(actor, owner, toWorkGroup, toNodeUuid, false);
+		}
+		checkCreatePermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, null, toWorkGroup);
+		if (isDocument(fromNode)) {
+			if (isFolder(toNode)) {
+				WorkGroupDocument doc = (WorkGroupDocument) fromNode;
+				String fileName = workGroupDocumentService.getNewName(actor, owner, toWorkGroup, toNode, fromNode.getName());
+				return workGroupDocumentService.copy(actor, owner, toWorkGroup, doc.getDocumentUuid(), fileName,
+						toNode, doc.getCiphered(), doc.getSize(), fromNodeUuid, TargetKind.SHARED_SPACE,
+						fromWorkGroup.getLsUuid());
+			} else if (isDocument(toNode)) {
 				// TODO new feature : create a new revision for this file.
 				throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not copy this kind of node.");
 			}
-		} else if (isFolder(node)) {
-			if (isFolder(nodeParent)) {
+		} else if (isFolder(fromNode)) {
+			if (isFolder(toNode)) {
 				// TODO:FMA:workgroups manage folder and nested folders.
 			}
-		} else if (isRevison(node)) {
+		} else if (isRevison(fromNode)) {
 			// TODO manage revisions.
-			if (isFolder(nodeParent)) {
+			if (isFolder(toNode)) {
 				// TODO create a new document from this revision
-			} else 	if (isDocument(nodeParent)) {
+			} else 	if (isDocument(toNode)) {
 				// TODO restore current document with this revision
 			}
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not copy this kind of node.");

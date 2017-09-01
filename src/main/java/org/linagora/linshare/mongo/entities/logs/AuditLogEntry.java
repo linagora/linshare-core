@@ -104,6 +104,8 @@ public class AuditLogEntry {
 
 	protected String fromResourceUuid;
 
+	protected String fromResourceKind;
+
 	protected AuditLogEntryType type;
 
 	protected Date creationDate;
@@ -200,6 +202,14 @@ public class AuditLogEntry {
 
 	public void setFromResourceUuid(String fromResourceUuid) {
 		this.fromResourceUuid = fromResourceUuid;
+	}
+
+	public String getFromResourceKind() {
+		return fromResourceKind;
+	}
+
+	public void setFromResourceKind(String fromResourceKind) {
+		this.fromResourceKind = fromResourceKind;
 	}
 
 	@Override

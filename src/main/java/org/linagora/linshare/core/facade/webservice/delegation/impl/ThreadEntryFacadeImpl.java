@@ -41,7 +41,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.TargetKind;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -106,12 +108,12 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 		User owner = getOwner(ownerUuid);
 		// Check if we have the right to access to the specified thread
 		Thread workGroup = threadService.find(actor, owner, threadUuid);
-		// Check if we have the right to access to the specified document entry
-		documentEntryService.find(actor, owner, entryUuid);
 		// Check if we have the right to download the specified document entry
-		documentEntryService.checkDownloadPermission(actor, owner, entryUuid);
-		WorkGroupNode node = workGroupNodeService.copy(actor, owner, workGroup, entryUuid, null);
-		WorkGroupEntryDto dto = new WorkGroupEntryDto((WorkGroupDocument)node);
+		DocumentEntry de = documentEntryService.findForDownloadOrCopyRight(actor, owner, entryUuid);
+		WorkGroupNode node = workGroupNodeService.copy(actor, owner, workGroup, null, de.getDocument().getUuid(),
+				de.getName(), de.getComment(), de.getMetaData(), de.getCiphered(), de.getSize(), entryUuid,
+				TargetKind.PERSONAL_SPACE);
+		WorkGroupEntryDto dto = new WorkGroupEntryDto((WorkGroupDocument) node);
 		return dto;
 	}
 

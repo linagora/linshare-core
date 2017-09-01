@@ -48,14 +48,18 @@ import org.apache.commons.lang.Validate;
 import org.apache.cxf.helpers.IOUtils;
 import org.linagora.linshare.core.business.service.EntryBusinessService;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
+import org.linagora.linshare.core.domain.constants.TargetKind;
+import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.CopyDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.DocumentAttachement;
 import org.linagora.linshare.core.facade.webservice.common.dto.MimeTypeDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
@@ -67,6 +71,10 @@ import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.MimePolicyService;
 import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.SignatureService;
+import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.core.service.WorkGroupNodeService;
+import org.linagora.linshare.mongo.entities.WorkGroupDocument;
+import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 import com.google.common.collect.ImmutableList;
@@ -74,8 +82,7 @@ import com.google.common.collect.Lists;
 
 import edu.emory.mathcs.backport.java.util.Collections;
 
-public class DocumentFacadeImpl extends UserGenericFacadeImp implements
-		DocumentFacade {
+public class DocumentFacadeImpl extends UserGenericFacadeImp implements DocumentFacade {
 
 	private final DocumentEntryService documentEntryService;
 
@@ -89,12 +96,18 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 
 	protected final AuditLogEntryService auditLogEntryService;
 
+	protected final ThreadService threadService;
+
+	protected final WorkGroupNodeService workGroupNodeService;
+
 	public DocumentFacadeImpl(final DocumentEntryService documentEntryService,
 			final AccountService accountService,
 			final MimePolicyService mimePolicyService,
 			final ShareService shareService,
 			final EntryBusinessService entryBusinessService,
 			final AuditLogEntryService auditLogEntryService,
+			final ThreadService threadService,
+			final WorkGroupNodeService workGroupNodeService,
 			final SignatureService signatureService) {
 		super(accountService);
 		this.documentEntryService = documentEntryService;
@@ -103,6 +116,8 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 		this.signatureService = signatureService;
 		this.entryBusinessService = entryBusinessService;
 		this.auditLogEntryService = auditLogEntryService;
+		this.threadService = threadService;
+		this.workGroupNodeService = workGroupNodeService;
 	}
 
 	@Override
@@ -120,10 +135,10 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 		DocumentDto documentDto = new DocumentDto(entry);
 		List<ShareDto> shares = Lists.newArrayList();
 		if (withShares) {
-			for (AnonymousShareEntry share: entryBusinessService.findAllMyAnonymousShareEntries(actor, entry)) {
+			for (AnonymousShareEntry share : entryBusinessService.findAllMyAnonymousShareEntries(actor, entry)) {
 				shares.add(ShareDto.getSentShare(share, false));
 			}
-			for (ShareEntry share: entryBusinessService.findAllMyShareEntries(actor, entry)) {
+			for (ShareEntry share : entryBusinessService.findAllMyShareEntries(actor, entry)) {
 				shares.add(ShareDto.getSentShare(share, false));
 			}
 		}
@@ -133,40 +148,34 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public DocumentDto create(File tempFile, String fileName,
-			String description, String metadata) throws BusinessException {
-		Validate.notNull(tempFile,
-				"Missing required file (check parameter named file)");
+	public DocumentDto create(File tempFile, String fileName, String description, String metadata)
+			throws BusinessException {
+		Validate.notNull(tempFile, "Missing required file (check parameter named file)");
 		User actor = checkAuthentication();
 		if ((actor.isGuest() && !actor.getCanUpload()))
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
-		DocumentEntry res = documentEntryService.create(actor, actor, tempFile,
-				fileName, description, false, metadata);
+		DocumentEntry res = documentEntryService.create(actor, actor, tempFile, fileName, description, false, metadata);
 		return new DocumentDto(res);
 	}
 
 	@Override
-	public DocumentDto addDocumentXop(DocumentAttachement doca)
-			throws BusinessException {
+	public DocumentDto addDocumentXop(DocumentAttachement doca) throws BusinessException {
 		File tempFile = null;
 		try {
 			User actor = checkAuthentication();
 			DataHandler dh = doca.getDocument();
 			InputStream in = dh.getInputStream();
 			String fileName = doca.getFilename();
-			String comment = (doca.getComment() == null) ? "" : doca
-					.getComment();
+			String comment = (doca.getComment() == null) ? "" : doca.getComment();
 			tempFile = File.createTempFile("linshare-xop-", ".tmp");
 			IOUtils.transferTo(in, tempFile);
-			DocumentEntry res = documentEntryService.create(actor, actor, tempFile,
-					fileName, comment, false, null);
+			DocumentEntry res = documentEntryService.create(actor, actor, tempFile, fileName, comment, false, null);
 			return new DocumentDto(res);
 		} catch (IOException e) {
 			logger.error(e.getMessage(), e);
 			deleteTempFile(tempFile);
-			throw new BusinessException(
-					BusinessErrorCode.FILE_INVALID_INPUT_TEMP_FILE,
+			throw new BusinessException(BusinessErrorCode.FILE_INVALID_INPUT_TEMP_FILE,
 					"Can not generate temp file from input stream.");
 		}
 	}
@@ -178,31 +187,26 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 					tempFile.delete();
 				}
 			} catch (Exception e) {
-				logger.warn("Can not delete temp file : "
-						+ tempFile.getAbsolutePath());
+				logger.warn("Can not delete temp file : " + tempFile.getAbsolutePath());
 				logger.debug(e.getMessage(), e);
 			}
 		}
 	}
 
 	@Override
-	public InputStream getDocumentStream(String docEntryUuid)
-			throws BusinessException {
+	public InputStream getDocumentStream(String docEntryUuid) throws BusinessException {
 		Validate.notEmpty(docEntryUuid, "Missing required document uuid");
 		logger.debug("downloading for document : " + docEntryUuid);
 		User actor = checkAuthentication();
-		return documentEntryService.getDocumentStream(actor, actor,
-				docEntryUuid);
+		return documentEntryService.getDocumentStream(actor, actor, docEntryUuid);
 	}
 
 	@Override
-	public InputStream getThumbnailStream(String docEntryUuid)
-			throws BusinessException {
+	public InputStream getThumbnailStream(String docEntryUuid) throws BusinessException {
 		Validate.notEmpty(docEntryUuid, "Missing required document uuid");
 		logger.debug("downloading thumbnail for document : " + docEntryUuid);
 		User actor = checkAuthentication();
-		return documentEntryService.getDocumentThumbnailStream(actor, actor,
-				docEntryUuid);
+		return documentEntryService.getDocumentThumbnailStream(actor, actor, docEntryUuid);
 	}
 
 	@Override
@@ -235,58 +239,49 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public DocumentDto update(String documentUuid, DocumentDto documentDto)
-			throws BusinessException {
+	public DocumentDto update(String documentUuid, DocumentDto documentDto) throws BusinessException {
 
 		Validate.notEmpty(documentUuid, "Missing required document uuid");
 		Validate.notNull(documentDto, "Missing required DocumentDto");
 		Validate.notEmpty(documentDto.getName(), "Missing required fileName");
 
 		User actor = checkAuthentication();
-		return new DocumentDto(documentEntryService.updateFileProperties(actor,
-				actor, documentUuid, documentDto.getName(),
-				documentDto.getDescription(), documentDto.getMetaData()));
+		return new DocumentDto(documentEntryService.updateFileProperties(actor, actor, documentUuid,
+				documentDto.getName(), documentDto.getDescription(), documentDto.getMetaData()));
 	}
 
 	@Override
-	public DocumentDto updateFile(File file, String givenFileName,
-			String documentUuid) throws BusinessException {
+	public DocumentDto updateFile(File file, String givenFileName, String documentUuid) throws BusinessException {
 		Validate.notEmpty(documentUuid, "Missing required document uuid");
 		Validate.notNull(file, "Missing required File stream");
 
 		User actor = checkAuthentication();
-		return new DocumentDto(documentEntryService.update(actor, actor,
-				documentUuid, file, givenFileName));
+		return new DocumentDto(documentEntryService.update(actor, actor, documentUuid, file, givenFileName));
 	}
 
 	@Override
-	public DocumentDto createWithSignature(File tempFile, String fileName,
-			String description, InputStream signatureFile,
-			String signatureFileName, InputStream x509)
-					throws BusinessException {
-		Validate.notNull(tempFile,
-				"Missing required file (check parameter named file)");
+	public DocumentDto createWithSignature(File tempFile, String fileName, String description,
+			InputStream signatureFile, String signatureFileName, InputStream x509) throws BusinessException {
+		Validate.notNull(tempFile, "Missing required file (check parameter named file)");
 		User actor = checkAuthentication();
 		if ((actor.isGuest() && !actor.getCanUpload()))
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
-		DocumentEntry res = documentEntryService.create(actor, actor, tempFile,
-				fileName, description, false, null);
-		if(signatureFile != null) {
+		DocumentEntry res = documentEntryService.create(actor, actor, tempFile, fileName, description, false, null);
+		if (signatureFile != null) {
 			X509Certificate x509certificate = null;
 			try {
 				CertificateFactory cf = CertificateFactory.getInstance("X.509");
 				x509certificate = (X509Certificate) cf.generateCertificate(x509);
 			} catch (CertificateException e) {
-				throw new BusinessException(
-						BusinessErrorCode.INVALID_INPUT_FOR_X509_CERTIFICATE,
+				throw new BusinessException(BusinessErrorCode.INVALID_INPUT_FOR_X509_CERTIFICATE,
 						"unable to generate a X509 certificate", e);
 			}
-			signatureService.createSignature(actor, res.getDocument(), signatureFile, signatureFileName, x509certificate);
+			signatureService.createSignature(actor, res.getDocument(), signatureFile, signatureFileName,
+					x509certificate);
 		}
 
-		documentEntryService.updateFileProperties(actor, actor, res.getUuid(),
-				res.getName(), description, null);
+		documentEntryService.updateFileProperties(actor, actor, res.getUuid(), res.getName(), description, null);
 		return new DocumentDto(res);
 	}
 
@@ -297,5 +292,59 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements
 		User owner = (User) getOwner(actor, ownerUuid);
 		DocumentEntry entry = documentEntryService.find(actor, owner, uuid);
 		return auditLogEntryService.findAll(actor, owner, entry.getUuid(), actions, types, beginDate, endDate);
+	}
+
+	@Override
+	public List<DocumentDto> copy(String ownerUuid, CopyDto copy, boolean deleteShare) throws BusinessException {
+		Account actor = checkAuthentication();
+		User owner = (User) getOwner(actor, ownerUuid);
+		Validate.notNull(copy);
+		TargetKind resourceKind = copy.getKind();
+		Validate.notNull(resourceKind);
+		String resourceUuid = copy.getUuid();
+		Validate.notEmpty(resourceUuid);
+		if (TargetKind.RECEIVED_SHARE.equals(resourceKind)) {
+			// FIXME:if the current user do have enough space, there is side effect on audit.
+			// Some audit traces will be created before quota checks ! :s
+			ShareEntry share = shareService.findForDownloadOrCopyRight(actor, owner, resourceUuid);
+			String documentUuid = share.getDocumentEntry().getDocument().getUuid();
+			Boolean ciphered = share.getDocumentEntry().getCiphered();
+			String name = share.getName();
+			DocumentEntry documentEntry = documentEntryService.copy(actor, owner, documentUuid, name,
+					share.getComment(), share.getMetaData(), ciphered, share.getSize(), copy);
+			shareService.markAsCopied(actor, owner, resourceUuid);
+			DocumentDto documentDto = new DocumentDto(documentEntry);
+			if (deleteShare) {
+				shareService.delete(actor, owner, share, LogActionCause.COPY);
+			}
+			return Lists.newArrayList(documentDto);
+		} else if (TargetKind.SHARED_SPACE.equals(resourceKind)) {
+			String workgroupUuid = copy.getContextUuid();
+			Validate.notEmpty(workgroupUuid, "Missing workgroup uuid");
+			Thread workGroup = threadService.find(actor, owner, workgroupUuid);
+			WorkGroupNode node = workGroupNodeService.findForDownloadOrCopyRight(actor, owner, workGroup, resourceUuid);
+			if (node.getNodeType().equals(WorkGroupNodeType.DOCUMENT)) {
+				WorkGroupDocument wgDocument = (WorkGroupDocument) node;
+				String documentUuid = wgDocument.getDocumentUuid();
+				Boolean ciphered = wgDocument.getCiphered();
+				String name = wgDocument.getName();
+				DocumentEntry documentEntry = documentEntryService.copy(actor, owner, documentUuid, name, null,
+						wgDocument.getMetaData(), ciphered, wgDocument.getSize(), copy);
+				workGroupNodeService.markAsCopied(actor, owner, workGroup, wgDocument);
+				DocumentDto documentDto = new DocumentDto(documentEntry);
+				return Lists.newArrayList(documentDto);
+			}
+		} else if (TargetKind.PERSONAL_SPACE.equals(resourceKind)) {
+			DocumentEntry documentEntry = documentEntryService.findForDownloadOrCopyRight(actor, owner, resourceUuid);
+			String documentUuid = documentEntry.getDocument().getUuid();
+			Boolean ciphered = documentEntry.getCiphered();
+			String name = documentEntry.getName();
+			DocumentEntry documentCopied = documentEntryService.copy(actor, owner, documentUuid, name,
+					documentEntry.getComment(), documentEntry.getMetaData(), ciphered, documentEntry.getSize(),
+					copy);
+			documentEntryService.markAsCopied(actor, owner, documentEntry);
+			return Lists.newArrayList(new DocumentDto(documentCopied));
+		}
+		throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN, "This action is not supported.");
 	}
 }

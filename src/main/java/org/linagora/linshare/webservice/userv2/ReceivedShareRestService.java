@@ -40,7 +40,6 @@ import javax.ws.rs.core.Response;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
-import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface ReceivedShareRestService {
@@ -56,8 +55,6 @@ public interface ReceivedShareRestService {
 	ShareDto delete(String receivedShareUuid) throws BusinessException;
 
 	ShareDto delete(ShareDto shareDto) throws BusinessException;
-
-	DocumentDto copy(String shareEntryUuid) throws BusinessException;
 
 	Response download(String uuid) throws BusinessException;
 

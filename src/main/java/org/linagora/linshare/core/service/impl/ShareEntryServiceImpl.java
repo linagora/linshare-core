@@ -69,7 +69,6 @@ import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.mongo.entities.EventNotification;
-import org.linagora.linshare.mongo.entities.logs.DocumentEntryAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.ShareEntryAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.ShareEntryMto;
 
@@ -136,19 +135,45 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 	}
 
 	@Override
-	public void delete(Account actor, Account owner, String uuid, LogActionCause cause)
+	public ShareEntry findForDownloadOrCopyRight(Account actor, Account owner, String uuid) throws BusinessException {
+		ShareEntry share = find(actor, owner, uuid);
+		checkDownloadPermission(actor, owner, ShareEntry.class,
+				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, share);
+		return share;
+	}
+
+	@Override
+	public ShareEntry markAsCopied(Account actor, Account owner, String uuid) throws BusinessException {
+		ShareEntry share = find(actor, owner, uuid);
+		checkDownloadPermission(actor, owner, ShareEntry.class,
+				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, share);
+		MailContainerWithRecipient mail = null;
+		if (share.getDownloaded() <= 0) {
+			ShareFileDownloadEmailContext context = new ShareFileDownloadEmailContext(share);
+			mail = mailBuildingService.build(context);
+		}
+		share = shareEntryBusinessService.updateDownloadCounter(share.getUuid());
+		ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, LogAction.DOWNLOAD, share,
+				AuditLogEntryType.SHARE_ENTRY);
+		log.setCause(LogActionCause.COPY);
+		logEntryService.insert(log);
+		notifierService.sendNotification(mail);
+		return share;
+	}
+
+	@Override
+	public ShareEntry delete(Account actor, Account owner, String uuid, LogActionCause cause)
 			throws BusinessException {
 		Validate.notEmpty(uuid, "Missing share entry uuid");
 		ShareEntry share = find(actor, owner, uuid);
 		checkDeletePermission(actor, owner, ShareEntry.class,
 				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, share);
-		logger.info("Share deleted : " + share.getUuid());
-		shareEntryBusinessService.delete(share);
+		logger.debug("Share deleted : " + share.getUuid());
+
+		MailContainerWithRecipient mail = null;
 		ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, LogAction.DELETE, share,
 				AuditLogEntryType.SHARE_ENTRY);
-		if (cause != null) {
-			log.setCause(cause);
-		}
+		log.setCause(cause);
 		if (share.getRecipient().equals(owner)) {
 			// If the modified account (aka owner parameter) is the recipient of this share.
 			// We does not need to send him a notification.
@@ -157,7 +182,6 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			log.addRelatedAccounts(senderUuid);
 			EventNotification event = new EventNotification(log, senderUuid);
 			logEntryService.insert(log, event);
-			// Mail to the sender ?
 		} else {
 			// The sender is deleting the current share, we need to warn the recipient.
 			String recipientUuid = share.getRecipient().getLsUuid();
@@ -165,55 +189,11 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			EventNotification event = new EventNotification(log, recipientUuid);
 			logEntryService.insert(log, event);
 			EmailContext context = new ShareFileShareDeletedEmailContext(share);
-			MailContainerWithRecipient mail = mailBuildingService.build(context);
-			notifierService.sendNotification(mail);
+			mail = mailBuildingService.build(context);
 		}
-	}
-
-	@Override
-	public DocumentEntry copy(Account actor, Account owner, String shareUuid)
-			throws BusinessException {
-		Validate.notEmpty(shareUuid, "Missing share entry uuid");
-		// step1 : find the resource, and it does the preChecks(actor, owner);
-		ShareEntry share = find(actor, owner, shareUuid);
-		checkDownloadPermission(actor, owner, ShareEntry.class,
-				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, share);
-		/*
-		 * This check already exists in DocumentEntry rac, but we do it it to avoid to go deeper in this method (performance).
-		 */
-		if (!((User) owner).getCanUpload()) {
-			throw new BusinessException(BusinessErrorCode.NO_UPLOAD_RIGHTS_FOR_ACTOR, "Actor do not have upload rights.");
-		}
-		// Check if we have the right to download the specified document entry
-		DocumentEntry documentEntry = null;
-		// step2 : copy the resource
-		Calendar expiryTime = functionalityService.getDefaultFileExpiryTime(owner.getDomain());
-		documentEntry = documentEntryBusinessService.copyFromShareEntry(owner, share, expiryTime);
-		// step3 : log the document creation
-		DocumentEntryAuditLogEntry docLog = new DocumentEntryAuditLogEntry(actor, owner, documentEntry, LogAction.CREATE);
-		docLog.setCause(LogActionCause.COPY);
-		docLog.setFromResourceUuid(shareUuid);
-		// step4 : remove the share
-		logger.info("delete share : " + share.getUuid());
-		// step 5 : notification
-		if (share.getDownloaded() < 1) {
-			ShareFileDownloadEmailContext context = new ShareFileDownloadEmailContext(share);
-			MailContainerWithRecipient mail = mailBuildingService.build(context);
-			notifierService.sendNotification(mail);
-		}
-		// The share is now useless. We can delete it.
 		shareEntryBusinessService.delete(share);
-		// step6 : log the share deletion
-		ShareEntryAuditLogEntry shareLog = new ShareEntryAuditLogEntry(actor, owner, LogAction.DELETE, share,
-				AuditLogEntryType.SHARE_ENTRY);
-		String senderUuid = share.getEntryOwner().getLsUuid();
-		shareLog.addRelatedAccounts(senderUuid);
-		shareLog.setCause(LogActionCause.COPY);
-		// step create an event to notify the sender of share deletion.
-		EventNotification event = new EventNotification(shareLog, senderUuid);
-		logEntryService.insert(docLog);
-		logEntryService.insert(shareLog, event);
-		return documentEntry;
+		notifierService.sendNotification(mail);
+		return share;
 	}
 
 	@Override

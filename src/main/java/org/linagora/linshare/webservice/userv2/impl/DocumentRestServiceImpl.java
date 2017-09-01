@@ -63,6 +63,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.CopyDto;
 import org.linagora.linshare.core.facade.webservice.user.AccountQuotaFacade;
 import org.linagora.linshare.core.facade.webservice.user.AsyncTaskFacade;
 import org.linagora.linshare.core.facade.webservice.user.DocumentAsyncFacade;
@@ -186,6 +187,21 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 				deleteTempFile(tempFile);
 			}
 		}
+	}
+
+	@Path("/copy")
+	@POST
+	@ApiOperation(value = "Create a document from an existing workgroup document or a received share.", response = DocumentDto.class)
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 404, message = "Document not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public List<DocumentDto> copy(CopyDto  copy,
+			@ApiParam(value = "Delete the share at the end of the copy.", required = false)
+				@QueryParam("deleteShare") @DefaultValue("false") boolean deleteShare) throws BusinessException {
+		return documentFacade.copy(null, copy, deleteShare);
 	}
 
 	@Path("/{uuid}")

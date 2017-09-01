@@ -45,9 +45,9 @@ import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
+import org.linagora.linshare.core.domain.constants.TargetKind;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.OperationHistory;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
@@ -155,34 +155,31 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 	}
 
 	@Override
-	public WorkGroupNode copy(Account actor, Account owner, Thread workGroup, DocumentEntry documentEntry, WorkGroupNode nodeParent)
-			throws BusinessException {
-//		checkCreatePermission(actor, owner, ThreadEntry.class,
-//				BusinessErrorCode.THREAD_ENTRY_FORBIDDEN, null, workGroup);
-		checkSpace(workGroup, documentEntry.getSize());
-		WorkGroupDocument node = documentEntryBusinessService.copy(actor, workGroup, nodeParent, documentEntry.getDocument().getUuid(), documentEntry.getName());
+	public WorkGroupNode copy(Account actor, Account owner, Thread workGroup, String documentUuid, String fileName,
+			WorkGroupNode nodeParent, boolean ciphered, Long size, String fromResourceUuid, TargetKind fromResourceKind,
+			String fromWorkGroupUuid) throws BusinessException {
+		Validate.notEmpty(documentUuid, "documentUuid is required.");
+		Validate.notEmpty(fileName, "fileName is required.");
+		Validate.notNull(nodeParent);
+		checkSpace(workGroup, size);
+		WorkGroupDocument node = documentEntryBusinessService.copy(owner, workGroup, nodeParent, documentUuid, fileName,
+				ciphered);
 		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
 				AuditLogEntryType.WORKGROUP_DOCUMENT, node, workGroup);
+		addMembersToLog(workGroup, log);
 		log.setCause(LogActionCause.COPY);
+		log.setFromResourceUuid(fromResourceUuid);
+		if (fromResourceKind.equals(TargetKind.RECEIVED_SHARE)) {
+			// workgroup members do not need to know if the new document come
+			// from author personal space or author received shares
+			fromResourceKind = TargetKind.PERSONAL_SPACE;
+		} else if (fromResourceKind.equals(TargetKind.SHARED_SPACE)) {
+			log.setFromWorkGroupUuid(fromWorkGroupUuid);
+		}
+		log.setFromResourceKind(fromResourceKind.name());
 		addMembersToLog(workGroup, log);
 		logEntryService.insert(log);
-		addToQuota(workGroup, documentEntry.getSize());
-		return node;
-	}
-
-	@Override
-	public WorkGroupNode copy(Account actor, Account owner, Thread workGroup, WorkGroupDocument nodeSource,
-			WorkGroupNode nodeParent, String newName) throws BusinessException {
-//		checkCreatePermission(actor, owner, ThreadEntry.class,
-//				BusinessErrorCode.THREAD_ENTRY_FORBIDDEN, null, workGroup);
-		checkSpace(workGroup, nodeSource.getSize());
-		WorkGroupDocument node = documentEntryBusinessService.copy(actor, workGroup, nodeParent, nodeSource.getDocumentUuid(), newName);
-		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
-				AuditLogEntryType.WORKGROUP_DOCUMENT, node, workGroup);
-		log.setCause(LogActionCause.COPY);
-		addMembersToLog(workGroup, log);
-		logEntryService.insert(log);
-		addToQuota(workGroup, nodeSource.getSize());
+		addToQuota(workGroup, size);
 		return node;
 	}
 
@@ -206,6 +203,15 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 		addMembersToLog(workGroup, log);
 		logEntryService.insert(log);
 		return documentEntryBusinessService.getDocumentStream(node);
+	}
+
+	@Override
+	public void markAsCopied(Account actor, Account owner, Thread workGroup, WorkGroupNode node) throws BusinessException {
+		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DOWNLOAD,
+				AuditLogEntryType.WORKGROUP_DOCUMENT, node, workGroup);
+		log.setCause(LogActionCause.COPY);
+		addMembersToLog(workGroup, log);
+		logEntryService.insert(log);
 	}
 
 	@Override

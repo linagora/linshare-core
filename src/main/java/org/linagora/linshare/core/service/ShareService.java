@@ -41,6 +41,7 @@ import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -55,7 +56,13 @@ public interface ShareService {
 
 	public Entry delete(Account actor, Account owner, String entryUuid) throws BusinessException;
 
+	ShareEntry delete(Account actor, Account owner, ShareEntry share, LogActionCause cause) throws BusinessException;
+
 	Date getUndownloadedSharedDocumentsAlertDuration(Account actor);
 
 	Date getFinalShareExpiryDate(Account actor, Date userExpiryDate);
+
+	ShareEntry findForDownloadOrCopyRight(Account actor, Account owner, String uuid)  throws BusinessException;
+
+	ShareEntry markAsCopied(Account actor, Account owner, String uuid)  throws BusinessException;
 }

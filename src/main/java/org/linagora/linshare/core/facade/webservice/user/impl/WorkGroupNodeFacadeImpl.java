@@ -41,23 +41,31 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.TargetKind;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.CopyDto;
 import org.linagora.linshare.core.facade.webservice.user.WorkGroupNodeFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
+import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
+import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
+
+import com.google.common.collect.Lists;
 
 public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements WorkGroupNodeFacade {
 
@@ -69,14 +77,22 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 
 	protected final AuditLogEntryService auditLogEntryService;
 
+	protected final DocumentEntryService documentEntryService;
+
+	protected final ShareEntryService shareEntryService;
+
 	public WorkGroupNodeFacadeImpl(AccountService accountService,
 			WorkGroupNodeService service,
 			ThreadService threadService,
 			FunctionalityReadOnlyService functionalityService,
+			DocumentEntryService documentEntryService,
+			ShareEntryService shareEntryService,
 			AuditLogEntryService auditLogEntryService) {
 		super(accountService);
 		this.service = service;
 		this.threadService = threadService;
+		this.documentEntryService = documentEntryService;
+		this.shareEntryService = shareEntryService;
 		this.functionalityService = functionalityService;
 		this.auditLogEntryService = auditLogEntryService;
 	}
@@ -137,6 +153,48 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 	}
 
 	@Override
+	public List<WorkGroupNode> copy(String ownerUuid, String workGroupUuid, String toParentNodeUuid, CopyDto copy) {
+		Account actor = checkAuthentication();
+		User owner = (User) getOwner(actor, ownerUuid);
+		Validate.notNull(copy);
+		TargetKind resourceKind = copy.getKind();
+		Validate.notNull(resourceKind, "Missing resource kind.");
+		String fromResourceUuid = copy.getUuid();
+		Validate.notEmpty(fromResourceUuid, "Missing entry uuid to copy from");
+		Validate.notEmpty(workGroupUuid, "Missing workGroup uuid to copy into");
+		Thread toWorkGroup = threadService.find(actor, owner, workGroupUuid);
+		if (TargetKind.RECEIVED_SHARE.equals(resourceKind)) {
+			// if the current user do have enough space, there is side effect on audit.
+			// Some audit traces will be created before quota checks ! :s
+			ShareEntry share = shareEntryService.findForDownloadOrCopyRight(actor, owner, fromResourceUuid);
+			String documentUuid = share.getDocumentEntry().getDocument().getUuid();
+			Boolean ciphered = share.getDocumentEntry().getCiphered();
+			String name = share.getName();
+			WorkGroupNode node = service.copy(actor, owner, toWorkGroup, toParentNodeUuid, documentUuid, name,
+					share.getComment(), share.getMetaData(), ciphered, share.getSize(), fromResourceUuid, resourceKind);
+			shareEntryService.markAsCopied(actor, owner, fromResourceUuid);
+			return Lists.newArrayList(node);
+		} else if (TargetKind.PERSONAL_SPACE.equals(resourceKind)) {
+			DocumentEntry documentEntry = documentEntryService.findForDownloadOrCopyRight(actor, owner, fromResourceUuid);
+			String documentUuid = documentEntry.getDocument().getUuid();
+			Boolean ciphered = documentEntry.getCiphered();
+			String name = documentEntry.getName();
+			WorkGroupNode node = service.copy(actor, owner, toWorkGroup, toParentNodeUuid, documentUuid, name,
+					documentEntry.getComment(), documentEntry.getMetaData(), ciphered, documentEntry.getSize(), fromResourceUuid, resourceKind);
+			return Lists.newArrayList(node);
+		} else if (TargetKind.SHARED_SPACE.equals(resourceKind)) {
+			// We retrieve workGroup uuid from the resource we want to copy
+			String fromWorkGroupUuid = service.findWorkGroupUuid(actor, owner, fromResourceUuid);
+			// check read access. read=download ? TODO
+			Thread fromWorkGroup = threadService.find(actor, owner, fromWorkGroupUuid);
+			WorkGroupNode node = service.copy(actor, owner, fromWorkGroup, fromResourceUuid, toWorkGroup, toParentNodeUuid);
+			return Lists.newArrayList(node);
+		}
+		throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
+				"This action is not supported.");
+	}
+
+	@Override
 	public WorkGroupNode update(String ownerUuid, String workGroupUuid, WorkGroupNode workGroupNode)
 			throws BusinessException {
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
@@ -169,23 +227,6 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		User owner = getOwner(actor, ownerUuid);
 		Thread workGroup = threadService.find(actor, owner, workGroupUuid);
 		return service.delete(actor, owner, workGroup, workGroupNode.getUuid());
-	}
-
-	@Override
-	public WorkGroupNode copy(String ownerUuid, String workGroupUuid, String workGroupNodeUuid, String destinationNodeUuid, WorkGroupNode workGroupNode) throws BusinessException {
-		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
-		Validate.notEmpty(workGroupNodeUuid, "Missing required workGroup node uuid");
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
-		// Check if we have the right to access to the specified thread
-		Thread workGroup = threadService.find(actor, owner, workGroupUuid);
-		//		// Check if we have the right to access to the specified document entry
-		//		documentEntryService.find(actor, owner, entryUuid);
-		//		// Check if we have the right to download the specified document entry
-		//		documentEntryService.checkDownloadPermission(actor, owner, entryUuid);
-		// TODO:Workgroups : Manage workGroupNode as destination node
-		WorkGroupNode node = service.copy(actor, owner, workGroup, workGroupNodeUuid, destinationNodeUuid);
-		return node;
 	}
 
 	@Override

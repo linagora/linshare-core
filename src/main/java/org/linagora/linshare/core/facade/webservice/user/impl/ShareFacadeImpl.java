@@ -52,7 +52,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
 import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareCreationDto;
 import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
-import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.MailingListService;
@@ -247,14 +246,6 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 		Validate.notEmpty(shareUuid, "Missing required share uuid");
 		User actor = checkAuthentication();
 		return ShareDto.getSentShare(shareEntryService.find(actor, actor, shareUuid));
-	}
-
-	@Override
-	public DocumentDto copy(String shareEntryUuid)
-			throws BusinessException {
-		Validate.notEmpty(shareEntryUuid, "Missing required share uuid");
-		Account actor = checkAuthentication();
-		return new DocumentDto(shareEntryService.copy(actor, actor, shareEntryUuid));
 	}
 
 	@Override

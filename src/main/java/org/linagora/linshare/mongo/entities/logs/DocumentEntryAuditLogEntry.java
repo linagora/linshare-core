@@ -51,6 +51,9 @@ public class DocumentEntryAuditLogEntry extends AuditLogEntryUser {
 
 	protected DocumentMto resourceUpdated;
 
+	// used when we copy a document from another workgroup
+	protected String fromWorkGroupUuid;
+
 	public DocumentEntryAuditLogEntry() {
 		super();
 	}
@@ -74,5 +77,13 @@ public class DocumentEntryAuditLogEntry extends AuditLogEntryUser {
 
 	public void setResourceUpdated(DocumentMto resourceUpdated) {
 		this.resourceUpdated = resourceUpdated;
+	}
+
+	public String getFromWorkGroupUuid() {
+		return fromWorkGroupUuid;
+	}
+
+	public void setFromWorkGroupUuid(String fromWorkGroupUuid) {
+		this.fromWorkGroupUuid = fromWorkGroupUuid;
 	}
 }

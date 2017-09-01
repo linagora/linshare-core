@@ -67,10 +67,8 @@ import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -155,6 +153,11 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_INSERT_DOCUMENT, "couldn't register the file in the database");
 		}
 		return entity;
+	}
+
+	@Override
+	public Document findDocument(String documentUuid) {
+		return documentRepository.findByUuid(documentUuid);
 	}
 
 	@Override
@@ -357,28 +360,30 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		} catch (org.springframework.dao.DuplicateKeyException e) {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_ALREADY_EXISTS,
 					"Can not create a new document, it already exists.");
-		}		
+		}
 		return node;
 	}
 
 	@Override
-	public WorkGroupDocument copy(Account actor, Thread workgroup, WorkGroupNode nodeParent, String documentUuid,
-			String name) throws BusinessException {
-		if (exists(workgroup, name, nodeParent)) {
+	public WorkGroupDocument copy(Account actor, Thread toWorkGroup, WorkGroupNode nodeParent, String documentUuid,
+			String name, boolean ciphered) throws BusinessException {
+		if (exists(toWorkGroup, name, nodeParent)) {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_ALREADY_EXISTS,
 					"Can not create a new document, it already exists.");
 		}
 		Document document = documentRepository.findByUuid(documentUuid);
 		if (document == null) {
 			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT,
-					"Can not create a new document, mising underlying document.");
+					"Can not create a new document, missing underlying document.");
 		}
-		Document createDocument = createDocument(workgroup, document, name);
-		WorkGroupDocument node = new WorkGroupDocument(actor, name, createDocument, workgroup, nodeParent);
+		Document createDocument = createDocument(toWorkGroup, document, name);
+		WorkGroupDocument node = new WorkGroupDocument(actor, name, createDocument, toWorkGroup, nodeParent);
 		node.setCreationDate(new Date());
 		node.setModificationDate(new Date());
 		node.setUploadDate(new Date());
 		node.setPathFromParent(nodeParent);
+		node.setCiphered(ciphered);
+		node.setLastAuthor(new AccountMto(actor, true));
 		try {
 			node = repository.insert(node);
 		} catch (org.springframework.dao.DuplicateKeyException e) {
@@ -389,31 +394,23 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	}
 
 	@Override
-	public DocumentEntry copyFromThreadEntry(Account owner,
-			ThreadEntry entry, Calendar expirationDate)
-			throws BusinessException {
-		String name = entry.getName();
-		Document document = entry.getDocument();
-		DocumentEntry docEntry = new DocumentEntry(owner, name, entry.getComment(), document);
+	public DocumentEntry copy(Account owner, String documentUuid, String fileName, String comment, String metadata,
+			Calendar expirationDate, boolean ciphered) throws BusinessException {
+		Document document = documentRepository.findByUuid(documentUuid);
+		if (document == null) {
+			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT,
+					"Can not create a new document, missing underlying document.");
+		}
+		Document createDocument = createDocument(owner, document, fileName);
+		DocumentEntry docEntry = new DocumentEntry(owner, fileName, comment, createDocument);
 		// We need to set an expiration date in case of file cleaner activation.
 		docEntry.setExpirationDate(expirationDate);
-		docEntry.setMetaData(entry.getMetaData());
-		docEntry.setCiphered(entry.getCiphered());
-		docEntry = documentEntryRepository.create(docEntry);
-		owner.getEntries().add(docEntry);
-		return docEntry;
-	}
-
-	@Override
-	public DocumentEntry copyFromShareEntry(Account owner,
-			ShareEntry entry, Calendar expirationDate) throws BusinessException {
-		String name = entry.getName();
-		Document document = entry.getDocumentEntry().getDocument();
-		DocumentEntry docEntry = new DocumentEntry(owner, name, entry.getComment(), document);
-		// We need to set an expiration date in case of file cleaner activation.
-		docEntry.setExpirationDate(expirationDate);
-		docEntry.setMetaData(entry.getMetaData());
-		docEntry.setCiphered(entry.getDocumentEntry().getCiphered());
+		if (comment == null) {
+			docEntry.setComment("");
+		}
+		docEntry.setMetaData(metadata);
+		docEntry.setCiphered(ciphered);
+		docEntry.setCmisSync(false);
 		docEntry = documentEntryRepository.create(docEntry);
 		owner.getEntries().add(docEntry);
 		return docEntry;

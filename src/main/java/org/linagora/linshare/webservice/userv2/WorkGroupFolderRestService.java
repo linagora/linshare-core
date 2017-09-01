@@ -43,6 +43,7 @@ import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.CopyDto;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
@@ -54,6 +55,10 @@ public interface WorkGroupFolderRestService {
 			String givenFileName, Boolean async, Long contentLength, Long fileSize, MultipartBody body, Boolean strict)
 			throws BusinessException;
 
+	List<WorkGroupNode> copy(String workGroupUuid, CopyDto copy) throws BusinessException;
+
+	List<WorkGroupNode> copy(String workGroupUuid, String parentNodeUuid, CopyDto copy) throws BusinessException;
+
 	List<WorkGroupNode> findAll(String workGroupUuid, String parentNodeUuid, WorkGroupNodeType nodeType) throws BusinessException;
 
 	WorkGroupNode find(String workGroupUuid, String workGroupNodeUuid, Boolean withTree) throws BusinessException;
@@ -63,8 +68,6 @@ public interface WorkGroupFolderRestService {
 	WorkGroupNode delete(String workGroupUuid, WorkGroupNode workGroupNode) throws BusinessException;
 
 	WorkGroupNode delete(String workGroupUuid, String uuid) throws BusinessException;
-
-	WorkGroupNode copy(String workGroupUuid, String entryUuid, String destinationNodeUuid, WorkGroupNode workGroupNode) throws BusinessException;
 
 	void head(String workGroupUuid, String uuid) throws BusinessException;
 

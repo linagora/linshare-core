@@ -52,6 +52,9 @@ public class WorkGroupNodeAuditLogEntry extends AuditLogEntryUser {
 
 	protected WorkGroupNode resourceUpdated;
 
+	// used when we copy a document from another workgroup
+	protected String fromWorkGroupUuid;
+
 	public WorkGroupNodeAuditLogEntry() {
 		super();
 	}
@@ -102,5 +105,13 @@ public class WorkGroupNodeAuditLogEntry extends AuditLogEntryUser {
 
 	public void setWorkGroup(WorkGroupLightDto workGroup) {
 		this.workGroup = workGroup;
+	}
+
+	public String getFromWorkGroupUuid() {
+		return fromWorkGroupUuid;
+	}
+
+	public void setFromWorkGroupUuid(String fromWorkGroupUuid) {
+		this.fromWorkGroupUuid = fromWorkGroupUuid;
 	}
 }

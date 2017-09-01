@@ -69,6 +69,7 @@
 
 	<bean id="userReceivedShareRestService" class="org.linagora.linshare.webservice.userv1.impl.ReceivedShareRestServiceImpl">
 		<constructor-arg ref="wsShareFacade" />
+		<constructor-arg ref="wsDocumentFacade" />
 	</bean>
 
 	<bean id="userLogRestService" class="org.linagora.linshare.webservice.userv1.impl.LogRestServiceImpl">

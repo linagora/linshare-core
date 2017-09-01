@@ -132,6 +132,11 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 		this.shareEntryGroupService = shareEntryGroupService;
 	}
 
+	@Override
+	public ShareEntry findForDownloadOrCopyRight(Account actor, Account owner, String uuid) throws BusinessException {
+		return shareEntryService.findForDownloadOrCopyRight(actor, owner, uuid);
+	}
+
 	// TODO FMA - Refactoring shares
 	@Override
 	public Set<Entry> create(Account actor, User owner, ShareContainer shareContainer)
@@ -450,5 +455,16 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			throw new BusinessException(BusinessErrorCode.SHARE_NOT_FOUND, msg);
 		}
 		return entry;
+	}
+
+	@Override
+	public ShareEntry delete(Account actor, Account owner, ShareEntry share, LogActionCause cause)
+			throws BusinessException {
+		return shareEntryService.delete(actor, owner, share.getUuid(), cause);
+	}
+
+	@Override
+	public ShareEntry markAsCopied(Account actor, Account owner, String uuid) throws BusinessException {
+		return shareEntryService.markAsCopied(actor, owner, uuid);
 	}
 }

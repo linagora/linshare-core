@@ -52,8 +52,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.TargetKind;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.CopyDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
+import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
 import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.webservice.userv1.ReceivedShareRestService;
@@ -72,9 +75,13 @@ import com.wordnik.swagger.annotations.ApiResponses;
 public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 
 	private final ShareFacade shareFacade;
+	private final DocumentFacade documentFacade;
 
-	public ReceivedShareRestServiceImpl(final ShareFacade shareFacade) {
+	public ReceivedShareRestServiceImpl(
+			final ShareFacade shareFacade,
+			final DocumentFacade documentFacade) {
 		this.shareFacade = shareFacade;
+		this.documentFacade = documentFacade;
 	}
 
 	@Path("/")
@@ -173,7 +180,11 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 	public DocumentDto copy(
 			@ApiParam(value = "The received share uuid.", required = true) @PathParam("uuid") String shareEntryUuid)
 					throws BusinessException {
-		return shareFacade.copy(shareEntryUuid);
+		CopyDto dto = new CopyDto();
+		dto.setUuid(shareEntryUuid);
+		dto.setKind(TargetKind.PERSONAL_SPACE);
+		List<DocumentDto> create = documentFacade.copy(null, dto, false);
+		return create.get(0);
 	}
 
 	@Path("/{uuid}/download")

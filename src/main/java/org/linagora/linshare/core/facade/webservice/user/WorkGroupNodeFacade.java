@@ -41,6 +41,7 @@ import javax.ws.rs.core.Response;
 
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.CopyDto;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
@@ -55,27 +56,17 @@ public interface WorkGroupNodeFacade extends GenericFacade {
 	WorkGroupNode create(String ownerUuid, String workGroupUuid,
 			String parentNodeUuid, File tempFile, String fileName, Boolean strict) throws BusinessException;
 
+	List<WorkGroupNode> copy(String ownerUuid, String workGroupUuid, String toParentNodeUuid, CopyDto copy);
+
 	WorkGroupNode update(String ownerUuid, String workGroupUuid, WorkGroupNode workGroupNode) throws BusinessException;
 
 	WorkGroupNode delete(String ownerUuid, String workGroupUuid, String workGroupNodeUuid) throws BusinessException;
 
 	WorkGroupNode delete(String ownerUuid, String workGroupUuid, WorkGroupNode workGroupNode) throws BusinessException;
-	
-	
-	
-	WorkGroupNode copy(String ownerUuid, String workGroupUuid, String uuid, String destinationNodeUuid, WorkGroupNode workGroupNode) throws BusinessException;
-//
-//	DocumentDto copyFromThreadEntry(String ownerUuid, String threadUuid, String entryUuid) throws BusinessException;
-//
-//	WorkGroupEntryDto delete(String ownerUuid, String workGroupUuid, WorkGroupEntryDto wgEntry)
-//			throws BusinessException;
-//
+
 	Response download(String ownerUuid, String workGroupUuid, String workGroupNodeUuid) throws BusinessException;
 
 	Response thumbnail(String ownerUuid, String workGroupUuid, String workGroupNodeUuid, boolean base64) throws BusinessException;
-//
-//	WorkGroupEntryDto update(String ownerUuid, String threadUuid, String threadEntryUuid,
-//			WorkGroupEntryDto threadEntryDto) throws BusinessException;
 
 	Set<AuditLogEntryUser> findAll(String ownerUuid, String workGroupUuid, String workGroupNodeUuid, List<String> actions, List<String> types, String beginDate, String endDate);
 }

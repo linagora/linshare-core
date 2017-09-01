@@ -42,16 +42,21 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 
 public interface DocumentEntryBusinessService {
 
-	public DocumentEntry createDocumentEntry(Account owner, File myFile, Long size, String fileName, String comment, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate, boolean isFromCmis, String metadata) throws BusinessException;
+	DocumentEntry createDocumentEntry(Account owner, File myFile, Long size, String fileName, String comment,
+			Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate,
+			boolean isFromCmis, String metadata) throws BusinessException;
+
+	Document findDocument(String documentUuid);
+
+	DocumentEntry copy(Account owner, String documentUuid, String fileName, String comment, String metadata,
+			Calendar expirationDate, boolean ciphered) throws BusinessException;
 
 	public DocumentEntry updateDocumentEntry(Account owner, DocumentEntry docEntry, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate) throws BusinessException ;
 
@@ -76,16 +81,8 @@ public interface DocumentEntryBusinessService {
 	WorkGroupDocument createWorkGroupDocument(Account actor, Thread workGroup, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl,
 			String mimeType, WorkGroupNode nodeParent) throws BusinessException;
 
-	WorkGroupDocument copy(Account actor, Thread workgroup, WorkGroupNode nodeParent,
-			String documentUuid, String name)
-			throws BusinessException;
-
-	DocumentEntry copyFromThreadEntry(Account owner,
-			ThreadEntry threadEntry, Calendar expirationDate)
-			throws BusinessException;
-
-	DocumentEntry copyFromShareEntry(Account owner,
-			ShareEntry shareEntry, Calendar expirationDate)
+	WorkGroupDocument copy(Account actor, Thread toWorkGroup, WorkGroupNode nodeParent,
+			String documentUuid, String name, boolean ciphered)
 			throws BusinessException;
 
 	InputStream getDocumentStream(WorkGroupDocument entry);

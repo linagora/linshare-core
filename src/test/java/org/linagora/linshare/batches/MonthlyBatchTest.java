@@ -150,7 +150,9 @@ public class MonthlyBatchTest extends AbstractTransactionalJUnit4SpringContextTe
 		List<DomainMonthlyStat> listDomainMonthlyStat = domainMonthlyStatBusinessService.findBetweenTwoDates(null, a,
 				new GregorianCalendar(2042, 9, 1, 00, 00).getTime());
 
+		// FIXME : every first of each month, we have 2 instead 1. weird.
 		assertEquals(1, listUserMonthlyStat.size());
+
 		assertEquals(1, listThreadMonthlyStat.size());
 		assertEquals(1, listDomainMonthlyStat.size());
 

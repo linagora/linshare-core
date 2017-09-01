@@ -39,7 +39,6 @@ import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.domain.entities.User;
@@ -50,9 +49,19 @@ public interface ShareEntryService {
 
 	ShareEntry find(Account actor, Account owner, String uuid)  throws BusinessException ;
 
-	void delete(Account actor, Account owner, String uuid, LogActionCause cause) throws BusinessException;
+	/**
+	 * Find underlying document uuid in order to create copy.
+	 * @param actor
+	 * @param owner
+	 * @param share uuid
+	 * @return
+	 * @throws BusinessException
+	 */
+	ShareEntry findForDownloadOrCopyRight(Account actor, Account owner, String uuid)  throws BusinessException;
 
-	DocumentEntry copy(Account actor, Account owner, String shareUuid) throws BusinessException;
+	ShareEntry markAsCopied(Account actor, Account owner, String uuid)  throws BusinessException;
+
+	ShareEntry delete(Account actor, Account owner, String uuid, LogActionCause cause) throws BusinessException;
 
 	ShareEntry update(Account actor, Account owner, ShareEntry shareEntry) throws BusinessException;
 
