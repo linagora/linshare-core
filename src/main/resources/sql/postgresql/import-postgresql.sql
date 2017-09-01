@@ -1206,6 +1206,111 @@ productCompagny=Linagora
 productName=LinShare
 welcomeMessage = Hello {0},');
 INSERT INTO mail_config (id, mail_layout_id, domain_abstract_id, name, visible, uuid, creation_date, modification_date, readonly) VALUES (1, 1, 1, 'Default mail config', true, '946b190d-4c95-485f-bfe6-d288a2de1edd', now(), now(), true);
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (23, 1, '', true, 23, '[# th:if="${!subject.modified}"]
+[(#{subject(${requestOwner.firstName},${requestOwner.lastName},${subject.value})})]
+[/]
+[# th:if="${subject.modified}"]
+[(#{subject(${requestOwner.firstName},${requestOwner.lastName},${subject.oldValue})})]
+[/]', '<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+   <head data-th-replace="layout :: header"></head>
+   <body>
+      <div
+         th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+         <!--/*  Upper main-content */-->
+         <section id="main-content">
+            <!--/* main-content container */-->
+            <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+               <div id="section-content">
+                  <!--/* Greetings for external or internal user */-->
+                  <div>
+                     <th:block data-th-replace="layout :: greetings(${requestRecipient.mail})"/>
+                  </div>
+                  <!--/* End of Greetings for external or internal recipient */-->
+                  <!--/* Main email  message content*/-->
+                  <p>
+                     <span data-th-utext="#{mainMsg(${requestOwner.firstName},${requestOwner.lastName})}">
+                     Peter Wilson invited  you to upload  some files in the Upload Request depot labeled : subject.
+                     </span>
+                     <span data-th-utext="#{secondaryMsg}">
+                     Peter Wilson invited  you to upload  some files in the Upload Request depot labeled : subject.
+                     </span>
+                  </p>
+                  <!--/* If the sender has added a  customized message */-->
+                  <th:block data-th-if="(${message.modified})">
+                     <div th:replace="layout :: contentMessageSection( ~{::#message-title}, ~{::#message-content})">
+                        <span id="message-title">
+                        <span data-th-text="#{msgFrom}">You have a message from</span>
+                        <b data-th-text="#{name(${requestOwner.firstName} , ${requestOwner.lastName})}">Peter Wilson</b> :
+                        </span>
+                        <span id="message-content" data-th-text="*{message.value}">
+                        Hi Amy,<br>
+                        As agreed,  i am sending you the report as well as the related files. Feel free to contact me if need be. <br>Best regards, Peter.
+                        </span>
+                     </div>
+                  </th:block>
+                  <!--/* End of Main email message content*/-->
+               </div>
+               <!--/* End of section-content*/-->
+            </div>
+            <!--/* End of main-content container */-->
+         </section>
+         <!--/* End of upper main-content*/-->
+         <!--/* Secondary content for  bottom email section */-->
+         <section id="secondary-content">
+            <span data-th-if="(${expiryDate.modified})">
+               <th:block data-th-replace="layout :: infoEditedDateArea(#{expiryDate},${expiryDate.oldValue},${expiryDate.value})"/>
+            </span>
+            <span data-th-if="(${activationDate.modified})">
+               <th:block data-th-replace="layout :: infoEditedDateArea(#{activationDate},${activationDate.oldValue},${activationDate.value})"/>
+            </span>
+            <span data-th-if="(${subject.modified})">
+               <th:block data-th-replace="layout :: infoEditedItem(#{nameOfDepot},${subject.oldValue},${subject.value})"/>
+            </span>
+            <span data-th-if="(${closureRight.modified})">
+               <th:block data-th-replace="layout :: infoEditedItem(#{closureRight},${closureRight.oldValue},${closureRight.value})"/>
+            </span>
+            <span data-th-if="(${deletionRight.modified})">
+               <th:block data-th-replace="layout :: infoEditedItem(#{deletionRight},${deletionRight.oldValue},${deletionRight.value})"/>
+            </span>
+            <span data-th-if="(${maxFileSize.modified})">
+               <th:block data-th-replace="layout :: infoEditedItem(#{maxFileSize},${maxFileSize.oldValue},${maxFileSize.value})"/>
+            </span>
+            <span data-th-if="(${maxFileNum.modified})">
+               <th:block data-th-replace="layout :: infoEditedItem(#{maxFileNum},${maxFileNum.oldValue},${maxFileNum.value})"/>
+            </span>
+            <span data-th-if="(${totalMaxDepotSize.modified})">
+               <th:block data-th-replace="layout :: infoEditedItem(#{depotSize},${totalMaxDepotSize.oldValue},${totalMaxDepotSize.value})"/>
+            </span>
+         </section>
+         <!--/* End of Secondary content for bottom email section */-->
+      </div>
+   </body>
+</html>', '9f17d614-60e7-11e7-94e3-0800271467bb', now(), now(), true, 'activationDate = Date d\''''activation
+closureRight = Droit de dépôt
+deletionRight = Droit de suppression
+depotSize = Taille du dépôt
+expiryDate = Date de clôture
+mainMsg =   <b> {0} <span style="text-transform:uppercase">{1}</span> </b>  a modifié des paramètres de l\''''Invitation de dépôt.
+maxFileNum = Nbr. max de fichier
+maxFileSize = Taille max. de fichier
+msgFrom = Nouveau message de
+name = {0} {1}
+nameOfDepot: Nom du dépôt
+secondaryMsg = Ces modifications sont listés ci-dessous.
+subject = Modifications des paramètres de l’Invitation {0}', 'activationDate = Activation date
+closureRight = Closure rights
+deletionRight = Deletion rights
+depotSize = Max. Depot size
+expiryDate = Closure date
+mainMsg =   <b> {0} <span style="text-transform:uppercase">{1}</span> </b>  has updated some settings of the upload request depot.
+maxFileNum = Max file number
+maxFileSize = Max. file size
+msgFrom =  New message from
+name = {0} {1}
+nameOfDepot: Name of the depot
+secondaryMsg = You may find the updated settings listed below.
+subject = Updated Settings for the Upload Request {0}');
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (6, 1, NULL, true, 6, '[( #{subject(${share.name})})]', '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head data-th-replace="layout :: header"></head>
@@ -2213,106 +2318,6 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
         xmlns:th=http://www.thymeleaf.org><body>layout</body></html>', '9f146074-60e7-11e7-94ba-0800271467bb', now(), now(), true, NULL, NULL);
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (24, 1, '', true, 24, '', '<!DOCTYPE html><html
         xmlns:th=http://www.thymeleaf.org><body>layout</body></html>', '9f1aca72-60e7-11e7-a75f-0800271467bb', now(), now(), true, NULL, NULL);
-INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (23, 1, '', true, 23, '', '<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-   <head data-th-replace="layout :: header"></head>
-   <body>
-      <div
-         th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
-         <!--/*  Upper main-content */-->
-         <section id="main-content">
-            <!--/* main-content container */-->
-            <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
-               <div id="section-content">
-                  <!--/* Greetings for external or internal user */-->
-                  <div>
-                     <th:block data-th-replace="layout :: greetings(${requestRecipient.mail})"/>
-                  </div>
-                  <!--/* End of Greetings for external or internal recipient */-->
-                  <!--/* Main email  message content*/-->
-                  <p>
-                     <span data-th-utext="#{mainMsg(${requestOwner.firstName},${requestOwner.lastName})}">
-                     Peter Wilson invited  you to upload  some files in the Upload Request depot labeled : subject.
-                     </span>
-                     <span data-th-utext="#{secondaryMsg}">
-                     Peter Wilson invited  you to upload  some files in the Upload Request depot labeled : subject.
-                     </span>
-                  </p>
-                  <!--/* If the sender has added a  customized message */-->
-                  <th:block data-th-if="(${message.modified})">
-                     <div th:replace="layout :: contentMessageSection( ~{::#message-title}, ~{::#message-content})">
-                        <span id="message-title">
-                        <span data-th-text="#{msgFrom}">You have a message from</span>
-                        <b data-th-text="#{name(${requestOwner.firstName} , ${requestOwner.lastName})}">Peter Wilson</b> :
-                        </span>
-                        <span id="message-content" data-th-text="*{message.value}">
-                        Hi Amy,<br>
-                        As agreed,  i am sending you the report as well as the related files. Feel free to contact me if need be. <br>Best regards, Peter.
-                        </span>
-                     </div>
-                  </th:block>
-                  <!--/* End of Main email message content*/-->
-               </div>
-               <!--/* End of section-content*/-->
-            </div>
-            <!--/* End of main-content container */-->
-         </section>
-         <!--/* End of upper main-content*/-->
-         <!--/* Secondary content for  bottom email section */-->
-         <section id="secondary-content">
-            <span data-th-if="(${expiryDate.modified})">
-               <th:block data-th-replace="layout :: infoEditedDateArea(#{expiryDate},${expiryDate.oldValue},${expiryDate.value})"/>
-            </span>
-            <span data-th-if="(${activationDate.modified})">
-               <th:block data-th-replace="layout :: infoEditedDateArea(#{activationDate},${activationDate.oldValue},${activationDate.value})"/>
-            </span>
-            <span data-th-if="(${subject.modified})">
-               <th:block data-th-replace="layout :: infoEditedItem(#{nameOfDepot},${subject.oldValue},${subject.value})"/>
-            </span>
-            <span data-th-if="(${closureRight.modified})">
-               <th:block data-th-replace="layout :: infoEditedItem(#{closureRight},${closureRight.oldValue},${closureRight.value})"/>
-            </span>
-            <span data-th-if="(${deletionRight.modified})">
-               <th:block data-th-replace="layout :: infoEditedItem(#{deletionRight},${deletionRight.oldValue},${deletionRight.value})"/>
-            </span>
-            <span data-th-if="(${maxFileSize.modified})">
-               <th:block data-th-replace="layout :: infoEditedItem(#{maxFileSize},${maxFileSize.oldValue},${maxFileSize.value})"/>
-            </span>
-            <span data-th-if="(${maxFileNum.modified})">
-               <th:block data-th-replace="layout :: infoEditedItem(#{maxFileNum},${maxFileNum.oldValue},${maxFileNum.value})"/>
-            </span>
-            <span data-th-if="(${totalMaxDepotSize.modified})">
-               <th:block data-th-replace="layout :: infoEditedItem(#{depotSize},${totalMaxDepotSize.oldValue},${totalMaxDepotSize.value})"/>
-            </span>
-         </section>
-         <!--/* End of Secondary content for bottom email section */-->
-      </div>
-   </body>
-</html>', '9f17d614-60e7-11e7-94e3-0800271467bb', now(), now(), true, 'activationDate = Date d\''''activation
-closureRight = Droit de dépôt
-deletionRight = Droit de suppression
-depotSize = Taille du dépôt
-expiryDate = Date de clôture
-mainMsg =   <b> {0} <span style="text-transform:uppercase">{1}</span> </b>  a modifié des paramètres de l\''''Invitation de dépôt.
-maxFileNum = Nbr. max de fichier
-maxFileSize = Taille max. de fichier
-msgFrom = Nouveau message de
-name = {0} {1}
-nameOfDepot: Nom du dépôt
-secondaryMsg = Ces modifications sont listés ci-dessous.
-subject = Modifications des paramètres de l’Invitation {0}', 'activationDate = Activation date
-closureRight = Closure rights
-deletionRight = Deletion rights
-depotSize = Max. Depot size
-expiryDate = Closure date
-mainMsg =   <b> {0} <span style="text-transform:uppercase">{1}</span> </b>  has updated some settings of the upload request depot.
-maxFileNum = Max file number
-maxFileSize = Max. file size
-msgFrom =  New message from
-name = {0} {1}
-nameOfDepot: Name of the depot
-secondaryMsg = You may find the updated settings listed below.
-subject = Updated Settings for the Upload Request {0}');
 INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (1, 0, 1, 1, 1, '4f3c4723-531e-449b-a1ae-d304fd3d2387', true);
 INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (2, 0, 2, 1, 2, '81041673-c699-4849-8be4-58eea4507305', true);
 INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (3, 0, 3, 1, 3, '85538234-1fc1-47a2-850d-7f7b59f1640e', true);
