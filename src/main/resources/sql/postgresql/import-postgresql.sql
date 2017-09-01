@@ -1046,6 +1046,19 @@ border-top: 1px solid #e1e1e1;">
     <br/>
       <th:block th:replace="${contentInfo}" />
 </div>
+<!--/* Common lower info title style */-->
+<div style="margin-bottom:17px;" data-th-fragment="infoEditedItem(titleInfo,oldValue,newValue)">
+     <span style="font-weight:bold;" ><th:block th:replace="${titleInfo}" /> </span>
+    <br/>
+      <th:block th:replace="${oldValue}" /> fred <th:block th:replace="${newValue}" />
+</div>
+<!--/* Edited  date  display settings  style */-->
+<div style="margin-bottom:17px;" data-th-fragment="infoEditedDateArea(titleInfo,oldValue,newValue)">
+     <span style="font-weight:bold;" data-th-text="${titleInfo}" >Shared the </span>
+    <br/>
+ <th:block  th:with="df=#{date.format}" data-th-text="${#dates.format(oldValue,df)}"/> fred
+ <th:block  th:with="df=#{date.format}" data-th-text="${#dates.format(newValue,df)}"/>
+</div>
 <!--/* Common button action style */-->
 <span   data-th-fragment="actionButtonLink(labelBtn,urlLink)">
 <a
