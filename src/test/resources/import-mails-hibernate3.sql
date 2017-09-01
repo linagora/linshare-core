@@ -469,6 +469,63 @@ name = {0} {1}
 nameOfDepot: Name of the depot
 secondaryMsg = You may find the updated settings listed below.
 subject = Updated Settings for the Upload Request {0}');
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (17, 1, '', true, 17, '[(#{subject(${subject})})]', '<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+   <head data-th-replace="layout :: header"></head>
+   <body>
+      <div
+         th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+         <!--/*  Upper main-content */-->
+         <section id="main-content">
+            <!--/* main-content container */-->
+            <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+               <div id="section-content">
+                  <!--/* Greetings for external or internal user */-->
+                  <div>
+                     <th:block data-th-replace="layout :: greetings(${requestOwner.firstName})"/>
+                  </div>
+                  <!--/* End of Greetings for external or internal recipient */-->
+                  <!--/* Main email  message content*/-->
+                  <p>
+                     <span data-th-utext="#{mainMsg(${request.subject})}">
+                     Your Upload Request depot labeled $subject is now activated.
+                     </span>
+                     <span data-th-text="#{msgLink}">In order to access it click the link below.</span>
+                  </p>
+                  <th:block data-th-replace="layout :: actionButtonLink(#{buttonMsg},${requestUrl})"/>
+                  <!--/* End of Main email message content*/-->
+               </div>
+               <!--/* End of section-content*/-->
+            </div>
+            <!--/* End of main-content container */-->
+         </section>
+         <!--/* End of upper main-content*/-->
+         <!--/* Secondary content for  bottom email section */-->
+         <section id="secondary-content">
+            <div data-th-if="${!#strings.isEmpty(request.expirationDate)}">
+               <th:block data-th-replace="layout :: infoDateArea(#{closureDate},${request.expirationDate})"/>
+            </div>
+            <th:block data-th-replace="layout :: infoRecipientListingArea(#{recipientsOfDepot},${recipients})"/>
+             <div data-th-if="(${totalMaxDepotSize})">
+                   <th:block data-th-replace="layout :: infoStandardArea(#{depotSize},${totalMaxDepotSize})"/>
+            </div>
+         </section>
+         <!--/* End of Secondary content for bottom email section */-->
+      </div>
+   </body>
+</html>', '9f03b0bc-60e7-11e7-a512-0800271467bb', now(), now(), true, 'buttonMsg = Accès au dépôt
+closureDate = Dépôt disponible jusqu au
+depotSize = Taille du dépôt
+mainMsg = Votre Invitation de Dépôt : {0}, est désormais active.
+msgLink = Vous pouvez y accéder en cliquant sur le lien ci-dessous.
+recipientsOfDepot = Destinataires associés au dépôt
+subject = Votre invitation de dépôt : {0}, est désormais active', 'buttonMsg = Access to the depot
+closureDate = Depot closure date
+depotSize = Size of the depot
+mainMsg = Your Upload Request depot labeled : {0}, is now activated.
+msgLink = In order to access it click the link below.
+recipientsOfDepot = Recipients of the depot
+subject = Your Upload Request  : {0}, has been activated');
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (6, 1, NULL, true, 6, '[( #{subject(${share.name})})]', '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head data-th-replace="layout :: header"></head>
@@ -570,8 +627,6 @@ mainMsg = <b>{0} <span style="text-transform:uppercase">{1}</span></b> has delet
 subject = {0} {1} has deleted the fileshare {2}');
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (16, 1, '', true, 16, '', '<!DOCTYPE html><html
         xmlns:th=http://www.thymeleaf.org><body>layout</body></html>', '9f00708c-60e7-11e7-a8eb-0800271467bb', now(), now(), true, NULL, NULL);
-INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (17, 1, '', true, 17, '', '<!DOCTYPE html><html
-        xmlns:th=http://www.thymeleaf.org><body>layout</body></html>', '9f03b0bc-60e7-11e7-a512-0800271467bb', now(), now(), true, NULL, NULL);
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (18, 1, '', true, 18, '', '<!DOCTYPE html><html
         xmlns:th=http://www.thymeleaf.org><body>layout</body></html>', '9f06f22c-60e7-11e7-a753-0800271467bb', now(), now(), true, NULL, NULL);
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (19, 1, '', true, 19, '', '<!DOCTYPE html><html
