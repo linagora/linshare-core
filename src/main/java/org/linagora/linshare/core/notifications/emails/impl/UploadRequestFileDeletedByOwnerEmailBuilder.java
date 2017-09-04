@@ -42,7 +42,6 @@ import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.dto.Document;
-import org.linagora.linshare.core.notifications.dto.MailContact;
 import org.thymeleaf.context.Context;
 
 import com.google.common.collect.Lists;
@@ -56,7 +55,7 @@ public class UploadRequestFileDeletedByOwnerEmailBuilder extends GenericUploadRe
 
 	@Override
 	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		// TODO Auto-generated method stub
+		// TODO UploadRequests : new email
 		return null;
 	}
 
@@ -69,25 +68,21 @@ public class UploadRequestFileDeletedByOwnerEmailBuilder extends GenericUploadRe
 	}
 
 	private Context getFakeGroupedForRecipient(Language language) {
-		List<MailContact> recipients = Lists.newArrayList();
-		recipients.add(new MailContact("unknown@linshare.org"));
-		recipients.add(new MailContact("unknown2@linshare.org"));
+		Document document = new Document("a-upload-request-file.txt");
+		document.setSize(65985L);
+		document.setCreationDate(new Date());
 
 		Context ctx = newFakeContext(language, false, true);
 		ctx.setVariable("body", "upload request body message");
 		ctx.setVariable("deletionDate", new Date());
+		ctx.setVariable("document", document);
 		ctx.setVariable("isgrouped", true);
-		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("totalMaxDepotSize", new Long(45687656));
-		ctx.setVariable("recipientsCount", recipients.size());
 
 		return ctx;
 	}
 
 	private Context getFakeSingleForRecipient(Language language) {
-		List<MailContact> recipients = Lists.newArrayList();
-		recipients.add(new MailContact("unknown@linshare.org"));
-
 		Document document = new Document("a-upload-request-file.txt");
 		document.setSize(65985L);
 		document.setCreationDate(new Date());
@@ -97,9 +92,7 @@ public class UploadRequestFileDeletedByOwnerEmailBuilder extends GenericUploadRe
 		ctx.setVariable("document", document);
 		ctx.setVariable("deletionDate", new Date());
 		ctx.setVariable("isgrouped", false);
-		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("totalMaxDepotSize", null);
-		ctx.setVariable("recipientsCount", recipients.size());
 
 		return ctx;
 	}
