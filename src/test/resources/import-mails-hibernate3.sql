@@ -469,6 +469,81 @@ name = {0} {1}
 nameOfDepot: Name of the depot
 secondaryMsg = You may find the updated settings listed below.
 subject = Updated Settings for the Upload Request {0}');
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (20, 1, '', true, 20, '[(#{subject(${requestOwner.firstName}, ${requestOwner.lastName})})]', '<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head data-th-replace="layout :: header"></head>
+<body>
+<div
+  th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+  <!--/*  Upper main-content */-->
+  <section id="main-content">
+    <!--/* If the sender has added a  customized message */-->
+    <th:block data-th-if="${!#strings.isEmpty(body)}">
+      <div th:replace="layout :: contentMessageSection(~{::#message-title}, ~{::#message-content})">
+        <span id="message-title">
+          <span data-th-text="#{msgFrom}">You have a message from</span>
+          <b data-th-text="#{name(${requestOwner.firstName} , ${requestOwner.lastName})}">Peter Wilson</b> :
+        </span>
+        <span id="message-content" data-th-text="*{body}">
+          Hi Amy,<br>
+          As agreed,  i am sending you the report as well as the related files. Feel free to contact me if need be. <br>Best regards, Peter.
+        </span>
+      </div>
+    </th:block>
+    <!--/* End of customized message */-->
+    <!--/* main-content container */-->
+    <div th:replace="layout :: contentUpperSection(~{::#section-content})">
+      <div id="section-content">
+        <!--/* Greetings for external or internal user */-->
+        <div>
+          <th:block data-th-replace="layout :: greetings(${requestRecipient.mail})"/>
+        </div>
+          <!--/* End of Greetings for external or internal recipient */-->
+        <!--/* Main email  message content*/-->
+        <p>
+                 <span data-th-utext="#{mainMsg(${requestOwner.firstName},${requestOwner.lastName})}">
+                     Peter Wilson invited  you to upload  some files in the Upload Request depot labeled : subject.
+                </span>
+ <span th:with="df=#{customDate}" data-th-text="${#dates.format(request.activationDate,df)}">7th of November, 2017</span>
+        </p>
+        <!--/* End of Main email message content*/-->
+      </div><!--/* End of section-content*/-->
+    </div><!--/* End of main-content container */-->
+  </section> <!--/* End of upper main-content*/-->
+  <!--/* Secondary content for  bottom email section */-->
+  <section id="secondary-content">
+  <div data-th-if="${!#strings.isEmpty(request.activationDate)}">
+               <th:block data-th-replace="layout :: infoDateArea(#{activationDate},${request.activationDate})"/>
+            </div>
+     <div data-th-if="${!#strings.isEmpty(request.expirationDate)}">
+               <th:block data-th-replace="layout :: infoDateArea(#{closureDate},${request.expirationDate})"/>
+            </div>
+       <div data-th-if="(${totalMaxDepotSize})">
+               <th:block data-th-replace="layout :: infoStandardArea(#{depotSize},${totalMaxDepotSize})"/>
+         </div>
+  <div data-th-if="(${isgrouped})">
+         <th:block data-th-replace="layout :: infoRecipientListingArea(#{recipientsOfDepot},${recipients})"/>
+    </div>
+  </section>  <!--/* End of Secondary content for bottom email section */-->
+  </div>
+</body>
+</html>', '9f0d6ac6-60e7-11e7-b1b6-0800271467bb', now(), now(), true, 'activationDate = Ouverture du dépôt le
+closureDate = Dépôt  disponible jusqu au
+customDate=dd/mm/yyyy
+depotSize = Taille du dépôt
+mainMsg = <b>{0} {1}</b> vous a créé une Invitation de Dépôt, qui sera ouverte au dépôt le
+msgFrom = Le message de
+name = {0} {1}
+recipientsOfDepot = Destinataires associés au dépôt
+subject = {0} {1} vous a créé une Invitation de Dépot', 'activationDate = Depot activation date
+closureDate = Depot closure date
+customDate=dd/mm/yyyy
+depotSize = Size of the depot
+mainMsg = <b>{0} {1}</b> has created an Upload Request Depot for you, set to open on
+msgFrom = Message from
+name = {0} {1}
+recipientsOfDepot = Recipients of the depot
+subject = {0} {1} has created an Upload Request Depot for you.');
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (17, 1, '', true, 17, '[(#{subject(${subject})})]', '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
    <head data-th-replace="layout :: header"></head>
@@ -1619,8 +1694,6 @@ mainMsgExt = The external recipient <b>{0}</b> has downloaded your file
 mainMsgInt = <b> {0} <span style="text-transform:uppercase">{1}</span> </b> has downloaded your file
 subject = {0} {1} has downloaded {2}
 subjectAnonymous = {0} has downloaded {1}');
-INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (20, 1, '', true, 20, '', '<!DOCTYPE html><html
-        xmlns:th=http://www.thymeleaf.org><body>layout</body></html>', '9f0d6ac6-60e7-11e7-b1b6-0800271467bb', now(), now(), true, NULL, NULL);
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (22, 1, '', true, 22, '', '<!DOCTYPE html><html
         xmlns:th=http://www.thymeleaf.org><body>layout</body></html>', '9f146074-60e7-11e7-94ba-0800271467bb', now(), now(), true, NULL, NULL);
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (24, 1, '', true, 24, '', '<!DOCTYPE html><html
