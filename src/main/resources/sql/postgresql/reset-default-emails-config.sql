@@ -598,6 +598,47 @@ mainMsg = <b>{0} {1}</b> has changed the password of the Upload Request : {2}
 msgProtected = You may find the new password below as well as the access link.
 password = Password
 subject = {0} {1} sent you the new password for the depot: {2}');
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (22, 1, '', true, 22, '[(#{subject(${requestOwner.firstName}, ${requestOwner.lastName},${subject})})]', '<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+   <head data-th-replace="layout :: header"></head>
+   <body>
+      <div
+         th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+         <!--/*  Upper main-content */-->
+         <section id="main-content">
+            <!--/* main-content container */-->
+            <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+               <div id="section-content">
+                  <!--/* Greetings for external or internal user */-->
+                  <div>
+                     <th:block data-th-replace="layout :: greetings(${requestRecipient.mail})"/>
+                  </div>
+                  <!--/* End of Greetings for external or internal recipient */-->
+                  <!--/* Main email  message content*/-->
+                  <p>
+                     <span data-th-utext="#{mainMsg(${requestOwner.firstName},${requestOwner.lastName},${subject})}">
+                     Peter WILSON has deleted your access to the depot : : subject.
+                     </span>
+                  </p>
+                  <!--/* End of Main email message content*/-->
+               </div>
+               <!--/* End of section-content*/-->
+            </div>
+            <!--/* End of main-content container */-->
+         </section>
+         <!--/* End of upper main-content*/-->
+         <!--/* Secondary content for  bottom email section */-->
+         <section id="secondary-content">
+            <th:block data-th-replace="layout :: infoDateArea(#{deletionDate},${deletionDate})"/>
+         </section>
+         <!--/* End of Secondary content for bottom email section */-->
+      </div>
+   </body>
+</html>', '9f146074-60e7-11e7-94ba-0800271467bb', now(), now(), true, 'deletionDate = Dépôt  supprimé le
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b>  vous invite à  déposer des fichiers dans l\''''Invitation de Dépôt intitulée : {2}.
+subject = {0} {1} a supprimé votre accès au dépôt : {2}', 'deletionDate = Deletion date
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> has deleted your access to the depot : {2}.
+subject = {0} {1} has removed your access to the depot : {2}');
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (24, 1, '', true, 24, '[(#{subject(${requestOwner.firstName}, ${requestOwner.lastName},${document.name})})]', '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
    <head data-th-replace="layout :: header"></head>
@@ -1792,8 +1833,6 @@ mainMsgExt = The external recipient <b>{0}</b> has downloaded your file
 mainMsgInt = <b> {0} <span style="text-transform:uppercase">{1}</span> </b> has downloaded your file
 subject = {0} {1} has downloaded {2}
 subjectAnonymous = {0} has downloaded {1}');
-INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (22, 1, '', true, 22, '', '<!DOCTYPE html><html
-        xmlns:th=http://www.thymeleaf.org><body>layout</body></html>', '9f146074-60e7-11e7-94ba-0800271467bb', now(), now(), true, NULL, NULL);
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (21, 1, '', true, 21, '[( #{subject(${requestOwner.firstName}, ${requestOwner.lastName},${subject})})]', '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
    <head data-th-replace="layout :: header"></head>
