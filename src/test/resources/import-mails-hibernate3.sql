@@ -364,384 +364,7 @@ productCompagny=Linagora
 productName=LinShare
 welcomeMessage = Hello {0},');
 INSERT INTO mail_config (id, mail_layout_id, domain_abstract_id, name, visible, uuid, creation_date, modification_date, readonly) VALUES (1, 1, 1, 'Default mail config', true, '946b190d-4c95-485f-bfe6-d288a2de1edd', now(), now(), true);
-INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (23, 1, '', true, 23, '[# th:if="${!subject.modified}"]
-[(#{subject(${requestOwner.firstName},${requestOwner.lastName},${subject.value})})]
-[/]
-[# th:if="${subject.modified}"]
-[(#{subject(${requestOwner.firstName},${requestOwner.lastName},${subject.oldValue})})]
-[/]', '<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-   <head data-th-replace="layout :: header"></head>
-   <body>
-      <div
-         th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
-         <!--/*  Upper main-content */-->
-         <section id="main-content">
-            <!--/* main-content container */-->
-            <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
-               <div id="section-content">
-                  <!--/* Greetings for external or internal user */-->
-                  <div>
-                     <th:block data-th-replace="layout :: greetings(${requestRecipient.mail})"/>
-                  </div>
-                  <!--/* End of Greetings for external or internal recipient */-->
-                  <!--/* Main email  message content*/-->
-                  <p>
-                     <span data-th-utext="#{mainMsg(${requestOwner.firstName},${requestOwner.lastName})}">
-                     Peter Wilson invited  you to upload  some files in the Upload Request depot labeled : subject.
-                     </span>
-                     <span data-th-utext="#{secondaryMsg}">
-                     Peter Wilson invited  you to upload  some files in the Upload Request depot labeled : subject.
-                     </span>
-                  </p>
-                  <!--/* If the sender has added a  customized message */-->
-                  <th:block data-th-if="(${message.modified})">
-                     <div th:replace="layout :: contentMessageSection( ~{::#message-title}, ~{::#message-content})">
-                        <span id="message-title">
-                        <span data-th-text="#{msgFrom}">You have a message from</span>
-                        <b data-th-text="#{name(${requestOwner.firstName} , ${requestOwner.lastName})}">Peter Wilson</b> :
-                        </span>
-                        <span id="message-content" data-th-text="*{message.value}">
-                        Hi Amy,<br>
-                        As agreed,  i am sending you the report as well as the related files. Feel free to contact me if need be. <br>Best regards, Peter.
-                        </span>
-                     </div>
-                  </th:block>
-                  <!--/* End of Main email message content*/-->
-               </div>
-               <!--/* End of section-content*/-->
-            </div>
-            <!--/* End of main-content container */-->
-         </section>
-         <!--/* End of upper main-content*/-->
-         <!--/* Secondary content for  bottom email section */-->
-         <section id="secondary-content">
-            <span data-th-if="(${expiryDate.modified})">
-               <th:block data-th-replace="layout :: infoEditedDateArea(#{expiryDate},${expiryDate.oldValue},${expiryDate.value})"/>
-            </span>
-            <span data-th-if="(${activationDate.modified})">
-               <th:block data-th-replace="layout :: infoEditedDateArea(#{activationDate},${activationDate.oldValue},${activationDate.value})"/>
-            </span>
-            <span data-th-if="(${subject.modified})">
-               <th:block data-th-replace="layout :: infoEditedItem(#{nameOfDepot},${subject.oldValue},${subject.value})"/>
-            </span>
-            <span data-th-if="(${closureRight.modified})">
-               <th:block data-th-replace="layout :: infoEditedItem(#{closureRight},${closureRight.oldValue},${closureRight.value})"/>
-            </span>
-            <span data-th-if="(${deletionRight.modified})">
-               <th:block data-th-replace="layout :: infoEditedItem(#{deletionRight},${deletionRight.oldValue},${deletionRight.value})"/>
-            </span>
-            <span data-th-if="(${maxFileSize.modified})">
-               <th:block data-th-replace="layout :: infoEditedItem(#{maxFileSize},${maxFileSize.oldValue},${maxFileSize.value})"/>
-            </span>
-            <span data-th-if="(${maxFileNum.modified})">
-               <th:block data-th-replace="layout :: infoEditedItem(#{maxFileNum},${maxFileNum.oldValue},${maxFileNum.value})"/>
-            </span>
-            <span data-th-if="(${totalMaxDepotSize.modified})">
-               <th:block data-th-replace="layout :: infoEditedItem(#{depotSize},${totalMaxDepotSize.oldValue},${totalMaxDepotSize.value})"/>
-            </span>
-         </section>
-         <!--/* End of Secondary content for bottom email section */-->
-      </div>
-   </body>
-</html>', '9f17d614-60e7-11e7-94e3-0800271467bb', now(), now(), true, 'activationDate = Date d activation
-closureRight = Droit de dépôt
-deletionRight = Droit de suppression
-depotSize = Taille du dépôt
-expiryDate = Date de clôture
-mainMsg =   <b> {0} <span style="text-transform:uppercase">{1}</span> </b>  a modifié des paramètres de l Invitation de dépôt.
-maxFileNum = Nbr. max de fichier
-maxFileSize = Taille max. de fichier
-msgFrom = Nouveau message de
-name = {0} {1}
-nameOfDepot: Nom du dépôt
-secondaryMsg = Ces modifications sont listés ci-dessous.
-subject = Modifications des paramètres de l’Invitation {0}', 'activationDate = Activation date
-closureRight = Closure rights
-deletionRight = Deletion rights
-depotSize = Max. Depot size
-expiryDate = Closure date
-mainMsg =   <b> {0} <span style="text-transform:uppercase">{1}</span> </b>  has updated some settings of the upload request depot.
-maxFileNum = Max file number
-maxFileSize = Max. file size
-msgFrom =  New message from
-name = {0} {1}
-nameOfDepot: Name of the depot
-secondaryMsg = You may find the updated settings listed below.
-subject = Updated Settings for the Upload Request {0}');
-INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (20, 1, '', true, 20, '[(#{subject(${requestOwner.firstName}, ${requestOwner.lastName})})]', '<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head data-th-replace="layout :: header"></head>
-<body>
-<div
-  th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
-  <!--/*  Upper main-content */-->
-  <section id="main-content">
-    <!--/* If the sender has added a  customized message */-->
-    <th:block data-th-if="${!#strings.isEmpty(body)}">
-      <div th:replace="layout :: contentMessageSection(~{::#message-title}, ~{::#message-content})">
-        <span id="message-title">
-          <span data-th-text="#{msgFrom}">You have a message from</span>
-          <b data-th-text="#{name(${requestOwner.firstName} , ${requestOwner.lastName})}">Peter Wilson</b> :
-        </span>
-        <span id="message-content" data-th-text="*{body}">
-          Hi Amy,<br>
-          As agreed,  i am sending you the report as well as the related files. Feel free to contact me if need be. <br>Best regards, Peter.
-        </span>
-      </div>
-    </th:block>
-    <!--/* End of customized message */-->
-    <!--/* main-content container */-->
-    <div th:replace="layout :: contentUpperSection(~{::#section-content})">
-      <div id="section-content">
-        <!--/* Greetings for external or internal user */-->
-        <div>
-          <th:block data-th-replace="layout :: greetings(${requestRecipient.mail})"/>
-        </div>
-          <!--/* End of Greetings for external or internal recipient */-->
-        <!--/* Main email  message content*/-->
-        <p>
-                 <span data-th-utext="#{mainMsg(${requestOwner.firstName},${requestOwner.lastName})}">
-                     Peter Wilson invited  you to upload  some files in the Upload Request depot labeled : subject.
-                </span>
- <span th:with="df=#{customDate}" data-th-text="${#dates.format(request.activationDate,df)}">7th of November, 2017</span>
-        </p>
-        <!--/* End of Main email message content*/-->
-      </div><!--/* End of section-content*/-->
-    </div><!--/* End of main-content container */-->
-  </section> <!--/* End of upper main-content*/-->
-  <!--/* Secondary content for  bottom email section */-->
-  <section id="secondary-content">
-  <div data-th-if="${!#strings.isEmpty(request.activationDate)}">
-               <th:block data-th-replace="layout :: infoDateArea(#{activationDate},${request.activationDate})"/>
-            </div>
-     <div data-th-if="${!#strings.isEmpty(request.expirationDate)}">
-               <th:block data-th-replace="layout :: infoDateArea(#{closureDate},${request.expirationDate})"/>
-            </div>
-       <div data-th-if="(${totalMaxDepotSize})">
-               <th:block data-th-replace="layout :: infoStandardArea(#{depotSize},${totalMaxDepotSize})"/>
-         </div>
-  <div data-th-if="(${isgrouped})">
-         <th:block data-th-replace="layout :: infoRecipientListingArea(#{recipientsOfDepot},${recipients})"/>
-    </div>
-  </section>  <!--/* End of Secondary content for bottom email section */-->
-  </div>
-</body>
-</html>', '9f0d6ac6-60e7-11e7-b1b6-0800271467bb', now(), now(), true, 'activationDate = Ouverture du dépôt le
-closureDate = Dépôt  disponible jusqu au
-customDate=dd/mm/yyyy
-depotSize = Taille du dépôt
-mainMsg = <b>{0} {1}</b> vous a créé une Invitation de Dépôt, qui sera ouverte au dépôt le
-msgFrom = Le message de
-name = {0} {1}
-recipientsOfDepot = Destinataires associés au dépôt
-subject = {0} {1} vous a créé une Invitation de Dépot', 'activationDate = Depot activation date
-closureDate = Depot closure date
-customDate=dd/mm/yyyy
-depotSize = Size of the depot
-mainMsg = <b>{0} {1}</b> has created an Upload Request Depot for you, set to open on
-msgFrom = Message from
-name = {0} {1}
-recipientsOfDepot = Recipients of the depot
-subject = {0} {1} has created an Upload Request Depot for you.');
-INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (19, 1, NULL, true, 19, '[( #{subject(${requestOwner.firstName}, ${requestOwner.lastName},${subject})})]', '<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-   <head data-th-replace="layout :: header"></head>
-   <body>
-      <div
-         th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
-         <!--/*  Upper main-content */-->
-         <section id="main-content">
-            <!--/* main-content container */-->
-            <div th:replace="layout :: contentUpperSection(~{::#section-content})">
-               <div id="section-content">
-                  <!--/* Greetings for external or internal user */-->
-                  <div>
-                     <th:block data-th-replace="layout :: greetings(${requestRecipient.mail})"/>
-                  </div>
-                  <!--/* End of Greetings for external or internal recipient */-->
-                  <!--/* Main email  message content*/-->
-                  <p>
-                     <span data-th-utext="#{mainMsg(${requestOwner.firstName},${requestOwner.lastName},${subject})}">
-                     Peter Wilson invited  you to upload  some files in the Upload Request depot labeled : subject.
-                     </span>
-                     <br/>
-                     <span data-th-text="#{msgProtected}">In order to access it click the link below and enter the provided password.</span>
-                  </p>
-                  <th:block data-th-replace="layout :: actionButtonLink(#{buttonMsg},${requestUrl})"/>
-                  <!--/* End of Main email message content*/-->
-               </div>
-               <!--/* End of section-content*/-->
-            </div>
-            <!--/* End of main-content container */-->
-         </section>
-         <!--/* End of upper main-content*/-->
-         <!--/* Secondary content for  bottom email section */-->
-         <section id="secondary-content">
-            <th:block data-th-replace="layout :: infoStandardArea(#{password},${password})"/>
-            <div data-th-if="${!#strings.isEmpty(request.expirationDate)}">
-               <th:block data-th-replace="layout :: infoDateArea(#{closureDate},${request.expirationDate})"/>
-            </div>
-         </section>
-         <!--/* End of Secondary content for bottom email section */-->
-      </div>
-   </body>
-</html>', '9f0a2758-60e7-11e7-b1e9-0800271467bb', now(), now(), true, 'buttonMsg = Accès au dépôt
-closureDate = Dépôt disponible jusqu au
-mainMsg = <b>{0} {1}</b> a modifié le mot de passe d accès à l Invitation de Dépôt : {2}.
-msgProtected = Vous trouverez ci-dessous le nouveau mot de passe ainsi que le lien d accès.
-password = Mot de passe
-subject = {0} {1} vous envoie le nouveau mot de passe du dépôt : {2}', 'buttonMsg = Access to the depot
-closureDate = Depot closure date
-mainMsg = <b>{0} {1}</b> has changed the password of the Upload Request : {2}
-msgProtected = You may find the new password below as well as the access link.
-password = Password
-subject = {0} {1} sent you the new password for the depot: {2}');
-INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (22, 1, '', true, 22, '[(#{subject(${requestOwner.firstName}, ${requestOwner.lastName},${subject})})]', '<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-   <head data-th-replace="layout :: header"></head>
-   <body>
-      <div
-         th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
-         <!--/*  Upper main-content */-->
-         <section id="main-content">
-            <!--/* main-content container */-->
-            <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
-               <div id="section-content">
-                  <!--/* Greetings for external or internal user */-->
-                  <div>
-                     <th:block data-th-replace="layout :: greetings(${requestRecipient.mail})"/>
-                  </div>
-                  <!--/* End of Greetings for external or internal recipient */-->
-                  <!--/* Main email  message content*/-->
-                  <p>
-                     <span data-th-utext="#{mainMsg(${requestOwner.firstName},${requestOwner.lastName},${subject})}">
-                     Peter WILSON has deleted your access to the depot : : subject.
-                     </span>
-                  </p>
-                  <!--/* End of Main email message content*/-->
-               </div>
-               <!--/* End of section-content*/-->
-            </div>
-            <!--/* End of main-content container */-->
-         </section>
-         <!--/* End of upper main-content*/-->
-         <!--/* Secondary content for  bottom email section */-->
-         <section id="secondary-content">
-            <th:block data-th-replace="layout :: infoDateArea(#{deletionDate},${deletionDate})"/>
-         </section>
-         <!--/* End of Secondary content for bottom email section */-->
-      </div>
-   </body>
-</html>', '9f146074-60e7-11e7-94ba-0800271467bb', now(), now(), true, 'deletionDate = Dépôt  supprimé le
-mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b>  vous invite à  déposer des fichiers dans l Invitation de Dépôt intitulée : {2}.
-subject = {0} {1} a supprimé votre accès au dépôt : {2}', 'deletionDate = Deletion date
-mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> has deleted your access to the depot : {2}.
-subject = {0} {1} has removed your access to the depot : {2}');
-INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (24, 1, '', true, 24, '[(#{subject(${requestOwner.firstName}, ${requestOwner.lastName},${document.name})})]', '<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-   <head data-th-replace="layout :: header"></head>
-   <body>
-      <div
-         th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
-         <!--/*  Upper main-content */-->
-         <section id="main-content">
-            <!--/* main-content container */-->
-            <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
-               <div id="section-content">
-                  <!--/* Greetings for external or internal user */-->
-                  <div>
-                     <th:block data-th-replace="layout :: greetings(${requestRecipient.mail})"/>
-                  </div>
-                  <!--/* End of Greetings for external or internal recipient */-->
-                  <!--/* Main email  message content*/-->
-                  <p>
-                     <span data-th-utext="#{mainMsg(${requestOwner.firstName},${requestOwner.lastName},${document.name},${subject})}">
-                 Peter WILSON has deleted the file my-file.txt from the depot : subject
-                     </span>
-                  </p>
-                  <!--/* End of Main email message content*/-->
-               </div>
-               <!--/* End of section-content*/-->
-            </div>
-            <!--/* End of main-content container */-->
-         </section>
-         <!--/* End of upper main-content*/-->
-         <!--/* Secondary content for  bottom email section */-->
-         <section id="secondary-content">
-            <th:block data-th-replace="layout :: infoDateArea(#{deletionDate},${deletionDate})"/>
-            <div data-th-if="${!#strings.isEmpty(request.expirationDate)}">
-               <th:block data-th-replace="layout :: infoDateArea(#{closureDate},${request.expirationDate})"/>
-            </div>
-         </section>
-         <!--/* End of Secondary content for bottom email section */-->
-      </div>
-   </body>
-</html>', '9f1aca72-60e7-11e7-a75f-0800271467bb', now(), now(), true, 'closureDate = Dépôt disponible jusqu au
-deletionDate = Fichier supprimé le
-mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b>a supprimé le fichier  <b>{2} </b> de  l Invitation de Dépôt : {3}
-subject = {0} {1} à supprimé {2} du dépôt', 'closureDate = Depot closure date
-deletionDate = File deletion date
-mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> has deleted the file <b>{2} </b>from the depot  : {3}.
-subject = {0} {1} has deleted {2} from the depot');
-INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (17, 1, '', true, 17, '[(#{subject(${subject})})]', '<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-   <head data-th-replace="layout :: header"></head>
-   <body>
-      <div
-         th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
-         <!--/*  Upper main-content */-->
-         <section id="main-content">
-            <!--/* main-content container */-->
-            <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
-               <div id="section-content">
-                  <!--/* Greetings for external or internal user */-->
-                  <div>
-                     <th:block data-th-replace="layout :: greetings(${requestOwner.firstName})"/>
-                  </div>
-                  <!--/* End of Greetings for external or internal recipient */-->
-                  <!--/* Main email  message content*/-->
-                  <p>
-                     <span data-th-utext="#{mainMsg(${request.subject})}">
-                     Your Upload Request depot labeled $subject is now activated.
-                     </span>
-                     <span data-th-text="#{msgLink}">In order to access it click the link below.</span>
-                  </p>
-                  <th:block data-th-replace="layout :: actionButtonLink(#{buttonMsg},${requestUrl})"/>
-                  <!--/* End of Main email message content*/-->
-               </div>
-               <!--/* End of section-content*/-->
-            </div>
-            <!--/* End of main-content container */-->
-         </section>
-         <!--/* End of upper main-content*/-->
-         <!--/* Secondary content for  bottom email section */-->
-         <section id="secondary-content">
-            <div data-th-if="${!#strings.isEmpty(request.expirationDate)}">
-               <th:block data-th-replace="layout :: infoDateArea(#{closureDate},${request.expirationDate})"/>
-            </div>
-            <th:block data-th-replace="layout :: infoRecipientListingArea(#{recipientsOfDepot},${recipients})"/>
-             <div data-th-if="(${totalMaxDepotSize})">
-                   <th:block data-th-replace="layout :: infoStandardArea(#{depotSize},${totalMaxDepotSize})"/>
-            </div>
-         </section>
-         <!--/* End of Secondary content for bottom email section */-->
-      </div>
-   </body>
-</html>', '9f03b0bc-60e7-11e7-a512-0800271467bb', now(), now(), true, 'buttonMsg = Accès au dépôt
-closureDate = Dépôt disponible jusqu au
-depotSize = Taille du dépôt
-mainMsg = Votre Invitation de Dépôt : {0}, est désormais active.
-msgLink = Vous pouvez y accéder en cliquant sur le lien ci-dessous.
-recipientsOfDepot = Destinataires associés au dépôt
-subject = Votre invitation de dépôt : {0}, est désormais active', 'buttonMsg = Access to the depot
-closureDate = Depot closure date
-depotSize = Size of the depot
-mainMsg = Your Upload Request depot labeled : {0}, is now activated.
-msgLink = In order to access it click the link below.
-recipientsOfDepot = Recipients of the depot
-subject = Your Upload Request  : {0}, has been activated');
-INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (16, 1, '', true, 16, '[(#{subject(${requestOwner.firstName}, ${requestOwner.lastName},${subject})})]', '<!DOCTYPE html>
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (16, 1, NULL, true, 16, '[(#{subject(${requestOwner.firstName}, ${requestOwner.lastName},${subject})})]', '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
    <head data-th-replace="layout :: header"></head>
    <body>
@@ -839,6 +462,284 @@ name = {0} {1}
 password = Password
 recipientsOfDepot = Recipients of the depot
 subject = {0} {1} invites you to upload some files in the depot : {2}');
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (20, 1, '', true, 20, '[(#{subject(${requestOwner.firstName}, ${requestOwner.lastName})})]', '<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head data-th-replace="layout :: header"></head>
+<body>
+<div
+  th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+  <!--/*  Upper main-content */-->
+  <section id="main-content">
+    <!--/* If the sender has added a  customized message */-->
+    <th:block data-th-if="${!#strings.isEmpty(body)}">
+      <div th:replace="layout :: contentMessageSection(~{::#message-title}, ~{::#message-content})">
+        <span id="message-title">
+          <span data-th-text="#{msgFrom}">You have a message from</span>
+          <b data-th-text="#{name(${requestOwner.firstName} , ${requestOwner.lastName})}">Peter Wilson</b> :
+        </span>
+        <span id="message-content" data-th-text="*{body}">
+          Hi Amy,<br>
+          As agreed,  i am sending you the report as well as the related files. Feel free to contact me if need be. <br>Best regards, Peter.
+        </span>
+      </div>
+    </th:block>
+    <!--/* End of customized message */-->
+    <!--/* main-content container */-->
+    <div th:replace="layout :: contentUpperSection(~{::#section-content})">
+      <div id="section-content">
+        <!--/* Greetings for external or internal user */-->
+        <div>
+          <th:block data-th-replace="layout :: greetings(${requestRecipient.mail})"/>
+        </div>
+          <!--/* End of Greetings for external or internal recipient */-->
+        <!--/* Main email  message content*/-->
+        <p>
+                 <span data-th-utext="#{mainMsg(${requestOwner.firstName},${requestOwner.lastName})}">
+                     Peter Wilson invited  you to upload  some files in the Upload Request depot labeled : subject.
+                </span>
+ <span th:with="df=#{customDate}" data-th-text="${#dates.format(request.activationDate,df)}">7th of November, 2017</span>
+        </p>
+        <!--/* End of Main email message content*/-->
+      </div><!--/* End of section-content*/-->
+    </div><!--/* End of main-content container */-->
+  </section> <!--/* End of upper main-content*/-->
+  <!--/* Secondary content for  bottom email section */-->
+  <section id="secondary-content">
+  <div data-th-if="${!#strings.isEmpty(request.activationDate)}">
+               <th:block data-th-replace="layout :: infoDateArea(#{activationDate},${request.activationDate})"/>
+            </div>
+     <div data-th-if="${!#strings.isEmpty(request.expirationDate)}">
+               <th:block data-th-replace="layout :: infoDateArea(#{closureDate},${request.expirationDate})"/>
+            </div>
+       <div data-th-if="(${totalMaxDepotSize})">
+               <th:block data-th-replace="layout :: infoStandardArea(#{depotSize},${totalMaxDepotSize})"/>
+         </div>
+  <div data-th-if="(${isgrouped})">
+         <th:block data-th-replace="layout :: infoRecipientListingArea(#{recipientsOfDepot},${recipients})"/>
+    </div>
+  </section>  <!--/* End of Secondary content for bottom email section */-->
+  </div>
+</body>
+</html>', '9f0d6ac6-60e7-11e7-b1b6-0800271467bb', now(), now(), true, 'activationDate = Ouverture du dépôt le
+closureDate = Dépôt  disponible jusqu au
+customDate= d MMMM, yyyy
+depotSize = Taille du dépôt
+mainMsg = <b>{0} {1}</b> vous a créé une Invitation de Dépôt, qui sera ouverte au dépôt le
+msgFrom = Le message de
+name = {0} {1}
+recipientsOfDepot = Destinataires associés au dépôt
+subject = {0} {1} vous a créé une Invitation de Dépot', 'activationDate = Depot activation date
+closureDate = Depot closure date
+customDate= MMMM d, yyyy
+depotSize = Size of the depot
+mainMsg = <b>{0} {1}</b> has created an Upload Request Depot for you, set to open for
+msgFrom = Message from
+name = {0} {1}
+recipientsOfDepot = Recipients of the depot
+subject = {0} {1} has created an Upload Request Depot for you.');
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (22, 1, '', true, 22, '[(#{subject(${requestOwner.firstName}, ${requestOwner.lastName},${subject})})]', '<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+   <head data-th-replace="layout :: header"></head>
+   <body>
+      <div
+         th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+         <!--/*  Upper main-content */-->
+         <section id="main-content">
+            <!--/* main-content container */-->
+            <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+               <div id="section-content">
+                  <!--/* Greetings for external or internal user */-->
+                  <div>
+                     <th:block data-th-replace="layout :: greetings(${requestRecipient.mail})"/>
+                  </div>
+                  <!--/* End of Greetings for external or internal recipient */-->
+                  <!--/* Main email  message content*/-->
+                  <p>
+                     <span data-th-utext="#{mainMsg(${requestOwner.firstName},${requestOwner.lastName},${subject})}">
+                     Peter WILSON has deleted your access to the depot : : subject.
+                     </span>
+                  </p>
+                  <!--/* End of Main email message content*/-->
+               </div>
+               <!--/* End of section-content*/-->
+            </div>
+            <!--/* End of main-content container */-->
+         </section>
+         <!--/* End of upper main-content*/-->
+         <!--/* Secondary content for  bottom email section */-->
+         <section id="secondary-content">
+            <th:block data-th-replace="layout :: infoDateArea(#{deletionDate},${deletionDate})"/>
+         </section>
+         <!--/* End of Secondary content for bottom email section */-->
+      </div>
+   </body>
+</html>', '9f146074-60e7-11e7-94ba-0800271467bb', now(), now(), true, 'deletionDate = Dépôt  supprimé le
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b>  vous invite à  déposer des fichiers dans l Invitation de Dépôt intitulée : {2}.
+subject = {0} {1} a supprimé votre accès au dépôt : {2}', 'deletionDate = Deletion date
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> has deleted your access to the depot : {2}.
+subject = {0} {1} has removed your access to the depot : {2}');
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (23, 1, '', true, 23, '[# th:if="${!subject.modified}"]
+[(#{subject(${subject.value})})]
+[/]
+[# th:if="${subject.modified}"]
+[(#{subject(${subject.oldValue})})]
+[/]', '<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+   <head data-th-replace="layout :: header"></head>
+   <body>
+      <div
+         th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+         <!--/*  Upper main-content */-->
+         <section id="main-content">
+            <!--/* main-content container */-->
+            <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+               <div id="section-content">
+                  <!--/* Greetings for external or internal user */-->
+                  <div>
+                     <th:block data-th-replace="layout :: greetings(${requestRecipient.mail})"/>
+                  </div>
+                  <!--/* End of Greetings for external or internal recipient */-->
+                  <!--/* Main email  message content*/-->
+                  <p>
+                     <span data-th-utext="#{mainMsg(${requestOwner.firstName},${requestOwner.lastName})}">
+                     Peter Wilson invited  you to upload  some files in the Upload Request depot labeled : subject.
+                     </span>
+                     <span data-th-utext="#{secondaryMsg}">
+                     Peter Wilson invited  you to upload  some files in the Upload Request depot labeled : subject.
+                     </span>
+                  </p>
+                  <!--/* If the sender has added a  customized message */-->
+                  <th:block data-th-if="(${message.modified})">
+                     <div th:replace="layout :: contentMessageSection( ~{::#message-title}, ~{::#message-content})">
+                        <span id="message-title">
+                        <span data-th-text="#{msgFrom}">You have a message from</span>
+                        <b data-th-text="#{name(${requestOwner.firstName} , ${requestOwner.lastName})}">Peter Wilson</b> :
+                        </span>
+                        <span id="message-content" data-th-text="*{message.value}">
+                        Hi Amy,<br>
+                        As agreed,  i am sending you the report as well as the related files. Feel free to contact me if need be. <br>Best regards, Peter.
+                        </span>
+                     </div>
+                  </th:block>
+                  <!--/* End of Main email message content*/-->
+               </div>
+               <!--/* End of section-content*/-->
+            </div>
+            <!--/* End of main-content container */-->
+         </section>
+         <!--/* End of upper main-content*/-->
+         <!--/* Secondary content for  bottom email section */-->
+         <section id="secondary-content">
+            <span data-th-if="(${expiryDate.modified})">
+               <th:block data-th-replace="layout :: infoEditedDateArea(#{expiryDate},${expiryDate.oldValue},${expiryDate.value})"/>
+            </span>
+            <span data-th-if="(${activationDate.modified})">
+               <th:block data-th-replace="layout :: infoEditedDateArea(#{activationDate},${activationDate.oldValue},${activationDate.value})"/>
+            </span>
+            <span data-th-if="(${subject.modified})">
+               <th:block data-th-replace="layout :: infoEditedItem(#{nameOfDepot},${subject.oldValue},${subject.value})"/>
+            </span>
+            <span data-th-if="(${closureRight.modified})">
+               <th:block data-th-replace="layout :: infoEditedItem(#{closureRight},${closureRight.oldValue},${closureRight.value})"/>
+            </span>
+            <span data-th-if="(${deletionRight.modified})">
+               <th:block data-th-replace="layout :: infoEditedItem(#{deletionRight},${deletionRight.oldValue},${deletionRight.value})"/>
+            </span>
+            <span data-th-if="(${maxFileSize.modified})">
+               <th:block data-th-replace="layout :: infoEditedItem(#{maxFileSize},${maxFileSize.oldValue},${maxFileSize.value})"/>
+            </span>
+            <span data-th-if="(${maxFileNum.modified})">
+               <th:block data-th-replace="layout :: infoEditedItem(#{maxFileNum},${maxFileNum.oldValue},${maxFileNum.value})"/>
+            </span>
+            <span data-th-if="(${totalMaxDepotSize.modified})">
+               <th:block data-th-replace="layout :: infoEditedItem(#{depotSize},${totalMaxDepotSize.oldValue},${totalMaxDepotSize.value})"/>
+            </span>
+         </section>
+         <!--/* End of Secondary content for bottom email section */-->
+      </div>
+   </body>
+</html>', '9f17d614-60e7-11e7-94e3-0800271467bb', now(), now(), true, 'activationDate = Date d activation
+closureRight = Droit de dépôt
+deletionRight = Droit de suppression
+depotSize = Taille du dépôt
+expiryDate = Date de clôture
+mainMsg =   <b> {0} <span style="text-transform:uppercase">{1}</span> </b>  a modifié des paramètres de l Invitation de dépôt.
+maxFileNum = Nbr. max de fichier
+maxFileSize = Taille max. de fichier
+msgFrom = Nouveau message de
+name = {0} {1}
+nameOfDepot: Nom du dépôt
+secondaryMsg = Ces modifications sont listés ci-dessous.
+subject = Modifications des paramètres de l Invitation de dépôt : {0}', 'activationDate = Activation date
+closureRight = Closure rights
+deletionRight = Deletion rights
+depotSize = Max. Depot size
+expiryDate = Closure date
+mainMsg =   <b> {0} <span style="text-transform:uppercase">{1}</span> </b>  has updated some settings of the upload request depot.
+maxFileNum = Max file number
+maxFileSize = Max. file size
+msgFrom =  New message from
+name = {0} {1}
+nameOfDepot: Name of the depot
+secondaryMsg = You may find the updated settings listed below.
+subject = Updated Settings for the Upload Request : {0}');
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (17, 1, '', true, 17, '[(#{subject(${subject})})]', '<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+   <head data-th-replace="layout :: header"></head>
+   <body>
+      <div
+         th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+         <!--/*  Upper main-content */-->
+         <section id="main-content">
+            <!--/* main-content container */-->
+            <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+               <div id="section-content">
+                  <!--/* Greetings for external or internal user */-->
+                  <div>
+                     <th:block data-th-replace="layout :: greetings(${requestOwner.firstName})"/>
+                  </div>
+                  <!--/* End of Greetings for external or internal recipient */-->
+                  <!--/* Main email  message content*/-->
+                  <p>
+                     <span data-th-utext="#{mainMsg(${request.subject})}">
+                     Your Upload Request depot labeled $subject is now activated.
+                     </span>
+                     <span data-th-text="#{msgLink}">In order to access it click the link below.</span>
+                  </p>
+                  <th:block data-th-replace="layout :: actionButtonLink(#{buttonMsg},${requestUrl})"/>
+                  <!--/* End of Main email message content*/-->
+               </div>
+               <!--/* End of section-content*/-->
+            </div>
+            <!--/* End of main-content container */-->
+         </section>
+         <!--/* End of upper main-content*/-->
+         <!--/* Secondary content for  bottom email section */-->
+         <section id="secondary-content">
+            <div data-th-if="${!#strings.isEmpty(request.expirationDate)}">
+               <th:block data-th-replace="layout :: infoDateArea(#{closureDate},${request.expirationDate})"/>
+            </div>
+            <th:block data-th-replace="layout :: infoRecipientListingArea(#{recipientsOfDepot},${recipients})"/>
+             <div data-th-if="(${totalMaxDepotSize})">
+                   <th:block data-th-replace="layout :: infoStandardArea(#{depotSize},${totalMaxDepotSize})"/>
+            </div>
+         </section>
+         <!--/* End of Secondary content for bottom email section */-->
+      </div>
+   </body>
+</html>', '9f03b0bc-60e7-11e7-a512-0800271467bb', now(), now(), true, 'buttonMsg = Accès au dépôt
+closureDate = Dépôt disponible jusqu au
+depotSize = Taille du dépôt
+mainMsg = Votre Invitation de Dépôt : {0}, est désormais active.
+msgLink = Vous pouvez y accéder en cliquant sur le lien ci-dessous.
+recipientsOfDepot = Destinataires associés au dépôt
+subject = Votre invitation de dépôt : {0}, est désormais active', 'buttonMsg = Access to the depot
+closureDate = Depot closure date
+depotSize = Size of the depot
+mainMsg = Your Upload Request depot labeled : {0}, is now activated.
+msgLink = In order to access it click the link below.
+recipientsOfDepot = Recipients of the depot
+subject = Your Upload Request  : {0}, has been activated');
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (18, 1, '', true, 18, '[(#{subject(${requestOwner.firstName}, ${requestOwner.lastName})})]', '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
    <head data-th-replace="layout :: header"></head>
@@ -923,6 +824,110 @@ msgUnProtected = In order to access it click the link below.
 name = {0} {1}
 recipientsOfDepot = Recipients of the depot
 subject = {0} {1} is still waiting for some files');
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (19, 1, '', true, 19, '[( #{subject(${requestOwner.firstName}, ${requestOwner.lastName},${subject})})]', '<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+   <head data-th-replace="layout :: header"></head>
+   <body>
+      <div
+         th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+         <!--/*  Upper main-content */-->
+         <section id="main-content">
+            <!--/* main-content container */-->
+            <div th:replace="layout :: contentUpperSection(~{::#section-content})">
+               <div id="section-content">
+                  <!--/* Greetings for external or internal user */-->
+                  <div>
+                     <th:block data-th-replace="layout :: greetings(${requestRecipient.mail})"/>
+                  </div>
+                  <!--/* End of Greetings for external or internal recipient */-->
+                  <!--/* Main email  message content*/-->
+                  <p>
+                     <span data-th-utext="#{mainMsg(${requestOwner.firstName},${requestOwner.lastName},${subject})}">
+                     Peter Wilson invited  you to upload  some files in the Upload Request depot labeled : subject.
+                     </span>
+                     <br/>
+                     <span data-th-text="#{msgProtected}">In order to access it click the link below and enter the provided password.</span>
+                  </p>
+                  <th:block data-th-replace="layout :: actionButtonLink(#{buttonMsg},${requestUrl})"/>
+                  <!--/* End of Main email message content*/-->
+               </div>
+               <!--/* End of section-content*/-->
+            </div>
+            <!--/* End of main-content container */-->
+         </section>
+         <!--/* End of upper main-content*/-->
+         <!--/* Secondary content for  bottom email section */-->
+         <section id="secondary-content">
+            <th:block data-th-replace="layout :: infoStandardArea(#{password},${password})"/>
+            <div data-th-if="${!#strings.isEmpty(request.expirationDate)}">
+               <th:block data-th-replace="layout :: infoDateArea(#{closureDate},${request.expirationDate})"/>
+            </div>
+         </section>
+         <!--/* End of Secondary content for bottom email section */-->
+      </div>
+   </body>
+</html>', '9f0a2758-60e7-11e7-b1e9-0800271467bb', now(), now(), true, 'buttonMsg = Accès au dépôt
+closureDate = Dépôt disponible jusqu au
+mainMsg = <b>{0} {1}</b> a modifié le mot de passe d accès à l Invitation de Dépôt : {2}.
+msgProtected = Vous trouverez ci-dessous le nouveau mot de passe ainsi que le lien d accès.
+password = Mot de passe
+subject = {0} {1} vous envoie le nouveau mot de passe du dépôt : {2}', 'buttonMsg = Access to the depot
+closureDate = Depot closure date
+mainMsg = <b>{0} {1}</b> has changed the password of the Upload Request : {2}
+msgProtected = You may find the new password below as well as the access link.
+password = Password
+subject = {0} {1} sent you the new password for the depot: {2}');
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (21, 1, '', true, 21, '[( #{subject(${requestOwner.firstName}, ${requestOwner.lastName},${subject})})]', '<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+   <head data-th-replace="layout :: header"></head>
+   <body>
+      <div
+         th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+         <!--/*  Upper main-content */-->
+         <section id="main-content">
+            <!--/* main-content container */-->
+            <div th:replace="layout :: contentUpperSection(~{::#section-content})">
+               <div id="section-content">
+                  <!--/* Greetings for external or internal user */-->
+                  <div>
+                     <th:block data-th-replace="layout :: greetings(${requestRecipient.mail})"/>
+                  </div>
+                  <!--/* End of Greetings for external or internal recipient */-->
+                  <!--/* Main email  message content*/-->
+                  <p>
+                     <span data-th-utext="#{mainMsg(${requestOwner.firstName},${requestOwner.lastName},${subject})}">
+                     Peter WILSON has closed prematurely his Upload Request Depot labeled : subject.
+                     </span>
+                  </p>
+                  <!--/* End of Main email message content*/-->
+               </div>
+               <!--/* End of section-content*/-->
+            </div>
+            <!--/* End of main-content container */-->
+         </section>
+         <!--/* End of upper main-content*/-->
+         <!--/* Secondary content for  bottom email section */-->
+         <section id="secondary-content">
+            <div data-th-if="(${isgrouped})">
+               <th:block data-th-replace="layout :: infoFileLinksListingArea(#{filesInURDepot},${documents}, false)"/>
+               <th:block data-th-replace="layout :: infoRecipientListingArea(#{recipientsOfDepot},${recipients})"/>
+            </div>
+            <div data-th-if="${!#strings.isEmpty(request.expirationDate)}">
+               <th:block data-th-replace="layout :: infoDateArea(#{closureDate},${request.expirationDate})"/>
+            </div>
+         </section>
+         <!--/* End of Secondary content for bottom email section */-->
+      </div>
+   </body>
+</html>', '9f10ba3c-60e7-11e7-9a73-0800271467bb', now(), now(), true, 'closureDate = Dépôt clôturé le
+filesInURDepot = Fichiers déposés
+mainMsg = <b>{0} {1}</b> a clôturé prématurément son Invitation de Dépôt intitulée : {2}.
+recipientsOfDepot = Destinataires
+subject = {0} {1} a clôturé l Invitation de Dépot : {2}', 'closureDate = Depot closure date
+filesInURDepot = Files uploaded
+mainMsg = <b>{0} {1}</b> has closed prematurely, his Upload Request Depot labeled : {2}.
+recipientsOfDepot = Recipients
+subject = {0} {1} has closed his Upload Request depot : {2}');
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (6, 1, NULL, true, 6, '[( #{subject(${share.name})})]', '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head data-th-replace="layout :: header"></head>
@@ -1914,7 +1919,7 @@ mainMsgExt = The external recipient <b>{0}</b> has downloaded your file
 mainMsgInt = <b> {0} <span style="text-transform:uppercase">{1}</span> </b> has downloaded your file
 subject = {0} {1} has downloaded {2}
 subjectAnonymous = {0} has downloaded {1}');
-INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (21, 1, '', true, 21, '[( #{subject(${requestOwner.firstName}, ${requestOwner.lastName},${subject})})]', '<!DOCTYPE html>
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (24, 1, '', true, 24, '[(#{subject(${requestOwner.firstName}, ${requestOwner.lastName},${document.name})})]', '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
    <head data-th-replace="layout :: header"></head>
    <body>
@@ -1923,7 +1928,7 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
          <!--/*  Upper main-content */-->
          <section id="main-content">
             <!--/* main-content container */-->
-            <div th:replace="layout :: contentUpperSection(~{::#section-content})">
+            <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
                <div id="section-content">
                   <!--/* Greetings for external or internal user */-->
                   <div>
@@ -1932,8 +1937,8 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
                   <!--/* End of Greetings for external or internal recipient */-->
                   <!--/* Main email  message content*/-->
                   <p>
-                     <span data-th-utext="#{mainMsg(${requestOwner.firstName},${requestOwner.lastName},${subject})}">
-                     Peter WILSON has closed prematurely his Upload Request Depot labeled : subject.
+                     <span data-th-utext="#{mainMsg(${requestOwner.firstName},${requestOwner.lastName},${document.name},${subject})}">
+                 Peter WILSON has deleted the file my-file.txt from the depot : subject
                      </span>
                   </p>
                   <!--/* End of Main email message content*/-->
@@ -1945,10 +1950,7 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
          <!--/* End of upper main-content*/-->
          <!--/* Secondary content for  bottom email section */-->
          <section id="secondary-content">
-            <div data-th-if="(${isgrouped})">
-               <th:block data-th-replace="layout :: infoFileLinksListingArea(#{filesInURDepot},${documents}, false)"/>
-               <th:block data-th-replace="layout :: infoRecipientListingArea(#{recipientsOfDepot},${recipients})"/>
-            </div>
+            <th:block data-th-replace="layout :: infoDateArea(#{deletionDate},${deletionDate})"/>
             <div data-th-if="${!#strings.isEmpty(request.expirationDate)}">
                <th:block data-th-replace="layout :: infoDateArea(#{closureDate},${request.expirationDate})"/>
             </div>
@@ -1956,15 +1958,13 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
          <!--/* End of Secondary content for bottom email section */-->
       </div>
    </body>
-</html>', '9f10ba3c-60e7-11e7-9a73-0800271467bb', now(), now(), true, 'closureDate = Dépôt clôturé le
-filesInURDepot = Fichiers déposés
-mainMsg = <b>{0} {1}</b> a clôturé prématurément son Invitation de Dépôt intitulée : {2}.
-recipientsOfDepot = Destinataires
-subject = {0} {1} a clôturé l Invitation de Dépot : {2}', 'closureDate = Depot closure date
-filesInURDepot = Files uploaded
-mainMsg = <b>{0} {1}</b> has closed prematurely his Upload Request Depot labeled : {2}.
-recipientsOfDepot = Recipients
-subject = {0} {1} has closed his Upload Request depot : {2}');
+</html>', '9f1aca72-60e7-11e7-a75f-0800271467bb', now(), now(), true, 'closureDate = Dépôt disponible jusqu au
+deletionDate = Fichier supprimé le
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b>a supprimé le fichier  <b>{2} </b> de  l Invitation de Dépôt : {3}
+subject = {0} {1} a supprimé {2} du dépôt', 'closureDate = Depot closure date
+deletionDate = File deletion date
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> has deleted the file <b>{2} </b>from the depot  : {3}.
+subject = {0} {1} has deleted {2} from the depot');
 INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (1, 0, 1, 1, 1, '4f3c4723-531e-449b-a1ae-d304fd3d2387', true);
 INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (2, 0, 2, 1, 2, '81041673-c699-4849-8be4-58eea4507305', true);
 INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (3, 0, 3, 1, 3, '85538234-1fc1-47a2-850d-7f7b59f1640e', true);
