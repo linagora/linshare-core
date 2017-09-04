@@ -1622,12 +1622,61 @@ subject = {0} {1} has downloaded {2}
 subjectAnonymous = {0} has downloaded {1}');
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (20, 1, '', true, 20, '', '<!DOCTYPE html><html
         xmlns:th=http://www.thymeleaf.org><body>layout</body></html>', '9f0d6ac6-60e7-11e7-b1b6-0800271467bb', now(), now(), true, NULL, NULL);
-INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (21, 1, '', true, 21, '', '<!DOCTYPE html><html
-        xmlns:th=http://www.thymeleaf.org><body>layout</body></html>', '9f10ba3c-60e7-11e7-9a73-0800271467bb', now(), now(), true, NULL, NULL);
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (22, 1, '', true, 22, '', '<!DOCTYPE html><html
         xmlns:th=http://www.thymeleaf.org><body>layout</body></html>', '9f146074-60e7-11e7-94ba-0800271467bb', now(), now(), true, NULL, NULL);
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (24, 1, '', true, 24, '', '<!DOCTYPE html><html
         xmlns:th=http://www.thymeleaf.org><body>layout</body></html>', '9f1aca72-60e7-11e7-a75f-0800271467bb', now(), now(), true, NULL, NULL);
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (21, 1, '', true, 21, '[( #{subject(${requestOwner.firstName}, ${requestOwner.lastName},${subject})})]', '<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+   <head data-th-replace="layout :: header"></head>
+   <body>
+      <div
+         th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+         <!--/*  Upper main-content */-->
+         <section id="main-content">
+            <!--/* main-content container */-->
+            <div th:replace="layout :: contentUpperSection(~{::#section-content})">
+               <div id="section-content">
+                  <!--/* Greetings for external or internal user */-->
+                  <div>
+                     <th:block data-th-replace="layout :: greetings(${requestRecipient.mail})"/>
+                  </div>
+                  <!--/* End of Greetings for external or internal recipient */-->
+                  <!--/* Main email  message content*/-->
+                  <p>
+                     <span data-th-utext="#{mainMsg(${requestOwner.firstName},${requestOwner.lastName},${subject})}">
+                     Peter WILSON has closed prematurely his Upload Request Depot labeled : subject.
+                     </span>
+                  </p>
+                  <!--/* End of Main email message content*/-->
+               </div>
+               <!--/* End of section-content*/-->
+            </div>
+            <!--/* End of main-content container */-->
+         </section>
+         <!--/* End of upper main-content*/-->
+         <!--/* Secondary content for  bottom email section */-->
+         <section id="secondary-content">
+            <div data-th-if="(${isgrouped})">
+               <th:block data-th-replace="layout :: infoFileLinksListingArea(#{filesInURDepot},${documents}, false)"/>
+               <th:block data-th-replace="layout :: infoRecipientListingArea(#{recipientsOfDepot},${recipients})"/>
+            </div>
+            <div data-th-if="${!#strings.isEmpty(request.expirationDate)}">
+               <th:block data-th-replace="layout :: infoDateArea(#{closureDate},${request.expirationDate})"/>
+            </div>
+         </section>
+         <!--/* End of Secondary content for bottom email section */-->
+      </div>
+   </body>
+</html>', '9f10ba3c-60e7-11e7-9a73-0800271467bb', now(), now(), true, 'closureDate = Dépôt clôturé le
+filesInURDepot = Fichiers déposés
+mainMsg = <b>{0} {1}</b> a clôturé prématurément son Invitation de Dépôt intitulée : {2}.
+recipientsOfDepot = Destinataires
+subject = {0} {1} a clôturé l\''''Invitation de Dépot : {2}', 'closureDate = Depot closure date
+filesInURDepot = Files uploaded
+mainMsg = <b>{0} {1}</b> has closed prematurely his Upload Request Depot labeled : {2}.
+recipientsOfDepot = Recipients
+subject = {0} {1} has closed his Upload Request depot : {2}');
 INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (1, 0, 1, 1, 1, '4f3c4723-531e-449b-a1ae-d304fd3d2387', true);
 INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (2, 0, 2, 1, 2, '81041673-c699-4849-8be4-58eea4507305', true);
 INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (3, 0, 3, 1, 3, '85538234-1fc1-47a2-850d-7f7b59f1640e', true);
