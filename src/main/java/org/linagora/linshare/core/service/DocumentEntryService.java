@@ -41,16 +41,15 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
+import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.CopyDto;
 
 public interface DocumentEntryService {
 
 	DocumentEntry create(Account actor, Account owner, File tempFile, String fileName, String comment,
 			boolean isFromCmis, String metadata) throws BusinessException;
 
-	DocumentEntry copy(Account actor, Account owner, String documentUuid, String fileName, String comment,
-			String metadata, boolean ciphered, Long size, CopyDto context) throws BusinessException;
+	DocumentEntry copy(Account actor, Account owner, CopyResource cr) throws BusinessException;
 
 	void markAsCopied(Account actor, Account owner, DocumentEntry entry) throws BusinessException;
 

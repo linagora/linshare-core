@@ -40,6 +40,7 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupLightDto;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.DocumentMto;
 
@@ -51,8 +52,8 @@ public class DocumentEntryAuditLogEntry extends AuditLogEntryUser {
 
 	protected DocumentMto resourceUpdated;
 
-	// used when we copy a document from another workgroup
-	protected String fromWorkGroupUuid;
+	// used when we copy a document from a workgroup
+	protected WorkGroupLightDto fromWorkGroup;
 
 	public DocumentEntryAuditLogEntry() {
 		super();
@@ -79,11 +80,12 @@ public class DocumentEntryAuditLogEntry extends AuditLogEntryUser {
 		this.resourceUpdated = resourceUpdated;
 	}
 
-	public String getFromWorkGroupUuid() {
-		return fromWorkGroupUuid;
+	public WorkGroupLightDto getFromWorkGroup() {
+		return fromWorkGroup;
 	}
 
-	public void setFromWorkGroupUuid(String fromWorkGroupUuid) {
-		this.fromWorkGroupUuid = fromWorkGroupUuid;
+	public void setFromWorkGroup(WorkGroupLightDto fromWorkGroup) {
+		this.fromWorkGroup = fromWorkGroup;
 	}
+
 }

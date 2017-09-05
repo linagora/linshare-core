@@ -53,6 +53,12 @@ public class WorkGroupLightDto {
 	public WorkGroupLightDto() {
 	}
 
+	public WorkGroupLightDto(String uuid, String name) {
+		super();
+		this.uuid = uuid;
+		this.name = name;
+	}
+
 	public WorkGroupLightDto(Thread thread) {
 		super();
 		this.uuid = thread.getLsUuid();

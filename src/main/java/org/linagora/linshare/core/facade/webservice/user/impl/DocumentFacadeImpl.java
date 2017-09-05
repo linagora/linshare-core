@@ -57,6 +57,7 @@ import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.CopyDto;
@@ -307,11 +308,8 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 			// FIXME:if the current user do have enough space, there is side effect on audit.
 			// Some audit traces will be created before quota checks ! :s
 			ShareEntry share = shareService.findForDownloadOrCopyRight(actor, owner, resourceUuid);
-			String documentUuid = share.getDocumentEntry().getDocument().getUuid();
-			Boolean ciphered = share.getDocumentEntry().getCiphered();
-			String name = share.getName();
-			DocumentEntry documentEntry = documentEntryService.copy(actor, owner, documentUuid, name,
-					share.getComment(), share.getMetaData(), ciphered, share.getSize(), copy);
+			CopyResource cr = new CopyResource(resourceKind, resourceUuid, share);
+			DocumentEntry documentEntry = documentEntryService.copy(actor, owner, cr);
 			shareService.markAsCopied(actor, owner, resourceUuid);
 			DocumentDto documentDto = new DocumentDto(documentEntry);
 			if (deleteShare) {
@@ -325,23 +323,16 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 			WorkGroupNode node = workGroupNodeService.findForDownloadOrCopyRight(actor, owner, workGroup, resourceUuid);
 			if (node.getNodeType().equals(WorkGroupNodeType.DOCUMENT)) {
 				WorkGroupDocument wgDocument = (WorkGroupDocument) node;
-				String documentUuid = wgDocument.getDocumentUuid();
-				Boolean ciphered = wgDocument.getCiphered();
-				String name = wgDocument.getName();
-				DocumentEntry documentEntry = documentEntryService.copy(actor, owner, documentUuid, name, null,
-						wgDocument.getMetaData(), ciphered, wgDocument.getSize(), copy);
+				CopyResource cr = new CopyResource(resourceKind, resourceUuid, wgDocument);
+				DocumentEntry documentEntry = documentEntryService.copy(actor, owner, cr);
 				workGroupNodeService.markAsCopied(actor, owner, workGroup, wgDocument);
 				DocumentDto documentDto = new DocumentDto(documentEntry);
 				return Lists.newArrayList(documentDto);
 			}
 		} else if (TargetKind.PERSONAL_SPACE.equals(resourceKind)) {
 			DocumentEntry documentEntry = documentEntryService.findForDownloadOrCopyRight(actor, owner, resourceUuid);
-			String documentUuid = documentEntry.getDocument().getUuid();
-			Boolean ciphered = documentEntry.getCiphered();
-			String name = documentEntry.getName();
-			DocumentEntry documentCopied = documentEntryService.copy(actor, owner, documentUuid, name,
-					documentEntry.getComment(), documentEntry.getMetaData(), ciphered, documentEntry.getSize(),
-					copy);
+			CopyResource cr = new CopyResource(resourceKind, resourceUuid, documentEntry);
+			DocumentEntry documentCopied = documentEntryService.copy(actor, owner, cr);
 			documentEntryService.markAsCopied(actor, owner, documentEntry);
 			return Lists.newArrayList(new DocumentDto(documentCopied));
 		}

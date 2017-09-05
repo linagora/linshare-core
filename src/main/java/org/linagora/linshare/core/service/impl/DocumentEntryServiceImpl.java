@@ -57,13 +57,14 @@ import org.linagora.linshare.core.domain.entities.OperationHistory;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
+import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
-import org.linagora.linshare.core.facade.webservice.common.dto.CopyDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupLightDto;
 import org.linagora.linshare.core.rac.DocumentEntryResourceAccessControl;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AntiSamyService;
@@ -250,22 +251,25 @@ public class DocumentEntryServiceImpl
 	}
 
 	@Override
-	public DocumentEntry copy(Account actor, Account owner, String documentUuid, String fileName, String comment,
-			String metadata, boolean ciphered, Long size, CopyDto context) throws BusinessException {
+	public DocumentEntry copy(Account actor, Account owner, CopyResource cr) throws BusinessException {
 		preChecks(actor, owner);
-		Validate.notEmpty(documentUuid, "documentUuid is required.");
-		Validate.notEmpty(fileName, "fileName is required.");
+		Validate.notEmpty(cr.getDocumentUuid(), "documentUuid is required.");
+		Validate.notEmpty(cr.getName(), "fileName is required.");
+		Validate.notNull(cr.getSize(), "size is required.");
 		checkCreatePermission(actor, owner, DocumentEntry.class,
 				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, null);
-		checkSpace(owner, size);
+		checkSpace(owner, cr.getSize());
 		Calendar expiryTime = functionalityReadOnlyService.getDefaultFileExpiryTime(owner.getDomain());
-		DocumentEntry documentEntry = documentEntryBusinessService.copy(owner, documentUuid, fileName, comment, metadata, expiryTime, ciphered);
-		addToQuota(owner, size);
+		DocumentEntry documentEntry = documentEntryBusinessService.copy(owner, cr.getDocumentUuid(), cr.getName(),
+				cr.getComment(), cr.getMetaData(), expiryTime, cr.getCiphered());
+		addToQuota(owner, cr.getSize());
 		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, documentEntry, LogAction.CREATE);
 		log.setCause(LogActionCause.COPY);
-		log.setFromResourceUuid(context.getUuid());
-		log.setFromResourceKind(context.getKind().name());
-		log.setFromWorkGroupUuid(context.getContextUuid());
+		log.setFromResourceUuid(cr.getResourceUuid());
+		log.setFromResourceKind(cr.getKind().name());
+		if (cr.getContextUuid() != null) {
+			log.setFromWorkGroup(new WorkGroupLightDto(cr.getContextUuid(), cr.getContextName()));
+		}
 		logEntryService.insert(log);
 		return documentEntry;
 	}
