@@ -64,7 +64,6 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
-import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupLightDto;
 import org.linagora.linshare.core.rac.DocumentEntryResourceAccessControl;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AntiSamyService;
@@ -79,6 +78,7 @@ import org.linagora.linshare.mongo.entities.EventNotification;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.DocumentEntryAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.ShareEntryAuditLogEntry;
+import org.linagora.linshare.mongo.entities.mto.CopyMto;
 import org.linagora.linshare.mongo.entities.mto.DocumentMto;
 
 import com.google.common.collect.Lists;
@@ -163,13 +163,6 @@ public class DocumentEntryServiceImpl
 		DocumentEntry entry = find(actor, owner, uuid);
 		checkDownloadPermission(actor, owner, DocumentEntry.class,
 				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, entry);
-		// TODO:FMA:Workgroups
-//		if (!actor.equals(owner)) {
-//			// If it is not the current owner, it could be useful to warn the owner.
-//			DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, entry, LogAction.DOWNLOAD);
-//			EventNotification event = new EventNotification(log, owner.getLsUuid());
-//			logEntryService.insert(log, event);
-//		}
 		return entry;
 	}
 
@@ -266,10 +259,7 @@ public class DocumentEntryServiceImpl
 		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, documentEntry, LogAction.CREATE);
 		log.setCause(LogActionCause.COPY);
 		log.setFromResourceUuid(cr.getResourceUuid());
-		log.setFromResourceKind(cr.getKind().name());
-		if (cr.getContextUuid() != null) {
-			log.setFromWorkGroup(new WorkGroupLightDto(cr.getContextUuid(), cr.getContextName()));
-		}
+		log.setCopiedFrom(cr.getCopyFrom());
 		logEntryService.insert(log);
 		return documentEntry;
 	}
@@ -488,10 +478,11 @@ public class DocumentEntryServiceImpl
 	}
 
 	@Override
-	public void markAsCopied(Account actor, Account owner, DocumentEntry entry) throws BusinessException {
+	public void markAsCopied(Account actor, Account owner, DocumentEntry entry, CopyMto copiedTo) throws BusinessException {
 		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, entry, LogAction.DOWNLOAD);
 		EventNotification event = new EventNotification(log, owner.getLsUuid());
 		log.setCause(LogActionCause.COPY);
+		log.setCopiedTo(copiedTo);
 		logEntryService.insert(log, event);
 	}
 

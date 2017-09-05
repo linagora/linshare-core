@@ -35,6 +35,7 @@ package org.linagora.linshare.mongo.entities.logs;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -42,6 +43,7 @@ import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupLightDto;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.linagora.linshare.mongo.entities.mto.CopyMto;
 
 @XmlRootElement
 public class WorkGroupNodeAuditLogEntry extends AuditLogEntryUser {
@@ -52,8 +54,11 @@ public class WorkGroupNodeAuditLogEntry extends AuditLogEntryUser {
 
 	protected WorkGroupNode resourceUpdated;
 
-	// used when we copy a document from another workgroup
-	protected String fromWorkGroupUuid;
+	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+	protected CopyMto copiedTo;
+
+	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+	protected CopyMto copiedFrom;
 
 	public WorkGroupNodeAuditLogEntry() {
 		super();
@@ -107,11 +112,19 @@ public class WorkGroupNodeAuditLogEntry extends AuditLogEntryUser {
 		this.workGroup = workGroup;
 	}
 
-	public String getFromWorkGroupUuid() {
-		return fromWorkGroupUuid;
+	public CopyMto getCopiedTo() {
+		return copiedTo;
 	}
 
-	public void setFromWorkGroupUuid(String fromWorkGroupUuid) {
-		this.fromWorkGroupUuid = fromWorkGroupUuid;
+	public void setCopiedTo(CopyMto copiedTo) {
+		this.copiedTo = copiedTo;
+	}
+
+	public CopyMto getCopiedFrom() {
+		return copiedFrom;
+	}
+
+	public void setCopiedFrom(CopyMto copiedFrom) {
+		this.copiedFrom = copiedFrom;
 	}
 }

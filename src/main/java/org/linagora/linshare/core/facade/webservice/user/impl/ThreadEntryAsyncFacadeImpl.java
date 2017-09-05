@@ -39,6 +39,7 @@ import org.linagora.linshare.core.domain.constants.TargetKind;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
@@ -51,6 +52,7 @@ import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
+import org.linagora.linshare.mongo.entities.mto.CopyMto;
 import org.linagora.linshare.webservice.userv1.task.context.ThreadEntryTaskContext;
 
 public class ThreadEntryAsyncFacadeImpl extends GenericAsyncFacadeImpl implements ThreadEntryAsyncFacade {
@@ -103,9 +105,9 @@ public class ThreadEntryAsyncFacadeImpl extends GenericAsyncFacadeImpl implement
 		Thread thread = threadService.find(actor, owner, tetc.getThreadUuid());
 		// Check if we have the right to download the specified document entry
 		DocumentEntry de = documentEntryService.findForDownloadOrCopyRight(actor, owner, tetc.getDocEntryUuid());
-		WorkGroupNode node = service.copy(actor, owner, thread, null, de.getDocument().getUuid(),
-				de.getName(), de.getComment(), de.getMetaData(), de.getCiphered(), de.getSize(), tetc.getDocEntryUuid(),
-				TargetKind.PERSONAL_SPACE);
+		CopyResource cr = new CopyResource(TargetKind.PERSONAL_SPACE, de);
+		WorkGroupNode node = service.copy(actor, owner, thread, null, cr);
+		documentEntryService.markAsCopied(actor, owner, de, new CopyMto(thread, true));
 		WorkGroupEntryDto dto = new WorkGroupEntryDto((WorkGroupDocument) node);
 		dto.setWorkGroup(new WorkGroupLightDto(thread));
 		return dto;

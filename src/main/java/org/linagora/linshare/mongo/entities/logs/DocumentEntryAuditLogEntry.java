@@ -40,8 +40,8 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupLightDto;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.linagora.linshare.mongo.entities.mto.CopyMto;
 import org.linagora.linshare.mongo.entities.mto.DocumentMto;
 
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
@@ -52,8 +52,11 @@ public class DocumentEntryAuditLogEntry extends AuditLogEntryUser {
 
 	protected DocumentMto resourceUpdated;
 
-	// used when we copy a document from a workgroup
-	protected WorkGroupLightDto fromWorkGroup;
+	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+	protected CopyMto copiedTo;
+
+	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+	protected CopyMto copiedFrom;
 
 	public DocumentEntryAuditLogEntry() {
 		super();
@@ -80,12 +83,20 @@ public class DocumentEntryAuditLogEntry extends AuditLogEntryUser {
 		this.resourceUpdated = resourceUpdated;
 	}
 
-	public WorkGroupLightDto getFromWorkGroup() {
-		return fromWorkGroup;
+	public CopyMto getCopiedTo() {
+		return copiedTo;
 	}
 
-	public void setFromWorkGroup(WorkGroupLightDto fromWorkGroup) {
-		this.fromWorkGroup = fromWorkGroup;
+	public void setCopiedTo(CopyMto copiedTo) {
+		this.copiedTo = copiedTo;
+	}
+
+	public CopyMto getCopiedFrom() {
+		return copiedFrom;
+	}
+
+	public void setCopiedFrom(CopyMto copiedFrom) {
+		this.copiedFrom = copiedFrom;
 	}
 
 }

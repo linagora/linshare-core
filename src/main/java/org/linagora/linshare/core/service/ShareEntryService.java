@@ -44,6 +44,7 @@ import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.mongo.entities.mto.CopyMto;
 
 public interface ShareEntryService {
 
@@ -59,7 +60,7 @@ public interface ShareEntryService {
 	 */
 	ShareEntry findForDownloadOrCopyRight(Account actor, Account owner, String uuid)  throws BusinessException;
 
-	ShareEntry markAsCopied(Account actor, Account owner, String uuid)  throws BusinessException;
+	ShareEntry markAsCopied(Account actor, Account owner, String uuid, CopyMto copiedTo)  throws BusinessException;
 
 	ShareEntry delete(Account actor, Account owner, String uuid, LogActionCause cause) throws BusinessException;
 

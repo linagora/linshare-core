@@ -67,6 +67,7 @@ import org.linagora.linshare.core.utils.UniqueName;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
+import org.linagora.linshare.mongo.entities.mto.CopyMto;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
@@ -155,31 +156,28 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 	}
 
 	@Override
-	public WorkGroupNode copy(Account actor, Account owner, Thread workGroup, String documentUuid, String fileName,
-			WorkGroupNode nodeParent, boolean ciphered, Long size, String fromResourceUuid, TargetKind fromResourceKind,
-			String fromWorkGroupUuid) throws BusinessException {
+	public WorkGroupNode copy(Account actor, Account owner, Thread toWorkGroup, String documentUuid, String fileName,
+			WorkGroupNode nodeParent, boolean ciphered, Long size, String fromNodeUuid, CopyMto copiedFrom) throws BusinessException {
 		Validate.notEmpty(documentUuid, "documentUuid is required.");
 		Validate.notEmpty(fileName, "fileName is required.");
 		Validate.notNull(nodeParent);
-		checkSpace(workGroup, size);
-		WorkGroupDocument node = documentEntryBusinessService.copy(owner, workGroup, nodeParent, documentUuid, fileName,
+		checkSpace(toWorkGroup, size);
+		WorkGroupDocument node = documentEntryBusinessService.copy(owner, toWorkGroup, nodeParent, documentUuid, fileName,
 				ciphered);
 		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
-				AuditLogEntryType.WORKGROUP_DOCUMENT, node, workGroup);
-		addMembersToLog(workGroup, log);
+				AuditLogEntryType.WORKGROUP_DOCUMENT, node, toWorkGroup);
+		addMembersToLog(toWorkGroup, log);
 		log.setCause(LogActionCause.COPY);
-		log.setFromResourceUuid(fromResourceUuid);
-		if (fromResourceKind.equals(TargetKind.RECEIVED_SHARE)) {
+		log.setFromResourceUuid(fromNodeUuid);
+		if (copiedFrom.getKind().equals(TargetKind.RECEIVED_SHARE)) {
 			// workgroup members do not need to know if the new document come
 			// from author personal space or author received shares
-			fromResourceKind = TargetKind.PERSONAL_SPACE;
-		} else if (fromResourceKind.equals(TargetKind.SHARED_SPACE)) {
-			log.setFromWorkGroupUuid(fromWorkGroupUuid);
+			copiedFrom.setKind(TargetKind.PERSONAL_SPACE);
 		}
-		log.setFromResourceKind(fromResourceKind.name());
-		addMembersToLog(workGroup, log);
+		log.setCopiedFrom(copiedFrom);
+		addMembersToLog(toWorkGroup, log);
 		logEntryService.insert(log);
-		addToQuota(workGroup, size);
+		addToQuota(toWorkGroup, size);
 		return node;
 	}
 
@@ -206,11 +204,13 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 	}
 
 	@Override
-	public void markAsCopied(Account actor, Account owner, Thread workGroup, WorkGroupNode node) throws BusinessException {
+	public void markAsCopied(Account actor, Account owner, Thread workGroup, WorkGroupNode node, CopyMto copiedTo)
+			throws BusinessException {
 		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DOWNLOAD,
 				AuditLogEntryType.WORKGROUP_DOCUMENT, node, workGroup);
 		log.setCause(LogActionCause.COPY);
 		addMembersToLog(workGroup, log);
+		log.setCopiedTo(copiedTo);
 		logEntryService.insert(log);
 	}
 

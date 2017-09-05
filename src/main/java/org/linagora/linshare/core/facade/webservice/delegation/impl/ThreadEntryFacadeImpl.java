@@ -46,6 +46,7 @@ import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
 import org.linagora.linshare.core.facade.webservice.delegation.ThreadEntryFacade;
@@ -57,6 +58,7 @@ import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
+import org.linagora.linshare.mongo.entities.mto.CopyMto;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 
 import com.google.common.collect.Lists;
@@ -98,6 +100,9 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 		return dto;
 	}
 
+	/**
+	 * copy a document entry to a workgroup.
+	 */
 	@Override
 	public WorkGroupEntryDto copy(String ownerUuid, String threadUuid,
 			String entryUuid) {
@@ -110,9 +115,9 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 		Thread workGroup = threadService.find(actor, owner, threadUuid);
 		// Check if we have the right to download the specified document entry
 		DocumentEntry de = documentEntryService.findForDownloadOrCopyRight(actor, owner, entryUuid);
-		WorkGroupNode node = workGroupNodeService.copy(actor, owner, workGroup, null, de.getDocument().getUuid(),
-				de.getName(), de.getComment(), de.getMetaData(), de.getCiphered(), de.getSize(), entryUuid,
-				TargetKind.PERSONAL_SPACE);
+		CopyResource cr = new CopyResource(TargetKind.PERSONAL_SPACE, de);
+		WorkGroupNode node = workGroupNodeService.copy(actor, owner, workGroup, null, cr);
+		documentEntryService.markAsCopied(actor, owner, de, new CopyMto(workGroup, true));
 		WorkGroupEntryDto dto = new WorkGroupEntryDto((WorkGroupDocument) node);
 		return dto;
 	}

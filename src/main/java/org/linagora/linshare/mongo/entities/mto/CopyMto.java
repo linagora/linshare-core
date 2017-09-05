@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2016 LINAGORA
+ * Copyright (C) 2017 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2016. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2017. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,36 +31,84 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.mongo.entities.mto;
 
-import java.io.File;
-import java.io.InputStream;
-
-import org.linagora.linshare.core.domain.entities.Account;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.linagora.linshare.core.domain.constants.TargetKind;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.mongo.entities.WorkGroupDocument;
-import org.linagora.linshare.mongo.entities.WorkGroupNode;
-import org.linagora.linshare.mongo.entities.mto.CopyMto;
 
-public interface WorkGroupDocumentService extends WorkGroupNodeAbstractService {
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
-	WorkGroupNode create(Account actor, Account owner, Thread thread, File tempFile, String fileName,
-			WorkGroupNode nodeParent) throws BusinessException;
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+public class CopyMto {
 
-	WorkGroupNode copy(Account actor, Account owner, Thread toWorkGroup, String documentUuid, String fileName,
-			WorkGroupNode nodeParent, boolean ciphered, Long size, String fromNodeUuid, CopyMto copiedFrom) throws BusinessException;
+	@ApiModelProperty(value = "Uuid")
+	protected String uuid;
 
-	void markAsCopied(Account actor, Account owner, Thread workGroup, WorkGroupNode node, CopyMto copiedTo) throws BusinessException;
+	@ApiModelProperty(value = "Name")
+	protected String name;
 
-	WorkGroupNode delete(Account actor, User owner, Thread workGroup, WorkGroupNode workGroupNode)
-			throws BusinessException;
+	@ApiModelProperty(value = "Kind")
+	protected TargetKind kind;
 
-	InputStream getDocumentStream(Account actor, Account owner, Thread workGroup, WorkGroupDocument node)
-			throws BusinessException;
+	public CopyMto() {
+		super();
+}
 
-	InputStream getThumbnailStream(Account actor, Account owner, Thread workGroup, WorkGroupDocument node)
-			throws BusinessException;
+	public CopyMto(String uuid, String name, TargetKind kind) {
+		super();
+		this.uuid = uuid;
+		this.name = name;
+		this.kind = kind;
+	}
+
+	public CopyMto(DocumentEntry de) {
+		super();
+		this.kind = TargetKind.PERSONAL_SPACE;
+		this.uuid = de.getUuid();
+		this.name = de.getName();
+	}
+
+	public CopyMto(ShareEntry de) {
+		super();
+		this.kind = TargetKind.RECEIVED_SHARE;
+		this.uuid = de.getUuid();
+		this.name = de.getName();
+	}
+
+	public CopyMto(Thread workGroup, boolean withName) {
+		super();
+		this.kind = TargetKind.SHARED_SPACE;
+		this.uuid = workGroup.getLsUuid();
+		if (withName) {
+			this.name = workGroup.getName();
+		}
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public TargetKind getKind() {
+		return kind;
+	}
+
+	public void setKind(TargetKind kind) {
+		this.kind = kind;
+	}
 
 }

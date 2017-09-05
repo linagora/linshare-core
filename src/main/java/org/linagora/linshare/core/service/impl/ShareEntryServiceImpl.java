@@ -70,6 +70,7 @@ import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.mongo.entities.EventNotification;
 import org.linagora.linshare.mongo.entities.logs.ShareEntryAuditLogEntry;
+import org.linagora.linshare.mongo.entities.mto.CopyMto;
 import org.linagora.linshare.mongo.entities.mto.ShareEntryMto;
 
 import com.google.common.collect.Sets;
@@ -143,7 +144,8 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 	}
 
 	@Override
-	public ShareEntry markAsCopied(Account actor, Account owner, String uuid) throws BusinessException {
+	public ShareEntry markAsCopied(Account actor, Account owner, String uuid, CopyMto copiedTo)
+			throws BusinessException {
 		ShareEntry share = find(actor, owner, uuid);
 		checkDownloadPermission(actor, owner, ShareEntry.class,
 				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, share);
@@ -156,6 +158,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		ShareEntryAuditLogEntry log = new ShareEntryAuditLogEntry(actor, owner, LogAction.DOWNLOAD, share,
 				AuditLogEntryType.SHARE_ENTRY);
 		log.setCause(LogActionCause.COPY);
+		log.setCopiedTo(copiedTo);
 		logEntryService.insert(log);
 		notifierService.sendNotification(mail);
 		return share;

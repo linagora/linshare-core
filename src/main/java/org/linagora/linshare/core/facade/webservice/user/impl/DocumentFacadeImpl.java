@@ -77,6 +77,7 @@ import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.mongo.entities.mto.CopyMto;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -308,14 +309,13 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 			// FIXME:if the current user do have enough space, there is side effect on audit.
 			// Some audit traces will be created before quota checks ! :s
 			ShareEntry share = shareService.findForDownloadOrCopyRight(actor, owner, resourceUuid);
-			CopyResource cr = new CopyResource(resourceKind, resourceUuid, share);
-			DocumentEntry documentEntry = documentEntryService.copy(actor, owner, cr);
-			shareService.markAsCopied(actor, owner, resourceUuid);
-			DocumentDto documentDto = new DocumentDto(documentEntry);
+			CopyResource cr = new CopyResource(resourceKind, share);
+			DocumentEntry newDocumentEntry = documentEntryService.copy(actor, owner, cr);
+			shareService.markAsCopied(actor, owner, resourceUuid, new CopyMto(newDocumentEntry));
 			if (deleteShare) {
 				shareService.delete(actor, owner, share, LogActionCause.COPY);
 			}
-			return Lists.newArrayList(documentDto);
+			return Lists.newArrayList(new DocumentDto(newDocumentEntry));
 		} else if (TargetKind.SHARED_SPACE.equals(resourceKind)) {
 			String workgroupUuid = copy.getContextUuid();
 			Validate.notEmpty(workgroupUuid, "Missing workgroup uuid");
@@ -323,18 +323,17 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 			WorkGroupNode node = workGroupNodeService.findForDownloadOrCopyRight(actor, owner, workGroup, resourceUuid);
 			if (node.getNodeType().equals(WorkGroupNodeType.DOCUMENT)) {
 				WorkGroupDocument wgDocument = (WorkGroupDocument) node;
-				CopyResource cr = new CopyResource(resourceKind, resourceUuid, wgDocument);
-				DocumentEntry documentEntry = documentEntryService.copy(actor, owner, cr);
-				workGroupNodeService.markAsCopied(actor, owner, workGroup, wgDocument);
-				DocumentDto documentDto = new DocumentDto(documentEntry);
-				return Lists.newArrayList(documentDto);
+				CopyResource cr = new CopyResource(resourceKind, workGroup, wgDocument);
+				DocumentEntry newDocumentEntry = documentEntryService.copy(actor, owner, cr);
+				workGroupNodeService.markAsCopied(actor, owner, workGroup, wgDocument, new CopyMto(newDocumentEntry));
+				return Lists.newArrayList(new DocumentDto(newDocumentEntry));
 			}
 		} else if (TargetKind.PERSONAL_SPACE.equals(resourceKind)) {
 			DocumentEntry documentEntry = documentEntryService.findForDownloadOrCopyRight(actor, owner, resourceUuid);
-			CopyResource cr = new CopyResource(resourceKind, resourceUuid, documentEntry);
-			DocumentEntry documentCopied = documentEntryService.copy(actor, owner, cr);
-			documentEntryService.markAsCopied(actor, owner, documentEntry);
-			return Lists.newArrayList(new DocumentDto(documentCopied));
+			CopyResource cr = new CopyResource(resourceKind, documentEntry);
+			DocumentEntry newDocumentEntry = documentEntryService.copy(actor, owner, cr);
+			documentEntryService.markAsCopied(actor, owner, documentEntry, new CopyMto(newDocumentEntry));
+			return Lists.newArrayList(new DocumentDto(newDocumentEntry));
 		}
 		throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN, "This action is not supported.");
 	}

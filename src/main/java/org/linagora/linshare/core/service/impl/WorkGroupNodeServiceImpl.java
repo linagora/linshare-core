@@ -42,11 +42,11 @@ import java.util.UUID;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.constants.TargetKind;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.impl.WorkGroupNodeResourceAccessControlImpl;
@@ -61,6 +61,7 @@ import org.linagora.linshare.mongo.entities.WorkGroupFolder;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.linagora.linshare.mongo.entities.mto.CopyMto;
 import org.linagora.linshare.mongo.entities.mto.WorkGroupLightNode;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.springframework.dao.support.DataAccessUtils;
@@ -389,13 +390,13 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 	}
 
 	@Override
-	public WorkGroupNode copy(Account actor, User owner, Thread toWorkGroup, String toNodeUuid, String documentUuid, String fileName,
-			String comment, String metadata, boolean ciphered, Long size, String resourceUuid, TargetKind fromResourceKind) throws BusinessException {
+	public WorkGroupNode copy(Account actor, User owner, Thread toWorkGroup, String toNodeUuid, CopyResource cr)
+			throws BusinessException {
 		preChecks(actor, owner);
-		Validate.notEmpty(documentUuid, "Missing documentUuid");
-		Validate.notEmpty(fileName, "Missing fileName");
+		Validate.notEmpty(cr.getDocumentUuid(), "Missing documentUuid");
+		Validate.notEmpty(cr.getName(), "Missing fileName");
 		checkCreatePermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, null, toWorkGroup);
-		fileName = sanitizeFileName(fileName);
+		String fileName = sanitizeFileName(cr.getName());
 		if (toNodeUuid != null) {
 			if (toNodeUuid.isEmpty()) {
 				toNodeUuid = null;
@@ -403,15 +404,16 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		}
 		WorkGroupNode nodeParent = getParentNode(actor, owner, toWorkGroup, toNodeUuid);
 		fileName = workGroupDocumentService.getNewName(actor, owner, toWorkGroup, nodeParent, fileName);
-		WorkGroupNode dto = workGroupDocumentService.copy(actor, owner, toWorkGroup, documentUuid, fileName, nodeParent,
-				ciphered, size, resourceUuid, fromResourceKind, null);
+		WorkGroupNode dto = workGroupDocumentService.copy(actor, owner, toWorkGroup, cr.getDocumentUuid(), fileName, nodeParent,
+				cr.getCiphered(), cr.getSize(), cr.getResourceUuid(), cr.getCopyFrom());
 		return dto;
 	}
 
 	@Override
-	public void markAsCopied(Account actor, Account owner, Thread workGroup, WorkGroupNode node) throws BusinessException {
-		if (isDocument(node)) {
-			workGroupDocumentService.markAsCopied(actor, owner, workGroup, node);
+	public void markAsCopied(Account actor, Account owner, Thread workGroup, WorkGroupNode wgNode, CopyMto copiedTo)
+			throws BusinessException {
+		if (isDocument(wgNode)) {
+			workGroupDocumentService.markAsCopied(actor, owner, workGroup, wgNode, copiedTo);
 		} else {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not copy this kind of node.");
 		}
@@ -439,11 +441,15 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		checkCreatePermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, null, toWorkGroup);
 		if (isDocument(fromNode)) {
 			if (isFolder(toNode)) {
+				// members of the "recipient workgroup" do not need to know the name of the source workgroup.
 				WorkGroupDocument doc = (WorkGroupDocument) fromNode;
 				String fileName = workGroupDocumentService.getNewName(actor, owner, toWorkGroup, toNode, fromNode.getName());
-				return workGroupDocumentService.copy(actor, owner, toWorkGroup, doc.getDocumentUuid(), fileName,
-						toNode, doc.getCiphered(), doc.getSize(), fromNodeUuid, TargetKind.SHARED_SPACE,
-						fromWorkGroup.getLsUuid());
+				CopyMto copyFrom = new CopyMto(fromWorkGroup, false);
+				WorkGroupNode copy = workGroupDocumentService.copy(actor, owner, toWorkGroup, doc.getDocumentUuid(), fileName,
+						toNode, doc.getCiphered(), doc.getSize(), fromNodeUuid, copyFrom);
+				CopyMto copiedTo = new CopyMto(toWorkGroup, false);
+				workGroupDocumentService.markAsCopied(actor, owner, fromWorkGroup, fromNode, copiedTo);
+				return copy;
 			} else if (isDocument(toNode)) {
 				// TODO new feature : create a new revision for this file.
 				throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not copy this kind of node.");

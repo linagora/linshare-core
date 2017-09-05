@@ -36,6 +36,7 @@ package org.linagora.linshare.mongo.entities.logs;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -44,6 +45,7 @@ import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.AnonymousShareEntryMto;
+import org.linagora.linshare.mongo.entities.mto.CopyMto;
 import org.linagora.linshare.mongo.entities.mto.EntryMto;
 import org.linagora.linshare.mongo.entities.mto.ShareEntryGroupMto;
 import org.linagora.linshare.mongo.entities.mto.ShareEntryMto;
@@ -60,6 +62,9 @@ public class ShareEntryAuditLogEntry extends AuditLogEntryUser {
 	protected EntryMto resourceUpdated;
 
 	protected ShareEntryGroupMto shareEntryGroup;
+
+	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+	protected CopyMto copiedTo;
 
 	public ShareEntryAuditLogEntry() {
 		super();
@@ -135,5 +140,13 @@ public class ShareEntryAuditLogEntry extends AuditLogEntryUser {
 
 	public void setShareEntryGroup(ShareEntryGroupMto shareEntryGroup) {
 		this.shareEntryGroup = shareEntryGroup;
+	}
+
+	public CopyMto getCopiedTo() {
+		return copiedTo;
+	}
+
+	public void setCopiedTo(CopyMto copiedTo) {
+		this.copiedTo = copiedTo;
 	}
 }

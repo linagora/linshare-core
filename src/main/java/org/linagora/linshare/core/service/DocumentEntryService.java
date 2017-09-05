@@ -43,6 +43,7 @@ import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.mongo.entities.mto.CopyMto;
 
 public interface DocumentEntryService {
 
@@ -51,7 +52,7 @@ public interface DocumentEntryService {
 
 	DocumentEntry copy(Account actor, Account owner, CopyResource cr) throws BusinessException;
 
-	void markAsCopied(Account actor, Account owner, DocumentEntry entry) throws BusinessException;
+	void markAsCopied(Account actor, Account owner, DocumentEntry entry, CopyMto copiedTo) throws BusinessException;
 
 	public DocumentEntry update(Account actor, Account owner, String docEntryUuid, File tempFile, String fileName) throws BusinessException ;
 

@@ -74,6 +74,7 @@ import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.ShareExpiryDateService;
 import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.mongo.entities.mto.CopyMto;
 
 import com.google.common.collect.Sets;
 
@@ -464,7 +465,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 	}
 
 	@Override
-	public ShareEntry markAsCopied(Account actor, Account owner, String uuid) throws BusinessException {
-		return shareEntryService.markAsCopied(actor, owner, uuid);
+	public ShareEntry markAsCopied(Account actor, Account owner, String uuid, CopyMto copiedTo) throws BusinessException {
+		return shareEntryService.markAsCopied(actor, owner, uuid, copiedTo);
 	}
 }
