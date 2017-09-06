@@ -38,6 +38,7 @@ import org.linagora.linshare.core.domain.constants.TargetKind;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.mongo.entities.WorkGroupNode;
 
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -53,9 +54,15 @@ public class CopyMto {
 	@ApiModelProperty(value = "Kind")
 	protected TargetKind kind;
 
+	@ApiModelProperty(value = "contextUuid")
+	protected String contextUuid;
+
+	@ApiModelProperty(value = "contextName")
+	protected String contextName;
+
 	public CopyMto() {
 		super();
-}
+	}
 
 	public CopyMto(String uuid, String name, TargetKind kind) {
 		super();
@@ -78,12 +85,14 @@ public class CopyMto {
 		this.name = de.getName();
 	}
 
-	public CopyMto(Thread workGroup, boolean withName) {
+	public CopyMto(WorkGroupNode node, Thread workGroup, boolean withName) {
 		super();
 		this.kind = TargetKind.SHARED_SPACE;
-		this.uuid = workGroup.getLsUuid();
+		this.uuid = node.getUuid();
+		this.name = node.getName();
+		this.contextUuid = workGroup.getLsUuid();
 		if (withName) {
-			this.name = workGroup.getName();
+			this.contextName = workGroup.getName();
 		}
 	}
 
@@ -109,6 +118,22 @@ public class CopyMto {
 
 	public void setKind(TargetKind kind) {
 		this.kind = kind;
+	}
+
+	public String getContextUuid() {
+		return contextUuid;
+	}
+
+	public void setContextUuid(String contextUuid) {
+		this.contextUuid = contextUuid;
+	}
+
+	public String getContextName() {
+		return contextName;
+	}
+
+	public void setContextName(String contextName) {
+		this.contextName = contextName;
 	}
 
 }

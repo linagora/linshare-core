@@ -45,7 +45,6 @@ import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
-import org.linagora.linshare.core.domain.constants.TargetKind;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
@@ -169,11 +168,6 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 		addMembersToLog(toWorkGroup, log);
 		log.setCause(LogActionCause.COPY);
 		log.setFromResourceUuid(fromNodeUuid);
-		if (copiedFrom.getKind().equals(TargetKind.RECEIVED_SHARE)) {
-			// workgroup members do not need to know if the new document come
-			// from author personal space or author received shares
-			copiedFrom.setKind(TargetKind.PERSONAL_SPACE);
-		}
 		log.setCopiedFrom(copiedFrom);
 		addMembersToLog(toWorkGroup, log);
 		logEntryService.insert(log);

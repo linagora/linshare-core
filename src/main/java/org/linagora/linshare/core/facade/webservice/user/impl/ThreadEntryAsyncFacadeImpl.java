@@ -107,7 +107,7 @@ public class ThreadEntryAsyncFacadeImpl extends GenericAsyncFacadeImpl implement
 		DocumentEntry de = documentEntryService.findForDownloadOrCopyRight(actor, owner, tetc.getDocEntryUuid());
 		CopyResource cr = new CopyResource(TargetKind.PERSONAL_SPACE, de);
 		WorkGroupNode node = service.copy(actor, owner, thread, null, cr);
-		documentEntryService.markAsCopied(actor, owner, de, new CopyMto(thread, true));
+		documentEntryService.markAsCopied(actor, owner, de, new CopyMto(node, thread, true));
 		WorkGroupEntryDto dto = new WorkGroupEntryDto((WorkGroupDocument) node);
 		dto.setWorkGroup(new WorkGroupLightDto(thread));
 		return dto;
