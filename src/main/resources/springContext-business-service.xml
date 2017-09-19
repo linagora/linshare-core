@@ -24,6 +24,7 @@
 		<constructor-arg value="${linshare.documents.thumbnail.pdf.enable}" />
 		<constructor-arg value="${linshare.documents.storage.deduplication}" />
 		<constructor-arg ref="workGroupNodeMongoRepository" />
+		<constructor-arg ref="documentGarbageCollecteurMongoRepository" />
 	</bean>
 
 

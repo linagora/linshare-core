@@ -79,9 +79,11 @@ import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.service.TimeStampingService;
 import org.linagora.linshare.core.utils.AESCrypt;
+import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.linagora.linshare.mongo.repository.DocumentGarbageCollecteurMongoRepository;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,6 +102,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	private final boolean pdfThumbEnabled;
 	private final boolean deduplication;
 	protected final WorkGroupNodeMongoRepository repository;
+	protected final DocumentGarbageCollecteurMongoRepository documentGarbageCollecteur;
 
 	public DocumentEntryBusinessServiceImpl(
 			final FileDataStore fileSystemDao,
@@ -111,7 +114,8 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			final boolean thumbEnabled,
 			final boolean pdfThumbEnabled,
 			final boolean deduplication,
-			final WorkGroupNodeMongoRepository repository) {
+			final WorkGroupNodeMongoRepository repository,
+			final DocumentGarbageCollecteurMongoRepository documentGarbageCollecteur) {
 		super();
 		this.fileDataStore = fileSystemDao;
 		this.timeStampingService = timeStampingService;
@@ -123,6 +127,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		this.pdfThumbEnabled = pdfThumbEnabled;
 		this.deduplication = deduplication;
 		this.repository = repository;
+		this.documentGarbageCollecteur = documentGarbageCollecteur;
 	}
 
 	@Override
@@ -335,6 +340,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		logger.debug("Deleting document entry: " + documentEntry.getUuid());
 		Account owner = documentEntry.getEntryOwner();
 		owner.getEntries().remove(documentEntry);
+		documentGarbageCollecteur.insert(new DocumentGarbageCollecteur(documentEntry.getDocument().getUuid()));
 		documentEntryRepository.delete(documentEntry);
 	}
 
@@ -628,6 +634,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		return documentEntryRepository.getRelatedEntriesCount(documentEntry);
 	}
 
+	@Deprecated
 	@Override
 	public long getUsedSpace(Account owner) throws BusinessException {
 		return documentEntryRepository.getUsedSpace(owner);

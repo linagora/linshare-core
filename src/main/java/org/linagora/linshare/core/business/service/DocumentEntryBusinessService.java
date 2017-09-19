@@ -89,6 +89,7 @@ public interface DocumentEntryBusinessService {
 
 	InputStream getThreadEntryThumbnailStream(WorkGroupDocument entry);
 
+	@Deprecated
 	long getUsedSpace(Account owner) throws BusinessException;
 
 	public void update(DocumentEntry docEntry) throws BusinessException;

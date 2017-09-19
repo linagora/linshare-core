@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2017 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2017. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,40 +31,11 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.repository;
+package org.linagora.linshare.mongo.repository;
 
-import java.util.List;
+import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Document;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.exception.BusinessException;
+public interface DocumentGarbageCollecteurMongoRepository extends MongoRepository<DocumentGarbageCollecteur, String> {
 
-public interface DocumentEntryRepository extends
-		AbstractRepository<DocumentEntry> {
-
-	/**
-	 * Find a document using its uuid.
-	 *
-	 * @param uuid
-	 * @return found document (null if no document found).
-	 */
-	DocumentEntry findById(String uuid);
-
-	List<DocumentEntry> findAllMyDocumentEntries(Account owner);
-
-	DocumentEntry findMoreRecentByName(Account owner, String fileName);
-
-	List<DocumentEntry> findAllMySyncEntries(Account owner);
-
-	long getRelatedEntriesCount(DocumentEntry documentEntry);
-
-	long getRelatedDocumentEntryCount(Document document);
-
-	List<String> findAllExpiredEntries();
-
-	@Deprecated
-	long getUsedSpace(Account owner) throws BusinessException;
-
-	void syncUniqueDocument(Account owner, String fileName) throws BusinessException;
 }

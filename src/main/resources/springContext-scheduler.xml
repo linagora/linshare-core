@@ -128,6 +128,7 @@
 						<ref bean="deleteExpiredAnonymousUrlBatch" />
 						<ref bean="deleteShareEntryGroupBatch" />
 						<ref bean="deleteExpiredDocumentEntryBatch" />
+						<ref bean="documentGarbageCollecteurBatch" />
 <!-- 						<ref bean="deleteMissingDocumentsBatch" /> -->
 					</list>
 				</entry>

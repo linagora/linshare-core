@@ -63,10 +63,12 @@ import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.VirusScannerService;
 import org.linagora.linshare.core.service.WorkGroupDocumentService;
 import org.linagora.linshare.core.utils.UniqueName;
+import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
+import org.linagora.linshare.mongo.repository.DocumentGarbageCollecteurMongoRepository;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
@@ -82,6 +84,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 	private final OperationHistoryBusinessService operationHistoryBusinessService;
 	private final QuotaService quotaService;
 	protected final WorkGroupNodeMongoRepository repository;
+	protected final DocumentGarbageCollecteurMongoRepository documentGarbageCollecteur;
 
 	public WorkGroupDocumentServiceImpl(DocumentEntryBusinessService documentEntryBusinessService,
 			LogEntryService logEntryService, FunctionalityReadOnlyService functionalityReadOnlyService,
@@ -89,6 +92,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 			MimeTypeMagicNumberDao mimeTypeIdentifier,
 			AntiSamyService antiSamyService,
 			WorkGroupNodeMongoRepository workGroupNodeMongoRepository,
+			DocumentGarbageCollecteurMongoRepository documentGarbageCollecteur,
 			ThreadMemberRepository threadMemberRepository,
 			MongoTemplate mongoTemplate,
 			OperationHistoryBusinessService operationHistoryBusinessService,
@@ -103,6 +107,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 		this.operationHistoryBusinessService = operationHistoryBusinessService;
 		this.quotaService = quotaService;
 		this.repository = workGroupNodeMongoRepository;
+		this.documentGarbageCollecteur = documentGarbageCollecteur;
 	}
 
 	@Override
@@ -182,8 +187,10 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 				AuditLogEntryType.WORKGROUP_DOCUMENT, workGroupNode, workGroup);
 		addMembersToLog(workGroup, log);
 		logEntryService.insert(log);
-		delFromQuota(workGroup, ((WorkGroupDocument)workGroupNode).getSize());
+		WorkGroupDocument document = (WorkGroupDocument)workGroupNode;
+		delFromQuota(workGroup, document.getSize());
 		repository.delete(workGroupNode);
+		documentGarbageCollecteur.insert(new DocumentGarbageCollecteur(document.getDocumentUuid()));
 		return workGroupNode;
 	}
 

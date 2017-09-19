@@ -48,6 +48,7 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
@@ -134,6 +135,14 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 	}
 
 	@Override
+	public long getRelatedDocumentEntryCount(Document document) {
+		DetachedCriteria det = DetachedCriteria.forClass(DocumentEntry.class);
+		det.add(Restrictions.eq("document", document));
+		det.setProjection(Projections.rowCount());
+		return DataAccessUtils.longResult(findByCriteria(det));
+	}
+
+	@Override
 	public List<String> findAllExpiredEntries() {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.setProjection(Projections.property("uuid"));
@@ -143,6 +152,7 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 		return list;
 	}
 
+	@Deprecated
 	@Override
 	public long getUsedSpace(Account owner) throws BusinessException {
 		DetachedCriteria det = DetachedCriteria.forClass(DocumentEntry.class);
