@@ -41,6 +41,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.TargetKind;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -155,7 +156,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 	}
 
 	@Override
-	public List<WorkGroupNode> copy(String ownerUuid, String workGroupUuid, String toParentNodeUuid, CopyDto copy) {
+	public List<WorkGroupNode> copy(String ownerUuid, String workGroupUuid, String toParentNodeUuid, CopyDto copy, boolean deleteShare) {
 		Account actor = checkAuthentication();
 		User owner = (User) getOwner(actor, ownerUuid);
 		Validate.notNull(copy);
@@ -172,6 +173,9 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 			CopyResource cr = new CopyResource(resourceKind, share);
 			WorkGroupNode node = service.copy(actor, owner, toWorkGroup, toParentNodeUuid, cr);
 			shareEntryService.markAsCopied(actor, owner, fromResourceUuid, new CopyMto(node, toWorkGroup, false));
+			if (deleteShare) {
+				shareEntryService.delete(actor, owner, share.getUuid(), LogActionCause.COPY);
+			}
 			return Lists.newArrayList(node);
 		} else if (TargetKind.PERSONAL_SPACE.equals(resourceKind)) {
 			DocumentEntry documentEntry = documentEntryService.findForDownloadOrCopyRight(actor, owner, fromResourceUuid);

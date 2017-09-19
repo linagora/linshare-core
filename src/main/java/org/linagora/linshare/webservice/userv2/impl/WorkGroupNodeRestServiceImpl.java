@@ -303,8 +303,11 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 	public List<WorkGroupNode> copy(
 			@ApiParam(value = "The workgroup uuid.", required = true)
 				@PathParam("workGroupUuid") String workGroupUuid,
-			CopyDto  copy) throws BusinessException {
-		return workGroupNodeFacade.copy(null, workGroupUuid, null, copy);
+			CopyDto  copy,
+			@ApiParam(value = "Delete the share at the end of the copy.", required = false)
+				@QueryParam("deleteShare") @DefaultValue("false") boolean deleteShare
+			) throws BusinessException {
+		return workGroupNodeFacade.copy(null, workGroupUuid, null, copy, deleteShare);
 	}
 
 	@Path("/{uuid}/copy")
@@ -321,9 +324,11 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 				@PathParam("workGroupUuid") String workGroupUuid,
 			@ApiParam(value = "The parent node uuid.", required = true)
 				@PathParam("uuid")  String parentNodeUuid,
-				CopyDto copy)
+				CopyDto copy,
+			@ApiParam(value = "Delete the share at the end of the copy.", required = false)
+				@QueryParam("deleteShare") @DefaultValue("false") boolean deleteShare)
 			throws BusinessException {
-		return workGroupNodeFacade.copy(null, workGroupUuid, parentNodeUuid, copy);
+		return workGroupNodeFacade.copy(null, workGroupUuid, parentNodeUuid, copy, deleteShare);
 	}
 
 	@Path("/{uuid}")

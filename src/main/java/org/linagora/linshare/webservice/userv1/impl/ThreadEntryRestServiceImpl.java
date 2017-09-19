@@ -208,7 +208,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 		dto.setUuid(entryUuid);
 		dto.setContextUuid(threadUuid);
 		dto.setKind(TargetKind.SHARED_SPACE);
-		List<WorkGroupNode> copy = facade.copy(null, threadUuid, null, dto);
+		List<WorkGroupNode> copy = facade.copy(null, threadUuid, null, dto, false);
 		return toDocumentDto(copy.get(0));
 	}
 

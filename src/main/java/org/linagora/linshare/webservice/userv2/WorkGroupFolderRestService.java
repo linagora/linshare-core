@@ -55,9 +55,9 @@ public interface WorkGroupFolderRestService {
 			String givenFileName, Boolean async, Long contentLength, Long fileSize, MultipartBody body, Boolean strict)
 			throws BusinessException;
 
-	List<WorkGroupNode> copy(String workGroupUuid, CopyDto copy) throws BusinessException;
+	List<WorkGroupNode> copy(String workGroupUuid, CopyDto copy, boolean deleteShare) throws BusinessException;
 
-	List<WorkGroupNode> copy(String workGroupUuid, String parentNodeUuid, CopyDto copy) throws BusinessException;
+	List<WorkGroupNode> copy(String workGroupUuid, String parentNodeUuid, CopyDto copy, boolean deleteShare) throws BusinessException;
 
 	List<WorkGroupNode> findAll(String workGroupUuid, String parentNodeUuid, WorkGroupNodeType nodeType) throws BusinessException;
 

@@ -56,7 +56,7 @@ public interface WorkGroupNodeFacade extends GenericFacade {
 	WorkGroupNode create(String ownerUuid, String workGroupUuid,
 			String parentNodeUuid, File tempFile, String fileName, Boolean strict) throws BusinessException;
 
-	List<WorkGroupNode> copy(String ownerUuid, String workGroupUuid, String toParentNodeUuid, CopyDto copy);
+	List<WorkGroupNode> copy(String ownerUuid, String workGroupUuid, String toParentNodeUuid, CopyDto copy, boolean deleteShare);
 
 	WorkGroupNode update(String ownerUuid, String workGroupUuid, WorkGroupNode workGroupNode) throws BusinessException;
 
