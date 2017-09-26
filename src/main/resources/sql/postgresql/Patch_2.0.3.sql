@@ -39,6 +39,7 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
+
 CREATE OR REPLACE FUNCTION ls_check_user_connected() RETURNS void AS $$
 BEGIN
 	DECLARE database VARCHAR := (SELECT current_database());
@@ -57,6 +58,38 @@ END
 $$ LANGUAGE plpgsql;
 
 
+
+CREATE OR REPLACE FUNCTION ls_fix_current_value_for_all_accounts() RETURNS void AS $$
+BEGIN
+	DECLARE myaccount record;
+	DECLARE q record;
+	DECLARE i BIGINT;
+	DECLARE j BIGINT;
+	DECLARE op BIGINT;
+	BEGIN
+		FOR myaccount IN (SELECT id, mail FROM account) LOOP
+			RAISE INFO 'account mail : % (account_id=%)', myaccount.mail, myaccount.id;
+			i := (SELECT sum(ls_size) FROM account AS a join entry AS e on a.id = e.owner_id join document_entry AS de ON de.entry_id = e.id WHERE a.id = myaccount.id);
+			IF i IS NULL THEN
+				i := 0;
+			END IF;
+			j := (SELECT current_value FROM quota AS q WHERE account_id = myaccount.id);
+			op := (SELECT - sum(operation_value) FROM operation_history AS q WHERE account_id = myaccount.id);
+			IF op IS NULL THEN
+				op := 0;
+			END IF;
+			RAISE INFO 'Value of current_value : %, sum(operation_value) : % (account=%)', j, op, myaccount.id;
+			RAISE INFO 'Updating account with new value (sum(ls_size)) - sum(operation_value) : % - % = %', i, op, i - op;
+			i := i - op;
+			RAISE INFO 'Difference of current_value : % ', i - j;
+			UPDATE quota SET current_value = i WHERE account_id = myaccount.id;
+			RAISE INFO '----';
+		END LOOP;
+	END;
+END
+$$ LANGUAGE plpgsql;
+
+
 CREATE OR REPLACE FUNCTION ls_fix_current_value_for_domains() RETURNS void AS $$
 BEGIN
 	DECLARE d record;
@@ -67,23 +100,20 @@ BEGIN
 		FOR d IN (SELECT id, label FROM domain_abstract) LOOP
 			RAISE INFO 'domain label : % (domain_id=%)', d.label, d.id;
 			FOR q IN (SELECT id, container_type FROM quota WHERE quota_type = 'CONTAINER_QUOTA' and domain_id = d.id) LOOP
-				RAISE INFO 'CONTAINER_QUOTA: % (id=%)', q.container_type, q.id;
 				i := (select sum(current_value) from quota where quota_container_id  = q.id);
-				RAISE INFO 'sum(current_value) : %', i;
-				IF i > 0 THEN
-					RAISE INFO 'Updating container current value : % (domain_id=%)', j, d.id;
-					UPDATE quota AS a SET current_value = i WHERE a.id = q.id;
+				IF i IS NULL THEN
+					i := 0;
 				END IF;
-				RAISE INFO '-- ';
+				RAISE INFO 'Updating container % (id=%) with new value : % (domain_id=%)', q.container_type, q.id, i, d.id;
+				UPDATE quota AS a SET current_value = i WHERE a.id = q.id;
 			END LOOP;
 			j := (SELECT sum(current_value) FROM quota WHERE quota_type = 'CONTAINER_QUOTA' and domain_id = d.id);
-			RAISE INFO 'Domain current value : % (domain_id=%)', j, d.id;
-			IF j > 0 THEN
-				RAISE INFO 'Updating domain current value : % (domain_id=%)', j, d.id;
-				UPDATE quota SET current_value = j WHERE quota_type = 'DOMAIN_QUOTA' and domain_id = d.id;
+			IF j IS NULL THEN
+				j := 0;
 			END IF;
+			RAISE INFO 'Updating domain with new value : % (domain_id=%)', j, d.id;
+			UPDATE quota SET current_value = j WHERE quota_type = 'DOMAIN_QUOTA' and domain_id = d.id;
 			RAISE INFO '----';
-			RAISE INFO '';
 		END LOOP;
 	END;
 END
@@ -100,11 +130,11 @@ BEGIN
 		FOR d IN (SELECT id, label FROM domain_abstract where type = domain_type) LOOP
 			RAISE INFO 'domain label : % (domain_id=%)', d.label, d.id;
 			j := (SELECT sum(current_value + current_value_for_subdomains) FROM quota WHERE quota_type = 'DOMAIN_QUOTA' and domain_parent_id = d.id);
-			RAISE INFO 'sum(current_value + current_value_for_subdomains) for all sub domains : % (domain_id=%)', j, d.id;
-			IF j > 0 THEN
-				RAISE INFO 'Updating domain with value : % (domain_id=%)', j, d.id;
-				UPDATE quota SET current_value_for_subdomains = j WHERE quota_type = 'DOMAIN_QUOTA' and domain_id = d.id;
+			IF j IS NULL THEN
+				j := 0;
 			END IF;
+			RAISE INFO 'Updating domain column "current_value_for_subdomains" with new value : % (domain_id=%)', j, d.id;
+			UPDATE quota SET current_value_for_subdomains = j WHERE quota_type = 'DOMAIN_QUOTA' and domain_id = d.id;
 			RAISE INFO '----';
 			RAISE INFO '';
 		END LOOP;
@@ -125,8 +155,20 @@ SET default_with_oids = false;
 SELECT ls_check_user_connected();
 SELECT ls_prechecks();
 
+
+-- fix quota for account (copy issue).
+SELECT ls_fix_current_value_for_all_accounts();
+-- update quota containers.
+
+-- updating current_value of all domains
 SELECT ls_fix_current_value_for_domains();
+
+-- updating current_value_for_subdomain of all top domains with the values of subdomains.
+-- TOPDOMAIN(1)
 SELECT ls_fix_current_value_for_subdomains(1);
+
+-- updating current_value_for_subdomain of root domain with the values of subdomains.
+-- ROOTDOMAIN(0)
 SELECT ls_fix_current_value_for_subdomains(0);
 
 COMMIT;
