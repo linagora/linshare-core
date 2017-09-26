@@ -109,14 +109,13 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 	public void jackRabbitKeepAlive() {
 		if (cronJackRabbitKeepAlive) {
 			SystemAccount actor = accountRepository.getBatchSystemAccount();
-			deleteExistingTestFiles(actor);
 			uploadTestFile(actor);
 			deleteExistingTestFiles(actor);
 		} else {
 			logger.debug("jackRabbit keepalive hack disabled");
 		}
 	}
-	
+
 	private void deleteExistingTestFiles(SystemAccount actor) {
 		List<DocumentEntry> findAllMyDocumentEntries = documentEntryRepository.findAllMyDocumentEntries(actor);
 		for (DocumentEntry documentEntry : findAllMyDocumentEntries) {
