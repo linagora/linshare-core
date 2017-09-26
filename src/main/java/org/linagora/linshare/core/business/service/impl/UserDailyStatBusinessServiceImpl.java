@@ -62,8 +62,7 @@ public class UserDailyStatBusinessServiceImpl implements UserDailyStatBusinessSe
 	}
 
 	@Override
-	public UserDailyStat create(User user, Date date) throws BusinessException {
-		Long sumOperationValue = operationHistoryRepository.sumOperationValue(user, null, date, null, null);
+	public UserDailyStat create(User user, Long currentUsedSpace, Date date) throws BusinessException {
 		Long sumCreateOperationValue = operationHistoryRepository.sumOperationValue(user, null, date,
 				OperationHistoryTypeEnum.CREATE, null);
 		Long sumDeleteOperationValue = operationHistoryRepository.sumOperationValue(user, null, date,
@@ -76,7 +75,7 @@ public class UserDailyStatBusinessServiceImpl implements UserDailyStatBusinessSe
 		Long diffOperationValue = sumCreateOperationValue + sumDeleteOperationValue;
 		UserDailyStat entity = new UserDailyStat(user, user.getDomain(), user.getDomain().getParentDomain(),
 				countOperationValue, countDeleteOperationValue, countCreateOperationValue, sumCreateOperationValue,
-				sumDeleteOperationValue, diffOperationValue, sumOperationValue);
+				sumDeleteOperationValue, diffOperationValue, currentUsedSpace);
 		entity.setStatisticDate(date);
 		entity = repository.create(entity);
 		return entity;

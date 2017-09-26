@@ -59,11 +59,7 @@ public class DomainDailyStatBusinessServiceImpl implements DomainDailyStatBusine
 	}
 
 	@Override
-	public DomainDailyStat create(AbstractDomain domain, Date startDate, Date endDate) throws BusinessException {
-
-		Long actualOperationSumUsers = userDailyStatRepository.sumOfActualOperationSum(domain, null, startDate, endDate);
-		Long actualOperationSumThreads = threadDailyStatRepository.sumOfActualOperationSum(domain, null, startDate, endDate);
-		Long actualOperationSum = actualOperationSumUsers + actualOperationSumThreads;
+	public DomainDailyStat create(AbstractDomain domain, Long currentUsedSpace, Date startDate, Date endDate) throws BusinessException {
 
 		Long createOperationSumUsers = userDailyStatRepository.sumOfCreateOperationSum(domain, null, startDate, endDate);
 		Long createOperationSumThreads = threadDailyStatRepository.sumOfCreateOperationSum(domain, null, startDate, endDate);
@@ -87,7 +83,7 @@ public class DomainDailyStatBusinessServiceImpl implements DomainDailyStatBusine
 		Long diffOperationSum = createOperationSum + deleteOperationSum;
 		DomainDailyStat entity = new DomainDailyStat(domain, domain.getParentDomain(), operationCount,
 				deleteOperationCount, createOperationCount, createOperationSum, deleteOperationSum, diffOperationSum,
-				actualOperationSum);
+				currentUsedSpace);
 		entity.setStatisticDate(endDate);
 		entity = repository.create(entity);
 		return entity;

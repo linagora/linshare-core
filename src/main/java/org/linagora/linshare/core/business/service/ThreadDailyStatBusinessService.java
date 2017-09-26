@@ -42,7 +42,7 @@ import org.linagora.linshare.core.domain.entities.Thread;
 
 public interface ThreadDailyStatBusinessService {
 
-	ThreadDailyStat create(Thread thread, Date date);
+	ThreadDailyStat create(Thread thread, Long currentUsedSpace, Date date);
 
 	List<ThreadDailyStat> findBetweenTwoDates(Thread thread, Date beginDate, Date endDate);
 

@@ -41,7 +41,7 @@ import org.linagora.linshare.core.domain.entities.DomainDailyStat;
 
 public interface DomainDailyStatBusinessService {
 
-	DomainDailyStat create(AbstractDomain domain, Date startDate, Date endDate);
+	DomainDailyStat create(AbstractDomain domain, Long currentUsedSpace, Date startDate, Date endDate);
 
 	List<DomainDailyStat> findBetweenTwoDates(AbstractDomain domain, Date beginDate, Date endDate);
 

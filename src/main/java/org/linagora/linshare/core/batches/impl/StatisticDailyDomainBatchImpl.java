@@ -102,9 +102,6 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchWithHistoryImpl {
 		try {
 			logInfo(batchRunContext, total, position, "processing domain : " + resource.toString());
 
-			// creation of domain statistic for the past day using account statistic of the past day
-			domainDailyStatBusinessService.create(resource, getYesterdayBegin(), getYesterdayEnd());
-
 			//updating user quota with account quotas only updated this morning. I suppose this batch is run every morning. 
 			ContainerQuota userContainerQuota = containerQuotaBusinessService.find(resource, ContainerQuotaType.USER);
 			userContainerQuota = containerQuotaBusinessService.updateByBatch(userContainerQuota);
@@ -115,6 +112,9 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchWithHistoryImpl {
 
 			DomainQuota domainQuota = domainQuotaBusinessService.find(resource);
 			domainQuota = domainQuotaBusinessService.updateByBatch(domainQuota);
+
+			// creation of domain statistic for the past day using account statistic of the past day
+			domainDailyStatBusinessService.create(resource, domainQuota.getCurrentValue(), getYesterdayBegin(), getYesterdayEnd());
 
 		} catch (BusinessException businessException) {
 			logError(total, position, "Error while trying to update domainQuota", batchRunContext);

@@ -44,6 +44,7 @@ import org.linagora.linshare.core.business.service.ThreadDailyStatBusinessServic
 import org.linagora.linshare.core.domain.constants.BatchType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -95,8 +96,8 @@ public class StatisticDailyThreadBatchImpl extends GenericBatchWithHistoryImpl {
 		ResultContext context = new AccountBatchResultContext(resource);
 		try {
 			logInfo(batchRunContext, total, position, "processing workgroup : " + resource.getAccountRepresentation());
-			threadDailyStatBusinessService.create(resource, yesterday);
-			accountQuotaBusinessService.createOrUpdate(resource, yesterday);
+			AccountQuota quota = accountQuotaBusinessService.createOrUpdate(resource, yesterday);
+			threadDailyStatBusinessService.create(resource, quota.getCurrentValue(), yesterday);
 			operationHistoryBusinessService.deleteBeforeDateByAccount(yesterday, resource);
 		} catch (BusinessException businessException) {
 			String batchClassName = this.getBatchClassName();

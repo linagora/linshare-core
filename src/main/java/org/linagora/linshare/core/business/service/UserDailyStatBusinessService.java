@@ -36,14 +36,20 @@ package org.linagora.linshare.core.business.service;
 import java.util.Date;
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserDailyStat;
 
 public interface UserDailyStatBusinessService{
 
-	UserDailyStat create(User user, Date today);
+	/**
+	 * 
+	 * @param user : the targeted user
+	 * @param currentUsedSpace the current used space for the targeted user.
+	 * @param today
+	 * @return
+	 */
+	UserDailyStat create(User user, Long currentUsedSpace, Date today);
 
 	List<UserDailyStat> findBetweenTwoDates(User user, Date beginDate, Date endDate);
 
