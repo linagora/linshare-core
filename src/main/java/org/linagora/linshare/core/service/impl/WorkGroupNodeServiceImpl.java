@@ -444,10 +444,10 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 				// members of the "recipient workgroup" do not need to know the name of the source workgroup.
 				WorkGroupDocument doc = (WorkGroupDocument) fromNode;
 				String fileName = workGroupDocumentService.getNewName(actor, owner, toWorkGroup, toNode, fromNode.getName());
-				CopyMto copyFrom = new CopyMto(doc, fromWorkGroup, false);
+				CopyMto copyFrom = new CopyMto(doc, fromWorkGroup);
 				WorkGroupNode copy = workGroupDocumentService.copy(actor, owner, toWorkGroup, doc.getDocumentUuid(), fileName,
 						toNode, doc.getCiphered(), doc.getSize(), fromNodeUuid, copyFrom);
-				CopyMto copiedTo = new CopyMto(copy, toWorkGroup, false);
+				CopyMto copiedTo = new CopyMto(copy, toWorkGroup);
 				workGroupDocumentService.markAsCopied(actor, owner, fromWorkGroup, fromNode, copiedTo);
 				return copy;
 			} else if (isDocument(toNode)) {

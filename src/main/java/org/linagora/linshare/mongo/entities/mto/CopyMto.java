@@ -85,15 +85,12 @@ public class CopyMto {
 		this.name = de.getName();
 	}
 
-	public CopyMto(WorkGroupNode node, Thread workGroup, boolean withName) {
+	public CopyMto(WorkGroupNode node, Thread workGroup) {
 		super();
 		this.kind = TargetKind.SHARED_SPACE;
 		this.uuid = node.getUuid();
 		this.name = node.getName();
 		this.contextUuid = workGroup.getLsUuid();
-		if (withName) {
-			this.contextName = workGroup.getName();
-		}
 	}
 
 	public String getUuid() {

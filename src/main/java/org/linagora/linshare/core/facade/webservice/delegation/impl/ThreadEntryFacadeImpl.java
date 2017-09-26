@@ -117,7 +117,7 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 		DocumentEntry de = documentEntryService.findForDownloadOrCopyRight(actor, owner, entryUuid);
 		CopyResource cr = new CopyResource(TargetKind.PERSONAL_SPACE, de);
 		WorkGroupNode node = workGroupNodeService.copy(actor, owner, workGroup, null, cr);
-		documentEntryService.markAsCopied(actor, owner, de, new CopyMto(node, workGroup, true));
+		documentEntryService.markAsCopied(actor, owner, de, new CopyMto(node, workGroup));
 		WorkGroupEntryDto dto = new WorkGroupEntryDto((WorkGroupDocument) node);
 		return dto;
 	}

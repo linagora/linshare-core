@@ -100,7 +100,7 @@ public class CopyResource {
 		this.name = entry.getName();
 		this.metaData = entry.getMetaData();
 		// there is no need to recipients to know the name of the source workgroup.
-		this.copyFrom = new CopyMto(entry, workGroup, false);
+		this.copyFrom = new CopyMto(entry, workGroup);
 	}
 
 	public TargetKind getKind() {

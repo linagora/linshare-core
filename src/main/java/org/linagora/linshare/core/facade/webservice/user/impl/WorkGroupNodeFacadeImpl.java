@@ -172,7 +172,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 			ShareEntry share = shareEntryService.findForDownloadOrCopyRight(actor, owner, fromResourceUuid);
 			CopyResource cr = new CopyResource(resourceKind, share);
 			WorkGroupNode node = service.copy(actor, owner, toWorkGroup, toParentNodeUuid, cr);
-			shareEntryService.markAsCopied(actor, owner, fromResourceUuid, new CopyMto(node, toWorkGroup, false));
+			shareEntryService.markAsCopied(actor, owner, fromResourceUuid, new CopyMto(node, toWorkGroup));
 			if (deleteShare) {
 				shareEntryService.delete(actor, owner, share.getUuid(), LogActionCause.COPY);
 			}
@@ -181,7 +181,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 			DocumentEntry documentEntry = documentEntryService.findForDownloadOrCopyRight(actor, owner, fromResourceUuid);
 			CopyResource cr = new CopyResource(resourceKind, documentEntry);
 			WorkGroupNode node = service.copy(actor, owner, toWorkGroup, toParentNodeUuid, cr);
-			documentEntryService.markAsCopied(actor, owner, documentEntry, new CopyMto(node, toWorkGroup, true));
+			documentEntryService.markAsCopied(actor, owner, documentEntry, new CopyMto(node, toWorkGroup));
 			return Lists.newArrayList(node);
 		} else if (TargetKind.SHARED_SPACE.equals(resourceKind)) {
 			String fromWorkGroupUuid = service.findWorkGroupUuid(actor, owner, fromResourceUuid);
