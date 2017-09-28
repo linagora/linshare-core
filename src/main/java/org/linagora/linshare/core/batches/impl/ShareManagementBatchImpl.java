@@ -117,7 +117,7 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 					try {
 						EmailContext contex = new ShareWarnRecipientBeforeExpiryEmailContext(share, day);
 						MailContainerWithRecipient mail = mailBuildingService.build(contex);
-						notifierService.sendNotification(mail);
+						notifierService.sendNotification(mail, true);
 					} catch (BusinessException e) {
 						logger.error(
 								"Error while trying to notify upcoming outdated share",
@@ -138,7 +138,7 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 					try {
 						EmailContext contex = new ShareWarnRecipientBeforeExpiryEmailContext(anonymousShareEntry, day);
 						MailContainerWithRecipient mail = mailBuildingService.build(contex);
-						notifierService.sendNotification(mail);
+						notifierService.sendNotification(mail, true);
 					} catch (BusinessException e) {
 						logger.error("Error while trying to notify upcoming outdated share", e);
 					}

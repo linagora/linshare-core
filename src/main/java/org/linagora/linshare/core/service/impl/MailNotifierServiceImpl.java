@@ -269,7 +269,7 @@ public class MailNotifierServiceImpl implements NotifierService {
 	 * Send multiple notifications giving a mailContainerWithRecipient object.
 	 */	
 	@Override
-	public void sendNotification(List<MailContainerWithRecipient> mailContainerWithRecipient) throws BusinessException {
+	public void sendNotification(List<MailContainerWithRecipient> mailContainerWithRecipient, boolean skipUnreachableAddresses) throws BusinessException {
 		if(CollectionUtils.isNotEmpty(mailContainerWithRecipient)) {
 			List<String> unknownRecipients = Lists.newArrayList();
 			for (MailContainerWithRecipient mailContainer : mailContainerWithRecipient) {
@@ -290,8 +290,10 @@ public class MailNotifierServiceImpl implements NotifierService {
 				}
 			}
 			if(!unknownRecipients.isEmpty()){
-				logger.error("Addresses unreachables : " + unknownRecipients.toString());
-				throw new BusinessException(BusinessErrorCode.RELAY_HOST_NOT_ENABLE, "Address Unreachable", unknownRecipients);
+				logger.warn("Addresses unreachables : " + unknownRecipients.toString());
+				if (!skipUnreachableAddresses) {
+					throw new BusinessException(BusinessErrorCode.RELAY_HOST_NOT_ENABLE, "Address Unreachable", unknownRecipients);
+				}
 			}
 		} else {
 			logger.debug("can not send mails, input list empty");
@@ -299,8 +301,19 @@ public class MailNotifierServiceImpl implements NotifierService {
 	}	
 
 	@Override
+	public void sendNotification(MailContainerWithRecipient mailContainers, boolean skipUnreachableAddresses)
+			throws BusinessException {
+		this.sendNotification(Lists.newArrayList(mailContainers), skipUnreachableAddresses);
+	}
+
+	@Override
+	public void sendNotification(List<MailContainerWithRecipient> mailContainers) throws BusinessException {
+		this.sendNotification(Lists.newArrayList(mailContainers), false);
+	}
+
+	@Override
 	public void sendNotification(MailContainerWithRecipient mailContainer) throws BusinessException {
-		this.sendNotification(Lists.newArrayList(mailContainer));
+		this.sendNotification(Lists.newArrayList(mailContainer), false);
 	}
 
 	@Override

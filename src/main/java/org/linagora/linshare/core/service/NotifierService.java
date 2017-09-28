@@ -62,15 +62,20 @@ public interface NotifierService {
 	public void sendNotification(String smtpSender, String replyTo, String recipient, String subject,String htmlContent,
 			String inReplyTo, String references, Map<String, DataSource> attachments) throws SendFailedException;
 
-    
-    /**
-     * @param mailContainerWithRecipient list of mail containers attached to recipients
-     * @throws BusinessException 
-     */
-    public void sendNotification(List<MailContainerWithRecipient> mailContainerWithRecipient) throws BusinessException;
-    
+	/**
+	 * @param mailContainerWithRecipient
+	 *            list of mail containers attached to recipients
+	 * @throws BusinessException
+	 */
+	public void sendNotification(List<MailContainerWithRecipient> mailContainers,
+			boolean skipUnreachableAddresses) throws BusinessException;
 
-	public void sendNotification(MailContainerWithRecipient mailContainerWithRecipient) throws BusinessException;
+	public void sendNotification(List<MailContainerWithRecipient> mailContainers) throws BusinessException;
+
+	public void sendNotification(MailContainerWithRecipient mailContainer, boolean skipUnreachableAddresses)
+			throws BusinessException;
+
+	public void sendNotification(MailContainerWithRecipient mailContainer) throws BusinessException;
 
 	/**
 	 * For JMX purpose.

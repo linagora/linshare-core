@@ -160,7 +160,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 		log.setCause(LogActionCause.COPY);
 		log.setCopiedTo(copiedTo);
 		logEntryService.insert(log);
-		notifierService.sendNotification(mail);
+		notifierService.sendNotification(mail, true);
 		return share;
 	}
 
@@ -195,7 +195,7 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			mail = mailBuildingService.build(context);
 		}
 		shareEntryBusinessService.delete(share);
-		notifierService.sendNotification(mail);
+		notifierService.sendNotification(mail, true);
 		return share;
 	}
 
