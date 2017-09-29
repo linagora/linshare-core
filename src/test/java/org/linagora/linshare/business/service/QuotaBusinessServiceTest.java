@@ -119,9 +119,9 @@ public class QuotaBusinessServiceTest extends AbstractTransactionalJUnit4SpringC
 		assertEquals(500, (long) domainQuota.getLastValue());
 		assertEquals(1900, (long) domainQuota.getQuota());
 		assertEquals(1800, (long) domainQuota.getQuotaWarning());
-		domainQuotaBusinessService.updateByBatch(domainQuota);
+		domainQuotaBusinessService.sumOfCurrentValue(domainQuota);
 		domainQuota = domainQuotaBusinessService.find(domain);
-		assertEquals(2492, (long) domainQuota.getCurrentValue());
+		assertEquals(1396, (long) domainQuota.getCurrentValue());
 		assertEquals(1096, (long) domainQuota.getLastValue());
 
 		ContainerQuota ensembleQuota = ensembleQuotaBusinessService.find(domain, ContainerQuotaType.USER);
@@ -131,9 +131,9 @@ public class QuotaBusinessServiceTest extends AbstractTransactionalJUnit4SpringC
 		assertEquals(1900, (long) ensembleQuota.getQuota());
 		assertEquals(1300, (long) ensembleQuota.getQuotaWarning());
 		assertEquals(5, (long) ensembleQuota.getDefaultMaxFileSize());
-		ensembleQuotaBusinessService.updateByBatch(ensembleQuota);
+		ensembleQuotaBusinessService.sumOfCurrentValue(ensembleQuota);
 		ensembleQuota = ensembleQuotaBusinessService.find(domain, ContainerQuotaType.USER);
-		assertEquals(2196, (long) ensembleQuota.getCurrentValue());
+		assertEquals(1700, (long) ensembleQuota.getCurrentValue());
 		assertEquals(496, (long) ensembleQuota.getLastValue());
 
 		ContainerQuota threadEnsembleQuota = ensembleQuotaBusinessService.find(domain, ContainerQuotaType.WORK_GROUP);
@@ -143,9 +143,9 @@ public class QuotaBusinessServiceTest extends AbstractTransactionalJUnit4SpringC
 		assertEquals(2000, (long) threadEnsembleQuota.getQuota());
 		assertEquals(1500, (long) threadEnsembleQuota.getQuotaWarning());
 		assertEquals(5, (long) threadEnsembleQuota.getDefaultMaxFileSize());
-		ensembleQuotaBusinessService.updateByBatch(threadEnsembleQuota);
+		ensembleQuotaBusinessService.sumOfCurrentValue(threadEnsembleQuota);
 		threadEnsembleQuota = ensembleQuotaBusinessService.find(domain, ContainerQuotaType.WORK_GROUP);
-		assertEquals(2100, (long) threadEnsembleQuota.getCurrentValue());
+		assertEquals(1200, (long) threadEnsembleQuota.getCurrentValue());
 		assertEquals(900, (long) threadEnsembleQuota.getLastValue());
 
 		AccountQuota qo = accountQuotaBusinessService.find(account);

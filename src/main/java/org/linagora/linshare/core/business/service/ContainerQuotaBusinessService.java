@@ -54,5 +54,5 @@ public interface ContainerQuotaBusinessService {
 
 	ContainerQuota update(ContainerQuota entity, ContainerQuota dto) throws BusinessException;
 
-	ContainerQuota updateByBatch(ContainerQuota entity) throws BusinessException;
+	ContainerQuota sumOfCurrentValue(ContainerQuota entity) throws BusinessException;
 }

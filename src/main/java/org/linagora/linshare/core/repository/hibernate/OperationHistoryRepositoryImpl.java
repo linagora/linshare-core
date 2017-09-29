@@ -98,9 +98,9 @@ public class OperationHistoryRepositoryImpl extends AbstractRepositoryImpl<Opera
 		criteria.setProjection(Projections.sum("operationValue"));
 		List<OperationHistory> list = findByCriteria(criteria);
 		if (list.size() > 0 && list.get(0) != null) {
-			return DataAccessUtils.longResult(findByCriteria(criteria));
+			return DataAccessUtils.longResult(list);
 		}
-		return (long) 0;
+		return 0L;
 	}
 
 	@Override

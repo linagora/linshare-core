@@ -135,11 +135,11 @@ public class DomainQuotaBusinessServiceImpl extends GenericQuotaBusinessServiceI
 	}
 
 	@Override
-	public DomainQuota updateByBatch(DomainQuota entity) throws BusinessException{
+	public DomainQuota sumOfCurrentValue(DomainQuota entity) throws BusinessException{
 		Long sumCurrentValue = containerQuotaRepository.sumOfCurrentValue(entity);
 		Long usedSpace = entity.getCurrentValue();
 		entity.setLastValue(usedSpace);
-		entity.setCurrentValue(usedSpace + sumCurrentValue);
+		entity.setCurrentValue(sumCurrentValue);
 		entity = repository.updateByBatch(entity);
 		return entity;
 	}

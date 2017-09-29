@@ -68,6 +68,7 @@ public class AccountQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Accou
 	public List<String> findDomainUuidByBatchModificationDate(Date startDate) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.ge("batchModificationDate", startDate));
+		// why do we check if the batchModificationDate is not in the future ?
 		criteria.add(Restrictions.le("batchModificationDate", new Date()));
 		criteria.createAlias("domain", "do");
 		criteria.setProjection(Projections.distinct(Projections.property("do.uuid")));
@@ -76,16 +77,18 @@ public class AccountQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Accou
 		return listIdentifier;
 	}
 
+	/**
+	 * currentValue sum of all account quota in a container
+	 */
 	@Override
 	public Long sumOfCurrentValue(ContainerQuota containerQuota) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("containerQuota", containerQuota));
-		criteria.add(Restrictions.ge("batchModificationDate", getTodayBegin()));
 		criteria.setProjection(Projections.sum("currentValue"));
 		List<AccountQuota> list = findByCriteria(criteria);
 		if (list.size() > 0 && list.get(0) != null) {
-			return DataAccessUtils.longResult(findByCriteria(criteria));
+			return DataAccessUtils.longResult(list);
 		}
-		return (long) 0;
+		return 0L;
 	}
 }

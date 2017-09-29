@@ -77,11 +77,10 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 	public Long sumOfCurrentValue(DomainQuota domainQuota) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("domainQuota", domainQuota));
-		criteria.add(Restrictions.ge("batchModificationDate", getTodayBegin()));
 		criteria.setProjection(Projections.sum("currentValue"));
 		List<ContainerQuota> list = findByCriteria(criteria);
 		if (list.size() > 0 && list.get(0) != null) {
-			return DataAccessUtils.longResult(findByCriteria(criteria));
+			return DataAccessUtils.longResult(list);
 		}
 		return 0L;
 	}

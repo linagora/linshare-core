@@ -57,6 +57,6 @@ public interface DomainQuotaBusinessService {
 
 	DomainQuota update(DomainQuota entity, DomainQuota dto) throws BusinessException;
 
-	DomainQuota updateByBatch(DomainQuota entity);
+	DomainQuota sumOfCurrentValue(DomainQuota entity);
 
 }

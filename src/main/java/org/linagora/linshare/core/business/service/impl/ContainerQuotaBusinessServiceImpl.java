@@ -186,11 +186,11 @@ public class ContainerQuotaBusinessServiceImpl extends GenericQuotaBusinessServi
 	}
 
 	@Override
-	public ContainerQuota updateByBatch(ContainerQuota quota) throws BusinessException {
+	public ContainerQuota sumOfCurrentValue(ContainerQuota quota) throws BusinessException {
 		Long sumCurrentValue = accountQuotaRepository.sumOfCurrentValue(quota);
 		Long usedSpace = quota.getCurrentValue();
 		quota.setLastValue(usedSpace);
-		quota.setCurrentValue(usedSpace + sumCurrentValue);
+		quota.setCurrentValue(sumCurrentValue);
 		quota = repository.updateByBatch(quota);
 		return quota;
 	}

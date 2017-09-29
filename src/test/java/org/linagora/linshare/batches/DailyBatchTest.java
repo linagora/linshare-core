@@ -166,7 +166,7 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 		ThreadDailyStat threadDailyStat = listThreaddailyStat.get(0);
 		assertEquals(thread1, threadDailyStat.getAccount());
 		assertEquals(3, (long) threadDailyStat.getOperationCount());
-		assertEquals(300, (long) threadDailyStat.getActualOperationSum());
+		assertEquals(1000, (long) threadDailyStat.getActualOperationSum());
 		assertEquals(2, (long) threadDailyStat.getCreateOperationCount());
 		assertEquals(600, (long) threadDailyStat.getCreateOperationSum());
 		assertEquals(1, (long) threadDailyStat.getDeleteOperationCount());
@@ -191,7 +191,7 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 		threadDailyStat = listThreaddailyStat.get(0);
 		assertEquals(thread2, threadDailyStat.getAccount());
 		assertEquals(2, (long) threadDailyStat.getOperationCount());
-		assertEquals(400, (long) threadDailyStat.getActualOperationSum());
+		assertEquals(900, (long) threadDailyStat.getActualOperationSum());
 		assertEquals(2, (long) threadDailyStat.getCreateOperationCount());
 		assertEquals(400, (long) threadDailyStat.getCreateOperationSum());
 		assertEquals(0, (long) threadDailyStat.getDeleteOperationCount());
@@ -217,7 +217,7 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 		UserDailyStat userDailyStat = listUserdailyStat.get(0);
 		assertEquals(jane, userDailyStat.getAccount());
 		assertEquals(3, (long) userDailyStat.getOperationCount());
-		assertEquals(300, (long) userDailyStat.getActualOperationSum());
+		assertEquals(1100, (long) userDailyStat.getActualOperationSum());
 		assertEquals(2, (long) userDailyStat.getCreateOperationCount());
 		assertEquals(600, (long) userDailyStat.getCreateOperationSum());
 		assertEquals(1, (long) userDailyStat.getDeleteOperationCount());
@@ -241,8 +241,8 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 		quota = accountQuotaBusinessService.find(jane);
 		assertNotNull(ensembleQuota);
 		assertEquals(496, (long) ensembleQuota.getLastValue());
-		// jane : 1100 + john 900 + last value = 2496
-		assertEquals(2496, (long) ensembleQuota.getCurrentValue());
+		// sum of all users : jane : 1100 + john 900 = 2000
+		assertEquals(2000, (long) ensembleQuota.getCurrentValue());
 		assertEquals(1900, (long) ensembleQuota.getQuota());
 		assertEquals(1300, (long) ensembleQuota.getQuotaWarning());
 		assertEquals(5, (long) ensembleQuota.getDefaultMaxFileSize());
@@ -251,8 +251,8 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 		assertNotNull(ensembleQuota);
 
 		assertEquals(900, (long) ensembleQuota.getLastValue());
-		// last value(900) + 1900 ? = 2800
-		assertEquals(2800, (long) ensembleQuota.getCurrentValue());
+		// sum of all workgroups : 1900 ? is it right ?
+		assertEquals(1900, (long) ensembleQuota.getCurrentValue());
 		assertEquals(2000, (long) ensembleQuota.getQuota());
 		assertEquals(1500, (long) ensembleQuota.getQuotaWarning());
 		assertEquals(5, (long) ensembleQuota.getDefaultMaxFileSize());
@@ -260,9 +260,8 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 		DomainQuota quotaD = domainQuotaBusinessService.find(jane.getDomain());
 		assertNotNull(quotaD);
 		assertEquals(1096, (long) quotaD.getLastValue());
-		// container user 2496  + container workgroup 2800 = 5296
-		// 5296 + lastvalue = 6392
-		assertEquals(6392, (long) quotaD.getCurrentValue());
+		// container user 2000  + container workgroup 1900 = 3900
+		assertEquals(3900, (long) quotaD.getCurrentValue());
 		assertEquals(1900, (long) quotaD.getQuota());
 		assertEquals(1800, (long) quotaD.getQuotaWarning());
 
