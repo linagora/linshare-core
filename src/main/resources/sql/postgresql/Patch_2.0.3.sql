@@ -67,7 +67,7 @@ BEGIN
 	DECLARE j BIGINT;
 	DECLARE op BIGINT;
 	BEGIN
-		FOR myaccount IN (SELECT id, mail FROM account) LOOP
+		FOR myaccount IN (SELECT id, mail FROM account WHERE account_type != 5) LOOP
 			RAISE INFO 'account mail : % (account_id=%)', myaccount.mail, myaccount.id;
 			i := (SELECT sum(ls_size) FROM account AS a join entry AS e on a.id = e.owner_id join document_entry AS de ON de.entry_id = e.id WHERE a.id = myaccount.id);
 			IF i IS NULL THEN
