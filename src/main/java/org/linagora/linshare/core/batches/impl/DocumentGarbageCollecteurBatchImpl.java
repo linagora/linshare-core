@@ -114,6 +114,9 @@ public class DocumentGarbageCollecteurBatchImpl extends GenericBatchImpl {
 	@Override
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position) throws BatchBusinessException, BusinessException {
 		DocumentGarbageCollecteur dgc = documentGarbageCollecteur.findOne(identifier);
+		if (dgc == null) {
+			return null;
+		}
 		Document document = documentRepository.findByUuid(dgc.getDocumentUuid());
 		if (document == null) {
 			// it does not exists anymore. skipped.
