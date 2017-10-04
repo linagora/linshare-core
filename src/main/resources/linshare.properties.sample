@@ -5,6 +5,9 @@
 # JAVA_OPTS="${JAVA_OPTS} -Dspring.profiles.active=default,jcloud,mongo"
 # On Centos, use only one JAVA_OPTS statement. Do not use the previous syntax, it may not work.
 
+# If you want to change the location of tmp directory
+# JAVA_OPTS="${JAVA_OPTS} -Djava.io.tmpdir=/tmp/"
+
 # Or you can use environment variable : SPRING_PROFILES_ACTIVE or -Dspring.profiles.active property
 # to configure which profile you want to use.
 # You must enable at least one authentication profile among authentication profiles,
