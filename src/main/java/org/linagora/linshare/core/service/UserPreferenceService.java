@@ -47,7 +47,7 @@ public interface UserPreferenceService {
 	 * 
 	 * @param actor
 	 * @param key
-	 * @return
+	 * @return UserPreference
 	 */
 	UserPreference findByKey(Account actor, Account owner, String key);
 
@@ -56,7 +56,7 @@ public interface UserPreferenceService {
 	 * 
 	 * @param actor
 	 * @param owner
-	 * @return
+	 * @return List<UserPreference>
 	 */
 	List<UserPreference> findByAccount(Account actor, Account owner);
 
@@ -65,7 +65,7 @@ public interface UserPreferenceService {
 	 * 
 	 * @param actor
 	 * @param domain
-	 * @return
+	 * @return List<UserPreference>
 	 */
 	List<UserPreference> findByDomain(Account actor, AbstractDomain domain);
 
@@ -74,7 +74,7 @@ public interface UserPreferenceService {
 	 * @param actor
 	 * @param owner
 	 * @param uuid
-	 * @return
+	 * @return UserPreference
 	 */
 	UserPreference findByUuid(Account actor, Account owner, String uuid);
 

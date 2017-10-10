@@ -113,7 +113,7 @@ public interface AbstractDomainService {
 	 * @param domainIdentifier
 	 * @param firstName
 	 * @param lastName
-	 * @return
+	 * @return List<User>
 	 * @throws BusinessException
 	 */
 	public List<User> autoCompleteUserWithDomainPolicies(String domainIdentifier, String firstName, String lastName) throws BusinessException;
@@ -174,14 +174,14 @@ public interface AbstractDomainService {
 
 	/**
 	 * Retrieve a list of all domains visible by the current actor.
-	 * @return
+	 * @return List<AbstractDomain>
 	 */
 	public List<AbstractDomain> findAll(Account actor);
 	/**
 	 * This method returns all the domains using the welcome message parameter as currentwelcomeMessage
 	 * @param actor
 	 * @param uuid
-	 * @return
+	 * @return List<AbstractDomain>
 	 * @throws BusinessException
 	 */
 	List<AbstractDomain> loadRelativeDomains(User actor, String uuid) throws BusinessException;

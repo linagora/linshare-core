@@ -48,7 +48,7 @@ public interface GuestFacade extends DelegationGenericFacade {
 	 * @param ownerUuid
 	 * @param domain : optional. owner domain will be used to find guest domain.
 	 * @param mail
-	 * @return
+	 * @return GuestDto
 	 * @throws BusinessException
 	 */
 	GuestDto find(String ownerUuid, String domain, String mail) throws BusinessException;

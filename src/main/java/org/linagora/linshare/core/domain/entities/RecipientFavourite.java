@@ -51,7 +51,8 @@ public class RecipientFavourite extends AbstractFavourite<User>{
 	
 	/**
 	 * The constructor with definition of a recipient.
-	 * @param recipient.
+	 * @param owner
+	 * @param recipient
 	 */
 	public RecipientFavourite(User owner,String recipient){
 		super();

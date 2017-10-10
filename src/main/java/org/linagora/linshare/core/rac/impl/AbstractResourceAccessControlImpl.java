@@ -168,7 +168,7 @@ public abstract class AbstractResourceAccessControlImpl<A, R, E> implements
 	 * @param owner
 	 * @param entry
 	 * @param permission
-	 * @return
+	 * @return boolean
 	 */
 	protected boolean defaultPermissionCheck(Account actor, Account owner,
 			E entry, TechnicalAccountPermissionType permission) {

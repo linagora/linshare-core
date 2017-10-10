@@ -279,7 +279,7 @@ public class BetterRepositoryFactoryBean extends RepositoryFactoryBean {
 	/**
 	 * Load all the configuration properties
 	 *
-	 * @return
+	 * @return Properties
 	 */
 	protected Properties loadConfigurationKeys() {
 		return propertyPlaceholderConfigurer.getProperties();

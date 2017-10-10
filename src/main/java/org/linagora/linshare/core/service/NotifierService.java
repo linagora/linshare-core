@@ -63,8 +63,9 @@ public interface NotifierService {
 			String inReplyTo, String references, Map<String, DataSource> attachments) throws SendFailedException;
 
 	/**
-	 * @param mailContainerWithRecipient
+	 * @param mailContainers
 	 *            list of mail containers attached to recipients
+	 * @param skipUnreachableAddresses
 	 * @throws BusinessException
 	 */
 	public void sendNotification(List<MailContainerWithRecipient> mailContainers,

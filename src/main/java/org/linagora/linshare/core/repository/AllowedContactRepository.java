@@ -50,7 +50,7 @@ public interface AllowedContactRepository extends AbstractRepository<AllowedCont
 	/**
 	 * Find the allowed contact of some user
 	 * @param owner the user
-	 * @return
+	 * @return List<AllowedContact>
 	 */
 	List<AllowedContact> findByOwner(final User owner);
 	/**
@@ -59,7 +59,7 @@ public interface AllowedContactRepository extends AbstractRepository<AllowedCont
 	 * @param firstName
 	 * @param lastName
 	 * @param guest
-	 * @return
+	 * @return List<AllowedContact>
 	 */
 	List<AllowedContact> searchContact(final Guest guest, final String mail, final String firstName,
 			final String lastName);

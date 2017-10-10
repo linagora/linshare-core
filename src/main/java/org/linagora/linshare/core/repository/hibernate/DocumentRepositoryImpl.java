@@ -59,7 +59,7 @@ public class DocumentRepositoryImpl extends AbstractRepositoryImpl<Document> imp
 	
 	
 	 /** Find a document using its id.
-     * @param id
+     * @param identifier
      * @return found document (null if no document found).
      */
     public Document findByUuid(String identifier) {

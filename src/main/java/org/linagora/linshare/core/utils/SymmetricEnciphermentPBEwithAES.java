@@ -252,7 +252,7 @@ public class SymmetricEnciphermentPBEwithAES {
 	/**
 	 * give a CipherInputStream to decrypt data, if you want to decrypt data yourself
 	 * in must be given in class constructor
-	 * @return
+	 * @return CipherInputStream
 	 */
 	public CipherInputStream getCipherInputStream(){
 		if(in == null) throw new IllegalStateException("can not give intialised CipherInputStream, check inputstream");
@@ -262,7 +262,7 @@ public class SymmetricEnciphermentPBEwithAES {
 	/**
 	 * give a CipherOutputStream to encrypt data, if you want to encrypt data yourself
 	 * out must be given in class constructor
-	 * @return
+	 * @return CipherOutputStream
 	 */
 	public CipherOutputStream getCipherOutputStream(){
 		if(out == null) throw new IllegalStateException("can not give intialised CipherOutputStream, check outputstream");

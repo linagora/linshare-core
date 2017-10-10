@@ -54,8 +54,8 @@ public interface ShareEntryService {
 	 * Find underlying document uuid in order to create copy.
 	 * @param actor
 	 * @param owner
-	 * @param share uuid
-	 * @return
+	 * @param uuid share uuid
+	 * @return ShareEntry
 	 * @throws BusinessException
 	 */
 	ShareEntry findForDownloadOrCopyRight(Account actor, Account owner, String uuid)  throws BusinessException;

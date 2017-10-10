@@ -195,25 +195,25 @@ public abstract class AbstractRepositoryImpl<T> implements AbstractRepository<T>
     }
 
     /** Find by criteria.
-     * @param a detached criteria.
-     * @return search result.
+     * @param criteria a detached criteria.
+     * @return List<T> search result.
      */
 	protected List<T> findByCriteria(final DetachedCriteria criteria) {
         return (List<T>) hibernateTemplate.findByCriteria(criteria);
     }
     
     /** Find by criteria.
-     * @param a detached criteria.
+     * @param criteria a detached criteria.
      * @param limit the results
-     * @return search result.
+     * @return List<T> search result.
      */
 	protected List<T> findByCriteria(final DetachedCriteria criteria, int limit) {
         return (List<T>) hibernateTemplate.findByCriteria(criteria, -1, limit);
     }
     
     /** Find by criteria.
-     * @param a detached criteria.
-     * @return search result.
+     * @param criteria a detached criteria.
+     * @return List search result.
      */
     @SuppressWarnings("rawtypes")
 	protected List listByCriteria(final DetachedCriteria criteria) {
@@ -225,7 +225,7 @@ public abstract class AbstractRepositoryImpl<T> implements AbstractRepository<T>
     }
  
     /** Get current Hibernate session from SessionFactory
-     * @return current session
+     * @return Session current session
      */
     protected Session getCurrentSession() {
     	return hibernateTemplate.getSessionFactory().getCurrentSession();

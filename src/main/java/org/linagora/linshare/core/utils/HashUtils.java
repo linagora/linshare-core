@@ -62,7 +62,7 @@ public class HashUtils {
 	
 	/**
 	 * generate salt (32 bits/4 octets)
-	 * @return
+	 * @return byte[]
 	 */
 	public static byte[] getSalt() {
 		// Get 32 random bits
@@ -92,7 +92,7 @@ public class HashUtils {
 	 * @param b array of byte to digest
 	 * @param salt can be null. if not it is appended to the array of bytes before doing the digest.
 	 * @param HashAlgo may be MD5, SHA1 ...
-	 * @return a base 64 string, with the encoded salt at the end if exist.
+	 * @return String a base 64 string, with the encoded salt at the end if exist.
 	 */
 	private static String hashWithBase64(byte[] b, byte[] salt,String HashAlgo) {
 		byte[] res = null;

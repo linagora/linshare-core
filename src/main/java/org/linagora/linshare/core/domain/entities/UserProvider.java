@@ -94,7 +94,7 @@ public abstract class UserProvider {
 
 	/**
 	 * alias
-	 * @return
+	 * @return UserProviderType
 	 */
 	public UserProviderType getType() {
 		return userProviderType;

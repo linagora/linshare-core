@@ -56,7 +56,7 @@ public interface WelcomeMessagesService {
 	 * @param wlcm
 	 * @param domainUuids
 	 *            no modification will be done for domain links if null
-	 * @return
+	 * @return WelcomeMessages
 	 * @throws BusinessException
 	 */
 	WelcomeMessages update(User actor, WelcomeMessages wlcm,

@@ -220,7 +220,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 	 * @param owner
 	 * @param userInputNotificationDate : user date
 	 * @param expiryDate : could be null
-	 * @return
+	 * @return Date
 	 */
 	private Date getUndownloadedSharedDocumentsAlertDuration(Account owner, Date userInputNotificationDate, Date expiryDate) {
 		Date defaultUsdaNotificationDate = null;
@@ -363,7 +363,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 	 * 
 	 * @param actor
 	 * @param userExpiryDate
-	 * @return
+	 * @return Date
 	 */
 	@Override
 	public Date getFinalShareExpiryDate(Account actor,

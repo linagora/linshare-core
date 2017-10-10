@@ -48,8 +48,8 @@ import org.linagora.linshare.core.domain.entities.Document;
 public interface DocumentRepository extends AbstractRepository<Document>{
 	
 	 /** Find a document using its uuid.
-     * @param id
-     * @return found document (null if no document found).
+     * @param identifier
+     * @return Document found document (null if no document found).
      */
 	Document findByUuid(String identifier);
 
@@ -58,7 +58,7 @@ public interface DocumentRepository extends AbstractRepository<Document>{
 	 * could have some duplicated files/hashes.
 	 *
 	 * @param sha256sum
-	 * @return
+	 * @return List<Document>
 	 */
 	List<Document> findBySha256Sum(String sha256sum);
 

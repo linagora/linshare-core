@@ -67,7 +67,7 @@ public interface GuestService {
 	 * find all guests according to domain access policies
 	 * @param actor
 	 * @param owner
-	 * @return
+	 * @return List<Guest>
 	 * @throws BusinessException
 	 */
 	List<Guest> findAll(Account actor, Account owner, Boolean mine) throws BusinessException;
@@ -80,7 +80,7 @@ public interface GuestService {
 	 * @param firstName
 	 * @param lastName
 	 * @param mail
-	 * @return
+	 * @return List<Guest>
 	 * @throws BusinessException
 	 */
 	List<Guest> search(Account actor, Account owner, String firstName, String lastName, String mail, boolean all) throws BusinessException;
@@ -91,7 +91,7 @@ public interface GuestService {
 	 * @param owner
 	 * @param pattern
 	 * @param mine TODO
-	 * @return
+	 * @return List<Guest>
 	 * @throws BusinessException
 	 */
 	List<Guest> search(Account actor, Account owner, String pattern, Boolean mine) throws BusinessException;
@@ -99,7 +99,7 @@ public interface GuestService {
 	/**
 	 * Test if a guest exists
 	 * @param lsUuid
-	 * @return
+	 * @return boolean
 	 * @throws BusinessException
 	 */
 	boolean exist(String lsUuid) throws BusinessException;
@@ -124,7 +124,7 @@ public interface GuestService {
 	 * @param owner
 	 * @param guest
 	 * @param restrictedMails : if null, it won't be updated.
-	 * @return
+	 * @return Guest
 	 * @throws BusinessException
 	 */
 	Guest update(Account actor, User owner, Guest guest, List<String> restrictedMails)

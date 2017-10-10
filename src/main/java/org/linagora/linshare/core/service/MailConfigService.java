@@ -56,7 +56,7 @@ public interface MailConfigService {
 	 * Find all mail configurations visible by this domain.
 	 * 
 	 * @param domainId
-	 * @return
+	 * @return List<MailConfig>
 	 */
 	List<MailConfig> findAllConfigs(User actor, String domainId)
 			throws BusinessException;
@@ -65,7 +65,7 @@ public interface MailConfigService {
 	 * Find a mail configuration.
 	 * 
 	 * @param uuid
-	 * @return
+	 * @return MailConfig
 	 */
 	MailConfig findConfigByUuid(User actor, String uuid)
 			throws BusinessException;
@@ -75,7 +75,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param config
-	 * @return
+	 * @return MailConfig
 	 * @throws BusinessException
 	 */
 	MailConfig createConfig(User actor, MailConfig config) throws BusinessException;
@@ -85,7 +85,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param config
-	 * @return
+	 * @return MailConfig
 	 * @throws BusinessException
 	 */
 	MailConfig updateConfig(User actor, MailConfig config) throws BusinessException;
@@ -95,7 +95,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param uuid
-	 * @return TODO
+	 * @return MailConfig
 	 * @throws BusinessException
 	 */
 	MailConfig deleteConfig(User actor, String uuid) throws BusinessException;
@@ -105,7 +105,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param domainId
-	 * @return
+	 * @return List<MailContent>
 	 */
 	List<MailContent> findAllContents(User actor, String domainId)
 			throws BusinessException;
@@ -115,7 +115,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param uuid
-	 * @return
+	 * @return MailContent
 	 */
 	MailContent findContentByUuid(User actor, String uuid)
 			throws BusinessException;
@@ -128,7 +128,7 @@ public interface MailConfigService {
 	 * @param domainId
 	 * @param lang
 	 * @param type
-	 * @return
+	 * @return MailContent
 	 */
 	MailContent findContentFromDomain(User actor, String domainId, Language lang,
 			MailContentType type) throws BusinessException;
@@ -138,7 +138,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param content
-	 * @return
+	 * @return MailContent
 	 * @throws BusinessException
 	 */
 	MailContent createContent(User actor, MailContent content)
@@ -149,7 +149,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param content
-	 * @return 
+	 * @return MailContent
 	 * @throws BusinessException
 	 */
 	MailContent updateContent(User actor, MailContent content)
@@ -160,7 +160,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param uuid
-	 * @return TODO
+	 * @return MailContent
 	 * @throws BusinessException
 	 */
 	MailContent deleteContent(User actor, String uuid) throws BusinessException;
@@ -170,7 +170,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param uuid
-	 * @return
+	 * @return MailContentLang
 	 * @throws BusinessException
 	 */
 	MailContentLang findContentLangByUuid(User actor, String uuid) throws BusinessException;
@@ -180,7 +180,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param contentLang
-	 * @return 
+	 * @return MailContentLang
 	 * @throws BusinessException
 	 */
 	MailContentLang createContentLang(User actor, MailContentLang contentLang) throws BusinessException;
@@ -190,7 +190,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param contentLang
-	 * @return 
+	 * @return MailContentLang
 	 * @throws BusinessException
 	 */
 	MailContentLang updateContentLang(User actor, MailContentLang contentLang) throws BusinessException;
@@ -209,7 +209,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param domainId
-	 * @return
+	 * @return List<MailFooter>
 	 */
 	List<MailFooter> findAllFooters(User actor, String domainId)
 			throws BusinessException;
@@ -219,7 +219,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param uuid
-	 * @return
+	 * @return MailFooter
 	 */
 	MailFooter findFooterByUuid(User actor, String uuid)
 			throws BusinessException;
@@ -229,7 +229,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param footer
-	 * @return
+	 * @return MailFooter
 	 * @throws BusinessException
 	 */
 	MailFooter createFooter(User actor, MailFooter footer) throws BusinessException;
@@ -239,7 +239,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param footer
-	 * @return 
+	 * @return MailFooter
 	 * @throws BusinessException
 	 */
 	MailFooter updateFooter(User actor, MailFooter footer) throws BusinessException;
@@ -249,7 +249,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param uuid
-	 * @return TODO
+	 * @return MailFooter
 	 * @throws BusinessException
 	 */
 	MailFooter deleteFooter(User actor, String uuid) throws BusinessException;
@@ -259,7 +259,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param uuid
-	 * @return
+	 * @return MailFooterLang
 	 * @throws BusinessException
 	 */
 	MailFooterLang findFooterLangByUuid(User actor, String uuid) throws BusinessException;
@@ -269,7 +269,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param footerLang
-	 * @return 
+	 * @return MailFooterLang
 	 * @throws BusinessException
 	 */
 	MailFooterLang createFooterLang(User actor, MailFooterLang footerLang) throws BusinessException;
@@ -279,6 +279,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param footerLang
+	 * @return MailFooterLang
 	 * @throws BusinessException
 	 */
 	MailFooterLang updateFooterLang(User actor, MailFooterLang footerLang) throws BusinessException;
@@ -297,7 +298,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param domainId
-	 * @return
+	 * @return List<MailLayout>
 	 */
 	List<MailLayout> findAllLayouts(User actor, String domainId)
 			throws BusinessException;
@@ -307,7 +308,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param uuid
-	 * @return
+	 * @return MailLayout
 	 */
 	MailLayout findLayoutByUuid(User actor, String uuid)
 			throws BusinessException;
@@ -317,7 +318,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param layout
-	 * @return
+	 * @return MailLayout
 	 * @throws BusinessException
 	 */
 	MailLayout createLayout(User actor, MailLayout layout) throws BusinessException;
@@ -327,7 +328,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param layout
-	 * @return 
+	 * @return MailLayout
 	 * @throws BusinessException
 	 */
 	MailLayout updateLayout(User actor, MailLayout layout) throws BusinessException;
@@ -337,7 +338,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param uuid
-	 * @return TODO
+	 * @return MailLayout
 	 * @throws BusinessException
 	 */
 	MailLayout deleteLayout(User actor, String uuid) throws BusinessException;
@@ -347,7 +348,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param config
-	 * @return
+	 * @return boolean
 	 */
 	boolean hasRights(User actor, MailConfig config);
 
@@ -356,7 +357,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param content
-	 * @return
+	 * @return boolean
 	 */
 	boolean hasRights(User actor, MailContent content);
 
@@ -365,7 +366,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param footer
-	 * @return
+	 * @return boolean
 	 */
 	boolean hasRights(User actor, MailFooter footer);
 
@@ -374,7 +375,7 @@ public interface MailConfigService {
 	 * 
 	 * @param actor
 	 * @param layout
-	 * @return
+	 * @return boolean
 	 */
 	boolean hasRights(User actor, MailLayout layout);
 

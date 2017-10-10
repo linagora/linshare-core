@@ -97,11 +97,10 @@ public class JScriptLdapQuery {
 	private Pattern cleaner;
 
 	/**
-	 * @param jScriptEvaluator
-	 * @param ldapJndiService
-	 * @param ldapConnection
+	 * @param ctx
 	 * @param baseDn
 	 * @param domainPattern
+	 * @param dnList
 	 */
 	public JScriptLdapQuery(LqlRequestCtx ctx, String baseDn, UserLdapPattern domainPattern, IDnList dnList) throws NamingException, IOException {
 		super();
@@ -177,7 +176,7 @@ public class JScriptLdapQuery {
 	 * 
 	 * @param pattern
 	 *            : could be first name, last name, or mail fragment.
-	 * @return
+	 * @return List<User>
 	 * @throws NamingException
 	 */
 	public List<User> complete(String pattern) throws NamingException {
@@ -203,7 +202,7 @@ public class JScriptLdapQuery {
 	 * Looking for a user using first name and last name. Only for auto-complete.
 	 * @param first_name
 	 * @param last_name
-	 * @return
+	 * @return List<User>
 	 * @throws NamingException
 	 */
 	public List<User> complete(String first_name, String last_name) throws NamingException {
@@ -233,7 +232,7 @@ public class JScriptLdapQuery {
 	 *            : completion mode return a user object with only mail,
 	 *            first name, and last name set. Otherwise all defined attributes
 	 *            will be search and set (mail, firstname, lastname, uid, ...)
-	 * @return List of user
+	 * @return List<User> List of user
 	 */
 	private List<User> dnListToUsersList(List<String> dnResultList, boolean completionMode) {
 		ControlContext controlContext = initControlContext(completionMode);
@@ -263,7 +262,7 @@ public class JScriptLdapQuery {
 	 * This function build user from input dn
 	 * @param dn
 	 * @param completionMode
-	 * @return
+	 * @return User
 	 * @throws NamingException
 	 */
 	private User dnToUser(String dn, boolean completionMode) throws NamingException {
@@ -411,7 +410,7 @@ public class JScriptLdapQuery {
 	 * Filtering database LDAP attributes map to get only attributes needed for
 	 * build a user.
 	 * 
-	 * @return
+	 * @return Map<String, LdapAttribute>
 	 */
 	private Map<String, LdapAttribute> getLdapDbAttribute() {
 		Map<String, LdapAttribute> dbAttributes = domainPattern.getAttributes();
@@ -450,7 +449,7 @@ public class JScriptLdapQuery {
 	 * @param mail
 	 * @param first_name
 	 * @param last_name
-	 * @return
+	 * @return List<User>
 	 * @throws NamingException
 	 */
 	public List<User> searchUser(String mail, String first_name, String last_name) throws NamingException {
@@ -516,7 +515,7 @@ public class JScriptLdapQuery {
 	 * test if a user exists using his mail. (entire mail, not a fragment)
 	 * 
 	 * @param mail
-	 * @return
+	 * @return Boolean
 	 * @throws NamingException
 	 */
 	public Boolean isUserExist(String mail) throws NamingException {
@@ -554,7 +553,7 @@ public class JScriptLdapQuery {
 	 * 
 	 * @param login
 	 * @param userPasswd
-	 * @return
+	 * @return User
 	 * @throws NamingException
 	 */
 	public User auth(LdapConnection ldapConnection, String login, String userPasswd) throws NamingException {
@@ -612,9 +611,9 @@ public class JScriptLdapQuery {
 	/**
 	 * search an user for Ldap Authentification process.
 	 * 
+	 * @param ldapConnection
 	 * @param login
-	 * @param userPasswd
-	 * @return
+	 * @return User
 	 * @throws NamingException
 	 */
 	public User searchForAuth(LdapConnection ldapConnection, String login) throws NamingException {
@@ -646,7 +645,7 @@ public class JScriptLdapQuery {
 	 * 
 	 * @param string
 	 *            : any string
-	 * @return
+	 * @return String
 	 */
 	private String addExpansionCharacters(String string) {
 		if (string == null || string.length() < 1) {

@@ -87,7 +87,7 @@ public interface GuestBusinessService {
 	 * @param lastName
 	 * @param mail
 	 * @param owner : if owner is not null, the search will be limited to all guests managed my the owner parameter.
-	 * @return
+	 * @return List<Guest>
 	 * @throws BusinessException
 	 */
 	List<Guest> search(List<AbstractDomain> authorizedDomains, String firstName, String lastName, String mail, Account owner) throws BusinessException;
@@ -96,8 +96,7 @@ public interface GuestBusinessService {
 	 * search a guest using input pattern as fragment of firstName or lastName or mail.
 	 * @param authorizedDomains
 	 * @param pattern
-	 * @param owner : if owner is not null, the search will be limited to all guests managed my the owner parameter.
-	 * @return
+	 * @return List<Guest>
 	 * @throws BusinessException
 	 */
 	List<Guest> search(List<AbstractDomain> authorizedDomains, String pattern) throws BusinessException;

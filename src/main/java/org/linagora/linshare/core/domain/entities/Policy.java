@@ -140,7 +140,7 @@ public class Policy implements Cloneable {
 
 	/**
 	 * this method returns true if a child can alter this policy 
-	 * @return
+	 * @return boolean
 	 */
 	public boolean isMutable() {
 		if(!system) {

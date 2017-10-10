@@ -47,7 +47,7 @@ public interface UserDailyStatBusinessService{
 	 * @param user : the targeted user
 	 * @param currentUsedSpace the current used space for the targeted user.
 	 * @param today
-	 * @return
+	 * @return UserDailyStat
 	 */
 	UserDailyStat create(User user, Long currentUsedSpace, Date today);
 

@@ -66,7 +66,7 @@ public class EntryRepositoryImpl extends AbstractRepositoryImpl<Entry>
 	/**
 	 * Find a entry using its uuid.
 	 * 
-	 * @param id
+	 * @param uuid
 	 * @return found document (null if no document found).
 	 */
 	@Override

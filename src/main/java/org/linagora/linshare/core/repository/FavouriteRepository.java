@@ -43,7 +43,7 @@ import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
  * @author ngapaillard
  *
  * @param <T> the type of element which is concerned by the weight.
- * @param <T> the type the owner of a favourite.
+ * @param <U> the type the owner of a favourite.
  * @param <V> the entity class concern by the favourite implementation used.
  */
 public interface FavouriteRepository<T,U,V> extends AbstractRepository<V>{

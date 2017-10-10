@@ -84,7 +84,7 @@ public interface FunctionalityService extends
 
 	/**
 	 * @param actor : a simple user
-	 * @return
+	 * @return Set<Functionality>
 	 * @throws BusinessException
 	 */
 	Set<Functionality> findAll(Account actor) throws BusinessException;
@@ -92,7 +92,7 @@ public interface FunctionalityService extends
 	/**
 	 * @param actor : a simple user
 	 * @param functionalityId
-	 * @return
+	 * @return Functionality
 	 * @throws BusinessException
 	 */
 	Functionality find(Account actor, String functionalityId) throws BusinessException;

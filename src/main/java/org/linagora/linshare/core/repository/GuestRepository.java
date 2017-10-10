@@ -44,11 +44,11 @@ import org.linagora.linshare.core.exception.BusinessException;
 public interface GuestRepository extends UserRepository<Guest> {
 	 /** Search some guests.
 	  * (start matching)
+	 * @param owner login of the user who creates the searched guest(s).
 	 * @param mail user mail.
 	 * @param firstName user first name.
 	 * @param lastName user last name.
-	 * @param ownerLogin login of the user who creates the searched guest(s).
-	 * @return a list of matching users.
+	 * @return List<Guest> a list of matching users.
 	 */
 	List<Guest> searchGuest(Account owner, String mail, String firstName, String lastName);
 
@@ -65,8 +65,7 @@ public interface GuestRepository extends UserRepository<Guest> {
 	 * @param mail user mail.
 	 * @param firstName user first name.
 	 * @param lastName user last name.
-	 * @param ownerLogin login of the user who creates the searched guest(s).
-	 * @return a list of matching users.
+	 * @return List<Guest> a list of matching users.
 	 */
 	List<Guest> searchGuestAnyWhere(String mail, String firstName, String lastName);
 	List<Guest> searchGuestAnyWhere(String firstName, String lastName);

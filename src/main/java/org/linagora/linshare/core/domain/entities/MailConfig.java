@@ -190,7 +190,7 @@ public class MailConfig implements Cloneable {
 	/**
 	 * Find a Footer by its Language
 	 * @param lang
-	 * @return
+	 * @return MailFooter
 	 */
 	public MailFooter findFooter(final Language lang) {
 		MailFooterLang f = mailFooters.get(lang.toInt());
@@ -206,7 +206,7 @@ public class MailConfig implements Cloneable {
 	 * 
 	 * @param lang
 	 * @param type
-	 * @return
+	 * @return MailContent
 	 */
 	public MailContent findContent(final Language lang,
 			final MailContentType type) {

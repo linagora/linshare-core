@@ -45,7 +45,7 @@ public interface AccountService {
 	 * @param uuid
 	 *            user identifier, should be lsUuid (or mail for compatibility,
 	 *            but this will be remove asap.)
-	 * @return
+	 * @return Account
 	 */
 	public Account findByLsUuid(String uuid);
 

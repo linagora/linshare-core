@@ -56,32 +56,32 @@ public interface DomainPolicyService {
 	/**
 	 * This method returns true if we have the right to communicate with itself.
 	 * @param domain
-	 * @return
+	 * @return boolean
 	 */
 	public boolean isAuthorizedToCommunicateWithItSelf(AbstractDomain domain);
 
 	/**
 	 * This method returns true if we have the right to communicate with its parent.
 	 * @param domain
-	 * @return
+	 * @return boolean
 	 */
 	public boolean isAuthorizedToCommunicateWithItsParent(AbstractDomain domain);
 	/**
 	 * This method returns a list of authorized sub domain, just the sub domain of the domain parameter. 
 	 * @param domain
-	 * @return
+	 * @return List<AbstractDomain>
 	 */
 	public List<AbstractDomain> getAuthorizedSubDomain(AbstractDomain domain);
 	/**
 	 * This method returns a list of all authorized sibling domain.
 	 * @param domain
-	 * @return
+	 * @return List<AbstractDomain>
 	 */
 	public List<AbstractDomain> getAuthorizedSibblingDomain(AbstractDomain domain);
 	/**
 	 * This method returns a list of all authorized domain. useful ?
 	 * @param domain
-	 * @return
+	 * @return List<AbstractDomain>
 	 */
 	public List<AbstractDomain> getAllAuthorizedDomain(AbstractDomain domain);
 }

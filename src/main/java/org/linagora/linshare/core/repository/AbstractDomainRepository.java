@@ -46,50 +46,50 @@ public interface AbstractDomainRepository extends AbstractRepository<AbstractDom
 
 	/**
 	 * return all TopDomain, SubDomain, GuestDomain and root domain identifiers
-	 * @return
+	 * @return List<String>
 	 */
 	public List<String> findAllDomainIdentifiers();
 
 	/**
 	 * return all TopDomain and SubDomain objects
-	 * @return
+	 * @return List<AbstractDomain>
 	 */
 	public List<AbstractDomain> findAllDomain();
 	
 	/**
 	 * return all TopDomain and SubDomain objects, excluding Guest and Root domains
-	 * @return
+	 * @return List<AbstractDomain>
 	 */
 	public List<AbstractDomain> findAllTopAndSubDomain();
 
 	/**
 	 * return all SubDomain and GuestDomain identifiers, excluding Top and Root domains
-	 * @return
+	 * @return List<String>
 	 */
 	public List<String> findAllGuestAndSubDomainIdentifiers();
 
 	/**
 	 * return all TopDomain objects
-	 * @return
+	 * @return List<AbstractDomain>
 	 */
 	public List<AbstractDomain> findAllTopDomain();
 	
 	/**
 	 * return all SubDomain objects
-	 * @return
+	 * @return List<AbstractDomain>
 	 */
 	public List<AbstractDomain> findAllSubDomain();
 
 	/**
 	 * return the unique root domain
-	 * @return
+	 * @return AbstractDomain
 	 */
 	public AbstractDomain getUniqueRootDomain() throws BusinessException;
 
 	/**
 	 * return all domains using cfg as their current mail configuration
 	 * @param cfg
-	 * @return
+	 * @return List<AbstractDomain>
 	 */
 	List<AbstractDomain> findByCurrentMailConfig(MailConfig cfg);
 

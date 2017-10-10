@@ -51,7 +51,7 @@ public interface AccountQuotaRepository extends GenericQuotaRepository<AccountQu
 	 * quota accounts.
 	 * @param startDate TODO
 	 * 
-	 * @return
+	 * @return List<String>
 	 */
 	List<String> findDomainUuidByBatchModificationDate(Date startDate);
 

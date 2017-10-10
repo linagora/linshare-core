@@ -69,14 +69,14 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 
 	/**
 	 * Search some guests. If given agument is null, it's not considered.
+	 * @param owner
+	 *            owner who creates the searched guest(s).
 	 * @param mail
 	 *            user mail.
 	 * @param firstName
 	 *            user first name.
 	 * @param lastName
 	 *            user last name.
-	 * @param ownerLogin
-	 *            login of the user who creates the searched guest(s).
 	 * 
 	 * @return a list of matching users.
 	 */
@@ -122,7 +122,7 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 	}
 
 	/**
-	 * @see GuestRepository#searchGuestAnyWhere(String, String, String, String)
+	 * @see GuestRepository#searchGuestAnyWhere(String, String, String)
 	 */
 	public List<Guest> searchGuestAnyWhere(String mail, String firstName, String lastName) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());

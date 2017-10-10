@@ -574,7 +574,7 @@ public class AESCrypt {
 	 * just check the file header BUT not the password (if we do not have it ...)
 	 * new function
 	 * @param fromPath
-	 * @return
+	 * @return boolean
 	 */
 	public boolean ckeckFileHeader(String fromPath) throws IOException {
 		
@@ -628,7 +628,7 @@ public class AESCrypt {
 	 * LINAGORA
 	 * check a file with a given password
 	 * new function
-	 * @return
+	 * @return boolean
 	 * @throws IOException 
 	 */
 	public boolean ckeckFileHeaderAndPassword(String fromPath) throws GeneralSecurityException, IOException {

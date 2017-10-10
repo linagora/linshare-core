@@ -47,7 +47,7 @@ public interface ContainerQuotaFacade {
 	 * Find all quota containers, you can filter them by domain and or by type.
 	 * @param domainUuid
 	 * @param type ContainerQuotaType
-	 * @return
+	 * @return List<ContainerQuotaDto>
 	 * @throws BusinessException
 	 */
 	List<ContainerQuotaDto> findAll(String domainUuid, ContainerQuotaType type) throws BusinessException;

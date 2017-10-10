@@ -61,7 +61,7 @@ public interface DocumentEntryService {
 	 * @param actor TODO
 	 * @param owner
 	 * @param documentUuid
-	 * @return TODO
+	 * @return DocumentEntry
 	 * @throws BusinessException
 	 */
 	public DocumentEntry delete(Account actor, Account owner, String documentUuid) throws BusinessException;
@@ -101,7 +101,7 @@ public interface DocumentEntryService {
 	 * @param actor
 	 * @param owner
 	 * @param uuid
-	 * @return
+	 * @return DocumentEntry
 	 * @throws BusinessException
 	 */
 	public DocumentEntry find(Account actor, Account owner, String uuid) throws BusinessException;

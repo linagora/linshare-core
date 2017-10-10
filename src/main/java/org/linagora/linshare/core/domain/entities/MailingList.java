@@ -217,7 +217,7 @@ public class MailingList {
 	 * Check if the actor parameter is the owner of the mailing list.
 	 * 
 	 * @param account
-	 * @return
+	 * @return MailingList
 	 */
 	public boolean isOwner(Account account) {
 		if (account.getLsUuid().equals(getOwner().getLsUuid())) {

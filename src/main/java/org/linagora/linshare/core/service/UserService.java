@@ -106,7 +106,7 @@ public interface UserService {
 
 	/**
 	 * Search user that are internal and in the DB but not in domains (=removed from ldap).
-	 * @return
+	 * @return List<User>
 	 */
 	List<User> searchAllBreakedUsers(User actor);
 	

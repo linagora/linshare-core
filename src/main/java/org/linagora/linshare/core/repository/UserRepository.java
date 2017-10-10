@@ -59,7 +59,7 @@ public interface UserRepository<T extends User> extends AccountRepository<T> {
     /**
      * Return a list of mails beginning with the text
      * @param beginWith
-     * @return
+     * @return List<String>
      */
     List<String> findMails(String beginWith);
     

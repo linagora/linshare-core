@@ -53,7 +53,7 @@ public interface MailingListBusinessService {
 	 * Find a mailing list by its uuid.
 	 * 
 	 * @param uuid
-	 * @return
+	 * @return MailingList
 	 * @throws BusinessException
 	 *             if not found.
 	 */
@@ -65,7 +65,7 @@ public interface MailingListBusinessService {
 	 * Find all list of the selected user (private and public)
 	 * 
 	 * @param user
-	 * @return
+	 * @return List<MailingList>
 	 */
 	List<MailingList> findAllListByUser(User user);
 
@@ -77,7 +77,7 @@ public interface MailingListBusinessService {
 	 * Find all list where user is owner
 	 * 
 	 * @param user
-	 * @return
+	 * @return List<MailingList>
 	 */
 	List<MailingList> findAllMyList(User user);
 
@@ -88,7 +88,7 @@ public interface MailingListBusinessService {
 	 * 
 	 * @param owner
 	 * @param isPublic
-	 * @return
+	 * @return List<MailingList>
 	 */
 	List<MailingList> findAllListByVisibility(User owner, boolean isPublic);
 
@@ -97,7 +97,7 @@ public interface MailingListBusinessService {
 	 * 
 	 * @param user
 	 * @param input
-	 * @return
+	 * @return List<MailingList>
 	 */
 	List<MailingList> searchMyLists(User user, String input);
 
@@ -106,7 +106,7 @@ public interface MailingListBusinessService {
 	 * 
 	 * @param user
 	 * @param input
-	 * @return
+	 * @return List<MailingList>
 	 */
 	List<MailingList> searchListByUser(User user, String input);
 
@@ -116,7 +116,7 @@ public interface MailingListBusinessService {
 	 * @param owner
 	 * @param isPublic
 	 * @param input
-	 * @return
+	 * @return List<MailingList>
 	 */
 	List<MailingList> searchListByVisibility(User owner, boolean isPublic, String input);
 
@@ -131,7 +131,7 @@ public interface MailingListBusinessService {
 	 * 
 	 * @param mailingList
 	 * @param contact
-	 * @return TODO
+	 * @return MailingListContact
 	 * @throws BusinessException
 	 */
 	MailingListContact addContact(MailingList mailingList, MailingListContact contact) throws BusinessException;

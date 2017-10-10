@@ -69,7 +69,7 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 	}
 
 	 /** Find a document using its id.
-     * @param id
+     * @param uuid
      * @return found document (null if no document found).
      */
 	@Override
