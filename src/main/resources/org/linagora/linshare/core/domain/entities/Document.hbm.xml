@@ -19,10 +19,12 @@
 		<property name="type" column="type" type="string" length="255" not-null="true" lazy="false" />
 		<property name="checkMimeType" column="check_mime_type" type="boolean" not-null="true" lazy="false" />
 		<property name="size" column="ls_size" type="long" not-null="true" lazy="false" />
+		<property name="thmbUuid" column="thmb_uuid" type="string" length="255" not-null="false" lazy="false" />
 		<property name="sha1sum" column="sha1sum" type="string" length="255" lazy="false"/>
 		<property name="sha256sum" column="sha256sum" type="string" length="255" lazy="false"/>
 		<property access="field" column="timestamp" name="timeStamp" type="binary" length="65535" />
 		<property name="hasThumbnail" column="has_thumbnail" type="boolean" not-null="true" lazy="false" />
+		<property name="computeThumbnail" column="compute_thumbnail" type="boolean" not-null="true" lazy="false" />
 		<set name="threadEntries" lazy="true" inverse="true">
 			<key column="document_id" not-null="true" />
 			<one-to-many class="org.linagora.linshare.core.domain.entities.ThreadEntry" />

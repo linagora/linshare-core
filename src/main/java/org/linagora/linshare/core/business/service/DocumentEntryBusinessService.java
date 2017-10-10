@@ -109,4 +109,6 @@ public interface DocumentEntryBusinessService {
 
 	void deleteDocument(Document document)
 			throws BusinessException;
+
+	boolean updateThumbnail(Document document, Account account) ;
 }

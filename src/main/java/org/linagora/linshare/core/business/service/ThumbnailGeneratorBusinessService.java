@@ -48,4 +48,7 @@ public interface ThumbnailGeneratorBusinessService {
 	void start();
 
 	void stop();
+
+	boolean isSupportedMimetype(String mimeType);
+
 }

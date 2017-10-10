@@ -70,4 +70,6 @@ public interface DocumentRepository extends AbstractRepository<Document>{
 
 	List<String> findAllDocumentsToUpgrade();
 
+	List<String> findAllDocumentWithComputeThumbnailEnabled();
+
 }

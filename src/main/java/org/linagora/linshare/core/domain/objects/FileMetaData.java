@@ -101,6 +101,18 @@ public class FileMetaData {
 		this.bucketUuid = document.getBucketUuid();
 	}
 
+	public FileMetaData(Document document) {
+		super();
+		this.uuid = document.getUuid();
+		if (document.getThmbUuid() != null) {
+			this.uuid = document.getThmbUuid();
+		}
+		this.kind = FileMetaDataKind.THUMBNAIL_MEDIUM;
+		this.mimeType = document.getType();
+		this.size = document.getSize();
+		this.bucketUuid = document.getBucketUuid();
+	}
+
 	public FileMetaData(Signature signature) {
 		super();
 		this.uuid = null;

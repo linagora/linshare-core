@@ -94,7 +94,8 @@ public class ThumbnailGeneratorRemoteBusinessServiceImpl implements ThumbnailGen
 		return computeAndStoreThumbnail(owner, metadata, mimeType, myFile);
 	}
 
-	protected boolean isSupportedMimetype(String mimeType) {
+	@Override
+	public boolean isSupportedMimetype(String mimeType) {
 		try {
 			final Response isSupported = ClientBuilder.newClient()
 					.target(getLinthumbnailWebServiceLink(mimeType)).request().get(Response.class);

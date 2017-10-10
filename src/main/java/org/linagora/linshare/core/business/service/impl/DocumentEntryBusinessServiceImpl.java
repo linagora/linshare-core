@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.cxf.helpers.IOUtils;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampResponse;
@@ -302,7 +303,9 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 				metadata.setFileName(fileName);
 				metadata = fileDataStore.add(myFile, metadata);
 				// Computing and storing thumbnail
-				fileMetadataThumbnail = thumbnailGeneratorService.getThumbnails(owner, myFile, metadata, mimeType);
+				if (thumbnailGeneratorService.isSupportedMimetype(mimeType)) {
+					fileMetadataThumbnail = thumbnailGeneratorService.getThumbnails(owner, myFile, metadata, mimeType);
+				}
 				byte[] timestampToken = getTimeStamp(fileName, myFile, timeStampingUrl);
 				document = new Document(metadata);
 				document.setTimeStamp(timestampToken);
@@ -469,7 +472,9 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			metadata = fileDataStore.add(myFile, metadata);
 
 			// Computing and storing thumbnail
-			fileMetadataThumbnail = thumbnailGeneratorService.getThumbnails(owner, myFile, metadata, mimeType);
+			if (thumbnailGeneratorService.isSupportedMimetype(mimeType)) {
+				fileMetadataThumbnail = thumbnailGeneratorService.getThumbnails(owner, myFile, metadata, mimeType);
+			}
 			try {
 				// want a timestamp on doc ?
 				byte[] timestampToken = null;
@@ -742,6 +747,43 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	@Override
 	public List<String> findAllExpiredEntries() {
 		return documentEntryRepository.findAllExpiredEntries();
+	}
+
+	@Override
+	public boolean updateThumbnail(Document document, Account account) {
+		Map<ThumbnailType, FileMetaData> fileMetadataThumbnail = Maps.newHashMap();
+		if (thumbnailGeneratorService.isSupportedMimetype(document.getType())) {
+			FileMetaData fileMetaData = new FileMetaData(FileMetaDataKind.DATA, document);
+			if (fileDataStore.exists(fileMetaData)) {
+				File myFile = null;
+				try (InputStream stream = fileDataStore.get(fileMetaData);) {
+					FileMetaData thmbMetadata = new FileMetaData(document);
+					if (fileDataStore.exists(thmbMetadata)) {
+						fileDataStore.remove(thmbMetadata);
+						document.setThmbUuid(null);
+					}
+					myFile = File.createTempFile("temp", "file");
+					FileUtils.copyInputStreamToFile(stream, myFile);
+					fileMetadataThumbnail = thumbnailGeneratorService.getThumbnails(account, myFile, fileMetaData,
+							document.getType());
+					Map<ThumbnailType, Thumbnail> fileThumbnails = toFileThumbnail(document, fileMetadataThumbnail);
+					if (!fileThumbnails.isEmpty()) {
+						document.setHasThumbnail(true);
+						document.setThumbnail(fileThumbnails);
+					}
+					documentRepository.update(document);
+					logger.info("Update the document to generate Thumbnail succes " + document.getRepresentation());
+					return true;
+				} catch (IOException io) {
+					throw new BusinessException("failed to get the document");
+				} finally {
+					if (myFile != null) {
+						myFile.delete();
+					}
+				}
+			}
+		}
+		throw new BusinessException("failed to update the thumbnail");
 	}
 
 	protected boolean exists(Thread workGroup, String fileName, WorkGroupNode nodeParent) {

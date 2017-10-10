@@ -42,18 +42,20 @@ CREATE TABLE cookie (
   CONSTRAINT linshare_cookie_pkey
     PRIMARY KEY (cookie_id));
 CREATE TABLE document (
-  id                      int8 NOT NULL,
-  uuid                   varchar(255) NOT NULL UNIQUE,
-  bucket_uuid            varchar(255),
-  creation_date          timestamp NOT NULL,
-  type                   varchar(255) NOT NULL,
-  ls_size                int8 NOT NULL,
-  timestamp       bytea,
-  check_mime_type bool DEFAULT 'false' NOT NULL,
-  sha1sum         varchar(255),
-  sha256sum       varchar(255) NOT NULL,
-  to_upgrade      bool DEFAULT 'false' NOT NULL,
-  has_thumbnail   bool DEFAULT 'false' NOT NULL,
+  id                int8 NOT NULL,
+  uuid             varchar(255) NOT NULL UNIQUE,
+  bucket_uuid      varchar(255),
+  creation_date    timestamp NOT NULL,
+  type             varchar(255) NOT NULL,
+  ls_size          int8 NOT NULL,
+  timestamp        bytea,
+  check_mime_type  bool DEFAULT 'false' NOT NULL,
+  sha1sum          varchar(255),
+  sha256sum        varchar(255),
+  to_upgrade       bool DEFAULT 'false' NOT NULL,
+  has_thumbnail    bool DEFAULT 'false' NOT NULL,
+  computeThumbnail bool DEFAULT 'false' NOT NULL,
+  thmbUuid         varchar(255) NOT NULL,
   CONSTRAINT linshare_document_pkey
     PRIMARY KEY (id));
 CREATE TABLE document_entry (

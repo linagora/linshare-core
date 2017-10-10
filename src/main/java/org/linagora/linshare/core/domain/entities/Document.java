@@ -102,6 +102,13 @@ public class Document implements Serializable {
 
 	protected Map<ThumbnailType, Thumbnail> thumbnail;
 
+	/**
+	 * technical field, used to compute thumbnails batch.
+	 */
+	protected Boolean computeThumbnail;
+
+	protected String thmbUuid;
+
 	/* Constructor for tests */
 	public Document(String uuid, String name, String type, Calendar creationDate,
 			Calendar expirationDate, User owner, Boolean encrypted,
@@ -115,6 +122,7 @@ public class Document implements Serializable {
 		this.checkMimeType = false;
 		this.toUpgrade = false;
 		this.hasThumbnail = false;
+		this.computeThumbnail = false;
 	}
 
 	/**
@@ -136,6 +144,7 @@ public class Document implements Serializable {
 		this.bucketUuid = metadata.getBucketUuid();
 		this.toUpgrade = false;
 		this.hasThumbnail = false;
+		this.computeThumbnail = false;
 	}
 
 	@Deprecated
@@ -149,6 +158,7 @@ public class Document implements Serializable {
 		this.checkMimeType = false;
 		this.toUpgrade = false;
 		this.hasThumbnail = false;
+		this.computeThumbnail = false;
 	}
 
 	@Override
@@ -284,13 +294,13 @@ public class Document implements Serializable {
 	public String toString() {
 		return "Document [uuid=" + uuid + ", creationDate=" + creationDate.getTimeInMillis()
 				+ ", type=" + type + ", size=" + size + ", sha256sum="
-				+ sha256sum + "]";
+				+ sha256sum + ", hasThumbnail=" + hasThumbnail + "]";
 	}
 
 	public String getRepresentation() {
 		return "Document [uuid=" + uuid
 				+ ", type=" + type + ", size=" + size + ", sha256sum="
-				+ sha256sum + "]";
+				+ sha256sum + ", hasThumbnail=" + hasThumbnail + "]";
 	}
 
 	public Boolean getToUpgrade() {
@@ -315,5 +325,21 @@ public class Document implements Serializable {
 
 	public void setThumbnail(Map<ThumbnailType, Thumbnail> thumbnail) {
 		this.thumbnail = thumbnail;
+	}
+
+	public Boolean getComputeThumbnail() {
+		return computeThumbnail;
+	}
+
+	public void setComputeThumbnail(Boolean computeThumbnail) {
+		this.computeThumbnail = computeThumbnail;
+	}
+
+	public String getThmbUuid() {
+		return thmbUuid;
+	}
+
+	public void setThmbUuid(String thmbUuid) {
+		this.thmbUuid = thmbUuid;
 	}
 }

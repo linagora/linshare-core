@@ -4,17 +4,17 @@
 
 
 INSERT INTO contact(id, mail) VALUES (2, 'yoda@linshare.org');
-INSERT INTO document (id, uuid, creation_date, type, ls_size, check_mime_type, has_thumbnail)
-	VALUES (1, '92ce81a8-3e87-413b-82c6-8ae9940aae9e', now(), 'data', 1024, false, false);
+INSERT INTO document (id, uuid, creation_date, type, ls_size, check_mime_type, has_thumbnail, compute_thumbnail)
+	VALUES (1, '92ce81a8-3e87-413b-82c6-8ae9940aae9e', now(), 'data', 1024, false, false, true);
 
-INSERT INTO document (id, uuid, creation_date, type, ls_size, check_mime_type, has_thumbnail)
-	VALUES (2, '7ea9644c-7870-4c85-abfe-7adefa7207ba', now(), 'data', 1024, false, false);
+INSERT INTO document (id, uuid, creation_date, type, ls_size, check_mime_type, has_thumbnail, compute_thumbnail)
+	VALUES (2, '7ea9644c-7870-4c85-abfe-7adefa7207ba', now(), 'data', 1024, false, false, true);
 
-INSERT INTO document (id, uuid, creation_date, type, ls_size, check_mime_type, has_thumbnail)
-	VALUES (3, '113c7cc6-3ddc-4c17-bdbf-9254ad4e0f4f', now(), 'data', 1024, false, false);
+INSERT INTO document (id, uuid, creation_date, type, ls_size, check_mime_type, has_thumbnail, compute_thumbnail)
+	VALUES (3, '113c7cc6-3ddc-4c17-bdbf-9254ad4e0f4f', now(), 'data', 1024, false, false, true);
 
-INSERT INTO document (id, uuid, creation_date, type, ls_size, check_mime_type, has_thumbnail)
-	VALUES (4, 'b82ff544-41ab-11e5-9e6f-080027b8274b', now(), 'data', 1024, false, false);
+INSERT INTO document (id, uuid, creation_date, type, ls_size, check_mime_type, has_thumbnail, compute_thumbnail)
+	VALUES (4, 'b82ff544-41ab-11e5-9e6f-080027b8274b', now(), 'data', 1024, false, false, true);
 
 
 -- Share 1 - one share was downloaded : 1/4

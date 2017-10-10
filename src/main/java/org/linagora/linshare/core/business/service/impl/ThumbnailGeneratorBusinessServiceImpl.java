@@ -96,6 +96,11 @@ public class ThumbnailGeneratorBusinessServiceImpl implements ThumbnailGenerator
 		return this.thumbnailService.getFactory();
 	}
 
+	@Override
+	public boolean isSupportedMimetype(String mimeType) {
+		return thumbnailService.getFactory().isSupportedMimeType(mimeType);
+	}
+
 	protected Map<ThumbnailType, FileMetaData> computeAndStoreThumbnail(Account owner, FileMetaData metadata,
 			FileResource fileResource) {
 		FileMetaData metadataThumb = null;

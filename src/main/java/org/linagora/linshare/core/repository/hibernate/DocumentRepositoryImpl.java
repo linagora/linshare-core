@@ -122,4 +122,14 @@ public class DocumentRepositoryImpl extends AbstractRepositoryImpl<Document> imp
 		List<String> list = listByCriteria(crit);
 		return list;
 	}
+
+	@Override
+	public List<String> findAllDocumentWithComputeThumbnailEnabled() {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.setProjection(Projections.property("uuid"));
+		criteria.add(Restrictions.eq("computeThumbnail", Boolean.TRUE));
+		@SuppressWarnings("unchecked")
+		List<String> list = listByCriteria(criteria);
+		return list;
+	}
 }
