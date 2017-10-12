@@ -18,6 +18,12 @@ function usage ()
     exit 1
 }
 
+if [ ! -f /usr/bin/uuid ] ; then
+    echo
+    echo "Missing uuid command. please install uuid tool."
+    echo
+    exit 1
+fi
 
 if [ -z "${l_offset}" ] ; then
     usage
