@@ -27,6 +27,19 @@ echo "pg_dump : $g_pg_dump"
 echo "#############################"
 
 
+function usage ()
+{
+    echo
+    echo "Usage : $0 <action>"
+    echo "  action = all : automatic mode."
+    echo "  action = dump : only dump database."
+    echo "  action = help : display all others actions."
+    echo
+    exit 1
+}
+
+
+
 function dump_and_clean ()
 {
     echo dump and clean database : $g_host : $g_port : $g_database  : $g_user
@@ -118,6 +131,12 @@ function update_migration_1_12 ()
 
 
 ####### MAIN
+
+if [ -z "${g_step}" ] ; then
+    usage
+fi
+
+
 rm -fv ${g_output}  ${g_output_clean}
 
 if [ "${g_step}" == "help" ] ; then
@@ -131,18 +150,22 @@ fi
 
 if [ "${g_step}" == "dump" ] ; then
     dump_and_clean
+    exit 0
 fi
 
-if [ -z "${g_step}" ] ; then
+if [ "${g_step}" == "all" ] ; then
     dump_and_clean
     update_postgresql
     update_embedded
     update_reset_script
     # Only useful to upgrade migration script 1.12 to 2.0
     # update_migration_1_12
-else
-    for func in ${g_step}
-    do
-        $func
-    done
+    exit 0
 fi
+
+# other wise , last choice.
+for func in ${g_step}
+do
+    echo RUNNING : $func
+    $func
+done
