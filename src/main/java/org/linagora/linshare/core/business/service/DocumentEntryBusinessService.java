@@ -39,6 +39,7 @@ import java.io.InputStream;
 import java.util.Calendar;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
@@ -110,5 +111,5 @@ public interface DocumentEntryBusinessService {
 	void deleteDocument(Document document)
 			throws BusinessException;
 
-	boolean updateThumbnail(Document document, Account account) ;
+	boolean updateThumbnail(Document document, Account account, FileMetaDataKind kind) ;
 }

@@ -82,6 +82,8 @@ public class FileMetaData {
 		this.uuid = document.getUuid();
 		if (document.getHasThumbnail() && ThumbnailType.getThumbnailType(kind) != null) {
 			this.uuid = document.getThumbnail().get(ThumbnailType.getThumbnailType(kind)).getThumbnailUuid();
+		} else if (kind.equals(FileMetaDataKind.THUMBNAIL)) {
+			this.uuid = document.getThmbUuid();
 		}
 		this.kind = kind;
 		this.mimeType = document.getType();
@@ -98,18 +100,6 @@ public class FileMetaData {
 		this.kind = kind;
 		this.mimeType = mimeType;
 		this.size = null;
-		this.bucketUuid = document.getBucketUuid();
-	}
-
-	public FileMetaData(Document document) {
-		super();
-		this.uuid = document.getUuid();
-		if (document.getThmbUuid() != null) {
-			this.uuid = document.getThmbUuid();
-		}
-		this.kind = FileMetaDataKind.THUMBNAIL_MEDIUM;
-		this.mimeType = document.getType();
-		this.size = document.getSize();
 		this.bucketUuid = document.getBucketUuid();
 	}
 

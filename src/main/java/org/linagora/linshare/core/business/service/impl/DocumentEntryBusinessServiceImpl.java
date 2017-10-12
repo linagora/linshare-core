@@ -749,17 +749,20 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	}
 
 	@Override
-	public boolean updateThumbnail(Document document, Account account) {
+	public boolean updateThumbnail(Document document, Account account, FileMetaDataKind kind) {
 		Map<ThumbnailType, FileMetaData> fileMetadataThumbnail = Maps.newHashMap();
 		if (thumbnailGeneratorService.isSupportedMimetype(document.getType())) {
 			FileMetaData fileMetaData = new FileMetaData(FileMetaDataKind.DATA, document);
 			if (fileDataStore.exists(fileMetaData)) {
 				File myFile = null;
 				try (InputStream stream = fileDataStore.get(fileMetaData);) {
-					FileMetaData thmbMetadata = new FileMetaData(document);
-					if (fileDataStore.exists(thmbMetadata)) {
-						fileDataStore.remove(thmbMetadata);
-						document.setThmbUuid(null);
+					String oldThumbUuid = document.getThmbUuid();
+					if (oldThumbUuid != null && oldThumbUuid.length() > 0) {
+						FileMetaData thmbMetadata = new FileMetaData(kind, document);
+						if (fileDataStore.exists(thmbMetadata)) {
+							fileDataStore.remove(thmbMetadata);
+							document.setThmbUuid(null);
+						}
 					}
 					myFile = File.createTempFile("temp", "file");
 					FileUtils.copyInputStreamToFile(stream, myFile);
