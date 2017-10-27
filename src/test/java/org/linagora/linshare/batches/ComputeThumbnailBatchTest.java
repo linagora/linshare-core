@@ -48,13 +48,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
+import org.linagora.linshare.core.dao.FileDataStore;
+import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.job.quartz.BatchRunContext;
-import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.runner.BatchRunner;
@@ -101,6 +102,9 @@ public class ComputeThumbnailBatchTest extends AbstractTransactionalJUnit4Spring
 	@Autowired
 	private DocumentRepository documentRepository;
 
+	@Autowired
+	private FileDataStore fileDataStore;
+
 	private LoadingServiceTestDatas datas;
 
 	private User jane;
@@ -129,24 +133,21 @@ public class ComputeThumbnailBatchTest extends AbstractTransactionalJUnit4Spring
 
 	@Test
 	public void testBatchExecution() throws BusinessException, JobExecutionException, IOException {
-		createDocument();
-		BatchRunContext batchRunContext = new BatchRunContext();
-		List<String> l = computeThumbnailBatch.getAll(batchRunContext);
-		Assert.assertEquals(l.size(), 1);
-		ResultContext batchResult;
-		for (int i = 0; i < l.size(); i++) {
-			batchResult = computeThumbnailBatch.execute(batchRunContext, l.get(i), l.size(), i);
-			Assert.assertEquals(batchResult.getIdentifier(), l.get(i));
-			if (batchResult != null) {
-				computeThumbnailBatch.notify(batchRunContext, batchResult, l.size(), i);
-			}
-		}
-		l = computeThumbnailBatch.getAll(batchRunContext);
-		Assert.assertEquals(l.size(), 1);
+		Document document = createDocument();
+		documentRepository.update(document);
+		Assert.assertTrue(document != null);
+		Assert.assertTrue(document.getThmbUuid() != null);
+		List<GenericBatch> batches = Lists.newArrayList();
+		batches.add(computeThumbnailBatch);
+		Assert.assertTrue("At least one batch failed.", batchRunner.execute(batches));
+		Assert.assertTrue(document.getThmbUuid() == null);
+		FileMetaData thmbMetadata = new FileMetaData(FileMetaDataKind.THUMBNAIL, document);
+		Assert.assertTrue(thmbMetadata.getUuid() == null);
 	}
 
-	private void createDocument() throws BusinessException, IOException {
+	private Document createDocument() throws BusinessException, IOException {
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		tempFile.deleteOnExit();
 		InputStream stream = Thread.currentThread().getContextClassLoader()
 				.getResourceAsStream("linshare-default.properties");
 		IOUtils.copy(stream, new FileOutputStream(tempFile));
@@ -154,9 +155,13 @@ public class ComputeThumbnailBatchTest extends AbstractTransactionalJUnit4Spring
 		DocumentEntry createDocumentEntry = documentEntryBusinessService.createDocumentEntry(jane, tempFile,
 				tempFile.length(), "file", null, false, null, "text/plain", cal, false, null);
 		Document document = createDocumentEntry.getDocument();
+		File tempThmbFile = File.createTempFile("thumbnail", "png");
+		tempFile.deleteOnExit();
+		FileMetaData metaDataThmb = new FileMetaData(FileMetaDataKind.THUMBNAIL_SMALL, "image/png",
+				tempThmbFile.length(), "thumbnail");
+		metaDataThmb = fileDataStore.add(tempThmbFile, metaDataThmb);
+		document.setThmbUuid(metaDataThmb.getUuid());
 		document.setComputeThumbnail(true);
-		documentRepository.update(document);
-		Assert.assertTrue(documentEntryBusinessService.find(createDocumentEntry.getUuid())
-		 != null);
+		return document;
 	}
 }

@@ -137,7 +137,7 @@ public class DocumentEntryBusinessServiceImplTest extends AbstractTransactionalJ
 				tempFile.length(), "file.txt", null, false, null, "text/plain", cal, false, null);
 		Assert.assertTrue(documentEntryBusinessService.find(createDocumentEntry.getUuid()) != null);
 		Document document = createDocumentEntry.getDocument();
-		Map<ThumbnailType, Thumbnail> thumbnails = document.getThumbnail();
+		Map<ThumbnailType, Thumbnail> thumbnails = document.getThumbnails();
 		documentEntryRepository.delete(createDocumentEntry);
 		documentEntryBusinessService.deleteDocument(document);
 		Assert.assertTrue(documentRepository.findByUuid(document.getUuid()) == null);

@@ -70,14 +70,6 @@ CREATE TABLE document_entry (
   PRIMARY KEY (entry_id),
   CONSTRAINT "unique document entry"
     UNIQUE (entry_id, document_id));
-CREATE TABLE thumbnail (
-  id                      int8 NOT NULL,
-  thumbnail_uuid         varchar(255) NOT NULL UNIQUE,
-  thumbnail_type         varchar(255) NOT NULL,
-  creation_date          timestamp NOT NULL,
-  document_id            int8,
-  CONSTRAINT linshare_thumbnail_pkey
-    PRIMARY KEY (id));
 CREATE TABLE domain_abstract (
   id                   int8 NOT NULL,
   type                int4 NOT NULL,
@@ -797,12 +789,13 @@ CREATE TABLE upgrade_task (
   priority          varchar(255) NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE thumbnail (
-  id              int8 NOT NULL,
-  document_id    int8 NOT NULL,
-  uuid           varchar(255) NOT NULL,
-  thumbnail_type varchar(255) NOT NULL,
-  creationdate   date NOT NULL,
-  PRIMARY KEY (id));
+  id                      int8 NOT NULL,
+  uuid                   varchar(255) NOT NULL UNIQUE,
+  thumbnail_type         varchar(255) NOT NULL,
+  creation_date          timestamp NOT NULL,
+  document_id            int8,
+  CONSTRAINT linshare_thumbnail_pkey
+    PRIMARY KEY (id));
 CREATE UNIQUE INDEX account_lsuid_index
   ON account (ls_uuid);
 CREATE UNIQUE INDEX account_ls_uuid

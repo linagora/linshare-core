@@ -39,7 +39,6 @@ import java.util.List;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.ThumbnailGeneratorBusinessService;
 import org.linagora.linshare.core.dao.FileDataStore;
-import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.exception.BatchBusinessException;
@@ -90,7 +89,7 @@ public class ComputeThumbnailBatchImpl extends GenericBatchImpl {
 		logInfo(batchRunContext, total, position, "processing document : " + document.getRepresentation());
 		ResultContext context = new BatchResultContext<Document>(document);
 		try {
-			documentEntryBusinessService.updateThumbnail(document, getSystemAccount(), FileMetaDataKind.THUMBNAIL);
+			documentEntryBusinessService.updateThumbnail(document, getSystemAccount());
 			console.logInfo(batchRunContext, "document updated ", document.getRepresentation());
 			context.setIdentifier(identifier);
 			context.setProcessed(true);

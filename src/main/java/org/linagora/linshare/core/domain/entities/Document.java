@@ -100,7 +100,7 @@ public class Document implements Serializable {
 
 	protected Boolean hasThumbnail;
 
-	protected Map<ThumbnailType, Thumbnail> thumbnail;
+	protected Map<ThumbnailType, Thumbnail> thumbnails;
 
 	/**
 	 * technical field, used to compute thumbnails batch.
@@ -319,12 +319,12 @@ public class Document implements Serializable {
 		this.hasThumbnail = hasThumbnail;
 	}
 
-	public Map<ThumbnailType, Thumbnail> getThumbnail() {
-		return thumbnail;
+	public Map<ThumbnailType, Thumbnail> getThumbnails() {
+		return thumbnails;
 	}
 
-	public void setThumbnail(Map<ThumbnailType, Thumbnail> thumbnail) {
-		this.thumbnail = thumbnail;
+	public void setThumbnails(Map<ThumbnailType, Thumbnail> thumbnail) {
+		this.thumbnails = thumbnail;
 	}
 
 	public Boolean getComputeThumbnail() {

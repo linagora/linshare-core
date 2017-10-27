@@ -68,9 +68,6 @@ public interface WorkGroupNodeFacade extends GenericFacade {
 	Response download(String ownerUuid, String workGroupUuid, String workGroupNodeUuid) throws BusinessException;
 
 	Response thumbnail(String ownerUuid, String workGroupUuid, String workGroupNodeUuid, boolean base64, ThumbnailType thumbnailType) throws BusinessException;
-//
-//	WorkGroupEntryDto update(String ownerUuid, String threadUuid, String threadEntryUuid,
-//			WorkGroupEntryDto threadEntryDto) throws BusinessException;
 
 	Set<AuditLogEntryUser> findAll(String ownerUuid, String workGroupUuid, String workGroupNodeUuid, List<String> actions, List<String> types, String beginDate, String endDate);
 }

@@ -40,7 +40,7 @@
 		<property name="toUpgrade" type="boolean" not-null="true" lazy="false">
 				<column name="to_upgrade" not-null="false" default="false" />
 		</property>
-		<map name="thumbnail" lazy="true" cascade="all" inverse="false">
+		<map name="thumbnails" lazy="true" cascade="all" inverse="false">
 			<key column="document_id" not-null="true" />
 			<index column="thumbnail_type" type="thumbnailType" />
 			<one-to-many class="org.linagora.linshare.core.domain.entities.Thumbnail" />

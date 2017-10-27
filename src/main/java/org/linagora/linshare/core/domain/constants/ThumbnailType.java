@@ -38,6 +38,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.sis.util.NullArgumentException;
 import org.linagora.LinThumbnail.utils.ThumbnailKind;
 import org.linagora.linshare.core.domain.entities.Document;
+import org.linagora.linshare.core.domain.entities.Thumbnail;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 
@@ -56,7 +57,10 @@ public enum ThumbnailType {
 	public static String getThmbUuid(FileMetaDataKind dataKind, Document doc) {
 		try {
 			if (getThumbnailType(dataKind) != null) {
-				return doc.getThumbnail().get(getThumbnailType(dataKind)).getThumbnailUuid();
+				Thumbnail thumbnail = doc.getThumbnails().get(getThumbnailType(dataKind));
+				if (thumbnail != null) {
+					return thumbnail.getThumbnailUuid();
+				}
 			}
 		} catch (RuntimeException e) {
 			throw new IllegalArgumentException("Doesn't match an existing Thumbnailkind");

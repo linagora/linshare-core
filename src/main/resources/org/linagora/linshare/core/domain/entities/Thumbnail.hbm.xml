@@ -8,7 +8,7 @@
 		<id name="id" column="id" type="long" unsaved-value="0">
 			<generator class="native" />
 		</id>
-		<property name="thumbnailUuid" column="thumbnail_uuid" type="string" length="255" not-null="true" lazy="false" />
+		<property name="thumbnailUuid" column="uuid" type="string" length="255" not-null="true" lazy="false" />
 		<property name="creationDate" column="creation_date" type="timestamp" not-null="true" lazy="false" />
 	</class>
 </hibernate-mapping>

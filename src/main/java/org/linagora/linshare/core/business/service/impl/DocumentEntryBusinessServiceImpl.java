@@ -212,7 +212,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 
 	protected InputStream getDocumentThumbnailStream(Document doc, ThumbnailType kind,
 			FileMetaDataKind fileMetaDataKind) {
-		Map<ThumbnailType, Thumbnail> thumbnailMap = doc.getThumbnail();
+		Map<ThumbnailType, Thumbnail> thumbnailMap = doc.getThumbnails();
 		if (thumbnailMap.containsKey(kind)) {
 			FileMetaData metadata = new FileMetaData(fileMetaDataKind, doc);
 			try (InputStream stream = fileDataStore.get(metadata)){
@@ -229,7 +229,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	@Override
 	public InputStream getThreadEntryThumbnailStream(WorkGroupDocument entry, ThumbnailType kind) {
 		Document doc = documentRepository.findByUuid(entry.getDocumentUuid());
-		Map<ThumbnailType, Thumbnail> thumbnailMap = doc.getThumbnail();
+		Map<ThumbnailType, Thumbnail> thumbnailMap = doc.getThumbnails();
 		FileMetaDataKind fileMetaDataKind = ThumbnailType.toFileMetaDataKind(kind);
 		if (thumbnailMap.containsKey(kind)) {
 			FileMetaData metadata = new FileMetaData(fileMetaDataKind, doc);
@@ -313,7 +313,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 				if (!fileMetadataThumbnail.isEmpty()) {
 					Map<ThumbnailType, Thumbnail> fileThumbnails = toFileThumbnail(document, fileMetadataThumbnail);
 					document.setHasThumbnail(true);
-					document.setThumbnail(fileThumbnails);
+					document.setThumbnails(fileThumbnails);
 				}
 				document = documentRepository.create(document);
 			} else {
@@ -488,7 +488,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 				if (!fileMetadataThumbnail.isEmpty()) {
 					Map<ThumbnailType, Thumbnail> fileThumbnails = toFileThumbnail(document, fileMetadataThumbnail);
 					document.setHasThumbnail(true);
-					document.setThumbnail(fileThumbnails);
+					document.setThumbnails(fileThumbnails);
 				}
 				return documentRepository.create(document);
 			} catch (Exception e) {
@@ -555,7 +555,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 				Map<ThumbnailType, Thumbnail> fileThumbnails = toFileThumbnail(document, fileMetaDataThumbnail);
 				if (!fileThumbnails.isEmpty()) {
 					document.setHasThumbnail(true);
-					document.setThumbnail(fileThumbnails);
+					document.setThumbnails(fileThumbnails);
 				}
 				document = documentRepository.create(document);
 			} catch (BusinessException e) {
@@ -647,7 +647,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	private void deleteThumbnail(Document document) {
 		for (ThumbnailType kind : ThumbnailType.values()) {
 			FileMetaDataKind fileMetaDataKind = ThumbnailType.toFileMetaDataKind(kind);
-			Thumbnail thumbnail = document.getThumbnail().get(kind);
+			Thumbnail thumbnail = document.getThumbnails().get(kind);
 			if (thumbnail != null) {
 				logger.info("suppression of " + fileMetaDataKind + " Thumb, Uuid : " + thumbnail.getThumbnailUuid());
 				FileMetaData metadata = new FileMetaData(fileMetaDataKind, document, "image/png");
@@ -749,7 +749,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	}
 
 	@Override
-	public boolean updateThumbnail(Document document, Account account, FileMetaDataKind kind) {
+	public boolean updateThumbnail(Document document, Account account) {
 		Map<ThumbnailType, FileMetaData> fileMetadataThumbnail = Maps.newHashMap();
 		if (thumbnailGeneratorService.isSupportedMimetype(document.getType())) {
 			FileMetaData fileMetaData = new FileMetaData(FileMetaDataKind.DATA, document);
@@ -758,7 +758,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 				try (InputStream stream = fileDataStore.get(fileMetaData);) {
 					String oldThumbUuid = document.getThmbUuid();
 					if (oldThumbUuid != null && oldThumbUuid.length() > 0) {
-						FileMetaData thmbMetadata = new FileMetaData(kind, document);
+						FileMetaData thmbMetadata = new FileMetaData(FileMetaDataKind.THUMBNAIL, document);
 						if (fileDataStore.exists(thmbMetadata)) {
 							fileDataStore.remove(thmbMetadata);
 							document.setThmbUuid(null);
@@ -771,7 +771,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 					Map<ThumbnailType, Thumbnail> fileThumbnails = toFileThumbnail(document, fileMetadataThumbnail);
 					if (!fileThumbnails.isEmpty()) {
 						document.setHasThumbnail(true);
-						document.setThumbnail(fileThumbnails);
+						document.setThumbnails(fileThumbnails);
 					}
 					documentRepository.update(document);
 					logger.info("Update the document to generate Thumbnail succes " + document.getRepresentation());
