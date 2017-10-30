@@ -304,6 +304,7 @@
 	<b:bean id="roleVoter" class="org.springframework.security.access.vote.RoleVoter" />
 
 	<b:bean id="lemonLDAPFilter" class="org.linagora.linshare.auth.sso.PreAuthenticationHeader">
+		<b:constructor-arg value="${sso.header.allowfrom.enable}" />
 		<b:constructor-arg value="${sso.header.allowfrom}" />
 		<b:property name="principalRequestHeader" value="${sso.header.user}" />
 		<b:property name="domainRequestHeader" value="${sso.header.domain}" />

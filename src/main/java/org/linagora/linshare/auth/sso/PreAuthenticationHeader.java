@@ -72,8 +72,11 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 	/** List of IP / DNS hostname */
 	private List<String> authorizedAddresses;
 
-	public PreAuthenticationHeader(String authorizedAddressesList) {
+	private Boolean authorizedAddressesEnable;
+
+	public PreAuthenticationHeader(Boolean authorizedAddressesEnable, String authorizedAddressesList) {
 		super();
+		this.authorizedAddressesEnable = authorizedAddressesEnable;
 		if (authorizedAddressesList != null) {
 			List<String> asList = Arrays.asList(authorizedAddressesList
 					.split(","));
@@ -91,21 +94,27 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 		if (domainIdentifier == null)	domainIdentifier = request.getHeader(domainRequestHeader);
 
 		if (authenticationHeader != null) {
-			if (!authorizedAddresses.contains(request.getRemoteAddr())) {
-				logger.error("SECURITY ALERT: Unauthorized header value '"
+			if (authorizedAddressesEnable) {
+				if (!authorizedAddresses.contains(request.getRemoteAddr())) {
+					logger.error("SECURITY ALERT: Unauthorized header value '"
+							+ authenticationHeader + "' from IP: "
+							+ request.getRemoteAddr() + ":"
+							+ request.getRemotePort());
+					return null;
+				}
+			} else {
+				logger.debug("Injected header value '"
 						+ authenticationHeader + "' from IP: "
 						+ request.getRemoteAddr() + ":"
 						+ request.getRemotePort());
-				return null;
-			} else {
-				User foundUser = getPreAuthenticatedUser(authenticationHeader, domainIdentifier);
-				if (foundUser == null) {
-					logger.debug("No user was found with : " + authenticationHeader);
-					logger.warn("PreAuthenticationHeader (SSO) is looking for someone who does not belong to the ldap domain anymore.");
-					return null;
-				}
-				authenticationHeader = foundUser.getLsUuid();
 			}
+			User foundUser = getPreAuthenticatedUser(authenticationHeader, domainIdentifier);
+			if (foundUser == null) {
+				logger.debug("No user was found with : " + authenticationHeader);
+			logger.warn("PreAuthenticationHeader (SSO) is looking for someone who does not belong to the ldap domain anymore.");
+				return null;
+			}
+			authenticationHeader = foundUser.getLsUuid();
 		}
 		return authenticationHeader;
 	}
