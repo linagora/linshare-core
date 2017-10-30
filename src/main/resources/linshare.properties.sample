@@ -137,6 +137,7 @@ webservice.attachment-directory=/tmp/
 # LemonLDAP::NG / SiteMinder HTTP request authenticator
 sso.header.user=Auth-User
 # comma separated list of ip address to be trusted :  
+sso.header.allowfrom.enable=true
 sso.header.allowfrom=127.0.0.1
 
 
