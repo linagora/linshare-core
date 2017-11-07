@@ -144,4 +144,14 @@
 		class="org.linagora.linshare.core.runner.impl.BatchRunnerImpl">
 	</bean>
 
+	<bean name="warnOwnerAboutGuestExpirationBatch"
+		class="org.linagora.linshare.core.batches.impl.WarnOwnerAboutGuestExpirationBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="guestRepository" />
+		<constructor-arg ref="mailBuildingService" />
+		<constructor-arg ref="notifierService" />
+		<constructor-arg ref="accountService" />
+		<constructor-arg value="${linshare.warn.owner.about.guest.expiration.days.before}" />
+	</bean>
+
 </beans>

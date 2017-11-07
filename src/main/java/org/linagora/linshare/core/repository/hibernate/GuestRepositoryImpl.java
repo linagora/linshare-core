@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -116,6 +117,28 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implem
 		criteria.setProjection(Projections.property("lsUuid"));
 		criteria.add(Restrictions.lt("expirationDate", new Date()));
 		criteria.add(Restrictions.eq("destroyed", 0L));
+		@SuppressWarnings("unchecked")
+		List<String> list = listByCriteria(criteria);
+		return list;
+	}
+
+	@Override
+	public List<String> findGuestsAboutToExpire(int nbDaysBeforeExpiration) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.setProjection(Projections.property("lsUuid"));
+		Calendar dateBeforeExpiration = Calendar.getInstance();
+		dateBeforeExpiration.add(Calendar.DATE, nbDaysBeforeExpiration);
+		dateBeforeExpiration.set(Calendar.HOUR_OF_DAY, 0);
+		dateBeforeExpiration.set(Calendar.MINUTE, 0);
+		dateBeforeExpiration.set(Calendar.SECOND, 0);
+		dateBeforeExpiration.set(Calendar.MILLISECOND, 0);
+		Calendar nextDateBeforeExpiration = Calendar.getInstance();
+		nextDateBeforeExpiration.set(Calendar.HOUR_OF_DAY, 0);
+		nextDateBeforeExpiration.set(Calendar.MINUTE, 0);
+		nextDateBeforeExpiration.set(Calendar.SECOND, 0);
+		nextDateBeforeExpiration.set(Calendar.MILLISECOND, 0);
+		nextDateBeforeExpiration.add(Calendar.DATE, nbDaysBeforeExpiration + 1);
+		criteria.add(Restrictions.between("expirationDate", dateBeforeExpiration.getTime(), nextDateBeforeExpiration.getTime()));
 		@SuppressWarnings("unchecked")
 		List<String> list = listByCriteria(criteria);
 		return list;

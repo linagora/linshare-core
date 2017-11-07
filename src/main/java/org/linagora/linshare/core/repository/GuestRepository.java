@@ -59,6 +59,7 @@ public interface GuestRepository extends UserRepository<Guest> {
 	 */
 	List<String> findOutdatedGuestIdentifiers();
 
+	List<String> findGuestsAboutToExpire(int nbDaysBeforeExpiration);
 
 	 /** Search some guests.
 	  * anyWhere matching

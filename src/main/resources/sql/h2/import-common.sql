@@ -573,7 +573,11 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (256, true
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (257, false, false, 2, true);
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable) VALUES(25, false, 'UPLOAD_REQUEST_FILE_DELETED_BY_OWNER', 255, 256, 257, 1, true);
 
-
+-- MailActivation : GUEST_WARN_OWNER_ABOUT_GUEST_EXPIRATION
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (258, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (259, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (260, false, false, 2, true);
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable) VALUES(26, false, 'GUEST_WARN_OWNER_ABOUT_GUEST_EXPIRATION', 258, 259, 260, 1, true);
 -- MailActivation : END
 
 -- quota for root domain

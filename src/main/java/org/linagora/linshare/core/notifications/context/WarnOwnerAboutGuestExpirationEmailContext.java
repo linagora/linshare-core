@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2017 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,72 +31,54 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
 
-public enum MailContentType {
+package org.linagora.linshare.core.notifications.context;
 
-	FILE_WARN_OWNER_BEFORE_FILE_EXPIRY(1),
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.MailActivationType;
+import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.Guest;
 
-	SHARE_NEW_SHARE_FOR_RECIPIENT(2),
-	SHARE_NEW_SHARE_ACKNOWLEDGEMENT_FOR_SENDER(3),
-	SHARE_FILE_DOWNLOAD(4),
-	SHARE_FILE_SHARE_DELETED(5),
-	SHARE_WARN_RECIPIENT_BEFORE_EXPIRY(6),
-	SHARE_WARN_UNDOWNLOADED_FILESHARES(7),
+public class WarnOwnerAboutGuestExpirationEmailContext extends EmailContext {
 
-	GUEST_ACCOUNT_NEW_CREATION(8),
-	GUEST_ACCOUNT_RESET_PASSWORD_LINK(9),
-	GUEST_WARN_OWNER_ABOUT_GUEST_EXPIRATION(25),
+	protected Guest guest;
 
-	UPLOAD_REQUEST_UPLOADED_FILE(10),
-	UPLOAD_REQUEST_UNAVAILABLE_SPACE(11),
-	UPLOAD_REQUEST_WARN_BEFORE_EXPIRY(12),
-	UPLOAD_REQUEST_WARN_EXPIRY(13),
-	UPLOAD_REQUEST_CLOSED_BY_RECIPIENT(14),
-	UPLOAD_REQUEST_FILE_DELETED_BY_RECIPIENT(15),
-
-	UPLOAD_REQUEST_ACTIVATED_FOR_RECIPIENT(16),
-	UPLOAD_REQUEST_ACTIVATED_FOR_OWNER(17),
-	UPLOAD_REQUEST_REMINDER(18),
-	UPLOAD_REQUEST_PASSWORD_RENEWAL(19),
-	UPLOAD_REQUEST_CREATED(20),
-	UPLOAD_REQUEST_CLOSED_BY_OWNER(21),
-	UPLOAD_REQUEST_RECIPIENT_REMOVED(22),
-	UPLOAD_REQUEST_UPDATED_SETTINGS(23),
-	UPLOAD_REQUEST_FILE_DELETED_BY_OWNER(24),
-
-	// Old template identifiers - not used
-	UPLOAD_PROPOSITION_CREATED(120),
-	UPLOAD_PROPOSITION_REJECTED(130),
-	UPLOAD_REQUEST_AUTO_FILTER(160);
-
-	private int value;
-
-	private MailContentType(int value) {
-		this.value = value;
+	public WarnOwnerAboutGuestExpirationEmailContext(Guest guest) {
+		super(guest.getOwner().getDomain(), false);
+		this.guest = guest;
 	}
 
-	public int toInt() {
-		return this.value;
+	public Guest getGuest() {
+		return guest;
 	}
 
-	public static MailContentType fromInt(int value) {
-		for (MailContentType type : values()) {
-			if (type.value == value) {
-				return type;
-			}
-		}
-		throw new IllegalArgumentException(
-				"Value : " + value + " doesn't match an existing MailContentType");
+	public void setGuest(Guest guest) {
+		this.guest = guest;
 	}
 
-	public static boolean contains(String test) {
-		String str= test.toUpperCase();
-		for (MailContentType c : MailContentType.values()) {
-			if (c.name().equals(str)) {
-				return true;
-			}
-		}
-		return false;
+	@Override
+	public MailContentType getType() {
+		return MailContentType.GUEST_WARN_OWNER_ABOUT_GUEST_EXPIRATION;
 	}
+
+	@Override
+	public MailActivationType getActivation() {
+		return MailActivationType.GUEST_WARN_OWNER_ABOUT_GUEST_EXPIRATION;
+	}
+
+	@Override
+	public String getMailRcpt() {
+		return guest.getOwner().getMail();
+	}
+
+	@Override
+	public String getMailReplyTo() {
+		return null;
+	}
+
+	@Override
+	public void validateRequiredField() {
+		Validate.notNull(guest, "Missing guest");
+	}
+
 }
