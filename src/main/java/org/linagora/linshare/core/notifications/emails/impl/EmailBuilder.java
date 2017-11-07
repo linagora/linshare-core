@@ -579,6 +579,11 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		return c.getTime();
 	}
 
+	protected Date getFakeCreationDate() {
+		Calendar c = Calendar.getInstance();
+		return c.getTime();
+	}
+
 	protected Context newFakeContext(Language language) {
 		Context ctx = new Context(Language.toLocale(language));
 		ctx.setVariable("linshareURL", fakeLinshareURL);

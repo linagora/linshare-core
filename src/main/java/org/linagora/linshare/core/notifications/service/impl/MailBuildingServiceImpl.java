@@ -69,6 +69,7 @@ import org.linagora.linshare.core.notifications.emails.impl.EmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.FileWarnOwnerBeforeExpiryEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.GuestAccountNewCreationEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.GuestAccountResetPasswordEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.WarnOwnerAboutGuestExpirationEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.ShareFileDownloadEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.ShareFileShareDeletedEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.ShareNewShareAcknowledgementEmailBuilder;
@@ -270,6 +271,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		emailBuilders.put(MailContentType.UPLOAD_REQUEST_RECIPIENT_REMOVED, new UploadRequestRecipientRemovedEmailBuilder());
 		emailBuilders.put(MailContentType.UPLOAD_REQUEST_UPDATED_SETTINGS, new UploadRequestUpdatedSettingsEmailBuilder());
 		emailBuilders.put(MailContentType.UPLOAD_REQUEST_FILE_DELETED_BY_OWNER, new UploadRequestFileDeletedByOwnerEmailBuilder());
+
+		emailBuilders.put(MailContentType.GUEST_WARN_OWNER_ABOUT_GUEST_EXPIRATION, new WarnOwnerAboutGuestExpirationEmailBuilder());
 
 		initMailBuilders(insertLicenceTerm, domainBusinessService, functionalityReadOnlyService, mailActivationBusinessService, urlTemplateForReceivedShares, urlTemplateForDocuments, urlTemplateForAnonymousUrl);
 		Set<MailContentType> keySet = emailBuilders.keySet();
