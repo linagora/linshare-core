@@ -580,6 +580,13 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (260, fals
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable) VALUES(26, false, 'GUEST_WARN_OWNER_ABOUT_GUEST_EXPIRATION', 258, 259, 260, 1, true);
 -- MailActivation : END
 
+-- MailActivation : SHARE_WARN_SENDER_ABOUT_SHARE_EXPIRATION_WITHOUT_DOWNLOAD
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (261, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (262, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (263, false, false, 2, true);
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable) VALUES(27, false, 'SHARE_WARN_SENDER_ABOUT_SHARE_EXPIRATION_WITHOUT_DOWNLOAD', 261, 262, 263, 1, true);
+-- MailActivation : END
+
 -- quota for root domain
 INSERT INTO quota( id, uuid, creation_date, modification_date, batch_modification_date, current_value, last_value, domain_id, quota, quota_warning, quota_type) VALUES (1, '2a01ac66-a279-11e5-9086-5404a683a462', NOW(), NOW(), null, 0, 0, 1, 1099511627776, 1045824536576, 'DOMAIN_QUOTA');
 UPDATE quota SET default_max_file_size_override = null, default_account_quota_override = null, default_quota_override = null, quota_override = null WHERE id = 1;

@@ -75,6 +75,7 @@ import org.linagora.linshare.core.notifications.emails.impl.ShareFileShareDelete
 import org.linagora.linshare.core.notifications.emails.impl.ShareNewShareAcknowledgementEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.ShareNewShareEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.ShareWarnRecipientBeforeExpiryEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.ShareWarnSenderAboutShareExpirationEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.ShareWarnUndownloadedFilesharesEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.UploadRequestActivationForOwnerEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.UploadRequestActivationForRecipientEmailBuilder;
@@ -253,6 +254,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		emailBuilders.put(MailContentType.SHARE_FILE_SHARE_DELETED, new ShareFileShareDeletedEmailBuilder());
 		emailBuilders.put(MailContentType.SHARE_WARN_RECIPIENT_BEFORE_EXPIRY, new ShareWarnRecipientBeforeExpiryEmailBuilder());
 		emailBuilders.put(MailContentType.SHARE_WARN_UNDOWNLOADED_FILESHARES, new ShareWarnUndownloadedFilesharesEmailBuilder());
+		emailBuilders.put(MailContentType.SHARE_WARN_SENDER_ABOUT_SHARE_EXPIRATION_WITHOUT_DOWNLOAD, new ShareWarnSenderAboutShareExpirationEmailBuilder());
 		emailBuilders.put(MailContentType.FILE_WARN_OWNER_BEFORE_FILE_EXPIRY, new FileWarnOwnerBeforeExpiryEmailBuilder());
 
 		emailBuilders.put(MailContentType.UPLOAD_REQUEST_UPLOADED_FILE, new UploadRequestUploadedFileEmailBuilder());

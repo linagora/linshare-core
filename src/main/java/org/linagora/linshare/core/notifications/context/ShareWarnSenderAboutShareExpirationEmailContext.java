@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2017 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2017. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -32,40 +32,43 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.domain.constants;
+package org.linagora.linshare.core.notifications.context;
 
-public enum MailActivationType {
+import org.linagora.linshare.core.domain.constants.MailActivationType;
+import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 
-	FILE_WARN_OWNER_BEFORE_FILE_EXPIRY,
+public class ShareWarnSenderAboutShareExpirationEmailContext extends EmailContext{
 
-	SHARE_NEW_SHARE_FOR_RECIPIENT,
-	SHARE_NEW_SHARE_ACKNOWLEDGEMENT_FOR_SENDER,
-	SHARE_FILE_DOWNLOAD_ANONYMOUS,
-	SHARE_FILE_DOWNLOAD_USERS,
-	SHARE_FILE_SHARE_DELETED,
-	SHARE_WARN_RECIPIENT_BEFORE_EXPIRY,
-	SHARE_WARN_UNDOWNLOADED_FILESHARES,
-	SHARE_WARN_SENDER_ABOUT_SHARE_EXPIRATION_WITHOUT_DOWNLOAD,
+	public ShareWarnSenderAboutShareExpirationEmailContext(AbstractDomain domain, boolean needToRetrieveGuestDomain) {
+		super(domain, needToRetrieveGuestDomain);
+	}
 
-	GUEST_ACCOUNT_NEW_CREATION,
-	GUEST_ACCOUNT_RESET_PASSWORD_LINK,
-	GUEST_WARN_OWNER_ABOUT_GUEST_EXPIRATION,
+	@Override
+	public MailContentType getType() {
+		return MailContentType.SHARE_WARN_SENDER_ABOUT_SHARE_EXPIRATION_WITHOUT_DOWNLOAD;
+	}
 
-	UPLOAD_REQUEST_UPLOADED_FILE,
-	UPLOAD_REQUEST_UNAVAILABLE_SPACE,
-	UPLOAD_REQUEST_WARN_BEFORE_EXPIRY,
-	UPLOAD_REQUEST_WARN_EXPIRY,
-	UPLOAD_REQUEST_CLOSED_BY_RECIPIENT,
-	UPLOAD_REQUEST_FILE_DELETED_BY_RECIPIENT,
+	@Override
+	public MailActivationType getActivation() {
+		return MailActivationType.SHARE_WARN_SENDER_ABOUT_SHARE_EXPIRATION_WITHOUT_DOWNLOAD;
+	}
 
-	UPLOAD_REQUEST_ACTIVATED_FOR_RECIPIENT,
-	UPLOAD_REQUEST_ACTIVATED_FOR_OWNER,
-	UPLOAD_REQUEST_REMINDER,
-	UPLOAD_REQUEST_PASSWORD_RENEWAL,
-	UPLOAD_REQUEST_CREATED,
-	UPLOAD_REQUEST_CLOSED_BY_OWNER,
-	UPLOAD_REQUEST_RECIPIENT_REMOVED,
-	UPLOAD_REQUEST_UPDATED_SETTINGS,
-	UPLOAD_REQUEST_FILE_DELETED_BY_OWNER;
+	@Override
+	public String getMailRcpt() {
+		// TODO
+		return null;
+	}
+
+	@Override
+	public String getMailReplyTo() {
+		return null;
+	}
+
+	@Override
+	public void validateRequiredField() {
+		// TODO Auto-generated method stub
+		
+	}
 
 }
