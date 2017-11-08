@@ -40,14 +40,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.Properties;
+import java.util.Set;
 import java.util.UUID;
 
 import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.domain.Location;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
+import org.jclouds.openstack.swift.v1.blobstore.RegionScopedBlobStoreContext;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
@@ -57,7 +60,10 @@ import org.slf4j.LoggerFactory;
 
 public class JcloudObjectStorageFileDataStoreImpl implements FileDataStore {
 	protected static final Logger logger = LoggerFactory.getLogger(JcloudObjectStorageFileDataStoreImpl.class);
+	// Do not support object storage region
 	protected static String SWIFT_KEYSTONE = "swift-keystone";
+	// Do support object storage region
+	protected static String OPENSTACK_SWIFT = "openstack-swift";
 	protected static String FILESYSTEM = "filesystem";
 
 	protected String provider;
@@ -66,6 +72,7 @@ public class JcloudObjectStorageFileDataStoreImpl implements FileDataStore {
 	protected String identity;
 	protected String credential;
 	protected String endpoint;
+	protected String regionId;
 	protected String bucketIdentifier;
 
 	public JcloudObjectStorageFileDataStoreImpl(String provider) {
@@ -76,29 +83,74 @@ public class JcloudObjectStorageFileDataStoreImpl implements FileDataStore {
 		this.identity = null;
 		this.credential = null;
 		this.endpoint = null;
+		this.regionId = null;
 		this.bucketIdentifier = null;
 	}
 
 	public void afterPropertiesSet() throws Exception {
 		Properties properties = new Properties();
 		ContextBuilder contextBuilder = null;
-		if (provider.equals(SWIFT_KEYSTONE)) {
+		BlobStore blobStore = null;
+		if (provider.equals(SWIFT_KEYSTONE) || provider.equals(OPENSTACK_SWIFT)) {
 			properties.setProperty(org.jclouds.Constants.PROPERTY_TRUST_ALL_CERTS, "true");
 			properties.setProperty(org.jclouds.Constants.PROPERTY_LOGGER_WIRE_LOG_SENSITIVE_INFO, "true");
-			contextBuilder = ContextBuilder.newBuilder(SWIFT_KEYSTONE);
-			contextBuilder.endpoint(endpoint).credentials(identity, credential);
+			contextBuilder = ContextBuilder.newBuilder(provider);
+			contextBuilder.endpoint(endpoint)
+							.credentials(identity, credential)
+							.overrides(properties);
+			if (provider.equals(SWIFT_KEYSTONE)) {
+				// We force region to null because regionId is not supported yet by the default BlobStoreContext.
+				regionId = null;
+				context = contextBuilder.buildView(BlobStoreContext.class);
+				blobStore = context.getBlobStore();
+			} else {
+				context = contextBuilder.buildView(RegionScopedBlobStoreContext.class);
+				blobStore = ((RegionScopedBlobStoreContext) context).getBlobStore(regionId);
+			}
 		} else if (provider.equals(FILESYSTEM)) {
 			properties.setProperty(org.jclouds.filesystem.reference.FilesystemConstants.PROPERTY_BASEDIR,
 					baseDirectory);
 			contextBuilder = ContextBuilder.newBuilder(FILESYSTEM);
+			contextBuilder.overrides(properties);
+			context = contextBuilder.buildView(BlobStoreContext.class);
+			blobStore = context.getBlobStore();
 		} else {
-			throw new IllegalArgumentException(" only " + SWIFT_KEYSTONE + " or " + FILESYSTEM);
+			throw new IllegalArgumentException("Supported providers: " + SWIFT_KEYSTONE + " , " + OPENSTACK_SWIFT + " , " + FILESYSTEM);
 		}
-		context = contextBuilder.overrides(properties).buildView(BlobStoreContext.class);
-		BlobStore blobStore = context.getBlobStore();
+		createContainerIfNotExist(blobStore);
+	}
+
+	protected void createContainerIfNotExist(BlobStore blobStore) {
 		if (!blobStore.containerExists(bucketIdentifier)) {
-			blobStore.createContainerInLocation(null, bucketIdentifier);
+			if (provider.equals(OPENSTACK_SWIFT)) {
+				Location location = getLocation(blobStore, regionId);
+				logger.info("creation of a new bucket {} with locale {}.", bucketIdentifier, location);
+				blobStore.createContainerInLocation(location, bucketIdentifier);
+			} else {
+				logger.info("creation of a new bucket {} without locale.", bucketIdentifier);
+				blobStore.createContainerInLocation(null, bucketIdentifier);
+			}
 		}
+	}
+
+	protected Location getLocation(BlobStore blobStore, String locationId) {
+		Location location = null;
+		if (locationId != null) {
+			if (!locationId.isEmpty()) {
+				Set<? extends Location> listAssignableLocations = blobStore.listAssignableLocations();
+				logger.info("available locations : {}", listAssignableLocations);
+				for (Location loc : listAssignableLocations) {
+					if (loc.getId().equalsIgnoreCase(locationId)) {
+						location = loc;
+						break;
+					}
+				}
+				if (location == null) {
+					throw new IllegalArgumentException("unknown location: " + locationId);
+				}
+			}
+		}
+		return location;
 	}
 
 	public void destroy() {
@@ -107,11 +159,13 @@ public class JcloudObjectStorageFileDataStoreImpl implements FileDataStore {
 	}
 
 	public BlobStore getBlobStore(String containerName) {
-		BlobStore blobStore = context.getBlobStore();
-		if (!blobStore.containerExists(containerName)) {
-			logger.warn("bucket does not exists : " + containerName);
-			blobStore.createContainerInLocation(null, bucketIdentifier);
+		BlobStore blobStore = null;
+		if (provider.equals(OPENSTACK_SWIFT)) {
+			blobStore = ((RegionScopedBlobStoreContext) context).getBlobStore(regionId);
+		} else {
+			blobStore = context.getBlobStore();
 		}
+		createContainerIfNotExist(blobStore);
 		return blobStore;
 	}
 
@@ -248,6 +302,14 @@ public class JcloudObjectStorageFileDataStoreImpl implements FileDataStore {
 
 	public void setBucketIdentifier(String bucketIdentifier) {
 		this.bucketIdentifier = bucketIdentifier;
+	}
+
+	public String getRegionId() {
+		return regionId;
+	}
+
+	public void setRegionId(String regionId) {
+		this.regionId = regionId;
 	}
 
 }
