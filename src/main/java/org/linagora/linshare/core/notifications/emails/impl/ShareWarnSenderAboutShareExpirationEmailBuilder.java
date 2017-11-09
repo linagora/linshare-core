@@ -38,9 +38,12 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.context.ShareWarnSenderAboutShareExpirationEmailContext;
 import org.linagora.linshare.core.notifications.dto.MailContact;
 import org.linagora.linshare.core.notifications.dto.Share;
 import org.thymeleaf.context.Context;
@@ -56,8 +59,24 @@ public class ShareWarnSenderAboutShareExpirationEmailBuilder extends EmailBuilde
 
 	@Override
 	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		ShareWarnSenderAboutShareExpirationEmailContext emailCtx = (ShareWarnSenderAboutShareExpirationEmailContext) context;
+
+		User shareOwner = emailCtx.getShareOwner();
+		User shareRecipient = emailCtx.getShareRecipient();
+		Share share = new Share(emailCtx.getShareEntry());
+		String linshareURL = getLinShareUrl(shareOwner);
+
+		MailConfig cfg = shareOwner.getDomain().getCurrentMailConfiguration();
+		Context ctx = new Context(emailCtx.getLocale());
+		ctx.setVariable("shareOwner", new MailContact(shareOwner));
+		ctx.setVariable("shareRecipient", new MailContact(shareRecipient));
+		ctx.setVariable("share", share);
+		ctx.setVariable(linshareURL, linshareURL);
+		ctx.setVariable("daysLeft", emailCtx.getDaysLeft());
+
+		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
+				emailCtx);
+		return buildMailContainer;
 	}
 
 	@Override

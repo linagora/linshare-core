@@ -127,6 +127,33 @@ public class ShareEntryRepositoryImpl extends
 	}
 
 	@Override
+	public List<String> findAllSharesExpirationWithoutDownloadEntries(int daysLeftExpiration) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.setProjection(Projections.property("uuid"));
+
+		Calendar dateBeforeExpiration = Calendar.getInstance();
+		dateBeforeExpiration.add(Calendar.DATE, daysLeftExpiration);
+		dateBeforeExpiration.set(Calendar.HOUR_OF_DAY, 0);
+		dateBeforeExpiration.set(Calendar.MINUTE, 0);
+		dateBeforeExpiration.set(Calendar.SECOND, 0);
+		dateBeforeExpiration.set(Calendar.MILLISECOND, 0);
+		Calendar nextDateBeforeExpiration = Calendar.getInstance();
+		nextDateBeforeExpiration.set(Calendar.HOUR_OF_DAY, 0);
+		nextDateBeforeExpiration.set(Calendar.MINUTE, 0);
+		nextDateBeforeExpiration.set(Calendar.SECOND, 0);
+		nextDateBeforeExpiration.set(Calendar.MILLISECOND, 0);
+		nextDateBeforeExpiration.add(Calendar.DATE, daysLeftExpiration + 1);
+
+		criteria.createAlias("shareEntryGroup", "seg");
+		criteria.add(Restrictions.between("seg.expirationDate", dateBeforeExpiration.getTime(),
+				nextDateBeforeExpiration.getTime()));
+		criteria.add(Restrictions.eq("downloaded", new Long(0)));
+		@SuppressWarnings("unchecked")
+		List<String> list = listByCriteria(criteria);
+		return list;
+	}
+
+	@Override
 	public List<ShareEntry> findUpcomingExpiredEntries(Integer date) {
 		Calendar calMin = Calendar.getInstance();
 		calMin.add(Calendar.DAY_OF_MONTH, date);

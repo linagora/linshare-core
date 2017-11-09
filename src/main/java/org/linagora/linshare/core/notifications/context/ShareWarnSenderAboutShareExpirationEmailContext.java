@@ -34,14 +34,65 @@
 
 package org.linagora.linshare.core.notifications.context;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Entry;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.User;
 
-public class ShareWarnSenderAboutShareExpirationEmailContext extends EmailContext{
+public class ShareWarnSenderAboutShareExpirationEmailContext extends EmailContext {
 
-	public ShareWarnSenderAboutShareExpirationEmailContext(AbstractDomain domain, boolean needToRetrieveGuestDomain) {
-		super(domain, needToRetrieveGuestDomain);
+	protected Entry entry;
+
+	protected User shareOwner;
+
+	protected User shareRecipient;
+
+	protected Integer daysLeft;
+
+	public ShareWarnSenderAboutShareExpirationEmailContext(ShareEntry shareEntry, Integer daysLeft) {
+		super(shareEntry.getEntryOwner().getDomain(), false);
+		this.entry = shareEntry;
+		this.shareOwner = (User) shareEntry.getEntryOwner();
+		this.daysLeft = daysLeft;
+		this.shareRecipient = shareEntry.getRecipient();
+	}
+
+	public ShareEntry getShareEntry() {
+		return (ShareEntry) entry;
+	}
+
+	public Entry getEntry() {
+		return entry;
+	}
+
+	public void setEntry(Entry entry) {
+		this.entry = entry;
+	}
+
+	public User getShareOwner() {
+		return shareOwner;
+	}
+
+	public void setShareOwner(User shareOwner) {
+		this.shareOwner = shareOwner;
+	}
+
+	public User getShareRecipient() {
+		return shareRecipient;
+	}
+
+	public void setShareRecipient(User shareRecipient) {
+		this.shareRecipient = shareRecipient;
+	}
+
+	public Integer getDaysLeft() {
+		return daysLeft;
+	}
+
+	public void setDaysLeft(Integer daysLeft) {
+		this.daysLeft = daysLeft;
 	}
 
 	@Override
@@ -56,8 +107,7 @@ public class ShareWarnSenderAboutShareExpirationEmailContext extends EmailContex
 
 	@Override
 	public String getMailRcpt() {
-		// TODO
-		return null;
+		return getShareOwner().getMail();
 	}
 
 	@Override
@@ -67,8 +117,10 @@ public class ShareWarnSenderAboutShareExpirationEmailContext extends EmailContex
 
 	@Override
 	public void validateRequiredField() {
-		// TODO Auto-generated method stub
-		
+		Validate.notNull(entry, "Missing shareEntry");
+		Validate.notNull(shareOwner, "Missing shareOwner");
+		Validate.notNull(shareRecipient, "Missing shareRecipient");
+		Validate.notNull(daysLeft, "Missing daysLeft");
 	}
 
 }
