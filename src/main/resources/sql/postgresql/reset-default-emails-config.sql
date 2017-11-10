@@ -2021,7 +2021,13 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
         <!--/* End of Greetings  */-->
         <!--/* Main email  message content*/-->
         <p>
-          <span data-th-utext="#{mainMsg(${share.name},${daysLeft},${shareRecipient.firstName},${shareRecipient.lastName})}"></span>
+          <span data-th-utext="#{beginningMainMsg}"></span>
+          <span>
+             <a target="_blank" style="color:#1294dc;text-decoration:none;"  data-th-text="#{fileNameEndOfLine(${share.name})}" th:href="@{${share.href}}" >
+                  filename.ext
+              </a>
+          </span>
+          <span data-th-utext="#{endingMainMsg(${daysLeft},${shareRecipient.firstName},${shareRecipient.lastName})}"></span>
           <!--/* Activation link for initialisation of the guest account */-->
              </p> <!--/* End of Main email  message content*/-->
       </div><!--/* End of section-content*/-->
@@ -2037,22 +2043,68 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
 </div>
 </body>
 </html>', '4375a5b6-c3ca-11e7-bd7c-47cacbfe09d9', now(), now(), true, 'accessToLinshareBTn = Votre partage expire bientôt
-shareRecipientTitle = Récepteur
+shareRecipientTitle =  Destinataire
 shareFileTitle = Le fichier partagé
 shareCreationDateTitle = Date de création
 shareExpiryDateTitle = Date d\''''expiration
 activationLinkTitle = Initialization link
-mainMsg = Le partage  <b> {0} </b> expire dans {1} jours sans avoir été téléchargé par <b> {2} <span style="text-transform:uppercase">{3}</span></b>.
+beginningMainMsg = Le partage
+endingMainMsg =  expire dans {0} jours sans avoir été téléchargé par <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
 subject = Votre partage expire bientôt sans avoir été téléchargé
-name = {0} {1}', 'accessToLinshareBTn = Your share will expire soon
+name = {0} {1}
+fileNameEndOfLine = {0}', 'accessToLinshareBTn = Your share will expire soon
 shareRecipientTitle = Recipient
 shareFileTitle = The shared file
 shareCreationDateTitle = Creation date
 shareExpiryDateTitle = Expiration date
 activationLinkTitle = Initialization link
-mainMsg = The fileshare  <b> {0} </b> will expire in {1} days and has not been downloaded by the recipient <b> {2} <span style="text-transform:uppercase">{3}</span></b>.
+beginningMainMsg =  The fileshare
+endingMainMsg =  will expire in {0} days and has not been downloaded by the recipient <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
 subject = Your share will expire soon and has not been downloaded
-name = {0} {1}');
+name = {0} {1}
+fileNameEndOfLine = {0}');
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (27, 1, '', true, 27, '[( #{subject(${share.name})})]', '<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head  data-th-replace="layout :: header"></head>
+<body>
+<div th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+  <!--/* Upper main-content*/-->
+  <section id="main-content">
+    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+      <div id="section-content">
+        <!--/* Greetings */-->
+        <th:block data-th-replace="layout :: greetings(${shareRecipient.firstName})"/>
+        <!--/* End of Greetings  */-->
+        <!--/* Main email  message content*/-->
+        <p>
+          <span data-th-utext="#{mainMsg(${share.name},${shareOwner.firstName},${shareOwner.lastName})}"></span>
+          <!--/* Activation link for initialisation of the guest account */-->
+             </p> <!--/* End of Main email  message content*/-->
+      </div><!--/* End of section-content*/-->
+    </div><!--/* End of main-content container*/-->
+  </section> <!--/* End of upper main-content*/-->
+  <!--/* Secondary content for  bottom email section */-->
+  <section id="secondary-content">
+    <th:block data-th-replace="layout :: infoStandardArea(#{senderEmailTitle},${shareRecipient.mail})"/>
+    <th:block data-th-replace="layout :: infoStandardArea(#{shareFileTitle},${share.name})"/>
+    <th:block data-th-replace="layout :: infoDateArea(#{shareCreationDateTitle},${share.creationDate})"/>
+    <th:block data-th-replace="layout :: infoDateArea(#{shareExpiryDateTitle},${share.expirationDate})"/>
+  </section>  <!--/* End of Secondary content for bottom email section */-->
+</div>
+</body>
+</html>', '935a0086-c53c-11e7-83d4-3fe6e27902d8', now(), now(), true, 'shareFileTitle = Le fichier partagé
+shareCreationDateTitle = Date de création
+shareExpiryDateTitle = Date d\''''expiration
+activationLinkTitle = Initialization link
+mainMsg = Le partage <b>{0}</b> émis par <b> {1} <span style="text-transform:uppercase">{2}</span></b> à expiré et à été supprimé par le système.
+subject = Le partage {0} à expiré 
+senderEmailTitle = Email', 'shareFileTitle = The shared file
+shareCreationDateTitle = Creation date
+shareExpiryDateTitle = Expiration date
+activationLinkTitle = Initialization link
+mainMsg = The fileshare <b>{0}</b> sent by <b> {1} <span style="text-transform:uppercase">{2}</span></b> has expired and been deleted by the system.
+subject = The fileshare {0} has expired
+senderEmailTitle = Email');
 INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (1, 0, 1, 1, 1, '4f3c4723-531e-449b-a1ae-d304fd3d2387', true);
 INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (2, 0, 2, 1, 2, '81041673-c699-4849-8be4-58eea4507305', true);
 INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (3, 0, 3, 1, 3, '85538234-1fc1-47a2-850d-7f7b59f1640e', true);
@@ -2105,6 +2157,8 @@ INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, ma
 INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (125, 1, 25, 1, 25, '82ce572e-b968-11e7-9f2c-8b110ac99bc9', true);
 INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (26, 0, 26, 1, 26, '4375f264-c3ca-11e7-a27a-bf234a0daed3', true);
 INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (126, 1, 26, 1, 26, '4376471e-c3ca-11e7-96f0-df378884d9bd', true);
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (27, 0, 27, 1, 27, '935a40fa-c53c-11e7-8fbc-ebfc048f79f6', true);
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (127, 1, 27, 1, 27, '935a7b10-c53c-11e7-8ce9-17fe85e6b389', true);
 INSERT INTO mail_footer (id, domain_abstract_id, description, visible, footer, creation_date, modification_date, uuid, readonly, messages_french, messages_english) VALUES (1, 1, 'footer html', true, '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
   <body>

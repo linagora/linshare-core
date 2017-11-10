@@ -39,47 +39,36 @@ import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 
-public class ShareWarnSenderAboutShareExpirationEmailContext extends EmailContext {
+public class ShareWarnRecipientAboutExpiredShareEmailContext extends EmailContext {
 
 	protected ShareEntry shareEntry;
 
-	protected Integer daysLeft;
-
-	public ShareWarnSenderAboutShareExpirationEmailContext(ShareEntry shareEntry, Integer daysLeft) {
+	public ShareWarnRecipientAboutExpiredShareEmailContext(ShareEntry shareEntry) {
 		super(shareEntry.getEntryOwner().getDomain(), false);
 		this.shareEntry = shareEntry;
-		this.daysLeft = daysLeft;
 	}
 
 	public ShareEntry getShareEntry() {
-		return shareEntry;
+		return (ShareEntry) shareEntry;
 	}
 
 	public void setShareEntry(ShareEntry shareEntry) {
 		this.shareEntry = shareEntry;
 	}
 
-	public Integer getDaysLeft() {
-		return daysLeft;
-	}
-
-	public void setDaysLeft(Integer daysLeft) {
-		this.daysLeft = daysLeft;
-	}
-
 	@Override
 	public MailContentType getType() {
-		return MailContentType.SHARE_WARN_SENDER_ABOUT_SHARE_EXPIRATION_WITHOUT_DOWNLOAD;
+		return MailContentType.SHARE_WARN_RECIPIENT_ABOUT_EXPIRED_SHARE;
 	}
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.SHARE_WARN_SENDER_ABOUT_SHARE_EXPIRATION_WITHOUT_DOWNLOAD;
+		return MailActivationType.SHARE_WARN_RECIPIENT_ABOUT_EXPIRED_SHARE;
 	}
 
 	@Override
 	public String getMailRcpt() {
-		return shareEntry.getEntryOwner().getMail();
+		return shareEntry.getRecipient().getMail();
 	}
 
 	@Override
@@ -90,7 +79,6 @@ public class ShareWarnSenderAboutShareExpirationEmailContext extends EmailContex
 	@Override
 	public void validateRequiredField() {
 		Validate.notNull(shareEntry, "Missing shareEntry");
-		Validate.notNull(daysLeft, "Missing daysLeft");
 	}
 
 }

@@ -43,23 +43,27 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
-import org.linagora.linshare.core.notifications.context.ShareWarnSenderAboutShareExpirationEmailContext;
+import org.linagora.linshare.core.notifications.context.ShareWarnRecipientAboutExpiredShareEmailContext;
 import org.linagora.linshare.core.notifications.dto.MailContact;
 import org.linagora.linshare.core.notifications.dto.Share;
 import org.thymeleaf.context.Context;
 
 import com.google.common.collect.Lists;
 
-public class ShareWarnSenderAboutShareExpirationEmailBuilder extends EmailBuilder {
+/**
+ * @author ysebahi
+ *
+ */
+public class ShareWarnRecipientAboutExpiredSahreEmailBuilder extends EmailBuilder{
 
 	@Override
 	public MailContentType getSupportedType() {
-		return MailContentType.SHARE_WARN_SENDER_ABOUT_SHARE_EXPIRATION_WITHOUT_DOWNLOAD;
+		return MailContentType.SHARE_WARN_RECIPIENT_ABOUT_EXPIRED_SHARE;
 	}
 
 	@Override
 	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		ShareWarnSenderAboutShareExpirationEmailContext emailCtx = (ShareWarnSenderAboutShareExpirationEmailContext) context;
+		ShareWarnRecipientAboutExpiredShareEmailContext emailCtx = (ShareWarnRecipientAboutExpiredShareEmailContext) context;
 
 		User shareOwner = (User) emailCtx.getShareEntry().getEntryOwner();
 		User shareRecipient = emailCtx.getShareEntry().getRecipient();
@@ -72,7 +76,6 @@ public class ShareWarnSenderAboutShareExpirationEmailBuilder extends EmailBuilde
 		ctx.setVariable("shareRecipient", new MailContact(shareRecipient));
 		ctx.setVariable("share", share);
 		ctx.setVariable(linshareURL, linshareURL);
-		ctx.setVariable("daysLeft", emailCtx.getDaysLeft());
 
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
 				emailCtx);
@@ -88,7 +91,6 @@ public class ShareWarnSenderAboutShareExpirationEmailBuilder extends EmailBuilde
 		Share share = new Share("a-shared-file.txt", true);
 		share.setHref(getRecipientShareLink(fakeLinshareURL, share.getUuid()));
 		ctx.setVariable("share", share);
-		ctx.setVariable("daysLeft", new Integer(7));
 		res.add(ctx);
 		return res;
 	}
