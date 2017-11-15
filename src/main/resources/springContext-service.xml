@@ -19,6 +19,8 @@
 		<constructor-arg ref="accountQuotaBusinessService"/>
 		<constructor-arg ref="containerQuotaBusinessService"/>
 		<constructor-arg ref="workGroupNodeService"/>
+		<constructor-arg ref="notifierService"/>
+		<constructor-arg ref="mailBuildingService" />
 	</bean>
 
 	<bean name="userService" class="org.linagora.linshare.core.service.impl.UserServiceImpl">

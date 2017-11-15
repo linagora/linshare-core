@@ -49,8 +49,13 @@ import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.context.WorkGroupWarnDeletedMemberEmailContext;
+import org.linagora.linshare.core.notifications.context.WorkGroupWarnNewMemberEmailContext;
+import org.linagora.linshare.core.notifications.context.WorkGroupWarnUpdatedMemberEmailContext;
+import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.ThreadMemberResourceAccessControl;
 import org.linagora.linshare.core.rac.ThreadResourceAccessControl;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
@@ -58,6 +63,7 @@ import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
+import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
@@ -89,6 +95,10 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 
 	private final WorkGroupNodeService workGroupNodeService;
 
+	private final NotifierService notifierService;
+
+	private final MailBuildingService mailBuildingService;
+
 	public ThreadServiceImpl(
 			ThreadRepository threadRepository,
 			ThreadMemberRepository threadMemberRepository,
@@ -99,7 +109,9 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 			FunctionalityReadOnlyService functionalityReadOnlyService,
 			AccountQuotaBusinessService accountQuotaBusinessService,
 			ContainerQuotaBusinessService containerQuotaBusinessService,
-			WorkGroupNodeService workGroupNodeService) {
+			WorkGroupNodeService workGroupNodeService,
+			NotifierService notifierService,
+			MailBuildingService mailBuildingService) {
 		super(rac);
 		this.threadRepository = threadRepository;
 		this.threadMemberRepository = threadMemberRepository;
@@ -110,6 +122,8 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
 		this.containerQuotaBusinessService = containerQuotaBusinessService;
 		this.workGroupNodeService = workGroupNodeService;
+		this.notifierService = notifierService;
+		this.mailBuildingService = mailBuildingService;
 	}
 
 	@Override
@@ -254,6 +268,9 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 				AuditLogEntryType.WORKGROUP_MEMBER, member);
 		addMembersToLog(thread, log);
 		logEntryService.insert(log);
+		WorkGroupWarnNewMemberEmailContext context = new WorkGroupWarnNewMemberEmailContext(member, owner);
+		MailContainerWithRecipient mail = mailBuildingService.build(context);
+		notifierService.sendNotification(mail);
 		return member;
 	}
 
@@ -274,6 +291,9 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		ThreadMember res = threadMemberRepository.update(member);
 		log.setResourceUpdated(new ThreadMemberMto(res));
 		logEntryService.insert(log);
+		WorkGroupWarnUpdatedMemberEmailContext context = new WorkGroupWarnUpdatedMemberEmailContext(member, owner);
+		MailContainerWithRecipient mail = mailBuildingService.build(context);
+		notifierService.sendNotification(mail);
 		return res;
 	}
 
@@ -296,6 +316,9 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 				AuditLogEntryType.WORKGROUP_MEMBER, member);
 		addMembersToLog(thread, log);
 		logEntryService.insert(log);
+		WorkGroupWarnDeletedMemberEmailContext context = new WorkGroupWarnDeletedMemberEmailContext(member, owner);
+		MailContainerWithRecipient mail = mailBuildingService.build(context);
+		notifierService.sendNotification(mail);
 		return member;
 	}
 
