@@ -353,6 +353,9 @@ common.titleSharedThe= Partagé le
 date.format=d MMMM, yyyy
 productCompagny=Linagora
 productName=LinShare
+workGroupRightAdminTitle = Administrateur
+workGroupRightWirteTitle = Écriture
+workGroupRightReadTitle = Lecture
 welcomeMessage = Bonjour {0},', 'common.availableUntil = Expiry date
 common.byYou= | By you
 common.download= Download
@@ -362,61 +365,11 @@ common.titleSharedThe= Creation date
 date.format= MMMM d, yyyy
 productCompagny=Linagora
 productName=LinShare
-welcomeMessage = Hello {0},');
-INSERT INTO mail_config (id, mail_layout_id, domain_abstract_id, name, visible, uuid, creation_date, modification_date, readonly) VALUES (1, 1, 1, 'Default mail config', true, '946b190d-4c95-485f-bfe6-d288a2de1edd', now(), now(), true);
-INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (29, 1, '', true, 29, '[(#{subject(${workGroupName})})]', '<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head  data-th-replace="layout :: header"></head>
-<body>
-<div th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
-  <!--/* Upper main-content*/-->
-  <section id="main-content">
-    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
-      <div id="section-content">
-        <!--/* Greetings */-->
-        <th:block data-th-replace="layout :: greetings(${member.firstName})"/>
-        <!--/* End of Greetings  */-->
-        <!--/* Main email  message content*/-->
-        <p>
-          <span data-th-utext="#{mainMsg(${owner.firstName},${owner.lastName},${workGroupName})}"></span>
-          <!--/* Activation link for initialisation of the guest account */-->
-             </p> <!--/* End of Main email  message content*/-->
-      </div><!--/* End of section-content*/-->
-    </div><!--/* End of main-content container*/-->
-  </section> <!--/* End of upper main-content*/-->
-  <!--/* Secondary content for  bottom email section */-->
-  <section id="secondary-content">
-    <th:block data-th-replace="layout :: infoStandardArea(#{workGroupNameTitle},${workGroupName})"/>
-    <th:block data-th-if="(${threadMember.admin})">
-       <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightAdminTitle})"/>
-    </th:block>
-    <th:block data-th-if="(!${threadMember.admin})">
-        <th:block data-th-if="(${threadMember.canUpload})">
-             <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightWirteTitle})"/>
-        </th:block>
-        <th:block data-th-if="(!${threadMember.canUpload})">
-             <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightReadTitle})"/>
-        </th:block>
-    </th:block>
-    <th:block data-th-replace="layout :: infoDateArea(#{workGroupUpdatedDateTitle},${threadMember.creationDate})"/>
-  </section>  <!--/* End of Secondary content for bottom email section */-->
-</div>
-</body>
-</html>', 'a4ef5ac0-c619-11e7-886b-7bf95112b643', now(), now(), true, 'workGroupUpdatedDateTitle = Date de la mise à jour
-mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span> </b> à mis a jour vos droits sur le  groupe de travail <b>{2}</b>.
-subject =  Vos droits ont été mis a jour
-workGroupRight = Droit
-workGroupNameTitle = Nom du groupe de travail
-workGroupRightAdminTitle = Admùinistrateur
-workGroupRightWirteTitle = Écriture
-workGroupRightReadTitle = Lecture', 'workGroupUpdatedDateTitle = Updated date
-mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> has updated your rights on the workgroup <b>{2}</b>.
-subject =  Your rights was updated.
-workGroupRight = Right
-workGroupNameTitle = Workgroup Name
 workGroupRightAdminTitle = Administrator
 workGroupRightWirteTitle = Write
-workGroupRightReadTitle = Read');
+workGroupRightReadTitle = Read
+welcomeMessage = Hello {0},');
+INSERT INTO mail_config (id, mail_layout_id, domain_abstract_id, name, visible, uuid, creation_date, modification_date, readonly) VALUES (1, 1, 1, 'Default mail config', true, '946b190d-4c95-485f-bfe6-d288a2de1edd', now(), now(), true);
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (30, 1, '', true, 30, '[( #{subject(${workGroupName})})]', '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head  data-th-replace="layout :: header"></head>
@@ -448,108 +401,6 @@ mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> vous a r
 workGroupNameTitle = Nom du groupe de travail', 'subject = You are no longer part of the workGroup {0}
 mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> removed you from the workgroup  <b>{2}</b>
 workGroupNameTitle = Workgroup Name');
-INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (27, 1, '', true, 27, '[( #{subject(${share.name})})]', '<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head  data-th-replace="layout :: header"></head>
-<body>
-<div th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
-  <!--/* Upper main-content*/-->
-  <section id="main-content">
-    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
-      <div id="section-content">
-        <!--/* Greetings */-->
-        <th:block data-th-replace="layout :: greetings(${shareRecipient.firstName})"/>
-        <!--/* End of Greetings  */-->
-        <!--/* Main email  message content*/-->
-        <p>
-          <span data-th-utext="#{beginningMainMsg}"></span>
-          <span>
-             <a target="_blank" style="color:#1294dc;text-decoration:none;"  data-th-text="#{fileNameEndOfLine(${share.name})}" th:href="@{${share.href}}" >
-                  filename.ext
-              </a>
-          </span>
-          <span data-th-utext="#{endingMainMsg(${shareOwner.firstName},${shareOwner.lastName})}"></span>
-          <!--/* Activation link for initialisation of the guest account */-->
-             </p> <!--/* End of Main email  message content*/-->
-      </div><!--/* End of section-content*/-->
-    </div><!--/* End of main-content container*/-->
-  </section> <!--/* End of upper main-content*/-->
-  <!--/* Secondary content for  bottom email section */-->
-  <section id="secondary-content">
-    <th:block data-th-replace="layout :: infoStandardArea(#{shareFileTitle},${share.name})"/>
-    <th:block data-th-replace="layout :: infoDateArea(#{shareCreationDateTitle},${share.creationDate})"/>
-    <th:block data-th-replace="layout :: infoDateArea(#{shareExpiryDateTitle},${share.expirationDate})"/>
-  </section>  <!--/* End of Secondary content for bottom email section */-->
-</div>
-</body>
-</html>', '935a0086-c53c-11e7-83d4-3fe6e27902d8', now(), now(), true, 'shareFileTitle = Le fichier partagé
-shareCreationDateTitle = Date de création
-shareExpiryDateTitle = Date d expiration
-activationLinkTitle = Initialization link
-beginningMainMsg = Le partage
-endingMainMsg = émis par <b> {0} <span style="text-transform:uppercase">{1}</span></b> à expiré et à été supprimé par le <b>système</b>.
-subject = Le partage {0} à expiré
-fileNameEndOfLine = {0}', 'shareFileTitle = The shared file
-shareCreationDateTitle = Creation date
-shareExpiryDateTitle = Expiration date
-activationLinkTitle = Initialization link
-beginningMainMsg =  The fileshare
-endingMainMsg = sent by <b> {0} <span style="text-transform:uppercase">{1}</span></b> has expired and been deleted by the <b>system</b>.
-subject = The fileshare {0} has expired
-fileNameEndOfLine = {0}');
-INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (28, 1, '', true, 28, '[( #{subject(${workGroupName})})]', '<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head  data-th-replace="layout :: header"></head>
-<body>
-<div th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
-  <!--/* Upper main-content*/-->
-  <section id="main-content">
-    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
-      <div id="section-content">
-        <!--/* Greetings */-->
-        <th:block data-th-replace="layout :: greetings(${member.firstName})"/>
-        <!--/* End of Greetings  */-->
-        <!--/* Main email  message content*/-->
-        <p>
-            <span data-th-utext="#{mainMsg(${owner.firstName},${owner.lastName},${workGroupName})}"></span>
-          <!--/* Activation link for initialisation of the guest account */-->
-             </p> <!--/* End of Main email  message content*/-->
-      </div><!--/* End of section-content*/-->
-    </div><!--/* End of main-content container*/-->
-  </section> <!--/* End of upper main-content*/-->
-  <!--/* Secondary content for  bottom email section */-->
-  <section id="secondary-content">
-    <th:block data-th-replace="layout :: infoStandardArea(#{workGroupNameTitle},${workGroupName})"/>
-    <th:block data-th-if="(${threadMember.admin})">
-       <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightAdminTitle})"/>
-    </th:block>
-    <th:block data-th-if="(!${threadMember.admin})">
-        <th:block data-th-if="(${threadMember.canUpload})">
-             <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightWirteTitle})"/>
-        </th:block>
-        <th:block data-th-if="(!${threadMember.canUpload})">
-             <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightReadTitle})"/>
-        </th:block>
-    </th:block>
-    <th:block data-th-replace="layout :: infoDateArea(#{workGroupCreationDateTitle},${threadMember.creationDate})"/>
-  </section>  <!--/* End of Secondary content for bottom email section */-->
-</div>
-</body>
-</html>', 'cd33405c-c617-11e7-be9c-c763a78e452c', now(), '2017-11-15 11:12:03.6', true, 'workGroupCreationDateTitle = Date de création
-mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> vous à ajouté(e) au groupe de travail : <b>{2}</b>
-subject = Vous faites partie du groupe de travail {0}
-workGroupRight = Droit
-workGroupNameTitle = Nom du groupe de travail
-workGroupRightAdminTitle = Administrateur
-workGroupRightWirteTitle = Écriture
-workGroupRightReadTitle = Lecture', 'workGroupCreationDateTitle = Creation date
-mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> added you to the Workgroup : <b>{2}</b>
-subject = You are part of the Workgroup {0}
-workGroupRight = Right
-workGroupNameTitle = Workgroup Name
-workGroupRightAdminTitle = Administrator
-workGroupRightWirteTitle = Write
-workGroupRightReadTitle = Read');
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (11, 1, NULL, true, 11, '[( #{subject(${requestRecipient.mail},${subject})})]', '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head data-th-replace="layout :: header"></head>
@@ -610,6 +461,53 @@ maxUploadDepotSize = Max size of the depot
 msgTitle = Upload Request s  attached message :
 recipientsURequest = Recipients
 subject =  {0} could not upload a file since there is no more space left');
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (28, 1, '', true, 28, '[( #{subject(${workGroupName})})]', '<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head  data-th-replace="layout :: header"></head>
+<body>
+<div th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+  <!--/* Upper main-content*/-->
+  <section id="main-content">
+    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+      <div id="section-content">
+        <!--/* Greetings */-->
+        <th:block data-th-replace="layout :: greetings(${member.firstName})"/>
+        <!--/* End of Greetings  */-->
+        <!--/* Main email  message content*/-->
+        <p>
+            <span data-th-utext="#{mainMsg(${owner.firstName},${owner.lastName},${workGroupName})}"></span>
+          <!--/* Activation link for initialisation of the guest account */-->
+             </p> <!--/* End of Main email  message content*/-->
+      </div><!--/* End of section-content*/-->
+    </div><!--/* End of main-content container*/-->
+  </section> <!--/* End of upper main-content*/-->
+  <!--/* Secondary content for  bottom email section */-->
+  <section id="secondary-content">
+    <th:block data-th-if="(${threadMember.admin})">
+       <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightAdminTitle})"/>
+    </th:block>
+    <th:block data-th-if="(!${threadMember.admin})">
+        <th:block data-th-if="(${threadMember.canUpload})">
+             <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightWirteTitle})"/>
+        </th:block>
+        <th:block data-th-if="(!${threadMember.canUpload})">
+             <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightReadTitle})"/>
+        </th:block>
+    </th:block>
+    <th:block data-th-replace="layout :: infoStandardArea(#{workGroupNameTitle},${workGroupName})"/>
+    <th:block data-th-replace="layout :: infoDateArea(#{workGroupCreationDateTitle},${threadMember.creationDate})"/>
+  </section>  <!--/* End of Secondary content for bottom email section */-->
+</div>
+</body>
+</html>', 'cd33405c-c617-11e7-be9c-c763a78e452c', now(), now(), true, 'workGroupCreationDateTitle = Date de création
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> vous a ajouté au groupe de travail : <b>{2}</b>
+subject = Vous avez été ajouté au groupe de travail {0}
+workGroupRight = Droit par défaut 
+workGroupNameTitle = Nom du groupe de travail', 'workGroupCreationDateTitle = Creation date
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> added you to the workgroup : <b>{2}</b>
+subject = You have been added to the workgroup {0}
+workGroupRight = Default right
+workGroupNameTitle = Workgroup Name');
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (16, 1, NULL, true, 16, '[(#{subject(${requestOwner.firstName}, ${requestOwner.lastName},${subject})})]', '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
    <head data-th-replace="layout :: header"></head>
@@ -2151,6 +2049,102 @@ subject = {0} {1} a supprimé {2} du dépôt', 'closureDate = Depot closure date
 deletionDate = File deletion date
 mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> has deleted the file <b>{2} </b>from the depot  : {3}.
 subject = {0} {1} has deleted {2} from the depot');
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (29, 1, '', true, 29, '[(#{subject(${workGroupName})})]', '<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head  data-th-replace="layout :: header"></head>
+<body>
+<div th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+  <!--/* Upper main-content*/-->
+  <section id="main-content">
+    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+      <div id="section-content">
+        <!--/* Greetings */-->
+        <th:block data-th-replace="layout :: greetings(${member.firstName})"/>
+        <!--/* End of Greetings  */-->
+        <!--/* Main email  message content*/-->
+        <p>
+          <span data-th-utext="#{mainMsg(${owner.firstName},${owner.lastName},${workGroupName})}"></span>
+          <!--/* Activation link for initialisation of the guest account */-->
+             </p> <!--/* End of Main email  message content*/-->
+      </div><!--/* End of section-content*/-->
+    </div><!--/* End of main-content container*/-->
+  </section> <!--/* End of upper main-content*/-->
+  <!--/* Secondary content for  bottom email section */-->
+  <section id="secondary-content">
+    <th:block data-th-if="(${threadMember.admin})">
+       <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightAdminTitle})"/>
+    </th:block>
+    <th:block data-th-if="(!${threadMember.admin})">
+        <th:block data-th-if="(${threadMember.canUpload})">
+             <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightWirteTitle})"/>
+        </th:block>
+        <th:block data-th-if="(!${threadMember.canUpload})">
+             <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightReadTitle})"/>
+        </th:block>
+    </th:block>
+    <th:block data-th-replace="layout :: infoStandardArea(#{workGroupNameTitle},${workGroupName})"/>
+    <th:block data-th-replace="layout :: infoDateArea(#{workGroupUpdatedDateTitle},${threadMember.creationDate})"/>
+  </section>  <!--/* End of Secondary content for bottom email section */-->
+</div>
+</body>
+</html>', 'a4ef5ac0-c619-11e7-886b-7bf95112b643', now(), now(), true, 'workGroupUpdatedDateTitle = Date de la mise à jour
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span> </b> a mis à jour vos droits sur le  groupe de travail <b>{2}</b>.
+subject =  Vos droits sur le groupe de travail {0} ont été mis à jour
+workGroupRight =  Nouveau droit
+workGroupNameTitle = Nom du groupe de travail', 'workGroupUpdatedDateTitle = Updated date
+mainMsg = Your rights on the workgroup  <b>{2}</b> were updated by  <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
+subject =  Your rights on the workgroup {0} was updated.
+workGroupRight = Current right
+workGroupNameTitle = Workgroup Name');
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (27, 1, '', true, 27, '[( #{subject(${share.name})})]', '<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head  data-th-replace="layout :: header"></head>
+<body>
+<div th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+  <!--/* Upper main-content*/-->
+  <section id="main-content">
+    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+      <div id="section-content">
+        <!--/* Greetings */-->
+        <th:block data-th-replace="layout :: greetings(${shareRecipient.firstName})"/>
+        <!--/* End of Greetings  */-->
+        <!--/* Main email  message content*/-->
+        <p>
+          <span data-th-utext="#{beginningMainMsg}"></span>
+          <span>
+             <a target="_blank" style="color:#1294dc;text-decoration:none;"  data-th-text="#{fileNameEndOfLine(${share.name})}" th:href="@{${share.href}}" >
+                  filename.ext
+              </a>
+          </span>
+          <span data-th-utext="#{endingMainMsg(${shareOwner.firstName},${shareOwner.lastName})}"></span>
+          <!--/* Activation link for initialisation of the guest account */-->
+             </p> <!--/* End of Main email  message content*/-->
+      </div><!--/* End of section-content*/-->
+    </div><!--/* End of main-content container*/-->
+  </section> <!--/* End of upper main-content*/-->
+  <!--/* Secondary content for  bottom email section */-->
+  <section id="secondary-content">
+    <th:block data-th-replace="layout :: infoStandardArea(#{shareFileTitle},${share.name})"/>
+    <th:block data-th-replace="layout :: infoDateArea(#{shareCreationDateTitle},${share.creationDate})"/>
+    <th:block data-th-replace="layout :: infoDateArea(#{shareExpiryDateTitle},${share.expirationDate})"/>
+  </section>  <!--/* End of Secondary content for bottom email section */-->
+</div>
+</body>
+</html>', '935a0086-c53c-11e7-83d4-3fe6e27902d8', now(), now(), true, 'shareFileTitle = Le fichier partagé
+shareCreationDateTitle = Date de création
+shareExpiryDateTitle = Date d expiration
+activationLinkTitle = Initialization link
+beginningMainMsg = Le partage
+endingMainMsg = émis par <b> {0} <span style="text-transform:uppercase">{1}</span></b> a expiré et a été supprimé par le <b>système</b>.
+subject = Le partage {0} a expiré
+fileNameEndOfLine = {0}', 'shareFileTitle = The shared file
+shareCreationDateTitle = Creation date
+shareExpiryDateTitle = Expiration date
+activationLinkTitle = Initialization link
+beginningMainMsg =  The fileshare
+endingMainMsg = sent by <b> {0} <span style="text-transform:uppercase">{1}</span></b> has expired and been deleted by the <b>system</b>.
+subject = The fileshare {0} has expired
+fileNameEndOfLine = {0}');
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (25, 1, '', true, 25, '[( #{subject(${guest.firstName},${guest.lastName}, #{productName})})]', '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head  data-th-replace="layout :: header"></head>
@@ -2235,7 +2229,7 @@ shareExpiryDateTitle = Date d expiration
 activationLinkTitle = Initialization link
 beginningMainMsg = Le partage
 endingMainMsg =  expire dans {0} jours sans avoir été téléchargé par <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
-subject = Votre partage expire bientôt sans avoir été téléchargé
+subject = Votre partage expire bientôt et n a pas encore été téléchargé
 name = {0} {1}
 fileNameEndOfLine = {0}', 'accessToLinshareBTn = Your share will expire soon
 shareRecipientTitle = Recipient
