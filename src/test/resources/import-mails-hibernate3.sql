@@ -370,37 +370,6 @@ workGroupRightWirteTitle = Write
 workGroupRightReadTitle = Read
 welcomeMessage = Hello {0},');
 INSERT INTO mail_config (id, mail_layout_id, domain_abstract_id, name, visible, uuid, creation_date, modification_date, readonly) VALUES (1, 1, 1, 'Default mail config', true, '946b190d-4c95-485f-bfe6-d288a2de1edd', now(), now(), true);
-INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (30, 1, '', true, 30, '[( #{subject(${workGroupName})})]', '<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head  data-th-replace="layout :: header"></head>
-<body>
-<div th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
-  <!--/* Upper main-content*/-->
-  <section id="main-content">
-    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
-      <div id="section-content">
-        <!--/* Greetings */-->
-        <th:block data-th-replace="layout :: greetings(${member.firstName})"/>
-        <!--/* End of Greetings  */-->
-        <!--/* Main email  message content*/-->
-        <p>
-          <span data-th-utext="#{mainMsg(${owner.firstName},${owner.lastName},${workGroupName})}"></span>
-          <!--/* Activation link for initialisation of the guest account */-->
-             </p> <!--/* End of Main email  message content*/-->
-      </div><!--/* End of section-content*/-->
-    </div><!--/* End of main-content container*/-->
-  </section> <!--/* End of upper main-content*/-->
-  <!--/* Secondary content for  bottom email section */-->
-  <section id="secondary-content">
-    <th:block data-th-replace="layout :: infoStandardArea(#{workGroupNameTitle},${workGroupName})"/>
-  </section>  <!--/* End of Secondary content for bottom email section */-->
-</div>
-</body>
-</html>', '47404f3c-c61a-11e7-bc5e-27c80414733b', now(), now(), true, 'subject = Vous ne faites plus partie du groupe de travail {0}
-mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> vous a retiré du groupe de travail <b>{2}</b>
-workGroupNameTitle = Nom du groupe de travail', 'subject = You are no longer part of the workGroup {0}
-mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> removed you from the workgroup  <b>{2}</b>
-workGroupNameTitle = Workgroup Name');
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (11, 1, NULL, true, 11, '[( #{subject(${requestRecipient.mail},${subject})})]', '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head data-th-replace="layout :: header"></head>
@@ -2145,6 +2114,37 @@ beginningMainMsg =  The fileshare
 endingMainMsg = sent by <b> {0} <span style="text-transform:uppercase">{1}</span></b> has expired and been deleted by the <b>system</b>.
 subject = The fileshare {0} has expired
 fileNameEndOfLine = {0}');
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (30, 1, '', true, 30, '[( #{subject(${workGroupName})})]', '<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head  data-th-replace="layout :: header"></head>
+<body>
+<div th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+  <!--/* Upper main-content*/-->
+  <section id="main-content">
+    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+      <div id="section-content">
+        <!--/* Greetings */-->
+        <th:block data-th-replace="layout :: greetings(${member.firstName})"/>
+        <!--/* End of Greetings  */-->
+        <!--/* Main email  message content*/-->
+        <p>
+          <span data-th-utext="#{mainMsg(${owner.firstName},${owner.lastName},${workGroupName})}"></span>
+          <!--/* Activation link for initialisation of the guest account */-->
+             </p> <!--/* End of Main email  message content*/-->
+      </div><!--/* End of section-content*/-->
+    </div><!--/* End of main-content container*/-->
+  </section> <!--/* End of upper main-content*/-->
+  <!--/* Secondary content for  bottom email section */-->
+  <section id="secondary-content">
+    <th:block data-th-replace="layout :: infoStandardArea(#{workGroupNameTitle},${workGroupName})"/>
+  </section>  <!--/* End of Secondary content for bottom email section */-->
+</div>
+</body>
+</html>', '47404f3c-c61a-11e7-bc5e-27c80414733b', now(), now(), true, 'subject = Les accès au groupe de travail {0} vous ont été retirés.
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> vous a retiré du groupe de travail <b>{2}</b>
+workGroupNameTitle = Nom du groupe de travail', 'subject = Your access to the workgroup {0} was withdrawn
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> removed you from the workgroup  <b>{2}</b>
+workGroupNameTitle = Workgroup Name');
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (25, 1, '', true, 25, '[( #{subject(${guest.firstName},${guest.lastName}, #{productName})})]', '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head  data-th-replace="layout :: header"></head>
@@ -2159,7 +2159,7 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
         <!--/* End of Greetings  */-->
         <!--/* Main email  message content*/-->
         <p>
-          <span data-th-utext="#{mainMsg(${guest.firstName},${guest.lastName},#{productName})}"></span>
+          <span data-th-utext="#{mainMsg(${guest.firstName},${guest.lastName},${daysLeft})}"></span>
           <!--/* Activation link for initialisation of the guest account */-->
              </p> <!--/* End of Main email  message content*/-->
       </div><!--/* End of section-content*/-->
@@ -2177,13 +2177,13 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
 accountCreationDateTitle = Date de création
 accountExpiryDateTitle = Date d expiration
 activationLinkTitle = Initialization link
-mainMsg = Le compte invité de : <b> {0} <span style="text-transform:uppercase">{1}</span></b> expirera dans 7 jours. Pensez à prolonger la validité du compte si besoin.
+mainMsg = Le compte invité de : <b> {0} <span style="text-transform:uppercase">{1}</span></b> expirera dans {2} jours. Pensez à prolonger la validité du compte si besoin.
 subject = Le compte invité de {0}  {1} expire bientôt
 userEmailTitle = Email', 'accessToLinshareBTn = Expiration account
 accountCreationDateTitle = Account creation date
 accountExpiryDateTitle = Account expiry date
 activationLinkTitle = Initialization link
-mainMsg = The  <b> {0} <span style="text-transform:uppercase">{1}</span></b> guest account is about to expire in 7 days. If this account is still needed,  postpone its expiration date.
+mainMsg = The  <b> {0} <span style="text-transform:uppercase">{1}</span></b> guest account is about to expire in {2} days. If this account is still needed,  postpone its expiration date.
 subject = {0}  {1} guest account will expire soon.
 userEmailTitle = Email');
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (26, 1, '', true, 26, '[( #{subject})]', '<!DOCTYPE html>

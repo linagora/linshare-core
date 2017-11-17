@@ -42,9 +42,9 @@ import org.linagora.linshare.core.domain.entities.ThreadMember;
 
 public class WorkGroupWarnDeletedMemberEmailContext extends EmailContext {
 
-	ThreadMember threadMember;
+	protected ThreadMember threadMember;
 
-	Account owner;
+	protected Account owner;
 
 	public WorkGroupWarnDeletedMemberEmailContext(ThreadMember threadMember, Account owner) {
 		super(threadMember.getUser().getDomain(), false);
@@ -85,7 +85,7 @@ public class WorkGroupWarnDeletedMemberEmailContext extends EmailContext {
 
 	@Override
 	public String getMailReplyTo() {
-		return null;
+		return owner.getMail();
 	}
 
 	@Override

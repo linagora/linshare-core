@@ -186,22 +186,20 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			log.addRelatedAccounts(senderUuid);
 			EventNotification event = new EventNotification(log, senderUuid);
 			logEntryService.insert(log, event);
-		} else if (owner.getLsUuid().equals("system")) {
-			// The system is deleting the current share, we need to warn the recipient.
-			String recipientUuid = share.getRecipient().getLsUuid();
-			log.addRelatedAccounts(recipientUuid);
-			EventNotification event = new EventNotification(log, recipientUuid);
-			logEntryService.insert(log, event);
-			EmailContext context = new ShareWarnRecipientAboutExpiredShareEmailContext(share);
-			mail = mailBuildingService.build(context);
 		} else {
-			// The sender is deleting the current share, we need to warn the recipient.
 			String recipientUuid = share.getRecipient().getLsUuid();
 			log.addRelatedAccounts(recipientUuid);
 			EventNotification event = new EventNotification(log, recipientUuid);
 			logEntryService.insert(log, event);
-			EmailContext context = new ShareFileShareDeletedEmailContext(share);
-			mail = mailBuildingService.build(context);
+			if (LogActionCause.EXPIRATION.equals(cause)) {
+				// The system is deleting the current share, we need to warn the recipient.
+				EmailContext context = new ShareWarnRecipientAboutExpiredShareEmailContext(share);
+				mail = mailBuildingService.build(context);
+			} else {
+				// The sender is deleting the current share, we need to warn the recipient.
+				EmailContext context = new ShareFileShareDeletedEmailContext(share);
+				mail = mailBuildingService.build(context);
+			}
 		}
 		shareEntryBusinessService.delete(share);
 		notifierService.sendNotification(mail, true);

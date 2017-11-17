@@ -34,8 +34,6 @@
 
 package org.linagora.linshare.service;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -105,7 +103,7 @@ public class WorkGroupServiceTest extends AbstractTransactionalJUnit4SpringConte
 		datas.loadUsers();
 		owner = datas.getUser1();
 		member = datas.getUser2();
-		initWorkGroup();
+		workGroup = threadService.create(owner, owner, "work_group_name_1");
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -124,19 +122,15 @@ public class WorkGroupServiceTest extends AbstractTransactionalJUnit4SpringConte
 		Assert.assertNotNull(workGroupMember);
 		wiser.checkGeneratedMessages();
 		// Update Member
-		assertEquals(workGroupMember.getAdmin(), false);
+		Assert.assertEquals(workGroupMember.getAdmin(), false);
 		threadService.updateMember(owner, owner, workGroup.getLsUuid(), member.getLsUuid(), true, true);
-		assertEquals(workGroupMember.getAdmin(), true);
+		Assert.assertEquals(workGroupMember.getAdmin(), true);
 		wiser.checkGeneratedMessages();
 		//Delete Member
 		Assert.assertNotNull(threadService.getMemberFromUser(workGroup, member));
 		threadService.deleteMember(owner, owner, workGroup.getLsUuid(), member.getLsUuid());
-		assertEquals(threadService.getMemberFromUser(workGroup, member), null);
+		Assert.assertEquals(threadService.getMemberFromUser(workGroup, member), null);
 		wiser.checkGeneratedMessages();
-	}
-
-	private void initWorkGroup() {
-		workGroup = threadService.create(owner, owner, "work_group_name_1");
 	}
 
 }

@@ -45,7 +45,6 @@ import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.runner.BatchRunner;
-import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +69,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-test.xml" })
 public class DeleteExpiredShareEntryBatchImplTest extends AbstractTransactionalJUnit4SpringContextTests {
 
-	private static Logger logger = LoggerFactory.getLogger(WarnSenderAboutShareExpirationBatchImplTest.class);
+	private static Logger logger = LoggerFactory.getLogger(DeleteExpiredShareEntryBatchImplTest.class);
 
 	@Autowired
 	private BatchRunner batchRunner;
@@ -78,10 +77,6 @@ public class DeleteExpiredShareEntryBatchImplTest extends AbstractTransactionalJ
 	@Autowired
 	@Qualifier("deleteExpiredShareEntryBatch")
 	private GenericBatch deleteExpiredShareEntryBatch;
-
-	@Autowired
-	@Qualifier("shareService")
-	private ShareService shareService;
 
 	private LinShareWiser wiser;
 

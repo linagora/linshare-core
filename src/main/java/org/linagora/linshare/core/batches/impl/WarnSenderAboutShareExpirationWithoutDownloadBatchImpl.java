@@ -53,13 +53,13 @@ import org.linagora.linshare.core.service.NotifierService;
 
 public class WarnSenderAboutShareExpirationWithoutDownloadBatchImpl extends GenericBatchImpl {
 
-	private ShareEntryRepository shareEntryRepository;
+	protected ShareEntryRepository shareEntryRepository;
 
-	final MailBuildingService mailBuildingService;
+	protected MailBuildingService mailBuildingService;
 
-	final NotifierService notifierService;
+	protected NotifierService notifierService;
 
-	private int daysLeftExpiration;
+	protected int daysLeftExpiration;
 
 	public WarnSenderAboutShareExpirationWithoutDownloadBatchImpl(AccountRepository<Account> accountRepository,
 			ShareEntryRepository shareEntryRepository,
@@ -90,9 +90,6 @@ public class WarnSenderAboutShareExpirationWithoutDownloadBatchImpl extends Gene
 		}
 		Account owner = shareEntry.getEntryOwner();
 		logInfo(batchRunContext, total, position, "processing shareEntry : " + shareEntry.getRepresentation());
-		if (owner == null) {
-			logger.warn("No owner found for this share " + shareEntry.getRepresentation());
-		}
 		logInfo(batchRunContext, total, position, "processing owner account : " + owner.getAccountRepresentation());
 		ResultContext context = new AccountBatchResultContext(owner);
 		try {

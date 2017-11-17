@@ -84,7 +84,7 @@ public class ShareWarnSenderAboutShareExpirationEmailContext extends EmailContex
 
 	@Override
 	public String getMailReplyTo() {
-		return null;
+		return shareEntry.getRecipient().getMail();
 	}
 
 	@Override

@@ -54,15 +54,15 @@ import org.linagora.linshare.core.service.NotifierService;
 
 public class WarnOwnerAboutGuestExpirationBatchImpl extends GenericBatchImpl {
 
-	private GuestRepository guestRepository;
+	protected GuestRepository guestRepository;
 
-	private AccountService accountService;
+	protected AccountService accountService;
 
-	final MailBuildingService mailBuildingService;
+	protected MailBuildingService mailBuildingService;
 
-	final NotifierService notifierService;
+	protected NotifierService notifierService;
 
-	private int nbDaysBeforeExpiration;
+	protected int nbDaysBeforeExpiration;
 
 	public WarnOwnerAboutGuestExpirationBatchImpl(AccountRepository<Account> accountRepository,
 			GuestRepository guestRepository,
@@ -102,7 +102,7 @@ public class WarnOwnerAboutGuestExpirationBatchImpl extends GenericBatchImpl {
 		logInfo(batchRunContext, total, position, "Processing guest account " + guest.getAccountRepresentation());
 		ResultContext context = new AccountBatchResultContext(owner);
 		try {
-			EmailContext ctx = new WarnOwnerAboutGuestExpirationEmailContext(guest);
+			EmailContext ctx = new WarnOwnerAboutGuestExpirationEmailContext(guest, nbDaysBeforeExpiration);
 			MailContainerWithRecipient mail = mailBuildingService.build(ctx);
 			notifierService.sendNotification(mail);
 		} catch (BusinessException businessException) {

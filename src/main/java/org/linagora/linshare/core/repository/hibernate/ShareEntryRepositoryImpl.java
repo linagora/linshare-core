@@ -144,9 +144,7 @@ public class ShareEntryRepositoryImpl extends
 		nextDateBeforeExpiration.set(Calendar.MILLISECOND, 0);
 		nextDateBeforeExpiration.add(Calendar.DATE, daysLeftExpiration + 1);
 
-		criteria.createAlias("shareEntryGroup", "seg");
-		criteria.add(Restrictions.between("seg.expirationDate", dateBeforeExpiration.getTime(),
-				nextDateBeforeExpiration.getTime()));
+		criteria.add(Restrictions.between("expirationDate", dateBeforeExpiration, nextDateBeforeExpiration));
 		criteria.add(Restrictions.eq("downloaded", new Long(0)));
 		@SuppressWarnings("unchecked")
 		List<String> list = listByCriteria(criteria);
