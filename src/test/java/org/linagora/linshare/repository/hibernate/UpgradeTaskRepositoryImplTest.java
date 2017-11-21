@@ -57,6 +57,7 @@ public class UpgradeTaskRepositoryImplTest extends AbstractTransactionalJUnit4Sp
 	public void setUp() throws Exception {
 		logger.debug("Begin setUp");
 		this.executeSqlScript("import-upgrade-task-sample.sql", false);
+		this.executeSqlScript("import-upgrade-task-2_1-sample.sql", false);
 		logger.debug("End setUp");
 	}
 
@@ -73,7 +74,7 @@ public class UpgradeTaskRepositoryImplTest extends AbstractTransactionalJUnit4Sp
 		for (UpgradeTask upgradeTask : list) {
 			logger.debug(upgradeTask.toString());
 		}
-		Assert.assertEquals(11, list.size());
+		Assert.assertEquals(12, list.size());
 	}
 
 }

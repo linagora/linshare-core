@@ -100,6 +100,13 @@
 					<constructor-arg ref="upgradeTaskLogMongoRepository" />
 					<constructor-arg ref="purgeUserBatch" />
 				</bean>
+<!-- 			Upgrade Task to 2.1  -->
+				<bean class="org.linagora.linshare.core.upgrade.v2_1.DocumentGarbageCollectorUpgradeTaskImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="documentRepository" />
+					<constructor-arg ref="documentGarbageCollecteurMongoRepository" />
+				</bean>
 			</list>
 		</constructor-arg>
 	</bean>
