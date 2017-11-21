@@ -43,9 +43,12 @@ public class WarnOwnerAboutGuestExpirationEmailContext extends EmailContext {
 
 	protected Guest guest;
 
-	public WarnOwnerAboutGuestExpirationEmailContext(Guest guest) {
+	protected int daysLeft;
+
+	public WarnOwnerAboutGuestExpirationEmailContext(Guest guest, int daysLeft) {
 		super(guest.getOwner().getDomain(), false);
 		this.guest = guest;
+		this.daysLeft = daysLeft;
 	}
 
 	public Guest getGuest() {
@@ -54,6 +57,14 @@ public class WarnOwnerAboutGuestExpirationEmailContext extends EmailContext {
 
 	public void setGuest(Guest guest) {
 		this.guest = guest;
+	}
+
+	public int getDaysLeft() {
+		return daysLeft;
+	}
+
+	public void setDaysLeft(int daysLeft) {
+		this.daysLeft = daysLeft;
 	}
 
 	@Override
@@ -73,12 +84,13 @@ public class WarnOwnerAboutGuestExpirationEmailContext extends EmailContext {
 
 	@Override
 	public String getMailReplyTo() {
-		return null;
+		return guest.getMail();
 	}
 
 	@Override
 	public void validateRequiredField() {
 		Validate.notNull(guest, "Missing guest");
+		Validate.notNull(daysLeft, "Missing daysLeft");
 	}
 
 }

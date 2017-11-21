@@ -57,9 +57,12 @@ import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.MailActivation;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
+import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -571,6 +574,13 @@ public abstract class EmailBuilder implements IEmailBuilder {
 			share.setHref(getOwnerDocumentLink(linshareURL, share.getUuid()));
 		}
 		return share;
+	}
+
+	protected ThreadMember getNewFakeThreadMember(String name) {
+		User user = new Guest("Peter", "Wilson", "peter.wilson@linshare.org");
+		org.linagora.linshare.core.domain.entities.Thread workGroup = new org.linagora.linshare.core.domain.entities.Thread(user.getDomain(), user, name);
+		ThreadMember threadMember = new ThreadMember(true, false, user, workGroup);
+		return threadMember;
 	}
 
 	protected Date getFakeExpirationDate() {

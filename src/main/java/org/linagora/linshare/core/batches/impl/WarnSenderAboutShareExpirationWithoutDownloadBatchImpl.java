@@ -37,7 +37,7 @@ package org.linagora.linshare.core.batches.impl;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -45,72 +45,63 @@ import org.linagora.linshare.core.job.quartz.AccountBatchResultContext;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.notifications.context.EmailContext;
-import org.linagora.linshare.core.notifications.context.WarnOwnerAboutGuestExpirationEmailContext;
+import org.linagora.linshare.core.notifications.context.ShareWarnSenderAboutShareExpirationEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.repository.AccountRepository;
-import org.linagora.linshare.core.repository.GuestRepository;
-import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.repository.ShareEntryRepository;
 import org.linagora.linshare.core.service.NotifierService;
 
-public class WarnOwnerAboutGuestExpirationBatchImpl extends GenericBatchImpl {
+public class WarnSenderAboutShareExpirationWithoutDownloadBatchImpl extends GenericBatchImpl {
 
-	protected GuestRepository guestRepository;
-
-	protected AccountService accountService;
+	protected ShareEntryRepository shareEntryRepository;
 
 	protected MailBuildingService mailBuildingService;
 
 	protected NotifierService notifierService;
 
-	protected int nbDaysBeforeExpiration;
+	protected int daysLeftExpiration;
 
-	public WarnOwnerAboutGuestExpirationBatchImpl(AccountRepository<Account> accountRepository,
-			GuestRepository guestRepository,
+	public WarnSenderAboutShareExpirationWithoutDownloadBatchImpl(AccountRepository<Account> accountRepository,
+			ShareEntryRepository shareEntryRepository,
 			MailBuildingService mailBuildingService,
 			NotifierService notifierService,
-			AccountService accountService,
-			int daysBeforeExpiration) {
+			int daysLeftExpiration) {
 		super(accountRepository);
-		this.guestRepository = guestRepository;
+		this.shareEntryRepository = shareEntryRepository;
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
-		this.accountService = accountService;
-		this.nbDaysBeforeExpiration = daysBeforeExpiration;
+		this.daysLeftExpiration = daysLeftExpiration;
 	}
 
 	@Override
 	public List<String> getAll(BatchRunContext batchRunContext) {
 		logger.info(getClass().toString() + " job is starting ...");
-		List<String> entries = guestRepository.findGuestsAboutToExpire(nbDaysBeforeExpiration);
-		logger.info(entries.size() + " guest(s) have been found.");
+		List<String> entries = shareEntryRepository.findAllSharesExpirationWithoutDownloadEntries(daysLeftExpiration);
+		logger.info(entries.size() + " share(s) have been found.");
 		return entries;
 	}
 
 	@Override
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
-		Guest guest = guestRepository.findByLsUuid(identifier);
-		if (guest == null) {
+		ShareEntry shareEntry = shareEntryRepository.findByUuid(identifier);
+		if (shareEntry == null) {
 			return null;
 		}
-		Account owner = accountService.findByLsUuid(guest.getOwner().getLsUuid());
-		if (owner == null) {
-			logger.warn("No owner found for this guest : " + guest.getAccountRepresentation());
-			return null;
-		}
-		logInfo(batchRunContext, total, position, "Processing owner account " + owner.getAccountRepresentation());
-		logInfo(batchRunContext, total, position, "Processing guest account " + guest.getAccountRepresentation());
+		Account owner = shareEntry.getEntryOwner();
+		logInfo(batchRunContext, total, position, "processing shareEntry : " + shareEntry.getRepresentation());
+		logInfo(batchRunContext, total, position, "processing owner account : " + owner.getAccountRepresentation());
 		ResultContext context = new AccountBatchResultContext(owner);
 		try {
-			EmailContext ctx = new WarnOwnerAboutGuestExpirationEmailContext(guest, nbDaysBeforeExpiration);
+			EmailContext ctx = new ShareWarnSenderAboutShareExpirationEmailContext(shareEntry, daysLeftExpiration);
 			MailContainerWithRecipient mail = mailBuildingService.build(ctx);
 			notifierService.sendNotification(mail);
 		} catch (BusinessException businessException) {
-			logError(total, position, "Error while trying to send a notification for expiration guest",
+			logError(total, position, "Error while trying to send a notification about sharefile expiration",
 					batchRunContext);
 			logger.error("Error occured while sending notification ", businessException);
 			BatchBusinessException exception = new BatchBusinessException(context,
-					"Error while trying to send a notification for expiration guest");
+					"Error while trying to send a notification about fileshare expiration");
 			exception.setBusinessException(businessException);
 			throw exception;
 		}
@@ -132,7 +123,7 @@ public class WarnOwnerAboutGuestExpirationBatchImpl extends GenericBatchImpl {
 		Account user = context.getResource();
 		console.logError(batchRunContext, total, position,
 				"User notification has failed : " + user.getAccountRepresentation());
-		logger.error("Error occured when trying to notify owner about guest expiration"
+		logger.error("Error occured when trying to notify owner about his share expiration without download"
 				+ user.getAccountRepresentation() + ". BatchBusinessException ", exception);
 	}
 

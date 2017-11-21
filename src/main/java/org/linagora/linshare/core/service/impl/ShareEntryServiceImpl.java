@@ -60,6 +60,7 @@ import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.ShareFileDownloadEmailContext;
 import org.linagora.linshare.core.notifications.context.ShareFileShareDeletedEmailContext;
 import org.linagora.linshare.core.notifications.context.ShareNewShareEmailContext;
+import org.linagora.linshare.core.notifications.context.ShareWarnRecipientAboutExpiredShareEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.ShareEntryResourceAccessControl;
 import org.linagora.linshare.core.repository.FavouriteRepository;
@@ -186,13 +187,19 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 			EventNotification event = new EventNotification(log, senderUuid);
 			logEntryService.insert(log, event);
 		} else {
-			// The sender is deleting the current share, we need to warn the recipient.
 			String recipientUuid = share.getRecipient().getLsUuid();
 			log.addRelatedAccounts(recipientUuid);
 			EventNotification event = new EventNotification(log, recipientUuid);
 			logEntryService.insert(log, event);
-			EmailContext context = new ShareFileShareDeletedEmailContext(share);
-			mail = mailBuildingService.build(context);
+			if (LogActionCause.EXPIRATION.equals(cause)) {
+				// The system is deleting the current share, we need to warn the recipient.
+				EmailContext context = new ShareWarnRecipientAboutExpiredShareEmailContext(share);
+				mail = mailBuildingService.build(context);
+			} else {
+				// The sender is deleting the current share, we need to warn the recipient.
+				EmailContext context = new ShareFileShareDeletedEmailContext(share);
+				mail = mailBuildingService.build(context);
+			}
 		}
 		shareEntryBusinessService.delete(share);
 		notifierService.sendNotification(mail, true);

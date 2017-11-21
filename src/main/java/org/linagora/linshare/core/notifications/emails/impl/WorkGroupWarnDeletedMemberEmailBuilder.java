@@ -38,39 +38,41 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
-import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
-import org.linagora.linshare.core.notifications.context.WarnOwnerAboutGuestExpirationEmailContext;
+import org.linagora.linshare.core.notifications.context.WorkGroupWarnDeletedMemberEmailContext;
 import org.linagora.linshare.core.notifications.dto.MailContact;
 import org.thymeleaf.context.Context;
 
 import com.google.common.collect.Lists;
 
-public class WarnOwnerAboutGuestExpirationEmailBuilder extends EmailBuilder {
+public class WorkGroupWarnDeletedMemberEmailBuilder extends EmailBuilder {
 
 	@Override
 	public MailContentType getSupportedType() {
-		return MailContentType.GUEST_WARN_OWNER_ABOUT_GUEST_EXPIRATION;
+		return MailContentType.WORKGROUP_WARN_DELETED_MEMBER;
 	}
 
 	@Override
 	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		WarnOwnerAboutGuestExpirationEmailContext emailCtx = (WarnOwnerAboutGuestExpirationEmailContext) context;
-		Guest guest = emailCtx.getGuest();
-		User owner = (User) guest.getOwner();
-		String linshareURL = getLinShareUrl(owner);
-		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
+		WorkGroupWarnDeletedMemberEmailContext emailCtx = (WorkGroupWarnDeletedMemberEmailContext) context;
+
+		ThreadMember workGroupMember = emailCtx.getThreadMember();
+		User member = workGroupMember.getUser();
+		User owner = (User) emailCtx.getOwner();
+		String linshareURL = getLinShareUrl(member);
+
+		MailConfig cfg = member.getDomain().getCurrentMailConfiguration();
 		Context ctx = new Context(emailCtx.getLocale());
+		ctx.setVariable("member", new MailContact(member));
 		ctx.setVariable("owner", new MailContact(owner));
-		ctx.setVariable("guest", new MailContact(guest));
-		ctx.setVariable("guestCreationDate", guest.getCreationDate());
-		ctx.setVariable("guestExpirationDate", guest.getExpirationDate());
-		ctx.setVariable("daysLeft", emailCtx.getDaysLeft());
-		ctx.setVariable("linshareURL", linshareURL);
+		ctx.setVariable("workGroupName", workGroupMember.getThread().getName());
+		ctx.setVariable(linshareURL, linshareURL);
+
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
 				emailCtx);
 		return buildMailContainer;
@@ -80,11 +82,9 @@ public class WarnOwnerAboutGuestExpirationEmailBuilder extends EmailBuilder {
 	protected List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
 		Context ctx = newFakeContext(language);
-		ctx.setVariable("owner", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
-		ctx.setVariable("guest", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
-		ctx.setVariable("guestCreationDate", getFakeCreationDate());
-		ctx.setVariable("guestExpirationDate", getFakeExpirationDate());
-		ctx.setVariable("daysLeft", new Integer(7));
+		ctx.setVariable("member", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
+		ctx.setVariable("owner", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
+		ctx.setVariable("workGroupName", "work_group_name-1");
 		res.add(ctx);
 		return res;
 	}

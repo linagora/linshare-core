@@ -154,4 +154,13 @@
 		<constructor-arg value="${linshare.warn.owner.about.guest.expiration.days.before}" />
 	</bean>
 
+	<bean name="warnSenderAboutShareExpirationWithoutDownloadBatch"
+		class="org.linagora.linshare.core.batches.impl.WarnSenderAboutShareExpirationWithoutDownloadBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="shareEntryRepository" />
+		<constructor-arg ref="mailBuildingService" />
+		<constructor-arg ref="notifierService" />
+		<constructor-arg value="${linshare.warn.owner.about.guest.expiration.days.before}" />
+	</bean>
+
 </beans>

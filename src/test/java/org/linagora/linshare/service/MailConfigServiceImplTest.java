@@ -102,7 +102,7 @@ public class MailConfigServiceImplTest extends AbstractTransactionalJUnit4Spring
 
 	private static int NB_LANG = 2;
 
-	private static int NB_CONTENT = 25;
+	private static int NB_CONTENT = 30;
 
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
