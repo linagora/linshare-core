@@ -79,7 +79,13 @@ public enum UpgradeTaskType {
 	 * Trigger the migration of all documents from the old datastore to the new
 	 * datastore.
 	 */
-	UPGRADE_2_0_UPGRADE_STORAGE;
+	UPGRADE_2_0_UPGRADE_STORAGE,
+
+	/*
+	 * Add all document uuid in the garbage (DocumentGarbageCollector),
+	 * and trigger it
+	 */
+	UPGRADE_2_1_DOCUMENT_GARBAGE_COLLECTOR;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {

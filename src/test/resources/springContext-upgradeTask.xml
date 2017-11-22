@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation=" http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="documentGarbageCollectorUpgradeTask"
+		class="org.linagora.linshare.core.upgrade.v2_1.DocumentGarbageCollectorUpgradeTaskImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="upgradeTaskLogMongoRepository" />
+		<constructor-arg ref="documentRepository" />
+		<constructor-arg ref="documentGarbageCollecteurMongoRepository" />
+	</bean>
+
+</beans>

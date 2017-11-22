@@ -39,7 +39,8 @@ import org.linagora.linshare.core.exception.TechnicalException;
 
 public enum UpgradeTaskGroup {
 
-	UPGRADE_2_0;
+	UPGRADE_2_0,
+	UPGRADE_2_1;
 
 	public static UpgradeTaskGroup fromString(String s) {
 		try {
