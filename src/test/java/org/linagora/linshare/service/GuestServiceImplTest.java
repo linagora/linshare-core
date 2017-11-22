@@ -53,8 +53,10 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.RootUserRepository;
+import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.GuestService;
+import org.linagora.linshare.core.service.InconsistentUserService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.utils.HashUtils;
 import org.linagora.linshare.utils.LinShareWiser;
@@ -66,7 +68,8 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 
 import com.google.common.collect.Lists;
 
-@ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
+@ContextConfiguration(locations = { 
+		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
@@ -103,6 +106,9 @@ public class GuestServiceImplTest extends
 
 	@Autowired
 	private RootUserRepository rootUserRepository;
+	
+	@Autowired
+	private InconsistentUserService inconsistentUserService;
 
 	private User root;
 
@@ -131,6 +137,7 @@ public class GuestServiceImplTest extends
 				.findById(LoadingServiceTestDatas.sqlSubDomain);
 		owner1 = new Internal("John", "Doe", "user1@linshare.org", null);
 		owner1.setDomain(subDomain);
+		owner1.setRole(Role.SUPERADMIN);
 		owner1.setCanCreateGuest(true);
 		owner1 = userService.saveOrUpdateUser(owner1);
 
@@ -156,13 +163,12 @@ public class GuestServiceImplTest extends
 
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
-
+	
 	@Test
 	public void testCreateGuest() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
 		guest.setCmisLocale("en");
-		guest.setRole(Role.SUPERADMIN);
 		guest = guestService.create(owner1, owner1, guest, null);
 		Guest find = guestService.find(owner1, owner1, guest.getLsUuid());
 		Assert.assertNotNull(find);
@@ -170,26 +176,48 @@ public class GuestServiceImplTest extends
 		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-
+	
 	@Test
 	public void testUpdateGuest() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
 		guest.setCmisLocale("en");
 		guest = guestService.create(owner1, owner1, guest, null);
+		AbstractDomain domain = abstractDomainRepository
+				.findById(LoadingServiceTestDatas.sqlSubDomain);
+	
 
+		guest.setDomain(domain);
 		guest.setFirstName("First");
 		guest.setLastName("Last");
-		guest.setRole(Role.SUPERADMIN);
 		Guest update = guestService.update(owner1, owner1, guest, null);
-
 		Assert.assertEquals(Role.SIMPLE, update.getRole());
 		Assert.assertEquals("First", update.getFirstName());
 		Assert.assertEquals("Last", update.getLastName());
 		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
+	
+	@Test
+	public void testUpdateInconsistentDomain() {
+		
+		// create guest
+		Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
+		guest.setCmisLocale("en");
+		wiser.checkGeneratedMessages();
+		AbstractDomain guestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
+		guest.setDomain(guestDomain);
+		guest = guestService.create(owner1, owner1, guest, null);
+		Guest find = guestService.find(owner1, owner1, guest.getLsUuid());
+		Assert.assertNotNull(find);
+		Assert.assertEquals(Role.SIMPLE, find.getRole());
+		
+		// updateGuestDomain
+		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.guestDomainName1);
+		inconsistentUserService.updateDomain(owner1, guest.getLsUuid(), domain.getUuid());
 
+	}
+	
 	@Test
 	public void testResetPassword() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
@@ -227,7 +255,6 @@ public class GuestServiceImplTest extends
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
-	@Ignore
 	@Test
 	public void testCreateGuestWithContactRestrictionAndErrors()
 			throws IllegalArgumentException, BusinessException {
@@ -249,7 +276,7 @@ public class GuestServiceImplTest extends
 		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-
+	
 	@Test
 	public void testUpdateGuestWithContactRestriction()
 			throws IllegalArgumentException, BusinessException,
@@ -273,7 +300,6 @@ public class GuestServiceImplTest extends
 		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-
 	@Test
 	public void testGuestWithContactRestrictionRemovedRestriction()
 			throws IllegalArgumentException, BusinessException,
@@ -302,7 +328,6 @@ public class GuestServiceImplTest extends
 		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-
 	@Test
 	public void testSearchGuest() throws IllegalArgumentException, BusinessException {
 		boolean mine= true;

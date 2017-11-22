@@ -216,8 +216,8 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	public void updateInconsistent(UserDto userDto) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		update(userDto);
-		inconsistentUserService.updateDomain(actor, userDto.getUuid(),
-				userDto.getDomain());
+		User entity = userService.findByLsUuid(userDto.getUuid());
+		inconsistentUserService.updateDomain(actor, userDto.getUuid(), userDto.getDomain());
 	}
 
 	@Override

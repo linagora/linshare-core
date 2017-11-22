@@ -37,15 +37,20 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.InternalRepository;
+import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
+import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.InconsistentUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class InconsistentUserServiceImpl implements InconsistentUserService {
 
@@ -56,28 +61,33 @@ public class InconsistentUserServiceImpl implements InconsistentUserService {
 
 	private final AbstractDomainService abstractDomainService;
 
+	private final  UserRepository<User> userRepository;
+
 	public InconsistentUserServiceImpl(
 			final InternalRepository internalRepository,
-			final AbstractDomainService abstractDomainService) {
+			final AbstractDomainService abstractDomainService,
+			final UserRepository<User> userRepository) {
 		super();
 		this.internateRepository = internalRepository;
 		this.abstractDomainService = abstractDomainService;
+		this.userRepository=userRepository;
 	}
 
 	@Override
-	public void updateDomain(User actor, String uuid, String domain)
-			throws BusinessException {
+	public void updateDomain(User actor, String uuid, String domain) throws BusinessException {
+
 		checkPermissions(actor);
+
 		if (!actor.hasSuperAdminRole()) {
 			throw new BusinessException(BusinessErrorCode.CANNOT_UPDATE_USER,
 					"Only superadmins can update an inconsistent user.");
 		}
 
-		Internal u = internateRepository.findByLsUuid(uuid);
+		User u = userRepository.findByLsUuid(uuid);
+
 		AbstractDomain d = abstractDomainService.retrieveDomain(domain);
 
-		logger.info("Trying to set inconsistent user '" + u + "' domain to '"
-				+ d + "'.");
+		logger.info("Trying to set inconsistent user '" + u + "' domain to '" + d + "'.");
 		if (u == null) {
 			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
 					"Attempt to update an user entity failed : User not found.");
@@ -85,19 +95,17 @@ public class InconsistentUserServiceImpl implements InconsistentUserService {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXIST,
 					"Attempt to update an user entity failed : Domain does not exist.");
 		}
-		Internal userInTargetDomain = internateRepository.findByMailAndDomain(domain, u.getMail());
+		User userInTargetDomain = userRepository.findByMailAndDomain(domain, u.getMail());
 
 		if (userInTargetDomain != null) {
-			throw new BusinessException(
-					BusinessErrorCode.USER_ALREADY_EXISTS_IN_DOMAIN_TARGET,
-					"Attempt to update an user entity failed : The user : "
-							+ u.getFullName() + " is already in the Domain : "
-							+ domain);
+			throw new BusinessException(BusinessErrorCode.USER_ALREADY_EXISTS_IN_DOMAIN_TARGET,
+					"Attempt to update an user entity failed : The user : " + u.getFullName()
+							+ " is already in the Domain : " + domain);
 		}
 		u.setDomain(d);
-		internateRepository.update(u);
+		userRepository.update(u);
 	}
-
+	
 	@Override
 	public List<Internal> findAllInconsistent(User actor) throws BusinessException {
 		checkPermissions(actor);
