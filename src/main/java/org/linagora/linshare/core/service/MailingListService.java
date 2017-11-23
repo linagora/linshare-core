@@ -113,5 +113,6 @@ public interface MailingListService {
 	List<MailingListContact> findAllContacts(Account actor, Account owner, String listUuid) throws BusinessException;
 
 	List<MailingList> findAll(Account actor, User owner, Boolean mine);
-
+	
+	List<MailingList> findAllByMemberEmail(Account actor, User owner, Boolean mine, String email);
 }

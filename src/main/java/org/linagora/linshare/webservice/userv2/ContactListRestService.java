@@ -43,7 +43,7 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface ContactListRestService {
 
-	Set<ContactListDto> findAll(Boolean mine) throws BusinessException;
+	Set<ContactListDto> findAll(Boolean mine, String contactMail) throws BusinessException;
 
 	ContactListDto find(String uuid) throws BusinessException;
 

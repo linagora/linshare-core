@@ -82,9 +82,13 @@ public class ContactListRestServiceImpl implements ContactListRestService {
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public Set<ContactListDto> findAll(
-			@ApiParam(value = "filter contact list by my contact list(true), others (false) or all (null).", required = false)
-				@QueryParam("mine") Boolean mine) throws BusinessException {
-		return contactListFacade.findAll(null, mine);
+			@ApiParam(value = "filter contact list by my contact list(true), others (false) or all (null).", required = false) @QueryParam("mine") Boolean mine,
+			@ApiParam(value = "filter contact list by a contact email.", required = false) @QueryParam("contactMail") String contactMail)
+			throws BusinessException {
+		if (contactMail == null) {
+			return contactListFacade.findAll(null, mine);
+		}
+		return contactListFacade.findAllByMemberEmail(null, mine, contactMail);
 	}
 
 	@Path("/{uuid}")
@@ -249,4 +253,5 @@ public class ContactListRestServiceImpl implements ContactListRestService {
 				@PathParam("uuid") String uuid) {
 		return contactListFacade.audit(null, uuid);
 	}
+
 }
