@@ -42,6 +42,7 @@
 	<bean name="inconsistentUserService" class="org.linagora.linshare.core.service.impl.InconsistentUserServiceImpl">
 		<constructor-arg ref="internalRepository" />
 		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg ref="userRepository" />
 	</bean>
 
 	<bean id="documentEntryService" class="org.linagora.linshare.core.service.impl.DocumentEntryServiceImpl">
