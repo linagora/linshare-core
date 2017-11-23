@@ -165,6 +165,43 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 	}
 
 	@Override
+	public List<MailingList> findAllByMemberEmail(User user, String email) {
+		Conjunction public_others = Restrictions.conjunction();
+		public_others.add(Restrictions.eq("domain", user.getDomain()));
+		public_others.add(Restrictions.eq("isPublic", true));
+		public_others.add(Restrictions.ne("owner", user));
+		Conjunction private_mine = Restrictions.conjunction();
+		private_mine.add(Restrictions.eq("domain", user.getDomain()));
+		private_mine.add(Restrictions.eq("owner", user));
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		det.add(Restrictions.or(public_others, private_mine));
+		det.createAlias("mailingListContact", "mlc");
+		det.add(Restrictions.eq("mlc.mail", email));
+		return findByCriteria(det);
+	}
+
+	@Override
+	public List<MailingList> findAllMineByMemberEmail(User user, String email) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		det.add(Restrictions.eq("domain", user.getDomain()));
+		det.add(Restrictions.eq("owner", user));
+		det.createAlias("mailingListContact", "mlc");
+		det.add(Restrictions.eq("mlc.mail", email));
+		return findByCriteria(det);
+	}
+
+	@Override
+	public List<MailingList> findAllOthersByMemberEmail(User user, String email) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		det.add(Restrictions.eq("domain", user.getDomain()));
+		det.add(Restrictions.eq("isPublic", true));
+		det.add(Restrictions.ne("owner", user));
+		det.createAlias("mailingListContact", "mlc");
+		det.add(Restrictions.eq("mlc.mail", email));
+		return findByCriteria(det);
+	}
+	
+	@Override
 	public List<MailingList> findAllMyList(User user) {
 		if (user.hasSuperAdminRole()) {
 			return findAll();
@@ -244,5 +281,4 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 		det.addOrder(Property.forName("identifier").desc());
 		return findByCriteria(det);
 	}
-
 }

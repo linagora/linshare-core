@@ -53,7 +53,7 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	private static final Logger logger = LoggerFactory.getLogger(MailingListBusinessServiceImpl.class);
 	private final MailingListRepository listRepository;
 	private final MailingListContactRepository contactRepository;
-
+	
 	public MailingListBusinessServiceImpl(MailingListRepository mailingListRepository,
 			MailingListContactRepository mailingListContactRepository) {
 		super();
@@ -278,5 +278,20 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	@Override
 	public List<MailingList> findAllOthers(Account actor, User user) {
 		return listRepository.findAllOthers(user);
+	}
+
+	@Override
+	public List<MailingList> findAllByMemberEmail(Account actor, User user, String email) {
+		return listRepository.findAllByMemberEmail(user, email);
+	}
+
+	@Override
+	public List<MailingList> findAllMineByMemberEmail(Account actor, User user, String email) {
+		return listRepository.findAllMineByMemberEmail(user, email);
+	}
+
+	@Override
+	public List<MailingList> findAllOthersByMemberEmail(Account actor, User user, String email) {
+		return listRepository.findAllOthersByMemberEmail(user, email);
 	}
 }

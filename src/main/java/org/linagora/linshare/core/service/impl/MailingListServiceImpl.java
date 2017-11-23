@@ -71,8 +71,7 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 	private final LogEntryService logEntryService;
 
 	public MailingListServiceImpl(MailingListBusinessService mailingListBusinessService, UserService userService,
-			final LogEntryService logEntryService, MailingListResourceAccessControl rac
-			) {
+			final LogEntryService logEntryService, MailingListResourceAccessControl rac) {
 		super(rac);
 		this.mailingListBusinessService = mailingListBusinessService;
 		this.userService = userService;
@@ -185,7 +184,8 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 			}
 		}
 		MailingListAuditLogEntry log = new MailingListAuditLogEntry(new AccountMto(actor),
-				new AccountMto(listToUpdate.getOwner()), LogAction.UPDATE, AuditLogEntryType.CONTACTS_LISTS, listToUpdate);
+				new AccountMto(listToUpdate.getOwner()), LogAction.UPDATE, AuditLogEntryType.CONTACTS_LISTS,
+				listToUpdate);
 		MailingList res = mailingListBusinessService.updateList(listToUpdate);
 		log.setResourceUpdated(new MailingListMto(res));
 		logEntryService.insert(log);
@@ -253,8 +253,8 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 		checkRights(actor, mailingList, "You are not authorized to delete a contact");
 		mailingListBusinessService.deleteContact(mailingList, contactUuid);
 		MailingListContactAuditLogEntry log = new MailingListContactAuditLogEntry(new AccountMto(actor),
-				new AccountMto(mailingList.getOwner()), LogAction.DELETE, AuditLogEntryType.CONTACTS_LISTS_CONTACTS, mailingList,
-				contact);
+				new AccountMto(mailingList.getOwner()), LogAction.DELETE, AuditLogEntryType.CONTACTS_LISTS_CONTACTS,
+				mailingList, contact);
 		logEntryService.insert(log);
 	}
 
@@ -305,7 +305,8 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 
 		MailingList listToUpdate = find(actor, owner, list.getUuid());
 		MailingListAuditLogEntry log = new MailingListAuditLogEntry(new AccountMto(actor),
-				new AccountMto(listToUpdate.getOwner()), LogAction.UPDATE, AuditLogEntryType.CONTACTS_LISTS, listToUpdate);
+				new AccountMto(listToUpdate.getOwner()), LogAction.UPDATE, AuditLogEntryType.CONTACTS_LISTS,
+				listToUpdate);
 		checkUpdatePermission(actor, owner, MailingList.class, BusinessErrorCode.FORBIDDEN, listToUpdate);
 		if (actor.hasSuperAdminRole()) {
 			// only super admin is authorized to modify list owner.
@@ -330,7 +331,8 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 		checkDeletePermission(actor, owner, MailingList.class, BusinessErrorCode.FORBIDDEN, listToDelete);
 		mailingListBusinessService.delete(listToDelete);
 		MailingListAuditLogEntry log = new MailingListAuditLogEntry(new AccountMto(actor),
-				new AccountMto(listToDelete.getOwner()), LogAction.DELETE, AuditLogEntryType.CONTACTS_LISTS, listToDelete);
+				new AccountMto(listToDelete.getOwner()), LogAction.DELETE, AuditLogEntryType.CONTACTS_LISTS,
+				listToDelete);
 		logEntryService.insert(log);
 		return listToDelete;
 	}
@@ -345,7 +347,8 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 		checkUpdatePermission(actor, owner, MailingList.class, BusinessErrorCode.FORBIDDEN, listToUpdate);
 		contact = mailingListBusinessService.addContact(listToUpdate, contact);
 		MailingListContactAuditLogEntry log = new MailingListContactAuditLogEntry(new AccountMto(actor),
-				new AccountMto(listToUpdate.getOwner()), LogAction.CREATE, AuditLogEntryType.CONTACTS_LISTS_CONTACTS, listToUpdate, contact);
+				new AccountMto(listToUpdate.getOwner()), LogAction.CREATE, AuditLogEntryType.CONTACTS_LISTS_CONTACTS,
+				listToUpdate, contact);
 		logEntryService.insert(log);
 		return contact;
 	}
@@ -359,7 +362,8 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 		MailingListContact contactToUpdate = mailingListBusinessService.findContact(contact.getUuid());
 		MailingList list = contactToUpdate.getMailingList();
 		MailingListContactAuditLogEntry log = new MailingListContactAuditLogEntry(new AccountMto(actor),
-				new AccountMto(list.getOwner()), LogAction.UPDATE, AuditLogEntryType.CONTACTS_LISTS_CONTACTS, list, contactToUpdate);
+				new AccountMto(list.getOwner()), LogAction.UPDATE, AuditLogEntryType.CONTACTS_LISTS_CONTACTS, list,
+				contactToUpdate);
 		checkUpdatePermission(actor, owner, MailingList.class, BusinessErrorCode.FORBIDDEN, list);
 		mailingListBusinessService.updateContact(contact);
 		contactToUpdate = mailingListBusinessService.findContact(contactToUpdate.getUuid());
@@ -377,7 +381,8 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 		checkUpdatePermission(actor, owner, MailingList.class, BusinessErrorCode.FORBIDDEN, list);
 		mailingListBusinessService.deleteContact(list, contactToDelete.getUuid());
 		MailingListContactAuditLogEntry log = new MailingListContactAuditLogEntry(new AccountMto(actor),
-				new AccountMto(list.getOwner()), LogAction.DELETE, AuditLogEntryType.CONTACTS_LISTS_CONTACTS, list, contactToDelete);
+				new AccountMto(list.getOwner()), LogAction.DELETE, AuditLogEntryType.CONTACTS_LISTS_CONTACTS, list,
+				contactToDelete);
 		logEntryService.insert(log);
 	}
 
@@ -398,6 +403,21 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 			all = mailingListBusinessService.findAllMine(actor, owner);
 		} else {
 			all = mailingListBusinessService.findAllOthers(actor, owner);
+		}
+		return all;
+	}
+
+	@Override
+	public List<MailingList> findAllByMemberEmail(Account actor, User owner, Boolean mine, String email) {
+		Validate.notEmpty(email, "mail must be set.");
+		List<MailingList> all = null;
+		checkListPermission(actor, owner, MailingList.class, BusinessErrorCode.FORBIDDEN, null);
+		if (mine == null) {
+			all = mailingListBusinessService.findAllByMemberEmail(actor, owner, email);
+		} else if (mine) {
+			all = mailingListBusinessService.findAllMineByMemberEmail(actor, owner, email);
+		} else {
+			all = mailingListBusinessService.findAllOthersByMemberEmail(actor, owner, email);
 		}
 		return all;
 	}

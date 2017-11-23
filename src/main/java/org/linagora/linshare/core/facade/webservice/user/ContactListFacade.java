@@ -63,4 +63,6 @@ public interface ContactListFacade {
 	void deleteContact(String ownerUuid, String uuid) throws BusinessException;
 
 	Set<AuditLogEntryUser> audit(String ownerUuid, String uuid);
+
+	Set<ContactListDto> findAllByMemberEmail(String ownerUuid, Boolean mine, String mail) throws BusinessException;
 }

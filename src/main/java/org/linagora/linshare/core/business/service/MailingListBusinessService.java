@@ -159,4 +159,10 @@ public interface MailingListBusinessService {
 	List<MailingList> findAllMine(Account actor, User user);
 
 	List<MailingList> findAllOthers(Account actor, User user);
+	
+	List<MailingList> findAllByMemberEmail(Account actor, User user, String email);
+
+	List<MailingList> findAllMineByMemberEmail(Account actor, User user, String email);
+
+	List<MailingList> findAllOthersByMemberEmail(Account actor, User user, String email);
 }
