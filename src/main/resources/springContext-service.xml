@@ -262,9 +262,11 @@
 		<constructor-arg ref="containerQuotaBusinessService" />
 		<constructor-arg ref="quotaResourceAccessControl" />
 	</bean>
-	<bean id="resetGuestPasswordService" class="org.linagora.linshare.core.service.impl.ResetGuestPasswordServiceImpl">
+	<bean id="resetGuestPasswordService"
+		class="org.linagora.linshare.core.service.impl.ResetGuestPasswordServiceImpl">
 		<constructor-arg ref="resetGuestPasswordMongoRepository" />
 		<constructor-arg ref="guestService" />
+		<constructor-arg ref="logEntryService" />
 	</bean>
 
 	<bean id="workGroupFolderService" class="org.linagora.linshare.core.service.impl.WorkGroupFolderServiceImpl">

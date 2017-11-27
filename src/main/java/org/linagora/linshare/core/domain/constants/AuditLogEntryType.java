@@ -57,7 +57,8 @@ public enum AuditLogEntryType {
 	UPLOAD_REQUEST_GROUP,
 	ANONYMOUS_SHARE_ENTRY,
 	AUTHENTICATION,
-	USER_PREFERENCE;
+	USER_PREFERENCE,
+	RESET_PASSWORD;
 
 	public static AuditLogEntryType fromString(String s) {
 		try {
