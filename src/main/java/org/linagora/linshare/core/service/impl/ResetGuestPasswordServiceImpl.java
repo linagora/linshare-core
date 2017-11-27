@@ -36,14 +36,19 @@ package org.linagora.linshare.core.service.impl;
 import java.util.Date;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.GuestService;
+import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.ResetGuestPasswordService;
 import org.linagora.linshare.mongo.entities.ResetGuestPassword;
+import org.linagora.linshare.mongo.entities.logs.UserAuditLogEntry;
 import org.linagora.linshare.mongo.repository.ResetGuestPasswordMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,11 +60,16 @@ public class ResetGuestPasswordServiceImpl implements ResetGuestPasswordService 
 	protected ResetGuestPasswordMongoRepository repository;
 
 	protected GuestService guestService;
+	
+	protected LogEntryService logEntryService;
 
-	public ResetGuestPasswordServiceImpl(ResetGuestPasswordMongoRepository repository, GuestService guestService) {
+	public ResetGuestPasswordServiceImpl(ResetGuestPasswordMongoRepository repository,
+			GuestService guestService,
+			LogEntryService logEntryService) {
 		super();
 		this.repository = repository;
 		this.guestService = guestService;
+		this.logEntryService = logEntryService;
 	}
 
 	@Override
@@ -79,10 +89,18 @@ public class ResetGuestPasswordServiceImpl implements ResetGuestPasswordService 
 		logger.info("Reset token found : " + resetGuestPassword);
 		Date now = new Date();
 		if (resetGuestPassword.getExpirationDate().before(now)) {
+			User guest = guestService.find(actor, owner, resetGuestPassword.getGuestUuid());
+			UserAuditLogEntry userAuditLogEntry = new UserAuditLogEntry(guest, guest, LogAction.FAILURE,
+					AuditLogEntryType.RESET_PASSWORD, guest);
+			logEntryService.insert(userAuditLogEntry);
 			throw new BusinessException(BusinessErrorCode.RESET_GUEST_PASSWORD_EXPIRED_TOKEN,
 					"The reset token is expired.");
 		}
 		if (resetGuestPassword.getAlreadyUsed()) {
+			User guest = guestService.find(actor, owner, resetGuestPassword.getGuestUuid());
+			UserAuditLogEntry userAuditLogEntry = new UserAuditLogEntry(guest, guest, LogAction.FAILURE,
+					AuditLogEntryType.RESET_PASSWORD, guest);
+			logEntryService.insert(userAuditLogEntry);
 			throw new BusinessException(BusinessErrorCode.RESET_GUEST_PASSWORD_ALREADY_USED_TOKEN,
 					"The reset token was already used.");
 		}
@@ -104,8 +122,10 @@ public class ResetGuestPasswordServiceImpl implements ResetGuestPasswordService 
 		Guest guest = guestService.find(actor, owner, reset.getGuestUuid());
 		guestService.resetPassword(guest, dto.getPassword());
 		reset = repository.save(reset);
+		UserAuditLogEntry userAuditLogEntry = new UserAuditLogEntry(guest, guest, LogAction.SUCCESS,
+				AuditLogEntryType.RESET_PASSWORD, guest);
+		logEntryService.insert(userAuditLogEntry);
 		logger.info("Reset password");
 		return reset;
 	}
-
 }

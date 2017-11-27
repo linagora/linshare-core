@@ -72,6 +72,7 @@ import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.ResetGuestPassword;
 import org.linagora.linshare.mongo.entities.logs.GuestAuditLogEntry;
+import org.linagora.linshare.mongo.entities.logs.UserAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.UserMto;
 import org.linagora.linshare.mongo.repository.ResetGuestPasswordMongoRepository;
 
@@ -375,7 +376,11 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		Guest guest = retrieveGuest(lsUuid);
 		ResetGuestPassword resetGuestPassword = resetGuestPasswordMongoRepository.insert(new ResetGuestPassword(guest));
 		resetGuestPassword.setKind(ResetTokenKind.RESET_PASSWORD);
-		GuestAccountResetPasswordEmailContext context = new GuestAccountResetPasswordEmailContext(guest, resetGuestPassword.getUuid());
+		UserAuditLogEntry userAuditLogEntry = new UserAuditLogEntry(guest, guest, LogAction.CREATE,
+				AuditLogEntryType.RESET_PASSWORD, guest);
+		logEntryService.insert(userAuditLogEntry);
+		GuestAccountResetPasswordEmailContext context = new GuestAccountResetPasswordEmailContext(guest,
+				resetGuestPassword.getUuid());
 		MailContainerWithRecipient mail = mailBuildingService.build(context);
 		notifierService.sendNotification(mail);
 	}
@@ -391,14 +396,18 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 			guest = guestBusinessService.find(domain, email);
 		}
 		if (guest == null) {
-			throw new BusinessException(BusinessErrorCode.GUEST_NOT_FOUND,
-					"Guest does not exist");
+			throw new BusinessException(BusinessErrorCode.GUEST_NOT_FOUND, "Guest does not exist");
 		}
-		// TODO: find if there is already a valid token for this guest, and reuse it if not expired.
+		// TODO: find if there is already a valid token for this guest, and
+		// reuse it if not expired.
 		ResetGuestPassword resetGuestPassword = new ResetGuestPassword(guest);
 		resetGuestPassword.setKind(ResetTokenKind.RESET_PASSWORD);
 		resetGuestPassword = resetGuestPasswordMongoRepository.insert(resetGuestPassword);
-		GuestAccountResetPasswordEmailContext context = new GuestAccountResetPasswordEmailContext(guest, resetGuestPassword.getUuid());
+		UserAuditLogEntry userAuditLogEntry = new UserAuditLogEntry(guest, guest, LogAction.CREATE,
+				AuditLogEntryType.RESET_PASSWORD, guest);
+		logEntryService.insert(userAuditLogEntry);
+		GuestAccountResetPasswordEmailContext context = new GuestAccountResetPasswordEmailContext(guest,
+				resetGuestPassword.getUuid());
 		MailContainerWithRecipient mail = mailBuildingService.build(context);
 		notifierService.sendNotification(mail);
 	}
