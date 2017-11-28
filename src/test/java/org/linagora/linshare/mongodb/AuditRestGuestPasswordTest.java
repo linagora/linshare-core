@@ -154,6 +154,7 @@ public class AuditRestGuestPasswordTest extends AbstractTransactionalJUnit4Sprin
 
 	@Test
 	public void testAuditInvalidToken() {
+		int initialSize = userMongoRepository.findByAction(String.valueOf(LogAction.FAILURE)).size();
 		Calendar instance = Calendar.getInstance();
 		instance.add(Calendar.HOUR, -1);
 		resetGuestPassword.setExpirationDate(instance.getTime());
@@ -163,26 +164,28 @@ public class AuditRestGuestPasswordTest extends AbstractTransactionalJUnit4Sprin
 		} catch (BusinessException e) {
 			logger.debug("The reset token is expired.");
 		}
-		assertEquals(1, userMongoRepository.findByAction(String.valueOf(LogAction.FAILURE)).size());
+		assertEquals(initialSize + 1, userMongoRepository.findByAction(String.valueOf(LogAction.FAILURE)).size());
 	}
 
 	@Test
 	public void testAuditAttemptToResetPowssword() {
+		int initialSize = userMongoRepository.findByAction(String.valueOf(LogAction.CREATE)).size();
 		try {
 			guestService.triggerResetPassword(actor, EMAIL, guestDomain.getUuid());
 		} catch (Exception e) {
 		}
-		assertEquals(1, userMongoRepository.findByAction(String.valueOf(LogAction.CREATE)).size());
+		assertEquals(initialSize + 1, userMongoRepository.findByAction(String.valueOf(LogAction.CREATE)).size());
 	}
 	
 	@Test
 	public void testAuditPowsswordResetedSuccessfully() {
+		int initialSize = userMongoRepository.findByAction(String.valueOf(LogAction.SUCCESS)).size();
 		Calendar instance = Calendar.getInstance();
 		instance.add(Calendar.HOUR, +1);
 		resetGuestPassword.setExpirationDate(instance.getTime());
 		resetGuestPassword.setPassword(NEW_PASSWORD);
 		resetGuestPassword = resetGuestPasswordMongoRepository.save(resetGuestPassword);
 		resetGuestPasswordService.update(actor, actor, resetGuestPassword);
-		assertEquals(1, userMongoRepository.findByAction(String.valueOf(LogAction.SUCCESS)).size());
+		assertEquals(initialSize + 1, userMongoRepository.findByAction(String.valueOf(LogAction.SUCCESS)).size());
 	}
 }
