@@ -64,6 +64,7 @@ import org.linagora.linshare.core.notifications.context.GuestAccountNewCreationE
 import org.linagora.linshare.core.notifications.context.GuestAccountResetPasswordEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.GuestResourceAccessControl;
+import org.linagora.linshare.core.repository.InternalRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.GuestService;
@@ -99,7 +100,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 
 	private final AccountQuotaBusinessService accountQuotaBusinessService;
 
-	protected final ResetGuestPasswordMongoRepository resetGuestPasswordMongoRepository;
+	protected final ResetGuestPasswordMongoRepository resetGuestPasswordMongoRepository;	
 
 	public GuestServiceImpl(final GuestBusinessService guestBusinessService,
 			final AbstractDomainService abstractDomainService,
@@ -216,6 +217,16 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		}
 		AbstractDomain guestDomain = abstractDomainService.findGuestDomain(owner
 				.getDomainId());
+		User user = null;
+		try {
+			user = userService.findOrCreateUser(guest.getMail(), owner.getDomainId());
+		} catch (BusinessException e) {
+			logger.error("User is null");
+		}
+		if (user != null) {
+			throw new BusinessException(BusinessErrorCode.GUEST_ALREADY_EXISTS,
+					"Can not create an internal user as guest");
+		}
 		if (!guestBusinessService.exist(guestDomain.getUuid(),
 				guest.getMail())) {
 			throw new BusinessException(BusinessErrorCode.GUEST_ALREADY_EXISTS,
