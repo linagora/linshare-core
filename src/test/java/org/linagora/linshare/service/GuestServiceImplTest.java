@@ -106,7 +106,7 @@ public class GuestServiceImplTest extends
 
 	@Autowired
 	private RootUserRepository rootUserRepository;
-	
+
 	@Autowired
 	private InconsistentUserService inconsistentUserService;
 
@@ -117,6 +117,8 @@ public class GuestServiceImplTest extends
 	private User owner1;
 
 	private User owner2;
+	
+	private User owner3;
 
 	public GuestServiceImplTest() {
 		super();
@@ -146,6 +148,12 @@ public class GuestServiceImplTest extends
 		owner2.setCanCreateGuest(true);
 		owner2.setRole(Role.SIMPLE);
 		owner2 = userService.saveOrUpdateUser(owner2);
+		
+		owner3 = new Internal("Jane", "Smith", "user4@linshare.org", null);
+		owner3.setDomain(subDomain);
+		owner3.setCanCreateGuest(true);
+		owner3.setRole(Role.SIMPLE);
+		owner3 = userService.saveOrUpdateUser(owner2);
 
 		Functionality functionality = functionalityService.find(
 				root, LoadingServiceTestDatas.sqlSubDomain,
@@ -163,7 +171,7 @@ public class GuestServiceImplTest extends
 
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
-	
+
 	@Test
 	public void testCreateGuest() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
@@ -177,6 +185,21 @@ public class GuestServiceImplTest extends
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
+	@Test
+	public void testCreateInternalAsGuest() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Guest guest = new Guest("Guest", "Doe", "user4@linshare.org");
+		guest.setCmisLocale("en");
+		int size = guestService.findAll(owner1, owner1, null).size();
+		try {
+			guest = guestService.create(owner1, owner1, guest, null);
+		} catch (BusinessException e) {
+			logger.debug("Can not create an internal user as guest");
+		}
+		Assert.assertEquals(size, guestService.findAll(owner1, owner1, null).size());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
 	@Test
 	public void testUpdateGuest() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
@@ -222,7 +245,7 @@ public class GuestServiceImplTest extends
 	public void testResetPassword() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		// create guest
-		Guest guest = new Guest("Foo", "Bar", "user3@linshare.org");
+		Guest guest = new Guest("Foo", "Bar", "user10@linshare.org");
 		String oldPassword = "password222";
 		guest.setPassword(HashUtils.hashSha1withBase64(oldPassword.getBytes()));
 		guest.setCmisLocale("en");
