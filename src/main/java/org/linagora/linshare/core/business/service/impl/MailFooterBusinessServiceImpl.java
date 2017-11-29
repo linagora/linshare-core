@@ -34,11 +34,13 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.linagora.linshare.core.business.service.MailFooterBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailFooter;
+import org.linagora.linshare.core.domain.entities.MailFooterLang;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
@@ -100,5 +102,10 @@ public class MailFooterBusinessServiceImpl implements MailFooterBusinessService 
 		domain.getMailContents().remove(val);
 		abstractDomainRepository.update(domain);
 		mailFooterRepository.delete(val);
+	}
+
+	@Override
+	public List<MailFooterLang> findByMailFooter(MailFooter mailFooter) throws BusinessException {
+		return mailFooterLangRepository.findByMailFooter(mailFooter);
 	}
 }

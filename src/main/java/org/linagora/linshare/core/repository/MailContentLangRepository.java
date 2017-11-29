@@ -34,6 +34,8 @@
 
 package org.linagora.linshare.core.repository;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.MailConfig;
@@ -49,4 +51,7 @@ public interface MailContentLangRepository extends
 			MailContentType type);
 
 	boolean isMailContentReferenced(MailContent content);
+	
+	List<MailContentLang> findByMailContent(MailContent mailContent);
+	
 }

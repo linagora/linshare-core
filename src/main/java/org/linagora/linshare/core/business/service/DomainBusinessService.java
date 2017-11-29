@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.business.service;
 
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
@@ -65,4 +66,8 @@ public interface DomainBusinessService {
 	List<String> getAllMyDomainIdentifiers(AbstractDomain domain);
 
 	List<String> getAllSubDomainIdentifiers(String domain);
+
+	List<AbstractDomain> getSubDomainsByDomain(String uuid) throws BusinessException;
+
+	Set<AbstractDomain> getSubDomainsByDomainAsASet(String uuid) throws BusinessException;
 }

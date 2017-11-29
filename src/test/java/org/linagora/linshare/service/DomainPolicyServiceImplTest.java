@@ -50,6 +50,8 @@ import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.RootDomain;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
+import org.linagora.linshare.core.repository.AbstractDomainRepository;
+import org.linagora.linshare.core.repository.DomainAccessRuleRepository;
 import org.linagora.linshare.core.service.DomainPolicyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +74,10 @@ public class DomainPolicyServiceImplTest extends AbstractJUnit4SpringContextTest
 	
 	@Autowired
 	private DomainPolicyService domainPolicyService;
+	@Autowired
+	AbstractDomainRepository abstractDomainRepository;
+	@Autowired
+	DomainAccessRuleRepository domainAccessRuleRepository;
 	
 	private AbstractDomain rootDomain;
 	
@@ -89,52 +95,70 @@ public class DomainPolicyServiceImplTest extends AbstractJUnit4SpringContextTest
 		
 		DomainPolicy domainePolicy1 = new DomainPolicy("TestAccessPolicy0", new DomainAccessPolicy());
 		domainePolicy1.getDomainAccessPolicy().addRule(new AllowAllDomain());
-		
+		domainPolicyService.create(domainePolicy1);
 		
 		
 		
 		rootDomain = new RootDomain("root domain");
 		rootDomain.setPolicy(domainePolicy1);
+		abstractDomainRepository.create(rootDomain);
 		
 		t1 = new TopDomain("top1", (RootDomain)rootDomain);
 		rootDomain.addSubdomain(t1);
 		t1.setPolicy(domainePolicy1);
+		t1.setParentDomain(rootDomain);
+		abstractDomainRepository.create(t1);
 		
 		s1 = new SubDomain("id_sub1",t1);
 		t1.addSubdomain(s1);
 		s1.setPolicy(domainePolicy1);
+		s1.setParentDomain(t1);
+		abstractDomainRepository.create(s1);
 		
 		SubDomain s2 = new SubDomain("id_sub2",t1);
 		t1.addSubdomain(s2);
 		s2.setPolicy(domainePolicy1);
+		s2.setParentDomain(t1);
+		abstractDomainRepository.create(s2);
 		
 		GuestDomain s3 = new GuestDomain("id_sub3");
 		s3.setParentDomain(t1);
 		t1.addSubdomain(s3);
 		s3.setPolicy(domainePolicy1);
-		
-		
+		s3.setParentDomain(t1);
+		abstractDomainRepository.create(s3);
 		
 		
 		t2 = new TopDomain("top2", (RootDomain)rootDomain);
 		rootDomain.addSubdomain(t2);
+		t2.setParentDomain(rootDomain);
+		abstractDomainRepository.create(t2);
+		
 		DomainPolicy domainePolicy2 = new DomainPolicy("TestAccessPolicy1", new DomainAccessPolicy());
 		domainePolicy2.getDomainAccessPolicy().addRule(new AllowDomain(t2));
 		domainePolicy2.getDomainAccessPolicy().addRule(new DenyAllDomain());
+		domainPolicyService.create(domainePolicy2);
+		
 		t2.setPolicy(domainePolicy2);
+		abstractDomainRepository.update(t2);
 		
 		s4 = new SubDomain("id_sub4",t2);
 		t2.addSubdomain(s4);
 		s4.setPolicy(domainePolicy2);
+		s4.setParentDomain(t2);
+		abstractDomainRepository.create(s4);
 		
 		SubDomain s5 = new SubDomain("id_sub5",t2);
 		t2.addSubdomain(s5);
 		s5.setPolicy(domainePolicy2);
+		s5.setParentDomain(t2);
+		abstractDomainRepository.create(s5);
 		
 		SubDomain s6 = new SubDomain("id_sub6",t2);
 		t2.addSubdomain(s6);
 		s6.setPolicy(domainePolicy2);
-		
+		s6.setParentDomain(t2);
+		abstractDomainRepository.create(s6);
 		
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}

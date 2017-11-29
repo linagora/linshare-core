@@ -70,4 +70,9 @@ public class MimeTypeBusinessServiceImpl implements MimeTypeBusinessService {
 		entity.setExtensions(mimeType.getExtensions());
 		return mimeTypeRepository.update(entity);
 	}
+
+	@Override
+	public void delete(MimeType mimeType) throws BusinessException {
+		mimeTypeRepository.delete(mimeType);
+	}
 }

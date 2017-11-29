@@ -44,4 +44,6 @@ public interface MimeTypeBusinessService {
 	MimeType findByMimeType(MimePolicy mimePolicy, String mimeType);
 
 	MimeType update(MimeType mimeType) throws BusinessException;
+	
+	void delete(MimeType mimeType)  throws BusinessException;
 }

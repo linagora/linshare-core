@@ -62,7 +62,6 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.core.service.LdapConnectionService;
 import org.linagora.linshare.core.service.QuotaService;
-import org.linagora.linshare.core.service.UserAndDomainMultiService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.service.WelcomeMessagesService;
 
@@ -79,8 +78,6 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private final DomainPolicyService domainPolicyService;
 
-	private final UserAndDomainMultiService userAndDomainMultiService;
-
 	private final QuotaService quotaService;
 
 	private final WelcomeMessagesService welcomeMessagesService;
@@ -91,13 +88,11 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 			final DomainPolicyService domainPolicyService,
 			final WelcomeMessagesService welcomeMessagesService,
 			final LdapConnectionService ldapConnectionService,
-			final QuotaService quotaService,
-			final UserAndDomainMultiService userAndDomainMultiService) {
+			final QuotaService quotaService) {
 		super(accountService);
 		this.abstractDomainService = abstractDomainService;
 		this.userProviderService = userProviderService;
 		this.domainPolicyService = domainPolicyService;
-		this.userAndDomainMultiService = userAndDomainMultiService;
 		this.welcomeMessagesService = welcomeMessagesService;
 		this.quotaService = quotaService;
 		this.ldapConnectionService = ldapConnectionService;
@@ -135,14 +130,14 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		 } else {
 			 throw new BusinessException(BusinessErrorCode.FORBIDDEN,
 					 "the curent domain was not found : " + domain);
-		 }
-		 if (tree) {
-			 if (simple) {
-				 res = DomainDto.getSimpleTree(entity);
-			 } else {
-				 res = DomainDto.getFullTree(entity);
-			 }
-		 } else {
+		}
+		if (tree) {
+			if (simple) {
+				res = getDomainTree(DomainDto.getSimple(entity), false);
+			} else {
+				res = getDomainTree(DomainDto.getFull(entity), false);
+			}
+		} else {
 			 res = DomainDto.getSimple(entity);
 		 }
 		 DomainQuota quota = quotaService.find(entity);
@@ -246,20 +241,10 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public DomainDto delete(DomainDto domainDto) throws BusinessException {
-		User actor = checkAuthentication(Role.SUPERADMIN);
-		Validate.notEmpty(domainDto.getIdentifier(),
-				"domain identifier must be set.");
-		AbstractDomain domain = userAndDomainMultiService.deleteDomainAndUsers(actor, domainDto.getIdentifier());
-		return DomainDto.getFull(domain);
-	}
-
-	@Override
 	public DomainDto delete(String domainId) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
-		Validate.notEmpty(domainId,
-				"domain identifier must be set.");
-		AbstractDomain domain = userAndDomainMultiService.deleteDomainAndUsers(actor, domainId);
+		Validate.notEmpty(domainId, "domain identifier must be set.");
+		AbstractDomain domain = abstractDomainService.markToPurge(actor, domainId);
 		return DomainDto.getFull(domain);
 	}
 
@@ -302,5 +287,17 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		}
 		return domain;
 	}
-
+	
+	private DomainDto getDomainTree(DomainDto domainDto, boolean light) {
+		for (AbstractDomain child : abstractDomainService.getSubDomainsByDomain(domainDto.getIdentifier())) {
+			DomainDto childDto = null;
+			if (light)
+				childDto = getDomainTree(DomainDto.getSimple(child), light);
+			else
+				childDto = getDomainTree(DomainDto.getFull(child), light);
+			domainDto.getChildren().add(childDto);
+			childDto.setParent(domainDto.getIdentifier());
+		}
+		return domainDto;
+	}
 }

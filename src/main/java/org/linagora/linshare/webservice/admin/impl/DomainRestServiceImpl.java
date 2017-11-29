@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2017. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -127,16 +127,6 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
 	@Override
 	public DomainDto delete(DomainDto domain) throws BusinessException {
-		return domainFacade.delete(domain);
+		return domainFacade.delete(domain.getIdentifier());
 	}
-
-	@Path("/{domainId}")
-	@DELETE
-	@ApiOperation(value = "Delete a domain.", response = DomainDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't a super admin.") })
-	@Override
-	public DomainDto delete(@PathParam(value = "domainId") String domainId) throws BusinessException {
-		return domainFacade.delete(domainId);
-	}
-
 }

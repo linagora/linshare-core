@@ -41,7 +41,9 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.LogEntryRepository;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.mongo.entities.EventNotification;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 import org.linagora.linshare.mongo.repository.EventNotificationMongoRepository;
 import org.linagora.linshare.view.tapestry.beans.LogCriteriaBean;
@@ -62,14 +64,18 @@ public class LogEntryServiceImpl implements LogEntryService {
 
 	private final EventNotificationMongoRepository eventNotificationMongoRepository;
 
+	private final AuditAdminMongoRepository auditAdminMongoRepository;
+
 	public LogEntryServiceImpl(final LogEntryRepository logEntryRepository,
 			final AuditUserMongoRepository auditUserMongoRepository,
+			final AuditAdminMongoRepository auditAdminMongoRepository,
 			final EventNotificationMongoRepository eventNotificationMongoRepository,
 			final DomainBusinessService domainBusinessService) {
 		super();
 		this.logEntryRepository = logEntryRepository;
 		this.domainBusinessService = domainBusinessService;
 		this.auditUserMongoRepository = auditUserMongoRepository;
+		this.auditAdminMongoRepository = auditAdminMongoRepository;
 		this.eventNotificationMongoRepository = eventNotificationMongoRepository;
 	}
 
@@ -142,6 +148,11 @@ public class LogEntryServiceImpl implements LogEntryService {
 		eventNotificationMongoRepository.insert(event);
 		return log;
 	}
+	
+	@Override
+	public AuditLogEntryAdmin insert(AuditLogEntryAdmin entity) {
+		return insert(INFO, entity);
+	}
 
 	@Override
 	public List<AuditLogEntryUser> insert(List<AuditLogEntryUser> entities, List<EventNotification> events) {
@@ -162,4 +173,22 @@ public class LogEntryServiceImpl implements LogEntryService {
 	public EventNotification insertEvent(EventNotification event) {
 		return eventNotificationMongoRepository.insert(event);
 	}
+	
+	@Override
+	public AuditLogEntryAdmin insert(int level, AuditLogEntryAdmin entity) {
+		if (entity == null) {
+			throw new IllegalArgumentException("Entity must not be null");
+		}
+		if (level == INFO) {
+			logger.info(entity.toString());
+		} else if (level == WARN) {
+			logger.warn(entity.toString());
+		} else if (level == ERROR) {
+			logger.error(entity.toString());
+		} else {
+			throw new IllegalArgumentException("Unknown log level, is neither INFO, WARN nor ERROR");
+		}
+		return auditAdminMongoRepository.insert(entity);
+	}
+
 }

@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.util.List;
+
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
@@ -81,5 +83,10 @@ public class MailContentLangRepositoryImpl extends
 	public boolean isMailContentReferenced(MailContent content) {
 		return !findByCriteria(Restrictions.eq("mailContent", content))
 				.isEmpty();
+	}
+
+	@Override
+	public List<MailContentLang> findByMailContent(MailContent mailContent) {
+		return findByCriteria(Restrictions.eq("mailContent", mailContent));
 	}
 }

@@ -172,7 +172,7 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 			current = welcomeService.find((User) actor, "4bc57114-c8c9-11e4-a859-37b5db95d856");
 			topDomain.setCurrentWelcomeMessages(current);
 			abstractDomainService.createTopDomain(actor, topDomain);
-			abstractDomainService.deleteDomain(actor, topDomain.getUuid());
+			abstractDomainService.markToPurge(actor, topDomain.getUuid());
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assert.fail("Can't create top domain.");
@@ -198,8 +198,6 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		mimePolicy.setUuid(LinShareConstants.defaultMimePolicyIdentifier);
 		topDomain.setMimePolicy(mimePolicy);
 		
-		
-		
 		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
 		current = welcomeService.find((User) actor, "4bc57114-c8c9-11e4-a859-37b5db95d856");
 		topDomain.setCurrentWelcomeMessages(current);
@@ -211,7 +209,7 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		}
 		
 		try {
-			abstractDomainService.deleteDomain(actor, topDomain.getUuid());
+			abstractDomainService.markToPurge(actor, topDomain.getUuid());
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assert.fail("Can't delete top domain.");

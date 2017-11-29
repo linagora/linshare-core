@@ -101,7 +101,7 @@ public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 					"Welcome message with uuid :" + uuid + " not found.");
 		return wlcm;
 	}
-
+	
 	@Override
 	public WelcomeMessages create(User actor, WelcomeMessages wlcmInput,
 			String domainId) throws BusinessException {

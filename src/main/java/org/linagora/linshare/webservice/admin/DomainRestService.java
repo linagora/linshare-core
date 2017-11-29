@@ -51,6 +51,4 @@ public interface DomainRestService {
 	DomainDto create(DomainDto domain) throws BusinessException;
 
 	DomainDto delete(DomainDto domain) throws BusinessException;
-
-	DomainDto delete(String domainId) throws BusinessException;
 }

@@ -95,7 +95,8 @@ public class DomainPermissionBusinessServiceImpl implements
 	private List<AbstractDomain> findRecursivelyDomains(AbstractDomain root) {
 		List<AbstractDomain> list = Lists.newArrayList();
 		list.add(root);
-		for (AbstractDomain sub : root.getSubdomain()) {
+		List<AbstractDomain> abstractDomains = domainBusinessService.getSubDomainsByDomain(root.getUuid());
+		for (AbstractDomain sub : abstractDomains) {
 			list.addAll(findRecursivelyDomains(sub));
 		}
 		return list;

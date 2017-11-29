@@ -107,33 +107,34 @@ public class DomainDto {
 	@ApiModelProperty(value = "Quota uuid")
 	private String quota;
 
-	protected DomainDto(final AbstractDomain domain, boolean light,
-			boolean recursive) {
+	protected DomainDto(final AbstractDomain domain, boolean light) {
 		this.identifier = domain.getUuid();
 		this.label = domain.getLabel();
 		this.type = domain.getDomainType().toString();
-		mimePolicyUuid = domain.getMimePolicy().getUuid();
-		mailConfigUuid = domain.getCurrentMailConfiguration().getUuid();
-		this.currentWelcomeMessage = new WelcomeMessagesDto(domain.getCurrentWelcomeMessage(), false);
+		if (domain.getMimePolicy() != null) {
+			mimePolicyUuid = domain.getMimePolicy().getUuid();
+		}
+		if (domain.getCurrentWelcomeMessage() != null) {
+			if (domain.getCurrentMailConfiguration() != null) {
+				mailConfigUuid = domain.getCurrentMailConfiguration().getUuid();
+			}
+		}
+		if (domain.getCurrentWelcomeMessage() != null) {
+			this.currentWelcomeMessage = new WelcomeMessagesDto(domain.getCurrentWelcomeMessage(), false);
+		}
 		if (!light) {
 			this.description = domain.getDescription();
 			this.language = domain.getDefaultTapestryLocale();
 			this.externalMailLocale = domain.getExternalMailLocale();
 			this.userRole = domain.getDefaultRole().toString();
-			this.policy = new DomainPolicyDto(domain.getPolicy());
+			if (domain.getPolicy() != null)
+				this.policy = new DomainPolicyDto(domain.getPolicy());
 			this.authShowOrder = domain.getAuthShowOrder();
 			if (domain.getUserProvider() != null) {
 				this.providers.add(domain.getUserProvider().toLDAPUserProviderDto());
 			}
 			if (domain.getParentDomain() != null) {
 				this.parent = domain.getParentDomain().getUuid();
-			}
-		}
-		if (recursive) {
-			for (AbstractDomain child : domain.getSubdomain()) {
-				DomainDto childDto = new DomainDto(child, light, recursive);
-				this.children.add(childDto);
-				childDto.parent = this.identifier;
 			}
 		}
 	}
@@ -143,19 +144,11 @@ public class DomainDto {
 	}
 
 	public static DomainDto getSimple(final AbstractDomain domain) {
-		return new DomainDto(domain, true, false);
+		return new DomainDto(domain, true);
 	}
 
 	public static DomainDto getFull(final AbstractDomain domain) {
-		return new DomainDto(domain, false, false);
-	}
-
-	public static DomainDto getSimpleTree(final AbstractDomain domain) {
-		return new DomainDto(domain, true, true);
-	}
-
-	public static DomainDto getFullTree(final AbstractDomain domain) {
-		return new DomainDto(domain, false, true);
+		return new DomainDto(domain, false);
 	}
 
 	public String getIdentifier() {

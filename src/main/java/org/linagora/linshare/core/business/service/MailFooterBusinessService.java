@@ -34,8 +34,11 @@
 
 package org.linagora.linshare.core.business.service;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailFooter;
+import org.linagora.linshare.core.domain.entities.MailFooterLang;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface MailFooterBusinessService {
@@ -48,5 +51,6 @@ public interface MailFooterBusinessService {
 	MailFooter update(MailFooter footer) throws BusinessException;
 
 	void delete(MailFooter val) throws BusinessException;
-
+	
+	List<MailFooterLang> findByMailFooter(MailFooter mailFooter) throws BusinessException;
 }

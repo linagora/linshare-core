@@ -40,7 +40,9 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.UploadPropositionFilterBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.UploadPropositionAction;
 import org.linagora.linshare.core.domain.entities.UploadPropositionFilter;
+import org.linagora.linshare.core.domain.entities.UploadPropositionRule;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.UploadPropositionFilterService;
@@ -121,8 +123,21 @@ public class UploadPropositionFilterServiceImpl implements UploadPropositionFilt
 		return entity;
 	}
 
+	@Override
+	public void delete(Account actor, UploadPropositionRule entity) throws BusinessException {
+		preChecks(actor);
+		businessService.delete(entity);
+	}
+
+	@Override
+	public void delete(Account actor, UploadPropositionAction entity) throws BusinessException {
+		preChecks(actor);
+		businessService.delete(entity);
+	}
+	
 	void preChecks(Account actor) {
 		Validate.notNull(actor, "actor is required");
 		Validate.notEmpty(actor.getLsUuid(), "actor uuid is required");
 	}
+
 }

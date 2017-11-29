@@ -96,4 +96,16 @@ public interface AbstractDomainRepository extends AbstractRepository<AbstractDom
 	List<AbstractDomain> loadDomainsForAWelcomeMessage(WelcomeMessages welcomeMessage) throws BusinessException;
 
 	List<String> getAllSubDomainIdentifiers(String domain);
+	
+	void markToPurge(AbstractDomain abstractDomain);
+
+	void purge(AbstractDomain abstractDomain);
+
+	List<String> findAllAbstractDomainsReadyToPurge();
+	
+	AbstractDomain findDomainReadyToPurge(String lsUuid);
+
+	List<AbstractDomain> getSubDomainsByDomain(String uuid);
+	
+	AbstractDomain getGuestSubDomainByDomain(String uuid);
 }

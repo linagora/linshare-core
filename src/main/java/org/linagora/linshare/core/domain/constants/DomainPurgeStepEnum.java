@@ -1,8 +1,8 @@
 /*
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
- * 
- * Copyright (C) 2015 LINAGORA
+ *
+ * Copyright (C) 2017 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -19,45 +19,33 @@
  * refrain from infringing Linagora intellectual property rights over its
  * trademarks and commercial brands. Other Additional Terms apply, see
  * <http://www.linagora.com/licenses/> for more details.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License and
  * its applicable Additional Terms for LinShare along with this program. If not,
  * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.core.domain.constants;
 
-package org.linagora.linshare.core.business.service;
+import org.apache.commons.lang.StringUtils;
+import org.linagora.linshare.core.exception.TechnicalErrorCode;
+import org.linagora.linshare.core.exception.TechnicalException;
 
-import java.util.List;
+public enum DomainPurgeStepEnum {
 
-import org.linagora.linshare.core.domain.entities.UploadPropositionAction;
-import org.linagora.linshare.core.domain.entities.UploadPropositionFilter;
-import org.linagora.linshare.core.domain.entities.UploadPropositionRule;
-import org.linagora.linshare.core.exception.BusinessException;
+	IN_USE, WAIT_FOR_PURGE, PURGED;
 
-public interface UploadPropositionFilterBusinessService {
-
-	UploadPropositionFilter find(String uuid);
-
-	List<UploadPropositionFilter> findAll();
-
-	List<UploadPropositionFilter> findAllEnabledFilters();
-
-	UploadPropositionFilter create(UploadPropositionFilter entity)
-			throws BusinessException;
-
-	UploadPropositionFilter update(UploadPropositionFilter entity)
-			throws BusinessException;
-
-	void delete(UploadPropositionFilter entity) throws BusinessException;
-	
-	void delete(UploadPropositionRule entity) throws BusinessException;
-
-	void delete(UploadPropositionAction entity) throws BusinessException;
+	public static DomainPurgeStepEnum fromString(String s) {
+		try {
+			return DomainPurgeStepEnum.valueOf(s.toUpperCase());
+		} catch (RuntimeException e) {
+			throw new TechnicalException(TechnicalErrorCode.DATABASE_INCOHERENCE, StringUtils.isEmpty(s) ? "null or empty" : s);
+		}
+	}
 }

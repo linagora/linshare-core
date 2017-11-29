@@ -34,10 +34,11 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.business.service.DomainBusinessService;
-import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -92,12 +93,10 @@ public class DomainBusinessServiceImpl implements DomainBusinessService {
 			return null;
 		}
 		// search GuestDomain among subdomains
-		if (domain.getSubdomain() != null) {
-			for (AbstractDomain d : domain.getSubdomain()) {
-				if (d.getDomainType().equals(DomainType.GUESTDOMAIN)) {
-					return d;
-				}
-			}
+		
+		AbstractDomain guestDomain = repository.getGuestSubDomainByDomain(domain.getUuid());
+		if (guestDomain != null) {
+			return guestDomain;
 		}
 		// search among siblings
 		if (domain.getParentDomain() != null) {
@@ -110,10 +109,9 @@ public class DomainBusinessServiceImpl implements DomainBusinessService {
 		List<AbstractDomain> domains = new ArrayList<AbstractDomain>();
 		if (domain != null) {
 			domains.add(domain);
-			if (domain.getSubdomain() != null) {
-				for (AbstractDomain d : domain.getSubdomain()) {
-					domains.addAll(getMyDomainRecursively(d));
-				}
+			List<AbstractDomain> abstractDomains = repository.getSubDomainsByDomain(domain.getUuid());
+			for (AbstractDomain d : abstractDomains) {
+				domains.addAll(getMyDomainRecursively(d));
 			}
 		}
 		return domains;
@@ -133,4 +131,13 @@ public class DomainBusinessServiceImpl implements DomainBusinessService {
 		return repository.getAllSubDomainIdentifiers(domain);
 	}
 
+	@Override
+	public List<AbstractDomain> getSubDomainsByDomain(String uuid) throws BusinessException {
+		return repository.getSubDomainsByDomain(uuid);
+	}
+	
+	@Override
+	public Set<AbstractDomain> getSubDomainsByDomainAsASet(String uuid) throws BusinessException {
+		return new HashSet<AbstractDomain>(repository.getSubDomainsByDomain(uuid));
+	}
 }

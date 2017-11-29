@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,6 +42,7 @@ import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.entities.MailContent;
 import org.linagora.linshare.core.domain.entities.MailContentLang;
 import org.linagora.linshare.core.domain.entities.MailFooterLang;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -230,5 +232,15 @@ public class MailConfigBusinessServiceImpl implements MailConfigBusinessService 
 					BusinessErrorCode.MAILFOOTERLANG_NOT_FOUND,
 					"Cannot delete mailconfig " + footerLang);
 		}
+	}
+
+	@Override
+	public List<MailFooterLang> findMailsFooterLangByMailConfig(MailConfig mailConfig) throws BusinessException {
+		return mailFooterLangRepository.findByMailConfig(mailConfig);
+	}
+
+	@Override
+	public List<MailContentLang> findMailsContentLangByMailContent(MailContent mailContent) throws BusinessException {
+		return mailContentLangRepository.findByMailContent(mailContent);
 	}
 }

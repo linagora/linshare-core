@@ -34,19 +34,23 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DomainAccessPolicyBusinessService;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.DomainQuotaBusinessService;
-import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.business.service.MailConfigBusinessService;
+import org.linagora.linshare.core.business.service.MailContentBusinessService;
+import org.linagora.linshare.core.business.service.MailFooterBusinessService;
+import org.linagora.linshare.core.business.service.MailLayoutBusinessService;
 import org.linagora.linshare.core.business.service.MimePolicyBusinessService;
+import org.linagora.linshare.core.business.service.UploadPropositionBusinessService;
+import org.linagora.linshare.core.business.service.WelcomeMessagesBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.DomainPurgeStepEnum;
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -60,6 +64,7 @@ import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.domain.entities.SubDomain;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.TopDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserProvider;
@@ -71,6 +76,10 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
+import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.core.service.LogEntryService;
+import org.linagora.linshare.core.service.MimeTypeService;
+import org.linagora.linshare.core.service.UploadPropositionFilterService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.service.WelcomeMessagesService;
 import org.linagora.linshare.mongo.entities.logs.DomainAuditLogEntry;
@@ -95,10 +104,19 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	private final MimePolicyBusinessService mimePolicyBusinessService;
 	private final MailConfigBusinessService mailConfigBusinessService;
 	private final WelcomeMessagesService welcomeMessagesService;
+	private final WelcomeMessagesBusinessService welcomeMessagesBusinessService;
 	private final AuditAdminMongoRepository auditMongoRepository;
-	final private DomainAccessPolicyBusinessService domainAccessPolicyBusinessService;
+	private final DomainAccessPolicyBusinessService domainAccessPolicyBusinessService;
 	private final DomainQuotaBusinessService domainQuotaBusinessService;
 	private final ContainerQuotaBusinessService containerQuotaBusinessService;
+	private final LogEntryService logEntryService;
+	private final FunctionalityService functionalityService;
+	private final MailFooterBusinessService mailFooterBusinessService;
+	private final MailContentBusinessService mailContentBusinessService;
+	private final UploadPropositionFilterService uploadPropositionFilterService;
+	private final UploadPropositionBusinessService uploadPropositionBusinessService;
+	private final MimeTypeService mimeTypeService;
+	private final MailLayoutBusinessService mailLayoutBusinessService;
 
 	public AbstractDomainServiceImpl(
 			final AbstractDomainRepository abstractDomainRepository,
@@ -110,10 +128,19 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			final MimePolicyBusinessService mimePolicyBusinessService,
 			final MailConfigBusinessService mailConfigBusinessService,
 			final WelcomeMessagesService welcomeMessagesService,
+			final WelcomeMessagesBusinessService welcomeMessagesBusinessService,
 			final AuditAdminMongoRepository auditMongoRepository,
 			final DomainAccessPolicyBusinessService domainAccessPolicyBusinessService,
 			final DomainQuotaBusinessService domainQuotaBusinessService,
-			final ContainerQuotaBusinessService containerQuotaBusinessService) {
+			final ContainerQuotaBusinessService containerQuotaBusinessService,
+			final LogEntryService logEntryService,
+			final FunctionalityService functionalityService,
+			final MailFooterBusinessService mailFooterBusinessService,
+			final MailContentBusinessService mailContentBusinessService,
+			final UploadPropositionFilterService  uploadPropositionFilterService,
+			final UploadPropositionBusinessService uploadPropositionBusinessService,
+			final MimeTypeService mimeTypeService,
+			final MailLayoutBusinessService mailLayoutBusinessService) {
 		super();
 		this.abstractDomainRepository = abstractDomainRepository;
 		this.domainPolicyService = domainPolicyService;
@@ -124,11 +151,20 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		this.mimePolicyBusinessService = mimePolicyBusinessService;
 		this.mailConfigBusinessService = mailConfigBusinessService;
 		this.welcomeMessagesService = welcomeMessagesService;
+		this.welcomeMessagesBusinessService = welcomeMessagesBusinessService;
 		this.auditMongoRepository = auditMongoRepository;
 		this.domainAccessPolicyBusinessService = domainAccessPolicyBusinessService;
 		this.domainQuotaBusinessService = domainQuotaBusinessService;
 		this.containerQuotaBusinessService = containerQuotaBusinessService;
-	}
+		this.logEntryService = logEntryService;
+		this.functionalityService = functionalityService;
+		this.mailFooterBusinessService = mailFooterBusinessService;
+		this.mailContentBusinessService = mailContentBusinessService;
+		this.uploadPropositionFilterService = uploadPropositionFilterService;
+		this.uploadPropositionBusinessService = uploadPropositionBusinessService;
+		this.mimeTypeService = mimeTypeService;
+		this.mailLayoutBusinessService = mailLayoutBusinessService;
+		}
 
 	@Override
 	public AbstractDomain getUniqueRootDomain() throws BusinessException {
@@ -267,43 +303,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 //		DomainAuditLogEntry log = new DomainAuditLogEntry(actor, LogAction.UPDATE, AuditLogEntryType.DOMAIN, domain);
 //		auditMongoRepository.insert(log);
 		return domain;
-	}
-
-	@Override
-	public void deleteDomain(Account actor, String identifier) throws BusinessException {
-		if (!actor.hasSuperAdminRole()) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Only root is authorized to create domains.");
-		}
-		AbstractDomain domain = findById(identifier);
-		if (domain.getDomainType().equals(DomainType.ROOTDOMAIN)) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "No one is authorized to delete root domain.");
-		}
-
-		boolean domainHasAccessRules = domainAccessPolicyBusinessService.domainHasPolicyRules(domain);
-		if (domainHasAccessRules) {
-			String errorMessage = "Cannot delete the domain : "
-					+ domain.getLabel() + " (" + domain.getUuid()
-					+ "), delete the affiliated rules to do so ...";
-			logger.info(errorMessage);
-			throw new BusinessException(
-					BusinessErrorCode.DOMAIN_HAS_ACCESS_RULES, errorMessage);
-		}
-		abstractDomainRepository.delete(domain);
-		DomainAuditLogEntry log = new DomainAuditLogEntry(actor, LogAction.DELETE, AuditLogEntryType.DOMAIN, domain);
-		auditMongoRepository.insert(log);
-		// Remove element from its ancestor. It does not need to be updated. Do
-		// not know why, implicit update somewhere ?
-		if (domain.getParentDomain() != null) {
-			for (Iterator<AbstractDomain> iterator = domain.getParentDomain()
-					.getSubdomain().iterator(); iterator.hasNext();) {
-				AbstractDomain s = iterator.next();
-				if (s.getUuid().equals(identifier)) {
-					iterator.remove();
-					// abstractDomainRepository.update(domain.getParentDomain());
-					break;
-				}
-			}
-		}
 	}
 
 	@Override
@@ -451,7 +450,9 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		} catch (BusinessException e) {
 			logger.error(e.getMessage());
 		}
-		for (AbstractDomain subDomain : domain.getSubdomain()) {
+		
+		List<AbstractDomain> abstractDomains = domainBusinessService.getSubDomainsByDomain(domain.getUuid());
+		for (AbstractDomain subDomain : abstractDomains) {
 			users.addAll(findUserRecursivelyWithoutRestriction(subDomain, mail));
 		}
 		return users;
@@ -712,9 +713,9 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	@Override
 	public boolean canCreateGuestDomain(AbstractDomain domain) {
 		if (domain != null) {
-			// search GuestDomain among subdomains
-			if (domain.getSubdomain() != null) {
-				for (AbstractDomain d : domain.getSubdomain()) {
+			List<AbstractDomain> abstractDomains = abstractDomainRepository.getSubDomainsByDomain(domain.getUuid());
+			if (!abstractDomains.isEmpty()) {
+				for (AbstractDomain d : abstractDomains) {
 					if (d.getDomainType().equals(DomainType.GUESTDOMAIN)) {
 						logger.debug("Guest domain already exist.");
 						return false;
@@ -753,7 +754,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		} else {
 			List<AbstractDomain> domainList = Lists.newArrayList();
 			domainList.add(actor.getDomain());
-			Set<AbstractDomain> entities = actor.getDomain().getSubdomain();
+			List<AbstractDomain> entities = abstractDomainRepository.getSubDomainsByDomain(actor.getDomain().getUuid());
 			for (AbstractDomain abstractDomain : entities) {
 				domainList.add(abstractDomain);
 			}
@@ -819,5 +820,113 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			}
 			containerQuotaBusinessService.create(cq);
 		}
+	}
+	
+	@Override
+	public AbstractDomain markToPurge(Account actor, String domainId) {
+		AbstractDomain domain = findById(domainId);
+		if (domain == null) {
+			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND, "Domain identifier no found.");
+		}
+		List<AbstractDomain> abstractDomains = domainBusinessService.getSubDomainsByDomain(domain.getUuid());
+
+		if (abstractDomains.isEmpty()) {
+			try {
+				logger.info("starting purging domain");
+				if (domain.getFunctionalities() != null) {
+					domain.getFunctionalities()
+							.forEach(f -> functionalityService.delete(actor, domain.getUuid(), f.getIdentifier()));
+				}
+				if (domain.getDomainAccessRules() != null) {
+					domain.getDomainAccessRules().forEach(dar -> domainAccessPolicyBusinessService.delete(dar));
+				}
+				if (domain.getMailLayouts() != null) {
+					domain.getMailLayouts().forEach(ml -> mailLayoutBusinessService.delete(ml));
+				}
+				if (domain.getMailFooters() != null) {
+					domain.getMailFooters().forEach(mf -> {
+						mailFooterBusinessService.findByMailFooter(mf)
+								.forEach(mfl -> mailConfigBusinessService.deleteFooterLang(mfl));
+						mailFooterBusinessService.delete(mf);
+					});
+				}
+				if (domain.getMailContents() != null) {
+					domain.getMailContents().forEach(mc -> {
+						mailConfigBusinessService.findMailsContentLangByMailContent(mc)
+								.forEach(mcl -> mailConfigBusinessService.deleteContentLang(mcl));
+						mailContentBusinessService.delete(mc);
+					});
+				}
+				if (domain.getMailConfigs() != null) {
+					domain.getMailConfigs().forEach(mc -> {
+						mc.getMailContentLangs().forEach(mcl -> mailConfigBusinessService.deleteContentLang(mcl));
+						mailConfigBusinessService.delete(mc);
+					});
+				}
+				if (domain.getMimePolicies() != null) {
+					domain.getMimePolicies().forEach(mp -> {
+						mp.getMimeTypes().forEach(mt -> mimeTypeService.delete(actor, mt));
+						mimePolicyBusinessService.delete(mp);
+					});
+				}
+				if (domain.getUploadPropositionFilters() != null) {
+					domain.getUploadPropositionFilters().forEach(upf -> {
+						upf.getRules().forEach(r -> uploadPropositionFilterService.delete(actor, r));
+						upf.getActions().forEach(a -> uploadPropositionFilterService.delete(actor, a));
+						uploadPropositionFilterService.delete(actor, upf.getUuid());
+					});
+				}
+				if (domain.getUploadPropositions() != null) {
+					domain.getUploadPropositions().forEach(up -> uploadPropositionBusinessService.delete(up));
+				}
+				if (domain.getUserProvider() != null) {
+					userProviderService.delete(domain.getUserProvider());
+					domain.setUserProvider(null);
+				}
+				if (domain.getWelcomeMessages() != null) {
+					domain.getWelcomeMessages().forEach(wm -> welcomeMessagesBusinessService.delete(wm));
+				}
+				if(domain.getPolicy()!=null)
+					domain.setPolicy(null);
+				DomainAuditLogEntry log = new DomainAuditLogEntry(actor, LogAction.DELETE, AuditLogEntryType.DOMAIN,
+						domain);
+				domain.setCurrentMailConfiguration(null);
+				domain.setCurrentWelcomeMessages(null);
+				domain.setMimePolicy(null);
+				abstractDomainRepository.markToPurge(domain);
+				auditMongoRepository.insert(log);
+				logger.info("domain purged successfully");
+			} catch (BusinessException businessException) {
+				logger.error("Error occured while deleting domain relatios", businessException);
+			}
+		} else
+			throw new BusinessException(BusinessErrorCode.DOMAIN_INVALID_OPERATION, " Domain contains subDomains");
+		return domain;
+	}
+
+	@Override
+	public List<String> findAllDomainsReadyToPurge() throws BusinessException {
+		return abstractDomainRepository.findAllAbstractDomainsReadyToPurge();
+	}
+
+	@Override
+	public AbstractDomain findDomainReadyToPurge(SystemAccount actor, String uuid) {
+		Validate.notEmpty(uuid, "User uuid must be set.");
+		return abstractDomainRepository.findDomainReadyToPurge(uuid);
+	}
+
+	@Override
+	public void purge(Account actor, String lsUuid) throws BusinessException {
+		AbstractDomain abstractDomainToDelete = findById(lsUuid);
+		abstractDomainToDelete.setPurgeStep(DomainPurgeStepEnum.PURGED);
+		abstractDomainRepository.update(abstractDomainToDelete);
+		DomainAuditLogEntry log = new DomainAuditLogEntry(actor, LogAction.PURGE, AuditLogEntryType.DOMAIN,
+				abstractDomainToDelete);
+		logEntryService.insert(log);
+	}
+
+	@Override
+	public List<AbstractDomain> getSubDomainsByDomain(String uuid) throws BusinessException {
+		return domainBusinessService.getSubDomainsByDomain(uuid);
 	}
 }

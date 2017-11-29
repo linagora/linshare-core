@@ -128,4 +128,13 @@ public class MimeTypeServiceImpl implements MimeTypeService {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
 		}
 	}
+
+	@Override
+	public void delete(Account actor, MimeType mimeType) throws BusinessException {
+		Validate.notNull(actor);
+		Validate.notNull(mimeType);
+		Validate.notEmpty(mimeType.getUuid());
+		checkAdminFor(actor, mimeType.getUuid());
+		mimeTypeBusinessService.delete(mimeType);
+	}
 }

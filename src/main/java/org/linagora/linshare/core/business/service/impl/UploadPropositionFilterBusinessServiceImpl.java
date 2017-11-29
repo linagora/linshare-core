@@ -152,4 +152,14 @@ public class UploadPropositionFilterBusinessServiceImpl implements
 		}
 	}
 
+	@Override
+	public void delete(UploadPropositionRule entity) throws BusinessException {
+		ruleRepository.delete(entity);
+	}
+
+	@Override
+	public void delete(UploadPropositionAction entity) throws BusinessException {
+		actionRepository.delete(entity);
+	}
+
 }

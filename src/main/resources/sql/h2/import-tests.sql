@@ -15,13 +15,13 @@ INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_patt
 INSERT INTO user_provider(id, uuid, provider_type, base_dn, creation_date, modification_date, ldap_connection_id, ldap_pattern_id) VALUES (50, '93fd0e8b-fa4c-495d-978f-132e157c2292', 'LDAP_PROVIDER', 'dc=linshare,dc=org', now(), now(), 50, 50);
 
 -- Top domain (example domain)
-INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, user_provider_id, domain_policy_id, parent_id, auth_show_order, mailconfig_id, welcome_messages_id) VALUES (2, 1, 'MyDomain', 'MyDomain', true, false, 'a simple description', 0, 'en', null, 1, 1, 2, null, 1);
+INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, purge_step, user_provider_id, domain_policy_id, parent_id, auth_show_order, mailconfig_id, welcome_messages_id) VALUES (2, 1, 'MyDomain', 'MyDomain', true, false, 'a simple description', 0, 'en','IN_USE', null, 1, 1, 2, null, 1);
 
 -- Sub domain (example domain)
-INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, user_provider_id, domain_policy_id, parent_id, auth_show_order, mailconfig_id, welcome_messages_id) VALUES (3, 2, 'MySubDomain', 'MySubDomain', true, false, 'a simple description', 0, 'en', 50, 1, 2, 3, null, 1);
+INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, purge_step, user_provider_id, domain_policy_id, parent_id, auth_show_order, mailconfig_id, welcome_messages_id) VALUES (3, 2, 'MySubDomain', 'MySubDomain', true, false, 'a simple description', 0, 'en','IN_USE', 50, 1, 2, 3, null, 1);
 
 -- Guest domain (example domain)
-INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, user_provider_id, domain_policy_id, parent_id, auth_show_order, mailconfig_id, welcome_messages_id) VALUES (4, 3, 'GuestDomain', 'GuestDomain', true, false, 'a simple description', 0, 'en', null, 1, 2, 4, null, 1);
+INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, purge_step, user_provider_id, domain_policy_id, parent_id, auth_show_order, mailconfig_id, welcome_messages_id) VALUES (4, 3, 'GuestDomain', 'GuestDomain', true, false, 'a simple description', 0, 'en','IN_USE', null, 1, 2, 4, null, 1);
 
 
 
@@ -64,29 +64,29 @@ INSERT INTO domain_policy(id, uuid, label, domain_access_policy_id) VALUES (1000
 
 
 -- Root domain (application domain)
-INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, user_provider_id, domain_policy_id, parent_id, welcome_messages_id) VALUES (100001, 0, 'TEST_Domain-0', 'TEST_Domain-0', true, false, 'The root test application domain', 3, 'en', null, 100001, null, 1);
+INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, purge_step, user_provider_id, domain_policy_id, parent_id, welcome_messages_id) VALUES (100001, 0, 'TEST_Domain-0', 'TEST_Domain-0', true, false, 'The root test application domain', 3, 'en','IN_USE', null, 100001, null, 1);
 -- id : 100001
 
 -- topDomainName
 -- id : 100002
-INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, user_provider_id, domain_policy_id, parent_id, auth_show_order, welcome_messages_id) VALUES (100002, 1, 'TEST_Domain-0-1', 'TEST_Domain-0-1 (Topdomain)', true, false, 'a simple description', 0, 'en', null, 100001, 100001, 2, 1);
+INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, purge_step, user_provider_id, domain_policy_id, parent_id, auth_show_order, welcome_messages_id) VALUES (100002, 1, 'TEST_Domain-0-1', 'TEST_Domain-0-1 (Topdomain)', true, false, 'a simple description', 0, 'en','IN_USE', null, 100001, 100001, 2, 1);
 
 -- topDomainName2
 -- id : 100003
-INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, user_provider_id, domain_policy_id, parent_id, auth_show_order, welcome_messages_id) VALUES (100003, 1, 'TEST_Domain-0-2', 'TEST_Domain-0-2 (Topdomain)', true, false, 'a simple description', 0, 'en', null, 100001, 100001, 3, 1);
+INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, purge_step, user_provider_id, domain_policy_id, parent_id, auth_show_order, welcome_messages_id) VALUES (100003, 1, 'TEST_Domain-0-2', 'TEST_Domain-0-2 (Topdomain)', true, false, 'a simple description', 0, 'en','IN_USE', null, 100001, 100001, 3, 1);
 
 -- subDomainName1
 -- id : 100004
-INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, user_provider_id, domain_policy_id, parent_id, auth_show_order, welcome_messages_id) VALUES (100004, 2, 'TEST_Domain-0-1-1', 'TEST_Domain-0-1-1 (Subdomain)', true, false, 'a simple description', 0, 'en', null, 100001, 100002, 4, 1);
+INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, purge_step, user_provider_id, domain_policy_id, parent_id, auth_show_order, welcome_messages_id) VALUES (100004, 2, 'TEST_Domain-0-1-1', 'TEST_Domain-0-1-1 (Subdomain)', true, false, 'a simple description', 0, 'en','IN_USE', null, 100001, 100002, 4, 1);
 
 -- subDomainName2
 -- id : 100005
-INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, user_provider_id, domain_policy_id, parent_id, auth_show_order, welcome_messages_id) VALUES (100005, 2, 'TEST_Domain-0-1-2', 'TEST_Domain-0-1-2 (Subdomain)', true, false, 'a simple description', 0, 'en', null, 100001, 100002, 5, 1);
+INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, purge_step, user_provider_id, domain_policy_id, parent_id, auth_show_order, welcome_messages_id) VALUES (100005, 2, 'TEST_Domain-0-1-2', 'TEST_Domain-0-1-2 (Subdomain)', true, false, 'a simple description', 0, 'en','IN_USE', null, 100001, 100002, 5, 1);
 
 
 -- Guest domain (example domain)
 -- id : 100006
-INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, user_provider_id, domain_policy_id, parent_id, auth_show_order, welcome_messages_id) VALUES (100006, 3, 'guestDomainName1', 'guestDomainName1 (GuestDomain)', true, false, 'a simple description', 0, 'en', null, 100001, 100002, 6, 1);
+INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, purge_step, user_provider_id, domain_policy_id, parent_id, auth_show_order, welcome_messages_id) VALUES (100006, 3, 'guestDomainName1', 'guestDomainName1 (GuestDomain)', true, false, 'a simple description', 0, 'en','IN_USE', null, 100001, 100002, 6, 1);
 
 -- Default mime policy
 INSERT INTO mime_policy(id, domain_id, uuid, name, mode, displayable, version, creation_date, modification_date) VALUES(100001, 100001, 'ec51317c-086c-442a-a4bf-1afdf8774079', 'Default Mime Policy de test', 0, 0, 1, now(), now());

@@ -37,7 +37,9 @@ package org.linagora.linshare.core.service;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.UploadPropositionAction;
 import org.linagora.linshare.core.domain.entities.UploadPropositionFilter;
+import org.linagora.linshare.core.domain.entities.UploadPropositionRule;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface UploadPropositionFilterService {
@@ -53,5 +55,9 @@ public interface UploadPropositionFilterService {
 	UploadPropositionFilter update(Account actor, UploadPropositionFilter dto) throws BusinessException;
 
 	UploadPropositionFilter delete(Account actor, String uuid) throws BusinessException;
+
+	void delete(Account actor, UploadPropositionRule entity) throws BusinessException;
+
+	void delete(Account actor, UploadPropositionAction entity) throws BusinessException;
 
 }

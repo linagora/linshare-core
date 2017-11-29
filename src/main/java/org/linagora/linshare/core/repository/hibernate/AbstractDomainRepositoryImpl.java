@@ -40,6 +40,7 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.constants.DomainPurgeStepEnum;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
@@ -52,6 +53,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.util.Assert;
 
 public class AbstractDomainRepositoryImpl extends
 		AbstractRepositoryImpl<AbstractDomain> implements
@@ -156,5 +158,53 @@ public class AbstractDomainRepositoryImpl extends
 	public AbstractDomain create(AbstractDomain entity) throws BusinessException {
 		entity.setUuid(UUID.randomUUID().toString());
 		return super.create(entity);
+	}
+	
+	@Override
+	public void markToPurge(AbstractDomain abstractDomain) throws BusinessException, IllegalArgumentException {
+		abstractDomain.setPurgeStep(DomainPurgeStepEnum.WAIT_FOR_PURGE);
+		this.update(abstractDomain);
+	}
+
+	@Override
+	public void purge(AbstractDomain abstractDomain) throws BusinessException, IllegalArgumentException {
+		abstractDomain.setPurgeStep(DomainPurgeStepEnum.PURGED);
+		this.update(abstractDomain);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> findAllAbstractDomainsReadyToPurge() {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.setProjection(Projections.property("uuid"));
+		criteria.add(Restrictions.eq("purgeStep", DomainPurgeStepEnum.WAIT_FOR_PURGE));
+		return listByCriteria(criteria);
+	}
+
+	@Override
+	public AbstractDomain findDomainReadyToPurge(String lsUuid) {
+		Assert.notNull(lsUuid);
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("purgeStep", DomainPurgeStepEnum.WAIT_FOR_PURGE));
+		criteria.add(Restrictions.eq("uuid", lsUuid).ignoreCase());
+		return DataAccessUtils.requiredSingleResult(findByCriteria(criteria));
+	}
+	
+	@Override
+	public List<AbstractDomain> getSubDomainsByDomain(String domain) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		det.createAlias("parentDomain", "parent");
+		det.add(Restrictions.eq("parent.uuid", domain));
+		det.add(Restrictions.eq("purgeStep", DomainPurgeStepEnum.IN_USE));
+		return findByCriteria(det);
+	}
+
+	@Override
+	public AbstractDomain getGuestSubDomainByDomain(String uuid) {
+		DetachedCriteria det = DetachedCriteria.forClass(GuestDomain.class);
+		det.createAlias("parentDomain", "parent");
+		det.add(Restrictions.eq("parent.uuid", uuid));
+		det.add(Restrictions.eq("purgeStep", DomainPurgeStepEnum.IN_USE));
+		return DataAccessUtils.singleResult(findByCriteria(det));
 	}
 }

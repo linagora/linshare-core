@@ -55,4 +55,6 @@ public interface MimeTypeService {
 	 */
 	public void checkFileMimeType(Account actor, String fileName,
 			String mimeType) throws BusinessException;
+	
+	void delete(Account actor, MimeType mimeType) throws BusinessException;
 }
