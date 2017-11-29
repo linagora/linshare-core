@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.DomainPolicyBusinessService;
 import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -57,11 +58,14 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 	private static final Logger logger = LoggerFactory
 			.getLogger(DomainPolicyServiceImpl.class);
 	private final DomainPolicyBusinessService domainPolicyBusinessService;
+	private final DomainBusinessService domainBusinessService;
 
 	public DomainPolicyServiceImpl(
-			DomainPolicyBusinessService domainPolicyBusinessService) {
+			final DomainPolicyBusinessService domainPolicyBusinessService,
+			final DomainBusinessService domainBusinessService) {
 		super();
 		this.domainPolicyBusinessService = domainPolicyBusinessService;
+		this.domainBusinessService = domainBusinessService;
 	}
 
 	@Override
@@ -227,10 +231,10 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 				.getDomainAccessPolicy().getRules();
 
 		// Check for communication with subdomains.
-		if (domain.getSubdomain() != null) {
-			result.addAll(getAuthorizedDomain(domain.getSubdomain(), rules));
+		Set<AbstractDomain> abstractDomains = domainBusinessService.getSubDomainsByDomainAsASet(domain.getUuid());
+		if (!abstractDomains.isEmpty()) {
+			result.addAll(getAuthorizedDomain(abstractDomains, rules));
 		}
-
 		logger.debug("domain result list size : " + result.size());
 		for (AbstractDomain abstractDomain : result) {
 			logger.debug("result : " + abstractDomain.getUuid());
@@ -249,8 +253,11 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 
 		// Check for communication with siblings.
 		if (domain.getParentDomain() != null) {
-			result.addAll(getAuthorizedDomain(domain.getParentDomain()
-					.getSubdomain(), rules));
+			Set<AbstractDomain> abstractDomains = domainBusinessService
+					.getSubDomainsByDomainAsASet(domain.getParentDomain().getUuid());
+			if (!abstractDomains.isEmpty()) {
+				result.addAll(getAuthorizedDomain(abstractDomains, rules));
+			}
 		}
 
 		logger.debug("domain result list size : " + result.size());
@@ -269,13 +276,11 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 		result.addAll(getAuthorizedDomain(domain, rules));
 
 		// Step 2 : check for communication with sub domains.
-		if (domain.getSubdomain() != null) {
-
-			for (AbstractDomain sub : domain.getSubdomain()) {
-				for (AbstractDomain d : getAllAuthorizedDomain(sub, rules)) {
-					if (!result.contains(d)) {
-						result.add(d);
-					}
+		List<AbstractDomain> abstractDomains = domainBusinessService.getSubDomainsByDomain(domain.getUuid());
+		for (AbstractDomain sub : abstractDomains) {
+			for (AbstractDomain d : getAllAuthorizedDomain(sub, rules)) {
+				if (!result.contains(d)) {
+					result.add(d);
 				}
 			}
 
@@ -296,16 +301,13 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 		result.addAll(getAuthorizedDomain(domain, rules));
 
 		// Step 2 : check for communication with sub domains.
-		if (domain.getSubdomain() != null) {
-
-			for (AbstractDomain sub : domain.getSubdomain()) {
-				for (AbstractDomain d : getAllAuthorizedDomain(sub, rules)) {
-					if (!result.contains(d)) {
-						result.add(d);
-					}
+		List<AbstractDomain> abstractDomains = domainBusinessService.getSubDomainsByDomain(domain.getUuid());
+		for (AbstractDomain sub : abstractDomains) {
+			for (AbstractDomain d : getAllAuthorizedDomain(sub, rules)) {
+				if (!result.contains(d)) {
+					result.add(d);
 				}
 			}
-
 		}
 		return result;
 	}

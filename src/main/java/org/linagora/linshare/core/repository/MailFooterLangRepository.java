@@ -34,6 +34,9 @@
 
 package org.linagora.linshare.core.repository;
 
+import java.util.List;
+
+import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MailFooter;
 import org.linagora.linshare.core.domain.entities.MailFooterLang;
 
@@ -43,4 +46,8 @@ public interface MailFooterLangRepository extends
 	MailFooterLang findByUuid(String uuid);
 
 	boolean isMailFooterReferenced(MailFooter footer);
+	
+	List<MailFooterLang> findByMailFooter(MailFooter mailFooter);
+	
+	List<MailFooterLang> findByMailConfig(MailConfig mailConfig);
 }

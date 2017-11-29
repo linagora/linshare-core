@@ -33,63 +33,22 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import org.linagora.linshare.core.domain.constants.DomainType;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.UserAndDomainMultiService;
 import org.linagora.linshare.core.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class UserAndDomainMultiServiceImpl implements UserAndDomainMultiService {
 
-	private static final Logger logger = LoggerFactory.getLogger(UserAndDomainMultiServiceImpl.class);
-
-	private final AbstractDomainService abstractDomainService;
 	private final UserService userService;
 
-	public UserAndDomainMultiServiceImpl(
-			AbstractDomainService abstractDomainService, UserService userService) {
+	public UserAndDomainMultiServiceImpl(UserService userService) {
 		super();
-		this.abstractDomainService = abstractDomainService;
 		this.userService = userService;
 	}
 
 	@Override
-	public AbstractDomain deleteDomainAndUsers(User actor, String domainIdentifier) throws BusinessException {
-		logger.debug("deleteDomainAndUsers: begin");
-
-		AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
-		if (domain == null) {
-			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,
-					"Domain identifier no found.");
-		}
-		if (domain.getDomainType().equals(DomainType.ROOTDOMAIN)) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "No one is authorized to delete root domain.");
-		}
-
-		logger.debug("Delete all subdomains users");
-		for (AbstractDomain subDomain : domain.getSubdomain()) {
-			userService.deleteAllUsersFromDomain(actor,
-					subDomain.getUuid());
-		}
-		logger.debug("Delete domain users");
-		userService.deleteAllUsersFromDomain(actor, domainIdentifier);
-
-		if (logger.isDebugEnabled())
-			logger.debug("Delete domain " + domainIdentifier
-					+ " and his subdomains");
-		abstractDomainService.deleteDomain(actor, domainIdentifier);
-		logger.debug("deleteDomainAndUsers: end");
-		return domain;
-	}
-
-	@Override
 	public User findOrCreateUser(String mail, String domainId) throws BusinessException {
-		return userService.findUserInDB(domainId,mail);
+		return userService.findUserInDB(domainId, mail);
 	}
-
 }

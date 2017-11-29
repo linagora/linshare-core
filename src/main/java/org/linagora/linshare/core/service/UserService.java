@@ -75,6 +75,8 @@ public interface UserService {
 	 */
 	void deleteAllUsersFromDomain(User actor, String domainIdentifier) throws BusinessException;
 
+	void deleteAllUsersFromDomain(SystemAccount account, String domainIdentifier) throws BusinessException;
+
 	/**
 	 * Update a user locale
 	 * @param mail : the user email

@@ -41,6 +41,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.linagora.linshare.core.domain.constants.DomainPurgeStepEnum;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
@@ -67,7 +68,9 @@ public class AbstractDomainRepositoryImplTest extends AbstractTransactionalJUnit
 	private static String topDomainName = "Domain0.1";
 	private static String subDomainName = "Domain0.1.1";
 	private static String domainePolicyName0 = "TestAccessPolicy0";
-
+	private static String existingSubDomain = "MySubDomain";
+	private static String existingTopDomain = "MyDomain";
+	
 	//private static String baseDn = "dc=nodomain,dc=com";
 	private static String identifier= "ID_LDAP_DE_TEST";
 	private static String identifierP= "ID_PARAM_DE_TEST";
@@ -171,16 +174,15 @@ public class AbstractDomainRepositoryImplTest extends AbstractTransactionalJUnit
 		logger.debug("my parent is  : " + currentTopDomain.getParentDomain().toString());
 
 		Assert.assertNotNull(abstractDomainRepository.findAll());
-		logger.debug("abstractDomainRepository.findAll().size():"+abstractDomainRepository.findAll().size());
+		logger.debug("abstractDomainRepository.findAll().size():" + abstractDomainRepository.findAll().size());
 		Assert.assertNotNull(abstractDomainRepository.findById(rootDomainName));
 		AbstractDomain entityRootDomain = abstractDomainRepository.findById(rootDomainName);
 
 		List<AbstractDomain> subDomainList = new ArrayList<AbstractDomain>();
-		subDomainList.addAll(entityRootDomain.getSubdomain());
+		subDomainList.addAll(abstractDomainRepository.getSubDomainsByDomain(entityRootDomain.getUuid()));
 		logger.debug(entityRootDomain.getUuid() + " : my son is : " + subDomainList.get(0).getUuid());
 		Assert.assertEquals(topDomainName, subDomainList.get(0).getUuid());
 
-		abstractDomainRepository.delete(rootDomain);
 		logger.debug("End testTopDomainCreation");
 	}
 
@@ -201,5 +203,21 @@ public class AbstractDomainRepositoryImplTest extends AbstractTransactionalJUnit
 	public void testFindSubDomain() throws BusinessException{
 		List<String> list = abstractDomainRepository.getAllSubDomainIdentifiers("LinShareRootDomain");
 		Assert.assertEquals(1, list.size());
+	}
+	
+	@Test
+	public void testFindSubDomainsByDomain() throws BusinessException{
+		AbstractDomain subDomain = abstractDomainRepository.findById(existingSubDomain);
+		subDomain.setPurgeStep(DomainPurgeStepEnum.WAIT_FOR_PURGE);
+		abstractDomainRepository.update(subDomain);
+		List<AbstractDomain> list = abstractDomainRepository.getSubDomainsByDomain(existingTopDomain);
+		Assert.assertEquals(1, list.size());
+	}
+	
+	@Test
+	public void testFindGuestDomainByDomain() throws BusinessException {
+		AbstractDomain topDomain = abstractDomainRepository.findById(existingTopDomain);
+		AbstractDomain guestDomain = abstractDomainRepository.getGuestSubDomainByDomain(topDomain.getUuid());
+		Assert.assertNotNull(guestDomain);
 	}
 }

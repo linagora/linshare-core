@@ -110,7 +110,8 @@
 		<constructor-arg ref="logEntryRepository" />
 	</bean>
 
-	<bean name="abstractDomainService" class="org.linagora.linshare.core.service.impl.AbstractDomainServiceImpl">
+	<bean name="abstractDomainService"
+		class="org.linagora.linshare.core.service.impl.AbstractDomainServiceImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="abstractDomainRepository" />
 		<constructor-arg ref="domainPolicyService" />
@@ -120,14 +121,22 @@
 		<constructor-arg ref="mailConfigBusinessService" />
 		<constructor-arg ref="mimePolicyBusinessService" />
 		<constructor-arg ref="welcomeMessagesService" />
+		<constructor-arg ref="welcomeMessagesBusinessService" />
 		<constructor-arg ref="auditAdminMongoRepository" />
 		<constructor-arg ref="domainAccessPolicyBusinessService" />
 		<constructor-arg ref="domainQuotaBusinessService" />
-		<constructor-arg ref="containerQuotaBusinessService"/>
+		<constructor-arg ref="containerQuotaBusinessService" />
+		<constructor-arg ref="logEntryService" />
+		<constructor-arg ref="functionalityService" />
+		<constructor-arg ref="mailFooterBusinessService" />
+		<constructor-arg ref="mailContentBusinessService" />
+		<constructor-arg ref="uploadPropositionFilterService" />
+		<constructor-arg ref="uploadPropositionBusinessService" />
+		<constructor-arg ref="mimeTypeService" />
+		<constructor-arg ref="mailLayoutBusinessService" />
 	</bean>
 
 	<bean name="userAndDomainMultiService" class="org.linagora.linshare.core.service.impl.UserAndDomainMultiServiceImpl">
-		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="userService" />
 	</bean>
 

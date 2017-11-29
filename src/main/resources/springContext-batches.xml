@@ -26,6 +26,13 @@
 		<constructor-arg ref="accountRepository" />
 	</bean>
 
+	<bean name="purgeDomainBatch"
+		class="org.linagora.linshare.core.batches.impl.PurgeDomainBatchImpl">
+		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="userService" />
+	</bean>
+	
 	<bean name="undownloadedSharedDocumentsBatch"
 		class="org.linagora.linshare.core.batches.impl.UndownloadedSharedDocumentsBatchImpl">
 		<constructor-arg ref="shareEntryGroupService" />

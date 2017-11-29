@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.service;
 
+import java.util.List;
 import java.util.Set;
 
 import org.junit.After;
@@ -359,7 +360,7 @@ public class FunctionalityServiceImplTest extends AbstractTransactionalJUnit4Spr
 
 		}
 
-		Set<AbstractDomain> subdomain = domain.getSubdomain();
+		List<AbstractDomain> subdomain = abstractDomainRepository.getSubDomainsByDomain(domain.getUuid());
 		for (AbstractDomain abstractDomain : subdomain) {
 			count += countFunctionality(abstractDomain, funcIdentifier);
 		}

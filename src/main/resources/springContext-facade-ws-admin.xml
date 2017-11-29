@@ -30,7 +30,6 @@
 		<constructor-arg ref="userProviderService" />
 		<constructor-arg ref="ldapConnectionService" />
 		<constructor-arg ref="domainPolicyService" />
-		<constructor-arg ref="userAndDomainMultiService" />
 		<constructor-arg ref="welcomeMessagesService" />
 		<constructor-arg ref="quotaService" />
 	</bean>

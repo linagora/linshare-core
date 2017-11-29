@@ -19,6 +19,13 @@
 		<param name="identifierMethod">getTapestryLocale</param>
 		<param name="valueOfMethod">fromTapestryLocale</param>
 	</typedef>
+	<typedef
+		class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType"
+		name="purgeStep">
+		<param name="enumClass">org.linagora.linshare.core.domain.constants.DomainPurgeStepEnum</param>
+		<param name="identifierMethod">name</param>
+		<param name="valueOfMethod">fromString</param>
+	</typedef>
 	<class name="AbstractDomain" table="domain_abstract" discriminator-value= "-1" >
 		<id name="persistenceId" type="long">
 			<column name="id" not-null="true" index="index_abstract_domain_id"/>
@@ -36,9 +43,10 @@
 		<property access="field" column="default_locale" name="defaultTapestryLocale" type="supportedLanguageType"/>
 		<property access="field" column="default_mail_locale" name="externalMailLocale" type="languageType"/>
 		<property access="field" column="auth_show_order" name="authShowOrder" />
-
+		<property access="field" name="purgeStep" column="purge_step" type="purgeStep" not-null="true" lazy="false" />
+			
 		<many-to-one name="policy" class="org.linagora.linshare.core.domain.entities.DomainPolicy" 
-			column="domain_policy_id" not-null="true" lazy="proxy" />
+			column="domain_policy_id" not-null="false" lazy="proxy" />
 
 		<many-to-one name="parentDomain" column="parent_id" class="AbstractDomain" lazy="proxy"/>
 

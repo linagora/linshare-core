@@ -414,10 +414,11 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 
 	private void deleteFunctionalityRecursivly(AbstractDomain domain, String functionalityIdentifier) throws IllegalArgumentException, BusinessException {
 		if(domain != null ) {
-			for (AbstractDomain subDomain : domain.getSubdomain()) {
+			List<AbstractDomain> abstractDomains = abstractDomainRepository.getSubDomainsByDomain(domain.getUuid());
+			for (AbstractDomain subDomain : abstractDomains) {
 				Set<T> functionalities = repository.findAll(subDomain);
 				for (T functionality : functionalities) {
-					if(functionality.getIdentifier().equals(functionalityIdentifier)) {
+					if (functionality.getIdentifier().equals(functionalityIdentifier)) {
 						repository.delete(functionality);
 						functionalities.remove(functionality);
 						break;
@@ -430,7 +431,8 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 
 	private void updateActivationPolicyRecursivly(AbstractDomain domain, T functionality) throws IllegalArgumentException, BusinessException {
 		if(domain != null ) {
-			for (AbstractDomain subDomain : domain.getSubdomain()) {
+			List<AbstractDomain> abstractDomains = abstractDomainRepository.getSubDomainsByDomain(domain.getUuid());
+			for (AbstractDomain subDomain : abstractDomains) {
 				for (T f : repository.findAll(subDomain)) {
 					if(f.getIdentifier().equals(functionality.getIdentifier())) {
 						f.getActivationPolicy().updatePolicyFrom(functionality.getActivationPolicy());
@@ -445,11 +447,12 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 
 	private void updateConfigurationPolicyRecursivly(AbstractDomain domain, T functionality, boolean copyContent) throws IllegalArgumentException, BusinessException {
 		if(domain != null ) {
-			for (AbstractDomain subDomain : domain.getSubdomain()) {
+			List<AbstractDomain> abstractDomains = abstractDomainRepository.getSubDomainsByDomain(domain.getUuid());
+			for (AbstractDomain subDomain : abstractDomains) {
 				for (T f : repository.findAll(subDomain)) {
-					if(f.getIdentifier().equals(functionality.getIdentifier())) {
+					if (f.getIdentifier().equals(functionality.getIdentifier())) {
 						f.getConfigurationPolicy().updatePolicyFrom(functionality.getConfigurationPolicy());
-						if(copyContent) {
+						if (copyContent) {
 							f.updateFunctionalityValuesOnlyFrom(functionality);
 						}
 						repository.update(f);
@@ -462,10 +465,11 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 	}
 
 	private void updateDelegationPolicyRecursivly(AbstractDomain domain, T functionality) throws IllegalArgumentException, BusinessException {
-		if(domain != null ) {
-			for (AbstractDomain subDomain : domain.getSubdomain()) {
+		if (domain != null) {
+			List<AbstractDomain> abstractDomains = abstractDomainRepository.getSubDomainsByDomain(domain.getUuid());
+			for (AbstractDomain subDomain : abstractDomains) {
 				for (T f : repository.findAll(subDomain)) {
-					if(f.getIdentifier().equals(functionality.getIdentifier())) {
+					if (f.getIdentifier().equals(functionality.getIdentifier())) {
 						f.getDelegationPolicy().updatePolicyFrom(functionality.getDelegationPolicy());
 						repository.update(f);
 						break;

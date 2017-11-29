@@ -17,6 +17,7 @@
 		<constructor-arg ref="logEntryRepository" />
 		<constructor-arg ref="domainBusinessService" />
 		<constructor-arg ref="auditUserMongoRepository" />
+		<constructor-arg ref="auditAdminMongoRepository" />
 		<constructor-arg ref="eventNotificationMongoRepository" />
 	</bean>
 
@@ -58,6 +59,7 @@
 	<bean name="domainPolicyService"
 		class="org.linagora.linshare.core.service.impl.DomainPolicyServiceImpl">
 		<constructor-arg ref="domainPolicyBusinessService" />
+		<constructor-arg ref="domainBusinessService" />
 	</bean>
 
 	<bean id="welcomeMessagesService"

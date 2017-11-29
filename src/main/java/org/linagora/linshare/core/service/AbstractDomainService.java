@@ -39,6 +39,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.SubDomain;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.TopDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -53,7 +54,6 @@ public interface AbstractDomainService {
 	AbstractDomain findById(String identifier) throws BusinessException;
 
 	public AbstractDomain updateDomain(Account actor, AbstractDomain domain) throws BusinessException;
-	public void deleteDomain(Account actor, String identifier) throws BusinessException;
 	public List<String> getAllDomainIdentifiers();
 	public List<String> getAllMyDomainIdentifiers(String personalDomainIdentifer);
 	List<String> getAllSubDomainIdentifiers(String domain);
@@ -187,4 +187,14 @@ public interface AbstractDomainService {
 	List<AbstractDomain> loadRelativeDomains(User actor, String uuid) throws BusinessException;
 
 	List<User> autoCompleteUserWithoutDomainPolicies(Account actor, String pattern) throws BusinessException;
+	
+	AbstractDomain markToPurge(Account actor, String domainId);
+	
+	List<String> findAllDomainsReadyToPurge() throws BusinessException;
+
+	AbstractDomain findDomainReadyToPurge(SystemAccount actor, String uuid);
+
+	void purge(Account actor, String lsUuid) throws BusinessException;
+	
+	List<AbstractDomain> getSubDomainsByDomain(String uuid) throws BusinessException;
 }

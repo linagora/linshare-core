@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import org.linagora.linshare.core.domain.constants.DomainPurgeStepEnum;
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -81,6 +82,8 @@ public abstract class AbstractDomain {
 
 	protected Long authShowOrder;
 
+	protected DomainPurgeStepEnum purgeStep = DomainPurgeStepEnum.IN_USE;
+
 	//mail configurations
 	private MailConfig currentMailConfiguration;
 	private Set<MailLayout> mailLayouts;
@@ -120,6 +123,7 @@ public abstract class AbstractDomain {
 		this.externalMailLocale = Language.ENGLISH;
 		this.enable = true;
 		this.template = false;
+		this.purgeStep = DomainPurgeStepEnum.IN_USE;
 		this.shareExpiryRules = new ArrayList<ShareExpiryRule>();
 		this.policy = null;
 		this.authShowOrder = new Long(1);
@@ -324,6 +328,14 @@ public abstract class AbstractDomain {
 
 	public void setAuthShowOrder(Long authShowOrder) {
 		this.authShowOrder = authShowOrder;
+	}
+	
+	public DomainPurgeStepEnum getPurgeStep() {
+		return purgeStep;
+	}
+
+	public void setPurgeStep(DomainPurgeStepEnum purgeStep) {
+		this.purgeStep = purgeStep;
 	}
 
 	public boolean isManagedBy(Account account) {

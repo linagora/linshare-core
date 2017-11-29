@@ -38,6 +38,7 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.LogEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.mongo.entities.EventNotification;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.view.tapestry.beans.LogCriteriaBean;
 import org.slf4j.spi.LocationAwareLogger;
@@ -59,6 +60,8 @@ public interface LogEntryService {
 	AuditLogEntryUser insert(int level, AuditLogEntryUser entry);
 
 	AuditLogEntryUser insert(int level, AuditLogEntryUser entry, EventNotification event);
+	
+	AuditLogEntryAdmin insert(AuditLogEntryAdmin entry);
 
 	List<AuditLogEntryUser> insert(List<AuditLogEntryUser> entities);
 
@@ -69,4 +72,7 @@ public interface LogEntryService {
 	List<AuditLogEntryUser> insert(int level, List<AuditLogEntryUser> entities, List<EventNotification> events);
 
 	EventNotification insertEvent(EventNotification event);
+	
+	AuditLogEntryAdmin insert(int level, AuditLogEntryAdmin entity);
+
 }
