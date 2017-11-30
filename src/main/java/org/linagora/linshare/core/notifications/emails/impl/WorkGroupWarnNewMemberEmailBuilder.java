@@ -72,6 +72,7 @@ public class WorkGroupWarnNewMemberEmailBuilder extends EmailBuilder {
 		ctx.setVariable("owner", new MailContact(owner));
 		ctx.setVariable("threadMember", workGroupMember);
 		ctx.setVariable("workGroupName", workGroupMember.getThread().getName());
+		ctx.setVariable("workGroupLink", getWorkGroupLink(linshareURL, workGroupMember.getThread().getLsUuid()));
 		ctx.setVariable(linshareURL, linshareURL);
 
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
@@ -88,6 +89,7 @@ public class WorkGroupWarnNewMemberEmailBuilder extends EmailBuilder {
 		ctx.setVariable("owner", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
 		ctx.setVariable("threadMember", workGroupMember);
 		ctx.setVariable("workGroupName", workGroupMember.getThread().getName());
+		ctx.setVariable("workGroupLink", getWorkGroupLink(fakeLinshareURL, "fake_uuid"));
 		res.add(ctx);
 		return res;
 	}

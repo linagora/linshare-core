@@ -110,23 +110,19 @@ public abstract class EmailBuilder implements IEmailBuilder {
 
 	protected String urlTemplateForReceivedShares;
 
-	public String getUrlTemplateForReceivedShares() {
-		return urlTemplateForReceivedShares;
-	}
-
-	public String getUrlTemplateForDocuments() {
-		return urlTemplateForDocuments;
-	}
-
-	public String getUrlTemplateForAnonymousUrl() {
-		return urlTemplateForAnonymousUrl;
-	}
-
 	protected String urlTemplateForDocuments;
 
 	protected String urlTemplateForAnonymousUrl;
 
 	protected String fakeLinshareURL = "http://127.0.0.1/";
+
+	protected abstract MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException;
+
+	protected abstract List<Context> getContextForFakeBuild(Language language);
+
+	protected String urlFragmentQueryParamFileUuid;
+
+	protected String urlTemplateForWorkgroup;
 
 	public EmailBuilder() {
 		initSupportedTypes();
@@ -201,9 +197,33 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		this.urlTemplateForAnonymousUrl = urlTemplateForAnonymousUrl;
 	}
 
-	protected abstract MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException;
+	public String getUrlFragmentQueryParamFileUuid() {
+		return urlFragmentQueryParamFileUuid;
+	}
 
-	protected abstract List<Context> getContextForFakeBuild(Language language);
+	public void setUrlFragmentQueryParamFileUuid(String paramFilesUuid) {
+		this.urlFragmentQueryParamFileUuid = paramFilesUuid;
+	}
+
+	public String getUrlTemplateForReceivedShares() {
+		return urlTemplateForReceivedShares;
+	}
+
+	public String getUrlTemplateForDocuments() {
+		return urlTemplateForDocuments;
+	}
+
+	public String getUrlTemplateForAnonymousUrl() {
+		return urlTemplateForAnonymousUrl;
+	}
+
+	public String getUrlTemplateForWorkgroup() {
+		return urlTemplateForWorkgroup;
+	}
+
+	public void setUrlTemplateForWorkgroup(String urlTemplateForWrokgroup) {
+		this.urlTemplateForWorkgroup = urlTemplateForWrokgroup;
+	}
 
 	@Override
 	public MailContainerWithRecipient build(EmailContext context) throws BusinessException {
@@ -531,6 +551,24 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		sb.append(linshareURL);
 		Formatter formatter = new Formatter(sb);
 		formatter.format(urlTemplateForReceivedShares, shareUuid);
+		formatter.close();
+		return sb.toString();
+	}
+
+	protected String addNewFilesParam (String link, String filesUuid) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(link);
+		Formatter formatter = new Formatter(sb);
+		formatter.format(urlFragmentQueryParamFileUuid, filesUuid);
+		formatter.close();
+		return sb.toString();
+	}
+
+	protected String getWorkGroupLink(String linshareURL, String workGroupUuid) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(linshareURL);
+		Formatter formatter = new Formatter(sb);
+		formatter.format(urlTemplateForWorkgroup, workGroupUuid);
 		formatter.close();
 		return sb.toString();
 	}

@@ -96,6 +96,7 @@ public class ShareNewShareEmailBuilder extends EmailBuilder {
 				share.setHref(getRecipientShareLink(linshareURL, s.getUuid()));
 				shares.add(share);
 			}
+			ctx.setVariable("filesSharesLink", getGlobalSharesLink(shares, linshareURL));
 		}
 		ctx.setVariable("shares", shares);
 		ctx.setVariable("sharesCount", shares.size());
@@ -109,6 +110,14 @@ public class ShareNewShareEmailBuilder extends EmailBuilder {
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
 				emailCtx);
 		return buildMailContainer;
+	}
+
+	protected String getGlobalSharesLink(List<Share> shares, String linshareURL) {
+		String link = shares.get(0).getHref();
+		for (int i = 1; i < shares.size(); i++) {
+			link = addNewFilesParam(link, shares.get(i).getUuid());
+		}
+		return link;
 	}
 
 	@Override
@@ -144,6 +153,7 @@ public class ShareNewShareEmailBuilder extends EmailBuilder {
 		shares.add(new Share("second-shared-file.txt", false));
 		shares.add(new Share("third-shared-file.txt", true));
 		ctx.setVariable("shares", shares);
+		ctx.setVariable("filesSharesLink", getGlobalSharesLink(shares, fakeLinshareURL));
 		ctx.setVariable("sharesCount", shares.size());
 		return ctx;
 	}
@@ -166,6 +176,7 @@ public class ShareNewShareEmailBuilder extends EmailBuilder {
 		shares.add(new Share("second-shared-file.txt", false));
 		shares.add(new Share("third-shared-file.txt", true));
 		ctx.setVariable("shares", shares);
+		ctx.setVariable("filesSharesLink", getGlobalSharesLink(shares, fakeLinshareURL));
 		ctx.setVariable("sharesCount", shares.size());
 		return ctx;
 	}
@@ -185,6 +196,7 @@ public class ShareNewShareEmailBuilder extends EmailBuilder {
 		shares.add(getNewFakeShare("second-shared-file.txt", fakeLinshareURL));
 		shares.add(getNewFakeShare("third-shared-file.txt", fakeLinshareURL));
 		ctx.setVariable("shares", shares);
+		ctx.setVariable("filesSharesLink", getGlobalSharesLink(shares, fakeLinshareURL));
 		ctx.setVariable("sharesCount", shares.size());
 		return ctx;
 	}
@@ -204,6 +216,7 @@ public class ShareNewShareEmailBuilder extends EmailBuilder {
 		shares.add(getNewFakeShare("second-shared-file.txt", fakeLinshareURL));
 		shares.add(getNewFakeShare("third-shared-file.txt", fakeLinshareURL));
 		ctx.setVariable("shares", shares);
+		ctx.setVariable("filesSharesLink", getGlobalSharesLink(shares, fakeLinshareURL));
 		ctx.setVariable("sharesCount", shares.size());
 		return ctx;
 	}
@@ -221,6 +234,7 @@ public class ShareNewShareEmailBuilder extends EmailBuilder {
 		List<Share> shares = Lists.newArrayList();
 		shares.add(getNewFakeShare("a-shared-file.txt", fakeLinshareURL));
 		ctx.setVariable("shares", shares);
+		ctx.setVariable("filesSharesLink", getGlobalSharesLink(shares, fakeLinshareURL));
 		ctx.setVariable("sharesCount", shares.size());
 		return ctx;
 	}
