@@ -79,6 +79,8 @@
 		<constructor-arg value="${linshare.user.url.anonymousurl.link}" />
 		<constructor-arg value="${linshare.notifications.email.templating.strict.mode}" />
 		<constructor-arg value="${linshare.notifications.email.templating.subject.prefix.enable}" />
+		<constructor-arg value="${linshare.user.url.fragment.param.file.uuid}" />
+		<constructor-arg value="${linshare.user.url.workgroup.link}" />
 	</bean>
 
 	<bean name="ldapConnectionService"

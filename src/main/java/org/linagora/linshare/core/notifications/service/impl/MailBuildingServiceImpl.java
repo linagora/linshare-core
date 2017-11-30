@@ -228,7 +228,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			String urlTemplateForGuestReset,
 			String urlTemplateForAnonymousUrl,
 			boolean templatingStrictMode,
-			boolean templatingSubjectPrefix
+			boolean templatingSubjectPrefix,
+			String urlFragmentQueryParamFileUuid,
+			String urlTemplateForWorkgroup
 			) throws Exception {
 		this.domainBusinessService = domainBusinessService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
@@ -286,7 +288,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		emailBuilders.put(MailContentType.WORKGROUP_WARN_UPDATED_MEMBER, new WorkGroupWarnUpdatedMemberEmailBuilder());
 		emailBuilders.put(MailContentType.WORKGROUP_WARN_DELETED_MEMBER, new WorkGroupWarnDeletedMemberEmailBuilder());
 
-		initMailBuilders(insertLicenceTerm, domainBusinessService, functionalityReadOnlyService, mailActivationBusinessService, urlTemplateForReceivedShares, urlTemplateForDocuments, urlTemplateForAnonymousUrl);
+		initMailBuilders(insertLicenceTerm, domainBusinessService, functionalityReadOnlyService,
+				mailActivationBusinessService, urlTemplateForReceivedShares, urlTemplateForDocuments,
+				urlTemplateForAnonymousUrl, urlFragmentQueryParamFileUuid, urlTemplateForWorkgroup);
 		Set<MailContentType> keySet = emailBuilders.keySet();
 		logger.debug("mail content loaded : size : {}", keySet.size());
 		for (MailContentType mailContentType : keySet) {
@@ -301,7 +305,9 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		MailActivationBusinessService mailActivationBusinessService,
 		String urlTemplateForReceivedShares,
 		String urlTemplateForDocuments,
-		String urlTemplateForAnonymousUrl
+		String urlTemplateForAnonymousUrl,
+		String paramFilesUuid,
+		String urlTemplateForWrokgroup
 	) {
 		Collection<EmailBuilder> values = emailBuilders.values();
 		for (EmailBuilder emailBuilder : values) {
@@ -313,6 +319,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			emailBuilder.setUrlTemplateForDocuments(urlTemplateForDocuments);
 			emailBuilder.setUrlTemplateForReceivedShares(urlTemplateForReceivedShares);
 			emailBuilder.setUrlTemplateForAnonymousUrl(urlTemplateForAnonymousUrl);
+			emailBuilder.setUrlFragmentQueryParamFileUuid(paramFilesUuid);
+			emailBuilder.setUrlTemplateForWorkgroup(urlTemplateForWrokgroup);
 		}
 	}
 
