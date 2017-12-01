@@ -298,7 +298,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 		return documentFacade.download(ownerUuid, uuid);
 	}
 
-	@Path("/{uuid}/thumbnail{kind:(small)?|(medium)?|(large)?}")
+	@Path("/{uuid}/thumbnail{kind:(small)?|(medium)?|(large)?|(pdf)?}")
 	@GET
 	@ApiOperation(value = "Download the thumbnail of a file.")
 	@ApiResponses({

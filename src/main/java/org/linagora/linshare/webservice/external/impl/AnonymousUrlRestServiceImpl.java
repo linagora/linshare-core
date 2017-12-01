@@ -132,7 +132,7 @@ public class AnonymousUrlRestServiceImpl implements AnonymousUrlRestService{
 	}
 
 	@GET
-	@Path("/{urlUuid}/{shareEntryUuid}/thumbnail{kind:(small)?|(medium)?|(large)?}")
+	@Path("/{urlUuid}/{shareEntryUuid}/thumbnail{kind:(small)?|(medium)?|(large)?|(pdf)?}")
 	@ApiOperation(value = "Get document thumbnail")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
 	@Override

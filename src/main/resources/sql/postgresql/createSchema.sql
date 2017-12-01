@@ -54,8 +54,8 @@ CREATE TABLE document (
   sha256sum        varchar(255),
   to_upgrade       bool DEFAULT 'false' NOT NULL,
   has_thumbnail    bool DEFAULT 'false' NOT NULL,
-  computeThumbnail bool DEFAULT 'false' NOT NULL,
-  thmbUuid         varchar(255) NOT NULL,
+  compute_thumbnail bool DEFAULT 'false' NOT NULL,
+  thmb_uuid         varchar(255) NOT NULL,
   CONSTRAINT linshare_document_pkey
     PRIMARY KEY (id));
 CREATE TABLE document_entry (

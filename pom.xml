@@ -105,22 +105,11 @@
 	</dependencyManagement>
 
 	<dependencies>
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.linagora</groupId> -->
-<!-- 			<artifactId>LinThumbnail</artifactId> -->
-<!-- 			<version>1.2</version> -->
-<!-- 			<exclusions> -->
-<!-- 				<exclusion> -->
-<!-- 					<artifactId>slf4j-jdk14</artifactId> -->
-<!-- 					<groupId>org.slf4j</groupId> -->
-<!-- 				</exclusion> -->
-<!-- 			</exclusions> -->
-<!-- 		</dependency> -->
 
 		<dependency>
 			<groupId>org.linagora</groupId>
 			<artifactId>LinThumbnail</artifactId>
-			<version>2.0.0</version>
+			<version>2.0.1</version>
 		</dependency>
 
 		<!-- A dependency on either JUnit or TestNG is required, or the surefire plugin (which runs the tests) will fail, preventing Maven

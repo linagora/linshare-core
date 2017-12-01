@@ -162,13 +162,13 @@ public class ThumbnailGeneratorRemoteBusinessServiceImpl implements ThumbnailGen
 					// one thumbnail has failed
 					cleanMap(thumbnailMap);
 					logger.error("failed to generate the thumbnail, we aborted all thumbnails generation process ");
-					return null;
+					return thumbnailMap;
 				}
 			} catch (IOException e) {
 				logger.error("Failed to generate the thumbnail", e);
 				logger.debug(e.getMessage(), e);
 				cleanMap(thumbnailMap);
-				return null;
+				return thumbnailMap;
 			} finally {
 				if (tempThumbFile != null) {
 					tempThumbFile.delete();

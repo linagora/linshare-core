@@ -118,7 +118,7 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 		shareFacade.getReceivedShare(receivedShareUuid);
 	}
 
-	@Path("/{uuid}/thumbnail{kind:(small)?|(medium)?|(large)?}")
+	@Path("/{uuid}/thumbnail{kind:(small)?|(medium)?|(large)?|(pdf)?}")
 	@GET
 	@ApiOperation(value = "Download the thumbnail of a file.", response = Response.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
@@ -133,7 +133,7 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 		ShareDto receivedShareDto = shareFacade.getReceivedShare(receivedShareUuid);
 		InputStream receivedShareStream = shareFacade.getThumbnailStream(receivedShareUuid, thumbnailType);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(receivedShareStream,
-				receivedShareDto.getName() + "_thumb.png", base64);
+				receivedShareDto.getName() + ThumbnailType.getFileType(thumbnailType), base64);
 		return response.build();
 	}
 

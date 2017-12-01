@@ -192,7 +192,7 @@ public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic>
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		if (beginDate != null && endDate != null) {
 			if (beginDate.after(endDate)) {
-				throw new BusinessException("Begin date can be after end date.");
+				throw new BusinessException("Begin date can't be after end date.");
 			}
 		}
 		if (beginDate != null) {

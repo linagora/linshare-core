@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.upgrade.v2_0;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
@@ -162,7 +163,7 @@ public class FileDataStoreMigrationUpgradeTaskImpl extends GenericUpgradeTaskImp
 					document.setToUpgrade(false);
 					repository.update(document);
 					res.setProcessed(true);
-				} catch (Exception e) {
+				} catch (IOException e) {
 					String msg = String.format("Can not copy the current document to the new file data store : %1$s.",
 							document.toString());
 					console.logError(batchRunContext, msg);
@@ -176,7 +177,7 @@ public class FileDataStoreMigrationUpgradeTaskImpl extends GenericUpgradeTaskImp
 					document.setToUpgrade(false);
 					repository.update(document);
 					res.setProcessed(true);
-				} catch (Exception e) {
+				} catch (IOException e) {
 					String msg = String.format("Can not copy the current document to the new file data store : %1$s.",
 							document.toString());
 					console.logError(batchRunContext, msg);

@@ -1,7 +1,7 @@
 
 INSERT INTO contact(id, mail) VALUES (2, 'yoda@linshare.org');
-INSERT INTO document (id, uuid, creation_date, type, ls_size, check_mime_type)
-	VALUES (1, '92ce81a8-3e87-413b-82c6-8ae9940aae9e', now(), 'data', 1024, false);
+INSERT INTO document (id, uuid, creation_date, type, ls_size, check_mime_type, has_thumbnail, compute_thumbnail)
+	VALUES (1, '92ce81a8-3e87-413b-82c6-8ae9940aae9e', now(), 'data', 1024, false, false, false);
 
 INSERT INTO entry (id, owner_id, creation_date, modification_date, name, comment, uuid, cmis_sync)
 	VALUES (1, 10, now(), now(), 'DE test doc entry name 1', '', 'bfaf3fea-c64a-4ee0-bae8-b1482f1f6401', false);

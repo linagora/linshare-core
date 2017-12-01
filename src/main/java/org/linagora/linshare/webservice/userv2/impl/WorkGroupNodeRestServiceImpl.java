@@ -362,7 +362,7 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 		return workGroupNodeFacade.download(null, workGroupUuid, uuid);
 	}
 
-	@Path("/{uuid}/thumbnail{kind:(small)?|(medium)?|(large)?}")
+	@Path("/{uuid}/thumbnail{kind:(small)?|(medium)?|(large)?|(pdf)?}")
 	@GET
 	@ApiOperation(value = "Download the thumbnail of a file.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),

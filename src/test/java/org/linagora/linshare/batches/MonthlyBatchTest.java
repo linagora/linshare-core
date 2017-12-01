@@ -124,6 +124,10 @@ public class MonthlyBatchTest extends AbstractTransactionalJUnit4SpringContextTe
 	public void test() {
 		BatchRunContext batchRunContext = new BatchRunContext();
 		monthlyUserBatch.execute(batchRunContext, jane.getLsUuid(), 10, 1);
+		List<UserMonthlyStat> batchListUserMonthlyStat = userMonthlyStatBusinessService.findBetweenTwoDates(null,
+				getFirstDayOfLastMonth(), getLastDayOfLastMonth());
+		assertEquals(1, batchListUserMonthlyStat.size());
+		userMonthlyStatBusinessService.deleteBeforeDate(getLastDayOfLastMonth());
 		userMonthlyStatBusinessService.create(jane, new GregorianCalendar(2042, 8, 1, 00, 00).getTime(), new GregorianCalendar(2042, 8, 30, 00, 00).getTime());
 		List<String> listThreadIdentifier = threadWeeklyBusinessService.findUuidAccountBetweenTwoDates(
 				new GregorianCalendar(2042, 10, 1, 00, 00).getTime(),
@@ -183,4 +187,28 @@ public class MonthlyBatchTest extends AbstractTransactionalJUnit4SpringContextTe
 		assertEquals(2, (long) domainMonthlyStat.getDeleteOperationCount());
 		assertEquals(50, (long) domainMonthlyStat.getDiffOperationSum());
 	}
+
+	private Date getLastDayOfLastMonth() {
+		GregorianCalendar dateCalendar = new GregorianCalendar();
+		dateCalendar.add(GregorianCalendar.MONTH, -1);
+		int nbDay = dateCalendar.getActualMaximum(GregorianCalendar.DAY_OF_MONTH);
+		dateCalendar.set(GregorianCalendar.DATE, nbDay);
+		dateCalendar.set(GregorianCalendar.HOUR_OF_DAY, 23);
+		dateCalendar.set(GregorianCalendar.MINUTE, 59);
+		dateCalendar.set(GregorianCalendar.SECOND, 59);
+		dateCalendar.set(GregorianCalendar.MILLISECOND, 999);
+		return dateCalendar.getTime();
+	}
+
+	private Date getFirstDayOfLastMonth() {
+		GregorianCalendar dateCalendar = new GregorianCalendar();
+		dateCalendar.add(GregorianCalendar.MONTH, -1);
+		dateCalendar.set(GregorianCalendar.DATE, 1);
+		dateCalendar.set(GregorianCalendar.HOUR_OF_DAY, 0);
+		dateCalendar.set(GregorianCalendar.MINUTE, 0);
+		dateCalendar.set(GregorianCalendar.SECOND, 0);
+		dateCalendar.set(GregorianCalendar.MILLISECOND, 0);
+		return dateCalendar.getTime();
+	}
+
 }

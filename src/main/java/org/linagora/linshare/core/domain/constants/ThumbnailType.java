@@ -44,7 +44,7 @@ import org.linagora.linshare.core.exception.TechnicalException;
 
 public enum ThumbnailType {
 
-	SMALL, MEDIUM, LARGE;
+	SMALL, MEDIUM, LARGE, PDF;
 
 	public static FileMetaDataKind toFileMetaDataKind(ThumbnailType thumbnailEKind) {
 		try {
@@ -93,12 +93,22 @@ public enum ThumbnailType {
 
 	public static ThumbnailType getThumbnailType(String fileName) {
 		try {
-			if (fileName != null) {
+			if (fileName.contains(".png")) {
 				return ThumbnailType.valueOf(fileName.split(".png")[0]);
+			} else if(fileName.contains(".pdf")) {
+				return ThumbnailType.valueOf(fileName.split(".pdf")[0]);
 			}
 			return null;
 		} catch (RuntimeException re){
 			throw new IllegalArgumentException("Doesn't match an existing ThumbnailType");
 		}
 	}
+
+	public static String getFileType(ThumbnailType kind) {
+		if (ThumbnailType.PDF.equals(kind)) {
+			return ".pdf";
+		}
+		return ".png";
+	}
+
 }

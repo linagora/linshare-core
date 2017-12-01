@@ -315,7 +315,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 		return response.build();
 	}
 
-	@Path("/{uuid}/thumbnail{kind:(small)?|(medium)?|(large)?}")
+	@Path("/{uuid}/thumbnail{kind:(small)?|(medium)?|(large)?|(pdf)?}")
 	@GET
 	@ApiOperation(value = "Download the thumbnail of a file.", response = Response.class)
 	@ApiResponses({
@@ -331,7 +331,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 		DocumentDto documentDto = documentFacade.find(documentUuid, false);
 		InputStream documentStream = documentFacade.getThumbnailStream(documentUuid, thumbnailType);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(documentStream,
-				documentDto.getName() + "_thumb.png", base64);
+				documentDto.getName() + ThumbnailType.getFileType(thumbnailType), base64);
 		return response.build();
 	}
 

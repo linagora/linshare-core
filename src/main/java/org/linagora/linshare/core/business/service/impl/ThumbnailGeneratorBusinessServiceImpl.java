@@ -34,19 +34,13 @@
 
 package org.linagora.linshare.core.business.service.impl;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
 
 import org.linagora.LinThumbnail.FileResource;
 import org.linagora.LinThumbnail.FileResourceFactory;
 import org.linagora.LinThumbnail.ThumbnailService;
-import org.linagora.LinThumbnail.utils.Constants;
-import org.linagora.LinThumbnail.utils.ImageUtils;
 import org.linagora.LinThumbnail.utils.ThumbnailKind;
 import org.linagora.linshare.core.business.service.ThumbnailGeneratorBusinessService;
 import org.linagora.linshare.core.dao.FileDataStore;
@@ -106,38 +100,22 @@ public class ThumbnailGeneratorBusinessServiceImpl implements ThumbnailGenerator
 		FileMetaData metadataThumb = null;
 		Map<ThumbnailType, FileMetaData> thumbnailMap = Maps.newHashMap();
 		if (fileResource != null) {
-			Map<ThumbnailKind, BufferedImage> imageMap = null;
+			Map<ThumbnailKind, File> imageMap = Maps.newHashMap();
 			try {
-				imageMap = fileResource.generateThumbnailImageMap();
+				imageMap = fileResource.generateThumbnailMap();
+				for (Map.Entry<ThumbnailKind, File> entry : imageMap.entrySet()) {
+					metadataThumb = new FileMetaData(FileMetaDataKind.THUMBNAIL_SMALL, "image/png",
+							entry.getValue().length(), metadata.getFileName());
+					metadataThumb = fileDataStore.add(entry.getValue(), metadataThumb);
+					thumbnailMap.put(ThumbnailType.toThumbnailType(entry.getKey()), metadataThumb);
+				}
 			} catch (Exception e) {
 				// We catch all exception to avoid failure when uploading
 				// a new document. thumbnails are optionals.
-				logger.error(e.getMessage());
+				logger.error("Failed to generate the thumbnail files ", e);
 				logger.debug(e.getMessage(), e);
-			}
-			for (Map.Entry<ThumbnailKind, BufferedImage> entry : imageMap.entrySet()) {
-				if (entry.getValue() != null) {
-					File tempThumbFile = null;
-					try (InputStream fisThmb = ImageUtils.getInputStreamFromImage(entry.getValue(), "png")) {
-						tempThumbFile = File.createTempFile("linthumbnail", owner + "_thumb.png");
-						tempThumbFile.createNewFile();
-						tempThumbFile.deleteOnExit();
-						ImageIO.write(entry.getValue(), Constants.THMB_DEFAULT_FORMAT, tempThumbFile);
-						metadataThumb = new FileMetaData(FileMetaDataKind.THUMBNAIL_SMALL, "image/png",
-								tempThumbFile.length(), metadata.getFileName());
-						metadataThumb = fileDataStore.add(tempThumbFile, metadataThumb);
-						thumbnailMap.put(ThumbnailType.toThumbnailType(entry.getKey()), metadataThumb);
-					} catch (IOException e) {
-						logger.error("Failed to generate the thumbnail files ", e);
-						logger.debug(e.getMessage(), e);
-						cleanMap(thumbnailMap);
-						return null;
-					} finally {
-						if (tempThumbFile != null) {
-							tempThumbFile.delete();
-						}
-					}
-				}
+				cleanMap(thumbnailMap);
+				return thumbnailMap;
 			}
 		}
 		return thumbnailMap;
@@ -150,6 +128,7 @@ public class ThumbnailGeneratorBusinessServiceImpl implements ThumbnailGenerator
 					fileDataStore.remove(metadata);
 				}
 			});
+			thumbnailMap.clear();
 		}
 	}
 
