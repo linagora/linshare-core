@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.upgrade.v2_0;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
@@ -41,6 +42,7 @@ import org.linagora.linshare.core.batches.impl.GenericUpgradeTaskImpl;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.dao.impl.MigrationFileDataStoreImpl;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
@@ -145,38 +147,45 @@ public class FileDataStoreMigrationUpgradeTaskImpl extends GenericUpgradeTaskImp
 	}
 
 	protected void upgrade(BatchRunContext batchRunContext, Document document, BatchResultContext<Document> res) {
-		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, document);
-		FileMetaData metadataTmb = new FileMetaData(FileMetaDataKind.THUMBNAIL, document);
-		if (document.getThmbUuid() != null) {
-			try (InputStream stream = fileDataStore.get(metadata);
-					InputStream streamTmb = fileDataStore.get(metadataTmb)) {
-				metadata = fileDataStore.add(stream, metadata);
-				if (!fileDataStore.exists(metadataTmb)) {
-					metadataTmb = fileDataStore.add(streamTmb, metadataTmb);
+		for (ThumbnailType kind : ThumbnailType.values()) {
+			FileMetaDataKind fileMetaDataKind = ThumbnailType.toFileMetaDataKind(kind);
+			String thmbUuid = ThumbnailType.getThmbUuid(fileMetaDataKind, document);
+			FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, document);
+			FileMetaData metadataTmb = new FileMetaData(fileMetaDataKind, document);
+			if (thmbUuid != null) {
+				try (InputStream stream = fileDataStore.get(metadata);
+						InputStream streamTmb = fileDataStore.get(metadataTmb)) {
+					metadata = fileDataStore.add(stream, metadata);
+					if (!fileDataStore.exists(metadataTmb)) {
+						metadataTmb = fileDataStore.add(streamTmb, metadataTmb);
+					}
+					document.setBucketUuid(metadata.getBucketUuid());
+					document.setToUpgrade(false);
+					repository.update(document);
+					res.setProcessed(true);
+				} catch (IOException e) {
+					String msg = String.format("Can not copy the current document to the new file data store : %1$s.",
+							document.toString());
+					console.logError(batchRunContext, msg);
+					logger.error(e.getMessage(), e);
+					throw new BatchBusinessException(res, msg);
 				}
-				document.setBucketUuid(metadata.getBucketUuid());
-				document.setToUpgrade(false);
-				repository.update(document);
-				res.setProcessed(true);
-			} catch (Exception e) {
-				String msg = String.format("Can not copy the current document to the new file data store : %1$s.", document.toString());
-				console.logError(batchRunContext, msg);
-				logger.error(e.getMessage(), e);
-				throw new BatchBusinessException(res, msg);
+			} else {
+				try (InputStream stream = fileDataStore.get(metadata)) {
+					metadata = fileDataStore.add(stream, metadata);
+					document.setBucketUuid(metadata.getBucketUuid());
+					document.setToUpgrade(false);
+					repository.update(document);
+					res.setProcessed(true);
+				} catch (IOException e) {
+					String msg = String.format("Can not copy the current document to the new file data store : %1$s.",
+							document.toString());
+					console.logError(batchRunContext, msg);
+					logger.error(e.getMessage(), e);
+					throw new BatchBusinessException(res, msg);
+				}
 			}
-		} else {
-			try (InputStream stream = fileDataStore.get(metadata)) {
-				metadata = fileDataStore.add(stream, metadata);
-				document.setBucketUuid(metadata.getBucketUuid());
-				document.setToUpgrade(false);
-				repository.update(document);
-				res.setProcessed(true);
-			} catch (Exception e) {
-				String msg = String.format("Can not copy the current document to the new file data store : %1$s.", document.toString());
-				console.logError(batchRunContext, msg);
-				logger.error(e.getMessage(), e);
-				throw new BatchBusinessException(res, msg);
-			}
+
 		}
 	}
 

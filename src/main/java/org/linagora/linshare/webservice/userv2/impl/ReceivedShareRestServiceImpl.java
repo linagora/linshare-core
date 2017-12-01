@@ -51,6 +51,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
 import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
@@ -117,7 +118,7 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 		shareFacade.getReceivedShare(receivedShareUuid);
 	}
 
-	@Path("/{uuid}/thumbnail")
+	@Path("/{uuid}/thumbnail{kind:(small)?|(medium)?|(large)?|(pdf)?}")
 	@GET
 	@ApiOperation(value = "Download the thumbnail of a file.", response = Response.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
@@ -126,11 +127,13 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public Response thumbnail(@PathParam("uuid") String receivedShareUuid,
-			@ApiParam(value = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64) throws BusinessException {
+			@ApiParam(value = "True to get an encoded base 64 response", required = false) @QueryParam("base64") @DefaultValue("false") boolean base64,
+			@ApiParam(value = "This parameter allows you to choose which thumbnail you want : Small, Medium or Large. Default value is Medium", required = false) @PathParam("kind") ThumbnailType thumbnailType
+			) throws BusinessException {
 		ShareDto receivedShareDto = shareFacade.getReceivedShare(receivedShareUuid);
-		InputStream receivedShareStream = shareFacade.getThumbnailStream(receivedShareUuid);
+		InputStream receivedShareStream = shareFacade.getThumbnailStream(receivedShareUuid, thumbnailType);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(receivedShareStream,
-				receivedShareDto.getName() + "_thumb.png", base64);
+				receivedShareDto.getName() + ThumbnailType.getFileType(thumbnailType), base64);
 		return response.build();
 	}
 

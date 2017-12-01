@@ -51,6 +51,7 @@ import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.TargetKind;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.MimeType;
@@ -204,11 +205,15 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 	}
 
 	@Override
-	public InputStream getThumbnailStream(String docEntryUuid) throws BusinessException {
+	public InputStream getThumbnailStream(String docEntryUuid, ThumbnailType kind)
+			throws BusinessException {
 		Validate.notEmpty(docEntryUuid, "Missing required document uuid");
 		logger.debug("downloading thumbnail for document : " + docEntryUuid);
 		User actor = checkAuthentication();
-		return documentEntryService.getDocumentThumbnailStream(actor, actor, docEntryUuid);
+		if (kind == null) {
+			kind = ThumbnailType.MEDIUM;
+		}
+		return documentEntryService.getDocumentThumbnailStream(actor, actor, docEntryUuid, kind);
 	}
 
 	@Override

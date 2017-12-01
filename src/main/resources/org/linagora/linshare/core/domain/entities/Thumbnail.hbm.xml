@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.linagora.linshare.core.domain.entities.Thumbnail" table="thumbnail">
+		<meta attribute="class-description">
+			This class contains all the generated thumbnails.
+		</meta>
+		<id name="id" column="id" type="long" unsaved-value="0">
+			<generator class="native" />
+		</id>
+		<property name="thumbnailUuid" column="uuid" type="string" length="255" not-null="true" lazy="false" />
+		<property name="creationDate" column="creation_date" type="timestamp" not-null="true" lazy="false" />
+	</class>
+</hibernate-mapping>

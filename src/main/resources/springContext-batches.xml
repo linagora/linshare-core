@@ -147,6 +147,15 @@
 		<constructor-arg ref="documentGarbageCollecteurMongoRepository" />
 	</bean>
 
+	<bean name="computeThumbnailBatch"
+		class="org.linagora.linshare.core.batches.impl.ComputeThumbnailBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="documentRepository" />
+		<constructor-arg ref="fileDataStore" />
+		<constructor-arg ref="documentEntryBusinessService"/>
+		<constructor-arg ref="thumbnailGeneratorService" />
+	</bean>
+
 	<bean name="batchRunner"
 		class="org.linagora.linshare.core.runner.impl.BatchRunnerImpl">
 	</bean>

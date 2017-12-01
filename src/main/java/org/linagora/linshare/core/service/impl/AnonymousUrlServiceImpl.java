@@ -41,6 +41,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.AnonymousUrlBusinessService;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
@@ -180,13 +181,13 @@ public class AnonymousUrlServiceImpl implements AnonymousUrlService {
 
 	@Override
 	public InputStream downloadThumbnail(Account actor,
-			Account owner, String anonymousUrlUuid, String anonymousShareEntryUuid, String password)
+			Account owner, String anonymousUrlUuid, String anonymousShareEntryUuid, String password, ThumbnailType kind)
 			throws BusinessException {
 		AnonymousUrl anonymousUrl = find(actor, owner, anonymousUrlUuid, password);
 		for(AnonymousShareEntry ase : anonymousUrl.getAnonymousShareEntries()) {
 			if(ase.getUuid().equals(anonymousShareEntryUuid)) {
 				return anonymousShareEntryService.getAnonymousShareEntryThumbnailStream(
-						actor, anonymousShareEntryUuid);
+						actor, anonymousShareEntryUuid, kind);
 			}
 		}
 		String msg = "AnonymousShareEntry with uuid : "

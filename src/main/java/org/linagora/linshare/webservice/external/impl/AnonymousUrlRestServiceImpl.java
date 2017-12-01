@@ -51,6 +51,7 @@ import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.facade.webservice.external.AnonymousUrlFacade;
 import org.linagora.linshare.core.facade.webservice.external.dto.AnonymousUrlDto;
 import org.linagora.linshare.core.facade.webservice.external.dto.ShareEntryDto;
@@ -131,25 +132,23 @@ public class AnonymousUrlRestServiceImpl implements AnonymousUrlRestService{
 	}
 
 	@GET
-	@Path("/{urlUuid}/{shareEntryUuid}/thumbnail")
+	@Path("/{urlUuid}/{shareEntryUuid}/thumbnail{kind:(small)?|(medium)?|(large)?|(pdf)?}")
 	@ApiOperation(value = "Get document thumbnail")
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Authentication failed.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
 	@Override
 	public Response getAnonymousShareEntryThumbnail(
 			@PathParam(value = "urlUuid") String anonymousUrlUuid,
 			@PathParam(value = "shareEntryUuid") String shareEntryUuid,
+			@PathParam(value = "kind") ThumbnailType thumbnailType,
 			@HeaderParam("linshare-anonymousurl-password") String password,
-			@QueryParam("base64") @DefaultValue("false") boolean base64,
+			@QueryParam("base64") @DefaultValue("false") boolean base64, 
 			@Context HttpHeaders headers) {
 		password = loadPasswordFromCookie(anonymousUrlUuid, password, headers);
-		ShareEntryDto shareEntry = anonymousUrlFacade.getShareEntry(anonymousUrlUuid,
-				shareEntryUuid, password);
-		InputStream documentStream = anonymousUrlFacade
-				.getThumbnail(anonymousUrlUuid, shareEntryUuid, password);
-		ResponseBuilder response = DocumentStreamReponseBuilder
-				.getThumbnailResponseBuilder(documentStream,
-						shareEntry.getName(), base64);
+		ShareEntryDto shareEntry = anonymousUrlFacade.getShareEntry(anonymousUrlUuid, shareEntryUuid, password);
+		InputStream documentStream = anonymousUrlFacade.getThumbnail(anonymousUrlUuid, shareEntryUuid, password,
+				thumbnailType);
+		ResponseBuilder response = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(documentStream,
+				shareEntry.getName(), base64);
 		return response.build();
 	}
 

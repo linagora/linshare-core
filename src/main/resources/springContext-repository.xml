@@ -288,4 +288,7 @@
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 
+	<bean name="thumbnailRepository" class="org.linagora.linshare.core.repository.hibernate.ThumbnailRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
 </beans>

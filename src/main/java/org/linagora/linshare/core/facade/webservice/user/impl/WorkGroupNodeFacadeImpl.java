@@ -41,8 +41,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.lang.Validate;
+
 import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.TargetKind;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -242,14 +244,17 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 	}
 
 	@Override
-	public Response thumbnail(String ownerUuid, String workGroupUuid, String workGroupNodeUuid, boolean base64)
+	public Response thumbnail(String ownerUuid, String workGroupUuid, String workGroupNodeUuid, boolean base64, ThumbnailType thumbnailType)
 			throws BusinessException {
+		if (thumbnailType == null) {
+			thumbnailType = ThumbnailType.MEDIUM;
+		}
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
 		Validate.notEmpty(workGroupNodeUuid, "Missing required workGroup node uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(actor, ownerUuid);
 		Thread workGroup = threadService.find(actor, owner, workGroupUuid);
-		FileAndMetaData data = service.thumbnail(actor, owner, workGroup, workGroupNodeUuid);
+		FileAndMetaData data = service.thumbnail(actor, owner, workGroup, workGroupNodeUuid, thumbnailType);
 		ResponseBuilder builder = DocumentStreamReponseBuilder
 				.getThumbnailResponseBuilder(data, base64);
 		return builder.build();

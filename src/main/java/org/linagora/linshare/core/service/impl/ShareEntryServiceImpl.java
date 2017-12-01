@@ -44,6 +44,7 @@ import org.linagora.linshare.core.business.service.ShareEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Guest;
@@ -230,13 +231,13 @@ public class ShareEntryServiceImpl extends GenericEntryServiceImpl<Account, Shar
 
 	@Override
 	public InputStream getThumbnailStream(Account actor, Account owner,
-			String uuid) throws BusinessException {
+			String uuid, ThumbnailType kind) throws BusinessException {
 		Validate.notEmpty(uuid, "Missing share entry uuid");
 		ShareEntry share = find(actor, owner, uuid);
 		checkThumbNailDownloadPermission(actor, owner, ShareEntry.class,
 				BusinessErrorCode.SHARE_ENTRY_FORBIDDEN, share);
-		return documentEntryBusinessService.getDocumentThumbnailStream(share
-				.getDocumentEntry());
+		return documentEntryBusinessService.getDocumentThumbnailStream(share.
+				getDocumentEntry(), kind);
 	}
 
 	@Override

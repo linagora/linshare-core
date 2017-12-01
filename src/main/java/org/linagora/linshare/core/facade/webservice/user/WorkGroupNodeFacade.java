@@ -39,6 +39,7 @@ import java.util.Set;
 
 import javax.ws.rs.core.Response;
 
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.CopyDto;
@@ -66,7 +67,7 @@ public interface WorkGroupNodeFacade extends GenericFacade {
 
 	Response download(String ownerUuid, String workGroupUuid, String workGroupNodeUuid) throws BusinessException;
 
-	Response thumbnail(String ownerUuid, String workGroupUuid, String workGroupNodeUuid, boolean base64) throws BusinessException;
+	Response thumbnail(String ownerUuid, String workGroupUuid, String workGroupNodeUuid, boolean base64, ThumbnailType thumbnailType) throws BusinessException;
 
 	Set<AuditLogEntryUser> findAll(String ownerUuid, String workGroupUuid, String workGroupNodeUuid, List<String> actions, List<String> types, String beginDate, String endDate);
 }

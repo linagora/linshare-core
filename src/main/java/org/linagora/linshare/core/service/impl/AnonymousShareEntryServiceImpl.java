@@ -42,6 +42,7 @@ import org.linagora.linshare.core.business.service.AnonymousShareEntryBusinessSe
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
@@ -225,12 +226,12 @@ public class AnonymousShareEntryServiceImpl extends
 
 	@Override
 	public InputStream getAnonymousShareEntryThumbnailStream(Account actor,
-			String shareUuid) throws BusinessException {
+			String shareUuid, ThumbnailType kind) throws BusinessException {
 		AnonymousShareEntry shareEntry = find(actor, actor, shareUuid);
 		rac.checkThumbNailDownloadPermission(actor, actor,
 				AnonymousShareEntry.class,
 				BusinessErrorCode.ANONYMOUS_SHARE_ENTRY_FORBIDDEN, shareEntry);
 		return documentEntryBusinessService
-				.getDocumentThumbnailStream(shareEntry.getDocumentEntry());
+				.getDocumentThumbnailStream(shareEntry.getDocumentEntry(), kind);
 	}
 }

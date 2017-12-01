@@ -42,6 +42,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -150,17 +151,20 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 	}
 
 	@Override
-	public Response thumbnail(String ownerUuid, String documentUuid)
+	public Response thumbnail(String ownerUuid, String documentUuid, ThumbnailType kind)
 			throws BusinessException {
 		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
 		Validate.notEmpty(documentUuid, "Missing required document uuid");
+		if (kind == null) {
+			kind = ThumbnailType.MEDIUM;
+		}
 
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 
 		DocumentEntry doc = documentEntryService.find(actor, owner,
 				documentUuid);
-		InputStream file = documentEntryService.getDocumentThumbnailStream(actor, owner, documentUuid);
+		InputStream file = documentEntryService.getDocumentThumbnailStream(actor, owner, documentUuid, kind);
 		ResponseBuilder response = DocumentStreamReponseBuilder
 				.getDocumentResponseBuilder(file, doc.getName() + "_thumb.png",
 						"image/png");

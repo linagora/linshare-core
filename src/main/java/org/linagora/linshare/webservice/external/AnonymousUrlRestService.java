@@ -36,15 +36,19 @@ package org.linagora.linshare.webservice.external;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.facade.webservice.external.dto.ShareEntryDto;
 
 public interface AnonymousUrlRestService {
 
 	Response getAnonymousUrl(String uuid, String password, HttpHeaders headers);
 
-	ShareEntryDto getAnonymousShareEntry(String anonymousUrlUuid, String shareEntryUuid, String password, HttpHeaders headers);
+	ShareEntryDto getAnonymousShareEntry(String anonymousUrlUuid, String shareEntryUuid, String password,
+			HttpHeaders headers);
 
 	Response download(String uuid, String shareEntryUuid, String password, HttpHeaders headers);
 
-	Response getAnonymousShareEntryThumbnail(String anonymousUrlUuid, String shareEntryUuid, String password, boolean base64, HttpHeaders headers);
+	Response getAnonymousShareEntryThumbnail(String anonymousUrlUuid, String shareEntryUuid,
+			ThumbnailType thumbnailType, String password, boolean base64, HttpHeaders headers);
+
 }

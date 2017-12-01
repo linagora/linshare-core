@@ -36,6 +36,7 @@ package org.linagora.linshare.core.service;
 import java.io.File;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
@@ -81,7 +82,7 @@ public interface WorkGroupNodeService {
 	FileAndMetaData download(Account actor, User owner, Thread workGroup, String workGroupNodeUuid)
 			throws BusinessException;
 
-	FileAndMetaData thumbnail(Account actor, User owner, Thread workGroup, String workGroupNodeUuid)
+	FileAndMetaData thumbnail(Account actor, User owner, Thread workGroup, String workGroupNodeUuid, ThumbnailType kind)
 			throws BusinessException;
 
 	WorkGroupNode getRootFolder(Account actor, User owner, Thread workGroup);

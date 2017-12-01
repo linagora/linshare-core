@@ -38,8 +38,10 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.utils.DocumentUtils;
 
@@ -77,11 +79,6 @@ public class Document implements Serializable {
 	private Set<Signature> signatures = new HashSet<Signature>();
 
 	/**
-	 * UUID of the thumbnail file
-	 */
-	private String thmbUuid;
-
-	/**
 	 * Use by LinShare v2 as container/bucket
 	 */
 	private String bucketUuid;
@@ -101,6 +98,17 @@ public class Document implements Serializable {
 
 	protected Boolean toUpgrade;
 
+	protected Boolean hasThumbnail;
+
+	protected Map<ThumbnailType, Thumbnail> thumbnails;
+
+	/**
+	 * technical field, used to compute thumbnails batch.
+	 */
+	protected Boolean computeThumbnail;
+
+	protected String thmbUuid;
+
 	/* Constructor for tests */
 	public Document(String uuid, String name, String type, Calendar creationDate,
 			Calendar expirationDate, User owner, Boolean encrypted,
@@ -111,9 +119,10 @@ public class Document implements Serializable {
 		this.type = type;
 		this.size = size;
 		this.timeStamp = null;
-		this.thmbUuid = null;
 		this.checkMimeType = false;
 		this.toUpgrade = false;
+		this.hasThumbnail = false;
+		this.computeThumbnail = false;
 	}
 
 	/**
@@ -131,10 +140,11 @@ public class Document implements Serializable {
 		this.creationDate = new GregorianCalendar();
 		this.size = metadata.getSize();
 		this.timeStamp = null;
-		this.thmbUuid = null;
 		this.checkMimeType = false;
 		this.bucketUuid = metadata.getBucketUuid();
 		this.toUpgrade = false;
+		this.hasThumbnail = false;
+		this.computeThumbnail = false;
 	}
 
 	@Deprecated
@@ -145,9 +155,10 @@ public class Document implements Serializable {
 		this.creationDate = new GregorianCalendar();
 		this.size = size;
 		this.timeStamp = null;
-		this.thmbUuid = null;
 		this.checkMimeType = false;
 		this.toUpgrade = false;
+		this.hasThumbnail = false;
+		this.computeThumbnail = false;
 	}
 
 	@Override
@@ -189,14 +200,6 @@ public class Document implements Serializable {
 		this.signatures = signatures;
 	}
 
-	public void setThmbUuid(String thmbUUID) {
-		this.thmbUuid = thmbUUID;
-	}
-	
-	public String getThmbUuid() {
-		return thmbUuid;
-	}
-	
 	public byte[] getTimeStamp() {
 		return timeStamp;
 	}
@@ -291,13 +294,13 @@ public class Document implements Serializable {
 	public String toString() {
 		return "Document [uuid=" + uuid + ", creationDate=" + creationDate.getTimeInMillis()
 				+ ", type=" + type + ", size=" + size + ", sha256sum="
-				+ sha256sum + "]";
+				+ sha256sum + ", hasThumbnail=" + hasThumbnail + "]";
 	}
 
 	public String getRepresentation() {
 		return "Document [uuid=" + uuid
 				+ ", type=" + type + ", size=" + size + ", sha256sum="
-				+ sha256sum + "]";
+				+ sha256sum + ", hasThumbnail=" + hasThumbnail + "]";
 	}
 
 	public Boolean getToUpgrade() {
@@ -306,5 +309,37 @@ public class Document implements Serializable {
 
 	public void setToUpgrade(Boolean toUpgrade) {
 		this.toUpgrade = toUpgrade;
+	}
+
+	public Boolean getHasThumbnail() {
+		return hasThumbnail;
+	}
+
+	public void setHasThumbnail(Boolean hasThumbnail) {
+		this.hasThumbnail = hasThumbnail;
+	}
+
+	public Map<ThumbnailType, Thumbnail> getThumbnails() {
+		return thumbnails;
+	}
+
+	public void setThumbnails(Map<ThumbnailType, Thumbnail> thumbnail) {
+		this.thumbnails = thumbnail;
+	}
+
+	public Boolean getComputeThumbnail() {
+		return computeThumbnail;
+	}
+
+	public void setComputeThumbnail(Boolean computeThumbnail) {
+		this.computeThumbnail = computeThumbnail;
+	}
+
+	public String getThmbUuid() {
+		return thmbUuid;
+	}
+
+	public void setThmbUuid(String thmbUuid) {
+		this.thmbUuid = thmbUuid;
 	}
 }

@@ -38,6 +38,7 @@ import java.util.Set;
 
 import javax.ws.rs.core.Response;
 
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
@@ -50,7 +51,7 @@ public interface ReceivedShareRestService {
 
 	void head(String receivedShareUuid) throws BusinessException;
 
-	Response thumbnail(String receivedShareUuid, boolean base64) throws BusinessException;
+	Response thumbnail(String receivedShareUuid, boolean base64, ThumbnailType thumbnailType) throws BusinessException;
 
 	ShareDto delete(String receivedShareUuid) throws BusinessException;
 
