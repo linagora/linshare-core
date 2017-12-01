@@ -134,11 +134,15 @@ public class ThumbnailGeneratorBusinessServiceImpl implements ThumbnailGenerator
 
 	@Override
 	public void start() {
-		this.thumbnailService.start();
+		if (thumbEnabled) {
+			this.thumbnailService.start();
+		}
 	}
 
 	@Override
 	public void stop() {
-		this.thumbnailService.stop();
+		if (thumbEnabled) {
+			this.thumbnailService.stop();
+		}
 	}
 }
