@@ -35,6 +35,7 @@
 package org.linagora.linshare.service;
 
 import java.util.List;
+import java.util.Set;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -44,11 +45,14 @@ import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Internal;
+import org.linagora.linshare.core.domain.entities.TechnicalAccount;
+import org.linagora.linshare.core.domain.entities.TechnicalAccountPermission;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
@@ -57,7 +61,12 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.InconsistentUserService;
+import org.linagora.linshare.core.service.TechnicalAccountPermissionService;
+import org.linagora.linshare.core.service.TechnicalAccountService;
+import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.utils.HashUtils;
 import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
@@ -110,6 +119,12 @@ public class GuestServiceImplTest extends
 	@Autowired
 	private InconsistentUserService inconsistentUserService;
 
+	@Autowired
+	private TechnicalAccountService technicalAccountService;
+
+	@Autowired
+	private ThreadService threadService;
+
 	private User root;
 
 	private LinShareWiser wiser;
@@ -119,6 +134,8 @@ public class GuestServiceImplTest extends
 	private User owner2;
 	
 	private User owner3;
+
+	private TechnicalAccount technicalAccount;
 
 	public GuestServiceImplTest() {
 		super();
@@ -373,6 +390,25 @@ public class GuestServiceImplTest extends
 		search = guestService.search(owner1, owner1, null, null, "guest", mine);
 		logger.info("nb guests : " + search.size());
 		Assert.assertEquals(1, search.size());
+	}
+
+	@Test
+	public void createWorkgroupAsTechnicalAccount() {
+		technicalAccount = new TechnicalAccount();
+		technicalAccount.setMail("technicalAccount@linshare.org");
+		technicalAccount.setLastName("technicalAccount");
+		technicalAccount.setEnable(true);
+		technicalAccount.setRole(Role.SUPERADMIN);
+		technicalAccount.setPassword("secret");
+		technicalAccount.setLocale(SupportedLanguage.ENGLISH);
+		technicalAccount.setOwner(owner1);
+		technicalAccount = technicalAccountService.create(owner1, technicalAccount);
+		TechnicalAccount find = technicalAccountService.find(technicalAccount, technicalAccount.getLsUuid());
+		Assert.assertNotNull(find);
+
+		Thread thread = threadService.create(technicalAccount, owner1, "FirstWorkGroup");
+		Set<ThreadMember> threadMembers=thread.getMyMembers();
+		Assert.assertNotNull(threadMembers);
 	}
 
 }
