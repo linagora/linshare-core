@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2016 LINAGORA
+ * Copyright (C) 2017 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -32,40 +32,21 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.domain.constants;
+package org.linagora.linshare.core.facade.webservice.delegation;
 
-import org.apache.commons.lang.StringUtils;
-import org.linagora.linshare.core.exception.TechnicalErrorCode;
-import org.linagora.linshare.core.exception.TechnicalException;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.mongo.entities.SafeDetail;
 
-public enum AuditLogEntryType {
+public interface SafeDetailFacade extends DelegationGenericFacade {
 
-	SHARE_ENTRY,
-	DOCUMENT_ENTRY,
-	GUEST,
-	WORKGROUP,
-	WORKGROUP_MEMBER,
-	WORKGROUP_FOLDER,
-	WORKGROUP_DOCUMENT,
-	DOMAIN,
-	USER,
-	DOMAIN_PATTERN,
-	FUNCTIONALITY,
-	CONTACTS_LISTS,
-	CONTACTS_LISTS_CONTACTS,
-	UPLOAD_REQUEST,
-	UPLOAD_REQUEST_GROUP,
-	ANONYMOUS_SHARE_ENTRY,
-	AUTHENTICATION,
-	USER_PREFERENCE,
-	RESET_PASSWORD,
-	SAFE_DETAIL;
+	SafeDetail create(String actorUuid, SafeDetail safeDetail)
+			throws BusinessException;
 
-	public static AuditLogEntryType fromString(String s) {
-		try {
-			return AuditLogEntryType.valueOf(s.toUpperCase());
-		} catch (RuntimeException e) {
-			throw new TechnicalException(TechnicalErrorCode.NO_SUCH_LOG_ACTION, StringUtils.isEmpty(s) ? "null or empty" : s);
-		}
-	}
+	SafeDetail find(String actorUuid, String safeDettailUuid) throws BusinessException;
+
+	SafeDetail findAll(String actorUuid) throws BusinessException;
+
+	SafeDetail delete(String actorUuid, String safeDettailUuid) throws BusinessException;
+
+	SafeDetail delete(String actorUuid, SafeDetail safeDetail) throws BusinessException;
 }

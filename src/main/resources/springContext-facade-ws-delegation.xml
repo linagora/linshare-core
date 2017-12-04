@@ -69,4 +69,9 @@
 		<constructor-arg ref="shareEntryGroupService" />
 	</bean>
 
+	<bean id="wsDelegationSafeDetailFacade" class="org.linagora.linshare.core.facade.webservice.delegation.impl.SafeDetailFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="userService" />
+		<constructor-arg ref="safeDetailService" />
+	</bean>
 </beans>

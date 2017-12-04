@@ -318,4 +318,11 @@
 	<bean id="upgradeTaskService" class="org.linagora.linshare.core.service.impl.UpgradeTaskServiceImpl">
 		<constructor-arg ref="upgradeTaskBusinessService" />
 	</bean>
+
+	<bean id="safeDetailService"
+		class="org.linagora.linshare.core.service.impl.SafeDetailServiceImpl">
+		<constructor-arg ref="safeDetailMongoRepository" />
+		<constructor-arg ref="logEntryService" />
+		<constructor-arg ref="safeDetailResourceAccessControl" />
+	</bean>
 </beans>
