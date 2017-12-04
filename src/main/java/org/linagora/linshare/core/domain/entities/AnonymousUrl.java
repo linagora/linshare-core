@@ -128,9 +128,6 @@ public class AnonymousUrl {
 		// compose the secured url to give in mail
 		StringBuffer httpUrlBase = new StringBuffer();
 		httpUrlBase.append(baseUrl);
-		if (!baseUrl.endsWith("/")) {
-			httpUrlBase.append('/');
-		}
 		httpUrlBase.append(getUrlPath());
 		if (!getUrlPath().endsWith("/")) {
 			httpUrlBase.append('/');
