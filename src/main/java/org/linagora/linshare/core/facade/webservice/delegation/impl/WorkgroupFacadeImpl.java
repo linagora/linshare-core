@@ -42,7 +42,7 @@ import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
-import org.linagora.linshare.core.facade.webservice.delegation.ThreadFacade;
+import org.linagora.linshare.core.facade.webservice.delegation.WorkgroupFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.ThreadService;
@@ -50,14 +50,14 @@ import org.linagora.linshare.core.service.UserService;
 
 import com.google.common.collect.Lists;
 
-public class ThreadFacadeImpl extends DelegationGenericFacadeImpl implements
-		ThreadFacade {
+public class WorkgroupFacadeImpl extends DelegationGenericFacadeImpl implements
+		WorkgroupFacade {
 
 	private final ThreadService threadService;
 
 	protected final QuotaService quotaService;
 
-	public ThreadFacadeImpl(
+	public WorkgroupFacadeImpl(
 			final AccountService accountService,
 			final UserService userService,
 			final QuotaService quotaService,
