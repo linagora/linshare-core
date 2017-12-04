@@ -186,3 +186,8 @@ linshare.linthumbnail.dropwizard.server=http://0.0.0.0:8090/linthumbnail?mimeTyp
 # key to disable thumbnail generation
 linshare.documents.thumbnail.pdf.enable=true
 linshare.documents.thumbnail.enable=true
+
+# SafeDetail properties value
+safe.detail.country.code=FR
+safe.detail.control.key=58
+safe.detail.iufsc=test.iufsc

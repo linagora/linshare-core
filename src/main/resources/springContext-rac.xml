@@ -80,4 +80,7 @@
 		<constructor-arg ref="threadRepository" />
 	</bean>
 
+	<bean name="safeDetailResourceAccessControl" class="org.linagora.linshare.core.rac.impl.SafeDetailResourceAccessControlImpl">
+		<constructor-arg ref="functionalityReadOnlyService" />
+	</bean>
 </beans>

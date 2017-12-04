@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2016 LINAGORA
+ * Copyright (C) 2017 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,41 +31,36 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.mongo.entities.logs;
 
-package org.linagora.linshare.core.domain.constants;
+import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.commons.lang.StringUtils;
-import org.linagora.linshare.core.exception.TechnicalErrorCode;
-import org.linagora.linshare.core.exception.TechnicalException;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.mongo.entities.SafeDetail;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
 
-public enum AuditLogEntryType {
+@XmlRootElement
+public class SafeDetailAuditLogEntry extends AuditLogEntryUser {
 
-	SHARE_ENTRY,
-	DOCUMENT_ENTRY,
-	GUEST,
-	WORKGROUP,
-	WORKGROUP_MEMBER,
-	WORKGROUP_FOLDER,
-	WORKGROUP_DOCUMENT,
-	DOMAIN,
-	USER,
-	DOMAIN_PATTERN,
-	FUNCTIONALITY,
-	CONTACTS_LISTS,
-	CONTACTS_LISTS_CONTACTS,
-	UPLOAD_REQUEST,
-	UPLOAD_REQUEST_GROUP,
-	ANONYMOUS_SHARE_ENTRY,
-	AUTHENTICATION,
-	USER_PREFERENCE,
-	RESET_PASSWORD,
-	SAFE_DETAIL;
+	protected SafeDetail safeDetail;
 
-	public static AuditLogEntryType fromString(String s) {
-		try {
-			return AuditLogEntryType.valueOf(s.toUpperCase());
-		} catch (RuntimeException e) {
-			throw new TechnicalException(TechnicalErrorCode.NO_SUCH_LOG_ACTION, StringUtils.isEmpty(s) ? "null or empty" : s);
-		}
+	public SafeDetailAuditLogEntry() {
+		super();
+	}
+
+	public SafeDetailAuditLogEntry(Account authUser, Account owner, LogAction action, AuditLogEntryType type,
+			SafeDetail safeDetail) {
+		super(new AccountMto(authUser), new AccountMto(owner), action, type, safeDetail.getUuid());
+		this.safeDetail = safeDetail;
+	}
+
+	public SafeDetail getSafeDetail() {
+		return safeDetail;
+	}
+
+	public void setSafeDetail(SafeDetail safeDetail) {
+		this.safeDetail = safeDetail;
 	}
 }
