@@ -264,6 +264,11 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
+	public StringValueFunctionality getCustomNotificationUrlForExternalsFunctionality(AbstractDomain domain) {
+		return (StringValueFunctionality) _getFunctionality(domain, FunctionalityNames.ANONYMOUS_URL__NOTIFICATION_URL);
+	}
+
+	@Override
 	public StringValueFunctionality getUploadRequestFunctionality(AbstractDomain domain) {
 		return (StringValueFunctionality) _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST);
 	}

@@ -277,9 +277,12 @@ public abstract class EmailBuilder implements IEmailBuilder {
 	protected String getLinShareUrl(Account recipient) {
 		String value = functionalityReadOnlyService.getCustomNotificationUrlFunctionality(recipient.getDomain())
 				.getValue();
-		if (!value.endsWith("/")) {
-			return value + "/";
-		}
+		return value;
+	}
+
+	protected String getLinShareUrlForExternals(Account recipient) {
+		String value = functionalityReadOnlyService.getCustomNotificationUrlForExternalsFunctionality(recipient.getDomain())
+				.getValue();
 		return value;
 	}
 

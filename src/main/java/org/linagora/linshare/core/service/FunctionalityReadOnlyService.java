@@ -77,6 +77,7 @@ public interface FunctionalityReadOnlyService {
 	Functionality getWorkGroupCreationRight(AbstractDomain domain);
 	Functionality getUserCanUploadFunctionality(AbstractDomain domain);
 	StringValueFunctionality getCustomNotificationUrlFunctionality(AbstractDomain domain);
+	StringValueFunctionality getCustomNotificationUrlForExternalsFunctionality(AbstractDomain domain);
 	StringValueFunctionality getShareNotificationBeforeExpirationFunctionality(AbstractDomain domain);
 	BooleanValueFunctionality getAcknowledgement(String domainIdentifier);
 	BooleanValueFunctionality getAcknowledgement(AbstractDomain domain);
