@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
-	xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:context="http://www.springframework.org/schema/context"
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs" xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:cxf="http://cxf.apache.org/core"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
@@ -9,6 +8,7 @@
        http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
+	<description>delegation v2 api exposed on /webservice/rest/delegation/v2 endpoint.</description>
 
 	<!-- cxf -->
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
@@ -16,6 +16,14 @@
 
 
 	<!-- REST -->
+	<bean id="delegationSafeDetailRestService"
+		class="org.linagora.linshare.webservice.delegationv2.impl.SafeDetailRestServiceImpl">
+		<constructor-arg ref="wsDelegationSafeDetailFacade" />
+		<constructor-arg value="${safe.detail.country.code}" />
+		<constructor-arg value="${safe.detail.control.key}" />
+		<constructor-arg value="${safe.detail.iufsc}" />
+	</bean>
+
 	<bean id="delegationV2AuthenticationRestService"
 		class="org.linagora.linshare.webservice.delegationv2.impl.AuthenticationRestServiceImpl">
 		<constructor-arg ref="wsDelegationGenericFacade" />
@@ -29,6 +37,7 @@
 
 	<jaxrs:server id="restDelegation2Container" address="/rest/delegation/v2">
 		<jaxrs:serviceBeans>
+			<ref bean="delegationSafeDetailRestService" />
 			<ref bean="delegationV2AuthenticationRestService" />
 			<ref bean="delegationV2WorkGroupRestService" />
 		</jaxrs:serviceBeans>
@@ -37,7 +46,7 @@
 			<entry key="xml" value="application/xml" />
 		</jaxrs:extensionMappings>
 		<jaxrs:providers>
-			<!-- ExceptionMappers. -->
+			<!--  ExceptionMappers. -->
 			<ref bean="illegalArgumentExceptionMapper" />
 			<ref bean="businessExceptionMapper" />
 			<ref bean="genericExceptionMapper" />
@@ -52,15 +61,14 @@
 		</jaxrs:features>
 		<jaxrs:inInterceptors>
 			<!-- For debug only : print input message -->
-			<!-- <ref bean="logInbound" /> -->
-			<!-- This interceptor is designed to store some context properties in 
-				message exchange context for timingOutInterceptor -->
+<!-- 			<ref bean="logInbound" /> -->
+			<!-- This interceptor is designed to store some context properties in message exchange context for timingOutInterceptor -->
 			<ref bean="timingInInterceptor" />
 		</jaxrs:inInterceptors>
 		<jaxrs:outInterceptors>
-			<!-- For debug only : print output message -->
-			<!-- <ref bean="logOutbound" /> -->
-			<!-- This interceptor is designed compute request execution time. -->
+			<!-- For debug only : print output  message -->
+<!--             	<ref bean="logOutbound" /> -->
+			<!-- This interceptor is designed compute request execution time.-->
 			<ref bean="timingOutInterceptor" />
 		</jaxrs:outInterceptors>
 		<jaxrs:inFaultInterceptors>
