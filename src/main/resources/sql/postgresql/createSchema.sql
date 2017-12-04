@@ -55,7 +55,7 @@ CREATE TABLE document (
   to_upgrade       bool DEFAULT 'false' NOT NULL,
   has_thumbnail    bool DEFAULT 'false' NOT NULL,
   compute_thumbnail bool DEFAULT 'false' NOT NULL,
-  thmb_uuid         varchar(255) NOT NULL,
+  thmb_uuid         varchar(255),
   CONSTRAINT linshare_document_pkey
     PRIMARY KEY (id));
 CREATE TABLE document_entry (

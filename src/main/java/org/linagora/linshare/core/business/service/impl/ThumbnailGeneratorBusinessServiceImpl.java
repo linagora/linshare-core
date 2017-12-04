@@ -35,7 +35,6 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Map;
 
 import org.linagora.LinThumbnail.FileResource;
