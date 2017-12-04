@@ -420,7 +420,6 @@ CREATE TABLE upload_request (
   expiry_date                     timestamp(6) NOT NULL,
   notification_date               timestamp(6) NOT NULL,
   max_deposit_size                int8,
-  max_file_count                  int4,
   max_file                        int4,
   max_file_size                   int8,
   can_delete                      bool NOT NULL,
