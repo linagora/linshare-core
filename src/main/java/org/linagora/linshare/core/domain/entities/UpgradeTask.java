@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.Date;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.UpgradeTaskGroup;
@@ -60,9 +61,9 @@ public class UpgradeTask {
 
 	protected UpgradeTaskPriority priority;
 
-	protected java.util.Date creationDate;
+	protected Date creationDate;
 
-	protected java.util.Date modificationDate;
+	protected Date modificationDate;
 
 	protected String extras;
 
@@ -139,19 +140,19 @@ public class UpgradeTask {
 		this.status = status;
 	}
 
-	public java.util.Date getCreationDate() {
+	public Date getCreationDate() {
 		return creationDate;
 	}
 
-	public void setCreationDate(java.util.Date creationDate) {
+	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
 	}
 
-	public java.util.Date getModificationDate() {
+	public Date getModificationDate() {
 		return modificationDate;
 	}
 
-	public void setModificationDate(java.util.Date modificationDate) {
+	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
 	}
 
