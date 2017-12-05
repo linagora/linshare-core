@@ -185,6 +185,11 @@ ALTER TABLE upgrade_task ALTER COLUMN priority SET NOT NULL;
 ALTER TABLE domain_abstract ADD COLUMN purge_step varchar(255) DEFAULT 'IN_USE' NOT NULL;
 ALTER TABLE domain_abstract ALTER COLUMN domain_policy_id SET int8;
 
+ALTER TABLE upgrade_task ALTER COLUMN creation_date TYPE timestamp(6);
+ALTER TABLE upgrade_task ALTER COLUMN creation_date SET NOT null;
+ALTER TABLE upgrade_task ALTER COLUMN modification_date TYPE timestamp(6);
+ALTER TABLE upgrade_task ALTER COLUMN modification_date SET NOT null;
+
 CREATE TABLE thumbnail (
   id                      int8 NOT NULL,
   uuid                   varchar(255) NOT NULL UNIQUE,
