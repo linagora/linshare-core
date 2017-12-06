@@ -771,6 +771,16 @@
 			<version>${thymeleaf.version}</version>
 			<scope>compile</scope>
 		</dependency>
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-webmvc</artifactId>
+		<version>${spring.mvc.version}</version>
+	</dependency>
+	<dependency>
+		<groupId>org.thymeleaf</groupId>
+		<artifactId>thymeleaf-spring4</artifactId>
+		<version>${thymeleaf.version}</version>
+	</dependency>
 	</dependencies>
 
 	<build>
@@ -1745,5 +1755,6 @@
 		<sql.driver.postgresql>9.4.1208.jre7</sql.driver.postgresql>
 		<sql.driver.mysql>5.1.38</sql.driver.mysql>
 		<thymeleaf.version>3.0.3.RELEASE</thymeleaf.version>
-	</properties>
+		<spring.mvc.version>4.2.2.RELEASE</spring.mvc.version>
+		<servlet.context.version>3.0.1</servlet.context.version></properties>
 </project>
