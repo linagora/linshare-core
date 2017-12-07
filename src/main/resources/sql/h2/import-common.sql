@@ -618,11 +618,11 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (274, true
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (275, false, false, 2, true);
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable) VALUES(31, false, 'WORKGROUP_WARN_DELETED_MEMBER', 273, 274, 275, 1, true);
 
--- MailActivation : GUEST_WERN_GUEST_ABOUT_HIS_PASSWORD_RESET
+-- MailActivation : GUEST_WARN_GUEST_ABOUT_HIS_PASSWORD_RESET
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (276, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (277, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (278, false, false, 2, true);
-INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable) VALUES(32, false, 'GUEST_WERN_GUEST_ABOUT_HIS_PASSWORD_RESET', 276, 277, 278, 1, true);
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable) VALUES(32, false, 'GUEST_WARN_GUEST_ABOUT_HIS_PASSWORD_RESET', 276, 277, 278, 1, true);
 
 -- MailActivation : END
 
