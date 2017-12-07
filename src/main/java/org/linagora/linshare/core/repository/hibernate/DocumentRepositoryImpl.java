@@ -42,7 +42,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.repository.DocumentRepository;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 
 public class DocumentRepositoryImpl extends AbstractRepositoryImpl<Document> implements DocumentRepository {
 	

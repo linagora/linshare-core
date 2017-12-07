@@ -45,7 +45,7 @@ import org.linagora.linshare.core.domain.entities.BatchHistory;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.BatchHistoryRepository;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 
 public class BatchHistoryRepositoryImpl extends AbstractRepositoryImpl<BatchHistory>implements BatchHistoryRepository {
 

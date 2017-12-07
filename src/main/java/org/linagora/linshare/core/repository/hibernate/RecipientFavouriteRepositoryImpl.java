@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,8 +49,8 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
 import org.linagora.linshare.core.repository.RecipientFavouriteRepository;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate3.HibernateCallback;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate4.HibernateCallback;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 
 public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<RecipientFavourite> implements RecipientFavouriteRepository {
 
@@ -281,7 +280,7 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 			throws BusinessException {
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session)
-					throws HibernateException, SQLException {
+					throws HibernateException {
 				final Query query = session.createQuery(
 						"UPDATE RecipientFavourite SET recipient_mail = :newEmail WHERE recipient_mail = :currentEmail");
 				query.setParameter("newEmail", newEmail);

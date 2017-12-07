@@ -49,7 +49,7 @@ import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 
 public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest> implements GuestRepository {
 

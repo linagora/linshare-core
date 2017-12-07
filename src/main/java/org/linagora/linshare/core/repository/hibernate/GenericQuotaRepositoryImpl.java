@@ -54,8 +54,8 @@ import org.linagora.linshare.core.domain.entities.Quota;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.GenericQuotaRepository;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate3.HibernateCallback;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate4.HibernateCallback;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 
 public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends AbstractRepositoryImpl<T>
 		implements GenericQuotaRepository<T> {
@@ -121,7 +121,7 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 	public List<Long> getQuotaIdforDefaultQuotaInSubDomains(AbstractDomain domain, Long quota, QuotaType type, ContainerQuotaType containerType) {
 		HibernateCallback<List<Long>> action = new HibernateCallback<List<Long>>() {
 			public List<Long> doInHibernate(final Session session)
-					throws HibernateException, SQLException {
+					throws HibernateException {
 				StringBuilder sb = new StringBuilder();
 				sb.append("SELECT DISTINCT child.id AS child_id FROM quota AS father");
 				sb.append(" JOIN quota AS child");
@@ -157,7 +157,7 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 		}
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session)
-					throws HibernateException, SQLException {
+					throws HibernateException {
 				StringBuilder sb = new StringBuilder();
 				sb.append("UPDATE Quota SET default_quota = :quota WHERE id IN :list_quota_id ;");
 				final Query query = session.createSQLQuery(sb.toString());
@@ -178,7 +178,7 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 	public List<Long> getQuotaIdforQuotaInSubDomains(AbstractDomain domain, Long quota, QuotaType type, ContainerQuotaType containerType) {
 		HibernateCallback<List<Long>> action = new HibernateCallback<List<Long>>() {
 			public List<Long> doInHibernate(final Session session)
-					throws HibernateException, SQLException {
+					throws HibernateException {
 				StringBuilder sb = new StringBuilder();
 				sb.append("SELECT DISTINCT child.id AS child_id FROM quota AS father");
 				sb.append(" JOIN quota AS child");
@@ -217,7 +217,7 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 		}
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session)
-					throws HibernateException, SQLException {
+					throws HibernateException {
 				StringBuilder sb = new StringBuilder();
 				sb.append("UPDATE Quota SET quota = :quota WHERE id IN :list_quota_id ;");
 				final Query query = session.createSQLQuery(sb.toString());

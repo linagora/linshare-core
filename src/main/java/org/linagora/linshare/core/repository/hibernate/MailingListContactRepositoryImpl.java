@@ -34,7 +34,6 @@
 
 package org.linagora.linshare.core.repository.hibernate;
 
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -50,8 +49,8 @@ import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.MailingListContactRepository;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate3.HibernateCallback;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate4.HibernateCallback;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 
 public class MailingListContactRepositoryImpl extends
 		AbstractRepositoryImpl<MailingListContact> implements
@@ -129,7 +128,7 @@ public class MailingListContactRepositoryImpl extends
 			throws BusinessException {
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session)
-					throws HibernateException, SQLException {
+					throws HibernateException {
 				final Query query = session.createQuery(
 						"UPDATE MailingListContact SET mail = :newEmail WHERE mail = :currentEmail");
 				query.setParameter("newEmail", newEmail);

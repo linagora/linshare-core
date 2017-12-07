@@ -48,7 +48,7 @@ import org.linagora.linshare.core.domain.entities.GenericStatistic;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.GenericStatisticRepository;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 
 // TODO FIXME Quota & Statistics
 public abstract class GenericStatisticRepositoryImpl<T extends GenericStatistic> extends AbstractRepositoryImpl<T>

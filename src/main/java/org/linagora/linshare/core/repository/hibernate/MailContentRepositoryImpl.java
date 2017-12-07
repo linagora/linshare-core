@@ -46,7 +46,7 @@ import org.linagora.linshare.core.domain.entities.MailContent;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.MailContentRepository;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 
 public class MailContentRepositoryImpl extends
 		AbstractRepositoryImpl<MailContent> implements MailContentRepository {

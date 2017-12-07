@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 
-import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -53,8 +52,8 @@ import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate3.HibernateCallback;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate4.HibernateCallback;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 
 public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<DocumentEntry> implements DocumentEntryRepository {
 
@@ -110,7 +109,7 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 		long result  = 0 ;
 
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
-			public Long doInHibernate(final Session session) throws HibernateException, SQLException {
+			public Long doInHibernate(final Session session) throws  HibernateException {
 				final Query query = session.createQuery("select count(*) from ShareEntry s where s.documentEntry = :documentEntry");
 				query.setParameter("documentEntry", documentEntry);
 				return 	((Long)query.iterate().next()).longValue();
@@ -119,7 +118,7 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 		Long shareResult = getHibernateTemplate().execute(action);
 
 		action = new HibernateCallback<Long>() {
-			public Long doInHibernate(final Session session) throws HibernateException, SQLException {
+			public Long doInHibernate(final Session session) throws  HibernateException {
 				final Query query = session.createQuery("select count(*) from AnonymousShareEntry s where s.documentEntry = :documentEntry");
 				query.setParameter("documentEntry", documentEntry);
 				return 	((Long)query.iterate().next()).longValue();
@@ -181,7 +180,7 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 	public void syncUniqueDocument(final Account owner, final String fileName)
 			throws BusinessException {
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
-			public Long doInHibernate(final Session session) throws HibernateException, SQLException {
+			public Long doInHibernate(final Session session) throws  HibernateException {
 				final Query query = session.createQuery("UPDATE Entry SET cmisSync = false WHERE name = :fileName and entryOwner = :owner");
 				query.setParameter("owner", owner);
 				query.setParameter("fileName", fileName);

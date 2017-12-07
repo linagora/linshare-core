@@ -35,7 +35,7 @@ package org.linagora.linshare.core.repository.hibernate;
 
 import org.linagora.linshare.core.domain.entities.UserWeeklyStat;
 import org.linagora.linshare.core.repository.UserWeeklyStatRepository;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 
 public class UserWeeklyStatRepositoryImpl extends GenericStatisticRepositoryImpl<UserWeeklyStat>implements UserWeeklyStatRepository {
 

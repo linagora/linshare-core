@@ -41,6 +41,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.type.AbstractSingleColumnStandardBasicType;
 import org.hibernate.type.AbstractStandardBasicType;
 import org.hibernate.type.TypeResolver;
@@ -111,72 +112,45 @@ public class GenericEnumType implements UserType, ParameterizedType {
     private AbstractStandardBasicType<? extends Object> type;
     private int[] sqlTypes;
 
-    public void setParameterValues(Properties parameters) {
-        String enumClassName = parameters.getProperty("enumClass");
-        try {
-            enumClass = Class.forName(enumClassName).asSubclass(Enum.class);
-        } catch (ClassNotFoundException cfne) {
-            throw new HibernateException("Enum class not found", cfne);
-        }
+	public void setParameterValues(Properties parameters) {
+		String enumClassName = parameters.getProperty("enumClass");
+		try {
+			enumClass = Class.forName(enumClassName).asSubclass(Enum.class);
+		} catch (ClassNotFoundException cfne) {
+			throw new HibernateException("Enum class not found", cfne);
+		}
 
-        String identifierMethodName = parameters.getProperty("identifierMethod", DEFAULT_IDENTIFIER_METHOD_NAME);
+		String identifierMethodName = parameters.getProperty("identifierMethod", DEFAULT_IDENTIFIER_METHOD_NAME);
 
-        try {
-            identifierMethod = enumClass.getMethod(identifierMethodName, new Class[0]);
-            identifierType = identifierMethod.getReturnType();
-        } catch (Exception e) {
-            throw new HibernateException("Failed to obtain identifier method", e);
-        }
+		try {
+			identifierMethod = enumClass.getMethod(identifierMethodName, new Class[0]);
+			identifierType = identifierMethod.getReturnType();
+		} catch (Exception e) {
+			throw new HibernateException("Failed to obtain identifier method", e);
+		}
 
-        type = (AbstractSingleColumnStandardBasicType<? extends Object>) new TypeResolver().heuristicType(identifierType.getName(), parameters);
+		type = (AbstractSingleColumnStandardBasicType<? extends Object>) new TypeResolver()
+				.heuristicType(identifierType.getName(), parameters);
 
-        if (type == null) {
-            throw new HibernateException("Unsupported identifier type " + identifierType.getName());
-        }
+		if (type == null) {
+			throw new HibernateException("Unsupported identifier type " + identifierType.getName());
+		}
 
-        sqlTypes = new int[]{((AbstractSingleColumnStandardBasicType<?>)type).sqlType()};
+		sqlTypes = new int[] { ((AbstractSingleColumnStandardBasicType<?>) type).sqlType() };
 
-        String valueOfMethodName = parameters.getProperty("valueOfMethod", DEFAULT_VALUE_OF_METHOD_NAME);
+		String valueOfMethodName = parameters.getProperty("valueOfMethod", DEFAULT_VALUE_OF_METHOD_NAME);
 
-        try {
-            valueOfMethod = enumClass.getMethod(valueOfMethodName, new Class[]{identifierType});
-        } catch (Exception e) {
-            throw new HibernateException("Failed to obtain valueOf method", e);
-        }
-    }
+		try {
+			valueOfMethod = enumClass.getMethod(valueOfMethodName, new Class[] { identifierType });
+		} catch (Exception e) {
+			throw new HibernateException("Failed to obtain valueOf method", e);
+		}
+	}
 
     public Class<? extends Enum> returnedClass() {
         return enumClass;
     }
-
-    public Object nullSafeGet(ResultSet rs, String[] names, Object owner) throws HibernateException, SQLException {
-        Object identifier = type.get(rs, names[0], null);
-        if (rs.wasNull()) {
-            return null;
-        }
-
-        try {
-            return valueOfMethod.invoke(enumClass, new Object[]{identifier});
-        } catch (Exception e) {
-            throw new HibernateException("Exception while invoking valueOf method '" + valueOfMethod.getName() + "' of " +
-                    "enumeration class '" + enumClass + "'", e);
-        }
-    }
-
-    public void nullSafeSet(PreparedStatement st, Object value, int index) throws HibernateException, SQLException {
-        try {
-            if (value == null) {
-                st.setNull(index, ((AbstractSingleColumnStandardBasicType<?>) type).sqlType());
-            } else {
-                Object identifier = identifierMethod.invoke(value, new Object[0]);
-                type.nullSafeSet(st, identifier, index, null);
-            }
-        } catch (Exception e) {
-            throw new HibernateException("Exception while invoking identifierMethod '" + identifierMethod.getName() + "' of " +
-                    "enumeration class '" + enumClass + "'", e);
-        }
-    }
-
+    
     public int[] sqlTypes() {
         return sqlTypes;
     }
@@ -208,4 +182,36 @@ public class GenericEnumType implements UserType, ParameterizedType {
     public Object replace(Object original, Object target, Object owner) throws HibernateException {
         return original;
     }
+
+	@Override
+	public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor sessionImplementor, Object arg3)
+			throws HibernateException, SQLException {
+		Object identifier = type.get(rs, names[0], sessionImplementor);
+		if (rs.wasNull()) {
+			return null;
+		}
+
+		try {
+			return valueOfMethod.invoke(enumClass, new Object[] { identifier });
+		} catch (Exception e) {
+			throw new HibernateException("Exception while invoking valueOf method '" + valueOfMethod.getName() + "' of "
+					+ "enumeration class '" + enumClass + "'", e);
+		}
+	}
+
+	@Override
+	public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor sessionImplementor)
+			throws HibernateException, SQLException {
+		try {
+			if (value == null) {
+				st.setNull(index, ((AbstractSingleColumnStandardBasicType<?>) type).sqlType());
+			} else {
+				Object identifier = identifierMethod.invoke(value, new Object[0]);
+				type.nullSafeSet(st, identifier, index, sessionImplementor);
+			}
+		} catch (Exception e) {
+			throw new HibernateException("Exception while invoking identifierMethod '" + identifierMethod.getName()
+					+ "' of " + "enumeration class '" + enumClass + "'", e);
+		}
+	}
 }
