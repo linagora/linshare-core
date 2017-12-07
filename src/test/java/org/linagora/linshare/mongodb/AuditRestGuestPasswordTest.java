@@ -44,19 +44,18 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.ResetTokenKind;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
-import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.ResetGuestPasswordService;
 import org.linagora.linshare.mongo.entities.ResetGuestPassword;
 import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
 import org.linagora.linshare.mongo.repository.ResetGuestPasswordMongoRepository;
+import org.linagora.linshare.service.LoadingServiceTestDatas;
+import org.linagora.linshare.utils.LinShareWiser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
@@ -81,7 +80,6 @@ public class AuditRestGuestPasswordTest extends AbstractTransactionalJUnit4Sprin
 	private final static String UUID = "uuid";
 	private final static String CMIS_LOCALE = "cmis";
 	private final static String NEW_PASSWORD ="root";
-	private final static String DOMAIN_POLICY_UUID = "DefaultDomainPolicy";
 	
 	@Autowired
 	private ResetGuestPasswordService resetGuestPasswordService;
@@ -96,9 +94,6 @@ public class AuditRestGuestPasswordTest extends AbstractTransactionalJUnit4Sprin
 	private AbstractDomainRepository abstractDomainRepository;
 
 	@Autowired
-	private DomainPolicyRepository domainPolicyRepository;
-
-	@Autowired
 	private AuditUserMongoRepository userMongoRepository;
 
 	@Autowired
@@ -108,25 +103,22 @@ public class AuditRestGuestPasswordTest extends AbstractTransactionalJUnit4Sprin
 
 	private AbstractDomain guestDomain;
 
-	private DomainPolicy defaultPolicy;
-
 	private ResetGuestPassword resetGuestPassword;
 
 	private SystemAccount actor;
 
-	private AbstractDomain createATesGuestDomain() throws BusinessException {
-		AbstractDomain currentTopDomain = new GuestDomain("My Guest domain");
-		currentTopDomain.setPolicy(defaultPolicy);
-		abstractDomainRepository.create(currentTopDomain);
-		logger.debug("Current TopDomain object: " + currentTopDomain.toString());
-		return currentTopDomain;
+	private LinShareWiser wiser;
+
+	public AuditRestGuestPasswordTest() {
+		super();
+		wiser = new LinShareWiser(2525);
 	}
 
 	@Before
 	public void setUp() throws Exception {
 		logger.debug("Begin setUp");
-		defaultPolicy = domainPolicyRepository.findById(DOMAIN_POLICY_UUID);
-		guestDomain = createATesGuestDomain();
+		this.executeSqlScript("import-mails-hibernate3.sql", false);
+		guestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
 		guest = new Guest(FIRST_NAME, LAST_NAME, EMAIL);
 		guest.setLsUuid(UUID);
 		guest.setLocale(SupportedLanguage.ENGLISH);
@@ -141,6 +133,7 @@ public class AuditRestGuestPasswordTest extends AbstractTransactionalJUnit4Sprin
 		resetGuestPassword.setKind(ResetTokenKind.RESET_PASSWORD);
 		resetGuestPassword = resetGuestPasswordMongoRepository.insert(resetGuestPassword);
 		actor = resetGuestPasswordService.getGuestSystemAccount();
+		wiser.start();
 	}
 
 	@After
@@ -149,6 +142,7 @@ public class AuditRestGuestPasswordTest extends AbstractTransactionalJUnit4Sprin
 		resetGuestPasswordMongoRepository.delete(resetGuestPassword);
 		guestRepository.delete(guest);
 		abstractDomainRepository.delete(guestDomain);
+		wiser.stop();
 		logger.debug("End tearDown");
 	}
 
@@ -176,9 +170,9 @@ public class AuditRestGuestPasswordTest extends AbstractTransactionalJUnit4Sprin
 		}
 		assertEquals(initialSize + 1, userMongoRepository.findByAction(String.valueOf(LogAction.CREATE)).size());
 	}
-	
+
 	@Test
-	public void testAuditPowsswordResetedSuccessfully() {
+	public void testAuditPawsswordResetedSuccessfully() {
 		int initialSize = userMongoRepository.findByAction(String.valueOf(LogAction.SUCCESS)).size();
 		Calendar instance = Calendar.getInstance();
 		instance.add(Calendar.HOUR, +1);
@@ -187,5 +181,6 @@ public class AuditRestGuestPasswordTest extends AbstractTransactionalJUnit4Sprin
 		resetGuestPassword = resetGuestPasswordMongoRepository.save(resetGuestPassword);
 		resetGuestPasswordService.update(actor, actor, resetGuestPassword);
 		assertEquals(initialSize + 1, userMongoRepository.findByAction(String.valueOf(LogAction.SUCCESS)).size());
+		wiser.checkGeneratedMessages();
 	}
 }

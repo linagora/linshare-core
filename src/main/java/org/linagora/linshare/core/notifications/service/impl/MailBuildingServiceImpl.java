@@ -69,6 +69,7 @@ import org.linagora.linshare.core.notifications.emails.impl.EmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.FileWarnOwnerBeforeExpiryEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.GuestAccountNewCreationEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.GuestAccountResetPasswordEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.GuestWarnGuestAboutHisPasswordResetEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.WarnOwnerAboutGuestExpirationEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.WorkGroupWarnDeletedMemberEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.WorkGroupWarnNewMemberEmailBuilder;
@@ -254,6 +255,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		GuestAccountResetPasswordEmailBuilder resetGuestBuilder = new GuestAccountResetPasswordEmailBuilder();
 		resetGuestBuilder.setUrlTemplateForGuestReset(urlTemplateForGuestReset);
 		emailBuilders.put(MailContentType.GUEST_ACCOUNT_RESET_PASSWORD_LINK, resetGuestBuilder);
+		emailBuilders.put(MailContentType.GUEST_WARN_GUEST_ABOUT_HIS_PASSWORD_RESET, new GuestWarnGuestAboutHisPasswordResetEmailBuilder());
 
 		emailBuilders.put(MailContentType.SHARE_NEW_SHARE_ACKNOWLEDGEMENT_FOR_SENDER,
 				new ShareNewShareAcknowledgementEmailBuilder());

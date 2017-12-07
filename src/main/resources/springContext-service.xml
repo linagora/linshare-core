@@ -279,6 +279,8 @@
 		<constructor-arg ref="resetGuestPasswordMongoRepository" />
 		<constructor-arg ref="guestService" />
 		<constructor-arg ref="logEntryService" />
+		<constructor-arg ref="mailBuildingService" />
+		<constructor-arg ref="notifierService" />
 	</bean>
 
 	<bean id="workGroupFolderService" class="org.linagora.linshare.core.service.impl.WorkGroupFolderServiceImpl">

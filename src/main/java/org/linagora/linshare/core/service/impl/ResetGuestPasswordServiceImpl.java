@@ -42,10 +42,14 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.context.GuestWarnGuestAboutHisPasswordResetEmailContext;
+import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.LogEntryService;
+import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ResetGuestPasswordService;
 import org.linagora.linshare.mongo.entities.ResetGuestPassword;
 import org.linagora.linshare.mongo.entities.logs.UserAuditLogEntry;
@@ -63,13 +67,22 @@ public class ResetGuestPasswordServiceImpl implements ResetGuestPasswordService 
 	
 	protected LogEntryService logEntryService;
 
+	protected final NotifierService notifierService;
+
+	protected final MailBuildingService mailBuildingService;
+
+
 	public ResetGuestPasswordServiceImpl(ResetGuestPasswordMongoRepository repository,
 			GuestService guestService,
-			LogEntryService logEntryService) {
+			LogEntryService logEntryService,
+			NotifierService notifierService,
+			MailBuildingService mailBuildingService) {
 		super();
 		this.repository = repository;
 		this.guestService = guestService;
 		this.logEntryService = logEntryService;
+		this.notifierService = notifierService;
+		this.mailBuildingService = mailBuildingService;
 	}
 
 	@Override
@@ -126,6 +139,9 @@ public class ResetGuestPasswordServiceImpl implements ResetGuestPasswordService 
 				AuditLogEntryType.RESET_PASSWORD, guest);
 		logEntryService.insert(userAuditLogEntry);
 		logger.info("Reset password");
+		GuestWarnGuestAboutHisPasswordResetEmailContext context = new GuestWarnGuestAboutHisPasswordResetEmailContext(guest);
+		MailContainerWithRecipient mail = mailBuildingService.build(context);
+		notifierService.sendNotification(mail);
 		return reset;
 	}
 }
