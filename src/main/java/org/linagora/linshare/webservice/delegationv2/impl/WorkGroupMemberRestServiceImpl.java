@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2017 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2017. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -32,7 +32,7 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.webservice.delegation.impl;
+package org.linagora.linshare.webservice.delegationv2.impl;
 
 import java.util.List;
 
@@ -50,7 +50,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupMemberDto;
 import org.linagora.linshare.core.facade.webservice.delegation.WorkgroupMemberFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.delegation.ThreadMemberRestService;
+import org.linagora.linshare.webservice.delegationv2.WorkGroupMemberRestService;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -58,24 +58,24 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/{ownerUuid}/threads/{threadUuid}/members")
-@Api(value = "/rest/delegation/{ownerUuid}/threads/{threadUuid}/members", basePath = "/rest/threads/{threadUuid}/members",
-	description = "thread members service.",
+@Path("/{actorUuid}/workgroups/{workgroupUuid}/members")
+@Api(value = "/rest/delegation/v2/{actorUuid}/workgroups/{workgroupUuid}/members", basePath = "/rest/workgroups/{workgroupUuid}/members",
+	description = "workgroup members service.",
 	produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class ThreadMemberRestServiceImpl extends WebserviceBase implements
-		ThreadMemberRestService {
+public class WorkGroupMemberRestServiceImpl extends WebserviceBase implements
+		WorkGroupMemberRestService {
 
 	private final WorkgroupMemberFacade workgroupMemberFacade;
 
-	public ThreadMemberRestServiceImpl(final WorkgroupMemberFacade workgroupMemberFacade) {
+	public WorkGroupMemberRestServiceImpl(final WorkgroupMemberFacade workgroupMemberFacade) {
 		this.workgroupMemberFacade = workgroupMemberFacade;
 	}
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a thread member.", response = WorkGroupMemberDto.class)
+	@ApiOperation(value = "Create a workgroup member.", response = WorkGroupMemberDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
 					@ApiResponse(code = 404, message = "Member not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
@@ -83,16 +83,16 @@ public class ThreadMemberRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public WorkGroupMemberDto create(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
-			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
-			@ApiParam(value = "The user domain identifier.", required = true) WorkGroupMemberDto threadMember)
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
+			@ApiParam(value = "The user domain identifier.", required = true) WorkGroupMemberDto workgroupMember)
 					throws BusinessException {
-		return workgroupMemberFacade.create(ownerUuid, threadUuid, threadMember.getUserDomainId(), threadMember.getUserMail(), threadMember.isReadonly(), threadMember.isAdmin());
+		return workgroupMemberFacade.create(actorUuid, workgroupUuid, workgroupMember.getUserDomainId(), workgroupMember.getUserMail(), workgroupMember.isReadonly(), workgroupMember.isAdmin());
 	}
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Get all thread members.", response = WorkGroupMemberDto.class, responseContainer = "Set")
+	@ApiOperation(value = "Get all workgroup members.", response = WorkGroupMemberDto.class, responseContainer = "Set")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
 					@ApiResponse(code = 404, message = "Member not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
@@ -100,61 +100,62 @@ public class ThreadMemberRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public List<WorkGroupMemberDto> findAll(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
-			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid)
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid)
 				throws BusinessException {
-		return workgroupMemberFacade.findAll(ownerUuid, threadUuid);
+		return workgroupMemberFacade.findAll(actorUuid, workgroupUuid);
 	}
 
 	@Path("/")
 	@PUT
-	@ApiOperation(value = "Update a thread member.", response = WorkGroupMemberDto.class)
+	@ApiOperation(value = "Update a workgroup member.", response = WorkGroupMemberDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Member or thread member not found."),
+					@ApiResponse(code = 404, message = "Member or workgroup member not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
 	public WorkGroupMemberDto update(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
-			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
-			@ApiParam(value = "The thread member to update.", required = true) WorkGroupMemberDto threadMember)
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
+			@ApiParam(value = "The workgroup member to update.", required = true) WorkGroupMemberDto workgroupMember)
 					throws BusinessException {
-		return workgroupMemberFacade.update(ownerUuid, threadUuid, threadMember);
+		return workgroupMemberFacade.update(actorUuid, workgroupUuid, workgroupMember);
 	}
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a thread member.", response = WorkGroupMemberDto.class)
+	@ApiOperation(value = "Delete a workgroup member.", response = WorkGroupMemberDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Member or thread member not found."),
+					@ApiResponse(code = 404, message = "Member or workgroup member not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
 	public WorkGroupMemberDto delete(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
-			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
-			@ApiParam(value = "The thread member to delete.", required = true) WorkGroupMemberDto threadMember)
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
+			@ApiParam(value = "The workgroup member to delete.", required = true) WorkGroupMemberDto workgroupMember)
 					throws BusinessException {
-		return workgroupMemberFacade.delete(ownerUuid, threadUuid, threadMember.getUserUuid());
+		return workgroupMemberFacade.delete(actorUuid, workgroupUuid, workgroupMember.getUserUuid());
 	}
 
 	@Path("/{uuid}")
 	@DELETE
-	@ApiOperation(value = "Delete a thread member.", response = WorkGroupMemberDto.class)
+	@ApiOperation(value = "Delete a workgroup member.", response = WorkGroupMemberDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Member or thread member not found."),
+					@ApiResponse(code = 404, message = "Member or workgroup member not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
 	public WorkGroupMemberDto delete(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
-			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
 			@ApiParam(value = "The user uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		return workgroupMemberFacade.delete(ownerUuid, threadUuid, uuid);
+		return workgroupMemberFacade.delete(actorUuid, workgroupUuid, uuid);
 	}
 
 }
+

@@ -407,8 +407,11 @@ public class GuestServiceImplTest extends
 		Assert.assertNotNull(find);
 
 		Thread thread = threadService.create(technicalAccount, owner1, "FirstWorkGroup");
-		Set<ThreadMember> threadMembers=thread.getMyMembers();
+		Set<ThreadMember> threadMembers = thread.getMyMembers();
 		Assert.assertNotNull(threadMembers);
+		ThreadMember threadMember = threadService.updateMember(technicalAccount, owner1, thread.getLsUuid(), owner1.getLsUuid(), false, false);
+		Assert.assertFalse(threadMember.getAdmin());
+		Assert.assertFalse(threadMember.getCanUpload());
 	}
 
 }
