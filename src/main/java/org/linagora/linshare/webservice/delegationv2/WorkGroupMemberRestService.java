@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2017 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2017. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -32,26 +32,28 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.facade.webservice.delegation;
+package org.linagora.linshare.webservice.delegationv2;
 
 import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupMemberDto;
 
-public interface ThreadMemberFacade extends DelegationGenericFacade {
+public interface WorkGroupMemberRestService {
 
-	List<WorkGroupMemberDto> findAll(String ownerUuid, String threadUuid)
+	WorkGroupMemberDto create(String actorUuid, String workGroupUuid,
+			WorkGroupMemberDto workGroupMember)
 			throws BusinessException;
 
-	WorkGroupMemberDto create(String ownerUuid, String threadUuid,
-			String domainId, String mail, boolean readonly, boolean admin)
+	public List<WorkGroupMemberDto> findAll(String actorUuid, String workGroupUuid)
 			throws BusinessException;
 
-	WorkGroupMemberDto update(String ownerUuid, String threadUuid,
-			WorkGroupMemberDto threadMember);
-
-	WorkGroupMemberDto delete(String ownerUuid, String threadUuid, String userUuid)
+	public WorkGroupMemberDto update(String actorUuid, String workGroupUuid, WorkGroupMemberDto workGroupMember)
 			throws BusinessException;
 
+	public WorkGroupMemberDto delete(String actorUuid, String workGroupUuid, WorkGroupMemberDto workGroupMember)
+			throws BusinessException;
+
+	public WorkGroupMemberDto delete(String actorUuid, String workGroupUuid, String uuid)
+			throws BusinessException;
 }

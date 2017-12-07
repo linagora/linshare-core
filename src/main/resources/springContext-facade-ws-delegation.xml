@@ -45,7 +45,7 @@
 		<constructor-arg ref="documentEntryService" />
 	</bean>
 
-	<bean id="wsDelegationThreadMemberFacade" class="org.linagora.linshare.core.facade.webservice.delegation.impl.ThreadMemberFacadeImpl">
+	<bean id="wsDelegationThreadMemberFacade" class="org.linagora.linshare.core.facade.webservice.delegation.impl.WorkgroupMemberFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="threadService" />

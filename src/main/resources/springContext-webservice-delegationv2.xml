@@ -30,6 +30,11 @@
 		<constructor-arg ref="wsDelegationUserFacade" />
 	</bean>
 
+	<bean id="delegationV2WorkGroupMemberRestService"
+		class="org.linagora.linshare.webservice.delegationv2.impl.WorkGroupMemberRestServiceImpl">
+		<constructor-arg ref="wsDelegationThreadMemberFacade" />
+	</bean>
+
 	<bean id="delegationV2WorkGroupRestService"
 		class="org.linagora.linshare.webservice.delegationv2.impl.WorkGroupRestServiceImpl">
 		<constructor-arg ref="wsDelegationThreadFacade" />
@@ -40,6 +45,7 @@
 			<ref bean="delegationSafeDetailRestService" />
 			<ref bean="delegationV2AuthenticationRestService" />
 			<ref bean="delegationV2WorkGroupRestService" />
+			<ref bean="delegationV2WorkGroupMemberRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />
