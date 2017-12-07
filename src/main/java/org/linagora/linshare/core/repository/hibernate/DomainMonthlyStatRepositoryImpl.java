@@ -35,7 +35,7 @@ package org.linagora.linshare.core.repository.hibernate;
 
 import org.linagora.linshare.core.domain.entities.DomainMonthlyStat;
 import org.linagora.linshare.core.repository.DomainMonthlyStatRepository;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 
 public class DomainMonthlyStatRepositoryImpl extends GenericStatisticRepositoryImpl<DomainMonthlyStat>
 		implements DomainMonthlyStatRepository {

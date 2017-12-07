@@ -38,7 +38,7 @@ import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linshare.core.repository.DomainAccessPolicyRepository;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 
 public class DomainAccessPolicyRepositoryImpl extends AbstractRepositoryImpl<DomainAccessPolicy> implements DomainAccessPolicyRepository {
 

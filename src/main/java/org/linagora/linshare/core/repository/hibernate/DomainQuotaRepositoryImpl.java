@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import org.hibernate.HibernateException;
@@ -47,8 +46,8 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.repository.DomainQuotaRepository;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate3.HibernateCallback;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate4.HibernateCallback;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 
 public class DomainQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<DomainQuota>
 		implements DomainQuotaRepository {
@@ -101,7 +100,7 @@ public class DomainQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Domain
 		if (domain.isRootDomain()) {
 			action = new HibernateCallback<Long>() {
 				public Long doInHibernate(final Session session)
-						throws HibernateException, SQLException {
+						throws HibernateException {
 					final Query query = session.createQuery("UPDATE Quota SET maintenance = :maintenance");
 					query.setParameter("maintenance", maintenance);
 					return (long) query.executeUpdate();
@@ -110,7 +109,7 @@ public class DomainQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Domain
 		} else {
 			action = new HibernateCallback<Long>() {
 				public Long doInHibernate(final Session session)
-						throws HibernateException, SQLException {
+						throws HibernateException {
 					final Query query = session.createQuery("UPDATE Quota SET maintenance = :maintenance WHERE domain = :domain OR parentDomain = :domain");
 					query.setParameter("domain", domain);
 					query.setParameter("maintenance", maintenance);
@@ -141,7 +140,7 @@ public class DomainQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Domain
 	public Long cascadeDefaultQuotaToQuotaOfChildrenDomains(AbstractDomain domain, Long quota) {
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session)
-					throws HibernateException, SQLException {
+					throws HibernateException {
 				final Query query = session.createQuery("UPDATE DomainQuota SET quota = :quota WHERE parentDomain = :parentDomain AND quotaOverride = false");
 				query.setParameter("quota", quota);
 				query.setParameter("parentDomain", domain);
@@ -156,7 +155,7 @@ public class DomainQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Domain
 	public Long cascadeDefaultQuotaToDefaultQuotaOfChildrenDomains(AbstractDomain domain, Long quota) {
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session)
-					throws HibernateException, SQLException {
+					throws HibernateException {
 				final Query query = session.createQuery("UPDATE DomainQuota SET defaultQuota = :defaultQuota WHERE parentDomain = :parentDomain AND defaultQuotaOverride = false");
 				query.setParameter("defaultQuota", quota);
 				query.setParameter("parentDomain", domain);

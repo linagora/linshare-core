@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import org.hibernate.HibernateException;
@@ -47,12 +46,12 @@ import org.hibernate.type.LongType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.QuotaType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
+import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.repository.ContainerQuotaRepository;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate3.HibernateCallback;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate4.HibernateCallback;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 
 public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<ContainerQuota>
 		implements ContainerQuotaRepository {
@@ -89,7 +88,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 	public Long cascadeMaintenanceMode(ContainerQuota container, boolean maintenance) {
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session)
-					throws HibernateException, SQLException {
+					throws  HibernateException {
 				final Query query = session.createQuery("UPDATE AccountQuota SET maintenance = :maintenance WHERE containerQuota = :containerQuota");
 				query.setParameter("containerQuota", container);
 				query.setParameter("maintenance", maintenance);
@@ -121,7 +120,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 	public Long cascadeDefaultQuotaToQuotaOfChildrenDomains(AbstractDomain domain, Long quota, ContainerQuotaType containerType) {
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session)
-					throws HibernateException, SQLException {
+					throws  HibernateException {
 				final Query query = session.createQuery("UPDATE ContainerQuota SET quota = :quota WHERE parentDomain = :parentDomain AND quotaOverride = false AND containerQuotaType = :containerType");
 				query.setParameter("quota", quota);
 				query.setParameter("parentDomain", domain);
@@ -137,7 +136,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 	public Long cascadeDefaultQuotaToDefaultQuotaOfChildrenDomains(AbstractDomain domain, Long quota, ContainerQuotaType containerType) {
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session)
-					throws HibernateException, SQLException {
+					throws  HibernateException {
 				final Query query = session.createQuery("UPDATE ContainerQuota SET defaultQuota = :defaultQuota WHERE parentDomain = :parentDomain AND defaultQuotaOverride = false AND containerQuotaType = :containerType");
 				query.setParameter("defaultQuota", quota);
 				query.setParameter("parentDomain", domain);
@@ -154,7 +153,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 	public Long cascadeMaxFileSize(ContainerQuota container, Long maxFileSize) {
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session)
-					throws HibernateException, SQLException {
+					throws HibernateException {
 				final Query query = session.createQuery("UPDATE AccountQuota SET maxFileSize = :maxFileSize WHERE containerQuota = :containerQuota AND maxFileSizeOverride = false");
 				query.setParameter("maxFileSize", maxFileSize);
 				query.setParameter("containerQuota", container);
@@ -170,7 +169,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 	public Long cascadeAccountQuota(ContainerQuota container, Long accountQuota) {
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session)
-					throws HibernateException, SQLException {
+					throws  HibernateException {
 				final Query query = session.createQuery("UPDATE AccountQuota SET quota = :quota WHERE containerQuota = :containerQuota AND quotaOverride = false");
 				query.setParameter("quota", accountQuota);
 				query.setParameter("containerQuota", container);
@@ -209,7 +208,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 	public Long cascadeDefaultMaxFileSizeToMaxFileSizeOfChildrenDomains(AbstractDomain domain, Long maxFileSize, ContainerQuotaType containerType) {
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session)
-					throws HibernateException, SQLException {
+					throws  HibernateException {
 				final Query query = session.createQuery("UPDATE ContainerQuota SET maxFileSize = :maxFileSize WHERE parentDomain = :parentDomain AND maxFileSizeOverride = false AND containerQuotaType = :containerType");
 				query.setParameter("maxFileSize", maxFileSize);
 				query.setParameter("parentDomain", domain);
@@ -225,7 +224,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 	public Long cascadeDefaultMaxFileSizeToDefaultMaxFileSizeOfChildrenDomains(AbstractDomain domain, Long maxFileSize, ContainerQuotaType containerType) {
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session)
-					throws HibernateException, SQLException {
+					throws  HibernateException {
 				final Query query = session.createQuery("UPDATE ContainerQuota SET defaultMaxFileSize = :maxFileSize WHERE parentDomain = :parentDomain AND defaultMaxFileSizeOverride = false AND containerQuotaType = :containerType");
 				query.setParameter("maxFileSize", maxFileSize);
 				query.setParameter("parentDomain", domain);
@@ -241,7 +240,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 	public List<Long> getQuotaIdforDefaultMaxFileSizeInSubDomains(AbstractDomain domain, QuotaType type, ContainerQuotaType containerType) {
 		HibernateCallback<List<Long>> action = new HibernateCallback<List<Long>>() {
 			public List<Long> doInHibernate(final Session session)
-					throws HibernateException, SQLException {
+					throws  HibernateException {
 				StringBuilder sb = new StringBuilder();
 				sb.append("SELECT DISTINCT child.id AS child_id FROM quota AS father");
 				sb.append(" JOIN quota AS child");
@@ -274,7 +273,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 	public List<Long> getQuotaIdforDefaultMaxFileSizeInTopDomains(AbstractDomain domain, QuotaType type, ContainerQuotaType containerType) {
 		HibernateCallback<List<Long>> action = new HibernateCallback<List<Long>>() {
 			public List<Long> doInHibernate(final Session session)
-					throws HibernateException, SQLException {
+					throws  HibernateException {
 				StringBuilder sb = new StringBuilder();
 				sb.append("SELECT DISTINCT id FROM quota ");
 				sb.append(" WHERE quota_type = :domainType");
@@ -302,7 +301,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 		}
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session)
-					throws HibernateException, SQLException {
+					throws  HibernateException {
 				StringBuilder sb = new StringBuilder();
 				sb.append("UPDATE Quota SET default_max_file_size = :maxFileSize WHERE id IN :list_quota_id ;");
 				final Query query = session.createSQLQuery(sb.toString());
@@ -319,7 +318,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 	public List<Long> getQuotaIdforMaxFileSizeInSubDomains(AbstractDomain domain, QuotaType type, ContainerQuotaType containerType) {
 		HibernateCallback<List<Long>> action = new HibernateCallback<List<Long>>() {
 			public List<Long> doInHibernate(final Session session)
-					throws HibernateException, SQLException {
+					throws  HibernateException {
 				StringBuilder sb = new StringBuilder();
 				sb.append("SELECT DISTINCT child.id AS child_id FROM quota AS father");
 				sb.append(" JOIN quota AS child");
@@ -358,7 +357,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 		}
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session)
-					throws HibernateException, SQLException {
+					throws  HibernateException {
 				StringBuilder sb = new StringBuilder();
 				sb.append("UPDATE Quota SET max_file_size = :maxFileSize WHERE id IN :list_quota_id ;");
 				final Query query = session.createSQLQuery(sb.toString());
@@ -378,7 +377,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 		}
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session)
-					throws HibernateException, SQLException {
+					throws  HibernateException {
 				StringBuilder sb = new StringBuilder();
 				sb.append("UPDATE Quota SET max_file_size = :maxFileSize WHERE quota_container_id IN :list_quota_id AND max_file_size_override = false;");
 				final Query query = session.createSQLQuery(sb.toString());
@@ -418,7 +417,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 
 	public Long cascadeDefaultAccountQuotaToDefaultAccountQuotaOfChildrenDomains(AbstractDomain domain, Long accountQuota, ContainerQuotaType containerType) {
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
-			public Long doInHibernate(final Session session) throws HibernateException, SQLException {
+			public Long doInHibernate(final Session session) throws  HibernateException {
 				final Query query = session.createQuery(
 						"UPDATE ContainerQuota SET defaultAccountQuota = :accountQuota WHERE parentDomain = :parentDomain AND defaultAccountQuotaOverride = false AND containerQuotaType = :containerType");
 				query.setParameter("accountQuota", accountQuota);
@@ -435,7 +434,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 	public List<Long> getQuotaIdforDefaultAccountQuotaInTopDomains(AbstractDomain domain, QuotaType type, ContainerQuotaType containerType) {
 		HibernateCallback<List<Long>> action = new HibernateCallback<List<Long>>() {
 			public List<Long> doInHibernate(final Session session)
-					throws HibernateException, SQLException {
+					throws  HibernateException {
 				StringBuilder sb = new StringBuilder();
 				sb.append("SELECT DISTINCT id FROM quota ");
 				sb.append(" WHERE quota_type = :domainType");
@@ -460,7 +459,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 	public Long cascadeDefaultAccountQuotaToAccountQuotaOfChildrenDomains(AbstractDomain domain, Long accountQuota, ContainerQuotaType containerType) {
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session)
-					throws HibernateException, SQLException {
+					throws  HibernateException {
 				final Query query = session.createQuery("UPDATE ContainerQuota SET accountQuota = :accountQuota WHERE parentDomain = :parentDomain AND accountQuotaOverride = false AND containerQuotaType = :containerType");
 				query.setParameter("accountQuota", accountQuota);
 				query.setParameter("parentDomain", domain);
@@ -476,7 +475,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 	public List<Long> getQuotaIdforDefaultAccountQuotaInSubDomains(AbstractDomain domain, QuotaType type, ContainerQuotaType containerType) {
 		HibernateCallback<List<Long>> action = new HibernateCallback<List<Long>>() {
 			public List<Long> doInHibernate(final Session session)
-					throws HibernateException, SQLException {
+					throws  HibernateException {
 				StringBuilder sb = new StringBuilder();
 				sb.append("SELECT DISTINCT child.id AS child_id FROM quota AS father");
 				sb.append(" JOIN quota AS child");
@@ -512,7 +511,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 		}
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session)
-					throws HibernateException, SQLException {
+					throws  HibernateException {
 				StringBuilder sb = new StringBuilder();
 				sb.append("UPDATE Quota SET default_account_quota = :accountQuota WHERE id IN :list_quota_id ;");
 				final Query query = session.createSQLQuery(sb.toString());
@@ -532,7 +531,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 		}
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session)
-					throws HibernateException, SQLException {
+					throws  HibernateException {
 				StringBuilder sb = new StringBuilder();
 				sb.append("UPDATE Quota SET quota = :accountQuota WHERE quota_container_id IN :list_quota_id AND quota_override = false;");
 				final Query query = session.createSQLQuery(sb.toString());
@@ -549,7 +548,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 	public List<Long> getQuotaIdforAccountQuotaInSubDomains(AbstractDomain domain, QuotaType type, ContainerQuotaType containerType) {
 		HibernateCallback<List<Long>> action = new HibernateCallback<List<Long>>() {
 			public List<Long> doInHibernate(final Session session)
-					throws HibernateException, SQLException {
+					throws  HibernateException {
 				StringBuilder sb = new StringBuilder();
 				sb.append("SELECT DISTINCT child.id AS child_id FROM quota AS father");
 				sb.append(" JOIN quota AS child");
@@ -588,7 +587,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 		}
 		HibernateCallback<Long> action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session)
-					throws HibernateException, SQLException {
+					throws  HibernateException {
 				StringBuilder sb = new StringBuilder();
 				sb.append("UPDATE Quota SET account_quota = :accountQuota WHERE id IN :list_quota_id ;");
 				final Query query = session.createSQLQuery(sb.toString());

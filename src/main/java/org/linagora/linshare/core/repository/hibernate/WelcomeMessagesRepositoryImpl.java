@@ -45,7 +45,7 @@ import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.WelcomeMessagesRepository;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 
 public class WelcomeMessagesRepositoryImpl extends
 		AbstractRepositoryImpl<WelcomeMessages> implements

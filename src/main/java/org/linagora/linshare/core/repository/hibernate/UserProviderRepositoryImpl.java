@@ -45,7 +45,7 @@ import org.linagora.linshare.core.domain.entities.UserProvider;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserProviderRepository;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 
 public class UserProviderRepositoryImpl extends AbstractRepositoryImpl<UserProvider> implements UserProviderRepository {
 

@@ -43,7 +43,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 
 public class FunctionalityRepositoryImpl extends AbstractRepositoryImpl<Functionality> implements FunctionalityRepository {
 

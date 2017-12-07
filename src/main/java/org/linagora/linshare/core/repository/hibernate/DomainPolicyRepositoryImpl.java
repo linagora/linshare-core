@@ -41,7 +41,7 @@ import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 
 public class DomainPolicyRepositoryImpl extends AbstractRepositoryImpl<DomainPolicy> implements DomainPolicyRepository {
 

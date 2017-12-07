@@ -43,7 +43,7 @@ import org.linagora.linshare.core.domain.entities.MailFooter;
 import org.linagora.linshare.core.domain.entities.MailFooterLang;
 import org.linagora.linshare.core.repository.MailFooterLangRepository;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 
 public class MailFooterLangRepositoryImpl extends
 		AbstractRepositoryImpl<MailFooterLang> implements

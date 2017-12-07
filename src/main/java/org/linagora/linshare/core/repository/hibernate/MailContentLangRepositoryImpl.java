@@ -45,7 +45,7 @@ import org.linagora.linshare.core.domain.entities.MailContent;
 import org.linagora.linshare.core.domain.entities.MailContentLang;
 import org.linagora.linshare.core.repository.MailContentLangRepository;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 
 public class MailContentLangRepositoryImpl extends
 		AbstractRepositoryImpl<MailContentLang> implements

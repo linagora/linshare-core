@@ -40,7 +40,7 @@ import java.util.UUID;
 import org.linagora.linshare.core.domain.entities.TechnicalAccount;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.TechnicalAccountRepository;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 
 public class TechnicalAccountRepositoryImpl extends GenericUserRepositoryImpl<TechnicalAccount>
 		implements TechnicalAccountRepository {

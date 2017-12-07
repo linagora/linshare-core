@@ -34,7 +34,6 @@
 
 package org.linagora.linshare.core.repository.hibernate;
 
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -52,8 +51,8 @@ import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ShareEntryGroupRepository;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate3.HibernateCallback;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate4.HibernateCallback;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 
 import com.google.common.collect.Sets;
 
@@ -142,7 +141,7 @@ public class ShareEntryGroupRepositoryImpl extends AbstractRepositoryImpl<ShareE
 	public List<String> findAllToPurge() {
 		HibernateCallback<List<String>> action = new HibernateCallback<List<String>>() {
 			@SuppressWarnings("unchecked")
-			public List<String> doInHibernate(final Session session) throws HibernateException, SQLException {
+			public List<String> doInHibernate(final Session session) throws HibernateException {
 				StringBuilder sb = new StringBuilder();
 				sb.append("select seg.uuid from ShareEntryGroup seg");
 				sb.append(" left outer join seg.shareEntries se ");
