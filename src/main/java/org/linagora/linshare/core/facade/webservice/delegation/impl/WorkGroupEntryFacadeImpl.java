@@ -50,7 +50,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
-import org.linagora.linshare.core.facade.webservice.delegation.ThreadEntryFacade;
+import org.linagora.linshare.core.facade.webservice.delegation.WorkGroupEntryFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.ThreadService;
@@ -64,8 +64,8 @@ import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 
 import com.google.common.collect.Lists;
 
-public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
-		implements ThreadEntryFacade {
+public class WorkGroupEntryFacadeImpl extends DelegationGenericFacadeImpl
+		implements WorkGroupEntryFacade {
 
 	private final ThreadService threadService;
 
@@ -73,7 +73,7 @@ public class ThreadEntryFacadeImpl extends DelegationGenericFacadeImpl
 
 	private final DocumentEntryService documentEntryService;
 
-	public ThreadEntryFacadeImpl(final AccountService accountService,
+	public WorkGroupEntryFacadeImpl(final AccountService accountService,
 			final UserService userService, final ThreadService threadService,
 			final WorkGroupNodeService workGroupNodeService,
 			final DocumentEntryService documentEntryService) {

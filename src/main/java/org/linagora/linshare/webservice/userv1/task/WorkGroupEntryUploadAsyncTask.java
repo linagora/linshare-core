@@ -32,45 +32,28 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.facade.webservice.delegation;
+package org.linagora.linshare.webservice.userv1.task;
 
-import java.io.File;
-import java.util.List;
-
-import javax.ws.rs.core.Response;
-
-import org.linagora.linshare.core.domain.constants.ThumbnailType;
-import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
+import org.linagora.linshare.core.facade.webservice.user.WorkGroupEntryAsyncFacade;
+import org.linagora.linshare.webservice.userv1.task.context.WorkGroupEntryTaskContext;
 
-public interface ThreadEntryFacade extends DelegationGenericFacade {
+public class WorkGroupEntryUploadAsyncTask extends
+		AsyncTask<WorkGroupEntryTaskContext> {
 
-	WorkGroupEntryDto create(String ownerUuid, String threadUuid,
-			File file, String fileName) throws BusinessException;
+	protected final WorkGroupEntryAsyncFacade asyncFacade;
 
-	WorkGroupEntryDto copy(String ownerUuid, String threadUuid, String entryUuid)
-			throws BusinessException;
+	public WorkGroupEntryUploadAsyncTask(WorkGroupEntryAsyncFacade asyncFacade,
+			WorkGroupEntryTaskContext task, AsyncTaskDto asyncTaskDto) {
+		super(asyncFacade, task, asyncTaskDto);
+		this.asyncFacade = asyncFacade;
+	}
 
-	WorkGroupEntryDto find(String ownerUuid, String threadUuid, String uuid)
-			throws BusinessException;
-
-	List<WorkGroupEntryDto> findAll(String ownerUuid, String threadUuid)
-			throws BusinessException;
-
-	WorkGroupEntryDto delete(String ownerUuid, String threadUuid, WorkGroupEntryDto threadEntry)
-			throws BusinessException;
-
-	WorkGroupEntryDto delete(String ownerUuid, String threadUuid, String uuid)
-			throws BusinessException;
-
-	Response download(String ownerUuid, String threadUuid, String uuid)
-			throws BusinessException;
-
-	Response thumbnail(String ownerUuid, String threadUuid, String uuid, ThumbnailType kind)
-			throws BusinessException;
-
-	WorkGroupEntryDto update(String owneruuid, String threadUuid,
-			String threadEntryUuid, WorkGroupEntryDto threadEntryDto)
-			throws BusinessException;
+	@Override
+	protected String runMyTask(WorkGroupEntryTaskContext task) {
+		WorkGroupEntryDto dto = asyncFacade.upload(task);
+		return dto.getUuid();
+	}
 
 }

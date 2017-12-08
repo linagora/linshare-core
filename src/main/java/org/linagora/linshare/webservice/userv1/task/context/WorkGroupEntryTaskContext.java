@@ -38,7 +38,7 @@ import java.io.File;
 
 import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
 
-public class ThreadEntryTaskContext extends TaskContext {
+public class WorkGroupEntryTaskContext extends TaskContext {
 
 	protected File file;
 
@@ -57,7 +57,7 @@ public class ThreadEntryTaskContext extends TaskContext {
 	 */
 	protected String docEntryUuid;
 
-	public ThreadEntryTaskContext(AccountDto actorDto, String ownerUuid,
+	public WorkGroupEntryTaskContext(AccountDto actorDto, String ownerUuid,
 			String threadUuid, File file, String fileName, String metaData,
 			String description, String workGroupFolderUuid) {
 		super(actorDto, ownerUuid);
@@ -69,7 +69,7 @@ public class ThreadEntryTaskContext extends TaskContext {
 		this.workGroupFolderUuid = workGroupFolderUuid;
 	}
 
-	public ThreadEntryTaskContext(AccountDto actorDto, String ownerUuid,
+	public WorkGroupEntryTaskContext(AccountDto actorDto, String ownerUuid,
 			String threadUuid, File file, String fileName, String workGroupFolderUuid) {
 		super(actorDto, ownerUuid);
 		this.file = file;
@@ -80,7 +80,7 @@ public class ThreadEntryTaskContext extends TaskContext {
 		this.workGroupFolderUuid = workGroupFolderUuid;
 	}
 
-	public ThreadEntryTaskContext(AccountDto actorDto, String ownerUuid,
+	public WorkGroupEntryTaskContext(AccountDto actorDto, String ownerUuid,
 			String threadUuid, String docEntryUuid, String workGroupFolderUuid) {
 		super(actorDto, ownerUuid);
 		this.file = null;
@@ -126,7 +126,7 @@ public class ThreadEntryTaskContext extends TaskContext {
 
 	@Override
 	public String toString() {
-		return "ThreadEntryTaskContext [fileName=" + fileName + ", threadUuid="
+		return "WorkGroupEntryTaskContext [fileName=" + fileName + ", threadUuid="
 				+ threadUuid + ", ownerUuid=" + ownerUuid + "]";
 	}
 

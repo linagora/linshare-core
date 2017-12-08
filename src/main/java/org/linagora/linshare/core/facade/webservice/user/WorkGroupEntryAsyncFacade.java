@@ -32,33 +32,14 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.webservice.userv1.task;
+package org.linagora.linshare.core.facade.webservice.user;
 
-import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
-import org.linagora.linshare.core.facade.webservice.user.ThreadEntryAsyncFacade;
-import org.linagora.linshare.webservice.userv1.task.context.ThreadEntryTaskContext;
+import org.linagora.linshare.webservice.userv1.task.context.WorkGroupEntryTaskContext;
 
-/**
- * This method create an new thread entry by copying a existing document entry.
- * 
- * @author fred
- *
- */
-public class ThreadEntryCopyAsyncTask extends AsyncTask<ThreadEntryTaskContext> {
+public interface WorkGroupEntryAsyncFacade extends GenericAsyncFacade {
 
-	protected final ThreadEntryAsyncFacade asyncFacade;
+	WorkGroupEntryDto upload(WorkGroupEntryTaskContext tetc);
 
-	public ThreadEntryCopyAsyncTask(ThreadEntryAsyncFacade asyncFacade,
-			ThreadEntryTaskContext task, AsyncTaskDto asyncTaskDto) {
-		super(asyncFacade, task, asyncTaskDto);
-		this.asyncFacade = asyncFacade;
-	}
-
-	@Override
-	protected String runMyTask(ThreadEntryTaskContext task) {
-		WorkGroupEntryDto dto = asyncFacade.copy(task);
-		return dto.getUuid();
-	}
-
+	WorkGroupEntryDto copy(WorkGroupEntryTaskContext tetc);
 }

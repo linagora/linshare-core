@@ -68,13 +68,13 @@ import org.linagora.linshare.core.facade.webservice.user.AccountQuotaFacade;
 import org.linagora.linshare.core.facade.webservice.user.AsyncTaskFacade;
 import org.linagora.linshare.core.facade.webservice.user.DocumentAsyncFacade;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
-import org.linagora.linshare.core.facade.webservice.user.ThreadEntryAsyncFacade;
+import org.linagora.linshare.core.facade.webservice.user.WorkGroupEntryAsyncFacade;
 import org.linagora.linshare.core.facade.webservice.user.WorkGroupNodeFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.userv1.task.DocumentUploadAsyncTask;
-import org.linagora.linshare.webservice.userv1.task.ThreadEntryUploadAsyncTask;
+import org.linagora.linshare.webservice.userv1.task.WorkGroupEntryUploadAsyncTask;
 import org.linagora.linshare.webservice.userv1.task.context.DocumentTaskContext;
-import org.linagora.linshare.webservice.userv1.task.context.ThreadEntryTaskContext;
+import org.linagora.linshare.webservice.userv1.task.context.WorkGroupEntryTaskContext;
 import org.linagora.linshare.webservice.userv2.FlowDocumentUploaderRestService;
 import org.linagora.linshare.webservice.utils.FlowUploaderUtils;
 import org.slf4j.Logger;
@@ -117,7 +117,7 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 
 	private final DocumentAsyncFacade documentAsyncFacade;
 
-	private final ThreadEntryAsyncFacade threadEntryAsyncFacade ;
+	private final WorkGroupEntryAsyncFacade workGroupEntryAsyncFacade ;
 
 	private final AsyncTaskFacade asyncTaskFacade;
 	
@@ -129,7 +129,7 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 			DocumentFacade documentFacade,
 			AccountQuotaFacade accountQuotaFacade,
 			DocumentAsyncFacade documentAsyncFacade,
-			ThreadEntryAsyncFacade threadEntryAsyncFacade,
+			WorkGroupEntryAsyncFacade workGroupEntryAsyncFacade,
 			AsyncTaskFacade asyncTaskFacade,
 			WorkGroupNodeFacade workGroupNodeFacade,
 			org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor taskExecutor,
@@ -140,7 +140,7 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 		this.accountQuotaFacade = accountQuotaFacade;
 		this.documentAsyncFacade = documentAsyncFacade;
 		this.workGroupNodeFacade = workGroupNodeFacade;
-		this.threadEntryAsyncFacade = threadEntryAsyncFacade;
+		this.workGroupEntryAsyncFacade = workGroupEntryAsyncFacade;
 		this.asyncTaskFacade = asyncTaskFacade;
 		this.taskExecutor = taskExecutor;
 	}
@@ -221,9 +221,9 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 					AsyncTaskDto asyncTask = null;
 					try {
 						if(isWorkGroup) {
-							ThreadEntryTaskContext threadEntryTaskContext = new ThreadEntryTaskContext(actorDto, actorDto.getUuid(), workGroupUuid, tempFile.toFile(), filename, workGroupParentNodeUuid);
+							WorkGroupEntryTaskContext workGroupEntryTaskContext = new WorkGroupEntryTaskContext(actorDto, actorDto.getUuid(), workGroupUuid, tempFile.toFile(), filename, workGroupParentNodeUuid);
 							asyncTask = asyncTaskFacade.create(totalSize, getTransfertDuration(identifier), filename, null, AsyncTaskType.THREAD_ENTRY_UPLOAD);
-							ThreadEntryUploadAsyncTask task = new ThreadEntryUploadAsyncTask(threadEntryAsyncFacade, threadEntryTaskContext, asyncTask);
+							WorkGroupEntryUploadAsyncTask task = new WorkGroupEntryUploadAsyncTask(workGroupEntryAsyncFacade, workGroupEntryTaskContext, asyncTask);
 							taskExecutor.execute(task);
 							flow.completeAsyncTransfert(asyncTask);
 						} else {

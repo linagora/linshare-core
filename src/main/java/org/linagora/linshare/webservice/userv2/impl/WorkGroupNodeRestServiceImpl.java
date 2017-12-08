@@ -69,15 +69,15 @@ import org.linagora.linshare.core.facade.webservice.common.dto.CopyDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
 import org.linagora.linshare.core.facade.webservice.user.AccountQuotaFacade;
 import org.linagora.linshare.core.facade.webservice.user.AsyncTaskFacade;
-import org.linagora.linshare.core.facade.webservice.user.ThreadEntryAsyncFacade;
+import org.linagora.linshare.core.facade.webservice.user.WorkGroupEntryAsyncFacade;
 import org.linagora.linshare.core.facade.webservice.user.WorkGroupNodeFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.mongo.entities.WorkGroupAsyncTask;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.userv1.task.ThreadEntryUploadAsyncTask;
-import org.linagora.linshare.webservice.userv1.task.context.ThreadEntryTaskContext;
+import org.linagora.linshare.webservice.userv1.task.WorkGroupEntryUploadAsyncTask;
+import org.linagora.linshare.webservice.userv1.task.context.WorkGroupEntryTaskContext;
 import org.linagora.linshare.webservice.userv2.WorkGroupFolderRestService;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -98,7 +98,7 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 
 	protected final WorkGroupNodeFacade workGroupNodeFacade;
 
-	protected final ThreadEntryAsyncFacade threadEntryAsyncFacade ;
+	protected final WorkGroupEntryAsyncFacade workGroupEntryAsyncFacade ;
 
 	protected final AsyncTaskFacade asyncTaskFacade;
 
@@ -109,11 +109,11 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 	protected boolean sizeValidation;
 
 	public WorkGroupNodeRestServiceImpl(WorkGroupNodeFacade workGroupNodeFacade,
-			ThreadEntryAsyncFacade threadEntryAsyncFacade, AsyncTaskFacade asyncTaskFacade,
+			WorkGroupEntryAsyncFacade workGroupEntryAsyncFacade, AsyncTaskFacade asyncTaskFacade,
 			ThreadPoolTaskExecutor taskExecutor, AccountQuotaFacade accountQuotaFacade, boolean sizeValidation) {
 		super();
 		this.workGroupNodeFacade = workGroupNodeFacade;
-		this.threadEntryAsyncFacade = threadEntryAsyncFacade;
+		this.workGroupEntryAsyncFacade = workGroupEntryAsyncFacade;
 		this.asyncTaskFacade = asyncTaskFacade;
 		this.taskExecutor = taskExecutor;
 		this.accountQuotaFacade = accountQuotaFacade;
@@ -270,10 +270,10 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 			AsyncTaskDto asyncTask = null;
 			try {
 				asyncTask = asyncTaskFacade.create(currSize, transfertDuration, fileName, null, AsyncTaskType.THREAD_ENTRY_UPLOAD);
-				ThreadEntryTaskContext threadEntryTaskContext = new ThreadEntryTaskContext(actorDto, actorDto.getUuid(), workGroupUuid, tempFile, fileName, parentNodeUuid);
-				ThreadEntryUploadAsyncTask task = new ThreadEntryUploadAsyncTask(threadEntryAsyncFacade, threadEntryTaskContext, asyncTask);
+				WorkGroupEntryTaskContext workGroupEntryTaskContext = new WorkGroupEntryTaskContext(actorDto, actorDto.getUuid(), workGroupUuid, tempFile, fileName, parentNodeUuid);
+				WorkGroupEntryUploadAsyncTask task = new WorkGroupEntryUploadAsyncTask(workGroupEntryAsyncFacade, workGroupEntryTaskContext, asyncTask);
 				taskExecutor.execute(task);
-				return new WorkGroupAsyncTask(asyncTask, threadEntryTaskContext);
+				return new WorkGroupAsyncTask(asyncTask, workGroupEntryTaskContext);
 			} catch (Exception e) {
 				logAsyncFailure(asyncTask, e);
 				deleteTempFile(tempFile);
