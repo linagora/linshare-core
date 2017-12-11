@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2017 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2017. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,29 +31,43 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.webservice.delegationv2;
 
-package org.linagora.linshare.webservice.userv1.task;
+import java.io.InputStream;
+import java.util.List;
 
+import javax.ws.rs.core.Response;
+
+import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
-import org.linagora.linshare.core.facade.webservice.user.ThreadEntryAsyncFacade;
-import org.linagora.linshare.webservice.userv1.task.context.ThreadEntryTaskContext;
 
-public class ThreadEntryUploadAsyncTask extends
-		AsyncTask<ThreadEntryTaskContext> {
+public interface WorkGroupEntryRestService {
+	WorkGroupEntryDto create(String ownerUuid, String workgroupUuid, InputStream file, String description,
+			String givenFileName, Boolean async, Long contentLength, Long fileSize, MultipartBody body)
+			throws BusinessException;
 
-	protected final ThreadEntryAsyncFacade asyncFacade;
+	WorkGroupEntryDto copy(String ownerUuid, String workgroupUuid, String entryUuid, Boolean async)
+			throws BusinessException;
 
-	public ThreadEntryUploadAsyncTask(ThreadEntryAsyncFacade asyncFacade,
-			ThreadEntryTaskContext task, AsyncTaskDto asyncTaskDto) {
-		super(asyncFacade, task, asyncTaskDto);
-		this.asyncFacade = asyncFacade;
-	}
+	public WorkGroupEntryDto find(String ownerUuid, String workgroupUuid, String uuid) throws BusinessException;
 
-	@Override
-	protected String runMyTask(ThreadEntryTaskContext task) {
-		WorkGroupEntryDto dto = asyncFacade.upload(task);
-		return dto.getUuid();
-	}
+	void head(String ownerUuid, String workgroupUuid, String uuid) throws BusinessException;
 
+	public List<WorkGroupEntryDto> findAll(String ownerUuid, String workgroupUuid) throws BusinessException;
+
+	public WorkGroupEntryDto delete(String ownerUuid, String workgroupUuid, WorkGroupEntryDto workgroupEntry)
+			throws BusinessException;
+
+	public WorkGroupEntryDto delete(String ownerUuid, String workgroupUuid, String uuid) throws BusinessException;
+
+	Response download(String ownerUuid, String workgroupUuid, String uuid) throws BusinessException;
+
+	Response thumbnail(String ownerUuid, String workgroupUuid, String uuid) throws BusinessException;
+
+	WorkGroupEntryDto update(String ownerUuid, String workgroupUuid, String workgroupEntryuuid,
+			WorkGroupEntryDto workgroupEntryDto) throws BusinessException;
+
+	AsyncTaskDto findAsync(String ownerUuid, String uuid) throws BusinessException;
 }

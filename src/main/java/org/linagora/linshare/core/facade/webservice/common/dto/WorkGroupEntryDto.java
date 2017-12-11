@@ -42,7 +42,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
-import org.linagora.linshare.webservice.userv1.task.context.ThreadEntryTaskContext;
+import org.linagora.linshare.webservice.userv1.task.context.WorkGroupEntryTaskContext;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -130,9 +130,9 @@ public class WorkGroupEntryDto extends EntryDto {
 	}
 
 	public WorkGroupEntryDto(AsyncTaskDto asyncTask,
-			ThreadEntryTaskContext threadEntryTaskContext) {
+			WorkGroupEntryTaskContext workGroupEntryTaskContext) {
 		async = asyncTask;
-		this.name = threadEntryTaskContext.getFileName();
+		this.name = workGroupEntryTaskContext.getFileName();
 	}
 
 	public String getSha256sum() {

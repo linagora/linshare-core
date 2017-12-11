@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2017 LINAGORA
+ * Copyright (C) 2015 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2017. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2015. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,32 +31,46 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.entities;
 
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
-import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
-import org.linagora.linshare.webservice.userv1.task.context.WorkGroupEntryTaskContext;
-import org.springframework.data.annotation.Transient;
+package org.linagora.linshare.core.facade.webservice.delegation;
 
-public class WorkGroupAsyncTask extends WorkGroupNode {
+import java.io.File;
+import java.util.List;
 
-	@Transient
-	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
-	protected AsyncTaskDto async;
+import javax.ws.rs.core.Response;
 
-	public WorkGroupAsyncTask(AsyncTaskDto asyncTask,
-			WorkGroupEntryTaskContext workGroupEntryTaskContext) {
-		this.async = asyncTask;
-		this.name = workGroupEntryTaskContext.getFileName();
-		this.nodeType = WorkGroupNodeType.ASYNC_TASK;
-	}
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
 
-	public AsyncTaskDto getAsync() {
-		return async;
-	}
+public interface WorkGroupEntryFacade extends DelegationGenericFacade {
 
-	public void setAsync(AsyncTaskDto async) {
-		this.async = async;
-	}
+	WorkGroupEntryDto create(String ownerUuid, String threadUuid,
+			File file, String fileName) throws BusinessException;
+
+	WorkGroupEntryDto copy(String ownerUuid, String threadUuid, String entryUuid)
+			throws BusinessException;
+
+	WorkGroupEntryDto find(String ownerUuid, String threadUuid, String uuid)
+			throws BusinessException;
+
+	List<WorkGroupEntryDto> findAll(String ownerUuid, String threadUuid)
+			throws BusinessException;
+
+	WorkGroupEntryDto delete(String ownerUuid, String threadUuid, WorkGroupEntryDto threadEntry)
+			throws BusinessException;
+
+	WorkGroupEntryDto delete(String ownerUuid, String threadUuid, String uuid)
+			throws BusinessException;
+
+	Response download(String ownerUuid, String threadUuid, String uuid)
+			throws BusinessException;
+
+	Response thumbnail(String ownerUuid, String threadUuid, String uuid, ThumbnailType kind)
+			throws BusinessException;
+
+	WorkGroupEntryDto update(String owneruuid, String threadUuid,
+			String threadEntryUuid, WorkGroupEntryDto threadEntryDto)
+			throws BusinessException;
+
 }

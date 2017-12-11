@@ -16,7 +16,7 @@
 		<constructor-arg ref="asyncTaskService" />
 		<constructor-arg ref="upgradeTaskService" />
 	</bean>
-	<bean id="wsThreadEntryAsyncFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.ThreadEntryAsyncFacadeImpl">
+	<bean id="wsThreadEntryAsyncFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.WorkGroupEntryAsyncFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="threadService" />
 		<constructor-arg ref="workGroupNodeService" />

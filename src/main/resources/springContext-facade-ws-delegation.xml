@@ -37,7 +37,7 @@
 	</bean>
 
 	<!--  deprecated bean -->
-	<bean id="wsDelegationThreadEntryFacade" class="org.linagora.linshare.core.facade.webservice.delegation.impl.ThreadEntryFacadeImpl">
+	<bean id="wsDelegationThreadEntryFacade" class="org.linagora.linshare.core.facade.webservice.delegation.impl.WorkGroupEntryFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="threadService" />

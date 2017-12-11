@@ -44,7 +44,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupLightDto;
-import org.linagora.linshare.core.facade.webservice.user.ThreadEntryAsyncFacade;
+import org.linagora.linshare.core.facade.webservice.user.WorkGroupEntryAsyncFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AsyncTaskService;
 import org.linagora.linshare.core.service.DocumentEntryService;
@@ -53,9 +53,9 @@ import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
-import org.linagora.linshare.webservice.userv1.task.context.ThreadEntryTaskContext;
+import org.linagora.linshare.webservice.userv1.task.context.WorkGroupEntryTaskContext;
 
-public class ThreadEntryAsyncFacadeImpl extends GenericAsyncFacadeImpl implements ThreadEntryAsyncFacade {
+public class WorkGroupEntryAsyncFacadeImpl extends GenericAsyncFacadeImpl implements WorkGroupEntryAsyncFacade {
 
 	private final WorkGroupNodeService service;
 
@@ -63,7 +63,7 @@ public class ThreadEntryAsyncFacadeImpl extends GenericAsyncFacadeImpl implement
 
 	private final ThreadService threadService;
 
-	public ThreadEntryAsyncFacadeImpl(AccountService accountService,
+	public WorkGroupEntryAsyncFacadeImpl(AccountService accountService,
 			AsyncTaskService asyncTaskService,
 			ThreadService threadService,
 			DocumentEntryService documentEntryService,
@@ -75,7 +75,7 @@ public class ThreadEntryAsyncFacadeImpl extends GenericAsyncFacadeImpl implement
 	}
 
 	@Override
-	public WorkGroupEntryDto upload(ThreadEntryTaskContext tetc) {
+	public WorkGroupEntryDto upload(WorkGroupEntryTaskContext tetc) {
 		User actor = checkAuthentication(tetc);
 		User owner = getOwner(tetc);
 		Validate.notNull(tetc.getFile(),
@@ -94,10 +94,10 @@ public class ThreadEntryAsyncFacadeImpl extends GenericAsyncFacadeImpl implement
 	}
 
 	@Override
-	public WorkGroupEntryDto copy(ThreadEntryTaskContext tetc) {
+	public WorkGroupEntryDto copy(WorkGroupEntryTaskContext tetc) {
 		User actor = checkAuthentication(tetc);
 		User owner = getOwner(tetc);
-		Validate.notNull(tetc, "Missing ThreadEntryTaskContext");
+		Validate.notNull(tetc, "Missing WorkGroupEntryTaskContext");
 		Validate.notEmpty(tetc.getOwnerUuid(), "Missing required owner uuid");
 		Validate.notEmpty(tetc.getThreadUuid(), "Missing required thread uuid");
 		Validate.notEmpty(tetc.getDocEntryUuid(), "Missing required document entry uuid");

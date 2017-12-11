@@ -77,7 +77,7 @@ import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/{ownerUuid}/documents")
-@Api(value = "/rest/delegation/{ownerUuid}/documents", basePath = "/rest/delegation/",
+@Api(value = "/rest/delegation/v2/{ownerUuid}/documents", basePath = "/rest/delegation/",
 		description = "Documents service.", produces = "application/json,application/xml",
 		consumes = "application/json,application/xml")
 public class DocumentRestServiceImpl extends WebserviceBase implements

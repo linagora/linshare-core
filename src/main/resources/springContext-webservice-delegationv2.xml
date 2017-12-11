@@ -40,12 +40,32 @@
 		<constructor-arg ref="wsDelegationThreadFacade" />
 	</bean>
 
+	<bean id="delegationV2DocumentRestService"
+		class="org.linagora.linshare.webservice.delegationv2.impl.DocumentRestServiceImpl">
+		<constructor-arg ref="wsDelegationDocumentFacade" />
+		<constructor-arg ref="wsDelegationAsyncTaskFacade" />
+		<constructor-arg ref="wsDocumentAsyncFacade" />
+		<constructor-arg ref="taskExecutor" />
+		<constructor-arg value="${linshare.rest.files.size.validation}" />
+	</bean>
+
+	<bean id="delegationV2WorkGroupEntryRestService"
+		class="org.linagora.linshare.webservice.delegationv2.impl.WorkGroupEntryRestServiceImpl">
+		<constructor-arg ref="wsDelegationThreadEntryFacade" />
+		<constructor-arg ref="wsThreadEntryAsyncFacade" />
+		<constructor-arg ref="wsDelegationAsyncTaskFacade" />
+		<constructor-arg ref="taskExecutor" />
+		<constructor-arg value="${linshare.rest.files.size.validation}" />
+	</bean>
+
 	<jaxrs:server id="restDelegation2Container" address="/rest/delegation/v2">
 		<jaxrs:serviceBeans>
 			<ref bean="delegationSafeDetailRestService" />
 			<ref bean="delegationV2AuthenticationRestService" />
 			<ref bean="delegationV2WorkGroupRestService" />
 			<ref bean="delegationV2WorkGroupMemberRestService" />
+			<ref bean="delegationV2DocumentRestService" />
+			<ref bean="delegationV2WorkGroupEntryRestService" />			
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />
