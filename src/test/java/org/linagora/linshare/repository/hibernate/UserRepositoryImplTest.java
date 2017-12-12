@@ -36,6 +36,7 @@ package org.linagora.linshare.repository.hibernate;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -125,7 +126,8 @@ public class UserRepositoryImplTest extends AbstractTransactionalJUnit4SpringCon
 		Assert.assertTrue(userRepository.exist(u.getLsUuid()));
 		Assert.assertFalse(userRepository.exist("toto"));
 	}
-	
+
+	@Ignore
 	@Test
 	public void testfindUser() throws BusinessException{
 		User u = new Internal( FIRST_NAME, LAST_NAME, MAIL, null);
