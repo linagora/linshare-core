@@ -62,6 +62,11 @@ public class GuestDomain extends AbstractDomain {
 	}
 
 	@Override
+	public boolean isSubDomain() {
+		return true;
+	}
+
+	@Override
 	public void updateDomainWith(AbstractDomain d) {
 		super.updateDomainWith(d);
 		this.defaultRole = Role.SIMPLE;

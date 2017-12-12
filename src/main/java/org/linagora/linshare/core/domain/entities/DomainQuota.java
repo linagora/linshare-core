@@ -37,6 +37,10 @@ public class DomainQuota extends Quota {
 
 	protected Long currentValueForSubdomains;
 
+	protected Boolean defaultDomainShared;
+
+	protected Boolean defaultDomainSharedOverride;
+
 	public DomainQuota() {
 		super();
 	}
@@ -46,6 +50,10 @@ public class DomainQuota extends Quota {
 				parentQuota.getDefaultQuota(),
 				parentQuota.getQuotaWarning());
 		this.currentValueForSubdomains = 0L;
+		this.domainShared = parentQuota.getDefaultDomainShared();
+		this.domainSharedOverride = false;
+		this.defaultDomainShared = parentQuota.getDefaultDomainShared();
+		this.defaultDomainSharedOverride = false;
 	}
 
 	public DomainQuota(DomainQuota quota) {
@@ -59,6 +67,10 @@ public class DomainQuota extends Quota {
 		this.defaultQuotaOverride = quota.getDefaultQuotaOverride();
 		this.quotaWarning = quota.getQuotaWarning();
 		this.maintenance = quota.getMaintenance();
+		this.domainShared = quota.getDomainShared();
+		this.domainSharedOverride = quota.getDomainSharedOverride();
+		this.defaultDomainShared = quota.getDefaultDomainShared();
+		this.defaultDomainSharedOverride = quota.getDefaultDomainSharedOverride();
 	}
 
 	public Long getCurrentValueForSubdomains() {
@@ -67,6 +79,22 @@ public class DomainQuota extends Quota {
 
 	public void setCurrentValueForSubdomains(Long currentValueForSubdomains) {
 		this.currentValueForSubdomains = currentValueForSubdomains;
+	}
+
+	public Boolean getDefaultDomainShared() {
+		return defaultDomainShared;
+	}
+
+	public void setDefaultDomainShared(Boolean defaultDomainShared) {
+		this.defaultDomainShared = defaultDomainShared;
+	}
+
+	public Boolean getDefaultDomainSharedOverride() {
+		return defaultDomainSharedOverride;
+	}
+
+	public void setDefaultDomainSharedOverride(Boolean defaultDomainSharedOverride) {
+		this.defaultDomainSharedOverride = defaultDomainSharedOverride;
 	}
 
 	@Override

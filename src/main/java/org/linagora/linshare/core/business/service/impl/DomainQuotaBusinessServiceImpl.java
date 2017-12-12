@@ -131,6 +131,17 @@ public class DomainQuotaBusinessServiceImpl extends GenericQuotaBusinessServiceI
 			entity.setDefaultQuota(dq.getDefaultQuota());
 			entity.setDefaultQuotaOverride(dq.getDefaultQuotaOverride());
 		}
+
+		entity.setDomainShared(dq.getDomainShared());
+		entity.setDefaultDomainShared(dq.getDefaultDomainShared());
+		if (entity.getDomain().isSubDomain() || entity.getDomain().isRootDomain()) {
+			entity.setDomainSharedOverride(null);
+			entity.setDefaultDomainSharedOverride(null);
+		} else {
+			entity.setDomainSharedOverride(dq.getDomainSharedOverride());
+			entity.setDefaultDomainSharedOverride(dq.getDefaultDomainSharedOverride());
+		}
+		// TODO manage cascade updates to subdomains and accounts in it.
 		return repository.update(entity);
 	}
 

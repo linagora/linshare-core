@@ -430,6 +430,8 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 				thread.getDomain(),
 				thread.getDomain().getParentDomain(),
 				thread, containerQuota);
+		threadQuota.setDomainShared(containerQuota.getDomainQuota().getDomainShared());
+		threadQuota.setDomainSharedOverride(containerQuota.getDomainQuota().getDomainSharedOverride());
 		accountQuotaBusinessService.create(threadQuota);
 	}
 

@@ -60,6 +60,11 @@ public class SubDomain extends AbstractDomain {
 	}
 
 	@Override
+	public boolean isSubDomain() {
+		return true;
+	}
+
+	@Override
 	public void updateDomainWith(AbstractDomain d) {
 		super.updateDomainWith(d);
 		if (!(this.defaultRole.equals(Role.SIMPLE) || this.defaultRole.equals(Role.ADMIN))) {

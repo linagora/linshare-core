@@ -35,6 +35,8 @@ package org.linagora.linshare.core.facade.webservice.user.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -54,6 +56,10 @@ public class AccountQuotaDto {
 	@ApiModelProperty(value = "If true, uploads are disable due to server maintenance.")
 	protected Boolean maintenance;
 
+	@ApiModelProperty(value = "The domain used space")
+	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+	protected Long domainUsedSpace;
+
 	public AccountQuotaDto() {
 	}
 
@@ -63,6 +69,7 @@ public class AccountQuotaDto {
 		this.usedSpace = usedSpace;
 		this.maxFileSize = maxFileSize;
 		this.maintenance = maintenance;
+		this.domainUsedSpace = null;
 	}
 
 	public Long getQuota() {
@@ -95,6 +102,14 @@ public class AccountQuotaDto {
 
 	public void setMaintenance(Boolean maintenance) {
 		this.maintenance = maintenance;
+	}
+
+	public Long getDomainUsedSpace() {
+		return domainUsedSpace;
+	}
+
+	public void setDomainUsedSpace(Long domainUsedSpace) {
+		this.domainUsedSpace = domainUsedSpace;
 	}
 
 }

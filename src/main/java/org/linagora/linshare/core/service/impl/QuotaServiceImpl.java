@@ -136,12 +136,20 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 		return cq.getCurrentValue() + todayConsumption;
 	}
 
+	@Override
+	public Long getRealTimeUsedSpace(Account actor, Account owner, DomainQuota dq) throws BusinessException {
+		preChecks(actor, owner);
+		Validate.notNull(dq, "quota domain must be set.");
+		// TODO FMA Quota : Resource Access control ?
+		Long todayConsumption = operationHistoryBusinessService.sumOperationValue(null, dq.getDomain(), new Date(),
+				null, null);
+		return dq.getCurrentValue() + todayConsumption;
+	}
 
 	@Override
 	public DomainQuota find(AbstractDomain domain) throws BusinessException {
 		return domainQuotaBusinessService.find(domain);
 	}
-
 
 	private void checkIfUserCanAddInAccountQuota(Account account, Long fileSize) throws BusinessException {
 		Validate.notNull(account, "Account must be set.");

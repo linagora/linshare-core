@@ -55,12 +55,24 @@ public class DomainQuotaDto extends QuotaDto {
 
 	protected Long currentValueForSubdomains;
 
+	protected Boolean domainShared;
+
+	protected Boolean domainSharedOverride;
+
+	protected Boolean defaultDomainShared;
+
+	protected Boolean defaultDomainSharedOverride;
+
 	public DomainQuotaDto() {
 	}
 
 	public DomainQuotaDto(DomainQuota quota) {
 		super(quota);
 		this.currentValueForSubdomains = quota.getCurrentValueForSubdomains();
+		this.domainShared = quota.getDomainShared();
+		this.domainSharedOverride = quota.getDomainSharedOverride();
+		this.defaultDomainShared = quota.getDefaultDomainShared();
+		this.defaultDomainSharedOverride = quota.getDefaultDomainSharedOverride();
 	}
 
 	public List<String> getContainerUuids() {
@@ -86,6 +98,38 @@ public class DomainQuotaDto extends QuotaDto {
 		this.containerUuids.add(containerUuid);
 	}
 
+	public Boolean getDomainShared() {
+		return domainShared;
+	}
+
+	public void setDomainShared(Boolean domainShared) {
+		this.domainShared = domainShared;
+	}
+
+	public Boolean getDomainSharedOverride() {
+		return domainSharedOverride;
+	}
+
+	public void setDomainSharedOverride(Boolean domainSharedOverride) {
+		this.domainSharedOverride = domainSharedOverride;
+	}
+
+	public Boolean getDefaultDomainShared() {
+		return defaultDomainShared;
+	}
+
+	public void setDefaultDomainShared(Boolean defaultDomainShared) {
+		this.defaultDomainShared = defaultDomainShared;
+	}
+
+	public Boolean getDefaultDomainSharedOverride() {
+		return defaultDomainSharedOverride;
+	}
+
+	public void setDefaultDomainSharedOverride(Boolean defaultDomainSharedOverride) {
+		this.defaultDomainSharedOverride = defaultDomainSharedOverride;
+	}
+
 	public DomainQuota toObject() {
 		DomainQuota quota = new DomainQuota();
 		quota.setUuid(getUuid());
@@ -94,6 +138,10 @@ public class DomainQuotaDto extends QuotaDto {
 		quota.setDefaultQuota(getDefaultQuota());
 		quota.setDefaultQuotaOverride(getDefaultQuotaOverride());
 		quota.setMaintenance(getMaintenance());
+		quota.setDomainShared(quota.getDomainShared());
+		quota.setDomainSharedOverride(quota.getDomainSharedOverride());
+		quota.setDefaultDomainShared(quota.getDefaultDomainShared());
+		quota.setDefaultDomainSharedOverride(quota.getDefaultDomainSharedOverride());
 		return quota;
 	}
 

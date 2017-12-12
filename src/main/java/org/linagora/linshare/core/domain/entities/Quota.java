@@ -69,6 +69,10 @@ public abstract class Quota {
 
 	protected Date batchModificationDate;
 
+	protected Boolean domainShared;
+
+	protected Boolean domainSharedOverride;
+
 	public Quota() {
 	}
 
@@ -213,6 +217,22 @@ public abstract class Quota {
 
 	public void setQuotaOverride(Boolean quotaOverride) {
 		this.quotaOverride = quotaOverride;
+	}
+
+	public Boolean getDomainShared() {
+		return domainShared;
+	}
+
+	public void setDomainShared(Boolean domainShared) {
+		this.domainShared = domainShared;
+	}
+
+	public Boolean getDomainSharedOverride() {
+		return domainSharedOverride;
+	}
+
+	public void setDomainSharedOverride(Boolean domainSharedOverride) {
+		this.domainSharedOverride = domainSharedOverride;
 	}
 
 	@Override

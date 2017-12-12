@@ -26,12 +26,18 @@
 		<property name="creationDate" column="creation_date" type = "timestamp"/>
 		<property name="modificationDate" column="modification_date" type = "timestamp"/>
 		<property name="batchModificationDate" column="batch_modification_date" type="timestamp"/>
+
+		<property name="domainShared" column="domain_shared" not-null="false"/>
+		<property name="domainSharedOverride" type="boolean" column="domain_shared_override" not-null="false" />
+
 		<many-to-one name="account" column="account_id"	class="org.linagora.linshare.core.domain.entities.Account" lazy="proxy" />
 		<many-to-one name="domain" column="domain_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" lazy="proxy" />
 		<many-to-one name="parentDomain" column="domain_parent_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" lazy="proxy" />
 
 		<subclass name="org.linagora.linshare.core.domain.entities.DomainQuota" discriminator-value="DOMAIN_QUOTA" >
 			<property name="currentValueForSubdomains" column="current_value_for_subdomains"/>
+			<property name="defaultDomainShared" column="default_domain_shared" not-null="false"/>
+			<property name="defaultDomainSharedOverride" type="boolean" column="default_domain_shared_override" not-null="false" />
 		</subclass>
 
 		<subclass name="org.linagora.linshare.core.domain.entities.AccountQuota" discriminator-value="ACCOUNT_QUOTA" >

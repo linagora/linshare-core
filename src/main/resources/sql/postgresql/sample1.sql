@@ -128,7 +128,8 @@ VALUES (
 -- quota : 1 To
 -- quota_warning : 1000000000000 : 1 To
 -- default_quota : 1000000000000 : 1 To (1 To per sub domain)
-
+UPDATE quota SET default_domain_shared = false, domain_shared = false WHERE id = 2;
+UPDATE quota SET default_domain_shared_override = false, domain_shared_override = false WHERE id = 2;
 
 -- 'CONTAINER_QUOTA', 'USER' for MyDomain
 INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification_date,
@@ -216,7 +217,8 @@ VALUES (
 -- quota : 1 To
 -- quota_warning : 1000000000000 : 1 To
 -- default_quota : 1000000000000 : 1 To (1 To per sub domain)
-
+UPDATE quota SET default_domain_shared = null, domain_shared = false WHERE id = 5;
+UPDATE quota SET default_domain_shared_override = null, domain_shared_override = false WHERE id = 5;
 
 
 -- 'CONTAINER_QUOTA', 'USER' for MySubDomain
@@ -304,7 +306,8 @@ VALUES (
 -- quota : 1 To
 -- quota_warning : 1000000000000 : 1 To
 -- default_quota : 1000000000000 : 1 To (1 To per sub domain)
-
+UPDATE quota SET default_domain_shared = null, domain_shared = false WHERE id = 8;
+UPDATE quota SET default_domain_shared_override = null, domain_shared_override = false WHERE id = 8;
 
 
 -- 'CONTAINER_QUOTA', 'USER' for GuestDomain

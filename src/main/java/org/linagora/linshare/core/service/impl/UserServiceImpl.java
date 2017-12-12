@@ -1005,6 +1005,8 @@ public class UserServiceImpl implements UserService {
 				user.getDomain(),
 				user.getDomain().getParentDomain(),
 				user, containerQuota);
+		userQuota.setDomainShared(containerQuota.getDomainQuota().getDomainShared());
+		userQuota.setDomainSharedOverride(containerQuota.getDomainQuota().getDomainSharedOverride());
 		accountQuotaBusinessService.create(userQuota);
 	}
 }

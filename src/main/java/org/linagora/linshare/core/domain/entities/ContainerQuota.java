@@ -97,6 +97,9 @@ public class ContainerQuota extends Quota {
 		this.maxFileSizeOverride = false;
 		this.accountQuota = parentContainerQuota.getDefaultAccountQuota();
 		this.accountQuotaOverride = false;
+
+		this.domainShared = null;
+		this.domainSharedOverride = null;
 	}
 
 	/**

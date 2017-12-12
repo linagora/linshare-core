@@ -35,6 +35,7 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
+import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.AccountQuotaFacade;
@@ -60,12 +61,20 @@ public class AccountQuotaFacadeImpl extends UserGenericFacadeImp implements Acco
 		Validate.notEmpty(uuid, "Missing account uuid");
 		AccountQuota aq = quotaService.find(actor, owner, uuid);
 		AccountQuotaDto dto = null;
-		if (aq.getShared()) {
-			Long usedSpace = quotaService.getRealTimeUsedSpace(actor, owner, aq.getContainerQuota());
-			dto = new AccountQuotaDto(aq.getContainerQuota().getQuota(), usedSpace, aq.getMaxFileSize(), aq.getMaintenance());
-		} else {
+		if (aq.getDomainShared()) {
 			Long usedSpace = quotaService.getRealTimeUsedSpace(actor, owner, uuid);
-			dto = new AccountQuotaDto(aq.getQuota(), usedSpace, aq.getMaxFileSize(), aq.getMaintenance());
+			DomainQuota domainQuota = aq.getContainerQuota().getDomainQuota();
+			dto = new AccountQuotaDto(domainQuota.getQuota(), usedSpace, aq.getMaxFileSize(), aq.getMaintenance());
+			Long domainUsedSpace = quotaService.getRealTimeUsedSpace(actor, owner, domainQuota);
+			dto.setDomainUsedSpace(domainUsedSpace);
+		} else {
+			if (aq.getShared()) {
+				Long usedSpace = quotaService.getRealTimeUsedSpace(actor, owner, aq.getContainerQuota());
+				dto = new AccountQuotaDto(aq.getContainerQuota().getQuota(), usedSpace, aq.getMaxFileSize(), aq.getMaintenance());
+			} else {
+				Long usedSpace = quotaService.getRealTimeUsedSpace(actor, owner, uuid);
+				dto = new AccountQuotaDto(aq.getQuota(), usedSpace, aq.getMaxFileSize(), aq.getMaintenance());
+			}
 		}
 		return dto;
 	}

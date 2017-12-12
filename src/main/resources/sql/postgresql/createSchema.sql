@@ -42,20 +42,20 @@ CREATE TABLE cookie (
   CONSTRAINT linshare_cookie_pkey
     PRIMARY KEY (cookie_id));
 CREATE TABLE document (
-  id                int8 NOT NULL,
-  uuid             varchar(255) NOT NULL UNIQUE,
-  bucket_uuid      varchar(255),
-  creation_date    timestamp NOT NULL,
-  type             varchar(255) NOT NULL,
-  ls_size          int8 NOT NULL,
-  timestamp        bytea,
-  check_mime_type  bool DEFAULT 'false' NOT NULL,
-  sha1sum          varchar(255),
-  sha256sum        varchar(255),
-  to_upgrade       bool DEFAULT 'false' NOT NULL,
-  has_thumbnail    bool DEFAULT 'false' NOT NULL,
-  compute_thumbnail bool DEFAULT 'false' NOT NULL,
+  id                 int8 NOT NULL,
+  uuid              varchar(255) NOT NULL UNIQUE,
+  bucket_uuid       varchar(255),
+  creation_date     timestamp NOT NULL,
+  type              varchar(255) NOT NULL,
+  ls_size           int8 NOT NULL,
   thmb_uuid         varchar(255),
+  timestamp         bytea,
+  check_mime_type   bool DEFAULT 'false' NOT NULL,
+  sha1sum           varchar(255),
+  sha256sum         varchar(255) NOT NULL,
+  to_upgrade        bool DEFAULT 'false' NOT NULL,
+  has_thumbnail     bool DEFAULT 'false' NOT NULL,
+  compute_thumbnail bool DEFAULT 'false' NOT NULL,
   CONSTRAINT linshare_document_pkey
     PRIMARY KEY (id));
 CREATE TABLE document_entry (
@@ -82,13 +82,13 @@ CREATE TABLE domain_abstract (
   default_locale      varchar(255) NOT NULL,
   default_mail_locale varchar(255) NOT NULL,
   auth_show_order     int8 NOT NULL,
-  purge_step          varchar(255) DEFAULT 'IN_USE' NOT NULL,
   domain_policy_id    int8,
   parent_id           int8,
   mime_policy_id      int8,
   mailconfig_id       int8,
   user_provider_id    int8,
   welcome_messages_id int8,
+  purge_step          varchar(255) DEFAULT 'IN_USE' NOT NULL,
   CONSTRAINT linshare_domain_abstract_pkey
     PRIMARY KEY (id));
 CREATE TABLE domain_access_policy (
@@ -727,6 +727,10 @@ CREATE TABLE quota (
   batch_modification_date        timestamp(6),
   container_type                 varchar(255),
   shared                         bool,
+  domain_shared                  bool DEFAULT 'false',
+  domain_shared_override         bool,
+  default_domain_shared          bool DEFAULT 'false' ,
+  default_domain_shared_override bool,
   account_id                     int8,
   domain_id                      int8 NOT NULL,
   domain_parent_id               int8,
@@ -788,13 +792,12 @@ CREATE TABLE upgrade_task (
   priority          varchar(255) NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE thumbnail (
-  id                      int8 NOT NULL,
-  uuid                   varchar(255) NOT NULL UNIQUE,
-  thumbnail_type         varchar(255) NOT NULL,
-  creation_date          timestamp NOT NULL,
-  document_id            int8,
-  CONSTRAINT linshare_thumbnail_pkey
-    PRIMARY KEY (id));
+  id              int8 NOT NULL,
+  uuid           varchar(255) NOT NULL UNIQUE,
+  thumbnail_type varchar(255) NOT NULL,
+  creation_date  timestamp(6) NOT NULL,
+  document_id    int8 NOT NULL,
+  PRIMARY KEY (id));
 CREATE UNIQUE INDEX account_lsuid_index
   ON account (ls_uuid);
 CREATE UNIQUE INDEX account_ls_uuid
