@@ -4,7 +4,7 @@ stages:
 build:
   stage: build
   tags:
-    - docker
+    - fred
   image: maven:3.3-jdk-8
   script:
     - mvn clean test
