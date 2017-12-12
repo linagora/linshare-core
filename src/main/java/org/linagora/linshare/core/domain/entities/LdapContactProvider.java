@@ -42,6 +42,10 @@ public class LdapContactProvider extends ContactProvider {
 
 	private LdapConnection ldapConnexion;
 
+	public LdapContactProvider() {
+		super();
+	}
+
 	public LdapContactProvider(String baseDn, ContactLdapPattern ldapPattern,
 			LdapConnection ldapConnexion) {
 		super();
