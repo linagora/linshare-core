@@ -39,7 +39,7 @@ import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface WorkGroupNodeMongoRepository extends MongoRepository<WorkGroupNode, String> {
+public interface WorkGroupNodeMongoRepository extends MongoRepository<WorkGroupNode, String> , WorkGroupNodeMongoRepositoryCustom {
 
 	List<WorkGroupNode> findByWorkGroup(String workGroupUuid);
 

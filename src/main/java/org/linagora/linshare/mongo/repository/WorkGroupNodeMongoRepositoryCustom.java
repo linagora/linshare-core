@@ -31,74 +31,17 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
 
-import org.apache.commons.lang.StringUtils;
-import org.linagora.linshare.core.exception.TechnicalErrorCode;
-import org.linagora.linshare.core.exception.TechnicalException;
+package org.linagora.linshare.mongo.repository;
 
-public enum UpgradeTaskType {
+import java.util.List;
 
-	/*
-	 * uuid generation for domains instead of identifier/label
-	 */
-	UPGRADE_2_0_DOMAIN_UUID,
+import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
+import org.linagora.linshare.mongo.entities.WorkGroupDocument;
+import org.springframework.data.mongodb.repository.Query;
 
-	/*
-	 * uuid generation for domains instead of identifier/label
-	 */
-	UPGRADE_2_0_DOMAIN_POLICIES_UUID,
+public interface WorkGroupNodeMongoRepositoryCustom {
 
-	/*
-	 * Compute sha256sum for all stored document (this value may be undefined)
-	 */
-	UPGRADE_2_0_SHA256SUM,
-
-	UPGRADE_2_0_CLEANUP_EXPIRED_GUEST,
-
-	UPGRADE_2_0_CLEANUP_EXPIRED_ACCOUNT,
-
-	UPGRADE_2_0_PURGE_ACCOUNT,
-
-	/*
-	 * initialization quota structure (domain quota and container quota) for all
-	 * existing domains
-	 */
-	UPGRADE_2_0_DOMAIN_QUOTA_TOPDOMAINS,
-	UPGRADE_2_0_DOMAIN_QUOTA_SUBDOMAINS,
-
-	/*
-	 * initialization quota structure for all existing accounts (users and
-	 * workgroups)
-	 */
-	UPGRADE_2_0_ACCOUNT_QUOTA,
-
-	UPGRADE_2_0_THREAD_TO_WORKGROUP,
-
-	/*
-	 * Trigger the migration of all documents from the old datastore to the new
-	 * datastore.
-	 */
-	UPGRADE_2_0_UPGRADE_STORAGE,
-
-	/*
-	 * Add all document uuid in the garbage (DocumentGarbageCollector),
-	 * and trigger it
-	 */
-	UPGRADE_2_1_DOCUMENT_GARBAGE_COLLECTOR,
-
-	/*
-	 * Calculus workgroup quota from wokgroup document entries
-	 * and update it
-	 */
-	UPGRADE_2_1_COMPUTE_USED_SPACE_FOR_WORGROUPS;
-
-	public static UpgradeTaskType fromString(String s) {
-		try {
-			return UpgradeTaskType.valueOf(s.toUpperCase());
-		} catch (RuntimeException e) {
-			throw new TechnicalException(TechnicalErrorCode.DATABASE_INCOHERENCE,
-					StringUtils.isEmpty(s) ? "null or empty" : s);
-		}
-	}
+	@Query("{ 'workGroup' : ?0 , 'nodeType' : ?1 }")
+	List<WorkGroupDocument> findAllWorkGroupDocument(String workGroup, WorkGroupNodeType nodeType);
 }

@@ -74,7 +74,7 @@ public class UpgradeTaskRepositoryImplTest extends AbstractTransactionalJUnit4Sp
 		for (UpgradeTask upgradeTask : list) {
 			logger.debug(upgradeTask.toString());
 		}
-		Assert.assertEquals(12, list.size());
+		Assert.assertEquals(13, list.size());
 	}
 
 }

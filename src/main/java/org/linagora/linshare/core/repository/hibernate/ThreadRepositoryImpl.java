@@ -205,4 +205,13 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 		return entity;
 	}
 
+	@Override
+	public List<String> findAllThreadUuid() {
+		DetachedCriteria criteria = DetachedCriteria.forClass(Thread.class);
+		criteria.setProjection(Projections.property("lsUuid"));
+		@SuppressWarnings("unchecked")
+		List<String> list = listByCriteria(criteria);
+		return list;
+	}
+
 }

@@ -107,6 +107,13 @@
 					<constructor-arg ref="documentRepository" />
 					<constructor-arg ref="documentGarbageCollecteurMongoRepository" />
 				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v2_1.ComputeUsedSpaceOnWorkgroupsUpgradeTaskImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="workGroupNodeMongoRepository" />
+					<constructor-arg ref="threadRepository" />
+					<constructor-arg ref="accountQuotaRepository" />
+				</bean>
 			</list>
 		</constructor-arg>
 	</bean>

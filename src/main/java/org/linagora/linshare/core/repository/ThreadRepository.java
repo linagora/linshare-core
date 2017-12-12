@@ -82,4 +82,6 @@ public interface ThreadRepository extends AccountRepository<Thread> {
 
 	Thread setAsUpgraded(Thread entity);
 
+	List<String> findAllThreadUuid();
+
 } 

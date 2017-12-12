@@ -204,7 +204,8 @@ ALTER TABLE thumbnail ADD CONSTRAINT FKthumbnail35163 FOREIGN KEY (document_id) 
 UPDATE document SET compute_thumbnail = true ;
 -- end update document
 
--- Upgrade Task 2.1.0 UPGRADE_2_1_DOCUMENT_GARBAGE_COLLECTOR
+-- Begin Upgrade Tsk 2.1.0
+-- UPGRADE_2_1_DOCUMENT_GARBAGE_COLLECTOR
 INSERT INTO upgrade_task
   (id,
   uuid,
@@ -231,6 +232,35 @@ VALUES
   now(),
   now(),
   null);
+
+-- UPGRADE_2_1_COMPUTE_USED_SPACE_FOR_WORGROUPS
+INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+  (14,
+  'UNDEFINED',
+  'UPGRADE_2_1_COMPUTE_USED_SPACE_FOR_WORGROUPS',
+  'UPGRADE_2_1',
+  null,
+  null,
+  14,
+  'NEW',
+  'MANDATORY',
+  now(),
+  now(),
+  null);
+
 -- End Upgrade Task 2.1.0
 
 -- End of your requests
