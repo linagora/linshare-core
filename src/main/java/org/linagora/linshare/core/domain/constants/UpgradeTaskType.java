@@ -91,7 +91,14 @@ public enum UpgradeTaskType {
 	 * Calculus workgroup quota from wokgroup document entries
 	 * and update it
 	 */
-	UPGRADE_2_1_COMPUTE_USED_SPACE_FOR_WORGROUPS;
+	UPGRADE_2_1_COMPUTE_USED_SPACE_FOR_WORGROUPS,
+
+	/* 
+	 * Compute the workgroup quota container for each domain,
+	 * and update the current value in domains
+	 * 
+	 */
+	UPGRADE_2_1_COMPUTE_CURRENT_VALUE_FOR_DOMAINS;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {
