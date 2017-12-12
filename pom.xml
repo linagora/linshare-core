@@ -107,9 +107,9 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>org.linagora</groupId>
-			<artifactId>LinThumbnail</artifactId>
-			<version>2.0.1</version>
+			<groupId>org.linagora.linshare</groupId>
+			<artifactId>thumbnail-engine</artifactId>
+			<version>2.0.0</version>
 		</dependency>
 
 		<!-- A dependency on either JUnit or TestNG is required, or the surefire plugin (which runs the tests) will fail, preventing Maven
