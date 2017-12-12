@@ -98,7 +98,14 @@ public enum UpgradeTaskType {
 	 * and update the current value in domains
 	 * 
 	 */
-	UPGRADE_2_1_COMPUTE_CURRENT_VALUE_FOR_DOMAINS;
+	UPGRADE_2_1_COMPUTE_CURRENT_VALUE_FOR_DOMAINS,
+
+	/*
+	 * Compute the current_value_for_subdomains for each top_domain
+	 * Compute the current_value_for_subdomains for root_domain
+	 * 
+	 */
+	UPGRADE_2_1_COMPUTE_TOP_AND_ROOT_DOMAIN_QUOTA;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {

@@ -81,3 +81,31 @@ VALUES
   now(),
   now(),
   null);
+
+     -- TASK: UPGRADE_2_1_COMPUTE_TOP_AND_ROOT_DOMAIN_QUOTA
+INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+  (17,
+  'UNDEFINED',
+  'UPGRADE_2_1_COMPUTE_TOP_AND_ROOT_DOMAIN_QUOTA',
+  'UPGRADE_2_1',
+  null,
+  null,
+  17,
+  'NEW',
+  'MANDATORY',
+  now(),
+  now(),
+  null);
