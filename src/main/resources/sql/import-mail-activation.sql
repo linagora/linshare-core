@@ -1,4 +1,4 @@
--- MailActivation : BEGIN
+
 -- MailActivation : FILE_WARN_OWNER_BEFORE_FILE_EXPIRY
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (137, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (138, true, true, 1, false);
@@ -183,33 +183,33 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (264, true
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (265, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (266, false, false, 2, true);
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable) 
-VALUES(28, false, 'SHARE_WARN_RECIPIENT_ABOUT_EXPIRED_SHARE', 264, 265, 266, 1, true);
+ VALUES(28, false, 'SHARE_WARN_RECIPIENT_ABOUT_EXPIRED_SHARE', 264, 265, 266, 1, true);
 
 -- MailActivation : WORKGROUP_WARN_NEW_MEMBER
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (267, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (268, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (269, false, false, 2, true);
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)  
-VALUES(29, false, 'WORKGROUP_WARN_NEW_MEMBER', 267, 268, 269, 1, true);
+ VALUES(29, false, 'WORKGROUP_WARN_NEW_MEMBER', 267, 268, 269, 1, true);
 
 -- MailActivation : WORKGROUP_WARN_UPDATED_MEMBER
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (270, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (271, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (272, false, false, 2, true);
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable) 
-VALUES(30, false, 'WORKGROUP_WARN_UPDATED_MEMBER', 270, 271, 272, 1, true);
+ VALUES(30, false, 'WORKGROUP_WARN_UPDATED_MEMBER', 270, 271, 272, 1, true);
 
 -- MailActivation : WORKGROUP_WARN_DELETED_MEMBER
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (273, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (274, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (275, false, false, 2, true);
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable) 
-VALUES(31, false, 'WORKGROUP_WARN_DELETED_MEMBER', 273, 274, 275, 1, true);
+ VALUES(31, false, 'WORKGROUP_WARN_DELETED_MEMBER', 273, 274, 275, 1, true);
 
 -- MailActivation : GUEST_WARN_GUEST_ABOUT_HIS_PASSWORD_RESET
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (276, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (277, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (278, false, false, 2, true);
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable) 
-VALUES(32, false, 'GUEST_WARN_GUEST_ABOUT_HIS_PASSWORD_RESET', 276, 277, 278, 1, true);
--- MailActivation : END
+ VALUES(32, false, 'GUEST_WARN_GUEST_ABOUT_HIS_PASSWORD_RESET', 276, 277, 278, 1, true);
+
