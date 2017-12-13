@@ -8,6 +8,7 @@ INSERT INTO domain_abstract(id, type , uuid, label, enable, template, descriptio
 
 -- Default mime policy
 INSERT INTO mime_policy(id, domain_id, uuid, name, mode, displayable, version, creation_date, modification_date) VALUES(1, 1, '3d6d8800-e0f7-11e3-8ec0-080027c0eef0', 'Default Mime Policy', 0, 0, 1, now(), now());
+UPDATE domain_abstract SET mime_policy_id=1;
 
 
 -- login is e-mail address 'root@localhost.localdomain' and password is 'adminlinshare'

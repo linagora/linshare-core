@@ -786,28 +786,28 @@
 					<optimize>true</optimize>
 				</configuration>
 				</plugin>
-			<plugin>
-       		  <groupId>org.zcore.maven</groupId>
-       			<artifactId>merge-maven-plugin</artifactId>
-      				<configuration>
-         			  <mergers>
-          				<merger>
-            				<target>${basedir}/src/main/resources/sql/postgresql/import-postgresql.sql</target>
-              				<sources>
-                				<source>src/main/resources/sql/import-header.sql</source>
-                				<source>src/main/resources/sql/import-domains.sql</source>
-                				<source>src/main/resources/sql/import-quota.sql</source>
-                				<source>src/main/resources/sql/import-welcome-messages.sql</source>
-                				<source>src/main/resources/sql/import-functionalities.sql</source>
-                				<source>src/main/resources/sql/import-mail-activation.sql</source>
-                				<source>src/main/resources/sql/import-mail.sql</source> 
-                				<source>src/main/resources/sql/import-alias.sql</source> 
-                				<source>src/main/resources/sql/import-settings.sql</source> 
-              				</sources>
-           				</merger>
-          				</mergers>
-       		  </configuration>
-      		</plugin>				
+				<plugin>
+					<groupId>org.zcore.maven</groupId>
+					<artifactId>merge-maven-plugin</artifactId>
+					<configuration>
+						<mergers>
+							<merger>
+								<target>${basedir}/src/main/resources/sql/postgresql/import-postgresql.sql</target>
+								<sources>
+									<source>src/main/resources/sql/import-header.sql</source>
+									<source>src/main/resources/sql/import-domains.sql</source>
+									<source>src/main/resources/sql/import-quota.sql</source>
+									<source>src/main/resources/sql/import-welcome-messages.sql</source>
+									<source>src/main/resources/sql/import-functionalities.sql</source>
+									<source>src/main/resources/sql/import-mail-activation.sql</source>
+									<source>src/main/resources/sql/import-mail.sql</source>
+									<source>src/main/resources/sql/import-settings.sql</source>
+									<source>src/main/resources/sql/import-alias.sql</source>
+								</sources>
+							</merger>
+						</mergers>
+					</configuration>
+				</plugin>
 			<!-- buildnumber-maven-plugin (compute timestamp, build number, ...)-->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>

@@ -1,3 +1,4 @@
+-- MailActivation : BEGIN
 -- MailActivation : FILE_WARN_OWNER_BEFORE_FILE_EXPIRY
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (137, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (138, true, true, 1, false);
@@ -174,8 +175,8 @@ INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (261, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (262, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (263, false, false, 2, true);
-INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable) 
-VALUES(27, false, 'SHARE_WARN_SENDER_ABOUT_SHARE_EXPIRATION_WITHOUT_DOWNLOAD', 261, 262, 263, 1, true);
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
+ VALUES(27, false, 'SHARE_WARN_SENDER_ABOUT_SHARE_EXPIRATION_WITHOUT_DOWNLOAD', 261, 262, 263, 1, true);
 
 -- MailActivation : SHARE_WARN_RECIPIENT_ABOUT_EXPIRED_SHARE
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (264, true, true, 0, true);
@@ -211,4 +212,4 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (277, true
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (278, false, false, 2, true);
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable) 
 VALUES(32, false, 'GUEST_WARN_GUEST_ABOUT_HIS_PASSWORD_RESET', 276, 277, 278, 1, true);
-
+-- MailActivation : END

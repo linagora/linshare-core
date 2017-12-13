@@ -1,3 +1,29 @@
+-- Functionality : BEGIN
+-- Functionality : FILESIZE_MAX
+-- INSERT INTO policy(id, status, default_status, policy, system) VALUES (1, true, true, 1, false);
+-- INSERT INTO policy(id, status, default_status, policy, system) VALUES (2, true, true, 1, false);
+-- if a functionality is system, you will not be able see/modify its parameters
+-- INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (1, false, 'FILESIZE_MAX', 1, 2, 1);
+-- INSERT INTO unit(id, unit_type, unit_value) VALUES (1, 1, 1);
+-- INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (1, 10, 1);
+
+
+-- Functionality : QUOTA_GLOBAL
+-- INSERT INTO policy(id, status, default_status, policy, system) VALUES (3, false, false, 1, false);
+-- INSERT INTO policy(id, status, default_status, policy, system) VALUES (4, true, true, 1, false);
+-- INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (2, false, 'QUOTA_GLOBAL', 3, 4, 1);
+-- INSERT INTO unit(id, unit_type, unit_value) VALUES (2, 1, 1);
+-- INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (2, 1, 2);
+
+
+-- Functionality : QUOTA_USER
+-- INSERT INTO policy(id, status, default_status, policy, system) VALUES (5, true, true, 1, false);
+-- INSERT INTO policy(id, status, default_status, policy, system) VALUES (6, true, true, 1, false);
+-- INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (3, false, 'QUOTA_USER', 5, 6, 1);
+-- INSERT INTO unit(id, unit_type, unit_value) VALUES (3, 1, 1);
+-- INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (3, 100, 3);
+
+
 -- Functionality : MIME_TYPE
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (7, false, false, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (8, false, false, 2, true);
@@ -27,6 +53,20 @@ INSERT INTO functionality_string(functionality_id, string_value) VALUES (7, 'htt
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (15, false, false, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (16, false, false, 2, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (8, true, 'ANTIVIRUS', 15, 16, 1);
+
+--useless - deleted
+---- Functionality : CUSTOM_LOGO
+--INSERT INTO policy(id, status, default_status, policy, system) VALUES (17, false, false, 1, false);
+--INSERT INTO policy(id, status, default_status, policy, system) VALUES (18, true, true, 1, false);
+--INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (9, false, 'CUSTOM_LOGO', 17, 18, 1);
+--INSERT INTO functionality_string(functionality_id, string_value) VALUES (9, 'http://linshare-ui-user.local/custom/images/logo.png');
+
+--useless - deleted
+---- Functionality : CUSTOM_LOGO__LINK
+--INSERT INTO policy(id, status, default_status, policy, system) VALUES (59, false, false, 1, false);
+--INSERT INTO policy(id, status, default_status, policy, system) VALUES (60, false, false, 1, false);
+--INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param) VALUES (29, false, 'CUSTOM_LOGO__LINK', 59, 60, 1, 'CUSTOM_LOGO', true);
+--INSERT INTO functionality_string(functionality_id, string_value) VALUES (29, 'http://linshare-ui-user.local');
 
 -- Functionality : GUESTS
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (27, false, false, 1, false);
@@ -96,6 +136,24 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (31, true,
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (32, true, true, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (16, false, 'COMPLETION', 31, 32, 1);
 INSERT INTO functionality_integer(functionality_id, integer_value) VALUES (16, 3);
+
+--useless - deleted
+---- Functionality : TAB_HELP
+--INSERT INTO policy(id, status, default_status, policy, system) VALUES (33, true, true, 1, false);
+--INSERT INTO policy(id, status, default_status, policy, system) VALUES (34, false, false, 1, true);
+--INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (17, true, 'TAB_HELP', 33, 34, 1);
+
+--useless - deleted
+---- Functionality : TAB_AUDIT
+--INSERT INTO policy(id, status, default_status, policy, system) VALUES (35, true, true, 1, false);
+--INSERT INTO policy(id, status, default_status, policy, system) VALUES (36, false, false, 1, true);
+--INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (18, true, 'TAB_AUDIT', 35, 36, 1);
+
+--useless - deleted
+---- Functionality : TAB_USER
+--INSERT INTO policy(id, status, default_status, policy, system) VALUES (37, true, true, 1, false);
+--INSERT INTO policy(id, status, default_status, policy, system) VALUES (38, false, false, 1, true);
+--INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (19, true, 'TAB_USER', 37, 38, 1);
 
 -- Functionality : SHARE_NOTIFICATION_BEFORE_EXPIRATION
 -- Policies : MANDATORY(0), ALLOWED(1), FORBIDDEN(2)
