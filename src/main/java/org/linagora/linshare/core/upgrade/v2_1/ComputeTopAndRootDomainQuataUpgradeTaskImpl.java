@@ -40,6 +40,7 @@ import org.linagora.linshare.core.batches.impl.GenericUpgradeTaskImpl;
 import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.BatchResultContext;
@@ -88,7 +89,10 @@ public class ComputeTopAndRootDomainQuataUpgradeTaskImpl extends GenericUpgradeT
 			throws BatchBusinessException, BusinessException {
 		AbstractDomain abstractDomain = abstractDomainRepository.findById(identifier);
 		BatchResultContext<AbstractDomain> res = new BatchResultContext<AbstractDomain>(abstractDomain);
-		domainQuotaRepository.sumOfCurrentValueForSubdomains(abstractDomain);
+		DomainQuota domainQuota = domainQuotaRepository.find(abstractDomain);
+		long valueForSubdomains = domainQuotaRepository.sumOfCurrentValueForSubdomains(abstractDomain);
+		domainQuota.setCurrentValueForSubdomains(valueForSubdomains);
+		domainQuotaRepository.update(domainQuota);
 		res.setProcessed(true);
 		return res;
 	}
