@@ -1,11 +1,4 @@
 
-UPDATE domain_abstract SET mailconfig_id = null;
-DELETE FROM mail_content_lang ;
-DELETE FROM mail_footer_lang ;
-DELETE FROM mail_config ;
-DELETE FROM mail_content;
-DELETE FROM mail_footer;
-DELETE FROM mail_layout ;
 
 INSERT INTO mail_layout (id, domain_abstract_id, description, visible, layout, creation_date, modification_date, uuid, readonly, messages_french, messages_english) VALUES (1, 1, 'Default HTML layout', true, '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">

@@ -57,7 +57,6 @@ public class UndownloadedSharedDocumentsBatchImplTest extends
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		this.executeSqlScript("import-tests-share-entry-group-setup.sql", false);
-		this.executeSqlScript("import-mails-hibernate3.sql", false);
 		wiser.start();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}

@@ -88,7 +88,6 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 	@Test
 	public void testBuildAllMails() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		this.executeSqlScript("import-mails-hibernate3.sql", false);
 		List<TestMailResult> findErrors = Lists.newArrayList();
 		MailConfig cfg = domainBusinessService.getUniqueRootDomain().getCurrentMailConfiguration();
 		for (MailContentType type : MailContentType.values()) {
@@ -127,7 +126,6 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 	@Test
 	public void testBuildOneMail() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		this.executeSqlScript("import-mails-hibernate3.sql", false);
 		MailConfig cfg = domainBusinessService.getUniqueRootDomain().getCurrentMailConfiguration();
 		MailContentType type = MailContentType.SHARE_WARN_UNDOWNLOADED_FILESHARES;
 		logger.info("Building mail {} ", type);

@@ -72,7 +72,6 @@ public class UploadRequestNewBatchImplTest extends
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		this.executeSqlScript("import-tests-close-expired-upload-requests.sql", false);
-		this.executeSqlScript("import-mails-hibernate3.sql", false);
 		wiser.start();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}

@@ -36,7 +36,6 @@ package org.linagora.linshare.repository.hibernate;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -71,6 +70,9 @@ public class UserRepositoryImplTest extends AbstractTransactionalJUnit4SpringCon
     private static final String LAST_NAME3 = "lepoint";
     private static final String MAIL3 = "robert@lepoint.com";
 
+    private static final String FIRST_NAME4 = "Anonymous";
+    private static final String LAST_NAME4 = "Anonymous";
+    private static final String MAIL4 = "anonymous@anonymous.com";
     // default import.sql
  	private static final String DOMAIN_IDENTIFIER = LinShareConstants.rootDomainIdentifier;
     
@@ -126,20 +128,19 @@ public class UserRepositoryImplTest extends AbstractTransactionalJUnit4SpringCon
 		Assert.assertTrue(userRepository.exist(u.getLsUuid()));
 		Assert.assertFalse(userRepository.exist("toto"));
 	}
-
-	@Ignore
+	
 	@Test
 	public void testfindUser() throws BusinessException{
-		User u = new Internal( FIRST_NAME, LAST_NAME, MAIL, null);
+		User u = new Internal( FIRST_NAME4, LAST_NAME4, MAIL4, null);
 		u.setLocale(domain.getDefaultTapestryLocale());
 		u.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 		u.setDomain(domain);
 		
 		userRepository.create(u);
 		
-		User userFound = userRepository.findByMailAndDomain(DOMAIN_IDENTIFIER,MAIL);
+		User userFound = userRepository.findByMailAndDomain(DOMAIN_IDENTIFIER,MAIL4);
 		Assert.assertNotNull(userFound);
-		Assert.assertEquals(FIRST_NAME,userFound.getFirstName());
+		Assert.assertEquals(FIRST_NAME4,userFound.getFirstName());
 	}
 	
 //	@Test

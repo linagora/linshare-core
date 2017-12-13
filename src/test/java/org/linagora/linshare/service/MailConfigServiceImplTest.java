@@ -117,7 +117,6 @@ public class MailConfigServiceImplTest extends AbstractTransactionalJUnit4Spring
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		rootDomain = abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlRootDomain);
-		this.executeSqlScript("import-mails-hibernate3.sql", false);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 

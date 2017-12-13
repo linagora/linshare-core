@@ -108,7 +108,6 @@ public class WarnOwnerAboutGuestExpirationBatchTest extends AbstractTransactiona
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		this.executeSqlScript("import-mails-hibernate3.sql", false);
 		wiser.start();
 		initAccount();
 		logger.debug(LinShareTestConstants.END_SETUP);

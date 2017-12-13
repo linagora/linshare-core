@@ -66,7 +66,6 @@ public class LinShareJobBeanTest extends
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		int countBefore = this.countRowsInTable("users");
 		this.executeSqlScript("import-tests-batches-accounts.sql", false);
-		this.executeSqlScript("import-mails-hibernate3.sql", false);
 		int countAfter = this.countRowsInTable("users");
 		Assert.assertEquals(3, countAfter - countBefore);
 		wiser.start();

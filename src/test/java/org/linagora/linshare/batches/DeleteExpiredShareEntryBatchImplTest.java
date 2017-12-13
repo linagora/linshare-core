@@ -89,7 +89,6 @@ public class DeleteExpiredShareEntryBatchImplTest extends AbstractTransactionalJ
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		this.executeSqlScript("import-tests-expired-share-entry-setup.sql", false);
-		this.executeSqlScript("import-mails-hibernate3.sql", false);
 		wiser.start();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}

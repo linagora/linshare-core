@@ -153,7 +153,6 @@ public class UserServiceImplTest extends
 		logger.debug(LinShareTestConstants.END_SETUP);
 		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
 		this.executeSqlScript("import-tests-quota-other.sql", false);
-		this.executeSqlScript("import-mails-hibernate3.sql", false);
 	}
 
 	@After

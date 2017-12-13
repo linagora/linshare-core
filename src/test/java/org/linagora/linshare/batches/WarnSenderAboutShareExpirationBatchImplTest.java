@@ -123,7 +123,6 @@ public class WarnSenderAboutShareExpirationBatchImplTest extends AbstractTransac
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		this.executeSqlScript("import-mails-hibernate3.sql", false);
 		wiser.start();
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();

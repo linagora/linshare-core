@@ -139,17 +139,6 @@
 			<artifactId>hibernate-ehcache</artifactId>
 			<version>${hibernate.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>net.sf.ehcache</groupId>
-			<artifactId>ehcache</artifactId>
-			<version>1.5.0</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 
 		<!-- Quartz framework -->
 		<dependency>
@@ -797,6 +786,28 @@
 					<optimize>true</optimize>
 				</configuration>
 				</plugin>
+			<plugin>
+       		  <groupId>org.zcore.maven</groupId>
+       			<artifactId>merge-maven-plugin</artifactId>
+      				<configuration>
+         			  <mergers>
+          				<merger>
+            				<target>${basedir}/src/main/resources/sql/postgresql/import-postgresql.sql</target>
+              				<sources>
+                				<source>src/main/resources/sql/import-header.sql</source>
+                				<source>src/main/resources/sql/import-domains.sql</source>
+                				<source>src/main/resources/sql/import-quota.sql</source>
+                				<source>src/main/resources/sql/import-welcome-messages.sql</source>
+                				<source>src/main/resources/sql/import-functionalities.sql</source>
+                				<source>src/main/resources/sql/import-mail-activation.sql</source>
+                				<source>src/main/resources/sql/import-mail.sql</source> 
+                				<source>src/main/resources/sql/import-alias.sql</source> 
+                				<source>src/main/resources/sql/import-settings.sql</source> 
+              				</sources>
+           				</merger>
+          				</mergers>
+       		  </configuration>
+      		</plugin>				
 			<!-- buildnumber-maven-plugin (compute timestamp, build number, ...)-->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -1119,7 +1130,7 @@
 				</property>
 			</activation>
 			<build>
-				<plugins>
+			  <plugins>
 					<plugin>
 						<groupId>com.github.kongchen</groupId>
 						<artifactId>swagger-maven-plugin</artifactId>
@@ -1740,7 +1751,7 @@
 		<spring-release-version>4.2.4.RELEASE</spring-release-version>
 		<spring-security-release-version>4.0.3.RELEASE</spring-security-release-version>
 		<spring-data.version>Gosling-SR1</spring-data.version>
-		<hibernate.version>4.3.6.Final</hibernate.version>
+		<hibernate.version>4.3.11.Final</hibernate.version>
 		<h2.version>1.4.191</h2.version>
 		<guava.version>19.0</guava.version>
 		<linid.authorization.version>2.1.2</linid.authorization.version>

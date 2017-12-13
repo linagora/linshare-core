@@ -109,7 +109,6 @@ public class ShareNewShareEmailBuilderTest extends AbstractTransactionalJUnit4Sp
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		this.executeSqlScript("import-tests-document-entry-setup.sql", false);
-		this.executeSqlScript("import-mails-hibernate3.sql", false);
 		wiser.start();
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();

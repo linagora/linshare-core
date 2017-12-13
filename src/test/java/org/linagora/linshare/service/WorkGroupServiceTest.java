@@ -97,7 +97,6 @@ public class WorkGroupServiceTest extends AbstractTransactionalJUnit4SpringConte
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
 		this.executeSqlScript("import-tests-quota-other.sql", false);
-		this.executeSqlScript("import-mails-hibernate3.sql", false);
 		wiser.start();
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();

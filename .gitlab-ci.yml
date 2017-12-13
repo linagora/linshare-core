@@ -1,6 +1,10 @@
 stages:
   - build
 
+before_script:
+  - apt-get update
+  - apt-get -y install libreoffice
+
 build:
   stage: build
   tags:

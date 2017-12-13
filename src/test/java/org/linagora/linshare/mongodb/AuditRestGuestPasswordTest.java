@@ -117,7 +117,6 @@ public class AuditRestGuestPasswordTest extends AbstractTransactionalJUnit4Sprin
 	@Before
 	public void setUp() throws Exception {
 		logger.debug("Begin setUp");
-		this.executeSqlScript("import-mails-hibernate3.sql", false);
 		guestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
 		guest = new Guest(FIRST_NAME, LAST_NAME, EMAIL);
 		guest.setLsUuid(UUID);

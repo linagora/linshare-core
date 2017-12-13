@@ -83,7 +83,7 @@ import org.linagora.linshare.mongo.entities.mto.CopyMto;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-import edu.emory.mathcs.backport.java.util.Collections;
+import java.util.Collections;
 
 public class DocumentFacadeImpl extends UserGenericFacadeImp implements DocumentFacade {
 

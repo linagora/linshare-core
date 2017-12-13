@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015 LINAGORA
+ * Copyright (C) 2017 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,46 +31,41 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.utils;
 
-package org.linagora.linshare.core.domain.constants;
+import org.hibernate.dialect.H2Dialect;
 
-import org.apache.commons.lang.StringUtils;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.exception.TechnicalErrorCode;
-import org.linagora.linshare.core.exception.TechnicalException;
+public class ImprovedH2Dialect extends H2Dialect {
 
-import java.util.Arrays;
-
-public enum UploadRequestStatus {
-	STATUS_DELETED,
-	STATUS_ARCHIVED(STATUS_DELETED),
-	STATUS_CLOSED(STATUS_ARCHIVED),
-	STATUS_ENABLED(STATUS_CLOSED),
-	STATUS_CANCELED,
-	STATUS_CREATED(STATUS_CANCELED, STATUS_ENABLED);
-
-	private final UploadRequestStatus[] next;
-
-	private UploadRequestStatus(UploadRequestStatus... next) {
-		this.next = next;
+	@Override
+	public String getDropSequenceString(String sequenceName) {
+		// Adding the "if exists" clause to avoid warnings
+		return "drop sequence if exists " + sequenceName;
 	}
 
-	public UploadRequestStatus transition(final UploadRequestStatus status)
-			throws BusinessException {
-		if (!Arrays.asList(next).contains(status)) {
-			throw new BusinessException("Cannot transition from " + name()
-					+ " to " + status.name() + '.');
-		}
-		return status;
+	@Override
+	public boolean dropConstraints() {
+		// We don't need to drop constraints before dropping tables, that just
+		// leads to error
+		// messages about missing tables when we don't have a schema in the
+		// database
+		return false;
 	}
 
-	public static UploadRequestStatus fromString(String s) {
-		try {
-			return UploadRequestStatus.valueOf(s.toUpperCase());
-		} catch (RuntimeException e) {
-			throw new TechnicalException(
-					TechnicalErrorCode.NO_SUCH_UPLOAD_REQUEST_STATUS,
-					StringUtils.isEmpty(s) ? "null or empty" : s);
-		}
+	@Override
+	public boolean supportsIfExistsBeforeTableName() {
+		return true;
 	}
+
+	@Override
+	public boolean supportsIfExistsAfterTableName() {
+		return false;
+	}
+
+	@Override
+	public String getCascadeConstraintsString() {
+		return " CASCADE ";
+	}
+	
+	
 }
