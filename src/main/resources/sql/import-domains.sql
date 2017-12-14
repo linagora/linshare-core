@@ -1,26 +1,38 @@
 -- default domain policy
-INSERT INTO domain_access_policy(id) VALUES (1);
-INSERT INTO domain_access_rule(id, domain_access_rule_type, domain_id, domain_access_policy_id, rule_index) VALUES (1, 0, null, 1,0);
-INSERT INTO domain_policy(id, uuid, label, domain_access_policy_id) VALUES (1, 'DefaultDomainPolicy', 'DefaultDomainPolicy', 1);
+INSERT INTO domain_access_policy(id) 
+	VALUES (1);
+INSERT INTO domain_access_rule(id, domain_access_rule_type, domain_id, domain_access_policy_id, rule_index) 
+	VALUES (1, 0, null, 1,0);
+INSERT INTO domain_policy(id, uuid, label, domain_access_policy_id) 
+	VALUES (1, 'DefaultDomainPolicy', 'DefaultDomainPolicy', 1);
 
 -- Root domain (application domain)
-INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, purge_step,user_provider_id, domain_policy_id, parent_id, mailconfig_id) VALUES (1, 0, 'LinShareRootDomain', 'LinShareRootDomain', true, false, 'The root application domain', 3, 'en','IN_USE', null, 1, null, null);
+INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, purge_step, default_mail_locale, user_provider_id, domain_policy_id, parent_id, auth_show_order) 
+	VALUES (1, 0, 'LinShareRootDomain', 'LinShareRootDomain', true, false, 'The root application domain', 3, 'en','IN_USE', 'en', null, 1, null, 0);
 
 -- Default mime policy
-INSERT INTO mime_policy(id, domain_id, uuid, name, mode, displayable, version, creation_date, modification_date) VALUES(1, 1, '3d6d8800-e0f7-11e3-8ec0-080027c0eef0', 'Default Mime Policy', 0, 0, 1, now(), now());
+INSERT INTO mime_policy(id, domain_id, uuid, name, mode, displayable, version, creation_date, modification_date) 
+	VALUES(1, 1, '3d6d8800-e0f7-11e3-8ec0-080027c0eef0', 'Default Mime Policy', 0, 0, 1, now(), now());
 UPDATE domain_abstract SET mime_policy_id=1;
 
-
 -- login is e-mail address 'root@localhost.localdomain' and password is 'adminlinshare'
-INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, cmis_locale, enable, password, destroyed, domain_id, purge_step) VALUES (1, 'root@localhost.localdomain', 6, 'root@localhost.localdomain', current_date(), current_date(), 3, 'en', 'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', 0, 1, 'IN_USE');
-INSERT INTO users(account_id, First_name, Last_name, Can_upload, Comment, Restricted, CAN_CREATE_GUEST, inconsistent) VALUES (1, 'Administrator', 'LinShare', true, '', false, false, false);
+INSERT INTO account(id, Mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale,cmis_locale, enable, password, destroyed, domain_id, purge_step) 
+	VALUES (1, 'root@localhost.localdomain', 6, 'root@localhost.localdomain', now(),now(), 3, 'en', 'en','en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', 0, 1, 'IN_USE');
+INSERT INTO users(account_id, First_name, Last_name, Can_upload, Comment, Restricted, CAN_CREATE_GUEST) 
+	VALUES (1, 'Administrator', 'LinShare', true, '', false, false);
 
 -- system account :
-INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, cmis_locale, enable, destroyed, domain_id, purge_step) VALUES (2, 'system', 7, 'system', current_date(), current_date(), 3, 'en', 'en', 'en', true, 0, 1, 'IN_USE');
-
+INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale,cmis_locale, enable, destroyed, domain_id, purge_step) 
+	VALUES (2, 'system', 7, 'system', now(),now(), 3, 'en', 'en','en', true, 0, 1, 'IN_USE');
 -- system account for upload-request:
-INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, cmis_locale, enable, destroyed, domain_id, purge_step) VALUES (3, 'system-account-uploadrequest', 7, 'system-account-uploadrequest', current_date(), current_date(), 3, 'en', 'en', 'en', true, false, 1, 'IN_USE');
+INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale,cmis_locale, enable, destroyed, domain_id, purge_step) 
+	VALUES (3,'system-account-uploadrequest', 7, 'system-account-uploadrequest', now(),now(), 3, 'en', 'en','en', true, 0, 1, 'IN_USE');
 
+-- system account for upload-proposition
+INSERT INTO account(id, mail, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale,cmis_locale, enable, password, destroyed, domain_id, purge_step)
+	VALUES (4,'linshare-noreply@linagora.com', 4, '89877610-574a-4e79-aeef-5606b96bde35', now(),now(), 5, 'en', 'en','en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', 0, 1, 'IN_USE');
+INSERT INTO users(account_id, first_name, last_name, can_upload, comment, restricted, can_create_guest)
+	VALUES (4, null, 'Technical Account for upload proposition', false, '', false, false);
 
 -- system
 -- OBM user ldap pattern.
