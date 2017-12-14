@@ -229,6 +229,7 @@
 				<sec:intercept-url pattern="/**/testpopup/" access="ROLE_ADMIN" />
 				<sec:intercept-url pattern="/**/webservice/rest/admin/**" access="ROLE_ADMIN" />
 				<sec:intercept-url pattern="/**/webservice/rest/delegation/**" access="ROLE_DELEGATION" />
+				<sec:intercept-url pattern="/**/webservice/rest/safe/**" access="ROLE_DELEGATION" />
 				<sec:intercept-url pattern="/**/webservice/rest/uploadproposition/**" access="ROLE_UPLOAD_PROPOSTION" />
 				<sec:intercept-url pattern="/**/webservice/rest/**" access="ROLE_USER" />
 				<sec:intercept-url pattern="/**/logout" access="ROLE_AUTH" />

@@ -125,4 +125,16 @@ public class SafeDetailServiceImpl extends GenericServiceImpl<Account, SafeDetai
 				BusinessErrorCode.SAFE_DETAIL_CAN_NOT_LIST, null);
 		return safeDetailMongoRepository.findByAccountUuid(actor.getLsUuid());
 	}
+
+	@Override
+	public SafeDetail find(Account authUser, String safeUuid) {
+		Validate.notNull(safeUuid);
+		
+		SafeDetail safeDetail = safeDetailMongoRepository.findByUuid(safeUuid);
+		if (safeDetail == null) {
+			throw new BusinessException(BusinessErrorCode.SAFE_DETAIL_NOT_FOUND,
+					"the safeDetail with uuid: " + safeUuid + " does not exist");
+		}
+		return safeDetail;
+	}
 }

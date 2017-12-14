@@ -40,6 +40,7 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
 import javax.ws.rs.HeaderParam;
@@ -121,14 +122,21 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public WorkGroupEntryDto create(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
-			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
-			@ApiParam(value = "File stream.", required = true) InputStream file,
-			@ApiParam(value = "An optional description of a workgroup entry.") String description,
-			@ApiParam(value = "The given file name of the uploaded file.", required = true) String givenFileName,
-			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) @QueryParam("async") Boolean async,
+			@ApiParam(value = "The owner (user) uuid.", required = true) 
+				@PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The workgroup uuid.", required = true) 
+				@PathParam("workgroupUuid") String workgroupUuid,
+			@ApiParam(value = "File stream.", required = true) 
+				@Multipart(value = "file", required = true) InputStream file,
+			@ApiParam(value = "An optional description of a document.") 
+				@Multipart(value = "description", required = false) String description,
+			@ApiParam(value = "The given file name of the uploaded file.", required = false) 
+				@Multipart(value = "filename", required = false) String givenFileName,
+			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) 
+				@DefaultValue("false") @QueryParam("async") Boolean async,
 			@HeaderParam("Content-Length") Long contentLength,
-			@ApiParam(value = "file size (size validation purpose).", required = false) @Multipart(value = "filesize", required = false)  Long fileSize,
+			@ApiParam(value = "file size (size validation purpose).", required = true) 
+				@Multipart(value = "filesize", required = true)  Long fileSize,
 			MultipartBody body)
 					throws BusinessException {
 		Long transfertDuration = getTransfertDuration();

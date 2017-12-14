@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2016. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2017. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,23 +31,20 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
 
-import org.linagora.linshare.core.domain.entities.Account;
+package org.linagora.linshare.webservice.safe;
+
+import java.io.InputStream;
+
+import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.mongo.entities.SafeDetail;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
 
-public interface SafeDetailService {
+public interface SafeDocumentRestService {
 
-	SafeDetail create(Account authUser, Account actor, SafeDetail safeDetail) throws BusinessException;
-
-	SafeDetail delete(Account authUser, Account actor, String uuid) throws BusinessException;
-
-	SafeDetail delete(Account authUser, Account actor, SafeDetail safeDetail) throws BusinessException;
-
-	SafeDetail findByUuid(Account authUser, Account actor, String uuid) throws BusinessException;
-
-	SafeDetail findAll(Account authUser, Account actor) throws BusinessException;
-
-	SafeDetail find(Account authUser, String safeUuid);
+	WorkGroupEntryDto create(String safeUuid, InputStream file, String description, String givenFileName,
+			Boolean async,
+			Long contentLength,
+			Long fileSize,
+			MultipartBody body) throws BusinessException;
 }
