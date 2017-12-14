@@ -12,4 +12,11 @@
 		<constructor-arg ref="documentGarbageCollecteurMongoRepository" />
 	</bean>
 
+	<bean id="removeAllThreadEntriesUpgradeTask"
+		class="org.linagora.linshare.core.upgrade.v2_1.RemoveAllThreadEntriesUpgradeTaskImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="upgradeTaskLogMongoRepository" />
+		<constructor-arg ref="threadEntryRepository" />
+	</bean>
+
 </beans>

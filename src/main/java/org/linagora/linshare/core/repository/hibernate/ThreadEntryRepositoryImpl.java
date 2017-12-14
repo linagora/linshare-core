@@ -121,4 +121,13 @@ public class ThreadEntryRepositoryImpl extends
 		}
 		return DataAccessUtils.longResult(result);
 	}
+
+	@Override
+	public List<String> findAllThreadEntries() {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.setProjection(Projections.property("uuid"));
+		@SuppressWarnings("unchecked")
+		List<String> list = listByCriteria(criteria);
+		return list;
+	}
 }

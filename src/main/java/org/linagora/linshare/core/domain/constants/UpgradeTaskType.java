@@ -93,6 +93,12 @@ public enum UpgradeTaskType {
 	 */
 	UPGRADE_2_1_COMPUTE_USED_SPACE_FOR_WORGROUPS,
 
+	/*
+	 * Remove all thread entries, they are useless on 2.1
+	 *
+	 */
+	UPGRADE_2_1_REMOVE_ALL_THREAD_ENTRIES,
+
 	/* 
 	 * Compute the workgroup quota container for each domain,
 	 * and update the current value in domains

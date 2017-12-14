@@ -53,6 +53,34 @@ VALUES
   now(),
   now(),
   null);
+ 
+ -- TASK: UPGRADE_2_1_REMOVE_ALL_THREAD_ENTRIES
+INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+  (15,
+  'UNDEFINED',
+  'UPGRADE_2_1_REMOVE_ALL_THREAD_ENTRIES',
+  'UPGRADE_2_1',
+  null,
+  null,
+  15,
+  'NEW',
+  'MANDATORY',
+  now(),
+  now(),
+  null);
 
     -- TASK: UPGRADE_2_1_COMPUTE_CURRENT_VALUE_FOR_DOMAINS
 INSERT INTO upgrade_task

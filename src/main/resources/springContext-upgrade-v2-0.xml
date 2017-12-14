@@ -114,6 +114,12 @@
 					<constructor-arg ref="threadRepository" />
 					<constructor-arg ref="accountQuotaRepository" />
 				</bean>
+				<bean>
+					<bean class="org.linagora.linshare.core.upgrade.v2_1.RemoveAllThreadEntriesUpgradeTaskImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="threadEntryRepository" />
+				</bean>
 				<bean class="org.linagora.linshare.core.upgrade.v2_1.ComputeCurrentValueForDomainsUpgradeTaskImpl">
 					<constructor-arg ref="accountRepository" />
 					<constructor-arg ref="upgradeTaskLogMongoRepository" />

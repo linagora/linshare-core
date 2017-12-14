@@ -60,4 +60,6 @@ public interface ThreadEntryRepository extends AbstractRepository<ThreadEntry> {
 
 	ThreadEntry update(ThreadEntry entity) throws BusinessException, IllegalArgumentException;
 
+	List<String> findAllThreadEntries();
+
 }

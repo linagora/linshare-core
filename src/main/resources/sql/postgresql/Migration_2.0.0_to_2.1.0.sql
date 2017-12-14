@@ -183,7 +183,7 @@ ALTER TABLE document ADD COLUMN compute_thumbnail bool DEFAULT 'false' NOT NULL;
 ALTER TABLE upgrade_task ALTER COLUMN priority SET NOT NULL;
 
 ALTER TABLE domain_abstract ADD COLUMN purge_step varchar(255) DEFAULT 'IN_USE' NOT NULL;
-ALTER TABLE domain_abstract ALTER COLUMN domain_policy_id SET int8;
+ALTER TABLE domain_abstract ALTER COLUMN domain_policy_id drop NOT NULL;
 
 ALTER TABLE upgrade_task ALTER COLUMN creation_date TYPE timestamp(6);
 ALTER TABLE upgrade_task ALTER COLUMN creation_date SET NOT null;
@@ -204,8 +204,10 @@ ALTER TABLE thumbnail ADD CONSTRAINT FKthumbnail35163 FOREIGN KEY (document_id) 
 UPDATE document SET compute_thumbnail = true ;
 -- end update document
 
+
 -- Begin Upgrade Tsk 2.1.0
--- UPGRADE_2_1_DOCUMENT_GARBAGE_COLLECTOR
+
+  -- TASK: UPGRADE_2_1_DOCUMENT_GARBAGE_COLLECTOR
 INSERT INTO upgrade_task
   (id,
   uuid,
@@ -233,7 +235,7 @@ VALUES
   now(),
   null);
 
--- UPGRADE_2_1_COMPUTE_USED_SPACE_FOR_WORGROUPS
+ -- TASK: UPGRADE_2_1_REMOVE_ALL_THREAD_ENTRIES
 INSERT INTO upgrade_task
   (id,
   uuid,
@@ -248,13 +250,13 @@ INSERT INTO upgrade_task
   modification_date,
   extras)
 VALUES
-  (14,
+  (15,
   'UNDEFINED',
-  'UPGRADE_2_1_COMPUTE_USED_SPACE_FOR_WORGROUPS',
+  'UPGRADE_2_1_REMOVE_ALL_THREAD_ENTRIES',
   'UPGRADE_2_1',
   null,
   null,
-  14,
+  15,
   'NEW',
   'MANDATORY',
   now(),
