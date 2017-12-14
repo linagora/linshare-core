@@ -270,8 +270,14 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 			List<AllowedContact> allowedContacts = guestService.load(actor, owner);
 			shareContainer.addAllowedRecipients(allowedContacts);
 		}
-
+		BooleanValueFunctionality aufas = funcService.getAnonymousUrlForceAnonymousSharing(owner.getDomain());
+		Boolean forceAnonymousSharing = aufas.getFinalValue(shareContainer.getForceAnonymousSharing());
 		for (Recipient recipient : shareContainer.getRecipients()) {
+			if (forceAnonymousSharing) {
+				recipient.setLocale(owner.getExternalMailLocale());
+				shareContainer.addAnonymousShareRecipient(recipient);
+				continue;
+			}
 			// step 1
 			if (addUserByUuid(shareContainer, recipient)) {
 				// no need to look further.
@@ -282,7 +288,7 @@ public class ShareServiceImpl extends GenericServiceImpl<Account, ShareEntry> im
 				// no need to look further.
 				continue;
 			}
-			// step 2
+			// step 3
 			if (addUserByMail(shareContainer, recipient, owner)) {
 				// no need to look further.
 				continue;

@@ -778,6 +778,27 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 INSERT INTO functionality_string(functionality_id, string_value)
 	VALUES (57, 'http://linshare-ui-user.local/');
 
+-- Functionality : ANONYMOUS_URL__FORCE_ANONYMOUS_SHARING
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (279, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (280, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (281, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+	VALUES(58, false, 'ANONYMOUS_URL__FORCE_ANONYMOUS_SHARING', 279, 280, 281, 1, 'ANONYMOUS_URL', true);
+INSERT INTO functionality_boolean(functionality_id, boolean_value)
+	VALUES (58, false);
+
+-- Functionality : ANONYMOUS_URL__HIDE_RECEIVED_SHARE_MENU
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (282, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (283, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param)
+	VALUES(59, false, 'ANONYMOUS_URL__HIDE_RECEIVED_SHARE_MENU', 282, 283, 1, 'ANONYMOUS_URL', true);
+INSERT INTO functionality_boolean(functionality_id, boolean_value)
+	VALUES (59, false);
 
 
 -- MailActivation : FILE_WARN_OWNER_BEFORE_FILE_EXPIRY

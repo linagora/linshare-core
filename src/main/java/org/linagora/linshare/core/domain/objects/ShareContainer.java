@@ -70,6 +70,8 @@ public class ShareContainer {
 
 	protected Boolean creationAcknowledgement;
 
+	protected Boolean forceAnonymousSharing;
+
 	protected String inReplyTo;
 
 	protected String references;
@@ -461,6 +463,14 @@ public class ShareContainer {
 
 	public void addEvents(List<EventNotification> events) {
 		this.events.addAll(events);
+	}
+
+	public Boolean getForceAnonymousSharing() {
+		return forceAnonymousSharing;
+	}
+
+	public void setForceAnonymousSharing(Boolean forceAnonymousSharing) {
+		this.forceAnonymousSharing = forceAnonymousSharing;
 	}
 
 	/*

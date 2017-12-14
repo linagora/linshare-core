@@ -72,6 +72,7 @@ public interface FunctionalityReadOnlyService {
 	BooleanValueFunctionality getAnonymousUrl(AbstractDomain domain);
 	BooleanValueFunctionality getAnonymousUrlNotification(AbstractDomain domain);
 	BooleanValueFunctionality getAnonymousUrl(String domainIdentifier);
+	BooleanValueFunctionality getAnonymousUrlForceAnonymousSharing(AbstractDomain domain);
 	StringValueFunctionality getAnonymousURLNotificationUrl(AbstractDomain domain);
 	Functionality getRestrictedGuestFunctionality(AbstractDomain domain);
 	Functionality getWorkGroupCreationRight(AbstractDomain domain);

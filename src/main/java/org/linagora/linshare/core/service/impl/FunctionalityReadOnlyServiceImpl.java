@@ -269,6 +269,11 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
+	public BooleanValueFunctionality getAnonymousUrlForceAnonymousSharing(AbstractDomain domain) {
+		return (BooleanValueFunctionality) _getFunctionality(domain, FunctionalityNames.ANONYMOUS_URL__FORCE_ANONYMOUS_SHARING);
+	}
+
+	@Override
 	public StringValueFunctionality getUploadRequestFunctionality(AbstractDomain domain) {
 		return (StringValueFunctionality) _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST);
 	}

@@ -56,6 +56,9 @@ public class ShareCreationDto {
 	@ApiModelProperty(value = "Share acknowledgement, this boolean allows to choose whether or not the creator of the share wants to receive an acknowledgement.")
 	protected Boolean creationAcknowledgement;
 
+	@ApiModelProperty(value = "Force anonymous sharing even for internal or guest users.")
+	protected Boolean forceAnonymousSharing;
+
 	@ApiModelProperty(value = "ExpirationDate")
 	protected Date expirationDate;
 
@@ -167,5 +170,13 @@ public class ShareCreationDto {
 
 	public void setMailingListUuid(Set<String> mailingListUuid) {
 		this.mailingListUuid = mailingListUuid;
+	}
+
+	public Boolean getForceAnonymousSharing() {
+		return forceAnonymousSharing;
+	}
+
+	public void setForceAnonymousSharing(Boolean forceAnonymousSharing) {
+		this.forceAnonymousSharing = forceAnonymousSharing;
 	}
 }

@@ -216,6 +216,7 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 		sc.setMessage(createDto.getMessage());
 		sc.setSecured(createDto.getSecured());
 		sc.setAcknowledgement(createDto.isCreationAcknowledgement());
+		sc.setForceAnonymousSharing(createDto.getForceAnonymousSharing());
 		sc.setExpiryDate(createDto.getExpirationDate());
 		sc.addGenericUserDto(createDto.getRecipients());
 		sc.setEnableUSDA(createDto.isEnableUSDA());
