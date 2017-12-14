@@ -34,6 +34,7 @@
 
 package org.linagora.linshare.core.upgrade.v2_1;
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.linagora.linshare.core.batches.impl.GenericUpgradeTaskImpl;
@@ -49,6 +50,7 @@ import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountQuotaRepository;
 import org.linagora.linshare.core.repository.AccountRepository;
+import org.linagora.linshare.core.repository.OperationHistoryRepository;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.repository.UpgradeTaskLogMongoRepository;
@@ -62,15 +64,19 @@ public class ComputeUsedSpaceOnWorkgroupsUpgradeTaskImpl extends GenericUpgradeT
 
 	protected AccountQuotaRepository accountQuotaRepository;
 
+	protected OperationHistoryRepository operationHistoryRepository;
+
 	public ComputeUsedSpaceOnWorkgroupsUpgradeTaskImpl(AccountRepository<Account> accountRepository,
 			UpgradeTaskLogMongoRepository upgradeTaskLogMongoRepository,
 			WorkGroupNodeMongoRepository workGroupNodeMongoRepository,
 			ThreadRepository threadRepository,
-			AccountQuotaRepository accountQuotaRepository) {
+			AccountQuotaRepository accountQuotaRepository,
+			OperationHistoryRepository operationHistoryRepository) {
 		super(accountRepository, upgradeTaskLogMongoRepository);
 		this.workGroupNodeMongoRepository = workGroupNodeMongoRepository;
 		this.threadRepository = threadRepository;
 		this.accountQuotaRepository = accountQuotaRepository;
+		this.operationHistoryRepository = operationHistoryRepository;
 	}
 
 	@Override
@@ -104,6 +110,7 @@ public class ComputeUsedSpaceOnWorkgroupsUpgradeTaskImpl extends GenericUpgradeT
 		AccountQuota accountQuota = accountQuotaRepository.find(workGroup);
 		accountQuota.setCurrentValue(totalSize);
 		accountQuotaRepository.update(accountQuota);
+		operationHistoryRepository.deleteBeforeDateByAccount(Calendar.getInstance().getTime(), workGroup);
 		res.setProcessed(true);
 		return res;
 	}

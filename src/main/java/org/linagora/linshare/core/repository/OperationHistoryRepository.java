@@ -55,4 +55,5 @@ public interface OperationHistoryRepository extends AbstractRepository<Operation
 	List<String> findUuidAccountBeforeDate(Date date, ContainerQuotaType containerQuotaType);
 
 	void deleteBeforeDateByAccount(Date date, Account account);
+
 }

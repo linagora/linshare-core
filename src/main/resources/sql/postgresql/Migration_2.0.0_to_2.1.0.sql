@@ -89,6 +89,9 @@ BEGIN
 			RAISE INFO 'Difference of current_value : % ', i - j;
 			UPDATE quota SET current_value = i WHERE account_id = myaccount.id;
 			RAISE INFO '----';
+			RAISE INFO 'Delete OperationHistory for account : % ', myaccount.mail;
+			DELETE FROM operation_history WHERE account_id = myaccount.id;
+			RAISE INFO '----';
 		END LOOP;
 	END;
 END
@@ -204,9 +207,7 @@ ALTER TABLE thumbnail ADD CONSTRAINT FKthumbnail35163 FOREIGN KEY (document_id) 
 UPDATE document SET compute_thumbnail = true ;
 -- end update document
 
-
 -- Begin Upgrade Tsk 2.1.0
-
   -- TASK: UPGRADE_2_1_DOCUMENT_GARBAGE_COLLECTOR
 INSERT INTO upgrade_task
   (id,
@@ -235,7 +236,7 @@ VALUES
   now(),
   null);
 
- -- TASK: UPGRADE_2_1_REMOVE_ALL_THREAD_ENTRIES
+-- TASK: UPGRADE_2_1_COMPUTE_USED_SPACE_FOR_WORGROUPS
 INSERT INTO upgrade_task
   (id,
   uuid,
@@ -252,11 +253,95 @@ INSERT INTO upgrade_task
 VALUES
   (15,
   'UNDEFINED',
-  'UPGRADE_2_1_REMOVE_ALL_THREAD_ENTRIES',
+  'UPGRADE_2_1_COMPUTE_USED_SPACE_FOR_WORGROUPS',
   'UPGRADE_2_1',
   null,
   null,
   15,
+  'NEW',
+  'MANDATORY',
+  now(),
+  now(),
+  null);
+
+-- TASK: UPGRADE_2_1_REMOVE_ALL_THREAD_ENTRIES
+INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+  (14,
+  'UNDEFINED',
+  'UPGRADE_2_1_REMOVE_ALL_THREAD_ENTRIES',
+  'UPGRADE_2_1',
+  null,
+  null,
+  14,
+  'NEW',
+  'MANDATORY',
+  now(),
+  now(),
+  null);
+
+-- TASK: UPGRADE_2_1_COMPUTE_CURRENT_VALUE_FOR_DOMAINS
+INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+  (16,
+  'UNDEFINED',
+  'UPGRADE_2_1_COMPUTE_CURRENT_VALUE_FOR_DOMAINS',
+  'UPGRADE_2_1',
+  null,
+  'UPGRADE_2_1_COMPUTE_USED_SPACE_FOR_WORGROUPS',
+  16,
+  'NEW',
+  'MANDATORY',
+  now(),
+  now(),
+  null);
+
+-- TASK: UPGRADE_2_1_COMPUTE_TOP_AND_ROOT_DOMAIN_QUOTA
+INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+  (17,
+  'UNDEFINED',
+  'UPGRADE_2_1_COMPUTE_TOP_AND_ROOT_DOMAIN_QUOTA',
+  'UPGRADE_2_1',
+  null,
+  'UPGRADE_2_1_COMPUTE_CURRENT_VALUE_FOR_DOMAINS',
+  17,
   'NEW',
   'MANDATORY',
   now(),

@@ -84,6 +84,9 @@ BEGIN
 			RAISE INFO 'Difference of current_value : % ', i - j;
 			UPDATE quota SET current_value = i WHERE account_id = myaccount.id;
 			RAISE INFO '----';
+			RAISE INFO 'Delete OperationHistory for account : % ', myaccount.mail;
+			DELETE FROM operation_history WHERE account_id = myaccount.id;
+			RAISE INFO '----';
 		END LOOP;
 	END;
 END

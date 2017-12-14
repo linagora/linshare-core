@@ -181,4 +181,5 @@ public class OperationHistoryRepositoryImpl extends AbstractRepositoryImpl<Opera
 		Long execute = getHibernateTemplate().execute(action);
 		logger.debug("{} OperationHistory deleted for account {} for operation history created before  {}", execute, account, date);
 	}
+
 }
