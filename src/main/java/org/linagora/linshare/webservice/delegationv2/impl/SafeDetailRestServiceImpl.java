@@ -108,8 +108,8 @@ public class SafeDetailRestServiceImpl extends WebserviceBase implements
 		return safeDetailFacade.create(actorUuid, safeDetail);
 	}
 
-	@DELETE
 	@Path("/{uuid}")
+	@DELETE
 	@ApiOperation(value = "Delete a safeDetail.", response = SafeDetail.class)
 	@ApiResponses({
 			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
@@ -125,7 +125,7 @@ public class SafeDetailRestServiceImpl extends WebserviceBase implements
 	}
 	
 	@Path("/")
-	@GET
+	@DELETE
 	@ApiOperation(value = "Get a SafeDetail.", response = SafeDetail.class)
 	@ApiResponses({
 			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
