@@ -183,15 +183,23 @@ ALTER TABLE document ALTER COLUMN thmb_uuid DROP NOT NULL;
 ALTER TABLE document ADD COLUMN has_thumbnail bool DEFAULT 'false' NOT NULL;
 ALTER TABLE document ADD COLUMN compute_thumbnail bool DEFAULT 'false' NOT NULL;
 
-ALTER TABLE upgrade_task ALTER COLUMN priority SET NOT NULL;
-
 ALTER TABLE domain_abstract ADD COLUMN purge_step varchar(255) DEFAULT 'IN_USE' NOT NULL;
-ALTER TABLE domain_abstract ALTER COLUMN domain_policy_id drop NOT NULL;
+ALTER TABLE domain_abstract ALTER COLUMN domain_policy_id DROP NOT NULL;
+
+ALTER TABLE upload_request ALTER COLUMN modification_date SET NOT NULL;
+ALTER TABLE upload_request ALTER COLUMN expiry_date SET NOT NULL;
+ALTER TABLE upload_request ALTER COLUMN notification_date SET NOT NULL;
+
+ALTER TABLE quota ADD COLUMN domain_shared bool DEFAULT 'false';
+ALTER TABLE quota ADD COLUMN domain_shared_override bool;
+ALTER TABLE quota ADD COLUMN default_domain_shared bool DEFAULT 'false';
+ALTER TABLE quota ADD COLUMN default_domain_shared_override bool;
 
 ALTER TABLE upgrade_task ALTER COLUMN creation_date TYPE timestamp(6);
-ALTER TABLE upgrade_task ALTER COLUMN creation_date SET NOT null;
+ALTER TABLE upgrade_task ALTER COLUMN creation_date SET NOT NULL;
 ALTER TABLE upgrade_task ALTER COLUMN modification_date TYPE timestamp(6);
-ALTER TABLE upgrade_task ALTER COLUMN modification_date SET NOT null;
+ALTER TABLE upgrade_task ALTER COLUMN modification_date SET NOT NULL;
+ALTER TABLE upgrade_task ALTER COLUMN priority SET NOT NULL;
 
 CREATE TABLE thumbnail (
   id                      int8 NOT NULL,
@@ -251,13 +259,13 @@ INSERT INTO upgrade_task
   modification_date,
   extras)
 VALUES
-  (15,
+  (14,
   'UNDEFINED',
   'UPGRADE_2_1_COMPUTE_USED_SPACE_FOR_WORGROUPS',
   'UPGRADE_2_1',
   null,
   null,
-  15,
+  14,
   'NEW',
   'MANDATORY',
   now(),
@@ -279,13 +287,13 @@ INSERT INTO upgrade_task
   modification_date,
   extras)
 VALUES
-  (14,
+  (15,
   'UNDEFINED',
   'UPGRADE_2_1_REMOVE_ALL_THREAD_ENTRIES',
   'UPGRADE_2_1',
   null,
   null,
-  14,
+  15,
   'NEW',
   'MANDATORY',
   now(),
