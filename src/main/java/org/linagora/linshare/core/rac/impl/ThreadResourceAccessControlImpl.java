@@ -65,7 +65,6 @@ public class ThreadResourceAccessControlImpl extends
 				owner = (Account) opt[0];
 			}
 		}
-		Validate.notNull(owner, "Missing owner argument");
 		return owner;
 	}
 
