@@ -1,11 +1,13 @@
 -- quota for root domain
 INSERT INTO quota( id, uuid, creation_date, modification_date, batch_modification_date, current_value, last_value, domain_id, quota, quota_warning, quota_type)
-	VALUES (1, '2a01ac66-a279-11e5-9086-5404a683a462', NOW(), NOW(), null, 0, 0, 1, 1099511627776, 1045824536576, 'DOMAIN_QUOTA');
+	VALUES (1, '2a01ac66-a279-11e5-9086-5404a683a462', NOW(), NOW(), null, 0, 0, 1, 1000000000000, 950000000000, 'DOMAIN_QUOTA');
 UPDATE quota SET default_max_file_size_override = null, default_account_quota_override = null, default_quota_override = null, quota_override = null WHERE id = 1;
 UPDATE quota SET default_domain_shared = false, domain_shared = false WHERE id = 1;
 UPDATE quota SET default_domain_shared_override = null, domain_shared_override = null WHERE id = 1;
 -- quota : 1 To, quota_warning : 950 Go
 -- max_file_size : 10 Go
+UPDATE quota SET default_quota = 100000000000 WHERE id = 1;
+-- default_quota : 1 To
 
 -- 'CONTAINER_QUOTA', 'USER' for root domain
 INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification_date, quota_domain_id, current_value, last_value, domain_id, quota, quota_override, quota_warning, default_quota, default_quota_override, default_max_file_size, default_max_file_size_override, default_account_quota, default_account_quota_override, max_file_size, max_file_size_override, account_quota, account_quota_override, quota_type, container_type, shared)
