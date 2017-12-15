@@ -112,7 +112,7 @@ public class SafeDetail {
 		this.role = "SAFE";
 		this.countryCode = safeDetail.getCountryCode();
 		this.controlKey = safeDetail.getControlKey();
-		this.iufsc = safeDetail.getUuid();
+		this.iufsc = safeDetail.getIufsc();
 	}
 
 	public SafeDetail() {
