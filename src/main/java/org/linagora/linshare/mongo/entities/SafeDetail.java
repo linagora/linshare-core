@@ -54,13 +54,15 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 public class SafeDetail {
 
 	@JsonIgnore
-	@Id @GeneratedValue
+	@Id
+	@GeneratedValue
 	protected String id;
 
 	@ApiModelProperty(value = "AccountUuid")
 	protected String accountUuid;
 
-	@JsonIgnore
+	// FIXME: workaround
+//	@JsonIgnore
 	@ApiModelProperty(value = "ContainerUuid")
 	protected String containerUuid;
 
@@ -81,13 +83,13 @@ public class SafeDetail {
 
 	@ApiModelProperty(value = "Number identifier, on 30 characters")
 	protected String uuid;
-	
+
 	@ApiModelProperty(value = "CreationDate of this safeDetail")
 	protected Date creationDate;
 
 	@ApiModelProperty(value = "Description")
 	protected String description;
-	
+
 	public SafeDetail(String accountUuid, String containerUuid, String description) {
 		super();
 		this.accountUuid = accountUuid;
@@ -112,7 +114,7 @@ public class SafeDetail {
 		this.controlKey = safeDetail.getControlKey();
 		this.iufsc = safeDetail.getUuid();
 	}
-	
+
 	public SafeDetail() {
 		super();
 	}
@@ -200,16 +202,16 @@ public class SafeDetail {
 	public String getDescription() {
 		return description;
 	}
-	
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	public String getSafeDetailRic() {
 		return new StringBuilder().append(countryCode).append(controlKey).append(iufsc).append(reserve).append(uuid)
 				.toString();
 	}
-	
+
 	@Override
 	public String toString() {
 		return "SafeDetail [id=" + id + ", accountUuid=" + accountUuid + ", containerUuid=" + containerUuid
