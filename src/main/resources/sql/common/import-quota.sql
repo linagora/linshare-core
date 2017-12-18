@@ -4,6 +4,7 @@ INSERT INTO quota( id, uuid, creation_date, modification_date, batch_modificatio
 UPDATE quota SET default_max_file_size_override = null, default_account_quota_override = null, default_quota_override = null, quota_override = null WHERE id = 1;
 UPDATE quota SET default_domain_shared = false, domain_shared = false WHERE id = 1;
 UPDATE quota SET default_domain_shared_override = null, domain_shared_override = null WHERE id = 1;
+UPDATE quota SET default_quota = 100000000000 WHERE id = 1;
 -- quota : 1 To, quota_warning : 950 Go
 -- max_file_size : 10 Go
 UPDATE quota SET default_quota = 100000000000 WHERE id = 1;

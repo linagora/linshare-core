@@ -789,24 +789,34 @@
 				<plugin>
 					<groupId>org.zcore.maven</groupId>
 					<artifactId>merge-maven-plugin</artifactId>
-					<configuration>
-						<mergers>
-							<merger>
-								<target>${basedir}/src/main/resources/sql/postgresql/import-postgresql.sql</target>
-								<sources>
-									<source>src/main/resources/sql/import-header.sql</source>
-									<source>src/main/resources/sql/import-domains.sql</source>
-									<source>src/main/resources/sql/import-quota.sql</source>
-									<source>src/main/resources/sql/import-welcome-messages.sql</source>
-									<source>src/main/resources/sql/import-functionalities.sql</source>
-									<source>src/main/resources/sql/import-mail-activation.sql</source>
-									<source>src/main/resources/sql/import-mail.sql</source>
-									<source>src/main/resources/sql/import-settings.sql</source>
-									<source>src/main/resources/sql/import-alias.sql</source>
-								</sources>
-							</merger>
-						</mergers>
-					</configuration>
+					<version>0.0.3</version>
+					<executions>
+						<execution>
+							<id>merge</id>
+							<phase>prepare-package</phase>
+							<goals>
+								<goal>merge</goal>
+							</goals>
+							<configuration>
+								<mergers>
+									<merger>
+										<target>target/generated-sources/import-postgresql.sql</target>
+										<sources>
+											<source>src/main/resources/sql/common/import-header.sql</source>
+											<source>src/main/resources/sql/common/import-domains.sql</source>
+											<source>src/main/resources/sql/common/import-quota.sql</source>
+											<source>src/main/resources/sql/common/import-welcome-messages.sql</source>
+											<source>src/main/resources/sql/common/import-functionalities.sql</source>
+											<source>src/main/resources/sql/common/import-mail-activation.sql</source>
+											<source>src/main/resources/sql/common/import-mail.sql</source>
+											<source>src/main/resources/sql/common/import-settings.sql</source>
+											<source>src/main/resources/sql/common/import-alias.sql</source>
+										</sources>
+									</merger>
+								</mergers>
+							</configuration>
+						</execution>
+					</executions>
 				</plugin>
 			<!-- buildnumber-maven-plugin (compute timestamp, build number, ...)-->
 			<plugin>

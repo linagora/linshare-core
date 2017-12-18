@@ -13,10 +13,20 @@
 			<outputDirectory>linshare-core-sql</outputDirectory>
 			<excludes>
 				<exclude>h2/**</exclude>
+				<exclude>common/**</exclude>
 				<exclude>**/Template_Migration_**</exclude>
 				<exclude>**/visualparadigm*.sh</exclude>
+				<exclude>**/add.new*.sh</exclude>
 				<exclude>**/sample**</exclude>
 				<exclude>**/tmp/**</exclude>
+				<exclude>**.md</exclude>
+			</excludes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/target/generated-sources</directory>
+			<outputDirectory>linshare-core-sql</outputDirectory>
+			<excludes>
+				<exclude>annotations/**</exclude>
 			</excludes>
 		</fileSet>
 	</fileSets>

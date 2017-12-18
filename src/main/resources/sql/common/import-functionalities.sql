@@ -1,5 +1,4 @@
-
--- Functionality : FILESIZE_MAX
+--Functionality : FILESIZE_MAX
 -- INSERT INTO policy(id, status, default_status, policy, system) VALUES (1, true, true, 1, false);
 -- INSERT INTO policy(id, status, default_status, policy, system) VALUES (2, true, true, 1, false);
 -- if a functionality is system, you will not be able see/modify its parameters

@@ -22,7 +22,7 @@
 			<prop key="hibernate.format_sql">${linshare.db.format_sql}</prop>
 			<prop key="hibernate.generate_statistics">${linshare.db.gen_stats}</prop>
 			<prop key="hibernate.hbm2ddl.auto">${linshare.db.hbm2ddl.auto}</prop>
-			<prop key="hibernate.hbm2ddl.import_files">sql/import-domains.sql,sql/import-welcome-messages.sql,sql/import-functionalities.sql,sql/import-mail-activation.sql,sql/import-quota.sql,sql/import-mail.sql,sql/h2/import-tests.sql
+			<prop key="hibernate.hbm2ddl.import_files">sql/common/import-domains.sql,sql/common/import-welcome-messages.sql,sql/common/import-functionalities.sql,sql/common/import-mail-activation.sql,sql/common/import-quota.sql,sql/common/import-mail.sql,sql/h2/import-tests.sql
 			</prop>
 			<prop key="hibernate.hbm2ddl.import_files_sql_extractor">${linshare.hbm2ddl.import_files_sql_extractor}</prop>
 		</props>
