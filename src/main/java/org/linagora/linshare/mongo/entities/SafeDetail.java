@@ -208,8 +208,8 @@ public class SafeDetail {
 	}
 
 	public String getSafeDetailRic() {
-		return new StringBuilder().append(countryCode).append(controlKey).append(iufsc).append(reserve).append(uuid)
-				.toString();
+		return new StringBuilder().append(countryCode).append(controlKey).append(role).append(iufsc).append(reserve)
+				.append(uuid).toString();
 	}
 
 	@Override

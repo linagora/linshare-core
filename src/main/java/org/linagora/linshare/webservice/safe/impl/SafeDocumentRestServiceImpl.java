@@ -151,7 +151,7 @@ public class SafeDocumentRestServiceImpl extends WebserviceBase implements
 			checkSizeValidation(fileSize, currSize);
 		}
 		Validate.notNull(ric);
-		String safeUuid = ric.substring(20);
+		String safeUuid = ric.substring(24);
 		SafeDetail safeDetail = safeDocumentFacade.findSafeDetail(safeUuid);
 		User user = safeDocumentFacade.findUser(safeUuid);
 		String workGroupUuid = safeDetail.getContainerUuid();
