@@ -35,7 +35,7 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 
 import java.util.Date;
 
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -59,7 +59,7 @@ public class WorkGroupLightDto {
 		this.name = name;
 	}
 
-	public WorkGroupLightDto(Thread thread) {
+	public WorkGroupLightDto(WorkGroup thread) {
 		super();
 		this.uuid = thread.getLsUuid();
 		this.name = thread.getName();

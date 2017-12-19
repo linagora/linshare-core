@@ -37,14 +37,14 @@ import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.ThreadMonthlyStat;
 
 public interface ThreadMonthlyStatBusinessService {
 
-	ThreadMonthlyStat create(Thread thread, Date beginDate, Date endDate);
+	ThreadMonthlyStat create(WorkGroup thread, Date beginDate, Date endDate);
 
-	List<ThreadMonthlyStat> findBetweenTwoDates(Thread thread, Date beginDate, Date endDate);
+	List<ThreadMonthlyStat> findBetweenTwoDates(WorkGroup thread, Date beginDate, Date endDate);
 
 	void deleteBeforeDate(Date date);
 

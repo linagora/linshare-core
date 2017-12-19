@@ -41,7 +41,7 @@ public class ThreadDailyStat extends AccountStatistic {
 		super();
 	}
 
-	public ThreadDailyStat(Thread thread, AbstractDomain domain, AbstractDomain parentDomain, Long operationCount,
+	public ThreadDailyStat(WorkGroup thread, AbstractDomain domain, AbstractDomain parentDomain, Long operationCount,
 			Long deleteOperationCount, Long addOperationCount, Long addOperationSum, Long deleteOperationSum,
 			Long diffOperationSum, Long actualOperationSum) {
 		super(thread, domain, parentDomain, operationCount, deleteOperationCount, addOperationCount, addOperationSum,

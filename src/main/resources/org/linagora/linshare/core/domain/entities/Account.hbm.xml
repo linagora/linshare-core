@@ -143,7 +143,7 @@
 		<subclass name="org.linagora.linshare.core.domain.entities.SystemAccount" discriminator-value="7" lazy="false">
 		</subclass>
 
-		<subclass name="org.linagora.linshare.core.domain.entities.Thread" discriminator-value="5" lazy="false">
+		<subclass name="org.linagora.linshare.core.domain.entities.WorkGroup" discriminator-value="5" lazy="false">
 			<set name="myMembers" lazy="true" cascade="save-update,lock" inverse="true">
 				<key column="thread_id" not-null="true"/>
 				<one-to-many class="org.linagora.linshare.core.domain.entities.WorkgroupMember"/>

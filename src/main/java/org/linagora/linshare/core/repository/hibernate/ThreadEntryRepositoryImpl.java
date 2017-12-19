@@ -44,7 +44,7 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ThreadEntryRepository;
@@ -83,12 +83,12 @@ public class ThreadEntryRepositoryImpl extends
 	}
 
 	@Override
-	public List<ThreadEntry> findAllThreadEntries(Thread owner) {
+	public List<ThreadEntry> findAllThreadEntries(WorkGroup owner) {
 		return findByCriteria(Restrictions.eq("entryOwner", owner));
 	}
 
 	@Override
-	public long count(Thread thread) {
+	public long count(WorkGroup thread) {
 		DetachedCriteria det = DetachedCriteria.forClass(ThreadEntry.class);
 
 		det.add(Restrictions.eq("entryOwner", thread));
@@ -97,7 +97,7 @@ public class ThreadEntryRepositoryImpl extends
 	}
 
 	@Override
-	public List<ThreadEntry> findAllDistinctEntries(Thread thread) {
+	public List<ThreadEntry> findAllDistinctEntries(WorkGroup thread) {
 		List<ThreadEntry> res = null;
 		DetachedCriteria crit = DetachedCriteria.forClass(ThreadEntry.class);
 		crit.add(Restrictions.eq("entryOwner", thread));

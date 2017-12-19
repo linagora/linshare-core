@@ -8,7 +8,7 @@
 		</id>
 		<many-to-one name="user" cascade="lock" column="user_id" class="org.linagora.linshare.core.domain.entities.User" not-null="true" lazy="no-proxy">
 		</many-to-one>
-		<many-to-one name="thread" cascade="lock" column="thread_id" class="org.linagora.linshare.core.domain.entities.Thread" not-null="true" lazy="no-proxy">
+		<many-to-one name="thread" cascade="lock" column="thread_id" class="org.linagora.linshare.core.domain.entities.WorkGroup" not-null="true" lazy="no-proxy">
 		</many-to-one>
 		<property name="admin" column="admin" type="boolean" not-null="true" lazy="false"/>
 		<property name="canUpload" column="can_upload" type="boolean" not-null="true" lazy="false"/>

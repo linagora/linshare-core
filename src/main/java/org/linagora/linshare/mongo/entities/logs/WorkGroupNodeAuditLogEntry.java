@@ -39,7 +39,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupLightDto;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
@@ -65,7 +65,7 @@ public class WorkGroupNodeAuditLogEntry extends AuditLogEntryUser {
 	}
 
 	public WorkGroupNodeAuditLogEntry(Account authUser, Account owner, LogAction action, AuditLogEntryType type,
-			WorkGroupNode node, Thread workGroup) {
+			WorkGroupNode node, WorkGroup workGroup) {
 		super(new AccountMto(authUser), new AccountMto(owner), action, type, node.getUuid());
 		this.resource = buildCopy(node);
 		this.workGroup = new WorkGroupLightDto(workGroup);

@@ -44,13 +44,13 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.springframework.orm.hibernate4.HibernateTemplate;
 
-public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
+public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<WorkGroup>
 		implements ThreadRepository {
 
 	private static final MatchMode ANYWHERE = MatchMode.ANYWHERE;
@@ -60,8 +60,8 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 	}
 
 	@Override
-	protected DetachedCriteria getNaturalKeyCriteria(Thread entity) {
-		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
+	protected DetachedCriteria getNaturalKeyCriteria(WorkGroup entity) {
+		DetachedCriteria det = DetachedCriteria.forClass(WorkGroup.class);
 
 		// filter enabled thread only.
 		det.add(Restrictions.eq("enable", true));
@@ -71,7 +71,7 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 	}
 
 	@Override
-	public Thread create(Thread entity) throws BusinessException {
+	public WorkGroup create(WorkGroup entity) throws BusinessException {
 		entity.setCreationDate(new Date());
 		entity.setModificationDate(new Date());
 		entity.setLsUuid(UUID.randomUUID().toString());
@@ -80,8 +80,8 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 	}
 
 	@Override
-	public List<Thread> findAll() {
-		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
+	public List<WorkGroup> findAll() {
+		DetachedCriteria det = DetachedCriteria.forClass(WorkGroup.class);
 		det.add(Restrictions.eq("toUpgrade", false));
 
 		// filter enabled thread only.
@@ -92,8 +92,8 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 	}
 
 	@Override
-	public List<Thread> findAllWhereMember(User actor) {
-		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
+	public List<WorkGroup> findAllWhereMember(User actor) {
+		DetachedCriteria det = DetachedCriteria.forClass(WorkGroup.class);
 		det.add(Restrictions.eq("destroyed", 0L));
 		det.add(Restrictions.eq("toUpgrade", false));
 		// query
@@ -103,8 +103,8 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 	}
 
 	@Override
-	public List<Thread> findAllWhereAdmin(User actor) {
-		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
+	public List<WorkGroup> findAllWhereAdmin(User actor) {
+		DetachedCriteria det = DetachedCriteria.forClass(WorkGroup.class);
 		det.add(Restrictions.eq("destroyed", 0L));
 		det.add(Restrictions.eq("toUpgrade", false));
 
@@ -116,8 +116,8 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 	}
 
 	@Override
-	public List<Thread> findAllWhereCanUpload(User actor) {
-		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
+	public List<WorkGroup> findAllWhereCanUpload(User actor) {
+		DetachedCriteria det = DetachedCriteria.forClass(WorkGroup.class);
 		det.add(Restrictions.eq("destroyed", 0L));
 		det.add(Restrictions.eq("toUpgrade", false));
 
@@ -129,8 +129,8 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 	}
 
 	@Override
-	public List<Thread> findLatestWhereMember(User actor, int limit) {
-		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
+	public List<WorkGroup> findLatestWhereMember(User actor, int limit) {
+		DetachedCriteria det = DetachedCriteria.forClass(WorkGroup.class);
 		det.add(Restrictions.eq("destroyed", 0L));
 		det.add(Restrictions.eq("toUpgrade", false));
 
@@ -144,8 +144,8 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 	}
 
 	@Override
-	public List<Thread> searchByName(User actor, String pattern) {
-		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
+	public List<WorkGroup> searchByName(User actor, String pattern) {
+		DetachedCriteria det = DetachedCriteria.forClass(WorkGroup.class);
 		det.add(Restrictions.eq("destroyed", 0L));
 		det.add(Restrictions.eq("toUpgrade", false));
 
@@ -159,8 +159,8 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 	}
 
 	@Override
-	public List<Thread> searchAmongMembers(User actor, String pattern) {
-		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
+	public List<WorkGroup> searchAmongMembers(User actor, String pattern) {
+		DetachedCriteria det = DetachedCriteria.forClass(WorkGroup.class);
 		det.add(Restrictions.eq("destroyed", 0L));
 		det.add(Restrictions.eq("toUpgrade", false));
 
@@ -172,7 +172,7 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 		or.add(Restrictions.ilike("u.lastName", pattern, ANYWHERE));
 		det.add(or);
 
-		DetachedCriteria sub = DetachedCriteria.forClass(Thread.class);
+		DetachedCriteria sub = DetachedCriteria.forClass(WorkGroup.class);
 		sub.createAlias("myMembers", "member");
 		if (!actor.hasSuperAdminRole())
 			sub.add(Restrictions.eq("member.user", actor));
@@ -184,7 +184,7 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 
 	@Override
 	public List<String> findAllThreadToUpgrade() {
-		DetachedCriteria criteria = DetachedCriteria.forClass(Thread.class);
+		DetachedCriteria criteria = DetachedCriteria.forClass(WorkGroup.class);
 		criteria.setProjection(Projections.property("lsUuid"));
 		criteria.add(Restrictions.eq("destroyed", 0L));
 		criteria.add(Restrictions.eq("toUpgrade", true));
@@ -194,7 +194,7 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 	}
 
 	@Override
-	public Thread setAsUpgraded(Thread entity) {
+	public WorkGroup setAsUpgraded(WorkGroup entity) {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity must not be null");
 		}
@@ -207,7 +207,7 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 
 	@Override
 	public List<String> findAllThreadUuid() {
-		DetachedCriteria criteria = DetachedCriteria.forClass(Thread.class);
+		DetachedCriteria criteria = DetachedCriteria.forClass(WorkGroup.class);
 		criteria.setProjection(Projections.property("lsUuid"));
 		@SuppressWarnings("unchecked")
 		List<String> list = listByCriteria(criteria);

@@ -37,7 +37,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.constants.TargetKind;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -85,7 +85,7 @@ public class CopyMto {
 		this.name = de.getName();
 	}
 
-	public CopyMto(WorkGroupNode node, Thread workGroup) {
+	public CopyMto(WorkGroupNode node, WorkGroup workGroup) {
 		super();
 		this.kind = TargetKind.SHARED_SPACE;
 		this.uuid = node.getUuid();

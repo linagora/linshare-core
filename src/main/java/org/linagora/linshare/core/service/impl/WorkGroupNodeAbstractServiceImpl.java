@@ -37,7 +37,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -90,7 +90,7 @@ public abstract class WorkGroupNodeAbstractServiceImpl implements WorkGroupNodeA
 	protected abstract BusinessErrorCode getBusinessExceptionForbidden();
 
 	@Override
-	public WorkGroupNode find(Account actor, User owner, Thread workGroup, String workGroupNodeUuid)
+	public WorkGroupNode find(Account actor, User owner, WorkGroup workGroup, String workGroupNodeUuid)
 			throws BusinessException {
 		WorkGroupNode folder = repository.findByWorkGroupAndUuid(workGroup.getLsUuid(), workGroupNodeUuid);
 		if (folder == null) {
@@ -102,14 +102,14 @@ public abstract class WorkGroupNodeAbstractServiceImpl implements WorkGroupNodeA
 	}
 
 	@Override
-	public void checkUniqueName(Thread workGroup, WorkGroupNode nodeParent, String name) {
+	public void checkUniqueName(WorkGroup workGroup, WorkGroupNode nodeParent, String name) {
 		if (!isUniqueName(workGroup, nodeParent, name)) {
 			throw new BusinessException(getBusinessExceptionAlreadyExists(),
 					"Can not create a new node, it already exists.");
 		}
 	}
 
-	protected boolean isUniqueName(Thread workGroup, WorkGroupNode nodeParent, String name) {
+	protected boolean isUniqueName(WorkGroup workGroup, WorkGroupNode nodeParent, String name) {
 		List<WorkGroupNode> nodes = repository.findByWorkGroupAndParentAndName(workGroup.getLsUuid(),
 				nodeParent.getUuid(), name);
 		if (nodes.isEmpty()) {
@@ -127,7 +127,7 @@ public abstract class WorkGroupNodeAbstractServiceImpl implements WorkGroupNodeA
 	}
 
 	@Override
-	public String getNewName(Account actor, User owner, Thread workGroup, WorkGroupNode nodeParent,
+	public String getNewName(Account actor, User owner, WorkGroup workGroup, WorkGroupNode nodeParent,
 			String currentName) {
 		if (!isUniqueName(workGroup, nodeParent, currentName)) {
 			UniqueName res = getQueryForNodesWithSameName(currentName);
@@ -154,7 +154,7 @@ public abstract class WorkGroupNodeAbstractServiceImpl implements WorkGroupNodeA
 		return node.getNodeType().equals(WorkGroupNodeType.DOCUMENT_REVISION);
 	}
 
-	protected void addMembersToLog(Thread thread, AuditLogEntryUser log) {
+	protected void addMembersToLog(WorkGroup thread, AuditLogEntryUser log) {
 		List<String> members = threadMemberRepository.findAllAccountUuidForThreadMembers(thread);
 		log.addRelatedAccounts(members);
 	}

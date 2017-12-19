@@ -41,7 +41,7 @@ public class ThreadWeeklyStat extends AccountStatistic {
 		super();
 	}
 
-	public ThreadWeeklyStat(Thread thread, AbstractDomain domain, AbstractDomain parentDomain, Long operationCount,
+	public ThreadWeeklyStat(WorkGroup thread, AbstractDomain domain, AbstractDomain parentDomain, Long operationCount,
 			Long deleteOperationCount, Long addOperationCount, Long addOperationSum, Long deleteOperationSum,
 			Long diffOperationSum, Long actualOperationSum) {
 		super(thread, domain, parentDomain, operationCount, deleteOperationCount, addOperationCount, addOperationSum,

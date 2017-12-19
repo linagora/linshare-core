@@ -43,9 +43,9 @@ import org.linagora.linshare.core.domain.constants.SearchType;
 import org.linagora.linshare.core.domain.constants.VisibilityType;
 import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.RecipientFavourite;
-import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
@@ -147,7 +147,7 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 				result.addAll(ImmutableList.copyOf(Lists.transform(Lists.newArrayList(userList), UserAutoCompleteResultDto.toDto())));
 			} else if (enumType.equals(SearchType.THREAD_MEMBERS)) {
 				Validate.notEmpty(threadUuid, "You must fill threadUuid query parameter.");
-				Thread thread = threadService.find(actor, actor, threadUuid);
+				WorkGroup thread = threadService.find(actor, actor, threadUuid);
 				List<User> users = userService.autoCompleteUser(actor, pattern);
 				int range = (users.size() < AUTO_COMPLETE_LIMIT ? users.size() : AUTO_COMPLETE_LIMIT);
 				for (User user : users.subList(0, range)) {

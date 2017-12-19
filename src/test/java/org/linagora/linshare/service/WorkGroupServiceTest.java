@@ -40,9 +40,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.utils.LinShareWiser;
@@ -75,7 +75,7 @@ public class WorkGroupServiceTest extends AbstractTransactionalJUnit4SpringConte
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
 
-	Thread workGroup;
+	WorkGroup workGroup;
 
 	WorkgroupMember workGroupMember;
 

@@ -34,16 +34,16 @@
 package org.linagora.linshare.core.service;
 
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 
 public interface WorkGroupFolderService extends WorkGroupNodeAbstractService {
 
-	WorkGroupNode create(Account actor, User owner, Thread workGroup, WorkGroupNode workGroupFolder,
+	WorkGroupNode create(Account actor, User owner, WorkGroup workGroup, WorkGroupNode workGroupFolder,
 			WorkGroupNode nodeParent, Boolean strict, Boolean dryRun) throws BusinessException;
 
-	WorkGroupNode delete(Account actor, User owner, Thread workGroup, WorkGroupNode workGroupNode)
+	WorkGroupNode delete(Account actor, User owner, WorkGroup workGroup, WorkGroupNode workGroupNode)
 			throws BusinessException;
 }

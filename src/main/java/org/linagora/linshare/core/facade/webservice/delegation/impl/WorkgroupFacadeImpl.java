@@ -38,7 +38,7 @@ import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
@@ -74,7 +74,7 @@ public class WorkgroupFacadeImpl extends DelegationGenericFacadeImpl implements
 		Validate.notEmpty(uuid, "Missing required thread uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		Thread thread = threadService.find(actor, owner, uuid);
+		WorkGroup thread = threadService.find(actor, owner, uuid);
 		WorkGroupDto dto = new WorkGroupDto(thread);
 		AccountQuota quota = quotaService.findByRelatedAccount(thread);
 		dto.setQuotaUuid(quota.getUuid());
@@ -87,8 +87,8 @@ public class WorkgroupFacadeImpl extends DelegationGenericFacadeImpl implements
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 		List<WorkGroupDto> res = Lists.newArrayList();
-		List<Thread> threads = threadService.findAll(actor, owner);
-		for (Thread thread : threads) {
+		List<WorkGroup> threads = threadService.findAll(actor, owner);
+		for (WorkGroup thread : threads) {
 			res.add(new WorkGroupDto(thread));
 		}
 		return res;
@@ -113,7 +113,7 @@ public class WorkgroupFacadeImpl extends DelegationGenericFacadeImpl implements
 		Validate.notEmpty(threadDto.getUuid(), "Missing required thread dto uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		Thread thread = threadService.find(actor, owner, threadDto.getUuid());
+		WorkGroup thread = threadService.find(actor, owner, threadDto.getUuid());
 		threadService.deleteThread(actor, owner, thread);
 		return new WorkGroupDto(thread);
 	}

@@ -43,7 +43,7 @@ import org.linagora.linshare.core.domain.entities.ThreadDailyStat;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.OperationHistoryRepository;
 import org.linagora.linshare.core.repository.ThreadDailyStatisticRepository;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 
 public class ThreadDailyStatBusinessServiceImpl implements ThreadDailyStatBusinessService {
 
@@ -57,7 +57,7 @@ public class ThreadDailyStatBusinessServiceImpl implements ThreadDailyStatBusine
 	}
 
 	@Override
-	public ThreadDailyStat create(Thread thread, Long currentUsedSpace, Date date) throws BusinessException {
+	public ThreadDailyStat create(WorkGroup thread, Long currentUsedSpace, Date date) throws BusinessException {
 		Long createOperationSum = operationHistoryRepository.sumOperationValue(thread, null, date,
 				OperationHistoryTypeEnum.CREATE, null);
 		Long deleteOperationSum = operationHistoryRepository.sumOperationValue(thread, null, date,
@@ -77,7 +77,7 @@ public class ThreadDailyStatBusinessServiceImpl implements ThreadDailyStatBusine
 	}
 
 	@Override
-	public List<ThreadDailyStat> findBetweenTwoDates(Thread thread, Date beginDate, Date endDate) {
+	public List<ThreadDailyStat> findBetweenTwoDates(WorkGroup thread, Date beginDate, Date endDate) {
 		return repository.findBetweenTwoDates(thread, null, null, beginDate, endDate, null);
 	}
 

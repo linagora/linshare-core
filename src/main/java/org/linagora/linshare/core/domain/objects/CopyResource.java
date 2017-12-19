@@ -36,7 +36,7 @@ package org.linagora.linshare.core.domain.objects;
 import org.linagora.linshare.core.domain.constants.TargetKind;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
 
@@ -90,7 +90,7 @@ public class CopyResource {
 		this.copyFrom = new CopyMto(entry);
 	}
 
-	public CopyResource(TargetKind kind, Thread workGroup, WorkGroupDocument entry) {
+	public CopyResource(TargetKind kind, WorkGroup workGroup, WorkGroupDocument entry) {
 		super();
 		this.kind = kind;
 		this.resourceUuid = entry.getUuid();

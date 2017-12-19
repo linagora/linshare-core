@@ -65,7 +65,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Signature;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.Thumbnail;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
@@ -371,7 +371,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	}
 
 	@Override
-	public WorkGroupDocument createWorkGroupDocument(Account actor, Thread workGroup, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, WorkGroupNode nodeParent) throws BusinessException {
+	public WorkGroupDocument createWorkGroupDocument(Account actor, WorkGroup workGroup, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, WorkGroupNode nodeParent) throws BusinessException {
 		if (exists(workGroup, fileName, nodeParent)) {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_ALREADY_EXISTS,
 					"Can not create a new document, it already exists.");
@@ -397,7 +397,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	}
 
 	@Override
-	public WorkGroupDocument copy(Account actor, Thread toWorkGroup, WorkGroupNode nodeParent, String documentUuid,
+	public WorkGroupDocument copy(Account actor, WorkGroup toWorkGroup, WorkGroupNode nodeParent, String documentUuid,
 			String name, boolean ciphered) throws BusinessException {
 		if (exists(toWorkGroup, name, nodeParent)) {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_ALREADY_EXISTS,
@@ -790,7 +790,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		throw new BusinessException("failed to update the thumbnail");
 	}
 
-	protected boolean exists(Thread workGroup, String fileName, WorkGroupNode nodeParent) {
+	protected boolean exists(WorkGroup workGroup, String fileName, WorkGroupNode nodeParent) {
 		List<WorkGroupNode> nodes = repository.findByWorkGroupAndParentAndName(workGroup.getLsUuid(),
 				nodeParent.getUuid(), fileName);
 		if (nodes != null && !nodes.isEmpty()) {

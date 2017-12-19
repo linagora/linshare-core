@@ -42,7 +42,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -114,7 +114,7 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 	@Test
 	public void testCreation() throws BusinessException {
 		logger.info("Begin coucou");
-		Thread workGroup = threadService.create(jane, jane, "thread1");
+		WorkGroup workGroup = threadService.create(jane, jane, "thread1");
 		AccountMto author = new AccountMto(jane);
 		WorkGroupNode workGroupFolder = new WorkGroupFolder(author, "folder1", null, workGroup.getLsUuid());
 		service.create(jane, jane, workGroup, workGroupFolder, false, dryRun);
@@ -129,7 +129,7 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 	@Test
 	public void testCreationStrict() throws BusinessException {
 		logger.info("Begin coucou");
-		Thread workGroup = threadService.create(jane, jane, "thread1");
+		WorkGroup workGroup = threadService.create(jane, jane, "thread1");
 		AccountMto author = new AccountMto(jane);
 		service.create(jane, jane, workGroup, new WorkGroupFolder(author, "folder1", null, workGroup.getLsUuid()), true, dryRun);
 		try {
@@ -144,7 +144,7 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 	@Test
 	public void testCreation2() throws BusinessException {
 		logger.info("Begin coucou");
-		Thread workGroup = threadService.create(jane, jane, "thread1");
+		WorkGroup workGroup = threadService.create(jane, jane, "thread1");
 		AccountMto author = new AccountMto(jane);
 		WorkGroupNode folder1 = new WorkGroupFolder(author, "folder1", null, workGroup.getLsUuid());
 		logger.debug(folder1.toString());
@@ -169,7 +169,7 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 	@Test
 	public void testCreationNonStrict() throws BusinessException {
 		logger.info("Begin coucou");
-		Thread workGroup = threadService.create(jane, jane, "thread1");
+		WorkGroup workGroup = threadService.create(jane, jane, "thread1");
 		AccountMto author = new AccountMto(jane);
 		service.create(jane, jane, workGroup, new WorkGroupFolder(author, "folder1", null, workGroup.getLsUuid()), false, dryRun);
 		WorkGroupNode create = service.create(jane, jane, workGroup, new WorkGroupFolder(author, "folder1", null, workGroup.getLsUuid()), false, dryRun);
@@ -183,7 +183,7 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 	@Test
 	public void testCreationNonStrict2() throws BusinessException {
 		logger.info("Begin coucou");
-		Thread workGroup = threadService.create(jane, jane, "thread1");
+		WorkGroup workGroup = threadService.create(jane, jane, "thread1");
 		AccountMto author = new AccountMto(jane);
 
 		// Init
@@ -208,7 +208,7 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 	@Test
 	public void testUpdate1() throws BusinessException {
 		logger.info("Begin coucou");
-		Thread workGroup = threadService.create(jane, jane, "thread1");
+		WorkGroup workGroup = threadService.create(jane, jane, "thread1");
 		AccountMto author = new AccountMto(jane);
 		WorkGroupNode workGroupFolder = new WorkGroupFolder(author, "folder1", workGroup.getLsUuid(), workGroup.getLsUuid());
 		WorkGroupNode create = service.create(jane, jane, workGroup, workGroupFolder, false, dryRun);
@@ -226,7 +226,7 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 
 	@Test
 	public void testUpdateParentNotFound() throws BusinessException {
-		Thread workGroup = threadService.create(jane, jane, "thread1");
+		WorkGroup workGroup = threadService.create(jane, jane, "thread1");
 		AccountMto author = new AccountMto(jane);
 		WorkGroupNode workGroupFolder = new WorkGroupFolder(author, "folder1", null, workGroup.getLsUuid());
 		WorkGroupNode create = service.create(jane, jane, workGroup, workGroupFolder, false, dryRun);
@@ -248,7 +248,7 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 	@Test
 	public void testUpdateParent() throws BusinessException {
 		logger.info("Begin coucou");
-		Thread workGroup = threadService.create(jane, jane, "thread1");
+		WorkGroup workGroup = threadService.create(jane, jane, "thread1");
 		String workGroupUuid = workGroup.getLsUuid();
 		AccountMto author = new AccountMto(jane);
 		WorkGroupNode folder1 = new WorkGroupFolder(author, "folder1", null, workGroupUuid);
@@ -280,7 +280,7 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 	@Test
 	public void testUpdateRename() throws BusinessException {
 		logger.info("Begin coucou");
-		Thread workGroup = threadService.create(jane, jane, "thread1");
+		WorkGroup workGroup = threadService.create(jane, jane, "thread1");
 		AccountMto author = new AccountMto(jane);
 
 		WorkGroupNode rootFolder = service.getRootFolder(jane, jane, workGroup);
@@ -324,7 +324,7 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 		Assert.assertEquals(",thread1,my.folder-a-1,my.folder-a-b-c-1,", service.find(jane, jane, workGroup, nodeabcd1.getUuid(), tree).getPath());
 	}
 
-	public WorkGroupNode createWrapper(Account actor, User owner, Thread workGroup, WorkGroupNode workGroupNode, Boolean strict)
+	public WorkGroupNode createWrapper(Account actor, User owner, WorkGroup workGroup, WorkGroupNode workGroupNode, Boolean strict)
 			throws BusinessException {
 		WorkGroupNode node = service.create(actor, owner, workGroup, workGroupNode, strict, dryRun);
 		node.setUuid(node.getName());

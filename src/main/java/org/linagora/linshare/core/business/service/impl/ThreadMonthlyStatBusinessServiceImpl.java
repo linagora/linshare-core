@@ -38,7 +38,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.business.service.ThreadMonthlyStatBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.ThreadMonthlyStat;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ThreadMonthlyStatRepository;
@@ -56,7 +56,7 @@ public class ThreadMonthlyStatBusinessServiceImpl implements ThreadMonthlyStatBu
 	}
 
 	@Override
-	public ThreadMonthlyStat create(Thread thread, Date beginDate, Date endDate) throws BusinessException {
+	public ThreadMonthlyStat create(WorkGroup thread, Date beginDate, Date endDate) throws BusinessException {
 		Long actualOperationSum = threadWeeklyStatRepository.sumOfActualOperationSum(null, thread, beginDate, endDate);
 		Long operationCount = threadWeeklyStatRepository.sumOfOperationCount(null, thread, beginDate, endDate);
 		Long createOperationSum = threadWeeklyStatRepository.sumOfCreateOperationSum(null, thread, beginDate, endDate);
@@ -75,7 +75,7 @@ public class ThreadMonthlyStatBusinessServiceImpl implements ThreadMonthlyStatBu
 	}
 
 	@Override
-	public List<ThreadMonthlyStat> findBetweenTwoDates(Thread thread, Date beginDate, Date endDate) {
+	public List<ThreadMonthlyStat> findBetweenTwoDates(WorkGroup thread, Date beginDate, Date endDate) {
 		return repository.findBetweenTwoDates(thread, null, null, beginDate, endDate, null);
 	}
 

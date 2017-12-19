@@ -38,7 +38,7 @@ import java.util.Set;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 
-public class Thread extends Account {
+public class WorkGroup extends Account {
 
 	protected String name;
 
@@ -46,11 +46,11 @@ public class Thread extends Account {
 
 	protected Set<WorkgroupMember> myMembers = new java.util.HashSet<WorkgroupMember>();
 
-	public Thread() {
+	public WorkGroup() {
 		super();
 	}
 
-	public Thread(AbstractDomain domain, Account owner, String name) {
+	public WorkGroup(AbstractDomain domain, Account owner, String name) {
 		super();
 		this.setName(name);
 		this.domain = domain;

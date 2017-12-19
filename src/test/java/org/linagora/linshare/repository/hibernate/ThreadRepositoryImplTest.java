@@ -41,9 +41,9 @@ import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Internal;
-import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.AccountRepository;
@@ -110,7 +110,7 @@ public class ThreadRepositoryImplTest extends AbstractTransactionalJUnit4SpringC
 	public void testCreateThread() throws BusinessException{
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		
-		Thread t = new Thread(domain, internal, "myThread");
+		WorkGroup t = new WorkGroup(domain, internal, "myThread");
 		t.setLocale(domain.getDefaultTapestryLocale());
 		t.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 		threadRepository.create(t);
@@ -122,7 +122,7 @@ public class ThreadRepositoryImplTest extends AbstractTransactionalJUnit4SpringC
 	public void testCreateThreadAndMember() throws BusinessException{
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		
-		Thread t = new Thread(domain, internal, "myThread");
+		WorkGroup t = new WorkGroup(domain, internal, "myThread");
 		t.setLocale(domain.getDefaultTapestryLocale());
 		t.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 		threadRepository.create(t);

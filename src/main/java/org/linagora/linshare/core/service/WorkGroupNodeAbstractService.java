@@ -34,18 +34,18 @@
 package org.linagora.linshare.core.service;
 
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 
 public interface WorkGroupNodeAbstractService {
 
-	WorkGroupNode find(Account actor, User owner, Thread workGroup, String workGroupNodeUuid)
+	WorkGroupNode find(Account actor, User owner, WorkGroup workGroup, String workGroupNodeUuid)
 			throws BusinessException;
 
-	String getNewName(Account actor, User owner, Thread workGroup, WorkGroupNode nodeParent, String currentName);
+	String getNewName(Account actor, User owner, WorkGroup workGroup, WorkGroupNode nodeParent, String currentName);
 
-	void checkUniqueName(Thread workGroup, WorkGroupNode nodeParent, String name);
+	void checkUniqueName(WorkGroup workGroup, WorkGroupNode nodeParent, String name);
 
 }

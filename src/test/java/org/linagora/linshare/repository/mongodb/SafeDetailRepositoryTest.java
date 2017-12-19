@@ -43,7 +43,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.Internal;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
@@ -92,7 +92,7 @@ public class SafeDetailRepositoryTest extends AbstractTransactionalJUnit4SpringC
 			
 	private Internal internal;
 	
-	private Thread thread;
+	private WorkGroup thread;
 	
 	private AbstractDomain testDomain;
 
@@ -112,7 +112,7 @@ public class SafeDetailRepositoryTest extends AbstractTransactionalJUnit4SpringC
 		internal = internalRepository.create(internal);
 		
 
-		thread = new Thread();
+		thread = new WorkGroup();
 		thread.setLocale(SupportedLanguage.ENGLISH);
 		thread.setExternalMailLocale(Language.ENGLISH);
 		thread.setCmisLocale(CMIS_LOCALE);

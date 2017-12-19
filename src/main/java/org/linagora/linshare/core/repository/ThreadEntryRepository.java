@@ -36,7 +36,7 @@ package org.linagora.linshare.core.repository;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -50,11 +50,11 @@ public interface ThreadEntryRepository extends AbstractRepository<ThreadEntry> {
 	 */
 	public ThreadEntry findByUuid(String uuid);
 
-	List<ThreadEntry> findAllThreadEntries(Thread owner);
+	List<ThreadEntry> findAllThreadEntries(WorkGroup owner);
 
-	long count(Thread thread);
+	long count(WorkGroup thread);
 
-	List<ThreadEntry> findAllDistinctEntries(Thread thread);
+	List<ThreadEntry> findAllDistinctEntries(WorkGroup thread);
 
 	long getUsedSpace(Account account);
 

@@ -46,7 +46,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DomainDailyStat;
 import org.linagora.linshare.core.domain.entities.Statistic;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.ThreadDailyStat;
 import org.linagora.linshare.core.domain.entities.ThreadWeeklyStat;
 import org.linagora.linshare.core.domain.entities.User;
@@ -164,7 +164,7 @@ public class StatisticRepositoryImplTest extends AbstractTransactionalJUnit4Spri
 		assertEquals(3, listDailyForThreadTest.size());
 		List<ThreadWeeklyStat> result = threadWeeklyStatRepository.findAll();
 		assertEquals(3, result.size());
-		Thread t = threadRepo.findByLsUuid("aebe1b64-39c0-11e5-9fa8-080027b8274e");
+		WorkGroup t = threadRepo.findByLsUuid("aebe1b64-39c0-11e5-9fa8-080027b8274e");
 		threadWeeklyStatBusinessService.create(t, new GregorianCalendar(2042, 9, 30, 00, 00).getTime(),
 				new GregorianCalendar(2042, 10, 9, 00, 00).getTime());
 		result = threadWeeklyStatRepository.findBetweenTwoDates(thread, null, null, null, null, null);

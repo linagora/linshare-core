@@ -39,7 +39,7 @@ import java.util.List;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -49,42 +49,42 @@ import org.linagora.linshare.mongo.entities.mto.CopyMto;
 
 public interface WorkGroupNodeService {
 
-	List<WorkGroupNode> findAll(Account actor, User owner, Thread workGroup) throws BusinessException;
+	List<WorkGroupNode> findAll(Account actor, User owner, WorkGroup workGroup) throws BusinessException;
 
-	List<WorkGroupNode> findAll(Account actor, User owner, Thread workGroup, String parentUuid, Boolean flatDocumentMode, WorkGroupNodeType nodeType)
+	List<WorkGroupNode> findAll(Account actor, User owner, WorkGroup workGroup, String parentUuid, Boolean flatDocumentMode, WorkGroupNodeType nodeType)
 			throws BusinessException;
 
-	WorkGroupNode find(Account actor, User owner, Thread workGroup, String workGroupNodeUuid, boolean withTree) throws BusinessException;
+	WorkGroupNode find(Account actor, User owner, WorkGroup workGroup, String workGroupNodeUuid, boolean withTree) throws BusinessException;
 
-	WorkGroupNode findForDownloadOrCopyRight(Account actor, User owner, Thread workGroup, String workGroupNodeUuid) throws BusinessException;
+	WorkGroupNode findForDownloadOrCopyRight(Account actor, User owner, WorkGroup workGroup, String workGroupNodeUuid) throws BusinessException;
 
-	void markAsCopied(Account actor, Account owner, Thread workGroup, WorkGroupNode wgNode, CopyMto copiedTo) throws BusinessException; 
+	void markAsCopied(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode wgNode, CopyMto copiedTo) throws BusinessException; 
 
 	String findWorkGroupUuid(Account actor, User owner, String workGroupNodeUuid) throws BusinessException;
 
-	WorkGroupNode create(Account actor, User owner, Thread workGroup, WorkGroupNode workGroupNode, Boolean strict, Boolean dryRun)
+	WorkGroupNode create(Account actor, User owner, WorkGroup workGroup, WorkGroupNode workGroupNode, Boolean strict, Boolean dryRun)
 			throws BusinessException;
 
-	WorkGroupNode copy(Account actor, User owner, Thread toWorkGroup, String toNodeUuid, CopyResource cr) throws BusinessException;
+	WorkGroupNode copy(Account actor, User owner, WorkGroup toWorkGroup, String toNodeUuid, CopyResource cr) throws BusinessException;
 
-	WorkGroupNode copy(Account actor, User owner, Thread fromWorkGroup, String fromNodeUuid, Thread toWorkGroup,
+	WorkGroupNode copy(Account actor, User owner, WorkGroup fromWorkGroup, String fromNodeUuid, WorkGroup toWorkGroup,
 			String toNodeUuid) throws BusinessException;
 
-	WorkGroupNode create(Account actor, User owner, Thread workGroup, File tempFile, String fileName,
+	WorkGroupNode create(Account actor, User owner, WorkGroup workGroup, File tempFile, String fileName,
 			String parentNodeUuid, Boolean strict) throws BusinessException;
 
-	WorkGroupNode update(Account actor, User owner, Thread workGroup, WorkGroupNode workGroupNode)
+	WorkGroupNode update(Account actor, User owner, WorkGroup workGroup, WorkGroupNode workGroupNode)
 			throws BusinessException;
 
-	WorkGroupNode delete(Account actor, User owner, Thread workGroup, String workGroupNodeUuid)
+	WorkGroupNode delete(Account actor, User owner, WorkGroup workGroup, String workGroupNodeUuid)
 			throws BusinessException;
 
-	FileAndMetaData download(Account actor, User owner, Thread workGroup, String workGroupNodeUuid)
+	FileAndMetaData download(Account actor, User owner, WorkGroup workGroup, String workGroupNodeUuid)
 			throws BusinessException;
 
-	FileAndMetaData thumbnail(Account actor, User owner, Thread workGroup, String workGroupNodeUuid, ThumbnailType kind)
+	FileAndMetaData thumbnail(Account actor, User owner, WorkGroup workGroup, String workGroupNodeUuid, ThumbnailType kind)
 			throws BusinessException;
 
-	WorkGroupNode getRootFolder(Account actor, User owner, Thread workGroup);
+	WorkGroupNode getRootFolder(Account actor, User owner, WorkGroup workGroup);
 
 }

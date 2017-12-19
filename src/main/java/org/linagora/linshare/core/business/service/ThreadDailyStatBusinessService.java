@@ -38,13 +38,13 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.ThreadDailyStat;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 
 public interface ThreadDailyStatBusinessService {
 
-	ThreadDailyStat create(Thread thread, Long currentUsedSpace, Date date);
+	ThreadDailyStat create(WorkGroup thread, Long currentUsedSpace, Date date);
 
-	List<ThreadDailyStat> findBetweenTwoDates(Thread thread, Date beginDate, Date endDate);
+	List<ThreadDailyStat> findBetweenTwoDates(WorkGroup thread, Date beginDate, Date endDate);
 
 	void deleteBeforeDate(Date date);
 

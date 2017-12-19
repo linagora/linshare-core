@@ -45,7 +45,7 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.AuditLogEntryResourceAccessControl;
@@ -129,7 +129,7 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 	}
 
 	@Override
-	public Set<AuditLogEntryUser> findAll(Account actor, Account owner, Thread workGroup, WorkGroupNode workGroupNode,
+	public Set<AuditLogEntryUser> findAll(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode,
 			List<String> action, List<String> type, String beginDate, String endDate) {
 		Validate.notNull(actor);
 		Validate.notNull(owner);

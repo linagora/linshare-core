@@ -38,14 +38,14 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.rac.ThreadResourceAccessControl;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 
 public class ThreadResourceAccessControlImpl extends
-		AbstractResourceAccessControlImpl<Account, Account, Thread> implements
+		AbstractResourceAccessControlImpl<Account, Account, WorkGroup> implements
 		ThreadResourceAccessControl {
 
 	private final ThreadMemberRepository threadMemberRepository;
@@ -58,7 +58,7 @@ public class ThreadResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected Account getOwner(Thread entry, Object... opt) {
+	protected Account getOwner(WorkGroup entry, Object... opt) {
 		Account owner = null;
 		if (opt != null && opt.length > 0) {
 			if (opt[0] instanceof Account) {
@@ -70,7 +70,7 @@ public class ThreadResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasReadPermission(Account authUser, Account actor,
-			Thread entry, Object... opt) {
+			WorkGroup entry, Object... opt) {
 		Validate.notNull(authUser);
 		Validate.notNull(actor);
 		Validate.notNull(entry);
@@ -87,7 +87,7 @@ public class ThreadResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasListPermission(Account authUser, Account actor,
-			Thread entry, Object... opt) {
+			WorkGroup entry, Object... opt) {
 		Validate.notNull(authUser);
 		// Owner is always null, because threads have not actor.
 
@@ -103,8 +103,9 @@ public class ThreadResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasDeletePermission(Account authUser, Account actor,
-			Thread entry, Object... opt) {
+			WorkGroup entry, Object... opt) {
 		Validate.notNull(authUser);
+
 		Validate.notNull(entry);
 		// Owner is always null, because threads have not actor.
 
@@ -120,7 +121,7 @@ public class ThreadResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasCreatePermission(Account authUser, Account actor,
-			Thread entry, Object... opt) {
+			WorkGroup entry, Object... opt) {
 		Validate.notNull(authUser);
 		// Owner is always null, because threads do not have actor.
 
@@ -143,8 +144,9 @@ public class ThreadResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasUpdatePermission(Account authUser, Account actor,
-			Thread entry, Object... opt) {
+			WorkGroup entry, Object... opt) {
 		Validate.notNull(authUser);
+
 		Validate.notNull(entry);
 		// Owner is always null, because threads have not actor.
 
@@ -159,18 +161,18 @@ public class ThreadResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected String getEntryRepresentation(Thread entry) {
+	protected String getEntryRepresentation(WorkGroup entry) {
 		return '(' + entry.getLsUuid() + ')';
 	}
 
-	private boolean isUserMember(Account user, Thread thread) {
+	private boolean isUserMember(Account user, WorkGroup thread) {
 		boolean ret = threadMemberRepository.findUserThreadMember(thread,
 				(User) user) != null;
 		logger.debug(user + " member of " + thread + " : " + ret);
 		return ret;
 	}
 
-	private boolean isUserAdmin(Account user, Thread thread) {
+	private boolean isUserAdmin(Account user, WorkGroup thread) {
 		boolean ret = threadMemberRepository.isUserAdmin((User) user, thread);
 		logger.debug(user + " admin of " + thread + " : " + ret);
 		return ret;

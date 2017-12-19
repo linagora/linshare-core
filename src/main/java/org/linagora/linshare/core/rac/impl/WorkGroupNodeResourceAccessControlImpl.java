@@ -37,9 +37,9 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.PermissionType;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.WorkGroupNodeResourceAccessControl;
@@ -71,7 +71,7 @@ public class WorkGroupNodeResourceAccessControlImpl
 
 	@Override
 	protected Account getOwner(WorkGroupNode entry, Object... opt) {
-		Thread workGroup = threadRepository.findByLsUuid(entry.getWorkGroup());
+		WorkGroup workGroup = threadRepository.findByLsUuid(entry.getWorkGroup());
 		return workGroup;
 	}
 
@@ -156,8 +156,8 @@ public class WorkGroupNodeResourceAccessControlImpl
 			return hasPermission(authUser,
 					TechnicalAccountPermissionType.THREAD_ENTRIES_GET);
 		}
-		if (opt.length > 0 && opt[0] instanceof Thread) {
-			return threadMemberRepository.findUserThreadMember((Thread) opt[0],
+		if (opt.length > 0 && opt[0] instanceof WorkGroup) {
+			return threadMemberRepository.findUserThreadMember((WorkGroup) opt[0],
 					(User) actor) != null;
 		}
 		return false;
@@ -172,8 +172,8 @@ public class WorkGroupNodeResourceAccessControlImpl
 			return hasPermission(authUser,
 					TechnicalAccountPermissionType.THREAD_ENTRIES_LIST);
 		}
-		if (opt.length > 0 && opt[0] instanceof Thread) {
-			return threadMemberRepository.findUserThreadMember((Thread) opt[0],
+		if (opt.length > 0 && opt[0] instanceof WorkGroup) {
+			return threadMemberRepository.findUserThreadMember((WorkGroup) opt[0],
 					(User) actor) != null;
 		}
 		return false;
@@ -188,8 +188,8 @@ public class WorkGroupNodeResourceAccessControlImpl
 			return hasPermission(authUser,
 					TechnicalAccountPermissionType.THREAD_ENTRIES_DELETE);
 		}
-		if (opt.length > 0 && opt[0] instanceof Thread) {
-			WorkgroupMember member = threadMemberRepository.findUserThreadMember((Thread) opt[0],
+		if (opt.length > 0 && opt[0] instanceof WorkGroup) {
+			WorkgroupMember member = threadMemberRepository.findUserThreadMember((WorkGroup) opt[0],
 					(User) actor);
 			if (member != null && member.getAdmin()) {
 				return true;
@@ -207,8 +207,8 @@ public class WorkGroupNodeResourceAccessControlImpl
 			return hasPermission(authUser,
 					TechnicalAccountPermissionType.THREAD_ENTRIES_CREATE);
 		}
-		if (opt.length > 0 && opt[0] instanceof Thread) {
-			WorkgroupMember member = threadMemberRepository.findUserThreadMember((Thread) opt[0],
+		if (opt.length > 0 && opt[0] instanceof WorkGroup) {
+			WorkgroupMember member = threadMemberRepository.findUserThreadMember((WorkGroup) opt[0],
 					(User) actor);
 			if (member != null && member.getCanUpload()) {
 				return true;
@@ -244,8 +244,8 @@ public class WorkGroupNodeResourceAccessControlImpl
 			return hasPermission(authUser,
 					TechnicalAccountPermissionType.THREAD_ENTRIES_DOWNLOAD);
 		}
-		if (opt.length > 0 && opt[0] instanceof Thread) {
-			WorkgroupMember member = threadMemberRepository.findUserThreadMember((Thread) opt[0],
+		if (opt.length > 0 && opt[0] instanceof WorkGroup) {
+			WorkgroupMember member = threadMemberRepository.findUserThreadMember((WorkGroup) opt[0],
 					(User) actor);
 			if (member != null) {
 				return true;
@@ -263,8 +263,8 @@ public class WorkGroupNodeResourceAccessControlImpl
 			return hasPermission(authUser,
 					TechnicalAccountPermissionType.THREAD_ENTRIES_DOWNLOAD_THUMBNAIL);
 		}
-		if (opt.length > 0 && opt[0] instanceof Thread) {
-			WorkgroupMember member = threadMemberRepository.findUserThreadMember((Thread) opt[0],
+		if (opt.length > 0 && opt[0] instanceof WorkGroup) {
+			WorkgroupMember member = threadMemberRepository.findUserThreadMember((WorkGroup) opt[0],
 					(User) actor);
 			if (member != null) {
 				return true;

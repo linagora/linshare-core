@@ -36,9 +36,9 @@ package org.linagora.linshare.core.repository;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 
 public interface ThreadMemberRepository extends AbstractRepository<WorkgroupMember> {
 
@@ -90,7 +90,7 @@ public interface ThreadMemberRepository extends AbstractRepository<WorkgroupMemb
 	 * @param thread
 	 * @return true if user is admin of the thread
 	 */
-	boolean isUserAdmin(User user, Thread thread);
+	boolean isUserAdmin(User user, WorkGroup thread);
 
 	/**
 	 * Count the amount of members in the thread
@@ -98,7 +98,7 @@ public interface ThreadMemberRepository extends AbstractRepository<WorkgroupMemb
 	 * @param thread
 	 * @return the amount of members
 	 */
-	public long count(Thread thread);
+	public long count(WorkGroup thread);
 
 	/**
 	 * Find members with no deleted accounts
@@ -106,8 +106,9 @@ public interface ThreadMemberRepository extends AbstractRepository<WorkgroupMemb
 	 * @param thread
 	 * @return the List of ThreadMember
 	 */
-	public List<WorkgroupMember> findAllThreadMembers(Thread thread);
-	public List<String> findAllAccountUuidForThreadMembers(Thread thread);
+	public List<WorkgroupMember> findAllThreadMembers(WorkGroup workGroup);
+
+	public List<String> findAllAccountUuidForThreadMembers(WorkGroup workGroup);
 
 	/**
 	 * Find members with deleted accounts
@@ -115,5 +116,5 @@ public interface ThreadMemberRepository extends AbstractRepository<WorkgroupMemb
 	 * @param thread
 	 * @return the List of ThreadMember
 	 */
-	public List<WorkgroupMember> findAllInconsistentThreadMembers(Thread thread);
+	public List<WorkgroupMember> findAllInconsistentThreadMembers(WorkGroup workGroup);
 }

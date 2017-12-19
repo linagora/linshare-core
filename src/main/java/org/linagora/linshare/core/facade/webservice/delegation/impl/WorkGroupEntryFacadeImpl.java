@@ -45,7 +45,7 @@ import org.linagora.linshare.core.domain.constants.TargetKind;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -93,7 +93,7 @@ public class WorkGroupEntryFacadeImpl extends DelegationGenericFacadeImpl
 
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		Thread thread = threadService.find(actor, owner, threadUuid);
+		WorkGroup thread = threadService.find(actor, owner, threadUuid);
 		WorkGroupNode node = workGroupNodeService.create(actor, owner, thread, file, fileName, null, false);
 		WorkGroupEntryDto dto = new WorkGroupEntryDto((WorkGroupDocument)node);
 		// why ?
@@ -113,7 +113,7 @@ public class WorkGroupEntryFacadeImpl extends DelegationGenericFacadeImpl
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 		// Check if we have the right to access to the specified thread
-		Thread workGroup = threadService.find(actor, owner, threadUuid);
+		WorkGroup workGroup = threadService.find(actor, owner, threadUuid);
 		// Check if we have the right to download the specified document entry
 		DocumentEntry de = documentEntryService.findForDownloadOrCopyRight(actor, owner, entryUuid);
 		CopyResource cr = new CopyResource(TargetKind.PERSONAL_SPACE, de);
@@ -132,7 +132,7 @@ public class WorkGroupEntryFacadeImpl extends DelegationGenericFacadeImpl
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 		// Check if we have the right to access to the specified thread
-		Thread workGroup = threadService.find(actor, owner, threadUuid);
+		WorkGroup workGroup = threadService.find(actor, owner, threadUuid);
 		WorkGroupNode node = workGroupNodeService.find(actor, owner, workGroup, entryUuid, false);
 		WorkGroupEntryDto dto = new WorkGroupEntryDto((WorkGroupDocument)node);
 		return dto;
@@ -148,7 +148,7 @@ public class WorkGroupEntryFacadeImpl extends DelegationGenericFacadeImpl
 		User owner = getOwner(ownerUuid);
 
 		// Check if we have the right to access to the specified thread
-		Thread workGroup = threadService.find(actor, owner, threadUuid);
+		WorkGroup workGroup = threadService.find(actor, owner, threadUuid);
 		List<WorkGroupNode> all = workGroupNodeService.findAll(actor, owner, workGroup, null, true, null);
 		List<WorkGroupEntryDto> ret = Lists.newArrayList();
 		for (WorkGroupNode node : all) {
@@ -175,7 +175,7 @@ public class WorkGroupEntryFacadeImpl extends DelegationGenericFacadeImpl
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 		// Check if we have the right to access to the specified thread
-		Thread workGroup = threadService.find(actor, owner, threadUuid);
+		WorkGroup workGroup = threadService.find(actor, owner, threadUuid);
 		WorkGroupNode node = workGroupNodeService.delete(actor, owner, workGroup, uuid);
 		WorkGroupEntryDto dto = new WorkGroupEntryDto((WorkGroupDocument)node);
 		return dto;
@@ -189,7 +189,7 @@ public class WorkGroupEntryFacadeImpl extends DelegationGenericFacadeImpl
 		Validate.notEmpty(entryUuid, "Missing required entry uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		Thread workGroup = threadService.find(actor, owner, threadUuid);
+		WorkGroup workGroup = threadService.find(actor, owner, threadUuid);
 		FileAndMetaData data = workGroupNodeService.download(actor, owner, workGroup, entryUuid);
 		ResponseBuilder builder = DocumentStreamReponseBuilder.getDocumentResponseBuilder(data);
 		return builder.build();
@@ -206,7 +206,7 @@ public class WorkGroupEntryFacadeImpl extends DelegationGenericFacadeImpl
 		}
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		Thread workGroup = threadService.find(actor, owner, threadEntryUuid);
+		WorkGroup workGroup = threadService.find(actor, owner, threadEntryUuid);
 		FileAndMetaData data = workGroupNodeService.thumbnail(actor, owner, workGroup, threadEntryUuid, kind);
 		ResponseBuilder builder = DocumentStreamReponseBuilder
 				.getThumbnailResponseBuilder(data, false, kind);
@@ -223,7 +223,7 @@ public class WorkGroupEntryFacadeImpl extends DelegationGenericFacadeImpl
 		Validate.notNull(threadEntryDto, "Missing required threadEntryDto");
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		Thread workGroup = threadService.find(actor, owner, threadUuid);
+		WorkGroup workGroup = threadService.find(actor, owner, threadUuid);
 		WorkGroupDocument document = new WorkGroupDocument();
 		document.setUuid(threadEntryDto.getUuid());
 		document.setName(threadEntryDto.getName());

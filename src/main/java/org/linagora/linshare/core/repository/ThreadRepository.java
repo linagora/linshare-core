@@ -37,10 +37,10 @@ package org.linagora.linshare.core.repository;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.User;
 
-public interface ThreadRepository extends AccountRepository<Thread> {
+public interface ThreadRepository extends AccountRepository<WorkGroup> {
 
 	/**
 	 * Find all Thread where the actor is member
@@ -48,7 +48,7 @@ public interface ThreadRepository extends AccountRepository<Thread> {
 	 * @param actor
 	 * @return the list of Thread where actor is member
 	 */
-	List<Thread> findAllWhereMember(User actor);
+	List<WorkGroup> findAllWhereMember(User actor);
 	
 	/**
 	 * Find all Thread where the actor is admin
@@ -56,7 +56,7 @@ public interface ThreadRepository extends AccountRepository<Thread> {
 	 * @param actor
 	 * @return the list of Thread where actor is admin
 	 */
-	List<Thread> findAllWhereAdmin(User actor);
+	List<WorkGroup> findAllWhereAdmin(User actor);
 
 	/**
 	 * Find all Thread where the actor can upload
@@ -64,7 +64,7 @@ public interface ThreadRepository extends AccountRepository<Thread> {
 	 * @param actor
 	 * @return the list of Thread where actor can upload
 	 */
-	List<Thread> findAllWhereCanUpload(User actor);
+	List<WorkGroup> findAllWhereCanUpload(User actor);
 	
 	/**
 	 * Find all threads modified by the actor on last 15 days
@@ -72,15 +72,15 @@ public interface ThreadRepository extends AccountRepository<Thread> {
 	 * @param limit
 	 * @return List<Thread>
 	 */
-	List<Thread> findLatestWhereMember(User actor, int limit);
+	List<WorkGroup> findLatestWhereMember(User actor, int limit);
 
-	public List<Thread> searchByName(User actor, String pattern);
+	public List<WorkGroup> searchByName(User actor, String pattern);
 
-	public List<Thread> searchAmongMembers(User actor, String pattern);
+	public List<WorkGroup> searchAmongMembers(User actor, String pattern);
 
 	List<String> findAllThreadToUpgrade();
 
-	Thread setAsUpgraded(Thread entity);
+	WorkGroup setAsUpgraded(WorkGroup entity);
 
 	List<String> findAllThreadUuid();
 

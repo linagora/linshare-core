@@ -45,7 +45,7 @@ import org.linagora.linshare.core.business.service.ThreadDailyStatBusinessServic
 import org.linagora.linshare.core.business.service.ThreadWeeklyStatisticBusinessService;
 import org.linagora.linshare.core.domain.constants.BatchType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.AccountBatchResultContext;
@@ -89,7 +89,7 @@ public class StatisticWeeklyThreadBatchImpl extends GenericBatchImpl {
 	@Override
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
-		Thread resource = threadService.findByLsUuidUnprotected(identifier);
+		WorkGroup resource = threadService.findByLsUuidUnprotected(identifier);
 		ResultContext context = new AccountBatchResultContext(resource);
 		try {
 			console.logInfo(batchRunContext, total, position, "processing thread : " + resource.getAccountRepresentation());

@@ -36,9 +36,9 @@ package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
-import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.ThreadMemberFacade;
@@ -76,7 +76,7 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notEmpty(dto.getUserDomainId(), "thread member domain id must be set.");
 		Validate.notEmpty(dto.getUserMail(), "thread member mail must be set.");
 
-		Thread thread = threadService.find(actor, actor, dto.getThreadUuid());
+		WorkGroup thread = threadService.find(actor, actor, dto.getThreadUuid());
 		User user = (User) accountService.findByLsUuid(dto.getUserUuid());
 		if (user == null) {
 			user = userService.findOrCreateUser(dto.getUserMail(),

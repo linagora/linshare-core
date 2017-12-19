@@ -46,7 +46,7 @@ import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.LogEntry;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -113,8 +113,8 @@ public class ThreadToWorkgroupUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 	@Override
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
-		Thread workGroup = threadRepository.findByLsUuid(identifier);
-		BatchResultContext<Thread> res = new BatchResultContext<Thread>(workGroup);
+		WorkGroup workGroup = threadRepository.findByLsUuid(identifier);
+		BatchResultContext<WorkGroup> res = new BatchResultContext<WorkGroup>(workGroup);
 		if (workGroup == null) {
 			res.setIdentifier(identifier);
 			return res;
@@ -201,7 +201,7 @@ public class ThreadToWorkgroupUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 		return b.toString();
 	}
 
-	protected WorkGroupNode getRootFolder(AccountMto author, Thread workGroup) {
+	protected WorkGroupNode getRootFolder(AccountMto author, WorkGroup workGroup) {
 		WorkGroupNode wgnParent = null;
 		String workGroupUuid = workGroup.getLsUuid();
 		List<WorkGroupNode> results = repository.findByWorkGroupAndParent(workGroupUuid, workGroupUuid);

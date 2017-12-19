@@ -57,7 +57,7 @@ import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.domain.entities.OperationHistory;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.ThreadDailyStat;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserDailyStat;
@@ -146,8 +146,8 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 		List<String> listThreadIdentifier = dailyThreadBatch.getAll(batchRunContext);
 		assertEquals(2, listThreadIdentifier.size());
 
-		Thread thread1 = (Thread) accountRepository.findByLsUuid(listThreadIdentifier.get(0));
-		Thread thread2 = (Thread) accountRepository.findByLsUuid(listThreadIdentifier.get(1));
+		WorkGroup thread1 = (WorkGroup) accountRepository.findByLsUuid(listThreadIdentifier.get(0));
+		WorkGroup thread2 = (WorkGroup) accountRepository.findByLsUuid(listThreadIdentifier.get(1));
 
 		List<OperationHistory> listOperationHistory = operationHistoryBusinessService.find(thread1, null, null, new Date());
 		assertEquals(3, listOperationHistory.size());

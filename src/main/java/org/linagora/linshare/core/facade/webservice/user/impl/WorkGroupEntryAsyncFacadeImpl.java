@@ -37,7 +37,7 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.TargetKind;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -82,7 +82,7 @@ public class WorkGroupEntryAsyncFacadeImpl extends GenericAsyncFacadeImpl implem
 				"Missing required file (check parameter named file)");
 		Validate.notEmpty(tetc.getThreadUuid(), "Missing required thread uuid");
 		Validate.notEmpty(tetc.getFileName(), "Missing required file name");
-		Thread thread = threadService.find(actor, owner, tetc.getThreadUuid());
+		WorkGroup thread = threadService.find(actor, owner, tetc.getThreadUuid());
 		if (thread == null) {
 			throw new BusinessException(BusinessErrorCode.THREAD_NOT_FOUND,
 					"Current thread was not found : " + tetc.getThreadUuid());
@@ -102,7 +102,7 @@ public class WorkGroupEntryAsyncFacadeImpl extends GenericAsyncFacadeImpl implem
 		Validate.notEmpty(tetc.getThreadUuid(), "Missing required thread uuid");
 		Validate.notEmpty(tetc.getDocEntryUuid(), "Missing required document entry uuid");
 		// Check if we have the right to access to the specified thread
-		Thread thread = threadService.find(actor, owner, tetc.getThreadUuid());
+		WorkGroup thread = threadService.find(actor, owner, tetc.getThreadUuid());
 		// Check if we have the right to download the specified document entry
 		DocumentEntry de = documentEntryService.findForDownloadOrCopyRight(actor, owner, tetc.getDocEntryUuid());
 		CopyResource cr = new CopyResource(TargetKind.PERSONAL_SPACE, de);

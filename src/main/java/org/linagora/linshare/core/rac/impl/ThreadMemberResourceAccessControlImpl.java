@@ -36,9 +36,9 @@ package org.linagora.linshare.core.rac.impl;
 
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.rac.ThreadMemberResourceAccessControl;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -80,8 +80,8 @@ public class ThreadMemberResourceAccessControlImpl extends
 			return hasPermission(authUser,
 					TechnicalAccountPermissionType.THREAD_MEMBERS_LIST);
 		}
-		if (opt.length > 0 && opt[0] instanceof Thread) {
-			return threadMemberRepository.findUserThreadMember((Thread) opt[0],
+		if (opt.length > 0 && opt[0] instanceof WorkGroup) {
+			return threadMemberRepository.findUserThreadMember((WorkGroup) opt[0],
 					(User) actor) != null;
 		}
 		return false;
@@ -116,10 +116,10 @@ public class ThreadMemberResourceAccessControlImpl extends
 					TechnicalAccountPermissionType.THREAD_MEMBERS_CREATE);
 		}
 		// entry is the object to be created. Can not be used to check if the
-		// current actor is admin.
-		if (opt.length > 0 && opt[0] instanceof Thread) {
+		// current owner is admin.
+		if (opt.length > 0 && opt[0] instanceof WorkGroup) {
 			WorkgroupMember member = threadMemberRepository.findUserThreadMember(
-					(Thread) opt[0], (User) actor);
+					(WorkGroup) opt[0], (User) actor);
 			if (member != null) {
 				return member.getAdmin();
 			}

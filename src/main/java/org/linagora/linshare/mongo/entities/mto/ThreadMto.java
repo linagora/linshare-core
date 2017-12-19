@@ -35,7 +35,7 @@ package org.linagora.linshare.mongo.entities.mto;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 
 import com.google.common.collect.Lists;
@@ -51,7 +51,7 @@ public class ThreadMto {
 	public ThreadMto() {
 	}
 
-	public ThreadMto(Thread thread, boolean light) {
+	public ThreadMto(WorkGroup thread, boolean light) {
 		this.setName(thread.getName());
 		this.setUuid(thread.getLsUuid());
 		if (!light) {

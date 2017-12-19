@@ -49,14 +49,14 @@ public class WorkgroupMember {
 
 	private User user;
 
-	private Thread thread;
+	private WorkGroup thread;
 
 	public WorkgroupMember() {
 		super();
 	}
 
 	public WorkgroupMember(boolean canUpload, boolean admin, User user,
-			Thread thread) {
+			WorkGroup thread) {
 		super();
 		this.canUpload = canUpload;
 		this.admin = admin;
@@ -106,7 +106,7 @@ public class WorkgroupMember {
 		return modificationDate;
 	}
 
-	public Thread getThread() {
+	public WorkGroup getThread() {
 		return thread;
 	}
 
@@ -118,7 +118,7 @@ public class WorkgroupMember {
 		this.user = user;
 	}
 
-	public void setThread(Thread thread) {
+	public void setThread(WorkGroup thread) {
 		this.thread = thread;
 	}
 

@@ -36,58 +36,59 @@ package org.linagora.linshare.core.service;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface ThreadService {
 	
-	Thread find(Account actor, Account owner, String uuid);
+	WorkGroup find(Account actor, Account owner, String uuid);
 
-	List<Thread> findAll(Account actor, Account owner);
+	List<WorkGroup> findAll(Account actor, Account owner);
 
-	Thread create(Account actor, Account owner, String name) throws BusinessException;
+	WorkGroup create(Account actor, Account owner, String name) throws BusinessException;
 	
 	WorkgroupMember getThreadMemberById(long id) throws BusinessException;
-	
-	WorkgroupMember getMemberFromUser(Thread thread, User user) throws BusinessException;
 
-	List<WorkgroupMember> findAllThreadMembers(Account actor, User owner, Thread thread) throws BusinessException;
+	WorkgroupMember getMemberFromUser(WorkGroup workGroup, User user) throws BusinessException;
 
-	List<Thread> findAllWhereMember(User user);
-	
-	List<Thread> findAllWhereAdmin(User user);
+	List<WorkgroupMember> findAllThreadMembers(Account actor, User owner, WorkGroup workGroup) throws BusinessException;
 
-	List<Thread> findAllWhereCanUpload(User user);
+	List<WorkGroup> findAllWhereMember(User user);
 	
-	List<Thread> findLatestWhereMember(User actor, int limit);
+	List<WorkGroup> findAllWhereAdmin(User user);
+
+	List<WorkGroup> findAllWhereCanUpload(User user);
+	
+	List<WorkGroup> findLatestWhereMember(User actor, int limit);
 
 	boolean hasAnyWhereAdmin(User user);
 
-	boolean isUserAdmin(User user, Thread thread);
+	boolean isUserAdmin(User user, WorkGroup thread);
 
-	long countMembers(Thread thread);
+	long countMembers(WorkGroup thread);
 
-	WorkgroupMember addMember(Account actor, Account owner, Thread thread, User user, boolean admin, boolean canUpload) throws BusinessException;
+	WorkgroupMember addMember(Account actor, Account owner, WorkGroup workGroup, User user, boolean admin, boolean canUpload) throws BusinessException;
 
 	WorkgroupMember updateMember(Account actor, Account owner, String threadUuid, String userUuid, boolean admin, boolean canUpload) throws BusinessException;
 
 	WorkgroupMember deleteMember(Account actor, Account owner, String threadUuid, String memberUuid) throws BusinessException;
 
-	void deleteAllMembers(Account actor, Thread thread) throws BusinessException;
+	void deleteAllMembers(Account actor, WorkGroup thread) throws BusinessException;
 
 	void deleteAllUserMemberships(Account actor, User user) throws BusinessException;
 
-	void deleteThread(User actor, Account owner, Thread thread) throws BusinessException;
+	void deleteThread(User actor, Account owner, WorkGroup thread) throws BusinessException;
 
-	Thread update(User actor, Account owner, String threadUuid, String threadName) throws BusinessException;
+	WorkGroup update(User actor, Account owner, String threadUuid, String threadName) throws BusinessException;
 
-	List<Thread> searchByName(User actor, String pattern);
+	List<WorkGroup> searchByName(User actor, String pattern);
 
-	List<Thread> searchByMembers(User actor, String pattern);
+	List<WorkGroup> searchByMembers(User actor, String pattern);
 
-	Thread findByLsUuidUnprotected(String uuid);
+	WorkGroup findByLsUuidUnprotected(String uuid);
 
-	List<WorkgroupMember> findAllInconsistentMembers(Account actor, User owner, Thread thread);
+	List<WorkgroupMember> findAllInconsistentMembers(Account actor, User owner, WorkGroup workGroup);
+
 }

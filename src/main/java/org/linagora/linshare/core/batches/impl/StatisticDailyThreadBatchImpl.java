@@ -45,7 +45,7 @@ import org.linagora.linshare.core.domain.constants.BatchType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.AccountBatchResultContext;
@@ -92,7 +92,7 @@ public class StatisticDailyThreadBatchImpl extends GenericBatchWithHistoryImpl {
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		Date yesterday = getYesterdayEnd();
-		Thread resource = threadService.findByLsUuidUnprotected(identifier);
+		WorkGroup resource = threadService.findByLsUuidUnprotected(identifier);
 		ResultContext context = new AccountBatchResultContext(resource);
 		try {
 			console.logInfo(batchRunContext, total, position, "processing workgroup : " + resource.getAccountRepresentation());

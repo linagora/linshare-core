@@ -37,9 +37,9 @@ package org.linagora.linshare.core.facade.webservice.delegation.impl;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupMemberDto;
 import org.linagora.linshare.core.facade.webservice.delegation.WorkgroupMemberFacade;
@@ -72,7 +72,7 @@ public class WorkgroupMemberFacadeImpl extends DelegationGenericFacadeImpl
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		User authActor = checkAuthentication();
 		User actor = getOwner(actorUuid);
-		Thread thread = threadService.find(authActor, actor, threadUuid);
+		WorkGroup thread = threadService.find(authActor, actor, threadUuid);
 		List<WorkGroupMemberDto> res = Lists.newArrayList();
 
 		for (WorkgroupMember m : threadService.findAllThreadMembers(authActor, actor, thread)) {
@@ -92,7 +92,7 @@ public class WorkgroupMemberFacadeImpl extends DelegationGenericFacadeImpl
 		User authActor = checkAuthentication();
 		User actor = getOwner(actorUuid);
 		User user = userService.findOrCreateUser(mail, domainId);
-		Thread thread = threadService.find(authActor, actor, threadUuid);
+		WorkGroup thread = threadService.find(authActor, actor, threadUuid);
 		return new WorkGroupMemberDto(threadService.addMember(authActor, actor,
 				thread, user, admin, !readonly));
 	}

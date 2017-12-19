@@ -41,7 +41,7 @@ public class ThreadMonthlyStat extends AccountStatistic {
 		super();
 	}
 
-	public ThreadMonthlyStat(Thread thread, AbstractDomain domain, AbstractDomain parentDomain, Long operationCount,
+	public ThreadMonthlyStat(WorkGroup thread, AbstractDomain domain, AbstractDomain parentDomain, Long operationCount,
 			Long deleteOperationCount, Long addOperationCount, Long addOperationSum, Long deleteOperationSum,
 			Long diffOperationSum, Long actualOperationSum) {
 		super(thread, domain, parentDomain, operationCount, deleteOperationCount, addOperationCount, addOperationSum,

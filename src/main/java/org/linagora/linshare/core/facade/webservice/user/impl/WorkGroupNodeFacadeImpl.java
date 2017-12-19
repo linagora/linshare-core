@@ -50,7 +50,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -119,7 +119,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(actor, ownerUuid);
-		Thread workGroup = threadService.find(actor, owner, workGroupUuid);
+		WorkGroup workGroup = threadService.find(actor, owner, workGroupUuid);
 		return service.findAll(actor, owner, workGroup, parentNodeUuid, flatDocumentMode, nodeType);
 	}
 
@@ -130,7 +130,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		Validate.notEmpty(workGroupNodeUuid, "Missing required workGroup folder uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(actor, ownerUuid);
-		Thread workGroup = threadService.find(actor, owner, workGroupUuid);
+		WorkGroup workGroup = threadService.find(actor, owner, workGroupUuid);
 		return service.find(actor, owner, workGroup, workGroupNodeUuid, withTree);
 	}
 
@@ -140,7 +140,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(actor, ownerUuid);
-		Thread workGroup = threadService.find(actor, owner, workGroupUuid);
+		WorkGroup workGroup = threadService.find(actor, owner, workGroupUuid);
 		return service.create(actor, owner, workGroup, workGroupNode, strict, dryRun);
 	}
 
@@ -152,7 +152,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		Validate.notNull(tempFile, "Missing required input temp file");
 		User actor = checkAuthentication();
 		User owner = getOwner(actor, ownerUuid);
-		Thread workGroup = threadService.find(actor, owner, workGroupUuid);
+		WorkGroup workGroup = threadService.find(actor, owner, workGroupUuid);
 		WorkGroupNode node = service.create(actor, owner, workGroup, tempFile, fileName, parentNodeUuid, strict);
 		return node;
 	}
@@ -167,7 +167,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		String fromResourceUuid = copy.getUuid();
 		Validate.notEmpty(fromResourceUuid, "Missing entry uuid to copy from");
 		Validate.notEmpty(workGroupUuid, "Missing workGroup uuid to copy into");
-		Thread toWorkGroup = threadService.find(actor, owner, workGroupUuid);
+		WorkGroup toWorkGroup = threadService.find(actor, owner, workGroupUuid);
 		if (TargetKind.RECEIVED_SHARE.equals(resourceKind)) {
 			// if the current user do have enough space, there is side effect on audit.
 			// Some audit traces will be created before quota checks ! :s
@@ -187,7 +187,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 			return Lists.newArrayList(node);
 		} else if (TargetKind.SHARED_SPACE.equals(resourceKind)) {
 			String fromWorkGroupUuid = service.findWorkGroupUuid(actor, owner, fromResourceUuid);
-			Thread fromWorkGroup = threadService.find(actor, owner, fromWorkGroupUuid);
+			WorkGroup fromWorkGroup = threadService.find(actor, owner, fromWorkGroupUuid);
 			WorkGroupNode node = service.copy(actor, owner, fromWorkGroup, fromResourceUuid, toWorkGroup, toParentNodeUuid);
 			return Lists.newArrayList(node);
 		}
@@ -204,7 +204,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		Validate.notEmpty(workGroupNode.getName(), "Missing required name");
 		User actor = checkAuthentication();
 		User owner = getOwner(actor, ownerUuid);
-		Thread workGroup = threadService.find(actor, owner, workGroupUuid);
+		WorkGroup workGroup = threadService.find(actor, owner, workGroupUuid);
 		return service.update(actor, owner, workGroup, workGroupNode);
 	}
 
@@ -214,7 +214,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(actor, ownerUuid);
-		Thread workGroup = threadService.find(actor, owner, workGroupUuid);
+		WorkGroup workGroup = threadService.find(actor, owner, workGroupUuid);
 		return service.delete(actor, owner, workGroup, workGroupNodeUuid);
 	}
 
@@ -226,7 +226,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		Validate.notEmpty(workGroupNode.getUuid(), "Missing required workGroup folder uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(actor, ownerUuid);
-		Thread workGroup = threadService.find(actor, owner, workGroupUuid);
+		WorkGroup workGroup = threadService.find(actor, owner, workGroupUuid);
 		return service.delete(actor, owner, workGroup, workGroupNode.getUuid());
 	}
 
@@ -237,7 +237,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		Validate.notEmpty(workGroupNodeUuid, "Missing required workGroup node uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(actor, ownerUuid);
-		Thread workGroup = threadService.find(actor, owner, workGroupUuid);
+		WorkGroup workGroup = threadService.find(actor, owner, workGroupUuid);
 		FileAndMetaData data = service.download(actor, owner, workGroup, workGroupNodeUuid);
 		ResponseBuilder builder = DocumentStreamReponseBuilder.getDocumentResponseBuilder(data);
 		return builder.build();
@@ -253,7 +253,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		Validate.notEmpty(workGroupNodeUuid, "Missing required workGroup node uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(actor, ownerUuid);
-		Thread workGroup = threadService.find(actor, owner, workGroupUuid);
+		WorkGroup workGroup = threadService.find(actor, owner, workGroupUuid);
 		FileAndMetaData data = service.thumbnail(actor, owner, workGroup, workGroupNodeUuid, thumbnailType);
 		ResponseBuilder builder = DocumentStreamReponseBuilder
 				.getThumbnailResponseBuilder(data, base64, thumbnailType);
@@ -265,7 +265,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 			List<String> actions, List<String> types, String beginDate, String endDate) {
 		Account actor = checkAuthentication();
 		User owner = (User) getOwner(actor, ownerUuid);
-		Thread workGroup = threadService.find(actor, owner, workGroupUuid);
+		WorkGroup workGroup = threadService.find(actor, owner, workGroupUuid);
 		WorkGroupNode workGroupNode = service.find(actor, owner, workGroup, workGroupNodeUuid, false);
 		return auditLogEntryService.findAll(actor, owner, workGroup, workGroupNode, actions, types, beginDate, endDate);
 	}

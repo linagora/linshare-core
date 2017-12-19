@@ -47,7 +47,7 @@ import org.linagora.linshare.core.business.service.DomainWeeklyStatBusinessServi
 import org.linagora.linshare.core.business.service.ThreadWeeklyStatisticBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DomainWeeklyStat;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.ThreadWeeklyStat;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserWeeklyStat;
@@ -119,7 +119,7 @@ public class WeeklyBatchTest extends AbstractTransactionalJUnit4SpringContextTes
 
 	@Test
 	public void test() {
-		Thread thread = threadRepository.findByLsUuid("aebe1b64-39c0-11e5-9fa8-080027b8274f");
+		WorkGroup thread = threadRepository.findByLsUuid("aebe1b64-39c0-11e5-9fa8-080027b8274f");
 		threadWeeklyStatBusinessService.create(thread, new GregorianCalendar(2042, 10, 1, 00, 00).getTime(),
 				new GregorianCalendar(2042, 10, 8, 00, 00).getTime());
 		userWeeklyStatBusinessService.create(jane, new GregorianCalendar(2042, 10, 9, 00, 00).getTime(), new GregorianCalendar(2042, 10, 17, 00, 00).getTime());

@@ -42,7 +42,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 
 
@@ -76,7 +76,7 @@ public class WorkGroupDocument extends WorkGroupNode {
 		this.nodeType = WorkGroupNodeType.DOCUMENT;
 	}
 
-	public WorkGroupDocument(Account author, String name, Document document, Thread workGroup,
+	public WorkGroupDocument(Account author, String name, Document document, WorkGroup workGroup,
 			WorkGroupNode nodeParent) {
 		super(new AccountMto(author, true), name, nodeParent.getUuid(), workGroup.getLsUuid());
 		this.size = document.getSize();

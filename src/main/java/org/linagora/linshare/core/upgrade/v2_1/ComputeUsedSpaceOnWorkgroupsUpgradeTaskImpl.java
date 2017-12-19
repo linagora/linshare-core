@@ -42,7 +42,7 @@ import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.BatchResultContext;
@@ -95,8 +95,8 @@ public class ComputeUsedSpaceOnWorkgroupsUpgradeTaskImpl extends GenericUpgradeT
 	@Override
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
-		Thread workGroup = threadRepository.findByLsUuid(identifier);
-		BatchResultContext<Thread> res = new BatchResultContext<Thread>(workGroup);
+		WorkGroup workGroup = threadRepository.findByLsUuid(identifier);
+		BatchResultContext<WorkGroup> res = new BatchResultContext<WorkGroup>(workGroup);
 		res.setProcessed(false);
 		if (workGroup == null)  {
 			res.setIdentifier(identifier);
@@ -118,8 +118,8 @@ public class ComputeUsedSpaceOnWorkgroupsUpgradeTaskImpl extends GenericUpgradeT
 	@Override
 	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		@SuppressWarnings("unchecked")
-		BatchResultContext<Thread> res = (BatchResultContext<Thread>) context;
-		Thread resource = res.getResource();
+		BatchResultContext<WorkGroup> res = (BatchResultContext<WorkGroup>) context;
+		WorkGroup resource = res.getResource();
 		if (res.getProcessed()) {
 			logInfo(batchRunContext, total, position, resource + " has been updated.");
 		} else {
@@ -131,8 +131,8 @@ public class ComputeUsedSpaceOnWorkgroupsUpgradeTaskImpl extends GenericUpgradeT
 	public void notifyError(BatchBusinessException exception, String identifier, long total, long position,
 			BatchRunContext batchRunContext) {
 		@SuppressWarnings("unchecked")
-		BatchResultContext<Thread> res = (BatchResultContext<Thread>) exception.getContext();
-		Thread resource = res.getResource();
+		BatchResultContext<WorkGroup> res = (BatchResultContext<WorkGroup>) exception.getContext();
+		WorkGroup resource = res.getResource();
 		console.logError(batchRunContext, total, position, "The upgrade task : " + resource + " failed.", batchRunContext);
 		logger.error("Error occured while updating the workGroup AccountQuota : "
 				+ resource +

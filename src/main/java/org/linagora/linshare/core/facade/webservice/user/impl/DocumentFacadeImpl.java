@@ -56,7 +56,7 @@ import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -324,7 +324,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 		} else if (TargetKind.SHARED_SPACE.equals(resourceKind)) {
 			String workgroupUuid = copy.getContextUuid();
 			Validate.notEmpty(workgroupUuid, "Missing workgroup uuid");
-			Thread workGroup = threadService.find(actor, owner, workgroupUuid);
+			WorkGroup workGroup = threadService.find(actor, owner, workgroupUuid);
 			WorkGroupNode node = workGroupNodeService.findForDownloadOrCopyRight(actor, owner, workGroup, resourceUuid);
 			if (node.getNodeType().equals(WorkGroupNodeType.DOCUMENT)) {
 				WorkGroupDocument wgDocument = (WorkGroupDocument) node;

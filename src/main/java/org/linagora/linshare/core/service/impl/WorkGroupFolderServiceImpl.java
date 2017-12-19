@@ -40,7 +40,7 @@ import java.util.UUID;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -81,7 +81,7 @@ public class WorkGroupFolderServiceImpl extends WorkGroupNodeAbstractServiceImpl
 	}
 
 	@Override
-	public WorkGroupNode create(Account actor, User owner, Thread workGroup, WorkGroupNode workGroupNode, WorkGroupNode nodeParent, Boolean strict, Boolean dryRun)
+	public WorkGroupNode create(Account actor, User owner, WorkGroup workGroup, WorkGroupNode workGroupNode, WorkGroupNode nodeParent, Boolean strict, Boolean dryRun)
 			throws BusinessException {
 		List<WorkGroupNode> node = repository.findByWorkGroupAndParentAndName(
 				workGroup.getLsUuid(),
@@ -116,7 +116,7 @@ public class WorkGroupFolderServiceImpl extends WorkGroupNodeAbstractServiceImpl
 	}
 
 	@Override
-	public WorkGroupNode delete(Account actor, User owner, Thread workGroup, WorkGroupNode workGroupNode)
+	public WorkGroupNode delete(Account actor, User owner, WorkGroup workGroup, WorkGroupNode workGroupNode)
 			throws BusinessException {
 		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DELETE,
 				AuditLogEntryType.WORKGROUP_FOLDER, workGroupNode, workGroup);

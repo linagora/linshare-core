@@ -39,9 +39,9 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate4.HibernateTemplate;
@@ -104,35 +104,33 @@ public class ThreadMemberRepositoryImpl extends
 	}
 
 	@Override
-	public boolean isUserAdmin(User user, Thread thread) {
+	public boolean isUserAdmin(User user, WorkGroup workGroup) {
 		DetachedCriteria det = DetachedCriteria.forClass(WorkgroupMember.class);
-
 		det.add(Restrictions.eq("user", user));
-		det.add(Restrictions.eq("thread", thread));
+		det.add(Restrictions.eq("thread", workGroup));
 		det.add(Restrictions.eq("admin", true));
 		return DataAccessUtils.singleResult(findByCriteria(det)) != null;
 	}
 
 	@Override
-	public long count(Thread thread) {
+	public long count(WorkGroup workGroup) {
 		DetachedCriteria det = DetachedCriteria.forClass(WorkgroupMember.class);
-
-		det.add(Restrictions.eq("thread", thread));
+		det.add(Restrictions.eq("thread", workGroup));
 		det.setProjection(Projections.rowCount());
 		return DataAccessUtils.longResult(findByCriteria(det));
 	}
 
 	@Override
-	public List<WorkgroupMember> findAllThreadMembers(Thread thread) {
+	public List<WorkgroupMember> findAllThreadMembers(WorkGroup workGroup) {
 		DetachedCriteria det = DetachedCriteria.forClass(WorkgroupMember.class);
 		det.createAlias("user", "member");
-		det.add(Restrictions.eq("thread", thread));
+		det.add(Restrictions.eq("thread", workGroup));
 		det.add(Restrictions.eq("member.destroyed", 0L));
 		return findByCriteria(det);
 	}
 
 	@Override
-	public List<String> findAllAccountUuidForThreadMembers(Thread thread) {
+	public List<String> findAllAccountUuidForThreadMembers(WorkGroup thread) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 		det.createAlias("user", "member");
 		det.add(Restrictions.eq("thread", thread));
@@ -144,10 +142,10 @@ public class ThreadMemberRepositoryImpl extends
 	}
 
 	@Override
-	public List<WorkgroupMember> findAllInconsistentThreadMembers(Thread thread) {
+	public List<WorkgroupMember> findAllInconsistentThreadMembers(WorkGroup workGroup) {
 		DetachedCriteria det = DetachedCriteria.forClass(WorkgroupMember.class);
 		det.createAlias("user", "member");
-		det.add(Restrictions.eq("thread", thread));
+		det.add(Restrictions.eq("thread", workGroup));
 		det.add(Restrictions.gt("member.destroyed", 0L));
 		return findByCriteria(det);
 	}

@@ -39,7 +39,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 
 import com.google.common.base.Function;
@@ -62,14 +62,14 @@ public class WorkGroupDto extends AccountDto {
 	@ApiModelProperty(value = "Members")
 	protected Set<WorkGroupMemberDto> members;
 
-	public WorkGroupDto(Thread thread) {
+	public WorkGroupDto(WorkGroup thread) {
 		super(thread, true);
 		this.name = thread.getName();
 	}
 
-	public WorkGroupDto(Thread thread, List<WorkgroupMember> members) {
-		super(thread, true);
-		this.name = thread.getName();
+	public WorkGroupDto(WorkGroup workGroup, List<WorkgroupMember> members) {
+		super(workGroup, true);
+		this.name = workGroup.getName();
 		this.members = Sets.newHashSet();
 		for (WorkgroupMember member : members) {
 			this.members.add(new WorkGroupMemberDto(member));
@@ -107,10 +107,10 @@ public class WorkGroupDto extends AccountDto {
 	/*
 	 * Transformers
 	 */
-	public static Function<Thread, WorkGroupDto> toDto() {
-		return new Function<Thread, WorkGroupDto>() {
+	public static Function<WorkGroup, WorkGroupDto> toDto() {
+		return new Function<WorkGroup, WorkGroupDto>() {
 			@Override
-			public WorkGroupDto apply(Thread arg0) {
+			public WorkGroupDto apply(WorkGroup arg0) {
 				return new WorkGroupDto(arg0);
 			}
 		};

@@ -43,7 +43,7 @@ import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
@@ -79,10 +79,10 @@ public interface DocumentEntryBusinessService {
 
 	public long getRelatedEntriesCount(DocumentEntry documentEntry);
 
-	WorkGroupDocument createWorkGroupDocument(Account actor, Thread workGroup, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl,
+	WorkGroupDocument createWorkGroupDocument(Account actor, WorkGroup workGroup, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl,
 			String mimeType, WorkGroupNode nodeParent) throws BusinessException;
 
-	WorkGroupDocument copy(Account actor, Thread toWorkGroup, WorkGroupNode nodeParent,
+	WorkGroupDocument copy(Account actor, WorkGroup toWorkGroup, WorkGroupNode nodeParent,
 			String documentUuid, String name, boolean ciphered)
 			throws BusinessException;
 

@@ -51,7 +51,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.OperationHistory;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -112,7 +112,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 	}
 
 	@Override
-	public WorkGroupNode create(Account actor, Account owner, Thread workgroup, File tempFile, String fileName, WorkGroupNode nodeParent)
+	public WorkGroupNode create(Account actor, Account owner, WorkGroup workgroup, File tempFile, String fileName, WorkGroupNode nodeParent)
 			throws BusinessException {
 		Validate.notNull(nodeParent);
 
@@ -161,7 +161,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 	}
 
 	@Override
-	public WorkGroupNode copy(Account actor, Account owner, Thread toWorkGroup, String documentUuid, String fileName,
+	public WorkGroupNode copy(Account actor, Account owner, WorkGroup toWorkGroup, String documentUuid, String fileName,
 			WorkGroupNode nodeParent, boolean ciphered, Long size, String fromNodeUuid, CopyMto copiedFrom) throws BusinessException {
 		Validate.notEmpty(documentUuid, "documentUuid is required.");
 		Validate.notEmpty(fileName, "fileName is required.");
@@ -182,7 +182,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 	}
 
 	@Override
-	public WorkGroupNode delete(Account actor, User owner, Thread workGroup, WorkGroupNode workGroupNode)
+	public WorkGroupNode delete(Account actor, User owner, WorkGroup workGroup, WorkGroupNode workGroupNode)
 			throws BusinessException {
 		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DELETE,
 				AuditLogEntryType.WORKGROUP_DOCUMENT, workGroupNode, workGroup);
@@ -196,7 +196,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 	}
 
 	@Override
-	public InputStream getDocumentStream(Account actor, Account owner, Thread workGroup, WorkGroupDocument node)
+	public InputStream getDocumentStream(Account actor, Account owner, WorkGroup workGroup, WorkGroupDocument node)
 			throws BusinessException {
 		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DOWNLOAD,
 				AuditLogEntryType.WORKGROUP_DOCUMENT, node, workGroup);
@@ -206,7 +206,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 	}
 
 	@Override
-	public void markAsCopied(Account actor, Account owner, Thread workGroup, WorkGroupNode node, CopyMto copiedTo)
+	public void markAsCopied(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode node, CopyMto copiedTo)
 			throws BusinessException {
 		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DOWNLOAD,
 				AuditLogEntryType.WORKGROUP_DOCUMENT, node, workGroup);
@@ -217,21 +217,21 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 	}
 
 	@Override
-	public InputStream getThumbnailStream(Account actor, Account owner, Thread workGroup, WorkGroupDocument node, ThumbnailType thumbnailType) throws BusinessException {
+	public InputStream getThumbnailStream(Account actor, Account owner, WorkGroup workGroup, WorkGroupDocument node, ThumbnailType thumbnailType) throws BusinessException {
 		return documentEntryBusinessService.getThreadEntryThumbnailStream(node, thumbnailType);
 	}
 
-	protected void checkSpace(Thread thread, long size) throws BusinessException {
+	protected void checkSpace(WorkGroup thread, long size) throws BusinessException {
 		quotaService.checkIfUserCanAddFile(thread, size, ContainerQuotaType.WORK_GROUP);
 	}
 
-	protected void addToQuota(Thread thread, Long size) {
+	protected void addToQuota(WorkGroup thread, Long size) {
 		OperationHistory oh = new OperationHistory(thread, thread.getDomain(), size, OperationHistoryTypeEnum.CREATE,
 				ContainerQuotaType.WORK_GROUP);
 		operationHistoryBusinessService.create(oh);
 	}
 
-	protected void delFromQuota(Thread thread, Long size) {
+	protected void delFromQuota(WorkGroup thread, Long size) {
 		OperationHistory oh = new OperationHistory(thread, thread.getDomain(), size, OperationHistoryTypeEnum.DELETE,
 				ContainerQuotaType.WORK_GROUP);
 		operationHistoryBusinessService.create(oh);

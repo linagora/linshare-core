@@ -38,7 +38,7 @@ import java.io.InputStream;
 
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
@@ -47,21 +47,21 @@ import org.linagora.linshare.mongo.entities.mto.CopyMto;
 
 public interface WorkGroupDocumentService extends WorkGroupNodeAbstractService {
 
-	WorkGroupNode create(Account actor, Account owner, Thread thread, File tempFile, String fileName,
+	WorkGroupNode create(Account actor, Account owner, WorkGroup thread, File tempFile, String fileName,
 			WorkGroupNode nodeParent) throws BusinessException;
 
-	WorkGroupNode copy(Account actor, Account owner, Thread toWorkGroup, String documentUuid, String fileName,
+	WorkGroupNode copy(Account actor, Account owner, WorkGroup toWorkGroup, String documentUuid, String fileName,
 			WorkGroupNode nodeParent, boolean ciphered, Long size, String fromNodeUuid, CopyMto copiedFrom) throws BusinessException;
 
-	void markAsCopied(Account actor, Account owner, Thread workGroup, WorkGroupNode node, CopyMto copiedTo) throws BusinessException;
+	void markAsCopied(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode node, CopyMto copiedTo) throws BusinessException;
 
-	WorkGroupNode delete(Account actor, User owner, Thread workGroup, WorkGroupNode workGroupNode)
+	WorkGroupNode delete(Account actor, User owner, WorkGroup workGroup, WorkGroupNode workGroupNode)
 			throws BusinessException;
 
-	InputStream getDocumentStream(Account actor, Account owner, Thread workGroup, WorkGroupDocument node)
+	InputStream getDocumentStream(Account actor, Account owner, WorkGroup workGroup, WorkGroupDocument node)
 			throws BusinessException;
 
-	InputStream getThumbnailStream(Account actor, Account owner, Thread workGroup, WorkGroupDocument node, ThumbnailType thumbnailType)
+	InputStream getThumbnailStream(Account actor, Account owner, WorkGroup workGroup, WorkGroupDocument node, ThumbnailType thumbnailType)
 			throws BusinessException;
 
 }

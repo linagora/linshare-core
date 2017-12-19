@@ -46,9 +46,9 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.domain.entities.Functionality;
-import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -75,7 +75,7 @@ import org.linagora.linshare.mongo.entities.mto.ThreadMto;
 
 import com.google.common.collect.Lists;
 
-public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> implements ThreadService {
+public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> implements ThreadService {
 
 	private final ThreadRepository threadRepository;
 
@@ -127,10 +127,10 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 	}
 
 	@Override
-	public Thread find(Account actor, Account owner, String uuid) {
+	public WorkGroup find(Account actor, Account owner, String uuid) {
 		preChecks(actor, owner);
 		Validate.notEmpty(uuid, "Missing thread uuid");
-		Thread thread = threadRepository.findByLsUuid(uuid);
+		WorkGroup thread = threadRepository.findByLsUuid(uuid);
 
 		if (thread == null) {
 			logger.error("Can't find thread  : " + uuid);
@@ -141,14 +141,14 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 			throw new BusinessException(
 					BusinessErrorCode.THREAD_NOT_FOUND, message);
 		}
-		checkReadPermission(actor, owner, Thread.class,
+		checkReadPermission(actor, owner, WorkGroup.class,
 				BusinessErrorCode.THREAD_FORBIDDEN, thread, owner);
 		return thread;
 	}
 
 	@Override
-	public Thread findByLsUuidUnprotected(String uuid) {
-		Thread thread = threadRepository.findByLsUuid(uuid);
+	public WorkGroup findByLsUuidUnprotected(String uuid) {
+		WorkGroup thread = threadRepository.findByLsUuid(uuid);
 		if (thread == null) {
 			logger.error("Can't find thread  : " + uuid);
 		}
@@ -156,40 +156,40 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 	}
 
 	@Override
-	public List<Thread> findAll(Account actor, Account owner) {
-		checkListPermission(actor, owner, Thread.class,
+	public List<WorkGroup> findAll(Account actor, Account owner) {
+		checkListPermission(actor, owner, WorkGroup.class,
 				BusinessErrorCode.THREAD_FORBIDDEN, null);
 		return threadRepository.findAll();
 	}
 
 	@Override
-	public Thread create(Account actor, Account owner, String name) throws BusinessException {
+	public WorkGroup create(Account actor, Account owner, String name) throws BusinessException {
 		Functionality threadFunc = functionalityReadOnlyService.getWorkGroupFunctionality(owner.getDomain());
 		Functionality threadCreation = functionalityReadOnlyService.getWorkGroupCreationRight(owner.getDomain());
 		if (!threadFunc.getActivationPolicy().getStatus()
 				|| !threadCreation.getActivationPolicy().getStatus()) {
 			throw new BusinessException(BusinessErrorCode.THREAD_FORBIDDEN, "Functionality forbideen.");
 		}
-		checkCreatePermission(actor, owner, Thread.class,
+		checkCreatePermission(actor, owner, WorkGroup.class,
 				BusinessErrorCode.THREAD_FORBIDDEN, null);
-		Thread thread = null;
+		WorkGroup workGroup = null;
 		WorkgroupMember member = null;
 		logger.debug("User " + owner.getAccountRepresentation() + " trying to create new thread named " + name);
-		thread = new Thread(owner.getDomain(), owner, name);
-		threadRepository.create(thread);
-		createQuotaThread(thread);
-		member = new WorkgroupMember(true, true, (User) owner, thread);
-		thread.getMyMembers().add(member);
-		thread = threadRepository.update(thread);
+		workGroup = new WorkGroup(owner.getDomain(), owner, name);
+		threadRepository.create(workGroup);
+		createQuotaThread(workGroup);
+		member = new WorkgroupMember(true, true, (User) owner, workGroup);
+		workGroup.getMyMembers().add(member);
+		workGroup = threadRepository.update(workGroup);
 		// workgroup creation
 		ThreadAuditLogEntry log = new ThreadAuditLogEntry(actor, owner, LogAction.CREATE, AuditLogEntryType.WORKGROUP,
-				new ThreadMto(thread, false));
+				new ThreadMto(workGroup, false));
 		logEntryService.insert(log);
 		// first workgroup member
 		ThreadMemberAuditLogEntry log2 = new ThreadMemberAuditLogEntry(actor, owner, LogAction.CREATE,
 				AuditLogEntryType.WORKGROUP_MEMBER, member);
 		logEntryService.insert(log2);
-		return thread;
+		return workGroup;
 	}
 
 	@Override
@@ -198,38 +198,38 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 	}
 
 	@Override
-	public WorkgroupMember getMemberFromUser(Thread thread, User user) throws BusinessException {
-		return threadMemberRepository.findUserThreadMember(thread, user);
+	public WorkgroupMember getMemberFromUser(WorkGroup workGroup, User user) throws BusinessException {
+		return threadMemberRepository.findUserThreadMember(workGroup, user);
 	}
 
 	@Override
 	public List<WorkgroupMember> findAllThreadMembers(Account actor, User owner,
-			Thread thread) throws BusinessException {
+			WorkGroup workGroup) throws BusinessException {
 		threadMemberAC.checkListPermission(actor, owner, WorkgroupMember.class,
-				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN, null, thread);
-		return threadMemberRepository.findAllThreadMembers(thread);
+				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN, null, workGroup);
+		return threadMemberRepository.findAllThreadMembers(workGroup);
 	}
 
 	@Override
 	public List<WorkgroupMember> findAllInconsistentMembers(Account actor, User owner,
-			Thread thread) throws BusinessException {
+			WorkGroup workGroup) throws BusinessException {
 		threadMemberAC.checkListPermission(actor, owner, WorkgroupMember.class,
-				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN, null, thread);
-		return threadMemberRepository.findAllInconsistentThreadMembers(thread);
+				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN, null, workGroup);
+		return threadMemberRepository.findAllInconsistentThreadMembers(workGroup);
 	}
 
 	@Override
-	public List<Thread> findAllWhereMember(User user) {
+	public List<WorkGroup> findAllWhereMember(User user) {
 		return threadRepository.findAllWhereMember(user);
 	}
 
 	@Override
-	public List<Thread> findAllWhereAdmin(User user) {
+	public List<WorkGroup> findAllWhereAdmin(User user) {
 		return threadRepository.findAllWhereAdmin(user);
 	}
 
 	@Override
-	public List<Thread> findAllWhereCanUpload(User user) {
+	public List<WorkGroup> findAllWhereCanUpload(User user) {
 		return threadRepository.findAllWhereCanUpload(user);
 	}
 
@@ -239,34 +239,34 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 	}
 
 	@Override
-	public boolean isUserAdmin(User user, Thread thread) {
+	public boolean isUserAdmin(User user, WorkGroup thread) {
 		return threadMemberRepository.isUserAdmin(user, thread);
 	}
 
 	@Override
-	public long countMembers(Thread thread) {
+	public long countMembers(WorkGroup thread) {
 		return threadMemberRepository.count(thread);
 	}
 
 	@Override
-	public WorkgroupMember addMember(Account actor, Account owner, Thread thread,
+	public WorkgroupMember addMember(Account actor, Account owner, WorkGroup workGroup,
 			User user, boolean admin, boolean canUpload)
 			throws BusinessException {
-		WorkgroupMember member = new WorkgroupMember(canUpload, admin, user, thread);
+		WorkgroupMember member = new WorkgroupMember(canUpload, admin, user, workGroup);
 		threadMemberAC.checkCreatePermission(actor, owner, WorkgroupMember.class,
-				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN, member, thread);
-		if (getMemberFromUser(thread, user) != null) {
+				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN, member, workGroup);
+		if (getMemberFromUser(workGroup, user) != null) {
 			logger.warn("The current " + user.getAccountRepresentation()
 					+ " user is already member of the thread : "
-					+ thread.getAccountRepresentation());
+					+ workGroup.getAccountRepresentation());
 			throw new BusinessException(
 					"You are not authorized to add member to this thread. Already exists.");
 		}
-		thread.getMyMembers().add(member);
-		threadRepository.update(thread);
+		workGroup.getMyMembers().add(member);
+		threadRepository.update(workGroup);
 		ThreadMemberAuditLogEntry log = new ThreadMemberAuditLogEntry(actor, owner, LogAction.CREATE,
 				AuditLogEntryType.WORKGROUP_MEMBER, member);
-		addMembersToLog(thread, log);
+		addMembersToLog(workGroup, log);
 		logEntryService.insert(log);
 		WorkGroupWarnNewMemberEmailContext context = new WorkGroupWarnNewMemberEmailContext(member, owner);
 		MailContainerWithRecipient mail = mailBuildingService.build(context);
@@ -275,10 +275,10 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 	}
 
 	@Override
-	public WorkgroupMember updateMember(Account actor, Account owner, String threadUuid, String userUuid,
+	public WorkgroupMember updateMember(Account actor, Account owner, String workGroupUuid, String userUuid,
 			boolean admin, boolean canUpload)
 			throws BusinessException {
-		Thread thread = find(actor, owner, threadUuid);
+		WorkGroup thread = find(actor, owner, workGroupUuid);
 		User user = getUserMember(userUuid);
 		WorkgroupMember member = getMemberFromUser(thread, user);
 		threadMemberAC.checkUpdatePermission(actor, owner, WorkgroupMember.class,
@@ -303,7 +303,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		preChecks(actor, owner);
 		Validate.notEmpty(userUuid);
 		Validate.notEmpty(threadUuid);
-		Thread thread = find(actor, owner, threadUuid);
+		WorkGroup thread = find(actor, owner, threadUuid);
 		User user = getUserMember(userUuid);
 		WorkgroupMember member = getMemberFromUser(thread,
 				user);
@@ -337,7 +337,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 	}
 
 	@Override
-	public void deleteAllMembers(Account actor, Thread thread) throws BusinessException {
+	public void deleteAllMembers(Account actor, WorkGroup thread) throws BusinessException {
 		// permission check
 		checkUserIsAdmin(actor, thread);
 		Object[] myMembers = thread.getMyMembers().toArray();
@@ -366,9 +366,9 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 	}
 
 	@Override
-	public void deleteThread(User actor, Account owner, Thread thread)
+	public void deleteThread(User actor, Account owner, WorkGroup thread)
 			throws BusinessException {
-		checkDeletePermission(actor, owner, Thread.class,
+		checkDeletePermission(actor, owner, WorkGroup.class,
 				BusinessErrorCode.THREAD_FORBIDDEN, thread);
 		User owner2 = (User) owner;
 		ThreadAuditLogEntry threadAuditLog = new ThreadAuditLogEntry(actor, owner, LogAction.DELETE,
@@ -386,16 +386,16 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 	}
 
 	@Override
-	public Thread update(User actor, Account owner, String threadUuid,
+	public WorkGroup update(User actor, Account owner, String threadUuid,
 			String threadName) throws BusinessException {
-		Thread thread = find(actor, owner, threadUuid);
-		checkUpdatePermission(actor, owner, Thread.class,
+		WorkGroup thread = find(actor, owner, threadUuid);
+		checkUpdatePermission(actor, owner, WorkGroup.class,
 				BusinessErrorCode.THREAD_FORBIDDEN, thread);
 		ThreadAuditLogEntry log = new ThreadAuditLogEntry(actor, owner, LogAction.UPDATE, AuditLogEntryType.WORKGROUP,
 				new ThreadMto(thread, true));
 		thread.setName(threadName);
 		addMembersToLog(thread, log);
-		Thread update = threadRepository.update(thread);
+		WorkGroup update = threadRepository.update(thread);
 		User owner2 = (User) owner;
 		WorkGroupNode rootFolder = workGroupNodeService.getRootFolder(actor, owner2, thread);
 		rootFolder.setName(threadName);
@@ -406,21 +406,21 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 	}
 
 	@Override
-	public List<Thread> findLatestWhereMember(User actor, int limit) {
+	public List<WorkGroup> findLatestWhereMember(User actor, int limit) {
 		return threadRepository.findLatestWhereMember(actor, limit);
 	}
 
 	@Override
-	public List<Thread> searchByName(User actor, String pattern) {
+	public List<WorkGroup> searchByName(User actor, String pattern) {
 		return threadRepository.searchByName(actor, pattern);
 	}
 
 	@Override
-	public List<Thread> searchByMembers(User actor, String pattern) {
+	public List<WorkGroup> searchByMembers(User actor, String pattern) {
 		return threadRepository.searchAmongMembers(actor, pattern);
 	}
 
-	private void createQuotaThread(Thread thread) throws BusinessException {
+	private void createQuotaThread(WorkGroup thread) throws BusinessException {
 		Validate.notNull(thread, "Thread must be set.");
 		ContainerQuota containerQuota = containerQuotaBusinessService.find(thread.getDomain(), ContainerQuotaType.WORK_GROUP);
 		if (containerQuota == null) {
@@ -439,7 +439,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
      *                   Helpers
      ************************************************************ */
 
-	protected void addMembersToLog(Thread thread, AuditLogEntryUser log) {
+	protected void addMembersToLog(WorkGroup thread, AuditLogEntryUser log) {
 		List<String> members = threadMemberRepository.findAllAccountUuidForThreadMembers(thread);
 		log.addRelatedAccounts(members);
 	}
@@ -448,7 +448,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 	 * Check if actor is admin of the thread and so has the right to perform any action.
 	 * Throw a BusinessException if the actor isn't authorized to modify the thread.
 	 */
-	private void checkUserIsAdmin(Account actor, Thread thread) throws BusinessException {
+	private void checkUserIsAdmin(Account actor, WorkGroup thread) throws BusinessException {
 		if (actor.getRole().equals(Role.SUPERADMIN) || actor.getRole().equals(Role.SYSTEM)) {
 			return; // superadmin or system accounts have all rights
 		}

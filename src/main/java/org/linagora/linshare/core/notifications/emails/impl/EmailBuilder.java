@@ -619,7 +619,7 @@ public abstract class EmailBuilder implements IEmailBuilder {
 
 	protected WorkgroupMember getNewFakeThreadMember(String name) {
 		User user = new Guest("Peter", "Wilson", "peter.wilson@linshare.org");
-		org.linagora.linshare.core.domain.entities.Thread workGroup = new org.linagora.linshare.core.domain.entities.Thread(user.getDomain(), user, name);
+		org.linagora.linshare.core.domain.entities.WorkGroup workGroup = new org.linagora.linshare.core.domain.entities.WorkGroup(user.getDomain(), user, name);
 		WorkgroupMember workgroupdMember = new WorkgroupMember(true, false, user, workGroup);
 		return workgroupdMember;
 	}

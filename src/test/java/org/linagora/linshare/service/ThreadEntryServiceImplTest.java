@@ -43,9 +43,9 @@ import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.UserRepository;
@@ -89,7 +89,7 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
 
-	private List<Thread> threads;
+	private List<WorkGroup> workGroups;
 
 	private User jane;
 	private User john;
@@ -106,7 +106,7 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		jane = datas.getUser2();
 		root= datas.getRoot();
 		this.createAllThreads();
-		threads = threadService.findAll(root, root);
+		workGroups = threadService.findAll(root, root);
 		logger.debug(LinShareTestConstants.END_SETUP);
 		AbstractDomain domain = abstractDomainRepository
 				.findById(LoadingServiceTestDatas.sqlDomain);
@@ -133,10 +133,10 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		threadService.create(jane, jane, ThreadEntryServiceImplTest.THREAD_1);
 	}
 	private void deleteAllThreads() throws BusinessException {
-		for (Thread thread : threads) {
-			for (WorkgroupMember m : thread.getMyMembers()) {
+		for (WorkGroup workGroup : workGroups) {
+			for (WorkgroupMember m : workGroup.getMyMembers()) {
 				if (m.getAdmin()) {
-					threadService.deleteThread(m.getUser(), m.getUser(), thread);
+					threadService.deleteThread(m.getUser(), m.getUser(), workGroup);
 				}
 			}
 		}
@@ -149,21 +149,21 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	public void testFindAllThread() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		int count;
-		Assert.assertEquals(threads.size(), 2);
-		for (count = threads.size(); count < 10; ++count) {
+		Assert.assertEquals(workGroups.size(), 2);
+		for (count = workGroups.size(); count < 10; ++count) {
 			threadService.create(john, john, ThreadEntryServiceImplTest.THREAD_1 + "_" + count);
 		}
 		User root = userRepository.findByMailAndDomain(LinShareConstants.rootDomainIdentifier, "root@localhost.localdomain");
-		threads = threadService.findAll(root, root);
-		Assert.assertEquals(threads.size(), count);
+		workGroups = threadService.findAll(root, root);
+		Assert.assertEquals(workGroups.size(), count);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
 	public void testFindThread() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Thread original = threads.get(0);
-		Thread found = threadService.findByLsUuidUnprotected(original.getLsUuid());
+		WorkGroup original = workGroups.get(0);
+		WorkGroup found = threadService.findByLsUuidUnprotected(original.getLsUuid());
 		Assert.assertEquals(found, original);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
@@ -181,10 +181,10 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	@Test
 	public void testFindLatest() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		List<Thread> latests = threadService.findLatestWhereMember(john, 10);
+		List<WorkGroup> latests = threadService.findLatestWhereMember(john, 10);
 		Assert.assertFalse(latests.isEmpty());
 		logger.debug("Latests :");
-		for (Thread thread : latests) {
+		for (WorkGroup thread : latests) {
 			logger.debug('\t' + thread.getName());
 		}
 		logger.info(LinShareTestConstants.END_TEST);

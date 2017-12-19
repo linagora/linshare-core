@@ -40,7 +40,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -79,7 +79,7 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 	public Set<WorkGroupDto> findAll(String pattern, String threadName,
 			String memberName) throws BusinessException {
 		User actor = super.checkAuthentication(Role.ADMIN);
-		Set<Thread> threads = Sets.newHashSet();
+		Set<WorkGroup> threads = Sets.newHashSet();
 		if (pattern == null && threadName == null && memberName == null) {
 			threads.addAll(threadService.findAll(actor, actor));
 		} else {
@@ -95,7 +95,7 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 			}
 		}
 		Set<WorkGroupDto> ret = Sets.newHashSet();
-		for (Thread thread : threads) {
+		for (WorkGroup thread : threads) {
 			ret.add(new WorkGroupDto(thread));
 		}
 		return ret;
@@ -106,8 +106,8 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "uuid must be set.");
 		Set<WorkGroupMemberDto> ret = new HashSet<WorkGroupMemberDto>();
-		Thread thread = threadService.find(actor, actor, uuid);
-		List<WorkgroupMember> workgroupMembers = threadService.findAllThreadMembers(actor, actor, thread);
+		WorkGroup workGroup = threadService.find(actor, actor, uuid);
+		List<WorkgroupMember> workgroupMembers = threadService.findAllThreadMembers(actor, actor, workGroup);
 		for (WorkgroupMember m : workgroupMembers)
 			ret.add(new WorkGroupMemberDto(m));
 		return ret;
@@ -125,7 +125,7 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 	public WorkGroupDto delete(String uuid) throws BusinessException {
 		User actor = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "uuid must be set.");
-		Thread thread = threadService.find(actor, actor, uuid);
+		WorkGroup thread = threadService.find(actor, actor, uuid);
 		threadService.deleteThread(actor, actor, thread);
 		return new WorkGroupDto(thread);
 	}

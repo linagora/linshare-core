@@ -73,7 +73,7 @@ import org.linagora.linshare.cmis.exceptions.CmisExceptionMappingService;
 import org.linagora.linshare.cmis.utils.CmisHelpers;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -102,7 +102,7 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 		this.helpers = cmisHelpers;
 	}
 
-	private String computeThreadName(Account actor, Thread thread) {
+	private String computeThreadName(Account actor, WorkGroup thread) {
 		DateFormat dateFormat = new SimpleDateFormat(
 				"MM-dd-yyyy_HH'h'mm'm'ss's'");
 
@@ -158,7 +158,7 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 		List<ObjectInFolderData> objDlist = new LinkedList<ObjectInFolderData>();
 		ObjectInFolderListImpl objList = new ObjectInFolderListImpl();
 		String threadId = helpers.getObjectUuid(folderId);
-		Thread thread = threadService.find(actor, actor, threadId);
+		WorkGroup thread = threadService.find(actor, actor, threadId);
 		List<WorkGroupNode> entries;
 		try {
 			entries = workGroupNodeService.findAll(actor, (User) actor, thread);
@@ -179,8 +179,8 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 	private ObjectInFolderList getThreadList(Account actor) {
 		List<ObjectInFolderData> objDlist = new LinkedList<ObjectInFolderData>();
 		ObjectInFolderListImpl objList = new ObjectInFolderListImpl();
-		List<Thread> threads = threadService.findAllWhereAdmin((User) actor);
-		for (Thread thread : threads) {
+		List<WorkGroup> threads = threadService.findAllWhereAdmin((User) actor);
+		for (WorkGroup thread : threads) {
 			ObjectInFolderDataImpl objData = new ObjectInFolderDataImpl(
 					getObject(actor.getLsUuid(),
 							CmisConstants.tagThreadChildren + thread.getLsUuid(), null, null, null,
@@ -201,7 +201,7 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 		try {
 			String workGroupNodeUuid = helpers.getObjectUuid(objectId);
 			String workGroupUuid = workGroupNodeService.findWorkGroupUuid(actor, (User) actor, workGroupNodeUuid);
-			Thread thread = threadService.find(actor, actor, workGroupUuid);
+			WorkGroup thread = threadService.find(actor, actor, workGroupUuid);
 			entry = workGroupNodeService.find(actor, (User) actor,
 					thread, workGroupNodeUuid, false);
 		} catch (BusinessException e) {
@@ -234,7 +234,7 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 					objectId, path, name);
 			res.setProperties(properties);
 		} else if (objectId.startsWith(CmisConstants.tagThreadChildren)) {
-			Thread thread = threadService
+			WorkGroup thread = threadService
 					.find(actor, actor, helpers.getObjectUuid(objectId));
 			String name = computeThreadName(actor, thread);
 			String path = "/"
@@ -247,7 +247,7 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 			try {
 				String workGroupNodeUuid = helpers.getObjectUuid(objectId);
 				String workGroupUuid = workGroupNodeService.findWorkGroupUuid(actor, (User) actor, workGroupNodeUuid);
-				Thread thread = threadService.find(actor, actor, workGroupUuid);
+				WorkGroup thread = threadService.find(actor, actor, workGroupUuid);
 				node = workGroupNodeService.find(actor, (User) actor,
 						thread, workGroupNodeUuid, false);
 			} catch (BusinessException e) {
@@ -273,7 +273,7 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 		try {
 			String workGroupNodeUuid = helpers.getObjectUuid(objectId);
 			String workGroupUuid = workGroupNodeService.findWorkGroupUuid(actor, (User) actor, workGroupNodeUuid);
-			Thread thread = threadService.find(actor, actor, workGroupUuid);
+			WorkGroup thread = threadService.find(actor, actor, workGroupUuid);
 			f = workGroupNodeService.download(actor, (User)actor, thread, workGroupNodeUuid);
 		} catch (BusinessException e) {
 			throw cmisExceptionMappingService.map(e);
@@ -301,7 +301,7 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 			try {
 				String workGroupNodeUuid = helpers.getObjectUuid(objectId);
 				String workGroupUuid = workGroupNodeService.findWorkGroupUuid(actor, (User) actor, workGroupNodeUuid);
-				Thread thread = threadService.find(actor, actor, workGroupUuid);
+				WorkGroup thread = threadService.find(actor, actor, workGroupUuid);
 				threadEntry = workGroupNodeService.find(actor, (User) actor,
 						thread, workGroupNodeUuid, false);
 			} catch (BusinessException e) {
@@ -334,7 +334,7 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 		try {
 			String workGroupNodeUuid = helpers.getObjectUuid(objectId);
 			String workGroupUuid = workGroupNodeService.findWorkGroupUuid(actor, (User) actor, workGroupNodeUuid);
-			Thread thread = threadService.find(actor, actor, workGroupUuid);
+			WorkGroup thread = threadService.find(actor, actor, workGroupUuid);
 			workGroupNodeService.delete(actor, (User) actor, thread, workGroupNodeUuid);
 		} catch (BusinessException e) {
 			throw cmisExceptionMappingService.map(e);
@@ -350,7 +350,7 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 		String res = folderId;
 		if (contentStream.getFileName() != null) {
 			File tempFile = null;
-			Thread thread = threadService.find(actor, actor, helpers.getObjectUuid(folderId));
+			WorkGroup thread = threadService.find(actor, actor, helpers.getObjectUuid(folderId));
 			try {
 				tempFile = getTempFile(contentStream.getStream(), contentStream.getFileName());
 				WorkGroupNode node = workGroupNodeService.create(actor, (User)actor, thread, tempFile, contentStream.getFileName(), null, true);
@@ -376,7 +376,7 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 				.getFirstValue();
 		try {
 			String workGroupUuid = workGroupNodeService.findWorkGroupUuid(actor, (User) actor, uuid);
-			Thread thread = threadService.find(actor, actor, workGroupUuid);
+			WorkGroup thread = threadService.find(actor, actor, workGroupUuid);
 			WorkGroupDocument node = new WorkGroupDocument();
 			node.setUuid(uuid);
 			node.setDescription(description);
