@@ -50,7 +50,7 @@ import org.linagora.linshare.core.facade.webservice.delegation.dto.DocumentDto;
 
 public interface DocumentRestService {
 
-	DocumentDto create(String ownerUuid, InputStream file,
+	DocumentDto create(String actorUuid, InputStream file,
 			String description, String givenFileName,
 			InputStream theSignature,
 			String signatureFileName, InputStream x509certificate,
@@ -60,22 +60,22 @@ public interface DocumentRestService {
 			MultipartBody body)
 			throws BusinessException;
 
-	DocumentDto find(String ownerUuid, String uuid) throws BusinessException;
+	DocumentDto find(String actorUuid, String uuid) throws BusinessException;
 
-	void head(String ownerUuid, String uuid) throws BusinessException;
+	void head(String actorUuid, String uuid) throws BusinessException;
 
-	List<DocumentDto> findAll(String ownerUuid) throws BusinessException;
+	List<DocumentDto> findAll(String actorUuid) throws BusinessException;
 
-	DocumentDto delete(String ownerUuid, String uuid) throws BusinessException;
+	DocumentDto delete(String actorUuid, String uuid) throws BusinessException;
 
-	Response download(String ownerUuid, String uuid) throws BusinessException;
+	Response download(String actorUuid, String uuid) throws BusinessException;
 
-	Response thumbnail(String ownerUuid, String uuid, ThumbnailType thumbnailType) throws BusinessException;
+	Response thumbnail(String actorUuid, String uuid, ThumbnailType thumbnailType) throws BusinessException;
 
-	DocumentDto update(String ownerUuid, String uuid, DocumentDto documentDto) throws BusinessException;
+	DocumentDto update(String actorUuid, String uuid, DocumentDto documentDto) throws BusinessException;
 
-	DocumentDto delete(String ownerUuid, DocumentDto documentDto)
+	DocumentDto delete(String actorUuid, DocumentDto documentDto)
 			throws BusinessException;
 
-	AsyncTaskDto findAsync(String ownerUuid, String uuid) throws BusinessException;
+	AsyncTaskDto findAsync(String actorUuid, String uuid) throws BusinessException;
 }

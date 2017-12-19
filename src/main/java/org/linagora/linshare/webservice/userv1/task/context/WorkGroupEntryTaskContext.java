@@ -57,10 +57,10 @@ public class WorkGroupEntryTaskContext extends TaskContext {
 	 */
 	protected String docEntryUuid;
 
-	public WorkGroupEntryTaskContext(AccountDto actorDto, String ownerUuid,
+	public WorkGroupEntryTaskContext(AccountDto authUserDto, String actorUuid,
 			String threadUuid, File file, String fileName, String metaData,
 			String description, String workGroupFolderUuid) {
-		super(actorDto, ownerUuid);
+		super(authUserDto, actorUuid);
 		this.file = file;
 		this.fileName = fileName;
 		this.metaData = metaData;
@@ -69,9 +69,9 @@ public class WorkGroupEntryTaskContext extends TaskContext {
 		this.workGroupFolderUuid = workGroupFolderUuid;
 	}
 
-	public WorkGroupEntryTaskContext(AccountDto actorDto, String ownerUuid,
+	public WorkGroupEntryTaskContext(AccountDto authUserDto, String actorUuid,
 			String threadUuid, File file, String fileName, String workGroupFolderUuid) {
-		super(actorDto, ownerUuid);
+		super(authUserDto, actorUuid);
 		this.file = file;
 		this.fileName = fileName;
 		this.metaData = null;
@@ -80,9 +80,9 @@ public class WorkGroupEntryTaskContext extends TaskContext {
 		this.workGroupFolderUuid = workGroupFolderUuid;
 	}
 
-	public WorkGroupEntryTaskContext(AccountDto actorDto, String ownerUuid,
+	public WorkGroupEntryTaskContext(AccountDto authUserDto, String actorUuid,
 			String threadUuid, String docEntryUuid, String workGroupFolderUuid) {
-		super(actorDto, ownerUuid);
+		super(authUserDto, actorUuid);
 		this.file = null;
 		this.fileName = null;
 		this.metaData = null;
@@ -127,7 +127,7 @@ public class WorkGroupEntryTaskContext extends TaskContext {
 	@Override
 	public String toString() {
 		return "WorkGroupEntryTaskContext [fileName=" + fileName + ", threadUuid="
-				+ threadUuid + ", ownerUuid=" + ownerUuid + "]";
+				+ threadUuid + ", actorUuid=" + actorUuid + "]";
 	}
 
 }

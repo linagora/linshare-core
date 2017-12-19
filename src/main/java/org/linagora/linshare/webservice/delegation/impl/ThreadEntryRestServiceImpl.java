@@ -78,8 +78,8 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/{ownerUuid}/threads/{threadUuid}/entries")
-@Api(value = "/rest/delegation/{ownerUuid}/threads/{threadUuid}/entries", basePath = "/rest/threads/{threadUuid}/entries",
+@Path("/{actorUuid}/threads/{threadUuid}/entries")
+@Api(value = "/rest/delegation/{actorUuid}/threads/{threadUuid}/entries", basePath = "/rest/threads/{threadUuid}/entries",
 	description = "thread entries service.",
 	produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -121,7 +121,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public WorkGroupEntryDto create(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "File stream.", required = true) InputStream file,
 			@ApiParam(value = "An optional description of a thread entry.") String description,
@@ -149,16 +149,16 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 		if (async) {
 			logger.debug("Async mode is used");
 			// Asynchronous mode
-			AccountDto actorDto = workGroupEntryFacade.getAuthenticatedAccountDto();
+			AccountDto authUserDto = workGroupEntryFacade.getAuthenticatedAccountDto();
 			AsyncTaskDto asyncTask = null;
 			try {
-				asyncTask = asyncTaskFacade.create(ownerUuid, currSize, transfertDuration, fileName, null, AsyncTaskType.THREAD_ENTRY_UPLOAD);
-				WorkGroupEntryTaskContext workGroupEntryTaskContext = new WorkGroupEntryTaskContext(actorDto, ownerUuid, threadUuid, tempFile, fileName, null);
+				asyncTask = asyncTaskFacade.create(actorUuid, currSize, transfertDuration, fileName, null, AsyncTaskType.THREAD_ENTRY_UPLOAD);
+				WorkGroupEntryTaskContext workGroupEntryTaskContext = new WorkGroupEntryTaskContext(authUserDto, actorUuid, threadUuid, tempFile, fileName, null);
 				WorkGroupEntryUploadAsyncTask task = new WorkGroupEntryUploadAsyncTask(workGroupEntryAsyncFacade, workGroupEntryTaskContext, asyncTask);
 				taskExecutor.execute(task);
 				return new WorkGroupEntryDto(asyncTask, workGroupEntryTaskContext);
 			} catch (Exception e) {
-				logAsyncFailure(ownerUuid, asyncTask, e);
+				logAsyncFailure(actorUuid, asyncTask, e);
 				deleteTempFile(tempFile);
 				throw e;
 			}
@@ -167,7 +167,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			// Synchronous mode
 			try {
 				logger.debug("Async mode is not used");
-				return workGroupEntryFacade.create(ownerUuid, threadUuid, tempFile, fileName);
+				return workGroupEntryFacade.create(actorUuid, threadUuid, tempFile, fileName);
 			} finally {
 				deleteTempFile(tempFile);
 			}
@@ -185,7 +185,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public WorkGroupEntryDto copy(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The document entry uuid.", required = true) @PathParam("entryUuid")  String entryUuid,
 			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) @QueryParam("async") Boolean async)
@@ -196,21 +196,21 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 		}
 		if (async) {
 			logger.debug("Async mode is used");
-			AccountDto actorDto = workGroupEntryFacade.getAuthenticatedAccountDto();
+			AccountDto authUserDto = workGroupEntryFacade.getAuthenticatedAccountDto();
 			AsyncTaskDto asyncTask = null;
 			try {
-				asyncTask = asyncTaskFacade.create(ownerUuid, entryUuid, AsyncTaskType.DOCUMENT_COPY);
-				WorkGroupEntryTaskContext tetc = new WorkGroupEntryTaskContext(actorDto, ownerUuid, threadUuid, entryUuid, null);
+				asyncTask = asyncTaskFacade.create(actorUuid, entryUuid, AsyncTaskType.DOCUMENT_COPY);
+				WorkGroupEntryTaskContext tetc = new WorkGroupEntryTaskContext(authUserDto, actorUuid, threadUuid, entryUuid, null);
 				WorkGroupEntryCopyAsyncTask task = new WorkGroupEntryCopyAsyncTask(workGroupEntryAsyncFacade, tetc, asyncTask);
 				taskExecutor.execute(task);
 				return new WorkGroupEntryDto(asyncTask, tetc);
 			} catch (Exception e) {
-				logAsyncFailure(ownerUuid, asyncTask, e);
+				logAsyncFailure(actorUuid, asyncTask, e);
 				throw e;
 			}
 		} else {
 			logger.debug("Async mode is not used");
-			return workGroupEntryFacade.copy(ownerUuid, threadUuid, entryUuid);
+			return workGroupEntryFacade.copy(actorUuid, threadUuid, entryUuid);
 		}
 	}
 
@@ -224,11 +224,11 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public WorkGroupEntryDto find(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread entry uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		return workGroupEntryFacade.find(ownerUuid, threadUuid, uuid);
+		return workGroupEntryFacade.find(actorUuid, threadUuid, uuid);
 	}
 
 	@Path("/{uuid}")
@@ -241,11 +241,11 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 	})
 	@Override
 	public void head(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread entry uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		workGroupEntryFacade.find(ownerUuid, threadUuid, uuid);
+		workGroupEntryFacade.find(actorUuid, threadUuid, uuid);
 	}
 
 	@Path("/")
@@ -258,10 +258,10 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public List<WorkGroupEntryDto> findAll(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid)
 					throws BusinessException {
-		return workGroupEntryFacade.findAll(ownerUuid, threadUuid);
+		return workGroupEntryFacade.findAll(actorUuid, threadUuid);
 	}
 
 	@Path("/")
@@ -274,11 +274,11 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public WorkGroupEntryDto delete(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread entry to delete.", required = true) WorkGroupEntryDto threadEntry)
 					throws BusinessException {
-		return workGroupEntryFacade.delete(ownerUuid, threadUuid, threadEntry);
+		return workGroupEntryFacade.delete(actorUuid, threadUuid, threadEntry);
 	}
 
 	@Path("/{uuid}")
@@ -291,14 +291,14 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public WorkGroupEntryDto delete(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread entry uuid to delete.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		return workGroupEntryFacade.delete(ownerUuid, threadUuid, uuid);
+		return workGroupEntryFacade.delete(actorUuid, threadUuid, uuid);
 	}
 
-	@Path("/{ownerUuid}/documents/{uuid}/download")
+	@Path("/{actorUuid}/documents/{uuid}/download")
 	@GET
 	@ApiOperation(value = "Download a file.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
@@ -308,14 +308,14 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public Response download(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread entry uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		return workGroupEntryFacade.download(ownerUuid, threadUuid, uuid);
+		return workGroupEntryFacade.download(actorUuid, threadUuid, uuid);
 	}
 
-	@Path("/{ownerUuid}/documents/{uuid}/thumbnail")
+	@Path("/{actorUuid}/documents/{uuid}/thumbnail")
 	@GET
 	@ApiOperation(value = "Download the thumbnail of a file.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
@@ -325,14 +325,14 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public Response thumbnail(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-			return workGroupEntryFacade.thumbnail(ownerUuid, threadUuid, uuid, ThumbnailType.MEDIUM);
+			return workGroupEntryFacade.thumbnail(actorUuid, threadUuid, uuid, ThumbnailType.MEDIUM);
 	}
 
-	@Path("/{ownerUuid}/documents/{uuid}")
+	@Path("/{actorUuid}/documents/{uuid}")
 	@PUT
 	@ApiOperation(value = "Update the thread entry properties.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
@@ -342,12 +342,12 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public WorkGroupEntryDto update(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String threadEntryuuid,
 			@ApiParam(value = "The Thread Entry.", required = true) WorkGroupEntryDto threadEntryDto)
 			throws BusinessException {
-		return workGroupEntryFacade.update(ownerUuid, threadUuid, threadEntryuuid, threadEntryDto);
+		return workGroupEntryFacade.update(actorUuid, threadUuid, threadEntryuuid, threadEntryDto);
 	}
 
 	@Path("/{uuid}/async")
@@ -355,19 +355,19 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public AsyncTaskDto findAsync(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The async task uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		Validate.notEmpty(uuid, "Missing uuid");
-		return asyncTaskFacade.find(ownerUuid, uuid);
+		return asyncTaskFacade.find(actorUuid, uuid);
 	}
 
-	protected void logAsyncFailure(String ownerUuid, AsyncTaskDto asyncTask,
+	protected void logAsyncFailure(String actorUuid, AsyncTaskDto asyncTask,
 			Exception e) {
 		logger.error(e.getMessage());
 		logger.debug("Exception : ", e);
 		if (asyncTask != null) {
-			asyncTaskFacade.fail(ownerUuid, asyncTask, e);
+			asyncTaskFacade.fail(actorUuid, asyncTask, e);
 		}
 	}
 }

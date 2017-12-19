@@ -68,17 +68,17 @@ public class StatisticFacadeImpl extends AdminGenericFacadeImpl implements Stati
 	@Override
 	public List<StatisticDto> findBetweenTwoDates(String accountUuid, String domainUuid, Date beginDate, Date endDate,
 			StatisticType statisticType) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		AbstractDomain domain = null;
 		// TODO FIXME Quota & Statistics
-		Account owner = null;
+		Account actor = null;
 		if(domainUuid != null){
 			domain = abstractDomainService.findById(domainUuid);
 		}
 		if(accountUuid != null){
-			owner = accountService.findByLsUuid(accountUuid);
+			actor = accountService.findByLsUuid(accountUuid);
 		}
-		List<Statistic> listStat = statisticService.findBetweenTwoDates(actor, owner, domain, beginDate, endDate, statisticType);
+		List<Statistic> listStat = statisticService.findBetweenTwoDates(authUser, actor, domain, beginDate, endDate, statisticType);
 		return ImmutableList.copyOf(Lists.transform(listStat, StatisticDto.toDto()));
 	}
 }

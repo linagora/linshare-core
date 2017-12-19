@@ -61,15 +61,15 @@ public class DocumentAsyncFacadeImpl extends
 	@Override
 	public DocumentDto upload(DocumentTaskContext dtc) {
 		Validate.notNull(dtc, "Missing dtc");
-		User actor = checkAuthentication(dtc);
-		User owner = getOwner(dtc);
+		User authUser = checkAuthentication(dtc);
+		User actor = getActor(dtc);
 		Validate.notNull(dtc.getFile(),
 				"Missing required file (check parameter named file)");
 		Validate.notEmpty(dtc.getFileName(), "Missing required file name");
-		if ((owner.isGuest() && !owner.getCanUpload()))
+		if ((actor.isGuest() && !actor.getCanUpload()))
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
-		DocumentEntry res = service.create(actor, owner,
+		DocumentEntry res = service.create(authUser, actor,
 				dtc.getFile(), dtc.getFileName(),
 				dtc.getDescription(), false,
 				dtc.getMetaData());
@@ -79,16 +79,16 @@ public class DocumentAsyncFacadeImpl extends
 	@Override
 	public DocumentDto update(DocumentTaskContext dtc) {
 		Validate.notNull(dtc, "Missing dtc");
-		User actor = checkAuthentication(dtc);
-		User owner = getOwner(dtc);
+		User authUser = checkAuthentication(dtc);
+		User actor = getActor(dtc);
 		Validate.notNull(dtc.getFile(),
 				"Missing required file (check parameter named file)");
 		Validate.notEmpty(dtc.getFileName(), "Missing required file name");
 		Validate.notNull(dtc.getDocEntryUuid(), "Missing docEntryUuid for the updated document");
-		if ((owner.isGuest() && !owner.getCanUpload()))
+		if ((actor.isGuest() && !actor.getCanUpload()))
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
-		DocumentEntry update = service.update(actor, owner, dtc.getDocEntryUuid(), dtc.getFile(), dtc.getFileName());
+		DocumentEntry update = service.update(authUser, actor, dtc.getDocEntryUuid(), dtc.getFile(), dtc.getFileName());
 		return new DocumentDto(update);
 	}
 }

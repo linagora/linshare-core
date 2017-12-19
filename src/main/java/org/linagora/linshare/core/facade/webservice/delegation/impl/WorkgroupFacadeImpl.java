@@ -68,13 +68,13 @@ public class WorkgroupFacadeImpl extends DelegationGenericFacadeImpl implements
 	}
 
 	@Override
-	public WorkGroupDto find(String ownerUuid, String uuid)
+	public WorkGroupDto find(String actorUuid, String uuid)
 			throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notEmpty(uuid, "Missing required thread uuid");
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
-		WorkGroup workGroup = threadService.find(actor, owner, uuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
+		WorkGroup workGroup = threadService.find(authUser, actor, uuid);
 		WorkGroupDto dto = new WorkGroupDto(workGroup);
 		AccountQuota quota = quotaService.findByRelatedAccount(workGroup);
 		dto.setQuotaUuid(quota.getUuid());
@@ -82,12 +82,12 @@ public class WorkgroupFacadeImpl extends DelegationGenericFacadeImpl implements
 	}
 
 	@Override
-	public List<WorkGroupDto> findAll(String ownerUuid) throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
+	public List<WorkGroupDto> findAll(String actorUuid) throws BusinessException {
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
 		List<WorkGroupDto> res = Lists.newArrayList();
-		List<WorkGroup> workGroups = threadService.findAll(actor, owner);
+		List<WorkGroup> workGroups = threadService.findAll(authUser, actor);
 		for (WorkGroup workGroup : workGroups) {
 			res.add(new WorkGroupDto(workGroup));
 		}
@@ -95,39 +95,39 @@ public class WorkgroupFacadeImpl extends DelegationGenericFacadeImpl implements
 	}
 
 	@Override
-	public WorkGroupDto create(String ownerUuid, WorkGroupDto threadDto)
+	public WorkGroupDto create(String actorUuid, WorkGroupDto threadDto)
 			throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notNull(threadDto, "Missing required thread dto");
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
-		return new WorkGroupDto(threadService.create(actor, owner, threadDto.getName()));
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
+		return new WorkGroupDto(threadService.create(authUser, actor, threadDto.getName()));
 
 	}
 
 	@Override
-	public WorkGroupDto delete(String ownerUuid, WorkGroupDto threadDto)
+	public WorkGroupDto delete(String actorUuid, WorkGroupDto threadDto)
 			throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notNull(threadDto, "Missing required thread dto");
 		Validate.notEmpty(threadDto.getUuid(), "Missing required thread dto uuid");
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
-		WorkGroup workGroup = threadService.find(actor, owner, threadDto.getUuid());
-		threadService.deleteThread(actor, owner, workGroup);
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
+		WorkGroup workGroup = threadService.find(authUser, actor, threadDto.getUuid());
+		threadService.deleteThread(authUser, actor, workGroup);
 		return new WorkGroupDto(workGroup);
 	}
 
 	@Override
-	public WorkGroupDto update(String ownerUuid, String threadUuid,
+	public WorkGroupDto update(String actorUuid, String threadUuid,
 			WorkGroupDto threadDto) throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notNull(threadDto, "Missing required ThreadDto");
 		Validate.notEmpty(threadDto.getName(), "Missing required thread name");
 
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
-		return new WorkGroupDto(threadService.update(actor, owner, threadUuid,
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
+		return new WorkGroupDto(threadService.update(authUser, actor, threadUuid,
 				threadDto.getName()));
 	}
 }

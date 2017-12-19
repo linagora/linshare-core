@@ -162,10 +162,10 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 		if (async) {
 			logger.debug("Async mode is used");
 			// Asynchronous mode
-			AccountDto actorDto = documentFacade.getAuthenticatedAccountDto();
+			AccountDto authUserDto = documentFacade.getAuthenticatedAccountDto();
 			AsyncTaskDto asyncTask = null;
 			try {
-				DocumentTaskContext documentTaskContext = new DocumentTaskContext(actorDto, actorDto.getUuid(),
+				DocumentTaskContext documentTaskContext = new DocumentTaskContext(authUserDto, authUserDto.getUuid(),
 						tempFile, fileName, metaData, description);
 				asyncTask = asyncTaskFacade.create(currSize, transfertDuration, fileName, null,
 						AsyncTaskType.DOCUMENT_UPLOAD);

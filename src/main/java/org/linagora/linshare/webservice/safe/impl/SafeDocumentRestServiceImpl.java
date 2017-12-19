@@ -159,12 +159,12 @@ public class SafeDocumentRestServiceImpl extends WebserviceBase implements
 		if (async) {
 			logger.debug("Async mode is used");
 			// Asynchronous mode
-			AccountDto actorDto = workGroupEntryFacade.getAuthenticatedAccountDto();
+			AccountDto authUserDto = workGroupEntryFacade.getAuthenticatedAccountDto();
 			AsyncTaskDto asyncTask = null;
 			try {
 				asyncTask = asyncTaskFacade.create(user.getLsUuid(), currSize, transfertDuration, fileName, null,
 						AsyncTaskType.THREAD_ENTRY_UPLOAD);
-				WorkGroupEntryTaskContext workGroupEntryTaskContext = new WorkGroupEntryTaskContext(actorDto, user.getLsUuid(),
+				WorkGroupEntryTaskContext workGroupEntryTaskContext = new WorkGroupEntryTaskContext(authUserDto, user.getLsUuid(),
 						workGroupUuid, tempFile, fileName, null);
 				WorkGroupEntryUploadAsyncTask task = new WorkGroupEntryUploadAsyncTask(workGroupEntryAsyncFacade,
 						workGroupEntryTaskContext, asyncTask);
@@ -187,11 +187,11 @@ public class SafeDocumentRestServiceImpl extends WebserviceBase implements
 		}
 	}
 
-	protected void logAsyncFailure(String ownerUuid, AsyncTaskDto asyncTask, Exception e) {
+	protected void logAsyncFailure(String actorUuid, AsyncTaskDto asyncTask, Exception e) {
 		logger.error(e.getMessage());
 		logger.debug("Exception : ", e);
 		if (asyncTask != null) {
-			asyncTaskFacade.fail(ownerUuid, asyncTask, e);
+			asyncTaskFacade.fail(actorUuid, asyncTask, e);
 		}
 	}
 }

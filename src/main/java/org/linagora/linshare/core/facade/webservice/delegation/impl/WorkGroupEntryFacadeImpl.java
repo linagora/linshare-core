@@ -84,17 +84,16 @@ public class WorkGroupEntryFacadeImpl extends DelegationGenericFacadeImpl
 	}
 
 	@Override
-	public WorkGroupEntryDto create(String ownerUuid, String threadUuid,
+	public WorkGroupEntryDto create(String actorUuid, String threadUuid,
 			File file, String fileName) {
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notNull(file, "Missing required file");
 		Validate.notNull(fileName, "Missing required fileName");
-
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
-		WorkGroup workGroup = threadService.find(actor, owner, threadUuid);
-		WorkGroupNode node = workGroupNodeService.create(actor, owner, workGroup, file, fileName, null, false);
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
+		WorkGroup workGroup = threadService.find(authUser, actor, threadUuid);
+		WorkGroupNode node = workGroupNodeService.create(authUser, actor, workGroup, file, fileName, null, false);
 		WorkGroupEntryDto dto = new WorkGroupEntryDto((WorkGroupDocument)node);
 		// why ?
 //		dto.setWorkGroup(new WorkGroupLightDto(thread));
@@ -105,51 +104,51 @@ public class WorkGroupEntryFacadeImpl extends DelegationGenericFacadeImpl
 	 * copy a document entry to a workgroup.
 	 */
 	@Override
-	public WorkGroupEntryDto copy(String ownerUuid, String threadUuid,
+	public WorkGroupEntryDto copy(String actorUuid, String threadUuid,
 			String entryUuid) {
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(entryUuid, "Missing required entry uuid");
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
 		// Check if we have the right to access to the specified thread
-		WorkGroup workGroup = threadService.find(actor, owner, threadUuid);
+		WorkGroup workGroup = threadService.find(authUser, actor, threadUuid);
 		// Check if we have the right to download the specified document entry
-		DocumentEntry de = documentEntryService.findForDownloadOrCopyRight(actor, owner, entryUuid);
+		DocumentEntry de = documentEntryService.findForDownloadOrCopyRight(authUser, actor, entryUuid);
 		CopyResource cr = new CopyResource(TargetKind.PERSONAL_SPACE, de);
-		WorkGroupNode node = workGroupNodeService.copy(actor, owner, workGroup, null, cr);
-		documentEntryService.markAsCopied(actor, owner, de, new CopyMto(node, workGroup));
+		WorkGroupNode node = workGroupNodeService.copy(authUser, actor, workGroup, null, cr);
+		documentEntryService.markAsCopied(authUser, actor, de, new CopyMto(node, workGroup));
 		WorkGroupEntryDto dto = new WorkGroupEntryDto((WorkGroupDocument) node);
 		return dto;
 	}
 
 	@Override
-	public WorkGroupEntryDto find(String ownerUuid, String threadUuid,
+	public WorkGroupEntryDto find(String actorUuid, String threadUuid,
 			String entryUuid) throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(entryUuid, "Missing required entry uuid");
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
 		// Check if we have the right to access to the specified thread
-		WorkGroup workGroup = threadService.find(actor, owner, threadUuid);
-		WorkGroupNode node = workGroupNodeService.find(actor, owner, workGroup, entryUuid, false);
+		WorkGroup workGroup = threadService.find(authUser, actor, threadUuid);
+		WorkGroupNode node = workGroupNodeService.find(authUser, actor, workGroup, entryUuid, false);
 		WorkGroupEntryDto dto = new WorkGroupEntryDto((WorkGroupDocument)node);
 		return dto;
 	}
 
 	@Override
-	public List<WorkGroupEntryDto> findAll(String ownerUuid, String threadUuid)
+	public List<WorkGroupEntryDto> findAll(String actorUuid, String threadUuid)
 			throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
 
 		// Check if we have the right to access to the specified thread
-		WorkGroup workGroup = threadService.find(actor, owner, threadUuid);
-		List<WorkGroupNode> all = workGroupNodeService.findAll(actor, owner, workGroup, null, true, null);
+		WorkGroup workGroup = threadService.find(authUser, actor, threadUuid);
+		List<WorkGroupNode> all = workGroupNodeService.findAll(authUser, actor, workGroup, null, true, null);
 		List<WorkGroupEntryDto> ret = Lists.newArrayList();
 		for (WorkGroupNode node : all) {
 			if (node.getNodeType().equals(WorkGroupNodeType.DOCUMENT)) {
@@ -160,76 +159,75 @@ public class WorkGroupEntryFacadeImpl extends DelegationGenericFacadeImpl
 	}
 
 	@Override
-	public WorkGroupEntryDto delete(String ownerUuid, String threadUuid,
+	public WorkGroupEntryDto delete(String actorUuid, String threadUuid,
 			WorkGroupEntryDto threadEntry) throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notEmpty(threadUuid, "Missing required entry uuid");
-		return delete(ownerUuid, threadUuid, threadEntry.getUuid());
+		return delete(actorUuid, threadUuid, threadEntry.getUuid());
 	}
 
 	@Override
-	public WorkGroupEntryDto delete(String ownerUuid, String threadUuid, String uuid)
+	public WorkGroupEntryDto delete(String actorUuid, String threadUuid, String uuid)
 			throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notEmpty(uuid, "Missing required entry uuid");
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
 		// Check if we have the right to access to the specified thread
-		WorkGroup workGroup = threadService.find(actor, owner, threadUuid);
-		WorkGroupNode node = workGroupNodeService.delete(actor, owner, workGroup, uuid);
+		WorkGroup workGroup = threadService.find(authUser, actor, threadUuid);
+		WorkGroupNode node = workGroupNodeService.delete(authUser, actor, workGroup, uuid);
 		WorkGroupEntryDto dto = new WorkGroupEntryDto((WorkGroupDocument)node);
 		return dto;
 	}
 
 	@Override
-	public Response download(String ownerUuid, String threadUuid,
+	public Response download(String actorUuid, String threadUuid,
 			String entryUuid) throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(entryUuid, "Missing required entry uuid");
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
-		WorkGroup workGroup = threadService.find(actor, owner, threadUuid);
-		FileAndMetaData data = workGroupNodeService.download(actor, owner, workGroup, entryUuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
+		WorkGroup workGroup = threadService.find(authUser, actor, threadUuid);
+		FileAndMetaData data = workGroupNodeService.download(authUser, actor, workGroup, entryUuid);
 		ResponseBuilder builder = DocumentStreamReponseBuilder.getDocumentResponseBuilder(data);
 		return builder.build();
 	}
 
 	@Override
-	public Response thumbnail(String ownerUuid, String threadUuid, String threadEntryUuid, ThumbnailType kind)
+	public Response thumbnail(String actorUuid, String threadUuid, String threadEntryUuid, ThumbnailType kind)
 			throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notEmpty(threadUuid, "Missing required document uuid");
 		Validate.notEmpty(threadEntryUuid, "Missing required document uuid");
 		if (kind == null) {
 			kind = ThumbnailType.MEDIUM;
 		}
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
-		WorkGroup workGroup = threadService.find(actor, owner, threadEntryUuid);
-		FileAndMetaData data = workGroupNodeService.thumbnail(actor, owner, workGroup, threadEntryUuid, kind);
-		ResponseBuilder builder = DocumentStreamReponseBuilder
-				.getThumbnailResponseBuilder(data, false, kind);
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
+		WorkGroup workGroup = threadService.find(authUser, actor, threadEntryUuid);
+		FileAndMetaData data = workGroupNodeService.thumbnail(authUser, actor, workGroup, threadEntryUuid, kind);
+		ResponseBuilder builder = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(data, false, kind);
 		return builder.build();
 	}
 
 	@Override
-	public WorkGroupEntryDto update(String ownerUuid, String threadUuid,
+	public WorkGroupEntryDto update(String actorUuid, String threadUuid,
 			String threadEntryUuid, WorkGroupEntryDto threadEntryDto)
 			throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notEmpty(threadUuid, "Missing required document uuid");
 		Validate.notEmpty(threadEntryUuid, "Missing required document uuid");
 		Validate.notNull(threadEntryDto, "Missing required threadEntryDto");
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
-		WorkGroup workGroup = threadService.find(actor, owner, threadUuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
+		WorkGroup workGroup = threadService.find(authUser, actor, threadUuid);
 		WorkGroupDocument document = new WorkGroupDocument();
 		document.setUuid(threadEntryDto.getUuid());
 		document.setName(threadEntryDto.getName());
 		document.setDescription(threadEntryDto.getDescription());
 		document.setMetaData(threadEntryDto.getMetaData());
-		WorkGroupNode node = workGroupNodeService.update(actor, owner, workGroup, document);
+		WorkGroupNode node = workGroupNodeService.update(authUser, actor, workGroup, document);
 		WorkGroupEntryDto dto = new WorkGroupEntryDto((WorkGroupDocument)node);
 		return dto;
 	}

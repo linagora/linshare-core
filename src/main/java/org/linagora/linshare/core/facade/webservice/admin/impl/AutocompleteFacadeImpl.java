@@ -61,8 +61,8 @@ public class AutocompleteFacadeImpl extends AdminGenericFacadeImpl implements Au
 
 	@Override
 	public Set<UserDto> findUser(String pattern) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
-		List<User> users = userService.autoCompleteUser(actor, pattern);
+		User authUser = checkAuthentication(Role.ADMIN);
+		List<User> users = userService.autoCompleteUser(authUser, pattern);
 		logger.debug("nb result for completion : " + users.size());
 		// TODO : FMA : Use database configuration for auto complete limit
 		return getUserDtoList(users);
@@ -70,9 +70,9 @@ public class AutocompleteFacadeImpl extends AdminGenericFacadeImpl implements Au
 
 	@Override
 	public Set<String> getMail(String pattern) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(pattern, "pattern must be set.");
-		List<User> users = userService.autoCompleteUser(actor, pattern);
+		List<User> users = userService.autoCompleteUser(authUser, pattern);
 		logger.debug("nb result for completion : " + users.size());
 		// TODO : FMA : Use database configuration for auto complete limit
 		return getMailList(users, AUTO_COMPLETE_LIMIT);

@@ -69,80 +69,80 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 	}
 
 	@Override
-	public List<DocumentDto> findAll(String ownerUuid) throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+	public List<DocumentDto> findAll(String actorUuid) throws BusinessException {
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
 
-		List<DocumentEntry> list = documentEntryService.findAll(actor, owner);
+		List<DocumentEntry> list = documentEntryService.findAll(authUser, actor);
 		return  ImmutableList.copyOf(Lists.transform(list, DocumentDto.toDelegationVo()));
 	}
 
 	@Override
-	public DocumentDto create(String ownerUuid, File file,
+	public DocumentDto create(String actorUuid, File file,
 			String description, String givenFileName) throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notNull(file, "Missing required file");
 
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
-		DocumentEntry doc = documentEntryService.create(actor, owner, file,
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
+		DocumentEntry doc = documentEntryService.create(authUser, actor, file,
 				givenFileName, description, false, null);
 		return new DocumentDto(doc);
 	}
 
 	@Override
-	public DocumentDto find(String ownerUuid, String documentUuid)
+	public DocumentDto find(String actorUuid, String documentUuid)
 			throws BusinessException {
-		Validate.notEmpty(ownerUuid, "");
+		Validate.notEmpty(actorUuid, "");
 		Validate.notEmpty(documentUuid, "");
 
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
 
-		return new DocumentDto(documentEntryService.find(actor, owner,
+		return new DocumentDto(documentEntryService.find(authUser, actor,
 				documentUuid));
 	}
 
 	@Override
-	public DocumentDto delete(String ownerUuid, DocumentDto documentDto)
+	public DocumentDto delete(String actorUuid, DocumentDto documentDto)
 			throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notNull(documentDto, "Missing required documentDto");
 		Validate.notEmpty(documentDto.getUuid(),
 				"Missing required document uuid");
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
-		DocumentEntry doc = documentEntryService.delete(actor, owner, documentDto.getUuid());
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
+		DocumentEntry doc = documentEntryService.delete(authUser, actor, documentDto.getUuid());
 		return new DocumentDto(doc);
 	}
 
 	@Override
-	public DocumentDto delete(String ownerUuid, String documentUuid)
+	public DocumentDto delete(String actorUuid, String documentUuid)
 			throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notEmpty(documentUuid, "Missing required document uuid");
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
-		DocumentEntry doc = documentEntryService.delete(actor, owner, documentUuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
+		DocumentEntry doc = documentEntryService.delete(authUser, actor, documentUuid);
 		return new DocumentDto(doc);
 	}
 
 	@Override
-	public Response download(String ownerUuid, String documentUuid)
+	public Response download(String actorUuid, String documentUuid)
 			throws BusinessException {
 
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notEmpty(documentUuid, "Missing required document uuid");
 
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
 
-		DocumentEntry doc = documentEntryService.find(actor, owner,
+		DocumentEntry doc = documentEntryService.find(authUser, actor,
 				documentUuid);
 
-		InputStream file = documentEntryService.getDocumentStream(actor, owner,
+		InputStream file = documentEntryService.getDocumentStream(authUser, actor,
 				documentUuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder
 				.getDocumentResponseBuilder(file, doc.getName(), doc.getType(),
@@ -151,20 +151,20 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 	}
 
 	@Override
-	public Response thumbnail(String ownerUuid, String documentUuid, ThumbnailType kind)
+	public Response thumbnail(String actorUuid, String documentUuid, ThumbnailType kind)
 			throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notEmpty(documentUuid, "Missing required document uuid");
 		if (kind == null) {
 			kind = ThumbnailType.MEDIUM;
 		}
 
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
 
-		DocumentEntry doc = documentEntryService.find(actor, owner,
+		DocumentEntry doc = documentEntryService.find(authUser, actor,
 				documentUuid);
-		InputStream file = documentEntryService.getDocumentThumbnailStream(actor, owner, documentUuid, kind);
+		InputStream file = documentEntryService.getDocumentThumbnailStream(authUser, actor, documentUuid, kind);
 		ResponseBuilder response = DocumentStreamReponseBuilder
 				.getDocumentResponseBuilder(file, doc.getName() + "_thumb.png",
 						"image/png");
@@ -172,32 +172,32 @@ public class DocumentFacadeImpl extends DelegationGenericFacadeImpl implements
 	}
 
 	@Override
-	public DocumentDto update(String ownerUuid, String documentUuid,
+	public DocumentDto update(String actorUuid, String documentUuid,
 			DocumentDto documentDto) throws BusinessException {
 
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notEmpty(documentUuid, "Missing required document uuid");
 		Validate.notNull(documentDto, "Missing required DocumentDto");
 
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
 
-		return new DocumentDto(documentEntryService.updateFileProperties(actor, owner, documentUuid,
+		return new DocumentDto(documentEntryService.updateFileProperties(authUser, actor, documentUuid,
 				documentDto.getName(), documentDto.getDescription(),
 				documentDto.getMetaData()));
 	}
 
 	@Override
-	public DocumentDto updateFile(String ownerUuid, String documentUuid,
+	public DocumentDto updateFile(String actorUuid, String documentUuid,
 			File file, String givenFileName) throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notEmpty(documentUuid, "Missing required document uuid");
 		Validate.notNull(file, "Missing required File stream");
 
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
 
-		return new DocumentDto(documentEntryService.update(actor, owner,
+		return new DocumentDto(documentEntryService.update(authUser, actor,
 				documentUuid, file, givenFileName));
 	}
 }

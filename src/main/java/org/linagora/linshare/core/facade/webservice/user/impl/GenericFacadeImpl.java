@@ -72,13 +72,13 @@ public class GenericFacadeImpl implements GenericFacade {
 	}
 
 	protected User checkAuthentication() throws BusinessException {
-		User actor = getAuthentication();
+		User authUser = getAuthentication();
 
-		if (actor == null)
+		if (authUser == null)
 			throw new BusinessException(
 					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
-		return actor;
+		return authUser;
 	}
 
 	/**
@@ -93,32 +93,32 @@ public class GenericFacadeImpl implements GenericFacade {
 	 */
 	@Override
 	public AccountDto getAuthenticatedAccountDto() throws BusinessException {
-		User actor = checkAuthentication();
-		return new AccountDto(actor, false);
+		User authUser = checkAuthentication();
+		return new AccountDto(authUser, false);
 	}
 
-	protected User getOwner(String ownerUuid) {
-		User owner = (User) accountService.findByLsUuid(ownerUuid);
-		if (owner == null) {
+	protected User getActor(String actorUuid) {
+		User actor = (User) accountService.findByLsUuid(actorUuid);
+		if (actor == null) {
 			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
-					"Owner not found");
+					"actor not found");
 		}
-		return owner;
+		return actor;
 	}
 
-	protected User getOwner(Account actor, String ownerUuid) {
-		if (ownerUuid != null) {
-			logger.trace("trying to find owner with uuid : " + ownerUuid);
-			User owner = (User) accountService.findByLsUuid(ownerUuid);
-			if (owner == null) {
-				logger.error("owner with uuid : " + ownerUuid + " not found.");
+	protected User getActor(Account authUser, String actorUuid) {
+		if (actorUuid != null) {
+			logger.trace("trying to find actor with uuid : " + actorUuid);
+			User actor = (User) accountService.findByLsUuid(actorUuid);
+			if (actor == null) {
+				logger.error("actor with uuid : " + actorUuid + " not found.");
 				throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
-						"Owner not found");
+						"actor not found");
 			}
-			return owner;
+			return actor;
 		} else {
-			logger.trace("Owner uuid null, returning the actor as owner.");
-			return (User) actor;
+			logger.trace("actor uuid null, returning the authUser as actor.");
+			return (User) authUser;
 		}
 	}
 }

@@ -40,19 +40,19 @@ import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupMemberDt
 
 public interface ThreadMemberRestService {
 
-	WorkGroupMemberDto create(String ownerUuid, String threadUuid,
+	WorkGroupMemberDto create(String actorUuid, String threadUuid,
 			WorkGroupMemberDto threadMember)
 			throws BusinessException;
 
-	public List<WorkGroupMemberDto> findAll(String ownerUuid, String threadUuid)
+	public List<WorkGroupMemberDto> findAll(String actorUuid, String threadUuid)
 			throws BusinessException;
 
-	public WorkGroupMemberDto update(String ownerUuid, String threadUuid, WorkGroupMemberDto threadMember)
+	public WorkGroupMemberDto update(String actorUuid, String threadUuid, WorkGroupMemberDto threadMember)
 			throws BusinessException;
 
-	public WorkGroupMemberDto delete(String ownerUuid, String threadUuid, WorkGroupMemberDto threadMember)
+	public WorkGroupMemberDto delete(String actorUuid, String threadUuid, WorkGroupMemberDto threadMember)
 			throws BusinessException;
 
-	public WorkGroupMemberDto delete(String ownerUuid, String threadUuid, String uuid)
+	public WorkGroupMemberDto delete(String actorUuid, String threadUuid, String uuid)
 			throws BusinessException;
 }

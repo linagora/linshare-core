@@ -126,7 +126,7 @@ public class ThreadRestServiceImpl extends WebserviceBase implements ThreadRestS
 	@DELETE
 	@ApiOperation(value = "Delete a thread.", response = WorkGroupDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Owner or thread not found."),
+					@ApiResponse(code = 404, message = "Actor or thread not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
@@ -141,7 +141,7 @@ public class ThreadRestServiceImpl extends WebserviceBase implements ThreadRestS
 	@DELETE
 	@ApiOperation(value = "Delete a thread.", response = WorkGroupDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Owner or thread not found."),
+					@ApiResponse(code = 404, message = "Actor or thread not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})

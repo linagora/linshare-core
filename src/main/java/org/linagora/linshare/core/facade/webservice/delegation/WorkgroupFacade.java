@@ -40,16 +40,16 @@ import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
 
 public interface WorkgroupFacade extends DelegationGenericFacade {
 
-	WorkGroupDto find(String ownerUuid, String uuid) throws BusinessException;
+	WorkGroupDto find(String actorUuid, String uuid) throws BusinessException;
 
-	List<WorkGroupDto> findAll(String ownerUuid) throws BusinessException;
+	List<WorkGroupDto> findAll(String actorUuid) throws BusinessException;
 
-	WorkGroupDto create(String ownerUuid, WorkGroupDto threadDto)
+	WorkGroupDto create(String actorUuid, WorkGroupDto threadDto)
 			throws BusinessException;
 
-	WorkGroupDto delete(String ownerUuid, WorkGroupDto threadDto) throws BusinessException;
+	WorkGroupDto delete(String actorUuid, WorkGroupDto threadDto) throws BusinessException;
 
-	WorkGroupDto update(String ownerUuid, String threadUuid, WorkGroupDto threadDto)
+	WorkGroupDto update(String actorUuid, String threadUuid, WorkGroupDto threadDto)
 			throws BusinessException;
 
 }

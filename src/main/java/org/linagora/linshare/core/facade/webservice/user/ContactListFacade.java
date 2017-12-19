@@ -43,28 +43,28 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface ContactListFacade {
 
-	Set<ContactListDto> findAll(String ownerUuid, Boolean mine) throws BusinessException;
+	Set<ContactListDto> findAll(String actorUuid, Boolean mine) throws BusinessException;
 
-	ContactListDto find(String ownerUuid, String uuid) throws BusinessException;
+	ContactListDto find(String actorUuid, String uuid) throws BusinessException;
 
-	ContactListDto create(String ownerUuid, ContactListDto dto) throws BusinessException;
+	ContactListDto create(String actorUuid, ContactListDto dto) throws BusinessException;
 
-	ContactListDto duplicate(String ownerUuid, String contactsListUuidSource, String contactListName) throws BusinessException;
+	ContactListDto duplicate(String actorUuid, String contactsListUuidSource, String contactListName) throws BusinessException;
 
-	ContactListDto update(String ownerUuid, ContactListDto dto, String uuid) throws BusinessException;
+	ContactListDto update(String actorUuid, ContactListDto dto, String uuid) throws BusinessException;
 
-	ContactListDto delete(String ownerUuid, String uuid) throws BusinessException;
+	ContactListDto delete(String actorUuid, String uuid) throws BusinessException;
 
-	Set<ContactListContactDto> findAllContacts(String ownerUuid, String listUuid) throws BusinessException;
+	Set<ContactListContactDto> findAllContacts(String actorUuid, String listUuid) throws BusinessException;
 
-	ContactListContactDto addContact(String ownerUuid, String listUuid, ContactListContactDto dto)
+	ContactListContactDto addContact(String actorUuid, String listUuid, ContactListContactDto dto)
 			throws BusinessException;
 
-	void updateContact(String ownerUuid, ContactListContactDto dto) throws BusinessException;
+	void updateContact(String actorUuid, ContactListContactDto dto) throws BusinessException;
 
-	void deleteContact(String ownerUuid, String uuid) throws BusinessException;
+	void deleteContact(String actorUuid, String uuid) throws BusinessException;
 
-	Set<AuditLogEntryUser> audit(String ownerUuid, String uuid);
+	Set<AuditLogEntryUser> audit(String actorUuid, String uuid);
 
-	Set<ContactListDto> findAllByMemberEmail(String ownerUuid, Boolean mine, String mail) throws BusinessException;
+	Set<ContactListDto> findAllByMemberEmail(String actorUuid, Boolean mine, String mail) throws BusinessException;
 }

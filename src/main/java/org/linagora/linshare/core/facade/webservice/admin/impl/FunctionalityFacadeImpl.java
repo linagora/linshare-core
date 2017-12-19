@@ -64,19 +64,19 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public FunctionalityAdminDto find(String domainId, String funcId, boolean tree)
 			throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(domainId, "domain identifier must be set.");
 		Validate.notEmpty(funcId, "functionality identifier must be set.");
-		Functionality func = service.find(actor, domainId, funcId, tree);
+		Functionality func = service.find(authUser, domainId, funcId, tree);
 		return FunctionalityAdminDto.toDto().apply(func);
 	}
 
 	@Override
 	public List<FunctionalityAdminDto> findAll(String domainId, String parentId, boolean tree, boolean withSubFunctionalities)
 			throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(domainId, "domain identifier must be set.");
-		Iterable<Functionality> entities = service.findAll(actor, domainId, parentId, tree, withSubFunctionalities);
+		Iterable<Functionality> entities = service.findAll(authUser, domainId, parentId, tree, withSubFunctionalities);
 		Iterable<FunctionalityAdminDto> transform = Iterables.transform(entities, FunctionalityAdminDto.toDto());
 		// Copy is made because the transaction is closed at the end of every method in facade classes.
 		return Ordering.natural().immutableSortedCopy(transform);
@@ -85,12 +85,12 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public FunctionalityAdminDto update(FunctionalityAdminDto func)
 			throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 
 		Validate.notEmpty(func.getDomain(), "domain identifier must be set.");
 		Validate.notEmpty(func.getIdentifier(),
 				"functionality identifier must be set.");
-		Functionality entity = service.find(actor, func.getDomain(),
+		Functionality entity = service.find(authUser, func.getDomain(),
 				func.getIdentifier());
 
 		// copy of activation policy.
@@ -117,18 +117,18 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements
 
 		// copy of parameters.
 		entity.updateFunctionalityValuesOnlyFromDto(func);
-		Functionality update = service.update(actor,
+		Functionality update = service.update(authUser,
 				func.getDomain(), entity);
 		return new FunctionalityAdminDto(update);
 	}
 
 	@Override
 	public void delete(FunctionalityAdminDto func) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(func.getDomain(), "domain identifier must be set.");
 		Validate.notEmpty(func.getIdentifier(),
 				"functionality identifier must be set.");
-		service.delete(actor, func.getDomain(),
+		service.delete(authUser, func.getDomain(),
 				func.getIdentifier());
 	}
 }

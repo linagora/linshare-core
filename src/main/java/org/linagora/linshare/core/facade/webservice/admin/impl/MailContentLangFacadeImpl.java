@@ -58,43 +58,43 @@ public class MailContentLangFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public MailContentLangDto find(String uuid) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
-		return new MailContentLangDto(findContentLang(actor, uuid), getOverrideReadonly());
+		User authUser = checkAuthentication(Role.ADMIN);
+		return new MailContentLangDto(findContentLang(authUser, uuid), getOverrideReadonly());
 	}
 
 	@Override
 	public MailContentLangDto create(MailContentLangDto dto) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		MailContentLang contentLang = new MailContentLang();
 
 		contentLang.setLanguage(dto.getLanguage().toInt());
-		contentLang.setMailConfig(findConfig(actor, dto.getMailConfig()));
-		contentLang.setMailContent(findContent(actor, dto.getMailContent()));
-		return new MailContentLangDto(mailConfigService.createContentLang(actor, contentLang));
+		contentLang.setMailConfig(findConfig(authUser, dto.getMailConfig()));
+		contentLang.setMailContent(findContent(authUser, dto.getMailContent()));
+		return new MailContentLangDto(mailConfigService.createContentLang(authUser, contentLang));
 	}
 
 	@Override
 	public MailContentLangDto update(MailContentLangDto dto) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
-		MailContentLang contentLang = findContentLang(actor, dto.getUuid());
+		User authUser = checkAuthentication(Role.ADMIN);
+		MailContentLang contentLang = findContentLang(authUser, dto.getUuid());
 
-		contentLang.setMailContent(findContent(actor, dto.getMailContent()));
-		return new MailContentLangDto(mailConfigService.updateContentLang(actor, contentLang));
+		contentLang.setMailContent(findContent(authUser, dto.getMailContent()));
+		return new MailContentLangDto(mailConfigService.updateContentLang(authUser, contentLang));
 	}
 
 	@Override
 	public void delete(String uuid) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
-		mailConfigService.deleteContentLang(actor, uuid);
+		User authUser = checkAuthentication(Role.ADMIN);
+		mailConfigService.deleteContentLang(authUser, uuid);
 	}
 
 	/*
 	 * Helpers
 	 */
 
-	private MailConfig findConfig(User actor, String uuid)
+	private MailConfig findConfig(User authUser, String uuid)
 			throws BusinessException {
-		MailConfig mailConfig = mailConfigService.findConfigByUuid(actor, uuid);
+		MailConfig mailConfig = mailConfigService.findConfigByUuid(authUser, uuid);
 
 		if (mailConfig == null)
 			throw new BusinessException(BusinessErrorCode.MAILCONFIG_NOT_FOUND,
@@ -102,9 +102,9 @@ public class MailContentLangFacadeImpl extends AdminGenericFacadeImpl implements
 		return mailConfig;
 	}
 
-	private MailContent findContent(User actor, String uuid)
+	private MailContent findContent(User authUser, String uuid)
 			throws BusinessException {
-		MailContent mailContent = mailConfigService.findContentByUuid(actor, uuid);
+		MailContent mailContent = mailConfigService.findContentByUuid(authUser, uuid);
 
 		if (mailContent == null)
 			throw new BusinessException(BusinessErrorCode.MAILCONTENT_NOT_FOUND,
@@ -112,10 +112,10 @@ public class MailContentLangFacadeImpl extends AdminGenericFacadeImpl implements
 		return mailContent;
 	}
 
-	private MailContentLang findContentLang(User actor, String uuid)
+	private MailContentLang findContentLang(User authUser, String uuid)
 			throws BusinessException {
 		MailContentLang mailContentLang = mailConfigService.findContentLangByUuid(
-				actor, uuid);
+				authUser, uuid);
 
 		if (mailContentLang == null)
 			throw new BusinessException(

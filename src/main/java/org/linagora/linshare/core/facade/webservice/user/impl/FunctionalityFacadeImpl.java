@@ -58,16 +58,16 @@ public class FunctionalityFacadeImpl extends UserGenericFacadeImp implements
 
 	@Override
 	public FunctionalityDto find(String identifier) throws BusinessException {
-		User actor = checkAuthentication();
-		Functionality functionality = functionalityService.find(actor, identifier);
+		User authUser = checkAuthentication();
+		Functionality functionality = functionalityService.find(authUser, identifier);
 		return functionality.toUserDto();
 	}
 
 	@Override
 	public List<FunctionalityDto> findAll() throws BusinessException {
-		User actor = checkAuthentication();
+		User authUser = checkAuthentication();
 		List<FunctionalityDto> res = Lists.newArrayList();
-		for (Functionality functionality : functionalityService.findAll(actor)) {
+		for (Functionality functionality : functionalityService.findAll(authUser)) {
 			res.add(functionality.toUserDto());
 		}
 		return res;

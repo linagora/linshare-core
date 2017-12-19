@@ -38,27 +38,27 @@ import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
 
 public class TaskContext {
 
-	protected final AccountDto actorDto;
+	protected final AccountDto authUserDto;
 
-	protected final String ownerUuid;
+	protected final String actorUuid;
 
-	public TaskContext(AccountDto actorDto, String ownerUuid) {
+	public TaskContext(AccountDto authUserDto, String actorUuid) {
 		super();
-		this.actorDto = actorDto;
-		this.ownerUuid = ownerUuid;
+		this.authUserDto = authUserDto;
+		this.actorUuid = actorUuid;
 	}
 
-	public AccountDto getActorDto() {
-		return actorDto;
+	public AccountDto getAuthUserDto() {
+		return authUserDto;
 	}
 
-	public String getOwnerUuid() {
-		return ownerUuid;
+	public String getActorUuid() {
+		return actorUuid;
 	}
 
 	@Override
 	public String toString() {
-		return "TaskContext [ownerUuid=" + ownerUuid + "]";
+		return "TaskContext [actorUuid=" + actorUuid + "]";
 	}
 
 }

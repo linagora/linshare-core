@@ -71,9 +71,9 @@ public class WelcomeMessagesFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public Set<WelcomeMessagesDto> findAll(String domainId, boolean parent)
 			throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		Set<WelcomeMessagesDto> wlcmDtoList = Sets.newHashSet();
-		List<WelcomeMessages> entities = service.findAll(actor, domainId, parent);
+		List<WelcomeMessages> entities = service.findAll(authUser, domainId, parent);
 		for (WelcomeMessages entity : entities) {
 			wlcmDtoList.add(new WelcomeMessagesDto(entity, true));
 		}
@@ -82,18 +82,18 @@ public class WelcomeMessagesFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public WelcomeMessagesDto find(String uuid) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(uuid, "Welcome message uuid must be set.");
-		WelcomeMessages welcomeMessage = service.find(actor, uuid);
+		WelcomeMessages welcomeMessage = service.find(authUser, uuid);
 		WelcomeMessagesDto ret = new WelcomeMessagesDto(welcomeMessage, true);
-		loadRelativeDomains(actor, ret);
+		loadRelativeDomains(authUser, ret);
 		return ret;
 	}
 
 	@Override
 	public WelcomeMessagesDto create(WelcomeMessagesDto wlcmDto)
 			throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notNull(wlcmDto, "Welcome message must be set.");
 		Validate.notEmpty(wlcmDto.getUuid(),
 				"Welcome message uuid must be set.");
@@ -104,9 +104,9 @@ public class WelcomeMessagesFacadeImpl extends AdminGenericFacadeImpl implements
 				"Welcome message domain identifier must be set.");
 
 		WelcomeMessages wlcm = wlcmDto.toObject();
-		WelcomeMessages wlcmMessage = service.create(actor, wlcm, domainId);
+		WelcomeMessages wlcmMessage = service.create(authUser, wlcm, domainId);
 		WelcomeMessagesDto ret = new WelcomeMessagesDto(wlcmMessage, true);
-		loadRelativeDomains(actor, ret);
+		loadRelativeDomains(authUser, ret);
 		return ret;
 	}
 
@@ -119,41 +119,41 @@ public class WelcomeMessagesFacadeImpl extends AdminGenericFacadeImpl implements
 			Set<DomainLightDto> domains = Sets.newHashSet();
 			wlcmDto.setDomains(domains);
 		}
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		WelcomeMessages wlcm = wlcmDto.toObject();
 		List<String> domainUuids = Lists.newArrayList();
 		for (DomainLightDto d : wlcmDto.getDomains()) {
 			domainUuids.add(d.getIdentifier());
 		}
-		WelcomeMessages wlcmMessage = service.update(actor, wlcm, domainUuids);
+		WelcomeMessages wlcmMessage = service.update(authUser, wlcm, domainUuids);
 		WelcomeMessagesDto ret = new WelcomeMessagesDto(wlcmMessage, true);
-		loadRelativeDomains(actor, ret);
+		loadRelativeDomains(authUser, ret);
 		return ret;
 	}
 
 	@Override
 	public WelcomeMessagesDto delete(String uuid) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(uuid, "Welcome message uuid must be set.");
-		WelcomeMessages welcomeMessage = service.delete(actor, uuid);
+		WelcomeMessages welcomeMessage = service.delete(authUser, uuid);
 		return new WelcomeMessagesDto(welcomeMessage, true);
 	}
 
 	@Override
 	public WelcomeMessagesDto delete(WelcomeMessagesDto wlcmDto)
 			throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notNull(wlcmDto, "Welcome message must be set.");
 		Validate.notEmpty(wlcmDto.getUuid(),
 				"Welcome message uuid must be set.");
-		WelcomeMessages welcomeMessage = service.delete(actor,
+		WelcomeMessages welcomeMessage = service.delete(authUser,
 				wlcmDto.getUuid());
 		return new WelcomeMessagesDto(welcomeMessage, true);
 	}
 
-	private void loadRelativeDomains(User actor,
+	private void loadRelativeDomains(User authUser,
 			WelcomeMessagesDto welcomeMessage) {
-		for (AbstractDomain domain : domainService.loadRelativeDomains(actor,
+		for (AbstractDomain domain : domainService.loadRelativeDomains(authUser,
 				welcomeMessage.getUuid())) {
 			welcomeMessage.addDomain(domain);
 		}

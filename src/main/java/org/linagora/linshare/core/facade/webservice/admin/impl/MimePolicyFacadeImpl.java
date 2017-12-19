@@ -60,42 +60,42 @@ public class MimePolicyFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public MimePolicyDto create(MimePolicyDto dto) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notNull(dto, "MimePolicy dto must be set.");
 		Validate.notEmpty(dto.getName(), "policy name must be set.");
 		Validate.notEmpty(dto.getDomainId(),
 				"domain identifier name must be set.");
 
-		MimePolicy create = mimePolicyService.create(actor, dto.getDomainId(),
+		MimePolicy create = mimePolicyService.create(authUser, dto.getDomainId(),
 				new MimePolicy(dto));
 		return new MimePolicyDto(create);
 	}
 
 	@Override
 	public MimePolicyDto delete(String uuid) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(uuid, "MimePolicy uuid must be set.");
-		MimePolicy mimePolicy = mimePolicyService.find(actor, uuid, false);
-		mimePolicyService.delete(actor, mimePolicy);
+		MimePolicy mimePolicy = mimePolicyService.find(authUser, uuid, false);
+		mimePolicyService.delete(authUser, mimePolicy);
 		return new MimePolicyDto(mimePolicy);
 	}
 
 	@Override
 	public MimePolicyDto find(String uuid, boolean full)
 			throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(uuid, "MimePolicy uuid must be set.");
-		return new MimePolicyDto(mimePolicyService.find(actor, uuid, full),
+		return new MimePolicyDto(mimePolicyService.find(authUser, uuid, full),
 				full);
 	}
 
 	@Override
 	public Set<MimePolicyDto> findAll(String domainId, boolean onlyCurrentDomain)
 			throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		if (domainId == null)
-			domainId = actor.getDomainId();
-		Set<MimePolicy> all = mimePolicyService.findAll(actor, domainId,
+			domainId = authUser.getDomainId();
+		Set<MimePolicy> all = mimePolicyService.findAll(authUser, domainId,
 				onlyCurrentDomain);
 		return transform(all);
 	}
@@ -110,11 +110,11 @@ public class MimePolicyFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public MimePolicyDto update(MimePolicyDto dto) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notNull(dto, "MimePolicy dto must be set.");
 		Validate.notEmpty(dto.getName(), "policy name must be set.");
 		Validate.notEmpty(dto.getUuid(), "policy uuid must be set.");
-		MimePolicy mimePolicy = mimePolicyService.update(actor, new MimePolicy(
+		MimePolicy mimePolicy = mimePolicyService.update(authUser, new MimePolicy(
 				dto));
 		return new MimePolicyDto(mimePolicy);
 	}
@@ -122,9 +122,9 @@ public class MimePolicyFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public MimePolicyDto enableAllMimeTypes(String uuid)
 			throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(uuid, "MimePolicy uuid must be set.");
-		MimePolicy mimePolicy = mimePolicyService.enableAllMimeTypes(actor,
+		MimePolicy mimePolicy = mimePolicyService.enableAllMimeTypes(authUser,
 				uuid);
 		return new MimePolicyDto(mimePolicy, true);
 	}
@@ -132,9 +132,9 @@ public class MimePolicyFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public MimePolicyDto disableAllMimeTypes(String uuid)
 			throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(uuid, "MimePolicy uuid must be set.");
-		MimePolicy mimePolicy = mimePolicyService.disableAllMimeTypes(actor,
+		MimePolicy mimePolicy = mimePolicyService.disableAllMimeTypes(authUser,
 				uuid);
 		return new MimePolicyDto(mimePolicy, true);
 	}

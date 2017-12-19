@@ -60,50 +60,50 @@ public class UploadRequestTemplateFacadeImpl extends GenericFacadeImpl implement
 	}
 
 	@Override
-	public List<UploadRequestTemplateDto> findAll(String ownerUuid) throws BusinessException {
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
-		Set<UploadRequestTemplate> tempSet = owner.getUploadRequestTemplates();
+	public List<UploadRequestTemplateDto> findAll(String actorUuid) throws BusinessException {
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		Set<UploadRequestTemplate> tempSet = actor.getUploadRequestTemplates();
 		return ImmutableList.copyOf(Lists.transform(Lists.newArrayList(tempSet), UploadRequestTemplateDto.toDto()));
 	}
 
 	@Override
-	public UploadRequestTemplateDto find(String ownerUuid, String uuid) throws BusinessException {
+	public UploadRequestTemplateDto find(String actorUuid, String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "Template uuid must be set.");
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
-		UploadRequestTemplate template = uploadRequestService.findTemplateByUuid(actor, owner, uuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		UploadRequestTemplate template = uploadRequestService.findTemplateByUuid(authUser, actor, uuid);
 		return new UploadRequestTemplateDto(template);
 	}
 
 	@Override
-	public UploadRequestTemplateDto create(String ownerUuid, UploadRequestTemplateDto dto)
+	public UploadRequestTemplateDto create(String actorUuid, UploadRequestTemplateDto dto)
 			throws BusinessException {
 		Validate.notNull(dto, "Template must be set.");
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
 		UploadRequestTemplate template = dto.toObject();
-		template = uploadRequestService.createTemplate(actor, owner, template);
+		template = uploadRequestService.createTemplate(authUser, actor, template);
 		return new UploadRequestTemplateDto(template);
 	}
 
 	@Override
-	public UploadRequestTemplateDto update(String ownerUuid, String uuid, UploadRequestTemplateDto dto)
+	public UploadRequestTemplateDto update(String actorUuid, String uuid, UploadRequestTemplateDto dto)
 			throws BusinessException {
 		Validate.notNull(dto, "Template must be set.");
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
 		UploadRequestTemplate template = dto.toObject();
-		template = uploadRequestService.updateTemplate(actor, owner, uuid, template);
+		template = uploadRequestService.updateTemplate(authUser, actor, uuid, template);
 		return new UploadRequestTemplateDto(template);
 	}
 
 	@Override
-	public UploadRequestTemplateDto delete(String ownerUuid, String uuid) throws BusinessException {
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
+	public UploadRequestTemplateDto delete(String actorUuid, String uuid) throws BusinessException {
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
 		Validate.notEmpty(uuid, "Template uuid must be set.");
-		UploadRequestTemplate template = uploadRequestService.deleteTemplate(actor, owner, uuid);
+		UploadRequestTemplate template = uploadRequestService.deleteTemplate(authUser, actor, uuid);
 		return new UploadRequestTemplateDto(template);
 	}
 }

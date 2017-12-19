@@ -61,41 +61,41 @@ public class UploadPropositionFilterFacadeImpl extends AdminGenericFacadeImpl
 
 	@Override
 	public List<UploadPropositionFilterDto> findAll() throws BusinessException {
-		User actor = checkAuthentication(Role.SUPERADMIN);
-		List<UploadPropositionFilter> all = service.findAll(actor);
+		User authUser = checkAuthentication(Role.SUPERADMIN);
+		List<UploadPropositionFilter> all = service.findAll(authUser);
 		return Lists.transform(ImmutableList.copyOf(all), UploadPropositionFilterDto.toVo());
 	}
 
 	@Override
 	public UploadPropositionFilterDto find(String uuid)
 			throws BusinessException {
-		User actor = checkAuthentication(Role.SUPERADMIN);
-		UploadPropositionFilter filter = service.find(actor, uuid);
+		User authUser = checkAuthentication(Role.SUPERADMIN);
+		UploadPropositionFilter filter = service.find(authUser, uuid);
 		return UploadPropositionFilterDto.toVo().apply(filter);
 	}
 
 	@Override
 	public UploadPropositionFilterDto create(UploadPropositionFilterDto dto)
 			throws BusinessException {
-		User actor = checkAuthentication(Role.SUPERADMIN);
+		User authUser = checkAuthentication(Role.SUPERADMIN);
 		UploadPropositionFilter filter = UploadPropositionFilterDto.toEntity().apply(dto);
-		filter = service.create(actor, filter);
+		filter = service.create(authUser, filter);
 		return UploadPropositionFilterDto.toVo().apply(filter);
 	}
 
 	@Override
 	public UploadPropositionFilterDto update(UploadPropositionFilterDto dto)
 			throws BusinessException {
-		User actor = checkAuthentication(Role.SUPERADMIN);
+		User authUser = checkAuthentication(Role.SUPERADMIN);
 		UploadPropositionFilter filter = UploadPropositionFilterDto.toEntity().apply(dto);
-		filter = service.update(actor, filter);
+		filter = service.update(authUser, filter);
 		return UploadPropositionFilterDto.toVo().apply(filter);
 	}
 
 	@Override
 	public UploadPropositionFilterDto delete(String uuid) throws BusinessException {
-		User actor = checkAuthentication(Role.SUPERADMIN);
-		UploadPropositionFilter filter = service.delete(actor, uuid);
+		User authUser = checkAuthentication(Role.SUPERADMIN);
+		UploadPropositionFilter filter = service.delete(authUser, uuid);
 		return new UploadPropositionFilterDto(filter);
 	}
 

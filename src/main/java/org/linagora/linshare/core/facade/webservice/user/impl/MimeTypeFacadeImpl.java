@@ -54,10 +54,10 @@ public class MimeTypeFacadeImpl extends GenericFacadeImpl implements MimeTypeFac
 	}
 
 	@Override
-	public List<MimeTypeDto> find(String ownerUuid, Boolean disabled) {
-		Account actor = checkAuthentication();
-		Account owner = getOwner(actor, ownerUuid);
-		Set<MimeType> mimeTypes = owner.getDomain().getMimePolicy().getMimeTypes();
+	public List<MimeTypeDto> find(String actorUuid, Boolean disabled) {
+		Account authUser = checkAuthentication();
+		Account actor = getActor(authUser, actorUuid);
+		Set<MimeType> mimeTypes = actor.getDomain().getMimePolicy().getMimeTypes();
 		List<MimeTypeDto> res = Lists.transform(Lists.newArrayList(mimeTypes), MimeTypeDto.toDto()
 				);
 		return ImmutableList.copyOf(Iterables.filter(res

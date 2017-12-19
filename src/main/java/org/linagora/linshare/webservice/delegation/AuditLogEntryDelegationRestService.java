@@ -40,6 +40,6 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface AuditLogEntryDelegationRestService {
 
-	public Set<AuditLogEntryUser> findAll(String ownerUuid, List<String> action, List<String> type, boolean forceAll, String beginDate,
+	public Set<AuditLogEntryUser> findAll(String actorUuid, List<String> action, List<String> type, boolean forceAll, String beginDate,
 			String endDate);
 }

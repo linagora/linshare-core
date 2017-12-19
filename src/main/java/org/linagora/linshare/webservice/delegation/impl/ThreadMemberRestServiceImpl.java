@@ -58,8 +58,8 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/{ownerUuid}/threads/{threadUuid}/members")
-@Api(value = "/rest/delegation/{ownerUuid}/threads/{threadUuid}/members", basePath = "/rest/threads/{threadUuid}/members",
+@Path("/{actorUuid}/threads/{threadUuid}/members")
+@Api(value = "/rest/delegation/{actorUuid}/threads/{threadUuid}/members", basePath = "/rest/threads/{threadUuid}/members",
 	description = "thread members service.",
 	produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -83,11 +83,11 @@ public class ThreadMemberRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public WorkGroupMemberDto create(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The user domain identifier.", required = true) WorkGroupMemberDto threadMember)
 					throws BusinessException {
-		return workgroupMemberFacade.create(ownerUuid, threadUuid, threadMember.getUserDomainId(), threadMember.getUserMail(), threadMember.isReadonly(), threadMember.isAdmin());
+		return workgroupMemberFacade.create(actorUuid, threadUuid, threadMember.getUserDomainId(), threadMember.getUserMail(), threadMember.isReadonly(), threadMember.isAdmin());
 	}
 
 	@Path("/")
@@ -100,10 +100,10 @@ public class ThreadMemberRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public List<WorkGroupMemberDto> findAll(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid)
 				throws BusinessException {
-		return workgroupMemberFacade.findAll(ownerUuid, threadUuid);
+		return workgroupMemberFacade.findAll(actorUuid, threadUuid);
 	}
 
 	@Path("/")
@@ -116,11 +116,11 @@ public class ThreadMemberRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public WorkGroupMemberDto update(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread member to update.", required = true) WorkGroupMemberDto threadMember)
 					throws BusinessException {
-		return workgroupMemberFacade.update(ownerUuid, threadUuid, threadMember);
+		return workgroupMemberFacade.update(actorUuid, threadUuid, threadMember);
 	}
 
 	@Path("/")
@@ -133,11 +133,11 @@ public class ThreadMemberRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public WorkGroupMemberDto delete(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The thread member to delete.", required = true) WorkGroupMemberDto threadMember)
 					throws BusinessException {
-		return workgroupMemberFacade.delete(ownerUuid, threadUuid, threadMember.getUserUuid());
+		return workgroupMemberFacade.delete(actorUuid, threadUuid, threadMember.getUserUuid());
 	}
 
 	@Path("/{uuid}")
@@ -150,11 +150,11 @@ public class ThreadMemberRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public WorkGroupMemberDto delete(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The user uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		return workgroupMemberFacade.delete(ownerUuid, threadUuid, uuid);
+		return workgroupMemberFacade.delete(actorUuid, threadUuid, uuid);
 	}
 
 }

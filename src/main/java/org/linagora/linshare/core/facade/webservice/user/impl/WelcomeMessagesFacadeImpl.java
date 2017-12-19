@@ -54,10 +54,10 @@ public class WelcomeMessagesFacadeImpl extends UserGenericFacadeImp implements W
 	}
 
 	@Override
-	public List<Map<SupportedLanguage, String>> findAll(String ownerUuid) throws BusinessException {
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
-		WelcomeMessages currentWelcomeMessage = owner.getDomain().getCurrentWelcomeMessage();
+	public List<Map<SupportedLanguage, String>> findAll(String actorUuid) throws BusinessException {
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		WelcomeMessages currentWelcomeMessage = actor.getDomain().getCurrentWelcomeMessage();
 		List<Map<SupportedLanguage, String>> resList = Lists.newArrayList();
 		Map<SupportedLanguage, String> res = new HashMap<SupportedLanguage, String>();
 		for (WelcomeMessagesEntry entry : currentWelcomeMessage

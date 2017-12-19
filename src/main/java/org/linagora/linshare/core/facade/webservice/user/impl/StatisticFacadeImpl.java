@@ -58,8 +58,8 @@ public class StatisticFacadeImpl extends UserGenericFacadeImp implements Statist
 	@Override
 	public List<StatisticDto> findBetweenTwoDates(Date beginDate, Date endDate, StatisticType statisticType)
 			throws BusinessException {
-		User actor = checkAuthentication();
-		List<Statistic> listStat = statisticService.findBetweenTwoDates(actor, actor, null, beginDate, endDate, statisticType);
+		User authUser = checkAuthentication();
+		List<Statistic> listStat = statisticService.findBetweenTwoDates(authUser, authUser, null, beginDate, endDate, statisticType);
 		return ImmutableList.copyOf(Lists.transform(listStat, StatisticDto.toDto()));
 	}
 }

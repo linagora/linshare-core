@@ -100,9 +100,9 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public Set<DomainDto> findAll() throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		Set<DomainDto> domainDtoList = Sets.newHashSet();
-		List<AbstractDomain> entities = abstractDomainService.findAll(actor);
+		List<AbstractDomain> entities = abstractDomainService.findAll(authUser);
 		for (AbstractDomain abstractDomain : entities) {
 			domainDtoList.add(DomainDto.getFull(abstractDomain));
 		}
@@ -112,7 +112,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public DomainDto find(String domain, boolean tree, boolean parent)
 			throws BusinessException {
-		 User actor = checkAuthentication(Role.ADMIN);
+		 User authUser = checkAuthentication(Role.ADMIN);
 		 Validate.notEmpty(domain, "domain identifier must be set.");
 		 AbstractDomain entity =
 				 abstractDomainService.retrieveDomain(domain);
@@ -123,9 +123,9 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 					 "the curent domain was not found : " + domain);
 		 }
 		 boolean simple = true;
-		 if (actor.hasSuperAdminRole()) {
+		 if (authUser.hasSuperAdminRole()) {
 			 simple = false;
-		 } else if (entity.isManagedBy(actor)) {
+		 } else if (entity.isManagedBy(authUser)) {
 			 simple = true;
 		 } else {
 			 throw new BusinessException(BusinessErrorCode.FORBIDDEN,
@@ -164,19 +164,19 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public DomainDto create(DomainDto domainDto) throws BusinessException {
-		User actor = checkAuthentication(Role.SUPERADMIN);
+		User authUser = checkAuthentication(Role.SUPERADMIN);
 		AbstractDomain domain = getDomain(domainDto);
 		switch (domain.getDomainType()) {
 		case TOPDOMAIN:
 			LdapUserProvider ldapUserProvider = createLdapUserProviderIfNeeded(domainDto);
 			domain.setUserProvider(ldapUserProvider);
-			return DomainDto.getFull(abstractDomainService.createTopDomain(actor, (TopDomain) domain));
+			return DomainDto.getFull(abstractDomainService.createTopDomain(authUser, (TopDomain) domain));
 		case SUBDOMAIN:
 			LdapUserProvider ldapUserProvider2 = createLdapUserProviderIfNeeded(domainDto);
 			domain.setUserProvider(ldapUserProvider2);
-			return DomainDto.getFull(abstractDomainService.createSubDomain(actor, (SubDomain) domain));
+			return DomainDto.getFull(abstractDomainService.createSubDomain(authUser, (SubDomain) domain));
 		case GUESTDOMAIN:
-			return DomainDto.getFull(abstractDomainService.createGuestDomain(actor, (GuestDomain) domain));
+			return DomainDto.getFull(abstractDomainService.createGuestDomain(authUser, (GuestDomain) domain));
 		default:
 			throw new BusinessException(BusinessErrorCode.DOMAIN_INVALID_TYPE,
 					"Try to create a root domain");
@@ -231,26 +231,26 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public DomainDto update(DomainDto domainDto) throws BusinessException {
-		User actor = checkAuthentication(Role.SUPERADMIN);
+		User authUser = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(domainDto.getIdentifier(),
 				"domain identifier must be set.");
 		AbstractDomain domain = getDomain(domainDto);
 		LdapUserProvider ldapUserProvider = updateLdapUserProvider(domainDto);
 		domain.setUserProvider(ldapUserProvider);
-		return DomainDto.getFull(abstractDomainService.updateDomain(actor, domain));
+		return DomainDto.getFull(abstractDomainService.updateDomain(authUser, domain));
 	}
 
 	@Override
 	public DomainDto delete(String domainId) throws BusinessException {
-		User actor = checkAuthentication(Role.SUPERADMIN);
+		User authUser = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(domainId, "domain identifier must be set.");
-		AbstractDomain domain = abstractDomainService.markToPurge(actor, domainId);
+		AbstractDomain domain = abstractDomainService.markToPurge(authUser, domainId);
 		return DomainDto.getFull(domain);
 	}
 
 	private AbstractDomain getDomain(DomainDto domainDto)
 			throws BusinessException {
-		User actor = checkAuthentication(Role.SUPERADMIN);
+		User authUser = checkAuthentication(Role.SUPERADMIN);
 //		Validate.notEmpty(domainDto.getUuid(),
 //				"domain identifier must be set.");
 		Validate.notNull(domainDto.getPolicy(), "domain policy must be set.");
@@ -272,7 +272,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 				.find(domainDto.getPolicy().getIdentifier());
 		domain.setPolicy(policy);
 
-		WelcomeMessages wlcm = welcomeMessagesService.find(actor, domainDto.getCurrentWelcomeMessage().getUuid());
+		WelcomeMessages wlcm = welcomeMessagesService.find(authUser, domainDto.getCurrentWelcomeMessage().getUuid());
 		domain.setCurrentWelcomeMessages(wlcm);
 
 		if (domainDto.getMailConfigUuid() != null) {

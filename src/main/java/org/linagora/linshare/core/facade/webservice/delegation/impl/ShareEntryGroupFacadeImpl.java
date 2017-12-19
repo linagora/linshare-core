@@ -60,44 +60,44 @@ public class ShareEntryGroupFacadeImpl extends DelegationGenericFacadeImpl imple
 	}
 
 	@Override
-	public List<ShareEntryGroupDto> findAll(String ownerUuid, boolean full) throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
-		List<ShareEntryGroup> list = shareEntryGroupService.findAll(actor, owner);
+	public List<ShareEntryGroupDto> findAll(String actorUuid, boolean full) throws BusinessException {
+		Validate.notEmpty(actorUuid, "actor uuid must be set.");
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
+		List<ShareEntryGroup> list = shareEntryGroupService.findAll(authUser, actor);
 		return	ImmutableList.copyOf(Lists.transform(list,
 						ShareEntryGroupDto.toDto(full)));
 	}
 
 	@Override
-	public ShareEntryGroupDto find(String ownerUuid, String uuid, boolean full) throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
+	public ShareEntryGroupDto find(String actorUuid, String uuid, boolean full) throws BusinessException {
+		Validate.notEmpty(actorUuid, "actor uuid must be set.");
 		Validate.notEmpty(uuid, "Shar entry group's uuid must be set.");
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
-		ShareEntryGroup seg = shareEntryGroupService.find(actor, owner, uuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
+		ShareEntryGroup seg = shareEntryGroupService.find(authUser, actor, uuid);
 		return new ShareEntryGroupDto(seg, full);
 	}
 
 	@Override
-	public ShareEntryGroupDto update(String ownerUuid, ShareEntryGroupDto shareEntryGroupDto) throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
+	public ShareEntryGroupDto update(String actorUuid, ShareEntryGroupDto shareEntryGroupDto) throws BusinessException {
+		Validate.notEmpty(actorUuid, "actor uuid must be set.");
 		Validate.notNull(shareEntryGroupDto, "Share entry group must be set.");
 		Validate.notEmpty(shareEntryGroupDto.getUuid(), "Uuid must be set.");
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
 		ShareEntryGroup seg = shareEntryGroupDto.toObject();
-		seg = shareEntryGroupService.update(actor, owner, shareEntryGroupDto.getUuid(), seg);
+		seg = shareEntryGroupService.update(authUser, actor, shareEntryGroupDto.getUuid(), seg);
 		return new ShareEntryGroupDto(seg, false);
 	}
 
 	@Override
-	public ShareEntryGroupDto delete(String ownerUuid, String uuid) throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
+	public ShareEntryGroupDto delete(String actorUuid, String uuid) throws BusinessException {
+		Validate.notEmpty(actorUuid, "actor uuid must be set.");
 		Validate.notEmpty(uuid, "Shar entry group's uuid must be set.");
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
-		ShareEntryGroup seg = shareEntryGroupService.delete(actor, owner, uuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
+		ShareEntryGroup seg = shareEntryGroupService.delete(authUser, actor, uuid);
 		return new ShareEntryGroupDto(seg, false);
 	}
 }

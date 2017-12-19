@@ -58,8 +58,8 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/{ownerUuid}/workgroups")
-@Api(value = "/rest/delegation/v2/{ownerUuid}/workgroups", basePath = "/rest/workgroups", description = "workgroups service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
+@Path("/{actorUuid}/workgroups")
+@Api(value = "/rest/delegation/v2/{actorUuid}/workgroups", basePath = "/rest/workgroups", description = "workgroups service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class WorkGroupRestServiceImpl extends WebserviceBase implements WorkGroupRestService {
@@ -79,9 +79,9 @@ public class WorkGroupRestServiceImpl extends WebserviceBase implements WorkGrou
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public WorkGroupDto create(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "Workgroup to create.", required = true) WorkGroupDto workgroup) throws BusinessException {
-		return workgroupFacade.create(ownerUuid, workgroup);
+		return workgroupFacade.create(actorUuid, workgroup);
 	}
 
 	@Path("/{uuid}")
@@ -93,10 +93,10 @@ public class WorkGroupRestServiceImpl extends WebserviceBase implements WorkGrou
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public WorkGroupDto find(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		return workgroupFacade.find(ownerUuid, uuid);
+		return workgroupFacade.find(actorUuid, uuid);
 	}
 
 	@Path("/{uuid}")
@@ -108,10 +108,10 @@ public class WorkGroupRestServiceImpl extends WebserviceBase implements WorkGrou
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public void head(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		workgroupFacade.find(ownerUuid, uuid);
+		workgroupFacade.find(actorUuid, uuid);
 	}
 
 	@Path("/")
@@ -123,9 +123,9 @@ public class WorkGroupRestServiceImpl extends WebserviceBase implements WorkGrou
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public List<WorkGroupDto> findAll(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid)
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid)
 			throws BusinessException {
-		return workgroupFacade.findAll(ownerUuid);
+		return workgroupFacade.findAll(actorUuid);
 	}
 
 	@Path("/")
@@ -137,9 +137,9 @@ public class WorkGroupRestServiceImpl extends WebserviceBase implements WorkGrou
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public WorkGroupDto delete(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "Workgroup to delete.", required = true) WorkGroupDto workgroup) throws BusinessException {
-		return workgroupFacade.delete(ownerUuid, workgroup);
+		return workgroupFacade.delete(actorUuid, workgroup);
 	}
 
 	@Path("/{uuid}")
@@ -151,12 +151,12 @@ public class WorkGroupRestServiceImpl extends WebserviceBase implements WorkGrou
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public WorkGroupDto delete(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		WorkGroupDto tmp = new WorkGroupDto();
 		tmp.setUuid(uuid);
-		return workgroupFacade.delete(ownerUuid, tmp);
+		return workgroupFacade.delete(actorUuid, tmp);
 	}
 
 	@Path("/{uuid}")
@@ -168,9 +168,9 @@ public class WorkGroupRestServiceImpl extends WebserviceBase implements WorkGrou
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public WorkGroupDto update(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("uuid") String workgroupUuid,
 			@ApiParam(value = "Workgroup to create.", required = true) WorkGroupDto workgroupDto) throws BusinessException {
-		return workgroupFacade.update(ownerUuid, workgroupUuid, workgroupDto);
+		return workgroupFacade.update(actorUuid, workgroupUuid, workgroupDto);
 	}
 }

@@ -40,16 +40,16 @@ import org.linagora.linshare.mongo.entities.UserPreference;
 
 public interface UserPreferenceFacade extends GenericFacade {
 
-	List<UserPreference> findAll(String ownerUuid) throws BusinessException;
+	List<UserPreference> findAll(String actorUuid) throws BusinessException;
 
-	UserPreference find(String ownerUuid, String uuid) throws BusinessException;
+	UserPreference find(String actorUuid, String uuid) throws BusinessException;
 
-	UserPreference create(String ownerUuid, UserPreference dto) throws BusinessException;
+	UserPreference create(String actorUuid, UserPreference dto) throws BusinessException;
 
-	UserPreference update(String ownerUuid, String uuid, UserPreference dto) throws BusinessException;
+	UserPreference update(String actorUuid, String uuid, UserPreference dto) throws BusinessException;
 
-	UserPreference delete(String ownerUuid, String uuid) throws BusinessException;
+	UserPreference delete(String actorUuid, String uuid) throws BusinessException;
 
-	void deleteAll(String ownerUuid) throws BusinessException;
+	void deleteAll(String actorUuid) throws BusinessException;
 
 }

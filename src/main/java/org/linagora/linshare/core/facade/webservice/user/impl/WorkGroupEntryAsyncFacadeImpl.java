@@ -76,18 +76,18 @@ public class WorkGroupEntryAsyncFacadeImpl extends GenericAsyncFacadeImpl implem
 
 	@Override
 	public WorkGroupEntryDto upload(WorkGroupEntryTaskContext tetc) {
-		User actor = checkAuthentication(tetc);
-		User owner = getOwner(tetc);
+		User authUser = checkAuthentication(tetc);
+		User actor = getActor(tetc);
 		Validate.notNull(tetc.getFile(),
 				"Missing required file (check parameter named file)");
 		Validate.notEmpty(tetc.getThreadUuid(), "Missing required thread uuid");
 		Validate.notEmpty(tetc.getFileName(), "Missing required file name");
-		WorkGroup workGroup = threadService.find(actor, owner, tetc.getThreadUuid());
+		WorkGroup workGroup = threadService.find(authUser, actor, tetc.getThreadUuid());
 		if (workGroup == null) {
 			throw new BusinessException(BusinessErrorCode.THREAD_NOT_FOUND,
 					"Current thread was not found : " + tetc.getThreadUuid());
 		}
-		WorkGroupNode node = service.create(actor, owner, workGroup, tetc.getFile(), tetc.getFileName(), tetc.getWorkGroupFolderUuid(), false);
+		WorkGroupNode node = service.create(authUser, actor, workGroup, tetc.getFile(), tetc.getFileName(), tetc.getWorkGroupFolderUuid(), false);
 		WorkGroupEntryDto dto = new WorkGroupEntryDto((WorkGroupDocument) node);
 		dto.setWorkGroup(new WorkGroupLightDto(workGroup));
 		return dto;
@@ -95,19 +95,19 @@ public class WorkGroupEntryAsyncFacadeImpl extends GenericAsyncFacadeImpl implem
 
 	@Override
 	public WorkGroupEntryDto copy(WorkGroupEntryTaskContext tetc) {
-		User actor = checkAuthentication(tetc);
-		User owner = getOwner(tetc);
+		User authUser = checkAuthentication(tetc);
+		User actor = getActor(tetc);
 		Validate.notNull(tetc, "Missing WorkGroupEntryTaskContext");
-		Validate.notEmpty(tetc.getOwnerUuid(), "Missing required owner uuid");
+		Validate.notEmpty(tetc.getActorUuid(), "Missing required actor uuid");
 		Validate.notEmpty(tetc.getThreadUuid(), "Missing required thread uuid");
 		Validate.notEmpty(tetc.getDocEntryUuid(), "Missing required document entry uuid");
 		// Check if we have the right to access to the specified thread
-		WorkGroup workGroup = threadService.find(actor, owner, tetc.getThreadUuid());
+		WorkGroup workGroup = threadService.find(authUser, actor, tetc.getThreadUuid());
 		// Check if we have the right to download the specified document entry
-		DocumentEntry de = documentEntryService.findForDownloadOrCopyRight(actor, owner, tetc.getDocEntryUuid());
+		DocumentEntry de = documentEntryService.findForDownloadOrCopyRight(authUser, actor, tetc.getDocEntryUuid());
 		CopyResource cr = new CopyResource(TargetKind.PERSONAL_SPACE, de);
-		WorkGroupNode node = service.copy(actor, owner, workGroup, null, cr);
-		documentEntryService.markAsCopied(actor, owner, de, new CopyMto(node, workGroup));
+		WorkGroupNode node = service.copy(authUser, actor, workGroup, null, cr);
+		documentEntryService.markAsCopied(authUser, actor, de, new CopyMto(node, workGroup));
 		WorkGroupEntryDto dto = new WorkGroupEntryDto((WorkGroupDocument) node);
 		dto.setWorkGroup(new WorkGroupLightDto(workGroup));
 		return dto;

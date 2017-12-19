@@ -41,17 +41,17 @@ import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 
 public interface UploadRequestFacade {
 
-	List<UploadRequestDto> findAll(String ownerUuid) throws BusinessException;
+	List<UploadRequestDto> findAll(String actorUuid) throws BusinessException;
 
-	UploadRequestDto find(String ownerUuid, String uuid) throws BusinessException;
+	UploadRequestDto find(String actorUuid, String uuid) throws BusinessException;
 
-	List<UploadRequestDto> create(String ownerUuid, UploadRequestDto uploadRequestDto, Boolean groupMode) throws BusinessException;
+	List<UploadRequestDto> create(String actorUuid, UploadRequestDto uploadRequestDto, Boolean groupMode) throws BusinessException;
 
-	UploadRequestDto update(String ownerUuid, String uuid, UploadRequestDto uploadRequestDto) throws BusinessException;
+	UploadRequestDto update(String actorUuid, String uuid, UploadRequestDto uploadRequestDto) throws BusinessException;
 
-	UploadRequestDto updateStatus(String ownerUuid, String uuid, String status) throws BusinessException;
+	UploadRequestDto updateStatus(String actorUuid, String uuid, String status) throws BusinessException;
 
-	UploadRequestDto delete(String ownerUuid, String uuid) throws BusinessException;
+	UploadRequestDto delete(String actorUuid, String uuid) throws BusinessException;
 
-	UploadRequestDto delete(String ownerUuid, UploadRequestDto uploadRequestDto) throws BusinessException;
+	UploadRequestDto delete(String actorUuid, UploadRequestDto uploadRequestDto) throws BusinessException;
 }

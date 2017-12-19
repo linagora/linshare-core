@@ -76,8 +76,8 @@ public class UploadPropositionFacadeImpl extends
 
 	@Override
 	public List<UploadPropositionFilterDto> findAll() throws BusinessException {
-		User actor = checkAuthentication();
-		List<UploadPropositionFilter> all = uploadPropositionFilterService.findAllEnabledFilters(actor);
+		User authUser = checkAuthentication();
+		List<UploadPropositionFilter> all = uploadPropositionFilterService.findAllEnabledFilters(authUser);
 		List<UploadPropositionFilterDto> transform = Lists.transform(all, UploadPropositionFilterDto.toVo());
 		ImmutableList<UploadPropositionFilterDto> res = ImmutableList.copyOf(transform);
 		return res;
@@ -87,8 +87,8 @@ public class UploadPropositionFacadeImpl extends
 	public void checkIfValidRecipient(String userMail, String userDomain)
 			throws BusinessException {
 		Validate.notEmpty(userMail, "User mail is required.");
-		User actor = checkAuthentication();
-		uploadPropositionService.checkIfValidRecipient(actor, userMail,
+		User authUser = checkAuthentication();
+		uploadPropositionService.checkIfValidRecipient(authUser, userMail,
 				userDomain);
 	}
 

@@ -63,32 +63,32 @@ public class GuestFacadeImpl extends DelegationGenericFacadeImpl implements
 	}
 
 	@Override
-	public GuestDto find(String ownerUuid, String uuid)
+	public GuestDto find(String actorUuid, String uuid)
 			throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notEmpty(uuid, "Missing required guest uuid");
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
-		return GuestDto.getFull(guestService.find(actor, owner, uuid));
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
+		return GuestDto.getFull(guestService.find(authUser, actor, uuid));
 	}
 
 	@Override
-	public GuestDto find(String ownerUuid, String domain, String mail)
+	public GuestDto find(String actorUuid, String domain, String mail)
 			throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notEmpty(mail, "Missing required guest mail");
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
-		return GuestDto.getFull(guestService.find(actor, owner, domain, mail));
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
+		return GuestDto.getFull(guestService.find(authUser, actor, domain, mail));
 	}
 
 	@Override
-	public List<GuestDto> findAll(String ownerUuid) throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
+	public List<GuestDto> findAll(String actorUuid) throws BusinessException {
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
 		List<GuestDto> res = Lists.newArrayList();
-		List<Guest> guests = guestService.findAll(actor, owner, null);
+		List<Guest> guests = guestService.findAll(authUser, actor, null);
 		for (Guest guest : guests) {
 			res.add(GuestDto.getFull(guest));
 		}
@@ -96,12 +96,12 @@ public class GuestFacadeImpl extends DelegationGenericFacadeImpl implements
 	}
 
 	@Override
-	public GuestDto create(String ownerUuid, GuestDto guestDto)
+	public GuestDto create(String actorUuid, GuestDto guestDto)
 			throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notNull(guestDto, "Missing required guest dto");
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
 		Guest guest = guestDto.toUserObject();
 		List<String> ac = Lists.newArrayList();
 		if (guest.isRestricted()) {
@@ -109,17 +109,17 @@ public class GuestFacadeImpl extends DelegationGenericFacadeImpl implements
 				ac.add(contactDto.getMail());
 			}
 		}
-		return GuestDto.getFull(guestService.create(actor, owner, guest, ac));
+		return GuestDto.getFull(guestService.create(authUser, actor, guest, ac));
 	}
 
 	@Override
-	public GuestDto update(String ownerUuid, GuestDto guestDto)
+	public GuestDto update(String actorUuid, GuestDto guestDto)
 			throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notNull(guestDto, "Missing required guest dto");
 		Validate.notEmpty(guestDto.getUuid(), "Missing required guest dto uuid");
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
 		Guest guest = guestDto.toUserObject();
 		List<String> ac = null;
 		if (guest.isRestricted()) {
@@ -130,27 +130,27 @@ public class GuestFacadeImpl extends DelegationGenericFacadeImpl implements
 				}
 			}
 		}
-		return GuestDto.getFull(guestService.update(actor, owner, guest, ac));
+		return GuestDto.getFull(guestService.update(authUser, actor, guest, ac));
 	}
 
 	@Override
-	public GuestDto delete(String ownerUuid, GuestDto guestDto)
+	public GuestDto delete(String actorUuid, GuestDto guestDto)
 			throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notNull(guestDto, "Missing required guest dto");
 		Validate.notEmpty(guestDto.getUuid(), "Missing required guest dto uuid");
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
-		return GuestDto.getFull(guestService.delete(actor, owner, guestDto.getUuid()));
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
+		return GuestDto.getFull(guestService.delete(authUser, actor, guestDto.getUuid()));
 	}
 
 	@Override
-	public GuestDto delete(String ownerUuid, String uuid) throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+	public GuestDto delete(String actorUuid, String uuid) throws BusinessException {
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notEmpty(uuid, "Missing required guest uuid");
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
-		return GuestDto.getFull(guestService.delete(actor, owner, uuid));
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
+		return GuestDto.getFull(guestService.delete(authUser, actor, uuid));
 	}
 
 }

@@ -40,8 +40,8 @@ public class BatchTaskContext extends TaskContext {
 
 	GenericBatch batch;
 
-	public BatchTaskContext(AccountDto actorDto, String ownerUuid, GenericBatch batch) {
-		super(actorDto, ownerUuid);
+	public BatchTaskContext(AccountDto authUserDto, String actorUuid, GenericBatch batch) {
+		super(authUserDto, actorUuid);
 		this.batch = batch;
 	}
 

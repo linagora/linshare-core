@@ -39,17 +39,17 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
 
 public interface WorkGroupRestService {
-	WorkGroupDto create(String ownerUuid, WorkGroupDto thread) throws BusinessException;
+	WorkGroupDto create(String actorUuid, WorkGroupDto thread) throws BusinessException;
 
-	WorkGroupDto find(String ownerUuid, String uuid) throws BusinessException;
+	WorkGroupDto find(String actorUuid, String uuid) throws BusinessException;
 
-	void head(String ownerUuid, String uuid) throws BusinessException;
+	void head(String actorUuid, String uuid) throws BusinessException;
 
-	List<WorkGroupDto> findAll(String ownerUuid) throws BusinessException;
+	List<WorkGroupDto> findAll(String actorUuid) throws BusinessException;
 
-	WorkGroupDto delete(String ownerUuid, WorkGroupDto thread) throws BusinessException;
+	WorkGroupDto delete(String actorUuid, WorkGroupDto thread) throws BusinessException;
 
-	WorkGroupDto delete(String ownerUuid, String uuid) throws BusinessException;
+	WorkGroupDto delete(String actorUuid, String uuid) throws BusinessException;
 
-	WorkGroupDto update(String ownerUuid, String threadUuid, WorkGroupDto threadDto) throws BusinessException;
+	WorkGroupDto update(String actorUuid, String threadUuid, WorkGroupDto threadDto) throws BusinessException;
 }

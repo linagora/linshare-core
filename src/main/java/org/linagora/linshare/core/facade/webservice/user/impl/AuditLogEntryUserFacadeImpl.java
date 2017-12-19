@@ -53,10 +53,10 @@ public class AuditLogEntryUserFacadeImpl extends GenericFacadeImpl implements Au
 	}
 
 	@Override
-	public Set<AuditLogEntryUser> findAll(String ownerUuid, List<String> action, List<String> type, boolean forceAll,
+	public Set<AuditLogEntryUser> findAll(String actorUuid, List<String> action, List<String> type, boolean forceAll,
 			String beginDate, String endDate) throws BusinessException {
-		Account actor = checkAuthentication();
-		Account owner = getOwner(actor, ownerUuid);
-		return service.findAll(actor, owner, action, type, forceAll, beginDate, endDate);
+		Account authUser = checkAuthentication();
+		Account actor = getActor(authUser, actorUuid);
+		return service.findAll(authUser, actor, action, type, forceAll, beginDate, endDate);
 	}
 }

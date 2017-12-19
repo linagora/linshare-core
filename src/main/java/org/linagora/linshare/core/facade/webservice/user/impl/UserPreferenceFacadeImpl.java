@@ -53,30 +53,30 @@ public class UserPreferenceFacadeImpl extends UserGenericFacadeImp implements Us
 	}
 
 	@Override
-	public List<UserPreference> findAll(String ownerUuid) throws BusinessException {
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
-		return service.findByAccount(actor, owner);
+	public List<UserPreference> findAll(String actorUuid) throws BusinessException {
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		return service.findByAccount(authUser, actor);
 	}
 
 	@Override
-	public UserPreference find(String ownerUuid, String uuid) throws BusinessException {
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
-		return service.findByUuid(actor, owner, uuid);
+	public UserPreference find(String actorUuid, String uuid) throws BusinessException {
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		return service.findByUuid(authUser, actor, uuid);
 	}
 
 	@Override
-	public UserPreference create(String ownerUuid, UserPreference dto) throws BusinessException {
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
-		return service.create(actor, owner, dto);
+	public UserPreference create(String actorUuid, UserPreference dto) throws BusinessException {
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		return service.create(authUser, actor, dto);
 	}
 
 	@Override
-	public UserPreference update(String ownerUuid, String uuid, UserPreference dto) throws BusinessException {
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
+	public UserPreference update(String actorUuid, String uuid, UserPreference dto) throws BusinessException {
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
 		Validate.notNull(dto, "Missing user preference object");
 		Validate.notEmpty(uuid, "Missing user preference uuid.");
 		if (dto.getUuid() == null) {
@@ -84,22 +84,22 @@ public class UserPreferenceFacadeImpl extends UserGenericFacadeImp implements Us
 		} else {
 			Validate.isTrue(dto.getUuid().equals(uuid), "Uuid in path param does not match uuid in dto.");
 		}
-		return service.update(actor, owner, dto);
+		return service.update(authUser, actor, dto);
 	}
 
 	@Override
-	public UserPreference delete(String ownerUuid, String uuid) throws BusinessException {
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
+	public UserPreference delete(String actorUuid, String uuid) throws BusinessException {
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
 		Validate.notEmpty(uuid, "Missing uuid");
-		return service.delete(actor, owner, uuid);
+		return service.delete(authUser, actor, uuid);
 	}
 
 	@Override
-	public void deleteAll(String ownerUuid) throws BusinessException {
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
-		service.deleteAll(actor, owner);
+	public void deleteAll(String actorUuid) throws BusinessException {
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		service.deleteAll(authUser, actor);
 	}
 
 }

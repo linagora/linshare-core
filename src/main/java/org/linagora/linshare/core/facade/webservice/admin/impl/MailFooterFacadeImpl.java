@@ -65,31 +65,31 @@ public class MailFooterFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public MailFooterDto find(String uuid) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
-		return new MailFooterDto(findFooter(actor, uuid), getOverrideReadonly());
+		User authUser = checkAuthentication(Role.ADMIN);
+		return new MailFooterDto(findFooter(authUser, uuid), getOverrideReadonly());
 	}
 
 	@Override
 	public MailFooterDto create(MailFooterDto dto) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		MailFooter footer = new MailFooter();
 		transform(footer, dto);
-		return new MailFooterDto(mailConfigService.createFooter(actor, footer));
+		return new MailFooterDto(mailConfigService.createFooter(authUser, footer));
 	}
 
 	@Override
 	public MailFooterDto update(MailFooterDto dto) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
-		MailFooter footer = findFooter(actor, dto.getUuid());
+		User authUser = checkAuthentication(Role.ADMIN);
+		MailFooter footer = findFooter(authUser, dto.getUuid());
 
 		transform(footer, dto);
-		return new MailFooterDto(mailConfigService.updateFooter(actor, footer));
+		return new MailFooterDto(mailConfigService.updateFooter(authUser, footer));
 	}
 
 	@Override
 	public MailFooterDto delete(String uuid) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
-		MailFooter footer = mailConfigService.deleteFooter(actor, uuid);
+		User authUser = checkAuthentication(Role.ADMIN);
+		MailFooter footer = mailConfigService.deleteFooter(authUser, uuid);
 		return new MailFooterDto(footer);
 	}
 
@@ -130,9 +130,9 @@ public class MailFooterFacadeImpl extends AdminGenericFacadeImpl implements
 		footer.setMessagesFrench(dto.getMessagesFrench());
 	}
 
-	private MailFooter findFooter(User actor, String uuid)
+	private MailFooter findFooter(User authUser, String uuid)
 			throws BusinessException {
-		MailFooter mailFooter = mailConfigService.findFooterByUuid(actor, uuid);
+		MailFooter mailFooter = mailConfigService.findFooterByUuid(authUser, uuid);
 
 		if (mailFooter == null)
 			throw new BusinessException(BusinessErrorCode.MAILFOOTER_NOT_FOUND,

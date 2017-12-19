@@ -60,67 +60,67 @@ public class UploadRequestFacadeImpl extends GenericFacadeImpl implements Upload
 	}
 
 	@Override
-	public List<UploadRequestDto> findAll(String ownerUuid) {
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
-		List<UploadRequest> eList = uploadRequestService.findAllRequest(actor, owner, null);
+	public List<UploadRequestDto> findAll(String actorUuid) {
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		List<UploadRequest> eList = uploadRequestService.findAllRequest(authUser, actor, null);
 		return ImmutableList.copyOf(Lists.transform(eList, UploadRequestDto.toDto(false)));
 	}
 
 	@Override
-	public UploadRequestDto find(String ownerUuid, String uuid) throws BusinessException {
+	public UploadRequestDto find(String actorUuid, String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "Upload request uuid must be set.");
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
-		UploadRequest ur = uploadRequestService.findRequestByUuid(actor, owner, uuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		UploadRequest ur = uploadRequestService.findRequestByUuid(authUser, actor, uuid);
 		return new UploadRequestDto(ur, true);
 	}
 
 	@Override
-	public List<UploadRequestDto> create(String ownerUuid, UploadRequestDto uploadRequestDto, Boolean groupMode) throws BusinessException {
+	public List<UploadRequestDto> create(String actorUuid, UploadRequestDto uploadRequestDto, Boolean groupMode) throws BusinessException {
 		Validate.notNull(uploadRequestDto, "Upload request must be set.");
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
 		UploadRequest req = uploadRequestDto.toObject();
 		Contact contact = new Contact(uploadRequestDto.getRecipient().getMail());
-		List<UploadRequest> e = uploadRequestService.createRequest(actor, owner, req, contact,
+		List<UploadRequest> e = uploadRequestService.createRequest(authUser, actor, req, contact,
 				uploadRequestDto.getSubject(), uploadRequestDto.getBody(), groupMode);
 		return ImmutableList.copyOf(Lists.transform(e, UploadRequestDto.toDto(true)));
 	}
 
 	@Override
-	public UploadRequestDto update(String ownerUuid, String uuid, UploadRequestDto req) throws BusinessException {
+	public UploadRequestDto update(String actorUuid, String uuid, UploadRequestDto req) throws BusinessException {
 		Validate.notEmpty(req.getUuid(), "Upload request uuid must be set.");
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
 		UploadRequest e = req.toObject();
-		e = uploadRequestService.update(actor, owner, req.getUuid(), e);
+		e = uploadRequestService.update(authUser, actor, req.getUuid(), e);
 		return new UploadRequestDto(e, true);
 	}
 
 	@Override
-	public UploadRequestDto updateStatus(String ownerUuid, String uuid, String status) throws BusinessException {
+	public UploadRequestDto updateStatus(String actorUuid, String uuid, String status) throws BusinessException {
 		Validate.notEmpty(uuid, "Upload request uuid must be set.");
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
 		UploadRequestStatus stat = UploadRequestStatus.fromString(status);
-		UploadRequest e = uploadRequestService.updateStatus(actor, owner, uuid, stat);
+		UploadRequest e = uploadRequestService.updateStatus(authUser, actor, uuid, stat);
 		return new UploadRequestDto(e, false);
 	}
 
 	@Override
-	public UploadRequestDto delete(String ownerUuid, String uuid) throws BusinessException {
+	public UploadRequestDto delete(String actorUuid, String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "Upload request uuid must be set.");
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
-		UploadRequest e = uploadRequestService.deleteRequest(actor, owner, uuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		UploadRequest e = uploadRequestService.deleteRequest(authUser, actor, uuid);
 		return new UploadRequestDto(e, false);
 	}
 
 	@Override
-	public UploadRequestDto delete(String ownerUuid, UploadRequestDto uploadRequestDto) throws BusinessException {
+	public UploadRequestDto delete(String actorUuid, UploadRequestDto uploadRequestDto) throws BusinessException {
 		Validate.notNull(uploadRequestDto, "Upload Request must be set.");
 		Validate.notEmpty(uploadRequestDto.getUuid(), "Upload Request uuid must be set.");
-		return delete(ownerUuid, uploadRequestDto.getUuid());
+		return delete(actorUuid, uploadRequestDto.getUuid());
 	}
 }

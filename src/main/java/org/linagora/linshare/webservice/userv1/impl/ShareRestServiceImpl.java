@@ -138,7 +138,7 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	@POST
 	@ApiOperation(value = "Create a share.", response = ShareDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "Owner not found."),
+			@ApiResponse(code = 404, message = "Actor not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override

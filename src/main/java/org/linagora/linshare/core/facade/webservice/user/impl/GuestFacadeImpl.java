@@ -64,22 +64,22 @@ public class GuestFacadeImpl extends UserGenericFacadeImp implements
 
 	@Override
 	public List<GuestDto> findAll(Boolean mine, String pattern) throws BusinessException {
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, null);
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, null);
 		List<Guest> guests = null;
 		if (pattern == null) {
-			guests = guestService.findAll(actor, owner, mine);
+			guests = guestService.findAll(authUser, actor, mine);
 		} else {
-			guests = guestService.search(actor, owner, pattern, mine);
+			guests = guestService.search(authUser, actor, pattern, mine);
 		}
 		return toGuestDto(guests);
 	}
 
 	@Override
 	public List<GuestDto> search(UserSearchDto userSearchDto) throws BusinessException {
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, null);
-		List<Guest> guests = guestService.search(actor, owner, userSearchDto.getFirstName(),
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, null);
+		List<Guest> guests = guestService.search(authUser, actor, userSearchDto.getFirstName(),
 				userSearchDto.getLastName(), userSearchDto.getMail(), true);
 		return toGuestDto(guests);
 	}
@@ -87,14 +87,14 @@ public class GuestFacadeImpl extends UserGenericFacadeImp implements
 	@Override
 	public GuestDto find(String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "guest uuid is required");
-		User actor = checkAuthentication();
-		return GuestDto.getFull(guestService.find(actor, actor, uuid));
+		User authUser = checkAuthentication();
+		return GuestDto.getFull(guestService.find(authUser, authUser, uuid));
 	}
 
 	@Override
 	public GuestDto create(GuestDto guestDto) throws BusinessException {
 		Validate.notNull(guestDto, "guest dto is required");
-		User actor = checkAuthentication();
+		User authUser = checkAuthentication();
 		Guest guest = guestDto.toUserObject();
 		List<String> ac = null;
 		if (guest.isRestricted()) {
@@ -105,7 +105,7 @@ public class GuestFacadeImpl extends UserGenericFacadeImp implements
 				}
 			}
 		}
-		return GuestDto.getFull(guestService.create(actor, actor, guest, ac));
+		return GuestDto.getFull(guestService.create(authUser, authUser, guest, ac));
 	}
 
 	@Override
@@ -115,7 +115,7 @@ public class GuestFacadeImpl extends UserGenericFacadeImp implements
 			dto.setUuid(uuid);
 		}
 		Validate.notEmpty(dto.getUuid(), "guest uuid is required");
-		User actor = checkAuthentication();
+		User authUser = checkAuthentication();
 		Guest guest = dto.toUserObject();
 		List<String> ac = Lists.newArrayList();
 		if (guest.isRestricted()) {
@@ -123,23 +123,23 @@ public class GuestFacadeImpl extends UserGenericFacadeImp implements
 				ac.add(contactDto.getMail());
 			}
 		}
-		return GuestDto.getFull(guestService.update(actor, actor, guest, ac));
+		return GuestDto.getFull(guestService.update(authUser, authUser, guest, ac));
 	}
 
 	@Override
 	public GuestDto delete(GuestDto guestDto) throws BusinessException {
 		Validate.notNull(guestDto, "guest dto is required");
 		Validate.notEmpty(guestDto.getUuid(), "guest uuid is required");
-		User actor = checkAuthentication();
-		Guest guest = guestService.delete(actor, actor, guestDto.getUuid());
+		User authUser = checkAuthentication();
+		Guest guest = guestService.delete(authUser, authUser, guestDto.getUuid());
 		return GuestDto.getSimple(guest);
 	}
 
 	@Override
 	public GuestDto delete(String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "guest uuid is required");
-		User actor = checkAuthentication();
-		Guest guest = guestService.delete(actor, actor, uuid);
+		User authUser = checkAuthentication();
+		Guest guest = guestService.delete(authUser, authUser, uuid);
 		return GuestDto.getSimple(guest);
 	}
 

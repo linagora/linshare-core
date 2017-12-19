@@ -95,46 +95,46 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public MailConfigDto find(String uuid) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
-		return new MailConfigDto(findConfig(actor, uuid), getOverrideReadonly());
+		User authUser = checkAuthentication(Role.ADMIN);
+		return new MailConfigDto(findConfig(authUser, uuid), getOverrideReadonly());
 	}
 
 	@Override
 	public MailConfigDto create(MailConfigDto dto) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		MailConfig config = new MailConfig();
 		transform(config, dto);
-		return new MailConfigDto(mailConfigService.createConfig(actor, config));
+		return new MailConfigDto(mailConfigService.createConfig(authUser, config));
 	}
 
 	@Override
 	public MailConfigDto update(MailConfigDto dto) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
-		MailConfig config = findConfig(actor, dto.getUuid());
+		User authUser = checkAuthentication(Role.ADMIN);
+		MailConfig config = findConfig(authUser, dto.getUuid());
 		transform(config, dto);
-		config.setMailLayoutHtml(findLayout(actor, dto.getMailLayout()));
-		return new MailConfigDto(mailConfigService.updateConfig(actor, config));
+		config.setMailLayoutHtml(findLayout(authUser, dto.getMailLayout()));
+		return new MailConfigDto(mailConfigService.updateConfig(authUser, config));
 	}
 
 	@Override
 	public MailConfigDto delete(String uuid) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
-		MailConfig config = mailConfigService.deleteConfig(actor, uuid);
+		User authUser = checkAuthentication(Role.ADMIN);
+		MailConfig config = mailConfigService.deleteConfig(authUser, uuid);
 		return new MailConfigDto(config);
 	}
 
 	@Override
 	public Set<MailContentDto> findAllContents(String mailConfigUuid,
 			String mailContentType) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(mailConfigUuid, "mailConfigUuid must be set.");
 		Validate.notEmpty(mailContentType, "mailContentType must be set.");
 
-		MailConfig cfg = mailConfigService.findConfigByUuid(actor, mailConfigUuid);
+		MailConfig cfg = mailConfigService.findConfigByUuid(authUser, mailConfigUuid);
 		MailContentType type = MailContentType.valueOf(mailContentType.toUpperCase());
 		Set<MailContentDto> ret = Sets.newHashSet();
 
-		List<MailContent> all = mailConfigService.findAllContents(actor,
+		List<MailContent> all = mailConfigService.findAllContents(authUser,
 				cfg.getDomain().getUuid());
 		// TODO Optimization needed.
 		for (MailContent mc : all) {
@@ -147,13 +147,13 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public Set<MailFooterDto> findAllFooters(String mailConfigUuid) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(mailConfigUuid, "mailConfigUuid must be set.");
 
-		MailConfig cfg = mailConfigService.findConfigByUuid(actor, mailConfigUuid);
+		MailConfig cfg = mailConfigService.findConfigByUuid(authUser, mailConfigUuid);
 		Set<MailFooterDto> ret = Sets.newHashSet();
 
-		List<MailFooter> all = mailConfigService.findAllFooters(actor, cfg
+		List<MailFooter> all = mailConfigService.findAllFooters(authUser, cfg
 				.getDomain().getUuid());
 		for (MailFooter footer : all) {
 			ret.add(new MailFooterDto(footer, getOverrideReadonly()));
@@ -172,9 +172,9 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 		config.setVisible(dto.isVisible());
 	}
 
-	private MailConfig findConfig(User actor, String uuid)
+	private MailConfig findConfig(User authUser, String uuid)
 			throws BusinessException {
-		MailConfig config = mailConfigService.findConfigByUuid(actor, uuid);
+		MailConfig config = mailConfigService.findConfigByUuid(authUser, uuid);
 
 		if (config == null) {
 			throw new BusinessException(BusinessErrorCode.MAILCONFIG_NOT_FOUND,
@@ -183,9 +183,9 @@ public class MailConfigFacadeImpl extends AdminGenericFacadeImpl implements
 		return config;
 	}
 
-	private MailLayout findLayout(User actor, String uuid)
+	private MailLayout findLayout(User authUser, String uuid)
 			throws BusinessException {
-		MailLayout mailLayout = mailConfigService.findLayoutByUuid(actor, uuid);
+		MailLayout mailLayout = mailConfigService.findLayoutByUuid(authUser, uuid);
 
 		if (mailLayout == null)
 			throw new BusinessException(BusinessErrorCode.MAILLAYOUT_NOT_FOUND,

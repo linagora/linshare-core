@@ -134,7 +134,7 @@ public class WorkGroupRestServiceImpl extends WebserviceBase implements WorkGrou
 	@DELETE
 	@ApiOperation(value = "Delete a workgroup.", response = WorkGroupDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Owner or workgroup not found."),
+					@ApiResponse(code = 404, message = "Actor or workgroup not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
@@ -149,7 +149,7 @@ public class WorkGroupRestServiceImpl extends WebserviceBase implements WorkGrou
 	@DELETE
 	@ApiOperation(value = "Delete a workgroup.", response = WorkGroupDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "Owner or workgroup not found."),
+					@ApiResponse(code = 404, message = "Actor or workgroup not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})

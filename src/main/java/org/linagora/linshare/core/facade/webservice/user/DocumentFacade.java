@@ -78,8 +78,8 @@ public interface DocumentFacade extends GenericFacade {
 	DocumentDto updateFile(File file, String givenFileName,
 			String documentUuid) throws BusinessException;
 
-	Set<AuditLogEntryUser> findAll(String ownerUuid, String uuid, List<String> actions, List<String> types,
+	Set<AuditLogEntryUser> findAll(String actorUuid, String uuid, List<String> actions, List<String> types,
 			String beginDate, String endDate);
 
-	List<DocumentDto> copy(String ownerUuid, CopyDto  copy, boolean deleteShare) throws BusinessException;
+	List<DocumentDto> copy(String actorUuid, CopyDto  copy, boolean deleteShare) throws BusinessException;
 }

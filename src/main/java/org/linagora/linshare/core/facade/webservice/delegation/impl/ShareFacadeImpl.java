@@ -65,11 +65,11 @@ public class ShareFacadeImpl extends DelegationGenericFacadeImpl implements
 	}
 
 	@Override
-	public Set<ShareDto> create(String ownerUuid, ShareCreationDto createDto) {
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
-		User actor = checkAuthentication();
-		User owner = getOwner(ownerUuid);
-		if ((actor.isGuest() && !actor.getCanUpload()))
+	public Set<ShareDto> create(String actorUuid, ShareCreationDto createDto) {
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
+		if ((authUser.isGuest() && !authUser.getCanUpload()))
 			throw new BusinessException(
 					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
@@ -82,7 +82,7 @@ public class ShareFacadeImpl extends DelegationGenericFacadeImpl implements
 		sc.addGenericUserDto(createDto.getRecipients());
 		sc.setAcknowledgement(createDto.isCreationAcknowledgement());
 		sc.setSharingNote(createDto.getSharingNote());
-		Set<Entry> shares = shareService.create(actor, owner, sc);
+		Set<Entry> shares = shareService.create(authUser, actor, sc);
 		Set<ShareDto> sharesDto = Sets.newHashSet();
 		for (Entry entry : shares) {
 			sharesDto.add(ShareDto.getSentShare(entry));

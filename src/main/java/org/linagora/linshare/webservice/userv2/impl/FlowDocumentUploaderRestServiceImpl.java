@@ -217,17 +217,17 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 				if (async) {
 					logger.debug("Async mode is used");
 					// Asynchronous mode
-					AccountDto actorDto = documentFacade.getAuthenticatedAccountDto();
+					AccountDto authUserDto = documentFacade.getAuthenticatedAccountDto();
 					AsyncTaskDto asyncTask = null;
 					try {
 						if(isWorkGroup) {
-							WorkGroupEntryTaskContext workGroupEntryTaskContext = new WorkGroupEntryTaskContext(actorDto, actorDto.getUuid(), workGroupUuid, tempFile.toFile(), filename, workGroupParentNodeUuid);
+							WorkGroupEntryTaskContext workGroupEntryTaskContext = new WorkGroupEntryTaskContext(authUserDto, authUserDto.getUuid(), workGroupUuid, tempFile.toFile(), filename, workGroupParentNodeUuid);
 							asyncTask = asyncTaskFacade.create(totalSize, getTransfertDuration(identifier), filename, null, AsyncTaskType.THREAD_ENTRY_UPLOAD);
 							WorkGroupEntryUploadAsyncTask task = new WorkGroupEntryUploadAsyncTask(workGroupEntryAsyncFacade, workGroupEntryTaskContext, asyncTask);
 							taskExecutor.execute(task);
 							flow.completeAsyncTransfert(asyncTask);
 						} else {
-							DocumentTaskContext documentTaskContext = new DocumentTaskContext(actorDto, actorDto.getUuid(), tempFile.toFile(), filename, null, null);
+							DocumentTaskContext documentTaskContext = new DocumentTaskContext(authUserDto, authUserDto.getUuid(), tempFile.toFile(), filename, null, null);
 							asyncTask = asyncTaskFacade.create(totalSize, getTransfertDuration(identifier), filename, null, AsyncTaskType.DOCUMENT_UPLOAD);
 							DocumentUploadAsyncTask task = new DocumentUploadAsyncTask(documentAsyncFacade, documentTaskContext, asyncTask);
 							taskExecutor.execute(task);

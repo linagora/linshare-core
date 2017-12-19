@@ -67,34 +67,18 @@ public abstract class GenericAsyncFacadeImpl implements
 
 	protected User checkAuthentication(TaskContext taskContext) throws BusinessException {
 		Validate.notNull(taskContext, "Missing asyncDto");
-		AccountDto actorDto = taskContext.getActorDto();
-		return checkAuthentication(actorDto);
+		AccountDto authUserDto = taskContext.getAuthUserDto();
+		return checkAuthentication(authUserDto);
 	}
 
-	protected User getOwner(TaskContext taskContext) throws BusinessException {
+	protected User getActor(TaskContext taskContext) throws BusinessException {
 		Validate.notNull(taskContext, "Missing asyncDto");
-		Validate.notEmpty(taskContext.getOwnerUuid(), "Missing owner uuid");
-		Account owner = accountService.findByLsUuid(taskContext.getOwnerUuid());
-		if (owner == null)
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
-					"You are not authorized to use this service");
-		if (!(owner.hasSimpleRole() || owner.hasAdminRole() || owner.hasSuperAdminRole())) {
-			logger.error("Current owner is trying to access to a forbbiden api : "
-					+ owner.getAccountRepresentation());
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
-					"You are not authorized to use this service");
-		}
-		return (User) owner;
-	}
-
-	protected User checkAuthentication(AccountDto actorDto) throws BusinessException {
-		Validate.notNull(actorDto, "Missing actorDto");
-		Validate.notEmpty(actorDto.getUuid(), "Missing actorDto uuid");
-		Account actor = accountService.findByLsUuid(actorDto.getUuid());
+		Validate.notEmpty(taskContext.getActorUuid(), "Missing actor uuid");
+		Account actor = accountService.findByLsUuid(taskContext.getActorUuid());
 		if (actor == null)
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
-		if (!(actor.hasSimpleRole() || actor.hasAdminRole() || actor.hasSuperAdminRole()) || actor.hasDelegationRole()) {
+		if (!(actor.hasSimpleRole() || actor.hasAdminRole() || actor.hasSuperAdminRole())) {
 			logger.error("Current actor is trying to access to a forbbiden api : "
 					+ actor.getAccountRepresentation());
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
@@ -103,12 +87,28 @@ public abstract class GenericAsyncFacadeImpl implements
 		return (User) actor;
 	}
 
+	protected User checkAuthentication(AccountDto authUserDto) throws BusinessException {
+		Validate.notNull(authUserDto, "Missing authUserDto");
+		Validate.notEmpty(authUserDto.getUuid(), "Missing authUserDto uuid");
+		Account authUser = accountService.findByLsUuid(authUserDto.getUuid());
+		if (authUser == null)
+			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
+					"You are not authorized to use this service");
+		if (!(authUser.hasSimpleRole() || authUser.hasAdminRole() || authUser.hasSuperAdminRole()) || authUser.hasDelegationRole()) {
+			logger.error("Current authUser is trying to access to a forbbiden api : "
+					+ authUser.getAccountRepresentation());
+			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
+					"You are not authorized to use this service");
+		}
+		return (User) authUser;
+	}
+
 	@Override
 	public AsyncTaskDto processing(TaskContext taskContext,
 			String asyncTaskUuid) {
-		User actor = checkAuthentication(taskContext);
-		User owner = getOwner(taskContext);
-		AsyncTask task = asyncTaskService.processing(actor, owner, asyncTaskUuid);
+		User authUser = checkAuthentication(taskContext);
+		User actor = getActor(taskContext);
+		AsyncTask task = asyncTaskService.processing(authUser, actor, asyncTaskUuid);
 		return new AsyncTaskDto(task);
 	}
 
@@ -116,9 +116,9 @@ public abstract class GenericAsyncFacadeImpl implements
 	public AsyncTaskDto success(TaskContext taskContext, String asyncTaskUuid,
 			String resourceUuid) {
 		Validate.notEmpty(asyncTaskUuid, "Missing async task uuid");
-		User actor = checkAuthentication(taskContext);
-		User owner = getOwner(taskContext);
-		AsyncTask task = asyncTaskService.success(actor, owner, asyncTaskUuid,
+		User authUser = checkAuthentication(taskContext);
+		User actor = getActor(taskContext);
+		AsyncTask task = asyncTaskService.success(authUser, actor, asyncTaskUuid,
 				resourceUuid);
 		return new AsyncTaskDto(task);
 	}
@@ -127,9 +127,9 @@ public abstract class GenericAsyncFacadeImpl implements
 	public AsyncTaskDto fail(TaskContext taskContext, String asyncTaskUuid,
 			String errorMsg) {
 		Validate.notEmpty(asyncTaskUuid, "Missing async task uuid");
-		User actor = checkAuthentication(taskContext);
-		User owner = getOwner(taskContext);
-		AsyncTask task = asyncTaskService.fail(actor, owner, asyncTaskUuid,
+		User authUser = checkAuthentication(taskContext);
+		User actor = getActor(taskContext);
+		AsyncTask task = asyncTaskService.fail(authUser,actor, asyncTaskUuid,
 				errorMsg);
 		return new AsyncTaskDto(task);
 	}
@@ -138,9 +138,9 @@ public abstract class GenericAsyncFacadeImpl implements
 	public AsyncTaskDto fail(TaskContext taskContext, String asyncTaskUuid,
 			Integer errorCode, String errorName, String errorMsg) {
 		Validate.notEmpty(asyncTaskUuid, "Missing async task uuid");
-		User actor = checkAuthentication(taskContext);
-		User owner = getOwner(taskContext);
-		AsyncTask task = asyncTaskService.fail(actor, owner, asyncTaskUuid,
+		User authUser = checkAuthentication(taskContext);
+		User actor = getActor(taskContext);
+		AsyncTask task = asyncTaskService.fail(authUser, actor, asyncTaskUuid,
 				errorCode, errorName, errorMsg);
 		return new AsyncTaskDto(task);
 	}

@@ -47,17 +47,17 @@ public class UserGenericFacadeImp extends GenericFacadeImpl {
 
 	@Override
 	protected User checkAuthentication() throws BusinessException {
-		User actor = super.checkAuthentication();
+		User authUser = super.checkAuthentication();
 
-		if (!(actor.hasSimpleRole()
-				|| actor.hasAdminRole()
-				|| actor.hasSuperAdminRole()
+		if (!(authUser.hasSimpleRole()
+				|| authUser.hasAdminRole()
+				|| authUser.hasSuperAdminRole()
 				)) {
-			logger.error("Current actor is trying to access to a forbbiden api : " + actor.getAccountRepresentation());
+			logger.error("Current authUser is trying to access to a forbbiden api : " + authUser.getAccountRepresentation());
 			throw new BusinessException(
 					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
 		}
-		return actor;
+		return authUser;
 	}
 }

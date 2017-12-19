@@ -73,10 +73,10 @@ public class DomainQuotaFacadeImpl extends AdminGenericFacadeImpl implements Dom
 	@Override
 	public DomainQuotaDto find(String uuid) throws BusinessException {
 		Validate.notNull(uuid, "Domain quota uuid must be set.");
-		User actor = checkAuthentication(Role.ADMIN);
-		DomainQuota quota = service.find(actor, uuid);
+		User authUser = checkAuthentication(Role.ADMIN);
+		DomainQuota quota = service.find(authUser, uuid);
 		DomainQuotaDto dto = new DomainQuotaDto(quota);
-		List<ContainerQuota> containers = containerQuotaService.findAll(actor, quota.getDomain());
+		List<ContainerQuota> containers = containerQuotaService.findAll(authUser, quota.getDomain());
 		for (ContainerQuota containerQuota : containers) {
 			dto.addContainerUuids(containerQuota.getUuid());
 		}
@@ -85,13 +85,13 @@ public class DomainQuotaFacadeImpl extends AdminGenericFacadeImpl implements Dom
 
 	@Override
 	public List<DomainQuotaDto> findAll(String parentUuid) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		List<DomainQuota> findAll = null;
 		if (parentUuid != null) {
 			AbstractDomain domain = abstractDomainService.findById(parentUuid);
-			findAll = service.findAll(actor, domain);
+			findAll = service.findAll(authUser, domain);
 		} else {
-			findAll = service.findAll(actor);
+			findAll = service.findAll(authUser);
 		}
 		return ImmutableList.copyOf(Lists.transform(findAll, DomainQuotaDto.toDto()));
 	}
@@ -104,9 +104,9 @@ public class DomainQuotaFacadeImpl extends AdminGenericFacadeImpl implements Dom
 		}
 		Validate.notEmpty(dto.getUuid(), "Quota uuid must be set.");
 //		Validate.notNull(entity.getQuotaWarning(), "QuotaWarning in DomainQuotaDto must be set.");
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		DomainQuota domainQuota = dto.toObject();
-		domainQuota = service.update(actor, domainQuota);
+		domainQuota = service.update(authUser, domainQuota);
 		return new DomainQuotaDto(domainQuota);
 	}
 

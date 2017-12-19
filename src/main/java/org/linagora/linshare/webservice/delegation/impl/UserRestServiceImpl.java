@@ -79,8 +79,8 @@ public class UserRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public GenericUserDto getUser(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("mail") String mail,
-			@ApiParam(value = "The owner (user) uuid.", required = false) @QueryParam("domainId") String domainId)
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("mail") String mail,
+			@ApiParam(value = "The actor (user) uuid.", required = false) @QueryParam("domainId") String domainId)
 			throws BusinessException {
 		return userFacade.getUser(mail, domainId);
 	}

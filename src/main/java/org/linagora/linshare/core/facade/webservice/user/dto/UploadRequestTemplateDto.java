@@ -82,7 +82,7 @@ public class UploadRequestTemplateDto {
 
 	private Date creationDate;
 
-	private AccountDto owner;
+	private AccountDto actor;
 
 	public UploadRequestTemplateDto() {
 		super();
@@ -107,7 +107,7 @@ public class UploadRequestTemplateDto {
 		this.prolongationMode = template.getProlongationMode();
 		this.modificationDate = template.getModificationDate();
 		this.creationDate = template.getCreationDate();
-		this.owner = new AccountDto(template.getOwner(), false);
+		this.actor = new AccountDto(template.getOwner(), false);
 	}
 
 	public UploadRequestTemplate toObject() {
@@ -275,14 +275,13 @@ public class UploadRequestTemplateDto {
 		this.creationDate = creationDate;
 	}
 
-	public AccountDto getOwner() {
-		return owner;
+	public AccountDto getActor() {
+		return actor;
 	}
 
-	public void setOwner(AccountDto owner) {
-		this.owner = owner;
+	public void setActor(AccountDto actor) {
+		this.actor = actor;
 	}
-
 	/*
 	 * Transformer
 	 */

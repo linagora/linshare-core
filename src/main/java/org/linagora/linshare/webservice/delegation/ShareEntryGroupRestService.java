@@ -41,15 +41,15 @@ import org.linagora.linshare.core.facade.webservice.common.dto.ShareEntryGroupDt
 
 public interface ShareEntryGroupRestService {
 
-	List<ShareEntryGroupDto> findAll(String ownerUuid, boolean full) throws BusinessException;
+	List<ShareEntryGroupDto> findAll(String actorUuid, boolean full) throws BusinessException;
 
-	ShareEntryGroupDto find(String ownerUuid, String uuid, boolean full) throws BusinessException;
+	ShareEntryGroupDto find(String actorUuid, String uuid, boolean full) throws BusinessException;
 
-	void head(String ownerUuid, String uuid) throws BusinessException;
+	void head(String actorUuid, String uuid) throws BusinessException;
 
-	ShareEntryGroupDto update(String ownerUuid, ShareEntryGroupDto shareEntryGroupDto) throws BusinessException;
+	ShareEntryGroupDto update(String actorUuid, ShareEntryGroupDto shareEntryGroupDto) throws BusinessException;
 
-	ShareEntryGroupDto delete(String ownerUuid, String uuid) throws BusinessException;
+	ShareEntryGroupDto delete(String actorUuid, String uuid) throws BusinessException;
 
-	ShareEntryGroupDto delete(String ownerUuid, ShareEntryGroupDto shareEntryGroupDto) throws BusinessException;
+	ShareEntryGroupDto delete(String actorUuid, ShareEntryGroupDto shareEntryGroupDto) throws BusinessException;
 }

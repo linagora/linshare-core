@@ -70,68 +70,68 @@ public class AsyncTaskFacadeImpl extends UserGenericFacadeImp implements
 	@Override
 	public AsyncTaskDto create(Long size, Long transfertDuration,
 			String fileName, Integer frequency, AsyncTaskType taskType) {
-		User actor = checkAuthentication();
+		User authUser = checkAuthentication();
 		AsyncTask task =  new AsyncTask(size, transfertDuration, fileName, frequency, taskType);
-		return new AsyncTaskDto(service.create(actor, actor, task));
+		return new AsyncTaskDto(service.create(authUser, authUser, task));
 	}
 
 	@Override
 	public AsyncTaskDto create(String fileName, Integer frequency,
 			AsyncTaskType taskType) {
-		User actor = checkAuthentication();
+		User authUser = checkAuthentication();
 		AsyncTask task =  new AsyncTask(fileName, frequency, taskType);
-		return new AsyncTaskDto(service.create(actor, actor, task));
+		return new AsyncTaskDto(service.create(authUser, authUser, task));
 	}
 
 	@Override
 	public AsyncTaskDto create(String fileName, AsyncTaskType taskType) {
-		User actor = checkAuthentication();
+		User authUser = checkAuthentication();
 		AsyncTask task =  new AsyncTask(fileName, null, taskType);
-		return new AsyncTaskDto(service.create(actor, actor, task));
+		return new AsyncTaskDto(service.create(authUser, authUser, task));
 	}
 
 	@Override
 	public AsyncTaskDto create(UpgradeTaskDto upgradeTaskDto, AsyncTaskType taskType) {
-		User actor = checkAuthentication();
-		UpgradeTask upgradeTask = upgradeTaskService.find(actor, upgradeTaskDto.getIdentifier());
+		User authUser = checkAuthentication();
+		UpgradeTask upgradeTask = upgradeTaskService.find(authUser, upgradeTaskDto.getIdentifier());
 		AsyncTask task =  new AsyncTask(upgradeTask, taskType);
-		return new AsyncTaskDto(service.create(actor, actor, task));
+		return new AsyncTaskDto(service.create(authUser, authUser, task));
 	}
 
 	@Override
 	public AsyncTaskDto find(String uuid) {
-		User actor = checkAuthentication();
+		User authUser = checkAuthentication();
 		Validate.notEmpty(uuid, "Missing uuid");
-		AsyncTask task = service.find(actor, actor, uuid);
+		AsyncTask task = service.find(authUser, authUser, uuid);
 		return new AsyncTaskDto(task);
 	}
 
 	@Override
 	public AsyncTaskDto fail(AsyncTaskDto asyncTask, Exception e) {
-		User actor = checkAuthentication();
+		User authUser = checkAuthentication();
 		Validate.notNull(asyncTask, "Missing AsyncTask");
 		Validate.notEmpty(asyncTask.getUuid(), "Missing AsyncTask uuid");
 		AsyncTask task = null;
 		if (e instanceof BusinessException) {
 			BusinessException eb = (BusinessException) e;
-			task = service.fail(actor, actor, asyncTask.getUuid(),
+			task = service.fail(authUser, authUser, asyncTask.getUuid(),
 					eb.getErrorCode().getCode(), eb.getErrorCode().name(), eb.getMessage());
 		} else {
 			String message = e.getMessage();
 			if (message == null) {
 				message = e.toString();
 			}
-			task = service.fail(actor, actor, asyncTask.getUuid(), message);
+			task = service.fail(authUser, authUser, asyncTask.getUuid(), message);
 		}
 		return new AsyncTaskDto(task);
 	}
 
 	@Override
 	public List<AsyncTaskDto> findAll(UpgradeTaskType upgradeTaskIdentifier) {
-		User actor = checkAuthentication();
+		User authUser = checkAuthentication();
 		Validate.notNull(upgradeTaskIdentifier, "Missing AsyncTask identifier");
-		UpgradeTask upgradeTask = upgradeTaskService.find(actor, upgradeTaskIdentifier);
-		List<AsyncTask> findAll = service.findAll(actor, actor, upgradeTask);
+		UpgradeTask upgradeTask = upgradeTaskService.find(authUser, upgradeTaskIdentifier);
+		List<AsyncTask> findAll = service.findAll(authUser, authUser, upgradeTask);
 		List<AsyncTaskDto> res = Lists.newArrayList();
 		for (AsyncTask asyncTask : findAll) {
 			res.add(new AsyncTaskDto(asyncTask));

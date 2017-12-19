@@ -41,26 +41,26 @@ import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
 
 public interface GuestFacade extends DelegationGenericFacade {
 
-	GuestDto find(String ownerUuid, String uuid) throws BusinessException;
+	GuestDto find(String actorUuid, String uuid) throws BusinessException;
 
 	/**
 	 * 
-	 * @param ownerUuid
-	 * @param domain : optional. owner domain will be used to find guest domain.
+	 * @param actorUuid
+	 * @param domain : optional. actor domain will be used to find guest domain.
 	 * @param mail
 	 * @return GuestDto
 	 * @throws BusinessException
 	 */
-	GuestDto find(String ownerUuid, String domain, String mail) throws BusinessException;
+	GuestDto find(String actorUuid, String domain, String mail) throws BusinessException;
 
-	List<GuestDto> findAll(String ownerUuid) throws BusinessException;
+	List<GuestDto> findAll(String actorUuid) throws BusinessException;
 
-	GuestDto create(String ownerUuid, GuestDto guest) throws BusinessException;
+	GuestDto create(String actorUuid, GuestDto guest) throws BusinessException;
 
-	GuestDto update(String ownerUuid, GuestDto guest) throws BusinessException;
+	GuestDto update(String actorUuid, GuestDto guest) throws BusinessException;
 
-	GuestDto delete(String ownerUuid, GuestDto guest) throws BusinessException;
+	GuestDto delete(String actorUuid, GuestDto guest) throws BusinessException;
 
-	GuestDto delete(String ownerUuid, String uuid) throws BusinessException;
+	GuestDto delete(String actorUuid, String uuid) throws BusinessException;
 
 }

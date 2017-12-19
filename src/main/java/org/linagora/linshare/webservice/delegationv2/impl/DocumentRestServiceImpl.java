@@ -76,8 +76,8 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/{ownerUuid}/documents")
-@Api(value = "/rest/delegation/v2/{ownerUuid}/documents", basePath = "/rest/delegation/",
+@Path("/{actorUuid}/documents")
+@Api(value = "/rest/delegation/v2/{actorUuid}/documents", basePath = "/rest/delegation/",
 		description = "Documents service.", produces = "application/json,application/xml",
 		consumes = "application/json,application/xml")
 public class DocumentRestServiceImpl extends WebserviceBase implements
@@ -118,7 +118,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public DocumentDto create(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "File stream.", required = true) @Multipart(value = "file", required = true) InputStream file,
 			@ApiParam(value = "An optional description of a document.") @Multipart(value = "description", required = false) String description,
 			@ApiParam(value = "The given file name of the uploaded file.", required = false) @Multipart(value = "filename", required = false) String givenFileName,
@@ -148,19 +148,19 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 		if (async) {
 			logger.debug("Async mode is used");
 			// Asynchronous mode
-			AccountDto actorDto = documentFacade.getAuthenticatedAccountDto();
+			AccountDto authUserDto = documentFacade.getAuthenticatedAccountDto();
 			AsyncTaskDto asyncTask = null;
 			try {
 				DocumentTaskContext documentTaskContext = new DocumentTaskContext(
-						actorDto, ownerUuid, tempFile, fileName,
+						authUserDto, actorUuid, tempFile, fileName,
 						metaData, description);
-				asyncTask = asyncTaskFacade.create(ownerUuid, currSize, transfertDuration, fileName, null, AsyncTaskType.DOCUMENT_UPLOAD);
+				asyncTask = asyncTaskFacade.create(actorUuid, currSize, transfertDuration, fileName, null, AsyncTaskType.DOCUMENT_UPLOAD);
 				DocumentUploadAsyncTask task = new DocumentUploadAsyncTask(
 						documentAsyncFacade, documentTaskContext, asyncTask);
 				taskExecutor.execute(task);
 				return new DocumentDto(asyncTask, documentTaskContext);
 			} catch (Exception e) {
-				logAsyncFailure(ownerUuid, asyncTask, e);
+				logAsyncFailure(actorUuid, asyncTask, e);
 				deleteTempFile(tempFile);
 				throw e;
 			}
@@ -171,9 +171,9 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 				logger.debug("Async mode is not used");
 				if (theSignatureFile != null) {
 					// TODO : Manage signature and meta data
-					return documentFacade.create(ownerUuid, tempFile, description, fileName);
+					return documentFacade.create(actorUuid, tempFile, description, fileName);
 				}
-				return documentFacade.create(ownerUuid, tempFile, description, fileName);
+				return documentFacade.create(actorUuid, tempFile, description, fileName);
 			} finally {
 				deleteTempFile(tempFile);
 			}
@@ -191,10 +191,10 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public DocumentDto find(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		return documentFacade.find(ownerUuid, uuid);
+		return documentFacade.find(actorUuid, uuid);
 	}
 
 	@Path("/{uuid}")
@@ -207,10 +207,10 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public void head(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		documentFacade.find(ownerUuid, uuid);
+		documentFacade.find(actorUuid, uuid);
 	}
 
 	@Path("/")
@@ -224,9 +224,9 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public List<DocumentDto> findAll(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid)
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid)
 			throws BusinessException {
-		return documentFacade.findAll(ownerUuid);
+		return documentFacade.findAll(actorUuid);
 	}
 
 
@@ -241,11 +241,11 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public DocumentDto update(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid,
 			@ApiParam(value = "The documentDto with updated values.") DocumentDto documentDto)
 			throws BusinessException {
-		return documentFacade.update(ownerUuid, uuid, documentDto);
+		return documentFacade.update(actorUuid, uuid, documentDto);
 	}
 
 	@DELETE
@@ -259,10 +259,10 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public DocumentDto delete(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		return documentFacade.delete(ownerUuid, uuid);
+		return documentFacade.delete(actorUuid, uuid);
 	}
 
 	@DELETE
@@ -276,10 +276,10 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public DocumentDto delete(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The document to delete.", required = true) DocumentDto documentDto)
 			throws BusinessException {
-		return documentFacade.delete(ownerUuid, documentDto);
+		return documentFacade.delete(actorUuid, documentDto);
 	}
 
 	@Path("/{uuid}/download")
@@ -292,10 +292,10 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public Response download(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		return documentFacade.download(ownerUuid, uuid);
+		return documentFacade.download(actorUuid, uuid);
 	}
 
 	@Path("/{uuid}/thumbnail{kind:(small)?|(medium)?|(large)?|(pdf)?}")
@@ -308,11 +308,11 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public Response thumbnail(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid,
 			@ApiParam(value = "This parameter allows you to choose which thumbnail you want : Small, Medium or Large. Default value is Medium", required = false) @PathParam("kind") ThumbnailType thumbnailType
 			) throws BusinessException {
-		return documentFacade.thumbnail(ownerUuid, uuid, thumbnailType);
+		return documentFacade.thumbnail(actorUuid, uuid, thumbnailType);
 	}
 
 	@Path("/{uuid}/async")
@@ -320,18 +320,18 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public AsyncTaskDto findAsync(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The async task uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		Validate.notEmpty(uuid, "Missing uuid");
-		return asyncTaskFacade.find(ownerUuid, uuid);
+		return asyncTaskFacade.find(actorUuid, uuid);
 	}
 
-	protected void logAsyncFailure(String ownerUuid, AsyncTaskDto asyncTask, Exception e) {
+	protected void logAsyncFailure(String actorUuid, AsyncTaskDto asyncTask, Exception e) {
 		logger.error(e.getMessage());
 		logger.debug("Exception : ", e);
 		if (asyncTask != null) {
-			asyncTaskFacade.fail(ownerUuid, asyncTask, e);
+			asyncTaskFacade.fail(actorUuid, asyncTask, e);
 		}
 	}
 }

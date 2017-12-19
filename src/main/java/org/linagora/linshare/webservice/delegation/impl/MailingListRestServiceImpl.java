@@ -60,8 +60,8 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/{ownerUuid}/lists")
-@Api(value = "/rest/delegaton/{ownerUuid}/lists", description = "Mailing lists delegation api.")
+@Path("/{actorUuid}/lists")
+@Api(value = "/rest/delegaton/{actorUuid}/lists", description = "Mailing lists delegation api.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class MailingListRestServiceImpl implements MailingListRestServcice {
@@ -80,10 +80,10 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public Set<MailingListDto> findAll(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid)
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid)
 					throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		return mailingListFacade.findAll(ownerUuid, null);
+		Validate.notEmpty(actorUuid, "actor uuid must be set.");
+		return mailingListFacade.findAll(actorUuid, null);
 	}
 
 	@Path("/{uuid}")
@@ -95,11 +95,11 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public MailingListDto find(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The mailing list uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		return mailingListFacade.find(ownerUuid, uuid);
+		Validate.notEmpty(actorUuid, "actor uuid must be set.");
+		return mailingListFacade.find(actorUuid, uuid);
 	}
 
 	@Path("/{uuid}")
@@ -111,11 +111,11 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 		@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public void head(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The mailing list uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		mailingListFacade.find(ownerUuid, uuid);
+		Validate.notEmpty(actorUuid, "actor uuid must be set.");
+		mailingListFacade.find(actorUuid, uuid);
 	}
 
 	@Path("/")
@@ -126,11 +126,11 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public MailingListDto create(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The mailing list to create.", required = true) MailingListDto dto)
 					throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		return mailingListFacade.create(ownerUuid, dto);
+		Validate.notEmpty(actorUuid, "actor uuid must be set.");
+		return mailingListFacade.create(actorUuid, dto);
 	}
 
 	@Path("/")
@@ -141,11 +141,11 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public MailingListDto update(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The mailing list to update.", required = true) MailingListDto dto)
 					throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		return mailingListFacade.update(ownerUuid, dto, null);
+		Validate.notEmpty(actorUuid, "actor uuid must be set.");
+		return mailingListFacade.update(actorUuid, dto, null);
 	}
 
 	@Path("/")
@@ -157,11 +157,11 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public MailingListDto delete(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The mailing list to delete.", required = true) MailingListDto dto)
 					throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		return mailingListFacade.delete(ownerUuid, dto.getUuid());
+		Validate.notEmpty(actorUuid, "actor uuid must be set.");
+		return mailingListFacade.delete(actorUuid, dto.getUuid());
 	}
 
 	@Path("/{uuid}")
@@ -173,11 +173,11 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public MailingListDto delete(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The mailing list uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		return mailingListFacade.delete(ownerUuid, uuid);
+		Validate.notEmpty(actorUuid, "actor uuid must be set.");
+		return mailingListFacade.delete(actorUuid, uuid);
 	}
 
 	@Path("/{uuid}/contacts")
@@ -187,12 +187,12 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") })
 	@Override
 	public void createContact(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The mailing list uuid.", required = true) @PathParam("uuid") String uuid,
 			@ApiParam(value = "The mailing list contact to create.", required = true) MailingListContactDto dto)
 					throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		mailingListFacade.addContact(ownerUuid, uuid, dto);
+		Validate.notEmpty(actorUuid, "actor uuid must be set.");
+		mailingListFacade.addContact(actorUuid, uuid, dto);
 	}
 
 	@Path("/{uuid}/contacts")
@@ -202,12 +202,12 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") })
 	@Override
 	public void updateContact(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The mailing list contact uuid.", required = true) @PathParam("uuid") String uuid,
 			@ApiParam(value = "The mailing list contact to create.", required = true) MailingListContactDto dto)
 					throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		mailingListFacade.updateContact(ownerUuid, dto);
+		Validate.notEmpty(actorUuid, "actor uuid must be set.");
+		mailingListFacade.updateContact(actorUuid, dto);
 	}
 
 	@Path("/{uuid}/contacts")
@@ -217,12 +217,12 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") })
 	@Override
 	public void deleteContact(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The mailing list uuid.", required = true) @PathParam("uuid") String uuid,
 			@ApiParam(value = "The mailing list contact.", required = true) MailingListContactDto dto)
 					throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		mailingListFacade.deleteContact(ownerUuid, dto.getUuid());
+		Validate.notEmpty(actorUuid, "actor uuid must be set.");
+		mailingListFacade.deleteContact(actorUuid, dto.getUuid());
 	}
 
 	@Path("/{uuid}/contacts")
@@ -232,11 +232,11 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") })
 	@Override
 	public Set<MailingListContactDto> findAllContacts(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The mailing list uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		Validate.notEmpty(ownerUuid, "Owner uuid must be set.");
-		return mailingListFacade.findAllContacts(ownerUuid, uuid);
+		Validate.notEmpty(actorUuid, "actor uuid must be set.");
+		return mailingListFacade.findAllContacts(actorUuid, uuid);
 	}
 
 	@Path("/{uuid}/contacts/{contactUuid}")
@@ -246,10 +246,10 @@ public class MailingListRestServiceImpl implements MailingListRestServcice {
 			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") })
 	@Override
 	public void deleteContact(
-			@ApiParam(value = "Mailing list contact uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "Mailing list contact uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "Mailing list contact uuid.", required = true) @PathParam("uuid") String uuid,
 			@ApiParam(value = "Mailing list contact uuid.", required = true) @PathParam("contactUuid") String contactUuid)
 					throws BusinessException {
-		mailingListFacade.deleteContact(ownerUuid, contactUuid);
+		mailingListFacade.deleteContact(actorUuid, contactUuid);
 	}
 }

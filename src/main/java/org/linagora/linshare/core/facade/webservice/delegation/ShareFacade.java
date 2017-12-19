@@ -41,6 +41,6 @@ import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareDto;
 
 public interface ShareFacade extends DelegationGenericFacade {
 
-	Set<ShareDto> create(String ownerUuid, ShareCreationDto createDto);
+	Set<ShareDto> create(String actorUuid, ShareCreationDto createDto);
 
 }

@@ -63,8 +63,8 @@ import com.wordnik.swagger.annotations.ApiResponses;
 
 
 
-@Path("{ownerUuid}/guests")
-@Api(value = "/rest/delegation/{ownerUuid}/guests", basePath = "/rest/delegation/", description = "Guests service.",
+@Path("{actorUuid}/guests")
+@Api(value = "/rest/delegation/{actorUuid}/guests", basePath = "/rest/delegation/", description = "Guests service.",
 	produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -87,10 +87,10 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 					})
 	@Override
 	public GuestDto create(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "Guest to create.", required = true) GuestDto guest)
 					throws BusinessException {
-		return guestFacade.create(ownerUuid, guest);
+		return guestFacade.create(actorUuid, guest);
 	}
 
 	@Path("/{identifier}")
@@ -103,15 +103,15 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 					})
 	@Override
 	public GuestDto get(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The guest identifier, could be uuid or mail.", required = true) @PathParam("identifier") String identifier,
 			@ApiParam(value = "Boolean value to search by domain.") @DefaultValue("false") @QueryParam("mail") Boolean isMail,
 			@ApiParam(value = "Domain identifier.") @QueryParam("domain") String domain)
 			throws BusinessException {
 		if (isMail) {
-			return guestFacade.find(ownerUuid, domain, identifier);
+			return guestFacade.find(actorUuid, domain, identifier);
 		}
-		return guestFacade.find(ownerUuid, identifier);
+		return guestFacade.find(actorUuid, identifier);
 	}
 
 	@Path("/{identifier}")
@@ -124,15 +124,15 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 					})
 	@Override
 	public void head(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The guest identifier, could be uuid or mail.", required = true) @PathParam("identifier") String identifier,
 			@ApiParam(value = "Boolean value to search by domain.") @DefaultValue("false") @QueryParam("mail") Boolean isMail,
 			@ApiParam(value = "Domain identifier.") @QueryParam("domain") String domain)
 			throws BusinessException {
 		if (isMail) {
-			guestFacade.find(ownerUuid, domain, identifier);
+			guestFacade.find(actorUuid, domain, identifier);
 		}
-		guestFacade.find(ownerUuid, identifier);
+		guestFacade.find(actorUuid, identifier);
 	}
 
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -147,8 +147,8 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 					})
 	@Override
 	public List<GuestDto> getAll(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid) throws BusinessException {
-		return guestFacade.findAll(ownerUuid);
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid) throws BusinessException {
+		return guestFacade.findAll(actorUuid);
 	}
 
 	@Path("/")
@@ -161,10 +161,10 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 					})
 	@Override
 	public GuestDto update(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "Guest to update.", required = true) GuestDto guest)
 			throws BusinessException {
-		return guestFacade.update(ownerUuid, guest);
+		return guestFacade.update(actorUuid, guest);
 	}
 
 	@Path("/")
@@ -177,10 +177,10 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 					})
 	@Override
 	public GuestDto delete(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "Guest to delete.", required = true) GuestDto guest)
 					throws BusinessException {
-		return guestFacade.delete(ownerUuid, guest);
+		return guestFacade.delete(actorUuid, guest);
 	}
 
 	@Path("/{uuid}")
@@ -193,10 +193,10 @@ public class GuestRestServiceImpl extends WebserviceBase implements GuestRestSer
 					})
 	@Override
 	public GuestDto delete(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid, 
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid, 
 			@ApiParam(value = "The guest uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		return guestFacade.delete(ownerUuid, uuid);
+		return guestFacade.delete(actorUuid, uuid);
 	}
 
 }

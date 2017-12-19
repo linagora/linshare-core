@@ -42,7 +42,7 @@ import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareDto;
 
 public interface ShareRestService {
 
-	Set<ShareDto> create(String ownerUuid, ShareCreationDto createDto)
+	Set<ShareDto> create(String actorUuid, ShareCreationDto createDto)
 			throws BusinessException;
 
 }

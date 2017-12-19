@@ -65,9 +65,9 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public WorkGroupDto find(String uuid) throws BusinessException {
-		User actor = checkAuthentication(Role.SUPERADMIN);
+		User authUser = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "uuid must be set.");
-		return new WorkGroupDto(threadService.find(actor, actor, uuid));
+		return new WorkGroupDto(threadService.find(authUser, authUser, uuid));
 	}
 
 	@Override
@@ -78,20 +78,20 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public Set<WorkGroupDto> findAll(String pattern, String threadName,
 			String memberName) throws BusinessException {
-		User actor = super.checkAuthentication(Role.ADMIN);
+		User authUser = super.checkAuthentication(Role.ADMIN);
 		Set<WorkGroup> workGroups = Sets.newHashSet();
 		if (pattern == null && threadName == null && memberName == null) {
-			workGroups.addAll(threadService.findAll(actor, actor));
+			workGroups.addAll(threadService.findAll(authUser, authUser));
 		} else {
 			if (memberName != null) {
-				workGroups.addAll(threadService.searchByMembers(actor, memberName));
+				workGroups.addAll(threadService.searchByMembers(authUser, memberName));
 			}
 			if (threadName != null) {
-				workGroups.addAll(threadService.searchByName(actor, threadName));
+				workGroups.addAll(threadService.searchByName(authUser, threadName));
 			}
 			if (pattern != null) {
-				workGroups.addAll(threadService.searchByName(actor, pattern));
-				workGroups.addAll(threadService.searchByMembers(actor, pattern));
+				workGroups.addAll(threadService.searchByName(authUser, pattern));
+				workGroups.addAll(threadService.searchByMembers(authUser, pattern));
 			}
 		}
 		Set<WorkGroupDto> ret = Sets.newHashSet();
@@ -103,11 +103,11 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public Set<WorkGroupMemberDto> members(String uuid) throws BusinessException {
-		User actor = checkAuthentication(Role.SUPERADMIN);
+		User authUser = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "uuid must be set.");
 		Set<WorkGroupMemberDto> ret = new HashSet<WorkGroupMemberDto>();
-		WorkGroup workGroup = threadService.find(actor, actor, uuid);
-		List<WorkgroupMember> workgroupMembers = threadService.findAllThreadMembers(actor, actor, workGroup);
+		WorkGroup workGroup = threadService.find(authUser, authUser, uuid);
+		List<WorkgroupMember> workgroupMembers = threadService.findAllThreadMembers(authUser, authUser, workGroup);
 		for (WorkgroupMember m : workgroupMembers)
 			ret.add(new WorkGroupMemberDto(m));
 		return ret;
@@ -115,18 +115,18 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public WorkGroupDto update(WorkGroupDto threadDto) throws BusinessException {
-		User actor = checkAuthentication(Role.SUPERADMIN);
+		User authUser = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(threadDto, "thread must be set.");
-		return new WorkGroupDto(threadService.update(actor, actor,
+		return new WorkGroupDto(threadService.update(authUser, authUser,
 				threadDto.getUuid(), threadDto.getName()));
 	}
 
 	@Override
 	public WorkGroupDto delete(String uuid) throws BusinessException {
-		User actor = checkAuthentication(Role.SUPERADMIN);
+		User authUser = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "uuid must be set.");
-		WorkGroup workGroup = threadService.find(actor, actor, uuid);
-		threadService.deleteThread(actor, actor, workGroup);
+		WorkGroup workGroup = threadService.find(authUser, authUser, uuid);
+		threadService.deleteThread(authUser, authUser, workGroup);
 		return new WorkGroupDto(workGroup);
 	}
 }

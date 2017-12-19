@@ -46,39 +46,39 @@ import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto
 
 public interface ThreadEntryRestService {
 
-	WorkGroupEntryDto create(String ownerUuid, String threadUuid,
+	WorkGroupEntryDto create(String actorUuid, String threadUuid,
 			InputStream file, String description, String givenFileName,
 			Boolean async,
 			Long contentLength,
 			Long fileSize,
 			MultipartBody body) throws BusinessException;
 
-	WorkGroupEntryDto copy(String ownerUuid, String threadUuid, String entryUuid, Boolean async)
+	WorkGroupEntryDto copy(String actorUuid, String threadUuid, String entryUuid, Boolean async)
 			throws BusinessException;
 
-	public WorkGroupEntryDto find(String ownerUuid, String threadUuid, String uuid)
+	public WorkGroupEntryDto find(String actorUuid, String threadUuid, String uuid)
 			throws BusinessException;
 
-	void head(String ownerUuid, String threadUuid, String uuid) throws BusinessException;
+	void head(String actorUuid, String threadUuid, String uuid) throws BusinessException;
 
-	public List<WorkGroupEntryDto> findAll(String ownerUuid, String threadUuid)
+	public List<WorkGroupEntryDto> findAll(String actorUuid, String threadUuid)
 			throws BusinessException;
 
-	public WorkGroupEntryDto delete(String ownerUuid, String threadUuid,
+	public WorkGroupEntryDto delete(String actorUuid, String threadUuid,
 			WorkGroupEntryDto threadEntry) throws BusinessException;
 
-	public WorkGroupEntryDto delete(String ownerUuid, String threadUuid, String uuid)
+	public WorkGroupEntryDto delete(String actorUuid, String threadUuid, String uuid)
 			throws BusinessException;
 
-	Response download(String ownerUuid, String threadUuid, String uuid)
+	Response download(String actorUuid, String threadUuid, String uuid)
 			throws BusinessException;
 
-	Response thumbnail(String ownerUuid, String threadUuid, String uuid) throws BusinessException;
+	Response thumbnail(String actorUuid, String threadUuid, String uuid) throws BusinessException;
 
-	WorkGroupEntryDto update(String ownerUuid, String threadUuid,
+	WorkGroupEntryDto update(String actorUuid, String threadUuid,
 			String threadEntryuuid, WorkGroupEntryDto threadEntryDto)
 			throws BusinessException;
 
-	AsyncTaskDto findAsync(String ownerUuid, String uuid)
+	AsyncTaskDto findAsync(String actorUuid, String uuid)
 			throws BusinessException;
 }

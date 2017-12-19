@@ -62,9 +62,9 @@ public class UploadRequestFacadeImpl extends AdminGenericFacadeImpl implements U
 
 	@Override
 	public Set<UploadRequestHistoryDto> findAllHistory(String uploadRequestUuid) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		Set<UploadRequestHistoryDto> dtos = Sets.newHashSet();
-		Set<UploadRequestHistory> res = uploadRequestService.findAllRequestHistory(actor, null, uploadRequestUuid);
+		Set<UploadRequestHistory> res = uploadRequestService.findAllRequestHistory(authUser, null, uploadRequestUuid);
 		for (UploadRequestHistory u: res) {
 			dtos.add(new UploadRequestHistoryDto(u));
 		}
@@ -73,9 +73,9 @@ public class UploadRequestFacadeImpl extends AdminGenericFacadeImpl implements U
 
 	@Override
 	public Set<UploadRequestDto> findAll(List<UploadRequestStatus> status, Date afterDate, Date beforeDate) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		Set<UploadRequestDto> dtos = Sets.newHashSet();
-		Set<UploadRequest> res = uploadRequestService.findAll(actor, status, afterDate, beforeDate);
+		Set<UploadRequest> res = uploadRequestService.findAll(authUser, status, afterDate, beforeDate);
 		for (UploadRequest u: res) {
 			dtos.add(new UploadRequestDto(u, false));
 		}

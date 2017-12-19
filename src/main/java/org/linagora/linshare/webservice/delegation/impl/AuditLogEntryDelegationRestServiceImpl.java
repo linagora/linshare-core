@@ -60,15 +60,15 @@ public class AuditLogEntryDelegationRestServiceImpl implements AuditLogEntryDele
 		this.auditFacade = auditFacade;
 	}
 
-	@Path("/{ownerUuid}")
+	@Path("/{actorUuid}")
 	@GET
 	@Override
-	public Set<AuditLogEntryUser> findAll(@PathParam("ownerUuid") String ownerUuid,
+	public Set<AuditLogEntryUser> findAll(@PathParam("actorUuid") String actorUuid,
 			@QueryParam("action") List<String> action,
 			@QueryParam("type") List<String> type,
 			@QueryParam("forceAll") @DefaultValue("false") boolean forceAll,
 			@QueryParam("beginDate") String beginDate,
 			@QueryParam("endDate") String endDate) {
-		return auditFacade.findAll(ownerUuid, action, type, forceAll, beginDate, endDate);
+		return auditFacade.findAll(actorUuid, action, type, forceAll, beginDate, endDate);
 	}
 }

@@ -63,19 +63,19 @@ public class AnonymousUrlFacadeImpl implements AnonymousUrlFacade{
 	@Override
 	public AnonymousUrlDto find(String uuid, String password) {
 		logger.debug("getting anonymousurl with uuid : " + uuid);
-		SystemAccount actor = anonymousUrlService.getAnonymousURLAccount();
-		Account owner = null;
-		AnonymousUrl url = anonymousUrlService.find(actor, actor, uuid, password);
+		SystemAccount authUser = anonymousUrlService.getAnonymousURLAccount();
+		Account actor = null;
+		AnonymousUrl url = anonymousUrlService.find(authUser, authUser, uuid, password);
 		/**
-		 * It is impossible to get directly the owner of an anonymous url
-		 * This workaround is to get the owner
-		 * TODO Add property in Anonymous url object for the owner
+		 * It is impossible to get directly the actor of an anonymous url
+		 * This workaround is to get the actor
+		 * TODO Add property in Anonymous url object for the actor
 		 */
 		for (AnonymousShareEntry ase : url.getAnonymousShareEntries()) {
-			owner = ase.getEntryOwner();
+			actor = ase.getEntryOwner();
 			break;
 		}
-		return new AnonymousUrlDto(owner, url);
+		return new AnonymousUrlDto(actor, url);
 	}
 
 	@Override
@@ -84,9 +84,9 @@ public class AnonymousUrlFacadeImpl implements AnonymousUrlFacade{
 		logger.debug("Downloading a file with anonymousShareEntryUuid :"
 				+ anonymousShareEntryUuid + "from anonymousUrl : "
 				+ anonymousUrlUuid);
-		SystemAccount actor = anonymousUrlService.getAnonymousURLAccount();
-		return anonymousUrlService.downloadDocument(actor,
-				actor, anonymousUrlUuid, anonymousShareEntryUuid, password);
+		SystemAccount authUser = anonymousUrlService.getAnonymousURLAccount();
+		return anonymousUrlService.downloadDocument(authUser,
+				authUser, anonymousUrlUuid, anonymousShareEntryUuid, password);
 	}
 
 	@Override
@@ -96,12 +96,12 @@ public class AnonymousUrlFacadeImpl implements AnonymousUrlFacade{
 				"Missing required anonymousUrl uuid");
 		Validate.notEmpty(anonymousShareEntryUuid,
 				"Missing required anonymousShareEntry uuid");
-		SystemAccount actor = anonymousUrlService.getAnonymousURLAccount();
+		SystemAccount authUser = anonymousUrlService.getAnonymousURLAccount();
 		if (kind == null) {
 			kind = ThumbnailType.MEDIUM;
 		}
-		return anonymousUrlService.downloadThumbnail(actor,
-				actor, anonymousUrlUuid, anonymousShareEntryUuid, password, kind);
+		return anonymousUrlService.downloadThumbnail(authUser,
+				authUser, anonymousUrlUuid, anonymousShareEntryUuid, password, kind);
 	}
 
 	@Override
@@ -111,9 +111,9 @@ public class AnonymousUrlFacadeImpl implements AnonymousUrlFacade{
 				"Missing required anonymousUrl uuid");
 		Validate.notEmpty(anonymousShareEntryUuid,
 				"Missing required anonymousShareEntry uuid");
-		SystemAccount actor = anonymousUrlService.getAnonymousURLAccount();
+		SystemAccount authUser = anonymousUrlService.getAnonymousURLAccount();
 		AnonymousShareEntry ase = anonymousUrlService.getAnonymousShareEntry(
-				actor, actor, anonymousUrlUuid, anonymousShareEntryUuid,
+				authUser, authUser, anonymousUrlUuid, anonymousShareEntryUuid,
 				password);
 		return new ShareEntryDto(ase.getUuid(), ase.getDocumentEntry());
 	}

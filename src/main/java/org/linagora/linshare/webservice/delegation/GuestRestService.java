@@ -41,18 +41,18 @@ import org.linagora.linshare.core.facade.webservice.common.dto.GuestDto;
 
 public interface GuestRestService {
 
-	GuestDto create(String ownerUuid, GuestDto guest) throws BusinessException;
+	GuestDto create(String actorUuid, GuestDto guest) throws BusinessException;
 
-	GuestDto get(String ownerUuid, String identifier, Boolean isMail, String domain) throws BusinessException;
+	GuestDto get(String actorUuid, String identifier, Boolean isMail, String domain) throws BusinessException;
 
-	void head(String ownerUuid, String identifier, Boolean isMail, String domain) throws BusinessException;
+	void head(String actorUuid, String identifier, Boolean isMail, String domain) throws BusinessException;
 
-	List<GuestDto> getAll(String ownerUuid) throws BusinessException;
+	List<GuestDto> getAll(String actorUuid) throws BusinessException;
 
-	GuestDto update(String ownerUuid, GuestDto guest) throws BusinessException;
+	GuestDto update(String actorUuid, GuestDto guest) throws BusinessException;
 
-	GuestDto delete(String ownerUuid, GuestDto guest) throws BusinessException;
+	GuestDto delete(String actorUuid, GuestDto guest) throws BusinessException;
 
-	GuestDto delete(String ownerUuid, String uuid) throws BusinessException;
+	GuestDto delete(String actorUuid, String uuid) throws BusinessException;
 
 }

@@ -42,13 +42,13 @@ import org.linagora.linshare.core.facade.webservice.user.dto.UploadRequestTempla
 public interface UploadRequestTemplateFacade {
 
 
-	List<UploadRequestTemplateDto> findAll(String ownerUuid) throws BusinessException;
+	List<UploadRequestTemplateDto> findAll(String actorUuid) throws BusinessException;
 
-	UploadRequestTemplateDto find(String ownerUuid, String uuid) throws BusinessException;
+	UploadRequestTemplateDto find(String actorUuid, String uuid) throws BusinessException;
 
-	UploadRequestTemplateDto create(String ownerUuid, UploadRequestTemplateDto dto) throws BusinessException;
+	UploadRequestTemplateDto create(String actorUuid, UploadRequestTemplateDto dto) throws BusinessException;
 
-	UploadRequestTemplateDto update(String ownerUuid, String uuid, UploadRequestTemplateDto dto) throws BusinessException;
+	UploadRequestTemplateDto update(String actorUuid, String uuid, UploadRequestTemplateDto dto) throws BusinessException;
 
-	UploadRequestTemplateDto delete(String ownerUuid, String uuid) throws BusinessException;
+	UploadRequestTemplateDto delete(String actorUuid, String uuid) throws BusinessException;
 }

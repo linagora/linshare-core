@@ -56,64 +56,64 @@ public class AsyncTaskFacadeImpl extends DelegationGenericFacadeImpl implements 
 	}
 
 	@Override
-	public AsyncTaskDto find(String ownerUuid, String uuid) {
-		User actor = checkAuthentication();
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
-		User owner = getOwner(ownerUuid);
+	public AsyncTaskDto find(String actorUuid, String uuid) {
+		User authUser = checkAuthentication();
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
+		User actor = getActor(actorUuid);
 		Validate.notEmpty(uuid, "Missing uuid");
-		AsyncTask task = service.find(actor, owner, uuid);
+		AsyncTask task = service.find(authUser, actor, uuid);
 		return new AsyncTaskDto(task);
 	}
 
 	@Override
-	public AsyncTaskDto create(String ownerUuid, Long size,
+	public AsyncTaskDto create(String actorUuid, Long size,
 			Long transfertDuration, String fileName, Integer frequency,
 			AsyncTaskType taskType) {
-		User actor = checkAuthentication();
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
-		User owner = getOwner(ownerUuid);
+		User authUser = checkAuthentication();
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
+		User actor = getActor(actorUuid);
 		AsyncTask task =  new AsyncTask(size, transfertDuration, fileName, frequency, taskType);
-		return new AsyncTaskDto(service.create(actor, owner, task));
+		return new AsyncTaskDto(service.create(authUser, actor, task));
 	}
 
 	@Override
-	public AsyncTaskDto create(String ownerUuid, String fileName,
+	public AsyncTaskDto create(String actorUuid, String fileName,
 			Integer frequency, AsyncTaskType taskType) {
-		User actor = checkAuthentication();
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
-		User owner = getOwner(ownerUuid);
+		User authUser = checkAuthentication();
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
+		User actor = getActor(actorUuid);
 		AsyncTask task =  new AsyncTask(fileName, frequency, taskType);
-		return new AsyncTaskDto(service.create(actor, owner, task));
+		return new AsyncTaskDto(service.create(authUser, actor, task));
 	}
 
 	@Override
-	public AsyncTaskDto create(String ownerUuid, String fileName,
+	public AsyncTaskDto create(String actorUuid, String fileName,
 			AsyncTaskType taskType) {
-		User actor = checkAuthentication();
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
-		User owner = getOwner(ownerUuid);
+		User authUser = checkAuthentication();
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
+		User actor = getActor(actorUuid);
 		AsyncTask task =  new AsyncTask(fileName, null, taskType);
-		return new AsyncTaskDto(service.create(actor, owner, task));
+		return new AsyncTaskDto(service.create(authUser, actor, task));
 	}
 
 	@Override
-	public AsyncTaskDto fail(String ownerUuid, AsyncTaskDto asyncTask, Exception e) {
-		User actor = checkAuthentication();
-		Validate.notEmpty(ownerUuid, "Missing required owner uuid");
+	public AsyncTaskDto fail(String actorUuid, AsyncTaskDto asyncTask, Exception e) {
+		User authUser = checkAuthentication();
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notNull(asyncTask, "Missing AsyncTask");
 		Validate.notEmpty(asyncTask.getUuid(), "Missing AsyncTask uuid");
-		User owner = getOwner(ownerUuid);
+		User actor = getActor(actorUuid);
 		AsyncTask task = null;
 		if (e instanceof BusinessException) {
 			BusinessException eb = (BusinessException) e;
-			task = service.fail(actor, owner, asyncTask.getUuid(),
+			task = service.fail(authUser, actor, asyncTask.getUuid(),
 					eb.getErrorCode().getCode(), eb.getErrorCode().name(), eb.getMessage());
 		} else {
 			String message = e.getMessage();
 			if (message == null) {
 				message = e.toString();
 			}
-			task = service.fail(actor, owner, asyncTask.getUuid(), message);
+			task = service.fail(authUser, actor, asyncTask.getUuid(), message);
 		}
 		return new AsyncTaskDto(task);
 	}

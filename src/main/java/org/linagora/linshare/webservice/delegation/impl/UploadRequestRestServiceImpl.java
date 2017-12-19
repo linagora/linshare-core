@@ -60,8 +60,8 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/{ownerUuid}/upload_requests")
-@Api(value = "/rest/delegation/{ownerUuid}/upload_requests", description = "requests API")
+@Path("/{actorUuid}/upload_requests")
+@Api(value = "/rest/delegation/{actorUuid}/upload_requests", description = "requests API")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class UploadRequestRestServiceImpl implements UploadRequestRestService {
@@ -82,9 +82,9 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 			@ApiResponse(code = 401, message = "Unauthorized.") })
 	@Override
 	public List<UploadRequestDto> findAll(
-			@ApiParam(value = "Upload request owner uuid.", required = true) @PathParam(value = "ownerUuid") String ownerUuid)
+			@ApiParam(value = "Upload request actor uuid.", required = true) @PathParam(value = "actorUuid") String actorUuid)
 					throws BusinessException {
-		return uploadRequestFacade.findAll(ownerUuid);
+		return uploadRequestFacade.findAll(actorUuid);
 	}
 
 	@GET
@@ -94,10 +94,10 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
 	@Override
 	public UploadRequestDto find(
-			@ApiParam(value = "Upload request owner uuid.", required = true) @PathParam(value = "ownerUuid") String ownerUuid,
+			@ApiParam(value = "Upload request actor uuid.", required = true) @PathParam(value = "actorUuid") String actorUuid,
 			@ApiParam(value = "Upload request uuid.", required = true) @PathParam(value = "uuid") String uuid)
 					throws BusinessException {
-		UploadRequestDto dto = uploadRequestFacade.find(ownerUuid, uuid);
+		UploadRequestDto dto = uploadRequestFacade.find(actorUuid, uuid);
 		return dto;
 	}
 
@@ -108,11 +108,11 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
 	@Override
 	public List<UploadRequestDto> create(
-			@ApiParam(value = "Upload request owner uuid.", required = true) @PathParam(value = "ownerUuid") String ownerUuid,
+			@ApiParam(value = "Upload request actor uuid.", required = true) @PathParam(value = "actorUuid") String actorUuid,
 			@ApiParam(value = "Upload request.", required = true) UploadRequestDto uploadRequestDto,
 			@ApiParam(value = "Group mode.", required = true) @QueryParam(value = "groupMode") Boolean groupMode)
 					throws BusinessException {
-		List<UploadRequestDto> dto = uploadRequestFacade.create(ownerUuid, uploadRequestDto, groupMode);
+		List<UploadRequestDto> dto = uploadRequestFacade.create(actorUuid, uploadRequestDto, groupMode);
 		return dto;
 	}
 
@@ -123,11 +123,11 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
 	@Override
 	public UploadRequestDto update(
-			@ApiParam(value = "Upload request owner uuid.", required = true) @PathParam(value = "ownerUuid") String ownerUuid,
+			@ApiParam(value = "Upload request actor uuid.", required = true) @PathParam(value = "actorUuid") String actorUuid,
 			@ApiParam(value = "Upload request uuid.", required = true) @PathParam(value = "uuid") String uuid,
 			@ApiParam(value = "Upload request.", required = true) UploadRequestDto uploadRequestDto)
 					throws BusinessException {
-		UploadRequestDto dto = uploadRequestFacade.update(ownerUuid, uuid, uploadRequestDto);
+		UploadRequestDto dto = uploadRequestFacade.update(actorUuid, uuid, uploadRequestDto);
 		return dto;
 	}
 
@@ -138,10 +138,10 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
 	@Override
 	public UploadRequestDto updateStatus(
-			@ApiParam(value = "Upload request owner uuid.", required = true) @PathParam(value = "ownerUuid") String ownerUuid,
+			@ApiParam(value = "Upload request actor uuid.", required = true) @PathParam(value = "actorUuid") String actorUuid,
 			@ApiParam(value = "Upload request uuid.", required = true) @PathParam(value = "uuid") String uuid,
 			@QueryParam("status") String status) throws BusinessException {
-		UploadRequestDto dto = uploadRequestFacade.updateStatus(ownerUuid, uuid, status);
+		UploadRequestDto dto = uploadRequestFacade.updateStatus(actorUuid, uuid, status);
 		return dto;
 	}
 
@@ -152,10 +152,10 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
 	@Override
 	public UploadRequestDto delete(
-			@ApiParam(value = "Upload request owner uuid.", required = true) @PathParam(value = "ownerUuid") String ownerUuid,
+			@ApiParam(value = "Upload request actor uuid.", required = true) @PathParam(value = "actorUuid") String actorUuid,
 			@ApiParam(value = "Upload request uuid.", required = true) @PathParam(value = "uuid") String uuid)
 					throws BusinessException {
-		UploadRequestDto dto = uploadRequestFacade.delete(ownerUuid, uuid);
+		UploadRequestDto dto = uploadRequestFacade.delete(actorUuid, uuid);
 		return dto;
 	}
 
@@ -166,10 +166,10 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
 	@Override
 	public UploadRequestDto delete(
-			@ApiParam(value = "Upload request owner uuid.", required = true) @PathParam(value = "ownerUuid") String ownerUuid,
+			@ApiParam(value = "Upload request actor uuid.", required = true) @PathParam(value = "actorUuid") String actorUuid,
 			@ApiParam(value = "Upload request.", required = true) UploadRequestDto uploadRequestDto)
 					throws BusinessException {
-		UploadRequestDto dto = uploadRequestFacade.delete(ownerUuid, uploadRequestDto);
+		UploadRequestDto dto = uploadRequestFacade.delete(actorUuid, uploadRequestDto);
 		return dto;
 	}
 }

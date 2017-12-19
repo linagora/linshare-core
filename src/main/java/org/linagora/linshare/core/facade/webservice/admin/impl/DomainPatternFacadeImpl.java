@@ -87,25 +87,25 @@ public class DomainPatternFacadeImpl extends AdminGenericFacadeImpl implements D
 
 	@Override
 	public DomainPatternDto update(DomainPatternDto domainPatternDto) throws BusinessException {
-		User actor = checkAuthentication(Role.SUPERADMIN);
+		User authUser = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(domainPatternDto.getUuid(), "domain pattern uuid must be set.");
 		return new DomainPatternDto(
-				userProviderService.updateDomainPattern(actor, new UserLdapPattern(domainPatternDto)));
+				userProviderService.updateDomainPattern(authUser, new UserLdapPattern(domainPatternDto)));
 	}
 
 	@Override
 	public DomainPatternDto create(DomainPatternDto domainPatternDto) throws BusinessException {
-		User actor = checkAuthentication(Role.SUPERADMIN);
+		User authUser = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(domainPatternDto.getLabel(), "domain pattern label must be set.");
 		return new DomainPatternDto(
-				userProviderService.createDomainPattern(actor, new UserLdapPattern(domainPatternDto)));
+				userProviderService.createDomainPattern(authUser, new UserLdapPattern(domainPatternDto)));
 	}
 
 	@Override
 	public DomainPatternDto delete(DomainPatternDto domainPatternDto) throws BusinessException {
-		User actor = checkAuthentication(Role.SUPERADMIN);
+		User authUser = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(domainPatternDto.getUuid(), "domain pattern uuid must be set.");
-		UserLdapPattern pattern = userProviderService.deletePattern(actor, domainPatternDto.getUuid());
+		UserLdapPattern pattern = userProviderService.deletePattern(authUser, domainPatternDto.getUuid());
 		return new DomainPatternDto(pattern);
 	}
 

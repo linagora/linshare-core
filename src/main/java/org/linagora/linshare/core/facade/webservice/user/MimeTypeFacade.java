@@ -40,5 +40,5 @@ import org.linagora.linshare.core.facade.webservice.common.dto.MimeTypeDto;
 
 public interface MimeTypeFacade {
 
-	List<MimeTypeDto> find(String ownerUuid, Boolean disabled);
+	List<MimeTypeDto> find(String actorUuid, Boolean disabled);
 }

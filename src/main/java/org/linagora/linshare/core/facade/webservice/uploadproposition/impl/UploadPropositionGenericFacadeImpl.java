@@ -55,20 +55,20 @@ public class UploadPropositionGenericFacadeImpl extends GenericFacadeImpl implem
 
 	@Override
 	protected User checkAuthentication() throws BusinessException {
-		User actor = super.checkAuthentication();
-		if (!actor.hasUploadPropositionRole()) {
-			logger.error("Current actor is trying to access to a forbbiden api : " + actor.getAccountRepresentation());
+		User authUser = super.checkAuthentication();
+		if (!authUser.hasUploadPropositionRole()) {
+			logger.error("Current authUser is trying to access to a forbbiden api : " + authUser.getAccountRepresentation());
 			throw new BusinessException(
 					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
 		}
-		Functionality func = functionalityService.getUploadPropositionFunctionality(actor.getDomain());
+		Functionality func = functionalityService.getUploadPropositionFunctionality(authUser.getDomain());
 		if (!func.getActivationPolicy().getStatus()) {
 			throw new BusinessException(
 					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"This service UploadProposition is not enable.");
 		}
-		return actor;
+		return authUser;
 	}
 
 	@Override

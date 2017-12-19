@@ -92,8 +92,8 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 
 	@Override
 	public Set<UserDto> findUser(String pattern) throws BusinessException {
-		User actor = checkAuthentication();
-		List<User> users = userService.autoCompleteUser(actor, pattern);
+		User authUser = checkAuthentication();
+		List<User> users = userService.autoCompleteUser(authUser, pattern);
 		logger.debug("nb result for completion : " + users.size());
 		// TODO : FMA : Use database configuration for auto complete limit
 		return getUserDtoList(users);
@@ -101,9 +101,9 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 
 	@Override
 	public Set<String> getMail(String pattern) throws BusinessException {
-		User actor = checkAuthentication();
+		User authUser = checkAuthentication();
 		Validate.notEmpty(pattern, "pattern must be set.");
-		List<User> users = userService.autoCompleteUser(actor, pattern);
+		List<User> users = userService.autoCompleteUser(authUser, pattern);
 		logger.debug("nb result for completion : " + users.size());
 		// TODO : FMA : Use database configuration for auto complete limit
 		return getMailList(users, AUTO_COMPLETE_LIMIT);
@@ -128,18 +128,18 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 
 	@Override
 	public List<AutoCompleteResultDto> search(String pattern, String type, String threadUuid) throws BusinessException {
-		User actor = checkAuthentication();
+		User authUser = checkAuthentication();
 		if (pattern.length() > 2) {
 			List<AutoCompleteResultDto> result = Lists.newArrayList();
 			SearchType enumType = SearchType.fromString(type);
 			if (enumType.equals(SearchType.SHARING)) {
-				List<ContactList> mailingListsList = contactListSerice.searchListByVisibility(actor.getLsUuid(), VisibilityType.All.name(), pattern);
+				List<ContactList> mailingListsList = contactListSerice.searchListByVisibility(authUser.getLsUuid(), VisibilityType.All.name(), pattern);
 				int range = (mailingListsList.size() < AUTO_COMPLETE_LIMIT ? mailingListsList.size() : AUTO_COMPLETE_LIMIT);
 				Set<UserDto> userList = findUser(pattern);
 				result.addAll(ImmutableList.copyOf(Lists.transform(Lists.newArrayList(userList), UserAutoCompleteResultDto.toDto())));
 				result.addAll(ImmutableList.copyOf(Lists.transform(mailingListsList.subList(0, range), ListAutoCompleteResultDto.toDto())));
 				// TODO : Fix this dirty hack ! :(
-				List<RecipientFavourite> favouriteRecipeints = favourite.findMatchElementsOrderByWeight(pattern, actor, FAVOURTITE_RECIPIENT_LIMIT);
+				List<RecipientFavourite> favouriteRecipeints = favourite.findMatchElementsOrderByWeight(pattern, authUser, FAVOURTITE_RECIPIENT_LIMIT);
 				int range2 = (favouriteRecipeints.size() < AUTO_COMPLETE_LIMIT ? favouriteRecipeints.size() : AUTO_COMPLETE_LIMIT);
 				result.addAll(ImmutableList.copyOf(Lists.transform(favouriteRecipeints.subList(0, range2), AutoCompleteResultDto.toRFDto())));
 			} else if (enumType.equals(SearchType.USERS)) {
@@ -147,8 +147,8 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 				result.addAll(ImmutableList.copyOf(Lists.transform(Lists.newArrayList(userList), UserAutoCompleteResultDto.toDto())));
 			} else if (enumType.equals(SearchType.THREAD_MEMBERS)) {
 				Validate.notEmpty(threadUuid, "You must fill threadUuid query parameter.");
-				WorkGroup workGroup = threadService.find(actor, actor, threadUuid);
-				List<User> users = userService.autoCompleteUser(actor, pattern);
+				WorkGroup workGroup = threadService.find(authUser, authUser, threadUuid);
+				List<User> users = userService.autoCompleteUser(authUser, pattern);
 				int range = (users.size() < AUTO_COMPLETE_LIMIT ? users.size() : AUTO_COMPLETE_LIMIT);
 				for (User user : users.subList(0, range)) {
 					User account = userService.findOrCreateUser(user.getMail(), user.getDomainId());

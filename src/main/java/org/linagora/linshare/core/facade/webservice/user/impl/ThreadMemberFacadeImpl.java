@@ -66,10 +66,10 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 	public List<WorkGroupMemberDto> findAll(String threadUuid)
 			throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
-		User actor = checkAuthentication();
-		WorkGroup workGroup = threadService.find(actor, actor, threadUuid);
+		User authUser = checkAuthentication();
+		WorkGroup workGroup = threadService.find(authUser, authUser, threadUuid);
 		List<WorkGroupMemberDto> res = Lists.newArrayList();
-		for (WorkgroupMember m : threadService.findAllThreadMembers(actor, actor, workGroup)) {
+		for (WorkgroupMember m : threadService.findAllThreadMembers(authUser, authUser, workGroup)) {
 			res.add(new WorkGroupMemberDto(m));
 		}
 		return res;
@@ -81,10 +81,9 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(userUuid,
 				"Missing required user uuid");
-		User actor = checkAuthentication();
-		WorkGroup workGroup = threadService.find(actor, actor, threadUuid);
-		return new WorkGroupMemberDto(threadService.getMemberFromUser(workGroup,
-				userService.findByLsUuid(userUuid)));
+		User authUser = checkAuthentication();
+		WorkGroup workGroup = threadService.find(authUser, authUser, threadUuid);
+		return new WorkGroupMemberDto(threadService.getMemberFromUser(workGroup, userService.findByLsUuid(userUuid)));
 	}
 
 	@Override
@@ -94,10 +93,10 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(domainId, "Missing required domain id");
 		Validate.notEmpty(userMail, "Missing required mail");
-		User actor = checkAuthentication();
+		User authUser = checkAuthentication();
 		User user = userService.findOrCreateUser(userMail, domainId);
-		WorkGroup workGroup = threadService.find(actor, actor, threadUuid);
-		return new WorkGroupMemberDto(threadService.addMember(actor, actor,
+		WorkGroup workGroup = threadService.find(authUser, authUser, threadUuid);
+		return new WorkGroupMemberDto(threadService.addMember(authUser, authUser,
 				workGroup, user, admin, !readOnly));
 	}
 
@@ -106,8 +105,8 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 			WorkGroupMemberDto threadMember) throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notNull(threadMember, "Missing required thread member");
-		User actor = checkAuthentication();
-		return new WorkGroupMemberDto(threadService.updateMember(actor, actor,
+		User authUser = checkAuthentication();
+		return new WorkGroupMemberDto(threadService.updateMember(authUser, authUser,
 				threadUuid, threadMember.getUserUuid(), threadMember.isAdmin(),
 				!threadMember.isReadonly()));
 	}
@@ -117,8 +116,8 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 			throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(userUuid, "Missing required user uuid");
-		User actor = checkAuthentication();
-		WorkgroupMember member = threadService.deleteMember(actor, actor, threadUuid, userUuid);
+		User authUser = checkAuthentication();
+		WorkgroupMember member = threadService.deleteMember(authUser, authUser, threadUuid, userUuid);
 		return new WorkGroupMemberDto(member);
 	}
 }

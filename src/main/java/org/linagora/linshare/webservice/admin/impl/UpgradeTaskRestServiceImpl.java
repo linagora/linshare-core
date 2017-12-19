@@ -152,7 +152,7 @@ public class UpgradeTaskRestServiceImpl implements UpgradeTaskRestService {
 			@ApiParam(value = "Force running the task even it may be alreadys running. Be careful.")
 				@DefaultValue(value="false") @QueryParam("force") Boolean force
 			) throws BusinessException {
-		AccountDto actorDto = facade.getAuthenticatedAccountDto();
+		AccountDto authUserDto = facade.getAuthenticatedAccountDto();
 		UpgradeTaskDto taskDto = facade.find(identifier);
 
 		if (!isAllowed(taskDto, force)) {
@@ -181,11 +181,11 @@ public class UpgradeTaskRestServiceImpl implements UpgradeTaskRestService {
 		taskDto = facade.update(taskDto);
 
 		// new running context (what to run)
-		BatchTaskContext batchTaskContext = new BatchTaskContext(actorDto, actorDto.getUuid(), upgradeTask);
+		BatchTaskContext batchTaskContext = new BatchTaskContext(authUserDto, authUserDto.getUuid(), upgradeTask);
 
 		// new task to run the task in asynchronous mode (taskScheduler)
 		BatchRunnerAsyncTask task = new BatchRunnerAsyncTask(batchRunnerAsyncFacade, batchTaskContext, asyncTask,
-				actorDto.getUuid(), taskDto.getIdentifier().name(), batchRunner);
+				authUserDto.getUuid(), taskDto.getIdentifier().name(), batchRunner);
 
 		// adding task to the pool
 		taskExecutor.execute(task);

@@ -54,8 +54,8 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/{ownerUuid}/upload_request_groups")
-@Api(value = "/rest/delegation/{ownerUuid}/upload_request_groups", description = "group requests API")
+@Path("/{actorUuid}/upload_request_groups")
+@Api(value = "/rest/delegation/{actorUuid}/upload_request_groups", description = "group requests API")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRestService {
@@ -74,9 +74,9 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 			@ApiResponse(code = 401, message = "Unauthorized.") })
 	@Override
 	public List<UploadRequestGroupDto> findAll(
-			@ApiParam(value = "Upload request group owner uuid.", required = true) @PathParam(value = "ownerUuid") String ownerUuid)
+			@ApiParam(value = "Upload request group actor uuid.", required = true) @PathParam(value = "actorUuid") String actorUuid)
 			throws BusinessException {
-		return uploadRequestGroupFacade.findAll(ownerUuid);
+		return uploadRequestGroupFacade.findAll(actorUuid);
 	}
 
 	@GET
@@ -85,9 +85,9 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
 	@Override
-	public UploadRequestGroupDto find(@ApiParam(value = "Upload request group owner uuid.", required = true) @PathParam(value = "ownerUuid") String ownerUuid,
+	public UploadRequestGroupDto find(@ApiParam(value = "Upload request group actor uuid.", required = true) @PathParam(value = "actorUuid") String actorUuid,
 			@ApiParam(value = "Upload request group uuid.", required = true) @PathParam(value = "uuid") String uuid)
 			throws BusinessException {
-		return uploadRequestGroupFacade.find(ownerUuid, uuid);
+		return uploadRequestGroupFacade.find(actorUuid, uuid);
 	}
 }

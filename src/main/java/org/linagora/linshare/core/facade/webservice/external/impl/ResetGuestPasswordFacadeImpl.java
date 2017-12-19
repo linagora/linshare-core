@@ -64,8 +64,8 @@ public class ResetGuestPasswordFacadeImpl implements ResetGuestPasswordFacade {
 	public ResetGuestPassword find(String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "Missing ResetGuestPassword uuid");
 		logger.debug("getting ResetGuestPassword with uuid : " + uuid);
-		SystemAccount actor = service.getGuestSystemAccount();
-		return service.find(actor, actor, uuid);
+		SystemAccount authUser = service.getGuestSystemAccount();
+		return service.find(authUser, authUser, uuid);
 	}
 
 	@Override
@@ -76,13 +76,13 @@ public class ResetGuestPasswordFacadeImpl implements ResetGuestPasswordFacade {
 		}
 		Validate.notEmpty(reset.getUuid(), "Missing ResetGuestPassword uuid");
 		logger.debug("getting ResetGuestPassword with uuid : " + reset.getUuid());
-		SystemAccount actor = service.getGuestSystemAccount();
-		return service.update(actor, actor, reset);
+		SystemAccount authUser = service.getGuestSystemAccount();
+		return service.update(authUser, authUser, reset);
 	}
 
 	@Override
 	public void create(String domainUuid, ResetPasswordDto resetDto) throws BusinessException {
-		SystemAccount actor = service.getGuestSystemAccount();
-		guestService.triggerResetPassword(actor, resetDto.getMail(), domainUuid);
+		SystemAccount authUser = service.getGuestSystemAccount();
+		guestService.triggerResetPassword(authUser, resetDto.getMail(), domainUuid);
 	}
 }

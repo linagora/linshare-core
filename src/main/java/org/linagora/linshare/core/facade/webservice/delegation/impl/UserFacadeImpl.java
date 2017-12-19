@@ -51,17 +51,17 @@ public class UserFacadeImpl extends DelegationGenericFacadeImpl implements
 
 	@Override
 	public void changePassword(PasswordDto password) throws BusinessException {
-		User actor = checkAuthentication();
-		userService.changePassword(actor.getLsUuid(), actor.getMail(),
+		User authUser = checkAuthentication();
+		userService.changePassword(authUser.getLsUuid(), authUser.getMail(),
 				password.getOldPwd(), password.getNewPwd());
 	}
 
 	@Override
 	public GenericUserDto getUser(String mail, String domainId)
 			throws BusinessException {
-		User actor = checkAuthentication();
+		User authUser = checkAuthentication();
 		if(domainId == null) {
-			domainId = actor.getDomainId();
+			domainId = authUser.getDomainId();
 		}
 		// We can not accept this wildcard. 
 		mail = mail.replace("*", "");

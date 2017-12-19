@@ -39,16 +39,16 @@ import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
 
 public interface AsyncTaskFacade extends DelegationGenericFacade{
 
-	AsyncTaskDto find(String ownerUuid, String uuid);
+	AsyncTaskDto find(String actorUuid, String uuid);
 
-	AsyncTaskDto create(String ownerUuid, Long size, Long transfertDuration,
+	AsyncTaskDto create(String actorUuid, Long size, Long transfertDuration,
 			String fileName, Integer frequency, AsyncTaskType taskType);
 
-	AsyncTaskDto create(String ownerUuid, String fileName, Integer frequency,
+	AsyncTaskDto create(String actorUuid, String fileName, Integer frequency,
 			AsyncTaskType taskType);
 
-	AsyncTaskDto create(String ownerUuid, String fileName,
+	AsyncTaskDto create(String actorUuid, String fileName,
 			AsyncTaskType taskType);
 
-	AsyncTaskDto fail(String ownerUuid, AsyncTaskDto asyncTask, Exception e);
+	AsyncTaskDto fail(String actorUuid, AsyncTaskDto asyncTask, Exception e);
 }

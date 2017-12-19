@@ -42,27 +42,27 @@ import org.linagora.linshare.core.facade.webservice.common.dto.MailingListDto;
 
 public interface MailingListRestServcice {
 
-	Set<MailingListDto> findAll(String ownerUuid) throws BusinessException;
+	Set<MailingListDto> findAll(String actorUuid) throws BusinessException;
 
-	MailingListDto find(String ownerUuid, String uuid) throws BusinessException;
+	MailingListDto find(String actorUuid, String uuid) throws BusinessException;
 
-	void head(String ownerUuid, String uuid) throws BusinessException;
+	void head(String actorUuid, String uuid) throws BusinessException;
 
-	MailingListDto create(String ownerUuid, MailingListDto dto) throws BusinessException;
+	MailingListDto create(String actorUuid, MailingListDto dto) throws BusinessException;
 
-	MailingListDto update(String ownerUuid, MailingListDto dto) throws BusinessException;
+	MailingListDto update(String actorUuid, MailingListDto dto) throws BusinessException;
 
-	MailingListDto delete(String ownerUuid, MailingListDto dto) throws BusinessException;
+	MailingListDto delete(String actorUuid, MailingListDto dto) throws BusinessException;
 
-	MailingListDto delete(String ownerUuid, String uuid) throws BusinessException;
+	MailingListDto delete(String actorUuid, String uuid) throws BusinessException;
 
-	Set<MailingListContactDto> findAllContacts(String ownerUuid, String listUuid) throws BusinessException;
+	Set<MailingListContactDto> findAllContacts(String actorUuid, String listUuid) throws BusinessException;
 
-	void createContact(String ownerUuid, String uuid, MailingListContactDto dto) throws BusinessException;
+	void createContact(String actorUuid, String uuid, MailingListContactDto dto) throws BusinessException;
 
-	void updateContact(String ownerUuid, String uuid, MailingListContactDto dto) throws BusinessException;
+	void updateContact(String actorUuid, String uuid, MailingListContactDto dto) throws BusinessException;
 
-	void deleteContact(String ownerUuid, String uuid, MailingListContactDto dto) throws BusinessException;
+	void deleteContact(String actorUuid, String uuid, MailingListContactDto dto) throws BusinessException;
 
-	void deleteContact(String ownerUuid, String uuid, String contactUuid) throws BusinessException;
+	void deleteContact(String actorUuid, String uuid, String contactUuid) throws BusinessException;
 }

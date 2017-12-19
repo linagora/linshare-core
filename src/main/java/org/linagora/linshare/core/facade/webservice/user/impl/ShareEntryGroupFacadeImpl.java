@@ -59,16 +59,16 @@ public class ShareEntryGroupFacadeImpl extends UserGenericFacadeImp implements S
 
 	@Override
 	public List<ShareEntryGroupDto> findAll(boolean full) {
-		User actor = checkAuthentication();
-		List<ShareEntryGroup> list = service.findAll(actor, actor);
+		User authUser = checkAuthentication();
+		List<ShareEntryGroup> list = service.findAll(authUser, authUser);
 		return ImmutableList.copyOf(Lists.transform(list, ShareEntryGroupDto.toDto(full)));
 	}
 
 	@Override
 	public ShareEntryGroupDto find(String uuid, boolean full) {
 		Validate.notEmpty(uuid, "Share entry group uuid must be set.");
-		User actor = checkAuthentication();
-		ShareEntryGroup seg = service.find(actor, actor, uuid);
+		User authUser = checkAuthentication();
+		ShareEntryGroup seg = service.find(authUser, authUser, uuid);
 		return new ShareEntryGroupDto(seg, full);
 	}
 
@@ -76,17 +76,17 @@ public class ShareEntryGroupFacadeImpl extends UserGenericFacadeImp implements S
 	public ShareEntryGroupDto update(ShareEntryGroupDto shareEntryGroupDto) {
 		Validate.notNull(shareEntryGroupDto, "Share entry group must be set.");
 		Validate.notNull(shareEntryGroupDto.getUuid(), "Share entry group uuid must be set.");
-		User actor = checkAuthentication();
+		User authUser = checkAuthentication();
 		ShareEntryGroup seg = shareEntryGroupDto.toObject();
-		seg = service.update(actor, actor, shareEntryGroupDto.getUuid(), seg);
+		seg = service.update(authUser, authUser, shareEntryGroupDto.getUuid(), seg);
 		return new ShareEntryGroupDto(seg, false);
 	}
 
 	@Override
 	public ShareEntryGroupDto delete(String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "Share entry group uuid must be set.");
-		User actor = checkAuthentication();
-		ShareEntryGroup seg = service.delete(actor, actor, uuid);
+		User authUser = checkAuthentication();
+		ShareEntryGroup seg = service.delete(authUser, authUser, uuid);
 		return new ShareEntryGroupDto(seg, false);
 	}
 }

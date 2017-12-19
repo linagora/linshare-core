@@ -99,7 +99,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public List<UserDto> search(UserSearchDto userSearchDto)
 			throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		return searchUsers(userSearchDto.getFirstName(),
 				userSearchDto.getLastName(), userSearchDto.getMail(), null);
 	}
@@ -107,13 +107,13 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public Set<UserDto> searchInternals(String pattern)
 			throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		return searchUsers(pattern, AccountType.INTERNAL);
 	}
 
 	@Override
 	public Set<UserDto> searchGuests(String pattern) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		return searchUsers(pattern, AccountType.GUEST);
 	}
 
@@ -167,7 +167,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notNull(userDto, "user must be set.");
 		Validate.notEmpty(userDto.getUuid(), "uuid must be set.");
 		Validate.notNull(userDto.getLocale(), "locale must be set.");
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		User entity = userService.findByLsUuid(userDto.getUuid());
 		if (entity == null) {
 			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
@@ -183,10 +183,10 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 					ac.add(contactDto.getMail());
 				}
 			}
-			update = guestService.update(actor, (User) entity.getOwner(),
+			update = guestService.update(authUser, (User) entity.getOwner(),
 					(Guest) userToUpdate, ac);
 		} else {
-			update = userService.updateUser(actor, userToUpdate,
+			update = userService.updateUser(authUser, userToUpdate,
 					userDto.getDomain());
 		}
 		return UserDto.getSimple(update);
@@ -194,19 +194,19 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public UserDto delete(UserDto userDto) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		String uuid = userDto.getUuid();
 		Validate.notEmpty(uuid, "user unique identifier must be set.");
-		User user = userService.deleteUser(actor, uuid);
+		User user = userService.deleteUser(authUser, uuid);
 		return UserDto.getFull(user);
 	}
 
 	@Override
 	public Set<UserDto> findAllInconsistent() throws BusinessException {
-		User actor = checkAuthentication(Role.SUPERADMIN);
+		User authUser = checkAuthentication(Role.SUPERADMIN);
 		Set<UserDto> ret = Sets.newHashSet();
 
-		for (User user : inconsistentUserService.findAllInconsistent(actor)) {
+		for (User user : inconsistentUserService.findAllInconsistent(authUser)) {
 			ret.add(UserDto.getFull(user));
 		}
 		return ret;
@@ -214,10 +214,10 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public void updateInconsistent(UserDto userDto) throws BusinessException {
-		User actor = checkAuthentication(Role.SUPERADMIN);
+		User authUser = checkAuthentication(Role.SUPERADMIN);
 		update(userDto);
 		User entity = userService.findByLsUuid(userDto.getUuid());
-		inconsistentUserService.updateDomain(actor, userDto.getUuid(), userDto.getDomain());
+		inconsistentUserService.updateDomain(authUser, userDto.getUuid(), userDto.getDomain());
 	}
 
 	@Override
@@ -267,22 +267,22 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public List<String> autocompleteInconsistent(UserSearchDto dto)
 			throws BusinessException {
-		User actor = checkAuthentication(Role.SUPERADMIN);
+		User authUser = checkAuthentication(Role.SUPERADMIN);
 		Set<String> res = Sets.newHashSet();
 		List<User> internals = abstractDomainService
-				.autoCompleteUserWithoutDomainPolicies(actor, dto.getMail());
+				.autoCompleteUserWithoutDomainPolicies(authUser, dto.getMail());
 		for (User user : internals) {
 			res.add(user.getMail());
 		}
-		res.addAll(accountService.findAllKnownEmails(actor, dto.getMail()));
+		res.addAll(accountService.findAllKnownEmails(authUser, dto.getMail()));
 		int range = (res.size() < AUTO_COMPLETE_LIMIT ? res.size() : AUTO_COMPLETE_LIMIT);
 		return Lists.newArrayList(res).subList(0, range);
 	}
 
 	@Override
 	public void changePassword(PasswordDto password) throws BusinessException {
-		User actor = checkAuthentication(Role.SUPERADMIN);
-		userService.changePassword(actor.getLsUuid(), actor.getMail(),
+		User authUser = checkAuthentication(Role.SUPERADMIN);
+		userService.changePassword(authUser.getLsUuid(), authUser.getMail(),
 				password.getOldPwd(), password.getNewPwd());
 	}
 
@@ -314,7 +314,7 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public UserDto create(UserDto userDto) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notNull(userDto, "User dto must be set.");
 		String uuid = userDto.getUuid();
 		if (uuid != null) {
@@ -326,22 +326,22 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		String domain = userDto.getDomain();
 		Validate.notEmpty(mail, "User mail must be set.");
 		Validate.notEmpty(domain, "User domain identifier must be set.");
-		User user = userService.findOrCreateUserWithDomainPolicies(domain, mail, actor.getDomainId());
+		User user = userService.findOrCreateUserWithDomainPolicies(domain, mail, authUser.getDomainId());
 		return UserDto.getFull(user);
 	}
 
 	@Override
 	public boolean updateEmail(String currentEmail, String newEmail) {
-		User actor = checkAuthentication(Role.SUPERADMIN);
+		User authUser = checkAuthentication(Role.SUPERADMIN);
 		logger.info("Start email migration...");
 		logger.info("Step 1: Find and update user's email ...");
-		boolean hasBeenUpdated = userService.updateUserEmail(actor, currentEmail, newEmail);
+		boolean hasBeenUpdated = userService.updateUserEmail(authUser, currentEmail, newEmail);
 
 		if(hasBeenUpdated) {
 			logger.info("Step 2: start updateMailingListEmail ...");
-			userService.updateMailingListEmail(actor, currentEmail, newEmail);
+			userService.updateMailingListEmail(authUser, currentEmail, newEmail);
 			logger.info("Step 3: start updateRecipientFavourite ...");
-			userService.updateRecipientFavourite(actor, currentEmail, newEmail);
+			userService.updateRecipientFavourite(authUser, currentEmail, newEmail);
 		}
 		logger.info("End of email migration...");
 		return hasBeenUpdated;

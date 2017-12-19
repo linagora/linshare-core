@@ -266,11 +266,11 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 		if (async) {
 			logger.debug("Async mode is used");
 			// Asynchronous mode
-			AccountDto actorDto = workGroupNodeFacade.getAuthenticatedAccountDto();
+			AccountDto authUserDto = workGroupNodeFacade.getAuthenticatedAccountDto();
 			AsyncTaskDto asyncTask = null;
 			try {
 				asyncTask = asyncTaskFacade.create(currSize, transfertDuration, fileName, null, AsyncTaskType.THREAD_ENTRY_UPLOAD);
-				WorkGroupEntryTaskContext workGroupEntryTaskContext = new WorkGroupEntryTaskContext(actorDto, actorDto.getUuid(), workGroupUuid, tempFile, fileName, parentNodeUuid);
+				WorkGroupEntryTaskContext workGroupEntryTaskContext = new WorkGroupEntryTaskContext(authUserDto, authUserDto.getUuid(), workGroupUuid, tempFile, fileName, parentNodeUuid);
 				WorkGroupEntryUploadAsyncTask task = new WorkGroupEntryUploadAsyncTask(workGroupEntryAsyncFacade, workGroupEntryTaskContext, asyncTask);
 				taskExecutor.execute(task);
 				return new WorkGroupAsyncTask(asyncTask, workGroupEntryTaskContext);

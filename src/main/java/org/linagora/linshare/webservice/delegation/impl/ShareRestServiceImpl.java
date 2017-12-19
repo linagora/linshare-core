@@ -56,8 +56,8 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/{ownerUuid}/shares")
-@Api(value = "/rest/delegation/{ownerUuid}/shares", basePath = "/rest/shares", description = "shares service.",
+@Path("/{actorUuid}/shares")
+@Api(value = "/rest/delegation/{actorUuid}/shares", basePath = "/rest/shares", description = "shares service.",
 	produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -74,15 +74,15 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	@POST
 	@ApiOperation(value = "Create a share.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-					@ApiResponse(code = 404, message = "Owner not found."),
+					@ApiResponse(code = 404, message = "Actor not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
 	public Set<ShareDto> create(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			ShareCreationDto createDto)
 					throws BusinessException {
-		return shareFacade.create(ownerUuid, createDto);
+		return shareFacade.create(actorUuid, createDto);
 	}
 }

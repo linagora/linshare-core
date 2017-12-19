@@ -62,101 +62,94 @@ public class MailingListFacadeImpl extends GenericFacadeImpl implements MailingL
 	}
 
 	@Override
-	public Set<MailingListDto> findAll(String ownerUuid, Boolean mine) throws BusinessException {
-		User actor = checkAuthentication();
+	public Set<MailingListDto> findAll(String actorUuid, Boolean mine) throws BusinessException {
+		User authUser = checkAuthentication();
 		List<ContactList> lists;
-		User owner = getOwner(actor, ownerUuid);
-		lists = contactListService.findAllByUser(actor, owner);
+		User actor = getActor(authUser, actorUuid);
+		lists = contactListService.findAllByUser(authUser, actor);
 		return ImmutableSet.copyOf(Lists.transform(lists, MailingListDto.toDto()));
 	}
 
 	@Override
-	public MailingListDto find(String ownerUuid, String uuid) throws BusinessException {
+	public MailingListDto find(String actorUuid, String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "List uuid must be set.");
-
-		User actor = checkAuthentication();
+		User authUser = checkAuthentication();
 		ContactList list;
-		User owner = getOwner(actor, ownerUuid);
-		list = contactListService.find(actor, owner, uuid);
+		User actor = getActor(authUser, actorUuid);
+		list = contactListService.find(authUser, actor, uuid);
 		return new MailingListDto(list);
 	}
 
 	@Override
-	public MailingListDto create(String ownerUuid, MailingListDto dto) throws BusinessException {
+	public MailingListDto create(String actorUuid, MailingListDto dto) throws BusinessException {
 		Validate.notNull(dto, "Mailing list must be set.");
-
-		User actor = checkAuthentication();
+		User authUser = checkAuthentication();
 		ContactList list = dto.toObject();
-		User owner = getOwner(actor, ownerUuid);
-		list = contactListService.create(actor, owner, list);
+		User actor = getActor(authUser, actorUuid);
+		list = contactListService.create(authUser, actor, list);
 		return new MailingListDto(list);
 	}
 
 	@Override
-	public MailingListDto update(String ownerUuid, MailingListDto dto, String uuid) throws BusinessException {
+	public MailingListDto update(String actorUuid, MailingListDto dto, String uuid) throws BusinessException {
 		Validate.notNull(dto, "Mailing list must be set.");
 		if (!Strings.isNullOrEmpty(uuid)) {
 			dto.setUuid(uuid);
 		}
 		Validate.notEmpty(dto.getUuid(), "Mailing list uuid must be set.");
-		User actor = checkAuthentication();
+		User authUser = checkAuthentication();
 		ContactList list = dto.toObject();
-		User owner = getOwner(actor, ownerUuid);
-		list = contactListService.update(actor, owner, list);
+		User actor = getActor(authUser, actorUuid);
+		list = contactListService.update(authUser, actor, list);
 		return new MailingListDto(list);
 	}
 
 	@Override
-	public MailingListDto delete(String ownerUuid, String uuid) throws BusinessException {
+	public MailingListDto delete(String actorUuid, String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "Mailing list uuid must be set.");
-
-		User actor = checkAuthentication();
+		User authUser = checkAuthentication();
 		ContactList list;
-		User owner = getOwner(actor, ownerUuid);
-		list = contactListService.delete(actor, owner, uuid);
+		User actor = getActor(authUser, actorUuid);
+		list = contactListService.delete(authUser, actor, uuid);
 		return new MailingListDto(list);
 	}
 
 	@Override
-	public Set<MailingListContactDto> findAllContacts(String ownerUuid, String listUuid) throws BusinessException {
+	public Set<MailingListContactDto> findAllContacts(String actorUuid, String listUuid) throws BusinessException {
 		Validate.notEmpty(listUuid, "Mailing list uuid must be set.");
-
-		User actor = checkAuthentication();
+		User authUser = checkAuthentication();
 		List<ContactListContact> list;
-		User owner = getOwner(actor, ownerUuid);
-		list = contactListService.findAllContacts(actor, owner, listUuid);
+		User actor = getActor(authUser, actorUuid);
+		list = contactListService.findAllContacts(authUser, actor, listUuid);
 		return ImmutableSet.copyOf(Lists.transform(list, MailingListContactDto.toDto()));
 	}
 
 	@Override
-	public MailingListContactDto addContact(String ownerUuid, String listUuid, MailingListContactDto dto) throws BusinessException {
+	public MailingListContactDto addContact(String actorUuid, String listUuid, MailingListContactDto dto) throws BusinessException {
 		Validate.notNull(dto, "List contact to add must be set.");
 		Validate.notEmpty(listUuid, "Mailing list uuid must be set.");
-
-		User actor = checkAuthentication();
+		User authUser = checkAuthentication();
 		ContactListContact contact = dto.toObject();
-		User owner = getOwner(actor, ownerUuid);
-		ContactListContact contact2 = contactListService.addContact(actor, owner, listUuid, contact);
+		User actor = getActor(authUser, actorUuid);
+		ContactListContact contact2 = contactListService.addContact(authUser, actor, listUuid, contact);
 		return new MailingListContactDto(contact2);
 	}
 
 	@Override
-	public void updateContact(String ownerUuid, MailingListContactDto dto) throws BusinessException {
+	public void updateContact(String actorUuid, MailingListContactDto dto) throws BusinessException {
 		Validate.notNull(dto, "List uuid must be set.");
 		Validate.notEmpty(dto.getUuid(), "List uuid must be set.");
-
-		User actor = checkAuthentication();
+		User authUser = checkAuthentication();
 		ContactListContact contact = dto.toObject();
-		User owner = getOwner(actor, ownerUuid);
-		contactListService.updateContact(actor, owner, contact);
+		User actor = getActor(authUser, actorUuid);
+		contactListService.updateContact(authUser, actor, contact);
 	}
 
 	@Override
-	public void deleteContact(String ownerUuid, String uuid) throws BusinessException {
+	public void deleteContact(String actorUuid, String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "Contact uuid must be set.");
-
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
-		contactListService.deleteContact(actor, owner, uuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		contactListService.deleteContact(authUser, actor, uuid);
 	}
 }

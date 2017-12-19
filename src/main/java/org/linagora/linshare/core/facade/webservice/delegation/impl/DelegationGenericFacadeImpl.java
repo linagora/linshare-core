@@ -56,14 +56,14 @@ public class DelegationGenericFacadeImpl extends GenericFacadeImpl implements
 
 	@Override
 	protected User checkAuthentication() throws BusinessException {
-		User actor = super.checkAuthentication();
-		if (!(actor.hasDelegationRole() || actor.hasSafeRole())) {
+		User authUser = super.checkAuthentication();
+		if (!(authUser.hasDelegationRole() || authUser.hasSafeRole())) {
 			logger.error("Current actor is trying to access to a forbbiden api : "
-					+ actor.getAccountRepresentation());
+					+ authUser.getAccountRepresentation());
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
 		}
-		return actor;
+		return authUser;
 	}
 
 	@Override
@@ -71,12 +71,12 @@ public class DelegationGenericFacadeImpl extends GenericFacadeImpl implements
 		return new AccountDto(checkAuthentication());
 	}
 
-	protected User getOwner(String ownerUuid) {
-		User owner = userService.findByLsUuid(ownerUuid);
-		if (owner == null) {
+	protected User getActor(String actorUuid) {
+		User actor = userService.findByLsUuid(actorUuid);
+		if (actor == null) {
 			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
-					"Owner not found");
+					"actor not found");
 		}
-		return owner;
+		return actor;
 	}
 }

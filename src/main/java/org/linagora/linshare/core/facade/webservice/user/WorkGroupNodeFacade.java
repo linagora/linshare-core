@@ -48,26 +48,26 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface WorkGroupNodeFacade extends GenericFacade {
 
-	List<WorkGroupNode> findAll(String ownerUuid, String workGroupUuid, String parentNodeUuid, Boolean flatDocumentMode, WorkGroupNodeType nodeType) throws BusinessException;
+	List<WorkGroupNode> findAll(String actorUuid, String workGroupUuid, String parentNodeUuid, Boolean flatDocumentMode, WorkGroupNodeType nodeType) throws BusinessException;
 
-	WorkGroupNode find(String ownerUuid, String workGroupUuid, String workGroupNodeUuid, Boolean withTree) throws BusinessException;
+	WorkGroupNode find(String actorUuid, String workGroupUuid, String workGroupNodeUuid, Boolean withTree) throws BusinessException;
 
-	WorkGroupNode create(String ownerUuid, String workGroupUuid, WorkGroupNode workGroupNode, Boolean strict, Boolean dryRun) throws BusinessException;
+	WorkGroupNode create(String actorUuid, String workGroupUuid, WorkGroupNode workGroupNode, Boolean strict, Boolean dryRun) throws BusinessException;
 
-	WorkGroupNode create(String ownerUuid, String workGroupUuid,
+	WorkGroupNode create(String actorUuid, String workGroupUuid,
 			String parentNodeUuid, File tempFile, String fileName, Boolean strict) throws BusinessException;
 
-	List<WorkGroupNode> copy(String ownerUuid, String workGroupUuid, String toParentNodeUuid, CopyDto copy, boolean deleteShare);
+	List<WorkGroupNode> copy(String actorUuid, String workGroupUuid, String toParentNodeUuid, CopyDto copy, boolean deleteShare);
 
-	WorkGroupNode update(String ownerUuid, String workGroupUuid, WorkGroupNode workGroupNode) throws BusinessException;
+	WorkGroupNode update(String actorUuid, String workGroupUuid, WorkGroupNode workGroupNode) throws BusinessException;
 
-	WorkGroupNode delete(String ownerUuid, String workGroupUuid, String workGroupNodeUuid) throws BusinessException;
+	WorkGroupNode delete(String actorUuid, String workGroupUuid, String workGroupNodeUuid) throws BusinessException;
 
-	WorkGroupNode delete(String ownerUuid, String workGroupUuid, WorkGroupNode workGroupNode) throws BusinessException;
+	WorkGroupNode delete(String actorUuid, String workGroupUuid, WorkGroupNode workGroupNode) throws BusinessException;
 
-	Response download(String ownerUuid, String workGroupUuid, String workGroupNodeUuid) throws BusinessException;
+	Response download(String actorUuid, String workGroupUuid, String workGroupNodeUuid) throws BusinessException;
 
-	Response thumbnail(String ownerUuid, String workGroupUuid, String workGroupNodeUuid, boolean base64, ThumbnailType thumbnailType) throws BusinessException;
+	Response thumbnail(String actorUuid, String workGroupUuid, String workGroupNodeUuid, boolean base64, ThumbnailType thumbnailType) throws BusinessException;
 
-	Set<AuditLogEntryUser> findAll(String ownerUuid, String workGroupUuid, String workGroupNodeUuid, List<String> actions, List<String> types, String beginDate, String endDate);
+	Set<AuditLogEntryUser> findAll(String actorUuid, String workGroupUuid, String workGroupNodeUuid, List<String> actions, List<String> types, String beginDate, String endDate);
 }

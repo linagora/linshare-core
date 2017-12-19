@@ -79,8 +79,8 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/{ownerUuid}/workgroups/{workgroupUuid}/entries")
-@Api(value = "/rest/delegation/v2/{ownerUuid}/workgroups/{workgroupUuid}/entries", basePath = "/rest/workgroups/{workgroupUuid}/entries",
+@Path("/{actorUuid}/workgroups/{workgroupUuid}/entries")
+@Api(value = "/rest/delegation/v2/{actorUuid}/workgroups/{workgroupUuid}/entries", basePath = "/rest/workgroups/{workgroupUuid}/entries",
 	description = "workgroup entries service.",
 	produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -122,8 +122,8 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public WorkGroupEntryDto create(
-			@ApiParam(value = "The owner (user) uuid.", required = true) 
-				@PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) 
+				@PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The workgroup uuid.", required = true) 
 				@PathParam("workgroupUuid") String workgroupUuid,
 			@ApiParam(value = "File stream.", required = true) 
@@ -157,16 +157,16 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 		if (async) {
 			logger.debug("Async mode is used");
 			// Asynchronous mode
-			AccountDto actorDto = workGroupEntryFacade.getAuthenticatedAccountDto();
+			AccountDto authUserDto = workGroupEntryFacade.getAuthenticatedAccountDto();
 			AsyncTaskDto asyncTask = null;
 			try {
-				asyncTask = asyncTaskFacade.create(ownerUuid, currSize, transfertDuration, fileName, null, AsyncTaskType.THREAD_ENTRY_UPLOAD);
-				WorkGroupEntryTaskContext workgroupEntryTaskContext = new WorkGroupEntryTaskContext(actorDto, ownerUuid, workgroupUuid, tempFile, fileName, null);
+				asyncTask = asyncTaskFacade.create(actorUuid, currSize, transfertDuration, fileName, null, AsyncTaskType.THREAD_ENTRY_UPLOAD);
+				WorkGroupEntryTaskContext workgroupEntryTaskContext = new WorkGroupEntryTaskContext(authUserDto, actorUuid, workgroupUuid, tempFile, fileName, null);
 				WorkGroupEntryUploadAsyncTask task = new WorkGroupEntryUploadAsyncTask(workGroupEntryAsyncFacade, workgroupEntryTaskContext, asyncTask);
 				taskExecutor.execute(task);
 				return new WorkGroupEntryDto(asyncTask, workgroupEntryTaskContext);
 			} catch (Exception e) {
-				logAsyncFailure(ownerUuid, asyncTask, e);
+				logAsyncFailure(actorUuid, asyncTask, e);
 				deleteTempFile(tempFile);
 				throw e;
 			}
@@ -175,7 +175,7 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 			// Synchronous mode
 			try {
 				logger.debug("Async mode is not used");
-				return workGroupEntryFacade.create(ownerUuid, workgroupUuid, tempFile, fileName);
+				return workGroupEntryFacade.create(actorUuid, workgroupUuid, tempFile, fileName);
 			} finally {
 				deleteTempFile(tempFile);
 			}
@@ -193,7 +193,7 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public WorkGroupEntryDto copy(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
 			@ApiParam(value = "The document entry uuid.", required = true) @PathParam("entryUuid")  String entryUuid,
 			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) @QueryParam("async") Boolean async)
@@ -204,21 +204,21 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 		}
 		if (async) {
 			logger.debug("Async mode is used");
-			AccountDto actorDto = workGroupEntryFacade.getAuthenticatedAccountDto();
+			AccountDto authUserDto = workGroupEntryFacade.getAuthenticatedAccountDto();
 			AsyncTaskDto asyncTask = null;
 			try {
-				asyncTask = asyncTaskFacade.create(ownerUuid, entryUuid, AsyncTaskType.DOCUMENT_COPY);
-				WorkGroupEntryTaskContext tetc = new WorkGroupEntryTaskContext(actorDto, ownerUuid, workgroupUuid, entryUuid, null);
+				asyncTask = asyncTaskFacade.create(actorUuid, entryUuid, AsyncTaskType.DOCUMENT_COPY);
+				WorkGroupEntryTaskContext tetc = new WorkGroupEntryTaskContext(authUserDto, actorUuid, workgroupUuid, entryUuid, null);
 				WorkGroupEntryCopyAsyncTask task = new WorkGroupEntryCopyAsyncTask(workGroupEntryAsyncFacade, tetc, asyncTask);
 				taskExecutor.execute(task);
 				return new WorkGroupEntryDto(asyncTask, tetc);
 			} catch (Exception e) {
-				logAsyncFailure(ownerUuid, asyncTask, e);
+				logAsyncFailure(actorUuid, asyncTask, e);
 				throw e;
 			}
 		} else {
 			logger.debug("Async mode is not used");
-			return workGroupEntryFacade.copy(ownerUuid, workgroupUuid, entryUuid);
+			return workGroupEntryFacade.copy(actorUuid, workgroupUuid, entryUuid);
 		}
 	}
 
@@ -232,11 +232,11 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public WorkGroupEntryDto find(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
 			@ApiParam(value = "The workgroup entry uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		return workGroupEntryFacade.find(ownerUuid, workgroupUuid, uuid);
+		return workGroupEntryFacade.find(actorUuid, workgroupUuid, uuid);
 	}
 
 	@Path("/{uuid}")
@@ -249,11 +249,11 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 	})
 	@Override
 	public void head(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
 			@ApiParam(value = "The workgroup entry uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		workGroupEntryFacade.find(ownerUuid, workgroupUuid, uuid);
+		workGroupEntryFacade.find(actorUuid, workgroupUuid, uuid);
 	}
 
 	@Path("/")
@@ -266,10 +266,10 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public List<WorkGroupEntryDto> findAll(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid)
 					throws BusinessException {
-		return workGroupEntryFacade.findAll(ownerUuid, workgroupUuid);
+		return workGroupEntryFacade.findAll(actorUuid, workgroupUuid);
 	}
 
 	@Path("/")
@@ -282,11 +282,11 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public WorkGroupEntryDto delete(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
 			@ApiParam(value = "The workgroup entry to delete.", required = true) WorkGroupEntryDto workgroupEntry)
 					throws BusinessException {
-		return workGroupEntryFacade.delete(ownerUuid, workgroupUuid, workgroupEntry);
+		return workGroupEntryFacade.delete(actorUuid, workgroupUuid, workgroupEntry);
 	}
 
 	@Path("/{uuid}")
@@ -299,14 +299,14 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public WorkGroupEntryDto delete(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
 			@ApiParam(value = "The workgroup entry uuid to delete.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		return workGroupEntryFacade.delete(ownerUuid, workgroupUuid, uuid);
+		return workGroupEntryFacade.delete(actorUuid, workgroupUuid, uuid);
 	}
 
-	@Path("/{ownerUuid}/documents/{uuid}/download")
+	@Path("/{actorUuid}/documents/{uuid}/download")
 	@GET
 	@ApiOperation(value = "Download a file.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
@@ -316,14 +316,14 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public Response download(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
 			@ApiParam(value = "The workgroup entry uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		return workGroupEntryFacade.download(ownerUuid, workgroupUuid, uuid);
+		return workGroupEntryFacade.download(actorUuid, workgroupUuid, uuid);
 	}
 
-	@Path("/{ownerUuid}/documents/{uuid}/thumbnail")
+	@Path("/{actorUuid}/documents/{uuid}/thumbnail")
 	@GET
 	@ApiOperation(value = "Download the thumbnail of a file.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
@@ -333,14 +333,14 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public Response thumbnail(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-			return workGroupEntryFacade.thumbnail(ownerUuid, workgroupUuid, uuid, ThumbnailType.MEDIUM);
+			return workGroupEntryFacade.thumbnail(actorUuid, workgroupUuid, uuid, ThumbnailType.MEDIUM);
 	}
 
-	@Path("/{ownerUuid}/documents/{uuid}")
+	@Path("/{actorUuid}/documents/{uuid}")
 	@PUT
 	@ApiOperation(value = "Update the workgroup entry properties.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
@@ -350,12 +350,12 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public WorkGroupEntryDto update(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workgroupUuid") String workgroupUuid,
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String workgroupEntryuuid,
 			@ApiParam(value = "The workgroup Entry.", required = true) WorkGroupEntryDto workgroupEntryDto)
 			throws BusinessException {
-		return workGroupEntryFacade.update(ownerUuid, workgroupUuid, workgroupEntryuuid, workgroupEntryDto);
+		return workGroupEntryFacade.update(actorUuid, workgroupUuid, workgroupEntryuuid, workgroupEntryDto);
 	}
 
 	@Path("/{uuid}/async")
@@ -363,19 +363,19 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public AsyncTaskDto findAsync(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The async task uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
 		Validate.notEmpty(uuid, "Missing uuid");
-		return asyncTaskFacade.find(ownerUuid, uuid);
+		return asyncTaskFacade.find(actorUuid, uuid);
 	}
 
-	protected void logAsyncFailure(String ownerUuid, AsyncTaskDto asyncTask,
+	protected void logAsyncFailure(String actorUuid, AsyncTaskDto asyncTask,
 			Exception e) {
 		logger.error(e.getMessage());
 		logger.debug("Exception : ", e);
 		if (asyncTask != null) {
-			asyncTaskFacade.fail(ownerUuid, asyncTask, e);
+			asyncTaskFacade.fail(actorUuid, asyncTask, e);
 		}
 	}
 }

@@ -58,47 +58,47 @@ public class MailFooterLangFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public MailFooterLangDto find(String uuid) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
-		return new MailFooterLangDto(findFooterLang(actor, uuid), getOverrideReadonly());
+		User authUser = checkAuthentication(Role.ADMIN);
+		return new MailFooterLangDto(findFooterLang(authUser, uuid), getOverrideReadonly());
 	}
 
 	@Override
 	public MailFooterLangDto create(MailFooterLangDto dto) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		MailFooterLang footerLang = new MailFooterLang();
-		transform(actor, footerLang, dto);
-		return new MailFooterLangDto(mailConfigService.createFooterLang(actor, footerLang));
+		transform(authUser, footerLang, dto);
+		return new MailFooterLangDto(mailConfigService.createFooterLang(authUser, footerLang));
 	}
 
 	@Override
 	public MailFooterLangDto update(MailFooterLangDto dto) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
-		MailFooterLang footerLang = findFooterLang(actor, dto.getUuid());
+		User authUser = checkAuthentication(Role.ADMIN);
+		MailFooterLang footerLang = findFooterLang(authUser, dto.getUuid());
 
-		transform(actor, footerLang, dto);
-		return new MailFooterLangDto(mailConfigService.updateFooterLang(actor, footerLang));
+		transform(authUser, footerLang, dto);
+		return new MailFooterLangDto(mailConfigService.updateFooterLang(authUser, footerLang));
 	}
 
 	@Override
 	public void delete(String uuid) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
-		mailConfigService.deleteFooterLang(actor, uuid);
+		User authUser = checkAuthentication(Role.ADMIN);
+		mailConfigService.deleteFooterLang(authUser, uuid);
 	}
 
 	/*
 	 * Helpers
 	 */
 
-	private void transform(User actor, MailFooterLang footerLang,
+	private void transform(User authUser, MailFooterLang footerLang,
 			MailFooterLangDto dto) throws BusinessException {
 		footerLang.setLanguage(dto.getLanguage().toInt());
-		footerLang.setMailConfig(findConfig(actor, dto.getMailConfig()));
-		footerLang.setMailFooter(findFooter(actor, dto.getMailFooter()));
+		footerLang.setMailConfig(findConfig(authUser, dto.getMailConfig()));
+		footerLang.setMailFooter(findFooter(authUser, dto.getMailFooter()));
 	}
 
-	private MailConfig findConfig(User actor, String uuid)
+	private MailConfig findConfig(User authUser, String uuid)
 			throws BusinessException {
-		MailConfig mailConfig = mailConfigService.findConfigByUuid(actor, uuid);
+		MailConfig mailConfig = mailConfigService.findConfigByUuid(authUser, uuid);
 
 		if (mailConfig == null)
 			throw new BusinessException(BusinessErrorCode.MAILCONFIG_NOT_FOUND,
@@ -106,9 +106,9 @@ public class MailFooterLangFacadeImpl extends AdminGenericFacadeImpl implements
 		return mailConfig;
 	}
 
-	private MailFooter findFooter(User actor, String uuid)
+	private MailFooter findFooter(User authUser, String uuid)
 			throws BusinessException {
-		MailFooter mailFooter = mailConfigService.findFooterByUuid(actor, uuid);
+		MailFooter mailFooter = mailConfigService.findFooterByUuid(authUser, uuid);
 
 		if (mailFooter == null)
 			throw new BusinessException(BusinessErrorCode.MAILFOOTER_NOT_FOUND,
@@ -116,10 +116,10 @@ public class MailFooterLangFacadeImpl extends AdminGenericFacadeImpl implements
 		return mailFooter;
 	}
 
-	private MailFooterLang findFooterLang(User actor, String uuid)
+	private MailFooterLang findFooterLang(User authUser, String uuid)
 			throws BusinessException {
 		MailFooterLang mailFooterLang = mailConfigService.findFooterLangByUuid(
-				actor, uuid);
+				authUser, uuid);
 
 		if (mailFooterLang == null)
 			throw new BusinessException(

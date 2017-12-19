@@ -53,18 +53,18 @@ public class DocumentTaskContext extends TaskContext {
 	 */
 	protected String docEntryUuid;
 
-	public DocumentTaskContext(AccountDto actorDto, String ownerUuid,
+	public DocumentTaskContext(AccountDto authUserDto, String actorUuid,
 			File file, String fileName, String metaData, String description) {
-		super(actorDto, ownerUuid);
+		super(authUserDto, actorUuid);
 		this.file = file;
 		this.fileName = fileName;
 		this.metaData = metaData;
 		this.description = description;
 	}
 
-	public DocumentTaskContext(AccountDto actorDto, String ownerUuid,
+	public DocumentTaskContext(AccountDto authUserDto, String actorUuid,
 			File file, String fileName) {
-		super(actorDto, ownerUuid);
+		super(authUserDto, actorUuid);
 		this.file = file;
 		this.fileName = fileName;
 		this.metaData = null;
@@ -102,7 +102,7 @@ public class DocumentTaskContext extends TaskContext {
 	@Override
 	public String toString() {
 		return "DocumentTaskContext [fileName=" + fileName + ", docEntryUuid="
-				+ docEntryUuid + ", ownerUuid=" + ownerUuid + "]";
+				+ docEntryUuid + ", actorUuid=" + actorUuid + "]";
 	}
 
 }

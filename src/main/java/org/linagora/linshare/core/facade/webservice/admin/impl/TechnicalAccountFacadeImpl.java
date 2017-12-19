@@ -63,46 +63,46 @@ public class TechnicalAccountFacadeImpl extends AdminGenericFacadeImpl
 	@Override
 	public TechnicalAccountDto create(TechnicalAccountDto dto)
 			throws BusinessException {
-		User actor = checkAuth();
+		User authUser = checkAuth();
 		Validate.notEmpty(dto.getName(), "name must be set.");
 		Validate.notEmpty(dto.getMail(), "mail must be set.");
 		TechnicalAccount technicalAccount = new TechnicalAccount(dto);
-		TechnicalAccount create = technicalAccountService.create(actor, technicalAccount);
+		TechnicalAccount create = technicalAccountService.create(authUser, technicalAccount);
 		return new TechnicalAccountDto(create);
 	}
 
 	@Override
 	public TechnicalAccountDto delete(String uuid) throws BusinessException {
-		User actor = checkAuth();
+		User authUser = checkAuth();
 		Validate.notEmpty(uuid, "uuid must be set.");
-		TechnicalAccount account = technicalAccountService.find(actor, uuid);
-		technicalAccountService.delete(actor, account);
+		TechnicalAccount account = technicalAccountService.find(authUser, uuid);
+		technicalAccountService.delete(authUser, account);
 		return new TechnicalAccountDto(account);
 	}
 
 	@Override
 	public TechnicalAccountDto delete(TechnicalAccountDto dto) throws BusinessException {
-		User actor = checkAuth();
+		User authUser = checkAuth();
 		Validate.notNull(dto, "dto must be set.");
 		Validate.notEmpty(dto.getUuid(), "uuid must be set.");
-		TechnicalAccount account = technicalAccountService.find(actor, dto.getUuid());
-		technicalAccountService.delete(actor, account);
+		TechnicalAccount account = technicalAccountService.find(authUser, dto.getUuid());
+		technicalAccountService.delete(authUser, account);
 		return new TechnicalAccountDto(account);
 	}
 
 	@Override
 	public TechnicalAccountDto find(String uuid) throws BusinessException {
-		User actor = checkAuth();
+		User authUser = checkAuth();
 		Validate.notEmpty(uuid, "uuid must be set.");
-		TechnicalAccount account = technicalAccountService.find(actor, uuid);
+		TechnicalAccount account = technicalAccountService.find(authUser, uuid);
 		return new TechnicalAccountDto(account);
 	}
 
 	@Override
 	public Set<TechnicalAccountDto> findAll() throws BusinessException {
-		User actor = checkAuth();
+		User authUser = checkAuth();
 		Set<TechnicalAccountDto> res = Sets.newHashSet();
-		Set<TechnicalAccount> all = technicalAccountService.findAll(actor);
+		Set<TechnicalAccount> all = technicalAccountService.findAll(authUser);
 		for (TechnicalAccount entity : all) {
 			res.add(new TechnicalAccountDto(entity));
 		}
@@ -112,12 +112,12 @@ public class TechnicalAccountFacadeImpl extends AdminGenericFacadeImpl
 	@Override
 	public TechnicalAccountDto update(TechnicalAccountDto dto)
 			throws BusinessException {
-		User actor = checkAuth();
+		User authUser = checkAuth();
 		Validate.notNull(dto, "dto must be set.");
 		Validate.notEmpty(dto.getUuid(), "uuid must be set.");
 		Validate.notEmpty(dto.getName(), "name must be set.");
 		Validate.notEmpty(dto.getMail(), "mail must be set.");
-		TechnicalAccount account = technicalAccountService.update(actor,
+		TechnicalAccount account = technicalAccountService.update(authUser,
 				TechnicalAccountDto.toObject(dto));
 		return new TechnicalAccountDto(account);
 	}

@@ -71,10 +71,9 @@ public class WorkgroupMemberFacadeImpl extends DelegationGenericFacadeImpl
 		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		User authActor = checkAuthentication();
-		User actor = getOwner(actorUuid);
+		User actor = getActor(actorUuid);
 		WorkGroup workGroup = threadService.find(authActor, actor, threadUuid);
 		List<WorkGroupMemberDto> res = Lists.newArrayList();
-
 		for (WorkgroupMember m : threadService.findAllThreadMembers(authActor, actor, workGroup)) {
 			res.add(new WorkGroupMemberDto(m));
 		}
@@ -90,7 +89,7 @@ public class WorkgroupMemberFacadeImpl extends DelegationGenericFacadeImpl
 		Validate.notEmpty(domainId, "Missing required domain id");
 		Validate.notEmpty(mail, "Missing required mail");
 		User authActor = checkAuthentication();
-		User actor = getOwner(actorUuid);
+		User actor = getActor(actorUuid);
 		User user = userService.findOrCreateUser(mail, domainId);
 		WorkGroup workGroup = threadService.find(authActor, actor, threadUuid);
 		return new WorkGroupMemberDto(threadService.addMember(authActor, actor,
@@ -104,7 +103,7 @@ public class WorkgroupMemberFacadeImpl extends DelegationGenericFacadeImpl
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notNull(threadMember, "Missing required thread member");
 		User authActor = checkAuthentication();
-		User actor = getOwner(actorUuid);
+		User actor = getActor(actorUuid);
 		return new WorkGroupMemberDto(threadService.updateMember(authActor, actor,
 				threadUuid, threadMember.getUserUuid(), threadMember.isAdmin(),
 				!threadMember.isReadonly()));
@@ -116,9 +115,8 @@ public class WorkgroupMemberFacadeImpl extends DelegationGenericFacadeImpl
 		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notEmpty(userUuid, "Missing required user uuid");
 		User authActor = checkAuthentication();
-		User actor = getOwner(actorUuid);
+		User actor = getActor(actorUuid);
 		WorkgroupMember member = threadService.deleteMember(authActor, actor, threadUuid, userUuid);
 		return new WorkGroupMemberDto(member);
 	}
-
 }

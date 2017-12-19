@@ -59,38 +59,38 @@ public class BatchRunnerAsyncFacadeImpl extends GenericAsyncFacadeImpl implement
 
 	@Override
 	public AsyncTaskDto processing(TaskContext taskContext, String asyncTaskUuid) {
-		User actor = checkAuthentication(taskContext);
-		User owner = getOwner(taskContext);
-		AsyncTask task = asyncTaskService.processing(actor, owner, asyncTaskUuid);
+		User authUser = checkAuthentication(taskContext);
+		User actor = getActor(taskContext);
+		AsyncTask task = asyncTaskService.processing(authUser, actor, asyncTaskUuid);
 		UpgradeTask upgradeTask = task.getUpgradeTask();
 		upgradeTask.setStatus(UpgradeTaskStatus.PROCESSING);
-		service.update(actor, upgradeTask);
+		service.update(authUser, upgradeTask);
 		return new AsyncTaskDto(task);
 	}
 
 	@Override
 	public AsyncTaskDto success(TaskContext taskContext, String asyncTaskUuid, String resourceUuid) {
 		Validate.notEmpty(asyncTaskUuid, "Missing async task uuid");
-		User actor = checkAuthentication(taskContext);
-		User owner = getOwner(taskContext);
-		AsyncTask task = asyncTaskService.success(actor, owner, asyncTaskUuid,
+		User authUser = checkAuthentication(taskContext);
+		User actor = getActor(taskContext);
+		AsyncTask task = asyncTaskService.success(authUser, actor, asyncTaskUuid,
 				resourceUuid);
 		UpgradeTask upgradeTask = task.getUpgradeTask();
 		upgradeTask.setStatus(UpgradeTaskStatus.SUCCESS);
-		service.update(actor, upgradeTask);
+		service.update(authUser, upgradeTask);
 		return new AsyncTaskDto(task);
 	}
 
 	@Override
 	public AsyncTaskDto fail(TaskContext taskContext, String asyncTaskUuid, String errorMsg) {
 		Validate.notEmpty(asyncTaskUuid, "Missing async task uuid");
-		User actor = checkAuthentication(taskContext);
-		User owner = getOwner(taskContext);
-		AsyncTask task = asyncTaskService.fail(actor, owner, asyncTaskUuid,
+		User authUser = checkAuthentication(taskContext);
+		User actor = getActor(taskContext);
+		AsyncTask task = asyncTaskService.fail(authUser, actor, asyncTaskUuid,
 				errorMsg);
 		UpgradeTask upgradeTask = task.getUpgradeTask();
 		upgradeTask.setStatus(UpgradeTaskStatus.FAILED);
-		service.update(actor, upgradeTask);
+		service.update(authUser, upgradeTask);
 		return new AsyncTaskDto(task);
 	}
 
@@ -98,13 +98,13 @@ public class BatchRunnerAsyncFacadeImpl extends GenericAsyncFacadeImpl implement
 	public AsyncTaskDto fail(TaskContext taskContext, String asyncTaskUuid, Integer errorCode, String errorName,
 			String errorMsg) {
 		Validate.notEmpty(asyncTaskUuid, "Missing async task uuid");
-		User actor = checkAuthentication(taskContext);
-		User owner = getOwner(taskContext);
-		AsyncTask task = asyncTaskService.fail(actor, owner, asyncTaskUuid,
+		User authUser = checkAuthentication(taskContext);
+		User actor = getActor(taskContext);
+		AsyncTask task = asyncTaskService.fail(authUser, actor, asyncTaskUuid,
 				errorCode, errorName, errorMsg);
 		UpgradeTask upgradeTask = task.getUpgradeTask();
 		upgradeTask.setStatus(UpgradeTaskStatus.FAILED);
-		service.update(actor, upgradeTask);
+		service.update(authUser, upgradeTask);
 		return new AsyncTaskDto(task);
 	}
 

@@ -50,28 +50,28 @@ public class AdminGenericFacadeImpl extends GenericFacadeImpl implements
 	}
 
 	protected User checkAuthentication(Role role) throws BusinessException {
-		User actor = super.checkAuthentication();
+		User authUser = super.checkAuthentication();
 
 		if (role != Role.SUPERADMIN && role != Role.ADMIN) {
 			logger.error("Programmatic error: role must be set either to SUPERADMIN or ADMIN but is " + role.name());
 			throw new IllegalArgumentException(
 					"role must be either SUPERADMIN or ADMIN");
 		}
-		if (!(actor.hasAdminRole() || actor.hasSuperAdminRole())) {
-			logger.error("Current actor is trying to access to a forbbiden api : " + actor.getAccountRepresentation());
+		if (!(authUser.hasAdminRole() || authUser.hasSuperAdminRole())) {
+			logger.error("Current authUser is trying to access to a forbbiden api : " + authUser.getAccountRepresentation());
 			throw new BusinessException(
 					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
 		}
 		if (role.equals(Role.SUPERADMIN)) {
-			if (!(actor.hasSuperAdminRole())) {
-				logger.error("Current actor is trying to access to a forbbiden api : " + actor.getAccountRepresentation());
+			if (!(authUser.hasSuperAdminRole())) {
+				logger.error("Current authUser is trying to access to a forbbiden api : " + authUser.getAccountRepresentation());
 				throw new BusinessException(
 						BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 						"You are not authorized to use this service");
 			}
 		}
-		return actor;
+		return authUser;
 	}
 
 	@Override

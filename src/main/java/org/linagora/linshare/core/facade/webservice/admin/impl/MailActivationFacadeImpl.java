@@ -64,11 +64,11 @@ public class MailActivationFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public List<MailActivationAdminDto> findAll(String domainId)
 			throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		if (domainId == null)
-			domainId = actor.getDomainId();
+			domainId = authUser.getDomainId();
 		Validate.notEmpty(domainId, "domain identifier must be set.");
-		Iterable<MailActivation> entities = service.findAll(actor, domainId);
+		Iterable<MailActivation> entities = service.findAll(authUser, domainId);
 		Iterable<MailActivationAdminDto> transform = Iterables.transform(
 				entities, MailActivationAdminDto.toDto());
 		// Copy is made because the transaction is closed at the end of every
@@ -79,24 +79,24 @@ public class MailActivationFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public MailActivationAdminDto find(String domainId, String mailActivationId)
 			throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(domainId, "domain identifier must be set.");
 		Validate.notEmpty(mailActivationId,
 				"functionality identifier must be set.");
-		MailActivation ma = service.find(actor, domainId, mailActivationId);
+		MailActivation ma = service.find(authUser, domainId, mailActivationId);
 		return MailActivationAdminDto.toDto().apply(ma);
 	}
 
 	@Override
 	public MailActivationAdminDto update(MailActivationAdminDto mailActivation)
 			throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 
 		Validate.notEmpty(mailActivation.getDomain(),
 				"domain identifier must be set.");
 		Validate.notEmpty(mailActivation.getIdentifier(),
 				"mailActivation identifier must be set.");
-		MailActivation entity = service.find(actor, mailActivation.getDomain(),
+		MailActivation entity = service.find(authUser, mailActivation.getDomain(),
 				mailActivation.getIdentifier());
 
 		// copy of activation policy.
@@ -122,7 +122,7 @@ public class MailActivationFacadeImpl extends AdminGenericFacadeImpl implements
 
 		// copy of parameters.
 		entity.setEnable(mailActivation.getEnable());
-		MailActivation update = service.update(actor,
+		MailActivation update = service.update(authUser,
 				mailActivation.getDomain(), entity);
 		return new MailActivationAdminDto(update);
 	}
@@ -130,12 +130,12 @@ public class MailActivationFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public void delete(MailActivationAdminDto mailActivation)
 			throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(mailActivation.getDomain(),
 				"domain identifier must be set.");
 		Validate.notEmpty(mailActivation.getIdentifier(),
 				"mailActivation identifier must be set.");
-		service.delete(actor, mailActivation.getDomain(),
+		service.delete(authUser, mailActivation.getDomain(),
 				mailActivation.getIdentifier());
 	}
 

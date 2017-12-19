@@ -52,8 +52,8 @@ import org.linagora.linshare.webservice.delegation.MimeTypeRestService;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiParam;
 
-@Path("/ownerUuid/mime_types")
-@Api(value = "/rest/delegation/ownerUuid/mime_types", description = "Mime types service.")
+@Path("/{actorUuid}/mime_types")
+@Api(value = "/rest/delegation/actorUuid/mime_types", description = "Mime types service.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class MimeTypeRestServiceImpl implements MimeTypeRestService {
@@ -68,9 +68,9 @@ public class MimeTypeRestServiceImpl implements MimeTypeRestService {
 	@Path("/")
 	@Override
 	public List<MimeTypeDto> find(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@QueryParam("disabled") @DefaultValue("false") boolean disabled) {
-		return facade.find(ownerUuid, disabled);
+		return facade.find(actorUuid, disabled);
 	}
 
 }

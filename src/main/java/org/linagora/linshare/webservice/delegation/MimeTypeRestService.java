@@ -40,5 +40,5 @@ import org.linagora.linshare.core.facade.webservice.common.dto.MimeTypeDto;
 
 public interface MimeTypeRestService {
 
-	List<MimeTypeDto> find(String ownerUuid, boolean disabled);
+	List<MimeTypeDto> find(String actorUuid, boolean disabled);
 }

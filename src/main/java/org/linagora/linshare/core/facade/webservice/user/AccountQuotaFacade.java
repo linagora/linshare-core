@@ -38,7 +38,7 @@ import org.linagora.linshare.core.facade.webservice.user.dto.AccountQuotaDto;
 
 public interface AccountQuotaFacade extends GenericFacade {
 
-	AccountQuotaDto find(String ownerUuid, String uuid) throws BusinessException;
+	AccountQuotaDto find(String actorUuid, String uuid) throws BusinessException;
 
 	boolean maintenanceModeIsEnabled() throws BusinessException;
 }

@@ -55,24 +55,24 @@ public class AccountQuotaFacadeImpl extends UserGenericFacadeImp implements Acco
 	}
 
 	@Override
-	public AccountQuotaDto find(String ownerUuid, String uuid) throws BusinessException {
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
+	public AccountQuotaDto find(String actorUuid, String uuid) throws BusinessException {
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
 		Validate.notEmpty(uuid, "Missing account uuid");
-		AccountQuota aq = quotaService.find(actor, owner, uuid);
+		AccountQuota aq = quotaService.find(authUser, actor, uuid);
 		AccountQuotaDto dto = null;
 		if (aq.getDomainShared()) {
-			Long usedSpace = quotaService.getRealTimeUsedSpace(actor, owner, uuid);
+			Long usedSpace = quotaService.getRealTimeUsedSpace(authUser, actor, uuid);
 			DomainQuota domainQuota = aq.getContainerQuota().getDomainQuota();
 			dto = new AccountQuotaDto(domainQuota.getQuota(), usedSpace, aq.getMaxFileSize(), aq.getMaintenance());
-			Long domainUsedSpace = quotaService.getRealTimeUsedSpace(actor, owner, domainQuota);
+			Long domainUsedSpace = quotaService.getRealTimeUsedSpace(authUser, actor, domainQuota);
 			dto.setDomainUsedSpace(domainUsedSpace);
 		} else {
 			if (aq.getShared()) {
-				Long usedSpace = quotaService.getRealTimeUsedSpace(actor, owner, aq.getContainerQuota());
+				Long usedSpace = quotaService.getRealTimeUsedSpace(authUser, actor, aq.getContainerQuota());
 				dto = new AccountQuotaDto(aq.getContainerQuota().getQuota(), usedSpace, aq.getMaxFileSize(), aq.getMaintenance());
 			} else {
-				Long usedSpace = quotaService.getRealTimeUsedSpace(actor, owner, uuid);
+				Long usedSpace = quotaService.getRealTimeUsedSpace(authUser, actor, uuid);
 				dto = new AccountQuotaDto(aq.getQuota(), usedSpace, aq.getMaxFileSize(), aq.getMaintenance());
 			}
 		}
@@ -81,8 +81,8 @@ public class AccountQuotaFacadeImpl extends UserGenericFacadeImp implements Acco
 
 	@Override
 	public boolean maintenanceModeIsEnabled() throws BusinessException {
-		User actor = checkAuthentication();
-		AccountQuota aq = quotaService.findByRelatedAccount(actor);
+		User authUser = checkAuthentication();
+		AccountQuota aq = quotaService.findByRelatedAccount(authUser);
 		return aq.getMaintenance();
 	}
 

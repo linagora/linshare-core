@@ -94,9 +94,9 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 
 	@Override
 	public List<ShareDto> getReceivedShares() throws BusinessException {
-		User actor = checkAuthentication();
+		User authUser = checkAuthentication();
 		List<ShareEntry> shares = shareEntryService.findAllMyRecievedShareEntries(
-				actor, actor);
+				authUser, authUser);
 
 		return ImmutableList.copyOf(Lists.transform(shares,
 				ShareDto.toDto()));
@@ -104,17 +104,17 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 
 	@Override
 	public List<ShareDto> getShares() throws BusinessException {
-		User actor = checkAuthentication();
+		User authUser = checkAuthentication();
 		List<Entry> shares = entryBusinessService
-				.findAllMyShareEntries(actor);
+				.findAllMyShareEntries(authUser);
 		return ImmutableList.copyOf(Lists.transform(shares, ShareDto.EntrytoDto()));
 	}
 
 	@Override
 	public void sharedocument(String targetMail, String uuid, int securedShare)
 			throws BusinessException {
-		User actor = checkAuthentication();
-		if ((actor.isGuest() && !actor.getCanUpload()))
+		User authUser = checkAuthentication();
+		if ((authUser.isGuest() && !authUser.getCanUpload()))
 			throw new BusinessException(
 					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
@@ -122,7 +122,7 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 		sc.addDocumentUuid(uuid);
 		sc.addMail(targetMail);
 		sc.setSecured((securedShare == 1));
-		shareService.create(actor, actor, sc);
+		shareService.create(authUser, authUser, sc);
 	}
 
 	@Override
@@ -139,8 +139,8 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 	public void multiplesharedocuments(List<String> mails, List<String> documentUuids,
 			int securedShare, String messageOpt, String inReplyToOpt,
 			String referencesOpt) throws BusinessException {
-		User actor = checkAuthentication();
-		if ((actor.isGuest() && !actor.getCanUpload()))
+		User authUser = checkAuthentication();
+		if ((authUser.isGuest() && !authUser.getCanUpload()))
 			throw new BusinessException(
 					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
@@ -151,14 +151,14 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 		sc.setInReplyTo(inReplyToOpt);
 		sc.setReferences(referencesOpt);
 		sc.setMessage(messageOpt);
-		shareService.create(actor, actor, sc);
+		shareService.create(authUser, authUser, sc);
 	}
 
 	@Override
 	public void multiplesharedocuments(List<ShareDto> shares, boolean secured,
 			String message) throws BusinessException {
-		User actor = checkAuthentication();
-		if ((actor.isGuest() && !actor.getCanUpload()))
+		User authUser = checkAuthentication();
+		if ((authUser.isGuest() && !authUser.getCanUpload()))
 			throw new BusinessException(
 					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
@@ -169,43 +169,43 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 		}
 		sc.setSecured(secured);
 		sc.setMessage(message);
-		shareService.create(actor, actor, sc);
+		shareService.create(authUser, authUser, sc);
 	}
 
 	@Override
 	public ShareDto getReceivedShare(String shareEntryUuid)
 			throws BusinessException {
-		User actor = checkAuthentication();
-		return ShareDto.getReceivedShare(shareEntryService.find(actor, actor, shareEntryUuid));
+		User authUser = checkAuthentication();
+		return ShareDto.getReceivedShare(shareEntryService.find(authUser, authUser, shareEntryUuid));
 	}
 
 	@Override
 	public InputStream getDocumentStream(String shareEntryUuid)
 			throws BusinessException {
-		User actor = checkAuthentication();
-		return shareEntryService.getStream(actor, actor, shareEntryUuid);
+		User authUser = checkAuthentication();
+		return shareEntryService.getStream(authUser, authUser, shareEntryUuid);
 	}
 
 	@Override
 	public InputStream getThumbnailStream(String shareEntryUuid, ThumbnailType kind) throws BusinessException {
-		User actor = checkAuthentication();
+		User authUser = checkAuthentication();
 		if (kind == null) {
 			kind = ThumbnailType.MEDIUM;
 		}
-		return shareEntryService.getThumbnailStream(actor, actor, shareEntryUuid, kind);
+		return shareEntryService.getThumbnailStream(authUser, authUser, shareEntryUuid, kind);
 	}
 
 	@Override
 	public Set<ShareDto> create(ShareCreationDto createDto) {
-		User actor = checkAuthentication();
-		if ((actor.isGuest() && !actor.getCanUpload()))
+		User authUser = checkAuthentication();
+		if ((authUser.isGuest() && !authUser.getCanUpload()))
 			throw new BusinessException(
 					BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
 		ShareContainer sc = new ShareContainer();
 		if (createDto.getMailingListUuid() != null && !createDto.getMailingListUuid().isEmpty()) {
 			for (String uuid : createDto.getMailingListUuid()) {
-				ContactList list = listService.findByUuid(actor.getLsUuid(), uuid);
+				ContactList list = listService.findByUuid(authUser.getLsUuid(), uuid);
 				for (ContactListContact c : list.getMailingListContact()) {
 					sc.addContact(c);
 				}
@@ -222,7 +222,7 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 		sc.setEnableUSDA(createDto.isEnableUSDA());
 		sc.setNotificationDateForUSDA(createDto.getNotificationDateForUSDA());
 		sc.setSharingNote(createDto.getSharingNote());
-		Set<Entry> shares = shareService.create(actor, actor, sc);
+		Set<Entry> shares = shareService.create(authUser, authUser, sc);
 		Set<ShareDto> sharesDto = Sets.newHashSet();
 		List<String> uuids = Lists.newArrayList();
 		for (Entry entry : shares) {
@@ -235,8 +235,8 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 	@Override
 	public ShareDto delete(String shareUuid, Boolean received) throws BusinessException {
 		Validate.notEmpty(shareUuid, "Missing required share uuid");
-		Account actor = checkAuthentication();
-		Entry entry = shareService.delete(actor, actor, shareUuid);
+		Account authUser = checkAuthentication();
+		Entry entry = shareService.delete(authUser, authUser, shareUuid);
 		ShareDto dto;
 		if (received) {
 			dto = ShareDto.getReceivedShare(entry);
@@ -249,17 +249,17 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 	@Override
 	public ShareDto getShare(String shareUuid) throws BusinessException {
 		Validate.notEmpty(shareUuid, "Missing required share uuid");
-		User actor = checkAuthentication();
-		return ShareDto.getSentShare(shareEntryService.find(actor, actor, shareUuid));
+		User authUser = checkAuthentication();
+		return ShareDto.getSentShare(shareEntryService.find(authUser, authUser, shareUuid));
 	}
 
 	@Override
-	public Set<AuditLogEntryUser> findAll(String ownerUuid, String uuid, List<String> actions, List<String> types,
+	public Set<AuditLogEntryUser> findAll(String actorUuid, String uuid, List<String> actions, List<String> types,
 			String beginDate, String endDate) {
-		Account actor = checkAuthentication();
-		User owner = (User) getOwner(actor, ownerUuid);
-		ShareEntry entry = shareEntryService.find(actor, owner, uuid);
-		Set<AuditLogEntryUser> findAll = auditLogEntryService.findAll(actor, owner, entry.getUuid(), actions, types, beginDate, endDate);
+		Account authUser = checkAuthentication();
+		User actor = (User) getActor(authUser, actorUuid);
+		ShareEntry entry = shareEntryService.find(authUser, actor, uuid);
+		Set<AuditLogEntryUser> findAll = auditLogEntryService.findAll(authUser, actor, entry.getUuid(), actions, types, beginDate, endDate);
 		return findAll;
 	}
 

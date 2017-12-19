@@ -69,7 +69,7 @@ public class LogEntryFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public List<LogDto> query(LogCriteriaDto criteria) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		Calendar before = null;
 		Calendar after = null;
 
@@ -90,7 +90,7 @@ public class LogEntryFacadeImpl extends AdminGenericFacadeImpl implements
 				criteria.getLogActions(), criteria.getFileName(),
 				criteria.getFileExtension());
 
-		return Lists.transform(logEntryService.findByCriteria(actor, crit),
+		return Lists.transform(logEntryService.findByCriteria(authUser, crit),
 				new Function<LogEntry, LogDto>() {
 					public LogDto apply(LogEntry input) {
 						if (input instanceof ShareLogEntry)

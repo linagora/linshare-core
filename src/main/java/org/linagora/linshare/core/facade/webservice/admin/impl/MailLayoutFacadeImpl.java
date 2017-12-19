@@ -65,30 +65,30 @@ public class MailLayoutFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public MailLayoutDto find(String uuid) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
-		return new MailLayoutDto(findLayout(actor, uuid), getOverrideReadonly());
+		User authUser = checkAuthentication(Role.ADMIN);
+		return new MailLayoutDto(findLayout(authUser, uuid), getOverrideReadonly());
 	}
 
 	@Override
 	public MailLayoutDto create(MailLayoutDto dto) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		MailLayout layout = new MailLayout();
 		transform(layout, dto);
-		return new MailLayoutDto(mailConfigService.createLayout(actor, layout));
+		return new MailLayoutDto(mailConfigService.createLayout(authUser, layout));
 	}
 
 	@Override
 	public MailLayoutDto update(MailLayoutDto dto) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
-		MailLayout layout = findLayout(actor, dto.getUuid());
+		User authUser = checkAuthentication(Role.ADMIN);
+		MailLayout layout = findLayout(authUser, dto.getUuid());
 		transform(layout, dto);
-		return new MailLayoutDto(mailConfigService.updateLayout(actor, layout));
+		return new MailLayoutDto(mailConfigService.updateLayout(authUser, layout));
 	}
 
 	@Override
 	public MailLayoutDto delete(String uuid) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
-		MailLayout layout = mailConfigService.deleteLayout(actor, uuid);
+		User authUser = checkAuthentication(Role.ADMIN);
+		MailLayout layout = mailConfigService.deleteLayout(authUser, uuid);
 		return new MailLayoutDto(layout);
 	}
 
@@ -128,9 +128,9 @@ public class MailLayoutFacadeImpl extends AdminGenericFacadeImpl implements
 		layout.setMessagesFrench(dto.getMessagesFrench());
 	}
 
-	private MailLayout findLayout(User actor, String uuid)
+	private MailLayout findLayout(User authUser, String uuid)
 			throws BusinessException {
-		MailLayout mailLayout = mailConfigService.findLayoutByUuid(actor, uuid);
+		MailLayout mailLayout = mailConfigService.findLayoutByUuid(authUser, uuid);
 
 		if (mailLayout == null)
 			throw new BusinessException(BusinessErrorCode.MAILLAYOUT_NOT_FOUND,

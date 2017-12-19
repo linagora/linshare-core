@@ -41,6 +41,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface WelcomeMessagesFacade extends GenericFacade {
 
-	List<Map<SupportedLanguage, String>> findAll(String ownerUuid) throws BusinessException;
+	List<Map<SupportedLanguage, String>> findAll(String actorUuid) throws BusinessException;
 
 }

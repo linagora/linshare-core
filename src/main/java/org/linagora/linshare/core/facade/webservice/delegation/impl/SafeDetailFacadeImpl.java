@@ -60,7 +60,7 @@ public class SafeDetailFacadeImpl extends DelegationGenericFacadeImpl implements
 		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notEmpty(safeDetail.getContainerUuid(), "Missing required container uuid");
 		User authUser = checkAuthentication();
-		User actor = getOwner(actorUuid);
+		User actor = getActor(actorUuid);
 		return safeDetailService.create(authUser, actor, safeDetail);
 	}
 
@@ -69,7 +69,7 @@ public class SafeDetailFacadeImpl extends DelegationGenericFacadeImpl implements
 		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notEmpty(safeDetailUuid, "Missing required safeDetail uuid");
 		User authUser = checkAuthentication();
-		User actor = getOwner(actorUuid);
+		User actor = getActor(actorUuid);
 		return safeDetailService.delete(authUser, actor, safeDetailUuid);
 	}
 
@@ -78,7 +78,7 @@ public class SafeDetailFacadeImpl extends DelegationGenericFacadeImpl implements
 		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notEmpty(safeDetailUuid, "Missing required safeDetail uuid");
 		User authUser = checkAuthentication();
-		User actor = getOwner(actorUuid);
+		User actor = getActor(actorUuid);
 		return safeDetailService.findByUuid(authUser, actor, safeDetailUuid);
 	}
 
@@ -88,7 +88,7 @@ public class SafeDetailFacadeImpl extends DelegationGenericFacadeImpl implements
 		Validate.notNull(safeDetail);
 		Validate.notEmpty(safeDetail.getUuid(), "Missing required safeDetail uuid");
 		User authUser = checkAuthentication();
-		User actor = getOwner(actorUuid);
+		User actor = getActor(actorUuid);
 		return safeDetailService.delete(authUser, actor, safeDetail);
 	}
 
@@ -96,7 +96,7 @@ public class SafeDetailFacadeImpl extends DelegationGenericFacadeImpl implements
 	public SafeDetail findAll(String actorUuid) throws BusinessException {
 		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		User authUser = checkAuthentication();
-		User actor = getOwner(actorUuid);
+		User actor = getActor(actorUuid);
 		return safeDetailService.findAll(authUser, actor);
 	}
 }

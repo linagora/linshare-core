@@ -69,11 +69,10 @@ public class MailingListFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public Set<MailingListDto> findAll() throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		List<ContactList> lists = contactListService.findAllListByUser(
-				actor.getLsUuid(), actor.getLsUuid());
+				authUser.getLsUuid(), authUser.getLsUuid());
 		Set<MailingListDto> ret = new HashSet<MailingListDto>();
-
 		for (ContactList list : lists) {
 			ret.add(new MailingListDto(list));
 		}
@@ -82,8 +81,8 @@ public class MailingListFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public MailingListDto find(String uuid) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
-		ContactList list = contactListService.findByUuid(actor.getLsUuid(),
+		User authUser = checkAuthentication(Role.ADMIN);
+		ContactList list = contactListService.findByUuid(authUser.getLsUuid(),
 				uuid);
 		if (list == null) {
 			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT,
@@ -94,40 +93,37 @@ public class MailingListFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public MailingListDto create(MailingListDto dto) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		ContactList list = new ContactList(dto);
-		return new MailingListDto(contactListService.createList(actor.getLsUuid(), actor.getLsUuid(),
-				list));
+		return new MailingListDto(contactListService.createList(authUser.getLsUuid(), authUser.getLsUuid(), list));
 	}
 
 	@Override
 	public MailingListDto update(MailingListDto dto) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notNull(dto.getUuid(), "uuid dto must be set.");
 		ContactList list = new ContactList(dto);
-		return new MailingListDto(contactListService.updateList(actor.getLsUuid(), list));
+		return new MailingListDto(contactListService.updateList(authUser.getLsUuid(), list));
 	}
 
 	@Override
 	public MailingListDto delete(String uuid) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
-		ContactList list = contactListService.deleteList(actor.getLsUuid(), uuid);
+		User authUser = checkAuthentication(Role.ADMIN);
+		ContactList list = contactListService.deleteList(authUser.getLsUuid(), uuid);
 		return new MailingListDto(list);
 	}
 
 	@Override
 	public void addContact(String listUuid, MailingListContactDto dto)
 			throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		ContactListContact contact = new ContactListContact(dto);
-
-		contactListService.addNewContact(actor.getLsUuid(), listUuid, contact);
+		contactListService.addNewContact(authUser.getLsUuid(), listUuid, contact);
 	}
 
 	@Override
 	public void deleteContact(String uuid) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
-
-		contactListService.deleteContact(actor.getLsUuid(), uuid);
+		User authUser = checkAuthentication(Role.ADMIN);
+		contactListService.deleteContact(authUser.getLsUuid(), uuid);
 	}
 }

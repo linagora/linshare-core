@@ -59,8 +59,8 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/{ownerUuid}/threads")
-@Api(value = "/rest/delegation/{ownerUuid}/threads", basePath = "/rest/threads", description = "threads service.",
+@Path("/{actorUuid}/threads")
+@Api(value = "/rest/delegation/{actorUuid}/threads", basePath = "/rest/threads", description = "threads service.",
 	produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -83,10 +83,10 @@ public class ThreadRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public WorkGroupDto create(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "Thread to create.", required = true) WorkGroupDto thread)
 			throws BusinessException {
-		return workgroupFacade.create(ownerUuid, thread);
+		return workgroupFacade.create(actorUuid, thread);
 	}
 
 	@Path("/{uuid}")
@@ -99,10 +99,10 @@ public class ThreadRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public WorkGroupDto find(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		return workgroupFacade.find(ownerUuid, uuid);
+		return workgroupFacade.find(actorUuid, uuid);
 	}
 
 	@Path("/{uuid}")
@@ -115,10 +115,10 @@ public class ThreadRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public void head(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		workgroupFacade.find(ownerUuid, uuid);
+		workgroupFacade.find(actorUuid, uuid);
 	}
 
 	@Path("/")
@@ -131,9 +131,9 @@ public class ThreadRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public List<WorkGroupDto> findAll(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid)
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid)
 					throws BusinessException {
-		return workgroupFacade.findAll(ownerUuid);
+		return workgroupFacade.findAll(actorUuid);
 	}
 
 	@Path("/")
@@ -146,10 +146,10 @@ public class ThreadRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public WorkGroupDto delete(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "Thread to delete.", required = true) WorkGroupDto thread)
 					throws BusinessException {
-		return workgroupFacade.delete(ownerUuid, thread);
+		return workgroupFacade.delete(actorUuid, thread);
 	}
 
 	@Path("/{uuid}")
@@ -162,12 +162,12 @@ public class ThreadRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public WorkGroupDto delete(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
 		WorkGroupDto tmp = new WorkGroupDto();
 		tmp.setUuid(uuid);
-		return workgroupFacade.delete(ownerUuid, tmp);
+		return workgroupFacade.delete(actorUuid, tmp);
 	}
 
 	@Path("/{uuid}")
@@ -180,11 +180,11 @@ public class ThreadRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public WorkGroupDto update(
-			@ApiParam(value = "The owner (user) uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("uuid") String threadUuid,
 			@ApiParam(value = "Thread to create.", required = true) WorkGroupDto threadDto)
 			throws BusinessException {
-		return workgroupFacade.update(ownerUuid, threadUuid, threadDto);
+		return workgroupFacade.update(actorUuid, threadUuid, threadDto);
 	}
 
 }

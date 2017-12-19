@@ -70,6 +70,6 @@ public interface ShareFacade extends GenericFacade {
 
 	ShareDto delete(String shareUuid, Boolean received) throws BusinessException;
 
-	Set<AuditLogEntryUser> findAll(String ownerUuid, String uuid, List<String> actions, List<String> types,
+	Set<AuditLogEntryUser> findAll(String actorUuid, String uuid, List<String> actions, List<String> types,
 			String beginDate, String endDate);
 }

@@ -45,31 +45,31 @@ import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto
 
 public interface WorkGroupEntryFacade extends DelegationGenericFacade {
 
-	WorkGroupEntryDto create(String ownerUuid, String threadUuid,
+	WorkGroupEntryDto create(String actorUuid, String threadUuid,
 			File file, String fileName) throws BusinessException;
 
-	WorkGroupEntryDto copy(String ownerUuid, String threadUuid, String entryUuid)
+	WorkGroupEntryDto copy(String actorUuid, String threadUuid, String entryUuid)
 			throws BusinessException;
 
-	WorkGroupEntryDto find(String ownerUuid, String threadUuid, String uuid)
+	WorkGroupEntryDto find(String actorUuid, String threadUuid, String uuid)
 			throws BusinessException;
 
-	List<WorkGroupEntryDto> findAll(String ownerUuid, String threadUuid)
+	List<WorkGroupEntryDto> findAll(String actorUuid, String threadUuid)
 			throws BusinessException;
 
-	WorkGroupEntryDto delete(String ownerUuid, String threadUuid, WorkGroupEntryDto threadEntry)
+	WorkGroupEntryDto delete(String actorUuid, String threadUuid, WorkGroupEntryDto threadEntry)
 			throws BusinessException;
 
-	WorkGroupEntryDto delete(String ownerUuid, String threadUuid, String uuid)
+	WorkGroupEntryDto delete(String actorUuid, String threadUuid, String uuid)
 			throws BusinessException;
 
-	Response download(String ownerUuid, String threadUuid, String uuid)
+	Response download(String actorUuid, String threadUuid, String uuid)
 			throws BusinessException;
 
-	Response thumbnail(String ownerUuid, String threadUuid, String uuid, ThumbnailType kind)
+	Response thumbnail(String actorUuid, String threadUuid, String uuid, ThumbnailType kind)
 			throws BusinessException;
 
-	WorkGroupEntryDto update(String owneruuid, String threadUuid,
+	WorkGroupEntryDto update(String actoruuid, String threadUuid,
 			String threadEntryUuid, WorkGroupEntryDto threadEntryDto)
 			throws BusinessException;
 

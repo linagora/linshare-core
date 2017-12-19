@@ -41,6 +41,6 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface AuditLogEntryUserFacade {
 
-	Set<AuditLogEntryUser> findAll(String ownerUuid, List<String> action, List<String> type, boolean forceAll,
+	Set<AuditLogEntryUser> findAll(String actorUuid, List<String> action, List<String> type, boolean forceAll,
 			String beginDate, String endDate) throws BusinessException;
 }

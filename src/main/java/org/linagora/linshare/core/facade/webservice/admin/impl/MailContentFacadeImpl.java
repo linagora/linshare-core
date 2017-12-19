@@ -83,32 +83,32 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public MailContentDto find(String uuid) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
-		return new MailContentDto(findContent(actor, uuid), getOverrideReadonly());
+		User authUser = checkAuthentication(Role.ADMIN);
+		return new MailContentDto(findContent(authUser, uuid), getOverrideReadonly());
 	}
 
 	@Override
 	public MailContentDto create(MailContentDto dto) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		MailContent content = new MailContent();
 		transform(content, dto);
-		return new MailContentDto(mailConfigService.createContent(actor,
+		return new MailContentDto(mailConfigService.createContent(authUser,
 				content));
 	}
 
 	@Override
 	public MailContentDto update(MailContentDto dto) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
-		MailContent content = findContent(actor, dto.getUuid());
+		User authUser = checkAuthentication(Role.ADMIN);
+		MailContent content = findContent(authUser, dto.getUuid());
 
 		transform(content, dto);
-		return new MailContentDto(mailConfigService.updateContent(actor, content));
+		return new MailContentDto(mailConfigService.updateContent(authUser, content));
 	}
 
 	@Override
 	public MailContentDto delete(String uuid) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
-		MailContent content = mailConfigService.deleteContent(actor, uuid);
+		User authUser = checkAuthentication(Role.ADMIN);
+		MailContent content = mailConfigService.deleteContent(authUser, uuid);
 		return new MailContentDto(content);
 	}
 
@@ -135,16 +135,16 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public MailContainerDto fakeBuild(String mailContentUuid, String language, String mailConfigUuid, Integer flavor) {
-		User actor = checkAuthentication(Role.ADMIN);
-		MailContent content = findContent(actor, mailContentUuid);
-		return fakeBuild(language, mailConfigUuid, actor, content, flavor);
+		User authUser = checkAuthentication(Role.ADMIN);
+		MailContent content = findContent(authUser, mailContentUuid);
+		return fakeBuild(language, mailConfigUuid, authUser, content, flavor);
 	}
 
 	@Override
 	public MailContainerDto fakeBuild(MailContentDto dto, String language, String mailConfigUuid, Integer flavor) {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		MailContent content = toFakeObject(dto);
-		return fakeBuild(language, mailConfigUuid, actor, content, flavor);
+		return fakeBuild(language, mailConfigUuid, authUser, content, flavor);
 	}
 
 	@Override
@@ -168,8 +168,8 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public List<ContextMetadata> getAvailableVariables(String mailContentUuid) {
-		User actor = checkAuthentication(Role.ADMIN);
-		MailContent content = findContent(actor, mailContentUuid);
+		User authUser = checkAuthentication(Role.ADMIN);
+		MailContent content = findContent(authUser, mailContentUuid);
 		MailContentType type = content.getType();
 		return mailBuildingService.getAvailableVariables(type);
 	}
@@ -185,18 +185,18 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 		return content;
 	}
 
-	private MailConfig findMailConfig(String mailConfigUuid, User actor) {
+	private MailConfig findMailConfig(String mailConfigUuid, User authUser) {
 		MailConfig config = null;
 		if (mailConfigUuid != null) {
-			config = mailConfigService.findConfigByUuid(actor, mailConfigUuid);
+			config = mailConfigService.findConfigByUuid(authUser, mailConfigUuid);
 		} else {
 			config = abstractDomainService.getUniqueRootDomain().getCurrentMailConfiguration();
 		}
 		return config;
 	}
 
-	private MailContainerDto fakeBuild(String language, String mailConfigUuid, User actor, MailContent content, Integer flavor) {
-		MailConfig config = getFakeConfig(mailConfigUuid, actor);
+	private MailContainerDto fakeBuild(String language, String mailConfigUuid, User authUser, MailContent content, Integer flavor) {
+		MailConfig config = getFakeConfig(mailConfigUuid, authUser);
 		Language languageEnum = getLanguage(language);
 		MailContentType type = content.getType();
 		config.replaceMailContent(languageEnum, type, content);
@@ -212,8 +212,8 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 		return languageEnum;
 	}
 
-	private MailConfig getFakeConfig(String mailConfigUuid, User actor) {
-		MailConfig config = findMailConfig(mailConfigUuid, actor);
+	private MailConfig getFakeConfig(String mailConfigUuid, User authUser) {
+		MailConfig config = findMailConfig(mailConfigUuid, authUser);
 		try {
 			return config.clone();
 		} catch (CloneNotSupportedException e) {
@@ -240,9 +240,9 @@ public class MailContentFacadeImpl extends AdminGenericFacadeImpl implements
 		content.setMessagesFrench(dto.getMessagesFrench());
 	}
 
-	private MailContent findContent(User actor, String uuid)
+	private MailContent findContent(User authUser, String uuid)
 			throws BusinessException {
-		MailContent mailContent = mailConfigService.findContentByUuid(actor,
+		MailContent mailContent = mailConfigService.findContentByUuid(authUser,
 				uuid);
 
 		if (mailContent == null)

@@ -62,24 +62,24 @@ public class TechnicalAccountPermissionFacadeImpl extends AdminGenericFacadeImpl
 
 	@Override
 	public TechnicalAccountPermissionDto find(String uuid) throws BusinessException {
-		User actor = checkAuth();
+		User authUser = checkAuth();
 		Validate.notEmpty(uuid, "uuid must be set.");
-		TechnicalAccountPermission permission = technicalAccountPermissionService.find(actor, uuid);
-		technicalAccountPermissionService.delete(actor, permission);
+		TechnicalAccountPermission permission = technicalAccountPermissionService.find(authUser, uuid);
+		technicalAccountPermissionService.delete(authUser, permission);
 		return new TechnicalAccountPermissionDto(permission);
 	}
 
 	@Override
 	public TechnicalAccountPermissionDto update(TechnicalAccountPermissionDto dto)
 			throws BusinessException {
-		User actor = checkAuth();
+		User authUser = checkAuth();
 		Validate.notEmpty(dto.getUuid(), "uuid must be set.");
 		TechnicalAccountPermission tap = new TechnicalAccountPermission(dto);
 		for (String domain: dto.getDomains()) {
 			if (domain != null)
 				tap.addDomain(domainService.findById(domain));
 		}
-		TechnicalAccountPermission permission = technicalAccountPermissionService.update(actor, tap);
+		TechnicalAccountPermission permission = technicalAccountPermissionService.update(authUser, tap);
 		return new TechnicalAccountPermissionDto(permission);
 	}
 

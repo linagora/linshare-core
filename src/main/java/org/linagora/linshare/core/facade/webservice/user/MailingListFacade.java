@@ -42,23 +42,23 @@ import org.linagora.linshare.core.facade.webservice.common.dto.MailingListDto;
 
 public interface MailingListFacade {
 
-	Set<MailingListDto> findAll(String ownerUuid, Boolean mine) throws BusinessException;
+	Set<MailingListDto> findAll(String actorUuid, Boolean mine) throws BusinessException;
 
-	MailingListDto find(String ownerUuid, String uuid) throws BusinessException;
+	MailingListDto find(String actorUuid, String uuid) throws BusinessException;
 
-	MailingListDto create(String ownerUuid, MailingListDto dto) throws BusinessException;
+	MailingListDto create(String actorUuid, MailingListDto dto) throws BusinessException;
 
-	MailingListDto update(String ownerUuid, MailingListDto dto, String uuid) throws BusinessException;
+	MailingListDto update(String actorUuid, MailingListDto dto, String uuid) throws BusinessException;
 
-	MailingListDto delete(String ownerUuid, String uuid) throws BusinessException;
+	MailingListDto delete(String actorUuid, String uuid) throws BusinessException;
 
-	Set<MailingListContactDto> findAllContacts(String ownerUuid, String listUuid) throws BusinessException;
+	Set<MailingListContactDto> findAllContacts(String actorUuid, String listUuid) throws BusinessException;
 
-	MailingListContactDto addContact(String ownerUuid, String listUuid, MailingListContactDto dto)
+	MailingListContactDto addContact(String actorUuid, String listUuid, MailingListContactDto dto)
 			throws BusinessException;
 
-	void updateContact(String ownerUuid, MailingListContactDto dto) throws BusinessException;
+	void updateContact(String actorUuid, MailingListContactDto dto) throws BusinessException;
 
-	void deleteContact(String ownerUuid, String uuid) throws BusinessException;
+	void deleteContact(String actorUuid, String uuid) throws BusinessException;
 
 }

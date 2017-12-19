@@ -59,8 +59,8 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/{ownerUuid}/upload_request_templates")
-@Api(value = "/rest/delegation/{ownerUuid}/upload_request_templates", description = "request templates API")
+@Path("/{actorUuid}/upload_request_templates")
+@Api(value = "/rest/delegation/{actorUuid}/upload_request_templates", description = "request templates API")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class UploadRequestTemplateRestServiceImpl  implements UploadRequestTemplateRestService {
@@ -78,9 +78,9 @@ public class UploadRequestTemplateRestServiceImpl  implements UploadRequestTempl
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
 	@Override
 	public List<UploadRequestTemplateDto> findAll(
-			@ApiParam(value = "Upload request owner uuid.", required = true) @PathParam(value = "ownerUuid") String ownerUuid)
+			@ApiParam(value = "Upload request actor uuid.", required = true) @PathParam(value = "actorUuid") String actorUuid)
 					throws BusinessException {
-		return uploadRequestTemplateFacade.findAll(ownerUuid);
+		return uploadRequestTemplateFacade.findAll(actorUuid);
 	}
 
 	@GET
@@ -90,10 +90,10 @@ public class UploadRequestTemplateRestServiceImpl  implements UploadRequestTempl
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
 	@Override
 	public UploadRequestTemplateDto find(
-			@ApiParam(value = "Upload request owner uuid.", required = true) @PathParam(value = "ownerUuid") String ownerUuid,
+			@ApiParam(value = "Upload request actor uuid.", required = true) @PathParam(value = "actorUuid") String actorUuid,
 			@ApiParam(value = "Upload request template uuid.", required = true) @PathParam(value = "uuid") String uuid)
 					throws BusinessException {
-		return uploadRequestTemplateFacade.find(ownerUuid, uuid);
+		return uploadRequestTemplateFacade.find(actorUuid, uuid);
 	}
 
 	@POST
@@ -103,10 +103,10 @@ public class UploadRequestTemplateRestServiceImpl  implements UploadRequestTempl
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
 	@Override
 	public UploadRequestTemplateDto create(
-			@ApiParam(value = "Upload request owner uuid.", required = true) @PathParam(value = "ownerUuid") String ownerUuid,
+			@ApiParam(value = "Upload request actor uuid.", required = true) @PathParam(value = "actorUuid") String actorUuid,
 			@ApiParam(value = "Upload request.", required = true) UploadRequestTemplateDto templateDto)
 					throws BusinessException {
-		UploadRequestTemplateDto dto = uploadRequestTemplateFacade.create(ownerUuid, templateDto);
+		UploadRequestTemplateDto dto = uploadRequestTemplateFacade.create(actorUuid, templateDto);
 		return dto;
 	}
 
@@ -117,11 +117,11 @@ public class UploadRequestTemplateRestServiceImpl  implements UploadRequestTempl
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
 	@Override
 	public UploadRequestTemplateDto update(
-			@ApiParam(value = "Upload request owner uuid.", required = true) @PathParam(value = "ownerUuid") String ownerUuid,
+			@ApiParam(value = "Upload request actor uuid.", required = true) @PathParam(value = "actorUuid") String actorUuid,
 			@ApiParam(value = "Upload request uuid.", required = true) @PathParam(value = "uuid") String uuid,
 			@ApiParam(value = "Upload request.", required = true) UploadRequestTemplateDto templateDto)
 					throws BusinessException {
-		UploadRequestTemplateDto dto = uploadRequestTemplateFacade.update(ownerUuid, uuid, templateDto);
+		UploadRequestTemplateDto dto = uploadRequestTemplateFacade.update(actorUuid, uuid, templateDto);
 		return dto;
 	}
 
@@ -132,10 +132,10 @@ public class UploadRequestTemplateRestServiceImpl  implements UploadRequestTempl
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
 	@Override
 	public UploadRequestTemplateDto delete(
-			@ApiParam(value = "Upload request owner uuid.", required = true) @PathParam(value = "ownerUuid") String ownerUuid,
+			@ApiParam(value = "Upload request actor uuid.", required = true) @PathParam(value = "actorUuid") String actorUuid,
 			@ApiParam(value = "Upload request uuid.", required = true) @PathParam(value = "uuid") String uuid)
 					throws BusinessException {
-		UploadRequestTemplateDto dto = uploadRequestTemplateFacade.delete(ownerUuid, uuid);
+		UploadRequestTemplateDto dto = uploadRequestTemplateFacade.delete(actorUuid, uuid);
 		return dto;
 	}
 
@@ -146,10 +146,10 @@ public class UploadRequestTemplateRestServiceImpl  implements UploadRequestTempl
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
 	@Override
 	public UploadRequestTemplateDto delete(
-			@ApiParam(value = "Upload request owner uuid.", required = true) @PathParam(value = "ownerUuid") String ownerUuid,
+			@ApiParam(value = "Upload request actor uuid.", required = true) @PathParam(value = "actorUuid") String actorUuid,
 			@ApiParam(value = "Upload request.", required = true) UploadRequestTemplateDto dto)
 					throws BusinessException {
 		Validate.notNull(dto, "Template must be set.");
-		return delete(ownerUuid, dto.getUuid());
+		return delete(actorUuid, dto.getUuid());
 	}
 }

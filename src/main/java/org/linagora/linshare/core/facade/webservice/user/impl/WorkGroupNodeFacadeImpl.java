@@ -104,92 +104,92 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 
 	@Override
 	protected User checkAuthentication() throws BusinessException {
-		User actor = super.checkAuthentication();
+		User authUser = super.checkAuthentication();
 		Functionality functionality = functionalityService
-				.getWorkGroupFunctionality(actor.getDomain());
+				.getWorkGroupFunctionality(authUser.getDomain());
 		if (!functionality.getActivationPolicy().getStatus()) {
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
 		}
-		return actor;
+		return authUser;
 	}
 
 	@Override
-	public List<WorkGroupNode> findAll(String ownerUuid, String workGroupUuid, String parentNodeUuid, Boolean flatDocumentMode, WorkGroupNodeType nodeType) throws BusinessException {
+	public List<WorkGroupNode> findAll(String actorUuid, String workGroupUuid, String parentNodeUuid, Boolean flatDocumentMode, WorkGroupNodeType nodeType) throws BusinessException {
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
-		WorkGroup workGroup = threadService.find(actor, owner, workGroupUuid);
-		return service.findAll(actor, owner, workGroup, parentNodeUuid, flatDocumentMode, nodeType);
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		WorkGroup workGroup = threadService.find(authUser, actor, workGroupUuid);
+		return service.findAll(authUser, actor, workGroup, parentNodeUuid, flatDocumentMode, nodeType);
 	}
 
 	@Override
-	public WorkGroupNode find(String ownerUuid, String workGroupUuid, String workGroupNodeUuid, Boolean withTree)
+	public WorkGroupNode find(String actorUuid, String workGroupUuid, String workGroupNodeUuid, Boolean withTree)
 			throws BusinessException {
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
 		Validate.notEmpty(workGroupNodeUuid, "Missing required workGroup folder uuid");
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
-		WorkGroup workGroup = threadService.find(actor, owner, workGroupUuid);
-		return service.find(actor, owner, workGroup, workGroupNodeUuid, withTree);
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		WorkGroup workGroup = threadService.find(authUser, actor, workGroupUuid);
+		return service.find(authUser, actor, workGroup, workGroupNodeUuid, withTree);
 	}
 
 	@Override
-	public WorkGroupNode create(String ownerUuid, String workGroupUuid, WorkGroupNode workGroupNode, Boolean strict, Boolean dryRun)
+	public WorkGroupNode create(String actorUuid, String workGroupUuid, WorkGroupNode workGroupNode, Boolean strict, Boolean dryRun)
 			throws BusinessException {
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
 		Validate.notNull(workGroupNode.getName(), "Missing default name for the folder");
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
-		WorkGroup workGroup = threadService.find(actor, owner, workGroupUuid);
-		return service.create(actor, owner, workGroup, workGroupNode, strict, dryRun);
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		WorkGroup workGroup = threadService.find(authUser, actor, workGroupUuid);
+		return service.create(authUser, actor, workGroup, workGroupNode, strict, dryRun);
 	}
 
 	@Override
-	public WorkGroupNode create(String ownerUuid, String workGroupUuid, String parentNodeUuid, File tempFile,
+	public WorkGroupNode create(String actorUuid, String workGroupUuid, String parentNodeUuid, File tempFile,
 			String fileName, Boolean strict) throws BusinessException {
 		Validate.notEmpty(workGroupUuid, "Missing required thread uuid");
 		Validate.notEmpty(fileName, "Missing required file name");
 		Validate.notNull(tempFile, "Missing required input temp file");
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
-		WorkGroup workGroup = threadService.find(actor, owner, workGroupUuid);
-		WorkGroupNode node = service.create(actor, owner, workGroup, tempFile, fileName, parentNodeUuid, strict);
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		WorkGroup workGroup = threadService.find(authUser, actor, workGroupUuid);
+		WorkGroupNode node = service.create(authUser, actor, workGroup, tempFile, fileName, parentNodeUuid, strict);
 		return node;
 	}
 
 	@Override
-	public List<WorkGroupNode> copy(String ownerUuid, String workGroupUuid, String toParentNodeUuid, CopyDto copy, boolean deleteShare) {
-		Account actor = checkAuthentication();
-		User owner = (User) getOwner(actor, ownerUuid);
+	public List<WorkGroupNode> copy(String actorUuid, String workGroupUuid, String toParentNodeUuid, CopyDto copy, boolean deleteShare) {
+		Account authUser = checkAuthentication();
+		User actor = (User) getActor(authUser, actorUuid);
 		Validate.notNull(copy);
 		TargetKind resourceKind = copy.getKind();
 		Validate.notNull(resourceKind, "Missing resource kind.");
 		String fromResourceUuid = copy.getUuid();
 		Validate.notEmpty(fromResourceUuid, "Missing entry uuid to copy from");
 		Validate.notEmpty(workGroupUuid, "Missing workGroup uuid to copy into");
-		WorkGroup toWorkGroup = threadService.find(actor, owner, workGroupUuid);
+		WorkGroup toWorkGroup = threadService.find(authUser, actor, workGroupUuid);
 		if (TargetKind.RECEIVED_SHARE.equals(resourceKind)) {
 			// if the current user do have enough space, there is side effect on audit.
 			// Some audit traces will be created before quota checks ! :s
-			ShareEntry share = shareEntryService.findForDownloadOrCopyRight(actor, owner, fromResourceUuid);
+			ShareEntry share = shareEntryService.findForDownloadOrCopyRight(authUser, actor, fromResourceUuid);
 			CopyResource cr = new CopyResource(resourceKind, share);
-			WorkGroupNode node = service.copy(actor, owner, toWorkGroup, toParentNodeUuid, cr);
-			shareEntryService.markAsCopied(actor, owner, fromResourceUuid, new CopyMto(node, toWorkGroup));
+			WorkGroupNode node = service.copy(authUser, actor, toWorkGroup, toParentNodeUuid, cr);
+			shareEntryService.markAsCopied(authUser, actor, fromResourceUuid, new CopyMto(node, toWorkGroup));
 			if (deleteShare) {
-				shareEntryService.delete(actor, owner, share.getUuid(), LogActionCause.COPY);
+				shareEntryService.delete(authUser, actor, share.getUuid(), LogActionCause.COPY);
 			}
 			return Lists.newArrayList(node);
 		} else if (TargetKind.PERSONAL_SPACE.equals(resourceKind)) {
-			DocumentEntry documentEntry = documentEntryService.findForDownloadOrCopyRight(actor, owner, fromResourceUuid);
+			DocumentEntry documentEntry = documentEntryService.findForDownloadOrCopyRight(authUser, actor, fromResourceUuid);
 			CopyResource cr = new CopyResource(resourceKind, documentEntry);
-			WorkGroupNode node = service.copy(actor, owner, toWorkGroup, toParentNodeUuid, cr);
-			documentEntryService.markAsCopied(actor, owner, documentEntry, new CopyMto(node, toWorkGroup));
+			WorkGroupNode node = service.copy(authUser, actor, toWorkGroup, toParentNodeUuid, cr);
+			documentEntryService.markAsCopied(authUser, actor, documentEntry, new CopyMto(node, toWorkGroup));
 			return Lists.newArrayList(node);
 		} else if (TargetKind.SHARED_SPACE.equals(resourceKind)) {
-			String fromWorkGroupUuid = service.findWorkGroupUuid(actor, owner, fromResourceUuid);
-			WorkGroup fromWorkGroup = threadService.find(actor, owner, fromWorkGroupUuid);
-			WorkGroupNode node = service.copy(actor, owner, fromWorkGroup, fromResourceUuid, toWorkGroup, toParentNodeUuid);
+			String fromWorkGroupUuid = service.findWorkGroupUuid(authUser, actor, fromResourceUuid);
+			WorkGroup fromWorkGroup = threadService.find(authUser, actor, fromWorkGroupUuid);
+			WorkGroupNode node = service.copy(authUser, actor, fromWorkGroup, fromResourceUuid, toWorkGroup, toParentNodeUuid);
 			return Lists.newArrayList(node);
 		}
 		throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
@@ -197,78 +197,79 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 	}
 
 	@Override
-	public WorkGroupNode update(String ownerUuid, String workGroupUuid, WorkGroupNode workGroupNode)
+	public WorkGroupNode update(String actorUuid, String workGroupUuid, WorkGroupNode workGroupNode)
 			throws BusinessException {
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
 		Validate.notNull(workGroupNode, "Missing required workGroupFolder");
 		Validate.notEmpty(workGroupNode.getUuid(), "Missing required workGroupNode uuid");
 		Validate.notEmpty(workGroupNode.getName(), "Missing required name");
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
-		WorkGroup workGroup = threadService.find(actor, owner, workGroupUuid);
-		return service.update(actor, owner, workGroup, workGroupNode);
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		WorkGroup workGroup = threadService.find(authUser, actor, workGroupUuid);
+		return service.update(authUser, actor, workGroup, workGroupNode);
 	}
 
 	@Override
-	public WorkGroupNode delete(String ownerUuid, String workGroupUuid, String workGroupNodeUuid)
+	public WorkGroupNode delete(String actorUuid, String workGroupUuid, String workGroupNodeUuid)
 			throws BusinessException {
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
-		WorkGroup workGroup = threadService.find(actor, owner, workGroupUuid);
-		return service.delete(actor, owner, workGroup, workGroupNodeUuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		WorkGroup workGroup = threadService.find(authUser, actor, workGroupUuid);
+		return service.delete(authUser, actor, workGroup, workGroupNodeUuid);
 	}
 
 	@Override
-	public WorkGroupNode delete(String ownerUuid, String workGroupUuid, WorkGroupNode workGroupNode)
+	public WorkGroupNode delete(String actorUuid, String workGroupUuid, WorkGroupNode workGroupNode)
 			throws BusinessException {
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
 		Validate.notNull(workGroupNode, "Missing required workGroup folder");
 		Validate.notEmpty(workGroupNode.getUuid(), "Missing required workGroup folder uuid");
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
-		WorkGroup workGroup = threadService.find(actor, owner, workGroupUuid);
-		return service.delete(actor, owner, workGroup, workGroupNode.getUuid());
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		WorkGroup workGroup = threadService.find(authUser, actor, workGroupUuid);
+		return service.delete(authUser, actor, workGroup, workGroupNode.getUuid());
 	}
 
 	@Override
-	public Response download(String ownerUuid, String workGroupUuid, String workGroupNodeUuid)
+	public Response download(String actorUuid, String workGroupUuid, String workGroupNodeUuid)
 			throws BusinessException {
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
 		Validate.notEmpty(workGroupNodeUuid, "Missing required workGroup node uuid");
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
-		WorkGroup workGroup = threadService.find(actor, owner, workGroupUuid);
-		FileAndMetaData data = service.download(actor, owner, workGroup, workGroupNodeUuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		WorkGroup workGroup = threadService.find(authUser, actor, workGroupUuid);
+		FileAndMetaData data = service.download(authUser, actor, workGroup, workGroupNodeUuid);
 		ResponseBuilder builder = DocumentStreamReponseBuilder.getDocumentResponseBuilder(data);
 		return builder.build();
 	}
 
 	@Override
-	public Response thumbnail(String ownerUuid, String workGroupUuid, String workGroupNodeUuid, boolean base64, ThumbnailType thumbnailType)
+	public Response thumbnail(String actorUuid, String workGroupUuid, String workGroupNodeUuid, boolean base64, ThumbnailType thumbnailType)
 			throws BusinessException {
 		if (thumbnailType == null) {
 			thumbnailType = ThumbnailType.MEDIUM;
 		}
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
 		Validate.notEmpty(workGroupNodeUuid, "Missing required workGroup node uuid");
-		User actor = checkAuthentication();
-		User owner = getOwner(actor, ownerUuid);
-		WorkGroup workGroup = threadService.find(actor, owner, workGroupUuid);
-		FileAndMetaData data = service.thumbnail(actor, owner, workGroup, workGroupNodeUuid, thumbnailType);
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		WorkGroup workGroup = threadService.find(authUser, actor, workGroupUuid);
+		FileAndMetaData data = service.thumbnail(authUser, actor, workGroup, workGroupNodeUuid, thumbnailType);
 		ResponseBuilder builder = DocumentStreamReponseBuilder
 				.getThumbnailResponseBuilder(data, base64, thumbnailType);
 		return builder.build();
 	}
 
 	@Override
-	public Set<AuditLogEntryUser> findAll(String ownerUuid, String workGroupUuid, String workGroupNodeUuid,
+	public Set<AuditLogEntryUser> findAll(String actorUuid, String workGroupUuid, String workGroupNodeUuid,
 			List<String> actions, List<String> types, String beginDate, String endDate) {
-		Account actor = checkAuthentication();
-		User owner = (User) getOwner(actor, ownerUuid);
-		WorkGroup workGroup = threadService.find(actor, owner, workGroupUuid);
-		WorkGroupNode workGroupNode = service.find(actor, owner, workGroup, workGroupNodeUuid, false);
-		return auditLogEntryService.findAll(actor, owner, workGroup, workGroupNode, actions, types, beginDate, endDate);
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		WorkGroup workGroup = threadService.find(authUser, actor, workGroupUuid);
+		WorkGroupNode workGroupNode = service.find(authUser, actor, workGroup, workGroupNodeUuid, false);
+		return auditLogEntryService.findAll(authUser, actor, workGroup, workGroupNode, actions, types, beginDate,
+				endDate);
 	}
 
 }

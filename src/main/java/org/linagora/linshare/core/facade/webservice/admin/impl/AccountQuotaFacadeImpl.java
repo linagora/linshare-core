@@ -64,16 +64,16 @@ public class AccountQuotaFacadeImpl extends AdminGenericFacadeImpl implements Ac
 	@Override
 	public AccountQuotaDto find(String uuid) throws BusinessException {
 		Validate.notNull(uuid, "Account quota uuid must be set.");
-		User actor = checkAuthentication(Role.ADMIN);
-		AccountQuota quota = service.find(actor, uuid);
+		User authUser = checkAuthentication(Role.ADMIN);
+		AccountQuota quota = service.find(authUser, uuid);
 		return new AccountQuotaDto(quota);
 	}
 
 	@Override
 	public List<AccountQuotaDto> findAll(String domainUuid, ContainerQuotaType type) throws BusinessException {
 		// TODO FMA Quota manage type and domains filters.
-		User actor = checkAuthentication(Role.ADMIN);
-		List<AccountQuota> all = service.findAll(actor);
+		User authUser = checkAuthentication(Role.ADMIN);
+		List<AccountQuota> all = service.findAll(authUser);
 		return ImmutableList.copyOf(Lists.transform(all, AccountQuotaDto.toDto()));
 	}
 
@@ -84,8 +84,8 @@ public class AccountQuotaFacadeImpl extends AdminGenericFacadeImpl implements Ac
 			dto.setUuid(uuid);
 		}
 		Validate.notEmpty(dto.getUuid(), "Quota uuid must be set.");
-		User actor = checkAuthentication(Role.ADMIN);
-		AccountQuota aq = service.update(actor, dto.toObject());
+		User authUser = checkAuthentication(Role.ADMIN);
+		AccountQuota aq = service.update(authUser, dto.toObject());
 		return new AccountQuotaDto(aq);
 	}
 

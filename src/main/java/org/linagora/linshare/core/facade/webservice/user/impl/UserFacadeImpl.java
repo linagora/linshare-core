@@ -62,16 +62,16 @@ public class UserFacadeImpl extends UserGenericFacadeImp implements UserFacade {
 
 	@Override
 	public User checkAuthentication() throws BusinessException {
-		User actor = super.checkAuthentication();
-		return actor;
+		User authUser = super.checkAuthentication();
+		return authUser;
 	}
 
 	@Override
 	public List<UserDto> findAll() throws BusinessException {
-		User actor = checkAuthentication();
+		User authUser = checkAuthentication();
 		List<UserDto> res = new ArrayList<UserDto>();
 		// we return all users without any filters
-		List<User> users = userService.searchUser(null, null, null, null, actor);
+		List<User> users = userService.searchUser(null, null, null, null, authUser);
 
 		for (User user : users)
 			res.add(UserDto.getSimple(user));
@@ -81,10 +81,10 @@ public class UserFacadeImpl extends UserGenericFacadeImp implements UserFacade {
 
 	@Override
 	public UserDto isAuthorized() throws BusinessException {
-		User owner = checkAuthentication();
-		UserDto dto = UserDto.getFull(owner);
+		User authUser = checkAuthentication();
+		UserDto dto = UserDto.getFull(authUser);
 		// get the quota for the current logged in user.
-		AccountQuota quota = quotaService.findByRelatedAccount(owner);
+		AccountQuota quota = quotaService.findByRelatedAccount(authUser);
 		dto.setQuotaUuid(quota.getUuid());
 		return dto;
 	}

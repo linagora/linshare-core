@@ -63,20 +63,19 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public WorkGroupMemberDto find(Long id) throws BusinessException {
 		@SuppressWarnings("unused")
-		User actor = checkAuthentication(Role.SUPERADMIN);
+		User authUser = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(id, "id must be set.");
 		return new WorkGroupMemberDto(threadService.getThreadMemberById(id));
 	}
 
 	@Override
 	public WorkGroupMemberDto create(WorkGroupMemberDto dto) throws BusinessException {
-		User actor = checkAuthentication(Role.SUPERADMIN);
+		User authUser = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(dto, "thread member must be set.");
 		Validate.notEmpty(dto.getThreadUuid(), "thread member thread id must be set.");
 		Validate.notEmpty(dto.getUserDomainId(), "thread member domain id must be set.");
 		Validate.notEmpty(dto.getUserMail(), "thread member mail must be set.");
-
-		WorkGroup workGroup = threadService.find(actor, actor, dto.getThreadUuid());
+		WorkGroup workGroup = threadService.find(authUser, authUser, dto.getThreadUuid());
 		User user = (User) accountService.findByLsUuid(dto.getUserUuid());
 		if (user == null) {
 			user = userService.findOrCreateUser(dto.getUserMail(),
@@ -89,28 +88,27 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		}
 		boolean admin = dto.isAdmin();
 		boolean canUpload = !dto.isReadonly();
-
-		return new WorkGroupMemberDto(threadService.addMember(actor, actor, workGroup, user, admin, canUpload));
+		return new WorkGroupMemberDto(threadService.addMember(authUser, authUser, workGroup, user, admin, canUpload));
 	}
 
 	@Override
 	public WorkGroupMemberDto update(WorkGroupMemberDto dto) throws BusinessException {
-		User actor = checkAuthentication(Role.SUPERADMIN);
+		User authUser = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(dto, "thread member must be set.");
 		Validate.notNull(dto.getThreadUuid(), "thread uuid must be set.");
 		Validate.notNull(dto.getUserUuid(), "user uuid must be set.");
 		boolean admin = dto.isAdmin();
 		boolean readonly = dto.isReadonly();
-		return new WorkGroupMemberDto(threadService.updateMember(actor, actor, dto.getThreadUuid(), dto.getUserUuid(), admin, !readonly));
+		return new WorkGroupMemberDto(threadService.updateMember(authUser, authUser, dto.getThreadUuid(), dto.getUserUuid(), admin, !readonly));
 	}
 
 	@Override
 	public WorkGroupMemberDto delete(WorkGroupMemberDto dto) throws BusinessException {
-		User actor = checkAuthentication(Role.SUPERADMIN);
+		User authUser = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(dto, "thread member must be set.");
 		Validate.notNull(dto.getThreadUuid(), "thread uuid must be set.");
 		Validate.notNull(dto.getUserUuid(), "user uuid must be set.");
-		WorkgroupMember member = this.threadService.deleteMember(actor, actor, dto.getThreadUuid(), dto.getUserUuid());
+		WorkgroupMember member = this.threadService.deleteMember(authUser, authUser, dto.getThreadUuid(), dto.getUserUuid());
 		return new WorkGroupMemberDto(member);
 	}
 }

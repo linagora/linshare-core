@@ -60,8 +60,8 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("{ownerUuid}/share_entry_group")
-@Api(value = "/rest/delegation/{ownerUuid}/share_entry_group", basePath = "/rest/share_entry_group", description = "share entries group delegation service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
+@Path("{actorUuid}/share_entry_group")
+@Api(value = "/rest/delegation/{actorUuid}/share_entry_group", basePath = "/rest/share_entry_group", description = "share entries group delegation service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class ShareEntryGroupRestServiceImpl implements ShareEntryGroupRestService {
@@ -79,9 +79,9 @@ public class ShareEntryGroupRestServiceImpl implements ShareEntryGroupRestServic
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public List<ShareEntryGroupDto> findAll(
-			@ApiParam(value = "Share entry group's owner uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "Share entry group's actor uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@QueryParam("full") @DefaultValue("false") boolean full) throws BusinessException {
-		return shareEntryGroupFacade.findAll(ownerUuid, full);
+		return shareEntryGroupFacade.findAll(actorUuid, full);
 	}
 
 	@Path("/{uuid}")
@@ -93,10 +93,10 @@ public class ShareEntryGroupRestServiceImpl implements ShareEntryGroupRestServic
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public ShareEntryGroupDto find(
-			@ApiParam(value = "Share entry group's owner uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "Share entry group's actor uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "Share entry group's uuid to find.", required = true) @PathParam("uuid") String uuid,
 			@QueryParam("full") @DefaultValue("false") boolean full) throws BusinessException {
-		return shareEntryGroupFacade.find(ownerUuid, uuid, full);
+		return shareEntryGroupFacade.find(actorUuid, uuid, full);
 	}
 
 	@Path("/{uuid}")
@@ -108,10 +108,10 @@ public class ShareEntryGroupRestServiceImpl implements ShareEntryGroupRestServic
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public void head(
-			@ApiParam(value = "Share entry group's owner uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "Share entry group's actor uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "Share entry group's uuid to find.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		shareEntryGroupFacade.find(ownerUuid, uuid, false);
+		shareEntryGroupFacade.find(actorUuid, uuid, false);
 	}
 
 	@Path("/{uuid}")
@@ -123,10 +123,10 @@ public class ShareEntryGroupRestServiceImpl implements ShareEntryGroupRestServic
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public ShareEntryGroupDto update(
-			@ApiParam(value = "Share entry group's owner uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "Share entry group's actor uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "Share entry group to update.", required = true) @PathParam("shareEntryGroupDto") ShareEntryGroupDto shareEntryGroupDto)
 					throws BusinessException {
-		return shareEntryGroupFacade.update(ownerUuid, shareEntryGroupDto);
+		return shareEntryGroupFacade.update(actorUuid, shareEntryGroupDto);
 	}
 
 	@Path("/{uuid}")
@@ -138,10 +138,10 @@ public class ShareEntryGroupRestServiceImpl implements ShareEntryGroupRestServic
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public ShareEntryGroupDto delete(
-			@ApiParam(value = "Share entry group's owner uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "Share entry group's actor uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "Share entry group's uuid to delete.", required = true) @PathParam("uuid") String uuid)
 					throws BusinessException {
-		return shareEntryGroupFacade.delete(ownerUuid, uuid);
+		return shareEntryGroupFacade.delete(actorUuid, uuid);
 	}
 
 	@Path("/")
@@ -153,10 +153,10 @@ public class ShareEntryGroupRestServiceImpl implements ShareEntryGroupRestServic
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public ShareEntryGroupDto delete(
-			@ApiParam(value = "Share entry group's owner uuid.", required = true) @PathParam("ownerUuid") String ownerUuid,
+			@ApiParam(value = "Share entry group's actor uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "Share entry group to delete.", required = true) @PathParam("uuid") ShareEntryGroupDto shareEntryGroupDto)
 					throws BusinessException {
 		Validate.notNull(shareEntryGroupDto);
-		return shareEntryGroupFacade.delete(ownerUuid, shareEntryGroupDto.getUuid());
+		return shareEntryGroupFacade.delete(actorUuid, shareEntryGroupDto.getUuid());
 	}
 }

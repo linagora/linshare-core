@@ -45,30 +45,30 @@ import org.linagora.linshare.core.facade.webservice.delegation.dto.DocumentDto;
 
 public interface DocumentFacade extends DelegationGenericFacade {
 
-	List<DocumentDto> findAll(String ownerUuid) throws BusinessException;
+	List<DocumentDto> findAll(String actorUuid) throws BusinessException;
 
-	DocumentDto find(String ownerUuid, String documentUuid)
+	DocumentDto find(String actorUuid, String documentUuid)
 			throws BusinessException;
 
-	DocumentDto create(String ownerUuid, File file,
+	DocumentDto create(String actorUuid, File file,
 			String description, String givenFileName) throws BusinessException;
 
-	DocumentDto update(String ownerUuid, String documentUuid,
+	DocumentDto update(String actorUuid, String documentUuid,
 			DocumentDto documentDto) throws BusinessException;
 
-	DocumentDto updateFile(String ownerUuid, String documentUuid,
+	DocumentDto updateFile(String actorUuid, String documentUuid,
 			File file, String givenFileName)
 			throws BusinessException;
 
-	DocumentDto delete(String ownerUuid, DocumentDto documentDto)
+	DocumentDto delete(String actorUuid, DocumentDto documentDto)
 			throws BusinessException;
 
-	DocumentDto delete(String ownerUuid, String documentUuid) throws BusinessException;
+	DocumentDto delete(String actorUuid, String documentUuid) throws BusinessException;
 
-	Response download(String ownerUuid, String documentUuuid)
+	Response download(String actorUuid, String documentUuuid)
 			throws BusinessException;
 
-	Response thumbnail(String ownerUuid, String documentUuuid, ThumbnailType kind)
+	Response thumbnail(String actorUuid, String documentUuuid, ThumbnailType kind)
 			throws BusinessException;
 
 }

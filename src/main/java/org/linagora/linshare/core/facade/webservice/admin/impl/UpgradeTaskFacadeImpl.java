@@ -60,16 +60,16 @@ public class UpgradeTaskFacadeImpl extends AdminGenericFacadeImpl implements Upg
 	@Override
 	public UpgradeTaskDto find(UpgradeTaskType identifier) throws BusinessException {
 		Validate.notNull(identifier, "Missing upgrade task uuid");
-		User root = checkAuthentication(Role.SUPERADMIN);
-		UpgradeTask task = service.find(root, identifier);
+		User authUser = checkAuthentication(Role.SUPERADMIN);
+		UpgradeTask task = service.find(authUser, identifier);
 		return new UpgradeTaskDto(task);
 	}
 
 	@Override
 	public List<UpgradeTaskDto> findAll() throws BusinessException {
-		User root = checkAuthentication(Role.SUPERADMIN);
+		User authUser = checkAuthentication(Role.SUPERADMIN);
 		List<UpgradeTaskDto> res = Lists.newArrayList();
-		List<UpgradeTask> all = service.findAll(root);
+		List<UpgradeTask> all = service.findAll(authUser);
 		for (UpgradeTask task : all) {
 			res.add(new UpgradeTaskDto(task));
 		}
@@ -79,11 +79,11 @@ public class UpgradeTaskFacadeImpl extends AdminGenericFacadeImpl implements Upg
 	@Override
 	public UpgradeTaskDto update(UpgradeTaskDto upgradeTaskDto) throws BusinessException {
 		Validate.notNull(upgradeTaskDto, "Missing upgrade task");
-		User root = checkAuthentication(Role.SUPERADMIN);
-		UpgradeTask task = service.find(root, upgradeTaskDto.getIdentifier());
+		User authUser = checkAuthentication(Role.SUPERADMIN);
+		UpgradeTask task = service.find(authUser, upgradeTaskDto.getIdentifier());
 		task.setAsyncTaskUuid(upgradeTaskDto.getAsyncTaskUuid());
 		task.setStatus(upgradeTaskDto.getStatus());
-		return new UpgradeTaskDto(service.update(root, task));
+		return new UpgradeTaskDto(service.update(authUser, task));
 	}
 
 }

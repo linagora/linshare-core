@@ -57,17 +57,17 @@ public class MimeTypeFacadeImpl extends AdminGenericFacadeImpl implements
 
 	@Override
 	public MimeTypeDto find(String uuid) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(uuid, "MimeType uuid must be set.");
-		return new MimeTypeDto(mimeTypeService.find(actor, uuid));
+		return new MimeTypeDto(mimeTypeService.find(authUser, uuid));
 	}
 
 	@Override
 	public MimeTypeDto update(MimeTypeDto dto) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notNull(dto, "MimeType dto must be set.");
 		Validate.notEmpty(dto.getUuid(), "MimeType uuid must be set.");
-		MimeType MimeType = mimeTypeService.update(actor, new MimeType(dto));
+		MimeType MimeType = mimeTypeService.update(authUser, new MimeType(dto));
 		return new MimeTypeDto(MimeType);
 	}
 
