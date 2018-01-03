@@ -33,8 +33,12 @@
  */
 package org.linagora.linshare.mongo.repository;
 
+import java.util.Date;
+import java.util.List;
+
 import org.linagora.linshare.mongo.entities.ResetGuestPassword;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 
 public interface ResetGuestPasswordMongoRepository extends MongoRepository<ResetGuestPassword, String> {
 
@@ -45,5 +49,7 @@ public interface ResetGuestPasswordMongoRepository extends MongoRepository<Reset
 	 * @return ResetGuestPassword
 	 */
 	ResetGuestPassword findByUuid(String uuid);
-
+	
+	@Query("{ 'alreadyUsed' : false, 'guestUuid' : ?0, 'expirationDate' : { '$gt' : '?1'}}")
+	List<ResetGuestPassword> findByGuestNotUsed(String guestUuid, Date currentDate);
 }

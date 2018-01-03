@@ -64,7 +64,6 @@ import org.linagora.linshare.core.notifications.context.GuestAccountNewCreationE
 import org.linagora.linshare.core.notifications.context.GuestAccountResetPasswordEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.GuestResourceAccessControl;
-import org.linagora.linshare.core.repository.InternalRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.GuestService;
@@ -385,6 +384,13 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		Validate.notEmpty(lsUuid);
 		// TODO : create a log entry for this action
 		Guest guest = retrieveGuest(lsUuid);
+		List<ResetGuestPassword> tokensNotUsed = resetGuestPasswordMongoRepository.findByGuestNotUsed(guest.getLsUuid(), new Date());
+		if (!tokensNotUsed.isEmpty()) {
+			tokensNotUsed.forEach(t -> {
+				t.setAlreadyUsed(true);
+				resetGuestPasswordMongoRepository.save(t);
+			});
+		}
 		ResetGuestPassword resetGuestPassword = resetGuestPasswordMongoRepository.insert(new ResetGuestPassword(guest));
 		resetGuestPassword.setKind(ResetTokenKind.RESET_PASSWORD);
 		UserAuditLogEntry userAuditLogEntry = new UserAuditLogEntry(guest, guest, LogAction.CREATE,
@@ -411,6 +417,13 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		}
 		// TODO: find if there is already a valid token for this guest, and
 		// reuse it if not expired.
+		List<ResetGuestPassword> tokensNotUsed = resetGuestPasswordMongoRepository.findByGuestNotUsed(guest.getLsUuid(), new Date());
+		if (!tokensNotUsed.isEmpty()) {
+			tokensNotUsed.forEach(t -> {
+				t.setAlreadyUsed(true);
+				resetGuestPasswordMongoRepository.save(t);
+			});
+		}
 		ResetGuestPassword resetGuestPassword = new ResetGuestPassword(guest);
 		resetGuestPassword.setKind(ResetTokenKind.RESET_PASSWORD);
 		resetGuestPassword = resetGuestPasswordMongoRepository.insert(resetGuestPassword);
