@@ -256,7 +256,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		Thread workGroup = threadService.find(actor, owner, workGroupUuid);
 		FileAndMetaData data = service.thumbnail(actor, owner, workGroup, workGroupNodeUuid, thumbnailType);
 		ResponseBuilder builder = DocumentStreamReponseBuilder
-				.getThumbnailResponseBuilder(data, base64);
+				.getThumbnailResponseBuilder(data, base64, thumbnailType);
 		return builder.build();
 	}
 

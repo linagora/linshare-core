@@ -209,7 +209,7 @@ public class WorkGroupEntryFacadeImpl extends DelegationGenericFacadeImpl
 		Thread workGroup = threadService.find(actor, owner, threadEntryUuid);
 		FileAndMetaData data = workGroupNodeService.thumbnail(actor, owner, workGroup, threadEntryUuid, kind);
 		ResponseBuilder builder = DocumentStreamReponseBuilder
-				.getThumbnailResponseBuilder(data, false);
+				.getThumbnailResponseBuilder(data, false, kind);
 		return builder.build();
 	}
 

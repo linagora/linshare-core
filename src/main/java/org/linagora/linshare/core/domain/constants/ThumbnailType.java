@@ -111,4 +111,11 @@ public enum ThumbnailType {
 		return ".png";
 	}
 
+	public static String getFileMimeType(ThumbnailType kind) {
+		if (ThumbnailType.PDF.equals(kind)) {
+			return "application/pdf";
+		}
+		return "image/png";
+	}
+
 }

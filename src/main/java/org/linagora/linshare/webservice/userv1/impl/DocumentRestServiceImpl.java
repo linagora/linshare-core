@@ -319,7 +319,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 		DocumentDto documentDto = documentFacade.find(documentUuid, false);
 		InputStream documentStream = documentFacade.getThumbnailStream(documentUuid, ThumbnailType.MEDIUM);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(documentStream,
-				documentDto.getName() + "_thumb.png", base64);
+				documentDto.getName() + "_thumb.png", base64, ThumbnailType.MEDIUM);
 		return response.build();
 	}
 

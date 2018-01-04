@@ -43,6 +43,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.utils.FileAndMetaData;
@@ -57,18 +58,18 @@ public class DocumentStreamReponseBuilder {
 		return getDocumentResponseBuilder(inputStream, fileName, mimeType, null);
 	}
 
-	public static ResponseBuilder getThumbnailResponseBuilder(FileAndMetaData data, boolean base64) {
-		return getThumbnailResponseBuilder(data.getStream(), data.getName() + "_thumb.png", base64);
+	public static ResponseBuilder getThumbnailResponseBuilder(FileAndMetaData data, boolean base64, ThumbnailType kind) {
+		return getThumbnailResponseBuilder(data.getStream(), data.getName() + ThumbnailType.getFileType(kind), base64, kind);
 	}
 
-	public static ResponseBuilder getThumbnailResponseBuilder(InputStream inputStream, String fileName, boolean base64) {
+	public static ResponseBuilder getThumbnailResponseBuilder(InputStream inputStream, String fileName, boolean base64, ThumbnailType kind) {
 		ResponseBuilder response = null;
 		if (base64) {
 			response = getDocumentResponseBuilderBase64(inputStream, fileName,
-					"image/png", null);
+					ThumbnailType.getFileMimeType(kind), null);
 		} else {
 			response = getDocumentResponseBuilder(inputStream, fileName,
-					"image/png", null);
+					ThumbnailType.getFileMimeType(kind), null);
 		}
 		return response;
 	}

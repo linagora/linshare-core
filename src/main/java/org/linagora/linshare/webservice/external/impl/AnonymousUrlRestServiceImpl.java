@@ -148,7 +148,7 @@ public class AnonymousUrlRestServiceImpl implements AnonymousUrlRestService{
 		InputStream documentStream = anonymousUrlFacade.getThumbnail(anonymousUrlUuid, shareEntryUuid, password,
 				thumbnailType);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(documentStream,
-				shareEntry.getName(), base64);
+				shareEntry.getName(), base64, thumbnailType);
 		return response.build();
 	}
 

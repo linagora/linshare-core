@@ -138,7 +138,7 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 		ShareDto receivedShareDto = shareFacade.getReceivedShare(receivedShareUuid);
 		InputStream receivedShareStream = shareFacade.getThumbnailStream(receivedShareUuid, ThumbnailType.MEDIUM);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(receivedShareStream,
-				receivedShareDto.getName() + "_thumb.png", base64);
+				receivedShareDto.getName() + "_thumb.png", base64, ThumbnailType.MEDIUM);
 		return response.build();
 	}
 

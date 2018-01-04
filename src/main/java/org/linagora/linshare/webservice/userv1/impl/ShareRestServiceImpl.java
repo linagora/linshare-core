@@ -130,7 +130,7 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 		ShareDto shareDto = webServiceShareFacade.getShare(shareUuid);
 		InputStream documentStream = webServiceShareFacade.getThumbnailStream(shareUuid, ThumbnailType.MEDIUM);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(documentStream,
-				shareDto.getName() + "_thumb.png", base64);
+				shareDto.getName() + "_thumb.png", base64, ThumbnailType.MEDIUM);
 		return response.build();
 	}
 
