@@ -24,7 +24,7 @@
 		</fileSet>
 		<fileSet>
 			<directory>${project.basedir}/target/generated-sources</directory>
-			<outputDirectory>linshare-core-sql</outputDirectory>
+			<outputDirectory>linshare-core-sql/postgresql</outputDirectory>
 			<excludes>
 				<exclude>annotations/**</exclude>
 			</excludes>
