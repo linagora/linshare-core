@@ -579,7 +579,9 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		for (ThumbnailType kind : ThumbnailType.values()) {
 			try {
 				tempThumbFile = getFileCopyThumbnail(srcDocument, owner, kind);
-				thumbnailMetaData.put(kind, storeThumbnail(tempThumbFile, metadata));
+				if (tempThumbFile != null) {
+					thumbnailMetaData.put(kind, storeThumbnail(tempThumbFile, metadata));
+				}
 			} catch (Exception e) {
 				logger.error("Copy thumbnail failed");
 				logger.error(e.getMessage(), e);
