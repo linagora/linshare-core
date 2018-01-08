@@ -77,9 +77,9 @@
 		</many-to-one>
 
 		<subclass name="org.linagora.linshare.core.domain.entities.User" discriminator-value="1" lazy="false">
-			<set name="myThreads" lazy="true" cascade="save-update,lock" inverse="true">
+			<set name="myWorkgroupMembers" lazy="true" cascade="save-update,lock" inverse="true">
 				<key column="user_id" not-null="true"/>
-				<one-to-many class="org.linagora.linshare.core.domain.entities.ThreadMember"/>
+				<one-to-many class="org.linagora.linshare.core.domain.entities.WorkgroupMember"/>
 			</set>
 			<subclass name="org.linagora.linshare.core.domain.entities.Internal" discriminator-value="2" lazy="false">
 				<join table="users">
@@ -146,7 +146,7 @@
 		<subclass name="org.linagora.linshare.core.domain.entities.Thread" discriminator-value="5" lazy="false">
 			<set name="myMembers" lazy="true" cascade="save-update,lock" inverse="true">
 				<key column="thread_id" not-null="true"/>
-				<one-to-many class="org.linagora.linshare.core.domain.entities.ThreadMember"/>
+				<one-to-many class="org.linagora.linshare.core.domain.entities.WorkgroupMember"/>
 			</set>
 			<join table="thread">
 				<key>

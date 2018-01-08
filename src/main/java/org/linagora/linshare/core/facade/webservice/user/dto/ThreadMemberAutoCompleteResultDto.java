@@ -36,7 +36,7 @@ package org.linagora.linshare.core.facade.webservice.user.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
 
 import com.wordnik.swagger.annotations.ApiModel;
@@ -80,7 +80,7 @@ public class ThreadMemberAutoCompleteResultDto extends AutoCompleteResultDto {
 		this.userUuid = user.getLsUuid();
 	}
 
-	public ThreadMemberAutoCompleteResultDto(ThreadMember member) {
+	public ThreadMemberAutoCompleteResultDto(WorkgroupMember member) {
 		super(member.getUser().getLsUuid(), member.getUser().getMail());
 		this.firstName = member.getUser().getFirstName();
 		this.lastName = member.getUser().getLastName();

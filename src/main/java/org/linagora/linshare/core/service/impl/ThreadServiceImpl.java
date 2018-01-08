@@ -47,7 +47,7 @@ import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -173,12 +173,12 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		checkCreatePermission(actor, owner, Thread.class,
 				BusinessErrorCode.THREAD_FORBIDDEN, null);
 		Thread thread = null;
-		ThreadMember member = null;
+		WorkgroupMember member = null;
 		logger.debug("User " + owner.getAccountRepresentation() + " trying to create new thread named " + name);
 		thread = new Thread(owner.getDomain(), owner, name);
 		threadRepository.create(thread);
 		createQuotaThread(thread);
-		member = new ThreadMember(true, true, (User) owner, thread);
+		member = new WorkgroupMember(true, true, (User) owner, thread);
 		thread.getMyMembers().add(member);
 		thread = threadRepository.update(thread);
 		// workgroup creation
@@ -193,27 +193,27 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 	}
 
 	@Override
-	public ThreadMember getThreadMemberById(long id) throws BusinessException {
+	public WorkgroupMember getThreadMemberById(long id) throws BusinessException {
 		return threadMemberRepository.findById(id);
 	}
 
 	@Override
-	public ThreadMember getMemberFromUser(Thread thread, User user) throws BusinessException {
+	public WorkgroupMember getMemberFromUser(Thread thread, User user) throws BusinessException {
 		return threadMemberRepository.findUserThreadMember(thread, user);
 	}
 
 	@Override
-	public List<ThreadMember> findAllThreadMembers(Account actor, User owner,
+	public List<WorkgroupMember> findAllThreadMembers(Account actor, User owner,
 			Thread thread) throws BusinessException {
-		threadMemberAC.checkListPermission(actor, owner, ThreadMember.class,
+		threadMemberAC.checkListPermission(actor, owner, WorkgroupMember.class,
 				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN, null, thread);
 		return threadMemberRepository.findAllThreadMembers(thread);
 	}
 
 	@Override
-	public List<ThreadMember> findAllInconsistentMembers(Account actor, User owner,
+	public List<WorkgroupMember> findAllInconsistentMembers(Account actor, User owner,
 			Thread thread) throws BusinessException {
-		threadMemberAC.checkListPermission(actor, owner, ThreadMember.class,
+		threadMemberAC.checkListPermission(actor, owner, WorkgroupMember.class,
 				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN, null, thread);
 		return threadMemberRepository.findAllInconsistentThreadMembers(thread);
 	}
@@ -249,11 +249,11 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 	}
 
 	@Override
-	public ThreadMember addMember(Account actor, Account owner, Thread thread,
+	public WorkgroupMember addMember(Account actor, Account owner, Thread thread,
 			User user, boolean admin, boolean canUpload)
 			throws BusinessException {
-		ThreadMember member = new ThreadMember(canUpload, admin, user, thread);
-		threadMemberAC.checkCreatePermission(actor, owner, ThreadMember.class,
+		WorkgroupMember member = new WorkgroupMember(canUpload, admin, user, thread);
+		threadMemberAC.checkCreatePermission(actor, owner, WorkgroupMember.class,
 				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN, member, thread);
 		if (getMemberFromUser(thread, user) != null) {
 			logger.warn("The current " + user.getAccountRepresentation()
@@ -275,20 +275,20 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 	}
 
 	@Override
-	public ThreadMember updateMember(Account actor, Account owner, String threadUuid, String userUuid,
+	public WorkgroupMember updateMember(Account actor, Account owner, String threadUuid, String userUuid,
 			boolean admin, boolean canUpload)
 			throws BusinessException {
 		Thread thread = find(actor, owner, threadUuid);
 		User user = getUserMember(userUuid);
-		ThreadMember member = getMemberFromUser(thread, user);
-		threadMemberAC.checkUpdatePermission(actor, owner, ThreadMember.class,
+		WorkgroupMember member = getMemberFromUser(thread, user);
+		threadMemberAC.checkUpdatePermission(actor, owner, WorkgroupMember.class,
 				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN, member);
 		ThreadMemberAuditLogEntry log = new ThreadMemberAuditLogEntry(actor, owner, LogAction.UPDATE,
 				AuditLogEntryType.WORKGROUP_MEMBER, member);
 		addMembersToLog(thread, log);
 		member.setAdmin(admin);
 		member.setCanUpload(canUpload);
-		ThreadMember res = threadMemberRepository.update(member);
+		WorkgroupMember res = threadMemberRepository.update(member);
 		log.setResourceUpdated(new ThreadMemberMto(res));
 		logEntryService.insert(log);
 		WorkGroupWarnUpdatedMemberEmailContext context = new WorkGroupWarnUpdatedMemberEmailContext(member, owner);
@@ -298,16 +298,16 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 	}
 
 	@Override
-	public ThreadMember deleteMember(Account actor, Account owner, String threadUuid,
+	public WorkgroupMember deleteMember(Account actor, Account owner, String threadUuid,
 			String userUuid) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(userUuid);
 		Validate.notEmpty(threadUuid);
 		Thread thread = find(actor, owner, threadUuid);
 		User user = getUserMember(userUuid);
-		ThreadMember member = getMemberFromUser(thread,
+		WorkgroupMember member = getMemberFromUser(thread,
 				user);
-		threadMemberAC.checkDeletePermission(actor, owner, ThreadMember.class,
+		threadMemberAC.checkDeletePermission(actor, owner, WorkgroupMember.class,
 				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN, member);
 		thread.getMyMembers().remove(member);
 		threadRepository.update(thread);
@@ -345,9 +345,9 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		for (Object threadMember : myMembers) {
 			thread.getMyMembers().remove(threadMember);
 			threadRepository.update(thread);
-			threadMemberRepository.delete((ThreadMember) threadMember);
+			threadMemberRepository.delete((WorkgroupMember) threadMember);
 			ThreadMemberAuditLogEntry log = new ThreadMemberAuditLogEntry(actor, actor, LogAction.DELETE,
-					AuditLogEntryType.WORKGROUP_MEMBER, (ThreadMember) threadMember);
+					AuditLogEntryType.WORKGROUP_MEMBER, (WorkgroupMember) threadMember);
 			addMembersToLog(thread, log);
 			audits.add(log);
 		}
@@ -357,9 +357,9 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 	@Override
 	public void deleteAllUserMemberships(Account actor, User user)
 			throws BusinessException {
-		List<ThreadMember> memberships = threadMemberRepository
+		List<WorkgroupMember> memberships = threadMemberRepository
 				.findAllUserMemberships(user);
-		for (ThreadMember threadMember : memberships) {
+		for (WorkgroupMember threadMember : memberships) {
 			deleteMember(actor, actor, threadMember.getThread().getLsUuid(),
 					threadMember.getUser().getLsUuid());
 		}

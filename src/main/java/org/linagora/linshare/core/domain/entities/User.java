@@ -45,7 +45,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 
 public abstract class User extends Account {
 
-	protected Set<ThreadMember> myThreads = new java.util.HashSet<ThreadMember>();
+	protected Set<WorkgroupMember> myWorkgroupMembers = new java.util.HashSet<WorkgroupMember>();
 
 	protected String firstName;
 
@@ -201,12 +201,12 @@ public abstract class User extends Account {
 		return false;
 	}
 
-	public Set<ThreadMember> getMyThreads() {
-		return myThreads;
+	public Set<WorkgroupMember> getMyWorkgroupMembers() {
+		return myWorkgroupMembers;
 	}
 
-	public void setMyThreads(Set<ThreadMember> myThreads) {
-		this.myThreads = myThreads;
+	public void setMyWorkgroupMembers(Set<WorkgroupMember> myWorkgroupMembers) {
+		this.myWorkgroupMembers = myWorkgroupMembers;
 	}
 
 	public Boolean getCanCreateGuest() {

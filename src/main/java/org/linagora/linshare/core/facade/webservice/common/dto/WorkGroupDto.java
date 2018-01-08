@@ -40,7 +40,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Sets;
@@ -67,11 +67,11 @@ public class WorkGroupDto extends AccountDto {
 		this.name = thread.getName();
 	}
 
-	public WorkGroupDto(Thread thread, List<ThreadMember> members) {
+	public WorkGroupDto(Thread thread, List<WorkgroupMember> members) {
 		super(thread, true);
 		this.name = thread.getName();
 		this.members = Sets.newHashSet();
-		for (ThreadMember member : members) {
+		for (WorkgroupMember member : members) {
 			this.members.add(new WorkGroupMemberDto(member));
 		}
 	}

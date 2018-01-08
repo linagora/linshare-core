@@ -52,7 +52,7 @@ import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.TechnicalAccount;
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
@@ -402,11 +402,11 @@ public class GuestServiceImplTest extends
 		Assert.assertNotNull(find);
 
 		Thread thread = threadService.create(technicalAccount, owner1, "FirstWorkGroup");
-		Set<ThreadMember> threadMembers = thread.getMyMembers();
-		Assert.assertNotNull(threadMembers);
-		ThreadMember threadMember = threadService.updateMember(technicalAccount, owner1, thread.getLsUuid(), owner1.getLsUuid(), false, false);
-		Assert.assertFalse(threadMember.getAdmin());
-		Assert.assertFalse(threadMember.getCanUpload());
+		Set<WorkgroupMember> workgroupMembers = thread.getMyMembers();
+		Assert.assertNotNull(workgroupMembers);
+		WorkgroupMember workgroupMember = threadService.updateMember(technicalAccount, owner1, thread.getLsUuid(), owner1.getLsUuid(), false, false);
+		Assert.assertFalse(workgroupMember.getAdmin());
+		Assert.assertFalse(workgroupMember.getCanUpload());
 	}
 
 }

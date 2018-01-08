@@ -39,7 +39,7 @@ import java.util.List;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.MailConfig;
-import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -61,7 +61,7 @@ public class WorkGroupWarnUpdatedMemberEmailBuilder extends EmailBuilder {
 	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
 		WorkGroupWarnUpdatedMemberEmailContext emailCtx = (WorkGroupWarnUpdatedMemberEmailContext) context;
 
-		ThreadMember workGroupMember = emailCtx.getThreadMember();
+		WorkgroupMember workGroupMember = emailCtx.getWorkgroupMember();
 		User member = workGroupMember.getUser();
 		User owner = (User) emailCtx.getOwner();
 		String linshareURL = getLinShareUrl(member);
@@ -84,7 +84,7 @@ public class WorkGroupWarnUpdatedMemberEmailBuilder extends EmailBuilder {
 	protected List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
 		Context ctx = newFakeContext(language);
-		ThreadMember workGroupMember = getNewFakeThreadMember("work_group_name-1");
+		WorkgroupMember workGroupMember = getNewFakeThreadMember("work_group_name-1");
 		workGroupMember.setAdmin(true);
 		ctx.setVariable("member", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
 		ctx.setVariable("owner", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));

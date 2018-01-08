@@ -30,7 +30,7 @@
 		<mapping resource="org/linagora/linshare/core/domain/entities/DomainAccessPolicy.hbm.xml"/>
 		<mapping resource="org/linagora/linshare/core/domain/entities/DomainPolicy.hbm.xml"/>
 		<mapping resource="org/linagora/linshare/core/domain/entities/Account.hbm.xml"/>
-		<mapping resource="org/linagora/linshare/core/domain/entities/ThreadMember.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/WorkgroupMember.hbm.xml"/>
 		<mapping resource="org/linagora/linshare/core/domain/entities/LdapAttribute.hbm.xml"/>
 		<mapping resource="org/linagora/linshare/core/domain/entities/TechnicalAccountPermission.hbm.xml"/>
 		<mapping resource="org/linagora/linshare/core/domain/entities/AccountPermission.hbm.xml"/>

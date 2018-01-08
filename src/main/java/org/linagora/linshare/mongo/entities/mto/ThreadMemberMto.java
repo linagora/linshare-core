@@ -33,7 +33,7 @@
  */
 package org.linagora.linshare.mongo.entities.mto;
 
-import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupLightDto;
 
 public class ThreadMemberMto {
@@ -49,7 +49,7 @@ public class ThreadMemberMto {
 	public ThreadMemberMto() {
 	}
 
-	public ThreadMemberMto(ThreadMember member) {
+	public ThreadMemberMto(WorkgroupMember member) {
 		this.workGroup = new WorkGroupLightDto(member.getThread());
 		this.user = new AccountMto(member.getUser(), true);
 		this.canUpload = member.getCanUpload();

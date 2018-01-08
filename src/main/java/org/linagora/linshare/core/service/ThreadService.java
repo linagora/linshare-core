@@ -37,7 +37,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -49,11 +49,11 @@ public interface ThreadService {
 
 	Thread create(Account actor, Account owner, String name) throws BusinessException;
 	
-	ThreadMember getThreadMemberById(long id) throws BusinessException;
+	WorkgroupMember getThreadMemberById(long id) throws BusinessException;
 	
-	ThreadMember getMemberFromUser(Thread thread, User user) throws BusinessException;
+	WorkgroupMember getMemberFromUser(Thread thread, User user) throws BusinessException;
 
-	List<ThreadMember> findAllThreadMembers(Account actor, User owner, Thread thread) throws BusinessException;
+	List<WorkgroupMember> findAllThreadMembers(Account actor, User owner, Thread thread) throws BusinessException;
 
 	List<Thread> findAllWhereMember(User user);
 	
@@ -69,11 +69,11 @@ public interface ThreadService {
 
 	long countMembers(Thread thread);
 
-	ThreadMember addMember(Account actor, Account owner, Thread thread, User user, boolean admin, boolean canUpload) throws BusinessException;
+	WorkgroupMember addMember(Account actor, Account owner, Thread thread, User user, boolean admin, boolean canUpload) throws BusinessException;
 
-	ThreadMember updateMember(Account actor, Account owner, String threadUuid, String userUuid, boolean admin, boolean canUpload) throws BusinessException;
+	WorkgroupMember updateMember(Account actor, Account owner, String threadUuid, String userUuid, boolean admin, boolean canUpload) throws BusinessException;
 
-	ThreadMember deleteMember(Account actor, Account owner, String threadUuid, String memberUuid) throws BusinessException;
+	WorkgroupMember deleteMember(Account actor, Account owner, String threadUuid, String memberUuid) throws BusinessException;
 
 	void deleteAllMembers(Account actor, Thread thread) throws BusinessException;
 
@@ -89,5 +89,5 @@ public interface ThreadService {
 
 	Thread findByLsUuidUnprotected(String uuid);
 
-	List<ThreadMember> findAllInconsistentMembers(Account actor, User owner, Thread thread);
+	List<WorkgroupMember> findAllInconsistentMembers(Account actor, User owner, Thread thread);
 }

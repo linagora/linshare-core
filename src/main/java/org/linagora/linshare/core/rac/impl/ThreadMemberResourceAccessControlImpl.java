@@ -37,14 +37,14 @@ package org.linagora.linshare.core.rac.impl;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.rac.ThreadMemberResourceAccessControl;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 
 public class ThreadMemberResourceAccessControlImpl extends
-		AbstractResourceAccessControlImpl<Account, Account, ThreadMember>
+		AbstractResourceAccessControlImpl<Account, Account, WorkgroupMember>
 		implements ThreadMemberResourceAccessControl {
 
 	private final ThreadMemberRepository threadMemberRepository;
@@ -58,7 +58,7 @@ public class ThreadMemberResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasReadPermission(Account actor, Account owner,
-			ThreadMember entry, Object... opt) {
+			WorkgroupMember entry, Object... opt) {
 		if (actor.hasAllRights()) {
 			return true;
 		}
@@ -72,7 +72,7 @@ public class ThreadMemberResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasListPermission(Account actor, Account owner,
-			ThreadMember entry, Object... opt) {
+			WorkgroupMember entry, Object... opt) {
 		if (actor.hasAllRights()) {
 			return true;
 		}
@@ -89,7 +89,7 @@ public class ThreadMemberResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasDeletePermission(Account actor, Account owner,
-			ThreadMember entry, Object... opt) {
+			WorkgroupMember entry, Object... opt) {
 		if (actor.hasAllRights()) {
 			return true;
 		}
@@ -97,7 +97,7 @@ public class ThreadMemberResourceAccessControlImpl extends
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.THREAD_MEMBERS_DELETE);
 		}
-		ThreadMember member = threadMemberRepository.findUserThreadMember(
+		WorkgroupMember member = threadMemberRepository.findUserThreadMember(
 				entry.getThread(), (User) owner);
 		if (member != null) {
 			return member.getAdmin();
@@ -107,7 +107,7 @@ public class ThreadMemberResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasCreatePermission(Account actor, Account owner,
-			ThreadMember entry, Object... opt) {
+			WorkgroupMember entry, Object... opt) {
 		if (actor.hasAllRights()) {
 			return true;
 		}
@@ -118,7 +118,7 @@ public class ThreadMemberResourceAccessControlImpl extends
 		// entry is the object to be created. Can not be used to check if the
 		// current owner is admin.
 		if (opt.length > 0 && opt[0] instanceof Thread) {
-			ThreadMember member = threadMemberRepository.findUserThreadMember(
+			WorkgroupMember member = threadMemberRepository.findUserThreadMember(
 					(Thread) opt[0], (User) owner);
 			if (member != null) {
 				return member.getAdmin();
@@ -129,7 +129,7 @@ public class ThreadMemberResourceAccessControlImpl extends
 
 	@Override
 	protected boolean hasUpdatePermission(Account actor, Account owner,
-			ThreadMember entry, Object... opt) {
+			WorkgroupMember entry, Object... opt) {
 		if (actor.hasAllRights()) {
 			return true;
 		}
@@ -137,7 +137,7 @@ public class ThreadMemberResourceAccessControlImpl extends
 			return hasPermission(actor,
 					TechnicalAccountPermissionType.THREAD_MEMBERS_UPDATE);
 		}
-		ThreadMember member = threadMemberRepository.findUserThreadMember(
+		WorkgroupMember member = threadMemberRepository.findUserThreadMember(
 				entry.getThread(), (User) owner);
 		if (member != null) {
 			return member.getAdmin();
@@ -146,7 +146,7 @@ public class ThreadMemberResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected String getEntryRepresentation(ThreadMember entry) {
+	protected String getEntryRepresentation(WorkgroupMember entry) {
 		return '(' + entry.getThread().getLsUuid() + ':'
 				+ entry.getUser().getLsUuid() + ')';
 	}

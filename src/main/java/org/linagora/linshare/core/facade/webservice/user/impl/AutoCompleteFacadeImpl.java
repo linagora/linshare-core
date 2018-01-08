@@ -44,7 +44,7 @@ import org.linagora.linshare.core.domain.constants.VisibilityType;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -152,7 +152,7 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 				int range = (users.size() < AUTO_COMPLETE_LIMIT ? users.size() : AUTO_COMPLETE_LIMIT);
 				for (User user : users.subList(0, range)) {
 					User account = userService.findOrCreateUser(user.getMail(), user.getDomainId());
-					ThreadMember member = threadService.getMemberFromUser(thread, account);
+					WorkgroupMember member = threadService.getMemberFromUser(thread, account);
 					if (member == null) {
 						result.add(new ThreadMemberAutoCompleteResultDto(account));
 					} else {

@@ -42,7 +42,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
@@ -127,7 +127,7 @@ public class ThreadRepositoryImplTest extends AbstractTransactionalJUnit4SpringC
 		t.setCmisLocale(domain.getDefaultTapestryLocale().toString());
 		threadRepository.create(t);
 		
-		ThreadMember m = new ThreadMember(true,true,internal,t);
+		WorkgroupMember m = new WorkgroupMember(true,true,internal,t);
 		t.getMyMembers().add(m);
 		threadRepository.update(t);
 		

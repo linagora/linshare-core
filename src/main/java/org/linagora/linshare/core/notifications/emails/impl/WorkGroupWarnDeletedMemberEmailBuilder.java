@@ -39,7 +39,7 @@ import java.util.List;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.MailConfig;
-import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -61,7 +61,7 @@ public class WorkGroupWarnDeletedMemberEmailBuilder extends EmailBuilder {
 	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
 		WorkGroupWarnDeletedMemberEmailContext emailCtx = (WorkGroupWarnDeletedMemberEmailContext) context;
 
-		ThreadMember workGroupMember = emailCtx.getThreadMember();
+		WorkgroupMember workGroupMember = emailCtx.getWorkgroupMember();
 		User member = workGroupMember.getUser();
 		User owner = (User) emailCtx.getOwner();
 		String linshareURL = getLinShareUrl(member);

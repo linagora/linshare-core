@@ -44,7 +44,7 @@ import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
@@ -134,7 +134,7 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	}
 	private void deleteAllThreads() throws BusinessException {
 		for (Thread thread : threads) {
-			for (ThreadMember m : thread.getMyMembers()) {
+			for (WorkgroupMember m : thread.getMyMembers()) {
 				if (m.getAdmin()) {
 					threadService.deleteThread(m.getUser(), m.getUser(), thread);
 				}

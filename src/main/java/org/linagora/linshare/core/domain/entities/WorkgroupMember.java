@@ -35,7 +35,7 @@ package org.linagora.linshare.core.domain.entities;
 
 import java.util.Date;
 
-public class ThreadMember {
+public class WorkgroupMember {
 
 	private long id;
 
@@ -51,11 +51,11 @@ public class ThreadMember {
 
 	private Thread thread;
 
-	public ThreadMember() {
+	public WorkgroupMember() {
 		super();
 	}
 
-	public ThreadMember(boolean canUpload, boolean admin, User user,
+	public WorkgroupMember(boolean canUpload, boolean admin, User user,
 			Thread thread) {
 		super();
 		this.canUpload = canUpload;

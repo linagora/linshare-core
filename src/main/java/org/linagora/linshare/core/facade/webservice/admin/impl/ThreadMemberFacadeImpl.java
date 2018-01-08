@@ -37,7 +37,7 @@ package org.linagora.linshare.core.facade.webservice.admin.impl;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -110,7 +110,7 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notNull(dto, "thread member must be set.");
 		Validate.notNull(dto.getThreadUuid(), "thread uuid must be set.");
 		Validate.notNull(dto.getUserUuid(), "user uuid must be set.");
-		ThreadMember member = this.threadService.deleteMember(actor, actor, dto.getThreadUuid(), dto.getUserUuid());
+		WorkgroupMember member = this.threadService.deleteMember(actor, actor, dto.getThreadUuid(), dto.getUserUuid());
 		return new WorkGroupMemberDto(member);
 	}
 }

@@ -41,7 +41,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -117,8 +117,8 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		Thread thread = threadService.find(actor, actor, uuid);
 		WorkGroupDto dto = null;
 		if (members) {
-			List<ThreadMember> threadMembers = threadService.findAllThreadMembers(actor, actor, thread);
-			dto = new WorkGroupDto(thread, threadMembers);
+			List<WorkgroupMember> workgroupMembers = threadService.findAllThreadMembers(actor, actor, thread);
+			dto = new WorkGroupDto(thread, workgroupMembers);
 		} else {
 			dto = new WorkGroupDto(thread);
 		}

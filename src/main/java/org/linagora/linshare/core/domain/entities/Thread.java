@@ -44,7 +44,7 @@ public class Thread extends Account {
 
 	protected Boolean toUpgrade;
 
-	protected Set<ThreadMember> myMembers = new java.util.HashSet<ThreadMember>();
+	protected Set<WorkgroupMember> myMembers = new java.util.HashSet<WorkgroupMember>();
 
 	public Thread() {
 		super();
@@ -67,11 +67,11 @@ public class Thread extends Account {
 		return AccountType.THREAD;
 	}
 
-	public Set<ThreadMember> getMyMembers() {
+	public Set<WorkgroupMember> getMyMembers() {
 		return myMembers;
 	}
 
-	public void setMyMembers(Set<ThreadMember> myMembers) {
+	public void setMyMembers(Set<WorkgroupMember> myMembers) {
 		this.myMembers = myMembers;
 	}
 

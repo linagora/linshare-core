@@ -41,7 +41,7 @@ import java.util.Set;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.ThreadFacade;
@@ -107,8 +107,8 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notEmpty(uuid, "uuid must be set.");
 		Set<WorkGroupMemberDto> ret = new HashSet<WorkGroupMemberDto>();
 		Thread thread = threadService.find(actor, actor, uuid);
-		List<ThreadMember> threadMember = threadService.findAllThreadMembers(actor, actor, thread);
-		for (ThreadMember m : threadMember)
+		List<WorkgroupMember> workgroupMembers = threadService.findAllThreadMembers(actor, actor, thread);
+		for (WorkgroupMember m : workgroupMembers)
 			ret.add(new WorkGroupMemberDto(m));
 		return ret;
 	}

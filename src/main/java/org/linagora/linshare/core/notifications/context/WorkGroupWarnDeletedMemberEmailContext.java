@@ -38,26 +38,26 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 
 public class WorkGroupWarnDeletedMemberEmailContext extends EmailContext {
 
-	protected ThreadMember threadMember;
+	protected WorkgroupMember workgroupMember;
 
 	protected Account owner;
 
-	public WorkGroupWarnDeletedMemberEmailContext(ThreadMember threadMember, Account owner) {
-		super(threadMember.getUser().getDomain(), false);
-		this.threadMember = threadMember;
+	public WorkGroupWarnDeletedMemberEmailContext(WorkgroupMember workgroupMember, Account owner) {
+		super(workgroupMember.getUser().getDomain(), false);
+		this.workgroupMember = workgroupMember;
 		this.owner = owner;
 	}
 
-	public ThreadMember getThreadMember() {
-		return threadMember;
+	public WorkgroupMember getWorkgroupMember() {
+		return workgroupMember;
 	}
 
-	public void setThreadMember(ThreadMember threadMember) {
-		this.threadMember = threadMember;
+	public void setWorkgroupMember(WorkgroupMember workgroupMember) {
+		this.workgroupMember = workgroupMember;
 	}
 
 	public Account getOwner() {
@@ -80,7 +80,7 @@ public class WorkGroupWarnDeletedMemberEmailContext extends EmailContext {
 
 	@Override
 	public String getMailRcpt() {
-		return threadMember.getUser().getMail();
+		return workgroupMember.getUser().getMail();
 	}
 
 	@Override
@@ -90,7 +90,7 @@ public class WorkGroupWarnDeletedMemberEmailContext extends EmailContext {
 
 	@Override
 	public void validateRequiredField() {
-		Validate.notNull(threadMember, "Missing threadMember");
+		Validate.notNull(workgroupMember, "Missing threadMember");
 		Validate.notNull(owner, "Missing owner");
 	}
 

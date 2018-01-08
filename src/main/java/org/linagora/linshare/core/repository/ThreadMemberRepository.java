@@ -37,10 +37,10 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
 
-public interface ThreadMemberRepository extends AbstractRepository<ThreadMember> {
+public interface ThreadMemberRepository extends AbstractRepository<WorkgroupMember> {
 
 	/**
 	 * Find ThreadMember by id
@@ -48,7 +48,7 @@ public interface ThreadMemberRepository extends AbstractRepository<ThreadMember>
 	 * @param id
 	 * @return the ThreadMember
 	 */
-	public ThreadMember findById(long id);
+	public WorkgroupMember findById(long id);
 
 	/**
 	 * Find ThreadMember corresponding to a User
@@ -57,7 +57,7 @@ public interface ThreadMemberRepository extends AbstractRepository<ThreadMember>
 	 * @param user
 	 * @return the ThreadMember
 	 */
-	ThreadMember findUserThreadMember(Account thread, User user);
+	WorkgroupMember findUserThreadMember(Account thread, User user);
 
 	/**
 	 * Find all ThreadMember corresponding to a User
@@ -65,7 +65,7 @@ public interface ThreadMemberRepository extends AbstractRepository<ThreadMember>
 	 * @param user
 	 * @return the ThreadMember
 	 */
-	public List<ThreadMember> findAllUserMemberships(User user);
+	public List<WorkgroupMember> findAllUserMemberships(User user);
 	
 	/**
 	 * Find all ThreadMember corresponding to a User where he's admin
@@ -73,7 +73,7 @@ public interface ThreadMemberRepository extends AbstractRepository<ThreadMember>
 	 * @param user
 	 * @return the ThreadMember
 	 */
-	public List<ThreadMember> findAllUserAdminMemberships(User user);
+	public List<WorkgroupMember> findAllUserAdminMemberships(User user);
 
 	/**
 	 * Find if the User is admin of any Thread
@@ -106,7 +106,7 @@ public interface ThreadMemberRepository extends AbstractRepository<ThreadMember>
 	 * @param thread
 	 * @return the List of ThreadMember
 	 */
-	public List<ThreadMember> findAllThreadMembers(Thread thread);
+	public List<WorkgroupMember> findAllThreadMembers(Thread thread);
 	public List<String> findAllAccountUuidForThreadMembers(Thread thread);
 
 	/**
@@ -115,5 +115,5 @@ public interface ThreadMemberRepository extends AbstractRepository<ThreadMember>
 	 * @param thread
 	 * @return the List of ThreadMember
 	 */
-	public List<ThreadMember> findAllInconsistentThreadMembers(Thread thread);
+	public List<WorkgroupMember> findAllInconsistentThreadMembers(Thread thread);
 }

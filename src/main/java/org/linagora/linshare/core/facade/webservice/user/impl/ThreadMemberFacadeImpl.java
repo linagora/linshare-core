@@ -37,7 +37,7 @@ import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupMemberDto;
@@ -69,7 +69,7 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		User actor = checkAuthentication();
 		Thread thread = threadService.find(actor, actor, threadUuid);
 		List<WorkGroupMemberDto> res = Lists.newArrayList();
-		for (ThreadMember m : threadService.findAllThreadMembers(actor, actor, thread)) {
+		for (WorkgroupMember m : threadService.findAllThreadMembers(actor, actor, thread)) {
 			res.add(new WorkGroupMemberDto(m));
 		}
 		return res;
@@ -118,7 +118,7 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(userUuid, "Missing required user uuid");
 		User actor = checkAuthentication();
-		ThreadMember member = threadService.deleteMember(actor, actor, threadUuid, userUuid);
+		WorkgroupMember member = threadService.deleteMember(actor, actor, threadUuid, userUuid);
 		return new WorkGroupMemberDto(member);
 	}
 }

@@ -36,7 +36,7 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.ThreadRoles;
-import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -72,7 +72,7 @@ public class WorkGroupMemberDto {
     @ApiModelProperty(value = "ThreadUuid")
 	private String threadUuid;
 
-	public WorkGroupMemberDto(ThreadMember member) {
+	public WorkGroupMemberDto(WorkgroupMember member) {
 		this.firstName = member.getUser().getFirstName();
 		this.lastName = member.getUser().getLastName();
 		this.admin = member.getAdmin();

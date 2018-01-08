@@ -38,7 +38,7 @@ import org.linagora.linshare.core.domain.constants.PermissionType;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -189,7 +189,7 @@ public class WorkGroupNodeResourceAccessControlImpl
 					TechnicalAccountPermissionType.THREAD_ENTRIES_DELETE);
 		}
 		if (opt.length > 0 && opt[0] instanceof Thread) {
-			ThreadMember member = threadMemberRepository.findUserThreadMember((Thread) opt[0],
+			WorkgroupMember member = threadMemberRepository.findUserThreadMember((Thread) opt[0],
 					(User) account);
 			if (member != null && member.getAdmin()) {
 				return true;
@@ -208,7 +208,7 @@ public class WorkGroupNodeResourceAccessControlImpl
 					TechnicalAccountPermissionType.THREAD_ENTRIES_CREATE);
 		}
 		if (opt.length > 0 && opt[0] instanceof Thread) {
-			ThreadMember member = threadMemberRepository.findUserThreadMember((Thread) opt[0],
+			WorkgroupMember member = threadMemberRepository.findUserThreadMember((Thread) opt[0],
 					(User) account);
 			if (member != null && member.getCanUpload()) {
 				return true;
@@ -227,7 +227,7 @@ public class WorkGroupNodeResourceAccessControlImpl
 					TechnicalAccountPermissionType.THREAD_ENTRIES_UPDATE);
 		}
 		Account workGroup = getOwner(entry, opt);
-		ThreadMember member = threadMemberRepository.findUserThreadMember(
+		WorkgroupMember member = threadMemberRepository.findUserThreadMember(
 				workGroup, (User) account);
 		if (member != null && member.getCanUpload()) {
 			return true;
@@ -245,7 +245,7 @@ public class WorkGroupNodeResourceAccessControlImpl
 					TechnicalAccountPermissionType.THREAD_ENTRIES_DOWNLOAD);
 		}
 		if (opt.length > 0 && opt[0] instanceof Thread) {
-			ThreadMember member = threadMemberRepository.findUserThreadMember((Thread) opt[0],
+			WorkgroupMember member = threadMemberRepository.findUserThreadMember((Thread) opt[0],
 					(User) account);
 			if (member != null) {
 				return true;
@@ -264,7 +264,7 @@ public class WorkGroupNodeResourceAccessControlImpl
 					TechnicalAccountPermissionType.THREAD_ENTRIES_DOWNLOAD_THUMBNAIL);
 		}
 		if (opt.length > 0 && opt[0] instanceof Thread) {
-			ThreadMember member = threadMemberRepository.findUserThreadMember((Thread) opt[0],
+			WorkgroupMember member = threadMemberRepository.findUserThreadMember((Thread) opt[0],
 					(User) account);
 			if (member != null) {
 				return true;

@@ -61,7 +61,7 @@ import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.MailActivation;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
-import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -617,11 +617,11 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		return share;
 	}
 
-	protected ThreadMember getNewFakeThreadMember(String name) {
+	protected WorkgroupMember getNewFakeThreadMember(String name) {
 		User user = new Guest("Peter", "Wilson", "peter.wilson@linshare.org");
 		org.linagora.linshare.core.domain.entities.Thread workGroup = new org.linagora.linshare.core.domain.entities.Thread(user.getDomain(), user, name);
-		ThreadMember threadMember = new ThreadMember(true, false, user, workGroup);
-		return threadMember;
+		WorkgroupMember workgroupdMember = new WorkgroupMember(true, false, user, workGroup);
+		return workgroupdMember;
 	}
 
 	protected Date getFakeExpirationDate() {
