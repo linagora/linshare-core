@@ -41,9 +41,9 @@ import org.linagora.linshare.mongo.entities.WorkGroupNode;
 public interface WorkGroupNodeResourceAccessControl<R, E extends WorkGroupNode>
 		extends AbstractResourceAccessControl<Account, R, E> {
 
-	void checkDownloadPermission(Account actor, Account targetedAccount, Class<?> clazz, BusinessErrorCode errCode,
+	void checkDownloadPermission(Account authUser, Account targetedAccount, Class<?> clazz, BusinessErrorCode errCode,
 			E entry, Object... opt) throws BusinessException;
 
-	void checkThumbNailDownloadPermission(Account actor, Account targetedAccount, Class<?> clazz,
+	void checkThumbNailDownloadPermission(Account authUser, Account targetedAccount, Class<?> clazz,
 			BusinessErrorCode errCode, E entry, Object... opt) throws BusinessException;
 }

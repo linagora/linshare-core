@@ -49,28 +49,28 @@ public class UploadRequestGroupResourceAccessControlImpl
 	}
 
 	@Override
-	protected boolean hasReadPermission(Account actor, Account account, UploadRequestGroup entry, Object... opt) {
-		return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_GET);
+	protected boolean hasReadPermission(Account authUser, Account actor, UploadRequestGroup entry, Object... opt) {
+		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_GET);
 	}
 
 	@Override
-	protected boolean hasListPermission(Account actor, Account account, UploadRequestGroup entry, Object... opt) {
-		return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_LIST);
+	protected boolean hasListPermission(Account authUser, Account actor, UploadRequestGroup entry, Object... opt) {
+		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_LIST);
 	}
 
 	@Override
-	protected boolean hasDeletePermission(Account actor, Account account, UploadRequestGroup entry, Object... opt) {
-		return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_DELETE);
+	protected boolean hasDeletePermission(Account authUser, Account actor, UploadRequestGroup entry, Object... opt) {
+		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_DELETE);
 	}
 
 	@Override
-	protected boolean hasCreatePermission(Account actor, Account account, UploadRequestGroup entry, Object... opt) {
-		return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_CREATE);
+	protected boolean hasCreatePermission(Account authUser, Account actor, UploadRequestGroup entry, Object... opt) {
+		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_CREATE);
 	}
 
 	@Override
-	protected boolean hasUpdatePermission(Account actor, Account account, UploadRequestGroup entry, Object... opt) {
-		return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_UPDATE);
+	protected boolean hasUpdatePermission(Account authUser, Account actor, UploadRequestGroup entry, Object... opt) {
+		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_UPDATE);
 	}
 
 	@Override

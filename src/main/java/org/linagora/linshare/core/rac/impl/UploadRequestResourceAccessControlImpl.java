@@ -50,56 +50,56 @@ public class UploadRequestResourceAccessControlImpl
 	}
 
 	@Override
-	protected boolean hasReadPermission(Account actor, Account account, UploadRequest entry, Object... opt) {
-		if (isEnable(actor)) {
-			if (actor.hasUploadRequestRole()) {
+	protected boolean hasReadPermission(Account authUser, Account actor, UploadRequest entry, Object... opt) {
+		if (isEnable(authUser)) {
+			if (authUser.hasUploadRequestRole()) {
 				return true;
 			}
-			return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_GET);
+			return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_GET);
 		}
 		return false;
 	}
 
 	@Override
-	protected boolean hasListPermission(Account actor, Account account, UploadRequest entry, Object... opt) {
-		if (isEnable(actor)) {
-			if (actor.hasUploadRequestRole()) {
+	protected boolean hasListPermission(Account authUser, Account actor, UploadRequest entry, Object... opt) {
+		if (isEnable(authUser)) {
+			if (authUser.hasUploadRequestRole()) {
 				return true;
 			}
-			return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_LIST);
+			return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_LIST);
 		}
 		return false;
 	}
 
 	@Override
-	protected boolean hasDeletePermission(Account actor, Account account, UploadRequest entry, Object... opt) {
-		if (isEnable(actor)) {
-			if (actor.hasUploadRequestRole()) {
+	protected boolean hasDeletePermission(Account authUser, Account actor, UploadRequest entry, Object... opt) {
+		if (isEnable(authUser)) {
+			if (authUser.hasUploadRequestRole()) {
 				return true;
 			}
-			return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_DELETE);
+			return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_DELETE);
 		}
 		return false;
 	}
 
 	@Override
-	protected boolean hasCreatePermission(Account actor, Account account, UploadRequest entry, Object... opt) {
-		if (isEnable(actor)) {
-			if (actor.hasUploadRequestRole()) {
+	protected boolean hasCreatePermission(Account authUser, Account actor, UploadRequest entry, Object... opt) {
+		if (isEnable(authUser)) {
+			if (authUser.hasUploadRequestRole()) {
 				return true;
 			}
-			return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_CREATE);
+			return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_CREATE);
 		}
 		return false;
 	}
 
 	@Override
-	protected boolean hasUpdatePermission(Account actor, Account account, UploadRequest entry, Object... opt) {
-		if (isEnable(actor)) {
-			if (actor.hasUploadRequestRole()) {
+	protected boolean hasUpdatePermission(Account authUser, Account actor, UploadRequest entry, Object... opt) {
+		if (isEnable(authUser)) {
+			if (authUser.hasUploadRequestRole()) {
 				return true;
 			}
-			return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_UPDATE);
+			return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_UPDATE);
 		}
 		return false;
 	}
@@ -114,8 +114,8 @@ public class UploadRequestResourceAccessControlImpl
 		return entry.getUuid();
 	}
 
-	private boolean isEnable(Account actor) {
-		Functionality func = functionalityService.getUploadRequestFunctionality(actor.getDomain());
+	private boolean isEnable(Account authUser) {
+		Functionality func = functionalityService.getUploadRequestFunctionality(authUser.getDomain());
 		return func.getActivationPolicy().getStatus();
 	}
 }

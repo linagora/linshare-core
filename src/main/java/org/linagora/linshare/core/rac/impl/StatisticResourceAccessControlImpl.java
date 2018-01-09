@@ -51,23 +51,23 @@ public class StatisticResourceAccessControlImpl extends AbstractResourceAccessCo
 	}
 
 	@Override
-	protected boolean hasReadPermission(Account actor, Account owner, Statistic entry, Object... opt) {
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor, TechnicalAccountPermissionType.STATISTIC_GET);
+	protected boolean hasReadPermission(Account authUser, Account owner, Statistic entry, Object... opt) {
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser, TechnicalAccountPermissionType.STATISTIC_GET);
 		}
-		if (actor.isInternal() || actor.isGuest()) {
-			if (actor.hasSystemAccountRole() || actor.hasSuperAdminRole()) {
+		if (authUser.isInternal() || authUser.isGuest()) {
+			if (authUser.hasSystemAccountRole() || authUser.hasSuperAdminRole()) {
 				return true;
 			}
-			if (owner != null && owner.equals(actor)) {
+			if (owner != null && owner.equals(authUser)) {
 				return true;
 			}
-			if (actor.hasAdminRole()) {
+			if (authUser.hasAdminRole()) {
 				if (owner != null) {
-					return owner.getDomain().isManagedBy(actor);
+					return owner.getDomain().isManagedBy(authUser);
 				}
 				if (owner == null && opt != null && opt.length > 0) {
-					return ((AbstractDomain) opt[0]).isManagedBy(actor);
+					return ((AbstractDomain) opt[0]).isManagedBy(authUser);
 				}
 			}
 		}
@@ -75,23 +75,23 @@ public class StatisticResourceAccessControlImpl extends AbstractResourceAccessCo
 	}
 
 	@Override
-	protected boolean hasListPermission(Account actor, Account owner, Statistic entry, Object... opt) {
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor, TechnicalAccountPermissionType.STATISTIC_LIST);
+	protected boolean hasListPermission(Account authUser, Account owner, Statistic entry, Object... opt) {
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser, TechnicalAccountPermissionType.STATISTIC_LIST);
 		}
-		if (actor.isInternal() || actor.isGuest()) {
-			if (actor.hasSystemAccountRole() || actor.hasSuperAdminRole()) {
+		if (authUser.isInternal() || authUser.isGuest()) {
+			if (authUser.hasSystemAccountRole() || authUser.hasSuperAdminRole()) {
 				return true;
 			}
-			if (owner != null && owner.equals(actor)) {
+			if (owner != null && owner.equals(authUser)) {
 				return true;
 			}
-			if (actor.hasAdminRole()) {
+			if (authUser.hasAdminRole()) {
 				if (owner != null) {
-					return owner.getDomain().isManagedBy(actor);
+					return owner.getDomain().isManagedBy(authUser);
 				}
 				if (owner == null && opt != null && opt.length > 0) {
-					return ((AbstractDomain) opt[0]).isManagedBy(actor);
+					return ((AbstractDomain) opt[0]).isManagedBy(authUser);
 				}
 			}
 		}
@@ -99,17 +99,17 @@ public class StatisticResourceAccessControlImpl extends AbstractResourceAccessCo
 	}
 
 	@Override
-	protected boolean hasDeletePermission(Account actor, Account account, Statistic entry, Object... opt) {
-		return actor.hasSystemAccountRole() || actor.hasSuperAdminRole();
+	protected boolean hasDeletePermission(Account authUser, Account account, Statistic entry, Object... opt) {
+		return authUser.hasSystemAccountRole() || authUser.hasSuperAdminRole();
 	}
 
 	@Override
-	protected boolean hasCreatePermission(Account actor, Account account, Statistic entry, Object... opt) {
-		return actor.hasSystemAccountRole() || actor.hasSuperAdminRole();
+	protected boolean hasCreatePermission(Account authUser, Account account, Statistic entry, Object... opt) {
+		return authUser.hasSystemAccountRole() || authUser.hasSuperAdminRole();
 	}
 
 	@Override
-	protected boolean hasUpdatePermission(Account actor, Account account, Statistic entry, Object... opt) {
+	protected boolean hasUpdatePermission(Account authUser, Account account, Statistic entry, Object... opt) {
 		return false;
 	}
 
@@ -123,34 +123,34 @@ public class StatisticResourceAccessControlImpl extends AbstractResourceAccessCo
 		return "";
 	}
 
-	protected boolean isAuthorized(Account actor, Account targetedAccount, PermissionType permission, Statistic entry,
+	protected boolean isAuthorized(Account authUser, Account targetedAccount, PermissionType permission, Statistic entry,
 			Class<?> clazz, Object... opt) {
-		Validate.notNull(actor);
+		Validate.notNull(authUser);
 		Validate.notNull(permission);
-		if (actor.hasAllRights())
+		if (authUser.hasAllRights())
 			return true;
 		if (permission.equals(PermissionType.GET)) {
-			if (hasReadPermission(actor, targetedAccount, entry, opt)) {
+			if (hasReadPermission(authUser, targetedAccount, entry, opt)) {
 				return true;
 			}
 		} else if (permission.equals(PermissionType.LIST)) {
-			if (hasListPermission(actor, targetedAccount, entry, opt))
+			if (hasListPermission(authUser, targetedAccount, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.CREATE)) {
-			if (hasCreatePermission(actor, targetedAccount, entry, opt)) {
+			if (hasCreatePermission(authUser, targetedAccount, entry, opt)) {
 				return true;
 			}
 		} else if (permission.equals(PermissionType.UPDATE)) {
-			if (hasUpdatePermission(actor, targetedAccount, entry, opt)) {
+			if (hasUpdatePermission(authUser, targetedAccount, entry, opt)) {
 				return true;
 			}
 		} else if (permission.equals(PermissionType.DELETE)) {
-			if (hasDeletePermission(actor, targetedAccount, entry, opt)) {
+			if (hasDeletePermission(authUser, targetedAccount, entry, opt)) {
 				return true;
 			}
 		}
 		if (clazz != null) {
-			StringBuilder sb = getActorStringBuilder(actor);
+			StringBuilder sb = getAuthUserStringBuilder(authUser);
 			sb.append(" is trying to access to unauthorized resource named ");
 			sb.append(clazz.toString());
 			appendOwner(sb, entry, opt);

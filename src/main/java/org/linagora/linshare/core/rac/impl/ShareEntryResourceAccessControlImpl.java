@@ -85,22 +85,22 @@ public class ShareEntryResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected boolean hasReadPermission(Account actor, Account owner,
+	protected boolean hasReadPermission(Account authUser, Account actor,
 			ShareEntry entry, Object... opt) {
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor,
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser,
 					TechnicalAccountPermissionType.SHARE_ENTRIES_GET);
-		} else if (actor.isInternal() || actor.isGuest()) {
+		} else if (authUser.isInternal() || authUser.isGuest()) {
 			/*
-			 * The owner has the right to read his own shareEntry, and the
+			 * The actor has the right to read his own shareEntry, and the
 			 * recipient has the right to read his received shareEntry because
 			 * it is same shared entity.
 			 */
-			if (owner != null && actor.equals(owner)) {
+			if (actor != null && authUser.equals(actor)) {
 				return true;
 			}
 			Account recipient = getRecipient(entry);
-			if (recipient != null && actor.equals(recipient)) {
+			if (recipient != null && authUser.equals(recipient)) {
 				return true;
 			}
 		}
@@ -108,29 +108,29 @@ public class ShareEntryResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected boolean hasListPermission(Account actor, Account owner,
+	protected boolean hasListPermission(Account authUser, Account actor,
 			ShareEntry entry, Object... opt) {
-		return defaultPermissionCheck(actor, owner, entry,
+		return defaultPermissionCheck(authUser, actor, entry,
 				TechnicalAccountPermissionType.SHARE_ENTRIES_LIST);
 	}
 
 	@Override
-	protected boolean hasDeletePermission(Account actor, Account owner,
+	protected boolean hasDeletePermission(Account authUser, Account actor,
 			ShareEntry entry, Object... opt) {
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor,
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser,
 					TechnicalAccountPermissionType.SHARE_ENTRIES_DELETE);
-		} else if (actor.isInternal() || actor.isGuest()) {
+		} else if (authUser.isInternal() || authUser.isGuest()) {
 			/*
-			 * The owner has the right to delete his own shareEntry, and the
+			 * The actor has the right to delete his own shareEntry, and the
 			 * recipient has the right to delete his received shareEntry because
 			 * it is same shared entity.
 			 */
-			if (owner != null && actor.equals(owner)) {
+			if (actor != null && authUser.equals(actor)) {
 				return true;
 			}
 			Account recipient = getRecipient(entry);
-			if (recipient != null && actor.equals(recipient)) {
+			if (recipient != null && authUser.equals(recipient)) {
 				return true;
 			}
 		}
@@ -138,29 +138,29 @@ public class ShareEntryResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected boolean hasCreatePermission(Account actor, Account owner,
+	protected boolean hasCreatePermission(Account authUser, Account actor,
 			ShareEntry entry, Object... opt) {
-		return defaultPermissionCheck(actor, owner, entry,
+		return defaultPermissionCheck(authUser, actor, entry,
 				TechnicalAccountPermissionType.SHARE_ENTRIES_CREATE);
 	}
 
 	@Override
-	protected boolean hasUpdatePermission(Account actor, Account owner,
+	protected boolean hasUpdatePermission(Account authUser, Account actor,
 			ShareEntry entry, Object... opt) {
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor,
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser,
 					TechnicalAccountPermissionType.SHARE_ENTRIES_UPDATE);
-		} else if (actor.isInternal() || actor.isGuest()) {
+		} else if (authUser.isInternal() || authUser.isGuest()) {
 			/*
-			 * The owner has the right to update his own shareEntry, and the
+			 * The actor has the right to update his own shareEntry, and the
 			 * recipient has the right to update his received shareEntry because
 			 * it is same shared entity.
 			 */
-			if (owner != null && actor.equals(owner)) {
+			if (actor != null && authUser.equals(actor)) {
 				return true;
 			}
 			Account recipient = getRecipient(entry);
-			if (recipient != null && actor.equals(recipient)) {
+			if (recipient != null && authUser.equals(recipient)) {
 				return true;
 			}
 		}
@@ -168,18 +168,18 @@ public class ShareEntryResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected boolean hasDownloadPermission(Account actor, Account owner,
+	protected boolean hasDownloadPermission(Account authUser, Account actor,
 			ShareEntry entry, Object... opt) {
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor,
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser,
 					TechnicalAccountPermissionType.SHARE_ENTRIES_DOWNLOAD);
-		} else if (actor.isInternal() || actor.isGuest()) {
+		} else if (authUser.isInternal() || authUser.isGuest()) {
 			/*
 			 * Only the recipient has the right to download his received
-			 * shareEntry. It makes no sense for the owner.
+			 * shareEntry. It makes no sense for the actor.
 			 */
 			Account recipient = getRecipient(entry);
-			if (recipient != null && actor.equals(recipient)) {
+			if (recipient != null && authUser.equals(recipient)) {
 				return true;
 			}
 		}
@@ -187,19 +187,19 @@ public class ShareEntryResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected boolean hasDownloadTumbnailPermission(Account actor,
-			Account owner, ShareEntry entry, Object... opt) {
-		if (actor.hasDelegationRole()) {
+	protected boolean hasDownloadTumbnailPermission(Account authUser,
+			Account actor, ShareEntry entry, Object... opt) {
+		if (authUser.hasDelegationRole()) {
 			return hasPermission(
-					actor,
+					authUser,
 					TechnicalAccountPermissionType.SHARE_ENTRIES_DOWNLOAD_THUMBNAIL);
-		} else if (actor.isInternal() || actor.isGuest()) {
+		} else if (authUser.isInternal() || authUser.isGuest()) {
 			/*
 			 * Only the recipient has the right to download the thumb nail of
-			 * his received shareEntry. It makes no sense for the owner.
+			 * his received shareEntry. It makes no sense for the actor.
 			 */
 			Account recipient = getRecipient(entry);
-			if (recipient != null && actor.equals(recipient)) {
+			if (recipient != null && authUser.equals(recipient)) {
 				return true;
 			}
 		}

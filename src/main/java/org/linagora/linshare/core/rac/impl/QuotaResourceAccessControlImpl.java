@@ -51,23 +51,23 @@ public class QuotaResourceAccessControlImpl extends AbstractResourceAccessContro
 	}
 
 	@Override
-	protected boolean hasReadPermission(Account actor, Account owner, Quota entry, Object... opt) {
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor, TechnicalAccountPermissionType.QUOTA_GET);
+	protected boolean hasReadPermission(Account authUser, Account actor, Quota entry, Object... opt) {
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser, TechnicalAccountPermissionType.QUOTA_GET);
 		}
-		if (actor.isInternal() || actor.isGuest()) {
-			if (actor.hasSystemAccountRole() || actor.hasSuperAdminRole()) {
+		if (authUser.isInternal() || authUser.isGuest()) {
+			if (authUser.hasSystemAccountRole() || authUser.hasSuperAdminRole()) {
 				return true;
 			}
-			if (owner != null && owner.equals(actor)) {
+			if (actor != null && actor.equals(authUser)) {
 				return true;
 			}
-			if (actor.hasAdminRole()) {
-				if (owner != null) {
-					return owner.getDomain().isManagedBy(actor);
+			if (authUser.hasAdminRole()) {
+				if (actor != null) {
+					return actor.getDomain().isManagedBy(authUser);
 				}
-				if (owner == null && opt != null && opt.length > 0) {
-					return ((AbstractDomain) opt[0]).isManagedBy(actor);
+				if (actor == null && opt != null && opt.length > 0) {
+					return ((AbstractDomain) opt[0]).isManagedBy(authUser);
 				}
 			}
 		}
@@ -75,23 +75,23 @@ public class QuotaResourceAccessControlImpl extends AbstractResourceAccessContro
 	}
 
 	@Override
-	protected boolean hasListPermission(Account actor, Account owner, Quota entry, Object... opt) {
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor, TechnicalAccountPermissionType.QUOTA_LIST);
+	protected boolean hasListPermission(Account authUser, Account actor, Quota entry, Object... opt) {
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser, TechnicalAccountPermissionType.QUOTA_LIST);
 		}
-		if (actor.isInternal() || actor.isGuest()) {
-			if (actor.hasSystemAccountRole() || actor.hasSuperAdminRole()) {
+		if (authUser.isInternal() || authUser.isGuest()) {
+			if (authUser.hasSystemAccountRole() || authUser.hasSuperAdminRole()) {
 				return true;
 			}
-			if (owner != null && owner.equals(actor)) {
+			if (actor != null && actor.equals(authUser)) {
 				return true;
 			}
-			if (actor.hasAdminRole()) {
-				if (owner != null) {
-					return owner.getDomain().isManagedBy(actor);
+			if (authUser.hasAdminRole()) {
+				if (actor != null) {
+					return actor.getDomain().isManagedBy(authUser);
 				}
-				if (owner == null && opt != null && opt.length > 0) {
-					return ((AbstractDomain) opt[0]).isManagedBy(actor);
+				if (actor == null && opt != null && opt.length > 0) {
+					return ((AbstractDomain) opt[0]).isManagedBy(authUser);
 				}
 			}
 		}
@@ -99,25 +99,25 @@ public class QuotaResourceAccessControlImpl extends AbstractResourceAccessContro
 	}
 
 	@Override
-	protected boolean hasDeletePermission(Account actor, Account owner, Quota entry, Object... opt) {
+	protected boolean hasDeletePermission(Account authUser, Account actor, Quota entry, Object... opt) {
 		return false;
 	}
 
 	@Override
-	protected boolean hasCreatePermission(Account actor, Account owner, Quota entry, Object... opt) {
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor, TechnicalAccountPermissionType.QUOTA_CREATE);
+	protected boolean hasCreatePermission(Account authUser, Account actor, Quota entry, Object... opt) {
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser, TechnicalAccountPermissionType.QUOTA_CREATE);
 		}
-		if (actor.isInternal() || actor.isGuest()) {
-			if (actor.hasSystemAccountRole() || actor.hasSuperAdminRole()) {
+		if (authUser.isInternal() || authUser.isGuest()) {
+			if (authUser.hasSystemAccountRole() || authUser.hasSuperAdminRole()) {
 				return true;
 			}
-			if (actor.hasAdminRole()) {
-				if (owner != null) {
-					return owner.getDomain().isManagedBy(actor);
+			if (authUser.hasAdminRole()) {
+				if (actor != null) {
+					return actor.getDomain().isManagedBy(authUser);
 				}
-				if (owner == null && opt != null && opt.length > 0) {
-					return ((AbstractDomain) opt[0]).isManagedBy(actor);
+				if (actor == null && opt != null && opt.length > 0) {
+					return ((AbstractDomain) opt[0]).isManagedBy(authUser);
 				}
 			}
 		}
@@ -125,20 +125,20 @@ public class QuotaResourceAccessControlImpl extends AbstractResourceAccessContro
 	}
 
 	@Override
-	protected boolean hasUpdatePermission(Account actor, Account owner, Quota entry, Object... opt) {
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor, TechnicalAccountPermissionType.QUOTA_UPDATE);
+	protected boolean hasUpdatePermission(Account authUser, Account actor, Quota entry, Object... opt) {
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser, TechnicalAccountPermissionType.QUOTA_UPDATE);
 		}
-		if (actor.isInternal() || actor.isGuest()) {
-			if (actor.hasSystemAccountRole() || actor.hasSuperAdminRole()) {
+		if (authUser.isInternal() || authUser.isGuest()) {
+			if (authUser.hasSystemAccountRole() || authUser.hasSuperAdminRole()) {
 				return true;
 			}
-			if (actor.hasAdminRole()) {
-				if (owner != null) {
-					return owner.getDomain().isManagedBy(actor);
+			if (authUser.hasAdminRole()) {
+				if (actor != null) {
+					return actor.getDomain().isManagedBy(authUser);
 				}
-				if (owner == null && opt != null && opt.length > 0) {
-					return ((AbstractDomain) opt[0]).isManagedBy(actor);
+				if (actor == null && opt != null && opt.length > 0) {
+					return ((AbstractDomain) opt[0]).isManagedBy(authUser);
 				}
 			}
 		}
@@ -156,30 +156,30 @@ public class QuotaResourceAccessControlImpl extends AbstractResourceAccessContro
 				+ entry.getLastValue() + " Current Value :" + entry.getCurrentValue();
 	}
 
-	protected boolean isAuthorized(Account actor, Account targetedAccount, PermissionType permission, Quota entry,
+	protected boolean isAuthorized(Account authUser, Account targetedAccount, PermissionType permission, Quota entry,
 			Class<?> clazz, Object... opt) {
-		Validate.notNull(actor);
+		Validate.notNull(authUser);
 		Validate.notNull(permission);
-		if (actor.hasAllRights())
+		if (authUser.hasAllRights())
 			return true;
 		if (permission.equals(PermissionType.GET)) {
-			if (hasReadPermission(actor, targetedAccount, entry, opt))
+			if (hasReadPermission(authUser, targetedAccount, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.LIST)) {
-			if (hasListPermission(actor, targetedAccount, entry, opt))
+			if (hasListPermission(authUser, targetedAccount, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.CREATE)) {
-			if (hasCreatePermission(actor, targetedAccount, entry, opt))
+			if (hasCreatePermission(authUser, targetedAccount, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.UPDATE)) {
-			if (hasUpdatePermission(actor, targetedAccount, entry, opt))
+			if (hasUpdatePermission(authUser, targetedAccount, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.DELETE)) {
-			if (hasDeletePermission(actor, targetedAccount, entry, opt))
+			if (hasDeletePermission(authUser, targetedAccount, entry, opt))
 				return true;
 		}
 		if (clazz != null) {
-			StringBuilder sb = getActorStringBuilder(actor);
+			StringBuilder sb = getAuthUserStringBuilder(authUser);
 			sb.append(" is trying to access to unauthorized resource named ");
 			sb.append(clazz.toString());
 			appendOwner(sb, entry, opt);

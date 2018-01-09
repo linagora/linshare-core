@@ -72,32 +72,32 @@ public class AnonymousShareEntryResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected boolean hasReadPermission(Account actor, Account owner,
+	protected boolean hasReadPermission(Account authUser, Account actor,
 			AnonymousShareEntry entry, Object... opt) {
-		return defaultPermissionCheck(actor, owner, entry,
+		return defaultPermissionCheck(authUser, actor, entry,
 				TechnicalAccountPermissionType.ANONYMOUS_SHARE_ENTRIES_GET);
 	}
 
 	@Override
-	protected boolean hasListPermission(Account actor, Account owner,
+	protected boolean hasListPermission(Account authUser, Account actor,
 			AnonymousShareEntry entry, Object... opt) {
-		return defaultPermissionCheck(actor, owner, entry,
+		return defaultPermissionCheck(authUser, actor, entry,
 				TechnicalAccountPermissionType.ANONYMOUS_SHARE_ENTRIES_LIST);
 	}
 
 	@Override
-	protected boolean hasDeletePermission(Account actor, Account owner,
+	protected boolean hasDeletePermission(Account authUser, Account actor,
 			AnonymousShareEntry entry, Object... opt) {
-		return defaultPermissionCheck(actor, owner, entry,
+		return defaultPermissionCheck(authUser, actor, entry,
 				TechnicalAccountPermissionType.ANONYMOUS_SHARE_ENTRIES_DELETE);
 	}
 
 	@Override
-	protected boolean hasCreatePermission(Account actor, Account owner,
+	protected boolean hasCreatePermission(Account authUser, Account actor,
 			AnonymousShareEntry entry, Object... opt) {
-		if (defaultPermissionCheck(actor, owner, entry,
+		if (defaultPermissionCheck(authUser, actor, entry,
 				TechnicalAccountPermissionType.ANONYMOUS_SHARE_ENTRIES_CREATE)) {
-			Functionality anonymousUrl = functionalityService.getAnonymousUrl(owner.getDomain());
+			Functionality anonymousUrl = functionalityService.getAnonymousUrl(actor.getDomain());
 			if (anonymousUrl.getActivationPolicy().getStatus()) {
 				return true;
 			} else
@@ -107,27 +107,27 @@ public class AnonymousShareEntryResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected boolean hasUpdatePermission(Account actor, Account owner,
+	protected boolean hasUpdatePermission(Account authUser, Account actor,
 			AnonymousShareEntry entry, Object... opt) {
-		return defaultPermissionCheck(actor, owner, entry,
+		return defaultPermissionCheck(authUser, actor, entry,
 				TechnicalAccountPermissionType.ANONYMOUS_SHARE_ENTRIES_UPDATE);
 	}
 
 	@Override
-	protected boolean hasDownloadPermission(Account actor, Account owner,
+	protected boolean hasDownloadPermission(Account authUser, Account actor,
 			AnonymousShareEntry entry, Object... opt) {
 		/*
-		 * The owner has not the right to download his own anonymousShareEntry,
+		 * The actor has not the right to download his own anonymousShareEntry,
 		 * neither account with delegation role.
 		 */
 		return false;
 	}
 
 	@Override
-	protected boolean hasDownloadTumbnailPermission(Account actor,
-			Account owner, AnonymousShareEntry entry, Object... opt) {
+	protected boolean hasDownloadTumbnailPermission(Account authUser,
+			Account actor, AnonymousShareEntry entry, Object... opt) {
 		/*
-		 * The owner has not the right to download his own anonymousShareEntry,
+		 * The actor has not the right to download his own anonymousShareEntry,
 		 * neither account with delegation role.
 		 */
 		return false;

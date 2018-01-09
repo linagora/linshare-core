@@ -48,31 +48,31 @@ public class UserPreferenceResourceAccessControlImpl
 	}
 
 	@Override
-	protected boolean hasReadPermission(Account actor, Account account, UserPreference entry, Object... opt) {
+	protected boolean hasReadPermission(Account authUser, Account actor, UserPreference entry, Object... opt) {
 		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
-	protected boolean hasListPermission(Account actor, Account account, UserPreference entry, Object... opt) {
+	protected boolean hasListPermission(Account authUser, Account actor, UserPreference entry, Object... opt) {
 		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
-	protected boolean hasDeletePermission(Account actor, Account account, UserPreference entry, Object... opt) {
+	protected boolean hasDeletePermission(Account authUser, Account actor, UserPreference entry, Object... opt) {
 		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
-	protected boolean hasCreatePermission(Account actor, Account account, UserPreference entry, Object... opt) {
+	protected boolean hasCreatePermission(Account authUser, Account actor, UserPreference entry, Object... opt) {
 		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
-	protected boolean hasUpdatePermission(Account actor, Account account, UserPreference entry, Object... opt) {
+	protected boolean hasUpdatePermission(Account authUser, Account actor, UserPreference entry, Object... opt) {
 		// TODO Auto-generated method stub
 		return true;
 	}

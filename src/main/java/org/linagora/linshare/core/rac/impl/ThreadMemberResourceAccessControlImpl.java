@@ -57,48 +57,48 @@ public class ThreadMemberResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected boolean hasReadPermission(Account actor, Account owner,
+	protected boolean hasReadPermission(Account authUser, Account actor,
 			WorkgroupMember entry, Object... opt) {
-		if (actor.hasAllRights()) {
+		if (authUser.hasAllRights()) {
 			return true;
 		}
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor,
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser,
 					TechnicalAccountPermissionType.THREAD_MEMBERS_GET);
 		}
 		return threadMemberRepository.findUserThreadMember(entry.getThread(),
-				(User) owner) != null;
+				(User) actor) != null;
 	}
 
 	@Override
-	protected boolean hasListPermission(Account actor, Account owner,
+	protected boolean hasListPermission(Account authUser, Account actor,
 			WorkgroupMember entry, Object... opt) {
-		if (actor.hasAllRights()) {
+		if (authUser.hasAllRights()) {
 			return true;
 		}
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor,
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser,
 					TechnicalAccountPermissionType.THREAD_MEMBERS_LIST);
 		}
 		if (opt.length > 0 && opt[0] instanceof Thread) {
 			return threadMemberRepository.findUserThreadMember((Thread) opt[0],
-					(User) owner) != null;
+					(User) actor) != null;
 		}
 		return false;
 	}
 
 	@Override
-	protected boolean hasDeletePermission(Account actor, Account owner,
+	protected boolean hasDeletePermission(Account authUser, Account actor,
 			WorkgroupMember entry, Object... opt) {
-		if (actor.hasAllRights()) {
+		if (authUser.hasAllRights()) {
 			return true;
 		}
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor,
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser,
 					TechnicalAccountPermissionType.THREAD_MEMBERS_DELETE);
 		}
 		WorkgroupMember member = threadMemberRepository.findUserThreadMember(
-				entry.getThread(), (User) owner);
+				entry.getThread(), (User) actor);
 		if (member != null) {
 			return member.getAdmin();
 		}
@@ -106,20 +106,20 @@ public class ThreadMemberResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected boolean hasCreatePermission(Account actor, Account owner,
+	protected boolean hasCreatePermission(Account authUser, Account actor,
 			WorkgroupMember entry, Object... opt) {
-		if (actor.hasAllRights()) {
+		if (authUser.hasAllRights()) {
 			return true;
 		}
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor,
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser,
 					TechnicalAccountPermissionType.THREAD_MEMBERS_CREATE);
 		}
 		// entry is the object to be created. Can not be used to check if the
-		// current owner is admin.
+		// current actor is admin.
 		if (opt.length > 0 && opt[0] instanceof Thread) {
 			WorkgroupMember member = threadMemberRepository.findUserThreadMember(
-					(Thread) opt[0], (User) owner);
+					(Thread) opt[0], (User) actor);
 			if (member != null) {
 				return member.getAdmin();
 			}
@@ -128,17 +128,17 @@ public class ThreadMemberResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected boolean hasUpdatePermission(Account actor, Account owner,
+	protected boolean hasUpdatePermission(Account authUser, Account actor,
 			WorkgroupMember entry, Object... opt) {
-		if (actor.hasAllRights()) {
+		if (authUser.hasAllRights()) {
 			return true;
 		}
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor,
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser,
 					TechnicalAccountPermissionType.THREAD_MEMBERS_UPDATE);
 		}
 		WorkgroupMember member = threadMemberRepository.findUserThreadMember(
-				entry.getThread(), (User) owner);
+				entry.getThread(), (User) actor);
 		if (member != null) {
 			return member.getAdmin();
 		}

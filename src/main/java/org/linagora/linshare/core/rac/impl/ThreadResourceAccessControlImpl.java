@@ -69,69 +69,69 @@ public class ThreadResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected boolean hasReadPermission(Account actor, Account owner,
+	protected boolean hasReadPermission(Account authUser, Account actor,
 			Thread entry, Object... opt) {
+		Validate.notNull(authUser);
 		Validate.notNull(actor);
-		Validate.notNull(owner);
 		Validate.notNull(entry);
 
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor,
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser,
 					TechnicalAccountPermissionType.THREADS_GET);
 		}
-		if (actor.hasAllRights()) {
+		if (authUser.hasAllRights()) {
 			return true;
 		}
-		return isUserMember(owner, entry);
+		return isUserMember(actor, entry);
 	}
 
 	@Override
-	protected boolean hasListPermission(Account actor, Account owner,
+	protected boolean hasListPermission(Account authUser, Account actor,
 			Thread entry, Object... opt) {
-		Validate.notNull(actor);
-		// Owner is always null, because threads have not owner.
+		Validate.notNull(authUser);
+		// Owner is always null, because threads have not actor.
 
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor,
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser,
 					TechnicalAccountPermissionType.THREADS_LIST);
 		}
-		if (actor.hasAllRights()) {
+		if (authUser.hasAllRights()) {
 			return true;
 		}
-		return isUserMember(owner, entry);
+		return isUserMember(actor, entry);
 	}
 
 	@Override
-	protected boolean hasDeletePermission(Account actor, Account owner,
+	protected boolean hasDeletePermission(Account authUser, Account actor,
 			Thread entry, Object... opt) {
-		Validate.notNull(actor);
+		Validate.notNull(authUser);
 		Validate.notNull(entry);
-		// Owner is always null, because threads have not owner.
+		// Owner is always null, because threads have not actor.
 
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor,
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser,
 					TechnicalAccountPermissionType.THREADS_DELETE);
 		}
-		if (actor.hasAllRights()) {
+		if (authUser.hasAllRights()) {
 			return true;
 		}
-		return isUserAdmin(owner, entry);
+		return isUserAdmin(actor, entry);
 	}
 
 	@Override
-	protected boolean hasCreatePermission(Account actor, Account owner,
+	protected boolean hasCreatePermission(Account authUser, Account actor,
 			Thread entry, Object... opt) {
-		Validate.notNull(actor);
-		// Owner is always null, because threads do not have owner.
+		Validate.notNull(authUser);
+		// Owner is always null, because threads do not have actor.
 
-		if (actor.hasAllRights()) {
+		if (authUser.hasAllRights()) {
 			return true;
 		}
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor,
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser,
 					TechnicalAccountPermissionType.THREADS_CREATE);
 		}
-		Functionality creation = functionalityService.getWorkGroupCreationRight(owner.getDomain());
+		Functionality creation = functionalityService.getWorkGroupCreationRight(actor.getDomain());
 		if (!creation.getActivationPolicy().getStatus()){
 			String message = "You can not create thread, you are not authorized.";
 			logger.error(message);
@@ -142,20 +142,20 @@ public class ThreadResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected boolean hasUpdatePermission(Account actor, Account owner,
+	protected boolean hasUpdatePermission(Account authUser, Account actor,
 			Thread entry, Object... opt) {
-		Validate.notNull(actor);
+		Validate.notNull(authUser);
 		Validate.notNull(entry);
-		// Owner is always null, because threads have not owner.
+		// Owner is always null, because threads have not actor.
 
-		if (actor.hasAllRights()) {
+		if (authUser.hasAllRights()) {
 			return true;
 		}
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor,
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser,
 					TechnicalAccountPermissionType.THREADS_UPDATE);
 		}
-		return isUserAdmin(actor, entry);
+		return isUserAdmin(authUser, entry);
 	}
 
 	@Override

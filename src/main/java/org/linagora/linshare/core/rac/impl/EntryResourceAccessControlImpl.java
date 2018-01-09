@@ -52,10 +52,10 @@ public abstract class EntryResourceAccessControlImpl<R, E extends Entry>
 		super(functionalityService);
 	}
 
-	protected abstract boolean hasDownloadPermission(Account actor,
+	protected abstract boolean hasDownloadPermission(Account authUser,
 			Account account, E entry, Object... opt);
 
-	protected abstract boolean hasDownloadTumbnailPermission(Account actor,
+	protected abstract boolean hasDownloadTumbnailPermission(Account authUser,
 			Account account, E entry, Object... opt);
 
 	@Override
@@ -84,36 +84,36 @@ public abstract class EntryResourceAccessControlImpl<R, E extends Entry>
 	}
 
 	@Override
-	protected boolean isAuthorized(Account actor, Account targetedAccount,
+	protected boolean isAuthorized(Account authUser, Account targetedAccount,
 			PermissionType permission, E entry, Class<?> clazz, Object... opt) {
 		Validate.notNull(permission);
-		if (actor.hasAllRights())
+		if (authUser.hasAllRights())
 			return true;
 		if (permission.equals(PermissionType.GET)) {
-			if (hasReadPermission(actor, targetedAccount, entry, opt))
+			if (hasReadPermission(authUser, targetedAccount, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.LIST)) {
-			if (hasListPermission(actor, targetedAccount, entry, opt))
+			if (hasListPermission(authUser, targetedAccount, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.CREATE)) {
-			if (hasCreatePermission(actor, targetedAccount, entry, opt))
+			if (hasCreatePermission(authUser, targetedAccount, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.UPDATE)) {
-			if (hasUpdatePermission(actor, targetedAccount, entry, opt))
+			if (hasUpdatePermission(authUser, targetedAccount, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.DELETE)) {
-			if (hasDeletePermission(actor, targetedAccount, entry, opt))
+			if (hasDeletePermission(authUser, targetedAccount, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.DOWNLOAD)) {
-			if (hasDownloadPermission(actor, targetedAccount, entry, opt))
+			if (hasDownloadPermission(authUser, targetedAccount, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.DOWNLOAD_THUMBNAIL)) {
-			if (hasDownloadTumbnailPermission(actor, targetedAccount, entry,
+			if (hasDownloadTumbnailPermission(authUser, targetedAccount, entry,
 					opt))
 				return true;
 		}
 		if (clazz != null) {
-			StringBuilder sb = getActorStringBuilder(actor);
+			StringBuilder sb = getAuthUserStringBuilder(authUser);
 			sb.append(" is trying to access to unauthorized resource named ");
 			sb.append(clazz.toString());
 			if (entry != null) {
@@ -125,22 +125,22 @@ public abstract class EntryResourceAccessControlImpl<R, E extends Entry>
 	}
 
 	@Override
-	public void checkDownloadPermission(Account actor, Account targetedAccount,
+	public void checkDownloadPermission(Account authUser, Account targetedAccount,
 			Class<?> clazz, BusinessErrorCode errCode, E entry, Object... opt)
 			throws BusinessException {
 		String logMessage = " is not authorized to download the entry ";
 		String exceptionMessage = "You are not authorized to download this entry.";
-		checkPermission(actor, targetedAccount, clazz, errCode, entry,
+		checkPermission(authUser, targetedAccount, clazz, errCode, entry,
 				PermissionType.DOWNLOAD, logMessage, exceptionMessage, opt);
 	}
 
 	@Override
-	public void checkThumbNailDownloadPermission(Account actor,
+	public void checkThumbNailDownloadPermission(Account authUser,
 			Account targetedAccount, Class<?> clazz, BusinessErrorCode errCode,
 			E entry, Object... opt) throws BusinessException {
 		String logMessage = " is not authorized to get the thumbnail of the entry ";
 		String exceptionMessage = "You are not authorized to get the thumbnail of this entry.";
-		checkPermission(actor, targetedAccount, clazz, errCode, entry,
+		checkPermission(authUser, targetedAccount, clazz, errCode, entry,
 				PermissionType.DOWNLOAD_THUMBNAIL, logMessage,
 				exceptionMessage, opt);
 	}

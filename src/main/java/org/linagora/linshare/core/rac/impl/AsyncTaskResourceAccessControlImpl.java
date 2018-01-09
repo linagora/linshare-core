@@ -50,37 +50,37 @@ public class AsyncTaskResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected boolean hasReadPermission(Account actor, Account owner,
+	protected boolean hasReadPermission(Account authUser, Account actor,
 			AsyncTask entry, Object... opt) {
-		return defaultPermissionCheck(actor, owner, entry,
+		return defaultPermissionCheck(authUser, actor, entry,
 				TechnicalAccountPermissionType.ASYNC_TASK_GET);
 	}
 
 	@Override
-	protected boolean hasListPermission(Account actor, Account owner,
+	protected boolean hasListPermission(Account authUser, Account actor,
 			AsyncTask entry, Object... opt) {
-		return defaultPermissionCheck(actor, owner, entry,
+		return defaultPermissionCheck(authUser, actor, entry,
 				TechnicalAccountPermissionType.ASYNC_TASK_LIST);
 	}
 
 	@Override
-	protected boolean hasDeletePermission(Account actor, Account owner,
+	protected boolean hasDeletePermission(Account authUser, Account actor,
 			AsyncTask entry, Object... opt) {
-		return defaultPermissionCheck(actor, owner, entry,
+		return defaultPermissionCheck(authUser, actor, entry,
 				TechnicalAccountPermissionType.ASYNC_TASK_DELETE);
 	}
 
 	@Override
-	protected boolean hasCreatePermission(Account actor, Account owner,
+	protected boolean hasCreatePermission(Account authUser, Account actor,
 			AsyncTask entry, Object... opt) {
-		return defaultPermissionCheck(actor, owner, entry,
+		return defaultPermissionCheck(authUser, actor, entry,
 				TechnicalAccountPermissionType.ASYNC_TASK_CREATE);
 	}
 
 	@Override
-	protected boolean hasUpdatePermission(Account actor, Account owner,
+	protected boolean hasUpdatePermission(Account authUser, Account actor,
 			AsyncTask entry, Object... opt) {
-		return defaultPermissionCheck(actor, owner, entry,
+		return defaultPermissionCheck(authUser, actor, entry,
 				TechnicalAccountPermissionType.ASYNC_TASK_UPDATE);
 	}
 

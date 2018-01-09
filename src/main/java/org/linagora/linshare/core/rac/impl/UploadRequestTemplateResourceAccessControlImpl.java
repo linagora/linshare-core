@@ -50,41 +50,41 @@ public class UploadRequestTemplateResourceAccessControlImpl
 	}
 
 	@Override
-	protected boolean hasReadPermission(Account actor, Account account, UploadRequestTemplate entry, Object... opt) {
-		if (isEnable(actor)) {
-			return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_TEMPLATE_GET);
+	protected boolean hasReadPermission(Account authUser, Account actor, UploadRequestTemplate entry, Object... opt) {
+		if (isEnable(authUser)) {
+			return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_TEMPLATE_GET);
 		}
 		return false;
 	}
 
 	@Override
-	protected boolean hasListPermission(Account actor, Account account, UploadRequestTemplate entry, Object... opt) {
-		if (isEnable(actor)) {
-			return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_TEMPLATE_LIST);
+	protected boolean hasListPermission(Account authUser, Account actor, UploadRequestTemplate entry, Object... opt) {
+		if (isEnable(authUser)) {
+			return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_TEMPLATE_LIST);
 		}
 		return false;
 	}
 
 	@Override
-	protected boolean hasDeletePermission(Account actor, Account account, UploadRequestTemplate entry, Object... opt) {
-		if (isEnable(actor)) {
-			return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_TEMPLATE_DELETE);
+	protected boolean hasDeletePermission(Account authUser, Account actor, UploadRequestTemplate entry, Object... opt) {
+		if (isEnable(authUser)) {
+			return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_TEMPLATE_DELETE);
 		}
 		return false;
 	}
 
 	@Override
-	protected boolean hasCreatePermission(Account actor, Account account, UploadRequestTemplate entry, Object... opt) {
-		if (isEnable(actor)) {
-			return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_TEMPLATE_CREATE);
+	protected boolean hasCreatePermission(Account authUser, Account actor, UploadRequestTemplate entry, Object... opt) {
+		if (isEnable(authUser)) {
+			return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_TEMPLATE_CREATE);
 		}
 		return false;
 	}
 
 	@Override
-	protected boolean hasUpdatePermission(Account actor, Account account, UploadRequestTemplate entry, Object... opt) {
-		if (isEnable(actor)) {
-			return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_TEMPLATE_UPDATE);
+	protected boolean hasUpdatePermission(Account authUser, Account actor, UploadRequestTemplate entry, Object... opt) {
+		if (isEnable(authUser)) {
+			return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_TEMPLATE_UPDATE);
 		}
 		return false;
 	}
@@ -99,10 +99,10 @@ public class UploadRequestTemplateResourceAccessControlImpl
 		return entry.getUuid();
 	}
 
-	private boolean isEnable(Account actor) {
-		Functionality func = functionalityService.getUploadRequestFunctionality(actor.getDomain());
+	private boolean isEnable(Account authUser) {
+		Functionality func = functionalityService.getUploadRequestFunctionality(authUser.getDomain());
 		if (func.getActivationPolicy().getStatus()) {
-			Functionality templateFunc = functionalityService.getUploadRequestEnableTemplateFunctionality(actor.getDomain());
+			Functionality templateFunc = functionalityService.getUploadRequestEnableTemplateFunctionality(authUser.getDomain());
 			return templateFunc.getActivationPolicy().getStatus();
 		}
 		return false;

@@ -86,36 +86,36 @@ public class WorkGroupNodeResourceAccessControlImpl
 	}
 
 	@Override
-	protected boolean isAuthorized(Account actor, Account targetedAccount,
+	protected boolean isAuthorized(Account authUser, Account targetedAccount,
 			PermissionType permission, WorkGroupNode entry, Class<?> clazz, Object... opt) {
 		Validate.notNull(permission);
-		if (actor.hasAllRights())
+		if (authUser.hasAllRights())
 			return true;
 		if (permission.equals(PermissionType.GET)) {
-			if (hasReadPermission(actor, targetedAccount, entry, opt))
+			if (hasReadPermission(authUser, targetedAccount, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.LIST)) {
-			if (hasListPermission(actor, targetedAccount, entry, opt))
+			if (hasListPermission(authUser, targetedAccount, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.CREATE)) {
-			if (hasCreatePermission(actor, targetedAccount, entry, opt))
+			if (hasCreatePermission(authUser, targetedAccount, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.UPDATE)) {
-			if (hasUpdatePermission(actor, targetedAccount, entry, opt))
+			if (hasUpdatePermission(authUser, targetedAccount, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.DELETE)) {
-			if (hasDeletePermission(actor, targetedAccount, entry, opt))
+			if (hasDeletePermission(authUser, targetedAccount, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.DOWNLOAD)) {
-			if (hasDownloadPermission(actor, targetedAccount, entry, opt))
+			if (hasDownloadPermission(authUser, targetedAccount, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.DOWNLOAD_THUMBNAIL)) {
-			if (hasDownloadTumbnailPermission(actor, targetedAccount, entry,
+			if (hasDownloadTumbnailPermission(authUser, targetedAccount, entry,
 					opt))
 				return true;
 		}
 		if (clazz != null) {
-			StringBuilder sb = getActorStringBuilder(actor);
+			StringBuilder sb = getAuthUserStringBuilder(authUser);
 			sb.append(" is trying to access to unauthorized resource named ");
 			sb.append(clazz.toString());
 			if (entry != null) {
@@ -127,70 +127,70 @@ public class WorkGroupNodeResourceAccessControlImpl
 	}
 
 	@Override
-	public void checkDownloadPermission(Account actor, Account targetedAccount,
+	public void checkDownloadPermission(Account authUser, Account targetedAccount,
 			Class<?> clazz, BusinessErrorCode errCode, WorkGroupNode entry, Object... opt)
 			throws BusinessException {
 		String logMessage = " is not authorized to download the entry ";
 		String exceptionMessage = "You are not authorized to download this entry.";
-		checkPermission(actor, targetedAccount, clazz, errCode, entry,
+		checkPermission(authUser, targetedAccount, clazz, errCode, entry,
 				PermissionType.DOWNLOAD, logMessage, exceptionMessage, opt);
 	}
 
 	@Override
-	public void checkThumbNailDownloadPermission(Account actor,
+	public void checkThumbNailDownloadPermission(Account authUser,
 			Account targetedAccount, Class<?> clazz, BusinessErrorCode errCode,
 			WorkGroupNode entry, Object... opt) throws BusinessException {
 		String logMessage = " is not authorized to get the thumbnail of the entry ";
 		String exceptionMessage = "You are not authorized to get the thumbnail of this entry.";
-		checkPermission(actor, targetedAccount, clazz, errCode, entry,
+		checkPermission(authUser, targetedAccount, clazz, errCode, entry,
 				PermissionType.DOWNLOAD_THUMBNAIL, logMessage,
 				exceptionMessage, opt);
 	}
 
 	@Override
-	protected boolean hasReadPermission(Account actor, Account account, WorkGroupNode entry, Object... opt) {
-		if (actor.hasAllRights()) {
+	protected boolean hasReadPermission(Account authUser, Account actor, WorkGroupNode entry, Object... opt) {
+		if (authUser.hasAllRights()) {
 			return true;
 		}
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor,
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser,
 					TechnicalAccountPermissionType.THREAD_ENTRIES_GET);
 		}
 		if (opt.length > 0 && opt[0] instanceof Thread) {
 			return threadMemberRepository.findUserThreadMember((Thread) opt[0],
-					(User) account) != null;
+					(User) actor) != null;
 		}
 		return false;
 	}
 
 	@Override
-	protected boolean hasListPermission(Account actor, Account account, WorkGroupNode entry, Object... opt) {
-		if (actor.hasAllRights()) {
+	protected boolean hasListPermission(Account authUser, Account actor, WorkGroupNode entry, Object... opt) {
+		if (authUser.hasAllRights()) {
 			return true;
 		}
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor,
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser,
 					TechnicalAccountPermissionType.THREAD_ENTRIES_LIST);
 		}
 		if (opt.length > 0 && opt[0] instanceof Thread) {
 			return threadMemberRepository.findUserThreadMember((Thread) opt[0],
-					(User) account) != null;
+					(User) actor) != null;
 		}
 		return false;
 	}
 
 	@Override
-	protected boolean hasDeletePermission(Account actor, Account account, WorkGroupNode entry, Object... opt) {
-		if (actor.hasAllRights()) {
+	protected boolean hasDeletePermission(Account authUser, Account actor, WorkGroupNode entry, Object... opt) {
+		if (authUser.hasAllRights()) {
 			return true;
 		}
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor,
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser,
 					TechnicalAccountPermissionType.THREAD_ENTRIES_DELETE);
 		}
 		if (opt.length > 0 && opt[0] instanceof Thread) {
 			WorkgroupMember member = threadMemberRepository.findUserThreadMember((Thread) opt[0],
-					(User) account);
+					(User) actor);
 			if (member != null && member.getAdmin()) {
 				return true;
 			}
@@ -199,17 +199,17 @@ public class WorkGroupNodeResourceAccessControlImpl
 	}
 
 	@Override
-	protected boolean hasCreatePermission(Account actor, Account account, WorkGroupNode entry, Object... opt) {
-		if (actor.hasAllRights()) {
+	protected boolean hasCreatePermission(Account authUser, Account actor, WorkGroupNode entry, Object... opt) {
+		if (authUser.hasAllRights()) {
 			return true;
 		}
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor,
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser,
 					TechnicalAccountPermissionType.THREAD_ENTRIES_CREATE);
 		}
 		if (opt.length > 0 && opt[0] instanceof Thread) {
 			WorkgroupMember member = threadMemberRepository.findUserThreadMember((Thread) opt[0],
-					(User) account);
+					(User) actor);
 			if (member != null && member.getCanUpload()) {
 				return true;
 			}
@@ -218,35 +218,35 @@ public class WorkGroupNodeResourceAccessControlImpl
 	}
 
 	@Override
-	protected boolean hasUpdatePermission(Account actor, Account account, WorkGroupNode entry, Object... opt) {
-		if (actor.hasAllRights()) {
+	protected boolean hasUpdatePermission(Account authUser, Account actor, WorkGroupNode entry, Object... opt) {
+		if (authUser.hasAllRights()) {
 			return true;
 		}
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor,
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser,
 					TechnicalAccountPermissionType.THREAD_ENTRIES_UPDATE);
 		}
 		Account workGroup = getOwner(entry, opt);
 		WorkgroupMember member = threadMemberRepository.findUserThreadMember(
-				workGroup, (User) account);
+				workGroup, (User) actor);
 		if (member != null && member.getCanUpload()) {
 			return true;
 		}
 		return false;
 	}
 
-	protected boolean hasDownloadPermission(Account actor,
-			Account account, WorkGroupNode entry, Object... opt) {
-		if (actor.hasAllRights()) {
+	protected boolean hasDownloadPermission(Account authUser,
+			Account actor, WorkGroupNode entry, Object... opt) {
+		if (authUser.hasAllRights()) {
 			return true;
 		}
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor,
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser,
 					TechnicalAccountPermissionType.THREAD_ENTRIES_DOWNLOAD);
 		}
 		if (opt.length > 0 && opt[0] instanceof Thread) {
 			WorkgroupMember member = threadMemberRepository.findUserThreadMember((Thread) opt[0],
-					(User) account);
+					(User) actor);
 			if (member != null) {
 				return true;
 			}
@@ -254,18 +254,18 @@ public class WorkGroupNodeResourceAccessControlImpl
 		return false;
 	}
 
-	protected boolean hasDownloadTumbnailPermission(Account actor,
-			Account account, WorkGroupNode entry, Object... opt) {
-		if (actor.hasAllRights()) {
+	protected boolean hasDownloadTumbnailPermission(Account authUser,
+			Account actor, WorkGroupNode entry, Object... opt) {
+		if (authUser.hasAllRights()) {
 			return true;
 		}
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor,
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser,
 					TechnicalAccountPermissionType.THREAD_ENTRIES_DOWNLOAD_THUMBNAIL);
 		}
 		if (opt.length > 0 && opt[0] instanceof Thread) {
 			WorkgroupMember member = threadMemberRepository.findUserThreadMember((Thread) opt[0],
-					(User) account);
+					(User) actor);
 			if (member != null) {
 				return true;
 			}

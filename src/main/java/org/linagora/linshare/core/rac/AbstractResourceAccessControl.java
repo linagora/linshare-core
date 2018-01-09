@@ -40,23 +40,23 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface AbstractResourceAccessControl<A, R, E> {
 
-	void checkReadPermission(Account actor, A targetedAccount, Class<?> clazz,
+	void checkReadPermission(Account authUser, A targetedAccount, Class<?> clazz,
 			BusinessErrorCode errCode, E entry, Object... opt)
 			throws BusinessException;
 
-	void checkListPermission(Account actor, A targetedAccount, Class<?> clazz,
+	void checkListPermission(Account authUser, A targetedAccount, Class<?> clazz,
 			BusinessErrorCode errCode, E entry, Object... opt)
 			throws BusinessException;
 
-	void checkCreatePermission(Account actor, A targetedAccount,
+	void checkCreatePermission(Account authUser, A targetedAccount,
 			Class<?> clazz, BusinessErrorCode errCode, E entry, Object... opt)
 			throws BusinessException;
 
-	void checkUpdatePermission(Account actor, A targetedAccount,
+	void checkUpdatePermission(Account authUser, A targetedAccount,
 			Class<?> clazz, BusinessErrorCode errCode, E entry, Object... opt)
 			throws BusinessException;
 
-	void checkDeletePermission(Account actor, A targetedAccount,
+	void checkDeletePermission(Account authUser, A targetedAccount,
 			Class<?> clazz, BusinessErrorCode errCode, E entry, Object... opt)
 			throws BusinessException;
 }

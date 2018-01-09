@@ -48,15 +48,15 @@ public class AuditLogEntryResourceAccessControlImpl
 	}
 
 	@Override
-	protected boolean hasReadPermission(Account actor, Account account, AuditLogEntryUser entry, Object... opt) {
-		if (actor.hasSuperAdminRole()) {
+	protected boolean hasReadPermission(Account authUser, Account actor, AuditLogEntryUser entry, Object... opt) {
+		if (authUser.hasSuperAdminRole()) {
 			return true;
 		} else {
-			if (actor.hasDelegationRole()) {
-				if (actor.getPermission().getAccountPermissions().contains(TechnicalAccountPermissionType.AUDIT_LIST)) {
+			if (authUser.hasDelegationRole()) {
+				if (authUser.getPermission().getAccountPermissions().contains(TechnicalAccountPermissionType.AUDIT_LIST)) {
 					return true;
 				}
-			} else if (actor.equals(entry.getActor())) {
+			} else if (authUser.equals(entry.getActor())) {
 				return true;
 			}
 		}
@@ -64,22 +64,22 @@ public class AuditLogEntryResourceAccessControlImpl
 	}
 
 	@Override
-	protected boolean hasListPermission(Account actor, Account account, AuditLogEntryUser entry, Object... opt) {
-		return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.AUDIT_LIST);
+	protected boolean hasListPermission(Account authUser, Account actor, AuditLogEntryUser entry, Object... opt) {
+		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.AUDIT_LIST);
 	}
 
 	@Override
-	protected boolean hasDeletePermission(Account actor, Account account, AuditLogEntryUser entry, Object... opt) {
+	protected boolean hasDeletePermission(Account authUser, Account actor, AuditLogEntryUser entry, Object... opt) {
 		return false;
 	}
 
 	@Override
-	protected boolean hasCreatePermission(Account actor, Account account, AuditLogEntryUser entry, Object... opt) {
+	protected boolean hasCreatePermission(Account authUser, Account actor, AuditLogEntryUser entry, Object... opt) {
 		return false;
 	}
 
 	@Override
-	protected boolean hasUpdatePermission(Account actor, Account account, AuditLogEntryUser entry, Object... opt) {
+	protected boolean hasUpdatePermission(Account authUser, Account actor, AuditLogEntryUser entry, Object... opt) {
 		return false;
 	}
 

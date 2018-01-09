@@ -75,27 +75,27 @@ public class GuestResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected boolean hasReadPermission(Account actor, Account owner,
+	protected boolean hasReadPermission(Account authUser, Account actor,
 			Guest entry, Object... opt) {
-		if (actor.hasDelegationRole())
-			return hasPermission(actor, TechnicalAccountPermissionType.GUESTS_GET);
-		if (actor.isInternal() || actor.isGuest()) {
+		if (authUser.hasDelegationRole())
+			return hasPermission(authUser, TechnicalAccountPermissionType.GUESTS_GET);
+		if (authUser.isInternal() || authUser.isGuest()) {
 			return true;
 		}
 		return false;
 	}
 
 	@Override
-	protected boolean hasListPermission(Account actor, Account owner,
+	protected boolean hasListPermission(Account authUser, Account actor,
 			Guest entry, Object... opt) {
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor,
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser,
 					TechnicalAccountPermissionType.GUESTS_LIST);
-		} else if (actor.isInternal()) {
-			/* Is it usefull to check if the current actor is an internal ?
+		} else if (authUser.isInternal()) {
+			/* Is it usefull to check if the current authUser is an internal ?
 			 * Only internals have the right to create guests.
 			*/
-			if (actor.equals(owner)) {
+			if (authUser.equals(actor)) {
 				return true;
 			}
 		}
@@ -103,16 +103,16 @@ public class GuestResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected boolean hasDeletePermission(Account actor, Account owner,
+	protected boolean hasDeletePermission(Account authUser, Account actor,
 			Guest entry, Object... opt) {
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor,
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser,
 					TechnicalAccountPermissionType.GUESTS_DELETE);
-		} else if (actor.isInternal()) {
-			if (entry.getOwner().equals(owner)) {
+		} else if (authUser.isInternal()) {
+			if (entry.getOwner().equals(actor)) {
 				return true;
 			}
-			if (!entry.getDomain().isManagedBy(actor)) {
+			if (!entry.getDomain().isManagedBy(authUser)) {
 				return false;
 			}
 		}
@@ -120,16 +120,16 @@ public class GuestResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected boolean hasCreatePermission(Account actor, Account owner,
+	protected boolean hasCreatePermission(Account authUser, Account actor,
 			Guest entry, Object... opt) {
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor,
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser,
 					TechnicalAccountPermissionType.GUESTS_CREATE);
-		} else if (actor.isInternal()) {
+		} else if (authUser.isInternal()) {
 			// Only internal users can create guests.
-			if (guestFunctionalityStatus(owner.getDomain())) {
+			if (guestFunctionalityStatus(actor.getDomain())) {
 				// We can not create guests if guest functionality is not enable.
-				if (hasGuestDomain(owner.getDomainId())) {
+				if (hasGuestDomain(actor.getDomainId())) {
 					// We can not create guest if there is no guest domain.
 					// TODO : Add a check if user still can guest.
 					return true;
@@ -142,16 +142,16 @@ public class GuestResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected boolean hasUpdatePermission(Account actor, Account owner,
+	protected boolean hasUpdatePermission(Account authUser, Account actor,
 			Guest entry, Object... opt) {
-		if (actor.hasDelegationRole()) {
-			return hasPermission(actor,
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser,
 					TechnicalAccountPermissionType.GUESTS_UPDATE);
-		} else if (actor.isInternal()) {
-			if (entry.getOwner().equals(owner)) {
+		} else if (authUser.isInternal()) {
+			if (entry.getOwner().equals(actor)) {
 				return true;
 			}
-			if (!entry.getDomain().isManagedBy(actor)) {
+			if (!entry.getDomain().isManagedBy(authUser)) {
 				return false;
 			}
 		}
