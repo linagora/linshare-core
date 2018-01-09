@@ -61,7 +61,7 @@ public class FlowUploaderUtils {
 		Validate.notEmpty(identifier, "Flow file identifier must be defined.");
 		identifier = cleanIdentifier(identifier);
 		boolean isValid = isValid(chunkNumber, chunkSize, totalSize, identifier,
-				filename);
+				filename, totalChunks);
 		// Throw HTTP 400 error code.
 		Validate.isTrue(isValid);
 		if (chunkedFiles.containsKey(identifier)
@@ -87,29 +87,22 @@ public class FlowUploaderUtils {
 	}
 
 	public static boolean isValid(long chunkNumber, long chunkSize,
-			long totalSize, String identifier, String filename) {
+			long totalSize, String identifier, String filename, long totalChunks) {
 		// Check if the request is sane
 		if (chunkNumber == 0 || chunkSize == 0 || totalSize == 0
 				|| identifier.length() == 0 || filename.length() == 0) {
 			return false;
 		}
-		double numberOfChunks = computeNumberOfChunks(chunkSize, totalSize);
-		if (chunkNumber > numberOfChunks) {
+		if (chunkNumber > totalChunks) {
 			return false;
 		}
 		return true;
 	}
 
-	private static double computeNumberOfChunks(long chunkSize,
-			long totalSize) {
-		return Math.max(Math.floor(totalSize / chunkSize), 1);
-	}
-
 	public static boolean isUploadFinished(String identifier, long chunkSize,
-			long totalSize, ConcurrentMap<String, ChunkedFile> chunkedFiles) {
-		double numberOfChunks = computeNumberOfChunks(chunkSize, totalSize);
+			long totalSize, ConcurrentMap<String, ChunkedFile> chunkedFiles, long totalChunks) {
 		return chunkedFiles.get(identifier).getChunks()
-				.size() == numberOfChunks;
+				.size() == totalChunks;
 	}
 
 	public static java.nio.file.Path getTempFile(String identifier,

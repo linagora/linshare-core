@@ -165,7 +165,7 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 		logger.debug("upload chunk number : " + chunkNumber);
 		identifier = cleanIdentifier(identifier);
 		boolean isValid = FlowUploaderUtils.isValid(chunkNumber, chunkSize,
-				totalSize, identifier, filename);
+				totalSize, identifier, filename, totalChunks);
 		Validate.isTrue(isValid);
 		checkIfMaintenanceIsEnabled();
 		FlowDto flow = new FlowDto(chunkNumber);
@@ -198,7 +198,7 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 			logger.debug("nb uploading files : " + chunkedFiles.size());
 			logger.debug("current chuckedfile uuid : " + identifier);
 			logger.debug("current chuckedfiles" + chunkedFiles.toString());
-			if (FlowUploaderUtils.isUploadFinished(identifier, chunkSize, totalSize, chunkedFiles)) {
+			if (FlowUploaderUtils.isUploadFinished(identifier, chunkSize, totalSize, chunkedFiles, totalChunks)) {
 				flow.setLastChunk(true);
 				logger.debug("upload finished : " + chunkNumber + " : " + identifier);
 				if (sizeValidation) {
