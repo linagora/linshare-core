@@ -58,6 +58,7 @@ public class FlowUploaderUtils {
 			// If request returns a permanent error status, upload is stopped.
 			// If request returns anything else, the chunk will be uploaded in the standard fashion.
 		}
+		Validate.notEmpty(identifier, "Flow file identifier must be defined.");
 		identifier = cleanIdentifier(identifier);
 		boolean isValid = isValid(chunkNumber, chunkSize, totalSize, identifier,
 				filename);
