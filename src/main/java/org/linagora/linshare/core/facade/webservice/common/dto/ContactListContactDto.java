@@ -37,7 +37,7 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.entities.MailingListContact;
+import org.linagora.linshare.core.domain.entities.ContactListContact;
 
 import com.google.common.base.Function;
 import com.wordnik.swagger.annotations.ApiModel;
@@ -71,7 +71,7 @@ public class ContactListContactDto {
 	public ContactListContactDto() {
 	}
 
-	public ContactListContactDto(MailingListContact contact) {
+	public ContactListContactDto(ContactListContact contact) {
 		this.mail = contact.getMail();
 		this.uuid = contact.getUuid();
 		this.lastName = contact.getLastName();
@@ -81,8 +81,8 @@ public class ContactListContactDto {
 		this.modificationDate = contact.getModificationDate();
 	}
 
-	public MailingListContact toObject() {
-		MailingListContact contact = new MailingListContact();
+	public ContactListContact toObject() {
+		ContactListContact contact = new ContactListContact();
 		contact.setUuid(getUuid());
 		contact.setMail(getMail());
 		contact.setFirstName(getFirstName());
@@ -149,10 +149,10 @@ public class ContactListContactDto {
 	/*
 	 * Transformers
 	 */
-	public static Function<MailingListContact, ContactListContactDto> toDto() {
-		return new Function<MailingListContact, ContactListContactDto>() {
+	public static Function<ContactListContact, ContactListContactDto> toDto() {
+		return new Function<ContactListContact, ContactListContactDto>() {
 			@Override
-			public ContactListContactDto apply(MailingListContact arg0) {
+			public ContactListContactDto apply(ContactListContact arg0) {
 				return new ContactListContactDto(arg0);
 			}
 		};

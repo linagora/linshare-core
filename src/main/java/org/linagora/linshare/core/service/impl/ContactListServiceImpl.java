@@ -44,37 +44,33 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.constants.VisibilityType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.MailingList;
-import org.linagora.linshare.core.domain.entities.MailingListContact;
+import org.linagora.linshare.core.domain.entities.ContactList;
+import org.linagora.linshare.core.domain.entities.ContactListContact;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.MailingListResourceAccessControl;
 import org.linagora.linshare.core.service.LogEntryService;
-import org.linagora.linshare.core.service.MailingListService;
+import org.linagora.linshare.core.service.ContactListService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.logs.MailingListAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.MailingListContactAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.MailingListContactMto;
 import org.linagora.linshare.mongo.entities.mto.MailingListMto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingList> implements MailingListService {
+public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactList> implements ContactListService {
 
-	private static final Logger logger = LoggerFactory.getLogger(MailingListServiceImpl.class);
-
-	private final MailingListBusinessService mailingListBusinessService;
+	private final MailingListBusinessService contactListBusinessService;
 
 	private final UserService userService;
 
 	private final LogEntryService logEntryService;
 
-	public MailingListServiceImpl(MailingListBusinessService mailingListBusinessService, UserService userService,
+	public ContactListServiceImpl(MailingListBusinessService contactListBusinessService, UserService userService,
 			final LogEntryService logEntryService, MailingListResourceAccessControl rac) {
 		super(rac);
-		this.mailingListBusinessService = mailingListBusinessService;
+		this.contactListBusinessService = contactListBusinessService;
 		this.userService = userService;
 		this.logEntryService = logEntryService;
 	}
@@ -84,7 +80,7 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 	 */
 
 	@Override
-	public MailingList createList(String actorUuid, String ownerUuid, MailingList list) throws BusinessException {
+	public ContactList createList(String actorUuid, String ownerUuid, ContactList list) throws BusinessException {
 		Validate.notEmpty(actorUuid);
 		Validate.notEmpty(ownerUuid);
 		Validate.notNull(list);
@@ -92,7 +88,7 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 		User owner = userService.findByLsUuid(ownerUuid);
 		if (actor.hasSuperAdminRole())
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to create a list.");
-		MailingList res = mailingListBusinessService.createList(list, owner);
+		ContactList res = contactListBusinessService.createList(list, owner);
 		MailingListAuditLogEntry log = new MailingListAuditLogEntry(new AccountMto(actor), new AccountMto(owner),
 				LogAction.CREATE, AuditLogEntryType.CONTACTS_LISTS, res);
 		logEntryService.insert(log);
@@ -100,67 +96,67 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 	}
 
 	@Override
-	public MailingList findByUuid(String actorUuid, String uuid) throws BusinessException {
+	public ContactList findByUuid(String actorUuid, String uuid) throws BusinessException {
 		Validate.notEmpty(uuid);
-		MailingList list = mailingListBusinessService.findByUuid(uuid);
+		ContactList list = contactListBusinessService.findByUuid(uuid);
 		if (list == null)
 			throw new BusinessException(BusinessErrorCode.LIST_DO_NOT_EXIST, "List does not exist : " + uuid);
 		return list;
 	}
 
 	@Override
-	public MailingList findByIdentifier(String ownerUuid, String identifier) {
+	public ContactList findByIdentifier(String ownerUuid, String identifier) {
 		Validate.notEmpty(ownerUuid);
 		User owner = userService.findByLsUuid(ownerUuid);
-		return mailingListBusinessService.findByIdentifier(owner, identifier);
+		return contactListBusinessService.findByIdentifier(owner, identifier);
 	}
 
 	@Override
 	public List<String> getAllContactMails(String actorUuid, String uuid) throws BusinessException {
 		Validate.notEmpty(uuid);
-		return mailingListBusinessService.getAllContactMails(findByUuid(actorUuid, uuid));
+		return contactListBusinessService.getAllContactMails(findByUuid(actorUuid, uuid));
 	}
 
 	@Override
-	public List<MailingList> findAllListByUser(String actorUuid, String userUuid) {
+	public List<ContactList> findAllListByUser(String actorUuid, String userUuid) {
 		Validate.notEmpty(actorUuid);
 		User user = userService.findByLsUuid(userUuid);
-		return mailingListBusinessService.findAllListByUser(user);
+		return contactListBusinessService.findAllListByUser(user);
 	}
 
 	@Override
-	public List<MailingList> searchListByVisibility(String actorUuid, String criteriaOnSearch, String pattern) {
+	public List<ContactList> searchListByVisibility(String actorUuid, String criteriaOnSearch, String pattern) {
 		Validate.notEmpty(actorUuid);
 		Validate.notEmpty(criteriaOnSearch);
 		Validate.notEmpty(pattern);
 
 		User actor = userService.findByLsUuid(actorUuid);
 		if (criteriaOnSearch.equals(VisibilityType.All.name()))
-			return mailingListBusinessService.searchListByUser(actor, pattern);
+			return contactListBusinessService.searchListByUser(actor, pattern);
 		if (criteriaOnSearch.equals(VisibilityType.AllMyLists.name()))
-			return mailingListBusinessService.searchMyLists(actor, pattern);
-		return mailingListBusinessService.searchListByVisibility(actor,
+			return contactListBusinessService.searchMyLists(actor, pattern);
+		return contactListBusinessService.searchListByVisibility(actor,
 				criteriaOnSearch.equals(VisibilityType.Public.name()), pattern);
 	}
 
 	@Override
-	public List<MailingList> findAllListByOwner(String actorUuid, String ownerUuid) {
+	public List<ContactList> findAllListByOwner(String actorUuid, String ownerUuid) {
 		Validate.notEmpty(ownerUuid);
 
 		User owner = userService.findByLsUuid(ownerUuid);
-		return mailingListBusinessService.findAllMyList(owner);
+		return contactListBusinessService.findAllMyList(owner);
 	}
 
 	@Override
-	public MailingList deleteList(String actorUuid, String mailingListUuid) throws BusinessException {
-		Validate.notEmpty(mailingListUuid);
+	public ContactList deleteList(String actorUuid, String contactListUuid) throws BusinessException {
+		Validate.notEmpty(contactListUuid);
 		Validate.notEmpty(actorUuid);
 
-		MailingList list = findByUuid(actorUuid, mailingListUuid);
+		ContactList list = findByUuid(actorUuid, contactListUuid);
 		User actor = userService.findByLsUuid(actorUuid);
 		if (!actor.hasSuperAdminRole())
 			checkRights(actor, list, "You are not authorized to delete this list.");
-		mailingListBusinessService.deleteList(mailingListUuid);
+		contactListBusinessService.deleteList(contactListUuid);
 		MailingListAuditLogEntry log = new MailingListAuditLogEntry(new AccountMto(actor),
 				new AccountMto(list.getOwner()), LogAction.DELETE, AuditLogEntryType.CONTACTS_LISTS, list);
 		logEntryService.insert(log);
@@ -168,7 +164,7 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 	}
 
 	@Override
-	public MailingList updateList(String actorUuid, MailingList listToUpdate) throws BusinessException {
+	public ContactList updateList(String actorUuid, ContactList listToUpdate) throws BusinessException {
 		Validate.notEmpty(actorUuid);
 		Validate.notNull(listToUpdate);
 		Validate.notEmpty(listToUpdate.getUuid());
@@ -187,26 +183,26 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 		MailingListAuditLogEntry log = new MailingListAuditLogEntry(new AccountMto(actor),
 				new AccountMto(listToUpdate.getOwner()), LogAction.UPDATE, AuditLogEntryType.CONTACTS_LISTS,
 				listToUpdate);
-		MailingList res = mailingListBusinessService.updateList(listToUpdate);
+		ContactList res = contactListBusinessService.updateList(listToUpdate);
 		log.setResourceUpdated(new MailingListMto(res));
 		logEntryService.insert(log);
 		return res;
 	}
 
 	/**
-	 * Basic operations on mailingListContact
+	 * Basic operations on ContactListMember
 	 */
 
 	@Override
-	public void addNewContact(String actorUuid, String mailingListUuid, MailingListContact contact)
+	public void addNewContact(String actorUuid, String contactListUuid, ContactListContact contact)
 			throws BusinessException {
 		Validate.notEmpty(actorUuid);
-		Validate.notEmpty(mailingListUuid);
+		Validate.notEmpty(contactListUuid);
 		Validate.notNull(contact);
 		User actor = userService.findByLsUuid(actorUuid);
-		MailingList list = mailingListBusinessService.findByUuid(mailingListUuid);
+		ContactList list = contactListBusinessService.findByUuid(contactListUuid);
 		checkRights(actor, list, "You are not authorized to create a contact");
-		mailingListBusinessService.addContact(list, contact);
+		contactListBusinessService.addContact(list, contact);
 		MailingListContactAuditLogEntry log = new MailingListContactAuditLogEntry(new AccountMto(actor),
 				new AccountMto(list.getOwner()), LogAction.CREATE, AuditLogEntryType.CONTACTS_LISTS_CONTACTS, list,
 				contact);
@@ -214,31 +210,31 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 	}
 
 	@Override
-	public MailingListContact searchContact(String actorUuid, String uuid) throws BusinessException {
+	public ContactListContact searchContact(String actorUuid, String uuid) throws BusinessException {
 		Validate.notNull(uuid);
-		return mailingListBusinessService.findContact(uuid);
+		return contactListBusinessService.findContact(uuid);
 	}
 
 	@Override
-	public MailingListContact findContactWithMail(String actorUuid, String listUuid, String mail)
+	public ContactListContact findContactWithMail(String actorUuid, String listUuid, String mail)
 			throws BusinessException {
-		return mailingListBusinessService.findContactWithMail(listUuid, mail);
+		return contactListBusinessService.findContactWithMail(listUuid, mail);
 	}
 
 	@Override
-	public void updateContact(String actorUuid, MailingListContact contactToUpdate) throws BusinessException {
+	public void updateContact(String actorUuid, ContactListContact contactToUpdate) throws BusinessException {
 		Validate.notNull(actorUuid);
 		Validate.notNull(contactToUpdate);
 
-		MailingListContact contact = mailingListBusinessService.findContact(contactToUpdate.getUuid());
-		MailingList list = contact.getMailingList();
+		ContactListContact contact = contactListBusinessService.findContact(contactToUpdate.getUuid());
+		ContactList list = contact.getMailingList();
 		User actor = userService.findByLsUuid(actorUuid);
 		MailingListContactAuditLogEntry log = new MailingListContactAuditLogEntry(new AccountMto(actor),
 				new AccountMto(list.getOwner()), LogAction.UPDATE, AuditLogEntryType.CONTACTS_LISTS_CONTACTS, list,
 				contact);
 		checkRights(actor, list, "You are not authorized to delete a contact");
-		mailingListBusinessService.updateContact(contactToUpdate);
-		contact = mailingListBusinessService.findContact(contactToUpdate.getUuid());
+		contactListBusinessService.updateContact(contactToUpdate);
+		contact = contactListBusinessService.findContact(contactToUpdate.getUuid());
 		log.setResourceUpdated(new MailingListContactMto(contact));
 		logEntryService.insert(log);
 	}
@@ -249,20 +245,20 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 		Validate.notEmpty(contactUuid);
 
 		User actor = userService.findByLsUuid(actorUuid);
-		MailingListContact contact = mailingListBusinessService.findContact(contactUuid);
-		MailingList mailingList = contact.getMailingList();
-		checkRights(actor, mailingList, "You are not authorized to delete a contact");
-		mailingListBusinessService.deleteContact(mailingList, contactUuid);
+		ContactListContact contact = contactListBusinessService.findContact(contactUuid);
+		ContactList contactList = contact.getMailingList();
+		checkRights(actor, contactList, "You are not authorized to delete a contact");
+		contactListBusinessService.deleteContact(contactList, contactUuid);
 		MailingListContactAuditLogEntry log = new MailingListContactAuditLogEntry(new AccountMto(actor),
-				new AccountMto(mailingList.getOwner()), LogAction.DELETE, AuditLogEntryType.CONTACTS_LISTS_CONTACTS,
-				mailingList, contact);
+				new AccountMto(contactList.getOwner()), LogAction.DELETE, AuditLogEntryType.CONTACTS_LISTS_CONTACTS,
+				contactList, contact);
 		logEntryService.insert(log);
 	}
 
-	private void checkRights(User actor, MailingList list, String msg) throws BusinessException {
+	private void checkRights(User actor, ContactList list, String msg) throws BusinessException {
 		if (actor.getRole().equals(Role.SUPERADMIN) || actor.getRole().equals(Role.SYSTEM))
 			return;
-		MailingList entityList = findByUuid(actor.getLsUuid(), list.getUuid());
+		ContactList entityList = findByUuid(actor.getLsUuid(), list.getUuid());
 		if (!actor.equals(entityList.getOwner()))
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
 	}
@@ -272,27 +268,27 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 	 */
 
 	@Override
-	public List<MailingList> findAllByUser(Account actor, Account owner) throws BusinessException {
+	public List<ContactList> findAllByUser(Account actor, Account owner) throws BusinessException {
 		preChecks(actor, owner);
-		checkListPermission(actor, owner, MailingList.class, BusinessErrorCode.FORBIDDEN, null);
-		return mailingListBusinessService.findAllListByUser((User) owner);
+		checkListPermission(actor, owner, ContactList.class, BusinessErrorCode.FORBIDDEN, null);
+		return contactListBusinessService.findAllListByUser((User) owner);
 	}
 
 	@Override
-	public MailingList find(Account actor, Account owner, String uuid) throws BusinessException {
+	public ContactList find(Account actor, Account owner, String uuid) throws BusinessException {
 		preChecks(actor, owner);
-		MailingList list = mailingListBusinessService.findByUuid(uuid);
-		checkReadPermission(actor, owner, MailingList.class, BusinessErrorCode.FORBIDDEN, list);
+		ContactList list = contactListBusinessService.findByUuid(uuid);
+		checkReadPermission(actor, owner, ContactList.class, BusinessErrorCode.FORBIDDEN, list);
 		return list;
 	}
 
 	@Override
-	public MailingList create(Account actor, Account owner, MailingList list) throws BusinessException {
-		Validate.notNull(list, "Mailing list must be set.");
+	public ContactList create(Account actor, Account owner, ContactList list) throws BusinessException {
+		Validate.notNull(list, "Contact list must be set.");
 		preChecks(actor, owner);
 
-		checkCreatePermission(actor, owner, MailingList.class, BusinessErrorCode.FORBIDDEN, null);
-		MailingList listCreated = mailingListBusinessService.createList(list, (User) owner);
+		checkCreatePermission(actor, owner, ContactList.class, BusinessErrorCode.FORBIDDEN, null);
+		ContactList listCreated = contactListBusinessService.createList(list, (User) owner);
 		MailingListAuditLogEntry log = new MailingListAuditLogEntry(new AccountMto(actor),
 				new AccountMto(list.getOwner()), LogAction.CREATE, AuditLogEntryType.CONTACTS_LISTS, listCreated);
 		logEntryService.insert(log);
@@ -300,39 +296,38 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 	}
 
 	@Override
-	public MailingList duplicate(Account actor, Account owner, MailingList list, String identifier) throws BusinessException {
+	public ContactList duplicate(Account actor, Account owner, ContactList list, String identifier) throws BusinessException {
 		Validate.notNull(list, "Mailing list must be set.");
 		Validate.notNull(identifier, "identifier must be set.");
 		preChecks(actor, owner);
-		checkCreatePermission(actor, owner, MailingList.class, BusinessErrorCode.FORBIDDEN, null);
-		MailingList duplicateMailingList = new MailingList();
+		checkCreatePermission(actor, owner, ContactList.class, BusinessErrorCode.FORBIDDEN, null);
+		ContactList duplicateMailingList = new ContactList();
 		duplicateMailingList.setIdentifier(identifier);
 		duplicateMailingList.setOwner(list.getOwner());
 		duplicateMailingList.setDomain(list.getDomain());
 		duplicateMailingList.setPublic(list.isPublic());
 		duplicateMailingList.setDescription(list.getDescription());
-		duplicateMailingList.setMailingListContact(new ArrayList<MailingListContact>());
+		duplicateMailingList.setMailingListContact(new ArrayList<ContactListContact>());
 		duplicateMailingList = create(actor, owner, duplicateMailingList);
-		for (MailingListContact contact : list.getMailingListContact()) {
-			MailingListContact duplicateContact = new MailingListContact();
+		for (ContactListContact contact : list.getMailingListContact()) {
+			ContactListContact duplicateContact = new ContactListContact();
 			duplicateContact.setFirstName(contact.getFirstName());
 			duplicateContact.setLastName(contact.getLastName());
 			duplicateContact.setMail(contact.getMail());
-			mailingListBusinessService.addContact(duplicateMailingList, duplicateContact);
+			contactListBusinessService.addContact(duplicateMailingList, duplicateContact);
 		}
 		return duplicateMailingList;
 	}
 
 	@Override
-	public MailingList update(Account actor, Account owner, MailingList list) throws BusinessException {
-		Validate.notNull(list, "Mailing list must be set.");
-		Validate.notEmpty(list.getUuid(), "Mailing list uuid must be set.");
-
-		MailingList listToUpdate = find(actor, owner, list.getUuid());
+	public ContactList update(Account actor, Account owner, ContactList list) throws BusinessException {
+		Validate.notNull(list, "Contact list must be set.");
+		Validate.notEmpty(list.getUuid(), "Contact list uuid must be set.");
+		ContactList listToUpdate = find(actor, owner, list.getUuid());
 		MailingListAuditLogEntry log = new MailingListAuditLogEntry(new AccountMto(actor),
 				new AccountMto(listToUpdate.getOwner()), LogAction.UPDATE, AuditLogEntryType.CONTACTS_LISTS,
 				listToUpdate);
-		checkUpdatePermission(actor, owner, MailingList.class, BusinessErrorCode.FORBIDDEN, listToUpdate);
+		checkUpdatePermission(actor, owner, ContactList.class, BusinessErrorCode.FORBIDDEN, listToUpdate);
 		if (actor.hasSuperAdminRole()) {
 			// only super admin is authorized to modify list owner.
 			User listOwner = list.getOwner();
@@ -341,20 +336,20 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 				listToUpdate.setNewOwner(listOwner);
 			}
 		}
-		listToUpdate = mailingListBusinessService.update(listToUpdate, list);
+		listToUpdate = contactListBusinessService.update(listToUpdate, list);
 		log.setResourceUpdated(new MailingListMto(listToUpdate));
 		logEntryService.insert(log);
 		return listToUpdate;
 	}
 
 	@Override
-	public MailingList delete(Account actor, Account owner, String uuid) throws BusinessException {
-		Validate.notNull(uuid, "Mailing list must be set.");
-		Validate.notEmpty(uuid, "Mailing list uuid must be set.");
+	public ContactList delete(Account actor, Account owner, String uuid) throws BusinessException {
+		Validate.notNull(uuid, "Contact list must be set.");
+		Validate.notEmpty(uuid, "Contact list uuid must be set.");
 
-		MailingList listToDelete = find(actor, owner, uuid);
-		checkDeletePermission(actor, owner, MailingList.class, BusinessErrorCode.FORBIDDEN, listToDelete);
-		mailingListBusinessService.delete(listToDelete);
+		ContactList listToDelete = find(actor, owner, uuid);
+		checkDeletePermission(actor, owner, ContactList.class, BusinessErrorCode.FORBIDDEN, listToDelete);
+		contactListBusinessService.delete(listToDelete);
 		MailingListAuditLogEntry log = new MailingListAuditLogEntry(new AccountMto(actor),
 				new AccountMto(listToDelete.getOwner()), LogAction.DELETE, AuditLogEntryType.CONTACTS_LISTS,
 				listToDelete);
@@ -363,14 +358,14 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 	}
 
 	@Override
-	public MailingListContact addContact(Account actor, Account owner, String listUuid, MailingListContact contact)
+	public ContactListContact addContact(Account actor, Account owner, String listUuid, ContactListContact contact)
 			throws BusinessException {
 		Validate.notNull(contact, "Contact list must be set.");
 		Validate.notEmpty(listUuid, "Mailing list uuid must be set.");
 
-		MailingList listToUpdate = find(actor, owner, listUuid);
-		checkUpdatePermission(actor, owner, MailingList.class, BusinessErrorCode.FORBIDDEN, listToUpdate);
-		contact = mailingListBusinessService.addContact(listToUpdate, contact);
+		ContactList listToUpdate = find(actor, owner, listUuid);
+		checkUpdatePermission(actor, owner, ContactList.class, BusinessErrorCode.FORBIDDEN, listToUpdate);
+		contact = contactListBusinessService.addContact(listToUpdate, contact);
 		MailingListContactAuditLogEntry log = new MailingListContactAuditLogEntry(new AccountMto(actor),
 				new AccountMto(listToUpdate.getOwner()), LogAction.CREATE, AuditLogEntryType.CONTACTS_LISTS_CONTACTS,
 				listToUpdate, contact);
@@ -379,19 +374,19 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 	}
 
 	@Override
-	public void updateContact(Account actor, Account owner, MailingListContact contact) throws BusinessException {
+	public void updateContact(Account actor, Account owner, ContactListContact contact) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notNull(contact, "Contact must be set.");
 		Validate.notEmpty(contact.getUuid(), "Contact uuid must be set.");
 
-		MailingListContact contactToUpdate = mailingListBusinessService.findContact(contact.getUuid());
-		MailingList list = contactToUpdate.getMailingList();
+		ContactListContact contactToUpdate = contactListBusinessService.findContact(contact.getUuid());
+		ContactList list = contactToUpdate.getMailingList();
 		MailingListContactAuditLogEntry log = new MailingListContactAuditLogEntry(new AccountMto(actor),
 				new AccountMto(list.getOwner()), LogAction.UPDATE, AuditLogEntryType.CONTACTS_LISTS_CONTACTS, list,
 				contactToUpdate);
-		checkUpdatePermission(actor, owner, MailingList.class, BusinessErrorCode.FORBIDDEN, list);
-		mailingListBusinessService.updateContact(contact);
-		contactToUpdate = mailingListBusinessService.findContact(contactToUpdate.getUuid());
+		checkUpdatePermission(actor, owner, ContactList.class, BusinessErrorCode.FORBIDDEN, list);
+		contactListBusinessService.updateContact(contact);
+		contactToUpdate = contactListBusinessService.findContact(contactToUpdate.getUuid());
 		log.setResourceUpdated(new MailingListContactMto(contactToUpdate));
 		logEntryService.insert(log);
 	}
@@ -401,10 +396,10 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 		preChecks(actor, owner);
 		Validate.notEmpty(contactUuid, "Contact uuid must be set.");
 
-		MailingListContact contactToDelete = mailingListBusinessService.findContact(contactUuid);
-		MailingList list = contactToDelete.getMailingList();
-		checkUpdatePermission(actor, owner, MailingList.class, BusinessErrorCode.FORBIDDEN, list);
-		mailingListBusinessService.deleteContact(list, contactToDelete.getUuid());
+		ContactListContact contactToDelete = contactListBusinessService.findContact(contactUuid);
+		ContactList list = contactToDelete.getMailingList();
+		checkUpdatePermission(actor, owner, ContactList.class, BusinessErrorCode.FORBIDDEN, list);
+		contactListBusinessService.deleteContact(list, contactToDelete.getUuid());
 		MailingListContactAuditLogEntry log = new MailingListContactAuditLogEntry(new AccountMto(actor),
 				new AccountMto(list.getOwner()), LogAction.DELETE, AuditLogEntryType.CONTACTS_LISTS_CONTACTS, list,
 				contactToDelete);
@@ -412,37 +407,37 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 	}
 
 	@Override
-	public List<MailingListContact> findAllContacts(Account actor, Account owner, String listUuid)
+	public List<ContactListContact> findAllContacts(Account actor, Account owner, String listUuid)
 			throws BusinessException {
-		MailingList list = find(actor, owner, listUuid);
-		return mailingListBusinessService.findAllContacts(list);
+		ContactList list = find(actor, owner, listUuid);
+		return contactListBusinessService.findAllContacts(list);
 	}
 
 	@Override
-	public List<MailingList> findAll(Account actor, User owner, Boolean mine) {
-		List<MailingList> all = null;
-		checkListPermission(actor, owner, MailingList.class, BusinessErrorCode.FORBIDDEN, null);
+	public List<ContactList> findAll(Account actor, User owner, Boolean mine) {
+		List<ContactList> all = null;
+		checkListPermission(actor, owner, ContactList.class, BusinessErrorCode.FORBIDDEN, null);
 		if (mine == null) {
-			all = mailingListBusinessService.findAll(actor, owner);
+			all = contactListBusinessService.findAll(actor, owner);
 		} else if (mine) {
-			all = mailingListBusinessService.findAllMine(actor, owner);
+			all = contactListBusinessService.findAllMine(actor, owner);
 		} else {
-			all = mailingListBusinessService.findAllOthers(actor, owner);
+			all = contactListBusinessService.findAllOthers(actor, owner);
 		}
 		return all;
 	}
 
 	@Override
-	public List<MailingList> findAllByMemberEmail(Account actor, User owner, Boolean mine, String email) {
+	public List<ContactList> findAllByMemberEmail(Account actor, User owner, Boolean mine, String email) {
 		Validate.notEmpty(email, "mail must be set.");
-		List<MailingList> all = null;
-		checkListPermission(actor, owner, MailingList.class, BusinessErrorCode.FORBIDDEN, null);
+		List<ContactList> all = null;
+		checkListPermission(actor, owner, ContactList.class, BusinessErrorCode.FORBIDDEN, null);
 		if (mine == null) {
-			all = mailingListBusinessService.findAllByMemberEmail(actor, owner, email);
+			all = contactListBusinessService.findAllByMemberEmail(actor, owner, email);
 		} else if (mine) {
-			all = mailingListBusinessService.findAllMineByMemberEmail(actor, owner, email);
+			all = contactListBusinessService.findAllMineByMemberEmail(actor, owner, email);
 		} else {
-			all = mailingListBusinessService.findAllOthersByMemberEmail(actor, owner, email);
+			all = contactListBusinessService.findAllOthersByMemberEmail(actor, owner, email);
 		}
 		return all;
 	}

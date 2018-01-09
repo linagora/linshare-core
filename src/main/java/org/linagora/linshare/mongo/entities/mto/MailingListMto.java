@@ -37,8 +37,8 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.entities.MailingList;
-import org.linagora.linshare.core.domain.entities.MailingListContact;
+import org.linagora.linshare.core.domain.entities.ContactList;
+import org.linagora.linshare.core.domain.entities.ContactListContact;
 
 import com.google.common.collect.Lists;
 
@@ -60,14 +60,14 @@ public class MailingListMto {
 	public MailingListMto() {
 	}
 
-	public MailingListMto(MailingList list) {
+	public MailingListMto(ContactList list) {
 		this.uuid = list.getUuid();
 		this.description = list.getDescription();
 		this.name = list.getIdentifier();
 		this.owner = new AccountMto(list.getOwner());
 		this.domain = new DomainMto(list.getDomain());
 		this.contacts = Lists.newArrayList();
-		for (MailingListContact m : list.getMailingListContact()) {
+		for (ContactListContact m : list.getMailingListContact()) {
 			contacts.add(new MailingListContactMto(m));
 		}
 	}

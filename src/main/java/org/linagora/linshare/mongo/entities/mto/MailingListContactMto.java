@@ -35,7 +35,7 @@ package org.linagora.linshare.mongo.entities.mto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.entities.MailingListContact;
+import org.linagora.linshare.core.domain.entities.ContactListContact;
 
 @XmlRootElement(name = "MailingListContact")
 public class MailingListContactMto {
@@ -53,7 +53,7 @@ public class MailingListContactMto {
 	public MailingListContactMto() {
 	}
 
-	public MailingListContactMto(MailingListContact contact) {
+	public MailingListContactMto(ContactListContact contact) {
 		this.uuid = contact.getUuid();
 		this.mail = contact.getMail();
 		this.listUuid = contact.getMailingList().getUuid();

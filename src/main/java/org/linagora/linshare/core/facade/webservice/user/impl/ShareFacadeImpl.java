@@ -43,8 +43,8 @@ import org.linagora.linshare.core.business.service.EntryBusinessService;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Entry;
-import org.linagora.linshare.core.domain.entities.MailingList;
-import org.linagora.linshare.core.domain.entities.MailingListContact;
+import org.linagora.linshare.core.domain.entities.ContactList;
+import org.linagora.linshare.core.domain.entities.ContactListContact;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.ShareContainer;
@@ -55,7 +55,7 @@ import org.linagora.linshare.core.facade.webservice.delegation.dto.ShareCreation
 import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
-import org.linagora.linshare.core.service.MailingListService;
+import org.linagora.linshare.core.service.ContactListService;
 import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
@@ -73,7 +73,7 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 
 	private final EntryBusinessService entryBusinessService;
 
-	private final MailingListService listService;
+	private final ContactListService listService;
 
 	private final AuditLogEntryService auditLogEntryService;
 
@@ -82,7 +82,7 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 			final ShareEntryService shareEntryService,
 			final ShareService shareService,
 			final EntryBusinessService entryBusinessService,
-			final MailingListService listService,
+			final ContactListService listService,
 			final AuditLogEntryService auditLogEntryService) {
 		super(accountService);
 		this.shareEntryService = shareEntryService;
@@ -205,8 +205,8 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 		ShareContainer sc = new ShareContainer();
 		if (createDto.getMailingListUuid() != null && !createDto.getMailingListUuid().isEmpty()) {
 			for (String uuid : createDto.getMailingListUuid()) {
-				MailingList list = listService.findByUuid(actor.getLsUuid(), uuid);
-				for (MailingListContact c : list.getMailingListContact()) {
+				ContactList list = listService.findByUuid(actor.getLsUuid(), uuid);
+				for (ContactListContact c : list.getMailingListContact()) {
 					sc.addContact(c);
 				}
 			}

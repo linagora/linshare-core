@@ -37,8 +37,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.entities.MailingList;
-import org.linagora.linshare.core.domain.entities.MailingListContact;
+import org.linagora.linshare.core.domain.entities.ContactList;
+import org.linagora.linshare.core.domain.entities.ContactListContact;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.MailingListContactMto;
 import org.linagora.linshare.mongo.entities.mto.MailingListMto;
@@ -56,7 +56,7 @@ public class MailingListContactAuditLogEntry extends AuditLogEntryUser {
 	}
 
 	public MailingListContactAuditLogEntry(AccountMto authUser, AccountMto owner, LogAction action, AuditLogEntryType type,
-			MailingList list, MailingListContact contact) {
+			ContactList list, ContactListContact contact) {
 		super(authUser, owner, action, type, contact.getUuid());
 		this.resource = new MailingListContactMto(contact);
 		this.list = new MailingListMto(list);

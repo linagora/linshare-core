@@ -41,8 +41,8 @@ import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.Internal;
-import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
@@ -109,7 +109,7 @@ public class MailingListRepositoryImplTest extends
 	@Test
 	public void testCreateMailingList1() throws BusinessException {
 
-		MailingList current = new MailingList();
+		ContactList current = new ContactList();
 		current.setIdentifier(identifier);
 		current.setOwner(internal);
 		current.setDomain(domain);
@@ -120,7 +120,7 @@ public class MailingListRepositoryImplTest extends
 
 		Assert.assertNotNull(current.getPersistenceId());
 
-		MailingList myList = mailingListRepository.findByIdentifier(internal,
+		ContactList myList = mailingListRepository.findByIdentifier(internal,
 				identifier);
 		Assert.assertTrue(myList != null);
 

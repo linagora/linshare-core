@@ -36,7 +36,7 @@ package org.linagora.linshare.core.facade.webservice.user.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.entities.MailingList;
+import org.linagora.linshare.core.domain.entities.ContactList;
 
 import com.google.common.base.Function;
 
@@ -54,7 +54,7 @@ public class ListAutoCompleteResultDto extends AutoCompleteResultDto {
 	public ListAutoCompleteResultDto() {
 	}
 
-	public ListAutoCompleteResultDto(MailingList list) {
+	public ListAutoCompleteResultDto(ContactList list) {
 		super(list.getUuid(), list.getIdentifier());
 		this.ownerFirstName = list.getOwner().getFirstName();
 		this.ownerLastName = list.getOwner().getLastName();
@@ -94,10 +94,10 @@ public class ListAutoCompleteResultDto extends AutoCompleteResultDto {
 		this.listName = listName;
 	}
 
-	public static Function<MailingList, ListAutoCompleteResultDto> toDto() {
-		return new Function<MailingList, ListAutoCompleteResultDto>() {
+	public static Function<ContactList, ListAutoCompleteResultDto> toDto() {
+		return new Function<ContactList, ListAutoCompleteResultDto>() {
 			@Override
-			public ListAutoCompleteResultDto apply(MailingList arg0) {
+			public ListAutoCompleteResultDto apply(ContactList arg0) {
 				return new ListAutoCompleteResultDto(arg0);
 			}
 		};

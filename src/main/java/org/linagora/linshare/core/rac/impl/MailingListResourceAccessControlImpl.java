@@ -37,39 +37,39 @@ package org.linagora.linshare.core.rac.impl;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
-import org.linagora.linshare.core.domain.entities.MailingList;
+import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.rac.MailingListResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 
 public class MailingListResourceAccessControlImpl extends
-		AbstractResourceAccessControlImpl<Account, Account, MailingList> implements MailingListResourceAccessControl {
+		AbstractResourceAccessControlImpl<Account, Account, ContactList> implements MailingListResourceAccessControl {
 
 	public MailingListResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService) {
 		super(functionalityService);
 	}
 
 	@Override
-	protected boolean hasReadPermission(Account authUser, Account actor, MailingList entry, Object... opt) {
+	protected boolean hasReadPermission(Account authUser, Account actor, ContactList entry, Object... opt) {
 		return defaultPermissionCheckListReadRight(authUser, actor, entry, TechnicalAccountPermissionType.LISTS_GET);
 	}
 
 	@Override
-	protected boolean hasListPermission(Account authUser, Account actor, MailingList entry, Object... opt) {
+	protected boolean hasListPermission(Account authUser, Account actor, ContactList entry, Object... opt) {
 		return defaultPermissionCheckListReadRight(authUser, actor, entry, TechnicalAccountPermissionType.LISTS_LIST);
 	}
 
 	@Override
-	protected boolean hasDeletePermission(Account authUser, Account actor, MailingList entry, Object... opt) {
+	protected boolean hasDeletePermission(Account authUser, Account actor, ContactList entry, Object... opt) {
 		return defaultPermissionCheckCreateUpdateDeleteRight(authUser, actor, entry, TechnicalAccountPermissionType.LISTS_DELETE);
 	}
 
 	@Override
-	protected boolean hasCreatePermission(Account authUser, Account actor, MailingList entry, Object... opt) {
+	protected boolean hasCreatePermission(Account authUser, Account actor, ContactList entry, Object... opt) {
 		return defaultPermissionCheckCreateUpdateDeleteRight(authUser, actor, entry, TechnicalAccountPermissionType.LISTS_CREATE);
 	}
 
 	@Override
-	protected boolean hasUpdatePermission(Account authUser, Account actor, MailingList entry, Object... opt) {
+	protected boolean hasUpdatePermission(Account authUser, Account actor, ContactList entry, Object... opt) {
 		return defaultPermissionCheckCreateUpdateDeleteRight(authUser, actor, entry, TechnicalAccountPermissionType.LISTS_UPDATE);
 	}
 
@@ -89,17 +89,17 @@ public class MailingListResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected String getEntryRepresentation(MailingList entry) {
+	protected String getEntryRepresentation(ContactList entry) {
 		return entry.getUuid();
 	}
 
 	@Override
-	protected Account getOwner(MailingList entry, Object... opt) {
+	protected Account getOwner(ContactList entry, Object... opt) {
 		return entry.getOwner();
 	}
 
 	@Override
-	protected boolean defaultPermissionCheck(Account authUser, Account actor, MailingList entry,
+	protected boolean defaultPermissionCheck(Account authUser, Account actor, ContactList entry,
 		TechnicalAccountPermissionType permission) {
 		if (authUser.hasDelegationRole())
 			return hasPermission(authUser, permission);
@@ -114,7 +114,7 @@ public class MailingListResourceAccessControlImpl extends
 		return false;
 	}
 
-	protected boolean defaultPermissionCheckCreateUpdateDeleteRight(Account authUser, Account actor, MailingList entry,
+	protected boolean defaultPermissionCheckCreateUpdateDeleteRight(Account authUser, Account actor, ContactList entry,
 			TechnicalAccountPermissionType permission) {
 		if (authUser.hasDelegationRole())
 			return hasPermission(authUser, permission);
@@ -136,7 +136,7 @@ public class MailingListResourceAccessControlImpl extends
 		return false;
 	}
 
-	protected boolean defaultPermissionCheckListReadRight(Account authUser, Account actor, MailingList entry,
+	protected boolean defaultPermissionCheckListReadRight(Account authUser, Account actor, ContactList entry,
 			TechnicalAccountPermissionType permission) {
 		if (authUser.hasDelegationRole())
 			return hasPermission(authUser, permission);

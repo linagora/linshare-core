@@ -36,21 +36,21 @@ package org.linagora.linshare.core.repository;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.MailingList;
-import org.linagora.linshare.core.domain.entities.MailingListContact;
+import org.linagora.linshare.core.domain.entities.ContactList;
+import org.linagora.linshare.core.domain.entities.ContactListContact;
 import org.linagora.linshare.core.exception.BusinessException;
 
-public interface MailingListContactRepository extends AbstractRepository<MailingListContact> {
+public interface MailingListContactRepository extends AbstractRepository<ContactListContact> {
 
-	MailingListContact findById(long id);
+	ContactListContact findById(long id);
 
-	MailingListContact findByUuid(String uuid);
+	ContactListContact findByUuid(String uuid);
 
-	MailingListContact findByMail(MailingList list, String mail);
+	ContactListContact findByMail(ContactList list, String mail);
 
-	List<String> getAllContactMails(MailingList list);
+	List<String> getAllContactMails(ContactList list);
 
-	List<MailingListContact> findAllContacts(MailingList list);
+	List<ContactListContact> findAllContacts(ContactList list);
 
 	void updateEmail(String currentMail, String newMail) throws BusinessException;
 }

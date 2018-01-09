@@ -27,7 +27,7 @@
 		<constructor-arg ref="shareService" />
 		<constructor-arg ref="shareEntryService" />
 		<constructor-arg ref="entryBusinessService" />
-		<constructor-arg ref="mailingListService" />
+		<constructor-arg ref="contactListService" />
 		<constructor-arg ref="auditLogEntryService" />
 	</bean>
 	<bean id="wsThreadFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.ThreadFacadeImpl">
@@ -60,7 +60,7 @@
 	<bean id="wsAutoCompleteFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.AutoCompleteFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="userService" />
-		<constructor-arg ref="mailingListService" />
+		<constructor-arg ref="contactListService" />
 		<constructor-arg ref="threadService" />
 		<constructor-arg ref="recipientFavouriteRepository" />
 	</bean>
@@ -70,11 +70,11 @@
 	</bean>
 	<bean id="wsMailingListFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.MailingListFacadeImpl">
 		<constructor-arg ref="accountService" />
-		<constructor-arg ref="mailingListService" />
+		<constructor-arg ref="contactListService" />
 	</bean>
 	<bean id="wsContactListFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.ContactListFacadeImpl">
 		<constructor-arg ref="accountService" />
-		<constructor-arg ref="mailingListService" />
+		<constructor-arg ref="contactListService" />
 		<constructor-arg ref="auditLogEntryService" />
 	</bean>
 	<bean id="wsMimeTypeFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.MimeTypeFacadeImpl">

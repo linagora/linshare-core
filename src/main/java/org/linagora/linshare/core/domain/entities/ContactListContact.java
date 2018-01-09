@@ -38,7 +38,7 @@ import java.util.Date;
 
 import org.linagora.linshare.core.facade.webservice.common.dto.MailingListContactDto;
 
-public class MailingListContact {
+public class ContactListContact {
 
 	private long persistenceId;
 
@@ -54,7 +54,7 @@ public class MailingListContact {
 
 	protected Date modificationDate;
 	
-	private MailingList mailingList;
+	private ContactList mailingList;
 	/**
 	 * Constructors
 	 */
@@ -62,20 +62,20 @@ public class MailingListContact {
 	/**
 	 * Hibernate constructor.
 	 */
-	public MailingListContact() {
+	public ContactListContact() {
 	}
 
-	public MailingListContact(String mail, String firstName, String lastName) {
+	public ContactListContact(String mail, String firstName, String lastName) {
 		this.mail = mail;
 		this.setLastName(lastName);
 		this.setFirstName(firstName);
 	}
 
-	public MailingListContact(MailingListContactDto mailingListContact)  {
-		this.mail = mailingListContact.getMail();
-		this.uuid = mailingListContact.getUuid();
-		this.setLastName(mailingListContact.getLastName());
-		this.setFirstName(mailingListContact.getFirstName());
+	public ContactListContact(MailingListContactDto contactListContact)  {
+		this.mail = contactListContact.getMail();
+		this.uuid = contactListContact.getUuid();
+		this.setLastName(contactListContact.getLastName());
+		this.setFirstName(contactListContact.getFirstName());
 	}
 
 	/**
@@ -138,7 +138,7 @@ public class MailingListContact {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		MailingListContact other = (MailingListContact) obj;
+		ContactListContact other = (ContactListContact) obj;
 		if (mail == null) {
 			if (other.mail != null)
 				return false;
@@ -163,12 +163,12 @@ public class MailingListContact {
 		this.modificationDate = modificationDate;
 	}
 
-	public MailingList getMailingList() {
+	public ContactList getMailingList() {
 		return mailingList;
 	}
 
-	public void setMailingList(MailingList mailingList) {
-		this.mailingList = mailingList;
+	public void setMailingList(ContactList contactList) {
+		this.mailingList = contactList;
 	}
 
 	/**

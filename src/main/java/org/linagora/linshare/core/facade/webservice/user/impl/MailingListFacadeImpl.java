@@ -38,15 +38,15 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.domain.entities.MailingList;
-import org.linagora.linshare.core.domain.entities.MailingListContact;
+import org.linagora.linshare.core.domain.entities.ContactList;
+import org.linagora.linshare.core.domain.entities.ContactListContact;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.MailingListContactDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.MailingListDto;
 import org.linagora.linshare.core.facade.webservice.user.MailingListFacade;
 import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.MailingListService;
+import org.linagora.linshare.core.service.ContactListService;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
@@ -54,19 +54,19 @@ import com.google.common.collect.Lists;
 
 public class MailingListFacadeImpl extends GenericFacadeImpl implements MailingListFacade {
 
-	private final MailingListService mailingListService;
+	private final ContactListService contactListService;
 
-	public MailingListFacadeImpl(final AccountService accountService, final MailingListService mailingListservice) {
+	public MailingListFacadeImpl(final AccountService accountService, final ContactListService contactListservice) {
 		super(accountService);
-		this.mailingListService = mailingListservice;
+		this.contactListService = contactListservice;
 	}
 
 	@Override
 	public Set<MailingListDto> findAll(String ownerUuid, Boolean mine) throws BusinessException {
 		User actor = checkAuthentication();
-		List<MailingList> lists;
+		List<ContactList> lists;
 		User owner = getOwner(actor, ownerUuid);
-		lists = mailingListService.findAllByUser(actor, owner);
+		lists = contactListService.findAllByUser(actor, owner);
 		return ImmutableSet.copyOf(Lists.transform(lists, MailingListDto.toDto()));
 	}
 
@@ -75,9 +75,9 @@ public class MailingListFacadeImpl extends GenericFacadeImpl implements MailingL
 		Validate.notEmpty(uuid, "List uuid must be set.");
 
 		User actor = checkAuthentication();
-		MailingList list;
+		ContactList list;
 		User owner = getOwner(actor, ownerUuid);
-		list = mailingListService.find(actor, owner, uuid);
+		list = contactListService.find(actor, owner, uuid);
 		return new MailingListDto(list);
 	}
 
@@ -86,9 +86,9 @@ public class MailingListFacadeImpl extends GenericFacadeImpl implements MailingL
 		Validate.notNull(dto, "Mailing list must be set.");
 
 		User actor = checkAuthentication();
-		MailingList list = dto.toObject();
+		ContactList list = dto.toObject();
 		User owner = getOwner(actor, ownerUuid);
-		list = mailingListService.create(actor, owner, list);
+		list = contactListService.create(actor, owner, list);
 		return new MailingListDto(list);
 	}
 
@@ -100,9 +100,9 @@ public class MailingListFacadeImpl extends GenericFacadeImpl implements MailingL
 		}
 		Validate.notEmpty(dto.getUuid(), "Mailing list uuid must be set.");
 		User actor = checkAuthentication();
-		MailingList list = dto.toObject();
+		ContactList list = dto.toObject();
 		User owner = getOwner(actor, ownerUuid);
-		list = mailingListService.update(actor, owner, list);
+		list = contactListService.update(actor, owner, list);
 		return new MailingListDto(list);
 	}
 
@@ -111,9 +111,9 @@ public class MailingListFacadeImpl extends GenericFacadeImpl implements MailingL
 		Validate.notEmpty(uuid, "Mailing list uuid must be set.");
 
 		User actor = checkAuthentication();
-		MailingList list;
+		ContactList list;
 		User owner = getOwner(actor, ownerUuid);
-		list = mailingListService.delete(actor, owner, uuid);
+		list = contactListService.delete(actor, owner, uuid);
 		return new MailingListDto(list);
 	}
 
@@ -122,9 +122,9 @@ public class MailingListFacadeImpl extends GenericFacadeImpl implements MailingL
 		Validate.notEmpty(listUuid, "Mailing list uuid must be set.");
 
 		User actor = checkAuthentication();
-		List<MailingListContact> list;
+		List<ContactListContact> list;
 		User owner = getOwner(actor, ownerUuid);
-		list = mailingListService.findAllContacts(actor, owner, listUuid);
+		list = contactListService.findAllContacts(actor, owner, listUuid);
 		return ImmutableSet.copyOf(Lists.transform(list, MailingListContactDto.toDto()));
 	}
 
@@ -134,9 +134,9 @@ public class MailingListFacadeImpl extends GenericFacadeImpl implements MailingL
 		Validate.notEmpty(listUuid, "Mailing list uuid must be set.");
 
 		User actor = checkAuthentication();
-		MailingListContact contact = dto.toObject();
+		ContactListContact contact = dto.toObject();
 		User owner = getOwner(actor, ownerUuid);
-		MailingListContact contact2 = mailingListService.addContact(actor, owner, listUuid, contact);
+		ContactListContact contact2 = contactListService.addContact(actor, owner, listUuid, contact);
 		return new MailingListContactDto(contact2);
 	}
 
@@ -146,9 +146,9 @@ public class MailingListFacadeImpl extends GenericFacadeImpl implements MailingL
 		Validate.notEmpty(dto.getUuid(), "List uuid must be set.");
 
 		User actor = checkAuthentication();
-		MailingListContact contact = dto.toObject();
+		ContactListContact contact = dto.toObject();
 		User owner = getOwner(actor, ownerUuid);
-		mailingListService.updateContact(actor, owner, contact);
+		contactListService.updateContact(actor, owner, contact);
 	}
 
 	@Override
@@ -157,6 +157,6 @@ public class MailingListFacadeImpl extends GenericFacadeImpl implements MailingL
 
 		User actor = checkAuthentication();
 		User owner = getOwner(actor, ownerUuid);
-		mailingListService.deleteContact(actor, owner, uuid);
+		contactListService.deleteContact(actor, owner, uuid);
 	}
 }

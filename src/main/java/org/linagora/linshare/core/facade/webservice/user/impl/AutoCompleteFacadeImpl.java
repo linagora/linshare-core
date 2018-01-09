@@ -41,7 +41,7 @@ import java.util.Set;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.SearchType;
 import org.linagora.linshare.core.domain.constants.VisibilityType;
-import org.linagora.linshare.core.domain.entities.MailingList;
+import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.WorkgroupMember;
@@ -56,7 +56,7 @@ import org.linagora.linshare.core.facade.webservice.user.dto.ThreadMemberAutoCom
 import org.linagora.linshare.core.facade.webservice.user.dto.UserAutoCompleteResultDto;
 import org.linagora.linshare.core.repository.RecipientFavouriteRepository;
 import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.MailingListService;
+import org.linagora.linshare.core.service.ContactListService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
 
@@ -73,19 +73,19 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 
 	private final ThreadService threadService;
 
-	private final MailingListService mailingListSerice;
+	private final ContactListService contactListSerice;
 
 	private final RecipientFavouriteRepository favourite;
 
 	public AutoCompleteFacadeImpl(final AccountService accountService,
 			final UserService userService,
-			final MailingListService mailingListSerice,
+			final ContactListService contactListService,
 			final ThreadService threadService,
 			RecipientFavouriteRepository favourite
 			) {
 		super(accountService);
 		this.userService = userService;
-		this.mailingListSerice = mailingListSerice;
+		this.contactListSerice = contactListService;
 		this.threadService = threadService;
 		this.favourite = favourite;
 	}
@@ -133,7 +133,7 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 			List<AutoCompleteResultDto> result = Lists.newArrayList();
 			SearchType enumType = SearchType.fromString(type);
 			if (enumType.equals(SearchType.SHARING)) {
-				List<MailingList> mailingListsList = mailingListSerice.searchListByVisibility(actor.getLsUuid(), VisibilityType.All.name(), pattern);
+				List<ContactList> mailingListsList = contactListSerice.searchListByVisibility(actor.getLsUuid(), VisibilityType.All.name(), pattern);
 				int range = (mailingListsList.size() < AUTO_COMPLETE_LIMIT ? mailingListsList.size() : AUTO_COMPLETE_LIMIT);
 				Set<UserDto> userList = findUser(pattern);
 				result.addAll(ImmutableList.copyOf(Lists.transform(Lists.newArrayList(userList), UserAutoCompleteResultDto.toDto())));

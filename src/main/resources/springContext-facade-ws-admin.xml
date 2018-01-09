@@ -61,7 +61,7 @@
 	<bean id="wsAdminMailingListFacade"
 		class="org.linagora.linshare.core.facade.webservice.admin.impl.MailingListFacadeImpl">
 		<constructor-arg ref="accountService" />
-		<constructor-arg ref="mailingListService" />
+		<constructor-arg ref="contactListService" />
 	</bean>
 	<bean id="wsAdminThreadMemberFacade"
 		class="org.linagora.linshare.core.facade.webservice.admin.impl.ThreadMemberFacadeImpl">

@@ -40,8 +40,8 @@ import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
-import org.linagora.linshare.core.domain.entities.MailingList;
-import org.linagora.linshare.core.domain.entities.MailingListContact;
+import org.linagora.linshare.core.domain.entities.ContactList;
+import org.linagora.linshare.core.domain.entities.ContactListContact;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -49,17 +49,17 @@ import org.linagora.linshare.core.facade.webservice.admin.MailingListFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.MailingListContactDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.MailingListDto;
 import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.MailingListService;
+import org.linagora.linshare.core.service.ContactListService;
 
 public class MailingListFacadeImpl extends AdminGenericFacadeImpl implements
 		MailingListFacade {
 
-	private MailingListService mailingListService;
+	private ContactListService contactListService;
 
 	public MailingListFacadeImpl(final AccountService accountService,
-			final MailingListService mailingListService) {
+			final ContactListService contactListService) {
 		super(accountService);
-		this.mailingListService = mailingListService;
+		this.contactListService = contactListService;
 	}
 
 	/*
@@ -70,11 +70,11 @@ public class MailingListFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public Set<MailingListDto> findAll() throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
-		List<MailingList> lists = mailingListService.findAllListByUser(
+		List<ContactList> lists = contactListService.findAllListByUser(
 				actor.getLsUuid(), actor.getLsUuid());
 		Set<MailingListDto> ret = new HashSet<MailingListDto>();
 
-		for (MailingList list : lists) {
+		for (ContactList list : lists) {
 			ret.add(new MailingListDto(list));
 		}
 		return ret;
@@ -83,7 +83,7 @@ public class MailingListFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public MailingListDto find(String uuid) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
-		MailingList list = mailingListService.findByUuid(actor.getLsUuid(),
+		ContactList list = contactListService.findByUuid(actor.getLsUuid(),
 				uuid);
 		if (list == null) {
 			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT,
@@ -95,8 +95,8 @@ public class MailingListFacadeImpl extends AdminGenericFacadeImpl implements
 	@Override
 	public MailingListDto create(MailingListDto dto) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
-		MailingList list = new MailingList(dto);
-		return new MailingListDto(mailingListService.createList(actor.getLsUuid(), actor.getLsUuid(),
+		ContactList list = new ContactList(dto);
+		return new MailingListDto(contactListService.createList(actor.getLsUuid(), actor.getLsUuid(),
 				list));
 	}
 
@@ -104,14 +104,14 @@ public class MailingListFacadeImpl extends AdminGenericFacadeImpl implements
 	public MailingListDto update(MailingListDto dto) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 		Validate.notNull(dto.getUuid(), "uuid dto must be set.");
-		MailingList list = new MailingList(dto);
-		return new MailingListDto(mailingListService.updateList(actor.getLsUuid(), list));
+		ContactList list = new ContactList(dto);
+		return new MailingListDto(contactListService.updateList(actor.getLsUuid(), list));
 	}
 
 	@Override
 	public MailingListDto delete(String uuid) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
-		MailingList list = mailingListService.deleteList(actor.getLsUuid(), uuid);
+		ContactList list = contactListService.deleteList(actor.getLsUuid(), uuid);
 		return new MailingListDto(list);
 	}
 
@@ -119,15 +119,15 @@ public class MailingListFacadeImpl extends AdminGenericFacadeImpl implements
 	public void addContact(String listUuid, MailingListContactDto dto)
 			throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
-		MailingListContact contact = new MailingListContact(dto);
+		ContactListContact contact = new ContactListContact(dto);
 
-		mailingListService.addNewContact(actor.getLsUuid(), listUuid, contact);
+		contactListService.addNewContact(actor.getLsUuid(), listUuid, contact);
 	}
 
 	@Override
 	public void deleteContact(String uuid) throws BusinessException {
 		User actor = checkAuthentication(Role.ADMIN);
 
-		mailingListService.deleteContact(actor.getLsUuid(), uuid);
+		contactListService.deleteContact(actor.getLsUuid(), uuid);
 	}
 }

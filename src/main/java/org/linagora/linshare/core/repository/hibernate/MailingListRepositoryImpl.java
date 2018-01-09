@@ -43,61 +43,61 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
-import org.linagora.linshare.core.domain.entities.MailingList;
+import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.MailingListRepository;
 import org.springframework.orm.hibernate4.HibernateTemplate;
 
-public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingList> implements MailingListRepository {
+public class MailingListRepositoryImpl extends AbstractRepositoryImpl<ContactList> implements MailingListRepository {
 
 	public MailingListRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
 	}
 
 	@Override
-	protected DetachedCriteria getNaturalKeyCriteria(MailingList entity) {
+	protected DetachedCriteria getNaturalKeyCriteria(ContactList entity) {
 		return DetachedCriteria.forClass(getPersistentClass()).add(Restrictions.eq("uuid", entity.getUuid()));
 	}
 
 	@Override
-	public MailingList findByUuid(String uuid) {
-		List<MailingList> mailingList = findByCriteria(Restrictions.eq("uuid", uuid));
+	public ContactList findByUuid(String uuid) {
+		List<ContactList> contactList = findByCriteria(Restrictions.eq("uuid", uuid));
 
-		if (mailingList == null || mailingList.isEmpty()) {
+		if (contactList == null || contactList.isEmpty()) {
 			return null;
-		} else if (mailingList.size() == 1) {
-			return mailingList.get(0);
+		} else if (contactList.size() == 1) {
+			return contactList.get(0);
 		} else {
 			throw new IllegalStateException("Uuid must be unique");
 		}
 	}
 
 	@Override
-	public MailingList findByIdentifier(User owner, String identifier) {
+	public ContactList findByIdentifier(User owner, String identifier) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 
 		det.add(Restrictions.and(Restrictions.eq("identifier", identifier), Restrictions.eq("owner", owner)));
-		List<MailingList> mailingList = findByCriteria(det);
+		List<ContactList> contactList = findByCriteria(det);
 
-		if (mailingList == null || mailingList.isEmpty()) {
+		if (contactList == null || contactList.isEmpty()) {
 			return null;
-		} else if (mailingList.size() == 1) {
-			return mailingList.get(0);
+		} else if (contactList.size() == 1) {
+			return contactList.get(0);
 		} else {
 			throw new IllegalStateException("Id must be unique");
 		}
 	}
 
 	@Override
-	public List<MailingList> findAllListWhereOwner(User user) {
+	public List<ContactList> findAllListWhereOwner(User user) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 		det.add(Restrictions.eq("owner", user));
 		return findByCriteria(det);
 	}
 
 	@Override
-	public List<MailingList> searchMyListWithInput(User user, String input) {
+	public List<ContactList> searchMyListWithInput(User user, String input) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 		det.add(Restrictions.and(Restrictions.eq("owner", user), Restrictions.like("identifier", "%" + input + "%")
 				.ignoreCase()));
@@ -106,7 +106,7 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 	}
 
 	@Override
-	public List<MailingList> searchListWithInput(User user, String input) {
+	public List<ContactList> searchListWithInput(User user, String input) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 
 		if (user.hasSuperAdminRole()) {
@@ -130,7 +130,7 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 	}
 
 	@Override
-	public List<MailingList> findAll(User user) {
+	public List<ContactList> findAll(User user) {
 		// all public lists owned by others people than current user.
 		Conjunction public_others = Restrictions.conjunction();
 		public_others.add(Restrictions.eq("domain", user.getDomain()));
@@ -148,7 +148,7 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 	}
 
 	@Override
-	public List<MailingList> findAllMine(User user) {
+	public List<ContactList> findAllMine(User user) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 		det.add(Restrictions.eq("domain", user.getDomain()));
 		det.add(Restrictions.eq("owner", user));
@@ -156,7 +156,7 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 	}
 
 	@Override
-	public List<MailingList> findAllOthers(User user) {
+	public List<ContactList> findAllOthers(User user) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 		det.add(Restrictions.eq("domain", user.getDomain()));
 		det.add(Restrictions.eq("isPublic", true));
@@ -165,7 +165,7 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 	}
 
 	@Override
-	public List<MailingList> findAllByMemberEmail(User user, String email) {
+	public List<ContactList> findAllByMemberEmail(User user, String email) {
 		Conjunction public_others = Restrictions.conjunction();
 		public_others.add(Restrictions.eq("domain", user.getDomain()));
 		public_others.add(Restrictions.eq("isPublic", true));
@@ -181,7 +181,7 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 	}
 
 	@Override
-	public List<MailingList> findAllMineByMemberEmail(User user, String email) {
+	public List<ContactList> findAllMineByMemberEmail(User user, String email) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 		det.add(Restrictions.eq("domain", user.getDomain()));
 		det.add(Restrictions.eq("owner", user));
@@ -191,7 +191,7 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 	}
 
 	@Override
-	public List<MailingList> findAllOthersByMemberEmail(User user, String email) {
+	public List<ContactList> findAllOthersByMemberEmail(User user, String email) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 		det.add(Restrictions.eq("domain", user.getDomain()));
 		det.add(Restrictions.eq("isPublic", true));
@@ -202,7 +202,7 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 	}
 	
 	@Override
-	public List<MailingList> findAllMyList(User user) {
+	public List<ContactList> findAllMyList(User user) {
 		if (user.hasSuperAdminRole()) {
 			return findAll();
 		}
@@ -221,13 +221,13 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 	}
 
 	@Override
-	public MailingList update(MailingList entity) throws BusinessException {
+	public ContactList update(ContactList entity) throws BusinessException {
 		entity.setModificationDate(new Date());
 		return super.update(entity);
 	}
 
 	@Override
-	public MailingList create(MailingList entity) throws BusinessException {
+	public ContactList create(ContactList entity) throws BusinessException {
 		entity.setCreationDate(new Date());
 		entity.setModificationDate(new Date());
 		entity.setUuid(UUID.randomUUID().toString());
@@ -235,7 +235,7 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 	}
 
 	@Override
-	public List<MailingList> searchWithInputByVisibility(User user, boolean isPublic, String input) {
+	public List<ContactList> searchWithInputByVisibility(User user, boolean isPublic, String input) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 
 		if (isPublic == false) {
@@ -262,7 +262,7 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 	}
 
 	@Override
-	public List<MailingList> searchListByVisibility(User user, boolean isPublic) {
+	public List<ContactList> searchListByVisibility(User user, boolean isPublic) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 
 		if (isPublic == false) {

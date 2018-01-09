@@ -46,8 +46,8 @@ import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Internal;
-import org.linagora.linshare.core.domain.entities.MailingList;
-import org.linagora.linshare.core.domain.entities.MailingListContact;
+import org.linagora.linshare.core.domain.entities.ContactList;
+import org.linagora.linshare.core.domain.entities.ContactListContact;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
@@ -90,9 +90,9 @@ public class ConatctListSearchRepositoryImplTest extends AbstractJUnit4SpringCon
 
 	private static String identifier2 = "TestMailingList2";
 
-	private MailingList mailingList1, mailingList2;
+	private ContactList mailingList1, mailingList2;
 
-	private MailingListContact contact;
+	private ContactListContact contact;
 
 	@Before
 	public void setUp() throws Exception {
@@ -105,32 +105,32 @@ public class ConatctListSearchRepositoryImplTest extends AbstractJUnit4SpringCon
 		internal.setDomain(domain);
 		accountRepository.create(internal);
 
-		mailingList1 = new MailingList();
+		mailingList1 = new ContactList();
 		mailingList1.setIdentifier(identifier1);
 		mailingList1.setOwner(internal);
 		mailingList1.setDomain(domain);
 		mailingList1.setPublic(true);
 		mailingList1.setDescription("yoyo");
-		mailingList1.setMailingListContact(new ArrayList<MailingListContact>());
+		mailingList1.setMailingListContact(new ArrayList<ContactListContact>());
 		mailingListRepository.create(mailingList1);
 
-		mailingList2 = new MailingList();
+		mailingList2 = new ContactList();
 		mailingList2.setIdentifier(identifier2);
 		mailingList2.setOwner(internal);
 		mailingList2.setDomain(domain);
 		mailingList2.setPublic(false);
 		mailingList2.setDescription("fofo");
-		mailingList2.setMailingListContact(new ArrayList<MailingListContact>());
+		mailingList2.setMailingListContact(new ArrayList<ContactListContact>());
 		mailingListRepository.create(mailingList2);
 
-		contact = new MailingListContact();
+		contact = new ContactListContact();
 		contact.setFirstName(FIRST_NAME);
 		contact.setLastName(LAST_NAME);
 		contact.setMail(CONTACT_MAIL);
 		contact.setUuid(UID);
 		contact.setCreationDate(new Date());
 		contact.setModificationDate(new Date());
-		List<MailingListContact> contacts = new ArrayList<>();
+		List<ContactListContact> contacts = new ArrayList<>();
 		contacts.add(contact);
 		mailingList1.setMailingListContact(contacts);
 		mailingListRepository.update(mailingList1);
@@ -151,7 +151,7 @@ public class ConatctListSearchRepositoryImplTest extends AbstractJUnit4SpringCon
 
 	@Test
 	public void testfindMailingList1ByMemberEmail() throws BusinessException {
-		List<MailingList> mailingLists = mailingListRepository.findAllByMemberEmail(internal, CONTACT_MAIL);
+		List<ContactList> mailingLists = mailingListRepository.findAllByMemberEmail(internal, CONTACT_MAIL);
 		Assert.assertEquals("just one list contains the member who has the mentioned email", mailingLists.size(), 1);
 	}
 }

@@ -145,7 +145,7 @@
 		<constructor-arg ref="logEntryService" />
 	</bean>
 
-	<bean name="mailingListService" class="org.linagora.linshare.core.service.impl.MailingListServiceImpl">
+	<bean name="contactListService" class="org.linagora.linshare.core.service.impl.ContactListServiceImpl">
 		<constructor-arg ref="mailingListBusinessService" />
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="mailingListResourceAccessControl" />

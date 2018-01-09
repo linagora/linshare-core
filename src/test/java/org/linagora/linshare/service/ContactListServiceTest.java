@@ -46,14 +46,14 @@ import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Internal;
-import org.linagora.linshare.core.domain.entities.MailingList;
-import org.linagora.linshare.core.domain.entities.MailingListContact;
+import org.linagora.linshare.core.domain.entities.ContactList;
+import org.linagora.linshare.core.domain.entities.ContactListContact;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.MailingListRepository;
-import org.linagora.linshare.core.service.MailingListService;
+import org.linagora.linshare.core.service.ContactListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -97,23 +97,23 @@ public class ContactListServiceTest extends AbstractTransactionalJUnit4SpringCon
 	private AbstractDomainRepository abstractDomainRepository;
 	
 	@Autowired
-	private MailingListService mailingListService;
+	private ContactListService contactListService;
 
 	private AbstractDomain domain;
 
 	private User internal;
 
-	private static String identifier1 = "TestMailingList1";
+	private static String identifier1 = "TestContactList1";
 
-	private static String identifier2 = "TestMailingList2";
+	private static String identifier2 = "TestContactList2";
 
-	private MailingList mailingList1, mailingList2;
+	private ContactList contactList1, contactList2;
 
-	private MailingListContact contact;
+	private ContactListContact contact;
 
-	private MailingListContact contact1;
+	private ContactListContact contact1;
 
-	private MailingListContact contact2;
+	private ContactListContact contact2;
 
 	@Before
 	public void setUp() throws Exception {
@@ -126,33 +126,33 @@ public class ContactListServiceTest extends AbstractTransactionalJUnit4SpringCon
 		internal.setDomain(domain);
 		accountRepository.create(internal);
 
-		mailingList1 = new MailingList();
-		mailingList1.setIdentifier(identifier1);
-		mailingList1.setOwner(internal);
-		mailingList1.setDomain(domain);
-		mailingList1.setPublic(true);
-		mailingList1.setDescription("yoyo");
-		mailingList1.setMailingListContact(new ArrayList<MailingListContact>());
-		mailingListRepository.create(mailingList1);
+		contactList1 = new ContactList();
+		contactList1.setIdentifier(identifier1);
+		contactList1.setOwner(internal);
+		contactList1.setDomain(domain);
+		contactList1.setPublic(true);
+		contactList1.setDescription("yoyo");
+		contactList1.setMailingListContact(new ArrayList<ContactListContact>());
+		mailingListRepository.create(contactList1);
 
-		mailingList2 = new MailingList();
-		mailingList2.setIdentifier(identifier2);
-		mailingList2.setOwner(internal);
-		mailingList2.setDomain(domain);
-		mailingList2.setPublic(false);
-		mailingList2.setDescription("fofo");
-		mailingList2.setMailingListContact(new ArrayList<MailingListContact>());
-		mailingListRepository.create(mailingList2);
-		contact = new MailingListContact();
+		contactList2 = new ContactList();
+		contactList2.setIdentifier(identifier2);
+		contactList2.setOwner(internal);
+		contactList2.setDomain(domain);
+		contactList2.setPublic(false);
+		contactList2.setDescription("fofo");
+		contactList2.setMailingListContact(new ArrayList<ContactListContact>());
+		mailingListRepository.create(contactList2);
+
 		contact = newContact(UID, CONTACT_MAIL);
 		contact1 = newContact(UID1, CONTACT_MAIL1);
 		contact2 = newContact(UID2, CONTACT_MAIL2);
-		List<MailingListContact> contacts = new ArrayList<>();
+		List<ContactListContact> contacts = new ArrayList<>();
 		contacts.add(contact);
 		contacts.add(contact1);
 		contacts.add(contact2);
-		mailingList1.setMailingListContact(contacts);
-		mailingListRepository.update(mailingList1);
+		contactList1.setMailingListContact(contacts);
+		mailingListRepository.update(contactList1);
 
 		logger.debug("End setUp");
 	}
@@ -161,8 +161,8 @@ public class ContactListServiceTest extends AbstractTransactionalJUnit4SpringCon
 	public void tearDown() throws Exception {
 		logger.debug("Begin tearDown");
 
-		mailingListRepository.delete(mailingList1);
-		mailingListRepository.delete(mailingList2);
+		mailingListRepository.delete(contactList1);
+		mailingListRepository.delete(contactList2);
 		accountRepository.delete(internal);
 
 		logger.debug("End tearDown");
@@ -170,15 +170,18 @@ public class ContactListServiceTest extends AbstractTransactionalJUnit4SpringCon
 
 	@Test
 	public void testfindMailingList1ByMemberEmail() throws BusinessException {
-		List<MailingList> mailingLists = mailingListService.findAllByMemberEmail(internal, internal, null, CONTACT_MAIL);
-		Assert.assertEquals("just one list contains the member who has the mentioned email", mailingLists.size(), 1);
-		MailingList duplicatedContactList = mailingListService.duplicate(internal, internal, mailingLists.get(0), "contactList duplicated");
+		List<ContactList> contactLists = contactListService.findAllByMemberEmail(internal, internal, null, CONTACT_MAIL);
+		Assert.assertEquals("just one list contains the member who has the mentioned email", contactLists.size(), 1);
+		ContactList duplicatedContactList = contactListService.duplicate(internal, internal, contactLists.get(0), "contactList duplicated");
 		Assert.assertEquals(3, duplicatedContactList.getMailingListContact().size());
+		contactListService.deleteList(internal.getLsUuid(), duplicatedContactList.getUuid());
+		ContactList deletedContactList = contactListService.findByIdentifier(internal.getLsUuid(), duplicatedContactList.getUuid());
+		Assert.assertNull(deletedContactList);
 	}
 
 	// helpers
-	public MailingListContact newContact(String uuid, String mail) {
-		MailingListContact newContact = new MailingListContact();
+	public ContactListContact newContact(String uuid, String mail) {
+		ContactListContact newContact = new ContactListContact();
 		newContact.setFirstName(FIRST_NAME);
 		newContact.setLastName(LAST_NAME);
 		newContact.setMail(mail);

@@ -38,8 +38,8 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.entities.MailingList;
-import org.linagora.linshare.core.domain.entities.MailingListContact;
+import org.linagora.linshare.core.domain.entities.ContactList;
+import org.linagora.linshare.core.domain.entities.ContactListContact;
 
 import com.google.common.base.Function;
 import com.wordnik.swagger.annotations.ApiModel;
@@ -74,11 +74,11 @@ public class MailingListDto {
 		super();
 	}
 
-	public MailingListDto(MailingList list) {
+	public MailingListDto(ContactList list) {
 		this(list, true);
 	}
 
-	public MailingListDto(MailingList list, boolean full) {
+	public MailingListDto(ContactList list, boolean full) {
 		this.uuid = list.getUuid();
 		this.identifier = list.getIdentifier();
 		this.description = list.getDescription();
@@ -86,20 +86,20 @@ public class MailingListDto {
 		this.owner = UserDto.getSimple(list.getOwner());
 		this.domainId = list.getDomain().getUuid();
 		if (full) {
-			for (MailingListContact current : list.getMailingListContact()) {
+			for (ContactListContact current : list.getMailingListContact()) {
 				contacts.add(new MailingListContactDto(current));
 			}
 		}
 	}
 
-	public MailingList toObject() {
-		MailingList list = new MailingList();
+	public ContactList toObject() {
+		ContactList list = new ContactList();
 		list.setUuid(getUuid());
 		list.setIdentifier(getIdentifier());
 		list.setDescription(getDescription());
 		list.setPublic(isPublic());
 		for (MailingListContactDto current : getContacts()) {
-			list.getMailingListContact().add(new MailingListContact(current));
+			list.getMailingListContact().add(new ContactListContact(current));
 		}
 		return list;
 	}
@@ -163,10 +163,10 @@ public class MailingListDto {
 	/*
 	 * Transformers
 	 */
-	public static Function<MailingList, MailingListDto> toDto() {
-		return new Function<MailingList, MailingListDto>() {
+	public static Function<ContactList, MailingListDto> toDto() {
+		return new Function<ContactList, MailingListDto>() {
 			@Override
-			public MailingListDto apply(MailingList arg0) {
+			public MailingListDto apply(ContactList arg0) {
 				MailingListDto dto = new MailingListDto(arg0);
 				return dto;
 			}

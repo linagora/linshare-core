@@ -36,42 +36,42 @@ package org.linagora.linshare.core.repository;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.MailingList;
+import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
-public interface MailingListRepository extends AbstractRepository<MailingList> {
+public interface MailingListRepository extends AbstractRepository<ContactList> {
 
-	MailingList findByUuid(String uuid);
+	ContactList findByUuid(String uuid);
 
-	MailingList findByIdentifier(User owner, String identifier);
+	ContactList findByIdentifier(User owner, String identifier);
 
-	List<MailingList> findAllListWhereOwner(User user);
+	List<ContactList> findAllListWhereOwner(User user);
 
-	List<MailingList> findAllMyList(User user);
+	List<ContactList> findAllMyList(User user);
 
-	List<MailingList> findAll(User user);
+	List<ContactList> findAll(User user);
 
-	List<MailingList> findAllMine(User user);
+	List<ContactList> findAllMine(User user);
 
-	List<MailingList> findAllOthers(User user);
+	List<ContactList> findAllOthers(User user);
 
-	List<MailingList> findAllByMemberEmail(User user, String email);
+	List<ContactList> findAllByMemberEmail(User user, String email);
 
-	List<MailingList> findAllMineByMemberEmail(User user, String email);
+	List<ContactList> findAllMineByMemberEmail(User user, String email);
 
-	List<MailingList> findAllOthersByMemberEmail(User user, String email);
+	List<ContactList> findAllOthersByMemberEmail(User user, String email);
 
-	List<MailingList> searchListByVisibility(User user, boolean isPublic);
+	List<ContactList> searchListByVisibility(User user, boolean isPublic);
 
-	List<MailingList> searchListWithInput(User user, String input);
+	List<ContactList> searchListWithInput(User user, String input);
 
-	List<MailingList> searchMyListWithInput(User user, String input);
+	List<ContactList> searchMyListWithInput(User user, String input);
 
-	List<MailingList> searchWithInputByVisibility(User user, boolean isPublic, String input);
+	List<ContactList> searchWithInputByVisibility(User user, boolean isPublic, String input);
 
-	MailingList update(MailingList entity) throws BusinessException;
+	ContactList update(ContactList entity) throws BusinessException;
 
-	MailingList create(MailingList entity) throws BusinessException;
+	ContactList create(ContactList entity) throws BusinessException;
 
 }

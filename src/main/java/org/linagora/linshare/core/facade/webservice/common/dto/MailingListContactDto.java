@@ -35,7 +35,7 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.entities.MailingListContact;
+import org.linagora.linshare.core.domain.entities.ContactListContact;
 
 import com.google.common.base.Function;
 import com.wordnik.swagger.annotations.ApiModel;
@@ -63,7 +63,7 @@ public class MailingListContactDto {
 	public MailingListContactDto() {
 	}
 
-	public MailingListContactDto(MailingListContact contact) {
+	public MailingListContactDto(ContactListContact contact) {
 		this.mail = contact.getMail();
 		this.uuid = contact.getUuid();
 		this.lastName = contact.getLastName();
@@ -71,8 +71,8 @@ public class MailingListContactDto {
 		this.mailingListUuid = contact.getMailingList().getUuid();
 	}
 
-	public MailingListContact toObject() {
-		MailingListContact contact = new MailingListContact();
+	public ContactListContact toObject() {
+		ContactListContact contact = new ContactListContact();
 		contact.setUuid(getUuid());
 		contact.setMail(getMail());
 		contact.setFirstName(getFirstName());
@@ -123,10 +123,10 @@ public class MailingListContactDto {
 	/*
 	 * Transformers
 	 */
-	public static Function<MailingListContact, MailingListContactDto> toDto() {
-		return new Function<MailingListContact, MailingListContactDto>() {
+	public static Function<ContactListContact, MailingListContactDto> toDto() {
+		return new Function<ContactListContact, MailingListContactDto>() {
 			@Override
-			public MailingListContactDto apply(MailingListContact arg0) {
+			public MailingListContactDto apply(ContactListContact arg0) {
 				return new MailingListContactDto(arg0);
 			}
 		};

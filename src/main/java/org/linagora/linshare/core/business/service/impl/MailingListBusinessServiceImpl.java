@@ -38,8 +38,8 @@ import java.util.List;
 
 import org.linagora.linshare.core.business.service.MailingListBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.MailingList;
-import org.linagora.linshare.core.domain.entities.MailingListContact;
+import org.linagora.linshare.core.domain.entities.ContactList;
+import org.linagora.linshare.core.domain.entities.ContactListContact;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -66,88 +66,88 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	 */
 
 	@Override
-	public MailingList createList(MailingList mailingList, User owner) throws BusinessException {
+	public ContactList createList(ContactList contactList, User owner) throws BusinessException {
 		// check if list identifier is unique (do not already exist)
-		if (listRepository.findByIdentifier(owner, mailingList.getIdentifier()) == null) {
+		if (listRepository.findByIdentifier(owner, contactList.getIdentifier()) == null) {
 			// Setting extra fields.
-			mailingList.setOwner(owner);
-			mailingList.setDomain(owner.getDomain());
-			MailingList createdList = listRepository.create(mailingList);
+			contactList.setOwner(owner);
+			contactList.setDomain(owner.getDomain());
+			ContactList createdList = listRepository.create(contactList);
 
 			return createdList;
 		} else {
-			String msg = "The current list you are trying to create already exists : " + mailingList.getIdentifier();
+			String msg = "The current list you are trying to create already exists : " + contactList.getIdentifier();
 			logger.error(msg);
 			throw new BusinessException(BusinessErrorCode.LIST_ALDREADY_EXISTS, msg);
 		}
 	}
 
 	@Override
-	public MailingList findByUuid(String uuid) throws BusinessException {
-		MailingList mailingList = listRepository.findByUuid(uuid);
-		if (mailingList == null) {
+	public ContactList findByUuid(String uuid) throws BusinessException {
+		ContactList contactList = listRepository.findByUuid(uuid);
+		if (contactList == null) {
 			String msg = "The current mailing list do not exist : " + uuid;
 			logger.error(msg);
 			throw new BusinessException(BusinessErrorCode.LIST_DO_NOT_EXIST, msg);
 		}
-		return mailingList;
+		return contactList;
 	}
 
 	@Override
-	public List<MailingList> findAllList() {
+	public List<ContactList> findAllList() {
 		return listRepository.findAll();
 	}
 
 	@Override
-	public MailingList findByIdentifier(User owner, String identifier) {
+	public ContactList findByIdentifier(User owner, String identifier) {
 		return listRepository.findByIdentifier(owner, identifier);
 	}
 
 	@Override
-	public List<String> getAllContactMails(MailingList list) {
+	public List<String> getAllContactMails(ContactList list) {
 		return contactRepository.getAllContactMails(list);
 	}
 
 	@Override
-	public List<MailingList> searchListByVisibility(User owner, boolean isPublic, String input) {
+	public List<ContactList> searchListByVisibility(User owner, boolean isPublic, String input) {
 		return listRepository.searchWithInputByVisibility(owner, isPublic, input);
 	}
 
 	@Override
-	public List<MailingList> findAllListByVisibility(User owner, boolean isPublic) {
+	public List<ContactList> findAllListByVisibility(User owner, boolean isPublic) {
 		return listRepository.searchListByVisibility(owner, isPublic);
 	}
 
 	@Override
-	public List<MailingList> searchMyLists(User user, String input) {
+	public List<ContactList> searchMyLists(User user, String input) {
 		return listRepository.searchMyListWithInput(user, input);
 	}
 
 	@Override
-	public List<MailingList> searchListByUser(User user, String input) {
+	public List<ContactList> searchListByUser(User user, String input) {
 		return listRepository.searchListWithInput(user, input);
 	}
 
 	@Override
-	public List<MailingList> findAllListByUser(User user) {
+	public List<ContactList> findAllListByUser(User user) {
 		return listRepository.findAllMyList(user);
 	}
 
 	@Override
-	public List<MailingList> findAllMyList(User user) {
+	public List<ContactList> findAllMyList(User user) {
 		return listRepository.findAllListWhereOwner(user);
 	}
 
 	@Override
 	public void deleteList(String uuid) throws BusinessException {
-		MailingList listToDelete = findByUuid(uuid);
+		ContactList listToDelete = findByUuid(uuid);
 		logger.debug("List to delete: " + uuid);
 		listRepository.delete(listToDelete);
 	}
 
 	@Override
-	public MailingList updateList(MailingList updatedMailingList) throws BusinessException {
-		MailingList entity = findByUuid(updatedMailingList.getUuid());
+	public ContactList updateList(ContactList updatedMailingList) throws BusinessException {
+		ContactList entity = findByUuid(updatedMailingList.getUuid());
 		String newIdentifier = updatedMailingList.getIdentifier();
 		if (!entity.getIdentifier().equals(newIdentifier)) {
 			// The identifier was changed.
@@ -173,9 +173,9 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	 */
 
 	@Override
-	public MailingListContact findContactWithMail(String listUuid, String mail) throws BusinessException {
-		MailingList list = listRepository.findByUuid(listUuid);
-		MailingListContact contact = contactRepository.findByMail(list, mail);
+	public ContactListContact findContactWithMail(String listUuid, String mail) throws BusinessException {
+		ContactList list = listRepository.findByUuid(listUuid);
+		ContactListContact contact = contactRepository.findByMail(list, mail);
 		if (contact == null) {
 			String msg = "The current contact you are trying to find do not exist : " + mail;
 			logger.error(msg);
@@ -185,8 +185,8 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	}
 
 	@Override
-	public MailingListContact findContact(String contactUuid) throws BusinessException {
-		MailingListContact contact = contactRepository.findByUuid(contactUuid);
+	public ContactListContact findContact(String contactUuid) throws BusinessException {
+		ContactListContact contact = contactRepository.findByUuid(contactUuid);
 		if (contact == null) {
 			String msg = "The current contact you are trying to find do not exist : " + contactUuid;
 			logger.error(msg);
@@ -196,21 +196,21 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	}
 
 	@Override
-	public void deleteContact(MailingList mailingList, String contactUuid) throws BusinessException {
-		MailingListContact contactToDelete = findContact(contactUuid);
-		mailingList.deleteMailingListContact(contactToDelete);
-		listRepository.update(mailingList);
+	public void deleteContact(ContactList contactList, String contactUuid) throws BusinessException {
+		ContactListContact contactToDelete = findContact(contactUuid);
+		contactList.deleteMailingListContact(contactToDelete);
+		listRepository.update(contactList);
 		contactRepository.delete(contactToDelete);
 	}
 
 	@Override
-	public void updateContact(MailingListContact contactToUpdate)
+	public void updateContact(ContactListContact contactToUpdate)
 			throws BusinessException {
 		/*
 		 * FIXME : update can leads to duplicate mails which in turn will break
 		 * the deletion
 		 */
-		MailingListContact contact = findContact(contactToUpdate.getUuid());
+		ContactListContact contact = findContact(contactToUpdate.getUuid());
 		contact.setMail(contactToUpdate.getMail());
 		contact.setLastName(contactToUpdate.getLastName());
 		contact.setFirstName(contactToUpdate.getFirstName());
@@ -218,13 +218,13 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	}
 
 	@Override
-	public MailingListContact addContact(MailingList mailingList, MailingListContact contact) throws BusinessException {
-		List<MailingListContact> contactList = findAllContacts(mailingList);
-		if (!contactList.contains(contact)) {
-			mailingList.addMailingListContact(contact);
-			contact.setMailingList(mailingList);
+	public ContactListContact addContact(ContactList contactList, ContactListContact contact) throws BusinessException {
+		List<ContactListContact> contactListContact = findAllContacts(contactList);
+		if (!contactListContact.contains(contact)) {
+			contactList.addMailingListContact(contact);
+			contact.setMailingList(contactList);
 			contact = contactRepository.create(contact);
-			listRepository.update(mailingList);
+			listRepository.update(contactList);
 			return contact;
 		} else {
 			logger.debug("Contact already present : " + contact.getMail());
@@ -233,7 +233,7 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	}
 
 	@Override
-	public List<MailingListContact> findAllContacts(MailingList list) {
+	public List<ContactListContact> findAllContacts(ContactList list) {
 		return contactRepository.findAllContacts(list);
 	}
 
@@ -242,7 +242,7 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	 */
 
 	@Override
-	public MailingList update(MailingList entity, MailingList object) throws BusinessException {
+	public ContactList update(ContactList entity, ContactList object) throws BusinessException {
 		String newIdentifier = object.getIdentifier();
 		if (!entity.getIdentifier().equals(newIdentifier)) {
 			// The identifier was changed.
@@ -260,39 +260,39 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	}
 
 	@Override
-	public MailingList delete(MailingList entity) throws BusinessException {
+	public ContactList delete(ContactList entity) throws BusinessException {
 		logger.debug("List to delete: " + entity.getUuid());
 		listRepository.delete(entity);
 		return entity;
 	}
 
 	@Override
-	public List<MailingList> findAll(Account actor, User user) {
+	public List<ContactList> findAll(Account actor, User user) {
 		return listRepository.findAll(user);
 	}
 
 	@Override
-	public List<MailingList> findAllMine(Account actor, User user) {
+	public List<ContactList> findAllMine(Account actor, User user) {
 		return listRepository.findAllMine(user);
 	}
 
 	@Override
-	public List<MailingList> findAllOthers(Account actor, User user) {
+	public List<ContactList> findAllOthers(Account actor, User user) {
 		return listRepository.findAllOthers(user);
 	}
 
 	@Override
-	public List<MailingList> findAllByMemberEmail(Account actor, User user, String email) {
+	public List<ContactList> findAllByMemberEmail(Account actor, User user, String email) {
 		return listRepository.findAllByMemberEmail(user, email);
 	}
 
 	@Override
-	public List<MailingList> findAllMineByMemberEmail(Account actor, User user, String email) {
+	public List<ContactList> findAllMineByMemberEmail(Account actor, User user, String email) {
 		return listRepository.findAllMineByMemberEmail(user, email);
 	}
 
 	@Override
-	public List<MailingList> findAllOthersByMemberEmail(Account actor, User user, String email) {
+	public List<ContactList> findAllOthersByMemberEmail(Account actor, User user, String email) {
 		return listRepository.findAllOthersByMemberEmail(user, email);
 	}
 }

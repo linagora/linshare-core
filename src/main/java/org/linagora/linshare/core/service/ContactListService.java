@@ -37,56 +37,56 @@ package org.linagora.linshare.core.service;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.MailingList;
-import org.linagora.linshare.core.domain.entities.MailingListContact;
+import org.linagora.linshare.core.domain.entities.ContactList;
+import org.linagora.linshare.core.domain.entities.ContactListContact;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
-public interface MailingListService {
+public interface ContactListService {
 
-	MailingList createList(String actorUuid, String ownerUuid, MailingList mailingList) throws BusinessException;
+	ContactList createList(String actorUuid, String ownerUuid, ContactList contactList) throws BusinessException;
 
-	MailingList deleteList(String actorUuid, String mailingListUuid) throws BusinessException;
+	ContactList deleteList(String actorUuid, String contactListUuid) throws BusinessException;
 
-	MailingList updateList(String actorUuid, MailingList listToUpdate) throws BusinessException;
+	ContactList updateList(String actorUuid, ContactList listToUpdate) throws BusinessException;
 
-	MailingList findByUuid(String actorUuid, String uuid) throws BusinessException;
+	ContactList findByUuid(String actorUuid, String uuid) throws BusinessException;
 
 	/**
 	 * Find all list (private and public) of the selected user
 	 * 
-	 * @return mailing list
+	 * @return contact list
 	 */
-	List<MailingList> findAllListByUser(String actorUuid, String userUuid);
+	List<ContactList> findAllListByUser(String actorUuid, String userUuid);
 
-	public MailingList findByIdentifier(String ownerUuid, String identifier);
+	public ContactList findByIdentifier(String ownerUuid, String identifier);
 
 	/**
 	 * Find all list of the user
 	 */
-	List<MailingList> findAllListByOwner(String actorUuid, String ownerUuid);
+	List<ContactList> findAllListByOwner(String actorUuid, String ownerUuid);
 
 	/**
 	 * find list of result according to visibility selected and pattern
 	 */
-	List<MailingList> searchListByVisibility(String actorUuid, String criteriaOnSearch, String pattern);
+	List<ContactList> searchListByVisibility(String actorUuid, String criteriaOnSearch, String pattern);
 
 	/**
-	 * Basic operations on mailingListContact
+	 * Basic operations on contactListMember
 	 */
 
 	/**
 	 * Add contact to list
 	 */
-	void addNewContact(String actorUuid, String mailingListUuid, MailingListContact contact) throws BusinessException;
+	void addNewContact(String actorUuid, String contactListUuid, ContactListContact contact) throws BusinessException;
 
 	void deleteContact(String actorUuid, String mail) throws BusinessException;
 
-	MailingListContact searchContact(String actorUuid, String uuid) throws BusinessException;
+	ContactListContact searchContact(String actorUuid, String uuid) throws BusinessException;
 
-	void updateContact(String actorUuid, MailingListContact contactToUpdate) throws BusinessException;
+	void updateContact(String actorUuid, ContactListContact contactToUpdate) throws BusinessException;
 
-	MailingListContact findContactWithMail(String actorUuid, String listUuid, String mail) throws BusinessException;
+	ContactListContact findContactWithMail(String actorUuid, String listUuid, String mail) throws BusinessException;
 
 	List<String> getAllContactMails(String actorUuid, String uuid) throws BusinessException;
 
@@ -94,27 +94,27 @@ public interface MailingListService {
 	 * Webservice methods
 	 */
 
-	List<MailingList> findAllByUser(Account actor, Account owner) throws BusinessException;
+	List<ContactList> findAllByUser(Account actor, Account owner) throws BusinessException;
 
-	MailingList find(Account actor, Account owner, String uuid) throws BusinessException;
+	ContactList find(Account actor, Account owner, String uuid) throws BusinessException;
 
-	MailingList create(Account actor, Account owner, MailingList list) throws BusinessException;
+	ContactList create(Account actor, Account owner, ContactList list) throws BusinessException;
 
-	MailingList duplicate(Account actor, Account owner, MailingList list, String identifier) throws BusinessException;
+	ContactList duplicate(Account actor, Account owner, ContactList list, String identifier) throws BusinessException;
 
-	MailingList update(Account actor, Account owner, MailingList list) throws BusinessException;
+	ContactList update(Account actor, Account owner, ContactList list) throws BusinessException;
 
-	MailingList delete(Account actor, Account owner, String uuid) throws BusinessException;
+	ContactList delete(Account actor, Account owner, String uuid) throws BusinessException;
 
-	MailingListContact addContact(Account actor, Account owner, String listUuid, MailingListContact contact) throws BusinessException;
+	ContactListContact addContact(Account actor, Account owner, String listUuid, ContactListContact contact) throws BusinessException;
 
-	void updateContact(Account actor, Account owner, MailingListContact contact) throws BusinessException;
+	void updateContact(Account actor, Account owner, ContactListContact contact) throws BusinessException;
 
 	void deleteContact(Account actor, Account owner, String contactUuid) throws BusinessException;
 
-	List<MailingListContact> findAllContacts(Account actor, Account owner, String listUuid) throws BusinessException;
+	List<ContactListContact> findAllContacts(Account actor, Account owner, String listUuid) throws BusinessException;
 
-	List<MailingList> findAll(Account actor, User owner, Boolean mine);
+	List<ContactList> findAll(Account actor, User owner, Boolean mine);
 	
-	List<MailingList> findAllByMemberEmail(Account actor, User owner, Boolean mine, String email);
+	List<ContactList> findAllByMemberEmail(Account actor, User owner, Boolean mine, String email);
 }

@@ -41,7 +41,7 @@ import java.util.List;
 import org.linagora.linshare.core.facade.webservice.common.dto.MailingListContactDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.MailingListDto;
 
-public class MailingList {
+public class ContactList {
 
 	/**
 	 * Database persistence identifier
@@ -70,17 +70,17 @@ public class MailingList {
 	private AbstractDomain domain;
 
 	// List of contacts.
-	private List<MailingListContact> mailingListContact = new ArrayList<MailingListContact>();
+	private List<ContactListContact> mailingListContact = new ArrayList<ContactListContact>();
 
 	protected Date creationDate;
 
 	protected Date modificationDate;
 
-	public MailingList() {
+	public ContactList() {
 		super();
 	}
 
-	public MailingList(MailingList list) {
+	public ContactList(ContactList list) {
 		this.persistenceId = list.getPersistenceId();
 		this.uuid = list.getUuid();
 		this.identifier = list.getIdentifier();
@@ -93,13 +93,13 @@ public class MailingList {
 		this.modificationDate = list.getModificationDate();
 	}
 
-	public MailingList(MailingListDto list) {
+	public ContactList(MailingListDto list) {
 		this.uuid = list.getUuid();
 		this.identifier = list.getIdentifier();
 		this.description = list.getDescription();
 		this.isPublic = list.isPublic();
 		for (MailingListContactDto current : list.getContacts()) {
-			mailingListContact.add(new MailingListContact(current));
+			mailingListContact.add(new ContactListContact(current));
 		}
 	}
 
@@ -167,12 +167,12 @@ public class MailingList {
 		this.uuid = uuid;
 	}
 
-	public List<MailingListContact> getMailingListContact() {
+	public List<ContactListContact> getMailingListContact() {
 		return mailingListContact;
 	}
 
-	public void setMailingListContact(List<MailingListContact> mailingListContact) {
-		this.mailingListContact = mailingListContact;
+	public void setMailingListContact(List<ContactListContact> contactListMember) {
+		this.mailingListContact = contactListMember;
 	}
 
 	public Date getCreationDate() {
@@ -196,25 +196,25 @@ public class MailingList {
 	 */
 
 	/**
-	 * Add a new contact to the mailing list contacts.
+	 * Add a new member to the list contacts.
 	 * 
 	 * @param contact
 	 */
-	public void addMailingListContact(MailingListContact contact) {
+	public void addMailingListContact(ContactListContact contact) {
 		mailingListContact.add(contact);
 	}
 
 	/**
-	 * remove a contact from the mailing list contacts.
+	 * remove a meber from the contact list .
 	 * 
 	 * @param contact
 	 */
-	public void deleteMailingListContact(MailingListContact contact) {
+	public void deleteMailingListContact(ContactListContact contact) {
 		mailingListContact.remove(contact);
 	}
 
 	/**
-	 * Check if the actor parameter is the owner of the mailing list.
+	 * Check if the actor parameter is the owner of the contact list.
 	 * 
 	 * @param account
 	 * @return MailingList

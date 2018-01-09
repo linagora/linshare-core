@@ -35,8 +35,8 @@
 package org.linagora.linshare.core.rac;
 
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.MailingList;
+import org.linagora.linshare.core.domain.entities.ContactList;
 
-public interface MailingListResourceAccessControl extends AbstractResourceAccessControl<Account, Account, MailingList> {
+public interface MailingListResourceAccessControl extends AbstractResourceAccessControl<Account, Account, ContactList> {
 
 }
