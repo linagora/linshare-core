@@ -49,6 +49,8 @@ public interface ContactListFacade {
 
 	ContactListDto create(String ownerUuid, ContactListDto dto) throws BusinessException;
 
+	ContactListDto duplicate(String ownerUuid, String contactsListUuidSource, String contactListName) throws BusinessException;
+
 	ContactListDto update(String ownerUuid, ContactListDto dto, String uuid) throws BusinessException;
 
 	ContactListDto delete(String ownerUuid, String uuid) throws BusinessException;

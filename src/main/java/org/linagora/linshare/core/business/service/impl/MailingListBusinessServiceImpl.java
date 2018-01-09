@@ -219,7 +219,8 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 
 	@Override
 	public MailingListContact addContact(MailingList mailingList, MailingListContact contact) throws BusinessException {
-		if (!mailingList.getMailingListContact().contains(contact)) {
+		List<MailingListContact> contactList = findAllContacts(mailingList);
+		if (!contactList.contains(contact)) {
 			mailingList.addMailingListContact(contact);
 			contact.setMailingList(mailingList);
 			contact = contactRepository.create(contact);

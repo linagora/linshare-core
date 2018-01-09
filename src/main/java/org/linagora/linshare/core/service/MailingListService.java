@@ -100,6 +100,8 @@ public interface MailingListService {
 
 	MailingList create(Account actor, Account owner, MailingList list) throws BusinessException;
 
+	MailingList duplicate(Account actor, Account owner, MailingList list, String identifier) throws BusinessException;
+
 	MailingList update(Account actor, Account owner, MailingList list) throws BusinessException;
 
 	MailingList delete(Account actor, Account owner, String uuid) throws BusinessException;

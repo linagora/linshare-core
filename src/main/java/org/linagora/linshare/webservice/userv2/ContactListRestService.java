@@ -51,6 +51,8 @@ public interface ContactListRestService {
 
 	ContactListDto create(ContactListDto dto) throws BusinessException;
 
+	ContactListDto duplicate(String contactsListUuidSource, String contactListName) throws BusinessException;
+
 	ContactListDto update(ContactListDto dto, String uuid) throws BusinessException;
 
 	ContactListDto delete(ContactListDto dto) throws BusinessException;

@@ -34,6 +34,7 @@
 
 package org.linagora.linshare.core.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
@@ -296,6 +297,30 @@ public class MailingListServiceImpl extends GenericServiceImpl<Account, MailingL
 				new AccountMto(list.getOwner()), LogAction.CREATE, AuditLogEntryType.CONTACTS_LISTS, listCreated);
 		logEntryService.insert(log);
 		return listCreated;
+	}
+
+	@Override
+	public MailingList duplicate(Account actor, Account owner, MailingList list, String identifier) throws BusinessException {
+		Validate.notNull(list, "Mailing list must be set.");
+		Validate.notNull(identifier, "identifier must be set.");
+		preChecks(actor, owner);
+		checkCreatePermission(actor, owner, MailingList.class, BusinessErrorCode.FORBIDDEN, null);
+		MailingList duplicateMailingList = new MailingList();
+		duplicateMailingList.setIdentifier(identifier);
+		duplicateMailingList.setOwner(list.getOwner());
+		duplicateMailingList.setDomain(list.getDomain());
+		duplicateMailingList.setPublic(list.isPublic());
+		duplicateMailingList.setDescription(list.getDescription());
+		duplicateMailingList.setMailingListContact(new ArrayList<MailingListContact>());
+		duplicateMailingList = create(actor, owner, duplicateMailingList);
+		for (MailingListContact contact : list.getMailingListContact()) {
+			MailingListContact duplicateContact = new MailingListContact();
+			duplicateContact.setFirstName(contact.getFirstName());
+			duplicateContact.setLastName(contact.getLastName());
+			duplicateContact.setMail(contact.getMail());
+			mailingListBusinessService.addContact(duplicateMailingList, duplicateContact);
+		}
+		return duplicateMailingList;
 	}
 
 	@Override

@@ -130,6 +130,22 @@ public class ContactListRestServiceImpl implements ContactListRestService {
 		return contactListFacade.create(null, dto);
 	}
 
+	@Path("/{uuid}/duplicate/{identifier}")
+	@POST
+	@ApiOperation(value = "Ducplicate a contact list.", response = ContactListDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public ContactListDto duplicate(
+			@ApiParam(value = "The contact list uuid, to duplicate", required = true)
+				@PathParam("uuid") String contactsListUuidSource,
+			@ApiParam(value = "New name for the duplicate ContactList.", required = true)
+				@PathParam("identifier")  String contactListName)
+					throws BusinessException {
+		return contactListFacade.duplicate(null, contactsListUuidSource, contactListName);
+	}
+
 	@Path("/{uuid : .*}")
 	@PUT
 	@ApiOperation(value = "Update a contact list.", response = ContactListDto.class)

@@ -111,6 +111,19 @@ public class ContactListFacadeImpl extends GenericFacadeImpl implements ContactL
 	}
 
 	@Override
+	public ContactListDto duplicate(String ownerUuid, String contactsListUuidSource, String contactListName)
+			throws BusinessException {
+		Validate.notNull(contactsListUuidSource, "Mailing list uuid must be set.");
+		Validate.notNull(contactListName, "Mailing list name must be set.");
+
+		User actor = checkAuthentication();
+		MailingList list = mailingListService.findByUuid(actor.getLsUuid(), contactsListUuidSource);
+		User owner = getOwner(actor, ownerUuid);
+		list = mailingListService.duplicate(actor, owner, list, contactListName);
+		return new ContactListDto(list);
+	}
+
+	@Override
 	public ContactListDto update(String ownerUuid, ContactListDto dto, String uuid) throws BusinessException {
 		Validate.notNull(dto, "Mailing list must be set.");
 		if (!Strings.isNullOrEmpty(uuid)) {

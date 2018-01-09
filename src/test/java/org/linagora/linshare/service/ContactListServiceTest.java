@@ -57,7 +57,7 @@ import org.linagora.linshare.core.service.MailingListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -72,7 +72,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
-public class ContactListServiceTest extends AbstractJUnit4SpringContextTests {
+public class ContactListServiceTest extends AbstractTransactionalJUnit4SpringContextTests {
 
 	// default import.sql
 	private static final String DOMAIN_IDENTIFIER = LinShareConstants.rootDomainIdentifier;
@@ -81,8 +81,11 @@ public class ContactListServiceTest extends AbstractJUnit4SpringContextTests {
 	private static final String LAST_NAME = "last name";
 	private static final String MAIL = "mail";
 	private static final String UID = "uid";
+	private static final String UID1 = "uid1";
+	private static final String UID2 = "uid2";
 	private static final String CONTACT_MAIL = "c@mail";
-
+	private static final String CONTACT_MAIL1 = "c1@mail";
+	private static final String CONTACT_MAIL2 = "c2@mail";
 	@Autowired
 	@Qualifier("accountRepository")
 	private AccountRepository<Account> accountRepository;
@@ -107,6 +110,10 @@ public class ContactListServiceTest extends AbstractJUnit4SpringContextTests {
 	private MailingList mailingList1, mailingList2;
 
 	private MailingListContact contact;
+
+	private MailingListContact contact1;
+
+	private MailingListContact contact2;
 
 	@Before
 	public void setUp() throws Exception {
@@ -136,16 +143,14 @@ public class ContactListServiceTest extends AbstractJUnit4SpringContextTests {
 		mailingList2.setDescription("fofo");
 		mailingList2.setMailingListContact(new ArrayList<MailingListContact>());
 		mailingListRepository.create(mailingList2);
-
 		contact = new MailingListContact();
-		contact.setFirstName(FIRST_NAME);
-		contact.setLastName(LAST_NAME);
-		contact.setMail(CONTACT_MAIL);
-		contact.setUuid(UID);
-		contact.setCreationDate(new Date());
-		contact.setModificationDate(new Date());
+		contact = newContact(UID, CONTACT_MAIL);
+		contact1 = newContact(UID1, CONTACT_MAIL1);
+		contact2 = newContact(UID2, CONTACT_MAIL2);
 		List<MailingListContact> contacts = new ArrayList<>();
 		contacts.add(contact);
+		contacts.add(contact1);
+		contacts.add(contact2);
 		mailingList1.setMailingListContact(contacts);
 		mailingListRepository.update(mailingList1);
 
@@ -167,5 +172,19 @@ public class ContactListServiceTest extends AbstractJUnit4SpringContextTests {
 	public void testfindMailingList1ByMemberEmail() throws BusinessException {
 		List<MailingList> mailingLists = mailingListService.findAllByMemberEmail(internal, internal, null, CONTACT_MAIL);
 		Assert.assertEquals("just one list contains the member who has the mentioned email", mailingLists.size(), 1);
+		MailingList duplicatedContactList = mailingListService.duplicate(internal, internal, mailingLists.get(0), "contactList duplicated");
+		Assert.assertEquals(3, duplicatedContactList.getMailingListContact().size());
+	}
+
+	// helpers
+	public MailingListContact newContact(String uuid, String mail) {
+		MailingListContact newContact = new MailingListContact();
+		newContact.setFirstName(FIRST_NAME);
+		newContact.setLastName(LAST_NAME);
+		newContact.setMail(mail);
+		newContact.setUuid(uuid);
+		newContact.setCreationDate(new Date());
+		newContact.setModificationDate(new Date());
+		return newContact;
 	}
 }
