@@ -98,20 +98,18 @@ public class WarnOwnerAboutGuestExpirationBatchImpl extends GenericBatchImpl {
 			logger.warn("No owner found for this guest : " + guest.getAccountRepresentation());
 			return null;
 		}
-		logInfo(batchRunContext, total, position, "Processing owner account " + owner.getAccountRepresentation());
-		logInfo(batchRunContext, total, position, "Processing guest account " + guest.getAccountRepresentation());
+		console.logInfo(batchRunContext, total, position, "Processing guest account " + guest.getAccountRepresentation());
 		ResultContext context = new AccountBatchResultContext(owner);
 		try {
 			EmailContext ctx = new WarnOwnerAboutGuestExpirationEmailContext(guest, nbDaysBeforeExpiration);
 			MailContainerWithRecipient mail = mailBuildingService.build(ctx);
 			notifierService.sendNotification(mail);
 		} catch (BusinessException businessException) {
-			logError(total, position, "Error while trying to send a notification for expiration guest",
-					batchRunContext);
-			logger.error("Error occured while sending notification ", businessException);
 			BatchBusinessException exception = new BatchBusinessException(context,
 					"Error while trying to send a notification for expiration guest");
 			exception.setBusinessException(businessException);
+			console.logError(batchRunContext, total, position,
+					"Error while trying to send a notification for expiration guest", exception);
 			throw exception;
 		}
 		return context;
@@ -132,8 +130,6 @@ public class WarnOwnerAboutGuestExpirationBatchImpl extends GenericBatchImpl {
 		Account user = context.getResource();
 		console.logError(batchRunContext, total, position,
 				"User notification has failed : " + user.getAccountRepresentation());
-		logger.error("Error occured when trying to notify owner about guest expiration"
-				+ user.getAccountRepresentation() + ". BatchBusinessException ", exception);
 	}
 
 }

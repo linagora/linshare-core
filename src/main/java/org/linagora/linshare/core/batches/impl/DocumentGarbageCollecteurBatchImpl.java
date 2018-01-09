@@ -149,9 +149,6 @@ public class DocumentGarbageCollecteurBatchImpl extends GenericBatchImpl {
 	public void notifyError(BatchBusinessException exception, String identifier, long total, long position, BatchRunContext batchRunContext) {
 		DocumentBatchResultContext res = (DocumentBatchResultContext) exception.getContext();
 		Document resource = res.getResource();
-		logError(total, position, exception.getMessage(), batchRunContext);
-		logger.error("Error occured while processing document : "
-				+ resource +
-				". BatchBusinessException", exception);
+		console.logError(batchRunContext, total, position, exception.getMessage());
 	}
 }

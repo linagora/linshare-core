@@ -89,7 +89,7 @@ public class DeleteExpiredAnonymousShareEntryBatchImpl extends GenericBatchImpl 
 		AnonymousShareEntry resource = service.find(actor, actor, identifier);
 		ResultContext context = new EntryBatchResultContext(resource);
 		try {
-			logInfo(batchRunContext,
+			console.logInfo(batchRunContext,
 					total,
 					position, "processing anonymous share : "
 							+ resource.getRepresentation());
@@ -109,13 +109,11 @@ public class DeleteExpiredAnonymousShareEntryBatchImpl extends GenericBatchImpl 
 			logger.info("Expired anonymous share was deleted : "
 					+ resource.getRepresentation());
 		} catch (BusinessException businessException) {
-			logError(total, position,
-					"Error while trying to delete expired shares", batchRunContext);
-			logger.info("Error occured while cleaning expired shares",
-					businessException);
 			BatchBusinessException exception = new BatchBusinessException(
 					context, "Error while trying to delete expired shares.");
 			exception.setBusinessException(businessException);
+			console.logError(batchRunContext, total, position, "Error while trying to delete expired shares",
+					exception);
 			throw exception;
 		}
 		return context;
@@ -125,7 +123,7 @@ public class DeleteExpiredAnonymousShareEntryBatchImpl extends GenericBatchImpl 
 	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		EntryBatchResultContext shareContext = (EntryBatchResultContext) context;
 		Entry share = shareContext.getResource();
-		logInfo(batchRunContext, total,
+		console.logInfo(batchRunContext, total,
 				position, "The anonymous share " + share.getRepresentation()
 						+ " has been successfully deleted.");
 	}
@@ -136,11 +134,8 @@ public class DeleteExpiredAnonymousShareEntryBatchImpl extends GenericBatchImpl 
 		EntryBatchResultContext shareContext = (EntryBatchResultContext) exception
 				.getContext();
 		Entry entry = shareContext.getResource();
-		logError(total, position, "cleaning anonymous share has failed : "
-				+ entry.getRepresentation(), batchRunContext);
-		logger.error("Error occured while cleaning expired anonymous share "
-				+ entry.getRepresentation() + ". BatchBusinessException ",
-				exception);
+		console.logError(batchRunContext,total, position, "cleaning anonymous share has failed : "
+				+ entry.getRepresentation());
 	}
 
 	@Override

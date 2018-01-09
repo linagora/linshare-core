@@ -102,7 +102,7 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 		List<AuditLogEntryUser> logs = null;
 		try {
 			// No more info ?
-			logInfo(batchRunContext, total, position, "processing shareEntryGroup : " + shareEntryGroup.getUuid());
+			console.logInfo(batchRunContext, total, position, "processing shareEntryGroup : " + shareEntryGroup.getUuid());
 			logger.info("needNotification : " + shareEntryGroup.needNotification());
 			shareEntryGroup.setProcessed(true);
 			if (shareEntryGroup.needNotification()) {
@@ -120,11 +120,11 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 			}
 			service.update(actor, actor, shareEntryGroup);
 		} catch (BusinessException businessException) {
-			logError(total, position, "Error while trying to send a notification for undownloaded shared documents", batchRunContext);
-			logger.error("Error occured while sending notification ", businessException);
 			BatchBusinessException exception = new BatchBusinessException(context,
 					"Error while trying to send a notification for undownloaded shared documents");
 			exception.setBusinessException(businessException);
+			console.logError(batchRunContext, total, position,
+					"Error while trying to send a notification for undownloaded shared documents", exception);
 			throw exception;
 		}
 		// Once every thing is ok, transaction is about to be committed, we can
@@ -153,7 +153,7 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 		@SuppressWarnings("unchecked")
 		BatchResultContext<ShareEntryGroup> shareEntryGroupContext = (BatchResultContext<ShareEntryGroup>) context;
 
-		logInfo(batchRunContext, total, position, "The notification for the shareEntryGroup "
+		console.logInfo(batchRunContext, total, position, "The notification for the shareEntryGroup "
 				+ shareEntryGroupContext.getResource().getUuid() + " has been successfully sent ");
 	}
 
@@ -161,10 +161,8 @@ public class UndownloadedSharedDocumentsBatchImpl extends GenericBatchImpl {
 	public void notifyError(BatchBusinessException exception, String identifier, long total, long position, BatchRunContext batchRunContext) {
 		@SuppressWarnings("unchecked")
 		BatchResultContext<ShareEntryGroup> context = (BatchResultContext<ShareEntryGroup>) exception.getContext();
-		logError(total, position,
-				"Sending undownload shared documents notification has failed : " + context.getResource().getUuid(), batchRunContext);
-		logger.error("Error occured while Sending undownload shared documents notification "
-				+ context.getResource().getUuid() + ". BatchBusinessException ", exception);
+		console.logError(batchRunContext, total, position,
+				"Sending undownload shared documents notification has failed : " + context.getResource().getUuid());
 	}
 
 	@Override

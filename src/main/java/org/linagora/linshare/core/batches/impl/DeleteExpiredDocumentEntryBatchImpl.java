@@ -93,7 +93,7 @@ public class DeleteExpiredDocumentEntryBatchImpl extends GenericBatchImpl {
 			throws BatchBusinessException, BusinessException {
 		SystemAccount actor = getSystemAccount();
 		DocumentEntry resource = service.find(actor, actor, identifier);
-		logInfo(batchRunContext, total,
+		console.logInfo(batchRunContext, total,
 				position, "processing document entry : " + resource.getRepresentation());
 		AbstractDomain domain = resource.getEntryOwner().getDomain();
 		ResultContext context = new EntryBatchResultContext(resource);
@@ -115,14 +115,12 @@ public class DeleteExpiredDocumentEntryBatchImpl extends GenericBatchImpl {
 			logger.info("Expired document entry was deleted : "
 					+ resource.getRepresentation());
 		} catch (BusinessException businessException) {
-			logError(total, position,
-					"Error while trying to delete expired document entry", batchRunContext);
-			logger.info("Error occured while cleaning expired document entry",
-					businessException);
 			BatchBusinessException exception = new BatchBusinessException(
 					context,
 					"Error while trying to delete expired document entry.");
 			exception.setBusinessException(businessException);
+			console.logError(batchRunContext, total, position, "Error while trying to delete expired document entry",
+					exception);
 			throw exception;
 		}
 		return context;
@@ -132,7 +130,7 @@ public class DeleteExpiredDocumentEntryBatchImpl extends GenericBatchImpl {
 	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		EntryBatchResultContext shareContext = (EntryBatchResultContext) context;
 		Entry entry = shareContext.getResource();
-		logInfo(batchRunContext, total,
+		console.logInfo(batchRunContext, total,
 				position, "The document entry " + entry.getRepresentation()
 						+ " has been successfully deleted.");
 	}
@@ -143,11 +141,8 @@ public class DeleteExpiredDocumentEntryBatchImpl extends GenericBatchImpl {
 		EntryBatchResultContext context = (EntryBatchResultContext) exception
 				.getContext();
 		Entry entry = context.getResource();
-		logError(total, position, "cleaning document entry has failed : "
-				+ entry.getRepresentation(), batchRunContext);
-		logger.error("Error occured while cleaning expired document entry "
-				+ entry.getRepresentation() + ". BatchBusinessException ",
-				exception);
+		console.logError(batchRunContext, total, position, "cleaning document entry has failed : "
+				+ entry.getRepresentation());
 	}
 
 	@Override

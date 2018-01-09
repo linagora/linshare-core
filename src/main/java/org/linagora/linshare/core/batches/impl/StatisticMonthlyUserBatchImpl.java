@@ -91,20 +91,20 @@ public class StatisticMonthlyUserBatchImpl extends GenericBatchImpl {
 		User resource = userService.findByLsUuid(identifier);
 		ResultContext context = new AccountBatchResultContext(resource);
 		try {
-			logInfo(batchRunContext, total, position, "processing user : " + resource.getAccountRepresentation());
+			console.logInfo(batchRunContext, total, position, "processing user : " + resource.getAccountRepresentation());
 			userMonthlyStatBusinessService.create(resource, getFirstDayOfLastMonth(), getLastDayOfLastMonth());
 		} catch (BusinessException businessException) {
 			GregorianCalendar calendar = new GregorianCalendar();
 			calendar.add(GregorianCalendar.MONTH, -1);
-			logError(total, position,
-					"Error while trying to create a UserMonthlyStat for user " + resource.getAccountRepresentation()
-							+ " in the month "
-							+ calendar.getDisplayName(GregorianCalendar.MONTH, GregorianCalendar.LONG, Locale.US), batchRunContext);
 			BatchBusinessException exception = new BatchBusinessException(context,
 					"Error while trying to create a UserMonthlyStat for user " + resource.getAccountRepresentation()
 							+ " in the month "
 							+ calendar.getDisplayName(GregorianCalendar.MONTH, GregorianCalendar.LONG, Locale.US));
 			exception.setBusinessException(businessException);
+			console.logError(batchRunContext, total, position,
+					"Error while trying to create a UserMonthlyStat for user " + resource.getAccountRepresentation()
+							+ " in the month "
+							+ calendar.getDisplayName(GregorianCalendar.MONTH, GregorianCalendar.LONG, Locale.US), exception);
 			throw exception;
 		}
 		return context;
@@ -114,7 +114,7 @@ public class StatisticMonthlyUserBatchImpl extends GenericBatchImpl {
 	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		AccountBatchResultContext userContext = (AccountBatchResultContext) context;
 		Account user = userContext.getResource();
-		logInfo(batchRunContext, total,
+		console.logInfo(batchRunContext, total,
 				position, "the MonthlyUserStat for " + user.getAccountRepresentation() + " has been successfully created.");
 	}
 
@@ -124,12 +124,9 @@ public class StatisticMonthlyUserBatchImpl extends GenericBatchImpl {
 		Account user = context.getResource();
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.add(GregorianCalendar.MONTH, -1);
-		logError(total, position,
+		console.logError(batchRunContext, total, position,
 				"creating MonthlyUserStatistic has failed for " + user.getAccountRepresentation() + " in the month "
-						+ calendar.getDisplayName(GregorianCalendar.MONTH, GregorianCalendar.LONG, Locale.US), batchRunContext);
-		logger.error("Error occured while creating MonthlyUserStatistic for user " + user.getAccountRepresentation()
-				+ " in the month " + calendar.getDisplayName(GregorianCalendar.MONTH, GregorianCalendar.LONG, Locale.US)
-				+ ". BatchBusinessException ", exception);
+						+ calendar.getDisplayName(GregorianCalendar.MONTH, GregorianCalendar.LONG, Locale.US));
 	}
 
 	@Override

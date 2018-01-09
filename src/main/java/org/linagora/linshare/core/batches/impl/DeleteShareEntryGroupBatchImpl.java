@@ -77,20 +77,18 @@ public class DeleteShareEntryGroupBatchImpl extends GenericBatchImpl {
 		ResultContext context = new BatchResultContext<ShareEntryGroup>(
 				shareEntryGroup);
 		try {
-			logInfo(batchRunContext, total, position, "processing shareEntryGroup : "
+			console.logInfo(batchRunContext, total, position, "processing shareEntryGroup : "
 					+ shareEntryGroup.getUuid());
 			service.delete(actor, actor,
 					shareEntryGroup);
 			logger.info("shareEntryGroup " + shareEntryGroup.getUuid()
 					+ " has been deleted");
 		} catch (BusinessException businessException) {
-			logError(total, position,
-					"Error while trying to delete shareEntryGroup", batchRunContext);
-			logger.info("Error occured while deleting shareEntryGroup ",
-					businessException);
 			BatchBusinessException exception = new BatchBusinessException(
 					context, "Error while trying to delete ShareEntryGroup");
 			exception.setBusinessException(businessException);
+			console.logError(batchRunContext, total, position,
+					"Error while trying to delete shareEntryGroup", exception);
 			throw exception;
 		}
 		return context;
@@ -100,7 +98,7 @@ public class DeleteShareEntryGroupBatchImpl extends GenericBatchImpl {
 	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		@SuppressWarnings("unchecked")
 		BatchResultContext<ShareEntryGroup> shareEntryGroupContext = (BatchResultContext<ShareEntryGroup>) context;
-		logInfo(batchRunContext, total,
+		console.logInfo(batchRunContext, total,
 				position, "The shareEntryGroup "
 						+ shareEntryGroupContext.getResource().getUuid()
 						+ " has been successfully deleted");
@@ -112,11 +110,8 @@ public class DeleteShareEntryGroupBatchImpl extends GenericBatchImpl {
 		@SuppressWarnings("unchecked")
 		BatchResultContext<ShareEntryGroup> shareEntryGroupContext = (BatchResultContext<ShareEntryGroup>) exception
 				.getContext();
-		logError(total, position, "Deleting shareEntryGroup has failed "
-				+ shareEntryGroupContext.getResource().getUuid(), batchRunContext);
-		logger.error("Error occured while deleting shareEntryGroup "
-				+ shareEntryGroupContext.getResource().getUuid()
-				+ ". BatchBusinessException ", exception);
+		console.logError(batchRunContext, total, position, "Deleting shareEntryGroup has failed "
+				+ shareEntryGroupContext.getResource().getUuid());
 	}
 
 	@Override

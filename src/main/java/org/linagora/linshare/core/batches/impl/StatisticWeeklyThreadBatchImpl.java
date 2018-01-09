@@ -92,22 +92,18 @@ public class StatisticWeeklyThreadBatchImpl extends GenericBatchImpl {
 		Thread resource = threadService.findByLsUuidUnprotected(identifier);
 		ResultContext context = new AccountBatchResultContext(resource);
 		try {
-			logInfo(batchRunContext, total, position, "processing thread : " + resource.getAccountRepresentation());
+			console.logInfo(batchRunContext, total, position, "processing thread : " + resource.getAccountRepresentation());
 			threadWeeklyStatBusinessService.create(resource, getFirstDayOfLastWeek(), getLastDayOfLastWeek());
 		} catch (BusinessException businessException) {
 			GregorianCalendar calendar = new GregorianCalendar();
 			calendar.add(GregorianCalendar.DATE, -7);
-			logError(total, position,
-					"Error while trying to create a ThreadWeeklyStat for user " + resource
-							.getAccountRepresentation() + " in the week "
-					+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US), batchRunContext);
-			logger.info("Error occurred while creating a weekly statistics for thread "
-					+ resource.getAccountRepresentation() + " int the week "
-					+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US),
-					businessException);
 			BatchBusinessException exception = new BatchBusinessException(context,
 					"Error while trying to create a ThreadWeeklyStat");
 			exception.setBusinessException(businessException);
+			console.logError(batchRunContext, total, position,
+					"Error while trying to create a ThreadWeeklyStat for user " + resource
+							.getAccountRepresentation() + " in the week "
+					+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US), exception);
 			throw exception;
 		}
 		return context;
@@ -117,7 +113,7 @@ public class StatisticWeeklyThreadBatchImpl extends GenericBatchImpl {
 	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		AccountBatchResultContext threadContext = (AccountBatchResultContext) context;
 		Account thread = threadContext.getResource();
-		logInfo(batchRunContext, total,
+		console.logInfo(batchRunContext, total,
 				position, "the WeeklyThreadStat for " + thread.getAccountRepresentation() + " has been successfully created.");
 	}
 
@@ -127,14 +123,10 @@ public class StatisticWeeklyThreadBatchImpl extends GenericBatchImpl {
 		Account thread = context.getResource();
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.add(GregorianCalendar.DATE, -7);
-		logError(total, position,
+		console.logError(batchRunContext, total, position,
 				"creating WeeklyThreadStatistic has failed for thread " + thread.getAccountRepresentation()
 						+ " in the week "
-						+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US), batchRunContext);
-		logger.error("Error occured while creating WeeklyThreadStatistic for thread " + thread.getAccountRepresentation()
-				+ "int the week "
-				+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US)
-				+ ". BatchBusinessException ", exception);
+						+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US));
 	}
 
 	@Override

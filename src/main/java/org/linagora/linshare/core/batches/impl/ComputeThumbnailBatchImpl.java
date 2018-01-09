@@ -86,7 +86,7 @@ public class ComputeThumbnailBatchImpl extends GenericBatchImpl {
 		if (document == null) {
 			return null;
 		}
-		logInfo(batchRunContext, total, position, "processing document : " + document.getRepresentation());
+		console.logInfo(batchRunContext, total, position, "processing document : " + document.getRepresentation());
 		ResultContext context = new BatchResultContext<Document>(document);
 		try {
 			documentEntryBusinessService.updateThumbnail(document, getSystemAccount());
@@ -96,7 +96,7 @@ public class ComputeThumbnailBatchImpl extends GenericBatchImpl {
 		} catch (BusinessException e){
 			logger.debug("failed to generate the thumbnails", document.getRepresentation());
 			console.logError(batchRunContext, total, position,
-					"Error while trying to update the thumbnail of the document ", batchRunContext);
+					"Error while trying to update the thumbnail of the document ");
 			BatchBusinessException exception = new BatchBusinessException(
 					context, "Error while trying to update the thumbnails");
 			context.setProcessed(false);
@@ -111,7 +111,7 @@ public class ComputeThumbnailBatchImpl extends GenericBatchImpl {
 		BatchResultContext<Document> cc = (BatchResultContext<Document>) context;
 		if (cc.getProcessed()) {
 			Document entry = cc.getResource();
-			logInfo(batchRunContext, total, position, "Document Thumbnail was updated {}.", entry.getRepresentation());
+			console.logInfo(batchRunContext, total, position, "Document Thumbnail was updated {}.", entry.getRepresentation());
 		}
 	}
 
@@ -121,8 +121,7 @@ public class ComputeThumbnailBatchImpl extends GenericBatchImpl {
 		@SuppressWarnings("unchecked")
 		BatchResultContext<Document> context = (BatchResultContext<Document>) exception.getContext();
 		Document entry = context.getResource();
-		logError(total, position, "Document Thumbnail was not updated, batch has failed : {}", batchRunContext,
+		console.logError(batchRunContext, total, position, "Document Thumbnail was not updated, batch has failed : {}",
 				entry.getRepresentation(), exception);
 	}
-
 }

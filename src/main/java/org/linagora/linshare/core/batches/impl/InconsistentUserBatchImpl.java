@@ -84,13 +84,13 @@ public class InconsistentUserBatchImpl extends GenericBatchImpl implements Incon
 		User u = userService.findByLsUuid(identifier);
 		ResultContext context = new InconsistentUserBatchResultContext(u);
 		context.setProcessed(false);
-		logInfo(batchRunContext,
+		console.logInfo(batchRunContext,
 				total,
 				position, "processing internal : "
 						+ u.getAccountRepresentation());
 		if (!abstractDomainService.isUserExist(u.getDomain(),
 				u.getMail())) {
-			logInfo(batchRunContext, total, position, "Flagging as inconsistent internal : " + u.getAccountRepresentation());
+			console.logInfo(batchRunContext, total, position, "Flagging as inconsistent internal : " + u.getAccountRepresentation());
 			u.setInconsistent(true);
 			userService.updateUser(account, u, u.getDomainId());
 			context.setProcessed(true);
@@ -103,7 +103,7 @@ public class InconsistentUserBatchImpl extends GenericBatchImpl implements Incon
 		InconsistentUserBatchResultContext c = (InconsistentUserBatchResultContext) context;
 		if (c.getProcessed()) {
 			User u = c.getResource();
-			logInfo(batchRunContext, total, position, "The inconsistent user " + u.getLsUuid() + " has been successfully checked.");
+			console.logInfo(batchRunContext, total, position, "The inconsistent user " + u.getLsUuid() + " has been successfully checked.");
 		}
 	}
 
@@ -111,7 +111,7 @@ public class InconsistentUserBatchImpl extends GenericBatchImpl implements Incon
 	public void notifyError(BatchBusinessException exception, String identifier, long total, long position, BatchRunContext batchRunContext) {
 		InconsistentUserBatchResultContext c = (InconsistentUserBatchResultContext) exception.getContext();
 		User u = c.getResource();
-		logError(total, position, "Flaging user has failed " + u.getLsUuid() + ". BatchBusinessException ", batchRunContext, exception);
+		console.logError(batchRunContext, total, position, "Flaging user has failed " + u.getLsUuid() + ". BatchBusinessException ", exception);
 	}
 
 	@Override

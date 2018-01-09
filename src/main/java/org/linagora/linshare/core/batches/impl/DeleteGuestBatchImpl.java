@@ -82,13 +82,11 @@ public class DeleteGuestBatchImpl extends GenericBatchImpl {
 					+ resource.getAccountRepresentation());
 			context.setProcessed(true);
 		} catch (BusinessException businessException) {
-			console.logError(batchRunContext, total, position,
-					"Error while trying to delete expired guest ", batchRunContext);
-			logger.info("Error occured while cleaning outdated guests ",
-					businessException);
 			BatchBusinessException exception = new BatchBusinessException(
 					context, "Error while trying to delete expired guest");
 			exception.setBusinessException(businessException);
+			console.logError(batchRunContext, total, position, "Error while trying to delete expired guest ",
+					batchRunContext, exception);
 			throw exception;
 		}
 		return context;
@@ -114,10 +112,5 @@ public class DeleteGuestBatchImpl extends GenericBatchImpl {
 				position,
 				"cleaning Guest has failed : "
 						+ guest.getAccountRepresentation(), batchRunContext);
-		logger.error(
-				"Error occured while cleaning outdated guest "
-						+ guest.getAccountRepresentation()
-						+ ". BatchBusinessException ", exception);
 	}
-
 }

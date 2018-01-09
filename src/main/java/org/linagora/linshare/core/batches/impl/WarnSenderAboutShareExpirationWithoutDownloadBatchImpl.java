@@ -89,20 +89,19 @@ public class WarnSenderAboutShareExpirationWithoutDownloadBatchImpl extends Gene
 			return null;
 		}
 		Account owner = shareEntry.getEntryOwner();
-		logInfo(batchRunContext, total, position, "processing shareEntry : " + shareEntry.getRepresentation());
-		logInfo(batchRunContext, total, position, "processing owner account : " + owner.getAccountRepresentation());
+		console.logInfo(batchRunContext, total, position, "processing shareEntry : " + shareEntry.getRepresentation());
+		console.logInfo(batchRunContext, total, position, "processing owner account : " + owner.getAccountRepresentation());
 		ResultContext context = new AccountBatchResultContext(owner);
 		try {
 			EmailContext ctx = new ShareWarnSenderAboutShareExpirationEmailContext(shareEntry, daysLeftExpiration);
 			MailContainerWithRecipient mail = mailBuildingService.build(ctx);
 			notifierService.sendNotification(mail);
 		} catch (BusinessException businessException) {
-			logError(total, position, "Error while trying to send a notification about sharefile expiration",
-					batchRunContext);
-			logger.error("Error occured while sending notification ", businessException);
 			BatchBusinessException exception = new BatchBusinessException(context,
 					"Error while trying to send a notification about fileshare expiration");
 			exception.setBusinessException(businessException);
+			console.logError(batchRunContext, total, position,
+					"Error while trying to send a notification about sharefile expiration", exception);
 			throw exception;
 		}
 		return context;
@@ -123,8 +122,5 @@ public class WarnSenderAboutShareExpirationWithoutDownloadBatchImpl extends Gene
 		Account user = context.getResource();
 		console.logError(batchRunContext, total, position,
 				"User notification has failed : " + user.getAccountRepresentation());
-		logger.error("Error occured when trying to notify owner about his share expiration without download"
-				+ user.getAccountRepresentation() + ". BatchBusinessException ", exception);
 	}
-
 }

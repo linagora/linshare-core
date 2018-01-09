@@ -110,16 +110,14 @@ public class NotifyBeforeExpirationUploadRequestBatchImpl extends GenericBatchIm
 	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		UploadRequestBatchResultContext uploadRequestContext = (UploadRequestBatchResultContext) context;
 		UploadRequest r = uploadRequestContext.getResource();
-		logInfo(batchRunContext, total, position, "The Upload Request " + r.getUuid() + " has been successfully processed.");
+		console.logInfo(batchRunContext, total, position, "The Upload Request " + r.getUuid() + " has been successfully processed.");
 	}
 
 	@Override
 	public void notifyError(BatchBusinessException exception, String identifier, long total, long position, BatchRunContext batchRunContext) {
 		UploadRequestBatchResultContext uploadRequestContext = (UploadRequestBatchResultContext) exception.getContext();
 		UploadRequest r = uploadRequestContext.getResource();
-		logError(total, position, "Sending notifications for upload request has failed : " + r.getUuid(), batchRunContext);
-		logger.error("Error occured while sending notification for upload request " + r.getUuid() + ". BatchBusinessException ",
-				exception);
+		console.logError(batchRunContext, total, position, "Sending notifications for upload request has failed : " + r.getUuid());
 	}
 
 	@Override

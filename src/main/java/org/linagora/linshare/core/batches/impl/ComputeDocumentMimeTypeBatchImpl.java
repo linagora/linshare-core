@@ -86,7 +86,7 @@ public class ComputeDocumentMimeTypeBatchImpl extends GenericBatchImpl {
 		if (resource == null) {
 			return null;
 		}
-		logInfo(batchRunContext, total,
+		console.logInfo(batchRunContext, total,
 				position, "processing document : " + resource.getRepresentation());
 		ResultContext context = new BatchResultContext<Document>(resource);
 		context.setProcessed(false);
@@ -113,7 +113,7 @@ public class ComputeDocumentMimeTypeBatchImpl extends GenericBatchImpl {
 		BatchResultContext<Document> cc = (BatchResultContext<Document>) context;
 		if (cc.getProcessed()) {
 			Document entry = cc.getResource();
-			logInfo(batchRunContext, total, position, "Document mime type was updated {}.", entry.getRepresentation());
+			console.logInfo(batchRunContext, total, position, "Document mime type was updated {}.", entry.getRepresentation());
 		}
 	}
 
@@ -124,8 +124,8 @@ public class ComputeDocumentMimeTypeBatchImpl extends GenericBatchImpl {
 		BatchResultContext<Document> context = (BatchResultContext<Document>) exception
 				.getContext();
 		Document entry = context.getResource();
-		logError(total, position, "Document mime type was not updated, batch has failed : {}",
-				batchRunContext, entry.getRepresentation(), exception);
+		console.logError(batchRunContext, total, position, "Document mime type was not updated, batch has failed : {}",
+				entry.getRepresentation(), exception);
 	}
 
 	@Override

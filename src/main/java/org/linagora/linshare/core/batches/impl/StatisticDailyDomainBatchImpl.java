@@ -100,7 +100,7 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchWithHistoryImpl {
 		AbstractDomain resource = abstractDomainService.findById(identifier);
 		ResultContext context = new DomainBatchResultContext(resource);
 		try {
-			logInfo(batchRunContext, total, position, "processing domain : " + resource.toString());
+			console.logInfo(batchRunContext, total, position, "processing domain : " + resource.toString());
 
 			//updating user quota with account quotas only updated this morning. I suppose this batch is run every morning. 
 			ContainerQuota userContainerQuota = containerQuotaBusinessService.find(resource, ContainerQuotaType.USER);
@@ -117,11 +117,10 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchWithHistoryImpl {
 			domainDailyStatBusinessService.create(resource, domainQuota.getCurrentValue(), getYesterdayBegin(), getYesterdayEnd());
 
 		} catch (BusinessException businessException) {
-			logError(total, position, "Error while trying to update domainQuota", batchRunContext);
-			logger.info("Error occured while updating a domain quota for domain", businessException);
 			BatchBusinessException exception = new BatchBusinessException(context,
 					"Error while trying to update a domainQuota");
 			exception.setBusinessException(businessException);
+			console.logError(batchRunContext, total, position, "Error while trying to update domainQuota", exception);
 			throw exception;
 		}
 		return context;
@@ -131,7 +130,7 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchWithHistoryImpl {
 	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		DomainBatchResultContext domainContext = (DomainBatchResultContext) context;
 		AbstractDomain domain = domainContext.getResource();
-		logInfo(batchRunContext, total, position, "DailyDomainStatistics, ContainerQuota and DomainQuota of the domain : "
+		console.logInfo(batchRunContext, total, position, "DailyDomainStatistics, ContainerQuota and DomainQuota of the domain : "
 				+ domain.getUuid() + " have been successfully created");
 	}
 
@@ -139,10 +138,8 @@ public class StatisticDailyDomainBatchImpl extends GenericBatchWithHistoryImpl {
 	public void notifyError(BatchBusinessException exception, String identifier, long total, long position, BatchRunContext batchRunContext) {
 		DomainBatchResultContext context = (DomainBatchResultContext) exception.getContext();
 		AbstractDomain domain = context.getResource();
-		logError(total, position,
+		console.logError(batchRunContext, total, position,
 				"creating DailyDomainStatistic, ContainerQuota and DomainQuota have failed for the domain : "
-						+ domain.getUuid(), batchRunContext);
-		logger.error("Error occured while creating DailyDomainStatistics, ContainerQuota and DomainQuota for a domain "
-				+ domain.getUuid() + ". BatchBusinessException ", exception);
-	}
+						+ domain.getUuid());
+		}
 }

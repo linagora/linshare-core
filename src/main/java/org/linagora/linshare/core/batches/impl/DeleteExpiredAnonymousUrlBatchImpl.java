@@ -76,20 +76,18 @@ public class DeleteExpiredAnonymousUrlBatchImpl extends GenericBatchImpl {
 		AnonymousUrl resource = service.find(actor, actor, identifier);
 		ResultContext context = new AnonymousUrlBatchResultContext(resource);
 		try {
-			logInfo(batchRunContext, total,
+			console.logInfo(batchRunContext, total,
 					position, "processing anonymous url : " + resource.getReprentation());
 			service.delete(actor, actor, identifier);
 			logger.info("Expired anonymous url was deleted : "
 					+ resource.getReprentation());
 		} catch (BusinessException businessException) {
-			logError(total, position,
-					"Error while trying to delete expired anonymous url", batchRunContext);
-			logger.info("Error occured while cleaning expired anonymous url",
-					businessException);
 			BatchBusinessException exception = new BatchBusinessException(
 					context,
 					"Error while trying to delete expired anonymous url.");
 			exception.setBusinessException(businessException);
+			console.logError(batchRunContext, total, position, "Error while trying to delete expired anonymous url",
+					exception);
 			throw exception;
 		}
 		return context;
@@ -99,7 +97,7 @@ public class DeleteExpiredAnonymousUrlBatchImpl extends GenericBatchImpl {
 	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		AnonymousUrlBatchResultContext auContext = (AnonymousUrlBatchResultContext) context;
 		AnonymousUrl url = auContext.getResource();
-		logInfo(batchRunContext, total, position, "The anonymous url " + url.getReprentation()
+		console.logInfo(batchRunContext, total, position, "The anonymous url " + url.getReprentation()
 				+ " has been successfully deleted.");
 	}
 
@@ -109,11 +107,8 @@ public class DeleteExpiredAnonymousUrlBatchImpl extends GenericBatchImpl {
 		AnonymousUrlBatchResultContext auContext = (AnonymousUrlBatchResultContext) exception
 				.getContext();
 		AnonymousUrl url = auContext.getResource();
-		logError(total, position,
-				"cleaning anonymous url has failed : " + url.getReprentation(), batchRunContext);
-		logger.error("Error occured while cleaning expired anonymous url "
-				+ url.getReprentation() + ". BatchBusinessException ",
-				exception);
+		console.logError(batchRunContext, total, position,
+				"cleaning anonymous url has failed : " + url.getReprentation());
 	}
 
 	@Override

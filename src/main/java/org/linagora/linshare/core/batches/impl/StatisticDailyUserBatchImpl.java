@@ -102,7 +102,7 @@ public class StatisticDailyUserBatchImpl extends GenericBatchWithHistoryImpl {
 		User resource = userService.findByLsUuid(identifier);
 		ResultContext context = new AccountBatchResultContext(resource);
 		try {
-			logInfo(batchRunContext, total, position, "processing user : " + resource.getAccountRepresentation());
+			console.logInfo(batchRunContext, total, position, "processing user : " + resource.getAccountRepresentation());
 			// compute once, used three times
 			Date yesterday = getYesterdayEnd();
 			AccountQuota quota = accountQuotaBusinessService.createOrUpdate(resource, yesterday);
@@ -110,11 +110,11 @@ public class StatisticDailyUserBatchImpl extends GenericBatchWithHistoryImpl {
 			operationHistoryBusinessService.deleteBeforeDateByAccount(yesterday, resource);
 		} catch (BusinessException businessException) {
 			String batchClassName = this.getBatchClassName();
-			logError(total, position, "Error while trying to process batch " + batchClassName + "for an user ", batchRunContext);
 			String msg = "Error occured while running batch : " + batchClassName;
-			logger.info(msg, businessException);
 			BatchBusinessException exception = new BatchBusinessException(context, msg);
 			exception.setBusinessException(businessException);
+			console.logError(batchRunContext, total, position,
+					"Error while trying to process batch " + batchClassName + "for an user ", exception);
 			throw exception;
 		}
 		return context;
@@ -124,17 +124,14 @@ public class StatisticDailyUserBatchImpl extends GenericBatchWithHistoryImpl {
 	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		AccountBatchResultContext userContext = (AccountBatchResultContext) context;
 		Account user = userContext.getResource();
-		logInfo(batchRunContext, total, position, "DailyUserStatistic was created and AccountQuota updated for " + user.getAccountRepresentation());
+		console.logInfo(batchRunContext, total, position, "DailyUserStatistic was created and AccountQuota updated for " + user.getAccountRepresentation());
 	}
 
 	@Override
 	public void notifyError(BatchBusinessException exception, String identifier, long total, long position, BatchRunContext batchRunContext) {
 		AccountBatchResultContext context = (AccountBatchResultContext) exception.getContext();
 		Account user = context.getResource();
-		logError(total, position,
-				"creating DailyUserStatistic and AccountQuota has failed : " + user.getAccountRepresentation(), batchRunContext);
-		logger.error("Error occured while creating DailyUserStatistic and UserQuota for an user "
-				+ user.getAccountRepresentation() + ". BatchBusinessException ", exception);
+		console.logError(batchRunContext, total, position,
+				"creating DailyUserStatistic and AccountQuota has failed : " + user.getAccountRepresentation());
 	}
-
 }

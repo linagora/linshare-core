@@ -77,13 +77,11 @@ public class PurgeUserBatchImpl extends GenericBatchImpl {
 			service.purge(actor, resource.getLsUuid());
 			context.setProcessed(true);
 		} catch (BusinessException businessException) {
-			console.logError(batchRunContext, total, position,
-					"Error while trying to purge users");
-			logger.error("Error occured while purging users ",
-					businessException);
 			BatchBusinessException exception = new BatchBusinessException(
 					context, "Error while trying to purge expired user");
 			exception.setBusinessException(businessException);
+			console.logError(batchRunContext, total, position,
+					"Error while trying to purge users", exception);
 			throw exception;
 		}
 		return context;
@@ -109,10 +107,5 @@ public class PurgeUserBatchImpl extends GenericBatchImpl {
 				position,
 				"Purging User has failed : "
 						+ user.getAccountRepresentation());
-		logger.error(
-				"Error occured while purging user "
-						+ user.getAccountRepresentation()
-						+ ". BatchBusinessException ", exception);
 	}
-
 }

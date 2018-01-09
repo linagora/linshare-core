@@ -81,11 +81,10 @@ public class PurgeDomainBatchImpl extends GenericBatchImpl {
 			userService.deleteAllUsersFromDomain(actor, resource.getUuid());
 			context.setProcessed(true);
 		} catch (BusinessException businessException) {
-			console.logError(batchRunContext, total, position, "Error while trying to purge users");
-			logger.error("Error occured while purging users ", businessException);
 			BatchBusinessException exception = new BatchBusinessException(context,
 					"Error while trying to purge expired user");
 			exception.setBusinessException(businessException);
+			console.logError(batchRunContext, total, position, "Error while trying to purge users", exception);
 			throw exception;
 		}
 		return context;
@@ -105,8 +104,6 @@ public class PurgeDomainBatchImpl extends GenericBatchImpl {
 		DomainBatchResultContext context = (DomainBatchResultContext) exception.getContext();
 		AbstractDomain domain = context.getResource();
 		console.logError(batchRunContext, total, position, "Purging Domain has failed : " + domain.getLabel());
-		logger.error("Error occured while purging domain " + domain.getLabel() + "uuid: "+domain.getUuid(),
-				exception);
 	}
 
 }

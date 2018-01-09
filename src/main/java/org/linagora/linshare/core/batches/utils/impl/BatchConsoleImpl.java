@@ -90,5 +90,4 @@ public class BatchConsoleImpl implements BatchConsole {
 	protected String getPrefix(long total, long position, BatchRunContext batchRunContext) {
 		return getStringPosition(total, position);
 	}
-
 }

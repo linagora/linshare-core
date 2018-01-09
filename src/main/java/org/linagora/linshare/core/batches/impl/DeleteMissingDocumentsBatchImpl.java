@@ -108,7 +108,7 @@ public class DeleteMissingDocumentsBatchImpl extends GenericBatchImpl {
 		if (resource == null) {
 			return null;
 		}
-		logDebug(batchRunContext, total, position,
+		console.logDebug(batchRunContext, total, position,
 				"processing document : " + resource.getRepresentation());
 		ResultContext context = new BatchResultContext<Document>(resource);
 		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, resource);
@@ -125,8 +125,7 @@ public class DeleteMissingDocumentsBatchImpl extends GenericBatchImpl {
 					}
 					documentEntryService.deleteInconsistentDocumentEntry(actor,
 							documentEntry);
-					logWarn(total,
-							position,
+					console.logWarn(batchRunContext, total, position,
 							"The inconsistent document (document entry related){} has been successfully deleted.",
 							batchRunContext, resource.getRepresentation());
 				}
@@ -137,7 +136,7 @@ public class DeleteMissingDocumentsBatchImpl extends GenericBatchImpl {
 //				if (threadEntry != null) {
 //					threadEntryService.deleteInconsistentThreadEntry(actor,
 //							threadEntry);
-//					logWarn(total,
+//					console.logWarn(total,
 //							position,
 //							"The inconsistent document (thread entry related) {} has been successfully deleted.",
 //							resource.getRepresentation());
@@ -149,7 +148,7 @@ public class DeleteMissingDocumentsBatchImpl extends GenericBatchImpl {
 				logger.error("Probably an invalid or missing uuid : ", e);
 				documentRepository.delete(resource);
 			}
-			logWarn(total,
+			console.logWarn(batchRunContext, total,
 					position,
 					"Removing a document unrelated to an entry  {} because of inconsistency",
 					batchRunContext, resource.getRepresentation());
@@ -169,7 +168,7 @@ public class DeleteMissingDocumentsBatchImpl extends GenericBatchImpl {
 		BatchResultContext<Document> context = (BatchResultContext<Document>) exception
 				.getContext();
 		Document entry = context.getResource();
-		logError(total, position, "cleaning document has failed : {}",
+		console.logError(batchRunContext, total, position, "cleaning document has failed : {}",
 				batchRunContext, entry.getRepresentation(), exception);
 	}
 

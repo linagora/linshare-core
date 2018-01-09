@@ -94,7 +94,7 @@ public class CloseExpiredUploadRequestBatchImpl extends GenericBatchImpl impleme
 		SystemAccount account = getSystemAccount();
 		UploadRequest r = uploadRequestService.findRequestByUuid(account, null, identifier);
 		ResultContext context = new UploadRequestBatchResultContext(r);
-		logInfo(batchRunContext, total, position, "processing uplaod request : ", r.getUuid());
+		console.logInfo(batchRunContext, total, position, "processing uplaod request : ", r.getUuid());
 		r.updateStatus(UploadRequestStatus.STATUS_CLOSED);
 		r = uploadRequestService.updateRequest(account, r.getOwner(), r);
 		for (UploadRequestUrl u : r.getUploadRequestURLs()) {
@@ -111,23 +111,14 @@ public class CloseExpiredUploadRequestBatchImpl extends GenericBatchImpl impleme
 	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		UploadRequestBatchResultContext uploadRequestContext = (UploadRequestBatchResultContext) context;
 		UploadRequest r = uploadRequestContext.getResource();
-		logInfo(batchRunContext, total, position, "The Upload Request "
-				+ r.getUuid()
-				+ " has been successfully closed.");
+		console.logInfo(batchRunContext, total, position,
+				"The Upload Request " + r.getUuid() + " has been successfully closed.");
 	}
 
 	@Override
 	public void notifyError(BatchBusinessException exception, String identifier, long total, long position, BatchRunContext batchRunContext) {
 		UploadRequestBatchResultContext uploadRequestContext = (UploadRequestBatchResultContext) exception.getContext();
 		UploadRequest r = uploadRequestContext.getResource();
-		logError(
-				total,
-				position,
-				"Closing upload request has failed : "
-						+ r.getUuid(), batchRunContext);
-		logger.error(
-				"Error occured while closing outdated upload request "
-						+ r.getUuid()
-						+ ". BatchBusinessException ", exception);
+		console.logError(batchRunContext, total, position, "Closing upload request has failed : " + r.getUuid());
 	}
 }

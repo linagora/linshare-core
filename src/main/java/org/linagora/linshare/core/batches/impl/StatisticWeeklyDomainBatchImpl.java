@@ -92,24 +92,20 @@ public class StatisticWeeklyDomainBatchImpl extends GenericBatchImpl {
 		AbstractDomain resource = abstractDomainService.findById(identifier);
 		ResultContext context = new DomainBatchResultContext(resource);
 		try {
-			logInfo(batchRunContext, total, position, "processing domain : " + resource.getDescription());
+			console.logInfo(batchRunContext, total, position, "processing domain : " + resource.getDescription());
 			domainWeeklyStatBusinessService.create(resource, getFirstDayOfLastWeek(), getLastDayOfLastWeek());
 		} catch (BusinessException businessException) {
 			GregorianCalendar calendar = new GregorianCalendar();
 			calendar.add(GregorianCalendar.DATE, -7);
-			logError(total, position,
-					"Error while trying to create a DomainWeeklyStat for domain " + resource
-							.getDescription() + " in the week "
-					+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US), batchRunContext);
-			logger.info("Error occurred while creating a weekly statistics for domain " + resource.getDescription()
-					+ " in the week "
-					+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US),
-					businessException);
 			BatchBusinessException exception = new BatchBusinessException(context,
 					"Error while trying to create a DomainWeeklyStat for domain " + resource.getDescription()
 							+ " in the week " + calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH,
 									GregorianCalendar.LONG, Locale.US));
 			exception.setBusinessException(businessException);
+			console.logError(batchRunContext, total, position,
+					"Error while trying to create a DomainWeeklyStat for domain " + resource
+							.getDescription() + " in the week "
+					+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US), exception);
 			throw exception;
 		}
 		return context;
@@ -119,7 +115,7 @@ public class StatisticWeeklyDomainBatchImpl extends GenericBatchImpl {
 	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		DomainBatchResultContext domainContext = (DomainBatchResultContext) context;
 		AbstractDomain domain = domainContext.getResource();
-		logInfo(batchRunContext, total,
+		console.logInfo(batchRunContext, total,
 				position, "the WeeklyDomainStat for " + domain.getUuid() + "has been successfully created.");
 	}
 
@@ -129,13 +125,9 @@ public class StatisticWeeklyDomainBatchImpl extends GenericBatchImpl {
 		AbstractDomain domain = domainContext.getResource();
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.add(GregorianCalendar.DATE, -7);
-		logError(total, position,
+		console.logError(batchRunContext, total, position,
 				"creating WeeklyDomainStatistic has failed for domain " + domain.getDescription() + " in the week "
-						+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US), batchRunContext);
-		logger.error("Error occured while creating WeeklyDomainStatistic for domain " + domain.getDescription()
-				+ " in the week "
-				+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US)
-				+ ". BatchBudinessException ", exception);
+						+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US));
 	}
 
 	@Override

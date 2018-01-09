@@ -86,13 +86,11 @@ public class MarkUserToPurgeBatchImpl extends GenericBatchImpl {
 					+ resource.getAccountRepresentation());
 			context.setProcessed(true);
 		} catch (BusinessException businessException) {
-			console.logError(batchRunContext, total, position,
-					"Error while trying to mark expired users to purge");
-			logger.error("Error occured while cleaning outdated users ",
-					businessException);
 			BatchBusinessException exception = new BatchBusinessException(
 					context, "Error while trying to move the expired user into those to purge");
 			exception.setBusinessException(businessException);
+			console.logError(batchRunContext, total, position, "Error while trying to mark expired users to purge",
+					exception);
 			throw exception;
 		}
 		return context;
@@ -119,9 +117,5 @@ public class MarkUserToPurgeBatchImpl extends GenericBatchImpl {
 				position,
 				"cleaning User has failed : "
 						+ user.getAccountRepresentation());
-		logger.error(
-				"Error occured while cleaning outdated user "
-						+ user.getAccountRepresentation()
-						+ ". BatchBusinessException ", exception);
 	}
 }

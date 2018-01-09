@@ -92,22 +92,18 @@ public class StatisticWeeklyUserBatchImpl extends GenericBatchImpl {
 		User resource = userService.findByLsUuid(identifier);
 		ResultContext context = new AccountBatchResultContext(resource);
 		try {
-			logInfo(batchRunContext, total, position, "processing user : " + resource.getAccountRepresentation());
+			console.logInfo(batchRunContext, total, position, "processing user : " + resource.getAccountRepresentation());
 			userWeeklyStatBusinessService.create(resource, getFirstDayOfLastWeek(), getLastDayOfLastWeek());
 		} catch (BusinessException businessException) {
 			GregorianCalendar calendar = new GregorianCalendar();
 			calendar.add(GregorianCalendar.DATE, -7);
-			logError(total, position,
-					"Error while trying to create a UserWeeklyStat for user " + resource
-							.getAccountRepresentation() + " in the week "
-					+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US), batchRunContext);
-			logger.info("Error occurred while creating a weekly statistics for user "
-					+ resource.getAccountRepresentation() + " in the week "
-					+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US),
-					businessException);
 			BatchBusinessException exception = new BatchBusinessException(context,
 					"Error while trying to create a UserWeeklyStat");
 			exception.setBusinessException(businessException);
+			console.logError(batchRunContext, total, position,
+					"Error while trying to create a UserWeeklyStat for user " + resource
+							.getAccountRepresentation() + " in the week "
+					+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US), exception);
 			throw exception;
 		}
 		return context;
@@ -117,7 +113,7 @@ public class StatisticWeeklyUserBatchImpl extends GenericBatchImpl {
 	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		AccountBatchResultContext userContext = (AccountBatchResultContext) context;
 		Account user = userContext.getResource();
-		logInfo(batchRunContext, total,
+		console.logInfo(batchRunContext, total,
 				position, "the WeeklyUserStat for " + user.getAccountRepresentation() + " has been successfully created.");
 	}
 
@@ -127,12 +123,8 @@ public class StatisticWeeklyUserBatchImpl extends GenericBatchImpl {
 		Account user = context.getResource();
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.add(GregorianCalendar.DATE, -7);
-		logError(total, position, "creating WeeklyUserStatistic has failed for user " + user.getAccountRepresentation()
-				+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US), batchRunContext);
-		logger.error("Error occured while creating WeeklyUserStatistic for user " + user.getAccountRepresentation()
-				+ " in the week "
-				+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US)
-				+ ". BatchBusinessException ", exception);
+		console.logError(batchRunContext, total, position, "creating WeeklyUserStatistic has failed for user " + user.getAccountRepresentation()
+				+ calendar.getDisplayName(GregorianCalendar.WEEK_OF_MONTH, GregorianCalendar.LONG, Locale.US));
 	}
 
 	@Override

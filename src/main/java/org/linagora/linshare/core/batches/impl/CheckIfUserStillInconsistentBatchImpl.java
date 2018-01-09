@@ -84,7 +84,7 @@ public class CheckIfUserStillInconsistentBatchImpl extends GenericBatchImpl impl
 		SystemAccount account = getSystemAccount();
 		User user  = userService.findByLsUuid(identifier);
 		ResultContext c = new CheckIfUserStillInconsistentBatchResultContext(user);
-		logInfo(batchRunContext,
+		console.logInfo(batchRunContext,
 				total,
 				position, "processing internal : "
 						+ user.getAccountRepresentation());
@@ -102,7 +102,7 @@ public class CheckIfUserStillInconsistentBatchImpl extends GenericBatchImpl impl
 		CheckIfUserStillInconsistentBatchResultContext c = (CheckIfUserStillInconsistentBatchResultContext) context;
 		User u = c.getResource();
 		if (c.getProcessed()) {
-			logInfo(batchRunContext, total, position, "The inconsistent user " + u.getLsUuid() + " has been successfully checked.");
+			console.logInfo(batchRunContext, total, position, "The inconsistent user " + u.getLsUuid() + " has been successfully checked.");
 		}
 	}
 
@@ -110,7 +110,8 @@ public class CheckIfUserStillInconsistentBatchImpl extends GenericBatchImpl impl
 	public void notifyError(BatchBusinessException exception, String identifier, long total, long position, BatchRunContext batchRunContext) {
 		CheckIfUserStillInconsistentBatchResultContext c = (CheckIfUserStillInconsistentBatchResultContext) exception.getContext();
 		User u = c.getResource();
-		logError(total, position, "Flaging user has failed " + u.getLsUuid() + ". BatchBusinessException ", batchRunContext, exception);
+		console.logError(batchRunContext, total, position,
+				"Flaging user has failed " + u.getLsUuid() + ". BatchBusinessException ", exception);
 	}
 
 	@Override

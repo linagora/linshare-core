@@ -91,23 +91,18 @@ public class StatisticMonthlyThreadBatchImpl extends GenericBatchImpl {
 		Thread resource = threadService.findByLsUuidUnprotected(identifier);
 		ResultContext context = new AccountBatchResultContext(resource);
 		try {
-			logInfo(batchRunContext, total, position, "processing thread : " + resource.getAccountRepresentation());
+			console.logInfo(batchRunContext, total, position, "processing thread : " + resource.getAccountRepresentation());
 			threadMonthlyStatBusinessService.create(resource, getFirstDayOfLastMonth(), getLastDayOfLastMonth());
 		} catch (BusinessException businessException) {
 			GregorianCalendar calendar = new GregorianCalendar();
 			calendar.add(GregorianCalendar.MONTH, -1);
-			logError(total, position,
-					"Error while trying to create a ThreadMonthlyStat for Thread " + resource.getAccountRepresentation()
-							+ " in the month "
-							+ calendar.getDisplayName(GregorianCalendar.MONTH, GregorianCalendar.LONG, Locale.US), batchRunContext);
-			logger.info(
-					"Error occurred while creating a monthly statistics for thread "
-							+ resource.getAccountRepresentation() + " in the month "
-							+ calendar.getDisplayName(GregorianCalendar.MONTH, GregorianCalendar.LONG, Locale.US),
-					businessException);
 			BatchBusinessException exception = new BatchBusinessException(context,
 					"Error while trying to create a ThreadMonthlyStat");
 			exception.setBusinessException(businessException);
+			console.logError(batchRunContext, total, position,
+					"Error while trying to create a ThreadMonthlyStat for Thread " + resource.getAccountRepresentation()
+							+ " in the month "
+							+ calendar.getDisplayName(GregorianCalendar.MONTH, GregorianCalendar.LONG, Locale.US), exception);
 			throw exception;
 		}
 		return context;
@@ -117,7 +112,7 @@ public class StatisticMonthlyThreadBatchImpl extends GenericBatchImpl {
 	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		AccountBatchResultContext threadContext = (AccountBatchResultContext) context;
 		Account thread = threadContext.getResource();
-		logInfo(batchRunContext, total,
+		console.logInfo(batchRunContext, total,
 				position, "the MonthlyThreadStat for " + thread.getAccountRepresentation() + " has been successfully created.");
 
 	}
@@ -128,13 +123,9 @@ public class StatisticMonthlyThreadBatchImpl extends GenericBatchImpl {
 		Account thread = context.getResource();
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.add(GregorianCalendar.MONTH, -1);
-		logError(total, position,
+		console.logError(batchRunContext, total, position,
 				"creating MonthlyThreadStatistic has failed for " + thread.getAccountRepresentation() + " in the month "
-						+ calendar.getDisplayName(GregorianCalendar.MONTH, GregorianCalendar.LONG, Locale.US), batchRunContext);
-		logger.error("Error occured while creating MonthlyThreadStatistic for thread "
-				+ thread.getAccountRepresentation() + " in the month "
-				+ calendar.getDisplayName(GregorianCalendar.MONTH, GregorianCalendar.LONG, Locale.US)
-				+ ". BatchBusinessException ", exception);
+						+ calendar.getDisplayName(GregorianCalendar.MONTH, GregorianCalendar.LONG, Locale.US));
 	}
 
 	@Override

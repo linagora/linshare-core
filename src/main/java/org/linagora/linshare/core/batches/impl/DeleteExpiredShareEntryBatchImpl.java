@@ -89,7 +89,7 @@ public class DeleteExpiredShareEntryBatchImpl extends GenericBatchImpl {
 		ShareEntry resource = service.find(actor, actor, identifier);
 		ResultContext context = new EntryBatchResultContext(resource);
 		try {
-			logInfo(batchRunContext, total,
+			console.logInfo(batchRunContext, total,
 					position, "processing share : " + resource.getRepresentation());
 			AbstractDomain domain = resource.getEntryOwner().getDomain();
 			TimeUnitValueFunctionality func = functionalityService
@@ -107,13 +107,11 @@ public class DeleteExpiredShareEntryBatchImpl extends GenericBatchImpl {
 			logger.info("Expired share was deleted : "
 					+ resource.getRepresentation());
 		} catch (BusinessException businessException) {
-			logError(total, position,
-					"Error while trying to delete expired share : " + resource.getRepresentation(), batchRunContext);
-			logger.info("Error occured while cleaning expired shares",
-					businessException);
 			BatchBusinessException exception = new BatchBusinessException(
 					context, "Error while trying to delete expired shares.");
 			exception.setBusinessException(businessException);
+			console.logError(batchRunContext, total, position,
+					"Error while trying to delete expired share : " + resource.getRepresentation(), exception);
 			throw exception;
 		}
 		return context;
@@ -123,7 +121,7 @@ public class DeleteExpiredShareEntryBatchImpl extends GenericBatchImpl {
 	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		EntryBatchResultContext shareContext = (EntryBatchResultContext) context;
 		Entry entry = shareContext.getResource();
-		logInfo(batchRunContext, total, position, "The share " + entry.getRepresentation()
+		console.logInfo(batchRunContext, total, position, "The share " + entry.getRepresentation()
 				+ " has been successfully deleted.");
 	}
 
@@ -133,12 +131,8 @@ public class DeleteExpiredShareEntryBatchImpl extends GenericBatchImpl {
 		EntryBatchResultContext shareContext = (EntryBatchResultContext) exception
 				.getContext();
 		Entry entry = shareContext.getResource();
-		logError(total, position,
-				"cleaning share has failed : " + entry.getRepresentation(), batchRunContext);
-		logger.error(
-				"Error occured while cleaning expired share "
-						+ entry.getRepresentation() + ". BatchBusinessException ",
-				exception);
+		console.logError(batchRunContext, total, position,
+				"cleaning share has failed : " + entry.getRepresentation());
 	}
 
 	@Override
@@ -155,5 +149,4 @@ public class DeleteExpiredShareEntryBatchImpl extends GenericBatchImpl {
 		}
 		logger.info(getClass().toString() + " job terminated.");
 	}
-
 }

@@ -79,18 +79,17 @@ public class ComputeSubDomainQuotaBatchImpl extends GenericBatchImpl {
 		AbstractDomain domain = domainRepository.findById(identifier);
 		ResultContext context = new DomainBatchResultContext(domain);
 		try {
-			logDebug(batchRunContext, total, position, "processing domain : " + domain.toString());
+			console.logDebug(batchRunContext, total, position, "processing domain : " + domain.toString());
 			Long subdomains = domainQuotaRepository.sumOfCurrentValueForSubdomains(domain);
 			DomainQuota quota = domainQuotaRepository.find(domain);
 			quota.setCurrentValueForSubdomains(subdomains);
 			domainQuotaRepository.update(quota);
 		} catch (BusinessException businessException) {
-			logError(total, position,
-					"Error while trying to update domain: " + domain.toString(), batchRunContext);
-			logger.info("Error occured while processing quota domain :", businessException);
 			BatchBusinessException exception = new BatchBusinessException(
 					context, "Error while trying to updating domain.");
 			exception.setBusinessException(businessException);
+			console.logError(batchRunContext, total, position,
+					"Error while trying to update domain: " + domain.toString(), exception);
 			throw exception;
 		}
 		
@@ -100,17 +99,14 @@ public class ComputeSubDomainQuotaBatchImpl extends GenericBatchImpl {
 	@Override
 	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		DomainBatchResultContext domainContext = (DomainBatchResultContext) context;
-		logDebug(batchRunContext, total, position, "Subdomains used space updated for domain : " + domainContext.getResource().toString());
+		console.logDebug(batchRunContext, total, position, "Subdomains used space updated for domain : " + domainContext.getResource().toString());
 	}
 
 	@Override
 	public void notifyError(BatchBusinessException exception, String identifier, long total, long position, BatchRunContext batchRunContext) {
 		DomainBatchResultContext domainContext = (DomainBatchResultContext) exception.getContext();
 		String ressource = domainContext.getResource().toString();
-		logError(total, position, "Subdomains used space update failed for domain : " + ressource, batchRunContext);
-		logger.error(
-				"Error occured while updating Subdomains used space for domain "+ ressource + ". BatchBusinessException ",
-				exception);
+		console.logError(batchRunContext, total, position, "Subdomains used space update failed for domain : " + ressource);
 	}
 
 	@Override
@@ -126,5 +122,4 @@ public class ComputeSubDomainQuotaBatchImpl extends GenericBatchImpl {
 		}
 		logger.info(getClass().toString() + " job terminated.");
 	}
-
 }
