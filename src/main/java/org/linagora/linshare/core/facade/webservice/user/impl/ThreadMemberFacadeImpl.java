@@ -36,14 +36,9 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
-<<<<<<< 94917ee70dec0cb722f1e2f1f8beb372adb47e10
-import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.WorkgroupMember;
-=======
-import org.linagora.linshare.core.domain.entities.WorkGroup;
-import org.linagora.linshare.core.domain.entities.ThreadMember;
->>>>>>> Refactoring : Rename hibernate "Thread" entity to Workgroup
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupMemberDto;
 import org.linagora.linshare.core.facade.webservice.user.WorkGroupMemberFacade;
@@ -72,9 +67,9 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 			throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		User actor = checkAuthentication();
-		WorkGroup thread = threadService.find(actor, actor, threadUuid);
+		WorkGroup workGroup = threadService.find(actor, actor, threadUuid);
 		List<WorkGroupMemberDto> res = Lists.newArrayList();
-		for (WorkgroupMember m : threadService.findAllThreadMembers(actor, actor, thread)) {
+		for (WorkgroupMember m : threadService.findAllThreadMembers(actor, actor, workGroup)) {
 			res.add(new WorkGroupMemberDto(m));
 		}
 		return res;
@@ -87,8 +82,8 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(userUuid,
 				"Missing required user uuid");
 		User actor = checkAuthentication();
-		WorkGroup thread = threadService.find(actor, actor, threadUuid);
-		return new WorkGroupMemberDto(threadService.getMemberFromUser(thread,
+		WorkGroup workGroup = threadService.find(actor, actor, threadUuid);
+		return new WorkGroupMemberDto(threadService.getMemberFromUser(workGroup,
 				userService.findByLsUuid(userUuid)));
 	}
 
@@ -101,9 +96,9 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(userMail, "Missing required mail");
 		User actor = checkAuthentication();
 		User user = userService.findOrCreateUser(userMail, domainId);
-		WorkGroup thread = threadService.find(actor, actor, threadUuid);
+		WorkGroup workGroup = threadService.find(actor, actor, threadUuid);
 		return new WorkGroupMemberDto(threadService.addMember(actor, actor,
-				thread, user, admin, !readOnly));
+				workGroup, user, admin, !readOnly));
 	}
 
 	@Override

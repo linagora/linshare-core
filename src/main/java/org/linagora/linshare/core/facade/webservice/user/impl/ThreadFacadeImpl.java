@@ -40,14 +40,9 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.Functionality;
-<<<<<<< 94917ee70dec0cb722f1e2f1f8beb372adb47e10
-import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.WorkgroupMember;
-=======
-import org.linagora.linshare.core.domain.entities.WorkGroup;
-import org.linagora.linshare.core.domain.entities.ThreadMember;
->>>>>>> Refactoring : Rename hibernate "Thread" entity to Workgroup
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
@@ -109,8 +104,8 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		User actor = checkAuthentication();
 
 		List<WorkGroupDto> res = Lists.newArrayList();
-		for (WorkGroup thread : threadService.findAllWhereMember(actor)) {
-			res.add(new WorkGroupDto(thread));
+		for (WorkGroup workGroup : threadService.findAllWhereMember(actor)) {
+			res.add(new WorkGroupDto(workGroup));
 		}
 		return res;
 	}
@@ -119,15 +114,15 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 	public WorkGroupDto find(String uuid, Boolean members) throws BusinessException {
 		Validate.notEmpty(uuid, "Missing required thread uuid");
 		User actor = checkAuthentication();
-		WorkGroup thread = threadService.find(actor, actor, uuid);
+		WorkGroup workGroup = threadService.find(actor, actor, uuid);
 		WorkGroupDto dto = null;
 		if (members) {
-			List<WorkgroupMember> workgroupMembers = threadService.findAllThreadMembers(actor, actor, thread);
-			dto = new WorkGroupDto(thread, workgroupMembers);
+			List<WorkgroupMember> workgroupMembers = threadService.findAllThreadMembers(actor, actor, workGroup);
+			dto = new WorkGroupDto(workGroup, workgroupMembers);
 		} else {
-			dto = new WorkGroupDto(thread);
+			dto = new WorkGroupDto(workGroup);
 		}
-		AccountQuota quota = quotaService.findByRelatedAccount(thread);
+		AccountQuota quota = quotaService.findByRelatedAccount(workGroup);
 		dto.setQuotaUuid(quota.getUuid());
 		return dto;
 	}
@@ -139,10 +134,10 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(domainId, "Missing required domain id");
 		Validate.notEmpty(mail, "Missing required mail");
 		User actor = checkAuthentication();
-		WorkGroup thread = threadService.find(actor, actor, threadUuid);
+		WorkGroup workGroup = threadService.find(actor, actor, threadUuid);
 		User user = userService.findOrCreateUserWithDomainPolicies(mail,
 				domainId, actor.getDomainId());
-		threadService.addMember(actor, actor, thread, user, false, !readonly);
+		threadService.addMember(actor, actor, workGroup, user, false, !readonly);
 	}
 
 	@Override
@@ -161,19 +156,19 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(threadDto.getUuid(),
 				"Missing required thread dto uuid");
 		User actor = checkAuthentication();
-		WorkGroup thread = threadService.find(actor, actor,
+		WorkGroup workGroup = threadService.find(actor, actor,
 				threadDto.getUuid());
-		threadService.deleteThread(actor, actor, thread);
-		return new WorkGroupDto(thread);
+		threadService.deleteThread(actor, actor, workGroup);
+		return new WorkGroupDto(workGroup);
 	}
 
 	@Override
 	public WorkGroupDto delete(String threadUuid) throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		User actor = checkAuthentication();
-		WorkGroup thread = threadService.find(actor, actor, threadUuid);
-		threadService.deleteThread(actor, actor, thread);
-		return new WorkGroupDto(thread);
+		WorkGroup workGroup = threadService.find(actor, actor, threadUuid);
+		threadService.deleteThread(actor, actor, workGroup);
+		return new WorkGroupDto(workGroup);
 	}
 
 	@Override

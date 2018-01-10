@@ -154,8 +154,8 @@ public abstract class WorkGroupNodeAbstractServiceImpl implements WorkGroupNodeA
 		return node.getNodeType().equals(WorkGroupNodeType.DOCUMENT_REVISION);
 	}
 
-	protected void addMembersToLog(WorkGroup thread, AuditLogEntryUser log) {
-		List<String> members = threadMemberRepository.findAllAccountUuidForThreadMembers(thread);
+	protected void addMembersToLog(WorkGroup workGroup, AuditLogEntryUser log) {
+		List<String> members = threadMemberRepository.findAllAccountUuidForThreadMembers(workGroup);
 		log.addRelatedAccounts(members);
 	}
 }

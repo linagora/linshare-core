@@ -56,17 +56,17 @@ public class ThreadWeeklyStatBusinessServiceImpl implements ThreadWeeklyStatisti
 	}
 
 	@Override
-	public ThreadWeeklyStat create(WorkGroup thread, Date beginDate, Date endDate) throws BusinessException {
-		Long actualOperationSum = threadDailyStatRepository.sumOfActualOperationSum(null, thread, beginDate, endDate);
-		Long operationCount = threadDailyStatRepository.sumOfOperationCount(null, thread, beginDate, endDate);
-		Long createOperationSum = threadDailyStatRepository.sumOfCreateOperationSum(null, thread, beginDate, endDate);
-		Long createOperationCount = threadDailyStatRepository.sumOfCreateOperationCount(null, thread, beginDate,
+	public ThreadWeeklyStat create(WorkGroup workGroup, Date beginDate, Date endDate) throws BusinessException {
+		Long actualOperationSum = threadDailyStatRepository.sumOfActualOperationSum(null, workGroup, beginDate, endDate);
+		Long operationCount = threadDailyStatRepository.sumOfOperationCount(null, workGroup, beginDate, endDate);
+		Long createOperationSum = threadDailyStatRepository.sumOfCreateOperationSum(null, workGroup, beginDate, endDate);
+		Long createOperationCount = threadDailyStatRepository.sumOfCreateOperationCount(null, workGroup, beginDate,
 				endDate);
-		Long deleteOperationSum = threadDailyStatRepository.sumOfDeleteOperationSum(null, thread, beginDate, endDate);
-		Long deleteOperationCount = threadDailyStatRepository.sumOfDeleteOperationCount(null, thread, beginDate,
+		Long deleteOperationSum = threadDailyStatRepository.sumOfDeleteOperationSum(null, workGroup, beginDate, endDate);
+		Long deleteOperationCount = threadDailyStatRepository.sumOfDeleteOperationCount(null, workGroup, beginDate,
 				endDate);
-		Long diffOperationSum = threadDailyStatRepository.sumOfDiffOperationSum(null, thread, beginDate, endDate);
-		ThreadWeeklyStat entity = new ThreadWeeklyStat(thread, thread.getDomain(), thread.getDomain().getParentDomain(),
+		Long diffOperationSum = threadDailyStatRepository.sumOfDiffOperationSum(null, workGroup, beginDate, endDate);
+		ThreadWeeklyStat entity = new ThreadWeeklyStat(workGroup, workGroup.getDomain(), workGroup.getDomain().getParentDomain(),
 				operationCount, deleteOperationCount, createOperationCount, createOperationSum, deleteOperationSum,
 				diffOperationSum, actualOperationSum);
 		entity.setStatisticDate(endDate);
@@ -75,8 +75,8 @@ public class ThreadWeeklyStatBusinessServiceImpl implements ThreadWeeklyStatisti
 	}
 
 	@Override
-	public List<ThreadWeeklyStat> findBetweenTwoDates(WorkGroup thread, Date beginDate, Date endDate) {
-		return repository.findBetweenTwoDates(thread, null, null, beginDate, endDate, null);
+	public List<ThreadWeeklyStat> findBetweenTwoDates(WorkGroup workGroup, Date beginDate, Date endDate) {
+		return repository.findBetweenTwoDates(workGroup, null, null, beginDate, endDate, null);
 	}
 
 	@Override

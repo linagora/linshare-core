@@ -42,9 +42,9 @@ import org.linagora.linshare.core.domain.entities.WorkGroup;
 
 public interface ThreadDailyStatBusinessService {
 
-	ThreadDailyStat create(WorkGroup thread, Long currentUsedSpace, Date date);
+	ThreadDailyStat create(WorkGroup workGroup, Long currentUsedSpace, Date date);
 
-	List<ThreadDailyStat> findBetweenTwoDates(WorkGroup thread, Date beginDate, Date endDate);
+	List<ThreadDailyStat> findBetweenTwoDates(WorkGroup workGroup, Date beginDate, Date endDate);
 
 	void deleteBeforeDate(Date date);
 

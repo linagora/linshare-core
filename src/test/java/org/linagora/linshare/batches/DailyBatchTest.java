@@ -146,24 +146,24 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 		List<String> listThreadIdentifier = dailyThreadBatch.getAll(batchRunContext);
 		assertEquals(2, listThreadIdentifier.size());
 
-		WorkGroup thread1 = (WorkGroup) accountRepository.findByLsUuid(listThreadIdentifier.get(0));
-		WorkGroup thread2 = (WorkGroup) accountRepository.findByLsUuid(listThreadIdentifier.get(1));
+		WorkGroup workGroup1 = (WorkGroup) accountRepository.findByLsUuid(listThreadIdentifier.get(0));
+		WorkGroup workGroup2 = (WorkGroup) accountRepository.findByLsUuid(listThreadIdentifier.get(1));
 
-		List<OperationHistory> listOperationHistory = operationHistoryBusinessService.find(thread1, null, null, new Date());
+		List<OperationHistory> listOperationHistory = operationHistoryBusinessService.find(workGroup1, null, null, new Date());
 		assertEquals(3, listOperationHistory.size());
 
-		listOperationHistory = operationHistoryBusinessService.find(thread2, null, null, new Date());
+		listOperationHistory = operationHistoryBusinessService.find(workGroup2, null, null, new Date());
 		assertEquals(2, listOperationHistory.size());
 
-		dailyThreadBatch.execute(batchRunContext, thread1.getLsUuid(), listThreadIdentifier.size(), 0);
+		dailyThreadBatch.execute(batchRunContext, workGroup1.getLsUuid(), listThreadIdentifier.size(), 0);
 
 		Calendar d = Calendar.getInstance();
 		d.add(Calendar.DATE, -1);
-		List<ThreadDailyStat> listThreaddailyStat = threadDailyStatBusinessService.findBetweenTwoDates(thread1, d.getTime(), new Date());
+		List<ThreadDailyStat> listThreaddailyStat = threadDailyStatBusinessService.findBetweenTwoDates(workGroup1, d.getTime(), new Date());
 
 		assertEquals(1, listThreaddailyStat.size());
 		ThreadDailyStat threadDailyStat = listThreaddailyStat.get(0);
-		assertEquals(thread1, threadDailyStat.getAccount());
+		assertEquals(workGroup1, threadDailyStat.getAccount());
 		assertEquals(3, (long) threadDailyStat.getOperationCount());
 		assertEquals(1000, (long) threadDailyStat.getActualOperationSum());
 		assertEquals(2, (long) threadDailyStat.getCreateOperationCount());
@@ -172,7 +172,7 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 		assertEquals(-300, (long) threadDailyStat.getDeleteOperationSum());
 		assertEquals(300, (long) threadDailyStat.getDiffOperationSum());
 
-		AccountQuota quota = accountQuotaBusinessService.find(thread1);
+		AccountQuota quota = accountQuotaBusinessService.find(workGroup1);
 		assertNotNull(quota);
 		assertEquals(1000, (long) quota.getCurrentValue());
 		assertEquals(700, (long) quota.getLastValue());
@@ -180,15 +180,15 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 		assertEquals(800, (long) quota.getQuotaWarning());
 		assertEquals(5, (long) quota.getMaxFileSize());
 
-		dailyThreadBatch.execute(batchRunContext, thread2.getLsUuid(), listThreadIdentifier.size(), 1);
+		dailyThreadBatch.execute(batchRunContext, workGroup2.getLsUuid(), listThreadIdentifier.size(), 1);
 
-		batchHistoryBusinessService.findByUuid(thread2.getLsUuid());
+		batchHistoryBusinessService.findByUuid(workGroup2.getLsUuid());
 
-		listThreaddailyStat = threadDailyStatBusinessService.findBetweenTwoDates(thread2, d.getTime(), new Date());
+		listThreaddailyStat = threadDailyStatBusinessService.findBetweenTwoDates(workGroup2, d.getTime(), new Date());
 
 		assertEquals(1, listThreaddailyStat.size());
 		threadDailyStat = listThreaddailyStat.get(0);
-		assertEquals(thread2, threadDailyStat.getAccount());
+		assertEquals(workGroup2, threadDailyStat.getAccount());
 		assertEquals(2, (long) threadDailyStat.getOperationCount());
 		assertEquals(900, (long) threadDailyStat.getActualOperationSum());
 		assertEquals(2, (long) threadDailyStat.getCreateOperationCount());
@@ -197,7 +197,7 @@ public class DailyBatchTest extends AbstractTransactionalJUnit4SpringContextTest
 		assertEquals(0, (long) threadDailyStat.getDeleteOperationSum());
 		assertEquals(400, (long) threadDailyStat.getDiffOperationSum());
 
-		quota = accountQuotaBusinessService.find(thread2);
+		quota = accountQuotaBusinessService.find(workGroup2);
 		assertNotNull(quota);
 		assertEquals(900, (long) quota.getCurrentValue());
 		assertEquals(500, (long) quota.getLastValue());

@@ -70,9 +70,9 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml"
 		})
-public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class WorkGroupEntryServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
 	private static Logger logger = LoggerFactory
-			.getLogger(ThreadEntryServiceImplTest.class);
+			.getLogger(WorkGroupEntryServiceImplTest.class);
 
 	private static final String THREAD_1 = "TEST_THREAD_1";
 	private static final String THREAD_2 = "TEST_THREAD_2";
@@ -129,8 +129,8 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	 */
 
 	private void createAllThreads() throws BusinessException {
-		threadService.create(john, john, ThreadEntryServiceImplTest.THREAD_2);
-		threadService.create(jane, jane, ThreadEntryServiceImplTest.THREAD_1);
+		threadService.create(john, john, WorkGroupEntryServiceImplTest.THREAD_2);
+		threadService.create(jane, jane, WorkGroupEntryServiceImplTest.THREAD_1);
 	}
 	private void deleteAllThreads() throws BusinessException {
 		for (WorkGroup workGroup : workGroups) {
@@ -151,7 +151,7 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		int count;
 		Assert.assertEquals(workGroups.size(), 2);
 		for (count = workGroups.size(); count < 10; ++count) {
-			threadService.create(john, john, ThreadEntryServiceImplTest.THREAD_1 + "_" + count);
+			threadService.create(john, john, WorkGroupEntryServiceImplTest.THREAD_1 + "_" + count);
 		}
 		User root = userRepository.findByMailAndDomain(LinShareConstants.rootDomainIdentifier, "root@localhost.localdomain");
 		workGroups = threadService.findAll(root, root);
@@ -160,7 +160,7 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	}
 
 	@Test
-	public void testFindThread() {
+	public void testFindWorkGroup() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		WorkGroup original = workGroups.get(0);
 		WorkGroup found = threadService.findByLsUuidUnprotected(original.getLsUuid());
@@ -173,7 +173,7 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Assert.assertTrue(threadService.hasAnyWhereAdmin(john));
 		Assert.assertEquals(threadService.findAllWhereAdmin(john).size(), 1);
-		threadService.create(datas.getUser1(), datas.getUser1(), ThreadEntryServiceImplTest.THREAD_1 + "_" + 1);
+		threadService.create(datas.getUser1(), datas.getUser1(), WorkGroupEntryServiceImplTest.THREAD_1 + "_" + 1);
 		Assert.assertEquals(threadService.findAllWhereAdmin(john).size(), 2);
 		logger.info(LinShareTestConstants.END_TEST);
 	}

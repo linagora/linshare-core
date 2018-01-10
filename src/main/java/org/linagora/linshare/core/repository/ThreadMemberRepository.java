@@ -87,18 +87,18 @@ public interface ThreadMemberRepository extends AbstractRepository<WorkgroupMemb
 	 * FInd if the user is admin of the thread
 	 * 
 	 * @param user
-	 * @param thread
+	 * @param workGroup
 	 * @return true if user is admin of the thread
 	 */
-	boolean isUserAdmin(User user, WorkGroup thread);
+	boolean isUserAdmin(User user, WorkGroup workGroup);
 
 	/**
 	 * Count the amount of members in the thread
 	 * 
-	 * @param thread
+	 * @param workGroup
 	 * @return the amount of members
 	 */
-	public long count(WorkGroup thread);
+	public long count(WorkGroup workGroup);
 
 	/**
 	 * Find members with no deleted accounts

@@ -108,7 +108,7 @@ public class SafeDetailServiceTest extends AbstractTransactionalJUnit4SpringCont
 	
 	private Internal actor;
 	
-	private WorkGroup thread;
+	private WorkGroup workGroup;
 	
 	private AbstractDomain testDomain;
 
@@ -145,13 +145,13 @@ public class SafeDetailServiceTest extends AbstractTransactionalJUnit4SpringCont
 		actor.setDomain(testDomain);
 		actor = internalRepository.create(actor);
 
-		thread = new WorkGroup();
-		thread.setLocale(SupportedLanguage.ENGLISH);
-		thread.setExternalMailLocale(Language.ENGLISH);
-		thread.setCmisLocale(CMIS_LOCALE);
-		thread.setDomain(testDomain);
-		thread.setName(THREAD_NAME);
-		thread = threadRepository.create(thread);
+		workGroup = new WorkGroup();
+		workGroup.setLocale(SupportedLanguage.ENGLISH);
+		workGroup.setExternalMailLocale(Language.ENGLISH);
+		workGroup.setCmisLocale(CMIS_LOCALE);
+		workGroup.setDomain(testDomain);
+		workGroup.setName(THREAD_NAME);
+		workGroup = threadRepository.create(workGroup);
 	}
 
 	@After
@@ -174,7 +174,7 @@ public class SafeDetailServiceTest extends AbstractTransactionalJUnit4SpringCont
 	@Test
 	public void testCreateSafeDetail() {
 		SafeDetail safeDetail = new SafeDetail();
-		safeDetail.setContainerUuid(thread.getLsUuid());
+		safeDetail.setContainerUuid(workGroup.getLsUuid());
 		SafeDetail exist = safeDetailService.create(technicalAccount, actor, safeDetail);
 		Assert.assertEquals(exist.getAccountUuid(), actor.getLsUuid());
 		safeDetailService.delete(technicalAccount, actor, exist.getUuid());
@@ -183,7 +183,7 @@ public class SafeDetailServiceTest extends AbstractTransactionalJUnit4SpringCont
 	@Test
 	public void testDeleteSafeDetail() {
 		SafeDetail safeDetail = new SafeDetail();
-		safeDetail.setContainerUuid(thread.getLsUuid());
+		safeDetail.setContainerUuid(workGroup.getLsUuid());
 		SafeDetail exist = safeDetailService.create(technicalAccount, actor, safeDetail);
 		safeDetailService.delete(technicalAccount, actor, exist.getUuid());
 		Assert.assertNull(safeDetailService.findAll(technicalAccount, actor));
@@ -192,7 +192,7 @@ public class SafeDetailServiceTest extends AbstractTransactionalJUnit4SpringCont
 	@Test
 	public void testfindtAll() {
 		SafeDetail safeDetail = new SafeDetail();
-		safeDetail.setContainerUuid(thread.getLsUuid());
+		safeDetail.setContainerUuid(workGroup.getLsUuid());
 		safeDetailService.create(technicalAccount, actor, safeDetail);
 		SafeDetail exist = safeDetailService.findAll(technicalAccount, actor);
 		Assert.assertEquals(exist.getAccountUuid(), actor.getLsUuid());

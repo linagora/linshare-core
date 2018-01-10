@@ -147,12 +147,12 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 				result.addAll(ImmutableList.copyOf(Lists.transform(Lists.newArrayList(userList), UserAutoCompleteResultDto.toDto())));
 			} else if (enumType.equals(SearchType.THREAD_MEMBERS)) {
 				Validate.notEmpty(threadUuid, "You must fill threadUuid query parameter.");
-				WorkGroup thread = threadService.find(actor, actor, threadUuid);
+				WorkGroup workGroup = threadService.find(actor, actor, threadUuid);
 				List<User> users = userService.autoCompleteUser(actor, pattern);
 				int range = (users.size() < AUTO_COMPLETE_LIMIT ? users.size() : AUTO_COMPLETE_LIMIT);
 				for (User user : users.subList(0, range)) {
 					User account = userService.findOrCreateUser(user.getMail(), user.getDomainId());
-					WorkgroupMember member = threadService.getMemberFromUser(thread, account);
+					WorkgroupMember member = threadService.getMemberFromUser(workGroup, account);
 					if (member == null) {
 						result.add(new ThreadMemberAutoCompleteResultDto(account));
 					} else {

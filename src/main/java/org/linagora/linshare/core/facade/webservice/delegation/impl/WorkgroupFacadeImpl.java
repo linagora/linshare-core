@@ -74,9 +74,9 @@ public class WorkgroupFacadeImpl extends DelegationGenericFacadeImpl implements
 		Validate.notEmpty(uuid, "Missing required thread uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		WorkGroup thread = threadService.find(actor, owner, uuid);
-		WorkGroupDto dto = new WorkGroupDto(thread);
-		AccountQuota quota = quotaService.findByRelatedAccount(thread);
+		WorkGroup workGroup = threadService.find(actor, owner, uuid);
+		WorkGroupDto dto = new WorkGroupDto(workGroup);
+		AccountQuota quota = quotaService.findByRelatedAccount(workGroup);
 		dto.setQuotaUuid(quota.getUuid());
 		return dto;
 	}
@@ -87,9 +87,9 @@ public class WorkgroupFacadeImpl extends DelegationGenericFacadeImpl implements
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
 		List<WorkGroupDto> res = Lists.newArrayList();
-		List<WorkGroup> threads = threadService.findAll(actor, owner);
-		for (WorkGroup thread : threads) {
-			res.add(new WorkGroupDto(thread));
+		List<WorkGroup> workGroups = threadService.findAll(actor, owner);
+		for (WorkGroup workGroup : workGroups) {
+			res.add(new WorkGroupDto(workGroup));
 		}
 		return res;
 	}
@@ -113,9 +113,9 @@ public class WorkgroupFacadeImpl extends DelegationGenericFacadeImpl implements
 		Validate.notEmpty(threadDto.getUuid(), "Missing required thread dto uuid");
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		WorkGroup thread = threadService.find(actor, owner, threadDto.getUuid());
-		threadService.deleteThread(actor, owner, thread);
-		return new WorkGroupDto(thread);
+		WorkGroup workGroup = threadService.find(actor, owner, threadDto.getUuid());
+		threadService.deleteThread(actor, owner, workGroup);
+		return new WorkGroupDto(workGroup);
 	}
 
 	@Override

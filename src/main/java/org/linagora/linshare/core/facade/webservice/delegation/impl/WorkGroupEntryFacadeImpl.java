@@ -93,8 +93,8 @@ public class WorkGroupEntryFacadeImpl extends DelegationGenericFacadeImpl
 
 		User actor = checkAuthentication();
 		User owner = getOwner(ownerUuid);
-		WorkGroup thread = threadService.find(actor, owner, threadUuid);
-		WorkGroupNode node = workGroupNodeService.create(actor, owner, thread, file, fileName, null, false);
+		WorkGroup workGroup = threadService.find(actor, owner, threadUuid);
+		WorkGroupNode node = workGroupNodeService.create(actor, owner, workGroup, file, fileName, null, false);
 		WorkGroupEntryDto dto = new WorkGroupEntryDto((WorkGroupDocument)node);
 		// why ?
 //		dto.setWorkGroup(new WorkGroupLightDto(thread));

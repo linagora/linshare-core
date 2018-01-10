@@ -88,19 +88,19 @@ public class ThreadEntryRepositoryImpl extends
 	}
 
 	@Override
-	public long count(WorkGroup thread) {
+	public long count(WorkGroup workGroup) {
 		DetachedCriteria det = DetachedCriteria.forClass(ThreadEntry.class);
 
-		det.add(Restrictions.eq("entryOwner", thread));
+		det.add(Restrictions.eq("entryOwner", workGroup));
 		det.setProjection(Projections.rowCount());
 		return DataAccessUtils.longResult(findByCriteria(det));
 	}
 
 	@Override
-	public List<ThreadEntry> findAllDistinctEntries(WorkGroup thread) {
+	public List<ThreadEntry> findAllDistinctEntries(WorkGroup workGroup) {
 		List<ThreadEntry> res = null;
 		DetachedCriteria crit = DetachedCriteria.forClass(ThreadEntry.class);
-		crit.add(Restrictions.eq("entryOwner", thread));
+		crit.add(Restrictions.eq("entryOwner", workGroup));
 		crit.addOrder(Order.desc("creationDate"));
 		crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		res = findByCriteria(crit);

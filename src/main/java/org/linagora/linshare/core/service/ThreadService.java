@@ -48,7 +48,7 @@ public interface ThreadService {
 	List<WorkGroup> findAll(Account actor, Account owner);
 
 	WorkGroup create(Account actor, Account owner, String name) throws BusinessException;
-	
+
 	WorkgroupMember getThreadMemberById(long id) throws BusinessException;
 
 	WorkgroupMember getMemberFromUser(WorkGroup workGroup, User user) throws BusinessException;
@@ -65,9 +65,9 @@ public interface ThreadService {
 
 	boolean hasAnyWhereAdmin(User user);
 
-	boolean isUserAdmin(User user, WorkGroup thread);
+	boolean isUserAdmin(User user, WorkGroup workGroup);
 
-	long countMembers(WorkGroup thread);
+	long countMembers(WorkGroup workGroup);
 
 	WorkgroupMember addMember(Account actor, Account owner, WorkGroup workGroup, User user, boolean admin, boolean canUpload) throws BusinessException;
 
@@ -75,11 +75,11 @@ public interface ThreadService {
 
 	WorkgroupMember deleteMember(Account actor, Account owner, String threadUuid, String memberUuid) throws BusinessException;
 
-	void deleteAllMembers(Account actor, WorkGroup thread) throws BusinessException;
+	void deleteAllMembers(Account actor, WorkGroup workGroup) throws BusinessException;
 
 	void deleteAllUserMemberships(Account actor, User user) throws BusinessException;
 
-	void deleteThread(User actor, Account owner, WorkGroup thread) throws BusinessException;
+	void deleteThread(User actor, Account owner, WorkGroup workGroup) throws BusinessException;
 
 	WorkGroup update(User actor, Account owner, String threadUuid, String threadName) throws BusinessException;
 

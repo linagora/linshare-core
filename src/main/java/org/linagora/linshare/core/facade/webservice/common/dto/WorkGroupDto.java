@@ -62,9 +62,9 @@ public class WorkGroupDto extends AccountDto {
 	@ApiModelProperty(value = "Members")
 	protected Set<WorkGroupMemberDto> members;
 
-	public WorkGroupDto(WorkGroup thread) {
-		super(thread, true);
-		this.name = thread.getName();
+	public WorkGroupDto(WorkGroup workGroup) {
+		super(workGroup, true);
+		this.name = workGroup.getName();
 	}
 
 	public WorkGroupDto(WorkGroup workGroup, List<WorkgroupMember> members) {

@@ -52,9 +52,9 @@ public interface ThreadEntryRepository extends AbstractRepository<ThreadEntry> {
 
 	List<ThreadEntry> findAllThreadEntries(WorkGroup owner);
 
-	long count(WorkGroup thread);
+	long count(WorkGroup workGroup);
 
-	List<ThreadEntry> findAllDistinctEntries(WorkGroup thread);
+	List<ThreadEntry> findAllDistinctEntries(WorkGroup workGroup);
 
 	long getUsedSpace(Account account);
 

@@ -165,16 +165,16 @@ public class ThreadResourceAccessControlImpl extends
 		return '(' + entry.getLsUuid() + ')';
 	}
 
-	private boolean isUserMember(Account user, WorkGroup thread) {
-		boolean ret = threadMemberRepository.findUserThreadMember(thread,
+	private boolean isUserMember(Account user, WorkGroup workGroup) {
+		boolean ret = threadMemberRepository.findUserThreadMember(workGroup,
 				(User) user) != null;
-		logger.debug(user + " member of " + thread + " : " + ret);
+		logger.debug(user + " member of " + workGroup + " : " + ret);
 		return ret;
 	}
 
-	private boolean isUserAdmin(Account user, WorkGroup thread) {
-		boolean ret = threadMemberRepository.isUserAdmin((User) user, thread);
-		logger.debug(user + " admin of " + thread + " : " + ret);
+	private boolean isUserAdmin(Account user, WorkGroup workGroup) {
+		boolean ret = threadMemberRepository.isUserAdmin((User) user, workGroup);
+		logger.debug(user + " admin of " + workGroup + " : " + ret);
 		return ret;
 	}
 

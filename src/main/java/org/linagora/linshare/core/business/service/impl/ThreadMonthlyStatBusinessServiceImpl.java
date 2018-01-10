@@ -56,18 +56,18 @@ public class ThreadMonthlyStatBusinessServiceImpl implements ThreadMonthlyStatBu
 	}
 
 	@Override
-	public ThreadMonthlyStat create(WorkGroup thread, Date beginDate, Date endDate) throws BusinessException {
-		Long actualOperationSum = threadWeeklyStatRepository.sumOfActualOperationSum(null, thread, beginDate, endDate);
-		Long operationCount = threadWeeklyStatRepository.sumOfOperationCount(null, thread, beginDate, endDate);
-		Long createOperationSum = threadWeeklyStatRepository.sumOfCreateOperationSum(null, thread, beginDate, endDate);
-		Long createOperationCount = threadWeeklyStatRepository.sumOfCreateOperationCount(null, thread, beginDate,
+	public ThreadMonthlyStat create(WorkGroup workGroup, Date beginDate, Date endDate) throws BusinessException {
+		Long actualOperationSum = threadWeeklyStatRepository.sumOfActualOperationSum(null, workGroup, beginDate, endDate);
+		Long operationCount = threadWeeklyStatRepository.sumOfOperationCount(null, workGroup, beginDate, endDate);
+		Long createOperationSum = threadWeeklyStatRepository.sumOfCreateOperationSum(null, workGroup, beginDate, endDate);
+		Long createOperationCount = threadWeeklyStatRepository.sumOfCreateOperationCount(null, workGroup, beginDate,
 				endDate);
-		Long deleteOperationSum = threadWeeklyStatRepository.sumOfDeleteOperationSum(null, thread, beginDate, endDate);
-		Long deleteOperationCount = threadWeeklyStatRepository.sumOfDeleteOperationCount(null, thread, beginDate,
+		Long deleteOperationSum = threadWeeklyStatRepository.sumOfDeleteOperationSum(null, workGroup, beginDate, endDate);
+		Long deleteOperationCount = threadWeeklyStatRepository.sumOfDeleteOperationCount(null, workGroup, beginDate,
 				endDate);
-		Long diffOperationSum = threadWeeklyStatRepository.sumOfDiffOperationSum(null, thread, beginDate, endDate);
-		ThreadMonthlyStat entity = new ThreadMonthlyStat(thread, thread.getDomain(),
-				thread.getDomain().getParentDomain(), operationCount, deleteOperationCount, createOperationCount,
+		Long diffOperationSum = threadWeeklyStatRepository.sumOfDiffOperationSum(null, workGroup, beginDate, endDate);
+		ThreadMonthlyStat entity = new ThreadMonthlyStat(workGroup, workGroup.getDomain(),
+				workGroup.getDomain().getParentDomain(), operationCount, deleteOperationCount, createOperationCount,
 				createOperationSum, deleteOperationSum, diffOperationSum, actualOperationSum);
 		entity.setStatisticDate(endDate);
 		entity = repository.create(entity);
@@ -75,8 +75,8 @@ public class ThreadMonthlyStatBusinessServiceImpl implements ThreadMonthlyStatBu
 	}
 
 	@Override
-	public List<ThreadMonthlyStat> findBetweenTwoDates(WorkGroup thread, Date beginDate, Date endDate) {
-		return repository.findBetweenTwoDates(thread, null, null, beginDate, endDate, null);
+	public List<ThreadMonthlyStat> findBetweenTwoDates(WorkGroup workGroup, Date beginDate, Date endDate) {
+		return repository.findBetweenTwoDates(workGroup, null, null, beginDate, endDate, null);
 	}
 
 	@Override

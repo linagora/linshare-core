@@ -47,7 +47,7 @@ import org.linagora.linshare.mongo.entities.mto.CopyMto;
 
 public interface WorkGroupDocumentService extends WorkGroupNodeAbstractService {
 
-	WorkGroupNode create(Account actor, Account owner, WorkGroup thread, File tempFile, String fileName,
+	WorkGroupNode create(Account actor, Account owner, WorkGroup workGroup, File tempFile, String fileName,
 			WorkGroupNode nodeParent) throws BusinessException;
 
 	WorkGroupNode copy(Account actor, Account owner, WorkGroup toWorkGroup, String documentUuid, String fileName,

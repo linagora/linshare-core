@@ -64,9 +64,9 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
-public class WorkGroupServiceTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class WorkGroupMemberTest extends AbstractTransactionalJUnit4SpringContextTests {
 
-	private static Logger logger = LoggerFactory.getLogger(WorkGroupServiceTest.class);
+	private static Logger logger = LoggerFactory.getLogger(WorkGroupMemberTest.class);
 
 	@Autowired
 	private ThreadService threadService;
@@ -87,7 +87,7 @@ public class WorkGroupServiceTest extends AbstractTransactionalJUnit4SpringConte
 
 	private LinShareWiser wiser;
 
-	public WorkGroupServiceTest() {
+	public WorkGroupMemberTest() {
 		super();
 		wiser = new LinShareWiser(2525);
 	}

@@ -72,10 +72,10 @@ public class WorkgroupMemberFacadeImpl extends DelegationGenericFacadeImpl
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		User authActor = checkAuthentication();
 		User actor = getOwner(actorUuid);
-		WorkGroup thread = threadService.find(authActor, actor, threadUuid);
+		WorkGroup workGroup = threadService.find(authActor, actor, threadUuid);
 		List<WorkGroupMemberDto> res = Lists.newArrayList();
 
-		for (WorkgroupMember m : threadService.findAllThreadMembers(authActor, actor, thread)) {
+		for (WorkgroupMember m : threadService.findAllThreadMembers(authActor, actor, workGroup)) {
 			res.add(new WorkGroupMemberDto(m));
 		}
 		return res;
@@ -92,9 +92,9 @@ public class WorkgroupMemberFacadeImpl extends DelegationGenericFacadeImpl
 		User authActor = checkAuthentication();
 		User actor = getOwner(actorUuid);
 		User user = userService.findOrCreateUser(mail, domainId);
-		WorkGroup thread = threadService.find(authActor, actor, threadUuid);
+		WorkGroup workGroup = threadService.find(authActor, actor, threadUuid);
 		return new WorkGroupMemberDto(threadService.addMember(authActor, actor,
-				thread, user, admin, !readonly));
+				workGroup, user, admin, !readonly));
 	}
 
 	@Override

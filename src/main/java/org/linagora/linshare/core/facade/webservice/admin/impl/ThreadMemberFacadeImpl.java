@@ -76,7 +76,7 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notEmpty(dto.getUserDomainId(), "thread member domain id must be set.");
 		Validate.notEmpty(dto.getUserMail(), "thread member mail must be set.");
 
-		WorkGroup thread = threadService.find(actor, actor, dto.getThreadUuid());
+		WorkGroup workGroup = threadService.find(actor, actor, dto.getThreadUuid());
 		User user = (User) accountService.findByLsUuid(dto.getUserUuid());
 		if (user == null) {
 			user = userService.findOrCreateUser(dto.getUserMail(),
@@ -90,7 +90,7 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		boolean admin = dto.isAdmin();
 		boolean canUpload = !dto.isReadonly();
 
-		return new WorkGroupMemberDto(threadService.addMember(actor, actor, thread, user, admin, canUpload));
+		return new WorkGroupMemberDto(threadService.addMember(actor, actor, workGroup, user, admin, canUpload));
 	}
 
 	@Override

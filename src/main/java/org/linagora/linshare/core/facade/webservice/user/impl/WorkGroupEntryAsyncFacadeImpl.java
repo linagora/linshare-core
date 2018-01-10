@@ -82,14 +82,14 @@ public class WorkGroupEntryAsyncFacadeImpl extends GenericAsyncFacadeImpl implem
 				"Missing required file (check parameter named file)");
 		Validate.notEmpty(tetc.getThreadUuid(), "Missing required thread uuid");
 		Validate.notEmpty(tetc.getFileName(), "Missing required file name");
-		WorkGroup thread = threadService.find(actor, owner, tetc.getThreadUuid());
-		if (thread == null) {
+		WorkGroup workGroup = threadService.find(actor, owner, tetc.getThreadUuid());
+		if (workGroup == null) {
 			throw new BusinessException(BusinessErrorCode.THREAD_NOT_FOUND,
 					"Current thread was not found : " + tetc.getThreadUuid());
 		}
-		WorkGroupNode node = service.create(actor, owner, thread, tetc.getFile(), tetc.getFileName(), tetc.getWorkGroupFolderUuid(), false);
+		WorkGroupNode node = service.create(actor, owner, workGroup, tetc.getFile(), tetc.getFileName(), tetc.getWorkGroupFolderUuid(), false);
 		WorkGroupEntryDto dto = new WorkGroupEntryDto((WorkGroupDocument) node);
-		dto.setWorkGroup(new WorkGroupLightDto(thread));
+		dto.setWorkGroup(new WorkGroupLightDto(workGroup));
 		return dto;
 	}
 
@@ -102,14 +102,14 @@ public class WorkGroupEntryAsyncFacadeImpl extends GenericAsyncFacadeImpl implem
 		Validate.notEmpty(tetc.getThreadUuid(), "Missing required thread uuid");
 		Validate.notEmpty(tetc.getDocEntryUuid(), "Missing required document entry uuid");
 		// Check if we have the right to access to the specified thread
-		WorkGroup thread = threadService.find(actor, owner, tetc.getThreadUuid());
+		WorkGroup workGroup = threadService.find(actor, owner, tetc.getThreadUuid());
 		// Check if we have the right to download the specified document entry
 		DocumentEntry de = documentEntryService.findForDownloadOrCopyRight(actor, owner, tetc.getDocEntryUuid());
 		CopyResource cr = new CopyResource(TargetKind.PERSONAL_SPACE, de);
-		WorkGroupNode node = service.copy(actor, owner, thread, null, cr);
-		documentEntryService.markAsCopied(actor, owner, de, new CopyMto(node, thread));
+		WorkGroupNode node = service.copy(actor, owner, workGroup, null, cr);
+		documentEntryService.markAsCopied(actor, owner, de, new CopyMto(node, workGroup));
 		WorkGroupEntryDto dto = new WorkGroupEntryDto((WorkGroupDocument) node);
-		dto.setWorkGroup(new WorkGroupLightDto(thread));
+		dto.setWorkGroup(new WorkGroupLightDto(workGroup));
 		return dto;
 	}
 }

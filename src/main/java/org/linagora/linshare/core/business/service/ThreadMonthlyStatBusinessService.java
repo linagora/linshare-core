@@ -42,9 +42,9 @@ import org.linagora.linshare.core.domain.entities.ThreadMonthlyStat;
 
 public interface ThreadMonthlyStatBusinessService {
 
-	ThreadMonthlyStat create(WorkGroup thread, Date beginDate, Date endDate);
+	ThreadMonthlyStat create(WorkGroup workGroup, Date beginDate, Date endDate);
 
-	List<ThreadMonthlyStat> findBetweenTwoDates(WorkGroup thread, Date beginDate, Date endDate);
+	List<ThreadMonthlyStat> findBetweenTwoDates(WorkGroup workGroup, Date beginDate, Date endDate);
 
 	void deleteBeforeDate(Date date);
 

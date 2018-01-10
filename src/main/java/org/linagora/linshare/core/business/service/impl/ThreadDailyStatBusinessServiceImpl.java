@@ -57,18 +57,18 @@ public class ThreadDailyStatBusinessServiceImpl implements ThreadDailyStatBusine
 	}
 
 	@Override
-	public ThreadDailyStat create(WorkGroup thread, Long currentUsedSpace, Date date) throws BusinessException {
-		Long createOperationSum = operationHistoryRepository.sumOperationValue(thread, null, date,
+	public ThreadDailyStat create(WorkGroup workGroup, Long currentUsedSpace, Date date) throws BusinessException {
+		Long createOperationSum = operationHistoryRepository.sumOperationValue(workGroup, null, date,
 				OperationHistoryTypeEnum.CREATE, null);
-		Long deleteOperationSum = operationHistoryRepository.sumOperationValue(thread, null, date,
+		Long deleteOperationSum = operationHistoryRepository.sumOperationValue(workGroup, null, date,
 				OperationHistoryTypeEnum.DELETE, null);
-		Long createOperationCount = operationHistoryRepository.countOperationValue(thread, null, date,
+		Long createOperationCount = operationHistoryRepository.countOperationValue(workGroup, null, date,
 				OperationHistoryTypeEnum.CREATE, null);
-		Long deleteOperationCount = operationHistoryRepository.countOperationValue(thread, null, date,
+		Long deleteOperationCount = operationHistoryRepository.countOperationValue(workGroup, null, date,
 				OperationHistoryTypeEnum.DELETE, null);
 		Long operationCount = deleteOperationCount + createOperationCount;
 		Long diffOperationSum = createOperationSum + deleteOperationSum;
-		ThreadDailyStat entity = new ThreadDailyStat(thread, thread.getDomain(), thread.getDomain().getParentDomain(),
+		ThreadDailyStat entity = new ThreadDailyStat(workGroup, workGroup.getDomain(), workGroup.getDomain().getParentDomain(),
 				operationCount, deleteOperationCount, createOperationCount, createOperationSum, deleteOperationSum,
 				diffOperationSum, currentUsedSpace);
 		entity.setStatisticDate(date);
@@ -77,8 +77,8 @@ public class ThreadDailyStatBusinessServiceImpl implements ThreadDailyStatBusine
 	}
 
 	@Override
-	public List<ThreadDailyStat> findBetweenTwoDates(WorkGroup thread, Date beginDate, Date endDate) {
-		return repository.findBetweenTwoDates(thread, null, null, beginDate, endDate, null);
+	public List<ThreadDailyStat> findBetweenTwoDates(WorkGroup workGroup, Date beginDate, Date endDate) {
+		return repository.findBetweenTwoDates(workGroup, null, null, beginDate, endDate, null);
 	}
 
 	@Override

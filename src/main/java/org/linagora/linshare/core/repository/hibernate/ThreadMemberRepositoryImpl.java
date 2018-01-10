@@ -130,10 +130,10 @@ public class ThreadMemberRepositoryImpl extends
 	}
 
 	@Override
-	public List<String> findAllAccountUuidForThreadMembers(WorkGroup thread) {
+	public List<String> findAllAccountUuidForThreadMembers(WorkGroup workGroup) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 		det.createAlias("user", "member");
-		det.add(Restrictions.eq("thread", thread));
+		det.add(Restrictions.eq("thread", workGroup));
 		det.add(Restrictions.eq("member.destroyed", 0L));
 		det.setProjection(Projections.property("member.lsUuid"));
 		@SuppressWarnings("unchecked")

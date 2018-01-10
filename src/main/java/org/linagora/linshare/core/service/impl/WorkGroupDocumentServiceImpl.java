@@ -221,18 +221,18 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 		return documentEntryBusinessService.getThreadEntryThumbnailStream(node, thumbnailType);
 	}
 
-	protected void checkSpace(WorkGroup thread, long size) throws BusinessException {
-		quotaService.checkIfUserCanAddFile(thread, size, ContainerQuotaType.WORK_GROUP);
+	protected void checkSpace(WorkGroup workGroup, long size) throws BusinessException {
+		quotaService.checkIfUserCanAddFile(workGroup, size, ContainerQuotaType.WORK_GROUP);
 	}
 
-	protected void addToQuota(WorkGroup thread, Long size) {
-		OperationHistory oh = new OperationHistory(thread, thread.getDomain(), size, OperationHistoryTypeEnum.CREATE,
+	protected void addToQuota(WorkGroup workGroup, Long size) {
+		OperationHistory oh = new OperationHistory(workGroup, workGroup.getDomain(), size, OperationHistoryTypeEnum.CREATE,
 				ContainerQuotaType.WORK_GROUP);
 		operationHistoryBusinessService.create(oh);
 	}
 
-	protected void delFromQuota(WorkGroup thread, Long size) {
-		OperationHistory oh = new OperationHistory(thread, thread.getDomain(), size, OperationHistoryTypeEnum.DELETE,
+	protected void delFromQuota(WorkGroup workGroup, Long size) {
+		OperationHistory oh = new OperationHistory(workGroup, workGroup.getDomain(), size, OperationHistoryTypeEnum.DELETE,
 				ContainerQuotaType.WORK_GROUP);
 		operationHistoryBusinessService.create(oh);
 	}
