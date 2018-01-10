@@ -105,11 +105,17 @@
 	</dependencyManagement>
 
 	<dependencies>
-
+	
 		<dependency>
 			<groupId>org.linagora.linshare</groupId>
 			<artifactId>thumbnail-engine</artifactId>
 			<version>2.0.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-jdk14</artifactId>
+				</exclusion>
+			</exclusions> 
 		</dependency>
 
 		<!-- A dependency on either JUnit or TestNG is required, or the surefire plugin (which runs the tests) will fail, preventing Maven
@@ -374,7 +380,7 @@
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>${slf4j-release-version}</version>
 		</dependency>
-
+		
 		<!-- bridge logs from commons loggings to slf4j -->
 		<dependency>
 			<groupId>commons-logging</groupId>
