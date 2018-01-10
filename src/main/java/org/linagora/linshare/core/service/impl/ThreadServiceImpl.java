@@ -270,7 +270,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		logEntryService.insert(log);
 		WorkGroupWarnNewMemberEmailContext context = new WorkGroupWarnNewMemberEmailContext(member, owner);
 		MailContainerWithRecipient mail = mailBuildingService.build(context);
-		notifierService.sendNotification(mail);
+		notifierService.sendNotification(mail, true);
 		return member;
 	}
 
@@ -293,7 +293,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		logEntryService.insert(log);
 		WorkGroupWarnUpdatedMemberEmailContext context = new WorkGroupWarnUpdatedMemberEmailContext(member, owner);
 		MailContainerWithRecipient mail = mailBuildingService.build(context);
-		notifierService.sendNotification(mail);
+		notifierService.sendNotification(mail, true);
 		return res;
 	}
 
@@ -318,7 +318,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, Thread> imple
 		logEntryService.insert(log);
 		WorkGroupWarnDeletedMemberEmailContext context = new WorkGroupWarnDeletedMemberEmailContext(member, owner);
 		MailContainerWithRecipient mail = mailBuildingService.build(context);
-		notifierService.sendNotification(mail);
+		notifierService.sendNotification(mail, true);
 		return member;
 	}
 
