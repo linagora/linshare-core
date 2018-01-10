@@ -38,10 +38,17 @@
 
 mail.smtp.host=smtp.yourdomain.com
 mail.smtp.port=25
+# use 25  default port for plain text mode
+# use 587 default port if you use starttls mode
+# use 465 default port if you use ssl mode
 mail.smtp.user=user
 mail.smtp.password=password
 mail.smtp.auth.needed=false
 mail.smtp.charset=UTF-8
+# StartTls mode (Set to true to enable it)
+mail.smtp.starttls.enable=false
+# SSL Mode (If you enable SSL Mode it will override startTls mode)
+mail.smtp.ssl.enable=false
 
 #******************* DATASTORE
 #uncomment this line to encrypt the files

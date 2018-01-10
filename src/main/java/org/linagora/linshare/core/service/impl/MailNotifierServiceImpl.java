@@ -94,6 +94,12 @@ public class MailNotifierServiceImpl implements NotifierService {
 	/** Mail charset. */
 	private final String charset;
 
+	/** Is starttls enabled **/
+	private final boolean startTlsEnable;
+
+	/** Is SSL enabled **/
+	private final boolean sslEnable;
+
 	/** Class logger */
 	private static final Logger logger = LoggerFactory.getLogger(MailNotifierServiceImpl.class);
 	
@@ -103,15 +109,22 @@ public class MailNotifierServiceImpl implements NotifierService {
 	 * see http://java.sun.com/developer/EJTechTips/2004/tt0625.html for
 	 * multipart/alternative
 	 */
-	public MailNotifierServiceImpl(String smtpServer, int smtpPort,
-			String smtpUser, String smtpPassword, boolean needsAuth,
-			String charset) {
+	public MailNotifierServiceImpl(String smtpServer,
+			int smtpPort,
+			String smtpUser,
+			String smtpPassword,
+			boolean needsAuth,
+			String charset,
+			boolean startTlsEnable,
+			boolean sslEnable) {
 		this.smtpServer = smtpServer;
 		this.smtpPort = smtpPort;
 		this.smtpUser = smtpUser;
 		this.smtpPassword = smtpPassword;
 		this.needsAuth = needsAuth;
 		this.charset = charset;
+		this.startTlsEnable = startTlsEnable;
+		this.sslEnable = sslEnable;
 	}
 
 	public static boolean isPureAscii(String v) {
@@ -246,14 +259,21 @@ public class MailNotifierServiceImpl implements NotifierService {
 		// Set the host smtp address
 		Properties props = new Properties();
 		props.put("mail.smtp.host", smtpServer);
-		props.put("mail.smtp.port", smtpPort + "");
+		// if ssl is enabled
+		if (sslEnable) {
+			props.put("mail.smtp.socketFactory.port", String.valueOf(smtpPort));
+			props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+		} else if (startTlsEnable) {
+			props.put("mail.smtp.starttls.enable", "true");
+		}
+		props.put("mail.smtp.port", String.valueOf(smtpPort));
 
 		if (needsAuth) {
 			props.put("mail.smtp.auth", "true");
 		} else {
 			props.put("mail.smtp.auth", "false");
 		}
-		
+
 		// create some properties and get the default Session
 		Session session = Session.getInstance(props, null);
 		if (logger.isDebugEnabled()) {
@@ -355,5 +375,13 @@ public class MailNotifierServiceImpl implements NotifierService {
 				logger.error("Smtp reconfiguration failed ! ");
 			}
 		}
+	}
+
+	public boolean isStartTlsEnable() {
+		return startTlsEnable;
+	}
+
+	public boolean isSslEnable() {
+		return sslEnable;
 	}
 }

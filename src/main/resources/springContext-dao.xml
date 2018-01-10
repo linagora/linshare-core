@@ -22,5 +22,7 @@
 		<constructor-arg index="3" value="${mail.smtp.password}" />
 		<constructor-arg index="4" value="${mail.smtp.auth.needed}" />
 		<constructor-arg index="5" value="${mail.smtp.charset}" />
+		<constructor-arg index="6" value="${mail.smtp.starttls.enable}" />
+		<constructor-arg index="7" value="${mail.smtp.ssl.enable}" />
 	</bean>
 </beans>
