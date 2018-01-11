@@ -134,9 +134,9 @@ public class LinShareStringTemplateResolver extends StringTemplateResolver {
 	final private String formatFooter(String footer, Language lang) {
 		if (insertLicenceTerm) {
 			if (lang.equals(Language.FRENCH)) {
-				footer += "<br/>Vous utilisez la version libre et gratuite de <a href=\"http://www.linshare.org/\" title=\"LinShare\"><strong>LinShare</strong></a>™, développée par Linagora © 2009–2015. Contribuez à la R&D du produit en souscrivant à une offre entreprise.<br/>";
+				footer += "<br/>Vous utilisez la version libre et gratuite de <a href=\"http://www.linshare.org/\" title=\"LinShare\"><strong>LinShare</strong></a>™, développée par Linagora © 2009–2018. Contribuez à la R&D du produit en souscrivant à une offre entreprise.<br/>";
 			} else {
-				footer += "<br/>You are using the Open Source and free version of <a href=\"http://www.linshare.org/\" title=\"LinShare\"><strong>LinShare</strong></a>™, powered by Linagora © 2009–2015. Contribute to Linshare R&D by subscribing to an Enterprise offer.<br/>";
+				footer += "<br/>You are using the Open Source and free version of <a href=\"http://www.linshare.org/\" title=\"LinShare\"><strong>LinShare</strong></a>™, powered by Linagora © 2009–2018. Contribute to Linshare R&D by subscribing to an Enterprise offer.<br/>";
 			}
 		}
 		return footer;
