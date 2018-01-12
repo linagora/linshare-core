@@ -138,6 +138,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 	public WorkGroupNode create(String ownerUuid, String workGroupUuid, WorkGroupNode workGroupNode, Boolean strict, Boolean dryRun)
 			throws BusinessException {
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
+		Validate.notNull(workGroupNode.getName(), "Missing default name for the folder");
 		User actor = checkAuthentication();
 		User owner = getOwner(actor, ownerUuid);
 		WorkGroup workGroup = threadService.find(actor, owner, workGroupUuid);
