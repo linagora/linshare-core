@@ -366,6 +366,10 @@ public abstract class Account {
 		return this.getRole().equals(Role.UPLOAD_REQUEST);
 	}
 
+	public boolean hasSafeRole() {
+		return this.getRole().equals(Role.SAFE);
+	}
+
 	/**
 	 * Account type Helpers
 	 */

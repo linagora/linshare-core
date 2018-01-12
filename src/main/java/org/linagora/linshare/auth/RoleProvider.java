@@ -76,6 +76,9 @@ public class RoleProvider {
 		} else if (account.hasUploadPropositionRole()) {
 			grantedAuthorities.add(new SimpleGrantedAuthority(AuthRole.ROLE_UPLOAD_PROPOSTION));
 		}
+		else if (account.hasSafeRole()) {
+			grantedAuthorities.add(new SimpleGrantedAuthority(AuthRole.ROLE_SAFE));
+		}
 		return grantedAuthorities;
 	}
 }

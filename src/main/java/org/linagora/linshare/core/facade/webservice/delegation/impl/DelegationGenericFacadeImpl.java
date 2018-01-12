@@ -57,7 +57,7 @@ public class DelegationGenericFacadeImpl extends GenericFacadeImpl implements
 	@Override
 	protected User checkAuthentication() throws BusinessException {
 		User actor = super.checkAuthentication();
-		if (!actor.hasDelegationRole()) {
+		if (!(actor.hasDelegationRole() || actor.hasSafeRole())) {
 			logger.error("Current actor is trying to access to a forbbiden api : "
 					+ actor.getAccountRepresentation());
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,

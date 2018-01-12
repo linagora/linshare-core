@@ -79,6 +79,10 @@ public class ThreadResourceAccessControlImpl extends
 			return hasPermission(authUser,
 					TechnicalAccountPermissionType.THREADS_GET);
 		}
+		// TODO: To be remove once real safe will be implemented in LinShare.
+		if (actor.hasSafeRole()) {
+			return true;
+		}
 		if (authUser.hasAllRights()) {
 			return true;
 		}
