@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2017 LINAGORA
+ * Copyright (C) 2017-2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2017. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -57,7 +57,7 @@ public class FooterCopyrightResource extends LinShareTemplateResource {
 					, ", développée par "
 					, "<a href=\"http://www.linagora.com/\" style=\"text-decoration:none;color:#b2b2b2;\" target=\"_blank\">"
 					, "<strong>Linagora</strong> ©</a>"
-					, " 2009–2017."
+					, " 2009–2018."
 					, " Contribuez à la R&D du produit en souscrivant à une offre entreprise."
 					, "\n"
 					);
@@ -69,7 +69,7 @@ public class FooterCopyrightResource extends LinShareTemplateResource {
 					, ", powered by "
 					, "<a href=\"http://www.linagora.com/\" style=\"text-decoration:none;color:#b2b2b2;\" target=\"_blank\">"
 					, "<strong>Linagora</strong> ©</a>"
-					, " 2009–2017."
+					, " 2009–2018."
 					, " Contribute to LinShare R&amp;D by subscribing to an Enterprise offer."
 					, "\n"
 					);
