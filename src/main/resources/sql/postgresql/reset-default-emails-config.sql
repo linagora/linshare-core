@@ -1592,6 +1592,18 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
   th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
   <!--/*  Upper main-content */-->
   <section id="main-content">
+  <!--/* If the sender has added a  customized message */-->
+    <th:block data-th-if="${!#strings.isEmpty(customMessage)}">
+      <div th:replace="layout :: contentMessageSection( ~{::#message-title}, ~{::#message-content})">
+        <span id="message-title">
+          <span data-th-text="#{msgFor}">You have a message from</span>
+        </span>
+        <span id="message-content" data-th-text="*{customMessage}">
+          Hi Amy,<br>
+          As agreed,  i am sending you the report as well as the related files. Feel free to contact me if need be. <br>Best regards, Peter.
+        </span>
+      </div>
+    </th:block>
     <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
       <div id="section-content">
         <!--/* Greetings */-->
@@ -1631,12 +1643,14 @@ numFilesMsgSingular = Vous avez partagé <b>{0} fichier</b>
 recipientCountMsgPlural = avec <b>{1} destinataires</b>. Ce partage expirera le <b>{0}</b>.
 recipientCountMsgSingular = avec <b>{1} destinataire</b>. Ce partage expirera le <b>{0}</b>.
 subjectPlural = Vous avez partagé des fichiers
-subjectSingular = Vous avez partagé un fichier', 'numFilesMsgPlural = You have shared <b>{0} files</b>
+subjectSingular = Vous avez partagé un fichier
+msgFor = Votre message de partage', 'numFilesMsgPlural = You have shared <b>{0} files</b>
 numFilesMsgSingular = You have shared <b>{0} file</b>
 recipientCountMsgPlural =   to <b>{1} recipients</b>. The fileshare will expire on : {0}.
 recipientCountMsgSingular =   to <b>{1} recipient</b>. The fileshare will  expire on : {0}.
 subjectPlural =  You have shared some files 
-subjectSingular = You have shared a file');
+subjectSingular = You have shared a file
+msgFor = Your message of sharing');
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (15, 1, NULL, true, 15, '[( #{subject(${requestRecipient.mail},${subject})})]', '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head data-th-replace="layout :: header"></head>
