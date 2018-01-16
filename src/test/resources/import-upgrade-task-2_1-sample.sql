@@ -137,3 +137,31 @@ VALUES
   now(),
   now(),
   null);
+
+    -- TASK: UPGRADE_2_1_ADD_ALL_NEW_MIME_TYPE
+INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+  (18,
+  'UNDEFINED',
+  'UPGRADE_2_1_ADD_ALL_NEW_MIME_TYPE',
+  'UPGRADE_2_1',
+  null,
+  null,
+  18,
+  'NEW',
+  'MANDATORY',
+  now(),
+  now(),
+  null); 

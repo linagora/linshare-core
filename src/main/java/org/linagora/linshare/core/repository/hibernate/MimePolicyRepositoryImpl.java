@@ -35,12 +35,14 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -107,5 +109,13 @@ public class MimePolicyRepositoryImpl extends
 		};
 		getHibernateTemplate().execute(action);
 		return load(entity);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> findAllUuid() {
+		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass())
+				.setProjection(Projections.property("uuid"));
+		return listByCriteria(crit);
 	}
 }

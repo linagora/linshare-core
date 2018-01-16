@@ -111,7 +111,14 @@ public enum UpgradeTaskType {
 	 * Compute the current_value_for_subdomains for root_domain
 	 * 
 	 */
-	UPGRADE_2_1_COMPUTE_TOP_AND_ROOT_DOMAIN_QUOTA;
+	UPGRADE_2_1_COMPUTE_TOP_AND_ROOT_DOMAIN_QUOTA,
+
+	/*
+	 * When we upgraded apache tika we have new mimeType
+	 * We have to update our database
+	 *
+	 */
+	UPGRADE_2_1_ADD_ALL_NEW_MIME_TYPE;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {

@@ -134,6 +134,13 @@
 					<constructor-arg ref="abstractDomainRepository" />
 					<constructor-arg ref="domainQuotaRepository" />
 				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v2_1.AddAllNewMimeTypeUpgradeTaskImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="mimePolicyRepository" />
+					<constructor-arg ref="mimeTypeMagicNumberDao" />
+					<constructor-arg ref="mimeTypeRepository" />
+				</bean>
 			</list>
 		</constructor-arg>
 	</bean>

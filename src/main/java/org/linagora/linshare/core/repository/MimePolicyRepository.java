@@ -34,6 +34,8 @@
 
 package org.linagora.linshare.core.repository;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.entities.MimePolicy;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -46,5 +48,7 @@ public interface MimePolicyRepository extends AbstractRepository<MimePolicy> {
 	 */
 	MimePolicy enableAll(final MimePolicy entity) throws BusinessException;
 	MimePolicy disableAll(final MimePolicy entity) throws BusinessException;
+
+	List<String> findAllUuid();
 
 }
