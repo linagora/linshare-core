@@ -186,10 +186,28 @@ ALTER TABLE document ADD COLUMN compute_thumbnail bool DEFAULT 'false' NOT NULL;
 ALTER TABLE domain_abstract ADD COLUMN purge_step varchar(255) DEFAULT 'IN_USE' NOT NULL;
 ALTER TABLE domain_abstract ALTER COLUMN domain_policy_id DROP NOT NULL;
 
-ALTER TABLE quota ADD COLUMN domain_shared bool DEFAULT 'false';
+ALTER TABLE quota ADD COLUMN domain_shared bool;
 ALTER TABLE quota ADD COLUMN domain_shared_override bool;
-ALTER TABLE quota ADD COLUMN default_domain_shared bool DEFAULT 'false';
+ALTER TABLE quota ADD COLUMN default_domain_shared bool;
 ALTER TABLE quota ADD COLUMN default_domain_shared_override bool;
+
+
+-- for top domains and sub domains
+UPDATE quota SET domain_shared_override = false, domain_shared = false WHERE quota_type = 'DOMAIN_QUOTA';
+-- for root domain
+UPDATE quota SET domain_shared_override = null, domain_shared = true WHERE id = 1;
+
+-- for root domain
+UPDATE quota SET default_domain_shared_override = null, default_domain_shared = false WHERE id = 1;
+-- for top domains and sub domains
+UPDATE quota SET default_domain_shared_override = false, default_domain_shared = false WHERE domain_parent_id = 1 AND quota_type = 'DOMAIN_QUOTA';
+
+
+-- every accounts.
+UPDATE quota SET domain_shared_override = false, domain_shared = false WHERE quota_type = 'ACCOUNT_QUOTA';
+-- root account
+UPDATE quota SET domain_shared_override = null, domain_shared = true WHERE account_id = 1;
+
 
 ALTER TABLE upgrade_task ALTER COLUMN creation_date TYPE timestamp(6);
 ALTER TABLE upgrade_task ALTER COLUMN creation_date SET NOT NULL;
