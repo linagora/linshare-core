@@ -9,6 +9,7 @@ VALUES (
 	null, 5, 0, 0,
 	2, 11, null, 1099511627776,
 	1045824536576, 10737418240, null, 'ACCOUNT_QUOTA');
+UPDATE quota SET domain_shared_override = false, domain_shared = false WHERE id = 101;
 
 -- topdomain 2, ACCOUNT_QUOTA - John (12)
 INSERT INTO quota (
@@ -21,3 +22,4 @@ VALUES (
 	null, 5, 0, 0,
 	2, 12, null, 1099511627776,
 	1045824536576, 10737418240, null, 'ACCOUNT_QUOTA');
+UPDATE quota SET domain_shared_override = false, domain_shared = false WHERE id = 102;

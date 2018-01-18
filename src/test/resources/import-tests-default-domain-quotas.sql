@@ -2,6 +2,8 @@
 
 -- MyDomain QUOTA
 INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification_date, current_value, last_value, domain_id, domain_parent_id, quota, quota_override, quota_warning, default_quota, default_quota_override, quota_type, current_value_for_subdomains) VALUES ( 2, '164783e8-b9d1-11e5-87e9-bfc0aac925c2', NOW(), NOW(), null, 0, 0, 2, 1, 1000000000000, false, 1000000000000, 1000000000000, false, 'DOMAIN_QUOTA', 0);
+UPDATE quota SET domain_shared_override = false, domain_shared = false WHERE id = 2;
+UPDATE quota SET default_domain_shared_override = false, default_domain_shared = false WHERE id = 2;
 -- quota : 1 To
 -- quota_warning : 1000000000000 : 1 To
 -- default_quota : 1000000000000 : 1 To (1 To per sub domain)
@@ -35,6 +37,8 @@ INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification
 -- quota : 1 To
 -- quota_warning : 1000000000000 : 1 To
 -- default_quota : 1000000000000 : 1 To (1 To per sub domain)
+UPDATE quota SET domain_shared_override = false, domain_shared = false WHERE id = 5;
+UPDATE quota SET default_domain_shared_override = null, default_domain_shared = null WHERE id = 5;
 
 
 
@@ -65,7 +69,8 @@ INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification
 -- quota : 1 To
 -- quota_warning : 1000000000000 : 1 To
 -- default_quota : 1000000000000 : 1 To (1 To per sub domain)
-
+UPDATE quota SET domain_shared_override = false, domain_shared = false WHERE id = 8;
+UPDATE quota SET default_domain_shared_override = null, default_domain_shared = null WHERE id = 8;
 
 
 -- 'CONTAINER_QUOTA', 'USER' for GuestDomain
@@ -88,3 +93,4 @@ INSERT INTO quota(id, uuid, creation_date, modification_date, batch_modification
 -- default_account_quota : 400000000000 : 400 Go, also 400 Go for one workgroup
 -- max_file_size : 10000000000  : 10 Go
 -- account_quota : 400000000000 : 400 Go, also 400 Go for one workgroup
+

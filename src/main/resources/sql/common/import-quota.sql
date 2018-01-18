@@ -15,7 +15,7 @@ VALUES (1, '2a01ac66-a279-11e5-9086-5404a683a462', NOW(), NOW(), null,
 -- quota_warning : 10000000000000 : 10 To
 -- default_quota : 1000000000000 : 1 To (1 To per sub domain)
 UPDATE quota SET default_max_file_size_override = null, default_account_quota_override = null, default_quota_override = null, quota_override = null WHERE id = 1;
-UPDATE quota SET default_domain_shared = false, domain_shared = false WHERE id = 1;
+UPDATE quota SET default_domain_shared = false, domain_shared = true WHERE id = 1;
 UPDATE quota SET default_domain_shared_override = null, domain_shared_override = null WHERE id = 1;
 
 -- 'CONTAINER_QUOTA', 'USER' for root domain
@@ -86,7 +86,6 @@ INSERT INTO quota(
     domain_id, account_id, domain_parent_id,
     quota, quota_override,
     quota_warning,
-    default_quota, default_quota_override,
     max_file_size, max_file_size_override,
     shared, quota_type)
 VALUES (
@@ -96,8 +95,7 @@ VALUES (
     100000000000, true,
     100000000000,
     100000000000, true,
-    100000000000, true,
     false, 'ACCOUNT_QUOTA');
-UPDATE quota SET default_domain_shared = null, domain_shared = false WHERE id = 13;
+UPDATE quota SET default_domain_shared = null, domain_shared = true WHERE id = 13;
 UPDATE quota SET default_domain_shared_override = null, domain_shared_override = null WHERE id = 13;
 
