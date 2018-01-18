@@ -211,12 +211,29 @@ ALTER TABLE thumbnail ADD CONSTRAINT FKthumbnail35163 FOREIGN KEY (document_id) 
 UPDATE document SET compute_thumbnail = true ;
 -- end update document
 
-UPDATE policy SET status = false, default_status = false WHERE id = 279;
-UPDATE policy SET policy = 2 WHERE id = 282;
-UPDATE policy SET status = false, default_status = false, policy = 2, system = true WHERE id = 283;
-DELETE FROM functionality_boolean WHERE functionality_id = 59;
+-- New functionnalities
+-- Functionality : ANONYMOUS_URL__FORCE_ANONYMOUS_SHARING
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (279, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (280, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (281, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param)
+	VALUES(58, false, 'ANONYMOUS_URL__FORCE_ANONYMOUS_SHARING', 279, 280, 281, 1, 'ANONYMOUS_URL', true);
+INSERT INTO functionality_boolean(functionality_id, boolean_value)
+	VALUES (58, false);
 
--- Begin Upgrade Tsk 2.1.0
+-- Functionality : ANONYMOUS_URL__HIDE_RECEIVED_SHARE_MENU
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (282, false, false, 2, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (283, false, false, 2, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param)
+	VALUES(59, false, 'ANONYMOUS_URL__HIDE_RECEIVED_SHARE_MENU', 282, 283, 1, 'ANONYMOUS_URL', true);
+
+
+-- Begin Upgrade Task 2.1.0
   -- TASK: UPGRADE_2_1_DOCUMENT_GARBAGE_COLLECTOR
 INSERT INTO upgrade_task
   (id,
