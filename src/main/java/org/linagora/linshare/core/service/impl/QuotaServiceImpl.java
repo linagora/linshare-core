@@ -163,13 +163,15 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 			throw new BusinessException(BusinessErrorCode.QUOTA_FILE_FORBIDDEN_FILE_SIZE,
 					"The file size is greater than the max file size.");
 		}
-		if (!aq.getShared()) {
-			// No need to check account used space because it is shared for all account form one container
-			Long todayConsumption = operationHistoryBusinessService.sumOperationValue(account, null, new Date(), null, null);
-			Long totalConsumption = aq.getCurrentValue() + todayConsumption + fileSize;
-			if (totalConsumption > aq.getQuota()) {
-				throw new BusinessException(BusinessErrorCode.QUOTA_ACCOUNT_FORBIDDEN_NO_MORE_SPACE_AVALAIBLE,
-						"The account quota has been reached.");
+		if (!aq.getDomainShared()) {
+			if (!aq.getShared()) {
+				// No need to check account used space because it is shared for all account form one container
+				Long todayConsumption = operationHistoryBusinessService.sumOperationValue(account, null, new Date(), null, null);
+				Long totalConsumption = aq.getCurrentValue() + todayConsumption + fileSize;
+				if (totalConsumption > aq.getQuota()) {
+					throw new BusinessException(BusinessErrorCode.QUOTA_ACCOUNT_FORBIDDEN_NO_MORE_SPACE_AVALAIBLE,
+							"The account quota has been reached.");
+				}
 			}
 		}
 	}
@@ -200,12 +202,14 @@ public class QuotaServiceImpl extends GenericServiceImpl<Account, Quota> impleme
 			throw new BusinessException(BusinessErrorCode.CONTAINER_QUOTA_NOT_FOUND,
 					"The container quota is not configured yet.");
 		}
-		Long todayConsumption = operationHistoryBusinessService.sumOperationValue(null, domain, new Date(), null,
-				containerQuotaType);
-		Long totalConsumption = cq.getCurrentValue() + todayConsumption + fileSize;
-		if (totalConsumption > cq.getQuota()) {
-			throw new BusinessException(BusinessErrorCode.QUOTA_CONTAINER_FORBIDDEN_NO_MORE_SPACE_AVALAIBLE,
-					"The container quota has been reached.");
+		if (!cq.getDomainQuota().getDomainShared()) {
+			Long todayConsumption = operationHistoryBusinessService.sumOperationValue(null, domain, new Date(), null,
+					containerQuotaType);
+			Long totalConsumption = cq.getCurrentValue() + todayConsumption + fileSize;
+			if (totalConsumption > cq.getQuota()) {
+				throw new BusinessException(BusinessErrorCode.QUOTA_CONTAINER_FORBIDDEN_NO_MORE_SPACE_AVALAIBLE,
+						"The container quota has been reached.");
+			}
 		}
 	}
 
