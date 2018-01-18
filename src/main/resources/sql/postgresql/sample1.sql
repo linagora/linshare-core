@@ -376,15 +376,15 @@ VALUES (
 -- account_quota : 400000000000 : 400 Go, also 400 Go for one workgroup
 
 
--- Bart ACCOUNT QUOTA
+-- Amy Wolsh (id=50) ACCOUNT QUOTA
 INSERT INTO quota(
     id, uuid, creation_date, modification_date, batch_modification_date,
     quota_container_id, current_value, last_value,
     domain_id, account_id, domain_parent_id,
     quota, quota_override,
     quota_warning,
-    default_quota, default_quota_override,
     max_file_size, max_file_size_override,
+    domain_shared, domain_shared_override,
     shared, quota_type)
 VALUES (
     43, '1f468522-b9d4-11e5-916d-a713a67dd226', NOW(), NOW(), null,
@@ -392,8 +392,8 @@ VALUES (
     3, 50, 2,
     100000000000, false,
     100000000000,
-    100000000000, false,
     10000000000, false,
+    false, false,
     false, 'ACCOUNT_QUOTA');
 
 -- enable guests
