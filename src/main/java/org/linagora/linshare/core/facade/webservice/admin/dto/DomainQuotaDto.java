@@ -138,10 +138,10 @@ public class DomainQuotaDto extends QuotaDto {
 		quota.setDefaultQuota(getDefaultQuota());
 		quota.setDefaultQuotaOverride(getDefaultQuotaOverride());
 		quota.setMaintenance(getMaintenance());
-		quota.setDomainShared(quota.getDomainShared());
-		quota.setDomainSharedOverride(quota.getDomainSharedOverride());
-		quota.setDefaultDomainShared(quota.getDefaultDomainShared());
-		quota.setDefaultDomainSharedOverride(quota.getDefaultDomainSharedOverride());
+		quota.setDomainShared(getDomainShared());
+		quota.setDomainSharedOverride(getDomainSharedOverride());
+		quota.setDefaultDomainShared(getDefaultDomainShared());
+		quota.setDefaultDomainSharedOverride(getDefaultDomainSharedOverride());
 		return quota;
 	}
 
