@@ -35,29 +35,44 @@ package org.linagora.linshare.core.business.service.impl;
 
 public abstract class GenericQuotaBusinessServiceImpl {
 
-	protected boolean needCascade(Long fromValue, Long toValue, Boolean fromOverride, Boolean toOverride) {
-		boolean doIt = false;
-		if (fromOverride == null) {
-			// root
-			return true;
-		}
-		if (toOverride != null) {
-			if (!toOverride.equals(fromOverride)) {
-				if (toOverride) {
-					// from false to true => need to cascade
-					doIt = true;
+	private Util<Long> longUtil = new Util<Long>();
+
+	private Util<Boolean> booleanUtil = new Util<Boolean>();
+
+	class Util<T> {
+		protected boolean needCascade(T fromValue, T toValue, Boolean fromOverride, Boolean toOverride) {
+			boolean doIt = false;
+			if (fromOverride == null) {
+				// root
+				return true;
+			}
+			if (toOverride != null) {
+				if (!toOverride.equals(fromOverride)) {
+					if (toOverride) {
+						// from false to true => need to cascade
+						doIt = true;
+					} else {
+						// from true to false => need to cascade
+						// Do we need to restore 'fromValue' with parent default
+						// value ?
+						doIt = true;
+					}
 				} else {
-					// from true to false => need to cascade
-					// Do we need to restore 'fromValue' with parent default value ?
-					doIt = true;
-				}
-			} else {
-				if (!toValue.equals(fromValue)) {
-					doIt = true;
+					if (!toValue.equals(fromValue)) {
+						doIt = true;
+					}
 				}
 			}
+			return doIt;
 		}
-		return doIt;
+	}
+
+	protected boolean needCascade(Long fromValue, Long toValue, Boolean fromOverride, Boolean toOverride) {
+		return longUtil.needCascade(fromValue, toValue, fromOverride, toOverride);
+	}
+
+	protected boolean needCascade(Boolean fromValue, Boolean toValue, Boolean fromOverride, Boolean toOverride) {
+		return booleanUtil.needCascade(fromValue, toValue, fromOverride, toOverride);
 	}
 
 	protected boolean needToRestore(Boolean fromOverride, Boolean toOverride) {
@@ -70,7 +85,8 @@ public abstract class GenericQuotaBusinessServiceImpl {
 			if (!toOverride.equals(fromOverride)) {
 				if (!toOverride) {
 					// from true to false => need to cascade
-					// Do we need to restore 'fromValue' with parent default value ?
+					// Do we need to restore 'fromValue' with parent default
+					// value ?
 					doIt = true;
 				}
 			}

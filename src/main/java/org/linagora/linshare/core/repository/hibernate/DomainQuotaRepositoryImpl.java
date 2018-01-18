@@ -173,4 +173,20 @@ public class DomainQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Domain
 		criteria.add(Restrictions.eq("parentDomain", parentDomain));
 		return findByCriteria(criteria);
 	}
+
+	@Override
+	public Long cascadeDomainShared(DomainQuota quota, Boolean domainShared) {
+		HibernateCallback<Long> action = new HibernateCallback<Long>() {
+			public Long doInHibernate(final Session session)
+					throws HibernateException {
+				final Query query = session.createQuery("UPDATE AccountQuota SET domainShared = :domainShared WHERE domain = :domain AND domainSharedOverride = false");
+				query.setParameter("domainShared", domainShared);
+				query.setParameter("domain", quota.getDomain());
+				return (long) query.executeUpdate();
+			}
+		};
+		Long updatedCounter = getHibernateTemplate().execute(action);
+		logger.debug(" {} domainShared of AccountQuota have been updated.", updatedCounter);
+		return updatedCounter;
+	}
 }

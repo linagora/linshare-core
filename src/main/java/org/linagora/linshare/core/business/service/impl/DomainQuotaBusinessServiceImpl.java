@@ -132,17 +132,36 @@ public class DomainQuotaBusinessServiceImpl extends GenericQuotaBusinessServiceI
 			entity.setDefaultQuotaOverride(dq.getDefaultQuotaOverride());
 		}
 
-		entity.setDomainShared(dq.getDomainShared());
+		// shared domain mode.
+		cascadeDomainShared(entity, dq);
+
+		// TODO manage cascade updates to subdomains and accounts in it.
 		entity.setDefaultDomainShared(dq.getDefaultDomainShared());
 		if (entity.getDomain().isSubDomain() || entity.getDomain().isRootDomain()) {
-			entity.setDomainSharedOverride(null);
 			entity.setDefaultDomainSharedOverride(null);
 		} else {
-			entity.setDomainSharedOverride(dq.getDomainSharedOverride());
 			entity.setDefaultDomainSharedOverride(dq.getDefaultDomainSharedOverride());
 		}
-		// TODO manage cascade updates to subdomains and accounts in it.
 		return repository.update(entity);
+	}
+
+	private void cascadeDomainShared(DomainQuota entity, DomainQuota dto) {
+		Boolean toDomainShared = dto.getDomainShared();
+		Boolean toDomainSharedOverride = dto.getDomainSharedOverride();
+		if (needToRestore(entity.getDomainSharedOverride(), toDomainSharedOverride)) {
+			DomainQuota ancestor = repository.find(entity.getParentDomain());
+			toDomainShared = ancestor.getDomainShared();
+		}
+		if (needCascade(entity.getDomainShared(), toDomainShared,
+				entity.getDomainSharedOverride(), toDomainSharedOverride)) {
+			repository.cascadeDomainShared(entity, toDomainShared);
+		}
+		entity.setDomainShared(toDomainShared);
+		// Just to be sure.
+		if (entity.getDomain().isSubDomain() || entity.getDomain().isRootDomain()) {
+			toDomainSharedOverride = null;
+		}
+		entity.setDomainSharedOverride(toDomainSharedOverride);
 	}
 
 	@Override

@@ -50,4 +50,6 @@ public interface DomainQuotaRepository extends GenericQuotaRepository<DomainQuot
 
 	Long cascadeDefaultQuota(AbstractDomain domain, Long quota);
 
+	Long cascadeDomainShared(DomainQuota quota, Boolean domainShared);
+
 }
