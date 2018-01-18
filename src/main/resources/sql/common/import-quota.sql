@@ -98,6 +98,6 @@ VALUES (
     100000000000, true,
     100000000000, true,
     false, 'ACCOUNT_QUOTA');
-UPDATE quota SET default_domain_shared = false, domain_shared = false WHERE id = 13;
+UPDATE quota SET default_domain_shared = null, domain_shared = false WHERE id = 13;
 UPDATE quota SET default_domain_shared_override = null, domain_shared_override = null WHERE id = 13;
 
