@@ -63,7 +63,7 @@ public interface ContactListRestService {
 
 	ContactListContactDto createContact(String uuid, ContactListContactDto dto) throws BusinessException;
 
-	void updateContact(String uuid, ContactListContactDto dto) throws BusinessException;
+	ContactListContactDto updateContact(String uuid, String contactUuuid, ContactListContactDto dto) throws BusinessException;
 
 	void deleteContact(String uuid, ContactListContactDto dto) throws BusinessException;
 

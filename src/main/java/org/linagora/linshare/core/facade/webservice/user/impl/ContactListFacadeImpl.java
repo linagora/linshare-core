@@ -166,13 +166,17 @@ public class ContactListFacadeImpl extends GenericFacadeImpl implements ContactL
 	}
 
 	@Override
-	public void updateContact(String actorUuid, ContactListContactDto dto) throws BusinessException {
+	public ContactListContactDto updateContact(String actorUuid, ContactListContactDto dto, String contactUuid) throws BusinessException {
 		Validate.notNull(dto, "List uuid must be set.");
+		if (contactUuid != null) {
+			dto.setUuid(contactUuid);
+		}
 		Validate.notEmpty(dto.getUuid(), "List uuid must be set.");
 		User authUser = checkAuthentication();
 		ContactListContact contact = dto.toObject();
 		User actor = getActor(authUser, actorUuid);
-		contactListService.updateContact(authUser, actor, contact);
+		ContactListContact updateContact = contactListService.updateContact(authUser, actor, contact);
+		return new ContactListContactDto(updateContact);
 	}
 
 	@Override

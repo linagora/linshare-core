@@ -60,7 +60,7 @@ public interface ContactListFacade {
 	ContactListContactDto addContact(String actorUuid, String listUuid, ContactListContactDto dto)
 			throws BusinessException;
 
-	void updateContact(String actorUuid, ContactListContactDto dto) throws BusinessException;
+	ContactListContactDto updateContact(String actorUuid, ContactListContactDto dto, String contactUuid) throws BusinessException;
 
 	void deleteContact(String actorUuid, String uuid) throws BusinessException;
 

@@ -216,17 +216,18 @@ public class ContactListRestServiceImpl implements ContactListRestService {
 		return contactListFacade.addContact(null, uuid, dto);
 	}
 
-	@Path("/{uuid}/contacts")
+	@Path("/{uuid}/contacts/{contact_uuid : .*}")
 	@PUT
 	@ApiOperation(value = "Delete a contact from a contact list.")
 	@ApiResponses({
 			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") })
 	@Override
-	public void updateContact(
-			@ApiParam(value = "Mailing list contact uuid.", required = true) @PathParam("uuid") String uuid,
+	public ContactListContactDto updateContact(
+			@ApiParam(value = "Mailing list uuid.", required = true) @PathParam("uuid") String uuid,
+			@ApiParam(value = "Mailing list contact uuid.", required = true) @PathParam("contact_uuid") String contactUuid,
 			@ApiParam(value = "Contact to create.", required = true) ContactListContactDto dto)
 					throws BusinessException {
-		contactListFacade.updateContact(null, dto);
+		return contactListFacade.updateContact(null, dto, contactUuid);
 	}
 
 	@Path("/{uuid}/contacts")
