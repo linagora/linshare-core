@@ -204,7 +204,7 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	}
 
 	@Override
-	public void updateContact(ContactListContact contactToUpdate)
+	public ContactListContact updateContact(ContactListContact contactToUpdate)
 			throws BusinessException {
 		/*
 		 * FIXME : update can leads to duplicate mails which in turn will break
@@ -214,7 +214,7 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 		contact.setMail(contactToUpdate.getMail());
 		contact.setLastName(contactToUpdate.getLastName());
 		contact.setFirstName(contactToUpdate.getFirstName());
-		contactRepository.update(contact);
+		return contactRepository.update(contact);
 	}
 
 	@Override

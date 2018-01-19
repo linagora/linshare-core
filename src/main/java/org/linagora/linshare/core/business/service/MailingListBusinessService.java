@@ -138,7 +138,7 @@ public interface MailingListBusinessService {
 
 	ContactListContact findContact(String contactUuid) throws BusinessException;
 
-	void updateContact(ContactListContact contactToUpdate) throws BusinessException;
+	ContactListContact updateContact(ContactListContact contactToUpdate) throws BusinessException;
 
 	ContactListContact findContactWithMail(String listUuid, String mail) throws BusinessException;
 

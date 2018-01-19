@@ -60,7 +60,7 @@ public interface MailingListRestService {
 
 	void createContact(String uuid, MailingListContactDto dto) throws BusinessException;
 
-	void updateContact(String uuid, MailingListContactDto dto) throws BusinessException;
+	MailingListContactDto updateContact(String uuid, MailingListContactDto dto) throws BusinessException;
 
 	void deleteContact(String uuid, MailingListContactDto dto) throws BusinessException;
 

@@ -48,6 +48,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.entities.ContactListContact;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.MailingListContactDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.MailingListDto;
@@ -198,11 +199,11 @@ public class MailingListRestServiceImpl implements MailingListRestService {
 	@ApiResponses({
 			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") })
 	@Override
-	public void updateContact(
+	public MailingListContactDto updateContact(
 			@ApiParam(value = "Mailing list contact uuid.", required = true) @PathParam("uuid") String uuid,
 			@ApiParam(value = "Contact to create.", required = true) MailingListContactDto dto)
 					throws BusinessException {
-		mailingListFacade.updateContact(null, dto);
+		return mailingListFacade.updateContact(null, dto);
 	}
 
 	@Path("/{uuid}/contacts")

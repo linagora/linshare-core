@@ -57,7 +57,7 @@ public interface MailingListFacade {
 	MailingListContactDto addContact(String actorUuid, String listUuid, MailingListContactDto dto)
 			throws BusinessException;
 
-	void updateContact(String actorUuid, MailingListContactDto dto) throws BusinessException;
+	MailingListContactDto updateContact(String actorUuid, MailingListContactDto dto) throws BusinessException;
 
 	void deleteContact(String actorUuid, String uuid) throws BusinessException;
 

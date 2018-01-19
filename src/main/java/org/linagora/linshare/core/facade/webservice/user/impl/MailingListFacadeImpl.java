@@ -136,13 +136,14 @@ public class MailingListFacadeImpl extends GenericFacadeImpl implements MailingL
 	}
 
 	@Override
-	public void updateContact(String actorUuid, MailingListContactDto dto) throws BusinessException {
+	public MailingListContactDto updateContact(String actorUuid, MailingListContactDto dto) throws BusinessException {
 		Validate.notNull(dto, "List uuid must be set.");
 		Validate.notEmpty(dto.getUuid(), "List uuid must be set.");
 		User authUser = checkAuthentication();
 		ContactListContact contact = dto.toObject();
 		User actor = getActor(authUser, actorUuid);
-		contactListService.updateContact(authUser, actor, contact);
+		ContactListContact updateContact = contactListService.updateContact(authUser, actor, contact);
+		return new MailingListContactDto(updateContact);
 	}
 
 	@Override

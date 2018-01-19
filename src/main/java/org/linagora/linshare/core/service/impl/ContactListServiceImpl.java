@@ -374,7 +374,7 @@ public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactL
 	}
 
 	@Override
-	public void updateContact(Account actor, Account owner, ContactListContact contact) throws BusinessException {
+	public ContactListContact updateContact(Account actor, Account owner, ContactListContact contact) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notNull(contact, "Contact must be set.");
 		Validate.notEmpty(contact.getUuid(), "Contact uuid must be set.");
@@ -385,10 +385,11 @@ public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactL
 				new AccountMto(list.getOwner()), LogAction.UPDATE, AuditLogEntryType.CONTACTS_LISTS_CONTACTS, list,
 				contactToUpdate);
 		checkUpdatePermission(actor, owner, ContactList.class, BusinessErrorCode.FORBIDDEN, list);
-		contactListBusinessService.updateContact(contact);
+		ContactListContact updateContact = contactListBusinessService.updateContact(contact);
 		contactToUpdate = contactListBusinessService.findContact(contactToUpdate.getUuid());
 		log.setResourceUpdated(new MailingListContactMto(contactToUpdate));
 		logEntryService.insert(log);
+		return updateContact;
 	}
 
 	@Override

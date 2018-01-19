@@ -108,7 +108,7 @@ public interface ContactListService {
 
 	ContactListContact addContact(Account actor, Account owner, String listUuid, ContactListContact contact) throws BusinessException;
 
-	void updateContact(Account actor, Account owner, ContactListContact contact) throws BusinessException;
+	ContactListContact updateContact(Account actor, Account owner, ContactListContact contact) throws BusinessException;
 
 	void deleteContact(Account actor, Account owner, String contactUuid) throws BusinessException;
 
