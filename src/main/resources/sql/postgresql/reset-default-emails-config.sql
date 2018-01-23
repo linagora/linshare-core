@@ -130,7 +130,7 @@ INSERT INTO mail_layout (id, domain_abstract_id, description, visible, layout, c
                                        style="text-decoration:none;color:#b2b2b2;"><strong>LinShare</strong>™</a>,
                                     powered by <a href="http://www.linshare.org/"
                                                   style="text-decoration:none;color:#b2b2b2;"><strong>Linagora</strong></a>
-                                    ©&nbsp;2009–2017. Contribute to
+                                    ©&nbsp;2009–2018. Contribute to
                                     Linshare R&amp;D by subscribing to an Enterprise offer.
                                   </p>
                                 </div>
@@ -210,7 +210,7 @@ border-top: 1px solid #e1e1e1;">
 <div style="margin-bottom:17px;" data-th-fragment="infoDateArea(titleInfo,contentInfo)">
      <span style="font-weight:bold;" data-th-text="${titleInfo}" >Shared the </span>
     <br/>
- <span  th:with="df=#{date.format}" data-th-text="${#dates.format(contentInfo,df)}">7th of November, 2017</span>
+ <span  th:with="df=#{date.format}" data-th-text="${#dates.format(contentInfo,df)}">7th of November, 2018</span>
 </div>
 <!--/* Common lower info title style */-->
 <div style="margin-bottom:17px;" data-th-fragment="infoStandardArea(titleInfo,contentInfo)">
@@ -645,7 +645,7 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
                  <span data-th-utext="#{mainMsg(${requestOwner.firstName},${requestOwner.lastName})}">
                      Peter Wilson invited  you to upload  some files in the Upload Request depot labeled : subject.
                 </span>
- <span th:with="df=#{customDate}" data-th-text="${#dates.format(request.activationDate,df)}">7th of November, 2017</span>
+ <span th:with="df=#{customDate}" data-th-text="${#dates.format(request.activationDate,df)}">7th of November, 2018</span>
         </p>
         <!--/* End of Main email message content*/-->
       </div><!--/* End of section-content*/-->
@@ -1619,11 +1619,11 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
             </span>
           <span data-th-if="(${recipientsCount} >  1)" th:with="df=#{date.format}"
                 data-th-utext="#{recipientCountMsgPlural(${#dates.format(expirationDate,df)},${recipientsCount})}">
-             to 3 recipients set to expire for the 7th December 2017
+             to 3 recipients set to expire for the 7th December 2018
             </span>
           <span data-th-if="(${recipientsCount} ==  1)" th:with="df=#{date.format}"
                 data-th-utext="#{recipientCountMsgSingular(${#dates.format(expirationDate,df)},${recipientsCount})}">
-            to 1 recipient set to expire for the 7th December 2017
+            to 1 recipient set to expire for the 7th December 2018
             </span>
         </p> <!--/* End of Main email  message content*/-->
       </div><!--/* End of section-content*/-->
