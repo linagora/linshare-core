@@ -68,6 +68,7 @@ import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.delegationv2.DocumentRestService;
 import org.linagora.linshare.webservice.userv1.task.DocumentUploadAsyncTask;
 import org.linagora.linshare.webservice.userv1.task.context.DocumentTaskContext;
+import org.linagora.linshare.webservice.utils.DocumentUtils;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.wordnik.swagger.annotations.Api;
@@ -140,10 +141,10 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 		if (async == null) {
 			async = false;
 		}
-		File tempFile = getTempFile(file, "rest-delegation-document-entries", fileName);
+		File tempFile = DocumentUtils.getTempFile(file, "rest-delegation-document-entries", fileName);
 		long currSize = tempFile.length();
 		if (sizeValidation) {
-			checkSizeValidation(fileSize, currSize);
+			DocumentUtils.checkSizeValidation(fileSize, currSize);
 		}
 		if (async) {
 			logger.debug("Async mode is used");
@@ -161,7 +162,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 				return new DocumentDto(asyncTask, documentTaskContext);
 			} catch (Exception e) {
 				logAsyncFailure(actorUuid, asyncTask, e);
-				deleteTempFile(tempFile);
+				DocumentUtils.deleteTempFile(tempFile);
 				throw e;
 			}
 		} else {
@@ -175,7 +176,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 				}
 				return documentFacade.create(actorUuid, tempFile, description, fileName);
 			} finally {
-				deleteTempFile(tempFile);
+				DocumentUtils.deleteTempFile(tempFile);
 			}
 		}
 	}

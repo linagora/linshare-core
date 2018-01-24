@@ -78,6 +78,7 @@ import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.userv1.ThreadEntryRestService;
 import org.linagora.linshare.webservice.userv1.task.WorkGroupEntryUploadAsyncTask;
 import org.linagora.linshare.webservice.userv1.task.context.WorkGroupEntryTaskContext;
+import org.linagora.linshare.webservice.utils.DocumentUtils;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.google.common.collect.Lists;
@@ -154,7 +155,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 		if (async == null) {
 			async = false;
 		}
-		File tempFile = getTempFile(file, "rest-userv2-thread-entries", fileName);
+		File tempFile = DocumentUtils.getTempFile(file, "rest-userv2-thread-entries", fileName);
 		long currSize = tempFile.length();
 		if (sizeValidation) {
 			checkSizeValidation(contentLength, fileSize, currSize);
@@ -172,7 +173,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 				return new WorkGroupEntryDto(asyncTask, workGroupEntryTaskContext);
 			} catch (Exception e) {
 				logAsyncFailure(asyncTask, e);
-				deleteTempFile(tempFile);
+				DocumentUtils.deleteTempFile(tempFile);
 				throw e;
 			}
 		} else {
@@ -187,7 +188,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 				dto.setWorkGroupFolder(null);
 				return dto;
 			} finally {
-				deleteTempFile(tempFile);
+				DocumentUtils.deleteTempFile(tempFile);
 			}
 		}
 	}

@@ -67,6 +67,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserSearchDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.UserRestService;
+import org.linagora.linshare.webservice.utils.DocumentUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -292,7 +293,7 @@ public class UserRestServiceImpl extends WebserviceBase implements
 			throw giveRestException(HttpStatus.SC_BAD_REQUEST,
 					"bad file extension");
 		}
-		File tempFile = getTempFile(file, "emails-migration", fileName);
+		File tempFile = DocumentUtils.getTempFile(file, "emails-migration", fileName);
 		BufferedReader reader = null;
 		String csvLine = "";
 		String[] emails = null;
@@ -346,7 +347,7 @@ public class UserRestServiceImpl extends WebserviceBase implements
 					BusinessErrorCode.FILE_INVALID_INPUT_TEMP_FILE,
 					e.getMessage());
 		} finally {
-			deleteTempFile(tempFile);
+			DocumentUtils.deleteTempFile(tempFile);
 		}
 		return state;
 	}

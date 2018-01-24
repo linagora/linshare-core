@@ -46,6 +46,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.CopyDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.DocumentURLDto;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface DocumentRestService {
@@ -80,4 +81,6 @@ public interface DocumentRestService {
 
 	Set<AuditLogEntryUser> findAll(String uuid, List<String> actions, List<String> types, String beginDate,
 			String endDate);
+
+	DocumentDto createFromURL(DocumentURLDto documentURLDto) throws BusinessException;
 }

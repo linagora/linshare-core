@@ -33,9 +33,7 @@
  */
 package org.linagora.linshare.webservice;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Properties;
@@ -44,7 +42,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.Validate;
-import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
@@ -106,47 +103,6 @@ public class WebserviceBase {
 			return prop.getProperty("Implementation-Version");
 		} else {
 			return "trunk";
-		}
-	}
-
-	protected File getTempFile(InputStream theFile, String discriminator, String fileName) {
-		if (discriminator == null)  {
-			discriminator = "";
-		}
-		// Legacy code, we need to extract extension for the dirty unstable LinThumbnail Module.
-		// I hope some day we get rid of it !
-		String extension = null;
-		if (fileName != null) {
-			int splitIdx = fileName.lastIndexOf('.');
-			if (splitIdx > -1) {
-				extension = fileName.substring(splitIdx, fileName.length());
-			}
-		}
-		File tempFile = null;
-		try {
-			tempFile = File.createTempFile("linshare-" + discriminator + "-", extension);
-			tempFile.deleteOnExit();
-			IOUtils.transferTo(theFile, tempFile);
-		} catch (IOException e) {
-			logger.error(e.getMessage(), e);
-			throw new BusinessException(
-					BusinessErrorCode.FILE_INVALID_INPUT_TEMP_FILE,
-					"Can not generate temp file from input stream.");
-		}
-		return tempFile;
-	}
-
-	protected void deleteTempFile(File tempFile) {
-		if (tempFile != null) {
-			try {
-				if (tempFile.exists()) {
-					tempFile.delete();
-				}
-			} catch (Exception e) {
-				logger.warn("Can not delete temp file : "
-						+ tempFile.getAbsolutePath());
-				logger.debug(e.getMessage(), e);
-			}
 		}
 	}
 
@@ -217,17 +173,6 @@ public class WebserviceBase {
 				logger.error(msg);
 				throw new BusinessException(BusinessErrorCode.WEBSERVICE_BAD_REQUEST, msg);
 			}
-		}
-	}
-
-	protected void checkSizeValidation(Long fileSize, long currSize) {
-		Validate.notNull(fileSize, "filesize must be set");
-		if (!fileSize.equals(currSize)) {
-			String msg = String.format(
-					"Invalid file size (check multipart parameter named 'filesize'), size found %1$d, expected %2$d.(diff=%3$d)",
-					currSize, fileSize, Math.abs(fileSize - currSize));
-			logger.error(msg);
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_BAD_REQUEST, msg);
 		}
 	}
 }

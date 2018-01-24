@@ -60,6 +60,7 @@ import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.core.utils.StringPredicates;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.legacy.PluginCompatibilityRestService;
+import org.linagora.linshare.webservice.utils.DocumentUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,11 +119,11 @@ public class PluginCompatibilityRestServiceImpl extends WebserviceBase implement
 			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check parameter file)");
 		}
 		String fileName = getFileName(givenFileName, body);
-		File tempFile = getTempFile(theFile, "rest-plugin", fileName);
+		File tempFile = DocumentUtils.getTempFile(theFile, "rest-plugin", fileName);
 		try {
 			return webServiceDocumentFacade.create(tempFile, fileName, comment, null);
 		} finally {
-			deleteTempFile(tempFile);
+			DocumentUtils.deleteTempFile(tempFile);
 		}
 	}
 

@@ -70,6 +70,7 @@ import org.linagora.linshare.webservice.delegation.ThreadEntryRestService;
 import org.linagora.linshare.webservice.userv1.task.WorkGroupEntryCopyAsyncTask;
 import org.linagora.linshare.webservice.userv1.task.WorkGroupEntryUploadAsyncTask;
 import org.linagora.linshare.webservice.userv1.task.context.WorkGroupEntryTaskContext;
+import org.linagora.linshare.webservice.utils.DocumentUtils;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.wordnik.swagger.annotations.Api;
@@ -141,7 +142,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 		if (async == null) {
 			async = false;
 		}
-		File tempFile = getTempFile(file, "rest-delegation-thread-entries", fileName);
+		File tempFile = DocumentUtils.getTempFile(file, "rest-delegation-thread-entries", fileName);
 		long currSize = tempFile.length();
 		if (sizeValidation) {
 			checkSizeValidation(contentLength, fileSize, currSize);
@@ -159,7 +160,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 				return new WorkGroupEntryDto(asyncTask, workGroupEntryTaskContext);
 			} catch (Exception e) {
 				logAsyncFailure(actorUuid, asyncTask, e);
-				deleteTempFile(tempFile);
+				DocumentUtils.deleteTempFile(tempFile);
 				throw e;
 			}
 		} else {
@@ -169,7 +170,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 				logger.debug("Async mode is not used");
 				return workGroupEntryFacade.create(actorUuid, threadUuid, tempFile, fileName);
 			} finally {
-				deleteTempFile(tempFile);
+				DocumentUtils.deleteTempFile(tempFile);
 			}
 		}
 	}

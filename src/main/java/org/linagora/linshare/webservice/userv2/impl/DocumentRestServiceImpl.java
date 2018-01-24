@@ -70,6 +70,7 @@ import org.linagora.linshare.core.facade.webservice.user.AsyncTaskFacade;
 import org.linagora.linshare.core.facade.webservice.user.DocumentAsyncFacade;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.DocumentURLDto;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.annotations.NoCache;
@@ -77,6 +78,7 @@ import org.linagora.linshare.webservice.userv1.task.DocumentUploadAsyncTask;
 import org.linagora.linshare.webservice.userv1.task.context.DocumentTaskContext;
 import org.linagora.linshare.webservice.userv2.DocumentRestService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
+import org.linagora.linshare.webservice.utils.DocumentUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -145,10 +147,10 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check multipart parameter named 'file')");
 		}
 		String fileName = getFileName(givenFileName, body);
-		File tempFile = getTempFile(file, "rest-userv2-document-entries", fileName);
+		File tempFile = DocumentUtils.getTempFile(file, "rest-userv2-document-entries", fileName);
 		long currSize = tempFile.length();
 		if (sizeValidation) {
-			checkSizeValidation(fileSize, currSize);
+			DocumentUtils.checkSizeValidation(fileSize, currSize);
 		}
 		if (async) {
 			logger.debug("Async mode is used");
@@ -166,7 +168,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 				return new DocumentDto(asyncTask, documentTaskContext);
 			} catch (Exception e) {
 				logAsyncFailure(asyncTask, e);
-				deleteTempFile(tempFile);
+				DocumentUtils.deleteTempFile(tempFile);
 				throw e;
 			}
 		} else {
@@ -180,7 +182,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 				}
 				return documentFacade.create(tempFile, fileName, description, metaData);
 			} finally {
-				deleteTempFile(tempFile);
+				DocumentUtils.deleteTempFile(tempFile);
 			}
 		}
 	}
@@ -344,6 +346,31 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 			@ApiParam(value = "Filter by type of resource's types.", required = false) @QueryParam("types") List<String> types,
 			@QueryParam("beginDate") String beginDate, @QueryParam("endDate") String endDate) {
 		return documentFacade.findAll(null, uuid, actions, types, beginDate, endDate);
+	}
+
+	@Path("/url")
+	@POST
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Create a document from an URL.", response = DocumentDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 404, message = "Document not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public DocumentDto createFromURL(
+			@ApiParam(value = "The document URL object.", required = true) DocumentURLDto documentURLDto)
+			throws BusinessException {
+		Validate.notNull(documentURLDto, "DocumentURLDto must be set.");
+		String fileURL = documentURLDto.getURL();
+		Validate.notEmpty(fileURL, "Missing url");
+		String fileName = DocumentUtils.getFileNameFromUrl(fileURL, documentURLDto.getFileName());
+		File tempFile = DocumentUtils.createFileFromURL(documentURLDto, sizeValidation);
+		try {
+			return documentFacade.create(tempFile, fileName, "", "");
+		} finally {
+			DocumentUtils.deleteTempFile(tempFile);
+		}
 	}
 
 	protected void logAsyncFailure(AsyncTaskDto asyncTask, Exception e) {
