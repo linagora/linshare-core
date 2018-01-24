@@ -11,7 +11,6 @@
 		<property name="name" column="name" type="string" length="255" not-null="true" lazy="false" />
 		<property name="mode" column="mode" type="integer" length="10" not-null="true" lazy="false" />
 		<property name="displayable" column="displayable" type="integer" length="10" not-null="true" lazy="false" />
-		<property name="version" column="version" type="integer" length="10" not-null="true" lazy="false" />
 		<property name="creationDate" column="creation_date" type="timestamp" not-null="true" lazy="false"/>
 		<property name="modificationDate" column="modification_date" type="timestamp" not-null="true" lazy="false"/>
 		<set name="mimeTypes" lazy="false" inverse="true" cascade="delete">

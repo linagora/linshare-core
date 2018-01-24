@@ -53,6 +53,8 @@ import org.linagora.linshare.core.repository.MimePolicyRepository;
 import org.linagora.linshare.core.repository.MimeTypeRepository;
 import org.linagora.linshare.mongo.repository.UpgradeTaskLogMongoRepository;
 
+import com.google.common.collect.Sets;
+
 public class AddAllNewMimeTypeUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 
 	protected MimePolicyRepository mimePolicyRepository;
@@ -90,7 +92,9 @@ public class AddAllNewMimeTypeUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 		BatchResultContext<MimePolicy> res = new BatchResultContext<MimePolicy>(mimePolicy);
 		console.logDebug(batchRunContext, total, position, "Processing MimePolicy : " + mimePolicy.toString());
 		Set<MimeType> mimeTypes = mimeTypeMagicNumberDao.getAllMimeType();
+		Set<String> ref = Sets.newHashSet();
 		for(MimeType mimeType : mimeTypes) {
+			ref.add(mimeType.getMimeType());
 			MimeType type = mimeTypeRepository.findByMimeType(mimePolicy, mimeType.getMimeType());
 			if (type == null) {
 				mimeType.setMimePolicy(mimePolicy);
@@ -99,7 +103,13 @@ public class AddAllNewMimeTypeUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 				mimePolicy.getMimeTypes().add(mimeType);
 			}
 		}
-		mimePolicy.setVersion(1);
+		List<MimeType> findAll = mimeTypeRepository.findAll(mimePolicy);
+		for (MimeType mimeType : findAll) {
+			if (!ref.contains(mimeType.getMimeType())) {
+				mimeTypeRepository.delete(mimeType);
+				mimePolicy.getMimeTypes().remove(mimeType);
+			}
+		}
 		mimePolicy = mimePolicyRepository.update(mimePolicy);
 		logger.debug("mime_policies size : " + mimePolicy.getMimeTypes().size());
 		res.setProcessed(true);
