@@ -85,5 +85,4 @@ public class DocumentURLDto {
 	public void setSize(Long size) {
 		this.size = size;
 	}
-
 }

@@ -68,7 +68,7 @@ import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.delegationv2.DocumentRestService;
 import org.linagora.linshare.webservice.userv1.task.DocumentUploadAsyncTask;
 import org.linagora.linshare.webservice.userv1.task.context.DocumentTaskContext;
-import org.linagora.linshare.webservice.utils.DocumentUtils;
+import org.linagora.linshare.webservice.utils.WebServiceUtils;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.wordnik.swagger.annotations.Api;
@@ -131,7 +131,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "file size (size validation purpose).", required = true) @Multipart(value = "filesize", required = true)  Long fileSize,
 			MultipartBody body)
 			throws BusinessException {
-		Long transfertDuration = getTransfertDuration();
+		Long transfertDuration = WebServiceUtils.getTransfertDuration();
 		if (file == null) {
 			logger.error("Missing file (check parameter file)");
 			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check parameter file)");
@@ -141,10 +141,10 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 		if (async == null) {
 			async = false;
 		}
-		File tempFile = DocumentUtils.getTempFile(file, "rest-delegation-document-entries", fileName);
+		File tempFile = WebServiceUtils.getTempFile(file, "rest-delegation-document-entries", fileName);
 		long currSize = tempFile.length();
 		if (sizeValidation) {
-			DocumentUtils.checkSizeValidation(fileSize, currSize);
+			WebServiceUtils.checkSizeValidation(fileSize, currSize);
 		}
 		if (async) {
 			logger.debug("Async mode is used");
@@ -162,7 +162,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 				return new DocumentDto(asyncTask, documentTaskContext);
 			} catch (Exception e) {
 				logAsyncFailure(actorUuid, asyncTask, e);
-				DocumentUtils.deleteTempFile(tempFile);
+				WebServiceUtils.deleteTempFile(tempFile);
 				throw e;
 			}
 		} else {
@@ -176,7 +176,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 				}
 				return documentFacade.create(actorUuid, tempFile, description, fileName);
 			} finally {
-				DocumentUtils.deleteTempFile(tempFile);
+				WebServiceUtils.deleteTempFile(tempFile);
 			}
 		}
 	}

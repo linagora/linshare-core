@@ -67,7 +67,7 @@ import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.safe.SafeDocumentRestService;
 import org.linagora.linshare.webservice.userv1.task.WorkGroupEntryUploadAsyncTask;
 import org.linagora.linshare.webservice.userv1.task.context.WorkGroupEntryTaskContext;
-import org.linagora.linshare.webservice.utils.DocumentUtils;
+import org.linagora.linshare.webservice.utils.WebServiceUtils;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.wordnik.swagger.annotations.Api;
@@ -140,16 +140,16 @@ public class SafeDocumentRestServiceImpl extends WebserviceBase implements
 				@Multipart(value = "filesize", required = true) Long fileSize,
 			MultipartBody body) throws BusinessException {
 
-		Long transfertDuration = getTransfertDuration();
+		Long transfertDuration = WebServiceUtils.getTransfertDuration();
 		if (file == null) {
 			logger.error("Missing file (check parameter file)");
 			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check multipart parameter named 'file')");
 		}
 		String fileName = getFileName(givenFileName, body);
-		File tempFile = DocumentUtils.getTempFile(file, "rest-userv2-document-entries", fileName);
+		File tempFile = WebServiceUtils.getTempFile(file, "rest-userv2-document-entries", fileName);
 		long currSize = tempFile.length();
 		if (sizeValidation) {
-			DocumentUtils.checkSizeValidation(fileSize, currSize);
+			WebServiceUtils.checkSizeValidation(fileSize, currSize);
 		}
 		Validate.notNull(ric);
 		String safeUuid = ric.substring(24);
@@ -173,7 +173,7 @@ public class SafeDocumentRestServiceImpl extends WebserviceBase implements
 				return new WorkGroupEntryDto(asyncTask, workGroupEntryTaskContext);
 			} catch (Exception e) {
 				logAsyncFailure(user.getLsUuid(), asyncTask, e);
-				DocumentUtils.deleteTempFile(tempFile);
+				WebServiceUtils.deleteTempFile(tempFile);
 				throw e;
 			}
 		} else {
@@ -183,7 +183,7 @@ public class SafeDocumentRestServiceImpl extends WebserviceBase implements
 				logger.debug("Async mode is not used");
 				return workGroupEntryFacade.create(user.getLsUuid(), workGroupUuid, tempFile, fileName);
 			} finally {
-				DocumentUtils.deleteTempFile(tempFile);
+				WebServiceUtils.deleteTempFile(tempFile);
 			}
 		}
 	}

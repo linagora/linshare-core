@@ -78,7 +78,7 @@ import org.linagora.linshare.webservice.userv1.task.DocumentUploadAsyncTask;
 import org.linagora.linshare.webservice.userv1.task.context.DocumentTaskContext;
 import org.linagora.linshare.webservice.userv2.DocumentRestService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
-import org.linagora.linshare.webservice.utils.DocumentUtils;
+import org.linagora.linshare.webservice.utils.WebServiceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -141,36 +141,21 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 			@ApiParam(value = "file size (size validation purpose).", required = true) @Multipart(value = "filesize", required = true) Long fileSize,
 			MultipartBody body) throws BusinessException {
 		checkMaintenanceMode();
-		Long transfertDuration = getTransfertDuration();
+		Long transfertDuration = WebServiceUtils.getTransfertDuration();
 		if (file == null) {
 			logger.error("Missing file (check parameter file)");
 			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check multipart parameter named 'file')");
 		}
 		String fileName = getFileName(givenFileName, body);
-		File tempFile = DocumentUtils.getTempFile(file, "rest-userv2-document-entries", fileName);
+		File tempFile = WebServiceUtils.getTempFile(file, "rest-userv2-document-entries", fileName);
 		long currSize = tempFile.length();
 		if (sizeValidation) {
-			DocumentUtils.checkSizeValidation(fileSize, currSize);
+			WebServiceUtils.checkSizeValidation(fileSize, currSize);
 		}
 		if (async) {
 			logger.debug("Async mode is used");
 			// Asynchronous mode
-			AccountDto authUserDto = documentFacade.getAuthenticatedAccountDto();
-			AsyncTaskDto asyncTask = null;
-			try {
-				DocumentTaskContext documentTaskContext = new DocumentTaskContext(authUserDto, authUserDto.getUuid(),
-						tempFile, fileName, metaData, description);
-				asyncTask = asyncTaskFacade.create(currSize, transfertDuration, fileName, null,
-						AsyncTaskType.DOCUMENT_UPLOAD);
-				DocumentUploadAsyncTask task = new DocumentUploadAsyncTask(documentAsyncFacade, documentTaskContext,
-						asyncTask);
-				taskExecutor.execute(task);
-				return new DocumentDto(asyncTask, documentTaskContext);
-			} catch (Exception e) {
-				logAsyncFailure(asyncTask, e);
-				DocumentUtils.deleteTempFile(tempFile);
-				throw e;
-			}
+			return createDocumentDtoAsynchronously(tempFile, fileName, metaData, description, transfertDuration);
 		} else {
 			// TODO : manage transfertDuration
 			// Synchronous mode
@@ -182,7 +167,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 				}
 				return documentFacade.create(tempFile, fileName, description, metaData);
 			} finally {
-				DocumentUtils.deleteTempFile(tempFile);
+				WebServiceUtils.deleteTempFile(tempFile);
 			}
 		}
 	}
@@ -348,7 +333,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 		return documentFacade.findAll(null, uuid, actions, types, beginDate, endDate);
 	}
 
-	@Path("/url")
+	@Path("/")
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -359,17 +344,26 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public DocumentDto createFromURL(
-			@ApiParam(value = "The document URL object.", required = true) DocumentURLDto documentURLDto)
+			@ApiParam(value = "The document URL object.", required = true) DocumentURLDto documentURLDto,
+			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) @DefaultValue("false") @QueryParam("async") boolean async)
 			throws BusinessException {
+		Long transfertDuration = WebServiceUtils.getTransfertDuration();
 		Validate.notNull(documentURLDto, "DocumentURLDto must be set.");
 		String fileURL = documentURLDto.getURL();
 		Validate.notEmpty(fileURL, "Missing url");
-		String fileName = DocumentUtils.getFileNameFromUrl(fileURL, documentURLDto.getFileName());
-		File tempFile = DocumentUtils.createFileFromURL(documentURLDto, sizeValidation);
-		try {
-			return documentFacade.create(tempFile, fileName, "", "");
-		} finally {
-			DocumentUtils.deleteTempFile(tempFile);
+		String fileName = WebServiceUtils.getFileNameFromUrl(fileURL, documentURLDto.getFileName());
+		File tempFile = WebServiceUtils.createFileFromURL(documentURLDto, sizeValidation);
+		if (async) {
+			logger.debug("Async mode is used");
+			// Asynchronous mode
+			return createDocumentDtoAsynchronously(tempFile, fileName, "", "", transfertDuration);
+		} else {
+			try {
+				logger.debug("Async mode is not used");
+				return documentFacade.create(tempFile, fileName, "", "");
+			} finally {
+				WebServiceUtils.deleteTempFile(tempFile);
+			}
 		}
 	}
 
@@ -387,6 +381,27 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 			// HTTP error 501
 			throw new BusinessException(BusinessErrorCode.MODE_MAINTENANCE_ENABLED,
 					"Maintenance mode is enable, uploads are disabled.");
+		}
+	}
+
+	protected DocumentDto createDocumentDtoAsynchronously(File tempFile, String fileName, String metaData,
+			String description, Long transferDuration) {
+		AccountDto authUserDto = documentFacade.getAuthenticatedAccountDto();
+		AsyncTaskDto asyncTask = null;
+		try {
+			DocumentTaskContext documentTaskContext = new DocumentTaskContext(authUserDto, authUserDto.getUuid(),
+					tempFile, fileName, "", "");
+			asyncTask = asyncTaskFacade.create(tempFile.length(), WebServiceUtils.getTransfertDuration(), fileName,
+					null, AsyncTaskType.DOCUMENT_UPLOAD);
+			DocumentUploadAsyncTask task = new DocumentUploadAsyncTask(documentAsyncFacade, documentTaskContext,
+					asyncTask);
+			taskExecutor.execute(task);
+			return new DocumentDto(asyncTask, documentTaskContext);
+		} catch (Exception e) {
+			logAsyncFailure(asyncTask, e);
+			WebServiceUtils.deleteTempFile(tempFile);
+			throw new BusinessException(BusinessErrorCode.FILE_INVALID_INPUT_TEMP_FILE,
+					"Failure during asynchronous file upload with file " + tempFile.getName());
 		}
 	}
 }

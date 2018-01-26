@@ -38,9 +38,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
 
 import org.apache.commons.lang.Validate;
 import org.apache.cxf.helpers.IOUtils;
+import org.apache.cxf.message.Exchange;
+import org.apache.cxf.message.Message;
+import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentURLDto;
@@ -49,9 +53,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
-public class DocumentUtils {
+public class WebServiceUtils {
 
-	public static Logger logger = LoggerFactory.getLogger(DocumentUtils.class);
+	public static Logger logger = LoggerFactory.getLogger(WebServiceUtils.class);
 
 	public static File getTempFile(InputStream theFile, String discriminator, String fileName) {
 		if (discriminator == null) {
@@ -120,16 +124,16 @@ public class DocumentUtils {
 			throw new BusinessException(BusinessErrorCode.WRONG_URL, "Malformed URL : " + fileURL);
 		}
 		try (InputStream inputStream = url.openStream()) {
-			tempFile = DocumentUtils.getTempFile(inputStream, "rest-userv2-document-entries", defaultFileName);
+			tempFile = WebServiceUtils.getTempFile(inputStream, "rest-userv2-document-entries", defaultFileName);
 		} catch (IOException e) {
 			logger.error(e.getMessage(), e);
-			DocumentUtils.deleteTempFile(tempFile);
+			WebServiceUtils.deleteTempFile(tempFile);
 			throw new BusinessException(BusinessErrorCode.FILE_INVALID_INPUT_TEMP_FILE,
 					"Can not generate temp file from input stream from URL : " + fileURL);
 		}
 		long currSize = tempFile.length();
 		if (sizeValidation && (fileSize != null)) {
-			DocumentUtils.checkSizeValidation(fileSize, currSize);
+			WebServiceUtils.checkSizeValidation(fileSize, currSize);
 		}
 		return tempFile;
 	}
@@ -140,5 +144,27 @@ public class DocumentUtils {
 			return fileURL.substring(fileURL.lastIndexOf("/") + 1, fileURL.length());
 		}
 		return defaultFileName;
+	}
+
+	public static Long getTransfertDuration() {
+		Long uploadStartTime = null;
+		Message currentMessage = PhaseInterceptorChain.getCurrentMessage();
+		Exchange exchange = currentMessage.getExchange();
+		if (exchange.containsKey("org.linagora.linshare.webservice.interceptor.start_time")) {
+			uploadStartTime = (Long) exchange.get("org.linagora.linshare.webservice.interceptor.start_time");
+			logger.debug("Upload start time : " + uploadStartTime);
+		}
+		Long transfertDuration = null;
+		if (uploadStartTime != null) {
+			Date endDate = new Date();
+			transfertDuration = endDate.getTime() - uploadStartTime;
+			if (logger.isDebugEnabled()) {
+				Date beginDate = new Date(uploadStartTime);
+				logger.debug("Upload was begining at : " + beginDate);
+				logger.debug("Upload was ending at : " + endDate);
+			}
+			logger.info("statistics:upload time:" + transfertDuration + "ms.");
+		}
+		return transfertDuration;
 	}
 }

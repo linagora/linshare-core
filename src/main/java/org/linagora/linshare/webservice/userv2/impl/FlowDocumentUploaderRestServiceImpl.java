@@ -76,7 +76,7 @@ import org.linagora.linshare.webservice.userv1.task.WorkGroupEntryUploadAsyncTas
 import org.linagora.linshare.webservice.userv1.task.context.DocumentTaskContext;
 import org.linagora.linshare.webservice.userv1.task.context.WorkGroupEntryTaskContext;
 import org.linagora.linshare.webservice.userv2.FlowDocumentUploaderRestService;
-import org.linagora.linshare.webservice.utils.DocumentUtils;
+import org.linagora.linshare.webservice.utils.WebServiceUtils;
 import org.linagora.linshare.webservice.utils.FlowUploaderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -236,7 +236,7 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 						}
 					} catch (Exception e) {
 						logAsyncFailure(asyncTask, e);
-						DocumentUtils.deleteTempFile(tempFile.toFile());
+						WebServiceUtils.deleteTempFile(tempFile.toFile());
 						ChunkedFile remove = chunkedFiles.remove(identifier);
 						Files.deleteIfExists(remove.getPath());
 						throw e;
@@ -250,7 +250,7 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 						}
 						flow.completeTransfert(uploadedDocument);
 					} finally {
-						DocumentUtils.deleteTempFile(tempFile.toFile());
+						WebServiceUtils.deleteTempFile(tempFile.toFile());
 						ChunkedFile remove = chunkedFiles.remove(identifier);
 						if (remove != null) {
 							Files.deleteIfExists(remove.getPath());

@@ -106,28 +106,6 @@ public class WebserviceBase {
 		}
 	}
 
-	protected Long getTransfertDuration() {
-		Long uploadStartTime = null;
-		Message currentMessage = PhaseInterceptorChain.getCurrentMessage();
-		Exchange exchange = currentMessage.getExchange();
-		if (exchange.containsKey("org.linagora.linshare.webservice.interceptor.start_time")) {
-			uploadStartTime = (Long) exchange.get("org.linagora.linshare.webservice.interceptor.start_time");
-			logger.debug("Upload start time : " + uploadStartTime);
-		}
-		Long transfertDuration = null;
-		if (uploadStartTime != null) {
-			Date endDate = new Date();
-			transfertDuration = endDate.getTime() - uploadStartTime;
-			if (logger.isDebugEnabled()) {
-				Date beginDate = new Date(uploadStartTime);
-				logger.debug("Upload was begining at : " + beginDate);
-				logger.debug("Upload was ending at : " + endDate);
-			}
-			logger.info("statistics:upload time:" + transfertDuration + "ms.");
-		}
-		return transfertDuration;
-	}
-
 	protected String getFileName(String givenFileName, MultipartBody body) {
 		String fileName;
 		if (givenFileName == null || givenFileName.isEmpty()) {

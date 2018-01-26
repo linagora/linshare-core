@@ -75,7 +75,7 @@ import org.linagora.linshare.webservice.userv1.DocumentRestService;
 import org.linagora.linshare.webservice.userv1.task.DocumentUploadAsyncTask;
 import org.linagora.linshare.webservice.userv1.task.context.DocumentTaskContext;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
-import org.linagora.linshare.webservice.utils.DocumentUtils;
+import org.linagora.linshare.webservice.utils.WebServiceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -145,7 +145,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 			MultipartBody body) throws BusinessException {
 
 		checkMaintenanceMode();
-		Long transfertDuration = getTransfertDuration();
+		Long transfertDuration = WebServiceUtils.getTransfertDuration();
 		if (file == null) {
 			logger.error("Missing file (check parameter file)");
 			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check multipart parameter named 'file')");
@@ -155,7 +155,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 		if (async == null) {
 			async = false;
 		}
-		File tempFile = DocumentUtils.getTempFile(file, "rest-userv2-document-entries", fileName);
+		File tempFile = WebServiceUtils.getTempFile(file, "rest-userv2-document-entries", fileName);
 		long currSize = tempFile.length();
 		if (sizeValidation) {
 			checkSizeValidation(contentLength, fileSize, currSize);
@@ -176,7 +176,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 				return new DocumentDto(asyncTask, documentTaskContext);
 			} catch (Exception e) {
 				logAsyncFailure(asyncTask, e);
-				DocumentUtils.deleteTempFile(tempFile);
+				WebServiceUtils.deleteTempFile(tempFile);
 				throw e;
 			}
 		} else {
@@ -190,7 +190,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 				}
 				return documentFacade.create(tempFile, fileName, description, metaData);
 			} finally {
-				DocumentUtils.deleteTempFile(tempFile);
+				WebServiceUtils.deleteTempFile(tempFile);
 			}
 		}
 	}

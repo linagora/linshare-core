@@ -82,5 +82,5 @@ public interface DocumentRestService {
 	Set<AuditLogEntryUser> findAll(String uuid, List<String> actions, List<String> types, String beginDate,
 			String endDate);
 
-	DocumentDto createFromURL(DocumentURLDto documentURLDto) throws BusinessException;
+	DocumentDto createFromURL(DocumentURLDto documentURLDto, boolean async) throws BusinessException;
 }

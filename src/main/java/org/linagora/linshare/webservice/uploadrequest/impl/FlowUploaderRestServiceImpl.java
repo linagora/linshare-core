@@ -64,7 +64,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.UploadRequestUrlFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.uploadrequest.FlowUploaderRestService;
-import org.linagora.linshare.webservice.utils.DocumentUtils;
+import org.linagora.linshare.webservice.utils.WebServiceUtils;
 import org.linagora.linshare.webservice.utils.FlowUploaderUtils;
 import org.linagora.linshare.core.facade.webservice.common.dto.ErrorDto;
 import org.slf4j.Logger;
@@ -152,12 +152,12 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 				logger.debug("upload finished ");
 				InputStream inputStream = Files.newInputStream(tempFile,
 						StandardOpenOption.READ);
-				File tempFile2 = DocumentUtils.getTempFile(inputStream, "rest-flowuploader", filename);
+				File tempFile2 = WebServiceUtils.getTempFile(inputStream, "rest-flowuploader", filename);
 				try {
 					uploadRequestUrlFacade.addUploadRequestEntry(
 							uploadRequestUrlUuid, password, tempFile2, filename);
 				} finally {
-					DocumentUtils.deleteTempFile(tempFile2);
+					WebServiceUtils.deleteTempFile(tempFile2);
 				}
 				ChunkedFile remove = chunkedFiles.remove(identifier);
 				Files.deleteIfExists(remove.getPath());
@@ -214,12 +214,12 @@ public class FlowUploaderRestServiceImpl extends WebserviceBase implements
 
 		ErrorDto errorDto;
 		try {
-			File tempFile2 = DocumentUtils.getTempFile(file, "rest-flowuploader", fileName);
+			File tempFile2 = WebServiceUtils.getTempFile(file, "rest-flowuploader", fileName);
 			try {
 				uploadRequestUrlFacade.addUploadRequestEntry(uploadRequestUrlUuid,
 						password, tempFile2, fileName);
 			} finally {
-				DocumentUtils.deleteTempFile(tempFile2);
+				WebServiceUtils.deleteTempFile(tempFile2);
 			}
 			errorDto = new ErrorDto(0, "upload success");
 		} catch (BusinessException exception) {
