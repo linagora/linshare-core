@@ -131,7 +131,8 @@
 						<ref bean="deleteShareEntryGroupBatch" />
 						<ref bean="deleteExpiredDocumentEntryBatch" />
 						<ref bean="documentGarbageCollecteurBatch" />
-<!-- 						<ref bean="deleteMissingDocumentsBatch" /> -->
+						<ref bean="computeThumbnailBatch" />
+<!-- 					<ref bean="deleteMissingDocumentsBatch" /> -->
 					</list>
 				</entry>
 				<entry key="batchRunner" value-ref="batchRunner" />
