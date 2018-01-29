@@ -751,7 +751,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	}
 
 	@Override
-	public boolean updateThumbnail(Document document, Account account) {
+	public void updateThumbnail(Document document, Account account) {
 		Map<ThumbnailType, FileMetaData> fileMetadataThumbnail = Maps.newHashMap();
 		if (thumbnailGeneratorService.isSupportedMimetype(document.getType())) {
 			FileMetaData fileMetaData = new FileMetaData(FileMetaDataKind.DATA, document);
@@ -775,9 +775,9 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 						document.setHasThumbnail(true);
 						document.setThumbnails(fileThumbnails);
 					}
+					document.setComputeThumbnail(false);
 					documentRepository.update(document);
 					logger.info("Update the document to generate Thumbnail succes " + document.getRepresentation());
-					return true;
 				} catch (IOException io) {
 					throw new BusinessException("failed to get the document");
 				} finally {
@@ -786,8 +786,11 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 					}
 				}
 			}
+		} else {
+			document.setHasThumbnail(false);
+			document.setComputeThumbnail(false);
+			documentRepository.update(document);
 		}
-		throw new BusinessException("failed to update the thumbnail");
 	}
 
 	protected boolean exists(WorkGroup workGroup, String fileName, WorkGroupNode nodeParent) {

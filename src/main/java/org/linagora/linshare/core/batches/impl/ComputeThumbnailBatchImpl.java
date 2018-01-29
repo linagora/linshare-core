@@ -94,7 +94,7 @@ public class ComputeThumbnailBatchImpl extends GenericBatchImpl {
 			context.setIdentifier(identifier);
 			context.setProcessed(true);
 		} catch (BusinessException e){
-			logger.debug("failed to generate the thumbnails", document.getRepresentation());
+			logger.debug("failed to generate the thumbnails" + document.getRepresentation(), e);
 			console.logError(batchRunContext, total, position,
 					"Error while trying to update the thumbnail of the document ");
 			BatchBusinessException exception = new BatchBusinessException(
