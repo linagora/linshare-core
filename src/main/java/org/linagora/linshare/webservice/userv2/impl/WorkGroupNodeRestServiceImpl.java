@@ -59,8 +59,8 @@ import org.apache.commons.lang.Validate;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.domain.constants.AsyncTaskType;
-import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
+import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
@@ -72,6 +72,7 @@ import org.linagora.linshare.core.facade.webservice.user.AsyncTaskFacade;
 import org.linagora.linshare.core.facade.webservice.user.WorkGroupEntryAsyncFacade;
 import org.linagora.linshare.core.facade.webservice.user.WorkGroupNodeFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.DocumentURLDto;
 import org.linagora.linshare.mongo.entities.WorkGroupAsyncTask;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
@@ -267,19 +268,7 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 		if (async) {
 			logger.debug("Async mode is used");
 			// Asynchronous mode
-			AccountDto authUserDto = workGroupNodeFacade.getAuthenticatedAccountDto();
-			AsyncTaskDto asyncTask = null;
-			try {
-				asyncTask = asyncTaskFacade.create(currSize, transfertDuration, fileName, null, AsyncTaskType.THREAD_ENTRY_UPLOAD);
-				WorkGroupEntryTaskContext workGroupEntryTaskContext = new WorkGroupEntryTaskContext(authUserDto, authUserDto.getUuid(), workGroupUuid, tempFile, fileName, parentNodeUuid);
-				WorkGroupEntryUploadAsyncTask task = new WorkGroupEntryUploadAsyncTask(workGroupEntryAsyncFacade, workGroupEntryTaskContext, asyncTask);
-				taskExecutor.execute(task);
-				return new WorkGroupAsyncTask(asyncTask, workGroupEntryTaskContext);
-			} catch (Exception e) {
-				logAsyncFailure(asyncTask, e);
-				WebServiceUtils.deleteTempFile(tempFile);
-				throw e;
-			}
+			return createWorkGroupAsycTask(fileName, tempFile, parentNodeUuid, workGroupUuid, transfertDuration, strict);
 		} else {
 			// TODO : manage transfertDuration
 			// Synchronous mode
@@ -414,6 +403,48 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 		return workGroupNodeFacade.findAll(null, workGroupUuid, workGroupNodeUuid, actions, types, beginDate, endDate);
 	}
 
+	@Path("/")
+	@POST
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Create a workgroup document which will contain the uploaded file.", response = WorkGroupNode.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 404, message = "Workgroup document not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public WorkGroupNode createFromURL(
+			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workGroupUuid") String workGroupUuid,
+			@ApiParam(value = "The parent workgroup node uuid.", required = false) @QueryParam("parent") String parentNodeUuid,
+			@ApiParam(value = "The document URL object.", required = true) DocumentURLDto documentURLDto,
+			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) @DefaultValue("false") @QueryParam("async") Boolean async,
+			@ApiParam(value = "Strict mode: Raise error if a node with same name already exists (default=false).", required = false) @QueryParam("strict") @DefaultValue("false") Boolean strict)
+			throws BusinessException {
+		checkMaintenanceMode();
+		Long transfertDuration = WebServiceUtils.getTransfertDuration();
+		Validate.notNull(documentURLDto);
+		String fileURL = documentURLDto.getURL();
+		Validate.notEmpty(fileURL);
+		String fileName = WebServiceUtils.getFileNameFromUrl(fileURL, documentURLDto.getFileName());
+		File tempFile = WebServiceUtils.createFileFromURL(documentURLDto, sizeValidation);
+		if (async) {
+			logger.debug("Async mode is used");
+			// Asynchronous mode
+			return createWorkGroupAsycTask(fileName, tempFile, parentNodeUuid, workGroupUuid, transfertDuration, strict);
+		} else {
+			// TODO : manage transfertDuration
+			// Synchronous mode
+			try {
+				logger.debug("Async mode is not used");
+				WorkGroupNode create = workGroupNodeFacade.create(null, workGroupUuid, parentNodeUuid, tempFile,
+						fileName, strict);
+				return create;
+			} finally {
+				WebServiceUtils.deleteTempFile(tempFile);
+			}
+		}
+	}
+
 	protected void logAsyncFailure(AsyncTaskDto asyncTask, Exception e) {
 		logger.error(e.getMessage());
 		logger.debug("Exception : ", e);
@@ -431,5 +462,29 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 					"Maintenance mode is enable, uploads are disabled.");
 		}
 	}
-	
+
+	protected WorkGroupAsyncTask createWorkGroupAsycTask(String fileName, File tempFile, String parentNodeUuid,
+			String workGroupUuid, Long transfertDuration, Boolean strict) {
+		AccountDto authUserDto = workGroupNodeFacade.getAuthenticatedAccountDto();
+		AsyncTaskDto asyncTask = null;
+		try {
+			asyncTask = asyncTaskFacade.create(tempFile.length(), transfertDuration, fileName, null,
+					AsyncTaskType.THREAD_ENTRY_UPLOAD);
+			WorkGroupEntryTaskContext workGroupEntryTaskContext = new WorkGroupEntryTaskContext(authUserDto,
+					authUserDto.getUuid(), workGroupUuid, tempFile, fileName, parentNodeUuid, strict);
+			WorkGroupEntryUploadAsyncTask task = new WorkGroupEntryUploadAsyncTask(workGroupEntryAsyncFacade,
+					workGroupEntryTaskContext, asyncTask);
+			taskExecutor.execute(task);
+			return new WorkGroupAsyncTask(asyncTask, workGroupEntryTaskContext);
+		} catch (Exception e) {
+			logAsyncFailure(asyncTask, e);
+			WebServiceUtils.deleteTempFile(tempFile);
+			if (asyncTask == null) {
+				throw new BusinessException(BusinessErrorCode.FILE_INVALID_INPUT_TEMP_FILE,
+						"Failure during asynchronous file upload : asyncTask null");
+			}
+			throw new BusinessException(BusinessErrorCode.FILE_INVALID_INPUT_TEMP_FILE,
+					"Failure during asynchronous file upload during the asyncTask with UUID " + asyncTask.getUuid());
+		}
+	}
 }

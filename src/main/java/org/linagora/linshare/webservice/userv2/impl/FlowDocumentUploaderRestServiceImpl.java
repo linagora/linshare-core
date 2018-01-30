@@ -222,7 +222,7 @@ public class FlowDocumentUploaderRestServiceImpl extends WebserviceBase
 					AsyncTaskDto asyncTask = null;
 					try {
 						if(isWorkGroup) {
-							WorkGroupEntryTaskContext workGroupEntryTaskContext = new WorkGroupEntryTaskContext(authUserDto, authUserDto.getUuid(), workGroupUuid, tempFile.toFile(), filename, workGroupParentNodeUuid);
+							WorkGroupEntryTaskContext workGroupEntryTaskContext = new WorkGroupEntryTaskContext(authUserDto, authUserDto.getUuid(), workGroupUuid, tempFile.toFile(), filename, workGroupParentNodeUuid, false);
 							asyncTask = asyncTaskFacade.create(totalSize, getTransfertDuration(identifier), filename, null, AsyncTaskType.THREAD_ENTRY_UPLOAD);
 							WorkGroupEntryUploadAsyncTask task = new WorkGroupEntryUploadAsyncTask(workGroupEntryAsyncFacade, workGroupEntryTaskContext, asyncTask);
 							taskExecutor.execute(task);

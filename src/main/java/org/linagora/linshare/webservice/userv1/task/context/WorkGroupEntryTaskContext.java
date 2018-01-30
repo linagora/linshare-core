@@ -52,6 +52,8 @@ public class WorkGroupEntryTaskContext extends TaskContext {
 
 	protected final String workGroupFolderUuid;
 
+	protected final Boolean strictModeActivated;
+
 	/**
 	 * uuid of the document entry to be copied.
 	 */
@@ -67,10 +69,11 @@ public class WorkGroupEntryTaskContext extends TaskContext {
 		this.description = description;
 		this.threadUuid = threadUuid;
 		this.workGroupFolderUuid = workGroupFolderUuid;
+		this.strictModeActivated = false;
 	}
 
-	public WorkGroupEntryTaskContext(AccountDto authUserDto, String actorUuid,
-			String threadUuid, File file, String fileName, String workGroupFolderUuid) {
+	public WorkGroupEntryTaskContext(AccountDto authUserDto, String actorUuid, String threadUuid, File file,
+			String fileName, String workGroupFolderUuid, Boolean strict) {
 		super(authUserDto, actorUuid);
 		this.file = file;
 		this.fileName = fileName;
@@ -78,6 +81,7 @@ public class WorkGroupEntryTaskContext extends TaskContext {
 		this.description = null;
 		this.threadUuid = threadUuid;
 		this.workGroupFolderUuid = workGroupFolderUuid;
+		this.strictModeActivated = strict;
 	}
 
 	public WorkGroupEntryTaskContext(AccountDto authUserDto, String actorUuid,
@@ -90,6 +94,7 @@ public class WorkGroupEntryTaskContext extends TaskContext {
 		this.threadUuid = threadUuid;
 		this.docEntryUuid = docEntryUuid;
 		this.workGroupFolderUuid = workGroupFolderUuid;
+		this.strictModeActivated = false;
 	}
 
 	public File getFile() {
@@ -122,6 +127,10 @@ public class WorkGroupEntryTaskContext extends TaskContext {
 
 	public String getWorkGroupFolderUuid() {
 		return workGroupFolderUuid;
+	}
+
+	public Boolean getStrictModeActivated() {
+		return strictModeActivated;
 	}
 
 	@Override

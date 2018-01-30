@@ -400,8 +400,12 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 		} catch (Exception e) {
 			logAsyncFailure(asyncTask, e);
 			WebServiceUtils.deleteTempFile(tempFile);
+			if (asyncTask == null) {
+				throw new BusinessException(BusinessErrorCode.FILE_INVALID_INPUT_TEMP_FILE,
+						"Failure during asynchronous file upload : asyncTask null");
+			}
 			throw new BusinessException(BusinessErrorCode.FILE_INVALID_INPUT_TEMP_FILE,
-					"Failure during asynchronous file upload with file " + tempFile.getName());
+					"Failure during asynchronous file upload during the asyncTask with UUID " + asyncTask.getUuid());
 		}
 	}
 }

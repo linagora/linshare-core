@@ -166,7 +166,7 @@ public class SafeDocumentRestServiceImpl extends WebserviceBase implements
 				asyncTask = asyncTaskFacade.create(user.getLsUuid(), currSize, transfertDuration, fileName, null,
 						AsyncTaskType.THREAD_ENTRY_UPLOAD);
 				WorkGroupEntryTaskContext workGroupEntryTaskContext = new WorkGroupEntryTaskContext(authUserDto, user.getLsUuid(),
-						workGroupUuid, tempFile, fileName, null);
+						workGroupUuid, tempFile, fileName, null, false);
 				WorkGroupEntryUploadAsyncTask task = new WorkGroupEntryUploadAsyncTask(workGroupEntryAsyncFacade,
 						workGroupEntryTaskContext, asyncTask);
 				taskExecutor.execute(task);

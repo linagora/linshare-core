@@ -162,7 +162,7 @@ public class WorkGroupEntryRestServiceImpl extends WebserviceBase implements
 			AsyncTaskDto asyncTask = null;
 			try {
 				asyncTask = asyncTaskFacade.create(actorUuid, currSize, transfertDuration, fileName, null, AsyncTaskType.THREAD_ENTRY_UPLOAD);
-				WorkGroupEntryTaskContext workgroupEntryTaskContext = new WorkGroupEntryTaskContext(authUserDto, actorUuid, workgroupUuid, tempFile, fileName, null);
+				WorkGroupEntryTaskContext workgroupEntryTaskContext = new WorkGroupEntryTaskContext(authUserDto, actorUuid, workgroupUuid, tempFile, fileName, null, false);
 				WorkGroupEntryUploadAsyncTask task = new WorkGroupEntryUploadAsyncTask(workGroupEntryAsyncFacade, workgroupEntryTaskContext, asyncTask);
 				taskExecutor.execute(task);
 				return new WorkGroupEntryDto(asyncTask, workgroupEntryTaskContext);
