@@ -403,7 +403,7 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 		return workGroupNodeFacade.findAll(null, workGroupUuid, workGroupNodeUuid, actions, types, beginDate, endDate);
 	}
 
-	@Path("/")
+	@Path("/url")
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -426,7 +426,7 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 		String fileURL = documentURLDto.getURL();
 		Validate.notEmpty(fileURL);
 		String fileName = WebServiceUtils.getFileNameFromUrl(fileURL, documentURLDto.getFileName());
-		File tempFile = WebServiceUtils.createFileFromURL(documentURLDto, sizeValidation);
+		File tempFile = WebServiceUtils.createFileFromURL(documentURLDto, "rest-userv2-thread-entries", sizeValidation);
 		if (async) {
 			logger.debug("Async mode is used");
 			// Asynchronous mode
@@ -484,7 +484,7 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 						"Failure during asynchronous file upload : asyncTask null");
 			}
 			throw new BusinessException(BusinessErrorCode.FILE_INVALID_INPUT_TEMP_FILE,
-					"Failure during asynchronous file upload during the asyncTask with UUID " + asyncTask.getUuid());
+					"Failure during asynchronous file upload in the asyncTask with UUID " + asyncTask.getUuid());
 		}
 	}
 }

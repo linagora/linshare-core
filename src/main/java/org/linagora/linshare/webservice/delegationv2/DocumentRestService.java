@@ -43,6 +43,7 @@ import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
 import org.linagora.linshare.core.facade.webservice.delegation.dto.DocumentDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.DocumentURLDto;
 
 /**
  * REST jaxRS interface
@@ -78,4 +79,6 @@ public interface DocumentRestService {
 			throws BusinessException;
 
 	AsyncTaskDto findAsync(String actorUuid, String uuid) throws BusinessException;
+
+	DocumentDto createFromURL(DocumentURLDto documentURLDto, String actorUUID, Boolean async) throws BusinessException;
 }

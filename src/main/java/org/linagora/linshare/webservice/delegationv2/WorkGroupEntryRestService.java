@@ -42,10 +42,11 @@ import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.DocumentURLDto;
 
 public interface WorkGroupEntryRestService {
 	WorkGroupEntryDto create(String actorUuid, String workgroupUuid, InputStream file, String description,
-			String givenFileName, Boolean async, Long contentLength, Long fileSize, MultipartBody body)
+			String givenFileName, Boolean async, Long contentLength, Long fileSize, Boolean strict, MultipartBody body)
 			throws BusinessException;
 
 	WorkGroupEntryDto copy(String actorUuid, String workgroupUuid, String entryUuid, Boolean async)
@@ -70,4 +71,7 @@ public interface WorkGroupEntryRestService {
 			WorkGroupEntryDto workgroupEntryDto) throws BusinessException;
 
 	AsyncTaskDto findAsync(String actorUuid, String uuid) throws BusinessException;
+
+	WorkGroupEntryDto createFromURL(DocumentURLDto documentURLDto, String actorUuid, String workgroupUuid,
+			Boolean async, Boolean strict) throws BusinessException;
 }

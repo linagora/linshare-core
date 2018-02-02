@@ -40,6 +40,7 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
@@ -57,6 +58,7 @@ import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.domain.constants.AsyncTaskType;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
@@ -64,6 +66,7 @@ import org.linagora.linshare.core.facade.webservice.delegation.AsyncTaskFacade;
 import org.linagora.linshare.core.facade.webservice.delegation.DocumentFacade;
 import org.linagora.linshare.core.facade.webservice.delegation.dto.DocumentDto;
 import org.linagora.linshare.core.facade.webservice.user.DocumentAsyncFacade;
+import org.linagora.linshare.core.facade.webservice.user.dto.DocumentURLDto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.delegationv2.DocumentRestService;
 import org.linagora.linshare.webservice.userv1.task.DocumentUploadAsyncTask;
@@ -149,22 +152,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 		if (async) {
 			logger.debug("Async mode is used");
 			// Asynchronous mode
-			AccountDto authUserDto = documentFacade.getAuthenticatedAccountDto();
-			AsyncTaskDto asyncTask = null;
-			try {
-				DocumentTaskContext documentTaskContext = new DocumentTaskContext(
-						authUserDto, actorUuid, tempFile, fileName,
-						metaData, description);
-				asyncTask = asyncTaskFacade.create(actorUuid, currSize, transfertDuration, fileName, null, AsyncTaskType.DOCUMENT_UPLOAD);
-				DocumentUploadAsyncTask task = new DocumentUploadAsyncTask(
-						documentAsyncFacade, documentTaskContext, asyncTask);
-				taskExecutor.execute(task);
-				return new DocumentDto(asyncTask, documentTaskContext);
-			} catch (Exception e) {
-				logAsyncFailure(actorUuid, asyncTask, e);
-				WebServiceUtils.deleteTempFile(tempFile);
-				throw e;
-			}
+			return createDocumentDtoAsynchronously(actorUuid, tempFile, fileName, "", "", transfertDuration);
 		} else {
 			// TODO : manage transfertDuration
 			// Synchronous mode
@@ -328,11 +316,73 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 		return asyncTaskFacade.find(actorUuid, uuid);
 	}
 
+	@Path("/")
+	@POST
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Create a document from an URL.", response = DocumentDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 404, message = "Document not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public DocumentDto createFromURL(
+			@ApiParam(value = "The document URL object.", required = true) DocumentURLDto documentURLDto,
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) @DefaultValue("false") @QueryParam("async") Boolean async)
+			throws BusinessException {
+		Long transfertDuration = WebServiceUtils.getTransfertDuration();
+		Validate.notNull(documentURLDto, "DocumentURLDto must be set.");
+		String fileURL = documentURLDto.getURL();
+		Validate.notEmpty(fileURL, "Missing url");
+		Validate.notEmpty(actorUuid, "Missing Actor UUID");
+		String fileName = WebServiceUtils.getFileNameFromUrl(fileURL, documentURLDto.getFileName());
+		File tempFile = WebServiceUtils.createFileFromURL(documentURLDto, "rest-delegation-document-entries",
+				sizeValidation);
+		if (async) {
+			logger.debug("Async mode is used");
+			// Asynchronous mode
+			return createDocumentDtoAsynchronously(actorUuid, tempFile, fileName, "", "", transfertDuration);
+		} else {
+			try {
+				logger.debug("Async mode is not used");
+				return documentFacade.create(actorUuid, tempFile, "", fileName);
+			} finally {
+				WebServiceUtils.deleteTempFile(tempFile);
+			}
+		}
+	}
+
 	protected void logAsyncFailure(String actorUuid, AsyncTaskDto asyncTask, Exception e) {
 		logger.error(e.getMessage());
 		logger.debug("Exception : ", e);
 		if (asyncTask != null) {
 			asyncTaskFacade.fail(actorUuid, asyncTask, e);
+		}
+	}
+
+	protected DocumentDto createDocumentDtoAsynchronously(String actorUuid, File tempFile, String fileName,
+			String metaData, String description, Long transfertDuration) {
+		AccountDto authUserDto = documentFacade.getAuthenticatedAccountDto();
+		AsyncTaskDto asyncTask = null;
+		try {
+			DocumentTaskContext documentTaskContext = new DocumentTaskContext(authUserDto, actorUuid, tempFile,
+					fileName, metaData, description);
+			asyncTask = asyncTaskFacade.create(actorUuid, tempFile.length(), transfertDuration, fileName, null,
+					AsyncTaskType.DOCUMENT_UPLOAD);
+			DocumentUploadAsyncTask task = new DocumentUploadAsyncTask(documentAsyncFacade, documentTaskContext,
+					asyncTask);
+			taskExecutor.execute(task);
+			return new DocumentDto(asyncTask, documentTaskContext);
+		} catch (Exception e) {
+			logAsyncFailure(actorUuid, asyncTask, e);
+			WebServiceUtils.deleteTempFile(tempFile);
+			if (asyncTask == null) {
+				throw new BusinessException(BusinessErrorCode.FILE_INVALID_INPUT_TEMP_FILE,
+						"Failure during asynchronous file upload : asyncTask null");
+			}
+			throw new BusinessException(BusinessErrorCode.FILE_INVALID_INPUT_TEMP_FILE,
+					"Failure during asynchronous file upload in the asyncTask with UUID " + asyncTask.getUuid());
 		}
 	}
 }

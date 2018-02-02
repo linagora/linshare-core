@@ -181,7 +181,7 @@ public class SafeDocumentRestServiceImpl extends WebserviceBase implements
 			// Synchronous mode
 			try {
 				logger.debug("Async mode is not used");
-				return workGroupEntryFacade.create(user.getLsUuid(), workGroupUuid, tempFile, fileName);
+				return workGroupEntryFacade.create(user.getLsUuid(), workGroupUuid, tempFile, fileName, false);
 			} finally {
 				WebServiceUtils.deleteTempFile(tempFile);
 			}

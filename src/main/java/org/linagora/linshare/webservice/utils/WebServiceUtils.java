@@ -108,12 +108,12 @@ public class WebServiceUtils {
 		}
 	}
 
-	public static File createFileFromURL(DocumentURLDto documentURLDto, boolean sizeValidation) {
-		return createFileFromUrl(documentURLDto.getURL(), documentURLDto.getFileName(), documentURLDto.getSize(),
+	public static File createFileFromURL(DocumentURLDto documentURLDto, String discriminator, boolean sizeValidation) {
+		return createFileFromUrl(documentURLDto.getURL(), documentURLDto.getFileName(), documentURLDto.getSize(), discriminator,
 				sizeValidation);
 	}
 
-	public static File createFileFromUrl(String fileURL, String defaultFileName, Long fileSize,
+	public static File createFileFromUrl(String fileURL, String defaultFileName, Long fileSize, String discriminator,
 			boolean sizeValidation) {
 		URL url = null;
 		File tempFile = null;
@@ -124,7 +124,7 @@ public class WebServiceUtils {
 			throw new BusinessException(BusinessErrorCode.WRONG_URL, "Malformed URL : " + fileURL);
 		}
 		try (InputStream inputStream = url.openStream()) {
-			tempFile = WebServiceUtils.getTempFile(inputStream, "rest-userv2-document-entries", defaultFileName);
+			tempFile = WebServiceUtils.getTempFile(inputStream, discriminator, defaultFileName);
 		} catch (IOException e) {
 			logger.error(e.getMessage(), e);
 			WebServiceUtils.deleteTempFile(tempFile);

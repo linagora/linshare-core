@@ -46,7 +46,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto
 public interface WorkGroupEntryFacade extends DelegationGenericFacade {
 
 	WorkGroupEntryDto create(String actorUuid, String threadUuid,
-			File file, String fileName) throws BusinessException;
+			File file, String fileName, Boolean strict) throws BusinessException;
 
 	WorkGroupEntryDto copy(String actorUuid, String threadUuid, String entryUuid)
 			throws BusinessException;

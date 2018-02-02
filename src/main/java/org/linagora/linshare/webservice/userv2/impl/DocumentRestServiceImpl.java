@@ -352,7 +352,8 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 		String fileURL = documentURLDto.getURL();
 		Validate.notEmpty(fileURL, "Missing url");
 		String fileName = WebServiceUtils.getFileNameFromUrl(fileURL, documentURLDto.getFileName());
-		File tempFile = WebServiceUtils.createFileFromURL(documentURLDto, sizeValidation);
+		File tempFile = WebServiceUtils.createFileFromURL(documentURLDto, "rest-userv2-document-entries",
+				sizeValidation);
 		if (async) {
 			logger.debug("Async mode is used");
 			// Asynchronous mode
@@ -405,7 +406,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 						"Failure during asynchronous file upload : asyncTask null");
 			}
 			throw new BusinessException(BusinessErrorCode.FILE_INVALID_INPUT_TEMP_FILE,
-					"Failure during asynchronous file upload during the asyncTask with UUID " + asyncTask.getUuid());
+					"Failure during asynchronous file upload in the asyncTask with UUID " + asyncTask.getUuid());
 		}
 	}
 }

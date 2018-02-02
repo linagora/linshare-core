@@ -85,7 +85,7 @@ public class WorkGroupEntryFacadeImpl extends DelegationGenericFacadeImpl
 
 	@Override
 	public WorkGroupEntryDto create(String actorUuid, String threadUuid,
-			File file, String fileName) {
+			File file, String fileName, Boolean strict) {
 		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notNull(file, "Missing required file");
@@ -93,7 +93,7 @@ public class WorkGroupEntryFacadeImpl extends DelegationGenericFacadeImpl
 		User authUser = checkAuthentication();
 		User actor = getActor(actorUuid);
 		WorkGroup workGroup = threadService.find(authUser, actor, threadUuid);
-		WorkGroupNode node = workGroupNodeService.create(authUser, actor, workGroup, file, fileName, null, false);
+		WorkGroupNode node = workGroupNodeService.create(authUser, actor, workGroup, file, fileName, null, strict);
 		WorkGroupEntryDto dto = new WorkGroupEntryDto((WorkGroupDocument)node);
 		// why ?
 //		dto.setWorkGroup(new WorkGroupLightDto(thread));
