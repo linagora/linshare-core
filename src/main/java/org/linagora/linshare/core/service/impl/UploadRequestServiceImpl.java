@@ -199,7 +199,9 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		} else {
 			groupedModeLocal = false;
 		}
-		UploadRequestGroup group = uploadRequestGroupBusinessService.create(new UploadRequestGroup(subject, body));
+		UploadRequestGroup group = uploadRequestGroupBusinessService.create(new UploadRequestGroup(subject, body,
+				inputRequest.getActivationDate(), inputRequest.isCanDelete(), inputRequest.isCanClose(),
+				inputRequest.isCanEditExpiryDate(), inputRequest.getLocale(), inputRequest.isSecured(),groupedMode, false));
 		UploadRequestGroupAuditLogEntry groupLog = new UploadRequestGroupAuditLogEntry(new AccountMto(actor),
 				new AccountMto(owner), LogAction.CREATE, AuditLogEntryType.UPLOAD_REQUEST_GROUP,
 				group.getUuid(), group);

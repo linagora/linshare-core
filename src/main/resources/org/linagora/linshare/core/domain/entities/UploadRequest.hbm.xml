@@ -60,7 +60,10 @@
 		<property name="secured" column="secured" type="boolean"
 			lazy="false" />
 		<property name="mailMessageId" column="mail_message_id" type="string"
-			length="255" not-null="false" lazy="false" />
+				length="255" not-null="false" lazy="false" />
+		<property name="dirty" column="dirty" type="boolean" lazy="false" />
+		<property name="enableNotification" column="enable_notification"
+			type="boolean" lazy="false" />
 		<set name="uploadRequestURLs" lazy="true" cascade="lock" inverse="true">
 			<key column="upload_request_id" not-null="true" />
 			<one-to-many

@@ -91,6 +91,10 @@ public class UploadRequest implements Cloneable {
 
 	private Boolean notified = new Boolean(false);
 
+	private Boolean dirty = new Boolean(false);
+
+	private Boolean enableNotification;
+	
 	public UploadRequest() {
 		super();
 	}
@@ -363,5 +367,22 @@ public class UploadRequest implements Cloneable {
 		if (date != null) {
 			this.expiryDate = date;
 		}
+	}
+	
+	
+	public Boolean getDirty() {
+		return dirty;
+	}
+	
+	public void setDirty(Boolean dirty) {
+		this.dirty = dirty;
+	}
+	
+	public Boolean getEnableNotification() {
+		return enableNotification;
+	}
+	
+	public void setEnableNotification(Boolean enableNotification) {
+		this.enableNotification = enableNotification;
 	}
 }

@@ -140,6 +140,7 @@ public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4Spr
 		ure.setCanEditExpiryDate(true);
 		ure.setCanDelete(true);
 		ure.setLocale("en");
+		ure.setActivationDate(new Date());
 		List<UploadRequest> eList = Lists.newArrayList();
 		eList = service.createRequest(john, john, ure, yoda, "This is a subject", "This is a body", false);
 		e = eList.get(0);

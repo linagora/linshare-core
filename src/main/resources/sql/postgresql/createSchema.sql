@@ -426,6 +426,8 @@ CREATE TABLE upload_request (
   can_close                       bool NOT NULL,
   can_edit_expiry_date            bool NOT NULL,
   locale                          varchar(255) NOT NULL,
+  dirty                           bool NOT NULL,
+  enable_notification             bool NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE upload_request_url (
   id                 int8 NOT NULL,
@@ -444,6 +446,20 @@ CREATE TABLE upload_request_group (
   uuid                            varchar(255) NOT NULL,
   creation_date                   timestamp(6) NOT NULL,
   modification_date               timestamp(6) NOT NULL,
+  secured                         bool NOT NULL,
+  mail_message_id                 varchar(255),
+  activation_date                 timestamp(6) NOT NULL,
+  expiry_date                     timestamp(6) NOT NULL,
+  notification_date               timestamp(6) NOT NULL,
+  max_deposit_size                int8,
+  max_file                        int4,
+  max_file_size                   int8,
+  can_delete                      bool NOT NULL,
+  can_close                       bool NOT NULL,
+  can_edit_expiry_date            bool NOT NULL,
+  locale                          varchar(255) NOT NULL,
+  enable_notification             bool NOT NULL,
+  restricted                      bool NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE upload_request_history (
   id                               int8 NOT NULL,
