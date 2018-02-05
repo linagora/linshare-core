@@ -35,11 +35,14 @@ package org.linagora.linshare.webservice.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.StreamingOutput;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
@@ -49,6 +52,8 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.io.ByteStreams;
 
 public class DocumentStreamReponseBuilder {
 
@@ -77,7 +82,18 @@ public class DocumentStreamReponseBuilder {
 	public static ResponseBuilder getDocumentResponseBuilder(
 			InputStream inputStream, String fileName, String mimeType,
 			Long fileSize) {
-		ResponseBuilder response = Response.ok(inputStream);
+		StreamingOutput stream = new StreamingOutput() {
+			@Override
+			public void write(OutputStream out) throws IOException, WebApplicationException {
+				try {
+					ByteStreams.copy(inputStream, out);
+				} finally {
+					out.close();
+					inputStream.close();
+				}
+			}
+		};
+		ResponseBuilder response = Response.ok(stream);
 		setHeaderToResponse(response, fileName, mimeType, fileSize);
 		return response;
 	}
