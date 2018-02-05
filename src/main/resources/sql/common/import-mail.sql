@@ -1823,8 +1823,7 @@ mainMsgplural = Some recipients have not downloaded <b>{0} files</b>. You may fi
 mainMsgSingular = Some recipients have not downloaded <b>{0} file</b>. You may find further details of the recipients downloads below.
 subjectPlural = Undownloaded shared files alert : {0} files have not been downloaded yet.
 subjectSingular = Undownloaded shared files alert : {0} file have not been downloaded yet.');
-INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english)
-	VALUES (2, 1, NULL, true, 2, '[# th:if="${#strings.isEmpty(customSubject)}"]
+INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (2, 1, NULL, true, 2, '[# th:if="${#strings.isEmpty(customSubject)}"]
 [# th:if="${sharesCount} > 1"]
 [( #{subjectPlural(${shareOwner.firstName},${ shareOwner.lastName})})]
 [/]
@@ -1882,10 +1881,25 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
        <span data-th-if="(${sharesCount} ==  1)" data-th-text="#{helpPasswordMsgSingular}">Click on the link below in order to download it     </span>
             <span data-th-if="(${sharesCount} >  1)" data-th-text="#{helpPasswordMsgPlural}">Click on the links below in order to download them </span>
             </span>
-            </span>
           <span data-th-if="(${!anonymous})">
-            <span data-th-if="(${sharesCount} ==  1)" data-th-text="#{helpMsgSingular}">Click on the link below in order to download it     </span>
-            <span data-th-if="(${sharesCount} >  1)" data-th-text="#{helpMsgPlural}">Click on the links below in order to download them </span>
+            <span data-th-if="(${sharesCount} ==  1)">
+              <span  data-th-utext="#{click}"></span>
+                <span>
+                 <a target="_blank" style="color:#1294dc;text-decoration:none;"  data-th-text="#{link}" th:href="@{${filesSharesLink}}" >
+                  link
+                 </a>
+               </span>
+              <span data-th-utext="#{helpMsgSingular}"></span>
+            </span>
+            <span data-th-if="(${sharesCount} >  1)">
+              <span  data-th-utext="#{click}"></span>
+              <span>
+                <a target="_blank" style="color:#1294dc;text-decoration:none;"  data-th-text="#{link}" th:href="@{${filesSharesLink}}" >
+                 link
+               </a>
+              </span>
+             <span data-th-utext="#{helpMsgPlural}"></span>
+            </span>
             </span>
         </p>
         <!--/* Single download link for external recipient */-->
@@ -1906,14 +1920,14 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
     </div>
     <th:block data-th-replace="layout :: infoDateArea(#{common.titleSharedThe},${shares[0].creationDate})"/>
     <th:block data-th-replace="layout :: infoDateArea(#{common.availableUntil},${shares[0].expirationDate})"/>
-     <th:block data-th-replace="layout :: infoFileLinksListingArea(#{common.filesInShare},${shares},${anonymous})"/>
+    <th:block data-th-replace="layout :: infoFileLinksListingArea(#{common.filesInShare},${shares},${anonymous})"/>
   </section>  <!--/* End of Secondary content for bottom email section */-->
   </div>
 </body>
 </html>', '250e4572-7bb9-4735-84ff-6a8af93e3a42', now(), now(), true, 'downloadBtn = Télécharger
 downloadLink = Lien de téléchargement
-helpMsgSingular = Cliquez sur le lien pour le télécharger.
-helpMsgPlural = Cliquez sur les liens pour les télécharger.
+helpMsgSingular =  pour visualiser le document partagé.
+helpMsgPlural =pour visualiser tous les documents du partage.
 helpPasswordMsgSingular = Cliquez sur le lien pour le télécharger et saisissez le mot de passe fourni ci.
 helpPasswordMsgPlural = Cliquez sur le lien pour les télécharger et saisissez le mot de passe fourni.
 mainMsgPlural = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>a partagé {2} fichiers avec vous.
@@ -1923,10 +1937,12 @@ name = {0} {1}
 password = Mot de passe
 subjectCustomAlt =de {0} {1}
 subjectPlural =  {0} {1} a partagé des fichiers avec vous
-subjectSingular =  {0} {1} vous a partagé un fichier avec vous', 'downloadBtn = Download
+subjectSingular =  {0} {1} vous a partagé un fichier avec vous
+click = Cliquez sur ce
+link = lien', 'downloadBtn = Download
 downloadLink = Download link
-helpMsgPlural = Click on the links below in order to download them.
-helpMsgSingular = Click on the link below in order to download it.
+helpMsgPlural = to access to all documents in this share.
+helpMsgSingular = to access to the document in this share.
 helpPasswordMsgSingular = Click on the link below in order to download it and enter the provided password.
 helpPasswordMsgPlural = Click on the link below in order to download them and enter the provided password.
 mainMsgPlural = <b> {0} <span style="text-transform:uppercase">{1}</span> </b> has shared <b>{2} files</b> with you.
@@ -1936,7 +1952,9 @@ name = {0} {1}
 password = Password
 subjectCustomAlt =by {0} {1}
 subjectPlural = {0} {1} has shared some files with you
-subjectSingular = {0} {1} has shared a file with you');
+subjectSingular = {0} {1} has shared a file with you
+click = Follow this
+link = link');
 INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english)
 	VALUES (1, 1, NULL, true, 1, '[( #{subject(${document.name})})]', '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
