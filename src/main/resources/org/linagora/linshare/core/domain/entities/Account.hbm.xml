@@ -63,9 +63,9 @@
 			<one-to-many class="org.linagora.linshare.core.domain.entities.Signature"/>
 		</set>
 
-		<set name="uploadRequests" lazy="true" cascade="save-update,lock" inverse="true">
+		<set name="uploadRequestGroups" lazy="true" cascade="save-update,lock" inverse="true">
 			<key column="account_id" not-null="true"/>
-			<one-to-many class="org.linagora.linshare.core.domain.entities.UploadRequest"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.UploadRequestGroup"/>
 		</set>
 		<set name="uploadRequestTemplates" lazy="true" cascade="save-update,lock" inverse="true">
 			<key column="account_id" not-null="true"/>

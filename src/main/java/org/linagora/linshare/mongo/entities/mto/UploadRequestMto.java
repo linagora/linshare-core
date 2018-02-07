@@ -103,10 +103,10 @@ public class UploadRequestMto {
 		this.body = request.getUploadRequestGroup().getBody();
 		this.subject = request.getUploadRequestGroup().getSubject();
 		this.groupUuid = request.getUploadRequestGroup().getUuid();
-		this.domain = new DomainMto(request.getAbstractDomain());
+		this.domain = new DomainMto(request.getUploadRequestGroup().getAbstractDomain());
 		this.maxFileCount = request.getMaxFileCount();
 		this.secured = request.isSecured();
-		this.owner = new AccountMto(request.getOwner());
+		this.owner = new AccountMto(request.getUploadRequestGroup().getOwner());
 		this.notified = request.isNotified();
 		this.locale = request.getLocale();
 		this.maxDepositSize = request.getMaxDepositSize();

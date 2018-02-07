@@ -58,7 +58,7 @@ public abstract class GenericUploadRequestEmailContext extends EmailContext {
 		this.warnOwner = warnOwner;
 		this.uploadRequest = uploadRequest;
 		if (warnOwner) {
-			this.language = uploadRequest.getOwner().getExternalMailLocale();
+			this.language = uploadRequest.getUploadRequestGroup().getOwner().getExternalMailLocale();
 		} else {
 			this.language = Language.fromTapestryLocale(uploadRequest.getLocale());
 		}

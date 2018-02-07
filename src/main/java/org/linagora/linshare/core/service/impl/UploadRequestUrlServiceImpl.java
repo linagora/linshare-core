@@ -147,14 +147,14 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 			found = uploadRequestEntryBusinessService.update(found);
 			if (documentEntryUuid != null) {
 				// Extract owner for upload request URL
-				Account owner = requestUrl.getUploadRequest().getOwner();
+				Account owner = requestUrl.getUploadRequest().getUploadRequestGroup().getOwner();
 				// Store the file into the owner account.
 				documentEntryService.delete(actor, owner, documentEntryUuid);
 			}
 			uploadRequestEntryBusinessService.delete(found);
 
 			EmailContext context = new UploadRequestDeleteFileEmailContext(
-					(User) requestUrl.getUploadRequest().getOwner(),
+					(User) requestUrl.getUploadRequest().getUploadRequestGroup().getOwner(),
 					requestUrl.getUploadRequest(), requestUrl, found);
 			MailContainerWithRecipient mail = mailBuildingService.build(context);
 			notifierService.sendNotification(mail);
@@ -174,7 +174,7 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 		// Retrieve upload request URL
 		UploadRequestUrl requestUrl = find(uploadRequestUrlUuid, password);
 		// HOOK : Extract owner for upload request URL
-		Account owner = requestUrl.getUploadRequest().getOwner();
+		Account owner = requestUrl.getUploadRequest().getUploadRequestGroup().getOwner();
 		// Store the file into the owner account.
 		DocumentEntry document = documentEntryService.create(
 				actor, owner, file, fileName, "", false, null);
@@ -185,7 +185,7 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 		UploadRequestEntry requestEntry = uploadRequestEntryBusinessService
 				.create(uploadRequestEntry);
 		EmailContext context = new UploadRequestUploadedFileEmailContext(
-				(User) requestUrl.getUploadRequest().getOwner(),
+				(User) requestUrl.getUploadRequest().getUploadRequestGroup().getOwner(),
 				requestUrl.getUploadRequest(),
 				requestUrl, requestEntry);
 		MailContainerWithRecipient mail = mailBuildingService.build(context);

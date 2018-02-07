@@ -168,7 +168,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_NOT_FOUND, "Can not find upload request with uuid : " + uuid);
 		}
 		if (owner == null) {
-			owner = ret.getOwner();
+			owner = ret.getUploadRequestGroup().getOwner();
 		}
 		checkReadPermission(actor, owner, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, ret);
 		return ret;
@@ -199,9 +199,9 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		} else {
 			groupedModeLocal = false;
 		}
-		UploadRequestGroup group = uploadRequestGroupBusinessService.create(new UploadRequestGroup(subject, body,
+		UploadRequestGroup group = uploadRequestGroupBusinessService.create(new UploadRequestGroup(owner, domain, subject, body,
 				inputRequest.getActivationDate(), inputRequest.isCanDelete(), inputRequest.isCanClose(),
-				inputRequest.isCanEditExpiryDate(), inputRequest.getLocale(), inputRequest.isSecured(),groupedMode, false));
+				inputRequest.isCanEditExpiryDate(), inputRequest.getLocale(), inputRequest.isSecured(),groupedMode, false, UploadRequestStatus.STATUS_CREATED));
 		UploadRequestGroupAuditLogEntry groupLog = new UploadRequestGroupAuditLogEntry(new AccountMto(actor),
 				new AccountMto(owner), LogAction.CREATE, AuditLogEntryType.UPLOAD_REQUEST_GROUP,
 				group.getUuid(), group);
@@ -244,7 +244,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 					.create(req, c);
 			if (!DateUtils.isSameDay(req.getActivationDate(), req.getCreationDate())) {
 				mails.add(mailBuildingService.buildCreateUploadRequest(
-						(User) req.getOwner(), requestUrl));
+						(User) req.getUploadRequestGroup().getOwner(), requestUrl));
 			}
 		}
 		notifierService.sendNotification(mails);
@@ -256,7 +256,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 				updateRequest(actor, owner, req);
 				for (UploadRequestUrl u: req.getUploadRequestURLs()) {
 					if (u.getContact().equals(contacts.get(0))) {
-						UploadRequestActivationEmailContext mailContext = new UploadRequestActivationEmailContext((User) req.getOwner(), req, u);
+						UploadRequestActivationEmailContext mailContext = new UploadRequestActivationEmailContext((User) req.getUploadRequestGroup().getOwner(), req, u);
 						mails.add(mailBuildingService.build(mailContext));
 					}
 				}
@@ -271,9 +271,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	private UploadRequest initUploadRequest(User owner,
 			UploadRequestGroup group, UploadRequest req) {
 		AbstractDomain domain = owner.getDomain();
-		req.setOwner(owner);
 		req.setStatus(UploadRequestStatus.STATUS_CREATED);
-		req.setAbstractDomain(domain);
 		req.setUploadRequestGroup(group);
 		checkActivationDate(domain, req);
 		checkExpiryAndNoticationDate(domain, req);
@@ -705,11 +703,11 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 							+ req.getUuid());
 		}
 		UploadRequestAuditLogEntry log = new UploadRequestAuditLogEntry(new AccountMto(actor),
-				new AccountMto(req.getOwner()), LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST, req.getUuid(), req);
-		checkUpdatePermission(actor, req.getOwner(), UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, req);
+				new AccountMto(req.getUploadRequestGroup().getOwner()), LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST, req.getUuid(), req);
+		checkUpdatePermission(actor, req.getUploadRequestGroup().getOwner(), UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, req);
 		req.updateStatus(UploadRequestStatus.STATUS_CLOSED);
 		UploadRequest update = updateRequest(actor, actor, req);
-		EmailContext ctx = new UploadRequestClosedByRecipientEmailContext((User)req.getOwner(), req, url);
+		EmailContext ctx = new UploadRequestClosedByRecipientEmailContext((User)req.getUploadRequestGroup().getOwner(), req, url);
 		MailContainerWithRecipient mail = mailBuildingService.build(ctx);
 		notifierService.sendNotification(mail);
 		log.setResourceUpdated(new UploadRequestMto(update));
@@ -727,7 +725,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	public UploadRequestGroup findRequestGroupByUuid(Account actor, Account owner, String uuid) {
 		preChecks(actor, owner);
 		UploadRequestGroup req = uploadRequestGroupBusinessService.findByUuid(uuid);
-		groupRac.checkReadPermission(actor, req.getUploadRequests().iterator().next().getOwner(), UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, req);
+		groupRac.checkReadPermission(actor, req.getUploadRequests().iterator().next().getUploadRequestGroup().getOwner(), UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, req);
 		return req;
 	}
 
@@ -735,7 +733,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	public UploadRequestGroup updateRequestGroup(Account actor,
 			Account owner, UploadRequestGroup group) throws BusinessException {
 		preChecks(actor, owner);
-		groupRac.checkUpdatePermission(actor, group.getUploadRequests().iterator().next().getOwner(), UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, group);
+		groupRac.checkUpdatePermission(actor, group.getUploadRequests().iterator().next().getUploadRequestGroup().getOwner(), UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, group);
 		return uploadRequestGroupBusinessService.update(group);
 	}
 
@@ -743,7 +741,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	public void deleteRequestGroup(Account actor, Account owner, UploadRequestGroup group)
 			throws BusinessException {
 		preChecks(actor, owner);
-		groupRac.checkDeletePermission(actor, group.getUploadRequests().iterator().next().getOwner(), UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, group);
+		groupRac.checkDeletePermission(actor, group.getUploadRequests().iterator().next().getUploadRequestGroup().getOwner(), UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, group);
 		uploadRequestGroupBusinessService.delete(group);
 	}
 

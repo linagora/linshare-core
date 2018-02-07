@@ -404,9 +404,7 @@ CREATE TABLE mail_content_lang (
   readonly          bool DEFAULT 'false' NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE upload_request (
-  id                               int8 NOT NULL,
-  domain_abstract_id              int8 NOT NULL,
-  account_id                      int8 NOT NULL,
+  id                              int8 NOT NULL,
   upload_request_group_id         int8 NOT NULL,
   uuid                            varchar(255) NOT NULL UNIQUE,
   status                          varchar(255) NOT NULL,
@@ -440,7 +438,9 @@ CREATE TABLE upload_request_url (
   modification_date timestamp(6) NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE upload_request_group (
-  id                               int8 NOT NULL,
+  id                              int8 NOT NULL,
+  domain_abstract_id              int8 NOT NULL,
+  account_id                      int8 NOT NULL,
   subject                         text NOT NULL,
   body                            text NOT NULL,
   uuid                            varchar(255) NOT NULL,
@@ -460,6 +460,7 @@ CREATE TABLE upload_request_group (
   locale                          varchar(255) NOT NULL,
   enable_notification             bool NOT NULL,
   restricted                      bool NOT NULL,
+  status                          varchar(255) NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE upload_request_history (
   id                               int8 NOT NULL,
@@ -973,8 +974,8 @@ ALTER TABLE mime_type ADD CONSTRAINT FKmime_type145742 FOREIGN KEY (mime_policy_
 ALTER TABLE mime_policy ADD CONSTRAINT FKmime_polic613419 FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);
 ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs809928 FOREIGN KEY (mime_policy_id) REFERENCES mime_policy (id);
 ALTER TABLE account_permission ADD CONSTRAINT FKaccount_pe759382 FOREIGN KEY (technical_account_permission_id) REFERENCES technical_account_permission (id);
-ALTER TABLE upload_request ADD CONSTRAINT FKupload_req220337 FOREIGN KEY (account_id) REFERENCES account (id);
-ALTER TABLE upload_request ADD CONSTRAINT FKupload_req840249 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
+ALTER TABLE upload_request_group ADD CONSTRAINT FKupload_req220337 FOREIGN KEY (account_id) REFERENCES account (id);
+ALTER TABLE upload_request_group ADD CONSTRAINT FKupload_req840249 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE upload_proposition_filter ADD CONSTRAINT FKupload_pro316142 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE functionality_enum_lang ADD CONSTRAINT FKfunctional140416 FOREIGN KEY (functionality_id) REFERENCES functionality (id);
 ALTER TABLE functionality_boolean ADD CONSTRAINT FKfunctional171577 FOREIGN KEY (functionality_id) REFERENCES functionality (id);

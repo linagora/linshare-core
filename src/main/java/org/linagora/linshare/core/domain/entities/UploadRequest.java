@@ -85,10 +85,6 @@ public class UploadRequest implements Cloneable {
 
 	private Set<UploadRequestHistory> uploadRequestHistory = Sets.newHashSet();
 
-	private Account owner;
-
-	private AbstractDomain abstractDomain;
-
 	private Boolean notified = new Boolean(false);
 
 	private Boolean dirty = new Boolean(false);
@@ -215,22 +211,6 @@ public class UploadRequest implements Cloneable {
 	public void setUploadRequestHistory(
 			Set<UploadRequestHistory> uploadRequestHistory) {
 		this.uploadRequestHistory = uploadRequestHistory;
-	}
-
-	public Account getOwner() {
-		return owner;
-	}
-
-	public void setOwner(Account owner) {
-		this.owner = owner;
-	}
-
-	public AbstractDomain getAbstractDomain() {
-		return abstractDomain;
-	}
-
-	public void setAbstractDomain(AbstractDomain abstractDomain) {
-		this.abstractDomain = abstractDomain;
 	}
 
 	public Integer getMaxFileCount() {
@@ -368,7 +348,6 @@ public class UploadRequest implements Cloneable {
 			this.expiryDate = date;
 		}
 	}
-	
 	
 	public Boolean getDirty() {
 		return dirty;

@@ -36,6 +36,8 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.Date;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
+
 import com.google.common.collect.Sets;
 
 public class UploadRequestGroup {
@@ -82,6 +84,12 @@ public class UploadRequestGroup {
 	
 	private Boolean restricted;
 
+	private Account owner;
+
+	private AbstractDomain abstractDomain;
+	
+	private UploadRequestStatus status;
+	
 	public UploadRequestGroup() {
 		super();
 	}
@@ -92,7 +100,9 @@ public class UploadRequestGroup {
 		this.body = body;
 	}
 	
-	public UploadRequestGroup(String subject,
+	public UploadRequestGroup(Account owner,
+			AbstractDomain abstractDomain,
+			String subject,
 			String body,
 			Date activationDate,
 			Boolean canDelete,
@@ -101,8 +111,11 @@ public class UploadRequestGroup {
 			String locale,
 			Boolean secured,
 			Boolean enableNotification,
-			Boolean restricted) {
+			Boolean restricted,
+			UploadRequestStatus status) {
 		super();
+		this.owner = owner;
+		this.abstractDomain = abstractDomain;
 		this.subject = subject;
 		this.body = body;
 		this.activationDate = activationDate;
@@ -115,6 +128,7 @@ public class UploadRequestGroup {
 		modificationDate = new Date();
 		this.enableNotification = enableNotification;
 		this.restricted = restricted;
+		this.status = status;
 	}
 
 
@@ -291,4 +305,28 @@ public class UploadRequestGroup {
 	public void setRestricted(Boolean restricted) {
 		this.restricted = restricted;
 	}
-}
+
+	public Account getOwner() {
+		return owner;
+	}
+
+	public void setOwner(Account owner) {
+		this.owner = owner;
+	}
+
+	public AbstractDomain getAbstractDomain() {
+		return abstractDomain;
+	}
+
+	public void setAbstractDomain(AbstractDomain abstractDomain) {
+		this.abstractDomain = abstractDomain;
+	}
+
+	public UploadRequestStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(UploadRequestStatus status) {
+		this.status = status;
+	}}
+

@@ -99,7 +99,7 @@ public class UploadRequestDto {
 
 	public UploadRequestDto(UploadRequest entity) {
 		super();
-		this.owner = new ContactDto(entity.getOwner());
+		this.owner = new ContactDto(entity.getUploadRequestGroup().getOwner());
 		this.recipient = null;
 		this.maxFileCount = entity.getMaxFileCount();
 		this.maxDepositSize = entity.getMaxDepositSize();

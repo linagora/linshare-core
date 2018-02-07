@@ -1,12 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
+	<typedef class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="uploadRequestStatus">
+		<param name="enumClass">org.linagora.linshare.core.domain.constants.UploadRequestStatus</param>
+		<param name="identifierMethod">name</param>
+		<param name="valueOfMethod">fromString</param>
+	</typedef>
 	<class name="org.linagora.linshare.core.domain.entities.UploadRequestGroup"
 		table="upload_request_group" lazy="true">
 		<id name="id" column="id" type="long" unsaved-value="0">
 			<generator class="native">
 			</generator>
 		</id>
+		<many-to-one name="owner" cascade="lock" column="account_id"
+			class="org.linagora.linshare.core.domain.entities.Account" not-null="true"
+			lazy="proxy" />
+		<many-to-one name="abstractDomain" column="domain_abstract_id"
+			class="org.linagora.linshare.core.domain.entities.AbstractDomain"
+			not-null="true" lazy="proxy" />
 		<property name="subject" column="subject" type="text"
 			not-null="true" lazy="false" />
 		<property name="body" column="body" type="text" not-null="true"
@@ -45,6 +56,8 @@
 			lazy="false" />
 		<property access="field" name="restricted" column="restricted"
 			not-null="true" lazy="false" type="boolean" />
+		<property access="field" name="status" column="status"
+			not-null="true" lazy="false" type="uploadRequestStatus" />
 		<set name="uploadRequests" lazy="true" cascade="lock" inverse="true">
 			<key column="upload_request_group_id" not-null="true" />
 			<one-to-many

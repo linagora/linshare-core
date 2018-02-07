@@ -94,13 +94,13 @@ public class NotifyBeforeExpirationUploadRequestBatchImpl extends GenericBatchIm
 		ResultContext context = new UploadRequestBatchResultContext(r);
 		if (!r.isNotified()) {
 			for (UploadRequestUrl u : r.getUploadRequestURLs()) {
-				EmailContext ctx = new UploadRequestWarnBeforeExpiryEmailContext((User)r.getOwner(), r, u, false);
+				EmailContext ctx = new UploadRequestWarnBeforeExpiryEmailContext((User)r.getUploadRequestGroup().getOwner(), r, u, false);
 				notifications.add(mailBuildingService.build(ctx));
 			}
-			EmailContext ctx = new UploadRequestWarnBeforeExpiryEmailContext((User)r.getOwner(), r, null, true);
+			EmailContext ctx = new UploadRequestWarnBeforeExpiryEmailContext((User)r.getUploadRequestGroup().getOwner(), r, null, true);
 			notifications.add(mailBuildingService.build(ctx));
 			r.setNotified(true);
-			service.updateRequest(getSystemAccount(), r.getOwner(), r);
+			service.updateRequest(getSystemAccount(), r.getUploadRequestGroup().getOwner(), r);
 			notifierService.sendNotification(notifications);
 		}
 		return context;

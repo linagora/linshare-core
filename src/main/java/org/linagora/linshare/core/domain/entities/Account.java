@@ -87,7 +87,7 @@ public abstract class Account {
 
 	protected Set<UploadRequestTemplate> uploadRequestTemplates;
 
-	protected Set<UploadRequest> uploadRequests;
+	protected Set<UploadRequestGroup> uploadRequestGroups;
 
 	public Account() {
 		setCreationDate(new Date());
@@ -291,12 +291,12 @@ public abstract class Account {
 		this.permission = permission;
 	}
 
-	public Set<UploadRequest> getUploadRequests() {
-		return uploadRequests;
+	public Set<UploadRequestGroup> getUploadRequestGroups() {
+		return uploadRequestGroups;
 	}
 
-	public void setUploadRequests(Set<UploadRequest> uploadRequests) {
-		this.uploadRequests = uploadRequests;
+	public void setUploadRequestGroups(Set<UploadRequestGroup> uploadRequestGroups) {
+		this.uploadRequestGroups = uploadRequestGroups;
 	}
 
 	public Set<UploadRequestTemplate> getUploadRequestTemplates() {

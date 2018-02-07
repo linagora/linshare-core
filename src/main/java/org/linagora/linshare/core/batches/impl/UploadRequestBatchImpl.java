@@ -94,7 +94,7 @@ public class UploadRequestBatchImpl implements UploadRequestBatch {
 					r.updateStatus(UploadRequestStatus.STATUS_ENABLED);
 					r = uploadRequestService.updateRequest(systemAccount, systemAccount, r);
 					for (UploadRequestUrl u: r.getUploadRequestURLs()) {
-						UploadRequestActivationEmailContext mailContext = new UploadRequestActivationEmailContext((User) r.getOwner(), r, u);
+						UploadRequestActivationEmailContext mailContext = new UploadRequestActivationEmailContext((User) r.getUploadRequestGroup().getOwner(), r, u);
 						notifications.add(mailBuildingService.build(mailContext));
 					}
 				} catch (BusinessException e) {
@@ -107,10 +107,10 @@ public class UploadRequestBatchImpl implements UploadRequestBatch {
 				logger.debug("date de notification == today..." + r.getExpiryDate() + " == " + new Date());
 				try {
 					for (UploadRequestUrl u : r.getUploadRequestURLs()) {
-						EmailContext ctx = new UploadRequestWarnBeforeExpiryEmailContext((User)r.getOwner(), r, u, false);
+						EmailContext ctx = new UploadRequestWarnBeforeExpiryEmailContext((User)r.getUploadRequestGroup().getOwner(), r, u, false);
 						notifications.add(mailBuildingService.build(ctx));
 					}
-					EmailContext ctx = new UploadRequestWarnBeforeExpiryEmailContext((User)r.getOwner(), r, null, true);
+					EmailContext ctx = new UploadRequestWarnBeforeExpiryEmailContext((User)r.getUploadRequestGroup().getOwner(), r, null, true);
 					notifications.add(mailBuildingService.build(ctx));
 				} catch (BusinessException e) {
 					logger.error("Fail to update upload request status of the request : " + r.getUuid());
@@ -121,10 +121,10 @@ public class UploadRequestBatchImpl implements UploadRequestBatch {
 					r.updateStatus(UploadRequestStatus.STATUS_CLOSED);
 					r = uploadRequestService.updateRequest(systemAccount, systemAccount, r);
 					for (UploadRequestUrl u : r.getUploadRequestURLs()) {
-						EmailContext ctx = new UploadRequestWarnExpiryEmailContext((User)r.getOwner(), r, u, false);
+						EmailContext ctx = new UploadRequestWarnExpiryEmailContext((User)r.getUploadRequestGroup().getOwner(), r, u, false);
 						notifications.add(mailBuildingService.build(ctx));
 					}
-					EmailContext ctx = new UploadRequestWarnExpiryEmailContext((User)r.getOwner(), r, null, true);
+					EmailContext ctx = new UploadRequestWarnExpiryEmailContext((User)r.getUploadRequestGroup().getOwner(), r, null, true);
 					notifications.add(mailBuildingService.build(ctx));
 				} catch (BusinessException e) {
 					logger.error("Fail to update upload request status of the request : " + r.getUuid());

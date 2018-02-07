@@ -118,7 +118,7 @@ public class UploadRequestDto {
 	public UploadRequestDto(UploadRequest entity, boolean full) {
 		super();
 		this.uuid = entity.getUuid();
-		this.owner = new ContactDto(entity.getOwner());
+		this.owner = new ContactDto(entity.getUploadRequestGroup().getOwner());
 		this.activationDate = entity.getActivationDate();
 		this.creationDate = entity.getCreationDate();
 		this.expiryDate = entity.getExpiryDate();

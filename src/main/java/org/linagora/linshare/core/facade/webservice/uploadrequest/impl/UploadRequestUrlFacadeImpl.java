@@ -124,7 +124,7 @@ public class UploadRequestUrlFacadeImpl implements UploadRequestUrlFacade {
 			return null;
 		}
 		UploadRequestDto dto = new UploadRequestDto(requestUrl);
-		Account actor = requestUrl.getUploadRequest().getOwner();
+		Account actor = requestUrl.getUploadRequest().getUploadRequestGroup().getOwner();
 		Functionality functionality = functionalityReadOnlyService.getMimeTypeFunctionality(actor.getDomain());
 		if (functionality.getActivationPolicy().getStatus()) {
 			Set<MimeType> mimeTypes = mimePolicyService.findAllMyMimeTypes(actor);

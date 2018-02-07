@@ -1,5 +1,5 @@
 /*
- * LinShare is an open source filesharing software, part of the LinPKI software
+s * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
  * Copyright (C) 2016-2018 LINAGORA
@@ -96,12 +96,12 @@ public class CloseExpiredUploadRequestBatchImpl extends GenericBatchImpl impleme
 		ResultContext context = new UploadRequestBatchResultContext(r);
 		console.logInfo(batchRunContext, total, position, "processing uplaod request : ", r.getUuid());
 		r.updateStatus(UploadRequestStatus.STATUS_CLOSED);
-		r = uploadRequestService.updateRequest(account, r.getOwner(), r);
+		r = uploadRequestService.updateRequest(account, r.getUploadRequestGroup().getOwner(), r);
 		for (UploadRequestUrl u : r.getUploadRequestURLs()) {
-			EmailContext ctx = new UploadRequestWarnExpiryEmailContext((User) r.getOwner(), r, u, false);
+			EmailContext ctx = new UploadRequestWarnExpiryEmailContext((User) r.getUploadRequestGroup().getOwner(), r, u, false);
 			notifications.add(mailBuildingService.build(ctx));
 		}
-		EmailContext ctx = new UploadRequestWarnExpiryEmailContext((User) r.getOwner(), r, null, true);
+		EmailContext ctx = new UploadRequestWarnExpiryEmailContext((User) r.getUploadRequestGroup().getOwner(), r, null, true);
 		notifications.add(mailBuildingService.build(ctx));
 		notifierService.sendNotification(notifications);
 		return context;

@@ -80,7 +80,7 @@ public class DomainPermissionBusinessServiceImpl implements
 
 	@Override
 	public boolean isAdminForThisUploadRequest(Account actor, UploadRequest request) {
-		return isAdminforThisDomain(actor, request.getAbstractDomain())
+		return isAdminforThisDomain(actor, request.getUploadRequestGroup().getAbstractDomain())
 				|| isOwner(actor, request);
 	}
 
@@ -107,6 +107,6 @@ public class DomainPermissionBusinessServiceImpl implements
 	}
 
 	private boolean isOwner(Account actor, UploadRequest request) {
-		return request.getOwner().equals(actor);
+		return request.getUploadRequestGroup().getOwner().equals(actor);
 	}
 }

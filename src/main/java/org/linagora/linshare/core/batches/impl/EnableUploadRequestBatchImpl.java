@@ -93,12 +93,12 @@ public class EnableUploadRequestBatchImpl extends GenericBatchImpl implements En
 		ResultContext context = new UploadRequestBatchResultContext(r);
 		console.logInfo(batchRunContext, total, position, "processing uplaod request : ", r.getUuid());
 		r.updateStatus(UploadRequestStatus.STATUS_ENABLED);
-		r = uploadRequestService.updateRequest(account, r.getOwner(), r);
+		r = uploadRequestService.updateRequest(account, r.getUploadRequestGroup().getOwner(), r);
 		for (UploadRequestUrl u: r.getUploadRequestURLs()) {
-			UploadRequestActivationEmailContext mailContext = new UploadRequestActivationEmailContext((User) r.getOwner(), r, u);
+			UploadRequestActivationEmailContext mailContext = new UploadRequestActivationEmailContext((User) r.getUploadRequestGroup().getOwner(), r, u);
 			notifications.add(mailBuildingService.build(mailContext));
 		}
-		UploadRequestActivationEmailContext mailContext = new UploadRequestActivationEmailContext((User) r.getOwner(), r);
+		UploadRequestActivationEmailContext mailContext = new UploadRequestActivationEmailContext((User) r.getUploadRequestGroup().getOwner(), r);
 		notifications.add(mailBuildingService.build(mailContext));
 		notifierService.sendNotification(notifications);
 		logger.error("Fail to update upload request status of the request : " + r.getUuid());
