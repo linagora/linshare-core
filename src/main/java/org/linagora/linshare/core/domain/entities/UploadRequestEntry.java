@@ -41,11 +41,21 @@ public class UploadRequestEntry extends Entry implements Serializable {
 
 	private static final long serialVersionUID = 54638444450061115L;
 
-	private DocumentEntry documentEntry;
+	protected Document document;
 
-	private UploadRequestUrl uploadRequestUrl;
+	protected DocumentEntry documentEntry;
 
-	private long size;
+	protected UploadRequestUrl uploadRequestUrl;
+
+	protected Long size;
+
+	protected String type;
+
+	protected String sha256sum;
+
+	protected Boolean copied;
+
+	protected Boolean ciphered;
 
 	public UploadRequestEntry() {
 		super();
@@ -55,9 +65,14 @@ public class UploadRequestEntry extends Entry implements Serializable {
 			UploadRequestUrl requestUrl) {
 		super(documentEntry.getEntryOwner(), documentEntry.getName(),
 				documentEntry.getComment());
+		this.document = documentEntry.getDocument();
 		this.documentEntry = documentEntry;
 		this.uploadRequestUrl = requestUrl;
+		this.sha256sum = documentEntry.getSha256sum();
 		this.size = documentEntry.getSize();
+		this.type = documentEntry.getType();
+		this.copied = false;
+		this.ciphered = false;
 	}
 
 	public DocumentEntry getDocumentEntry() {
@@ -91,5 +106,45 @@ public class UploadRequestEntry extends Entry implements Serializable {
 
 	public void setUploadRequestUrl(UploadRequestUrl uploadRequestUrl) {
 		this.uploadRequestUrl = uploadRequestUrl;
+	}
+
+	public Document getDocument() {
+		return document;
+	}
+
+	public void setDocument(Document document) {
+		this.document = document;
+	}
+
+	public Boolean getCopied() {
+		return copied;
+	}
+
+	public void setCopied(Boolean copied) {
+		this.copied = copied;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getSha256sum() {
+		return sha256sum;
+	}
+
+	public void setSha256sum(String sha256sum) {
+		this.sha256sum = sha256sum;
+	}
+
+	public Boolean getCiphered() {
+		return ciphered;
+	}
+
+	public void setCiphered(Boolean ciphered) {
+		this.ciphered = ciphered;
 	}
 }

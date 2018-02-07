@@ -488,8 +488,13 @@ CREATE TABLE upload_request_history (
 CREATE TABLE upload_request_entry (
   entry_id                int8 NOT NULL,
   document_entry_entry_id int8,
+  document_id             int8 NOT NULL,
   upload_request_url_id   int8 NOT NULL,
   ls_size                 int8 NOT NULL,
+  copied                  bool DEFAULT 'false' NOT NULL,
+  ciphered                bool NOT NULL,
+  ls_type                 varchar(255) NOT NULL,
+  sha256sum               varchar(255),
   PRIMARY KEY (entry_id));
 CREATE TABLE upload_proposition_filter (
   id                  int8 NOT NULL,
@@ -961,6 +966,7 @@ ALTER TABLE upload_request_history ADD CONSTRAINT FKupload_req678768 FOREIGN KEY
 ALTER TABLE upload_request_entry ADD CONSTRAINT upload_request_entry_fk_url FOREIGN KEY (upload_request_url_id) REFERENCES upload_request_url (id);
 ALTER TABLE upload_request_entry ADD CONSTRAINT FKupload_req254795 FOREIGN KEY (entry_id) REFERENCES entry (id);
 ALTER TABLE upload_request_entry ADD CONSTRAINT FKupload_req11781 FOREIGN KEY (document_entry_entry_id) REFERENCES document_entry (entry_id);
+ALTER TABLE upload_request_entry ADD CONSTRAINT FKupload_req11782 FOREIGN KEY (document_id) REFERENCES document (id);
 ALTER TABLE upload_proposition_rule ADD CONSTRAINT FKupload_pro672390 FOREIGN KEY (upload_proposition_filter_id) REFERENCES upload_proposition_filter (id);
 ALTER TABLE upload_proposition_action ADD CONSTRAINT FKupload_pro841666 FOREIGN KEY (upload_proposition_filter_id) REFERENCES upload_proposition_filter (id);
 ALTER TABLE functionality ADD CONSTRAINT FKfunctional788903 FOREIGN KEY (policy_delegation_id) REFERENCES policy (id);

@@ -41,11 +41,15 @@ public class UploadRequestEntryMto {
 
 	protected DocumentMto document;
 
-	protected String type;
-
 	protected Long size;
 
+	protected String type;
+
 	protected String sha256sum;
+
+	protected Boolean copied;
+
+	protected Boolean ciphered;
 
 	public UploadRequestEntryMto() {
 		super();
@@ -57,6 +61,8 @@ public class UploadRequestEntryMto {
 		this.type = reqEntry.getDocumentEntry().getType();
 		this.size = reqEntry.getSize();
 		this.sha256sum = reqEntry.getDocumentEntry().getSha256sum();
+		this.ciphered = reqEntry.getDocumentEntry().getCiphered();
+		this.copied = false;
 	}
 
 	public String getUrlUuid() {
@@ -97,5 +103,21 @@ public class UploadRequestEntryMto {
 
 	public void setSha256sum(String sha256sum) {
 		this.sha256sum = sha256sum;
+	}
+
+	public Boolean getCopied() {
+		return copied;
+	}
+
+	public void setCopied(Boolean copied) {
+		this.copied = copied;
+	}
+
+	public Boolean getCiphered() {
+		return ciphered;
+	}
+
+	public void setCiphered(Boolean ciphered) {
+		this.ciphered = ciphered;
 	}
 }
