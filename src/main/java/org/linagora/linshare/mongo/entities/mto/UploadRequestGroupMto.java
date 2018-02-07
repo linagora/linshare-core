@@ -36,6 +36,7 @@ package org.linagora.linshare.mongo.entities.mto;
 import java.util.Date;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 
@@ -55,6 +56,40 @@ public class UploadRequestGroupMto {
 
 	private Date modificationDate;
 
+	private Integer maxFileCount;
+
+	private Long maxDepositSize;
+
+	private Long maxFileSize;
+
+	private Date activationDate;
+
+	private Date notificationDate;
+
+	private Date expiryDate;
+
+	private Boolean canDelete;
+
+	private Boolean canClose;
+
+	private Boolean canEditExpiryDate;
+
+	private String locale;
+
+	private boolean secured;
+
+	private String mailMessageId;
+
+	private Boolean enableNotification;
+
+	private Boolean restricted;
+
+	private AccountMto owner;
+
+	private DomainMto domain;
+
+	private UploadRequestStatus status;
+
 	public UploadRequestGroupMto() {
 	}
 
@@ -64,6 +99,23 @@ public class UploadRequestGroupMto {
 		this.body = group.getBody();
 		this.creationDate = group.getCreationDate();
 		this.modificationDate = group.getModificationDate();
+		this.maxFileCount = group.getMaxFileCount();
+		this.maxDepositSize = group.getMaxDepositSize();
+		this.maxFileSize = group.getMaxFileSize();
+		this.activationDate = group.getActivationDate();
+		this.notificationDate = group.getNotificationDate();
+		this.expiryDate = group.getExpiryDate();
+		this.canDelete = group.getCanDelete();
+		this.canClose = group.getCanClose();
+		this.canEditExpiryDate = group.getCanEditExpiryDate();
+		this.locale = group.getLocale();
+		this.secured = group.isSecured();
+		this.mailMessageId = group.getMailMessageId();
+		this.enableNotification = group.getEnableNotification();
+		this.restricted = group.getRestricted();
+		this.owner = new AccountMto(group.getOwner());
+		this.domain = new DomainMto(group.getAbstractDomain());
+		this.status = group.getStatus();
 		for (UploadRequest req : group.getUploadRequests()) {
 			uploadRequestUuids.add(req.getUuid());
 		}
@@ -116,4 +168,141 @@ public class UploadRequestGroupMto {
 	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
 	}
+
+	public Integer getMaxFileCount() {
+		return maxFileCount;
+	}
+
+	public void setMaxFileCount(Integer maxFileCount) {
+		this.maxFileCount = maxFileCount;
+	}
+
+	public Long getMaxDepositSize() {
+		return maxDepositSize;
+	}
+
+	public void setMaxDepositSize(Long maxDepositSize) {
+		this.maxDepositSize = maxDepositSize;
+	}
+
+	public Long getMaxFileSize() {
+		return maxFileSize;
+	}
+
+	public void setMaxFileSize(Long maxFileSize) {
+		this.maxFileSize = maxFileSize;
+	}
+
+	public Date getActivationDate() {
+		return activationDate;
+	}
+
+	public void setActivationDate(Date activationDate) {
+		this.activationDate = activationDate;
+	}
+
+	public Date getNotificationDate() {
+		return notificationDate;
+	}
+
+	public void setNotificationDate(Date notificationDate) {
+		this.notificationDate = notificationDate;
+	}
+
+	public Date getExpiryDate() {
+		return expiryDate;
+	}
+
+	public void setExpiryDate(Date expiryDate) {
+		this.expiryDate = expiryDate;
+	}
+
+	public Boolean getCanDelete() {
+		return canDelete;
+	}
+
+	public void setCanDelete(Boolean canDelete) {
+		this.canDelete = canDelete;
+	}
+
+	public Boolean getCanClose() {
+		return canClose;
+	}
+
+	public void setCanClose(Boolean canClose) {
+		this.canClose = canClose;
+	}
+
+	public Boolean getCanEditExpiryDate() {
+		return canEditExpiryDate;
+	}
+
+	public void setCanEditExpiryDate(Boolean canEditExpiryDate) {
+		this.canEditExpiryDate = canEditExpiryDate;
+	}
+
+	public String getLocale() {
+		return locale;
+	}
+
+	public void setLocale(String locale) {
+		this.locale = locale;
+	}
+
+	public boolean isSecured() {
+		return secured;
+	}
+
+	public void setSecured(boolean secured) {
+		this.secured = secured;
+	}
+
+	public String getMailMessageId() {
+		return mailMessageId;
+	}
+
+	public void setMailMessageId(String mailMessageId) {
+		this.mailMessageId = mailMessageId;
+	}
+
+	public Boolean getEnableNotification() {
+		return enableNotification;
+	}
+
+	public void setEnableNotification(Boolean enableNotification) {
+		this.enableNotification = enableNotification;
+	}
+
+	public Boolean getRestricted() {
+		return restricted;
+	}
+
+	public void setRestricted(Boolean restricted) {
+		this.restricted = restricted;
+	}
+
+	public AccountMto getOwner() {
+		return owner;
+	}
+
+	public void setOwner(AccountMto owner) {
+		this.owner = owner;
+	}
+
+	public DomainMto getDomain() {
+		return domain;
+	}
+
+	public void setDomain(DomainMto domain) {
+		this.domain = domain;
+	}
+
+	public UploadRequestStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(UploadRequestStatus status) {
+		this.status = status;
+	}
+
 }

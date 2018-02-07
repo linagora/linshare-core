@@ -86,13 +86,15 @@ public class UploadRequestMto {
 
 	private Set<UploadRequestUrlMto> uploadRequestURLs = Sets.newHashSet();
 
-//	private Set<UploadRequestHistory> uploadRequestHistory = Sets.newHashSet();
-
 	private AccountMto owner;
 
 	private DomainMto domain;
 
 	private Boolean notified;
+
+	private Boolean dirtyLocalConf;
+
+	private Boolean enableNotification;
 
 	public UploadRequestMto() {
 		super();
@@ -116,6 +118,8 @@ public class UploadRequestMto {
 		this.canClose = request.isCanClose();
 		this.canDelete = request.isCanDelete();
 		this.canEditExpiryDate = request.isCanEditExpiryDate();
+		this.dirtyLocalConf = request.getDirty();
+		this.enableNotification = request.getEnableNotification();
 		for (UploadRequestUrl u : request.getUploadRequestURLs()) {
 			this.uploadRequestURLs.add(new UploadRequestUrlMto(u));
 		}
@@ -265,14 +269,6 @@ public class UploadRequestMto {
 		this.uploadRequestURLs = uploadRequestURLs;
 	}
 
-//	public Set<UploadRequestHistory> getUploadRequestHistory() {
-//		return uploadRequestHistory;
-//	}
-//
-//	public void setUploadRequestHistory(Set<UploadRequestHistory> uploadRequestHistory) {
-//		this.uploadRequestHistory = uploadRequestHistory;
-//	}
-
 	public AccountMto getOwner() {
 		return owner;
 	}
@@ -320,4 +316,21 @@ public class UploadRequestMto {
 	public void setGroupUuid(String groupUuid) {
 		this.groupUuid = groupUuid;
 	}
+
+	public Boolean getDirtyLocalConf() {
+		return dirtyLocalConf;
+	}
+
+	public void setDirtyLocalConf(Boolean dirtyLocalConf) {
+		this.dirtyLocalConf = dirtyLocalConf;
+	}
+
+	public Boolean getEnableNotification() {
+		return enableNotification;
+	}
+
+	public void setEnableNotification(Boolean enableNotification) {
+		this.enableNotification = enableNotification;
+	}
+
 }
