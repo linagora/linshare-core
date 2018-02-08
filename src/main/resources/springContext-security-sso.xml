@@ -60,8 +60,14 @@
 
 			<sec:filter-chain pattern="/webservice/rest/authentication/" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/user/authentication/" filters="none" />
+			<sec:filter-chain pattern="/webservice/rest/user/authentication/logout" filters="logoutFilterUser" />
+
 			<sec:filter-chain pattern="/webservice/rest/user/v2/authentication/" filters="none" />
+			<sec:filter-chain pattern="/webservice/rest/user/v2/authentication/logout" filters="logoutFilterUserV2" />
+
 			<sec:filter-chain pattern="/webservice/rest/admin/authentication/" filters="none" />
+			<sec:filter-chain pattern="/webservice/rest/admin/authentication/logout" filters="logoutFilterAdmin" />
+
 			<sec:filter-chain pattern="/webservice/rest/uploadrequest/**" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/external/**" filters="none" />
 
