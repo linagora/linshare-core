@@ -73,7 +73,6 @@ import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
-import org.linagora.linshare.core.notifications.context.UploadRequestActivationEmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestClosedByRecipientEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.UploadRequestGroupResourceAccessControl;
@@ -199,26 +198,27 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		} else {
 			groupedModeLocal = false;
 		}
-		UploadRequestGroup group = uploadRequestGroupBusinessService.create(new UploadRequestGroup(owner, domain, subject, body,
-				inputRequest.getActivationDate(), inputRequest.isCanDelete(), inputRequest.isCanClose(),
-				inputRequest.isCanEditExpiryDate(), inputRequest.getLocale(), inputRequest.isSecured(),groupedMode, false, UploadRequestStatus.STATUS_CREATED));
+		UploadRequest req = initUploadRequest(owner, inputRequest);
+		UploadRequestGroup uploadRequestGroup = new UploadRequestGroup(owner, domain, subject, body,
+				req.getActivationDate(), req.isCanDelete(), req.isCanClose(),
+				req.isCanEditExpiryDate(), req.getLocale(), req.isSecured(),req.getEnableNotification(),
+				!groupedModeLocal, req.getStatus(),req.getExpiryDate(),req.getNotificationDate(),
+				req.getMaxFileCount(), req.getMaxDepositSize(), req.getMaxFileSize());
+		uploadRequestGroup = uploadRequestGroupBusinessService.create(uploadRequestGroup);
 		UploadRequestGroupAuditLogEntry groupLog = new UploadRequestGroupAuditLogEntry(new AccountMto(actor),
 				new AccountMto(owner), LogAction.CREATE, AuditLogEntryType.UPLOAD_REQUEST_GROUP,
-				group.getUuid(), group);
+				uploadRequestGroup.getUuid(), uploadRequestGroup);
 		logEntryService.insert(groupLog);
-		UploadRequest req = initUploadRequest(owner, group, inputRequest);
+		req.setUploadRequestGroup(uploadRequestGroup);
 		List<UploadRequest> requests = Lists.newArrayList();
 		if (groupedModeLocal) {
 			requests.addAll(createRequestGrouped(actor, owner, req,
-					contacts, subject, body, group));
+					contacts, subject, body, uploadRequestGroup));
 		} else {
 			for (Contact contact : contacts) {
-//				AKO: the request is modified by the function below, so the clone is bugged.
-//					It results that if you have 5 contacts, the first will receive 5 mails,
-//					the second 4 mails, etc...
 				UploadRequest clone = req.clone();
 				requests.addAll(createRequestGrouped(actor, owner, clone,
-						 Lists.newArrayList(contact), subject, body, group));
+						 Lists.newArrayList(contact), subject, body, uploadRequestGroup));
 			}
 		}
 		List<AuditLogEntryUser> log = Lists.newArrayList();
@@ -249,7 +249,8 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		}
 		notifierService.sendNotification(mails);
 		mails.clear();
-		req = uploadRequestBusinessService.findByUuid(req.getUuid());
+		//To be verified by notification ticket
+		/*req = uploadRequestBusinessService.findByUuid(req.getUuid());
 		if (req.getActivationDate().before(new Date())) {
 			try {
 				req.updateStatus(UploadRequestStatus.STATUS_ENABLED);
@@ -264,15 +265,14 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 			} catch (BusinessException e) {
 				logger.error("Fail to update upload request status of the request : " + req.getUuid());
 			}
-		}
+		}*/
 		return Lists.newArrayList(req);
 	}
 
-	private UploadRequest initUploadRequest(User owner,
-			UploadRequestGroup group, UploadRequest req) {
+	private UploadRequest initUploadRequest(User owner, UploadRequest req) {
 		AbstractDomain domain = owner.getDomain();
-		req.setStatus(UploadRequestStatus.STATUS_CREATED);
-		req.setUploadRequestGroup(group);
+		UploadRequestStatus status = req.getActivationDate().after(new Date())?UploadRequestStatus.STATUS_CREATED:UploadRequestStatus.STATUS_ENABLED;
+		req.setStatus(status);
 		checkActivationDate(domain, req);
 		checkExpiryAndNoticationDate(domain, req);
 		checkMaxDepositSize(domain, req);

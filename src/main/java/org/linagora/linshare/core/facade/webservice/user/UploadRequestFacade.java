@@ -37,6 +37,7 @@ package org.linagora.linshare.core.facade.webservice.user;
 import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestCreationtDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 
 public interface UploadRequestFacade {
@@ -45,7 +46,7 @@ public interface UploadRequestFacade {
 
 	UploadRequestDto find(String actorUuid, String uuid) throws BusinessException;
 
-	List<UploadRequestDto> create(String actorUuid, UploadRequestDto uploadRequestDto, Boolean groupMode) throws BusinessException;
+	List<UploadRequestCreationtDto> create(String actorUuid, UploadRequestCreationtDto uploadRequestCreationtDto, Boolean groupMode) throws BusinessException;
 
 	UploadRequestDto update(String actorUuid, String uuid, UploadRequestDto uploadRequestDto) throws BusinessException;
 

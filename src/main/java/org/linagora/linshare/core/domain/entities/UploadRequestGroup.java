@@ -112,7 +112,12 @@ public class UploadRequestGroup {
 			Boolean secured,
 			Boolean enableNotification,
 			Boolean restricted,
-			UploadRequestStatus status) {
+			UploadRequestStatus status,
+			Date expiryDate,
+			Date notificationDate,
+			Integer maxFileCount,
+			Long maxDepositSize,
+			Long maxFileSize) {
 		super();
 		this.owner = owner;
 		this.abstractDomain = abstractDomain;
@@ -129,6 +134,11 @@ public class UploadRequestGroup {
 		this.enableNotification = enableNotification;
 		this.restricted = restricted;
 		this.status = status;
+		this.expiryDate = expiryDate;
+		this.notificationDate = notificationDate;
+		this.maxFileCount = maxFileCount;
+		this.maxDepositSize = maxDepositSize;
+		this.maxFileSize = maxFileSize;
 	}
 
 
@@ -328,5 +338,5 @@ public class UploadRequestGroup {
 
 	public void setStatus(UploadRequestStatus status) {
 		this.status = status;
-	}}
-
+	}
+}

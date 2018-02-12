@@ -32,25 +32,54 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.webservice.delegation;
+package org.linagora.linshare.webservice.userv2.impl;
 
 import java.util.List;
 
-import org.linagora.linshare.core.exception.BusinessException;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestCreationtDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
+import org.linagora.linshare.core.facade.webservice.user.UploadRequestFacade;
+import org.linagora.linshare.webservice.userv2.UploadRequestRestService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public interface UploadRequestRestService {
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
-	List<UploadRequestDto> findAll(String actorUuid) throws BusinessException;
+@Path("/upload_requests")
+@Api(value = "/rest/user/v2/upload_requests", description = "requests API")
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 
-	UploadRequestDto find(String actorUuid, String uuid) throws BusinessException;
+	protected final Logger logger = LoggerFactory.getLogger(UploadRequestRestServiceImpl.class);
 
-	UploadRequestDto update(String actorUuid, String uuid, UploadRequestDto uploadRequestDto) throws BusinessException;
+	private final UploadRequestFacade uploadRequestFacade;
 
-	UploadRequestDto updateStatus(String actorUuid, String uuid, String status) throws BusinessException;
+	public UploadRequestRestServiceImpl(UploadRequestFacade uploadRequestFacade) {
+		super();
+		this.uploadRequestFacade = uploadRequestFacade;
+	}
 
-	UploadRequestDto delete(String actorUuid, String uuid) throws BusinessException;
-
-	UploadRequestDto delete(String actorUuid, UploadRequestDto uploadRequestDto) throws BusinessException;
-
+	@POST
+	@Path("/")
+	@ApiOperation(value = "Create an upload request.", response = UploadRequestDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
+	@Override
+	public List<UploadRequestCreationtDto> create(
+			@ApiParam(value = "Upload request.", required = true) UploadRequestCreationtDto uploadRequestCreationtDto,
+			@ApiParam(value = "Group mode.", required = true) @QueryParam(value = "groupMode") Boolean groupMode) {
+		List<UploadRequestCreationtDto> dto = uploadRequestFacade.create(null, uploadRequestCreationtDto, groupMode);
+		return dto;
+	}
 }

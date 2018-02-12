@@ -97,18 +97,6 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 		return dto;
 	}
 
-	@POST
-	@Path("/")
-	@ApiOperation(value = "Create an upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
-	@Override
-	public List<UploadRequestDto> create(
-			@ApiParam(value = "Upload request.", required = true) UploadRequestDto uploadRequestDto,
-			@ApiParam(value = "Group mode.", required = true) @QueryParam(value = "groupMode") Boolean groupMode) {
-		List<UploadRequestDto> dto = uploadRequestFacade.create(null, uploadRequestDto, groupMode);
-		return dto;
-	}
-
 	@PUT
 	@Path("/{uuid}")
 	@ApiOperation(value = "Update an upload request.", response = UploadRequestDto.class)

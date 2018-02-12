@@ -80,7 +80,6 @@ public class UploadRequestBusinessServiceImpl implements
 
 	@Override
 	public UploadRequest create(UploadRequest req) throws BusinessException {
-		req.setStatus(UploadRequestStatus.STATUS_CREATED);
 		return uploadRequestRepository.create(req);
 	}
 

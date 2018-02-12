@@ -80,5 +80,4 @@ public class Contact {
 	public long getPersistenceId() {
 		return persistenceId;
 	}
-
 }

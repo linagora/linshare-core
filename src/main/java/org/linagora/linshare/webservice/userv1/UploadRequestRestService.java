@@ -45,8 +45,6 @@ public interface UploadRequestRestService {
 
 	UploadRequestDto find(String uuid);
 
-	List<UploadRequestDto> create(UploadRequestDto uploadRequestDto, Boolean groupMode);
-
 	UploadRequestDto update(String uuid, UploadRequestDto uploadRequestDto);
 
 	UploadRequestDto updateStatus(String uuid, String status) throws BusinessException;

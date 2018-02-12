@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -43,10 +43,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.ContactDto;
-import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.EntryDto;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -54,17 +52,14 @@ import com.google.common.collect.Sets;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
-@XmlRootElement(name = "UploadRequest")
-public class UploadRequestDto {
+@XmlRootElement(name = "UploadRequestCreation")
+public class UploadRequestCreationtDto {
 
 	@ApiModelProperty(value = "Uuid")
 	private String uuid;
 
 	@ApiModelProperty(value = "Owner")
 	private ContactDto owner;
-
-	@ApiModelProperty(value = "Recipient")
-	private ContactDto recipient;
 
 	@ApiModelProperty(value = "Activation date")
 	private Date activationDate;
@@ -104,8 +99,6 @@ public class UploadRequestDto {
 
 	private boolean isClosed;
 
-	private Set<EntryDto> entries = Sets.newHashSet();
-
 	private boolean protectedByPassword;
 
 	private long usedSpace = 0;
@@ -120,11 +113,10 @@ public class UploadRequestDto {
 	
 	private Boolean canEditExpiryDate;
 	
-	public UploadRequestDto() {
+	public UploadRequestCreationtDto() {
 		super();
 	}
-
-	public UploadRequestDto(UploadRequest entity, boolean full) {
+	public UploadRequestCreationtDto(UploadRequest entity, boolean full) {
 		super();
 		this.uuid = entity.getUuid();
 		this.owner = new ContactDto(entity.getUploadRequestGroup().getOwner());
@@ -144,14 +136,9 @@ public class UploadRequestDto {
 			this.canClose = entity.isCanClose();
 			for (UploadRequestUrl uru : entity.getUploadRequestURLs()) {
 				contactList.add(new ContactDto(uru.getContact()));
-				for (UploadRequestEntry entry : uru.getUploadRequestEntries()) {
-					entries.add(new EntryDto(entry));
-					this.usedSpace += entry.getSize();
-				}
 			}
 			this.body = entity.getUploadRequestGroup().getBody();
 		}
-		this.recipient = null;
 		if (entity.getStatus().equals(UploadRequestStatus.STATUS_CLOSED)) {
 			this.isClosed = true;
 			this.canDeleteDocument = false;
@@ -160,14 +147,6 @@ public class UploadRequestDto {
 		this.protectedByPassword = false;
 		this.locale = entity.getLocale();
 	}
-
-	public UploadRequestDto(UploadRequestUrl requestUrl) {
-		this(requestUrl.getUploadRequest(), false);
-		this.uuid = requestUrl.getUuid();
-		this.recipient = new ContactDto(requestUrl.getContact());
-		this.protectedByPassword = requestUrl.isProtectedByPassword();
-	}
-
 	public UploadRequest toObject() {
 		UploadRequest e = new UploadRequest();
 		e.setActivationDate(getActivationDate());
@@ -306,14 +285,6 @@ public class UploadRequestDto {
 		this.isClosed = isClosed;
 	}
 
-	public Set<EntryDto> getEntries() {
-		return entries;
-	}
-
-	public void setEntries(Set<EntryDto> entries) {
-		this.entries = entries;
-	}
-
 	public boolean isProtectedByPassword() {
 		return protectedByPassword;
 	}
@@ -334,16 +305,11 @@ public class UploadRequestDto {
 		return locale;
 	}
 
+	/**
+	 * @param locale
+	 */
 	public void setLocale(String locale) {
 		this.locale = locale;
-	}
-
-	public ContactDto getRecipient() {
-		return recipient;
-	}
-
-	public void setRecipient(ContactDto recipient) {
-		this.recipient = recipient;
 	}
 
 	public Date getNotificationDate() {
@@ -377,14 +343,15 @@ public class UploadRequestDto {
 	public void setCanEditExpiryDate(Boolean canEditExpiryDate) {
 		this.canEditExpiryDate = canEditExpiryDate;
 	}
+	
 	/*
 	 * Transformers
 	 */
-	public static Function<UploadRequest, UploadRequestDto> toDto(final boolean full) {
-		return new Function<UploadRequest, UploadRequestDto>() {
+	public static Function<UploadRequest, UploadRequestCreationtDto> toDto(final boolean full) {
+		return new Function<UploadRequest, UploadRequestCreationtDto>() {
 			@Override
-			public UploadRequestDto apply(UploadRequest arg0) {
-				return new UploadRequestDto(arg0, full);
+			public UploadRequestCreationtDto apply(UploadRequest arg0) {
+				return new UploadRequestCreationtDto(arg0, full);
 			}
 		};
 	}
