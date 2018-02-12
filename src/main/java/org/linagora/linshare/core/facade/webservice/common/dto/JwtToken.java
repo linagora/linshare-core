@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,23 +31,29 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.core.facade.webservice.common.dto;
 
-package org.linagora.linshare.webservice.userv1;
+import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.JwtToken;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
-import org.linagora.linshare.core.facade.webservice.user.dto.VersionDto;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
-public interface AuthenticationRestService {
+@XmlRootElement(name = "JwtToken")
+public class JwtToken {
 
-	void noop();
+	@ApiModelProperty(value = "Jwt Token")
+	protected String token;
 
-	UserDto isAuthorized() throws BusinessException;
+	public JwtToken(String token) {
+		super();
+		this.token = token;
+	}
 
-	void logout();
+	public String getToken() {
+		return token;
+	}
 
-	VersionDto getVersion();
+	public void setToken(String token) {
+		this.token = token;
+	}
 
-	JwtToken generateToken() throws BusinessException;
 }

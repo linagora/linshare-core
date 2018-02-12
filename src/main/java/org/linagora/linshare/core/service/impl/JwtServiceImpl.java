@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,23 +31,54 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.core.service.impl;
 
-package org.linagora.linshare.webservice.userv1;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.JwtToken;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
-import org.linagora.linshare.core.facade.webservice.user.dto.VersionDto;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.service.JwtService;
 
-public interface AuthenticationRestService {
+import io.jsonwebtoken.Clock;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.impl.DefaultClock;
 
-	void noop();
+public class JwtServiceImpl implements JwtService {
 
-	UserDto isAuthorized() throws BusinessException;
+	protected Clock clock = DefaultClock.INSTANCE;
 
-	void logout();
+	protected String secret;
 
-	VersionDto getVersion();
+	protected Long expiration;
 
-	JwtToken generateToken() throws BusinessException;
+	public JwtServiceImpl(String secret, Long expiration) {
+		super();
+		this.secret = secret;
+		this.expiration = expiration;
+	}
+
+	@Override
+	public String generateToken(Account actor) {
+		final Date createdDate = clock.now();
+		final Date expirationDate = getExpirationDate(createdDate);
+
+		// extra claims
+		Map<String, Object> claims = new HashMap<>();
+		claims.put("linshareDomain", actor.getDomainId());
+		claims.put("accountUuid", actor.getLsUuid());
+
+		return Jwts.builder()
+				.setClaims(claims)
+				.setSubject(actor.getMail())
+				.setIssuedAt(createdDate)
+				.setExpiration(expirationDate)
+				.signWith(SignatureAlgorithm.HS512, secret)
+				.compact();
+	}
+
+	private Date getExpirationDate(Date fromDate) {
+		return new Date(fromDate.getTime() + expiration * 1000);
+	}
 }

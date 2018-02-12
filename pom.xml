@@ -778,12 +778,16 @@
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
 		<dependency>
-		    <groupId>com.fasterxml.jackson.core</groupId>
-		    <artifactId>jackson-databind</artifactId>
-		    <version>2.9.4</version>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.9.4</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>${jjwt.version}</version>
 		</dependency>
 	</dependencies>
-
 	<build>
 		<finalName>linshare-core</finalName>
 		<plugins>
@@ -1824,5 +1828,6 @@
 		<sql.driver.mysql>5.1.38</sql.driver.mysql>
 		<thymeleaf.version>3.0.3.RELEASE</thymeleaf.version>
 		<spring.mvc.version>4.2.2.RELEASE</spring.mvc.version>
+		<jjwt.version>0.7.0</jjwt.version>
 		<servlet.context.version>3.0.1</servlet.context.version></properties>
 </project>

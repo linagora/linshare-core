@@ -43,4 +43,6 @@ public interface UserFacade extends GenericFacade {
 	List<UserDto> findAll() throws BusinessException;
 
 	UserDto isAuthorized() throws BusinessException;
+
+	String generateToken() throws BusinessException;
 }

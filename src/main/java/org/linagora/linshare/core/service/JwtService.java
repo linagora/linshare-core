@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,23 +31,11 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.core.service;
 
-package org.linagora.linshare.webservice.userv1;
+import org.linagora.linshare.core.domain.entities.Account;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.JwtToken;
-import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
-import org.linagora.linshare.core.facade.webservice.user.dto.VersionDto;
+public interface JwtService {
 
-public interface AuthenticationRestService {
-
-	void noop();
-
-	UserDto isAuthorized() throws BusinessException;
-
-	void logout();
-
-	VersionDto getVersion();
-
-	JwtToken generateToken() throws BusinessException;
+	String generateToken(Account actor);
 }

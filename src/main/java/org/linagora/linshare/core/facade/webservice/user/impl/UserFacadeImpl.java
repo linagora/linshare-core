@@ -42,6 +42,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.user.UserFacade;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.JwtService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UserService;
 
@@ -51,13 +52,18 @@ public class UserFacadeImpl extends UserGenericFacadeImp implements UserFacade {
 
 	protected final QuotaService quotaService;
 
+	protected final JwtService jwtService;
+
 	public UserFacadeImpl(
 			final AccountService accountService,
 			final UserService userService,
-			final QuotaService quotaService) {
+			final QuotaService quotaService,
+			final JwtService jwtService
+			) {
 		super(accountService);
 		this.userService = userService;
 		this.quotaService = quotaService;
+		this.jwtService = jwtService;
 	}
 
 	@Override
@@ -87,5 +93,11 @@ public class UserFacadeImpl extends UserGenericFacadeImp implements UserFacade {
 		AccountQuota quota = quotaService.findByRelatedAccount(authUser);
 		dto.setQuotaUuid(quota.getUuid());
 		return dto;
+	}
+
+	@Override
+	public String generateToken() throws BusinessException {
+		User authUser = checkAuthentication();
+		return jwtService.generateToken(authUser);
 	}
 }

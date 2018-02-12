@@ -40,6 +40,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.JwtToken;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.user.UserFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.VersionDto;
@@ -94,5 +95,13 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements
 	@Override
 	public VersionDto getVersion() {
 		return new VersionDto(getCoreVersion());
+	}
+
+	@Path("/jwt")
+	@GET
+	@Override
+	public JwtToken generateToken() throws BusinessException {
+		String token = userFacade.generateToken();
+		return new JwtToken(token);
 	}
 }
