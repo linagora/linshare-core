@@ -929,4 +929,12 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		return uploadRequest;
 	}
 
+	@Override
+	public List<UploadRequest> findAllRequestsByGroup(User authUser, User actor, String uuid) {
+		preChecks(authUser, actor);
+		checkListPermission(authUser, actor, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, null);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupBusinessService.findByUuid(uuid);
+		Validate.notNull(uploadRequestGroup);
+		return uploadRequestBusinessService.findByGroup(uploadRequestGroup);
+	}
 }

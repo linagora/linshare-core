@@ -93,6 +93,11 @@
 		class="org.linagora.linshare.webservice.userv2.impl.UploadRequestRestServiceImpl">
 		<constructor-arg ref="wsUploadRequestFacade" />
 	</bean>
+	
+	<bean id="userUploadRequestGroupRestService" class="org.linagora.linshare.webservice.userv2.impl.UploadRequestGroupRestServiceImpl">
+		<constructor-arg ref="wsUploadRequestGroupFacade"/>
+	</bean>
+
 
 	<jaxrs:server id="userRestContainer" address="/rest/user/v2">
 		<jaxrs:serviceBeans>
@@ -121,6 +126,7 @@
 			<ref bean="userv2AccountQuotaRestService" />
 			<ref bean="userv2WelcomeMessagesRestService" />
 			<ref bean="userUploadRequestRestService" /> 
+			<ref bean="userUploadRequestGroupRestService" /> 
 <!--
 			<ref bean="pluginCompatibilityRestServiceV2" />
 -->

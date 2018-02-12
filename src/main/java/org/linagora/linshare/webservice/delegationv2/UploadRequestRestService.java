@@ -44,4 +44,10 @@ public interface UploadRequestRestService {
 	List<UploadRequestCreationtDto> create(String actorUuid, UploadRequestCreationtDto uploadRequestCreationtDto, Boolean groupMode);
 
 	UploadRequestDto addRecipient(String actorUuid, String groupUuid, String recipientEmail);
+	
+	List<UploadRequestDto> findByUploadRequestGroup(String actorUuid, String uuid);
+
+	List<UploadRequestDto> findAll(String actorUuid);
+	
+	UploadRequestDto find(String actorUuid, String uuid);
 }

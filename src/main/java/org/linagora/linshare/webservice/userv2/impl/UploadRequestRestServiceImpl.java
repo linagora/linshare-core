@@ -37,6 +37,7 @@ package org.linagora.linshare.webservice.userv2.impl;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -96,5 +97,38 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 				@QueryParam(value = "recipientEmail") String recipientEmail ) {
 		UploadRequestDto dto = uploadRequestFacade.addRecipient(null, groupUuid, recipientEmail);
 		return dto;
+	}
+	
+	@GET
+	@Path("/")
+	@ApiOperation(value = "Find a list of upload request.", response = UploadRequestDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
+			@ApiResponse(code = 401, message = "Unauthorized.") })
+	@Override
+	public List<UploadRequestDto> findAll() {
+		return uploadRequestFacade.findAll(null);
+	}
+
+	@GET
+	@Path("/{uuid}")
+	@ApiOperation(value = "Find an upload request.", response = UploadRequestDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
+			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
+	@Override
+	public UploadRequestDto find(
+			@ApiParam(value = "Upload request uuid.", required = true) @PathParam(value = "uuid") String uuid) {
+		UploadRequestDto dto = uploadRequestFacade.find(null, uuid);
+		return dto;
+	}
+
+	@GET
+	@Path("/bygroup/{uuid}")
+	@ApiOperation(value = "Find an upload request by Group.", response = UploadRequestDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
+			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
+	@Override
+	public List<UploadRequestDto> findByUploadRequestGroup(
+			@ApiParam(value = "Upload request uuid.", required = true) @PathParam(value = "uuid") String uuid) {
+		return uploadRequestFacade.findByGroup(null, uuid);
 	}
 }

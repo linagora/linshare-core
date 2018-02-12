@@ -136,7 +136,6 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		wiser.stop();
-		service.deleteRequest(john, john, uploadRequest.getUuid());
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
@@ -147,6 +146,29 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 		eList = service.createRequest(john, john, ure, yoda, "This is a subject", "This is a body", false);
 		uploadRequest = eList.get(0);
 		Assert.assertNotNull(uploadRequest);
+		service.deleteRequest(john, john, uploadRequest.getUuid());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+	
+	@Test
+	public void findAll() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		int initSize = service.findAllRequest(john, john, null).size();
+		service.createRequest(john, john, ure, yoda, "This is a subject", "This is a body", false);
+		service.createRequest(john, john, ure, yoda, "This is a subject", "This is a body", false);
+		int finalSize = service.findAllRequest(john, john, null).size();
+		Assert.assertEquals(initSize+2, finalSize);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+	
+	@Test
+	public void findByGroup() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		List<UploadRequest> list = service.createRequest(john, john, ure, yoda, "This is a subject", "This is a body", false);
+		service.createRequest(john, john, ure, yoda, "This is a subject", "This is a body", false);
+		Assert.assertNotNull(list.get(0));
+		int size = service.findAllRequestsByGroup(john, john, list.get(0).getUploadRequestGroup().getUuid()).size();
+		Assert.assertEquals(1, size);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }

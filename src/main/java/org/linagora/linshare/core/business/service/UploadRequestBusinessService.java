@@ -39,6 +39,7 @@ import java.util.List;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -66,4 +67,6 @@ public interface UploadRequestBusinessService {
 	List<String> findUnabledRequests() throws BusinessException;
 
 	List<String> findAllRequestsToBeNotified() throws BusinessException;
+
+	List<UploadRequest> findByGroup(UploadRequestGroup uploadRequestGroup);
 }

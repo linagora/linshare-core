@@ -57,7 +57,7 @@ public class UploadRequestGroupRepositoryImpl extends
 
 	@Override
 	public List<UploadRequestGroup> findAllByOwner(Account owner) {
-		DetachedCriteria cri = DetachedCriteria.forClass(UploadRequestGroup.class);
+		DetachedCriteria cri = DetachedCriteria.forClass(getPersistentClass());
 		cri.add(Restrictions.eq("owner", owner));
 		cri.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		return findByCriteria(cri);

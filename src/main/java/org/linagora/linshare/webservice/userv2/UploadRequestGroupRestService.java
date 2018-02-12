@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2016-2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,61 +31,17 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.repository;
 
-import java.util.Date;
+package org.linagora.linshare.webservice.userv2;
+
 import java.util.List;
 
-import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
-import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.user.dto.UploadRequestGroupDto;
 
-public interface UploadRequestRepository extends
-		AbstractRepository<UploadRequest> {
+public interface UploadRequestGroupRestService {
 
-	/**
-	 * Find a uploadRequestEntry using its uuid.
-	 * 
-	 * @param uuid
-	 * @return found uploadRequest (null if no uploadRequestEntry found).
-	 */
-	UploadRequest findByUuid(String uuid);
+	List<UploadRequestGroupDto> findAll() throws BusinessException;
 
-	/**
-	 * Find uploadRequests using their owner.
-	 * 
-	 * @param owner
-	 * @param statusList List of status.
-	 * @return found uploadRequests otherwise null.
-	 */
-	List<UploadRequest> findByOwner(User owner, List<UploadRequestStatus> statusList);
-
-	/**
-	 * Find uploadRequests using their status.
-	 *
-	 * @param status
-	 * @return found uploadRequests otherwise null.
-	 */
-	List<UploadRequest> findByStatus(UploadRequestStatus... status);
-
-	/**
-	 * Find uploadRequests using their status and their domains.
-	 *
-	 * @param domains
-	 * @param status
-	 * @param after based on creation date
-	 * @param before based on creation date
-	 * @return found uploadRequests otherwise null.
-	 */
-	List<UploadRequest> findByDomainsAndStatus(List<AbstractDomain> domains, List<UploadRequestStatus> status, Date after, Date before);
-
-	List<String> findOutdatedRequests();
-
-	List<String> findCreatedUploadRequests();
-
-	List<String> findAllRequestsToBeNotified();
-
-	List<UploadRequest> findByGroup(UploadRequestGroup uploadRequestGroup);
+	UploadRequestGroupDto find(String uuid) throws BusinessException;
 }

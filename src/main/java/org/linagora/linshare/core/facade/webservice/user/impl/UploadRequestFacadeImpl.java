@@ -144,4 +144,10 @@ public class UploadRequestFacadeImpl extends GenericFacadeImpl implements Upload
 		return new UploadRequestDto(uploadRequest, false);
 	}
 
+	public List<UploadRequestDto> findByGroup(String actorUuid, String uuid) {
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		List<UploadRequest> eList = uploadRequestService.findAllRequestsByGroup(authUser, actor, uuid);
+		return ImmutableList.copyOf(Lists.transform(eList, UploadRequestDto.toDto(false)));
+	}
 }

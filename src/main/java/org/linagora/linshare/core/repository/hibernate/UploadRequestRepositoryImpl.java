@@ -45,6 +45,7 @@ import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UploadRequestRepository;
@@ -75,7 +76,8 @@ public class UploadRequestRepositoryImpl extends
 	@Override
 	public List<UploadRequest> findByOwner(User owner, List<UploadRequestStatus> statusList) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
-		det.add(Restrictions.eq("owner", owner));
+		det.createAlias("uploadRequestGroup", "group");
+		det.add(Restrictions.eq("group.owner", owner));
 		if (statusList != null && !statusList.isEmpty()) {
 			det.add(Restrictions.in("status", statusList));
 		}
@@ -155,5 +157,12 @@ public class UploadRequestRepositoryImpl extends
 		@SuppressWarnings("unchecked")
 		List<String> list = listByCriteria(crit);
 		return list;
+	}
+
+	@Override
+	public List<UploadRequest> findByGroup(UploadRequestGroup uploadRequestGroup) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass())
+				.add(Restrictions.eq("uploadRequestGroup", uploadRequestGroup));
+		return findByCriteria(det);
 	}
 }
