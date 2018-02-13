@@ -101,8 +101,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 		}
 
 		User foundUser = null;
-		// TODO: manage domainIdentifier
-		String domainIdentifier = null;
+		String domainUuid = claims.get("domain", String.class);
 		try {
 			String email= claims.getSubject();
 			String accountUuid = claims.get("accountUuid", String.class);
@@ -110,7 +109,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 			if (accountUuid != null) {
 				foundUser = authentificationFacade.loadUserDetails(accountUuid);
 			} else {
-				foundUser = ldapUserDetailsProvider.retrieveUser(domainIdentifier, email);
+				foundUser = ldapUserDetailsProvider.retrieveUser(domainUuid, email);
 			}
 		} catch (BusinessException e) {
 			logger.error(e.getMessage(), e);

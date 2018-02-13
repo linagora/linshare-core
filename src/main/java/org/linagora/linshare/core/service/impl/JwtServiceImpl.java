@@ -69,8 +69,7 @@ public class JwtServiceImpl implements JwtService {
 
 		// extra claims
 		Map<String, Object> claims = new HashMap<>();
-		claims.put("linshareDomain", actor.getDomainId());
-		claims.put("accountUuid", actor.getLsUuid());
+		claims.put("domain", actor.getDomainId());
 
 		return Jwts.builder()
 				.setClaims(claims)
