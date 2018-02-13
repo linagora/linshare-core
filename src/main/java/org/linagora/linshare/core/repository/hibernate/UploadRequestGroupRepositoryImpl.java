@@ -39,10 +39,8 @@ import java.util.UUID;
 
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UploadRequestGroupRepository;
@@ -59,9 +57,8 @@ public class UploadRequestGroupRepositoryImpl extends
 
 	@Override
 	public List<UploadRequestGroup> findAllByOwner(Account owner) {
-		DetachedCriteria cri = DetachedCriteria.forClass(UploadRequest.class);
+		DetachedCriteria cri = DetachedCriteria.forClass(UploadRequestGroup.class);
 		cri.add(Restrictions.eq("owner", owner));
-		cri.setProjection(Projections.property("uploadRequestGroup"));
 		cri.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		return findByCriteria(cri);
 	}

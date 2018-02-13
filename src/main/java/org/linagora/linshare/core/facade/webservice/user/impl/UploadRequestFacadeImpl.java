@@ -40,6 +40,7 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestCreationtDto;
@@ -130,4 +131,17 @@ public class UploadRequestFacadeImpl extends GenericFacadeImpl implements Upload
 		Validate.notEmpty(uploadRequestDto.getUuid(), "Upload Request uuid must be set.");
 		return delete(actorUuid, uploadRequestDto.getUuid());
 	}
+
+	@Override
+	public UploadRequestDto addRecipient(String actorUuid, String groupUuid, String emailRecipient) throws BusinessException {
+		Validate.notEmpty(groupUuid, "Upload request group uuid must be set.");
+		Validate.notEmpty(emailRecipient, "The email of recipient must be set.");
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		UploadRequestGroup uploadRequestGroup = uploadRequestService.findRequestGroupByUuid(actor, authUser, groupUuid);
+		Contact contact = new Contact(emailRecipient);
+		UploadRequest uploadRequest = uploadRequestService.addNewRecipient(authUser, actor, uploadRequestGroup, contact);
+		return new UploadRequestDto(uploadRequest, false);
+	}
+
 }

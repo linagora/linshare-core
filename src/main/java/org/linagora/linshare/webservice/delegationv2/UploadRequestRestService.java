@@ -37,8 +37,11 @@ package org.linagora.linshare.webservice.delegationv2;
 import java.util.List;
 
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestCreationtDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 
 public interface UploadRequestRestService {
 
 	List<UploadRequestCreationtDto> create(String actorUuid, UploadRequestCreationtDto uploadRequestCreationtDto, Boolean groupMode);
+
+	UploadRequestDto addRecipient(String actorUuid, String groupUuid, String recipientEmail);
 }

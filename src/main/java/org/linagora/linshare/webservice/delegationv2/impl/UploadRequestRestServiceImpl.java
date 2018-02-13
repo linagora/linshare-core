@@ -86,4 +86,20 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 		List<UploadRequestCreationtDto> dto = uploadRequestFacade.create(actorUuid, uploadRequestCreationtDto, groupMode);
 		return dto;
 	}
+
+	@POST
+	@Path("/{groupUuid}/add/reciptient")
+	@ApiOperation(value = "Add new recipient to upload request group.", response = UploadRequestDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
+	@Override
+	public UploadRequestDto addRecipient(
+			@ApiParam(value = "The actor (user) uuid.", required = true)
+				@PathParam("actorUuid") String actorUuid,
+			@ApiParam(value = "Upload request uuid", required = true)
+				@PathParam(value = "groupUuid") String groupUuid,
+			@ApiParam(value = "Email of new recipient", required = true)
+				@QueryParam(value = "recipientEmail") String recipientEmail ) {
+		UploadRequestDto dto = uploadRequestFacade.addRecipient(actorUuid, groupUuid, recipientEmail);
+		return dto;
+	}
 }

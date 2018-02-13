@@ -99,4 +99,5 @@ public class UploadRequestUrlBusinessServiceImpl implements
 	public void delete(UploadRequestUrl url) throws BusinessException {
 		uploadRequestUrlRepository.delete(url);
 	}
+
 }

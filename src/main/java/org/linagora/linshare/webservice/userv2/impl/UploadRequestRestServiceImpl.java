@@ -39,6 +39,7 @@ import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -80,6 +81,20 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 			@ApiParam(value = "Upload request.", required = true) UploadRequestCreationtDto uploadRequestCreationtDto,
 			@ApiParam(value = "Group mode.", required = true) @QueryParam(value = "groupMode") Boolean groupMode) {
 		List<UploadRequestCreationtDto> dto = uploadRequestFacade.create(null, uploadRequestCreationtDto, groupMode);
+		return dto;
+	}
+
+	@POST
+	@Path("/{groupUuid}/add/recipient")
+	@ApiOperation(value = "Add new recipient to upload request group.", response = UploadRequestDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
+	@Override
+	public UploadRequestDto addRecipient(
+			@ApiParam(value = "Upload request uuid", required = true)
+				@PathParam(value = "groupUuid") String groupUuid,
+			@ApiParam(value = "Email of new recipient", required = true)
+				@QueryParam(value = "recipientEmail") String recipientEmail ) {
+		UploadRequestDto dto = uploadRequestFacade.addRecipient(null, groupUuid, recipientEmail);
 		return dto;
 	}
 }

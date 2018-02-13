@@ -80,4 +80,5 @@ public class UploadRequestUrlRepositoryImpl extends
 		entity.setModificationDate(new Date());
 		return super.update(entity);
 	}
+
 }

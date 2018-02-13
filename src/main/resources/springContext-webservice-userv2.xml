@@ -113,9 +113,7 @@
 			<ref bean="userv2ContactListRestService" />
 			<ref bean="userMimeTypeRestService" />
 			<ref bean="userAutoCompleteRestService" />
-<!-- 			<ref bean="userUploadRequestRestService" /> -->
-<!-- 			<ref bean="userUploadRequestGroupRestService" /> -->
-<!-- 			<ref bean="userUploadRequestTemplateRestService" /> -->
+			<ref bean="userUploadRequestRestService" />
 			<ref bean="userUserPreferenceRestService" />
 			<ref bean="userAuditLogEntryUserRestService" />
 <!-- 			Disable because it is fully tested. -->

@@ -108,4 +108,7 @@ public interface UploadRequestService {
 	List<String> findUnabledRequests(Account actor);
 
 	List<String> findAllRequestsToBeNotified(Account actor);
+
+	UploadRequest addNewRecipient(User authUser, User actor, UploadRequestGroup uploadRequestgroup,
+			Contact contact);
 }

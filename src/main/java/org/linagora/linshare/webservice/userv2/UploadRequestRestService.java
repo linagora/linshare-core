@@ -38,7 +38,12 @@ import java.util.List;
 
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestCreationtDto;
 
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
+
 public interface UploadRequestRestService {
 
 	List<UploadRequestCreationtDto> create(UploadRequestCreationtDto uploadRequestCreationtDto, Boolean groupMode);
+
+	UploadRequestDto addRecipient(String groupUuid, String recipientsEmail);
+
 }

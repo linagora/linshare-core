@@ -45,4 +45,5 @@ public interface UploadRequestUrlRepository extends
 	 * @return found UploadRequestUrl (null if no uploadRequestEntry found).
 	 */
 	public UploadRequestUrl findByUuid(String uuid);
+
 }

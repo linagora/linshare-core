@@ -73,6 +73,7 @@ import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.context.UploadRequestActivationEmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestClosedByRecipientEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.UploadRequestGroupResourceAccessControl;
@@ -873,4 +874,59 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You have no rights to access this service.");
 		}
 	}
+
+	private void checkStatusPermission(UploadRequestStatus status) {
+		if ((UploadRequestStatus.STATUS_CREATED.equals(status) != true) &&(UploadRequestStatus.STATUS_ENABLED.equals(status) != true)) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You have no rights to add new recipient");
+		}
+	}
+
+	@Override
+	public UploadRequest addNewRecipient(User authUser, User actor, UploadRequestGroup uploadRequestGroup, Contact contact) {
+		checkStatusPermission(uploadRequestGroup.getStatus());
+		groupRac.checkUpdatePermission(authUser, actor, UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, uploadRequestGroup);
+		UploadRequest uploadRequest = initLocalConfig(uploadRequestGroup);
+		UploadRequestUrl uploadRequestUrl;
+		if (uploadRequestGroup.getRestricted()) {
+			uploadRequest = uploadRequestBusinessService.create(uploadRequest);
+			uploadRequestUrl = uploadRequestUrlService.create(uploadRequest, contact);
+		} else {
+			uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
+			uploadRequestUrl = uploadRequestUrlService.create(uploadRequest, contact);
+		}
+		if (!DateUtils.isSameDay(uploadRequest.getActivationDate(), uploadRequest.getCreationDate()) &&
+				uploadRequest.getActivationDate().after(new Date())) {
+			// TODO : Add mail creation
+		} else {
+			UploadRequestActivationEmailContext mailContext = new UploadRequestActivationEmailContext(
+					(User) uploadRequestGroup.getOwner(), uploadRequest, uploadRequestUrl);
+			MailContainerWithRecipient mail = mailBuildingService.build(mailContext);
+			notifierService.sendNotification(mail);
+		}
+		return uploadRequest;
+	}
+
+	protected UploadRequest initLocalConfig (UploadRequestGroup urg) {
+		UploadRequest uploadRequest = new UploadRequest();
+		if (urg.getActivationDate().before(new Date())) {
+			uploadRequest.setActivationDate(new Date());
+		} else {
+			uploadRequest.setActivationDate(urg.getActivationDate());
+		}
+		uploadRequest.setCanDelete(urg.getCanDelete());
+		uploadRequest.setCanClose(urg.getCanClose());
+		uploadRequest.setCanEditExpiryDate(urg.getCanEditExpiryDate());
+		uploadRequest.setLocale(urg.getLocale());
+		uploadRequest.setSecured(urg.isSecured());
+		uploadRequest.setEnableNotification(urg.getEnableNotification());
+		uploadRequest.setExpiryDate(urg.getExpiryDate());
+		uploadRequest.setNotificationDate(urg.getNotificationDate());
+		uploadRequest.setMaxFileCount(urg.getMaxFileCount());
+		uploadRequest.setMaxDepositSize(urg.getMaxDepositSize());
+		uploadRequest.setMaxFileSize(urg.getMaxFileSize());
+		uploadRequest.setUploadRequestGroup(urg);
+		uploadRequest.setStatus(urg.getStatus());
+		return uploadRequest;
+	}
+
 }
