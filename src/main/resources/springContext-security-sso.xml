@@ -306,6 +306,7 @@
 
 	<b:bean id="jwtAuthenticationProvider" class="org.linagora.linshare.auth.jwt.JwtAuthenticationProvider">
 		<b:property name="authentificationFacade" ref="authentificationFacade" />
+		<b:property name="ldapUserDetailsProvider" ref="ldapUserDetailsProvider" />
 		<!--  good practice ? -->
 		<b:property name="jwtService" ref="jwtService" />
 	</b:bean>

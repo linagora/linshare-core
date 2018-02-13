@@ -38,6 +38,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.linagora.linshare.auth.RoleProvider;
+import org.linagora.linshare.auth.dao.LdapUserDetailsProvider;
 import org.linagora.linshare.auth.sso.SSOAuthenticationProvider;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -63,8 +64,14 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
 	private JwtService jwtService;
 
+	private LdapUserDetailsProvider ldapUserDetailsProvider;
+
 	public void setAuthentificationFacade(AuthentificationFacade authentificationFacade) {
 		this.authentificationFacade = authentificationFacade;
+	}
+
+	public void setLdapUserDetailsProvider(LdapUserDetailsProvider ldapUserDetailsProvider) {
+		this.ldapUserDetailsProvider = ldapUserDetailsProvider;
 	}
 
 	public void setJwtService(JwtService jwtService) {
@@ -94,6 +101,8 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 		}
 
 		User foundUser = null;
+		// TODO: manage domainIdentifier
+		String domainIdentifier = null;
 		try {
 			String email= claims.getSubject();
 			String accountUuid = claims.get("accountUuid", String.class);
@@ -101,7 +110,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 			if (accountUuid != null) {
 				foundUser = authentificationFacade.loadUserDetails(accountUuid);
 			} else {
-				foundUser = authentificationFacade.findByLogin(email);
+				foundUser = ldapUserDetailsProvider.retrieveUser(domainIdentifier, email);
 			}
 		} catch (BusinessException e) {
 			logger.error(e.getMessage(), e);
@@ -113,6 +122,17 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 			// We can't return null because there is one and only Provider that can handle JwtAuthenticationToken
 			throw new AuthenticationServiceException("Could not find user account : " + claims);
 		}
+		try {
+			// loading /creating the real entity
+			foundUser = ldapUserDetailsProvider.findOrCreateUser(foundUser.getDomainId(), foundUser.getMail());
+		} catch (BusinessException e) {
+			logger.error(e);
+			throw new AuthenticationServiceException(
+					"Could not create user account : "
+					+ foundUser.getDomainId() + " : "
+					+ foundUser.getMail(), e);
+		}
+
 		authentificationFacade.logAuthSuccess(foundUser);
 		List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(foundUser);
 		UserDetails userDetail = new org.springframework.security.core.userdetails.User(foundUser.getLsUuid(), "", true,
