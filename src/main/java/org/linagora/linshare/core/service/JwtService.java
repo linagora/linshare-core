@@ -35,7 +35,11 @@ package org.linagora.linshare.core.service;
 
 import org.linagora.linshare.core.domain.entities.Account;
 
+import io.jsonwebtoken.Claims;
+
 public interface JwtService {
 
 	String generateToken(Account actor);
+
+	Claims decode(String token);
 }

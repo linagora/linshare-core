@@ -31,66 +31,42 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service.impl;
+package org.linagora.linshare.auth.jwt;
 
-import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.service.JwtService;
+public class JwtAuthenticationToken extends AbstractAuthenticationToken {
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Clock;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.impl.DefaultClock;
+	private static final long serialVersionUID = 9181838390481593862L;
 
-public class JwtServiceImpl implements JwtService {
+	private final String token;
 
-	protected Clock clock = DefaultClock.INSTANCE;
+	private String accountUuid;
 
-	protected final String secret;
+	public JwtAuthenticationToken(String token) {
+		super(null);
+		this.token = token;
+	}
 
-	protected Long expiration;
-
-	public JwtServiceImpl(String secret, Long expiration) {
-		super();
-		// see https://github.com/jwtk/jjwt/issues/248
-		this.secret = Base64.getEncoder().encodeToString(secret.getBytes());
-		this.expiration = expiration;
+	public String getToken() {
+		return token;
 	}
 
 	@Override
-	public String generateToken(Account actor) {
-		final Date createdDate = clock.now();
-		final Date expirationDate = getExpirationDate(createdDate);
-
-		// extra claims
-		Map<String, Object> claims = new HashMap<>();
-		claims.put("linshareDomain", actor.getDomainId());
-		claims.put("accountUuid", actor.getLsUuid());
-
-		return Jwts.builder()
-				.setClaims(claims)
-				.setSubject(actor.getMail())
-				.setIssuedAt(createdDate)
-				.setExpiration(expirationDate)
-				.signWith(SignatureAlgorithm.HS512, secret)
-				.compact();
+	public Object getCredentials() {
+		return null;
 	}
 
 	@Override
-	public Claims decode(String token) {
-		Claims claims = Jwts.parser()
-				.setSigningKey(secret)
-				.parseClaimsJws(token)
-				.getBody();
-		return claims;
+	public Object getPrincipal() {
+		return token;
 	}
 
-	private Date getExpirationDate(Date fromDate) {
-		return new Date(fromDate.getTime() + expiration * 1000);
+	public String getAccountUuid() {
+		return accountUuid;
+	}
+
+	public void setAccountUuid(String accountUuid) {
+		this.accountUuid = accountUuid;
 	}
 }

@@ -74,13 +74,13 @@
 			<sec:filter-chain pattern="/webservice/rest/plugin/information" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/cors" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/**"
-				filters="httpSessionIntegrationFilter,CORSRequestFilter,lemonLDAPFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor,logoutFilterAdmin, logoutFilterUser, logoutFilterUserV2" />
+				filters="httpSessionIntegrationFilter,CORSRequestFilter,lemonLDAPFilter,basicProcessingFilter,jwtAuthenticationFilter,basicExceptionTranslationFilter,filterSecurityInterceptor,logoutFilterAdmin, logoutFilterUser, logoutFilterUserV2" />
 
 			<sec:filter-chain pattern="/webservice/fineuploader/**"
-				filters="httpSessionIntegrationFilter,CORSRequestFilter,lemonLDAPFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
+				filters="httpSessionIntegrationFilter,CORSRequestFilter,lemonLDAPFilter,basicProcessingFilter,jwtAuthenticationFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
 
 			<sec:filter-chain pattern="/webservice/**"
-				filters="httpSessionIntegrationFilter, lemonLDAPFilter, basicProcessingFilter,basicExceptionTranslationFilter ,filterSecurityInterceptor" />
+				filters="httpSessionIntegrationFilter, lemonLDAPFilter, basicProcessingFilter,jwtAuthenticationFilter,basicExceptionTranslationFilter ,filterSecurityInterceptor" />
 
 			<sec:filter-chain pattern="/index.form" filters="httpSessionIntegrationFilter" />
 			<sec:filter-chain pattern="/j_security_check" filters="httpSessionIntegrationFilter,authenticationProcessingFilter" />
@@ -258,6 +258,7 @@
 		<b:list>
 			<b:ref bean="ssoAuthenticationProvider" />
 			<b:ref bean="rememberMeAuthenticationProvider" />
+			<b:ref bean="jwtAuthenticationProvider" />
 			<b:ref bean="databaseAuthenticationProvider" />
 			<b:ref bean="ldapAuthenticationProvider" />
 		</b:list>
@@ -303,6 +304,12 @@
 		<b:property name="authentificationFacade" ref="authentificationFacade" />
 	</b:bean>
 
+	<b:bean id="jwtAuthenticationProvider" class="org.linagora.linshare.auth.jwt.JwtAuthenticationProvider">
+		<b:property name="authentificationFacade" ref="authentificationFacade" />
+		<!--  good practice ? -->
+		<b:property name="jwtService" ref="jwtService" />
+	</b:bean>
+
 	<!-- AUTHORIZATIONS MANAGEMENT -->
 	<b:bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased">
 		<b:constructor-arg ref="roleVoter"/>
@@ -323,5 +330,8 @@
 	<b:bean class="org.linagora.linshare.auth.sso.SSOInfoLogger"
 		init-method="afterPropertiesSet">
 		<b:constructor-arg ref="lemonLDAPFilter"/>
+	</b:bean>
+
+	<b:bean name="jwtAuthenticationFilter" class="org.linagora.linshare.auth.jwt.JwtAuthenticationFilter">
 	</b:bean>
 </b:beans>
