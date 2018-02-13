@@ -160,9 +160,12 @@ public class UploadRequestRepositoryImpl extends
 	}
 
 	@Override
-	public List<UploadRequest> findByGroup(UploadRequestGroup uploadRequestGroup) {
-		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass())
-				.add(Restrictions.eq("uploadRequestGroup", uploadRequestGroup));
+	public List<UploadRequest> findByGroup(UploadRequestGroup uploadRequestGroup, List<UploadRequestStatus> statusList) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		det.add(Restrictions.eq("uploadRequestGroup", uploadRequestGroup));
+		if (statusList != null && !statusList.isEmpty()) {
+			det.add(Restrictions.in("status", statusList));
+		}
 		return findByCriteria(det);
 	}
 }

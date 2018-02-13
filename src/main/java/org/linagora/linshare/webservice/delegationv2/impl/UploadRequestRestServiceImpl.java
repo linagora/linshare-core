@@ -108,10 +108,12 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	@Path("/")
 	@ApiOperation(value = "Find a list of upload request.", response = UploadRequestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-			@ApiResponse(code = 401, message = "Unauthorized.") })
+	@ApiResponse(code = 401, message = "Unauthorized.") })
 	@Override
-	public List<UploadRequestDto> findAll(@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid) {
-		return uploadRequestFacade.findAll(actorUuid);
+	public List<UploadRequestDto> findAll(
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@ApiParam(value = "Values t filter upload resquets by status", required = false) @QueryParam("filter") List<String> status) {
+		return uploadRequestFacade.findAll(actorUuid, status);
 	}
 
 	@GET
@@ -135,7 +137,8 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	@Override
 	public List<UploadRequestDto> findByUploadRequestGroup(
 			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Upload request uuid.", required = true) @PathParam(value = "uuid") String uuid) {
-		return uploadRequestFacade.findByGroup(actorUuid, uuid);
+			@ApiParam(value = "Upload request group uuid.", required = true) @PathParam(value = "groupUuid") String groupUuid,
+			@ApiParam(value = "Values t filter upload resquets by status", required = false) @QueryParam("filter") List<String> status) {
+		return uploadRequestFacade.findByGroup(actorUuid, groupUuid, status);
 	}
 }

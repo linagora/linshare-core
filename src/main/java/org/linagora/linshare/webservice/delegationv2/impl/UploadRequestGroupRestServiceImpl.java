@@ -32,7 +32,7 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.webservice.userv2.impl;
+package org.linagora.linshare.webservice.delegationv2.impl;
 
 import java.util.List;
 
@@ -47,7 +47,7 @@ import javax.ws.rs.core.MediaType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.UploadRequestGroupFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.UploadRequestGroupDto;
-import org.linagora.linshare.webservice.userv2.UploadRequestGroupRestService;
+import org.linagora.linshare.webservice.delegationv2.UploadRequestGroupRestService;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -55,8 +55,8 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Api(value = "/rest/user/v2/upload_request_groups", description = "group requests API")
-@Path("/upload_request_groups")
+@Api(value = "/rest/delegation/v2/{actorUuid}/upload_request_groups", description = "group requests API")
+@Path("/{actorUuid}/upload_request_groups")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRestService {
@@ -72,10 +72,13 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 	@Path("/")
 	@ApiOperation(value = "Find a list of upload request group.", response = UploadRequestGroupDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-			@ApiResponse(code = 401, message = "Unauthorized.") })
+	@ApiResponse(code = 401, message = "Unauthorized.") })
 	@Override
-	public List<UploadRequestGroupDto> findAll(	@ApiParam(value = "Values t filter upload resquets by status", required = false) @QueryParam("filter") List<String> statusList) throws BusinessException {
-		return uploadRequestGroupFacade.findAll(null, statusList);
+	public List<UploadRequestGroupDto> findAll(
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@ApiParam(value = "Values t filter upload resquets by status", required = false) @QueryParam("filter") List<String> statusList)
+			throws BusinessException {
+		return uploadRequestGroupFacade.findAll(actorUuid, statusList);
 	}
 
 	@GET
@@ -85,8 +88,9 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
 	@Override
 	public UploadRequestGroupDto find(
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "Upload request group uuid.", required = true) @PathParam(value = "uuid") String uuid)
 			throws BusinessException {
-		return uploadRequestGroupFacade.find(null, uuid);
+		return uploadRequestGroupFacade.find(actorUuid, uuid);
 	}
 }

@@ -147,17 +147,25 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	}
 
 	@Override
-	public List<UploadRequest> findAllRequest(Account actor, Account owner, List<UploadRequestStatus> statusList) {
+	public List<UploadRequest> findAllRequest(Account actor, Account owner, List<String> statusList) {
 		preChecks(actor, owner);
 		checkListPermission(actor, owner, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, null);
-		return uploadRequestBusinessService.findAll((User) owner, statusList);
+		List<UploadRequestStatus> uploadRequestStatus = Lists.newArrayList();
+		if (statusList != null && !statusList.isEmpty()) {
+			statusList.forEach(s -> uploadRequestStatus.add(UploadRequestStatus.fromString(s)));
+		}
+		return uploadRequestBusinessService.findAll((User) owner, uploadRequestStatus);
 	}
 
 	@Override
-	public List<UploadRequestGroup> findAllGroupRequest(Account actor, Account owner) throws BusinessException {
+	public List<UploadRequestGroup> findAllGroupRequest(Account actor, Account owner, List<String> statusList) throws BusinessException {
 		preChecks(actor, owner);
 		groupRac.checkListPermission(actor, owner, UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, null);
-		return uploadRequestGroupBusinessService.findAll(owner);
+		List<UploadRequestStatus> uploadRequestStatus = Lists.newArrayList();
+		if (statusList != null && !statusList.isEmpty()) {
+			statusList.forEach(s -> uploadRequestStatus.add(UploadRequestStatus.fromString(s)));
+		}
+		return uploadRequestGroupBusinessService.findAll(owner, uploadRequestStatus);
 	}
 
 	@Override
@@ -930,11 +938,15 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	}
 
 	@Override
-	public List<UploadRequest> findAllRequestsByGroup(User authUser, User actor, String uuid) {
+	public List<UploadRequest> findAllRequestsByGroup(User authUser, User actor, String groupUuid, List<String> statusList) {
 		preChecks(authUser, actor);
 		checkListPermission(authUser, actor, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, null);
-		UploadRequestGroup uploadRequestGroup = uploadRequestGroupBusinessService.findByUuid(uuid);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupBusinessService.findByUuid(groupUuid);
 		Validate.notNull(uploadRequestGroup);
-		return uploadRequestBusinessService.findByGroup(uploadRequestGroup);
+		List<UploadRequestStatus> uploadRequestStatus = Lists.newArrayList();
+		if (statusList != null && !statusList.isEmpty()) {
+			statusList.forEach(s -> uploadRequestStatus.add(UploadRequestStatus.fromString(s)));
+		}
+		return uploadRequestBusinessService.findByGroup(uploadRequestGroup, uploadRequestStatus);
 	}
 }

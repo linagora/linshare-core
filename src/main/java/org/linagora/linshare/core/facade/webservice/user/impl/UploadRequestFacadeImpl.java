@@ -63,10 +63,10 @@ public class UploadRequestFacadeImpl extends GenericFacadeImpl implements Upload
 	}
 
 	@Override
-	public List<UploadRequestDto> findAll(String actorUuid) {
+	public List<UploadRequestDto> findAll(String actorUuid, List<String> status) {
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
-		List<UploadRequest> eList = uploadRequestService.findAllRequest(authUser, actor, null);
+		List<UploadRequest> eList = uploadRequestService.findAllRequest(authUser, actor, status);
 		return ImmutableList.copyOf(Lists.transform(eList, UploadRequestDto.toDto(false)));
 	}
 
@@ -144,10 +144,10 @@ public class UploadRequestFacadeImpl extends GenericFacadeImpl implements Upload
 		return new UploadRequestDto(uploadRequest, false);
 	}
 
-	public List<UploadRequestDto> findByGroup(String actorUuid, String uuid) {
+	public List<UploadRequestDto> findByGroup(String actorUuid, String groupUuid, List<String> status) {
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
-		List<UploadRequest> eList = uploadRequestService.findAllRequestsByGroup(authUser, actor, uuid);
+		List<UploadRequest> eList = uploadRequestService.findAllRequestsByGroup(authUser, actor, groupUuid, status);
 		return ImmutableList.copyOf(Lists.transform(eList, UploadRequestDto.toDto(false)));
 	}
 }

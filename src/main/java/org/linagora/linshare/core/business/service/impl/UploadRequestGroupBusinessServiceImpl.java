@@ -36,6 +36,7 @@ package org.linagora.linshare.core.business.service.impl;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.UploadRequestGroupBusinessService;
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -53,8 +54,8 @@ public class UploadRequestGroupBusinessServiceImpl implements
 	}
 
 	@Override
-	public List<UploadRequestGroup> findAll(Account owner) {
-		return uploadRequestGroupRepository.findAllByOwner(owner);
+	public List<UploadRequestGroup> findAll(Account owner, List<UploadRequestStatus> uploadRequestStatus) {
+		return uploadRequestGroupRepository.findAllByOwner(owner, uploadRequestStatus);
 	}
 
 	@Override

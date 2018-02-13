@@ -42,7 +42,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 
 public interface UploadRequestFacade {
 
-	List<UploadRequestDto> findAll(String actorUuid) throws BusinessException;
+	List<UploadRequestDto> findAll(String actorUuid, List<String> status) throws BusinessException;
 
 	UploadRequestDto find(String actorUuid, String uuid) throws BusinessException;
 
@@ -59,5 +59,5 @@ public interface UploadRequestFacade {
 
 	UploadRequestDto addRecipient(String actorUuid, String groupUuid, String emailRecipient) throws BusinessException;
 
-	List<UploadRequestDto> findByGroup(String actorUuid, String uuid);
+	List<UploadRequestDto> findByGroup(String actorUuid, String groupUuid, List<String>  status);
 }

@@ -74,7 +74,7 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 			@ApiResponse(code = 401, message = "Unauthorized.") })
 	@Override
 	public List<UploadRequestGroupDto> findAll() throws BusinessException {
-		return uploadRequestGroupFacade.findAll(null);
+		return uploadRequestGroupFacade.findAll(null, null);
 	}
 
 	@GET

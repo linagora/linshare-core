@@ -82,7 +82,7 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 			@ApiResponse(code = 401, message = "Unauthorized.") })
 	@Override
 	public List<UploadRequestDto> findAll() {
-		return uploadRequestFacade.findAll(null);
+		return uploadRequestFacade.findAll(null,null);
 	}
 
 	@GET

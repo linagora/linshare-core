@@ -34,22 +34,26 @@
 
 package org.linagora.linshare.service;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
-import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
+import org.linagora.linshare.core.repository.ContactRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.utils.LinShareWiser;
@@ -60,30 +64,37 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
-@ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
-		"classpath:springContext-repository.xml",
-		"classpath:springContext-dao.xml",
-		"classpath:springContext-ldap.xml",
-		"classpath:springContext-business-service.xml",
-		"classpath:springContext-service-miscellaneous.xml",
-		"classpath:springContext-service.xml",
-		"classpath:springContext-rac.xml",
-		"classpath:springContext-fongo.xml",
-		"classpath:springContext-storage-jcloud.xml",
-		"classpath:springContext-test.xml", })
-public class UploadRequestAddRecipientsTest extends AbstractTransactionalJUnit4SpringContextTests {
+import com.google.common.collect.Lists;
 
-	private static Logger logger = LoggerFactory.getLogger(UploadRequestAddRecipientsTest.class);
+@ContextConfiguration(locations = { "classpath:springContext-datasource.xml", "classpath:springContext-repository.xml",
+		"classpath:springContext-dao.xml", "classpath:springContext-ldap.xml",
+		"classpath:springContext-business-service.xml", "classpath:springContext-service-miscellaneous.xml",
+		"classpath:springContext-service.xml", "classpath:springContext-rac.xml", "classpath:springContext-fongo.xml",
+		"classpath:springContext-storage-jcloud.xml", "classpath:springContext-test.xml", })
+public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+	private static Logger logger = LoggerFactory.getLogger(UploadRequestGroupServiceImplTest.class);
+
+	private LinShareWiser wiser;
+
+	public UploadRequestGroupServiceImplTest() {
+		super();
+		wiser = new LinShareWiser(2525);
+	}
 
 	@Qualifier("userRepository")
 	@Autowired
 	private UserRepository<User> userRepository;
 
 	@Autowired
-	private UploadRequestService uploadRequestService;
+	private ContactRepository repository;
+
+	@Autowired
+	private UploadRequestService service;
 
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
+
+	private UploadRequest ure = new UploadRequest();
 
 	private LoadingServiceTestDatas datas;
 
@@ -91,27 +102,34 @@ public class UploadRequestAddRecipientsTest extends AbstractTransactionalJUnit4S
 
 	private User john;
 
-	private User jane;
-
-	private LinShareWiser wiser;
-
-	public UploadRequestAddRecipientsTest() {
-		super();
-		wiser = new LinShareWiser(2525);
-	}
+	private Contact yoda;
 
 	@Before
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		this.executeSqlScript("import-tests-upload-request-add-recipients.sql", false);
+		this.executeSqlScript("import-tests-upload-request.sql", false);
 		wiser.start();
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		john = datas.getUser1();
-		jane = datas.getUser2();
 		AbstractDomain subDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlSubDomain);
+		yoda = repository.findByMail("yoda@linshare.org");
 		john.setDomain(subDomain);
-		jane.setDomain(subDomain);
+		// UPLOAD REQUEST CREATE
+		ure.setCanClose(true);
+		ure.setMaxDepositSize((long) 100);
+		ure.setMaxFileCount(new Integer(3));
+		ure.setMaxFileSize((long) 50);
+		ure.setStatus(UploadRequestStatus.STATUS_CREATED);
+		ure.setExpiryDate(new Date());
+		ure.setSecured(false);
+		ure.setCanEditExpiryDate(true);
+		ure.setCanDelete(true);
+		ure.setLocale("en");
+		ure.setActivationDate(new Date());
+		List<UploadRequest> eList = service.createRequest(john, john, ure, Lists.newArrayList(yoda),
+				"This is a subject", "This is a body", false);
+		ure = eList.get(0);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -119,40 +137,28 @@ public class UploadRequestAddRecipientsTest extends AbstractTransactionalJUnit4S
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		wiser.stop();
+		service.deleteRequest(john, john, ure.getUuid());
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
 	@Test
-	public void addNewRecipientInRestrictedMode() throws BusinessException {
+	public void findAll() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		List<UploadRequestGroup> uploadRequestGroups = uploadRequestService.findAllGroupRequest(john, john, null);
-		Assert.assertEquals(uploadRequestGroups.size(), 3);
-		UploadRequestGroup uploadRequestGroup = uploadRequestGroups.get(1);
-		uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
-		Set<UploadRequestUrl> uploadRequestUrls = uploadRequest.getUploadRequestURLs();
-		Assert.assertEquals(uploadRequestUrls.size(), 0);
-		Contact contact = new Contact("amy@mail.test");
-		uploadRequest = uploadRequestService.addNewRecipient(john, john, uploadRequestGroup, contact);
-		uploadRequestUrls = uploadRequest.getUploadRequestURLs();
-		Assert.assertEquals(uploadRequestUrls.size(), 1);
+		List<UploadRequestGroup> groups = service.findAllGroupRequest(john, john, null);
+		Assert.assertNotNull(groups.get(0));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
-	public void addNewRecipientInGroupedMode() throws BusinessException {
+	public void findFiltred() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		List<UploadRequestGroup> uploadRequestGroups = uploadRequestService.findAllGroupRequest(jane, jane, null);
-		Assert.assertEquals(uploadRequestGroups.size(), 1);
-		UploadRequestGroup uploadRequestGroup = uploadRequestGroups.get(0);
-		Assert.assertEquals(uploadRequestGroup.getUploadRequests().size(), 1);
-		uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
-		Set<UploadRequestUrl> uploadRequestUrls = uploadRequest.getUploadRequestURLs();
-		Assert.assertEquals(uploadRequestUrls.size(), 0);
-		Contact contact = new Contact("john@mail.test");
-		uploadRequest = uploadRequestService.addNewRecipient(jane, jane, uploadRequestGroup, contact);
-		Set<UploadRequestUrl> requestUrls = uploadRequest.getUploadRequestURLs();
-		Assert.assertEquals(uploadRequestGroup.getUploadRequests().size(), 1);
-		Assert.assertEquals(requestUrls.size(), 1);
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.DAY_OF_MONTH, 1);
+		Date tomorrow = calendar.getTime();
+		ure.setActivationDate(tomorrow);
+		service.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		List<UploadRequestGroup> groups = service.findAllGroupRequest(john, john, Lists.newArrayList("STATUS_ENABLED"));
+		Assert.assertEquals(service.findAllGroupRequest(john, john, null).size() - 1, groups.size());
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
-
 }

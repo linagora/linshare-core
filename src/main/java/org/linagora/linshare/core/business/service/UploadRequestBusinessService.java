@@ -68,5 +68,5 @@ public interface UploadRequestBusinessService {
 
 	List<String> findAllRequestsToBeNotified() throws BusinessException;
 
-	List<UploadRequest> findByGroup(UploadRequestGroup uploadRequestGroup);
+	List<UploadRequest> findByGroup(UploadRequestGroup uploadRequestGroup, List<UploadRequestStatus> statusList);
 }

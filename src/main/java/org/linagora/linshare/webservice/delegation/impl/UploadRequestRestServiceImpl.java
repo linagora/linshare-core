@@ -84,7 +84,7 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	public List<UploadRequestDto> findAll(
 			@ApiParam(value = "Upload request actor uuid.", required = true) @PathParam(value = "actorUuid") String actorUuid)
 					throws BusinessException {
-		return uploadRequestFacade.findAll(actorUuid);
+		return uploadRequestFacade.findAll(actorUuid, null);
 	}
 
 	@GET

@@ -76,7 +76,7 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 	public List<UploadRequestGroupDto> findAll(
 			@ApiParam(value = "Upload request group actor uuid.", required = true) @PathParam(value = "actorUuid") String actorUuid)
 			throws BusinessException {
-		return uploadRequestGroupFacade.findAll(actorUuid);
+		return uploadRequestGroupFacade.findAll(actorUuid, null);
 	}
 
 	@GET

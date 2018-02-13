@@ -58,10 +58,10 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 	}
 
 	@Override
-	public List<UploadRequestGroupDto> findAll(String actorUuid) throws BusinessException {
+	public List<UploadRequestGroupDto> findAll(String actorUuid, List<String> status) throws BusinessException {
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
-		List<UploadRequestGroup> list = uploadRequestService.findAllGroupRequest(authUser, actor);
+		List<UploadRequestGroup> list = uploadRequestService.findAllGroupRequest(authUser, actor, status);
 		return ImmutableList.copyOf(Lists.transform(list, UploadRequestGroupDto.toDto()));
 	}
 

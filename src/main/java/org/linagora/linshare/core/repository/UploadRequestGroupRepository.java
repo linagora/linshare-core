@@ -35,6 +35,7 @@ package org.linagora.linshare.core.repository;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 
@@ -49,5 +50,5 @@ public interface UploadRequestGroupRepository extends
 	 */
 	public UploadRequestGroup findByUuid(String uuid);
 
-	public List<UploadRequestGroup> findAllByOwner(Account owner);
+	public List<UploadRequestGroup> findAllByOwner(Account owner, List<UploadRequestStatus> uploadRequestStatus);
 }

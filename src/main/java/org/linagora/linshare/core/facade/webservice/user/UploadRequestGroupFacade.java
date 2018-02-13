@@ -41,7 +41,7 @@ import org.linagora.linshare.core.facade.webservice.user.dto.UploadRequestGroupD
 
 public interface UploadRequestGroupFacade {
 
-	List<UploadRequestGroupDto> findAll(String actorUuid) throws BusinessException;
+	List<UploadRequestGroupDto> findAll(String actorUuid, List<String> status) throws BusinessException;
 
 	UploadRequestGroupDto find(String actorUuid, String uuid) throws BusinessException;
 }

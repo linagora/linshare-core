@@ -63,6 +63,11 @@
 		<constructor-arg ref="wsUploadRequestFacade" />
 	</bean>
 
+	<bean id="delegationUploadRequestGroupRestService"
+		class="org.linagora.linshare.webservice.delegationv2.impl.UploadRequestGroupRestServiceImpl">
+		<constructor-arg ref="wsUploadRequestGroupFacade" />
+	</bean>
+
 	<jaxrs:server id="restDelegation2Container" address="/rest/delegation/v2">
 		<jaxrs:serviceBeans>
 			<ref bean="delegationSafeDetailRestService" />
@@ -71,7 +76,8 @@
 			<ref bean="delegationV2WorkGroupMemberRestService" />
 			<ref bean="delegationV2DocumentRestService" />
 			<ref bean="delegationV2WorkGroupEntryRestService" />	
-			<ref bean="delegationUploadRequestRestService" />			
+			<ref bean="delegationUploadRequestRestService" />	
+			<ref bean="delegationUploadRequestGroupRestService" />					
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

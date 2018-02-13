@@ -123,7 +123,7 @@ public class UploadRequestBusinessServiceImpl implements
 	}
 
 	@Override
-	public List<UploadRequest> findByGroup(UploadRequestGroup uploadRequestGroup) {
-		return uploadRequestRepository.findByGroup(uploadRequestGroup);
+	public List<UploadRequest> findByGroup(UploadRequestGroup uploadRequestGroup, List<UploadRequestStatus> statusList) {
+		return uploadRequestRepository.findByGroup(uploadRequestGroup, statusList);
 	}
 }

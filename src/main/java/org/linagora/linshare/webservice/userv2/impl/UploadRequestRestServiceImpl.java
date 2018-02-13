@@ -103,10 +103,11 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	@Path("/")
 	@ApiOperation(value = "Find a list of upload request.", response = UploadRequestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-			@ApiResponse(code = 401, message = "Unauthorized.") })
+	@ApiResponse(code = 401, message = "Unauthorized.")})
 	@Override
-	public List<UploadRequestDto> findAll() {
-		return uploadRequestFacade.findAll(null);
+	public List<UploadRequestDto> findAll(
+			@ApiParam(value = "Values t filter upload resquets by status", required = false) @QueryParam("filter") List<String> status) {
+		return uploadRequestFacade.findAll(null, status);
 	}
 
 	@GET
@@ -128,7 +129,8 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
 	@Override
 	public List<UploadRequestDto> findByUploadRequestGroup(
-			@ApiParam(value = "Upload request uuid.", required = true) @PathParam(value = "uuid") String uuid) {
-		return uploadRequestFacade.findByGroup(null, uuid);
+			@ApiParam(value = "Upload request group uuid.", required = true) @PathParam(value = "uuid") String groupUuid,
+			@ApiParam(value = "Values t filter upload resquets by status", required = false) @QueryParam("filter") List<String> status) {
+		return uploadRequestFacade.findByGroup(null, groupUuid, status);
 	}
 }

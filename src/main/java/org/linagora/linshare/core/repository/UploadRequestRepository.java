@@ -87,5 +87,5 @@ public interface UploadRequestRepository extends
 
 	List<String> findAllRequestsToBeNotified();
 
-	List<UploadRequest> findByGroup(UploadRequestGroup uploadRequestGroup);
+	List<UploadRequest> findByGroup(UploadRequestGroup uploadRequestGroup, List<UploadRequestStatus> statusList);
 }
