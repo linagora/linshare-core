@@ -84,34 +84,36 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 			throw new AuthenticationServiceException(msg, e);
 		} catch (ExpiredJwtException e) {
 			logger.warn(e.getMessage(), e);
+			// TODO: log authentication failure
+//			authentificationFacade.logAuthError(user, message);
 			throw new AuthenticationServiceException("The token is expired and not valid anymore : " + token, e);
 		} catch (Exception e) {
 			logger.warn(e.getMessage(), e);
 			String msg = String.format("Invalid token : %1$s : %2$s", e.getMessage(), token);
 			throw new AuthenticationServiceException(msg, e);
 		}
-		String principal = claims.getSubject();
-		String userName = claims.get("accountUuid", String.class);
 
 		User foundUser = null;
 		try {
-			foundUser = authentificationFacade.loadUserDetails(userName);
+			String email= claims.getSubject();
+			String accountUuid = claims.get("accountUuid", String.class);
+			// If account uuid, is provided, we use it instead of email.
+			if (accountUuid != null) {
+				foundUser = authentificationFacade.loadUserDetails(accountUuid);
+			} else {
+				foundUser = authentificationFacade.findByLogin(email);
+			}
 		} catch (BusinessException e) {
-			logger.error(e);
-			throw new AuthenticationServiceException("Could not find user account : " + userName, e);
+			logger.error(e.getMessage(), e);
+			throw new AuthenticationServiceException("Could not find user account : " + claims, e);
 		}
-
 		if (foundUser == null) {
-			return null;
+			// if we can find the user with jwt token, the user may not exist.
+			// Token is still valid but we can't continue, we have to abord authentification process.
+			// We can't return null because there is one and only Provider that can handle JwtAuthenticationToken
+			throw new AuthenticationServiceException("Could not find user account : " + claims);
 		}
-
-		try {
-			authentificationFacade.logAuthSuccess(foundUser);
-		} catch (BusinessException e) {
-			logger.error(e.getMessage());
-			logger.debug(e.getStackTrace());
-		}
-
+		authentificationFacade.logAuthSuccess(foundUser);
 		List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(foundUser);
 		UserDetails userDetail = new org.springframework.security.core.userdetails.User(foundUser.getLsUuid(), "", true,
 				true, true, true, grantedAuthorities);
