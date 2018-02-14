@@ -34,27 +34,40 @@
 
 package org.linagora.linshare.service;
 
+import java.io.File; 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.cxf.helpers.IOUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.linagora.linshare.core.dao.FileDataStore;
+import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Contact;
+import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
 import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.ContactRepository;
+import org.linagora.linshare.core.repository.DocumentRepository;
+import org.linagora.linshare.core.repository.UploadRequestEntryRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
+import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
@@ -104,6 +117,21 @@ public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4Spr
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
 
+	@Autowired
+	private UploadRequestEntryService uploadRequestEntryService;
+
+	@Autowired
+	private UploadRequestEntryRepository uploadRequestEntryRepository;
+
+	@Qualifier("jcloudFileDataStore")
+	@Autowired
+	private FileDataStore fileDataStore;
+
+	@Autowired
+	private DocumentRepository documentRepository;
+
+	private UploadRequestEntry uploadRequestEntry;
+
 	private UploadRequest ure = new UploadRequest();
 
 	private UploadRequestTemplate template = new UploadRequestTemplate();
@@ -118,11 +146,19 @@ public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4Spr
 
 	private User jane;
 
+	private final InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
+
+	private final String fileName = "linshare-default.properties";
+
+	private final String comment = "file description";
+
 	private Contact yoda;
 
 	@Before
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
+		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
+		this.executeSqlScript("import-tests-quota-other.sql", false);
 		this.executeSqlScript("import-tests-upload-request.sql", false);
 		wiser.start();
 		datas = new LoadingServiceTestDatas(userRepository);
@@ -305,6 +341,26 @@ public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4Spr
 			Assert.assertEquals("You are not authorized to get this entry.", ex.getMessage());
 		}
 		history = service.findAllRequestHistory(john, john, e.getUuid());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testUploadRequestCreateDocumentEntry() throws BusinessException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Account actor = jane;
+		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		IOUtils.transferTo(stream, tempFile);
+		uploadRequestEntry = uploadRequestEntryService.create(actor, actor, tempFile, fileName, comment, false, null,
+				e.getUploadRequestURLs().iterator().next());
+		Assert.assertTrue(uploadRequestEntryRepository.findByUuid(uploadRequestEntry.getUuid()) != null);
+		Document aDocument = uploadRequestEntry.getDocument();
+		uploadRequestEntryRepository.delete(uploadRequestEntry);
+		jane.getEntries().clear();
+		userRepository.update(jane);
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.THUMBNAIL_SMALL, aDocument, "image/png");
+		metadata.setUuid(aDocument.getUuid());
+		fileDataStore.remove(metadata);
+		documentRepository.delete(aDocument);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }

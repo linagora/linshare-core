@@ -209,7 +209,21 @@
 		<constructor-arg ref="documentEntryService" />
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="notifierService" />
+		<constructor-arg ref="uploadRequestEntryService" />
 		<constructor-arg ref="functionalityReadOnlyService" />
+	</bean>
+	<bean name="uploadRequestEntryService"
+		class="org.linagora.linshare.core.service.impl.UploadRequestEntryServiceImpl">
+		<constructor-arg ref="uploadRequestEntryBusinessService" />
+		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="mimeTypeService" />
+		<constructor-arg ref="virusScannerService" />
+		<constructor-arg ref="mimeTypeMagicNumberDao" />
+		<constructor-arg ref="antiSamyService" />
+		<constructor-arg ref="uploadRequestEntryRessourceAccessControl" />
+		<constructor-arg ref="operationHistoryBusinessService" />
+		<constructor-arg ref="quotaService" />
 	</bean>
 	<bean name="uploadPropositionService" class="org.linagora.linshare.core.service.impl.UploadPropositionServiceImpl">
 		<constructor-arg ref="uploadPropositionBusinessService" />

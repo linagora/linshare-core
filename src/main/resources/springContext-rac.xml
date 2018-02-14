@@ -15,6 +15,10 @@
 		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 
+	<bean name="uploadRequestEntryRessourceAccessControl" class="org.linagora.linshare.core.rac.impl.UploadRequestEntryRessourceAccessControlImpl">
+		<constructor-arg ref="functionalityReadOnlyService" />
+	</bean>
+
 	<bean name="anonymousShareEntryResourceAccessControl" class="org.linagora.linshare.core.rac.impl.AnonymousShareEntryResourceAccessControlImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>

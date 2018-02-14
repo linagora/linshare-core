@@ -45,7 +45,6 @@ import org.linagora.linshare.core.business.service.UploadRequestUrlBusinessServi
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Contact;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
@@ -61,15 +60,11 @@ import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.NotifierService;
+import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
 import org.linagora.linshare.core.utils.HashUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
-
-	final private static Logger logger = LoggerFactory
-			.getLogger(UploadRequestUrlServiceImpl.class);
 
 	private final UploadRequestUrlBusinessService uploadRequestUrlBusinessService;
 
@@ -83,6 +78,8 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 
 	private final NotifierService notifierService;
 
+	private final UploadRequestEntryService uploadRequestEntryService;
+
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
 	public UploadRequestUrlServiceImpl(
@@ -92,6 +89,7 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 			final DocumentEntryService documentEntryService,
 			final MailBuildingService mailBuildingService,
 			final NotifierService notifierService,
+			final UploadRequestEntryService uploadRequestEntryService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService) {
 		super();
 		this.uploadRequestUrlBusinessService = uploadRequestUrlBusinessService;
@@ -100,6 +98,7 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 		this.documentEntryService = documentEntryService;
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
+		this.uploadRequestEntryService = uploadRequestEntryService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 	}
 
@@ -176,12 +175,12 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 		// HOOK : Extract owner for upload request URL
 		Account owner = requestUrl.getUploadRequest().getUploadRequestGroup().getOwner();
 		// Store the file into the owner account.
-		DocumentEntry document = documentEntryService.create(
-				actor, owner, file, fileName, "", false, null);
-		createBusinessCheck(requestUrl, document);
+		UploadRequestEntry upReqdoc = uploadRequestEntryService.create(
+				actor, owner, file, fileName, "", false, null, requestUrl);
+		createBusinessCheck(requestUrl, upReqdoc);
 		// Create the link between the document and the upload request URL.
-		UploadRequestEntry uploadRequestEntry = new UploadRequestEntry(
-				document, requestUrl);
+		UploadRequestEntry uploadRequestEntry = new UploadRequestEntry(upReqdoc.getEntryOwner(), upReqdoc.getName(),
+				upReqdoc.getComment(), upReqdoc.getDocument(), requestUrl);
 		UploadRequestEntry requestEntry = uploadRequestEntryBusinessService
 				.create(uploadRequestEntry);
 		EmailContext context = new UploadRequestUploadedFileEmailContext(
@@ -243,7 +242,7 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 	}
 
 	private void createBusinessCheck(UploadRequestUrl requestUrl,
-			DocumentEntry document) throws BusinessException {
+			UploadRequestEntry document) throws BusinessException {
 		UploadRequest request = requestUrl.getUploadRequest();
 		if (!request.getStatus().equals(UploadRequestStatus.STATUS_ENABLED)) {
 			throw new BusinessException(

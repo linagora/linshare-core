@@ -61,16 +61,14 @@ public class UploadRequestEntry extends Entry implements Serializable {
 		super();
 	}
 
-	public UploadRequestEntry(DocumentEntry documentEntry,
+	public UploadRequestEntry(Account entryOwner, String name, String comment, Document document,
 			UploadRequestUrl requestUrl) {
-		super(documentEntry.getEntryOwner(), documentEntry.getName(),
-				documentEntry.getComment());
-		this.document = documentEntry.getDocument();
-		this.documentEntry = documentEntry;
+		super(entryOwner, name, comment);
+		this.document = document;
 		this.uploadRequestUrl = requestUrl;
-		this.sha256sum = documentEntry.getSha256sum();
-		this.size = documentEntry.getSize();
-		this.type = documentEntry.getType();
+		this.sha256sum = document.getSha256sum();
+		this.size = document.getSize();
+		this.type = document.getType();
 		this.copied = false;
 		this.ciphered = false;
 	}

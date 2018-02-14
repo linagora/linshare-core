@@ -140,7 +140,12 @@
 
 	<bean id="uploadRequestEntryBusinessService" class="org.linagora.linshare.core.business.service.impl.UploadRequestEntryBusinessServiceImpl">
 		<constructor-arg ref="uploadRequestEntryRepository" />
-	</bean>
+		<constructor-arg ref="documentRepository" />
+		<constructor-arg value="${linshare.documents.storage.deduplication}" />
+		<constructor-arg ref="fileDataStore" />
+		<constructor-arg ref="thumbnailGeneratorService" />
+		<constructor-arg ref="timeStampingService" />
+	</bean>	
 
 	<bean id="uploadRequestGroupBusinessService" class="org.linagora.linshare.core.business.service.impl.UploadRequestGroupBusinessServiceImpl">
 		<constructor-arg ref="uploadRequestGroupRepository" />
