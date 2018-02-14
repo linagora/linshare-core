@@ -38,6 +38,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
 import org.linagora.linshare.core.facade.webservice.user.UserFacade;
@@ -98,6 +99,10 @@ public class UserFacadeImpl extends UserGenericFacadeImp implements UserFacade {
 	@Override
 	public String generateToken() throws BusinessException {
 		User authUser = checkAuthentication();
+		if (!authUser.isInternal()) {
+			String message = "You can not generate JWT token for account which is not internal user.";
+			throw new BusinessException(BusinessErrorCode.METHOD_NOT_ALLOWED, message);
+		}
 		return jwtService.generateToken(authUser);
 	}
 }
