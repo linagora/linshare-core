@@ -53,13 +53,16 @@ public class JwtServiceImpl implements JwtService {
 
 	protected final String secret;
 
+	protected String issuer;
+
 	protected Long expiration;
 
-	public JwtServiceImpl(String secret, Long expiration) {
+	public JwtServiceImpl(String secret, Long expiration, String issuer) {
 		super();
 		// see https://github.com/jwtk/jjwt/issues/248
 		this.secret = Base64.getEncoder().encodeToString(secret.getBytes());
 		this.expiration = expiration;
+		this.issuer = issuer;
 	}
 
 	@Override
@@ -75,6 +78,7 @@ public class JwtServiceImpl implements JwtService {
 				.setClaims(claims)
 				.setSubject(actor.getMail())
 				.setIssuedAt(createdDate)
+				.setIssuer(issuer)
 				.setExpiration(expirationDate)
 				.signWith(SignatureAlgorithm.HS512, secret)
 				.compact();

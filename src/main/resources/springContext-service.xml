@@ -332,6 +332,7 @@
 		class="org.linagora.linshare.core.service.impl.JwtServiceImpl">
 		<constructor-arg value="${jwt.secret}" />
 		<constructor-arg value="${jwt.expiration}" />
+		<constructor-arg value="${jwt.issuer}" />
 	</bean>
 
 </beans>
