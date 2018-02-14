@@ -48,6 +48,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.ContactDto;
 import org.linagora.linshare.core.facade.webservice.user.UploadRequestFacade;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UploadRequestService;
 
 import com.google.common.collect.ImmutableList;
@@ -56,10 +57,14 @@ import com.google.common.collect.Lists;
 public class UploadRequestFacadeImpl extends GenericFacadeImpl implements UploadRequestFacade {
 
 	private final UploadRequestService uploadRequestService;
+	private final UploadRequestGroupService uploadRequestGroupService;
 
-	public UploadRequestFacadeImpl(AccountService accountService, UploadRequestService uploadRequestService) {
+	public UploadRequestFacadeImpl(final AccountService accountService,
+			final UploadRequestService uploadRequestService,
+			final UploadRequestGroupService uploadRequestGroupService) {
 		super(accountService);
 		this.uploadRequestService = uploadRequestService;
+		this.uploadRequestGroupService = uploadRequestGroupService;
 	}
 
 	@Override
@@ -138,7 +143,7 @@ public class UploadRequestFacadeImpl extends GenericFacadeImpl implements Upload
 		Validate.notEmpty(emailRecipient, "The email of recipient must be set.");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
-		UploadRequestGroup uploadRequestGroup = uploadRequestService.findRequestGroupByUuid(actor, authUser, groupUuid);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.findRequestGroupByUuid(actor, authUser, groupUuid);
 		Contact contact = new Contact(emailRecipient);
 		UploadRequest uploadRequest = uploadRequestService.addNewRecipient(authUser, actor, uploadRequestGroup, contact);
 		return new UploadRequestDto(uploadRequest, false);

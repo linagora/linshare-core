@@ -158,17 +158,6 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	}
 
 	@Override
-	public List<UploadRequestGroup> findAllGroupRequest(Account actor, Account owner, List<String> statusList) throws BusinessException {
-		preChecks(actor, owner);
-		groupRac.checkListPermission(actor, owner, UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, null);
-		List<UploadRequestStatus> uploadRequestStatus = Lists.newArrayList();
-		if (statusList != null && !statusList.isEmpty()) {
-			statusList.forEach(s -> uploadRequestStatus.add(UploadRequestStatus.fromString(s)));
-		}
-		return uploadRequestGroupBusinessService.findAll(owner, uploadRequestStatus);
-	}
-
-	@Override
 	public UploadRequest findRequestByUuid(Account actor, Account owner, String uuid)
 			throws BusinessException {
 		UploadRequest ret = uploadRequestBusinessService.findByUuid(uuid);
@@ -728,14 +717,6 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	public UploadRequest deleteRequest(Account actor, Account owner, String uuid)
 			throws BusinessException {
 		return updateStatus(actor, owner, uuid, UploadRequestStatus.STATUS_DELETED);
-	}
-
-	@Override
-	public UploadRequestGroup findRequestGroupByUuid(Account actor, Account owner, String uuid) {
-		preChecks(actor, owner);
-		UploadRequestGroup req = uploadRequestGroupBusinessService.findByUuid(uuid);
-		groupRac.checkReadPermission(actor, req.getUploadRequests().iterator().next().getUploadRequestGroup().getOwner(), UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, req);
-		return req;
 	}
 
 	@Override

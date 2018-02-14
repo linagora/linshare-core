@@ -44,8 +44,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestGroupDto;
 import org.linagora.linshare.core.facade.webservice.user.UploadRequestGroupFacade;
-import org.linagora.linshare.core.facade.webservice.user.dto.UploadRequestGroupDto;
 import org.linagora.linshare.webservice.userv1.UploadRequestGroupRestService;
 
 import com.wordnik.swagger.annotations.Api;

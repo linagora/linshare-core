@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2016-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,17 +31,17 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-
-package org.linagora.linshare.core.facade.webservice.user;
+package org.linagora.linshare.core.service;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestGroupDto;
 
-public interface UploadRequestGroupFacade {
+public interface UploadRequestGroupService {
 
-	List<UploadRequestGroupDto> findAll(String actorUuid, List<String> status) throws BusinessException;
+	List<UploadRequestGroup> findAllGroupRequest(Account actor, Account owner, List<String> statusList) throws BusinessException;
 
-	UploadRequestGroupDto find(String actorUuid, String uuid) throws BusinessException;
+	UploadRequestGroup findRequestGroupByUuid(Account actor, Account owner, String uuid);
 }

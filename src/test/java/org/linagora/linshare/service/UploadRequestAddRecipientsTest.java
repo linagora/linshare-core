@@ -51,6 +51,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
@@ -82,6 +83,9 @@ public class UploadRequestAddRecipientsTest extends AbstractTransactionalJUnit4S
 	@Autowired
 	private UploadRequestService uploadRequestService;
 
+	@Autowired
+	private UploadRequestGroupService uploadRequestGroupService;
+	
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
 
@@ -125,7 +129,7 @@ public class UploadRequestAddRecipientsTest extends AbstractTransactionalJUnit4S
 	@Test
 	public void addNewRecipientInRestrictedMode() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		List<UploadRequestGroup> uploadRequestGroups = uploadRequestService.findAllGroupRequest(john, john, null);
+		List<UploadRequestGroup> uploadRequestGroups = uploadRequestGroupService.findAllGroupRequest(john, john, null);
 		Assert.assertEquals(uploadRequestGroups.size(), 3);
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroups.get(1);
 		uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
@@ -141,7 +145,7 @@ public class UploadRequestAddRecipientsTest extends AbstractTransactionalJUnit4S
 	@Test
 	public void addNewRecipientInGroupedMode() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		List<UploadRequestGroup> uploadRequestGroups = uploadRequestService.findAllGroupRequest(jane, jane, null);
+		List<UploadRequestGroup> uploadRequestGroups = uploadRequestGroupService.findAllGroupRequest(jane, jane, null);
 		Assert.assertEquals(uploadRequestGroups.size(), 1);
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroups.get(0);
 		Assert.assertEquals(uploadRequestGroup.getUploadRequests().size(), 1);

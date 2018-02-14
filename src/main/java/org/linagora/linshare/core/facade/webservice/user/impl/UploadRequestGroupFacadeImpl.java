@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2016-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -39,29 +39,29 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestGroupDto;
 import org.linagora.linshare.core.facade.webservice.user.UploadRequestGroupFacade;
-import org.linagora.linshare.core.facade.webservice.user.dto.UploadRequestGroupDto;
 import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.UploadRequestService;
+import org.linagora.linshare.core.service.UploadRequestGroupService;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements UploadRequestGroupFacade {
 
-	private final UploadRequestService uploadRequestService;
+	private final UploadRequestGroupService uploadRequestGroupService;
 
 	public UploadRequestGroupFacadeImpl(AccountService accountService,
-			final UploadRequestService uploadRequestService) {
+			final UploadRequestGroupService uploadRequestGroupService) {
 		super(accountService);
-		this.uploadRequestService = uploadRequestService;
+		this.uploadRequestGroupService = uploadRequestGroupService;
 	}
 
 	@Override
 	public List<UploadRequestGroupDto> findAll(String actorUuid, List<String> status) throws BusinessException {
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
-		List<UploadRequestGroup> list = uploadRequestService.findAllGroupRequest(authUser, actor, status);
+		List<UploadRequestGroup> list = uploadRequestGroupService.findAllGroupRequest(authUser, actor, status);
 		return ImmutableList.copyOf(Lists.transform(list, UploadRequestGroupDto.toDto()));
 	}
 
@@ -69,7 +69,7 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 	public UploadRequestGroupDto find(String actorUuid, String uuid) throws BusinessException {
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
-		UploadRequestGroup group = uploadRequestService.findRequestGroupByUuid(authUser, actor, uuid);
+		UploadRequestGroup group = uploadRequestGroupService.findRequestGroupByUuid(authUser, actor, uuid);
 		return new UploadRequestGroupDto(group);
 	}
 }

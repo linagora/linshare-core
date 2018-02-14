@@ -169,6 +169,13 @@
 		<constructor-arg ref="logEntryService" />
 	</bean>
 
+	<bean name="uploadRequestGroupService"
+		class="org.linagora.linshare.core.service.impl.UploadRequestGroupServiceImpl">
+		<constructor-arg ref="uploadRequestGroupBusinessService" />
+		<constructor-arg ref="uploadRequestGroupResourceAccessControl" />
+		<constructor-arg ref="logEntryService" />
+	</bean>
+
 	<bean name="guestService" class="org.linagora.linshare.core.service.impl.GuestServiceImpl">
 		<constructor-arg ref="guestBusinessService" />
 		<constructor-arg ref="abstractDomainService" />

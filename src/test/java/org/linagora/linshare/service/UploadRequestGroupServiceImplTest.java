@@ -34,8 +34,6 @@
 
 package org.linagora.linshare.service;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -55,6 +53,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.ContactRepository;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
@@ -89,7 +88,10 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 	private ContactRepository repository;
 
 	@Autowired
-	private UploadRequestService service;
+	private UploadRequestGroupService uploadRequestGroupService;
+	
+	@Autowired
+	private UploadRequestService uploadRequestService;
 
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
@@ -97,8 +99,6 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 	private UploadRequest ure = new UploadRequest();
 
 	private LoadingServiceTestDatas datas;
-
-	private UploadRequest uploadRequest;
 
 	private User john;
 
@@ -127,7 +127,7 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 		ure.setCanDelete(true);
 		ure.setLocale("en");
 		ure.setActivationDate(new Date());
-		List<UploadRequest> eList = service.createRequest(john, john, ure, Lists.newArrayList(yoda),
+		List<UploadRequest> eList = uploadRequestService.createRequest(john, john, ure, Lists.newArrayList(yoda),
 				"This is a subject", "This is a body", false);
 		ure = eList.get(0);
 		logger.debug(LinShareTestConstants.END_SETUP);
@@ -137,14 +137,14 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		wiser.stop();
-		service.deleteRequest(john, john, ure.getUuid());
+		uploadRequestService.deleteRequest(john, john, ure.getUuid());
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
 	@Test
 	public void findAll() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		List<UploadRequestGroup> groups = service.findAllGroupRequest(john, john, null);
+		List<UploadRequestGroup> groups = uploadRequestGroupService.findAllGroupRequest(john, john, null);
 		Assert.assertNotNull(groups.get(0));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -156,9 +156,9 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 		calendar.add(Calendar.DAY_OF_MONTH, 1);
 		Date tomorrow = calendar.getTime();
 		ure.setActivationDate(tomorrow);
-		service.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
-		List<UploadRequestGroup> groups = service.findAllGroupRequest(john, john, Lists.newArrayList("STATUS_ENABLED"));
-		Assert.assertEquals(service.findAllGroupRequest(john, john, null).size() - 1, groups.size());
+		uploadRequestService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		List<UploadRequestGroup> groups = uploadRequestGroupService.findAllGroupRequest(john, john, Lists.newArrayList("STATUS_ENABLED"));
+		Assert.assertEquals(uploadRequestGroupService.findAllGroupRequest(john, john, null).size() - 1, groups.size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }
