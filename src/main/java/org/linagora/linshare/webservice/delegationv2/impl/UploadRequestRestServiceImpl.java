@@ -46,6 +46,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 import org.linagora.linshare.core.facade.webservice.user.UploadRequestFacade;
 import org.linagora.linshare.webservice.delegationv2.UploadRequestRestService;
@@ -127,5 +128,21 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 			@ApiParam(value = "Upload request group uuid.", required = true) @PathParam(value = "groupUuid") String groupUuid,
 			@ApiParam(value = "Values t filter upload resquets by status", required = false) @QueryParam("filter") List<UploadRequestStatus> status) {
 		return uploadRequestFacade.findByGroup(actorUuid, groupUuid, status);
+	}
+
+	@POST
+	@Path("/update/status/{uuid}")
+	@ApiOperation(value = "Update an upload request.", response = UploadRequestDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
+			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
+	@Override
+	public UploadRequestDto updateStatus(
+			@ApiParam(value = "The actor (user) uuid.", required = true)
+				@PathParam("actorUuid") String actorUuid,
+			@ApiParam(value = "Upload request uuid.", required = true)
+				@PathParam(value = "uuid") String requestUuid,
+			@QueryParam("status") String status) throws BusinessException {
+		UploadRequestDto dto = uploadRequestFacade.updateStatus(actorUuid, requestUuid, status);
+		return dto;
 	}
 }

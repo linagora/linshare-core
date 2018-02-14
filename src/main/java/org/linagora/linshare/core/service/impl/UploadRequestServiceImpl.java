@@ -155,10 +155,16 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		Validate.notEmpty(uuid, "Uuid must be set.");
 		Validate.notNull(status, "Status must be set.");
 		UploadRequest req = findRequestByUuid(actor, owner, uuid);
+		if (!req.getUploadRequestGroup().getRestricted()) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You can not edit an uploadRequest in grouped mode : " + req.getUuid()); 
+		}
 		UploadRequestAuditLogEntry log = new UploadRequestAuditLogEntry(new AccountMto(actor), new AccountMto(owner),
 				LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST, req.getUuid(), req);
 		req.setStatus(status);
 		req = updateRequest(actor, owner, req);
+		if (status.equals(UploadRequestStatus.STATUS_ARCHIVED)) {
+			// TODO copy all uploadRequestEntry to DocumentEntry
+		}
 		log.setResourceUpdated(new UploadRequestMto(req));
 		logEntryService.insert(log);
 		return req;

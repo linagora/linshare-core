@@ -126,4 +126,5 @@ public class UploadRequestBusinessServiceImpl implements
 	public List<UploadRequest> findByGroup(UploadRequestGroup uploadRequestGroup, List<UploadRequestStatus> statusList) {
 		return uploadRequestRepository.findByGroup(uploadRequestGroup, statusList);
 	}
+
 }
