@@ -45,7 +45,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestCreationtDto;
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 import org.linagora.linshare.core.facade.webservice.user.UploadRequestFacade;
 import org.linagora.linshare.webservice.delegationv2.UploadRequestRestService;
@@ -76,19 +76,6 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	}
 
 	@POST
-	@Path("/")
-	@ApiOperation(value = "Create an upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
-	@Override
-	public List<UploadRequestCreationtDto> create(
-			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Upload request.", required = true) UploadRequestCreationtDto uploadRequestCreationtDto,
-			@ApiParam(value = "Group mode.", required = true) @QueryParam(value = "groupMode") Boolean groupMode) {
-		List<UploadRequestCreationtDto> dto = uploadRequestFacade.create(actorUuid, uploadRequestCreationtDto, groupMode);
-		return dto;
-	}
-
-	@POST
 	@Path("/{groupUuid}/add/reciptient")
 	@ApiOperation(value = "Add new recipient to upload request group.", response = UploadRequestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
@@ -112,7 +99,7 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	@Override
 	public List<UploadRequestDto> findAll(
 			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Values t filter upload resquets by status", required = false) @QueryParam("filter") List<String> status) {
+			@ApiParam(value = "Values t filter upload resquets by status", required = false) @QueryParam("filter") List<UploadRequestStatus> status) {
 		return uploadRequestFacade.findAll(actorUuid, status);
 	}
 
@@ -138,7 +125,7 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	public List<UploadRequestDto> findByUploadRequestGroup(
 			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "Upload request group uuid.", required = true) @PathParam(value = "groupUuid") String groupUuid,
-			@ApiParam(value = "Values t filter upload resquets by status", required = false) @QueryParam("filter") List<String> status) {
+			@ApiParam(value = "Values t filter upload resquets by status", required = false) @QueryParam("filter") List<UploadRequestStatus> status) {
 		return uploadRequestFacade.findByGroup(actorUuid, groupUuid, status);
 	}
 }

@@ -380,12 +380,7 @@ public class UploadRequestDto {
 	/*
 	 * Transformers
 	 */
-	public static Function<UploadRequest, UploadRequestDto> toDto(final boolean full) {
-		return new Function<UploadRequest, UploadRequestDto>() {
-			@Override
-			public UploadRequestDto apply(UploadRequest arg0) {
-				return new UploadRequestDto(arg0, full);
-			}
-		};
+	public static Function<UploadRequest, UploadRequestDto> toDto(Boolean full) {
+		return uploadRequest -> new UploadRequestDto(uploadRequest, full);
 	}
 }

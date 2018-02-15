@@ -16,7 +16,7 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION ls_prechecks() RETURNS void AS $$
 BEGIN
 	DECLARE version_to VARCHAR := '2.2.0';
-	DECLARE version_from VARCHAR := '2.0.0';
+	DECLARE version_from VARCHAR := '2.1.0';
 	DECLARE start VARCHAR := concat('You are about to upgrade from LinShare : ', version_from,  ' to ' , version_to);
 	DECLARE version_history_from VARCHAR := (SELECT version from version ORDER BY id DESC LIMIT 1);
 	DECLARE database_info VARCHAR = version();

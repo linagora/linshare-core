@@ -162,7 +162,6 @@
 		<constructor-arg ref="domainPermissionBusinessService" />
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="notifierService" />
-		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="uploadRequestResourceAccessControl" />
 		<constructor-arg ref="uploadRequestTemplateResourceAccessControl" />
 		<constructor-arg ref="uploadRequestGroupResourceAccessControl" />
@@ -173,6 +172,11 @@
 		class="org.linagora.linshare.core.service.impl.UploadRequestGroupServiceImpl">
 		<constructor-arg ref="uploadRequestGroupBusinessService" />
 		<constructor-arg ref="uploadRequestGroupResourceAccessControl" />
+		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="uploadRequestUrlService" />
+		<constructor-arg ref="mailBuildingService" />
+		<constructor-arg ref="uploadRequestBusinessService" />
+		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="logEntryService" />
 	</bean>
 
@@ -210,12 +214,11 @@
 	<bean name="uploadPropositionService" class="org.linagora.linshare.core.service.impl.UploadPropositionServiceImpl">
 		<constructor-arg ref="uploadPropositionBusinessService" />
 		<constructor-arg ref="domainBusinessService" />
-		<constructor-arg ref="uploadRequestService" />
-		<constructor-arg ref="uploadRequestUrlService" />
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="notifierService" />
+		<constructor-arg ref="uploadRequestGroupService" />
 	</bean>
 	<bean id="uploadPropositionFilterService" class="org.linagora.linshare.core.service.impl.UploadPropositionFilterServiceImpl">
 		<constructor-arg ref="uploadPropositionFilterBusinessService" />

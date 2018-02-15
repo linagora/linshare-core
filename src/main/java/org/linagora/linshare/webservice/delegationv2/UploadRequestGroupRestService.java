@@ -36,12 +36,17 @@ package org.linagora.linshare.webservice.delegationv2;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestCreationtDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestGroupDto;
 
 public interface UploadRequestGroupRestService {
 
-	List<UploadRequestGroupDto> findAll(String actorUuid, List<String> statusList) throws BusinessException;
+	List<UploadRequestGroupDto> findAll(String actorUuid, List<UploadRequestStatus> statusList) throws BusinessException;
 
 	UploadRequestGroupDto find(String actorUuid, String uuid) throws BusinessException;
+	
+	List<UploadRequestDto> create(String actorUuid, UploadRequestCreationtDto uploadRequestCreationtDto, Boolean groupMode);
 }

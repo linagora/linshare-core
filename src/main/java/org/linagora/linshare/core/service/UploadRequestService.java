@@ -50,15 +50,9 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface UploadRequestService {
 
-	List<UploadRequest> findAllRequest(Account actor, Account owner, List<String> statusList);
+	List<UploadRequest> findAllRequest(Account actor, Account owner, List<UploadRequestStatus> statusList);
 
 	UploadRequest findRequestByUuid(Account actor, Account owner, String uuid) throws BusinessException;
-
-	List<UploadRequest> createRequest(Account actor, User owner, UploadRequest req, Contact contact, String subject,
-			String body, Boolean groupedMode) throws BusinessException;
-
-	List<UploadRequest> createRequest(Account actor, User owner, UploadRequest req, List<Contact> contacts,
-			String subject, String body, Boolean groupedMode) throws BusinessException;
 
 	UploadRequest updateRequest(Account actor, Account owner, UploadRequest req) throws BusinessException;
 
@@ -108,5 +102,5 @@ public interface UploadRequestService {
 	UploadRequest addNewRecipient(User authUser, User actor, UploadRequestGroup uploadRequestgroup,
 			Contact contact);
 	
-	List<UploadRequest> findAllRequestsByGroup(User authUser, User actor, String groupUuid, List<String> status);
+	List<UploadRequest> findAllRequestsByGroup(User authUser, User actor, String groupUuid, List<UploadRequestStatus> status);
 }

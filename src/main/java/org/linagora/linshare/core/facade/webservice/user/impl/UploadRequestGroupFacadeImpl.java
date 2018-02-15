@@ -36,9 +36,16 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Contact;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestCreationtDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestGroupDto;
 import org.linagora.linshare.core.facade.webservice.user.UploadRequestGroupFacade;
 import org.linagora.linshare.core.service.AccountService;
@@ -58,7 +65,7 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 	}
 
 	@Override
-	public List<UploadRequestGroupDto> findAll(String actorUuid, List<String> status) throws BusinessException {
+	public List<UploadRequestGroupDto> findAll(String actorUuid, List<UploadRequestStatus> status) throws BusinessException {
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
 		List<UploadRequestGroup> list = uploadRequestGroupService.findAllGroupRequest(authUser, actor, status);
@@ -71,5 +78,22 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 		Account actor = getActor(authUser, actorUuid);
 		UploadRequestGroup group = uploadRequestGroupService.findRequestGroupByUuid(authUser, actor, uuid);
 		return new UploadRequestGroupDto(group);
+	}
+	
+	@Override
+	public List<UploadRequestDto> create(String actorUuid, UploadRequestCreationtDto uploadRequesCreationtDto, Boolean groupMode) throws BusinessException {
+		Validate.notNull(uploadRequesCreationtDto, "Upload request must be set.");
+		Validate.notNull(uploadRequesCreationtDto.getSubject(), "Upload request subject must be set.");
+		Validate.notEmpty(uploadRequesCreationtDto.getContactList());
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		UploadRequest req = uploadRequesCreationtDto.toObject();
+		List<Contact> contacts = Lists.newArrayList();
+		for (String mail : uploadRequesCreationtDto.getContactList()) {
+			contacts.add(new Contact(mail));
+		}
+		List<UploadRequest> e = uploadRequestGroupService.createRequest(authUser, actor, req, contacts,
+				uploadRequesCreationtDto.getSubject(), uploadRequesCreationtDto.getBody(), groupMode);
+		return ImmutableList.copyOf(Lists.transform(e, UploadRequestDto.toDto(true)));
 	}
 }

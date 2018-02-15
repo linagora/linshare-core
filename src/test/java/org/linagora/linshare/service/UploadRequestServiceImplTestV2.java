@@ -52,6 +52,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.ContactRepository;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
@@ -93,7 +94,10 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 
 	@Autowired
 	private UploadRequestService service;
-
+	
+	@Autowired
+	private UploadRequestGroupService uploadRequestGroupService;
+	
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
 
@@ -144,7 +148,7 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 	public void createUploadRequest() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		List<UploadRequest> eList = Lists.newArrayList();
-		eList = service.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		eList = uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
 		uploadRequest = eList.get(0);
 		Assert.assertNotNull(uploadRequest);
 		service.deleteRequest(john, john, uploadRequest.getUuid());
@@ -155,8 +159,8 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 	public void findAll() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		int initSize = service.findAllRequest(john, john, null).size();
-		service.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
-		service.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
 		int finalSize = service.findAllRequest(john, john, null).size();
 		Assert.assertEquals(initSize+2, finalSize);
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -165,8 +169,8 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 	@Test
 	public void findByGroup() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		List<UploadRequest> list = service.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
-		service.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		List<UploadRequest> list = uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
 		Assert.assertNotNull(list.get(0));
 		int size = service.findAllRequestsByGroup(john, john, list.get(0).getUploadRequestGroup().getUuid(), null).size();
 		Assert.assertEquals(1, size);
@@ -177,13 +181,13 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 	public void findFiltredUploadRequests() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		int initSize = service.findAllRequest(john, john, null).size();
-		service.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.DAY_OF_MONTH, 1);
 		Date tomorrow = calendar.getTime();
 		ure.setActivationDate(tomorrow);
-		service.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
-		int finalSize = service.findAllRequest(john, john, Lists.newArrayList("STATUS_ENABLED")).size();
+		uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		int finalSize = service.findAllRequest(john, john, Lists.newArrayList(UploadRequestStatus.STATUS_ENABLED)).size();
 		Assert.assertEquals(initSize+1, finalSize);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}

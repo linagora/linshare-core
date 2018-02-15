@@ -36,27 +36,21 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.ContactDto;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 @XmlRootElement(name = "UploadRequestCreation")
 public class UploadRequestCreationtDto {
-
-	@ApiModelProperty(value = "Uuid")
-	private String uuid;
 
 	@ApiModelProperty(value = "Owner")
 	private ContactDto owner;
@@ -77,10 +71,7 @@ public class UploadRequestCreationtDto {
 	@ApiModelProperty(value = "Subject")
 	private String subject;
 
-	@ApiModelProperty(value = "Status")
-	private UploadRequestStatus status;
-
-	private List<ContactDto> contactList = Lists.newArrayList();
+	private List<String> contactList = Lists.newArrayList();
 
 	private Integer maxFileCount;
 
@@ -90,20 +81,14 @@ public class UploadRequestCreationtDto {
 	// could be null
 	private Long maxFileSize;
 
-	private boolean canDeleteDocument;
+	private boolean canDelete;
 
 	private boolean canClose;
 
 	// could be null
 	private String body;
 
-	private boolean isClosed;
-
-	private boolean protectedByPassword;
-
-	private long usedSpace = 0;
-
-	Set<String> extensions = Sets.newHashSet();
+	private boolean secured;
 
 	private String locale;
 	
@@ -116,43 +101,34 @@ public class UploadRequestCreationtDto {
 	public UploadRequestCreationtDto() {
 		super();
 	}
-	public UploadRequestCreationtDto(UploadRequest entity, boolean full) {
+	public UploadRequestCreationtDto(UploadRequest entity) {
 		super();
-		this.uuid = entity.getUuid();
 		this.owner = new ContactDto(entity.getUploadRequestGroup().getOwner());
 		this.activationDate = entity.getActivationDate();
 		this.creationDate = entity.getCreationDate();
 		this.expiryDate = entity.getExpiryDate();
 		this.subject = entity.getUploadRequestGroup().getSubject();
-		this.status = entity.getStatus();
 		this.notificationDate = entity.getNotificationDate();
 		this.dirty = entity.getDirty();
 		this.enableNotification = entity.getEnableNotification();
-		if (full) {
 			this.maxFileCount = entity.getMaxFileCount();
 			this.maxDepositSize = entity.getMaxDepositSize();
 			this.maxFileSize = entity.getMaxFileSize();
-			this.canDeleteDocument = entity.isCanDelete();
+			this.canDelete = entity.isCanDelete();
 			this.canClose = entity.isCanClose();
 			for (UploadRequestUrl uru : entity.getUploadRequestURLs()) {
-				contactList.add(new ContactDto(uru.getContact()));
+				contactList.add(uru.getContact().getMail());
 			}
 			this.body = entity.getUploadRequestGroup().getBody();
-		}
-		if (entity.getStatus().equals(UploadRequestStatus.STATUS_CLOSED)) {
-			this.isClosed = true;
-			this.canDeleteDocument = false;
-			this.canClose = false;
-		}
-		this.protectedByPassword = false;
+		this.secured = entity.isSecured();
 		this.locale = entity.getLocale();
 	}
 	public UploadRequest toObject() {
 		UploadRequest e = new UploadRequest();
 		e.setActivationDate(getActivationDate());
 		e.setCanClose(isCanClose());
-		e.setCanDelete(isCanDeleteDocument());
-		e.setSecured(isProtectedByPassword());
+		e.setCanDelete(isCanDelete());
+		e.setSecured(isSecured());
 		e.setMaxDepositSize(getMaxDepositSize());
 		e.setMaxFileCount(getMaxFileCount());
 		e.setLocale(getLocale());
@@ -163,14 +139,6 @@ public class UploadRequestCreationtDto {
 		e.setEnableNotification(getEnableNotification());
 		e.setCanEditExpiryDate(getCanEditExpiryDate());
 		return e;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
 	}
 
 	public ContactDto getOwner() {
@@ -213,22 +181,6 @@ public class UploadRequestCreationtDto {
 		this.creationDate = creationDate;
 	}
 
-	public UploadRequestStatus getStatus() {
-		return status;
-	}
-
-	public void setStatus(UploadRequestStatus status) {
-		this.status = status;
-	}
-
-	public List<ContactDto> getContactList() {
-		return contactList;
-	}
-
-	public void setContactList(List<ContactDto> contactList) {
-		this.contactList = contactList;
-	}
-
 	public Integer getMaxFileCount() {
 		return maxFileCount;
 	}
@@ -253,14 +205,6 @@ public class UploadRequestCreationtDto {
 		this.maxFileSize = maxFileSize;
 	}
 
-	public boolean isCanDeleteDocument() {
-		return canDeleteDocument;
-	}
-
-	public void setCanDeleteDocument(boolean canDeleteDocument) {
-		this.canDeleteDocument = canDeleteDocument;
-	}
-
 	public boolean isCanClose() {
 		return canClose;
 	}
@@ -277,37 +221,10 @@ public class UploadRequestCreationtDto {
 		this.body = body;
 	}
 
-	public boolean isClosed() {
-		return isClosed;
-	}
-
-	public void setClosed(boolean isClosed) {
-		this.isClosed = isClosed;
-	}
-
-	public boolean isProtectedByPassword() {
-		return protectedByPassword;
-	}
-
-	public void setProtectedByPassword(boolean protectedByPassword) {
-		this.protectedByPassword = protectedByPassword;
-	}
-
-	public long getUsedSpace() {
-		return usedSpace;
-	}
-
-	public void setUsedSpace(long usedSpace) {
-		this.usedSpace = usedSpace;
-	}
-
 	public String getLocale() {
 		return locale;
 	}
 
-	/**
-	 * @param locale
-	 */
 	public void setLocale(String locale) {
 		this.locale = locale;
 	}
@@ -344,15 +261,28 @@ public class UploadRequestCreationtDto {
 		this.canEditExpiryDate = canEditExpiryDate;
 	}
 	
+	public List<String> getContactList() {
+		return contactList;
+	}
+	public void setContactList(List<String> contactList) {
+		this.contactList = contactList;
+	}
+	public boolean isCanDelete() {
+		return canDelete;
+	}
+	public void setCanDelete(boolean canDelete) {
+		this.canDelete = canDelete;
+	}
+	public boolean isSecured() {
+		return secured;
+	}
+	public void setSecured(boolean secured) {
+		this.secured = secured;
+	}
 	/*
 	 * Transformers
 	 */
-	public static Function<UploadRequest, UploadRequestCreationtDto> toDto(final boolean full) {
-		return new Function<UploadRequest, UploadRequestCreationtDto>() {
-			@Override
-			public UploadRequestCreationtDto apply(UploadRequest arg0) {
-				return new UploadRequestCreationtDto(arg0, full);
-			}
-		};
+	public static Function<UploadRequest, UploadRequestCreationtDto> toDto() {
+		return uploadRequestCreation -> new UploadRequestCreationtDto(uploadRequestCreation);
 	}
 }

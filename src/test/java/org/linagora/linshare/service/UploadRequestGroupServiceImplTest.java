@@ -127,7 +127,7 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 		ure.setCanDelete(true);
 		ure.setLocale("en");
 		ure.setActivationDate(new Date());
-		List<UploadRequest> eList = uploadRequestService.createRequest(john, john, ure, Lists.newArrayList(yoda),
+		List<UploadRequest> eList = uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda),
 				"This is a subject", "This is a body", false);
 		ure = eList.get(0);
 		logger.debug(LinShareTestConstants.END_SETUP);
@@ -156,8 +156,8 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 		calendar.add(Calendar.DAY_OF_MONTH, 1);
 		Date tomorrow = calendar.getTime();
 		ure.setActivationDate(tomorrow);
-		uploadRequestService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
-		List<UploadRequestGroup> groups = uploadRequestGroupService.findAllGroupRequest(john, john, Lists.newArrayList("STATUS_ENABLED"));
+		uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		List<UploadRequestGroup> groups = uploadRequestGroupService.findAllGroupRequest(john, john, Lists.newArrayList(UploadRequestStatus.STATUS_ENABLED));
 		Assert.assertEquals(uploadRequestGroupService.findAllGroupRequest(john, john, null).size() - 1, groups.size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}

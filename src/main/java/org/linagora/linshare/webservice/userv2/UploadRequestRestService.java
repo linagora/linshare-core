@@ -36,18 +36,16 @@ package org.linagora.linshare.webservice.userv2;
 
 import java.util.List;
 
-import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestCreationtDto;
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 
 public interface UploadRequestRestService {
 
-	List<UploadRequestCreationtDto> create(UploadRequestCreationtDto uploadRequestCreationtDto, Boolean groupMode);
-
 	UploadRequestDto addRecipient(String groupUuid, String recipientsEmail);
 
-	List<UploadRequestDto> findByUploadRequestGroup(String groupUuid, List<String> status);
+	List<UploadRequestDto> findByUploadRequestGroup(String groupUuid, List<UploadRequestStatus> status);
 
-	List<UploadRequestDto> findAll(List<String> status);
+	List<UploadRequestDto> findAll(List<UploadRequestStatus> status);
 	
 	UploadRequestDto find(String uuid);
 }

@@ -38,13 +38,17 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestCreationtDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestGroupDto;
 import org.linagora.linshare.core.facade.webservice.user.UploadRequestGroupFacade;
 import org.linagora.linshare.webservice.delegationv2.UploadRequestGroupRestService;
@@ -76,7 +80,7 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 	@Override
 	public List<UploadRequestGroupDto> findAll(
 			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Values t filter upload resquets by status", required = false) @QueryParam("filter") List<String> statusList)
+			@ApiParam(value = "Values t filter upload resquets by status", required = false) @QueryParam("filter") List<UploadRequestStatus> statusList)
 			throws BusinessException {
 		return uploadRequestGroupFacade.findAll(actorUuid, statusList);
 	}
@@ -92,5 +96,18 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 			@ApiParam(value = "Upload request group uuid.", required = true) @PathParam(value = "uuid") String uuid)
 			throws BusinessException {
 		return uploadRequestGroupFacade.find(actorUuid, uuid);
+	}
+	
+	@POST
+	@Path("/")
+	@ApiOperation(value = "Create an upload request.", response = UploadRequestDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
+	@Override
+	public List<UploadRequestDto> create(
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@ApiParam(value = "Upload request.", required = true) UploadRequestCreationtDto uploadRequestCreationtDto,
+			@ApiParam(value = "Group mode.", required = true) @QueryParam(value = "groupMode") Boolean groupMode) {
+		List<UploadRequestDto> dto = uploadRequestGroupFacade.create(actorUuid, uploadRequestCreationtDto, groupMode);
+		return dto;
 	}
 }

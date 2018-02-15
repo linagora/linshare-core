@@ -129,8 +129,8 @@ public class UploadRequestGroup {
 		this.canEditExpiryDate = canEditExpiryDate;
 		this.locale = locale;
 		this.secured = secured;
-		creationDate = new Date();
-		modificationDate = new Date();
+		this.creationDate = new Date();
+		this.modificationDate = new Date();
 		this.enableNotification = enableNotification;
 		this.restricted = restricted;
 		this.status = status;

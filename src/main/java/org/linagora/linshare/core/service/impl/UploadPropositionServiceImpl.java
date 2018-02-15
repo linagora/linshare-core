@@ -63,11 +63,12 @@ import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UploadPropositionService;
-import org.linagora.linshare.core.service.UploadRequestService;
-import org.linagora.linshare.core.service.UploadRequestUrlService;
+import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 public class UploadPropositionServiceImpl implements UploadPropositionService {
 
@@ -78,10 +79,6 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 
 	private final DomainBusinessService domainBusinessService;
 
-	private final UploadRequestService uploadRequestService;
-
-	private final UploadRequestUrlService uploadRequestUrlService;
-
 	private final UserService userService;
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
@@ -89,25 +86,25 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 	private final MailBuildingService mailBuildingService;
 
 	private final NotifierService notifierService;
+	
+	private final UploadRequestGroupService uploadRequestGroupService;
 
 	public UploadPropositionServiceImpl(
 			final UploadPropositionBusinessService uploadPropositionBusinessService,
 			final DomainBusinessService domainBusinessService,
-			final UploadRequestService uploadRequestService,
-			final UploadRequestUrlService uploadRequestUrlService,
 			final UserService userService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
 			final MailBuildingService mailBuildingService,
-			final NotifierService notifierService) {
+			final NotifierService notifierService,
+			final UploadRequestGroupService uploadRequestGroupService) {
 		super();
 		this.uploadPropositionBusinessService = uploadPropositionBusinessService;
 		this.domainBusinessService = domainBusinessService;
-		this.uploadRequestService = uploadRequestService;
-		this.uploadRequestUrlService = uploadRequestUrlService;
 		this.userService = userService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
+		this.uploadRequestGroupService = uploadRequestGroupService;
 	}
 
 	@Override
@@ -213,7 +210,7 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 		req.setUploadPropositionRequestUuid(created.getUuid());
 		getDefaultValue(owner, req);// get value default from domain
 		Contact contact = new Contact(created.getMail());
-		uploadRequestService.createRequest(owner, owner, req, contact,
+		uploadRequestGroupService.createRequest(owner, owner, req, Lists.newArrayList(contact),
 				created.getSubject(), created.getBody(), null);
 	}
 

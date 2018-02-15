@@ -54,6 +54,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.ContactRepository;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
@@ -91,6 +92,9 @@ public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4Spr
 	@Autowired
 	private UserRepository<User> userRepository;
 
+	@Autowired
+	private UploadRequestGroupService uploadRequestGroupService;
+	
 	@Autowired
 	private ContactRepository repository;
 
@@ -141,7 +145,7 @@ public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4Spr
 		ure.setLocale("en");
 		ure.setActivationDate(new Date());
 		List<UploadRequest> eList = Lists.newArrayList();
-		eList = service.createRequest(john, john, ure, yoda, "This is a subject", "This is a body", false);
+		eList = uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
 		e = eList.get(0);
 //		END OF UPLOAD REQUEST CREATE
 //		Set upload request template

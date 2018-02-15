@@ -35,13 +35,21 @@ package org.linagora.linshare.core.service;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Contact;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface UploadRequestGroupService {
 
-	List<UploadRequestGroup> findAllGroupRequest(Account actor, Account owner, List<String> statusList) throws BusinessException;
+	List<UploadRequestGroup> findAllGroupRequest(Account actor, Account owner, List<UploadRequestStatus> statusList)
+			throws BusinessException;
 
 	UploadRequestGroup findRequestGroupByUuid(Account actor, Account owner, String uuid);
+
+	List<UploadRequest> createRequest(Account actor, User owner, UploadRequest req, List<Contact> contacts,
+			String subject, String body, Boolean groupedMode) throws BusinessException;
 }

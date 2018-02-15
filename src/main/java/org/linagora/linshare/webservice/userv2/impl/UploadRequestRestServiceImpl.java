@@ -45,7 +45,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestCreationtDto;
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 import org.linagora.linshare.core.facade.webservice.user.UploadRequestFacade;
 import org.linagora.linshare.webservice.userv2.UploadRequestRestService;
@@ -74,18 +74,6 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	}
 
 	@POST
-	@Path("/")
-	@ApiOperation(value = "Create an upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
-	@Override
-	public List<UploadRequestCreationtDto> create(
-			@ApiParam(value = "Upload request.", required = true) UploadRequestCreationtDto uploadRequestCreationtDto,
-			@ApiParam(value = "Group mode.", required = true) @QueryParam(value = "groupMode") Boolean groupMode) {
-		List<UploadRequestCreationtDto> dto = uploadRequestFacade.create(null, uploadRequestCreationtDto, groupMode);
-		return dto;
-	}
-
-	@POST
 	@Path("/{groupUuid}/add/recipient")
 	@ApiOperation(value = "Add new recipient to upload request group.", response = UploadRequestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
@@ -106,7 +94,7 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	@ApiResponse(code = 401, message = "Unauthorized.")})
 	@Override
 	public List<UploadRequestDto> findAll(
-			@ApiParam(value = "Values t filter upload resquets by status", required = false) @QueryParam("filter") List<String> status) {
+			@ApiParam(value = "Values t filter upload resquets by status", required = false) @QueryParam("filter") List<UploadRequestStatus> status) {
 		return uploadRequestFacade.findAll(null, status);
 	}
 
@@ -130,7 +118,7 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	@Override
 	public List<UploadRequestDto> findByUploadRequestGroup(
 			@ApiParam(value = "Upload request group uuid.", required = true) @PathParam(value = "uuid") String groupUuid,
-			@ApiParam(value = "Values t filter upload resquets by status", required = false) @QueryParam("filter") List<String> status) {
+			@ApiParam(value = "Values t filter upload resquets by status", required = false) @QueryParam("filter") List<UploadRequestStatus> status) {
 		return uploadRequestFacade.findByGroup(null, groupUuid, status);
 	}
 }
