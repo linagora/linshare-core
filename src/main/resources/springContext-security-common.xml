@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<b:beans xmlns:b="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sec="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+ 	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+	<b:bean name="jwtAuthenticationFilter"
+		class="org.linagora.linshare.auth.jwt.JwtAuthenticationFilter">
+	</b:bean>
+
+	<b:bean id="jwtAuthenticationProvider"
+		class="org.linagora.linshare.auth.jwt.JwtAuthenticationProvider">
+		<b:property name="authentificationFacade" ref="authentificationFacade" />
+		<b:property name="ldapUserDetailsProvider" ref="ldapUserDetailsProvider" />
+		<!-- good practice ? -->
+		<b:property name="jwtService" ref="jwtService" />
+	</b:bean>
+</b:beans>

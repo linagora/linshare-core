@@ -89,13 +89,13 @@
 			<sec:filter-chain pattern="/webservice/rest/plugin/information" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/cors" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/**"
-				filters="httpSessionIntegrationFilter,CORSRequestFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor, logoutFilterAdmin, logoutFilterUser, logoutFilterUserV2" />
+				filters="httpSessionIntegrationFilter,CORSRequestFilter,basicProcessingFilter,jwtAuthenticationFilter,basicExceptionTranslationFilter,filterSecurityInterceptor, logoutFilterAdmin, logoutFilterUser, logoutFilterUserV2" />
 
 			<sec:filter-chain pattern="/webservice/fineuploader/**"
-				filters="httpSessionIntegrationFilter,CORSRequestFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
+				filters="httpSessionIntegrationFilter,CORSRequestFilter,basicProcessingFilter,jwtAuthenticationFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
 
 			<sec:filter-chain pattern="/webservice/**"
-				filters="httpSessionIntegrationFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
+				filters="httpSessionIntegrationFilter,basicProcessingFilter,jwtAuthenticationFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
 
 			<sec:filter-chain pattern="/index.form" filters="httpSessionIntegrationFilter" />
 			<sec:filter-chain pattern="/j_security_check" filters="httpSessionIntegrationFilter,authenticationProcessingFilter" />
@@ -272,6 +272,7 @@
 		<b:constructor-arg>
 		<b:list>
 			<b:ref bean="rememberMeAuthenticationProvider" />
+			<b:ref bean="jwtAuthenticationProvider" />
 			<b:ref bean="databaseAuthenticationProvider" />
 			<b:ref bean="ldapAuthenticationProvider" />
 		</b:list>
