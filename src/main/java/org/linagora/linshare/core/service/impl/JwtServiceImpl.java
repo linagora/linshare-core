@@ -38,6 +38,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.service.JwtService;
 
@@ -57,12 +58,16 @@ public class JwtServiceImpl implements JwtService {
 
 	protected Long expiration;
 
-	public JwtServiceImpl(String secret, Long expiration, String issuer) {
+	protected Long maxLifeTime;
+
+	public JwtServiceImpl(String secret, Long expiration, String issuer, Long maxLifeTime) {
 		super();
-		// see https://github.com/jwtk/jjwt/issues/248
+		Validate.notEmpty(secret, "Secret shared key can't be null");
+		// see https://github.com/jwtk/jjwt/issues/248 why base64 encoding is required.
 		this.secret = Base64.getEncoder().encodeToString(secret.getBytes());
 		this.expiration = expiration;
 		this.issuer = issuer;
+		this.maxLifeTime = maxLifeTime;
 	}
 
 	@Override
@@ -91,6 +96,20 @@ public class JwtServiceImpl implements JwtService {
 				.parseClaimsJws(token)
 				.getBody();
 		return claims;
+	}
+
+	@Override
+	public boolean hasValidLiveTime(Claims claims) {
+		Date issuedAt = claims.getIssuedAt();
+		Date expireAt = claims.getExpiration();
+		long duration = expireAt.getTime() - issuedAt.getTime();
+		if (duration <= 0) {
+			return false;
+		}
+		if (duration > maxLifeTime * 1000) {
+			return false;
+		}
+		return true;
 	}
 
 	private Date getExpirationDate(Date fromDate) {

@@ -42,4 +42,6 @@ public interface JwtService {
 	String generateToken(Account actor);
 
 	Claims decode(String token);
+
+	boolean hasValidLiveTime(Claims claims);
 }

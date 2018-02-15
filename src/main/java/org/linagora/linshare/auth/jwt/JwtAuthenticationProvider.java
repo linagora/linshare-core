@@ -35,11 +35,11 @@ package org.linagora.linshare.auth.jwt;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.linagora.linshare.auth.RoleProvider;
 import org.linagora.linshare.auth.dao.LdapUserDetailsProvider;
-import org.linagora.linshare.auth.sso.SSOAuthenticationProvider;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
@@ -58,7 +58,7 @@ import io.jsonwebtoken.SignatureException;
 
 public class JwtAuthenticationProvider implements AuthenticationProvider {
 
-	private final static Log logger = LogFactory.getLog(SSOAuthenticationProvider.class);
+	private final static Log logger = LogFactory.getLog(JwtAuthenticationProvider.class);
 
 	private AuthentificationFacade authentificationFacade;
 
@@ -78,6 +78,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 		this.jwtService = jwtService;
 	}
 
+	// TODO:JWT: log authentication attempts with failures
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
@@ -91,7 +92,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 			throw new AuthenticationServiceException(msg, e);
 		} catch (ExpiredJwtException e) {
 			logger.warn(e.getMessage(), e);
-			// TODO: log authentication failure
+			// TODO:JWT: log authentication failure
 //			authentificationFacade.logAuthError(user, message);
 			throw new AuthenticationServiceException("The token is expired and not valid anymore : " + token, e);
 		} catch (Exception e) {
@@ -100,17 +101,29 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 			throw new AuthenticationServiceException(msg, e);
 		}
 
+		if (StringUtils.isBlank(claims.getSubject()) || claims.getExpiration() == null
+				|| claims.getIssuedAt() == null) {
+			String msg = String.format("Subject and expiration date are mandatory fields for jwt token: %1$s", token);
+			throw new AuthenticationServiceException(msg);
+		}
+
+		// TODO:JWT: We need to manage timezone first.
+//		Date issuedAt = claims.getIssuedAt();
+//		if (issuedAt.after(new Date())) {
+//			String msg = String.format("Issued date (iat) can not be in the futur for jwt token: %1$s", token);
+//			throw new AuthenticationServiceException(msg);
+//		}
+		if (!jwtService.hasValidLiveTime(claims)) {
+			String msg = String.format("Token live time can not be more than 5 minutes for jwt token: %1$s", token);
+			throw new AuthenticationServiceException(msg);
+		}
+
 		User foundUser = null;
 		String domainUuid = claims.get("domain", String.class);
 		try {
 			String email= claims.getSubject();
-			String accountUuid = claims.get("accountUuid", String.class);
 			// If account uuid, is provided, we use it instead of email.
-			if (accountUuid != null) {
-				foundUser = authentificationFacade.loadUserDetails(accountUuid);
-			} else {
-				foundUser = ldapUserDetailsProvider.retrieveUser(domainUuid, email);
-			}
+			foundUser = ldapUserDetailsProvider.retrieveUser(domainUuid, email);
 		} catch (BusinessException e) {
 			logger.error(e.getMessage(), e);
 			throw new AuthenticationServiceException("Could not find user account : " + claims, e);
@@ -122,7 +135,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 			throw new AuthenticationServiceException("Could not find user account : " + claims);
 		}
 		try {
-			// loading /creating the real entity
+			// loading/creating the real entity
 			foundUser = ldapUserDetailsProvider.findOrCreateUser(foundUser.getDomainId(), foundUser.getMail());
 		} catch (BusinessException e) {
 			logger.error(e);
@@ -133,6 +146,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 		}
 
 		authentificationFacade.logAuthSuccess(foundUser);
+		logger.info(String.format("Successful authentication of  %1$s with JWT token : %2$s", foundUser.getLsUuid(), claims));
 		List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(foundUser);
 		UserDetails userDetail = new org.springframework.security.core.userdetails.User(foundUser.getLsUuid(), "", true,
 				true, true, true, grantedAuthorities);
