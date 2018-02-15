@@ -112,53 +112,35 @@ public class MonthlyBatchTest extends AbstractTransactionalJUnit4SpringContextTe
 	LoadingServiceTestDatas dates;
 	private User jane;
 
+	private Date currentDate;
+
 	@Before
 	public void setUp() throws Exception {
 		this.executeSqlScript("import-tests-stat.sql", false);
 		dates = new LoadingServiceTestDatas(userRepository);
 		dates.loadUsers();
+		GregorianCalendar calendar = new GregorianCalendar();
+		calendar.add(GregorianCalendar.DATE, -1);
+		currentDate = calendar.getTime();
 		jane = dates.getUser2();
 	}
 
 	@Test
-	public void test() {
+	public void testUserMonthlyStat() {
+		Date beginDate = new GregorianCalendar(2042, 8, 1, 00, 00).getTime();
+		Date endDate =  new GregorianCalendar(2042, 8, 30, 00, 00).getTime();
+		Date untilDate = new GregorianCalendar(2042, 9, 30, 23, 59).getTime();
+
 		BatchRunContext batchRunContext = new BatchRunContext();
 		monthlyUserBatch.execute(batchRunContext, jane.getLsUuid(), 10, 1);
 		List<UserMonthlyStat> batchListUserMonthlyStat = userMonthlyStatBusinessService.findBetweenTwoDates(null,
 				getFirstDayOfLastMonth(), getLastDayOfLastMonth());
 		assertEquals(1, batchListUserMonthlyStat.size());
 		userMonthlyStatBusinessService.deleteBeforeDate(getLastDayOfLastMonth());
-		userMonthlyStatBusinessService.create(jane, new GregorianCalendar(2042, 8, 1, 00, 00).getTime(), new GregorianCalendar(2042, 8, 30, 00, 00).getTime());
-		List<String> listThreadIdentifier = threadWeeklyBusinessService.findUuidAccountBetweenTwoDates(
-				new GregorianCalendar(2042, 10, 1, 00, 00).getTime(),
-				new GregorianCalendar(2042, 10, 30, 00, 00).getTime());
-		assertEquals(2, listThreadIdentifier.size());
-		threadMonthlyStatBusinessService.create(threadRepository.findByLsUuid(listThreadIdentifier.get(0)), new GregorianCalendar(2042, 10, 1, 00, 00).getTime(), new GregorianCalendar(2042, 10, 30, 23, 59).getTime());
-//		monthlyThreadBatch.execute(listThreadIdentifier.get(0), 2, 1);
-//		monthlyThreadBatch.execute(listThreadIdentifier.get(1), 2, 1);
+		userMonthlyStatBusinessService.create(jane, beginDate, endDate);
+		List<UserMonthlyStat> listUserMonthlyStat = userMonthlyStatBusinessService.findBetweenTwoDates(null, currentDate, untilDate);
 
-		List<String> listDomainIdentifier = domainWeeklyStatBusinessService.findIdentifierDomainBetweenTwoDates(
-				new GregorianCalendar(2042, 8, 1, 00, 00).getTime(),
-				new GregorianCalendar(2042, 8, 30, 00, 00).getTime());
-		assertEquals(1, listDomainIdentifier.size());
-		domainMonthlyStatBusinessService.create(jane.getDomain(), new GregorianCalendar(2042, 8, 1, 00, 00).getTime(), new GregorianCalendar(2042, 8, 30, 00, 00).getTime());
-//		monthlyDomainBatch.execute(listDomainIdentifier.get(0), 1, 0);
-
-		GregorianCalendar calendar = new GregorianCalendar();
-		calendar.add(GregorianCalendar.DATE, -1);
-		Date a = calendar.getTime();
-
-		List<UserMonthlyStat> listUserMonthlyStat = userMonthlyStatBusinessService.findBetweenTwoDates(null, a, new GregorianCalendar(2042, 9, 30, 23, 59).getTime());
-		List<ThreadMonthlyStat> listThreadMonthlyStat = threadMonthlyStatBusinessService.findBetweenTwoDates(null, a,
-				new GregorianCalendar(2042, 11, 1, 00, 00).getTime());
-		List<DomainMonthlyStat> listDomainMonthlyStat = domainMonthlyStatBusinessService.findBetweenTwoDates(null, a,
-				new GregorianCalendar(2042, 9, 1, 00, 00).getTime());
-
-		// FIXME : every first of each month, we have 2 instead 1. weird.
 		assertEquals(1, listUserMonthlyStat.size());
-
-		assertEquals(1, listThreadMonthlyStat.size());
-		assertEquals(1, listDomainMonthlyStat.size());
 
 		UserMonthlyStat userMonthlyStat = listUserMonthlyStat.get(0);
 		assertEquals(1200, (long) userMonthlyStat.getActualOperationSum());
@@ -168,7 +150,21 @@ public class MonthlyBatchTest extends AbstractTransactionalJUnit4SpringContextTe
 		assertEquals(-3000, (long) userMonthlyStat.getDeleteOperationSum());
 		assertEquals(14, (long) userMonthlyStat.getDeleteOperationCount());
 		assertEquals(1200, (long) userMonthlyStat.getDiffOperationSum());
+	}
 
+	@Test
+	public void testThreadMonthlyStat() {
+		Date beginDate = new GregorianCalendar(2042, 10, 1, 00, 00).getTime();
+		Date endDate = new GregorianCalendar(2042, 10, 30, 00, 00).getTime();
+		Date untilDate = new GregorianCalendar(2042, 11, 1, 00, 00).getTime();
+
+		List<String> listThreadIdentifier = threadWeeklyBusinessService.findUuidAccountBetweenTwoDates(
+				beginDate,
+				endDate);
+		assertEquals(2, listThreadIdentifier.size());
+		threadMonthlyStatBusinessService.create(threadRepository.findByLsUuid(listThreadIdentifier.get(0)), beginDate, endDate);
+		List<ThreadMonthlyStat> listThreadMonthlyStat = threadMonthlyStatBusinessService.findBetweenTwoDates(null, currentDate, untilDate);
+		assertEquals(1, listThreadMonthlyStat.size());
 		ThreadMonthlyStat threadMonthlyStat = listThreadMonthlyStat.get(0);
 		assertEquals(100, (long) threadMonthlyStat.getActualOperationSum());
 		assertEquals(10, (long) threadMonthlyStat.getOperationCount());
@@ -177,7 +173,22 @@ public class MonthlyBatchTest extends AbstractTransactionalJUnit4SpringContextTe
 		assertEquals(-100, (long) threadMonthlyStat.getDeleteOperationSum());
 		assertEquals(4, (long) threadMonthlyStat.getDeleteOperationCount());
 		assertEquals(100, (long) threadMonthlyStat.getDiffOperationSum());
+	}
 
+	@Test
+	public void testDomainMonthlyStat() {
+		Date beginDate = new GregorianCalendar(2042, 8, 1, 00, 00).getTime();
+		Date endDate =  new GregorianCalendar(2042, 8, 30, 00, 00).getTime();
+		Date untilDate = new GregorianCalendar(2042, 9, 30, 23, 59).getTime();
+
+		List<String> listDomainIdentifier = domainWeeklyStatBusinessService.findIdentifierDomainBetweenTwoDates(
+				beginDate,
+				endDate);
+		assertEquals(1, listDomainIdentifier.size());
+		domainMonthlyStatBusinessService.create(jane.getDomain(), beginDate, endDate);
+		List<DomainMonthlyStat> listDomainMonthlyStat = domainMonthlyStatBusinessService.findBetweenTwoDates(null, currentDate,
+				untilDate);
+		assertEquals(1, listDomainMonthlyStat.size());
 		DomainMonthlyStat domainMonthlyStat = listDomainMonthlyStat.get(0);
 		assertEquals(50, (long) domainMonthlyStat.getActualOperationSum());
 		assertEquals(5, (long) domainMonthlyStat.getOperationCount());
