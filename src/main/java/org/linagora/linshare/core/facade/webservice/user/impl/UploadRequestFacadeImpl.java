@@ -83,7 +83,7 @@ public class UploadRequestFacadeImpl extends GenericFacadeImpl implements Upload
 	}
 
 	@Override
-	public UploadRequestDto update(String actorUuid, String uuid, UploadRequestDto req) throws BusinessException {
+	public UploadRequestDto update(String actorUuid, UploadRequestDto req) throws BusinessException {
 		Validate.notEmpty(req.getUuid(), "Upload request uuid must be set.");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);

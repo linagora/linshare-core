@@ -168,4 +168,11 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 			@ApiParam(value = "The upload request url to be removed", required = true) UploadRequestUrlDto uploadRequestUrlDto) {
 		return uploadRequestUrlFacade.delete(actorUuid, uploadRequestUrlDto);
 	}
+	public UploadRequestDto update(
+			@ApiParam(value = "Upload request actor uuid.", required = true) @PathParam(value = "actorUuid") String actorUuid,
+			@ApiParam(value = "Upload request.", required = true) UploadRequestDto uploadRequestDto)
+					throws BusinessException {
+		UploadRequestDto dto = uploadRequestFacade.update(actorUuid, uploadRequestDto);
+		return dto;
+	}
 }

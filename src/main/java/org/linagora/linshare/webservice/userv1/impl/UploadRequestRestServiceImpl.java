@@ -95,15 +95,14 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	}
 
 	@PUT
-	@Path("/{uuid}")
+	@Path("/")
 	@ApiOperation(value = "Update an upload request.", response = UploadRequestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
 	@Override
 	public UploadRequestDto update(
-			@ApiParam(value = "Upload request uuid.", required = true) @PathParam(value = "uuid") String uuid,
 			@ApiParam(value = "Upload request.", required = true) UploadRequestDto uploadRequestDto) {
-		UploadRequestDto dto = uploadRequestFacade.update(null, uuid, uploadRequestDto);
+		UploadRequestDto dto = uploadRequestFacade.update(null, uploadRequestDto);
 		return dto;
 	}
 

@@ -112,6 +112,11 @@ public class UploadRequestBusinessServiceImpl implements
 		req.setBusinessLocale(object.getLocale());
 		req.setBusinessCanClose(object.isCanClose());
 		req.setBusinessCanDelete(object.isCanDelete());
+		req.setBusinessEnableNotification(object.getEnableNotification());
+		req.setBusinessCanEditExpiryDate(object.isCanEditExpiryDate());
+		req.setBusinessNotificationDate(object.getNotificationDate());
+		req.setDirty(true);
+		req.setModificationDate(new Date());
 		return uploadRequestRepository.update(req);
 	}
 

@@ -54,4 +54,6 @@ public interface UploadRequestRestService {
 	UploadRequestDto updateStatus(String requestUuid, UploadRequestStatus status) throws BusinessException;
 
 	UploadRequestUrlDto delete(UploadRequestUrlDto uploadRequestUrlDto) throws BusinessException;
+	
+	UploadRequestDto update(UploadRequestDto uploadRequestDto);
 }

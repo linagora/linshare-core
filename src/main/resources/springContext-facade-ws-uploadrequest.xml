@@ -8,6 +8,7 @@
 	default-autowire="no">
 
 	<bean id="wsUploadRequestUrlFacade" class="org.linagora.linshare.core.facade.webservice.uploadrequest.impl.UploadRequestUrlFacadeImpl">
+		<constructor-arg ref="accountService" />
 		<constructor-arg ref="uploadRequestService" />
 		<constructor-arg ref="uploadRequestUrlService" />
 		<constructor-arg ref="mimePolicyService" />

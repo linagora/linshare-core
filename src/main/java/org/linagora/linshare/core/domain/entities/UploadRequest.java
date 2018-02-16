@@ -291,6 +291,22 @@ public class UploadRequest implements Cloneable {
 		return req;
 	}
 
+	public Boolean getDirty() {
+		return dirty;
+	}
+
+	public void setDirty(Boolean dirty) {
+		this.dirty = dirty;
+	}
+
+	public Boolean getEnableNotification() {
+		return enableNotification;
+	}
+
+	public void setEnableNotification(Boolean enableNotification) {
+		this.enableNotification = enableNotification;
+	}
+
 	/*
 	 * Business setters
 	 */
@@ -310,6 +326,12 @@ public class UploadRequest implements Cloneable {
 	public void setBusinessCanDelete(Boolean canDelete) {
 		if (canDelete != null) {
 			this.canDelete = canDelete;
+		}
+	}
+	
+	public void setBusinessCanEditExpiryDate(Boolean canEditExpiryDate) {
+		if (canEditExpiryDate != null) {
+			this.canEditExpiryDate = canEditExpiryDate;
 		}
 	}
 
@@ -348,20 +370,31 @@ public class UploadRequest implements Cloneable {
 			this.expiryDate = date;
 		}
 	}
-	
-	public Boolean getDirty() {
-		return dirty;
+
+	public void setBusinessNotificationDate(Date notificationDate) {
+		if (notificationDate != null) {
+			this.notificationDate = notificationDate;
+		}
 	}
 	
-	public void setDirty(Boolean dirty) {
-		this.dirty = dirty;
+	public void setBusinessEnableNotification(Boolean enableNotification) {
+		if (enableNotification != null) {
+			this.enableNotification = enableNotification;
+		}
+	}
+
+	@Override
+	public String toString() {
+		return "UploadRequest [id=" + id + ", uploadRequestGroup=" + uploadRequestGroup + ", uuid=" + uuid
+				+ ", maxFileCount=" + maxFileCount + ", maxDepositSize=" + maxDepositSize + ", maxFileSize="
+				+ maxFileSize + ", status=" + status + ", activationDate=" + activationDate + ", creationDate="
+				+ creationDate + ", modificationDate=" + modificationDate + ", notificationDate=" + notificationDate
+				+ ", expiryDate=" + expiryDate + ", canDelete=" + canDelete + ", canClose=" + canClose
+				+ ", canEditExpiryDate=" + canEditExpiryDate + ", locale=" + locale + ", secured=" + secured
+				+ ", mailMessageId=" + mailMessageId + ", uploadRequestURLs=" + uploadRequestURLs
+				+ ", uploadRequestHistory=" + uploadRequestHistory + ", notified=" + notified + ", dirty=" + dirty
+				+ ", enableNotification=" + enableNotification + "]";
 	}
 	
-	public Boolean getEnableNotification() {
-		return enableNotification;
-	}
 	
-	public void setEnableNotification(Boolean enableNotification) {
-		this.enableNotification = enableNotification;
-	}
 }

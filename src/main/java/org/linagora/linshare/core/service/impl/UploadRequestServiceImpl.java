@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -49,7 +48,6 @@ import org.linagora.linshare.core.business.service.UploadRequestHistoryBusinessS
 import org.linagora.linshare.core.business.service.UploadRequestTemplateBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.constants.UploadRequestHistoryEventType;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -78,8 +76,6 @@ import org.linagora.linshare.core.service.UploadRequestUrlService;
 import org.linagora.linshare.mongo.entities.logs.UploadRequestAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.UploadRequestMto;
-
-import com.google.common.collect.Lists;
 
 public class UploadRequestServiceImpl extends GenericServiceImpl<Account, UploadRequest> implements UploadRequestService {
 
@@ -195,12 +191,16 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		Validate.notNull(owner, "Owner must be set.");
 		Validate.notEmpty(uuid, "Uuid must be set.");
 		Validate.notNull(object, "Object must be set.");
-		UploadRequest e = findRequestByUuid(actor, owner, uuid);
+		UploadRequest uploadRequest = findRequestByUuid(actor, owner, uuid);
 		UploadRequestAuditLogEntry log = new UploadRequestAuditLogEntry(new AccountMto(actor), new AccountMto(owner),
-				LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST, e.getUuid(), e);
-		checkUpdatePermission(actor, owner, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, e);
-		e = setHistory(e);
-		UploadRequest res = uploadRequestBusinessService.update(e, object);
+				LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST, uploadRequest.getUuid(), uploadRequest);
+		checkUpdatePermission(actor, owner, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
+				uploadRequest);
+		if (!uploadRequest.getUploadRequestGroup().getRestricted()) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_NOT_UPDATABLE_GROUP_MODE,
+					"Connot update upload request in grouped mode, try to update the upload request group");
+		}
+		UploadRequest res = uploadRequestBusinessService.update(uploadRequest, object);
 		log.setResourceUpdated(new UploadRequestMto(res));
 		logEntryService.insert(log);
 		return res;
@@ -208,29 +208,8 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 
 	@Override
 	public UploadRequest updateRequest(Account actor, Account owner, UploadRequest req) throws BusinessException {
-		req = setHistory(req);
 		checkUpdatePermission(actor, owner, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, req);
 		return uploadRequestBusinessService.update(req);
-	}
-
-	private UploadRequest setHistory(UploadRequest req) {
-		if(req.getUploadRequestHistory() != null && Lists.newArrayList(req
-				.getUploadRequestHistory()) != null && ! Lists.newArrayList(req
-						.getUploadRequestHistory()).isEmpty()) {
-			UploadRequestHistory last = Collections.max(Lists.newArrayList(req
-					.getUploadRequestHistory()));
-			UploadRequestHistory hist = new UploadRequestHistory(req,
-				UploadRequestHistoryEventType.fromStatus(req.getStatus()),
-				!last.getStatus().equals(req.getStatus()));
-			req.getUploadRequestHistory().add(hist);
-		}
-		else {
-			UploadRequestHistory hist = new UploadRequestHistory(req,
-					UploadRequestHistoryEventType.fromStatus(req.getStatus()),
-					false);
-			req.getUploadRequestHistory().add(hist);
-		}
-		return req;
 	}
 
 	@Override

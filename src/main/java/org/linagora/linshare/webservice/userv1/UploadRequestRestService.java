@@ -45,7 +45,7 @@ public interface UploadRequestRestService {
 
 	UploadRequestDto find(String uuid);
 
-	UploadRequestDto update(String uuid, UploadRequestDto uploadRequestDto);
+	UploadRequestDto update(UploadRequestDto uploadRequestDto);
 
 	UploadRequestDto delete(String uuid);
 

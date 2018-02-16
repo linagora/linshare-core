@@ -157,4 +157,17 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 			@ApiParam(value = "The upload request url to be removed", required = true) UploadRequestUrlDto uploadRequestUrlDto) {
 		return uploadRequestUrlFacade.delete(null, uploadRequestUrlDto);
 	}
+	
+	@PUT
+	@Path("/")
+	@ApiOperation(value = "Update an upload request.", response = UploadRequestDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
+			@ApiResponse(code = 401, message = "Unauthorized."),
+			@ApiResponse(code = 404, message = "Not found.") })
+	@Override
+	public UploadRequestDto update(
+			@ApiParam(value = "Upload request.", required = true) UploadRequestDto uploadRequestDto) {
+		UploadRequestDto dto = uploadRequestFacade.update(null, uploadRequestDto);
+		return dto;
+	}
 }

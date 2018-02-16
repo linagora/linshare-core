@@ -143,6 +143,14 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 	}
 
 	@Test
+	public void createUploadRequest() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		List<UploadRequest> eList = Lists.newArrayList();
+		eList = uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		Assert.assertNotNull(eList.get(0));
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+	@Test
 	public void findAll() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		List<UploadRequestGroup> groups = uploadRequestGroupService.findAllGroupRequest(john, john, null);

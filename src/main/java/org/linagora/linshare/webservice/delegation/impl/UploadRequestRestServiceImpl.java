@@ -109,10 +109,9 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	@Override
 	public UploadRequestDto update(
 			@ApiParam(value = "Upload request actor uuid.", required = true) @PathParam(value = "actorUuid") String actorUuid,
-			@ApiParam(value = "Upload request uuid.", required = true) @PathParam(value = "uuid") String uuid,
 			@ApiParam(value = "Upload request.", required = true) UploadRequestDto uploadRequestDto)
 					throws BusinessException {
-		UploadRequestDto dto = uploadRequestFacade.update(actorUuid, uuid, uploadRequestDto);
+		UploadRequestDto dto = uploadRequestFacade.update(actorUuid, uploadRequestDto);
 		return dto;
 	}
 
