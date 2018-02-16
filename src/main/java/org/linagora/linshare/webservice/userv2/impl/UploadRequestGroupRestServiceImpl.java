@@ -114,10 +114,18 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
 	@Override
 	public UploadRequestGroupDto updateStatus(
-			@ApiParam(value = "Upload request group uuid.", required = true)
-				@PathParam(value = "uuid") String requestGroupUuid,
-			@ApiParam(value = "New status for the upload request groupe", required = true)
-				@QueryParam("status") UploadRequestStatus status) throws BusinessException {
+			@ApiParam(value = "Upload request group uuid.", required = true) @PathParam(value = "uuid") String requestGroupUuid,
+			@ApiParam(value = "New status for the upload request groupe", required = true) @QueryParam("status") UploadRequestStatus status)
+			throws BusinessException {
 		return uploadRequestGroupFacade.updateStatus(null, requestGroupUuid, status);
+	}
+
+	@Path("/")
+	@ApiOperation(value = "update an upload request group", response = UploadRequestDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
+	@Override
+	public UploadRequestGroupDto update(
+			@ApiParam(value = "Upload request group", required = true) UploadRequestGroupDto uploadRequestGroupDto) {
+		return uploadRequestGroupFacade.update(null, uploadRequestGroupDto);
 	}
 }

@@ -71,12 +71,12 @@ import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
+import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.UploadRequestAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.UploadRequestGroupAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
-import org.linagora.linshare.core.service.UploadRequestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,8 +96,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 	private final UploadRequestBusinessService uploadRequestBusinessService;
 	private final NotifierService notifierService;
 	private final LogEntryService logEntryService;
-
-	private final UploadRequestService uploadRequesService;
+	private final UploadRequestService uploadRequestService;
 
 	public UploadRequestGroupServiceImpl(
 			final UploadRequestGroupBusinessService uploadRequestGroupBusinessService,
@@ -108,8 +107,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 			final UploadRequestBusinessService uploadRequestBusinessService,
 			final NotifierService notifierService,
 			final LogEntryService logEntryService,
-			final UploadRequestService uploadRequestService
-			) {
+			final UploadRequestService uploadRequestService) {
 		super(groupRac);
 		this.uploadRequestGroupBusinessService = uploadRequestGroupBusinessService;
 		this.groupRac = groupRac;
@@ -119,7 +117,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		this.uploadRequestBusinessService = uploadRequestBusinessService;
 		this.notifierService = notifierService;
 		this.logEntryService = logEntryService;
-		this.uploadRequesService = uploadRequestService;
+		this.uploadRequestService = uploadRequestService;
 	}
 
 	@Override
@@ -136,7 +134,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		preChecks(actor, owner);
 		UploadRequestGroup req = uploadRequestGroupBusinessService.findByUuid(uuid);
 		groupRac.checkReadPermission(actor,
-				req.getUploadRequests().iterator().next().getUploadRequestGroup().getOwner(), UploadRequestGroup.class,
+				req.getOwner(), UploadRequestGroup.class,
 				BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, req);
 		return req;
 	}
@@ -596,10 +594,57 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		groupRac.checkUpdatePermission(authUser, actor, UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, uploadRequestGroup);
 		uploadRequestGroup = uploadRequestGroupBusinessService.updateStatus(uploadRequestGroup, status);
 		for (UploadRequest uploadRequest : uploadRequestGroup.getUploadRequests()) {
-			uploadRequesService.updateStatus(authUser, actor, uploadRequest.getUuid(), status);
+			uploadRequestService.updateStatus(authUser, actor, uploadRequest.getUuid(), status);
 		}
 		//TODO Mail notification for the owner
 		// TODO add audit 
 		return uploadRequestGroup;
+	}
+	
+	public UploadRequestGroup update(User authUser, User actor, UploadRequestGroup uploadRequestGroup) {
+		checkUpdatePermission(authUser, actor, UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
+				null);
+		UploadRequestGroup group = uploadRequestGroupBusinessService.findByUuid(uploadRequestGroup.getUuid());
+		group.setModificationDate(new Date());
+		group.setBusinessSubject(uploadRequestGroup.getSubject());
+		group.setBusinessBody(uploadRequestGroup.getBody());
+		group.setBusinessMaxFileCount(uploadRequestGroup.getMaxFileCount());
+		group.setBusinessMaxDepositSize(uploadRequestGroup.getMaxDepositSize());
+		group.setBusinessMaxFileSize(uploadRequestGroup.getMaxFileSize());
+		group.setBusinessNotificationDate(uploadRequestGroup.getNotificationDate());
+		group.setBusinessActivationDate(uploadRequestGroup.getActivationDate());
+		group.setBusinessExpiryDate(uploadRequestGroup.getExpiryDate());
+		group.setBusinessCanDelete(uploadRequestGroup.getCanDelete());
+		group.setBusinessCanClose(uploadRequestGroup.getCanClose());
+		group.setBusinessCanEditExpiryDate(uploadRequestGroup.getCanEditExpiryDate());
+		group.setBusinessLocale(uploadRequestGroup.getLocale());
+		group.setBusinessEnableNotification(uploadRequestGroup.getEnableNotification());
+		for (UploadRequest uploadRequest : group.getUploadRequests()) {
+			if (!uploadRequest.getDirty()) {
+				setUploadRequest(uploadRequest, group);
+				uploadRequestService.updateRequest(authUser, actor, uploadRequest);
+			}
+		}
+		uploadRequestGroup = uploadRequestGroupBusinessService.update(group);
+		UploadRequestGroupAuditLogEntry groupLog = new UploadRequestGroupAuditLogEntry(new AccountMto(authUser),
+				new AccountMto(actor), LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST_GROUP,
+				uploadRequestGroup.getUuid(), uploadRequestGroup);
+		logEntryService.insert(groupLog);
+		return group;
+	}
+
+	private void setUploadRequest(UploadRequest uploadRequest, UploadRequestGroup group) {
+		uploadRequest.setModificationDate(new Date());
+		uploadRequest.setMaxFileCount(group.getMaxFileCount());
+		uploadRequest.setMaxDepositSize(group.getMaxDepositSize());
+		uploadRequest.setMaxFileSize(group.getMaxFileSize());
+		uploadRequest.setNotificationDate(group.getNotificationDate());
+		uploadRequest.setExpiryDate(group.getExpiryDate());
+		uploadRequest.setCanDelete(group.getCanDelete());
+		uploadRequest.setCanClose(group.getCanClose());
+		uploadRequest.setCanEditExpiryDate(group.getCanEditExpiryDate());
+		uploadRequest.setLocale(group.getLocale());
+		uploadRequest.setEnableNotification(group.getEnableNotification());
+		uploadRequest.setActivationDate(group.getActivationDate());
 	}
 }

@@ -37,6 +37,7 @@ package org.linagora.linshare.service;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -54,6 +55,7 @@ import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.ContactRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
+import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,6 +96,9 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 
 	@Autowired
 	private UploadRequestGroupService uploadRequestGroupService;
+	
+	@Autowired
+	private UploadRequestService uploadRequestService;
 
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
@@ -200,6 +205,22 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 		Assert.assertEquals(UploadRequestStatus.STATUS_CREATED, ure.getUploadRequestGroup().getStatus());
 		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(), UploadRequestStatus.STATUS_CANCELED);
 		Assert.assertEquals(UploadRequestStatus.STATUS_CANCELED, ure.getUploadRequestGroup().getStatus());
+	}
+	
+	@Test
+	public void update() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		UploadRequestGroup group = uploadRequestGroupService.findRequestGroupByUuid(john, john, ure.getUploadRequestGroup().getUuid());
+		List<UploadRequest> uploadRequests = uploadRequestService.findAllRequestsByGroup(john, john, group.getUuid(), null);
+		group.setUploadRequests(uploadRequests.stream().collect(Collectors.toSet()));
+		group.setCanClose(false);
+		group.setMaxFileCount(new Integer(5));
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.update(john, john, group);
+		Assert.assertEquals(false, uploadRequestGroup.getCanClose());
+		Assert.assertEquals(new Integer(5), uploadRequestGroup.getMaxFileCount());
+		UploadRequest uploadRequest = uploadRequests.get(0);
+		Assert.assertEquals(false, uploadRequest.isCanClose());
+		Assert.assertEquals(new Integer(5), uploadRequest.getMaxFileCount());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }

@@ -178,7 +178,7 @@
 		<constructor-arg ref="uploadRequestBusinessService" />
 		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="logEntryService" />
-		<constructor-arg ref="uploadRequestService"/>
+		<constructor-arg ref="uploadRequestService" />
 	</bean>
 
 	<bean name="guestService" class="org.linagora.linshare.core.service.impl.GuestServiceImpl">

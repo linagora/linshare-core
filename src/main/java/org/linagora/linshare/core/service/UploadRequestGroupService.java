@@ -54,4 +54,6 @@ public interface UploadRequestGroupService {
 			String subject, String body, Boolean groupedMode) throws BusinessException;
 
 	UploadRequestGroup updateStatus(Account actor, Account owner, String requestGroupUuid, UploadRequestStatus stat);
+
+	UploadRequestGroup update(User authUser, User actor, UploadRequestGroup uploadRequestGroup);
 }

@@ -53,4 +53,6 @@ public interface UploadRequestGroupFacade {
 
 	UploadRequestGroupDto updateStatus(String actorUuid, String requestGroupUuid, UploadRequestStatus status)
 			throws BusinessException;
+	
+	UploadRequestGroupDto update(String actorUuid, UploadRequestGroupDto uploadRequestGroupDto);
 }

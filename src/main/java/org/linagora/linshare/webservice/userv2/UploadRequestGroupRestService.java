@@ -51,4 +51,6 @@ public interface UploadRequestGroupRestService {
 	List<UploadRequestDto> create(UploadRequestCreationtDto uploadRequestCreationtDto, Boolean groupMode);
 
 	UploadRequestGroupDto updateStatus(String requestUuid, UploadRequestStatus status) throws BusinessException;
+	
+	UploadRequestGroupDto update(UploadRequestGroupDto uploadRequestGroupDto);
 }

@@ -119,12 +119,21 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
 	@Override
 	public UploadRequestGroupDto updateStatus(
-			@ApiParam(value = "The actor (user) uuid.", required = true)
-				@PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Upload request uuid.", required = true)
-				@PathParam(value = "uuid") String requestUuid,
-			@ApiParam(value = "Upload request uuid.", required = true)
-				@PathParam("status") UploadRequestStatus status) throws BusinessException {
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@ApiParam(value = "Upload request uuid.", required = true) @PathParam(value = "uuid") String requestUuid,
+			@ApiParam(value = "Upload request uuid.", required = true) @PathParam("status") UploadRequestStatus status)
+			throws BusinessException {
 		return uploadRequestGroupFacade.updateStatus(actorUuid, requestUuid, status);
+	}
+
+	@PUT
+	@Path("/")
+	@ApiOperation(value = "update an upload request group", response = UploadRequestDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
+	@Override
+	public UploadRequestGroupDto update(
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@ApiParam(value = "Upload request group", required = true) UploadRequestGroupDto uploadRequestGroupDto) {
+		return uploadRequestGroupFacade.update(actorUuid, uploadRequestGroupDto);
 	}
 }

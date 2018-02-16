@@ -344,4 +344,91 @@ public class UploadRequestGroup {
 	public void updateStatus(UploadRequestStatus to) throws BusinessException {
 		status = status.transition(to);
 	}
+	/*
+	 * Business setters
+	 */
+	
+	public void setBusinessSubject(String subject) {
+		if (subject != null) {
+			this.subject = subject;
+		}
+	}
+	
+	public void setBusinessBody(String body) {
+		if (body != null) {
+			this.body = body;
+		}
+	}
+	
+	public void setBusinessNotificationDate(Date date) {
+		if (date != null) {
+			this.notificationDate = date;
+		}
+	}
+	
+	public void setBusinessActivationDate(Date date) {
+		if (date != null && date.after(new Date())) {
+			this.activationDate = date;
+		}
+	}
+
+	public void setBusinessCanClose(Boolean canClose) {
+		if (canClose != null) {
+			this.canClose = canClose;
+		}
+	}
+
+	public void setBusinessCanEditExpiryDate(Boolean canEditExpiryDate) {
+		if (canEditExpiryDate != null) {
+			this.canEditExpiryDate = canEditExpiryDate;
+		}
+	}
+	
+	public void setBusinessCanDelete(Boolean canDelete) {
+		if (canDelete != null) {
+			this.canDelete = canDelete;
+		}
+	}
+
+	public void setBusinessSecured(Boolean secured) {
+		if (secured != null) {
+			this.secured = secured;
+		}
+	}
+
+	public void setBusinessMaxDepositSize(Long size) {
+		if (size != null) {
+			this.maxDepositSize = size;
+		}
+	}
+
+	public void setBusinessMaxFileSize(Long size) {
+		if (size != null) {
+			this.maxFileSize = size;
+		}
+	}
+
+	public void setBusinessMaxFileCount(Integer size) {
+		if (size != null) {
+			this.maxFileCount = size;
+		}
+	}
+
+	public void setBusinessLocale(String locale) {
+		if (locale != null && !locale.isEmpty()) {
+			this.locale = locale;
+		}
+	}
+
+	public void setBusinessExpiryDate(Date date) {
+		if (date != null) {
+			this.expiryDate = date;
+		}
+	}
+	
+	public void setBusinessEnableNotification(Boolean enableNotification) {
+		if (enableNotification != null) {
+			this.enableNotification = enableNotification;
+		}
+	}
 }

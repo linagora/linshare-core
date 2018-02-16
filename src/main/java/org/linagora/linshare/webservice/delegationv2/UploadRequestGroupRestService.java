@@ -52,4 +52,6 @@ public interface UploadRequestGroupRestService {
 
 	UploadRequestGroupDto updateStatus(String actorUuid, String requestUuid, UploadRequestStatus status)
 			throws BusinessException;
+	
+	UploadRequestGroupDto update(String actorUuid, UploadRequestGroupDto uploadRequestGroupDto);
 }

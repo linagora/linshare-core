@@ -35,7 +35,6 @@ package org.linagora.linshare.core.facade.webservice.uploadrequest;
 
 import java.io.File;
 
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.EntryDto;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.UploadRequestDto;
