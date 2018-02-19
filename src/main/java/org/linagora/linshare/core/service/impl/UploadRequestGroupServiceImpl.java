@@ -64,6 +64,7 @@ import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.context.UploadRequestActivationEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.UploadRequestGroupResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -202,12 +203,10 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		}
 		notifierService.sendNotification(mails);
 		mails.clear();
-		//To be verified by notification ticket
-		/*req = uploadRequestBusinessService.findByUuid(req.getUuid());
+		req = uploadRequestBusinessService.findByUuid(req.getUuid());
 		if (req.getActivationDate().before(new Date())) {
 			try {
 				req.updateStatus(UploadRequestStatus.STATUS_ENABLED);
-				updateRequest(actor, owner, req);
 				for (UploadRequestUrl u: req.getUploadRequestURLs()) {
 					if (u.getContact().equals(contacts.get(0))) {
 						UploadRequestActivationEmailContext mailContext = new UploadRequestActivationEmailContext((User) req.getUploadRequestGroup().getOwner(), req, u);
@@ -218,7 +217,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 			} catch (BusinessException e) {
 				logger.error("Fail to update upload request status of the request : " + req.getUuid());
 			}
-		}*/
+		}
 		return Lists.newArrayList(req);
 	}
 
