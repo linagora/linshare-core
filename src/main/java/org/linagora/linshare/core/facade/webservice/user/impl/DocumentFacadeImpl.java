@@ -39,6 +39,7 @@ import java.io.InputStream;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -49,15 +50,15 @@ import org.apache.cxf.helpers.IOUtils;
 import org.linagora.linshare.core.business.service.EntryBusinessService;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.TargetKind;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
-import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -83,8 +84,6 @@ import org.linagora.linshare.mongo.entities.mto.CopyMto;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-import java.util.Collections;
-
 public class DocumentFacadeImpl extends UserGenericFacadeImp implements DocumentFacade {
 
 	private final DocumentEntryService documentEntryService;
@@ -102,7 +101,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 	protected final ThreadService threadService;
 
 	protected final WorkGroupNodeService workGroupNodeService;
-
+	
 	public DocumentFacadeImpl(final DocumentEntryService documentEntryService,
 			final AccountService accountService,
 			final MimePolicyService mimePolicyService,
@@ -149,7 +148,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 		documentDto.setShares(shares);
 		return documentDto;
 	}
-
+	
 	@Override
 	public DocumentDto create(File tempFile, String fileName, String description, String metadata)
 			throws BusinessException {

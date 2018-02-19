@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,42 +31,14 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.business.service;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Calendar;
+package org.linagora.linshare.webservice.userv2;
 
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
-import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
+import javax.ws.rs.core.Response;
+
 import org.linagora.linshare.core.exception.BusinessException;
 
-public interface UploadRequestEntryBusinessService {
+public interface UploadRequestEntryRestService {
 
-	UploadRequestEntry findByUuid(String uuid);
-
-	UploadRequestEntry create(UploadRequestEntry entry)
-			throws BusinessException;
-
-	UploadRequestEntry update(UploadRequestEntry entry)
-			throws BusinessException;
-
-	void delete(UploadRequestEntry entry) throws BusinessException;
-
-	UploadRequestEntry findRelative(DocumentEntry entry);
-
-	UploadRequestEntry createUploadRequestEntryDocument(Account owner, File myFile, Long size, String fileName,
-			String comment, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate,
-			boolean isFromCmis, String metadata, UploadRequestUrl uploadRequestUrl) throws BusinessException;
-
-	String SHA256CheckSumFileStream(File file);
-
-	String SHA256CheckSumFileStream(InputStream fis) throws IOException;
-
-	byte[] getTimeStamp(String fileName, File tempFile, String timeStampingUrl) throws BusinessException;
-
-	InputStream getDocumentStream(UploadRequestEntry entry);
+	Response download(String uuid) throws BusinessException;
 }

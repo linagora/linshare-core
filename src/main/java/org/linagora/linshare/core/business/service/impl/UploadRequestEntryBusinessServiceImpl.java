@@ -314,4 +314,22 @@ public class UploadRequestEntryBusinessServiceImpl implements
 		});
 		return fileThumbnail;
 	}
+
+	@Override
+	public InputStream getDocumentStream(UploadRequestEntry entry) {
+		String UUID = entry.getDocument().getUuid();
+		if (UUID != null && UUID.length() > 0) {
+			logger.debug("retrieve from jackrabbity : " + UUID);
+			InputStream stream = null;
+			try {
+				FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, entry.getDocument());
+				stream = fileDataStore.get(metadata);
+			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
+				throw new BusinessException(BusinessErrorCode.FILE_UNREACHABLE, "no stream available.");
+			}
+			return stream;
+		}
+		return null;
+	}
 }

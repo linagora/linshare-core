@@ -98,6 +98,11 @@
 		<constructor-arg ref="uploadRequestGroupService" />
 	</bean>
 
+	<bean id="wsUploadRequestEntryFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.UploadRequestEntryFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="uploadRequestEntryService" />
+	</bean>
+	
 	<bean id="wsUploadRequestTemplateFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.UploadRequestTemplateFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="uploadRequestService" />

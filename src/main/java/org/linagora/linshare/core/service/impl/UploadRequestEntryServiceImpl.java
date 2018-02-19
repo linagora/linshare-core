@@ -35,6 +35,7 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.Calendar;
 
 import org.apache.commons.lang.Validate;
@@ -45,6 +46,7 @@ import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.OperationHistory;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
@@ -188,4 +190,20 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		protected Calendar getDocumentExpirationDate(AbstractDomain domain) {
 			return functionalityReadOnlyService.getDefaultFileExpiryTime(domain);
 		}
+
+	@Override
+	public UploadRequestEntry find(Account authUser, Account actor, String uuid) {
+		preChecks(authUser, actor);
+		return uploadRequestEntryBusinessService.findByUuid(uuid);
+	}
+	
+	@Override
+	public InputStream getDocumentStream(Account actor, Account owner, String uuid) throws BusinessException {
+		preChecks(actor, owner);
+		Validate.notEmpty(uuid, "upload request entry uuid is required.");
+		UploadRequestEntry entry = find(actor, owner, uuid);
+		checkDownloadPermission(actor, owner, DocumentEntry.class, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, entry);
+		// TODO log
+		return uploadRequestEntryBusinessService.getDocumentStream(entry);
+	}
 }

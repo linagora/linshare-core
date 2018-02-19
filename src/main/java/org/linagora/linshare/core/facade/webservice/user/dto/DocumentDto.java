@@ -40,6 +40,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.EntryDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
@@ -118,6 +119,24 @@ public class DocumentDto extends EntryDto {
 		this.sha256sum = de.getSha256sum();
 		this.hasThumbnail = de.isHasThumbnail();
 		this.shared = de.getShared();
+	}
+	
+	public DocumentDto(UploadRequestEntry de) {
+		if (de == null)
+			return;
+		this.uuid = de.getUuid();
+		this.name = de.getName();
+		this.creationDate = de.getCreationDate().getTime();
+		this.modificationDate = de.getModificationDate().getTime();
+		if (de.getExpirationDate() != null) {
+			this.expirationDate = de.getExpirationDate().getTime();
+		}
+		this.description = de.getComment();
+		this.ciphered = de.getCiphered();
+		this.type = de.getType();
+		this.size = de.getSize();
+		this.metaData = de.getMetaData();
+		this.sha256sum = de.getSha256sum();
 	}
 
 	public DocumentDto() {
