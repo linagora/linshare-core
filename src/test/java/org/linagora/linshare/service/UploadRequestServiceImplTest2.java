@@ -142,21 +142,17 @@ public class UploadRequestServiceImplTest2 extends AbstractTransactionalJUnit4Sp
 	public void testCreateNewUploadRequestActivatedLater() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		// UPLOAD REQUEST CREATE
-		List<UploadRequest> eListActivatedLater = Lists.newArrayList();
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(new Date());
 		calendar.add(Calendar.MONTH, 2);
 		Date ulteriorActivationDate = calendar.getTime();
 		UploadRequest ureActivatedLater = createSimpleUploadRequest(ulteriorActivationDate);
 		// Test the creation notification
-		eListActivatedLater = groupService.createRequest(john, john, ureActivatedLater, Lists.newArrayList(yoda),
+		groupService.createRequest(john, john, ureActivatedLater, Lists.newArrayList(yoda),
 				"This is the subject of a new Upload Request",
 				"This is a body sent after the creation of the Upload Request", false);
 		wiser.checkGeneratedMessages();
-		UploadRequest eActivatedLater = eListActivatedLater.get(0);
-		// Test the creation notification
 		// END OF UPLOAD REQUEST CREATE
-		finishUploadRequest(eActivatedLater, john);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 

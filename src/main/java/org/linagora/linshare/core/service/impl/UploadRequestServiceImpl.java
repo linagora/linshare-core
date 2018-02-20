@@ -148,26 +148,44 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	}
 
 	@Override
-	public UploadRequest updateStatus(Account actor, Account owner, String uuid, UploadRequestStatus status)
+	public UploadRequest updateStatus(Account authUser, Account actor, String uuid, UploadRequestStatus status)
 			throws BusinessException {
-		Validate.notNull(actor, "Actor must be set.");
-		Validate.notNull(owner, "Owner must be set.");
-		Validate.notEmpty(uuid, "Uuid must be set.");
-		Validate.notNull(status, "Status must be set.");
-		UploadRequest req = findRequestByUuid(actor, owner, uuid);
-		if (!req.getUploadRequestGroup().getRestricted()) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You can not edit an uploadRequest in grouped mode : " + req.getUuid()); 
+		Validate.notNull(authUser, "Actor must be set.");
+		Validate.notNull(actor, "Owner must be set.");
+		UploadRequest req = findRequestByUuid(authUser, actor, uuid);
+		checkUpdatePermission(authUser, actor, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, req);
+		if (!req.getUploadRequestGroup().getRestricted() && !status.equals(req.getUploadRequestGroup().getStatus())) {
+			// if is grouped mode and the new status is not equal 
+			// to the current status of uploadRequestGroup 
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You can not edit an uploadRequest : " + req.getUuid()); 
 		}
-		UploadRequestAuditLogEntry log = new UploadRequestAuditLogEntry(new AccountMto(actor), new AccountMto(owner),
+		UploadRequestAuditLogEntry log = new UploadRequestAuditLogEntry(new AccountMto(authUser), new AccountMto(actor),
 				LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST, req.getUuid(), req);
-		req.setStatus(status);
-		req = updateRequest(actor, owner, req);
-		if (status.equals(UploadRequestStatus.STATUS_ARCHIVED)) {
-			// TODO copy all uploadRequestEntry to DocumentEntry
+		req = uploadRequestBusinessService.updateStatus(req, status);
+		EmailContext ctx = prepareNotification(req, actor);
+		if (ctx != null) {
+			MailContainerWithRecipient mail = mailBuildingService.build(ctx);
+			notifierService.sendNotification(mail);
 		}
 		log.setResourceUpdated(new UploadRequestMto(req));
 		logEntryService.insert(log);
 		return req;
+	}
+
+	private EmailContext prepareNotification(UploadRequest req, Account actor) {
+		EmailContext ctx = null;
+		if (UploadRequestStatus.STATUS_ENABLED.equals(req.getStatus())) {
+			ctx = new UploadRequestActivationEmailContext((User) actor, req);
+		} else if (UploadRequestStatus.STATUS_CANCELED.equals(req.getStatus())) {
+			// TODO return context
+		} else if (UploadRequestStatus.STATUS_CLOSED.equals(req.getStatus())) {
+			// TODO return context
+		} else if (UploadRequestStatus.STATUS_ARCHIVED.equals(req.getStatus())) {
+			// TODO return context
+		}else if (UploadRequestStatus.STATUS_DELETED.equals(req.getStatus())) {
+			// TODO return context
+		}
+		return ctx;
 	}
 
 	@Override

@@ -39,6 +39,7 @@ import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -123,17 +124,17 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 		return uploadRequestFacade.findByGroup(null, groupUuid, status);
 	}
 
-	@POST
-	@Path("/{uuid}")
-	@ApiOperation(value = "Update an upload request.", response = UploadRequestDto.class)
+	@PUT
+	@Path("/{uuid}/update/status")
+	@ApiOperation(value = "Update status of upload request.", response = UploadRequestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
 	@Override
 	public UploadRequestDto updateStatus(
 			@ApiParam(value = "Upload request uuid.", required = true)
 				@PathParam(value = "uuid") String requestUuid,
-			@QueryParam("status") String status) throws BusinessException {
-		UploadRequestDto dto = uploadRequestFacade.updateStatus(null, requestUuid, status);
-		return dto;
+			@ApiParam(value = "New status for the upload request", required = true)
+				@QueryParam("status") UploadRequestStatus status) throws BusinessException {
+		return uploadRequestFacade.updateStatus(null, requestUuid, status);
 	}
 }

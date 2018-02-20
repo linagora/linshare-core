@@ -52,4 +52,6 @@ public interface UploadRequestGroupService {
 
 	List<UploadRequest> createRequest(Account actor, User owner, UploadRequest req, List<Contact> contacts,
 			String subject, String body, Boolean groupedMode) throws BusinessException;
+
+	UploadRequestGroup updateStatus(Account actor, Account owner, String requestGroupUuid, UploadRequestStatus stat);
 }

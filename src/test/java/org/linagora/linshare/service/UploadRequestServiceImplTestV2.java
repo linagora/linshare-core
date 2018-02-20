@@ -151,10 +151,9 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 		eList = uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
 		uploadRequest = eList.get(0);
 		Assert.assertNotNull(uploadRequest);
-		service.deleteRequest(john, john, uploadRequest.getUuid());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
 	@Test
 	public void findAll() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
@@ -176,7 +175,7 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 		Assert.assertEquals(1, size);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
 	@Test
 	public void findFiltredUploadRequests() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
@@ -189,6 +188,22 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 		uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
 		int finalSize = service.findAllRequest(john, john, Lists.newArrayList(UploadRequestStatus.STATUS_ENABLED)).size();
 		Assert.assertEquals(initSize+1, finalSize);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void updateStatus() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		List<UploadRequest> uploadRequests = uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		Assert.assertEquals(UploadRequestStatus.STATUS_ENABLED, ure.getUploadRequestGroup().getStatus());
+
+		// Update upload request status
+		service.updateStatus(john, john, uploadRequests.get(0).getUuid(), UploadRequestStatus.STATUS_CLOSED);
+		Assert.assertEquals(UploadRequestStatus.STATUS_CLOSED, uploadRequests.get(0).getStatus());
+		service.updateStatus(john, john, uploadRequests.get(0).getUuid(), UploadRequestStatus.STATUS_ARCHIVED);
+		Assert.assertEquals(UploadRequestStatus.STATUS_ARCHIVED, uploadRequests.get(0).getStatus());
+		service.updateStatus(john, john, uploadRequests.get(0).getUuid(), UploadRequestStatus.STATUS_DELETED);
+		Assert.assertEquals(UploadRequestStatus.STATUS_DELETED, uploadRequests.get(0).getStatus());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }

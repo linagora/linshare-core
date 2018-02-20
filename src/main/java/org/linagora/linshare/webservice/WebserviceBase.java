@@ -35,7 +35,6 @@ package org.linagora.linshare.webservice;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Date;
 import java.util.Properties;
 
 import javax.ws.rs.WebApplicationException;
@@ -43,9 +42,6 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.Validate;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
-import org.apache.cxf.message.Exchange;
-import org.apache.cxf.message.Message;
-import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.slf4j.Logger;

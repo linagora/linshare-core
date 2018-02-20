@@ -76,6 +76,7 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.UploadRequestAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.UploadRequestGroupAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.linagora.linshare.core.service.UploadRequestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,6 +88,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 			.getLogger(UploadRequestGroupServiceImpl.class);
 
 	private final UploadRequestGroupBusinessService uploadRequestGroupBusinessService;
+
 	private final UploadRequestGroupResourceAccessControl groupRac;
 	private final FunctionalityReadOnlyService functionalityService;
 	private final UploadRequestUrlService uploadRequestUrlService;
@@ -94,6 +96,8 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 	private final UploadRequestBusinessService uploadRequestBusinessService;
 	private final NotifierService notifierService;
 	private final LogEntryService logEntryService;
+
+	private final UploadRequestService uploadRequesService;
 
 	public UploadRequestGroupServiceImpl(
 			final UploadRequestGroupBusinessService uploadRequestGroupBusinessService,
@@ -103,7 +107,8 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 			final MailBuildingService mailBuildingService,
 			final UploadRequestBusinessService uploadRequestBusinessService,
 			final NotifierService notifierService,
-			final LogEntryService logEntryService
+			final LogEntryService logEntryService,
+			final UploadRequestService uploadRequestService
 			) {
 		super(groupRac);
 		this.uploadRequestGroupBusinessService = uploadRequestGroupBusinessService;
@@ -114,6 +119,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		this.uploadRequestBusinessService = uploadRequestBusinessService;
 		this.notifierService = notifierService;
 		this.logEntryService = logEntryService;
+		this.uploadRequesService = uploadRequestService;
 	}
 
 	@Override
@@ -580,5 +586,20 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 			}
 			return null;
 		}
+	}
+
+	@Override
+	public UploadRequestGroup updateStatus(Account authUser, Account actor, String requestGroupUuid,
+			UploadRequestStatus status) {
+		preChecks(authUser, actor);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupBusinessService.findByUuid(requestGroupUuid);
+		groupRac.checkUpdatePermission(authUser, actor, UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, uploadRequestGroup);
+		uploadRequestGroup = uploadRequestGroupBusinessService.updateStatus(uploadRequestGroup, status);
+		for (UploadRequest uploadRequest : uploadRequestGroup.getUploadRequests()) {
+			uploadRequesService.updateStatus(authUser, actor, uploadRequest.getUuid(), status);
+		}
+		//TODO Mail notification for the owner
+		// TODO add audit 
+		return uploadRequestGroup;
 	}
 }

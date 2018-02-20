@@ -54,7 +54,6 @@ import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.ContactRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
-import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,11 +64,17 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 
 import com.google.common.collect.Lists;
 
-@ContextConfiguration(locations = { "classpath:springContext-datasource.xml", "classpath:springContext-repository.xml",
-		"classpath:springContext-dao.xml", "classpath:springContext-ldap.xml",
-		"classpath:springContext-business-service.xml", "classpath:springContext-service-miscellaneous.xml",
-		"classpath:springContext-service.xml", "classpath:springContext-rac.xml", "classpath:springContext-fongo.xml",
-		"classpath:springContext-storage-jcloud.xml", "classpath:springContext-test.xml", })
+@ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
+		"classpath:springContext-repository.xml",
+		"classpath:springContext-dao.xml",
+		"classpath:springContext-ldap.xml",
+		"classpath:springContext-business-service.xml",
+		"classpath:springContext-service-miscellaneous.xml",
+		"classpath:springContext-service.xml",
+		"classpath:springContext-rac.xml",
+		"classpath:springContext-fongo.xml",
+		"classpath:springContext-storage-jcloud.xml",
+		"classpath:springContext-test.xml", })
 public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
 	private static Logger logger = LoggerFactory.getLogger(UploadRequestGroupServiceImplTest.class);
 
@@ -89,9 +94,6 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 
 	@Autowired
 	private UploadRequestGroupService uploadRequestGroupService;
-	
-	@Autowired
-	private UploadRequestService uploadRequestService;
 
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
@@ -137,7 +139,6 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		wiser.stop();
-		uploadRequestService.deleteRequest(john, john, ure.getUuid());
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
@@ -159,6 +160,38 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 		uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
 		List<UploadRequestGroup> groups = uploadRequestGroupService.findAllGroupRequest(john, john, Lists.newArrayList(UploadRequestStatus.STATUS_ENABLED));
 		Assert.assertEquals(uploadRequestGroupService.findAllGroupRequest(john, john, null).size() - 1, groups.size());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void updateStatus() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		Assert.assertEquals(UploadRequestStatus.STATUS_CREATED, ure.getUploadRequestGroup().getStatus());
+
+		// Update upload request group status
+		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(), UploadRequestStatus.STATUS_ENABLED);
+		Assert.assertEquals(UploadRequestStatus.STATUS_ENABLED, ure.getUploadRequestGroup().getStatus());
+		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(), UploadRequestStatus.STATUS_CLOSED);
+		Assert.assertEquals(UploadRequestStatus.STATUS_CLOSED, ure.getUploadRequestGroup().getStatus());
+		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(), UploadRequestStatus.STATUS_ARCHIVED);
+		Assert.assertEquals(UploadRequestStatus.STATUS_ARCHIVED, ure.getUploadRequestGroup().getStatus());
+		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(), UploadRequestStatus.STATUS_DELETED);
+		Assert.assertEquals(UploadRequestStatus.STATUS_DELETED, ure.getUploadRequestGroup().getStatus());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void updateStatusToCanceled() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.DAY_OF_MONTH, 1);
+		Date tomorrow = calendar.getTime();
+		ure.setActivationDate(tomorrow);
+		uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		Assert.assertEquals(UploadRequestStatus.STATUS_CREATED, ure.getUploadRequestGroup().getStatus());
+		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(), UploadRequestStatus.STATUS_CANCELED);
+		Assert.assertEquals(UploadRequestStatus.STATUS_CANCELED, ure.getUploadRequestGroup().getStatus());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }

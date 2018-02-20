@@ -90,6 +90,19 @@ public class UploadRequestBusinessServiceImpl implements
 	}
 
 	@Override
+	public UploadRequest updateStatus(UploadRequest req, UploadRequestStatus status) throws BusinessException {
+		if (req.getDirty() == false) {
+			req.setDirty(true);
+		}
+		req.updateStatus(status);
+		req = uploadRequestRepository.update(req);
+		if (req.getStatus() == UploadRequestStatus.STATUS_ARCHIVED) {
+			// Copy all uploadRequestEntry to DocumentEntry
+		}
+		return req;
+	}
+
+	@Override
 	public UploadRequest update(UploadRequest req, UploadRequest object) throws BusinessException {
 		req.setBusinessMaxFileCount(object.getMaxFileCount());
 		req.setBusinessMaxFileSize(object.getMaxFileSize());
@@ -126,5 +139,4 @@ public class UploadRequestBusinessServiceImpl implements
 	public List<UploadRequest> findByGroup(UploadRequestGroup uploadRequestGroup, List<UploadRequestStatus> statusList) {
 		return uploadRequestRepository.findByGroup(uploadRequestGroup, statusList);
 	}
-
 }

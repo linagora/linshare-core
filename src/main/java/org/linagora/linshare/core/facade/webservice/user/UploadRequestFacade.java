@@ -48,7 +48,7 @@ public interface UploadRequestFacade {
 
 	UploadRequestDto update(String actorUuid, String uuid, UploadRequestDto uploadRequestDto) throws BusinessException;
 
-	UploadRequestDto updateStatus(String actorUuid, String uuid, String status) throws BusinessException;
+	UploadRequestDto updateStatus(String actorUuid, String uuid, UploadRequestStatus status) throws BusinessException;
 
 	UploadRequestDto delete(String actorUuid, String uuid) throws BusinessException;
 

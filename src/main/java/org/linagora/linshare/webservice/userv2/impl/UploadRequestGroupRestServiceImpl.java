@@ -39,6 +39,7 @@ import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -104,5 +105,19 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 			@ApiParam(value = "Group mode.", required = true) @QueryParam(value = "groupMode") Boolean groupMode) {
 		List<UploadRequestDto> dto = uploadRequestGroupFacade.create(null, uploadRequestCreationtDto, groupMode);
 		return dto;
+	}
+
+	@PUT
+	@Path("/{uuid}/update/status")
+	@ApiOperation(value = "Update status of upload request group.", response = UploadRequestDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
+			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
+	@Override
+	public UploadRequestGroupDto updateStatus(
+			@ApiParam(value = "Upload request group uuid.", required = true)
+				@PathParam(value = "uuid") String requestGroupUuid,
+			@ApiParam(value = "New status for the upload request groupe", required = true)
+				@QueryParam("status") UploadRequestStatus status) throws BusinessException {
+		return uploadRequestGroupFacade.updateStatus(null, requestGroupUuid, status);
 	}
 }

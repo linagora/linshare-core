@@ -36,6 +36,7 @@ package org.linagora.linshare.webservice.delegation;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 
@@ -47,10 +48,9 @@ public interface UploadRequestRestService {
 
 	UploadRequestDto update(String actorUuid, String uuid, UploadRequestDto uploadRequestDto) throws BusinessException;
 
-	UploadRequestDto updateStatus(String actorUuid, String uuid, String status) throws BusinessException;
+	UploadRequestDto updateStatus(String actorUuid, String uuid, UploadRequestStatus status) throws BusinessException;
 
 	UploadRequestDto delete(String actorUuid, String uuid) throws BusinessException;
 
 	UploadRequestDto delete(String actorUuid, UploadRequestDto uploadRequestDto) throws BusinessException;
-
 }

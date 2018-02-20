@@ -39,15 +39,12 @@ import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 import org.linagora.linshare.core.facade.webservice.user.UploadRequestFacade;
 import org.linagora.linshare.webservice.userv1.UploadRequestRestService;
@@ -107,19 +104,6 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 			@ApiParam(value = "Upload request uuid.", required = true) @PathParam(value = "uuid") String uuid,
 			@ApiParam(value = "Upload request.", required = true) UploadRequestDto uploadRequestDto) {
 		UploadRequestDto dto = uploadRequestFacade.update(null, uuid, uploadRequestDto);
-		return dto;
-	}
-
-	@POST
-	@Path("/{uuid}")
-	@ApiOperation(value = "Update an upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
-	@Override
-	public UploadRequestDto updateStatus(
-			@ApiParam(value = "Upload request uuid.", required = true) @PathParam(value = "uuid") String uuid,
-			@QueryParam("status") String status) throws BusinessException {
-		UploadRequestDto dto = uploadRequestFacade.updateStatus(null, uuid, status);
 		return dto;
 	}
 

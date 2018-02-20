@@ -79,7 +79,7 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 		UploadRequestGroup group = uploadRequestGroupService.findRequestGroupByUuid(authUser, actor, uuid);
 		return new UploadRequestGroupDto(group);
 	}
-	
+
 	@Override
 	public List<UploadRequestDto> create(String actorUuid, UploadRequestCreationtDto uploadRequesCreationtDto, Boolean groupMode) throws BusinessException {
 		Validate.notNull(uploadRequesCreationtDto, "Upload request must be set.");
@@ -95,5 +95,15 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 		List<UploadRequest> e = uploadRequestGroupService.createRequest(authUser, actor, req, contacts,
 				uploadRequesCreationtDto.getSubject(), uploadRequesCreationtDto.getBody(), groupMode);
 		return ImmutableList.copyOf(Lists.transform(e, UploadRequestDto.toDto(true)));
+	}
+
+	@Override
+	public UploadRequestGroupDto updateStatus(String actorUuid, String requestGroupUuid, UploadRequestStatus status) throws BusinessException {
+		Validate.notEmpty(requestGroupUuid, "Upload request group uuid must be set.");
+		Validate.notNull(status, "Status must be set.");
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.updateStatus(authUser, actor, requestGroupUuid, status);
+		return new UploadRequestGroupDto(uploadRequestGroup);
 	}
 }

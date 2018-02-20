@@ -39,6 +39,7 @@ import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -91,7 +92,7 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 		UploadRequestDto dto = uploadRequestFacade.addRecipient(actorUuid, groupUuid, recipientEmail);
 		return dto;
 	}
-	
+
 	@GET
 	@Path("/")
 	@ApiOperation(value = "Find a list of upload request.", response = UploadRequestDto.class)
@@ -130,8 +131,8 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 		return uploadRequestFacade.findByGroup(actorUuid, groupUuid, status);
 	}
 
-	@POST
-	@Path("/update/status/{uuid}")
+	@PUT
+	@Path("/{uuid}/update/status")
 	@ApiOperation(value = "Update an upload request.", response = UploadRequestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
@@ -141,7 +142,8 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 				@PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "Upload request uuid.", required = true)
 				@PathParam(value = "uuid") String requestUuid,
-			@QueryParam("status") String status) throws BusinessException {
+			@ApiParam(value = "Upload request uuid.", required = true)
+				@PathParam("status") UploadRequestStatus status) throws BusinessException {
 		UploadRequestDto dto = uploadRequestFacade.updateStatus(actorUuid, requestUuid, status);
 		return dto;
 	}

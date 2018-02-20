@@ -37,6 +37,7 @@ import java.util.Date;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
+import org.linagora.linshare.core.exception.BusinessException;
 
 import com.google.common.collect.Sets;
 
@@ -338,5 +339,9 @@ public class UploadRequestGroup {
 
 	public void setStatus(UploadRequestStatus status) {
 		this.status = status;
+	}
+
+	public void updateStatus(UploadRequestStatus to) throws BusinessException {
+		status = status.transition(to);
 	}
 }

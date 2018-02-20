@@ -50,4 +50,7 @@ public interface UploadRequestGroupFacade {
 	
 	List<UploadRequestDto> create(String actorUuid, UploadRequestCreationtDto uploadRequestCreationtDto,
 			Boolean groupMode) throws BusinessException;
+
+	UploadRequestGroupDto updateStatus(String actorUuid, String requestGroupUuid, UploadRequestStatus status)
+			throws BusinessException;
 }

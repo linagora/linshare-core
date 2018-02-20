@@ -70,4 +70,5 @@ public interface UploadRequestBusinessService {
 
 	List<UploadRequest> findByGroup(UploadRequestGroup uploadRequestGroup, List<UploadRequestStatus> statusList);
 
+	UploadRequest updateStatus(UploadRequest req, UploadRequestStatus status) throws BusinessException;
 }

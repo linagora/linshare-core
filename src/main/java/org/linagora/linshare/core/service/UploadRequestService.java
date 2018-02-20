@@ -101,6 +101,6 @@ public interface UploadRequestService {
 
 	UploadRequest addNewRecipient(User authUser, User actor, UploadRequestGroup uploadRequestgroup,
 			Contact contact);
-	
+
 	List<UploadRequest> findAllRequestsByGroup(User authUser, User actor, String groupUuid, List<UploadRequestStatus> status);
 }

@@ -214,10 +214,6 @@ public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4Spr
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		wiser.stop();
-		service.deleteTemplate(john, john, temp.getUuid());
-		service.updateStatus(john, john, e.getUuid(), UploadRequestStatus.STATUS_CLOSED);
-		service.updateStatus(john, john, e.getUuid(), UploadRequestStatus.STATUS_ARCHIVED);
-		service.deleteRequest(john, john, e.getUuid());
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 

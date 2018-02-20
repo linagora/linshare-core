@@ -50,5 +50,5 @@ public interface UploadRequestRestService {
 	
 	UploadRequestDto find(String actorUuid, String uuid);
 
-	UploadRequestDto updateStatus(String actorUuid, String requestUuid, String status) throws BusinessException;
+	UploadRequestDto updateStatus(String actorUuid, String requestUuid, UploadRequestStatus status) throws BusinessException;
 }

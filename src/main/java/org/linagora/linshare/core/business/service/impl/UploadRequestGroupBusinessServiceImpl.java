@@ -79,4 +79,11 @@ public class UploadRequestGroupBusinessServiceImpl implements
 	public void delete(UploadRequestGroup group) throws BusinessException {
 		uploadRequestGroupRepository.delete(group);
 	}
+
+	@Override
+	public UploadRequestGroup updateStatus(UploadRequestGroup uploadRequestGroup, UploadRequestStatus status) throws BusinessException {
+		uploadRequestGroup.updateStatus(status);
+		uploadRequestGroup = uploadRequestGroupRepository.update(uploadRequestGroup);
+		return uploadRequestGroup;
+	}
 }
