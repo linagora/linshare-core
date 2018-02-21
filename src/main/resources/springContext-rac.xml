@@ -70,6 +70,10 @@
 		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 
+	<bean name="uploadRequestUrlResourceAccessControl" class="org.linagora.linshare.core.rac.impl.UploadRequestUrlResourceAccessControlImpl">
+		<constructor-arg ref="functionalityReadOnlyService" />
+	</bean>
+	
 	<bean name="userPreferenceResourceAccessControl" class="org.linagora.linshare.core.rac.impl.UserPreferenceResourceAccessControlImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>

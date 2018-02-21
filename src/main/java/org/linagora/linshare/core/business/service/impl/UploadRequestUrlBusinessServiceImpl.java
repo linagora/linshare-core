@@ -33,10 +33,14 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
+import java.util.List;
+
 import org.linagora.linshare.core.business.service.UploadRequestUrlBusinessService;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ContactRepository;
 import org.linagora.linshare.core.repository.UploadRequestUrlRepository;
@@ -96,8 +100,21 @@ public class UploadRequestUrlBusinessServiceImpl implements
 	}
 
 	@Override
-	public void delete(UploadRequestUrl url) throws BusinessException {
-		uploadRequestUrlRepository.delete(url);
+	public void delete(UploadRequestUrl uploadRequestUrl) throws BusinessException {
+		UploadRequest uploadRequest = uploadRequestUrl.getUploadRequest();
+		UploadRequestGroup uploadRequestGroup = uploadRequest.getUploadRequestGroup();
+		List<UploadRequestUrl> uploadRequestURLs = uploadRequestUrlRepository.findByUploadRequest(uploadRequest);
+		if (uploadRequestGroup.getRestricted()) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_DELETE_RECIPIENT_FROM_RESTRICTED_REQUEST,
+					"Cannot delete a recipient of an upload request in mode restricted");
+		}
+		if (uploadRequestURLs.size() < 2) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_DELETE_LAST_RECIPIENT,
+					"Cannot delete the last recipient of an upload request in shared mode");
+		}else if (!uploadRequestUrl.getUploadRequestEntries().isEmpty()) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_URL_EXISTS,
+					"Cannot delete upload request url with existed entries");
+		}
+		uploadRequestUrlRepository.delete(uploadRequestUrl);
 	}
-
 }

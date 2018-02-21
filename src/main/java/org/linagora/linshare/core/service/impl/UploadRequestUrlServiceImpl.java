@@ -56,6 +56,7 @@ import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestDeleteFileEmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestUploadedFileEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
+import org.linagora.linshare.core.rac.UploadRequestUrlResourceAccessControl;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -63,6 +64,7 @@ import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
 import org.linagora.linshare.core.utils.HashUtils;
+import org.linagora.linshare.webservice.utils.UploadRequestUtils;
 
 public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 
@@ -81,6 +83,8 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 	private final UploadRequestEntryService uploadRequestEntryService;
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
+	
+	private final UploadRequestUrlResourceAccessControl uploadRequestUrlRac;
 
 	public UploadRequestUrlServiceImpl(
 			final UploadRequestUrlBusinessService uploadRequestUrlBusinessService,
@@ -90,7 +94,8 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 			final MailBuildingService mailBuildingService,
 			final NotifierService notifierService,
 			final UploadRequestEntryService uploadRequestEntryService,
-			final FunctionalityReadOnlyService functionalityReadOnlyService) {
+			final FunctionalityReadOnlyService functionalityReadOnlyService,
+			final UploadRequestUrlResourceAccessControl uploadRequestUrlRac) {
 		super();
 		this.uploadRequestUrlBusinessService = uploadRequestUrlBusinessService;
 		this.uploadRequestEntryBusinessService = uploadRequestEntryBusinessService;
@@ -100,6 +105,7 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 		this.notifierService = notifierService;
 		this.uploadRequestEntryService = uploadRequestEntryService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
+		this.uploadRequestUrlRac =  uploadRequestUrlRac;
 	}
 
 	@Override
@@ -291,4 +297,13 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 		}
 	}
 
+	@Override
+	public void delete(Account actor, UploadRequestUrl uploadRequestUrl) {
+		UploadRequestUtils.checkStatusPermission(uploadRequestUrl.getUploadRequest().getStatus(),
+				"You have no rights to delete recipients");
+		uploadRequestUrlRac.checkDeletePermission(actor,
+				uploadRequestUrl.getUploadRequest().getUploadRequestGroup().getOwner(), UploadRequestUrl.class,
+				BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, uploadRequestUrl);
+		uploadRequestUrlBusinessService.delete(uploadRequestUrl);
+	}
 }

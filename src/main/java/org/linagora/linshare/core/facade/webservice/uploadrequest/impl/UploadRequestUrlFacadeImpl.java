@@ -42,16 +42,20 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.MimeType;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.UploadRequestUrlFacade;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.EntryDto;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.UploadRequestDto;
+import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.UploadRequestUrlDto;
+import org.linagora.linshare.core.facade.webservice.user.impl.GenericFacadeImpl;
+import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.MimePolicyService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
 
-public class UploadRequestUrlFacadeImpl implements UploadRequestUrlFacade {
+public class UploadRequestUrlFacadeImpl extends GenericFacadeImpl implements UploadRequestUrlFacade {
 
 	private final UploadRequestService uploadRequestService;
 
@@ -61,11 +65,12 @@ public class UploadRequestUrlFacadeImpl implements UploadRequestUrlFacade {
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
-	public UploadRequestUrlFacadeImpl(
+	public UploadRequestUrlFacadeImpl(final AccountService accountService,
 			final UploadRequestService uploadRequestService,
 			final UploadRequestUrlService uploadRequestUrlService,
-			FunctionalityReadOnlyService functionalityReadOnlyService,
+			final FunctionalityReadOnlyService functionalityReadOnlyService,
 			final MimePolicyService mimePolicyService) {
+		super(accountService);
 		this.uploadRequestService = uploadRequestService;
 		this.uploadRequestUrlService = uploadRequestUrlService;
 		this.mimePolicyService = mimePolicyService;
@@ -141,5 +146,19 @@ public class UploadRequestUrlFacadeImpl implements UploadRequestUrlFacade {
 			}
 		}
 		return dto;
+	}
+
+	@Override
+	public UploadRequestUrlDto delete(String actorUuid, UploadRequestUrlDto uploadRequestUrlDto)
+			throws BusinessException {
+		Validate.notNull(uploadRequestUrlDto);
+		String uploadRequestUrlUuid = uploadRequestUrlDto.getUuid();
+		Validate.notEmpty(uploadRequestUrlUuid);
+		String uploadRequestUrlPassword = uploadRequestUrlDto.getPassword();
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		UploadRequestUrl uploadRequestUrl = uploadRequestUrlService.find(uploadRequestUrlUuid, uploadRequestUrlPassword);
+		uploadRequestUrlService.delete(actor, uploadRequestUrl);
+		return new UploadRequestUrlDto(uploadRequestUrl);
 	}
 }

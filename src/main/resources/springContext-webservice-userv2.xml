@@ -92,6 +92,7 @@
 	<bean id="userUploadRequestRestService"
 		class="org.linagora.linshare.webservice.userv2.impl.UploadRequestRestServiceImpl">
 		<constructor-arg ref="wsUploadRequestFacade" />
+		<constructor-arg ref="wsUploadRequestUrlFacade" />
 	</bean>
 	
 	<bean id="userUploadRequestGroupRestService" class="org.linagora.linshare.webservice.userv2.impl.UploadRequestGroupRestServiceImpl">

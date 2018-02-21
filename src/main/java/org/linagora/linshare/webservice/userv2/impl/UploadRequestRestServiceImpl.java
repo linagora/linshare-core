@@ -38,6 +38,7 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -49,6 +50,8 @@ import javax.ws.rs.core.MediaType;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
+import org.linagora.linshare.core.facade.webservice.uploadrequest.UploadRequestUrlFacade;
+import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.UploadRequestUrlDto;
 import org.linagora.linshare.core.facade.webservice.user.UploadRequestFacade;
 import org.linagora.linshare.webservice.userv2.UploadRequestRestService;
 import org.slf4j.Logger;
@@ -70,9 +73,13 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 
 	private final UploadRequestFacade uploadRequestFacade;
 
-	public UploadRequestRestServiceImpl(UploadRequestFacade uploadRequestFacade) {
+	private final UploadRequestUrlFacade uploadRequestUrlFacade;
+
+	public UploadRequestRestServiceImpl(UploadRequestFacade uploadRequestFacade,
+			UploadRequestUrlFacade uploadRequestUrlFacade) {
 		super();
 		this.uploadRequestFacade = uploadRequestFacade;
+		this.uploadRequestUrlFacade = uploadRequestUrlFacade;
 	}
 
 	@POST
@@ -136,5 +143,18 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 			@ApiParam(value = "New status for the upload request", required = true)
 				@QueryParam("status") UploadRequestStatus status) throws BusinessException {
 		return uploadRequestFacade.updateStatus(null, requestUuid, status);
+	}
+
+	@DELETE
+	@Path("/upload_request_urls")
+	@ApiOperation(value = "Delete a Upload request url from a shared upload request.", response = UploadRequestDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
+			@ApiResponse(code = 404, message = "Document not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public UploadRequestUrlDto delete(
+			@ApiParam(value = "The upload request url to be removed", required = true) UploadRequestUrlDto uploadRequestUrlDto) {
+		return uploadRequestUrlFacade.delete(null, uploadRequestUrlDto);
 	}
 }

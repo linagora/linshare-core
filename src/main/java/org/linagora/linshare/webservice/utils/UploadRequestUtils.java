@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,27 +31,19 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-
-package org.linagora.linshare.webservice.delegationv2;
-
-import java.util.List;
+package org.linagora.linshare.webservice.utils;
 
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
-import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.UploadRequestUrlDto;
 
-public interface UploadRequestRestService {
+public class UploadRequestUtils {
 
-	UploadRequestDto addRecipient(String actorUuid, String groupUuid, String recipientEmail);
-	
-	List<UploadRequestDto> findByUploadRequestGroup(String actorUuid, String groupUuid, List<UploadRequestStatus> status);
+	public static void checkStatusPermission(UploadRequestStatus status, String message) {
+		if ((UploadRequestStatus.STATUS_CREATED.equals(status) != true)
+				&& (UploadRequestStatus.STATUS_ENABLED.equals(status) != true)) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, message);
+		}
+	}
 
-	List<UploadRequestDto> findAll(String actorUuid, List<UploadRequestStatus> status);
-	
-	UploadRequestDto find(String actorUuid, String uuid);
-
-	UploadRequestDto updateStatus(String actorUuid, String requestUuid, UploadRequestStatus status) throws BusinessException;
-
-	UploadRequestUrlDto delete(String actorUuid, UploadRequestUrlDto uploadRequestUrlDto) throws BusinessException;
 }

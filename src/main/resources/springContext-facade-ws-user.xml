@@ -137,4 +137,11 @@
 		<constructor-arg ref="accountService" />
 	</bean>
 
+	<bean id="wsUploadRequestUrlFacade" class="org.linagora.linshare.core.facade.webservice.uploadrequest.impl.UploadRequestUrlFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="uploadRequestService" />
+		<constructor-arg ref="uploadRequestUrlService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="mimePolicyService" />
+	</bean>
 </beans>
