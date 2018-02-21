@@ -132,7 +132,7 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	}
 
 	@PUT
-	@Path("/{uuid}/update/status")
+	@Path("/{uuid}/update/{status}")
 	@ApiOperation(value = "Update status of upload request.", response = UploadRequestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
@@ -141,7 +141,7 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 			@ApiParam(value = "Upload request uuid.", required = true)
 				@PathParam(value = "uuid") String requestUuid,
 			@ApiParam(value = "New status for the upload request", required = true)
-				@QueryParam("status") UploadRequestStatus status) throws BusinessException {
+				@PathParam("status") UploadRequestStatus status) throws BusinessException {
 		return uploadRequestFacade.updateStatus(null, requestUuid, status);
 	}
 

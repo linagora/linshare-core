@@ -90,11 +90,11 @@ public class UploadRequestEntry extends Entry implements Serializable {
 		return EntryType.UPLOAD_REQUEST;
 	}
 
-	public long getSize() {
+	public Long getSize() {
 		return size;
 	}
 
-	public void setSize(long size) {
+	public void setSize(Long size) {
 		this.size = size;
 	}
 

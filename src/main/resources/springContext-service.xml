@@ -215,7 +215,7 @@
 		<constructor-arg ref="uploadRequestUrlResourceAccessControl" />
 	</bean>
 	<bean name="uploadRequestEntryService"
-		class="org.linagora.linshare.core.service.impl.UploadRequestEntryServiceImpl">
+			class="org.linagora.linshare.core.service.impl.UploadRequestEntryServiceImpl">
 		<constructor-arg ref="uploadRequestEntryBusinessService" />
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="functionalityReadOnlyService" />
@@ -226,6 +226,7 @@
 		<constructor-arg ref="uploadRequestEntryRessourceAccessControl" />
 		<constructor-arg ref="operationHistoryBusinessService" />
 		<constructor-arg ref="quotaService" />
+		<constructor-arg ref="documentGarbageCollecteurMongoRepository" />
 	</bean>
 	<bean name="uploadPropositionService" class="org.linagora.linshare.core.service.impl.UploadPropositionServiceImpl">
 		<constructor-arg ref="uploadPropositionBusinessService" />

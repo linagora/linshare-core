@@ -37,6 +37,7 @@ package org.linagora.linshare.core.facade.webservice.user;
 import java.io.InputStream;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 
 public interface UploadRequestEntryFacade {
@@ -44,4 +45,6 @@ public interface UploadRequestEntryFacade {
 	DocumentDto find(String actorUuid, String uuid) throws BusinessException;
 
 	InputStream getDocumentStream(String ulploadRequestEntryUuid) throws BusinessException;
+
+	UploadRequestEntryDto delete(String actorUuid, String uuid);
 }

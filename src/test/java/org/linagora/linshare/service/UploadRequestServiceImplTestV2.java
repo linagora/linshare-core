@@ -222,4 +222,65 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 		Assert.assertEquals(request.getDirty(), true);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
+	
+
+	@Test
+	public void testCreateNewUploadRequestActivatedNow() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		// UPLOAD REQUEST CREATE
+		List<UploadRequest> eListActivated = Lists.newArrayList();
+		UploadRequest ureActivated = createSimpleUploadRequest(new Date());
+		eListActivated = uploadRequestGroupService.createRequest(john, john, ureActivated, Lists.newArrayList(yoda),
+				"This is the subject of a new Upload Request",
+				"This is a body sent after the creation of the Upload Request", false);
+		// Test the creation notification
+		wiser.checkGeneratedMessages();
+		UploadRequest eActivated = eListActivated.get(0);
+		// Test the creation notification
+		// END OF UPLOAD REQUEST CREATE
+		finishUploadRequest(eActivated, john);
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testCreateNewUploadRequestActivatedLater() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		// UPLOAD REQUEST CREATE
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		calendar.add(Calendar.MONTH, 2);
+		Date ulteriorActivationDate = calendar.getTime();
+		UploadRequest ureActivatedLater = createSimpleUploadRequest(ulteriorActivationDate);
+		// Test the creation notification
+		uploadRequestGroupService.createRequest(john, john, ureActivatedLater, Lists.newArrayList(yoda),
+				"This is the subject of a new Upload Request",
+				"This is a body sent after the creation of the Upload Request", false);
+		wiser.checkGeneratedMessages();
+		// END OF UPLOAD REQUEST CREATE
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+	
+	private UploadRequest createSimpleUploadRequest(Date activationDate) {
+		UploadRequest uploadRequest = new UploadRequest();
+		uploadRequest.setCanClose(true);
+		uploadRequest.setMaxDepositSize((long) 100);
+		uploadRequest.setMaxFileCount(new Integer(3));
+		uploadRequest.setMaxFileSize((long) 50);
+		uploadRequest.setStatus(UploadRequestStatus.STATUS_CREATED);
+		uploadRequest.setExpiryDate(new Date());
+		uploadRequest.setSecured(false);
+		uploadRequest.setCanEditExpiryDate(true);
+		uploadRequest.setCanDelete(true);
+		uploadRequest.setLocale("fr");
+		uploadRequest.setActivationDate(activationDate);
+		uploadRequest.setCreationDate(new Date());
+		uploadRequest.setModificationDate(new Date());
+		return uploadRequest;
+	}
+
+	private void finishUploadRequest(UploadRequest ure, User actor) {
+		service.updateStatus(actor, actor, ure.getUuid(), UploadRequestStatus.STATUS_CLOSED);
+		service.updateStatus(actor, actor, ure.getUuid(), UploadRequestStatus.STATUS_ARCHIVED);
+		service.deleteRequest(actor, actor, ure.getUuid());
+	}
 }

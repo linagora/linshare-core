@@ -44,6 +44,7 @@ import org.linagora.linshare.core.business.service.UploadRequestEntryBusinessSer
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
+import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -52,6 +53,7 @@ import org.linagora.linshare.core.domain.entities.OperationHistory;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.UploadRequestEntryRessourceAccessControl;
@@ -62,6 +64,8 @@ import org.linagora.linshare.core.service.MimeTypeService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.VirusScannerService;
+import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
+import org.linagora.linshare.mongo.repository.DocumentGarbageCollecteurMongoRepository;
 
 public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Account, UploadRequestEntry>
 		implements UploadRequestEntryService {
@@ -83,6 +87,8 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 	private final AntiSamyService antiSamyService;
 
 	private final QuotaService quotaService;
+	
+	protected final DocumentGarbageCollecteurMongoRepository documentGarbageCollecteur;
 
 	public UploadRequestEntryServiceImpl(
 			UploadRequestEntryBusinessService uploadRequestEntryBusinessService,
@@ -94,7 +100,8 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 			AntiSamyService antiSamyService,
 			UploadRequestEntryRessourceAccessControl rac,
 			OperationHistoryBusinessService operationHistoryBusinessService,
-			QuotaService quotaService) {
+			QuotaService quotaService,
+			DocumentGarbageCollecteurMongoRepository documentGarbageCollecteur) {
 		super(rac);
 		this.uploadRequestEntryBusinessService = uploadRequestEntryBusinessService;
 		this.abstractDomainService = abstractDomainService;
@@ -105,6 +112,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		this.antiSamyService = antiSamyService;		
 		this.operationHistoryBusinessService = operationHistoryBusinessService;
 		this.quotaService = quotaService;
+		this.documentGarbageCollecteur = documentGarbageCollecteur;
 	}
 
 	@Override
@@ -205,5 +213,36 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		checkDownloadPermission(actor, owner, DocumentEntry.class, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, entry);
 		// TODO log
 		return uploadRequestEntryBusinessService.getDocumentStream(entry);
+	}
+
+	@Override
+	public UploadRequestEntry delete(User authUser, User actor, String uuid) {
+		preChecks(authUser, actor);
+		Validate.notEmpty(uuid, "entry uuid is required.");
+		logger.debug(
+				"Actor: " + actor.getAccountRepresentation() + " is trying to delete upload request entry: " + uuid);
+		UploadRequestEntry uploadRequestEntry = find(authUser, actor, uuid);
+		checkDeletePermission(authUser, actor, UploadRequestEntry.class,
+				BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FORBIDDEN, uploadRequestEntry);
+		if (!(uploadRequestEntry.getUploadRequestUrl().getUploadRequest()
+				.getStatus() == UploadRequestStatus.STATUS_CLOSED
+				|| uploadRequestEntry.getUploadRequestUrl().getUploadRequest()
+						.getStatus() == UploadRequestStatus.STATUS_ARCHIVED)) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FILE_CANNOT_DELETED,
+					"Cannot delete file when upload request is not closed or archived");
+		}
+		if (!uploadRequestEntry.getCopied()) {
+			documentGarbageCollecteur.insert(new DocumentGarbageCollecteur(uploadRequestEntry.getDocument().getUuid()));
+		}
+		uploadRequestEntryBusinessService.delete(uploadRequestEntry);
+		//TODO log
+		delFromQuota(actor, uploadRequestEntry.getSize());
+		return uploadRequestEntry;
+	}
+	
+	protected void delFromQuota(Account owner, Long size) {
+		OperationHistory oh = new OperationHistory(owner, owner.getDomain(), - size, OperationHistoryTypeEnum.DELETE,
+				ContainerQuotaType.USER);
+		operationHistoryBusinessService.create(oh);
 	}
 }

@@ -40,6 +40,7 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
 import org.linagora.linshare.core.facade.webservice.user.UploadRequestEntryFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.core.service.AccountService;
@@ -57,7 +58,7 @@ public class UploadRequestEntryFacadeImpl extends GenericFacadeImpl implements U
 
 	@Override
 	public DocumentDto find(String actorUuid, String uuid) throws BusinessException {
-		Validate.notEmpty(uuid, "Upload request uuid must be set.");
+		Validate.notEmpty(uuid, "Upload request entry uuid must be set.");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		UploadRequestEntry uploadRequestEntry =  uploadRequestEntryService.find(authUser, actor, uuid);
@@ -70,5 +71,14 @@ public class UploadRequestEntryFacadeImpl extends GenericFacadeImpl implements U
 		logger.debug("downloading for document : " + ulploadRequestEntryUuid);
 		User authUser = checkAuthentication();
 		return uploadRequestEntryService.getDocumentStream(authUser, authUser, ulploadRequestEntryUuid);
+	}
+
+	@Override
+	public UploadRequestEntryDto delete(String actorUuid, String uuid) {
+		Validate.notEmpty(uuid, "Upload request entry uuid must be set.");
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		UploadRequestEntry uploadRequestEntry =  uploadRequestEntryService.delete(authUser, actor, uuid);
+		return new UploadRequestEntryDto(uploadRequestEntry);
 	}
 }

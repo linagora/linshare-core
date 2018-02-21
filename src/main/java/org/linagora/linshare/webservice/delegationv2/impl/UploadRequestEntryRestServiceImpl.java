@@ -32,7 +32,7 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.webservice.userv2.impl;
+package org.linagora.linshare.webservice.delegationv2.impl;
 
 import java.io.InputStream;
 
@@ -50,7 +50,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
 import org.linagora.linshare.core.facade.webservice.user.UploadRequestEntryFacade;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
-import org.linagora.linshare.webservice.userv2.UploadRequestEntryRestService;
+import org.linagora.linshare.webservice.delegationv2.UploadRequestEntryRestService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,8 +61,8 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/upload_request_entry")
-@Api(value = "/rest/user/v2/upload_request_entry", description = "requests API")
+@Path("/{actorUuid}/upload_request_entry")
+@Api(value = "/rest/delegation/v2/{actorUuid}/upload_request_entry", description = "requests API")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class UploadRequestEntryRestServiceImpl implements UploadRequestEntryRestService {
@@ -84,8 +84,11 @@ public class UploadRequestEntryRestServiceImpl implements UploadRequestEntryRest
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public Response download(@ApiParam(value = "Upload request entry uuid.", required = true)  @PathParam("uuid") String uuid) throws BusinessException {
-		DocumentDto documentDto = uploadRequestEntryFacade.find(null, uuid);
+	public Response download(
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@ApiParam(value = "Upload request entry uuid.", required = true) @PathParam("uuid") String uuid)
+			throws BusinessException {
+		DocumentDto documentDto = uploadRequestEntryFacade.find(actorUuid, uuid);
 		InputStream documentStream = uploadRequestEntryFacade.getDocumentStream(uuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream,
 				documentDto.getName(), documentDto.getType(), documentDto.getSize());
@@ -99,7 +102,11 @@ public class UploadRequestEntryRestServiceImpl implements UploadRequestEntryRest
 			@ApiResponse(code = 404, message = "Document not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
-	@Override	public UploadRequestEntryDto delete(@ApiParam(value = "Upload request entry uuid.", required = true)  @PathParam("uuid") String uuid) throws BusinessException {
-		return uploadRequestEntryFacade.delete(null, uuid);
+	@Override
+	public UploadRequestEntryDto delete(
+			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@ApiParam(value = "Upload request entry uuid.", required = true) @PathParam("uuid") String uuid)
+			throws BusinessException {
+		return uploadRequestEntryFacade.delete(actorUuid, uuid);
 	}
 }

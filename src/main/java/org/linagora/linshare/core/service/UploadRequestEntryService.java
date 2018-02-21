@@ -40,6 +40,7 @@ import java.io.InputStream;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface UploadRequestEntryService {
@@ -52,4 +53,6 @@ public interface UploadRequestEntryService {
 	UploadRequestEntry find (Account authUser, Account actor, String uuid);
 
 	InputStream getDocumentStream(Account actor, Account owner, String uuid) throws BusinessException;
+
+	UploadRequestEntry delete(User authUser, User actor, String uuid);
 }

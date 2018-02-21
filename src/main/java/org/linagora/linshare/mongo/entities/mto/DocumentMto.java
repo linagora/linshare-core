@@ -34,6 +34,7 @@
 package org.linagora.linshare.mongo.entities.mto;
 
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 
 public class DocumentMto extends EntryMto {
 
@@ -48,6 +49,13 @@ public class DocumentMto extends EntryMto {
 	}
 
 	public DocumentMto(DocumentEntry entry) {
+		super(entry);
+		this.type = entry.getType();
+		this.sha256Sum = entry.getSha256sum();
+		this.size = entry.getSize();
+	}
+
+	public DocumentMto(UploadRequestEntry entry) {
 		super(entry);
 		this.type = entry.getType();
 		this.sha256Sum = entry.getSha256sum();

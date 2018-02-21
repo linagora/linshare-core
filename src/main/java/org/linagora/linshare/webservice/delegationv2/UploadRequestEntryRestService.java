@@ -32,7 +32,7 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.webservice.userv2;
+package org.linagora.linshare.webservice.delegationv2;
 
 import javax.ws.rs.core.Response;
 
@@ -41,7 +41,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntr
 
 public interface UploadRequestEntryRestService {
 
-	Response download(String uuid) throws BusinessException;
+	Response download(String actorUuid, String uuid) throws BusinessException;
 	
-	UploadRequestEntryDto delete(String uuid) throws BusinessException;
+	UploadRequestEntryDto delete(String actorUuid, String uuid) throws BusinessException;
 }
