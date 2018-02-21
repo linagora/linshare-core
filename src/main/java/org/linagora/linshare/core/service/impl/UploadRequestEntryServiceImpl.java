@@ -39,10 +39,13 @@ import java.io.InputStream;
 import java.util.Calendar;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestEntryBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
+import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -51,6 +54,7 @@ import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.OperationHistory;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
@@ -64,12 +68,14 @@ import org.linagora.linshare.core.rac.UploadRequestEntryRessourceAccessControl;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AntiSamyService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
+import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MimeTypeService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.VirusScannerService;
 import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
+import org.linagora.linshare.mongo.entities.logs.DocumentEntryAuditLogEntry;
 import org.linagora.linshare.mongo.repository.DocumentGarbageCollecteurMongoRepository;
 
 public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Account, UploadRequestEntry>
@@ -99,6 +105,10 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 
 	protected final DocumentGarbageCollecteurMongoRepository documentGarbageCollecteur;
 
+	private DocumentEntryBusinessService documentEntryBusinessService;
+
+	private LogEntryService logEntryService;
+
 	public UploadRequestEntryServiceImpl(
 			UploadRequestEntryBusinessService uploadRequestEntryBusinessService,
 			AbstractDomainService abstractDomainService,
@@ -112,7 +122,9 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 			QuotaService quotaService,
 			DocumentGarbageCollecteurMongoRepository documentGarbageCollecteur,
 			MailBuildingService mailBuildingService,
-			NotifierService notifierService) {
+			NotifierService notifierService,
+			DocumentEntryBusinessService documentEntryBusinessService,
+			LogEntryService logEntryService) {
 		super(rac);
 		this.uploadRequestEntryBusinessService = uploadRequestEntryBusinessService;
 		this.abstractDomainService = abstractDomainService;
@@ -126,7 +138,9 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		this.documentGarbageCollecteur = documentGarbageCollecteur;
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
-	}
+		this.documentEntryBusinessService = documentEntryBusinessService;
+		this.logEntryService = logEntryService;
+		}
 
 	@Override
 	public UploadRequestEntry create(Account actor, Account owner, File tempFile, String fileName, String comment,
@@ -185,6 +199,29 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 			AbstractDomain domain = abstractDomainService.retrieveDomain(actor.getDomain().getUuid());
 			Functionality mimeFunctionality = functionalityReadOnlyService.getMimeTypeFunctionality(domain);
 			return mimeFunctionality.getActivationPolicy().getStatus();
+		}
+
+		@Override
+		public DocumentEntry copy(Account actor, Account owner, UploadRequestEntry uploadRequestEntry)
+				throws BusinessException {
+			DocumentEntry entity = null;
+			preChecks(actor, owner);
+			Validate.notEmpty(uploadRequestEntry.getDocument().getUuid(), "documentUuid is required.");
+			Validate.notEmpty(uploadRequestEntry.getName(), "fileName is required.");
+			Validate.notNull(uploadRequestEntry.getSize(), "size is required.");
+			checkCreatePermission(actor, owner, DocumentEntry.class, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, null);
+			checkSpace(owner, uploadRequestEntry.getSize());
+			UploadRequest uploadRequest = uploadRequestEntry.getUploadRequestUrl().getUploadRequest();
+			if (!uploadRequest.getStatus().equals(UploadRequestStatus.STATUS_CLOSED)) {
+				throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FILE_CANNOT_BE_COPIED,
+						"You need first close the current upload request before copying file");
+			}
+			entity = documentEntryBusinessService.copy(owner, uploadRequestEntry);
+			DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, entity, LogAction.CREATE);
+			log.setCause(LogActionCause.COPY);
+			log.setFromResourceUuid(uploadRequestEntry.getUuid());
+			logEntryService.insert(log);
+			return entity;
 		}
 
 		private String sanitizeFileName(String fileName) throws BusinessException {

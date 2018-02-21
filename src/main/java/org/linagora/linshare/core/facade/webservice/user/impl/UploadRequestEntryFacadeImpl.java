@@ -35,8 +35,11 @@
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.io.InputStream;
+import java.util.List;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -45,6 +48,8 @@ import org.linagora.linshare.core.facade.webservice.user.UploadRequestEntryFacad
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
+
+import com.google.common.collect.Lists;
 
 public class UploadRequestEntryFacadeImpl extends GenericFacadeImpl implements UploadRequestEntryFacade {
 
@@ -80,5 +85,16 @@ public class UploadRequestEntryFacadeImpl extends GenericFacadeImpl implements U
 		User actor = getActor(authUser, actorUuid);
 		UploadRequestEntry uploadRequestEntry =  uploadRequestEntryService.delete(authUser, actor, uuid);
 		return new UploadRequestEntryDto(uploadRequestEntry);
+	}
+
+	@Override
+	public List<DocumentDto> copy(String actorUuid, String uuid) throws BusinessException {
+		Account authUser = checkAuthentication();
+		Validate.notNull(uuid);
+		User actor = (User) getActor(authUser, actorUuid);
+		UploadRequestEntry uploadRequestEntry = uploadRequestEntryService.find(authUser, actor,uuid);
+		Validate.notNull(uploadRequestEntry);
+		DocumentEntry newDocumentEntry = uploadRequestEntryService.copy(authUser, actor, uploadRequestEntry);
+		return Lists.newArrayList(new DocumentDto(newDocumentEntry));
 	}
 }

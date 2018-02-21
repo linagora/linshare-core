@@ -38,6 +38,7 @@ import java.io.File;
 import java.io.InputStream;
 
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
@@ -49,10 +50,12 @@ public interface UploadRequestEntryService {
 			boolean isFromCmis, String metadata, UploadRequestUrl uploadRequestUrl) throws BusinessException;
 
 	boolean mimeTypeFilteringStatus(Account actor) throws BusinessException;
-	
+
 	UploadRequestEntry find (Account authUser, Account actor, String uuid);
 
 	InputStream getDocumentStream(Account actor, Account owner, String uuid) throws BusinessException;
 
 	UploadRequestEntry delete(User authUser, User actor, String uuid);
+
+	DocumentEntry copy(Account actor, Account owner, UploadRequestEntry uploadRequestEntry) throws BusinessException;
 }

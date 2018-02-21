@@ -35,10 +35,12 @@
 package org.linagora.linshare.webservice.userv2.impl;
 
 import java.io.InputStream;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -79,7 +81,7 @@ public class UploadRequestEntryRestServiceImpl implements UploadRequestEntryRest
 	@Path("/{uuid}/download")
 	@GET
 	@ApiOperation(value = "Download a file.", response = Response.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right role."),
 			@ApiResponse(code = 404, message = "Document not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
@@ -101,5 +103,19 @@ public class UploadRequestEntryRestServiceImpl implements UploadRequestEntryRest
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override	public UploadRequestEntryDto delete(@ApiParam(value = "Upload request entry uuid.", required = true)  @PathParam("uuid") String uuid) throws BusinessException {
 		return uploadRequestEntryFacade.delete(null, uuid);
+	}
+
+	@Path("/{uuid}/copy")
+	@POST
+	@ApiOperation(value = "Copy a document from an existing upload resquest.", response = DocumentDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right role."),
+			@ApiResponse(code = 404, message = "Document not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public List<DocumentDto> copy(
+			@ApiParam(value = "Copy document.", required = false)  @PathParam("uuid") String uuid)
+			throws BusinessException {
+		return uploadRequestEntryFacade.copy(null, uuid);
 	}
 }

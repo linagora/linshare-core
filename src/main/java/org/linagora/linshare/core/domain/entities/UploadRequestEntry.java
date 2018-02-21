@@ -57,6 +57,8 @@ public class UploadRequestEntry extends Entry implements Serializable {
 
 	protected Boolean ciphered;
 
+	protected boolean hasThumbnail;
+
 	public UploadRequestEntry() {
 		super();
 	}
@@ -69,6 +71,7 @@ public class UploadRequestEntry extends Entry implements Serializable {
 		this.sha256sum = document.getSha256sum();
 		this.size = document.getSize();
 		this.type = document.getType();
+		this.hasThumbnail = document.getHasThumbnail();
 		this.copied = false;
 		this.ciphered = false;
 	}
@@ -144,5 +147,13 @@ public class UploadRequestEntry extends Entry implements Serializable {
 
 	public void setCiphered(Boolean ciphered) {
 		this.ciphered = ciphered;
+	}
+
+	public boolean isHasThumbnail() {
+		return hasThumbnail;
+	}
+
+	public void setHasThumbnail(boolean hasThumbnail) {
+		this.hasThumbnail = hasThumbnail;
 	}
 }

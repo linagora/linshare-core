@@ -228,6 +228,8 @@
 		<constructor-arg ref="documentGarbageCollecteurMongoRepository" />
 		<constructor-arg ref="mailBuildingService"/>
 		<constructor-arg ref="notifierService"/>
+		<constructor-arg ref="documentEntryBusinessService" />
+		<constructor-arg ref="logEntryService" />
 	</bean>
 	<bean name="uploadPropositionService" class="org.linagora.linshare.core.service.impl.UploadPropositionServiceImpl">
 		<constructor-arg ref="uploadPropositionBusinessService" />

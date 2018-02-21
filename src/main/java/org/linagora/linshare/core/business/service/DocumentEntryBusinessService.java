@@ -106,6 +106,7 @@ public interface DocumentEntryBusinessService {
 
 	String SHA256CheckSumFileStream(InputStream fs) throws IOException;
 
+	
 	List<String> findAllExpiredEntries();
 
 	void deleteDocument(Document document)
@@ -114,4 +115,6 @@ public interface DocumentEntryBusinessService {
 	void updateThumbnail(Document document, Account account) ;
 
 	UploadRequestEntry getRelatedUploadRequestEntry(DocumentEntry documentEntry);
+
+	DocumentEntry copy(Account owner, UploadRequestEntry uploadRequestEntry);
 }

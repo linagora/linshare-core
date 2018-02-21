@@ -34,14 +34,19 @@
 
 package org.linagora.linshare.webservice.userv2;
 
+import java.util.List;
+
 import javax.ws.rs.core.Response;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
+import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 
 public interface UploadRequestEntryRestService {
 
 	Response download(String uuid) throws BusinessException;
 	
 	UploadRequestEntryDto delete(String uuid) throws BusinessException;
+
+	List<DocumentDto> copy(String uuid) throws BusinessException;
 }

@@ -132,7 +132,6 @@
 <!-- 			<ref bean="userv2StatisticRestService" /> -->
 			<ref bean="userv2AccountQuotaRestService" />
 			<ref bean="userv2WelcomeMessagesRestService" />
-			<ref bean="userUploadRequestRestService" /> 
 			<ref bean="userUploadRequestGroupRestService" /> 
 			<ref bean="userUploadRequestEntryRestService" /> 
 			<ref bean="userUploadRequestUrlRestService" /> 
