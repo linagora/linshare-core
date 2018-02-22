@@ -207,11 +207,9 @@
 		<constructor-arg ref="uploadRequestUrlBusinessService" />
 		<constructor-arg ref="uploadRequestEntryBusinessService" />
 		<constructor-arg ref="accountRepository" />
-		<constructor-arg ref="documentEntryService" />
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="uploadRequestEntryService" />
-		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="uploadRequestUrlResourceAccessControl" />
 	</bean>
 	<bean name="uploadRequestEntryService"

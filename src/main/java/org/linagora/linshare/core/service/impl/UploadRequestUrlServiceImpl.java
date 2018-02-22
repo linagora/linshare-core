@@ -58,8 +58,6 @@ import org.linagora.linshare.core.notifications.context.UploadRequestUploadedFil
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.UploadRequestUrlResourceAccessControl;
 import org.linagora.linshare.core.repository.AccountRepository;
-import org.linagora.linshare.core.service.DocumentEntryService;
-import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
@@ -74,15 +72,11 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 
 	private final AccountRepository<Account> accountRepository;
 
-	private final DocumentEntryService documentEntryService;
-
 	private final MailBuildingService mailBuildingService;
 
 	private final NotifierService notifierService;
 
 	private final UploadRequestEntryService uploadRequestEntryService;
-
-	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
 	private final UploadRequestUrlResourceAccessControl uploadRequestUrlRac;
 
@@ -90,21 +84,17 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 			final UploadRequestUrlBusinessService uploadRequestUrlBusinessService,
 			final UploadRequestEntryBusinessService uploadRequestEntryBusinessService,
 			final AccountRepository<Account> accountRepository,
-			final DocumentEntryService documentEntryService,
 			final MailBuildingService mailBuildingService,
 			final NotifierService notifierService,
 			final UploadRequestEntryService uploadRequestEntryService,
-			final FunctionalityReadOnlyService functionalityReadOnlyService,
 			final UploadRequestUrlResourceAccessControl uploadRequestUrlRac) {
 		super();
 		this.uploadRequestUrlBusinessService = uploadRequestUrlBusinessService;
 		this.uploadRequestEntryBusinessService = uploadRequestEntryBusinessService;
 		this.accountRepository = accountRepository;
-		this.documentEntryService = documentEntryService;
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
 		this.uploadRequestEntryService = uploadRequestEntryService;
-		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.uploadRequestUrlRac =  uploadRequestUrlRac;
 	}
 
@@ -133,6 +123,11 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 	public void deleteUploadRequestEntry(String uploadRequestUrlUuid,
 			String password, String entryUuid) throws BusinessException {
 		UploadRequestUrl requestUrl = find(uploadRequestUrlUuid, password);
+		if (requestUrl.getUploadRequest().getStatus() != UploadRequestStatus.STATUS_ENABLED) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FILE_CANNOT_DELETED,
+					"Cannot delete file when upload request is not enabled");
+
+		}
 		deleteBusinessCheck(requestUrl);
 		Set<UploadRequestEntry> entries = requestUrl.getUploadRequestEntries();
 		UploadRequestEntry found = null;
@@ -143,19 +138,6 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 			}
 		}
 		if (found != null) {
-			Account actor = accountRepository.getUploadRequestSystemAccount();
-			String documentEntryUuid = null;
-			if (found.getDocumentEntry() != null) {
-				documentEntryUuid = found.getDocumentEntry().getUuid();
-			}
-			found.setDocumentEntry(null);
-			found = uploadRequestEntryBusinessService.update(found);
-			if (documentEntryUuid != null) {
-				// Extract owner for upload request URL
-				Account owner = requestUrl.getUploadRequest().getUploadRequestGroup().getOwner();
-				// Store the file into the owner account.
-				documentEntryService.delete(actor, owner, documentEntryUuid);
-			}
 			uploadRequestEntryBusinessService.delete(found);
 
 			EmailContext context = new UploadRequestDeleteFileEmailContext(
