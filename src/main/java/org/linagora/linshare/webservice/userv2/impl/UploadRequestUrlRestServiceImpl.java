@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,26 +31,48 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.webservice.userv2.impl;
 
-package org.linagora.linshare.webservice.userv2;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
-import java.util.List;
-
-import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
+import org.linagora.linshare.core.facade.webservice.uploadrequest.UploadRequestUrlFacade;
+import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.UploadRequestUrlDto;
+import org.linagora.linshare.webservice.userv2.UploadRequestUrlRestService;
 
-public interface UploadRequestRestService {
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
-	UploadRequestDto addRecipient(String groupUuid, String recipientsEmail);
+@Path("/upload_request_urls")
+@Api(value = "/rest/user/v2/upload_request_urls", description = "requests API")
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+public class UploadRequestUrlRestServiceImpl implements UploadRequestUrlRestService {
 
-	List<UploadRequestDto> findByUploadRequestGroup(String groupUuid, List<UploadRequestStatus> status);
+	private final UploadRequestUrlFacade uploadRequestUrlFacade;
 
-	List<UploadRequestDto> findAll(List<UploadRequestStatus> status);
-	
-	UploadRequestDto find(String uuid);
+	public UploadRequestUrlRestServiceImpl(UploadRequestUrlFacade uploadRequestUrlFacade) {
+		super();
+		this.uploadRequestUrlFacade = uploadRequestUrlFacade;
+	}
 
-	UploadRequestDto updateStatus(String requestUuid, UploadRequestStatus status) throws BusinessException;
-
-	UploadRequestDto update(UploadRequestDto uploadRequestDto);
+	@DELETE
+	@Path("/")
+	@ApiOperation(value = "Delete a Upload request url from a shared upload request.", response = UploadRequestDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
+			@ApiResponse(code = 404, message = "Document not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public UploadRequestUrlDto delete(
+			@ApiParam(value = "The upload request url to be removed", required = true) UploadRequestUrlDto uploadRequestUrlDto) {
+		return uploadRequestUrlFacade.delete(null, uploadRequestUrlDto);
+	}
 }

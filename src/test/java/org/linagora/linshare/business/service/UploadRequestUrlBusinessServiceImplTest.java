@@ -72,9 +72,9 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml", })
-public class UploadRequestDeleteRecipientsTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class UploadRequestUrlBusinessServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
 
-	private static Logger logger = LoggerFactory.getLogger(UploadRequestDeleteRecipientsTest.class);
+	private static Logger logger = LoggerFactory.getLogger(UploadRequestUrlBusinessServiceImplTest.class);
 
 	@Qualifier("userRepository")
 	@Autowired
@@ -94,7 +94,7 @@ public class UploadRequestDeleteRecipientsTest extends AbstractTransactionalJUni
 
 	private LinShareWiser wiser;
 
-	public UploadRequestDeleteRecipientsTest() {
+	public UploadRequestUrlBusinessServiceImplTest() {
 		super();
 		wiser = new LinShareWiser(2525);
 	}
