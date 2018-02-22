@@ -180,11 +180,9 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 	public void updateStatus() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
-		Assert.assertEquals(UploadRequestStatus.STATUS_CREATED, ure.getUploadRequestGroup().getStatus());
+		Assert.assertEquals(UploadRequestStatus.STATUS_ENABLED, ure.getUploadRequestGroup().getStatus());
 
 		// Update upload request group status
-		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(), UploadRequestStatus.STATUS_ENABLED);
-		Assert.assertEquals(UploadRequestStatus.STATUS_ENABLED, ure.getUploadRequestGroup().getStatus());
 		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(), UploadRequestStatus.STATUS_CLOSED);
 		Assert.assertEquals(UploadRequestStatus.STATUS_CLOSED, ure.getUploadRequestGroup().getStatus());
 		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(), UploadRequestStatus.STATUS_ARCHIVED);

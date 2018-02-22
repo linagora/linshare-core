@@ -89,7 +89,7 @@ public class UploadRequest implements Cloneable {
 
 	private Boolean dirty = new Boolean(false);
 
-	private Boolean enableNotification;
+	private Boolean enableNotification = new Boolean(true);
 	
 	public UploadRequest() {
 		super();

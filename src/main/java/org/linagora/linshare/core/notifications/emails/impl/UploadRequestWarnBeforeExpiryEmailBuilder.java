@@ -81,7 +81,7 @@ public class UploadRequestWarnBeforeExpiryEmailBuilder extends GenericUploadRequ
 		ctx.setVariable("body", request.getUploadRequestGroup().getBody());
 		ctx.setVariable("documents", documents);
 		ctx.setVariable("documentsCount", documents.size());
-		ctx.setVariable("isgrouped", request.getUploadRequestURLs().size() > 1);
+		ctx.setVariable("isgrouped", request.getUploadRequestGroup().getRestricted().equals(Boolean.FALSE));
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
 		ctx.setVariable("remainingDays", days);

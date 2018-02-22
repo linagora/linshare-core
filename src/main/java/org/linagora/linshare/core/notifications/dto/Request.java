@@ -78,7 +78,7 @@ public class Request {
 	public Request(UploadRequest uploadRequest) {
 		this.activationDate = uploadRequest.getActivationDate();
 		this.expirationDate = uploadRequest.getExpiryDate();
-		this.subject = null;
+		this.subject = uploadRequest.getUploadRequestGroup().getSubject();
 		this.authorizedFiles = null;
 		this.uploadedFilesCount = null;
 		this.wasPreviouslyCreated = DateUtils.isSameDay(uploadRequest.getActivationDate(), uploadRequest.getCreationDate());

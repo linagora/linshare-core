@@ -63,7 +63,9 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestActivationEmailContext;
+import org.linagora.linshare.core.notifications.context.UploadRequestCloseByOwnerEmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestClosedByRecipientEmailContext;
+import org.linagora.linshare.core.notifications.context.UploadRequestCreatedEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.UploadRequestGroupResourceAccessControl;
 import org.linagora.linshare.core.rac.UploadRequestResourceAccessControl;
@@ -76,6 +78,8 @@ import org.linagora.linshare.core.service.UploadRequestUrlService;
 import org.linagora.linshare.mongo.entities.logs.UploadRequestAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.UploadRequestMto;
+
+import com.google.common.collect.Lists;
 
 public class UploadRequestServiceImpl extends GenericServiceImpl<Account, UploadRequest> implements UploadRequestService {
 
@@ -158,30 +162,31 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		UploadRequestAuditLogEntry log = new UploadRequestAuditLogEntry(new AccountMto(authUser), new AccountMto(actor),
 				LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST, req.getUuid(), req);
 		req = uploadRequestBusinessService.updateStatus(req, status);
-		EmailContext ctx = prepareNotification(req, actor);
-		if (ctx != null) {
-			MailContainerWithRecipient mail = mailBuildingService.build(ctx);
-			notifierService.sendNotification(mail);
-		}
+		sendNotification(req, actor);
 		log.setResourceUpdated(new UploadRequestMto(req));
 		logEntryService.insert(log);
 		return req;
 	}
 
-	private EmailContext prepareNotification(UploadRequest req, Account actor) {
-		EmailContext ctx = null;
+	private void sendNotification(UploadRequest req, Account actor) {
+		List<MailContainerWithRecipient> mails = Lists.newArrayList();
 		if (UploadRequestStatus.STATUS_ENABLED.equals(req.getStatus())) {
-			ctx = new UploadRequestActivationEmailContext((User) actor, req);
-		} else if (UploadRequestStatus.STATUS_CANCELED.equals(req.getStatus())) {
-			// TODO return context
-		} else if (UploadRequestStatus.STATUS_CLOSED.equals(req.getStatus())) {
-			// TODO return context
-		} else if (UploadRequestStatus.STATUS_ARCHIVED.equals(req.getStatus())) {
-			// TODO return context
-		}else if (UploadRequestStatus.STATUS_DELETED.equals(req.getStatus())) {
-			// TODO return context
+			mails.add(mailBuildingService.build(new UploadRequestActivationEmailContext((User) actor, req)));
+		} else if (req.getEnableNotification()) {
+			if (UploadRequestStatus.STATUS_CANCELED.equals(req.getStatus())) {
+				// TODO return context
+			} else if (UploadRequestStatus.STATUS_CLOSED.equals(req.getStatus())) {
+				for (UploadRequestUrl urUrl : req.getUploadRequestURLs()) {
+					mails.add(mailBuildingService.build(new UploadRequestCloseByOwnerEmailContext((User) actor, urUrl, req)));
+				}
+			} else if (UploadRequestStatus.STATUS_ARCHIVED.equals(req.getStatus())) {
+				// TODO return context
+			} else if (UploadRequestStatus.STATUS_DELETED.equals(req.getStatus())) {
+				// TODO return context
+			}
 		}
-		return ctx;
+		notifierService.sendNotification(mails);
+		mails.clear();
 	}
 
 	@Override
@@ -407,7 +412,11 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		}
 		if (!DateUtils.isSameDay(uploadRequest.getActivationDate(), uploadRequest.getCreationDate()) &&
 				uploadRequest.getActivationDate().after(new Date())) {
-			// TODO : Add mail creation
+			if (uploadRequest.getEnableNotification()) {
+				UploadRequestCreatedEmailContext context = new UploadRequestCreatedEmailContext((User) uploadRequest.getUploadRequestGroup().getOwner(),
+						uploadRequestUrl, uploadRequest);
+				notifierService.sendNotification(mailBuildingService.build(context));
+			}
 		} else {
 			UploadRequestActivationEmailContext mailContext = new UploadRequestActivationEmailContext(
 					(User) uploadRequestGroup.getOwner(), uploadRequest, uploadRequestUrl);

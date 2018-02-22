@@ -38,6 +38,7 @@ import java.util.List;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Contact;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.User;
@@ -56,4 +57,6 @@ public interface UploadRequestGroupService {
 	UploadRequestGroup updateStatus(Account actor, Account owner, String requestGroupUuid, UploadRequestStatus stat);
 
 	UploadRequestGroup update(User authUser, User actor, UploadRequestGroup uploadRequestGroup);
+
+	List<String> findOutdatedRequestsGroup(SystemAccount account);
 }

@@ -37,9 +37,13 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.context.UploadRequestReminderEmailContext;
 import org.linagora.linshare.core.notifications.dto.MailContact;
 import org.thymeleaf.context.Context;
 
@@ -54,8 +58,23 @@ public class UploadRequestReminderEmailBuilder extends GenericUploadRequestEmail
 
 	@Override
 	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		// TODO UploadRequests : new email
-		return null;
+		UploadRequestReminderEmailContext emailCtx = (UploadRequestReminderEmailContext) context;
+
+		User owner = emailCtx.getOwner();
+		UploadRequest request = emailCtx.getUploadRequest();
+
+		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
+
+		List<MailContact> recipients = getRecipients(request);
+		Context ctx = newTmlContext(emailCtx);
+		ctx.setVariable("body", request.getUploadRequestGroup().getBody());
+		ctx.setVariable("isgrouped", request.getUploadRequestGroup().getRestricted().equals(Boolean.FALSE));
+		ctx.setVariable("recipients", recipients);
+		ctx.setVariable("recipientsCount", recipients.size());
+
+		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
+				emailCtx);
+		return buildMailContainer;
 	}
 
 	@Override

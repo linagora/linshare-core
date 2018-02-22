@@ -49,6 +49,7 @@ import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.job.quartz.UploadRequestBatchResultContext;
 import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.context.UploadRequestReminderEmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestWarnBeforeExpiryEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.repository.AccountRepository;
@@ -90,17 +91,26 @@ public class NotifyBeforeExpirationUploadRequestBatchImpl extends GenericBatchIm
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		List<MailContainerWithRecipient> notifications = Lists.newArrayList();
-		UploadRequest r = service.findRequestByUuid(getSystemAccount(), null, identifier);
-		ResultContext context = new UploadRequestBatchResultContext(r);
-		if (!r.isNotified()) {
-			for (UploadRequestUrl u : r.getUploadRequestURLs()) {
-				EmailContext ctx = new UploadRequestWarnBeforeExpiryEmailContext((User)r.getUploadRequestGroup().getOwner(), r, u, false);
-				notifications.add(mailBuildingService.build(ctx));
+		UploadRequest uploadRequest = service.findRequestByUuid(getSystemAccount(), null, identifier);
+		ResultContext context = new UploadRequestBatchResultContext(uploadRequest);
+		if (!uploadRequest.isNotified()) {
+			for (UploadRequestUrl urUrl : uploadRequest.getUploadRequestURLs()) {
+				if (uploadRequest.getEnableNotification()) {
+					if (urUrl.getUploadRequestEntries().isEmpty()) {
+						// Send remind to the recipients
+						EmailContext ctx = new UploadRequestReminderEmailContext((User) uploadRequest.getUploadRequestGroup().getOwner(), urUrl, uploadRequest);
+						notifications.add(mailBuildingService.build(ctx));
+					} else {
+						EmailContext ctx = new UploadRequestWarnBeforeExpiryEmailContext(
+								(User) uploadRequest.getUploadRequestGroup().getOwner(), uploadRequest, urUrl, false);
+						notifications.add(mailBuildingService.build(ctx));
+					}
+				}
 			}
-			EmailContext ctx = new UploadRequestWarnBeforeExpiryEmailContext((User)r.getUploadRequestGroup().getOwner(), r, null, true);
+			EmailContext ctx = new UploadRequestWarnBeforeExpiryEmailContext((User)uploadRequest.getUploadRequestGroup().getOwner(), uploadRequest, null, true);
 			notifications.add(mailBuildingService.build(ctx));
-			r.setNotified(true);
-			service.updateRequest(getSystemAccount(), r.getUploadRequestGroup().getOwner(), r);
+			uploadRequest.setNotified(true);
+			service.updateRequest(getSystemAccount(), uploadRequest.getUploadRequestGroup().getOwner(), uploadRequest);
 			notifierService.sendNotification(notifications);
 		}
 		return context;

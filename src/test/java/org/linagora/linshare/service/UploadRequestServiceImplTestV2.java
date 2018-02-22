@@ -78,13 +78,6 @@ import com.google.common.collect.Lists;
 public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4SpringContextTests {
 	private static Logger logger = LoggerFactory.getLogger(UploadRequestServiceImplTestV2.class);
 
-	private LinShareWiser wiser;
-
-	public UploadRequestServiceImplTestV2() {
-		super();
-		wiser = new LinShareWiser(2525);
-	}
-
 	@Qualifier("userRepository")
 	@Autowired
 	private UserRepository<User> userRepository;
@@ -110,6 +103,13 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 	private User john;
 
 	private Contact yoda;
+
+	private LinShareWiser wiser;
+
+	public UploadRequestServiceImplTestV2() {
+		super();
+		wiser = new LinShareWiser(2525);
+	}
 
 	@Before
 	public void init() throws Exception {
@@ -142,7 +142,6 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		wiser.stop();
-		service.deleteRequest(john, john, uploadRequest.getUuid());
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
@@ -199,7 +198,6 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 		List<UploadRequest> uploadRequests = uploadRequestGroupService.createRequest(john, john, ure,
 				Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
 		Assert.assertEquals(UploadRequestStatus.STATUS_ENABLED, ure.getUploadRequestGroup().getStatus());
-
 		// Update upload request status
 		service.updateStatus(john, john, uploadRequests.get(0).getUuid(), UploadRequestStatus.STATUS_CLOSED);
 		Assert.assertEquals(UploadRequestStatus.STATUS_CLOSED, uploadRequests.get(0).getStatus());
@@ -221,6 +219,7 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 		Assert.assertEquals(request.getEnableNotification(), true);
 		Assert.assertEquals(request.getDirty(), true);
 		logger.debug(LinShareTestConstants.END_TEST);
+		wiser.checkGeneratedMessages();
 	}
 	
 

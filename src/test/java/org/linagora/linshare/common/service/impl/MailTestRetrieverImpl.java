@@ -57,7 +57,4 @@ public class MailTestRetrieverImpl implements MailTestRetriever{
 	public String getSenderMail() {
 		return sender;
 	}
-
-	
-	
 }

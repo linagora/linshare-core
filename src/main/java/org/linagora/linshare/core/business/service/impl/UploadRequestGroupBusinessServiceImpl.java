@@ -86,4 +86,9 @@ public class UploadRequestGroupBusinessServiceImpl implements
 		uploadRequestGroup = uploadRequestGroupRepository.update(uploadRequestGroup);
 		return uploadRequestGroup;
 	}
+
+	@Override
+	public List<String> findOutdatedRequests() {
+		return uploadRequestGroupRepository.findOutDateRequests();
+	}
 }

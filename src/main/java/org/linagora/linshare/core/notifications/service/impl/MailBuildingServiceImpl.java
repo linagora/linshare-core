@@ -720,10 +720,6 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 
 	@SuppressWarnings("unused")
 	private boolean isDisable(Contact contact, Account sender, MailActivationType type) {
-		// Disable old deprecated notifications !!
-		if (true) {
-			return true;
-		}
 		AbstractDomain recipientDomain = domainBusinessService.findGuestDomain(sender.getDomain());
 		// guest domain could be inexistent into the database.
 		if (recipientDomain == null) {

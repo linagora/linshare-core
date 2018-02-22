@@ -55,4 +55,6 @@ public interface UploadRequestGroupBusinessService {
 	void delete(UploadRequestGroup group) throws BusinessException;
 
 	UploadRequestGroup updateStatus(UploadRequestGroup uploadRequestGroup, UploadRequestStatus status);
+
+	List<String> findOutdatedRequests();
 }

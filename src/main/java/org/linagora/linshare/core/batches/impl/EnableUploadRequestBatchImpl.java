@@ -101,7 +101,6 @@ public class EnableUploadRequestBatchImpl extends GenericBatchImpl implements En
 		UploadRequestActivationEmailContext mailContext = new UploadRequestActivationEmailContext((User) r.getUploadRequestGroup().getOwner(), r);
 		notifications.add(mailBuildingService.build(mailContext));
 		notifierService.sendNotification(notifications);
-		logger.error("Fail to update upload request status of the request : " + r.getUuid());
 		return context;
 	}
 

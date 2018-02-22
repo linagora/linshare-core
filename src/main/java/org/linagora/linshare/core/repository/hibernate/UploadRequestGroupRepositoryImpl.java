@@ -39,6 +39,7 @@ import java.util.UUID;
 
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -94,5 +95,16 @@ public class UploadRequestGroupRepositoryImpl extends
 			throws BusinessException {
 		entity.setModificationDate(new Date());
 		return super.update(entity);
+	}
+
+	@Override
+	public List<String> findOutDateRequests() {
+		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass());
+		crit.add(Restrictions.lt("expiryDate", new Date()));
+		crit.add(Restrictions.eq("status", UploadRequestStatus.STATUS_ENABLED));
+		crit.setProjection(Projections.property("uuid"));
+		@SuppressWarnings("unchecked")
+		List<String> list = listByCriteria(crit);
+		return list;
 	}
 }

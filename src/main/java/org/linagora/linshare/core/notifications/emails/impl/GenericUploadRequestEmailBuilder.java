@@ -43,6 +43,7 @@ import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.notifications.context.GenericUploadRequestEmailContext;
 import org.linagora.linshare.core.notifications.dto.Document;
@@ -71,6 +72,16 @@ public abstract class GenericUploadRequestEmailBuilder extends EmailBuilder {
 		List<MailContact> recipients = Lists.newArrayList();
 		for (UploadRequestUrl u : request.getUploadRequestURLs()) {
 			recipients.add(new MailContact(u.getContact()));
+		}
+		return recipients;
+	}
+
+	protected List<MailContact> getRecipients(UploadRequestGroup uploadrequestGroup) {
+		List<MailContact> recipients = Lists.newArrayList();
+		for (UploadRequest request : uploadrequestGroup.getUploadRequests()) {
+			for (UploadRequestUrl u : request.getUploadRequestURLs()) {
+				recipients.add(new MailContact(u.getContact()));
+			}
 		}
 		return recipients;
 	}

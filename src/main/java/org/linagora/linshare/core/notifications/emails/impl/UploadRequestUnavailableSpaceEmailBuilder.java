@@ -40,6 +40,7 @@ import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
@@ -67,10 +68,11 @@ public class UploadRequestUnavailableSpaceEmailBuilder extends GenericUploadRequ
 		boolean warnOwner = emailCtx.isWarnOwner();
 		UploadRequestUrl requestUrl = emailCtx.getRequestUrl();
 		UploadRequest request = emailCtx.getUploadRequest();
+		UploadRequestGroup uploadRequestGroup = request.getUploadRequestGroup();
 
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 
-		List<MailContact> recipients = getRecipients(request);
+		List<MailContact> recipients = getRecipients(uploadRequestGroup);
 		List<Document> documents = getDocuments(warnOwner, request, requestUrl);
 
 		Context ctx = newTmlContext(emailCtx);

@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,26 +31,44 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.repository;
 
-import java.util.List;
+package org.linagora.linshare.core.notifications.context;
 
-import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.MailActivationType;
+import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
+import org.linagora.linshare.core.domain.entities.User;
 
-public interface UploadRequestGroupRepository extends
-		AbstractRepository<UploadRequestGroup> {
+public class UploadRequestCreatedEmailContext extends GenericUploadRequestEmailContext {
 
-	/**
-	 * Find a UploadRequestGroup using its uuid.
-	 * 
-	 * @param uuid
-	 * @return found UploadRequestGroup (null if no uploadRequestEntry found).
-	 */
-	public UploadRequestGroup findByUuid(String uuid);
+	public UploadRequestCreatedEmailContext(User owner, UploadRequestUrl requestUrl, UploadRequest uploadRequest) {
+		super(owner.getDomain(), false, owner, requestUrl, uploadRequest, false);
+	}
 
-	public List<UploadRequestGroup> findAllByOwner(Account owner, List<UploadRequestStatus> uploadRequestStatus);
+	@Override
+	public MailContentType getType() {
+		return MailContentType.UPLOAD_REQUEST_CREATED;
+	}
 
-	public List<String> findOutDateRequests();
+	@Override
+	public MailActivationType getActivation() {
+		return MailActivationType.UPLOAD_REQUEST_CREATED;
+	}
+
+	@Override
+	public String getMailRcpt() {
+		return requestUrl.getContact().getMail();
+	}
+
+	@Override
+	public String getMailReplyTo() {
+		return owner.getMail();
+	}
+
+	@Override
+	public void validateRequiredField() {
+		Validate.notNull(requestUrl, "Missing Upload request url");
+	}
 }

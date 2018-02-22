@@ -92,16 +92,18 @@ public class CloseExpiredUploadRequestBatchImpl extends GenericBatchImpl impleme
 			throws BatchBusinessException, BusinessException {
 		List<MailContainerWithRecipient> notifications = Lists.newArrayList();
 		SystemAccount account = getSystemAccount();
-		UploadRequest r = uploadRequestService.findRequestByUuid(account, null, identifier);
-		ResultContext context = new UploadRequestBatchResultContext(r);
-		console.logInfo(batchRunContext, total, position, "processing uplaod request : ", r.getUuid());
-		r.updateStatus(UploadRequestStatus.STATUS_CLOSED);
-		r = uploadRequestService.updateRequest(account, r.getUploadRequestGroup().getOwner(), r);
-		for (UploadRequestUrl u : r.getUploadRequestURLs()) {
-			EmailContext ctx = new UploadRequestWarnExpiryEmailContext((User) r.getUploadRequestGroup().getOwner(), r, u, false);
-			notifications.add(mailBuildingService.build(ctx));
+		UploadRequest uploadRequest = uploadRequestService.findRequestByUuid(account, null, identifier);
+		ResultContext context = new UploadRequestBatchResultContext(uploadRequest);
+		console.logInfo(batchRunContext, total, position, "processing uplaod request : ", uploadRequest.getUuid());
+		uploadRequest.updateStatus(UploadRequestStatus.STATUS_CLOSED);
+		uploadRequest = uploadRequestService.updateRequest(account, uploadRequest.getUploadRequestGroup().getOwner(), uploadRequest);
+		for (UploadRequestUrl u : uploadRequest.getUploadRequestURLs()) {
+			if (uploadRequest.getEnableNotification()) {
+				EmailContext ctx = new UploadRequestWarnExpiryEmailContext((User) uploadRequest.getUploadRequestGroup().getOwner(), uploadRequest, u, false);
+				notifications.add(mailBuildingService.build(ctx));
+			}
 		}
-		EmailContext ctx = new UploadRequestWarnExpiryEmailContext((User) r.getUploadRequestGroup().getOwner(), r, null, true);
+		EmailContext ctx = new UploadRequestWarnExpiryEmailContext((User) uploadRequest.getUploadRequestGroup().getOwner(), uploadRequest, null, true);
 		notifications.add(mailBuildingService.build(ctx));
 		notifierService.sendNotification(notifications);
 		return context;

@@ -38,9 +38,14 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.context.UploadRequestCloseByOwnerEmailContext;
 import org.linagora.linshare.core.notifications.dto.Document;
 import org.linagora.linshare.core.notifications.dto.MailContact;
 import org.thymeleaf.context.Context;
@@ -56,8 +61,22 @@ public class UploadRequestCloseByOwnerEmailBuilder extends GenericUploadRequestE
 
 	@Override
 	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		// TODO UploadRequests : new email
-		return null;
+		UploadRequestCloseByOwnerEmailContext emailCtx = (UploadRequestCloseByOwnerEmailContext) context;
+		User owner = emailCtx.getOwner();
+		UploadRequest request = emailCtx.getUploadRequest();
+		UploadRequestGroup uploadRequestGroup = request.getUploadRequestGroup();
+
+		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
+		List<MailContact> recipients = getRecipients(uploadRequestGroup);
+
+		Context ctx = newTmlContext(emailCtx);
+		ctx.setVariable("body", uploadRequestGroup.getBody());
+		ctx.setVariable("isgrouped", request.getUploadRequestGroup().getRestricted().equals(Boolean.FALSE));
+		ctx.setVariable("recipients", recipients);
+		ctx.setVariable("recipientsCount", recipients.size());
+		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
+				emailCtx);
+		return buildMailContainer;
 	}
 
 	@Override

@@ -38,7 +38,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.linagora.linshare.core.business.service.UploadRequestBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestGroupBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -54,6 +53,7 @@ import org.linagora.linshare.core.domain.entities.FileSizeUnitClass;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
 import org.linagora.linshare.core.domain.entities.LanguageEnumValueFunctionality;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
@@ -65,6 +65,7 @@ import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.UploadRequestActivationEmailContext;
+import org.linagora.linshare.core.notifications.context.UploadRequestCreatedEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.UploadRequestGroupResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -138,7 +139,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 				BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, req);
 		return req;
 	}
-	
+
 	@Override
 	public List<UploadRequest> createRequest(Account actor, User owner,
 			UploadRequest inputRequest, List<Contact> contacts, String subject,
@@ -200,27 +201,25 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		for (Contact c : contacts) {
 			UploadRequestUrl requestUrl = uploadRequestUrlService
 					.create(req, c);
-			if (!DateUtils.isSameDay(req.getActivationDate(), req.getCreationDate())) {
-				mails.add(mailBuildingService.buildCreateUploadRequest(
-						(User) req.getUploadRequestGroup().getOwner(), requestUrl));
+			if (UploadRequestStatus.STATUS_CREATED.equals(req.getStatus())) {
+				if (req.getEnableNotification()) {
+					UploadRequestCreatedEmailContext context = new UploadRequestCreatedEmailContext(owner, requestUrl, req);
+					mails.add(mailBuildingService.build(context));
+				}
 			}
 		}
-		notifierService.sendNotification(mails);
+		notifierService.sendNotification(mails, true);
 		mails.clear();
 		req = uploadRequestBusinessService.findByUuid(req.getUuid());
-		if (req.getActivationDate().before(new Date())) {
-			try {
-				req.updateStatus(UploadRequestStatus.STATUS_ENABLED);
-				for (UploadRequestUrl u: req.getUploadRequestURLs()) {
-					if (u.getContact().equals(contacts.get(0))) {
-						UploadRequestActivationEmailContext mailContext = new UploadRequestActivationEmailContext((User) req.getUploadRequestGroup().getOwner(), req, u);
-						mails.add(mailBuildingService.build(mailContext));
-					}
+		if (UploadRequestStatus.STATUS_ENABLED.equals(req.getStatus())) {
+			for (UploadRequestUrl u : req.getUploadRequestURLs()) {
+				if (u.getContact().equals(contacts.get(0))) {
+					UploadRequestActivationEmailContext mailContext = new UploadRequestActivationEmailContext(
+							(User) req.getUploadRequestGroup().getOwner(), req, u);
+					mails.add(mailBuildingService.build(mailContext));
 				}
-				notifierService.sendNotification(mails);
-			} catch (BusinessException e) {
-				logger.error("Fail to update upload request status of the request : " + req.getUuid());
 			}
+			notifierService.sendNotification(mails);
 		}
 		return Lists.newArrayList(req);
 	}
@@ -596,11 +595,10 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		for (UploadRequest uploadRequest : uploadRequestGroup.getUploadRequests()) {
 			uploadRequestService.updateStatus(authUser, actor, uploadRequest.getUuid(), status);
 		}
-		//TODO Mail notification for the owner
 		// TODO add audit 
 		return uploadRequestGroup;
 	}
-	
+
 	public UploadRequestGroup update(User authUser, User actor, UploadRequestGroup uploadRequestGroup) {
 		checkUpdatePermission(authUser, actor, UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
 				null);
@@ -646,5 +644,17 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		uploadRequest.setLocale(group.getLocale());
 		uploadRequest.setEnableNotification(group.getEnableNotification());
 		uploadRequest.setActivationDate(group.getActivationDate());
+	}
+
+	@Override
+	public List<String> findOutdatedRequestsGroup(SystemAccount actor) {
+		checkActorPermission(actor);
+		return uploadRequestGroupBusinessService.findOutdatedRequests();
+	}
+
+	private void checkActorPermission(SystemAccount actor) {
+		if (!actor.hasAllRights()) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You have no rights to access this service.");
+		}
 	}
 }
