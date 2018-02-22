@@ -58,6 +58,7 @@
 		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="operationHistoryBusinessService" />
 		<constructor-arg ref="quotaService"/>
+		<constructor-arg ref="uploadRequestEntryBusinessService"/>
 	</bean>
 
 	<bean id="shareExpiryDateService" class="org.linagora.linshare.core.service.impl.ShareExpiryDateServiceImpl">

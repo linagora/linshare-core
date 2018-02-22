@@ -41,6 +41,7 @@ import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
+import org.linagora.linshare.core.business.service.UploadRequestEntryBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
@@ -58,6 +59,7 @@ import org.linagora.linshare.core.domain.entities.OperationHistory;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
@@ -109,6 +111,8 @@ public class DocumentEntryServiceImpl
 	private final NotifierService notifierService;
 
 	private final QuotaService quotaService;
+	
+	private final UploadRequestEntryBusinessService uploadRequestEntryBusinessService;
 
 	public DocumentEntryServiceImpl(
 			DocumentEntryBusinessService documentEntryBusinessService,
@@ -122,7 +126,8 @@ public class DocumentEntryServiceImpl
 			DocumentEntryResourceAccessControl rac,
 			NotifierService notifierService, 
 			OperationHistoryBusinessService operationHistoryBusinessService,
-			QuotaService quotaService) {
+			QuotaService quotaService,
+			UploadRequestEntryBusinessService uploadRequestEntryBusinessService) {
 		super(rac);
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.operationHistoryBusinessService = operationHistoryBusinessService;
@@ -135,6 +140,7 @@ public class DocumentEntryServiceImpl
 		this.antiSamyService = antiSamyService;
 		this.notifierService = notifierService;
 		this.quotaService = quotaService;
+		this.uploadRequestEntryBusinessService = uploadRequestEntryBusinessService;
 	}
 
 	@Override
@@ -458,6 +464,12 @@ public class DocumentEntryServiceImpl
 				.getRelatedEntriesCount(documentEntry) > 0) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
 					"You are not authorized to delete this document. There's still existing shares.");
+		}
+		
+		UploadRequestEntry uploadRequestEntry = documentEntryBusinessService
+				.getRelatedUploadRequestEntry(documentEntry);
+		if (uploadRequestEntry != null) {
+			uploadRequestEntryBusinessService.delete(uploadRequestEntry);
 		}
 		documentEntryBusinessService.deleteDocumentEntry(documentEntry);
 		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, documentEntry, LogAction.DELETE);

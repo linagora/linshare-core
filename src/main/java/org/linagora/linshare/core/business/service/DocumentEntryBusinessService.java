@@ -43,6 +43,7 @@ import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
@@ -111,4 +112,6 @@ public interface DocumentEntryBusinessService {
 			throws BusinessException;
 
 	void updateThumbnail(Document document, Account account) ;
+
+	UploadRequestEntry getRelatedUploadRequestEntry(DocumentEntry documentEntry);
 }
