@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2017-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,53 +31,57 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+
 package org.linagora.linshare.core.notifications.context;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 
-public class UploadRequestUploadedFileEmailContext extends GenericUploadRequestEmailContext {
+public class UploadRequestUpdateSettingsEmailContext extends GenericUploadRequestEmailContext {
 
-	protected UploadRequestEntry entry;
+	protected UploadRequest oldRequest;
 
-	public UploadRequestUploadedFileEmailContext(User owner, UploadRequest uploadRequest, UploadRequestUrl requestUrl,
-			UploadRequestEntry entry) {
+	public UploadRequestUpdateSettingsEmailContext(User owner, UploadRequestUrl requestUrl, UploadRequest uploadRequest, UploadRequest oldRequest) {
 		super(owner.getDomain(), false, owner, requestUrl, uploadRequest, false);
-		this.entry = entry;
+		this.oldRequest = oldRequest;
 	}
 
-	public UploadRequestEntry getEntry() {
-		return entry;
+	public UploadRequest getOldRequest() {
+		return oldRequest;
+	}
+
+	public void setOldRequest(UploadRequest oldUploadRequest) {
+		this.oldRequest = oldUploadRequest;
 	}
 
 	@Override
 	public MailContentType getType() {
-		return MailContentType.UPLOAD_REQUEST_UPLOADED_FILE;
+		return MailContentType.UPLOAD_REQUEST_UPDATED_SETTINGS;
 	}
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.UPLOAD_REQUEST_UPLOADED_FILE;
+		return MailActivationType.UPLOAD_REQUEST_UPDATED_SETTINGS;
 	}
 
 	@Override
 	public String getMailRcpt() {
-		return owner.getMail();
+		return requestUrl.getContact().getMail();
 	}
 
 	@Override
 	public String getMailReplyTo() {
-		return requestUrl.getContact().getMail();
+		return owner.getMail();
 	}
 
 	@Override
 	public void validateRequiredField() {
 		super.validateRequiredField();
-		Validate.notNull(entry, "Missing upload request entry");
+		Validate.notNull(requestUrl, "Missing upload request url");
+		Validate.notNull(oldRequest, "Missing old upload request url");
 	}
 }

@@ -38,12 +38,17 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.context.UploadRequestUpdateSettingsEmailContext;
 import org.linagora.linshare.core.notifications.dto.BooleanParameter;
 import org.linagora.linshare.core.notifications.dto.DateParameter;
 import org.linagora.linshare.core.notifications.dto.IntegerParameter;
+import org.linagora.linshare.core.notifications.dto.LongParameter;
 import org.linagora.linshare.core.notifications.dto.MailContact;
 import org.linagora.linshare.core.notifications.dto.StringParameter;
 import org.thymeleaf.context.Context;
@@ -59,8 +64,42 @@ public class UploadRequestUpdatedSettingsEmailBuilder extends GenericUploadReque
 
 	@Override
 	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		// TODO UploadRequests : new email
-		return null;
+		UploadRequestUpdateSettingsEmailContext emailCtx = (UploadRequestUpdateSettingsEmailContext) context;
+		User owner = emailCtx.getOwner();
+		UploadRequest request = emailCtx.getUploadRequest();
+		UploadRequest oldRequest = emailCtx.getOldRequest();
+
+		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
+
+		List<MailContact> recipients = getRecipients(request);
+		Context ctx = newTmlContext(emailCtx);
+		ctx.setVariable("body", request.getUploadRequestGroup().getBody());
+		ctx.setVariable("isgrouped", request.getUploadRequestGroup().getRestricted().equals(Boolean.FALSE));
+		ctx.setVariable("recipients", recipients);
+		ctx.setVariable("recipientsCount", recipients.size());
+
+		ctx.setVariable("totalMaxDepotSize", new LongParameter(request.getMaxDepositSize(), oldRequest.getMaxDepositSize()));
+		ctx.setVariable("maxFileNum", new IntegerParameter(request.getMaxFileCount(), oldRequest.getMaxFileCount()));
+		ctx.setVariable("maxFileSize", new LongParameter(request.getMaxFileSize(), request.getMaxFileSize()));
+
+		ctx.setVariable("subject", new StringParameter(request.getUploadRequestGroup().getSubject(), oldRequest.getUploadRequestGroup().getSubject()));
+		ctx.setVariable("message", new StringParameter(request.getUploadRequestGroup().getBody(), oldRequest.getUploadRequestGroup().getBody()));
+
+		ctx.setVariable("activationDate",
+				new DateParameter(request.getActivationDate(), oldRequest.getActivationDate()));
+		ctx.setVariable("expiryDate", new DateParameter(request.getExpiryDate(), oldRequest.getExpiryDate()));
+
+		ctx.setVariable("expiryDate", new DateParameter(request.getExpiryDate(), oldRequest.getExpiryDate()));
+
+		ctx.setVariable("closureRight", new BooleanParameter(request.isCanClose(), oldRequest.isCanClose()));
+		ctx.setVariable("deletionRight", new BooleanParameter(request.isCanDelete(), oldRequest.isCanDelete()));
+		ctx.setVariable("local", new StringParameter(request.getLocale(), oldRequest.getLocale()));
+
+		ctx.setVariable("enableNotification", new BooleanParameter(request.getEnableNotification(), oldRequest.getEnableNotification()));
+
+		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
+				emailCtx);
+		return buildMailContainer;
 	}
 
 	@Override
@@ -83,18 +122,21 @@ public class UploadRequestUpdatedSettingsEmailBuilder extends GenericUploadReque
 
 		ctx.setVariable("recipientsCount", recipients.size());
 
+		ctx.setVariable("subject", new StringParameter("a subject", false));
+		ctx.setVariable("message", new StringParameter("a message", false));
+
 		ctx.setVariable("totalMaxDepotSize", new IntegerParameter(8, 30));
 		ctx.setVariable("maxFileNum", new IntegerParameter(50, 48));
 		ctx.setVariable("maxFileSize", new IntegerParameter(70, 69));
-
-		ctx.setVariable("subject", new StringParameter("a subject", "a modified subject "));
-		ctx.setVariable("message", new StringParameter("a message", "a modified message"));
 
 		ctx.setVariable("expiryDate", new DateParameter(new Date(), getFakeExpirationDate()));
 		ctx.setVariable("activationDate", new DateParameter(new Date(), false));
 
 		ctx.setVariable("deletionRight", new BooleanParameter(true, false));
 		ctx.setVariable("closureRight", new BooleanParameter(true, false));
+		ctx.setVariable("local", new StringParameter("fr", "en"));
+
+		ctx.setVariable("enableNotification", new BooleanParameter(true, false));
 		return ctx;
 	}
 
@@ -121,6 +163,9 @@ public class UploadRequestUpdatedSettingsEmailBuilder extends GenericUploadReque
 
 		ctx.setVariable("deletionRight", new BooleanParameter(false, false));
 		ctx.setVariable("closureRight", new BooleanParameter(false, false));
+		ctx.setVariable("local", new StringParameter("fr", "en"));
+
+		ctx.setVariable("enableNotification", new BooleanParameter(true, false));
 
 		return ctx;
 	}

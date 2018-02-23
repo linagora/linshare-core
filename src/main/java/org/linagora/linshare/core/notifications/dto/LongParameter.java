@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2017-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,53 +31,57 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.notifications.context;
 
-import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.domain.constants.MailActivationType;
-import org.linagora.linshare.core.domain.constants.MailContentType;
-import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
-import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
-import org.linagora.linshare.core.domain.entities.User;
+package org.linagora.linshare.core.notifications.dto;
 
-public class UploadRequestUploadedFileEmailContext extends GenericUploadRequestEmailContext {
+public class LongParameter {
 
-	protected UploadRequestEntry entry;
+	protected Boolean modified;
 
-	public UploadRequestUploadedFileEmailContext(User owner, UploadRequest uploadRequest, UploadRequestUrl requestUrl,
-			UploadRequestEntry entry) {
-		super(owner.getDomain(), false, owner, requestUrl, uploadRequest, false);
-		this.entry = entry;
+	protected Long value;
+
+	protected Long oldValue;
+
+	public LongParameter(Long value, Long oldValue) {
+		super();
+		this.value = value;
+		this.oldValue = oldValue;
+		this.modified = value != null?value.equals(oldValue):false;
 	}
 
-	public UploadRequestEntry getEntry() {
-		return entry;
+	public LongParameter(Long value, boolean modified) {
+		super();
+		this.value = value;
+		this.oldValue = null;
+		this.modified = modified;
+	}
+
+	public Boolean getModified() {
+		return modified;
+	}
+
+	public void setModified(Boolean modified) {
+		this.modified = modified;
+	}
+
+	public Long getValue() {
+		return value;
+	}
+
+	public void setValue(Long value) {
+		this.value = value;
+	}
+
+	public Long getOldValue() {
+		return oldValue;
+	}
+
+	public void setOldValue(Long oldValue) {
+		this.oldValue = oldValue;
 	}
 
 	@Override
-	public MailContentType getType() {
-		return MailContentType.UPLOAD_REQUEST_UPLOADED_FILE;
-	}
-
-	@Override
-	public MailActivationType getActivation() {
-		return MailActivationType.UPLOAD_REQUEST_UPLOADED_FILE;
-	}
-
-	@Override
-	public String getMailRcpt() {
-		return owner.getMail();
-	}
-
-	@Override
-	public String getMailReplyTo() {
-		return requestUrl.getContact().getMail();
-	}
-
-	@Override
-	public void validateRequiredField() {
-		super.validateRequiredField();
-		Validate.notNull(entry, "Missing upload request entry");
+	public String toString() {
+		return "LongParameter [modified=" + modified + ", value=" + value + ", oldValue=" + oldValue + "]";
 	}
 }

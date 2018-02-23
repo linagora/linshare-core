@@ -227,6 +227,8 @@
 		<constructor-arg ref="operationHistoryBusinessService" />
 		<constructor-arg ref="quotaService" />
 		<constructor-arg ref="documentGarbageCollecteurMongoRepository" />
+		<constructor-arg ref="mailBuildingService"/>
+		<constructor-arg ref="notifierService"/>
 	</bean>
 	<bean name="uploadPropositionService" class="org.linagora.linshare.core.service.impl.UploadPropositionServiceImpl">
 		<constructor-arg ref="uploadPropositionBusinessService" />

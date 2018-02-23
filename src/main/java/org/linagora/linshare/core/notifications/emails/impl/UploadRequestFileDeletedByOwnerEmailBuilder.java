@@ -38,10 +38,15 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.context.UploadRequestDeleteFileByOwnerEmailContext;
 import org.linagora.linshare.core.notifications.dto.Document;
+import org.linagora.linshare.core.notifications.dto.MailContact;
 import org.thymeleaf.context.Context;
 
 import com.google.common.collect.Lists;
@@ -55,8 +60,27 @@ public class UploadRequestFileDeletedByOwnerEmailBuilder extends GenericUploadRe
 
 	@Override
 	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		// TODO UploadRequests : new email
-		return null;
+		UploadRequestDeleteFileByOwnerEmailContext emailCtx = (UploadRequestDeleteFileByOwnerEmailContext) context;
+
+		User owner = emailCtx.getOwner();
+		UploadRequest request = emailCtx.getUploadRequest();
+		Document document = new Document(emailCtx.getEntry());
+
+		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
+
+		List<MailContact> recipients = getRecipients(request);
+
+		Context ctx = newTmlContext(emailCtx);
+		ctx.setVariable("body", request.getUploadRequestGroup().getBody());
+		ctx.setVariable("deletionDate", new Date());
+		ctx.setVariable("document", document);
+		ctx.setVariable("isgrouped", request.getUploadRequestGroup().getRestricted().equals(Boolean.FALSE));
+		ctx.setVariable("recipients", recipients);
+		ctx.setVariable("recipientsCount", recipients.size());
+
+		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
+				emailCtx);
+		return buildMailContainer;
 	}
 
 	@Override
@@ -96,5 +120,4 @@ public class UploadRequestFileDeletedByOwnerEmailBuilder extends GenericUploadRe
 
 		return ctx;
 	}
-
 }

@@ -54,13 +54,18 @@ import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.context.UploadRequestDeleteFileByOwnerEmailContext;
+import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.UploadRequestEntryRessourceAccessControl;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AntiSamyService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.MimeTypeService;
+import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.VirusScannerService;
@@ -87,7 +92,11 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 	private final AntiSamyService antiSamyService;
 
 	private final QuotaService quotaService;
-	
+
+	private final MailBuildingService mailBuildingService;
+
+	private final NotifierService notifierService;
+
 	protected final DocumentGarbageCollecteurMongoRepository documentGarbageCollecteur;
 
 	public UploadRequestEntryServiceImpl(
@@ -101,7 +110,9 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 			UploadRequestEntryRessourceAccessControl rac,
 			OperationHistoryBusinessService operationHistoryBusinessService,
 			QuotaService quotaService,
-			DocumentGarbageCollecteurMongoRepository documentGarbageCollecteur) {
+			DocumentGarbageCollecteurMongoRepository documentGarbageCollecteur,
+			MailBuildingService mailBuildingService,
+			NotifierService notifierService) {
 		super(rac);
 		this.uploadRequestEntryBusinessService = uploadRequestEntryBusinessService;
 		this.abstractDomainService = abstractDomainService;
@@ -113,6 +124,8 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		this.operationHistoryBusinessService = operationHistoryBusinessService;
 		this.quotaService = quotaService;
 		this.documentGarbageCollecteur = documentGarbageCollecteur;
+		this.mailBuildingService = mailBuildingService;
+		this.notifierService = notifierService;
 	}
 
 	@Override
@@ -235,11 +248,20 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 			documentGarbageCollecteur.insert(new DocumentGarbageCollecteur(uploadRequestEntry.getDocument().getUuid()));
 		}
 		uploadRequestEntryBusinessService.delete(uploadRequestEntry);
+		if (uploadRequestEntry.getUploadRequestUrl().getUploadRequest().getEnableNotification()) {
+			for (UploadRequestUrl urUrl : uploadRequestEntry.getUploadRequestUrl().getUploadRequest().getUploadRequestURLs()) {
+				EmailContext context = new UploadRequestDeleteFileByOwnerEmailContext(
+						(User) urUrl.getUploadRequest().getUploadRequestGroup().getOwner(),
+						urUrl.getUploadRequest(),	urUrl, uploadRequestEntry);
+				MailContainerWithRecipient mail = mailBuildingService.build(context);
+				notifierService.sendNotification(mail); 
+			}
+		}
 		//TODO log
 		delFromQuota(actor, uploadRequestEntry.getSize());
 		return uploadRequestEntry;
 	}
-	
+
 	protected void delFromQuota(Account owner, Long size) {
 		OperationHistory oh = new OperationHistory(owner, owner.getDomain(), - size, OperationHistoryTypeEnum.DELETE,
 				ContainerQuotaType.USER);

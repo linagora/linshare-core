@@ -83,7 +83,7 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 	private final UploadRequestEntryService uploadRequestEntryService;
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
-	
+
 	private final UploadRequestUrlResourceAccessControl uploadRequestUrlRac;
 
 	public UploadRequestUrlServiceImpl(
@@ -189,12 +189,13 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 				upReqdoc.getComment(), upReqdoc.getDocument(), requestUrl);
 		UploadRequestEntry requestEntry = uploadRequestEntryBusinessService
 				.create(uploadRequestEntry);
-		EmailContext context = new UploadRequestUploadedFileEmailContext(
-				(User) requestUrl.getUploadRequest().getUploadRequestGroup().getOwner(),
-				requestUrl.getUploadRequest(),
-				requestUrl, requestEntry);
-		MailContainerWithRecipient mail = mailBuildingService.build(context);
-		notifierService.sendNotification(mail);
+		if (requestUrl.getUploadRequest().getEnableNotification()) {
+			EmailContext context = new UploadRequestUploadedFileEmailContext(
+					(User) requestUrl.getUploadRequest().getUploadRequestGroup().getOwner(),
+					requestUrl.getUploadRequest(), requestUrl, requestEntry);
+			MailContainerWithRecipient mail = mailBuildingService.build(context);
+			notifierService.sendNotification(mail);
+		}
 		return requestEntry;
 	}
 

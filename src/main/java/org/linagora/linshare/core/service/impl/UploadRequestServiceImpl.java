@@ -66,6 +66,7 @@ import org.linagora.linshare.core.notifications.context.UploadRequestActivationE
 import org.linagora.linshare.core.notifications.context.UploadRequestCloseByOwnerEmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestClosedByRecipientEmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestCreatedEmailContext;
+import org.linagora.linshare.core.notifications.context.UploadRequestUpdateSettingsEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.UploadRequestGroupResourceAccessControl;
 import org.linagora.linshare.core.rac.UploadRequestResourceAccessControl;
@@ -206,6 +207,14 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 					"Connot update upload request in grouped mode, try to update the upload request group");
 		}
 		UploadRequest res = uploadRequestBusinessService.update(uploadRequest, object);
+		List<MailContainerWithRecipient> mails = Lists.newArrayList();
+		if (res.getEnableNotification()) {
+			for (UploadRequestUrl urUrl : res.getUploadRequestURLs()) {
+				EmailContext context = new UploadRequestUpdateSettingsEmailContext((User) res.getUploadRequestGroup().getOwner(), urUrl, res, object);
+				mails.add(mailBuildingService.build(context));
+			}
+			notifierService.sendNotification(mails);
+		}
 		log.setResourceUpdated(new UploadRequestMto(res));
 		logEntryService.insert(log);
 		return res;
