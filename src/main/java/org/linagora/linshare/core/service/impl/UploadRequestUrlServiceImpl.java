@@ -194,7 +194,7 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 					(User) requestUrl.getUploadRequest().getUploadRequestGroup().getOwner(),
 					requestUrl.getUploadRequest(), requestUrl, requestEntry);
 			MailContainerWithRecipient mail = mailBuildingService.build(context);
-			notifierService.sendNotification(mail);
+			notifierService.sendNotification(mail, true);
 		}
 		return requestEntry;
 	}

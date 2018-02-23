@@ -69,12 +69,15 @@ public class UploadRequestActivationForRecipientEmailBuilder extends GenericUplo
 
 		Context ctx = newTmlContext(emailCtx);
 		ctx.setVariable("body", request.getUploadRequestGroup().getBody());
+		ctx.setVariable("protected", request.isSecured());
+		ctx.setVariable("password", emailCtx.getRequestUrl().getTemporaryPlainTextPassword());
 		boolean grouped = request.getUploadRequestURLs().size() > 1;
 		ctx.setVariable("isgrouped", grouped);
 		if (grouped) {
 			ctx.setVariable("recipients", recipients);
 			ctx.setVariable("recipientsCount", recipients.size());
 		}
+		ctx.setVariable("totalMaxDepotSize", request.getMaxDepositSize());
 
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
 				emailCtx);
