@@ -48,7 +48,7 @@ public interface UploadRequestRestService {
 
 	UploadRequestDto update(String actorUuid, UploadRequestDto uploadRequestDto) throws BusinessException;
 
-	UploadRequestDto updateStatus(String actorUuid, String uuid, UploadRequestStatus status) throws BusinessException;
+	UploadRequestDto updateStatus(String actorUuid, String uuid, UploadRequestStatus status, boolean copy) throws BusinessException;
 
 	UploadRequestDto delete(String actorUuid, String uuid) throws BusinessException;
 

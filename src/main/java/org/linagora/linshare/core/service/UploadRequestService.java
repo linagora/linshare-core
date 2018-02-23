@@ -56,7 +56,7 @@ public interface UploadRequestService {
 
 	UploadRequest updateRequest(Account actor, Account owner, UploadRequest req) throws BusinessException;
 
-	UploadRequest updateStatus(Account actor, Account owner, String uuid, UploadRequestStatus status)
+	UploadRequest updateStatus(Account actor, Account owner, String uuid, UploadRequestStatus status, boolean copy)
 			throws BusinessException;
 
 	UploadRequest update(Account actor, Account owner, String uuid, UploadRequest object) throws BusinessException;;

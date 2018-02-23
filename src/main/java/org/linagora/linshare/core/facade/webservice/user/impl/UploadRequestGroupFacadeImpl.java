@@ -99,12 +99,12 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 	}
 
 	@Override
-	public UploadRequestGroupDto updateStatus(String actorUuid, String requestGroupUuid, UploadRequestStatus status) throws BusinessException {
+	public UploadRequestGroupDto updateStatus(String actorUuid, String requestGroupUuid, UploadRequestStatus status, boolean copy) throws BusinessException {
 		Validate.notEmpty(requestGroupUuid, "Upload request group uuid must be set.");
 		Validate.notNull(status, "Status must be set.");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
-		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.updateStatus(authUser, actor, requestGroupUuid, status);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.updateStatus(authUser, actor, requestGroupUuid, status, copy);
 		return new UploadRequestGroupDto(uploadRequestGroup);
 	}
 

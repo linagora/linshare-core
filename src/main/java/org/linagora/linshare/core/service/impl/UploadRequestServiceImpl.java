@@ -53,6 +53,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
 import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
@@ -74,6 +75,7 @@ import org.linagora.linshare.core.rac.UploadRequestTemplateResourceAccessControl
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
+import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
 import org.linagora.linshare.mongo.entities.logs.UploadRequestAuditLogEntry;
@@ -96,6 +98,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	private final UploadRequestTemplateResourceAccessControl templateRac;
 	private final UploadRequestGroupResourceAccessControl groupRac;
 	private final LogEntryService logEntryService;
+	private final UploadRequestEntryService uploadRequestEntryService;
 
 	public UploadRequestServiceImpl(
 			final AccountRepository<Account> accountRepository,
@@ -110,8 +113,8 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 			final UploadRequestResourceAccessControl rac,
 			final UploadRequestTemplateResourceAccessControl templateRac,
 			final UploadRequestGroupResourceAccessControl groupRac,
-			final LogEntryService logEntryService
-			) {
+			final LogEntryService logEntryService,
+			final UploadRequestEntryService uploadRequestEntryService) {
 		super(rac);
 		this.accountRepository = accountRepository;
 		this.uploadRequestBusinessService = uploadRequestBusinessService;
@@ -125,6 +128,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		this.templateRac = templateRac;
 		this.groupRac = groupRac;
 		this.logEntryService = logEntryService;
+		this.uploadRequestEntryService = uploadRequestEntryService;
 	}
 
 	@Override
@@ -149,20 +153,35 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	}
 
 	@Override
-	public UploadRequest updateStatus(Account authUser, Account actor, String uuid, UploadRequestStatus status)
-			throws BusinessException {
+	public UploadRequest updateStatus(Account authUser, Account actor, String uuid, UploadRequestStatus status,
+			boolean copy) throws BusinessException {
 		Validate.notNull(authUser, "Actor must be set.");
 		Validate.notNull(actor, "Owner must be set.");
 		UploadRequest req = findRequestByUuid(authUser, actor, uuid);
+		Validate.notNull(req);
 		checkUpdatePermission(authUser, actor, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, req);
 		if (!req.getUploadRequestGroup().getRestricted() && !status.equals(req.getUploadRequestGroup().getStatus())) {
-			// if is grouped mode and the new status is not equal 
-			// to the current status of uploadRequestGroup 
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You can not edit an uploadRequest : " + req.getUuid()); 
+			// if is grouped mode and the new status is not equal
+			// to the current status of uploadRequestGroup
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_GROUP_STATUS,
+					"You can not edit an uploadRequest : " + req.getUuid());
 		}
+		// TODO: Fix issue of UploadRequestAuditLogEntry
 		UploadRequestAuditLogEntry log = new UploadRequestAuditLogEntry(new AccountMto(authUser), new AccountMto(actor),
 				LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST, req.getUuid(), req);
+		if (status.equals(UploadRequestStatus.ARCHIVED) && copy) {
+			Set<UploadRequestUrl> requestUrls = req.getUploadRequestURLs();
+			for (UploadRequestUrl uploadRequestUrl : requestUrls) {
+				Set<UploadRequestEntry> uploadRequestEntries = uploadRequestUrl.getUploadRequestEntries();
+				for (UploadRequestEntry requestEntry : uploadRequestEntries) {
+					if (!requestEntry.getCopied()) {
+						uploadRequestEntryService.copy(authUser, authUser, requestEntry);
+					}
+				}
+			}
+		}
 		req = uploadRequestBusinessService.updateStatus(req, status);
+		// TODO: Fix issue of sendNotification
 		sendNotification(req, actor);
 		log.setResourceUpdated(new UploadRequestMto(req));
 		logEntryService.insert(log);
@@ -250,9 +269,8 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	}
 
 	@Override
-	public UploadRequest deleteRequest(Account actor, Account owner, String uuid)
-			throws BusinessException {
-		return updateStatus(actor, owner, uuid, UploadRequestStatus.DELETED);
+	public UploadRequest deleteRequest(Account actor, Account owner, String uuid) throws BusinessException {
+		return updateStatus(actor, owner, uuid, UploadRequestStatus.DELETED, false);
 	}
 
 	@Override

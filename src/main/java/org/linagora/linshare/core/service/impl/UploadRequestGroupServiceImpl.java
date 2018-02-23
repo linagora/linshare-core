@@ -587,13 +587,14 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 
 	@Override
 	public UploadRequestGroup updateStatus(Account authUser, Account actor, String requestGroupUuid,
-			UploadRequestStatus status) {
+			UploadRequestStatus status, boolean copy) {
 		preChecks(authUser, actor);
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupBusinessService.findByUuid(requestGroupUuid);
 		groupRac.checkUpdatePermission(authUser, actor, UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, uploadRequestGroup);
 		uploadRequestGroup = uploadRequestGroupBusinessService.updateStatus(uploadRequestGroup, status);
 		for (UploadRequest uploadRequest : uploadRequestGroup.getUploadRequests()) {
-			uploadRequestService.updateStatus(authUser, actor, uploadRequest.getUuid(), status);
+			
+			uploadRequestService.updateStatus(authUser, actor, uploadRequest.getUuid(), status, copy);
 		}
 		// TODO add audit 
 		return uploadRequestGroup;

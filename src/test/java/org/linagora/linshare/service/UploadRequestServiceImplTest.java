@@ -282,15 +282,15 @@ public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4Spr
 	public void UpdateUploadRequestStatus() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadRequest tmp = e.clone();
-		tmp = service.updateStatus(john, john, tmp.getUuid(), UploadRequestStatus.CLOSED);
+		tmp = service.updateStatus(john, john, tmp.getUuid(), UploadRequestStatus.CLOSED, false);
 		Assert.assertEquals(tmp.getStatus(), UploadRequestStatus.CLOSED);
 		Assert.assertEquals(john, (User) e.getUploadRequestGroup().getOwner());
 		// Status ARCHIVED
-		tmp = service.updateStatus(john, john, tmp.getUuid(), UploadRequestStatus.ARCHIVED);
+		tmp = service.updateStatus(john, john, tmp.getUuid(), UploadRequestStatus.ARCHIVED, true);
 		Assert.assertEquals(tmp.getStatus(), UploadRequestStatus.ARCHIVED);
 		Assert.assertEquals(john, (User) e.getUploadRequestGroup().getOwner());
 		// STATUS DELETED
-		tmp = service.updateStatus(john, john, tmp.getUuid(), UploadRequestStatus.DELETED);
+		tmp = service.updateStatus(john, john, tmp.getUuid(), UploadRequestStatus.DELETED, false);
 		Assert.assertEquals(tmp.getStatus(), UploadRequestStatus.DELETED);
 		Assert.assertEquals(john, (User) e.getUploadRequestGroup().getOwner());
 		// TODO UploadRequests : new email

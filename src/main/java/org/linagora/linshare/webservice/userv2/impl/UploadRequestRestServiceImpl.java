@@ -37,6 +37,7 @@ package org.linagora.linshare.webservice.userv2.impl;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -47,7 +48,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 import org.linagora.linshare.core.facade.webservice.user.UploadRequestFacade;
 import org.linagora.linshare.webservice.userv2.UploadRequestRestService;
@@ -132,11 +132,10 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
 	@Override
 	public UploadRequestDto updateStatus(
-			@ApiParam(value = "Upload request uuid.", required = true)
-				@PathParam(value = "uuid") String requestUuid,
-			@ApiParam(value = "New status for the upload request", required = true)
-				@PathParam("status") UploadRequestStatus status) throws BusinessException {
-		return uploadRequestFacade.updateStatus(null, requestUuid, status);
+			@ApiParam(value = "Upload request uuid.", required = true) @PathParam(value = "uuid") String requestUuid,
+			@ApiParam(value = "New status for the upload request", required = true) @PathParam("status") UploadRequestStatus status,
+			@ApiParam(value = "If the owner wants to copy all documents and the upload request is in archived status.", required = false) @QueryParam("copy") @DefaultValue("false") boolean copy) {
+		return uploadRequestFacade.updateStatus(null, requestUuid, status, copy);
 	}
 
 	@PUT

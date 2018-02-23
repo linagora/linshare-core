@@ -38,12 +38,14 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
@@ -127,8 +129,10 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 			@ApiParam(value = "Upload request uuid.", required = true)
 				@PathParam(value = "uuid") String uuid,
 			@ApiParam(value = "Upload request status.", required = true)
-				@PathParam("status") UploadRequestStatus status) throws BusinessException {
-		return uploadRequestFacade.updateStatus(actorUuid, uuid, status);
+				@PathParam("status") UploadRequestStatus status, 
+			@ApiParam(value = "If the owner wants to copy all documents and the upload request is in archived status.", required = false) 
+				@QueryParam("copy") @DefaultValue("false") boolean copy) throws BusinessException {
+		return uploadRequestFacade.updateStatus(actorUuid, uuid, status, copy);
 	}
 
 	@DELETE

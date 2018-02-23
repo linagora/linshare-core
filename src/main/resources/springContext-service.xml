@@ -167,6 +167,7 @@
 		<constructor-arg ref="uploadRequestTemplateResourceAccessControl" />
 		<constructor-arg ref="uploadRequestGroupResourceAccessControl" />
 		<constructor-arg ref="logEntryService" />
+		<constructor-arg ref="uploadRequestEntryService" />
 	</bean>
 
 	<bean name="uploadRequestGroupService"

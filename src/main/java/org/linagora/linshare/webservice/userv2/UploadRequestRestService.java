@@ -50,7 +50,7 @@ public interface UploadRequestRestService {
 	
 	UploadRequestDto find(String uuid);
 
-	UploadRequestDto updateStatus(String requestUuid, UploadRequestStatus status) throws BusinessException;
+	UploadRequestDto updateStatus(String requestUuid, UploadRequestStatus status, boolean copy) throws BusinessException;
 
 	UploadRequestDto update(UploadRequestDto uploadRequestDto);
 }

@@ -37,6 +37,7 @@ package org.linagora.linshare.webservice.userv2.impl;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -108,16 +109,19 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 	}
 
 	@PUT
-	@Path("/{uuid}/update/status")
+	@Path("/{uuid}/update/{status}")
 	@ApiOperation(value = "Update status of upload request group.", response = UploadRequestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
 	@Override
 	public UploadRequestGroupDto updateStatus(
-			@ApiParam(value = "Upload request group uuid.", required = true) @PathParam(value = "uuid") String requestGroupUuid,
-			@ApiParam(value = "New status for the upload request groupe", required = true) @QueryParam("status") UploadRequestStatus status)
-			throws BusinessException {
-		return uploadRequestGroupFacade.updateStatus(null, requestGroupUuid, status);
+			@ApiParam(value = "Upload request group uuid.", required = true)
+				@PathParam(value = "uuid") String requestGroupUuid,
+			@ApiParam(value = "New status for the upload request groupe", required = true)
+				@PathParam("status") UploadRequestStatus status,
+			@ApiParam(value = "If the owner want to copy the document.", required = false) 
+				@QueryParam("copy") @DefaultValue("false") boolean copy) throws BusinessException {
+		return uploadRequestGroupFacade.updateStatus(null, requestGroupUuid, status, copy);
 	}
 
 	@Path("/")

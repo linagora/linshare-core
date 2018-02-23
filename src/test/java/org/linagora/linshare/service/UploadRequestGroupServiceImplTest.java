@@ -183,11 +183,12 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 		Assert.assertEquals(UploadRequestStatus.ENABLED, ure.getUploadRequestGroup().getStatus());
 
 		// Update upload request group status
-		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(), UploadRequestStatus.CLOSED);
+
+		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(), UploadRequestStatus.CLOSED, false);
 		Assert.assertEquals(UploadRequestStatus.CLOSED, ure.getUploadRequestGroup().getStatus());
-		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(), UploadRequestStatus.ARCHIVED);
+		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(), UploadRequestStatus.ARCHIVED, true);
 		Assert.assertEquals(UploadRequestStatus.ARCHIVED, ure.getUploadRequestGroup().getStatus());
-		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(), UploadRequestStatus.DELETED);
+		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(), UploadRequestStatus.DELETED, false);
 		Assert.assertEquals(UploadRequestStatus.DELETED, ure.getUploadRequestGroup().getStatus());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -201,7 +202,7 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 		ure.setActivationDate(tomorrow);
 		uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
 		Assert.assertEquals(UploadRequestStatus.CREATED, ure.getUploadRequestGroup().getStatus());
-		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(), UploadRequestStatus.CANCELED);
+		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(), UploadRequestStatus.CANCELED, false);
 		Assert.assertEquals(UploadRequestStatus.CANCELED, ure.getUploadRequestGroup().getStatus());
 	}
 	

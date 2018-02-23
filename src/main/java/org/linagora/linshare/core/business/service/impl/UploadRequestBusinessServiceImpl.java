@@ -96,9 +96,6 @@ public class UploadRequestBusinessServiceImpl implements
 		}
 		req.updateStatus(status);
 		req = uploadRequestRepository.update(req);
-		if (req.getStatus() == UploadRequestStatus.ARCHIVED) {
-			// Copy all uploadRequestEntry to DocumentEntry
-		}
 		return req;
 	}
 

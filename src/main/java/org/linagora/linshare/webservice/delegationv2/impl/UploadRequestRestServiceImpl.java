@@ -37,6 +37,7 @@ package org.linagora.linshare.webservice.delegationv2.impl;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -144,8 +145,10 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 			@ApiParam(value = "Upload request uuid.", required = true)
 				@PathParam(value = "uuid") String requestUuid,
 			@ApiParam(value = "Upload request uuid.", required = true)
-				@PathParam("status") UploadRequestStatus status) throws BusinessException {
-		UploadRequestDto dto = uploadRequestFacade.updateStatus(actorUuid, requestUuid, status);
+				@PathParam("status") UploadRequestStatus status,
+			@ApiParam(value = "If the owner wants to copy all documents and the upload request is in archived status", required = false)
+				@QueryParam("copy") @DefaultValue("false") boolean copy) throws BusinessException {
+		UploadRequestDto dto = uploadRequestFacade.updateStatus(actorUuid, requestUuid, status, copy);
 		return dto;
 	}
 

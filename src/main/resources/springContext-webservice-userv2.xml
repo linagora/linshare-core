@@ -89,7 +89,7 @@
 		<constructor-arg ref="wsWelcomeMessagesFacadeImpl" />
 	</bean>
 
-	<bean id="userUploadRequestRestService"
+	<bean id="userv2UploadRequestRestService"
 		class="org.linagora.linshare.webservice.userv2.impl.UploadRequestRestServiceImpl">
 		<constructor-arg ref="wsUploadRequestFacade" />
 	</bean>
@@ -125,7 +125,7 @@
 			<ref bean="userv2ContactListRestService" />
 			<ref bean="userMimeTypeRestService" />
 			<ref bean="userAutoCompleteRestService" />
-			<ref bean="userUploadRequestRestService" />
+			<ref bean="userv2UploadRequestRestService" /> 
 			<ref bean="userUserPreferenceRestService" />
 			<ref bean="userAuditLogEntryUserRestService" />
 <!-- 			Disable because it is fully tested. -->

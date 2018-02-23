@@ -252,11 +252,11 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 				Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
 		Assert.assertEquals(UploadRequestStatus.ENABLED, ure.getUploadRequestGroup().getStatus());
 		// Update upload request status
-		service.updateStatus(john, john, uploadRequests.get(0).getUuid(), UploadRequestStatus.CLOSED);
+		service.updateStatus(john, john, uploadRequests.get(0).getUuid(), UploadRequestStatus.CLOSED, false);
 		Assert.assertEquals(UploadRequestStatus.CLOSED, uploadRequests.get(0).getStatus());
-		service.updateStatus(john, john, uploadRequests.get(0).getUuid(), UploadRequestStatus.ARCHIVED);
+		service.updateStatus(john, john, uploadRequests.get(0).getUuid(), UploadRequestStatus.ARCHIVED, true);
 		Assert.assertEquals(UploadRequestStatus.ARCHIVED, uploadRequests.get(0).getStatus());
-		service.updateStatus(john, john, uploadRequests.get(0).getUuid(), UploadRequestStatus.DELETED);
+		service.updateStatus(john, john, uploadRequests.get(0).getUuid(), UploadRequestStatus.DELETED, false);
 		Assert.assertEquals(UploadRequestStatus.DELETED, uploadRequests.get(0).getStatus());
 	}
 
@@ -331,8 +331,8 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 	}
 
 	private void finishUploadRequest(UploadRequest ure, User actor) {
-		service.updateStatus(actor, actor, ure.getUuid(), UploadRequestStatus.CLOSED);
-		service.updateStatus(actor, actor, ure.getUuid(), UploadRequestStatus.ARCHIVED);
+		service.updateStatus(actor, actor, ure.getUuid(), UploadRequestStatus.CLOSED, false);
+		service.updateStatus(actor, actor, ure.getUuid(), UploadRequestStatus.ARCHIVED, true);
 		service.deleteRequest(actor, actor, ure.getUuid());
 	}
 
@@ -345,6 +345,9 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 		IOUtils.transferTo(stream, tempFile);
 		UploadRequestUrl requestUrl= e.getUploadRequestURLs().iterator().next();
 		Assert.assertNotNull(requestUrl);
+		UploadRequest uploadRequest = requestUrl.getUploadRequest();
+		Assert.assertNotNull(uploadRequest);
+		uploadRequest.setStatus(UploadRequestStatus.CLOSED);
 		uploadRequestEntry = uploadRequestEntryService.create(actor, actor, tempFile, fileName, comment, false, null,
 				requestUrl);
 		Assert.assertTrue(uploadRequestEntryRepository.findByUuid(uploadRequestEntry.getUuid()) != null);

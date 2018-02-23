@@ -93,12 +93,12 @@ public class UploadRequestFacadeImpl extends GenericFacadeImpl implements Upload
 	}
 
 	@Override
-	public UploadRequestDto updateStatus(String actorUuid, String requestUuid, UploadRequestStatus status) throws BusinessException {
+	public UploadRequestDto updateStatus(String actorUuid, String requestUuid, UploadRequestStatus status, boolean copy) throws BusinessException {
 		Validate.notEmpty(requestUuid, "Upload request uuid must be set.");
 		Validate.notNull(status, "Status must be set.");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
-		UploadRequest uploadRequest = uploadRequestService.updateStatus(authUser, actor, requestUuid, status);
+		UploadRequest uploadRequest = uploadRequestService.updateStatus(authUser, actor, requestUuid, status, copy);
 		return new UploadRequestDto(uploadRequest, false);
 	}
 

@@ -231,7 +231,7 @@ public class UploadRequestEntryServiceImplTest extends AbstractTransactionalJUni
 				uploadRequest.getUploadRequestURLs().iterator().next());
 		UploadRequestEntry entry = uploadRequestEntryService.find(jane, jane, uploadRequestEntry.getUuid());
 		Assert.assertNotNull(entry);
-		uploadRequestService.updateStatus(john, john, uploadRequest.getUuid(), UploadRequestStatus.CLOSED);
+		uploadRequestService.updateStatus(john, john, uploadRequest.getUuid(), UploadRequestStatus.CLOSED, false);
 		uploadRequestEntryService.delete(jane, jane, uploadRequestEntry.getUuid());
 		UploadRequestEntry deletedEntry = uploadRequestEntryService.find(jane, jane, uploadRequestEntry.getUuid());
 		Assert.assertNull(deletedEntry);
