@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2017-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,69 +31,46 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.notifications.emails.impl;
 
-import java.util.Date;
-import java.util.List;
+package org.linagora.linshare.core.notifications.context;
 
-import org.linagora.linshare.core.domain.constants.Language;
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
-import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.notifications.context.EmailContext;
-import org.linagora.linshare.core.notifications.context.UploadRequestRecipientRemovedEmailContext;
-import org.thymeleaf.context.Context;
 
-import com.google.common.collect.Lists;
+public class UploadRequestRecipientRemovedEmailContext extends GenericUploadRequestEmailContext {
 
-public class UploadRequestRecipientRemovedEmailBuilder extends GenericUploadRequestEmailBuilder {
+	public UploadRequestRecipientRemovedEmailContext(User owner, UploadRequestUrl requestUrl,
+			UploadRequest uploadRequest) {
+		super(owner.getDomain(), false, owner, requestUrl, uploadRequest, false);
+	}
 
 	@Override
-	public MailContentType getSupportedType() {
+	public MailContentType getType() {
 		return MailContentType.UPLOAD_REQUEST_RECIPIENT_REMOVED;
 	}
 
 	@Override
-	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		UploadRequestRecipientRemovedEmailContext emailCtx = (UploadRequestRecipientRemovedEmailContext) context;
-
-		User owner = emailCtx.getOwner();
-		UploadRequest request = emailCtx.getUploadRequest();
-
-		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
-
-		Context ctx = newTmlContext(emailCtx);
-		ctx.setVariable("body", request.getUploadRequestGroup().getBody());
-		ctx.setVariable("deletionDate", new Date());
-
-		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
-				emailCtx);
-		return buildMailContainer;
+	public MailActivationType getActivation() {
+		return MailActivationType.UPLOAD_REQUEST_RECIPIENT_REMOVED;
 	}
 
 	@Override
-	protected List<Context> getContextForFakeBuild(Language language) {
-		List<Context> res = Lists.newArrayList();
-		res.add(getFakeSingleForRecipient(language));
-		res.add(getFakeGroupedForRecipient(language));
-		return res;
+	public String getMailRcpt() {
+		return requestUrl.getContact().getMail();
 	}
 
-	private Context getFakeGroupedForRecipient(Language language) {
-		Context ctx = newFakeContext(language, false, true);
-		ctx.setVariable("body", "upload request body message");
-		ctx.setVariable("deletionDate", new Date());
-		return ctx;
+	@Override
+	public String getMailReplyTo() {
+		return owner.getMail();
 	}
 
-	private Context getFakeSingleForRecipient(Language language) {
-		Context ctx = newFakeContext(language, false, true);
-		ctx.setVariable("body", "upload request body message");
-		ctx.setVariable("deletionDate", new Date());
-		return ctx;
+	@Override
+	public void validateRequiredField() {
+		super.validateRequiredField();
+		Validate.notNull(requestUrl, "Missing upload request url");
 	}
-
 }

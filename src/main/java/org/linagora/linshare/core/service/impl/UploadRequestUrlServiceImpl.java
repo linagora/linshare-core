@@ -54,6 +54,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestDeleteFileEmailContext;
+import org.linagora.linshare.core.notifications.context.UploadRequestRecipientRemovedEmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestUploadedFileEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.UploadRequestUrlResourceAccessControl;
@@ -288,5 +289,11 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 				uploadRequestUrl.getUploadRequest().getUploadRequestGroup().getOwner(), UploadRequestUrl.class,
 				BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, uploadRequestUrl);
 		uploadRequestUrlBusinessService.delete(uploadRequestUrl);
+		EmailContext context = new UploadRequestRecipientRemovedEmailContext(
+				(User) uploadRequestUrl.getUploadRequest().getUploadRequestGroup().getOwner(),
+				uploadRequestUrl,
+				uploadRequestUrl.getUploadRequest());
+		MailContainerWithRecipient mail = mailBuildingService.build(context);
+		notifierService.sendNotification(mail, true);
 	}
 }
