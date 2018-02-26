@@ -167,19 +167,14 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 		UploadRequestEntry upReqdoc = uploadRequestEntryService.create(
 				actor, owner, file, fileName, "", false, null, requestUrl);
 		createBusinessCheck(requestUrl, upReqdoc);
-		// Create the link between the document and the upload request URL.
-		UploadRequestEntry uploadRequestEntry = new UploadRequestEntry(upReqdoc.getEntryOwner(), upReqdoc.getName(),
-				upReqdoc.getComment(), upReqdoc.getDocument(), requestUrl);
-		UploadRequestEntry requestEntry = uploadRequestEntryBusinessService
-				.create(uploadRequestEntry);
 		if (requestUrl.getUploadRequest().getEnableNotification()) {
 			EmailContext context = new UploadRequestUploadedFileEmailContext(
 					(User) requestUrl.getUploadRequest().getUploadRequestGroup().getOwner(),
-					requestUrl.getUploadRequest(), requestUrl, requestEntry);
+					requestUrl.getUploadRequest(), requestUrl, upReqdoc);
 			MailContainerWithRecipient mail = mailBuildingService.build(context);
 			notifierService.sendNotification(mail, true);
 		}
-		return requestEntry;
+		return upReqdoc;
 	}
 
 	private boolean isValidPassword(UploadRequestUrl data, String password) {
