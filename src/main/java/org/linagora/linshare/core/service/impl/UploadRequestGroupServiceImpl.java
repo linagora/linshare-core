@@ -201,7 +201,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		for (Contact c : contacts) {
 			UploadRequestUrl requestUrl = uploadRequestUrlService
 					.create(req, c);
-			if (UploadRequestStatus.STATUS_CREATED.equals(req.getStatus())) {
+			if (UploadRequestStatus.CREATED.equals(req.getStatus())) {
 				if (req.getEnableNotification()) {
 					UploadRequestCreatedEmailContext context = new UploadRequestCreatedEmailContext(owner, requestUrl, req);
 					mails.add(mailBuildingService.build(context));
@@ -211,7 +211,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		notifierService.sendNotification(mails, true);
 		mails.clear();
 		req = uploadRequestBusinessService.findByUuid(req.getUuid());
-		if (UploadRequestStatus.STATUS_ENABLED.equals(req.getStatus())) {
+		if (UploadRequestStatus.ENABLED.equals(req.getStatus())) {
 			for (UploadRequestUrl u : req.getUploadRequestURLs()) {
 				if (u.getContact().equals(contacts.get(0))) {
 					UploadRequestActivationEmailContext mailContext = new UploadRequestActivationEmailContext(
@@ -226,7 +226,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 
 	private UploadRequest initUploadRequest(User owner, UploadRequest req) {
 		AbstractDomain domain = owner.getDomain();
-		UploadRequestStatus status = req.getActivationDate().after(new Date())?UploadRequestStatus.STATUS_CREATED:UploadRequestStatus.STATUS_ENABLED;
+		UploadRequestStatus status = req.getActivationDate().after(new Date())?UploadRequestStatus.CREATED:UploadRequestStatus.ENABLED;
 		req.setStatus(status);
 		checkActivationDate(domain, req);
 		checkExpiryAndNoticationDate(domain, req);

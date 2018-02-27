@@ -166,7 +166,7 @@ public class UploadRequestEntryServiceImplTest extends AbstractTransactionalJUni
 		ure.setMaxDepositSize((long) 100);
 		ure.setMaxFileCount(new Integer(3));
 		ure.setMaxFileSize((long) 50);
-		ure.setStatus(UploadRequestStatus.STATUS_CREATED);
+		ure.setStatus(UploadRequestStatus.CREATED);
 		ure.setExpiryDate(new Date());
 		ure.setSecured(false);
 		ure.setCanEditExpiryDate(true);
@@ -231,7 +231,7 @@ public class UploadRequestEntryServiceImplTest extends AbstractTransactionalJUni
 				uploadRequest.getUploadRequestURLs().iterator().next());
 		UploadRequestEntry entry = uploadRequestEntryService.find(jane, jane, uploadRequestEntry.getUuid());
 		Assert.assertNotNull(entry);
-		uploadRequestService.updateStatus(john, john, uploadRequest.getUuid(), UploadRequestStatus.STATUS_CLOSED);
+		uploadRequestService.updateStatus(john, john, uploadRequest.getUuid(), UploadRequestStatus.CLOSED);
 		uploadRequestEntryService.delete(jane, jane, uploadRequestEntry.getUuid());
 		UploadRequestEntry deletedEntry = uploadRequestEntryService.find(jane, jane, uploadRequestEntry.getUuid());
 		Assert.assertNull(deletedEntry);

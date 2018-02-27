@@ -101,7 +101,7 @@ public class UploadRequestGroupRepositoryImpl extends
 	public List<String> findOutDateRequests() {
 		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass());
 		crit.add(Restrictions.lt("expiryDate", new Date()));
-		crit.add(Restrictions.eq("status", UploadRequestStatus.STATUS_ENABLED));
+		crit.add(Restrictions.eq("status", UploadRequestStatus.ENABLED));
 		crit.setProjection(Projections.property("uuid"));
 		@SuppressWarnings("unchecked")
 		List<String> list = listByCriteria(crit);

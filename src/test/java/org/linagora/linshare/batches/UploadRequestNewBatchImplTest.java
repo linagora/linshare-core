@@ -139,23 +139,23 @@ public class UploadRequestNewBatchImplTest extends
 		int i;
 		for (i = 0; i < l.size(); i++) {
 			u = uploadRequestRepository.findByUuid(l.get(i));
-			Assert.assertEquals(u.getStatus(), UploadRequestStatus.STATUS_ENABLED);
+			Assert.assertEquals(u.getStatus(), UploadRequestStatus.ENABLED);
 			c = closeExpiredUploadResquestBatch.execute(batchRunContext, l.get(i), l.size(), i);
 			Assert.assertEquals(c.getIdentifier(), l.get(i));
 			u = uploadRequestRepository.findByUuid(l.get(i));
 			Assert.assertEquals(u.getUuid(), l.get(i));
-			Assert.assertEquals(u.getStatus(), UploadRequestStatus.STATUS_CLOSED);
+			Assert.assertEquals(u.getStatus(), UploadRequestStatus.CLOSED);
 		}
 		l = enableUploadResquestBatch.getAll(batchRunContext);
 		Assert.assertEquals(l.size(), 3);
 		for (i = 0; i < l.size(); i++) {
 			u = uploadRequestRepository.findByUuid(l.get(i));
-			Assert.assertEquals(u.getStatus(), UploadRequestStatus.STATUS_CREATED);
+			Assert.assertEquals(u.getStatus(), UploadRequestStatus.CREATED);
 			c = enableUploadResquestBatch.execute(batchRunContext, l.get(i), l.size(), i);
 			Assert.assertEquals(c.getIdentifier(), l.get(i));
 			u = uploadRequestRepository.findByUuid(l.get(i));
 			Assert.assertEquals(u.getUuid(), l.get(i));
-			Assert.assertEquals(u.getStatus(), UploadRequestStatus.STATUS_ENABLED);
+			Assert.assertEquals(u.getStatus(), UploadRequestStatus.ENABLED);
 		}
 		l = notifyBeforeExpirationUploadResquestBatch.getAll(batchRunContext);
 		Assert.assertEquals(l.size(), 3);
@@ -164,7 +164,7 @@ public class UploadRequestNewBatchImplTest extends
 			Assert.assertEquals(c.getIdentifier(), l.get(i));
 			u = uploadRequestRepository.findByUuid(l.get(i));
 			Assert.assertEquals(u.getUuid(), l.get(i));
-			Assert.assertEquals(u.getStatus(), UploadRequestStatus.STATUS_ENABLED);
+			Assert.assertEquals(u.getStatus(), UploadRequestStatus.ENABLED);
 			Assert.assertEquals(u.isNotified(), true);
 		}
 		wiser.checkGeneratedMessages();

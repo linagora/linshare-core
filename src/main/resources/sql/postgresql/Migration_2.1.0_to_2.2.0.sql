@@ -409,3 +409,8 @@ CREATE VIEW alias_threads_list_active AS SELECT a.id, name, domain_id, ls_uuid, 
 -- All destroyed threads
 CREATE VIEW alias_threads_list_destroyed AS SELECT a.id, name, domain_id, ls_uuid, creation_date, modification_date, enable, destroyed from thread as u join account as a on a.id=u.account_id where a.destroyed != 0;
 COMMIT;
+
+--Update the upload request statuses
+UPDATE upload_request_history set status = replace(status, 'STATUS_', '');
+UPDATE upload_request_group set status = replace(status, 'STATUS_', '');
+UPDATE upload_request set status = replace(status, 'STATUS_', '');

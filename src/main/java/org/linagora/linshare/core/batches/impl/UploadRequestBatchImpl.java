@@ -88,10 +88,10 @@ public class UploadRequestBatchImpl implements UploadRequestBatch {
 		SystemAccount systemAccount = accountRepository.getBatchSystemAccount();
 		logger.info("Update upload request status");
 		List<MailContainerWithRecipient> notifications = Lists.newArrayList();
-		for (UploadRequest r : uploadRequestRepository.findByStatus(UploadRequestStatus.STATUS_CREATED)) {
+		for (UploadRequest r : uploadRequestRepository.findByStatus(UploadRequestStatus.CREATED)) {
 			if (r.getActivationDate().before(new Date())) {
 				try {
-					r.updateStatus(UploadRequestStatus.STATUS_ENABLED);
+					r.updateStatus(UploadRequestStatus.ENABLED);
 					r = uploadRequestService.updateRequest(systemAccount, systemAccount, r);
 					for (UploadRequestUrl u: r.getUploadRequestURLs()) {
 						UploadRequestActivationEmailContext mailContext = new UploadRequestActivationEmailContext((User) r.getUploadRequestGroup().getOwner(), r, u);
@@ -102,7 +102,7 @@ public class UploadRequestBatchImpl implements UploadRequestBatch {
 				}
 			}
 		}
-		for (UploadRequest r : uploadRequestRepository.findByStatus(UploadRequestStatus.STATUS_ENABLED)) {
+		for (UploadRequest r : uploadRequestRepository.findByStatus(UploadRequestStatus.ENABLED)) {
 			if (DateUtils.isSameDay(r.getNotificationDate(), new Date()) && !DateUtils.isSameDay(r.getNotificationDate(), r.getExpiryDate())) {
 				logger.debug("date de notification == today..." + r.getExpiryDate() + " == " + new Date());
 				try {
@@ -118,7 +118,7 @@ public class UploadRequestBatchImpl implements UploadRequestBatch {
 			}
 			if (r.getExpiryDate().before(new Date())) {
 				try {
-					r.updateStatus(UploadRequestStatus.STATUS_CLOSED);
+					r.updateStatus(UploadRequestStatus.CLOSED);
 					r = uploadRequestService.updateRequest(systemAccount, systemAccount, r);
 					for (UploadRequestUrl u : r.getUploadRequestURLs()) {
 						EmailContext ctx = new UploadRequestWarnExpiryEmailContext((User)r.getUploadRequestGroup().getOwner(), r, u, false);

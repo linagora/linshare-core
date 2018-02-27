@@ -212,7 +212,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 			checkCreatePermission(actor, owner, DocumentEntry.class, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, null);
 			checkSpace(owner, uploadRequestEntry.getSize());
 			UploadRequest uploadRequest = uploadRequestEntry.getUploadRequestUrl().getUploadRequest();
-			if (!uploadRequest.getStatus().equals(UploadRequestStatus.STATUS_CLOSED)) {
+			if (!uploadRequest.getStatus().equals(UploadRequestStatus.CLOSED)) {
 				throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FILE_CANNOT_BE_COPIED,
 						"You need first close the current upload request before copying file");
 			}
@@ -275,9 +275,9 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		checkDeletePermission(authUser, actor, UploadRequestEntry.class,
 				BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FORBIDDEN, uploadRequestEntry);
 		if (!(uploadRequestEntry.getUploadRequestUrl().getUploadRequest()
-				.getStatus() == UploadRequestStatus.STATUS_CLOSED
+				.getStatus() == UploadRequestStatus.CLOSED
 				|| uploadRequestEntry.getUploadRequestUrl().getUploadRequest()
-						.getStatus() == UploadRequestStatus.STATUS_ARCHIVED)) {
+						.getStatus() == UploadRequestStatus.ARCHIVED)) {
 			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FILE_CANNOT_DELETED,
 					"Cannot delete file when upload request is not closed or archived");
 		}

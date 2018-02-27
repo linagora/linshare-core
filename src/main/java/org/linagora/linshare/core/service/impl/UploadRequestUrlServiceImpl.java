@@ -124,7 +124,7 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 	public void deleteUploadRequestEntry(String uploadRequestUrlUuid,
 			String password, String entryUuid) throws BusinessException {
 		UploadRequestUrl requestUrl = find(uploadRequestUrlUuid, password);
-		if (requestUrl.getUploadRequest().getStatus() != UploadRequestStatus.STATUS_ENABLED) {
+		if (requestUrl.getUploadRequest().getStatus() != UploadRequestStatus.ENABLED) {
 			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FILE_CANNOT_DELETED,
 					"Cannot delete file when upload request is not enabled");
 
@@ -203,8 +203,8 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 							+ requestUrl.getUuid());
 		}
 
-		if (!(request.getStatus().equals(UploadRequestStatus.STATUS_ENABLED) || request
-				.getStatus().equals(UploadRequestStatus.STATUS_CLOSED))) {
+		if (!(request.getStatus().equals(UploadRequestStatus.ENABLED) || request
+				.getStatus().equals(UploadRequestStatus.CLOSED))) {
 			throw new BusinessException(
 					BusinessErrorCode.UPLOAD_REQUEST_READONLY_MODE,
 					"The current upload request url is not available : "
@@ -234,7 +234,7 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 	private void createBusinessCheck(UploadRequestUrl requestUrl,
 			UploadRequestEntry document) throws BusinessException {
 		UploadRequest request = requestUrl.getUploadRequest();
-		if (!request.getStatus().equals(UploadRequestStatus.STATUS_ENABLED)) {
+		if (!request.getStatus().equals(UploadRequestStatus.ENABLED)) {
 			throw new BusinessException(
 					BusinessErrorCode.UPLOAD_REQUEST_READONLY_MODE,
 					"The current upload request url is in read only mode : "
@@ -273,7 +273,7 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 	private void deleteBusinessCheck(UploadRequestUrl requestUrl)
 			throws BusinessException {
 		UploadRequest request = requestUrl.getUploadRequest();
-		if (!request.getStatus().equals(UploadRequestStatus.STATUS_ENABLED)) {
+		if (!request.getStatus().equals(UploadRequestStatus.ENABLED)) {
 			throw new BusinessException(
 					BusinessErrorCode.UPLOAD_REQUEST_READONLY_MODE,
 					"The current upload request url is in read only mode : "

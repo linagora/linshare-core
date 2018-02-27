@@ -173,7 +173,7 @@ public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4Spr
 		ure.setMaxDepositSize((long) 100);
 		ure.setMaxFileCount(new Integer(3));
 		ure.setMaxFileSize((long) 50);
-		ure.setStatus(UploadRequestStatus.STATUS_CREATED);
+		ure.setStatus(UploadRequestStatus.CREATED);
 		ure.setExpiryDate(new Date());
 		ure.setSecured(false);
 		ure.setCanEditExpiryDate(true);
@@ -206,7 +206,7 @@ public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4Spr
 		Assert.assertEquals(new Long(3), temp.getUnitBeforeExpiry());
 		Assert.assertEquals(false, temp.getGroupMode());
 		Assert.assertEquals("templateName", temp.getName());
-		Assert.assertEquals(e.getStatus(), UploadRequestStatus.STATUS_ENABLED);
+		Assert.assertEquals(e.getStatus(), UploadRequestStatus.ENABLED);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -282,16 +282,16 @@ public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4Spr
 	public void UpdateUploadRequestStatus() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadRequest tmp = e.clone();
-		tmp = service.updateStatus(john, john, tmp.getUuid(), UploadRequestStatus.STATUS_CLOSED);
-		Assert.assertEquals(tmp.getStatus(), UploadRequestStatus.STATUS_CLOSED);
+		tmp = service.updateStatus(john, john, tmp.getUuid(), UploadRequestStatus.CLOSED);
+		Assert.assertEquals(tmp.getStatus(), UploadRequestStatus.CLOSED);
 		Assert.assertEquals(john, (User) e.getUploadRequestGroup().getOwner());
 		// Status ARCHIVED
-		tmp = service.updateStatus(john, john, tmp.getUuid(), UploadRequestStatus.STATUS_ARCHIVED);
-		Assert.assertEquals(tmp.getStatus(), UploadRequestStatus.STATUS_ARCHIVED);
+		tmp = service.updateStatus(john, john, tmp.getUuid(), UploadRequestStatus.ARCHIVED);
+		Assert.assertEquals(tmp.getStatus(), UploadRequestStatus.ARCHIVED);
 		Assert.assertEquals(john, (User) e.getUploadRequestGroup().getOwner());
 		// STATUS DELETED
-		tmp = service.updateStatus(john, john, tmp.getUuid(), UploadRequestStatus.STATUS_DELETED);
-		Assert.assertEquals(tmp.getStatus(), UploadRequestStatus.STATUS_DELETED);
+		tmp = service.updateStatus(john, john, tmp.getUuid(), UploadRequestStatus.DELETED);
+		Assert.assertEquals(tmp.getStatus(), UploadRequestStatus.DELETED);
 		Assert.assertEquals(john, (User) e.getUploadRequestGroup().getOwner());
 		// TODO UploadRequests : new email
 		// wiser.checkGeneratedMessages();
@@ -303,7 +303,7 @@ public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4Spr
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadRequest tmp = e.clone();
 		tmp = service.closeRequestByRecipient(e.getUploadRequestURLs().iterator().next());
-		Assert.assertEquals(tmp.getStatus(), UploadRequestStatus.STATUS_CLOSED);
+		Assert.assertEquals(tmp.getStatus(), UploadRequestStatus.CLOSED);
 		Assert.assertEquals(john, (User) e.getUploadRequestGroup().getOwner());
 		// TODO UploadRequests : new email
 		// wiser.checkGeneratedMessages();
@@ -314,13 +314,13 @@ public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4Spr
 	public void updateStatusWithError() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		try {
-			e.updateStatus(UploadRequestStatus.STATUS_CLOSED);
+			e.updateStatus(UploadRequestStatus.CLOSED);
 			UploadRequest tmp = service.updateRequest(john, john, e);
 			tmp = service.findRequestByUuid(john, john, e.getUuid());
-			tmp.updateStatus(UploadRequestStatus.STATUS_ENABLED);
+			tmp.updateStatus(UploadRequestStatus.ENABLED);
 			tmp = service.updateRequest(john, john, tmp);
 		} catch (BusinessException ex) {
-			Assert.assertEquals("Cannot transition from STATUS_CLOSED to STATUS_ENABLED.", ex.getMessage());
+			Assert.assertEquals("Cannot transition from CLOSED to ENABLED.", ex.getMessage());
 		}
 		// TODO UploadRequests : new email
 		// wiser.checkGeneratedMessages();

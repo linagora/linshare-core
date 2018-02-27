@@ -95,7 +95,7 @@ public class CloseExpiredUploadRequestBatchImpl extends GenericBatchImpl impleme
 		UploadRequest uploadRequest = uploadRequestService.findRequestByUuid(account, null, identifier);
 		ResultContext context = new UploadRequestBatchResultContext(uploadRequest);
 		console.logInfo(batchRunContext, total, position, "processing uplaod request : ", uploadRequest.getUuid());
-		uploadRequest.updateStatus(UploadRequestStatus.STATUS_CLOSED);
+		uploadRequest.updateStatus(UploadRequestStatus.CLOSED);
 		uploadRequest = uploadRequestService.updateRequest(account, uploadRequest.getUploadRequestGroup().getOwner(), uploadRequest);
 		for (UploadRequestUrl u : uploadRequest.getUploadRequestURLs()) {
 			if (uploadRequest.getEnableNotification()) {

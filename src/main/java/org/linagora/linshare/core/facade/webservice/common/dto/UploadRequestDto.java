@@ -152,7 +152,7 @@ public class UploadRequestDto {
 			this.body = entity.getUploadRequestGroup().getBody();
 		}
 		this.recipient = null;
-		if (entity.getStatus().equals(UploadRequestStatus.STATUS_CLOSED)) {
+		if (entity.getStatus().equals(UploadRequestStatus.CLOSED)) {
 			this.isClosed = true;
 			this.canDeleteDocument = false;
 			this.canClose = false;

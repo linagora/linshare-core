@@ -171,18 +171,18 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 
 	private void sendNotification(UploadRequest req, Account actor) {
 		List<MailContainerWithRecipient> mails = Lists.newArrayList();
-		if (UploadRequestStatus.STATUS_ENABLED.equals(req.getStatus())) {
+		if (UploadRequestStatus.ENABLED.equals(req.getStatus())) {
 			mails.add(mailBuildingService.build(new UploadRequestActivationEmailContext((User) actor, req)));
 		} else if (req.getEnableNotification()) {
-			if (UploadRequestStatus.STATUS_CANCELED.equals(req.getStatus())) {
+			if (UploadRequestStatus.CANCELED.equals(req.getStatus())) {
 				// TODO return context
-			} else if (UploadRequestStatus.STATUS_CLOSED.equals(req.getStatus())) {
+			} else if (UploadRequestStatus.CLOSED.equals(req.getStatus())) {
 				for (UploadRequestUrl urUrl : req.getUploadRequestURLs()) {
 					mails.add(mailBuildingService.build(new UploadRequestCloseByOwnerEmailContext((User) actor, urUrl, req)));
 				}
-			} else if (UploadRequestStatus.STATUS_ARCHIVED.equals(req.getStatus())) {
+			} else if (UploadRequestStatus.ARCHIVED.equals(req.getStatus())) {
 				// TODO return context
-			} else if (UploadRequestStatus.STATUS_DELETED.equals(req.getStatus())) {
+			} else if (UploadRequestStatus.DELETED.equals(req.getStatus())) {
 				// TODO return context
 			}
 		}
@@ -231,7 +231,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 			throws BusinessException {
 		Account actor = accountRepository.getUploadRequestSystemAccount();
 		UploadRequest req = url.getUploadRequest();
-		if (req.getStatus().equals(UploadRequestStatus.STATUS_CLOSED)) {
+		if (req.getStatus().equals(UploadRequestStatus.CLOSED)) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
 					"Closing an already closed upload request url : "
 							+ req.getUuid());
@@ -239,7 +239,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		UploadRequestAuditLogEntry log = new UploadRequestAuditLogEntry(new AccountMto(actor),
 				new AccountMto(req.getUploadRequestGroup().getOwner()), LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST, req.getUuid(), req);
 		checkUpdatePermission(actor, req.getUploadRequestGroup().getOwner(), UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, req);
-		req.updateStatus(UploadRequestStatus.STATUS_CLOSED);
+		req.updateStatus(UploadRequestStatus.CLOSED);
 		UploadRequest update = updateRequest(actor, actor, req);
 		EmailContext ctx = new UploadRequestClosedByRecipientEmailContext((User)req.getUploadRequestGroup().getOwner(), req, url);
 		MailContainerWithRecipient mail = mailBuildingService.build(ctx);
@@ -252,7 +252,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	@Override
 	public UploadRequest deleteRequest(Account actor, Account owner, String uuid)
 			throws BusinessException {
-		return updateStatus(actor, owner, uuid, UploadRequestStatus.STATUS_DELETED);
+		return updateStatus(actor, owner, uuid, UploadRequestStatus.DELETED);
 	}
 
 	@Override
@@ -401,7 +401,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	}
 
 	private void checkStatusPermission(UploadRequestStatus status) {
-		if ((UploadRequestStatus.STATUS_CREATED.equals(status) != true) &&(UploadRequestStatus.STATUS_ENABLED.equals(status) != true)) {
+		if ((UploadRequestStatus.CREATED.equals(status) != true) &&(UploadRequestStatus.ENABLED.equals(status) != true)) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You have no rights to add new recipient");
 		}
 	}

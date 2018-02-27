@@ -120,7 +120,7 @@ public class UploadRequestRepositoryImpl extends
 	public List<String> findOutdatedRequests() {
 		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass());
 		crit.add(Restrictions.lt("expiryDate", new Date()));
-		crit.add(Restrictions.eq("status", UploadRequestStatus.STATUS_ENABLED));
+		crit.add(Restrictions.eq("status", UploadRequestStatus.ENABLED));
 		crit.setProjection(Projections.property("uuid"));
 		@SuppressWarnings("unchecked")
 		List<String> list = listByCriteria(crit);
@@ -131,7 +131,7 @@ public class UploadRequestRepositoryImpl extends
 	public List<String> findCreatedUploadRequests() {
 		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass());
 		crit.add(Restrictions.lt("activationDate", new Date()));
-		crit.add(Restrictions.eq("status", UploadRequestStatus.STATUS_CREATED));
+		crit.add(Restrictions.eq("status", UploadRequestStatus.CREATED));
 		crit.setProjection(Projections.property("uuid"));
 		@SuppressWarnings("unchecked")
 		List<String> list = listByCriteria(crit);
@@ -152,7 +152,7 @@ public class UploadRequestRepositoryImpl extends
 		crit.add(Restrictions.lt("notificationDate", after));
 		crit.add(Restrictions.gt("notificationDate", before));
 		crit.add(Restrictions.ltProperty("notificationDate", "expiryDate"));
-		crit.add(Restrictions.eq("status", UploadRequestStatus.STATUS_ENABLED));
+		crit.add(Restrictions.eq("status", UploadRequestStatus.ENABLED));
 		crit.setProjection(Projections.property("uuid"));
 		@SuppressWarnings("unchecked")
 		List<String> list = listByCriteria(crit);

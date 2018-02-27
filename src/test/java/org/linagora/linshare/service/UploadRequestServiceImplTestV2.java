@@ -176,7 +176,7 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 		ure.setMaxDepositSize((long) 100);
 		ure.setMaxFileCount(new Integer(3));
 		ure.setMaxFileSize((long) 50);
-		ure.setStatus(UploadRequestStatus.STATUS_CREATED);
+		ure.setStatus(UploadRequestStatus.CREATED);
 		ure.setExpiryDate(new Date());
 		ure.setSecured(false);
 		ure.setCanEditExpiryDate(true);
@@ -240,7 +240,7 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 		Date tomorrow = calendar.getTime();
 		ure.setActivationDate(tomorrow);
 		uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
-		int finalSize = service.findAllRequest(john, john, Lists.newArrayList(UploadRequestStatus.STATUS_ENABLED)).size();
+		int finalSize = service.findAllRequest(john, john, Lists.newArrayList(UploadRequestStatus.ENABLED)).size();
 		Assert.assertEquals(initSize+1, finalSize);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -250,14 +250,14 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		List<UploadRequest> uploadRequests = uploadRequestGroupService.createRequest(john, john, ure,
 				Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
-		Assert.assertEquals(UploadRequestStatus.STATUS_ENABLED, ure.getUploadRequestGroup().getStatus());
+		Assert.assertEquals(UploadRequestStatus.ENABLED, ure.getUploadRequestGroup().getStatus());
 		// Update upload request status
-		service.updateStatus(john, john, uploadRequests.get(0).getUuid(), UploadRequestStatus.STATUS_CLOSED);
-		Assert.assertEquals(UploadRequestStatus.STATUS_CLOSED, uploadRequests.get(0).getStatus());
-		service.updateStatus(john, john, uploadRequests.get(0).getUuid(), UploadRequestStatus.STATUS_ARCHIVED);
-		Assert.assertEquals(UploadRequestStatus.STATUS_ARCHIVED, uploadRequests.get(0).getStatus());
-		service.updateStatus(john, john, uploadRequests.get(0).getUuid(), UploadRequestStatus.STATUS_DELETED);
-		Assert.assertEquals(UploadRequestStatus.STATUS_DELETED, uploadRequests.get(0).getStatus());
+		service.updateStatus(john, john, uploadRequests.get(0).getUuid(), UploadRequestStatus.CLOSED);
+		Assert.assertEquals(UploadRequestStatus.CLOSED, uploadRequests.get(0).getStatus());
+		service.updateStatus(john, john, uploadRequests.get(0).getUuid(), UploadRequestStatus.ARCHIVED);
+		Assert.assertEquals(UploadRequestStatus.ARCHIVED, uploadRequests.get(0).getStatus());
+		service.updateStatus(john, john, uploadRequests.get(0).getUuid(), UploadRequestStatus.DELETED);
+		Assert.assertEquals(UploadRequestStatus.DELETED, uploadRequests.get(0).getStatus());
 	}
 
 	@Test
@@ -318,7 +318,7 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 		uploadRequest.setMaxDepositSize((long) 100);
 		uploadRequest.setMaxFileCount(new Integer(3));
 		uploadRequest.setMaxFileSize((long) 50);
-		uploadRequest.setStatus(UploadRequestStatus.STATUS_CREATED);
+		uploadRequest.setStatus(UploadRequestStatus.CREATED);
 		uploadRequest.setExpiryDate(new Date());
 		uploadRequest.setSecured(false);
 		uploadRequest.setCanEditExpiryDate(true);
@@ -331,8 +331,8 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 	}
 
 	private void finishUploadRequest(UploadRequest ure, User actor) {
-		service.updateStatus(actor, actor, ure.getUuid(), UploadRequestStatus.STATUS_CLOSED);
-		service.updateStatus(actor, actor, ure.getUuid(), UploadRequestStatus.STATUS_ARCHIVED);
+		service.updateStatus(actor, actor, ure.getUuid(), UploadRequestStatus.CLOSED);
+		service.updateStatus(actor, actor, ure.getUuid(), UploadRequestStatus.ARCHIVED);
 		service.deleteRequest(actor, actor, ure.getUuid());
 	}
 

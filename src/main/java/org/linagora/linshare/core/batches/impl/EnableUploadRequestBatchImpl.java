@@ -92,7 +92,7 @@ public class EnableUploadRequestBatchImpl extends GenericBatchImpl implements En
 		UploadRequest r = uploadRequestService.findRequestByUuid(account, null, identifier);
 		ResultContext context = new UploadRequestBatchResultContext(r);
 		console.logInfo(batchRunContext, total, position, "processing uplaod request : ", r.getUuid());
-		r.updateStatus(UploadRequestStatus.STATUS_ENABLED);
+		r.updateStatus(UploadRequestStatus.ENABLED);
 		r = uploadRequestService.updateRequest(account, r.getUploadRequestGroup().getOwner(), r);
 		for (UploadRequestUrl u: r.getUploadRequestURLs()) {
 			UploadRequestActivationEmailContext mailContext = new UploadRequestActivationEmailContext((User) r.getUploadRequestGroup().getOwner(), r, u);

@@ -127,7 +127,7 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 		ure.setMaxDepositSize((long) 100);
 		ure.setMaxFileCount(new Integer(3));
 		ure.setMaxFileSize((long) 50);
-		ure.setStatus(UploadRequestStatus.STATUS_CREATED);
+		ure.setStatus(UploadRequestStatus.CREATED);
 		ure.setExpiryDate(new Date());
 		ure.setSecured(false);
 		ure.setCanEditExpiryDate(true);
@@ -171,7 +171,7 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 		Date tomorrow = calendar.getTime();
 		ure.setActivationDate(tomorrow);
 		uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
-		List<UploadRequestGroup> groups = uploadRequestGroupService.findAllGroupRequest(john, john, Lists.newArrayList(UploadRequestStatus.STATUS_ENABLED));
+		List<UploadRequestGroup> groups = uploadRequestGroupService.findAllGroupRequest(john, john, Lists.newArrayList(UploadRequestStatus.ENABLED));
 		Assert.assertEquals(uploadRequestGroupService.findAllGroupRequest(john, john, null).size() - 1, groups.size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -180,15 +180,15 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 	public void updateStatus() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
-		Assert.assertEquals(UploadRequestStatus.STATUS_ENABLED, ure.getUploadRequestGroup().getStatus());
+		Assert.assertEquals(UploadRequestStatus.ENABLED, ure.getUploadRequestGroup().getStatus());
 
 		// Update upload request group status
-		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(), UploadRequestStatus.STATUS_CLOSED);
-		Assert.assertEquals(UploadRequestStatus.STATUS_CLOSED, ure.getUploadRequestGroup().getStatus());
-		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(), UploadRequestStatus.STATUS_ARCHIVED);
-		Assert.assertEquals(UploadRequestStatus.STATUS_ARCHIVED, ure.getUploadRequestGroup().getStatus());
-		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(), UploadRequestStatus.STATUS_DELETED);
-		Assert.assertEquals(UploadRequestStatus.STATUS_DELETED, ure.getUploadRequestGroup().getStatus());
+		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(), UploadRequestStatus.CLOSED);
+		Assert.assertEquals(UploadRequestStatus.CLOSED, ure.getUploadRequestGroup().getStatus());
+		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(), UploadRequestStatus.ARCHIVED);
+		Assert.assertEquals(UploadRequestStatus.ARCHIVED, ure.getUploadRequestGroup().getStatus());
+		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(), UploadRequestStatus.DELETED);
+		Assert.assertEquals(UploadRequestStatus.DELETED, ure.getUploadRequestGroup().getStatus());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -200,9 +200,9 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 		Date tomorrow = calendar.getTime();
 		ure.setActivationDate(tomorrow);
 		uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
-		Assert.assertEquals(UploadRequestStatus.STATUS_CREATED, ure.getUploadRequestGroup().getStatus());
-		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(), UploadRequestStatus.STATUS_CANCELED);
-		Assert.assertEquals(UploadRequestStatus.STATUS_CANCELED, ure.getUploadRequestGroup().getStatus());
+		Assert.assertEquals(UploadRequestStatus.CREATED, ure.getUploadRequestGroup().getStatus());
+		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(), UploadRequestStatus.CANCELED);
+		Assert.assertEquals(UploadRequestStatus.CANCELED, ure.getUploadRequestGroup().getStatus());
 	}
 	
 	@Test

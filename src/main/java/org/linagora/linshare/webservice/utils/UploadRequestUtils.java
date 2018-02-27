@@ -40,8 +40,8 @@ import org.linagora.linshare.core.exception.BusinessException;
 public class UploadRequestUtils {
 
 	public static void checkStatusPermission(UploadRequestStatus status, String message) {
-		if ((UploadRequestStatus.STATUS_CREATED.equals(status) != true)
-				&& (UploadRequestStatus.STATUS_ENABLED.equals(status) != true)) {
+		if ((UploadRequestStatus.CREATED.equals(status) != true)
+				&& (UploadRequestStatus.ENABLED.equals(status) != true)) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, message);
 		}
 	}

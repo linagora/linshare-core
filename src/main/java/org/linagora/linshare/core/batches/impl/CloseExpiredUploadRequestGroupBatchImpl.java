@@ -81,13 +81,13 @@ public class CloseExpiredUploadRequestGroupBatchImpl extends GenericBatchImpl {
 		for(UploadRequest ur : uploadRequestGroup.getUploadRequests()) {
 			// with this batch, we update just current uploadRequestGroup
 			// if there is one uploadRequest enable, we shouldn't  close the group
-			if (ur.getStatus().equals(UploadRequestStatus.STATUS_ENABLED)) {
+			if (ur.getStatus().equals(UploadRequestStatus.ENABLED)) {
 				return null;
 			}
 		}
 		ResultContext context = new BatchResultContext<UploadRequestGroup>(uploadRequestGroup);
 		console.logInfo(batchRunContext, total, position, "processing uplaod request group : ", uploadRequestGroup.getUuid());
-		uploadRequestGroup.updateStatus(UploadRequestStatus.STATUS_CLOSED);
+		uploadRequestGroup.updateStatus(UploadRequestStatus.CLOSED);
 		uploadRequestGroupRepository.update(uploadRequestGroup);
 		return context;
 	}
