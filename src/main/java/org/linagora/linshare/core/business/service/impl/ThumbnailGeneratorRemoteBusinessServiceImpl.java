@@ -96,6 +96,12 @@ public class ThumbnailGeneratorRemoteBusinessServiceImpl implements ThumbnailGen
 
 	@Override
 	public boolean isSupportedMimetype(String mimeType) {
+		if (!thumbEnabled) {
+			return false;
+		}
+		if (!pdfThumbEnabled && mimeType.contains("pdf")) {
+			return false;
+		}
 		try {
 			final Response isSupported = ClientBuilder.newClient()
 					.target(getLinthumbnailWebServiceLink(mimeType)).request().get(Response.class);
