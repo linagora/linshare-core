@@ -60,6 +60,7 @@ import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
+import org.linagora.linshare.core.domain.objects.UploadRequestContainer;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
@@ -150,6 +151,15 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		}
 		checkReadPermission(actor, owner, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, ret);
 		return ret;
+	}
+
+	@Override
+
+	public UploadRequestContainer create(Account authUser, Account owner, UploadRequest uploadRequest, UploadRequestContainer container) {
+		uploadRequest = uploadRequestBusinessService.create(uploadRequest);
+		container.addUploadRequests(uploadRequest);
+		// TODO create and add log to the container
+		return container;
 	}
 
 	@Override

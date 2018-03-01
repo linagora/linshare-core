@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -32,34 +32,48 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.core.domain.objects;
 
-import java.io.File;
+import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
-import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
-import org.linagora.linshare.core.domain.objects.UploadRequestContainer;
-import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
-public interface UploadRequestUrlService {
+import com.google.common.collect.Lists;
 
-	UploadRequestUrl find(String uuid, String password)
-			throws BusinessException;
+public class UploadRequestContainer {
 
-	UploadRequestContainer create(UploadRequest request, Contact contact, UploadRequestContainer container)
-			throws BusinessException;
+	protected List<UploadRequest> uploadRequests = Lists.newArrayList();
 
-	UploadRequestEntry createUploadRequestEntry(String uploadRequestUrlUuid,
-			File file, String fileName, String password)
-			throws BusinessException;
+	protected List<MailContainerWithRecipient> mailContainers = Lists
+			.newArrayList();
 
-	void deleteUploadRequestEntry(String uploadRequestUrlUuid, String password,
-			String entryUuid) throws BusinessException;
+	protected List<AuditLogEntryUser> logs = Lists.newArrayList();
 
-	void delete(Account actor, UploadRequestUrl uploadRequestUrl);
+	public UploadRequestContainer() {
+	}
 
-	UploadRequestUrl create(UploadRequest request, Contact contact) throws BusinessException;
+	public List<UploadRequest> getUploadRequests() {
+		return uploadRequests;
+	}
+
+	public void addUploadRequests(UploadRequest uploadRequest) {
+		this.uploadRequests.add(uploadRequest);
+	}
+
+	public List<MailContainerWithRecipient> getMailContainers() {
+		return mailContainers;
+	}
+
+	public void addMailContainersAddEmail(MailContainerWithRecipient mailContainer) {
+		this.mailContainers.add(mailContainer);
+	}
+
+	public List<AuditLogEntryUser> getLogs() {
+		return logs;
+	}
+
+	public void addLogs(AuditLogEntryUser log) {
+		this.logs.add(log);
+	}
 }

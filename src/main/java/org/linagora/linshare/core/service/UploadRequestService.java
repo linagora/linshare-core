@@ -46,6 +46,7 @@ import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
 import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.UploadRequestContainer;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface UploadRequestService {
@@ -103,4 +104,7 @@ public interface UploadRequestService {
 			Contact contact);
 
 	List<UploadRequest> findAllRequestsByGroup(User authUser, User actor, String groupUuid, List<UploadRequestStatus> status);
+
+	UploadRequestContainer create(Account authUser, Account owner, UploadRequest uploadRequest,
+			UploadRequestContainer container);
 }

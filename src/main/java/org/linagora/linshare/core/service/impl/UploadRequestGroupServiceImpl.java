@@ -38,12 +38,10 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.linagora.linshare.core.business.service.UploadRequestBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestGroupBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.constants.UploadRequestHistoryEventType;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -56,16 +54,12 @@ import org.linagora.linshare.core.domain.entities.LanguageEnumValueFunctionality
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
-import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
-import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
+import org.linagora.linshare.core.domain.objects.UploadRequestContainer;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.notifications.context.UploadRequestActivationEmailContext;
-import org.linagora.linshare.core.notifications.context.UploadRequestCreatedEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.UploadRequestGroupResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -74,14 +68,10 @@ import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
-import org.linagora.linshare.mongo.entities.logs.UploadRequestAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.UploadRequestGroupAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, UploadRequestGroup> implements UploadRequestGroupService {
 
@@ -94,7 +84,6 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 	private final FunctionalityReadOnlyService functionalityService;
 	private final UploadRequestUrlService uploadRequestUrlService;
 	private final MailBuildingService mailBuildingService;
-	private final UploadRequestBusinessService uploadRequestBusinessService;
 	private final NotifierService notifierService;
 	private final LogEntryService logEntryService;
 	private final UploadRequestService uploadRequestService;
@@ -105,7 +94,6 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 			final FunctionalityReadOnlyService functionalityService,
 			final UploadRequestUrlService uploadRequestUrlService,
 			final MailBuildingService mailBuildingService,
-			final UploadRequestBusinessService uploadRequestBusinessService,
 			final NotifierService notifierService,
 			final LogEntryService logEntryService,
 			final UploadRequestService uploadRequestService) {
@@ -115,7 +103,6 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		this.functionalityService = functionalityService;
 		this.uploadRequestUrlService = uploadRequestUrlService;
 		this.mailBuildingService = mailBuildingService;
-		this.uploadRequestBusinessService = uploadRequestBusinessService;
 		this.notifierService = notifierService;
 		this.logEntryService = logEntryService;
 		this.uploadRequestService = uploadRequestService;
@@ -164,64 +151,34 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 				!groupedModeLocal, req.getStatus(),req.getExpiryDate(),req.getNotificationDate(),
 				req.getMaxFileCount(), req.getMaxDepositSize(), req.getMaxFileSize());
 		uploadRequestGroup = uploadRequestGroupBusinessService.create(uploadRequestGroup);
+		UploadRequestContainer container = new UploadRequestContainer();
+		req.setUploadRequestGroup(uploadRequestGroup);
+		if (groupedModeLocal) {
+			uploadRequestService.create(actor, owner, req, container);
+			for (Contact contact : contacts) {
+				container = uploadRequestUrlService.create(container.getUploadRequests().get(0), contact, container);
+			}
+		} else {
+			for (Contact contact : contacts) {
+				UploadRequest clone = req.clone();
+				container = uploadRequestService.create(actor, owner, clone, container);
+				container = uploadRequestUrlService.create(container.getUploadRequests().get(0), contact, container);
+			}
+		}
+		// TODO move this logs
+//		List<AuditLogEntryUser> log = Lists.newArrayList();
+//		for (UploadRequest r : requests) {
+//			log.add(new UploadRequestAuditLogEntry(new AccountMto(actor),
+//				new AccountMto(owner), LogAction.CREATE, AuditLogEntryType.UPLOAD_REQUEST,
+//				r.getUuid(), r));
+//		}
+//		logEntryService.insert(log);
+		notifierService.sendNotification(container.getMailContainers());
 		UploadRequestGroupAuditLogEntry groupLog = new UploadRequestGroupAuditLogEntry(new AccountMto(actor),
 				new AccountMto(owner), LogAction.CREATE, AuditLogEntryType.UPLOAD_REQUEST_GROUP,
 				uploadRequestGroup.getUuid(), uploadRequestGroup);
 		logEntryService.insert(groupLog);
-		req.setUploadRequestGroup(uploadRequestGroup);
-		List<UploadRequest> requests = Lists.newArrayList();
-		if (groupedModeLocal) {
-			requests.addAll(createRequestGrouped(actor, owner, req,
-					contacts, subject, body, uploadRequestGroup));
-		} else {
-			for (Contact contact : contacts) {
-				UploadRequest clone = req.clone();
-				requests.addAll(createRequestGrouped(actor, owner, clone,
-						 Lists.newArrayList(contact), subject, body, uploadRequestGroup));
-			}
-		}
-		List<AuditLogEntryUser> log = Lists.newArrayList();
-		for (UploadRequest r : requests) {
-			log.add(new UploadRequestAuditLogEntry(new AccountMto(actor),
-				new AccountMto(owner), LogAction.CREATE, AuditLogEntryType.UPLOAD_REQUEST,
-				r.getUuid(), r));
-		}
-		logEntryService.insert(log);
-		return requests;
-	}
-
-	private List<UploadRequest> createRequestGrouped(Account actor, User owner,
-			UploadRequest req, List<Contact> contacts, String subject,
-			String body, UploadRequestGroup group) throws BusinessException {
-		UploadRequestHistory hist = new UploadRequestHistory(req,
-				UploadRequestHistoryEventType.EVENT_CREATED);
-		req.getUploadRequestHistory().add(hist);
-		req = uploadRequestBusinessService.create(req);
-		List<MailContainerWithRecipient> mails = Lists.newArrayList();
-		for (Contact c : contacts) {
-			UploadRequestUrl requestUrl = uploadRequestUrlService
-					.create(req, c);
-			if (UploadRequestStatus.CREATED.equals(req.getStatus())) {
-				if (req.getEnableNotification()) {
-					UploadRequestCreatedEmailContext context = new UploadRequestCreatedEmailContext(owner, requestUrl, req);
-					mails.add(mailBuildingService.build(context));
-				}
-			}
-		}
-		notifierService.sendNotification(mails, true);
-		mails.clear();
-		req = uploadRequestBusinessService.findByUuid(req.getUuid());
-		if (UploadRequestStatus.ENABLED.equals(req.getStatus())) {
-			for (UploadRequestUrl u : req.getUploadRequestURLs()) {
-				if (u.getContact().equals(contacts.get(0))) {
-					UploadRequestActivationEmailContext mailContext = new UploadRequestActivationEmailContext(
-							(User) req.getUploadRequestGroup().getOwner(), req, u);
-					mails.add(mailBuildingService.build(mailContext));
-				}
-			}
-			notifierService.sendNotification(mails);
-		}
-		return Lists.newArrayList(req);
+		return container.getUploadRequests();
 	}
 
 	private UploadRequest initUploadRequest(User owner, UploadRequest req) {

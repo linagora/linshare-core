@@ -177,7 +177,6 @@
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="uploadRequestUrlService" />
 		<constructor-arg ref="mailBuildingService" />
-		<constructor-arg ref="uploadRequestBusinessService" />
 		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="uploadRequestService" />

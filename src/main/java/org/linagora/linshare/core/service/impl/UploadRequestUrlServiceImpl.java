@@ -50,9 +50,12 @@ import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
+import org.linagora.linshare.core.domain.objects.UploadRequestContainer;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.context.UploadRequestActivationEmailContext;
+import org.linagora.linshare.core.notifications.context.UploadRequestCreatedEmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestDeleteFileEmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestRecipientRemovedEmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestUploadedFileEmailContext;
@@ -118,6 +121,26 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 	public UploadRequestUrl create(UploadRequest request, Contact contact)
 			throws BusinessException {
 		return uploadRequestUrlBusinessService.create(request, request.isSecured(), contact);
+	}
+
+	@Override
+	public UploadRequestContainer create(UploadRequest request, Contact contact, UploadRequestContainer container)
+			throws BusinessException {
+		UploadRequestUrl requestUrl = uploadRequestUrlBusinessService.create(request, request.isSecured(), contact);
+		User owner = (User) request.getUploadRequestGroup().getOwner();
+		if (UploadRequestStatus.CREATED.equals(request.getStatus())) {
+			if (request.getEnableNotification()) {
+				UploadRequestCreatedEmailContext context = new UploadRequestCreatedEmailContext(owner, requestUrl,
+						request);
+				container.addMailContainersAddEmail(mailBuildingService.build(context));
+			}
+		} else if (UploadRequestStatus.ENABLED.equals(request.getStatus())) {
+			UploadRequestActivationEmailContext mailContext = new UploadRequestActivationEmailContext(owner, request,
+					requestUrl);
+			container.addMailContainersAddEmail(mailBuildingService.build(mailContext));
+		}
+		// TODO logs UploadRequestUrlMto
+		return container;
 	}
 
 	@Override
