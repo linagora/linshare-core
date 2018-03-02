@@ -73,7 +73,7 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 
 	private final ThreadService threadService;
 
-	private final ContactListService contactListSerice;
+	private final ContactListService contactListService;
 
 	private final RecipientFavouriteRepository favourite;
 
@@ -85,7 +85,7 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 			) {
 		super(accountService);
 		this.userService = userService;
-		this.contactListSerice = contactListService;
+		this.contactListService = contactListService;
 		this.threadService = threadService;
 		this.favourite = favourite;
 	}
@@ -133,7 +133,7 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 			List<AutoCompleteResultDto> result = Lists.newArrayList();
 			SearchType enumType = SearchType.fromString(type);
 			if (enumType.equals(SearchType.SHARING)) {
-				List<ContactList> mailingListsList = contactListSerice.searchListByVisibility(authUser.getLsUuid(), VisibilityType.All.name(), pattern);
+				List<ContactList> mailingListsList = contactListService.searchListByVisibility(authUser.getLsUuid(), VisibilityType.All.name(), pattern);
 				int range = (mailingListsList.size() < AUTO_COMPLETE_LIMIT ? mailingListsList.size() : AUTO_COMPLETE_LIMIT);
 				Set<UserDto> userList = findUser(pattern);
 				result.addAll(ImmutableList.copyOf(Lists.transform(Lists.newArrayList(userList), UserAutoCompleteResultDto.toDto())));
@@ -148,6 +148,9 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 			} else if (enumType.equals(SearchType.THREAD_MEMBERS)) {
 				Validate.notEmpty(threadUuid, "You must fill threadUuid query parameter.");
 				WorkGroup workGroup = threadService.find(authUser, authUser, threadUuid);
+				List<ContactList> mailingListsList = contactListService.searchListByVisibility(authUser.getLsUuid(), VisibilityType.All.name(), pattern);
+				int rangeContactList = (mailingListsList.size() < AUTO_COMPLETE_LIMIT ? mailingListsList.size() : AUTO_COMPLETE_LIMIT);
+				result.addAll(ImmutableList.copyOf(Lists.transform(mailingListsList.subList(0, rangeContactList), ListAutoCompleteResultDto.toDto())));
 				List<User> users = userService.autoCompleteUser(authUser, pattern);
 				int range = (users.size() < AUTO_COMPLETE_LIMIT ? users.size() : AUTO_COMPLETE_LIMIT);
 				for (User user : users.subList(0, range)) {
