@@ -154,7 +154,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		AuditLogEntryUser log = new UploadRequestAuditLogEntry(new AccountMto(owner),
 				new AccountMto(owner), LogAction.CREATE, AuditLogEntryType.UPLOAD_REQUEST,
 				uploadRequest.getUuid(), uploadRequest);
-		container.addLogs(log);
+		container.addLog(log);
 		return container;
 	}
 
@@ -172,7 +172,6 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_GROUP_STATUS,
 					"You can not edit an uploadRequest : " + req.getUuid());
 		}
-		// TODO: Fix issue of UploadRequestAuditLogEntry
 		UploadRequestAuditLogEntry log = new UploadRequestAuditLogEntry(new AccountMto(authUser), new AccountMto(actor),
 				LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST, req.getUuid(), req);
 		if (status.equals(UploadRequestStatus.ARCHIVED) && copy) {
@@ -187,27 +186,24 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 			}
 		}
 		req = uploadRequestBusinessService.updateStatus(req, status);
-		// TODO: Fix issue of sendNotification
 		sendNotification(req, actor);
-//		log.setResourceUpdated(new UploadRequestMto(req, true));		logEntryService.insert(log);
+		log.setResourceUpdated(new UploadRequestMto(req, true));
+		logEntryService.insert(log);
 		return req;
 	}
 
 	private void sendNotification(UploadRequest req, Account actor) {
 		List<MailContainerWithRecipient> mails = Lists.newArrayList();
 		if (UploadRequestStatus.ENABLED.equals(req.getStatus())) {
-			mails.add(mailBuildingService.build(new UploadRequestActivationEmailContext((User) actor, req)));
+			for (UploadRequestUrl urUrl : req.getUploadRequestURLs()) {
+				mails.add(mailBuildingService.build(new UploadRequestActivationEmailContext((User) actor, req, urUrl)));
+			}
 		} else if (req.getEnableNotification()) {
-			if (UploadRequestStatus.CANCELED.equals(req.getStatus())) {
-				// TODO return context
-			} else if (UploadRequestStatus.CLOSED.equals(req.getStatus())) {
+			if (UploadRequestStatus.CLOSED.equals(req.getStatus())) {
 				for (UploadRequestUrl urUrl : req.getUploadRequestURLs()) {
-					mails.add(mailBuildingService.build(new UploadRequestCloseByOwnerEmailContext((User) actor, urUrl, req)));
+					mails.add(mailBuildingService
+							.build(new UploadRequestCloseByOwnerEmailContext((User) actor, urUrl, req)));
 				}
-			} else if (UploadRequestStatus.ARCHIVED.equals(req.getStatus())) {
-				// TODO return context
-			} else if (UploadRequestStatus.DELETED.equals(req.getStatus())) {
-				// TODO return context
 			}
 		}
 		notifierService.sendNotification(mails);
@@ -268,7 +264,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		EmailContext ctx = new UploadRequestClosedByRecipientEmailContext((User)req.getUploadRequestGroup().getOwner(), req, url);
 		MailContainerWithRecipient mail = mailBuildingService.build(ctx);
 		notifierService.sendNotification(mail);
-		log.setResourceUpdated(new UploadRequestMto(update));
+		log.setResourceUpdated(new UploadRequestMto(update, true));
 		logEntryService.insert(log);
 		return update;
 	}
@@ -420,12 +416,6 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	private void checkActorPermission(Account actor) {
 		if (!actor.hasAllRights()) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You have no rights to access this service.");
-		}
-	}
-
-	private void checkStatusPermission(UploadRequestStatus status) {
-		if ((UploadRequestStatus.CREATED.equals(status) != true) &&(UploadRequestStatus.ENABLED.equals(status) != true)) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You have no rights to add new recipient");
 		}
 	}
 

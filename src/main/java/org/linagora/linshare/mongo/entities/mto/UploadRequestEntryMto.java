@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -51,6 +51,10 @@ public class UploadRequestEntryMto {
 
 	protected Boolean ciphered;
 
+	protected String uploadRequestUuid;
+
+	protected String uploadRequestGroupUuid;
+
 	public UploadRequestEntryMto() {
 		super();
 	}
@@ -63,6 +67,8 @@ public class UploadRequestEntryMto {
 		this.sha256sum = reqEntry.getSha256sum();
 		this.ciphered = reqEntry.getCiphered();
 		this.copied = false;
+		this.uploadRequestUuid = reqEntry.getUploadRequestUrl().getUploadRequest().getUuid();
+		this.uploadRequestGroupUuid = reqEntry.getUploadRequestUrl().getUploadRequest().getUploadRequestGroup().getUuid();
 	}
 
 	public String getUrlUuid() {
@@ -119,5 +125,21 @@ public class UploadRequestEntryMto {
 
 	public void setCiphered(Boolean ciphered) {
 		this.ciphered = ciphered;
+	}
+
+	public String getUploadRequestUuid() {
+		return uploadRequestUuid;
+	}
+
+	public void setUploadRequestUuid(String uploadRequestUuid) {
+		this.uploadRequestUuid = uploadRequestUuid;
+	}
+
+	public String getUploadRequestGroupUuid() {
+		return uploadRequestGroupUuid;
+	}
+
+	public void setUploadRequestGroupUuid(String uploadRequestGroupUuid) {
+		this.uploadRequestGroupUuid = uploadRequestGroupUuid;
 	}
 }

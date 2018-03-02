@@ -46,21 +46,16 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface UploadRequestUrlService {
 
-	UploadRequestUrl find(String uuid, String password)
-			throws BusinessException;
+	UploadRequestUrl find(String uuid, String password) throws BusinessException;
 
 	UploadRequestContainer create(UploadRequest request, Contact contact, UploadRequestContainer container)
 			throws BusinessException;
 
-	UploadRequestEntry createUploadRequestEntry(String uploadRequestUrlUuid,
-			File file, String fileName, String password)
+	UploadRequestEntry createUploadRequestEntry(String uploadRequestUrlUuid, File file, String fileName,
+			String password) throws BusinessException;
+
+	void deleteUploadRequestEntry(String uploadRequestUrlUuid, String password, String entryUuid)
 			throws BusinessException;
 
-	void deleteUploadRequestEntry(String uploadRequestUrlUuid, String password,
-			String entryUuid) throws BusinessException;
-
-	UploadRequestUrl create(UploadRequest request, Contact contact) throws BusinessException;
-
 	UploadRequestUrl delete(Account authUser, Account actor, String uploadRequestUrlUuid);
-
 }

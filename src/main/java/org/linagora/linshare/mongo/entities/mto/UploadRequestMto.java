@@ -34,13 +34,9 @@
 package org.linagora.linshare.mongo.entities.mto;
 
 import java.util.Date;
-import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
-
-import com.google.common.collect.Sets;
 
 public class UploadRequestMto {
 
@@ -84,8 +80,6 @@ public class UploadRequestMto {
 
 	private String mailMessageId;
 
-	private Set<UploadRequestUrlMto> uploadRequestURLs = Sets.newHashSet();
-
 	private AccountMto owner;
 
 	private DomainMto domain;
@@ -95,6 +89,8 @@ public class UploadRequestMto {
 	private Boolean dirtyLocalConf;
 
 	private Boolean enableNotification;
+
+	private Boolean statusUpdated;
 
 	public UploadRequestMto() {
 		super();
@@ -120,9 +116,30 @@ public class UploadRequestMto {
 		this.canEditExpiryDate = request.isCanEditExpiryDate();
 		this.dirtyLocalConf = request.getDirty();
 		this.enableNotification = request.getEnableNotification();
-		for (UploadRequestUrl u : request.getUploadRequestURLs()) {
-			this.uploadRequestURLs.add(new UploadRequestUrlMto(u));
-		}
+		this.statusUpdated = false;
+	}
+
+	public UploadRequestMto(UploadRequest request, Boolean statusUpdated) {
+		this.uuid = request.getUuid();
+		this.body = request.getUploadRequestGroup().getBody();
+		this.subject = request.getUploadRequestGroup().getSubject();
+		this.groupUuid = request.getUploadRequestGroup().getUuid();
+		this.domain = new DomainMto(request.getUploadRequestGroup().getAbstractDomain());
+		this.maxFileCount = request.getMaxFileCount();
+		this.secured = request.isSecured();
+		this.owner = new AccountMto(request.getUploadRequestGroup().getOwner());
+		this.notified = request.isNotified();
+		this.locale = request.getLocale();
+		this.maxDepositSize = request.getMaxDepositSize();
+		this.maxFileSize = request.getMaxFileSize();
+		this.status = request.getStatus();
+		this.expiryDate = request.getExpiryDate();
+		this.canClose = request.isCanClose();
+		this.canDelete = request.isCanDelete();
+		this.canEditExpiryDate = request.isCanEditExpiryDate();
+		this.dirtyLocalConf = request.getDirty();
+		this.enableNotification = request.getEnableNotification();
+		this.statusUpdated = statusUpdated;
 	}
 
 	public String getUuid() {
@@ -261,14 +278,6 @@ public class UploadRequestMto {
 		this.mailMessageId = mailMessageId;
 	}
 
-	public Set<UploadRequestUrlMto> getUploadRequestURLs() {
-		return uploadRequestURLs;
-	}
-
-	public void setUploadRequestURLs(Set<UploadRequestUrlMto> uploadRequestURLs) {
-		this.uploadRequestURLs = uploadRequestURLs;
-	}
-
 	public AccountMto getOwner() {
 		return owner;
 	}
@@ -333,4 +342,11 @@ public class UploadRequestMto {
 		this.enableNotification = enableNotification;
 	}
 
+	public Boolean getStatusUpdated() {
+		return statusUpdated;
+	}
+
+	public void setStatusUpdated(Boolean statusUpdated) {
+		this.statusUpdated = statusUpdated;
+	}
 }

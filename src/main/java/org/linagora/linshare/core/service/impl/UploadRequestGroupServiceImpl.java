@@ -62,7 +62,6 @@ import org.linagora.linshare.core.domain.objects.UploadRequestContainer;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.ContactDto;
-import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.UploadRequestGroupResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
@@ -72,6 +71,7 @@ import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
 import org.linagora.linshare.mongo.entities.logs.UploadRequestGroupAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.linagora.linshare.mongo.entities.mto.UploadRequestGroupMto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,11 +83,15 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 	private final UploadRequestGroupBusinessService uploadRequestGroupBusinessService;
 
 	private final UploadRequestGroupResourceAccessControl groupRac;
+
 	private final FunctionalityReadOnlyService functionalityService;
+
 	private final UploadRequestUrlService uploadRequestUrlService;
-	private final MailBuildingService mailBuildingService;
+
 	private final NotifierService notifierService;
+
 	private final LogEntryService logEntryService;
+
 	private final UploadRequestService uploadRequestService;
 
 	public UploadRequestGroupServiceImpl(
@@ -95,7 +99,6 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 			final UploadRequestGroupResourceAccessControl groupRac,
 			final FunctionalityReadOnlyService functionalityService,
 			final UploadRequestUrlService uploadRequestUrlService,
-			final MailBuildingService mailBuildingService,
 			final NotifierService notifierService,
 			final LogEntryService logEntryService,
 			final UploadRequestService uploadRequestService) {
@@ -104,7 +107,6 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		this.groupRac = groupRac;
 		this.functionalityService = functionalityService;
 		this.uploadRequestUrlService = uploadRequestUrlService;
-		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
 		this.logEntryService = logEntryService;
 		this.uploadRequestService = uploadRequestService;
@@ -130,9 +132,8 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 	}
 
 	@Override
-	public List<UploadRequest> createRequest(Account actor, User owner,
-			UploadRequest inputRequest, List<Contact> contacts, String subject,
-			String body, Boolean groupedMode) throws BusinessException {
+	public List<UploadRequest> createRequest(Account actor, User owner, UploadRequest inputRequest,
+			List<Contact> contacts, String subject, String body, Boolean groupedMode) throws BusinessException {
 		checkCreatePermission(actor, owner, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, null);
 		AbstractDomain domain = owner.getDomain();
 		BooleanValueFunctionality groupedFunc = functionalityService.getUploadRequestGroupedFunctionality(domain);
@@ -148,15 +149,19 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		}
 		UploadRequest req = initUploadRequest(owner, inputRequest);
 		UploadRequestGroup uploadRequestGroup = new UploadRequestGroup(owner, domain, subject, body,
-				req.getActivationDate(), req.isCanDelete(), req.isCanClose(),
-				req.isCanEditExpiryDate(), req.getLocale(), req.isSecured(),req.getEnableNotification(),
-				!groupedModeLocal, req.getStatus(),req.getExpiryDate(),req.getNotificationDate(),
-				req.getMaxFileCount(), req.getMaxDepositSize(), req.getMaxFileSize());
+				req.getActivationDate(), req.isCanDelete(), req.isCanClose(), req.isCanEditExpiryDate(),
+				req.getLocale(), req.isSecured(), req.getEnableNotification(), !groupedModeLocal, req.getStatus(),
+				req.getExpiryDate(), req.getNotificationDate(), req.getMaxFileCount(), req.getMaxDepositSize(),
+				req.getMaxFileSize());
 		uploadRequestGroup = uploadRequestGroupBusinessService.create(uploadRequestGroup);
 		UploadRequestContainer container = new UploadRequestContainer();
+		UploadRequestGroupAuditLogEntry groupLog = new UploadRequestGroupAuditLogEntry(new AccountMto(actor),
+				new AccountMto(owner), LogAction.CREATE, AuditLogEntryType.UPLOAD_REQUEST_GROUP,
+				uploadRequestGroup.getUuid(), uploadRequestGroup);
+		container.addLog(groupLog);
 		req.setUploadRequestGroup(uploadRequestGroup);
 		if (groupedModeLocal) {
-			uploadRequestService.create(actor, owner, req, container);
+			container = uploadRequestService.create(actor, owner, req, container);
 			for (Contact contact : contacts) {
 				container = uploadRequestUrlService.create(container.getUploadRequests().get(0), contact, container);
 			}
@@ -167,19 +172,8 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 				container = uploadRequestUrlService.create(container.getUploadRequests().get(0), contact, container);
 			}
 		}
-		// TODO move this logs
-//		List<AuditLogEntryUser> log = Lists.newArrayList();
-//		for (UploadRequest r : requests) {
-//			log.add(new UploadRequestAuditLogEntry(new AccountMto(actor),
-//				new AccountMto(owner), LogAction.CREATE, AuditLogEntryType.UPLOAD_REQUEST,
-//				r.getUuid(), r));
-//		}
-//		logEntryService.insert(log);
 		notifierService.sendNotification(container.getMailContainers());
-		UploadRequestGroupAuditLogEntry groupLog = new UploadRequestGroupAuditLogEntry(new AccountMto(actor),
-				new AccountMto(owner), LogAction.CREATE, AuditLogEntryType.UPLOAD_REQUEST_GROUP,
-				uploadRequestGroup.getUuid(), uploadRequestGroup);
-		logEntryService.insert(groupLog);
+		logEntryService.insert(container.getLogs());
 		return container.getUploadRequests();
 	}
 
@@ -551,19 +545,26 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupBusinessService.findByUuid(requestGroupUuid);
 		groupRac.checkUpdatePermission(authUser, actor, UploadRequestGroup.class,
 				BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, uploadRequestGroup);
+		UploadRequestGroupAuditLogEntry groupLog = new UploadRequestGroupAuditLogEntry(new AccountMto(authUser),
+				new AccountMto(actor), LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST_GROUP,
+				uploadRequestGroup.getUuid(), uploadRequestGroup);
 		uploadRequestGroup = uploadRequestGroupBusinessService.updateStatus(uploadRequestGroup, status);
 		for (UploadRequest uploadRequest : uploadRequestGroup.getUploadRequests()) {
 			if (status.compareTo(uploadRequest.getStatus()) < 0) {
 				uploadRequestService.updateStatus(authUser, actor, uploadRequest.getUuid(), status, copy);
 			}
 		}
-		// TODO add audit
+		groupLog.setResourceUpdated(new UploadRequestGroupMto(uploadRequestGroup, true));
+		logEntryService.insert(groupLog);
 		return uploadRequestGroup;
 	}
 
 	public UploadRequestGroup update(User authUser, User actor, UploadRequestGroup uploadRequestGroup) {
 		checkUpdatePermission(authUser, actor, UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
 				null);
+		UploadRequestGroupAuditLogEntry groupLog = new UploadRequestGroupAuditLogEntry(new AccountMto(authUser),
+				new AccountMto(actor), LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST_GROUP,
+				uploadRequestGroup.getUuid(), uploadRequestGroup);
 		UploadRequestGroup group = uploadRequestGroupBusinessService.findByUuid(uploadRequestGroup.getUuid());
 		group.setModificationDate(new Date());
 		group.setBusinessSubject(uploadRequestGroup.getSubject());
@@ -586,9 +587,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 			}
 		}
 		uploadRequestGroup = uploadRequestGroupBusinessService.update(group);
-		UploadRequestGroupAuditLogEntry groupLog = new UploadRequestGroupAuditLogEntry(new AccountMto(authUser),
-				new AccountMto(actor), LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST_GROUP,
-				uploadRequestGroup.getUuid(), uploadRequestGroup);
+		groupLog.setResourceUpdated(new UploadRequestGroupMto(uploadRequestGroup, true));
 		logEntryService.insert(groupLog);
 		return group;
 	}
@@ -646,6 +645,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 			container = uploadRequestUrlService.create(uploadRequest, contact, container);
 		}
 		notifierService.sendNotification(container.getMailContainers());
+		logEntryService.insert(container.getLogs());
 		return uploadRequestGroup;
 	}
 }

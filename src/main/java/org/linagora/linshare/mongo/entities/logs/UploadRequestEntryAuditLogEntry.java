@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2016-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -32,28 +32,33 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.webservice.userv2;
+package org.linagora.linshare.mongo.entities.logs;
 
-import java.util.List;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.linagora.linshare.mongo.entities.mto.UploadRequestEntryMto;
 
-import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestCreationtDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
-import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestGroupDto;
-import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.ContactDto;
+public class UploadRequestEntryAuditLogEntry extends AuditLogEntryUser {
 
-public interface UploadRequestGroupRestService {
+	protected UploadRequestEntryMto resource;
 
-	List<UploadRequestGroupDto> findAll(List<UploadRequestStatus> statusList) throws BusinessException;
+	public UploadRequestEntryAuditLogEntry() {
+		super();
+	}
 
-	UploadRequestGroupDto find(String uuid) throws BusinessException;
+	public UploadRequestEntryAuditLogEntry(AccountMto authUser, AccountMto owner, LogAction action, AuditLogEntryType type,
+			String resourceUuid, UploadRequestEntry urEntry) {
+		super(authUser, owner, action, type, urEntry.getUuid());
+		this.resource = new UploadRequestEntryMto(urEntry);
+	}
 
-	List<UploadRequestDto> create(UploadRequestCreationtDto uploadRequestCreationtDto, Boolean groupMode);
+	public UploadRequestEntryMto getResource() {
+		return resource;
+	}
 
-	UploadRequestGroupDto update(UploadRequestGroupDto uploadRequestGroupDto);
-
-	UploadRequestGroupDto updateStatus(String requestUuid, UploadRequestStatus status, boolean copy) throws BusinessException;
-
-	UploadRequestGroupDto addRecipient(String groupUuid, List<ContactDto> recipientEmail);
+	public void setResource(UploadRequestEntryMto resource) {
+		this.resource = resource;
+	}
 }

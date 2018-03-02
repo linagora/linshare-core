@@ -34,13 +34,9 @@
 package org.linagora.linshare.mongo.entities.mto;
 
 import java.util.Date;
-import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
-import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
-
-import com.google.common.collect.Sets;
 
 public class UploadRequestGroupMto {
 
@@ -49,8 +45,6 @@ public class UploadRequestGroupMto {
 	private String subject;
 
 	private String body;
-
-	private Set<String> uploadRequestUuids = Sets.newHashSet();
 
 	private Date creationDate;
 
@@ -90,6 +84,8 @@ public class UploadRequestGroupMto {
 
 	private UploadRequestStatus status;
 
+	private Boolean statusUpdated;
+
 	public UploadRequestGroupMto() {
 	}
 
@@ -116,9 +112,33 @@ public class UploadRequestGroupMto {
 		this.owner = new AccountMto(group.getOwner());
 		this.domain = new DomainMto(group.getAbstractDomain());
 		this.status = group.getStatus();
-		for (UploadRequest req : group.getUploadRequests()) {
-			uploadRequestUuids.add(req.getUuid());
-		}
+		this.statusUpdated = false;
+	}
+
+	public UploadRequestGroupMto(UploadRequestGroup group, Boolean statusUpdated) {
+		this.uuid = group.getUuid();
+		this.subject = group.getSubject();
+		this.body = group.getBody();
+		this.creationDate = group.getCreationDate();
+		this.modificationDate = group.getModificationDate();
+		this.maxFileCount = group.getMaxFileCount();
+		this.maxDepositSize = group.getMaxDepositSize();
+		this.maxFileSize = group.getMaxFileSize();
+		this.activationDate = group.getActivationDate();
+		this.notificationDate = group.getNotificationDate();
+		this.expiryDate = group.getExpiryDate();
+		this.canDelete = group.getCanDelete();
+		this.canClose = group.getCanClose();
+		this.canEditExpiryDate = group.getCanEditExpiryDate();
+		this.locale = group.getLocale();
+		this.secured = group.isSecured();
+		this.mailMessageId = group.getMailMessageId();
+		this.enableNotification = group.getEnableNotification();
+		this.restricted = group.getRestricted();
+		this.owner = new AccountMto(group.getOwner());
+		this.domain = new DomainMto(group.getAbstractDomain());
+		this.status = group.getStatus();
+		this.statusUpdated = statusUpdated;
 	}
 
 	public String getUuid() {
@@ -143,14 +163,6 @@ public class UploadRequestGroupMto {
 
 	public void setBody(String body) {
 		this.body = body;
-	}
-
-	public Set<String> getUploadRequestUuids() {
-		return uploadRequestUuids;
-	}
-
-	public void setUploadRequestUuids(Set<String> uploadRequestUuids) {
-		this.uploadRequestUuids = uploadRequestUuids;
 	}
 
 	public Date getCreationDate() {
@@ -305,4 +317,11 @@ public class UploadRequestGroupMto {
 		this.status = status;
 	}
 
+	public Boolean getStatusUpdated() {
+		return statusUpdated;
+	}
+
+	public void setStatusUpdated(Boolean statusUpdated) {
+		this.statusUpdated = statusUpdated;
+	}
 }

@@ -73,7 +73,7 @@ public class UploadRequestContainer {
 		return logs;
 	}
 
-	public void addLogs(AuditLogEntryUser log) {
+	public void addLog(AuditLogEntryUser log) {
 		this.logs.add(log);
 	}
 }

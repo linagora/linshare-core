@@ -37,11 +37,11 @@ package org.linagora.linshare.core.service.impl;
 import java.io.File;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.Set;
 
 import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.business.service.UploadRequestEntryBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestUrlBusinessService;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Contact;
@@ -62,17 +62,19 @@ import org.linagora.linshare.core.notifications.context.UploadRequestUploadedFil
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.UploadRequestUrlResourceAccessControl;
 import org.linagora.linshare.core.repository.AccountRepository;
+import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.UploadRequestUrlService;
 import org.linagora.linshare.core.utils.HashUtils;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.mongo.entities.logs.UploadRequestUrlAuditLogEntry;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.webservice.utils.UploadRequestUtils;
 
 public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 
 	private final UploadRequestUrlBusinessService uploadRequestUrlBusinessService;
-
-	private final UploadRequestEntryBusinessService uploadRequestEntryBusinessService;
 
 	private final AccountRepository<Account> accountRepository;
 
@@ -84,22 +86,24 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 
 	private final UploadRequestUrlResourceAccessControl uploadRequestUrlRac;
 
+	private final LogEntryService logEntryService;
+
 	public UploadRequestUrlServiceImpl(
 			final UploadRequestUrlBusinessService uploadRequestUrlBusinessService,
-			final UploadRequestEntryBusinessService uploadRequestEntryBusinessService,
 			final AccountRepository<Account> accountRepository,
 			final MailBuildingService mailBuildingService,
 			final NotifierService notifierService,
 			final UploadRequestEntryService uploadRequestEntryService,
-			final UploadRequestUrlResourceAccessControl uploadRequestUrlRac) {
+			final UploadRequestUrlResourceAccessControl uploadRequestUrlRac,
+			final LogEntryService logEntryService) {
 		super();
 		this.uploadRequestUrlBusinessService = uploadRequestUrlBusinessService;
-		this.uploadRequestEntryBusinessService = uploadRequestEntryBusinessService;
 		this.accountRepository = accountRepository;
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
 		this.uploadRequestEntryService = uploadRequestEntryService;
 		this.uploadRequestUrlRac =  uploadRequestUrlRac;
+		this.logEntryService = logEntryService;
 	}
 
 	@Override
@@ -118,12 +122,6 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 	}
 
 	@Override
-	public UploadRequestUrl create(UploadRequest request, Contact contact)
-			throws BusinessException {
-		return uploadRequestUrlBusinessService.create(request, request.isSecured(), contact);
-	}
-
-	@Override
 	public UploadRequestContainer create(UploadRequest request, Contact contact, UploadRequestContainer container)
 			throws BusinessException {
 		UploadRequestUrl requestUrl = uploadRequestUrlBusinessService.create(request, request.isSecured(), contact);
@@ -139,47 +137,33 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 					requestUrl);
 			container.addMailContainersAddEmail(mailBuildingService.build(mailContext));
 		}
-		// TODO logs UploadRequestUrlMto
+		AuditLogEntryUser log = new UploadRequestUrlAuditLogEntry(new AccountMto(owner), new AccountMto(owner),
+				LogAction.CREATE, AuditLogEntryType.UPLOAD_REQUEST_URL, requestUrl.getUuid(), requestUrl);
+		container.addLog(log);
 		return container;
 	}
 
 	@Override
-	public void deleteUploadRequestEntry(String uploadRequestUrlUuid,
-			String password, String entryUuid) throws BusinessException {
+	public void deleteUploadRequestEntry(String uploadRequestUrlUuid, String password, String entryUuid)
+			throws BusinessException {
 		UploadRequestUrl requestUrl = find(uploadRequestUrlUuid, password);
 		if (requestUrl.getUploadRequest().getStatus() != UploadRequestStatus.ENABLED) {
 			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FILE_CANNOT_DELETED,
 					"Cannot delete file when upload request is not enabled");
-
 		}
 		deleteBusinessCheck(requestUrl);
-		Set<UploadRequestEntry> entries = requestUrl.getUploadRequestEntries();
-		UploadRequestEntry found = null;
-		for (UploadRequestEntry entry : entries) {
-			if (entry.getUuid().equals(entryUuid)) {
-				found = entry;
-				break;
-			}
-		}
-		if (found != null) {
-			uploadRequestEntryBusinessService.delete(found);
-
-			EmailContext context = new UploadRequestDeleteFileEmailContext(
-					(User) requestUrl.getUploadRequest().getUploadRequestGroup().getOwner(),
-					requestUrl.getUploadRequest(), requestUrl, found);
+		User owner = (User) requestUrl.getUploadRequest().getUploadRequestGroup().getOwner();
+		UploadRequestEntry entry = uploadRequestEntryService.deleteEntryByRecipients(requestUrl, entryUuid);
+		if (requestUrl.getUploadRequest().getEnableNotification()) {
+			EmailContext context = new UploadRequestDeleteFileEmailContext(owner, requestUrl.getUploadRequest(), requestUrl,
+					entry);
 			MailContainerWithRecipient mail = mailBuildingService.build(context);
 			notifierService.sendNotification(mail);
-
-		} else {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
-					"You do not have the right to delete a file into upload request : "
-							+ uploadRequestUrlUuid);
 		}
 	}
 
 	@Override
-	public UploadRequestEntry createUploadRequestEntry(
-			String uploadRequestUrlUuid, File  file, String fileName,
+	public UploadRequestEntry createUploadRequestEntry(String uploadRequestUrlUuid, File  file, String fileName,
 			String password) throws BusinessException {
 		Account actor = accountRepository.getUploadRequestSystemAccount();
 		// Retrieve upload request URL
@@ -308,13 +292,19 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 				BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, uploadRequestUrl);
 		UploadRequestUtils.checkStatusPermission(uploadRequestUrl.getUploadRequest().getStatus(),
 				"You have no rights to delete recipients");
+		Account owner = uploadRequestUrl.getUploadRequest().getUploadRequestGroup().getOwner();
+		uploadRequestUrlRac.checkDeletePermission(actor, owner, UploadRequestUrl.class,
+				BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, uploadRequestUrl);
 		uploadRequestUrlBusinessService.delete(uploadRequestUrl);
-		EmailContext context = new UploadRequestRecipientRemovedEmailContext(
-				(User) uploadRequestUrl.getUploadRequest().getUploadRequestGroup().getOwner(), uploadRequestUrl,
-				uploadRequestUrl.getUploadRequest());
-		MailContainerWithRecipient mail = mailBuildingService.build(context);
-		notifierService.sendNotification(mail, true);
+		if (uploadRequestUrl.getUploadRequest().getEnableNotification()) {
+			EmailContext context = new UploadRequestRecipientRemovedEmailContext((User) owner, uploadRequestUrl,
+					uploadRequestUrl.getUploadRequest());
+			MailContainerWithRecipient mail = mailBuildingService.build(context);
+			notifierService.sendNotification(mail, true);
+		}
+		AuditLogEntryUser log = new UploadRequestUrlAuditLogEntry(new AccountMto(owner), new AccountMto(owner),
+				LogAction.DELETE, AuditLogEntryType.UPLOAD_REQUEST_URL, uploadRequestUrl.getUuid(), uploadRequestUrl);
+		logEntryService.insert(log);
 		return uploadRequestUrl;
 	}
-
 }

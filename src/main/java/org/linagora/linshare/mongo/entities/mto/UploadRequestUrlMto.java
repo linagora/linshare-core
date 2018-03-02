@@ -34,12 +34,8 @@
 package org.linagora.linshare.mongo.entities.mto;
 
 import java.util.Date;
-import java.util.Set;
 
-import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
-
-import com.google.common.collect.Sets;
 
 public class UploadRequestUrlMto {
 
@@ -59,7 +55,7 @@ public class UploadRequestUrlMto {
 
 	private Date modificationDate;
 
-	private Set<UploadRequestEntryMto> uploadRequestEntries = Sets.newHashSet();
+	private String uploadRequestGroupUuid;
 
 	public UploadRequestUrlMto() {
 		super();
@@ -72,9 +68,7 @@ public class UploadRequestUrlMto {
 		this.path = url.getPath();
 		this.password = url.getPassword();
 		this.temporaryPlainTextPassword = url.getTemporaryPlainTextPassword();
-		for (UploadRequestEntry e : url.getUploadRequestEntries()) {
-			uploadRequestEntries.add(new UploadRequestEntryMto(e));
-		}
+		this.uploadRequestGroupUuid = url.getUploadRequest().getUploadRequestGroup().getUuid();
 	}
 
 	public String getContactMail() {
@@ -141,11 +135,11 @@ public class UploadRequestUrlMto {
 		this.modificationDate = modificationDate;
 	}
 
-	public Set<UploadRequestEntryMto> getUploadRequestEntries() {
-		return uploadRequestEntries;
+	public String getUploadRequestGroupUuid() {
+		return uploadRequestGroupUuid;
 	}
 
-	public void setUploadRequestEntries(Set<UploadRequestEntryMto> uploadRequestEntries) {
-		this.uploadRequestEntries = uploadRequestEntries;
+	public void setUploadRequestGroupUuid(String uploadRequestGroupUuid) {
+		this.uploadRequestGroupUuid = uploadRequestGroupUuid;
 	}
 }

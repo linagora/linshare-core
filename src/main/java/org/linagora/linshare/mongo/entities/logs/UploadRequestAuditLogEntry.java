@@ -41,9 +41,9 @@ import org.linagora.linshare.mongo.entities.mto.UploadRequestMto;
 
 public class UploadRequestAuditLogEntry extends AuditLogEntryUser {
 
-	private UploadRequestMto resource;
+	protected UploadRequestMto resource;
 
-	private UploadRequestMto resourceUpdated;
+	protected UploadRequestMto resourceUpdated;
 
 	public UploadRequestAuditLogEntry() {
 		super();

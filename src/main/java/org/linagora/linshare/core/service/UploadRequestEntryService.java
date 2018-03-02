@@ -58,4 +58,6 @@ public interface UploadRequestEntryService {
 	UploadRequestEntry delete(User authUser, User actor, String uuid);
 
 	DocumentEntry copy(Account actor, Account owner, UploadRequestEntry uploadRequestEntry) throws BusinessException;
+
+	UploadRequestEntry deleteEntryByRecipients(UploadRequestUrl uploadRequestUrl, String entryUuid) throws BusinessException;
 }
