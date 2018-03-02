@@ -205,7 +205,22 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(), UploadRequestStatus.CANCELED, false);
 		Assert.assertEquals(UploadRequestStatus.CANCELED, ure.getUploadRequestGroup().getStatus());
 	}
-	
+
+	@Test
+	public void updateStatusToClosedWithAlreadyClosedUploadRequest() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject",
+				"This is a body", false);
+		Assert.assertEquals(UploadRequestStatus.ENABLED, ure.getUploadRequestGroup().getStatus());
+		uploadRequestService.updateStatus(john, john, ure.getUuid(), UploadRequestStatus.CLOSED, false);
+		Assert.assertEquals(UploadRequestStatus.CLOSED, ure.getStatus());
+		// Update upload request group status
+		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(),
+				UploadRequestStatus.CLOSED, false);
+		Assert.assertEquals(UploadRequestStatus.CLOSED, ure.getUploadRequestGroup().getStatus());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
 	@Test
 	public void update() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
