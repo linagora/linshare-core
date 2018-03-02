@@ -465,10 +465,6 @@ public class DocumentEntryServiceImpl
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
 					"You are not authorized to delete this document. There's still existing shares.");
 		}
-		UploadRequestEntry uploadRequestEntry = uploadRequestEntryBusinessService.findRelative(documentEntry);
-		if (uploadRequestEntry != null) {
-			uploadRequestEntryBusinessService.delete(uploadRequestEntry);
-		}
 		documentEntryBusinessService.deleteDocumentEntry(documentEntry);
 		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, documentEntry, LogAction.DELETE);
 		logEntryService.insert(log);

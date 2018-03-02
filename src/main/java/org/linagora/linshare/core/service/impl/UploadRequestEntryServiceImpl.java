@@ -219,6 +219,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 						"You need first close the current upload request before copying file");
 			}
 			entity = documentEntryBusinessService.copy(owner, uploadRequestEntry);
+			uploadRequestEntry.setDocumentEntry(entity);
 			DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, entity, LogAction.CREATE);
 			log.setCause(LogActionCause.COPY);
 			log.setFromResourceUuid(uploadRequestEntry.getUuid());

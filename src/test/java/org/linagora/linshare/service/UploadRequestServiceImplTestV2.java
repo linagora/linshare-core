@@ -63,9 +63,11 @@ import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.ContactRepository;
+import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.UploadRequestEntryRepository;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UploadRequestService;
@@ -121,6 +123,12 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 
 	@Autowired
 	private DocumentRepository documentRepository;
+
+	@Autowired
+	private DocumentEntryRepository documentEntryRepository;
+
+	@Autowired
+	private DocumentEntryService documentEntryService;
 
 	private UploadRequest ure = new UploadRequest();
 
@@ -316,17 +324,33 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 	}
 
 	@Test
+	public void createUploadRequestEntry() throws BusinessException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Account actor = jane;
+		Assert.assertNotNull(actor);
+		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		IOUtils.transferTo(stream, tempFile);
+		UploadRequestUrl requestUrl = ur.getUploadRequestURLs().iterator().next();
+		Assert.assertNotNull(requestUrl);
+		UploadRequest uploadRequest = requestUrl.getUploadRequest();
+		Assert.assertNotNull(uploadRequest);
+		uploadRequestEntry = uploadRequestEntryService.create(actor, actor, tempFile, fileName, comment, false, null,
+				requestUrl);
+		Assert.assertTrue(uploadRequestEntryRepository.findByUuid(uploadRequestEntry.getUuid()) != null);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
 	public void testUploadRequestCopyUploadRequestEntry() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account actor = jane;
 		Assert.assertNotNull(actor);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
-		UploadRequestUrl requestUrl= ur.getUploadRequestURLs().iterator().next();
+		UploadRequestUrl requestUrl = ur.getUploadRequestURLs().iterator().next();
 		Assert.assertNotNull(requestUrl);
 		UploadRequest uploadRequest = requestUrl.getUploadRequest();
 		Assert.assertNotNull(uploadRequest);
-		uploadRequest.setStatus(UploadRequestStatus.CLOSED);
 		uploadRequestEntry = uploadRequestEntryService.create(actor, actor, tempFile, fileName, comment, false, null,
 				requestUrl);
 		Assert.assertTrue(uploadRequestEntryRepository.findByUuid(uploadRequestEntry.getUuid()) != null);
@@ -336,8 +360,38 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 		Assert.assertNotNull(documentEntry);
 
 		Document aDocument = uploadRequestEntry.getDocument();
-		uploadRequestEntryRepository.delete(uploadRequestEntry);
-		john.getEntries().clear();
+		userRepository.update(jane);
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.THUMBNAIL_SMALL, aDocument, "image/png");
+		metadata.setUuid(aDocument.getUuid());
+		fileDataStore.remove(metadata);
+		documentRepository.delete(aDocument);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testDeleteDocumentEntryAfterCopy() throws BusinessException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Account actor = jane;
+		Assert.assertNotNull(actor);
+		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		IOUtils.transferTo(stream, tempFile);
+		UploadRequestUrl requestUrl = ur.getUploadRequestURLs().iterator().next();
+		Assert.assertNotNull(requestUrl);
+		UploadRequest uploadRequest = requestUrl.getUploadRequest();
+		Assert.assertNotNull(uploadRequest);
+		uploadRequestEntry = uploadRequestEntryService.create(actor, actor, tempFile, fileName, comment, false, null,
+				requestUrl);
+		Assert.assertTrue(uploadRequestEntryRepository.findByUuid(uploadRequestEntry.getUuid()) != null);
+
+		uplaodRequestService.updateStatus(actor, actor, ur.getUuid(), UploadRequestStatus.CLOSED, false);
+		documentEntry = uploadRequestEntryService.copy(actor, actor, uploadRequestEntry);
+		Assert.assertNotNull(documentEntry);
+		Assert.assertNotNull(uploadRequestEntry.getDocumentEntry());
+
+		documentEntryService.delete(actor, actor, documentEntry.getUuid());
+		Assert.assertTrue(documentEntryRepository.findById(documentEntry.getUuid()) == null);
+
+		Document aDocument = uploadRequestEntry.getDocument();
 		userRepository.update(jane);
 		FileMetaData metadata = new FileMetaData(FileMetaDataKind.THUMBNAIL_SMALL, aDocument, "image/png");
 		metadata.setUuid(aDocument.getUuid());
