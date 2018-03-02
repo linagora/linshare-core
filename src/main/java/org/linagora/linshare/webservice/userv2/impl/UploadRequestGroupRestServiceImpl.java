@@ -52,6 +52,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestCreationtDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestGroupDto;
+import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.ContactDto;
 import org.linagora.linshare.core.facade.webservice.user.UploadRequestGroupFacade;
 import org.linagora.linshare.webservice.userv2.UploadRequestGroupRestService;
 
@@ -131,5 +132,17 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 	public UploadRequestGroupDto update(
 			@ApiParam(value = "Upload request group", required = true) UploadRequestGroupDto uploadRequestGroupDto) {
 		return uploadRequestGroupFacade.update(null, uploadRequestGroupDto);
+	}
+
+	@POST
+	@Path("/{groupUuid}/recipients")
+	@ApiOperation(value = "Add new recipient to upload request group.", response = UploadRequestDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
+	@Override
+	public UploadRequestGroupDto addRecipient(
+			@ApiParam(value = "Upload request group uuid", required = true)
+				@PathParam(value = "groupUuid") String groupUuid,
+			@ApiParam(value = "List of new recipients", required = true) List<ContactDto> recipientEmail) {
+		return uploadRequestGroupFacade.addRecipients(null, groupUuid, recipientEmail);
 	}
 }

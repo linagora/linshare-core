@@ -43,6 +43,7 @@ import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.ContactDto;
 
 public interface UploadRequestGroupService {
 
@@ -59,4 +60,7 @@ public interface UploadRequestGroupService {
 	List<String> findOutdatedRequestsGroup(SystemAccount account);
 
 	UploadRequestGroup updateStatus(Account actor, Account owner, String requestGroupUuid, UploadRequestStatus stat, boolean copy);
+
+	UploadRequestGroup addNewRecipients(User authUser, User actor, UploadRequestGroup uploadRequestGroup,
+			List<ContactDto> recipientEmail);
 }

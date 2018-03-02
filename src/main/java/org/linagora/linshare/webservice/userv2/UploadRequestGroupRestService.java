@@ -41,6 +41,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestCreationtDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestGroupDto;
+import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.ContactDto;
 
 public interface UploadRequestGroupRestService {
 
@@ -53,4 +54,6 @@ public interface UploadRequestGroupRestService {
 	UploadRequestGroupDto update(UploadRequestGroupDto uploadRequestGroupDto);
 
 	UploadRequestGroupDto updateStatus(String requestUuid, UploadRequestStatus status, boolean copy) throws BusinessException;
+
+	UploadRequestGroupDto addRecipient(String groupUuid, List<ContactDto> recipientEmail);
 }

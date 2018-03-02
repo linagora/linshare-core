@@ -40,7 +40,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
-import org.apache.commons.lang.time.DateUtils;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestGroupBusinessService;
@@ -51,7 +50,6 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
@@ -67,7 +65,6 @@ import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestActivationEmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestCloseByOwnerEmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestClosedByRecipientEmailContext;
-import org.linagora.linshare.core.notifications.context.UploadRequestCreatedEmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestUpdateSettingsEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.UploadRequestGroupResourceAccessControl;
@@ -78,7 +75,7 @@ import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.UploadRequestService;
-import org.linagora.linshare.core.service.UploadRequestUrlService;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.UploadRequestAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.UploadRequestMto;
@@ -92,7 +89,6 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	private final UploadRequestGroupBusinessService uploadRequestGroupBusinessService;
 	private final UploadRequestHistoryBusinessService uploadRequestHistoryBusinessService;
 	private final UploadRequestTemplateBusinessService uploadRequestTemplateBusinessService;
-	private final UploadRequestUrlService uploadRequestUrlService;
 	private final DomainPermissionBusinessService domainPermissionBusinessService;
 	private final MailBuildingService mailBuildingService;
 	private final NotifierService notifierService;
@@ -107,7 +103,6 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 			final UploadRequestGroupBusinessService uploadRequestGroupBusinessService,
 			final UploadRequestHistoryBusinessService uploadRequestHistoryBusinessService,
 			final UploadRequestTemplateBusinessService uploadRequestTemplateBusinessService,
-			final UploadRequestUrlService uploadRequestUrlService,
 			final DomainPermissionBusinessService domainPermissionBusinessService,
 			final MailBuildingService mailBuildingService,
 			final NotifierService notifierService,
@@ -122,7 +117,6 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		this.uploadRequestGroupBusinessService = uploadRequestGroupBusinessService;
 		this.uploadRequestHistoryBusinessService = uploadRequestHistoryBusinessService;
 		this.uploadRequestTemplateBusinessService = uploadRequestTemplateBusinessService;
-		this.uploadRequestUrlService = uploadRequestUrlService;
 		this.domainPermissionBusinessService = domainPermissionBusinessService;
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
@@ -154,11 +148,13 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	}
 
 	@Override
-
 	public UploadRequestContainer create(Account authUser, Account owner, UploadRequest uploadRequest, UploadRequestContainer container) {
 		uploadRequest = uploadRequestBusinessService.create(uploadRequest);
 		container.addUploadRequests(uploadRequest);
-		// TODO create and add log to the container
+		AuditLogEntryUser log = new UploadRequestAuditLogEntry(new AccountMto(owner),
+				new AccountMto(owner), LogAction.CREATE, AuditLogEntryType.UPLOAD_REQUEST,
+				uploadRequest.getUuid(), uploadRequest);
+		container.addLogs(log);
 		return container;
 	}
 
@@ -193,8 +189,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		req = uploadRequestBusinessService.updateStatus(req, status);
 		// TODO: Fix issue of sendNotification
 		sendNotification(req, actor);
-		log.setResourceUpdated(new UploadRequestMto(req));
-		logEntryService.insert(log);
+//		log.setResourceUpdated(new UploadRequestMto(req, true));		logEntryService.insert(log);
 		return req;
 	}
 
@@ -432,58 +427,6 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		if ((UploadRequestStatus.CREATED.equals(status) != true) &&(UploadRequestStatus.ENABLED.equals(status) != true)) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You have no rights to add new recipient");
 		}
-	}
-
-	@Override
-	public UploadRequest addNewRecipient(User authUser, User actor, UploadRequestGroup uploadRequestGroup, Contact contact) {
-		checkStatusPermission(uploadRequestGroup.getStatus());
-		groupRac.checkUpdatePermission(authUser, actor, UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, uploadRequestGroup);
-		UploadRequest uploadRequest = initLocalConfig(uploadRequestGroup);
-		UploadRequestUrl uploadRequestUrl;
-		if (uploadRequestGroup.getRestricted()) {
-			uploadRequest = uploadRequestBusinessService.create(uploadRequest);
-			uploadRequestUrl = uploadRequestUrlService.create(uploadRequest, contact);
-		} else {
-			uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
-			uploadRequestUrl = uploadRequestUrlService.create(uploadRequest, contact);
-		}
-		if (!DateUtils.isSameDay(uploadRequest.getActivationDate(), uploadRequest.getCreationDate()) &&
-				uploadRequest.getActivationDate().after(new Date())) {
-			if (uploadRequest.getEnableNotification()) {
-				UploadRequestCreatedEmailContext context = new UploadRequestCreatedEmailContext((User) uploadRequest.getUploadRequestGroup().getOwner(),
-						uploadRequestUrl, uploadRequest);
-				notifierService.sendNotification(mailBuildingService.build(context));
-			}
-		} else {
-			UploadRequestActivationEmailContext mailContext = new UploadRequestActivationEmailContext(
-					(User) uploadRequestGroup.getOwner(), uploadRequest, uploadRequestUrl);
-			MailContainerWithRecipient mail = mailBuildingService.build(mailContext);
-			notifierService.sendNotification(mail);
-		}
-		return uploadRequest;
-	}
-
-	protected UploadRequest initLocalConfig (UploadRequestGroup urg) {
-		UploadRequest uploadRequest = new UploadRequest();
-		if (urg.getActivationDate().before(new Date())) {
-			uploadRequest.setActivationDate(new Date());
-		} else {
-			uploadRequest.setActivationDate(urg.getActivationDate());
-		}
-		uploadRequest.setCanDelete(urg.getCanDelete());
-		uploadRequest.setCanClose(urg.getCanClose());
-		uploadRequest.setCanEditExpiryDate(urg.getCanEditExpiryDate());
-		uploadRequest.setLocale(urg.getLocale());
-		uploadRequest.setSecured(urg.isSecured());
-		uploadRequest.setEnableNotification(urg.getEnableNotification());
-		uploadRequest.setExpiryDate(urg.getExpiryDate());
-		uploadRequest.setNotificationDate(urg.getNotificationDate());
-		uploadRequest.setMaxFileCount(urg.getMaxFileCount());
-		uploadRequest.setMaxDepositSize(urg.getMaxDepositSize());
-		uploadRequest.setMaxFileSize(urg.getMaxFileSize());
-		uploadRequest.setUploadRequestGroup(urg);
-		uploadRequest.setStatus(urg.getStatus());
-		return uploadRequest;
 	}
 
 	@Override

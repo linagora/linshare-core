@@ -47,6 +47,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestCreationtDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestGroupDto;
+import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.ContactDto;
 import org.linagora.linshare.core.facade.webservice.user.UploadRequestGroupFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
@@ -115,5 +116,16 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 		User actor = getActor(authUser, actorUuid);
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupDto.toObject();
 		return new UploadRequestGroupDto(uploadRequestGroupService.update(authUser, actor, uploadRequestGroup));
+	}
+
+	@Override
+	public UploadRequestGroupDto addRecipients(String actorUuid, String groupUuid, List<ContactDto> recipientEmail) {
+		Validate.notNull(groupUuid, "Upload request group must be set.");
+		Validate.notEmpty(recipientEmail, "Upload request contact must be set.");
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.findRequestGroupByUuid(authUser, actor, groupUuid);
+		uploadRequestGroup = uploadRequestGroupService.addNewRecipients(authUser, actor, uploadRequestGroup, recipientEmail);
+		return new UploadRequestGroupDto(uploadRequestGroup);
 	}
 }

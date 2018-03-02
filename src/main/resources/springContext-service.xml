@@ -159,7 +159,6 @@
 		<constructor-arg ref="uploadRequestGroupBusinessService" />
 		<constructor-arg ref="uploadRequestHistoryBusinessService" />
 		<constructor-arg ref="uploadRequestTemplateBusinessService" />
-		<constructor-arg ref="uploadRequestUrlService" />
 		<constructor-arg ref="domainPermissionBusinessService" />
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="notifierService" />

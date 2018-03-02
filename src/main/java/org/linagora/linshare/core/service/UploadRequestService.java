@@ -39,7 +39,6 @@ import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
@@ -99,9 +98,6 @@ public interface UploadRequestService {
 	List<String> findUnabledRequests(Account actor);
 
 	List<String> findAllRequestsToBeNotified(Account actor);
-
-	UploadRequest addNewRecipient(User authUser, User actor, UploadRequestGroup uploadRequestgroup,
-			Contact contact);
 
 	List<UploadRequest> findAllRequestsByGroup(User authUser, User actor, String groupUuid, List<UploadRequestStatus> status);
 

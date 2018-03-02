@@ -42,8 +42,6 @@ import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 
 public interface UploadRequestRestService {
 
-	UploadRequestDto addRecipient(String groupUuid, String recipientsEmail);
-
 	List<UploadRequestDto> findByUploadRequestGroup(String groupUuid, List<UploadRequestStatus> status);
 
 	List<UploadRequestDto> findAll(List<UploadRequestStatus> status);

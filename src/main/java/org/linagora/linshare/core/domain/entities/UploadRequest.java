@@ -90,9 +90,30 @@ public class UploadRequest implements Cloneable {
 	private Boolean dirty = new Boolean(false);
 
 	private Boolean enableNotification = new Boolean(true);
-	
+
 	public UploadRequest() {
 		super();
+	}
+
+	public UploadRequest(UploadRequestGroup urg) {
+		if (urg.getActivationDate().before(new Date())) {
+			this.setActivationDate(new Date());
+		} else {
+			this.setActivationDate(urg.getActivationDate());
+		}
+		this.setCanDelete(urg.getCanDelete());
+		this.setCanClose(urg.getCanClose());
+		this.setCanEditExpiryDate(urg.getCanEditExpiryDate());
+		this.setLocale(urg.getLocale());
+		this.setSecured(urg.isSecured());
+		this.setEnableNotification(urg.getEnableNotification());
+		this.setExpiryDate(urg.getExpiryDate());
+		this.setNotificationDate(urg.getNotificationDate());
+		this.setMaxFileCount(urg.getMaxFileCount());
+		this.setMaxDepositSize(urg.getMaxDepositSize());
+		this.setMaxFileSize(urg.getMaxFileSize());
+		this.setUploadRequestGroup(urg);
+		this.setStatus(urg.getStatus());
 	}
 
 	public long getId() {

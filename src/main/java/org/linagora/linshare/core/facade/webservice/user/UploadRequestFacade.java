@@ -54,7 +54,5 @@ public interface UploadRequestFacade {
 
 	UploadRequestDto delete(String actorUuid, UploadRequestDto uploadRequestDto) throws BusinessException;
 
-	UploadRequestDto addRecipient(String actorUuid, String groupUuid, String emailRecipient) throws BusinessException;
-
 	List<UploadRequestDto> findByGroup(String actorUuid, String groupUuid, List<UploadRequestStatus> status);
 }

@@ -38,6 +38,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.UploadRequestGroupBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.Language;
@@ -60,6 +61,7 @@ import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.domain.objects.UploadRequestContainer;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.ContactDto;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.UploadRequestGroupResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -614,5 +616,34 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		if (!actor.hasAllRights()) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You have no rights to access this service.");
 		}
+	}
+
+	private void checkStatusPermission(UploadRequestStatus status) {
+		if (!(UploadRequestStatus.CREATED.equals(status)) && !(UploadRequestStatus.ENABLED.equals(status))) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You have no rights to add new recipient");
+		}
+	}
+
+	@Override
+	public UploadRequestGroup addNewRecipients(User authUser, User actor, UploadRequestGroup uploadRequestGroup,
+			List<ContactDto> recipientEmail) {
+		checkStatusPermission(uploadRequestGroup.getStatus());
+		checkUpdatePermission(authUser, actor, UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
+				uploadRequestGroup);
+		UploadRequestContainer container = new UploadRequestContainer();
+		for (ContactDto recipient : recipientEmail) {
+			Validate.notEmpty(recipient.getMail(), "Mail must be set");
+			Contact contact = new Contact(recipient.getMail());
+			UploadRequest uploadRequest = new UploadRequest(uploadRequestGroup);
+			if (uploadRequestGroup.getRestricted()) {
+				container = uploadRequestService.create(authUser, actor, uploadRequest, container);
+				uploadRequestGroup.getUploadRequests().add(uploadRequest);
+			} else {
+				uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
+			}
+			container = uploadRequestUrlService.create(uploadRequest, contact, container);
+		}
+		notifierService.sendNotification(container.getMailContainers());
+		return uploadRequestGroup;
 	}
 }

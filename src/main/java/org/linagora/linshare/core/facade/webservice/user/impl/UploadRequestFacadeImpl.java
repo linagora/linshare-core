@@ -38,15 +38,12 @@ import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
-import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 import org.linagora.linshare.core.facade.webservice.user.UploadRequestFacade;
 import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UploadRequestService;
 
 import com.google.common.collect.ImmutableList;
@@ -55,14 +52,11 @@ import com.google.common.collect.Lists;
 public class UploadRequestFacadeImpl extends GenericFacadeImpl implements UploadRequestFacade {
 
 	private final UploadRequestService uploadRequestService;
-	private final UploadRequestGroupService uploadRequestGroupService;
 
 	public UploadRequestFacadeImpl(final AccountService accountService,
-			final UploadRequestService uploadRequestService,
-			final UploadRequestGroupService uploadRequestGroupService) {
+			final UploadRequestService uploadRequestService) {
 		super(accountService);
 		this.uploadRequestService = uploadRequestService;
-		this.uploadRequestGroupService = uploadRequestGroupService;
 	}
 
 	@Override
@@ -116,18 +110,6 @@ public class UploadRequestFacadeImpl extends GenericFacadeImpl implements Upload
 		Validate.notNull(uploadRequestDto, "Upload Request must be set.");
 		Validate.notEmpty(uploadRequestDto.getUuid(), "Upload Request uuid must be set.");
 		return delete(actorUuid, uploadRequestDto.getUuid());
-	}
-
-	@Override
-	public UploadRequestDto addRecipient(String actorUuid, String groupUuid, String emailRecipient) throws BusinessException {
-		Validate.notEmpty(groupUuid, "Upload request group uuid must be set.");
-		Validate.notEmpty(emailRecipient, "The email of recipient must be set.");
-		User authUser = checkAuthentication();
-		User actor = getActor(authUser, actorUuid);
-		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.findRequestGroupByUuid(actor, authUser, groupUuid);
-		Contact contact = new Contact(emailRecipient);
-		UploadRequest uploadRequest = uploadRequestService.addNewRecipient(authUser, actor, uploadRequestGroup, contact);
-		return new UploadRequestDto(uploadRequest, false);
 	}
 
 	public List<UploadRequestDto> findByGroup(String actorUuid, String groupUuid, List<UploadRequestStatus> status) {
