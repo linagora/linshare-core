@@ -59,7 +59,8 @@ public interface UploadRequestUrlService {
 	void deleteUploadRequestEntry(String uploadRequestUrlUuid, String password,
 			String entryUuid) throws BusinessException;
 
-	void delete(Account actor, UploadRequestUrl uploadRequestUrl);
-
 	UploadRequestUrl create(UploadRequest request, Contact contact) throws BusinessException;
+
+	UploadRequestUrl delete(Account authUser, Account actor, String uploadRequestUrlUuid);
+
 }

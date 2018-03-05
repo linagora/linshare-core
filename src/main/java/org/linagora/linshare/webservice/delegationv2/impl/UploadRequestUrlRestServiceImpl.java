@@ -41,8 +41,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
-import org.linagora.linshare.core.facade.webservice.uploadrequest.UploadRequestUrlFacade;
-import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.UploadRequestUrlDto;
+import org.linagora.linshare.core.facade.webservice.user.UploadRequestUrlFacade;
 import org.linagora.linshare.webservice.delegationv2.UploadRequestUrlRestService;
 
 import com.wordnik.swagger.annotations.Api;
@@ -67,16 +66,16 @@ public class UploadRequestUrlRestServiceImpl implements UploadRequestUrlRestServ
 	}
 
 	@DELETE
-	@Path("/")
+	@Path("/{uuid}")
 	@ApiOperation(value = "Delete a Upload request url from a shared upload request.", response = UploadRequestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
 			@ApiResponse(code = 404, message = "Document not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public UploadRequestUrlDto delete(
+	public UploadRequestDto delete(
 			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "The upload request url to be removed", required = true) UploadRequestUrlDto uploadRequestUrlDto) {
-		return uploadRequestUrlFacade.delete(actorUuid, uploadRequestUrlDto);
+			@ApiParam(value = "The upload request url to be removed", required = true) @PathParam("uuid") String uploadRequestUrlUuid) {
+		return uploadRequestUrlFacade.delete(actorUuid, uploadRequestUrlUuid);
 	}
 }

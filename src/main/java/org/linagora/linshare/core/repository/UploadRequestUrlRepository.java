@@ -33,9 +33,6 @@
  */
 package org.linagora.linshare.core.repository;
 
-import java.util.List;
-
-import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 
 public interface UploadRequestUrlRepository extends
@@ -49,5 +46,4 @@ public interface UploadRequestUrlRepository extends
 	 */
 	public UploadRequestUrl findByUuid(String uuid);
 
-	public List<UploadRequestUrl> findByUploadRequest(UploadRequest uploadRequest);
 }

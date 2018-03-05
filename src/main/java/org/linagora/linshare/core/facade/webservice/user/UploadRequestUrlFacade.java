@@ -31,11 +31,11 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.userv2;
+package org.linagora.linshare.core.facade.webservice.user;
 
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 
-public interface UploadRequestUrlRestService {
+public interface UploadRequestUrlFacade {
 
-	UploadRequestDto delete(String uploadRequestUrlUuid);
+	UploadRequestDto delete(String actorUuid, String uploadRequestUrlUuid);
 }

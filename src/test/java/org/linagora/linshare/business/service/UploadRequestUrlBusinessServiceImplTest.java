@@ -33,10 +33,7 @@
  */
 package org.linagora.linshare.business.service;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -44,14 +41,11 @@ import org.junit.Test;
 import org.linagora.linshare.core.business.service.UploadRequestUrlBusinessService;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
@@ -60,6 +54,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+
+import com.google.common.collect.Lists;
 
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -86,13 +82,17 @@ public class UploadRequestUrlBusinessServiceImplTest extends AbstractTransaction
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
 
-	@Autowired
-	private UploadRequestGroupService uploadRequestGroupService;
 	private LoadingServiceTestDatas datas;
 
 	private User john;
 
 	private LinShareWiser wiser;
+
+	private String urlUuid1 = "f447ac1c-ef45-44e5-a73f-4b844b25f44b";
+
+	private String urlUuid2 = "f447ac1c-ef45-44e5-a73f-4b844b25f66b";
+
+	private String urlUuid3 = "f447ac1c-ef45-44e5-a73f-4b844b25f55b";
 
 	public UploadRequestUrlBusinessServiceImplTest() {
 		super();
@@ -122,33 +122,12 @@ public class UploadRequestUrlBusinessServiceImplTest extends AbstractTransaction
 	@Test
 	public void testDeleteRecipients() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		List<UploadRequestGroup> groups = uploadRequestGroupService.findAllGroupRequest(john, john, null);
-		if (!groups.isEmpty()) {
-			Set<UploadRequest> uploadrequestSet = groups.get(0).getUploadRequests();
-			UploadRequest uploadRequest = uploadrequestSet.iterator().next();
-			for (Iterator<UploadRequestUrl> urlIterator = uploadRequest.getUploadRequestURLs().iterator(); urlIterator
-					.hasNext();) {
-				UploadRequestUrl uploadRequestUrl = (UploadRequestUrl) urlIterator.next();
-				if (!urlIterator.hasNext()) {
-					try {
-						// Last Recipient of the Upload Request
-						uploadRequestUrlBusinessService.delete(uploadRequestUrl);
-						Assert.assertFalse("Should not be deleted if last upload reqeust URL of this upload request",
-								true);
-					} catch (BusinessException e) {
-						Assert.assertTrue(
-								"Exception raised because the last recipient cannot be deleted or restricted upload request",
-								true);
-					}
-				} else {
-					String urlUuid = uploadRequestUrl.getUuid();
-					uploadRequestUrlBusinessService.delete(uploadRequestUrl);
-					Assert.assertNull("The Upload request url has been deleted",
-							uploadRequestUrlBusinessService.findByUuid(urlUuid));
-				}
-			}
-
+		List<String> urlList = Lists.newArrayList(urlUuid1, urlUuid2, urlUuid3);
+		for (String uploadRequestUrlUuid : urlList) {
+			UploadRequestUrl url = uploadRequestUrlBusinessService.findByUuid(uploadRequestUrlUuid);
+			uploadRequestUrlBusinessService.delete(url);
+			Assert.assertNull("The Upload request url has not been deleted",
+					uploadRequestUrlBusinessService.findByUuid(uploadRequestUrlUuid));
 		}
-		logger.info(LinShareTestConstants.END_TEST);
 	}
 }

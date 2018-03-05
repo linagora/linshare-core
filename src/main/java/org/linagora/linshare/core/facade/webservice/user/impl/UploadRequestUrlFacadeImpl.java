@@ -31,11 +31,31 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.userv2;
+package org.linagora.linshare.core.facade.webservice.user.impl;
 
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
+import org.linagora.linshare.core.facade.webservice.user.UploadRequestUrlFacade;
+import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.UploadRequestUrlService;
 
-public interface UploadRequestUrlRestService {
+public class UploadRequestUrlFacadeImpl extends GenericFacadeImpl implements UploadRequestUrlFacade {
 
-	UploadRequestDto delete(String uploadRequestUrlUuid);
+	private final UploadRequestUrlService uploadRequestUrlService;
+
+	public UploadRequestUrlFacadeImpl(final AccountService accountService,
+			final UploadRequestUrlService uploadRequestUrlService) {
+		super(accountService);
+		this.uploadRequestUrlService = uploadRequestUrlService;
+	}
+
+	@Override
+	public UploadRequestDto delete(String actorUuid, String uploadRequestUrlUuid) {
+		Validate.notEmpty(uploadRequestUrlUuid);
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		return new UploadRequestDto(uploadRequestUrlService.delete(authUser, actor, uploadRequestUrlUuid));
+	}
+
 }

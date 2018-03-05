@@ -33,10 +33,9 @@
  */
 package org.linagora.linshare.webservice.delegationv2;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.UploadRequestUrlDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 
 public interface UploadRequestUrlRestService {
 
-	UploadRequestUrlDto delete(String actorUuid, UploadRequestUrlDto uploadRequestUrlDto) throws BusinessException;
+	UploadRequestDto delete(String actorUuid, String uploadRequestUrlUuid);
 }

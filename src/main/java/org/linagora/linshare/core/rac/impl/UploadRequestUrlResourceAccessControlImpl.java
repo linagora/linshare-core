@@ -33,9 +33,15 @@
  */
 package org.linagora.linshare.core.rac.impl;
 
+import java.util.Set;
+
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.UploadRequestUrlResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 
@@ -58,8 +64,22 @@ public class UploadRequestUrlResourceAccessControlImpl
 	}
 
 	@Override
-	protected boolean hasDeletePermission(Account authUser, Account actor, UploadRequestUrl entry, Object... opt) {
-		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_URL_DELETE);
+	protected boolean hasDeletePermission(Account authUser, Account actor, UploadRequestUrl uploadRequestUrl, Object... opt) {
+		UploadRequest uploadRequest = uploadRequestUrl.getUploadRequest();
+		Set<UploadRequestUrl> uploadRequestURLs = uploadRequest.getUploadRequestURLs();
+		UploadRequestGroup uploadRequestGroup = uploadRequest.getUploadRequestGroup();
+		if (uploadRequestGroup.getRestricted()) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_DELETE_RECIPIENT_FROM_RESTRICTED_REQUEST,
+					"Cannot delete a recipient of an upload request in mode restricted");
+		}
+		if (uploadRequestURLs.size() < 2) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_DELETE_LAST_RECIPIENT,
+					"Cannot delete the last recipient of an upload request in shared mode");
+		} else if (!uploadRequestUrl.getUploadRequestEntries().isEmpty()) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_URL_EXISTS,
+					"Cannot delete upload request url with existed entries");
+		}
+		return defaultPermissionCheck(authUser, actor, uploadRequestUrl, TechnicalAccountPermissionType.UPLOAD_REQUEST_URL_DELETE);
 	}
 
 	@Override

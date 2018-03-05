@@ -103,7 +103,7 @@
 	</bean>
 
 	<bean id="userUploadRequestUrlRestService" class="org.linagora.linshare.webservice.userv2.impl.UploadRequestUrlRestServiceImpl">
-		<constructor-arg ref="wsUploadRequestUrlFacade" />
+		<constructor-arg ref="wsUploadRequestUrlUserFacade" />
 	</bean>
 
 	<jaxrs:server id="userRestContainer" address="/rest/user/v2">

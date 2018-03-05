@@ -300,18 +300,21 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 	}
 
 	@Override
-	public void delete(Account actor, UploadRequestUrl uploadRequestUrl) {
+	public UploadRequestUrl delete(Account authUser, Account actor, String uploadRequestUrlUuid) {
+		Validate.notEmpty(uploadRequestUrlUuid, "uploadRequestUrlUuid is required.");
+		UploadRequestUrl uploadRequestUrl = uploadRequestUrlBusinessService.findByUuid(uploadRequestUrlUuid);
+		Validate.notNull(uploadRequestUrl, "UploadRequestUrl not found.");
+		uploadRequestUrlRac.checkDeletePermission(authUser, actor, UploadRequestUrl.class,
+				BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, uploadRequestUrl);
 		UploadRequestUtils.checkStatusPermission(uploadRequestUrl.getUploadRequest().getStatus(),
 				"You have no rights to delete recipients");
-		uploadRequestUrlRac.checkDeletePermission(actor,
-				uploadRequestUrl.getUploadRequest().getUploadRequestGroup().getOwner(), UploadRequestUrl.class,
-				BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, uploadRequestUrl);
 		uploadRequestUrlBusinessService.delete(uploadRequestUrl);
 		EmailContext context = new UploadRequestRecipientRemovedEmailContext(
-				(User) uploadRequestUrl.getUploadRequest().getUploadRequestGroup().getOwner(),
-				uploadRequestUrl,
+				(User) uploadRequestUrl.getUploadRequest().getUploadRequestGroup().getOwner(), uploadRequestUrl,
 				uploadRequestUrl.getUploadRequest());
 		MailContainerWithRecipient mail = mailBuildingService.build(context);
 		notifierService.sendNotification(mail, true);
+		return uploadRequestUrl;
 	}
+
 }

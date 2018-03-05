@@ -75,7 +75,7 @@
 
 	<bean id="delegationUploadRequestUrlRestService"
 		class="org.linagora.linshare.webservice.delegationv2.impl.UploadRequestUrlRestServiceImpl">
-		<constructor-arg ref="wsUploadRequestUrlFacade" />
+		<constructor-arg ref="wsUploadRequestUrlUserFacade" />
 	</bean>
 
 	<jaxrs:server id="restDelegation2Container" address="/rest/delegation/v2">
