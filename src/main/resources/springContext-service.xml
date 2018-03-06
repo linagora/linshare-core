@@ -213,7 +213,6 @@
 	</bean>
 	<bean name="uploadRequestEntryService"
 			class="org.linagora.linshare.core.service.impl.UploadRequestEntryServiceImpl">
-		<constructor-arg ref="accountRepository" />
 		<constructor-arg ref="uploadRequestEntryBusinessService" />
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="functionalityReadOnlyService" />

@@ -35,13 +35,17 @@
 package org.linagora.linshare.core.facade.webservice.user;
 
 import java.util.List;
+import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestCreationtDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestGroupDto;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.ContactDto;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface UploadRequestGroupFacade {
 
@@ -58,4 +62,7 @@ public interface UploadRequestGroupFacade {
 	UploadRequestGroupDto update(String actorUuid, UploadRequestGroupDto uploadRequestGroupDto);
 
 	UploadRequestGroupDto addRecipients(String actorUuid, String uuid, List<ContactDto> recipientEmail);
+
+	Set<AuditLogEntryUser> findAll(String requestUuid, boolean detail, boolean entriesLogsOnly, List<LogAction> actions,
+			List<AuditLogEntryType> type);
 }

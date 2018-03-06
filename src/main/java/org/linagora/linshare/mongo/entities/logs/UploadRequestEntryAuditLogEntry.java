@@ -34,12 +34,15 @@
 
 package org.linagora.linshare.mongo.entities.logs;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.UploadRequestEntryMto;
 
+@XmlRootElement
 public class UploadRequestEntryAuditLogEntry extends AuditLogEntryUser {
 
 	protected UploadRequestEntryMto resource;

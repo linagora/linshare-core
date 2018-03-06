@@ -34,12 +34,15 @@
 
 package org.linagora.linshare.mongo.entities.logs;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.UploadRequestUrlMto;
 
+@XmlRootElement
 public class UploadRequestUrlAuditLogEntry extends AuditLogEntryUser {
 
 	protected UploadRequestUrlMto resource;
@@ -50,9 +53,9 @@ public class UploadRequestUrlAuditLogEntry extends AuditLogEntryUser {
 		super();
 	}
 
-	public UploadRequestUrlAuditLogEntry(AccountMto authUser, AccountMto owner, LogAction action, AuditLogEntryType type,
+	public UploadRequestUrlAuditLogEntry(AccountMto authUser, AccountMto actor, LogAction action, AuditLogEntryType type,
 			String resourceUuid, UploadRequestUrl urUrl) {
-		super(authUser, owner, action, type, urUrl.getUuid());
+		super(authUser, actor, action, type, urUrl.getUuid());
 		this.resource = new UploadRequestUrlMto(urUrl);
 	}
 

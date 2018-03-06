@@ -86,8 +86,6 @@ import org.linagora.linshare.mongo.repository.DocumentGarbageCollecteurMongoRepo
 public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Account, UploadRequestEntry>
 		implements UploadRequestEntryService {
 
-	private final AccountRepository<Account> accountRepository;
-
 	private final UploadRequestEntryBusinessService uploadRequestEntryBusinessService;
 
 	private final OperationHistoryBusinessService operationHistoryBusinessService;
@@ -117,7 +115,6 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 	private LogEntryService logEntryService;
 
 	public UploadRequestEntryServiceImpl(
-			final AccountRepository<Account> accountRepository,
 			UploadRequestEntryBusinessService uploadRequestEntryBusinessService,
 			AbstractDomainService abstractDomainService,
 			FunctionalityReadOnlyService functionalityReadOnlyService,
@@ -134,7 +131,6 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 			DocumentEntryBusinessService documentEntryBusinessService,
 			LogEntryService logEntryService) {
 		super(rac);
-		this.accountRepository = accountRepository;
 		this.uploadRequestEntryBusinessService = uploadRequestEntryBusinessService;
 		this.abstractDomainService = abstractDomainService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
@@ -152,38 +148,38 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 	}
 
 	@Override
-	public UploadRequestEntry create(Account actor, Account owner, File tempFile, String fileName, String comment,
+	public UploadRequestEntry create(Account authUser, Account actor, File tempFile, String fileName, String comment,
 			boolean isFromCmis, String metadata, UploadRequestUrl uploadRequestUrl) throws BusinessException {
-		preChecks(actor, owner);
+		preChecks(authUser, actor);
 		Validate.notEmpty(fileName, "fileName is required.");
 		UploadRequestEntry upReqEntry = null;
 		try {
 			fileName = sanitizeFileName(fileName);
 			Long size = tempFile.length();
-			checkSpace(owner, size);
+			checkSpace(actor, size);
 			// detect file's mime type.
 			String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
 			// check if the file MimeType is allowed
-			if (mimeTypeFilteringStatus(owner)) {
-				mimeTypeService.checkFileMimeType(owner, fileName, mimeType);
+			if (mimeTypeFilteringStatus(actor)) {
+				mimeTypeService.checkFileMimeType(actor, fileName, mimeType);
 			}
-			virusScannerService.checkVirus(fileName, owner, tempFile, size);
+			virusScannerService.checkVirus(fileName, actor, tempFile, size);
 			// want a timestamp on doc ?
 			String timeStampingUrl = null;
 			StringValueFunctionality timeStampingFunctionality = functionalityReadOnlyService
-					.getTimeStampingFunctionality(owner.getDomain());
+					.getTimeStampingFunctionality(actor.getDomain());
 			if (timeStampingFunctionality.getActivationPolicy().getStatus()) {
 				timeStampingUrl = timeStampingFunctionality.getValue();
 			}
 			Functionality enciphermentFunctionality = functionalityReadOnlyService
-					.getEnciphermentFunctionality(owner.getDomain());
+					.getEnciphermentFunctionality(actor.getDomain());
 			Boolean checkIfIsCiphered = enciphermentFunctionality.getActivationPolicy().getStatus();
 			// We need to set an expiration date in case of file cleaner
 			// activation.
-			upReqEntry = uploadRequestEntryBusinessService.createUploadRequestEntryDocument(owner, tempFile, size,
+			upReqEntry = uploadRequestEntryBusinessService.createUploadRequestEntryDocument(actor, tempFile, size,
 					fileName, comment, checkIfIsCiphered, timeStampingUrl, mimeType,
-					getDocumentExpirationDate(owner.getDomain()), isFromCmis, metadata, uploadRequestUrl);
-			addToQuota(owner, size);
+					getDocumentExpirationDate(actor.getDomain()), isFromCmis, metadata, uploadRequestUrl);
+			addToQuota(actor, size);
 		} finally {
 			try {
 				logger.debug("deleting temp file : " + tempFile.getName());
@@ -194,7 +190,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 				logger.error("can not delete temp file : " + e.getMessage(), e);
 			}
 		}
-		AuditLogEntryUser log = new UploadRequestEntryAuditLogEntry(new AccountMto(owner), new AccountMto(owner),
+		AuditLogEntryUser log = new UploadRequestEntryAuditLogEntry(new AccountMto(authUser), new AccountMto(actor),
 				LogAction.CREATE, AuditLogEntryType.UPLOAD_REQUEST_ENTRY, upReqEntry.getUuid(), upReqEntry);
 		logEntryService.insert(log);
 		return upReqEntry;
@@ -275,13 +271,13 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 
 	@Override
 	public UploadRequestEntry deleteEntryByRecipients(UploadRequestUrl uploadRequestUrl, String entryUuid) throws BusinessException{
-		Account actor = accountRepository.getUploadRequestSystemAccount();
 		UploadRequestEntry entry = uploadRequestEntryBusinessService.findByUuid(entryUuid);
 		if (entry == null) {
 			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_NOT_FOUND,
 					"File not found");
 		}
 		uploadRequestEntryBusinessService.delete(entry);
+		Account actor = uploadRequestUrl.getUploadRequest().getUploadRequestGroup().getOwner();
 		AuditLogEntryUser log = new UploadRequestEntryAuditLogEntry(new AccountMto(actor),
 				new AccountMto(actor), LogAction.DELETE, AuditLogEntryType.UPLOAD_REQUEST_ENTRY,
 				entry.getUuid(), entry);
@@ -318,7 +314,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 				notifierService.sendNotification(mail); 
 			}
 		}
-		AuditLogEntryUser log = new UploadRequestEntryAuditLogEntry(new AccountMto(actor),
+		AuditLogEntryUser log = new UploadRequestEntryAuditLogEntry(new AccountMto(authUser),
 				new AccountMto(actor), LogAction.DELETE, AuditLogEntryType.UPLOAD_REQUEST_ENTRY,
 				uploadRequestEntry.getUuid(), uploadRequestEntry);
 		logEntryService.insert(log);

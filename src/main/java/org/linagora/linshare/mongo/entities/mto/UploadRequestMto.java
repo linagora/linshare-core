@@ -46,7 +46,7 @@ public class UploadRequestMto {
 
 	private String body;
 
-	private String groupUuid;
+	private String uploadRequestGroupUuid;
 
 	private Integer maxFileCount;
 
@@ -100,7 +100,7 @@ public class UploadRequestMto {
 		this.uuid = request.getUuid();
 		this.body = request.getUploadRequestGroup().getBody();
 		this.subject = request.getUploadRequestGroup().getSubject();
-		this.groupUuid = request.getUploadRequestGroup().getUuid();
+		this.uploadRequestGroupUuid = request.getUploadRequestGroup().getUuid();
 		this.domain = new DomainMto(request.getUploadRequestGroup().getAbstractDomain());
 		this.maxFileCount = request.getMaxFileCount();
 		this.secured = request.isSecured();
@@ -123,7 +123,7 @@ public class UploadRequestMto {
 		this.uuid = request.getUuid();
 		this.body = request.getUploadRequestGroup().getBody();
 		this.subject = request.getUploadRequestGroup().getSubject();
-		this.groupUuid = request.getUploadRequestGroup().getUuid();
+		this.uploadRequestGroupUuid = request.getUploadRequestGroup().getUuid();
 		this.domain = new DomainMto(request.getUploadRequestGroup().getAbstractDomain());
 		this.maxFileCount = request.getMaxFileCount();
 		this.secured = request.isSecured();
@@ -318,12 +318,12 @@ public class UploadRequestMto {
 		this.body = body;
 	}
 
-	public String getGroupUuid() {
-		return groupUuid;
+	public String getUploadRequestGroupUuid() {
+		return uploadRequestGroupUuid;
 	}
 
-	public void setGroupUuid(String groupUuid) {
-		this.groupUuid = groupUuid;
+	public void setUploadRequestGroupUuid(String groupUuid) {
+		this.uploadRequestGroupUuid = groupUuid;
 	}
 
 	public Boolean getDirtyLocalConf() {

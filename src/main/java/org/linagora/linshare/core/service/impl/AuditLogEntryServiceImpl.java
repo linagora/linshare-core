@@ -272,4 +272,39 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 		}
 		return actions;
 	}
+
+	@Override
+	public Set<AuditLogEntryUser> findAll(Account authUser, Account actor, String requestUuid, boolean detail, boolean entriesLogsOnly,
+			List<LogAction> action, List<AuditLogEntryType> types) {
+		Validate.notNull(authUser);
+		Validate.notNull(actor);
+		Set<AuditLogEntryUser> res = Sets.newHashSet();
+		types = getSupportedTypes(types, detail, entriesLogsOnly);
+		if (action.isEmpty()) {
+			for (LogAction log : LogAction.values()) {
+				action.add(log);
+			}
+		}
+		res = userMongoRepository.findUploadRequestHistoryForUser(authUser.getLsUuid(), requestUuid, action, types, new Sort(Sort.Direction.DESC, CREATION_DATE));
+		return res;
+	}
+
+	protected List<AuditLogEntryType> getSupportedTypes(List<AuditLogEntryType> types, boolean detail, boolean entriesLogsOnly) {
+		List<AuditLogEntryType> supportedTypes = Lists.newArrayList();
+		if (!types.isEmpty()) {
+			return types;
+		} else {
+			if (entriesLogsOnly) {
+				supportedTypes.add(AuditLogEntryType.UPLOAD_REQUEST_ENTRY);
+			} else if (detail) {
+				supportedTypes.add(AuditLogEntryType.UPLOAD_REQUEST_GROUP);
+				supportedTypes.add(AuditLogEntryType.UPLOAD_REQUEST);
+				supportedTypes.add(AuditLogEntryType.UPLOAD_REQUEST_URL);
+			} else {
+				supportedTypes.add(AuditLogEntryType.UPLOAD_REQUEST_GROUP);
+				supportedTypes.add(AuditLogEntryType.UPLOAD_REQUEST_URL);
+			}
+		}
+		return supportedTypes;
+	}
 }

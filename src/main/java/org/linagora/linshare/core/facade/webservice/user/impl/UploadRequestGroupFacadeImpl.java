@@ -35,8 +35,11 @@
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Contact;
@@ -50,7 +53,9 @@ import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestGrou
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.ContactDto;
 import org.linagora.linshare.core.facade.webservice.user.UploadRequestGroupFacade;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -59,10 +64,14 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 
 	private final UploadRequestGroupService uploadRequestGroupService;
 
+	private final AuditLogEntryService auditLogEntryService;
+
 	public UploadRequestGroupFacadeImpl(AccountService accountService,
-			final UploadRequestGroupService uploadRequestGroupService) {
+			final UploadRequestGroupService uploadRequestGroupService,
+			final AuditLogEntryService auditLogEntryService) {
 		super(accountService);
 		this.uploadRequestGroupService = uploadRequestGroupService;
+		this.auditLogEntryService = auditLogEntryService;
 	}
 
 	@Override
@@ -127,5 +136,13 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.findRequestGroupByUuid(authUser, actor, groupUuid);
 		uploadRequestGroup = uploadRequestGroupService.addNewRecipients(authUser, actor, uploadRequestGroup, recipientEmail);
 		return new UploadRequestGroupDto(uploadRequestGroup);
+	}
+
+	@Override
+	public Set<AuditLogEntryUser> findAll(String groupUuid, boolean detail, boolean entriesLogsOnly, List<LogAction> actions, List<AuditLogEntryType> type) {
+		Validate.notNull(groupUuid, "Upload request group uuid must be set");
+		Account authUser = checkAuthentication();
+		User actor = (User) getActor(authUser, null);
+		return auditLogEntryService.findAll(authUser, actor, groupUuid, detail, entriesLogsOnly, actions, type);
 	}
 }

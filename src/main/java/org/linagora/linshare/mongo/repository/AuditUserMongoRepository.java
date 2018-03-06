@@ -80,4 +80,8 @@ public interface AuditUserMongoRepository extends MongoRepository<AuditLogEntryU
 	@Query("{ $or: [ {'resourceUuid' : ?0 } , { 'list.uuid' : ?0 } ], 'type' : { '$in' : ?1 } }")
 	Set<AuditLogEntryUser> findContactListsActivity(String entryUuid,
 			List<AuditLogEntryType> types, Sort sort);
+
+	// UploadRequest
+	@Query("{ 'actor.uuid' : ?0, $or: [ {'resourceUuid' :  ?1 } , {'resource.uploadRequestGroupUuid' : ?1}], 'action' : {'$in' : ?2 }, 'type' : { '$in' : ?3 } }")
+	Set<AuditLogEntryUser> findUploadRequestHistoryForUser(String ownerUuid, String requestUuid, List<LogAction> actions, List<AuditLogEntryType> types, Sort sort);
 }
