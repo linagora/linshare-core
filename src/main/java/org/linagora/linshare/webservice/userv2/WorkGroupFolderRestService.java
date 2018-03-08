@@ -40,6 +40,8 @@ import java.util.Set;
 import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -79,8 +81,10 @@ public interface WorkGroupFolderRestService {
 
 	AsyncTaskDto findAsync(String uuid) throws BusinessException;
 
-	Set<AuditLogEntryUser> findAll(String workGroupUuid, String uuid, List<String> actions, List<String> types, String beginDate, String endDate);
+	Set<AuditLogEntryUser> findAll(String workGroupUuid, String workGroupNodeUuid, List<LogAction> actions,
+			List<AuditLogEntryType> types, String beginDate, String endDate);
 
 	WorkGroupNode createFromURL(String workGroupUuid, String parentNodeUuid, DocumentURLDto documentURLDto,
 			Boolean async, Boolean strict) throws BusinessException;
+
 }

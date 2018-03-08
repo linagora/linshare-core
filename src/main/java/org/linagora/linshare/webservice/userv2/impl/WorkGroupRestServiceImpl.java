@@ -50,6 +50,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
 import org.linagora.linshare.core.facade.webservice.user.WorkGroupFacade;
@@ -186,9 +188,9 @@ public class WorkGroupRestServiceImpl extends WebserviceBase implements WorkGrou
 			@ApiParam(value = "The workgroup uuid.", required = true)
 				@PathParam("uuid") String workGroupUuid,
 			@ApiParam(value = "Filter by type of actions..", required = false)
-				@QueryParam("actions") List<String> actions,
+				@QueryParam("actions") List<LogAction> actions,
 			@ApiParam(value = "Filter by type of resource's types.", required = false)
-				@QueryParam("types") List<String> types,
+				@QueryParam("types") List<AuditLogEntryType> types,
 				@QueryParam("beginDate") String beginDate,
 				@QueryParam("endDate") String endDate) {
 		return workGroupFacade.findAll(workGroupUuid, actions, types, beginDate, endDate);

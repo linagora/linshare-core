@@ -41,7 +41,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.lang.Validate;
-
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.TargetKind;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
@@ -263,7 +264,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 
 	@Override
 	public Set<AuditLogEntryUser> findAll(String actorUuid, String workGroupUuid, String workGroupNodeUuid,
-			List<String> actions, List<String> types, String beginDate, String endDate) {
+			List<LogAction> actions, List<AuditLogEntryType> types, String beginDate, String endDate) {
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		WorkGroup workGroup = threadService.find(authUser, actor, workGroupUuid);

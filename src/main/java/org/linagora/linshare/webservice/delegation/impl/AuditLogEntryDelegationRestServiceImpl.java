@@ -45,6 +45,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.facade.webservice.user.AuditLogEntryUserFacade;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.delegation.AuditLogEntryDelegationRestService;
@@ -64,8 +66,8 @@ public class AuditLogEntryDelegationRestServiceImpl implements AuditLogEntryDele
 	@GET
 	@Override
 	public Set<AuditLogEntryUser> findAll(@PathParam("actorUuid") String actorUuid,
-			@QueryParam("action") List<String> action,
-			@QueryParam("type") List<String> type,
+			@QueryParam("action") List<LogAction> action,
+			@QueryParam("type") List<AuditLogEntryType> type,
 			@QueryParam("forceAll") @DefaultValue("false") boolean forceAll,
 			@QueryParam("beginDate") String beginDate,
 			@QueryParam("endDate") String endDate) {

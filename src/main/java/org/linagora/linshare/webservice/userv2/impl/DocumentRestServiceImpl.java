@@ -59,6 +59,8 @@ import org.apache.commons.lang.Validate;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.domain.constants.AsyncTaskType;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -327,8 +329,8 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Override
 	public Set<AuditLogEntryUser> findAll(
 			@ApiParam(value = "The document uuid.", required = true) @PathParam("uuid") String uuid,
-			@ApiParam(value = "Filter by type of actions..", required = false) @QueryParam("actions") List<String> actions,
-			@ApiParam(value = "Filter by type of resource's types.", required = false) @QueryParam("types") List<String> types,
+			@ApiParam(value = "Filter by type of actions..", required = false) @QueryParam("actions") List<LogAction> actions,
+			@ApiParam(value = "Filter by type of resource's types.", required = false) @QueryParam("types") List<AuditLogEntryType> types,
 			@QueryParam("beginDate") String beginDate, @QueryParam("endDate") String endDate) {
 		return documentFacade.findAll(null, uuid, actions, types, beginDate, endDate);
 	}

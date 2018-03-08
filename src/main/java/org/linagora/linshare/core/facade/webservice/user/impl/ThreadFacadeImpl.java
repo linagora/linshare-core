@@ -37,6 +37,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.Functionality;
@@ -181,7 +183,7 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public Set<AuditLogEntryUser> findAll(String workGroupUuid, List<String> actions, List<String> types,
+	public Set<AuditLogEntryUser> findAll(String workGroupUuid, List<LogAction> actions, List<AuditLogEntryType> types,
 			String beginDate, String endDate) {
 		Account authUser = checkAuthentication();
 		User actor = (User) getActor(authUser, null);

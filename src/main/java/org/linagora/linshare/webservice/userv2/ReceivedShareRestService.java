@@ -38,6 +38,8 @@ import java.util.Set;
 
 import javax.ws.rs.core.Response;
 
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
@@ -59,6 +61,6 @@ public interface ReceivedShareRestService {
 
 	Response download(String uuid) throws BusinessException;
 
-	Set<AuditLogEntryUser> findAll(String uuid, List<String> actions, List<String> types, String beginDate,
-			String endDate);
+	Set<AuditLogEntryUser> findAll(String uuid, List<LogAction> actions, List<AuditLogEntryType> types,
+			String beginDate, String endDate);
 }

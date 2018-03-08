@@ -87,13 +87,13 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 	}
 
 	@Override
-	public Set<AuditLogEntryUser> findAll(Account actor, Account owner, List<String> action, List<String> type,
+	public Set<AuditLogEntryUser> findAll(Account actor, Account owner, List<LogAction> action, List<AuditLogEntryType> type,
 			boolean forceAll, String beginDate, String endDate) {
 		Validate.notNull(actor);
 		Validate.notNull(owner);
 		Set<AuditLogEntryUser> res = Sets.newHashSet();
 		List<LogAction> actions = getActions(action);
-		List<AuditLogEntryType> types = getEntryTypes(type, null);
+		List<AuditLogEntryType> types = getEntryTypes(type, null, true);
 		if (forceAll) {
 			res = userMongoRepository.findForUser(owner.getLsUuid(), actions, types);
 		} else {
@@ -107,7 +107,7 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 	}
 
 	@Override
-	public Set<AuditLogEntry> findAll(Account actor, List<String> action, List<String> type,
+	public Set<AuditLogEntry> findAll(Account actor, List<LogAction> action, List<AuditLogEntryType> type,
 			boolean forceAll, String beginDate, String endDate) {
 		Validate.notNull(actor);
 		if (!actor.hasSuperAdminRole()) {
@@ -115,7 +115,7 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 		}
 		Set<AuditLogEntry> res = Sets.newHashSet();
 		List<LogAction> actions = getActions(action);
-		List<AuditLogEntryType> types = getEntryTypes(type, null);
+		List<AuditLogEntryType> types = getEntryTypes(type, null, true);
 		if (actor.hasSuperAdminRole()) {
 			if (forceAll) {
 				res = auditMongoRepository.findAll(actions, types);
@@ -130,7 +130,7 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 
 	@Override
 	public Set<AuditLogEntryUser> findAll(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode,
-			List<String> action, List<String> type, String beginDate, String endDate) {
+			List<LogAction> action, List<AuditLogEntryType> type, String beginDate, String endDate) {
 		Validate.notNull(actor);
 		Validate.notNull(owner);
 		Validate.notNull(workGroup);
@@ -140,7 +140,7 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 		supportedTypes.add(AuditLogEntryType.WORKGROUP_DOCUMENT);
 		supportedTypes.add(AuditLogEntryType.WORKGROUP_FOLDER);
 		supportedTypes.add(AuditLogEntryType.WORKGROUP_MEMBER);
-		List<AuditLogEntryType> types = getEntryTypes(type, supportedTypes);
+		List<AuditLogEntryType> types = getEntryTypes(type, supportedTypes, true);
 		List<LogAction> actions = getActions(action);
 		Date end = getEndDate(endDate);
 		Date begin = getBeginDate(beginDate, end);
@@ -178,8 +178,8 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 	}
 
 	@Override
-	public Set<AuditLogEntryUser> findAll(Account actor, Account owner, String entryUuid, List<String> action,
-			List<String> type, String beginDate, String endDate) {
+	public Set<AuditLogEntryUser> findAll(Account actor, Account owner, String entryUuid, List<LogAction> action,
+			List<AuditLogEntryType> type, String beginDate, String endDate) {
 		Validate.notNull(actor);
 		Validate.notNull(owner);
 		Validate.notNull(entryUuid);
@@ -188,7 +188,7 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 		supportedTypes.add(AuditLogEntryType.DOCUMENT_ENTRY);
 		supportedTypes.add(AuditLogEntryType.SHARE_ENTRY);
 		supportedTypes.add(AuditLogEntryType.ANONYMOUS_SHARE_ENTRY);
-		List<AuditLogEntryType> types = getEntryTypes(type, supportedTypes);
+		List<AuditLogEntryType> types = getEntryTypes(type, supportedTypes, true);
 		List<LogAction> actions = getActions(action);
 		res = userMongoRepository.findDocumentHistoryForUser(
 				owner.getLsUuid(), entryUuid,
@@ -197,24 +197,25 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 		return res;
 	}
 
-	protected List<AuditLogEntryType> getEntryTypes(List<String> type, List<AuditLogEntryType> supportedTypes) {
+	protected List<AuditLogEntryType> getEntryTypes(List<AuditLogEntryType> entryTypes, List<AuditLogEntryType> supportedTypes, boolean defaultType) {
 		List<AuditLogEntryType> types = Lists.newArrayList();
-		if (type != null && !type.isEmpty()) {
-			for (String t : type) {
-				AuditLogEntryType entryType = AuditLogEntryType.fromString(t);
+		if (entryTypes != null && !entryTypes.isEmpty()) {
+			for (AuditLogEntryType type : entryTypes) {
 				if (supportedTypes != null) {
-					if (supportedTypes.contains(entryType)) {
-						types.add(entryType);
+					if (supportedTypes.contains(type)) {
+						types.add(type);
 					}
 				} else {
-					types.add(entryType);
+					types.add(type);
 				}
 			}
 		} else {
-			if (supportedTypes != null) {
-				types = supportedTypes;
-			} else {
-				types = Lists.newArrayList(AuditLogEntryType.class.getEnumConstants());
+			if (defaultType) {
+				if (supportedTypes != null) {
+					types = supportedTypes;
+				} else {
+					types = Lists.newArrayList(AuditLogEntryType.class.getEnumConstants());
+				}
 			}
 		}
 		return types;
@@ -261,50 +262,46 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 		return end;
 	}
 
-	protected List<LogAction> getActions(List<String> action) {
-		List<LogAction> actions = Lists.newArrayList();
-		if (action != null && !action.isEmpty()) {
-			for (String a : action) {
-				actions.add(LogAction.fromString(a));
-			}
-		} else {
-			actions = Lists.newArrayList(LogAction.class.getEnumConstants());
+	protected List<LogAction> getActions(List<LogAction> action) {
+		if (action == null || action.isEmpty()) {
+			return Lists.newArrayList(LogAction.class.getEnumConstants());
 		}
-		return actions;
+		return action;
 	}
 
 	@Override
-	public Set<AuditLogEntryUser> findAll(Account authUser, Account actor, String requestUuid, boolean detail, boolean entriesLogsOnly,
-			List<LogAction> action, List<AuditLogEntryType> types) {
+	public Set<AuditLogEntryUser> findAll(Account authUser, Account actor, String requestUuid, boolean detail,
+			boolean entriesLogsOnly, List<LogAction> action, List<AuditLogEntryType> types) {
 		Validate.notNull(authUser);
 		Validate.notNull(actor);
 		Set<AuditLogEntryUser> res = Sets.newHashSet();
-		types = getSupportedTypes(types, detail, entriesLogsOnly);
-		if (action.isEmpty()) {
-			for (LogAction log : LogAction.values()) {
-				action.add(log);
-			}
+		List<AuditLogEntryType> supportedTypes = Lists.newArrayList();
+		supportedTypes.add(AuditLogEntryType.UPLOAD_REQUEST_GROUP);
+		supportedTypes.add(AuditLogEntryType.UPLOAD_REQUEST);
+		supportedTypes.add(AuditLogEntryType.UPLOAD_REQUEST_URL);
+		supportedTypes.add(AuditLogEntryType.UPLOAD_REQUEST_ENTRY);
+		List<AuditLogEntryType> entriesTypes = getEntryTypes(types, supportedTypes, false);
+		if (entriesTypes == null || entriesTypes.isEmpty()) {
+			entriesTypes = getUplaodRequestDefaultTypes(detail, entriesLogsOnly);
 		}
-		res = userMongoRepository.findUploadRequestHistoryForUser(authUser.getLsUuid(), requestUuid, action, types, new Sort(Sort.Direction.DESC, CREATION_DATE));
+		action = getActions(action);
+		res = userMongoRepository.findUploadRequestHistoryForUser(authUser.getLsUuid(), requestUuid, action,
+				entriesTypes, new Sort(Sort.Direction.DESC, CREATION_DATE));
 		return res;
 	}
 
-	protected List<AuditLogEntryType> getSupportedTypes(List<AuditLogEntryType> types, boolean detail, boolean entriesLogsOnly) {
-		List<AuditLogEntryType> supportedTypes = Lists.newArrayList();
-		if (!types.isEmpty()) {
-			return types;
+	protected List<AuditLogEntryType> getUplaodRequestDefaultTypes(boolean detail, boolean entriesLogsOnly) {
+		List<AuditLogEntryType> types = Lists.newArrayList();
+		if (entriesLogsOnly) {
+			types.add(AuditLogEntryType.UPLOAD_REQUEST_ENTRY);
+		} else if (detail) {
+			types.add(AuditLogEntryType.UPLOAD_REQUEST_GROUP);
+			types.add(AuditLogEntryType.UPLOAD_REQUEST);
+			types.add(AuditLogEntryType.UPLOAD_REQUEST_URL);
 		} else {
-			if (entriesLogsOnly) {
-				supportedTypes.add(AuditLogEntryType.UPLOAD_REQUEST_ENTRY);
-			} else if (detail) {
-				supportedTypes.add(AuditLogEntryType.UPLOAD_REQUEST_GROUP);
-				supportedTypes.add(AuditLogEntryType.UPLOAD_REQUEST);
-				supportedTypes.add(AuditLogEntryType.UPLOAD_REQUEST_URL);
-			} else {
-				supportedTypes.add(AuditLogEntryType.UPLOAD_REQUEST_GROUP);
-				supportedTypes.add(AuditLogEntryType.UPLOAD_REQUEST_URL);
-			}
+			types.add(AuditLogEntryType.UPLOAD_REQUEST_GROUP);
+			types.add(AuditLogEntryType.UPLOAD_REQUEST_URL);
 		}
-		return supportedTypes;
+		return types;
 	}
 }

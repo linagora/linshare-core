@@ -36,6 +36,8 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 import java.util.List;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.AuditLogEntryUserFacade;
@@ -53,7 +55,7 @@ public class AuditLogEntryUserFacadeImpl extends GenericFacadeImpl implements Au
 	}
 
 	@Override
-	public Set<AuditLogEntryUser> findAll(String actorUuid, List<String> action, List<String> type, boolean forceAll,
+	public Set<AuditLogEntryUser> findAll(String actorUuid, List<LogAction> action, List<AuditLogEntryType> type, boolean forceAll,
 			String beginDate, String endDate) throws BusinessException {
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);

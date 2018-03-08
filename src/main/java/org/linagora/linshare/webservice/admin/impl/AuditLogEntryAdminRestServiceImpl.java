@@ -45,6 +45,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.facade.webservice.admin.AuditLogEntryAdminFacade;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 import org.linagora.linshare.webservice.admin.AuditLogEntryAdminRestService;
@@ -64,8 +66,8 @@ public class AuditLogEntryAdminRestServiceImpl implements AuditLogEntryAdminRest
 	@Path("/")
 	@GET
 	@Override
-	public Set<AuditLogEntry> findAll(@QueryParam("action") List<String> action,
-			@QueryParam("type") List<String> type,
+	public Set<AuditLogEntry> findAll(@QueryParam("action") List<LogAction> action,
+			@QueryParam("type") List<AuditLogEntryType> type,
 			@QueryParam("forceAll") @DefaultValue("false") boolean forceAll,
 			@QueryParam("beginDate") String beginDate,
 			@QueryParam("endDate") String endDate) {

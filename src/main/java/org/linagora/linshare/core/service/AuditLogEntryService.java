@@ -46,17 +46,21 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface AuditLogEntryService {
 
-	Set<AuditLogEntryUser> findAll(Account actor, Account owner, List<String> action, List<String> type, boolean forceAll, String beginDate, String endDate);
+	Set<AuditLogEntryUser> findAll(Account actor, Account owner, List<LogAction> action, List<AuditLogEntryType> type,
+			boolean forceAll, String beginDate, String endDate);
 
-	Set<AuditLogEntryUser> findAll(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode, List<String> actions, List<String> types, String beginDate, String endDate);
+	Set<AuditLogEntryUser> findAll(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode,
+			List<LogAction> action, List<AuditLogEntryType> type, String beginDate, String endDate);
 
-	Set<AuditLogEntryUser> findAll(Account actor, Account owner, String entryUuid, List<String> actions,
-			List<String> types, String beginDate, String endDate);
+	Set<AuditLogEntryUser> findAll(Account actor, Account owner, String entryUuid, List<LogAction> action,
+			List<AuditLogEntryType> type, String beginDate, String endDate);
 
-	Set<AuditLogEntry> findAll(Account actor, List<String> action, List<String> type, boolean forceAll, String beginDate, String endDate);
+	Set<AuditLogEntry> findAll(Account actor, List<LogAction> action, List<AuditLogEntryType> type, boolean forceAll,
+			String beginDate, String endDate);
 
 	Set<AuditLogEntryUser> findAllContactLists(Account actor, Account owner, String contactListUuid);
 
 	Set<AuditLogEntryUser> findAll(Account authUser, Account actor, String requestUuid, boolean detail,
 			boolean entriesLogsOnly, List<LogAction> action, List<AuditLogEntryType> type);
+
 }

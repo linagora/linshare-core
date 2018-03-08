@@ -51,6 +51,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
@@ -196,9 +198,9 @@ public class ReceivedShareRestServiceImpl implements ReceivedShareRestService {
 			@ApiParam(value = "The received share uuid.", required = true)
 				@PathParam("uuid") String uuid,
 			@ApiParam(value = "Filter by type of actions..", required = false)
-				@QueryParam("actions") List<String> actions,
+				@QueryParam("actions") List<LogAction> actions,
 			@ApiParam(value = "Filter by type of resource's types.", required = false)
-				@QueryParam("types") List<String> types,
+				@QueryParam("types") List<AuditLogEntryType> types,
 				@QueryParam("beginDate") String beginDate,
 				@QueryParam("endDate") String endDate) {
 		return shareFacade.findAll(null, uuid, actions, types, beginDate, endDate);

@@ -40,6 +40,8 @@ import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.EntryBusinessService;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Entry;
@@ -254,7 +256,7 @@ public class ShareFacadeImpl extends UserGenericFacadeImp
 	}
 
 	@Override
-	public Set<AuditLogEntryUser> findAll(String actorUuid, String uuid, List<String> actions, List<String> types,
+	public Set<AuditLogEntryUser> findAll(String actorUuid, String uuid, List<LogAction> actions, List<AuditLogEntryType> types,
 			String beginDate, String endDate) {
 		Account authUser = checkAuthentication();
 		User actor = (User) getActor(authUser, actorUuid);

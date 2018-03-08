@@ -48,6 +48,8 @@ import javax.activation.DataHandler;
 import org.apache.commons.lang.Validate;
 import org.apache.cxf.helpers.IOUtils;
 import org.linagora.linshare.core.business.service.EntryBusinessService;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
 import org.linagora.linshare.core.domain.constants.TargetKind;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
@@ -292,7 +294,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 	}
 
 	@Override
-	public Set<AuditLogEntryUser> findAll(String actorUuid, String uuid, List<String> actions, List<String> types,
+	public Set<AuditLogEntryUser> findAll(String actorUuid, String uuid, List<LogAction> actions, List<AuditLogEntryType> types,
 			String beginDate, String endDate) {
 		Account authUser = checkAuthentication();
 		User actor = (User) getActor(authUser, actorUuid);

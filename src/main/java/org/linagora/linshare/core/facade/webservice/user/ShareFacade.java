@@ -37,6 +37,8 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
@@ -70,6 +72,6 @@ public interface ShareFacade extends GenericFacade {
 
 	ShareDto delete(String shareUuid, Boolean received) throws BusinessException;
 
-	Set<AuditLogEntryUser> findAll(String actorUuid, String uuid, List<String> actions, List<String> types,
-			String beginDate, String endDate);
+	Set<AuditLogEntryUser> findAll(String actorUuid, String uuid, List<LogAction> actions,
+			List<AuditLogEntryType> types, String beginDate, String endDate);
 }

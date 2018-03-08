@@ -36,6 +36,8 @@ package org.linagora.linshare.webservice.userv2;
 import java.util.List;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
@@ -57,5 +59,6 @@ public interface WorkGroupRestService {
 	WorkGroupDto update(String workGroupUuid, WorkGroupDto workGroupDto)
 			throws BusinessException;
 
-	Set<AuditLogEntryUser> findAll(String workGroupUuid, List<String> actions, List<String> types, String beginDate, String endDate);
+	Set<AuditLogEntryUser> findAll(String workGroupUuid, List<LogAction> actions, List<AuditLogEntryType> types,
+			String beginDate, String endDate);
 }
