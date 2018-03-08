@@ -33,26 +33,38 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import java.util.Base64;
+import java.io.IOException;
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.JwtService;
+import org.linagora.linshare.core.utils.PemRsaKeyHelper;
+import org.linagora.linshare.core.utils.RSASigningKeyResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Clock;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.DefaultClock;
 
 public class JwtServiceImpl implements JwtService {
 
-	protected Clock clock = DefaultClock.INSTANCE;
+	final private static Logger logger = LoggerFactory
+			.getLogger(JwtServiceImpl.class);
 
-	protected final String secret;
+	protected Clock clock = DefaultClock.INSTANCE;
 
 	protected String issuer;
 
@@ -60,14 +72,19 @@ public class JwtServiceImpl implements JwtService {
 
 	protected Long maxLifeTime;
 
-	public JwtServiceImpl(String secret, Long expiration, String issuer, Long maxLifeTime) {
+	protected KeyPair globalKey;
+
+	protected RSAPublicKey extraPublicKey;
+
+	public JwtServiceImpl(Long expiration, Long maxLifeTime, String issuer, String pemPrivateKeyPath,
+			String pemPublicKeyPath, String pemExtraPublicKeyPath)
+			throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
 		super();
-		Validate.notEmpty(secret, "Secret shared key can't be null");
-		// see https://github.com/jwtk/jjwt/issues/248 why base64 encoding is required.
-		this.secret = Base64.getEncoder().encodeToString(secret.getBytes());
 		this.expiration = expiration;
 		this.issuer = issuer;
 		this.maxLifeTime = maxLifeTime;
+		this.globalKey = PemRsaKeyHelper.loadKeys(pemPrivateKeyPath, pemPublicKeyPath);
+		this.extraPublicKey = PemRsaKeyHelper.loadPublicKey(pemExtraPublicKeyPath);
 	}
 
 	@Override
@@ -79,22 +96,28 @@ public class JwtServiceImpl implements JwtService {
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("domain", actor.getDomainId());
 
-		return Jwts.builder()
+		PrivateKey pk = globalKey.getPrivate();
+		if (pk == null) {
+			logger.error("Can not generate a JWT toekn. Can not read global private key.");
+			throw new BusinessException(BusinessErrorCode.INVALID_CONFIGURATION, "JWT private key was not set properly.");
+		}
+		String compact = Jwts.builder()
 				.setClaims(claims)
 				.setSubject(actor.getMail())
 				.setIssuedAt(createdDate)
 				.setIssuer(issuer)
 				.setExpiration(expirationDate)
-				.signWith(SignatureAlgorithm.HS512, secret)
+				.signWith(SignatureAlgorithm.RS512, pk)
 				.compact();
+		return compact;
 	}
 
 	@Override
 	public Claims decode(String token) {
-		Claims claims = Jwts.parser()
-				.setSigningKey(secret)
-				.parseClaimsJws(token)
-				.getBody();
+		Jws<Claims> jws = Jwts.parser()
+				.setSigningKeyResolver(new RSASigningKeyResolver(globalKey.getPublic(), extraPublicKey, issuer))
+				.parseClaimsJws(token);
+		Claims claims = jws.getBody();
 		return claims;
 	}
 

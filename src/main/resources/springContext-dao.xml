@@ -25,4 +25,13 @@
 		<constructor-arg index="6" value="${mail.smtp.starttls.enable}" />
 		<constructor-arg index="7" value="${mail.smtp.ssl.enable}" />
 	</bean>
+	<bean id="jwtService"
+		class="org.linagora.linshare.core.service.impl.JwtServiceImpl">
+		<constructor-arg value="${jwt.expiration}" />
+		<constructor-arg value="${jwt.token.max.lifetime}" />
+		<constructor-arg value="${jwt.issuer}" />
+		<constructor-arg value="${jwt.global.key.private.path}" />
+		<constructor-arg value="${jwt.global.key.public.path}" />
+		<constructor-arg value="${jwt.extra.key.public.path}" />
+	</bean>
 </beans>

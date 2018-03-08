@@ -328,12 +328,4 @@
 		<constructor-arg ref="safeDetailResourceAccessControl" />
 	</bean>
 
-	<bean id="jwtService"
-		class="org.linagora.linshare.core.service.impl.JwtServiceImpl">
-		<constructor-arg value="${jwt.secret}" />
-		<constructor-arg value="${jwt.expiration}" />
-		<constructor-arg value="${jwt.issuer}" />
-		<constructor-arg value="${jwt.token.max.lifetime}" />
-	</bean>
-
 </beans>
