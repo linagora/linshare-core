@@ -67,7 +67,6 @@ public class ShareNewShareEmailBuilder extends EmailBuilder {
 
 		User shareOwner = emailCtx.getShareOwner();
 		ShareContainer shareContainer = emailCtx.getShareContainer();
-		String linshareURL = getLinShareUrl(shareOwner);
 
 		MailConfig cfg = shareOwner.getDomain().getCurrentMailConfiguration();
 		Context ctx = new Context(emailCtx.getLocale());
@@ -79,12 +78,12 @@ public class ShareNewShareEmailBuilder extends EmailBuilder {
 		ctx.setVariable("shareNote", shareContainer.getSharingNote());
 		ctx.setVariable("shareOwner", emailCtx.getMailContactShareOwner());
 		ctx.setVariable("shareRecipient", emailCtx.getMailContactShareRecipient());
-		ctx.setVariable("linshareURL", linshareURL);
 
 		List<Share> shares = Lists.newArrayList();
 		if (emailCtx.isAnonymous()) {
 			AnonymousUrl url = emailCtx.getAnonymousUrl();
-			linshareURL = getLinShareUrlForExternals(shareOwner);
+			String linshareURL = getLinShareUrlForExternals(shareOwner);
+			ctx.setVariable("linshareURL", linshareURL);
 			ctx.setVariable("anonymousURL", emailCtx.getAnonymousUrl().getFullUrl(linshareURL));
 			ctx.setVariable("protected", url.getTemporaryPlainTextPassword() != null);
 			ctx.setVariable("password", url.getTemporaryPlainTextPassword());
@@ -92,6 +91,8 @@ public class ShareNewShareEmailBuilder extends EmailBuilder {
 				shares.add(new Share(s));
 			}
 		} else {
+			String linshareURL = getLinShareUrl(emailCtx.getShareRecipient());
+			ctx.setVariable("linshareURL", linshareURL);
 			for (ShareEntry s : emailCtx.getShares()) {
 				Share share = new Share(s);
 				share.setHref(getRecipientShareLink(linshareURL, s.getUuid()));
@@ -101,12 +102,6 @@ public class ShareNewShareEmailBuilder extends EmailBuilder {
 		}
 		ctx.setVariable("shares", shares);
 		ctx.setVariable("sharesCount", shares.size());
-
-		if (emailCtx.isAnonymous()) {
-			ctx.setVariable("linshareURL", getLinShareAnonymousURL(shareOwner));
-		} else {
-			ctx.setVariable("linshareURL", getLinShareUrl(emailCtx.getShareRecipient()));
-		}
 
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
 				emailCtx);

@@ -45,8 +45,10 @@ import org.linagora.linshare.core.notifications.dto.MailContact;
 public class ShareWarnRecipientBeforeExpiryEmailContext extends EmailContext {
 
 	protected Entry entry;
-	
+
 	protected User shareOwner;
+
+	protected User shareRecipient;
 
 	protected Integer day;
 
@@ -115,6 +117,14 @@ public class ShareWarnRecipientBeforeExpiryEmailContext extends EmailContext {
 			return new MailContact(getAnonymousShareEntry().getAnonymousUrl().getContact());
 		}
 		return new MailContact(getShareEntry().getRecipient());
+	}
+
+	public User getShareRecipient() {
+		return shareRecipient;
+	}
+
+	public void setShareRecipient(User shareRecipient) {
+		this.shareRecipient = shareRecipient;
 	}
 
 	@Override
