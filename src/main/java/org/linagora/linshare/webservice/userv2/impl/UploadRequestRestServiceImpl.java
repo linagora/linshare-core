@@ -111,8 +111,8 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	}
 
 	@PUT
-	@Path("/{uuid}/update/{status}")
-	@ApiOperation(value = "Update status of upload request.", response = UploadRequestDto.class)
+	@Path("/{uuid}/status/{status}")
+	@ApiOperation(value = "Update status of an upload request.", response = UploadRequestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
 	@Override

@@ -114,7 +114,7 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 	}
 
 	@PUT
-	@Path("/{uuid}/update/{status}")
+	@Path("/{uuid}/status/{status}")
 	@ApiOperation(value = "Update status of upload request group.", response = UploadRequestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
 			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
@@ -122,9 +122,9 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 	public UploadRequestGroupDto updateStatus(
 			@ApiParam(value = "Upload request group uuid.", required = true)
 				@PathParam(value = "uuid") String requestGroupUuid,
-			@ApiParam(value = "New status for the upload request groupe", required = true)
+			@ApiParam(value = "New status for the upload request group", required = true)
 				@PathParam("status") UploadRequestStatus status,
-			@ApiParam(value = "If the owner want to copy the document.", required = false) 
+			@ApiParam(value = "If the owner wants to copy all documents and the upload request group is in archived status", required = false) 
 				@QueryParam("copy") @DefaultValue("false") boolean copy) throws BusinessException {
 		return uploadRequestGroupFacade.updateStatus(null, requestGroupUuid, status, copy);
 	}
