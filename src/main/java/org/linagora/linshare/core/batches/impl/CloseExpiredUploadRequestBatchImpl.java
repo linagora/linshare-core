@@ -1,5 +1,5 @@
 /*
-s * LinShare is an open source filesharing software, part of the LinPKI software
+ * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
  * Copyright (C) 2016-2018 LINAGORA
@@ -62,7 +62,9 @@ import com.google.common.collect.Lists;
 public class CloseExpiredUploadRequestBatchImpl extends GenericBatchImpl implements CloseExpiredUploadRequestBatch {
 
 	private final UploadRequestService uploadRequestService;
+
 	private final MailBuildingService mailBuildingService;
+
 	private final NotifierService notifierService;
 
 	public CloseExpiredUploadRequestBatchImpl(
@@ -106,6 +108,7 @@ public class CloseExpiredUploadRequestBatchImpl extends GenericBatchImpl impleme
 		EmailContext ctx = new UploadRequestWarnExpiryEmailContext((User) uploadRequest.getUploadRequestGroup().getOwner(), uploadRequest, null, true);
 		notifications.add(mailBuildingService.build(ctx));
 		notifierService.sendNotification(notifications);
+		context.setProcessed(true);
 		return context;
 	}
 

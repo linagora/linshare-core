@@ -47,7 +47,7 @@ import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestCreationtDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestCreationDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestGroupDto;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.ContactDto;
@@ -91,10 +91,10 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 	}
 
 	@Override
-	public List<UploadRequestDto> create(String actorUuid, UploadRequestCreationtDto uploadRequesCreationtDto,
+	public List<UploadRequestDto> create(String actorUuid, UploadRequestCreationDto uploadRequesCreationtDto,
 			Boolean groupMode) throws BusinessException {
 		Validate.notNull(uploadRequesCreationtDto, "Upload request must be set.");
-		Validate.notNull(uploadRequesCreationtDto.getSubject(), "Upload request subject must be set.");
+		Validate.notNull(uploadRequesCreationtDto.getLabel(), "Upload request subject must be set.");
 		Validate.notEmpty(uploadRequesCreationtDto.getContactList());
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
@@ -104,7 +104,7 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 			contacts.add(new Contact(mail));
 		}
 		List<UploadRequest> e = uploadRequestGroupService.createRequest(authUser, actor, req, contacts,
-				uploadRequesCreationtDto.getSubject(), uploadRequesCreationtDto.getBody(), groupMode);
+				uploadRequesCreationtDto.getLabel(), uploadRequesCreationtDto.getBody(), groupMode);
 		return ImmutableList.copyOf(Lists.transform(e, UploadRequestDto.toDto(true)));
 	}
 

@@ -42,18 +42,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
-import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.ContactDto;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @XmlRootElement(name = "UploadRequestCreation")
-public class UploadRequestCreationtDto {
-
-	@ApiModelProperty(value = "Owner")
-	private ContactDto owner;
+public class UploadRequestCreationDto {
 
 	@ApiModelProperty(value = "Activation date")
 	private Date activationDate;
@@ -67,9 +63,9 @@ public class UploadRequestCreationtDto {
 
 	@ApiModelProperty(value = "Notification date")
 	private Date notificationDate;
-	
-	@ApiModelProperty(value = "Subject")
-	private String subject;
+
+	@ApiModelProperty(value = "Label")
+	private String label;
 
 	private List<String> contactList = Lists.newArrayList();
 
@@ -91,38 +87,39 @@ public class UploadRequestCreationtDto {
 	private boolean secured;
 
 	private String locale;
-	
+
 	private Boolean dirty;
-	
+
 	private Boolean enableNotification;
-	
+
 	private Boolean canEditExpiryDate;
-	
-	public UploadRequestCreationtDto() {
+
+	public UploadRequestCreationDto() {
 		super();
 	}
-	public UploadRequestCreationtDto(UploadRequest entity) {
+
+	public UploadRequestCreationDto(UploadRequest entity) {
 		super();
-		this.owner = new ContactDto(entity.getUploadRequestGroup().getOwner());
 		this.activationDate = entity.getActivationDate();
 		this.creationDate = entity.getCreationDate();
 		this.expiryDate = entity.getExpiryDate();
-		this.subject = entity.getUploadRequestGroup().getSubject();
+		this.label = entity.getUploadRequestGroup().getSubject();
 		this.notificationDate = entity.getNotificationDate();
 		this.dirty = entity.getDirty();
 		this.enableNotification = entity.getEnableNotification();
-			this.maxFileCount = entity.getMaxFileCount();
-			this.maxDepositSize = entity.getMaxDepositSize();
-			this.maxFileSize = entity.getMaxFileSize();
-			this.canDelete = entity.isCanDelete();
-			this.canClose = entity.isCanClose();
-			for (UploadRequestUrl uru : entity.getUploadRequestURLs()) {
-				contactList.add(uru.getContact().getMail());
-			}
-			this.body = entity.getUploadRequestGroup().getBody();
+		this.maxFileCount = entity.getMaxFileCount();
+		this.maxDepositSize = entity.getMaxDepositSize();
+		this.maxFileSize = entity.getMaxFileSize();
+		this.canDelete = entity.isCanDelete();
+		this.canClose = entity.isCanClose();
+		for (UploadRequestUrl uru : entity.getUploadRequestURLs()) {
+			contactList.add(uru.getContact().getMail());
+		}
+		this.body = entity.getUploadRequestGroup().getBody();
 		this.secured = entity.isSecured();
 		this.locale = entity.getLocale();
 	}
+
 	public UploadRequest toObject() {
 		UploadRequest e = new UploadRequest();
 		e.setActivationDate(getActivationDate());
@@ -141,14 +138,6 @@ public class UploadRequestCreationtDto {
 		return e;
 	}
 
-	public ContactDto getOwner() {
-		return owner;
-	}
-
-	public void setOwner(ContactDto owner) {
-		this.owner = owner;
-	}
-
 	public Date getExpiryDate() {
 		return expiryDate;
 	}
@@ -157,12 +146,12 @@ public class UploadRequestCreationtDto {
 		this.expiryDate = expiryDate;
 	}
 
-	public String getSubject() {
-		return subject;
+	public String getLabel() {
+		return label;
 	}
 
-	public void setSubject(String subject) {
-		this.subject = subject;
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	public Date getActivationDate() {
@@ -256,33 +245,39 @@ public class UploadRequestCreationtDto {
 	public Boolean getCanEditExpiryDate() {
 		return canEditExpiryDate;
 	}
-	
+
 	public void setCanEditExpiryDate(Boolean canEditExpiryDate) {
 		this.canEditExpiryDate = canEditExpiryDate;
 	}
-	
+
 	public List<String> getContactList() {
 		return contactList;
 	}
+
 	public void setContactList(List<String> contactList) {
 		this.contactList = contactList;
 	}
+
 	public boolean isCanDelete() {
 		return canDelete;
 	}
+
 	public void setCanDelete(boolean canDelete) {
 		this.canDelete = canDelete;
 	}
+
 	public boolean isSecured() {
 		return secured;
 	}
+
 	public void setSecured(boolean secured) {
 		this.secured = secured;
 	}
+
 	/*
 	 * Transformers
 	 */
-	public static Function<UploadRequest, UploadRequestCreationtDto> toDto() {
-		return uploadRequestCreation -> new UploadRequestCreationtDto(uploadRequestCreation);
+	public static Function<UploadRequest, UploadRequestCreationDto> toDto() {
+		return uploadRequestCreation -> new UploadRequestCreationDto(uploadRequestCreation);
 	}
 }

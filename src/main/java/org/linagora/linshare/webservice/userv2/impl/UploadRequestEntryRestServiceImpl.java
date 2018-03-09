@@ -63,7 +63,7 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/upload_request_entry")
+@Path("/upload_request_entries")
 @Api(value = "/rest/user/v2/upload_request_entry", description = "requests API")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -72,7 +72,7 @@ public class UploadRequestEntryRestServiceImpl implements UploadRequestEntryRest
 	protected final Logger logger = LoggerFactory.getLogger(UploadRequestEntryRestServiceImpl.class);
 
 	private final UploadRequestEntryFacade uploadRequestEntryFacade;
-	
+
 	public UploadRequestEntryRestServiceImpl(UploadRequestEntryFacade uploadRequestEntryFacade) {
 		super();
 		this.uploadRequestEntryFacade = uploadRequestEntryFacade;
@@ -87,10 +87,10 @@ public class UploadRequestEntryRestServiceImpl implements UploadRequestEntryRest
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public Response download(@ApiParam(value = "Upload request entry uuid.", required = true)  @PathParam("uuid") String uuid) throws BusinessException {
-		DocumentDto documentDto = uploadRequestEntryFacade.find(null, uuid);
-		InputStream documentStream = uploadRequestEntryFacade.getDocumentStream(uuid);
+		UploadRequestEntryDto uploadRequestEntryDto = uploadRequestEntryFacade.find(null, uuid);
+		InputStream documentStream = uploadRequestEntryFacade.download(uuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream,
-				documentDto.getName(), documentDto.getType(), documentDto.getSize());
+				uploadRequestEntryDto.getName(), uploadRequestEntryDto.getType(), uploadRequestEntryDto.getSize());
 		return response.build();
 	}
 

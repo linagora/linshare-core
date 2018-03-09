@@ -49,7 +49,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestCreationtDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestCreationDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestGroupDto;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.ContactDto;
@@ -108,9 +108,9 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 	@Override
 	public List<UploadRequestDto> create(
 			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Upload request.", required = true) UploadRequestCreationtDto uploadRequestCreationtDto,
+			@ApiParam(value = "Upload request.", required = true) UploadRequestCreationDto uploadRequestCreationDto,
 			@ApiParam(value = "Group mode.", required = true) @QueryParam(value = "groupMode") Boolean groupMode) {
-		List<UploadRequestDto> dto = uploadRequestGroupFacade.create(actorUuid, uploadRequestCreationtDto, groupMode);
+		List<UploadRequestDto> dto = uploadRequestGroupFacade.create(actorUuid, uploadRequestCreationDto, groupMode);
 		return dto;
 	}
 

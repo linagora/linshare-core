@@ -172,7 +172,7 @@
 	<bean name="uploadRequestGroupService"
 		class="org.linagora.linshare.core.service.impl.UploadRequestGroupServiceImpl">
 		<constructor-arg ref="uploadRequestGroupBusinessService" />
-		<constructor-arg ref="uploadRequestGroupResourceAccessControl" />
+		<constructor-arg ref="uploadRequestGroupResourceAccessControl"/>
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="uploadRequestUrlService" />
 		<constructor-arg ref="notifierService" />

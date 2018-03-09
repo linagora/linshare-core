@@ -34,7 +34,7 @@
 
 package org.linagora.linshare.core.notifications.dto;
 
-public class LongParameter {
+public class LongParameter implements Parameter {
 
 	protected Boolean modified;
 

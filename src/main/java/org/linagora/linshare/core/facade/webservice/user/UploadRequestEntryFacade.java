@@ -43,9 +43,9 @@ import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 
 public interface UploadRequestEntryFacade {
 
-	DocumentDto find(String actorUuid, String uuid) throws BusinessException;
+	UploadRequestEntryDto find(String actorUuid, String uuid) throws BusinessException;
 
-	InputStream getDocumentStream(String ulploadRequestEntryUuid) throws BusinessException;
+	InputStream download(String ulploadRequestEntryUuid) throws BusinessException;
 
 	UploadRequestEntryDto delete(String actorUuid, String uuid);
 

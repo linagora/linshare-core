@@ -49,7 +49,6 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
 import org.linagora.linshare.core.facade.webservice.user.UploadRequestEntryFacade;
-import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 import org.linagora.linshare.webservice.delegationv2.UploadRequestEntryRestService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 import org.slf4j.Logger;
@@ -61,7 +60,7 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/{actorUuid}/upload_request_entry")
+@Path("/{actorUuid}/upload_request_entries")
 @Api(value = "/rest/delegation/v2/{actorUuid}/upload_request_entry", description = "requests API")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -88,10 +87,10 @@ public class UploadRequestEntryRestServiceImpl implements UploadRequestEntryRest
 			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "Upload request entry uuid.", required = true) @PathParam("uuid") String uuid)
 			throws BusinessException {
-		DocumentDto documentDto = uploadRequestEntryFacade.find(actorUuid, uuid);
-		InputStream documentStream = uploadRequestEntryFacade.getDocumentStream(uuid);
+		UploadRequestEntryDto uploadRequestEntryDto = uploadRequestEntryFacade.find(actorUuid, uuid);
+		InputStream documentStream = uploadRequestEntryFacade.download(uuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream,
-				documentDto.getName(), documentDto.getType(), documentDto.getSize());
+				uploadRequestEntryDto.getName(), uploadRequestEntryDto.getType(), uploadRequestEntryDto.getSize());
 		return response.build();
 	}
 

@@ -62,16 +62,16 @@ public class UploadRequestEntryFacadeImpl extends GenericFacadeImpl implements U
 	}
 
 	@Override
-	public DocumentDto find(String actorUuid, String uuid) throws BusinessException {
+	public UploadRequestEntryDto find(String actorUuid, String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "Upload request entry uuid must be set.");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		UploadRequestEntry uploadRequestEntry =  uploadRequestEntryService.find(authUser, actor, uuid);
-		return new DocumentDto(uploadRequestEntry);
+		return new UploadRequestEntryDto(uploadRequestEntry);
 	}
-	
+
 	@Override
-	public InputStream getDocumentStream(String ulploadRequestEntryUuid) throws BusinessException {
+	public InputStream download(String ulploadRequestEntryUuid) throws BusinessException {
 		Validate.notEmpty(ulploadRequestEntryUuid, "Missing required document uuid");
 		logger.debug("downloading for document : " + ulploadRequestEntryUuid);
 		User authUser = checkAuthentication();

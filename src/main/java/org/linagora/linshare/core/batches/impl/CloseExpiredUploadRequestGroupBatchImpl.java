@@ -53,6 +53,7 @@ import org.linagora.linshare.core.service.UploadRequestGroupService;
 public class CloseExpiredUploadRequestGroupBatchImpl extends GenericBatchImpl {
 
 	private final UploadRequestGroupService uploadRequestGroupService;
+
 	private final UploadRequestGroupRepository uploadRequestGroupRepository;
 
 	public CloseExpiredUploadRequestGroupBatchImpl(AccountRepository<Account> accountRepository,
@@ -78,17 +79,18 @@ public class CloseExpiredUploadRequestGroupBatchImpl extends GenericBatchImpl {
 			throws BatchBusinessException, BusinessException {
 		SystemAccount account = getSystemAccount();
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.findRequestGroupByUuid(account, null, identifier);
+		ResultContext context = new BatchResultContext<UploadRequestGroup>(uploadRequestGroup);
 		for(UploadRequest ur : uploadRequestGroup.getUploadRequests()) {
 			// with this batch, we update just current uploadRequestGroup
 			// if there is one uploadRequest enable, we shouldn't  close the group
 			if (ur.getStatus().equals(UploadRequestStatus.ENABLED)) {
-				return null;
+				context.setProcessed(false);
+				return context;
 			}
 		}
-		ResultContext context = new BatchResultContext<UploadRequestGroup>(uploadRequestGroup);
-		console.logInfo(batchRunContext, total, position, "processing uplaod request group : ", uploadRequestGroup.getUuid());
 		uploadRequestGroup.updateStatus(UploadRequestStatus.CLOSED);
 		uploadRequestGroupRepository.update(uploadRequestGroup);
+		context.setProcessed(true);
 		return context;
 	}
 
@@ -97,6 +99,7 @@ public class CloseExpiredUploadRequestGroupBatchImpl extends GenericBatchImpl {
 		@SuppressWarnings("unchecked")
 		BatchResultContext<UploadRequestGroup> uploadRequestContext = (BatchResultContext<UploadRequestGroup>) context;
 		UploadRequestGroup uploadRequestGroup = uploadRequestContext.getResource();
+		console.logInfo(batchRunContext, total, position, "processing uplaod request group : ", uploadRequestGroup.getUuid());
 		console.logInfo(batchRunContext, total, position,
 				"The Upload Request group " + uploadRequestGroup.getUuid() + " has been successfully closed.");
 	}

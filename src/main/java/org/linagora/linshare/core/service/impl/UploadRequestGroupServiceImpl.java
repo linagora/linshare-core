@@ -82,8 +82,6 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 
 	private final UploadRequestGroupBusinessService uploadRequestGroupBusinessService;
 
-	private final UploadRequestGroupResourceAccessControl groupRac;
-
 	private final FunctionalityReadOnlyService functionalityService;
 
 	private final UploadRequestUrlService uploadRequestUrlService;
@@ -104,7 +102,6 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 			final UploadRequestService uploadRequestService) {
 		super(groupRac);
 		this.uploadRequestGroupBusinessService = uploadRequestGroupBusinessService;
-		this.groupRac = groupRac;
 		this.functionalityService = functionalityService;
 		this.uploadRequestUrlService = uploadRequestUrlService;
 		this.notifierService = notifierService;
@@ -116,7 +113,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 	public List<UploadRequestGroup> findAllGroupRequest(Account actor, Account owner, List<UploadRequestStatus> statusList)
 			throws BusinessException {
 		preChecks(actor, owner);
-		groupRac.checkListPermission(actor, owner, UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
+		checkListPermission(actor, owner, UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
 				null);
 		return uploadRequestGroupBusinessService.findAll(owner, statusList);
 	}
@@ -125,7 +122,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 	public UploadRequestGroup findRequestGroupByUuid(Account actor, Account owner, String uuid) {
 		preChecks(actor, owner);
 		UploadRequestGroup req = uploadRequestGroupBusinessService.findByUuid(uuid);
-		groupRac.checkReadPermission(actor,
+		checkReadPermission(actor,
 				req.getOwner(), UploadRequestGroup.class,
 				BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, req);
 		return req;
@@ -543,7 +540,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 			UploadRequestStatus status, boolean copy) {
 		preChecks(authUser, actor);
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupBusinessService.findByUuid(requestGroupUuid);
-		groupRac.checkUpdatePermission(authUser, actor, UploadRequestGroup.class,
+		checkUpdatePermission(authUser, actor, UploadRequestGroup.class,
 				BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, uploadRequestGroup);
 		UploadRequestGroupAuditLogEntry groupLog = new UploadRequestGroupAuditLogEntry(new AccountMto(authUser),
 				new AccountMto(actor), LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST_GROUP,

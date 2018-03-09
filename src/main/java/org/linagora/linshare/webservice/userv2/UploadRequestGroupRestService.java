@@ -41,7 +41,7 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestCreationtDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestCreationDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestGroupDto;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.ContactDto;
@@ -53,7 +53,7 @@ public interface UploadRequestGroupRestService {
 
 	UploadRequestGroupDto find(String uuid) throws BusinessException;
 
-	List<UploadRequestDto> create(UploadRequestCreationtDto uploadRequestCreationtDto, Boolean groupMode);
+	List<UploadRequestDto> create(UploadRequestCreationDto uploadRequestCreationDto, Boolean groupMode);
 
 	UploadRequestGroupDto update(UploadRequestGroupDto uploadRequestGroupDto);
 
