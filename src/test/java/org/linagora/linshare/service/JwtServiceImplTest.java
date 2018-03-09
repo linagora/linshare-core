@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.service;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
@@ -43,6 +45,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+
+import io.jsonwebtoken.Claims;
 
 
 @ContextConfiguration(locations = {
@@ -76,7 +80,10 @@ public class JwtServiceImplTest extends AbstractTransactionalJUnit4SpringContext
 	@Test
 	public void test() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		// jwtService.generateToken(jane);
+		String token = jwtService.generateToken(jane);
+		Claims decode = jwtService.decode(token);
+		logger.debug("Token:" + decode.toString());
+		assertEquals("user2@linshare.org", decode.getSubject());
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 }
