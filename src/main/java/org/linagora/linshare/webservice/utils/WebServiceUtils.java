@@ -141,7 +141,14 @@ public class WebServiceUtils {
 	public static String getFileNameFromUrl(String fileURL, String defaultFileName) {
 		boolean emptyFileName = Strings.isNullOrEmpty(defaultFileName);
 		if (emptyFileName) {
-			return fileURL.substring(fileURL.lastIndexOf("/") + 1, fileURL.length());
+			try {
+				URL foundUrl = new URL(fileURL);
+				String pathUrl = foundUrl.getPath();
+				return pathUrl.substring(pathUrl.lastIndexOf('/') + 1, pathUrl.length());
+			} catch (MalformedURLException e) {
+				logger.error(e.getMessage(), e);
+				throw new BusinessException(BusinessErrorCode.WRONG_URL, "Malformed URL : " + fileURL);
+			}
 		}
 		return defaultFileName;
 	}
