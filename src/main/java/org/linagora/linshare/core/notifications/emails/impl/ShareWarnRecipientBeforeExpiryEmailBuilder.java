@@ -61,13 +61,15 @@ public class ShareWarnRecipientBeforeExpiryEmailBuilder extends EmailBuilder {
 		ShareWarnRecipientBeforeExpiryEmailContext emailCtx = (ShareWarnRecipientBeforeExpiryEmailContext) context;
 
 		User shareOwner = emailCtx.getShareOwner();
-		String linshareURL = getLinShareUrl(shareOwner);
 
+		String linshareURL;
 		Share share = null;
 		boolean anonymous = emailCtx.isAnonymous();
 		if (anonymous) {
 			share = new Share(emailCtx.getAnonymousShareEntry());
+			linshareURL = getLinShareAnonymousURL(shareOwner);
 		} else {
+			linshareURL = getLinShareUrl(emailCtx.getShareRecipient());
 			share = new Share(emailCtx.getShareEntry());
 			share.setHref(getRecipientShareLink(linshareURL, share.getUuid()));
 		}
