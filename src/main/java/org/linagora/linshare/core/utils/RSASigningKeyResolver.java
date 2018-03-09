@@ -77,6 +77,7 @@ public class RSASigningKeyResolver implements SigningKeyResolver {
 				logger.error("Can not find global public key to verify the JWT token.");
 				throw new BusinessException(BusinessErrorCode.INVALID_CONFIGURATION, "Can not find global public key to verify the JWT token.");
 			}
+			return publicKey;
 		}
 		if (extraPublicKey == null) {
 			logger.error("Can not find a public key to verify the JWT token.");
