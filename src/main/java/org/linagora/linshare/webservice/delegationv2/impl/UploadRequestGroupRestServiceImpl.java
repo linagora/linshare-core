@@ -35,6 +35,7 @@
 package org.linagora.linshare.webservice.delegationv2.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
@@ -47,6 +48,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestCreationDto;
@@ -54,6 +57,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestGroupDto;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.ContactDto;
 import org.linagora.linshare.core.facade.webservice.user.UploadRequestGroupFacade;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.delegationv2.UploadRequestGroupRestService;
 
 import com.wordnik.swagger.annotations.Api;
@@ -155,5 +159,30 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 				@PathParam(value = "groupUuid") String groupUuid,
 			@ApiParam(value = "List of new recipients", required = true) List<ContactDto> recipientEmail) {
 		return uploadRequestGroupFacade.addRecipients(actorUuid, groupUuid, recipientEmail);
+	}
+
+	@GET
+	@Path("/{uuid}/audit")
+	@ApiOperation(value = "Get all traces for upload request.", response = AuditLogEntryUser.class, responseContainer="Set")
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
+					@ApiResponse(code = 404, message = "upload request group not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+					})
+	@Override
+	public Set<AuditLogEntryUser> findAll(
+			@ApiParam(value = "The actor (user) uuid.", required = true)
+				@PathParam("actorUuid") String actorUuid,
+			@ApiParam(value = "The request uuid.", required = true)
+				@PathParam("uuid") String uuid,
+			@ApiParam(value= "This parameter allow you to find all logs relative to upload request, upload request group and recipients (can be activated if type is empty and entriesLogsOnly has false value)")
+				@QueryParam("detail") boolean detail,
+			@ApiParam(value = "This parameter allow you to find all logs relative to upload request entry only (can be activated if type is empty)", required = false)
+				@QueryParam("entriesLogsOnly") boolean entriesLogsOnly,
+			@ApiParam(value = "Filter by type of actions..", required = false)
+				@QueryParam("actions") List<LogAction> actions,
+			@ApiParam(value = "Filter by type of resource's types (If the type is not empty, the entriesLogsType and detail parameter are ignored)", required = false)
+				@QueryParam("types") List<AuditLogEntryType> types) {
+		return uploadRequestGroupFacade.findAll(actorUuid, uuid, detail, entriesLogsOnly, actions, types);
 	}
 }

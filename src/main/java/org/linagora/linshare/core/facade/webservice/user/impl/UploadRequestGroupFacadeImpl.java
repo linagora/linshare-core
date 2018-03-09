@@ -139,7 +139,8 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 	}
 
 	@Override
-	public Set<AuditLogEntryUser> findAll(String groupUuid, boolean detail, boolean entriesLogsOnly, List<LogAction> actions, List<AuditLogEntryType> type) {
+	public Set<AuditLogEntryUser> findAll(String actorUuid, String groupUuid, boolean detail, boolean entriesLogsOnly,
+			List<LogAction> actions, List<AuditLogEntryType> type) {
 		Validate.notNull(groupUuid, "Upload request group uuid must be set");
 		Account authUser = checkAuthentication();
 		User actor = (User) getActor(authUser, null);

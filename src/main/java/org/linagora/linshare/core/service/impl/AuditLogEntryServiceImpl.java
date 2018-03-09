@@ -285,7 +285,7 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 			entriesTypes = getUplaodRequestDefaultTypes(detail, entriesLogsOnly);
 		}
 		action = getActions(action);
-		res = userMongoRepository.findUploadRequestHistoryForUser(authUser.getLsUuid(), requestUuid, action,
+		res = userMongoRepository.findUploadRequestHistoryForUser(actor.getLsUuid(), requestUuid, action,
 				entriesTypes, new Sort(Sort.Direction.DESC, CREATION_DATE));
 		return res;
 	}

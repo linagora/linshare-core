@@ -151,7 +151,7 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 	}
 
 	@GET
-	@Path("/{uuid}/audit/")
+	@Path("/{uuid}/audit")
 	@ApiOperation(value = "Get all traces for a n upload request group.", response = AuditLogEntryUser.class, responseContainer="Set")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
 					@ApiResponse(code = 404, message = "upload request group not found."),
@@ -162,14 +162,14 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 	public Set<AuditLogEntryUser> findAll(
 			@ApiParam(value = "The request uuid.", required = true)
 				@PathParam("uuid") String uuid,
-			@ApiParam(value= "Find all logs relative to upload request, upload request group and recipients")
+			@ApiParam(value= "This parameter allow you to find all logs relative to upload request, upload request group and recipients (can be activated if type is empty and entriesLogsOnly has false value)")
 				@QueryParam("detail") boolean detail,
-			@ApiParam(value = "find all upload request entry only", required = false)
+			@ApiParam(value = "This parameter allow you to find all logs relative to upload request entry only (can be activated if type is empty)", required = false)
 				@QueryParam("entriesLogsOnly") boolean entriesLogsOnly,
 			@ApiParam(value = "Filter by type of actions..", required = false)
 				@QueryParam("actions") List<LogAction> actions,
-			@ApiParam(value = "Filter by type of resource's types.", required = false)
+			@ApiParam(value = "Filter by type of resource's types (If the type is not empty, the entriesLogsType and detail parameter are ignored)", required = false)
 				@QueryParam("types") List<AuditLogEntryType> types) {
-		return uploadRequestGroupFacade.findAll(uuid, detail, entriesLogsOnly, actions, types);
+		return uploadRequestGroupFacade.findAll(null, uuid, detail, entriesLogsOnly, actions, types);
 	}
 }

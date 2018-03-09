@@ -52,17 +52,17 @@ public interface UploadRequestGroupFacade {
 	List<UploadRequestGroupDto> findAll(String actorUuid, List<UploadRequestStatus> status) throws BusinessException;
 
 	UploadRequestGroupDto find(String actorUuid, String uuid) throws BusinessException;
-	
+
 	List<UploadRequestDto> create(String actorUuid, UploadRequestCreationDto uploadRequestCreationtDto,
 			Boolean groupMode) throws BusinessException;
 
 	UploadRequestGroupDto updateStatus(String actorUuid, String requestGroupUuid, UploadRequestStatus status, boolean copy)
 			throws BusinessException;
-	
+
 	UploadRequestGroupDto update(String actorUuid, UploadRequestGroupDto uploadRequestGroupDto);
 
 	UploadRequestGroupDto addRecipients(String actorUuid, String uuid, List<ContactDto> recipientEmail);
 
-	Set<AuditLogEntryUser> findAll(String requestUuid, boolean detail, boolean entriesLogsOnly, List<LogAction> actions,
-			List<AuditLogEntryType> type);
+	Set<AuditLogEntryUser> findAll(String actorUuid, String groupUuid, boolean detail, boolean entriesLogsOnly,
+			List<LogAction> actions, List<AuditLogEntryType> type);
 }
