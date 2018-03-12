@@ -680,11 +680,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	public long getRelatedEntriesCount(DocumentEntry documentEntry) {
 		return documentEntryRepository.getRelatedEntriesCount(documentEntry);
 	}
-	
-	@Override
-	public UploadRequestEntry getRelatedUploadRequestEntry(DocumentEntry documentEntry) {
-		return documentEntryRepository.getRelatedUploadRequestEntry(documentEntry);
-	}
 
 	@Deprecated
 	@Override

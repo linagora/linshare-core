@@ -38,7 +38,6 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface DocumentEntryRepository extends
@@ -68,6 +67,4 @@ public interface DocumentEntryRepository extends
 	long getUsedSpace(Account owner) throws BusinessException;
 
 	void syncUniqueDocument(Account owner, String fileName) throws BusinessException;
-	
-	UploadRequestEntry getRelatedUploadRequestEntry(final DocumentEntry documentEntry);
 }

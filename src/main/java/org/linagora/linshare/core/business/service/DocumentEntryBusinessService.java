@@ -114,7 +114,5 @@ public interface DocumentEntryBusinessService {
 
 	void updateThumbnail(Document document, Account account) ;
 
-	UploadRequestEntry getRelatedUploadRequestEntry(DocumentEntry documentEntry);
-
 	DocumentEntry copy(Account owner, UploadRequestEntry uploadRequestEntry);
 }

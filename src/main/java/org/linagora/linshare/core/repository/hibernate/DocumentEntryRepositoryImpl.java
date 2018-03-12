@@ -49,7 +49,6 @@ import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.springframework.dao.support.DataAccessUtils;
@@ -132,19 +131,6 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 			logger.debug("related entries for document " + documentEntry.getUuid() + " :  (share=" + shareResult + ", anonymous=" + anonymousShareResult + " , sum=" + result + ")");
 
 		return result;
-	}
-	
-	@Override
-	public UploadRequestEntry getRelatedUploadRequestEntry(final DocumentEntry documentEntry) {
-		HibernateCallback<UploadRequestEntry> action = new HibernateCallback<UploadRequestEntry>() {
-			public UploadRequestEntry doInHibernate(final Session session) throws  HibernateException {
-				final Query query = session.createQuery("select e from UploadRequestEntry e where e.documentEntry = :documentEntry");
-				query.setParameter("documentEntry", documentEntry);
-				return 	((UploadRequestEntry)query.uniqueResult());
-			}
-		};
-
-		return getHibernateTemplate().execute(action);
 	}
 
 	@Override
