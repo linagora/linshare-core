@@ -34,8 +34,6 @@
 
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
-import java.util.List;
-
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
@@ -47,8 +45,6 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UploadRequestService;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 public class UploadRequestFacadeImpl extends GenericFacadeImpl implements UploadRequestFacade {
 
@@ -58,14 +54,6 @@ public class UploadRequestFacadeImpl extends GenericFacadeImpl implements Upload
 			final UploadRequestService uploadRequestService) {
 		super(accountService);
 		this.uploadRequestService = uploadRequestService;
-	}
-
-	@Override
-	public List<UploadRequestDto> findAll(String actorUuid, List<UploadRequestStatus> status) {
-		User authUser = checkAuthentication();
-		User actor = getActor(authUser, actorUuid);
-		List<UploadRequest> eList = uploadRequestService.findAllRequest(authUser, actor, status);
-		return ImmutableList.copyOf(Lists.transform(eList, UploadRequestDto.toDto(false)));
 	}
 
 	@Override
@@ -115,12 +103,5 @@ public class UploadRequestFacadeImpl extends GenericFacadeImpl implements Upload
 		Validate.notNull(uploadRequestDto, "Upload Request must be set.");
 		Validate.notEmpty(uploadRequestDto.getUuid(), "Upload Request uuid must be set.");
 		return delete(actorUuid, uploadRequestDto.getUuid());
-	}
-
-	public List<UploadRequestDto> findByGroup(String actorUuid, String groupUuid, List<UploadRequestStatus> status) {
-		User authUser = checkAuthentication();
-		User actor = getActor(authUser, actorUuid);
-		List<UploadRequest> eList = uploadRequestService.findAllRequestsByGroup(authUser, actor, groupUuid, status);
-		return ImmutableList.copyOf(Lists.transform(eList, UploadRequestDto.toDto(false)));
 	}
 }

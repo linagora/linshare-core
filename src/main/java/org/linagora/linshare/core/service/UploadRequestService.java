@@ -44,13 +44,12 @@ import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
 import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.UploadRequestContainer;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface UploadRequestService {
 
-	List<UploadRequest> findAllRequest(Account actor, Account owner, List<UploadRequestStatus> statusList);
+	List<UploadRequest> findAll(Account actor, Account owner, UploadRequestGroup uploadRequestGroup, List<UploadRequestStatus> statusList);
 
 	UploadRequest findRequestByUuid(Account actor, Account owner, String uuid) throws BusinessException;
 
@@ -98,8 +97,6 @@ public interface UploadRequestService {
 	List<String> findUnabledRequests(Account actor);
 
 	List<String> findAllRequestsToBeNotified(Account actor);
-
-	List<UploadRequest> findAllRequestsByGroup(User authUser, User actor, String groupUuid, List<UploadRequestStatus> status);
 
 	UploadRequestContainer create(Account authUser, Account owner, UploadRequest uploadRequest,
 			UploadRequestContainer container);

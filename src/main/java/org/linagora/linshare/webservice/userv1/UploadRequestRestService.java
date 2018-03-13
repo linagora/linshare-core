@@ -34,14 +34,9 @@
 
 package org.linagora.linshare.webservice.userv1;
 
-import java.util.List;
-
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
 
 public interface UploadRequestRestService {
-
-	List<UploadRequestDto> findAll();
 
 	UploadRequestDto find(String uuid);
 

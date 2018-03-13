@@ -55,6 +55,7 @@ import org.linagora.linshare.core.facade.webservice.user.UploadRequestGroupFacad
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
+import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 import com.google.common.base.Strings;
@@ -67,12 +68,16 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 
 	private final AuditLogEntryService auditLogEntryService;
 
+	private final UploadRequestService uploadRequestService;
+
 	public UploadRequestGroupFacadeImpl(AccountService accountService,
 			final UploadRequestGroupService uploadRequestGroupService,
-			final AuditLogEntryService auditLogEntryService) {
+			final AuditLogEntryService auditLogEntryService,
+			final UploadRequestService uploadRequestService) {
 		super(accountService);
 		this.uploadRequestGroupService = uploadRequestGroupService;
 		this.auditLogEntryService = auditLogEntryService;
+		this.uploadRequestService = uploadRequestService;
 	}
 
 	@Override
@@ -149,5 +154,15 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 		Account authUser = checkAuthentication();
 		User actor = (User) getActor(authUser, null);
 		return auditLogEntryService.findAll(authUser, actor, groupUuid, detail, entriesLogsOnly, actions, type);
+	}
+
+	@Override
+	public List<UploadRequestDto> findAllUploadRequests(String actorUuid, String groupUuid, List<UploadRequestStatus> status) {
+		Validate.notEmpty(groupUuid, "Upload request group Uuid must be set");
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.findRequestGroupByUuid(authUser, actor, groupUuid);
+		List<UploadRequest> requests = uploadRequestService.findAll(authUser, actor, uploadRequestGroup, status);
+		return ImmutableList.copyOf(Lists.transform(requests, UploadRequestDto.toDto(false)));
 	}
 }

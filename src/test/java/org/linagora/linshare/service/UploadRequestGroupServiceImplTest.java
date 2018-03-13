@@ -225,7 +225,7 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 	public void update() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		UploadRequestGroup group = uploadRequestGroupService.findRequestGroupByUuid(john, john, ure.getUploadRequestGroup().getUuid());
-		List<UploadRequest> uploadRequests = uploadRequestService.findAllRequestsByGroup(john, john, group.getUuid(), null);
+		List<UploadRequest> uploadRequests = uploadRequestService.findAll(john, john, group, null);
 		group.setUploadRequests(uploadRequests.stream().collect(Collectors.toSet()));
 		group.setCanClose(false);
 		group.setMaxFileCount(new Integer(5));

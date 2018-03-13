@@ -34,14 +34,11 @@
 
 package org.linagora.linshare.webservice.delegation.impl;
 
-import java.util.List;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -75,18 +72,6 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	public UploadRequestRestServiceImpl(UploadRequestFacade uploadRequestFacade) {
 		super();
 		this.uploadRequestFacade = uploadRequestFacade;
-	}
-
-	@GET
-	@Path("/")
-	@ApiOperation(value = "Find a list of upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-			@ApiResponse(code = 401, message = "Unauthorized.") })
-	@Override
-	public List<UploadRequestDto> findAll(
-			@ApiParam(value = "Upload request actor uuid.", required = true) @PathParam(value = "actorUuid") String actorUuid)
-					throws BusinessException {
-		return uploadRequestFacade.findAll(actorUuid, null);
 	}
 
 	@GET

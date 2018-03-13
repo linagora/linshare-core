@@ -34,8 +34,6 @@
 
 package org.linagora.linshare.webservice.delegationv2.impl;
 
-import java.util.List;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -72,22 +70,9 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 
 	private final UploadRequestFacade uploadRequestFacade;
 
-
 	public UploadRequestRestServiceImpl(UploadRequestFacade uploadRequestFacade) {
 		super();
 		this.uploadRequestFacade = uploadRequestFacade;
-	}
-
-	@GET
-	@Path("/")
-	@ApiOperation(value = "Find a list of upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-	@ApiResponse(code = 401, message = "Unauthorized.") })
-	@Override
-	public List<UploadRequestDto> findAll(
-			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Values t filter upload resquets by status", required = false) @QueryParam("filter") List<UploadRequestStatus> status) {
-		return uploadRequestFacade.findAll(actorUuid, status);
 	}
 
 	@GET
@@ -101,19 +86,6 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 			@ApiParam(value = "Upload request uuid.", required = true) @PathParam(value = "uuid") String uuid) {
 		UploadRequestDto dto = uploadRequestFacade.find(actorUuid, uuid);
 		return dto;
-	}
-
-	@GET
-	@Path("/bygroup/{uuid}")
-	@ApiOperation(value = "Find an upload request by Group.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
-	@Override
-	public List<UploadRequestDto> findByUploadRequestGroup(
-			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Upload request group uuid.", required = true) @PathParam(value = "groupUuid") String groupUuid,
-			@ApiParam(value = "Values t filter upload resquets by status", required = false) @QueryParam("filter") List<UploadRequestStatus> status) {
-		return uploadRequestFacade.findByGroup(actorUuid, groupUuid, status);
 	}
 
 	@PUT

@@ -63,4 +63,6 @@ public interface UploadRequestGroupRestService {
 			List<AuditLogEntryType> types);
 
 	UploadRequestGroupDto update(String uuid, UploadRequestGroupDto uploadRequestGroupDto);
+
+	List<UploadRequestDto> findAllUploadRequests(String uuid, List<UploadRequestStatus> status);
 }

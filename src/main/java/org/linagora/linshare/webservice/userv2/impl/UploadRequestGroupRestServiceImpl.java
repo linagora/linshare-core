@@ -174,4 +174,18 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 				@QueryParam("types") List<AuditLogEntryType> types) {
 		return uploadRequestGroupFacade.findAll(null, uuid, detail, entriesLogsOnly, actions, types);
 	}
+
+	@GET
+	@Path("/{uuid}/upload_requests")
+	@ApiOperation(value = "Find a list of upload request.", response = UploadRequestDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
+	@ApiResponse(code = 401, message = "Unauthorized.") })
+	@Override
+	public List<UploadRequestDto> findAllUploadRequests(
+			@ApiParam(value = "Upload request group uuid.", required = true)
+				@PathParam(value = "uuid") String uuid,
+			@ApiParam(value = "Values to filter upload requests by status", required = false)
+				@QueryParam("status") List<UploadRequestStatus> status) {
+		return uploadRequestGroupFacade.findAllUploadRequests(null, uuid, status);
+	}
 }

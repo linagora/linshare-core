@@ -41,7 +41,6 @@ import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UploadRequestRepository;
 
@@ -57,8 +56,8 @@ public class UploadRequestBusinessServiceImpl implements
 	}
 
 	@Override
-	public List<UploadRequest> findAll(User owner, List<UploadRequestStatus> statusList) {
-		return uploadRequestRepository.findByOwner(owner, statusList);
+	public List<UploadRequest> findAll(UploadRequestGroup uploadRequestGroup, List<UploadRequestStatus> statusList) {
+		return uploadRequestRepository.findAll(uploadRequestGroup, statusList);
 	}
 
 //	AKO: method unused.
@@ -135,10 +134,5 @@ public class UploadRequestBusinessServiceImpl implements
 	@Override
 	public List<String> findAllRequestsToBeNotified() throws BusinessException {
 		return uploadRequestRepository.findAllRequestsToBeNotified();
-	}
-
-	@Override
-	public List<UploadRequest> findByGroup(UploadRequestGroup uploadRequestGroup, List<UploadRequestStatus> statusList) {
-		return uploadRequestRepository.findByGroup(uploadRequestGroup, statusList);
 	}
 }

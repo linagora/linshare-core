@@ -127,10 +127,11 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	}
 
 	@Override
-	public List<UploadRequest> findAllRequest(Account actor, Account owner, List<UploadRequestStatus> statusList) {
+	public List<UploadRequest> findAll(Account actor, Account owner, UploadRequestGroup uploadRequestGroup, List<UploadRequestStatus> statusList) {
+		Validate.notNull(uploadRequestGroup);
 		preChecks(actor, owner);
 		checkListPermission(actor, owner, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, null);
-		return uploadRequestBusinessService.findAll((User) owner, statusList);
+		return uploadRequestBusinessService.findAll(uploadRequestGroup, statusList);
 	}
 
 	@Override
@@ -417,14 +418,5 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		if (!actor.hasAllRights()) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You have no rights to access this service.");
 		}
-	}
-
-	@Override
-	public List<UploadRequest> findAllRequestsByGroup(User authUser, User actor, String groupUuid, List<UploadRequestStatus> statusList) {
-		preChecks(authUser, actor);
-		checkListPermission(authUser, actor, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, null);
-		UploadRequestGroup uploadRequestGroup = uploadRequestGroupBusinessService.findByUuid(groupUuid);
-		Validate.notNull(uploadRequestGroup);
-		return uploadRequestBusinessService.findByGroup(uploadRequestGroup, statusList);
 	}
 }

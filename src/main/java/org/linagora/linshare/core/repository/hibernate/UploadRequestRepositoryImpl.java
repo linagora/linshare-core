@@ -74,6 +74,16 @@ public class UploadRequestRepositoryImpl extends
 	}
 
 	@Override
+	public List<UploadRequest> findAll(UploadRequestGroup uploadRequestGroup, List<UploadRequestStatus> statusList) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		det.add(Restrictions.eq("uploadRequestGroup", uploadRequestGroup));
+		if (statusList != null && !statusList.isEmpty()) {
+			det.add(Restrictions.in("status", statusList));
+		}
+		return findByCriteria(det);
+	}
+
+	@Override
 	public List<UploadRequest> findByOwner(User owner, List<UploadRequestStatus> statusList) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 		det.createAlias("uploadRequestGroup", "group");
@@ -157,15 +167,5 @@ public class UploadRequestRepositoryImpl extends
 		@SuppressWarnings("unchecked")
 		List<String> list = listByCriteria(crit);
 		return list;
-	}
-
-	@Override
-	public List<UploadRequest> findByGroup(UploadRequestGroup uploadRequestGroup, List<UploadRequestStatus> statusList) {
-		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
-		det.add(Restrictions.eq("uploadRequestGroup", uploadRequestGroup));
-		if (statusList != null && !statusList.isEmpty()) {
-			det.add(Restrictions.in("status", statusList));
-		}
-		return findByCriteria(det);
 	}
 }

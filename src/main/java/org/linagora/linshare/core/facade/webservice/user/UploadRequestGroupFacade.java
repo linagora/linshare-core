@@ -65,4 +65,6 @@ public interface UploadRequestGroupFacade {
 
 	Set<AuditLogEntryUser> findAll(String actorUuid, String groupUuid, boolean detail, boolean entriesLogsOnly,
 			List<LogAction> actions, List<AuditLogEntryType> type);
+
+	List<UploadRequestDto> findAllUploadRequests(String actorUuid, String groupUuid, List<UploadRequestStatus> status);
 }

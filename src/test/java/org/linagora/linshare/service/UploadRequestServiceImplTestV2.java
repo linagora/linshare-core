@@ -206,21 +206,10 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 	@Test
 	public void findAll() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		int initSize = uplaodRequestService.findAllRequest(john, john, null).size();
-		uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
-		uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
-		int finalSize = uplaodRequestService.findAllRequest(john, john, null).size();
-		Assert.assertEquals(initSize+2, finalSize);
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
-	
-	@Test
-	public void findByGroup() throws BusinessException {
-		logger.info(LinShareTestConstants.BEGIN_TEST);
 		List<UploadRequest> list = uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
 		uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
 		Assert.assertNotNull(list.get(0));
-		int size = uplaodRequestService.findAllRequestsByGroup(john, john, list.get(0).getUploadRequestGroup().getUuid(), null).size();
+		int size = uplaodRequestService.findAll(john, john, list.get(0).getUploadRequestGroup(), null).size();
 		Assert.assertEquals(1, size);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -228,14 +217,9 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 	@Test
 	public void findFiltredUploadRequests() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		int initSize = uplaodRequestService.findAllRequest(john, john, null).size();
-		uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.DAY_OF_MONTH, 1);
-		Date tomorrow = calendar.getTime();
-		ure.setActivationDate(tomorrow);
-		uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
-		int finalSize = uplaodRequestService.findAllRequest(john, john, Lists.newArrayList(UploadRequestStatus.ENABLED)).size();
+		UploadRequest uploadRequest = uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false).get(0);
+		int initSize = uplaodRequestService.findAll(john, john, uploadRequest.getUploadRequestGroup(), Lists.newArrayList(UploadRequestStatus.CREATED)).size();
+		int finalSize = uplaodRequestService.findAll(john, john, uploadRequest.getUploadRequestGroup(), Lists.newArrayList(UploadRequestStatus.ENABLED)).size();
 		Assert.assertEquals(initSize+1, finalSize);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
