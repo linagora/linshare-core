@@ -71,9 +71,8 @@ public class UploadRequestActivationForRecipientEmailBuilder extends GenericUplo
 		ctx.setVariable("body", request.getUploadRequestGroup().getBody());
 		ctx.setVariable("protected", request.isSecured());
 		ctx.setVariable("password", emailCtx.getRequestUrl().getTemporaryPlainTextPassword());
-		boolean grouped = request.getUploadRequestURLs().size() > 1;
-		ctx.setVariable("isgrouped", grouped);
-		if (grouped) {
+		ctx.setVariable("isRestricted", request.getUploadRequestGroup().getRestricted());
+		if (!request.getUploadRequestGroup().getRestricted()) {
 			ctx.setVariable("recipients", recipients);
 			ctx.setVariable("recipientsCount", recipients.size());
 		}
@@ -99,7 +98,7 @@ public class UploadRequestActivationForRecipientEmailBuilder extends GenericUplo
 
 		Context ctx = newFakeContext(language, false, true);
 		ctx.setVariable("body", "upload request body message");
-		ctx.setVariable("isgrouped", true);
+		ctx.setVariable("isRestricted", false);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("protected", true);
 		ctx.setVariable("password", "a generated password");
@@ -115,7 +114,7 @@ public class UploadRequestActivationForRecipientEmailBuilder extends GenericUplo
 
 		Context ctx = newFakeContext(language, false, true);
 		ctx.setVariable("body", "upload request body message");
-		ctx.setVariable("isgrouped", false);
+		ctx.setVariable("isRestricted", true);
 		ctx.setVariable("protected", false);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("totalMaxDepotSize", null);

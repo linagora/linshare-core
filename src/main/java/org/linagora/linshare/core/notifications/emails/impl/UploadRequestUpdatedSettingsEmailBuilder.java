@@ -74,7 +74,6 @@ public class UploadRequestUpdatedSettingsEmailBuilder extends GenericUploadReque
 		List<MailContact> recipients = getRecipients(request);
 		Context ctx = newTmlContext(emailCtx);
 		ctx.setVariable("body", request.getUploadRequestGroup().getBody());
-		ctx.setVariable("isgrouped", request.getUploadRequestGroup().getRestricted().equals(Boolean.FALSE));
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
 
@@ -116,8 +115,6 @@ public class UploadRequestUpdatedSettingsEmailBuilder extends GenericUploadReque
 		recipients.add(new MailContact("unknown2@linshare.org"));
 
 		Context ctx = newFakeContext(language, false, true);
-		ctx.setVariable("body", "upload request body message");
-		ctx.setVariable("isgrouped", true);
 		ctx.setVariable("recipients", recipients);
 
 		ctx.setVariable("recipientsCount", recipients.size());
@@ -146,7 +143,6 @@ public class UploadRequestUpdatedSettingsEmailBuilder extends GenericUploadReque
 
 		Context ctx = newFakeContext(language, false, true);
 		ctx.setVariable("body", "upload request body message");
-		ctx.setVariable("isgrouped", false);
 		ctx.setVariable("protected", false);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());

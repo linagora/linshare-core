@@ -74,7 +74,6 @@ public class UploadRequestFileDeletedByOwnerEmailBuilder extends GenericUploadRe
 		ctx.setVariable("body", request.getUploadRequestGroup().getBody());
 		ctx.setVariable("deletionDate", new Date());
 		ctx.setVariable("document", document);
-		ctx.setVariable("isgrouped", request.getUploadRequestGroup().getRestricted().equals(Boolean.FALSE));
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
 
@@ -100,7 +99,6 @@ public class UploadRequestFileDeletedByOwnerEmailBuilder extends GenericUploadRe
 		ctx.setVariable("body", "upload request body message");
 		ctx.setVariable("deletionDate", new Date());
 		ctx.setVariable("document", document);
-		ctx.setVariable("isgrouped", true);
 		ctx.setVariable("totalMaxDepotSize", new Long(45687656));
 
 		return ctx;
@@ -115,7 +113,6 @@ public class UploadRequestFileDeletedByOwnerEmailBuilder extends GenericUploadRe
 		ctx.setVariable("body", "upload request body message");
 		ctx.setVariable("document", document);
 		ctx.setVariable("deletionDate", new Date());
-		ctx.setVariable("isgrouped", false);
 		ctx.setVariable("totalMaxDepotSize", null);
 
 		return ctx;

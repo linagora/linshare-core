@@ -80,7 +80,7 @@ public class UploadRequestClosedByRecipientEmailBuilder extends GenericUploadReq
 		ctx.setVariable("body", request.getUploadRequestGroup().getBody());
 		ctx.setVariable("documents", documents);
 		ctx.setVariable("documentsCount", documents.size());
-		ctx.setVariable("isgrouped", request.getUploadRequestURLs().size() > 1);
+		ctx.setVariable("isRestricted", request.getUploadRequestGroup().getRestricted());
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
 		ctx.setVariable("totalSize", totalSize);
@@ -120,7 +120,7 @@ public class UploadRequestClosedByRecipientEmailBuilder extends GenericUploadReq
 		ctx.setVariable("body", "upload request body message");
 		ctx.setVariable("documents", documents);
 		ctx.setVariable("documentsCount", documents.size());
-		ctx.setVariable("isgrouped", true);
+		ctx.setVariable("isRestricted", false);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
 		ctx.setVariable("totalSize", new Long(5682642));
@@ -148,7 +148,7 @@ public class UploadRequestClosedByRecipientEmailBuilder extends GenericUploadReq
 		ctx.setVariable("body", "upload request body message");
 		ctx.setVariable("documents", documents);
 		ctx.setVariable("documentsCount", documents.size());
-		ctx.setVariable("isgrouped", false);
+		ctx.setVariable("isRestricted", true);
 		ctx.setVariable("recipients", recipients);
 		ctx.setVariable("recipientsCount", recipients.size());
 		ctx.setVariable("totalSize", new Long(5682642));
