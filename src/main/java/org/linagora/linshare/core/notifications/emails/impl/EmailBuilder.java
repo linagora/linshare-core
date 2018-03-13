@@ -124,6 +124,8 @@ public abstract class EmailBuilder implements IEmailBuilder {
 
 	protected String urlTemplateForWorkgroup;
 
+	protected String urlTemplateForUploadRequestEntries;
+
 	public EmailBuilder() {
 		initSupportedTypes();
 	}
@@ -223,6 +225,14 @@ public abstract class EmailBuilder implements IEmailBuilder {
 
 	public void setUrlTemplateForWorkgroup(String urlTemplateForWrokgroup) {
 		this.urlTemplateForWorkgroup = urlTemplateForWrokgroup;
+	}
+
+	public String getUrlTemplateForUploadRequestEntries() {
+		return urlTemplateForUploadRequestEntries;
+	}
+
+	public void setUrlTemplateForUploadRequestEntries(String urlTemplateForUploadRequestEntries) {
+		this.urlTemplateForUploadRequestEntries = urlTemplateForUploadRequestEntries;
 	}
 
 	@Override

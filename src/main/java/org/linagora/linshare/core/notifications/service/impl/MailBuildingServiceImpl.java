@@ -231,7 +231,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			boolean templatingStrictMode,
 			boolean templatingSubjectPrefix,
 			String urlFragmentQueryParamFileUuid,
-			String urlTemplateForWorkgroup
+			String urlTemplateForWorkgroup,
+			String urlTemplateForUploadRequestEntries
 			) throws Exception {
 		this.domainBusinessService = domainBusinessService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
@@ -292,7 +293,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 
 		initMailBuilders(insertLicenceTerm, domainBusinessService, functionalityReadOnlyService,
 				mailActivationBusinessService, urlTemplateForReceivedShares, urlTemplateForDocuments,
-				urlTemplateForAnonymousUrl, urlFragmentQueryParamFileUuid, urlTemplateForWorkgroup);
+				urlTemplateForAnonymousUrl, urlFragmentQueryParamFileUuid, urlTemplateForWorkgroup, urlTemplateForUploadRequestEntries);
 		Set<MailContentType> keySet = emailBuilders.keySet();
 		logger.debug("mail content loaded : size : {}", keySet.size());
 		for (MailContentType mailContentType : keySet) {
@@ -309,7 +310,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		String urlTemplateForDocuments,
 		String urlTemplateForAnonymousUrl,
 		String paramFilesUuid,
-		String urlTemplateForWrokgroup
+		String urlTemplateForWorkgroup,
+		String urlTemplateForUploadRequestEntries
 	) {
 		Collection<EmailBuilder> values = emailBuilders.values();
 		for (EmailBuilder emailBuilder : values) {
@@ -322,7 +324,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			emailBuilder.setUrlTemplateForReceivedShares(urlTemplateForReceivedShares);
 			emailBuilder.setUrlTemplateForAnonymousUrl(urlTemplateForAnonymousUrl);
 			emailBuilder.setUrlFragmentQueryParamFileUuid(paramFilesUuid);
-			emailBuilder.setUrlTemplateForWorkgroup(urlTemplateForWrokgroup);
+			emailBuilder.setUrlTemplateForWorkgroup(urlTemplateForWorkgroup);
+			emailBuilder.setUrlTemplateForUploadRequestEntries(urlTemplateForUploadRequestEntries);
 		}
 	}
 
