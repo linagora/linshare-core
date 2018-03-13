@@ -80,7 +80,11 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	@GET
 	@Path("/{uuid}")
 	@ApiOperation(value = "Find an upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
+					@ApiResponse(code = 404, message = "UploadRequest not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+		})
 	@Override
 	public Response find(@PathParam(value = "uuid") String uuid,
 			@HeaderParam("linshare-uploadrequest-password") String password)
@@ -100,7 +104,11 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	@PUT
 	@Path("/{requestUrlUuid}")
 	@ApiOperation(value = "Update an upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
+					@ApiResponse(code = 404, message = "UploadRequest not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+		})
 	@Override
 	public UploadRequestDto close(@PathParam(value = "requestUrlUuid") String requestUrlUuid,
 			@HeaderParam("linshare-uploadrequest-password") String password)
@@ -111,7 +119,11 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	@DELETE
 	@Path("/{requestUrlUuid}/{entryUuid}")
 	@ApiOperation(value = "Delete an entry in an upload request.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
+					@ApiResponse(code = 404, message = "UploadRequest not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+		})
 	public void delete(@PathParam(value = "requestUrlUuid") String requestUrlUuid,
 			@HeaderParam("linshare-uploadrequest-password") String password,
 			@PathParam(value = "entryUuid") String entryUuid)
@@ -122,7 +134,11 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	@DELETE
 	@Path("/{requestUrlUuid}")
 	@ApiOperation(value = "Delete an entry in an upload request.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
+					@ApiResponse(code = 404, message = "UploadRequest not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+		})
 	@Override
 	public void delete(@PathParam(value = "requestUrlUuid") String requestUrlUuid,
 			@HeaderParam("linshare-uploadrequest-password") String password, EntryDto entry)

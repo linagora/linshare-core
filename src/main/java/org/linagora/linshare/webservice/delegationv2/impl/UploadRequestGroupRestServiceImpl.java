@@ -82,38 +82,55 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 	@GET
 	@Path("/")
 	@ApiOperation(value = "Find a list of upload request group.", response = UploadRequestGroupDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-	@ApiResponse(code = 401, message = "Unauthorized.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+					@ApiResponse(code = 404, message = "UploadRequestGroup not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+		})
 	@Override
 	public List<UploadRequestGroupDto> findAll(
-			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Values t filter upload resquets by status", required = false) @QueryParam("filter") List<UploadRequestStatus> statusList)
+			@ApiParam(value = "The actor (user) uuid.", required = true)
+				@PathParam("actorUuid") String actorUuid,
+			@ApiParam(value = "Values to filter upload resquets by status", required = false)
+				@QueryParam("status") List<UploadRequestStatus> status)
 			throws BusinessException {
-		return uploadRequestGroupFacade.findAll(actorUuid, statusList);
+		return uploadRequestGroupFacade.findAll(actorUuid, status);
 	}
 
 	@GET
 	@Path("/{uuid}")
 	@ApiOperation(value = "Find an upload request group.", response = UploadRequestGroupDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+					@ApiResponse(code = 404, message = "UploadRequestGroup not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+		})
 	@Override
 	public UploadRequestGroupDto find(
-			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Upload request group uuid.", required = true) @PathParam(value = "uuid") String uuid)
+			@ApiParam(value = "The actor (user) uuid.", required = true)
+				@PathParam("actorUuid") String actorUuid,
+			@ApiParam(value = "Upload request group uuid.", required = true)
+				@PathParam(value = "uuid") String uuid)
 			throws BusinessException {
 		return uploadRequestGroupFacade.find(actorUuid, uuid);
 	}
-	
+
 	@POST
 	@Path("/")
 	@ApiOperation(value = "Create an upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+					@ApiResponse(code = 404, message = "UploadRequestGroup not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+		})
 	@Override
 	public List<UploadRequestDto> create(
-			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Upload request.", required = true) UploadRequestCreationDto uploadRequestCreationDto,
-			@ApiParam(value = "Group mode.", required = true) @QueryParam(value = "groupMode") Boolean groupMode) {
+			@ApiParam(value = "The actor (user) uuid.", required = true)
+				@PathParam("actorUuid") String actorUuid,
+			@ApiParam(value = "Upload request.", required = true)
+				UploadRequestCreationDto uploadRequestCreationDto,
+			@ApiParam(value = "Group mode.", required = true)
+				@QueryParam(value = "groupMode") Boolean groupMode) {
 		List<UploadRequestDto> dto = uploadRequestGroupFacade.create(actorUuid, uploadRequestCreationDto, groupMode);
 		return dto;
 	}
@@ -121,47 +138,59 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 	@PUT
 	@Path("/{uuid}/status/{status}")
 	@ApiOperation(value = "Update status of an upload request group.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+					@ApiResponse(code = 404, message = "UploadRequestGroup not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+		})
 	@Override
 	public UploadRequestGroupDto updateStatus(
 			@ApiParam(value = "The actor (user) uuid.", required = true)
 				@PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "Upload request group uuid.", required = true)
-				@PathParam(value = "uuid") String requestUuid,
+				@PathParam(value = "uuid") String uuid,
 			@ApiParam(value = "Upload request group status.", required = true)
 				@PathParam("status") UploadRequestStatus status,
 			@ApiParam(value = "If the owner wants to copy all documents and the upload request group is in archived status", required = false)
 				@QueryParam("copy") @DefaultValue("false") boolean copy) throws BusinessException {
-		return uploadRequestGroupFacade.updateStatus(actorUuid, requestUuid, status, copy);
+		return uploadRequestGroupFacade.updateStatus(actorUuid, uuid, status, copy);
 	}
 
 	@PUT
 	@Path("/{uuid : .*}")
 	@ApiOperation(value = "update an upload request group", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+					@ApiResponse(code = 404, message = "UploadRequestGroup not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+		})
 	@Override
 	public UploadRequestGroupDto update(
 			@ApiParam(value = "The actor (user) uuid.", required = true)
 				@PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "Upload request group uuid, if null uploadRequestGroupDto.uuid is used.", required = false) 
 				@PathParam("uuid") String uuid,
-			@ApiParam(value = "Upload request group", required = true) UploadRequestGroupDto uploadRequestGroupDto) {
+			@ApiParam(value = "Upload request group", required = true)
+				UploadRequestGroupDto uploadRequestGroupDto) {
 		return uploadRequestGroupFacade.update(actorUuid, uploadRequestGroupDto, uuid);
 	}
 
 	@POST
 	@Path("/{groupUuid}/recipients")
 	@ApiOperation(value = "Add new recipient to upload request group.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+					@ApiResponse(code = 404, message = "UploadRequestGroup not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+		})
 	@Override
 	public UploadRequestGroupDto addRecipient(
 			@ApiParam(value = "The actor (user) uuid.", required = true) 
 				@PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "Upload request group uuid", required = true)
-				@PathParam(value = "groupUuid") String groupUuid,
+				@PathParam(value = "groupUuid") String uuid,
 			@ApiParam(value = "List of new recipients", required = true) List<ContactDto> recipientEmail) {
-		return uploadRequestGroupFacade.addRecipients(actorUuid, groupUuid, recipientEmail);
+		return uploadRequestGroupFacade.addRecipients(actorUuid, uuid, recipientEmail);
 	}
 
 	@GET
@@ -192,8 +221,11 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 	@GET
 	@Path("/{uuid}/upload_requests")
 	@ApiOperation(value = "Find a list of upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-	@ApiResponse(code = 401, message = "Unauthorized.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+					@ApiResponse(code = 404, message = "UploadRequestGroup not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+		})
 	@Override
 	public List<UploadRequestDto> findAllUploadRequests(
 			@ApiParam(value = "The actor (user) uuid.", required = true)

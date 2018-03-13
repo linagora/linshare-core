@@ -49,16 +49,16 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface UploadRequestGroupRestService {
 
-	List<UploadRequestGroupDto> findAll(String actorUuid, List<UploadRequestStatus> statusList) throws BusinessException;
+	List<UploadRequestGroupDto> findAll(String actorUuid, List<UploadRequestStatus> status) throws BusinessException;
 
 	UploadRequestGroupDto find(String actorUuid, String uuid) throws BusinessException;
-	
+
 	List<UploadRequestDto> create(String actorUuid, UploadRequestCreationDto uploadRequestCreationDto, Boolean groupMode);
 
 	UploadRequestGroupDto updateStatus(String actorUuid, String requestUuid, UploadRequestStatus status, boolean copy)
 			throws BusinessException;
 
-	UploadRequestGroupDto addRecipient(String actorUuid, String groupUuid, List<ContactDto> recipientEmail);
+	UploadRequestGroupDto addRecipient(String actorUuid, String uuid, List<ContactDto> recipientEmail);
 
 	Set<AuditLogEntryUser> findAll(String actorUuid, String uuid, boolean detail, boolean entriesLogsOnly,
 			List<LogAction> actions, List<AuditLogEntryType> types);

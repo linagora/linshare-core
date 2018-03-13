@@ -42,7 +42,7 @@ public interface UploadRequestRestService {
 
 	UploadRequestDto find(String actorUuid, String uuid);
 
-	UploadRequestDto updateStatus(String actorUuid, String requestUuid, UploadRequestStatus status, boolean copy) throws BusinessException;
+	UploadRequestDto updateStatus(String actorUuid, String uuid, UploadRequestStatus status, boolean copy) throws BusinessException;
 
 	UploadRequestDto update(String actorUuid, String uuid, UploadRequestDto uploadRequestDto);
 }

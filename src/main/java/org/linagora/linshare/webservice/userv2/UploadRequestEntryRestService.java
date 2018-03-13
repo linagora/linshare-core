@@ -45,7 +45,7 @@ import org.linagora.linshare.core.facade.webservice.user.dto.DocumentDto;
 public interface UploadRequestEntryRestService {
 
 	Response download(String uuid) throws BusinessException;
-	
+
 	UploadRequestEntryDto delete(String uuid) throws BusinessException;
 
 	List<DocumentDto> copy(String uuid) throws BusinessException;

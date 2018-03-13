@@ -82,21 +82,30 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 	@GET
 	@Path("/")
 	@ApiOperation(value = "Find a list of upload request group.", response = UploadRequestGroupDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-			@ApiResponse(code = 401, message = "Unauthorized.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights.") ,
+					@ApiResponse(code = 404, message = "UploadRequestGroup not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+		})
 	@Override
-	public List<UploadRequestGroupDto> findAll(	@ApiParam(value = "Values t filter upload resquets by status", required = false) @QueryParam("filter") List<UploadRequestStatus> statusList) throws BusinessException {
-		return uploadRequestGroupFacade.findAll(null, statusList);
+	public List<UploadRequestGroupDto> findAll(
+			@ApiParam(value = "Values t filter upload resquets by status", required = false)
+				@QueryParam("status") List<UploadRequestStatus> status) throws BusinessException {
+		return uploadRequestGroupFacade.findAll(null, status);
 	}
 
 	@GET
 	@Path("/{uuid}")
 	@ApiOperation(value = "Find an upload request group.", response = UploadRequestGroupDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights.") ,
+					@ApiResponse(code = 404, message = "UploadRequestGroup not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+		})
 	@Override
 	public UploadRequestGroupDto find(
-			@ApiParam(value = "Upload request group uuid.", required = true) @PathParam(value = "uuid") String uuid)
+			@ApiParam(value = "Upload request group uuid.", required = true)
+				@PathParam(value = "uuid") String uuid)
 			throws BusinessException {
 		return uploadRequestGroupFacade.find(null, uuid);
 	}
@@ -104,11 +113,17 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 	@POST
 	@Path("/")
 	@ApiOperation(value = "Create an upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights.") ,
+					@ApiResponse(code = 404, message = "UploadRequestGroup not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+		})
 	@Override
 	public List<UploadRequestDto> create(
-			@ApiParam(value = "Upload request.", required = true) UploadRequestCreationDto uploadRequestCreationDto,
-			@ApiParam(value = "Group mode.", required = true) @QueryParam(value = "groupMode") Boolean groupMode) {
+			@ApiParam(value = "Upload request.", required = true)
+				UploadRequestCreationDto uploadRequestCreationDto,
+			@ApiParam(value = "Group mode.", required = true)
+				@QueryParam(value = "groupMode") Boolean groupMode) {
 		List<UploadRequestDto> dto = uploadRequestGroupFacade.create(null, uploadRequestCreationDto, groupMode);
 		return dto;
 	}
@@ -116,57 +131,70 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 	@PUT
 	@Path("/{uuid}/status/{status}")
 	@ApiOperation(value = "Update status of upload request group.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights.") ,
+					@ApiResponse(code = 404, message = "UploadRequestGroup not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+		})
 	@Override
 	public UploadRequestGroupDto updateStatus(
 			@ApiParam(value = "Upload request group uuid.", required = true)
-				@PathParam(value = "uuid") String requestGroupUuid,
+				@PathParam(value = "uuid") String uuid,
 			@ApiParam(value = "New status for the upload request group", required = true)
 				@PathParam("status") UploadRequestStatus status,
 			@ApiParam(value = "If the owner wants to copy all documents and the upload request group is in archived status", required = false) 
 				@QueryParam("copy") @DefaultValue("false") boolean copy) throws BusinessException {
-		return uploadRequestGroupFacade.updateStatus(null, requestGroupUuid, status, copy);
+		return uploadRequestGroupFacade.updateStatus(null, uuid, status, copy);
 	}
 
 	@Path("/{uuid : .*}")
 	@ApiOperation(value = "update an upload request group", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights.") ,
+					@ApiResponse(code = 404, message = "UploadRequestGroup not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+		})
 	@Override
 	public UploadRequestGroupDto update(
 			@ApiParam(value = "Upload request group uuid, if null uploadRequestGroupDto.uuid is used.", required = false) 
 				@PathParam("uuid") String uuid,
-			@ApiParam(value = "Upload request group", required = true) UploadRequestGroupDto uploadRequestGroupDto) {
+			@ApiParam(value = "Upload request group", required = true)
+				UploadRequestGroupDto uploadRequestGroupDto) {
 		return uploadRequestGroupFacade.update(null, uploadRequestGroupDto, uuid);
 	}
 
 	@POST
 	@Path("/{uuid}/recipients")
 	@ApiOperation(value = "Add new recipient to upload request group.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights.") ,
+					@ApiResponse(code = 404, message = "UploadRequestGroup not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+		})
 	@Override
 	public UploadRequestGroupDto addRecipient(
 			@ApiParam(value = "Upload request group uuid", required = true)
-				@PathParam(value = "uuid") String groupUuid,
-			@ApiParam(value = "List of new recipients", required = true) List<ContactDto> recipientEmail) {
-		return uploadRequestGroupFacade.addRecipients(null, groupUuid, recipientEmail);
+				@PathParam(value = "uuid") String uuid,
+			@ApiParam(value = "List of new recipients", required = true)
+				List<ContactDto> recipientEmail) {
+		return uploadRequestGroupFacade.addRecipients(null, uuid, recipientEmail);
 	}
 
 	@GET
 	@Path("/{uuid}/audit")
 	@ApiOperation(value = "Get all traces for a n upload request group.", response = AuditLogEntryUser.class, responseContainer="Set")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
-					@ApiResponse(code = 404, message = "upload request group not found."),
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights.") ,
+					@ApiResponse(code = 404, message = "UploadRequestGroup not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
-					})
+		})
 	@Override
 	public Set<AuditLogEntryUser> findAll(
 			@ApiParam(value = "The request uuid.", required = true)
 				@PathParam("uuid") String uuid,
-			@ApiParam(value= "This parameter allow you to find all logs relative to upload request, upload request group and recipients (can be activated if type is empty and entriesLogsOnly has false value)")
+			@ApiParam(value= "This parameter allow you to find all logs relative to upload request, upload request group and recipients (can be activated if types is empty and entriesLogsOnly has false value)")
 				@QueryParam("detail") boolean detail,
-			@ApiParam(value = "This parameter allow you to find all logs relative to upload request entry only (can be activated if type is empty)", required = false)
+			@ApiParam(value = "This parameter allow you to find all logs relative to upload request entry only (can be activated if types is empty)", required = false)
 				@QueryParam("entriesLogsOnly") boolean entriesLogsOnly,
 			@ApiParam(value = "Filter by type of actions..", required = false)
 				@QueryParam("actions") List<LogAction> actions,
@@ -178,8 +206,11 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 	@GET
 	@Path("/{uuid}/upload_requests")
 	@ApiOperation(value = "Find a list of upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-	@ApiResponse(code = 401, message = "Unauthorized.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights.") ,
+					@ApiResponse(code = 404, message = "UploadRequestGroup not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+		})
 	@Override
 	public List<UploadRequestDto> findAllUploadRequests(
 			@ApiParam(value = "Upload request group uuid.", required = true)

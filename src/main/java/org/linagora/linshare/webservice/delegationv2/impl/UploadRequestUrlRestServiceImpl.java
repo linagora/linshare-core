@@ -68,14 +68,16 @@ public class UploadRequestUrlRestServiceImpl implements UploadRequestUrlRestServ
 	@DELETE
 	@Path("/{uuid}")
 	@ApiOperation(value = "Delete a Upload request url from a shared upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
 			@ApiResponse(code = 404, message = "Document not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public UploadRequestDto delete(
-			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "The upload request url to be removed", required = true) @PathParam("uuid") String uploadRequestUrlUuid) {
+			@ApiParam(value = "The actor (user) uuid.", required = true)
+				@PathParam("actorUuid") String actorUuid,
+			@ApiParam(value = "The upload request url to be removed", required = true)
+				@PathParam("uuid") String uploadRequestUrlUuid) {
 		return uploadRequestUrlFacade.delete(actorUuid, uploadRequestUrlUuid);
 	}
 }

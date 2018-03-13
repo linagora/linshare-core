@@ -78,12 +78,17 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	@GET
 	@Path("/{uuid}")
 	@ApiOperation(value = "Find an upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+					@ApiResponse(code = 404, message = "UploadRequest not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+		})
 	@Override
 	public UploadRequestDto find(
-			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Upload request uuid.", required = true) @PathParam(value = "uuid") String uuid) {
+			@ApiParam(value = "The actor (user) uuid.", required = true)
+				@PathParam("actorUuid") String actorUuid,
+			@ApiParam(value = "Upload request uuid.", required = true)
+				@PathParam(value = "uuid") String uuid) {
 		UploadRequestDto dto = uploadRequestFacade.find(actorUuid, uuid);
 		return dto;
 	}
@@ -91,28 +96,33 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 	@PUT
 	@Path("/{uuid}/status/{status}")
 	@ApiOperation(value = "Update status of an upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+					@ApiResponse(code = 404, message = "UploadRequest not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+		})
 	@Override
 	public UploadRequestDto updateStatus(
 			@ApiParam(value = "The actor (user) uuid.", required = true)
 				@PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "Upload request uuid.", required = true)
-				@PathParam(value = "uuid") String requestUuid,
+				@PathParam(value = "uuid") String uuid,
 			@ApiParam(value = "New status for the upload request.", required = true)
 				@PathParam("status") UploadRequestStatus status,
 			@ApiParam(value = "If the owner wants to copy all documents and the upload request is in archived status", required = false)
 				@QueryParam("copy") @DefaultValue("false") boolean copy) throws BusinessException {
-		UploadRequestDto dto = uploadRequestFacade.updateStatus(actorUuid, requestUuid, status, copy);
+		UploadRequestDto dto = uploadRequestFacade.updateStatus(actorUuid, uuid, status, copy);
 		return dto;
 	}
 
 	@PUT
 	@Path("/{uuid : .*}")
 	@ApiOperation(value = "Update an upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-			@ApiResponse(code = 401, message = "Unauthorized."),
-			@ApiResponse(code = 404, message = "Not found.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+					@ApiResponse(code = 404, message = "UploadRequest not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+		})
 	@Override
 	public UploadRequestDto update(
 			@ApiParam(value = "Upload request actor uuid.", required = true)
