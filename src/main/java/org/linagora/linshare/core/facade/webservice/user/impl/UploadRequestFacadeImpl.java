@@ -46,6 +46,7 @@ import org.linagora.linshare.core.facade.webservice.user.UploadRequestFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UploadRequestService;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
@@ -77,8 +78,12 @@ public class UploadRequestFacadeImpl extends GenericFacadeImpl implements Upload
 	}
 
 	@Override
-	public UploadRequestDto update(String actorUuid, UploadRequestDto req) throws BusinessException {
-		Validate.notEmpty(req.getUuid(), "Upload request uuid must be set.");
+	public UploadRequestDto update(String actorUuid, UploadRequestDto req, String uuid) throws BusinessException {
+		Validate.notNull(req, "UploadRequestDto must be set.");
+		if (!Strings.isNullOrEmpty(uuid)) {
+			req.setUuid(uuid);
+		}
+		Validate.notEmpty(req.getUuid(), "Upload request uuid is required");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		UploadRequest e = req.toObject();

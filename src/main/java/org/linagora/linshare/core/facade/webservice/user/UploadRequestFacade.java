@@ -46,8 +46,6 @@ public interface UploadRequestFacade {
 
 	UploadRequestDto find(String actorUuid, String uuid) throws BusinessException;
 
-	UploadRequestDto update(String actorUuid, UploadRequestDto uploadRequestDto) throws BusinessException;
-
 	UploadRequestDto updateStatus(String actorUuid, String uuid, UploadRequestStatus status, boolean copy) throws BusinessException;
 
 	UploadRequestDto delete(String actorUuid, String uuid) throws BusinessException;
@@ -55,4 +53,6 @@ public interface UploadRequestFacade {
 	UploadRequestDto delete(String actorUuid, UploadRequestDto uploadRequestDto) throws BusinessException;
 
 	List<UploadRequestDto> findByGroup(String actorUuid, String groupUuid, List<UploadRequestStatus> status);
+
+	UploadRequestDto update(String actorUuid, UploadRequestDto uploadRequestDto, String uuid) throws BusinessException;
 }

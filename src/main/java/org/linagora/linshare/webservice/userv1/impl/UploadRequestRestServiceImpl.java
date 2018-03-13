@@ -94,18 +94,6 @@ public class UploadRequestRestServiceImpl implements UploadRequestRestService {
 		return dto;
 	}
 
-	@PUT
-	@Path("/")
-	@ApiOperation(value = "Update an upload request.", response = UploadRequestDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed."),
-			@ApiResponse(code = 401, message = "Unauthorized."), @ApiResponse(code = 404, message = "Not found.") })
-	@Override
-	public UploadRequestDto update(
-			@ApiParam(value = "Upload request.", required = true) UploadRequestDto uploadRequestDto) {
-		UploadRequestDto dto = uploadRequestFacade.update(null, uploadRequestDto);
-		return dto;
-	}
-
 	@DELETE
 	@Path("/{uuid}")
 	@ApiOperation(value = "Update an upload request.", response = UploadRequestDto.class)

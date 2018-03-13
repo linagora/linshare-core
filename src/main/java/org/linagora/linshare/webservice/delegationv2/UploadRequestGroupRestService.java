@@ -57,11 +57,11 @@ public interface UploadRequestGroupRestService {
 
 	UploadRequestGroupDto updateStatus(String actorUuid, String requestUuid, UploadRequestStatus status, boolean copy)
 			throws BusinessException;
-	
-	UploadRequestGroupDto update(String actorUuid, UploadRequestGroupDto uploadRequestGroupDto);
 
 	UploadRequestGroupDto addRecipient(String actorUuid, String groupUuid, List<ContactDto> recipientEmail);
 
 	Set<AuditLogEntryUser> findAll(String actorUuid, String uuid, boolean detail, boolean entriesLogsOnly,
 			List<LogAction> actions, List<AuditLogEntryType> types);
+
+	UploadRequestGroupDto update(String actorUuid, String uuid, UploadRequestGroupDto uploadRequestGroupDto);
 }

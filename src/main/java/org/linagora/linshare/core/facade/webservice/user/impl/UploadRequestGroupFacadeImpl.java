@@ -57,6 +57,7 @@ import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
@@ -118,9 +119,12 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 		return new UploadRequestGroupDto(uploadRequestGroup);
 	}
 
-	public UploadRequestGroupDto update(String actorUuid, UploadRequestGroupDto uploadRequestGroupDto) {
+	public UploadRequestGroupDto update(String actorUuid, UploadRequestGroupDto uploadRequestGroupDto, String uuid) {
 		Validate.notNull(uploadRequestGroupDto, "Upload request group must be set.");
-		Validate.notNull(uploadRequestGroupDto.getUuid(), "Upload request group uuid must be set.");
+		if (!Strings.isNullOrEmpty(uuid)) {
+			uploadRequestGroupDto.setUuid(uuid);
+		}
+		Validate.notEmpty(uploadRequestGroupDto.getUuid(), "Upload request group uuid must be set.");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupDto.toObject();

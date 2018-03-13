@@ -137,14 +137,17 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 	}
 
 	@PUT
-	@Path("/")
+	@Path("/{uuid : .*}")
 	@ApiOperation(value = "update an upload request group", response = UploadRequestDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Authentication failed.") })
 	@Override
 	public UploadRequestGroupDto update(
-			@ApiParam(value = "The actor (user) uuid.", required = true) @PathParam("actorUuid") String actorUuid,
+			@ApiParam(value = "The actor (user) uuid.", required = true)
+				@PathParam("actorUuid") String actorUuid,
+			@ApiParam(value = "Upload request group uuid, if null uploadRequestGroupDto.uuid is used.", required = false) 
+				@PathParam("uuid") String uuid,
 			@ApiParam(value = "Upload request group", required = true) UploadRequestGroupDto uploadRequestGroupDto) {
-		return uploadRequestGroupFacade.update(actorUuid, uploadRequestGroupDto);
+		return uploadRequestGroupFacade.update(actorUuid, uploadRequestGroupDto, uuid);
 	}
 
 	@POST

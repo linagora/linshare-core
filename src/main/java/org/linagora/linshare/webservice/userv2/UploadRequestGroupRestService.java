@@ -55,12 +55,12 @@ public interface UploadRequestGroupRestService {
 
 	List<UploadRequestDto> create(UploadRequestCreationDto uploadRequestCreationDto, Boolean groupMode);
 
-	UploadRequestGroupDto update(UploadRequestGroupDto uploadRequestGroupDto);
-
 	UploadRequestGroupDto updateStatus(String requestUuid, UploadRequestStatus status, boolean copy) throws BusinessException;
 
 	UploadRequestGroupDto addRecipient(String groupUuid, List<ContactDto> recipientEmail);
 
 	Set<AuditLogEntryUser> findAll(String uuid, boolean detail, boolean entriesLogsOnly, List<LogAction> actions,
 			List<AuditLogEntryType> types);
+
+	UploadRequestGroupDto update(String uuid, UploadRequestGroupDto uploadRequestGroupDto);
 }
