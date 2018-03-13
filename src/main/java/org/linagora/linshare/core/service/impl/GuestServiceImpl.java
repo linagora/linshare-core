@@ -536,6 +536,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 				guest.getDomain(),
 				guest.getDomain().getParentDomain(),
 				guest, containerQuota);
+		userQuota.setDomainShared(containerQuota.getDomainQuota().getDomainShared());
+		userQuota.setDomainSharedOverride(false);
 		accountQuotaBusinessService.create(userQuota);
 	}
 }

@@ -46,6 +46,7 @@ import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
@@ -60,6 +61,7 @@ import org.linagora.linshare.core.repository.RootUserRepository;
 import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.InconsistentUserService;
+import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.TechnicalAccountService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
@@ -120,6 +122,9 @@ public class GuestServiceImplTest extends
 
 	@Autowired
 	private ThreadService threadService;
+
+	@Autowired
+	private QuotaService quotaService;
 
 	private User root;
 
@@ -193,6 +198,9 @@ public class GuestServiceImplTest extends
 		Guest find = guestService.find(owner1, owner1, guest.getLsUuid());
 		Assert.assertNotNull(find);
 		Assert.assertEquals(Role.SIMPLE, find.getRole());
+		AccountQuota aq = quotaService.find(owner1, owner1, find.getLsUuid());
+		Assert.assertNotNull(aq.getDomainShared());
+		Assert.assertNotNull(aq.getMaxFileSize());
 		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
