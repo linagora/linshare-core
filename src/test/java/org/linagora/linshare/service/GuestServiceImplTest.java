@@ -195,10 +195,9 @@ public class GuestServiceImplTest extends
 		Guest guest = new Guest("Guest", "Doe", "guest1@linshare.org");
 		guest.setCmisLocale("en");
 		guest = guestService.create(owner1, owner1, guest, null);
-		Guest find = guestService.find(owner1, owner1, guest.getLsUuid());
-		Assert.assertNotNull(find);
-		Assert.assertEquals(Role.SIMPLE, find.getRole());
-		AccountQuota aq = quotaService.find(owner1, owner1, find.getLsUuid());
+		Assert.assertNotNull(guest);
+		Assert.assertEquals(Role.SIMPLE, guest.getRole());
+		AccountQuota aq = quotaService.findByRelatedAccount(guest);
 		Assert.assertNotNull(aq.getDomainShared());
 		Assert.assertNotNull(aq.getMaxFileSize());
 		wiser.checkGeneratedMessages();
