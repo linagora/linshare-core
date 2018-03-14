@@ -237,4 +237,52 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 		Assert.assertEquals(new Integer(5), uploadRequest.getMaxFileCount());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
+
+	@Test
+	public void updateStatusToPurged() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		List<UploadRequest> eList = uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda),
+				"This is a subject", "This is a body", false);
+		UploadRequest createdUploadRequest = eList.get(0);
+		uploadRequestGroupService.createRequest(john, john, createdUploadRequest, Lists.newArrayList(yoda), "This is a subject",
+				"This is a body", false);
+		Assert.assertEquals(UploadRequestStatus.ENABLED, createdUploadRequest.getUploadRequestGroup().getStatus());
+		// Update upload request group status
+		uploadRequestGroupService.updateStatus(john, john, createdUploadRequest.getUploadRequestGroup().getUuid(),
+				UploadRequestStatus.CLOSED, false);
+		Assert.assertEquals(UploadRequestStatus.CLOSED, createdUploadRequest.getUploadRequestGroup().getStatus());
+		uploadRequestGroupService.updateStatus(john, john, createdUploadRequest.getUploadRequestGroup().getUuid(),
+				UploadRequestStatus.ARCHIVED, false);
+		Assert.assertEquals(UploadRequestStatus.ARCHIVED, createdUploadRequest.getUploadRequestGroup().getStatus());
+		// Try with copy false
+		uploadRequestGroupService.updateStatus(john, john, createdUploadRequest.getUploadRequestGroup().getUuid(),
+				UploadRequestStatus.PURGED, false);
+		Assert.assertEquals("The given upload request has not a PURGED status", UploadRequestStatus.PURGED,
+				createdUploadRequest.getUploadRequestGroup().getStatus());
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void updateStatusToPurgedAndCopy() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		List<UploadRequest> eList = uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda),
+				"This is a subject", "This is a body", false);
+		UploadRequest createdUploadRequest = eList.get(0);
+		uploadRequestGroupService.createRequest(john, john, createdUploadRequest, Lists.newArrayList(yoda), "This is a subject",
+				"This is a body", false);
+		Assert.assertEquals(UploadRequestStatus.ENABLED, createdUploadRequest.getUploadRequestGroup().getStatus());
+		// Update upload request group status
+		uploadRequestGroupService.updateStatus(john, john, createdUploadRequest.getUploadRequestGroup().getUuid(),
+				UploadRequestStatus.CLOSED, false);
+		Assert.assertEquals(UploadRequestStatus.CLOSED, createdUploadRequest.getUploadRequestGroup().getStatus());
+		uploadRequestGroupService.updateStatus(john, john, createdUploadRequest.getUploadRequestGroup().getUuid(),
+				UploadRequestStatus.ARCHIVED, false);
+		Assert.assertEquals(UploadRequestStatus.ARCHIVED, createdUploadRequest.getUploadRequestGroup().getStatus());
+		// Try with copy true
+		uploadRequestGroupService.updateStatus(john, john, createdUploadRequest.getUploadRequestGroup().getUuid(),
+				UploadRequestStatus.PURGED, true);
+		Assert.assertEquals(UploadRequestStatus.PURGED, createdUploadRequest.getUploadRequestGroup().getStatus());
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
 }

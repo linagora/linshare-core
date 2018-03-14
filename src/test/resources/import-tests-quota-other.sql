@@ -20,6 +20,6 @@ INSERT INTO quota (
 VALUES (
 	102, 'aebe1b64-39c0-11e5-9fa8-080027b8274b', NOW(), NOW(), NOW(),
 	null, 5, 0, 0,
-	2, 12, null, 1099511627776,
+	2, 10, null, 1099511627776,
 	1045824536576, 10737418240, null, 'ACCOUNT_QUOTA');
 UPDATE quota SET domain_shared_override = false, domain_shared = false WHERE id = 102;

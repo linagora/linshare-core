@@ -162,8 +162,8 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	@Override
 	public UploadRequest updateStatus(Account authUser, Account actor, String uuid, UploadRequestStatus status,
 			boolean copy) throws BusinessException {
-		Validate.notNull(authUser, "Actor must be set.");
-		Validate.notNull(actor, "Owner must be set.");
+		Validate.notNull(authUser, "authUser must be set.");
+		Validate.notNull(actor, "Actor must be set.");
 		UploadRequest req = findRequestByUuid(authUser, actor, uuid);
 		Validate.notNull(req);
 		checkUpdatePermission(authUser, actor, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, req);
@@ -175,18 +175,9 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		}
 		UploadRequestAuditLogEntry log = new UploadRequestAuditLogEntry(new AccountMto(authUser), new AccountMto(actor),
 				LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST, req.getUuid(), req);
-		if (status.equals(UploadRequestStatus.ARCHIVED) && copy) {
-			Set<UploadRequestUrl> requestUrls = req.getUploadRequestURLs();
-			for (UploadRequestUrl uploadRequestUrl : requestUrls) {
-				Set<UploadRequestEntry> uploadRequestEntries = uploadRequestUrl.getUploadRequestEntries();
-				for (UploadRequestEntry requestEntry : uploadRequestEntries) {
-					if (!requestEntry.getCopied()) {
-						uploadRequestEntryService.copy(authUser, authUser, requestEntry);
-					}
-				}
-			}
-		}
 		req = uploadRequestBusinessService.updateStatus(req, status);
+		archiveEntries(req, authUser, actor, status.equals(UploadRequestStatus.PURGED),
+				(status.compareTo(UploadRequestStatus.CLOSED) <= 0) && copy);
 		sendNotification(req, actor);
 		log.setResourceUpdated(new UploadRequestMto(req, true));
 		logEntryService.insert(log);
@@ -209,6 +200,23 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		}
 		notifierService.sendNotification(mails);
 		mails.clear();
+	}
+
+	private void archiveEntries(UploadRequest req, Account authUser, Account actor, boolean purge, boolean copy) {
+		if (purge || copy) {
+			Set<UploadRequestUrl> requestUrls = req.getUploadRequestURLs();
+			for (UploadRequestUrl uploadRequestUrl : requestUrls) {
+				Set<UploadRequestEntry> uploadRequestEntries = uploadRequestUrl.getUploadRequestEntries();
+				for (UploadRequestEntry requestEntry : uploadRequestEntries) {
+					if (!requestEntry.getCopied() && copy) {
+						uploadRequestEntryService.copy(authUser, actor, requestEntry);
+					}
+					if (purge) {
+						uploadRequestEntryService.delete((User) authUser, (User) actor, requestEntry.getUuid());
+					}
+				}
+			}
+		}
 	}
 
 	@Override
