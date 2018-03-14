@@ -34,17 +34,24 @@
 
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
+import java.util.List;
+
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
 import org.linagora.linshare.core.facade.webservice.user.UploadRequestFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UploadRequestService;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 public class UploadRequestFacadeImpl extends GenericFacadeImpl implements UploadRequestFacade {
 
@@ -103,5 +110,14 @@ public class UploadRequestFacadeImpl extends GenericFacadeImpl implements Upload
 		Validate.notNull(uploadRequestDto, "Upload Request must be set.");
 		Validate.notEmpty(uploadRequestDto.getUuid(), "Upload Request uuid must be set.");
 		return delete(actorUuid, uploadRequestDto.getUuid());
+	}
+
+	@Override
+	public List<UploadRequestEntryDto> findAllEntries(String actorUuid, String uuid) {
+		Validate.notNull(uuid, "Upload request uuid must be set.");
+		Account authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		List<UploadRequestEntry> uploadRequestEntries = uploadRequestService.findAllEntries(authUser, actor, uuid);
+		return  ImmutableList.copyOf(Lists.transform(uploadRequestEntries, UploadRequestEntryDto.toDto()));
 	}
 }

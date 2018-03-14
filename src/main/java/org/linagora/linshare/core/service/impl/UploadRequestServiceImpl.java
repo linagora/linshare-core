@@ -427,4 +427,19 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You have no rights to access this service.");
 		}
 	}
+
+	@Override
+	public List<UploadRequestEntry> findAllEntries(Account actor, Account owner, String uploadRequestUuid)
+			throws BusinessException {
+		preChecks(actor, owner);
+		checkListPermission(actor, owner, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
+				null);
+		List<UploadRequestEntry> uploadRequestEntries = Lists.newArrayList();
+		UploadRequest uploadRequest = findRequestByUuid(actor, owner, uploadRequestUuid);
+		Set<UploadRequestUrl> uploadRequestUrls = uploadRequest.getUploadRequestURLs();
+		for (UploadRequestUrl uploadRequestUrl : uploadRequestUrls) {
+			uploadRequestEntries.addAll(uploadRequestUrl.getUploadRequestEntries());
+		}
+		return uploadRequestEntries;
+	}
 }

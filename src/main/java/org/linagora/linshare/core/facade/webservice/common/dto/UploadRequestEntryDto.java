@@ -51,6 +51,9 @@ public class UploadRequestEntryDto {
 	@ApiModelProperty(value = "Owner")
 	protected AccountDto entryOwner;
 
+	@ApiModelProperty(value = "Recipient")
+	private ContactDto recipient;
+
 	@ApiModelProperty(value = "CreationDate")
 	protected Calendar creationDate;
 
@@ -100,6 +103,7 @@ public class UploadRequestEntryDto {
 	public UploadRequestEntryDto(UploadRequestEntry entry) {
 		super();
 		this.entryOwner = new AccountDto(entry.getEntryOwner(), false);
+		this.recipient = new ContactDto(entry.getUploadRequestUrl().getContact());
 		this.creationDate = entry.getCreationDate();
 		this.modificationDate = entry.getModificationDate();
 		this.expirationDate = entry.getExpirationDate();
@@ -229,6 +233,14 @@ public class UploadRequestEntryDto {
 
 	public void setCiphered(Boolean ciphered) {
 		this.ciphered = ciphered;
+	}
+
+	public ContactDto getRecipient() {
+		return recipient;
+	}
+
+	public void setRecipient(ContactDto recipient) {
+		this.recipient = recipient;
 	}
 
 	/*

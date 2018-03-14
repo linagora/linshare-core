@@ -34,9 +34,12 @@
 
 package org.linagora.linshare.webservice.userv2;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestEntryDto;
 
 public interface UploadRequestRestService {
 
@@ -45,4 +48,6 @@ public interface UploadRequestRestService {
 	UploadRequestDto updateStatus(String requestUuid, UploadRequestStatus status, boolean copy) throws BusinessException;
 
 	UploadRequestDto update(String uuid, UploadRequestDto uploadRequestDto);
+
+	List<UploadRequestEntryDto> findAllEntries(String uploadRequestuuid) throws BusinessException;
 }

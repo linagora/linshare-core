@@ -359,4 +359,22 @@ public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4Spr
 		documentRepository.delete(aDocument);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
+
+	@Test
+	public void testFindAllUploadRequestEntries()
+			throws BusinessException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Account actor = jane;
+		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		IOUtils.transferTo(stream, tempFile);
+
+		uploadRequestEntry = uploadRequestEntryService.create(actor, actor, tempFile, fileName, comment, false, null,
+				e.getUploadRequestURLs().iterator().next());
+		Assert.assertTrue(uploadRequestEntryRepository.findByUuid(uploadRequestEntry.getUuid()) != null);
+
+		List<UploadRequestEntry> entries = service.findAllEntries(actor, actor, e.getUuid());
+		Assert.assertNotNull(entries);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
 }
