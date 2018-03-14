@@ -52,10 +52,9 @@ public class UploadRequestUrlFacadeImpl extends GenericFacadeImpl implements Upl
 
 	@Override
 	public UploadRequestDto delete(String actorUuid, String uploadRequestUrlUuid) {
-		Validate.notEmpty(uploadRequestUrlUuid);
+		Validate.notEmpty(uploadRequestUrlUuid, "Upload request url uuid must be set");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		return new UploadRequestDto(uploadRequestUrlService.delete(authUser, actor, uploadRequestUrlUuid));
 	}
-
 }

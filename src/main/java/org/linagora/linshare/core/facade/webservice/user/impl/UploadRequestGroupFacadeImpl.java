@@ -90,6 +90,7 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 
 	@Override
 	public UploadRequestGroupDto find(String actorUuid, String uuid) throws BusinessException {
+		Validate.notNull(uuid, "Upload request uuid must be set");
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
 		UploadRequestGroup group = uploadRequestGroupService.findRequestGroupByUuid(authUser, actor, uuid);
@@ -100,8 +101,8 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 	public List<UploadRequestDto> create(String actorUuid, UploadRequestCreationDto uploadRequesCreationtDto,
 			Boolean groupMode) throws BusinessException {
 		Validate.notNull(uploadRequesCreationtDto, "Upload request must be set.");
-		Validate.notNull(uploadRequesCreationtDto.getLabel(), "Upload request subject must be set.");
-		Validate.notEmpty(uploadRequesCreationtDto.getContactList());
+		Validate.notNull(uploadRequesCreationtDto.getLabel(), "Upload request label must be set.");
+		Validate.notEmpty(uploadRequesCreationtDto.getContactList(), "ContactList must be set");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		UploadRequest req = uploadRequesCreationtDto.toObject();
@@ -109,9 +110,9 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 		for (String mail : uploadRequesCreationtDto.getContactList()) {
 			contacts.add(new Contact(mail));
 		}
-		List<UploadRequest> e = uploadRequestGroupService.createRequest(authUser, actor, req, contacts,
+		List<UploadRequest> uploadRequests = uploadRequestGroupService.createRequest(authUser, actor, req, contacts,
 				uploadRequesCreationtDto.getLabel(), uploadRequesCreationtDto.getBody(), groupMode);
-		return ImmutableList.copyOf(Lists.transform(e, UploadRequestDto.toDto(true)));
+		return ImmutableList.copyOf(Lists.transform(uploadRequests, UploadRequestDto.toDto(true)));
 	}
 
 	@Override
@@ -149,11 +150,11 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 
 	@Override
 	public Set<AuditLogEntryUser> findAll(String actorUuid, String groupUuid, boolean detail, boolean entriesLogsOnly,
-			List<LogAction> actions, List<AuditLogEntryType> type) {
+			List<LogAction> actions, List<AuditLogEntryType> types) {
 		Validate.notNull(groupUuid, "Upload request group uuid must be set");
 		Account authUser = checkAuthentication();
 		User actor = (User) getActor(authUser, null);
-		return auditLogEntryService.findAll(authUser, actor, groupUuid, detail, entriesLogsOnly, actions, type);
+		return auditLogEntryService.findAll(authUser, actor, groupUuid, detail, entriesLogsOnly, actions, types);
 	}
 
 	@Override

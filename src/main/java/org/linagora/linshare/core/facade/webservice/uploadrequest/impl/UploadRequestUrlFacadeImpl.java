@@ -77,7 +77,7 @@ public class UploadRequestUrlFacadeImpl extends GenericFacadeImpl implements Upl
 
 	@Override
 	public UploadRequestDto find(String uploadRequestUrlUuid, String password) throws BusinessException {
-		Validate.notEmpty(uploadRequestUrlUuid);
+		Validate.notEmpty(uploadRequestUrlUuid, "Upload request url uuid must be set");
 		UploadRequestUrl requestUrl = uploadRequestUrlService.find(uploadRequestUrlUuid, password);
 		UploadRequestDto dto = transform(requestUrl);
 		return dto;
@@ -95,26 +95,26 @@ public class UploadRequestUrlFacadeImpl extends GenericFacadeImpl implements Upl
 	@Override
 	public void addUploadRequestEntry(String uploadRequestUrlUuid,
 			String password, File file, String fileName) throws BusinessException {
-		Validate.notEmpty(uploadRequestUrlUuid);
-		Validate.notNull(file);
-		Validate.notEmpty(fileName);
+		Validate.notEmpty(uploadRequestUrlUuid, "Upload request url uuid must be set");
+		Validate.notNull(file, "file must be set");
+		Validate.notEmpty(fileName, "fileName must be set");
 		uploadRequestUrlService.createUploadRequestEntry(uploadRequestUrlUuid, file, fileName, password);
 	}
 
 	@Override
 	public void deleteUploadRequestEntry(String uploadRequestUrlUuid,
 			String password, EntryDto entry) throws BusinessException {
-		Validate.notEmpty(uploadRequestUrlUuid);
-		Validate.notNull(entry);
-		Validate.notEmpty(entry.getUuid());
+		Validate.notEmpty(uploadRequestUrlUuid, "Upload request url uuid must be set");
+		Validate.notNull(entry, "Upload request entry must be set");
+		Validate.notEmpty(entry.getUuid(), "Upload request entry uuid must be set");
 		uploadRequestUrlService.deleteUploadRequestEntry(uploadRequestUrlUuid, password, entry.getUuid());
 	}
 
 	@Override
 	public void deleteUploadRequestEntry(String uploadRequestUrlUuid,
 			String password, String entryUuid) throws BusinessException {
-		Validate.notEmpty(uploadRequestUrlUuid);
-		Validate.notEmpty(entryUuid);
+		Validate.notEmpty(uploadRequestUrlUuid, "Upload request url uuid must be set");
+		Validate.notEmpty(entryUuid, "Upload request entry uuid must be set");
 		uploadRequestUrlService.deleteUploadRequestEntry(uploadRequestUrlUuid, password, entryUuid);
 	}
 

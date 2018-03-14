@@ -53,7 +53,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @XmlRootElement(name = "UploadRequest")
 public class UploadRequestDto {
 
@@ -78,9 +78,9 @@ public class UploadRequestDto {
 
 	@ApiModelProperty(value = "Notification date")
 	private Date notificationDate;
-	
-	@ApiModelProperty(value = "Subject")
-	private String subject;
+
+	@ApiModelProperty(value = "Label")
+	private String label;
 
 	@ApiModelProperty(value = "Status")
 	private UploadRequestStatus status;
@@ -113,13 +113,13 @@ public class UploadRequestDto {
 	Set<String> extensions = Sets.newHashSet();
 
 	private String locale;
-	
+
 	private Boolean dirty;
-	
+
 	private Boolean enableNotification;
-	
+
 	private Boolean canEditExpiryDate;
-	
+
 	public UploadRequestDto() {
 		super();
 	}
@@ -131,7 +131,7 @@ public class UploadRequestDto {
 		this.activationDate = entity.getActivationDate();
 		this.creationDate = entity.getCreationDate();
 		this.expiryDate = entity.getExpiryDate();
-		this.subject = entity.getUploadRequestGroup().getSubject();
+		this.label = entity.getUploadRequestGroup().getSubject();
 		this.status = entity.getStatus();
 		this.notificationDate = entity.getNotificationDate();
 		this.dirty = entity.getDirty();
@@ -210,12 +210,12 @@ public class UploadRequestDto {
 		this.expiryDate = expiryDate;
 	}
 
-	public String getSubject() {
-		return subject;
+	public String getLabel() {
+		return label;
 	}
 
-	public void setSubject(String subject) {
-		this.subject = subject;
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	public Date getActivationDate() {
@@ -373,10 +373,11 @@ public class UploadRequestDto {
 	public Boolean getCanEditExpiryDate() {
 		return canEditExpiryDate;
 	}
-	
+
 	public void setCanEditExpiryDate(Boolean canEditExpiryDate) {
 		this.canEditExpiryDate = canEditExpiryDate;
 	}
+
 	/*
 	 * Transformers
 	 */

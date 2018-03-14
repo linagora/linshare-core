@@ -56,8 +56,8 @@ public class UploadRequestGroupDto {
 	@ApiModelProperty(value = "Uuid")
 	private String uuid;
 	
-	@ApiModelProperty(value = "Subject")
-	private String subject;
+	@ApiModelProperty(value = "Label")
+	private String label;
 
 	@ApiModelProperty(value = "Body")
 	private String body;
@@ -73,7 +73,7 @@ public class UploadRequestGroupDto {
 	
 	@ApiModelProperty(value = "Max deposit size")
 	private Long maxDepositSize;
-	
+
 	@ApiModelProperty(value = "Max file size")
 	private Long maxFileSize;
 
@@ -129,7 +129,7 @@ public class UploadRequestGroupDto {
 	public UploadRequestGroupDto(UploadRequestGroup entity) {
 		super();
 		this.uuid = entity.getUuid();
-		this.subject = entity.getSubject();
+		this.label = entity.getSubject();
 		this.body= entity.getBody();
 		this.creationDate = entity.getCreationDate();
 		this.modificationDate = entity.getModificationDate();
@@ -156,7 +156,7 @@ public class UploadRequestGroupDto {
 	public UploadRequestGroup toObject() {
 		UploadRequestGroup uploadRequestGroup = new UploadRequestGroup();
 		uploadRequestGroup.setUuid(getUuid());
-		uploadRequestGroup.setSubject(getSubject());
+		uploadRequestGroup.setSubject(getLabel());
 		uploadRequestGroup.setBody(getBody());
 		uploadRequestGroup.setCreationDate(getCreationDate());
 		uploadRequestGroup.setModificationDate(getModificationDate());
@@ -186,12 +186,12 @@ public class UploadRequestGroupDto {
 		this.uuid = uuid;
 	}
 
-	public String getSubject() {
-		return subject;
+	public String getLabel() {
+		return label;
 	}
 
-	public void setSubject(String subject) {
-		this.subject = subject;
+	public void setLabel(String subject) {
+		this.label = subject;
 	}
 
 	public String getBody() {

@@ -56,15 +56,15 @@ public interface UploadRequestGroupFacade {
 	List<UploadRequestDto> create(String actorUuid, UploadRequestCreationDto uploadRequestCreationtDto,
 			Boolean groupMode) throws BusinessException;
 
-	UploadRequestGroupDto updateStatus(String actorUuid, String requestGroupUuid, UploadRequestStatus status, boolean copy)
+	UploadRequestGroupDto updateStatus(String actorUuid, String uuid, UploadRequestStatus status, boolean copy)
 			throws BusinessException;
 
 	UploadRequestGroupDto update(String actorUuid, UploadRequestGroupDto uploadRequestGroupDto, String uuid) throws BusinessException;
 
 	UploadRequestGroupDto addRecipients(String actorUuid, String uuid, List<ContactDto> recipientEmail);
 
-	Set<AuditLogEntryUser> findAll(String actorUuid, String groupUuid, boolean detail, boolean entriesLogsOnly,
+	Set<AuditLogEntryUser> findAll(String actorUuid, String uuid, boolean detail, boolean entriesLogsOnly,
 			List<LogAction> actions, List<AuditLogEntryType> type);
 
-	List<UploadRequestDto> findAllUploadRequests(String actorUuid, String groupUuid, List<UploadRequestStatus> status);
+	List<UploadRequestDto> findAllUploadRequests(String actorUuid, String uuid, List<UploadRequestStatus> status);
 }
