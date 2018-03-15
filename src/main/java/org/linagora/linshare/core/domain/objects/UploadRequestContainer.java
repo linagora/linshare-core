@@ -35,15 +35,17 @@
 package org.linagora.linshare.core.domain.objects;
 
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class UploadRequestContainer {
 
-	protected List<UploadRequest> uploadRequests = Lists.newArrayList();
+	protected Set<UploadRequest> uploadRequests = Sets.newHashSet();
 
 	protected List<MailContainerWithRecipient> mailContainers = Lists
 			.newArrayList();
@@ -53,7 +55,7 @@ public class UploadRequestContainer {
 	public UploadRequestContainer() {
 	}
 
-	public List<UploadRequest> getUploadRequests() {
+	public Set<UploadRequest> getUploadRequests() {
 		return uploadRequests;
 	}
 

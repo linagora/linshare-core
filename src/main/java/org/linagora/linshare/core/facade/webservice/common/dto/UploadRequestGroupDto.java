@@ -35,7 +35,6 @@
 package org.linagora.linshare.core.facade.webservice.common.dto;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -45,32 +44,30 @@ import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.ContactDto;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @XmlRootElement(name = "UploadRequestGroup")
 public class UploadRequestGroupDto {
 
 	@ApiModelProperty(value = "Uuid")
 	private String uuid;
-	
+
 	@ApiModelProperty(value = "Label")
 	private String label;
 
 	@ApiModelProperty(value = "Body")
 	private String body;
-	
+
 	@ApiModelProperty(value = "Creation date")
 	private Date creationDate;
-	
+
 	@ApiModelProperty(value = "Modification date")
 	private Date modificationDate;
 
 	@ApiModelProperty(value = "Max file count")
 	private Integer maxFileCount;
-	
+
 	@ApiModelProperty(value = "Max deposit size")
 	private Long maxDepositSize;
 
@@ -79,19 +76,19 @@ public class UploadRequestGroupDto {
 
 	@ApiModelProperty(value = "Activation date")
 	private Date activationDate;
-	
+
 	@ApiModelProperty(value = "Notification date")
 	private Date notificationDate;
-	
+
 	@ApiModelProperty(value = "Expiry date")
 	private Date expiryDate;
-	
+
 	@ApiModelProperty(value = "Can Delete")
-	private boolean canDelete;
+	private Boolean canDelete;
 
 	@ApiModelProperty(value = "Can Close")
-	private boolean canClose;
-	
+	private Boolean canClose;
+
 	@ApiModelProperty(value = "Can Edit Expiry Date")
 	private Boolean canEditExpiryDate;
 
@@ -112,15 +109,12 @@ public class UploadRequestGroupDto {
 
 	@ApiModelProperty(value = "Owner")
 	private ContactDto owner;
-	
+
 	@ApiModelProperty(value = "Abstract Domain")
 	private DomainDto domainDto;
 
 	@ApiModelProperty(value = "Status")
 	private UploadRequestStatus status;
-	
-	@ApiModelProperty(value = "List of upload requests")
-	private List<UploadRequestDto> uploadRequestDtos = Lists.newArrayList();
 
 	public UploadRequestGroupDto() {
 		super();
@@ -130,7 +124,7 @@ public class UploadRequestGroupDto {
 		super();
 		this.uuid = entity.getUuid();
 		this.label = entity.getSubject();
-		this.body= entity.getBody();
+		this.body = entity.getBody();
 		this.creationDate = entity.getCreationDate();
 		this.modificationDate = entity.getModificationDate();
 		this.maxFileCount = entity.getMaxFileCount();
@@ -150,8 +144,7 @@ public class UploadRequestGroupDto {
 		this.owner = new ContactDto(entity.getOwner());
 		this.domainDto = new DomainDto(entity.getAbstractDomain(), true);
 		this.status = entity.getStatus();
-		this.uploadRequestDtos = ImmutableList.copyOf(Lists.transform(Lists.newArrayList(entity.getUploadRequests()), UploadRequestDto.toDto(false)));
-		}
+	}
 
 	public UploadRequestGroup toObject() {
 		UploadRequestGroup uploadRequestGroup = new UploadRequestGroup();
@@ -270,7 +263,7 @@ public class UploadRequestGroupDto {
 		return canDelete;
 	}
 
-	public void setCanDelete(boolean canDelete) {
+	public void setCanDelete(Boolean canDelete) {
 		this.canDelete = canDelete;
 	}
 
@@ -278,7 +271,7 @@ public class UploadRequestGroupDto {
 		return canClose;
 	}
 
-	public void setCanClose(boolean canClose) {
+	public void setCanClose(Boolean canClose) {
 		this.canClose = canClose;
 	}
 
@@ -352,14 +345,6 @@ public class UploadRequestGroupDto {
 
 	public void setStatus(UploadRequestStatus status) {
 		this.status = status;
-	}
-
-	public List<UploadRequestDto> getUploadRequestDtos() {
-		return uploadRequestDtos;
-	}
-
-	public void setUploadRequestDtos(List<UploadRequestDto> uploadRequestDtos) {
-		this.uploadRequestDtos = uploadRequestDtos;
 	}
 
 	/*

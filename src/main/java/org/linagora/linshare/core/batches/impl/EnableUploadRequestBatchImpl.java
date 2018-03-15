@@ -89,9 +89,9 @@ public class EnableUploadRequestBatchImpl extends GenericBatchImpl implements En
 			throws BatchBusinessException, BusinessException {
 		List<MailContainerWithRecipient> notifications = Lists.newArrayList();
 		SystemAccount account = getSystemAccount();
-		UploadRequest r = uploadRequestService.findRequestByUuid(account, null, identifier);
+		UploadRequest r = uploadRequestService.find(account, null, identifier);
 		ResultContext context = new UploadRequestBatchResultContext(r);
-		console.logInfo(batchRunContext, total, position, "processing uplaod request : ", r.getUuid());
+		console.logInfo(batchRunContext, total, position, "processing upload request : ", r.getUuid());
 		r.updateStatus(UploadRequestStatus.ENABLED);
 		r = uploadRequestService.updateRequest(account, r.getUploadRequestGroup().getOwner(), r);
 		for (UploadRequestUrl u: r.getUploadRequestURLs()) {

@@ -46,7 +46,6 @@ import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UploadRequestRepository;
 import org.springframework.dao.support.DataAccessUtils;
@@ -77,17 +76,6 @@ public class UploadRequestRepositoryImpl extends
 	public List<UploadRequest> findAll(UploadRequestGroup uploadRequestGroup, List<UploadRequestStatus> statusList) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 		det.add(Restrictions.eq("uploadRequestGroup", uploadRequestGroup));
-		if (statusList != null && !statusList.isEmpty()) {
-			det.add(Restrictions.in("status", statusList));
-		}
-		return findByCriteria(det);
-	}
-
-	@Override
-	public List<UploadRequest> findByOwner(User owner, List<UploadRequestStatus> statusList) {
-		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
-		det.createAlias("uploadRequestGroup", "group");
-		det.add(Restrictions.eq("group.owner", owner));
 		if (statusList != null && !statusList.isEmpty()) {
 			det.add(Restrictions.in("status", statusList));
 		}

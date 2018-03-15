@@ -68,5 +68,5 @@ public interface UploadRequestEntryBusinessService {
 
 	byte[] getTimeStamp(String fileName, File tempFile, String timeStampingUrl) throws BusinessException;
 
-	InputStream getDocumentStream(UploadRequestEntry entry);
+	InputStream download(UploadRequestEntry entry);
 }

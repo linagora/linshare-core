@@ -53,7 +53,7 @@ public interface UploadRequestGroupRestService {
 
 	UploadRequestGroupDto find(String uuid) throws BusinessException;
 
-	List<UploadRequestDto> create(UploadRequestCreationDto uploadRequestCreationDto, Boolean groupMode);
+	UploadRequestGroupDto create(UploadRequestCreationDto uploadRequestCreationDto, Boolean groupMode);
 
 	UploadRequestGroupDto updateStatus(String uuid, UploadRequestStatus status, boolean copy) throws BusinessException;
 

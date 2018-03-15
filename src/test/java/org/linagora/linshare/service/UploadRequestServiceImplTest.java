@@ -34,12 +34,11 @@
 
 package org.linagora.linshare.service;
 
-import java.io.File; 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.cxf.helpers.IOUtils;
 import org.junit.After;
@@ -56,8 +55,7 @@ import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
-import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
-import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
+import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -66,8 +64,8 @@ import org.linagora.linshare.core.repository.ContactRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.UploadRequestEntryRepository;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
+import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UploadRequestService;
 import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
@@ -78,7 +76,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -93,13 +90,6 @@ import com.google.common.collect.Sets;
 		"classpath:springContext-test.xml", })
 public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
 	private static Logger logger = LoggerFactory.getLogger(UploadRequestServiceImplTest.class);
-
-	private LinShareWiser wiser;
-
-	public UploadRequestServiceImplTest() {
-		super();
-		wiser = new LinShareWiser(2525);
-	}
 
 	@Qualifier("userRepository")
 	@Autowired
@@ -134,13 +124,9 @@ public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4Spr
 
 	private UploadRequest ure = new UploadRequest();
 
-	private UploadRequestTemplate template = new UploadRequestTemplate();
-
 	private LoadingServiceTestDatas datas;
 
 	private UploadRequest e;
-
-	private UploadRequestTemplate temp;
 
 	private User john;
 
@@ -153,6 +139,13 @@ public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4Spr
 	private final String comment = "file description";
 
 	private Contact yoda;
+
+	private LinShareWiser wiser;
+
+	public UploadRequestServiceImplTest() {
+		super();
+		wiser = new LinShareWiser(2525);
+	}
 
 	@Before
 	public void init() throws Exception {
@@ -180,32 +173,11 @@ public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4Spr
 		ure.setCanDelete(true);
 		ure.setLocale("en");
 		ure.setActivationDate(new Date());
-		List<UploadRequest> eList = Lists.newArrayList();
-		eList = uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
-		e = eList.get(0);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, ure, Lists.newArrayList(yoda), "This is a subject",
+				"This is a body", false);
+		e = uploadRequestGroup.getUploadRequests().iterator().next();
 //		END OF UPLOAD REQUEST CREATE
-//		Set upload request template
-		template.setDayBeforeNotification(new Long(10));
-		template.setDepositMode(true);
-		template.setDescription("This is a tempale");
-		template.setName("templateName");
-		template.setDurationBeforeActivation(new Long(10));
-		template.setDurationBeforeExpiry(new Long(10));
-		template.setUnitBeforeActivation(new Long(2));
-		template.setUnitBeforeExpiry(new Long(3));
-		template.setGroupMode(false);
-		template.setMaxDepositSize(new Long(10));
-		template.setMaxFile(new Long(3));
-		template.setMaxFileSize(new Long(10));
-		template.setLocale("fr");
-		temp = service.createTemplate(john, john, template);
 		Assert.assertEquals(john, (User) e.getUploadRequestGroup().getOwner());
-		Assert.assertEquals(john, (User) temp.getOwner());
-		Assert.assertEquals(new Long(3), temp.getMaxFile());
-		Assert.assertEquals(new Long(10), temp.getMaxFileSize());
-		Assert.assertEquals(new Long(3), temp.getUnitBeforeExpiry());
-		Assert.assertEquals(false, temp.getGroupMode());
-		Assert.assertEquals("templateName", temp.getName());
 		Assert.assertEquals(e.getStatus(), UploadRequestStatus.ENABLED);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
@@ -220,7 +192,7 @@ public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4Spr
 	@Test
 	public void findRequest() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		UploadRequest tmp = service.findRequestByUuid(john, john, e.getUuid());
+		UploadRequest tmp = service.find(john, john, e.getUuid());
 		Assert.assertEquals(tmp.getStatus(), e.getStatus());
 		Assert.assertEquals(tmp.getUploadRequestGroup().getOwner(), e.getUploadRequestGroup().getOwner());
 		Assert.assertEquals(tmp.getStatus(), e.getStatus());
@@ -237,7 +209,7 @@ public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4Spr
 	@Test
 	public void update() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		UploadRequest tmp = service.findRequestByUuid(john, john, e.getUuid());
+		UploadRequest tmp = service.find(john, john, e.getUuid());
 		tmp.setCanClose(false);
 		tmp.setCanDelete(false);
 		tmp.setCanEditExpiryDate(false);
@@ -247,35 +219,8 @@ public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4Spr
 		Assert.assertEquals(tmp.isCanDelete(), false);
 		Assert.assertEquals(tmp.isCanEditExpiryDate(), false);
 		Assert.assertEquals(tmp.getMaxFileCount(), new Integer(2));
-		// TODO UploadRequests : new email
-		// wiser.checkGeneratedMessages();
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
-	}
-
-	@Test
-	public void updateTemplate() {
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		template.setDayBeforeNotification(new Long(5));
-		template.setDepositMode(false);
-		template.setDescription("This is a tempale");
-		template.setName("templateName");
-		template.setDurationBeforeActivation(new Long(100));
-		template.setDurationBeforeExpiry(new Long(100));
-		template.setUnitBeforeActivation(new Long(2));
-		template.setUnitBeforeExpiry(new Long(2));
-		template.setGroupMode(true);
-		template.setMaxDepositSize(new Long(100));
-		template.setMaxFile(new Long(30));
-		template.setMaxFileSize(new Long(100));
-		template.setLocale("en");
-		UploadRequestTemplate tmp = service.updateTemplate(john, john, temp.getUuid(), template);
-		Assert.assertEquals(new Long(30), tmp.getMaxFile());
-		Assert.assertEquals(new Long(100), tmp.getMaxFileSize());
-		Assert.assertEquals(new Long(2), tmp.getUnitBeforeExpiry());
-		Assert.assertEquals(true, tmp.getGroupMode());
-		Assert.assertEquals("templateName", tmp.getName());
-		// TODO UploadRequests : new email
-		// wiser.checkGeneratedMessages();
 	}
 
 	@Test
@@ -293,8 +238,7 @@ public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4Spr
 		tmp = service.updateStatus(john, john, tmp.getUuid(), UploadRequestStatus.DELETED, false);
 		Assert.assertEquals(tmp.getStatus(), UploadRequestStatus.DELETED);
 		Assert.assertEquals(john, (User) e.getUploadRequestGroup().getOwner());
-		// TODO UploadRequests : new email
-		// wiser.checkGeneratedMessages();
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -305,8 +249,7 @@ public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4Spr
 		tmp = service.closeRequestByRecipient(e.getUploadRequestURLs().iterator().next());
 		Assert.assertEquals(tmp.getStatus(), UploadRequestStatus.CLOSED);
 		Assert.assertEquals(john, (User) e.getUploadRequestGroup().getOwner());
-		// TODO UploadRequests : new email
-		// wiser.checkGeneratedMessages();
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -316,27 +259,13 @@ public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4Spr
 		try {
 			e.updateStatus(UploadRequestStatus.CLOSED);
 			UploadRequest tmp = service.updateRequest(john, john, e);
-			tmp = service.findRequestByUuid(john, john, e.getUuid());
+			tmp = service.find(john, john, e.getUuid());
 			tmp.updateStatus(UploadRequestStatus.ENABLED);
 			tmp = service.updateRequest(john, john, tmp);
 		} catch (BusinessException ex) {
 			Assert.assertEquals("Cannot transition from CLOSED to ENABLED.", ex.getMessage());
 		}
-		// TODO UploadRequests : new email
-		// wiser.checkGeneratedMessages();
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
-
-	@Test
-	public void findAllRequestHistory() throws BusinessException {
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Set<UploadRequestHistory> history = Sets.newHashSet();
-		try {
-			history = service.findAllRequestHistory(jane, john, e.getUuid());
-		} catch (BusinessException ex) {
-			Assert.assertEquals("You are not authorized to get this entry.", ex.getMessage());
-		}
-		history = service.findAllRequestHistory(john, john, e.getUuid());
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -376,5 +305,4 @@ public class UploadRequestServiceImplTest extends AbstractTransactionalJUnit4Spr
 		Assert.assertNotNull(entries);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-
 }

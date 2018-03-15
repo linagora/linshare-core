@@ -54,9 +54,6 @@ public class UploadRequestCreationDto {
 	@ApiModelProperty(value = "Activation date")
 	private Date activationDate;
 
-	@ApiModelProperty(value = "Creation date")
-	private Date creationDate;
-
 	// could be null
 	@ApiModelProperty(value = "Expiry date")
 	private Date expiryDate;
@@ -77,9 +74,9 @@ public class UploadRequestCreationDto {
 	// could be null
 	private Long maxFileSize;
 
-	private boolean canDelete;
+	private Boolean canDelete;
 
-	private boolean canClose;
+	private Boolean canClose;
 
 	// could be null
 	private String body;
@@ -101,7 +98,6 @@ public class UploadRequestCreationDto {
 	public UploadRequestCreationDto(UploadRequest entity) {
 		super();
 		this.activationDate = entity.getActivationDate();
-		this.creationDate = entity.getCreationDate();
 		this.expiryDate = entity.getExpiryDate();
 		this.label = entity.getUploadRequestGroup().getSubject();
 		this.notificationDate = entity.getNotificationDate();
@@ -160,14 +156,6 @@ public class UploadRequestCreationDto {
 
 	public void setActivationDate(Date activationDate) {
 		this.activationDate = activationDate;
-	}
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
 	}
 
 	public Integer getMaxFileCount() {

@@ -47,12 +47,12 @@ import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.ContactDto
 
 public interface UploadRequestGroupService {
 
-	List<UploadRequestGroup> findAllGroupRequest(Account actor, Account owner, List<UploadRequestStatus> statusList)
+	List<UploadRequestGroup> findAll(Account actor, Account owner, List<UploadRequestStatus> statusList)
 			throws BusinessException;
 
-	UploadRequestGroup findRequestGroupByUuid(Account actor, Account owner, String uuid);
+	UploadRequestGroup find(Account actor, Account owner, String uuid);
 
-	List<UploadRequest> createRequest(Account actor, User owner, UploadRequest req, List<Contact> contacts,
+	UploadRequestGroup create(Account actor, User owner, UploadRequest req, List<Contact> contacts,
 			String subject, String body, Boolean groupedMode) throws BusinessException;
 
 	UploadRequestGroup update(User authUser, User actor, UploadRequestGroup uploadRequestGroup);

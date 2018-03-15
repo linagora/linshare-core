@@ -35,7 +35,6 @@
 package org.linagora.linshare.core.facade.webservice.common.dto;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -43,13 +42,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.ContactDto;
-import org.linagora.linshare.core.facade.webservice.uploadrequest.dto.EntryDto;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -85,8 +81,6 @@ public class UploadRequestDto {
 	@ApiModelProperty(value = "Status")
 	private UploadRequestStatus status;
 
-	private List<ContactDto> contactList = Lists.newArrayList();
-
 	private Integer maxFileCount;
 
 	// could be null
@@ -95,16 +89,14 @@ public class UploadRequestDto {
 	// could be null
 	private Long maxFileSize;
 
-	private boolean canDeleteDocument;
+	private Boolean canDeleteDocument;
 
-	private boolean canClose;
+	private Boolean canClose;
 
 	// could be null
 	private String body;
 
 	private boolean isClosed;
-
-	private Set<EntryDto> entries = Sets.newHashSet();
 
 	private boolean protectedByPassword;
 
@@ -129,7 +121,6 @@ public class UploadRequestDto {
 		this.uuid = entity.getUuid();
 		this.owner = new ContactDto(entity.getUploadRequestGroup().getOwner());
 		this.activationDate = entity.getActivationDate();
-		this.creationDate = entity.getCreationDate();
 		this.expiryDate = entity.getExpiryDate();
 		this.label = entity.getUploadRequestGroup().getSubject();
 		this.status = entity.getStatus();
@@ -142,13 +133,6 @@ public class UploadRequestDto {
 			this.maxFileSize = entity.getMaxFileSize();
 			this.canDeleteDocument = entity.isCanDelete();
 			this.canClose = entity.isCanClose();
-			for (UploadRequestUrl uru : entity.getUploadRequestURLs()) {
-				contactList.add(new ContactDto(uru.getContact()));
-				for (UploadRequestEntry entry : uru.getUploadRequestEntries()) {
-					entries.add(new EntryDto(entry));
-					this.usedSpace += entry.getSize();
-				}
-			}
 			this.body = entity.getUploadRequestGroup().getBody();
 		}
 		this.recipient = null;
@@ -242,14 +226,6 @@ public class UploadRequestDto {
 		this.status = status;
 	}
 
-	public List<ContactDto> getContactList() {
-		return contactList;
-	}
-
-	public void setContactList(List<ContactDto> contactList) {
-		this.contactList = contactList;
-	}
-
 	public Integer getMaxFileCount() {
 		return maxFileCount;
 	}
@@ -274,19 +250,19 @@ public class UploadRequestDto {
 		this.maxFileSize = maxFileSize;
 	}
 
-	public boolean isCanDeleteDocument() {
+	public Boolean isCanDeleteDocument() {
 		return canDeleteDocument;
 	}
 
-	public void setCanDeleteDocument(boolean canDeleteDocument) {
+	public void setCanDeleteDocument(Boolean canDeleteDocument) {
 		this.canDeleteDocument = canDeleteDocument;
 	}
 
-	public boolean isCanClose() {
+	public Boolean isCanClose() {
 		return canClose;
 	}
 
-	public void setCanClose(boolean canClose) {
+	public void setCanClose(Boolean canClose) {
 		this.canClose = canClose;
 	}
 
@@ -304,14 +280,6 @@ public class UploadRequestDto {
 
 	public void setClosed(boolean isClosed) {
 		this.isClosed = isClosed;
-	}
-
-	public Set<EntryDto> getEntries() {
-		return entries;
-	}
-
-	public void setEntries(Set<EntryDto> entries) {
-		this.entries = entries;
 	}
 
 	public boolean isProtectedByPassword() {

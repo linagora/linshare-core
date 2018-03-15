@@ -96,20 +96,6 @@
 		<constructor-arg ref="wsAutoCompleteFacade" />
 	</bean>
 
-<!-- For now, upload request UI is not implement in linshare v2. Audit and notifications are not implemented too. -->
-	<bean id="userUploadRequestRestService" class="org.linagora.linshare.webservice.userv1.impl.UploadRequestRestServiceImpl">
-		<constructor-arg ref="wsUploadRequestFacade" />
-	</bean>
-
-	<bean id="userUploadRequestGroupRestService" class="org.linagora.linshare.webservice.userv1.impl.UploadRequestGroupRestServiceImpl">
-		<constructor-arg ref="wsUploadRequestGroupFacade"/>
-	</bean>
-
-	<bean id="userUploadRequestTemplateRestService" class="org.linagora.linshare.webservice.userv1.impl.UploadRequestTemplateRestServiceImpl">
-		<constructor-arg ref="wsUploadRequestTemplateFacade"/>
-	</bean>
-
-
 	<jaxrs:server id="restContainer" address="/rest/user">
 		<jaxrs:serviceBeans>
 			<ref bean="userEnumRestService" />
@@ -128,9 +114,6 @@
 			<ref bean="userMailingListRestService" />
 			<ref bean="userMimeTypeRestService" />
 			<ref bean="userAutoCompleteRestService" />
-			<ref bean="userUploadRequestRestService" /> 
-			<ref bean="userUploadRequestGroupRestService" /> 
- 			<ref bean="userUploadRequestTemplateRestService" /> 
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

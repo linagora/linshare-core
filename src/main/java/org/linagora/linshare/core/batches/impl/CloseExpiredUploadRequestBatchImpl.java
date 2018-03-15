@@ -94,9 +94,9 @@ public class CloseExpiredUploadRequestBatchImpl extends GenericBatchImpl impleme
 			throws BatchBusinessException, BusinessException {
 		List<MailContainerWithRecipient> notifications = Lists.newArrayList();
 		SystemAccount account = getSystemAccount();
-		UploadRequest uploadRequest = uploadRequestService.findRequestByUuid(account, null, identifier);
+		UploadRequest uploadRequest = uploadRequestService.find(account, null, identifier);
 		ResultContext context = new UploadRequestBatchResultContext(uploadRequest);
-		console.logInfo(batchRunContext, total, position, "processing uplaod request : ", uploadRequest.getUuid());
+		console.logInfo(batchRunContext, total, position, "processing upload request : ", uploadRequest.getUuid());
 		uploadRequest.updateStatus(UploadRequestStatus.CLOSED);
 		uploadRequest = uploadRequestService.updateRequest(account, uploadRequest.getUploadRequestGroup().getOwner(), uploadRequest);
 		for (UploadRequestUrl u : uploadRequest.getUploadRequestURLs()) {

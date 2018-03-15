@@ -46,8 +46,6 @@ public interface UploadRequestBusinessService {
 
 	List<UploadRequest> findAll(UploadRequestGroup uploadRequestGroup, List<UploadRequestStatus> statusList);
 
-	List<UploadRequest> findAll(UploadRequestStatus... status);
-
 	List<UploadRequest> findAll(List<AbstractDomain> domains,
 			List<UploadRequestStatus> status, Date afterDate, Date beforeDate);
 

@@ -72,7 +72,7 @@ import org.linagora.linshare.mongo.entities.logs.UploadRequestUrlAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.webservice.utils.UploadRequestUtils;
 
-public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
+public class UploadRequestUrlServiceImpl extends GenericServiceImpl<Account, UploadRequestUrl> implements UploadRequestUrlService {
 
 	private final UploadRequestUrlBusinessService uploadRequestUrlBusinessService;
 
@@ -84,8 +84,6 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 
 	private final UploadRequestEntryService uploadRequestEntryService;
 
-	private final UploadRequestUrlResourceAccessControl uploadRequestUrlRac;
-
 	private final LogEntryService logEntryService;
 
 	public UploadRequestUrlServiceImpl(
@@ -94,15 +92,14 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 			final MailBuildingService mailBuildingService,
 			final NotifierService notifierService,
 			final UploadRequestEntryService uploadRequestEntryService,
-			final UploadRequestUrlResourceAccessControl uploadRequestUrlRac,
+			final UploadRequestUrlResourceAccessControl rac,
 			final LogEntryService logEntryService) {
-		super();
+		super(rac);
 		this.uploadRequestUrlBusinessService = uploadRequestUrlBusinessService;
 		this.accountRepository = accountRepository;
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
 		this.uploadRequestEntryService = uploadRequestEntryService;
-		this.uploadRequestUrlRac =  uploadRequestUrlRac;
 		this.logEntryService = logEntryService;
 	}
 
@@ -204,7 +201,6 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 					"You do not have the right to get this upload request url : "
 							+ requestUrl.getUuid());
 		}
-
 		if (!(request.getStatus().equals(UploadRequestStatus.ENABLED) || request
 				.getStatus().equals(UploadRequestStatus.CLOSED))) {
 			throw new BusinessException(
@@ -212,7 +208,6 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 					"The current upload request url is not available : "
 							+ requestUrl.getUuid());
 		}
-
 		Calendar now = GregorianCalendar.getInstance();
 		Calendar compare = GregorianCalendar.getInstance();
 		compare.setTime(request.getActivationDate());
@@ -288,12 +283,12 @@ public class UploadRequestUrlServiceImpl implements UploadRequestUrlService {
 		Validate.notEmpty(uploadRequestUrlUuid, "uploadRequestUrlUuid is required.");
 		UploadRequestUrl uploadRequestUrl = uploadRequestUrlBusinessService.findByUuid(uploadRequestUrlUuid);
 		Validate.notNull(uploadRequestUrl, "UploadRequestUrl not found.");
-		uploadRequestUrlRac.checkDeletePermission(authUser, actor, UploadRequestUrl.class,
+		checkDeletePermission(authUser, actor, UploadRequestUrl.class,
 				BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, uploadRequestUrl);
 		UploadRequestUtils.checkStatusPermission(uploadRequestUrl.getUploadRequest().getStatus(),
 				"You have no rights to delete recipients");
 		Account owner = uploadRequestUrl.getUploadRequest().getUploadRequestGroup().getOwner();
-		uploadRequestUrlRac.checkDeletePermission(actor, owner, UploadRequestUrl.class,
+		checkDeletePermission(actor, owner, UploadRequestUrl.class,
 				BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, uploadRequestUrl);
 		uploadRequestUrlBusinessService.delete(uploadRequestUrl);
 		if (uploadRequestUrl.getUploadRequest().getEnableNotification()) {

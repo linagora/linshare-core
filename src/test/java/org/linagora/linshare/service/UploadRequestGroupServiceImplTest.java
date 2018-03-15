@@ -80,13 +80,6 @@ import com.google.common.collect.Lists;
 public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
 	private static Logger logger = LoggerFactory.getLogger(UploadRequestGroupServiceImplTest.class);
 
-	private LinShareWiser wiser;
-
-	public UploadRequestGroupServiceImplTest() {
-		super();
-		wiser = new LinShareWiser(2525);
-	}
-
 	@Qualifier("userRepository")
 	@Autowired
 	private UserRepository<User> userRepository;
@@ -111,6 +104,13 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 
 	private Contact yoda;
 
+	private LinShareWiser wiser;
+
+	public UploadRequestGroupServiceImplTest() {
+		super();
+		wiser = new LinShareWiser(2525);
+	}
+
 	@Before
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
@@ -123,20 +123,10 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 		yoda = repository.findByMail("yoda@linshare.org");
 		john.setDomain(subDomain);
 		// UPLOAD REQUEST CREATE
-		ure.setCanClose(true);
-		ure.setMaxDepositSize((long) 100);
-		ure.setMaxFileCount(new Integer(3));
-		ure.setMaxFileSize((long) 50);
-		ure.setStatus(UploadRequestStatus.CREATED);
-		ure.setExpiryDate(new Date());
-		ure.setSecured(false);
-		ure.setCanEditExpiryDate(true);
-		ure.setCanDelete(true);
-		ure.setLocale("en");
-		ure.setActivationDate(new Date());
-		List<UploadRequest> eList = uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda),
-				"This is a subject", "This is a body", false);
-		ure = eList.get(0);
+		ure = initUploadRequest();
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, ure, Lists.newArrayList(yoda), "This is a subject",
+				"This is a body", false);
+		ure = uploadRequestGroup.getUploadRequests().iterator().next();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -150,15 +140,17 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 	@Test
 	public void createUploadRequest() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		List<UploadRequest> eList = Lists.newArrayList();
-		eList = uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
-		Assert.assertNotNull(eList.get(0));
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, ure, Lists.newArrayList(yoda), "This is a subject",
+				"This is a body", false);
+		Assert.assertNotNull(uploadRequestGroup);
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
+
 	@Test
 	public void findAll() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		List<UploadRequestGroup> groups = uploadRequestGroupService.findAllGroupRequest(john, john, null);
+		List<UploadRequestGroup> groups = uploadRequestGroupService.findAll(john, john, null);
 		Assert.assertNotNull(groups.get(0));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -170,26 +162,26 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 		calendar.add(Calendar.DAY_OF_MONTH, 1);
 		Date tomorrow = calendar.getTime();
 		ure.setActivationDate(tomorrow);
-		uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
-		List<UploadRequestGroup> groups = uploadRequestGroupService.findAllGroupRequest(john, john, Lists.newArrayList(UploadRequestStatus.ENABLED));
-		Assert.assertEquals(uploadRequestGroupService.findAllGroupRequest(john, john, null).size() - 1, groups.size());
+		uploadRequestGroupService.create(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		List<UploadRequestGroup> groups = uploadRequestGroupService.findAll(john, john, Lists.newArrayList(UploadRequestStatus.ENABLED));
+		Assert.assertEquals(uploadRequestGroupService.findAll(john, john, null).size() - 1, groups.size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
 	public void updateStatus() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
-		Assert.assertEquals(UploadRequestStatus.ENABLED, ure.getUploadRequestGroup().getStatus());
-
+		UploadRequest uploadRequest = initUploadRequest();
+		UploadRequestGroup group = uploadRequestGroupService.create(john, john, uploadRequest, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		Assert.assertEquals(UploadRequestStatus.ENABLED, group.getStatus());
 		// Update upload request group status
-
-		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(), UploadRequestStatus.CLOSED, false);
-		Assert.assertEquals(UploadRequestStatus.CLOSED, ure.getUploadRequestGroup().getStatus());
-		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(), UploadRequestStatus.ARCHIVED, true);
-		Assert.assertEquals(UploadRequestStatus.ARCHIVED, ure.getUploadRequestGroup().getStatus());
-		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(), UploadRequestStatus.DELETED, false);
-		Assert.assertEquals(UploadRequestStatus.DELETED, ure.getUploadRequestGroup().getStatus());
+		uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.CLOSED, false);
+		Assert.assertEquals(UploadRequestStatus.CLOSED, group.getStatus());
+		uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.ARCHIVED, true);
+		Assert.assertEquals(UploadRequestStatus.ARCHIVED, group.getStatus());
+		uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.DELETED, false);
+		Assert.assertEquals(UploadRequestStatus.DELETED, group.getStatus());
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -199,17 +191,18 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.DAY_OF_MONTH, 1);
 		Date tomorrow = calendar.getTime();
-		ure.setActivationDate(tomorrow);
-		uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
-		Assert.assertEquals(UploadRequestStatus.CREATED, ure.getUploadRequestGroup().getStatus());
-		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(), UploadRequestStatus.CANCELED, false);
-		Assert.assertEquals(UploadRequestStatus.CANCELED, ure.getUploadRequestGroup().getStatus());
+		UploadRequest uploadRequest = initUploadRequest();
+		uploadRequest.setActivationDate(tomorrow);
+		UploadRequestGroup group = uploadRequestGroupService.create(john, john, uploadRequest, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
+		Assert.assertEquals(UploadRequestStatus.CREATED, group.getStatus());
+		uploadRequestGroupService.updateStatus(john, john, group.getUuid(), UploadRequestStatus.CANCELED, false);
+		Assert.assertEquals(UploadRequestStatus.CANCELED, group.getStatus());
 	}
 
 	@Test
 	public void updateStatusToClosedWithAlreadyClosedUploadRequest() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject",
+		uploadRequestGroupService.create(john, john, ure, Lists.newArrayList(yoda), "This is a subject",
 				"This is a body", false);
 		Assert.assertEquals(UploadRequestStatus.ENABLED, ure.getUploadRequestGroup().getStatus());
 		uploadRequestService.updateStatus(john, john, ure.getUuid(), UploadRequestStatus.CLOSED, false);
@@ -218,13 +211,14 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 		uploadRequestGroupService.updateStatus(john, john, ure.getUploadRequestGroup().getUuid(),
 				UploadRequestStatus.CLOSED, false);
 		Assert.assertEquals(UploadRequestStatus.CLOSED, ure.getUploadRequestGroup().getStatus());
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
 	public void update() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		UploadRequestGroup group = uploadRequestGroupService.findRequestGroupByUuid(john, john, ure.getUploadRequestGroup().getUuid());
+		UploadRequestGroup group = uploadRequestGroupService.find(john, john, ure.getUploadRequestGroup().getUuid());
 		List<UploadRequest> uploadRequests = uploadRequestService.findAll(john, john, group, null);
 		group.setUploadRequests(uploadRequests.stream().collect(Collectors.toSet()));
 		group.setCanClose(false);
@@ -235,16 +229,17 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 		UploadRequest uploadRequest = uploadRequests.get(0);
 		Assert.assertEquals(false, uploadRequest.isCanClose());
 		Assert.assertEquals(new Integer(5), uploadRequest.getMaxFileCount());
+		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
 	public void updateStatusToPurged() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		List<UploadRequest> eList = uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda),
-				"This is a subject", "This is a body", false);
-		UploadRequest createdUploadRequest = eList.get(0);
-		uploadRequestGroupService.createRequest(john, john, createdUploadRequest, Lists.newArrayList(yoda), "This is a subject",
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, ure, Lists.newArrayList(yoda), "This is a subject",
+				"This is a body", false);
+		UploadRequest createdUploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
+		uploadRequestGroupService.create(john, john, createdUploadRequest, Lists.newArrayList(yoda), "This is a subject",
 				"This is a body", false);
 		Assert.assertEquals(UploadRequestStatus.ENABLED, createdUploadRequest.getUploadRequestGroup().getStatus());
 		// Update upload request group status
@@ -265,11 +260,11 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 	@Test
 	public void updateStatusToPurgedAndCopy() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		List<UploadRequest> eList = uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda),
-				"This is a subject", "This is a body", false);
-		UploadRequest createdUploadRequest = eList.get(0);
-		uploadRequestGroupService.createRequest(john, john, createdUploadRequest, Lists.newArrayList(yoda), "This is a subject",
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, ure, Lists.newArrayList(yoda), "This is a subject",
 				"This is a body", false);
+		UploadRequest createdUploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
+		uploadRequestGroupService.create(john, john, createdUploadRequest, Lists.newArrayList(yoda),
+				"This is a subject", "This is a body", false);
 		Assert.assertEquals(UploadRequestStatus.ENABLED, createdUploadRequest.getUploadRequestGroup().getStatus());
 		// Update upload request group status
 		uploadRequestGroupService.updateStatus(john, john, createdUploadRequest.getUploadRequestGroup().getUuid(),
@@ -285,4 +280,20 @@ public class UploadRequestGroupServiceImplTest extends AbstractTransactionalJUni
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
+	// helpers
+	private UploadRequest initUploadRequest() {
+		UploadRequest uploadRequest = new UploadRequest();
+		uploadRequest.setCanClose(true);
+		uploadRequest.setMaxDepositSize((long) 100);
+		uploadRequest.setMaxFileCount(new Integer(3));
+		uploadRequest.setMaxFileSize((long) 50);
+		uploadRequest.setStatus(UploadRequestStatus.CREATED);
+		uploadRequest.setExpiryDate(new Date());
+		uploadRequest.setSecured(false);
+		uploadRequest.setCanEditExpiryDate(true);
+		uploadRequest.setCanDelete(true);
+		uploadRequest.setLocale("en");
+		uploadRequest.setActivationDate(new Date());
+		return uploadRequest;
+	}
 }

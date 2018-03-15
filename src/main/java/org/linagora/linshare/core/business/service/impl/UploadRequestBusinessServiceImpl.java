@@ -60,12 +60,6 @@ public class UploadRequestBusinessServiceImpl implements
 		return uploadRequestRepository.findAll(uploadRequestGroup, statusList);
 	}
 
-//	AKO: method unused.
-	@Override
-	public List<UploadRequest> findAll(UploadRequestStatus... status) {
-		return uploadRequestRepository.findByStatus(status);
-	}
-
 	@Override
 	public List<UploadRequest> findAll(List<AbstractDomain> domains,
 			List<UploadRequestStatus> status, Date afterDate, Date beforeDate) {

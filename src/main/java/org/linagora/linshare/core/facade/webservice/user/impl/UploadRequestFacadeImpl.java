@@ -68,7 +68,7 @@ public class UploadRequestFacadeImpl extends GenericFacadeImpl implements Upload
 		Validate.notEmpty(uuid, "Upload request uuid must be set.");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
-		UploadRequest ur = uploadRequestService.findRequestByUuid(authUser, actor, uuid);
+		UploadRequest ur = uploadRequestService.find(authUser, actor, uuid);
 		return new UploadRequestDto(ur, true);
 	}
 

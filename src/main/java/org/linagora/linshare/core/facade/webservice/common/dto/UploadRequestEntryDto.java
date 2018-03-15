@@ -99,7 +99,7 @@ public class UploadRequestEntryDto {
 	public UploadRequestEntryDto() {
 		super();
 	}
-	
+
 	public UploadRequestEntryDto(UploadRequestEntry entry) {
 		super();
 		this.entryOwner = new AccountDto(entry.getEntryOwner(), false);
@@ -114,7 +114,7 @@ public class UploadRequestEntryDto {
 		this.cmisSync = entry.isCmisSync();
 		this.documentDto = new DocumentDto(entry);
 	}
-	
+
 	public AccountDto getEntryOwner() {
 		return entryOwner;
 	}

@@ -40,7 +40,6 @@ import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
-import org.linagora.linshare.core.domain.entities.User;
 
 public interface UploadRequestRepository extends
 		AbstractRepository<UploadRequest> {
@@ -52,15 +51,6 @@ public interface UploadRequestRepository extends
 	 * @return found uploadRequest (null if no uploadRequestEntry found).
 	 */
 	UploadRequest findByUuid(String uuid);
-
-	/**
-	 * Find uploadRequests using their owner.
-	 * 
-	 * @param owner
-	 * @param statusList List of status.
-	 * @return found uploadRequests otherwise null.
-	 */
-	List<UploadRequest> findByOwner(User owner, List<UploadRequestStatus> statusList);
 
 	/**
 	 * Find uploadRequests using their status.

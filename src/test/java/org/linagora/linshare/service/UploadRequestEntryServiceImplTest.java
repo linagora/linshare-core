@@ -38,7 +38,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
-import java.util.List;
 
 import org.apache.cxf.helpers.IOUtils;
 import org.junit.After;
@@ -56,6 +55,7 @@ import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
+import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -91,34 +91,27 @@ import com.google.common.collect.Lists;
 public class UploadRequestEntryServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
 	private static Logger logger = LoggerFactory.getLogger(UploadRequestEntryServiceImplTest.class);
 
-	private LinShareWiser wiser;
-
-	public UploadRequestEntryServiceImplTest() {
-		super();
-		wiser = new LinShareWiser(2525);
-	}
-
 	@Qualifier("userRepository")
 	@Autowired
 	private UserRepository<User> userRepository;
 
 	@Autowired
 	private ContactRepository repository;
-	
+
 	@Autowired
 	private UploadRequestGroupService uploadRequestGroupService;
-	
+
 	@Autowired
 	private UploadRequestEntryService uploadRequestEntryService;
-	
+
 	@Autowired
 	private UploadRequestEntryRepository uploadRequestEntryRepository;
-	
+
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
-	
+
 	@Autowired
-	private UploadRequestService uploadRequestService; 
+	private UploadRequestService uploadRequestService;
 
 	@Qualifier("jcloudFileDataStore")
 	@Autowired
@@ -126,7 +119,7 @@ public class UploadRequestEntryServiceImplTest extends AbstractTransactionalJUni
 
 	@Autowired
 	private DocumentRepository documentRepository;
-	
+
 	private UploadRequest ure = new UploadRequest();
 
 	private LoadingServiceTestDatas datas;
@@ -139,14 +132,22 @@ public class UploadRequestEntryServiceImplTest extends AbstractTransactionalJUni
 
 	private Contact yoda;
 
-	private final InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
+	private final InputStream stream = Thread.currentThread().getContextClassLoader()
+			.getResourceAsStream("linshare-default.properties");
 
 	private final String fileName = "linshare-default.properties";
 
 	private final String comment = "file description";
-	
+
 	private UploadRequestEntry uploadRequestEntry;
-	
+
+	private LinShareWiser wiser;
+
+	public UploadRequestEntryServiceImplTest() {
+		super();
+		wiser = new LinShareWiser(2525);
+	}
+
 	@Before
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
@@ -161,7 +162,7 @@ public class UploadRequestEntryServiceImplTest extends AbstractTransactionalJUni
 		AbstractDomain subDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlSubDomain);
 		yoda = repository.findByMail("yoda@linshare.org");
 		john.setDomain(subDomain);
-		//UPLOAD REQUEST CREATE
+		// UPLOAD REQUEST CREATE
 		ure.setCanClose(true);
 		ure.setMaxDepositSize((long) 100);
 		ure.setMaxFileCount(new Integer(3));
@@ -173,9 +174,9 @@ public class UploadRequestEntryServiceImplTest extends AbstractTransactionalJUni
 		ure.setCanDelete(true);
 		ure.setLocale("en");
 		ure.setActivationDate(new Date());
-		List<UploadRequest> eList = Lists.newArrayList();
-		eList = uploadRequestGroupService.createRequest(john, john, ure, Lists.newArrayList(yoda), "This is a subject", "This is a body", false);
-		uploadRequest = eList.get(0);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, ure, Lists.newArrayList(yoda), "This is a subject",
+				"This is a body", false);
+		uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -188,7 +189,7 @@ public class UploadRequestEntryServiceImplTest extends AbstractTransactionalJUni
 
 	@Rule
 	public ExpectedException expectedEx = ExpectedException.none();
-	
+
 	@Test
 	public void testUploadRequestCreateDocumentEntry() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
@@ -222,7 +223,7 @@ public class UploadRequestEntryServiceImplTest extends AbstractTransactionalJUni
 		uploadRequestEntryService.find(jane, jane, uploadRequestEntry.getUuid());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
 	@Test
 	public void deleteUploadRequestEntry() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);

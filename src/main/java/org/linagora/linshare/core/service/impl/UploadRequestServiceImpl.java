@@ -42,8 +42,6 @@ import java.util.Set;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestBusinessService;
-import org.linagora.linshare.core.business.service.UploadRequestGroupBusinessService;
-import org.linagora.linshare.core.business.service.UploadRequestHistoryBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestTemplateBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -53,7 +51,6 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
-import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
 import org.linagora.linshare.core.domain.entities.UploadRequestTemplate;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
@@ -67,7 +64,6 @@ import org.linagora.linshare.core.notifications.context.UploadRequestCloseByOwne
 import org.linagora.linshare.core.notifications.context.UploadRequestClosedByRecipientEmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestUpdateSettingsEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
-import org.linagora.linshare.core.rac.UploadRequestGroupResourceAccessControl;
 import org.linagora.linshare.core.rac.UploadRequestResourceAccessControl;
 import org.linagora.linshare.core.rac.UploadRequestTemplateResourceAccessControl;
 import org.linagora.linshare.core.repository.AccountRepository;
@@ -85,43 +81,42 @@ import com.google.common.collect.Lists;
 public class UploadRequestServiceImpl extends GenericServiceImpl<Account, UploadRequest> implements UploadRequestService {
 
 	private final AccountRepository<Account> accountRepository;
+
 	private final UploadRequestBusinessService uploadRequestBusinessService;
-	private final UploadRequestGroupBusinessService uploadRequestGroupBusinessService;
-	private final UploadRequestHistoryBusinessService uploadRequestHistoryBusinessService;
+
 	private final UploadRequestTemplateBusinessService uploadRequestTemplateBusinessService;
+
 	private final DomainPermissionBusinessService domainPermissionBusinessService;
+
 	private final MailBuildingService mailBuildingService;
+
 	private final NotifierService notifierService;
+
 	private final UploadRequestTemplateResourceAccessControl templateRac;
-	private final UploadRequestGroupResourceAccessControl groupRac;
+
 	private final LogEntryService logEntryService;
+
 	private final UploadRequestEntryService uploadRequestEntryService;
 
 	public UploadRequestServiceImpl(
 			final AccountRepository<Account> accountRepository,
 			final UploadRequestBusinessService uploadRequestBusinessService,
-			final UploadRequestGroupBusinessService uploadRequestGroupBusinessService,
-			final UploadRequestHistoryBusinessService uploadRequestHistoryBusinessService,
 			final UploadRequestTemplateBusinessService uploadRequestTemplateBusinessService,
 			final DomainPermissionBusinessService domainPermissionBusinessService,
 			final MailBuildingService mailBuildingService,
 			final NotifierService notifierService,
 			final UploadRequestResourceAccessControl rac,
 			final UploadRequestTemplateResourceAccessControl templateRac,
-			final UploadRequestGroupResourceAccessControl groupRac,
 			final LogEntryService logEntryService,
 			final UploadRequestEntryService uploadRequestEntryService) {
 		super(rac);
 		this.accountRepository = accountRepository;
 		this.uploadRequestBusinessService = uploadRequestBusinessService;
-		this.uploadRequestGroupBusinessService = uploadRequestGroupBusinessService;
-		this.uploadRequestHistoryBusinessService = uploadRequestHistoryBusinessService;
 		this.uploadRequestTemplateBusinessService = uploadRequestTemplateBusinessService;
 		this.domainPermissionBusinessService = domainPermissionBusinessService;
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
 		this.templateRac = templateRac;
-		this.groupRac = groupRac;
 		this.logEntryService = logEntryService;
 		this.uploadRequestEntryService = uploadRequestEntryService;
 	}
@@ -135,7 +130,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	}
 
 	@Override
-	public UploadRequest findRequestByUuid(Account actor, Account owner, String uuid)
+	public UploadRequest find(Account actor, Account owner, String uuid)
 			throws BusinessException {
 		UploadRequest ret = uploadRequestBusinessService.findByUuid(uuid);
 		if (ret == null) {
@@ -164,7 +159,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 			boolean copy) throws BusinessException {
 		Validate.notNull(authUser, "authUser must be set.");
 		Validate.notNull(actor, "Actor must be set.");
-		UploadRequest req = findRequestByUuid(authUser, actor, uuid);
+		UploadRequest req = find(authUser, actor, uuid);
 		Validate.notNull(req);
 		checkUpdatePermission(authUser, actor, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, req);
 		if (!req.getUploadRequestGroup().getRestricted() && !status.equals(req.getUploadRequestGroup().getStatus())) {
@@ -204,10 +199,8 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 
 	private void archiveEntries(UploadRequest req, Account authUser, Account actor, boolean purge, boolean copy) {
 		if (purge || copy) {
-			Set<UploadRequestUrl> requestUrls = req.getUploadRequestURLs();
-			for (UploadRequestUrl uploadRequestUrl : requestUrls) {
-				Set<UploadRequestEntry> uploadRequestEntries = uploadRequestUrl.getUploadRequestEntries();
-				for (UploadRequestEntry requestEntry : uploadRequestEntries) {
+			for (UploadRequestUrl uploadRequestUrl : req.getUploadRequestURLs()) {
+				for (UploadRequestEntry requestEntry : uploadRequestUrl.getUploadRequestEntries()) {
 					if (!requestEntry.getCopied() && copy) {
 						uploadRequestEntryService.copy(authUser, actor, requestEntry);
 					}
@@ -226,7 +219,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		Validate.notNull(owner, "Owner must be set.");
 		Validate.notEmpty(uuid, "Uuid must be set.");
 		Validate.notNull(object, "Object must be set.");
-		UploadRequest uploadRequest = findRequestByUuid(actor, owner, uuid);
+		UploadRequest uploadRequest = find(actor, owner, uuid);
 		UploadRequestAuditLogEntry log = new UploadRequestAuditLogEntry(new AccountMto(actor), new AccountMto(owner),
 				LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST, uploadRequest.getUuid(), uploadRequest);
 		checkUpdatePermission(actor, owner, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
@@ -284,35 +277,6 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 	}
 
 	@Override
-	public UploadRequestGroup updateRequestGroup(Account actor,
-			Account owner, UploadRequestGroup group) throws BusinessException {
-		preChecks(actor, owner);
-		groupRac.checkUpdatePermission(actor, group.getUploadRequests().iterator().next().getUploadRequestGroup().getOwner(), UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, group);
-		return uploadRequestGroupBusinessService.update(group);
-	}
-
-	@Override
-	public void deleteRequestGroup(Account actor, Account owner, UploadRequestGroup group)
-			throws BusinessException {
-		preChecks(actor, owner);
-		groupRac.checkDeletePermission(actor, group.getUploadRequests().iterator().next().getUploadRequestGroup().getOwner(), UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, group);
-		uploadRequestGroupBusinessService.delete(group);
-	}
-
-	@Override
-	public Set<UploadRequestHistory> findAllRequestHistory(Account actor, Account owner,
-			String uploadRequestUuid) throws BusinessException {
-		UploadRequest request = findRequestByUuid(actor, owner, uploadRequestUuid);
-		if (!domainPermissionBusinessService.isAdminForThisUploadRequest(actor,
-				request)) {
-			throw new BusinessException(
-					BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
-					"Upload request history search forbidden");
-		}
-		return request.getUploadRequestHistory();
-	}
-
-	@Override
 	public Set<UploadRequest> findAll(Account actor,
 			List<UploadRequestStatus> status, Date afterDate, Date beforeDate)
 			throws BusinessException {
@@ -337,30 +301,6 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 				.getMyAdministredDomains(actor);
 		return new HashSet<UploadRequest>(uploadRequestBusinessService.findAll(
 				myAdministredDomains, status, afterDate, beforeDate));
-	}
-
-	@Override
-	public UploadRequestHistory findRequestHistoryByUuid(Account actor,
-			String uuid) {
-		return uploadRequestHistoryBusinessService.findByUuid(uuid);
-	}
-
-	@Override
-	public UploadRequestHistory createRequestHistory(Account actor,
-			UploadRequestHistory history) throws BusinessException {
-		return uploadRequestHistoryBusinessService.create(history);
-	}
-
-	@Override
-	public UploadRequestHistory updateRequestHistory(Account actor,
-			UploadRequestHistory history) throws BusinessException {
-		return uploadRequestHistoryBusinessService.update(history);
-	}
-
-	@Override
-	public void deleteRequestHistory(Account actor, UploadRequestHistory history)
-			throws BusinessException {
-		uploadRequestHistoryBusinessService.delete(history);
 	}
 
 	@Override
@@ -435,7 +375,7 @@ public class UploadRequestServiceImpl extends GenericServiceImpl<Account, Upload
 		checkListPermission(actor, owner, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
 				null);
 		List<UploadRequestEntry> uploadRequestEntries = Lists.newArrayList();
-		UploadRequest uploadRequest = findRequestByUuid(actor, owner, uploadRequestUuid);
+		UploadRequest uploadRequest = find(actor, owner, uploadRequestUuid);
 		Set<UploadRequestUrl> uploadRequestUrls = uploadRequest.getUploadRequestURLs();
 		for (UploadRequestUrl uploadRequestUrl : uploadRequestUrls) {
 			uploadRequestEntries.addAll(uploadRequestUrl.getUploadRequestEntries());

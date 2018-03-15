@@ -38,7 +38,6 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
-import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.UploadProposition;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
@@ -64,23 +63,6 @@ public interface MailBuildingService {
 	MailContainerWithRecipient buildRejectUploadProposition(User sender, UploadProposition proposition)
 			throws BusinessException;
 
-	MailContainerWithRecipient buildUpdateUploadRequest(User owner, UploadRequestUrl request)
-			throws BusinessException;
-
 	MailContainerWithRecipient buildFilterUploadRequest(User owner, UploadRequestUrl request)
 			throws BusinessException;
-
-	// TODO ?
-	MailContainerWithRecipient buildCreateUploadRequest(User owner, UploadRequestUrl request)
-			throws BusinessException;
-
-	MailContainerWithRecipient buildRemindUploadRequest(User owner, UploadRequestUrl request)
-			throws BusinessException;
-
-	MailContainerWithRecipient buildCloseUploadRequestByOwner(User owner, UploadRequestUrl request)
-			throws BusinessException;
-
-	MailContainerWithRecipient buildDeleteUploadRequestByOwner(User owner, UploadRequestUrl request)
-			throws BusinessException;
-
 }

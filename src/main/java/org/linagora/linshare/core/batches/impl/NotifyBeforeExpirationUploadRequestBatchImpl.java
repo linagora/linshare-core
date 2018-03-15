@@ -91,7 +91,7 @@ public class NotifyBeforeExpirationUploadRequestBatchImpl extends GenericBatchIm
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		List<MailContainerWithRecipient> notifications = Lists.newArrayList();
-		UploadRequest uploadRequest = service.findRequestByUuid(getSystemAccount(), null, identifier);
+		UploadRequest uploadRequest = service.find(getSystemAccount(), null, identifier);
 		ResultContext context = new UploadRequestBatchResultContext(uploadRequest);
 		if (!uploadRequest.isNotified()) {
 			for (UploadRequestUrl urUrl : uploadRequest.getUploadRequestURLs()) {

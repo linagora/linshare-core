@@ -65,9 +65,13 @@ public class UploadRequestBatchImpl implements UploadRequestBatch {
 	private static final Logger logger = LoggerFactory.getLogger(UploadRequestBatchImpl.class);
 
 	private final UploadRequestRepository uploadRequestRepository;
+
 	private final UploadRequestService uploadRequestService;
+
 	private final MailBuildingService mailBuildingService;
+
 	private final NotifierService notifierService;
+
 	private final AccountRepository<Account> accountRepository;
 
 	public UploadRequestBatchImpl(

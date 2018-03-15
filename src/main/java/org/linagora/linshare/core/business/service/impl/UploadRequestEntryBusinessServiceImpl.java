@@ -75,6 +75,7 @@ import com.google.common.collect.Maps;
 
 public class UploadRequestEntryBusinessServiceImpl implements
 		UploadRequestEntryBusinessService {
+
 	private static final Logger logger = LoggerFactory.getLogger(UploadRequestEntryBusinessServiceImpl.class);
 
 	private final UploadRequestEntryRepository uploadRequestEntryRepository;
@@ -117,33 +118,35 @@ public class UploadRequestEntryBusinessServiceImpl implements
 	}
 
 	@Override
-	public UploadRequestEntry createUploadRequestEntryDocument(Account owner, File myFile, Long size, String fileName, String comment,
-			Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate,
-			boolean isFromCmis, String metadata, UploadRequestUrl uploadRequestUrl) throws BusinessException{
-	// add an entry for the file in DB
-	UploadRequestEntry upReqEntry = null;
-	try {
-		Document document = createDocument(owner, myFile, size, fileName, timeStampingUrl, mimeType);
-		if (comment == null) {
-			comment = "";
-		}
-		UploadRequestEntry upReqdocEntry = new UploadRequestEntry(owner, fileName, comment, document, uploadRequestUrl);
-		// We need to set an expiration date in case of file cleaner activation.
-		upReqdocEntry.setExpirationDate(expirationDate);
-		upReqdocEntry.setMetaData(metadata);
+	public UploadRequestEntry createUploadRequestEntryDocument(Account owner, File myFile, Long size, String fileName,
+			String comment, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate,
+			boolean isFromCmis, String metadata, UploadRequestUrl uploadRequestUrl) throws BusinessException {
+		// add an entry for the file in DB
+		UploadRequestEntry upReqEntry = null;
+		try {
+			Document document = createDocument(owner, myFile, size, fileName, timeStampingUrl, mimeType);
+			if (comment == null) {
+				comment = "";
+			}
+			UploadRequestEntry upReqdocEntry = new UploadRequestEntry(owner, fileName, comment, document,
+					uploadRequestUrl);
+			// We need to set an expiration date in case of file cleaner activation.
+			upReqdocEntry.setExpirationDate(expirationDate);
+			upReqdocEntry.setMetaData(metadata);
 
-		//aes encrypt ? check headers
-		if(checkIfIsCiphered) {
-			upReqdocEntry.setCiphered(checkIfFileIsCiphered(fileName, myFile));
+			// aes encrypt ? check headers
+			if (checkIfIsCiphered) {
+				upReqdocEntry.setCiphered(checkIfFileIsCiphered(fileName, myFile));
+			}
+			upReqdocEntry.setCmisSync(isFromCmis);
+			upReqEntry = uploadRequestEntryRepository.create(upReqdocEntry);
+			owner.getEntries().add(upReqEntry);
+		} catch (BusinessException e) {
+			logger.error("Could not add  " + fileName + " to user " + owner.getLsUuid() + ", reason : ", e);
+			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_INSERT_DOCUMENT,
+					"couldn't register the file in the database");
 		}
-		upReqdocEntry.setCmisSync(isFromCmis);
-		upReqEntry = uploadRequestEntryRepository.create(upReqdocEntry);
-		owner.getEntries().add(upReqEntry);
-	} catch (BusinessException e) {
-		logger.error("Could not add  " + fileName + " to user " + owner.getLsUuid() + ", reason : ", e);
-		throw new TechnicalException(TechnicalErrorCode.COULD_NOT_INSERT_DOCUMENT, "couldn't register the file in the database");
-	}
-	return upReqEntry;
+		return upReqEntry;
 	}
 
 	@Override
@@ -316,7 +319,7 @@ public class UploadRequestEntryBusinessServiceImpl implements
 	}
 
 	@Override
-	public InputStream getDocumentStream(UploadRequestEntry entry) {
+	public InputStream download(UploadRequestEntry entry) {
 		String UUID = entry.getDocument().getUuid();
 		if (UUID != null && UUID.length() > 0) {
 			logger.debug("retrieve from jackrabbity : " + UUID);

@@ -55,7 +55,8 @@ public class UploadRequestFacadeImpl extends AdminGenericFacadeImpl implements U
 
 	private final UploadRequestService uploadRequestService;
 
-	public UploadRequestFacadeImpl(AccountService accountService, UploadRequestService uploadRequestService) {
+	public UploadRequestFacadeImpl(AccountService accountService,
+			final UploadRequestService uploadRequestService) {
 		super(accountService);
 		this.uploadRequestService = uploadRequestService;
 	}
@@ -64,7 +65,8 @@ public class UploadRequestFacadeImpl extends AdminGenericFacadeImpl implements U
 	public Set<UploadRequestHistoryDto> findAllHistory(String uploadRequestUuid) throws BusinessException {
 		User authUser = checkAuthentication(Role.ADMIN);
 		Set<UploadRequestHistoryDto> dtos = Sets.newHashSet();
-		Set<UploadRequestHistory> res = uploadRequestService.findAllRequestHistory(authUser, null, uploadRequestUuid);
+		UploadRequest uploadRequest = uploadRequestService.find(authUser, null, uploadRequestUuid);
+		Set<UploadRequestHistory> res = uploadRequest.getUploadRequestHistory();
 		for (UploadRequestHistory u: res) {
 			dtos.add(new UploadRequestHistoryDto(u));
 		}

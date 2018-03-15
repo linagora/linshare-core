@@ -160,10 +160,6 @@
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 
-	<bean name="uploadRequestHistoryRepository" class="org.linagora.linshare.core.repository.hibernate.UploadRequestHistoryRepositoryImpl">
-		<constructor-arg ref="hibernateTemplate" />
-	</bean>
-
 	<bean name="uploadRequestRepository" class="org.linagora.linshare.core.repository.hibernate.UploadRequestRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>

@@ -72,9 +72,9 @@ public class UploadRequestDto {
 	// could be null
 	private Date expiryDate;
 
-	private boolean canDeleteDocument;
+	private Boolean canDeleteDocument;
 
-	private boolean canClose;
+	private Boolean canClose;
 
 	private String subject;
 

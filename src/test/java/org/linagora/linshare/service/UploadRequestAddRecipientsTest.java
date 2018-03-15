@@ -127,7 +127,7 @@ public class UploadRequestAddRecipientsTest extends AbstractTransactionalJUnit4S
 	@Test
 	public void addNewRecipientInRestrictedMode() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		List<UploadRequestGroup> uploadRequestGroups = uploadRequestGroupService.findAllGroupRequest(john, john, null);
+		List<UploadRequestGroup> uploadRequestGroups = uploadRequestGroupService.findAll(john, john, null);
 		Assert.assertEquals(uploadRequestGroups.size(), 3);
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroups.get(0);
 		uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
@@ -142,7 +142,7 @@ public class UploadRequestAddRecipientsTest extends AbstractTransactionalJUnit4S
 	@Test
 	public void addNewRecipientInGroupedMode() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		List<UploadRequestGroup> uploadRequestGroups = uploadRequestGroupService.findAllGroupRequest(jane, jane, null);
+		List<UploadRequestGroup> uploadRequestGroups = uploadRequestGroupService.findAll(jane, jane, null);
 		Assert.assertEquals(uploadRequestGroups.size(), 1);
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroups.get(0);
 		Assert.assertEquals(uploadRequestGroup.getUploadRequests().size(), 1);

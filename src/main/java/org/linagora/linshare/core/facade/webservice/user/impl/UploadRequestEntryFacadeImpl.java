@@ -75,7 +75,7 @@ public class UploadRequestEntryFacadeImpl extends GenericFacadeImpl implements U
 		Validate.notEmpty(ulploadRequestEntryUuid, "Missing required document uuid");
 		logger.debug("downloading for document : " + ulploadRequestEntryUuid);
 		User authUser = checkAuthentication();
-		return uploadRequestEntryService.getDocumentStream(authUser, authUser, ulploadRequestEntryUuid);
+		return uploadRequestEntryService.download(authUser, authUser, ulploadRequestEntryUuid);
 	}
 
 	@Override

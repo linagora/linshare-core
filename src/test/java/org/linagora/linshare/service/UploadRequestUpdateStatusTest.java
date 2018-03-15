@@ -36,7 +36,9 @@ package org.linagora.linshare.service;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Calendar;
 import java.util.Date;
+
 import org.apache.cxf.helpers.IOUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -48,6 +50,7 @@ import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
+import org.linagora.linshare.core.domain.entities.UploadRequestGroup;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -103,6 +106,9 @@ public class UploadRequestUpdateStatusTest extends AbstractTransactionalJUnit4Sp
 
 	private UploadRequest referenceUploadRequest = new UploadRequest();
 
+	private final InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
+
+	private final String fileName = "linshare-default.properties";
 
 	private LinShareWiser wiser;
 
@@ -110,11 +116,6 @@ public class UploadRequestUpdateStatusTest extends AbstractTransactionalJUnit4Sp
 		super();
 		wiser = new LinShareWiser(2525);
 	}
-
-	private final InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
-
-	private final String fileName = "linshare-default.properties";
-
 
 	@Before
 	public void init() throws Exception {
@@ -124,12 +125,15 @@ public class UploadRequestUpdateStatusTest extends AbstractTransactionalJUnit4Sp
 		this.executeSqlScript("import-tests-upload-request.sql", false);
 		wiser.start();
 		// UPLOAD REQUEST CREATE
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.DAY_OF_MONTH, 10);
+		Date expiryDate = calendar.getTime();
 		referenceUploadRequest.setCanClose(true);
 		referenceUploadRequest.setMaxDepositSize((long) 100);
 		referenceUploadRequest.setMaxFileCount(new Integer(3));
 		referenceUploadRequest.setMaxFileSize((long) 5000000);
 		referenceUploadRequest.setStatus(UploadRequestStatus.CREATED);
-		referenceUploadRequest.setExpiryDate(new Date());
+		referenceUploadRequest.setExpiryDate(expiryDate);
 		referenceUploadRequest.setSecured(false);
 		referenceUploadRequest.setCanEditExpiryDate(true);
 		referenceUploadRequest.setCanDelete(true);
@@ -152,7 +156,8 @@ public class UploadRequestUpdateStatusTest extends AbstractTransactionalJUnit4Sp
 		IOUtils.transferTo(stream, tempFile);
 		Account actor = userRepository.findByMail("user1@linshare.org");
 		//CreateUploadRequest : STATUS ENABLED
-		UploadRequest uploadRequest = uploadRequestGroupService.createRequest(actor, (User)actor, referenceUploadRequest, Lists.newArrayList(new Contact("yoda@int4.linshare.dev")), "This is a subject", "This is a body", false).get(0);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(actor, (User)actor, referenceUploadRequest, Lists.newArrayList(new Contact("yoda@int4.linshare.dev")), "This is a subject", "This is a body", false);
+		UploadRequest uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
 		Assert.assertNotNull("This initial upload request is null", uploadRequest);
 		Assert.assertEquals("Wrong upload Request status", UploadRequestStatus.ENABLED, uploadRequest.getStatus());
 		//UploadFileIntoUploadRequest : STATUS ENABLED
@@ -174,7 +179,8 @@ public class UploadRequestUpdateStatusTest extends AbstractTransactionalJUnit4Sp
 		IOUtils.transferTo(stream, tempFile);
 		Account actor = userRepository.findByMail("user1@linshare.org");
 		//CreateUploadRequest : STATUS ENABLED
-		UploadRequest uploadRequest = uploadRequestGroupService.createRequest(actor, (User)actor, referenceUploadRequest, Lists.newArrayList(new Contact("yoda@int4.linshare.dev")), "This is a subject", "This is a body", false).get(0);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(actor, (User)actor, referenceUploadRequest, Lists.newArrayList(new Contact("yoda@int4.linshare.dev")), "This is a subject", "This is a body", false);
+		UploadRequest uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
 		Assert.assertNotNull("This initial upload request is null", uploadRequest);
 		Assert.assertEquals("Wrong upload Request status", UploadRequestStatus.ENABLED, uploadRequest.getStatus());
 		//UploadFileIntoUploadRequest : STATUS ENABLED
@@ -196,7 +202,8 @@ public class UploadRequestUpdateStatusTest extends AbstractTransactionalJUnit4Sp
 		IOUtils.transferTo(stream, tempFile);
 		Account actor = userRepository.findByMail("user1@linshare.org");
 		//CreateUploadRequest : STATUS ENABLED
-		UploadRequest uploadRequest = uploadRequestGroupService.createRequest(actor, (User)actor, referenceUploadRequest, Lists.newArrayList(new Contact("yoda@int4.linshare.dev")), "This is a subject", "This is a body", false).get(0);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(actor, (User)actor, referenceUploadRequest, Lists.newArrayList(new Contact("yoda@int4.linshare.dev")), "This is a subject", "This is a body", false);
+		UploadRequest uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
 		Assert.assertNotNull("This initial upload request is null", uploadRequest);
 		Assert.assertEquals("Wrong upload Request status", UploadRequestStatus.ENABLED, uploadRequest.getStatus());
 		//UploadFileIntoUploadRequest : STATUS ENABLED
@@ -216,7 +223,8 @@ public class UploadRequestUpdateStatusTest extends AbstractTransactionalJUnit4Sp
 		IOUtils.transferTo(stream, tempFile);
 		Account actor = userRepository.findByMail("user1@linshare.org");
 		//CreateUploadRequest : STATUS ENABLED
-		UploadRequest uploadRequest = uploadRequestGroupService.createRequest(actor, (User)actor, referenceUploadRequest, Lists.newArrayList(new Contact("yoda@int4.linshare.dev")), "This is a subject", "This is a body", false).get(0);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(actor, (User)actor, referenceUploadRequest, Lists.newArrayList(new Contact("yoda@int4.linshare.dev")), "This is a subject", "This is a body", false);
+		UploadRequest uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
 		Assert.assertNotNull("This initial upload request is null", uploadRequest);
 		Assert.assertEquals("Wrong upload Request status", UploadRequestStatus.ENABLED, uploadRequest.getStatus());
 		//UploadFileIntoUploadRequest : STATUS ENABLED
@@ -236,7 +244,8 @@ public class UploadRequestUpdateStatusTest extends AbstractTransactionalJUnit4Sp
 		IOUtils.transferTo(stream, tempFile);
 		Account actor = userRepository.findByMail("user1@linshare.org");
 		//CreateUploadRequest : STATUS ENABLED
-		UploadRequest uploadRequest = uploadRequestGroupService.createRequest(actor, (User)actor, referenceUploadRequest, Lists.newArrayList(new Contact("yoda@int4.linshare.dev")), "This is a subject", "This is a body", false).get(0);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(actor, (User)actor, referenceUploadRequest, Lists.newArrayList(new Contact("yoda@int4.linshare.dev")), "This is a subject", "This is a body", false);
+		UploadRequest uploadRequest = uploadRequestGroup.getUploadRequests().iterator().next();
 		Assert.assertNotNull("This initial upload request is null", uploadRequest);
 		Assert.assertEquals("Wrong upload Request status", UploadRequestStatus.ENABLED, uploadRequest.getStatus());
 		//UploadFileIntoUploadRequest : STATUS ENABLED
@@ -253,5 +262,4 @@ public class UploadRequestUpdateStatusTest extends AbstractTransactionalJUnit4Sp
 		uploadRequestService.updateStatus(actor, actor, uploadReq.getUuid(), requestStatus, copy);
 		Assert.assertEquals("Wrong upload Request status", requestStatus, uploadReq.getStatus());
 	}
-
 }

@@ -66,7 +66,6 @@ import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.UploadRequestDeleteFileByOwnerEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.UploadRequestEntryRessourceAccessControl;
-import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AntiSamyService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -196,70 +195,69 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		return upReqEntry;
 	}
 
-		@Override
-		public boolean mimeTypeFilteringStatus(Account actor) throws BusinessException {
-			AbstractDomain domain = abstractDomainService.retrieveDomain(actor.getDomain().getUuid());
-			Functionality mimeFunctionality = functionalityReadOnlyService.getMimeTypeFunctionality(domain);
-			return mimeFunctionality.getActivationPolicy().getStatus();
-		}
+	@Override
+	public boolean mimeTypeFilteringStatus(Account actor) throws BusinessException {
+		AbstractDomain domain = abstractDomainService.retrieveDomain(actor.getDomain().getUuid());
+		Functionality mimeFunctionality = functionalityReadOnlyService.getMimeTypeFunctionality(domain);
+		return mimeFunctionality.getActivationPolicy().getStatus();
+	}
 
-		@Override
-		public DocumentEntry copy(Account actor, Account owner, UploadRequestEntry uploadRequestEntry)
-				throws BusinessException {
-			DocumentEntry entity = null;
-			preChecks(actor, owner);
-			Validate.notEmpty(uploadRequestEntry.getDocument().getUuid(), "documentUuid is required.");
-			Validate.notEmpty(uploadRequestEntry.getName(), "fileName is required.");
-			Validate.notNull(uploadRequestEntry.getSize(), "size is required.");
-			checkCreatePermission(actor, owner, DocumentEntry.class, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, null);
-			checkSpace(owner, uploadRequestEntry.getSize());
-			UploadRequest uploadRequest = uploadRequestEntry.getUploadRequestUrl().getUploadRequest();
-			if (uploadRequest.getStatus().compareTo(UploadRequestStatus.CLOSED) > 0) {
-				throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FILE_CANNOT_BE_COPIED,
-						"You need first close the current upload request before copying file");
-			}
-			entity = documentEntryBusinessService.copy(owner, uploadRequestEntry);
-			uploadRequestEntry.setDocumentEntry(entity);
-			DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, entity, LogAction.CREATE);
-			log.setCause(LogActionCause.COPY);
-			log.setFromResourceUuid(uploadRequestEntry.getUuid());
-			logEntryService.insert(log);
-			return entity;
+	@Override
+	public DocumentEntry copy(Account actor, Account owner, UploadRequestEntry uploadRequestEntry)
+			throws BusinessException {
+		DocumentEntry entity = null;
+		preChecks(actor, owner);
+		Validate.notEmpty(uploadRequestEntry.getDocument().getUuid(), "documentUuid is required.");
+		Validate.notEmpty(uploadRequestEntry.getName(), "fileName is required.");
+		Validate.notNull(uploadRequestEntry.getSize(), "size is required.");
+		checkCreatePermission(actor, owner, DocumentEntry.class, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, null);
+		checkSpace(owner, uploadRequestEntry.getSize());
+		UploadRequest uploadRequest = uploadRequestEntry.getUploadRequestUrl().getUploadRequest();
+		if (uploadRequest.getStatus().compareTo(UploadRequestStatus.CLOSED) > 0) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_REQUEST_ENTRY_FILE_CANNOT_BE_COPIED,
+					"You need first close the current upload request before copying file");
 		}
+		entity = documentEntryBusinessService.copy(owner, uploadRequestEntry);
+		uploadRequestEntry.setDocumentEntry(entity);
+		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, entity, LogAction.CREATE);
+		log.setCause(LogActionCause.COPY);
+		log.setFromResourceUuid(uploadRequestEntry.getUuid());
+		logEntryService.insert(log);
+		return entity;
+	}
 
-		private String sanitizeFileName(String fileName) throws BusinessException {
-			fileName = fileName.replace("\\", "_");
-			fileName = fileName.replace(":", "_");
-			fileName = antiSamyService.clean(fileName);
-			if (fileName.isEmpty()) {
-				throw new BusinessException(BusinessErrorCode.INVALID_FILENAME,
-						"fileName is empty after the xss filter");
-			}
-			return fileName;
+	private String sanitizeFileName(String fileName) throws BusinessException {
+		fileName = fileName.replace("\\", "_");
+		fileName = fileName.replace(":", "_");
+		fileName = antiSamyService.clean(fileName);
+		if (fileName.isEmpty()) {
+			throw new BusinessException(BusinessErrorCode.INVALID_FILENAME, "fileName is empty after the xss filter");
 		}
+		return fileName;
+	}
 
-		protected void checkSpace(Account owner, long size) throws BusinessException {
-			quotaService.checkIfUserCanAddFile(owner, size, ContainerQuotaType.USER);
-		}
+	protected void checkSpace(Account owner, long size) throws BusinessException {
+		quotaService.checkIfUserCanAddFile(owner, size, ContainerQuotaType.USER);
+	}
 
-		protected void addToQuota(Account owner, Long size) {
-			OperationHistory oh = new OperationHistory(owner, owner.getDomain(), size, OperationHistoryTypeEnum.CREATE,
-					ContainerQuotaType.USER);
-			operationHistoryBusinessService.create(oh);
-		}
+	protected void addToQuota(Account owner, Long size) {
+		OperationHistory oh = new OperationHistory(owner, owner.getDomain(), size, OperationHistoryTypeEnum.CREATE,
+				ContainerQuotaType.USER);
+		operationHistoryBusinessService.create(oh);
+	}
 
-		protected Calendar getDocumentExpirationDate(AbstractDomain domain) {
-			return functionalityReadOnlyService.getDefaultFileExpiryTime(domain);
-		}
+	protected Calendar getDocumentExpirationDate(AbstractDomain domain) {
+		return functionalityReadOnlyService.getDefaultFileExpiryTime(domain);
+	}
 
 	@Override
 	public UploadRequestEntry find(Account authUser, Account actor, String uuid) {
 		preChecks(authUser, actor);
 		return uploadRequestEntryBusinessService.findByUuid(uuid);
 	}
-	
+
 	@Override
-	public InputStream getDocumentStream(Account actor, Account owner, String uuid) throws BusinessException {
+	public InputStream download(Account actor, Account owner, String uuid) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(uuid, "upload request entry uuid is required.");
 		UploadRequestEntry entry = find(actor, owner, uuid);
@@ -267,7 +265,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		AuditLogEntryUser log = new UploadRequestEntryAuditLogEntry(new AccountMto(owner), new AccountMto(owner),
 				LogAction.DOWNLOAD, AuditLogEntryType.UPLOAD_REQUEST_ENTRY, entry.getUuid(), entry);
 		logEntryService.insert(log);
-		return uploadRequestEntryBusinessService.getDocumentStream(entry);
+		return uploadRequestEntryBusinessService.download(entry);
 	}
 
 	@Override
@@ -278,6 +276,9 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 					"File not found");
 		}
 		uploadRequestEntryBusinessService.delete(entry);
+		if (!entry.getCopied()) {
+			documentGarbageCollecteur.insert(new DocumentGarbageCollecteur(entry.getDocument().getUuid()));
+		}
 		Account actor = uploadRequestUrl.getUploadRequest().getUploadRequestGroup().getOwner();
 		AuditLogEntryUser log = new UploadRequestEntryAuditLogEntry(new AccountMto(actor),
 				new AccountMto(actor), LogAction.DELETE, AuditLogEntryType.UPLOAD_REQUEST_ENTRY,

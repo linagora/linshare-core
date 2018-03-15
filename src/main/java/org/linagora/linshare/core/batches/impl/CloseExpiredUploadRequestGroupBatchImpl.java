@@ -78,7 +78,7 @@ public class CloseExpiredUploadRequestGroupBatchImpl extends GenericBatchImpl {
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		SystemAccount account = getSystemAccount();
-		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.findRequestGroupByUuid(account, null, identifier);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.find(account, null, identifier);
 		ResultContext context = new BatchResultContext<UploadRequestGroup>(uploadRequestGroup);
 		for(UploadRequest ur : uploadRequestGroup.getUploadRequests()) {
 			// with this batch, we update just current uploadRequestGroup
@@ -99,7 +99,7 @@ public class CloseExpiredUploadRequestGroupBatchImpl extends GenericBatchImpl {
 		@SuppressWarnings("unchecked")
 		BatchResultContext<UploadRequestGroup> uploadRequestContext = (BatchResultContext<UploadRequestGroup>) context;
 		UploadRequestGroup uploadRequestGroup = uploadRequestContext.getResource();
-		console.logInfo(batchRunContext, total, position, "processing uplaod request group : ", uploadRequestGroup.getUuid());
+		console.logInfo(batchRunContext, total, position, "processing upload request group : ", uploadRequestGroup.getUuid());
 		console.logInfo(batchRunContext, total, position,
 				"The Upload Request group " + uploadRequestGroup.getUuid() + " has been successfully closed.");
 	}

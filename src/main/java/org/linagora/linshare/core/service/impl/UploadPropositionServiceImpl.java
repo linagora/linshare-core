@@ -210,7 +210,7 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 		req.setUploadPropositionRequestUuid(created.getUuid());
 		getDefaultValue(owner, req);// get value default from domain
 		Contact contact = new Contact(created.getMail());
-		uploadRequestGroupService.createRequest(owner, owner, req, Lists.newArrayList(contact),
+		uploadRequestGroupService.create(owner, owner, req, Lists.newArrayList(contact),
 				created.getSubject(), created.getBody(), null);
 	}
 

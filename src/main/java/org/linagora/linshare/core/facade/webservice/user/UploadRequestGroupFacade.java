@@ -53,7 +53,7 @@ public interface UploadRequestGroupFacade {
 
 	UploadRequestGroupDto find(String actorUuid, String uuid) throws BusinessException;
 
-	List<UploadRequestDto> create(String actorUuid, UploadRequestCreationDto uploadRequestCreationtDto,
+	UploadRequestGroupDto create(String actorUuid, UploadRequestCreationDto uploadRequestCreationtDto,
 			Boolean groupMode) throws BusinessException;
 
 	UploadRequestGroupDto updateStatus(String actorUuid, String uuid, UploadRequestStatus status, boolean copy)

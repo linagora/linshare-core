@@ -110,7 +110,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 	}
 
 	@Override
-	public List<UploadRequestGroup> findAllGroupRequest(Account actor, Account owner, List<UploadRequestStatus> statusList)
+	public List<UploadRequestGroup> findAll(Account actor, Account owner, List<UploadRequestStatus> statusList)
 			throws BusinessException {
 		preChecks(actor, owner);
 		checkListPermission(actor, owner, UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
@@ -119,7 +119,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 	}
 
 	@Override
-	public UploadRequestGroup findRequestGroupByUuid(Account actor, Account owner, String uuid) {
+	public UploadRequestGroup find(Account actor, Account owner, String uuid) {
 		preChecks(actor, owner);
 		UploadRequestGroup req = uploadRequestGroupBusinessService.findByUuid(uuid);
 		checkReadPermission(actor,
@@ -129,7 +129,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 	}
 
 	@Override
-	public List<UploadRequest> createRequest(Account actor, User owner, UploadRequest inputRequest,
+	public UploadRequestGroup create(Account actor, User owner, UploadRequest inputRequest,
 			List<Contact> contacts, String subject, String body, Boolean groupedMode) throws BusinessException {
 		checkCreatePermission(actor, owner, UploadRequest.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN, null);
 		AbstractDomain domain = owner.getDomain();
@@ -160,24 +160,23 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		if (groupedModeLocal) {
 			container = uploadRequestService.create(actor, owner, req, container);
 			for (Contact contact : contacts) {
-				container = uploadRequestUrlService.create(container.getUploadRequests().get(0), contact, container);
+				container = uploadRequestUrlService.create(container.getUploadRequests().iterator().next(), contact, container);
 			}
 		} else {
 			for (Contact contact : contacts) {
 				UploadRequest clone = req.clone();
 				container = uploadRequestService.create(actor, owner, clone, container);
-				container = uploadRequestUrlService.create(container.getUploadRequests().get(0), contact, container);
+				container = uploadRequestUrlService.create(clone, contact, container);
 			}
 		}
+		uploadRequestGroup.setUploadRequests(container.getUploadRequests());
 		notifierService.sendNotification(container.getMailContainers());
 		logEntryService.insert(container.getLogs());
-		return container.getUploadRequests();
+		return uploadRequestGroup;
 	}
 
 	private UploadRequest initUploadRequest(User owner, UploadRequest req) {
 		AbstractDomain domain = owner.getDomain();
-		UploadRequestStatus status = req.getActivationDate().after(new Date())?UploadRequestStatus.CREATED:UploadRequestStatus.ENABLED;
-		req.setStatus(status);
 		checkActivationDate(domain, req);
 		checkExpiryAndNoticationDate(domain, req);
 		checkMaxDepositSize(domain, req);
@@ -187,6 +186,8 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 		checkCanDelete(domain, req);
 		checkCanClose(domain, req);
 		checkSecuredUrl(domain, req);
+		UploadRequestStatus status = req.getActivationDate().after(new Date())?UploadRequestStatus.CREATED:UploadRequestStatus.ENABLED;
+		req.setStatus(status);
 		Functionality func = functionalityService.getUploadRequestProlongationFunctionality(domain);
 		req.setCanEditExpiryDate(func.getActivationPolicy().getStatus());
 		return req;
@@ -369,8 +370,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 					&& func.getDelegationPolicy().getStatus()) {
 				logger.debug(func.getIdentifier() + " has a delegation policy");
 				if (currentDate != null) {
-					if (currentDate.after(maxDate)
-							|| currentDate.before(new Date())) {
+					if (currentDate.after(maxDate)) {
 						logger.warn("the current value "
 								+ currentDate.toString()
 								+ " is out of range : " + func.toString()

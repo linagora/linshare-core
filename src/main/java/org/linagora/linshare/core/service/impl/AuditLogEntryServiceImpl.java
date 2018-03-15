@@ -282,7 +282,7 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 		supportedTypes.add(AuditLogEntryType.UPLOAD_REQUEST_ENTRY);
 		List<AuditLogEntryType> entriesTypes = getEntryTypes(types, supportedTypes, false);
 		if (entriesTypes == null || entriesTypes.isEmpty()) {
-			entriesTypes = getUplaodRequestDefaultTypes(detail, entriesLogsOnly);
+			entriesTypes = getUploadRequestDefaultTypes(detail, entriesLogsOnly);
 		}
 		action = getActions(action);
 		res = userMongoRepository.findUploadRequestHistoryForUser(actor.getLsUuid(), requestUuid, action,
@@ -290,7 +290,7 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 		return res;
 	}
 
-	protected List<AuditLogEntryType> getUplaodRequestDefaultTypes(boolean detail, boolean entriesLogsOnly) {
+	protected List<AuditLogEntryType> getUploadRequestDefaultTypes(boolean detail, boolean entriesLogsOnly) {
 		List<AuditLogEntryType> types = Lists.newArrayList();
 		if (entriesLogsOnly) {
 			types.add(AuditLogEntryType.UPLOAD_REQUEST_ENTRY);

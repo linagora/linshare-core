@@ -119,13 +119,12 @@ public class UploadRequestGroupRestServiceImpl implements UploadRequestGroupRest
 					@ApiResponse(code = 500, message = "Internal server error."),
 		})
 	@Override
-	public List<UploadRequestDto> create(
+	public UploadRequestGroupDto create(
 			@ApiParam(value = "Upload request.", required = true)
 				UploadRequestCreationDto uploadRequestCreationDto,
 			@ApiParam(value = "Group mode.", required = true)
 				@QueryParam(value = "groupMode") Boolean groupMode) {
-		List<UploadRequestDto> dto = uploadRequestGroupFacade.create(null, uploadRequestCreationDto, groupMode);
-		return dto;
+		return uploadRequestGroupFacade.create(null, uploadRequestCreationDto, groupMode);
 	}
 
 	@PUT

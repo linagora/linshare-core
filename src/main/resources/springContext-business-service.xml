@@ -151,10 +151,6 @@
 		<constructor-arg ref="uploadRequestGroupRepository" />
 	</bean>
 
-	<bean id="uploadRequestHistoryBusinessService" class="org.linagora.linshare.core.business.service.impl.UploadRequestHistoryBusinessServiceImpl">
-		<constructor-arg ref="uploadRequestHistoryRepository" />
-	</bean>
-
 	<bean id="uploadRequestTemplateBusinessService" class="org.linagora.linshare.core.business.service.impl.UploadRequestTemplateBusinessServiceImpl">
 		<constructor-arg ref="uploadRequestTemplateRepository" />
 	</bean>

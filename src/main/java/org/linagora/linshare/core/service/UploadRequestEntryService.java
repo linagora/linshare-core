@@ -53,7 +53,7 @@ public interface UploadRequestEntryService {
 
 	UploadRequestEntry find (Account authUser, Account actor, String uuid);
 
-	InputStream getDocumentStream(Account actor, Account owner, String uuid) throws BusinessException;
+	InputStream download(Account actor, Account owner, String uuid) throws BusinessException;
 
 	UploadRequestEntry delete(User authUser, User actor, String uuid);
 

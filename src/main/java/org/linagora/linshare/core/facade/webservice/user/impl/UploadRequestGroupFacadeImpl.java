@@ -84,7 +84,7 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 	public List<UploadRequestGroupDto> findAll(String actorUuid, List<UploadRequestStatus> status) throws BusinessException {
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
-		List<UploadRequestGroup> list = uploadRequestGroupService.findAllGroupRequest(authUser, actor, status);
+		List<UploadRequestGroup> list = uploadRequestGroupService.findAll(authUser, actor, status);
 		return ImmutableList.copyOf(Lists.transform(list, UploadRequestGroupDto.toDto()));
 	}
 
@@ -93,12 +93,12 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 		Validate.notNull(uuid, "Upload request uuid must be set");
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
-		UploadRequestGroup group = uploadRequestGroupService.findRequestGroupByUuid(authUser, actor, uuid);
+		UploadRequestGroup group = uploadRequestGroupService.find(authUser, actor, uuid);
 		return new UploadRequestGroupDto(group);
 	}
 
 	@Override
-	public List<UploadRequestDto> create(String actorUuid, UploadRequestCreationDto uploadRequesCreationtDto,
+	public UploadRequestGroupDto create(String actorUuid, UploadRequestCreationDto uploadRequesCreationtDto,
 			Boolean groupMode) throws BusinessException {
 		Validate.notNull(uploadRequesCreationtDto, "Upload request must be set.");
 		Validate.notNull(uploadRequesCreationtDto.getLabel(), "Upload request label must be set.");
@@ -110,9 +110,9 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 		for (String mail : uploadRequesCreationtDto.getContactList()) {
 			contacts.add(new Contact(mail));
 		}
-		List<UploadRequest> uploadRequests = uploadRequestGroupService.createRequest(authUser, actor, req, contacts,
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(authUser, actor, req, contacts,
 				uploadRequesCreationtDto.getLabel(), uploadRequesCreationtDto.getBody(), groupMode);
-		return ImmutableList.copyOf(Lists.transform(uploadRequests, UploadRequestDto.toDto(true)));
+		return new UploadRequestGroupDto(uploadRequestGroup);
 	}
 
 	@Override
@@ -143,7 +143,7 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 		Validate.notEmpty(recipientEmail, "Upload request contact must be set.");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
-		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.findRequestGroupByUuid(authUser, actor, groupUuid);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.find(authUser, actor, groupUuid);
 		uploadRequestGroup = uploadRequestGroupService.addNewRecipients(authUser, actor, uploadRequestGroup, recipientEmail);
 		return new UploadRequestGroupDto(uploadRequestGroup);
 	}
@@ -162,7 +162,7 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 		Validate.notEmpty(groupUuid, "Upload request group Uuid must be set");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
-		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.findRequestGroupByUuid(authUser, actor, groupUuid);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.find(authUser, actor, groupUuid);
 		List<UploadRequest> requests = uploadRequestService.findAll(authUser, actor, uploadRequestGroup, status);
 		return ImmutableList.copyOf(Lists.transform(requests, UploadRequestDto.toDto(false)));
 	}
