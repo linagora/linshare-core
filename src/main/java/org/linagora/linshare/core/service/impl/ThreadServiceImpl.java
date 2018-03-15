@@ -257,10 +257,10 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN, member, workGroup);
 		if (getMemberFromUser(workGroup, user) != null) {
 			logger.warn("The current " + user.getAccountRepresentation()
-					+ " user is already member of the thread : "
+					+ " user is already member of the workgroup : "
 					+ workGroup.getAccountRepresentation());
-			throw new BusinessException(
-					"You are not authorized to add member to this thread. Already exists.");
+			throw new BusinessException(BusinessErrorCode.THREAD_MEMBER_ALREADY_EXISTS,
+					"You are not authorized to add member to this workgroup. Already exists.");
 		}
 		workGroup.getMyMembers().add(member);
 		threadRepository.update(workGroup);
