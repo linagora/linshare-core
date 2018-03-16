@@ -97,6 +97,64 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION ls_update_one_upload_request_group(group_id BIGINT) RETURNS void AS $$
+BEGIN
+	DECLARE uploadrequest record;
+	DECLARE i BIGINT;
+	DECLARE j BIGINT;
+	DECLARE grp_created BIGINT;
+	DECLARE grp_updated BIGINT;
+	DECLARE count_url BIGINT;
+	DECLARE is_restricted BOOLEAN;
+	DECLARE ur_infos_cursor CURSOR IS
+    				SELECT ur.*, urg.body, urg.subject FROM upload_request AS ur INNER JOIN upload_request_group AS urg ON ur.upload_request_group_id = urg.id
+							WHERE ur.upload_request_group_id = group_id;
+			ur_row RECORD;
+			
+	BEGIN
+		i := 0;
+		FOR ur_row IN ur_infos_cursor LOOP
+			count_url := (SELECT COUNT(id) FROM upload_request_url WHERE upload_request_id = ur_row.id);
+			is_restricted := (count_url = 1);
+			IF i > 0 THEN
+				j := (SELECT nextVal('hibernate_sequence'));
+				INSERT INTO upload_request_group (uuid, id, subject, body, domain_abstract_id, account_id,
+					status, creation_date, modification_date,
+					secured, mail_message_id, activation_date, expiry_date, 
+					notification_date, max_deposit_size, max_file, max_file_size,
+					can_delete, can_close, can_edit_expiry_date, locale, restricted) 
+					VALUES ((SELECT uuid_in(md5(random()::text || now()::text)::cstring)), j, ur_row.subject, ur_row.body, ur_row.domain_abstract_id, ur_row.account_id,
+						ur_row.status, ur_row.creation_date, ur_row.modification_date,
+						ur_row.secured, ur_row.mail_message_id, ur_row.activation_date, ur_row.expiry_date,
+						ur_row.notification_date, ur_row.max_deposit_size, ur_row.max_file, ur_row.max_file_size,
+						ur_row.can_delete, ur_row.can_close, ur_row.can_edit_expiry_date, ur_row.locale, is_restricted);
+				UPDATE upload_request SET upload_request_group_id = j where id = ur_row.id;
+			ELSE
+				UPDATE upload_request_group SET (domain_abstract_id, account_id, status, secured, mail_message_id, activation_date, expiry_date, 
+					notification_date, max_deposit_size, max_file, max_file_size,
+					can_delete, can_close, can_edit_expiry_date, locale, restricted) = 
+					(ur_row.domain_abstract_id, ur_row.account_id, ur_row.status, ur_row.secured, ur_row.mail_message_id, ur_row.activation_date, ur_row.expiry_date,
+						ur_row.notification_date, ur_row.max_deposit_size, ur_row.max_file, ur_row.max_file_size,
+						ur_row.can_delete, ur_row.can_close, ur_row.can_edit_expiry_date, ur_row.locale, is_restricted) 
+					where id = ur_row.upload_request_group_id;
+			END IF;
+			i := i + 1;
+		END LOOP;
+	END;
+END
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION ls_update_upload_request_groups() RETURNS void AS $$
+BEGIN
+	DECLARE ur_group record;
+	BEGIN
+		FOR ur_group IN (SELECT id FROM upload_request_group) LOOP
+			PERFORM ls_update_one_upload_request_group(ur_group.id) ;
+		END LOOP;
+	END;
+END
+$$ LANGUAGE plpgsql;
+
 SELECT ls_check_user_connected();
 SELECT ls_prechecks();
 
@@ -110,37 +168,66 @@ DROP VIEW IF EXISTS alias_threads_list_active;
 DROP VIEW IF EXISTS alias_threads_list_destroyed;
 -- Here your request
 
-ALTER TABLE upload_request DROP COLUMN domain_abstract_id;
-ALTER TABLE upload_request DROP COLUMN account_id;
-ALTER TABLE upload_request ADD COLUMN dirty bool DEFAULT 'false' NOT NULL;
-ALTER TABLE upload_request ADD COLUMN enable_notification bool NOT NULL;
+--Update the upload request statuses
+UPDATE upload_request_history set status = replace(status, 'STATUS_', '');
+UPDATE upload_request set status = replace(status, 'STATUS_', '');
 
-ALTER TABLE upload_request_group ADD COLUMN domain_abstract_id int8 NOT NULL;
-ALTER TABLE upload_request_group ADD COLUMN account_id int8 NOT NULL;
-ALTER TABLE upload_request_group ADD COLUMN secured bool NOT NULL;
+ALTER TABLE upload_request_group ADD COLUMN domain_abstract_id int8;
+ALTER TABLE upload_request_group ADD COLUMN account_id int8;
+ALTER TABLE upload_request_group ADD COLUMN secured bool;
 ALTER TABLE upload_request_group ADD COLUMN mail_message_id varchar(255);
-ALTER TABLE upload_request_group ADD COLUMN activation_date timestamp(6) NOT NULL;
-ALTER TABLE upload_request_group ADD COLUMN expiry_date timestamp(6) NOT NULL;
-ALTER TABLE upload_request_group ADD COLUMN notification_date timestamp(6) NOT NULL;
+ALTER TABLE upload_request_group ADD COLUMN activation_date timestamp(6);
+ALTER TABLE upload_request_group ADD COLUMN expiry_date timestamp(6);
+ALTER TABLE upload_request_group ADD COLUMN notification_date timestamp(6);
 ALTER TABLE upload_request_group ADD COLUMN max_deposit_size int8;
 ALTER TABLE upload_request_group ADD COLUMN max_file int4;
 ALTER TABLE upload_request_group ADD COLUMN max_file_size int8;
-ALTER TABLE upload_request_group ADD COLUMN can_delete bool NOT NULL;
-ALTER TABLE upload_request_group ADD COLUMN can_close bool NOT NULL;
-ALTER TABLE upload_request_group ADD COLUMN can_edit_expiry_date bool NOT NULL;
-ALTER TABLE upload_request_group ADD COLUMN locale varchar(255) NOT NULL;
-ALTER TABLE upload_request_group ADD COLUMN enable_notification bool NOT NULL;
-ALTER TABLE upload_request_group ADD COLUMN restricted bool NOT NULL;
-ALTER TABLE upload_request_group ADD COLUMN status varchar(255) NOT NULL;
+ALTER TABLE upload_request_group ADD COLUMN can_delete bool;
+ALTER TABLE upload_request_group ADD COLUMN can_close bool;
+ALTER TABLE upload_request_group ADD COLUMN can_edit_expiry_date bool;
+ALTER TABLE upload_request_group ADD COLUMN locale varchar(255);
+ALTER TABLE upload_request_group ADD COLUMN enable_notification bool DEFAULT TRUE NOT NULL;
+ALTER TABLE upload_request_group ADD COLUMN restricted bool;
+ALTER TABLE upload_request_group ADD COLUMN status varchar(255);
+
+SELECT ls_update_upload_request_groups();
+
+ALTER TABLE upload_request_group ALTER COLUMN domain_abstract_id SET NOT NULL;
+ALTER TABLE upload_request_group ALTER COLUMN account_id SET NOT NULL;
+ALTER TABLE upload_request_group ALTER COLUMN secured SET NOT NULL;
+ALTER TABLE upload_request_group ALTER COLUMN activation_date SET NOT NULL;
+ALTER TABLE upload_request_group ALTER COLUMN notification_date SET NOT NULL;
+ALTER TABLE upload_request_group ALTER COLUMN can_delete SET NOT NULL;
+ALTER TABLE upload_request_group ALTER COLUMN can_close SET NOT NULL;
+ALTER TABLE upload_request_group ALTER COLUMN can_edit_expiry_date SET NOT NULL;
+ALTER TABLE upload_request_group ALTER COLUMN locale SET NOT NULL;
+ALTER TABLE upload_request_group ALTER COLUMN enable_notification SET NOT NULL;
+ALTER TABLE upload_request_group ALTER COLUMN restricted SET NOT NULL;
+ALTER TABLE upload_request_group ALTER COLUMN status SET NOT NULL;
 ALTER TABLE upload_request_group ADD CONSTRAINT FKupload_req220337 FOREIGN KEY (account_id) REFERENCES account (id);
 ALTER TABLE upload_request_group ADD CONSTRAINT FKupload_req840249 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 
-ALTER TABLE upload_request_entry ADD COLUMN document_id int8 NOT NULL;
-ALTER TABLE upload_request_entry ADD COLUMN copied bool DEFAULT 'false' NOT NULL;
-ALTER TABLE upload_request_entry ADD COLUMN ciphered bool NOT NULL;
-ALTER TABLE upload_request_entry ADD COLUMN ls_type varchar(255) NOT NULL;
+ALTER TABLE upload_request DROP COLUMN domain_abstract_id;
+ALTER TABLE upload_request DROP COLUMN account_id;
+ALTER TABLE upload_request ADD COLUMN dirty bool DEFAULT FALSE NOT NULL;
+ALTER TABLE upload_request ADD COLUMN enable_notification bool DEFAULT TRUE NOT NULL;
+
+ALTER TABLE upload_request_entry ADD COLUMN document_id int8;
+ALTER TABLE upload_request_entry ADD COLUMN ls_type varchar(255);
+ALTER TABLE upload_request_entry ADD COLUMN copied bool DEFAULT FALSE NOT NULL;
+ALTER TABLE upload_request_entry ADD COLUMN ciphered bool DEFAULT FALSE NOT NULL;
 ALTER TABLE upload_request_entry ADD COLUMN sha256sum varchar(255);
 ALTER TABLE upload_request_entry ADD CONSTRAINT FKupload_req11782 FOREIGN KEY (document_id) REFERENCES document (id);
+UPDATE upload_request_entry
+	SET document_id = document_entry.document_id,
+		ls_type = document_entry.type,
+		ciphered = document_entry.ciphered,
+		copied = TRUE,
+		sha256sum = document_entry.sha256sum
+	FROM document_entry
+	WHERE document_entry.entry_id = upload_request_entry.document_entry_entry_id;
+ALTER TABLE upload_request_entry ALTER COLUMN document_id SET NOT NULL;
+ALTER TABLE upload_request_entry ALTER COLUMN ls_type SET NOT NULL;
 
 -- Mail Activation
 
@@ -994,7 +1081,3 @@ CREATE VIEW alias_threads_list_active AS SELECT a.id, name, domain_id, ls_uuid, 
 CREATE VIEW alias_threads_list_destroyed AS SELECT a.id, name, domain_id, ls_uuid, creation_date, modification_date, enable, destroyed from thread as u join account as a on a.id=u.account_id where a.destroyed != 0;
 COMMIT;
 
---Update the upload request statuses
-UPDATE upload_request_history set status = replace(status, 'STATUS_', '');
-UPDATE upload_request_group set status = replace(status, 'STATUS_', '');
-UPDATE upload_request set status = replace(status, 'STATUS_', '');
