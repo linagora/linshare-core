@@ -90,7 +90,7 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 
 	@Override
 	public UploadRequestGroupDto find(String actorUuid, String uuid) throws BusinessException {
-		Validate.notNull(uuid, "Upload request uuid must be set");
+		Validate.notEmpty(uuid, "Upload request uuid must be set");
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
 		UploadRequestGroup group = uploadRequestGroupService.find(authUser, actor, uuid);
@@ -101,7 +101,7 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 	public UploadRequestGroupDto create(String actorUuid, UploadRequestCreationDto uploadRequesCreationtDto,
 			Boolean groupMode) throws BusinessException {
 		Validate.notNull(uploadRequesCreationtDto, "Upload request must be set.");
-		Validate.notNull(uploadRequesCreationtDto.getLabel(), "Upload request label must be set.");
+		Validate.notEmpty(uploadRequesCreationtDto.getLabel(), "Upload request label must be set.");
 		Validate.notEmpty(uploadRequesCreationtDto.getContactList(), "ContactList must be set");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
@@ -139,7 +139,7 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 
 	@Override
 	public UploadRequestGroupDto addRecipients(String actorUuid, String groupUuid, List<ContactDto> recipientEmail) {
-		Validate.notNull(groupUuid, "Upload request group must be set.");
+		Validate.notEmpty(groupUuid, "Upload request group must be set.");
 		Validate.notEmpty(recipientEmail, "Upload request contact must be set.");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
@@ -151,7 +151,7 @@ public class UploadRequestGroupFacadeImpl extends GenericFacadeImpl implements U
 	@Override
 	public Set<AuditLogEntryUser> findAll(String actorUuid, String groupUuid, boolean detail, boolean entriesLogsOnly,
 			List<LogAction> actions, List<AuditLogEntryType> types) {
-		Validate.notNull(groupUuid, "Upload request group uuid must be set");
+		Validate.notEmpty(groupUuid, "Upload request group uuid must be set");
 		Account authUser = checkAuthentication();
 		User actor = (User) getActor(authUser, null);
 		return auditLogEntryService.findAll(authUser, actor, groupUuid, detail, entriesLogsOnly, actions, types);

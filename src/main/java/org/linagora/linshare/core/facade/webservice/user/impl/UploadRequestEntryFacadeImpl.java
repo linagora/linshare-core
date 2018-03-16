@@ -90,7 +90,7 @@ public class UploadRequestEntryFacadeImpl extends GenericFacadeImpl implements U
 	@Override
 	public List<DocumentDto> copy(String actorUuid, String uuid) throws BusinessException {
 		Account authUser = checkAuthentication();
-		Validate.notNull(uuid, "Upload request entry uuid must be set");
+		Validate.notEmpty(uuid, "Upload request entry uuid must be set");
 		User actor = (User) getActor(authUser, actorUuid);
 		UploadRequestEntry uploadRequestEntry = uploadRequestEntryService.find(authUser, actor, uuid);
 		Validate.notNull(uploadRequestEntry);

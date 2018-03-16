@@ -114,7 +114,7 @@ public class UploadRequestFacadeImpl extends GenericFacadeImpl implements Upload
 
 	@Override
 	public List<UploadRequestEntryDto> findAllEntries(String actorUuid, String uuid) {
-		Validate.notNull(uuid, "Upload request uuid must be set.");
+		Validate.notEmpty(uuid, "Upload request uuid must be set.");
 		Account authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		List<UploadRequestEntry> uploadRequestEntries = uploadRequestService.findAllEntries(authUser, actor, uuid);

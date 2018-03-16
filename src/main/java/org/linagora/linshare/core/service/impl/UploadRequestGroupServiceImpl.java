@@ -41,6 +41,7 @@ import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.UploadRequestGroupBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
@@ -370,12 +371,14 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 					&& func.getDelegationPolicy().getStatus()) {
 				logger.debug(func.getIdentifier() + " has a delegation policy");
 				if (currentDate != null) {
-					if (currentDate.after(maxDate)) {
-						logger.warn("the current value "
-								+ currentDate.toString()
-								+ " is out of range : " + func.toString()
-								+ " : " + maxDate.toString());
+					if (currentDate.after(maxDate) || (currentDate.before(new Date())
+							&& FunctionalityNames.UPLOAD_REQUEST__DELAY_BEFORE_EXPIRATION.toString()
+									.equals(func.getIdentifier()))) {
+						logger.warn("the current value " + currentDate.toString() + " is out of range : "
+								+ func.toString() + " : " + maxDate.toString());
 						return maxDate;
+					} else if (currentDate.before(new Date ())) {
+						return new Date();
 					} else {
 						return currentDate;
 					}
