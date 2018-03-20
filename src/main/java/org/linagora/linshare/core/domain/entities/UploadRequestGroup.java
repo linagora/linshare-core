@@ -56,7 +56,7 @@ public class UploadRequestGroup {
 	private Date creationDate;
 
 	private Date modificationDate;
-	
+
 	private Integer maxFileCount;
 
 	private Long maxDepositSize;
@@ -80,17 +80,17 @@ public class UploadRequestGroup {
 	private boolean secured;
 
 	private String mailMessageId;
-	
+
 	private Boolean enableNotification;
-	
+
 	private Boolean restricted;
 
 	private Account owner;
 
 	private AbstractDomain abstractDomain;
-	
+
 	private UploadRequestStatus status;
-	
+
 	public UploadRequestGroup() {
 		super();
 	}
@@ -100,7 +100,7 @@ public class UploadRequestGroup {
 		this.subject = subject;
 		this.body = body;
 	}
-	
+
 	public UploadRequestGroup(Account owner,
 			AbstractDomain abstractDomain,
 			String subject,
@@ -141,7 +141,6 @@ public class UploadRequestGroup {
 		this.maxDepositSize = maxDepositSize;
 		this.maxFileSize = maxFileSize;
 	}
-
 
 	public UploadRequestGroup(UploadProposition proposition) {
 		super();
@@ -204,7 +203,7 @@ public class UploadRequestGroup {
 	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
 	}
-	
+
 	public Integer getMaxFileCount() {
 		return maxFileCount;
 	}
@@ -304,7 +303,7 @@ public class UploadRequestGroup {
 	public Boolean getEnableNotification() {
 		return enableNotification;
 	}
-	
+
 	public void setEnableNotification(Boolean enableNotification) {
 		this.enableNotification = enableNotification;
 	}
@@ -344,6 +343,7 @@ public class UploadRequestGroup {
 	public void updateStatus(UploadRequestStatus to) throws BusinessException {
 		status = status.transition(to);
 	}
+
 	/*
 	 * Business setters
 	 */
@@ -353,19 +353,19 @@ public class UploadRequestGroup {
 			this.subject = subject;
 		}
 	}
-	
+
 	public void setBusinessBody(String body) {
 		if (body != null) {
 			this.body = body;
 		}
 	}
-	
+
 	public void setBusinessNotificationDate(Date date) {
 		if (date != null) {
 			this.notificationDate = date;
 		}
 	}
-	
+
 	public void setBusinessActivationDate(Date date) {
 		if (date != null && date.after(new Date())) {
 			this.activationDate = date;
@@ -383,7 +383,7 @@ public class UploadRequestGroup {
 			this.canEditExpiryDate = canEditExpiryDate;
 		}
 	}
-	
+
 	public void setBusinessCanDelete(Boolean canDelete) {
 		if (canDelete != null) {
 			this.canDelete = canDelete;
@@ -425,7 +425,7 @@ public class UploadRequestGroup {
 			this.expiryDate = date;
 		}
 	}
-	
+
 	public void setBusinessEnableNotification(Boolean enableNotification) {
 		if (enableNotification != null) {
 			this.enableNotification = enableNotification;

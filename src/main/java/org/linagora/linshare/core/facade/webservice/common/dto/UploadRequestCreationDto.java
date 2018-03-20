@@ -41,9 +41,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -93,27 +91,6 @@ public class UploadRequestCreationDto {
 
 	public UploadRequestCreationDto() {
 		super();
-	}
-
-	public UploadRequestCreationDto(UploadRequest entity) {
-		super();
-		this.activationDate = entity.getActivationDate();
-		this.expiryDate = entity.getExpiryDate();
-		this.label = entity.getUploadRequestGroup().getSubject();
-		this.notificationDate = entity.getNotificationDate();
-		this.dirty = entity.getDirty();
-		this.enableNotification = entity.getEnableNotification();
-		this.maxFileCount = entity.getMaxFileCount();
-		this.maxDepositSize = entity.getMaxDepositSize();
-		this.maxFileSize = entity.getMaxFileSize();
-		this.canDelete = entity.isCanDelete();
-		this.canClose = entity.isCanClose();
-		for (UploadRequestUrl uru : entity.getUploadRequestURLs()) {
-			contactList.add(uru.getContact().getMail());
-		}
-		this.body = entity.getUploadRequestGroup().getBody();
-		this.secured = entity.isSecured();
-		this.locale = entity.getLocale();
 	}
 
 	public UploadRequest toObject() {
@@ -260,12 +237,5 @@ public class UploadRequestCreationDto {
 
 	public void setSecured(boolean secured) {
 		this.secured = secured;
-	}
-
-	/*
-	 * Transformers
-	 */
-	public static Function<UploadRequest, UploadRequestCreationDto> toDto() {
-		return uploadRequestCreation -> new UploadRequestCreationDto(uploadRequestCreation);
 	}
 }
