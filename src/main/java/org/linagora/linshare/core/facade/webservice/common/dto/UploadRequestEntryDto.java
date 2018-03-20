@@ -39,7 +39,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
-import org.linagora.linshare.core.facade.webservice.delegation.dto.DocumentDto;
 
 import com.google.common.base.Function;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -78,9 +77,6 @@ public class UploadRequestEntryDto {
 	@ApiModelProperty(value = "CmisSync")
 	protected boolean cmisSync;
 
-	@ApiModelProperty(value = "Document")
-	protected DocumentDto documentDto;
-
 	@ApiModelProperty(value = "Size")
 	protected Long size;
 
@@ -112,7 +108,6 @@ public class UploadRequestEntryDto {
 		this.uuid = entry.getUuid();
 		this.metaData = entry.getMetaData();
 		this.cmisSync = entry.isCmisSync();
-		this.documentDto = new DocumentDto(entry);
 	}
 
 	public AccountDto getEntryOwner() {
@@ -185,14 +180,6 @@ public class UploadRequestEntryDto {
 
 	public void setCmisSync(boolean cmisSync) {
 		this.cmisSync = cmisSync;
-	}
-
-	public DocumentDto getDocumentDto() {
-		return documentDto;
-	}
-
-	public void setDocumentDto(DocumentDto documentDto) {
-		this.documentDto = documentDto;
 	}
 
 	public Long getSize() {

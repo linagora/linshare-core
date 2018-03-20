@@ -38,7 +38,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.GenericUserDto;
@@ -74,11 +73,6 @@ public class DocumentDto extends
 	public DocumentDto(DocumentEntry de) {
 		super(de);
 		this.owner = new GenericUserDto((User) de.getEntryOwner());
-	}
-	
-	public DocumentDto(UploadRequestEntry entry) {
-		super(entry);
-		this.owner = new GenericUserDto((User) entry.getEntryOwner());
 	}
 
 	public GenericUserDto getOwner() {
