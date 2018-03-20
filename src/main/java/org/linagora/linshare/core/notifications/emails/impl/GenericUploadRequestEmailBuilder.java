@@ -86,7 +86,7 @@ public abstract class GenericUploadRequestEmailBuilder extends EmailBuilder {
 		return recipients;
 	}
 
-	protected List<Document> getDocuments(boolean warnOwner, UploadRequest request, UploadRequestUrl requestUrl) {
+	protected List<Document> getUploadRequestDocuments(boolean warnOwner, UploadRequest request, UploadRequestUrl requestUrl) {
 		List<Document> documents = Lists.newArrayList();
 		Set<UploadRequestUrl> requestURLs = request.getUploadRequestURLs();
 		for (UploadRequestUrl uploadRequestUrl : requestURLs) {
@@ -94,7 +94,7 @@ public abstract class GenericUploadRequestEmailBuilder extends EmailBuilder {
 			for (UploadRequestEntry e : entries) {
 				Document d = new Document(e);
 				if (warnOwner) {
-					String href = getOwnerDocumentLink(getUrlTemplateForUploadRequestEntries(), e.getDocument().getUuid());
+					String href = getOwnerDocumentLink(getUrlTemplateForUploadRequestEntries(), e.getUuid());
 					d.setHref(href);
 				} else {
 					d.setMine(isMine(requestUrl, uploadRequestUrl));

@@ -75,7 +75,7 @@ public class UploadRequestWarnBeforeExpiryEmailBuilder extends GenericUploadRequ
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 
 		List<MailContact> recipients = getRecipients(request);
-		List<Document> documents = getDocuments(warnOwner, request, requestUrl);
+		List<Document> documents = getUploadRequestDocuments(warnOwner, request, requestUrl);
 
 		Context ctx = newTmlContext(emailCtx);
 		ctx.setVariable("body", request.getUploadRequestGroup().getBody());

@@ -73,7 +73,7 @@ public class UploadRequestUnavailableSpaceEmailBuilder extends GenericUploadRequ
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 
 		List<MailContact> recipients = getRecipients(uploadRequestGroup);
-		List<Document> documents = getDocuments(warnOwner, request, requestUrl);
+		List<Document> documents = getUploadRequestDocuments(warnOwner, request, requestUrl);
 
 		Context ctx = newTmlContext(emailCtx);
 		ctx.setVariable("body", request.getUploadRequestGroup().getBody());

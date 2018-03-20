@@ -71,7 +71,7 @@ public class UploadRequestClosedByRecipientEmailBuilder extends GenericUploadReq
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 
 		List<MailContact> recipients = getRecipients(request);
-		List<Document> documents = getDocuments(warnOwner, request, requestUrl);
+		List<Document> documents = getUploadRequestDocuments(warnOwner, request, requestUrl);
 		long totalSize = 0;
 		for (Document document : documents) {
 			totalSize += document.getSize();
