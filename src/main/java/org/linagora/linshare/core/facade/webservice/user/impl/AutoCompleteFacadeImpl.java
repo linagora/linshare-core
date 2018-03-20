@@ -162,7 +162,7 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 						result.add(new ThreadMemberAutoCompleteResultDto(member));
 					}
 				}
-			} else if (enumType.equals(SearchType.UPLOAD_REQUEST)) {
+			} else if (enumType.equals(SearchType.UPLOAD_REQUESTS)) {
 				List<ContactList> mailingListsList = contactListService.searchListByVisibility(authUser.getLsUuid(), VisibilityType.All.name(), pattern);
 				int range = (mailingListsList.size() < AUTO_COMPLETE_LIMIT ? mailingListsList.size() : AUTO_COMPLETE_LIMIT);
 				Set<UserDto> userList = findUser(pattern);
