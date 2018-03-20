@@ -63,6 +63,7 @@ public class PemRsaKeyHelper {
 		}
 		KeySpec privateKeySpec = Pems.privateKeySpec(pem);
 		RSAPrivateKey privatevKey = (RSAPrivateKey) keyFactory.generatePrivate(privateKeySpec);
+		logger.info("Private key '" + pemPrivateKeyPath + "' was loaded");
 		return privatevKey;
 	}
 
@@ -75,6 +76,7 @@ public class PemRsaKeyHelper {
 		}
 		RSAPublicKeySpec publicKeySpec = SshKeys.publicKeySpecFromOpenSSH(pem);
 		RSAPublicKey publicKey = (RSAPublicKey) keyFactory.generatePublic(publicKeySpec);
+		logger.info("Public key '" + pemPublicKeyPath + "' was loaded");
 		return publicKey;
 	}
 
