@@ -64,7 +64,7 @@ public class UploadRequestUploadedFileEmailBuilder extends GenericUploadRequestE
 		UploadRequestEntry entry = emailCtx.getEntry();
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		Context ctx = newTmlContext(emailCtx);
-		String href = getOwnerDocumentLink(getUrlTemplateForUploadRequestEntries(), entry.getDocument().getUuid());
+		String href = getOwnerDocumentLink(getUrlTemplateForUploadRequestEntries(), entry.getUuid());
 		Document document = new Document(entry);
 		document.setHref(href);
 		ctx.setVariable("document", document);
