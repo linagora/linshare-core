@@ -91,13 +91,15 @@ public class UploadRequestRepositoryImpl extends
 	public List<UploadRequest> findByDomainsAndStatus(
 			List<AbstractDomain> domains, List<UploadRequestStatus> status,
 			Date after, Date before) {
-		Junction add = Restrictions.conjunction()
-						.add(Restrictions.in("abstractDomain", domains))
-						.add(Restrictions.between("creationDate", after, before));
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		det.createAlias("uploadRequestGroup", "urg");
+		det.add(Restrictions.conjunction()
+						.add(Restrictions.in("urg.abstractDomain", domains))
+						.add(Restrictions.between("creationDate", after, before)));
 		if (!status.isEmpty()) {
-			add.add(Restrictions.in("status", status));
+			det.add(Restrictions.in("status", status));
 		}
-		return findByCriteria(add);
+		return findByCriteria(det);
 	}
 
 	@Override
