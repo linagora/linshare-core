@@ -17,12 +17,4 @@
 		<constructor-arg ref="mailBuildingService"/>
 	</bean>
 
-	<bean name="uploadRequestBatch" class="org.linagora.linshare.core.batches.impl.UploadRequestBatchImpl">
-		<constructor-arg ref="uploadRequestRepository" />
-		<constructor-arg ref="mailBuildingService" />
-		<constructor-arg ref="notifierService" />
-		<constructor-arg ref="uploadRequestService" />
-		<constructor-arg ref="accountRepository" />
-	</bean>
-
 </beans>
