@@ -182,4 +182,9 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="upgradeTaskService" />
 	</bean>
+	<bean id="wsAdminPublicKeyFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.PublicKeyFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="publicKeyService" />
+		<constructor-arg ref="abstractDomainService" />
+	</bean>
 </beans>

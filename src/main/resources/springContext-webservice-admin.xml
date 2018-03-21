@@ -144,6 +144,10 @@
 		<constructor-arg ref="wsAdminAccountQuotaFacade" />
 	</bean>
 
+	<bean id="adminPublicKeyRestService" class="org.linagora.linshare.webservice.admin.impl.PublicKeyRestServiceImpl">
+		<constructor-arg ref="wsAdminPublicKeyFacade" />
+	</bean>
+
 	<jaxrs:server id="restAdminContainer" address="/rest/admin">
 		<jaxrs:serviceBeans>
 			<ref bean="adminAuthenticationRestService" />
@@ -179,6 +183,7 @@
 			<ref bean="adminContainerQuotaRestService" />
 			<ref bean="adminAccountQuotaRestService" />
 			<ref bean="adminUpgradeTaskRestService" />
+			<ref bean="adminPublicKeyRestService"/>
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

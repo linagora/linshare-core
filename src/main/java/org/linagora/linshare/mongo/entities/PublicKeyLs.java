@@ -41,17 +41,17 @@ import javax.persistence.GeneratedValue;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.linagora.linshare.core.domain.constants.PublicKeysFormatType;
-import org.linagora.linshare.core.domain.constants.PublicKeysUsageType;
+import org.linagora.linshare.core.domain.constants.PublicKeyFormat;
+import org.linagora.linshare.core.domain.constants.PublicKeyUsage;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-@XmlRootElement(name = "PublicKeys")
+@XmlRootElement(name = "PublicKeyLs")
 @Document(collection = "public_keys")
-public class PublicKeys {
+public class PublicKeyLs {
 
 	@JsonIgnore
 	@Id
@@ -65,9 +65,11 @@ public class PublicKeys {
 	protected String domainUuid;
 
 	@ApiModelProperty(value = "usage")
-	protected PublicKeysUsageType usage;
+	@JsonIgnore
+	protected PublicKeyUsage usage;
 
 	@ApiModelProperty(value = "destroyed")
+	@JsonIgnore
 	protected boolean destroyed;
 
 	@ApiModelProperty(value = "issuer")
@@ -77,25 +79,25 @@ public class PublicKeys {
 	@ApiModelProperty(value = "publicKey")
 	protected String publicKey;
 
-	@ApiModelProperty(value = "crationDate")
+	@ApiModelProperty(value = "creationDate")
 	protected Date creationDate;
 
 	@ApiModelProperty(value = "format")
-	protected PublicKeysFormatType format;
+	protected PublicKeyFormat format;
 
-	public PublicKeys() {
+	public PublicKeyLs() {
 		super();
 		this.uuid = UUID.randomUUID().toString();
 	}
 
-	public PublicKeys(String issuer, String publicKey, PublicKeysFormatType format, String domainUuid) {
-		this.issuer = issuer;
-		this.publicKey = publicKey;
+	public PublicKeyLs(PublicKeyLs entity) {
+		this.issuer = entity.getIssuer();
+		this.publicKey = entity.getPublicKey();
 		this.destroyed = false;
-		this.format = format;
+		this.format = entity.getFormat();
 		this.creationDate = new Date();
-		this.usage = PublicKeysUsageType.JWT;
-		this.domainUuid = domainUuid;
+		this.usage = PublicKeyUsage.JWT;
+		this.domainUuid = entity.getDomainUuid();
 		this.uuid = UUID.randomUUID().toString();
 	}
 
@@ -115,11 +117,11 @@ public class PublicKeys {
 		this.domainUuid = domainUuid;
 	}
 
-	public PublicKeysUsageType getUsage() {
+	public PublicKeyUsage getUsage() {
 		return usage;
 	}
 
-	public void setUsage(PublicKeysUsageType usage) {
+	public void setUsage(PublicKeyUsage usage) {
 		this.usage = usage;
 	}
 
@@ -155,11 +157,11 @@ public class PublicKeys {
 		this.creationDate = creationDate;
 	}
 
-	public PublicKeysFormatType getFormat() {
+	public PublicKeyFormat getFormat() {
 		return format;
 	}
 
-	public void setFormat(PublicKeysFormatType format) {
+	public void setFormat(PublicKeyFormat format) {
 		this.format = format;
 	}
 }

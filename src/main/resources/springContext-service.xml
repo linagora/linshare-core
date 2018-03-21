@@ -353,4 +353,10 @@
 		<constructor-arg ref="safeDetailResourceAccessControl" />
 	</bean>
 
+	<bean name="publicKeyService" class="org.linagora.linshare.core.service.impl.PublicKeyServiceImpl">
+		<constructor-arg ref="publicKeyMongoRepository" />
+		<constructor-arg ref="logEntryService" />
+		<constructor-arg ref="domainPermissionBusinessService" />
+	</bean>
+
 </beans>

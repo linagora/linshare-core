@@ -32,10 +32,47 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.domain.constants;
+package org.linagora.linshare.core.service.impl;
 
-public enum PublicKeysFormatType {
+import org.jsoup.helper.Validate;
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.service.LogEntryService;
+import org.linagora.linshare.core.service.PublicKeyService;
+import org.linagora.linshare.mongo.entities.PublicKeyLs;
+import org.linagora.linshare.mongo.repository.PublicKeyMongoRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-	SSH,
-	PEM;
+public class PublicKeyServiceImpl implements PublicKeyService {
+
+	private static final Logger logger = LoggerFactory.getLogger(PublicKeyServiceImpl.class);
+
+	protected final PublicKeyMongoRepository publicKeyMongoRepository;
+
+	protected final LogEntryService logEntryService;
+
+	protected final DomainPermissionBusinessService permissionService;
+
+	public PublicKeyServiceImpl (PublicKeyMongoRepository publicKeyMongoRepository,
+			LogEntryService logEntryService,
+			DomainPermissionBusinessService permissionService) {
+		super ();
+		this.publicKeyMongoRepository = publicKeyMongoRepository;
+		this.logEntryService = logEntryService;
+		this.permissionService = permissionService;
+	}
+
+	@Override
+	public PublicKeyLs create(Account actor, PublicKeyLs publicKey, AbstractDomain domain) throws BusinessException {
+		Validate.notNull(domain, "domain must be set");
+		if (!permissionService.isAdminforThisDomain(actor, domain)) {
+			throw new BusinessException(BusinessErrorCode.PUBLIC_KEY_CAN_NOT_CREATE, "You are not allowed to use this domain");
+		}
+		PublicKeyLs pubKey = new PublicKeyLs(publicKey);
+		return publicKeyMongoRepository.save(pubKey);
+	}
 }

@@ -32,9 +32,51 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.domain.constants;
+package org.linagora.linshare.webservice.admin.impl;
 
-public enum PublicKeysUsageType {
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-	JWT;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.admin.PublicKeyFacade;
+import org.linagora.linshare.mongo.entities.PublicKeyLs;
+import org.linagora.linshare.webservice.WebserviceBase;
+import org.linagora.linshare.webservice.admin.PublicKeyRestService;
+
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
+
+@Path("/public_keys")
+@Api(value = "/rest/admin/public_keys", description = "Public keys API")
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+public class PublicKeyRestServiceImpl extends WebserviceBase implements PublicKeyRestService {
+
+	private final PublicKeyFacade publicKeyFacade;
+
+	public PublicKeyRestServiceImpl(PublicKeyFacade publicKeyFacade) {
+		super();
+		this.publicKeyFacade = publicKeyFacade;
+	}
+
+	@Path("/")
+	@POST
+	@ApiOperation(value = "Store a new public key.", response = Response.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
+			@ApiResponse(code = 404, message = "PublicKeys not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public PublicKeyLs create(
+			@ApiParam(value = "New public key", required = true)
+				PublicKeyLs publicKeyLs) throws BusinessException {
+		return publicKeyFacade.create(publicKeyLs);
+	}
 }
