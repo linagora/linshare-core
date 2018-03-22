@@ -357,6 +357,7 @@
 		<constructor-arg ref="publicKeyMongoRepository" />
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="domainPermissionBusinessService" />
+		<constructor-arg ref="abstractDomainService"/>
 	</bean>
 
 </beans>

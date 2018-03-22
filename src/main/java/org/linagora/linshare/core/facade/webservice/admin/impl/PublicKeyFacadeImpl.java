@@ -34,6 +34,8 @@
 
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
+import java.util.List;
+
 import org.jsoup.helper.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -59,6 +61,14 @@ public class PublicKeyFacadeImpl extends AdminGenericFacadeImpl implements Publi
 	}
 
 	@Override
+	public PublicKeyLs find(String uuid) {
+		Validate.notEmpty(uuid, "Public key uuid must be set");
+		User authUser = checkAuthentication(Role.SUPERADMIN);
+		PublicKeyLs publicKeyLs = publicKeyService.findByUuid(authUser, uuid);
+		return publicKeyLs;
+	}
+
+	@Override
 	public PublicKeyLs create(PublicKeyLs publicKey) {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(publicKey, "publicKey must be set");
@@ -68,5 +78,13 @@ public class PublicKeyFacadeImpl extends AdminGenericFacadeImpl implements Publi
 		Validate.notNull(publicKey.getFormat(), "Format must be set");
 		AbstractDomain domain = abstractDomainService.findById(publicKey.getDomainUuid());
 		return publicKeyService.create(authUser, publicKey, domain);
+	}
+
+	@Override
+	public List<PublicKeyLs> findAllByDomain(String domainUuid) {
+		User authUser = checkAuthentication(Role.SUPERADMIN);
+		Validate.notEmpty(domainUuid);
+		AbstractDomain domain = abstractDomainService.findById(domainUuid);
+		return publicKeyService.findAllByDomain(authUser, domain);
 	}
 }

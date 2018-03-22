@@ -34,22 +34,28 @@
 
 package org.linagora.linshare.core.service.impl;
 
+import java.util.List;
+
 import org.jsoup.helper.Validate;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.PublicKeyService;
 import org.linagora.linshare.mongo.entities.PublicKeyLs;
 import org.linagora.linshare.mongo.repository.PublicKeyMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Sort;
 
 public class PublicKeyServiceImpl implements PublicKeyService {
 
 	private static final Logger logger = LoggerFactory.getLogger(PublicKeyServiceImpl.class);
+
+	private static final String CREATION_DATE = "creationDate";
 
 	protected final PublicKeyMongoRepository publicKeyMongoRepository;
 
@@ -57,22 +63,55 @@ public class PublicKeyServiceImpl implements PublicKeyService {
 
 	protected final DomainPermissionBusinessService permissionService;
 
+	protected final AbstractDomainService abstractDomainService;
+
 	public PublicKeyServiceImpl (PublicKeyMongoRepository publicKeyMongoRepository,
 			LogEntryService logEntryService,
-			DomainPermissionBusinessService permissionService) {
+			DomainPermissionBusinessService permissionService,
+			AbstractDomainService abstractDomainService) {
 		super ();
 		this.publicKeyMongoRepository = publicKeyMongoRepository;
 		this.logEntryService = logEntryService;
 		this.permissionService = permissionService;
+		this.abstractDomainService = abstractDomainService;
 	}
 
 	@Override
-	public PublicKeyLs create(Account actor, PublicKeyLs publicKey, AbstractDomain domain) throws BusinessException {
+	public PublicKeyLs findByUuid(Account authUser, String uuid) {
+		Validate.notNull(authUser);
+		PublicKeyLs publicKey = publicKeyMongoRepository.findByUuid(uuid);
+		if (publicKey != null) {
+			AbstractDomain domain = abstractDomainService.findById(publicKey.getDomainUuid());
+			if (!permissionService.isAdminforThisDomain(authUser, domain)) {
+				throw new BusinessException(BusinessErrorCode.PUBLIC_KEY_CAN_NOT_READ,
+						"You are not allowed to use this domain");
+			}
+		} else {
+			throw new BusinessException(BusinessErrorCode.PUBLIC_KEY_NOT_FOUND, "Public key not found ");
+		}
+		return publicKey;
+	}
+
+	@Override
+	public PublicKeyLs create(Account authUser, PublicKeyLs publicKey, AbstractDomain domain) throws BusinessException {
 		Validate.notNull(domain, "domain must be set");
-		if (!permissionService.isAdminforThisDomain(actor, domain)) {
+		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
 			throw new BusinessException(BusinessErrorCode.PUBLIC_KEY_CAN_NOT_CREATE, "You are not allowed to use this domain");
 		}
 		PublicKeyLs pubKey = new PublicKeyLs(publicKey);
 		return publicKeyMongoRepository.save(pubKey);
+	}
+
+	@Override
+	public List<PublicKeyLs> findAllByDomain(Account authUser, AbstractDomain domain) {
+		Validate.notNull(domain);
+		Validate.notNull(authUser);
+		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
+			throw new BusinessException(BusinessErrorCode.PUBLIC_KEY_CAN_NOT_READ,
+					"You are not allowed to use this domain");
+		}
+		List<PublicKeyLs> publickeys = publicKeyMongoRepository.findByDomainUuid(domain.getUuid(),
+				new Sort(Sort.Direction.DESC, CREATION_DATE));
+		return publickeys;
 	}
 }

@@ -34,6 +34,8 @@
 
 package org.linagora.linshare.core.service;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -42,4 +44,8 @@ import org.linagora.linshare.mongo.entities.PublicKeyLs;
 public interface PublicKeyService {
 
 	PublicKeyLs create(Account authUser, PublicKeyLs publicKey, AbstractDomain domain) throws BusinessException;
+
+	PublicKeyLs findByUuid(Account authUser, String uuid);
+
+	List<PublicKeyLs> findAllByDomain(Account authUser, AbstractDomain domain);
 }

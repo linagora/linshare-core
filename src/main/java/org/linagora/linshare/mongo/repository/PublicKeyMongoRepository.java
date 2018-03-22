@@ -34,8 +34,7 @@
 
 package org.linagora.linshare.mongo.repository;
 
-
-import java.util.Set;
+import java.util.List;
 
 import org.linagora.linshare.mongo.entities.PublicKeyLs;
 import org.springframework.data.domain.Sort;
@@ -43,5 +42,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface PublicKeyMongoRepository extends MongoRepository<PublicKeyLs, String> {
 
-	Set<PublicKeyLs> findByDomainUuid(String domainUuid, Sort sort);
+	PublicKeyLs findByUuid(String uuid);
+
+	List<PublicKeyLs> findByDomainUuid(String domainUuid, Sort sort);
 }

@@ -34,15 +34,20 @@
 
 package org.linagora.linshare.webservice.admin.impl;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.PublicKeyFacade;
+import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestGroupDto;
 import org.linagora.linshare.mongo.entities.PublicKeyLs;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.PublicKeyRestService;
@@ -66,6 +71,20 @@ public class PublicKeyRestServiceImpl extends WebserviceBase implements PublicKe
 		this.publicKeyFacade = publicKeyFacade;
 	}
 
+	@Path("/{uuid}")
+	@GET
+	@ApiOperation(value = "Find public key by uuid.", response = Response.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
+			@ApiResponse(code = 404, message = "PublicKeys not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public PublicKeyLs find(
+			@ApiParam(value = "public key uuid", required = true)
+				@PathParam("uuid") String uuid) throws BusinessException {
+		return publicKeyFacade.find(uuid);
+	}
+
 	@Path("/")
 	@POST
 	@ApiOperation(value = "Store a new public key.", response = Response.class)
@@ -79,4 +98,20 @@ public class PublicKeyRestServiceImpl extends WebserviceBase implements PublicKe
 				PublicKeyLs publicKeyLs) throws BusinessException {
 		return publicKeyFacade.create(publicKeyLs);
 	}
+
+	@GET
+	@Path("/domain/{domainUuid}")
+	@ApiOperation(value = "Find a list of public keys by Domain uuid.", response = UploadRequestGroupDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission.") ,
+					@ApiResponse(code = 404, message = "PublicKeys not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+		})
+	@Override
+	public List<PublicKeyLs> findAllByDomain(
+			@ApiParam(value = "Domain uuid", required = true)
+				@PathParam("domainUuid") String domainUuid) throws BusinessException {
+		return publicKeyFacade.findAllByDomain(domainUuid);
+	}
+
 }

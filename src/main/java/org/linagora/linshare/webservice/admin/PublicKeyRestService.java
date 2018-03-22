@@ -34,10 +34,16 @@
 
 package org.linagora.linshare.webservice.admin;
 
+import java.util.List;
+
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.PublicKeyLs;
 
 public interface PublicKeyRestService {
 
 	PublicKeyLs create(PublicKeyLs publicKeyLs) throws BusinessException;
+
+	PublicKeyLs find(String uuid) throws BusinessException;
+
+	List<PublicKeyLs> findAllByDomain(String domainUuid) throws BusinessException;
 }
