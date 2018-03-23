@@ -87,7 +87,6 @@ public class PublicKeyLs {
 
 	public PublicKeyLs() {
 		super();
-		this.uuid = UUID.randomUUID().toString();
 	}
 
 	public PublicKeyLs(PublicKeyLs entity) {

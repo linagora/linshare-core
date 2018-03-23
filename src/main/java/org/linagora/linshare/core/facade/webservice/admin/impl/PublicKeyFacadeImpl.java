@@ -36,10 +36,11 @@ package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import java.util.List;
 
-import org.jsoup.helper.Validate;
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.PublicKeyFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
@@ -61,15 +62,15 @@ public class PublicKeyFacadeImpl extends AdminGenericFacadeImpl implements Publi
 	}
 
 	@Override
-	public PublicKeyLs find(String uuid) {
+	public PublicKeyLs find(String uuid) throws BusinessException{
 		Validate.notEmpty(uuid, "Public key uuid must be set");
 		User authUser = checkAuthentication(Role.SUPERADMIN);
-		PublicKeyLs publicKeyLs = publicKeyService.findByUuid(authUser, uuid);
+		PublicKeyLs publicKeyLs = publicKeyService.find(authUser, uuid);
 		return publicKeyLs;
 	}
 
 	@Override
-	public PublicKeyLs create(PublicKeyLs publicKey) {
+	public PublicKeyLs create(PublicKeyLs publicKey) throws BusinessException{
 		User authUser = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(publicKey, "publicKey must be set");
 		Validate.notEmpty(publicKey.getDomainUuid(), "domain uuid must be set");
@@ -81,10 +82,24 @@ public class PublicKeyFacadeImpl extends AdminGenericFacadeImpl implements Publi
 	}
 
 	@Override
-	public List<PublicKeyLs> findAllByDomain(String domainUuid) {
+	public List<PublicKeyLs> findAll(String domainUuid) throws BusinessException{
 		User authUser = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(domainUuid);
 		AbstractDomain domain = abstractDomainService.findById(domainUuid);
-		return publicKeyService.findAllByDomain(authUser, domain);
+		return publicKeyService.findAll(authUser, domain);
+	}
+
+	@Override
+	public PublicKeyLs delete(String uuid, PublicKeyLs publicKeyLs) throws BusinessException {
+		Validate.notNull(publicKeyLs, "public key must be set");
+		Validate.notEmpty(publicKeyLs.getUuid(), "public key uuid must be set");
+		User authUser = checkAuthentication(Role.SUPERADMIN);
+		if (!uuid.isEmpty()) {
+			publicKeyLs = publicKeyService.find(authUser, uuid);
+		} else {
+			publicKeyLs = publicKeyService.find(authUser, publicKeyLs.getUuid());
+		}
+		Validate.notNull(publicKeyLs);
+		return publicKeyService.delete(authUser, publicKeyLs);
 	}
 }

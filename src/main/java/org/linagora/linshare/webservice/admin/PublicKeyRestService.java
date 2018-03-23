@@ -45,5 +45,7 @@ public interface PublicKeyRestService {
 
 	PublicKeyLs find(String uuid) throws BusinessException;
 
-	List<PublicKeyLs> findAllByDomain(String domainUuid) throws BusinessException;
+	List<PublicKeyLs> findAll(String domainUuid) throws BusinessException;
+
+	PublicKeyLs delete(PublicKeyLs publicKeyLs, String uuid) throws BusinessException;
 }

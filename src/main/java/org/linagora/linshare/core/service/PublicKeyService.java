@@ -45,7 +45,9 @@ public interface PublicKeyService {
 
 	PublicKeyLs create(Account authUser, PublicKeyLs publicKey, AbstractDomain domain) throws BusinessException;
 
-	PublicKeyLs findByUuid(Account authUser, String uuid);
+	PublicKeyLs find(Account authUser, String uuid) throws BusinessException;
 
-	List<PublicKeyLs> findAllByDomain(Account authUser, AbstractDomain domain);
+	List<PublicKeyLs> findAll(Account authUser, AbstractDomain domain) throws BusinessException;
+
+	PublicKeyLs delete(Account authUser, PublicKeyLs publicKeyLs) throws BusinessException;
 }

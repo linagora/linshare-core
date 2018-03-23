@@ -37,6 +37,7 @@ package org.linagora.linshare.webservice.admin.impl;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -108,10 +109,25 @@ public class PublicKeyRestServiceImpl extends WebserviceBase implements PublicKe
 					@ApiResponse(code = 500, message = "Internal server error."),
 		})
 	@Override
-	public List<PublicKeyLs> findAllByDomain(
+	public List<PublicKeyLs> findAll(
 			@ApiParam(value = "Domain uuid", required = true)
 				@PathParam("domainUuid") String domainUuid) throws BusinessException {
-		return publicKeyFacade.findAllByDomain(domainUuid);
+		return publicKeyFacade.findAll(domainUuid);
 	}
 
+	@Path("/{uuid .*}")
+	@DELETE
+	@ApiOperation(value = "Delete a public keys.", response = Response.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
+			@ApiResponse(code = 404, message = "PublicKeys not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public PublicKeyLs delete(
+			@ApiParam(value = "public key to delete", required = true)
+				PublicKeyLs publicKeyLs,
+			@ApiParam(value = "public key uuid to delete", required = false)
+				@PathParam("uuid") String uuid) throws BusinessException {
+		return publicKeyFacade.delete(uuid, publicKeyLs);
+	}
 }

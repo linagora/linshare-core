@@ -36,7 +36,7 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
 
-import org.jsoup.helper.Validate;
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -77,7 +77,7 @@ public class PublicKeyServiceImpl implements PublicKeyService {
 	}
 
 	@Override
-	public PublicKeyLs findByUuid(Account authUser, String uuid) {
+	public PublicKeyLs find(Account authUser, String uuid) {
 		Validate.notNull(authUser);
 		PublicKeyLs publicKey = publicKeyMongoRepository.findByUuid(uuid);
 		if (publicKey != null) {
@@ -87,6 +87,7 @@ public class PublicKeyServiceImpl implements PublicKeyService {
 						"You are not allowed to use this domain");
 			}
 		} else {
+			logger.debug("Public key not found ", uuid);
 			throw new BusinessException(BusinessErrorCode.PUBLIC_KEY_NOT_FOUND, "Public key not found ");
 		}
 		return publicKey;
@@ -103,7 +104,7 @@ public class PublicKeyServiceImpl implements PublicKeyService {
 	}
 
 	@Override
-	public List<PublicKeyLs> findAllByDomain(Account authUser, AbstractDomain domain) {
+	public List<PublicKeyLs> findAll(Account authUser, AbstractDomain domain) {
 		Validate.notNull(domain);
 		Validate.notNull(authUser);
 		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
@@ -113,5 +114,17 @@ public class PublicKeyServiceImpl implements PublicKeyService {
 		List<PublicKeyLs> publickeys = publicKeyMongoRepository.findByDomainUuid(domain.getUuid(),
 				new Sort(Sort.Direction.DESC, CREATION_DATE));
 		return publickeys;
+	}
+
+	@Override
+	public PublicKeyLs delete(Account authUser, PublicKeyLs publicKeyLs) throws BusinessException {
+		Validate.notNull(authUser);
+		AbstractDomain domain = abstractDomainService.findById(publicKeyLs.getDomainUuid());
+		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
+			throw new BusinessException(BusinessErrorCode.PUBLIC_KEY_CAN_NOT_DELETE,
+					"You are not allowed to use this domain");
+		}
+		publicKeyMongoRepository.delete(publicKeyLs);
+		return publicKeyLs;
 	}
 }

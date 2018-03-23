@@ -36,13 +36,16 @@ package org.linagora.linshare.core.facade.webservice.admin;
 
 import java.util.List;
 
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.PublicKeyLs;
 
 public interface PublicKeyFacade {
 
-	PublicKeyLs create(PublicKeyLs publicKey);
+	PublicKeyLs create(PublicKeyLs publicKey) throws BusinessException;
 
-	PublicKeyLs find(String uuid);
+	PublicKeyLs find(String uuid) throws BusinessException;
 
-	List<PublicKeyLs> findAllByDomain(String domainUuid);
+	List<PublicKeyLs> findAll(String domainUuid) throws BusinessException;
+
+	PublicKeyLs delete(String uuid, PublicKeyLs publicKeyLs) throws BusinessException;
 }
