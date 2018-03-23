@@ -64,14 +64,6 @@
 		<constructor-arg ref="wsMailingListFacade" />
 	</bean>
 
-	<bean id="delegationUploadRequestRestService" class="org.linagora.linshare.webservice.delegation.impl.UploadRequestRestServiceImpl">
-		<constructor-arg ref="wsUploadRequestFacade" />
-	</bean>
-
-	<bean id="delegationUploadRequestGroupRestService" class="org.linagora.linshare.webservice.delegation.impl.UploadRequestGroupRestServiceImpl">
-		<constructor-arg ref="wsUploadRequestGroupFacade" />
-	</bean>
-
 	<bean id="delegationUploadRequestTemplateRestService" class="org.linagora.linshare.webservice.delegation.impl.UploadRequestTemplateRestServiceImpl">
 		<constructor-arg ref="wsUploadRequestTemplateFacade" />
 	</bean>
@@ -92,8 +84,6 @@
 			<ref bean="delegationShareRestService" />
 			<ref bean="delegationShareEntryGroupRestService" />
 			<ref bean="delegationMailingListRestService" />
-			<ref bean="delegationUploadRequestRestService" />
-			<ref bean="delegationUploadRequestGroupRestService" />
 			<ref bean="delegationUploadRequestTemplateRestService" />
 			<ref bean="delegationAuditLogEntryDelegationRestService" />
 		</jaxrs:serviceBeans>
