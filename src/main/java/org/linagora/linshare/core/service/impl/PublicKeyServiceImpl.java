@@ -100,7 +100,7 @@ public class PublicKeyServiceImpl implements PublicKeyService {
 			throw new BusinessException(BusinessErrorCode.PUBLIC_KEY_CAN_NOT_CREATE, "You are not allowed to use this domain");
 		}
 		PublicKeyLs pubKey = new PublicKeyLs(publicKey);
-		return publicKeyMongoRepository.save(pubKey);
+		return publicKeyMongoRepository.insert(pubKey);
 	}
 
 	@Override
@@ -124,7 +124,8 @@ public class PublicKeyServiceImpl implements PublicKeyService {
 			throw new BusinessException(BusinessErrorCode.PUBLIC_KEY_CAN_NOT_DELETE,
 					"You are not allowed to use this domain");
 		}
-		publicKeyMongoRepository.delete(publicKeyLs);
+		publicKeyLs.setDestroyed(true);
+		publicKeyMongoRepository.save(publicKeyLs);
 		return publicKeyLs;
 	}
 }

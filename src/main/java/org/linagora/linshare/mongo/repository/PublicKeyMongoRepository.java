@@ -39,10 +39,13 @@ import java.util.List;
 import org.linagora.linshare.mongo.entities.PublicKeyLs;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 
 public interface PublicKeyMongoRepository extends MongoRepository<PublicKeyLs, String> {
 
+	@Query("{ 'uuid' : ?0, 'destroyed' : false }")
 	PublicKeyLs findByUuid(String uuid);
 
+	@Query("{ 'domainUuid' : ?0, 'destroyed' : false }")
 	List<PublicKeyLs> findByDomainUuid(String domainUuid, Sort sort);
 }

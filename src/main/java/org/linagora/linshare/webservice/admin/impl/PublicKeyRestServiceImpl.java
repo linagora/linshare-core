@@ -115,7 +115,7 @@ public class PublicKeyRestServiceImpl extends WebserviceBase implements PublicKe
 		return publicKeyFacade.findAll(domainUuid);
 	}
 
-	@Path("/{uuid .*}")
+	@Path("/{uuid : .*}")
 	@DELETE
 	@ApiOperation(value = "Delete a public keys.", response = Response.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
