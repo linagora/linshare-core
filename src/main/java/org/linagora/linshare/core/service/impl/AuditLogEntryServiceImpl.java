@@ -54,6 +54,7 @@ import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
@@ -303,5 +304,16 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 			types.add(AuditLogEntryType.UPLOAD_REQUEST_URL);
 		}
 		return types;
+	}
+
+	@Override
+	public Set<AuditLogEntryAdmin> findAll(Account actor, String domainUuid, List<LogAction> action) {
+		Validate.notNull(actor);
+		if (action.isEmpty()) {
+			action.add(LogAction.CREATE);
+			action.add(LogAction.DELETE);
+		}
+		return auditMongoRepository.findAll(domainUuid, action, AuditLogEntryType.PUBLIC_KEY,
+				new Sort(Sort.Direction.DESC, CREATION_DATE));
 	}
 }

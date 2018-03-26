@@ -35,11 +35,15 @@
 package org.linagora.linshare.core.service;
 
 import java.util.List;
+import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.PublicKeyLs;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
 
 public interface PublicKeyService {
 
@@ -50,4 +54,6 @@ public interface PublicKeyService {
 	List<PublicKeyLs> findAll(Account authUser, AbstractDomain domain) throws BusinessException;
 
 	PublicKeyLs delete(Account authUser, PublicKeyLs publicKeyLs) throws BusinessException;
+
+	Set<AuditLogEntryAdmin> findAllAudit(User authUser, AbstractDomain domain, List<LogAction> actions);
 }

@@ -35,6 +35,7 @@
 package org.linagora.linshare.webservice.admin.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -43,13 +44,15 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.PublicKeyFacade;
-import org.linagora.linshare.core.facade.webservice.common.dto.UploadRequestGroupDto;
 import org.linagora.linshare.mongo.entities.PublicKeyLs;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.PublicKeyRestService;
 
@@ -74,7 +77,7 @@ public class PublicKeyRestServiceImpl extends WebserviceBase implements PublicKe
 
 	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Find public key by uuid.", response = Response.class)
+	@ApiOperation(value = "Find public key by uuid.", response = PublicKeyLs.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
 			@ApiResponse(code = 404, message = "PublicKeys not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
@@ -88,7 +91,7 @@ public class PublicKeyRestServiceImpl extends WebserviceBase implements PublicKe
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Store a new public key.", response = Response.class)
+	@ApiOperation(value = "Store a new public key.", response = PublicKeyLs.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
 			@ApiResponse(code = 404, message = "PublicKeys not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
@@ -102,7 +105,7 @@ public class PublicKeyRestServiceImpl extends WebserviceBase implements PublicKe
 
 	@GET
 	@Path("/domain/{domainUuid}")
-	@ApiOperation(value = "Find a list of public keys by Domain uuid.", response = UploadRequestGroupDto.class)
+	@ApiOperation(value = "Find a list of public keys by Domain uuid.", response = PublicKeyLs.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission.") ,
 					@ApiResponse(code = 404, message = "PublicKeys not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
@@ -117,7 +120,7 @@ public class PublicKeyRestServiceImpl extends WebserviceBase implements PublicKe
 
 	@Path("/{uuid : .*}")
 	@DELETE
-	@ApiOperation(value = "Delete a public keys.", response = Response.class)
+	@ApiOperation(value = "Delete a public keys.", response = PublicKeyLs.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
 			@ApiResponse(code = 404, message = "PublicKeys not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
@@ -129,5 +132,22 @@ public class PublicKeyRestServiceImpl extends WebserviceBase implements PublicKe
 			@ApiParam(value = "public key uuid to delete", required = false)
 				@PathParam("uuid") String uuid) throws BusinessException {
 		return publicKeyFacade.delete(uuid, publicKeyLs);
+	}
+
+	@GET
+	@Path("/audit/{domainUuid}")
+	@ApiOperation(value = "Get all traces for a public keys.", response = AuditLogEntryUser.class, responseContainer="Set")
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
+					@ApiResponse(code = 404, message = "PublicKeyLs not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+		})
+	@Override
+	public Set<AuditLogEntryAdmin> findAll(
+			@ApiParam(value = "The domain uuid.", required = true)
+				@PathParam("domainUuid") String domainUuid,
+			@ApiParam(value = "Filter by type of actions..", required = false)
+				@QueryParam("actions") List<LogAction> actions) {
+		return publicKeyFacade.findAll(domainUuid, actions);
 	}
 }

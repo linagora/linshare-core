@@ -358,6 +358,7 @@
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="domainPermissionBusinessService" />
 		<constructor-arg ref="abstractDomainService"/>
+		<constructor-arg ref="auditLogEntryService"/>
 	</bean>
 
 </beans>

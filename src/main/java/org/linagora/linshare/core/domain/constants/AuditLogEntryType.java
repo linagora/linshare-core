@@ -61,7 +61,8 @@ public enum AuditLogEntryType {
 	AUTHENTICATION,
 	USER_PREFERENCE,
 	RESET_PASSWORD,
-	SAFE_DETAIL;
+	SAFE_DETAIL,
+	PUBLIC_KEY;
 
 	public static AuditLogEntryType fromString(String s) {
 		try {

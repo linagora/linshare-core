@@ -35,8 +35,10 @@
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
@@ -46,6 +48,7 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.PublicKeyService;
 import org.linagora.linshare.mongo.entities.PublicKeyLs;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
 
 public class PublicKeyFacadeImpl extends AdminGenericFacadeImpl implements PublicKeyFacade {
 
@@ -101,5 +104,13 @@ public class PublicKeyFacadeImpl extends AdminGenericFacadeImpl implements Publi
 		}
 		Validate.notNull(publicKeyLs);
 		return publicKeyService.delete(authUser, publicKeyLs);
+	}
+
+	@Override
+	public Set<AuditLogEntryAdmin> findAll(String domainUuid, List<LogAction> actions) {
+		Validate.notEmpty(domainUuid, "Domain uuid must be set");
+		User authUser = checkAuthentication(Role.SUPERADMIN);
+		AbstractDomain domain = abstractDomainService.findById(domainUuid);
+		return publicKeyService.findAllAudit(authUser, domain, actions);
 	}
 }

@@ -139,7 +139,7 @@ public class PublicKeyServiceImplTest extends AbstractTransactionalJUnit4SpringC
 			Assert.assertNotNull(pubKey);
 			publicKeyService.find(jane, pubKey.getUuid());
 		} catch (BusinessException ex) {
-			Assert.assertThat(ex.getErrorCode(), is(BusinessErrorCode.PUBLIC_KEY_CAN_NOT_READ));
+			Assert.assertThat(ex.getErrorCode(), is(BusinessErrorCode.PUBLIC_KEY_FORBIDDEN));
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}

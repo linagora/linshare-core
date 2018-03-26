@@ -35,17 +35,24 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AbstractDomainService;
+import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.PublicKeyService;
 import org.linagora.linshare.mongo.entities.PublicKeyLs;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
+import org.linagora.linshare.mongo.entities.logs.PublicKeyAuditLogEntry;
 import org.linagora.linshare.mongo.repository.PublicKeyMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,15 +72,19 @@ public class PublicKeyServiceImpl implements PublicKeyService {
 
 	protected final AbstractDomainService abstractDomainService;
 
+	protected final AuditLogEntryService auditLogEntryService;
+
 	public PublicKeyServiceImpl (PublicKeyMongoRepository publicKeyMongoRepository,
 			LogEntryService logEntryService,
 			DomainPermissionBusinessService permissionService,
-			AbstractDomainService abstractDomainService) {
+			AbstractDomainService abstractDomainService,
+			AuditLogEntryService auditLogEntryService) {
 		super ();
 		this.publicKeyMongoRepository = publicKeyMongoRepository;
 		this.logEntryService = logEntryService;
 		this.permissionService = permissionService;
 		this.abstractDomainService = abstractDomainService;
+		this.auditLogEntryService = auditLogEntryService;
 	}
 
 	@Override
@@ -83,7 +94,7 @@ public class PublicKeyServiceImpl implements PublicKeyService {
 		if (publicKey != null) {
 			AbstractDomain domain = abstractDomainService.findById(publicKey.getDomainUuid());
 			if (!permissionService.isAdminforThisDomain(authUser, domain)) {
-				throw new BusinessException(BusinessErrorCode.PUBLIC_KEY_CAN_NOT_READ,
+				throw new BusinessException(BusinessErrorCode.PUBLIC_KEY_FORBIDDEN,
 						"You are not allowed to use this domain");
 			}
 		} else {
@@ -100,7 +111,11 @@ public class PublicKeyServiceImpl implements PublicKeyService {
 			throw new BusinessException(BusinessErrorCode.PUBLIC_KEY_CAN_NOT_CREATE, "You are not allowed to use this domain");
 		}
 		PublicKeyLs pubKey = new PublicKeyLs(publicKey);
-		return publicKeyMongoRepository.insert(pubKey);
+		pubKey = publicKeyMongoRepository.insert(pubKey);
+		AuditLogEntryAdmin createLog = new PublicKeyAuditLogEntry(authUser, LogAction.CREATE, AuditLogEntryType.PUBLIC_KEY,
+				pubKey.getUuid(), pubKey);
+		logEntryService.insert(createLog);
+		return pubKey;
 	}
 
 	@Override
@@ -108,7 +123,7 @@ public class PublicKeyServiceImpl implements PublicKeyService {
 		Validate.notNull(domain);
 		Validate.notNull(authUser);
 		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
-			throw new BusinessException(BusinessErrorCode.PUBLIC_KEY_CAN_NOT_READ,
+			throw new BusinessException(BusinessErrorCode.PUBLIC_KEY_FORBIDDEN,
 					"You are not allowed to use this domain");
 		}
 		List<PublicKeyLs> publickeys = publicKeyMongoRepository.findByDomainUuid(domain.getUuid(),
@@ -124,8 +139,20 @@ public class PublicKeyServiceImpl implements PublicKeyService {
 			throw new BusinessException(BusinessErrorCode.PUBLIC_KEY_CAN_NOT_DELETE,
 					"You are not allowed to use this domain");
 		}
-		publicKeyLs.setDestroyed(true);
-		publicKeyMongoRepository.save(publicKeyLs);
+		AuditLogEntryAdmin deleteLog = new PublicKeyAuditLogEntry(authUser, LogAction.DELETE,
+				AuditLogEntryType.PUBLIC_KEY, publicKeyLs.getUuid(), publicKeyLs);
+		publicKeyMongoRepository.delete(publicKeyLs);
+		logEntryService.insert(deleteLog);
 		return publicKeyLs;
+	}
+
+	@Override
+	public Set<AuditLogEntryAdmin> findAllAudit(User authUser, AbstractDomain domain, List<LogAction> actions) {
+		Validate.notNull(domain);
+		if(!permissionService.isAdminforThisDomain(authUser, domain)) {
+			throw new BusinessException(BusinessErrorCode.PUBLIC_KEY_FORBIDDEN,
+					"You are not allowed to use this domain");
+		}
+		return auditLogEntryService.findAll(authUser, domain.getUuid(), actions);
 	}
 }

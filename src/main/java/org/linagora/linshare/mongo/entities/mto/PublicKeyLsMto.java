@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2016-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,40 +31,86 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.repository;
+
+package org.linagora.linshare.mongo.entities.mto;
 
 import java.util.Date;
-import java.util.List;
-import java.util.Set;
 
-import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
-import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
+import org.linagora.linshare.core.domain.constants.PublicKeyFormat;
+import org.linagora.linshare.mongo.entities.PublicKeyLs;
 
-public interface AuditAdminMongoRepository extends MongoRepository<AuditLogEntry, String> {
+public class PublicKeyLsMto {
 
-	List<AuditLogEntry> findByAction(String action);
+	protected String uuid;
 
-//	List<AuditLogEntry> findByTargetDomainUuid(String domain);
+	protected String domainUuid;
 
-	@Query("{ 'actor.uuid' : ?0 }")
-	List<AuditLogEntry> findByActor(String actor);
+	protected String issuer;
 
-	List<AuditLogEntry> findByType(AuditLogEntryType type);
+	protected String publicKey;
 
-	@Query("{'action' : {'$in' : ?0 }, 'type' : { '$in' : ?1 } , 'creationDate' : { '$gt' : '?2' , '$lt' : '?3'} }")
-	Set<AuditLogEntry> findAll(List<LogAction> actions, List<AuditLogEntryType> types, Date beginDate,
-			Date endDate);
+	protected Date creationDate;
 
-	@Query("{ 'action' : {'$in' : ?0 }, 'type' : { '$in' : ?1 } }")
-	Set<AuditLogEntry> findAll(List<LogAction> actions, List<AuditLogEntryType> types);
+	protected PublicKeyFormat format;
 
-	// Public Key
-	@Query("{ 'resource.domainUuid' : ?0, 'action' : {'$in' : ?1 }, 'type' : ?2 }")
-	Set<AuditLogEntryAdmin> findAll(String domainUuid, List<LogAction> action, AuditLogEntryType type,
-			Sort sort);
+	public PublicKeyLsMto() {
+		super();
+	}
+
+	public PublicKeyLsMto(PublicKeyLs publicKey) {
+		this.issuer = publicKey.getIssuer();
+		this.publicKey = publicKey.getPublicKey();
+		this.format = publicKey.getFormat();
+		this.creationDate = publicKey.getCreationDate();
+		this.domainUuid = publicKey.getDomainUuid();
+		this.uuid = publicKey.getUuid();
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getDomainUuid() {
+		return domainUuid;
+	}
+
+	public void setDomainUuid(String domainUuid) {
+		this.domainUuid = domainUuid;
+	}
+
+	public String getIssuer() {
+		return issuer;
+	}
+
+	public void setIssuer(String issuer) {
+		this.issuer = issuer;
+	}
+
+	public String getPublicKey() {
+		return publicKey;
+	}
+
+	public void setPublicKey(String publicKey) {
+		this.publicKey = publicKey;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public PublicKeyFormat getFormat() {
+		return format;
+	}
+
+	public void setFormat(PublicKeyFormat format) {
+		this.format = format;
+	}
 }

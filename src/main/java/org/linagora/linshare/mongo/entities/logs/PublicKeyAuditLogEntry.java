@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2016-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,40 +31,34 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.repository;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+package org.linagora.linshare.mongo.entities.logs;
 
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.mongo.entities.PublicKeyLs;
+import org.linagora.linshare.mongo.entities.mto.PublicKeyLsMto;
 
-public interface AuditAdminMongoRepository extends MongoRepository<AuditLogEntry, String> {
+public class PublicKeyAuditLogEntry extends AuditLogEntryAdmin {
 
-	List<AuditLogEntry> findByAction(String action);
+	protected PublicKeyLsMto resource;
 
-//	List<AuditLogEntry> findByTargetDomainUuid(String domain);
+	public PublicKeyAuditLogEntry() {
+		super();
+	}
 
-	@Query("{ 'actor.uuid' : ?0 }")
-	List<AuditLogEntry> findByActor(String actor);
+	public PublicKeyAuditLogEntry(Account authUser, LogAction action, AuditLogEntryType type, String resourceUuid,
+			PublicKeyLs publicKey) {
+		super(authUser, publicKey.getDomainUuid(), action, type, resourceUuid);
+		this.resource = new PublicKeyLsMto(publicKey);
+	}
 
-	List<AuditLogEntry> findByType(AuditLogEntryType type);
+	public PublicKeyLsMto getResource() {
+		return resource;
+	}
 
-	@Query("{'action' : {'$in' : ?0 }, 'type' : { '$in' : ?1 } , 'creationDate' : { '$gt' : '?2' , '$lt' : '?3'} }")
-	Set<AuditLogEntry> findAll(List<LogAction> actions, List<AuditLogEntryType> types, Date beginDate,
-			Date endDate);
-
-	@Query("{ 'action' : {'$in' : ?0 }, 'type' : { '$in' : ?1 } }")
-	Set<AuditLogEntry> findAll(List<LogAction> actions, List<AuditLogEntryType> types);
-
-	// Public Key
-	@Query("{ 'resource.domainUuid' : ?0, 'action' : {'$in' : ?1 }, 'type' : ?2 }")
-	Set<AuditLogEntryAdmin> findAll(String domainUuid, List<LogAction> action, AuditLogEntryType type,
-			Sort sort);
+	public void setResource(PublicKeyLsMto resource) {
+		this.resource = resource;
+	}
 }
