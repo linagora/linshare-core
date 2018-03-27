@@ -49,7 +49,7 @@ public interface WelcomeMessagesRestService {
 
 	WelcomeMessagesDto create(WelcomeMessagesDto customDto) throws BusinessException;
 
-	WelcomeMessagesDto update(WelcomeMessagesDto customDto) throws BusinessException;
+	WelcomeMessagesDto update(WelcomeMessagesDto customDto, String uuid) throws BusinessException;
 
 	WelcomeMessagesDto delete(String uuid) throws BusinessException;
 

@@ -127,7 +127,7 @@ public class WelcomeMessagesRestServiceImpl implements
 		return welcomeMessagesFacade.create(customDto);
 	}
 
-	@Path("/")
+	@Path("/{uuid : .*}")
 	@PUT
 	@ApiOperation(value = "Update a welcome message entry.", response = WelcomeMessagesDto.class)
 	@ApiResponses({
@@ -136,9 +136,11 @@ public class WelcomeMessagesRestServiceImpl implements
 			@ApiResponse(code = 400, message = "Bad request : missing required fields.") })
 	@Override
 	public WelcomeMessagesDto update(
-			@ApiParam(value = "Welcome message updated", required = true) WelcomeMessagesDto customDto)
-			throws BusinessException {
-		return welcomeMessagesFacade.update(customDto);
+			@ApiParam(value = "Welcome message updated", required = true)
+			WelcomeMessagesDto customDto,
+		@ApiParam(value = "Welcome messages uuid", required = false)
+			@PathParam("uuid") String uuid) {
+		return welcomeMessagesFacade.update(customDto, uuid);
 	}
 
 	@Path("/{uuid}")

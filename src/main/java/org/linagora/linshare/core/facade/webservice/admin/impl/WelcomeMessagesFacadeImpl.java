@@ -50,6 +50,7 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.WelcomeMessagesService;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -111,16 +112,18 @@ public class WelcomeMessagesFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public WelcomeMessagesDto update(WelcomeMessagesDto wlcmDto)
-			throws BusinessException {
+	public WelcomeMessagesDto update(WelcomeMessagesDto wlcmDto, String uuid) throws BusinessException {
 		Validate.notNull(wlcmDto, "Welcome message object must be set.");
+		if (!Strings.isNullOrEmpty(uuid)) {
+			wlcmDto.setUuid(uuid);
+		}
 		Validate.notEmpty(wlcmDto.getUuid(), "Welcome message uuid must be set.");
+		User authUser = checkAuthentication(Role.ADMIN);
 		if (wlcmDto.getDomains() == null) {
 			Set<DomainLightDto> domains = Sets.newHashSet();
 			wlcmDto.setDomains(domains);
 		}
-		User authUser = checkAuthentication(Role.ADMIN);
-		WelcomeMessages wlcm = wlcmDto.toObject();
+		WelcomeMessages	wlcm = wlcmDto.toObject();
 		List<String> domainUuids = Lists.newArrayList();
 		for (DomainLightDto d : wlcmDto.getDomains()) {
 			domainUuids.add(d.getIdentifier());
