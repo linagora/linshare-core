@@ -47,7 +47,7 @@ public interface WelcomeMessagesFacade {
 
 	WelcomeMessagesDto create(WelcomeMessagesDto wlcmDto) throws BusinessException;
 
-	WelcomeMessagesDto update(WelcomeMessagesDto wlcmDto) throws BusinessException;
+	WelcomeMessagesDto update(WelcomeMessagesDto wlcmDto, String uuid) throws BusinessException;
 
 	WelcomeMessagesDto delete(String uuid) throws BusinessException;
 
