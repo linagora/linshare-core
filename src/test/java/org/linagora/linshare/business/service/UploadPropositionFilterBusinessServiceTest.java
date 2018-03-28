@@ -109,4 +109,14 @@ public class UploadPropositionFilterBusinessServiceTest extends AbstractTransact
 		Assert.assertNotNull("No Filter has been created", persistedFilter);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
+
+	@Test
+	public void createAndFindUploadPropositionFilter() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		UploadPropositionFilter filterToCreate = new UploadPropositionFilter(referenceFilter);
+		UploadPropositionFilter persistedFilter = filterBusinessService.create(filterToCreate);
+		UploadPropositionFilter found = filterBusinessService.find(persistedFilter.getDomainUuid(), persistedFilter.getUuid());
+		Assert.assertNotNull("No Filter has been found", found);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
 }

@@ -42,11 +42,11 @@ import org.linagora.linshare.mongo.entities.UploadPropositionFilter;
 
 public interface UploadPropositionFilterRestService {
 
-	List<UploadPropositionFilterDto> findAll() throws BusinessException;
+	List<UploadPropositionFilter> findAll(String domainUuid) throws BusinessException;
 
-	UploadPropositionFilterDto find(String uuid) throws BusinessException;
+	UploadPropositionFilter find(String uuid, String domainUuid) throws BusinessException;
 
-	void head(String uuid) throws BusinessException;
+	void head(String uuid, String domainUuid) throws BusinessException;
 
 	UploadPropositionFilterDto update(UploadPropositionFilterDto filter) throws BusinessException;
 

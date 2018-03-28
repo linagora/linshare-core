@@ -70,10 +70,10 @@ public class UploadPropositionFilterServiceImpl
 	}
 
 	@Override
-	public UploadPropositionFilterOLD find(Account actor, String uuid) throws BusinessException {
+	public UploadPropositionFilterOLD findOLD(Account actor, String uuid) throws BusinessException {
 		preChecks(actor);
 		Validate.notEmpty(uuid, "filter uuid is required");
-		UploadPropositionFilterOLD filter = businessService.find(uuid);
+		UploadPropositionFilterOLD filter = businessService.findOLD(uuid);
 		if (filter ==null) {
 			logger.error(actor.getAccountRepresentation() + " is looking for missing filter uuid : " + uuid);
 			throw new BusinessException(BusinessErrorCode.UPLOAD_PROPOSITION_FILTER_NOT_FOUND, "filter with uuid : " + uuid + " not found.");
@@ -82,13 +82,30 @@ public class UploadPropositionFilterServiceImpl
 	}
 
 	@Override
-	public List<UploadPropositionFilterOLD> findAll(Account actor) throws BusinessException {
-		preChecks(actor);
-		if (actor.hasSuperAdminRole() || actor.hasUploadPropositionRole()) {
-			return businessService.findAll();
-		} else {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get these filters.");
+	public UploadPropositionFilter find(Account authUser, AbstractDomain domain, String uuid) throws BusinessException {
+		preChecks(authUser);
+		Validate.notEmpty(uuid, "filter uuid is required");
+		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_PROPOSITION_FILTER_CAN_NOT_READ,
+					"You are not allowed to use this domain");
 		}
+		UploadPropositionFilter filter = businessService.find(domain.getUuid(), uuid);
+		if (filter == null) {
+			logger.error(authUser.getAccountRepresentation() + " is looking for missing filter uuid : " + uuid);
+			throw new BusinessException(BusinessErrorCode.UPLOAD_PROPOSITION_FILTER_NOT_FOUND,
+					"filter with uuid : " + uuid + " not found.");
+		}
+		return filter;
+	}
+
+	@Override
+	public List<UploadPropositionFilter> findAll(Account authUser, AbstractDomain domain) throws BusinessException {
+		preChecks(authUser);
+		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_PROPOSITION_FILTER_CAN_NOT_READ,
+					"You are not allowed to use this domain");
+		}
+		return businessService.findAll();
 	}
 
 	@Override
@@ -118,7 +135,7 @@ public class UploadPropositionFilterServiceImpl
 		Validate.notNull(dto, "filter is required");
 		Validate.notEmpty(dto.getUuid(), "filter uuid is required");
 		// permission check
-		find(actor, dto.getUuid());
+		findOLD(actor, dto.getUuid());
 		return businessService.update(dto);
 	}
 
@@ -126,7 +143,7 @@ public class UploadPropositionFilterServiceImpl
 	public UploadPropositionFilterOLD delete(Account actor, String uuid) throws BusinessException {
 		preChecks(actor);
 		Validate.notEmpty(uuid, "filter uuid is required");
-		UploadPropositionFilterOLD entity = find(actor, uuid);
+		UploadPropositionFilterOLD entity = findOLD(actor, uuid);
 		businessService.delete(entity);
 		return entity;
 	}

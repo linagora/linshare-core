@@ -42,9 +42,9 @@ import org.linagora.linshare.mongo.entities.UploadPropositionFilter;
 
 public interface UploadPropositionFilterFacade extends AdminGenericFacade {
 
-	List<UploadPropositionFilterDto> findAll() throws BusinessException;
+	List<UploadPropositionFilter> findAll(String domainUuid) throws BusinessException;
 
-	UploadPropositionFilterDto find(String uuid) throws BusinessException;
+	UploadPropositionFilter find(String uuid, String domainUuid) throws BusinessException;
 
 	UploadPropositionFilterDto update(UploadPropositionFilterDto filter) throws BusinessException;
 

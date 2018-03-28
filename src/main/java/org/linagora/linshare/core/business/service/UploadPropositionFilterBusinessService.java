@@ -44,9 +44,11 @@ import org.linagora.linshare.mongo.entities.UploadPropositionFilter;
 
 public interface UploadPropositionFilterBusinessService {
 
-	UploadPropositionFilterOLD find(String uuid);
+	UploadPropositionFilterOLD findOLD(String uuid);
 
-	List<UploadPropositionFilterOLD> findAll();
+	UploadPropositionFilter find(String domainUuid, String uuid);
+
+	List<UploadPropositionFilter> findAll();
 
 	List<UploadPropositionFilterOLD> findAllEnabledFilters();
 

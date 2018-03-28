@@ -79,33 +79,50 @@ public class UploadPropositionFilterRestServiceImpl extends WebserviceBase
 		this.uploadPropositionFilterFacade = uploadPropositionFilterFacade;
 	}
 
-	@Path("/")
+	@Path("/domains/{domainUuid}")
 	@GET
-	@ApiOperation(value = "Find all filters.", response = UploadPropositionFilterDto.class, responseContainer = "List")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't super admin.") })
+	@ApiOperation(value = "Find all filters.", response = UploadPropositionFilter.class, responseContainer = "List")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't super admin."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error.") })
 	@Override
-	public List<UploadPropositionFilterDto> findAll() throws BusinessException {
-		return uploadPropositionFilterFacade.findAll();
+	public List<UploadPropositionFilter> findAll(
+			@ApiParam(value = "Domain uuid", required = true)
+				@PathParam("domainUuid") String domainUuid)
+			throws BusinessException {
+		return uploadPropositionFilterFacade.findAll(domainUuid);
 	}
 
-	@Path("/{uuid}")
+	@Path("/{uuid}/domains/{domainUuid}")
 	@GET
 	@ApiOperation(value = "Find a filter", response = UploadPropositionFilterDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't super admin.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't super admin."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error.") })
 	@Override
-	public UploadPropositionFilterDto find(@PathParam("uuid") String uuid)
+	public UploadPropositionFilter find(
+			@ApiParam(value = "Filter uuid", required = true)
+				@PathParam("uuid") String uuid,
+			@ApiParam(value = "Domain uuid", required = true)
+				@PathParam("domainUuid") String domainUuid)
 			throws BusinessException {
-		return uploadPropositionFilterFacade.find(uuid);
+		return uploadPropositionFilterFacade.find(uuid, domainUuid);
 	}
 
-	@Path("/{uuid}")
+	@Path("/{uuid}/domains/{domainUuid}")
 	@HEAD
 	@ApiOperation(value = "Find a filter")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't super admin.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't super admin."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error.") })
 	@Override
-	public void head(@PathParam("uuid") String uuid)
+	public void head(
+			@ApiParam(value = "Filter uuid", required = true)
+				@PathParam("uuid") String uuid,
+			@ApiParam(value = "Domain uuid", required = true)
+				@PathParam("domainUuid") String domainUuid)
 			throws BusinessException {
-		uploadPropositionFilterFacade.find(uuid);
+		uploadPropositionFilterFacade.find(uuid, domainUuid);
 	}
 
 	@Path("/")

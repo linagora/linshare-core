@@ -49,9 +49,6 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UploadPropositionFilterService;
 import org.linagora.linshare.mongo.entities.UploadPropositionFilter;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-
 public class UploadPropositionFilterFacadeImpl extends AdminGenericFacadeImpl
 		implements UploadPropositionFilterFacade {
 
@@ -68,18 +65,21 @@ public class UploadPropositionFilterFacadeImpl extends AdminGenericFacadeImpl
 	}
 
 	@Override
-	public List<UploadPropositionFilterDto> findAll() throws BusinessException {
+	public List<UploadPropositionFilter> findAll(String domainUuid) throws BusinessException {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
-		List<UploadPropositionFilterOLD> all = service.findAll(authUser);
-		return Lists.transform(ImmutableList.copyOf(all), UploadPropositionFilterDto.toVo());
+		Validate.notEmpty(domainUuid, "domain uuid must be set");
+		AbstractDomain domain = abstractDomainService.findById(domainUuid);
+		return service.findAll(authUser, domain);
 	}
 
 	@Override
-	public UploadPropositionFilterDto find(String uuid)
+	public UploadPropositionFilter find(String uuid, String domainUuid)
 			throws BusinessException {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
-		UploadPropositionFilterOLD filter = service.find(authUser, uuid);
-		return UploadPropositionFilterDto.toVo().apply(filter);
+		Validate.notEmpty(uuid, "uuid must be set");
+		Validate.notEmpty(domainUuid, "domain uuid must be set");
+		AbstractDomain domain = abstractDomainService.findById(domainUuid);
+		return service.find(authUser, domain, uuid);
 	}
 
 	@Override

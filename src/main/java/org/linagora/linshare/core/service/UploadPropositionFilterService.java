@@ -47,9 +47,11 @@ import org.linagora.linshare.mongo.entities.UploadPropositionFilter;
 
 public interface UploadPropositionFilterService {
 
-	UploadPropositionFilterOLD find(Account actor, String uuid) throws BusinessException;
+	UploadPropositionFilterOLD findOLD(Account actor, String uuid) throws BusinessException;
 
-	List<UploadPropositionFilterOLD> findAll(Account actor) throws BusinessException;
+	UploadPropositionFilter find(Account actor, AbstractDomain domain, String uuid) throws BusinessException;
+
+	List<UploadPropositionFilter> findAll(Account authUser, AbstractDomain domain) throws BusinessException;
 
 	List<UploadPropositionFilterOLD> findAllEnabledFilters(Account actor) throws BusinessException;
 

@@ -76,13 +76,18 @@ public class UploadPropositionFilterBusinessServiceImpl implements
 	}
 
 	@Override
-	public UploadPropositionFilterOLD find(String uuid) {
+	public UploadPropositionFilterOLD findOLD(String uuid) {
 		return repository.find(uuid);
 	}
 
 	@Override
-	public List<UploadPropositionFilterOLD> findAll() {
-		return repository.findAll();
+	public UploadPropositionFilter find(String domainUuid, String uuid) {
+		return uploadPropositionFilterMongoRepository.findByDomainUuidAndUuid(domainUuid, uuid);
+	}
+
+	@Override
+	public List<UploadPropositionFilter> findAll() {
+		return uploadPropositionFilterMongoRepository.findAll();
 	}
 
 	@Override
@@ -101,7 +106,7 @@ public class UploadPropositionFilterBusinessServiceImpl implements
 	public UploadPropositionFilterOLD update(UploadPropositionFilterOLD dto)
 			throws BusinessException {
 		logger.debug(dto.toString());
-		UploadPropositionFilterOLD entity = find(dto.getUuid());
+		UploadPropositionFilterOLD entity = findOLD(dto.getUuid());
 		entity.setEnable(dto.isEnable());
 		entity.setMatch(dto.getMatch());
 		entity.setName(dto.getName());
