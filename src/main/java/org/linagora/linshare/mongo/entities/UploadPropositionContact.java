@@ -31,23 +31,44 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.repository;
+package org.linagora.linshare.mongo.entities;
 
-import java.util.Set;
+public class UploadPropositionContact {
 
-import org.linagora.linshare.mongo.entities.UploadProposition;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
+	private String firstName;
 
-public interface UploadPropositionMongoRepository extends MongoRepository<UploadProposition, String> {
+	private String lastName;
 
-	UploadProposition findByUuid(String uuid);
+	private String mail;
 
-	Set<UploadProposition> findByDomainUuid(String domainUuid, Sort sort);
+	public UploadPropositionContact(String firstName, String lastName, String mail) {
+		super();
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.mail = mail;
+	}
 
-	Set<UploadProposition> findByAccountUuid(String accountUuid, Sort sort);
+	public String getFirstName() {
+		return firstName;
+	}
 
-	@Query("{ 'accountUuid' : ?0, 'contact.mail' : ?1 }")
-	Set<UploadProposition> findByAccountUuidAndContactMail(String accountUuid, String mail);
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getMail() {
+		return mail;
+	}
+
+	public void setMail(String mail) {
+		this.mail = mail;
+	}
 }

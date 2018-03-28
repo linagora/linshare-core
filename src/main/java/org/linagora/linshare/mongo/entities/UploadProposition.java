@@ -34,7 +34,6 @@
 package org.linagora.linshare.mongo.entities;
 
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.GeneratedValue;
@@ -71,20 +70,11 @@ public class UploadProposition {
 	@ApiModelProperty(value = "Body")
 	protected String body;
 
-	@ApiModelProperty(value = "Mail")
-	protected String mail;
-
-	@ApiModelProperty(value = "FirstName")
-	protected String firstName;
-
-	@ApiModelProperty(value = "LastName")
-	protected String lastName;
+	@ApiModelProperty(value = "Contact")
+	protected UploadPropositionContact contact;
 
 	@ApiModelProperty(value = "AccountUuid")
 	protected String accountUuid;
-
-	@ApiModelProperty(value = "Filters")
-	protected List<UploadPropositionFilter> filters;
 
 	@ApiModelProperty(value = "CreationDate")
 	protected Date creationDate;
@@ -97,7 +87,7 @@ public class UploadProposition {
 	}
 
 	public UploadProposition(String uuid, String domainUuid, UploadPropositionStatus status, String label, String body,
-			String mail, String firstName, String lastName, String accountUuid, List<UploadPropositionFilter> filters,
+			UploadPropositionContact contact, String accountUuid,
 			Date creationDate, Date modificationDate) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
@@ -105,11 +95,8 @@ public class UploadProposition {
 		this.status = status;
 		this.label = label;
 		this.body = body;
-		this.mail = mail;
-		this.firstName = firstName;
-		this.lastName = lastName;
+		this.contact = contact;
 		this.accountUuid = accountUuid;
-		this.filters = filters;
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
 	}
@@ -146,28 +133,12 @@ public class UploadProposition {
 		this.body = body;
 	}
 
-	public String getMail() {
-		return mail;
+	public UploadPropositionContact getContact() {
+		return this.contact;
 	}
 
-	public void setMail(String mail) {
-		this.mail = mail;
-	}
-
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+	public void setContact(UploadPropositionContact contact) {
+		this.contact = contact;
 	}
 
 	public String getAccountUuid() {
@@ -176,14 +147,6 @@ public class UploadProposition {
 
 	public void setAccountUuid(String accountUuid) {
 		this.accountUuid = accountUuid;
-	}
-
-	public List<UploadPropositionFilter> getFilters() {
-		return filters;
-	}
-
-	public void setFilters(List<UploadPropositionFilter> filters) {
-		this.filters = filters;
 	}
 
 	public String getLabel() {
