@@ -40,15 +40,15 @@ import javax.persistence.GeneratedValue;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.linagora.linshare.core.domain.constants.UploadPropositionAcceptanceType;
+import org.linagora.linshare.core.domain.constants.UploadPropositionExceptionRuleType;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-@XmlRootElement(name = "UploadPropositionAcceptanceUser")
-@Document(collection = "upload_proposition_acceptance_user")
-public class UploadPropositionAcceptanceUser {
+@XmlRootElement(name = "UploadPropositionExceptionRule")
+@Document(collection = "upload_proposition_exception_rule")
+public class UploadPropositionExceptionRule {
 
 	@JsonIgnore
 	@Id
@@ -58,14 +58,17 @@ public class UploadPropositionAcceptanceUser {
 	@ApiModelProperty(value = "Uuid")
 	protected String uuid;
 
+	@ApiModelProperty(value = "DomainUuid")
+	protected String domainUuid;
+
 	@ApiModelProperty(value = "Mail")
 	protected String mail;
 
 	@ApiModelProperty(value = "AccountUuid")
 	protected String accountUuid;
 
-	@ApiModelProperty(value = "Acceptance")
-	protected UploadPropositionAcceptanceType acceptance;
+	@ApiModelProperty(value = "ExceptionRule")
+	protected UploadPropositionExceptionRuleType exceptionRuleType;
 
 	@ApiModelProperty(value = "CreationDate")
 	protected Date creationDate;
@@ -73,17 +76,18 @@ public class UploadPropositionAcceptanceUser {
 	@ApiModelProperty(value = "ModificationDate")
 	protected Date modificationDate;
 
-	public UploadPropositionAcceptanceUser() {
+	public UploadPropositionExceptionRule() {
 		super();
 	}
 
-	public UploadPropositionAcceptanceUser(String uuid, String mail, String accountUuid,
-			UploadPropositionAcceptanceType acceptance, Date creationDate, Date modificationDate) {
+	public UploadPropositionExceptionRule(String uuid, String domainUuid, String mail, String accountUuid,
+			UploadPropositionExceptionRuleType exceptionRuleType, Date creationDate, Date modificationDate) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
+		this.domainUuid = domainUuid;
 		this.mail = mail;
 		this.accountUuid = accountUuid;
-		this.acceptance = acceptance;
+		this.exceptionRuleType = exceptionRuleType;
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
 	}
@@ -94,6 +98,14 @@ public class UploadPropositionAcceptanceUser {
 
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
+	}
+
+	public String getDomainUuid() {
+		return domainUuid;
+	}
+
+	public void setDomainUuid(String domainUuid) {
+		this.domainUuid = domainUuid;
 	}
 
 	public String getMail() {
@@ -112,12 +124,12 @@ public class UploadPropositionAcceptanceUser {
 		this.accountUuid = accountUuid;
 	}
 
-	public UploadPropositionAcceptanceType getAcceptance() {
-		return acceptance;
+	public UploadPropositionExceptionRuleType getExceptionRuleType() {
+		return exceptionRuleType;
 	}
 
-	public void setAcceptance(UploadPropositionAcceptanceType acceptance) {
-		this.acceptance = acceptance;
+	public void setExceptionRuleType(UploadPropositionExceptionRuleType exceptionRuleType) {
+		this.exceptionRuleType = exceptionRuleType;
 	}
 
 	public Date getCreationDate() {
@@ -135,5 +147,4 @@ public class UploadPropositionAcceptanceUser {
 	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
 	}
-
 }

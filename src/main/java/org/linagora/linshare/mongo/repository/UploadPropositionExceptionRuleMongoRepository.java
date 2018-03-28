@@ -35,12 +35,14 @@ package org.linagora.linshare.mongo.repository;
 
 import java.util.Set;
 
-import org.linagora.linshare.mongo.entities.UploadPropositionAcceptanceUser;
+import org.linagora.linshare.mongo.entities.UploadPropositionExceptionRule;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface UploadPropositionAcceptanceUserMongoRepository
-		extends MongoRepository<UploadPropositionAcceptanceUser, String> {
+public interface UploadPropositionExceptionRuleMongoRepository
+		extends MongoRepository<UploadPropositionExceptionRule, String> {
 
-	Set<UploadPropositionAcceptanceUser> findByAccountUuid(String accountUuid, Sort sort);
+	Set<UploadPropositionExceptionRule> findByAccountUuid(String accountUuid, Sort sort);
+
+	Set<UploadPropositionExceptionRule> findByAccountUuidAndDomainUuid(String accountUuid, String domainUuid, Sort sort);
 }

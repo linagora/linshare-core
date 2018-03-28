@@ -37,13 +37,13 @@ import org.apache.commons.lang.StringUtils;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 
-public enum UploadPropositionAcceptanceType {
+public enum UploadPropositionExceptionRuleType {
 	ALLOW,
 	DENY;
 
-	public static UploadPropositionAcceptanceType fromString(String s) {
+	public static UploadPropositionExceptionRuleType fromString(String s) {
 		try {
-			return UploadPropositionAcceptanceType.valueOf(s.toUpperCase());
+			return UploadPropositionExceptionRuleType.valueOf(s.toUpperCase());
 		} catch (RuntimeException e) {
 			throw new TechnicalException(TechnicalErrorCode.DATABASE_INCOHERENCE,
 					StringUtils.isEmpty(s) ? "null or empty" : s);
