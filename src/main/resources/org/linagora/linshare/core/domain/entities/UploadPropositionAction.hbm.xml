@@ -19,6 +19,6 @@
 			length="6" not-null="true" lazy="false" />
 		<property name="modificationDate" column="modification_date"
 			type="timestamp" length="6" not-null="true" lazy="false" />
-		<many-to-one name="filter" cascade="lock" column="upload_proposition_filter_id" class="org.linagora.linshare.core.domain.entities.UploadPropositionFilter" not-null="true" lazy="no-proxy"/>
+		<many-to-one name="filter" cascade="lock" column="upload_proposition_filter_id" class="org.linagora.linshare.core.domain.entities.UploadPropositionFilterOLD" not-null="true" lazy="no-proxy"/>
 		</class>
 </hibernate-mapping>

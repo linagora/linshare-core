@@ -39,7 +39,7 @@ import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.UploadPropositionMatchType;
 import org.linagora.linshare.core.domain.entities.UploadPropositionAction;
-import org.linagora.linshare.core.domain.entities.UploadPropositionFilter;
+import org.linagora.linshare.core.domain.entities.UploadPropositionFilterOLD;
 import org.linagora.linshare.core.domain.entities.UploadPropositionRule;
 
 import com.google.common.base.Function;
@@ -68,7 +68,7 @@ public class UploadPropositionFilterDto {
 		super();
 	}
 
-	public UploadPropositionFilterDto(UploadPropositionFilter entity) {
+	public UploadPropositionFilterDto(UploadPropositionFilterOLD entity) {
 		super();
 		this.uuid = entity.getUuid();
 		this.name = entity.getName();
@@ -145,22 +145,22 @@ public class UploadPropositionFilterDto {
 	/*
 	 * Transformers
 	 */
-	public static Function<UploadPropositionFilter, UploadPropositionFilterDto> toVo() {
-		return new Function<UploadPropositionFilter, UploadPropositionFilterDto>() {
+	public static Function<UploadPropositionFilterOLD, UploadPropositionFilterDto> toVo() {
+		return new Function<UploadPropositionFilterOLD, UploadPropositionFilterDto>() {
 			@Override
-			public UploadPropositionFilterDto apply(UploadPropositionFilter arg0) {
+			public UploadPropositionFilterDto apply(UploadPropositionFilterOLD arg0) {
 				return new UploadPropositionFilterDto(arg0);
 			}
 		};
 	}
 
-	public static Function<UploadPropositionFilterDto, UploadPropositionFilter> toEntity() {
-		return new Function<UploadPropositionFilterDto, UploadPropositionFilter>() {
+	public static Function<UploadPropositionFilterDto, UploadPropositionFilterOLD> toEntity() {
+		return new Function<UploadPropositionFilterDto, UploadPropositionFilterOLD>() {
 			@Override
-			public UploadPropositionFilter apply(UploadPropositionFilterDto dto) {
+			public UploadPropositionFilterOLD apply(UploadPropositionFilterDto dto) {
 				Validate.notNull(dto.getUploadPropositionActions());
 				Validate.notNull(dto.getUploadPropositionRules());
-				UploadPropositionFilter filter = new UploadPropositionFilter();
+				UploadPropositionFilterOLD filter = new UploadPropositionFilterOLD();
 				filter.setUuid(dto.getUuid());
 				filter.setMatch(UploadPropositionMatchType.fromString(dto
 						.getMatch()));

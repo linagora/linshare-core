@@ -40,7 +40,7 @@ import org.linagora.linshare.core.domain.constants.UploadPropositionMatchType;
 
 import com.google.common.collect.Sets;
 
-public class UploadPropositionFilter {
+public class UploadPropositionFilterOLD {
 
 	private long id;
 
@@ -64,7 +64,7 @@ public class UploadPropositionFilter {
 
 	private AbstractDomain domain;
 
-	public UploadPropositionFilter() {
+	public UploadPropositionFilterOLD() {
 	}
 
 	@Override

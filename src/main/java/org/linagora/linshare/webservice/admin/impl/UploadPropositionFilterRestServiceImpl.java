@@ -50,11 +50,13 @@ import javax.ws.rs.core.MediaType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.UploadPropositionFilterFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadPropositionFilterDto;
+import org.linagora.linshare.mongo.entities.UploadPropositionFilter;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.UploadPropositionFilterRestService;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
@@ -108,12 +110,15 @@ public class UploadPropositionFilterRestServiceImpl extends WebserviceBase
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a filter.", response = UploadPropositionFilterDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't super admin.") })
+	@ApiOperation(value = "Create a filter.", response = UploadPropositionFilter.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't super admin."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error.") })
 	@Override
-	public UploadPropositionFilterDto create(UploadPropositionFilterDto filter)
+	public UploadPropositionFilter create(
+			@ApiParam(value = "Paylod to create a upload proposition filter", required = true) UploadPropositionFilter uploadPropositionFilter)
 			throws BusinessException {
-		return uploadPropositionFilterFacade.create(filter);
+		return uploadPropositionFilterFacade.create(uploadPropositionFilter);
 	}
 
 	@Path("/")

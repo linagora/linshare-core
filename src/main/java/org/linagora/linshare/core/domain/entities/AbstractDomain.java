@@ -95,7 +95,7 @@ public abstract class AbstractDomain {
 
 	private Set<MimePolicy> mimePolicies;
 
-	private Set<UploadPropositionFilter> uploadPropositionFilters;
+	private Set<UploadPropositionFilterOLD> uploadPropositionFilters;
 
 	private Set<UploadProposition> uploadPropositions;
 
@@ -434,12 +434,12 @@ public abstract class AbstractDomain {
 		this.mimePolicies = mimePolicies;
 	}
 
-	public Set<UploadPropositionFilter> getUploadPropositionFilters() {
+	public Set<UploadPropositionFilterOLD> getUploadPropositionFilters() {
 		return uploadPropositionFilters;
 	}
 
 	public void setUploadPropositionFilters(
-			Set<UploadPropositionFilter> uploadPropositionFilters) {
+			Set<UploadPropositionFilterOLD> uploadPropositionFilters) {
 		this.uploadPropositionFilters = uploadPropositionFilters;
 	}
 

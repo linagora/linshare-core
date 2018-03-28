@@ -37,25 +37,26 @@ package org.linagora.linshare.core.business.service;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.UploadPropositionAction;
-import org.linagora.linshare.core.domain.entities.UploadPropositionFilter;
+import org.linagora.linshare.core.domain.entities.UploadPropositionFilterOLD;
 import org.linagora.linshare.core.domain.entities.UploadPropositionRule;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.mongo.entities.UploadPropositionFilter;
 
 public interface UploadPropositionFilterBusinessService {
 
-	UploadPropositionFilter find(String uuid);
+	UploadPropositionFilterOLD find(String uuid);
 
-	List<UploadPropositionFilter> findAll();
+	List<UploadPropositionFilterOLD> findAll();
 
-	List<UploadPropositionFilter> findAllEnabledFilters();
+	List<UploadPropositionFilterOLD> findAllEnabledFilters();
 
 	UploadPropositionFilter create(UploadPropositionFilter entity)
 			throws BusinessException;
 
-	UploadPropositionFilter update(UploadPropositionFilter entity)
+	UploadPropositionFilterOLD update(UploadPropositionFilterOLD entity)
 			throws BusinessException;
 
-	void delete(UploadPropositionFilter entity) throws BusinessException;
+	void delete(UploadPropositionFilterOLD entity) throws BusinessException;
 	
 	void delete(UploadPropositionRule entity) throws BusinessException;
 

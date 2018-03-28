@@ -38,7 +38,7 @@ import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.UploadPropositionActionType;
-import org.linagora.linshare.core.domain.entities.UploadPropositionFilter;
+import org.linagora.linshare.core.domain.entities.UploadPropositionFilterOLD;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.uploadproposition.UploadPropositionFacade;
@@ -77,7 +77,7 @@ public class UploadPropositionFacadeImpl extends
 	@Override
 	public List<UploadPropositionFilterDto> findAll() throws BusinessException {
 		User authUser = checkAuthentication();
-		List<UploadPropositionFilter> all = uploadPropositionFilterService.findAllEnabledFilters(authUser);
+		List<UploadPropositionFilterOLD> all = uploadPropositionFilterService.findAllEnabledFilters(authUser);
 		List<UploadPropositionFilterDto> transform = Lists.transform(all, UploadPropositionFilterDto.toVo());
 		ImmutableList<UploadPropositionFilterDto> res = ImmutableList.copyOf(transform);
 		return res;

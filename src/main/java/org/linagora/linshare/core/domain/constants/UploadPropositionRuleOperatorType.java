@@ -40,7 +40,10 @@ import org.linagora.linshare.core.exception.TechnicalException;
 
 public enum UploadPropositionRuleOperatorType {
 
-	CONTAIN, DO_NOT_CONTAIN, EQUAL, DO_NOT_EQUAL, BEGIN_WITH, END_WITH;
+	CONTAIN,
+	DO_NOT_CONTAIN,
+	EQUAL, DO_NOT_EQUAL,
+	BEGIN_WITH, END_WITH;
 
 	public static UploadPropositionRuleOperatorType fromString(String s) {
 		try {

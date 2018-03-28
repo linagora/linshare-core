@@ -38,6 +38,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadPropositionFilterDto;
+import org.linagora.linshare.mongo.entities.UploadPropositionFilter;
 
 public interface UploadPropositionFilterRestService {
 
@@ -47,10 +48,10 @@ public interface UploadPropositionFilterRestService {
 
 	void head(String uuid) throws BusinessException;
 
-	UploadPropositionFilterDto create(UploadPropositionFilterDto filter) throws BusinessException;
-
 	UploadPropositionFilterDto update(UploadPropositionFilterDto filter) throws BusinessException;
 
 	UploadPropositionFilterDto delete(UploadPropositionFilterDto filter) throws BusinessException;
+
+	UploadPropositionFilter create(UploadPropositionFilter uploadPropositionFilter) throws BusinessException;
 
 }

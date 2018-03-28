@@ -36,14 +36,18 @@ package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
-import org.linagora.linshare.core.domain.entities.UploadPropositionFilter;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.UploadPropositionFilterOLD;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.UploadPropositionFilterFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.UploadPropositionFilterDto;
+import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UploadPropositionFilterService;
+import org.linagora.linshare.mongo.entities.UploadPropositionFilter;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -53,16 +57,20 @@ public class UploadPropositionFilterFacadeImpl extends AdminGenericFacadeImpl
 
 	private final UploadPropositionFilterService service;
 
-	public UploadPropositionFilterFacadeImpl(AccountService accountService,
-			UploadPropositionFilterService service) {
+	private final AbstractDomainService abstractDomainService;
+
+	public UploadPropositionFilterFacadeImpl(final AccountService accountService,
+			final UploadPropositionFilterService service,
+			final AbstractDomainService abstractDomainService) {
 		super(accountService);
 		this.service = service;
+		this.abstractDomainService = abstractDomainService;
 	}
 
 	@Override
 	public List<UploadPropositionFilterDto> findAll() throws BusinessException {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
-		List<UploadPropositionFilter> all = service.findAll(authUser);
+		List<UploadPropositionFilterOLD> all = service.findAll(authUser);
 		return Lists.transform(ImmutableList.copyOf(all), UploadPropositionFilterDto.toVo());
 	}
 
@@ -70,24 +78,28 @@ public class UploadPropositionFilterFacadeImpl extends AdminGenericFacadeImpl
 	public UploadPropositionFilterDto find(String uuid)
 			throws BusinessException {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
-		UploadPropositionFilter filter = service.find(authUser, uuid);
+		UploadPropositionFilterOLD filter = service.find(authUser, uuid);
 		return UploadPropositionFilterDto.toVo().apply(filter);
 	}
 
 	@Override
-	public UploadPropositionFilterDto create(UploadPropositionFilterDto dto)
-			throws BusinessException {
+	public UploadPropositionFilter create(UploadPropositionFilter uploadPropositionFilter) throws BusinessException {
+		Validate.notNull(uploadPropositionFilter, "The filter cannot be null");
+		Validate.notEmpty(uploadPropositionFilter.getDomainUuid(), "domain uuid must be set");
+		Validate.notEmpty(uploadPropositionFilter.getName(), "Name must be set");
+		Validate.notNull(uploadPropositionFilter.getMatchType(), "The match type must be set");
+		Validate.notNull(uploadPropositionFilter.getUploadPropositionAction(), "The action type must be set");
+		Validate.notEmpty(uploadPropositionFilter.getUploadPropositionRules(), "A filter must have at least one rule");
 		User authUser = checkAuthentication(Role.SUPERADMIN);
-		UploadPropositionFilter filter = UploadPropositionFilterDto.toEntity().apply(dto);
-		filter = service.create(authUser, filter);
-		return UploadPropositionFilterDto.toVo().apply(filter);
+		AbstractDomain domain = abstractDomainService.findById(uploadPropositionFilter.getDomainUuid());
+		return service.create(authUser, uploadPropositionFilter, domain);
 	}
 
 	@Override
 	public UploadPropositionFilterDto update(UploadPropositionFilterDto dto)
 			throws BusinessException {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
-		UploadPropositionFilter filter = UploadPropositionFilterDto.toEntity().apply(dto);
+		UploadPropositionFilterOLD filter = UploadPropositionFilterDto.toEntity().apply(dto);
 		filter = service.update(authUser, filter);
 		return UploadPropositionFilterDto.toVo().apply(filter);
 	}
@@ -95,7 +107,7 @@ public class UploadPropositionFilterFacadeImpl extends AdminGenericFacadeImpl
 	@Override
 	public UploadPropositionFilterDto delete(String uuid) throws BusinessException {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
-		UploadPropositionFilter filter = service.delete(authUser, uuid);
+		UploadPropositionFilterOLD filter = service.delete(authUser, uuid);
 		return new UploadPropositionFilterDto(filter);
 	}
 

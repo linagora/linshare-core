@@ -237,7 +237,7 @@
 	</bean>
 	<bean id="uploadPropositionFilterService" class="org.linagora.linshare.core.service.impl.UploadPropositionFilterServiceImpl">
 		<constructor-arg ref="uploadPropositionFilterBusinessService" />
-		<constructor-arg ref="domainBusinessService" />
+		<constructor-arg ref="domainPermissionBusinessService" />
 	</bean>
 	<bean name="shareService" class="org.linagora.linshare.core.service.impl.ShareServiceImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />

@@ -37,38 +37,43 @@ package org.linagora.linshare.core.service.impl;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.business.service.DomainBusinessService;
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.UploadPropositionFilterBusinessService;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadPropositionAction;
-import org.linagora.linshare.core.domain.entities.UploadPropositionFilter;
+import org.linagora.linshare.core.domain.entities.UploadPropositionFilterOLD;
 import org.linagora.linshare.core.domain.entities.UploadPropositionRule;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.UploadPropositionFilterService;
+import org.linagora.linshare.mongo.entities.UploadPropositionFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UploadPropositionFilterServiceImpl implements UploadPropositionFilterService {
+public class UploadPropositionFilterServiceImpl
+		implements UploadPropositionFilterService {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(UploadPropositionFilterServiceImpl.class);
 
 	private final UploadPropositionFilterBusinessService businessService;
 
-	private final DomainBusinessService domainBusinessService;
+	private final DomainPermissionBusinessService permissionService;
 
-	public UploadPropositionFilterServiceImpl(UploadPropositionFilterBusinessService businessService, DomainBusinessService domainBusinessService) {
+	public UploadPropositionFilterServiceImpl(final UploadPropositionFilterBusinessService businessService,
+			final DomainPermissionBusinessService permissionService) {
 		super();
 		this.businessService = businessService;
-		this.domainBusinessService = domainBusinessService;
+		this.permissionService = permissionService;
 	}
 
 	@Override
-	public UploadPropositionFilter find(Account actor, String uuid) throws BusinessException {
+	public UploadPropositionFilterOLD find(Account actor, String uuid) throws BusinessException {
 		preChecks(actor);
 		Validate.notEmpty(uuid, "filter uuid is required");
-		UploadPropositionFilter filter = businessService.find(uuid);
+		UploadPropositionFilterOLD filter = businessService.find(uuid);
 		if (filter ==null) {
 			logger.error(actor.getAccountRepresentation() + " is looking for missing filter uuid : " + uuid);
 			throw new BusinessException(BusinessErrorCode.UPLOAD_PROPOSITION_FILTER_NOT_FOUND, "filter with uuid : " + uuid + " not found.");
@@ -77,7 +82,7 @@ public class UploadPropositionFilterServiceImpl implements UploadPropositionFilt
 	}
 
 	@Override
-	public List<UploadPropositionFilter> findAll(Account actor) throws BusinessException {
+	public List<UploadPropositionFilterOLD> findAll(Account actor) throws BusinessException {
 		preChecks(actor);
 		if (actor.hasSuperAdminRole() || actor.hasUploadPropositionRole()) {
 			return businessService.findAll();
@@ -87,7 +92,7 @@ public class UploadPropositionFilterServiceImpl implements UploadPropositionFilt
 	}
 
 	@Override
-	public List<UploadPropositionFilter> findAllEnabledFilters(Account actor) throws BusinessException {
+	public List<UploadPropositionFilterOLD> findAllEnabledFilters(Account actor) throws BusinessException {
 		preChecks(actor);
 		if (actor.hasSuperAdminRole() || actor.hasUploadPropositionRole()) {
 			return businessService.findAllEnabledFilters();
@@ -97,15 +102,18 @@ public class UploadPropositionFilterServiceImpl implements UploadPropositionFilt
 	}
 
 	@Override
-	public UploadPropositionFilter create(Account actor, UploadPropositionFilter dto) throws BusinessException {
-		preChecks(actor);
-		Validate.notNull(dto, "filter is required");
-		dto.setDomain(domainBusinessService.getUniqueRootDomain());
-		return businessService.create(dto);
+	public UploadPropositionFilter create(User authUser, UploadPropositionFilter uploadPropositionFilter, AbstractDomain domain) throws BusinessException {
+		preChecks(authUser);
+		Validate.notNull(uploadPropositionFilter, "filter is required");
+		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_PROPOSITION_FILTER_CAN_NOT_CREATE, "You are not allowed to use this domain");
+		}
+		UploadPropositionFilter createdFilter = new UploadPropositionFilter(uploadPropositionFilter);
+		return businessService.create(createdFilter);
 	}
 
 	@Override
-	public UploadPropositionFilter update(Account actor, UploadPropositionFilter dto) throws BusinessException {
+	public UploadPropositionFilterOLD update(Account actor, UploadPropositionFilterOLD dto) throws BusinessException {
 		preChecks(actor);
 		Validate.notNull(dto, "filter is required");
 		Validate.notEmpty(dto.getUuid(), "filter uuid is required");
@@ -115,10 +123,10 @@ public class UploadPropositionFilterServiceImpl implements UploadPropositionFilt
 	}
 
 	@Override
-	public UploadPropositionFilter delete(Account actor, String uuid) throws BusinessException {
+	public UploadPropositionFilterOLD delete(Account actor, String uuid) throws BusinessException {
 		preChecks(actor);
 		Validate.notEmpty(uuid, "filter uuid is required");
-		UploadPropositionFilter entity = find(actor, uuid);
+		UploadPropositionFilterOLD entity = find(actor, uuid);
 		businessService.delete(entity);
 		return entity;
 	}

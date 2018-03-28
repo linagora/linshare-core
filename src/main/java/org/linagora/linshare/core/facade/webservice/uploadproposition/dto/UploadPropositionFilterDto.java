@@ -37,7 +37,7 @@ package org.linagora.linshare.core.facade.webservice.uploadproposition.dto;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.UploadPropositionAction;
-import org.linagora.linshare.core.domain.entities.UploadPropositionFilter;
+import org.linagora.linshare.core.domain.entities.UploadPropositionFilterOLD;
 import org.linagora.linshare.core.domain.entities.UploadPropositionRule;
 
 import com.google.common.base.Function;
@@ -57,7 +57,7 @@ public class UploadPropositionFilterDto {
 	protected List<UploadPropositionActionDto> uploadPropositionActions = Lists
 			.newArrayList();
 
-	public UploadPropositionFilterDto(UploadPropositionFilter entity) {
+	public UploadPropositionFilterDto(UploadPropositionFilterOLD entity) {
 		super();
 		this.uuid = entity.getUuid();
 		this.name = entity.getName();
@@ -116,10 +116,10 @@ public class UploadPropositionFilterDto {
 	/*
 	 * Transformers
 	 */
-	public static Function<UploadPropositionFilter, UploadPropositionFilterDto> toVo() {
-		return new Function<UploadPropositionFilter, UploadPropositionFilterDto>() {
+	public static Function<UploadPropositionFilterOLD, UploadPropositionFilterDto> toVo() {
+		return new Function<UploadPropositionFilterOLD, UploadPropositionFilterDto>() {
 			@Override
-			public UploadPropositionFilterDto apply(UploadPropositionFilter arg0) {
+			public UploadPropositionFilterDto apply(UploadPropositionFilterOLD arg0) {
 				return new UploadPropositionFilterDto(arg0);
 			}
 		};

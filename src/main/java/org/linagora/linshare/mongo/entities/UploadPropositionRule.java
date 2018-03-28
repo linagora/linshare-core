@@ -31,16 +31,12 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.entities.mto;
-
-import java.util.Date;
+package org.linagora.linshare.mongo.entities;
 
 import org.linagora.linshare.core.domain.constants.UploadPropositionRuleFieldType;
 import org.linagora.linshare.core.domain.constants.UploadPropositionRuleOperatorType;
 
-public class UploadPropositionRuleMto {
-
-	protected String uuid;
+public class UploadPropositionRule {
 
 	protected UploadPropositionRuleOperatorType operator;
 
@@ -48,31 +44,16 @@ public class UploadPropositionRuleMto {
 
 	protected String value;
 
-	protected Date creationDate;
-
-	protected Date modificationDate;
-
-	public UploadPropositionRuleMto() {
+	public UploadPropositionRule() {
 		super();
 	}
 
-	public UploadPropositionRuleMto(long id, String uuid, UploadPropositionRuleOperatorType operator,
-			UploadPropositionRuleFieldType field, String value, Date creationDate, Date modificationDate) {
+	public UploadPropositionRule(UploadPropositionRuleOperatorType operator, UploadPropositionRuleFieldType field,
+			String value) {
 		super();
-		this.uuid = uuid;
 		this.operator = operator;
 		this.field = field;
 		this.value = value;
-		this.creationDate = new Date();
-		this.modificationDate = new Date();
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
 	}
 
 	public UploadPropositionRuleOperatorType getOperator() {
@@ -97,21 +78,5 @@ public class UploadPropositionRuleMto {
 
 	public void setValue(String value) {
 		this.value = value;
-	}
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	public Date getModificationDate() {
-		return modificationDate;
-	}
-
-	public void setModificationDate(Date modificationDate) {
-		this.modificationDate = modificationDate;
 	}
 }

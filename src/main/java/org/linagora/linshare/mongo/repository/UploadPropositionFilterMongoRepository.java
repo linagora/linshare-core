@@ -42,5 +42,6 @@ public interface UploadPropositionFilterMongoRepository extends MongoRepository<
 
 	UploadPropositionFilter findByUuid(String uuid);
 
-	Set<UploadPropositionFilter> findByStatus(String status);
+	Set<UploadPropositionFilter> findByEnabled(Boolean enabled);
+
 }

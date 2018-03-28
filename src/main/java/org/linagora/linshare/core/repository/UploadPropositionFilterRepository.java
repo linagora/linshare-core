@@ -36,12 +36,12 @@ package org.linagora.linshare.core.repository;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.UploadPropositionFilter;
+import org.linagora.linshare.core.domain.entities.UploadPropositionFilterOLD;
 
-public interface UploadPropositionFilterRepository extends AbstractRepository<UploadPropositionFilter> {
+public interface UploadPropositionFilterRepository extends AbstractRepository<UploadPropositionFilterOLD> {
 
-	UploadPropositionFilter find(String uuid);
+	UploadPropositionFilterOLD find(String uuid);
 
-	List<UploadPropositionFilter> findAllEnabledFilters();
+	List<UploadPropositionFilterOLD> findAllEnabledFilters();
 
 }

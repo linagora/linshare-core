@@ -43,7 +43,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.linagora.linshare.core.domain.constants.UploadPropositionActionType;
 import org.linagora.linshare.core.domain.constants.UploadPropositionMatchType;
-import org.linagora.linshare.mongo.entities.mto.UploadPropositionRuleMto;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -61,23 +60,26 @@ public class UploadPropositionFilter {
 	@ApiModelProperty(value = "Uuid")
 	protected String uuid;
 
+	@ApiModelProperty(value = "DomainUuid")
+	protected String domainUuid;
+
 	@ApiModelProperty(value = "Name")
 	protected String name;
 
 	@ApiModelProperty(value = "MatchType")
 	protected UploadPropositionMatchType matchType;
 
-	@ApiModelProperty(value = "ActionType")
-	protected UploadPropositionActionType actionType;
+	@ApiModelProperty(value = "UploadPropositionAction")
+	protected UploadPropositionActionType uploadPropositionAction;
 
-	@ApiModelProperty(value = "Status")
-	protected String status;
+	@ApiModelProperty(value = "Enabled")
+	protected Boolean enabled;
 
 	@ApiModelProperty(value = "Order")
 	protected Integer order;
 
-	@ApiModelProperty(value = "Rules")
-	protected List<UploadPropositionRuleMto> rules;
+	@ApiModelProperty(value = "UploadPropositionRules")
+	protected List<UploadPropositionRule> uploadPropositionRules;
 
 	@ApiModelProperty(value = "CreationDate")
 	protected Date creationDate;
@@ -89,19 +91,49 @@ public class UploadPropositionFilter {
 		super();
 	}
 
-	public UploadPropositionFilter(String uuid, String name, UploadPropositionMatchType matchType,
-			UploadPropositionActionType actionType, String status, Integer order, List<UploadPropositionRuleMto> rules,
-			Date creationDate, Date modificationDate) {
+	public UploadPropositionFilter(String domainUuid, String name, UploadPropositionMatchType matchType,
+			UploadPropositionActionType uploadPropositionAction, Boolean enabled, Integer order,
+			List<UploadPropositionRule> uploadPropositionRules) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
+		this.domainUuid = domainUuid;
 		this.name = name;
 		this.matchType = matchType;
-		this.actionType = actionType;
-		this.status = status;
+		this.uploadPropositionAction = uploadPropositionAction;
+		this.enabled = enabled;
+		if (this.enabled == null) {
+			this.enabled = Boolean.FALSE;
+		}
 		this.order = order;
-		this.rules = rules;
+		this.uploadPropositionRules = uploadPropositionRules;
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
+	}
+
+	public UploadPropositionFilter(UploadPropositionFilter initFilter) {
+		super();
+		this.uuid = initFilter.getUuid();
+		if (this.uuid == null) {
+			this.uuid = UUID.randomUUID().toString();
+		}
+		this.domainUuid = initFilter.getDomainUuid();
+		this.name = initFilter.getName();
+		this.matchType = initFilter.getMatchType();
+		this.uploadPropositionAction = initFilter.getUploadPropositionAction();
+		this.enabled = initFilter.isEnabled();
+		if (this.enabled == null) {
+			this.enabled = Boolean.FALSE;
+		}
+		this.order = initFilter.getOrder();
+		this.uploadPropositionRules = initFilter.getUploadPropositionRules();
+		this.creationDate = initFilter.getCreationDate();
+		this.modificationDate = initFilter.getModificationDate();
+		if (this.creationDate == null) {
+			this.creationDate = new Date();
+		}
+		if (this.modificationDate == null) {
+			this.modificationDate = new Date();
+		}
 	}
 
 	public String getUuid() {
@@ -110,6 +142,14 @@ public class UploadPropositionFilter {
 
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
+	}
+
+	public String getDomainUuid() {
+		return domainUuid;
+	}
+
+	public void setDomainUuid(String domainUuid) {
+		this.domainUuid = domainUuid;
 	}
 
 	public String getName() {
@@ -128,20 +168,20 @@ public class UploadPropositionFilter {
 		this.matchType = matchType;
 	}
 
-	public UploadPropositionActionType getActionType() {
-		return actionType;
+	public UploadPropositionActionType getUploadPropositionAction() {
+		return uploadPropositionAction;
 	}
 
-	public void setActionType(UploadPropositionActionType actionType) {
-		this.actionType = actionType;
+	public void setUploadPropositionAction(UploadPropositionActionType actionType) {
+		this.uploadPropositionAction = actionType;
 	}
 
-	public String getStatus() {
-		return status;
+	public Boolean isEnabled() {
+		return enabled;
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
+	public void setEnabled(Boolean enabled) {
+		this.enabled = enabled;
 	}
 
 	public Integer getOrder() {
@@ -152,12 +192,12 @@ public class UploadPropositionFilter {
 		this.order = order;
 	}
 
-	public List<UploadPropositionRuleMto> getRules() {
-		return rules;
+	public List<UploadPropositionRule> getUploadPropositionRules() {
+		return uploadPropositionRules;
 	}
 
-	public void setRules(List<UploadPropositionRuleMto> rules) {
-		this.rules = rules;
+	public void setUploadPropositionRules(List<UploadPropositionRule> uploadPropositionRules) {
+		this.uploadPropositionRules = uploadPropositionRules;
 	}
 
 	public Date getCreationDate() {

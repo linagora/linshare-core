@@ -51,7 +51,7 @@ public class UploadPropositionAction {
 
 	protected Date modificationDate;
 
-	protected UploadPropositionFilter filter;
+	protected UploadPropositionFilterOLD filter;
 
 	public UploadPropositionAction() {
 	}
@@ -135,11 +135,11 @@ public class UploadPropositionAction {
 		this.modificationDate = modificationDate;
 	}
 
-	public UploadPropositionFilter getFilter() {
+	public UploadPropositionFilterOLD getFilter() {
 		return filter;
 	}
 
-	public void setFilter(UploadPropositionFilter filter) {
+	public void setFilter(UploadPropositionFilterOLD filter) {
 		this.filter = filter;
 	}
 }

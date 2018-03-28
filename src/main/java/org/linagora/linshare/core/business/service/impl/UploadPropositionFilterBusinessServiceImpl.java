@@ -38,12 +38,14 @@ import java.util.List;
 
 import org.linagora.linshare.core.business.service.UploadPropositionFilterBusinessService;
 import org.linagora.linshare.core.domain.entities.UploadPropositionAction;
-import org.linagora.linshare.core.domain.entities.UploadPropositionFilter;
+import org.linagora.linshare.core.domain.entities.UploadPropositionFilterOLD;
 import org.linagora.linshare.core.domain.entities.UploadPropositionRule;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UploadPropositionActionRepository;
 import org.linagora.linshare.core.repository.UploadPropositionFilterRepository;
 import org.linagora.linshare.core.repository.UploadPropositionRuleRepository;
+import org.linagora.linshare.mongo.entities.UploadPropositionFilter;
+import org.linagora.linshare.mongo.repository.UploadPropositionFilterMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,62 +61,47 @@ public class UploadPropositionFilterBusinessServiceImpl implements
 
 	private final UploadPropositionActionRepository actionRepository;
 
+	protected final UploadPropositionFilterMongoRepository uploadPropositionFilterMongoRepository;
+
 	public UploadPropositionFilterBusinessServiceImpl(
 			UploadPropositionFilterRepository repository,
 			UploadPropositionRuleRepository ruleRepository,
-			UploadPropositionActionRepository actionRepository) {
+			UploadPropositionActionRepository actionRepository,
+			UploadPropositionFilterMongoRepository uploadPropositionFilterMongoRepository) {
 		super();
 		this.repository = repository;
 		this.ruleRepository = ruleRepository;
 		this.actionRepository = actionRepository;
+		this.uploadPropositionFilterMongoRepository = uploadPropositionFilterMongoRepository;
 	}
 
 	@Override
-	public UploadPropositionFilter find(String uuid) {
+	public UploadPropositionFilterOLD find(String uuid) {
 		return repository.find(uuid);
 	}
 
 	@Override
-	public List<UploadPropositionFilter> findAll() {
+	public List<UploadPropositionFilterOLD> findAll() {
 		return repository.findAll();
 	}
 
 	@Override
-	public List<UploadPropositionFilter> findAllEnabledFilters() {
+	public List<UploadPropositionFilterOLD> findAllEnabledFilters() {
 		return repository.findAllEnabledFilters();
 	}
 
 	@Override
-	public UploadPropositionFilter create(UploadPropositionFilter dto)
-			throws BusinessException {
-		logger.debug(dto.toString());
-		UploadPropositionFilter filter = new UploadPropositionFilter();
-		filter.setEnable(dto.isEnable());
-		filter.setMatch(dto.getMatch());
-		filter.setName(dto.getName());
-		filter.setOrder(dto.getOrder());
-		filter.setDomain(dto.getDomain());
+	public UploadPropositionFilter create(UploadPropositionFilter uploadPropositionFilter) throws BusinessException {
 		int size = findAll().size();
-		filter.setOrder(size);
-		UploadPropositionFilter entity = repository.create(filter);
-		for (UploadPropositionRule rule : dto.getRules()) {
-			rule.setFilter(entity);
-			entity.getRules().add(rule);
-			ruleRepository.create(rule);
-		}
-		for (UploadPropositionAction action : dto.getActions()) {
-			action.setFilter(entity);
-			entity.getActions().add(action);
-			actionRepository.create(action);
-		}
-		return entity;
+		uploadPropositionFilter.setOrder(size);
+		return uploadPropositionFilterMongoRepository.insert(uploadPropositionFilter);
 	}
 
 	@Override
-	public UploadPropositionFilter update(UploadPropositionFilter dto)
+	public UploadPropositionFilterOLD update(UploadPropositionFilterOLD dto)
 			throws BusinessException {
 		logger.debug(dto.toString());
-		UploadPropositionFilter entity = find(dto.getUuid());
+		UploadPropositionFilterOLD entity = find(dto.getUuid());
 		entity.setEnable(dto.isEnable());
 		entity.setMatch(dto.getMatch());
 		entity.setName(dto.getName());
@@ -137,12 +124,12 @@ public class UploadPropositionFilterBusinessServiceImpl implements
 	}
 
 	@Override
-	public void delete(UploadPropositionFilter entity) throws BusinessException {
+	public void delete(UploadPropositionFilterOLD entity) throws BusinessException {
 		resetRulesAndActions(entity);
 		repository.delete(entity);
 	}
 
-	private void resetRulesAndActions(UploadPropositionFilter entity)
+	private void resetRulesAndActions(UploadPropositionFilterOLD entity)
 			throws BusinessException {
 		for (UploadPropositionRule rule : entity.getRules()) {
 			ruleRepository.delete(rule);
