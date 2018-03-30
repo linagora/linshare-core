@@ -147,4 +147,9 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="safeDetailService" />
 	</bean>
+
+	<bean id="wsUploadPropositionExceptionRuleFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.UploadPropositionExceptionRuleFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="uploadPropositionExceptionRuleService" />
+	</bean>
 </beans>

@@ -110,6 +110,11 @@
 		class="org.linagora.linshare.webservice.userv2.impl.SafeDetailRestServiceImpl">
 		<constructor-arg ref="wsSafeDetailFacade" />
 	</bean>
+
+	<bean id="userUploadPropositionExceptionRuleRestService" class="org.linagora.linshare.webservice.userv2.impl.UploadPropositionExceptionRuleRestServiceImpl">
+		<constructor-arg ref="wsUploadPropositionExceptionRuleFacade" />
+	</bean>
+
 	<jaxrs:server id="userRestContainer" address="/rest/user/v2">
 		<jaxrs:serviceBeans>
 			<ref bean="userEnumRestService" />
@@ -140,6 +145,7 @@
 			<ref bean="userUploadRequestEntryRestService" /> 
 			<ref bean="userUploadRequestUrlRestService" /> 
 			<ref bean="userSafeDetailRestService" /> 
+			<ref bean="userUploadPropositionExceptionRuleRestService" />
 			<!--
 			<ref bean="pluginCompatibilityRestServiceV2" />
 -->

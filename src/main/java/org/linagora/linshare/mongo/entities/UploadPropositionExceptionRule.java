@@ -78,17 +78,29 @@ public class UploadPropositionExceptionRule {
 
 	public UploadPropositionExceptionRule() {
 		super();
+		this.uuid = UUID.randomUUID().toString();
 	}
 
 	public UploadPropositionExceptionRule(String uuid, String domainUuid, String mail, String accountUuid,
 			UploadPropositionExceptionRuleType exceptionRuleType, Date creationDate, Date modificationDate) {
 		super();
-		this.uuid = UUID.randomUUID().toString();
+		this.uuid = uuid;
 		this.domainUuid = domainUuid;
 		this.mail = mail;
 		this.accountUuid = accountUuid;
 		this.exceptionRuleType = exceptionRuleType;
-		this.creationDate = new Date();
+		this.creationDate = creationDate;
+		this.modificationDate = modificationDate;
+	}
+
+	public UploadPropositionExceptionRule(UploadPropositionExceptionRule uploadPropositionExceptionRule) {
+		super();
+		this.uuid = uploadPropositionExceptionRule.getUuid();
+		this.domainUuid = uploadPropositionExceptionRule.getDomainUuid();
+		this.mail = uploadPropositionExceptionRule.getMail();
+		this.accountUuid = uploadPropositionExceptionRule.getAccountUuid();
+		this.exceptionRuleType = uploadPropositionExceptionRule.getExceptionRuleType();
+		this.creationDate = uploadPropositionExceptionRule.getCreationDate();
 		this.modificationDate = new Date();
 	}
 

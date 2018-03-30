@@ -172,6 +172,10 @@
 		<constructor-arg ref="technicalAccountPermissionRepository" />
 	</bean>
 
+	<bean id="uploadPropositionExceptionRuleBusinessService" class="org.linagora.linshare.core.business.service.impl.UploadPropositionExceptionRuleBusinessServiceImpl">
+		<constructor-arg ref="uploadPropositionExceptionRuleMongoRepository" />
+	</bean>
+
 	<bean id="uploadPropositionBusinessService" class="org.linagora.linshare.core.business.service.impl.UploadPropositionBusinessServiceImpl">
 		<constructor-arg ref="uploadPropositionRepository" />
 	</bean>

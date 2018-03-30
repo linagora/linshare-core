@@ -239,6 +239,12 @@
 		<constructor-arg ref="uploadPropositionFilterBusinessService" />
 		<constructor-arg ref="domainPermissionBusinessService" />
 	</bean>
+
+	<bean id="uploadPropositionExceptionRuleService" class="org.linagora.linshare.core.service.impl.UploadPropositionExceptionRuleServiceImpl">
+		<constructor-arg ref="uploadPropositionExceptionRuleBusinessService" />
+		<constructor-arg ref="uploadPropositionExceptionRuleResourceAccessControl"/>
+	</bean>
+
 	<bean name="shareService" class="org.linagora.linshare.core.service.impl.ShareServiceImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="documentEntryService" />
