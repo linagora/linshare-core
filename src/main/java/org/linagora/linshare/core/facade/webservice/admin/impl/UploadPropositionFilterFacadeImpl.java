@@ -39,15 +39,15 @@ import java.util.List;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.UploadPropositionFilterOLD;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.UploadPropositionFilterFacade;
-import org.linagora.linshare.core.facade.webservice.common.dto.UploadPropositionFilterDto;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UploadPropositionFilterService;
 import org.linagora.linshare.mongo.entities.UploadPropositionFilter;
+
+import com.google.common.base.Strings;
 
 public class UploadPropositionFilterFacadeImpl extends AdminGenericFacadeImpl
 		implements UploadPropositionFilterFacade {
@@ -84,31 +84,43 @@ public class UploadPropositionFilterFacadeImpl extends AdminGenericFacadeImpl
 
 	@Override
 	public UploadPropositionFilter create(UploadPropositionFilter uploadPropositionFilter) throws BusinessException {
-		Validate.notNull(uploadPropositionFilter, "The filter cannot be null");
-		Validate.notEmpty(uploadPropositionFilter.getDomainUuid(), "domain uuid must be set");
-		Validate.notEmpty(uploadPropositionFilter.getName(), "Name must be set");
-		Validate.notNull(uploadPropositionFilter.getMatchType(), "The match type must be set");
-		Validate.notNull(uploadPropositionFilter.getUploadPropositionAction(), "The action type must be set");
-		Validate.notEmpty(uploadPropositionFilter.getUploadPropositionRules(), "A filter must have at least one rule");
+		validateEntryValues(uploadPropositionFilter);
 		User authUser = checkAuthentication(Role.SUPERADMIN);
 		AbstractDomain domain = abstractDomainService.findById(uploadPropositionFilter.getDomainUuid());
 		return service.create(authUser, uploadPropositionFilter, domain);
 	}
 
 	@Override
-	public UploadPropositionFilterDto update(UploadPropositionFilterDto dto)
+	public UploadPropositionFilter update(UploadPropositionFilter uploadPropositionFilter, String uuid)
 			throws BusinessException {
+		validateEntryValues(uploadPropositionFilter);
+		if (!Strings.isNullOrEmpty(uuid)) {
+			uploadPropositionFilter.setUuid(uuid);
+		}
+		Validate.notEmpty(uploadPropositionFilter.getUuid());
 		User authUser = checkAuthentication(Role.SUPERADMIN);
-		UploadPropositionFilterOLD filter = UploadPropositionFilterDto.toEntity().apply(dto);
-		filter = service.update(authUser, filter);
-		return UploadPropositionFilterDto.toVo().apply(filter);
+		AbstractDomain domain = abstractDomainService.findById(uploadPropositionFilter.getDomainUuid());
+		return service.update(authUser, domain, uploadPropositionFilter);
 	}
 
 	@Override
-	public UploadPropositionFilterDto delete(String uuid) throws BusinessException {
+	public UploadPropositionFilter delete(UploadPropositionFilter uploadPropositionFilter, String uuid) throws BusinessException {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
-		UploadPropositionFilterOLD filter = service.delete(authUser, uuid);
-		return new UploadPropositionFilterDto(filter);
+		if (!Strings.isNullOrEmpty(uuid)) {
+			uploadPropositionFilter.setUuid(uuid);
+		}
+		Validate.notEmpty(uploadPropositionFilter.getUuid());
+		Validate.notEmpty(uploadPropositionFilter.getDomainUuid());
+		AbstractDomain domain = abstractDomainService.findById(uploadPropositionFilter.getDomainUuid());
+		return service.delete(authUser, domain, uploadPropositionFilter);
 	}
 
+	private void validateEntryValues(UploadPropositionFilter uploadPropositionFilter) {
+		Validate.notNull(uploadPropositionFilter, "The filter cannot be null");
+		Validate.notEmpty(uploadPropositionFilter.getDomainUuid(), "domain uuid must be set");
+		Validate.notEmpty(uploadPropositionFilter.getName(), "Name must be set");
+		Validate.notNull(uploadPropositionFilter.getMatchType(), "The match type must be set");
+		Validate.notNull(uploadPropositionFilter.getUploadPropositionAction(), "The action type must be set");
+		Validate.notEmpty(uploadPropositionFilter.getUploadPropositionRules(), "A filter must have at least one rule");
+	}
 }

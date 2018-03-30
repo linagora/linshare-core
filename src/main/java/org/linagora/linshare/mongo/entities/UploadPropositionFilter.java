@@ -89,51 +89,40 @@ public class UploadPropositionFilter {
 
 	public UploadPropositionFilter() {
 		super();
+		this.uuid = UUID.randomUUID().toString();
 	}
 
-	public UploadPropositionFilter(String domainUuid, String name, UploadPropositionMatchType matchType,
+	public UploadPropositionFilter(String uuid, String domainUuid, String name, UploadPropositionMatchType matchType,
 			UploadPropositionActionType uploadPropositionAction, Boolean enabled, Integer order,
-			List<UploadPropositionRule> uploadPropositionRules) {
+			List<UploadPropositionRule> uploadPropositionRules, Date creationDate, Date modificationDate) {
 		super();
-		this.uuid = UUID.randomUUID().toString();
+		this.uuid = uuid;
 		this.domainUuid = domainUuid;
 		this.name = name;
 		this.matchType = matchType;
 		this.uploadPropositionAction = uploadPropositionAction;
 		this.enabled = enabled;
-		if (this.enabled == null) {
-			this.enabled = Boolean.FALSE;
-		}
 		this.order = order;
 		this.uploadPropositionRules = uploadPropositionRules;
-		this.creationDate = new Date();
-		this.modificationDate = new Date();
+		this.creationDate = creationDate;
+		this.modificationDate = modificationDate;
 	}
 
 	public UploadPropositionFilter(UploadPropositionFilter initFilter) {
 		super();
 		this.uuid = initFilter.getUuid();
-		if (this.uuid == null) {
-			this.uuid = UUID.randomUUID().toString();
-		}
 		this.domainUuid = initFilter.getDomainUuid();
 		this.name = initFilter.getName();
 		this.matchType = initFilter.getMatchType();
 		this.uploadPropositionAction = initFilter.getUploadPropositionAction();
 		this.enabled = initFilter.isEnabled();
-		if (this.enabled == null) {
-			this.enabled = Boolean.FALSE;
-		}
+		this.enabled = initFilter.isEnabled();
 		this.order = initFilter.getOrder();
 		this.uploadPropositionRules = initFilter.getUploadPropositionRules();
 		this.creationDate = initFilter.getCreationDate();
 		this.modificationDate = initFilter.getModificationDate();
-		if (this.creationDate == null) {
-			this.creationDate = new Date();
-		}
-		if (this.modificationDate == null) {
-			this.modificationDate = new Date();
-		}
+		this.creationDate = initFilter.getCreationDate();
+		this.modificationDate = new Date();
 	}
 
 	public String getUuid() {

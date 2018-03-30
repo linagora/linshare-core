@@ -47,6 +47,7 @@ import org.linagora.linshare.core.business.service.MailFooterBusinessService;
 import org.linagora.linshare.core.business.service.MailLayoutBusinessService;
 import org.linagora.linshare.core.business.service.MimePolicyBusinessService;
 import org.linagora.linshare.core.business.service.UploadPropositionBusinessService;
+import org.linagora.linshare.core.business.service.UploadPropositionFilterBusinessService;
 import org.linagora.linshare.core.business.service.WelcomeMessagesBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -79,7 +80,6 @@ import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MimeTypeService;
-import org.linagora.linshare.core.service.UploadPropositionFilterService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.service.WelcomeMessagesService;
 import org.linagora.linshare.mongo.entities.logs.DomainAuditLogEntry;
@@ -113,7 +113,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	private final FunctionalityService functionalityService;
 	private final MailFooterBusinessService mailFooterBusinessService;
 	private final MailContentBusinessService mailContentBusinessService;
-	private final UploadPropositionFilterService uploadPropositionFilterService;
+	private final UploadPropositionFilterBusinessService uploadPropositionFilterBusinessService;
 	private final UploadPropositionBusinessService uploadPropositionBusinessService;
 	private final MimeTypeService mimeTypeService;
 	private final MailLayoutBusinessService mailLayoutBusinessService;
@@ -137,7 +137,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			final FunctionalityService functionalityService,
 			final MailFooterBusinessService mailFooterBusinessService,
 			final MailContentBusinessService mailContentBusinessService,
-			final UploadPropositionFilterService  uploadPropositionFilterService,
+			final UploadPropositionFilterBusinessService  uploadPropositionFilterBusinessService,
 			final UploadPropositionBusinessService uploadPropositionBusinessService,
 			final MimeTypeService mimeTypeService,
 			final MailLayoutBusinessService mailLayoutBusinessService) {
@@ -160,7 +160,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		this.functionalityService = functionalityService;
 		this.mailFooterBusinessService = mailFooterBusinessService;
 		this.mailContentBusinessService = mailContentBusinessService;
-		this.uploadPropositionFilterService = uploadPropositionFilterService;
+		this.uploadPropositionFilterBusinessService = uploadPropositionFilterBusinessService;
 		this.uploadPropositionBusinessService = uploadPropositionBusinessService;
 		this.mimeTypeService = mimeTypeService;
 		this.mailLayoutBusinessService = mailLayoutBusinessService;
@@ -874,12 +874,9 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 						mimePolicyBusinessService.delete(mp);
 					});
 				}
-				if (domain.getUploadPropositionFilters() != null) {
-					domain.getUploadPropositionFilters().forEach(upf -> {
-						upf.getRules().forEach(r -> uploadPropositionFilterService.delete(actor, r));
-						upf.getActions().forEach(a -> uploadPropositionFilterService.delete(actor, a));
-						uploadPropositionFilterService.delete(actor, upf.getUuid());
-					});
+				if (uploadPropositionFilterBusinessService.findByDomainUuid(domain.getUuid()) != null) {
+					uploadPropositionFilterBusinessService.findByDomainUuid(domain.getUuid())
+							.forEach(upf -> uploadPropositionFilterBusinessService.delete(upf));
 				}
 				if (domain.getUploadPropositions() != null) {
 					domain.getUploadPropositions().forEach(up -> uploadPropositionBusinessService.delete(up));

@@ -131,7 +131,7 @@
 		<constructor-arg ref="functionalityService" />
 		<constructor-arg ref="mailFooterBusinessService" />
 		<constructor-arg ref="mailContentBusinessService" />
-		<constructor-arg ref="uploadPropositionFilterService" />
+		<constructor-arg ref="uploadPropositionFilterBusinessService" />
 		<constructor-arg ref="uploadPropositionBusinessService" />
 		<constructor-arg ref="mimeTypeService" />
 		<constructor-arg ref="mailLayoutBusinessService" />

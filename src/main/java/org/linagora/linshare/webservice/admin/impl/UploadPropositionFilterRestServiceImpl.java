@@ -133,28 +133,38 @@ public class UploadPropositionFilterRestServiceImpl extends WebserviceBase
 			@ApiResponse(code = 500, message = "Internal server error.") })
 	@Override
 	public UploadPropositionFilter create(
-			@ApiParam(value = "Paylod to create a upload proposition filter", required = true) UploadPropositionFilter uploadPropositionFilter)
+			@ApiParam(value = "Payload to create a upload proposition filter", required = true) UploadPropositionFilter uploadPropositionFilter)
 			throws BusinessException {
 		return uploadPropositionFilterFacade.create(uploadPropositionFilter);
 	}
 
-	@Path("/")
+	@Path("/{uuid : .*}")
 	@PUT
-	@ApiOperation(value = "Update a filter.", response = UploadPropositionFilterDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't super admin.") })
+	@ApiOperation(value = "Update a filter.", response = UploadPropositionFilter.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't super admin."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error.") })
 	@Override
-	public UploadPropositionFilterDto update(UploadPropositionFilterDto filter)
+	public UploadPropositionFilter update(
+			@ApiParam(value = "Payload to update an upload proposition filter", required = true) UploadPropositionFilter uploadPropositionFilter,
+			@ApiParam(value = "Filter uuid, if null uploadPropositionFilter.uuid is used.", required = false)
+					@PathParam("uuid") String uuid)
 			throws BusinessException {
-		return uploadPropositionFilterFacade.update(filter);
+		return uploadPropositionFilterFacade.update(uploadPropositionFilter, uuid);
 	}
 
-	@Path("/")
+	@Path("/{uuid : .*}")
 	@DELETE
 	@ApiOperation(value = "Delete a filter.", response = UploadPropositionFilterDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't super admin."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error.") })
 	@Override
-	public UploadPropositionFilterDto delete(UploadPropositionFilterDto filter) throws BusinessException {
-		UploadPropositionFilterDto ret = uploadPropositionFilterFacade.delete(filter.getUuid());
-		return ret;
+	public UploadPropositionFilter delete(
+			@ApiParam(value = "Payload to delete an upload proposition filter", required = true) UploadPropositionFilter uploadPropositionFilter,
+			@ApiParam(value = "Filter uuid, if null uploadPropositionFilter.uuid is used.", required = false)
+					@PathParam("uuid") String uuid)
+			throws BusinessException {
+		return uploadPropositionFilterFacade.delete(uploadPropositionFilter, uuid);
 	}
 }

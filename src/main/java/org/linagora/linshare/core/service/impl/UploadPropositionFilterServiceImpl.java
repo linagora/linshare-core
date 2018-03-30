@@ -34,7 +34,9 @@
 
 package org.linagora.linshare.core.service.impl;
 
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
@@ -119,33 +121,50 @@ public class UploadPropositionFilterServiceImpl
 	}
 
 	@Override
-	public UploadPropositionFilter create(User authUser, UploadPropositionFilter uploadPropositionFilter, AbstractDomain domain) throws BusinessException {
+	public UploadPropositionFilter create(User authUser, UploadPropositionFilter uploadPropositionFilter,
+			AbstractDomain domain) throws BusinessException {
 		preChecks(authUser);
-		Validate.notNull(uploadPropositionFilter, "filter is required");
+		validateEntryValues(uploadPropositionFilter);
 		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
-			throw new BusinessException(BusinessErrorCode.UPLOAD_PROPOSITION_FILTER_CAN_NOT_CREATE, "You are not allowed to use this domain");
+			throw new BusinessException(BusinessErrorCode.UPLOAD_PROPOSITION_FILTER_CAN_NOT_CREATE,
+					"You are not allowed to use this domain");
 		}
-		UploadPropositionFilter createdFilter = new UploadPropositionFilter(uploadPropositionFilter);
+		UploadPropositionFilter createdFilter = new UploadPropositionFilter(UUID.randomUUID().toString(),
+				uploadPropositionFilter.getDomainUuid(), uploadPropositionFilter.getName(),
+				uploadPropositionFilter.getMatchType(), uploadPropositionFilter.getUploadPropositionAction(),
+				uploadPropositionFilter.isEnabled(), uploadPropositionFilter.getOrder(),
+				uploadPropositionFilter.getUploadPropositionRules(), new Date(), new Date());
 		return businessService.create(createdFilter);
 	}
 
 	@Override
-	public UploadPropositionFilterOLD update(Account actor, UploadPropositionFilterOLD dto) throws BusinessException {
-		preChecks(actor);
-		Validate.notNull(dto, "filter is required");
-		Validate.notEmpty(dto.getUuid(), "filter uuid is required");
-		// permission check
-		findOLD(actor, dto.getUuid());
-		return businessService.update(dto);
+	public UploadPropositionFilter update(Account authUser, AbstractDomain domain,
+			UploadPropositionFilter uploadPropositionFilter) throws BusinessException {
+		preChecks(authUser);
+		validateEntryValues(uploadPropositionFilter);
+		Validate.notEmpty(uploadPropositionFilter.getUuid(), "filter uuid is required");
+		Validate.notNull(uploadPropositionFilter.getCreationDate(), "CreationDate is required");
+		Validate.notNull(uploadPropositionFilter.getOrder());
+		Validate.notNull(uploadPropositionFilter.getModificationDate(), "Modification is required");
+		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_PROPOSITION_FILTER_CAN_NOT_CREATE,
+					"You are not allowed to use this domain");
+		}
+		UploadPropositionFilter filterToUpdate = new UploadPropositionFilter(uploadPropositionFilter);
+		find(authUser, domain, filterToUpdate.getUuid());
+		return businessService.update(filterToUpdate);
 	}
 
 	@Override
-	public UploadPropositionFilterOLD delete(Account actor, String uuid) throws BusinessException {
-		preChecks(actor);
-		Validate.notEmpty(uuid, "filter uuid is required");
-		UploadPropositionFilterOLD entity = findOLD(actor, uuid);
-		businessService.delete(entity);
-		return entity;
+	public UploadPropositionFilter delete(Account authUser, AbstractDomain domain,
+			UploadPropositionFilter uploadPropositionFilter) throws BusinessException {
+		preChecks(authUser);
+		Validate.notNull(uploadPropositionFilter, "filter is required");
+		Validate.notEmpty(uploadPropositionFilter.getUuid(), "filter uuid is required");
+		UploadPropositionFilter uploadPropositionFilterToDelete = find(authUser, domain,
+				uploadPropositionFilter.getUuid());
+		businessService.delete(uploadPropositionFilterToDelete);
+		return uploadPropositionFilterToDelete;
 	}
 
 	@Override
@@ -165,4 +184,12 @@ public class UploadPropositionFilterServiceImpl
 		Validate.notEmpty(actor.getLsUuid(), "actor uuid is required");
 	}
 
+	private void validateEntryValues(UploadPropositionFilter uploadPropositionFilter) {
+		Validate.notNull(uploadPropositionFilter, "Filter is required");
+		Validate.notEmpty(uploadPropositionFilter.getDomainUuid(), "DomainUuid is required");
+		Validate.notEmpty(uploadPropositionFilter.getName(), "Name is required");
+		Validate.notEmpty(uploadPropositionFilter.getUploadPropositionRules(), "A filter must have at least one rule");
+		Validate.notNull(uploadPropositionFilter.getMatchType(), "MatchType is required");
+		Validate.notNull(uploadPropositionFilter.getUploadPropositionAction(), "Action is required");
+	}
 }

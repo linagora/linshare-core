@@ -55,9 +55,9 @@ public interface UploadPropositionFilterService {
 
 	List<UploadPropositionFilterOLD> findAllEnabledFilters(Account actor) throws BusinessException;
 
-	UploadPropositionFilterOLD update(Account actor, UploadPropositionFilterOLD dto) throws BusinessException;
+	UploadPropositionFilter update(Account authUser, AbstractDomain domain, UploadPropositionFilter uploadPropositionFilter) throws BusinessException;
 
-	UploadPropositionFilterOLD delete(Account actor, String uuid) throws BusinessException;
+	UploadPropositionFilter delete(Account authUser, AbstractDomain domain, UploadPropositionFilter uploadPropositionFilter) throws BusinessException;
 
 	void delete(Account actor, UploadPropositionRule entity) throws BusinessException;
 

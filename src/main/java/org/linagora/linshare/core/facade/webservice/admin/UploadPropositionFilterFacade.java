@@ -37,7 +37,6 @@ package org.linagora.linshare.core.facade.webservice.admin;
 import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.UploadPropositionFilterDto;
 import org.linagora.linshare.mongo.entities.UploadPropositionFilter;
 
 public interface UploadPropositionFilterFacade extends AdminGenericFacade {
@@ -46,9 +45,9 @@ public interface UploadPropositionFilterFacade extends AdminGenericFacade {
 
 	UploadPropositionFilter find(String uuid, String domainUuid) throws BusinessException;
 
-	UploadPropositionFilterDto update(UploadPropositionFilterDto filter) throws BusinessException;
+	UploadPropositionFilter update(UploadPropositionFilter uploadPropositionFilter, String uuid) throws BusinessException;
 
-	UploadPropositionFilterDto delete(String uuid) throws BusinessException;
+	UploadPropositionFilter delete(UploadPropositionFilter uploadPropositionFilter, String uuid) throws BusinessException;
 
 	UploadPropositionFilter create(UploadPropositionFilter uploadPropositionFilter) throws BusinessException;
 }

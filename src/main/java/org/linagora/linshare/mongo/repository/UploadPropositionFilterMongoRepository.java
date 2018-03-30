@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.mongo.repository;
 
+import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.mongo.entities.UploadPropositionFilter;
@@ -42,7 +43,7 @@ public interface UploadPropositionFilterMongoRepository extends MongoRepository<
 
 	UploadPropositionFilter findByUuid(String uuid);
 
-	UploadPropositionFilter findByDomainUuid(String domainUuid);
+	List<UploadPropositionFilter> findByDomainUuid(String domainUuid);
 
 	UploadPropositionFilter findByDomainUuidAndUuid(String domainUuid, String uuid);
 

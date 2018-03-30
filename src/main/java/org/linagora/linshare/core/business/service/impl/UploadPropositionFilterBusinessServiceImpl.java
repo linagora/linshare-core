@@ -46,14 +46,9 @@ import org.linagora.linshare.core.repository.UploadPropositionFilterRepository;
 import org.linagora.linshare.core.repository.UploadPropositionRuleRepository;
 import org.linagora.linshare.mongo.entities.UploadPropositionFilter;
 import org.linagora.linshare.mongo.repository.UploadPropositionFilterMongoRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class UploadPropositionFilterBusinessServiceImpl implements
 		UploadPropositionFilterBusinessService {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(UploadPropositionFilterBusinessServiceImpl.class);
 
 	private final UploadPropositionFilterRepository repository;
 
@@ -86,6 +81,11 @@ public class UploadPropositionFilterBusinessServiceImpl implements
 	}
 
 	@Override
+	public List<UploadPropositionFilter> findByDomainUuid(String domainUuid) {
+		return uploadPropositionFilterMongoRepository.findByDomainUuid(domainUuid);
+	}
+
+	@Override
 	public List<UploadPropositionFilter> findAll() {
 		return uploadPropositionFilterMongoRepository.findAll();
 	}
@@ -103,45 +103,13 @@ public class UploadPropositionFilterBusinessServiceImpl implements
 	}
 
 	@Override
-	public UploadPropositionFilterOLD update(UploadPropositionFilterOLD dto)
-			throws BusinessException {
-		logger.debug(dto.toString());
-		UploadPropositionFilterOLD entity = findOLD(dto.getUuid());
-		entity.setEnable(dto.isEnable());
-		entity.setMatch(dto.getMatch());
-		entity.setName(dto.getName());
-		entity.setOrder(dto.getOrder());
-		entity = repository.update(entity);
-
-		resetRulesAndActions(entity);
-		entity = repository.update(entity);
-		for (UploadPropositionRule rule : dto.getRules()) {
-			rule.setFilter(entity);
-			entity.getRules().add(rule);
-			ruleRepository.create(rule);
-		}
-		for (UploadPropositionAction action : dto.getActions()) {
-			action.setFilter(entity);
-			entity.getActions().add(action);
-			actionRepository.create(action);
-		}
-		return entity;
+	public UploadPropositionFilter update(UploadPropositionFilter uploadPropositionFilter) throws BusinessException {
+		return uploadPropositionFilterMongoRepository.save(uploadPropositionFilter);
 	}
 
 	@Override
-	public void delete(UploadPropositionFilterOLD entity) throws BusinessException {
-		resetRulesAndActions(entity);
-		repository.delete(entity);
-	}
-
-	private void resetRulesAndActions(UploadPropositionFilterOLD entity)
-			throws BusinessException {
-		for (UploadPropositionRule rule : entity.getRules()) {
-			ruleRepository.delete(rule);
-		}
-		for (UploadPropositionAction action : entity.getActions()) {
-			actionRepository.delete(action);
-		}
+	public void delete(UploadPropositionFilter uploadPropositionFilter) throws BusinessException {
+		uploadPropositionFilterMongoRepository.delete(uploadPropositionFilter);
 	}
 
 	@Override

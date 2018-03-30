@@ -48,6 +48,8 @@ public interface UploadPropositionFilterBusinessService {
 
 	UploadPropositionFilter find(String domainUuid, String uuid);
 
+	List<UploadPropositionFilter> findByDomainUuid(String domainUuid);
+
 	List<UploadPropositionFilter> findAll();
 
 	List<UploadPropositionFilterOLD> findAllEnabledFilters();
@@ -55,10 +57,10 @@ public interface UploadPropositionFilterBusinessService {
 	UploadPropositionFilter create(UploadPropositionFilter entity)
 			throws BusinessException;
 
-	UploadPropositionFilterOLD update(UploadPropositionFilterOLD entity)
+	UploadPropositionFilter update(UploadPropositionFilter entity)
 			throws BusinessException;
 
-	void delete(UploadPropositionFilterOLD entity) throws BusinessException;
+	void delete(UploadPropositionFilter entity) throws BusinessException;
 	
 	void delete(UploadPropositionRule entity) throws BusinessException;
 

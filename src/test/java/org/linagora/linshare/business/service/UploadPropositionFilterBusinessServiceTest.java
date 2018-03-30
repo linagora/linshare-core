@@ -33,6 +33,9 @@
  */
 package org.linagora.linshare.business.service;
 
+import java.util.Date;
+import java.util.UUID;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -88,9 +91,9 @@ public class UploadPropositionFilterBusinessServiceTest extends AbstractTransact
 		wiser.start();
 		UploadPropositionRule rule = new UploadPropositionRule(UploadPropositionRuleOperatorType.CONTAIN,
 				UploadPropositionRuleFieldType.RECIPIENT_EMAIL, "gmail.com");
-		referenceFilter = new UploadPropositionFilter("LinShareRootDomain", "Upload Proposition Filter",
+		referenceFilter = new UploadPropositionFilter(UUID.randomUUID().toString(), "LinShareRootDomain", "Upload Proposition Filter",
 				UploadPropositionMatchType.ALL, UploadPropositionActionType.ACCEPT, Boolean.TRUE, 0,
-				Lists.newArrayList(rule));
+				Lists.newArrayList(rule), new Date(), new Date());
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -104,7 +107,7 @@ public class UploadPropositionFilterBusinessServiceTest extends AbstractTransact
 	@Test
 	public void createUploadPropositionFilter() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		UploadPropositionFilter filterToCreate = new UploadPropositionFilter(referenceFilter);
+		UploadPropositionFilter filterToCreate = initFilter(referenceFilter);
 		UploadPropositionFilter persistedFilter = filterBusinessService.create(filterToCreate);
 		Assert.assertNotNull("No Filter has been created", persistedFilter);
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -113,10 +116,43 @@ public class UploadPropositionFilterBusinessServiceTest extends AbstractTransact
 	@Test
 	public void createAndFindUploadPropositionFilter() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		UploadPropositionFilter filterToCreate = new UploadPropositionFilter(referenceFilter);
+		UploadPropositionFilter filterToCreate = initFilter(referenceFilter);
 		UploadPropositionFilter persistedFilter = filterBusinessService.create(filterToCreate);
-		UploadPropositionFilter found = filterBusinessService.find(persistedFilter.getDomainUuid(), persistedFilter.getUuid());
+		UploadPropositionFilter found = filterBusinessService.find(persistedFilter.getDomainUuid(),
+				persistedFilter.getUuid());
 		Assert.assertNotNull("No Filter has been found", found);
 		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void updateUploadPropositionFilter() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		UploadPropositionFilter filterToCreate = initFilter(referenceFilter);
+		UploadPropositionFilter persistedFilter = filterBusinessService.create(filterToCreate);
+		persistedFilter.setMatchType(UploadPropositionMatchType.ANY);
+		persistedFilter.setEnabled(Boolean.FALSE);
+		UploadPropositionFilter updated = filterBusinessService.update(persistedFilter);
+		Assert.assertEquals("Filter field has not been updated : MatchType", UploadPropositionMatchType.ANY,
+				updated.getMatchType());
+		Assert.assertEquals("Filter field has not been updated : Enabled", Boolean.FALSE, updated.isEnabled());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void deleteUploadPropositionFilter() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		UploadPropositionFilter filterToCreate = initFilter(referenceFilter);
+		UploadPropositionFilter persistedFilter = filterBusinessService.create(filterToCreate);
+		filterBusinessService.delete(persistedFilter);
+		Assert.assertNull("The filter has not been deleted",
+				filterBusinessService.find(persistedFilter.getDomainUuid(), persistedFilter.getUuid()));
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	private UploadPropositionFilter initFilter(UploadPropositionFilter referenceFilter) {
+		return new UploadPropositionFilter(UUID.randomUUID().toString(), referenceFilter.getDomainUuid(),
+				referenceFilter.getName(), referenceFilter.getMatchType(), referenceFilter.getUploadPropositionAction(),
+				referenceFilter.isEnabled(), referenceFilter.getOrder(), referenceFilter.getUploadPropositionRules(),
+				new Date(), new Date());
 	}
 }
