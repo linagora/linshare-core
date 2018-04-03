@@ -37,7 +37,7 @@ import java.util.Date;
 
 import org.linagora.linshare.core.domain.constants.UploadPropositionStatus;
 
-public class UploadProposition {
+public class UploadPropositionOLD {
 
 	private long id;
 
@@ -65,7 +65,7 @@ public class UploadProposition {
 
 	private Date modificationDate;
 
-	public UploadProposition() {
+	public UploadPropositionOLD() {
 	}
 
 	public long getId() {

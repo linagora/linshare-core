@@ -7,7 +7,7 @@
 		<param name="valueOfMethod">fromString</param>
 	</typedef>
 
-	<class name="org.linagora.linshare.core.domain.entities.UploadProposition" table="upload_proposition" lazy="true">
+	<class name="org.linagora.linshare.core.domain.entities.UploadPropositionOLD" table="upload_proposition" lazy="true">
 		<id name="id" column="id" type="long" unsaved-value="0">
 			<generator class="native">
 			</generator>

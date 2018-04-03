@@ -52,7 +52,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.MailActivation;
 import org.linagora.linshare.core.domain.entities.MailConfig;
-import org.linagora.linshare.core.domain.entities.UploadProposition;
+import org.linagora.linshare.core.domain.entities.UploadPropositionOLD;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
@@ -354,7 +354,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	 */
 
 	@Override
-	public MailContainerWithRecipient buildCreateUploadProposition(User recipient, UploadProposition proposition)
+	public MailContainerWithRecipient buildCreateUploadProposition(User recipient, UploadPropositionOLD proposition)
 			throws BusinessException {
 //		if (isDisable(recipient, MailActivationType.UPLOAD_PROPOSITION_CREATED)) {
 		if (isDisable(recipient, null)) {
@@ -385,7 +385,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	}
 
 	@Override
-	public MailContainerWithRecipient buildRejectUploadProposition(User sender, UploadProposition proposition)
+	public MailContainerWithRecipient buildRejectUploadProposition(User sender, UploadPropositionOLD proposition)
 			throws BusinessException {
 		// MailActivationType.UPLOAD_PROPOSITION_REJECTED
 		if (isDisable(sender, null)) {

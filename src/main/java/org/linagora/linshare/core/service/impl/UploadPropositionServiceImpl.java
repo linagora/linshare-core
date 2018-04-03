@@ -51,7 +51,7 @@ import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.FileSizeUnitClass;
 import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
 import org.linagora.linshare.core.domain.entities.LanguageEnumValueFunctionality;
-import org.linagora.linshare.core.domain.entities.UploadProposition;
+import org.linagora.linshare.core.domain.entities.UploadPropositionOLD;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
@@ -108,14 +108,14 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 	}
 
 	@Override
-	public UploadProposition create(UploadProposition proposition,
+	public UploadPropositionOLD create(UploadPropositionOLD proposition,
 			UploadPropositionActionType action) throws BusinessException {
 		Validate.notNull(proposition, "UploadProposition must be set.");
 
 		AbstractDomain rootDomain = domainBusinessService.getUniqueRootDomain();
 		proposition.setDomain(rootDomain);
 
-		UploadProposition created;
+		UploadPropositionOLD created;
 		boolean accept = action.equals(UploadPropositionActionType.ACCEPT);
 		if (accept) {
 			proposition.setStatus(UploadPropositionStatus.SYSTEM_ACCEPTED);
@@ -143,21 +143,21 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 	}
 
 	@Override
-	public void delete(Account actor, UploadProposition prop)
+	public void delete(Account actor, UploadPropositionOLD prop)
 			throws BusinessException {
 		Validate.notNull(actor, "Actor must be set.");
 		uploadPropositionBusinessService.delete(prop);
 	}
 
 	@Override
-	public UploadProposition find(Account actor, String uuid)
+	public UploadPropositionOLD find(Account actor, String uuid)
 			throws BusinessException {
 		Validate.notNull(actor, "Actor must be set.");
 		return uploadPropositionBusinessService.findByUuid(uuid);
 	}
 
 	@Override
-	public List<UploadProposition> findAll(User actor) throws BusinessException {
+	public List<UploadPropositionOLD> findAll(User actor) throws BusinessException {
 		Validate.notNull(actor, "Actor must be set.");
 		return uploadPropositionBusinessService.findAllByMail(actor.getMail());
 	}
@@ -185,7 +185,7 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 	}
 
 	@Override
-	public void accept(User actor, UploadProposition e)
+	public void accept(User actor, UploadPropositionOLD e)
 			throws BusinessException {
 		logger.debug("Accepting proposition: " + e.getUuid());
 		e.setStatus(UploadPropositionStatus.USER_ACCEPTED);
@@ -194,7 +194,7 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 	}
 
 	@Override
-	public void reject(User actor, UploadProposition e)
+	public void reject(User actor, UploadPropositionOLD e)
 			throws BusinessException {
 		logger.debug("Rejecting proposition: " + e.getUuid());
 		e.setStatus(UploadPropositionStatus.USER_REJECTED);
@@ -204,7 +204,7 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 		notifierService.sendNotification(mail);
 	}
 
-	public void acceptHook(User owner, UploadProposition created)
+	public void acceptHook(User owner, UploadPropositionOLD created)
 			throws BusinessException {
 		UploadRequest req = new UploadRequest();
 		req.setUploadPropositionRequestUuid(created.getUuid());

@@ -37,7 +37,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.business.service.UploadPropositionBusinessService;
 import org.linagora.linshare.core.domain.constants.UploadPropositionStatus;
-import org.linagora.linshare.core.domain.entities.UploadProposition;
+import org.linagora.linshare.core.domain.entities.UploadPropositionOLD;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UploadPropositionRepository;
 
@@ -53,35 +53,35 @@ public class UploadPropositionBusinessServiceImpl implements
 	}
 
 	@Override
-	public List<UploadProposition> findAll(List<UploadPropositionStatus> status) {
+	public List<UploadPropositionOLD> findAll(List<UploadPropositionStatus> status) {
 		// return uploadPropositionRepository.findByStatus(status);
 		return null;
 	}
 
 	@Override
-	public List<UploadProposition> findAllByMail(String mail) {
+	public List<UploadPropositionOLD> findAllByMail(String mail) {
 		return uploadPropositionRepository.findAllByMail(mail);
 	}
 
 	@Override
-	public UploadProposition findByUuid(String uuid) {
+	public UploadPropositionOLD findByUuid(String uuid) {
 		return uploadPropositionRepository.findByUuid(uuid);
 	}
 
 	@Override
-	public UploadProposition create(UploadProposition proposition)
+	public UploadPropositionOLD create(UploadPropositionOLD proposition)
 			throws BusinessException {
 		return uploadPropositionRepository.create(proposition);
 	}
 
 	@Override
-	public UploadProposition update(UploadProposition proposition)
+	public UploadPropositionOLD update(UploadPropositionOLD proposition)
 			throws BusinessException {
 		return uploadPropositionRepository.update(proposition);
 	}
 
 	@Override
-	public void delete(UploadProposition proposition) throws BusinessException {
+	public void delete(UploadPropositionOLD proposition) throws BusinessException {
 		uploadPropositionRepository.delete(proposition);
 	}
 }

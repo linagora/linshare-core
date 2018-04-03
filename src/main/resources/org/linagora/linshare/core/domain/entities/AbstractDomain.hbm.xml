@@ -101,7 +101,7 @@
 
 		<set name="uploadPropositions" lazy="true" cascade="lock" inverse="true">
 			<key column="domain_abstract_id" not-null="true"/>
-			<one-to-many class="org.linagora.linshare.core.domain.entities.UploadProposition"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.UploadPropositionOLD"/>
 		</set>
 
 		<many-to-one name="userProvider" column="user_provider_id" class="org.linagora.linshare.core.domain.entities.UserProvider"

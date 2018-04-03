@@ -39,14 +39,14 @@ import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
-import org.linagora.linshare.core.domain.entities.UploadProposition;
+import org.linagora.linshare.core.domain.entities.UploadPropositionOLD;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UploadPropositionRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate4.HibernateTemplate;
 
 public class UploadPropositionRepositoryImpl extends
-		AbstractRepositoryImpl<UploadProposition> implements
+		AbstractRepositoryImpl<UploadPropositionOLD> implements
 		UploadPropositionRepository {
 
 	public UploadPropositionRepositoryImpl(HibernateTemplate hibernateTemplate) {
@@ -54,20 +54,20 @@ public class UploadPropositionRepositoryImpl extends
 	}
 
 	@Override
-	protected DetachedCriteria getNaturalKeyCriteria(UploadProposition prop) {
+	protected DetachedCriteria getNaturalKeyCriteria(UploadPropositionOLD prop) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass())
 				.add(Restrictions.eq("uuid", prop.getUuid()));
 		return det;
 	}
 
 	@Override
-	public UploadProposition findByUuid(String uuid) {
+	public UploadPropositionOLD findByUuid(String uuid) {
 		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
 				"uuid", uuid)));
 	}
 
 	@Override
-	public UploadProposition create(UploadProposition entity)
+	public UploadPropositionOLD create(UploadPropositionOLD entity)
 			throws BusinessException {
 		entity.setCreationDate(new Date());
 		entity.setModificationDate(new Date());
@@ -76,14 +76,14 @@ public class UploadPropositionRepositoryImpl extends
 	}
 
 	@Override
-	public UploadProposition update(UploadProposition entity)
+	public UploadPropositionOLD update(UploadPropositionOLD entity)
 			throws BusinessException {
 		entity.setModificationDate(new Date());
 		return super.update(entity);
 	}
 
 	@Override
-	public List<UploadProposition> findAllByMail(String mail) {
+	public List<UploadPropositionOLD> findAllByMail(String mail) {
 		return findByCriteria(Restrictions.eq("recipientMail", mail));
 	}
 }

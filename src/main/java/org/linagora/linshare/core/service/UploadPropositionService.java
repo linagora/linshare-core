@@ -38,23 +38,23 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.UploadPropositionActionType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.UploadProposition;
+import org.linagora.linshare.core.domain.entities.UploadPropositionOLD;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface UploadPropositionService {
 
-	UploadProposition create(UploadProposition proposition, UploadPropositionActionType action) throws BusinessException;
+	UploadPropositionOLD create(UploadPropositionOLD proposition, UploadPropositionActionType action) throws BusinessException;
 
-	void delete(Account actor, UploadProposition prop) throws BusinessException;
+	void delete(Account actor, UploadPropositionOLD prop) throws BusinessException;
 
-	UploadProposition find(Account actor, String uuid) throws BusinessException;
+	UploadPropositionOLD find(Account actor, String uuid) throws BusinessException;
 
-	List<UploadProposition> findAll(User actor) throws BusinessException;
+	List<UploadPropositionOLD> findAll(User actor) throws BusinessException;
 
 	void checkIfValidRecipient(Account actor, String mail, String domainId) throws BusinessException;
 
-	void accept(User actor, UploadProposition e) throws BusinessException;
+	void accept(User actor, UploadPropositionOLD e) throws BusinessException;
 
-	void reject(User actor, UploadProposition e) throws BusinessException;
+	void reject(User actor, UploadPropositionOLD e) throws BusinessException;
 }

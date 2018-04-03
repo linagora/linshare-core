@@ -36,7 +36,7 @@ package org.linagora.linshare.core.facade.webservice.uploadproposition.dto;
 
 import org.linagora.linshare.core.domain.constants.UploadPropositionActionType;
 import org.linagora.linshare.core.domain.constants.UploadPropositionStatus;
-import org.linagora.linshare.core.domain.entities.UploadProposition;
+import org.linagora.linshare.core.domain.entities.UploadPropositionOLD;
 
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -84,8 +84,8 @@ public class UploadPropositionDto {
 	}
 
 
-	public UploadProposition toEntity(UploadPropositionDto dto) {
-		UploadProposition entity = new UploadProposition();
+	public UploadPropositionOLD toEntity(UploadPropositionDto dto) {
+		UploadPropositionOLD entity = new UploadPropositionOLD();
 		entity.setBody(dto.getBody());
 		entity.setDomainSource(dto.getRecipientDomain());
 		entity.setFirstName(dto.getFirstName());

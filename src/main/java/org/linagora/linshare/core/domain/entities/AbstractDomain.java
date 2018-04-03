@@ -97,7 +97,7 @@ public abstract class AbstractDomain {
 
 	private Set<UploadPropositionFilterOLD> uploadPropositionFilters;
 
-	private Set<UploadProposition> uploadPropositions;
+	private Set<UploadPropositionOLD> uploadPropositions;
 
 	protected UserProvider userProvider;
 
@@ -443,11 +443,11 @@ public abstract class AbstractDomain {
 		this.uploadPropositionFilters = uploadPropositionFilters;
 	}
 
-	public Set<UploadProposition> getUploadPropositions() {
+	public Set<UploadPropositionOLD> getUploadPropositions() {
 		return uploadPropositions;
 	}
 
-	public void setUploadPropositions(Set<UploadProposition> uploadPropositions) {
+	public void setUploadPropositions(Set<UploadPropositionOLD> uploadPropositions) {
 		this.uploadPropositions = uploadPropositions;
 	}
 
