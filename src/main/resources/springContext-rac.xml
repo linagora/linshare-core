@@ -89,4 +89,8 @@
 	<bean name="uploadPropositionExceptionRuleResourceAccessControl" class="org.linagora.linshare.core.rac.impl.UploadPropositionExceptionRuleResourceAccessControlImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
+
+	<bean name="uploadPropositionResourceAccessControl" class="org.linagora.linshare.core.rac.impl.UploadPropositionResourceAccessControlImpl">
+		<constructor-arg ref="functionalityReadOnlyService" />
+	</bean>
 </beans>

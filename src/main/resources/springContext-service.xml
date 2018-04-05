@@ -228,6 +228,7 @@
 	</bean>
 	<bean name="uploadPropositionService" class="org.linagora.linshare.core.service.impl.UploadPropositionServiceImpl">
 		<constructor-arg ref="uploadPropositionBusinessService" />
+		<constructor-arg ref="uploadPropositionResourceAccessControl" />
 		<constructor-arg ref="domainBusinessService" />
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="functionalityReadOnlyService" />

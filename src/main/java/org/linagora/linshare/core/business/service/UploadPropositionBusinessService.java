@@ -38,6 +38,7 @@ import java.util.List;
 import org.linagora.linshare.core.domain.constants.UploadPropositionStatus;
 import org.linagora.linshare.core.domain.entities.UploadPropositionOLD;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.mongo.entities.UploadProposition;
 
 public interface UploadPropositionBusinessService {
 
@@ -47,7 +48,7 @@ public interface UploadPropositionBusinessService {
 
 	UploadPropositionOLD findByUuid(String uuid);
 
-	UploadPropositionOLD create(UploadPropositionOLD proposition) throws BusinessException;
+	UploadProposition create(UploadProposition uploadProposition) throws BusinessException;
 
 	UploadPropositionOLD update(UploadPropositionOLD proposition) throws BusinessException;
 

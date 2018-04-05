@@ -40,16 +40,22 @@ import org.linagora.linshare.core.domain.constants.UploadPropositionStatus;
 import org.linagora.linshare.core.domain.entities.UploadPropositionOLD;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UploadPropositionRepository;
+import org.linagora.linshare.mongo.entities.UploadProposition;
+import org.linagora.linshare.mongo.repository.UploadPropositionMongoRepository;
 
 public class UploadPropositionBusinessServiceImpl implements
 		UploadPropositionBusinessService {
 
 	private final UploadPropositionRepository uploadPropositionRepository;
 
+	private final UploadPropositionMongoRepository uploadPropositionMongoRepository;
+
 	public UploadPropositionBusinessServiceImpl(
-			final UploadPropositionRepository uploadRequestRepository) {
+			final UploadPropositionRepository uploadRequestRepository,
+			final UploadPropositionMongoRepository uploadPropositionMongoRepository) {
 		super();
 		this.uploadPropositionRepository = uploadRequestRepository;
+		this.uploadPropositionMongoRepository = uploadPropositionMongoRepository;
 	}
 
 	@Override
@@ -69,9 +75,8 @@ public class UploadPropositionBusinessServiceImpl implements
 	}
 
 	@Override
-	public UploadPropositionOLD create(UploadPropositionOLD proposition)
-			throws BusinessException {
-		return uploadPropositionRepository.create(proposition);
+	public UploadProposition create(UploadProposition uploadProposition) throws BusinessException {
+		return uploadPropositionMongoRepository.insert(uploadProposition);
 	}
 
 	@Override

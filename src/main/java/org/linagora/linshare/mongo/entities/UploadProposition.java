@@ -40,7 +40,9 @@ import javax.persistence.GeneratedValue;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.linagora.linshare.core.domain.constants.UploadPropositionActionType;
 import org.linagora.linshare.core.domain.constants.UploadPropositionStatus;
+import org.linagora.linshare.core.facade.webservice.uploadproposition.dto.UploadPropositionDto;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -99,6 +101,23 @@ public class UploadProposition {
 		this.accountUuid = accountUuid;
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
+	}
+
+	public UploadProposition(UploadPropositionDto dto) {
+		super();
+		this.uuid = UUID.randomUUID().toString();
+		if (dto.getAction() != null) {
+			UploadPropositionActionType actionType = UploadPropositionActionType.fromString(dto.getAction());
+			this.status = UploadPropositionStatus.SYSTEM_PENDING;
+			if (UploadPropositionActionType.ACCEPT.equals(actionType)) {
+				this.status = UploadPropositionStatus.SYSTEM_ACCEPTED;
+			} else if (UploadPropositionActionType.REJECT.equals(actionType)) {
+				this.status = UploadPropositionStatus.SYSTEM_REJECTED;
+			}
+		}
+		this.label = dto.getSubject();
+		this.body = dto.getBody();
+		this.contact = new UploadPropositionContact(dto.getFirstName(), dto.getLastName(), dto.getMail());
 	}
 
 	public String getUuid() {

@@ -178,6 +178,7 @@
 
 	<bean id="uploadPropositionBusinessService" class="org.linagora.linshare.core.business.service.impl.UploadPropositionBusinessServiceImpl">
 		<constructor-arg ref="uploadPropositionRepository" />
+		<constructor-arg ref="uploadPropositionMongoRepository" />
 	</bean>
 
 	<bean id="uploadPropositionFilterBusinessService" class="org.linagora.linshare.core.business.service.impl.UploadPropositionFilterBusinessServiceImpl">

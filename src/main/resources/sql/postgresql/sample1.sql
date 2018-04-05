@@ -389,9 +389,9 @@ UPDATE policy SET status=true where id=27;
 UPDATE policy SET status=true , system=false , default_status=true where id=45;
 
 -- enable upload proposition web service
-UPDATE policy SET status=true , policy=1 where id=98; -- fixme
+UPDATE policy SET status=true , policy=1, system=false where id=101;
 
 -- enable upload request
-UPDATE policy SET status=true , policy=1 where id=63;
+UPDATE policy SET status=true , policy=1, system=false where id=63;
 
 COMMIT;

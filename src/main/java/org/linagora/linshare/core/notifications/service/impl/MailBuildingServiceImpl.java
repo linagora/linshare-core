@@ -95,6 +95,7 @@ import org.linagora.linshare.core.notifications.emails.impl.WorkGroupWarnNewMemb
 import org.linagora.linshare.core.notifications.emails.impl.WorkGroupWarnUpdatedMemberEmailBuilder;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
+import org.linagora.linshare.mongo.entities.UploadProposition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.thymeleaf.TemplateEngine;
@@ -354,7 +355,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	 */
 
 	@Override
-	public MailContainerWithRecipient buildCreateUploadProposition(User recipient, UploadPropositionOLD proposition)
+	public MailContainerWithRecipient buildCreateUploadProposition(User recipient, UploadProposition proposition)
 			throws BusinessException {
 //		if (isDisable(recipient, MailActivationType.UPLOAD_PROPOSITION_CREATED)) {
 		if (isDisable(recipient, null)) {
@@ -366,17 +367,17 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		MailContainerBuilder builder = new MailContainerBuilder();
 
 		builder.getSubjectChain()
-				.add("actorRepresentation", proposition.getMail())
-				.add("subject", proposition.getSubject());
+				.add("actorRepresentation", proposition.getContact().getMail())
+				.add("subject", proposition.getLabel());
 		builder.getGreetingsChain()
 				.add("firstName", recipient.getFirstName())
 				.add("lastName", recipient.getLastName());
 		builder.getBodyChain()
-				.add("subject", proposition.getSubject())
+				.add("subject", proposition.getLabel())
 				.add("body", proposition.getBody())
-				.add("firstName", proposition.getFirstName())
-				.add("lastName", proposition.getLastName())
-				.add("mail", proposition.getMail())
+				.add("firstName", proposition.getContact().getFirstName())
+				.add("lastName", proposition.getContact().getLastName())
+				.add("mail", proposition.getContact().getMail())
 				.add("uploadPropositionUrl", getUploadPropositionUrl(recipient));
 		container.setRecipient(recipient.getMail());
 		container.setFrom(getFromMailAddress(recipient));

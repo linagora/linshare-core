@@ -37,12 +37,10 @@ package org.linagora.linshare.core.service.impl;
 import java.util.Calendar;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.UploadPropositionBusinessService;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
-import org.linagora.linshare.core.domain.constants.UploadPropositionActionType;
 import org.linagora.linshare.core.domain.constants.UploadPropositionStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -60,17 +58,20 @@ import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
+import org.linagora.linshare.core.rac.UploadPropositionResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UploadPropositionService;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.mongo.entities.UploadProposition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
-public class UploadPropositionServiceImpl implements UploadPropositionService {
+public class UploadPropositionServiceImpl  extends GenericServiceImpl<Account, UploadProposition> implements UploadPropositionService {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(UploadPropositionServiceImpl.class);
@@ -91,13 +92,14 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 
 	public UploadPropositionServiceImpl(
 			final UploadPropositionBusinessService uploadPropositionBusinessService,
+			final UploadPropositionResourceAccessControl rac,
 			final DomainBusinessService domainBusinessService,
 			final UserService userService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
 			final MailBuildingService mailBuildingService,
 			final NotifierService notifierService,
 			final UploadRequestGroupService uploadRequestGroupService) {
-		super();
+		super(rac);
 		this.uploadPropositionBusinessService = uploadPropositionBusinessService;
 		this.domainBusinessService = domainBusinessService;
 		this.userService = userService;
@@ -108,37 +110,39 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 	}
 
 	@Override
-	public UploadPropositionOLD create(UploadPropositionOLD proposition,
-			UploadPropositionActionType action) throws BusinessException {
-		Validate.notNull(proposition, "UploadProposition must be set.");
-
+	public UploadProposition create(Account authUser, String recipientMail, UploadProposition uploadProposition) {
+		Validate.notNull(uploadProposition, "The Upload proposition cannot be null");
 		AbstractDomain rootDomain = domainBusinessService.getUniqueRootDomain();
-		proposition.setDomain(rootDomain);
-
-		UploadPropositionOLD created;
-		boolean accept = action.equals(UploadPropositionActionType.ACCEPT);
-		if (accept) {
-			proposition.setStatus(UploadPropositionStatus.SYSTEM_ACCEPTED);
+		Account targetedAccount = userService.findOrCreateUser(recipientMail, rootDomain.getUuid());
+		preChecks(authUser, targetedAccount);
+		checkCreatePermission(authUser, targetedAccount, UploadProposition.class,
+				BusinessErrorCode.UPLOAD_PROPOSITION_CAN_NOT_CREATE, null);
+		if (UploadPropositionStatus.SYSTEM_REJECTED.equals(uploadProposition.getStatus())) {
+			// The uploadProposition has been rejected by the system : no upload request nor
+			// upload proposition are created
+			return uploadProposition;
 		}
-		created = uploadPropositionBusinessService.create(proposition);
-		User owner = null;
-		try {
-			owner = userService.findOrCreateUser(proposition
-					.getRecipientMail(), StringUtils.defaultString(
-					proposition.getDomainSource(),
-					rootDomain.getUuid()));
-		} catch (BusinessException e) {
-			logger.error("The recipient of the upload proposition can't be found : "
-					+ created.getUuid()
-					+ ": "
-					+ proposition.getRecipientMail());
-			return null;
+		if (Strings.isNullOrEmpty(uploadProposition.getAccountUuid())) {
+			uploadProposition.setAccountUuid(targetedAccount.getLsUuid());
 		}
-		if (accept) {
-			acceptHook(owner, created);
+		if (Strings.isNullOrEmpty(uploadProposition.getDomainUuid())) {
+			uploadProposition.setAccountUuid(rootDomain.getUuid());
 		}
-		MailContainerWithRecipient mail = mailBuildingService.buildCreateUploadProposition(owner, proposition);
-		notifierService.sendNotification(mail);
+		UploadProposition created;
+		if (UploadPropositionStatus.SYSTEM_ACCEPTED.equals(uploadProposition.getStatus())) {
+			// The uploadProposition has been accepted by the system : an upload request is
+			// directly created
+			acceptHook((User) targetedAccount, uploadProposition);
+			created = uploadProposition;
+		} else {
+			// No system rules have been applied to the proposition : an upload proposition
+			// is submitted to the targetted account
+			created = uploadPropositionBusinessService.create(uploadProposition);
+			MailContainerWithRecipient mail = mailBuildingService.buildCreateUploadProposition((User) targetedAccount,
+					uploadProposition);
+			notifierService.sendNotification(mail);
+		}
+		// TODO Audit
 		return created;
 	}
 
@@ -190,7 +194,8 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 		logger.debug("Accepting proposition: " + e.getUuid());
 		e.setStatus(UploadPropositionStatus.USER_ACCEPTED);
 		e = uploadPropositionBusinessService.update(e);
-		acceptHook(actor, e);
+		//TODO acceptHook
+		//acceptHook(actor, e);
 	}
 
 	@Override
@@ -204,14 +209,14 @@ public class UploadPropositionServiceImpl implements UploadPropositionService {
 		notifierService.sendNotification(mail);
 	}
 
-	public void acceptHook(User owner, UploadPropositionOLD created)
+	public void acceptHook(User owner, UploadProposition created)
 			throws BusinessException {
 		UploadRequest req = new UploadRequest();
 		req.setUploadPropositionRequestUuid(created.getUuid());
 		getDefaultValue(owner, req);// get value default from domain
-		Contact contact = new Contact(created.getMail());
+		Contact contact = new Contact(created.getContact().getMail());
 		uploadRequestGroupService.create(owner, owner, req, Lists.newArrayList(contact),
-				created.getSubject(), created.getBody(), null);
+				created.getLabel(), created.getBody(), null);
 	}
 
 	public void getDefaultValue(User owner, UploadRequest req)

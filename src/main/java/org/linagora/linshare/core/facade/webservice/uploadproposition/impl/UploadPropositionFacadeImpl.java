@@ -37,7 +37,6 @@ package org.linagora.linshare.core.facade.webservice.uploadproposition.impl;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.domain.constants.UploadPropositionActionType;
 import org.linagora.linshare.core.domain.entities.UploadPropositionFilterOLD;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -48,6 +47,7 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.UploadPropositionFilterService;
 import org.linagora.linshare.core.service.UploadPropositionService;
+import org.linagora.linshare.mongo.entities.UploadProposition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,13 +94,11 @@ public class UploadPropositionFacadeImpl extends
 
 	@Override
 	public void create(UploadPropositionDto dto) throws BusinessException {
-		this.checkAuthentication();
+		User authUser = this.checkAuthentication();
 		Validate.notNull(dto, "Upload proposition is required.");
 		Validate.notEmpty(dto.getMail(), "Mail is required.");
 		Validate.notEmpty(dto.getRecipientMail(), "Recipient mail is required.");
 		logger.debug(dto.toString());
-		UploadPropositionActionType actionType = dto.getAction() == null ? UploadPropositionActionType.MANUAL
-				: UploadPropositionActionType.fromString(dto.getAction());
-		uploadPropositionService.create(dto.toEntity(dto), actionType);
+		uploadPropositionService.create(authUser, dto.getRecipientMail(), new UploadProposition(dto));
 	}
 }

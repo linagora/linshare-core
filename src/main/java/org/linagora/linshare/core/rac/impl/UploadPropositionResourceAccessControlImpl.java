@@ -64,7 +64,7 @@ public class UploadPropositionResourceAccessControlImpl
 
 	@Override
 	protected boolean hasCreatePermission(Account authUser, Account actor, UploadProposition entry, Object... opt) {
-		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_PROPOSITION_CREATE);
+		return authUser.hasUploadPropositionRole();
 	}
 
 	@Override
