@@ -805,25 +805,19 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	@Override
 	public DocumentEntry copy(Account owner, UploadRequestEntry uploadRequestEntry) {
 		DocumentEntry entity = null;
-		try {
-			DocumentEntry docEntry = new DocumentEntry(owner, uploadRequestEntry.getName(),
-					uploadRequestEntry.getComment(), uploadRequestEntry.getDocument());
-			// We need to set an expiration date in case of file cleaner activation.
-			if (uploadRequestEntry.getComment() == null) {
-				docEntry.setComment("");
-			}
-			docEntry.setSize(uploadRequestEntry.getSize());
-			docEntry.setSha256sum(uploadRequestEntry.getSha256sum());
-			docEntry.setExpirationDate(uploadRequestEntry.getExpirationDate());
-			docEntry.setMetaData(uploadRequestEntry.getMetaData());
-			docEntry.setCmisSync(uploadRequestEntry.isCmisSync());
-			docEntry.setHasThumbnail(uploadRequestEntry.isHasThumbnail());
-			entity = documentEntryRepository.create(docEntry);
-		} catch (BusinessException e) {
-			logger.error("Could not add  " + entity.getName() + " to user " + owner.getLsUuid() + ", reason : ", e);
-			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_INSERT_DOCUMENT,
-					"couldn't register the file in the database");
+		DocumentEntry docEntry = new DocumentEntry(owner, uploadRequestEntry.getName(), uploadRequestEntry.getComment(),
+				uploadRequestEntry.getDocument());
+		// We need to set an expiration date in case of file cleaner activation.
+		if (uploadRequestEntry.getComment() == null) {
+			docEntry.setComment("");
 		}
+		docEntry.setSize(uploadRequestEntry.getSize());
+		docEntry.setSha256sum(uploadRequestEntry.getSha256sum());
+		docEntry.setExpirationDate(uploadRequestEntry.getExpirationDate());
+		docEntry.setMetaData(uploadRequestEntry.getMetaData());
+		docEntry.setCmisSync(uploadRequestEntry.isCmisSync());
+		docEntry.setHasThumbnail(uploadRequestEntry.isHasThumbnail());
+		entity = documentEntryRepository.create(docEntry);
 		if (uploadRequestEntry.getCopied() == false) {
 			uploadRequestEntry.setCopied(true);
 		}
