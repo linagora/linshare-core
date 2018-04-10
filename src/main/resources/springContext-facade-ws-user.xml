@@ -152,4 +152,9 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="uploadPropositionExceptionRuleService" />
 	</bean>
+
+	<bean id="wsUploadPropositionFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.UploadPropositionFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="uploadPropositionService" />
+	</bean>
 </beans>
