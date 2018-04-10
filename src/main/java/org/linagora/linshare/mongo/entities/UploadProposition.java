@@ -118,6 +118,8 @@ public class UploadProposition {
 		this.label = dto.getSubject();
 		this.body = dto.getBody();
 		this.contact = new UploadPropositionContact(dto.getFirstName(), dto.getLastName(), dto.getMail());
+		this.creationDate = new Date();
+		this.modificationDate = new Date();
 	}
 
 	public String getUuid() {

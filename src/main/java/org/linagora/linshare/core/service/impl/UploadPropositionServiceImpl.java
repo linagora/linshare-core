@@ -38,7 +38,6 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.UploadPropositionBusinessService;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.UploadPropositionStatus;
@@ -59,6 +58,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.UploadPropositionResourceAccessControl;
+import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UploadPropositionService;
@@ -78,9 +78,9 @@ public class UploadPropositionServiceImpl  extends GenericServiceImpl<Account, U
 
 	private final UploadPropositionBusinessService uploadPropositionBusinessService;
 
-	private final DomainBusinessService domainBusinessService;
-
 	private final UserService userService;
+
+	private final UserRepository<User> userRepository;
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
@@ -93,16 +93,16 @@ public class UploadPropositionServiceImpl  extends GenericServiceImpl<Account, U
 	public UploadPropositionServiceImpl(
 			final UploadPropositionBusinessService uploadPropositionBusinessService,
 			final UploadPropositionResourceAccessControl rac,
-			final DomainBusinessService domainBusinessService,
 			final UserService userService,
+			final UserRepository<User> userRepository,
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
 			final MailBuildingService mailBuildingService,
 			final NotifierService notifierService,
 			final UploadRequestGroupService uploadRequestGroupService) {
 		super(rac);
 		this.uploadPropositionBusinessService = uploadPropositionBusinessService;
-		this.domainBusinessService = domainBusinessService;
 		this.userService = userService;
+		this.userRepository = userRepository;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
@@ -112,8 +112,7 @@ public class UploadPropositionServiceImpl  extends GenericServiceImpl<Account, U
 	@Override
 	public UploadProposition create(Account authUser, String recipientMail, UploadProposition uploadProposition) {
 		Validate.notNull(uploadProposition, "The Upload proposition cannot be null");
-		AbstractDomain rootDomain = domainBusinessService.getUniqueRootDomain();
-		Account targetedAccount = userService.findOrCreateUser(recipientMail, rootDomain.getUuid());
+		Account targetedAccount = userRepository.findByMail(recipientMail);
 		preChecks(authUser, targetedAccount);
 		checkCreatePermission(authUser, targetedAccount, UploadProposition.class,
 				BusinessErrorCode.UPLOAD_PROPOSITION_CAN_NOT_CREATE, null);
@@ -126,7 +125,7 @@ public class UploadPropositionServiceImpl  extends GenericServiceImpl<Account, U
 			uploadProposition.setAccountUuid(targetedAccount.getLsUuid());
 		}
 		if (Strings.isNullOrEmpty(uploadProposition.getDomainUuid())) {
-			uploadProposition.setAccountUuid(rootDomain.getUuid());
+			uploadProposition.setDomainUuid(targetedAccount.getDomainId());
 		}
 		UploadProposition created;
 		if (UploadPropositionStatus.SYSTEM_ACCEPTED.equals(uploadProposition.getStatus())) {

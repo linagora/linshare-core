@@ -50,4 +50,6 @@ public interface DomainPermissionBusinessService {
 	boolean isAdminForThisUploadRequest(Account actor, UploadRequest request);
 
 	List<AbstractDomain> getMyAdministredDomains(Account actor);
+
+	boolean isAdminToCreateUploadProposition(Account actor);
 }

@@ -34,8 +34,6 @@
 package org.linagora.linshare.mongo.repository;
 
 import java.util.List;
-import java.util.Set;
-
 import org.linagora.linshare.mongo.entities.UploadPropositionFilter;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
@@ -47,6 +45,6 @@ public interface UploadPropositionFilterMongoRepository extends MongoRepository<
 
 	UploadPropositionFilter findByDomainUuidAndUuid(String domainUuid, String uuid);
 
-	Set<UploadPropositionFilter> findByEnabled(Boolean enabled);
+	List<UploadPropositionFilter> findByEnabled(Boolean enabled);
 
 }

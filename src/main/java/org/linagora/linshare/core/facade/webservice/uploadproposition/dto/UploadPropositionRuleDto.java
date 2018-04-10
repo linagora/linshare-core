@@ -34,7 +34,9 @@
 
 package org.linagora.linshare.core.facade.webservice.uploadproposition.dto;
 
-import org.linagora.linshare.core.domain.entities.UploadPropositionRule;
+import java.util.UUID;
+
+import org.linagora.linshare.mongo.entities.UploadPropositionRule;
 
 import com.google.common.base.Function;
 
@@ -50,7 +52,7 @@ public class UploadPropositionRuleDto {
 
 	public UploadPropositionRuleDto(UploadPropositionRule entity) {
 		super();
-		this.uuid = entity.getUuid();
+		this.uuid = UUID.randomUUID().toString();
 		this.operator = entity.getOperator().name();
 		this.field = entity.getField().name();
 		this.value = entity.getValue();

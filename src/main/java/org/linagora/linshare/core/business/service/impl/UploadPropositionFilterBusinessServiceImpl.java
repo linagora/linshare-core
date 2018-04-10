@@ -91,8 +91,8 @@ public class UploadPropositionFilterBusinessServiceImpl implements
 	}
 
 	@Override
-	public List<UploadPropositionFilterOLD> findAllEnabledFilters() {
-		return repository.findAllEnabledFilters();
+	public List<UploadPropositionFilter> findAllEnabledFilters() {
+		return uploadPropositionFilterMongoRepository.findByEnabled(Boolean.TRUE);
 	}
 
 	@Override

@@ -110,6 +110,7 @@ public class UploadPropositionFilter {
 
 	public UploadPropositionFilter(UploadPropositionFilter initFilter) {
 		super();
+		this.id = initFilter.getId();
 		this.uuid = initFilter.getUuid();
 		this.domainUuid = initFilter.getDomainUuid();
 		this.name = initFilter.getName();
@@ -123,6 +124,14 @@ public class UploadPropositionFilter {
 		this.modificationDate = initFilter.getModificationDate();
 		this.creationDate = initFilter.getCreationDate();
 		this.modificationDate = new Date();
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getUuid() {

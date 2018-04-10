@@ -111,13 +111,13 @@ public class UploadPropositionFilterServiceImpl
 	}
 
 	@Override
-	public List<UploadPropositionFilterOLD> findAllEnabledFilters(Account actor) throws BusinessException {
+	public List<UploadPropositionFilter> findAllEnabledFilters(Account actor) throws BusinessException {
 		preChecks(actor);
-		if (actor.hasSuperAdminRole() || actor.hasUploadPropositionRole()) {
-			return businessService.findAllEnabledFilters();
-		} else {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get these filters.");
+		if (!permissionService.isAdminToCreateUploadProposition(actor)) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_PROPOSITION_FILTER_CAN_NOT_LIST_ENABLED_FILTERS,
+					"You are not allowed to list enabled filters");
 		}
+		return businessService.findAllEnabledFilters();
 	}
 
 	@Override
@@ -150,8 +150,9 @@ public class UploadPropositionFilterServiceImpl
 			throw new BusinessException(BusinessErrorCode.UPLOAD_PROPOSITION_FILTER_CAN_NOT_CREATE,
 					"You are not allowed to use this domain");
 		}
+		UploadPropositionFilter found = find(authUser, domain, uploadPropositionFilter.getUuid());
 		UploadPropositionFilter filterToUpdate = new UploadPropositionFilter(uploadPropositionFilter);
-		find(authUser, domain, filterToUpdate.getUuid());
+		filterToUpdate.setId(found.getId());
 		return businessService.update(filterToUpdate);
 	}
 

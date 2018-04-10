@@ -40,10 +40,42 @@ import org.linagora.linshare.core.exception.TechnicalException;
 
 public enum UploadPropositionRuleOperatorType {
 
-	CONTAIN,
-	DO_NOT_CONTAIN,
-	EQUAL, DO_NOT_EQUAL,
-	BEGIN_WITH, END_WITH;
+	CONTAIN {
+		@Override
+		public boolean check(String value, String compare) {
+			return value.contains(compare);
+		}
+	},
+	DO_NOT_CONTAIN {
+		@Override
+		public boolean check(String value, String compare) {
+			return !value.contains(compare);
+		}
+	},
+	EQUAL {
+		@Override
+		public boolean check(String value, String compare) {
+			return value.equals(compare);
+		}
+	},
+	DO_NOT_EQUAL {
+		@Override
+		public boolean check(String value, String compare) {
+			return !value.equals(compare);
+		}
+	},
+	BEGIN_WITH {
+		@Override
+		public boolean check(String value, String compare) {
+			return value.startsWith(compare);
+		}
+	},
+	END_WITH {
+		@Override
+		public boolean check(String value, String compare) {
+			return value.endsWith(compare);
+		}
+	};
 
 	public static UploadPropositionRuleOperatorType fromString(String s) {
 		try {
@@ -54,4 +86,6 @@ public enum UploadPropositionRuleOperatorType {
 					StringUtils.isEmpty(s) ? "null or empty" : s);
 		}
 	}
+
+	public abstract boolean check(String value, String compare);
 }

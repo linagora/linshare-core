@@ -52,7 +52,7 @@ public interface UploadPropositionFilterBusinessService {
 
 	List<UploadPropositionFilter> findAll();
 
-	List<UploadPropositionFilterOLD> findAllEnabledFilters();
+	List<UploadPropositionFilter> findAllEnabledFilters();
 
 	UploadPropositionFilter create(UploadPropositionFilter entity)
 			throws BusinessException;

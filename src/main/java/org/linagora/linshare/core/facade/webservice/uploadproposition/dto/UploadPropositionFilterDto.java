@@ -36,9 +36,8 @@ package org.linagora.linshare.core.facade.webservice.uploadproposition.dto;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.UploadPropositionAction;
-import org.linagora.linshare.core.domain.entities.UploadPropositionFilterOLD;
-import org.linagora.linshare.core.domain.entities.UploadPropositionRule;
+import org.linagora.linshare.mongo.entities.UploadPropositionFilter;
+import org.linagora.linshare.mongo.entities.UploadPropositionRule;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -57,16 +56,13 @@ public class UploadPropositionFilterDto {
 	protected List<UploadPropositionActionDto> uploadPropositionActions = Lists
 			.newArrayList();
 
-	public UploadPropositionFilterDto(UploadPropositionFilterOLD entity) {
+	public UploadPropositionFilterDto(UploadPropositionFilter entity) {
 		super();
 		this.uuid = entity.getUuid();
 		this.name = entity.getName();
-		this.match = entity.getMatch().name();
-		for (UploadPropositionAction action : entity.getActions()) {
-			this.uploadPropositionActions.add(new UploadPropositionActionDto(
-					action));
-		}
-		for (UploadPropositionRule rule : entity.getRules()) {
+		this.match = entity.getMatchType().name();
+		this.uploadPropositionActions.add(new UploadPropositionActionDto(entity.getUploadPropositionAction()));
+		for (UploadPropositionRule rule : entity.getUploadPropositionRules()) {
 			this.uploadPropositionRules.add(new UploadPropositionRuleDto(rule));
 		}
 	}
@@ -116,10 +112,10 @@ public class UploadPropositionFilterDto {
 	/*
 	 * Transformers
 	 */
-	public static Function<UploadPropositionFilterOLD, UploadPropositionFilterDto> toVo() {
-		return new Function<UploadPropositionFilterOLD, UploadPropositionFilterDto>() {
+	public static Function<UploadPropositionFilter, UploadPropositionFilterDto> toVo() {
+		return new Function<UploadPropositionFilter, UploadPropositionFilterDto>() {
 			@Override
-			public UploadPropositionFilterDto apply(UploadPropositionFilterOLD arg0) {
+			public UploadPropositionFilterDto apply(UploadPropositionFilter arg0) {
 				return new UploadPropositionFilterDto(arg0);
 			}
 		};

@@ -34,7 +34,9 @@
 
 package org.linagora.linshare.core.facade.webservice.uploadproposition.dto;
 
-import org.linagora.linshare.core.domain.entities.UploadPropositionAction;
+import java.util.UUID;
+
+import org.linagora.linshare.core.domain.constants.UploadPropositionActionType;
 
 import com.google.common.base.Function;
 
@@ -47,11 +49,10 @@ public class UploadPropositionActionDto {
 
 	protected String data;
 
-	public UploadPropositionActionDto(UploadPropositionAction entity) {
+	public UploadPropositionActionDto(UploadPropositionActionType entity) {
 		super();
-		this.uuid = entity.getUuid();
-		this.action = entity.getActionType().name();
-		this.data = entity.getData();
+		this.uuid = UUID.randomUUID().toString();
+		this.action = entity.name();
 	}
 
 	public String getUuid() {
@@ -81,11 +82,10 @@ public class UploadPropositionActionDto {
 	/*
 	 * Transformers
 	 */
-	public static Function<UploadPropositionAction, UploadPropositionActionDto> toVo() {
-		return new Function<UploadPropositionAction, UploadPropositionActionDto>() {
+	public static Function<UploadPropositionActionType, UploadPropositionActionDto> toVo() {
+		return new Function<UploadPropositionActionType, UploadPropositionActionDto>() {
 			@Override
-			public UploadPropositionActionDto apply(
-					UploadPropositionAction entity) {
+			public UploadPropositionActionDto apply(UploadPropositionActionType entity) {
 				return new UploadPropositionActionDto(entity);
 			}
 		};

@@ -43,6 +43,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.mongo.entities.UploadProposition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,6 +83,11 @@ public class DomainPermissionBusinessServiceImpl implements
 	public boolean isAdminForThisUploadRequest(Account actor, UploadRequest request) {
 		return isAdminforThisDomain(actor, request.getUploadRequestGroup().getAbstractDomain())
 				|| isOwner(actor, request);
+	}
+
+	@Override
+	public boolean isAdminToCreateUploadProposition(Account actor) {
+		return actor.hasSuperAdminRole() || actor.hasUploadPropositionRole();
 	}
 
 	@Override

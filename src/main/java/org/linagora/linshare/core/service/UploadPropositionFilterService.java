@@ -53,7 +53,7 @@ public interface UploadPropositionFilterService {
 
 	List<UploadPropositionFilter> findAll(Account authUser, AbstractDomain domain) throws BusinessException;
 
-	List<UploadPropositionFilterOLD> findAllEnabledFilters(Account actor) throws BusinessException;
+	List<UploadPropositionFilter> findAllEnabledFilters(Account authUser) throws BusinessException;
 
 	UploadPropositionFilter update(Account authUser, AbstractDomain domain, UploadPropositionFilter uploadPropositionFilter) throws BusinessException;
 
