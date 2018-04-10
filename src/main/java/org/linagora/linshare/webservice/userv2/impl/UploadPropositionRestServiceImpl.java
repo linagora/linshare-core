@@ -77,7 +77,7 @@ public class UploadPropositionRestServiceImpl implements UploadPropositionRestSe
 	public UploadProposition find(
 			@ApiParam(value = "Upload proposition uuid", required = true)
 				@PathParam(value = "uuid") String uuid) {
-		return uploadPropositionFacade.find(uuid);
+		return uploadPropositionFacade.find(null, uuid);
 	}
 
 	@GET

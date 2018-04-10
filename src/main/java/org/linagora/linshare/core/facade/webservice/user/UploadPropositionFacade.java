@@ -40,7 +40,7 @@ import org.linagora.linshare.mongo.entities.UploadProposition;
 
 public interface UploadPropositionFacade {
 
-	UploadProposition find(String uuid) throws BusinessException;
+	UploadProposition find(String actorUuid, String uuid) throws BusinessException;
 
 	List<UploadProposition> findAllByAccountUuid() throws BusinessException;
 

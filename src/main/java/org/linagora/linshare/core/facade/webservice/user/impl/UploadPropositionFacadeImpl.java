@@ -54,10 +54,11 @@ public class UploadPropositionFacadeImpl extends GenericFacadeImpl implements Up
 	}
 
 	@Override
-	public UploadProposition find(String uuid) throws BusinessException {
+	public UploadProposition find(String actorUuid, String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "Upload proposition must be set");
 		User authUser = checkAuthentication();
-		return uploadPropositionService.find(authUser, authUser, uuid);
+		User actor = getActor(authUser, actorUuid);
+		return uploadPropositionService.find(authUser, actor, uuid);
 	}
 
 	@Override
