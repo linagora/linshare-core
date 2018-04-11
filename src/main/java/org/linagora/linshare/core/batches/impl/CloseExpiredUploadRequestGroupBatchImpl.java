@@ -47,21 +47,16 @@ import org.linagora.linshare.core.job.quartz.BatchResultContext;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
-import org.linagora.linshare.core.repository.UploadRequestGroupRepository;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
 
 public class CloseExpiredUploadRequestGroupBatchImpl extends GenericBatchImpl {
 
-	private final UploadRequestGroupService uploadRequestGroupService;
-
-	private final UploadRequestGroupRepository uploadRequestGroupRepository;
+	protected final UploadRequestGroupService uploadRequestGroupService;
 
 	public CloseExpiredUploadRequestGroupBatchImpl(AccountRepository<Account> accountRepository,
-			final UploadRequestGroupService uploadRequestGroupService,
-			final UploadRequestGroupRepository uploadRequestGroupRepository) {
+			final UploadRequestGroupService uploadRequestGroupService) {
 		super(accountRepository);
 		this.uploadRequestGroupService = uploadRequestGroupService;
-		this.uploadRequestGroupRepository = uploadRequestGroupRepository;
 	}
 
 	@Override
@@ -78,7 +73,7 @@ public class CloseExpiredUploadRequestGroupBatchImpl extends GenericBatchImpl {
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		SystemAccount account = getSystemAccount();
-		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.find(account, null, identifier);
+		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.find(account, account, identifier);
 		ResultContext context = new BatchResultContext<UploadRequestGroup>(uploadRequestGroup);
 		for(UploadRequest ur : uploadRequestGroup.getUploadRequests()) {
 			// with this batch, we update just current uploadRequestGroup
@@ -88,8 +83,7 @@ public class CloseExpiredUploadRequestGroupBatchImpl extends GenericBatchImpl {
 				return context;
 			}
 		}
-		uploadRequestGroup.updateStatus(UploadRequestStatus.CLOSED);
-		uploadRequestGroupRepository.update(uploadRequestGroup);
+		uploadRequestGroupService.updateStatus(account, account, identifier, UploadRequestStatus.CLOSED, false);
 		context.setProcessed(true);
 		return context;
 	}

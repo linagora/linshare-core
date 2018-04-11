@@ -113,6 +113,12 @@
 		<constructor-arg ref="notifierService" />
 	</bean>
 
+	<bean name="closeExpiredUploadRequestGroupBatch"
+		class="org.linagora.linshare.core.batches.impl.CloseExpiredUploadRequestGroupBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="uploadRequestGroupService" />
+	</bean>
+
 	<bean name="notifyBeforeExpirationUploadRequestBatch"
 		class="org.linagora.linshare.core.batches.impl.NotifyBeforeExpirationUploadRequestBatchImpl">
 		<constructor-arg ref="accountRepository" />
