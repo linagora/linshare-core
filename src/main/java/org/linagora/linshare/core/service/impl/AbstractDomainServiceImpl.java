@@ -878,8 +878,9 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 					uploadPropositionFilterBusinessService.findByDomainUuid(domain.getUuid())
 							.forEach(upf -> uploadPropositionFilterBusinessService.delete(upf));
 				}
-				if (domain.getUploadPropositions() != null) {
-					domain.getUploadPropositions().forEach(up -> uploadPropositionBusinessService.delete(up));
+				if (uploadPropositionBusinessService.findByDomainUuid(domain.getUuid()) != null) {
+					uploadPropositionBusinessService.findByDomainUuid(domain.getUuid())
+							.forEach(up -> uploadPropositionBusinessService.delete(up));
 				}
 				if (domain.getUserProvider() != null) {
 					userProviderService.delete(domain.getUserProvider());

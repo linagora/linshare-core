@@ -51,5 +51,7 @@ public interface UploadPropositionBusinessService {
 
 	UploadPropositionOLD update(UploadPropositionOLD proposition) throws BusinessException;
 
-	void delete(UploadPropositionOLD proposition) throws BusinessException;
+	void delete(UploadProposition proposition) throws BusinessException;
+
+	List<UploadProposition> findByDomainUuid(String domainUuid);
 }

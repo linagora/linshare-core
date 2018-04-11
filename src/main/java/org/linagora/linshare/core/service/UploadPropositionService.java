@@ -37,7 +37,6 @@ package org.linagora.linshare.core.service;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.UploadPropositionOLD;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.UploadProposition;
 
@@ -46,7 +45,7 @@ public interface UploadPropositionService {
 	UploadProposition create(Account authUser, String recipientMail, UploadProposition uploadProposition)
 			throws BusinessException;
 
-	void delete(Account actor, UploadPropositionOLD prop) throws BusinessException;
+	UploadProposition delete(Account authUser, Account actor, UploadProposition uploadProposition) throws BusinessException;
 
 	UploadProposition find(Account authUser, Account actor, String uuid) throws BusinessException;
 

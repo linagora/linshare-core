@@ -73,6 +73,11 @@ public class UploadPropositionBusinessServiceImpl implements
 	}
 
 	@Override
+	public List<UploadProposition> findByDomainUuid(String domainUuuid) {
+		return uploadPropositionMongoRepository.findByDomainUuid(domainUuuid, null);
+	}
+
+	@Override
 	public UploadProposition create(UploadProposition uploadProposition) throws BusinessException {
 		return uploadPropositionMongoRepository.insert(uploadProposition);
 	}
@@ -84,7 +89,7 @@ public class UploadPropositionBusinessServiceImpl implements
 	}
 
 	@Override
-	public void delete(UploadPropositionOLD proposition) throws BusinessException {
-		uploadPropositionRepository.delete(proposition);
+	public void delete(UploadProposition proposition) throws BusinessException {
+		uploadPropositionMongoRepository.delete(proposition);
 	}
 }

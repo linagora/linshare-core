@@ -48,7 +48,6 @@ import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.FileSizeUnitClass;
 import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
 import org.linagora.linshare.core.domain.entities.LanguageEnumValueFunctionality;
-import org.linagora.linshare.core.domain.entities.UploadPropositionOLD;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
@@ -146,10 +145,17 @@ public class UploadPropositionServiceImpl  extends GenericServiceImpl<Account, U
 	}
 
 	@Override
-	public void delete(Account actor, UploadPropositionOLD prop)
+	public UploadProposition delete(Account authUser, Account actor, UploadProposition uploadProposition)
 			throws BusinessException {
-		Validate.notNull(actor, "Actor must be set.");
-		uploadPropositionBusinessService.delete(prop);
+		Validate.notNull(authUser, "AuthUser must be set.");
+		Validate.notNull(actor, "Actor must be set");
+		Validate.notNull(uploadProposition, "UploadProposition must be set");
+		Validate.notEmpty(uploadProposition.getUuid(), "Uuid must be set");
+		UploadProposition found = uploadPropositionBusinessService.findByUuid(uploadProposition.getUuid());
+		checkDeletePermission(authUser, actor, UploadProposition.class,
+				BusinessErrorCode.UPLOAD_PROPOSITION_CAN_NOT_DELETE, found);
+		uploadPropositionBusinessService.delete(found);
+		return found;
 	}
 
 	@Override
@@ -203,8 +209,8 @@ public class UploadPropositionServiceImpl  extends GenericServiceImpl<Account, U
 		Validate.notEmpty(uuid, "Upload Proposition uuid must be set");
 		UploadProposition found = find(authUser, actor, uuid);
 		acceptHook((User)actor, found);
-		//TODO Delete uploadProposition And Add Audit
-		return found;
+		//TODO Add Audit
+		return delete(authUser, actor, found);
 	}
 
 	@Override
@@ -216,8 +222,8 @@ public class UploadPropositionServiceImpl  extends GenericServiceImpl<Account, U
 		MailContainerWithRecipient mail = mailBuildingService
 				.buildRejectUploadProposition((User)actor, found);
 		notifierService.sendNotification(mail);
-		//TODO Delete uploadProposition And Add Audit
-		return found;
+		//TODO Add Audit
+		return delete(authUser, actor, found);
 	}
 
 	public void acceptHook(User owner, UploadProposition created)
