@@ -257,12 +257,13 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 	}
 
 	@Override
-	public InputStream download(Account actor, Account owner, String uuid) throws BusinessException {
-		preChecks(actor, owner);
+	public InputStream download(Account authUser, Account actor, String uuid) throws BusinessException {
+		preChecks(authUser, actor);
 		Validate.notEmpty(uuid, "upload request entry uuid is required.");
-		UploadRequestEntry entry = find(actor, owner, uuid);
-		checkDownloadPermission(actor, owner, DocumentEntry.class, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, entry);
-		AuditLogEntryUser log = new UploadRequestEntryAuditLogEntry(new AccountMto(owner), new AccountMto(owner),
+		logger.debug("downloading for document : " + uuid);
+		UploadRequestEntry entry = find(authUser, actor, uuid);
+		checkDownloadPermission(authUser, actor, DocumentEntry.class, BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, entry);
+		AuditLogEntryUser log = new UploadRequestEntryAuditLogEntry(new AccountMto(actor), new AccountMto(actor),
 				LogAction.DOWNLOAD, AuditLogEntryType.UPLOAD_REQUEST_ENTRY, entry.getUuid(), entry);
 		logEntryService.insert(log);
 		return uploadRequestEntryBusinessService.download(entry);

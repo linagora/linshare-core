@@ -90,7 +90,7 @@ public class UploadRequestEntryRestServiceImpl implements UploadRequestEntryRest
 			@ApiParam(value = "Upload request entry uuid.", required = true)
 				@PathParam("uuid") String uuid) throws BusinessException {
 		UploadRequestEntryDto uploadRequestEntryDto = uploadRequestEntryFacade.find(null, uuid);
-		InputStream documentStream = uploadRequestEntryFacade.download(uuid);
+		InputStream documentStream = uploadRequestEntryFacade.download(null, uuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream,
 				uploadRequestEntryDto.getName(), uploadRequestEntryDto.getType(), uploadRequestEntryDto.getSize());
 		return response.build();

@@ -71,11 +71,11 @@ public class UploadRequestEntryFacadeImpl extends GenericFacadeImpl implements U
 	}
 
 	@Override
-	public InputStream download(String ulploadRequestEntryUuid) throws BusinessException {
-		Validate.notEmpty(ulploadRequestEntryUuid, "Missing required document uuid");
-		logger.debug("downloading for document : " + ulploadRequestEntryUuid);
+	public InputStream download(String actorUuid, String uuid) throws BusinessException {
+		Validate.notEmpty(uuid, "Missing required document uuid");
 		User authUser = checkAuthentication();
-		return uploadRequestEntryService.download(authUser, authUser, ulploadRequestEntryUuid);
+		User actor = getActor(authUser, actorUuid);
+		return uploadRequestEntryService.download(authUser, actor, uuid);
 	}
 
 	@Override

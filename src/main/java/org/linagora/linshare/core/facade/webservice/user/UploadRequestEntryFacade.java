@@ -45,7 +45,7 @@ public interface UploadRequestEntryFacade {
 
 	UploadRequestEntryDto find(String actorUuid, String uuid) throws BusinessException;
 
-	InputStream download(String ulploadRequestEntryUuid) throws BusinessException;
+	InputStream download(String actorUuid, String uuid) throws BusinessException;
 
 	UploadRequestEntryDto delete(String actorUuid, String uuid);
 
