@@ -41,37 +41,23 @@ import org.linagora.linshare.core.domain.constants.UploadRequestStatus;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
-import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.job.quartz.UploadRequestBatchResultContext;
-import org.linagora.linshare.core.notifications.context.UploadRequestActivationEmailContext;
-import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.repository.AccountRepository;
-import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UploadRequestService;
-
-import com.google.common.collect.Lists;
 
 public class EnableUploadRequestBatchImpl extends GenericBatchImpl implements EnableUploadRequestBatch {
 
 	private final UploadRequestService uploadRequestService;
-	private final MailBuildingService mailBuildingService;
-	private final NotifierService notifierService;
 
 	public EnableUploadRequestBatchImpl(
 			AccountRepository<Account> accountRepository,
-			final UploadRequestService uploadRequestService,
-			final MailBuildingService mailBuildingService,
-			final NotifierService notifierService) {
+			final UploadRequestService uploadRequestService) {
 		super(accountRepository);
 		this.uploadRequestService = uploadRequestService;
-		this.mailBuildingService = mailBuildingService;
-		this.notifierService = notifierService;
 	}
 
 	@Override
@@ -87,20 +73,13 @@ public class EnableUploadRequestBatchImpl extends GenericBatchImpl implements En
 	@Override
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
-		List<MailContainerWithRecipient> notifications = Lists.newArrayList();
 		SystemAccount account = getSystemAccount();
-		UploadRequest r = uploadRequestService.find(account, null, identifier);
-		ResultContext context = new UploadRequestBatchResultContext(r);
-		console.logInfo(batchRunContext, total, position, "processing upload request : ", r.getUuid());
-		r.updateStatus(UploadRequestStatus.ENABLED);
-		r = uploadRequestService.updateRequest(account, r.getUploadRequestGroup().getOwner(), r);
-		for (UploadRequestUrl u: r.getUploadRequestURLs()) {
-			UploadRequestActivationEmailContext mailContext = new UploadRequestActivationEmailContext((User) r.getUploadRequestGroup().getOwner(), r, u);
-			notifications.add(mailBuildingService.build(mailContext));
-		}
-		UploadRequestActivationEmailContext mailContext = new UploadRequestActivationEmailContext((User) r.getUploadRequestGroup().getOwner(), r);
-		notifications.add(mailBuildingService.build(mailContext));
-		notifierService.sendNotification(notifications);
+		UploadRequest uploadRequest = uploadRequestService.find(account, account, identifier);
+		ResultContext context = new UploadRequestBatchResultContext(uploadRequest);
+		console.logInfo(batchRunContext, total, position, "processing upload request : ", uploadRequest.getUuid());
+		uploadRequest = uploadRequestService.updateStatus(account, uploadRequest.getUploadRequestGroup().getOwner(),
+				identifier, UploadRequestStatus.ENABLED, false);
+		context.setProcessed(true);
 		return context;
 	}
 

@@ -101,8 +101,6 @@
 		class="org.linagora.linshare.core.batches.impl.EnableUploadRequestBatchImpl">
 		<constructor-arg ref="accountRepository" />
 		<constructor-arg ref="uploadRequestService" />
-		<constructor-arg ref="mailBuildingService" />
-		<constructor-arg ref="notifierService" />
 	</bean>
 
 	<bean name="closeExpiredUploadRequestBatch"
