@@ -71,6 +71,12 @@ public class AbstractDomainRepositoryImpl extends
 	}
 
 	@Override
+	public List<AbstractDomain> findAll() {
+		return findByCriteria(DetachedCriteria.forClass(getPersistentClass())
+				.add(Restrictions.eq("purgeStep", DomainPurgeStepEnum.IN_USE)));
+	}
+
+	@Override
 	public AbstractDomain findById(String identifier) {
 		return DataAccessUtils.singleResult(findByCriteria(
 				Restrictions.eq("uuid", identifier)));
@@ -82,21 +88,26 @@ public class AbstractDomainRepositoryImpl extends
 		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass())
 				.setProjection(Projections.property("uuid"))
 				.addOrder(Order.asc("authShowOrder"));
-
+		crit.add(Restrictions.eq("purgeStep", DomainPurgeStepEnum.IN_USE));
 		return listByCriteria(crit);
 	}
 
 	@Override
 	public List<AbstractDomain> findAllDomain() {
 		return findByCriteria(DetachedCriteria.forClass(getPersistentClass())
-				.addOrder(Order.asc("authShowOrder")));
+				.addOrder(Order.asc("authShowOrder"))
+				.add(Restrictions.eq("purgeStep", DomainPurgeStepEnum.IN_USE)));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<AbstractDomain> findAllTopAndSubDomain() {
-		return findByCriteria(Restrictions.disjunction()
+		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass());
+		crit.add(Restrictions.disjunction()
 				.add(Restrictions.eq("class", TopDomain.class))
-				.add(Restrictions.eq("class", SubDomain.class)));
+				.add(Restrictions.eq("class", SubDomain.class)))
+			.add(Restrictions.eq("purgeStep", DomainPurgeStepEnum.IN_USE));
+		return listByCriteria(crit);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -106,23 +117,30 @@ public class AbstractDomainRepositoryImpl extends
 		crit.setProjection(Projections.property("uuid"));
 		crit.add(Restrictions.disjunction()
 				.add(Restrictions.eq("class", GuestDomain.class))
-				.add(Restrictions.eq("class", SubDomain.class)));
+				.add(Restrictions.eq("class", SubDomain.class)))
+			.add(Restrictions.eq("purgeStep", DomainPurgeStepEnum.IN_USE));
 		return listByCriteria(crit);
 	}
 
 	@Override
 	public List<AbstractDomain> findAllTopDomain() {
-		return findByCriteria(Restrictions.eq("class", TopDomain.class));
+		return findByCriteria(DetachedCriteria.forClass(getPersistentClass())
+				.add(Restrictions.eq("class", TopDomain.class))
+				.add(Restrictions.eq("purgeStep", DomainPurgeStepEnum.IN_USE)));
 	}
 
 	@Override
 	public List<AbstractDomain> findAllSubDomain() {
-		return findByCriteria(Restrictions.eq("class", SubDomain.class));
+		return findByCriteria(DetachedCriteria.forClass(getPersistentClass())
+				.add(Restrictions.eq("class", SubDomain.class))
+				.add(Restrictions.eq("purgeStep", DomainPurgeStepEnum.IN_USE)));
 	}
 
 	@Override
 	public List<AbstractDomain> findByCurrentMailConfig(MailConfig cfg) {
-		return findByCriteria(Restrictions.eq("currentMailConfiguration", cfg));
+		return findByCriteria(DetachedCriteria.forClass(getPersistentClass())
+				.add(Restrictions.eq("currentMailConfiguration", cfg))
+				.add(Restrictions.eq("purgeStep", DomainPurgeStepEnum.IN_USE)));
 	}
 
 	@Override
@@ -148,6 +166,7 @@ public class AbstractDomainRepositoryImpl extends
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 		det.createAlias("parentDomain", "parent");
 		det.add(Restrictions.eq("parent.uuid", domain));
+		det.add(Restrictions.eq("purgeStep", DomainPurgeStepEnum.IN_USE));
 		det.setProjection(Projections.property("uuid"));
 		@SuppressWarnings("unchecked")
 		List<String> ret = (List<String>)listByCriteria(det);

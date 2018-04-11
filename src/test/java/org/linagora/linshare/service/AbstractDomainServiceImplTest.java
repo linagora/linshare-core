@@ -34,6 +34,7 @@
 package org.linagora.linshare.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.After;
@@ -43,6 +44,7 @@ import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
@@ -179,8 +181,7 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
-	
+
 	@Test
 	public void testCreateTopDomain2() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
@@ -216,5 +217,42 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-		
+
+	@Test
+	public void testCreateFindAndPurgeDomain() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		TopDomain topDomain = new TopDomain("topDomainToPurge");
+		topDomain.setDefaultRole(Role.SIMPLE);
+		DomainPolicy policy = domainPolicyRepository.findById(LinShareConstants.defaultDomainPolicyIdentifier);
+		topDomain.setPolicy(policy);
+
+		MailConfig mailConfig = new MailConfig();
+		mailConfig.setUuid(LinShareConstants.defaultMailConfigIdentifier);
+		topDomain.setCurrentMailConfiguration(mailConfig);
+
+		MimePolicy mimePolicy = new MimePolicy();
+		mimePolicy.setUuid(LinShareConstants.defaultMimePolicyIdentifier);
+		topDomain.setMimePolicy(mimePolicy);
+
+		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
+		current = welcomeService.find((User) actor, "4bc57114-c8c9-11e4-a859-37b5db95d856");
+		topDomain.setCurrentWelcomeMessages(current);
+		int initSize = abstractDomainService.findAll(actor).size();
+		try {
+			abstractDomainService.createTopDomain(actor, topDomain);
+		} catch (BusinessException e) {
+			e.printStackTrace();
+			Assert.fail("Can't create domain.");
+		}
+		List<AbstractDomain> abstractDomainsService = abstractDomainService.findAll(actor);
+		Assert.assertEquals(initSize + 1, abstractDomainsService.size());
+		try {
+			abstractDomainService.markToPurge(actor, topDomain.getUuid());
+		} catch (BusinessException e) {
+			e.printStackTrace();
+			Assert.fail("Can't delete top domain.");
+		}
+		Assert.assertEquals(initSize, abstractDomainService.findAll(actor).size());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
 }
