@@ -52,7 +52,6 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.MailActivation;
 import org.linagora.linshare.core.domain.entities.MailConfig;
-import org.linagora.linshare.core.domain.entities.UploadPropositionOLD;
 import org.linagora.linshare.core.domain.entities.UploadRequestUrl;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
@@ -386,7 +385,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	}
 
 	@Override
-	public MailContainerWithRecipient buildRejectUploadProposition(User sender, UploadPropositionOLD proposition)
+	public MailContainerWithRecipient buildRejectUploadProposition(User sender, UploadProposition proposition)
 			throws BusinessException {
 		// MailActivationType.UPLOAD_PROPOSITION_REJECTED
 		if (isDisable(sender, null)) {
@@ -399,18 +398,18 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 
 		builder.getSubjectChain()
 				.add("actorRepresentation", new ContactRepresentation(sender).getContactRepresentation())
-				.add("subject", proposition.getSubject());
+				.add("subject", proposition.getLabel());
 		builder.getGreetingsChain()
-				.add("firstName", proposition.getFirstName())
-				.add("lastName", proposition.getLastName());
+				.add("firstName", proposition.getContact().getFirstName())
+				.add("lastName", proposition.getContact().getLastName());
 		builder.getBodyChain()
-				.add("subject", proposition.getSubject())
+				.add("subject", proposition.getLabel())
 				.add("body", proposition.getBody())
 				.add("firstName", sender.getFirstName())
 				.add("lastName", sender.getLastName())
-				.add("mail", proposition.getMail());
+				.add("mail", proposition.getContact().getMail());
 
-		container.setRecipient(proposition.getMail());
+		container.setRecipient(proposition.getContact().getMail());
 		container.setFrom(getFromMailAddress(sender));
 
 		return buildMailContainer(cfg, container, null, MailContentType.UPLOAD_PROPOSITION_REJECTED, builder);

@@ -108,4 +108,19 @@ public class UploadPropositionRestServiceImpl implements UploadPropositionRestSe
 				@PathParam(value ="uuid") String uuid) {
 		return uploadPropositionFacade.accept(uuid);
 	}
+
+	@PUT
+	@Path("/{uuid}/reject")
+	@ApiOperation(value = "Reject an upload proposition.", response = UploadProposition.class)
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "Current logged in account does not have the rights.") ,
+			@ApiResponse(code = 404, message = "UploadProposition not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."),})
+	@Override
+	public UploadProposition reject(
+			@ApiParam(value = "Upload Proposition uuid", required = true)
+				@PathParam(value ="uuid") String uuid) {
+		return uploadPropositionFacade.reject(uuid);
+	}
 }

@@ -45,4 +45,6 @@ public interface UploadPropositionRestService {
 
 	UploadProposition accept(String uuid);
 
+	UploadProposition reject(String uuid);
+
 }

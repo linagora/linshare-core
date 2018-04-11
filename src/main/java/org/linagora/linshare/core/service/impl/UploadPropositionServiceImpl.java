@@ -208,14 +208,16 @@ public class UploadPropositionServiceImpl  extends GenericServiceImpl<Account, U
 	}
 
 	@Override
-	public void reject(User actor, UploadPropositionOLD e)
+	public UploadProposition reject(Account authUser, Account actor, String uuid)
 			throws BusinessException {
-		logger.debug("Rejecting proposition: " + e.getUuid());
-		e.setStatus(UploadPropositionStatus.USER_REJECTED);
-		uploadPropositionBusinessService.update(e);
+		Validate.notNull(actor, "Actor must be set.");
+		Validate.notEmpty(uuid, "Upload Proposition uuid must be set");
+		UploadProposition found = find(authUser, actor, uuid);
 		MailContainerWithRecipient mail = mailBuildingService
-				.buildRejectUploadProposition(actor, e);
+				.buildRejectUploadProposition((User)actor, found);
 		notifierService.sendNotification(mail);
+		//TODO Delete uploadProposition And Add Audit
+		return found;
 	}
 
 	public void acceptHook(User owner, UploadProposition created)

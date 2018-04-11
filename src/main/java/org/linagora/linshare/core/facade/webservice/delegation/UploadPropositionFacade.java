@@ -46,4 +46,5 @@ public interface UploadPropositionFacade {
 
 	UploadProposition accept(String actorUuid, String uuid);
 
+	UploadProposition reject(String actorUuid, String uuid);
 }

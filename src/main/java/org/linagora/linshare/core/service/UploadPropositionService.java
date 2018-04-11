@@ -38,7 +38,6 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.UploadPropositionOLD;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.UploadProposition;
 
@@ -57,5 +56,5 @@ public interface UploadPropositionService {
 
 	UploadProposition accept(Account authUser, Account actor, String uuid) throws BusinessException;
 
-	void reject(User actor, UploadPropositionOLD e) throws BusinessException;
+	UploadProposition reject(Account authUser, Account actor, String uuid) throws BusinessException;
 }
