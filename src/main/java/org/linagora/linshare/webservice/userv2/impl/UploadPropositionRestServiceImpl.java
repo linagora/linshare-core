@@ -37,6 +37,7 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -91,5 +92,20 @@ public class UploadPropositionRestServiceImpl implements UploadPropositionRestSe
 	@Override
 	public List<UploadProposition> findAll() {
 		return uploadPropositionFacade.findAllByAccountUuid();
+	}
+
+	@PUT
+	@Path("/{uuid}/accept")
+	@ApiOperation(value = "Accept an upload proposition.", response = UploadProposition.class)
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "Current logged in account does not have the rights.") ,
+			@ApiResponse(code = 404, message = "UploadProposition not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."),})
+	@Override
+	public UploadProposition accept(
+			@ApiParam(value = "Upload Proposition uuid", required = true)
+				@PathParam(value ="uuid") String uuid) {
+		return uploadPropositionFacade.accept(uuid);
 	}
 }

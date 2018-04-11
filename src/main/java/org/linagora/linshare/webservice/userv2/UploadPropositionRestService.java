@@ -43,4 +43,6 @@ public interface UploadPropositionRestService {
 
 	List<UploadProposition> findAll();
 
+	UploadProposition accept(String uuid);
+
 }

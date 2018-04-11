@@ -44,4 +44,6 @@ public interface UploadPropositionFacade {
 
 	List<UploadProposition> findAllByAccountUuid() throws BusinessException;
 
+	UploadProposition accept(String uuid);
+
 }

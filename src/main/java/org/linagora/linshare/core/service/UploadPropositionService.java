@@ -55,7 +55,7 @@ public interface UploadPropositionService {
 
 	void checkIfValidRecipient(Account actor, String mail, String domainId) throws BusinessException;
 
-	void accept(User actor, UploadPropositionOLD e) throws BusinessException;
+	UploadProposition accept(Account authUser, Account actor, String uuid) throws BusinessException;
 
 	void reject(User actor, UploadPropositionOLD e) throws BusinessException;
 }

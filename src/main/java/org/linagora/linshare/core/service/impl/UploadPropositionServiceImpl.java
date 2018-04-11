@@ -197,13 +197,14 @@ public class UploadPropositionServiceImpl  extends GenericServiceImpl<Account, U
 	}
 
 	@Override
-	public void accept(User actor, UploadPropositionOLD e)
+	public UploadProposition accept(Account authUser, Account actor, String uuid)
 			throws BusinessException {
-		logger.debug("Accepting proposition: " + e.getUuid());
-		e.setStatus(UploadPropositionStatus.USER_ACCEPTED);
-		e = uploadPropositionBusinessService.update(e);
-		//TODO acceptHook
-		//acceptHook(actor, e);
+		Validate.notNull(actor, "Actor must be set.");
+		Validate.notEmpty(uuid, "Upload Proposition uuid must be set");
+		UploadProposition found = find(authUser, actor, uuid);
+		acceptHook((User)actor, found);
+		//TODO Delete uploadProposition And Add Audit
+		return found;
 	}
 
 	@Override

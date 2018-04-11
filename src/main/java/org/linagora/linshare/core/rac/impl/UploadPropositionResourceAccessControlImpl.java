@@ -49,7 +49,10 @@ public class UploadPropositionResourceAccessControlImpl
 
 	@Override
 	protected boolean hasReadPermission(Account authUser, Account actor, UploadProposition entry, Object... opt) {
-		return !entry.getAccountUuid().equals(actor.getLsUuid()) && defaultPermissionCheck(authUser, actor, entry,
+		if (entry == null || !(entry.getAccountUuid().equals(actor.getLsUuid()))) {
+			return false;
+		}
+		return defaultPermissionCheck(authUser, actor, entry,
 				TechnicalAccountPermissionType.UPLOAD_PROPOSITION_GET);
 	}
 

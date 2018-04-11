@@ -70,4 +70,13 @@ public class UploadPropositionFacadeImpl extends GenericFacadeImpl implements Up
 		User actor = getActor(authUser, actorUuid);
 		return uploadPropositionService.findAllByAccount(authUser, actor);
 	}
+
+	@Override
+	public UploadProposition accept(String actorUuid, String uuid) {
+		Validate.notEmpty(actorUuid, "ActorUuid must be set");
+		Validate.notEmpty(uuid, "upload Proposition uuid must be set");
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, actorUuid);
+		return uploadPropositionService.accept(authUser, actor, uuid);
+	}
 }
