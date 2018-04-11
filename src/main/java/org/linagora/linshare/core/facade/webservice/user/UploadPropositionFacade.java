@@ -33,6 +33,15 @@
  */
 package org.linagora.linshare.core.facade.webservice.user;
 
+import java.util.List;
+
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.mongo.entities.UploadProposition;
+
 public interface UploadPropositionFacade {
+
+	UploadProposition find(String uuid) throws BusinessException;
+
+	List<UploadProposition> findAllByAccountUuid() throws BusinessException;
 
 }

@@ -33,15 +33,24 @@
  */
 package org.linagora.linshare.webservice.userv2.impl;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.facade.webservice.user.UploadPropositionFacade;
+import org.linagora.linshare.mongo.entities.UploadProposition;
 import org.linagora.linshare.webservice.userv2.UploadPropositionRestService;
 
 import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/upload_propositions")
 @Api(value = "/rest/user/v2/upload_propositions", description = "Upload Propositions API")
@@ -55,5 +64,32 @@ public class UploadPropositionRestServiceImpl implements UploadPropositionRestSe
 		super();
 		this.uploadPropositionFacade = uploadPropositionFacade;
 	}
-	
+
+	@GET
+	@Path("/{uuid}")
+	@ApiOperation(value = "Find an upload proposition.", response = UploadProposition.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights.") ,
+					@ApiResponse(code = 404, message = "UploadProposition not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+		})
+	@Override
+	public UploadProposition find(
+			@ApiParam(value = "Upload proposition uuid", required = true)
+				@PathParam(value = "uuid") String uuid) {
+		return uploadPropositionFacade.find(uuid);
+	}
+
+	@GET
+	@Path("/")
+	@ApiOperation(value = "Find all upload propositions.", response = UploadProposition.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights.") ,
+					@ApiResponse(code = 404, message = "UploadProposition not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+		})
+	@Override
+	public List<UploadProposition> findAll() {
+		return uploadPropositionFacade.findAllByAccountUuid();
+	}
 }

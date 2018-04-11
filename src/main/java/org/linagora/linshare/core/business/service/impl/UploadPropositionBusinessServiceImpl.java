@@ -36,7 +36,6 @@ package org.linagora.linshare.core.business.service.impl;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.UploadPropositionBusinessService;
-import org.linagora.linshare.core.domain.constants.UploadPropositionStatus;
 import org.linagora.linshare.core.domain.entities.UploadPropositionOLD;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UploadPropositionRepository;
@@ -59,19 +58,18 @@ public class UploadPropositionBusinessServiceImpl implements
 	}
 
 	@Override
-	public List<UploadPropositionOLD> findAll(List<UploadPropositionStatus> status) {
-		// return uploadPropositionRepository.findByStatus(status);
-		return null;
+	public List<UploadProposition> findAll() {
+		return uploadPropositionMongoRepository.findAll();
 	}
 
 	@Override
-	public List<UploadPropositionOLD> findAllByMail(String mail) {
-		return uploadPropositionRepository.findAllByMail(mail);
+	public List<UploadProposition> findAllByAccountUuid(String accountUuid) {
+		return uploadPropositionMongoRepository.findByAccountUuid(accountUuid, null);
 	}
 
 	@Override
-	public UploadPropositionOLD findByUuid(String uuid) {
-		return uploadPropositionRepository.findByUuid(uuid);
+	public UploadProposition findByUuid(String uuid) {
+		return uploadPropositionMongoRepository.findByUuid(uuid);
 	}
 
 	@Override

@@ -153,16 +153,25 @@ public class UploadPropositionServiceImpl  extends GenericServiceImpl<Account, U
 	}
 
 	@Override
-	public UploadPropositionOLD find(Account actor, String uuid)
-			throws BusinessException {
-		Validate.notNull(actor, "Actor must be set.");
-		return uploadPropositionBusinessService.findByUuid(uuid);
+	public UploadProposition find(Account authUser, Account actor, String uuid) throws BusinessException {
+		Validate.notNull(authUser, "AuthUser must be set.");
+		Validate.notNull(actor, "Actor must be set");
+		UploadProposition uploadProposition = uploadPropositionBusinessService.findByUuid(uuid);
+		if (uploadProposition == null) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_PROPOSITION_NOT_FOUND, "Can not find upload proposition with uuid : " + uuid);
+		}
+		checkReadPermission(authUser, actor, UploadProposition.class, BusinessErrorCode.UPLOAD_PROPOSITION_CAN_NOT_READ,
+				uploadProposition);
+		return uploadProposition;
 	}
 
 	@Override
-	public List<UploadPropositionOLD> findAll(User actor) throws BusinessException {
-		Validate.notNull(actor, "Actor must be set.");
-		return uploadPropositionBusinessService.findAllByMail(actor.getMail());
+	public List<UploadProposition> findAllByAccount(Account authUser, Account actor) throws BusinessException {
+		Validate.notNull(authUser, "AuthUser must be set.");
+		Validate.notNull(actor, "Actor must be set");
+		checkListPermission(authUser, actor, UploadProposition.class, BusinessErrorCode.UPLOAD_PROPOSITION_CAN_NOT_LIST,
+				null);
+		return uploadPropositionBusinessService.findAllByAccountUuid(actor.getLsUuid());
 	}
 
 	@Override

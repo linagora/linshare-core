@@ -33,6 +33,14 @@
  */
 package org.linagora.linshare.webservice.userv2;
 
+import java.util.List;
+
+import org.linagora.linshare.mongo.entities.UploadProposition;
+
 public interface UploadPropositionRestService {
+
+	UploadProposition find(String uuid);
+
+	List<UploadProposition> findAll();
 
 }

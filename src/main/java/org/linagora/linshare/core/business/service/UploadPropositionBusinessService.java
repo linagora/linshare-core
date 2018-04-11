@@ -35,18 +35,17 @@ package org.linagora.linshare.core.business.service;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.constants.UploadPropositionStatus;
 import org.linagora.linshare.core.domain.entities.UploadPropositionOLD;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.UploadProposition;
 
 public interface UploadPropositionBusinessService {
 
-	List<UploadPropositionOLD> findAll(List<UploadPropositionStatus> status);
+	List<UploadProposition> findAll();
 
-	List<UploadPropositionOLD> findAllByMail(String mail);
+	List<UploadProposition> findAllByAccountUuid(String accountUuid);
 
-	UploadPropositionOLD findByUuid(String uuid);
+	UploadProposition findByUuid(String uuid);
 
 	UploadProposition create(UploadProposition uploadProposition) throws BusinessException;
 

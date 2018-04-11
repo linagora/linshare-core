@@ -33,9 +33,15 @@
  */
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
+import java.util.List;
+
+import org.jsoup.helper.Validate;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.UploadPropositionFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UploadPropositionService;
+import org.linagora.linshare.mongo.entities.UploadProposition;
 
 public class UploadPropositionFacadeImpl extends GenericFacadeImpl implements UploadPropositionFacade {
 
@@ -47,4 +53,16 @@ public class UploadPropositionFacadeImpl extends GenericFacadeImpl implements Up
 		this.uploadPropositionService = uploadPropositionService;
 	}
 
+	@Override
+	public UploadProposition find(String uuid) throws BusinessException {
+		Validate.notEmpty(uuid, "Upload proposition must be set");
+		User authUser = checkAuthentication();
+		return uploadPropositionService.find(authUser, authUser, uuid);
+	}
+
+	@Override
+	public List<UploadProposition> findAllByAccountUuid() throws BusinessException {
+		User authUser = checkAuthentication();
+		return uploadPropositionService.findAllByAccount(authUser, authUser);
+	}
 }

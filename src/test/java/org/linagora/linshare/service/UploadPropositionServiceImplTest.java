@@ -182,13 +182,15 @@ public class UploadPropositionServiceImplTest extends AbstractTransactionalJUnit
 		UploadProposition uploadPropositionToCreate = initProposition();
 		int countUploadRequests = uploadRequestGroupService
 				.findAll(jane, jane, Lists.newArrayList(UploadRequestStatus.ENABLED)).size();
+		int countUploadPropositions = uploadPropositionService.findAllByAccount(jane, jane).size();
 		UploadProposition created = null;
 		if (portalCheckAndApply(filters, uploadPropositionToCreate, jane)
 				&& portalCheckRecipient(jane.getMail(), jane.getDomainId())) {
 			uploadPropositionToCreate.setStatus(UploadPropositionStatus.SYSTEM_ACCEPTED);
 			created = uploadPropositionService.create(technicalAccount, jane.getMail(), uploadPropositionToCreate);
 		}
-		//TODO Add test counting the uploadPropositions with FindAll
+		Assert.assertEquals("An uploadProposition has been created", countUploadPropositions,
+				uploadPropositionService.findAllByAccount(jane, jane).size());
 		Assert.assertNotNull("No upload Proposition created", created);
 		Assert.assertEquals(countUploadRequests + 1,
 				uploadRequestGroupService.findAll(jane, jane, Lists.newArrayList(UploadRequestStatus.ENABLED)).size());
@@ -203,13 +205,15 @@ public class UploadPropositionServiceImplTest extends AbstractTransactionalJUnit
 		UploadProposition uploadPropositionToCreate = initProposition();
 		int countUploadRequests = uploadRequestGroupService
 				.findAll(john, john, Lists.newArrayList(UploadRequestStatus.ENABLED)).size();
+		int countUploadPropositions = uploadPropositionService.findAllByAccount(john, john).size();
 		UploadProposition created = null;
 		if (portalCheckAndApply(filters, uploadPropositionToCreate, john)
 				&& portalCheckRecipient(john.getMail(), john.getDomainId())) {
 			uploadPropositionToCreate.setStatus(UploadPropositionStatus.SYSTEM_ACCEPTED);
 			created = uploadPropositionService.create(technicalAccount, john.getMail(), uploadPropositionToCreate);
 		}
-		//TODO Add test counting the uploadPropositions with FindAll
+		Assert.assertEquals("An uploadProposition has been created", countUploadPropositions,
+				uploadPropositionService.findAllByAccount(john, john).size());
 		Assert.assertNull("An upload Proposition created", created);
 		Assert.assertEquals(countUploadRequests,
 				uploadRequestGroupService.findAll(john, john, Lists.newArrayList(UploadRequestStatus.ENABLED)).size());
@@ -224,13 +228,15 @@ public class UploadPropositionServiceImplTest extends AbstractTransactionalJUnit
 		UploadProposition uploadPropositionToCreate = initProposition();
 		int countUploadRequests = uploadRequestGroupService
 				.findAll(john, john, Lists.newArrayList(UploadRequestStatus.ENABLED)).size();
+		int countUploadPropositions = uploadPropositionService.findAllByAccount(john, john).size();
 		UploadProposition created = null;
 		if (portalCheckAndApply(filters, uploadPropositionToCreate, john)
 				&& portalCheckRecipient(john.getMail(), john.getDomainId())) {
 			uploadPropositionToCreate.setStatus(UploadPropositionStatus.SYSTEM_PENDING);
 			created = uploadPropositionService.create(technicalAccount, john.getMail(), uploadPropositionToCreate);
 		}
-		//TODO Add test counting the uploadPropositions with FindAll
+		Assert.assertEquals("No uploadProposition has been created", countUploadPropositions + 1,
+				uploadPropositionService.findAllByAccount(john, john).size());
 		Assert.assertNotNull("No upload Proposition created", created);
 		Assert.assertEquals(countUploadRequests,
 				uploadRequestGroupService.findAll(john, john, Lists.newArrayList(UploadRequestStatus.ENABLED)).size());

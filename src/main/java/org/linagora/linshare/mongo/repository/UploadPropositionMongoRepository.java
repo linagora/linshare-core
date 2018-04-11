@@ -33,8 +33,7 @@
  */
 package org.linagora.linshare.mongo.repository;
 
-import java.util.Set;
-
+import java.util.List;
 import org.linagora.linshare.mongo.entities.UploadProposition;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -44,10 +43,10 @@ public interface UploadPropositionMongoRepository extends MongoRepository<Upload
 
 	UploadProposition findByUuid(String uuid);
 
-	Set<UploadProposition> findByDomainUuid(String domainUuid, Sort sort);
+	List<UploadProposition> findByDomainUuid(String domainUuid, Sort sort);
 
-	Set<UploadProposition> findByAccountUuid(String accountUuid, Sort sort);
+	List<UploadProposition> findByAccountUuid(String accountUuid, Sort sort);
 
 	@Query("{ 'accountUuid' : ?0, 'contact.mail' : ?1 }")
-	Set<UploadProposition> findByAccountUuidAndContactMail(String accountUuid, String mail);
+	List<UploadProposition> findByAccountUuidAndContactMail(String accountUuid, String mail);
 }
