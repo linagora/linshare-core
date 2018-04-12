@@ -91,7 +91,7 @@ public class UploadPropositionRestServiceImpl implements UploadPropositionRestSe
 		})
 	@Override
 	public List<UploadProposition> findAll() {
-		return uploadPropositionFacade.findAllByAccountUuid();
+		return uploadPropositionFacade.findAllByAccountUuid(null);
 	}
 
 	@PUT
@@ -106,7 +106,7 @@ public class UploadPropositionRestServiceImpl implements UploadPropositionRestSe
 	public UploadProposition accept(
 			@ApiParam(value = "Upload Proposition uuid", required = true)
 				@PathParam(value ="uuid") String uuid) {
-		return uploadPropositionFacade.accept(uuid);
+		return uploadPropositionFacade.accept(null, uuid);
 	}
 
 	@PUT
@@ -121,6 +121,6 @@ public class UploadPropositionRestServiceImpl implements UploadPropositionRestSe
 	public UploadProposition reject(
 			@ApiParam(value = "Upload Proposition uuid", required = true)
 				@PathParam(value ="uuid") String uuid) {
-		return uploadPropositionFacade.reject(uuid);
+		return uploadPropositionFacade.reject(null, uuid);
 	}
 }

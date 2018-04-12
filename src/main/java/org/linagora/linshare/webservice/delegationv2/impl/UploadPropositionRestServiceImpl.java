@@ -42,7 +42,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.linagora.linshare.core.facade.webservice.delegation.UploadPropositionFacade;
+import org.linagora.linshare.core.facade.webservice.user.UploadPropositionFacade;
 import org.linagora.linshare.mongo.entities.UploadProposition;
 import org.linagora.linshare.webservice.delegationv2.UploadPropositionRestService;
 

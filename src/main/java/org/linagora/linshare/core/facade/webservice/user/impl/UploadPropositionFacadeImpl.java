@@ -54,7 +54,7 @@ public class UploadPropositionFacadeImpl extends GenericFacadeImpl implements Up
 	}
 
 	@Override
-	public UploadProposition find(String actorUuid, String uuid) throws BusinessException {
+	public UploadProposition find(String actorUuid, String uuid) {
 		Validate.notEmpty(uuid, "Upload proposition must be set");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
@@ -62,22 +62,25 @@ public class UploadPropositionFacadeImpl extends GenericFacadeImpl implements Up
 	}
 
 	@Override
-	public List<UploadProposition> findAllByAccountUuid() throws BusinessException {
+	public List<UploadProposition> findAllByAccountUuid(String actorUuid) throws BusinessException {
 		User authUser = checkAuthentication();
-		return uploadPropositionService.findAllByAccount(authUser, authUser);
+		User actor = getActor(authUser, actorUuid);
+		return uploadPropositionService.findAllByAccount(authUser, actor);
 	}
 
 	@Override
-	public UploadProposition accept(String uuid) {
-		Validate.notEmpty(uuid, "upload Proposition must be set");
+	public UploadProposition accept(String actorUuid, String uuid) {
+		Validate.notEmpty(uuid, "upload Proposition uuid must be set");
 		User authUser = checkAuthentication();
-		return uploadPropositionService.accept(authUser, authUser, uuid);
+		User actor = getActor(authUser, actorUuid);
+		return uploadPropositionService.accept(authUser, actor, uuid);
 	}
 
 	@Override
-	public UploadProposition reject(String uuid) {
-		Validate.notEmpty(uuid, "upload Proposition must be set");
+	public UploadProposition reject(String actorUuid, String uuid) {
+		Validate.notEmpty(uuid, "upload Proposition uuid must be set");
 		User authUser = checkAuthentication();
-		return uploadPropositionService.reject(authUser, authUser, uuid);
+		User actor = getActor(authUser, actorUuid);
+		return uploadPropositionService.reject(authUser, actor, uuid);
 	}
 }

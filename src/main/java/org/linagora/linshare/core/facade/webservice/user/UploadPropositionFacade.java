@@ -42,10 +42,10 @@ public interface UploadPropositionFacade {
 
 	UploadProposition find(String actorUuid, String uuid) throws BusinessException;
 
-	List<UploadProposition> findAllByAccountUuid() throws BusinessException;
+	List<UploadProposition> findAllByAccountUuid(String actorUuid) throws BusinessException;
 
-	UploadProposition accept(String uuid);
+	UploadProposition accept(String actorUuid, String uuid);
 
-	UploadProposition reject(String uuid);
+	UploadProposition reject(String actorUuid, String uuid);
 
 }
