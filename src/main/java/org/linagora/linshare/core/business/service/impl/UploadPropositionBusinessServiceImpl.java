@@ -36,24 +36,18 @@ package org.linagora.linshare.core.business.service.impl;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.UploadPropositionBusinessService;
-import org.linagora.linshare.core.domain.entities.UploadPropositionOLD;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.UploadPropositionRepository;
 import org.linagora.linshare.mongo.entities.UploadProposition;
 import org.linagora.linshare.mongo.repository.UploadPropositionMongoRepository;
 
 public class UploadPropositionBusinessServiceImpl implements
 		UploadPropositionBusinessService {
 
-	private final UploadPropositionRepository uploadPropositionRepository;
-
 	private final UploadPropositionMongoRepository uploadPropositionMongoRepository;
 
 	public UploadPropositionBusinessServiceImpl(
-			final UploadPropositionRepository uploadRequestRepository,
 			final UploadPropositionMongoRepository uploadPropositionMongoRepository) {
 		super();
-		this.uploadPropositionRepository = uploadRequestRepository;
 		this.uploadPropositionMongoRepository = uploadPropositionMongoRepository;
 	}
 
@@ -83,9 +77,9 @@ public class UploadPropositionBusinessServiceImpl implements
 	}
 
 	@Override
-	public UploadPropositionOLD update(UploadPropositionOLD proposition)
+	public UploadProposition update(UploadProposition proposition)
 			throws BusinessException {
-		return uploadPropositionRepository.update(proposition);
+		return uploadPropositionMongoRepository.save(proposition);
 	}
 
 	@Override

@@ -35,7 +35,6 @@ package org.linagora.linshare.core.business.service;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.UploadPropositionOLD;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.UploadProposition;
 
@@ -49,7 +48,7 @@ public interface UploadPropositionBusinessService {
 
 	UploadProposition create(UploadProposition uploadProposition) throws BusinessException;
 
-	UploadPropositionOLD update(UploadPropositionOLD proposition) throws BusinessException;
+	UploadProposition update(UploadProposition proposition) throws BusinessException;
 
 	void delete(UploadProposition proposition) throws BusinessException;
 
