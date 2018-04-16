@@ -32,30 +32,55 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.core.utils;
 
-import java.util.List;
-import java.util.Set;
+import java.security.Key;
+import java.security.PublicKey;
 
-import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.mongo.entities.PublicKeyLs;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public interface PublicKeyService {
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwsHeader;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SigningKeyResolver;
+import io.jsonwebtoken.lang.Assert;
 
-	PublicKeyLs create(Account authUser, PublicKeyLs publicKey, AbstractDomain domain) throws BusinessException;
+public abstract class AbstractSigningKeyResolver implements SigningKeyResolver {
 
-	PublicKeyLs find(Account authUser, String uuid) throws BusinessException;
+	final private static Logger logger = LoggerFactory.getLogger(AbstractSigningKeyResolver.class);
 
-	List<PublicKeyLs> findAll(Account authUser, AbstractDomain domain) throws BusinessException;
+	protected PublicKey globalPublicKey;
 
-	PublicKeyLs delete(Account authUser, PublicKeyLs publicKeyLs) throws BusinessException;
+	protected String issuer;
 
-	Set<AuditLogEntryAdmin> findAllAudit(User authUser, AbstractDomain domain, List<LogAction> actions);
+	protected abstract Key getExtraPublicKey(String issuer);
 
-	PublicKeyLs findByIssuer(String issuer) throws BusinessException;
+	@Override
+	public Key resolveSigningKey(@SuppressWarnings("rawtypes") JwsHeader header, Claims claims) {
+		SignatureAlgorithm alg = SignatureAlgorithm.forName(header.getAlgorithm());
+		logger.debug("JwsHeader : " + header.toString());
+		Assert.isTrue(alg.isRsa(), "The resolveSigningKey(JwsHeader, Claims) implementation can be "
+				+ "used only for asymmetric key algorithms (RSA). ");
+		String issuer = claims.getIssuer();
+		Assert.hasText(issuer);
+		if (issuer.equals(this.issuer)) {
+			if (globalPublicKey == null) {
+				logger.error("Can not find global public key to verify the JWT token.");
+				throw new BusinessException(BusinessErrorCode.INVALID_CONFIGURATION,
+						"Can not find global public key to verify the JWT token.");
+			}
+			return globalPublicKey;
+		}
+		return getExtraPublicKey(issuer);
+	}
+
+	@Override
+	public Key resolveSigningKey(@SuppressWarnings("rawtypes") JwsHeader header, String plaintext) {
+		logger.error("Format plaintext unsupported, you need to use json format.");
+		throw new BusinessException(BusinessErrorCode.INVALID_CONFIGURATION,
+				"Format plaintext unsupported, you need to use json format.");
+	}
 }

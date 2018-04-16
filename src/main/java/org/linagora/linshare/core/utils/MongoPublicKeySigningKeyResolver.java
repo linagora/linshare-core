@@ -32,30 +32,49 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.core.utils;
 
-import java.util.List;
-import java.util.Set;
+import java.io.IOException;
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
 
-import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.service.PublicKeyService;
 import org.linagora.linshare.mongo.entities.PublicKeyLs;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public interface PublicKeyService {
+public class MongoPublicKeySigningKeyResolver extends AbstractSigningKeyResolver {
 
-	PublicKeyLs create(Account authUser, PublicKeyLs publicKey, AbstractDomain domain) throws BusinessException;
+	final private static Logger logger = LoggerFactory.getLogger(MongoPublicKeySigningKeyResolver.class);
 
-	PublicKeyLs find(Account authUser, String uuid) throws BusinessException;
+	protected PublicKeyService publicKeyService;
 
-	List<PublicKeyLs> findAll(Account authUser, AbstractDomain domain) throws BusinessException;
+	public MongoPublicKeySigningKeyResolver(PublicKey globalPublicKey, String issuer,
+			PublicKeyService publicKeyService) {
+		super();
+		super.globalPublicKey = globalPublicKey;
+		super.issuer = issuer;
+		this.publicKeyService = publicKeyService;
+	}
 
-	PublicKeyLs delete(Account authUser, PublicKeyLs publicKeyLs) throws BusinessException;
-
-	Set<AuditLogEntryAdmin> findAllAudit(User authUser, AbstractDomain domain, List<LogAction> actions);
-
-	PublicKeyLs findByIssuer(String issuer) throws BusinessException;
+	@Override
+	protected Key getExtraPublicKey(String issuer) {
+		PublicKeyLs publicKeyLs = publicKeyService.findByIssuer(issuer);
+		if (publicKeyLs == null) {
+			logger.error("unkown issuer.", issuer);
+			throw new BusinessException(BusinessErrorCode.PUBLIC_KEY_UNKOWN_ISSUER,
+					"Can not find the stored public key to verify the jwt token.");
+		}
+		try {
+			return PemRsaKeyHelper.loadPubKey(publicKeyLs.getPublicKey());
+		} catch (InvalidKeySpecException | NoSuchAlgorithmException | IOException e) {
+			logger.debug(e.getMessage(), e);
+			logger.error("Can not load a public key ", publicKeyLs.getUuid());
+			throw new BusinessException(BusinessErrorCode.INVALID_CONFIGURATION, "Can not load a public key.");
+		}
+	}
 }

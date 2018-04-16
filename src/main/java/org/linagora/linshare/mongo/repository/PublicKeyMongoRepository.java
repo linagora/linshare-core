@@ -48,4 +48,7 @@ public interface PublicKeyMongoRepository extends MongoRepository<PublicKeyLs, S
 
 	@Query("{ 'domainUuid' : ?0, 'destroyed' : false }")
 	List<PublicKeyLs> findByDomainUuid(String domainUuid, Sort sort);
+
+	@Query("{ 'issuer' : ?0, 'destroyed' : false }")
+	PublicKeyLs findByIssuer(String issuer);
 }

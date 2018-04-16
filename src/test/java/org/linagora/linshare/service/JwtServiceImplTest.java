@@ -48,12 +48,18 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 
 import io.jsonwebtoken.Claims;
 
-
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
-		"classpath:springContext-test.xml" })
+		"classpath:springContext-service.xml",
+		"classpath:springContext-business-service.xml",
+		"classpath:springContext-rac.xml",
+		"classpath:springContext-fongo.xml",
+		"classpath:springContext-storage-jcloud.xml",
+		"classpath:springContext-service-miscellaneous.xml",
+		"classpath:springContext-test.xml",
+		"classpath:springContext-ldap.xml" })
 public class JwtServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
 
 	@Autowired

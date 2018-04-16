@@ -102,7 +102,8 @@ public class PublicKeyServiceImplTest extends AbstractTransactionalJUnit4SpringC
 	}
 
 	@After
-	public void tearDwon() throws Exception {
+	public void tearDown() throws Exception {
+		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
@@ -113,6 +114,21 @@ public class PublicKeyServiceImplTest extends AbstractTransactionalJUnit4SpringC
 		pubKey.setIssuer("New application");
 		pubKey = publicKeyService.create(root, pubKey , domain);
 		Assert.assertNotNull(pubKey);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testCreateWithInvalidPublicKey() {
+		logger.debug(LinShareTestConstants.BEGIN_TEST);
+		PublicKeyLs pubKey = initPublicKeys();
+		pubKey.setIssuer("My app");
+		pubKey.setPublicKey("Invalid public key format");
+		try {
+			pubKey = publicKeyService.create(root, pubKey , domain);
+			Assert.assertNotNull(pubKey);
+		} catch (BusinessException ex) {
+			Assert.assertThat(ex.getErrorCode(), is(BusinessErrorCode.PUBLIC_KEY_INVALID_FORMAT));
+		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -180,11 +196,25 @@ public class PublicKeyServiceImplTest extends AbstractTransactionalJUnit4SpringC
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
+	@Test
+	public void testFindByIssuer() throws BusinessException {
+		logger.debug(LinShareTestConstants.BEGIN_TEST);
+		PublicKeyLs pubKey = initPublicKeys();
+		pubKey.setIssuer("OpenPass");
+		pubKey = publicKeyService.create(root, pubKey , domain);
+		Assert.assertNotNull(pubKey);
+		PublicKeyLs found = publicKeyService.findByIssuer("OpenPass");
+		Assert.assertNotNull(found);
+		Assert.assertEquals("OpenPass", found.getIssuer());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
 	private PublicKeyLs initPublicKeys() {
 		PublicKeyLs publicKeyLs = new PublicKeyLs();
 		publicKeyLs.setDomainUuid(domain.getUuid());
 		publicKeyLs.setFormat(PublicKeyFormat.SSH);
-		publicKeyLs.setPublicKey("public-key");
+		publicKeyLs.setPublicKey(
+				"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDG3WzeguQTjxpS9GpYnmLRyrRWZUV1BEXDjYR6uZSlTFcwVVfQnKigf0WOJsK2xIJ8dWbI8+75vDNJ1binQ38qaytAUyIDC7a89r+0T7R9MhWcxW1B7B3dkwaOM+HR1lGnMBxi7WTz86DxhRDdhKgCCsGtQex3ZDTyEhwlvV0qvj/HQhqCEuYSuok+C+eWrYbzlDK2y5CODPiV8vclwoVZ4pbq0UZcqt9WfldVdtGijaNqtCTKZXWtvDCC2rURyWsUfgYs0UHg1gvD+PA07/2GhcmFwv6Ap4LuliTbsWSQfZu2/05U5INmqWpOrm3oxXzppm1hs7UNGaWVYN82/XJp fred@fredarc");
 		return publicKeyLs;
 	}
 }

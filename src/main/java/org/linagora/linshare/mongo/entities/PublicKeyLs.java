@@ -64,11 +64,9 @@ public class PublicKeyLs {
 	@ApiModelProperty(value = "domainUuid")
 	protected String domainUuid;
 
-	@ApiModelProperty(value = "usage")
 	@JsonIgnore
 	protected PublicKeyUsage usage;
 
-	@ApiModelProperty(value = "destroyed")
 	@JsonIgnore
 	protected boolean destroyed;
 
@@ -106,6 +104,10 @@ public class PublicKeyLs {
 
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
+	}
+
+	public void initUuid() {
+		this.uuid = UUID.randomUUID().toString();
 	}
 
 	public String getDomainUuid() {

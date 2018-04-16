@@ -41,56 +41,26 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwsHeader;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SigningKeyResolver;
-import io.jsonwebtoken.lang.Assert;
-
-public class RSASigningKeyResolver implements SigningKeyResolver {
+public class RSASigningKeyResolver extends AbstractSigningKeyResolver {
 
 	final private static Logger logger = LoggerFactory.getLogger(RSASigningKeyResolver.class);
 
-	protected PublicKey publicKey;
-
 	protected PublicKey extraPublicKey;
 
-	protected String issuer;
-
-	public RSASigningKeyResolver(PublicKey publicKey, PublicKey extraPublicKey, String issuer) {
+	public RSASigningKeyResolver(PublicKey globalPublicKey, String issuer, PublicKey extraPublicKey) {
 		super();
-		this.publicKey = publicKey;
+		super.globalPublicKey = globalPublicKey;
 		this.extraPublicKey = extraPublicKey;
-		this.issuer = issuer;
+		super.issuer = issuer;
 	}
 
 	@Override
-	public Key resolveSigningKey(@SuppressWarnings("rawtypes") JwsHeader header, Claims claims) {
-		SignatureAlgorithm alg = SignatureAlgorithm.forName(header.getAlgorithm());
-		logger.debug("JwsHeader : " + header.toString());
-		Assert.isTrue(alg.isRsa(), "The resolveSigningKey(JwsHeader, Claims) implementation can be "
-				+ "used only for asymmetric key algorithms (RSA). ");
-		String issuer = claims.getIssuer();
-		Assert.hasText(issuer);
-		if (issuer.equals(this.issuer)) {
-			if (publicKey == null) {
-				logger.error("Can not find global public key to verify the JWT token.");
-				throw new BusinessException(BusinessErrorCode.INVALID_CONFIGURATION, "Can not find global public key to verify the JWT token.");
-			}
-			return publicKey;
-		}
+	protected Key getExtraPublicKey(String issuer) {
 		if (extraPublicKey == null) {
 			logger.error("Can not find a public key to verify the JWT token.");
-			throw new BusinessException(BusinessErrorCode.INVALID_CONFIGURATION, "Can not find a public key to verify the JWT token.");
+			throw new BusinessException(BusinessErrorCode.INVALID_CONFIGURATION,
+					"Can not find a public key to verify the JWT token.");
 		}
 		return extraPublicKey;
-	}
-
-	@Override
-	public Key resolveSigningKey(@SuppressWarnings("rawtypes") JwsHeader header, String plaintext) {
-		SignatureAlgorithm alg = SignatureAlgorithm.forName(header.getAlgorithm());
-		Assert.isTrue(alg.isRsa(), "The resolveSigningKey(JwsHeader, Claims) implementation can be "
-				+ "used only for asymmetric key algorithms (RSA). ");
-		return publicKey;
 	}
 }

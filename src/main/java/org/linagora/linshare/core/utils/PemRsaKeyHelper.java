@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
@@ -80,6 +81,14 @@ public class PemRsaKeyHelper {
 		return publicKey;
 	}
 
+	public static PublicKey loadPubKey(String publicKey) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+		RSAPublicKeySpec publicKeySpec = SshKeys.publicKeySpecFromOpenSSH(publicKey);
+		RSAPublicKey key = (RSAPublicKey) keyFactory.generatePublic(publicKeySpec);
+		logger.info("Public key '" + key + "' was loaded");
+		return key;
+	}
+
 	public static KeyPair loadKeys(String pemPrivateKeyPath, String pemPublicKeyPath) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
 		RSAPrivateKey privatevKey = PemRsaKeyHelper.loadPrivateKey(pemPrivateKeyPath);
 		RSAPublicKey publicKey = PemRsaKeyHelper.loadPublicKey(pemPublicKeyPath);
@@ -102,5 +111,4 @@ public class PemRsaKeyHelper {
 		}
 		return null;
 	}
-
 }

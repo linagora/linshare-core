@@ -37,7 +37,6 @@ import java.io.IOException;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
-import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
 import java.util.HashMap;
@@ -47,8 +46,9 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.JwtService;
+import org.linagora.linshare.core.service.PublicKeyService;
+import org.linagora.linshare.core.utils.MongoPublicKeySigningKeyResolver;
 import org.linagora.linshare.core.utils.PemRsaKeyHelper;
-import org.linagora.linshare.core.utils.RSASigningKeyResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,8 +61,7 @@ import io.jsonwebtoken.impl.DefaultClock;
 
 public class JwtServiceImpl implements JwtService {
 
-	final private static Logger logger = LoggerFactory
-			.getLogger(JwtServiceImpl.class);
+	final private static Logger logger = LoggerFactory.getLogger(JwtServiceImpl.class);
 
 	protected Clock clock = DefaultClock.INSTANCE;
 
@@ -74,17 +73,20 @@ public class JwtServiceImpl implements JwtService {
 
 	protected KeyPair globalKey;
 
-	protected RSAPublicKey extraPublicKey;
+	protected PublicKeyService publicKeyService;
 
-	public JwtServiceImpl(Long expiration, Long maxLifeTime, String issuer, String pemPrivateKeyPath,
-			String pemPublicKeyPath, String pemExtraPublicKeyPath)
-			throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
+	public JwtServiceImpl(Long expiration,
+			Long maxLifeTime,
+			String issuer,
+			String pemPrivateKeyPath,
+			String pemPublicKeyPath,
+			PublicKeyService publicKeyService) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
 		super();
 		this.expiration = expiration;
 		this.issuer = issuer;
 		this.maxLifeTime = maxLifeTime;
 		this.globalKey = PemRsaKeyHelper.loadKeys(pemPrivateKeyPath, pemPublicKeyPath);
-		this.extraPublicKey = PemRsaKeyHelper.loadPublicKey(pemExtraPublicKeyPath);
+		this.publicKeyService = publicKeyService;
 	}
 
 	@Override
@@ -115,7 +117,7 @@ public class JwtServiceImpl implements JwtService {
 	@Override
 	public Claims decode(String token) {
 		Jws<Claims> jws = Jwts.parser()
-				.setSigningKeyResolver(new RSASigningKeyResolver(globalKey.getPublic(), extraPublicKey, issuer))
+				.setSigningKeyResolver(new MongoPublicKeySigningKeyResolver(globalKey.getPublic(), issuer, publicKeyService))
 				.parseClaimsJws(token);
 		Claims claims = jws.getBody();
 		return claims;

@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.auth.jwt;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -107,12 +108,11 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 			throw new AuthenticationServiceException(msg);
 		}
 
-		// TODO:JWT: We need to manage timezone first.
-//		Date issuedAt = claims.getIssuedAt();
-//		if (issuedAt.after(new Date())) {
-//			String msg = String.format("Issued date (iat) can not be in the futur for jwt token: %1$s", token);
-//			throw new AuthenticationServiceException(msg);
-//		}
+		Date issuedAt = claims.getIssuedAt();
+		if (issuedAt.after(new Date())) {
+			String msg = String.format("Issued date (iat) can not be in the futur for jwt token: %1$s", token);
+			throw new AuthenticationServiceException(msg);
+		}
 		if (!jwtService.hasValidLiveTime(claims)) {
 			String msg = String.format("Token live time can not be more than 5 minutes for jwt token: %1$s", token);
 			throw new AuthenticationServiceException(msg);

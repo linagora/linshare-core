@@ -361,4 +361,13 @@
 		<constructor-arg ref="auditLogEntryService"/>
 	</bean>
 
+	<bean id="jwtService"
+		class="org.linagora.linshare.core.service.impl.JwtServiceImpl">
+		<constructor-arg value="${jwt.expiration}" />
+		<constructor-arg value="${jwt.token.max.lifetime}" />
+		<constructor-arg value="${jwt.issuer}" />
+		<constructor-arg value="${jwt.global.key.private.path}" />
+		<constructor-arg value="${jwt.global.key.public.path}" />
+		<constructor-arg ref="publicKeyService" />
+	</bean>
 </beans>
