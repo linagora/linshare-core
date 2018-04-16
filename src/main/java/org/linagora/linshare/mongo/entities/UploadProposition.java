@@ -42,6 +42,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.linagora.linshare.core.domain.constants.UploadPropositionActionType;
 import org.linagora.linshare.core.domain.constants.UploadPropositionStatus;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.uploadproposition.dto.UploadPropositionDto;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -144,6 +145,10 @@ public class UploadProposition {
 
 	public void setStatus(UploadPropositionStatus status) {
 		this.status = status;
+	}
+
+	public void updateStatus(UploadPropositionStatus to) throws BusinessException {
+		status = status.transition(to);
 	}
 
 	public String getBody() {

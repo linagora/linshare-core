@@ -71,4 +71,9 @@ public class UploadPropositionContact {
 	public void setMail(String mail) {
 		this.mail = mail;
 	}
+
+	public String toString() {
+		return "UploadPropositionContact [firstName=" + this.getFirstName() + ", lastName=" + this.getLastName()
+				+ ", mail=" + this.getMail() + "]";
+	}
 }

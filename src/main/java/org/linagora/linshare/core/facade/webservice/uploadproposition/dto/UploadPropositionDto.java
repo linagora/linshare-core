@@ -72,7 +72,7 @@ public class UploadPropositionDto {
 
 	public UploadPropositionDto(String firstName, String lastName, String mail,
 			String subject, String body, String recipientMail,
-			String recipientDomain) {
+			String recipientDomain, String action) {
 		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -81,6 +81,7 @@ public class UploadPropositionDto {
 		this.body = body;
 		this.recipientMail = recipientMail;
 		this.recipientDomain = recipientDomain;
+		this.action = action;
 	}
 
 

@@ -34,23 +34,42 @@
 
 package org.linagora.linshare.core.domain.constants;
 
+import java.util.Arrays;
+
 import org.apache.commons.lang.StringUtils;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 
 public enum UploadPropositionStatus {
-	SYSTEM_PENDING,
-	SYSTEM_ACCEPTED,
-	SYSTEM_REJECTED,
-	USER_PENDING,
+	USER_REJECTED,
 	USER_ACCEPTED,
-	USER_REJECTED;
+	USER_PENDING(USER_ACCEPTED, USER_REJECTED),
+	SYSTEM_REJECTED,
+	SYSTEM_ACCEPTED(USER_ACCEPTED, USER_REJECTED, USER_PENDING),
+	SYSTEM_PENDING(SYSTEM_ACCEPTED, SYSTEM_REJECTED, USER_PENDING);
+
+	private final UploadPropositionStatus[] next;
+
+	private UploadPropositionStatus(UploadPropositionStatus... next) {
+		this.next = next;
+	}
+
+	public UploadPropositionStatus transition(final UploadPropositionStatus status) throws BusinessException {
+		if (!Arrays.asList(next).contains(status)) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_PROPOSITION_CAN_NOT_UPDATE_STATUS,
+					"Cannot transition from " + name() + " to " + status.name() + '.');
+		}
+		return status;
+	}
 
 	public static UploadPropositionStatus fromString(String s) {
 		try {
 			return UploadPropositionStatus.valueOf(s.toUpperCase());
 		} catch (RuntimeException e) {
-			throw new TechnicalException(TechnicalErrorCode.NO_SUCH_UPLOAD_REQUEST_STATUS, StringUtils.isEmpty(s) ? "null or empty" : s);
+			throw new TechnicalException(TechnicalErrorCode.NO_SUCH_UPLOAD_PROPOSITION_STATUS,
+					StringUtils.isEmpty(s) ? "null or empty" : s);
 		}
 	}
 }

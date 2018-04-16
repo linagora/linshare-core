@@ -110,7 +110,7 @@ public class UploadPropositionServiceImplTest extends AbstractTransactionalJUnit
 
 	private LoadingServiceTestDatas datas;
 
-	private AbstractDomain subDomain;
+	private AbstractDomain rootDomain;
 
 	private Account root;
 
@@ -130,9 +130,7 @@ public class UploadPropositionServiceImplTest extends AbstractTransactionalJUnit
 
 	private LinShareWiser wiser;
 
-	private String rootDomainIdentifier = "LinShareDomainRoot";
-
-	private List<UploadPropositionFilter> filters = Lists.newArrayList();
+	private String rootDomainIdentifier = "TEST_Domain-0";
 
 	public UploadPropositionServiceImplTest() {
 		super();
@@ -148,7 +146,7 @@ public class UploadPropositionServiceImplTest extends AbstractTransactionalJUnit
 		john = datas.getUser1();
 		jane = datas.getUser2();
 		root = datas.getRoot();
-		subDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlSubDomain);
+		rootDomain = abstractDomainRepository.findById(rootDomainIdentifier);
 		acceptationFilter = initFilter((User)root, UploadPropositionMatchType.ALL, UploadPropositionActionType.ACCEPT, 0, "user2");
 		rejectionFilter = initFilter((User)root, UploadPropositionMatchType.ALL, UploadPropositionActionType.REJECT, 1, "user1");
 		noAcceptationFilter = initFilter((User)root, UploadPropositionMatchType.ALL, UploadPropositionActionType.ACCEPT, 1, "NO_MATCH_ACCEPTED");
@@ -163,7 +161,7 @@ public class UploadPropositionServiceImplTest extends AbstractTransactionalJUnit
 		technicalAccount.setOwner(john);
 		technicalAccount = technicalAccountService.create(john, technicalAccount);
 		TechnicalAccount find = technicalAccountService.find(technicalAccount, technicalAccount.getLsUuid());
-		filters = uploadPropositionfilterService.findAllEnabledFilters(find);
+		uploadPropositionfilterService.findAllEnabledFilters(find);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -177,76 +175,162 @@ public class UploadPropositionServiceImplTest extends AbstractTransactionalJUnit
 	@Test
 	public void createUploadPropositionAcceptedBySystem() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		uploadPropositionfilterService.create((User)root, acceptationFilter, subDomain);
-		uploadPropositionfilterService.create((User)root, rejectionFilter, subDomain);
-		UploadProposition uploadPropositionToCreate = initProposition();
+		UploadPropositionFilter createdAcceptationFilter = uploadPropositionfilterService.create((User) root,
+				acceptationFilter, rootDomain);
+		UploadPropositionFilter createdRejectionFilter = uploadPropositionfilterService.create((User) root,
+				rejectionFilter, rootDomain);
+		UploadProposition uploadPropositionToCreate = initProposition(jane);
+		List<UploadPropositionFilter> enabledFilters = uploadPropositionfilterService.findAll(root, root.getDomain());
 		int countUploadRequests = uploadRequestGroupService
 				.findAll(jane, jane, Lists.newArrayList(UploadRequestStatus.ENABLED)).size();
 		int countUploadPropositions = uploadPropositionService.findAllByAccount(jane, jane).size();
-		UploadProposition created = null;
-		if (portalCheckAndApply(filters, uploadPropositionToCreate, jane)
-				&& portalCheckRecipient(jane.getMail(), jane.getDomainId())) {
-			uploadPropositionToCreate.setStatus(UploadPropositionStatus.SYSTEM_ACCEPTED);
-			created = uploadPropositionService.create(technicalAccount, jane.getMail(), uploadPropositionToCreate);
-		}
+		//Simulating the payload received from the external portal
+		uploadPropositionToCreate.setStatus(portalCheckAndApply(enabledFilters, uploadPropositionToCreate, jane));
+		UploadProposition created = uploadPropositionService.create(technicalAccount, jane.getMail(),
+				uploadPropositionToCreate);
+		Assert.assertNotNull("No upload Proposition created", created);
+		Assert.assertEquals("Wrong status", UploadPropositionStatus.SYSTEM_ACCEPTED, created.getStatus());
 		Assert.assertEquals("An uploadProposition has been created", countUploadPropositions,
 				uploadPropositionService.findAllByAccount(jane, jane).size());
-		Assert.assertNotNull("No upload Proposition created", created);
 		Assert.assertEquals(countUploadRequests + 1,
 				uploadRequestGroupService.findAll(jane, jane, Lists.newArrayList(UploadRequestStatus.ENABLED)).size());
+		uploadPropositionfilterService.delete(root, rootDomain, createdAcceptationFilter);
+		uploadPropositionfilterService.delete(root, rootDomain, createdRejectionFilter);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
 	public void createUploadPropositionRejectedBySystem() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		uploadPropositionfilterService.create((User)root, acceptationFilter, subDomain);
-		uploadPropositionfilterService.create((User)root, rejectionFilter, subDomain);
-		UploadProposition uploadPropositionToCreate = initProposition();
+		UploadPropositionFilter createdAcceptationFilter = uploadPropositionfilterService.create((User) root,
+				acceptationFilter, rootDomain);
+		UploadPropositionFilter createdRejectionFilter = uploadPropositionfilterService.create((User) root,
+				rejectionFilter, rootDomain);
+		List<UploadPropositionFilter> enabledFilters = uploadPropositionfilterService.findAll(root, root.getDomain());
+		UploadProposition uploadPropositionToCreate = initProposition(john);
 		int countUploadRequests = uploadRequestGroupService
 				.findAll(john, john, Lists.newArrayList(UploadRequestStatus.ENABLED)).size();
 		int countUploadPropositions = uploadPropositionService.findAllByAccount(john, john).size();
-		UploadProposition created = null;
-		if (portalCheckAndApply(filters, uploadPropositionToCreate, john)
-				&& portalCheckRecipient(john.getMail(), john.getDomainId())) {
-			uploadPropositionToCreate.setStatus(UploadPropositionStatus.SYSTEM_ACCEPTED);
-			created = uploadPropositionService.create(technicalAccount, john.getMail(), uploadPropositionToCreate);
-		}
+		//Simulating the payload received from the external portal
+		uploadPropositionToCreate.setStatus(portalCheckAndApply(enabledFilters, uploadPropositionToCreate, john));
+		Assert.assertEquals("Wrong status", UploadPropositionStatus.SYSTEM_REJECTED,
+				uploadPropositionToCreate.getStatus());
+		UploadProposition created = uploadPropositionService.create(technicalAccount, john.getMail(),
+				uploadPropositionToCreate);
+		Assert.assertNotNull("No upload Proposition created", created);
+		Assert.assertEquals("Wrong status", UploadPropositionStatus.SYSTEM_REJECTED, created.getStatus());
 		Assert.assertEquals("An uploadProposition has been created", countUploadPropositions,
 				uploadPropositionService.findAllByAccount(john, john).size());
-		Assert.assertNull("An upload Proposition created", created);
 		Assert.assertEquals(countUploadRequests,
 				uploadRequestGroupService.findAll(john, john, Lists.newArrayList(UploadRequestStatus.ENABLED)).size());
+		uploadPropositionfilterService.delete(root, rootDomain, createdAcceptationFilter);
+		uploadPropositionfilterService.delete(root, rootDomain, createdRejectionFilter);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
 	public void createUploadPropositionNotDealtBySystem() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		uploadPropositionfilterService.create((User)root, noAcceptationFilter, subDomain);
-		uploadPropositionfilterService.create((User)root, noRejectionFilter, subDomain);
-		UploadProposition uploadPropositionToCreate = initProposition();
+		UploadPropositionFilter createdNoAcceptationFilter = uploadPropositionfilterService.create((User) root,
+				noAcceptationFilter, rootDomain);
+		UploadPropositionFilter createdNoRejectionFilter = uploadPropositionfilterService.create((User) root,
+				noRejectionFilter, rootDomain);
+		List<UploadPropositionFilter> enabledFilters = uploadPropositionfilterService.findAll(root, root.getDomain());
+		UploadProposition uploadPropositionToCreate = initProposition(john);
 		int countUploadRequests = uploadRequestGroupService
 				.findAll(john, john, Lists.newArrayList(UploadRequestStatus.ENABLED)).size();
 		int countUploadPropositions = uploadPropositionService.findAllByAccount(john, john).size();
-		UploadProposition created = null;
-		if (portalCheckAndApply(filters, uploadPropositionToCreate, john)
-				&& portalCheckRecipient(john.getMail(), john.getDomainId())) {
-			uploadPropositionToCreate.setStatus(UploadPropositionStatus.SYSTEM_PENDING);
-			created = uploadPropositionService.create(technicalAccount, john.getMail(), uploadPropositionToCreate);
-		}
+		//Simulating the payload received from the external portal
+		uploadPropositionToCreate.setStatus(portalCheckAndApply(enabledFilters, uploadPropositionToCreate, john));
+		Assert.assertEquals("Wrong status", UploadPropositionStatus.SYSTEM_PENDING,
+				uploadPropositionToCreate.getStatus());
+		UploadProposition created = uploadPropositionService.create(technicalAccount, john.getMail(),
+				uploadPropositionToCreate);
+		Assert.assertNotNull("No upload Proposition created", created);
+		Assert.assertEquals("Wrong status", UploadPropositionStatus.USER_PENDING, created.getStatus());
 		Assert.assertEquals("No uploadProposition has been created", countUploadPropositions + 1,
 				uploadPropositionService.findAllByAccount(john, john).size());
-		Assert.assertNotNull("No upload Proposition created", created);
 		Assert.assertEquals(countUploadRequests,
 				uploadRequestGroupService.findAll(john, john, Lists.newArrayList(UploadRequestStatus.ENABLED)).size());
+		uploadPropositionfilterService.delete(root, rootDomain, createdNoAcceptationFilter);
+		uploadPropositionfilterService.delete(root, rootDomain, createdNoRejectionFilter);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
-	private UploadProposition initProposition() {
+	@Test
+	public void acceptUploadPropositionByUser() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		UploadPropositionFilter createdNoAcceptationFilter = uploadPropositionfilterService.create((User) root,
+				noAcceptationFilter, rootDomain);
+		UploadPropositionFilter createdNoRejectionFilter = uploadPropositionfilterService.create((User) root,
+				noRejectionFilter, rootDomain);
+		List<UploadPropositionFilter> enabledFilters = uploadPropositionfilterService.findAll(root, root.getDomain());
+		UploadProposition uploadPropositionToCreate = initProposition(jane);
+		int countUploadRequests = uploadRequestGroupService
+				.findAll(jane, jane, Lists.newArrayList(UploadRequestStatus.ENABLED)).size();
+		int countUploadPropositions = uploadPropositionService.findAllByAccount(jane, jane).size();
+		//Simulating the payload received from the external portal
+		uploadPropositionToCreate.setStatus(portalCheckAndApply(enabledFilters, uploadPropositionToCreate, jane));
+		Assert.assertEquals("Wrong status", UploadPropositionStatus.SYSTEM_PENDING,
+				uploadPropositionToCreate.getStatus());
+		UploadProposition created = uploadPropositionService.create(technicalAccount, jane.getMail(),
+				uploadPropositionToCreate);
+		Assert.assertNotNull("No upload Proposition created", created);
+		Assert.assertEquals("Wrong status", UploadPropositionStatus.USER_PENDING, created.getStatus());
+		Assert.assertNotNull("No uploadProposition has been created",
+				uploadPropositionService.find(jane, jane, created.getUuid()));
+		Assert.assertEquals(countUploadRequests,
+				uploadRequestGroupService.findAll(jane, jane, Lists.newArrayList(UploadRequestStatus.ENABLED)).size());
+		UploadProposition acceptedUploadProposition = uploadPropositionService.accept(jane, jane, created.getUuid());
+		Assert.assertEquals(UploadPropositionStatus.USER_ACCEPTED, acceptedUploadProposition.getStatus());
+		Assert.assertEquals("No uploadProposition has been created", countUploadPropositions,
+				uploadPropositionService.findAllByAccount(jane, jane).size());
+		Assert.assertEquals(countUploadRequests + 1,
+				uploadRequestGroupService.findAll(jane, jane, Lists.newArrayList(UploadRequestStatus.ENABLED)).size());
+		uploadPropositionfilterService.delete(root, rootDomain, createdNoAcceptationFilter);
+		uploadPropositionfilterService.delete(root, rootDomain, createdNoRejectionFilter);
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void rejectUploadPropositionByUser() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		UploadPropositionFilter createdNoAcceptationFilter = uploadPropositionfilterService.create((User) root,
+				noAcceptationFilter, rootDomain);
+		UploadPropositionFilter createdNoRejectionFilter = uploadPropositionfilterService.create((User) root,
+				noRejectionFilter, rootDomain);
+		List<UploadPropositionFilter> enabledFilters = uploadPropositionfilterService.findAll(root, root.getDomain());
+		UploadProposition uploadPropositionToCreate = initProposition(jane);
+		int countUploadRequests = uploadRequestGroupService
+				.findAll(jane, jane, Lists.newArrayList(UploadRequestStatus.ENABLED)).size();
+		int countUploadPropositions = uploadPropositionService.findAllByAccount(jane, jane).size();
+		//Simulating the payload received from the external portal
+		uploadPropositionToCreate.setStatus(portalCheckAndApply(enabledFilters, uploadPropositionToCreate, jane));
+		Assert.assertEquals("Wrong status", UploadPropositionStatus.SYSTEM_PENDING,
+				uploadPropositionToCreate.getStatus());
+		UploadProposition created = uploadPropositionService.create(technicalAccount, jane.getMail(),
+				uploadPropositionToCreate);
+		Assert.assertNotNull("No upload Proposition created", created);
+		Assert.assertEquals("Wrong status", UploadPropositionStatus.USER_PENDING, created.getStatus());
+		Assert.assertNotNull("No uploadProposition has been created",
+				uploadPropositionService.find(jane, jane, created.getUuid()));
+		Assert.assertEquals(countUploadRequests,
+				uploadRequestGroupService.findAll(jane, jane, Lists.newArrayList(UploadRequestStatus.ENABLED)).size());
+		UploadProposition acceptedUploadProposition = uploadPropositionService.reject(jane, jane, created.getUuid());
+		Assert.assertEquals(UploadPropositionStatus.USER_REJECTED, acceptedUploadProposition.getStatus());
+		Assert.assertEquals("No uploadProposition has been deleted", countUploadPropositions,
+				uploadPropositionService.findAllByAccount(jane, jane).size());
+		Assert.assertEquals(countUploadRequests,
+				uploadRequestGroupService.findAll(jane, jane, Lists.newArrayList(UploadRequestStatus.ENABLED)).size());
+		uploadPropositionfilterService.delete(root, rootDomain, createdNoAcceptationFilter);
+		uploadPropositionfilterService.delete(root, rootDomain, createdNoRejectionFilter);
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	private UploadProposition initProposition(User actor) {
 		return new UploadProposition(UUID.randomUUID().toString(), john.getDomainId(), null, "Label",
 				"Body Upload Proposition", new UploadPropositionContact("First", "Last", "yoda@linshare.com"),
-				john.getLsUuid(), new Date(), new Date());
+				actor.getLsUuid(), new Date(), new Date());
 	}
 
 	private UploadPropositionFilter initFilter(User root, UploadPropositionMatchType matchType,
@@ -254,23 +338,22 @@ public class UploadPropositionServiceImplTest extends AbstractTransactionalJUnit
 		List<UploadPropositionRule> rules = Lists.newArrayList();
 		rules.add(new UploadPropositionRule(UploadPropositionRuleOperatorType.CONTAIN,
 				UploadPropositionRuleFieldType.RECIPIENT_EMAIL, containedValue));
-		return new UploadPropositionFilter(UUID.randomUUID().toString(), rootDomainIdentifier, "GMAIL out", matchType,
-				actionType, Boolean.TRUE, order, rules, new Date(), new Date());
+		return new UploadPropositionFilter(UUID.randomUUID().toString(), rootDomainIdentifier,
+				"FILTER " + actionType + " contained value " + containedValue, matchType, actionType, Boolean.TRUE,
+				order, rules, new Date(), new Date());
 	}
 
-	private boolean portalCheckAndApply(List<UploadPropositionFilter> enabledFilters, UploadProposition proposition,
+	private UploadPropositionStatus portalCheckAndApply(List<UploadPropositionFilter> enabledFilters, UploadProposition proposition,
 			Account linShareUser) {
-			for (UploadPropositionFilter filter : filters) {
+			for (UploadPropositionFilter filter : enabledFilters) {
 				if (portalMatch(filter, proposition, linShareUser)) {
-					return !UploadPropositionActionType.REJECT.equals(filter.getUploadPropositionAction());
+					if (UploadPropositionActionType.REJECT.equals(filter.getUploadPropositionAction())) {
+						return UploadPropositionStatus.SYSTEM_REJECTED;
+					}
+					return UploadPropositionStatus.SYSTEM_ACCEPTED;
 				}
 			}
-		return true;
-	}
-
-	private boolean portalCheckRecipient(String mail, String domainId) {
-		//uploadPropositionService.checkIfValidRecipient(technicalAccount, mail, domainId);
-		return true;
+		return UploadPropositionStatus.SYSTEM_PENDING;
 	}
 
 	private boolean portalMatch(UploadPropositionFilter filter, UploadProposition uploadProposition,

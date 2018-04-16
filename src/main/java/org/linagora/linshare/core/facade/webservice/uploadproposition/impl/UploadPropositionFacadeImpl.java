@@ -99,6 +99,9 @@ public class UploadPropositionFacadeImpl extends
 		Validate.notEmpty(dto.getMail(), "Mail is required.");
 		Validate.notEmpty(dto.getRecipientMail(), "Recipient mail is required.");
 		logger.debug(dto.toString());
+		if (dto.getAction() == null) {
+			dto.setAction("MANUAL");
+		}
 		uploadPropositionService.create(authUser, dto.getRecipientMail(), new UploadProposition(dto));
 	}
 }

@@ -39,7 +39,9 @@ import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.UploadPropositionBusinessService;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.UploadPropositionStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -59,11 +61,13 @@ import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.UploadPropositionResourceAccessControl;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
+import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.UploadPropositionService;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.UploadProposition;
+import org.linagora.linshare.mongo.entities.logs.UploadPropositionAuditLogEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,6 +93,8 @@ public class UploadPropositionServiceImpl  extends GenericServiceImpl<Account, U
 	
 	private final UploadRequestGroupService uploadRequestGroupService;
 
+	private final LogEntryService logEntryService;
+
 	public UploadPropositionServiceImpl(
 			final UploadPropositionBusinessService uploadPropositionBusinessService,
 			final UploadPropositionResourceAccessControl rac,
@@ -97,7 +103,8 @@ public class UploadPropositionServiceImpl  extends GenericServiceImpl<Account, U
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
 			final MailBuildingService mailBuildingService,
 			final NotifierService notifierService,
-			final UploadRequestGroupService uploadRequestGroupService) {
+			final UploadRequestGroupService uploadRequestGroupService,
+			final LogEntryService logEntryService) {
 		super(rac);
 		this.uploadPropositionBusinessService = uploadPropositionBusinessService;
 		this.userService = userService;
@@ -106,6 +113,7 @@ public class UploadPropositionServiceImpl  extends GenericServiceImpl<Account, U
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
 		this.uploadRequestGroupService = uploadRequestGroupService;
+		this.logEntryService = logEntryService;
 	}
 
 	@Override
@@ -118,6 +126,8 @@ public class UploadPropositionServiceImpl  extends GenericServiceImpl<Account, U
 		if (UploadPropositionStatus.SYSTEM_REJECTED.equals(uploadProposition.getStatus())) {
 			// The uploadProposition has been rejected by the system : no upload request nor
 			// upload proposition are created
+			logger.debug("REJECTED Upload proposition FROM " + uploadProposition.getContact().toString() + " TO "
+					+ targetedAccount.getAccountRepresentation());
 			return uploadProposition;
 		}
 		if (Strings.isNullOrEmpty(uploadProposition.getAccountUuid())) {
@@ -134,13 +144,16 @@ public class UploadPropositionServiceImpl  extends GenericServiceImpl<Account, U
 			created = uploadProposition;
 		} else {
 			// No system rules have been applied to the proposition : an upload proposition
-			// is submitted to the targetted account
+			// is submitted to the targeted account
 			created = uploadPropositionBusinessService.create(uploadProposition);
+			uploadPropositionBusinessService.updateStatus(created, UploadPropositionStatus.USER_PENDING);
 			MailContainerWithRecipient mail = mailBuildingService.buildCreateUploadProposition((User) targetedAccount,
 					uploadProposition);
 			notifierService.sendNotification(mail);
 		}
-		// TODO Audit
+		UploadPropositionAuditLogEntry log = new UploadPropositionAuditLogEntry(authUser, targetedAccount,
+				LogAction.CREATE, AuditLogEntryType.UPLOAD_PROPOSITION, created.getUuid(), created);
+		logEntryService.insert(log);
 		return created;
 	}
 
@@ -154,7 +167,10 @@ public class UploadPropositionServiceImpl  extends GenericServiceImpl<Account, U
 		UploadProposition found = uploadPropositionBusinessService.findByUuid(uploadProposition.getUuid());
 		checkDeletePermission(authUser, actor, UploadProposition.class,
 				BusinessErrorCode.UPLOAD_PROPOSITION_CAN_NOT_DELETE, found);
+		UploadPropositionAuditLogEntry log = new UploadPropositionAuditLogEntry(authUser, actor, LogAction.DELETE,
+				AuditLogEntryType.UPLOAD_PROPOSITION, found.getUuid(), found);
 		uploadPropositionBusinessService.delete(found);
+		logEntryService.insert(log);
 		return found;
 	}
 
@@ -203,26 +219,35 @@ public class UploadPropositionServiceImpl  extends GenericServiceImpl<Account, U
 	}
 
 	@Override
-	public UploadProposition accept(Account authUser, Account actor, String uuid)
-			throws BusinessException {
+	public UploadProposition accept(Account authUser, Account actor, String uuid) throws BusinessException {
 		Validate.notNull(actor, "Actor must be set.");
 		Validate.notEmpty(uuid, "Upload Proposition uuid must be set");
 		UploadProposition found = find(authUser, actor, uuid);
-		acceptHook((User)actor, found);
-		//TODO Add Audit
+		checkUpdatePermission(authUser, actor, UploadProposition.class,
+				BusinessErrorCode.UPLOAD_PROPOSITION_CAN_NOT_UPDATE, found);
+		found = uploadPropositionBusinessService.updateStatus(found, UploadPropositionStatus.USER_ACCEPTED);
+		acceptHook((User) actor, found);
+		UploadPropositionAuditLogEntry log = new UploadPropositionAuditLogEntry(authUser, actor, LogAction.UPDATE,
+				AuditLogEntryType.UPLOAD_PROPOSITION, found.getUuid(), found);
+		log.setResourceUpdated(found);
+		logEntryService.insert(log);
 		return delete(authUser, actor, found);
 	}
 
 	@Override
-	public UploadProposition reject(Account authUser, Account actor, String uuid)
-			throws BusinessException {
+	public UploadProposition reject(Account authUser, Account actor, String uuid) throws BusinessException {
 		Validate.notNull(actor, "Actor must be set.");
 		Validate.notEmpty(uuid, "Upload Proposition uuid must be set");
 		UploadProposition found = find(authUser, actor, uuid);
-		MailContainerWithRecipient mail = mailBuildingService
-				.buildRejectUploadProposition((User)actor, found);
+		checkUpdatePermission(authUser, actor, UploadProposition.class,
+				BusinessErrorCode.UPLOAD_PROPOSITION_CAN_NOT_UPDATE, found);
+		found = uploadPropositionBusinessService.updateStatus(found, UploadPropositionStatus.USER_REJECTED);
+		MailContainerWithRecipient mail = mailBuildingService.buildRejectUploadProposition((User) actor, found);
 		notifierService.sendNotification(mail);
-		//TODO Add Audit
+		UploadPropositionAuditLogEntry log = new UploadPropositionAuditLogEntry(authUser, actor, LogAction.UPDATE,
+				AuditLogEntryType.UPLOAD_PROPOSITION, found.getUuid(), found);
+		log.setResourceUpdated(found);
+		logEntryService.insert(log);
 		return delete(authUser, actor, found);
 	}
 

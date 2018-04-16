@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009-2018. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,30 +31,42 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.business.service;
+package org.linagora.linshare.mongo.entities.logs;
 
-import java.util.List;
-
-import org.linagora.linshare.core.domain.constants.UploadPropositionStatus;
-import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.mongo.entities.UploadProposition;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
 
-public interface UploadPropositionBusinessService {
+public class UploadPropositionAuditLogEntry extends AuditLogEntryUser {
 
-	List<UploadProposition> findAll();
+	protected UploadProposition resource;
 
-	List<UploadProposition> findAllByAccountUuid(String accountUuid);
+	protected UploadProposition resourceUpdated;
 
-	UploadProposition findByUuid(String uuid);
+	public UploadPropositionAuditLogEntry() {
+		super();
+	}
 
-	UploadProposition create(UploadProposition uploadProposition) throws BusinessException;
+	public UploadPropositionAuditLogEntry(Account authUser, Account actor, LogAction action,
+			AuditLogEntryType type, String resourceUuid, UploadProposition uploadProposition) {
+		super(new AccountMto(authUser), new AccountMto(actor), action, type, uploadProposition.getUuid());
+	}
 
-	UploadProposition update(UploadProposition proposition) throws BusinessException;
+	public UploadProposition getResource() {
+		return resource;
+	}
 
-	void delete(UploadProposition proposition) throws BusinessException;
+	public void setResource(UploadProposition resource) {
+		this.resource = resource;
+	}
 
-	List<UploadProposition> findByDomainUuid(String domainUuid);
+	public UploadProposition getResourceUpdated() {
+		return resourceUpdated;
+	}
 
-	UploadProposition updateStatus(UploadProposition proposition, UploadPropositionStatus newStatus)
-			throws BusinessException;
+	public void setResourceUpdated(UploadProposition resourceUpdated) {
+		this.resourceUpdated = resourceUpdated;
+	}
 }
