@@ -42,6 +42,7 @@ import org.linagora.linshare.core.business.service.UploadPropositionBusinessServ
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.UploadPropositionExceptionRuleType;
 import org.linagora.linshare.core.domain.constants.UploadPropositionStatus;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -63,10 +64,12 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
+import org.linagora.linshare.core.service.UploadPropositionExceptionRuleService;
 import org.linagora.linshare.core.service.UploadPropositionService;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.UploadProposition;
+import org.linagora.linshare.mongo.entities.UploadPropositionExceptionRule;
 import org.linagora.linshare.mongo.entities.logs.UploadPropositionAuditLogEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,6 +96,8 @@ public class UploadPropositionServiceImpl  extends GenericServiceImpl<Account, U
 	
 	private final UploadRequestGroupService uploadRequestGroupService;
 
+	private final UploadPropositionExceptionRuleService uploadPropositionExceptionRuleService;
+
 	private final LogEntryService logEntryService;
 
 	public UploadPropositionServiceImpl(
@@ -104,6 +109,7 @@ public class UploadPropositionServiceImpl  extends GenericServiceImpl<Account, U
 			final MailBuildingService mailBuildingService,
 			final NotifierService notifierService,
 			final UploadRequestGroupService uploadRequestGroupService,
+			final UploadPropositionExceptionRuleService uploadPropositionExceptionRuleService,
 			final LogEntryService logEntryService) {
 		super(rac);
 		this.uploadPropositionBusinessService = uploadPropositionBusinessService;
@@ -113,6 +119,7 @@ public class UploadPropositionServiceImpl  extends GenericServiceImpl<Account, U
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
 		this.uploadRequestGroupService = uploadRequestGroupService;
+		this.uploadPropositionExceptionRuleService = uploadPropositionExceptionRuleService;
 		this.logEntryService = logEntryService;
 	}
 
@@ -123,9 +130,14 @@ public class UploadPropositionServiceImpl  extends GenericServiceImpl<Account, U
 		preChecks(authUser, targetedAccount);
 		checkCreatePermission(authUser, targetedAccount, UploadProposition.class,
 				BusinessErrorCode.UPLOAD_PROPOSITION_CAN_NOT_CREATE, null);
-		if (UploadPropositionStatus.SYSTEM_REJECTED.equals(uploadProposition.getStatus())) {
+		if (UploadPropositionStatus.SYSTEM_REJECTED.equals(uploadProposition.getStatus())
+				|| (isInExceptionRuleList(authUser, targetedAccount, uploadProposition.getContact().getMail(),
+						UploadPropositionExceptionRuleType.DENY))) {
 			// The uploadProposition has been rejected by the system : no upload request nor
 			// upload proposition are created
+			if (UploadPropositionStatus.SYSTEM_PENDING.equals(uploadProposition.getStatus())) {
+				uploadProposition.setStatus(UploadPropositionStatus.USER_REJECTED);
+			}
 			logger.debug("REJECTED Upload proposition FROM " + uploadProposition.getContact().toString() + " TO "
 					+ targetedAccount.getAccountRepresentation());
 			return uploadProposition;
@@ -137,7 +149,12 @@ public class UploadPropositionServiceImpl  extends GenericServiceImpl<Account, U
 			uploadProposition.setDomainUuid(targetedAccount.getDomainId());
 		}
 		UploadProposition created;
-		if (UploadPropositionStatus.SYSTEM_ACCEPTED.equals(uploadProposition.getStatus())) {
+		if (UploadPropositionStatus.SYSTEM_ACCEPTED.equals(uploadProposition.getStatus())
+				|| (isInExceptionRuleList(authUser, targetedAccount, uploadProposition.getContact().getMail(),
+						UploadPropositionExceptionRuleType.ALLOW))) {
+			if (UploadPropositionStatus.SYSTEM_PENDING.equals(uploadProposition.getStatus())) {
+				uploadProposition.setStatus(UploadPropositionStatus.USER_ACCEPTED);
+			}
 			// The uploadProposition has been accepted by the system : an upload request is
 			// directly created
 			acceptHook((User) targetedAccount, uploadProposition);
@@ -369,5 +386,15 @@ public class UploadPropositionServiceImpl  extends GenericServiceImpl<Account, U
 			}
 			req.setCanClose(canCloseFunc.getValue());
 		}
+	}
+
+	private boolean isInExceptionRuleList(Account authUser, Account actor, String mail, UploadPropositionExceptionRuleType exceptionRuleType) {
+		List<UploadPropositionExceptionRule> exceptionRules = uploadPropositionExceptionRuleService.findByExceptionRule(authUser, actor, exceptionRuleType);
+		for( UploadPropositionExceptionRule exceptionRule : exceptionRules) {
+			if (exceptionRule.getMail().equals(mail)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

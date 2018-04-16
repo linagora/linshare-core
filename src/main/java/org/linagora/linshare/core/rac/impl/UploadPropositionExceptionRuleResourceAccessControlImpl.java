@@ -55,6 +55,9 @@ public class UploadPropositionExceptionRuleResourceAccessControlImpl extends Abs
 	@Override
 	protected boolean hasListPermission(Account authUser, Account actor, UploadPropositionExceptionRule entry,
 			Object... opt) {
+		if (authUser.hasUploadPropositionRole()) {
+			return true;
+		}
 		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_PROPOSITION_EXCEPTION_RULE_LIST);
 	}
 

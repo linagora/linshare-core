@@ -235,6 +235,7 @@
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="uploadRequestGroupService" />
+		<constructor-arg ref="uploadPropositionExceptionRuleService" />
 		<constructor-arg ref="logEntryService" />
 	</bean>
 	<bean id="uploadPropositionFilterService" class="org.linagora.linshare.core.service.impl.UploadPropositionFilterServiceImpl">

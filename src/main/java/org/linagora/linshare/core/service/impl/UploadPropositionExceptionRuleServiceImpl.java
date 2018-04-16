@@ -68,7 +68,7 @@ public class UploadPropositionExceptionRuleServiceImpl extends GenericServiceImp
 	public List<UploadPropositionExceptionRule> findByExceptionRule(Account authUser, Account actor,
 			UploadPropositionExceptionRuleType exceptionRuleType) {
 		preChecks(authUser, actor);
-		checkReadPermission(authUser, actor, UploadPropositionExceptionRule.class,
+		checkListPermission(authUser, actor, UploadPropositionExceptionRule.class,
 				BusinessErrorCode.UPLOAD_PROPOSITION_EXCEPTION_RULE_CAN_NOT_LIST, null);
 		return exceptionRuleBusinessService.findByExceptionRuleType(actor.getLsUuid(), exceptionRuleType);
 	}

@@ -45,6 +45,7 @@ import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.constants.UploadPropositionActionType;
+import org.linagora.linshare.core.domain.constants.UploadPropositionExceptionRuleType;
 import org.linagora.linshare.core.domain.constants.UploadPropositionMatchType;
 import org.linagora.linshare.core.domain.constants.UploadPropositionRuleFieldType;
 import org.linagora.linshare.core.domain.constants.UploadPropositionRuleOperatorType;
@@ -58,13 +59,16 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.TechnicalAccountService;
+import org.linagora.linshare.core.service.UploadPropositionExceptionRuleService;
 import org.linagora.linshare.core.service.UploadPropositionFilterService;
 import org.linagora.linshare.core.service.UploadPropositionService;
 import org.linagora.linshare.core.service.UploadRequestGroupService;
 import org.linagora.linshare.mongo.entities.UploadProposition;
 import org.linagora.linshare.mongo.entities.UploadPropositionContact;
+import org.linagora.linshare.mongo.entities.UploadPropositionExceptionRule;
 import org.linagora.linshare.mongo.entities.UploadPropositionFilter;
 import org.linagora.linshare.mongo.entities.UploadPropositionRule;
+import org.linagora.linshare.mongo.repository.UploadPropositionExceptionRuleMongoRepository;
 import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,6 +111,12 @@ public class UploadPropositionServiceImplTest extends AbstractTransactionalJUnit
 
 	@Autowired
 	private TechnicalAccountService technicalAccountService;
+
+	@Autowired
+	private UploadPropositionExceptionRuleService uploadPropositionExceptionRuleService;
+
+	@Autowired
+	private UploadPropositionExceptionRuleMongoRepository uploadPropositionExceptionRuleMongoRepository;
 
 	private LoadingServiceTestDatas datas;
 
@@ -327,6 +337,70 @@ public class UploadPropositionServiceImplTest extends AbstractTransactionalJUnit
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
+	@Test
+	public void rejectUploadPropositionByBlackList() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		UploadPropositionFilter createdNoAcceptationFilter = uploadPropositionfilterService.create((User) root,
+				noAcceptationFilter, rootDomain);
+		UploadPropositionFilter createdNoRejectionFilter = uploadPropositionfilterService.create((User) root,
+				noRejectionFilter, rootDomain);
+		//Add yoda@linshare.com to jane's blacklist
+		UploadPropositionExceptionRule createdExceptionRule = addMailToList(jane, "yoda@linshare.com", UploadPropositionExceptionRuleType.DENY);
+		List<UploadPropositionFilter> enabledFilters = uploadPropositionfilterService.findAll(root, root.getDomain());
+		UploadProposition uploadPropositionToCreate = initProposition(jane);
+		int countUploadRequests = uploadRequestGroupService
+				.findAll(jane, jane, Lists.newArrayList(UploadRequestStatus.ENABLED)).size();
+		int countUploadPropositions = uploadPropositionService.findAllByAccount(jane, jane).size();
+		//Simulating the payload received from the external portal
+		uploadPropositionToCreate.setStatus(portalCheckAndApply(enabledFilters, uploadPropositionToCreate, jane));
+		Assert.assertEquals("Wrong status", UploadPropositionStatus.SYSTEM_PENDING,
+				uploadPropositionToCreate.getStatus());
+		UploadProposition created = uploadPropositionService.create(technicalAccount, jane.getMail(),
+				uploadPropositionToCreate);
+		Assert.assertNotNull("No upload Proposition created", created);
+		Assert.assertEquals("Wrong status", UploadPropositionStatus.USER_REJECTED, created.getStatus());
+		Assert.assertEquals("An uploadProposition has been created", countUploadPropositions,
+				uploadPropositionService.findAllByAccount(jane, jane).size());
+		Assert.assertEquals(countUploadRequests,
+				uploadRequestGroupService.findAll(jane, jane, Lists.newArrayList(UploadRequestStatus.ENABLED)).size());
+		uploadPropositionExceptionRuleMongoRepository.delete(createdExceptionRule);
+		uploadPropositionfilterService.delete(root, rootDomain, createdNoAcceptationFilter);
+		uploadPropositionfilterService.delete(root, rootDomain, createdNoRejectionFilter);
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void acceptUploadPropositionByWhiteList() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		UploadPropositionFilter createdNoAcceptationFilter = uploadPropositionfilterService.create((User) root,
+				noAcceptationFilter, rootDomain);
+		UploadPropositionFilter createdNoRejectionFilter = uploadPropositionfilterService.create((User) root,
+				noRejectionFilter, rootDomain);
+		//Add yoda@linshare.com to jane's white list
+		UploadPropositionExceptionRule createdExceptionRule = addMailToList(jane, "yoda@linshare.com", UploadPropositionExceptionRuleType.ALLOW);
+		List<UploadPropositionFilter> enabledFilters = uploadPropositionfilterService.findAll(root, root.getDomain());
+		UploadProposition uploadPropositionToCreate = initProposition(jane);
+		int countUploadRequests = uploadRequestGroupService
+				.findAll(jane, jane, Lists.newArrayList(UploadRequestStatus.ENABLED)).size();
+		int countUploadPropositions = uploadPropositionService.findAllByAccount(jane, jane).size();
+		//Simulating the payload received from the external portal
+		uploadPropositionToCreate.setStatus(portalCheckAndApply(enabledFilters, uploadPropositionToCreate, jane));
+		Assert.assertEquals("Wrong status", UploadPropositionStatus.SYSTEM_PENDING,
+				uploadPropositionToCreate.getStatus());
+		UploadProposition created = uploadPropositionService.create(technicalAccount, jane.getMail(),
+				uploadPropositionToCreate);
+		Assert.assertNotNull("No upload Proposition created", created);
+		Assert.assertEquals("Wrong status", UploadPropositionStatus.USER_ACCEPTED, created.getStatus());
+		Assert.assertEquals("An uploadProposition has been created", countUploadPropositions,
+				uploadPropositionService.findAllByAccount(jane, jane).size());
+		Assert.assertEquals(countUploadRequests + 1,
+				uploadRequestGroupService.findAll(jane, jane, Lists.newArrayList(UploadRequestStatus.ENABLED)).size());
+		uploadPropositionExceptionRuleMongoRepository.delete(createdExceptionRule);
+		uploadPropositionfilterService.delete(root, rootDomain, createdNoAcceptationFilter);
+		uploadPropositionfilterService.delete(root, rootDomain, createdNoRejectionFilter);
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
 	private UploadProposition initProposition(User actor) {
 		return new UploadProposition(UUID.randomUUID().toString(), john.getDomainId(), null, "Label",
 				"Body Upload Proposition", new UploadPropositionContact("First", "Last", "yoda@linshare.com"),
@@ -406,5 +480,10 @@ public class UploadPropositionServiceImplTest extends AbstractTransactionalJUnit
 		}
 		UploadPropositionRuleOperatorType op = rule.getOperator();
 		return op.check(compare, rule.getValue());
+	}
+
+	private UploadPropositionExceptionRule addMailToList(Account actor, String mail, UploadPropositionExceptionRuleType exceptionRuleType) {
+		UploadPropositionExceptionRule rule = new UploadPropositionExceptionRule(UUID.randomUUID().toString(), actor.getDomainId(), mail, actor.getLsUuid(), exceptionRuleType, new Date(), new Date());
+		return uploadPropositionExceptionRuleService.create(actor, actor, rule);
 	}
 }
