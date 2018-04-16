@@ -34,9 +34,11 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.linagora.linshare.core.business.service.UploadPropositionExceptionRuleBusinessService;
+import org.linagora.linshare.core.domain.constants.UploadPropositionExceptionRuleType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.rac.UploadPropositionExceptionRuleResourceAccessControl;
@@ -52,6 +54,23 @@ public class UploadPropositionExceptionRuleServiceImpl extends GenericServiceImp
 			final UploadPropositionExceptionRuleResourceAccessControl rac) {
 		super(rac);
 		this.exceptionRuleBusinessService = exceptionRuleBusinessService;
+	}
+
+	@Override
+	public UploadPropositionExceptionRule find(Account authUser, Account actor, String uuid) {
+		preChecks(authUser, actor);
+		checkReadPermission(authUser, actor, UploadPropositionExceptionRule.class,
+				BusinessErrorCode.UPLOAD_PROPOSITION_EXCEPTION_RULE_CAN_NOT_READ, null);
+		return exceptionRuleBusinessService.find(uuid);
+	}
+
+	@Override
+	public List<UploadPropositionExceptionRule> findByExceptionRule(Account authUser, Account actor,
+			UploadPropositionExceptionRuleType exceptionRuleType) {
+		preChecks(authUser, actor);
+		checkReadPermission(authUser, actor, UploadPropositionExceptionRule.class,
+				BusinessErrorCode.UPLOAD_PROPOSITION_EXCEPTION_RULE_CAN_NOT_LIST, null);
+		return exceptionRuleBusinessService.findByExceptionRuleType(actor.getLsUuid(), exceptionRuleType);
 	}
 
 	@Override

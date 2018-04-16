@@ -31,26 +31,18 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.repository;
+package org.linagora.linshare.webservice.delegationv2;
 
 import java.util.List;
-import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.UploadPropositionExceptionRuleType;
 import org.linagora.linshare.mongo.entities.UploadPropositionExceptionRule;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface UploadPropositionExceptionRuleMongoRepository
-		extends MongoRepository<UploadPropositionExceptionRule, String> {
+public interface UploadPropositionExceptionRuleRestService {
 
-	UploadPropositionExceptionRule findByUuid(String uuid);
+	List<UploadPropositionExceptionRule> findByExceptionRuleType(String accountUuid, UploadPropositionExceptionRuleType exceptionRuleType);
 
-	Set<UploadPropositionExceptionRule> findByAccountUuid(String accountUuid, Sort sort);
+	UploadPropositionExceptionRule find(String accountUuid, String uuid);
 
-	Set<UploadPropositionExceptionRule> findByAccountUuidAndDomainUuid(String accountUuid, String domainUuid, Sort sort);
-
-	List<UploadPropositionExceptionRule> findByAccountUuidAndExceptionRuleType(String accountUuid, UploadPropositionExceptionRuleType exceptionRuleType);
-
-	UploadPropositionExceptionRule findByAccountUuidAndMail(String accountUuid, String mail);
+	UploadPropositionExceptionRule create(String accountUuid, UploadPropositionExceptionRule exceptionRule);
 }

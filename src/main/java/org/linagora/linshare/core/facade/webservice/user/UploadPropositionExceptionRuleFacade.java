@@ -33,10 +33,17 @@
  */
 package org.linagora.linshare.core.facade.webservice.user;
 
+import java.util.List;
+
+import org.linagora.linshare.core.domain.constants.UploadPropositionExceptionRuleType;
 import org.linagora.linshare.mongo.entities.UploadPropositionExceptionRule;
 
 public interface UploadPropositionExceptionRuleFacade {
 
-	UploadPropositionExceptionRule create(UploadPropositionExceptionRule exceptionRule);
+	UploadPropositionExceptionRule find(String actorUuid, String uuid);
+
+	List<UploadPropositionExceptionRule> findByExceptionRuleType(String actorUuid, UploadPropositionExceptionRuleType exceptionRuleType);
+
+	UploadPropositionExceptionRule create(String actorUuid, UploadPropositionExceptionRule exceptionRule);
 
 }

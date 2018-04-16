@@ -33,7 +33,10 @@
  */
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
+import java.util.List;
+
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.domain.constants.UploadPropositionExceptionRuleType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.facade.webservice.user.UploadPropositionExceptionRuleFacade;
 import org.linagora.linshare.core.service.AccountService;
@@ -51,14 +54,31 @@ public class UploadPropositionExceptionRuleFacadeImpl extends GenericFacadeImpl 
 	}
 
 	@Override
-	public UploadPropositionExceptionRule create(UploadPropositionExceptionRule exceptionRule) {
+	public UploadPropositionExceptionRule find(String actorUuid, String uuid) {
+		Validate.notEmpty(uuid, "uuid cannot be empty");
+		Account authUser = checkAuthentication();
+		Account actor = getActor(authUser, actorUuid);
+		return exceptionRuleService.find(authUser, actor, uuid);
+	}
+
+	@Override
+	public List<UploadPropositionExceptionRule> findByExceptionRuleType(String actorUuid,
+			UploadPropositionExceptionRuleType exceptionRuleType) {
+		Validate.notNull(exceptionRuleType);
+		Account authUser = checkAuthentication();
+		Account actor = getActor(authUser, actorUuid);
+		return exceptionRuleService.findByExceptionRule(authUser, actor, exceptionRuleType);
+	}
+
+	@Override
+	public UploadPropositionExceptionRule create(String actorUuid, UploadPropositionExceptionRule exceptionRule) {
 		Validate.notNull(exceptionRule);
 		Validate.notEmpty(exceptionRule.getDomainUuid(), "DomainUuid cannot be empty");
 		Validate.notEmpty(exceptionRule.getMail(), "Mail cannot be empty");
 		Validate.notEmpty(exceptionRule.getAccountUuid(), "Mail cannot be empty");
 		Validate.notNull(exceptionRule.getExceptionRuleType(), "ExceptionRule Type cannot be null");
 		Account authUser = checkAuthentication();
-		Account actor = getActor(exceptionRule.getAccountUuid());
+		Account actor = getActor(authUser, actorUuid);
 		return exceptionRuleService.create(authUser, actor, exceptionRule);
 	}
 }

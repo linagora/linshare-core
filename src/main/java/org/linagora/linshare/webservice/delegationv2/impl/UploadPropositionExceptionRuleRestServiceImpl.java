@@ -31,7 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.userv2.impl;
+package org.linagora.linshare.webservice.delegationv2.impl;
 
 import java.util.List;
 
@@ -46,7 +46,7 @@ import javax.ws.rs.core.MediaType;
 import org.linagora.linshare.core.domain.constants.UploadPropositionExceptionRuleType;
 import org.linagora.linshare.core.facade.webservice.user.UploadPropositionExceptionRuleFacade;
 import org.linagora.linshare.mongo.entities.UploadPropositionExceptionRule;
-import org.linagora.linshare.webservice.userv2.UploadPropositionExceptionRuleRestService;
+import org.linagora.linshare.webservice.delegationv2.UploadPropositionExceptionRuleRestService;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -54,8 +54,8 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/upload_proposition_exception_rules")
-@Api(value = "/rest/user/v2/upload_proposition_exception_rules", description = "Upload Proposition Exception Rules service")
+@Path("/{actorUuid}/upload_proposition_exception_rules")
+@Api(value = "/rest/delegation/v2/upload_proposition_exception_rules", description = "Upload Proposition Exception Rules service")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class UploadPropositionExceptionRuleRestServiceImpl implements UploadPropositionExceptionRuleRestService {
@@ -75,9 +75,11 @@ public class UploadPropositionExceptionRuleRestServiceImpl implements UploadProp
 		@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public UploadPropositionExceptionRule find(
+			@ApiParam(value = "The actor (user) uuid.", required = true)
+				@PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "Uploadproposition exception rule uuid", required = true)
 				@PathParam("uuid") String uuid){
-		return exceptionRuleFacade.find(null, uuid);
+		return exceptionRuleFacade.find(actorUuid, uuid);
 	}
 
 	@Path("/list/{exceptionRuleType}")
@@ -88,9 +90,11 @@ public class UploadPropositionExceptionRuleRestServiceImpl implements UploadProp
 		@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public List<UploadPropositionExceptionRule> findByExceptionRuleType(
+			@ApiParam(value = "The actor (user) uuid.", required = true)
+				@PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "Uploadproposition exception rule type", required = true)
 				@PathParam("exceptionRuleType") UploadPropositionExceptionRuleType exceptionRuleType){
-		return exceptionRuleFacade.findByExceptionRuleType(null, exceptionRuleType);
+		return exceptionRuleFacade.findByExceptionRuleType(actorUuid, exceptionRuleType);
 	}
 
 	@Path("/")
@@ -101,7 +105,9 @@ public class UploadPropositionExceptionRuleRestServiceImpl implements UploadProp
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public UploadPropositionExceptionRule create(
+			@ApiParam(value = "The actor (user) uuid.", required = true)
+				@PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "Payload to create an exception rule", required = true) UploadPropositionExceptionRule exceptionRule) {
-		return exceptionRuleFacade.create(null, exceptionRule);
+		return exceptionRuleFacade.create(actorUuid, exceptionRule);
 	}
 }

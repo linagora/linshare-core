@@ -33,7 +33,10 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
+import java.util.List;
+
 import org.linagora.linshare.core.business.service.UploadPropositionExceptionRuleBusinessService;
+import org.linagora.linshare.core.domain.constants.UploadPropositionExceptionRuleType;
 import org.linagora.linshare.mongo.entities.UploadPropositionExceptionRule;
 import org.linagora.linshare.mongo.repository.UploadPropositionExceptionRuleMongoRepository;
 
@@ -46,6 +49,27 @@ public class UploadPropositionExceptionRuleBusinessServiceImpl
 			final UploadPropositionExceptionRuleMongoRepository exceptionRuleMongoRepository) {
 		super();
 		this.exceptionRuleMongoRepository = exceptionRuleMongoRepository;
+	}
+
+	@Override
+	public UploadPropositionExceptionRule find(String uuid) {
+		return exceptionRuleMongoRepository.findByUuid(uuid);
+	}
+
+	@Override
+	public List<UploadPropositionExceptionRule> findAll() {
+		return exceptionRuleMongoRepository.findAll();
+	}
+
+	@Override
+	public List<UploadPropositionExceptionRule> findByExceptionRuleType(String accountUuid,
+			UploadPropositionExceptionRuleType exceptionRuleType) {
+		return exceptionRuleMongoRepository.findByAccountUuidAndExceptionRuleType(accountUuid, exceptionRuleType);
+	}
+
+	@Override
+	public UploadPropositionExceptionRule findByMail(String accountUuid, String mail) {
+		return exceptionRuleMongoRepository.findByAccountUuidAndMail(accountUuid, mail);
 	}
 
 	@Override
