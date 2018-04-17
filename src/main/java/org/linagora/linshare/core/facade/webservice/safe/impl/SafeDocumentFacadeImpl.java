@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.facade.webservice.safe.impl;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.delegation.impl.DelegationGenericFacadeImpl;
@@ -56,10 +57,11 @@ public class SafeDocumentFacadeImpl extends DelegationGenericFacadeImpl
 	}
 
 	@Override
-	public SafeDetail findSafeDetail(String safeUuid) throws BusinessException {
+	public SafeDetail findSafeDetail(String actorUuid, String safeUuid) throws BusinessException {
 		Validate.notEmpty(safeUuid);
 		User authUser = checkAuthentication();
-		SafeDetail safeDetail = safeDetailService.find(authUser, safeUuid);
+		Account actor = getActor(authUser, actorUuid);
+		SafeDetail safeDetail = safeDetailService.find(authUser, actor, safeUuid);
 		Validate.notNull(safeDetail);
 		return safeDetail;
 	}

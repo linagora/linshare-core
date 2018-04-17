@@ -89,6 +89,10 @@
 		<constructor-arg ref="wsWelcomeMessagesFacadeImpl" />
 	</bean>
 
+	<bean id="userSafeDetailRestService"
+		class="org.linagora.linshare.webservice.userv2.impl.SafeDetailRestServiceImpl">
+		<constructor-arg ref="wsSafeDetailFacade" />
+	</bean>
 	<jaxrs:server id="userRestContainer" address="/rest/user/v2">
 		<jaxrs:serviceBeans>
 			<ref bean="userEnumRestService" />
@@ -117,7 +121,9 @@
 <!-- 			<ref bean="userv2StatisticRestService" /> -->
 			<ref bean="userv2AccountQuotaRestService" />
 			<ref bean="userv2WelcomeMessagesRestService" />
-<!--
+
+			<ref bean="userSafeDetailRestService" /> 
+			<!--
 			<ref bean="pluginCompatibilityRestServiceV2" />
 -->
 		</jaxrs:serviceBeans>

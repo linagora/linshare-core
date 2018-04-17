@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.mongo.repository;
 
+import java.util.List;
+
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SafeDetail;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -45,5 +47,5 @@ public interface SafeDetailMongoRepository extends MongoRepository<SafeDetail, S
 
 	SafeDetail findByUuid(String uuid) throws BusinessException;
 
-	SafeDetail findByAccountUuid(String accountUuid) throws BusinessException;
+	List<SafeDetail> findByAccountUuid(String accountUuid) throws BusinessException;
 }

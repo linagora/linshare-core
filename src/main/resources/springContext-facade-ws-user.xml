@@ -131,4 +131,8 @@
 		<constructor-arg ref="accountService" />
 	</bean>
 
+	<bean id="wsSafeDetailFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.SafeDetailFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="safeDetailService" />
+	</bean>
 </beans>

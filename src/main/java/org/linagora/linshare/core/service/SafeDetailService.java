@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.service;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SafeDetail;
@@ -45,9 +47,7 @@ public interface SafeDetailService {
 
 	SafeDetail delete(Account authUser, Account actor, SafeDetail safeDetail) throws BusinessException;
 
-	SafeDetail findByUuid(Account authUser, Account actor, String uuid) throws BusinessException;
+	SafeDetail find(Account authUser, Account actor, String uuid) throws BusinessException;
 
-	SafeDetail findAll(Account authUser, Account actor) throws BusinessException;
-
-	SafeDetail find(Account authUser, String safeUuid);
+	List<SafeDetail> findAll(Account authUser, Account actor) throws BusinessException;
 }

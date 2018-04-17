@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.repository.mongodb;
 
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -104,7 +106,7 @@ public class SafeDetailRepositoryTest extends AbstractTransactionalJUnit4SpringC
 		defaultPolicy = domainPolicyRepository.findById(DOMAIN_POLICY_UUID);
 		testDomain = createATestDomain();
 		
-		internal = new Internal();		
+		internal = new Internal();
 		internal.setMail(EMAIL1);
 		internal.setLocale(SupportedLanguage.ENGLISH);
 		internal.setCmisLocale(CMIS_LOCALE);
@@ -151,15 +153,15 @@ public class SafeDetailRepositoryTest extends AbstractTransactionalJUnit4SpringC
 		safeDetail = safeDetailMongoRepository.insert(safeDetail);
 		Assert.assertEquals(safeDetail.getAccountUuid(), internal.getLsUuid());
 		safeDetailMongoRepository.delete(safeDetail);
-		Assert.assertNull(safeDetailMongoRepository.findByAccountUuid(internal.getLsUuid()));
+		Assert.assertTrue(safeDetailMongoRepository.findByAccountUuid(internal.getLsUuid()).isEmpty());
 	}
 	
 	@Test
 	public void testfindAll() {
 		SafeDetail safeDetail = new SafeDetail(internal.getLsUuid(), workGroup.getLsUuid(), DESCRIPTION);
 		safeDetailMongoRepository.insert(safeDetail);
-		SafeDetail exist = safeDetailMongoRepository.findByAccountUuid(internal.getLsUuid());
-		Assert.assertEquals(exist.getAccountUuid() , internal.getLsUuid());
+		List<SafeDetail> exist = safeDetailMongoRepository.findByAccountUuid(internal.getLsUuid());
+		Assert.assertEquals(exist.iterator().next().getAccountUuid() , internal.getLsUuid());
 		safeDetailMongoRepository.delete(safeDetail.getUuid());
 	}
 }

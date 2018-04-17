@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.mongodb;
 
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -86,30 +88,30 @@ public class SafeDetailServiceTest extends AbstractTransactionalJUnit4SpringCont
 
 	@Autowired
 	private TechnicalAccountRepository technicalAccountRepository;
-	
+
 	@Autowired
 	private SafeDetailService safeDetailService;
-	
+
 	@Autowired
 	private ThreadRepository threadRepository;
-	
+
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
 
 	@Autowired
 	private DomainPolicyRepository domainPolicyRepository;
-	
+
 	@Autowired
 	private TechnicalAccountPermissionRepository technicalAccountPermissionRepository;
-	
+
 	private TechnicalAccountPermission technicalAccountPermission;
-	
+
 	private TechnicalAccount technicalAccount;
-	
+
 	private Internal actor;
-	
+
 	private WorkGroup workGroup;
-	
+
 	private AbstractDomain testDomain;
 
 	private DomainPolicy defaultPolicy;
@@ -129,7 +131,7 @@ public class SafeDetailServiceTest extends AbstractTransactionalJUnit4SpringCont
 		technicalAccountPermission.addPermission(ap3);
 		technicalAccountPermission.addPermission(ap4);
 		technicalAccountPermission = technicalAccountPermissionRepository.create(technicalAccountPermission);
-		
+
 		technicalAccount = new TechnicalAccount();
 		technicalAccount.setRole(Role.DELEGATION);
 		technicalAccount.setLocale(SupportedLanguage.ENGLISH);
@@ -137,8 +139,8 @@ public class SafeDetailServiceTest extends AbstractTransactionalJUnit4SpringCont
 		technicalAccount.setDomain(testDomain);
 		technicalAccount.setPermission(technicalAccountPermission);
 		technicalAccount = technicalAccountRepository.create(technicalAccount);
-		
-		actor = new Internal();		
+
+		actor = new Internal();
 		actor.setMail(EMAIL);
 		actor.setLocale(SupportedLanguage.ENGLISH);
 		actor.setCmisLocale(CMIS_LOCALE);
@@ -186,16 +188,16 @@ public class SafeDetailServiceTest extends AbstractTransactionalJUnit4SpringCont
 		safeDetail.setContainerUuid(workGroup.getLsUuid());
 		SafeDetail exist = safeDetailService.create(technicalAccount, actor, safeDetail);
 		safeDetailService.delete(technicalAccount, actor, exist.getUuid());
-		Assert.assertNull(safeDetailService.findAll(technicalAccount, actor));
+		Assert.assertTrue(safeDetailService.findAll(technicalAccount, actor).isEmpty());
 	}
 	
 	@Test
-	public void testfindtAll() {
+	public void testfindAll() {
 		SafeDetail safeDetail = new SafeDetail();
 		safeDetail.setContainerUuid(workGroup.getLsUuid());
 		safeDetailService.create(technicalAccount, actor, safeDetail);
-		SafeDetail exist = safeDetailService.findAll(technicalAccount, actor);
-		Assert.assertEquals(exist.getAccountUuid(), actor.getLsUuid());
-		safeDetailService.delete(technicalAccount, actor, exist.getUuid());
+		List<SafeDetail> exist = safeDetailService.findAll(technicalAccount, actor);
+		Assert.assertEquals(exist.iterator().next().getAccountUuid(), actor.getLsUuid());
+		safeDetailService.delete(technicalAccount, actor, exist.iterator().next().getUuid());
 	}
 }

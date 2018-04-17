@@ -33,18 +33,20 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.util.List;
+
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.rac.SafeDetailResourceAccessControl;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.SafeDetailService;
 import org.linagora.linshare.mongo.entities.SafeDetail;
 import org.linagora.linshare.mongo.entities.logs.SafeDetailAuditLogEntry;
 import org.linagora.linshare.mongo.repository.SafeDetailMongoRepository;
+import org.linagora.linshare.core.rac.SafeDetailResourceAccessControl;
 
 public class SafeDetailServiceImpl extends GenericServiceImpl<Account, SafeDetail> implements SafeDetailService {
 
@@ -52,25 +54,22 @@ public class SafeDetailServiceImpl extends GenericServiceImpl<Account, SafeDetai
 
 	protected LogEntryService logEntryService;
 
-	protected SafeDetailResourceAccessControl accessControl;
-
-	public SafeDetailServiceImpl(final SafeDetailMongoRepository safeDetailMongoRepository,
-			final LogEntryService logEntryService,
-			final SafeDetailResourceAccessControl accessControl) {
-		super(accessControl);
+	public SafeDetailServiceImpl(SafeDetailMongoRepository safeDetailMongoRepository,
+			LogEntryService logEntryService,
+			SafeDetailResourceAccessControl rac) {
+		super(rac);
 		this.safeDetailMongoRepository = safeDetailMongoRepository;
 		this.logEntryService = logEntryService;
-		this.accessControl = accessControl;
 	}
 
 	@Override
 	public SafeDetail create(Account authUser, Account actor, SafeDetail safeDetail) {
 		safeDetail.setAccountUuid(actor.getLsUuid());
 		SafeDetail safeDetailToPersist = new SafeDetail(safeDetail);
-		accessControl.checkCreatePermission(authUser, actor, SafeDetail.class,
+		checkCreatePermission(authUser, actor, SafeDetail.class,
 				BusinessErrorCode.SAFE_DETAIL_CAN_NOT_CREATE, safeDetailToPersist);
-		SafeDetail existing = safeDetailMongoRepository.findByAccountUuid(actor.getLsUuid());
-		if (existing == null) {
+		List<SafeDetail> existing = safeDetailMongoRepository.findByAccountUuid(actor.getLsUuid());
+		if (existing.isEmpty()) {
 			safeDetail = safeDetailMongoRepository.insert(safeDetailToPersist);
 			SafeDetailAuditLogEntry safeDetailAuditLogEntry = new SafeDetailAuditLogEntry(authUser, actor,
 					LogAction.CREATE, AuditLogEntryType.SAFE_DETAIL, safeDetailToPersist);
@@ -86,7 +85,7 @@ public class SafeDetailServiceImpl extends GenericServiceImpl<Account, SafeDetai
 	public SafeDetail delete(Account authUser, Account actor, String uuid) throws BusinessException {
 		Validate.notNull(uuid);
 		SafeDetail safeDetail = safeDetailMongoRepository.findByUuid(uuid);
-		accessControl.checkDeletePermission(authUser, actor, SafeDetail.class,
+		checkDeletePermission(authUser, actor, SafeDetail.class,
 				BusinessErrorCode.SAFE_DETAIL_CAN_NOT_DELETE, safeDetail);
 		safeDetailMongoRepository.delete(safeDetail);
 		SafeDetailAuditLogEntry safeDetailAuditLogEntry = new SafeDetailAuditLogEntry(authUser, actor, LogAction.DELETE,
@@ -97,7 +96,7 @@ public class SafeDetailServiceImpl extends GenericServiceImpl<Account, SafeDetai
 
 	@Override
 	public SafeDetail delete(Account authUser, Account actor, SafeDetail safeDetail) throws BusinessException {
-		accessControl.checkDeletePermission(authUser, actor, SafeDetail.class,
+		checkDeletePermission(authUser, actor, SafeDetail.class,
 				BusinessErrorCode.SAFE_DETAIL_CAN_NOT_DELETE, safeDetail);
 		safeDetailMongoRepository.delete(safeDetail);
 		SafeDetailAuditLogEntry safeDetailAuditLogEntry = new SafeDetailAuditLogEntry(authUser, actor, LogAction.DELETE,
@@ -107,10 +106,10 @@ public class SafeDetailServiceImpl extends GenericServiceImpl<Account, SafeDetai
 	}
 
 	@Override
-	public SafeDetail findByUuid(Account authUser, Account actor, String uuid) throws BusinessException {
+	public SafeDetail find(Account authUser, Account actor, String uuid) throws BusinessException {
 		Validate.notNull(uuid);
 		SafeDetail safeDetail = safeDetailMongoRepository.findByUuid(uuid);
-		accessControl.checkReadPermission(authUser, actor, SafeDetail.class,
+		checkReadPermission(authUser, actor, SafeDetail.class,
 				BusinessErrorCode.SAFE_DETAIL_CAN_NOT_READ, safeDetail);
 		if (safeDetail == null) {
 			throw new BusinessException(BusinessErrorCode.SAFE_DETAIL_NOT_FOUND,
@@ -120,21 +119,9 @@ public class SafeDetailServiceImpl extends GenericServiceImpl<Account, SafeDetai
 	}
 
 	@Override
-	public SafeDetail findAll(Account authUser, Account actor) throws BusinessException {
-		accessControl.checkListPermission(authUser, actor, SafeDetail.class,
+	public List<SafeDetail> findAll(Account authUser, Account actor) throws BusinessException {
+		checkListPermission(authUser, actor, SafeDetail.class,
 				BusinessErrorCode.SAFE_DETAIL_CAN_NOT_LIST, null);
 		return safeDetailMongoRepository.findByAccountUuid(actor.getLsUuid());
-	}
-
-	@Override
-	public SafeDetail find(Account authUser, String safeUuid) {
-		Validate.notNull(safeUuid);
-		
-		SafeDetail safeDetail = safeDetailMongoRepository.findByUuid(safeUuid);
-		if (safeDetail == null) {
-			throw new BusinessException(BusinessErrorCode.SAFE_DETAIL_NOT_FOUND,
-					"the safeDetail with uuid: " + safeUuid + " does not exist");
-		}
-		return safeDetail;
 	}
 }
