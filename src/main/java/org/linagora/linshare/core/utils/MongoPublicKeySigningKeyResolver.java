@@ -38,8 +38,10 @@ import java.io.IOException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
+import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 
+import org.linagora.linshare.core.domain.constants.PublicKeyFormat;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.PublicKeyService;
@@ -70,7 +72,13 @@ public class MongoPublicKeySigningKeyResolver extends AbstractSigningKeyResolver
 					"Can not find the stored public key to verify the jwt token.");
 		}
 		try {
-			return PemRsaKeyHelper.loadPubKey(publicKeyLs.getPublicKey());
+			RSAPublicKey publicKey = null;
+			if (publicKeyLs.getFormat().equals(PublicKeyFormat.SSH)) {
+				publicKey = PemRsaKeyHelper.loadSSHPublicKey(publicKeyLs.getPublicKey());
+			} else {
+				publicKey = PemRsaKeyHelper.loadPEMpublicKey(publicKeyLs.getPublicKey());
+			}
+			return publicKey;
 		} catch (InvalidKeySpecException | NoSuchAlgorithmException | IOException e) {
 			logger.debug(e.getMessage(), e);
 			logger.error("Can not load a public key ", publicKeyLs.getUuid());

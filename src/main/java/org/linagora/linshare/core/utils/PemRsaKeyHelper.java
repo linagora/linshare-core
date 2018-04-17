@@ -51,6 +51,9 @@ import org.jclouds.ssh.SshKeys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.ByteSource;
+
 public class PemRsaKeyHelper {
 
 	final private static Logger logger = LoggerFactory.getLogger(PemRsaKeyHelper.class);
@@ -68,34 +71,43 @@ public class PemRsaKeyHelper {
 		return privatevKey;
 	}
 
-	public static RSAPublicKey loadPublicKey(String pemPublicKeyPath) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
-		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+	public static RSAPublicKey loadSSHPublicKeyFromFile(String pemPublicKeyPath) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
 		String pem = loadPemKey(pemPublicKeyPath);
 		if (pem == null) {
 			logger.info("Public key '" + pemPublicKeyPath + "' was not found. (check read access)");
 			return null;
 		}
-		RSAPublicKeySpec publicKeySpec = SshKeys.publicKeySpecFromOpenSSH(pem);
-		RSAPublicKey publicKey = (RSAPublicKey) keyFactory.generatePublic(publicKeySpec);
+		RSAPublicKey publicKey = loadSSHPublicKey(pem);
 		logger.info("Public key '" + pemPublicKeyPath + "' was loaded");
 		return publicKey;
 	}
 
-	public static PublicKey loadPubKey(String publicKey) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+	public static RSAPublicKey loadSSHPublicKey(String publicKey) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
 		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 		RSAPublicKeySpec publicKeySpec = SshKeys.publicKeySpecFromOpenSSH(publicKey);
 		RSAPublicKey key = (RSAPublicKey) keyFactory.generatePublic(publicKeySpec);
-		logger.info("Public key '" + key + "' was loaded");
 		return key;
 	}
 
 	public static KeyPair loadKeys(String pemPrivateKeyPath, String pemPublicKeyPath) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
 		RSAPrivateKey privatevKey = PemRsaKeyHelper.loadPrivateKey(pemPrivateKeyPath);
-		RSAPublicKey publicKey = PemRsaKeyHelper.loadPublicKey(pemPublicKeyPath);
+		PublicKey publicKey = PemRsaKeyHelper.loadSSHPublicKeyFromFile(pemPublicKeyPath);
 		KeyPair kp = new KeyPair(publicKey, privatevKey);
 		return kp;
 	}
 
+	public static RSAPublicKey loadPEMpublicKey(String pem) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+		ByteSource asByteSource = ByteSource.wrap(pem.getBytes(Charsets.UTF_8));
+		return loadPEMpublicKey(asByteSource);
+	}
+
+	public static RSAPublicKey loadPEMpublicKey(ByteSource asByteSource) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+		KeySpec ks = Pems.publicKeySpec(asByteSource);
+		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+		RSAPublicKey pubKey = (RSAPublicKey) keyFactory.generatePublic(ks);
+		return pubKey;
+	}
+	
 	protected static String loadPemKey(String pemKeyPath) {
 		try (BufferedReader in = new BufferedReader(new FileReader(pemKeyPath))) {
 			String str;

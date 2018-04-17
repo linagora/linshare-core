@@ -124,9 +124,9 @@ public class PublicKeyServiceImpl implements PublicKeyService {
 		}
 		try {
 			if (PublicKeyFormat.SSH.equals(publicKey.getFormat())) {
-				PemRsaKeyHelper.loadPubKey(publicKey.getPublicKey());
+				PemRsaKeyHelper.loadSSHPublicKey(publicKey.getPublicKey());
 			} else if (PublicKeyFormat.PEM.equals(publicKey.getFormat())) {
-				// TODO check PEM public key
+				PemRsaKeyHelper.loadPEMpublicKey(publicKey.getPublicKey());
 			} else {
 				throw new BusinessException(BusinessErrorCode.PUBLIC_KEY_INVALID_FORMAT, "Unsupported format " + publicKey.getFormat());
 			}
