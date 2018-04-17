@@ -18,7 +18,7 @@
 	<!-- REST -->
 	<bean id="delegationSafeDetailRestService"
 		class="org.linagora.linshare.webservice.delegationv2.impl.SafeDetailRestServiceImpl">
-		<constructor-arg ref="wsDelegationSafeDetailFacade" />
+		<constructor-arg ref="wsSafeDetailFacade" />
 		<constructor-arg value="${safe.detail.country.code}" />
 		<constructor-arg value="${safe.detail.control.key}" />
 		<constructor-arg value="${safe.detail.iufsc}" />

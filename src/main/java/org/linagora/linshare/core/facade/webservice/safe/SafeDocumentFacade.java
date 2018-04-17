@@ -40,7 +40,7 @@ import org.linagora.linshare.mongo.entities.SafeDetail;
 
 public interface SafeDocumentFacade {
 
-	SafeDetail findSafeDetail(String safeUuid) throws BusinessException;
+	SafeDetail findSafeDetail(String actorUuid, String safeUuid) throws BusinessException;
 
 	User findUser(String safeUuid) throws BusinessException;
 }

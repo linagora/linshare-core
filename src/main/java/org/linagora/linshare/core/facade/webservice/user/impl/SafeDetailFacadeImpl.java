@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2017-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -32,71 +32,65 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.facade.webservice.delegation.impl;
+package org.linagora.linshare.core.facade.webservice.user.impl;
+
+import java.util.List;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.delegation.SafeDetailFacade;
+import org.linagora.linshare.core.facade.webservice.user.SafeDetailFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.SafeDetailService;
-import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.SafeDetail;
 
-public class SafeDetailFacadeImpl extends DelegationGenericFacadeImpl implements
-		SafeDetailFacade {
+import com.google.common.base.Strings;
+
+public class SafeDetailFacadeImpl extends GenericFacadeImpl implements SafeDetailFacade {
 
 	private final SafeDetailService safeDetailService;
 
-	public SafeDetailFacadeImpl(final AccountService accountService,
-			final UserService userService,
+	public SafeDetailFacadeImpl(AccountService accountService,
 			final SafeDetailService safeDetailService) {
-		super(accountService, userService);
+		super(accountService);
 		this.safeDetailService = safeDetailService;
 	}
 
 	@Override
-	public SafeDetail create(String actorUuid, SafeDetail safeDetail) throws BusinessException {
-		Validate.notEmpty(actorUuid, "Missing required actor uuid");
-		Validate.notEmpty(safeDetail.getContainerUuid(), "Missing required container uuid");
+	public List<SafeDetail> findAll(String actorUuid) throws BusinessException {
 		User authUser = checkAuthentication();
-		User actor = getActor(actorUuid);
-		return safeDetailService.create(authUser, actor, safeDetail);
+		Account actor = getActor(authUser, actorUuid);
+		return safeDetailService.findAll(authUser, actor);
 	}
 
 	@Override
-	public SafeDetail delete(String actorUuid, String safeDetailUuid) throws BusinessException {
-		Validate.notEmpty(actorUuid, "Missing required actor uuid");
-		Validate.notEmpty(safeDetailUuid, "Missing required safeDetail uuid");
+	public SafeDetail delete(String actorUuid, String uuid, SafeDetail safeDetail) throws BusinessException {
 		User authUser = checkAuthentication();
-		User actor = getActor(actorUuid);
-		return safeDetailService.delete(authUser, actor, safeDetailUuid);
-	}
-
-	@Override
-	public SafeDetail find(String actorUuid, String safeDetailUuid) throws BusinessException {
-		Validate.notEmpty(actorUuid, "Missing required actor uuid");
-		Validate.notEmpty(safeDetailUuid, "Missing required safeDetail uuid");
-		User authUser = checkAuthentication();
-		User actor = getActor(actorUuid);
-		return safeDetailService.findByUuid(authUser, actor, safeDetailUuid);
-	}
-
-	@Override
-	public SafeDetail delete(String actorUuid, SafeDetail safeDetail) throws BusinessException {
-		Validate.notEmpty(actorUuid, "Missing required actor uuid");
-		Validate.notNull(safeDetail);
-		Validate.notEmpty(safeDetail.getUuid(), "Missing required safeDetail uuid");
-		User authUser = checkAuthentication();
-		User actor = getActor(actorUuid);
+		Account actor = getActor(authUser, actorUuid);
+		if (!Strings.isNullOrEmpty(uuid)) {
+			safeDetail = safeDetailService.find(authUser, actor, uuid);
+		} else {
+			Validate.notNull(safeDetail, "safeDetail must be set");
+			Validate.notEmpty(safeDetail.getUuid(), "safeDetail uuid must be set");
+			safeDetail = safeDetailService.find(authUser, actor, safeDetail.getUuid());
+		}
 		return safeDetailService.delete(authUser, actor, safeDetail);
 	}
 
 	@Override
-	public SafeDetail findAll(String actorUuid) throws BusinessException {
-		Validate.notEmpty(actorUuid, "Missing required actor uuid");
+	public SafeDetail find(String actorUuid, String uuid) throws BusinessException {
+		Validate.notEmpty(uuid, "Missing required safeDetail uuid");
 		User authUser = checkAuthentication();
-		User actor = getActor(actorUuid);
-		return safeDetailService.findAll(authUser, actor);
+		Account actor = getActor(authUser, actorUuid);
+		return safeDetailService.find(authUser, actor, uuid);
+	}
+
+	@Override
+	public SafeDetail create(String actorUuid, SafeDetail safeDetail) throws BusinessException {
+		Validate.notEmpty(safeDetail.getContainerUuid(), "Missing required container uuid");
+		User authUser = checkAuthentication();
+		Account actor = getActor(authUser, actorUuid);
+		return safeDetailService.create(authUser, actor, safeDetail);
 	}
 }

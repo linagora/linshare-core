@@ -106,6 +106,10 @@
 		<constructor-arg ref="wsUploadRequestUrlUserFacade" />
 	</bean>
 
+	<bean id="userSafeDetailRestService"
+		class="org.linagora.linshare.webservice.userv2.impl.SafeDetailRestServiceImpl">
+		<constructor-arg ref="wsSafeDetailFacade" />
+	</bean>
 	<jaxrs:server id="userRestContainer" address="/rest/user/v2">
 		<jaxrs:serviceBeans>
 			<ref bean="userEnumRestService" />
@@ -135,6 +139,7 @@
 			<ref bean="userUploadRequestGroupRestService" /> 
 			<ref bean="userUploadRequestEntryRestService" /> 
 			<ref bean="userUploadRequestUrlRestService" /> 
+			<ref bean="userSafeDetailRestService" /> 
 			<!--
 			<ref bean="pluginCompatibilityRestServiceV2" />
 -->

@@ -153,7 +153,7 @@ public class SafeDocumentRestServiceImpl extends WebserviceBase implements
 		}
 		Validate.notNull(ric);
 		String safeUuid = ric.substring(24);
-		SafeDetail safeDetail = safeDocumentFacade.findSafeDetail(safeUuid);
+		SafeDetail safeDetail = safeDocumentFacade.findSafeDetail(null, safeUuid);
 		User user = safeDocumentFacade.findUser(safeUuid);
 		String workGroupUuid = safeDetail.getContainerUuid();
 

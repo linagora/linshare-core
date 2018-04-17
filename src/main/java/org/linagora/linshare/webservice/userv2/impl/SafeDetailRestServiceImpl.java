@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2017-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -32,25 +32,23 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.webservice.delegationv2.impl;
+package org.linagora.linshare.webservice.userv2.impl;
 
 import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.SafeDetailFacade;
 import org.linagora.linshare.mongo.entities.SafeDetail;
 import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.delegationv2.SafeDetailRestService;
+import org.linagora.linshare.webservice.userv2.SafeDetailRestService;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -58,108 +56,61 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-/**
- * @author Mehdi Attia
- *
- */
-
-@Path("/{actorUuid}/safe_details")
-@Api(value = "/rest/delegation/v2/{actorUuid}/safe_details", basePath = "/rest/delegation/v2/",
-		description = "SafeDetail service.", produces = "application/json,application/xml",
-		consumes = "application/json,application/xml")
+@Path("/safe_details")
+@Api(value = "/rest/user/v2/safe_details", description = "safe_details API")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class SafeDetailRestServiceImpl extends WebserviceBase implements
-		SafeDetailRestService {
+public class SafeDetailRestServiceImpl extends WebserviceBase implements SafeDetailRestService {
 
 	private final SafeDetailFacade safeDetailFacade;
-	
-	private String countryCode;
-	
-	private String controlKey;
-	
-	private String iufsc;
 
-	public SafeDetailRestServiceImpl(SafeDetailFacade safeDetailFacade,
-			String countryCode,
-			String controlKey,
-			String iufssc) {
+	public SafeDetailRestServiceImpl(SafeDetailFacade safeDetailFacade) {
 		super();
 		this.safeDetailFacade = safeDetailFacade;
-		this.countryCode = countryCode;
-		this.controlKey = controlKey;
-		this.iufsc = iufssc;
-	}
-
-	@Path("/")
-	@POST 
-	@ApiOperation(value = "Create a safeDetail", response = SafeDetail.class)
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
-	@Override
-	public SafeDetail create(
-			@ApiParam(value = "The actor (user) uuid.", required = true) 
-				@PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "The safeDetail to Delete.", required = true) SafeDetail safeDetail)
-			throws BusinessException {
-		Validate.notEmpty(actorUuid, "actor uuid must be set.");
-		Validate.notNull(safeDetail);
-		safeDetail.setControlKey(controlKey);
-		safeDetail.setCountryCode(countryCode);
-		safeDetail.setIufsc(iufsc);
-		return safeDetailFacade.create(actorUuid, safeDetail);
-	}
-
-	@Path("/{uuid : .*}")
-	@DELETE
-	@ApiOperation(value = "EXPERIMENTAL - Delete a safeDetail.", response = SafeDetail.class)
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "SafeDetail not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
-	@Override
-	public SafeDetail delete(
-			@ApiParam(value = "The actor (user) uuid.", required = true) 
-				@PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "The safeDetail uuid.", required = false) 
-				@PathParam("uuid") String uuid,
-			@ApiParam(value = "The safeDetail to delete.", required = false) SafeDetail safeDetail) throws BusinessException {
-		return safeDetailFacade.delete(actorUuid, uuid, safeDetail);
-	}
-
-	@Path("/{uuid}")
-	@GET
-	@ApiOperation(value = "Get a SafeDetail.", response = SafeDetail.class)
-	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-			@ApiResponse(code = 404, message = "SafeDetail not found."),
-			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-			@ApiResponse(code = 500, message = "Internal server error."), })
-	@Override
-	public SafeDetail find(
-			@ApiParam(value = "The actor (user) uuid.", required = true) 
-				@PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "The safeDetail uuid.", required = true) 
-				@PathParam("uuid") String uuid)
-			throws BusinessException {
-		return safeDetailFacade.find(actorUuid, uuid);
 	}
 
 	@Path("/")
 	@GET
 	@ApiOperation(value = "EXPERIMENTAL - Get all safeDetails.", response = SafeDetail.class, responseContainer = "Set")
 	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 403, message = "Current logged in account does not have the right role."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public List<SafeDetail> findAll(
-			@ApiParam(value = "The actor (user) uuid.", required = true) 
-				@PathParam("actorUuid") String actorUuid)
-			throws BusinessException {
-		return safeDetailFacade.findAll(actorUuid);
+	public List<SafeDetail> findAll() throws BusinessException {
+		return safeDetailFacade.findAll(null);
 	}
+
+	@Path("/{uuid : .*}")
+	@DELETE
+	@ApiOperation(value = "EXPERIMENTAL - Delete a safeDetail.", response = SafeDetail.class)
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "Current logged in account does not have the right role."),
+			@ApiResponse(code = 404, message = "SafeDetail not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public SafeDetail delete(
+			@ApiParam(value = "The safeDetail uuid.", required = false) 
+				@PathParam("uuid") String uuid,
+			@ApiParam(value = "The safeDetail to delete.", required = false) SafeDetail safeDetail) throws BusinessException {
+		return safeDetailFacade.delete(null, uuid, safeDetail);
+	}
+
+	@Path("/{uuid}")
+	@GET
+	@ApiOperation(value = "Get a SafeDetail.", response = SafeDetail.class)
+	@ApiResponses({
+			@ApiResponse(code = 403, message = "Current logged in account does not have the right role."),
+			@ApiResponse(code = 404, message = "SafeDetail not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public SafeDetail find(
+			@ApiParam(value = "The safeDetail uuid.", required = true) 
+				@PathParam("uuid") String uuid)
+			throws BusinessException {
+		return safeDetailFacade.find(null, uuid);
+	}
+	
 }
