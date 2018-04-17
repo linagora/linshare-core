@@ -37,6 +37,8 @@ import java.util.List;
 
 import org.linagora.linshare.core.business.service.UploadPropositionExceptionRuleBusinessService;
 import org.linagora.linshare.core.domain.constants.UploadPropositionExceptionRuleType;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.UploadPropositionExceptionRule;
 import org.linagora.linshare.mongo.repository.UploadPropositionExceptionRuleMongoRepository;
 
@@ -74,6 +76,13 @@ public class UploadPropositionExceptionRuleBusinessServiceImpl
 
 	@Override
 	public UploadPropositionExceptionRule create(UploadPropositionExceptionRule exceptionRule) {
+		UploadPropositionExceptionRule foundExceptionRule = findByMail(exceptionRule.getAccountUuid(),
+				exceptionRule.getMail());
+		if (foundExceptionRule != null) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_PROPOSITION_EXCEPTION_RULE_ALREADY_EXISTS,
+					"An exception rule already exists for this mail " + exceptionRule.getMail()
+							+ " and this accountUuid " + exceptionRule.getAccountUuid());
+		}
 		return exceptionRuleMongoRepository.insert(exceptionRule);
 	}
 }
