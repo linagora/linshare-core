@@ -85,4 +85,9 @@ public class UploadPropositionExceptionRuleBusinessServiceImpl
 		}
 		return exceptionRuleMongoRepository.insert(exceptionRule);
 	}
+
+	@Override
+	public void delete(UploadPropositionExceptionRule exceptionRule) {
+		exceptionRuleMongoRepository.delete(exceptionRule);
+	}
 }

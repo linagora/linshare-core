@@ -41,6 +41,7 @@ import org.linagora.linshare.core.business.service.UploadPropositionExceptionRul
 import org.linagora.linshare.core.domain.constants.UploadPropositionExceptionRuleType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.UploadPropositionExceptionRuleResourceAccessControl;
 import org.linagora.linshare.core.service.UploadPropositionExceptionRuleService;
 import org.linagora.linshare.mongo.entities.UploadPropositionExceptionRule;
@@ -59,9 +60,13 @@ public class UploadPropositionExceptionRuleServiceImpl extends GenericServiceImp
 	@Override
 	public UploadPropositionExceptionRule find(Account authUser, Account actor, String uuid) {
 		preChecks(authUser, actor);
+		UploadPropositionExceptionRule found = exceptionRuleBusinessService.find(uuid);
+		if (found == null) {
+			throw new BusinessException(BusinessErrorCode.UPLOAD_PROPOSITION_EXCEPTION_RULE_NOT_FOUND, "Can not find upload proposition exception rule with uuid : " + uuid);
+		}
 		checkReadPermission(authUser, actor, UploadPropositionExceptionRule.class,
-				BusinessErrorCode.UPLOAD_PROPOSITION_EXCEPTION_RULE_CAN_NOT_READ, null);
-		return exceptionRuleBusinessService.find(uuid);
+				BusinessErrorCode.UPLOAD_PROPOSITION_EXCEPTION_RULE_CAN_NOT_READ, found);
+		return found;
 	}
 
 	@Override
@@ -85,4 +90,13 @@ public class UploadPropositionExceptionRuleServiceImpl extends GenericServiceImp
 		return exceptionRuleBusinessService.create(persistedExceptionRule);
 	}
 
+	@Override
+	public UploadPropositionExceptionRule delete(Account authUser, Account actor,
+			UploadPropositionExceptionRule exceptionRule) {
+		preChecks(authUser, actor);
+		checkDeletePermission(authUser, actor, UploadPropositionExceptionRule.class,
+				BusinessErrorCode.UPLOAD_PROPOSITION_CAN_NOT_DELETE, exceptionRule);
+		exceptionRuleBusinessService.delete(exceptionRule);
+		return exceptionRule;
+	}
 }

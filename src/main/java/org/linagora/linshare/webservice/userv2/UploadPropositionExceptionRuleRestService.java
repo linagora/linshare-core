@@ -46,4 +46,6 @@ public interface UploadPropositionExceptionRuleRestService {
 
 	UploadPropositionExceptionRule create(UploadPropositionExceptionRule exceptionRule);
 
+	UploadPropositionExceptionRule delete(UploadPropositionExceptionRule exceptionRule, String uuid);
+
 }

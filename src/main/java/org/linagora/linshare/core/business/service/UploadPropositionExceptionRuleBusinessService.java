@@ -51,4 +51,6 @@ public interface UploadPropositionExceptionRuleBusinessService {
 
 	UploadPropositionExceptionRule create(UploadPropositionExceptionRule exceptionRule);
 
+	void delete(UploadPropositionExceptionRule exceptionRule);
+
 }

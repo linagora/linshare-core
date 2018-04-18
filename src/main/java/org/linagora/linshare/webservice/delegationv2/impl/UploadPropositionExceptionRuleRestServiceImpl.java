@@ -36,6 +36,7 @@ package org.linagora.linshare.webservice.delegationv2.impl;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -109,5 +110,22 @@ public class UploadPropositionExceptionRuleRestServiceImpl implements UploadProp
 				@PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "Payload to create an exception rule", required = true) UploadPropositionExceptionRule exceptionRule) {
 		return exceptionRuleFacade.create(actorUuid, exceptionRule);
+	}
+
+	@Path("/{uuid : .*}")
+	@DELETE
+	@ApiOperation(value = "Delete an exceptionRule")
+	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to delete a Exception rule."),
+		@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+		@ApiResponse(code = 404, message = "UploadPropositionExceptionRule not found."),
+		@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public UploadPropositionExceptionRule delete(
+			@ApiParam(value = "The actor (user) uuid.", required = true)
+				@PathParam("actorUuid") String actorUuid,
+			@ApiParam(value = "Payload of the exception rule to delete") UploadPropositionExceptionRule exceptionRule,
+			@ApiParam(value = "optionnal uuid of the exceptionRule to delete")
+				@PathParam("uuid") String uuid) {
+		return exceptionRuleFacade.delete(actorUuid, uuid, exceptionRule);
 	}
 }

@@ -36,6 +36,7 @@ package org.linagora.linshare.core.facade.webservice.user;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.UploadPropositionExceptionRuleType;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.UploadPropositionExceptionRule;
 
 public interface UploadPropositionExceptionRuleFacade {
@@ -45,5 +46,8 @@ public interface UploadPropositionExceptionRuleFacade {
 	List<UploadPropositionExceptionRule> findByExceptionRuleType(String actorUuid, UploadPropositionExceptionRuleType exceptionRuleType);
 
 	UploadPropositionExceptionRule create(String actorUuid, UploadPropositionExceptionRule exceptionRule);
+
+	UploadPropositionExceptionRule delete(String actorUuid, String uuid, UploadPropositionExceptionRule exceptionRule)
+			throws BusinessException;
 
 }

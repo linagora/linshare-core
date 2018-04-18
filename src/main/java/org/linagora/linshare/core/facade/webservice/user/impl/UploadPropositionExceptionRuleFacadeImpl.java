@@ -38,10 +38,13 @@ import java.util.List;
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.UploadPropositionExceptionRuleType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.UploadPropositionExceptionRuleFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UploadPropositionExceptionRuleService;
 import org.linagora.linshare.mongo.entities.UploadPropositionExceptionRule;
+
+import com.google.common.base.Strings;
 
 public class UploadPropositionExceptionRuleFacadeImpl extends GenericFacadeImpl implements UploadPropositionExceptionRuleFacade {
 
@@ -80,5 +83,20 @@ public class UploadPropositionExceptionRuleFacadeImpl extends GenericFacadeImpl 
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
 		return exceptionRuleService.create(authUser, actor, exceptionRule);
+	}
+
+	@Override
+	public UploadPropositionExceptionRule delete(String actorUuid, String uuid,
+			UploadPropositionExceptionRule exceptionRule) throws BusinessException {
+		Account authUser = checkAuthentication();
+		Account actor = getActor(authUser, actorUuid);
+		if (!Strings.isNullOrEmpty(uuid)) {
+			exceptionRule = exceptionRuleService.find(authUser, actor, uuid);
+		} else {
+			Validate.notNull(exceptionRule, "ExceptionRule must be set");
+			Validate.notEmpty(exceptionRule.getUuid(), "ExceptionRule uuid must be set");
+			exceptionRule = exceptionRuleService.find(authUser, actor, exceptionRule.getUuid());
+		}
+		return exceptionRuleService.delete(authUser, actor, exceptionRule);
 	}
 }
