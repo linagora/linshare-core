@@ -52,8 +52,10 @@ public class StatisticBusinessServiceImpl implements StatisticBusinessService {
 	}
 
 	@Override
-	public List<Statistic> findBetweenTwoDates(Account account, AbstractDomain domain, AbstractDomain parentDomain, Date beginDate, Date endDate,
-			StatisticType statisticType) {
-		return repository.findBetweenTwoDates(account, domain, parentDomain, beginDate, endDate, statisticType);
+	public List<Statistic> findBetweenTwoDates(Account account,
+			AbstractDomain domain, AbstractDomain parentDomain, Date beginDate,
+			Date endDate, StatisticType statisticType) {
+		return repository.findBetweenTwoDates(account, domain, parentDomain,
+				beginDate, endDate, statisticType);
 	}
 }

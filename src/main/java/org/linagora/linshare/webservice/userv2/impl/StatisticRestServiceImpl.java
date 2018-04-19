@@ -33,9 +33,6 @@
  */
 package org.linagora.linshare.webservice.userv2.impl;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -45,7 +42,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.domain.constants.StatisticType;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.StatisticDto;
 import org.linagora.linshare.core.facade.webservice.user.StatisticFacade;
@@ -54,6 +50,7 @@ import org.linagora.linshare.webservice.userv2.StatisticRestService;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
@@ -61,9 +58,6 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Api(value = "/rest/user/v2/statistic", description = "Statistic service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
 public class StatisticRestServiceImpl extends WebserviceBase implements StatisticRestService {
 
-	private static final String STATISTIC_TYPE = "statisticType";
-	private static final String BEGIN_DATE = "beginDate";
-	private static final String END_DATE = "endDate";
 	private final StatisticFacade statisticFacade;
 
 	public StatisticRestServiceImpl(StatisticFacade statisticFacade) {
@@ -73,28 +67,22 @@ public class StatisticRestServiceImpl extends WebserviceBase implements Statisti
 	@Path("/")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+
 	@ApiOperation(value = "Get Statistic Between two dates of the authenticated account.", response = StatisticDto.class)
 	@ApiResponses({ @ApiResponse(code = 409, message = "Current logged in account does not have the delegation role."),
 			@ApiResponse(code = 404, message = "Actor not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error.") })
 	@Override
-	public List<StatisticDto> findBetweenTwoDates(@QueryParam(BEGIN_DATE) String beginDate,
-			@QueryParam(END_DATE) String endDate, @QueryParam(STATISTIC_TYPE) StatisticType statisticType)
-					throws BusinessException {
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-		Date bDate = null;
-		Date eDate = null;
-		try {
-			if(beginDate != null){
-				bDate = formatter.parse(beginDate);
-			}
-			if(endDate != null){
-				eDate = formatter.parse(endDate);
-			}
-			return statisticFacade.findAllByOwner(bDate, eDate, statisticType);
-		} catch (ParseException e) {
-			throw new BusinessException(BusinessErrorCode.BAD_REQUEST, "Bad request.");
-		}
+
+	public List<StatisticDto> findBetweenTwoDates(
+		    @ApiParam(value = "begin statistic creation date")
+			   @QueryParam("beginDate") String beginDate,
+		    @ApiParam(value = "end statistic creation date")
+			   @QueryParam("endDate") String endDate,
+		    @ApiParam(value = "statistic type")
+			   @QueryParam("statisticType") StatisticType statisticType)
+			throws BusinessException {
+		return statisticFacade.findBetweenTwoDates(null, beginDate, endDate, statisticType);
 	}
 }

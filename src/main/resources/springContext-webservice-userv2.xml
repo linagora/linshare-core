@@ -192,7 +192,7 @@
 			<ref bean="userv2UploadRequestRestService" />
 			<ref bean="userv2AuditLogEntryUserRestService" />
 <!-- 			Disable because it is fully tested. -->
-<!-- 			<ref bean="userv2StatisticRestService" /> -->
+ 			<ref bean="userv2StatisticRestService" /> 
 			<ref bean="userv2AccountQuotaRestService" />
 			<ref bean="userv2WelcomeMessagesRestService" />
 			<ref bean="userv2UploadRequestGroupRestService" /> 

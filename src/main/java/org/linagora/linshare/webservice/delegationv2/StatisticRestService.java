@@ -31,58 +31,17 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service.impl;
+package org.linagora.linshare.webservice.delegationv2;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.Validate;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-import org.linagora.linshare.core.business.service.StatisticBusinessService;
 import org.linagora.linshare.core.domain.constants.StatisticType;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Statistic;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.service.StatisticService;
+import org.linagora.linshare.core.facade.webservice.common.dto.StatisticDto;
 
-public class StatisticServiceImpl implements StatisticService {
+public interface StatisticRestService {
 
-	private StatisticBusinessService statisticBusinessService;
-
-	public StatisticServiceImpl(StatisticBusinessService statisticBusinessService) {
-		super();
-		this.statisticBusinessService = statisticBusinessService;
-	}
-
-	@Override
-	public List<Statistic> findBetweenTwoDates(Account authUser, Account actor, AbstractDomain domain, String beginDate,
-			String endDate, StatisticType statisticType) throws BusinessException {
-		Validate.notNull(authUser, "authUser must be set.");
-		Pair<Date, Date> dates = checkDatesInitialization(beginDate, endDate);
-		Date bDate = dates.getLeft();
-		Date eDate = dates.getRight();
-		return statisticBusinessService.findBetweenTwoDates(authUser, domain, null, bDate, eDate, statisticType);
-	}
-
-	public Pair<Date, Date> checkDatesInitialization(String beginDate, String endDate) {
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-		Date bDate = null;
-		Date eDate = null;
-		try {
-			if (beginDate != null) {
-				bDate = formatter.parse(beginDate);
-			}
-			if (endDate != null) {
-				eDate = formatter.parse(endDate);
-			}
-		} catch (ParseException e) {
-			throw new BusinessException(BusinessErrorCode.STATISTIC_DATE_PARSING_ERROR, "Can not parse the dates.");
-		}
-		return new ImmutablePair<>(bDate, eDate);
-	}
+	List<StatisticDto> findBetweenTwoDates(String actorUuid, String beginDate,
+			String endDate, StatisticType statisticType)
+			throws BusinessException;
 }

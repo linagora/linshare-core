@@ -43,6 +43,7 @@ import org.linagora.linshare.core.domain.entities.Statistic;
 
 public interface StatisticBusinessService {
 
-	List<Statistic> findBetweenTwoDates(Account account, AbstractDomain domain, AbstractDomain parentDomain,Date beginDate, Date endDate,
+	List<Statistic> findBetweenTwoDates(Account account, AbstractDomain domain,
+			AbstractDomain parentDomain, Date beginDate, Date endDate,
 			StatisticType statisticType);
 }

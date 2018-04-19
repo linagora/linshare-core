@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.facade.webservice.user;
 
-import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.StatisticType;
@@ -42,6 +41,6 @@ import org.linagora.linshare.core.facade.webservice.common.dto.StatisticDto;
 
 public interface StatisticFacade {
 
-	List<StatisticDto> findAllByOwner(Date beginDate, Date endDate,
+	List<StatisticDto> findBetweenTwoDates(String actorUuid, String beginDate, String endDate,
 			StatisticType statisticType) throws BusinessException;
 }

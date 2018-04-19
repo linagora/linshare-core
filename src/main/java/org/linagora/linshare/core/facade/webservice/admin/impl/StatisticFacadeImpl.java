@@ -33,15 +33,16 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
-import java.util.Date;
 import java.util.List;
 
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.constants.StatisticType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Statistic;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.StatisticFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.StatisticDto;
@@ -52,33 +53,52 @@ import org.linagora.linshare.core.service.StatisticService;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-public class StatisticFacadeImpl extends AdminGenericFacadeImpl implements StatisticFacade {
+public class StatisticFacadeImpl extends AdminGenericFacadeImpl implements
+		StatisticFacade {
 
 	private final StatisticService statisticService;
 	private final AbstractDomainService abstractDomainService;
 	private final AccountService accountService;
+	private final DomainPermissionBusinessService permissionService;
 
-	public StatisticFacadeImpl(AccountService accountService, StatisticService statisticService, AbstractDomainService abstractDomainService) {
+	public StatisticFacadeImpl(AccountService accountService,
+			DomainPermissionBusinessService permissionService,
+			StatisticService statisticService,
+			AbstractDomainService abstractDomainService) {
 		super(accountService);
 		this.statisticService = statisticService;
 		this.abstractDomainService = abstractDomainService;
 		this.accountService = accountService;
+		this.permissionService = permissionService;
 	}
 
 	@Override
-	public List<StatisticDto> findBetweenTwoDates(String accountUuid, String domainUuid, Date beginDate, Date endDate,
+	public List<StatisticDto> findBetweenTwoDates(String accountUuid,
+			String domainUuid, String beginDate, String endDate,
 			StatisticType statisticType) throws BusinessException {
 		User authUser = checkAuthentication(Role.ADMIN);
 		AbstractDomain domain = null;
 		// TODO FIXME Quota & Statistics
 		Account actor = null;
-		if(domainUuid != null){
+		if (domainUuid != null) {
 			domain = abstractDomainService.findById(domainUuid);
+			if (!permissionService.isAdminforThisDomain(authUser, domain)) {
+				throw new BusinessException(
+						BusinessErrorCode.STATISTIC_READ_DOMAIN_ERROR,
+						"You are not allowed to use this domain");
+			}
 		}
-		if(accountUuid != null){
+		if (accountUuid != null) {
 			actor = accountService.findByLsUuid(accountUuid);
+			if (!permissionService.isAdminForThisUser(authUser, (User) actor)) {
+				throw new BusinessException(
+						BusinessErrorCode.STATISTIC_READ_ACTOR_ERROR,
+						"You are not allowed to read these accounts statistics");
+			}
 		}
-		List<Statistic> listStat = statisticService.findBetweenTwoDates(authUser, actor, domain, beginDate, endDate, statisticType);
-		return ImmutableList.copyOf(Lists.transform(listStat, StatisticDto.toDto()));
+		List<Statistic> listStat = statisticService.findBetweenTwoDates(authUser, actor,
+				domain, beginDate, endDate, statisticType);
+		return ImmutableList.copyOf(Lists.transform(listStat,
+				StatisticDto.toDto()));
 	}
 }

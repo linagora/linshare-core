@@ -98,7 +98,9 @@ public class StatisticDto {
 		this.deleteOperaionSum = statistic.getDeleteOperationSum();
 		this.diffOperationSum = statistic.getDiffOperationSum();
 		this.OperationCount = statistic.getOperationCount();
-		this.account = new AccountDto(statistic.getAccount(), true);
+		if (statistic.getAccount() != null) {
+			this.account = new AccountDto(statistic.getAccount(), true);
+		}
 		this.statisticType = statistic.getStatisticType();
 	}
 
@@ -188,6 +190,14 @@ public class StatisticDto {
 
 	public void setAccount(AccountDto account) {
 		this.account = account;
+	}
+
+	public void setStatisticType(StatisticType statisticType) {
+		this.statisticType = statisticType;
+	}
+
+	public StatisticType getStatisticType() {
+		return statisticType;
 	}
 
 	public static Function<Statistic, StatisticDto> toDto(){

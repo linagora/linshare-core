@@ -57,6 +57,10 @@
 		<constructor-arg ref="taskExecutor" />
 		<constructor-arg value="${linshare.rest.files.size.validation}" />
 	</bean>
+	<bean id="delegationV2StatisticRestService"
+		class="org.linagora.linshare.webservice.delegationv2.impl.StatisticRestServiceImpl">
+		<constructor-arg ref="wsStatisticFacade" />
+	</bean>
 
 	<bean id="delegationUploadRequestRestService"
 		class="org.linagora.linshare.webservice.delegationv2.impl.UploadRequestRestServiceImpl">
@@ -110,6 +114,7 @@
 			<ref bean="delegationSharedSpaceRoleRestService" />
 			<ref bean="delegationSharedSpacePermissionRestService"/>
 			<ref bean="delegationSharedSpaceMemberRestService"/>
+			<ref bean="delegationV2StatisticRestService" /> 
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

@@ -168,6 +168,7 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="statisticService" />
 		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg ref="domainPermissionBusinessService" />
 	</bean>
 	<bean id="wsAdminDomainQuotaFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.DomainQuotaFacadeImpl">
 		<constructor-arg ref="accountService" />

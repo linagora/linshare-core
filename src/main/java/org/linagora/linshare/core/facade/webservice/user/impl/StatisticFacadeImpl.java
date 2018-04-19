@@ -33,10 +33,10 @@
  */
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.StatisticType;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Statistic;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -48,18 +48,22 @@ import org.linagora.linshare.core.service.StatisticService;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-public class StatisticFacadeImpl extends UserGenericFacadeImp implements StatisticFacade {
-
+public class StatisticFacadeImpl extends GenericFacadeImpl implements
+		StatisticFacade {
 	private StatisticService statisticService;
-	public StatisticFacadeImpl(AccountService accountService, StatisticService statisticService) {
+
+	public StatisticFacadeImpl(AccountService accountService,
+			StatisticService statisticService) {
 		super(accountService);
 		this.statisticService = statisticService;
 	}
-	@Override
-	public List<StatisticDto> findAllByOwner(Date beginDate, Date endDate, StatisticType statisticType)
-			throws BusinessException {
+
+	public List<StatisticDto> findBetweenTwoDates(String actorUuid, String beginDate, String endDate,
+			StatisticType statisticType) throws BusinessException {
 		User authUser = checkAuthentication();
-		List<Statistic> listStat = statisticService.findAllByOwner(authUser, authUser, null, beginDate, endDate, statisticType);
+		Account actor = getActor(authUser, actorUuid);
+		List<Statistic> listStat = statisticService.findBetweenTwoDates(authUser, actor, null, beginDate, endDate,
+				statisticType);
 		return ImmutableList.copyOf(Lists.transform(listStat, StatisticDto.toDto()));
 	}
 }

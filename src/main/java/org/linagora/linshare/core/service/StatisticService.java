@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.service;
 
-import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.StatisticType;
@@ -44,9 +43,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface StatisticService {
 
-	List<Statistic> findBetweenTwoDates(Account actor, Account owner, AbstractDomain domain, Date beginDate,
-			Date endDate, StatisticType statisticType) throws BusinessException;
-
-	List<Statistic> findAllByOwner(Account actor, Account owner, AbstractDomain domain, Date beginDate, Date endDate,
-			StatisticType statisticType) throws BusinessException;
+	List<Statistic> findBetweenTwoDates(Account actor, Account owner, AbstractDomain domain, String beginDate,
+			String endDate, StatisticType statisticType) throws BusinessException;
 }
