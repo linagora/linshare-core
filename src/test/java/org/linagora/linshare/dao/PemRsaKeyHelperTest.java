@@ -33,8 +33,11 @@
  */
 package org.linagora.linshare.dao;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.KeyPair;
@@ -50,12 +53,17 @@ import org.linagora.linshare.core.utils.PemRsaKeyHelper;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
+import com.google.common.io.ByteSource;
+import com.google.common.io.Files;
+
 @ContextConfiguration(locations = { "classpath:springContext-test.xml" })
 public class PemRsaKeyHelperTest extends AbstractJUnit4SpringContextTests {
 
 	protected String pemPrivateKeyPath = "src/test/resources/sshkeys/id_rsa";
 
 	protected String pemPublicKeyPath = "src/test/resources/sshkeys/id_rsa.pub";
+
+	protected String pemPEMPublicKeyPath = "src/test/resources/sshkeys/id_rsa.pub.pem";
 
 	@Before
 	public void setUp() throws NoSuchAlgorithmException {
@@ -85,9 +93,9 @@ public class PemRsaKeyHelperTest extends AbstractJUnit4SpringContextTests {
 	}
 
 	@Test
-	public void testLoadPublicKey() throws InvalidKeySpecException, IOException, NoSuchAlgorithmException {
+	public void testLoadSSHPublicKey() throws InvalidKeySpecException, IOException, NoSuchAlgorithmException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		RSAPublicKey key = PemRsaKeyHelper.loadPublicKey(pemPublicKeyPath);
+		RSAPublicKey key = PemRsaKeyHelper.loadSSHPublicKeyFromFile(pemPublicKeyPath);
 		logger.info("PublicExponent: " + key.getPublicExponent());
 		logger.info("Modulus: " + key.getModulus());
 		assertEquals(new BigInteger("65537"), key.getPublicExponent());
@@ -97,9 +105,18 @@ public class PemRsaKeyHelperTest extends AbstractJUnit4SpringContextTests {
 	}
 
 	@Test
+	public void testLoadPEMPublicKey() throws InvalidKeySpecException, IOException, NoSuchAlgorithmException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		ByteSource asByteSource = Files.asByteSource(new File(pemPEMPublicKeyPath));
+		RSAPublicKey pubKey = PemRsaKeyHelper.loadPEMpublicKey(asByteSource);
+		assertNotNull(pubKey);
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
 	public void testMissingPublicKey() throws InvalidKeySpecException, IOException, NoSuchAlgorithmException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		RSAPublicKey key = PemRsaKeyHelper.loadPublicKey(pemPublicKeyPath + "foo");
+		RSAPublicKey key = PemRsaKeyHelper.loadSSHPublicKeyFromFile(pemPublicKeyPath + "foo");
 		assertEquals(null, key);
 		logger.info(LinShareTestConstants.END_TEST);
 	}

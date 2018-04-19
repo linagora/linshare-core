@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.utils;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.security.KeyFactory;
@@ -49,6 +50,10 @@ import org.jclouds.crypto.Pems;
 import org.jclouds.ssh.SshKeys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Charsets;
+import com.google.common.io.ByteSource;
+import com.google.common.io.Files;
 
 public class PemRsaKeyHelper {
 
@@ -67,7 +72,7 @@ public class PemRsaKeyHelper {
 		return privatevKey;
 	}
 
-	public static RSAPublicKey loadPublicKey(String pemPublicKeyPath) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+	public static RSAPublicKey loadSSHPublicKeyFromFile(String pemPublicKeyPath) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
 		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 		String pem = loadPemKey(pemPublicKeyPath);
 		if (pem == null) {
@@ -80,9 +85,26 @@ public class PemRsaKeyHelper {
 		return publicKey;
 	}
 
+	public static RSAPublicKey loadPEMpublicKey(String pem) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+		ByteSource asByteSource = ByteSource.wrap(pem.getBytes(Charsets.UTF_8));
+		return loadPEMpublicKey(asByteSource);
+	}
+
+	public static RSAPublicKey loadPEMPublicKeyFromFile(String pemPEMPublicKeyPath) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+		ByteSource asByteSource = Files.asByteSource(new File(pemPEMPublicKeyPath));
+		return loadPEMpublicKey(asByteSource);
+	}
+
+	public static RSAPublicKey loadPEMpublicKey(ByteSource asByteSource) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+		KeySpec ks = Pems.publicKeySpec(asByteSource);
+		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+		RSAPublicKey pubKey = (RSAPublicKey) keyFactory.generatePublic(ks);
+		return pubKey;
+	}
+
 	public static KeyPair loadKeys(String pemPrivateKeyPath, String pemPublicKeyPath) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
 		RSAPrivateKey privatevKey = PemRsaKeyHelper.loadPrivateKey(pemPrivateKeyPath);
-		RSAPublicKey publicKey = PemRsaKeyHelper.loadPublicKey(pemPublicKeyPath);
+		RSAPublicKey publicKey = PemRsaKeyHelper.loadSSHPublicKeyFromFile(pemPublicKeyPath);
 		KeyPair kp = new KeyPair(publicKey, privatevKey);
 		return kp;
 	}

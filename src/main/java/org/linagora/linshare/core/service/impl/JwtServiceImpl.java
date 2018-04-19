@@ -84,7 +84,7 @@ public class JwtServiceImpl implements JwtService {
 		this.issuer = issuer;
 		this.maxLifeTime = maxLifeTime;
 		this.globalKey = PemRsaKeyHelper.loadKeys(pemPrivateKeyPath, pemPublicKeyPath);
-		this.extraPublicKey = PemRsaKeyHelper.loadPublicKey(pemExtraPublicKeyPath);
+		this.extraPublicKey = loadPublicKey(pemExtraPublicKeyPath);
 	}
 
 	@Override
@@ -137,5 +137,20 @@ public class JwtServiceImpl implements JwtService {
 
 	private Date getExpirationDate(Date fromDate) {
 		return new Date(fromDate.getTime() + expiration * 1000);
+	}
+
+	private RSAPublicKey loadPublicKey(String pemExtraPublicKeyPath) {
+		try {
+			return PemRsaKeyHelper.loadPEMPublicKeyFromFile(pemExtraPublicKeyPath);
+		} catch (IllegalArgumentException | InvalidKeySpecException | NoSuchAlgorithmException | IOException e) {
+			try {
+				logger.debug(e.getMessage(), e);
+				return PemRsaKeyHelper.loadSSHPublicKeyFromFile(pemExtraPublicKeyPath);
+			} catch (IllegalArgumentException | InvalidKeySpecException | NoSuchAlgorithmException | IOException e1) {
+				logger.error("JWT : Can not load the public key ", e);
+				logger.debug(e.getMessage(), e);
+				return null;
+			}
+		}
 	}
 }
