@@ -110,7 +110,7 @@ public class PublicKeyServiceImplTest extends AbstractTransactionalJUnit4SpringC
 	@Test
 	public void testCreatePublicKey() throws BusinessException {
 		logger.debug(LinShareTestConstants.BEGIN_TEST);
-		PublicKeyLs pubKey = initPublicKeys();
+		PublicKeyLs pubKey = initSSHPublicKeys();
 		pubKey.setIssuer("New application");
 		pubKey = publicKeyService.create(root, pubKey , domain);
 		Assert.assertNotNull(pubKey);
@@ -118,9 +118,20 @@ public class PublicKeyServiceImplTest extends AbstractTransactionalJUnit4SpringC
 	}
 
 	@Test
+	public void testCreatePEMPublicKey() throws BusinessException {
+		logger.debug(LinShareTestConstants.BEGIN_TEST);
+		PublicKeyLs pubKey = initPEMPublicKeys();
+		pubKey.setIssuer("app with pem public key");
+		pubKey = publicKeyService.create(root, pubKey , domain);
+		Assert.assertNotNull(pubKey);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+
+	@Test
 	public void testCreateWithInvalidPublicKey() {
 		logger.debug(LinShareTestConstants.BEGIN_TEST);
-		PublicKeyLs pubKey = initPublicKeys();
+		PublicKeyLs pubKey = initSSHPublicKeys();
 		pubKey.setIssuer("My app");
 		pubKey.setPublicKey("Invalid public key format");
 		try {
@@ -135,7 +146,7 @@ public class PublicKeyServiceImplTest extends AbstractTransactionalJUnit4SpringC
 	@Test
 	public void testFindPublicKeyByUuid() throws BusinessException {
 		logger.debug(LinShareTestConstants.BEGIN_TEST);
-		PublicKeyLs pubKey = initPublicKeys();
+		PublicKeyLs pubKey = initSSHPublicKeys();
 		pubKey.setIssuer("New Application");
 		pubKey = publicKeyService.create(root, pubKey , domain);
 		Assert.assertNotNull(pubKey);
@@ -149,7 +160,7 @@ public class PublicKeyServiceImplTest extends AbstractTransactionalJUnit4SpringC
 	public void testForbiddenFindPublicKeyByUuid() throws BusinessException {
 		logger.debug(LinShareTestConstants.BEGIN_TEST);
 		try {
-			PublicKeyLs pubKey = initPublicKeys();
+			PublicKeyLs pubKey = initSSHPublicKeys();
 			pubKey.setIssuer("application test");
 			pubKey = publicKeyService.create(root, pubKey , domain);
 			Assert.assertNotNull(pubKey);
@@ -165,10 +176,10 @@ public class PublicKeyServiceImplTest extends AbstractTransactionalJUnit4SpringC
 		logger.debug(LinShareTestConstants.BEGIN_TEST);
 		List<PublicKeyLs> oldPublicKeys = publicKeyService.findAll(root, domain);
 		int oldSize = oldPublicKeys.size();
-		PublicKeyLs pubKey = initPublicKeys();
+		PublicKeyLs pubKey = initSSHPublicKeys();
 		pubKey.setIssuer("Application");
 		pubKey = publicKeyService.create(root, pubKey , domain);
-		PublicKeyLs pubKey2 = initPublicKeys();
+		PublicKeyLs pubKey2 = initSSHPublicKeys();
 		pubKey2.setIssuer("General Application");
 		pubKey2 = publicKeyService.create(root, pubKey2 , domain);
 		Assert.assertNotNull(pubKey);
@@ -181,7 +192,7 @@ public class PublicKeyServiceImplTest extends AbstractTransactionalJUnit4SpringC
 	@Test
 	public void testDeletePublicKey() throws BusinessException {
 		logger.debug(LinShareTestConstants.BEGIN_TEST);
-		PublicKeyLs pubKey = initPublicKeys();
+		PublicKeyLs pubKey = initSSHPublicKeys();
 		pubKey.setIssuer("linshare");
 		pubKey = publicKeyService.create(root, pubKey , domain);
 		Assert.assertNotNull(pubKey);
@@ -199,7 +210,7 @@ public class PublicKeyServiceImplTest extends AbstractTransactionalJUnit4SpringC
 	@Test
 	public void testFindByIssuer() throws BusinessException {
 		logger.debug(LinShareTestConstants.BEGIN_TEST);
-		PublicKeyLs pubKey = initPublicKeys();
+		PublicKeyLs pubKey = initSSHPublicKeys();
 		pubKey.setIssuer("OpenPass");
 		pubKey = publicKeyService.create(root, pubKey , domain);
 		Assert.assertNotNull(pubKey);
@@ -209,12 +220,29 @@ public class PublicKeyServiceImplTest extends AbstractTransactionalJUnit4SpringC
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
-	private PublicKeyLs initPublicKeys() {
+	private PublicKeyLs initSSHPublicKeys() {
 		PublicKeyLs publicKeyLs = new PublicKeyLs();
 		publicKeyLs.setDomainUuid(domain.getUuid());
 		publicKeyLs.setFormat(PublicKeyFormat.SSH);
 		publicKeyLs.setPublicKey(
 				"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDG3WzeguQTjxpS9GpYnmLRyrRWZUV1BEXDjYR6uZSlTFcwVVfQnKigf0WOJsK2xIJ8dWbI8+75vDNJ1binQ38qaytAUyIDC7a89r+0T7R9MhWcxW1B7B3dkwaOM+HR1lGnMBxi7WTz86DxhRDdhKgCCsGtQex3ZDTyEhwlvV0qvj/HQhqCEuYSuok+C+eWrYbzlDK2y5CODPiV8vclwoVZ4pbq0UZcqt9WfldVdtGijaNqtCTKZXWtvDCC2rURyWsUfgYs0UHg1gvD+PA07/2GhcmFwv6Ap4LuliTbsWSQfZu2/05U5INmqWpOrm3oxXzppm1hs7UNGaWVYN82/XJp fred@fredarc");
+		return publicKeyLs;
+	}
+
+	private PublicKeyLs initPEMPublicKeys() {
+		PublicKeyLs publicKeyLs = new PublicKeyLs();
+		publicKeyLs.setDomainUuid(domain.getUuid());
+		publicKeyLs.setFormat(PublicKeyFormat.PEM);
+		publicKeyLs.setPublicKey("-----BEGIN PUBLIC KEY-----\n" +
+				"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtUIZXEawBZ6GEZlNcLEf\n" +
+				"yekEkd944Hn+kmEAG0awY0raGoKgm/Dj9e+aqWgF2xkiZfRWxYrpXkHU7mnqK3FJ\n" +
+				"GsoNZ2tk6pxFH4JkiGtocHYwX1lsYkNr95StX0zyV3a1psTeoTqaXxblqx7tNvc4\n" +
+				"oD2HW6NIMlgBL3yGFppMa2s6tk+LwsrPRrHDYVc0t6RrN0h6ZvkFCZAZ98INHD6K\n" +
+				"ZoD2wVauviYRObgeoLMv1MJ1NVZjUvdXlMEojzbpSgpmkttfmEtgO9oGlmyNpe8s\n" +
+				"7D7Pi+FUcHTMplaTU46EkVPGaNqGGgnbh+6ixboHJEr2W6BovXCk4lXuSdEXoNNu\n" +
+				"PwIDAQAB\n" +
+				"-----END PUBLIC KEY-----\n" +
+				"");
 		return publicKeyLs;
 	}
 }
