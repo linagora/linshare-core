@@ -51,4 +51,7 @@ public interface UploadPropositionExceptionRuleService {
 
 	UploadPropositionExceptionRule delete(Account authUser, Account actor,
 			UploadPropositionExceptionRule exceptionRule);
+
+	UploadPropositionExceptionRule update(Account authUser, Account actor,
+			UploadPropositionExceptionRule exceptionRule);
 }

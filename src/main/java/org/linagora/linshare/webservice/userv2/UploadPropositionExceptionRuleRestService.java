@@ -48,4 +48,6 @@ public interface UploadPropositionExceptionRuleRestService {
 
 	UploadPropositionExceptionRule delete(UploadPropositionExceptionRule exceptionRule, String uuid);
 
+	UploadPropositionExceptionRule update(UploadPropositionExceptionRule exceptionRule, String uuid);
+
 }

@@ -39,6 +39,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -119,5 +120,20 @@ public class UploadPropositionExceptionRuleRestServiceImpl implements UploadProp
 			@ApiParam(value = "optionnal uuid of the exceptionRule to delete")
 				@PathParam("uuid") String uuid) {
 		return exceptionRuleFacade.delete(null, uuid, exceptionRule);
+	}
+
+	@Path("/{uuid : .*}")
+	@PUT
+	@ApiOperation(value = "Update an exceptionRule")
+	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to update a Exception rule."),
+		@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+		@ApiResponse(code = 404, message = "UploadPropositionExceptionRule not found."),
+		@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public UploadPropositionExceptionRule update(
+			@ApiParam(value = "Payload of the exception rule to update", required = true) UploadPropositionExceptionRule exceptionRule,
+			@ApiParam(value = "optionnal uuid of the exceptionRule to update")
+				@PathParam("uuid") String uuid) {
+		return exceptionRuleFacade.update(null, uuid, exceptionRule);
 	}
 }

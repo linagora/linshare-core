@@ -76,6 +76,9 @@ public class UploadPropositionExceptionRuleResourceAccessControlImpl extends Abs
 	@Override
 	protected boolean hasUpdatePermission(Account authUser, Account actor, UploadPropositionExceptionRule entry,
 			Object... opt) {
+		if (entry == null || !actor.getLsUuid().equals(entry.getAccountUuid())) {
+			return false;
+		}
 		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_PROPOSITION_EXCEPTION_RULE_UPDATE);
 	}
 

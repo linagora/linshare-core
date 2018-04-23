@@ -50,4 +50,6 @@ public interface UploadPropositionExceptionRuleFacade {
 	UploadPropositionExceptionRule delete(String actorUuid, String uuid, UploadPropositionExceptionRule exceptionRule)
 			throws BusinessException;
 
+	UploadPropositionExceptionRule update(String actorUuid, String uuid, UploadPropositionExceptionRule exceptionRule);
+
 }

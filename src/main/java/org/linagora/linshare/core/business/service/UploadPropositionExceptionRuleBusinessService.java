@@ -53,4 +53,6 @@ public interface UploadPropositionExceptionRuleBusinessService {
 
 	void delete(UploadPropositionExceptionRule exceptionRule);
 
+	UploadPropositionExceptionRule update(UploadPropositionExceptionRule found, UploadPropositionExceptionRule exceptionRule);
+
 }

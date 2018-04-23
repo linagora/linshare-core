@@ -47,4 +47,6 @@ public interface UploadPropositionExceptionRuleRestService {
 	UploadPropositionExceptionRule create(String accountUuid, UploadPropositionExceptionRule exceptionRule);
 
 	UploadPropositionExceptionRule delete(String actorUuid, UploadPropositionExceptionRule exceptionRule, String uuid);
+
+	UploadPropositionExceptionRule update(String actorUuid, UploadPropositionExceptionRule exceptionRule, String uuid);
 }

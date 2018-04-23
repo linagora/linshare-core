@@ -94,9 +94,20 @@ public class UploadPropositionExceptionRuleServiceImpl extends GenericServiceImp
 	public UploadPropositionExceptionRule delete(Account authUser, Account actor,
 			UploadPropositionExceptionRule exceptionRule) {
 		preChecks(authUser, actor);
+		UploadPropositionExceptionRule found = find(authUser, actor, exceptionRule.getUuid());
 		checkDeletePermission(authUser, actor, UploadPropositionExceptionRule.class,
-				BusinessErrorCode.UPLOAD_PROPOSITION_CAN_NOT_DELETE, exceptionRule);
-		exceptionRuleBusinessService.delete(exceptionRule);
-		return exceptionRule;
+				BusinessErrorCode.UPLOAD_PROPOSITION_CAN_NOT_DELETE, found);
+		exceptionRuleBusinessService.delete(found);
+		return found;
+	}
+
+	@Override
+	public UploadPropositionExceptionRule update(Account authUser, Account actor,
+			UploadPropositionExceptionRule exceptionRule) {
+		preChecks(authUser, actor);
+		UploadPropositionExceptionRule found = find(authUser, actor, exceptionRule.getUuid());
+		checkUpdatePermission(authUser, actor, UploadPropositionExceptionRule.class,
+				BusinessErrorCode.UPLOAD_PROPOSITION_CAN_NOT_UPDATE, found);
+		return exceptionRuleBusinessService.update(found, exceptionRule);
 	}
 }

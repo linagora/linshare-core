@@ -78,7 +78,7 @@ public class UploadPropositionExceptionRuleFacadeImpl extends GenericFacadeImpl 
 		Validate.notNull(exceptionRule);
 		Validate.notEmpty(exceptionRule.getDomainUuid(), "DomainUuid cannot be empty");
 		Validate.notEmpty(exceptionRule.getMail(), "Mail cannot be empty");
-		Validate.notEmpty(exceptionRule.getAccountUuid(), "Mail cannot be empty");
+		Validate.notEmpty(exceptionRule.getAccountUuid(), "Account Uuid cannot be empty");
 		Validate.notNull(exceptionRule.getExceptionRuleType(), "ExceptionRule Type cannot be null");
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
@@ -97,6 +97,23 @@ public class UploadPropositionExceptionRuleFacadeImpl extends GenericFacadeImpl 
 			Validate.notEmpty(exceptionRule.getUuid(), "ExceptionRule uuid must be set");
 			exceptionRule = exceptionRuleService.find(authUser, actor, exceptionRule.getUuid());
 		}
+		
 		return exceptionRuleService.delete(authUser, actor, exceptionRule);
+	}
+
+	@Override
+	public UploadPropositionExceptionRule update(String actorUuid, String uuid, UploadPropositionExceptionRule exceptionRule) {
+		Validate.notNull(exceptionRule, "ExceptionRule must be set");
+		Validate.notEmpty(exceptionRule.getDomainUuid(), "DomainUuid cannot be empty");
+		Validate.notEmpty(exceptionRule.getMail(), "Mail cannot be empty");
+		Validate.notEmpty(exceptionRule.getAccountUuid(), "Account Uuid cannot be empty");
+		Validate.notNull(exceptionRule.getExceptionRuleType(), "ExceptionRule Type cannot be null");
+		Account authUser = checkAuthentication();
+		Account actor = getActor(authUser, actorUuid);
+		if (!Strings.isNullOrEmpty(uuid)) {
+			exceptionRule.setUuid(uuid);
+		}
+		Validate.notEmpty(exceptionRule.getUuid(), "ExceptionRule uuid must be set");
+		return exceptionRuleService.update(authUser, actor, exceptionRule);
 	}
 }

@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.UploadPropositionExceptionRuleBusinessService;
@@ -89,5 +90,15 @@ public class UploadPropositionExceptionRuleBusinessServiceImpl
 	@Override
 	public void delete(UploadPropositionExceptionRule exceptionRule) {
 		exceptionRuleMongoRepository.delete(exceptionRule);
+	}
+
+	@Override
+	public UploadPropositionExceptionRule update(UploadPropositionExceptionRule found, UploadPropositionExceptionRule exceptionRule) {
+		found.setAccountUuid(exceptionRule.getAccountUuid());
+		found.setDomainUuid(exceptionRule.getDomainUuid());
+		found.setExceptionRuleType(exceptionRule.getExceptionRuleType());
+		found.setMail(exceptionRule.getMail());
+		found.setModificationDate(new Date());
+		return exceptionRuleMongoRepository.save(found);
 	}
 }
