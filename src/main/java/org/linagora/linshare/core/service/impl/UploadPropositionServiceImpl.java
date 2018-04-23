@@ -167,10 +167,10 @@ public class UploadPropositionServiceImpl  extends GenericServiceImpl<Account, U
 			MailContainerWithRecipient mail = mailBuildingService.buildCreateUploadProposition((User) targetedAccount,
 					uploadProposition);
 			notifierService.sendNotification(mail);
+			UploadPropositionAuditLogEntry log = new UploadPropositionAuditLogEntry(authUser, targetedAccount,
+					LogAction.CREATE, AuditLogEntryType.UPLOAD_PROPOSITION, created.getUuid(), created);
+			logEntryService.insert(log);
 		}
-		UploadPropositionAuditLogEntry log = new UploadPropositionAuditLogEntry(authUser, targetedAccount,
-				LogAction.CREATE, AuditLogEntryType.UPLOAD_PROPOSITION, created.getUuid(), created);
-		logEntryService.insert(log);
 		return created;
 	}
 

@@ -118,7 +118,17 @@ public enum UpgradeTaskType {
 	 * We have to update our database
 	 *
 	 */
-	UPGRADE_2_1_ADD_ALL_NEW_MIME_TYPE;
+	UPGRADE_2_1_ADD_ALL_NEW_MIME_TYPE,
+
+	/*
+	 * We migrate all entities related to upload proposition filter into the mongo database
+	 */
+	UPGRADE_2_2_MIGRATE_UPLOAD_PROPOSITION_FILTER_TO_MONGO_DATABASE,
+	
+	/*
+	 * We migrate all entities related to upload proposition into the mongo database
+	 */
+	UPGRADE_2_2_MIGRATE_UPLOAD_PROPOSITION_TO_MONGO_DATABASE;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {
