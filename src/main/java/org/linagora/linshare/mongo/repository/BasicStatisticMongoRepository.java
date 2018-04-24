@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,51 +31,24 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.mongo.repository;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
-import org.linagora.linshare.core.domain.entities.LogEntry;
-import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.BasicStatisticType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.mongo.entities.BasicStatistic;
-import org.linagora.linshare.mongo.entities.EventNotification;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
-import org.linagora.linshare.view.tapestry.beans.LogCriteriaBean;
-import org.slf4j.spi.LocationAwareLogger;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 
-public interface LogEntryService {
+public interface BasicStatisticMongoRepository extends
+		MongoRepository<BasicStatistic, String> {
 
-	final public int INFO = LocationAwareLogger.INFO_INT;
-
-	final public int WARN = LocationAwareLogger.WARN_INT;
-
-	final public int ERROR = LocationAwareLogger.ERROR_INT;
-
-	public List<LogEntry> findByCriteria(User actor, LogCriteriaBean criteria);
-
-	AuditLogEntryUser insert(AuditLogEntryUser entry);
-
-	AuditLogEntryUser insert(AuditLogEntryUser entry, EventNotification event);
-
-	AuditLogEntryUser insert(int level, AuditLogEntryUser entry);
-
-	AuditLogEntryUser insert(int level, AuditLogEntryUser entry, EventNotification event);
-	
-	AuditLogEntryAdmin insert(AuditLogEntryAdmin entry);
-
-	List<AuditLogEntryUser> insert(List<AuditLogEntryUser> entities);
-
-	List<AuditLogEntryUser> insert(List<AuditLogEntryUser> entities, List<EventNotification> events);
-
-	List<AuditLogEntryUser> insert(int level, List<AuditLogEntryUser> entities);
-
-	List<AuditLogEntryUser> insert(int level, List<AuditLogEntryUser> entities, List<EventNotification> events);
-
-	EventNotification insertEvent(EventNotification event);
-	
-	AuditLogEntryAdmin insert(int level, AuditLogEntryAdmin entity);
-
-	BasicStatistic generateBasicStatistic(AuditLogEntry entity);
+	@Query("{ 'domainUuid' : ?0 ,'action' : {'$in' : ?1 }, 'creationDate' : { '$gt' : '?2' , '$lt' : '?3'}, 'resourceType' : { '$in' : ?4 } , 'type' : ?5 }")
+	Set<BasicStatistic> findBetweenTwoDates(String domainUuid,
+			List<LogAction> actions, Date beginDate, Date endDate,
+			List<AuditLogEntryType> resourceType, BasicStatisticType type);
 }

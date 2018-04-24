@@ -36,15 +36,20 @@ package org.linagora.linshare.core.service.impl;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.DomainBusinessService;
+import org.linagora.linshare.core.domain.constants.BasicStatisticType;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.LogEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.LogEntryRepository;
 import org.linagora.linshare.core.service.LogEntryService;
+import org.linagora.linshare.mongo.entities.BasicStatistic;
 import org.linagora.linshare.mongo.entities.EventNotification;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
+import org.linagora.linshare.mongo.repository.BasicStatisticMongoRepository;
 import org.linagora.linshare.mongo.repository.EventNotificationMongoRepository;
 import org.linagora.linshare.view.tapestry.beans.LogCriteriaBean;
 import org.slf4j.Logger;
@@ -66,10 +71,13 @@ public class LogEntryServiceImpl implements LogEntryService {
 
 	private final AuditAdminMongoRepository auditAdminMongoRepository;
 
+	private final BasicStatisticMongoRepository basicStatisticMongoRepository;
+
 	public LogEntryServiceImpl(final LogEntryRepository logEntryRepository,
 			final AuditUserMongoRepository auditUserMongoRepository,
 			final AuditAdminMongoRepository auditAdminMongoRepository,
 			final EventNotificationMongoRepository eventNotificationMongoRepository,
+			final BasicStatisticMongoRepository basicStatisticMongoRepository,
 			final DomainBusinessService domainBusinessService) {
 		super();
 		this.logEntryRepository = logEntryRepository;
@@ -77,6 +85,7 @@ public class LogEntryServiceImpl implements LogEntryService {
 		this.auditUserMongoRepository = auditUserMongoRepository;
 		this.auditAdminMongoRepository = auditAdminMongoRepository;
 		this.eventNotificationMongoRepository = eventNotificationMongoRepository;
+		this.basicStatisticMongoRepository = basicStatisticMongoRepository;
 	}
 
 	@Override
@@ -114,11 +123,14 @@ public class LogEntryServiceImpl implements LogEntryService {
 		} else {
 			throw new IllegalArgumentException("Unknown log level, is neither INFO, WARN nor ERROR");
 		}
+		BasicStatistic basicStatistic = generateBasicStatistic(entity);
+		basicStatisticMongoRepository.insert(basicStatistic);
 		return auditUserMongoRepository.insert(entity);
 	}
 
 	@Override
 	public List<AuditLogEntryUser> insert(int level, List<AuditLogEntryUser> entities) {
+		List<BasicStatistic> basicStatisticsList = Lists.newArrayList();
 		if (entities == null || entities.isEmpty()) {
 			throw new IllegalArgumentException("Entity must not be null or empty");
 		}
@@ -132,6 +144,11 @@ public class LogEntryServiceImpl implements LogEntryService {
 		} else {
 			throw new IllegalArgumentException("Unknown log level, is neither INFO, WARN nor ERROR");
 		}
+		entities.forEach(entity -> {
+			BasicStatistic basicStatistic = generateBasicStatistic(entity);
+			basicStatisticsList.add(basicStatistic);
+		});
+		basicStatisticMongoRepository.insert(basicStatisticsList);
 		return auditUserMongoRepository.insert(entities);
 	}
 
@@ -188,7 +205,19 @@ public class LogEntryServiceImpl implements LogEntryService {
 		} else {
 			throw new IllegalArgumentException("Unknown log level, is neither INFO, WARN nor ERROR");
 		}
+		BasicStatistic basicStatistic = generateBasicStatistic(entity);
+		basicStatisticMongoRepository.insert(basicStatistic);
 		return auditAdminMongoRepository.insert(entity);
 	}
 
+	public BasicStatistic generateBasicStatistic(AuditLogEntry entity) {
+		String parentDomainUuid = null;
+		AbstractDomain parentDomain = domainBusinessService.findById(
+				entity.getAuthUser().getDomain().getUuid()).getParentDomain();
+		if (parentDomain != null) {
+			parentDomainUuid = parentDomain.getUuid();
+		}
+		return new BasicStatistic(1L, parentDomainUuid, entity,
+				BasicStatisticType.ONESHOT);
+	}
 }

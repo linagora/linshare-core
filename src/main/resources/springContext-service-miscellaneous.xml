@@ -15,6 +15,7 @@
 		<constructor-arg ref="auditUserMongoRepository" />
 		<constructor-arg ref="auditAdminMongoRepository" />
 		<constructor-arg ref="eventNotificationMongoRepository" />
+		<constructor-arg ref="basicStatisticMongoRepository" />
 	</bean>
 
 	<bean id="antiSamyService"
