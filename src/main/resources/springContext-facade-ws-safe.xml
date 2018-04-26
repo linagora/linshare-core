@@ -12,7 +12,6 @@
 		class="org.linagora.linshare.core.facade.webservice.safe.impl.SafeDocumentFacadeImpl">
 		<constructor-arg ref="safeDetailService" />
 		<constructor-arg ref="accountService" />
-		<constructor-arg ref="userService" />
 	</bean>
 
 </beans>

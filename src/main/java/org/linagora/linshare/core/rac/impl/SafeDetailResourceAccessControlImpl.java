@@ -50,7 +50,15 @@ public class SafeDetailResourceAccessControlImpl
 
 	@Override
 	protected boolean hasReadPermission(Account actor, Account account, SafeDetail entry, Object... opt) {
-		return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.SAFE_DETAIL_GET);
+		if (actor.hasSafeRole()) {
+			return true;
+		} else if (actor.hasDelegationRole()) {
+			return hasPermission(actor, TechnicalAccountPermissionType.SAFE_DETAIL_GET);
+		} else if (actor.isInternal() || actor.isGuest()) {
+			return (account != null && actor.equals(account)
+					&& actor.getLsUuid().equals(entry.getAccountUuid()));
+		}
+		return false;
 	}
 
 	@Override

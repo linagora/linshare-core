@@ -73,11 +73,11 @@ public class SafeDetailRestServiceImpl extends WebserviceBase implements
 		SafeDetailRestService {
 
 	private final SafeDetailFacade safeDetailFacade;
-	
+
 	private String countryCode;
-	
+
 	private String controlKey;
-	
+
 	private String iufsc;
 
 	public SafeDetailRestServiceImpl(SafeDetailFacade safeDetailFacade,
