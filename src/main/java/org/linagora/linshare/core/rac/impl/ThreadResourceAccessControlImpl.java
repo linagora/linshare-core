@@ -74,17 +74,15 @@ public class ThreadResourceAccessControlImpl extends
 		Validate.notNull(authUser);
 		Validate.notNull(actor);
 		Validate.notNull(entry);
-
-		if (authUser.hasDelegationRole()) {
-			return hasPermission(authUser,
-					TechnicalAccountPermissionType.THREADS_GET);
+		if (authUser.hasAllRights()) {
+			return true;
 		}
-		// TODO: To be remove once real safe will be implemented in LinShare.
 		if (actor.hasSafeRole()) {
 			return true;
 		}
-		if (authUser.hasAllRights()) {
-			return true;
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser,
+					TechnicalAccountPermissionType.THREADS_GET);
 		}
 		return isUserMember(actor, entry);
 	}

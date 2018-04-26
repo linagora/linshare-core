@@ -52,11 +52,11 @@ public class SafeDetailResourceAccessControlImpl
 	protected boolean hasReadPermission(Account actor, Account account, SafeDetail entry, Object... opt) {
 		if (actor.hasSafeRole()) {
 			return true;
-		} else if (actor.isInternal() || actor.isGuest()) {
-			return (account != null && actor.equals(account) 
-					&& actor.getLsUuid().equals(entry.getAccountUuid()));
 		} else if (actor.hasDelegationRole()) {
 			return hasPermission(actor, TechnicalAccountPermissionType.SAFE_DETAIL_GET);
+		} else if (actor.isInternal() || actor.isGuest()) {
+			return (account != null && actor.equals(account)
+					&& actor.getLsUuid().equals(entry.getAccountUuid()));
 		}
 		return false;
 	}

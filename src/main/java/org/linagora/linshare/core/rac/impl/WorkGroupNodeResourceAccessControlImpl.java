@@ -203,13 +203,12 @@ public class WorkGroupNodeResourceAccessControlImpl
 		if (authUser.hasAllRights()) {
 			return true;
 		}
+		if (actor.hasSafeRole()) {
+			return true;
+		}
 		if (authUser.hasDelegationRole()) {
 			return hasPermission(authUser,
 					TechnicalAccountPermissionType.THREAD_ENTRIES_CREATE);
-		}
-		// TODO: To be remove once real safe will be implemented in LinShare.
-		if (actor.hasSafeRole()) {
-			return true;
 		}
 		if (opt.length > 0 && opt[0] instanceof WorkGroup) {
 			WorkgroupMember member = threadMemberRepository.findUserThreadMember((WorkGroup) opt[0],

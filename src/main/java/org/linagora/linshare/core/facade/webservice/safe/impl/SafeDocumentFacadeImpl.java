@@ -37,22 +37,20 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.delegation.impl.DelegationGenericFacadeImpl;
 import org.linagora.linshare.core.facade.webservice.safe.SafeDocumentFacade;
+import org.linagora.linshare.core.facade.webservice.user.impl.GenericFacadeImpl;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.SafeDetailService;
-import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.SafeDetail;
 
-public class SafeDocumentFacadeImpl extends DelegationGenericFacadeImpl 
+public class SafeDocumentFacadeImpl extends GenericFacadeImpl
 		implements SafeDocumentFacade {
 
 	private final SafeDetailService safeDetailService;
 
 	public SafeDocumentFacadeImpl(SafeDetailService safeDetailService,
-			final AccountService accountService,
-			final UserService userService) {
-		super(accountService, userService);
+			final AccountService accountService) {
+		super(accountService);
 		this.safeDetailService = safeDetailService;
 	}
 
