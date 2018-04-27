@@ -84,6 +84,9 @@ public class StatisticDto {
 	@ApiModelProperty(value = "StatisticType")
 	private StatisticType statisticType;
 
+	@ApiModelProperty(value = "StatisticDate")
+	private Date statisticDate;
+
 	public StatisticDto() {
 	}
 
@@ -102,6 +105,7 @@ public class StatisticDto {
 			this.account = new AccountDto(statistic.getAccount(), true);
 		}
 		this.statisticType = statistic.getStatisticType();
+		this.statisticDate = statistic.getStatisticDate();
 	}
 
 	public DomainLightDto getDomain() {
@@ -198,6 +202,14 @@ public class StatisticDto {
 
 	public StatisticType getStatisticType() {
 		return statisticType;
+	}
+
+	public Date getStatisticDate() {
+		return statisticDate;
+	}
+
+	public void setStatisticDate(Date statisticDate) {
+		this.statisticDate = statisticDate;
 	}
 
 	public static Function<Statistic, StatisticDto> toDto(){
