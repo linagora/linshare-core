@@ -1427,8 +1427,8 @@ msgFrom = Vous avez un message de
 name = {0} {1}
 password = Mot de passe
 subjectCustomAlt =de {0} {1}
-subjectPlural =  {0} {1} a partagé des fichiers avec vous
-subjectSingular =  {0} {1} vous a partagé un fichier avec vous
+subjectPlural =  {0} {1} vous a partagé des fichiers
+subjectSingular =  {0} {1} vous a partagé un fichier
 click = Cliquez sur ce
 link = lien', 'downloadBtn = Download
 downloadLink = Download link
@@ -1494,7 +1494,12 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
         <!--/* End of Greetings  */-->
         <!--/* Main email  message content*/-->
         <p>
-            <span data-th-utext="#{mainMsg(${owner.firstName},${owner.lastName},${workGroupName})}"></span>
+            <span data-th-utext="#{mainMsg(${owner.firstName},${owner.lastName})}"></span>
+            <span>
+              <a target="_blank" style="color:#1294dc;text-decoration:none;"  data-th-text="${workGroupName}" th:href="@{${workGroupLink}}" >
+               link
+             </a>
+            </span>
           <!--/* Activation link for initialisation of the guest account */-->
              </p> <!--/* End of Main email  message content*/-->
       </div><!--/* End of section-content*/-->
@@ -1519,11 +1524,11 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
 </div>
 </body>
 </html>', 'cd33405c-c617-11e7-be9c-c763a78e452c', now(), now(), true, 'workGroupCreationDateTitle = Date de création
-mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> vous a ajouté au groupe de travail : <b>{2}</b>
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> vous a ajouté au groupe de travail <br>
 subject = Vous avez été ajouté au groupe de travail {0}
 workGroupRight = Droit par défaut 
 workGroupNameTitle = Nom du groupe de travail', 'workGroupCreationDateTitle = Creation date
-mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> added you to the workgroup : <b>{2}</b>
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> added you to the workgroup <br>
 subject = You have been added to the workgroup {0}
 workGroupRight = Default right
 workGroupNameTitle = Workgroup Name');
@@ -2096,8 +2101,13 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
         <!--/* End of Greetings  */-->
         <!--/* Main email  message content*/-->
         <p>
-          <span data-th-utext="#{mainMsg(${owner.firstName},${owner.lastName},${workGroupName})}"></span>
-          <!--/* Activation link for initialisation of the guest account */-->
+          <span data-th-utext="#{mainMsg}"></span>
+          <span>
+               <a target="_blank" style="color:#1294dc;text-decoration:none;"  data-th-text="${workGroupName}" th:href="@{${workGroupLink}}" >
+                link </a>
+          </span>
+          <span data-th-utext="#{mainMsgNext(${owner.firstName},${owner.lastName})}"></span>
+
              </p> <!--/* End of Main email  message content*/-->
       </div><!--/* End of section-content*/-->
     </div><!--/* End of main-content container*/-->
@@ -2121,11 +2131,13 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
 </div>
 </body>
 </html>', 'a4ef5ac0-c619-11e7-886b-7bf95112b643', now(), now(), true, 'workGroupUpdatedDateTitle = Date de la mise à jour
-mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span> </b> a mis à jour vos droits sur le  groupe de travail <b>{2}</b>.
+mainMsg = Vos droits sur le groupe de travail
+mainMsgNext = ont été mis à jour par <b> {0} <span style="text-transform:uppercase">{1}</span> </b>.
 subject =  Vos droits sur le groupe de travail {0} ont été mis à jour
 workGroupRight =  Nouveau droit
 workGroupNameTitle = Nom du groupe de travail', 'workGroupUpdatedDateTitle = Updated date
-mainMsg = Your rights on the workgroup  <b>{2}</b> were updated by  <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
+mainMsg = Your rights on the workgroup 
+mainMsgNext= have been updated by  <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
 subject =  Your rights on the workgroup {0} was updated.
 workGroupRight = Current right
 workGroupNameTitle = Workgroup Name');
