@@ -209,6 +209,10 @@ public class WelcomeMessagesServiceImpl implements WelcomeMessagesService {
 		Validate.notEmpty(uuid, "Welcome message uudi must be set.");
 
 		WelcomeMessages wlcm = find(actor, uuid);
+		if (LinShareConstants.defaultWelcomeMessagesUuid.equals(uuid)) {
+			throw new BusinessException(BusinessErrorCode.WELCOME_MESSAGES_FORBIDDEN,
+					"Cannot delete default welcome message " + wlcm.getName());
+		}
 		reinitToDefault(wlcm);
 		businessService.delete(wlcm);
 		return wlcm;
