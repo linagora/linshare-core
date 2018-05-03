@@ -36,10 +36,9 @@ package org.linagora.linshare.core.domain.entities;
 import java.io.Serializable;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
-
-import org.linagora.linshare.core.utils.Base64Utils;
 
 public class Signature implements Serializable {
 	
@@ -102,7 +101,7 @@ public class Signature implements Serializable {
 		this.certIssuerDn = signerCertificate.getIssuerDN().toString();
 		this.certNotAfter = signerCertificate.getNotAfter();
 		try {
-			this.cert = Base64Utils.encodeBytes(signerCertificate.getEncoded());
+			this.cert = Base64.getEncoder().encodeToString(signerCertificate.getEncoded());
 		} catch (CertificateEncodingException e) {
 			e.printStackTrace();
 		}

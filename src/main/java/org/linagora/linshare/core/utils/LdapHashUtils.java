@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.utils;
 
+import java.util.Base64;
+
 import org.apache.commons.lang.ArrayUtils;
 
 
@@ -79,7 +81,7 @@ public class LdapHashUtils {
 	public static byte[] getSaltFromUserPassword(String userPassword) {
 		String pass = userPassword.substring(userPassword.indexOf("}")+1, userPassword.length());
 		
-		byte[] passBytes = Base64Utils.decode(pass);
+		byte[] passBytes = Base64.getDecoder().decode(pass);
 		byte[] salt = ArrayUtils.subarray(passBytes, passBytes.length-4, passBytes.length);
 		
 		return salt;

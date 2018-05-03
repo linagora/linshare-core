@@ -40,6 +40,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Base64;
 
 import org.apache.commons.lang.ArrayUtils;
 
@@ -110,10 +111,10 @@ public class HashUtils {
 		}
 
 		if (salt==null){
-			return Base64Utils.encodeBytes(res);
+			return Base64.getEncoder().encodeToString(res);
 		} else {		
 			res = ArrayUtils.addAll(res,salt);
-			return Base64Utils.encodeBytes(res);
+			return Base64.getEncoder().encodeToString(res);
 		}
 	}
 	
