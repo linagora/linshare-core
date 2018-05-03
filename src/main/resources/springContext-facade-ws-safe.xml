@@ -13,5 +13,4 @@
 		<constructor-arg ref="safeDetailService" />
 		<constructor-arg ref="accountService" />
 	</bean>
-
 </beans>
