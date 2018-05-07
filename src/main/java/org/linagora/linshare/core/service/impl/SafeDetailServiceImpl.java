@@ -54,17 +54,35 @@ public class SafeDetailServiceImpl extends GenericServiceImpl<Account, SafeDetai
 
 	protected LogEntryService logEntryService;
 
+	protected String countryCode;
+
+	protected String controlKey;
+
+	protected String iufsc;
+
 	public SafeDetailServiceImpl(SafeDetailMongoRepository safeDetailMongoRepository,
 			LogEntryService logEntryService,
-			SafeDetailResourceAccessControl rac) {
+			SafeDetailResourceAccessControl rac,
+			String countryCode,
+			String controlKey,
+			String iufsc) {
 		super(rac);
 		this.safeDetailMongoRepository = safeDetailMongoRepository;
 		this.logEntryService = logEntryService;
+		if (countryCode.length() != 2 || controlKey.length() != 2 || iufsc.length() != 8) {
+			throw new IllegalArgumentException("SafeDetail Invalid arguments");
+		}
+		this.countryCode = countryCode;
+		this.controlKey = controlKey;
+		this.iufsc = iufsc;
 	}
 
 	@Override
 	public SafeDetail create(Account authUser, Account actor, SafeDetail safeDetail) {
 		safeDetail.setAccountUuid(actor.getLsUuid());
+		safeDetail.setControlKey(controlKey);
+		safeDetail.setCountryCode(countryCode);
+		safeDetail.setIufsc(iufsc);
 		SafeDetail safeDetailToPersist = new SafeDetail(safeDetail);
 		checkCreatePermission(authUser, actor, SafeDetail.class,
 				BusinessErrorCode.SAFE_DETAIL_CAN_NOT_CREATE, safeDetailToPersist);

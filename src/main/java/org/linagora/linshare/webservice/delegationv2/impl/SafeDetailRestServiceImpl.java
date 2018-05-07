@@ -74,21 +74,9 @@ public class SafeDetailRestServiceImpl extends WebserviceBase implements
 
 	private final SafeDetailFacade safeDetailFacade;
 
-	private String countryCode;
-
-	private String controlKey;
-
-	private String iufsc;
-
-	public SafeDetailRestServiceImpl(SafeDetailFacade safeDetailFacade,
-			String countryCode,
-			String controlKey,
-			String iufssc) {
+	public SafeDetailRestServiceImpl(SafeDetailFacade safeDetailFacade) {
 		super();
 		this.safeDetailFacade = safeDetailFacade;
-		this.countryCode = countryCode;
-		this.controlKey = controlKey;
-		this.iufsc = iufssc;
 	}
 
 	@Path("/")
@@ -106,9 +94,6 @@ public class SafeDetailRestServiceImpl extends WebserviceBase implements
 			throws BusinessException {
 		Validate.notEmpty(actorUuid, "actor uuid must be set.");
 		Validate.notNull(safeDetail);
-		safeDetail.setControlKey(controlKey);
-		safeDetail.setCountryCode(countryCode);
-		safeDetail.setIufsc(iufsc);
 		return safeDetailFacade.create(actorUuid, safeDetail);
 	}
 
