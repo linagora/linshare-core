@@ -89,4 +89,13 @@
 		<constructor-arg ref="abstractDomainRepository" />
 		<constructor-arg ref="domainQuotaRepository" />
 	</bean>
+	<bean id="basicStatisticDailyBatch"
+		class="org.linagora.linshare.core.batches.impl.BasicStatisticDailyBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg ref="basicStatisticService" />
+		<constructor-arg ref="domainBusinessService" />
+		<constructor-arg ref="batchHistoryBusinessService" />
+		<constructor-arg ref="mongoTemplate" />
+	</bean>
 </beans>

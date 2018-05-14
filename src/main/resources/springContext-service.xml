@@ -365,6 +365,11 @@
 		<constructor-arg ref="auditLogEntryService"/>
 	</bean>
 
+	<bean id="basicStatisticService"
+		class="org.linagora.linshare.core.service.impl.BasicStatisticServiceImpl">
+		<constructor-arg ref="basicStatisticMongoRepository" />
+	</bean>
+	
 	<bean id="jwtService"
 		class="org.linagora.linshare.core.service.impl.JwtServiceImpl">
 		<constructor-arg value="${jwt.expiration}" />

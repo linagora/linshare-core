@@ -143,6 +143,10 @@
 	<bean id="adminAccountQuotaRestService" class="org.linagora.linshare.webservice.admin.impl.AccountQuotaRestServiceImpl">
 		<constructor-arg ref="wsAdminAccountQuotaFacade" />
 	</bean>
+	
+		<bean id="adminBasicStatisticRestService" class="org.linagora.linshare.webservice.admin.impl.BasicStatisticRestServiceImpl">
+		<constructor-arg ref="wsBasicStatisticFacade" />
+	</bean>
 
 	<bean id="adminPublicKeyRestService" class="org.linagora.linshare.webservice.admin.impl.PublicKeyRestServiceImpl">
 		<constructor-arg ref="wsAdminPublicKeyFacade" />
@@ -206,6 +210,7 @@
 			<ref bean="adminSharedSpaceNodeRestService"/>
 			<ref bean="adminSharedSpacePermissionRestService"/>
 			<ref bean="adminSharedSpaceRoleRestService"/>
+			<ref bean="adminBasicStatisticRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

@@ -31,26 +31,57 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.repository;
+package org.linagora.linshare.core.facade.webservice.admin.impl;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.BasicStatisticType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.admin.BasicStatisticAdminFacade;
+import org.linagora.linshare.core.service.AbstractDomainService;
+import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.BasicStatisticService;
 import org.linagora.linshare.mongo.entities.BasicStatistic;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
 
-public interface BasicStatisticMongoRepository extends MongoRepository<BasicStatistic, String> {
+public class BasicStatisticFacadeImpl extends AdminGenericFacadeImpl implements BasicStatisticAdminFacade {
 
-	@Query("{ 'domainUuid' : ?0 ,'action' : {'$in' : ?1 }, 'creationDate' : { '$gt' : '?2' , '$lt' : '?3'}, 'resourceType' : { '$in' : ?4 } , 'type' : ?5 }")
-	Set<BasicStatistic> findBetweenTwoDates(String domainUuid, List<LogAction> actions, Date beginDate, Date endDate,
-			List<AuditLogEntryType> resourceType, BasicStatisticType type);
+	protected BasicStatisticService statisticService;
 
-	@Query(value = "{ 'domainUuid' : ?0 ,'action' : ?1 , 'creationDate' : { '$gt' : '?2' , '$lt' : '?3'}, 'resourceType' : ?4  , 'type' : ?5 }}", count = true)
-	Long countBasicStatistic(String domainUuid, LogAction action, Date beginDate, Date endDate,
-			AuditLogEntryType resourceType, BasicStatisticType type);
+	protected AbstractDomainService abstractDomainService;
+
+	protected DomainPermissionBusinessService permissionService;
+
+	public BasicStatisticFacadeImpl(
+			AccountService accountService,
+			BasicStatisticService statisticService,
+			DomainPermissionBusinessService permissionService,
+			AbstractDomainService abstractDomainService) {
+		super(accountService);
+		this.statisticService = statisticService;
+		this.abstractDomainService = abstractDomainService;
+		this.permissionService = permissionService;
+	}
+
+	@Override
+	public Set<BasicStatistic> findBetweenTwoDates(String domainUuid, List<LogAction> logActions, String beginDate,
+			String endDate, List<AuditLogEntryType> resourceTypes, BasicStatisticType type) throws BusinessException {
+		User authUser = checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(domainUuid);
+		AbstractDomain domain = abstractDomainService.findById(domainUuid);
+		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
+			throw new BusinessException(BusinessErrorCode.STATISTIC_READ_DOMAIN_ERROR,
+					"You are not allowed to use this domain");
+		}
+		return statisticService.findBetweenTwoDates(authUser, domainUuid, logActions, beginDate, endDate, resourceTypes,
+				type);
+	}
 }

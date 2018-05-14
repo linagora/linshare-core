@@ -139,6 +139,7 @@
 			<map>
 				<entry key="batch">
 					<list value-type="org.linagora.linshare.core.batches.GenericBatch">
+						<ref bean="basicStatisticDailyBatch" />
 						<ref bean="statisticDailyUserBatch" />
 						<ref bean="statisticDailyThreadBatch" />
 						<ref bean="statisticDailyDomainBatch" />

@@ -193,6 +193,13 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="publicKeyService" />
 		<constructor-arg ref="abstractDomainService" />
+    </bean>
+	<bean id="wsBasicStatisticFacade"
+		class="org.linagora.linshare.core.facade.webservice.admin.impl.BasicStatisticFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="basicStatisticService" />
+		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg ref="domainPermissionBusinessService" />
 	</bean>
 	<bean id="wsAdminJwtLongTimeTokenFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.JwtLongTimeTokenFacadeImpl">
 		<constructor-arg ref="accountService" />

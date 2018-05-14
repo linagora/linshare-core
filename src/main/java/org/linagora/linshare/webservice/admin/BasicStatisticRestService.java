@@ -31,9 +31,9 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.repository;
 
-import java.util.Date;
+package org.linagora.linshare.webservice.admin;
+
 import java.util.List;
 import java.util.Set;
 
@@ -41,16 +41,9 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.BasicStatisticType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.mongo.entities.BasicStatistic;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
 
-public interface BasicStatisticMongoRepository extends MongoRepository<BasicStatistic, String> {
+public interface BasicStatisticRestService {
 
-	@Query("{ 'domainUuid' : ?0 ,'action' : {'$in' : ?1 }, 'creationDate' : { '$gt' : '?2' , '$lt' : '?3'}, 'resourceType' : { '$in' : ?4 } , 'type' : ?5 }")
-	Set<BasicStatistic> findBetweenTwoDates(String domainUuid, List<LogAction> actions, Date beginDate, Date endDate,
-			List<AuditLogEntryType> resourceType, BasicStatisticType type);
-
-	@Query(value = "{ 'domainUuid' : ?0 ,'action' : ?1 , 'creationDate' : { '$gt' : '?2' , '$lt' : '?3'}, 'resourceType' : ?4  , 'type' : ?5 }}", count = true)
-	Long countBasicStatistic(String domainUuid, LogAction action, Date beginDate, Date endDate,
-			AuditLogEntryType resourceType, BasicStatisticType type);
+	public Set<BasicStatistic> findBetweenTwoDates(String domainUuid, List<LogAction> logActions, String beginDate,
+			String endDate, List<AuditLogEntryType> resourceTypes, BasicStatisticType type);
 }

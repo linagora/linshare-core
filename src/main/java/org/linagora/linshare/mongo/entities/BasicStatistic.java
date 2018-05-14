@@ -88,6 +88,19 @@ public class BasicStatistic {
 		this.uuid = UUID.randomUUID().toString();
 	}
 
+	public BasicStatistic(Long value, String domainUuid, String parentDomainUuid, LogAction action, Date creationDate,
+			AuditLogEntryType resourceType, BasicStatisticType type) {
+		super();
+		this.value = value;
+		this.domainUuid = domainUuid;
+		this.parentDomainUuid = parentDomainUuid;
+		this.action = action;
+		this.creationDate = creationDate;
+		this.resourceType = resourceType;
+		this.type = type;
+		this.uuid = UUID.randomUUID().toString();
+	}
+
 	public String getId() {
 		return id;
 	}
