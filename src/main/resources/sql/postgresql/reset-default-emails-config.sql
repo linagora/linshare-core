@@ -445,7 +445,7 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
                   <span data-th-text="#{msgFrom}">You have a message from</span>
                   <b data-th-text="#{name(${requestOwner.firstName} , ${requestOwner.lastName})}">Peter Wilson</b> :
                   </span>
-                  <span id="message-content" data-th-text="${body}">
+                  <span id="message-content" data-th-text="${body}" style="white-space: pre-line;">
                   Hi Amy,<br>
                   As agreed,  could you send me the report. Feel free to contact me if need be. <br/>Best regards, Peter.
                   </span>
@@ -606,7 +606,7 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
                   <span data-th-text="#{msgFrom}">You have a message from</span>
                   <b data-th-text="#{name(${requestOwner.firstName}, ${requestOwner.lastName})}">Peter Wilson</b> :
                   </span>
-                  <span id="message-content" data-th-text="*{body}">
+                  <span id="message-content" data-th-text="*{body}" style="white-space: pre-line;">
                   Hi Amy,<br>
                   As agreed,  i am sending you the report as well as the related files. Feel free to contact me if need be. <br>Best regards, Peter.
                   </span>
@@ -712,7 +712,7 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
                         <span data-th-text="#{msgFrom}">You have a message from</span>
                         <b data-th-text="#{name(${requestOwner.firstName} , ${requestOwner.lastName})}">Peter Wilson</b> :
                         </span>
-                        <span id="message-content" data-th-text="*{message.value}">
+                        <span id="message-content" data-th-text="*{message.value}" style="white-space: pre-line;">
                         Hi Amy,<br>
                         As agreed,  i am sending you the report as well as the related files. Feel free to contact me if need be. <br>Best regards, Peter.
                         </span>
@@ -814,7 +814,7 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
         <span id="message-title">
           <span data-th-text="#{msgTitle}">You have a message from</span>
         </span>
-      <span id="message-content" data-th-text="*{body}">
+      <span id="message-content" data-th-text="*{body}" style="white-space: pre-line;">
           Hi design team,<br>
           Could you send me some screenshots of the app please. I am sending you a file depot link so that you can upload the files
           within my LinShare space.  <br>Best regards, Peter.
@@ -918,7 +918,7 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
         <span id="message-title">
           <span data-th-text="#{msgTitle}">You have a message from</span>
         </span>
-      <span id="message-content" data-th-text="*{body}">
+      <span id="message-content" data-th-text="*{body}" style="white-space: pre-line;">
           Hi design team,<br>
           Could you send me some screenshots of the app please. I am sending you a file depot link so that you can upload the files
           within my LinShare space.  <br>Best regards, Peter.
@@ -1044,7 +1044,7 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
           <span data-th-text="#{msgFrom}">You have a message from</span>
           <b data-th-text="#{name(${requestOwner.firstName} , ${requestOwner.lastName})}">Peter Wilson</b> :
         </span>
-        <span id="message-content" data-th-text="*{body}">
+        <span id="message-content" data-th-text="*{body}" style="white-space: pre-line;">
           Hi Amy,<br>
           As agreed,  i am sending you the report as well as the related files. Feel free to contact me if need be. <br>Best regards, Peter.
         </span>
@@ -1131,7 +1131,7 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
       <span id="message-title">
         <span data-th-text="#{msgTitle}">You have a message from</span>
       </span>
-      <span id="message-content" data-th-text="*{body}">
+      <span id="message-content" data-th-text="*{body}" style="white-space: pre-line;">
         Hi design,<br>
        Could you send me some screenshots of the app please. I am sending you a file depot link so that you can upload the files
         within my LinShare space.  <br>Best regards, Peter.
@@ -1217,7 +1217,7 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
       <span id="message-title">
         <span data-th-text="#{msgTitle}">You have a message from</span>
       </span>
-      <span id="message-content"  data-th-text="*{body}">
+      <span id="message-content"  data-th-text="*{body}" style="white-space: pre-line;">
           Hi design team,<br>
          Could you send me some screenshots of the app please. I am sending you a file depot link so that you can upload the files
           within my LinShare space.  <br>Best regards, Peter.
@@ -1349,7 +1349,7 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
           <span data-th-text="#{msgFrom}">You have a message from</span>
           <b data-th-text="#{name(${shareOwner.firstName} , ${shareOwner.lastName})}">Peter Wilson</b> :
         </span>name = {0} {1}
-        <span id="message-content" data-th-text="*{customMessage}">
+        <span id="message-content" data-th-text="*{customMessage}" style="white-space: pre-line;">
           Hi Amy,<br>
           As agreed,  i am sending you the report as well as the related files. Feel free to contact me if need be. <br>Best regards, Peter.
         </span>
@@ -1799,7 +1799,7 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
         <span id="message-title">
           <span data-th-text="#{msgFor}">You have a message from</span>
         </span>
-        <span id="message-content" data-th-text="*{customMessage}">
+        <span id="message-content" data-th-text="*{customMessage}" style="white-space: pre-line;">
           Hi Amy,<br>
           As agreed,  i am sending you the report as well as the related files. Feel free to contact me if need be. <br>Best regards, Peter.
         </span>
@@ -1877,7 +1877,7 @@ INSERT INTO mail_content (id, domain_abstract_id, description, visible, mail_con
         <span id="message-title">
           <span data-th-text="#{msgTitle}">You have a message from</span>
         </span>
-      <span id="message-content" data-th-text="*{body}">
+      <span id="message-content" data-th-text="*{body}" style="white-space: pre-line;">
           Hi design team,<br>
           Could you send me some screenshots of the app please. I am sending you a file depot link so that you can upload the files
           within my LinShare space.  <br>Best regards, Peter.
