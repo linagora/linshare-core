@@ -36,13 +36,12 @@ package org.linagora.linshare.core.rac.impl;
 
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
 import org.linagora.linshare.core.rac.UploadRequestResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 
 public class UploadRequestResourceAccessControlImpl
-		extends AbstractResourceAccessControlImpl<Account, Account, UploadRequest>
+		extends AbstractUploadRequestResourceAbstractControlImpl<Account, UploadRequest>
 		implements UploadRequestResourceAccessControl {
 
 	public UploadRequestResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService) {
@@ -51,57 +50,32 @@ public class UploadRequestResourceAccessControlImpl
 
 	@Override
 	protected boolean hasReadPermission(Account authUser, Account actor, UploadRequest entry, Object... opt) {
-		if (isEnable(authUser)) {
-			if (authUser.hasUploadRequestRole()) {
-				return true;
-			}
-			return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_GET);
-		}
-		return false;
+		return defaultUploadRequestPermissionCheck(authUser, actor, entry,
+				TechnicalAccountPermissionType.UPLOAD_REQUEST_GET);
 	}
 
 	@Override
 	protected boolean hasListPermission(Account authUser, Account actor, UploadRequest entry, Object... opt) {
-		if (isEnable(authUser)) {
-			if (authUser.hasUploadRequestRole()) {
-				return true;
-			}
-			return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_LIST);
-		}
-		return false;
+		return defaultPermissionCheck(authUser, actor, entry,
+				TechnicalAccountPermissionType.UPLOAD_REQUEST_LIST, false);
 	}
 
 	@Override
 	protected boolean hasDeletePermission(Account authUser, Account actor, UploadRequest entry, Object... opt) {
-		if (isEnable(authUser)) {
-			if (authUser.hasUploadRequestRole()) {
-				return true;
-			}
-			return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_DELETE);
-		}
-		return false;
+		return defaultPermissionCheck(authUser, actor, entry,
+				TechnicalAccountPermissionType.UPLOAD_REQUEST_DELETE);
 	}
 
 	@Override
 	protected boolean hasCreatePermission(Account authUser, Account actor, UploadRequest entry, Object... opt) {
-		if (isEnable(authUser)) {
-			if (authUser.hasUploadRequestRole()) {
-				return true;
-			}
-			return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_CREATE);
-		}
-		return false;
+		return defaultPermissionCheck(authUser, actor, entry,
+				TechnicalAccountPermissionType.UPLOAD_REQUEST_CREATE, false);
 	}
 
 	@Override
 	protected boolean hasUpdatePermission(Account authUser, Account actor, UploadRequest entry, Object... opt) {
-		if (isEnable(authUser)) {
-			if (authUser.hasUploadRequestRole()) {
-				return true;
-			}
-			return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_UPDATE);
-		}
-		return false;
+		return defaultUploadRequestPermissionCheck(authUser, actor, entry,
+				TechnicalAccountPermissionType.UPLOAD_REQUEST_UPDATE);
 	}
 
 	@Override
@@ -114,8 +88,8 @@ public class UploadRequestResourceAccessControlImpl
 		return entry.getUuid();
 	}
 
-	private boolean isEnable(Account authUser) {
-		Functionality func = functionalityService.getUploadRequestFunctionality(authUser.getDomain());
-		return func.getActivationPolicy().getStatus();
+	@Override
+	protected Account getOwner(UploadRequest entry, Object... opt) {
+		return entry.getUploadRequestGroup().getOwner();
 	}
 }

@@ -134,7 +134,7 @@ public class UploadRequestAddRecipientsTest extends AbstractTransactionalJUnit4S
 		List<ContactDto> recipients = Lists.newArrayList();
 		recipients.add(addToList("amy@mail.test"));
 		recipients.add(addToList("peter@mail.test"));
-		uploadRequestGroup = uploadRequestGroupService.addNewRecipients(jane, jane, uploadRequestGroup, recipients);
+		uploadRequestGroup = uploadRequestGroupService.addNewRecipients(john, john, uploadRequestGroup, recipients);
 		Assert.assertEquals(uploadRequestGroup.getUploadRequests().size(), 3);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -152,7 +152,7 @@ public class UploadRequestAddRecipientsTest extends AbstractTransactionalJUnit4S
 		List<ContactDto> recipients = Lists.newArrayList();
 		recipients.add(addToList("amy@mail.test"));
 		recipients.add(addToList("peter@mail.test"));
-		uploadRequestGroup = uploadRequestGroupService.addNewRecipients(john, john, uploadRequestGroup, recipients);
+		uploadRequestGroup = uploadRequestGroupService.addNewRecipients(jane, jane, uploadRequestGroup, recipients);
 		Set<UploadRequestUrl> requestUrls = uploadRequest.getUploadRequestURLs();
 		Assert.assertEquals(uploadRequestGroup.getUploadRequests().size(), 1);
 		Assert.assertEquals(requestUrls.size(), 2);

@@ -50,10 +50,6 @@
 	        <constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 
-	<bean name="statisticResourceAccessControl" class="org.linagora.linshare.core.rac.impl.StatisticResourceAccessControlImpl">
-		<constructor-arg ref="functionalityReadOnlyService" />
-	</bean>
-
 	<bean name="uploadRequestResourceAccessControl" class="org.linagora.linshare.core.rac.impl.UploadRequestResourceAccessControlImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
@@ -76,10 +72,7 @@
 	
 	<bean name="userPreferenceResourceAccessControl" class="org.linagora.linshare.core.rac.impl.UserPreferenceResourceAccessControlImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
-	</bean>
-
-	<bean name="auditLogEntryResourceAccessControl" class="org.linagora.linshare.core.rac.impl.AuditLogEntryResourceAccessControlImpl">
-		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="accountRepository" />
 	</bean>
 
 	<bean name="workGroupNodeResourceAccessControl" class="org.linagora.linshare.core.rac.impl.WorkGroupNodeResourceAccessControlImpl">
@@ -90,5 +83,6 @@
 
 	<bean name="safeDetailResourceAccessControl" class="org.linagora.linshare.core.rac.impl.SafeDetailResourceAccessControlImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="accountRepository" />
 	</bean>
 </beans>

@@ -46,4 +46,7 @@ public interface StatisticService {
 
 	List<Statistic> findBetweenTwoDates(Account actor, Account owner, AbstractDomain domain, Date beginDate,
 			Date endDate, StatisticType statisticType) throws BusinessException;
+
+	List<Statistic> findAllByOwner(Account actor, Account owner, AbstractDomain domain, Date beginDate, Date endDate,
+			StatisticType statisticType) throws BusinessException;
 }

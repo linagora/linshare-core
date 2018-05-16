@@ -78,9 +78,7 @@ public abstract class AbstractResourceAccessControlImpl<A, R, E> implements
 
 	protected abstract String getTargetedAccountRepresentation(A actor);
 
-	protected A getOwner(E entry, Object... opt) {
-		return null;
-	}
+	protected abstract A getOwner(E entry, Object... opt);
 
 	protected R getRecipient(E entry) {
 		return null;
@@ -160,6 +158,11 @@ public abstract class AbstractResourceAccessControlImpl<A, R, E> implements
 		return contains;
 	}
 
+	protected boolean defaultPermissionCheck(Account authUser, Account actor, E entry,
+			TechnicalAccountPermissionType permission) {
+		return defaultPermissionCheck(authUser, actor, entry, permission, true);
+	}
+
 	/**
 	 * Only the entry actor has all rights (create, read, list, update, delete,
 	 * download and thumb nail download.
@@ -168,14 +171,22 @@ public abstract class AbstractResourceAccessControlImpl<A, R, E> implements
 	 * @param actor
 	 * @param entry
 	 * @param permission
+	 * @param checkActorIsEntryOwner
 	 * @return boolean
 	 */
-	protected boolean defaultPermissionCheck(Account authUser, Account actor,
-			E entry, TechnicalAccountPermissionType permission) {
-		if (authUser.hasDelegationRole())
+	protected boolean defaultPermissionCheck(Account authUser, Account actor, E entry,
+			TechnicalAccountPermissionType permission, boolean checkActorIsEntryOwner) {
+		if (authUser.hasDelegationRole()) {
 			return hasPermission(authUser, permission);
-		if (authUser.isInternal() || authUser.isGuest())
-			return (actor != null && authUser.equals(actor));
+		}
+		if (authUser.isInternal() || authUser.isGuest()) {
+			if (actor != null && authUser.equals(actor)) {
+				if (checkActorIsEntryOwner) {
+					return authUser.equals(getOwner(entry));
+				}
+				return true;
+			}
+		}
 		return false;
 	}
 
@@ -249,4 +260,5 @@ public abstract class AbstractResourceAccessControlImpl<A, R, E> implements
 		checkPermission(authUser, actor, clazz, errCode, entry,
 				PermissionType.DELETE, logMessage, exceptionMessage, opt);
 	}
+
 }

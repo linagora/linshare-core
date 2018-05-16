@@ -155,4 +155,9 @@ public class ThreadMemberResourceAccessControlImpl extends
 	protected String getTargetedAccountRepresentation(Account targetedAccount) {
 		return targetedAccount.getAccountRepresentation();
 	}
+
+	@Override
+	protected Account getOwner(WorkgroupMember entry, Object... opt) {
+		return entry.getUser().getOwner();
+	}
 }

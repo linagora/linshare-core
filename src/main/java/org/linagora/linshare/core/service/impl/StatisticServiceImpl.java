@@ -41,27 +41,36 @@ import org.linagora.linshare.core.business.service.StatisticBusinessService;
 import org.linagora.linshare.core.domain.constants.StatisticType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.AccountStatistic;
 import org.linagora.linshare.core.domain.entities.Statistic;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.rac.StatisticResourceAccessControl;
 import org.linagora.linshare.core.service.StatisticService;
 
-public class StatisticServiceImpl extends GenericServiceImpl<Account, Statistic>implements StatisticService {
+public class StatisticServiceImpl implements StatisticService {
 
 	private StatisticBusinessService statisticBusinessService;
 
-	public StatisticServiceImpl(StatisticResourceAccessControl rac, StatisticBusinessService statisticBusinessService) {
-		super(rac);
+	public StatisticServiceImpl(StatisticBusinessService statisticBusinessService) {
+		super();
 		this.statisticBusinessService = statisticBusinessService;
 	}
 
 	@Override
-	public List<Statistic> findBetweenTwoDates(Account actor, Account owner, AbstractDomain domain, Date beginDate,
+	public List<Statistic> findBetweenTwoDates(Account authUser, Account actor, AbstractDomain domain, Date beginDate,
 			Date endDate, StatisticType statisticType) throws BusinessException {
-		Validate.notNull(actor, "Actor must be set.");
-		checkReadPermission(actor, owner, AccountStatistic.class, BusinessErrorCode.STATISTIC_FORBIDDEN, null, domain);
-		return statisticBusinessService.findBetweenTwoDates(owner, domain, null, beginDate, endDate, statisticType);
+		Validate.notNull(authUser, "Actor must be set.");
+		return statisticBusinessService.findBetweenTwoDates(actor, domain, null, beginDate, endDate, statisticType);
+	}
+
+	@Override
+	public List<Statistic> findAllByOwner(Account authUser, Account actor, AbstractDomain domain, Date beginDate,
+			Date endDate, StatisticType statisticType) throws BusinessException {
+		Validate.notNull(authUser, "AuthUser must be set.");
+		if (authUser != actor && (StatisticType.USER_DAILY_STAT.equals(statisticType)
+				|| StatisticType.USER_WEEKLY_STAT.equals(statisticType)
+				|| StatisticType.USER_MONTHLY_STAT.equals(statisticType))) {
+			throw new BusinessException(BusinessErrorCode.STATISTIC_FORBIDDEN, "Cannot get these statistics");
+		}
+		return findBetweenTwoDates(authUser, authUser, domain, beginDate, endDate, statisticType);
 	}
 }

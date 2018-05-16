@@ -111,7 +111,7 @@ public class ShareEntryResourceAccessControlImpl extends
 	protected boolean hasListPermission(Account authUser, Account actor,
 			ShareEntry entry, Object... opt) {
 		return defaultPermissionCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.SHARE_ENTRIES_LIST);
+				TechnicalAccountPermissionType.SHARE_ENTRIES_LIST, false);
 	}
 
 	@Override
@@ -141,7 +141,7 @@ public class ShareEntryResourceAccessControlImpl extends
 	protected boolean hasCreatePermission(Account authUser, Account actor,
 			ShareEntry entry, Object... opt) {
 		return defaultPermissionCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.SHARE_ENTRIES_CREATE);
+				TechnicalAccountPermissionType.SHARE_ENTRIES_CREATE, false);
 	}
 
 	@Override

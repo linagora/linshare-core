@@ -274,11 +274,9 @@
 		<constructor-arg ref="auditUserMongoRepository" />
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="abstractDomainService" />
-		<constructor-arg ref="auditLogEntryResourceAccessControl" />
 	</bean>
 	<bean id="statisticService" class="org.linagora.linshare.core.service.impl.StatisticServiceImpl">
 		<constructor-arg ref="statisticBusinessService" />
-		<constructor-arg ref="statisticResourceAccessControl" />
 	</bean>
 	<bean id="quotaService" class="org.linagora.linshare.core.service.impl.QuotaServiceImpl">
 		<constructor-arg ref="quotaResourceAccessControl" />

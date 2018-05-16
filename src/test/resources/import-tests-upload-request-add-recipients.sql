@@ -1,3 +1,6 @@
+-- ENABLE UPLOAD REQUEST FUNCTIONALITY
+UPDATE policy SET status = true where id = 63;
+
 -- Upload requests notifier.
 INSERT INTO upload_request_group (id, domain_abstract_id, account_id, subject, body, uuid, creation_date, modification_date, max_file, max_deposit_size, max_file_size, activation_date, notification_date, expiry_date, can_delete, can_close, can_edit_expiry_date, locale, secured, mail_message_id, enable_notification, restricted, status)
 	VALUES (7, 2, 10, 'subject of upload request 4', 'body of upload request 4', 'f4j31b58-ef45-11e5-b506-c348d7a7b65a', DATEADD(month, -2, now()), DATEADD(month, -2, now()), 3, 31457280, 10485760, DATEADD(month, -2, now()), DATEADD(month, -2, now()),DATEADD(month, 1, now()), true, true, true, 'fr', true, null,true,true, 'ENABLED');

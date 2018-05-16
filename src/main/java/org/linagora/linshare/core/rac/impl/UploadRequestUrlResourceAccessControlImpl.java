@@ -46,7 +46,7 @@ import org.linagora.linshare.core.rac.UploadRequestUrlResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 
 public class UploadRequestUrlResourceAccessControlImpl
-		extends AbstractResourceAccessControlImpl<Account, Account, UploadRequestUrl>
+		extends AbstractUploadRequestResourceAbstractControlImpl<Account, UploadRequestUrl>
 		implements UploadRequestUrlResourceAccessControl {
 
 	public UploadRequestUrlResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService) {
@@ -55,12 +55,12 @@ public class UploadRequestUrlResourceAccessControlImpl
 
 	@Override
 	protected boolean hasReadPermission(Account authUser, Account actor, UploadRequestUrl entry, Object... opt) {
-		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_URL_GET);
+		return defaultUploadRequestPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_URL_GET);
 	}
 
 	@Override
 	protected boolean hasListPermission(Account authUser, Account actor, UploadRequestUrl entry, Object... opt) {
-		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_URL_LIST);
+		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_URL_LIST, false);
 	}
 
 	@Override
@@ -84,7 +84,7 @@ public class UploadRequestUrlResourceAccessControlImpl
 
 	@Override
 	protected boolean hasCreatePermission(Account authUser, Account actor, UploadRequestUrl entry, Object... opt) {
-		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_URL_CREATE);
+		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_URL_CREATE, false);
 	}
 
 	@Override
@@ -100,6 +100,11 @@ public class UploadRequestUrlResourceAccessControlImpl
 	@Override
 	protected String getEntryRepresentation(UploadRequestUrl entry) {
 		return entry.getUuid();
+	}
+
+	@Override
+	protected Account getOwner(UploadRequestUrl entry, Object... opt) {
+		return entry.getUploadRequest().getUploadRequestGroup().getOwner();
 	}
 
 }

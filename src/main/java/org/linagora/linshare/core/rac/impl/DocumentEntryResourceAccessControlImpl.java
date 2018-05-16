@@ -60,52 +60,32 @@ public class DocumentEntryResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected Account getOwner(DocumentEntry entry, Object... opt) {
-		Account owner = entry.getEntryOwner();
-		return owner;
-	}
-
-	@Override
 	protected String getOwnerRepresentation(Account owner) {
 		return owner.getAccountRepresentation();
 	}
 
 	@Override
-	protected boolean hasReadPermission(Account authUser, Account actor,
-			DocumentEntry entry, Object... opt) {
-		if (authUser.hasUploadRequestRole()) {
-			return true;
-		}
+	protected boolean hasReadPermission(Account authUser, Account actor, DocumentEntry entry, Object... opt) {
 		return defaultPermissionCheck(authUser, actor, entry,
 				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_GET);
 	}
 
 	@Override
-	protected boolean hasListPermission(Account authUser, Account actor,
-			DocumentEntry entry, Object... opt) {
-		return defaultPermissionCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_LIST);
+	protected boolean hasListPermission(Account authUser, Account actor, DocumentEntry entry, Object... opt) {
+		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.DOCUMENT_ENTRIES_LIST,
+				false);
 	}
 
 	@Override
-	protected boolean hasDeletePermission(Account authUser, Account actor,
-			DocumentEntry entry, Object... opt) {
-		if (authUser.hasUploadRequestRole()) {
-			return true;
-		}
+	protected boolean hasDeletePermission(Account authUser, Account actor, DocumentEntry entry, Object... opt) {
 		return defaultPermissionCheck(authUser, actor, entry,
 				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_DELETE);
 	}
 
 	@Override
-	protected boolean hasCreatePermission(Account authUser, Account actor,
-			DocumentEntry entry, Object... opt) {
-		if (authUser.hasUploadRequestRole()) {
-			return true;
-		}
+	protected boolean hasCreatePermission(Account authUser, Account actor, DocumentEntry entry, Object... opt) {
 		if (authUser.hasDelegationRole()) {
-			return hasPermission(authUser,
-					TechnicalAccountPermissionType.DOCUMENT_ENTRIES_CREATE);
+			return hasPermission(authUser, TechnicalAccountPermissionType.DOCUMENT_ENTRIES_CREATE);
 		} else if (authUser.isInternal() || authUser.isGuest()) {
 			if (authUser.equals(actor)) {
 				if (((User) actor).getCanUpload()) {
@@ -117,22 +97,20 @@ public class DocumentEntryResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected boolean hasUpdatePermission(Account authUser, Account actor,
-			DocumentEntry entry, Object... opt) {
+	protected boolean hasUpdatePermission(Account authUser, Account actor, DocumentEntry entry, Object... opt) {
 		return defaultPermissionCheck(authUser, actor, entry,
 				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_UPDATE);
 	}
 
 	@Override
-	protected boolean hasDownloadPermission(Account authUser, Account actor,
-			DocumentEntry entry, Object... opt) {
+	protected boolean hasDownloadPermission(Account authUser, Account actor, DocumentEntry entry, Object... opt) {
 		return defaultPermissionCheck(authUser, actor, entry,
 				TechnicalAccountPermissionType.DOCUMENT_ENTRIES_DOWNLOAD);
 	}
 
 	@Override
-	protected boolean hasDownloadTumbnailPermission(Account authUser,
-			Account actor, DocumentEntry entry, Object... opt) {
+	protected boolean hasDownloadTumbnailPermission(Account authUser, Account actor, DocumentEntry entry,
+			Object... opt) {
 		return defaultPermissionCheck(
 				authUser,
 				actor,

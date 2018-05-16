@@ -561,7 +561,7 @@ public class UploadRequestGroupServiceImpl extends GenericServiceImpl<Account, U
 
 	public UploadRequestGroup update(User authUser, User actor, UploadRequestGroup uploadRequestGroup) {
 		checkUpdatePermission(authUser, actor, UploadRequestGroup.class, BusinessErrorCode.UPLOAD_REQUEST_FORBIDDEN,
-				null);
+				uploadRequestGroup);
 		UploadRequestGroupAuditLogEntry groupLog = new UploadRequestGroupAuditLogEntry(new AccountMto(authUser),
 				new AccountMto(actor), LogAction.UPDATE, AuditLogEntryType.UPLOAD_REQUEST_GROUP,
 				uploadRequestGroup.getUuid(), uploadRequestGroup);

@@ -42,6 +42,6 @@ import org.linagora.linshare.core.facade.webservice.common.dto.StatisticDto;
 
 public interface StatisticFacade {
 
-	List<StatisticDto> findBetweenTwoDates(Date beginDate, Date endDate,
+	List<StatisticDto> findAllByOwner(Date beginDate, Date endDate,
 			StatisticType statisticType) throws BusinessException;
 }

@@ -48,7 +48,6 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.rac.AuditLogEntryResourceAccessControl;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.UserService;
@@ -58,12 +57,17 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 import org.linagora.linshare.mongo.repository.AuditUserMongoRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditLogEntryUser> implements AuditLogEntryService {
+public class AuditLogEntryServiceImpl implements AuditLogEntryService {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(AuditLogEntryServiceImpl.class);
 
 	private static final String CREATION_DATE = "creationDate";
 
@@ -71,20 +75,13 @@ public class AuditLogEntryServiceImpl extends GenericServiceImpl<Account, AuditL
 
 	private AuditUserMongoRepository userMongoRepository;
 
-	private UserService userService;
-
-	private AbstractDomainService domainService;
-
 	public AuditLogEntryServiceImpl(AuditAdminMongoRepository auditMongoRepository,
 			AuditUserMongoRepository userMongoRepository,
 			UserService userService,
-			AbstractDomainService domainService,
-			final AuditLogEntryResourceAccessControl rac) {
-		super(rac);
+			AbstractDomainService domainService) {
+		super();
 		this.auditMongoRepository = auditMongoRepository;
 		this.userMongoRepository = userMongoRepository;
-		this.userService = userService;
-		this.domainService = domainService;
 	}
 
 	@Override

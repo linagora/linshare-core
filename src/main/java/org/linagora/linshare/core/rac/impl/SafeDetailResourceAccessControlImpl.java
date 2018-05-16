@@ -37,6 +37,7 @@ package org.linagora.linshare.core.rac.impl;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.rac.SafeDetailResourceAccessControl;
+import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.mongo.entities.SafeDetail;
 
@@ -44,8 +45,12 @@ public class SafeDetailResourceAccessControlImpl
 		extends AbstractResourceAccessControlImpl<Account, Account, SafeDetail>
 		implements SafeDetailResourceAccessControl {
 
-	public SafeDetailResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService) {
+	private AccountRepository<Account> accountRepository;
+
+	public SafeDetailResourceAccessControlImpl(AccountRepository<Account> accountRepository,
+			FunctionalityReadOnlyService functionalityService) {
 		super(functionalityService);
+		this.accountRepository = accountRepository;
 	}
 
 	@Override
@@ -63,7 +68,7 @@ public class SafeDetailResourceAccessControlImpl
 
 	@Override
 	protected boolean hasListPermission(Account actor, Account account, SafeDetail entry, Object... opt) {
-		return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.SAFE_DETAIL_LIST);
+		return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.SAFE_DETAIL_LIST, false);
 	}
 
 	@Override
@@ -73,7 +78,7 @@ public class SafeDetailResourceAccessControlImpl
 
 	@Override
 	protected boolean hasCreatePermission(Account actor, Account account, SafeDetail entry, Object... opt) {
-		return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.SAFE_DETAIL_CREATE);
+		return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.SAFE_DETAIL_CREATE, false);
 	}
 
 	@Override
@@ -89,5 +94,10 @@ public class SafeDetailResourceAccessControlImpl
 	@Override
 	protected String getEntryRepresentation(SafeDetail entry) {
 		return entry.getUuid();
+	}
+
+	@Override
+	protected Account getOwner(SafeDetail entry, Object... opt) {
+		return accountRepository.findByLsUuid(entry.getAccountUuid());
 	}
 }

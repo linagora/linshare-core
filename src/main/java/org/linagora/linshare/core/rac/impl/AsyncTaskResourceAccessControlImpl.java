@@ -60,7 +60,7 @@ public class AsyncTaskResourceAccessControlImpl extends
 	protected boolean hasListPermission(Account authUser, Account actor,
 			AsyncTask entry, Object... opt) {
 		return defaultPermissionCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.ASYNC_TASK_LIST);
+				TechnicalAccountPermissionType.ASYNC_TASK_LIST, false);
 	}
 
 	@Override
@@ -74,7 +74,7 @@ public class AsyncTaskResourceAccessControlImpl extends
 	protected boolean hasCreatePermission(Account authUser, Account actor,
 			AsyncTask entry, Object... opt) {
 		return defaultPermissionCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.ASYNC_TASK_CREATE);
+				TechnicalAccountPermissionType.ASYNC_TASK_CREATE, false);
 	}
 
 	@Override
@@ -92,5 +92,10 @@ public class AsyncTaskResourceAccessControlImpl extends
 	@Override
 	protected String getEntryRepresentation(AsyncTask entry) {
 		return entry.toString();
+	}
+
+	@Override
+	protected Account getOwner(AsyncTask entry, Object... opt) {
+		return entry.getOwner();
 	}
 }

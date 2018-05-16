@@ -53,7 +53,7 @@ public class ShareEntryGroupResourceAccessControlImpl extends AbstractResourceAc
 
 	@Override
 	protected boolean hasListPermission(Account actor, Account account, ShareEntryGroup entry, Object... opt) {
-		return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.SHARE_ENTRY_GROUPS_LIST);
+		return defaultPermissionCheck(actor, account, entry, TechnicalAccountPermissionType.SHARE_ENTRY_GROUPS_LIST, false);
 	}
 
 	@Override
@@ -83,5 +83,10 @@ public class ShareEntryGroupResourceAccessControlImpl extends AbstractResourceAc
 	@Override
 	protected String getEntryRepresentation(ShareEntryGroup entry) {
 		return entry.getUuid();
+	}
+
+	@Override
+	protected Account getOwner(ShareEntryGroup entry, Object... opt) {
+		return entry.getOwner();
 	}
 }

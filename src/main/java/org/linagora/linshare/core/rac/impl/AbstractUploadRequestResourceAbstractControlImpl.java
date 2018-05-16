@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2016-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009-2018. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -35,61 +35,46 @@ package org.linagora.linshare.core.rac.impl;
 
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.rac.AuditLogEntryResourceAccessControl;
+import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.rac.AbstractResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
-public class AuditLogEntryResourceAccessControlImpl
-		extends AbstractResourceAccessControlImpl<Account, Account, AuditLogEntryUser>
-		implements AuditLogEntryResourceAccessControl {
+public abstract class AbstractUploadRequestResourceAbstractControlImpl<R, E>
+		extends AbstractResourceAccessControlImpl<Account, R, E> implements AbstractResourceAccessControl<Account, R, E> {
 
-	public AuditLogEntryResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService) {
+	public AbstractUploadRequestResourceAbstractControlImpl(FunctionalityReadOnlyService functionalityService) {
 		super(functionalityService);
 	}
 
-	@Override
-	protected boolean hasReadPermission(Account authUser, Account actor, AuditLogEntryUser entry, Object... opt) {
-		if (authUser.hasSuperAdminRole()) {
-			return true;
-		} else {
-			if (authUser.hasDelegationRole()) {
-				if (authUser.getPermission().getAccountPermissions().contains(TechnicalAccountPermissionType.AUDIT_LIST)) {
-					return true;
-				}
-			} else if (authUser.equals(entry.getActor())) {
+	/**
+	 * Checking if the functionality Upload Request is enabled before checking the
+	 * default permissions
+	 * 
+	 * @param authUser
+	 * @param actor
+	 * @param entry
+	 * @param permission
+	 * @param checkActorIsEntryOwner
+	 * @return
+	 */
+	protected boolean defaultUploadRequestPermissionCheck(Account authUser, Account actor, E entry,
+			TechnicalAccountPermissionType permission, boolean checkActorIsEntryOwner) {
+		if (isEnabled(authUser)) {
+			if (authUser.hasUploadRequestRole()) {
 				return true;
 			}
+			return defaultPermissionCheck(authUser, actor, entry, permission, checkActorIsEntryOwner);
 		}
 		return false;
 	}
 
-	@Override
-	protected boolean hasListPermission(Account authUser, Account actor, AuditLogEntryUser entry, Object... opt) {
-		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.AUDIT_LIST);
+	protected boolean defaultUploadRequestPermissionCheck(Account authUser, Account actor, E entry,
+			TechnicalAccountPermissionType permission) {
+		return defaultUploadRequestPermissionCheck(authUser, actor, entry, permission, true);
 	}
 
-	@Override
-	protected boolean hasDeletePermission(Account authUser, Account actor, AuditLogEntryUser entry, Object... opt) {
-		return false;
-	}
-
-	@Override
-	protected boolean hasCreatePermission(Account authUser, Account actor, AuditLogEntryUser entry, Object... opt) {
-		return false;
-	}
-
-	@Override
-	protected boolean hasUpdatePermission(Account authUser, Account actor, AuditLogEntryUser entry, Object... opt) {
-		return false;
-	}
-
-	@Override
-	protected String getTargetedAccountRepresentation(Account targetedAccount) {
-		return targetedAccount.getAccountRepresentation();
-	}
-
-	@Override
-	protected String getEntryRepresentation(AuditLogEntryUser entry) {
-		return entry.getRepresentation(entry);
+	private boolean isEnabled(Account authUser) {
+		Functionality func = functionalityService.getUploadRequestFunctionality(authUser.getDomain());
+		return func.getActivationPolicy().getStatus();
 	}
 }

@@ -36,6 +36,7 @@ package org.linagora.linshare.core.rac.impl;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.rac.UserPreferenceResourceAccessControl;
+import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.mongo.entities.UserPreference;
 
@@ -43,8 +44,12 @@ public class UserPreferenceResourceAccessControlImpl
 		extends AbstractResourceAccessControlImpl<Account, Account, UserPreference>
 		implements UserPreferenceResourceAccessControl {
 
-	public UserPreferenceResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService) {
+	private AccountRepository<Account> accountRepository;
+
+	public UserPreferenceResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService,
+			AccountRepository<Account> accountRepository) {
 		super(functionalityService);
+		this.accountRepository = accountRepository;
 	}
 
 	@Override
@@ -85,6 +90,11 @@ public class UserPreferenceResourceAccessControlImpl
 	@Override
 	protected String getEntryRepresentation(UserPreference entry) {
 		return entry.toString();
+	}
+
+	@Override
+	protected Account getOwner(UserPreference entry, Object... opt) {
+		return accountRepository.findByLsUuid(entry.getAccountUuid());
 	}
 
 }

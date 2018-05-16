@@ -42,7 +42,7 @@ import org.linagora.linshare.core.rac.UploadRequestTemplateResourceAccessControl
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 
 public class UploadRequestTemplateResourceAccessControlImpl
-		extends AbstractResourceAccessControlImpl<Account, Account, UploadRequestTemplate>
+		extends AbstractUploadRequestResourceAbstractControlImpl<Account, UploadRequestTemplate>
 		implements UploadRequestTemplateResourceAccessControl {
 
 	public UploadRequestTemplateResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService) {
@@ -60,7 +60,7 @@ public class UploadRequestTemplateResourceAccessControlImpl
 	@Override
 	protected boolean hasListPermission(Account authUser, Account actor, UploadRequestTemplate entry, Object... opt) {
 		if (isEnable(authUser)) {
-			return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_TEMPLATE_LIST);
+			return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_TEMPLATE_LIST, false);
 		}
 		return false;
 	}
@@ -76,7 +76,7 @@ public class UploadRequestTemplateResourceAccessControlImpl
 	@Override
 	protected boolean hasCreatePermission(Account authUser, Account actor, UploadRequestTemplate entry, Object... opt) {
 		if (isEnable(authUser)) {
-			return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_TEMPLATE_CREATE);
+			return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_TEMPLATE_CREATE, false);
 		}
 		return false;
 	}
@@ -106,5 +106,10 @@ public class UploadRequestTemplateResourceAccessControlImpl
 			return templateFunc.getActivationPolicy().getStatus();
 		}
 		return false;
+	}
+
+	@Override
+	protected Account getOwner(UploadRequestTemplate entry, Object... opt) {
+		return entry.getOwner();
 	}
 }

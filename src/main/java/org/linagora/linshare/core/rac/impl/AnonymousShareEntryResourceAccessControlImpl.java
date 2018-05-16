@@ -82,7 +82,7 @@ public class AnonymousShareEntryResourceAccessControlImpl extends
 	protected boolean hasListPermission(Account authUser, Account actor,
 			AnonymousShareEntry entry, Object... opt) {
 		return defaultPermissionCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.ANONYMOUS_SHARE_ENTRIES_LIST);
+				TechnicalAccountPermissionType.ANONYMOUS_SHARE_ENTRIES_LIST, false);
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class AnonymousShareEntryResourceAccessControlImpl extends
 	protected boolean hasCreatePermission(Account authUser, Account actor,
 			AnonymousShareEntry entry, Object... opt) {
 		if (defaultPermissionCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.ANONYMOUS_SHARE_ENTRIES_CREATE)) {
+				TechnicalAccountPermissionType.ANONYMOUS_SHARE_ENTRIES_CREATE, false)) {
 			Functionality anonymousUrl = functionalityService.getAnonymousUrl(actor.getDomain());
 			if (anonymousUrl.getActivationPolicy().getStatus()) {
 				return true;

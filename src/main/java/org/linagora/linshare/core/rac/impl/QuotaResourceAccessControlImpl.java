@@ -187,4 +187,9 @@ public class QuotaResourceAccessControlImpl extends AbstractResourceAccessContro
 		}
 		return false;
 	}
+
+	@Override
+	protected Account getOwner(Quota entry, Object... opt) {
+		return entry.getAccount();
+	}
 }

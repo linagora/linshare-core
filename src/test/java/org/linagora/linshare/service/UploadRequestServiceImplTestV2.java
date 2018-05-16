@@ -134,7 +134,9 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 
 	private UploadRequest uploadRequest;
 
-	private UploadRequest ure;
+	private UploadRequest ureJohn;
+
+	private UploadRequest ureJane;
 
 	private User john;
 
@@ -184,7 +186,10 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 		uploadRequest.setActivationDate(new Date());
 		UploadRequestGroup uploadRequestGroup = uploadRequestGroupService.create(john, john, uploadRequest, Lists.newArrayList(yoda), "This is a subject",
 				"This is a body", false);
-		ure = uploadRequestGroup.getUploadRequests().iterator().next();
+		UploadRequestGroup uploadRequestGroupJane = uploadRequestGroupService.create(jane, jane, uploadRequest, Lists.newArrayList(yoda), "This is a subject",
+				"This is a body", false);
+		ureJohn = uploadRequestGroup.getUploadRequests().iterator().next();
+		ureJane = uploadRequestGroupJane.getUploadRequests().iterator().next();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -247,7 +252,7 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 	@Test
 	public void updateUploadRequest() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		UploadRequest uRequest = uploadRequestService.find(john, john, ure.getUuid());
+		UploadRequest uRequest = uploadRequestService.find(john, john, ureJohn.getUuid());
 		uRequest.setCanClose(false);
 		uRequest.setMaxDepositSize((long)150);
 		uRequest.setEnableNotification(true);
@@ -316,7 +321,7 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 		Assert.assertNotNull(actor);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
-		UploadRequestUrl requestUrl = ure.getUploadRequestURLs().iterator().next();
+		UploadRequestUrl requestUrl = ureJohn.getUploadRequestURLs().iterator().next();
 		Assert.assertNotNull(requestUrl);
 		UploadRequest uploadRequest = requestUrl.getUploadRequest();
 		Assert.assertNotNull(uploadRequest);
@@ -333,7 +338,7 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 		Assert.assertNotNull(actor);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
-		UploadRequestUrl requestUrl = ure.getUploadRequestURLs().iterator().next();
+		UploadRequestUrl requestUrl = ureJane.getUploadRequestURLs().iterator().next();
 		Assert.assertNotNull(requestUrl);
 		UploadRequest uploadRequest = requestUrl.getUploadRequest();
 		Assert.assertNotNull(uploadRequest);
@@ -361,7 +366,7 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 		Assert.assertNotNull(actor);
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
-		UploadRequestUrl requestUrl = ure.getUploadRequestURLs().iterator().next();
+		UploadRequestUrl requestUrl = ureJane.getUploadRequestURLs().iterator().next();
 		Assert.assertNotNull(requestUrl);
 		UploadRequest uploadRequest = requestUrl.getUploadRequest();
 		Assert.assertNotNull(uploadRequest);
@@ -369,7 +374,7 @@ public class UploadRequestServiceImplTestV2 extends AbstractTransactionalJUnit4S
 				requestUrl);
 		Assert.assertTrue(uploadRequestEntryRepository.findByUuid(uploadRequestEntry.getUuid()) != null);
 
-		uploadRequestService.updateStatus(actor, actor, ure.getUuid(), UploadRequestStatus.CLOSED, false);
+		uploadRequestService.updateStatus(actor, actor, ureJane.getUuid(), UploadRequestStatus.CLOSED, false);
 		DocumentEntry documentEntry = uploadRequestEntryService.copy(actor, actor, uploadRequestEntry);
 		Assert.assertNotNull(documentEntry);
 		Assert.assertNotNull(uploadRequestEntry.getDocumentEntry());

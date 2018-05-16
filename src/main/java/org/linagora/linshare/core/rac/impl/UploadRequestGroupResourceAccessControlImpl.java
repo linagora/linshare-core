@@ -41,7 +41,7 @@ import org.linagora.linshare.core.rac.UploadRequestGroupResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 
 public class UploadRequestGroupResourceAccessControlImpl
-		extends AbstractResourceAccessControlImpl<Account, Account, UploadRequestGroup>
+		extends AbstractUploadRequestResourceAbstractControlImpl<Account, UploadRequestGroup>
 		implements UploadRequestGroupResourceAccessControl {
 
 	public UploadRequestGroupResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService) {
@@ -55,7 +55,8 @@ public class UploadRequestGroupResourceAccessControlImpl
 
 	@Override
 	protected boolean hasListPermission(Account authUser, Account actor, UploadRequestGroup entry, Object... opt) {
-		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_LIST);
+		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_LIST,
+				false);
 	}
 
 	@Override
@@ -65,7 +66,8 @@ public class UploadRequestGroupResourceAccessControlImpl
 
 	@Override
 	protected boolean hasCreatePermission(Account authUser, Account actor, UploadRequestGroup entry, Object... opt) {
-		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_CREATE);
+		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_REQUEST_CREATE,
+				false);
 	}
 
 	@Override
@@ -81,5 +83,10 @@ public class UploadRequestGroupResourceAccessControlImpl
 	@Override
 	protected String getEntryRepresentation(UploadRequestGroup entry) {
 		return entry.getUuid();
+	}
+
+	@Override
+	protected Account getOwner(UploadRequestGroup entry, Object... opt) {
+		return entry.getOwner();
 	}
 }

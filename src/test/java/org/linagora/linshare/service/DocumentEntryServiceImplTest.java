@@ -33,6 +33,9 @@
  */
 package org.linagora.linshare.service;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -114,6 +117,7 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 	@Autowired
 	private DocumentEntryService documentEntryService;
 
+	private User john;
 
 	private User jane;
 	private final InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
@@ -124,6 +128,7 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 
 	private LoadingServiceTestDatas datas;
 
+	private static final String EXCEPTION_GET_MESSAGE = "You are not authorized to get this entry.";
 	@Before
 	public void setUp() throws Exception {
 		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
@@ -131,6 +136,7 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
+		john = datas.getUser1();
 		jane = datas.getUser2();
 		createFunctionalities();
 		logger.debug(LinShareTestConstants.END_SETUP);
@@ -217,17 +223,80 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 	}
 
 	@Test
-	public void testDeleteDocumentEntries()
-			throws BusinessException, IOException {
+	public void testDeleteDocumentEntries() throws BusinessException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Account intruder = john;
 		Account actor = jane;
 		File tempFile = File.createTempFile("linshare-test-", ".tmp");
 		IOUtils.transferTo(stream, tempFile);
 		aDocumentEntry = documentEntryService.create(actor, actor, tempFile, fileName, comment, false, null);
 		aDocumentEntry.getDocument().setSignatures(new HashSet<Signature>());
-		documentEntryService.delete(actor, actor, aDocumentEntry.getUuid());
-		Assert.assertTrue(documentEntryRepository
-				.findById(aDocumentEntry.getUuid()) == null);
+		try {
+			documentEntryService.delete(intruder, intruder, aDocumentEntry.getUuid());
+			assertTrue("The intruder shouldn't have access to this resource. An exception must be thrown", false);
+		} catch (Exception e) {
+			assertTrue("Wrong exception is thrown : " + e.getMessage(), EXCEPTION_GET_MESSAGE.equals(e.getMessage()));
+		}
+		try {
+			documentEntryService.delete(actor, actor, aDocumentEntry.getUuid());
+			Assert.assertTrue(documentEntryRepository.findById(aDocumentEntry.getUuid()) == null);
+		} catch (BusinessException e) {
+			assertFalse(
+					"The user should have access to this resource. This exception must not be thrown " + e.getMessage(),
+					EXCEPTION_GET_MESSAGE.equals(e.getMessage()));
+		}
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testFindDocumentEntries() throws BusinessException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Account intruder = john;
+		Account actor = jane;
+		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		IOUtils.transferTo(stream, tempFile);
+		aDocumentEntry = documentEntryService.create(actor, actor, tempFile, fileName, comment, false, null);
+		try {
+			aDocumentEntry = documentEntryService.find(intruder, intruder, aDocumentEntry.getUuid());
+			assertTrue("The intruder shouldn't have access to this resource. An exception must be thrown", false);
+		} catch (Exception e) {
+			assertTrue("Wrong exception is thrown", EXCEPTION_GET_MESSAGE.equals(e.getMessage()));
+		}
+		try {
+			aDocumentEntry = documentEntryService.find(actor, actor, aDocumentEntry.getUuid());
+			assertTrue("The actor should have access to this resource.", aDocumentEntry != null);
+		} catch (BusinessException e) {
+			assertFalse(
+					"The user should have access to this resource. This exception must not be thrown " + e.getMessage(),
+					EXCEPTION_GET_MESSAGE.equals(e.getMessage()));
+		}
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testUpdateDocumentEntries() throws BusinessException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Account intruder = john;
+		Account actor = jane;
+		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		IOUtils.transferTo(stream, tempFile);
+		aDocumentEntry = documentEntryService.create(actor, actor, tempFile, fileName, comment, false, null);
+		aDocumentEntry.getDocument().setSignatures(new HashSet<Signature>());
+		try {
+			documentEntryService.update(intruder, intruder, aDocumentEntry.getUuid(), tempFile, "new-file-name.txt");
+			assertTrue("The intruder shouldn't have access to this resource. An exception must be thrown", false);
+		} catch (Exception e) {
+			assertTrue("Wrong exception is thrown : " + e.getMessage(), EXCEPTION_GET_MESSAGE.equals(e.getMessage()));
+		}
+		try {
+			documentEntryService.update(actor, actor, aDocumentEntry.getUuid(), tempFile, "New file Name");
+			Assert.assertTrue(
+					"New file Name".equals(documentEntryRepository.findById(aDocumentEntry.getUuid()).getName()));
+		} catch (BusinessException e) {
+			assertFalse(
+					"The user should have access to this resource. This exception must not be thrown " + e.getMessage(),
+					EXCEPTION_GET_MESSAGE.equals(e.getMessage()));
+		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }
