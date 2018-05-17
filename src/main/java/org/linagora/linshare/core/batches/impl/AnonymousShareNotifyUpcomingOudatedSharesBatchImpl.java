@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,42 +31,36 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+
 package org.linagora.linshare.core.batches.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import org.linagora.linshare.core.batches.ShareManagementBatch;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
-import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
+import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.job.quartz.BatchResultContext;
+import org.linagora.linshare.core.job.quartz.BatchRunContext;
+import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.ShareWarnRecipientBeforeExpiryEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.AnonymousShareEntryRepository;
-import org.linagora.linshare.core.repository.ShareEntryRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.NotifierService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-/** This class provides shares management methods.
- */
-public class ShareManagementBatchImpl implements ShareManagementBatch {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(ShareManagementBatchImpl.class);
-
-	private final ShareEntryRepository shareEntryRepository;
+public class AnonymousShareNotifyUpcomingOudatedSharesBatchImpl extends GenericBatchImpl {
 
 	private final AnonymousShareEntryRepository anonymousShareEntryRepository;
-
-	private final AccountRepository<Account> accountRepository;
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
@@ -74,76 +68,65 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 
 	private final MailBuildingService mailBuildingService;
 
-	public ShareManagementBatchImpl(ShareEntryRepository shareEntryRepository,
+	public AnonymousShareNotifyUpcomingOudatedSharesBatchImpl(AccountRepository<Account> accountRepository,
 			AnonymousShareEntryRepository anonymousShareEntryRepository,
-			AccountRepository<Account> accountRepository,
 			FunctionalityReadOnlyService functionalityReadOnlyService,
 			NotifierService notifierService,
 			MailBuildingService mailBuildingService) {
-		super();
-		this.shareEntryRepository = shareEntryRepository;
+		super(accountRepository);
 		this.anonymousShareEntryRepository = anonymousShareEntryRepository;
-		this.accountRepository = accountRepository;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.notifierService = notifierService;
 		this.mailBuildingService = mailBuildingService;
 	}
 
 	@Override
-	public void notifyUpcomingOutdatedShares() {
-
+	public List<String> getAll(BatchRunContext batchRunContext) {
 		SystemAccount systemAccount = accountRepository.getBatchSystemAccount();
-
 		StringValueFunctionality notificationBeforeExpirationFunctionality = functionalityReadOnlyService
-				.getShareNotificationBeforeExpirationFunctionality(systemAccount
-						.getDomain());
-
-		List<Integer> datesForNotifyUpcomingOutdatedShares = new ArrayList<Integer>();
-
-		String[] dates = notificationBeforeExpirationFunctionality.getValue()
-				.split(",");
+				.getShareNotificationBeforeExpirationFunctionality(systemAccount.getDomain());
+		String[] dates = notificationBeforeExpirationFunctionality.getValue().split(",");
+		List<String> shares = new ArrayList<String>();
 		for (String date : dates) {
-			datesForNotifyUpcomingOutdatedShares.add(Integer.parseInt(date));
+			shares.addAll(anonymousShareEntryRepository.findUpcomingExpiredEntries(Integer.parseInt(date)));
 		}
+		return shares;
+	}
 
-		for (Integer day : datesForNotifyUpcomingOutdatedShares) {
-
-			List<ShareEntry> shares = shareEntryRepository
-					.findUpcomingExpiredEntries(day);
-			logger.info(shares.size() + " upcoming (in " + day.toString()
-					+ " days) outdated share(s) found to be notified.");
-			for (ShareEntry share : shares) {
-				if (share.getDownloaded() < 1) {
-					try {
-						EmailContext contex = new ShareWarnRecipientBeforeExpiryEmailContext(share, day);
-						MailContainerWithRecipient mail = mailBuildingService.build(contex);
-						notifierService.sendNotification(mail, true);
-					} catch (BusinessException e) {
-						logger.error(
-								"Error while trying to notify upcoming outdated share",
-								e);
-					}
-				}
-			}
-
-			List<AnonymousShareEntry> anonymousShareEntries = anonymousShareEntryRepository
-					.findUpcomingExpiredEntries(day);
-			logger.info(anonymousShareEntries.size()
-					+ " upcoming (in "
-					+ day.toString()
-					+ " days) outdated anonymous share Url(s) found to be notified.");
-
-			for (AnonymousShareEntry anonymousShareEntry : anonymousShareEntries) {
-				if (anonymousShareEntry.getDownloaded() < 1) {
-					try {
-						EmailContext contex = new ShareWarnRecipientBeforeExpiryEmailContext(anonymousShareEntry, day);
-						MailContainerWithRecipient mail = mailBuildingService.build(contex);
-						notifierService.sendNotification(mail, true);
-					} catch (BusinessException e) {
-						logger.error("Error while trying to notify upcoming outdated share", e);
-					}
-				}
-			}
+	@Override
+	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
+			throws BatchBusinessException, BusinessException {
+		AnonymousShareEntry anonymousShareEntry = anonymousShareEntryRepository.findById(identifier);
+		ResultContext context = new BatchResultContext<AnonymousShareEntry>(anonymousShareEntry);
+		context.setProcessed(true);
+		Integer daysLeft = Days.daysBetween(new DateTime(new Date()), new DateTime(anonymousShareEntry.getExpirationDate()))
+				.getDays();
+		if (anonymousShareEntry.getDownloaded() < 1) {
+			EmailContext emailContext = new ShareWarnRecipientBeforeExpiryEmailContext(anonymousShareEntry, daysLeft);
+			MailContainerWithRecipient mail = mailBuildingService.build(emailContext);
+			notifierService.sendNotification(mail, true);
 		}
+		return context;
+	}
+
+	@Override
+	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
+		@SuppressWarnings("unchecked")
+		BatchResultContext<AnonymousShareEntry> anonymousShareEntries = (BatchResultContext<AnonymousShareEntry>) context;
+		if (anonymousShareEntries.getProcessed()) {
+			AnonymousShareEntry entry = anonymousShareEntries.getResource();
+			console.logInfo(batchRunContext, total, position,
+					" Notification for upcoming outdated share successfully sent {}.", entry.getRepresentation());
+		}
+	}
+
+	@Override
+	public void notifyError(BatchBusinessException exception, String identifier, long total, long position,
+			BatchRunContext batchRunContext) {
+		@SuppressWarnings("unchecked")
+		BatchResultContext<AnonymousShareEntry> context = (BatchResultContext<AnonymousShareEntry>) exception.getContext();
+		AnonymousShareEntry entry = context.getResource();
+		console.logError(batchRunContext, total, position,
+				"Failed to send notification for upcoming outdated share : {}", entry.getRepresentation(), exception);
 	}
 }

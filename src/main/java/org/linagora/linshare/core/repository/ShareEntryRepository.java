@@ -64,7 +64,7 @@ public interface ShareEntryRepository extends AbstractRepository<ShareEntry> {
 
 	List<String> findAllSharesExpirationWithoutDownloadEntries(int daysLeftExpiration);
 
-	List<ShareEntry> findUpcomingExpiredEntries(Integer date);
+	List<String> findUpcomingExpiredEntries(Integer date);
 
 	List<ShareEntry> findAllMyShareEntries(User owner, DocumentEntry entry);
 }

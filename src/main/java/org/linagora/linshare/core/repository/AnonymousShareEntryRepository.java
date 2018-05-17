@@ -52,7 +52,7 @@ public interface AnonymousShareEntryRepository extends
 
 	List<String> findAllExpiredEntries();
 
-	List<AnonymousShareEntry> findUpcomingExpiredEntries(Integer date);
+	List<String> findUpcomingExpiredEntries(Integer date);
 
 	List<AnonymousShareEntry> findAllMyAnonymousShareEntries(User owner,
 			DocumentEntry entry);

@@ -183,4 +183,22 @@
 		<constructor-arg value="${linshare.warn.owner.about.guest.expiration.days.before}" />
 	</bean>
 
+	<bean name="shareNotifyUpcomingOutdatedSharesBatch"
+		class="org.linagora.linshare.core.batches.impl.ShareNotifyUpcomingOutdatedSharesBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="shareEntryRepository" />
+		<constructor-arg ref="functionalityReadOnlyService"/>
+		<constructor-arg ref="notifierService" />
+		<constructor-arg ref="mailBuildingService" />
+	</bean>
+
+	<bean name="anonymousShareNotifyUpcomingOudatedSharesBatch"
+		class="org.linagora.linshare.core.batches.impl.AnonymousShareNotifyUpcomingOudatedSharesBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="anonymousShareEntryRepository" />
+		<constructor-arg ref="functionalityReadOnlyService"/>
+		<constructor-arg ref="notifierService" />
+		<constructor-arg ref="mailBuildingService" />
+	</bean>
+
 </beans>

@@ -47,20 +47,6 @@
 		<property name="cronExpression" value="${job.mimetype.cron.expression}" />
 	</bean>
 
-
-    <bean id="notifyOutdatedSharesJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
-        <property name="jobClass" value="org.linagora.linshare.core.job.quartz.NotifyOutdatedShares"/>
-        <property name="jobDataAsMap">
-            <map>
-                <entry key="batch" value-ref="shareManagementBatch"/>
-            </map>
-        </property>
-    </bean>
-    <bean id="notifyOutdatedSharesJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-        <property name="jobDetail" ref="notifyOutdatedSharesJob"/>
-        <property name="cronExpression" value="${job.outdatedshares.cron.expression}"/>
-    </bean>
-
 	<bean id="deleteMissingDocumentsBatchJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
 		<property name="jobClass"
 			value="org.linagora.linshare.core.job.quartz.LinShareJobBean" />
@@ -179,7 +165,6 @@
         <property name="triggers">
             <list>
                 <ref bean="cleanOutdatedUsersJobTrigger"/>
-                <ref bean="notifyOutdatedSharesJobTrigger"/>
                 <ref bean="updateUploadRequestJobTrigger"/>
                 <ref bean="nofifyUndownloadedSharedDocumentsJobTrigger"/>
                 <ref bean="deleteMissingDocumentsBatchJobTrigger"/>

@@ -97,17 +97,22 @@ public class AnonymousShareEntryRepositoryImpl extends AbstractRepositoryImpl<An
 		List<String> list = listByCriteria(criteria);
 		return list;
 	}
-	
 
 	@Override
-	public List<AnonymousShareEntry> findUpcomingExpiredEntries(Integer date) {
+	public List<String> findUpcomingExpiredEntries(Integer date) {
 		Calendar calMin = Calendar.getInstance();
-    	calMin.add(Calendar.DAY_OF_MONTH, date);
-    	
-    	Calendar calMax = Calendar.getInstance();
-    	calMax.add(Calendar.DAY_OF_MONTH, date+1);
-        
-    	return findByCriteria(Restrictions.lt("expirationDate", calMax), Restrictions.gt("expirationDate", calMin));
+		calMin.add(Calendar.DAY_OF_MONTH, date);
+
+		Calendar calMax = Calendar.getInstance();
+		calMax.add(Calendar.DAY_OF_MONTH, date + 1);
+
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.setProjection(Projections.distinct(Projections.property("uuid")))
+				.add(Restrictions.lt("expirationDate", calMax))
+				.add(Restrictions.gt("expirationDate", calMin));
+		@SuppressWarnings("unchecked")
+		List<String> list = listByCriteria(criteria);
+		return list;
 	}
 
 	@Override
