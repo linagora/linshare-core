@@ -68,4 +68,5 @@
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="shareEntryGroupService" />
 	</bean>
+
 </beans>

@@ -31,101 +31,29 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.entities;
+package org.linagora.linshare.core.business.service.impl;
 
-import java.util.Date;
-import java.util.UUID;
+import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.xml.bind.annotation.XmlRootElement;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.springframework.data.mongodb.core.mapping.Document;
+public class SharedSpaceNodeBusinessServiceImpl implements SharedSpaceNodeBusinessService {
 
-@XmlRootElement(name = "SharedSpaceNode")
-@Document(collection = "shared_space_nodes")
-public class SharedSpaceNode {
-	
-	@JsonIgnore
-	@Id
-	@GeneratedValue
-	protected String id;
+	private SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository;
 
-	protected String uuid;
-
-	protected String name;
-
-	protected String parentUuid;
-
-	protected Date creationDate;
-
-	protected Date modificationDate;
-
-	public SharedSpaceNode() {
-		super();
-	}
-
-	public SharedSpaceNode(String name, String parentUuid) {
-		super();
-		this.uuid = UUID.randomUUID().toString();
-		this.name = name;
-		this.parentUuid = parentUuid;
-		this.creationDate = new Date();
-		this.modificationDate = new Date();
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getParentUuid() {
-		return parentUuid;
-	}
-
-	public void setParentUuid(String parentUuid) {
-		this.parentUuid = parentUuid;
-	}
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	public Date getModificationDate() {
-		return modificationDate;
-	}
-
-	public void setModificationDate(Date modificationDate) {
-		this.modificationDate = modificationDate;
+	public SharedSpaceNodeBusinessServiceImpl(SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository) {
+		this.sharedSpaceNodeMongoRepository = sharedSpaceNodeMongoRepository;
 	}
 
 	@Override
-	public String toString() {
-		return "SharedSpaceNodes [id=" + id + ", uuid=" + uuid + ", name=" + name + ", parentUuid=" + parentUuid
-				+ ", creationDate=" + creationDate + ", modificationDate=" + modificationDate + "]";
+	public SharedSpaceNode find(String uuid) throws BusinessException {
+		return sharedSpaceNodeMongoRepository.findByUuid(uuid);
+	}
+
+	@Override
+	public SharedSpaceNode create(SharedSpaceNode node) throws BusinessException {
+		return sharedSpaceNodeMongoRepository.insert(node);
 	}
 
 }

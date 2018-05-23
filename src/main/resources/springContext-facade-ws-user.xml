@@ -163,4 +163,8 @@
 		<constructor-arg ref="jwtLongTimeService" />
 		<constructor-arg ref="auditLogEntryService" />
 	</bean>
+	<bean id="sharedSpaceNodeFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.SharedSpaceNodeFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="sharedSpaceNodeService" />
+	</bean>
 </beans>

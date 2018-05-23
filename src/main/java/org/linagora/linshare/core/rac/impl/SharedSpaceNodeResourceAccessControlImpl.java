@@ -31,101 +31,44 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.entities;
+package org.linagora.linshare.core.rac.impl;
 
-import java.util.Date;
-import java.util.UUID;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.rac.SharedSpaceNodeResourceAccessControl;
+import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.xml.bind.annotation.XmlRootElement;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-@XmlRootElement(name = "SharedSpaceNode")
-@Document(collection = "shared_space_nodes")
-public class SharedSpaceNode {
+public class SharedSpaceNodeResourceAccessControlImpl implements SharedSpaceNodeResourceAccessControl {
 	
-	@JsonIgnore
-	@Id
-	@GeneratedValue
-	protected String id;
-
-	protected String uuid;
-
-	protected String name;
-
-	protected String parentUuid;
-
-	protected Date creationDate;
-
-	protected Date modificationDate;
-
-	public SharedSpaceNode() {
-		super();
-	}
-
-	public SharedSpaceNode(String name, String parentUuid) {
-		super();
-		this.uuid = UUID.randomUUID().toString();
-		this.name = name;
-		this.parentUuid = parentUuid;
-		this.creationDate = new Date();
-		this.modificationDate = new Date();
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getParentUuid() {
-		return parentUuid;
-	}
-
-	public void setParentUuid(String parentUuid) {
-		this.parentUuid = parentUuid;
-	}
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	public Date getModificationDate() {
-		return modificationDate;
-	}
-
-	public void setModificationDate(Date modificationDate) {
-		this.modificationDate = modificationDate;
+	
+	@Override
+	public void checkCreatePermission(Account authUser, Account targetedAccount, Class<?> clazz,
+			BusinessErrorCode errCode, SharedSpaceNode entry, Object... opt) throws BusinessException {
 	}
 
 	@Override
-	public String toString() {
-		return "SharedSpaceNodes [id=" + id + ", uuid=" + uuid + ", name=" + name + ", parentUuid=" + parentUuid
-				+ ", creationDate=" + creationDate + ", modificationDate=" + modificationDate + "]";
+	public void checkReadPermission(Account authUser, Account targetedAccount, Class<?> clazz,
+			BusinessErrorCode errCode, SharedSpaceNode entry, Object... opt) throws BusinessException {
+
+	}
+
+	@Override
+	public void checkListPermission(Account authUser, Account targetedAccount, Class<?> clazz,
+			BusinessErrorCode errCode, SharedSpaceNode entry, Object... opt) throws BusinessException {
+
+	}
+
+	@Override
+	public void checkUpdatePermission(Account authUser, Account targetedAccount, Class<?> clazz,
+			BusinessErrorCode errCode, SharedSpaceNode entry, Object... opt) throws BusinessException {
+
+	}
+
+	@Override
+	public void checkDeletePermission(Account authUser, Account targetedAccount, Class<?> clazz,
+			BusinessErrorCode errCode, SharedSpaceNode entry, Object... opt) throws BusinessException {
+
 	}
 
 }

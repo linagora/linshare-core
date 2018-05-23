@@ -64,7 +64,10 @@ public class SharedSpaceMember {
 
 	protected SharedSpaceAccount sharedSpaceAccount;
 
-	public SharedSpaceMember(String name,SharedSpaceRole sharedSpaceRole, SharedSpaceNode sharedSpaceNode, SharedSpaceAccount sharedSpaceAccount) {
+	public SharedSpaceMember(String name,
+			SharedSpaceRole sharedSpaceRole,
+			SharedSpaceNode sharedSpaceNode,
+			SharedSpaceAccount sharedSpaceAccount) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
 		this.creationDate = new Date();

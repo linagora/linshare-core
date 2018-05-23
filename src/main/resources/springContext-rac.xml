@@ -103,4 +103,7 @@
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="abstractDomainService" />
 	</bean>
+
+	<bean name="sharedSpaceNodeResourceAccessControl" class="org.linagora.linshare.core.rac.impl.SharedSpaceNodeResourceAccessControlImpl">
+	</bean>
 </beans>

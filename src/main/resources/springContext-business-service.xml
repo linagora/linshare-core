@@ -301,4 +301,8 @@
 	<bean id="jwtLongTimeBusinessService" class="org.linagora.linshare.core.business.service.impl.JwtLongTimeBusinessServiceImpl">
 		<constructor-arg ref="jwtLongTimeMongoRepository" />
 	</bean>
+	<bean name="sharedSpaceNodeBusinessService"
+		class="org.linagora.linshare.core.business.service.impl.SharedSpaceNodeBusinessServiceImpl">
+		<constructor-arg ref="sharedSpaceNodeMongoRepository" />
+	</bean>
 </beans>

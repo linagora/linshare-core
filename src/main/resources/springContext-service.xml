@@ -394,4 +394,8 @@
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="auditLogEntryService"/>
 	</bean>
+		<bean id="sharedSpaceNodeService" class="org.linagora.linshare.core.service.impl.SharedSpaceNodeServiceImpl">
+		<constructor-arg ref="sharedSpaceNodeBusinessService" />
+		<constructor-arg ref="sharedSpaceNodeResourceAccessControl" />
+	</bean>
 </beans>
