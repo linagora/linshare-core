@@ -105,5 +105,6 @@
 	</bean>
 
 	<bean name="sharedSpaceNodeResourceAccessControl" class="org.linagora.linshare.core.rac.impl.SharedSpaceNodeResourceAccessControlImpl">
+		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 </beans>

@@ -33,42 +33,60 @@
  */
 package org.linagora.linshare.core.rac.impl;
 
+import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.SharedSpaceNodeResourceAccessControl;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 
-public class SharedSpaceNodeResourceAccessControlImpl implements SharedSpaceNodeResourceAccessControl {
-	
-	
-	@Override
-	public void checkCreatePermission(Account authUser, Account targetedAccount, Class<?> clazz,
-			BusinessErrorCode errCode, SharedSpaceNode entry, Object... opt) throws BusinessException {
+public class SharedSpaceNodeResourceAccessControlImpl
+		extends AbstractResourceAccessControlImpl<Account, Account, SharedSpaceNode>
+		implements SharedSpaceNodeResourceAccessControl {
+
+	public SharedSpaceNodeResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService) {
+		super(functionalityService);
 	}
 
 	@Override
-	public void checkReadPermission(Account authUser, Account targetedAccount, Class<?> clazz,
-			BusinessErrorCode errCode, SharedSpaceNode entry, Object... opt) throws BusinessException {
-
+	protected boolean hasReadPermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
+		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.SHARED_SPACE_NODE_READ,
+				false);
 	}
 
 	@Override
-	public void checkListPermission(Account authUser, Account targetedAccount, Class<?> clazz,
-			BusinessErrorCode errCode, SharedSpaceNode entry, Object... opt) throws BusinessException {
-
+	protected boolean hasListPermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
+		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.SHARED_SPACE_NODE_LIST);
 	}
 
 	@Override
-	public void checkUpdatePermission(Account authUser, Account targetedAccount, Class<?> clazz,
-			BusinessErrorCode errCode, SharedSpaceNode entry, Object... opt) throws BusinessException {
-
+	protected boolean hasDeletePermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
+		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.SHARED_SPACE_NODE_DELETE);
 	}
 
 	@Override
-	public void checkDeletePermission(Account authUser, Account targetedAccount, Class<?> clazz,
-			BusinessErrorCode errCode, SharedSpaceNode entry, Object... opt) throws BusinessException {
+	protected boolean hasCreatePermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
+		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.SHARED_SPACE_NODE_CREATE,
+				false);
+	}
 
+	@Override
+	protected boolean hasUpdatePermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
+		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.SHARED_SPACE_NODE_UPDATE);
+	}
+
+	@Override
+	protected String getTargetedAccountRepresentation(Account actor) {
+		return actor.getAccountRepresentation();
+	}
+
+	@Override
+	protected String getEntryRepresentation(SharedSpaceNode entry) {
+		return entry.toString();
+	}
+
+	@Override
+	protected Account getOwner(SharedSpaceNode entry, Object... opt) {
+		return null;
 	}
 
 }
