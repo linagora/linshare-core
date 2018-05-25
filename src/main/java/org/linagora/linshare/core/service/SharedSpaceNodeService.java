@@ -38,8 +38,9 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 
 public interface SharedSpaceNodeService {
-	
+
 	SharedSpaceNode find(Account authUser, Account actor, String uuid) throws BusinessException;
 
 	SharedSpaceNode create(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException;
+
 }

@@ -33,12 +33,14 @@
  */
 package org.linagora.linshare.mongo.repository;
 
+import java.util.List;
+
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface SharedSpaceNodeMongoRepository extends MongoRepository<SharedSpaceNode, String>{
+public interface SharedSpaceNodeMongoRepository extends MongoRepository<SharedSpaceNode, String> {
 
 	SharedSpaceNode findByUuid(String uuid);
-	
-}
 
+	List<SharedSpaceNode> findByNameAndParentUuid(String name, String parentUuid);
+}

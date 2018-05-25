@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.util.List;
 import org.jsoup.helper.Validate;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -59,7 +60,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	@Override
 	public SharedSpaceNode find(Account authUser, Account actor, String uuid) throws BusinessException {
 		preChecks(authUser, actor);
-		Validate.notEmpty(uuid,"Missing required shared space node uuid.");
+		Validate.notEmpty(uuid, "Missing required shared space node uuid.");
 		SharedSpaceNode found = sharedSpaceNodeBusinessService.find(uuid);
 		checkReadPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.SHARED_SPACE_NODE_NOT_FOUND,
 				found);
@@ -69,11 +70,21 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	@Override
 	public SharedSpaceNode create(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException {
 		preChecks(authUser, actor);
-		Validate.notNull(node,"Missing required input shared space node.");
-		checkCreatePermission(authUser, actor, SharedSpaceNode.class,
-				BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN, null);
+		Validate.notNull(node, "Missing required input shared space node.");
+		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN,
+				null);
+		checkUniqueNameNode(node);
 		SharedSpaceNode created = sharedSpaceNodeBusinessService.create(node);
 		return created;
+	}
+
+	private void checkUniqueNameNode(SharedSpaceNode node) {
+		List<SharedSpaceNode> nodes = sharedSpaceNodeBusinessService.findByNameAndParentUuid(node.getName(),
+				node.getParentUuid());
+		if (!nodes.isEmpty()) {
+			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_NODE_ALREADY_EXISTS,
+					"Can not create a new shared space node it already exists");
+		}
 	}
 
 }

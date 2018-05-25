@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
+import java.util.List;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
@@ -54,6 +55,11 @@ public class SharedSpaceNodeBusinessServiceImpl implements SharedSpaceNodeBusine
 	@Override
 	public SharedSpaceNode create(SharedSpaceNode node) throws BusinessException {
 		return sharedSpaceNodeMongoRepository.insert(node);
+	}
+
+	@Override
+	public List<SharedSpaceNode> findByNameAndParentUuid(String name, String parentUuid) throws BusinessException{
+		return sharedSpaceNodeMongoRepository.findByNameAndParentUuid(name, parentUuid);
 	}
 
 }
