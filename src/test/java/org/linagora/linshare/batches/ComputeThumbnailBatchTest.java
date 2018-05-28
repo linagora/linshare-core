@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.cxf.helpers.IOUtils;
 import org.junit.After;
@@ -66,6 +67,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
+import com.beust.jcommander.internal.Sets;
 import com.google.common.collect.Lists;
 
 @ContextConfiguration(locations = {
@@ -155,6 +157,9 @@ public class ComputeThumbnailBatchTest extends AbstractTransactionalJUnit4Spring
 		DocumentEntry createDocumentEntry = documentEntryBusinessService.createDocumentEntry(jane, tempFile,
 				tempFile.length(), "file", null, false, null, "text/plain", cal, false, null);
 		Document document = createDocumentEntry.getDocument();
+		Set<DocumentEntry> documentEntries = Sets.newHashSet();
+		documentEntries.add(createDocumentEntry);
+		document.setDocumentEntries(documentEntries);
 		File tempThmbFile = File.createTempFile("thumbnail", "png");
 		tempFile.deleteOnExit();
 		FileMetaData metaDataThmb = new FileMetaData(FileMetaDataKind.THUMBNAIL_SMALL, "image/png",

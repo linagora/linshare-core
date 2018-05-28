@@ -38,7 +38,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.cxf.helpers.IOUtils;
 import org.junit.After;
@@ -46,16 +49,26 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
+import org.linagora.linshare.core.dao.FileDataStore;
+import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Thumbnail;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.mongo.entities.WorkGroupDocument;
+import org.linagora.linshare.mongo.entities.WorkGroupFolder;
+import org.linagora.linshare.mongo.entities.WorkGroupNode;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,11 +77,17 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
+import com.beust.jcommander.internal.Sets;
+
 @ContextConfiguration(locations = {
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
+		"classpath:springContext-ldap.xml",
 		"classpath:springContext-business-service.xml",
+		"classpath:springContext-service-miscellaneous.xml",
+		"classpath:springContext-service.xml",
+		"classpath:springContext-rac.xml",
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml",
@@ -87,8 +106,21 @@ public class DocumentEntryBusinessServiceImplTest extends AbstractTransactionalJ
 	private DocumentEntryRepository documentEntryRepository;
 
 	@Autowired
+	private WorkGroupNodeMongoRepository workGroupNodeMongoRepository;
+
+	@Autowired
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
+
+	@Autowired
+	private ThreadService threadService;
+
+	WorkGroup workGroup;
+
+	WorkGroupNode workGroupFolder;
+
+	@Autowired
+	private FileDataStore fileDataStore;
 
 	private LoadingServiceTestDatas datas;
 
@@ -97,9 +129,13 @@ public class DocumentEntryBusinessServiceImplTest extends AbstractTransactionalJ
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
+		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
+		this.executeSqlScript("import-tests-quota-other.sql", false);
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		jane = datas.getUser2();
+		workGroup = threadService.create(jane, jane, "work_group_name_1");
+		workGroupFolder = new WorkGroupFolder(new AccountMto(jane), "folder1", null, workGroup.getLsUuid());
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -160,6 +196,60 @@ public class DocumentEntryBusinessServiceImplTest extends AbstractTransactionalJ
 				tempFile.length(), "file.png", false, null, "image/png", cal);
 		Assert.assertTrue(documentEntryRepository.findById(createDocumentEntry.getUuid()).getType() == "image/png");
 		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testUpdateThumbnail() throws BusinessException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Document createdDocument = createDocument();
+		Set<DocumentEntry> documentEntries = createdDocument.getDocumentEntries();
+		List<WorkGroupDocument> wgDocuments = workGroupNodeMongoRepository
+				.findByDocumentUuid(createdDocument.getUuid());
+		Assert.assertTrue("The created document should have a thumbnail", createdDocument.getHasThumbnail());
+		documentEntryBusinessService.updateThumbnail(createdDocument, jane);
+		for (DocumentEntry docEntry : documentEntries) {
+			Assert.assertEquals("The document entry and the document should have the same thumbnail status",
+					createdDocument.getHasThumbnail(), docEntry.isHasThumbnail());
+		}
+		for (WorkGroupDocument wgDocument : wgDocuments) {
+			Assert.assertEquals("The wgDocument entry and the document should have the same thumbnail status",
+					createdDocument.getHasThumbnail(), wgDocument.getHasThumbnail());
+		}
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	private Document createDocument() throws BusinessException, IOException {
+		File tempFile = File.createTempFile("linshare-test-", ".tmp");
+		tempFile.deleteOnExit();
+		InputStream stream = Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream("linshare-default.properties");
+		IOUtils.copy(stream, new FileOutputStream(tempFile));
+		Calendar cal = Calendar.getInstance();
+		DocumentEntry createDocumentEntry = documentEntryBusinessService.createDocumentEntry(jane, tempFile,
+				tempFile.length(), "file", null, false, null, "text/plain", cal, false, null);
+		Document document = createDocumentEntry.getDocument();
+		Set<DocumentEntry> documentEntries = Sets.newHashSet();
+		documentEntries.add(createDocumentEntry);
+		document.setDocumentEntries(documentEntries);
+		createWorkGroupDocument(jane, document);
+		File tempThmbFile = File.createTempFile("thumbnail", "png");
+		tempFile.deleteOnExit();
+		FileMetaData metaDataThmb = new FileMetaData(FileMetaDataKind.THUMBNAIL_SMALL, "image/png",
+				tempThmbFile.length(), "thumbnail");
+		metaDataThmb = fileDataStore.add(tempThmbFile, metaDataThmb);
+		document.setThmbUuid(metaDataThmb.getUuid());
+		document.setComputeThumbnail(true);
+		return document;
+	}
+
+	private WorkGroupNode createWorkGroupDocument(User authUser, Document document) {
+		WorkGroupDocument node = new WorkGroupDocument(authUser, "testName", document, workGroup, workGroupFolder);
+		node.setCreationDate(new Date());
+		node.setModificationDate(new Date());
+		node.setUploadDate(new Date());
+		node.setCiphered(false);
+		node.setLastAuthor(new AccountMto(authUser, true));
+		return workGroupNodeMongoRepository.insert(node);
 	}
 
 }

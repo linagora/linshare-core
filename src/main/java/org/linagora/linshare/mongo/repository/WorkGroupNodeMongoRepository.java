@@ -36,6 +36,7 @@ package org.linagora.linshare.mongo.repository;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
+import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
@@ -54,5 +55,7 @@ public interface WorkGroupNodeMongoRepository extends MongoRepository<WorkGroupN
 	List<WorkGroupNode> findByWorkGroupAndNodeType(String workGroupUuid, WorkGroupNodeType type);
 
 	List<WorkGroupNode> findByWorkGroupAndParentAndName(String workGroupUuid, String parentUuid, String name);
+
+	List<WorkGroupDocument> findByDocumentUuid(String documentUuid);
 
 }

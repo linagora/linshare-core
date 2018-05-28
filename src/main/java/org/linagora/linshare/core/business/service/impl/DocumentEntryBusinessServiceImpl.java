@@ -753,6 +753,8 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	@Override
 	public void updateThumbnail(Document document, Account account) {
 		Map<ThumbnailType, FileMetaData> fileMetadataThumbnail = Maps.newHashMap();
+		Set<DocumentEntry> documentEntries = document.getDocumentEntries();
+		List<WorkGroupDocument> wgDocuments = repository.findByDocumentUuid(document.getUuid());
 		if (thumbnailGeneratorService.isSupportedMimetype(document.getType())) {
 			FileMetaData fileMetaData = new FileMetaData(FileMetaDataKind.DATA, document);
 			if (fileDataStore.exists(fileMetaData)) {
@@ -774,6 +776,9 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 					if (!fileThumbnails.isEmpty()) {
 						document.setHasThumbnail(true);
 						document.setThumbnails(fileThumbnails);
+						documentEntries.stream().forEach(docEntry -> updateHasThumbnailDocumentEntry(docEntry, true));
+						wgDocuments.stream().forEach(wgDocument -> updateHasThumbnailWorkGroupDocument(wgDocument, true));
+						repository.save(wgDocuments);
 					}
 					document.setComputeThumbnail(false);
 					documentRepository.update(document);
@@ -790,7 +795,19 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			document.setHasThumbnail(false);
 			document.setComputeThumbnail(false);
 			documentRepository.update(document);
+			documentEntries.stream().forEach(docEntry -> updateHasThumbnailDocumentEntry(docEntry, false));
+			wgDocuments.stream().forEach(wgDocument -> updateHasThumbnailWorkGroupDocument(wgDocument, false));
+			repository.save(wgDocuments);
 		}
+	}
+
+	private void updateHasThumbnailDocumentEntry(DocumentEntry docEntry, boolean hasThumbnail) {
+		docEntry.setHasThumbnail(hasThumbnail);
+		documentEntryRepository.update(docEntry);
+	}
+
+	private void updateHasThumbnailWorkGroupDocument(WorkGroupDocument wgDocument, boolean hasThumbnail) {
+		wgDocument.setHasThumbnail(hasThumbnail);
 	}
 
 	protected boolean exists(WorkGroup workGroup, String fileName, WorkGroupNode nodeParent) {
