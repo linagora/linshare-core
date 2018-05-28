@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.service;
 
+import static org.hamcrest.CoreMatchers.is;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -108,19 +110,16 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 	public void createWithDuplicatedName() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		try {
-			SharedSpaceNode node1 = new SharedSpaceNode("My first node", "My parent nodeUuid");
-			SharedSpaceNode node2 = new SharedSpaceNode("My first node", "My parent nodeUuid");
+			SharedSpaceNode node1 = new SharedSpaceNode("My node", "My parent nodeUuid");
+			SharedSpaceNode node2 = new SharedSpaceNode("My node", "My parent nodeUuid");
 			SharedSpaceNode expectedNode1 = service.create(authUser, authUser, node1);
-			SharedSpaceNode expectedNode2 = service.create(authUser, authUser, node2);
 			Assert.assertNotNull("node not created", expectedNode1);
-			Assert.assertNotNull("node not created", expectedNode2);
 			Assert.assertEquals(expectedNode1.getUuid(), node1.getUuid());
-			Assert.assertEquals(expectedNode1.getUuid(), node1.getUuid());
+			SharedSpaceNode expectedNode2 = service.create(authUser, authUser, node2);
+			Assert.fail("No exception was thrown");
 		} catch (BusinessException e) {
-			e.equalErrCode(BusinessErrorCode.SHARED_SPACE_NODE_ALREADY_EXISTS);
-			Assert.assertTrue("The node to create have a same name", true);
+			Assert.assertThat(e.getErrorCode(), is(BusinessErrorCode.SHARED_SPACE_NODE_ALREADY_EXISTS));
 		}
-
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
