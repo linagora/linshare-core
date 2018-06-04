@@ -31,25 +31,11 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
+package org.linagora.linshare.core.service;
 
-import org.apache.commons.lang.StringUtils;
-import org.linagora.linshare.core.exception.TechnicalErrorCode;
-import org.linagora.linshare.core.exception.TechnicalException;
+import org.linagora.linshare.core.exception.BusinessException;
 
-public enum SharedSpaceResourceType {
-	FOLDER,
-	FILE,
-	WORKGROUP,
-	SHARED_SPACE_NODE,
-	MEMBER;
-	
-	public static SharedSpaceResourceType fromString(String s) {
-		try {
-			return SharedSpaceResourceType.valueOf(s.toUpperCase());
-		} catch (RuntimeException e) {
-			throw new TechnicalException(TechnicalErrorCode.NO_SUCH_LOG_ACTION,
-					StringUtils.isEmpty(s) ? "null or empty" : s);
-		}
-	}	
+public interface InitMongoService {
+	public void init() throws BusinessException;
 }
+

@@ -45,7 +45,7 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @XmlRootElement(name = "SharedSpaceRole")
-@Document(collection = "shared_space_role")
+@Document(collection = "shared_space_roles")
 public class SharedSpaceRole {
 
 	@JsonIgnore
@@ -108,7 +108,7 @@ public class SharedSpaceRole {
 		return sharedSpaceAccount;
 	}
 
-	public void setSharedSpaceRole(SharedSpaceAccount sharedSpaceAccount) {
+	public void setSharedSpaceAccount(SharedSpaceAccount sharedSpaceAccount) {
 		this.sharedSpaceAccount = sharedSpaceAccount;
 	}
 

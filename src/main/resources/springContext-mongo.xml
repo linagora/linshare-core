@@ -70,7 +70,12 @@
 	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
 		<constructor-arg name="mongoDbFactory" ref="mongoDbFactory" />
 	</bean>
-
+	<bean id = "initMongoServiceImpl" class="org.linagora.linshare.core.service.impl.InitMongoServiceImpl" init-method="init" >
+		<constructor-arg ref="sharedSpaceRoleMongoRepository" />
+		<constructor-arg ref="userService" />
+		<constructor-arg ref="sharedSpacePermissionMongoRepository" />
+	</bean>
+	
 <!-- 	<bean id="mappingContext" class="org.springframework.data.mongodb.core.mapping.MongoMappingContext" /> -->
 
 <!-- 	<bean id="mongoEntityInformation" -->

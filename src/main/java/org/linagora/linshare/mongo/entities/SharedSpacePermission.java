@@ -43,12 +43,13 @@ import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.linagora.linshare.core.domain.constants.SharedSpaceActionType;
 import org.linagora.linshare.core.domain.constants.SharedSpaceResourceType;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @XmlRootElement(name = "SharedSpacePermission")
-@Document(collection = "shared_space_permission")
+@Document(collection = "shared_space_permissions")
 public class SharedSpacePermission {
 	
 	@JsonIgnore
@@ -58,13 +59,11 @@ public class SharedSpacePermission {
 
 	@ApiModelProperty(value = "uuid")
 	protected String uuid;
-
-	protected String name;
-
+	
 	protected SharedSpaceActionType action;
 
 	protected SharedSpaceResourceType resource;
-
+	
 	protected List<SharedSpaceRole> sharedSpaceRoles;
 
 	protected Date creationDate;
@@ -79,7 +78,6 @@ public class SharedSpacePermission {
 			List<SharedSpaceRole> sharedSpaceRoles) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
-		this.name = name;
 		this.action = action;
 		this.resource = resource;
 		this.sharedSpaceRoles = sharedSpaceRoles;
@@ -101,14 +99,6 @@ public class SharedSpacePermission {
 
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public SharedSpaceActionType getAction() {
@@ -153,7 +143,7 @@ public class SharedSpacePermission {
 
 	@Override
 	public String toString() {
-		return "SharedSpacePermissions [id=" + id + ", uuid=" + uuid + ", name=" + name + ", action=" + action
+		return "SharedSpacePermissions [id=" + id + ", uuid=" + uuid + ", action=" + action
 				+ ", resource=" + resource + ", SharedSpacerole=" + sharedSpaceRoles + ", creationDate="
 				+ creationDate + ", modificationDate=" + modificationDate + "]";
 	}

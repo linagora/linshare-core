@@ -31,25 +31,14 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
+package org.linagora.linshare.mongo.repository;
 
-import org.apache.commons.lang.StringUtils;
-import org.linagora.linshare.core.exception.TechnicalErrorCode;
-import org.linagora.linshare.core.exception.TechnicalException;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.mongo.entities.SharedSpacePermission;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-public enum SharedSpaceResourceType {
-	FOLDER,
-	FILE,
-	WORKGROUP,
-	SHARED_SPACE_NODE,
-	MEMBER;
+public interface SharedSpacePermissionMongoRepository extends MongoRepository<SharedSpacePermission, String> {
 	
-	public static SharedSpaceResourceType fromString(String s) {
-		try {
-			return SharedSpaceResourceType.valueOf(s.toUpperCase());
-		} catch (RuntimeException e) {
-			throw new TechnicalException(TechnicalErrorCode.NO_SUCH_LOG_ACTION,
-					StringUtils.isEmpty(s) ? "null or empty" : s);
-		}
-	}	
+	SharedSpacePermission findByUuid(String uuid) throws BusinessException;
+	
 }

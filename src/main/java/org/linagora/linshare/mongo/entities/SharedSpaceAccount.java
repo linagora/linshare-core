@@ -46,20 +46,17 @@ public class SharedSpaceAccount {
 
 	protected String lastName;
 
-	protected String name;
-
 	protected String mail;
 
 	public SharedSpaceAccount() {
 		super();
 	}
 
-	public SharedSpaceAccount(  String firstName, String lastName, String name, String mail) {
+	public SharedSpaceAccount( String firstName, String lastName, String mail) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.name = name;
 		this.mail = mail;
 	}
 
@@ -87,13 +84,6 @@ public class SharedSpaceAccount {
 		this.lastName = lastName;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
 
 	public String getMail() {
 		return mail;
@@ -106,7 +96,7 @@ public class SharedSpaceAccount {
 	@Override
 	public String toString() {
 		return "AccountEntity [ uuid=" + uuid + ", firstName=" + firstName + ", lastName=" + lastName
-				+ ", name=" + name + ", mail=" + mail + "]";
+				+ ", mail=" + mail + "]";
 	}
 
 }
