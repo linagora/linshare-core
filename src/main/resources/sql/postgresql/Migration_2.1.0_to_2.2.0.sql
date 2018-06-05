@@ -1520,3 +1520,31 @@ CREATE VIEW alias_threads_list_active AS SELECT a.id, name, domain_id, ls_uuid, 
 CREATE VIEW alias_threads_list_destroyed AS SELECT a.id, name, domain_id, ls_uuid, creation_date, modification_date, enable, destroyed from thread as u join account as a on a.id=u.account_id where a.destroyed != 0;
 COMMIT;
 
+
+   -- TASK: UPGRADE_2_2_GENERATE_BASIC_STATISTICS_FROM_AUDIT_LOG_ENTRIES
+INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+  (21,
+  'UNDEFINED',
+  'UPGRADE_2_2_GENERATE_BASIC_STATISTICS_FROM_AUDIT_LOG_ENTRIES',
+  'UPGRADE_2_2',
+  null,
+  null,
+  21,
+  'NEW',
+  'MANDATORY',
+  now(),
+  now(),
+  null);

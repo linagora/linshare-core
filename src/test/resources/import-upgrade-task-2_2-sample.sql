@@ -69,10 +69,10 @@ INSERT INTO upgrade_task
   modification_date,
   extras)
 VALUES
-  (21,
-  'UNDEFINED',
-  'UPGRADE_2_2_MIGRATE_UPLOAD_PROPOSITION_TO_MONGO_DATABASE',
-  'UPGRADE_2_2',
+ (21,
+ 'UNDEFINED',
+ 'UPGRADE_2_2_MIGRATE_UPLOAD_PROPOSITION_TO_MONGO_DATABASE',
+ 'UPGRADE_2_2',
   null,
   null,
   21,
@@ -81,6 +81,7 @@ VALUES
   now(),
   now(),
   null);
+
 -- TASK: UPGRADE_2_2_MIGRATE_THREAD_TO_MONGO_DATABASE
 INSERT INTO upgrade_task
   (id,
@@ -105,6 +106,34 @@ VALUES
   22,
   'NEW',
   'MANDATORY',
+  now(),
+  now(),
+  null);
+
+-- TASK: UPGRADE_2_2_GENERATE_BASIC_STATISTICS_FROM_AUDIT_LOG_ENTRIES
+INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+ (23,
+ 'UNDEFINED',
+ 'UPGRADE_2_2_GENERATE_BASIC_STATISTICS_FROM_AUDIT_LOG_ENTRIES',
+ 'UPGRADE_2_2',
+  null,
+  null,
+  23,
+ 'NEW',
+ 'MANDATORY',
   now(),
   now(),
   null);

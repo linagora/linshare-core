@@ -138,7 +138,14 @@ public enum UpgradeTaskType {
 	/*
 	 * We migrate all thread member to shared space members into mongo database.
 	 */
-	UPGRADE_2_2_MIGRATE_THREAD_AND_THREAD_MEMBERS_TO_MONGO_DATABASE;
+	UPGRADE_2_2_MIGRATE_THREAD_AND_THREAD_MEMBERS_TO_MONGO_DATABASE,
+
+	/* 
+	 * Generate oneshot basic statistics from the old audit log entries,
+	 * calculate daily basic statistics
+	 * 
+	 */
+	UPGRADE_2_2_GENERATE_BASIC_STATISTICS_FROM_AUDIT_LOG_ENTRIES;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {

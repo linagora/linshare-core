@@ -53,4 +53,7 @@ public interface BasicStatisticService {
 
 	List<BasicStatistic> insert(List<BasicStatistic> basicStatisticList);
 
+	Long countBeforeDate(Date endDate);
+
+	Date getFirstStatisticCreationDate();
 }

@@ -128,4 +128,14 @@ public class BasicStatisticServiceImpl implements BasicStatisticService {
 		}
 		return new ImmutablePair<>(bDate, eDate);
 	}
+
+	@Override
+	public Long countBeforeDate(Date endDate) {
+		return basicStatisticMongoRepository.countBeforeDate(endDate);
+	}
+
+	@Override
+	public Date getFirstStatisticCreationDate() {
+		return basicStatisticMongoRepository.findCreationDateByOrderByIdAsc().getCreationDate();
+	}
 }

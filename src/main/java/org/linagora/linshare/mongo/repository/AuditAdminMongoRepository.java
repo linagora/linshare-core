@@ -63,7 +63,12 @@ public interface AuditAdminMongoRepository extends MongoRepository<AuditLogEntry
 	@Query("{ 'action' : {'$in' : ?0 }, 'type' : { '$in' : ?1 } }")
 	Set<AuditLogEntry> findAll(List<LogAction> actions, List<AuditLogEntryType> types);
 
-	// Public Key
+	@Query("{ 'authUser.domain.uuid' : ?0, 'creationDate' : { '$lt' : '?1'}}")
+	List<AuditLogEntry> findAllBeforeDateByDomainUuid(String domainUuid,Date date);
+
+	@Query("{ 'creationDate' : { '$gt' : '?0' , '$lt' : '?1'} }")
+	List<AuditLogEntry> findAllBetweenTwoDates(Date beginDate, Date endDate);
+
 	@Query("{ 'resource.domainUuid' : ?0, 'action' : {'$in' : ?1 }, 'type' : ?2 }")
 	Set<AuditLogEntryAdmin> findAll(String domainUuid, List<LogAction> action, AuditLogEntryType type,
 			Sort sort);

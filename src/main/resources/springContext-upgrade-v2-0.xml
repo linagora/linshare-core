@@ -175,6 +175,14 @@
 					<constructor-arg ref="sharedSpaceMemberMongoRepository"/> 
 					<constructor-arg ref="sharedSpaceRoleMongoRepository" />
 				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v2_2.MigrateOldAuditLogEntryToBasicStatisticsUpgradeTaskImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="abstractDomainRepository" />
+					<constructor-arg ref="auditAdminMongoRepository" />
+					<constructor-arg ref="basicStatisticService" />
+					<constructor-arg ref="domainBusinessService" />
+				</bean>
 			</list>
 		</constructor-arg>
 	</bean>
