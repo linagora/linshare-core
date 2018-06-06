@@ -394,8 +394,17 @@
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="auditLogEntryService"/>
 	</bean>
-		<bean id="sharedSpaceNodeService" class="org.linagora.linshare.core.service.impl.SharedSpaceNodeServiceImpl">
+	<bean id="sharedSpaceNodeService" class="org.linagora.linshare.core.service.impl.SharedSpaceNodeServiceImpl">
 		<constructor-arg ref="sharedSpaceNodeBusinessService" />
 		<constructor-arg ref="sharedSpaceNodeResourceAccessControl" />
+	</bean>
+	<bean id="sharedSpaceRoleService" class="org.linagora.linshare.core.service.impl.SharedSpaceRoleServiceImpl">
+		<constructor-arg ref="sharedSpaceRoleBusinessService" />
+		<constructor-arg ref="sharedSpaceRoleResourceAccessControl" />
+	</bean>
+		<bean id="initMongoService" class="org.linagora.linshare.core.service.impl.InitMongoServiceImpl">
+		<constructor-arg ref="userService" />
+		<constructor-arg ref="sharedSpaceRoleMongoRepository" />
+		<constructor-arg ref="sharedSpacePermissionMongoRepository" />
 	</bean>
 </beans>

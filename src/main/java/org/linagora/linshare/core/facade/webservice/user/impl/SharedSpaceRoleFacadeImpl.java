@@ -31,16 +31,39 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.repository;
+package org.linagora.linshare.core.facade.webservice.user.impl;
 
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.user.SharedSpaceRoleFacade;
+import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
-import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface SharedSpaceRoleMongoRepository extends MongoRepository<SharedSpaceRole, String> {
+public class SharedSpaceRoleFacadeImpl extends GenericFacadeImpl implements SharedSpaceRoleFacade {
 
-	SharedSpaceRole findByUuid(String uuid) throws BusinessException;
+	private final SharedSpaceRoleService sharedSpaceRoleService;
 
-	SharedSpaceRole findByName(String name) throws BusinessException;
+	public SharedSpaceRoleFacadeImpl(AccountService accountService, SharedSpaceRoleService sharedSpaceRoleService) {
+		super(accountService);
+		this.sharedSpaceRoleService = sharedSpaceRoleService;
+	}
+
+	@Override
+	public SharedSpaceRole find(String actorUuid, String uuid) throws BusinessException {
+		Validate.notEmpty(uuid, "Missing required shared space role uuid.");
+		Account authUser = checkAuthentication();
+		Account actor = getActor(authUser, actorUuid);
+		return sharedSpaceRoleService.find(authUser, actor, uuid);
+	}
+	
+	@Override
+	public SharedSpaceRole findByName(String actorUuid, String name) throws BusinessException {
+		Validate.notEmpty(name, "Missing required shared space role name.");
+		Account authUser = checkAuthentication();
+		Account actor = getActor(authUser, actorUuid);
+		return sharedSpaceRoleService.findByName(authUser, actor, name);
+	}
 
 }

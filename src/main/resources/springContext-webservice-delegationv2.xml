@@ -81,6 +81,10 @@
 		class="org.linagora.linshare.webservice.delegationv2.impl.SharedSpaceNodeRestServiceImpl">
 		<constructor-arg ref="sharedSpaceNodeFacade" />
 	</bean>
+	<bean id="delegationSharedSpaceRoleRestService"
+		class="org.linagora.linshare.webservice.delegationv2.impl.SharedSpaceRoleRestServiceImpl">
+		<constructor-arg ref="sharedSpaceRoleFacade" />
+	</bean>
 
 	<jaxrs:server id="restDelegation2Container" address="/rest/delegation/v2">
 		<jaxrs:serviceBeans>
@@ -94,6 +98,8 @@
 			<ref bean="delegationUploadRequestEntryRestService" />
 			<ref bean="delegationUploadRequestGroupRestService" />
 			<ref bean="delegationUploadRequestUrlRestService" />
+			<ref bean="delegationSharedSpaceNodeRestService" />
+			<ref bean="delegationSharedSpaceRoleRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

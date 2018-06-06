@@ -31,16 +31,30 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.repository;
+package org.linagora.linshare.core.business.service.impl;
 
+import org.linagora.linshare.core.business.service.SharedSpaceRoleBusinessService;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.linagora.linshare.mongo.repository.SharedSpaceRoleMongoRepository;
 
-public interface SharedSpaceRoleMongoRepository extends MongoRepository<SharedSpaceRole, String> {
+public class SharedSpaceRoleBusinessServiceImpl implements SharedSpaceRoleBusinessService {
 
-	SharedSpaceRole findByUuid(String uuid) throws BusinessException;
+	private final SharedSpaceRoleMongoRepository sharedSpaceRoleMongoRepository;
 
-	SharedSpaceRole findByName(String name) throws BusinessException;
-
+	public SharedSpaceRoleBusinessServiceImpl(SharedSpaceRoleMongoRepository sharedSpaceRoleMongoRepository) {
+		super();
+		this.sharedSpaceRoleMongoRepository = sharedSpaceRoleMongoRepository;
+	}
+	
+	@Override
+	public SharedSpaceRole find(String uuid) throws BusinessException {
+		return sharedSpaceRoleMongoRepository.findByUuid(uuid);
+	}
+	
+	@Override
+	public SharedSpaceRole findByName(String name) throws BusinessException {
+		return sharedSpaceRoleMongoRepository.findByName(name);
+	}
+	
 }

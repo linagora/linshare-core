@@ -31,16 +31,69 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.repository;
+package org.linagora.linshare.core.rac.impl;
 
-import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.rac.SharedSpaceRoleResourceAccessControl;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
-import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface SharedSpaceRoleMongoRepository extends MongoRepository<SharedSpaceRole, String> {
+public class SharedSpaceRoleResourceAccessControlImpl 
+	extends AbstractResourceAccessControlImpl<Account, Account, SharedSpaceRole> 
+	implements SharedSpaceRoleResourceAccessControl{
 
-	SharedSpaceRole findByUuid(String uuid) throws BusinessException;
+	public SharedSpaceRoleResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService) {
+		super(functionalityService);
+		// TODO Auto-generated constructor stub
+	}
 
-	SharedSpaceRole findByName(String name) throws BusinessException;
+	@Override
+	protected boolean hasReadPermission(Account authUser, Account account, SharedSpaceRole entry, Object... opt) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	protected boolean hasListPermission(Account authUser, Account account, SharedSpaceRole entry, Object... opt) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	protected boolean hasDeletePermission(Account authUser, Account account, SharedSpaceRole entry, Object... opt) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	protected boolean hasCreatePermission(Account authUser, Account account, SharedSpaceRole entry, Object... opt) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	protected boolean hasUpdatePermission(Account authUser, Account account, SharedSpaceRole entry, Object... opt) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	protected String getTargetedAccountRepresentation(Account actor) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected Account getOwner(SharedSpaceRole entry, Object... opt) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected String getEntryRepresentation(SharedSpaceRole entry) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
+
