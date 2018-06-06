@@ -36,13 +36,13 @@ package org.linagora.linshare.core.rac.impl;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
-import org.linagora.linshare.core.rac.AbstractResourceAccessControl;
+import org.linagora.linshare.core.rac.AbstractUploadRequestResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 
-public abstract class AbstractUploadRequestResourceAbstractControlImpl<R, E>
-		extends AbstractResourceAccessControlImpl<Account, R, E> implements AbstractResourceAccessControl<Account, R, E> {
+public abstract class AbstractUploadRequestResourceAccessControlImpl<R, E>
+		extends AbstractResourceAccessControlImpl<Account, R, E> implements AbstractUploadRequestResourceAccessControl<R, E> {
 
-	public AbstractUploadRequestResourceAbstractControlImpl(FunctionalityReadOnlyService functionalityService) {
+	public AbstractUploadRequestResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService) {
 		super(functionalityService);
 	}
 

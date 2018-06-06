@@ -35,6 +35,6 @@ package org.linagora.linshare.core.rac;
 
 import org.linagora.linshare.core.domain.entities.Account;
 
-public interface AbstractUploadRequestResourceAbstractControl<R, E> extends AbstractResourceAccessControl<Account, R, E> {
+public interface AbstractUploadRequestResourceAccessControl<R, E> extends AbstractResourceAccessControl<Account, R, E> {
 
 }

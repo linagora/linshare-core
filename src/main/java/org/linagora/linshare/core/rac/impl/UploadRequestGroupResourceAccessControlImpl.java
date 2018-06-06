@@ -41,7 +41,7 @@ import org.linagora.linshare.core.rac.UploadRequestGroupResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 
 public class UploadRequestGroupResourceAccessControlImpl
-		extends AbstractUploadRequestResourceAbstractControlImpl<Account, UploadRequestGroup>
+		extends AbstractUploadRequestResourceAccessControlImpl<Account, UploadRequestGroup>
 		implements UploadRequestGroupResourceAccessControl {
 
 	public UploadRequestGroupResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService) {
