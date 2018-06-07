@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.service;
 
+import java.util.List;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -106,7 +107,7 @@ public class SharedSpaceRoleServiceImplTest extends AbstractTransactionalJUnit4S
 	@Test
 	public void findByNameDefaultRoles() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		SharedSpaceRole toFindRole = service.findByName(authUser, authUser,"ADMIN");
+		SharedSpaceRole toFindRole = service.findByName(authUser, authUser, "ADMIN");
 		Assert.assertNotNull("Role has not been found.", toFindRole);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
@@ -116,6 +117,14 @@ public class SharedSpaceRoleServiceImplTest extends AbstractTransactionalJUnit4S
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		SharedSpaceRole toFindRole = service.find(authUser, authUser, "77a699fe-faca-46a5-97c0-1b46a0f5cd14");
 		Assert.assertNotNull("Role has not been found.", toFindRole);
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void findAllExistingDefaultRoles() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		List<SharedSpaceRole> toFindRoles = service.findAll(authUser, authUser);
+		Assert.assertNotNull("Roles has not been not found", toFindRoles);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 }

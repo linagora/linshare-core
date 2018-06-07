@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.webservice.delegationv2.impl;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -95,5 +97,20 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 				@PathParam(value="name")String name) 
 					throws BusinessException {
 		return sharedSpaceRoleFacade.findByName(actorUuid, name);
+	}
+	
+	@Path("/")
+	@GET
+	@ApiOperation(value = "Find all a shared space roles.", response = SharedSpaceNode.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 404, message = "Not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public List<SharedSpaceRole> findAll(
+			@ApiParam(value="the actor uuid")
+				@PathParam(value="actorUuid")String actorUuid)
+						throws BusinessException {
+		return sharedSpaceRoleFacade.findAll(actorUuid);
 	}
 }

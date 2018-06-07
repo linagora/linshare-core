@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.mongo.repository;
 
+import java.util.List;
+
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -42,5 +44,6 @@ public interface SharedSpaceRoleMongoRepository extends MongoRepository<SharedSp
 	SharedSpaceRole findByUuid(String uuid) throws BusinessException;
 
 	SharedSpaceRole findByName(String name) throws BusinessException;
-
+	
+	List <SharedSpaceRole> findAll() throws BusinessException;
 }

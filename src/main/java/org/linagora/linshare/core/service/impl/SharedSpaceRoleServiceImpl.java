@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.util.List;
+
 import org.jsoup.helper.Validate;
 import org.linagora.linshare.core.business.service.SharedSpaceRoleBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -79,6 +81,15 @@ public class SharedSpaceRoleServiceImpl extends GenericServiceImpl<Account, Shar
 		checkReadPermission(authUser, actor, SharedSpaceRole.class, BusinessErrorCode.SHARED_SPACE_ROLE_FORBIDDEN,
 				found);
 		return found;
+	}
+
+	@Override
+	public List<SharedSpaceRole> findAll(Account authUser, Account actor) {
+		preChecks(authUser, actor);
+		checkListPermission(actor, authUser, SharedSpaceRole.class, BusinessErrorCode.SHARED_SPACE_ROLE_FORBIDDEN,
+				null);
+		List<SharedSpaceRole> foundRoles = sharedSpaceRoleBusinessService.findAll();
+		return foundRoles;
 	}
 
 }

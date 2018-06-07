@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.webservice.userv2.impl;
 
+import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -55,11 +56,11 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestService {
 
-	private final SharedSpaceRoleFacade sharedSpaceFacade;
+	protected final SharedSpaceRoleFacade sharedSpaceRoleFacade;
 
 	public SharedSpaceRoleRestServiceImpl(SharedSpaceRoleFacade sharedSpaceFacade) {
 		super();
-		this.sharedSpaceFacade = sharedSpaceFacade;
+		this.sharedSpaceRoleFacade = sharedSpaceFacade;
 	}
 
 	@Path("/{uuid}")
@@ -74,7 +75,7 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 			@ApiParam(value = "shared space role uuid.", required = true) 
 				@PathParam(value = "uuid") String uuid)
 						throws BusinessException {
-		return sharedSpaceFacade.find(null, uuid);
+		return sharedSpaceRoleFacade.find(null, uuid);
 	}
 
 	@Path("/role/{name}")
@@ -86,10 +87,22 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public SharedSpaceRole findByName(
-			@ApiParam(value = "shared space role name.", required = true) 
+			@ApiParam(value = "shared space role name.", required = true)
 				@PathParam(value = "name") String name)
 						throws BusinessException {
-		return sharedSpaceFacade.findByName(null, name);
+		return sharedSpaceRoleFacade.findByName(null, name);
+	}
+
+	@Path("/")
+	@GET
+	@ApiOperation(value = "Find all shared space roles.", response = SharedSpaceRole.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 404, message = "Not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public List<SharedSpaceRole> findAll() throws BusinessException {
+		return sharedSpaceRoleFacade.findAll(null);
 	}
 
 }

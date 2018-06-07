@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.business.service;
 
+import java.util.List;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 
@@ -41,5 +42,7 @@ public interface SharedSpaceRoleBusinessService {
 	SharedSpaceRole find(String uuid) throws BusinessException;
 
 	SharedSpaceRole findByName(String name) throws BusinessException;
+	
+	List<SharedSpaceRole> findAll() throws BusinessException;
 
 }
