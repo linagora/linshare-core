@@ -34,7 +34,6 @@
 package org.linagora.linshare.mongo.repository;
 
 import java.util.List;
-
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.springframework.data.mongodb.repository.MongoRepository;
 

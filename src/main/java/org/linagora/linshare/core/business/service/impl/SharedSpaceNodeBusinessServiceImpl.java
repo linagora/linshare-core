@@ -58,7 +58,7 @@ public class SharedSpaceNodeBusinessServiceImpl implements SharedSpaceNodeBusine
 	}
 
 	@Override
-	public List<SharedSpaceNode> findByNameAndParentUuid(String name, String parentUuid) throws BusinessException{
+	public List<SharedSpaceNode> findByNameAndParentUuid(String name, String parentUuid) throws BusinessException {
 		return sharedSpaceNodeMongoRepository.findByNameAndParentUuid(name, parentUuid);
 	}
 

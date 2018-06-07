@@ -38,7 +38,7 @@ import org.linagora.linshare.mongo.entities.SharedSpacePermission;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface SharedSpacePermissionMongoRepository extends MongoRepository<SharedSpacePermission, String> {
-	
+
 	SharedSpacePermission findByUuid(String uuid) throws BusinessException;
-	
+
 }

@@ -52,7 +52,7 @@ public class SharedSpaceAccount {
 		super();
 	}
 
-	public SharedSpaceAccount( String firstName, String lastName, String mail) {
+	public SharedSpaceAccount(String firstName, String lastName, String mail) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
 		this.firstName = firstName;

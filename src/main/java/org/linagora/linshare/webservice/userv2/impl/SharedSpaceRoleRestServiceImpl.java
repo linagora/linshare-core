@@ -55,7 +55,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestService {
 
-	protected final SharedSpaceRoleFacade sharedSpaceFacade;
+	private final SharedSpaceRoleFacade sharedSpaceFacade;
 
 	public SharedSpaceRoleRestServiceImpl(SharedSpaceRoleFacade sharedSpaceFacade) {
 		super();

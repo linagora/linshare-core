@@ -44,7 +44,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @XmlRootElement(name = "SharedSpaceMember")
-@Document(collection = "shared_space_member")
+@Document(collection = "shared_space_members")
 public class SharedSpaceMember {
 
 	@JsonIgnore
@@ -64,9 +64,7 @@ public class SharedSpaceMember {
 
 	protected SharedSpaceAccount sharedSpaceAccount;
 
-	public SharedSpaceMember(String name,
-			SharedSpaceRole sharedSpaceRole,
-			SharedSpaceNode sharedSpaceNode,
+	public SharedSpaceMember(SharedSpaceRole sharedSpaceRole, SharedSpaceNode sharedSpaceNode,
 			SharedSpaceAccount sharedSpaceAccount) {
 		super();
 		this.uuid = UUID.randomUUID().toString();

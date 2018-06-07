@@ -48,13 +48,10 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 
 	private final SharedSpaceNodeBusinessService sharedSpaceNodeBusinessService;
 
-	private final SharedSpaceNodeResourceAccessControl sharedSpaceNodeResourceAccessControl;
-
 	public SharedSpaceNodeServiceImpl(SharedSpaceNodeBusinessService sharedSpaceNodeBusinessService,
 			SharedSpaceNodeResourceAccessControl sharedSpaceNodeResourceAccessControl) {
 		super(sharedSpaceNodeResourceAccessControl);
 		this.sharedSpaceNodeBusinessService = sharedSpaceNodeBusinessService;
-		this.sharedSpaceNodeResourceAccessControl = sharedSpaceNodeResourceAccessControl;
 	}
 
 	@Override

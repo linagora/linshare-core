@@ -36,7 +36,7 @@ package org.linagora.linshare.core.rac;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 
-public interface SharedSpaceNodeResourceAccessControl extends AbstractResourceAccessControl<Account, Account, SharedSpaceNode>{
-	
-}
+public interface SharedSpaceNodeResourceAccessControl
+		extends AbstractResourceAccessControl<Account, Account, SharedSpaceNode> {
 
+}

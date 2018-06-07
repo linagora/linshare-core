@@ -39,8 +39,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 public interface SharedSpaceRoleFacade {
 
 	SharedSpaceRole find(String actorUuid, String uuid) throws BusinessException;
-	
-	SharedSpaceRole findByName(String actorUuid,String name) throws BusinessException;
+
+	SharedSpaceRole findByName(String actorUuid, String name) throws BusinessException;
 
 }
-

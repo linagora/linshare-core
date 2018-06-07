@@ -46,15 +46,15 @@ public class SharedSpaceRoleBusinessServiceImpl implements SharedSpaceRoleBusine
 		super();
 		this.sharedSpaceRoleMongoRepository = sharedSpaceRoleMongoRepository;
 	}
-	
+
 	@Override
 	public SharedSpaceRole find(String uuid) throws BusinessException {
 		return sharedSpaceRoleMongoRepository.findByUuid(uuid);
 	}
-	
+
 	@Override
 	public SharedSpaceRole findByName(String name) throws BusinessException {
 		return sharedSpaceRoleMongoRepository.findByName(name);
 	}
-	
+
 }

@@ -43,7 +43,6 @@ import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.linagora.linshare.core.domain.constants.SharedSpaceActionType;
 import org.linagora.linshare.core.domain.constants.SharedSpaceResourceType;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -74,7 +73,7 @@ public class SharedSpacePermission {
 		super();
 	}
 
-	public SharedSpacePermission(String name, SharedSpaceActionType action, SharedSpaceResourceType resource,
+	public SharedSpacePermission(SharedSpaceActionType action, SharedSpaceResourceType resource,
 			List<SharedSpaceRole> sharedSpaceRoles) {
 		super();
 		this.uuid = UUID.randomUUID().toString();

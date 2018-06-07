@@ -47,13 +47,10 @@ public class SharedSpaceRoleServiceImpl extends GenericServiceImpl<Account, Shar
 
 	private final SharedSpaceRoleBusinessService sharedSpaceRoleBusinessService;
 
-	private final SharedSpaceRoleResourceAccessControl rac;
-
 	public SharedSpaceRoleServiceImpl(SharedSpaceRoleBusinessService sharedSpaceRoleBusinessService,
 			SharedSpaceRoleResourceAccessControl rac) {
 		super(rac);
 		this.sharedSpaceRoleBusinessService = sharedSpaceRoleBusinessService;
-		this.rac = rac;
 	}
 
 	@Override

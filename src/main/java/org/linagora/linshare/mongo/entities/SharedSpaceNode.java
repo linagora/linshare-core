@@ -35,7 +35,6 @@ package org.linagora.linshare.mongo.entities;
 
 import java.util.Date;
 import java.util.UUID;
-
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlRootElement;

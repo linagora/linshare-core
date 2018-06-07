@@ -45,7 +45,8 @@ public class SharedSpaceRoleFacadeImpl extends GenericFacadeImpl implements Shar
 
 	private final SharedSpaceRoleService sharedSpaceRoleService;
 
-	public SharedSpaceRoleFacadeImpl(AccountService accountService, SharedSpaceRoleService sharedSpaceRoleService) {
+	public SharedSpaceRoleFacadeImpl(AccountService accountService,
+			SharedSpaceRoleService sharedSpaceRoleService) {
 		super(accountService);
 		this.sharedSpaceRoleService = sharedSpaceRoleService;
 	}
@@ -57,7 +58,7 @@ public class SharedSpaceRoleFacadeImpl extends GenericFacadeImpl implements Shar
 		Account actor = getActor(authUser, actorUuid);
 		return sharedSpaceRoleService.find(authUser, actor, uuid);
 	}
-	
+
 	@Override
 	public SharedSpaceRole findByName(String actorUuid, String name) throws BusinessException {
 		Validate.notEmpty(name, "Missing required shared space role name.");

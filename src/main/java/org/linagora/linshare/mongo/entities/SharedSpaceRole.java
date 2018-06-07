@@ -35,6 +35,7 @@
 package org.linagora.linshare.mongo.entities;
 
 import java.util.Date;
+import java.util.UUID;
 import javax.persistence.GeneratedValue;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -72,28 +73,27 @@ public class SharedSpaceRole {
 		super();
 	}
 
-	public SharedSpaceRole(String id, String uuid, String name, Boolean enabled, SharedSpaceDomain sharedSpaceDomain,
+	public SharedSpaceRole(String name, Boolean enabled, SharedSpaceDomain sharedSpaceDomain,
 			SharedSpaceAccount sharedSpaceAccount, Date creationDate, Date modificationDate) {
 		super();
-		this.id = id;
-		this.uuid = uuid;
+		this.uuid = UUID.randomUUID().toString();
 		this.name = name;
 		this.enabled = enabled;
 		this.sharedSpaceAccount = sharedSpaceAccount;
 		this.sharedSpaceDomain = sharedSpaceDomain;
-		this.creationDate = creationDate;
-		this.modificationDate = modificationDate;
+		this.creationDate = new Date();
+		this.modificationDate = new Date();
 	}
 
 	public SharedSpaceRole(SharedSpaceRole role) {
 		super();
+		this.uuid = role.getUuid();
 		this.name = role.getName();
 		this.enabled = role.isEnabled();
 		this.sharedSpaceAccount = role.getSharedSpaceAccount();
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
 		this.sharedSpaceDomain = role.getSharedSpaceDomain();
-		this.uuid = role.getUuid();
 	}
 
 	public boolean isEnabled() {
