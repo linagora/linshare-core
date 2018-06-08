@@ -36,20 +36,26 @@ package org.linagora.linshare.core.rac.impl;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.rac.UploadPropositionExceptionRuleResourceAccessControl;
+import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.mongo.entities.UploadPropositionExceptionRule;
 
 public class UploadPropositionExceptionRuleResourceAccessControlImpl extends AbstractResourceAccessControlImpl<Account, Account, UploadPropositionExceptionRule>
 		implements UploadPropositionExceptionRuleResourceAccessControl {
 
-	public UploadPropositionExceptionRuleResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService) {
+	private AccountRepository<Account> accountRepository;
+
+	public UploadPropositionExceptionRuleResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService,
+			AccountRepository<Account> accountRepository) {
 		super(functionalityService);
+		this.accountRepository = accountRepository;
 	}
 
 	@Override
 	protected boolean hasReadPermission(Account authUser, Account actor, UploadPropositionExceptionRule entry,
 			Object... opt) {
-		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_PROPOSITION_EXCEPTION_RULE_GET);
+		return defaultPermissionCheck(authUser, actor, entry,
+				TechnicalAccountPermissionType.UPLOAD_PROPOSITION_EXCEPTION_RULE_GET);
 	}
 
 	@Override
@@ -58,19 +64,22 @@ public class UploadPropositionExceptionRuleResourceAccessControlImpl extends Abs
 		if (authUser.hasUploadPropositionRole()) {
 			return true;
 		}
-		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_PROPOSITION_EXCEPTION_RULE_LIST);
+		return defaultPermissionCheck(authUser, actor, entry,
+				TechnicalAccountPermissionType.UPLOAD_PROPOSITION_EXCEPTION_RULE_LIST, false);
 	}
 
 	@Override
 	protected boolean hasDeletePermission(Account authUser, Account actor, UploadPropositionExceptionRule entry,
 			Object... opt) {
-		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_PROPOSITION_EXCEPTION_RULE_DELETE);
+		return defaultPermissionCheck(authUser, actor, entry,
+				TechnicalAccountPermissionType.UPLOAD_PROPOSITION_EXCEPTION_RULE_DELETE);
 	}
 
 	@Override
 	protected boolean hasCreatePermission(Account authUser, Account actor, UploadPropositionExceptionRule entry,
 			Object... opt) {
-		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_PROPOSITION_EXCEPTION_RULE_CREATE);
+		return defaultPermissionCheck(authUser, actor, entry,
+				TechnicalAccountPermissionType.UPLOAD_PROPOSITION_EXCEPTION_RULE_CREATE, false);
 	}
 
 	@Override
@@ -79,7 +88,8 @@ public class UploadPropositionExceptionRuleResourceAccessControlImpl extends Abs
 		if (entry == null || !actor.getLsUuid().equals(entry.getAccountUuid())) {
 			return false;
 		}
-		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_PROPOSITION_EXCEPTION_RULE_UPDATE);
+		return defaultPermissionCheck(authUser, actor, entry,
+				TechnicalAccountPermissionType.UPLOAD_PROPOSITION_EXCEPTION_RULE_UPDATE);
 	}
 
 	@Override
@@ -90,6 +100,11 @@ public class UploadPropositionExceptionRuleResourceAccessControlImpl extends Abs
 	@Override
 	protected String getEntryRepresentation(UploadPropositionExceptionRule entry) {
 		return entry.getUuid();
+	}
+
+	@Override
+	protected Account getOwner(UploadPropositionExceptionRule entry, Object... opt) {
+		return accountRepository.findByLsUuid(entry.getAccountUuid());
 	}
 
 }

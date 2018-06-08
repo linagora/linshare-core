@@ -36,6 +36,7 @@ package org.linagora.linshare.core.rac.impl;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.rac.UploadPropositionResourceAccessControl;
+import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.mongo.entities.UploadProposition;
 
@@ -43,22 +44,23 @@ public class UploadPropositionResourceAccessControlImpl
 		extends AbstractResourceAccessControlImpl<Account, Account, UploadProposition>
 		implements UploadPropositionResourceAccessControl {
 
-	public UploadPropositionResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService) {
+	private AccountRepository<Account> accountRepository;
+
+	public UploadPropositionResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService,
+			AccountRepository<Account> accountRepository) {
 		super(functionalityService);
+		this.accountRepository = accountRepository;
 	}
 
 	@Override
 	protected boolean hasReadPermission(Account authUser, Account actor, UploadProposition entry, Object... opt) {
-		if (entry == null || !(entry.getAccountUuid().equals(actor.getLsUuid()))) {
-			return false;
-		}
-		return defaultPermissionCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.UPLOAD_PROPOSITION_GET);
+		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_PROPOSITION_GET);
 	}
 
 	@Override
 	protected boolean hasListPermission(Account authUser, Account actor, UploadProposition entry, Object... opt) {
-		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_PROPOSITION_LIST);
+		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.UPLOAD_PROPOSITION_LIST,
+				false);
 	}
 
 	@Override
@@ -84,5 +86,10 @@ public class UploadPropositionResourceAccessControlImpl
 	@Override
 	protected String getEntryRepresentation(UploadProposition entry) {
 		return entry.getUuid();
+	}
+
+	@Override
+	protected Account getOwner(UploadProposition entry, Object... opt) {
+		return accountRepository.findByLsUuid(entry.getAccountUuid());
 	}
 }
