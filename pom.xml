@@ -1814,7 +1814,7 @@
 		<spring-security-release-version>4.0.3.RELEASE</spring-security-release-version>
 		<spring-data.version>Gosling-SR1</spring-data.version>
 		<hibernate.version>4.3.11.Final</hibernate.version>
-		<h2.version>1.4.191</h2.version>
+		<h2.version>1.4.197</h2.version>
 		<guava.version>19.0</guava.version>
 		<linid.authorization.version>2.1.2</linid.authorization.version>
 		<mozilla.rhino.version>1.7.7.1</mozilla.rhino.version>
