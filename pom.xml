@@ -757,7 +757,7 @@
 		<dependency>
 			<groupId>org.cyclopsgroup</groupId>
 			<artifactId>jmxterm</artifactId>
-			<version>1.0-alpha-4-uber</version>
+			<version>1.0.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
