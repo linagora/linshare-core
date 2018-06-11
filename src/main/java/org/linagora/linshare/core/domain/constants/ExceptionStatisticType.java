@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2018 to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -32,39 +32,18 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.webservice.interceptor;
+package org.linagora.linshare.core.domain.constants;
 
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.ext.ExceptionMapper;
+public enum ExceptionStatisticType {
 
-import org.linagora.linshare.core.domain.constants.ExceptionType;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ErrorDto;
-import org.linagora.linshare.core.service.ExceptionStatisticService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+	ONESHOT, DAILY;
 
-@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class BusinessExceptionMapper implements ExceptionMapper<BusinessException> {
-
-	@Autowired
-	protected ExceptionStatisticService exceptionStatisticService;
-
-	private static final Logger logger = LoggerFactory.getLogger(BusinessExceptionMapper.class);
-
-	@Override
-	public Response toResponse(BusinessException exception) {
-		logger.error("A BusinessException was caught : code=" + exception.getErrorCode().toString() + ",  "
-				+ exception.getLocalizedMessage());
-		logger.debug("Stacktrace: ", exception);
-		ErrorDto errorDto = new ErrorDto(exception.getErrorCode().getCode(), exception.getMessage());
-		ResponseBuilder response = Response.status(exception.getErrorCode().getStatus());
-		exceptionStatisticService.createExceptionStatistic(exception.getErrorCode(),exception.getStackTrace(),ExceptionType.BUSINESS_EXCEPTION);
-		response.entity(errorDto);
-		return response.build();
+	public static ExceptionStatisticType fromString(String s) {
+		try {
+			return ExceptionStatisticType.valueOf(s.toUpperCase());
+		} catch (RuntimeException e) {
+			throw new IllegalArgumentException(
+					"Doesn't match an existing ExceptionStatisticType");
+		}
 	}
 }

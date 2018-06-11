@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,40 +31,24 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.mongo.repository;
 
-package org.linagora.linshare.webservice.interceptor;
+import java.util.Date;
+import java.util.List;
 
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.ext.ExceptionMapper;
-
+import org.linagora.linshare.core.domain.constants.ExceptionStatisticType;
 import org.linagora.linshare.core.domain.constants.ExceptionType;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ErrorDto;
-import org.linagora.linshare.core.service.ExceptionStatisticService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.linagora.linshare.mongo.entities.ExceptionStatistic;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 
-@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class BusinessExceptionMapper implements ExceptionMapper<BusinessException> {
+public interface ExceptionStatisticMongoRepository extends MongoRepository<ExceptionStatistic, String> {
 
-	@Autowired
-	protected ExceptionStatisticService exceptionStatisticService;
+	@Query("{ 'domainUuid' : ?0 ,'exceptionType' : ?1 , 'creationDate' : { '$gt' : '?2' , '$lt' : '?3'},'type' : ?4 }")
+	List<ExceptionStatistic> findBetweenTwoDates(String domainUuid, ExceptionType exceptionType, Date beginDate, Date endDate,
+			 ExceptionStatisticType type);
 
-	private static final Logger logger = LoggerFactory.getLogger(BusinessExceptionMapper.class);
-
-	@Override
-	public Response toResponse(BusinessException exception) {
-		logger.error("A BusinessException was caught : code=" + exception.getErrorCode().toString() + ",  "
-				+ exception.getLocalizedMessage());
-		logger.debug("Stacktrace: ", exception);
-		ErrorDto errorDto = new ErrorDto(exception.getErrorCode().getCode(), exception.getMessage());
-		ResponseBuilder response = Response.status(exception.getErrorCode().getStatus());
-		exceptionStatisticService.createExceptionStatistic(exception.getErrorCode(),exception.getStackTrace(),ExceptionType.BUSINESS_EXCEPTION);
-		response.entity(errorDto);
-		return response.build();
-	}
+	@Query(value = "{ 'domainUuid' : ?0 ,'exceptionType' : ?1 , 'creationDate' : { '$gt' : '?2' , '$lt' : '?3'}, 'type' : ?4 }}", count = true)
+	Long countExceptionStatistic(String domainUuid, ExceptionType exceptionType, Date beginDate, Date endDate,
+			 ExceptionStatisticType type);
 }

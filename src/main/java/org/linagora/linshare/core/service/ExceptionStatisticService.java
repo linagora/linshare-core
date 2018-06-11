@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,40 +31,13 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-
-package org.linagora.linshare.webservice.interceptor;
-
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.ext.ExceptionMapper;
+package org.linagora.linshare.core.service;
 
 import org.linagora.linshare.core.domain.constants.ExceptionType;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.ErrorDto;
-import org.linagora.linshare.core.service.ExceptionStatisticService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.mongo.entities.ExceptionStatistic;
 
-@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class BusinessExceptionMapper implements ExceptionMapper<BusinessException> {
+public interface ExceptionStatisticService {
 
-	@Autowired
-	protected ExceptionStatisticService exceptionStatisticService;
-
-	private static final Logger logger = LoggerFactory.getLogger(BusinessExceptionMapper.class);
-
-	@Override
-	public Response toResponse(BusinessException exception) {
-		logger.error("A BusinessException was caught : code=" + exception.getErrorCode().toString() + ",  "
-				+ exception.getLocalizedMessage());
-		logger.debug("Stacktrace: ", exception);
-		ErrorDto errorDto = new ErrorDto(exception.getErrorCode().getCode(), exception.getMessage());
-		ResponseBuilder response = Response.status(exception.getErrorCode().getStatus());
-		exceptionStatisticService.createExceptionStatistic(exception.getErrorCode(),exception.getStackTrace(),ExceptionType.BUSINESS_EXCEPTION);
-		response.entity(errorDto);
-		return response.build();
-	}
+	ExceptionStatistic createExceptionStatistic(BusinessErrorCode errorCode, StackTraceElement[] stackTrace,ExceptionType type);
 }

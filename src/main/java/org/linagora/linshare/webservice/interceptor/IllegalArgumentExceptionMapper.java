@@ -41,15 +41,21 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.ext.ExceptionMapper;
 
 import org.apache.commons.httpclient.HttpStatus;
+import org.linagora.linshare.core.domain.constants.ExceptionType;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.facade.webservice.common.dto.ErrorDto;
+import org.linagora.linshare.core.service.ExceptionStatisticService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class IllegalArgumentExceptionMapper implements ExceptionMapper<IllegalArgumentException> {
 
 	private static final Logger logger = LoggerFactory.getLogger(IllegalArgumentExceptionMapper.class);
+	
+	@Autowired
+	protected ExceptionStatisticService exceptionStatisticService;
 
 	@Override
 	public Response toResponse(IllegalArgumentException exception) {
@@ -59,6 +65,7 @@ public class IllegalArgumentExceptionMapper implements ExceptionMapper<IllegalAr
 
 		ErrorDto errorDto = new ErrorDto(BusinessErrorCode.WEBSERVICE_FAULT.getCode()," : " +exception.getMessage());
 		ResponseBuilder response = Response.status(HttpStatus.SC_BAD_REQUEST);
+		exceptionStatisticService.createExceptionStatistic(null,exception.getStackTrace(),ExceptionType.ILLEGAL_ARGUMENT_EXCEPTION);
 		response.entity(errorDto);
 		return response.build();
 	}

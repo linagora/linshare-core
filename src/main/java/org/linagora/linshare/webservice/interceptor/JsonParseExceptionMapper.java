@@ -42,13 +42,19 @@ import javax.ws.rs.ext.ExceptionMapper;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.codehaus.jackson.JsonParseException;
+import org.linagora.linshare.core.domain.constants.ExceptionType;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.facade.webservice.common.dto.ErrorDto;
+import org.linagora.linshare.core.service.ExceptionStatisticService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class JsonParseExceptionMapper implements ExceptionMapper<JsonParseException> {
+	
+	@Autowired
+	protected ExceptionStatisticService exceptionStatisticService;
 
 	private static final Logger logger = LoggerFactory.getLogger(JsonParseExceptionMapper.class);
 
@@ -59,6 +65,7 @@ public class JsonParseExceptionMapper implements ExceptionMapper<JsonParseExcept
 		ErrorDto errorDto = new ErrorDto(BusinessErrorCode.WEBSERVICE_BAD_REQUEST.getCode(),
 				"You have an error in your json : " + exception.getClass().toString() + " : " + exception.getMessage());
 		ResponseBuilder response = Response.status(HttpStatus.SC_BAD_REQUEST);
+		exceptionStatisticService.createExceptionStatistic(null,exception.getStackTrace(),ExceptionType.JSON_PARSE_EXCEPTION);
 		response.entity(errorDto);
 		return response.build();
 	}
