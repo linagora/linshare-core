@@ -22,6 +22,18 @@ CREATE TABLE account (
   destroyed                       int8 NOT NULL,
   purge_step                      varchar(255) DEFAULT 'IN_USE' NOT NULL,
   cmis_locale                     varchar(255) NOT NULL,
+  first_name            varchar(255),
+  last_name             varchar(255),
+  encipherment_key_pass bytea,
+  not_after             timestamp(6),
+  not_before            timestamp(6),
+  can_upload            bool,
+  comment               text,
+  restricted            bool,
+  expiration_date       timestamp,
+  ldap_uid              varchar(255),
+  can_create_guest      bool,
+  inconsistent          bool DEFAULT 'False',
   CONSTRAINT account_pkey
     PRIMARY KEY (id),
   CONSTRAINT account_unique_mail_domain_destroyed
@@ -282,22 +294,6 @@ CREATE TABLE unit (
   unit_value int4 NOT NULL,
   CONSTRAINT linshare_unit_pkey
     PRIMARY KEY (id));
-CREATE TABLE users (
-  account_id            int8 NOT NULL,
-  first_name            varchar(255),
-  last_name             varchar(255),
-  encipherment_key_pass bytea,
-  not_after             timestamp(6),
-  not_before            timestamp(6),
-  can_upload            bool NOT NULL,
-  comment               text,
-  restricted            bool,
-  expiration_date       timestamp,
-  ldap_uid              varchar(255),
-  can_create_guest      bool NOT NULL,
-  inconsistent          bool DEFAULT 'False',
-  CONSTRAINT user_pkey
-    PRIMARY KEY (account_id));
 CREATE TABLE version (
   id       int8 NOT NULL,
   version text NOT NULL UNIQUE,
@@ -929,16 +925,15 @@ ALTER TABLE thread ADD CONSTRAINT inheritance_account_thread FOREIGN KEY (accoun
 ALTER TABLE document_entry ADD CONSTRAINT FKdocument_e594117 FOREIGN KEY (document_id) REFERENCES document (id);
 ALTER TABLE share_entry ADD CONSTRAINT FKshare_entr708932 FOREIGN KEY (document_entry_id) REFERENCES document_entry (entry_id);
 ALTER TABLE anonymous_share_entry ADD CONSTRAINT FKanonymous_138106 FOREIGN KEY (document_entry_id) REFERENCES document_entry (entry_id);
-ALTER TABLE recipient_favourite ADD CONSTRAINT FKrecipient_90791 FOREIGN KEY (user_id) REFERENCES users (account_id);
+ALTER TABLE recipient_favourite ADD CONSTRAINT FKrecipient_90791 FOREIGN KEY (user_id) REFERENCES account (id);
 ALTER TABLE anonymous_share_entry ADD CONSTRAINT FKanonymous_732508 FOREIGN KEY (anonymous_url_id) REFERENCES anonymous_url (id);
 ALTER TABLE share_entry ADD CONSTRAINT FKshare_entr87036 FOREIGN KEY (recipient_id) REFERENCES account (id);
 ALTER TABLE account ADD CONSTRAINT FKaccount400616 FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);
-ALTER TABLE allowed_contact ADD CONSTRAINT FKallowed_co409962 FOREIGN KEY (account_id) REFERENCES users (account_id);
-ALTER TABLE allowed_contact ADD CONSTRAINT FKallowed_co620678 FOREIGN KEY (contact_id) REFERENCES users (account_id);
+ALTER TABLE allowed_contact ADD CONSTRAINT FKallowed_co409962 FOREIGN KEY (account_id) REFERENCES account (id);
+ALTER TABLE allowed_contact ADD CONSTRAINT FKallowed_co620678 FOREIGN KEY (contact_id) REFERENCES account (id);
 ALTER TABLE account ADD CONSTRAINT FKaccount487511 FOREIGN KEY (owner_id) REFERENCES account (id);
-ALTER TABLE users ADD CONSTRAINT FKusers71760 FOREIGN KEY (account_id) REFERENCES account (id);
 ALTER TABLE thread_member ADD CONSTRAINT FKthread_mem280144 FOREIGN KEY (thread_id) REFERENCES thread (account_id);
-ALTER TABLE thread_member ADD CONSTRAINT FKthread_mem565048 FOREIGN KEY (user_id) REFERENCES users (account_id);
+ALTER TABLE thread_member ADD CONSTRAINT FKthread_mem565048 FOREIGN KEY (user_id) REFERENCES account (id);
 ALTER TABLE technical_account_permission_domain_abstract ADD CONSTRAINT FKtechnical_303831 FOREIGN KEY (technical_account_permission_id) REFERENCES technical_account_permission (id);
 ALTER TABLE technical_account_permission_domain_abstract ADD CONSTRAINT FKtechnical_231219 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE anonymous_share_entry ADD CONSTRAINT FKanonymous_621478 FOREIGN KEY (entry_id) REFERENCES entry (id);
@@ -970,7 +965,7 @@ ALTER TABLE upload_request_entry ADD CONSTRAINT FKupload_req11782 FOREIGN KEY (d
 ALTER TABLE upload_proposition_rule ADD CONSTRAINT FKupload_pro672390 FOREIGN KEY (upload_proposition_filter_id) REFERENCES upload_proposition_filter (id);
 ALTER TABLE upload_proposition_action ADD CONSTRAINT FKupload_pro841666 FOREIGN KEY (upload_proposition_filter_id) REFERENCES upload_proposition_filter (id);
 ALTER TABLE functionality ADD CONSTRAINT FKfunctional788903 FOREIGN KEY (policy_delegation_id) REFERENCES policy (id);
-ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li478123 FOREIGN KEY (user_id) REFERENCES users (account_id);
+ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li478123 FOREIGN KEY (user_id) REFERENCES account (id);
 ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li335663 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE mailing_list_contact ADD CONSTRAINT FKMailingListContact FOREIGN KEY (mailing_list_id) REFERENCES mailing_list (id);
 ALTER TABLE upload_request_template ADD CONSTRAINT FKupload_req618325 FOREIGN KEY (account_id) REFERENCES account (id);

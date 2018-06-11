@@ -82,61 +82,42 @@
 				<one-to-many class="org.linagora.linshare.core.domain.entities.WorkgroupMember"/>
 			</set>
 			<subclass name="org.linagora.linshare.core.domain.entities.Internal" discriminator-value="2" lazy="false">
-				<join table="users">
-					<key>
-						<column name="account_id"/>
-					</key>
 					<property name="firstName" column="first_name" type="string" length="255" not-null="false" lazy="false"/>
 					<property name="lastName" column="last_name" type="string" length="255" not-null="false" lazy="false"/>
 					<property name="notAfter" column="not_after" type="timestamp" not-null="false" lazy="false"/>
 					<property name="notBefore" column="not_before" type="timestamp" not-null="false" lazy="false"/>
 					<property name="ldapUid" column="ldap_uid" type="string" length="255" not-null="false" lazy="false"/>
-					<property name="canUpload" column="can_upload" type="boolean" not-null="true" lazy="false"/>
-					<property name="canCreateGuest" column="can_create_guest" type="boolean" not-null="true" lazy="false"/>
+					<property name="canUpload" column="can_upload" type="boolean" not-null="false" lazy="false"/>
+					<property name="canCreateGuest" column="can_create_guest" type="boolean" not-null="false" lazy="false"/>
 					<property name="inconsistent" column="inconsistent" type="boolean" lazy="false"/>
-				</join>
 			</subclass>
 			<subclass name="org.linagora.linshare.core.domain.entities.Guest" discriminator-value="3" lazy="false">
-				<join table="users">
-					<key>
-						<column name="account_id"/>
-					</key>
+
 					<property name="firstName" column="first_name" type="string" length="255" not-null="false" lazy="false"/>
 					<property name="lastName" column="last_name" type="string" length="255" not-null="false" lazy="false"/>
 					<property name="notAfter" column="not_after" type="timestamp" not-null="false" lazy="false"/>
 					<property name="notBefore" column="not_before" type="timestamp" not-null="false" lazy="false"/>
 					<property name="ldapUid" column="ldap_uid" type="string" length="255" not-null="false" lazy="false"/>
-					<property name="canUpload" column="can_upload" type="boolean" not-null="true" lazy="false"/>
+					<property name="canUpload" column="can_upload" type="boolean" not-null="false" lazy="false"/>
 					<property name="canCreateGuest" column="can_create_guest" type="boolean" not-null="true" lazy="false"/>
 					<property name="expirationDate" column="expiration_date" type="timestamp" not-null="false" lazy="false"/>
 					<property name="restricted" column="restricted" type="boolean" not-null="false" lazy="false"/>
 					<property name="comment" column="comment" type="text" not-null="false" lazy="false"/>
-				</join>
 			</subclass>
 			<subclass name="org.linagora.linshare.core.domain.entities.Root" discriminator-value="6" lazy="false">
-				<join table="users">
-					<key>
-						<column name="account_id"/>
-					</key>
 					<property name="firstName" column="first_name" type="string" length="255" not-null="false" lazy="false"/>
 					<property name="lastName" column="last_name" type="string" length="255" not-null="false" lazy="false"/>
 					<property name="notAfter" column="not_after" type="timestamp" not-null="false" lazy="false"/>
 					<property name="notBefore" column="not_before" type="timestamp" not-null="false" lazy="false"/>
 					<property name="ldapUid" column="ldap_uid" type="string" length="255" not-null="false" lazy="false"/>
-					<property name="canUpload" column="can_upload" type="boolean" not-null="true" lazy="false"/>
-					<property name="canCreateGuest" column="can_create_guest" type="boolean" not-null="true" lazy="false"/>
-				</join>
+					<property name="canUpload" column="can_upload" type="boolean" not-null="false" lazy="false"/>
+					<property name="canCreateGuest" column="can_create_guest" type="boolean" not-null="false" lazy="false"/>
 			</subclass>
 
 			<subclass name="org.linagora.linshare.core.domain.entities.TechnicalAccount" discriminator-value="4" lazy="false">
-				<join table="users">
-					<key>
-						<column name="account_id"/>
-					</key>
 					<property name="lastName" column="last_name" type="string" length="255" not-null="false" lazy="false"/>
 					<property name="canUpload" column="can_upload" type="boolean" not-null="true" lazy="false"/>
-					<property name="canCreateGuest" column="can_create_guest" type="boolean" not-null="true" lazy="false"/>
-				</join>
+					<property name="canCreateGuest" column="can_create_guest" type="boolean" not-null="false" lazy="false"/>
 			</subclass>
 		</subclass>
 

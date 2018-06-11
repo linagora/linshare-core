@@ -98,9 +98,9 @@ public class LinShareJobBeanTest extends
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		int countBefore = this.countRowsInTable("users");
+		int countBefore = this.countRowsInTable("account");
 		this.executeSqlScript("import-tests-batches-accounts.sql", false);
-		int countAfter = this.countRowsInTable("users");
+		int countAfter = this.countRowsInTable("account");
 		Assert.assertEquals(3, countAfter - countBefore);
 		wiser.start();
 		logger.debug(LinShareTestConstants.END_SETUP);

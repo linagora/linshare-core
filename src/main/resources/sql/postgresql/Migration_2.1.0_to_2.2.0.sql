@@ -285,6 +285,58 @@ VALUES
   now(),
   null);
 
+ALTER TABLE account ADD COLUMN first_name varchar(255);
+ALTER TABLE account ADD COLUMN last_name varchar(255);
+ALTER TABLE account ADD COLUMN encipherment_key_pass bytea;
+ALTER TABLE account ADD COLUMN not_after timestamp(6);
+ALTER TABLE account ADD COLUMN not_before timestamp(6);
+ALTER TABLE account ADD COLUMN can_upload bool DEFAULT FALSE NOT NULL;
+ALTER TABLE account ADD COLUMN comment text;
+ALTER TABLE account ADD COLUMN restricted bool DEFAULT FALSE NOT NULL;
+ALTER TABLE account ADD COLUMN expiration_date timestamp;
+ALTER TABLE account ADD COLUMN ldap_uid varchar(255);
+ALTER TABLE account ADD COLUMN can_create_guest bool DEFAULT FALSE NOT NULL;
+ALTER TABLE account ADD COLUMN inconsistent bool DEFAULT FALSE;
+
+UPDATE account SET 
+	first_name = users.first_name,
+	last_name = users.last_name,
+	encipherment_key_pass = users.encipherment_key_pass,
+	not_after = users.not_after,
+	not_before = users.not_before,
+	can_upload = users.can_upload,
+	comment = users.comment,
+	restricted = users.restricted,
+	expiration_date = users.expiration_date,
+	ldap_uid = users.ldap_uid,
+	can_create_guest = users.can_create_guest,
+	inconsistent  = users.inconsistent
+	FROM users
+	WHERE users.account_id = account.id;
+
+ALTER TABLE recipient_favourite DROP CONSTRAINT FKrecipient_90791;
+ALTER TABLE recipient_favourite ADD CONSTRAINT FKrecipient_90791 FOREIGN KEY (user_id) REFERENCES account (id);
+ALTER TABLE allowed_contact DROP CONSTRAINT FKallowed_co409962;
+ALTER TABLE allowed_contact ADD CONSTRAINT FKallowed_co409962 FOREIGN KEY (account_id) REFERENCES account (id);
+ALTER TABLE allowed_contact DROP CONSTRAINT FKallowed_co620678;
+ALTER TABLE allowed_contact ADD CONSTRAINT FKallowed_co620678 FOREIGN KEY (contact_id) REFERENCES account (id);
+ALTER TABLE thread_member DROP CONSTRAINT FKthread_mem565048;
+ALTER TABLE thread_member ADD CONSTRAINT FKthread_mem565048 FOREIGN KEY (user_id) REFERENCES account (id);
+ALTER TABLE mailing_list DROP CONSTRAINT fkmailing_li478123;
+ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li478123 FOREIGN KEY (user_id) REFERENCES account (id);
+
+CREATE OR REPLACE VIEW alias_users_list_all AS
+ SELECT id, first_name, last_name, mail, can_upload, restricted, expiration_date, ldap_uid, domain_id, ls_uuid, creation_date, modification_date, role_id, account_type from account as a ;
+-- All active users
+CREATE OR REPLACE VIEW alias_users_list_active AS
+ SELECT id, first_name, last_name, mail, can_upload, restricted, expiration_date, ldap_uid, domain_id, ls_uuid, creation_date, modification_date, role_id, account_type from account as a where a.destroyed = 0;
+-- All destroyed users
+CREATE OR REPLACE VIEW alias_users_list_destroyed AS
+ SELECT id, first_name, last_name, mail, can_upload, restricted, expiration_date, ldap_uid, domain_id, ls_uuid, creation_date, modification_date, role_id, account_type from account as a where a.destroyed = 0;
+
+
+DROP TABLE IF EXISTS users;
+
 -- Mail Activation
 
 -- End MailActivation
