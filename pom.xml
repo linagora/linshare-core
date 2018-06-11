@@ -824,7 +824,8 @@
 											<source>src/main/resources/sql/common/import-welcome-messages.sql</source>
 											<source>src/main/resources/sql/common/import-functionalities.sql</source>
 											<source>src/main/resources/sql/common/import-mail-activation.sql</source>
-											<source>src/main/resources/sql/common/import-mail.sql</source>
+											<source>src/main/resources/sql/common/import_mail_structure.sql</source>
+											<source>src/main/resources/sql/common/import_mail_update.sql</source>
 											<source>src/main/resources/sql/common/import-settings.sql</source>
 											<source>src/main/resources/sql/common/import-alias.sql</source>
 										</sources>

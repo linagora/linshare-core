@@ -1,0 +1,8 @@
+{
+	"dbname": "linshare",
+	"user": "linshare",
+	"host": "localhost",
+	"port": "5432",
+	"password": "linshare",
+	"path_mail_content_types": "../../src/main/java/org/linagora/linshare/core/domain/constants/MailContentType.java"
+}
