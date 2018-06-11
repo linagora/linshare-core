@@ -98,4 +98,12 @@
 		<constructor-arg ref="batchHistoryBusinessService" />
 		<constructor-arg ref="mongoTemplate" />
 	</bean>
+	<bean id="exceptionStatisticDailyBatch"
+		class="org.linagora.linshare.core.batches.impl.ExceptionStatisticDailyBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg ref="exceptionStatisticService" />
+		<constructor-arg ref="batchHistoryBusinessService" />
+		<constructor-arg ref="mongoTemplate" />
+	</bean>
 </beans>

@@ -43,7 +43,6 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.linagora.linshare.core.domain.constants.ExceptionStatisticType;
 import org.linagora.linshare.core.domain.constants.ExceptionType;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
-import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -78,12 +77,11 @@ public class ExceptionStatistic implements Cloneable {
 		super();
 	}
 
-	public ExceptionStatistic(Long value, String parentDomainUuid, BusinessErrorCode errorCode,
-			StackTraceElement[] stackTrace, AccountMto authUser, ExceptionType exceptionType,
-			ExceptionStatisticType type) {
+	public ExceptionStatistic(Long value, String domainUuid, String parentDomainUuid, BusinessErrorCode errorCode,
+			StackTraceElement[] stackTrace, ExceptionType exceptionType, ExceptionStatisticType type) {
 		super();
 		this.value = value;
-		this.domainUuid = authUser.getDomain().getUuid();
+		this.domainUuid = domainUuid;
 		this.parentDomainUuid = parentDomainUuid;
 		this.stackTrace = stackTrace;
 		this.creationDate = new Date();

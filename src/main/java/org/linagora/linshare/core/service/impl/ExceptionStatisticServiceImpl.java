@@ -33,6 +33,9 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.util.Date;
+import java.util.List;
+
 import org.jsoup.helper.Validate;
 import org.linagora.linshare.core.domain.constants.ExceptionStatisticType;
 import org.linagora.linshare.core.domain.constants.ExceptionType;
@@ -43,7 +46,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ExceptionStatisticService;
 import org.linagora.linshare.mongo.entities.ExceptionStatistic;
-import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.repository.ExceptionStatisticMongoRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -65,9 +67,22 @@ public class ExceptionStatisticServiceImpl implements ExceptionStatisticService 
 			ExceptionType type) {
 		User authUser = checkAuthentication();
 		Validate.notNull(type);
+		String domainUuid = authUser.getDomain().getUuid();
 		return exceptionStatisticMongoRepository
-				.insert(new ExceptionStatistic(1L, getParentDomainUuid(), errorCode, stackTrace,
-						new AccountMto(authUser), type, ExceptionStatisticType.ONESHOT));
+				.insert(new ExceptionStatistic(1L, domainUuid, getParentDomainUuid(), errorCode, stackTrace,
+						type, ExceptionStatisticType.ONESHOT));
+	}
+
+	@Override
+	public List<ExceptionStatistic> insert(List<ExceptionStatistic> exceptionStatistics) {
+		return exceptionStatisticMongoRepository.insert(exceptionStatistics);
+	}
+
+	@Override
+	public Long countExceptionStatistic(String domainUuid, ExceptionType exceptionType, Date beginDate, Date endDate,
+			ExceptionStatisticType type) {
+		return exceptionStatisticMongoRepository.countExceptionStatistic(domainUuid, exceptionType, beginDate, endDate,
+				type);
 	}
 
 	protected User checkAuthentication() throws BusinessException {

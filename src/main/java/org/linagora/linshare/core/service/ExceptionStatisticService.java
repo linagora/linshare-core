@@ -33,6 +33,10 @@
  */
 package org.linagora.linshare.core.service;
 
+import java.util.Date;
+import java.util.List;
+
+import org.linagora.linshare.core.domain.constants.ExceptionStatisticType;
 import org.linagora.linshare.core.domain.constants.ExceptionType;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.mongo.entities.ExceptionStatistic;
@@ -40,4 +44,9 @@ import org.linagora.linshare.mongo.entities.ExceptionStatistic;
 public interface ExceptionStatisticService {
 
 	ExceptionStatistic createExceptionStatistic(BusinessErrorCode errorCode, StackTraceElement[] stackTrace,ExceptionType type);
+
+	Long countExceptionStatistic(String domainUuid, ExceptionType exceptionType, Date beginDate, Date endDate,
+			ExceptionStatisticType type);
+
+	List<ExceptionStatistic> insert(List<ExceptionStatistic> exceptionStatistics);
 }
