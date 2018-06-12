@@ -65,7 +65,7 @@ public class JsonParseExceptionMapper implements ExceptionMapper<JsonParseExcept
 		ErrorDto errorDto = new ErrorDto(BusinessErrorCode.WEBSERVICE_BAD_REQUEST.getCode(),
 				"You have an error in your json : " + exception.getClass().toString() + " : " + exception.getMessage());
 		ResponseBuilder response = Response.status(HttpStatus.SC_BAD_REQUEST);
-		exceptionStatisticService.createExceptionStatistic(null,exception.getStackTrace(),ExceptionType.JSON_PARSE_EXCEPTION);
+		exceptionStatisticService.createExceptionStatistic(null, exception.getStackTrace(), ExceptionType.JSON_PARSE_EXCEPTION);
 		response.entity(errorDto);
 		return response.build();
 	}

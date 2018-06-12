@@ -31,27 +31,17 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.webservice.admin;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.ExceptionStatisticType;
 import org.linagora.linshare.core.domain.constants.ExceptionType;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.mongo.entities.ExceptionStatistic;
 
-public interface ExceptionStatisticService {
+public interface ExceptionStatisticRestService {
 
-	ExceptionStatistic createExceptionStatistic(BusinessErrorCode errorCode, StackTraceElement[] stackTrace,ExceptionType type);
-
-	Long countExceptionStatistic(String domainUuid, ExceptionType exceptionType, Date beginDate, Date endDate,
-			ExceptionStatisticType type);
-
-	List<ExceptionStatistic> insert(List<ExceptionStatistic> exceptionStatistics);
-
-	Set<ExceptionStatistic> findBetweenTwoDates(Account actor, String domainUuid, String beginDate, String endDate,
-			List<ExceptionType> exceptionTypes, ExceptionStatisticType type);
+	public Set<ExceptionStatistic> findBetweenTwoDates(String domainUuid, String beginDate,
+			String endDate, List<ExceptionType> exceptionTypes, ExceptionStatisticType type);
 }

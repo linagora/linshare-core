@@ -65,7 +65,7 @@ public class IllegalArgumentExceptionMapper implements ExceptionMapper<IllegalAr
 
 		ErrorDto errorDto = new ErrorDto(BusinessErrorCode.WEBSERVICE_FAULT.getCode()," : " +exception.getMessage());
 		ResponseBuilder response = Response.status(HttpStatus.SC_BAD_REQUEST);
-		exceptionStatisticService.createExceptionStatistic(null,exception.getStackTrace(),ExceptionType.ILLEGAL_ARGUMENT_EXCEPTION);
+		exceptionStatisticService.createExceptionStatistic(null, exception.getStackTrace(), ExceptionType.ILLEGAL_ARGUMENT_EXCEPTION);
 		response.entity(errorDto);
 		return response.build();
 	}

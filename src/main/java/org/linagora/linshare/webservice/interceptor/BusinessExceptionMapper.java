@@ -63,7 +63,8 @@ public class BusinessExceptionMapper implements ExceptionMapper<BusinessExceptio
 		logger.debug("Stacktrace: ", exception);
 		ErrorDto errorDto = new ErrorDto(exception.getErrorCode().getCode(), exception.getMessage());
 		ResponseBuilder response = Response.status(exception.getErrorCode().getStatus());
-		exceptionStatisticService.createExceptionStatistic(exception.getErrorCode(),exception.getStackTrace(),ExceptionType.BUSINESS_EXCEPTION);
+		exceptionStatisticService.createExceptionStatistic(exception.getErrorCode(), exception.getStackTrace(),
+				ExceptionType.BUSINESS_EXCEPTION);
 		response.entity(errorDto);
 		return response.build();
 	}

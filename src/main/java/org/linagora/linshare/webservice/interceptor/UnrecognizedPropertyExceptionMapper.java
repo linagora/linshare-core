@@ -63,7 +63,7 @@ public class UnrecognizedPropertyExceptionMapper implements ExceptionMapper<Unre
 				"You have an unrecognized field in your json : " + exception.getClass().toString() + " : "
 						+ exception.getMessage());
 		ResponseBuilder response = Response.status(HttpStatus.SC_BAD_REQUEST);
-		exceptionStatisticService.createExceptionStatistic(null,null,ExceptionType.UNRECOGNIZED_PROPERTY_EXCEPTION);
+		exceptionStatisticService.createExceptionStatistic(null, null, ExceptionType.UNRECOGNIZED_PROPERTY_EXCEPTION);
 		response.entity(errorDto);
 		return response.build();
 	}
