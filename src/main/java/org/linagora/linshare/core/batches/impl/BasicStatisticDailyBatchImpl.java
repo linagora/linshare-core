@@ -105,22 +105,22 @@ public class BasicStatisticDailyBatchImpl extends GenericBatchWithHistoryImpl {
 	@Override
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
-		AbstractDomain resource = abstractDomainService.findById(identifier);
-		ResultContext context = new DomainBatchResultContext(resource);
+		AbstractDomain domain = abstractDomainService.findById(identifier);
+		ResultContext context = new DomainBatchResultContext(domain);
 		context.setProcessed(false);
 		try {
-			console.logInfo(batchRunContext, total, position, "processing domain : " + resource.toString());
+			console.logInfo(batchRunContext, total, position, "processing domain : " + domain.toString());
+			String parentDomainUuid = null;
+			AbstractDomain parentDomain = domainBusinessService.findById(identifier).getParentDomain();
+			if (parentDomain != null) {
+				parentDomainUuid = parentDomain.getUuid();
+			}
 			List<BasicStatistic> dailyBasicStatisticList = Lists.newArrayList();
 			for (AuditLogEntryType resourceType : AuditLogEntryType.values()) {
 				for (LogAction action : LogAction.values()) {
 					Long value = basicStatisticService.countBasicStatistic(identifier, action, getYesterdayBegin(),
 							getYesterdayEnd(), resourceType, BasicStatisticType.ONESHOT);
 					if (value != 0L) {
-						String parentDomainUuid = null;
-						AbstractDomain parentDomain = domainBusinessService.findById(identifier).getParentDomain();
-						if (parentDomain != null) {
-							parentDomainUuid = parentDomain.getUuid();
-						}
 						dailyBasicStatisticList.add(new BasicStatistic(value, identifier, parentDomainUuid, action,
 								new Date(), resourceType, BasicStatisticType.DAILY));
 					}

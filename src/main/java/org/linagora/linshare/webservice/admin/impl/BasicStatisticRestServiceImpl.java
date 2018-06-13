@@ -61,6 +61,8 @@ import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/basicStatistic")
 @Api(value = "/rest/admin/basicStatistic", description = "basicStatistic service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public class BasicStatisticRestServiceImpl implements BasicStatisticRestService {
 
 	private BasicStatisticAdminFacade basicStatisticFacade;
@@ -72,26 +74,24 @@ public class BasicStatisticRestServiceImpl implements BasicStatisticRestService 
 
 	@Path("/{domainUuid}")
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@ApiOperation(value = "Get a Basic statistic Between two dates.", response = BasicStatistic.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User has not Admin role"),
 			@ApiResponse(code = 404, message = "Statistic not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error.") })
 	public Set<BasicStatistic> findBetweenTwoDates(
-		    @ApiParam(value = "domain's uuid")
-		       @PathParam("domainUuid") String domainUuid,
-		    @ApiParam(value = "list of actions")
-		   @QueryParam("logActions") List<LogAction> logActions,
-		    @ApiParam(value = "statistic's  begin date")
-			   @QueryParam("beginDate") String beginDate,
-		    @ApiParam(value = "statistic's end date")
-			   @QueryParam("endDate") String endDate, 
-		    @ApiParam(value = "resource's types")
-			   @QueryParam("resourceTypes") List<AuditLogEntryType> resourceTypes,
-		    @ApiParam(value = "basic statistic's type")
-			@QueryParam("type") BasicStatisticType type)
+			@ApiParam(value = "domain's uuid")
+				@PathParam("domainUuid") String domainUuid,
+			@ApiParam(value = "list of actions")
+				@QueryParam("logActions") List<LogAction> logActions,
+			@ApiParam(value = "statistic's  begin date")
+				@QueryParam("beginDate") String beginDate,
+			@ApiParam(value = "statistic's end date")
+				@QueryParam("endDate") String endDate,
+			@ApiParam(value = "resource's types")
+				@QueryParam("resourceTypes") List<AuditLogEntryType> resourceTypes,
+			@ApiParam(value = "basic statistic's type")
+				@QueryParam("type") BasicStatisticType type)
 			throws BusinessException {
 		return basicStatisticFacade.findBetweenTwoDates(domainUuid, logActions, beginDate, endDate, resourceTypes, type);
 	}

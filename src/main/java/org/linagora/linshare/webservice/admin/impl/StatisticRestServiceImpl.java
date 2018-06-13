@@ -55,6 +55,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/statistic")
 @Api(value = "/rest/admin/statistic", description = "Statistic service.", produces = "application/json, application/xml", consumes = "application/json,aaplication/xml")
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class StatisticRestServiceImpl extends WebserviceBase
 		implements org.linagora.linshare.webservice.admin.StatisticRestService {
 
@@ -66,7 +67,6 @@ public class StatisticRestServiceImpl extends WebserviceBase
 
 	@Path("/")
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Get Statistic Between two dates.", response = StatisticDto.class)
 	@ApiResponses({
 			@ApiResponse(code = 403, message = "User has not admin role."),
@@ -76,15 +76,15 @@ public class StatisticRestServiceImpl extends WebserviceBase
 	@Override
 	public List<StatisticDto> findBetweenTwoDates(
 			@ApiParam(value = "account's uuid") 
-			    @QueryParam("accountUuid") String accountUuid,
+				@QueryParam("accountUuid") String accountUuid,
 			@ApiParam(value = "domain's uuid")
-			    @QueryParam("domainUuid") String domainUuid,
+				@QueryParam("domainUuid") String domainUuid,
 			@ApiParam(value = "begin statistic creation date")
-			    @QueryParam("beginDate") String beginDate,
+				@QueryParam("beginDate") String beginDate,
 			@ApiParam(value = "end statistic creation date") 
-			    @QueryParam("endDate") String endDate,
+				@QueryParam("endDate") String endDate,
 			@ApiParam(value = "statistic type")   
-			    @QueryParam("statisticType") StatisticType statisticType)
+				@QueryParam("statisticType") StatisticType statisticType)
 			throws BusinessException {
 		return statisticFacade.findBetweenTwoDates(accountUuid, domainUuid,
 				beginDate, endDate, statisticType);
