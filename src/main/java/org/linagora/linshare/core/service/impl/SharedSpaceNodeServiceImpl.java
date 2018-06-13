@@ -59,7 +59,11 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		preChecks(authUser, actor);
 		Validate.notEmpty(uuid, "Missing required shared space node uuid.");
 		SharedSpaceNode found = sharedSpaceNodeBusinessService.find(uuid);
-		checkReadPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.SHARED_SPACE_NODE_NOT_FOUND,
+		if (found == null) {
+			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_NODE_NOT_FOUND,
+					"The shared space node with uuid: " + uuid + " is not found");
+		}
+		checkReadPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN,
 				found);
 		return found;
 	}
