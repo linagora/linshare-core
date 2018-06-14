@@ -31,21 +31,37 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.repository;
+package org.linagora.linshare.core.business.service.impl;
 
 import java.util.List;
+
+import org.linagora.linshare.core.business.service.SharedSpacePermissionBusinessService;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpacePermission;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
+import org.linagora.linshare.mongo.repository.SharedSpacePermissionMongoRepository;
 
-public interface SharedSpacePermissionMongoRepository extends MongoRepository<SharedSpacePermission, String> {
-	
-	SharedSpacePermission findByUuid(String uuid) throws BusinessException;
+public class SharedSpacePermissionBusinessServiceImpl implements SharedSpacePermissionBusinessService {
 
-	@Query("{sharedSpaceRoles.name: ?0}")
-	List<SharedSpacePermission> findBySharedSpaceRole(String roleName) throws BusinessException;
+	private final SharedSpacePermissionMongoRepository sharedSpacePermissionMongoRepository;
 
-	List<SharedSpacePermission> findAll() throws BusinessException;
+	public SharedSpacePermissionBusinessServiceImpl(
+			SharedSpacePermissionMongoRepository sharedSpacePermissionMongorepository) {
+		this.sharedSpacePermissionMongoRepository = sharedSpacePermissionMongorepository;
+	}
+
+	@Override
+	public SharedSpacePermission findByUuid(String uuid) throws BusinessException {
+		return sharedSpacePermissionMongoRepository.findByUuid(uuid);
+	}
+
+	@Override
+	public List<SharedSpacePermission> findByRole(String roleName) throws BusinessException {
+		return sharedSpacePermissionMongoRepository.findBySharedSpaceRole(roleName);
+	}
+
+	@Override
+	public List<SharedSpacePermission> findAll() throws BusinessException {
+		return sharedSpacePermissionMongoRepository.findAll();
+	}
 
 }

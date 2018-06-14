@@ -166,6 +166,10 @@
 		class="org.linagora.linshare.webservice.userv2.impl.SharedSpaceRoleRestServiceImpl">
 		<constructor-arg ref="sharedSpaceRoleFacade" />
 	</bean>
+	<bean id="userSharedSpacePermissionRestService"
+		class="org.linagora.linshare.webservice.userv2.impl.SharedSpacePermissionRestServiceImpl">
+		<constructor-arg ref="sharedSpacePermissionFacade" />
+	</bean>
 	<jaxrs:server id="userRestContainer" address="/rest/user/v2">
 		<jaxrs:serviceBeans>
 			<ref bean="userv2EnumRestService" />
@@ -202,6 +206,7 @@
 			<ref bean="pluginCompatibilityRestServiceV2" />
 -->			<ref bean="userSharedSpaceNodeRestService" />
 			<ref bean="userSharedSpaceRoleRestService" />
+			<ref bean="userSharedSpacePermissionRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

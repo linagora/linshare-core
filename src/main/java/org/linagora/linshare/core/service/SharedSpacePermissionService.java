@@ -31,21 +31,18 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.repository;
+package org.linagora.linshare.core.service;
 
 import java.util.List;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpacePermission;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
 
-public interface SharedSpacePermissionMongoRepository extends MongoRepository<SharedSpacePermission, String> {
-	
-	SharedSpacePermission findByUuid(String uuid) throws BusinessException;
+public interface SharedSpacePermissionService {
 
-	@Query("{sharedSpaceRoles.name: ?0}")
-	List<SharedSpacePermission> findBySharedSpaceRole(String roleName) throws BusinessException;
+	SharedSpacePermission findByUuid(Account authUser, Account actor, String uuid) throws BusinessException;
 
-	List<SharedSpacePermission> findAll() throws BusinessException;
+	List<SharedSpacePermission> findByRole(Account authUser, Account actor, String roleName) throws BusinessException;
 
+	List<SharedSpacePermission> findAll(Account authUser, Account actor) throws BusinessException;
 }

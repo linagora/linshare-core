@@ -31,21 +31,48 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.repository;
+package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.util.List;
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.user.SharedSpacePermissionFacade;
+import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.SharedSpacePermissionService;
 import org.linagora.linshare.mongo.entities.SharedSpacePermission;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
 
-public interface SharedSpacePermissionMongoRepository extends MongoRepository<SharedSpacePermission, String> {
-	
-	SharedSpacePermission findByUuid(String uuid) throws BusinessException;
+public class SharedSpacePermissionFacadeImpl extends GenericFacadeImpl implements SharedSpacePermissionFacade {
 
-	@Query("{sharedSpaceRoles.name: ?0}")
-	List<SharedSpacePermission> findBySharedSpaceRole(String roleName) throws BusinessException;
+	private final SharedSpacePermissionService sharedSpacePermissionService;
 
-	List<SharedSpacePermission> findAll() throws BusinessException;
+	public SharedSpacePermissionFacadeImpl(AccountService accountService,
+			SharedSpacePermissionService sharedSpacePermissionService) {
+		super(accountService);
+		this.sharedSpacePermissionService = sharedSpacePermissionService;
+	}
+
+	@Override
+	public SharedSpacePermission find(String actorUuid, String uuid) throws BusinessException {
+		Validate.notEmpty("Missing required shared space permission uuid", uuid);
+		Account authUser = checkAuthentication();
+		Account actor = getActor(authUser, actorUuid);
+		return sharedSpacePermissionService.findByUuid(authUser, actor, uuid);
+	}
+
+	@Override
+	public List<SharedSpacePermission> findByRole(String actorUuid, String roleName) throws BusinessException {
+		Validate.notNull(roleName, "Missing require role for this permission");
+		Account authUser = checkAuthentication();
+		Account actor = getActor(authUser, actorUuid);
+		return sharedSpacePermissionService.findByRole(authUser, actor, roleName);
+	}
+
+	@Override
+	public List<SharedSpacePermission> findAll(String actorUuid) throws BusinessException {
+		Account authUser = checkAuthentication();
+		Account actor = getActor(authUser, actorUuid);
+		return sharedSpacePermissionService.findAll(authUser, actor);
+	}
 
 }
