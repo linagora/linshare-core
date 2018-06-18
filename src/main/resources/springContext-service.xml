@@ -410,4 +410,8 @@
 	<bean id="sharedSpacePermissionService" class="org.linagora.linshare.core.service.impl.SharedSpacePermissionServiceImpl">
 		<constructor-arg ref="sharedSpacePermissionBusinessService" />
 	</bean>
+	<bean id="sharedSpaceMemberService" class="org.linagora.linshare.core.service.impl.SharedSpaceMemberServiceImpl">
+		<constructor-arg ref="sharedSpaceMemberBusinessService" />
+		<constructor-arg ref="sharedSpaceMemberResourceAccessControl" />
+	</bean>
 </beans>

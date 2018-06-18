@@ -39,12 +39,10 @@ import java.util.UUID;
 import javax.persistence.GeneratedValue;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @XmlRootElement(name = "SharedSpaceRole")
 @Document(collection = "shared_space_roles")
 public class SharedSpaceRole {

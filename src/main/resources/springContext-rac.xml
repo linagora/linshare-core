@@ -110,5 +110,8 @@
 	<bean name="sharedSpaceRoleResourceAccessControl" class="org.linagora.linshare.core.rac.impl.SharedSpaceRoleResourceAccessControlImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
+	<bean name="sharedSpaceMemberResourceAccessControl" class="org.linagora.linshare.core.rac.impl.SharedSpaceMemberResourceAccessControlImpl">
+		<constructor-arg ref="functionalityReadOnlyService" />
+	</bean>
 
 </beans>
