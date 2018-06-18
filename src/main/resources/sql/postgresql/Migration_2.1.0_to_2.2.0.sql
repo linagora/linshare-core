@@ -292,7 +292,7 @@ ALTER TABLE account ADD COLUMN not_after timestamp(6);
 ALTER TABLE account ADD COLUMN not_before timestamp(6);
 ALTER TABLE account ADD COLUMN can_upload bool DEFAULT FALSE NOT NULL;
 ALTER TABLE account ADD COLUMN comment text;
-ALTER TABLE account ADD COLUMN restricted bool DEFAULT FALSE NOT NULL;
+ALTER TABLE account ADD COLUMN restricted bool DEFAULT FALSE;
 ALTER TABLE account ADD COLUMN expiration_date timestamp;
 ALTER TABLE account ADD COLUMN ldap_uid varchar(255);
 ALTER TABLE account ADD COLUMN can_create_guest bool DEFAULT FALSE NOT NULL;
@@ -1306,17 +1306,6 @@ link = lien' WHERE id = 2;
 
 -- LinShare version
 SELECT ls_version();
-
--- Alias for Users
--- All users
-CREATE VIEW alias_users_list_all AS
- SELECT id, first_name, last_name, mail, can_upload, restricted, expiration_date, ldap_uid, domain_id, ls_uuid, creation_date, modification_date, role_id, account_type from users as u join account as a on a.id=u.account_id;
--- All active users
-CREATE VIEW alias_users_list_active AS
- SELECT id, first_name, last_name, mail, can_upload, restricted, expiration_date, ldap_uid, domain_id, ls_uuid, creation_date, modification_date, role_id, account_type from users as u join account as a on a.id=u.account_id where a.destroyed = 0;
--- All destroyed users
-CREATE VIEW alias_users_list_destroyed AS
- SELECT id, first_name, last_name, mail, can_upload, restricted, expiration_date, ldap_uid, domain_id, ls_uuid, creation_date, modification_date, role_id, account_type from users as u join account as a on a.id=u.account_id where a.destroyed != 0;
 
 -- Alias for threads
 -- All threads
