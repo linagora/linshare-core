@@ -133,52 +133,55 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 		for (AbstractDomain domain : domains) {
 			logger.debug("check:domain : " + domain.toString());
 			for (DomainAccessRule domainAccessRule : rules) {
-				logger.debug("check:domainAccessRule : "
-						+ domainAccessRule.getDomainAccessRuleType().toString());
-				if (domainAccessRule.getDomainAccessRuleType().equals(
-						DomainAccessRuleType.ALLOW_ALL)) {
-					// logger.debug("check:domainAccessRule : ALLOW_ALL");
-					// Allow domain without any check
-					if (!includes.contains(domain)
-							&& !excludes.contains(domain)) {
-						includes.add(domain);
-					}
-					// This rule should me the last one
-					break;
-				} else if (domainAccessRule.getDomainAccessRuleType().equals(
-						DomainAccessRuleType.DENY_ALL)) {
-					// logger.debug("check:domainAccessRule : DENY_ALL");
-					// Deny domain without any check
-					if (!excludes.contains(domain)) {
-						excludes.add(domain);
-					}
-					// This rule should me the last one
-					break;
-
-				} else if (domainAccessRule.getDomainAccessRuleType().equals(
-						DomainAccessRuleType.ALLOW)) {
-					// logger.debug("check:domainAccessRule : ALLOW");
-					// Allow domain
-					AllowDomain allowDomain = (AllowDomain) domainAccessRule;
-
-					if (allowDomain.getDomain().equals(domain)
-							&& !includes.contains(domain)) {
-						logger.debug(" ALLOW : " + domain.getUuid());
-						includes.add(domain);
-					}
-
-				} else if (domainAccessRule.getDomainAccessRuleType().equals(
-						DomainAccessRuleType.DENY)) {
-					// Deny domain
-					// logger.debug("check:domainAccessRule : DENY");
-					DenyDomain denyDomain = (DenyDomain) domainAccessRule;
-
-					if (denyDomain.getDomain().equals(domain)
-							&& !excludes.contains(domain)) {
-						logger.debug(" DENY : " + domain.getUuid());
-						excludes.add(domain);
-					} else {
-						includes.add(domain);
+				// TODO To be refactored : Fix NPE
+				if (domainAccessRule != null) {
+					logger.debug("check:domainAccessRule : "
+							+ domainAccessRule.getDomainAccessRuleType().toString());
+					if (domainAccessRule.getDomainAccessRuleType().equals(
+							DomainAccessRuleType.ALLOW_ALL)) {
+						// logger.debug("check:domainAccessRule : ALLOW_ALL");
+						// Allow domain without any check
+						if (!includes.contains(domain)
+								&& !excludes.contains(domain)) {
+							includes.add(domain);
+						}
+						// This rule should me the last one
+						break;
+					} else if (domainAccessRule.getDomainAccessRuleType().equals(
+							DomainAccessRuleType.DENY_ALL)) {
+						// logger.debug("check:domainAccessRule : DENY_ALL");
+						// Deny domain without any check
+						if (!excludes.contains(domain)) {
+							excludes.add(domain);
+						}
+						// This rule should me the last one
+						break;
+	
+					} else if (domainAccessRule.getDomainAccessRuleType().equals(
+							DomainAccessRuleType.ALLOW)) {
+						// logger.debug("check:domainAccessRule : ALLOW");
+						// Allow domain
+						AllowDomain allowDomain = (AllowDomain) domainAccessRule;
+	
+						if (allowDomain.getDomain().equals(domain)
+								&& !includes.contains(domain)) {
+							logger.debug(" ALLOW : " + domain.getUuid());
+							includes.add(domain);
+						}
+	
+					} else if (domainAccessRule.getDomainAccessRuleType().equals(
+							DomainAccessRuleType.DENY)) {
+						// Deny domain
+						// logger.debug("check:domainAccessRule : DENY");
+						DenyDomain denyDomain = (DenyDomain) domainAccessRule;
+	
+						if (denyDomain.getDomain().equals(domain)
+								&& !excludes.contains(domain)) {
+							logger.debug(" DENY : " + domain.getUuid());
+							excludes.add(domain);
+						} else {
+							includes.add(domain);
+						}
 					}
 				}
 			}
