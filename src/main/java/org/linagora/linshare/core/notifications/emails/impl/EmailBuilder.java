@@ -352,7 +352,7 @@ public abstract class EmailBuilder implements IEmailBuilder {
 			subject = subject.replace("\n", "").trim();
 			ctx.setVariable(CST_MAIL_SUBJECT_VAR_NAME, subject);
 
-			TemplateSpec templateSpec = new TemplateSpec(type.toString(), null, null, templateResolutionAttributes);
+			TemplateSpec templateSpec = new TemplateSpec(type.toString(), templateResolutionAttributes);
 			// TemplateSpec templateSpec = new TemplateSpec(type.toString(),
 			// null, TemplateMode.XML, templateResolutionAttributes);
 			Date date_before = new Date();
