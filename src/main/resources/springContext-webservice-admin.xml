@@ -147,6 +147,9 @@
 	<bean id="adminPublicKeyRestService" class="org.linagora.linshare.webservice.admin.impl.PublicKeyRestServiceImpl">
 		<constructor-arg ref="wsAdminPublicKeyFacade" />
 	</bean>
+	<bean id="adminSharedSpaceMemberRestService" class="org.linagora.linshare.webservice.admin.impl.SharedSpaceMemberRestServiceImpl">
+		<constructor-arg ref="wsAdminSharedSpaceMemberFacade" />
+	</bean>
 
 	<bean id="adminJwtPermanentTokenRestService" class="org.linagora.linshare.webservice.admin.impl.JwtPermanentTokenRestServiceImpl">
 		<constructor-arg ref="wsAdminJwtLongTimeTokenFacade" />
@@ -189,6 +192,7 @@
 			<ref bean="adminUpgradeTaskRestService" />
 			<ref bean="adminPublicKeyRestService"/>
 			<ref bean="adminJwtPermanentTokenRestService"/>
+			<ref bean="adminSharedSpaceMemberRestService"/>
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />
