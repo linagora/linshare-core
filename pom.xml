@@ -1819,7 +1819,7 @@
 		<linid.authorization.version>2.1.2</linid.authorization.version>
 		<mozilla.rhino.version>1.7.10</mozilla.rhino.version>
 		<apache-directory-server.version>1.5.5</apache-directory-server.version>
-		<slf4j-release-version>1.7.16</slf4j-release-version>
+		<slf4j-release-version>1.7.25</slf4j-release-version>
 		<cxf.version>3.2.4</cxf.version>
 		<jackrabbit.version>2.11.2</jackrabbit.version>
 		<jclouds.version>2.1.0</jclouds.version>
