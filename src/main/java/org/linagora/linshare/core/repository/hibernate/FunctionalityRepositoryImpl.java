@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -41,6 +42,7 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate4.HibernateTemplate;
@@ -49,6 +51,19 @@ public class FunctionalityRepositoryImpl extends AbstractRepositoryImpl<Function
 
 	public FunctionalityRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
+	}
+
+	@Override
+	public Functionality create(Functionality entity) throws BusinessException {
+		entity.setCreationDate(new Date());
+		entity.setModificationDate(new Date());
+		return super.create(entity);
+	}
+
+	@Override
+	public Functionality update(Functionality entity) throws BusinessException {
+		entity.setModificationDate(new Date());
+		return super.update(entity);
 	}
 
 	@Override

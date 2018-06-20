@@ -93,6 +93,8 @@ CREATE TABLE domain_abstract (
   default_role        int4 NOT NULL,
   default_locale      varchar(255) NOT NULL,
   default_mail_locale varchar(255) NOT NULL,
+  creation_date       timestamp(6) NOT NULL,
+  modification_date   timestamp(6) NOT NULL,
   auth_show_order     int8 NOT NULL,
   domain_policy_id    int8,
   parent_id           int8,
@@ -104,7 +106,9 @@ CREATE TABLE domain_abstract (
   CONSTRAINT linshare_domain_abstract_pkey
     PRIMARY KEY (id));
 CREATE TABLE domain_access_policy (
-  id  int8 NOT NULL,
+  id                int8 NOT NULL,
+  creation_date     timestamp(6) NOT NULL,
+  modification_date timestamp(6) NOT NULL,
   CONSTRAINT linshare_domain_access_policy_pkey
     PRIMARY KEY (id));
 CREATE TABLE domain_access_rule (
@@ -140,6 +144,8 @@ CREATE TABLE functionality (
   id                       int8 NOT NULL,
   system                  bool NOT NULL,
   identifier              varchar(255) NOT NULL,
+  creation_date           timestamp(6) NOT NULL,
+  modification_date       timestamp(6) NOT NULL,
   policy_activation_id    int8 NOT NULL,
   policy_configuration_id int8 NOT NULL,
   policy_delegation_id    int8,
@@ -295,8 +301,10 @@ CREATE TABLE unit (
   CONSTRAINT linshare_unit_pkey
     PRIMARY KEY (id));
 CREATE TABLE version (
-  id       int8 NOT NULL,
-  version text NOT NULL UNIQUE,
+  id                int8 NOT NULL,
+  version           text NOT NULL UNIQUE,
+  creation_date     timestamp(6) NOT NULL,
+  modification_date timestamp(6) NOT NULL,
   CONSTRAINT linshare_version_pkey
     PRIMARY KEY (id));
 CREATE TABLE allowed_contact (

@@ -12,11 +12,11 @@ INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_patt
 INSERT INTO user_provider(id, uuid, provider_type, base_dn, creation_date, modification_date, ldap_connection_id, ldap_pattern_id) VALUES (50, '93fd0e8b-fa4c-495d-978f-132e157c2292', 'LDAP_PROVIDER', 'dc=linshare,dc=org', now(), now(), 50, 50);
 
 -- Top domain (example domain)
-INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, purge_step,  user_provider_id, domain_policy_id, parent_id, auth_show_order, mailconfig_id) VALUES (2, 1, 'MyDomain', 'MyDomain', true, false, 'a simple description', 0, 'en','IN_USE', null, 1, 1, 2, null);
+INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, purge_step,  user_provider_id, domain_policy_id, parent_id, auth_show_order, mailconfig_id, creation_date, modification_date) VALUES (2, 1, 'MyDomain', 'MyDomain', true, false, 'a simple description', 0, 'en','IN_USE', null, 1, 1, 2, null, now(), now());
 -- Sub domain (example domain)
-INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, purge_step,  user_provider_id, domain_policy_id, parent_id, auth_show_order, mailconfig_id) VALUES (3, 2, 'MySubDomain', 'MySubDomain', true, false, 'a simple description', 0, 'en','IN_USE', 50, 1, 2, 3, null);
+INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, purge_step,  user_provider_id, domain_policy_id, parent_id, auth_show_order, mailconfig_id, creation_date, modification_date) VALUES (3, 2, 'MySubDomain', 'MySubDomain', true, false, 'a simple description', 0, 'en','IN_USE', 50, 1, 2, 3, null, now(), now());
 -- Guest domain (example domain)
-INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, purge_step,  user_provider_id, domain_policy_id, parent_id, auth_show_order, mailconfig_id) VALUES (4, 3, 'GuestDomain', 'GuestDomain', true, false, 'a simple description', 0, 'en','IN_USE', null, 1, 2, 4, null);
+INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, purge_step,  user_provider_id, domain_policy_id, parent_id, auth_show_order, mailconfig_id, creation_date, modification_date) VALUES (4, 3, 'GuestDomain', 'GuestDomain', true, false, 'a simple description', 0, 'en','IN_USE', null, 1, 2, 4, null, now(), now());
 
 UPDATE domain_abstract SET mime_policy_id=1 WHERE id < 100000;
 UPDATE domain_abstract SET mailconfig_id = 1;

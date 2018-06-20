@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.domain.entities;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class DomainAccessPolicy {
@@ -42,6 +43,10 @@ public class DomainAccessPolicy {
 	 * Database persistence identifier
 	 */
 	private long persistenceId;
+
+	private Date creationDate;
+
+	private Date modificationDate;
 
 	private List<DomainAccessRule> rules;
 
@@ -83,6 +88,22 @@ public class DomainAccessPolicy {
 			this.rules = new ArrayList<DomainAccessRule>();
 		}
 		this.rules.add(rule);
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
 	}
 
 }

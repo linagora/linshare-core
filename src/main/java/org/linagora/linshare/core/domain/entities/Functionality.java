@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.domain.entities;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
@@ -54,6 +55,10 @@ public class Functionality extends AbstractFunctionality {
 	 * If the current entity is a parameter, it must have a parent.
 	 */
 	private String parentIdentifier;
+
+	private Date creationDate;
+
+	private Date modificationDate;
 
 	public Functionality() {
 		super();
@@ -81,6 +86,22 @@ public class Functionality extends AbstractFunctionality {
 	@Override
 	public String toString() {
 		return "Functionality : " + identifier + "(" + domain.getUuid() + ")";
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
 	}
 
 	public String getParentIdentifier() {

@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -176,18 +177,28 @@ public class AbstractDomainRepositoryImpl extends
 	@Override
 	public AbstractDomain create(AbstractDomain entity) throws BusinessException {
 		entity.setUuid(UUID.randomUUID().toString());
+		entity.setCreationDate(new Date());
+		entity.setModificationDate(new Date());
 		return super.create(entity);
 	}
-	
+
+	@Override
+	public AbstractDomain update(AbstractDomain entity) throws BusinessException {
+		entity.setModificationDate(new Date());
+		return super.update(entity);
+	}
+
 	@Override
 	public void markToPurge(AbstractDomain abstractDomain) throws BusinessException, IllegalArgumentException {
 		abstractDomain.setPurgeStep(DomainPurgeStepEnum.WAIT_FOR_PURGE);
+		abstractDomain.setModificationDate(new Date());
 		this.update(abstractDomain);
 	}
 
 	@Override
 	public void purge(AbstractDomain abstractDomain) throws BusinessException, IllegalArgumentException {
 		abstractDomain.setPurgeStep(DomainPurgeStepEnum.PURGED);
+		abstractDomain.setModificationDate(new Date());
 		this.update(abstractDomain);
 	}
 

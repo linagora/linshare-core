@@ -13,6 +13,8 @@
       <column name="id" not-null="true" index="index_functionality_id"/>
       <generator class="native"/>
     </id>
+    <property name="creationDate" column="creation_date" type="timestamp" not-null="true" lazy="false"/>
+    <property name="modificationDate" column="modification_date" type="timestamp" not-null="true" lazy="false"/>
     <property access="field" column="system" name="system" not-null="true"/>
     <property access="field" column="identifier" name="identifier" not-null="true"  unique-key="functionality_unicity_key"/>
 	<property name="param" type="boolean" not-null="true" lazy="false">

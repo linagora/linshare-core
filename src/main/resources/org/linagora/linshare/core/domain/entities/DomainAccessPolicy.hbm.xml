@@ -7,6 +7,8 @@
 			<column name="id" not-null="true" index="index_domain_access_policy_id"/>
 			<generator class="native" />
 		</id>
+		<property access="field" column="creation_date" name="creationDate" type="timestamp" not-null="true" lazy="false"/>
+		<property access="field" column="modification_date" name="modificationDate" type="timestamp" not-null="true" lazy="false"/>
 		<list name="rules" cascade="all-delete-orphan" lazy="false">
 			<key column="domain_access_policy_id" not-null="true" />
 			<list-index column="rule_index" />

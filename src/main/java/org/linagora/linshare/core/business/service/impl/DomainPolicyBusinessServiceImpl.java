@@ -82,7 +82,6 @@ public class DomainPolicyBusinessServiceImpl implements
 				.getUuid());
 		entity.setDescription(dto.getDescription());
 		List<DomainAccessRule> rules = dto.getDomainAccessPolicy().getRules();
-
 		entity.getDomainAccessPolicy().getRules().clear();
 		for (DomainAccessRule domainAccessRule : rules) {
 			entity.getDomainAccessPolicy().addRule(domainAccessRule);

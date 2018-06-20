@@ -67,11 +67,11 @@ INSERT INTO user_provider(id, uuid, provider_type, base_dn, creation_date, modif
 
 
 -- Top domain (example domain)
-INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, default_mail_locale, user_provider_id, domain_policy_id, parent_id, auth_show_order) VALUES (2, 1, 'f4a7e5d0-4650-4a5c-a2a8-f1a563f2ff6c', 'MyDomain', true, false, 'a simple description', 0, 'en', 'en', null, 1, 1, 2);
+INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, default_mail_locale, user_provider_id, domain_policy_id, parent_id, auth_show_order, creation_date, modification_date) VALUES (2, 1, 'f4a7e5d0-4650-4a5c-a2a8-f1a563f2ff6c', 'MyDomain', true, false, 'a simple description', 0, 'en', 'en', null, 1, 1, 2, now(), now());
 -- Sub domain (example domain)
-INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, default_mail_locale, user_provider_id, domain_policy_id, parent_id, auth_show_order) VALUES (3, 2, 'c3cffd8c-7bbb-4314-8dd8-80960dc596e6', 'MySubDomain', true, false, 'a simple description', 0, 'en','en', 1, 1, 2, 3);
+INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, default_mail_locale, user_provider_id, domain_policy_id, parent_id, auth_show_order, creation_date, modification_date) VALUES (3, 2, 'c3cffd8c-7bbb-4314-8dd8-80960dc596e6', 'MySubDomain', true, false, 'a simple description', 0, 'en','en', 1, 1, 2, 3, now(), now());
 -- Guest domain (example domain)
-INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, default_mail_locale, user_provider_id, domain_policy_id, parent_id, auth_show_order) VALUES (4, 3, '3d3f0827-a224-445d-9fe6-b1ce313ab1b2', 'GuestDomain', true, false, 'a simple description', 0, 'en', 'en', null, 1, 2, 4);
+INSERT INTO domain_abstract(id, type , uuid, label, enable, template, description, default_role, default_locale, default_mail_locale, user_provider_id, domain_policy_id, parent_id, auth_show_order, creation_date, modification_date) VALUES (4, 3, '3d3f0827-a224-445d-9fe6-b1ce313ab1b2', 'GuestDomain', true, false, 'a simple description', 0, 'en', 'en', null, 1, 2, 4, now(), now());
 
 UPDATE domain_abstract SET mailconfig_id = 1;
 UPDATE domain_abstract SET mime_policy_id=1;

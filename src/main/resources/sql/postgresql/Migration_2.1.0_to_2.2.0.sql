@@ -337,6 +337,19 @@ CREATE OR REPLACE VIEW alias_users_list_destroyed AS
 
 DROP TABLE IF EXISTS users;
 
+-- Add new fields : creation date and modification date
+ALTER TABLE domain_abstract ADD COLUMN creation_date timestamp(6) DEFAULT CURRENT_TIMESTAMP NOT NULL;
+ALTER TABLE domain_abstract ADD COLUMN modification_date timestamp(6) DEFAULT CURRENT_TIMESTAMP NOT NULL;
+
+ALTER TABLE domain_access_policy ADD COLUMN creation_date timestamp(6) DEFAULT CURRENT_TIMESTAMP NOT NULL;
+ALTER TABLE domain_access_policy ADD COLUMN modification_date timestamp(6) DEFAULT CURRENT_TIMESTAMP NOT NULL;
+
+ALTER TABLE functionality ADD COLUMN creation_date timestamp(6) DEFAULT CURRENT_TIMESTAMP NOT NULL;
+ALTER TABLE functionality ADD COLUMN modification_date timestamp(6) DEFAULT CURRENT_TIMESTAMP NOT NULL;
+
+ALTER TABLE version ADD COLUMN creation_date timestamp(6) DEFAULT CURRENT_TIMESTAMP NOT NULL;
+ALTER TABLE version ADD COLUMN modification_date timestamp(6) DEFAULT CURRENT_TIMESTAMP NOT NULL;
+
 -- Mail Activation
 
 -- End MailActivation

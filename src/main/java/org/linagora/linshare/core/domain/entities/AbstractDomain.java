@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.domain.entities;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -67,6 +68,10 @@ public abstract class AbstractDomain {
 	protected boolean template;
 
 	protected boolean enable;
+
+	protected Date creationDate;
+
+	protected Date modificationDate;
 
 	protected DomainPolicy policy;
 
@@ -168,6 +173,22 @@ public abstract class AbstractDomain {
 		if (description == null) {
 			this.description = "";
 		}
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
 	}
 
 	public SupportedLanguage getDefaultTapestryLocale() {
