@@ -39,11 +39,13 @@ import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.BasicStatisticType;
@@ -70,6 +72,32 @@ public class BasicStatisticRestServiceImpl implements BasicStatisticRestService 
 	public BasicStatisticRestServiceImpl(BasicStatisticAdminFacade facade) {
 		super();
 		this.basicStatisticFacade = facade;
+	}
+
+	@Path("/{domainUuid}")
+	@HEAD
+	@ApiOperation(value = "Get a statistic Between two dates.", response = BasicStatistic.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "User has not Admin role"),
+			@ApiResponse(code = 404, message = "Statistic not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error.") })
+	@Override
+	public Response countValueStatisticBetweenTwoDates(
+			@ApiParam(value = "domain's uuid")
+				@PathParam("domainUuid") String domainUuid,
+			@ApiParam(value = "list of actions")
+				@QueryParam("logActions") List<LogAction> actions,
+			@ApiParam(value = "statistic's  begin date")
+				@QueryParam("beginDate") String beginDate,
+			@ApiParam(value = "statistic's end date")
+				@QueryParam("endDate") String endDate,
+			@ApiParam(value = "resource's types")
+				@QueryParam("resourceTypes") List<AuditLogEntryType> resourceTypes,
+			@ApiParam(value = "Statistics type")
+				@QueryParam("statisticType") BasicStatisticType type)
+			throws BusinessException {
+		long count = basicStatisticFacade.countValueStatisticBetweenTwoDates(domainUuid, actions, beginDate, endDate, resourceTypes, type);
+		return Response.noContent().header("count", count).build();
 	}
 
 	@Path("/{domainUuid}")

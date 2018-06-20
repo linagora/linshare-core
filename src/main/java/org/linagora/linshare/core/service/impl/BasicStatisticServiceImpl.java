@@ -40,6 +40,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -48,21 +49,29 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.BasicStatisticType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.BasicStatisticService;
 import org.linagora.linshare.mongo.entities.BasicStatistic;
 import org.linagora.linshare.mongo.repository.BasicStatisticMongoRepository;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.query.Criteria;
 
 import com.google.common.collect.Lists;
 
 public class BasicStatisticServiceImpl implements BasicStatisticService {
 
-	private BasicStatisticMongoRepository basicStatisticMongoRepository;
-	
+	protected BasicStatisticMongoRepository basicStatisticMongoRepository;
+
+	protected MongoTemplate mongoTemplate;
+
 	public BasicStatisticServiceImpl(
-			BasicStatisticMongoRepository basicStatisticMongoRepository) {
+			BasicStatisticMongoRepository basicStatisticMongoRepository,
+			MongoTemplate mongoTemplate) {
 		this.basicStatisticMongoRepository = basicStatisticMongoRepository;
+		this.mongoTemplate = mongoTemplate;
 	}
 
 	@Override
@@ -85,6 +94,7 @@ public class BasicStatisticServiceImpl implements BasicStatisticService {
 				type);
 	}
 
+	@Override
 	public Long countBasicStatistic(String domainUuid, LogAction actions, Date beginDate, Date endDate,
 			AuditLogEntryType resourceType, BasicStatisticType type) {
 		return basicStatisticMongoRepository.countBasicStatistic(domainUuid, actions, beginDate, endDate, resourceType,
@@ -94,6 +104,28 @@ public class BasicStatisticServiceImpl implements BasicStatisticService {
 	@Override
 	public List<BasicStatistic> insert(List<BasicStatistic> basicStatisticList) {
 		return basicStatisticMongoRepository.insert(basicStatisticList);
+	}
+
+	@Override
+	public long countValueStatisticBetweenTwoDates(User authUser, String domainUuid, List<LogAction> actions,
+			String beginDate, String endDate, List<AuditLogEntryType> resourceTypes, BasicStatisticType type) {
+		if (type == null) {
+			type = BasicStatisticType.ONESHOT;
+		}
+		List<String> logActions = actions.stream().map(Enum::name).collect(Collectors.toList());
+		List<String> resources = resourceTypes.stream().map(Enum::name).collect(Collectors.toList());
+		Pair<Date, Date> dates = checkDatesInitialization(beginDate, endDate);
+		Date bDate = dates.getLeft();
+		Date eDate = dates.getRight();
+		Aggregation aggregation = Aggregation.newAggregation(
+				Aggregation.match(Criteria.where("domainUuid").is(domainUuid)
+						.and("action").in(logActions)
+						.and("creationDate").gte(bDate).lt(eDate)
+						.and("resourceType").in(resources)
+						.and("type").is(type.toString())),
+						Aggregation.group().sum("value").as("value"));
+		BasicStatistic results = mongoTemplate.aggregate(aggregation, "basic_statistic", BasicStatistic.class).getUniqueMappedResult();
+		return results != null ? results.getValue() : 0L;
 	}
 
 	private Pair<Date, Date> checkDatesInitialization(String beginDate, String endDate) {

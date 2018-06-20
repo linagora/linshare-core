@@ -37,13 +37,19 @@ package org.linagora.linshare.webservice.admin;
 import java.util.List;
 import java.util.Set;
 
+import javax.ws.rs.core.Response;
+
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.BasicStatisticType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.BasicStatistic;
 
 public interface BasicStatisticRestService {
 
 	public Set<BasicStatistic> findBetweenTwoDates(String domainUuid, List<LogAction> logActions, String beginDate,
 			String endDate, List<AuditLogEntryType> resourceTypes, BasicStatisticType type);
+
+	Response countValueStatisticBetweenTwoDates(String domainUuid, List<LogAction> actions, String beginDate,
+			String endDate, List<AuditLogEntryType> resourceTypes, BasicStatisticType type) throws BusinessException;
 }

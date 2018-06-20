@@ -76,12 +76,27 @@ public class BasicStatisticFacadeImpl extends AdminGenericFacadeImpl implements 
 			String endDate, List<AuditLogEntryType> resourceTypes, BasicStatisticType type) throws BusinessException {
 		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notEmpty(domainUuid);
+		checkAdminDomain(authUser, domainUuid);
+		return statisticService.findBetweenTwoDates(authUser, domainUuid, logActions, beginDate, endDate, resourceTypes,
+				type);
+	}
+
+	@Override
+	public long countValueStatisticBetweenTwoDates(String domainUuid, List<LogAction> actions, String beginDate,
+			String endDate, List<AuditLogEntryType> resourceTypes, BasicStatisticType type) {
+		User authUser = checkAuthentication(Role.ADMIN);
+		Validate.notEmpty(domainUuid);
+		Validate.notEmpty(actions);
+		Validate.notEmpty(resourceTypes);
+		checkAdminDomain(authUser, domainUuid);
+		return statisticService.countValueStatisticBetweenTwoDates(authUser, domainUuid, actions, beginDate, endDate, resourceTypes, type);
+	}
+
+	private void checkAdminDomain(User authUser, String domainUuid) {
 		AbstractDomain domain = abstractDomainService.findById(domainUuid);
 		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
 			throw new BusinessException(BusinessErrorCode.STATISTIC_READ_DOMAIN_ERROR,
 					"You are not allowed to use this domain");
 		}
-		return statisticService.findBetweenTwoDates(authUser, domainUuid, logActions, beginDate, endDate, resourceTypes,
-				type);
 	}
 }

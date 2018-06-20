@@ -41,6 +41,7 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.BasicStatisticType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.mongo.entities.BasicStatistic;
 
 public interface BasicStatisticService {
@@ -56,4 +57,7 @@ public interface BasicStatisticService {
 	Long countBeforeDate(Date endDate);
 
 	Date getFirstStatisticCreationDate();
+
+	long countValueStatisticBetweenTwoDates(User authUser, String domainUuid, List<LogAction> actions, String beginDate,
+			String endDate, List<AuditLogEntryType> resourceTypes, BasicStatisticType type);
 }

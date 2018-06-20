@@ -45,4 +45,7 @@ public interface BasicStatisticAdminFacade extends AdminGenericFacade {
 
 	Set<BasicStatistic> findBetweenTwoDates(String domainUuid, List<LogAction> logActions, String beginDate, String endDate,
 			List<AuditLogEntryType> resourceTypes, BasicStatisticType type);
+
+	long countValueStatisticBetweenTwoDates(String domainUuid, List<LogAction> actions, String beginDate,
+			String endDate, List<AuditLogEntryType> resourceTypes, BasicStatisticType type);
 }

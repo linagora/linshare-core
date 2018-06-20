@@ -368,6 +368,7 @@
 	<bean id="basicStatisticService"
 		class="org.linagora.linshare.core.service.impl.BasicStatisticServiceImpl">
 		<constructor-arg ref="basicStatisticMongoRepository" />
+		<constructor-arg ref="mongoTemplate" />
 	</bean>
 	
 	<bean id="exceptionStatisticService"

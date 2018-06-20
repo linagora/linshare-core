@@ -33,6 +33,11 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
+import java.util.List;
+
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.BasicStatisticType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
