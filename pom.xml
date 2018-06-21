@@ -1810,9 +1810,9 @@
 	</distributionManagement>
 
 	<properties>
-		<spring-release-version>4.2.4.RELEASE</spring-release-version>
-		<spring-security-release-version>4.0.3.RELEASE</spring-security-release-version>
-		<spring-data.version>Gosling-SR1</spring-data.version>
+		<spring-release-version>4.3.18.RELEASE</spring-release-version>
+		<spring-security-release-version>4.2.7.RELEASE</spring-security-release-version>
+		<spring-data.version>Gosling-SR6</spring-data.version>
 		<hibernate.version>4.3.11.Final</hibernate.version>
 		<h2.version>1.4.197</h2.version>
 		<guava.version>19.0</guava.version>
@@ -1821,7 +1821,7 @@
 		<apache-directory-server.version>1.5.5</apache-directory-server.version>
 		<slf4j-release-version>1.7.25</slf4j-release-version>
 		<cxf.version>3.2.4</cxf.version>
-		<jackrabbit.version>2.11.2</jackrabbit.version>
+		<jackrabbit.version>2.17.3</jackrabbit.version>
 		<jclouds.version>2.1.0</jclouds.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.build.timestamp.format>yyyy.MM.dd-HH.mm.ss</maven.build.timestamp.format>
