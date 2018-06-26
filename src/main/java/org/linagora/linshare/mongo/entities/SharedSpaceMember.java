@@ -40,7 +40,6 @@ import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @XmlRootElement(name = "SharedSpaceMember")
@@ -55,29 +54,28 @@ public class SharedSpaceMember {
 	@Id
 	@GeneratedValue
 	protected String id;
-	
-	@Indexed(unique=true)
+
 	protected String uuid;
 
 	protected Date creationDate;
 
 	protected Date modificationDate;
 	
-	protected SharedSpaceRole sharedSpaceRole;
+	protected SharedSpaceRole role;
 
-	protected SharedSpaceNode sharedSpaceNode;
+	protected SharedSpaceNode node;
 
-	protected SharedSpaceAccount sharedSpaceAccount;
+	protected SharedSpaceAccount account;
 
-	public SharedSpaceMember(SharedSpaceRole sharedSpaceRole, SharedSpaceNode sharedSpaceNode,
-			SharedSpaceAccount sharedSpaceAccount) {
+	public SharedSpaceMember(SharedSpaceRole role, SharedSpaceNode node,
+			SharedSpaceAccount account) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
-		this.sharedSpaceRole = sharedSpaceRole;
-		this.sharedSpaceNode = sharedSpaceNode;
-		this.sharedSpaceAccount = sharedSpaceAccount;
+		this.role = role;
+		this.node = node;
+		this.account = account;
 	}
 
 	public SharedSpaceMember() {
@@ -117,34 +115,34 @@ public class SharedSpaceMember {
 	}
 
 	public SharedSpaceRole getSharedSpaceRole() {
-		return sharedSpaceRole;
+		return role;
 	}
 
 	public void setSharedSpaceRole(SharedSpaceRole sharedSpaceRole) {
-		this.sharedSpaceRole = sharedSpaceRole;
+		this.role = sharedSpaceRole;
 	}
 
 	public SharedSpaceNode getSharedSpaceNode() {
-		return sharedSpaceNode;
+		return node;
 	}
 
 	public void setSharedSpaceNode(SharedSpaceNode sharedSpaceNode) {
-		this.sharedSpaceNode = sharedSpaceNode;
+		this.node = sharedSpaceNode;
 	}
 
 	public SharedSpaceAccount getSharedSpaceAccount() {
-		return sharedSpaceAccount;
+		return account;
 	}
 
 	public void setSharedSpaceAccount(SharedSpaceAccount sharedSpaceAccount) {
-		this.sharedSpaceAccount = sharedSpaceAccount;
+		this.account = sharedSpaceAccount;
 	}
 
 	@Override
 	public String toString() {
 		return "SharedSpaceMember [id=" + id + ", uuid=" + uuid + ", creationDate=" + creationDate
-				+ ", modificationDate=" + modificationDate + ", sharedSpaceRole=" + sharedSpaceRole
-				+ ", sharedSpaceNodes=" + sharedSpaceNode + ", sharedSpaceAccount=" + sharedSpaceAccount + "]";
+				+ ", modificationDate=" + modificationDate + ", sharedSpaceRole=" + role
+				+ ", sharedSpaceNodes=" + node + ", sharedSpaceAccount=" + account + "]";
 	}
 
 }

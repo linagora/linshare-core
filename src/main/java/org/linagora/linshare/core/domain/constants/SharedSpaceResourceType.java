@@ -33,23 +33,19 @@
  */
 package org.linagora.linshare.core.domain.constants;
 
-import org.apache.commons.lang.StringUtils;
-import org.linagora.linshare.core.exception.TechnicalErrorCode;
-import org.linagora.linshare.core.exception.TechnicalException;
-
 public enum SharedSpaceResourceType {
+	
 	FOLDER,
 	FILE,
 	WORKGROUP,
-	SHARED_SPACE_NODE,
+	DRIVE,
 	MEMBER;
-	
+
 	public static SharedSpaceResourceType fromString(String s) {
 		try {
 			return SharedSpaceResourceType.valueOf(s.toUpperCase());
 		} catch (RuntimeException e) {
-			throw new TechnicalException(TechnicalErrorCode.NO_SUCH_LOG_ACTION,
-					StringUtils.isEmpty(s) ? "null or empty" : s);
+			throw new IllegalArgumentException("Doesn't match an existing resource type");
 		}
-	}	
+	}
 }

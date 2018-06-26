@@ -43,7 +43,7 @@ import org.linagora.linshare.core.domain.constants.SharedSpaceResourceType;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.UserService;
-import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
+import org.linagora.linshare.mongo.entities.SharedSpaceAuthor;
 import org.linagora.linshare.mongo.entities.SharedSpaceDomain;
 import org.linagora.linshare.mongo.entities.SharedSpacePermission;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
@@ -72,7 +72,7 @@ public class InitMongoServiceImpl implements InitMongoService {
 	}
 
 	private SharedSpaceRole createInitRole(String roleUuid, String roleName, SharedSpaceDomain domain,
-			SharedSpaceAccount account) {
+			SharedSpaceAuthor author) {
 		SharedSpaceRole role = sharedSpaceRoleMongoRepository.findByUuid(roleUuid);
 		if (role == null) {
 			role = new SharedSpaceRole();
@@ -80,7 +80,7 @@ public class InitMongoServiceImpl implements InitMongoService {
 			role.setName(roleName);
 			role.setEnabled(true);
 			role.setSharedSpaceDomain(domain);
-			role.setSharedSpaceAccount(account);
+			role.setSharedSpaceAuthor(author);
 			role.setModificationDate(new Date());
 			role.setCreationDate(new Date());
 			sharedSpaceRoleMongoRepository.insert(role);
@@ -111,8 +111,7 @@ public class InitMongoServiceImpl implements InitMongoService {
 		User root = userService.findByLsUuid("root@localhost.localdomain");
 		SharedSpaceDomain rootDomain = new SharedSpaceDomain(LinShareConstants.rootDomainIdentifier,
 				LinShareConstants.rootDomainIdentifier);
-		SharedSpaceAccount rootAccount = new SharedSpaceAccount(root.getFirstName(), root.getLastName(),
-				root.getMail());
+		SharedSpaceAuthor rootAccount = new SharedSpaceAuthor(root.getFullName(), root.getMail());
 		SharedSpaceRole admin = createInitRole("77a699fe-faca-46a5-97c0-1b46a0f5cd05", "ADMIN", rootDomain,
 				rootAccount);
 		SharedSpaceRole contributor = createInitRole("77a699fe-faca-46a5-97c0-1b46a0f5cd19", "CONTRIBUTOR", rootDomain,
@@ -127,18 +126,14 @@ public class InitMongoServiceImpl implements InitMongoService {
 		roles.add(writer);
 		roles.add(contributor);
 		roles.add(reader);
-		SharedSpacePermission createSharedSpaceNode = createInitPermission("77a699fe-faca-46a5-97c0-1b46a0452d05",
-				"Create a shared space node ", SharedSpaceActionType.CREATE, SharedSpaceResourceType.SHARED_SPACE_NODE,
-				roleAdmin);
-		SharedSpacePermission readSharedSpaceNode = createInitPermission("77a699fe-faca-46a5-97c0-1b46a074dd05",
-				"read a shared space node", SharedSpaceActionType.READ, SharedSpaceResourceType.SHARED_SPACE_NODE,
-				roles);
-		SharedSpacePermission updateSharedSpaceNode = createInitPermission("77a699fe-faca-46a5-97c0-1b461dm23d05",
-				"Update  a shared space node", SharedSpaceActionType.UPDATE, SharedSpaceResourceType.SHARED_SPACE_NODE,
-				roles.subList(0, 3));
-		SharedSpacePermission deleteSharedSpaceNode = createInitPermission("77a699fe-faca-46a5-97c0-1b46akq23d05",
-				"Delete  a shared space node", SharedSpaceActionType.DELETE, SharedSpaceResourceType.SHARED_SPACE_NODE,
-				roleAdmin);
+		SharedSpacePermission createDrive = createInitPermission("77a699fe-faca-46a5-97c0-1b46a0452d05",
+				"Create a drive ", SharedSpaceActionType.CREATE, SharedSpaceResourceType.DRIVE, roleAdmin);
+		SharedSpacePermission readDrive = createInitPermission("77a699fe-faca-46a5-97c0-1b46a074dd05", "read a drive",
+				SharedSpaceActionType.READ, SharedSpaceResourceType.DRIVE, roles);
+		SharedSpacePermission updateDrive = createInitPermission("77a699fe-faca-46a5-97c0-1b461dm23d05",
+				"Update  a drive", SharedSpaceActionType.UPDATE, SharedSpaceResourceType.DRIVE, roles.subList(0, 3));
+		SharedSpacePermission deleteDrive = createInitPermission("77a699fe-faca-46a5-97c0-1b46akq23d05",
+				"Delete  a drive", SharedSpaceActionType.DELETE, SharedSpaceResourceType.DRIVE, roleAdmin);
 		SharedSpacePermission createFolder = createInitPermission("77a6d9fe-41ca-46a5-97c0-1b46a0452d05",
 				"Create a folder", SharedSpaceActionType.CREATE, SharedSpaceResourceType.FOLDER, roles.subList(0, 3));
 		SharedSpacePermission readFolder = createInitPermission("77a699fe-fKLa-46a5-97c0-1jq6a074dd05", "Read a folder",
@@ -157,7 +152,7 @@ public class InitMongoServiceImpl implements InitMongoService {
 				SharedSpaceActionType.DELETE, SharedSpaceResourceType.FILE, roles.subList(0, 2));
 		SharedSpacePermission createMember = createInitPermission("77a6d9fe-faca-46a5-97c0-1b40a0452d05",
 				"Create a member", SharedSpaceActionType.CREATE, SharedSpaceResourceType.MEMBER, roleAdmin);
-		SharedSpacePermission readMember = createInitPermission("77a6d9fe-faca-46a5-97c0-1b40a0452d05", "Read a member",
+		SharedSpacePermission readMember = createInitPermission("77a6d9fe-faca-46a5-97c0-1b15a0452d05", "Read a member",
 				SharedSpaceActionType.READ, SharedSpaceResourceType.MEMBER, roles.subList(0, 3));
 		SharedSpacePermission updateMember = createInitPermission("77a699fe-fmla-46a5-97c0-1b441dm23d05",
 				"Update a member", SharedSpaceActionType.UPDATE, SharedSpaceResourceType.MEMBER, roleAdmin);

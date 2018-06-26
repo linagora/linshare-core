@@ -31,62 +31,47 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.service;
-
-import static org.hamcrest.CoreMatchers.is;
+package org.linagora.linshare.mongodb;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.core.service.SharedSpaceNodeService;
-import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.core.domain.constants.SharedSpaceActionType;
+import org.linagora.linshare.core.domain.constants.SharedSpaceResourceType;
+import org.linagora.linshare.core.service.InitMongoService;
+import org.linagora.linshare.mongo.repository.SharedSpacePermissionMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
-@ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
+@ContextConfiguration(locations = {
+		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
+		"classpath:springContext-service.xml",
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-service-miscellaneous.xml",
-		"classpath:springContext-service.xml",
 		"classpath:springContext-rac.xml",
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
-public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
-	private static Logger logger = LoggerFactory.getLogger(SharedSpaceNodeServiceImplTest.class);
+public class SharedSpacePermissionNumberTest extends AbstractTransactionalJUnit4SpringContextTests {
+	private static Logger logger = LoggerFactory.getLogger(SharedSpacePermissionNumberTest.class);
+	
+	@Autowired
+	private InitMongoService initMongo;
 
 	@Autowired
-	@Qualifier("userRepository")
-	private UserRepository<User> userRepo;
-
-	private Account authUser;
-
-	private LoadingServiceTestDatas datas;
-
-	@Autowired
-	private SharedSpaceNodeService service;
+	private SharedSpacePermissionMongoRepository permissionRepo;
 
 	@Before
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
-		this.executeSqlScript("import-tests-quota-other.sql", false);
-		datas = new LoadingServiceTestDatas(userRepo);
-		datas.loadUsers();
-		authUser = datas.getUser1();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -97,39 +82,12 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 	}
 
 	@Test
-	public void create() throws BusinessException {
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		SharedSpaceNode node = new SharedSpaceNode("My first node", "My parent nodeUuid");
-		SharedSpaceNode expectedNode = service.create(authUser, authUser, node);
-		Assert.assertNotNull("node not created", expectedNode);
-		Assert.assertEquals(expectedNode.getUuid(), node.getUuid());
-		logger.info(LinShareTestConstants.END_TEST);
-	}
-
-	@Test
-	public void createWithDuplicatedName() throws BusinessException {
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		try {
-			SharedSpaceNode node1 = new SharedSpaceNode("My node", "My parent nodeUuid");
-			SharedSpaceNode node2 = new SharedSpaceNode("My node", "My parent nodeUuid");
-			SharedSpaceNode expectedNode1 = service.create(authUser, authUser, node1);
-			Assert.assertNotNull("node not created", expectedNode1);
-			Assert.assertEquals(expectedNode1.getUuid(), node1.getUuid());
-			SharedSpaceNode expectedNode2 = service.create(authUser, authUser, node2);
-			Assert.fail("No exception was thrown");
-		} catch (BusinessException e) {
-			Assert.assertThat(e.getErrorCode(), is(BusinessErrorCode.DRIVE_ALREADY_EXISTS));
-		}
-		logger.info(LinShareTestConstants.END_TEST);
-	}
-
-	@Test
-	public void find() throws BusinessException {
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		SharedSpaceNode node = new SharedSpaceNode("Node to find", "My parent nodeUuid");
-		SharedSpaceNode expectedNode = service.create(authUser, authUser, node);
-		SharedSpaceNode toFindNode = service.find(authUser, authUser, expectedNode.getUuid());
-		Assert.assertNotNull("Node has not been found.", toFindNode);
-		logger.info(LinShareTestConstants.END_TEST);
+	public void testNumberofPermission() {
+		Long resourceNumber = (long) SharedSpaceResourceType.values().length;
+		Long actionNumber = (long) SharedSpaceActionType.values().length;
+		Long actualPermissionNumber = resourceNumber * actionNumber;
+		initMongo.init();
+		Long number = permissionRepo.count();
+		Assert.assertEquals(number, actualPermissionNumber);
 	}
 }

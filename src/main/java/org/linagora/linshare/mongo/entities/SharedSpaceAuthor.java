@@ -31,20 +31,59 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
+package org.linagora.linshare.mongo.entities;
 
-public enum SharedSpaceActionType {
+import java.util.UUID;
+
+import javax.xml.bind.annotation.XmlRootElement;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
+@XmlRootElement(name = "Author")
+public class SharedSpaceAuthor {
 	
-	READ,
-	UPDATE,
-	CREATE,
-	DELETE;
+	@ApiModelProperty(value = "uuid")
+	protected String uuid;
 	
-	public static SharedSpaceActionType fromString(String s) {
-		try {
-			return SharedSpaceActionType.valueOf(s.toUpperCase());
-		} catch (RuntimeException e) {
-			throw new IllegalArgumentException("Doesn't match an existing action");
-		}
+	@ApiModelProperty(value = "name")
+	protected String name;
+	
+	@ApiModelProperty(value = "mail")
+	protected String mail;
+
+	public SharedSpaceAuthor(String name, String mail) {
+		super();
+		this.uuid = UUID.randomUUID().toString();
+		this.name = name;
+		this.mail = mail;
 	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getMail() {
+		return mail;
+	}
+
+	public void setMail(String mail) {
+		this.mail = mail;
+	}
+
+	@Override
+	public String toString() {
+		return "SharedSpaceAuthor [uuid=" + uuid + ", name=" + name + ", mail=" + mail + "]";
+	}
+
 }

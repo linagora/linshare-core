@@ -60,10 +60,10 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		Validate.notEmpty(uuid, "Missing required shared space node uuid.");
 		SharedSpaceNode found = sharedSpaceNodeBusinessService.find(uuid);
 		if (found == null) {
-			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_NODE_NOT_FOUND,
+			throw new BusinessException(BusinessErrorCode.DRIVE_NOT_FOUND,
 					"The shared space node with uuid: " + uuid + " is not found");
 		}
-		checkReadPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN,
+		checkReadPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.DRIVE_FORBIDDEN,
 				found);
 		return found;
 	}
@@ -72,7 +72,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	public SharedSpaceNode create(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException {
 		preChecks(authUser, actor);
 		Validate.notNull(node, "Missing required input shared space node.");
-		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN,
+		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.DRIVE_FORBIDDEN,
 				null);
 		checkUniqueNameNode(node);
 		SharedSpaceNode created = sharedSpaceNodeBusinessService.create(node);
@@ -83,7 +83,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		List<SharedSpaceNode> nodes = sharedSpaceNodeBusinessService.findByNameAndParentUuid(node.getName(),
 				node.getParentUuid());
 		if (!nodes.isEmpty()) {
-			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_NODE_ALREADY_EXISTS,
+			throw new BusinessException(BusinessErrorCode.DRIVE_ALREADY_EXISTS,
 					"Can not create a new shared space node it already exists");
 		}
 	}

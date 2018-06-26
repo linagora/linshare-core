@@ -59,9 +59,9 @@ public class SharedSpaceRole {
 
 	protected Boolean enabled;
 
-	protected SharedSpaceAccount sharedSpaceAccount;
+	protected SharedSpaceAuthor author;
 
-	protected SharedSpaceDomain sharedSpaceDomain;
+	protected SharedSpaceDomain domain;
 
 	protected Date creationDate;
 
@@ -72,13 +72,13 @@ public class SharedSpaceRole {
 	}
 
 	public SharedSpaceRole(String name, Boolean enabled, SharedSpaceDomain sharedSpaceDomain,
-			SharedSpaceAccount sharedSpaceAccount, Date creationDate, Date modificationDate) {
+			SharedSpaceAuthor author, Date creationDate, Date modificationDate) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
 		this.name = name;
 		this.enabled = enabled;
-		this.sharedSpaceAccount = sharedSpaceAccount;
-		this.sharedSpaceDomain = sharedSpaceDomain;
+		this.author = author;
+		this.domain = sharedSpaceDomain;
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
 	}
@@ -88,10 +88,10 @@ public class SharedSpaceRole {
 		this.uuid = role.getUuid();
 		this.name = role.getName();
 		this.enabled = role.isEnabled();
-		this.sharedSpaceAccount = role.getSharedSpaceAccount();
+		this.author = role.getSharedSpaceAuthor();
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
-		this.sharedSpaceDomain = role.getSharedSpaceDomain();
+		this.domain = role.getSharedSpaceDomain();
 	}
 
 	public boolean isEnabled() {
@@ -102,12 +102,12 @@ public class SharedSpaceRole {
 		this.enabled = enable;
 	}
 
-	public SharedSpaceAccount getSharedSpaceAccount() {
-		return sharedSpaceAccount;
+	public SharedSpaceAuthor getSharedSpaceAuthor() {
+		return author;
 	}
 
-	public void setSharedSpaceAccount(SharedSpaceAccount sharedSpaceAccount) {
-		this.sharedSpaceAccount = sharedSpaceAccount;
+	public void setSharedSpaceAuthor(SharedSpaceAuthor author) {
+		this.author = author;
 	}
 
 	public Date getCreationDate() {
@@ -127,11 +127,11 @@ public class SharedSpaceRole {
 	}
 
 	public SharedSpaceDomain getSharedSpaceDomain() {
-		return sharedSpaceDomain;
+		return domain;
 	}
 
 	public void setSharedSpaceDomain(SharedSpaceDomain sharedSpaceDomain) {
-		this.sharedSpaceDomain=sharedSpaceDomain;
+		this.domain=sharedSpaceDomain;
 	}
 
 	public String getId() {
@@ -161,8 +161,8 @@ public class SharedSpaceRole {
 	@Override
 	public String toString() {
 		return "SharedSpaceRoles [id=" + id + ", uuid=" + uuid + ", name=" + name + ", enable=" + enabled + ", sharedSpaceAccount="
-				+ sharedSpaceAccount + ", creationDate=" + creationDate + ", modificationDate=" + modificationDate + ", sharedSpaceDomain="
-				+ sharedSpaceDomain + "]";
+				+ author + ", creationDate=" + creationDate + ", modificationDate=" + modificationDate + ", sharedSpaceDomain="
+				+ domain + "]";
 				 
 	}
 

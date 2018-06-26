@@ -49,29 +49,29 @@ public class SharedSpaceNodeResourceAccessControlImpl
 
 	@Override
 	protected boolean hasReadPermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
-		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.SHARED_SPACE_NODE_READ,
+		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.DRIVE_READ,
 				false);
 	}
 
 	@Override
 	protected boolean hasListPermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
-		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.SHARED_SPACE_NODE_LIST);
+		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.DRIVE_LIST);
 	}
 
 	@Override
 	protected boolean hasDeletePermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
-		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.SHARED_SPACE_NODE_DELETE);
+		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.DRIVE_DELETE);
 	}
 
 	@Override
 	protected boolean hasCreatePermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
-		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.SHARED_SPACE_NODE_CREATE,
+		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.DRIVE_CREATE,
 				false);
 	}
 
 	@Override
 	protected boolean hasUpdatePermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
-		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.SHARED_SPACE_NODE_UPDATE);
+		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.DRIVE_UPDATE);
 	}
 
 	@Override

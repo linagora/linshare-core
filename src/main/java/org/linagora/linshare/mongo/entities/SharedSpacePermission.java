@@ -63,7 +63,7 @@ public class SharedSpacePermission {
 
 	protected SharedSpaceResourceType resource;
 	
-	protected List<SharedSpaceRole> sharedSpaceRoles;
+	protected List<SharedSpaceRole> roles;
 
 	protected Date creationDate;
 
@@ -74,12 +74,12 @@ public class SharedSpacePermission {
 	}
 
 	public SharedSpacePermission(SharedSpaceActionType action, SharedSpaceResourceType resource,
-			List<SharedSpaceRole> sharedSpaceRoles) {
+			List<SharedSpaceRole> roles) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
 		this.action = action;
 		this.resource = resource;
-		this.sharedSpaceRoles = sharedSpaceRoles;
+		this.roles = roles;
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
 	}
@@ -117,11 +117,11 @@ public class SharedSpacePermission {
 	}
 
 	public List<SharedSpaceRole> getSharedSpaceRole() {
-		return sharedSpaceRoles;
+		return roles;
 	}
 
 	public void setSharedSpaceRole(List<SharedSpaceRole> sharedSpaceRole) {
-		this.sharedSpaceRoles = sharedSpaceRole;
+		this.roles = sharedSpaceRole;
 	}
 
 	public Date getCreationDate() {
@@ -143,7 +143,7 @@ public class SharedSpacePermission {
 	@Override
 	public String toString() {
 		return "SharedSpacePermissions [id=" + id + ", uuid=" + uuid + ", action=" + action
-				+ ", resource=" + resource + ", SharedSpacerole=" + sharedSpaceRoles + ", creationDate="
+				+ ", resource=" + resource + ", SharedSpacerole=" + roles + ", creationDate="
 				+ creationDate + ", modificationDate=" + modificationDate + "]";
 	}
 
