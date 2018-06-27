@@ -35,7 +35,7 @@ package org.linagora.linshare.core.repository.hibernate;
 
 import org.linagora.linshare.core.domain.entities.Statistic;
 import org.linagora.linshare.core.repository.StatisticRepository;
-import org.springframework.orm.hibernate4.HibernateTemplate;
+import org.springframework.orm.hibernate5.HibernateTemplate;
 
 public class StatisticRepositoryImpl extends GenericStatisticRepositoryImpl<Statistic> implements StatisticRepository{
 

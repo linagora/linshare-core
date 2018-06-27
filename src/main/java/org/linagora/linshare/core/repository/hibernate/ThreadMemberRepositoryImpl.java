@@ -44,7 +44,7 @@ import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate4.HibernateTemplate;
+import org.springframework.orm.hibernate5.HibernateTemplate;
 
 public class ThreadMemberRepositoryImpl extends
 		AbstractRepositoryImpl<WorkgroupMember> implements ThreadMemberRepository {

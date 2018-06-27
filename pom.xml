@@ -145,6 +145,11 @@
 			<artifactId>hibernate-ehcache</artifactId>
 			<version>${hibernate.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
+			<version>3.5.2</version>
+		</dependency>
 
 		<!-- Quartz framework -->
 		<dependency>
@@ -1810,10 +1815,10 @@
 	</distributionManagement>
 
 	<properties>
-		<spring-release-version>4.3.18.RELEASE</spring-release-version>
+		<spring-release-version>5.0.7.RELEASE</spring-release-version>
 		<spring-security-release-version>4.2.7.RELEASE</spring-security-release-version>
 		<spring-data.version>Gosling-SR6</spring-data.version>
-		<hibernate.version>4.3.11.Final</hibernate.version>
+		<hibernate.version>5.0.12.Final</hibernate.version>
 		<h2.version>1.4.197</h2.version>
 		<guava.version>19.0</guava.version>
 		<linid.authorization.version>2.1.2</linid.authorization.version>
@@ -1828,7 +1833,7 @@
 		<sql.driver.postgresql>42.2.2.jre7</sql.driver.postgresql>
 		<sql.driver.mysql>8.0.11</sql.driver.mysql>
 		<thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
-		<spring.mvc.version>4.2.2.RELEASE</spring.mvc.version>
+		<spring.mvc.version>5.0.7.RELEASE</spring.mvc.version>
 		<jjwt.version>0.9.0</jjwt.version>
 		<servlet.context.version>3.0.1</servlet.context.version>
 		<opencmis.version>1.1.0</opencmis.version>

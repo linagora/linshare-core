@@ -37,7 +37,7 @@ package org.linagora.linshare.core.repository.hibernate;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.Root;
 import org.linagora.linshare.core.repository.RootUserRepository;
-import org.springframework.orm.hibernate4.HibernateTemplate;
+import org.springframework.orm.hibernate5.HibernateTemplate;
 
 public class RootUserRepositoryImpl  extends GenericUserRepositoryImpl<Root> implements RootUserRepository {
 

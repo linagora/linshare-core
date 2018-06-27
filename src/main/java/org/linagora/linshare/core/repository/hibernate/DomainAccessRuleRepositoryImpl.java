@@ -42,7 +42,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.repository.DomainAccessRuleRepository;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate4.HibernateTemplate;
+import org.springframework.orm.hibernate5.HibernateTemplate;
 
 public class DomainAccessRuleRepositoryImpl extends AbstractRepositoryImpl<DomainAccessRule> implements DomainAccessRuleRepository {
 

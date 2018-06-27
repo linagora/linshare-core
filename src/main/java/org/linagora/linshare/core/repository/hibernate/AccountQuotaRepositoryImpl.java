@@ -44,7 +44,7 @@ import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.repository.AccountQuotaRepository;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate4.HibernateTemplate;
+import org.springframework.orm.hibernate5.HibernateTemplate;
 
 public class AccountQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<AccountQuota>
 		implements AccountQuotaRepository {

@@ -46,8 +46,8 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.repository.DomainQuotaRepository;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate4.HibernateCallback;
-import org.springframework.orm.hibernate4.HibernateTemplate;
+import org.springframework.orm.hibernate5.HibernateCallback;
+import org.springframework.orm.hibernate5.HibernateTemplate;
 
 public class DomainQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<DomainQuota>
 		implements DomainQuotaRepository {

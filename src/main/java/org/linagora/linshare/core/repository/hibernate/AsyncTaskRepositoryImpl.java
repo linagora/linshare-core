@@ -47,7 +47,7 @@ import org.linagora.linshare.core.domain.entities.UpgradeTask;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AsyncTaskRepository;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate4.HibernateTemplate;
+import org.springframework.orm.hibernate5.HibernateTemplate;
 
 public class AsyncTaskRepositoryImpl extends AbstractRepositoryImpl<AsyncTask>
 		implements AsyncTaskRepository {

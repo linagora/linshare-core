@@ -45,7 +45,6 @@ import org.junit.Test;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractRepository;
-import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
 /** Abstract class that test CRUD methods.
@@ -63,7 +62,7 @@ public abstract class AbstractRepositoryImplTest<T> extends AbstractTransactiona
         assertEquals("There is already a same entity in database", 0, count);
 
         T result = getAbstractRepository().create(entity);
-        SessionFactoryUtils.getSession(getSessionFactory(), false).flush();
+        getSessionFactory().getCurrentSession().flush();
         assertEquals(entity, result);
 
         count = jdbcTemplate.queryForObject(getSqlQueryForEntityDataCheck(), Integer.class);
@@ -114,7 +113,7 @@ public abstract class AbstractRepositoryImplTest<T> extends AbstractTransactiona
         assertTrue(count == 1);
         entity = getCompleteEntity();
         getAbstractRepository().delete(entity);
-        SessionFactoryUtils.getSession(getSessionFactory(), false).flush();
+        getSessionFactory().getCurrentSession().flush();
         count = jdbcTemplate.queryForObject(getSqlQueryForEntityDataCheck(), Integer.class);
         assertEquals(0, count);
     }
@@ -134,7 +133,7 @@ public abstract class AbstractRepositoryImplTest<T> extends AbstractTransactiona
 
         getAbstractRepository().update(updatedEntity);
 
-        SessionFactoryUtils.getSession(getSessionFactory(), false).flush();
+        getSessionFactory().getCurrentSession().flush();
         count = jdbcTemplate.queryForObject(getSqlQueryForUpdatedEntityCheck(), Integer.class);
         assertEquals(1, count);
     }

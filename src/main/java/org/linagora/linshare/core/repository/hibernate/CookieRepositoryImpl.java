@@ -43,7 +43,7 @@ import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Cookie;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.CookieRepository;
-import org.springframework.orm.hibernate4.HibernateTemplate;
+import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework.security.web.authentication.rememberme.PersistentRememberMeToken;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 

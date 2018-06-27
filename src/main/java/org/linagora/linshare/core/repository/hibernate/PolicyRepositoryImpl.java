@@ -39,7 +39,7 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Policy;
 import org.linagora.linshare.core.repository.PolicyRepository;
-import org.springframework.orm.hibernate4.HibernateTemplate;
+import org.springframework.orm.hibernate5.HibernateTemplate;
 
 public class PolicyRepositoryImpl extends AbstractRepositoryImpl<Policy> implements PolicyRepository {
 

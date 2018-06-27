@@ -39,7 +39,7 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Unit;
 import org.linagora.linshare.core.repository.UnitRepository;
-import org.springframework.orm.hibernate4.HibernateTemplate;
+import org.springframework.orm.hibernate5.HibernateTemplate;
 
 public class UnitRepositoryImpl extends AbstractRepositoryImpl<Unit> implements UnitRepository {
 

@@ -87,7 +87,7 @@ public abstract class AbstractDomain {
 
 	protected Long authShowOrder;
 
-	protected DomainPurgeStepEnum purgeStep = DomainPurgeStepEnum.IN_USE;
+	protected DomainPurgeStepEnum purgeStep;
 
 	//mail configurations
 	private MailConfig currentMailConfiguration;
@@ -150,6 +150,7 @@ public abstract class AbstractDomain {
 		this.parentDomain = parent;
 		this.enable = true;
 		this.template = false;
+		this.purgeStep = DomainPurgeStepEnum.IN_USE;
 		this.subdomain = new HashSet<AbstractDomain>();
 		this.defaultRole = Role.valueOf(domainDto.getUserRole());
 		this.defaultTapestryLocale = domainDto.getLanguage();

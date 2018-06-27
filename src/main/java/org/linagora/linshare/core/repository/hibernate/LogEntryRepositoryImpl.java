@@ -46,7 +46,7 @@ import org.linagora.linshare.core.domain.entities.LogEntry;
 import org.linagora.linshare.core.repository.LogEntryRepository;
 import org.linagora.linshare.view.tapestry.beans.LogCriteriaBean;
 import org.linagora.linshare.view.tapestry.enums.CriterionMatchMode;
-import org.springframework.orm.hibernate4.HibernateTemplate;
+import org.springframework.orm.hibernate5.HibernateTemplate;
 
 public class LogEntryRepositoryImpl extends AbstractRepositoryImpl<LogEntry>
 		implements LogEntryRepository {

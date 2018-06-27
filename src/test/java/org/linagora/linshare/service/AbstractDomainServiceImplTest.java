@@ -41,6 +41,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.linagora.linshare.core.domain.constants.DomainPurgeStepEnum;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -158,6 +159,7 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		TopDomain topDomain = new TopDomain("label");
 		topDomain.setDefaultRole(Role.SIMPLE);
+		topDomain.setPurgeStep(DomainPurgeStepEnum.IN_USE);
 		DomainPolicy policy = domainPolicyRepository.findById(LinShareConstants.defaultDomainPolicyIdentifier);
 		topDomain.setPolicy(policy);
 
@@ -187,6 +189,7 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		TopDomain topDomain = new TopDomain("label");
 		topDomain.setDefaultRole(Role.SIMPLE);
+		topDomain.setPurgeStep(DomainPurgeStepEnum.IN_USE);
 		DomainPolicy policy = domainPolicyRepository
 				.findById(LinShareConstants.defaultDomainPolicyIdentifier);
 		topDomain.setPolicy(policy);
@@ -223,6 +226,7 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		TopDomain topDomain = new TopDomain("topDomainToPurge");
 		topDomain.setDefaultRole(Role.SIMPLE);
+		topDomain.setPurgeStep(DomainPurgeStepEnum.IN_USE);
 		DomainPolicy policy = domainPolicyRepository.findById(LinShareConstants.defaultDomainPolicyIdentifier);
 		topDomain.setPolicy(policy);
 

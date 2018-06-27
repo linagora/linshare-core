@@ -14,14 +14,14 @@
 		<param name="valueOfMethod">fromTapestryLocale</param>
 	</typedef>
 	<typedef
-		class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="languageType">
+		class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="domainLanguageType">
 		<param name="enumClass">org.linagora.linshare.core.domain.constants.Language</param>
 		<param name="identifierMethod">getTapestryLocale</param>
 		<param name="valueOfMethod">fromTapestryLocale</param>
 	</typedef>
 	<typedef
 		class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType"
-		name="purgeStep">
+		name="domainPurgeStep">
 		<param name="enumClass">org.linagora.linshare.core.domain.constants.DomainPurgeStepEnum</param>
 		<param name="identifierMethod">name</param>
 		<param name="valueOfMethod">fromString</param>
@@ -41,9 +41,9 @@
 		<property access="field" column="description" name="description" type="text" not-null="true" lazy="false"/>
 		<property access="field" column="default_role" name="defaultRole" type="roleEnumType" />
 		<property access="field" column="default_locale" name="defaultTapestryLocale" type="supportedLanguageType"/>
-		<property access="field" column="default_mail_locale" name="externalMailLocale" type="languageType"/>
+		<property access="field" column="default_mail_locale" name="externalMailLocale" type="domainLanguageType"/>
 		<property access="field" column="auth_show_order" name="authShowOrder" />
-		<property access="field" name="purgeStep" column="purge_step" type="purgeStep" not-null="true" lazy="false" />
+		<property access="field" name="purgeStep" column="purge_step" type="domainPurgeStep" not-null="true" lazy="false" />
 		<property access="field" column="creation_date" name="creationDate" type="timestamp" not-null="true" lazy="false"/>
 		<property access="field" column="modification_date" name="modificationDate" type="timestamp" not-null="true" lazy="false"/>
 
