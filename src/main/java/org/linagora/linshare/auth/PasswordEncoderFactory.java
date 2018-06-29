@@ -33,10 +33,15 @@
  */
 package org.linagora.linshare.auth;
 
-import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
-import org.springframework.security.authentication.encoding.PasswordEncoder;
-import org.springframework.security.authentication.encoding.PlaintextPasswordEncoder;
-import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
+import java.util.Map;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
+import org.springframework.security.crypto.password.MessageDigestPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
+
+import com.google.common.collect.Maps;
 
 /** 
  * Returns an instance of password encoder.
@@ -63,16 +68,22 @@ public class PasswordEncoderFactory {
      * @return a password encoder.
      */
     public PasswordEncoder getInstance() {
+    	String defaultAlgoForEncode = "bcrypt";
+    	BCryptPasswordEncoder defaultEncoder = new BCryptPasswordEncoder();
+    	Map<String, PasswordEncoder> encoders = Maps.newHashMap();
+    	encoders.put(defaultAlgoForEncode, defaultEncoder);
+    	DelegatingPasswordEncoder hybridPasswordEncoder = new DelegatingPasswordEncoder(defaultAlgoForEncode, encoders);
         if (passwordEncoderName.equalsIgnoreCase(MD5)) {
-            Md5PasswordEncoder passwordEncoder = new Md5PasswordEncoder();
+        	MessageDigestPasswordEncoder passwordEncoder = new MessageDigestPasswordEncoder("MD5");
             passwordEncoder.setEncodeHashAsBase64(true);
-            return passwordEncoder;
+            hybridPasswordEncoder.setDefaultPasswordEncoderForMatches(passwordEncoder);
         } else if (passwordEncoderName.equalsIgnoreCase(SHA) || passwordEncoderName.equalsIgnoreCase(SSHA)) {
-            ShaPasswordEncoder passwordEncoder = new ShaPasswordEncoder();
+        	MessageDigestPasswordEncoder passwordEncoder = new MessageDigestPasswordEncoder("SHA-1");
             passwordEncoder.setEncodeHashAsBase64(true);
-            return passwordEncoder;
+            hybridPasswordEncoder.setDefaultPasswordEncoderForMatches(passwordEncoder);
         } else {
-            return new PlaintextPasswordEncoder();
+        	hybridPasswordEncoder.setDefaultPasswordEncoderForMatches(new StandardPasswordEncoder());
         }
+        return hybridPasswordEncoder;
     }
 }

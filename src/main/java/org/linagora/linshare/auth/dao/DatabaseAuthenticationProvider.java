@@ -42,12 +42,12 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
-import org.springframework.security.authentication.encoding.PasswordEncoder;
-import org.springframework.security.authentication.encoding.PlaintextPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.util.Assert;
 
 public class DatabaseAuthenticationProvider extends
@@ -56,7 +56,7 @@ public class DatabaseAuthenticationProvider extends
 	// ~ Instance fields
 	// ================================================================================================
 
-	private PasswordEncoder passwordEncoder = new PlaintextPasswordEncoder();
+	private PasswordEncoder passwordEncoder = new StandardPasswordEncoder();
 
 	private DatabaseUserDetailsProvider userDetailsProvider;
 
@@ -132,8 +132,7 @@ public class DatabaseAuthenticationProvider extends
 			// auth
 			String presentedPassword = authentication.getCredentials().toString();
 
-			if (!passwordEncoder.isPasswordValid(password,
-					presentedPassword, null)) {
+			if (!passwordEncoder.matches(presentedPassword, password)) {
 				logger.debug("Authentication failed: password does not match stored value");
 				userDetailsProvider.logAuthError(account, "Bad credentials.");
 				throw new BadCredentialsException(messages.getMessage(
