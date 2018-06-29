@@ -80,7 +80,8 @@ public class JwtServiceImpl implements JwtService {
 			String issuer,
 			String pemPrivateKeyPath,
 			String pemPublicKeyPath,
-			PublicKeyService publicKeyService) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
+			PublicKeyService publicKeyService) 
+					throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
 		super();
 		this.expiration = expiration;
 		this.issuer = issuer;
@@ -91,18 +92,28 @@ public class JwtServiceImpl implements JwtService {
 
 	@Override
 	public String generateToken(Account actor) {
-		final Date createdDate = clock.now();
-		final Date expirationDate = getExpirationDate(createdDate);
+		return generateToken(actor, null, null);
+	}
+
+	@Override
+	public String generateToken(Account actor, String tokenUuid, Date creationDate) {
+		Date createdDate = clock.now();
+		Date expirationDate = getExpirationDate(createdDate);
 
 		// extra claims
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("domain", actor.getDomainId());
-
 		PrivateKey pk = globalKey.getPrivate();
 		if (pk == null) {
-			logger.error("Can not generate a JWT toekn. Can not read global private key.");
+			logger.error("Can not generate a JWT token. Can not read global private key.");
 			throw new BusinessException(BusinessErrorCode.INVALID_CONFIGURATION, "JWT private key was not set properly.");
 		}
+		// long time token
+		if (tokenUuid != null && creationDate != null) {
+			claims.put("uuid", tokenUuid);
+			createdDate = creationDate;
+			expirationDate = null;
+ 		}
 		String compact = Jwts.builder()
 				.setClaims(claims)
 				.setSubject(actor.getMail())

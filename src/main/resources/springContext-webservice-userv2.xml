@@ -154,6 +154,10 @@
 		<constructor-arg ref="wsUploadPropositionFacade" />
 	</bean>
 
+	<bean id="userJwtLongTimeRestService" class="org.linagora.linshare.webservice.userv2.impl.JwtLongTimeUserRestServiceImpl">
+		<constructor-arg ref="wsJwtLongTimeUserFacade" />
+	</bean>
+
 	<jaxrs:server id="userRestContainer" address="/rest/user/v2">
 		<jaxrs:serviceBeans>
 			<ref bean="userv2EnumRestService" />

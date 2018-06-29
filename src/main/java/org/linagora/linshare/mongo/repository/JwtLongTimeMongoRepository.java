@@ -31,22 +31,12 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
 
-import java.util.Date;
+package org.linagora.linshare.mongo.repository;
 
-import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.mongo.entities.JwtLongTime;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-import io.jsonwebtoken.Claims;
-
-public interface JwtService {
-
-	String generateToken(Account actor);
-
-	String generateToken(Account actor, String tokenUuid, Date creationDate);
-
-	Claims decode(String token);
-
-	boolean hasValidLiveTime(Claims claims);
+public interface JwtLongTimeMongoRepository extends MongoRepository<JwtLongTime, String> {
 
 }

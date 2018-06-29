@@ -31,22 +31,12 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.core.facade.webservice.user;
 
-import java.util.Date;
+import org.linagora.linshare.core.exception.BusinessException;
 
-import org.linagora.linshare.core.domain.entities.Account;
+public interface JwtLongTimeUserFacade {
 
-import io.jsonwebtoken.Claims;
-
-public interface JwtService {
-
-	String generateToken(Account actor);
-
-	String generateToken(Account actor, String tokenUuid, Date creationDate);
-
-	Claims decode(String token);
-
-	boolean hasValidLiveTime(Claims claims);
+	String generateLongTimeToken(String label, String description) throws BusinessException;
 
 }

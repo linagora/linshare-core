@@ -31,22 +31,47 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.core.service.impl;
 
 import java.util.Date;
+import java.util.UUID;
 
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.service.JwtLongTimeService;
+import org.linagora.linshare.core.service.JwtService;
+import org.linagora.linshare.mongo.entities.JwtLongTime;
+import org.linagora.linshare.mongo.repository.JwtLongTimeMongoRepository;
 
-import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Clock;
+import io.jsonwebtoken.impl.DefaultClock;
 
-public interface JwtService {
+public class JwtLongTimeServiceImpl implements JwtLongTimeService {
 
-	String generateToken(Account actor);
+	protected Clock clock = DefaultClock.INSTANCE;
 
-	String generateToken(Account actor, String tokenUuid, Date creationDate);
+	protected String issuer;
 
-	Claims decode(String token);
+	protected JwtService jwtService;
 
-	boolean hasValidLiveTime(Claims claims);
+	protected JwtLongTimeMongoRepository jwtLongTimeMongoRepository;
 
+	public JwtLongTimeServiceImpl(String issuer,
+			JwtLongTimeMongoRepository jwtLongTimeMongoRepository,
+			JwtService jwtService) {
+		this.issuer = issuer;
+		this.jwtLongTimeMongoRepository = jwtLongTimeMongoRepository;
+		this.jwtService = jwtService;
+	}
+
+	@Override
+	public String createToken(Account actor, String label, String description) {
+		final Date creationDate = clock.now();
+		final String tokenUuid = UUID.randomUUID().toString();
+		String token = jwtService.generateToken(actor, tokenUuid, creationDate);
+		JwtLongTime entity = new JwtLongTime(tokenUuid, creationDate, issuer, label, description, actor.getLsUuid(),
+				actor.getMail(), actor.getDomainId());
+		jwtLongTimeMongoRepository.insert(entity);
+		// TODO insert audit
+		return token;
+	}
 }

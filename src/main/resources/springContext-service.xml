@@ -376,5 +376,13 @@
 		<constructor-arg value="${jwt.global.key.private.path}" />
 		<constructor-arg value="${jwt.global.key.public.path}" />
 		<constructor-arg ref="publicKeyService" />
+		
+	</bean>
+
+	<bean id="jwtLongTimeService"
+		class="org.linagora.linshare.core.service.impl.JwtLongTimeServiceImpl">
+		<constructor-arg value="${jwt.issuer}" />
+		<constructor-arg ref="jwtLongTimeMongoRepository" />
+		<constructor-arg ref="jwtService"/>
 	</bean>
 </beans>

@@ -43,6 +43,10 @@ public class JwtToken {
 	@ApiModelProperty(value = "Jwt Token")
 	protected String token;
 
+	public JwtToken() {
+		super();
+	}
+
 	public JwtToken(String token) {
 		super();
 		this.token = token;

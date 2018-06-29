@@ -33,20 +33,10 @@
  */
 package org.linagora.linshare.core.service;
 
-import java.util.Date;
-
 import org.linagora.linshare.core.domain.entities.Account;
 
-import io.jsonwebtoken.Claims;
+public interface JwtLongTimeService {
 
-public interface JwtService {
-
-	String generateToken(Account actor);
-
-	String generateToken(Account actor, String tokenUuid, Date creationDate);
-
-	Claims decode(String token);
-
-	boolean hasValidLiveTime(Claims claims);
+	String createToken(Account actor, String label, String description);
 
 }
