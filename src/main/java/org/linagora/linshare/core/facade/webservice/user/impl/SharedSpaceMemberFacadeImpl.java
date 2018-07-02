@@ -42,26 +42,29 @@ import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 
 public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements SharedSpaceMemberFacade {
-	private final SharedSpaceMemberService sharedSpacememberService;
+	private final SharedSpaceMemberService sharedSpaceMemberService;
 
 	public SharedSpaceMemberFacadeImpl(SharedSpaceMemberService sharedSpaceMemberService,
 			AccountService accountService) {
 		super(accountService);
-		this.sharedSpacememberService = sharedSpaceMemberService;
+		this.sharedSpaceMemberService = sharedSpaceMemberService;
 	}
 
 	public SharedSpaceMember find(String actorUuid, String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "Missing required uuid");
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
-		return sharedSpacememberService.find(authUser, actor, uuid);
+		return sharedSpaceMemberService.find(authUser, actor, uuid);
 	}
 
 	@Override
 	public SharedSpaceMember create(String actorUuid, SharedSpaceMember member) throws BusinessException {
-		Validate.notNull(member, "Missing required input shared space member.");
+		Validate.notNull(member, "Shared space member must be set.");
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
-		return sharedSpacememberService.create(authUser, actor, member);
+		SharedSpaceMember toAddMember = sharedSpaceMemberService.create(authUser, actor,
+				member.getSharedSpaceAccount().getUuid(), member.getSharedSpaceRole().getUuid(),
+				member.getSharedSpaceNode().getUuid());
+		return toAddMember;
 	}
 }

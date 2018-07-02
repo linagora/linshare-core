@@ -40,5 +40,5 @@ public interface SharedSpaceMemberRestService {
 
 	SharedSpaceMember find(String uuid) throws BusinessException;
 
-	SharedSpaceMember create(SharedSpaceMember member) throws BusinessException;
+	SharedSpaceMember addMember(SharedSpaceMember member) throws BusinessException;
 }

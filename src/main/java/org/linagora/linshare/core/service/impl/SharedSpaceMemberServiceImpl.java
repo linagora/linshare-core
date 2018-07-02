@@ -33,49 +33,74 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import java.util.List;
 import org.jsoup.helper.Validate;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
+import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
+import org.linagora.linshare.core.business.service.SharedSpaceRoleBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.SharedSpaceMemberResourceAccessControl;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
+import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 
 public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, SharedSpaceMember>
 		implements SharedSpaceMemberService {
 	private final SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService;
 
+	private final SharedSpaceNodeBusinessService nodeBusinessService;
+
+	private final SharedSpaceRoleBusinessService roleBusinessService;
+
+	private final UserService userService;
+
 	public SharedSpaceMemberServiceImpl(SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService,
-			SharedSpaceMemberResourceAccessControl rac) {
+			SharedSpaceNodeBusinessService nodeBusinessService, SharedSpaceRoleBusinessService roleBusinessService,
+			UserService userService, SharedSpaceMemberResourceAccessControl rac) {
 		super(rac);
 		this.sharedSpaceMemberBusinessService = sharedSpaceMemberBusinessService;
+		this.nodeBusinessService = nodeBusinessService;
+		this.roleBusinessService = roleBusinessService;
+		this.userService = userService;
 	}
 
 	@Override
 	public SharedSpaceMember find(Account authUser, Account actor, String uuid) throws BusinessException {
 		preChecks(authUser, actor);
 		Validate.notEmpty(uuid, "Missing required shared space member uuid");
-		SharedSpaceMember found = sharedSpaceMemberBusinessService.find(uuid);
-		if (found == null) {
+		SharedSpaceMember toFind = sharedSpaceMemberBusinessService.find(uuid);
+		if (toFind == null) {
 			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND,
 					"The Shared space member with uuid : " + uuid + " is not found");
 		}
 		checkReadPermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
-				found);
-		return found;
+				toFind);
+		return toFind;
 	}
 
 	@Override
-	public SharedSpaceMember create(Account authUser, Account actor, SharedSpaceMember member)
-			throws BusinessException {
+	public SharedSpaceMember create(Account authUser, Account actor, String accountUuid, String roleUuid,
+			String nodeUuid) throws BusinessException {
 		preChecks(authUser, actor);
-		Validate.notNull(member, "Missing required shared space node member");
+		SharedSpaceNode toFindNode = nodeBusinessService.find(nodeUuid);
+		Validate.notNull(toFindNode, "Missing required node");
+		SharedSpaceRole toFindRole = roleBusinessService.find(roleUuid);
+		Validate.notNull(toFindRole, "Missing required role");
+		User user = userService.findByLsUuid(accountUuid);
+		Validate.notNull(user, "Missing required user");
+		SharedSpaceAccount sharedSpaceAccount = new SharedSpaceAccount(user.getFirstName(), user.getLastName(),
+				user.getMail());
+		sharedSpaceAccount.setUuid(user.getLsUuid());
+		SharedSpaceMember member = new SharedSpaceMember(toFindRole, toFindNode, sharedSpaceAccount);
 		checkCreatePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
 				null);
-		SharedSpaceMember toCreate = sharedSpaceMemberBusinessService.create(member);
-		return toCreate;
+		SharedSpaceMember toAdd = sharedSpaceMemberBusinessService.create(member);
+		return toAdd;
 	}
 
 }

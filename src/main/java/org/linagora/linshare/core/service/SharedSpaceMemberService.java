@@ -41,5 +41,6 @@ public interface SharedSpaceMemberService {
 
 	SharedSpaceMember find(Account authUser, Account actor, String uuid) throws BusinessException;
 
-	SharedSpaceMember create(Account authUser, Account actor, SharedSpaceMember member) throws BusinessException;
+	SharedSpaceMember create(Account authUser, Account actor, String accountUuid, String roleUuid, String nodeUuid)
+			throws BusinessException;
 }

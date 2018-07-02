@@ -55,10 +55,10 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Api(value = "/rest/admin/shared_space_members", description = "Shared space member service.")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestService{
-	
+public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestService {
+
 	private final SharedSpaceMemberFacade sharedSpaceMemberFacade;
-	
+
 	public SharedSpaceMemberRestServiceImpl(SharedSpaceMemberFacade sharedSpaceMemberFacade) {
 		super();
 		this.sharedSpaceMemberFacade = sharedSpaceMemberFacade;
@@ -66,30 +66,29 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 
 	@Path("/{uuid}")
 	@GET
-	@ApiOperation(value = "Find a shared space member.", response = SharedSpaceNode.class)
+	@ApiOperation(value = "Find a shared space member.", response = SharedSpaceMember.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
 			@ApiResponse(code = 404, message = "Not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public SharedSpaceMember find(
-			@ApiParam(value="Shared space member uuid")
-				@PathParam("uuid")String uuid) 
-						throws BusinessException {
+	public SharedSpaceMember find(@ApiParam(value = "Shared space member uuid") @PathParam("uuid") String uuid)
+			throws BusinessException {
 		return sharedSpaceMemberFacade.find(uuid);
 	}
-	
+
 	@Path("/")
 	@POST
-	@ApiOperation(value = "create a shared space member.", response = SharedSpaceNode.class)
+	@ApiOperation(value = "create a shared space member.", response = SharedSpaceMember.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
 			@ApiResponse(code = 404, message = "Not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public SharedSpaceMember addMember(@ApiParam(value = "shared space member uuid") SharedSpaceMember member)
+	public SharedSpaceMember addMember(
+			@ApiParam(value = "shared space member to create") SharedSpaceMember sharedSpaceNodeMember)
 			throws BusinessException {
-		return sharedSpaceMemberFacade.create(member);
+		return sharedSpaceMemberFacade.create(sharedSpaceNodeMember);
 	}
 
 }

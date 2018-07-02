@@ -38,7 +38,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 
 public interface SharedSpaceMemberRestService {
 
-	SharedSpaceMember addMember(SharedSpaceMember member) throws BusinessException;
-
 	SharedSpaceMember find(String uuid) throws BusinessException;
+
+	SharedSpaceMember addMember(SharedSpaceMember member) throws BusinessException;
 }

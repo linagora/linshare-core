@@ -39,15 +39,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @XmlRootElement(name = "SharedSpaceMember")
 @Document(collection = "shared_space_members")
-@JsonIgnoreProperties({ "sharedSpaceRole.sharedSpaceAccount", "sharedSpaceRole.sharedSpaceDomain",
-		"sharedSpaceRole.creationDate", "sharedSpaceRole.modificationDate", "sharedSpaceRole.enabled",
-		"sharedSpaceNode.parentUuid", "sharedSpaceNode.creationDate", "sharedSpaceNode.modificationDate",
-		"sharedSpaceAccount.firstName", "sharedSpaceAccount.lastName" })
 public class SharedSpaceMember {
 
 	@JsonIgnore

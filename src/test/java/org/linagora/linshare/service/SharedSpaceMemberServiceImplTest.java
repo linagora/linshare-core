@@ -33,22 +33,23 @@
  */
 package org.linagora.linshare.service;
 
+import org.apache.commons.lang.Validate;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
+import org.linagora.linshare.core.business.service.SharedSpaceRoleBusinessService;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
-import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
-import org.linagora.linshare.mongo.repository.SharedSpaceRoleMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,12 +57,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
-
-@ContextConfiguration(locations = { "classpath:springContext-datasource.xml", 
+@ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
-		"classpath:springContext-business-service.xml",
+		"classpath:springContext-business-service.xml", 
 		"classpath:springContext-service-miscellaneous.xml",
 		"classpath:springContext-service.xml",
 		"classpath:springContext-rac.xml",
@@ -83,16 +83,18 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 
 	private User authUser;
 
-	SharedSpaceNode node;
+	private SharedSpaceNode node;
 
 	private LoadingServiceTestDatas datas;
 
 	@Autowired
-	private SharedSpaceRoleMongoRepository roleRepo;
-
+	private SharedSpaceRoleBusinessService roleBusinessService;
 	@Autowired
-	private SharedSpaceNodeMongoRepository nodeRepo;
+	private SharedSpaceNodeBusinessService nodeBusinessService;
+
 	private SharedSpaceAccount account;
+	@Autowired
+	InitMongoService initService;
 
 	@Autowired
 	private SharedSpaceMemberService service;
@@ -105,9 +107,14 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 		datas = new LoadingServiceTestDatas(userRepo);
 		datas.loadUsers();
 		authUser = datas.getUser1();
-		role = roleRepo.findByName("ADMIN");
-		node = nodeRepo.findByUuid("0166843f-7fec-4427-b1be-13be67f32ee6");
-		account = new SharedSpaceAccount(authUser.getFirstName(), authUser.getLastName(), authUser.getMail());
+		initService.init();
+		role = roleBusinessService.findByName("ADMIN");
+		Validate.notNull(role, "role must be set");
+		SharedSpaceNode node0 = new SharedSpaceNode("nodeTest", "parentuuidTest");
+		node = nodeBusinessService.create(node0);
+		User user = userRepo.findByLsUuid(datas.getUser2().getLsUuid());
+		account = new SharedSpaceAccount(user.getFirstName(), user.getLastName(), user.getMail());
+		account.setUuid(user.getLsUuid());
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -118,21 +125,19 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 	}
 
 	@Test
-	public void testFind() throws BusinessException {
-		SharedSpaceMember create = new SharedSpaceMember(role, node, account);
-		SharedSpaceMember tofound = service.create(authUser, authUser, create);
-		SharedSpaceMember found = service.find(authUser, authUser, tofound.getUuid());
-		Assert.assertNotNull("shared space member is not found", found);
-		logger.info(LinShareTestConstants.END_TEST);
+	public void testFind() {
+		SharedSpaceMember toCreate = service.create(authUser, authUser, account.getUuid(), role.getUuid(),
+				node.getUuid());
+		SharedSpaceMember tofound = service.find(authUser, authUser, toCreate.getUuid());
+		Assert.assertEquals(toCreate.getUuid(), tofound.getUuid());
 	}
 
 	@Test
-	public void testCreate() throws BusinessException {
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		SharedSpaceMember expected = new SharedSpaceMember(role, node, account);
-		SharedSpaceMember actual = service.create(authUser, authUser, expected);
-		Assert.assertNotNull("shared space member is not found", actual);
-		Assert.assertEquals(expected.getUuid(), actual.getUuid());
-		logger.info(LinShareTestConstants.END_TEST);
+	public void testCreate() {
+		SharedSpaceMember member = new SharedSpaceMember(role, node, account);
+		SharedSpaceMember memberToCreate = service.create(authUser, authUser, member.getSharedSpaceAccount().getUuid(),
+				member.getSharedSpaceRole().getUuid(), member.getSharedSpaceNode().getUuid());
+		Assert.assertNotNull( memberToCreate);
 	}
+ 
 }

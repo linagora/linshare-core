@@ -67,7 +67,6 @@ public class SharedSpaceMemberResourceAccessControlImpl
 
 	@Override
 	protected boolean hasCreatePermission(Account authUser, Account actor, SharedSpaceMember entry, Object... opt) {
-		// TODO Auto-generated method stub
 		return defaultPermissionCheck(authUser, actor, entry,
 				TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_CREATE, false);
 	}

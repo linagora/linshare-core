@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.rac.impl;
 
+import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.rac.SharedSpaceRoleResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -50,7 +51,7 @@ public class SharedSpaceRoleResourceAccessControlImpl
 	@Override
 	protected boolean hasReadPermission(Account authUser, Account account, SharedSpaceRole entry, Object... opt) {
 		// TODO Auto-generated method stub
-		return false;
+		return defaultPermissionCheck(authUser, authUser, entry, TechnicalAccountPermissionType.SHARED_SPACE_ROLE_READ,false);
 	}
 
 	@Override
