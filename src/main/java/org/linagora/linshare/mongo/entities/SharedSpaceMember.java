@@ -39,6 +39,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @XmlRootElement(name = "SharedSpaceMember")
@@ -52,29 +53,28 @@ public class SharedSpaceMember {
 
 	protected String uuid;
 
+	protected GenericLightEntity node;
+
+	protected GenericLightEntity role;
+
+	protected GenericLightEntity account;
+
 	protected Date creationDate;
 
 	protected Date modificationDate;
-	
-	protected SharedSpaceRole role;
-
-	protected SharedSpaceNode node;
-
-	protected SharedSpaceAccount account;
-
-	public SharedSpaceMember(SharedSpaceRole role, SharedSpaceNode node,
-			SharedSpaceAccount account) {
-		super();
-		this.uuid = UUID.randomUUID().toString();
-		this.creationDate = new Date();
-		this.modificationDate = new Date();
-		this.role = role;
-		this.node = node;
-		this.account = account;
-	}
 
 	public SharedSpaceMember() {
 		super();
+	}
+
+	public SharedSpaceMember(GenericLightEntity node, GenericLightEntity role, GenericLightEntity account) {
+		super();
+		this.uuid = UUID.randomUUID().toString();
+		this.node = node;
+		this.role = role;
+		this.account = account;
+		this.creationDate = new Date();
+		this.modificationDate = new Date();
 	}
 
 	public String getId() {
@@ -109,35 +109,34 @@ public class SharedSpaceMember {
 		this.modificationDate = modificationDate;
 	}
 
-	public SharedSpaceRole getSharedSpaceRole() {
-		return role;
-	}
-
-	public void setSharedSpaceRole(SharedSpaceRole sharedSpaceRole) {
-		this.role = sharedSpaceRole;
-	}
-
-	public SharedSpaceNode getSharedSpaceNode() {
+	public GenericLightEntity getNode() {
 		return node;
 	}
 
-	public void setSharedSpaceNode(SharedSpaceNode sharedSpaceNode) {
-		this.node = sharedSpaceNode;
+	public void setNode(GenericLightEntity node) {
+		this.node = node;
 	}
 
-	public SharedSpaceAccount getSharedSpaceAccount() {
+	public GenericLightEntity getRole() {
+		return role;
+	}
+
+	public void setRole(GenericLightEntity role) {
+		this.role = role;
+	}
+
+	public GenericLightEntity getAccount() {
 		return account;
 	}
 
-	public void setSharedSpaceAccount(SharedSpaceAccount sharedSpaceAccount) {
-		this.account = sharedSpaceAccount;
+	public void setAccount(GenericLightEntity account) {
+		this.account = account;
 	}
 
 	@Override
 	public String toString() {
-		return "SharedSpaceMember [id=" + id + ", uuid=" + uuid + ", creationDate=" + creationDate
-				+ ", modificationDate=" + modificationDate + ", sharedSpaceRole=" + role
-				+ ", sharedSpaceNodes=" + node + ", sharedSpaceAccount=" + account + "]";
+		return "SharedSpaceMember [id=" + id + ", uuid=" + uuid + ", node=" + node + ", role=" + role + ", account="
+				+ account + ", creationDate=" + creationDate + ", modificationDate=" + modificationDate + "]";
 	}
 
 }

@@ -40,6 +40,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -99,7 +100,7 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 	@Test
 	public void create() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		SharedSpaceNode node = new SharedSpaceNode("My first node", "My parent nodeUuid");
+		SharedSpaceNode node = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.DRIVE_ROOT);
 		SharedSpaceNode expectedNode = service.create(authUser, authUser, node);
 		Assert.assertNotNull("node not created", expectedNode);
 		Assert.assertEquals(expectedNode.getUuid(), node.getUuid());
@@ -110,8 +111,8 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 	public void createWithDuplicatedName() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		try {
-			SharedSpaceNode node1 = new SharedSpaceNode("My node", "My parent nodeUuid");
-			SharedSpaceNode node2 = new SharedSpaceNode("My node", "My parent nodeUuid");
+			SharedSpaceNode node1 = new SharedSpaceNode("My node", "My parent nodeUuid", NodeType.DRIVE_ROOT);
+			SharedSpaceNode node2 = new SharedSpaceNode("My node", "My parent nodeUuid", NodeType.DRIVE_ROOT);
 			SharedSpaceNode expectedNode1 = service.create(authUser, authUser, node1);
 			Assert.assertNotNull("node not created", expectedNode1);
 			Assert.assertEquals(expectedNode1.getUuid(), node1.getUuid());
@@ -126,7 +127,7 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 	@Test
 	public void find() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		SharedSpaceNode node = new SharedSpaceNode("Node to find", "My parent nodeUuid");
+		SharedSpaceNode node = new SharedSpaceNode("Node to find", "My parent nodeUuid", NodeType.DRIVE_ROOT);
 		SharedSpaceNode expectedNode = service.create(authUser, authUser, node);
 		SharedSpaceNode toFindNode = service.find(authUser, authUser, expectedNode.getUuid());
 		Assert.assertNotNull("Node has not been found.", toFindNode);

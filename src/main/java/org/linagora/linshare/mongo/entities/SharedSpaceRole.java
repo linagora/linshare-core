@@ -39,6 +39,7 @@ import java.util.UUID;
 import javax.persistence.GeneratedValue;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -61,37 +62,24 @@ public class SharedSpaceRole {
 
 	protected SharedSpaceAuthor author;
 
-	protected SharedSpaceDomain domain;
+	protected GenericLightEntity domain;
 
 	protected Date creationDate;
 
 	protected Date modificationDate;
 
 	public SharedSpaceRole() {
-		super();
 	}
 
-	public SharedSpaceRole(String name, Boolean enabled, SharedSpaceDomain sharedSpaceDomain,
-			SharedSpaceAuthor author, Date creationDate, Date modificationDate) {
+	public SharedSpaceRole(String name, Boolean enabled, GenericLightEntity domain, SharedSpaceAuthor author) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
 		this.name = name;
 		this.enabled = enabled;
 		this.author = author;
-		this.domain = sharedSpaceDomain;
+		this.domain = domain;
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
-	}
-
-	public SharedSpaceRole(SharedSpaceRole role) {
-		super();
-		this.uuid = role.getUuid();
-		this.name = role.getName();
-		this.enabled = role.isEnabled();
-		this.author = role.getSharedSpaceAuthor();
-		this.creationDate = new Date();
-		this.modificationDate = new Date();
-		this.domain = role.getSharedSpaceDomain();
 	}
 
 	public boolean isEnabled() {
@@ -126,12 +114,12 @@ public class SharedSpaceRole {
 		this.modificationDate = modificationDate;
 	}
 
-	public SharedSpaceDomain getSharedSpaceDomain() {
+	public GenericLightEntity getSharedSpaceDomain() {
 		return domain;
 	}
 
-	public void setSharedSpaceDomain(SharedSpaceDomain sharedSpaceDomain) {
-		this.domain=sharedSpaceDomain;
+	public void setSharedSpaceDomain(GenericLightEntity domain) {
+		this.domain = domain;
 	}
 
 	public String getId() {
@@ -160,10 +148,10 @@ public class SharedSpaceRole {
 
 	@Override
 	public String toString() {
-		return "SharedSpaceRoles [id=" + id + ", uuid=" + uuid + ", name=" + name + ", enable=" + enabled + ", sharedSpaceAccount="
-				+ author + ", creationDate=" + creationDate + ", modificationDate=" + modificationDate + ", sharedSpaceDomain="
-				+ domain + "]";
-				 
+		return "SharedSpaceRoles [id=" + id + ", uuid=" + uuid + ", name=" + name + ", enable=" + enabled
+				+ ", sharedSpaceAccount=" + author + ", creationDate=" + creationDate + ", modificationDate="
+				+ modificationDate + ", sharedSpaceDomain=" + domain + "]";
+
 	}
 
 }

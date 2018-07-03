@@ -42,6 +42,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.linagora.linshare.core.domain.constants.SharedSpaceActionType;
 import org.linagora.linshare.core.domain.constants.SharedSpaceResourceType;
+import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -50,7 +51,7 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 @XmlRootElement(name = "SharedSpacePermission")
 @Document(collection = "shared_space_permissions")
 public class SharedSpacePermission {
-	
+
 	@JsonIgnore
 	@Id
 	@GeneratedValue
@@ -58,12 +59,12 @@ public class SharedSpacePermission {
 
 	@ApiModelProperty(value = "uuid")
 	protected String uuid;
-	
+
 	protected SharedSpaceActionType action;
 
 	protected SharedSpaceResourceType resource;
-	
-	protected List<SharedSpaceRole> roles;
+
+	protected List<GenericLightEntity> roles;
 
 	protected Date creationDate;
 
@@ -74,7 +75,8 @@ public class SharedSpacePermission {
 	}
 
 	public SharedSpacePermission(SharedSpaceActionType action, SharedSpaceResourceType resource,
-			List<SharedSpaceRole> roles) {
+			List<GenericLightEntity> roles) {
+
 		super();
 		this.uuid = UUID.randomUUID().toString();
 		this.action = action;
@@ -83,7 +85,7 @@ public class SharedSpacePermission {
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
 	}
-	
+
 	public String getId() {
 		return id;
 	}
@@ -116,12 +118,13 @@ public class SharedSpacePermission {
 		this.resource = resourceType;
 	}
 
-	public List<SharedSpaceRole> getSharedSpaceRole() {
+	public List<GenericLightEntity> getSharedSpaceRole() {
 		return roles;
 	}
 
-	public void setSharedSpaceRole(List<SharedSpaceRole> sharedSpaceRole) {
-		this.roles = sharedSpaceRole;
+	public void setSharedSpaceRole(List<GenericLightEntity> roles) {
+		this.roles = roles;
+
 	}
 
 	public Date getCreationDate() {
@@ -142,9 +145,9 @@ public class SharedSpacePermission {
 
 	@Override
 	public String toString() {
-		return "SharedSpacePermissions [id=" + id + ", uuid=" + uuid + ", action=" + action
-				+ ", resource=" + resource + ", SharedSpacerole=" + roles + ", creationDate="
-				+ creationDate + ", modificationDate=" + modificationDate + "]";
+		return "SharedSpacePermissions [id=" + id + ", uuid=" + uuid + ", action=" + action + ", resource=" + resource
+				+ ", SharedSpacerole=" + roles + ", creationDate=" + creationDate + ", modificationDate="
+				+ modificationDate + "]";
 	}
 
 }

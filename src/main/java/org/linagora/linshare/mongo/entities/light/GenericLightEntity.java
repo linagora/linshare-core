@@ -31,39 +31,37 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.user.impl;
+package org.linagora.linshare.mongo.entities.light;
 
-import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.user.SharedSpaceMemberFacade;
-import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.SharedSpaceMemberService;
-import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+public class GenericLightEntity {
 
-public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements SharedSpaceMemberFacade {
-	private final SharedSpaceMemberService sharedSpaceMemberService;
+	protected String uuid;
+	protected String name;
 
-	public SharedSpaceMemberFacadeImpl(SharedSpaceMemberService sharedSpaceMemberService,
-			AccountService accountService) {
-		super(accountService);
-		this.sharedSpaceMemberService = sharedSpaceMemberService;
+	public GenericLightEntity() {
+		super();
 	}
 
-	public SharedSpaceMember find(String actorUuid, String uuid) throws BusinessException {
-		Validate.notEmpty(uuid, "Missing required uuid");
-		Account authUser = checkAuthentication();
-		Account actor = getActor(authUser, actorUuid);
-		return sharedSpaceMemberService.find(authUser, actor, uuid);
+	public GenericLightEntity(String uuid, String name) {
+		super();
+		this.uuid = uuid;
+		this.name = name;
 	}
 
-	@Override
-	public SharedSpaceMember create(String actorUuid, SharedSpaceMember member) throws BusinessException {
-		Validate.notNull(member, "Shared space member must be set.");
-		Account authUser = checkAuthentication();
-		Account actor = getActor(authUser, actorUuid);
-		SharedSpaceMember toAddMember = sharedSpaceMemberService.create(authUser, actor, member.getAccount().getUuid(),
-				member.getRole().getUuid(), member.getNode().getUuid());
-		return toAddMember;
+	public String getUuid() {
+		return uuid;
 	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 }

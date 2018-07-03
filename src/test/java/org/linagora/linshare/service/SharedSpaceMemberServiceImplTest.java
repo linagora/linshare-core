@@ -41,6 +41,7 @@ import org.junit.Test;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceRoleBusinessService;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.InitMongoService;
@@ -50,6 +51,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
+import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,14 +83,21 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 
 	private SharedSpaceRole role;
 
+	private GenericLightEntity roleToPersist;
+
 	private User authUser;
 
 	private SharedSpaceNode node;
+
+	private GenericLightEntity nodeToPersist;
 
 	private LoadingServiceTestDatas datas;
 
 	@Autowired
 	private SharedSpaceRoleBusinessService roleBusinessService;
+
+	private GenericLightEntity accountToPersist;
+
 	@Autowired
 	private SharedSpaceNodeBusinessService nodeBusinessService;
 
@@ -109,12 +118,15 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 		authUser = datas.getUser1();
 		initService.init();
 		role = roleBusinessService.findByName("ADMIN");
+		roleToPersist = new GenericLightEntity(role.getUuid(), role.getName());
 		Validate.notNull(role, "role must be set");
-		SharedSpaceNode node0 = new SharedSpaceNode("nodeTest", "parentuuidTest");
+		SharedSpaceNode node0 = new SharedSpaceNode("nodeTest", "parentuuidTest", NodeType.DRIVE_ROOT);
 		node = nodeBusinessService.create(node0);
+		nodeToPersist = new GenericLightEntity(node0.getUuid(), node0.getUuid());
 		User user = userRepo.findByLsUuid(datas.getUser2().getLsUuid());
-		account = new SharedSpaceAccount(user.getFirstName(), user.getLastName(), user.getMail());
+		account = new SharedSpaceAccount(user.getFullName(), user.getFirstName(), user.getLastName(), user.getMail());
 		account.setUuid(user.getLsUuid());
+		accountToPersist = new GenericLightEntity(account.getUuid(), account.getName());
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -124,7 +136,6 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
-	@Test
 	public void testFind() {
 		SharedSpaceMember toCreate = service.create(authUser, authUser, account.getUuid(), role.getUuid(),
 				node.getUuid());
@@ -134,10 +145,10 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 
 	@Test
 	public void testCreate() {
-		SharedSpaceMember member = new SharedSpaceMember(role, node, account);
-		SharedSpaceMember memberToCreate = service.create(authUser, authUser, member.getSharedSpaceAccount().getUuid(),
-				member.getSharedSpaceRole().getUuid(), member.getSharedSpaceNode().getUuid());
-		Assert.assertNotNull( memberToCreate);
+		SharedSpaceMember member = new SharedSpaceMember(nodeToPersist, roleToPersist, accountToPersist);
+		SharedSpaceMember memberToCreate = service.create(authUser, authUser, member.getAccount().getUuid(),
+				member.getRole().getUuid(), member.getNode().getUuid());
+		Assert.assertNotNull(memberToCreate);
 	}
- 
+
 }

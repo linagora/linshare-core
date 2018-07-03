@@ -35,16 +35,21 @@ package org.linagora.linshare.mongo.entities;
 
 import java.util.Date;
 import java.util.UUID;
+
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @XmlRootElement(name = "SharedSpaceNode")
 @Document(collection = "shared_space_nodes")
 public class SharedSpaceNode {
-	
+
 	@JsonIgnore
 	@Id
 	@GeneratedValue
@@ -56,6 +61,9 @@ public class SharedSpaceNode {
 
 	protected String parentUuid;
 
+	@Enumerated(EnumType.STRING)
+	protected NodeType nodeType;
+
 	protected Date creationDate;
 
 	protected Date modificationDate;
@@ -64,11 +72,12 @@ public class SharedSpaceNode {
 		super();
 	}
 
-	public SharedSpaceNode(String name, String parentUuid) {
+	public SharedSpaceNode(String name, String parentUuid, NodeType nodeType) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
 		this.name = name;
 		this.parentUuid = parentUuid;
+		this.nodeType = nodeType;
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
 	}
@@ -121,10 +130,19 @@ public class SharedSpaceNode {
 		this.modificationDate = modificationDate;
 	}
 
+	public NodeType getNodeType() {
+		return nodeType;
+	}
+
+	public void setNodeType(NodeType nodeType) {
+		this.nodeType = nodeType;
+	}
+
 	@Override
 	public String toString() {
-		return "SharedSpaceNodes [id=" + id + ", uuid=" + uuid + ", name=" + name + ", parentUuid=" + parentUuid
-				+ ", creationDate=" + creationDate + ", modificationDate=" + modificationDate + "]";
+		return "SharedSpaceNode [id=" + id + ", uuid=" + uuid + ", name=" + name + ", parentUuid=" + parentUuid
+				+ ", nodeType=" + nodeType + ", creationDate=" + creationDate + ", modificationDate=" + modificationDate
+				+ "]";
 	}
 
 }

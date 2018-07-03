@@ -47,7 +47,7 @@ public class SharedSpaceMemberFacadeImpl extends AdminGenericFacadeImpl implemen
 	private final SharedSpaceMemberService sharedSpaceMemberService;
 
 	public SharedSpaceMemberFacadeImpl(SharedSpaceMemberService sharedSpaceMemberService,
-			 AccountService accountService) {
+			AccountService accountService) {
 		super(accountService);
 		this.sharedSpaceMemberService = sharedSpaceMemberService;
 	}
@@ -57,10 +57,10 @@ public class SharedSpaceMemberFacadeImpl extends AdminGenericFacadeImpl implemen
 		Validate.notNull(member, "Shared space member must be set.");
 		Account authUser = checkAuthentication(Role.SUPERADMIN);
 		SharedSpaceMember toAddMember = sharedSpaceMemberService.create(authUser, authUser,
-				member.getSharedSpaceAccount().getUuid(), member.getSharedSpaceRole().getUuid(),
-				member.getSharedSpaceNode().getUuid());
+				member.getAccount().getUuid(), member.getRole().getUuid(), member.getNode().getUuid());
 		return toAddMember;
 	}
+
 	@Override
 	public SharedSpaceMember find(String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "Member must be set.");

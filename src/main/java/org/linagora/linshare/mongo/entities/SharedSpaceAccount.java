@@ -37,10 +37,12 @@ import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name="SharedSpaceAccount")
+@XmlRootElement(name = "SharedSpaceAccount")
 public class SharedSpaceAccount {
-	
+
 	protected String uuid;
+
+	protected String name;
 
 	protected String firstName;
 
@@ -52,18 +54,27 @@ public class SharedSpaceAccount {
 		super();
 	}
 
-	public SharedSpaceAccount(String firstName, String lastName, String mail) {
+	public SharedSpaceAccount(String name, String firstName, String lastName, String mail) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
+		this.name = name;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.mail = mail;
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
 	}
-	
+
 	public String getUuid() {
 		return uuid;
 	}
@@ -84,7 +95,6 @@ public class SharedSpaceAccount {
 		this.lastName = lastName;
 	}
 
-
 	public String getMail() {
 		return mail;
 	}
@@ -95,8 +105,8 @@ public class SharedSpaceAccount {
 
 	@Override
 	public String toString() {
-		return "AccountEntity [ uuid=" + uuid + ", firstName=" + firstName + ", lastName=" + lastName
-				+ ", mail=" + mail + "]";
+		return "SharedSpaceAccount [uuid=" + uuid + ", name=" + name + ", firstName=" + firstName + ", lastName="
+				+ lastName + ", mail=" + mail + "]";
 	}
 
 }

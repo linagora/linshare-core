@@ -48,6 +48,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
+import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
 public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, SharedSpaceMember>
 		implements SharedSpaceMemberService {
@@ -87,16 +88,23 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	public SharedSpaceMember create(Account authUser, Account actor, String accountUuid, String roleUuid,
 			String nodeUuid) throws BusinessException {
 		preChecks(authUser, actor);
+		Validate.notNull(accountUuid, "Account uuid must be set.");
+		Validate.notNull(roleUuid,"Role uuid must be set.");
+		Validate.notNull(nodeUuid,"Node uuid must be set.");
 		SharedSpaceNode toFindNode = nodeBusinessService.find(nodeUuid);
+		GenericLightEntity nodeToPersist = new GenericLightEntity(nodeUuid, toFindNode.getName());
 		Validate.notNull(toFindNode, "Missing required node");
 		SharedSpaceRole toFindRole = roleBusinessService.find(roleUuid);
+		GenericLightEntity roleToPersist = new GenericLightEntity(roleUuid, toFindRole.getName());
 		Validate.notNull(toFindRole, "Missing required role");
 		User user = userService.findByLsUuid(accountUuid);
 		Validate.notNull(user, "Missing required user");
-		SharedSpaceAccount sharedSpaceAccount = new SharedSpaceAccount(user.getFirstName(), user.getLastName(),
-				user.getMail());
+		SharedSpaceAccount sharedSpaceAccount = new SharedSpaceAccount(user.getFullName(), user.getFirstName(),
+				user.getLastName(), user.getMail());
+		GenericLightEntity accountLight = new GenericLightEntity(sharedSpaceAccount.getUuid(),
+				sharedSpaceAccount.getName());
 		sharedSpaceAccount.setUuid(user.getLsUuid());
-		SharedSpaceMember member = new SharedSpaceMember(toFindRole, toFindNode, sharedSpaceAccount);
+		SharedSpaceMember member = new SharedSpaceMember(nodeToPersist, roleToPersist, accountLight);
 		checkCreatePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
 				null);
 		SharedSpaceMember toAdd = sharedSpaceMemberBusinessService.create(member);

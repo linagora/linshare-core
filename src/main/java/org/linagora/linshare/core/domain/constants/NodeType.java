@@ -31,47 +31,18 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.entities;
+package org.linagora.linshare.core.domain.constants;
 
-import java.util.UUID;
-import javax.xml.bind.annotation.XmlRootElement;
+public enum NodeType {
 
-@XmlRootElement(name="SharedSpaceDomain")
-public class SharedSpaceDomain {
-	
-	protected String uuid;
+	DRIVE_ROOT,
+	WORKGROUP_NODE;
 
-	protected String name;
-
-	public SharedSpaceDomain() {
-		super();
+	public NodeType fromString(String s) {
+		try {
+			return NodeType.valueOf(s.toUpperCase());
+		} catch (RuntimeException e) {
+			throw new IllegalArgumentException("Doesn't match an existing action");
+		}
 	}
-
-	public SharedSpaceDomain(String uuid, String name) {
-		super();
-		this.uuid = UUID.randomUUID().toString();
-		this.name = name;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	@Override
-	public String toString() {
-		return "SharedSpaceDomain [ uuid=" + uuid + ", name=" + name + "]";
-	}
-
 }

@@ -43,7 +43,6 @@ import javax.ws.rs.core.MediaType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceMemberFacade;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
-import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.webservice.userv2.SharedSpaceMemberRestService;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -79,7 +78,7 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "create a shared space member.", response = SharedSpaceNode.class)
+	@ApiOperation(value = "create a shared space member.", response = SharedSpaceMember.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
 			@ApiResponse(code = 404, message = "Not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),

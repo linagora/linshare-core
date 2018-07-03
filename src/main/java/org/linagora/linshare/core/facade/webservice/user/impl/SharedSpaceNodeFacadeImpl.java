@@ -45,26 +45,25 @@ public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements Shar
 
 	protected SharedSpaceNodeService sharedSpaceNodeService;
 
-	public SharedSpaceNodeFacadeImpl(AccountService accountService,
-			SharedSpaceNodeService sharedSpaceNodeService) {
+	public SharedSpaceNodeFacadeImpl(AccountService accountService, SharedSpaceNodeService sharedSpaceNodeService) {
 		super(accountService);
 		this.sharedSpaceNodeService = sharedSpaceNodeService;
 	}
 
 	@Override
 	public SharedSpaceNode find(String actorUuid, String uuid) throws BusinessException {
-		Validate.notEmpty(uuid,"Missing required shared space node uuid.");
+		Validate.notEmpty(uuid, "Missing required shared space node uuid.");
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
 		return sharedSpaceNodeService.find(authUser, actor, uuid);
 	}
-	
+
 	@Override
 	public SharedSpaceNode create(String actorUuid, SharedSpaceNode node) throws BusinessException {
 		Validate.notNull(node, "Missing required input shared space node.");
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
-		SharedSpaceNode toCreate = new SharedSpaceNode(node.getName(),node.getParentUuid());
+		SharedSpaceNode toCreate = new SharedSpaceNode(node.getName(), node.getParentUuid(), node.getNodeType());
 		return sharedSpaceNodeService.create(authUser, actor, toCreate);
 	}
 }

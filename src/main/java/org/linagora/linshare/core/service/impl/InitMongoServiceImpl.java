@@ -44,9 +44,9 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAuthor;
-import org.linagora.linshare.mongo.entities.SharedSpaceDomain;
 import org.linagora.linshare.mongo.entities.SharedSpacePermission;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
+import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.mongo.repository.SharedSpacePermissionMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceRoleMongoRepository;
 import org.slf4j.Logger;
@@ -71,7 +71,7 @@ public class InitMongoServiceImpl implements InitMongoService {
 
 	}
 
-	private SharedSpaceRole createInitRole(String roleUuid, String roleName, SharedSpaceDomain domain,
+	private SharedSpaceRole createInitRole(String roleUuid, String roleName, GenericLightEntity domain,
 			SharedSpaceAuthor author) {
 		SharedSpaceRole role = sharedSpaceRoleMongoRepository.findByUuid(roleUuid);
 		if (role == null) {
@@ -88,9 +88,15 @@ public class InitMongoServiceImpl implements InitMongoService {
 		return role;
 	}
 
+	private GenericLightEntity createInitLightRole(String roleUuid, String roleName) {
+		SharedSpaceRole role = sharedSpaceRoleMongoRepository.findByUuid(roleUuid);
+		GenericLightEntity roleLight = new GenericLightEntity(role.getUuid(), role.getName());
+		return roleLight;
+	}
+
 	private SharedSpacePermission createInitPermission(String permissionUuid, String permissionName,
 			SharedSpaceActionType actionType, SharedSpaceResourceType resourceType,
-			List<SharedSpaceRole> sharedSpaceRoles) {
+			List<GenericLightEntity> sharedSpaceRoles) {
 		SharedSpacePermission permission = sharedSpacePermissionMongoRepository.findByUuid(permissionUuid);
 		if (permission == null) {
 			permission = new SharedSpacePermission();
@@ -109,19 +115,25 @@ public class InitMongoServiceImpl implements InitMongoService {
 	public void init() {
 		logger.info("Initialization");
 		User root = userService.findByLsUuid("root@localhost.localdomain");
-		SharedSpaceDomain rootDomain = new SharedSpaceDomain(LinShareConstants.rootDomainIdentifier,
+		GenericLightEntity rootDomain = new GenericLightEntity(LinShareConstants.rootDomainIdentifier,
 				LinShareConstants.rootDomainIdentifier);
-		SharedSpaceAuthor rootAccount = new SharedSpaceAuthor(root.getFullName(), root.getMail());
-		SharedSpaceRole admin = createInitRole("77a699fe-faca-46a5-97c0-1b46a0f5cd05", "ADMIN", rootDomain,
+		SharedSpaceAuthor rootAccount = new SharedSpaceAuthor(root.getLsUuid(), root.getFullName());
+
+		SharedSpaceRole defaultAdmin = createInitRole("77a699fe-faca-46a5-97c0-1b46a0f5cd05", "ADMIN", rootDomain,
 				rootAccount);
-		SharedSpaceRole contributor = createInitRole("77a699fe-faca-46a5-97c0-1b46a0f5cd19", "CONTRIBUTOR", rootDomain,
+		SharedSpaceRole defaulttContributor = createInitRole("77a699fe-faca-46a5-97c0-1b46a0f5cd19", "CONTRIBUTOR",
+				rootDomain, rootAccount);
+		SharedSpaceRole defaultWriter = createInitRole("77a699fe-faca-46a5-97c0-1b46a0f5cd14", "WRITER", rootDomain,
 				rootAccount);
-		SharedSpaceRole writer = createInitRole("77a699fe-faca-46a5-97c0-1b46a0f5cd14", "WRITER", rootDomain,
+		SharedSpaceRole defaultReader = createInitRole("77a699fe-faca-46a5-97c0-1b46a0f5cd13", "READER", rootDomain,
 				rootAccount);
-		SharedSpaceRole reader = createInitRole("77a699fe-faca-46a5-97c0-1b46a0f5cd13", "READER", rootDomain,
-				rootAccount);
-		List<SharedSpaceRole> roles = new ArrayList<SharedSpaceRole>();
-		List<SharedSpaceRole> roleAdmin = Collections.singletonList(admin);
+
+		GenericLightEntity admin = createInitLightRole("77a699fe-faca-46a5-97c0-1b46a0f5cd05", "ADMIN");
+		GenericLightEntity contributor = createInitLightRole("77a699fe-faca-46a5-97c0-1b46a0f5cd19", "CONTRIBUTOR");
+		GenericLightEntity writer = createInitLightRole("77a699fe-faca-46a5-97c0-1b46a0f5cd14", "WRITER");
+		GenericLightEntity reader = createInitLightRole("77a699fe-faca-46a5-97c0-1b46a0f5cd13", "READER");
+		List<GenericLightEntity> roles = new ArrayList<GenericLightEntity>();
+		List<GenericLightEntity> roleAdmin = Collections.singletonList(admin);
 		roles.add(admin);
 		roles.add(writer);
 		roles.add(contributor);
