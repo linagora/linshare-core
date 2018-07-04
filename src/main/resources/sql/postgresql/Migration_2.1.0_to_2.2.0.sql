@@ -9,7 +9,7 @@ SET default_with_oids = false;
 
 CREATE OR REPLACE FUNCTION ls_version() RETURNS void AS $$
 BEGIN
-	INSERT INTO version (id, version) VALUES ((SELECT nextVal('hibernate_sequence')),'2.2.0');
+	INSERT INTO version (id, version, creation_date) VALUES ((SELECT nextVal('hibernate_sequence')),'2.2.0', now());
 END
 $$ LANGUAGE plpgsql;
 
@@ -338,17 +338,29 @@ CREATE OR REPLACE VIEW alias_users_list_destroyed AS
 DROP TABLE IF EXISTS users;
 
 -- Add new fields : creation date and modification date
-ALTER TABLE domain_abstract ADD COLUMN creation_date timestamp(6) DEFAULT CURRENT_TIMESTAMP NOT NULL;
-ALTER TABLE domain_abstract ADD COLUMN modification_date timestamp(6) DEFAULT CURRENT_TIMESTAMP NOT NULL;
+ALTER TABLE domain_abstract ADD COLUMN creation_date timestamp(6);
+ALTER TABLE domain_abstract ADD COLUMN modification_date timestamp(6);
+ALTER TABLE domain_access_policy ADD COLUMN creation_date timestamp(6);
+ALTER TABLE domain_access_policy ADD COLUMN modification_date timestamp(6);
+ALTER TABLE functionality ADD COLUMN creation_date timestamp(6);
+ALTER TABLE functionality ADD COLUMN modification_date timestamp(6);
+ALTER TABLE version ADD COLUMN creation_date timestamp(6);
 
-ALTER TABLE domain_access_policy ADD COLUMN creation_date timestamp(6) DEFAULT CURRENT_TIMESTAMP NOT NULL;
-ALTER TABLE domain_access_policy ADD COLUMN modification_date timestamp(6) DEFAULT CURRENT_TIMESTAMP NOT NULL;
+UPDATE domain_abstract SET creation_date = CURRENT_TIMESTAMP;
+UPDATE domain_abstract SET modification_date = CURRENT_TIMESTAMP;
+UPDATE domain_access_policy SET creation_date = CURRENT_TIMESTAMP;
+UPDATE domain_access_policy SET modification_date = CURRENT_TIMESTAMP;
+UPDATE functionality SET creation_date = CURRENT_TIMESTAMP;
+UPDATE functionality SET modification_date = CURRENT_TIMESTAMP;
+UPDATE version SET creation_date = CURRENT_TIMESTAMP;
 
-ALTER TABLE functionality ADD COLUMN creation_date timestamp(6) DEFAULT CURRENT_TIMESTAMP NOT NULL;
-ALTER TABLE functionality ADD COLUMN modification_date timestamp(6) DEFAULT CURRENT_TIMESTAMP NOT NULL;
-
-ALTER TABLE version ADD COLUMN creation_date timestamp(6) DEFAULT CURRENT_TIMESTAMP NOT NULL;
-ALTER TABLE version ADD COLUMN modification_date timestamp(6) DEFAULT CURRENT_TIMESTAMP NOT NULL;
+ALTER TABLE domain_abstract ALTER COLUMN creation_date SET NOT NULL;
+ALTER TABLE domain_abstract ALTER COLUMN modification_date SET NOT NULL;
+ALTER TABLE domain_access_policy ALTER COLUMN creation_date SET NOT NULL;
+ALTER TABLE domain_access_policy ALTER COLUMN modification_date SET NOT NULL;
+ALTER TABLE functionality ALTER COLUMN creation_date SET NOT NULL;
+ALTER TABLE functionality ALTER COLUMN modification_date SET NOT NULL;
+ALTER TABLE version ALTER COLUMN creation_date SET NOT NULL;
 
 -- Mail Activation
 

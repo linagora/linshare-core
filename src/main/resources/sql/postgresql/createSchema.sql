@@ -304,7 +304,6 @@ CREATE TABLE version (
   id                int8 NOT NULL,
   version           text NOT NULL UNIQUE,
   creation_date     timestamp(6) NOT NULL,
-  modification_date timestamp(6) NOT NULL,
   CONSTRAINT linshare_version_pkey
     PRIMARY KEY (id));
 CREATE TABLE allowed_contact (

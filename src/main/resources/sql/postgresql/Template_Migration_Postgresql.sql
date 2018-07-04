@@ -9,7 +9,7 @@ SET default_with_oids = false;
 
 CREATE OR REPLACE FUNCTION ls_version() RETURNS void AS $$
 BEGIN
-	INSERT INTO version (id, version) VALUES ((SELECT nextVal('hibernate_sequence')),'CHANGE ME');
+	INSERT INTO version (id, version, creation_date) VALUES ((SELECT nextVal('hibernate_sequence')),'CHANGE ME', now());
 END
 $$ LANGUAGE plpgsql;
 
