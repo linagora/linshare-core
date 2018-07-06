@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.repository;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
 
 public interface UploadRequestHistoryRepository extends
@@ -45,4 +47,6 @@ public interface UploadRequestHistoryRepository extends
 	 * @return found uploadRequestHistory (null if no uploadRequestEntry found).
 	 */
 	public UploadRequestHistory findByUuid(String uuid);
+
+	List<String> findAllUuid();
 }

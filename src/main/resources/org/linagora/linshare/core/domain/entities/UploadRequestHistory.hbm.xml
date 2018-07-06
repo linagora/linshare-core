@@ -13,6 +13,11 @@
 			<generator class="native">
 			</generator>
 		</id>
+		<many-to-one name="uploadRequest" cascade="lock"
+			column="upload_request_id"
+			class="org.linagora.linshare.core.domain.entities.UploadRequest"
+			not-null="true" lazy="false" fetch="join">
+		</many-to-one>
 		<property access="field" name="status" column="status"
 			not-null="true" lazy="false" type="uploadRequestStatus" />
 		<property name="statusUpdated" column="status_updated" type="boolean"

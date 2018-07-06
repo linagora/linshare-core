@@ -40,6 +40,7 @@ import java.util.Set;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.mongo.entities.logs.UploadRequestAuditLogEntry;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
@@ -84,4 +85,6 @@ public interface AuditUserMongoRepository extends MongoRepository<AuditLogEntryU
 	// UploadRequest
 	@Query("{ 'actor.uuid' : ?0, $or: [ {'resourceUuid' :  ?1 } , {'resource.uploadRequestGroupUuid' : ?1}], 'action' : {'$in' : ?2 }, 'type' : { '$in' : ?3 } }")
 	Set<AuditLogEntryUser> findUploadRequestHistoryForUser(String ownerUuid, String requestUuid, List<LogAction> actions, List<AuditLogEntryType> types, Sort sort);
+
+	UploadRequestAuditLogEntry findTopByOrderByCreationDateDesc(String resourceUuid);
 }

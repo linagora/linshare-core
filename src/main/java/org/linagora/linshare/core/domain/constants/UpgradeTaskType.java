@@ -128,7 +128,12 @@ public enum UpgradeTaskType {
 	/*
 	 * We migrate all entities related to upload proposition into the mongo database
 	 */
-	UPGRADE_2_2_MIGRATE_UPLOAD_PROPOSITION_TO_MONGO_DATABASE;
+	UPGRADE_2_2_MIGRATE_UPLOAD_PROPOSITION_TO_MONGO_DATABASE,
+
+	/*
+	 * We migrate all uploadRequestHistory to uploadRequestAudit into the mongo database
+	 */
+	UPGRADE_2_2_MIGRATE_UPLOAD_REQUEST_HISTORY_TO_MONGO_AUDIT;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {

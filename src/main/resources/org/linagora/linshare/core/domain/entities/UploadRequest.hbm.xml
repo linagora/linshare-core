@@ -62,7 +62,7 @@
 				class="org.linagora.linshare.core.domain.entities.UploadRequestUrl" />
 		</set>
 		<set name="uploadRequestHistory" lazy="true" cascade="save-update,lock"
-			inverse="false">
+			inverse="true">
 			<key column="upload_request_id" not-null="true" />
 			<one-to-many
 				class="org.linagora.linshare.core.domain.entities.UploadRequestHistory" />

@@ -58,6 +58,12 @@ public class UploadRequestAuditLogEntry extends AuditLogEntryUser {
 		this.resource = new UploadRequestMto(req);
 	}
 
+	public UploadRequestAuditLogEntry(AccountMto authUser, AccountMto owner, LogAction action, AuditLogEntryType type,
+			String resourceUuid, UploadRequestMto req) {
+		super(authUser, owner, action, type, req.getUuid());
+		this.resource = req;
+	}
+
 	public UploadRequestMto getResource() {
 		return resource;
 	}

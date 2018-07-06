@@ -158,6 +158,14 @@
 					<constructor-arg ref="uploadPropositionFilterRepository" />
 					<constructor-arg ref="uploadPropositionFilterMongoRepository" />
 				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v2_2.MigrateHistoryToMongoUpgradeTaskImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="uploadRequestHistoryRepository" />
+					<constructor-arg ref="logEntryService" />
+					<constructor-arg ref="uploadRequestRepository" />
+					<constructor-arg ref="auditUserMongoRepository" />
+				</bean>
 			</list>
 		</constructor-arg>
 	</bean>

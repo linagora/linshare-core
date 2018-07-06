@@ -47,6 +47,8 @@ public class UploadRequestHistory implements Comparable<UploadRequestHistory> {
 
 	private boolean statusUpdated;
 
+	private UploadRequest uploadRequest;
+
 	private UploadRequestHistoryEventType eventType;
 
 	private String uuid;
@@ -276,6 +278,14 @@ public class UploadRequestHistory implements Comparable<UploadRequestHistory> {
 
 	public void setMailMessageID(String mailMessageID) {
 		this.mailMessageID = mailMessageID;
+	}
+
+	public UploadRequest getUploadRequest() {
+		return uploadRequest;
+	}
+
+	public void setUploadRequest(UploadRequest uploadRequest) {
+		this.uploadRequest = uploadRequest;
 	}
 
 	@Override

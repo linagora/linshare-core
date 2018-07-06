@@ -34,9 +34,12 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.UploadRequestHistory;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -80,5 +83,14 @@ public class UploadRequestHistoryRepositoryImpl extends
 			throws BusinessException {
 		entity.setModificationDate(new Date());
 		return super.update(entity);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> findAllUuid() {
+		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass())
+				.setProjection(Projections.property("uuid"))
+				.addOrder(Order.asc("creationDate"));
+		return listByCriteria(crit);
 	}
 }
