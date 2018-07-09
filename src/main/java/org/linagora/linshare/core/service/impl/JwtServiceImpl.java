@@ -136,6 +136,9 @@ public class JwtServiceImpl implements JwtService {
 
 	@Override
 	public boolean hasValidLiveTime(Claims claims) {
+		if (claims.getExpiration() == null && claims.containsKey("uuid")) {
+			return true;
+		}
 		Date issuedAt = claims.getIssuedAt();
 		Date expireAt = claims.getExpiration();
 		long duration = expireAt.getTime() - issuedAt.getTime();

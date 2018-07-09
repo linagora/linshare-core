@@ -14,5 +14,6 @@
 		<b:property name="ldapUserDetailsProvider" ref="ldapUserDetailsProvider" />
 		<!-- good practice ? -->
 		<b:property name="jwtService" ref="jwtService" />
+		<b:property name="jwtLongTimeMongoRepository" ref="jwtLongTimeMongoRepository" />
 	</b:bean>
 </b:beans>

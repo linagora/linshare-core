@@ -48,4 +48,5 @@ public interface JwtLongTimeService {
 	JwtLongTime find(Account authUser, Account actor, String uuid) throws BusinessException;
 
 	List<JwtLongTime> findAllByActor(Account actor) throws BusinessException;
+
 }

@@ -45,6 +45,8 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
 import org.linagora.linshare.core.service.JwtService;
+import org.linagora.linshare.mongo.entities.JwtLongTime;
+import org.linagora.linshare.mongo.repository.JwtLongTimeMongoRepository;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -67,6 +69,8 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
 	private LdapUserDetailsProvider ldapUserDetailsProvider;
 
+	private JwtLongTimeMongoRepository jwtLongTimeMongoRepository;
+
 	public void setAuthentificationFacade(AuthentificationFacade authentificationFacade) {
 		this.authentificationFacade = authentificationFacade;
 	}
@@ -77,6 +81,10 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
 	public void setJwtService(JwtService jwtService) {
 		this.jwtService = jwtService;
+	}
+
+	public void setJwtLongTimeMongoRepository(JwtLongTimeMongoRepository jwtLongTimeMongoRepository) {
+		this.jwtLongTimeMongoRepository = jwtLongTimeMongoRepository;
 	}
 
 	// TODO:JWT: log authentication attempts with failures
@@ -102,12 +110,19 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 			throw new AuthenticationServiceException(msg, e);
 		}
 
-		if (StringUtils.isBlank(claims.getSubject()) || claims.getExpiration() == null
+		if (StringUtils.isBlank(claims.getSubject()) || (claims.getExpiration() == null && !claims.containsKey("uuid"))
 				|| claims.getIssuedAt() == null) {
 			String msg = String.format("Subject and expiration date are mandatory fields for jwt token: %1$s", token);
 			throw new AuthenticationServiceException(msg);
 		}
 
+		if (claims.getExpiration() == null && claims.containsKey("uuid") && claims.get("uuid") != null) {
+			JwtLongTime jwtLongTime = jwtLongTimeMongoRepository.findByUuid(claims.get("uuid", String.class));
+			if (jwtLongTime == null) {
+				String msg = String.format("No valide jwt long time found for jwt token: %1$s", token);
+				throw new AuthenticationServiceException(msg);
+			}
+		}
 		Date issuedAt = claims.getIssuedAt();
 		if (issuedAt.after(new Date())) {
 			String msg = String.format("Issued date (iat) can not be in the futur for jwt token: %1$s", token);
