@@ -43,4 +43,8 @@ public interface JwtLongTimeBusinessService {
 	void create(JwtLongTime entity);
 
 	List<JwtLongTime> findAllByActor(Account actor);
+
+	void deleteToken(JwtLongTime entity);
+
+	JwtLongTime find(String uuid);
 }

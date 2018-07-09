@@ -36,16 +36,18 @@ package org.linagora.linshare.webservice.userv2.impl;
 
 import java.util.List;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.JwtToken;
-import org.linagora.linshare.core.facade.webservice.user.JwtLongTimeUserFacade;
+import org.linagora.linshare.core.facade.webservice.user.JwtLongTimeFacade;
 import org.linagora.linshare.mongo.entities.JwtLongTime;
-import org.linagora.linshare.webservice.userv2.JwtLongTimeUserRestService;
+import org.linagora.linshare.webservice.userv2.JwtLongTimeRestService;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -55,11 +57,11 @@ import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/jwtlongtime")
 @Api(value = "/rest/user/v2/jwtlongtime", basePath = "/rest/user/v2/", description = "Jwt Long Time service", produces = "application/json,application/xml", consumes = "application/json,application/xml")
-public class JwtLongTimeRestServiceImpl implements JwtLongTimeUserRestService {
+public class JwtLongTimeRestServiceImpl implements JwtLongTimeRestService {
 
-	private final JwtLongTimeUserFacade jwtLongTimeUserFacade;
+	private final JwtLongTimeFacade jwtLongTimeUserFacade;
 
-	public JwtLongTimeRestServiceImpl(JwtLongTimeUserFacade jwtLongTimeUserFacade) {
+	public JwtLongTimeRestServiceImpl(JwtLongTimeFacade jwtLongTimeUserFacade) {
 		super();
 		this.jwtLongTimeUserFacade = jwtLongTimeUserFacade;
 	}
@@ -90,5 +92,21 @@ public class JwtLongTimeRestServiceImpl implements JwtLongTimeUserRestService {
 			@ApiResponse(code = 500, message = "Internal server error.") })
 	public List<JwtLongTime> findAll() throws BusinessException {
 		return jwtLongTimeUserFacade.findAll();
+	}
+
+	@Path("/{uuid: .*}")
+	@DELETE
+	@Override
+	@ApiOperation(value = "Delete an infinite life time JWT token by its uuid.", response = JwtLongTime.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "User is not allowed to use this endpoint"),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 404, message = "The requested token has not been found."),
+					@ApiResponse(code = 500, message = "Internal server error.") })
+	public JwtLongTime delete(
+			@ApiParam(value = "JwtLongTime to delete.", required = true)
+					@QueryParam("token") JwtLongTime jwtLongTime,
+			@ApiParam(value = "token uuid, if null object is used", required = false)
+					@PathParam("uuid") String uuid) throws BusinessException {
+		return jwtLongTimeUserFacade.delete(jwtLongTime, uuid);
 	}
 }

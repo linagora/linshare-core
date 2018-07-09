@@ -43,4 +43,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 public interface JwtLongTimeMongoRepository extends MongoRepository<JwtLongTime, String> {
 
 	List<JwtLongTime> findAllByActorUuid(String actorUuid, Sort sort);
+
+	JwtLongTime findByUuid(String uuid);
 }

@@ -39,7 +39,11 @@ import java.util.UUID;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.JwtLongTimeBusinessService;
+
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.rac.JwtLongTimeResourceAccessControl;
 import org.linagora.linshare.core.service.JwtLongTimeService;
 import org.linagora.linshare.core.service.JwtService;
 import org.linagora.linshare.mongo.entities.JwtLongTime;
@@ -47,7 +51,7 @@ import org.linagora.linshare.mongo.entities.JwtLongTime;
 import io.jsonwebtoken.Clock;
 import io.jsonwebtoken.impl.DefaultClock;
 
-public class JwtLongTimeServiceImpl implements JwtLongTimeService {
+public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, JwtLongTime> implements JwtLongTimeService {
 
 	protected Clock clock = DefaultClock.INSTANCE;
 
@@ -57,16 +61,19 @@ public class JwtLongTimeServiceImpl implements JwtLongTimeService {
 
 	protected JwtLongTimeBusinessService jwtLongTimeBusinessService;
 
-	public JwtLongTimeServiceImpl(String issuer,
+	public JwtLongTimeServiceImpl(
+			String issuer,
 			JwtLongTimeBusinessService jwtLongTimeBusinessService,
-			JwtService jwtService) {
+			JwtService jwtService,
+			JwtLongTimeResourceAccessControl rac) {
+		super(rac);
 		this.issuer = issuer;
 		this.jwtLongTimeBusinessService = jwtLongTimeBusinessService;
 		this.jwtService = jwtService;
 	}
 
 	@Override
-	public String createToken(Account actor, String label, String description) {
+	public String createToken(Account actor, String label, String description) throws BusinessException {
 		final Date creationDate = clock.now();
 		final String tokenUuid = UUID.randomUUID().toString();
 		String token = jwtService.generateToken(actor, tokenUuid, creationDate);
@@ -78,9 +85,35 @@ public class JwtLongTimeServiceImpl implements JwtLongTimeService {
 	}
 
 	@Override
-	public List<JwtLongTime> findAllByActor(Account actor) {
+	public List<JwtLongTime> findAllByActor(Account actor) throws BusinessException {
 		Validate.notNull(actor);
 		List<JwtLongTime> tokens = jwtLongTimeBusinessService.findAllByActor(actor);
 		return tokens;
+	}
+
+	@Override
+	public JwtLongTime delete(Account authUser, Account actor, JwtLongTime jwtLongTime) throws BusinessException {
+		Validate.notNull(authUser, "AuthUser must be set.");
+		Validate.notNull(actor, "Actor must be set");
+		Validate.notNull(jwtLongTime, "Token uuid must be set");
+		checkDeletePermission(authUser, actor, JwtLongTime.class, BusinessErrorCode.JWT_LONG_TIME_CAN_NOT_DELETE,
+				jwtLongTime);
+		jwtLongTimeBusinessService.deleteToken(jwtLongTime);
+		// TODO insert audit
+		return jwtLongTime;
+	}
+
+	@Override
+	public JwtLongTime find(Account authUser, Account actor, String uuid) throws BusinessException {
+		Validate.notNull(authUser, "AuthUser must be set.");
+		Validate.notNull(actor, "Actor must be set");
+		Validate.notEmpty(uuid, "Token uuid must be set");
+		JwtLongTime found = jwtLongTimeBusinessService.find(uuid);
+		if (found == null) {
+			String message = "The requested token has not been found.";
+			throw new BusinessException(BusinessErrorCode.JWT_LONG_TIME_NOT_FOUND, message);
+		}
+		checkReadPermission(authUser, actor, JwtLongTime.class, BusinessErrorCode.JWT_LONG_TIME_CAN_NOT_READ, found);
+		return found;
 	}
 }

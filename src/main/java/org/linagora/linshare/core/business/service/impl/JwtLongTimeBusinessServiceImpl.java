@@ -64,4 +64,14 @@ public class JwtLongTimeBusinessServiceImpl implements JwtLongTimeBusinessServic
 		return tokens;
 	}
 
+	@Override
+	public void deleteToken(JwtLongTime entity) {
+		jwtLongTimeMongoRepository.delete(entity);
+	}
+
+	@Override
+	public JwtLongTime find(String uuid) {
+		return jwtLongTimeMongoRepository.findByUuid(uuid);
+	}
+
 }

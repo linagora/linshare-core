@@ -34,6 +34,7 @@
 package org.linagora.linshare.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 
@@ -115,6 +116,20 @@ public class JwtLongTimeServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		for (JwtLongTime entity : mongoEntities) {
 			assertEquals(jane.getMail(), entity.getSubject());
 		}
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void deleteTokenTest() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		String token = jwtLongTimeService.createToken(john, "MyToken", "My description");
+		Claims decode = jwtService.decode(token);
+		String uuid = (String) decode.get("uuid");
+		logger.info("Token UUID: " + uuid);
+		JwtLongTime found = jwtLongTimeService.find(john, john, uuid);
+		assertNotNull(found);
+		JwtLongTime deleted = jwtLongTimeService.delete(john, john, found);
+		assertEquals(found.getUuid(), deleted.getUuid());
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 }

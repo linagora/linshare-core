@@ -383,5 +383,6 @@
 		class="org.linagora.linshare.core.service.impl.JwtLongTimeServiceImpl">
 		<constructor-arg value="${jwt.issuer}" />
 		<constructor-arg ref="jwtService"/>
+		<constructor-arg ref="jwtLongTimeResourceAccessControl"/>
 	</bean>
 </beans>

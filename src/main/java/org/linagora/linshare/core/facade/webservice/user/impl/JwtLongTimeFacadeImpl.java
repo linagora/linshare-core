@@ -39,12 +39,14 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.user.JwtLongTimeUserFacade;
+import org.linagora.linshare.core.facade.webservice.user.JwtLongTimeFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.JwtLongTimeService;
 import org.linagora.linshare.mongo.entities.JwtLongTime;
 
-public class JwtLongTimeFacadeImpl extends UserGenericFacadeImp implements JwtLongTimeUserFacade {
+import com.google.common.base.Strings;
+
+public class JwtLongTimeFacadeImpl extends UserGenericFacadeImp implements JwtLongTimeFacade {
 
 	JwtLongTimeService jwtLongTimeService;
 
@@ -73,5 +75,22 @@ public class JwtLongTimeFacadeImpl extends UserGenericFacadeImp implements JwtLo
 			throw new BusinessException(BusinessErrorCode.METHOD_NOT_ALLOWED, message);
 		}
 		return jwtLongTimeService.findAllByActor(authUser);
+	}
+
+	@Override
+	public JwtLongTime delete(JwtLongTime jwtLongTime, String uuid) throws BusinessException {
+		User authUser = checkAuthentication();
+		if (!authUser.isInternal()) {
+			String message = "You can not delete JWT token for account which is not internal user.";
+			throw new BusinessException(BusinessErrorCode.METHOD_NOT_ALLOWED, message);
+		}
+		if (!Strings.isNullOrEmpty(uuid)) {
+			jwtLongTime = jwtLongTimeService.find(authUser, authUser, uuid);
+		} else {
+			Validate.notNull(jwtLongTime, "jwtLongTime object must be set");
+			Validate.notEmpty(jwtLongTime.getUuid(), "jwtLongTime uuid must be set");
+			jwtLongTime = jwtLongTimeService.find(authUser, authUser, jwtLongTime.getUuid());
+		}
+		return jwtLongTimeService.delete(authUser, authUser, jwtLongTime);
 	}
 }

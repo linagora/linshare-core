@@ -31,21 +31,19 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.core.facade.webservice.user;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.JwtLongTime;
 
-public interface JwtLongTimeService {
+public interface JwtLongTimeFacade {
 
-	String createToken(Account actor, String label, String description) throws BusinessException;
+	String generateLongTimeToken(String label, String description) throws BusinessException;
 
-	JwtLongTime delete(Account authUser, Account actor, JwtLongTime jwtLongTime) throws BusinessException;
+	List<JwtLongTime> findAll() throws BusinessException;
 
-	JwtLongTime find(Account authUser, Account actor, String uuid) throws BusinessException;
+	JwtLongTime delete(JwtLongTime jwtLongTime, String uuid) throws BusinessException;
 
-	List<JwtLongTime> findAllByActor(Account actor) throws BusinessException;
 }
