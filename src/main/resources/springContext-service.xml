@@ -382,7 +382,6 @@
 	<bean id="jwtLongTimeService"
 		class="org.linagora.linshare.core.service.impl.JwtLongTimeServiceImpl">
 		<constructor-arg value="${jwt.issuer}" />
-		<constructor-arg ref="jwtLongTimeMongoRepository" />
 		<constructor-arg ref="jwtService"/>
 	</bean>
 </beans>

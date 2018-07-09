@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2016-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,49 +31,37 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.core.business.service.impl;
 
-package org.linagora.linshare.webservice.userv2.impl;
+import java.util.List;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
+import org.linagora.linshare.core.business.service.JwtLongTimeBusinessService;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.mongo.entities.JwtLongTime;
+import org.linagora.linshare.mongo.repository.JwtLongTimeMongoRepository;
+import org.springframework.data.domain.Sort;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.JwtToken;
-import org.linagora.linshare.core.facade.webservice.user.JwtLongTimeUserFacade;
-import org.linagora.linshare.webservice.userv2.JwtLongTimeUserRestService;
+public class JwtLongTimeBusinessServiceImpl implements JwtLongTimeBusinessService{
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+	private final String CREATION_DATE = "creationDate";
 
-@Path("/jwtlongtime")
-@Api(value = "/rest/user/v2/jwtlongtime", basePath = "/rest/user/v2/", description = "Jwt Long Time service", produces = "application/json,application/xml", consumes = "application/json,application/xml")
-public class JwtLongTimeUserRestServiceImpl implements JwtLongTimeUserRestService {
+	protected JwtLongTimeMongoRepository jwtLongTimeMongoRepository;
 
-	private final JwtLongTimeUserFacade jwtLongTimeUserFacade;
-
-	public JwtLongTimeUserRestServiceImpl(JwtLongTimeUserFacade jwtLongTimeUserFacade) {
+	public JwtLongTimeBusinessServiceImpl(JwtLongTimeMongoRepository jwtLongTimeMongoRepository) {
 		super();
-		this.jwtLongTimeUserFacade = jwtLongTimeUserFacade;
+		this.jwtLongTimeMongoRepository = jwtLongTimeMongoRepository;
 	}
 
-	@Path("/")
-	@GET
 	@Override
-	@ApiOperation(value = "Get an infinite life time JWT token.", response = JwtToken.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User is not allowed to use this endpoint"),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error.") })
-	public JwtToken generateLongTimeToken(
-			@ApiParam(value = "token label")
-					@QueryParam("label") String label,
-			@ApiParam(value = "token description")
-					@QueryParam("description") String description)
-			throws BusinessException {
-		String token = jwtLongTimeUserFacade.generateLongTimeToken(label, description);
-		return new JwtToken(token);
+	public void create(JwtLongTime entity) {
+		jwtLongTimeMongoRepository.insert(entity);
 	}
+
+	@Override
+	public List<JwtLongTime> findAllByActor(Account actor) {
+		Sort sort = new Sort(Sort.Direction.DESC, CREATION_DATE);
+		List<JwtLongTime> tokens = jwtLongTimeMongoRepository.findAllByActorUuid(actor.getLsUuid(), sort);
+		return tokens;
+	}
+
 }

@@ -31,34 +31,16 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.user.impl;
+package org.linagora.linshare.core.business.service;
 
-import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.user.JwtLongTimeUserFacade;
-import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.JwtLongTimeService;
+import java.util.List;
 
-public class JwtLongTimeUserFacadeImpl extends UserGenericFacadeImp implements JwtLongTimeUserFacade {
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.mongo.entities.JwtLongTime;
 
-	JwtLongTimeService jwtLongTimeService;
+public interface JwtLongTimeBusinessService {
 
-	public JwtLongTimeUserFacadeImpl(AccountService accountService,
-			JwtLongTimeService jwtLongTimeService) {
-		super(accountService);
-		this.jwtLongTimeService = jwtLongTimeService;
-	}
+	void create(JwtLongTime entity);
 
-	@Override
-	public String generateLongTimeToken(String label, String description) throws BusinessException {
-		Validate.notEmpty(label, "Missing Label");
-		User authUser = checkAuthentication();
-		if (!authUser.isInternal()) {
-			String message = "You can not generate JWT token for account which is not internal user.";
-			throw new BusinessException(BusinessErrorCode.METHOD_NOT_ALLOWED, message);
-		}
-		return jwtLongTimeService.createToken(authUser, label, description);
-	}
+	List<JwtLongTime> findAllByActor(Account actor);
 }

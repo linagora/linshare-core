@@ -158,7 +158,7 @@
 		<constructor-arg ref="uploadPropositionService" />
 	</bean>
 
-	<bean id="wsJwtLongTimeUserFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.JwtLongTimeUserFacadeImpl">
+	<bean id="wsJwtLongTimeFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.JwtLongTimeFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="jwtLongTimeService" />
 	</bean>

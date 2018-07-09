@@ -34,13 +34,15 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.JwtLongTimeBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.service.JwtLongTimeService;
 import org.linagora.linshare.core.service.JwtService;
 import org.linagora.linshare.mongo.entities.JwtLongTime;
-import org.linagora.linshare.mongo.repository.JwtLongTimeMongoRepository;
 
 import io.jsonwebtoken.Clock;
 import io.jsonwebtoken.impl.DefaultClock;
@@ -53,13 +55,13 @@ public class JwtLongTimeServiceImpl implements JwtLongTimeService {
 
 	protected JwtService jwtService;
 
-	protected JwtLongTimeMongoRepository jwtLongTimeMongoRepository;
+	protected JwtLongTimeBusinessService jwtLongTimeBusinessService;
 
 	public JwtLongTimeServiceImpl(String issuer,
-			JwtLongTimeMongoRepository jwtLongTimeMongoRepository,
+			JwtLongTimeBusinessService jwtLongTimeBusinessService,
 			JwtService jwtService) {
 		this.issuer = issuer;
-		this.jwtLongTimeMongoRepository = jwtLongTimeMongoRepository;
+		this.jwtLongTimeBusinessService = jwtLongTimeBusinessService;
 		this.jwtService = jwtService;
 	}
 
@@ -70,8 +72,15 @@ public class JwtLongTimeServiceImpl implements JwtLongTimeService {
 		String token = jwtService.generateToken(actor, tokenUuid, creationDate);
 		JwtLongTime entity = new JwtLongTime(tokenUuid, creationDate, issuer, label, description, actor.getLsUuid(),
 				actor.getMail(), actor.getDomainId());
-		jwtLongTimeMongoRepository.insert(entity);
+		jwtLongTimeBusinessService.create(entity);
 		// TODO insert audit
 		return token;
+	}
+
+	@Override
+	public List<JwtLongTime> findAllByActor(Account actor) {
+		Validate.notNull(actor);
+		List<JwtLongTime> tokens = jwtLongTimeBusinessService.findAllByActor(actor);
+		return tokens;
 	}
 }

@@ -297,4 +297,8 @@
 	<bean name="passwordService"
 		class="org.linagora.linshare.core.service.impl.PasswordServiceImpl">
 	</bean>
+
+	<bean id="jwtLongTimeBusinessService" class="org.linagora.linshare.core.business.service.impl.JwtLongTimeBusinessServiceImpl">
+		<constructor-arg ref="jwtLongTimeMongoRepository" />
+	</bean>
 </beans>

@@ -35,6 +35,8 @@ package org.linagora.linshare.service;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
@@ -42,6 +44,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.JwtLongTimeService;
 import org.linagora.linshare.core.service.impl.JwtServiceImpl;
+import org.linagora.linshare.mongo.entities.JwtLongTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -49,7 +52,8 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 
 import io.jsonwebtoken.Claims;
 
-@ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
+@ContextConfiguration(locations = { 
+		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-service.xml",
@@ -76,12 +80,15 @@ public class JwtLongTimeServiceImplTest extends AbstractTransactionalJUnit4Sprin
 
 	private User john;
 
+	private User jane;
+
 	@Before
 	public void setUp() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		john = datas.getUser1();
+		jane = datas.getUser2();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -91,8 +98,23 @@ public class JwtLongTimeServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		String token = jwtLongTimeService.createToken(john, "MyToken", "My description");
 		Claims decode = jwtService.decode(token);
 		logger.debug("Token:" + decode.toString());
-		assertEquals("user1@linshare.org", decode.getSubject());
+		assertEquals(john.getMail(), decode.getSubject());
 		assertEquals(null, decode.getExpiration());
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void findAllByActorTest() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		for (int i = 0; i < 5; i++) {
+			jwtLongTimeService.createToken(jane, "Jane's Token label", "Jane's Token description");
+			jwtLongTimeService.createToken(john, "John", "");
+		}
+		List<JwtLongTime> mongoEntities = jwtLongTimeService.findAllByActor(jane);
+		assertEquals(5, mongoEntities.size());
+		for (JwtLongTime entity : mongoEntities) {
+			assertEquals(jane.getMail(), entity.getSubject());
+		}
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 }
