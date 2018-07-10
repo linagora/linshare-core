@@ -56,8 +56,7 @@ public class SharedSpaceRoleResourceAccessControlImpl
 
 	@Override
 	protected boolean hasListPermission(Account authUser, Account account, SharedSpaceRole entry, Object... opt) {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override

@@ -50,6 +50,10 @@ public class SharedSpaceAuthor {
 	@ApiModelProperty(value = "mail")
 	protected String mail;
 
+	public SharedSpaceAuthor() {
+		super();
+	}
+
 	public SharedSpaceAuthor(String name, String mail) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
