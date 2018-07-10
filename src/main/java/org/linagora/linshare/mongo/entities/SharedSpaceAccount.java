@@ -37,6 +37,8 @@ import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.entities.User;
+
 @XmlRootElement(name = "SharedSpaceAccount")
 public class SharedSpaceAccount {
 
@@ -61,6 +63,15 @@ public class SharedSpaceAccount {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.mail = mail;
+	}
+
+	public SharedSpaceAccount(User user) {
+		super();
+		this.uuid = user.getLsUuid();
+		this.name = user.getFullName();
+		this.firstName = user.getFirstName();
+		this.lastName = user.getLastName();
+		this.mail = user.getMail();
 	}
 
 	public String getName() {

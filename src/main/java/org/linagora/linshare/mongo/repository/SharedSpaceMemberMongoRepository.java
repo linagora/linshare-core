@@ -36,8 +36,12 @@ package org.linagora.linshare.mongo.repository;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 
 public interface SharedSpaceMemberMongoRepository extends MongoRepository<SharedSpaceMember, String> {
 
 	SharedSpaceMember findByUuid(String uuid) throws BusinessException;
+
+	@Query("{ 'account.uuid' : ?0, 'node.uuid' : ?1 }")
+	SharedSpaceMember findByAccountAndNode(String accountUuid, String nodeUuid);
 }

@@ -62,4 +62,10 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		return sharedSpaceMemberMongoRepository.findAll();
 	}
 
+	@Override
+	public SharedSpaceMember findByMemberAndSharedSpaceNode(String accountUuid,
+			String nodeUuid) {
+		return sharedSpaceMemberMongoRepository.findByAccountAndNode(accountUuid, nodeUuid);
+	}
+
 }

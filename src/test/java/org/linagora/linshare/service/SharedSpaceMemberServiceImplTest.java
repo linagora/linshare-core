@@ -43,6 +43,8 @@ import org.linagora.linshare.core.business.service.SharedSpaceRoleBusinessServic
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
@@ -87,6 +89,8 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 
 	private User authUser;
 
+	private User jane;
+
 	private SharedSpaceNode node;
 
 	private GenericLightEntity nodeToPersist;
@@ -123,9 +127,8 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 		SharedSpaceNode node0 = new SharedSpaceNode("nodeTest", "parentuuidTest", NodeType.DRIVE_ROOT);
 		node = nodeBusinessService.create(node0);
 		nodeToPersist = new GenericLightEntity(node0.getUuid(), node0.getUuid());
-		User user = userRepo.findByLsUuid(datas.getUser2().getLsUuid());
-		account = new SharedSpaceAccount(user.getFullName(), user.getFirstName(), user.getLastName(), user.getMail());
-		account.setUuid(user.getLsUuid());
+		jane = datas.getUser2();
+		account = new SharedSpaceAccount(jane);
 		accountToPersist = new GenericLightEntity(account.getUuid(), account.getName());
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
@@ -149,6 +152,25 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 		SharedSpaceMember memberToCreate = service.create(authUser, authUser, member.getAccount().getUuid(),
 				member.getRole().getUuid(), member.getNode().getUuid());
 		Assert.assertNotNull(memberToCreate);
+	}
+
+	@Test
+	public void testAvoidDuplicatesMembers() {
+		SharedSpaceMember member = new SharedSpaceMember(nodeToPersist, roleToPersist, accountToPersist);
+		SharedSpaceMember memberToCreate = service.create(authUser, authUser, member.getAccount().getUuid(),
+				member.getRole().getUuid(), member.getNode().getUuid());
+		Assert.assertEquals("The account referenced in this member is not authUser's",
+				memberToCreate.getAccount().getUuid(), jane.getLsUuid());
+		try {
+			service.create(authUser, authUser, member.getAccount().getUuid(), member.getRole().getUuid(),
+					member.getNode().getUuid());
+			Assert.assertTrue(
+					"An exception should be thrown to prevent the creation of a member with same accountuuid and nodeuuid",
+					false);
+		} catch (BusinessException e) {
+			Assert.assertEquals("The thrown error code is not the one of an already exist ShareSpaceMember",
+					BusinessErrorCode.SHARED_SPACE_MEMBER_ALREADY_EXISTS, e.getErrorCode());
+		}
 	}
 
 }

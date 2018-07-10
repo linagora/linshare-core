@@ -89,8 +89,8 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 			String nodeUuid) throws BusinessException {
 		preChecks(authUser, actor);
 		Validate.notNull(accountUuid, "Account uuid must be set.");
-		Validate.notNull(roleUuid,"Role uuid must be set.");
-		Validate.notNull(nodeUuid,"Node uuid must be set.");
+		Validate.notNull(roleUuid, "Role uuid must be set.");
+		Validate.notNull(nodeUuid, "Node uuid must be set.");
 		SharedSpaceNode toFindNode = nodeBusinessService.find(nodeUuid);
 		GenericLightEntity nodeToPersist = new GenericLightEntity(nodeUuid, toFindNode.getName());
 		Validate.notNull(toFindNode, "Missing required node");
@@ -99,8 +99,11 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		Validate.notNull(toFindRole, "Missing required role");
 		User user = userService.findByLsUuid(accountUuid);
 		Validate.notNull(user, "Missing required user");
-		SharedSpaceAccount sharedSpaceAccount = new SharedSpaceAccount(user.getFullName(), user.getFirstName(),
-				user.getLastName(), user.getMail());
+		if (!checkAccountNotInNode(authUser, actor, user, toFindNode)) {
+			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_ALREADY_EXISTS, "The user with uuid : "
+					+ user.getLsUuid() + " is already member of the node with uuid" + toFindNode.getUuid());
+		}
+		SharedSpaceAccount sharedSpaceAccount = new SharedSpaceAccount(user);
 		GenericLightEntity accountLight = new GenericLightEntity(sharedSpaceAccount.getUuid(),
 				sharedSpaceAccount.getName());
 		sharedSpaceAccount.setUuid(user.getLsUuid());
@@ -109,6 +112,24 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 				null);
 		SharedSpaceMember toAdd = sharedSpaceMemberBusinessService.create(member);
 		return toAdd;
+	}
+
+	@Override
+	public SharedSpaceMember findMember(Account authUser, Account actor, Account possibleMember,
+			SharedSpaceNode sharedSpaceNode) throws BusinessException {
+		preChecks(authUser, actor);
+		Validate.notNull(possibleMember, "possibleMember must be set.");
+		Validate.notNull(sharedSpaceNode, "sharedSpaceNode must be set.");
+		SharedSpaceMember foundMember = sharedSpaceMemberBusinessService
+				.findByMemberAndSharedSpaceNode(possibleMember.getLsUuid(), sharedSpaceNode.getUuid());
+		checkReadPermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
+				foundMember);
+		return foundMember;
+	}
+
+	private boolean checkAccountNotInNode(Account authUser, Account actor, Account possibleMember,
+			SharedSpaceNode sharedSpaceNode) throws BusinessException {
+		return findMember(authUser, actor, possibleMember, sharedSpaceNode) == null;
 	}
 
 }

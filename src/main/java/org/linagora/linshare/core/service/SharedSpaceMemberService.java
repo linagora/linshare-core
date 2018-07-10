@@ -36,6 +36,7 @@ package org.linagora.linshare.core.service;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 
 public interface SharedSpaceMemberService {
 
@@ -43,4 +44,7 @@ public interface SharedSpaceMemberService {
 
 	SharedSpaceMember create(Account authUser, Account actor, String accountUuid, String roleUuid, String nodeUuid)
 			throws BusinessException;
+
+	SharedSpaceMember findMember(Account authUser, Account actor, Account possibleMember,
+			SharedSpaceNode sharedSpaceNode) throws BusinessException;
 }
