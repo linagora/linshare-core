@@ -32,42 +32,24 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.webservice.userv1.impl;
-
-import java.util.List;
+package org.linagora.linshare.webservice.userv2.impl;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-
-import org.linagora.linshare.core.facade.webservice.common.dto.MimeTypeDto;
-import org.linagora.linshare.core.facade.webservice.user.MimeTypeFacade;
-import org.linagora.linshare.webservice.userv1.MimeTypeRestService;
-
+import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
+import org.linagora.linshare.webservice.userv1.ShareRestService;
 import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
 
-@Path("/mime_types")
-@Api(value = "/rest/user/mime_types", description = "Mime types service.")
+//Class created to generate the swagger documentation of v1 RestServices
+@Api(value = "/rest/user/v2/shares", description = "Shares service")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class MimeTypeRestServiceImpl implements MimeTypeRestService {
+public class ShareRestServiceImpl extends org.linagora.linshare.webservice.userv1.impl.ShareRestServiceImpl
+		implements ShareRestService {
 
-	private final MimeTypeFacade facade;
-
-	public MimeTypeRestServiceImpl(final MimeTypeFacade facade) {
-		this.facade = facade;
+	public ShareRestServiceImpl(final ShareFacade facade) {
+		super(facade);
 	}
 
-	@GET
-	@Path("/")
-	@ApiOperation(value = "Find all Mime types.", response = MimeTypeDto.class)
-	@Override
-	public List<MimeTypeDto> find(@QueryParam("disabled") @DefaultValue("false") boolean disabled) {
-		return facade.find(null, disabled);
-	}
 }

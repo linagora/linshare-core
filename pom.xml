@@ -1480,8 +1480,8 @@
 							<apiSources>
 								<apiSource>
 									<locations>org.linagora.linshare.webservice.userv2</locations>
-									<apiVersion>v1</apiVersion>
-									<basePath>http://localhost:8080/linshare/webservice/rest/user</basePath>
+									<apiVersion>v2</apiVersion>
+									<basePath>http://localhost:8080/linshare/webservice/rest/user/v2</basePath>
 									<outputTemplate>${basedir}/src/docs/resources/userv2/strapdown.html.mustache</outputTemplate>
 									<outputPath>generated-userv2/index.html</outputPath>
 									<swaggerDirectory>generated-userv2/apidocs</swaggerDirectory>
@@ -1514,8 +1514,8 @@
 							<apiSources>
 								<apiSource>
 									<locations>org.linagora.linshare.webservice.userv2</locations>
-									<apiVersion>v1</apiVersion>
-									<basePath>http://localhost:8080/linshare/webservice/rest/user</basePath>
+									<apiVersion>v2</apiVersion>
+									<basePath>http://localhost:8080/linshare/webservice/rest/user/v2</basePath>
 									<outputTemplate>${basedir}/src/docs/resources/userv2/html.mustache</outputTemplate>
 									<outputPath>generated-userv2-strapdown/index.html</outputPath>
 									<swaggerDirectory>generated-userv2-strapdown/apidocs</swaggerDirectory>

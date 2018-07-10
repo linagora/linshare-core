@@ -19,6 +19,12 @@
 	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
 	<!-- REST  -->
+	<bean id="userv2EnumRestService" class="org.linagora.linshare.webservice.userv2.impl.EnumRestServiceImpl">
+	</bean>
+
+	<bean id="userv2AuthenticationRestService" class="org.linagora.linshare.webservice.userv2.impl.AuthenticationRestServiceImpl">
+		<constructor-arg ref="wsUserFacade" />
+	</bean>
 
 	<bean id="userv2DocumentRestService" class="org.linagora.linshare.webservice.userv2.impl.DocumentRestServiceImpl">
 		<constructor-arg ref="wsDocumentFacade" />
@@ -50,11 +56,11 @@
 		<constructor-arg value="${linshare.rest.files.size.validation}" />
 	</bean>
 
-	<bean id="userUserPreferenceRestService" class="org.linagora.linshare.webservice.userv2.impl.UserPreferenceRestServiceImpl">
+	<bean id="userv2UserPreferenceRestService" class="org.linagora.linshare.webservice.userv2.impl.UserPreferenceRestServiceImpl">
 		<constructor-arg ref="wsUserPreferenceFacade"/>
 	</bean>
 
-	<bean id="userAuditLogEntryUserRestService" class="org.linagora.linshare.webservice.userv2.impl.AuditLogEntryUserRestServiceImpl">
+	<bean id="userv2AuditLogEntryUserRestService" class="org.linagora.linshare.webservice.userv2.impl.AuditLogEntryUserRestServiceImpl">
 		<constructor-arg ref="wsAuditLogEntryUserFacade"/>
 	</bean>
 
@@ -62,8 +68,37 @@
 		<constructor-arg ref="wsContactListFacade" />
 	</bean>
 
+	<bean id="userv2MimeTypeRestService" class="org.linagora.linshare.webservice.userv2.impl.MimeTypeRestServiceImpl">
+		<constructor-arg ref="wsMimeTypeFacade" />
+	</bean>
+
+	<bean id="userv2AutoCompleteRestService" class="org.linagora.linshare.webservice.userv2.impl.AutoCompleteRestServiceImpl">
+		<constructor-arg ref="wsAutoCompleteFacade" />
+	</bean>
+
 	<bean id="userv2GuestRestService" class="org.linagora.linshare.webservice.userv2.impl.GuestRestServiceImpl">
 		<constructor-arg ref="wsGuestFacade" />
+	</bean>
+
+	<bean id="userv2ShareRestService" class="org.linagora.linshare.webservice.userv2.impl.ShareRestServiceImpl">
+		<constructor-arg ref="wsShareFacade" />
+	</bean>
+
+	<bean id="userv2RestService" class="org.linagora.linshare.webservice.userv2.impl.UserRestServiceImpl">
+		<constructor-arg ref="wsUserFacade" />
+		<constructor-arg ref="wsAutoCompleteFacade" />
+	</bean>
+
+	<bean id="userv2LogRestService" class="org.linagora.linshare.webservice.userv2.impl.LogRestServiceImpl">
+		<constructor-arg ref="wsLogEntryFacade" />
+	</bean>
+
+	<bean id="userv2FunctionalityRestService" class="org.linagora.linshare.webservice.userv2.impl.FunctionalityRestServiceImpl">
+		<constructor-arg ref="wsFunctionalityFacade" />
+	</bean>
+
+	<bean id="userv2ShareEntryGroupRestService" class="org.linagora.linshare.webservice.userv2.impl.ShareEntryGroupRestServiceImpl">
+		<constructor-arg ref="wsShareEntryGroupFacade" />
 	</bean>
 
 	<bean id="userv2StatisticRestService" class="org.linagora.linshare.webservice.userv2.impl.StatisticRestServiceImpl">
@@ -94,63 +129,62 @@
 		<constructor-arg ref="wsUploadRequestFacade" />
 	</bean>
 	
-	<bean id="userUploadRequestGroupRestService" class="org.linagora.linshare.webservice.userv2.impl.UploadRequestGroupRestServiceImpl">
+	<bean id="userv2UploadRequestGroupRestService" class="org.linagora.linshare.webservice.userv2.impl.UploadRequestGroupRestServiceImpl">
 		<constructor-arg ref="wsUploadRequestGroupFacade"/>
 	</bean>
 	
-	<bean id="userUploadRequestEntryRestService" class="org.linagora.linshare.webservice.userv2.impl.UploadRequestEntryRestServiceImpl">
+	<bean id="userv2UploadRequestEntryRestService" class="org.linagora.linshare.webservice.userv2.impl.UploadRequestEntryRestServiceImpl">
 		<constructor-arg ref="wsUploadRequestEntryFacade"/>
 	</bean>
 
-	<bean id="userUploadRequestUrlRestService" class="org.linagora.linshare.webservice.userv2.impl.UploadRequestUrlRestServiceImpl">
+	<bean id="userv2UploadRequestUrlRestService" class="org.linagora.linshare.webservice.userv2.impl.UploadRequestUrlRestServiceImpl">
 		<constructor-arg ref="wsUploadRequestUrlUserFacade" />
 	</bean>
 
-	<bean id="userSafeDetailRestService"
+	<bean id="userv2SafeDetailRestService"
 		class="org.linagora.linshare.webservice.userv2.impl.SafeDetailRestServiceImpl">
 		<constructor-arg ref="wsSafeDetailFacade" />
 	</bean>
 
-	<bean id="userUploadPropositionExceptionRuleRestService" class="org.linagora.linshare.webservice.userv2.impl.UploadPropositionExceptionRuleRestServiceImpl">
+	<bean id="userv2UploadPropositionExceptionRuleRestService" class="org.linagora.linshare.webservice.userv2.impl.UploadPropositionExceptionRuleRestServiceImpl">
 		<constructor-arg ref="wsUploadPropositionExceptionRuleFacade" />
 	</bean>
 
-	<bean id="userUploadPropositionRestService" class="org.linagora.linshare.webservice.userv2.impl.UploadPropositionRestServiceImpl">
+	<bean id="userv2UploadPropositionRestService" class="org.linagora.linshare.webservice.userv2.impl.UploadPropositionRestServiceImpl">
 		<constructor-arg ref="wsUploadPropositionFacade" />
 	</bean>
 
 	<jaxrs:server id="userRestContainer" address="/rest/user/v2">
 		<jaxrs:serviceBeans>
-			<ref bean="userEnumRestService" />
-			<ref bean="userAuthenticationRestService" />
+			<ref bean="userv2EnumRestService" />
+			<ref bean="userv2AuthenticationRestService" />
 			<ref bean="userv2DocumentRestService" />
 			<ref bean="userv2WorkGroupRestService" />
 			<ref bean="userv2WorkGroupMemberRestService" />
 			<ref bean="userv2WorkGroupNodeRestService" />
 			<ref bean="userv2GuestRestService" />
-			<ref bean="userShareRestService" />
-			<ref bean="userRestService" />
+			<ref bean="userv2ShareRestService" />
+			<ref bean="userv2RestService" />
 			<ref bean="userv2ReceivedShareRestService" />
-			<ref bean="userLogRestService" />
-			<ref bean="userFunctionalityRestService" />
+			<ref bean="userv2LogRestService" />
+			<ref bean="userv2FunctionalityRestService" />
 			<ref bean="userv2FlowDocumentUploaderRestService" />
-			<ref bean="userShareEntryGroupRestService" />
+			<ref bean="userv2ShareEntryGroupRestService" />
 			<ref bean="userv2ContactListRestService" />
-			<ref bean="userMimeTypeRestService" />
-			<ref bean="userAutoCompleteRestService" />
-			<ref bean="userv2UploadRequestRestService" /> 
-			<ref bean="userUserPreferenceRestService" />
-			<ref bean="userAuditLogEntryUserRestService" />
+			<ref bean="userv2MimeTypeRestService" />
+			<ref bean="userv2AutoCompleteRestService" />
+			<ref bean="userv2UploadRequestRestService" />
+			<ref bean="userv2AuditLogEntryUserRestService" />
 <!-- 			Disable because it is fully tested. -->
 <!-- 			<ref bean="userv2StatisticRestService" /> -->
 			<ref bean="userv2AccountQuotaRestService" />
 			<ref bean="userv2WelcomeMessagesRestService" />
-			<ref bean="userUploadRequestGroupRestService" /> 
-			<ref bean="userUploadRequestEntryRestService" /> 
-			<ref bean="userUploadRequestUrlRestService" /> 
-			<ref bean="userSafeDetailRestService" /> 
-			<ref bean="userUploadPropositionExceptionRuleRestService" />
-			<ref bean="userUploadPropositionRestService" />
+			<ref bean="userv2UploadRequestGroupRestService" /> 
+			<ref bean="userv2UploadRequestEntryRestService" /> 
+			<ref bean="userv2UploadRequestUrlRestService" /> 
+			<ref bean="userv2SafeDetailRestService" /> 
+			<ref bean="userv2UploadPropositionExceptionRuleRestService" />
+			<ref bean="userv2UploadPropositionRestService" />
 			<!--
 			<ref bean="pluginCompatibilityRestServiceV2" />
 -->
