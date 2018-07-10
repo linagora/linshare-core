@@ -73,14 +73,13 @@ public class JwtLongTimeRestServiceImpl implements JwtLongTimeRestService {
 	@ApiResponses({ @ApiResponse(code = 403, message = "User is not allowed to use this endpoint"),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error.") })
-	public JwtToken generateLongTimeToken(
+	public JwtLongTime create(
 			@ApiParam(value = "token label")
 					@QueryParam("label") String label,
 			@ApiParam(value = "token description")
 					@QueryParam("description") String description)
 			throws BusinessException {
-		String token = jwtLongTimeUserFacade.generateLongTimeToken(label, description);
-		return new JwtToken(token);
+		return jwtLongTimeUserFacade.create(label, description);
 	}
 
 	@Path("/")

@@ -96,8 +96,8 @@ public class JwtLongTimeServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	@Test
 	public void createTokenTest() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		String token = jwtLongTimeService.createToken(john, "MyToken", "My description");
-		Claims decode = jwtService.decode(token);
+		JwtLongTime token = jwtLongTimeService.create(john, john, "MyToken", "My description");
+		Claims decode = jwtService.decode(token.getJwtToken().getToken());
 		logger.debug("Token:" + decode.toString());
 		assertEquals(john.getMail(), decode.getSubject());
 		assertEquals(null, decode.getExpiration());
@@ -108,8 +108,8 @@ public class JwtLongTimeServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	public void findAllByActorTest() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		for (int i = 0; i < 5; i++) {
-			jwtLongTimeService.createToken(jane, "Jane's Token label", "Jane's Token description");
-			jwtLongTimeService.createToken(john, "John", "");
+			jwtLongTimeService.create(jane, jane, "Jane's Token label", "Jane's Token description");
+			jwtLongTimeService.create(john, john, "John", "");
 		}
 		List<JwtLongTime> mongoEntities = jwtLongTimeService.findAllByActor(jane);
 		assertEquals(5, mongoEntities.size());
@@ -122,8 +122,8 @@ public class JwtLongTimeServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	@Test
 	public void deleteTokenTest() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		String token = jwtLongTimeService.createToken(john, "MyToken", "My description");
-		Claims decode = jwtService.decode(token);
+		JwtLongTime token = jwtLongTimeService.create(john, john, "MyToken", "My description");
+		Claims decode = jwtService.decode(token.getJwtToken().getToken());
 		String uuid = (String) decode.get("uuid");
 		logger.info("Token UUID: " + uuid);
 		JwtLongTime found = jwtLongTimeService.find(john, john, uuid);

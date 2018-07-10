@@ -39,7 +39,9 @@ import javax.persistence.GeneratedValue;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.linagora.linshare.core.facade.webservice.common.dto.JwtToken;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -76,6 +78,10 @@ public class JwtLongTime {
 
 	@ApiModelProperty(value = "owner email")
 	protected String subject;
+
+	@ApiModelProperty(value = "jwt token, non persisted")
+	@Transient
+	protected JwtToken jwtToken;
 
 	public JwtLongTime() {
 		super();
@@ -169,6 +175,14 @@ public class JwtLongTime {
 
 	public void setSubject(String subject) {
 		this.subject = subject;
+	}
+
+	public JwtToken getJwtToken() {
+		return jwtToken;
+	}
+
+	public void setJwtToken(JwtToken jwtToken) {
+		this.jwtToken = jwtToken;
 	}
 
 	@Override

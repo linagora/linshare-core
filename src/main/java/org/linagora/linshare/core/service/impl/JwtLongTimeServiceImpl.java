@@ -43,6 +43,7 @@ import org.linagora.linshare.core.business.service.JwtLongTimeBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.JwtToken;
 import org.linagora.linshare.core.rac.JwtLongTimeResourceAccessControl;
 import org.linagora.linshare.core.service.JwtLongTimeService;
 import org.linagora.linshare.core.service.JwtService;
@@ -73,15 +74,21 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, JwtLongT
 	}
 
 	@Override
-	public String createToken(Account actor, String label, String description) throws BusinessException {
+	public JwtLongTime create(Account authUser, Account actor, String label, String description) throws BusinessException {
+		Validate.notNull(actor, "actor must be set");
 		final Date creationDate = clock.now();
 		final String tokenUuid = UUID.randomUUID().toString();
-		String token = jwtService.generateToken(actor, tokenUuid, creationDate);
-		JwtLongTime entity = new JwtLongTime(tokenUuid, creationDate, issuer, label, description, actor.getLsUuid(),
+		if (!actor.isInternal()) {
+			String message = "You can not generate JWT token for account which is not internal user.";
+			throw new BusinessException(BusinessErrorCode.METHOD_NOT_ALLOWED, message);
+		}
+		JwtLongTime jwtLongTime = new JwtLongTime(tokenUuid, creationDate, issuer, label, description, actor.getLsUuid(),
 				actor.getMail(), actor.getDomainId());
-		jwtLongTimeBusinessService.create(entity);
+		String token = jwtService.generateToken(actor, tokenUuid, creationDate);
+		jwtLongTimeBusinessService.create(jwtLongTime);
+		jwtLongTime.setJwtToken(new JwtToken(token));
 		// TODO insert audit
-		return token;
+		return jwtLongTime;
 	}
 
 	@Override

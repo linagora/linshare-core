@@ -31,18 +31,44 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.userv2;
+package org.linagora.linshare.core.facade.webservice.admin.impl;
 
-import java.util.List;
-
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.admin.JwtLongTimeTokenFacade;
+import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.JwtLongTimeService;
 import org.linagora.linshare.mongo.entities.JwtLongTime;
 
-public interface JwtLongTimeRestService {
+public class JwtLongTimeTokenFacadeImpl extends AdminGenericFacadeImpl implements JwtLongTimeTokenFacade {
 
-	JwtLongTime create(String label, String description) throws BusinessException;
+	private JwtLongTimeService jwtLongTimeService;
 
-	List<JwtLongTime> findAll() throws BusinessException;
+	private final DomainPermissionBusinessService permissionService;
 
-	JwtLongTime delete(JwtLongTime jwtLongTime, String uuid) throws BusinessException;
+	public JwtLongTimeTokenFacadeImpl (final AccountService accountService,
+			JwtLongTimeService jwtLongTimeService,
+			DomainPermissionBusinessService permissionService) {
+		super(accountService);
+		this.jwtLongTimeService = jwtLongTimeService;
+		this.permissionService = permissionService;
+	}
+
+	@Override
+	public JwtLongTime create(String userUuid, String label, String description) throws BusinessException {
+		Validate.notEmpty(userUuid, "userUuid must be set");
+		Validate.notEmpty(label, "label must be set");
+		Account authUser = getAuthentication();
+		Account actor = accountService.findByLsUuid(userUuid);
+		Validate.notNull(actor);
+		if (!permissionService.isAdminforThisDomain(authUser, actor.getDomain())) {
+			throw new BusinessException(BusinessErrorCode.JWT_LONG_TIME_CAN_NOT_CREATE,
+					"You are not allowed to use this domain");
+		}
+		return jwtLongTimeService.create(authUser, actor, label, description);
+	}
+
 }

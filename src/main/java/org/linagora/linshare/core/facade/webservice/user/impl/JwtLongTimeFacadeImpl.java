@@ -57,14 +57,10 @@ public class JwtLongTimeFacadeImpl extends UserGenericFacadeImp implements JwtLo
 	}
 
 	@Override
-	public String generateLongTimeToken(String label, String description) throws BusinessException {
+	public JwtLongTime create(String label, String description) throws BusinessException {
 		Validate.notEmpty(label, "Missing Label");
 		User authUser = checkAuthentication();
-		if (!authUser.isInternal()) {
-			String message = "You can not generate JWT token for account which is not internal user.";
-			throw new BusinessException(BusinessErrorCode.METHOD_NOT_ALLOWED, message);
-		}
-		return jwtLongTimeService.createToken(authUser, label, description);
+		return jwtLongTimeService.create(authUser, authUser, label, description);
 	}
 
 	@Override

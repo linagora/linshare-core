@@ -41,7 +41,7 @@ import org.linagora.linshare.mongo.entities.JwtLongTime;
 
 public interface JwtLongTimeService {
 
-	String createToken(Account actor, String label, String description) throws BusinessException;
+	JwtLongTime create(Account authUser, Account actor, String label, String description) throws BusinessException;
 
 	JwtLongTime delete(Account authUser, Account actor, JwtLongTime jwtLongTime) throws BusinessException;
 
