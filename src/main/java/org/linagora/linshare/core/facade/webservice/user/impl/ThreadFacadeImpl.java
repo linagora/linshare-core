@@ -39,6 +39,7 @@ import java.util.Set;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.Functionality;
@@ -53,8 +54,10 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.QuotaService;
+import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 import com.google.common.collect.Lists;
@@ -71,6 +74,8 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 	protected final FunctionalityReadOnlyService functionalityReadOnlyService;
 
 	protected final AuditLogEntryService auditLogEntryService;
+	
+	protected final SharedSpaceNodeService ssNodeService;
 
 	public ThreadFacadeImpl(
 			final ThreadService threadService,
@@ -78,13 +83,14 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 			final UserService userService,
 			final QuotaService quotaService,
 			final FunctionalityReadOnlyService functionalityService,
-			final AuditLogEntryService auditLogEntryService) {
+			final AuditLogEntryService auditLogEntryService,SharedSpaceNodeService ssNodeService) {
 		super(accountService);
 		this.threadService = threadService;
 		this.functionalityReadOnlyService = functionalityService;
 		this.userService = userService;
 		this.auditLogEntryService = auditLogEntryService;
 		this.quotaService = quotaService;
+		this.ssNodeService=ssNodeService;
 	}
 
 	@Override
@@ -144,18 +150,19 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 	@Override
 	public WorkGroupDto create(WorkGroupDto threadDto) throws BusinessException {
 		Validate.notNull(threadDto, "Missing required thread");
-		Validate.notEmpty(threadDto.getName(),
-				"Missing required thread dto name");
+		Validate.notEmpty(threadDto.getName(), "Missing required thread dto name");
 		User authUser = checkAuthentication();
-		return new WorkGroupDto(threadService.create(authUser, authUser,
-				threadDto.getName()));
+		WorkGroupDto toCreate = new WorkGroupDto(threadService.create(authUser, authUser, threadDto.getName()));
+		SharedSpaceNode node = new SharedSpaceNode(threadDto.getName(), null, NodeType.WORK_GROUP);
+		SharedSpaceNode createdNode = ssNodeService.create(authUser, authUser, node);
+		createdNode.setUuid(toCreate.getUuid());
+		return toCreate;
 	}
 
 	@Override
 	public WorkGroupDto delete(WorkGroupDto threadDto) throws BusinessException {
 		Validate.notNull(threadDto, "Missing required thread dto");
-		Validate.notEmpty(threadDto.getUuid(),
-				"Missing required thread dto uuid");
+		Validate.notEmpty(threadDto.getUuid(), "Missing required thread dto uuid");
 		User authUser = checkAuthentication();
 		WorkGroup workGroup = threadService.find(authUser, authUser, threadDto.getUuid());
 		threadService.deleteThread(authUser, authUser, workGroup);

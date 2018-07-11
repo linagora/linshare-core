@@ -33,25 +33,35 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import java.util.List;
 import org.jsoup.helper.Validate;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.SharedSpaceNodeResourceAccessControl;
+import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
+import org.linagora.linshare.core.service.SharedSpaceRoleService;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 
 public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, SharedSpaceNode>
 		implements SharedSpaceNodeService {
 
 	private final SharedSpaceNodeBusinessService sharedSpaceNodeBusinessService;
 
+	private final SharedSpaceMemberService sharedSpaceMemberService;
+
+	private final SharedSpaceRoleService ssRoleService;
+
 	public SharedSpaceNodeServiceImpl(SharedSpaceNodeBusinessService sharedSpaceNodeBusinessService,
-			SharedSpaceNodeResourceAccessControl sharedSpaceNodeResourceAccessControl) {
+			SharedSpaceNodeResourceAccessControl sharedSpaceNodeResourceAccessControl,
+			SharedSpaceMemberService sharedSpaceMemberService, SharedSpaceRoleService ssRoleService) {
 		super(sharedSpaceNodeResourceAccessControl);
 		this.sharedSpaceNodeBusinessService = sharedSpaceNodeBusinessService;
+		this.sharedSpaceMemberService = sharedSpaceMemberService;
+		this.ssRoleService = ssRoleService;
 	}
 
 	@Override
@@ -60,11 +70,10 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		Validate.notEmpty(uuid, "Missing required shared space node uuid.");
 		SharedSpaceNode found = sharedSpaceNodeBusinessService.find(uuid);
 		if (found == null) {
-			throw new BusinessException(BusinessErrorCode.DRIVE_NOT_FOUND,
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_NOT_FOUND,
 					"The shared space node with uuid: " + uuid + " is not found");
 		}
-		checkReadPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.DRIVE_FORBIDDEN,
-				found);
+		checkReadPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, found);
 		return found;
 	}
 
@@ -72,20 +81,13 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	public SharedSpaceNode create(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException {
 		preChecks(authUser, actor);
 		Validate.notNull(node, "Missing required input shared space node.");
-		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.DRIVE_FORBIDDEN,
-				null);
-		checkUniqueNameNode(node);
+		Validate.notNull(node.getNodeType(), "you must set the node type");
+		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
 		SharedSpaceNode created = sharedSpaceNodeBusinessService.create(node);
+		SharedSpaceRole role = ssRoleService.getAdmin(authUser, actor);
+		SharedSpaceMember member = sharedSpaceMemberService.create(authUser, actor, authUser.getLsUuid(),
+				role.getUuid(), created.getUuid());
 		return created;
 	}
-
-	private void checkUniqueNameNode(SharedSpaceNode node) {
-		List<SharedSpaceNode> nodes = sharedSpaceNodeBusinessService.findByNameAndParentUuid(node.getName(),
-				node.getParentUuid());
-		if (!nodes.isEmpty()) {
-			throw new BusinessException(BusinessErrorCode.DRIVE_ALREADY_EXISTS,
-					"Can not create a new shared space node it already exists");
-		}
-	}
-
+	
 }

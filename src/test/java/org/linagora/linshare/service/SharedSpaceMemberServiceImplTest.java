@@ -124,7 +124,7 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 		role = roleBusinessService.findByName("ADMIN");
 		roleToPersist = new GenericLightEntity(role.getUuid(), role.getName());
 		Validate.notNull(role, "role must be set");
-		SharedSpaceNode node0 = new SharedSpaceNode("nodeTest", "parentuuidTest", NodeType.DRIVE_ROOT);
+		SharedSpaceNode node0 = new SharedSpaceNode("nodeTest", "parentuuidTest", NodeType.DRIVE);
 		node = nodeBusinessService.create(node0);
 		nodeToPersist = new GenericLightEntity(node0.getUuid(), node0.getUuid());
 		jane = datas.getUser2();

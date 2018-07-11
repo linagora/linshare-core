@@ -31,23 +31,9 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.mongo.entities.logs;
 
-import java.util.List;
-
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.mongo.entities.SharedSpaceRole;
-
-public interface SharedSpaceRoleService {
-	
-	SharedSpaceRole find(Account authUser, Account actor, String uuid) throws BusinessException;
-	
-	SharedSpaceRole findByName(Account authUser, Account actor, String name) throws BusinessException;
-	
-	List <SharedSpaceRole> findAll(Account authUser, Account actor) throws BusinessException;
-	
-	SharedSpaceRole getAdmin(Account authUser, Account actor) throws BusinessException;
+public class SharedSpaceNodeAuditLogEntry {
 
 }
 

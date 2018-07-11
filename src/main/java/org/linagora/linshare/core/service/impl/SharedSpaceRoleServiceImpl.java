@@ -92,4 +92,9 @@ public class SharedSpaceRoleServiceImpl extends GenericServiceImpl<Account, Shar
 		return foundRoles;
 	}
 
+	public SharedSpaceRole getAdmin(Account authUser, Account actor) {
+		preChecks(authUser, actor);
+		SharedSpaceRole roleAdmin = findByName(authUser, actor, "ADMIN");
+		return roleAdmin;
+	}
 }

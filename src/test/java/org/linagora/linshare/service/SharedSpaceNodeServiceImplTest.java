@@ -46,6 +46,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.slf4j.Logger;
@@ -78,6 +79,9 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 	private LoadingServiceTestDatas datas;
 
 	@Autowired
+	private InitMongoService init;
+
+	@Autowired
 	private SharedSpaceNodeService service;
 
 	@Before
@@ -87,6 +91,7 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 		this.executeSqlScript("import-tests-quota-other.sql", false);
 		datas = new LoadingServiceTestDatas(userRepo);
 		datas.loadUsers();
+		init.init();
 		authUser = datas.getUser1();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
@@ -100,7 +105,7 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 	@Test
 	public void create() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		SharedSpaceNode node = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.DRIVE_ROOT);
+		SharedSpaceNode node = new SharedSpaceNode("My first node", null, NodeType.WORK_GROUP);
 		SharedSpaceNode expectedNode = service.create(authUser, authUser, node);
 		Assert.assertNotNull("node not created", expectedNode);
 		Assert.assertEquals(expectedNode.getUuid(), node.getUuid());
@@ -108,26 +113,9 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 	}
 
 	@Test
-	public void createWithDuplicatedName() throws BusinessException {
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		try {
-			SharedSpaceNode node1 = new SharedSpaceNode("My node", "My parent nodeUuid", NodeType.DRIVE_ROOT);
-			SharedSpaceNode node2 = new SharedSpaceNode("My node", "My parent nodeUuid", NodeType.DRIVE_ROOT);
-			SharedSpaceNode expectedNode1 = service.create(authUser, authUser, node1);
-			Assert.assertNotNull("node not created", expectedNode1);
-			Assert.assertEquals(expectedNode1.getUuid(), node1.getUuid());
-			SharedSpaceNode expectedNode2 = service.create(authUser, authUser, node2);
-			Assert.fail("No exception was thrown");
-		} catch (BusinessException e) {
-			Assert.assertThat(e.getErrorCode(), is(BusinessErrorCode.DRIVE_ALREADY_EXISTS));
-		}
-		logger.info(LinShareTestConstants.END_TEST);
-	}
-
-	@Test
 	public void find() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		SharedSpaceNode node = new SharedSpaceNode("Node to find", "My parent nodeUuid", NodeType.DRIVE_ROOT);
+		SharedSpaceNode node = new SharedSpaceNode("Node to find", null, NodeType.WORK_GROUP);
 		SharedSpaceNode expectedNode = service.create(authUser, authUser, node);
 		SharedSpaceNode toFindNode = service.find(authUser, authUser, expectedNode.getUuid());
 		Assert.assertNotNull("Node has not been found.", toFindNode);
