@@ -33,10 +33,16 @@
  */
 package org.linagora.linshare.webservice.admin;
 
+import java.util.List;
+
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.JwtLongTime;
 
 public interface JwtLongTimeTokenRestService {
 
 	JwtLongTime create(String userUuid, String label, String description) throws BusinessException;
+
+	JwtLongTime delete(JwtLongTime jwtLongTime, String uuid) throws BusinessException;
+
+	List<JwtLongTime> findAll(String domainUuid) throws BusinessException;
 }

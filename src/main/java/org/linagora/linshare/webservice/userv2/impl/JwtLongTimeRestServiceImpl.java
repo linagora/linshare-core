@@ -59,11 +59,11 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Api(value = "/rest/user/v2/jwtlongtime", basePath = "/rest/user/v2/", description = "Jwt Long Time service", produces = "application/json,application/xml", consumes = "application/json,application/xml")
 public class JwtLongTimeRestServiceImpl implements JwtLongTimeRestService {
 
-	private final JwtLongTimeFacade jwtLongTimeUserFacade;
+	private final JwtLongTimeFacade jwtLongTimeFacade;
 
-	public JwtLongTimeRestServiceImpl(JwtLongTimeFacade jwtLongTimeUserFacade) {
+	public JwtLongTimeRestServiceImpl(JwtLongTimeFacade jwtLongTimeFacade) {
 		super();
-		this.jwtLongTimeUserFacade = jwtLongTimeUserFacade;
+		this.jwtLongTimeFacade = jwtLongTimeFacade;
 	}
 
 	@Path("/")
@@ -79,7 +79,7 @@ public class JwtLongTimeRestServiceImpl implements JwtLongTimeRestService {
 			@ApiParam(value = "token description")
 					@QueryParam("description") String description)
 			throws BusinessException {
-		return jwtLongTimeUserFacade.create(label, description);
+		return jwtLongTimeFacade.create(label, description);
 	}
 
 	@Path("/")
@@ -90,7 +90,7 @@ public class JwtLongTimeRestServiceImpl implements JwtLongTimeRestService {
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error.") })
 	public List<JwtLongTime> findAll() throws BusinessException {
-		return jwtLongTimeUserFacade.findAll();
+		return jwtLongTimeFacade.findAll();
 	}
 
 	@Path("/{uuid: .*}")
@@ -106,6 +106,6 @@ public class JwtLongTimeRestServiceImpl implements JwtLongTimeRestService {
 					@QueryParam("token") JwtLongTime jwtLongTime,
 			@ApiParam(value = "token uuid, if null object is used", required = false)
 					@PathParam("uuid") String uuid) throws BusinessException {
-		return jwtLongTimeUserFacade.delete(jwtLongTime, uuid);
+		return jwtLongTimeFacade.delete(jwtLongTime, uuid);
 	}
 }

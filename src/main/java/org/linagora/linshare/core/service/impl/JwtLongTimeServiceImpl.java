@@ -38,13 +38,15 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.JwtLongTimeBusinessService;
-
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.JwtToken;
 import org.linagora.linshare.core.rac.JwtLongTimeResourceAccessControl;
+import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.JwtLongTimeService;
 import org.linagora.linshare.core.service.JwtService;
 import org.linagora.linshare.mongo.entities.JwtLongTime;
@@ -62,15 +64,23 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, JwtLongT
 
 	protected JwtLongTimeBusinessService jwtLongTimeBusinessService;
 
+	private DomainPermissionBusinessService permissionService;
+
+	private AbstractDomainService abstractDomainService;
+
 	public JwtLongTimeServiceImpl(
 			String issuer,
 			JwtLongTimeBusinessService jwtLongTimeBusinessService,
 			JwtService jwtService,
-			JwtLongTimeResourceAccessControl rac) {
+			JwtLongTimeResourceAccessControl rac,
+			DomainPermissionBusinessService permissionSerivce,
+			AbstractDomainService abstractDomainService) {
 		super(rac);
 		this.issuer = issuer;
 		this.jwtLongTimeBusinessService = jwtLongTimeBusinessService;
 		this.jwtService = jwtService;
+		this.permissionService = permissionSerivce;
+		this.abstractDomainService = abstractDomainService;
 	}
 
 	@Override
@@ -122,5 +132,29 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, JwtLongT
 		}
 		checkReadPermission(authUser, actor, JwtLongTime.class, BusinessErrorCode.JWT_LONG_TIME_CAN_NOT_READ, found);
 		return found;
+	}
+
+	@Override
+	public List<JwtLongTime> findAllByDomain(Account authUser, AbstractDomain domain) throws BusinessException {
+		Validate.notNull(domain, "domain must be set");
+		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
+			throw new BusinessException(BusinessErrorCode.JWT_LONG_TIME_FORBIDDEN,
+					"You are not allowed to use this domain");
+		}
+		return jwtLongTimeBusinessService.findAllByDomain(domain.getUuid());
+	}
+
+	@Override
+	public JwtLongTime deleteByAdmin(Account authUser, JwtLongTime jwtLongTime) throws BusinessException {
+		Validate.notNull(jwtLongTime, "jwtLongTime must be set");
+		AbstractDomain domain = abstractDomainService.findById(jwtLongTime.getDomainUuid());
+		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
+			throw new BusinessException(BusinessErrorCode.JWT_LONG_TIME_FORBIDDEN,
+					"You are not allowed to use this domain");
+		}
+		JwtLongTime jwtToken = find(authUser, authUser, jwtLongTime.getUuid());
+		jwtLongTimeBusinessService.deleteToken(jwtLongTime);
+		// audit
+		return jwtToken;
 	}
 }

@@ -45,4 +45,6 @@ public interface JwtLongTimeMongoRepository extends MongoRepository<JwtLongTime,
 	List<JwtLongTime> findAllByActorUuid(String actorUuid, Sort sort);
 
 	JwtLongTime findByUuid(String uuid);
+
+	List<JwtLongTime> findAllByDomainUuid(String domainUuid);
 }

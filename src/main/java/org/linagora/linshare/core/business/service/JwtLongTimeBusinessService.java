@@ -47,4 +47,6 @@ public interface JwtLongTimeBusinessService {
 	void deleteToken(JwtLongTime entity);
 
 	JwtLongTime find(String uuid);
+
+	List<JwtLongTime> findAllByDomain(String uuid);
 }

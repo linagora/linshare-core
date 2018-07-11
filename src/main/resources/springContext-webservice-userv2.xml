@@ -154,7 +154,7 @@
 		<constructor-arg ref="wsUploadPropositionFacade" />
 	</bean>
 
-	<bean id="userJwtLongTimeRestService" class="org.linagora.linshare.webservice.userv2.impl.JwtLongTimeRestServiceImpl">
+	<bean id="userv2JwtLongTimeRestService" class="org.linagora.linshare.webservice.userv2.impl.JwtLongTimeRestServiceImpl">
 		<constructor-arg ref="wsJwtLongTimeFacade" />
 	</bean>
 
@@ -189,6 +189,7 @@
 			<ref bean="userv2SafeDetailRestService" /> 
 			<ref bean="userv2UploadPropositionExceptionRuleRestService" />
 			<ref bean="userv2UploadPropositionRestService" />
+			<ref bean="userv2JwtLongTimeRestService" />
 			<!--
 			<ref bean="pluginCompatibilityRestServiceV2" />
 -->

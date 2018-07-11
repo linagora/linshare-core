@@ -41,6 +41,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.JwtLongTimeService;
@@ -83,6 +84,8 @@ public class JwtLongTimeServiceImplTest extends AbstractTransactionalJUnit4Sprin
 
 	private User jane;
 
+	private Account root;
+
 	@Before
 	public void setUp() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
@@ -90,6 +93,7 @@ public class JwtLongTimeServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		datas.loadUsers();
 		john = datas.getUser1();
 		jane = datas.getUser2();
+		root = datas.getRoot();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
@@ -120,6 +124,18 @@ public class JwtLongTimeServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	}
 
 	@Test
+	public void findAllByDomainTest() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		int  initSize = jwtLongTimeService.findAllByDomain(root, john.getDomain()).size();
+		for (int i = 0; i < 5; i++) {
+			jwtLongTimeService.create(john, john, "my token", "");
+		}
+		List<JwtLongTime> mongoEntities = jwtLongTimeService.findAllByDomain(root, john.getDomain());
+		assertEquals(initSize + 5, mongoEntities.size());
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
 	public void deleteTokenTest() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		JwtLongTime token = jwtLongTimeService.create(john, john, "MyToken", "My description");
@@ -130,6 +146,15 @@ public class JwtLongTimeServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		assertNotNull(found);
 		JwtLongTime deleted = jwtLongTimeService.delete(john, john, found);
 		assertEquals(found.getUuid(), deleted.getUuid());
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void deleteTokenByAdminTest() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		JwtLongTime token = jwtLongTimeService.create(john, john, "MyToken", "My description");
+		JwtLongTime deleted = jwtLongTimeService.deleteByAdmin(root, token);
+		assertEquals(token.getUuid(), deleted.getUuid());
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 }

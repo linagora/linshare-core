@@ -33,9 +33,14 @@
  */
 package org.linagora.linshare.webservice.admin.impl;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -72,14 +77,43 @@ public class JwtLongTimeTokenRestServiceImpl implements JwtLongTimeTokenRestServ
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error.") })
 	public JwtLongTime create(
-			@ApiParam(value = "actor uuid")
+			@ApiParam(value = "actor uuid", required = true)
 				@QueryParam("actor") String actorUuid,
-			@ApiParam(value = "token label")
+			@ApiParam(value = "token label", required = true)
 				@QueryParam("label") String label,
-			@ApiParam(value = "token description")
+			@ApiParam(value = "token description", required = false)
 				@QueryParam("description") String description)
 						throws BusinessException {
 		return jwtLongTimeTokenFacade.create(actorUuid, label, description);
+	}
+
+	@Path("/")
+	@GET
+	@Override
+	@ApiOperation(value = "Find all infinite life time JWT tokens of admin domain.", response = JwtLongTime.class, responseContainer = "List")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User is not allowed to use this endpoint"),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error.") })
+	public List<JwtLongTime> findAll(
+			@ApiParam(value = "domain uuid.", required = true)
+				@QueryParam("domainUuid") String domainUuid) throws BusinessException {
+		return jwtLongTimeTokenFacade.findAll(domainUuid);
+	}
+
+	@Path("/{uuid: .*}")
+	@DELETE
+	@Override
+	@ApiOperation(value = "Delete an infinite life time JWT token by its uuid.", response = JwtLongTime.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "User is not allowed to use this endpoint"),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 404, message = "The requested token has not been found."),
+					@ApiResponse(code = 500, message = "Internal server error.") })
+	public JwtLongTime delete(
+			@ApiParam(value = "JwtLongTime to delete.", required = true)
+					@QueryParam("token") JwtLongTime jwtLongTime,
+			@ApiParam(value = "token uuid, if null object is used", required = false)
+					@PathParam("uuid") String uuid) throws BusinessException {
+		return jwtLongTimeTokenFacade.delete(jwtLongTime, uuid);
 	}
 
 }

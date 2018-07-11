@@ -192,5 +192,6 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="jwtLongTimeService" />
 		<constructor-arg ref="domainPermissionBusinessService" />
+		<constructor-arg ref="abstractDomainService" />
 	</bean>
 </beans>

@@ -74,4 +74,9 @@ public class JwtLongTimeBusinessServiceImpl implements JwtLongTimeBusinessServic
 		return jwtLongTimeMongoRepository.findByUuid(uuid);
 	}
 
+	@Override
+	public List<JwtLongTime> findAllByDomain(String domainUuid) {
+		return jwtLongTimeMongoRepository.findAllByDomainUuid(domainUuid);
+	}
+
 }
