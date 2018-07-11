@@ -144,4 +144,27 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		return foundMemberToDelete;
 	}
 
+	@Override
+	public SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate) {
+		preChecks(authUser, actor);
+		Validate.notNull(memberToUpdate, "Missing required member to update");
+		Validate.notNull(memberToUpdate.getUuid(), "Missing required member uuid to update");
+		SharedSpaceMember foundMemberToUpdate = find(authUser, actor, memberToUpdate.getUuid());
+		checkUpdatePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
+				foundMemberToUpdate);
+		return sharedSpaceMemberBusinessService.update(foundMemberToUpdate, memberToUpdate);
+	}
+
+	@Override
+	public SharedSpaceMember updateRole(Account authUser, Account actor, String sharedSpaceMemberUuid, String roleUuid) {
+		preChecks(authUser, actor);
+		Validate.notNull(sharedSpaceMemberUuid, "Missing required sharedSpaceMemberUuid");
+		Validate.notNull(roleUuid, "Missing required roleUuid");
+		SharedSpaceMember foundMemberToUpdate = find(authUser, actor, sharedSpaceMemberUuid);
+		SharedSpaceRole foundRole = roleBusinessService.find(roleUuid);
+		checkUpdatePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
+				foundMemberToUpdate);
+		return sharedSpaceMemberBusinessService.updateRole(foundMemberToUpdate, new GenericLightEntity(foundRole.getUuid(), foundRole.getName()));
+	}
+
 }

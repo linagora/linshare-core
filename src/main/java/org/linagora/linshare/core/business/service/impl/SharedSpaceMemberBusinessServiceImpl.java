@@ -33,10 +33,12 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
+import java.util.Date;
 import java.util.List;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
 
 public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBusinessService {
@@ -71,6 +73,22 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	@Override
 	public void delete(SharedSpaceMember memberToDelete) {
 		sharedSpaceMemberMongoRepository.delete(memberToDelete);
+	}
+
+	@Override
+	public SharedSpaceMember update(SharedSpaceMember foundMemberToUpdate, SharedSpaceMember memberToUpdate) {
+		foundMemberToUpdate.setAccount(memberToUpdate.getAccount());
+		foundMemberToUpdate.setNode(memberToUpdate.getNode());
+		foundMemberToUpdate.setRole(memberToUpdate.getRole());
+		foundMemberToUpdate.setModificationDate(new Date());
+		return sharedSpaceMemberMongoRepository.save(foundMemberToUpdate);
+	}
+
+	@Override
+	public SharedSpaceMember updateRole(SharedSpaceMember foundMemberToUpdate, GenericLightEntity newRole) {
+		foundMemberToUpdate.setRole(newRole);
+		foundMemberToUpdate.setModificationDate(new Date());
+		return sharedSpaceMemberMongoRepository.save(foundMemberToUpdate);
 	}
 
 }

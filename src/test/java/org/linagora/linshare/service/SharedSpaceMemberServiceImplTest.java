@@ -191,4 +191,36 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 		}
 	}
 
+	@Test
+	public void testUpdate() {
+		SharedSpaceMember member = new SharedSpaceMember(nodeToPersist, roleToPersist, accountToPersist);
+		SharedSpaceMember createdMember = service.create(authUser, authUser, member.getAccount().getUuid(),
+				member.getRole().getUuid(), member.getNode().getUuid());
+		Assert.assertEquals("The account referenced in this member is not authUser's",
+				createdMember.getAccount().getUuid(), jane.getLsUuid());
+		GenericLightEntity newAccount = new GenericLightEntity(accountToPersist.getUuid(),
+				accountToPersist.getName() + "DIRTY");
+		SharedSpaceMember memberToUpdate = new SharedSpaceMember(nodeToPersist, roleToPersist, newAccount);
+		memberToUpdate.setUuid(createdMember.getUuid());
+		SharedSpaceMember updatedMember = service.update(authUser, authUser, memberToUpdate);
+		Assert.assertNotEquals("The member has not been updated", accountToPersist.getName(),
+				updatedMember.getAccount().getName());
+		Assert.assertEquals("The member has not been updated", memberToUpdate.getAccount().getName(),
+				updatedMember.getAccount().getName());
+	}
+
+	@Test
+	public void testUpdateRole() {
+		SharedSpaceMember member = new SharedSpaceMember(nodeToPersist, roleToPersist, accountToPersist);
+		SharedSpaceMember createdMember = service.create(authUser, authUser, member.getAccount().getUuid(),
+				member.getRole().getUuid(), member.getNode().getUuid());
+		Assert.assertEquals("The account referenced in this member is not authUser's",
+				createdMember.getAccount().getUuid(), jane.getLsUuid());
+		SharedSpaceRole newRole = roleBusinessService.findByName("CONTRIBUTOR");
+		SharedSpaceMember updatedMember = service.updateRole(authUser, authUser, createdMember.getUuid(), newRole.getUuid());
+		Assert.assertNotEquals("The role has not been updated", newRole.getUuid(),
+				createdMember.getRole().getUuid());
+		Assert.assertEquals("The role has not been updated", newRole.getUuid(),
+				updatedMember.getRole().getUuid());
+	}
 }

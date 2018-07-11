@@ -49,4 +49,8 @@ public interface SharedSpaceMemberService {
 			SharedSpaceNode sharedSpaceNode) throws BusinessException;
 
 	SharedSpaceMember delete(Account authUser, Account actor, SharedSpaceMember memberToDelete);
+
+	SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate);
+
+	SharedSpaceMember updateRole(Account authUser, Account actor, String sharedSpaceMemberUuid, String roleUuid);
 }
