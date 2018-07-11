@@ -2367,3 +2367,5 @@ productOfficialWebsite=http://www.linshare.org/',footer='<!DOCTYPE html>
    </div>
  </body>
  </html>' WHERE id=1;
+
+UPDATE domain_abstract SET mailconfig_id = 1;

@@ -128,6 +128,10 @@ def write_update_scripts(update_file_name, full_imported_database, tables_conten
 		content_to_write = table_content.export_to_update_sql(column_names, tables_update_folder + separator, mail_types)
 		update_file.write("\n")
 		update_file.write(content_to_write)
+	update_file.write("\n")
+	update_file.write("\n")
+	update_file.write("UPDATE domain_abstract SET mailconfig_id = 1;")
+	update_file.write("\n")
 	update_file.close()
 	print("File " + update_file_name + " successfully generated")
 	
