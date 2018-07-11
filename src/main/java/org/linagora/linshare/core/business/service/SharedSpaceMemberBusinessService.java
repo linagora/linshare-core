@@ -47,4 +47,6 @@ public interface SharedSpaceMemberBusinessService {
 	SharedSpaceMember create(SharedSpaceMember sharedSpacemember) throws BusinessException;
 
 	SharedSpaceMember findByMemberAndSharedSpaceNode(String accountUuid, String nodeUuid);
+
+	void delete(SharedSpaceMember memberToDelete);
 }

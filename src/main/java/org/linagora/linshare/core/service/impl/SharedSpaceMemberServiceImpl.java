@@ -132,4 +132,16 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		return findMember(authUser, actor, possibleMember, sharedSpaceNode) == null;
 	}
 
+	@Override
+	public SharedSpaceMember delete(Account authUser, Account actor, SharedSpaceMember memberToDelete) {
+		preChecks(authUser, actor);
+		Validate.notNull(memberToDelete, "Missing required member to delete");
+		Validate.notNull(memberToDelete.getUuid(), "Missing required member uuid to delete");
+		SharedSpaceMember foundMemberToDelete = find(authUser, actor, memberToDelete.getUuid());
+		checkDeletePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
+				foundMemberToDelete);
+		sharedSpaceMemberBusinessService.delete(memberToDelete);
+		return foundMemberToDelete;
+	}
+
 }

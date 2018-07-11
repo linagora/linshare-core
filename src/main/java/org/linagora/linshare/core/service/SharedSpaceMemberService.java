@@ -47,4 +47,6 @@ public interface SharedSpaceMemberService {
 
 	SharedSpaceMember findMember(Account authUser, Account actor, Account possibleMember,
 			SharedSpaceNode sharedSpaceNode) throws BusinessException;
+
+	SharedSpaceMember delete(Account authUser, Account actor, SharedSpaceMember memberToDelete);
 }

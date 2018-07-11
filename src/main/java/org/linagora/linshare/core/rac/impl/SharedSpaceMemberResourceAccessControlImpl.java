@@ -56,13 +56,14 @@ public class SharedSpaceMemberResourceAccessControlImpl
 	@Override
 	protected boolean hasListPermission(Account authUser, Account actor, SharedSpaceMember entry, Object... opt) {
 		return defaultPermissionCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_LIST);
+				TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_LIST, false);
 	}
 
 	@Override
 	protected boolean hasDeletePermission(Account authUser, Account actor, SharedSpaceMember entry, Object... opt) {
 		// TODO Auto-generated method stub
-		return false;
+		return defaultPermissionCheck(authUser, actor, entry,
+				TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_DELETE, false);
 	}
 
 	@Override
@@ -74,7 +75,8 @@ public class SharedSpaceMemberResourceAccessControlImpl
 	@Override
 	protected boolean hasUpdatePermission(Account authUser, Account actor, SharedSpaceMember entry, Object... opt) {
 		// TODO Auto-generated method stub
-		return false;
+		return defaultPermissionCheck(authUser, actor, entry,
+				TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_UPDATE, false);
 	}
 
 	@Override

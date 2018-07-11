@@ -173,4 +173,22 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 		}
 	}
 
+	@Test
+	public void testDelete() {
+		SharedSpaceMember member = new SharedSpaceMember(nodeToPersist, roleToPersist, accountToPersist);
+		SharedSpaceMember memberToCreate = service.create(authUser, authUser, member.getAccount().getUuid(),
+				member.getRole().getUuid(), member.getNode().getUuid());
+		Assert.assertEquals("The account referenced in this member is not authUser's",
+				memberToCreate.getAccount().getUuid(), jane.getLsUuid());
+		SharedSpaceMember deletedMember = service.delete(authUser, authUser, memberToCreate);
+		Assert.assertNotNull("No member deleted", deletedMember);
+		try {
+			service.find(authUser, authUser, memberToCreate.getUuid());
+			Assert.assertTrue("An exception should be thrown because the member should not be found", false);
+		} catch (BusinessException e) {
+			Assert.assertEquals("The member is found in the database. It has not been deleted",
+					BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, e.getErrorCode());
+		}
+	}
+
 }

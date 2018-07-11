@@ -68,4 +68,9 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		return sharedSpaceMemberMongoRepository.findByAccountAndNode(accountUuid, nodeUuid);
 	}
 
+	@Override
+	public void delete(SharedSpaceMember memberToDelete) {
+		sharedSpaceMemberMongoRepository.delete(memberToDelete);
+	}
+
 }
