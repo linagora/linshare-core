@@ -42,5 +42,7 @@ public interface SharedSpaceNodeService {
 	SharedSpaceNode find(Account authUser, Account actor, String uuid) throws BusinessException;
 
 	SharedSpaceNode create(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException;
+	
+	SharedSpaceNode delete (Account authUser, Account actor, SharedSpaceNode node) throws BusinessException;
 
 }

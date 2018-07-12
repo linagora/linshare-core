@@ -89,5 +89,16 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 				role.getUuid(), created.getUuid());
 		return created;
 	}
-	
+
+	@Override
+	public SharedSpaceNode delete(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException {
+		preChecks(authUser, actor);
+		Validate.notNull(node, "missing required node to delete.");
+		Validate.notEmpty(node.getUuid(),"missing required node uuid to delete");
+		SharedSpaceNode foundedNodeTodel =find(authUser,actor,node.getUuid());
+		checkDeletePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, foundedNodeTodel);
+				sharedSpaceNodeBusinessService.delete(foundedNodeTodel);
+				return foundedNodeTodel;
+	}
+
 }

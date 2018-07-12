@@ -94,6 +94,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		Validate.notNull(roleUuid, "Role uuid must be set.");
 		Validate.notNull(nodeUuid, "Node uuid must be set.");
 		SharedSpaceNode toFindNode = nodeBusinessService.find(nodeUuid);
+		Validate.notNull(toFindNode, "Node is not found.");
 		GenericLightEntity nodeToPersist = new GenericLightEntity(nodeUuid, toFindNode.getName());
 		Validate.notNull(toFindNode, "Missing required node");
 		SharedSpaceRole toFindRole = roleBusinessService.find(roleUuid);

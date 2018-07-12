@@ -41,5 +41,7 @@ public interface SharedSpaceNodeRestService {
 	SharedSpaceNode find(String uuid) throws BusinessException;
 
 	SharedSpaceNode create(SharedSpaceNode node) throws BusinessException;
+	
+	SharedSpaceNode delete (SharedSpaceNode node,String uuid) throws BusinessException;
 
 }

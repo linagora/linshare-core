@@ -62,4 +62,9 @@ public class SharedSpaceNodeBusinessServiceImpl implements SharedSpaceNodeBusine
 		return sharedSpaceNodeMongoRepository.findByNameAndParentUuid(name, parentUuid);
 	}
 
+	@Override
+	public void delete(SharedSpaceNode node) throws BusinessException {
+		sharedSpaceNodeMongoRepository.delete(node);
+	}
+	
 }

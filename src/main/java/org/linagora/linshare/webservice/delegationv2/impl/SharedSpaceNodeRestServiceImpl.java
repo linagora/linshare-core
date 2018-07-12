@@ -34,6 +34,7 @@
 package org.linagora.linshare.webservice.delegationv2.impl;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -95,4 +96,22 @@ public class SharedSpaceNodeRestServiceImpl implements SharedSpaceNodeRestServic
 
 		return sharedSpaceNodeFacade.create(actorUuid, node);
 	}
+	@Path("/{uuid : .*}")
+	@DELETE
+	@ApiOperation(value = "Delete a shared space node.", response = SharedSpaceNode.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to delete."),
+			@ApiResponse(code = 404, message = "Not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public SharedSpaceNode delete(
+			@ApiParam(value="The actor uuid.")
+				@PathParam(value="{uuid}")String actorUuid,
+			@ApiParam(value = "sharedSpaceNode to delete. ", required = true)SharedSpaceNode node,
+			@ApiParam(value = "shared space node's uuid.", required = false)
+				@PathParam(value="uuid")String uuid) 
+					throws BusinessException {
+		return sharedSpaceNodeFacade.delete(actorUuid, node,uuid);
+	}
+
 }

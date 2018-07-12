@@ -41,6 +41,8 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 
+import com.google.common.base.Strings;
+
 public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements SharedSpaceNodeFacade {
 
 	protected SharedSpaceNodeService sharedSpaceNodeService;
@@ -65,5 +67,19 @@ public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements Shar
 		Account actor = getActor(authUser, actorUuid);
 		SharedSpaceNode toCreate = new SharedSpaceNode(node.getName(), node.getParentUuid(), node.getNodeType());
 		return sharedSpaceNodeService.create(authUser, actor, toCreate);
+	}
+
+	@Override
+	public SharedSpaceNode delete(String actorUuid, SharedSpaceNode node, String uuid) throws BusinessException {
+		Validate.notEmpty(uuid, "Missing required input shared space node.");
+		Account authUser = checkAuthentication();
+		Account actor = getActor(authUser, actorUuid);
+		if (!Strings.isNullOrEmpty(uuid)) {
+			node = sharedSpaceNodeService.find(authUser, actor, uuid);
+		} else {
+			Validate.notNull(node, "node must be set");
+			Validate.notEmpty(node.getUuid(), "node uuid must be set.");
+		}
+		return sharedSpaceNodeService.delete(authUser, actor, node);
 	}
 }
