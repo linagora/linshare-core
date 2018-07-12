@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.service;
 
+import java.util.List;
+
 import org.apache.commons.lang.Validate;
 import org.junit.After;
 import org.junit.Assert;
@@ -189,6 +191,22 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 			Assert.assertEquals("The member is found in the database. It has not been deleted",
 					BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, e.getErrorCode());
 		}
+	}
+
+	@Test
+	public void testDeleteAll() {
+		SharedSpaceMember member = new SharedSpaceMember(nodeToPersist, roleToPersist, accountToPersist);
+		SharedSpaceMember member2 = new SharedSpaceMember(nodeToPersist, roleToPersist,
+				new GenericLightEntity(authUser.getLsUuid(), authUser.getFullName()));
+		service.create(authUser, authUser, member.getAccount().getUuid(), member.getRole().getUuid(),
+				member.getNode().getUuid());
+		service.create(jane, jane, member2.getAccount().getUuid(), member2.getRole().getUuid(),
+				member2.getNode().getUuid());
+		List<SharedSpaceMember> foundMembers = service.findAll(authUser, authUser, nodeToPersist.getUuid());
+		Assert.assertTrue("No members have been created", foundMembers.size() > 0);
+		service.deleteAllMembers(authUser, authUser, nodeToPersist.getUuid());
+		foundMembers = service.findAll(authUser, authUser, nodeToPersist.getUuid());
+		Assert.assertEquals("There are members left in the shared space node", 0, foundMembers.size());
 	}
 
 	@Test

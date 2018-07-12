@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.mongo.repository;
 
+import java.util.List;
+
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -44,4 +46,7 @@ public interface SharedSpaceMemberMongoRepository extends MongoRepository<Shared
 
 	@Query("{ 'account.uuid' : ?0, 'node.uuid' : ?1 }")
 	SharedSpaceMember findByAccountAndNode(String accountUuid, String nodeUuid);
+
+	@Query("{ 'node.uuid' : ?0 }")
+	List<SharedSpaceMember> findByShareSpaceNodeUuid(String shareSpaceNodeUuid);
 }

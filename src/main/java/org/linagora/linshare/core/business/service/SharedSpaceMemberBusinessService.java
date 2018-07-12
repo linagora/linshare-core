@@ -54,4 +54,8 @@ public interface SharedSpaceMemberBusinessService {
 	SharedSpaceMember update(SharedSpaceMember foundMemberToUpdate, SharedSpaceMember memberToUpdate);
 
 	SharedSpaceMember updateRole(SharedSpaceMember foundMemberToUpdate, GenericLightEntity newRole);
+
+	List<SharedSpaceMember> findBySharedSpaceNodeUuid(String shareSpaceNodeUuid);
+
+	void deleteAll(List<SharedSpaceMember> foundMembersToDelete);
 }

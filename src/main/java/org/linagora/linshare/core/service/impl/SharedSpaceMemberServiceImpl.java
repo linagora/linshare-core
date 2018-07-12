@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.util.List;
+
 import org.jsoup.helper.Validate;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
@@ -166,6 +168,28 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		checkUpdatePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
 				foundMemberToUpdate);
 		return sharedSpaceMemberBusinessService.updateRole(foundMemberToUpdate, new GenericLightEntity(foundRole.getUuid(), foundRole.getName()));
+	}
+
+	@Override
+	public List<SharedSpaceMember> findAll(Account authUser, Account actor, String shareSpaceNodeUuid)
+			throws BusinessException {
+		preChecks(authUser, actor);
+		Validate.notEmpty(shareSpaceNodeUuid, "Missing required shared space node uuid");
+		checkListPermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
+				null);
+		List<SharedSpaceMember> foundMembers = sharedSpaceMemberBusinessService
+				.findBySharedSpaceNodeUuid(shareSpaceNodeUuid);
+		return foundMembers;
+	}
+
+	@Override
+	public List<SharedSpaceMember> deleteAllMembers(Account authUser, Account actor, String sharedSpaceNodeUuid) {
+		preChecks(authUser, actor);
+		Validate.notNull(sharedSpaceNodeUuid, "Missing required sharedSpaceNodeUuid");
+		// TODO Check the user is admin to delete all Members
+		List<SharedSpaceMember> foundMembersToDelete = findAll(authUser, actor, sharedSpaceNodeUuid);
+		sharedSpaceMemberBusinessService.deleteAll(foundMembersToDelete);
+		return foundMembersToDelete;
 	}
 
 }

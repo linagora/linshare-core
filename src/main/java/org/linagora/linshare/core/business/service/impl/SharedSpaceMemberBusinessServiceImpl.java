@@ -91,4 +91,14 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		return sharedSpaceMemberMongoRepository.save(foundMemberToUpdate);
 	}
 
+	@Override
+	public List<SharedSpaceMember> findBySharedSpaceNodeUuid(String shareSpaceNodeUuid) {
+		return sharedSpaceMemberMongoRepository.findByShareSpaceNodeUuid(shareSpaceNodeUuid);
+	}
+
+	@Override
+	public void deleteAll(List<SharedSpaceMember> foundMembersToDelete) {
+		sharedSpaceMemberMongoRepository.delete(foundMembersToDelete);
+	}
+
 }
