@@ -154,8 +154,8 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		User authUser = checkAuthentication();
 		WorkGroupDto toCreate = new WorkGroupDto(threadService.create(authUser, authUser, threadDto.getName()));
 		SharedSpaceNode node = new SharedSpaceNode(threadDto.getName(), null, NodeType.WORK_GROUP);
-		SharedSpaceNode createdNode = ssNodeService.create(authUser, authUser, node);
-		createdNode.setUuid(toCreate.getUuid());
+		node.setUuid(toCreate.getUuid());
+		ssNodeService.create(authUser, authUser, node);
 		return toCreate;
 	}
 
