@@ -98,6 +98,8 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		SharedSpaceNode foundedNodeTodel =find(authUser,actor,node.getUuid());
 		checkDeletePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, foundedNodeTodel);
 				sharedSpaceNodeBusinessService.delete(foundedNodeTodel);
+
+				sharedSpaceMemberService.deleteAllMembers(authUser, actor, foundedNodeTodel.getUuid());
 				return foundedNodeTodel;
 	}
 

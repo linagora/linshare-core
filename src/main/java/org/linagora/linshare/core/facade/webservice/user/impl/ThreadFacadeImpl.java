@@ -76,21 +76,22 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 	protected final AuditLogEntryService auditLogEntryService;
 	
 	protected final SharedSpaceNodeService ssNodeService;
-
+	
 	public ThreadFacadeImpl(
 			final ThreadService threadService,
 			final AccountService accountService,
 			final UserService userService,
 			final QuotaService quotaService,
 			final FunctionalityReadOnlyService functionalityService,
-			final AuditLogEntryService auditLogEntryService,SharedSpaceNodeService ssNodeService) {
+			final AuditLogEntryService auditLogEntryService,
+			SharedSpaceNodeService ssNodeService) {
 		super(accountService);
 		this.threadService = threadService;
 		this.functionalityReadOnlyService = functionalityService;
 		this.userService = userService;
 		this.auditLogEntryService = auditLogEntryService;
 		this.quotaService = quotaService;
-		this.ssNodeService=ssNodeService;
+		this.ssNodeService = ssNodeService;
 	}
 
 	@Override
@@ -166,6 +167,8 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		User authUser = checkAuthentication();
 		WorkGroup workGroup = threadService.find(authUser, authUser, threadDto.getUuid());
 		threadService.deleteThread(authUser, authUser, workGroup);
+		SharedSpaceNode node = ssNodeService.find(authUser, authUser, threadDto.getUuid());
+		ssNodeService.delete(authUser, authUser, node);
 		return new WorkGroupDto(workGroup);
 	}
 
@@ -175,6 +178,8 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		User authUser = checkAuthentication();
 		WorkGroup workGroup = threadService.find(authUser, authUser, threadUuid);
 		threadService.deleteThread(authUser, authUser, workGroup);
+		SharedSpaceNode node = ssNodeService.find(authUser, authUser, threadUuid);
+		ssNodeService.delete(authUser, authUser, node);
 		return new WorkGroupDto(workGroup);
 	}
 

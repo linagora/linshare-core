@@ -57,6 +57,7 @@
 		class="org.linagora.linshare.core.facade.webservice.admin.impl.ThreadFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="threadService" />
+		<constructor-arg ref="sharedSpaceNodeService" />
 	</bean>
 	<bean id="wsAdminMailingListFacade"
 		class="org.linagora.linshare.core.facade.webservice.admin.impl.MailingListFacadeImpl">

@@ -48,7 +48,9 @@ import org.linagora.linshare.core.facade.webservice.admin.ThreadFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupMemberDto;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 
 import com.google.common.collect.Sets;
 
@@ -56,11 +58,15 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 		ThreadFacade {
 
 	private ThreadService threadService;
+	
+	private final SharedSpaceNodeService ssNodeService;
 
 	public ThreadFacadeImpl(final AccountService accountService,
-			final ThreadService threadService) {
+							final ThreadService threadService,
+							SharedSpaceNodeService ssNodeService) {
 		super(accountService);
 		this.threadService = threadService;
+		this.ssNodeService = ssNodeService;
 	}
 
 	@Override
@@ -126,6 +132,8 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 		User authUser = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "uuid must be set.");
 		WorkGroup workGroup = threadService.find(authUser, authUser, uuid);
+		SharedSpaceNode node = ssNodeService.find(authUser, authUser, workGroup.getLsUuid());
+		ssNodeService.delete(authUser, workGroup, node);
 		threadService.deleteThread(authUser, authUser, workGroup);
 		return new WorkGroupDto(workGroup);
 	}
