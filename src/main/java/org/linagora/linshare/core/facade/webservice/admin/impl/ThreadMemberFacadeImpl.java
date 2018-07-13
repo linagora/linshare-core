@@ -44,8 +44,13 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.ThreadMemberFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupMemberDto;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.SharedSpaceMemberService;
+import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 
 public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		ThreadMemberFacade {
@@ -53,11 +58,19 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 	private ThreadService threadService;
 	private UserService userService;
 
+	protected final SharedSpaceMemberService ssMemberService;
+
+	protected final SharedSpaceRoleService ssRoleService;
+
 	public ThreadMemberFacadeImpl(final AccountService accountService,
-			final ThreadService threadService, final UserService userService) {
+			final ThreadService threadService, final UserService userService,
+			SharedSpaceMemberService ssMemberService,
+			SharedSpaceRoleService ssRoleService) {
 		super(accountService);
 		this.threadService = threadService;
 		this.userService = userService;
+		this.ssMemberService = ssMemberService;
+		this.ssRoleService = ssRoleService;
 	}
 
 	@Override
@@ -88,7 +101,11 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		}
 		boolean admin = dto.isAdmin();
 		boolean canUpload = !dto.isReadonly();
-		return new WorkGroupMemberDto(threadService.addMember(authUser, authUser, workGroup, user, admin, canUpload));
+		WorkgroupMember createdWorkGroupMember = threadService.addMember(authUser, authUser, workGroup, user, admin, canUpload);
+		// TODO Retrieve the role from the restService once the front will pass the info
+		SharedSpaceRole readerRole = ssRoleService.findByName(authUser, authUser, "CONTRIBUTOR");
+		ssMemberService.create(authUser, authUser, user.getLsUuid(), readerRole.getUuid(), dto.getThreadUuid());
+		return new WorkGroupMemberDto(createdWorkGroupMember);
 	}
 
 	@Override
@@ -109,6 +126,11 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notNull(dto.getThreadUuid(), "thread uuid must be set.");
 		Validate.notNull(dto.getUserUuid(), "user uuid must be set.");
 		WorkgroupMember member = this.threadService.deleteMember(authUser, authUser, dto.getThreadUuid(), dto.getUserUuid());
+		User user = userService.findByLsUuid(dto.getUserUuid());
+		SharedSpaceNode nodeToDelete = new SharedSpaceNode();
+		nodeToDelete.setUuid(dto.getThreadUuid());
+		SharedSpaceMember ssMemberToDelete = ssMemberService.findMember(authUser, authUser, user, nodeToDelete);
+		ssMemberService.delete(authUser, authUser, ssMemberToDelete);
 		return new WorkGroupMemberDto(member);
 	}
 }

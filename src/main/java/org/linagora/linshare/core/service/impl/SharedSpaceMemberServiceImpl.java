@@ -142,7 +142,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		SharedSpaceMember foundMemberToDelete = find(authUser, actor, memberToDelete.getUuid());
 		checkDeletePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
 				foundMemberToDelete);
-		sharedSpaceMemberBusinessService.delete(memberToDelete);
+		sharedSpaceMemberBusinessService.delete(foundMemberToDelete);
 		return foundMemberToDelete;
 	}
 

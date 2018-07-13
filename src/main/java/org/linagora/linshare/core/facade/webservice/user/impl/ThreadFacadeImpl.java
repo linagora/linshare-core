@@ -54,10 +54,13 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.QuotaService;
+import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
+import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 import com.google.common.collect.Lists;
@@ -74,9 +77,13 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 	protected final FunctionalityReadOnlyService functionalityReadOnlyService;
 
 	protected final AuditLogEntryService auditLogEntryService;
-	
+
 	protected final SharedSpaceNodeService ssNodeService;
-	
+
+	protected final SharedSpaceMemberService ssMemberService;
+
+	protected final SharedSpaceRoleService ssRoleService;
+
 	public ThreadFacadeImpl(
 			final ThreadService threadService,
 			final AccountService accountService,
@@ -84,7 +91,9 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 			final QuotaService quotaService,
 			final FunctionalityReadOnlyService functionalityService,
 			final AuditLogEntryService auditLogEntryService,
-			SharedSpaceNodeService ssNodeService) {
+			final SharedSpaceNodeService ssNodeService,
+			final SharedSpaceMemberService ssMemberService,
+			final SharedSpaceRoleService ssRoleService) {
 		super(accountService);
 		this.threadService = threadService;
 		this.functionalityReadOnlyService = functionalityService;
@@ -92,6 +101,8 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		this.auditLogEntryService = auditLogEntryService;
 		this.quotaService = quotaService;
 		this.ssNodeService = ssNodeService;
+		this.ssMemberService = ssMemberService;
+		this.ssRoleService = ssRoleService;
 	}
 
 	@Override
@@ -146,6 +157,9 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		WorkGroup workGroup = threadService.find(authUser, authUser, threadUuid);
 		User user = userService.findOrCreateUserWithDomainPolicies(mail, domainId, authUser.getDomainId());
 		threadService.addMember(authUser, authUser, workGroup, user, false, !readonly);
+		// TODO Retrieve the role from the restService once the front will pass the info
+		SharedSpaceRole readerRole = ssRoleService.findByName(authUser, authUser, "READER");
+		ssMemberService.create(authUser, authUser, user.getLsUuid(), readerRole.getUuid(), threadUuid);
 	}
 
 	@Override

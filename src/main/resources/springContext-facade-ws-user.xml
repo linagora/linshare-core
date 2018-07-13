@@ -38,11 +38,15 @@
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="auditLogEntryService" />
 		<constructor-arg ref="sharedSpaceNodeService" />
+		<constructor-arg ref="sharedSpaceMemberService" />
+		<constructor-arg ref="sharedSpaceRoleService" />
 	</bean>
 	<bean id="wsThreadMemberFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.ThreadMemberFacadeImpl">
 		<constructor-arg ref="threadService" />
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="userService" />
+		<constructor-arg ref="sharedSpaceMemberService" />
+		<constructor-arg ref="sharedSpaceRoleService" />
 	</bean>
 	<bean id="wsUserFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.UserFacadeImpl">
 		<constructor-arg ref="userService" />
