@@ -58,6 +58,7 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="threadService" />
 		<constructor-arg ref="sharedSpaceNodeService" />
+		<constructor-arg ref="sharedSpaceMemberService" />
 	</bean>
 	<bean id="wsAdminMailingListFacade"
 		class="org.linagora.linshare.core.facade.webservice.admin.impl.MailingListFacadeImpl">
@@ -69,6 +70,8 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="threadService" />
 		<constructor-arg ref="userService" />
+		<constructor-arg ref="sharedSpaceMemberService" />
+		<constructor-arg ref="sharedSpaceRoleService" />
 	</bean>
 	<bean id="wsAdminUserFacade"
 		class="org.linagora.linshare.core.facade.webservice.admin.impl.UserFacadeImpl">

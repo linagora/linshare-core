@@ -48,8 +48,10 @@ import org.linagora.linshare.core.facade.webservice.admin.ThreadFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupMemberDto;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 
 import com.google.common.collect.Sets;
@@ -61,12 +63,16 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 	
 	private final SharedSpaceNodeService ssNodeService;
 
+	private final SharedSpaceMemberService ssMemberService;
+
 	public ThreadFacadeImpl(final AccountService accountService,
 							final ThreadService threadService,
-							SharedSpaceNodeService ssNodeService) {
+							final SharedSpaceNodeService ssNodeService,
+							final SharedSpaceMemberService ssMemberService) {
 		super(accountService);
 		this.threadService = threadService;
 		this.ssNodeService = ssNodeService;
+		this.ssMemberService = ssMemberService;
 	}
 
 	@Override
@@ -116,6 +122,7 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 		List<WorkgroupMember> workgroupMembers = threadService.findAllThreadMembers(authUser, authUser, workGroup);
 		for (WorkgroupMember m : workgroupMembers)
 			ret.add(new WorkGroupMemberDto(m));
+		List<SharedSpaceMember> sharedSpaceMembers = ssMemberService.findAll(authUser, authUser, uuid);
 		return ret;
 	}
 
