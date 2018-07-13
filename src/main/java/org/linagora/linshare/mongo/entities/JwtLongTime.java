@@ -105,6 +105,18 @@ public class JwtLongTime {
 		this.domainUuid = domainUuid;
 	}
 
+	public JwtLongTime(JwtLongTime jwtLongTime) {
+		this.id = jwtLongTime.getId();
+		this.uuid = jwtLongTime.getUuid();
+		this.creationDate = jwtLongTime.getCreationDate();
+		this.issuer = jwtLongTime.getIssuer();
+		this.subject = jwtLongTime.getSubject();
+		this.label = jwtLongTime.getLabel();
+		this.description = jwtLongTime.getDescription();
+		this.actorUuid = jwtLongTime.getActorUuid();
+		this.domainUuid = jwtLongTime.getDomainUuid();
+	}
+
 	public String getId() {
 		return id;
 	}

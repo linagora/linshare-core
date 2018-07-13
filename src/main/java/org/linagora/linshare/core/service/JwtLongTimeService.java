@@ -34,11 +34,14 @@
 package org.linagora.linshare.core.service;
 
 import java.util.List;
+import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.JwtLongTime;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface JwtLongTimeService {
 
@@ -53,5 +56,8 @@ public interface JwtLongTimeService {
 	List<JwtLongTime> findAllByDomain(Account authUser, AbstractDomain domain) throws BusinessException;
 
 	JwtLongTime deleteByAdmin(Account authUser, JwtLongTime jwtLongTime) throws BusinessException;
+
+	Set<AuditLogEntryUser> findAllAudit(Account authUser, String domainUuid, List<LogAction> actions)
+			throws BusinessException;
 
 }

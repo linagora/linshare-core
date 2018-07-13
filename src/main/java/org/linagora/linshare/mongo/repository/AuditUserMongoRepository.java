@@ -87,4 +87,8 @@ public interface AuditUserMongoRepository extends MongoRepository<AuditLogEntryU
 	Set<AuditLogEntryUser> findUploadRequestHistoryForUser(String ownerUuid, String requestUuid, List<LogAction> actions, List<AuditLogEntryType> types, Sort sort);
 
 	UploadRequestAuditLogEntry findTopByOrderByCreationDateDesc(String resourceUuid);
+
+	// jwt LongTime
+	@Query("{ $or: [ {'resource.actorUuid' : ?0 } , {'resource.domainUuid' : ?1}], 'action' : { '$in' : ?2 }, 'type' :  ?3 }")
+	Set<AuditLogEntryUser> findAll(String actorUuid, String domainUuid, List<LogAction> action, AuditLogEntryType type, Sort sort);
 }

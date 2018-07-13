@@ -34,9 +34,12 @@
 package org.linagora.linshare.core.facade.webservice.admin;
 
 import java.util.List;
+import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.JwtLongTime;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface JwtLongTimeTokenFacade {
 
@@ -45,5 +48,7 @@ public interface JwtLongTimeTokenFacade {
 	List<JwtLongTime> findAll(String domainUuid) throws BusinessException;
 
 	JwtLongTime delete(JwtLongTime jwtLongTime, String uuid) throws BusinessException;
+
+	Set<AuditLogEntryUser> findAllAudit(String domainUuid, List<LogAction> actions) throws BusinessException;
 
 }

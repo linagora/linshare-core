@@ -34,8 +34,10 @@
 package org.linagora.linshare.core.facade.webservice.user.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -43,6 +45,7 @@ import org.linagora.linshare.core.facade.webservice.user.JwtLongTimeFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.JwtLongTimeService;
 import org.linagora.linshare.mongo.entities.JwtLongTime;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 import com.google.common.base.Strings;
 
@@ -88,5 +91,11 @@ public class JwtLongTimeFacadeImpl extends UserGenericFacadeImp implements JwtLo
 			jwtLongTime = jwtLongTimeService.find(authUser, authUser, jwtLongTime.getUuid());
 		}
 		return jwtLongTimeService.delete(authUser, authUser, jwtLongTime);
+	}
+
+	@Override
+	public Set<AuditLogEntryUser> findAllAudit(List<LogAction> actions) throws BusinessException {
+		User authUser = checkAuthentication();
+		return jwtLongTimeService.findAllAudit(authUser, null, actions);
 	}
 }

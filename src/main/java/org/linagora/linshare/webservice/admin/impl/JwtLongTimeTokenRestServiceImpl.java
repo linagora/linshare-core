@@ -34,6 +34,7 @@
 package org.linagora.linshare.webservice.admin.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -45,9 +46,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.JwtLongTimeTokenFacade;
 import org.linagora.linshare.mongo.entities.JwtLongTime;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.admin.JwtLongTimeTokenRestService;
 
 import com.wordnik.swagger.annotations.Api;
@@ -110,10 +113,27 @@ public class JwtLongTimeTokenRestServiceImpl implements JwtLongTimeTokenRestServ
 					@ApiResponse(code = 500, message = "Internal server error.") })
 	public JwtLongTime delete(
 			@ApiParam(value = "JwtLongTime to delete.", required = true)
-					@QueryParam("token") JwtLongTime jwtLongTime,
+					JwtLongTime jwtLongTime,
 			@ApiParam(value = "token uuid, if null object is used", required = false)
 					@PathParam("uuid") String uuid) throws BusinessException {
 		return jwtLongTimeTokenFacade.delete(jwtLongTime, uuid);
+	}
+
+	@GET
+	@Path("/audit/{domainUuid}")
+	@ApiOperation(value = "Get all traces for a JWT long time token.", response = AuditLogEntryUser.class, responseContainer="Set")
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
+		@ApiResponse(code = 404, message = "The requested token has not been found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+		})
+	@Override
+	public Set<AuditLogEntryUser> findAllAudit(
+			@ApiParam(value = "The domain uuid.", required = true)
+				@PathParam("domainUuid") String domainUuid,
+			@ApiParam(value = "Filter by type of actions..", required = false)
+				@QueryParam("actions") List<LogAction> actions) {
+		return jwtLongTimeTokenFacade.findAllAudit(domainUuid, actions);
 	}
 
 }

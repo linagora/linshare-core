@@ -313,4 +313,14 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 		return auditMongoRepository.findAll(domainUuid, action, AuditLogEntryType.PUBLIC_KEY,
 				new Sort(Sort.Direction.DESC, CREATION_DATE));
 	}
+
+	@Override
+	public Set<AuditLogEntryUser> findAllAudit(Account authUser, String domainUuid, List<LogAction> actions) {
+		if (actions.isEmpty()) {
+			actions.add(LogAction.CREATE);
+			actions.add(LogAction.DELETE);
+		}
+		return userMongoRepository.findAll(authUser.getLsUuid(), domainUuid, actions, AuditLogEntryType.JWT_LONG_TIME_TOKEN,
+					new Sort(Sort.Direction.DESC, CREATION_DATE));
+	}
 }

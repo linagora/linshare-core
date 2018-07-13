@@ -34,9 +34,12 @@
 package org.linagora.linshare.webservice.userv2;
 
 import java.util.List;
+import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.JwtLongTime;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface JwtLongTimeRestService {
 
@@ -45,4 +48,6 @@ public interface JwtLongTimeRestService {
 	List<JwtLongTime> findAll() throws BusinessException;
 
 	JwtLongTime delete(JwtLongTime jwtLongTime, String uuid) throws BusinessException;
+
+	Set<AuditLogEntryUser> findAllAudit(List<LogAction> actions) throws BusinessException;
 }

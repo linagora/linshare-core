@@ -35,6 +35,7 @@
 package org.linagora.linshare.webservice.userv2.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -43,10 +44,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.JwtToken;
 import org.linagora.linshare.core.facade.webservice.user.JwtLongTimeFacade;
 import org.linagora.linshare.mongo.entities.JwtLongTime;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.userv2.JwtLongTimeRestService;
 
 import com.wordnik.swagger.annotations.Api;
@@ -103,9 +106,24 @@ public class JwtLongTimeRestServiceImpl implements JwtLongTimeRestService {
 					@ApiResponse(code = 500, message = "Internal server error.") })
 	public JwtLongTime delete(
 			@ApiParam(value = "JwtLongTime to delete.", required = true)
-					@QueryParam("token") JwtLongTime jwtLongTime,
+					JwtLongTime jwtLongTime,
 			@ApiParam(value = "token uuid, if null object is used", required = false)
 					@PathParam("uuid") String uuid) throws BusinessException {
 		return jwtLongTimeFacade.delete(jwtLongTime, uuid);
+	}
+
+	@GET
+	@Path("/audit")
+	@ApiOperation(value = "Get all traces for a JWT long time token.", response = AuditLogEntryUser.class, responseContainer="Set")
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
+		@ApiResponse(code = 404, message = "The requested token has not been found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+		})
+	@Override
+	public Set<AuditLogEntryUser> findAllAudit(
+			@ApiParam(value = "Filter by type of actions..", required = false)
+				@QueryParam("actions") List<LogAction> actions) {
+		return jwtLongTimeFacade.findAllAudit(actions);
 	}
 }
