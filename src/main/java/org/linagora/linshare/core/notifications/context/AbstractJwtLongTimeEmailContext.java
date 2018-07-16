@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018 to
+ * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,50 +31,65 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.core.notifications.context;
 
-package org.linagora.linshare.core.domain.constants;
+import java.util.Date;
 
-public enum MailActivationType {
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.MailActivationType;
+import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.mongo.entities.JwtLongTime;
 
-	FILE_WARN_OWNER_BEFORE_FILE_EXPIRY,
+public abstract class AbstractJwtLongTimeEmailContext extends EmailContext{
 
-	SHARE_NEW_SHARE_FOR_RECIPIENT,
-	SHARE_NEW_SHARE_ACKNOWLEDGEMENT_FOR_SENDER,
-	SHARE_FILE_DOWNLOAD_ANONYMOUS,
-	SHARE_FILE_DOWNLOAD_USERS,
-	SHARE_FILE_SHARE_DELETED,
-	SHARE_WARN_RECIPIENT_BEFORE_EXPIRY,
-	SHARE_WARN_UNDOWNLOADED_FILESHARES,
-	SHARE_WARN_SENDER_ABOUT_SHARE_EXPIRATION_WITHOUT_DOWNLOAD,
-	SHARE_WARN_RECIPIENT_ABOUT_EXPIRED_SHARE,
+	protected JwtLongTime jwtLongTime;
 
-	GUEST_ACCOUNT_NEW_CREATION,
-	GUEST_ACCOUNT_RESET_PASSWORD_LINK,
-	GUEST_WARN_GUEST_ABOUT_HIS_PASSWORD_RESET,
-	GUEST_WARN_OWNER_ABOUT_GUEST_EXPIRATION,
+	protected Account recipient;
 
-	UPLOAD_REQUEST_UPLOADED_FILE,
-	UPLOAD_REQUEST_UNAVAILABLE_SPACE,
-	UPLOAD_REQUEST_WARN_BEFORE_EXPIRY,
-	UPLOAD_REQUEST_WARN_EXPIRY,
-	UPLOAD_REQUEST_CLOSED_BY_RECIPIENT,
-	UPLOAD_REQUEST_FILE_DELETED_BY_RECIPIENT,
+	protected Account owner;
 
-	UPLOAD_REQUEST_ACTIVATED_FOR_RECIPIENT,
-	UPLOAD_REQUEST_ACTIVATED_FOR_OWNER,
-	UPLOAD_REQUEST_REMINDER,
-	UPLOAD_REQUEST_PASSWORD_RENEWAL,
-	UPLOAD_REQUEST_CREATED,
-	UPLOAD_REQUEST_CLOSED_BY_OWNER,
-	UPLOAD_REQUEST_RECIPIENT_REMOVED,
-	UPLOAD_REQUEST_UPDATED_SETTINGS,
-	UPLOAD_REQUEST_FILE_DELETED_BY_OWNER,
+	public AbstractJwtLongTimeEmailContext(Account creator,
+			Account actor,
+			JwtLongTime jwtLongTime) {
+		super(actor.getDomain(), true);
+		this.jwtLongTime = jwtLongTime;
+		this.language = actor.getExternalMailLocale();
+		this.recipient = actor;
+		this.owner = creator;
+	}
 
-	WORKGROUP_WARN_NEW_MEMBER,
-	WORKGROUP_WARN_UPDATED_MEMBER,
-	WORKGROUP_WARN_DELETED_MEMBER,
+	@Override
+	public abstract MailContentType getType();
 
-	ACCOUNT_OWNER_WARN_JWT_LONG_TIME_CREATED,
-	ACCOUNT_OWNER_WARN_JWT_LONG_TIME_DELETED;
+	@Override
+	public abstract MailActivationType getActivation();
+
+	@Override
+	public String getMailRcpt() {
+		return recipient.getMail();
+	}
+
+	@Override
+	public String getMailReplyTo() {
+		return recipient.getMail();
+	}
+
+	@Override
+	public void validateRequiredField() {
+		Validate.notNull(jwtLongTime, "Missing jwtLongTime");
+	}
+
+	public JwtLongTime getJwtLongTime() {
+		return jwtLongTime;
+	}
+
+	public Account getRecipient() {
+		return recipient;
+	}
+
+	public Account getOwner() {
+		return owner;
+	}
 
 }

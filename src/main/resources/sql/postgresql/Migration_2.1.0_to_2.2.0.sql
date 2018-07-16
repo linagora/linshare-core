@@ -390,8 +390,17 @@ ALTER TABLE functionality ALTER COLUMN creation_date SET NOT NULL;
 ALTER TABLE functionality ALTER COLUMN modification_date SET NOT NULL;
 ALTER TABLE version ALTER COLUMN creation_date SET NOT NULL;
 
--- Mail Activation
+-- Mail policy
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (284, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (285, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (286, false, false, 2, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (287, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (288, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (289, false, false, 2, true);
 
+-- Mail Activation
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable) VALUES(33, false, 'ACCOUNT_OWNER_WARN_JWT_LONG_TIME_CREATED', 284, 285, 286, 1, true);
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable) VALUES(34, false, 'ACCOUNT_OWNER_WARN_JWT_LONG_TIME_DELETED', 287, 288, 289, 1, true);
 -- End MailActivation
 
 -- Mail Layout
@@ -399,6 +408,115 @@ ALTER TABLE version ALTER COLUMN creation_date SET NOT NULL;
 -- End mail layout
 
 --Mail Content
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,32,32,'','',NOW(),true,'','dbf022d8-8389-11e8-b804-d32666b16d41',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,33,33,'','',NOW(),true,'','dbf1b49a-8389-11e8-a006-77d9edee84a4',true);
+
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (32, 0, 32, 1, 32, 'dbf0aaaa-8389-11e8-8743-9b6e3afe9f53', true);
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (132,1,1,32,32,true,'dbf12958-8389-11e8-964e-6b7eef81da86');
+INSERT INTO mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (33, 0, 33, 1, 33, 'dbf1f8ba-8389-11e8-83c9-0b5ecc4849b0', true);
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (133,1,1,33,33,true,'dbf23f1e-8389-11e8-b430-a3d498f96a4f');
+
+UPDATE mail_content SET subject='[(#{subject})]',body='<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+   <head data-th-replace="layout :: header"></head>
+   <body>
+      <div
+         th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+         <!--/*  Upper main-content */-->
+         <section id="main-content">
+            <!--/* main-content container */-->
+            <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+               <div id="section-content">
+                  <!--/* Greetings for external or internal user */-->
+                  <div>
+                     <th:block data-th-replace="layout :: greetings(${recipient.firstName})"/>
+                  </div>
+                  <!--/* End of Greetings for external or internal recipient */-->
+                  <!--/* Main email  message content*/-->
+                  <p>
+                     <span data-th-utext="#{mainMsg(${owner.firstName},${owner.lastName})}">
+                 Peter WILSON has created a new permanent access token for your account
+                     </span>
+                  </p>
+                  <!--/* End of Main email message content*/-->
+               </div>
+               <!--/* End of section-content*/-->
+            </div>
+            <!--/* End of main-content container */-->
+         </section>
+         <!--/* End of upper main-content*/-->
+         <!--/* Secondary content for  bottom email section */-->
+         <section id="secondary-content">
+           <th:block data-th-replace="layout :: infoStandardArea(#{tokenLabel},${label})"/>
+           <th:block data-th-replace="layout :: infoDateArea(#{tokenCreationDate},${creationDate})"/>
+           <div data-th-if="${!#strings.isEmpty(description)}">
+             <th:block data-th-replace="layout :: infoStandardArea(#{tokenDescription},${description})"/>
+           </div>
+         </section>
+         <!--/* End of Secondary content for bottom email section */-->
+      </div>
+   </body>
+</html>',messages_french='subject = Création d''''un jeton d''''accès permanent
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> a créé un jeton d''''accès permanent pour votre compte.
+tokenCreationDate = Date de création
+tokenLabel = Nom
+tokenDescription = Description',messages_english='subject = Creation of a permanent authentication token
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> has created a permanent access token for your account.
+tokenCreationDate = Creation date
+tokenLabel = Name
+tokenDescription = Description' WHERE id=32;
+
+UPDATE mail_content SET subject='[(#{subject})]',body='<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+   <head data-th-replace="layout :: header"></head>
+   <body>
+      <div
+         th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+         <!--/*  Upper main-content */-->
+         <section id="main-content">
+            <!--/* main-content container */-->
+            <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+               <div id="section-content">
+                  <!--/* Greetings for external or internal user */-->
+                  <div>
+                     <th:block data-th-replace="layout :: greetings(${recipient.firstName})"/>
+                  </div>
+                  <!--/* End of Greetings for external or internal recipient */-->
+                  <!--/* Main email  message content*/-->
+                  <p>
+                     <span data-th-utext="#{mainMsg(${owner.firstName},${owner.lastName})}">
+                 Peter WILSON has deleted a permanent access token for your account
+                     </span>
+                  </p>
+                  <!--/* End of Main email message content*/-->
+               </div>
+               <!--/* End of section-content*/-->
+            </div>
+            <!--/* End of main-content container */-->
+         </section>
+         <!--/* End of upper main-content*/-->
+         <!--/* Secondary content for  bottom email section */-->
+         <section id="secondary-content">
+           <th:block data-th-replace="layout :: infoStandardArea(#{tokenLabel},${label})"/>
+           <th:block data-th-replace="layout :: infoDateArea(#{tokenCreationDate},${creationDate})"/>
+           <div data-th-if="${!#strings.isEmpty(description)}">
+             <th:block data-th-replace="layout :: infoStandardArea(#{tokenDescription},${description})"/>
+           </div>
+         </section>
+         <!--/* End of Secondary content for bottom email section */-->
+      </div>
+   </body>
+</html>',messages_french='subject = Suppression d''''un jeton d''''accès permanent
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> a supprimé un jeton d''''accès permanent pour votre compte.
+tokenCreationDate = Date de création
+tokenLabel = Nom
+tokenDescription = Description
+tokenIdentifier = Identifiant',messages_english='subject = Deletion of a permanent authentication token
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> has deleted a permanent access token for your account.
+tokenCreationDate = Creation date
+tokenLabel = Name
+tokenDescription = Description' WHERE id=33;
+
 UPDATE mail_content SET body = '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head data-th-replace="layout :: header"></head>

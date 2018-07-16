@@ -76,7 +76,7 @@ public class JwtLongTimeTokenFacadeImpl extends AdminGenericFacadeImpl implement
 	public JwtLongTime create(String userUuid, String label, String description) throws BusinessException {
 		Validate.notEmpty(userUuid, "userUuid must be set");
 		Validate.notEmpty(label, "label must be set");
-		Account authUser = checkAuthentication(Role.SUPERADMIN);
+		Account authUser = checkAuthentication(Role.ADMIN);
 		Account actor = accountService.findByLsUuid(userUuid);
 		Validate.notNull(actor);
 		if (!permissionService.isAdminforThisDomain(authUser, actor.getDomain())) {
@@ -89,14 +89,14 @@ public class JwtLongTimeTokenFacadeImpl extends AdminGenericFacadeImpl implement
 	@Override
 	public List<JwtLongTime> findAll(String domainUuid) throws BusinessException {
 		Validate.notEmpty(domainUuid, "domainUuid must be set");
-		Account authUser = checkAuthentication(Role.SUPERADMIN);
+		Account authUser = checkAuthentication(Role.ADMIN);
 		AbstractDomain domain = abstractDomainService.findById(domainUuid);
 		return jwtLongTimeService.findAllByDomain(authUser, domain);
 	}
 
 	@Override
 	public JwtLongTime delete(JwtLongTime jwtLongTime, String uuid) throws BusinessException {
-		Account authUser = checkAuthentication(Role.SUPERADMIN);
+		Account authUser = checkAuthentication(Role.ADMIN);
 		if (!Strings.isNullOrEmpty(uuid)) {
 			jwtLongTime = jwtLongTimeService.find(authUser, authUser, uuid);
 		} else {
@@ -110,7 +110,7 @@ public class JwtLongTimeTokenFacadeImpl extends AdminGenericFacadeImpl implement
 	@Override
 	public Set<AuditLogEntryUser> findAllAudit(String domainUuid, List<LogAction> actions) throws BusinessException {
 		Validate.notEmpty(domainUuid, "Domain uuid must be set");
-		User authUser = checkAuthentication(Role.SUPERADMIN);
+		User authUser = checkAuthentication(Role.ADMIN);
 		return jwtLongTimeService.findAllAudit(authUser, domainUuid, actions);
 	}
 

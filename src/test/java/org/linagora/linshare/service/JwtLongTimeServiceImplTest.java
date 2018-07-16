@@ -38,6 +38,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
@@ -47,6 +48,7 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.JwtLongTimeService;
 import org.linagora.linshare.core.service.impl.JwtServiceImpl;
 import org.linagora.linshare.mongo.entities.JwtLongTime;
+import org.linagora.linshare.utils.LinShareWiser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -74,6 +76,8 @@ public class JwtLongTimeServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	@Autowired
 	private JwtLongTimeService jwtLongTimeService;
 
+	private LinShareWiser wiser;
+
 	@Autowired
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
@@ -86,15 +90,28 @@ public class JwtLongTimeServiceImplTest extends AbstractTransactionalJUnit4Sprin
 
 	private Account root;
 
+	public JwtLongTimeServiceImplTest() {
+		super();
+		wiser = new LinShareWiser(2525);
+	}
+
 	@Before
 	public void setUp() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
+		wiser.start();
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		john = datas.getUser1();
 		jane = datas.getUser2();
 		root = datas.getRoot();
 		logger.debug(LinShareTestConstants.END_SETUP);
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
+		wiser.stop();
+		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
 	@Test
@@ -155,6 +172,15 @@ public class JwtLongTimeServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		JwtLongTime token = jwtLongTimeService.create(john, john, "MyToken", "My description");
 		JwtLongTime deleted = jwtLongTimeService.deleteByAdmin(root, token);
 		assertEquals(token.getUuid(), deleted.getUuid());
+		wiser.checkGeneratedMessages();
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void sendMailOnCreateByAdminTest() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		jwtLongTimeService.create(root, john, "MyToken", "My description");
+		wiser.checkGeneratedMessages();
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 }

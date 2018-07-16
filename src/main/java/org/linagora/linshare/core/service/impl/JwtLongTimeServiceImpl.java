@@ -45,9 +45,14 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.JwtToken;
+import org.linagora.linshare.core.notifications.context.EmailContext;
+import org.linagora.linshare.core.notifications.context.JwtLongTimeCreatedEmailContext;
+import org.linagora.linshare.core.notifications.context.JwtLongTimeDeletedEmailContext;
+import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.JwtLongTimeResourceAccessControl;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
@@ -55,6 +60,7 @@ import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.JwtLongTimeService;
 import org.linagora.linshare.core.service.JwtService;
 import org.linagora.linshare.core.service.LogEntryService;
+import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.mongo.entities.JwtLongTime;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.JwtLongTimeAuditLogEntry;
@@ -68,15 +74,19 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, JwtLongT
 
 	protected String issuer;
 
+	protected NotifierService notifierService;
+
+	protected MailBuildingService mailBuildingService;
+
 	protected JwtService jwtService;
+
+	protected AccountRepository<Account> accountRepository;
 
 	protected JwtLongTimeBusinessService jwtLongTimeBusinessService;
 
 	private DomainPermissionBusinessService permissionService;
 
 	private AbstractDomainService abstractDomainService;
-
-	private AccountRepository<Account> accountRepository;
 
 	private LogEntryService logEntryService;
 
@@ -85,6 +95,8 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, JwtLongT
 	public JwtLongTimeServiceImpl(
 			String issuer,
 			JwtLongTimeBusinessService jwtLongTimeBusinessService,
+			NotifierService notifierService,
+			MailBuildingService mailBuildingService,
 			JwtService jwtService,
 			JwtLongTimeResourceAccessControl rac,
 			DomainPermissionBusinessService permissionSerivce,
@@ -101,6 +113,8 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, JwtLongT
 		this.accountRepository = accountRepository;
 		this.logEntryService = logEntryService;
 		this.auditLogEntryService = auditLogEntryService;
+		this.notifierService = notifierService;
+		this.mailBuildingService = mailBuildingService;
 	}
 
 	@Override
@@ -119,6 +133,11 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, JwtLongT
 		AuditLogEntryUser createLog = new JwtLongTimeAuditLogEntry(authUser, actor, LogAction.CREATE,
 				AuditLogEntryType.JWT_LONG_TIME_TOKEN, jwtLongTime);
 		logEntryService.insert(createLog);
+		if (authUser.hasAdminRole() || authUser.hasSuperAdminRole()) {
+			EmailContext context = new JwtLongTimeCreatedEmailContext(authUser, actor, jwtLongTime);
+			MailContainerWithRecipient mail = mailBuildingService.build(context);
+			notifierService.sendNotification(mail);
+		}
 		jwtLongTime.setJwtToken(new JwtToken(token));
 		return jwtLongTime;
 	}
@@ -182,6 +201,10 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, JwtLongT
 		AuditLogEntryUser createLog = new JwtLongTimeAuditLogEntry(authUser, actor, LogAction.DELETE,
 				AuditLogEntryType.JWT_LONG_TIME_TOKEN, jwtLongTime);
 		logEntryService.insert(createLog);
+		EmailContext context = new JwtLongTimeDeletedEmailContext(authUser, actor, jwtToken);
+		MailContainerWithRecipient mail = mailBuildingService.build(context);
+		jwtLongTimeBusinessService.deleteToken(jwtLongTime);
+		notifierService.sendNotification(mail);
 		return jwtToken;
 	}
 
