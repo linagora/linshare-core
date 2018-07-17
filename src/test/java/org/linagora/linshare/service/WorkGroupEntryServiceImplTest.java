@@ -41,6 +41,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
@@ -49,7 +50,10 @@ import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.service.InitMongoService;
+import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,6 +93,12 @@ public class WorkGroupEntryServiceImplTest extends AbstractTransactionalJUnit4Sp
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
 
+	@Autowired
+	private SharedSpaceNodeService sharedSpaceNodeService;
+
+	@Autowired
+	private InitMongoService init;
+
 	private List<WorkGroup> workGroups;
 
 	private User jane;
@@ -105,6 +115,7 @@ public class WorkGroupEntryServiceImplTest extends AbstractTransactionalJUnit4Sp
 		john = datas.getUser1();
 		jane = datas.getUser2();
 		root= datas.getRoot();
+		init.init();
 		this.createAllThreads();
 		workGroups = threadService.findAll(root, root);
 		logger.debug(LinShareTestConstants.END_SETUP);
@@ -129,9 +140,18 @@ public class WorkGroupEntryServiceImplTest extends AbstractTransactionalJUnit4Sp
 	 */
 
 	private void createAllThreads() throws BusinessException {
-		threadService.create(john, john, WorkGroupEntryServiceImplTest.THREAD_2);
-		threadService.create(jane, jane, WorkGroupEntryServiceImplTest.THREAD_1);
+		WorkGroup thread2 = threadService.create(john, john, WorkGroupEntryServiceImplTest.THREAD_2);
+		createSharedSpaceNode(john, thread2);
+		WorkGroup thread1 = threadService.create(jane, jane, WorkGroupEntryServiceImplTest.THREAD_1);
+		createSharedSpaceNode(jane, thread1);
 	}
+
+	private void createSharedSpaceNode(User user, WorkGroup workGroup) {
+		SharedSpaceNode node = new SharedSpaceNode(workGroup.getName(), null, NodeType.WORK_GROUP);
+		node.setUuid(workGroup.getLsUuid());
+		sharedSpaceNodeService.create(user, user, node);
+	}
+
 	private void deleteAllThreads() throws BusinessException {
 		for (WorkGroup workGroup : workGroups) {
 			for (WorkgroupMember m : workGroup.getMyMembers()) {
@@ -151,7 +171,7 @@ public class WorkGroupEntryServiceImplTest extends AbstractTransactionalJUnit4Sp
 		int count;
 		Assert.assertEquals(workGroups.size(), 2);
 		for (count = workGroups.size(); count < 10; ++count) {
-			threadService.create(john, john, WorkGroupEntryServiceImplTest.THREAD_1 + "_" + count);
+			createSharedSpaceNode(john, threadService.create(john, john, WorkGroupEntryServiceImplTest.THREAD_1 + "_" + count));
 		}
 		User root = userRepository.findByMailAndDomain(LinShareConstants.rootDomainIdentifier, "root@localhost.localdomain");
 		workGroups = threadService.findAll(root, root);

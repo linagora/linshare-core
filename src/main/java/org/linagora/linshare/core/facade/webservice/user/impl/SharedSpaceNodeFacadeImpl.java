@@ -47,7 +47,9 @@ public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements Shar
 
 	protected SharedSpaceNodeService sharedSpaceNodeService;
 
-	public SharedSpaceNodeFacadeImpl(AccountService accountService, SharedSpaceNodeService sharedSpaceNodeService) {
+
+	public SharedSpaceNodeFacadeImpl(AccountService accountService,
+			SharedSpaceNodeService sharedSpaceNodeService) {
 		super(accountService);
 		this.sharedSpaceNodeService = sharedSpaceNodeService;
 	}

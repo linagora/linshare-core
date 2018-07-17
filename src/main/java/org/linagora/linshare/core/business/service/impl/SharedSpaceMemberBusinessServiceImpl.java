@@ -35,6 +35,9 @@ package org.linagora.linshare.core.business.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
@@ -94,6 +97,13 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	@Override
 	public List<SharedSpaceMember> findBySharedSpaceNodeUuid(String shareSpaceNodeUuid) {
 		return sharedSpaceMemberMongoRepository.findByShareSpaceNodeUuid(shareSpaceNodeUuid);
+	}
+
+	@Override
+	public List<String> findMembersUuidBySharedSpaceNodeUuid(String shareSpaceNodeUuid) {
+		List<SharedSpaceMember> members = sharedSpaceMemberMongoRepository.findByShareSpaceNodeUuid(shareSpaceNodeUuid);
+		Stream<GenericLightEntity> accounts = members.stream().map(SharedSpaceMember::getAccount);
+		return accounts.map(GenericLightEntity::getUuid).collect(Collectors.toList());
 	}
 
 	@Override

@@ -44,9 +44,9 @@ import org.linagora.linshare.core.rac.SharedSpaceNodeResourceAccessControl;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
-import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
+import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
 public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, SharedSpaceNode>
 		implements SharedSpaceNodeService {
@@ -78,7 +78,6 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		checkReadPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, found);
 		return found;
 	}
-	
 
 	@Override
 	public SharedSpaceNode create(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException {
@@ -88,8 +87,10 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
 		SharedSpaceNode created = sharedSpaceNodeBusinessService.create(node);
 		SharedSpaceRole role = ssRoleService.getAdmin(authUser, actor);
-		SharedSpaceMember member = sharedSpaceMemberService.create(authUser, actor, authUser.getLsUuid(),
-				role.getUuid(), created.getUuid());
+		sharedSpaceMemberService.create(authUser, authUser,
+				new GenericLightEntity(node.getUuid(), node.getName()),
+				new GenericLightEntity(role.getUuid(), role.getName()),
+				new GenericLightEntity(actor.getLsUuid(), actor.getFullName()));
 		return created;
 	}
 

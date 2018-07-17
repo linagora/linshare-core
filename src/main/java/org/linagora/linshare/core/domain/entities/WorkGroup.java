@@ -37,6 +37,7 @@ import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
+import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 
 public class WorkGroup extends Account {
 
@@ -60,6 +61,12 @@ public class WorkGroup extends Account {
 		this.locale = owner.locale;
 		this.cmisLocale=owner.cmisLocale;
 		this.externalMailLocale = owner.externalMailLocale;
+	}
+
+	public WorkGroup(SharedSpaceNode sharedSpaceNode) {
+		super();
+		this.name = sharedSpaceNode.getName();
+		this.lsUuid = sharedSpaceNode.getUuid();
 	}
 
 	@Override

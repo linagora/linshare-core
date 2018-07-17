@@ -63,9 +63,11 @@ import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.ShareEntryService;
+import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.core.utils.FileAndMetaData;
+import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
@@ -87,13 +89,16 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 
 	protected final ShareEntryService shareEntryService;
 
+	protected final SharedSpaceNodeService sharedSpaceNodeService;
+
 	public WorkGroupNodeFacadeImpl(AccountService accountService,
 			WorkGroupNodeService service,
 			ThreadService threadService,
 			FunctionalityReadOnlyService functionalityService,
 			DocumentEntryService documentEntryService,
 			ShareEntryService shareEntryService,
-			AuditLogEntryService auditLogEntryService) {
+			AuditLogEntryService auditLogEntryService,
+			SharedSpaceNodeService sharedSpaceNodeService) {
 		super(accountService);
 		this.service = service;
 		this.threadService = threadService;
@@ -101,6 +106,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		this.shareEntryService = shareEntryService;
 		this.functionalityService = functionalityService;
 		this.auditLogEntryService = auditLogEntryService;
+		this.sharedSpaceNodeService = sharedSpaceNodeService;
 	}
 
 	@Override
@@ -120,7 +126,8 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
-		WorkGroup workGroup = threadService.find(authUser, actor, workGroupUuid);
+		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
+		WorkGroup workGroup = new WorkGroup(sharedSpaceNode);
 		return service.findAll(authUser, actor, workGroup, parentNodeUuid, flatDocumentMode, nodeType);
 	}
 
@@ -130,8 +137,8 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
 		Validate.notEmpty(workGroupNodeUuid, "Missing required workGroup folder uuid");
 		User authUser = checkAuthentication();
-		User actor = getActor(authUser, actorUuid);
-		WorkGroup workGroup = threadService.find(authUser, actor, workGroupUuid);
+		User actor = getActor(authUser, actorUuid);SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
+		WorkGroup workGroup = new WorkGroup(sharedSpaceNode);
 		return service.find(authUser, actor, workGroup, workGroupNodeUuid, withTree);
 	}
 
@@ -142,7 +149,8 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		Validate.notNull(workGroupNode.getName(), "Missing default name for the folder");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
-		WorkGroup workGroup = threadService.find(authUser, actor, workGroupUuid);
+		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
+		WorkGroup workGroup = new WorkGroup(sharedSpaceNode);
 		return service.create(authUser, actor, workGroup, workGroupNode, strict, dryRun);
 	}
 
@@ -154,7 +162,8 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		Validate.notNull(tempFile, "Missing required input temp file");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
-		WorkGroup workGroup = threadService.find(authUser, actor, workGroupUuid);
+		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
+		WorkGroup workGroup = new WorkGroup(sharedSpaceNode);
 		WorkGroupNode node = service.create(authUser, actor, workGroup, tempFile, fileName, parentNodeUuid, strict);
 		return node;
 	}
@@ -169,6 +178,8 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		String fromResourceUuid = copy.getUuid();
 		Validate.notEmpty(fromResourceUuid, "Missing entry uuid to copy from");
 		Validate.notEmpty(workGroupUuid, "Missing workGroup uuid to copy into");
+		SharedSpaceNode toSharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
+		//The workgroup here is used for the OperationHistory
 		WorkGroup toWorkGroup = threadService.find(authUser, actor, workGroupUuid);
 		if (TargetKind.RECEIVED_SHARE.equals(resourceKind)) {
 			// if the current user do have enough space, there is side effect on audit.
@@ -189,6 +200,8 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 			return Lists.newArrayList(node);
 		} else if (TargetKind.SHARED_SPACE.equals(resourceKind)) {
 			String fromWorkGroupUuid = service.findWorkGroupUuid(authUser, actor, fromResourceUuid);
+			SharedSpaceNode fromSharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, fromWorkGroupUuid);
+			//The workgroup here is used for the OperationHistory
 			WorkGroup fromWorkGroup = threadService.find(authUser, actor, fromWorkGroupUuid);
 			WorkGroupNode node = service.copy(authUser, actor, fromWorkGroup, fromResourceUuid, toWorkGroup, toParentNodeUuid);
 			return Lists.newArrayList(node);
@@ -206,7 +219,8 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		Validate.notEmpty(workGroupNode.getName(), "Missing required name");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
-		WorkGroup workGroup = threadService.find(authUser, actor, workGroupUuid);
+		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
+		WorkGroup workGroup = new WorkGroup(sharedSpaceNode);
 		return service.update(authUser, actor, workGroup, workGroupNode);
 	}
 
@@ -216,6 +230,8 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
+		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
+		//The workgroup here is used for the OperationHistory
 		WorkGroup workGroup = threadService.find(authUser, actor, workGroupUuid);
 		return service.delete(authUser, actor, workGroup, workGroupNodeUuid);
 	}
@@ -228,6 +244,8 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		Validate.notEmpty(workGroupNode.getUuid(), "Missing required workGroup folder uuid");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
+		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
+		//The workgroup here is used for the OperationHistory
 		WorkGroup workGroup = threadService.find(authUser, actor, workGroupUuid);
 		return service.delete(authUser, actor, workGroup, workGroupNode.getUuid());
 	}
@@ -239,7 +257,8 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		Validate.notEmpty(workGroupNodeUuid, "Missing required workGroup node uuid");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
-		WorkGroup workGroup = threadService.find(authUser, actor, workGroupUuid);
+		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
+		WorkGroup workGroup = new WorkGroup(sharedSpaceNode);
 		FileAndMetaData data = service.download(authUser, actor, workGroup, workGroupNodeUuid);
 		ResponseBuilder builder = DocumentStreamReponseBuilder.getDocumentResponseBuilder(data);
 		return builder.build();
@@ -255,7 +274,8 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		Validate.notEmpty(workGroupNodeUuid, "Missing required workGroup node uuid");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
-		WorkGroup workGroup = threadService.find(authUser, actor, workGroupUuid);
+		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
+		WorkGroup workGroup = new WorkGroup(sharedSpaceNode);
 		FileAndMetaData data = service.thumbnail(authUser, actor, workGroup, workGroupNodeUuid, thumbnailType);
 		ResponseBuilder builder = DocumentStreamReponseBuilder
 				.getThumbnailResponseBuilder(data, base64, thumbnailType);
@@ -267,7 +287,8 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 			List<LogAction> actions, List<AuditLogEntryType> types, String beginDate, String endDate) {
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
-		WorkGroup workGroup = threadService.find(authUser, actor, workGroupUuid);
+		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
+		WorkGroup workGroup = new WorkGroup(sharedSpaceNode);
 		WorkGroupNode workGroupNode = service.find(authUser, actor, workGroup, workGroupNodeUuid, false);
 		return auditLogEntryService.findAll(authUser, actor, workGroup, workGroupNode, actions, types, beginDate,
 				endDate);

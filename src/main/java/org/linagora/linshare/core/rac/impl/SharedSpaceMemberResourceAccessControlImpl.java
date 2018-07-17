@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.rac.impl;
 
+import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.rac.SharedSpaceMemberResourceAccessControl;
@@ -43,8 +44,12 @@ public class SharedSpaceMemberResourceAccessControlImpl
 		extends AbstractResourceAccessControlImpl<Account, Account, SharedSpaceMember>
 		implements SharedSpaceMemberResourceAccessControl {
 
-	public SharedSpaceMemberResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService) {
+	private final SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService;
+
+	public SharedSpaceMemberResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService,
+			SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService) {
 		super(functionalityService);
+		this.sharedSpaceMemberBusinessService = sharedSpaceMemberBusinessService;
 	}
 
 	@Override
@@ -68,6 +73,12 @@ public class SharedSpaceMemberResourceAccessControlImpl
 
 	@Override
 	protected boolean hasCreatePermission(Account authUser, Account actor, SharedSpaceMember entry, Object... opt) {
+		if (!checkAccountNotInNode(entry.getAccount().getUuid(), entry.getNode().getUuid())) {
+			logger.error(
+					String.format("The account with the UUID : %s is already a member of the node with the uuid : %s",
+							entry.getAccount().getUuid(), entry.getNode().getUuid()));
+			return false;
+		}
 		return defaultPermissionCheck(authUser, actor, entry,
 				TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_CREATE, false);
 	}
@@ -94,4 +105,7 @@ public class SharedSpaceMemberResourceAccessControlImpl
 		return entry.toString();
 	}
 
+	private boolean checkAccountNotInNode(String possibleMemberUuid, String nodeUuid) {
+		return sharedSpaceMemberBusinessService.findByMemberAndSharedSpaceNode(possibleMemberUuid, nodeUuid) == null;
+	}
 }

@@ -39,13 +39,14 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
 public interface SharedSpaceMemberService {
 
 	SharedSpaceMember find(Account authUser, Account actor, String uuid) throws BusinessException;
 
-	SharedSpaceMember create(Account authUser, Account actor, String accountUuid, String roleUuid, String nodeUuid)
-			throws BusinessException;
+	SharedSpaceMember create(Account authUser, Account actor, GenericLightEntity nodeToPersist,
+			GenericLightEntity roleToPersist, GenericLightEntity accountLight) throws BusinessException;
 
 	SharedSpaceMember findMember(Account authUser, Account actor, Account possibleMember,
 			SharedSpaceNode sharedSpaceNode) throws BusinessException;
@@ -54,10 +55,12 @@ public interface SharedSpaceMemberService {
 
 	SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate);
 
-	SharedSpaceMember updateRole(Account authUser, Account actor, String sharedSpaceMemberUuid, String roleUuid);
+	SharedSpaceMember updateRole(Account authUser, Account actor, String sharedSpaceMemberUuid,
+			GenericLightEntity newRole);
 
 	List<SharedSpaceMember> findAll(Account authUser, Account actor, String shareSpaceNodeUuid)
 			throws BusinessException;
 
 	List<SharedSpaceMember> deleteAllMembers(Account authUser, Account actor, String sharedSpaceNodeUuid);
+
 }

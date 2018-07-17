@@ -96,6 +96,7 @@ public class SharedSpaceNodeRestServiceImpl implements SharedSpaceNodeRestServic
 
 		return sharedSpaceNodeFacade.create(actorUuid, node);
 	}
+
 	@Path("/{uuid : .*}")
 	@DELETE
 	@ApiOperation(value = "Delete a shared space node.", response = SharedSpaceNode.class)

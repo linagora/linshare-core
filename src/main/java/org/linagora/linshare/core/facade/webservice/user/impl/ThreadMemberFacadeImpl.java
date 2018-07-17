@@ -44,12 +44,14 @@ import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupMemberDt
 import org.linagora.linshare.core.facade.webservice.user.WorkGroupMemberFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
+import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
+import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
 import com.google.common.collect.Lists;
 
@@ -64,16 +66,20 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 
 	protected final SharedSpaceRoleService ssRoleService;
 
+	protected final SharedSpaceNodeService sharedSpaceNodeService;
+
 	public ThreadMemberFacadeImpl(ThreadService threadService,
 			AccountService accountService,
 			UserService userService,
 			SharedSpaceMemberService ssMemberService,
-			SharedSpaceRoleService ssRoleService) {
+			SharedSpaceRoleService ssRoleService,
+			SharedSpaceNodeService sharedSpaceNodeService) {
 		super(accountService);
 		this.threadService = threadService;
 		this.userService = userService;
 		this.ssMemberService = ssMemberService;
 		this.ssRoleService = ssRoleService;
+		this.sharedSpaceNodeService = sharedSpaceNodeService;
 	}
 
 	@Override
@@ -101,20 +107,23 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public WorkGroupMemberDto create(String threadUuid, String domainId,
-			String userMail, boolean readOnly, boolean admin)
-			throws BusinessException {
+	public WorkGroupMemberDto create(String threadUuid, String domainId, String userMail, boolean readOnly,
+			boolean admin) throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(domainId, "Missing required domain id");
 		Validate.notEmpty(userMail, "Missing required mail");
 		User authUser = checkAuthentication();
 		User user = userService.findOrCreateUser(userMail, domainId);
 		WorkGroup workGroup = threadService.find(authUser, authUser, threadUuid);
-		WorkgroupMember createdWorkGroupMember = threadService.addMember(authUser, authUser,
-				workGroup, user, admin, !readOnly);
+		WorkgroupMember createdWorkGroupMember = threadService.addMember(authUser, authUser, workGroup, user, admin,
+				!readOnly);
 		// TODO Retrieve the role from the restService once the front will pass the info
-		SharedSpaceRole readerRole = ssRoleService.findByName(authUser, authUser, "CONTRIBUTOR");
-		ssMemberService.create(authUser, authUser, user.getLsUuid(), readerRole.getUuid(), threadUuid);
+		SharedSpaceNode foundSharedSpaceNode = sharedSpaceNodeService.find(authUser, authUser, threadUuid);
+		SharedSpaceRole defaultRole = ssRoleService.findByName(authUser, authUser, "CONTRIBUTOR");
+		ssMemberService.create(authUser, authUser,
+				new GenericLightEntity(foundSharedSpaceNode.getUuid(), foundSharedSpaceNode.getName()),
+				new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()),
+				new GenericLightEntity(user.getLsUuid(), user.getFullName()));
 		return new WorkGroupMemberDto(createdWorkGroupMember);
 	}
 

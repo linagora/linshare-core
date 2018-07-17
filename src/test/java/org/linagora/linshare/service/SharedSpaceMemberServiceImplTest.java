@@ -93,8 +93,6 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 
 	private User jane;
 
-	private SharedSpaceNode node;
-
 	private GenericLightEntity nodeToPersist;
 
 	private LoadingServiceTestDatas datas;
@@ -127,7 +125,7 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 		roleToPersist = new GenericLightEntity(role.getUuid(), role.getName());
 		Validate.notNull(role, "role must be set");
 		SharedSpaceNode node0 = new SharedSpaceNode("nodeTest", "parentuuidTest", NodeType.DRIVE);
-		node = nodeBusinessService.create(node0);
+		nodeBusinessService.create(node0);
 		nodeToPersist = new GenericLightEntity(node0.getUuid(), node0.getUuid());
 		jane = datas.getUser2();
 		account = new SharedSpaceAccount(jane);
@@ -142,44 +140,37 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 	}
 
 	public void testFind() {
-		SharedSpaceMember toCreate = service.create(authUser, authUser, account.getUuid(), role.getUuid(),
-				node.getUuid());
+		SharedSpaceMember toCreate = service.create(authUser, authUser, nodeToPersist, roleToPersist, accountToPersist);
 		SharedSpaceMember tofound = service.find(authUser, authUser, toCreate.getUuid());
 		Assert.assertEquals(toCreate.getUuid(), tofound.getUuid());
 	}
 
 	@Test
 	public void testCreate() {
-		SharedSpaceMember member = new SharedSpaceMember(nodeToPersist, roleToPersist, accountToPersist);
-		SharedSpaceMember memberToCreate = service.create(authUser, authUser, member.getAccount().getUuid(),
-				member.getRole().getUuid(), member.getNode().getUuid());
+		new SharedSpaceMember(nodeToPersist, roleToPersist, accountToPersist);
+		SharedSpaceMember memberToCreate = service.create(authUser, authUser, nodeToPersist, roleToPersist, accountToPersist);
 		Assert.assertNotNull(memberToCreate);
 	}
 
 	@Test
 	public void testAvoidDuplicatesMembers() {
-		SharedSpaceMember member = new SharedSpaceMember(nodeToPersist, roleToPersist, accountToPersist);
-		SharedSpaceMember memberToCreate = service.create(authUser, authUser, member.getAccount().getUuid(),
-				member.getRole().getUuid(), member.getNode().getUuid());
+		SharedSpaceMember memberToCreate = service.create(authUser, authUser, nodeToPersist, roleToPersist, accountToPersist);
 		Assert.assertEquals("The account referenced in this member is not authUser's",
 				memberToCreate.getAccount().getUuid(), jane.getLsUuid());
 		try {
-			service.create(authUser, authUser, member.getAccount().getUuid(), member.getRole().getUuid(),
-					member.getNode().getUuid());
+			service.create(authUser, authUser, nodeToPersist, roleToPersist, accountToPersist);
 			Assert.assertTrue(
 					"An exception should be thrown to prevent the creation of a member with same accountuuid and nodeuuid",
 					false);
 		} catch (BusinessException e) {
 			Assert.assertEquals("The thrown error code is not the one of an already exist ShareSpaceMember",
-					BusinessErrorCode.SHARED_SPACE_MEMBER_ALREADY_EXISTS, e.getErrorCode());
+					BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN, e.getErrorCode());
 		}
 	}
 
 	@Test
 	public void testDelete() {
-		SharedSpaceMember member = new SharedSpaceMember(nodeToPersist, roleToPersist, accountToPersist);
-		SharedSpaceMember memberToCreate = service.create(authUser, authUser, member.getAccount().getUuid(),
-				member.getRole().getUuid(), member.getNode().getUuid());
+		SharedSpaceMember memberToCreate = service.create(authUser, authUser, nodeToPersist, roleToPersist, accountToPersist);
 		Assert.assertEquals("The account referenced in this member is not authUser's",
 				memberToCreate.getAccount().getUuid(), jane.getLsUuid());
 		SharedSpaceMember deletedMember = service.delete(authUser, authUser, memberToCreate);
@@ -195,13 +186,8 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 
 	@Test
 	public void testDeleteAll() {
-		SharedSpaceMember member = new SharedSpaceMember(nodeToPersist, roleToPersist, accountToPersist);
-		SharedSpaceMember member2 = new SharedSpaceMember(nodeToPersist, roleToPersist,
-				new GenericLightEntity(authUser.getLsUuid(), authUser.getFullName()));
-		service.create(authUser, authUser, member.getAccount().getUuid(), member.getRole().getUuid(),
-				member.getNode().getUuid());
-		service.create(jane, jane, member2.getAccount().getUuid(), member2.getRole().getUuid(),
-				member2.getNode().getUuid());
+		service.create(authUser, authUser, nodeToPersist, roleToPersist, new GenericLightEntity(authUser.getLsUuid(), authUser.getFullName()));
+		service.create(authUser, authUser, nodeToPersist, roleToPersist, new GenericLightEntity(jane.getLsUuid(), jane.getFullName()));
 		List<SharedSpaceMember> foundMembers = service.findAll(authUser, authUser, nodeToPersist.getUuid());
 		Assert.assertTrue("No members have been created", foundMembers.size() > 0);
 		service.deleteAllMembers(authUser, authUser, nodeToPersist.getUuid());
@@ -211,9 +197,8 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 
 	@Test
 	public void testUpdate() {
-		SharedSpaceMember member = new SharedSpaceMember(nodeToPersist, roleToPersist, accountToPersist);
-		SharedSpaceMember createdMember = service.create(authUser, authUser, member.getAccount().getUuid(),
-				member.getRole().getUuid(), member.getNode().getUuid());
+		new SharedSpaceMember(nodeToPersist, roleToPersist, accountToPersist);
+		SharedSpaceMember createdMember = service.create(authUser, authUser, nodeToPersist, roleToPersist, accountToPersist);
 		Assert.assertEquals("The account referenced in this member is not authUser's",
 				createdMember.getAccount().getUuid(), jane.getLsUuid());
 		GenericLightEntity newAccount = new GenericLightEntity(accountToPersist.getUuid(),
@@ -229,13 +214,11 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 
 	@Test
 	public void testUpdateRole() {
-		SharedSpaceMember member = new SharedSpaceMember(nodeToPersist, roleToPersist, accountToPersist);
-		SharedSpaceMember createdMember = service.create(authUser, authUser, member.getAccount().getUuid(),
-				member.getRole().getUuid(), member.getNode().getUuid());
+		SharedSpaceMember createdMember = service.create(authUser, authUser, nodeToPersist, roleToPersist, accountToPersist);
 		Assert.assertEquals("The account referenced in this member is not authUser's",
 				createdMember.getAccount().getUuid(), jane.getLsUuid());
 		SharedSpaceRole newRole = roleBusinessService.findByName("CONTRIBUTOR");
-		SharedSpaceMember updatedMember = service.updateRole(authUser, authUser, createdMember.getUuid(), newRole.getUuid());
+		SharedSpaceMember updatedMember = service.updateRole(authUser, authUser, createdMember.getUuid(), new GenericLightEntity(newRole.getUuid(), newRole.getName()));
 		Assert.assertNotEquals("The role has not been updated", newRole.getUuid(),
 				createdMember.getRole().getUuid());
 		Assert.assertEquals("The role has not been updated", newRole.getUuid(),

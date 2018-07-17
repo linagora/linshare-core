@@ -61,6 +61,7 @@ import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
+import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 import com.google.common.collect.Lists;
@@ -158,8 +159,12 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		User user = userService.findOrCreateUserWithDomainPolicies(mail, domainId, authUser.getDomainId());
 		threadService.addMember(authUser, authUser, workGroup, user, false, !readonly);
 		// TODO Retrieve the role from the restService once the front will pass the info
-		SharedSpaceRole readerRole = ssRoleService.findByName(authUser, authUser, "READER");
-		ssMemberService.create(authUser, authUser, user.getLsUuid(), readerRole.getUuid(), threadUuid);
+		SharedSpaceNode foundSharedSpaceNode = ssNodeService.find(authUser, authUser, threadUuid);
+		SharedSpaceRole defaultRole = ssRoleService.findByName(authUser, authUser, "CONTRIBUTOR");
+		ssMemberService.create(authUser, authUser,
+				new GenericLightEntity(foundSharedSpaceNode.getUuid(), foundSharedSpaceNode.getName()),
+				new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()),
+				new GenericLightEntity(user.getLsUuid(), user.getFullName()));
 	}
 
 	@Override

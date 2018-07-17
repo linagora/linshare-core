@@ -114,13 +114,16 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		this.deleteAllNodes();
-		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
 	@Test
 	public void create() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Assert.assertNotNull("node not created", sharedSpaceNodes);
+		SharedSpaceNode node = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
+		SharedSpaceNode expectedNode = service.create(authUser, authUser, node);
+		Assert.assertNotNull("node not created", expectedNode);
+		Assert.assertEquals(expectedNode.getUuid(), node.getUuid());
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -189,8 +192,10 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 	@Test
 	public void findAll() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		List<SharedSpaceNode> foundedNodes = service.findAll(root);
-		Assert.assertEquals(foundedNodes.size(), sharedSpaceNodes.size());
+		List<SharedSpaceNode> foundNodes = service.findAll(root);
+		SharedSpaceNode node = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
+		service.create(authUser, authUser, node);
+		Assert.assertEquals(foundNodes.size() + 1, service.findAll(root).size());
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 

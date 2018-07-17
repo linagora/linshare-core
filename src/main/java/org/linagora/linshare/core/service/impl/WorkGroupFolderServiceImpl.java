@@ -37,6 +37,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -61,8 +62,9 @@ public class WorkGroupFolderServiceImpl extends WorkGroupNodeAbstractServiceImpl
 			ThreadMemberRepository threadMemberRepository,
 			MongoTemplate mongoTemplate,
 			AntiSamyService antiSamyService,
-			LogEntryService logEntryService) {
-		super(repository, mongoTemplate, antiSamyService, threadMemberRepository, logEntryService);
+			LogEntryService logEntryService,
+			SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService) {
+		super(repository, mongoTemplate, antiSamyService, threadMemberRepository, logEntryService, sharedSpaceMemberBusinessService);
 	}
 
 	@Override

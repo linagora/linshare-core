@@ -79,6 +79,8 @@
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="threadMemberRepository" />
 		<constructor-arg ref="threadRepository" />
+		<constructor-arg ref="sharedSpaceNodeService" />
+		<constructor-arg ref="sharedSpaceMemberService" />
 	</bean>
 
 	<bean name="safeDetailResourceAccessControl" class="org.linagora.linshare.core.rac.impl.SafeDetailResourceAccessControlImpl">
@@ -112,6 +114,7 @@
 	</bean>
 	<bean name="sharedSpaceMemberResourceAccessControl" class="org.linagora.linshare.core.rac.impl.SharedSpaceMemberResourceAccessControlImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="sharedSpaceMemberBusinessService" />
 	</bean>
 
 </beans>

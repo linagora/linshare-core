@@ -34,7 +34,7 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
-
+import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
@@ -69,18 +69,22 @@ public abstract class WorkGroupNodeAbstractServiceImpl implements WorkGroupNodeA
 
 	protected final AntiSamyService antiSamyService;
 
+	protected final SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService;
+
 	public WorkGroupNodeAbstractServiceImpl(
 			WorkGroupNodeMongoRepository repository,
 			MongoTemplate mongoTemplate,
 			AntiSamyService antiSamyService,
 			ThreadMemberRepository threadMemberRepository,
-			LogEntryService logEntryService) {
+			LogEntryService logEntryService,
+			SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService) {
 		super();
 		this.repository = repository;
 		this.mongoTemplate = mongoTemplate;
 		this.logEntryService = logEntryService;
 		this.antiSamyService = antiSamyService;
 		this.threadMemberRepository = threadMemberRepository;
+		this.sharedSpaceMemberBusinessService = sharedSpaceMemberBusinessService;
 	}
 
 	protected abstract BusinessErrorCode getBusinessExceptionAlreadyExists();
@@ -155,7 +159,7 @@ public abstract class WorkGroupNodeAbstractServiceImpl implements WorkGroupNodeA
 	}
 
 	protected void addMembersToLog(WorkGroup workGroup, AuditLogEntryUser log) {
-		List<String> members = threadMemberRepository.findAllAccountUuidForThreadMembers(workGroup);
+		List<String> members = sharedSpaceMemberBusinessService.findMembersUuidBySharedSpaceNodeUuid(workGroup.getLsUuid());
 		log.addRelatedAccounts(members);
 	}
 }

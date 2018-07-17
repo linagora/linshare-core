@@ -37,39 +37,24 @@ import java.util.List;
 
 import org.jsoup.helper.Validate;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
-import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
-import org.linagora.linshare.core.business.service.SharedSpaceRoleBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.SharedSpaceMemberResourceAccessControl;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
-import org.linagora.linshare.core.service.UserService;
-import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
-import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
 public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, SharedSpaceMember>
 		implements SharedSpaceMemberService {
+
 	private final SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService;
 
-	private final SharedSpaceNodeBusinessService nodeBusinessService;
-
-	private final SharedSpaceRoleBusinessService roleBusinessService;
-
-	private final UserService userService;
-
 	public SharedSpaceMemberServiceImpl(SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService,
-			SharedSpaceNodeBusinessService nodeBusinessService, SharedSpaceRoleBusinessService roleBusinessService,
-			UserService userService, SharedSpaceMemberResourceAccessControl rac) {
+			SharedSpaceMemberResourceAccessControl rac) {
 		super(rac);
 		this.sharedSpaceMemberBusinessService = sharedSpaceMemberBusinessService;
-		this.nodeBusinessService = nodeBusinessService;
-		this.roleBusinessService = roleBusinessService;
-		this.userService = userService;
 	}
 
 	@Override
@@ -87,31 +72,14 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	}
 
 	@Override
-	public SharedSpaceMember create(Account authUser, Account actor, String accountUuid, String roleUuid,
-			String nodeUuid) throws BusinessException {
+	public SharedSpaceMember create(Account authUser, Account actor, GenericLightEntity nodeToPersist, GenericLightEntity roleToPersist, GenericLightEntity accountLight) throws BusinessException {
 		preChecks(authUser, actor);
-		Validate.notNull(accountUuid, "Account uuid must be set.");
-		Validate.notNull(roleUuid, "Role uuid must be set.");
-		Validate.notNull(nodeUuid, "Node uuid must be set.");
-		SharedSpaceNode toFindNode = nodeBusinessService.find(nodeUuid);
-		Validate.notNull(toFindNode, "Node is not found.");
-		GenericLightEntity nodeToPersist = new GenericLightEntity(nodeUuid, toFindNode.getName());
-		SharedSpaceRole toFindRole = roleBusinessService.find(roleUuid);
-		Validate.notNull(toFindRole, "Role in not found");
-		GenericLightEntity roleToPersist = new GenericLightEntity(roleUuid, toFindRole.getName());
-		User user = userService.findByLsUuid(accountUuid);
-		Validate.notNull(user, "Missing required user");
-		if (!checkAccountNotInNode(authUser, actor, user, toFindNode)) {
-			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_ALREADY_EXISTS, "The user with uuid : "
-					+ user.getLsUuid() + " is already member of the node with uuid" + toFindNode.getUuid());
-		}
-		SharedSpaceAccount sharedSpaceAccount = new SharedSpaceAccount(user);
-		GenericLightEntity accountLight = new GenericLightEntity(sharedSpaceAccount.getUuid(),
-				sharedSpaceAccount.getName());
-		sharedSpaceAccount.setUuid(user.getLsUuid());
+		Validate.notNull(accountLight, "Account uuid must be set.");
+		Validate.notNull(roleToPersist, "Role uuid must be set.");
+		Validate.notNull(nodeToPersist, "Node uuid must be set.");
 		SharedSpaceMember member = new SharedSpaceMember(nodeToPersist, roleToPersist, accountLight);
 		checkCreatePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
-				null);
+				member);
 		SharedSpaceMember toAdd = sharedSpaceMemberBusinessService.create(member);
 		return toAdd;
 	}
@@ -127,11 +95,6 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		checkReadPermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
 				foundMember);
 		return foundMember;
-	}
-
-	private boolean checkAccountNotInNode(Account authUser, Account actor, Account possibleMember,
-			SharedSpaceNode sharedSpaceNode) throws BusinessException {
-		return findMember(authUser, actor, possibleMember, sharedSpaceNode) == null;
 	}
 
 	@Override
@@ -158,15 +121,16 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	}
 
 	@Override
-	public SharedSpaceMember updateRole(Account authUser, Account actor, String sharedSpaceMemberUuid, String roleUuid) {
+	public SharedSpaceMember updateRole(Account authUser, Account actor, String sharedSpaceMemberUuid, GenericLightEntity newRole) {
 		preChecks(authUser, actor);
 		Validate.notNull(sharedSpaceMemberUuid, "Missing required sharedSpaceMemberUuid");
-		Validate.notNull(roleUuid, "Missing required roleUuid");
+		Validate.notNull(newRole, "Missing required newRole");
+		Validate.notNull(newRole.getName(), "Missing required roleName");
+		Validate.notNull(newRole.getUuid(), "Missing required roleUuid");
 		SharedSpaceMember foundMemberToUpdate = find(authUser, actor, sharedSpaceMemberUuid);
-		SharedSpaceRole foundRole = roleBusinessService.find(roleUuid);
 		checkUpdatePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
 				foundMemberToUpdate);
-		return sharedSpaceMemberBusinessService.updateRole(foundMemberToUpdate, new GenericLightEntity(foundRole.getUuid(), foundRole.getName()));
+		return sharedSpaceMemberBusinessService.updateRole(foundMemberToUpdate, newRole);
 	}
 
 	@Override

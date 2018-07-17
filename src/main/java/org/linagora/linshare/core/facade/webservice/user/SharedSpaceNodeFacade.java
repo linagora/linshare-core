@@ -45,3 +45,4 @@ public interface SharedSpaceNodeFacade {
 	SharedSpaceNode delete(String actorUuid,SharedSpaceNode node,String uuid) throws BusinessException;
 
 }
+

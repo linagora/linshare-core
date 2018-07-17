@@ -51,5 +51,4 @@ public interface SharedSpaceNodeService {
 
 	List<SharedSpaceNode> findAll(Account authUser);
 
-
 }

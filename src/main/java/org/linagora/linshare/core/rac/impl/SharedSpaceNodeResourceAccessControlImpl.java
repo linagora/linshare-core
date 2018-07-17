@@ -89,6 +89,7 @@ public class SharedSpaceNodeResourceAccessControlImpl
 	@Override
 	protected Account getOwner(SharedSpaceNode entry, Object... opt) {
 		return null;
+
 	}
 
 }

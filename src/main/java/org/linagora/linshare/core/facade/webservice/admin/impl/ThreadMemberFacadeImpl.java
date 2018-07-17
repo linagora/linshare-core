@@ -45,12 +45,14 @@ import org.linagora.linshare.core.facade.webservice.admin.ThreadMemberFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupMemberDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
+import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
+import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
 public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		ThreadMemberFacade {
@@ -62,15 +64,19 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 
 	protected final SharedSpaceRoleService ssRoleService;
 
+	protected final SharedSpaceNodeService sharedSpaceNodeService;
+
 	public ThreadMemberFacadeImpl(final AccountService accountService,
 			final ThreadService threadService, final UserService userService,
 			SharedSpaceMemberService ssMemberService,
-			SharedSpaceRoleService ssRoleService) {
+			SharedSpaceRoleService ssRoleService,
+			SharedSpaceNodeService sharedSpaceNodeService) {
 		super(accountService);
 		this.threadService = threadService;
 		this.userService = userService;
 		this.ssMemberService = ssMemberService;
 		this.ssRoleService = ssRoleService;
+		this.sharedSpaceNodeService = sharedSpaceNodeService;
 	}
 
 	@Override
@@ -103,8 +109,12 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		boolean canUpload = !dto.isReadonly();
 		WorkgroupMember createdWorkGroupMember = threadService.addMember(authUser, authUser, workGroup, user, admin, canUpload);
 		// TODO Retrieve the role from the restService once the front will pass the info
-		SharedSpaceRole readerRole = ssRoleService.findByName(authUser, authUser, "CONTRIBUTOR");
-		ssMemberService.create(authUser, authUser, user.getLsUuid(), readerRole.getUuid(), dto.getThreadUuid());
+		SharedSpaceRole defaultRole = ssRoleService.findByName(authUser, authUser, "CONTRIBUTOR");
+		SharedSpaceNode foundSharedSpaceNode = sharedSpaceNodeService.find(authUser, authUser, dto.getThreadUuid());
+		ssMemberService.create(authUser, authUser,
+				new GenericLightEntity(foundSharedSpaceNode.getUuid(), foundSharedSpaceNode.getName()),
+				new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()),
+				new GenericLightEntity(user.getLsUuid(), user.getFullName()));
 		return new WorkGroupMemberDto(createdWorkGroupMember);
 	}
 

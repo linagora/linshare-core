@@ -58,4 +58,6 @@ public interface SharedSpaceMemberBusinessService {
 	List<SharedSpaceMember> findBySharedSpaceNodeUuid(String shareSpaceNodeUuid);
 
 	void deleteAll(List<SharedSpaceMember> foundMembersToDelete);
+
+	List<String> findMembersUuidBySharedSpaceNodeUuid(String shareSpaceNodeUuid);
 }
