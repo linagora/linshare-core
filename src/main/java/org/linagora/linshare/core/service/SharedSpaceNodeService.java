@@ -44,5 +44,7 @@ public interface SharedSpaceNodeService {
 	SharedSpaceNode create(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException;
 	
 	SharedSpaceNode delete (Account authUser, Account actor, SharedSpaceNode node) throws BusinessException;
+	
+	SharedSpaceNode update (Account authUser, Account actor, SharedSpaceNode node) throws BusinessException;
 
 }

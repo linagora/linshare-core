@@ -44,6 +44,8 @@ public interface SharedSpaceNodeBusinessService {
 	SharedSpaceNode create(SharedSpaceNode node) throws BusinessException;
 
 	List<SharedSpaceNode> findByNameAndParentUuid(String name, String parentUuid) throws BusinessException;
-	
-	void delete (SharedSpaceNode node) throws BusinessException;
+
+	void delete(SharedSpaceNode node) throws BusinessException;
+
+	SharedSpaceNode update(SharedSpaceNode foundNodeToUpdate, SharedSpaceNode nodeToUpdate) throws BusinessException;
 }

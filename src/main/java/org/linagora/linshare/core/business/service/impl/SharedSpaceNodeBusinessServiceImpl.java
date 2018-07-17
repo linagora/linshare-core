@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
+import java.util.Date;
 import java.util.List;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -65,6 +66,14 @@ public class SharedSpaceNodeBusinessServiceImpl implements SharedSpaceNodeBusine
 	@Override
 	public void delete(SharedSpaceNode node) throws BusinessException {
 		sharedSpaceNodeMongoRepository.delete(node);
+	}
+
+	@Override
+	public SharedSpaceNode update(SharedSpaceNode foundNodeToUpdate, SharedSpaceNode nodeToUpdate)
+			throws BusinessException {
+		foundNodeToUpdate.setName(nodeToUpdate.getName());
+		foundNodeToUpdate.setModificationDate(new Date());
+		return sharedSpaceNodeMongoRepository.save(foundNodeToUpdate);
 	}
 	
 }

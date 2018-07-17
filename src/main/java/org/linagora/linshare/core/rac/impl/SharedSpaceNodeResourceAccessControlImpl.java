@@ -71,7 +71,8 @@ public class SharedSpaceNodeResourceAccessControlImpl
 
 	@Override
 	protected boolean hasUpdatePermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
-		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.DRIVE_UPDATE);
+		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.SHARED_SPACE_NODE_UPDATE,
+				false);
 	}
 
 	@Override

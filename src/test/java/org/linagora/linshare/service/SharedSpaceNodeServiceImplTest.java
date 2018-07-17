@@ -33,8 +33,6 @@
  */
 package org.linagora.linshare.service;
 
-import static org.hamcrest.CoreMatchers.is;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -136,6 +134,19 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 			Assert.assertEquals("The node has been found in the data base. but it has not been deleted",
 					BusinessErrorCode.WORK_GROUP_NOT_FOUND, e.getErrorCode());
 		}
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void update() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		SharedSpaceNode nodeToUpdate = new SharedSpaceNode("nodeName ToUpdate", null, NodeType.WORK_GROUP);
+		SharedSpaceNode createdNodeToUpdate = service.create(authUser, authUser, nodeToUpdate);
+		SharedSpaceNode updatedNode = new SharedSpaceNode("nodeName Updated", null, NodeType.WORK_GROUP);
+		updatedNode.setUuid(createdNodeToUpdate.getUuid());
+		service.update(authUser, authUser, updatedNode);
+		Assert.assertEquals("The shared space node is not updated.", updatedNode.getName(),
+				service.update(authUser, authUser, updatedNode).getName());
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 }

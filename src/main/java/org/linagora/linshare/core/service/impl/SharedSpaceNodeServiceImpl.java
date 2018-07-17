@@ -94,13 +94,24 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	public SharedSpaceNode delete(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException {
 		preChecks(authUser, actor);
 		Validate.notNull(node, "missing required node to delete.");
-		Validate.notEmpty(node.getUuid(),"missing required node uuid to delete");
-		SharedSpaceNode foundedNodeTodel =find(authUser,actor,node.getUuid());
-		checkDeletePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, foundedNodeTodel);
-				sharedSpaceNodeBusinessService.delete(foundedNodeTodel);
+		Validate.notEmpty(node.getUuid(), "missing required node uuid to delete");
+		SharedSpaceNode foundedNodeTodel = find(authUser, actor, node.getUuid());
+		checkDeletePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN,
+				foundedNodeTodel);
+		sharedSpaceNodeBusinessService.delete(foundedNodeTodel);
+		sharedSpaceMemberService.deleteAllMembers(authUser, actor, foundedNodeTodel.getUuid());
+		return foundedNodeTodel;
+	}
 
-				sharedSpaceMemberService.deleteAllMembers(authUser, actor, foundedNodeTodel.getUuid());
-				return foundedNodeTodel;
+	@Override
+	public SharedSpaceNode update(Account authUser, Account actor, SharedSpaceNode nodeToUpdate)
+			throws BusinessException {
+		Validate.notNull(nodeToUpdate, "nodeToUpdate must be set.");
+		Validate.notEmpty(nodeToUpdate.getUuid(), "shared space node uuid to update must be set.");
+		SharedSpaceNode foundNodeToUpdate = find(authUser, actor, nodeToUpdate.getUuid());
+		checkUpdatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN,
+				nodeToUpdate);
+		return sharedSpaceNodeBusinessService.update(foundNodeToUpdate, nodeToUpdate);
 	}
 
 }
