@@ -69,11 +69,16 @@ public class SharedSpaceNodeBusinessServiceImpl implements SharedSpaceNodeBusine
 	}
 
 	@Override
+
 	public SharedSpaceNode update(SharedSpaceNode foundNodeToUpdate, SharedSpaceNode nodeToUpdate)
 			throws BusinessException {
 		foundNodeToUpdate.setName(nodeToUpdate.getName());
 		foundNodeToUpdate.setModificationDate(new Date());
 		return sharedSpaceNodeMongoRepository.save(foundNodeToUpdate);
 	}
-	
+
+	public List<SharedSpaceNode> findAll() throws BusinessException {
+		return sharedSpaceNodeMongoRepository.findAll();
+	}
+
 }

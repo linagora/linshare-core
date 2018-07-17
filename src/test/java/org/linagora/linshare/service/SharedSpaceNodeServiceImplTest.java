@@ -33,6 +33,9 @@
  */
 package org.linagora.linshare.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -72,7 +75,17 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepo;
 
+	private final static String SHARED_SPACE_NODE_1 = "WORKG_GROUP_NAME_1";
+
+	private final static String SHARED_SPACE_NODE_2 = "WORKG_GROUP_NAME_2";
+
 	private Account authUser;
+
+	private Account jane;
+
+	private Account root;
+
+	private List<SharedSpaceNode> sharedSpaceNodes;
 
 	private LoadingServiceTestDatas datas;
 
@@ -90,32 +103,31 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 		datas = new LoadingServiceTestDatas(userRepo);
 		datas.loadUsers();
 		init.init();
+		root = datas.getRoot();
 		authUser = datas.getUser1();
+		jane = datas.getUser2();
+		sharedSpaceNodes=this.createAll();
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
 	@After
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
+		this.deleteAllNodes();
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
 	@Test
 	public void create() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		SharedSpaceNode node = new SharedSpaceNode("My first node", null, NodeType.WORK_GROUP);
-		SharedSpaceNode expectedNode = service.create(authUser, authUser, node);
-		Assert.assertNotNull("node not created", expectedNode);
-		Assert.assertEquals(expectedNode.getUuid(), node.getUuid());
+		Assert.assertNotNull("node not created", sharedSpaceNodes);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
 	public void find() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		SharedSpaceNode node = new SharedSpaceNode("Node to find", null, NodeType.WORK_GROUP);
-		SharedSpaceNode expectedNode = service.create(authUser, authUser, node);
-		SharedSpaceNode toFindNode = service.find(authUser, authUser, expectedNode.getUuid());
+		SharedSpaceNode toFindNode = service.find(authUser, authUser, sharedSpaceNodes.get(0).getUuid());
 		Assert.assertNotNull("Node has not been found.", toFindNode);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
@@ -123,12 +135,12 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 	@Test
 	public void delete() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		SharedSpaceNode node = new SharedSpaceNode("My first node", null, NodeType.WORK_GROUP);
-		SharedSpaceNode createdNode = service.create(authUser, authUser, node);
-		Assert.assertEquals(createdNode, node);
-		service.delete(authUser, authUser, createdNode);
+		SharedSpaceNode node = new SharedSpaceNode(SharedSpaceNodeServiceImplTest.SHARED_SPACE_NODE_2, null,
+				NodeType.WORK_GROUP);
+		SharedSpaceNode toDelete=service.create(authUser, authUser, node);
+		service.delete(authUser, authUser, toDelete);
 		try {
-			service.find(authUser, authUser, createdNode.getUuid());
+			service.find(authUser, authUser, toDelete.getUuid());
 			Assert.fail("An exception should be thrown because the node is found.");
 		} catch (BusinessException e) {
 			Assert.assertEquals("The node has been found in the data base. but it has not been deleted",
@@ -136,6 +148,7 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 		}
 		logger.info(LinShareTestConstants.END_TEST);
 	}
+
 
 	@Test
 	public void update() throws BusinessException {
@@ -149,4 +162,36 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 				service.update(authUser, authUser, updatedNode).getName());
 		logger.info(LinShareTestConstants.END_TEST);
 	}
+
+	/*
+	* Helpers
+	*/
+
+	private List<SharedSpaceNode> createAll() {
+		SharedSpaceNode node1 = new SharedSpaceNode(SharedSpaceNodeServiceImplTest.SHARED_SPACE_NODE_1, null,
+				NodeType.WORK_GROUP);
+		SharedSpaceNode node2 = new SharedSpaceNode(SharedSpaceNodeServiceImplTest.SHARED_SPACE_NODE_2, null,
+				NodeType.WORK_GROUP);
+		service.create(authUser, authUser, node1);
+		service.create(jane, jane, node2);
+		List<SharedSpaceNode> nodes = new ArrayList<SharedSpaceNode>();
+		nodes.add(node1);
+		nodes.add(node2);
+		return nodes;
+	}
+
+	private void deleteAllNodes() throws BusinessException {
+		for (Integer n = 0; n <sharedSpaceNodes.size(); n++) {
+			service.delete(authUser, authUser, sharedSpaceNodes.get(n));
+		}
+	}
+
+	@Test
+	public void findAll() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		List<SharedSpaceNode> foundedNodes = service.findAll(root);
+		Assert.assertEquals(foundedNodes.size(), sharedSpaceNodes.size());
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
 }

@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.util.List;
+
 import org.jsoup.helper.Validate;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -76,6 +78,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		checkReadPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, found);
 		return found;
 	}
+	
 
 	@Override
 	public SharedSpaceNode create(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException {
@@ -112,6 +115,13 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		checkUpdatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN,
 				nodeToUpdate);
 		return sharedSpaceNodeBusinessService.update(foundNodeToUpdate, nodeToUpdate);
+	}
+
+	@Override
+	public List<SharedSpaceNode> findAll(Account authUser) {
+		preChecks(authUser, authUser);
+		checkListPermission(authUser, authUser, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
+		return sharedSpaceNodeBusinessService.findAll();
 	}
 
 }

@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.service;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
@@ -43,8 +45,11 @@ public interface SharedSpaceNodeService {
 
 	SharedSpaceNode create(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException;
 	
-	SharedSpaceNode delete (Account authUser, Account actor, SharedSpaceNode node) throws BusinessException;
-	
 	SharedSpaceNode update (Account authUser, Account actor, SharedSpaceNode node) throws BusinessException;
+
+	SharedSpaceNode delete(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException;
+
+	List<SharedSpaceNode> findAll(Account authUser);
+
 
 }

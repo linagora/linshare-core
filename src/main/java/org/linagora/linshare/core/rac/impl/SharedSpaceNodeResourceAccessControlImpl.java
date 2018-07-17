@@ -55,18 +55,19 @@ public class SharedSpaceNodeResourceAccessControlImpl
 
 	@Override
 	protected boolean hasListPermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
-		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.SHARED_SPACE_NODE_LIST);
+		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.SHARED_SPACE_NODE_LIST,
+				false);
 	}
 
 	@Override
 	protected boolean hasDeletePermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
-		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.SHARED_SPACE_NODE_DELETE,false);
+		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.SHARED_SPACE_NODE_DELETE,
+				false);
 	}
 
 	@Override
 	protected boolean hasCreatePermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
-		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.DRIVE_CREATE,
-				false);
+		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.DRIVE_CREATE, false);
 	}
 
 	@Override
