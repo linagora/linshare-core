@@ -46,6 +46,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
+import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.JwtService;
 import org.linagora.linshare.mongo.entities.JwtLongTime;
 import org.linagora.linshare.mongo.repository.JwtLongTimeMongoRepository;
@@ -75,6 +76,8 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
 	private FunctionalityReadOnlyService functionalityReadOnlyService;
 
+	private UserRepository<User> userRepository;
+
 	public void setAuthentificationFacade(AuthentificationFacade authentificationFacade) {
 		this.authentificationFacade = authentificationFacade;
 	}
@@ -93,6 +96,10 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
 	public void setFunctionalityReadOnlyService(FunctionalityReadOnlyService functionalityReadOnlyService) {
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
+	}
+
+	public void setUserRepository(UserRepository<User> userRepository) {
+		this.userRepository = userRepository;
 	}
 
 	// TODO:JWT: log authentication attempts with failures
@@ -127,7 +134,9 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 		if (claims.getExpiration() == null && claims.containsKey("uuid") && claims.get("uuid") != null) {
 			JwtLongTime jwtLongTime = jwtLongTimeMongoRepository.findByUuid(claims.get("uuid", String.class));
 			if (jwtLongTime == null) {
-				String msg = String.format("No valid JWT infinite token found for JWT token: %1$s", token);
+				String message = "No valid JWT infinite token found for this token: %1$s";
+				insertJwtLongTimeFailureLogEntry(claims, message);
+				String msg = String.format(message, token);
 				throw new AuthenticationServiceException(msg);
 			}
 			Functionality functionality = functionalityReadOnlyService.getJwtLongTimeFunctionality(jwtLongTime.getDomainUuid());
@@ -179,6 +188,20 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 				true, true, true, grantedAuthorities);
 
 		return new UsernamePasswordAuthenticationToken(userDetail, authentication.getCredentials(), grantedAuthorities);
+	}
+
+	private void insertJwtLongTimeFailureLogEntry(Claims claims, String message) {
+		User found = userRepository.findByMail(claims.getSubject());
+		String msg = new String();
+		if (claims.containsKey("uuid") && claims.get("uuid") != null) {
+			if (found != null) {
+				msg = String.format(message, claims.get("uuid"));
+				authentificationFacade.logAuthError(found, found.getDomainId(), msg);
+			} else {
+				msg = String.format("User not found for this permanent token : %1$s", claims.get("uuid"));
+				authentificationFacade.logAuthError(claims.getSubject(), null, msg);
+			}
+		}
 	}
 
 	@Override
