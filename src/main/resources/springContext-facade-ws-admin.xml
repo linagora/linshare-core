@@ -201,4 +201,8 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="sharedSpaceMemberService" />
 	</bean>
+	<bean id="wsAdminSharedSpaceNodeFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.SharedSpaceNodeFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="sharedSpaceNodeService" />
+	</bean>
 </beans>

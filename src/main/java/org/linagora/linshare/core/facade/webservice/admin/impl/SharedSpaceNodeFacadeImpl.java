@@ -31,19 +31,57 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.userv2;
+package org.linagora.linshare.core.facade.webservice.admin.impl;
 
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.admin.SharedSpaceNodeFacade;
+import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 
-public interface SharedSpaceNodeRestService {
+import com.google.common.base.Strings;
 
-	SharedSpaceNode find(String uuid) throws BusinessException;
+public class SharedSpaceNodeFacadeImpl extends AdminGenericFacadeImpl implements SharedSpaceNodeFacade {
 
-	SharedSpaceNode create(SharedSpaceNode node) throws BusinessException;
+	private final SharedSpaceNodeService ssNodeService;
 
-	SharedSpaceNode delete(SharedSpaceNode node, String uuid) throws BusinessException;
+	public SharedSpaceNodeFacadeImpl(AccountService accountService, SharedSpaceNodeService ssNodeService) {
+		super(accountService);
+		this.ssNodeService = ssNodeService;
+	}
 
-	SharedSpaceNode update(SharedSpaceNode node, String uuid) throws BusinessException;
+	@Override
+	public SharedSpaceNode find(String uuid) throws BusinessException {
+		Validate.notEmpty(uuid, "The shared space node uuid to find must bes set.");
+		Account authUser = checkAuthentication(Role.SUPERADMIN);
+		return ssNodeService.find(authUser, authUser, uuid);
+	}
+
+	@Override
+	public SharedSpaceNode delete(SharedSpaceNode node, String uuid) throws BusinessException {
+		Account authUser = checkAuthentication(Role.SUPERADMIN);
+		if (!Strings.isNullOrEmpty(uuid)) {
+			node = ssNodeService.find(authUser, authUser, uuid);
+		} else {
+			Validate.notNull(node, "The shared space node to delete must be set.");
+			Validate.notEmpty(node.getUuid(), "The shared space node uuid to delete must be set.");
+		}
+		return ssNodeService.delete(authUser, authUser, node);
+	}
+
+	@Override
+	public SharedSpaceNode update(SharedSpaceNode node, String uuid) throws BusinessException {
+		Validate.notNull(node, "Missing required shared space node to update.");
+		Account authUser = checkAuthentication(Role.SUPERADMIN);
+		if (!Strings.isNullOrEmpty(uuid)) {
+			node.setUuid(uuid);
+		} else {
+			Validate.notEmpty(node.getUuid(), "The shared space node uuid to update must be set.");
+		}
+		return ssNodeService.update(authUser, authUser, node);
+	}
 
 }

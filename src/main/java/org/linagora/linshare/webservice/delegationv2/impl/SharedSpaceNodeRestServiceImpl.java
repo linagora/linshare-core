@@ -37,6 +37,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -84,7 +85,7 @@ public class SharedSpaceNodeRestServiceImpl implements SharedSpaceNodeRestServic
 	@Path("/")
 	@POST
 	@ApiOperation(value = "Create a shared space node.", response = SharedSpaceNode.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to create."),
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
@@ -93,26 +94,43 @@ public class SharedSpaceNodeRestServiceImpl implements SharedSpaceNodeRestServic
 				@PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "The shared space node to create.", required = true) SharedSpaceNode node)
 			throws BusinessException {
-
 		return sharedSpaceNodeFacade.create(actorUuid, node);
 	}
-
+	
 	@Path("/{uuid : .*}")
 	@DELETE
 	@ApiOperation(value = "Delete a shared space node.", response = SharedSpaceNode.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to delete."),
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
 			@ApiResponse(code = 404, message = "Not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public SharedSpaceNode delete(
 			@ApiParam(value="The actor uuid.")
-				@PathParam(value="{uuid}")String actorUuid,
+				@PathParam(value="actorUuid")String actorUuid,
 			@ApiParam(value = "sharedSpaceNode to delete. ", required = true)SharedSpaceNode node,
 			@ApiParam(value = "shared space node's uuid.", required = false)
 				@PathParam(value="uuid")String uuid) 
-					throws BusinessException {
-		return sharedSpaceNodeFacade.delete(actorUuid, node,uuid);
+			throws BusinessException {
+		return sharedSpaceNodeFacade.delete(actorUuid, node, uuid);
+	}
+	
+	@Path("/{uuid : .*}")
+	@PUT
+	@ApiOperation(value = "Update a shared space node.", response = SharedSpaceNode.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 404, message = "Not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error"),})
+	@Override
+	public SharedSpaceNode update(
+			@ApiParam(value="The actor uuid.")
+				@PathParam(value="actorUuid")String actorUuid, 
+			@ApiParam(value = "The sharedSpaceNode to update. ", required = true)SharedSpaceNode node,
+			@ApiParam(value = "The shared space node's uuid to update.", required = false)
+				@PathParam(value="uuid")String uuid)
+			throws BusinessException {
+		return sharedSpaceNodeFacade.update(actorUuid, node, uuid);
 	}
 
 }

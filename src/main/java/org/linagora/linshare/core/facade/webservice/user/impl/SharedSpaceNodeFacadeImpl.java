@@ -47,9 +47,7 @@ public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements Shar
 
 	protected SharedSpaceNodeService sharedSpaceNodeService;
 
-
-	public SharedSpaceNodeFacadeImpl(AccountService accountService,
-			SharedSpaceNodeService sharedSpaceNodeService) {
+	public SharedSpaceNodeFacadeImpl(AccountService accountService, SharedSpaceNodeService sharedSpaceNodeService) {
 		super(accountService);
 		this.sharedSpaceNodeService = sharedSpaceNodeService;
 	}
@@ -73,7 +71,6 @@ public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements Shar
 
 	@Override
 	public SharedSpaceNode delete(String actorUuid, SharedSpaceNode node, String uuid) throws BusinessException {
-		Validate.notEmpty(uuid, "Missing required input shared space node.");
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
 		if (!Strings.isNullOrEmpty(uuid)) {
@@ -83,5 +80,18 @@ public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements Shar
 			Validate.notEmpty(node.getUuid(), "node uuid must be set.");
 		}
 		return sharedSpaceNodeService.delete(authUser, actor, node);
+	}
+
+	@Override
+	public SharedSpaceNode update(String actorUuid, SharedSpaceNode node, String uuid) throws BusinessException {
+		Validate.notNull(node, "Missind required input shared space node.");
+		Account authUser = checkAuthentication();
+		Account actor = getActor(authUser, actorUuid);
+		if (!Strings.isNullOrEmpty(uuid)) {
+			node.setUuid(uuid);
+		} else {
+			Validate.notEmpty(node.getUuid(), "node uuid must be set.");
+		}
+		return sharedSpaceNodeService.update(authUser, actor, node);
 	}
 }

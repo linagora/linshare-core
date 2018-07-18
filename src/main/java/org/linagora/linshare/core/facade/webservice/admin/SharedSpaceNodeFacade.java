@@ -31,19 +31,16 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.userv2;
+package org.linagora.linshare.core.facade.webservice.admin;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 
-public interface SharedSpaceNodeRestService {
+public interface SharedSpaceNodeFacade {
 
 	SharedSpaceNode find(String uuid) throws BusinessException;
-
-	SharedSpaceNode create(SharedSpaceNode node) throws BusinessException;
 
 	SharedSpaceNode delete(SharedSpaceNode node, String uuid) throws BusinessException;
 
 	SharedSpaceNode update(SharedSpaceNode node, String uuid) throws BusinessException;
-
 }
