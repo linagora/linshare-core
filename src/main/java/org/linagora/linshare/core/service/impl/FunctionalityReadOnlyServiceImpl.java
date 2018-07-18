@@ -344,6 +344,22 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
+	public Functionality getJwtLongTimeFunctionalityForUser(AbstractDomain domain) {
+		return _getFunctionality(domain, FunctionalityNames.JWT_LONG_TIME_TOKEN__FOR_USER);
+	}
+
+	@Override
+	public Functionality getJwtLongTimeFunctionality(AbstractDomain domain) {
+		return _getFunctionality(domain, FunctionalityNames.JWT_LONG_TIME_TOKEN);
+	}
+
+	@Override
+	public Functionality getJwtLongTimeFunctionality(String domainUuid) {
+		AbstractDomain domain = domainBusinessService.find(domainUuid);
+		return getJwtLongTimeFunctionality(domain);
+	}
+
+	@Override
 	public TimeUnitValueFunctionality getUploadRequestNotificationTimeFunctionality(
 			AbstractDomain domain) {
 		return new TimeUnitValueFunctionality((UnitValueFunctionality) _getFunctionality(domain, FunctionalityNames.UPLOAD_REQUEST__DELAY_BEFORE_NOTIFICATION));

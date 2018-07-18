@@ -41,9 +41,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.linagora.linshare.auth.RoleProvider;
 import org.linagora.linshare.auth.dao.LdapUserDetailsProvider;
+import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.JwtService;
 import org.linagora.linshare.mongo.entities.JwtLongTime;
 import org.linagora.linshare.mongo.repository.JwtLongTimeMongoRepository;
@@ -71,6 +73,8 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
 	private JwtLongTimeMongoRepository jwtLongTimeMongoRepository;
 
+	private FunctionalityReadOnlyService functionalityReadOnlyService;
+
 	public void setAuthentificationFacade(AuthentificationFacade authentificationFacade) {
 		this.authentificationFacade = authentificationFacade;
 	}
@@ -85,6 +89,10 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
 	public void setJwtLongTimeMongoRepository(JwtLongTimeMongoRepository jwtLongTimeMongoRepository) {
 		this.jwtLongTimeMongoRepository = jwtLongTimeMongoRepository;
+	}
+
+	public void setFunctionalityReadOnlyService(FunctionalityReadOnlyService functionalityReadOnlyService) {
+		this.functionalityReadOnlyService = functionalityReadOnlyService;
 	}
 
 	// TODO:JWT: log authentication attempts with failures
@@ -119,8 +127,12 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 		if (claims.getExpiration() == null && claims.containsKey("uuid") && claims.get("uuid") != null) {
 			JwtLongTime jwtLongTime = jwtLongTimeMongoRepository.findByUuid(claims.get("uuid", String.class));
 			if (jwtLongTime == null) {
-				String msg = String.format("No valide jwt long time found for jwt token: %1$s", token);
+				String msg = String.format("No valid JWT infinite token found for JWT token: %1$s", token);
 				throw new AuthenticationServiceException(msg);
+			}
+			Functionality functionality = functionalityReadOnlyService.getJwtLongTimeFunctionality(jwtLongTime.getDomainUuid());
+			if (!functionality.getActivationPolicy().getStatus()) {
+				throw new AuthenticationServiceException("JWT infinite token Functionality is disabled.");
 			}
 		}
 		Date issuedAt = claims.getIssuedAt();

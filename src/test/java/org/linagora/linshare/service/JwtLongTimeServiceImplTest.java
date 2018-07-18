@@ -98,6 +98,7 @@ public class JwtLongTimeServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	@Before
 	public void setUp() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
+		this.executeSqlScript("import-tests-jwt-long-time-functionnality.sql", false);
 		wiser.start();
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();

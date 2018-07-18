@@ -46,6 +46,7 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
+import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.JwtToken;
@@ -57,6 +58,7 @@ import org.linagora.linshare.core.rac.JwtLongTimeResourceAccessControl;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.JwtLongTimeService;
 import org.linagora.linshare.core.service.JwtService;
 import org.linagora.linshare.core.service.LogEntryService;
@@ -84,13 +86,15 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, JwtLongT
 
 	protected JwtLongTimeBusinessService jwtLongTimeBusinessService;
 
-	private DomainPermissionBusinessService permissionService;
+	protected DomainPermissionBusinessService permissionService;
 
-	private AbstractDomainService abstractDomainService;
+	protected AbstractDomainService abstractDomainService;
 
-	private LogEntryService logEntryService;
+	protected LogEntryService logEntryService;
 
-	private AuditLogEntryService auditLogEntryService;
+	protected AuditLogEntryService auditLogEntryService;
+
+	protected FunctionalityReadOnlyService functionalityReadOnlyService;
 
 	public JwtLongTimeServiceImpl(
 			String issuer,
@@ -103,7 +107,8 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, JwtLongT
 			AbstractDomainService abstractDomainService,
 			AccountRepository<Account> accountRepository,
 			LogEntryService logEntryService,
-			AuditLogEntryService auditLogEntryService) {
+			AuditLogEntryService auditLogEntryService,
+			FunctionalityReadOnlyService functionalityReadOnlyService) {
 		super(rac);
 		this.issuer = issuer;
 		this.jwtLongTimeBusinessService = jwtLongTimeBusinessService;
@@ -115,11 +120,15 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, JwtLongT
 		this.auditLogEntryService = auditLogEntryService;
 		this.notifierService = notifierService;
 		this.mailBuildingService = mailBuildingService;
+		this.functionalityReadOnlyService = functionalityReadOnlyService;
 	}
 
 	@Override
 	public JwtLongTime create(Account authUser, Account actor, String label, String description) throws BusinessException {
 		Validate.notNull(actor, "actor must be set");
+		if (!functionalityActivated(authUser, LogAction.CREATE)) {
+			throw new BusinessException(BusinessErrorCode.THREAD_FORBIDDEN, "Functionality forbidden.");
+		}
 		final Date creationDate = clock.now();
 		final String tokenUuid = UUID.randomUUID().toString();
 		if (!actor.isInternal()) {
@@ -145,6 +154,9 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, JwtLongT
 	@Override
 	public List<JwtLongTime> findAllByActor(Account actor) throws BusinessException {
 		Validate.notNull(actor);
+		if (!functionalityActivated(actor, LogAction.GET)) {
+			throw new BusinessException(BusinessErrorCode.THREAD_FORBIDDEN, "Functionality forbidden.");
+		}
 		List<JwtLongTime> tokens = jwtLongTimeBusinessService.findAllByActor(actor);
 		return tokens;
 	}
@@ -154,6 +166,9 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, JwtLongT
 		Validate.notNull(authUser, "AuthUser must be set.");
 		Validate.notNull(actor, "Actor must be set");
 		Validate.notNull(jwtLongTime, "Token uuid must be set");
+		if (!functionalityActivated(authUser, LogAction.DELETE)) {
+			throw new BusinessException(BusinessErrorCode.THREAD_FORBIDDEN, "Functionality forbidden.");
+		}
 		checkDeletePermission(authUser, actor, JwtLongTime.class, BusinessErrorCode.JWT_LONG_TIME_CAN_NOT_DELETE,
 				jwtLongTime);
 		AuditLogEntryUser createLog = new JwtLongTimeAuditLogEntry(authUser, actor, LogAction.DELETE,
@@ -168,6 +183,9 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, JwtLongT
 		Validate.notNull(authUser, "AuthUser must be set.");
 		Validate.notNull(actor, "Actor must be set");
 		Validate.notEmpty(uuid, "Token uuid must be set");
+		if (!functionalityActivated(authUser, LogAction.GET)) {
+			throw new BusinessException(BusinessErrorCode.THREAD_FORBIDDEN, "Functionality forbidden.");
+		}
 		JwtLongTime found = jwtLongTimeBusinessService.find(uuid);
 		if (found == null) {
 			String message = "The requested token has not been found.";
@@ -180,6 +198,9 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, JwtLongT
 	@Override
 	public List<JwtLongTime> findAllByDomain(Account authUser, AbstractDomain domain) throws BusinessException {
 		Validate.notNull(domain, "domain must be set");
+		if (!functionalityActivated(authUser, LogAction.GET)) {
+			throw new BusinessException(BusinessErrorCode.THREAD_FORBIDDEN, "Functionality forbidden.");
+		}
 		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
 			throw new BusinessException(BusinessErrorCode.JWT_LONG_TIME_FORBIDDEN,
 					"You are not allowed to use this domain");
@@ -191,6 +212,10 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, JwtLongT
 	public JwtLongTime deleteByAdmin(Account authUser, JwtLongTime jwtLongTime) throws BusinessException {
 		Validate.notNull(jwtLongTime, "jwtLongTime must be set");
 		AbstractDomain domain = abstractDomainService.findById(jwtLongTime.getDomainUuid());
+		Functionality functionality = functionalityReadOnlyService.getJwtLongTimeFunctionality(authUser.getDomain());
+		if (!functionality.getActivationPolicy().getStatus()) {
+			throw new BusinessException(BusinessErrorCode.THREAD_FORBIDDEN, "Functionality forbidden.");
+		}
 		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
 			throw new BusinessException(BusinessErrorCode.JWT_LONG_TIME_FORBIDDEN,
 					"You are not allowed to use this domain");
@@ -220,6 +245,31 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, JwtLongT
 			}
 		}
 		return auditLogEntryService.findAllAudit(authUser, domainUuid, actions);
+	}
+
+	private boolean functionalityActivated(Account authUser, LogAction logAction) {
+		Functionality functionality = functionalityReadOnlyService.getJwtLongTimeFunctionality(authUser.getDomain());
+		Functionality userCreateFunctionality = functionalityReadOnlyService
+				.getJwtLongTimeFunctionalityForUser(authUser.getDomain());
+		if (authUser.hasAdminRole() || authUser.hasSuperAdminRole()) {
+			if (!functionality.getActivationPolicy().getStatus()
+					|| !functionality.getConfigurationPolicy().getStatus()) {
+				return false;
+			}
+		} else {
+			if (LogAction.CREATE.equals(logAction)) {
+				if (!functionality.getActivationPolicy().getStatus()
+						|| !userCreateFunctionality.getDelegationPolicy().getStatus()) {
+					return false;
+				}
+			} else {
+				if (!functionality.getActivationPolicy().getStatus()
+						|| !userCreateFunctionality.getActivationPolicy().getStatus()) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 }
