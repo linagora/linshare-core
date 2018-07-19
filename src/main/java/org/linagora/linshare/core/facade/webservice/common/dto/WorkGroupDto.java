@@ -41,6 +41,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.WorkgroupMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Sets;
@@ -62,11 +64,16 @@ public class WorkGroupDto extends AccountDto {
 	@ApiModelProperty(value = "Members")
 	protected Set<WorkGroupMemberDto> members;
 
+	public WorkGroupDto(WorkGroup workGroup,SharedSpaceNode sharedSpaceNode) {
+		super(workGroup, true);
+		this.name = sharedSpaceNode.getName();
+	}
+	
 	public WorkGroupDto(WorkGroup workGroup) {
 		super(workGroup, true);
 		this.name = workGroup.getName();
 	}
-
+	
 	public WorkGroupDto(WorkGroup workGroup, List<WorkgroupMember> members) {
 		super(workGroup, true);
 		this.name = workGroup.getName();

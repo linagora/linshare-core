@@ -42,4 +42,7 @@ public interface SharedSpaceNodeMongoRepository extends MongoRepository<SharedSp
 	SharedSpaceNode findByUuid(String uuid);
 
 	List<SharedSpaceNode> findByNameAndParentUuid(String name, String parentUuid);
+
+	SharedSpaceNode findByName(String name);
+	
 }

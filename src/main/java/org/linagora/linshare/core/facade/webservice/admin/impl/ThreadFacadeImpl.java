@@ -42,6 +42,7 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.WorkgroupMember;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.ThreadFacade;
@@ -56,19 +57,16 @@ import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 
 import com.google.common.collect.Sets;
 
-public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
-		ThreadFacade {
+public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements ThreadFacade {
 
 	private ThreadService threadService;
-	
+
 	private final SharedSpaceNodeService ssNodeService;
 
 	private final SharedSpaceMemberService ssMemberService;
 
-	public ThreadFacadeImpl(final AccountService accountService,
-							final ThreadService threadService,
-							final SharedSpaceNodeService ssNodeService,
-							final SharedSpaceMemberService ssMemberService) {
+	public ThreadFacadeImpl(final AccountService accountService, final ThreadService threadService,
+			final SharedSpaceNodeService ssNodeService, final SharedSpaceMemberService ssMemberService) {
 		super(accountService);
 		this.threadService = threadService;
 		this.ssNodeService = ssNodeService;
@@ -79,7 +77,8 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 	public WorkGroupDto find(String uuid) throws BusinessException {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "uuid must be set.");
-		return new WorkGroupDto(threadService.find(authUser, authUser, uuid));
+		SharedSpaceNode sSNode = ssNodeService.find(authUser, authUser, uuid);
+		return new WorkGroupDto(threadService.find(authUser, authUser, uuid), sSNode);
 	}
 
 	@Override
@@ -88,20 +87,25 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public Set<WorkGroupDto> findAll(String pattern, String threadName,
-			String memberName) throws BusinessException {
+	public Set<WorkGroupDto> findAll(String pattern, String threadName, String memberName) throws BusinessException {
 		User authUser = super.checkAuthentication(Role.ADMIN);
 		Set<WorkGroup> workGroups = Sets.newHashSet();
+		Set<SharedSpaceNode> ssnodes = Sets.newHashSet();
 		if (pattern == null && threadName == null && memberName == null) {
+			ssnodes.addAll(ssNodeService.findAll(authUser));
 			workGroups.addAll(threadService.findAll(authUser, authUser));
 		} else {
 			if (memberName != null) {
+				ssnodes.addAll(ssNodeService.findAllNodesBySSMember(authUser, memberName));
 				workGroups.addAll(threadService.searchByMembers(authUser, memberName));
 			}
 			if (threadName != null) {
+				ssnodes.add(ssNodeService.findByName(authUser, authUser, threadName));
 				workGroups.addAll(threadService.searchByName(authUser, threadName));
 			}
 			if (pattern != null) {
+				ssnodes.add(ssNodeService.findByName(authUser, authUser, threadName));
+				ssnodes.addAll(ssNodeService.findAllNodesBySSMember(authUser, memberName));
 				workGroups.addAll(threadService.searchByName(authUser, pattern));
 				workGroups.addAll(threadService.searchByMembers(authUser, pattern));
 			}
@@ -110,7 +114,13 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 		for (WorkGroup workGroup : workGroups) {
 			ret.add(new WorkGroupDto(workGroup));
 		}
+		// TODO : put as a return when WorkgroupDto is disconected.
+		Set<SharedSpaceNode> ssnodeRet = Sets.newHashSet();
+		for (SharedSpaceNode node : ssnodes) {
+			ssnodeRet.add(node);
+		}
 		return ret;
+
 	}
 
 	@Override
@@ -122,6 +132,7 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 		List<WorkgroupMember> workgroupMembers = threadService.findAllThreadMembers(authUser, authUser, workGroup);
 		for (WorkgroupMember m : workgroupMembers)
 			ret.add(new WorkGroupMemberDto(m));
+		// TODO : put as a return when WorkgroupDto is disconected.
 		List<SharedSpaceMember> sharedSpaceMembers = ssMemberService.findAll(authUser, authUser, uuid);
 		return ret;
 	}
@@ -130,8 +141,7 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements
 	public WorkGroupDto update(WorkGroupDto threadDto) throws BusinessException {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(threadDto, "thread must be set.");
-		return new WorkGroupDto(threadService.update(authUser, authUser,
-				threadDto.getUuid(), threadDto.getName()));
+		return new WorkGroupDto(threadService.update(authUser, authUser, threadDto.getUuid(), threadDto.getName()));
 	}
 
 	@Override

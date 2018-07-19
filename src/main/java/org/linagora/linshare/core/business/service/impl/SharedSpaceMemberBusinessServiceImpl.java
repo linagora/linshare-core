@@ -68,8 +68,7 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	}
 
 	@Override
-	public SharedSpaceMember findByMemberAndSharedSpaceNode(String accountUuid,
-			String nodeUuid) {
+	public SharedSpaceMember findByMemberAndSharedSpaceNode(String accountUuid, String nodeUuid) {
 		return sharedSpaceMemberMongoRepository.findByAccountAndNode(accountUuid, nodeUuid);
 	}
 
@@ -109,6 +108,11 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	@Override
 	public void deleteAll(List<SharedSpaceMember> foundMembersToDelete) {
 		sharedSpaceMemberMongoRepository.delete(foundMembersToDelete);
+	}
+
+	@Override
+	public List<SharedSpaceMember> findByMemberName(String name) throws BusinessException {
+		return sharedSpaceMemberMongoRepository.findByMemberName(name);
 	}
 
 }

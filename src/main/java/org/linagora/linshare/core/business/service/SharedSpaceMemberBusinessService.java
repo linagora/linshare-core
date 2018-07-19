@@ -47,17 +47,21 @@ public interface SharedSpaceMemberBusinessService {
 
 	SharedSpaceMember create(SharedSpaceMember sharedSpacemember) throws BusinessException;
 
-	SharedSpaceMember findByMemberAndSharedSpaceNode(String accountUuid, String nodeUuid);
+	SharedSpaceMember findByMemberAndSharedSpaceNode(String accountUuid, String nodeUuid) throws BusinessException;
 
-	void delete(SharedSpaceMember memberToDelete);
+	void delete(SharedSpaceMember memberToDelete) throws BusinessException;
 
-	SharedSpaceMember update(SharedSpaceMember foundMemberToUpdate, SharedSpaceMember memberToUpdate);
+	SharedSpaceMember update(SharedSpaceMember foundMemberToUpdate, SharedSpaceMember memberToUpdate)
+			throws BusinessException;
 
-	SharedSpaceMember updateRole(SharedSpaceMember foundMemberToUpdate, GenericLightEntity newRole);
+	SharedSpaceMember updateRole(SharedSpaceMember foundMemberToUpdate, GenericLightEntity newRole)
+			throws BusinessException;
 
-	List<SharedSpaceMember> findBySharedSpaceNodeUuid(String shareSpaceNodeUuid);
+	List<SharedSpaceMember> findBySharedSpaceNodeUuid(String shareSpaceNodeUuid) throws BusinessException;
 
-	void deleteAll(List<SharedSpaceMember> foundMembersToDelete);
+	void deleteAll(List<SharedSpaceMember> foundMembersToDelete) throws BusinessException;
 
-	List<String> findMembersUuidBySharedSpaceNodeUuid(String shareSpaceNodeUuid);
+	List<String> findMembersUuidBySharedSpaceNodeUuid(String shareSpaceNodeUuid) throws BusinessException;
+
+	List<SharedSpaceMember> findByMemberName(String name) throws BusinessException;
 }

@@ -63,4 +63,6 @@ public interface SharedSpaceMemberService {
 
 	List<SharedSpaceMember> deleteAllMembers(Account authUser, Account actor, String sharedSpaceNodeUuid);
 
+	List<SharedSpaceMember> findByMemberName(Account authUser, Account actor,String name);
+
 }

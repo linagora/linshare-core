@@ -44,9 +44,12 @@ import org.linagora.linshare.core.rac.SharedSpaceNodeResourceAccessControl;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
+
+import com.google.common.collect.Lists;
 
 public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, SharedSpaceNode>
 		implements SharedSpaceNodeService {
@@ -87,8 +90,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
 		SharedSpaceNode created = sharedSpaceNodeBusinessService.create(node);
 		SharedSpaceRole role = ssRoleService.getAdmin(authUser, actor);
-		sharedSpaceMemberService.create(authUser, authUser,
-				new GenericLightEntity(node.getUuid(), node.getName()),
+		sharedSpaceMemberService.create(authUser, authUser, new GenericLightEntity(node.getUuid(), node.getName()),
 				new GenericLightEntity(role.getUuid(), role.getName()),
 				new GenericLightEntity(actor.getLsUuid(), actor.getFullName()));
 		return created;
@@ -125,4 +127,27 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		return sharedSpaceNodeBusinessService.findAll();
 	}
 
+	@Override
+	public SharedSpaceNode findByName(Account authUser, Account actor, String name) throws BusinessException {
+		preChecks(authUser, actor);
+		Validate.notEmpty(name, "Missing required shared space node name.");
+		SharedSpaceNode found = sharedSpaceNodeBusinessService.findByName(name);
+		if (found == null) {
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_NOT_FOUND,
+					"The shared space node with name: " + name + " is not found");
+		}
+		checkReadPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
+		return found;
+	}
+
+	@Override
+	public List<SharedSpaceNode> findAllNodesBySSMember(Account authUser, String memberName) {
+		List<SharedSpaceMember> ssmembers = sharedSpaceMemberService.findByMemberName(authUser, authUser,
+				authUser.getFullName());
+		List<SharedSpaceNode> nodes = Lists.newArrayList();
+		for (SharedSpaceMember member : ssmembers) {
+			nodes.add(find(authUser, authUser, member.getNode().getUuid()));
+		}
+		return nodes;
+	}
 }

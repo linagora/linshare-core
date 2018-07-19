@@ -109,8 +109,7 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 	@Override
 	public User checkAuthentication() throws BusinessException {
 		User user = super.checkAuthentication();
-		Functionality functionality = functionalityReadOnlyService
-				.getWorkGroupFunctionality(user.getDomain());
+		Functionality functionality = functionalityReadOnlyService.getWorkGroupFunctionality(user.getDomain());
 
 		if (!functionality.getActivationPolicy().getStatus()) {
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
@@ -121,13 +120,13 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 
 	@Override
 	public List<WorkGroupDto> findAll() throws BusinessException {
-
 		User authUser = checkAuthentication();
-
 		List<WorkGroupDto> res = Lists.newArrayList();
-		for (WorkGroup workGroup : threadService.findAllWhereMember(authUser)) {
-			res.add(new WorkGroupDto(workGroup));
+		for (SharedSpaceNode ssnode : ssNodeService.findAllNodesBySSMember(authUser, authUser.getFirstName())) {
+			WorkGroup workgroup = new WorkGroup(ssnode);
+			res.add(new WorkGroupDto(workgroup, ssnode));
 		}
+		// TODO : put ssres as return when the new architecture is applied.
 		return res;
 	}
 
@@ -136,12 +135,14 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(uuid, "Missing required thread uuid");
 		User authUser = checkAuthentication();
 		WorkGroup workGroup = threadService.find(authUser, authUser, uuid);
+		SharedSpaceNode ssnode = ssNodeService.find(authUser, authUser, uuid);
 		WorkGroupDto dto = null;
 		if (members) {
 			List<WorkgroupMember> workgroupMembers = threadService.findAllThreadMembers(authUser, authUser, workGroup);
+			ssNodeService.findAllNodesBySSMember(authUser, authUser.getFullName());
 			dto = new WorkGroupDto(workGroup, workgroupMembers);
 		} else {
-			dto = new WorkGroupDto(workGroup);
+			dto = new WorkGroupDto(workGroup, ssnode);
 		}
 		AccountQuota quota = quotaService.findByRelatedAccount(workGroup);
 		dto.setQuotaUuid(quota.getUuid());
@@ -149,8 +150,7 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public void addMember(String threadUuid, String domainId, String mail,
-			boolean readonly) throws BusinessException {
+	public void addMember(String threadUuid, String domainId, String mail, boolean readonly) throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(domainId, "Missing required domain id");
 		Validate.notEmpty(mail, "Missing required mail");
@@ -203,14 +203,12 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public WorkGroupDto update(String threadUuid, WorkGroupDto threadDto)
-			throws BusinessException {
+	public WorkGroupDto update(String threadUuid, WorkGroupDto threadDto) throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notNull(threadDto, "Missing required ThreadDto");
 		Validate.notEmpty(threadDto.getName(), "Missing required thread name");
 		User authUser = checkAuthentication();
-		return new WorkGroupDto(threadService.update(authUser, authUser, threadUuid,
-				threadDto.getName()));
+		return new WorkGroupDto(threadService.update(authUser, authUser, threadUuid, threadDto.getName()));
 	}
 
 	@Override

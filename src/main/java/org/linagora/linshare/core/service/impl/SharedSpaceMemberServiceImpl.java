@@ -72,7 +72,8 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	}
 
 	@Override
-	public SharedSpaceMember create(Account authUser, Account actor, GenericLightEntity nodeToPersist, GenericLightEntity roleToPersist, GenericLightEntity accountLight) throws BusinessException {
+	public SharedSpaceMember create(Account authUser, Account actor, GenericLightEntity nodeToPersist,
+			GenericLightEntity roleToPersist, GenericLightEntity accountLight) throws BusinessException {
 		preChecks(authUser, actor);
 		Validate.notNull(accountLight, "Account uuid must be set.");
 		Validate.notNull(roleToPersist, "Role uuid must be set.");
@@ -121,7 +122,8 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	}
 
 	@Override
-	public SharedSpaceMember updateRole(Account authUser, Account actor, String sharedSpaceMemberUuid, GenericLightEntity newRole) {
+	public SharedSpaceMember updateRole(Account authUser, Account actor, String sharedSpaceMemberUuid,
+			GenericLightEntity newRole) {
 		preChecks(authUser, actor);
 		Validate.notNull(sharedSpaceMemberUuid, "Missing required sharedSpaceMemberUuid");
 		Validate.notNull(newRole, "Missing required newRole");
@@ -153,6 +155,16 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		List<SharedSpaceMember> foundMembersToDelete = findAll(authUser, actor, sharedSpaceNodeUuid);
 		sharedSpaceMemberBusinessService.deleteAll(foundMembersToDelete);
 		return foundMembersToDelete;
+	}
+
+	@Override
+	public List<SharedSpaceMember> findByMemberName(Account authUser, Account actor, String name) {
+		preChecks(authUser, actor);
+		Validate.notEmpty(name, "Shared space member account name must be set.");
+		List<SharedSpaceMember> foundMembers = sharedSpaceMemberBusinessService.findByMemberName(name);
+		checkListPermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
+				null);
+		return foundMembers;
 	}
 
 }

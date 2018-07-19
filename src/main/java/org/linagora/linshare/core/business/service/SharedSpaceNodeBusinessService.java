@@ -50,5 +50,7 @@ public interface SharedSpaceNodeBusinessService {
 	SharedSpaceNode update(SharedSpaceNode foundNodeToUpdate, SharedSpaceNode nodeToUpdate) throws BusinessException;
 	
 	List<SharedSpaceNode> findAll() throws BusinessException;
+	
+	SharedSpaceNode findByName(String name) throws BusinessException;
 
 }
