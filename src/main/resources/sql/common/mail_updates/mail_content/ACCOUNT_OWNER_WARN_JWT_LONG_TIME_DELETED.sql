@@ -17,7 +17,7 @@ UPDATE mail_content SET subject='[(#{subject})]',body='<!DOCTYPE html>
                   <!--/* Main email  message content*/-->
                   <p>
                      <span data-th-utext="#{mainMsg(${owner.firstName},${owner.lastName})}">
-                 Peter WILSON has deleted a permanent access token for your account
+                 Peter WILSON has deleted a permanent authentication token for your account
                      </span>
                   </p>
                   <!--/* End of Main email message content*/-->
@@ -44,7 +44,7 @@ tokenCreationDate = Date de création
 tokenLabel = Nom
 tokenDescription = Description
 tokenIdentifier = Identifiant',messages_english='subject = Deletion of a permanent authentication token
-mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> has deleted a permanent access token for your account.
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> has deleted a permanent authentication token for your account.
 tokenCreationDate = Creation date
 tokenLabel = Name
 tokenDescription = Description' WHERE id=33;

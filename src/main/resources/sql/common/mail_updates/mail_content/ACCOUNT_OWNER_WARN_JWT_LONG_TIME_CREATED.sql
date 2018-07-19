@@ -43,7 +43,7 @@ mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> a cré�
 tokenCreationDate = Date de création
 tokenLabel = Nom
 tokenDescription = Description',messages_english='subject = Creation of a permanent authentication token
-mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> has created a permanent access token for your account.
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> has created a permanent authentication token for your account.
 tokenCreationDate = Creation date
 tokenLabel = Name
 tokenDescription = Description' WHERE id=32;

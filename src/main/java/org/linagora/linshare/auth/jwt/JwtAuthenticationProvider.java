@@ -134,14 +134,14 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 		if (claims.getExpiration() == null && claims.containsKey("uuid") && claims.get("uuid") != null) {
 			JwtLongTime jwtLongTime = jwtLongTimeMongoRepository.findByUuid(claims.get("uuid", String.class));
 			if (jwtLongTime == null) {
-				String message = "No valid JWT infinite token found for this token: %1$s";
+				String message = "No valid JWT permanent token found for this token : %1$s";
 				insertJwtLongTimeFailureLogEntry(claims, message);
 				String msg = String.format(message, token);
 				throw new AuthenticationServiceException(msg);
 			}
 			Functionality functionality = functionalityReadOnlyService.getJwtLongTimeFunctionality(jwtLongTime.getDomainUuid());
 			if (!functionality.getActivationPolicy().getStatus()) {
-				throw new AuthenticationServiceException("JWT infinite token Functionality is disabled.");
+				throw new AuthenticationServiceException("JWT permanent token Functionality is disabled.");
 			}
 		}
 		Date issuedAt = claims.getIssuedAt();
@@ -198,7 +198,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 				msg = String.format(message, claims.get("uuid"));
 				authentificationFacade.logAuthError(found, found.getDomainId(), msg);
 			} else {
-				msg = String.format("User not found for this permanent token : %1$s", claims.get("uuid"));
+				msg = String.format("User not found for this JWT permanent token : %1$s", claims.get("uuid"));
 				authentificationFacade.logAuthError(claims.getSubject(), null, msg);
 			}
 		}

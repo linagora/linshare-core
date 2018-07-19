@@ -133,7 +133,7 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, JwtLongT
 		final Date creationDate = clock.now();
 		final String tokenUuid = UUID.randomUUID().toString();
 		if (!actor.isInternal()) {
-			String message = "You can not generate JWT token for account which is not internal user.";
+			String message = "You can not generate JWT permanent token for account which is not internal user.";
 			throw new BusinessException(BusinessErrorCode.METHOD_NOT_ALLOWED, message);
 		}
 		JwtLongTime jwtLongTime = new JwtLongTime(tokenUuid, creationDate, issuer, label, description, actor.getLsUuid(),

@@ -2347,7 +2347,7 @@ INSERT INTO public.mail_content (id, domain_abstract_id, description, visible, m
                   <!--/* Main email  message content*/-->
                   <p>
                      <span data-th-utext="#{mainMsg(${owner.firstName},${owner.lastName})}">
-                 Peter WILSON has created a new permanent access token for your account
+                 Peter WILSON has created a new permanent authentication token for your account
                      </span>
                   </p>
                   <!--/* End of Main email message content*/-->
@@ -2373,7 +2373,7 @@ mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> a cré�
 tokenCreationDate = Date de création
 tokenLabel = Nom
 tokenDescription = Description', 'subject = Creation of a permanent authentication token
-mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> has created a permanent access token for your account.
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> has created a permanent authentication token for your account.
 tokenCreationDate = Creation date
 tokenLabel = Name
 tokenDescription = Description');
@@ -2396,7 +2396,7 @@ INSERT INTO public.mail_content (id, domain_abstract_id, description, visible, m
                   <!--/* Main email  message content*/-->
                   <p>
                      <span data-th-utext="#{mainMsg(${owner.firstName},${owner.lastName})}">
-                 Peter WILSON has deleted a permanent access token for your account
+                 Peter WILSON has deleted a permanent authentication token for your account
                      </span>
                   </p>
                   <!--/* End of Main email message content*/-->
@@ -2423,7 +2423,7 @@ tokenCreationDate = Date de création
 tokenLabel = Nom
 tokenDescription = Description
 tokenIdentifier = Identifiant', 'subject = Deletion of a permanent authentication token
-mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> has deleted a permanent access token for your account.
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> has deleted a permanent authentication token for your account.
 tokenCreationDate = Creation date
 tokenLabel = Name
 tokenDescription = Description');

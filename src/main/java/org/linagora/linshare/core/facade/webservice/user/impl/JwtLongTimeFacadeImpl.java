@@ -70,7 +70,7 @@ public class JwtLongTimeFacadeImpl extends UserGenericFacadeImp implements JwtLo
 	public List<JwtLongTime> findAll() throws BusinessException {
 		User authUser = checkAuthentication();
 		if (!authUser.isInternal()) {
-			String message = "You can not generate JWT token for account which is not internal user.";
+			String message = "You can not generate JWT permanent token for account which is not internal user.";
 			throw new BusinessException(BusinessErrorCode.METHOD_NOT_ALLOWED, message);
 		}
 		return jwtLongTimeService.findAllByActor(authUser);
@@ -80,7 +80,7 @@ public class JwtLongTimeFacadeImpl extends UserGenericFacadeImp implements JwtLo
 	public JwtLongTime delete(JwtLongTime jwtLongTime, String uuid) throws BusinessException {
 		User authUser = checkAuthentication();
 		if (!authUser.isInternal()) {
-			String message = "You can not delete JWT token for account which is not internal user.";
+			String message = "You can not delete JWT permanent token for account which is not internal user.";
 			throw new BusinessException(BusinessErrorCode.METHOD_NOT_ALLOWED, message);
 		}
 		if (!Strings.isNullOrEmpty(uuid)) {

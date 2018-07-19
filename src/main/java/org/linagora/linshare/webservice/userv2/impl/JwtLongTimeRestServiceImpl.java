@@ -59,7 +59,7 @@ import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/jwtlongtime")
-@Api(value = "/rest/user/v2/jwtlongtime", basePath = "/rest/user/v2/", description = "Jwt Long Time service", produces = "application/json,application/xml", consumes = "application/json,application/xml")
+@Api(value = "/rest/user/v2/jwtlongtime", basePath = "/rest/user/v2/", description = "JWT permanent token service", produces = "application/json,application/xml", consumes = "application/json,application/xml")
 public class JwtLongTimeRestServiceImpl implements JwtLongTimeRestService {
 
 	private final JwtLongTimeFacade jwtLongTimeFacade;
@@ -72,7 +72,7 @@ public class JwtLongTimeRestServiceImpl implements JwtLongTimeRestService {
 	@Path("/")
 	@POST
 	@Override
-	@ApiOperation(value = "Create an infinite life time JWT token.", response = JwtToken.class)
+	@ApiOperation(value = "Create a JWT permanent token.", response = JwtToken.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User is not allowed to use this endpoint"),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error.") })
@@ -88,7 +88,7 @@ public class JwtLongTimeRestServiceImpl implements JwtLongTimeRestService {
 	@Path("/")
 	@GET
 	@Override
-	@ApiOperation(value = "Find all infinite life time JWT tokens owned by user.", response = JwtLongTime.class, responseContainer = "List")
+	@ApiOperation(value = "Find all JWT permanent tokens owned by user.", response = JwtLongTime.class, responseContainer = "List")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User is not allowed to use this endpoint"),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error.") })
@@ -99,7 +99,7 @@ public class JwtLongTimeRestServiceImpl implements JwtLongTimeRestService {
 	@Path("/{uuid: .*}")
 	@DELETE
 	@Override
-	@ApiOperation(value = "Delete an infinite life time JWT token by its uuid.", response = JwtLongTime.class)
+	@ApiOperation(value = "Delete a JWT permanent token by its uuid.", response = JwtLongTime.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User is not allowed to use this endpoint"),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 404, message = "The requested token has not been found."),
@@ -114,7 +114,7 @@ public class JwtLongTimeRestServiceImpl implements JwtLongTimeRestService {
 
 	@GET
 	@Path("/audit")
-	@ApiOperation(value = "Get all traces for a JWT long time token.", response = AuditLogEntryUser.class, responseContainer="Set")
+	@ApiOperation(value = "Get all traces for a JWT permanent token.", response = AuditLogEntryUser.class, responseContainer="Set")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
 		@ApiResponse(code = 404, message = "The requested token has not been found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
