@@ -39,6 +39,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.lang.Validate;
+import org.apache.jackrabbit.rmi.client.RemoteRuntimeException;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.JwtLongTimeBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -257,16 +258,12 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, JwtLongT
 				return false;
 			}
 		} else {
-			if (LogAction.CREATE.equals(logAction)) {
-				if (!functionality.getActivationPolicy().getStatus()
-						|| !userCreateFunctionality.getDelegationPolicy().getStatus()) {
-					return false;
-				}
-			} else {
-				if (!functionality.getActivationPolicy().getStatus()
-						|| !userCreateFunctionality.getActivationPolicy().getStatus()) {
-					return false;
-				}
+			if (!functionality.getActivationPolicy().getStatus()
+					|| !userCreateFunctionality.getActivationPolicy().getStatus()) {
+				return false;
+			} else if (LogAction.CREATE.equals(logAction)
+					&& !userCreateFunctionality.getDelegationPolicy().getStatus()) {
+				return false;
 			}
 		}
 		return true;

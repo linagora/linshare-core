@@ -43,6 +43,7 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
+import org.linagora.linshare.core.business.service.JwtLongTimeBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
@@ -75,6 +76,9 @@ import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.utils.HashUtils;
+import org.linagora.linshare.mongo.entities.JwtLongTime;
+import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.mongo.entities.logs.JwtLongTimeAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.UserAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.UserMto;
 import org.slf4j.Logger;
@@ -118,6 +122,8 @@ public class UserServiceImpl implements UserService {
 
 	private final ContainerQuotaBusinessService containerQuotaBusinessService;
 
+	private final JwtLongTimeBusinessService jwtLongTimeBusinessService;
+
 	public UserServiceImpl(
 			final UserRepository<User> userRepository,
 			final LogEntryService logEntryService,
@@ -131,7 +137,8 @@ public class UserServiceImpl implements UserService {
 			final MailingListContactRepository mailingListContactRepository,
 			final RecipientFavouriteRepository recipientFavouriteRepository,
 			final AccountQuotaBusinessService accountQuotaBusinessService,
-			final ContainerQuotaBusinessService containerQuotaBusinessService) {
+			final ContainerQuotaBusinessService containerQuotaBusinessService,
+			final JwtLongTimeBusinessService jwtLongTimeBusinessService) {
 		this.userRepository = userRepository;
 		this.logEntryService = logEntryService;
 		this.guestRepository = guestRepository;
@@ -145,6 +152,7 @@ public class UserServiceImpl implements UserService {
 		this.recipientFavouriteRepository = recipientFavouriteRepository;
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
 		this.containerQuotaBusinessService = containerQuotaBusinessService;
+		this.jwtLongTimeBusinessService = jwtLongTimeBusinessService;
 	}
 
 	@Override
@@ -245,6 +253,7 @@ public class UserServiceImpl implements UserService {
 			UserAuditLogEntry log = new UserAuditLogEntry(actor, actor, LogAction.DELETE, AuditLogEntryType.USER, userToDelete);
 			threadService.deleteAllUserMemberships(actor, userToDelete);
 			userRepository.delete(userToDelete);
+			deleteAllJwtLongTime(actor, userToDelete);
 			logEntryService.insert(log);
 		} catch (IllegalArgumentException e) {
 			logger.error(
@@ -309,6 +318,9 @@ public class UserServiceImpl implements UserService {
 			// ownSignatures.clear();
 			// userRepository.update(userToDelete);
 
+			// Delete all Jwt Long Time tokens owned by this user
+			deleteAllJwtLongTime(actor, userToDelete);
+
 			userRepository.purge(userToDelete);
 
 //			AKO : To think about, logical delete, delete, physical delete staging for delete...
@@ -324,6 +336,18 @@ public class UserServiceImpl implements UserService {
 					"Couldn't find the user "
 							+ userToDelete.getAccountRepresentation()
 							+ " to be deleted");
+		}
+	}
+
+	private void deleteAllJwtLongTime(Account authUser, Account userToDelete) {
+		List<JwtLongTime> tokens = jwtLongTimeBusinessService.findAllByActor(userToDelete);
+		if (tokens != null && !tokens.isEmpty()) {
+			for (JwtLongTime token : tokens) {
+				AuditLogEntryUser createLog = new JwtLongTimeAuditLogEntry(authUser, userToDelete, LogAction.DELETE,
+						AuditLogEntryType.JWT_LONG_TIME_TOKEN, token);
+				jwtLongTimeBusinessService.deleteToken(token);
+				logEntryService.insert(createLog);
+			}
 		}
 	}
 

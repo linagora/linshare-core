@@ -37,6 +37,7 @@
 		<constructor-arg ref="recipientFavouriteRepository" />
 		<constructor-arg ref="accountQuotaBusinessService"/>
 		<constructor-arg ref="containerQuotaBusinessService"/>
+		<constructor-arg ref="jwtLongTimeBusinessService"/>
 	</bean>
 
 	<bean name="inconsistentUserService" class="org.linagora.linshare.core.service.impl.InconsistentUserServiceImpl">
