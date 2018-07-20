@@ -119,7 +119,7 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 				!readOnly);
 		// TODO Retrieve the role from the restService once the front will pass the info
 		SharedSpaceNode foundSharedSpaceNode = sharedSpaceNodeService.find(authUser, authUser, threadUuid);
-		SharedSpaceRole defaultRole = ssRoleService.findByName(authUser, authUser, "CONTRIBUTOR");
+		SharedSpaceRole defaultRole = getDefaultRole(authUser, admin);
 		ssMemberService.create(authUser, authUser,
 				new GenericLightEntity(foundSharedSpaceNode.getUuid(), foundSharedSpaceNode.getName()),
 				new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()),
@@ -133,9 +133,18 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notNull(threadMember, "Missing required thread member");
 		User authUser = checkAuthentication();
-		return new WorkGroupMemberDto(threadService.updateMember(authUser, authUser,
+		WorkgroupMember updatedMember = threadService.updateMember(authUser, authUser,
 				threadUuid, threadMember.getUserUuid(), threadMember.isAdmin(),
-				!threadMember.isReadonly()));
+				!threadMember.isReadonly());
+		// New SharedSpaceNode architecture
+		SharedSpaceRole defaultRole = getDefaultRole(authUser, threadMember.isAdmin());
+		User user = userService.findByLsUuid(threadMember.getUserUuid());
+		SharedSpaceNode nodeOfMemberToUpdate = new SharedSpaceNode();
+		nodeOfMemberToUpdate.setUuid(threadUuid);
+		SharedSpaceMember ssMemberToUpdate = ssMemberService.findMember(authUser, authUser, user, nodeOfMemberToUpdate);
+		ssMemberService.updateRole(authUser, authUser, ssMemberToUpdate.getUuid(),
+				new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()));
+		return new WorkGroupMemberDto(updatedMember);
 	}
 
 	@Override
@@ -152,5 +161,12 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		SharedSpaceMember ssMemberToDelete = ssMemberService.findMember(authUser, authUser, user, nodeOfMemberToDelete);
 		ssMemberService.delete(authUser, authUser, ssMemberToDelete);
 		return new WorkGroupMemberDto(member);
+	}
+
+	private SharedSpaceRole getDefaultRole(User authUser, boolean admin) {
+		if (admin) {
+			return ssRoleService.findByName(authUser, authUser, "ADMIN");
+		}
+		return ssRoleService.findByName(authUser, authUser, "READER");
 	}
 }

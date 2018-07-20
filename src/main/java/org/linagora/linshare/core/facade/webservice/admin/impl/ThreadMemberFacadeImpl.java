@@ -109,7 +109,10 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		boolean canUpload = !dto.isReadonly();
 		WorkgroupMember createdWorkGroupMember = threadService.addMember(authUser, authUser, workGroup, user, admin, canUpload);
 		// TODO Retrieve the role from the restService once the front will pass the info
-		SharedSpaceRole defaultRole = ssRoleService.findByName(authUser, authUser, "CONTRIBUTOR");
+		SharedSpaceRole defaultRole = ssRoleService.findByName(authUser, authUser, "READER");
+		if (dto.isAdmin()) {
+			defaultRole = ssRoleService.findByName(authUser, authUser, "ADMIN");
+		}
 		SharedSpaceNode foundSharedSpaceNode = sharedSpaceNodeService.find(authUser, authUser, dto.getThreadUuid());
 		ssMemberService.create(authUser, authUser,
 				new GenericLightEntity(foundSharedSpaceNode.getUuid(), foundSharedSpaceNode.getName()),
@@ -126,7 +129,19 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notNull(dto.getUserUuid(), "user uuid must be set.");
 		boolean admin = dto.isAdmin();
 		boolean readonly = dto.isReadonly();
-		return new WorkGroupMemberDto(threadService.updateMember(authUser, authUser, dto.getThreadUuid(), dto.getUserUuid(), admin, !readonly));
+		WorkgroupMember updatedMember = threadService.updateMember(authUser, authUser, dto.getThreadUuid(), dto.getUserUuid(), admin, !readonly);
+		// New SharedSpaceNode architecture
+		SharedSpaceRole defaultRole = ssRoleService.findByName(authUser, authUser, "READER");
+		if (dto.isAdmin()) {
+			defaultRole = ssRoleService.findByName(authUser, authUser, "ADMIN");
+		}
+		User user = userService.findByLsUuid(dto.getUserUuid());
+		SharedSpaceNode nodeOfMemberToDelete = new SharedSpaceNode();
+		nodeOfMemberToDelete.setUuid(dto.getThreadUuid());
+		SharedSpaceMember ssMemberToUpdate = ssMemberService.findMember(authUser, authUser, user, nodeOfMemberToDelete);
+		ssMemberService.updateRole(authUser, authUser, ssMemberToUpdate.getUuid(),
+				new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()));
+		return new WorkGroupMemberDto(updatedMember);
 	}
 
 	@Override
