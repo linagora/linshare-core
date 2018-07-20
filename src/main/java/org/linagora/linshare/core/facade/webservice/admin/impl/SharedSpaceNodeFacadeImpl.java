@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
+import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -48,7 +49,8 @@ public class SharedSpaceNodeFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private final SharedSpaceNodeService ssNodeService;
 
-	public SharedSpaceNodeFacadeImpl(AccountService accountService, SharedSpaceNodeService ssNodeService) {
+	public SharedSpaceNodeFacadeImpl(AccountService accountService,
+			SharedSpaceNodeService ssNodeService) {
 		super(accountService);
 		this.ssNodeService = ssNodeService;
 	}
@@ -82,6 +84,12 @@ public class SharedSpaceNodeFacadeImpl extends AdminGenericFacadeImpl implements
 			Validate.notEmpty(node.getUuid(), "The shared space node uuid to update must be set.");
 		}
 		return ssNodeService.update(authUser, authUser, node);
+	}
+
+	@Override
+	public List<SharedSpaceNode> findAll() {
+		Account authUser = checkAuthentication(Role.SUPERADMIN);
+		return ssNodeService.findAll(authUser);
 	}
 
 }

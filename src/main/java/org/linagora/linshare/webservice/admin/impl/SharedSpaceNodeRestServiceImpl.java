@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.webservice.admin.impl;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -112,4 +114,17 @@ public class SharedSpaceNodeRestServiceImpl implements SharedSpaceNodeRestServic
 			throws BusinessException {
 		return ssNodeFacade.update(node, uuid);
 	}
+
+	@Path("/")
+	@GET
+	@ApiOperation(value = "Get all shared space nodes.", response = SharedSpaceNode.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to list all shared space nodes."),
+			@ApiResponse(code = 404, message = "Not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public List<SharedSpaceNode> findAll() throws BusinessException {
+		return ssNodeFacade.findAll();
+	}
+
 }
