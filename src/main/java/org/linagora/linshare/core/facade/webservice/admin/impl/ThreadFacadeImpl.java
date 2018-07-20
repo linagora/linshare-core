@@ -141,7 +141,12 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements ThreadFa
 	public WorkGroupDto update(WorkGroupDto threadDto) throws BusinessException {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
 		Validate.notNull(threadDto, "thread must be set.");
-		return new WorkGroupDto(threadService.update(authUser, authUser, threadDto.getUuid(), threadDto.getName()));
+		WorkGroupDto workGroupDto = new WorkGroupDto(
+				threadService.update(authUser, authUser, threadDto.getUuid(), threadDto.getName()));
+		SharedSpaceNode ssNodeFoundToUpdate = ssNodeService.find(authUser, authUser, workGroupDto.getUuid());
+		ssNodeFoundToUpdate.setName(threadDto.getName());
+		SharedSpaceNode ssnodeUpdated = ssNodeService.update(authUser, authUser, ssNodeFoundToUpdate);
+		return workGroupDto;
 	}
 
 	@Override

@@ -208,7 +208,12 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notNull(threadDto, "Missing required ThreadDto");
 		Validate.notEmpty(threadDto.getName(), "Missing required thread name");
 		User authUser = checkAuthentication();
-		return new WorkGroupDto(threadService.update(authUser, authUser, threadUuid, threadDto.getName()));
+		WorkGroupDto workGroupDto = new WorkGroupDto(
+				threadService.update(authUser, authUser, threadUuid, threadDto.getName()));
+		SharedSpaceNode ssNodeFoundToUpdate = ssNodeService.find(authUser, authUser, threadUuid);
+		ssNodeFoundToUpdate.setName(threadDto.getName());
+		SharedSpaceNode ssnodeUpdated = ssNodeService.update(authUser, authUser, ssNodeFoundToUpdate);
+		return workGroupDto;
 	}
 
 	@Override
