@@ -113,7 +113,7 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 	@After
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		this.deleteAllNodes();
+//		this.deleteAllNodes();
 	}
 
 	@Test

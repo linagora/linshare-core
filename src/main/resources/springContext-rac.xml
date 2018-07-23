@@ -108,6 +108,8 @@
 
 	<bean name="sharedSpaceNodeResourceAccessControl" class="org.linagora.linshare.core.rac.impl.SharedSpaceNodeResourceAccessControlImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="sharedSpacePermissionMongoRepository" />
+		<constructor-arg ref="sharedSpaceMemberMongoRepository" />
 	</bean>
 	<bean name="sharedSpaceRoleResourceAccessControl" class="org.linagora.linshare.core.rac.impl.SharedSpaceRoleResourceAccessControlImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />

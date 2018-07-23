@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009-2018. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,25 +31,8 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.business.service;
+package org.linagora.linshare.core.rac;
 
-import java.util.List;
-
-import org.linagora.linshare.core.domain.constants.SharedSpaceActionType;
-import org.linagora.linshare.core.domain.constants.SharedSpaceResourceType;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.mongo.entities.SharedSpacePermission;
-
-public interface SharedSpacePermissionBusinessService {
-
-	SharedSpacePermission findByUuid(String uuid) throws BusinessException;
-
-	List<SharedSpacePermission> findByRole(String roleName) throws BusinessException;
-
-	List<SharedSpacePermission> findAll() throws BusinessException;
-
-	List<SharedSpacePermission> findByRoleUuid(String roleUuid) throws BusinessException;
-
-	Boolean hasPermission(String roleUuid, SharedSpaceActionType action, SharedSpaceResourceType resourceType);
+public interface AbstractSharedSpaceResourceAccessControl<A, R, E> extends AbstractResourceAccessControl<A, R, E> {
 
 }

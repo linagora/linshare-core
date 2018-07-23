@@ -34,6 +34,9 @@
 package org.linagora.linshare.mongo.repository;
 
 import java.util.List;
+
+import org.linagora.linshare.core.domain.constants.SharedSpaceActionType;
+import org.linagora.linshare.core.domain.constants.SharedSpaceResourceType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpacePermission;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -43,9 +46,15 @@ public interface SharedSpacePermissionMongoRepository extends MongoRepository<Sh
 	
 	SharedSpacePermission findByUuid(String uuid) throws BusinessException;
 
-	@Query("{sharedSpaceRoles.name: ?0}")
+	@Query("{roles.name: ?0}")
 	List<SharedSpacePermission> findBySharedSpaceRole(String roleName) throws BusinessException;
 
+	@Query("{roles.uuid: ?0}")
+	List<SharedSpacePermission> findBySharedSpaceRoleUuid(String roleUuid) throws BusinessException;
+
 	List<SharedSpacePermission> findAll() throws BusinessException;
+
+	@Query("{roles.uuid: ?0, action: ?1, resource: ?2}")
+	List<SharedSpacePermission> findByRoleAndActionAndResource(String roleUuid, SharedSpaceActionType action, SharedSpaceResourceType resourceType);
 
 }

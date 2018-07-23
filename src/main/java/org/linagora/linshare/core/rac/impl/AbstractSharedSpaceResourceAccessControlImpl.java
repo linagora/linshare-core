@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009-2018. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -37,68 +37,74 @@ import org.linagora.linshare.core.domain.constants.SharedSpaceActionType;
 import org.linagora.linshare.core.domain.constants.SharedSpaceResourceType;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Functionality;
-import org.linagora.linshare.core.rac.SharedSpaceNodeResourceAccessControl;
+import org.linagora.linshare.core.rac.AbstractSharedSpaceResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpacePermissionMongoRepository;
 
-public class SharedSpaceNodeResourceAccessControlImpl
-		extends AbstractSharedSpaceResourceAccessControlImpl<Account, SharedSpaceNode>
-		implements SharedSpaceNodeResourceAccessControl {
+public abstract class AbstractSharedSpaceResourceAccessControlImpl<R, E> extends AbstractResourceAccessControlImpl<Account, R, E> implements AbstractSharedSpaceResourceAccessControl<Account, R, E>{
 
-	public SharedSpaceNodeResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService,
+	protected SharedSpaceMemberMongoRepository sharedSpaceMemberMongoRepository;
+
+	protected SharedSpacePermissionMongoRepository sharedSpacePermissionMongoRepository;
+
+	public AbstractSharedSpaceResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService,
 			SharedSpaceMemberMongoRepository sharedSpaceMemberMongoRepository,
 			SharedSpacePermissionMongoRepository sharedSpacePermissionMongoRepository) {
-		super(functionalityService, sharedSpaceMemberMongoRepository, sharedSpacePermissionMongoRepository);
+		super(functionalityService);
+		this.sharedSpaceMemberMongoRepository = sharedSpaceMemberMongoRepository;
+		this.sharedSpacePermissionMongoRepository = sharedSpacePermissionMongoRepository;
+	}
+
+	protected abstract SharedSpaceResourceType getSharedSpaceResourceType();
+
+	protected Account getOwner(SharedSpaceNode entry, Object... opt) {
+		return null;
+	}
+
+	protected abstract String getSharedSpaceNodeUuid(E entry);
+
+	@Override
+	protected String getTargetedAccountRepresentation(Account actor) {
+		return actor.getAccountRepresentation();
 	}
 
 	@Override
-	protected SharedSpaceResourceType getSharedSpaceResourceType() {
-		return SharedSpaceResourceType.WORKGROUP;
+	protected String getEntryRepresentation(E entry) {
+		return entry.toString();
 	}
 
-	@Override
-	protected boolean hasReadPermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
-		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.SHARED_SPACE_NODE_READ, SharedSpaceActionType.READ);
+	protected boolean defaultSharedSpacePermissionCheck(Account authUser, Account actor, E entry,
+			TechnicalAccountPermissionType permission, SharedSpaceActionType action) {
+		String sharedSpaceNodeUuid = getSharedSpaceNodeUuid(entry);
+		return defaultSharedSpacePermissionCheck(authUser, actor, sharedSpaceNodeUuid, permission, action);
 	}
 
-	@Override
-	protected boolean hasListPermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
-		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.SHARED_SPACE_NODE_LIST,
-				false);
-	}
-
-	@Override
-	protected boolean hasDeletePermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
-		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.SHARED_SPACE_NODE_DELETE, SharedSpaceActionType.DELETE);
-	}
-
-	@Override
-	protected boolean hasCreatePermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
-		Functionality creation = functionalityService.getWorkGroupCreationRight(actor.getDomain());
-		if (!creation.getActivationPolicy().getStatus()) {
-			String message = "You can not create shared space, you are not authorized.";
-			logger.error(message);
-			logger.error("The current domain does not allow you to create a shared space node.");
-			return false;
+	protected boolean defaultSharedSpacePermissionCheck(Account authUser, Account actor, String sharedSpaceNodeUuid,
+			TechnicalAccountPermissionType permission, SharedSpaceActionType action) {
+		if (authUser.hasSuperAdminRole()) {
+			return true;
 		}
-		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.SHARED_SPACE_NODE_CREATE,
-				false);
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser, permission);
+		}
+		if (authUser.isInternal() || authUser.isGuest()) {
+			if (actor != null && authUser.equals(actor)) {
+				SharedSpaceMember foundMember = sharedSpaceMemberMongoRepository.findByAccountAndNode(actor.getLsUuid(),
+						sharedSpaceNodeUuid);
+				if (foundMember == null) {
+					return false;
+				}
+				return hasPermission(foundMember.getRole().getUuid(), action, getSharedSpaceResourceType());
+			}
+		}
+		return false;
 	}
 
-	@Override
-	protected boolean hasUpdatePermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
-		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.SHARED_SPACE_NODE_UPDATE, SharedSpaceActionType.UPDATE);
-	}
-
-	@Override
-	protected String getSharedSpaceNodeUuid(SharedSpaceNode entry) {
-		return entry.getUuid();
+	private Boolean hasPermission(String roleUuid, SharedSpaceActionType action, SharedSpaceResourceType resourceType) {
+		return !sharedSpacePermissionMongoRepository.findByRoleAndActionAndResource(roleUuid, action, resourceType).isEmpty();
 	}
 
 }

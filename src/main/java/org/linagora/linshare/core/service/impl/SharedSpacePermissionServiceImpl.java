@@ -36,6 +36,8 @@ package org.linagora.linshare.core.service.impl;
 import java.util.List;
 import org.jsoup.helper.Validate;
 import org.linagora.linshare.core.business.service.SharedSpacePermissionBusinessService;
+import org.linagora.linshare.core.domain.constants.SharedSpaceActionType;
+import org.linagora.linshare.core.domain.constants.SharedSpaceResourceType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -71,8 +73,8 @@ public class SharedSpacePermissionServiceImpl implements SharedSpacePermissionSe
 	public List<SharedSpacePermission> findByRole(Account authUser, Account actor, String roleName)
 			throws BusinessException {
 		Validate.notNull(authUser, "Missing authUser account");
-		Validate.notEmpty(actor.getLsUuid(), "Missing authUser uuid");
-		Validate.notNull(roleName, "Missing required role for this permission");
+		Validate.notNull(actor, "Missing actor");
+		Validate.notEmpty(actor.getLsUuid(), "Missing actor uuid");
 		List<SharedSpacePermission> foundPermission = sharedSpacePermissionBusinessService.findByRole(roleName);
 		if (foundPermission == null) {
 			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_PERMISSION_NOT_FOUND,
@@ -90,6 +92,14 @@ public class SharedSpacePermissionServiceImpl implements SharedSpacePermissionSe
 			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_PERMISSION_FORBIDDEN, "you are not authorized");
 		}
 		return sharedSpacePermissionBusinessService.findAll();
+	}
+
+	public Boolean hasPermission(Account authUser, Account actor, String roleUuid, SharedSpaceActionType action,
+			SharedSpaceResourceType resourceType) {
+		Validate.notNull(authUser, "Missing authUser account");
+		Validate.notNull(actor, "Missing actor");
+		Validate.notEmpty(actor.getLsUuid(), "Missing actor uuid");
+		return sharedSpacePermissionBusinessService.hasPermission(roleUuid, action, resourceType);
 	}
 
 }

@@ -36,6 +36,8 @@ package org.linagora.linshare.core.business.service.impl;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.SharedSpacePermissionBusinessService;
+import org.linagora.linshare.core.domain.constants.SharedSpaceActionType;
+import org.linagora.linshare.core.domain.constants.SharedSpaceResourceType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpacePermission;
 import org.linagora.linshare.mongo.repository.SharedSpacePermissionMongoRepository;
@@ -60,8 +62,18 @@ public class SharedSpacePermissionBusinessServiceImpl implements SharedSpacePerm
 	}
 
 	@Override
+	public List<SharedSpacePermission> findByRoleUuid(String roleUuid) throws BusinessException {
+		return sharedSpacePermissionMongoRepository.findBySharedSpaceRoleUuid(roleUuid);
+	}
+
+	@Override
 	public List<SharedSpacePermission> findAll() throws BusinessException {
 		return sharedSpacePermissionMongoRepository.findAll();
+	}
+
+	@Override
+	public Boolean hasPermission(String roleUuid, SharedSpaceActionType action, SharedSpaceResourceType resourceType) {
+		return !sharedSpacePermissionMongoRepository.findByRoleAndActionAndResource(roleUuid, action, resourceType).isEmpty();
 	}
 
 }
