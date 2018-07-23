@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,38 +31,27 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-
 package org.linagora.linshare.core.domain.entities;
 
-import org.linagora.linshare.core.domain.constants.UserProviderType;
-import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPUserProviderDto;
+public class GroupMemberLdapPattern extends LdapPattern {
 
-public abstract class UserProvider extends Provider {
+	protected String findMemberQuery;
 
-	protected UserProviderType userProviderType;
+	public String getFindMemberQuery() {
+		return findMemberQuery;
+	}
 
-	public UserProviderType getUserProviderType() {
-		return userProviderType;
+	public void setFindMemberQuery(String findMemberQuery) {
+		this.findMemberQuery = findMemberQuery;
+	}
+
+	public GroupMemberLdapPattern() {
+		super();
 	}
 
 	@Override
 	public String toString() {
-		return "UserProvider [Type=" + userProviderType + ", uuid=" + uuid + "]";
+		return "GroupMemberLdapPattern [findMemberQuery=" + findMemberQuery + "]";
 	}
-
-	/**
-	 * alias
-	 * @return UserProviderType
-	 */
-	public UserProviderType getType() {
-		return userProviderType;
-	}
-
-	protected void setUserProviderType(UserProviderType userProviderType) {
-		this.userProviderType = userProviderType;
-	}
-
-	// TODO Just create and return an UserProviderDto
-	public abstract LDAPUserProviderDto toLDAPUserProviderDto();
 
 }

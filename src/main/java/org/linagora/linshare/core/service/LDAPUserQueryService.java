@@ -31,38 +31,32 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.core.service;
 
-package org.linagora.linshare.core.domain.entities;
+import java.io.IOException;
+import java.util.List;
 
-import org.linagora.linshare.core.domain.constants.UserProviderType;
-import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPUserProviderDto;
+import javax.naming.NamingException;
 
-public abstract class UserProvider extends Provider {
+import org.linagora.linshare.core.domain.entities.LdapConnection;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.UserLdapPattern;
+import org.linagora.linshare.core.exception.BusinessException;
 
-	protected UserProviderType userProviderType;
+public interface LDAPUserQueryService {
 
-	public UserProviderType getUserProviderType() {
-		return userProviderType;
-	}
+	public User auth(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, String userLogin, String userPasswd) throws NamingException, IOException;
 
-	@Override
-	public String toString() {
-		return "UserProvider [Type=" + userProviderType + ", uuid=" + uuid + "]";
-	}
+	public User searchForAuth(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, String userLogin) throws NamingException, IOException;
 
-	/**
-	 * alias
-	 * @return UserProviderType
-	 */
-	public UserProviderType getType() {
-		return userProviderType;
-	}
+	public List<User> searchUser(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, String mail, String firstName, String lastName) throws BusinessException, NamingException,
+			IOException;
 
-	protected void setUserProviderType(UserProviderType userProviderType) {
-		this.userProviderType = userProviderType;
-	}
+	public Boolean isUserExist(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, String mail) throws BusinessException, NamingException, IOException;
+	
+	public User getUser(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, String mail) throws BusinessException, NamingException,	IOException;
 
-	// TODO Just create and return an UserProviderDto
-	public abstract LDAPUserProviderDto toLDAPUserProviderDto();
+	public List<User> completeUser(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, String pattern) throws BusinessException, NamingException, IOException;
 
+	public List<User> completeUser(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, String firstName, String lastName) throws BusinessException, NamingException, IOException;
 }

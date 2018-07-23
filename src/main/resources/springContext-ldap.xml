@@ -8,8 +8,12 @@
 	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
 	default-autowire="no">
 
-	<bean name="ldapQueryService"
-		class="org.linagora.linshare.core.service.impl.LDAPQueryServiceImpl">
+	<bean name="ldapUserQueryService"
+		class="org.linagora.linshare.core.service.impl.LDAPUserQueryServiceImpl">
+	</bean>
+
+	<bean name="ldapGroupQueryService"
+		class="org.linagora.linshare.core.service.impl.LDAPGroupQueryServiceImpl">
 	</bean>
 
 </beans>

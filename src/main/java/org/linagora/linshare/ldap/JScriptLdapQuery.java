@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -38,9 +38,9 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -54,64 +54,41 @@ import javax.naming.directory.SearchResult;
 import javax.naming.ldap.Control;
 import javax.naming.ldap.HasControls;
 
-import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
-import org.linagora.linshare.core.domain.entities.LdapConnection;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linid.dm.authorization.lql.JScriptEvaluator;
 import org.linid.dm.authorization.lql.LqlRequestCtx;
 import org.linid.dm.authorization.lql.dnlist.IDnList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.ldap.NameNotFoundException;
-import org.springframework.ldap.core.support.LdapContextSource;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.ldap.authentication.BindAuthenticator;
-import org.springframework.security.ldap.search.LdapUserSearch;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Maps;
+public abstract class JScriptLdapQuery<T extends Object> {
 
-public class JScriptLdapQuery {
+	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	/** Attributes **/
+	protected JScriptEvaluator evaluator;
 
-	// Logger
-	private static final Logger logger = LoggerFactory.getLogger(JScriptLdapQuery.class);
-	
-	private JScriptEvaluator evaluator;
-	
-	private String baseDn;
+	protected LqlRequestCtx lqlctx;
 
-	private UserLdapPattern domainPattern;
+	protected IDnList dnList;
 
-	private LqlRequestCtx lqlctx;
+	protected String baseDn;
 
-	private IDnList dnList;
+	protected BeanInfo beanInfo;
 
-	private BeanInfo beanInfo;
+	protected Pattern cleaner;
 
-	private Pattern cleaner;
+	protected Class<?> clazz;
 
-	/**
-	 * @param ctx
-	 * @param baseDn
-	 * @param domainPattern
-	 * @param dnList
-	 */
-	public JScriptLdapQuery(LqlRequestCtx ctx, String baseDn, UserLdapPattern domainPattern, IDnList dnList) throws NamingException, IOException {
+	public JScriptLdapQuery(LqlRequestCtx ctx, String baseDn, IDnList dnList, Class<?> clazz) throws NamingException, IOException {
 		super();
 		this.lqlctx = ctx;
 		this.evaluator = JScriptEvaluator.getInstance(ctx.getLdapCtx(), dnList);
-		this.baseDn = baseDn;
-		this.domainPattern = domainPattern;
 		this.cleaner = Pattern.compile("[;,!|*()&]");
-
+		this.clazz = clazz;
+		this.baseDn = baseDn;
 		try {
-			this.beanInfo = Introspector.getBeanInfo(Internal.class);
+			this.beanInfo = Introspector.getBeanInfo(clazz);
 		} catch (IntrospectionException e) {
 			logger.error("Introspection of Internal user class impossible.");
 			logger.debug("message : " + e.getMessage());
@@ -121,8 +98,6 @@ public class JScriptLdapQuery {
 	public String cleanLdapInputPattern(String pattern) {
 		return cleaner.matcher(pattern).replaceAll("");
 	}
-
-	/** Methods **/
 
 	public List<String> evaluate(String lqlExpression) throws NamingException {
 		try {
@@ -144,7 +119,7 @@ public class JScriptLdapQuery {
 		}
 	}
 
-	private void logLqlQuery(String command, String pattern) {
+	protected void logLqlQuery(String command, String pattern) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("lql command " + command);
 			logger.debug("pattern: " + pattern);
@@ -154,155 +129,34 @@ public class JScriptLdapQuery {
 		}
 	}
 
-	private void logLqlQuery(String command, String mail, String first_name, String last_name) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("lql command " + command);
-			logger.debug("first_name: " + first_name);
-			logger.debug("last_name: " + last_name);
-			String cmd = command.replaceAll("\"[ ]*[+][ ]*last_name[ ]*[+][ ]*\"", last_name);
-			cmd = cmd.replaceAll("\"[ ]*[+][ ]*first_name[ ]*[+][ ]*\"", first_name);
-			if (mail != null) {
-				cmd = cmd.replaceAll("\"[ ]*[+][ ]*mail[ ]*[+][ ]*\"", mail);
-			}
-			logger.debug("ldap filter : " + cmd);
-		}
-	}
-
-	private void logLqlQuery(String command, String first_name, String last_name) {
-		logLqlQuery(command, null, first_name, last_name);
-	}
-
 	/**
+	 * This method is designed to add expansion characters to the input string.
 	 * 
-	 * @param pattern
-	 *            : could be first name, last name, or mail fragment.
-	 * @return List<User>
-	 * @throws NamingException
+	 * @param string
+	 *            : any string
+	 * @return String
 	 */
-	public List<User> complete(String pattern) throws NamingException {
-
-		// Getting lql expression for completion
-		String command = domainPattern.getAutoCompleteCommandOnAllAttributes();
-		pattern = addExpansionCharacters(pattern);
-
-		// Setting lql query parameters
-		Map<String, Object> vars = lqlctx.getVariables();
-		vars.put("pattern", pattern);
-		if (logger.isDebugEnabled())
-			logLqlQuery(command, pattern);
-
-		// searching ldap directory with pattern
-		List<String> dnResultList = this.evaluate(command);
-
-		// Building user list from dn (getting needed attributes)
-		return dnListToUsersList(dnResultList, true);
-	}
-
-	/**
-	 * Looking for a user using first name and last name. Only for auto-complete.
-	 * @param first_name
-	 * @param last_name
-	 * @return List<User>
-	 * @throws NamingException
-	 */
-	public List<User> complete(String first_name, String last_name) throws NamingException {
-
-		// Getting lql expression for completion
-		String command = domainPattern.getAutoCompleteCommandOnFirstAndLastName();
-		first_name = addExpansionCharacters(first_name);
-		last_name = addExpansionCharacters(last_name);
-
-		// Setting lql query parameters
-		Map<String, Object> vars = lqlctx.getVariables();
-		vars.put("first_name", first_name);
-		vars.put("last_name", last_name);
-		logLqlQuery(command, first_name, last_name);
-
-		// searching ldap directory with pattern
-		List<String> dnResultList = this.evaluate(command);
-
-		return dnListToUsersList(dnResultList, true);
-	}
-
-	/**
-	 * This function build user list from input dn list
-	 * @param dnResultList
-	 *            : // list of dn without baseDn used by the previous search.
-	 * @param completionMode
-	 *            : completion mode return a user object with only mail,
-	 *            first name, and last name set. Otherwise all defined attributes
-	 *            will be search and set (mail, firstname, lastname, uid, ...)
-	 * @return List<User> List of user
-	 */
-	private List<User> dnListToUsersList(List<String> dnResultList, boolean completionMode) {
-		ControlContext controlContext = initControlContext(completionMode);
-
-		// converting resulting dn to User object
-		List<User> users = new ArrayList<User>();
-		for (String dn : dnResultList) {
-			logger.debug("current dn: " + dn);
-			Date date_before = new Date();
-			User user = null;
-			try {
-				user = dnToUser(dn, controlContext.getLdapDbAttributes(), controlContext.getSearchControls());
-			} catch (NamingException e) {
-				logger.error(e.getMessage());
-				logger.debug(e.toString());
-			}
-			Date date_after = new Date();
-			logger.debug("fin dnToUser : " + String.valueOf(date_after.getTime() - date_before.getTime()) + " milliseconds.");
-			if (user != null) {
-				users.add(user);
-			}
+	protected String addExpansionCharacters(String string) {
+		if (string == null || string.length() < 1) {
+			string = "*";
+		} else {
+			string = cleanLdapInputPattern(string);
+			string = "*" + string.trim() + "*";
 		}
-		return users;
+		return string;
 	}
 
-	/**
-	 * This function build user from input dn
-	 * @param dn
-	 * @param completionMode
-	 * @return User
-	 * @throws NamingException
-	 */
-	private User dnToUser(String dn, boolean completionMode) throws NamingException {
-		ControlContext controlContext = initControlContext(completionMode);
-		return dnToUser(dn, controlContext.getLdapDbAttributes(), controlContext.getSearchControls());
-	}
-
-	private ControlContext initControlContext(boolean completionMode) {
-		// Initialization of bean introspection
-		if (beanInfo == null) {
-			logger.error("Introspection of Internal user class impossible. Bean inspector is not initialised.");
+	@SuppressWarnings("unchecked")
+	protected T dnToObject(String dn, Map<String, LdapAttribute> ldapDbAttributes, SearchControls scs) throws NamingException {
+		T user = null;
+		try {
+			Constructor<?> ctor = clazz.getConstructor();
+			user = (T) ctor.newInstance();
+			logger.debug("newInstance : " + user.toString());
+		} catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException e) {
+			logger.error(e.getMessage(), e);
 			return null;
 		}
-
-		// Get only ldap attributes needed for completion
-		Map<String, LdapAttribute> ldapDbAttributes;
-		if (completionMode) {
-			// Get only ldap attributes needed for completion
-			ldapDbAttributes = getLdapDbAttributeForCompletion();
-		} else {
-			// Get only ldap attributes
-			ldapDbAttributes = getLdapDbAttribute();
-		}
-
-		// String list of ldap attributes
-		Collection<String> ldapAttrList = getLdapAttrList(ldapDbAttributes);
-
-		// ldapContext ldapCtx, String base, String filter, int scope)
-		SearchControls scs = new SearchControls();
-		scs.setSearchScope(SearchControls.OBJECT_SCOPE);
-
-		// Attributes to retrieve from ldap.
-		logger.debug("ldap attributes to retrieve : " + ldapAttrList.toString());
-		scs.setReturningAttributes(ldapAttrList.toArray(new String[ldapAttrList.size()]));
-		return new ControlContext(ldapDbAttributes, scs);
-	}
-
-	private User dnToUser(String dn, Map<String, LdapAttribute> ldapDbAttributes, SearchControls scs) throws NamingException {
-		// returned value
-		User user = new Internal();
 		NamingEnumeration<SearchResult> results = lqlctx.getLdapCtx().search(dn, "(objectclass=*)", scs);
 		Integer cpt = new Integer(0);
 		while (results != null && results.hasMore()) {
@@ -365,66 +219,11 @@ public class JScriptLdapQuery {
 				}
 			}
 		}
+		logger.debug("newInstance : " + user.toString());
 		return user;
 	}
 
-	/**
-	 * Convert database LDAP attributes map to a attribute name list.
-	 * 
-	 * @param ldapDbAttributes
-	 *            : map of database LDAP attributes
-	 * @return List of attribute names.
-	 */
-	private Collection<String> getLdapAttrList(Map<String, LdapAttribute> ldapDbAttributes) {
-		Collection<String> ldapAttrList = Maps.transformValues(ldapDbAttributes, new Function<LdapAttribute, String>() {
-			public String apply(LdapAttribute input) {
-				return input.getAttribute();
-			}
-		}).values();
-		return ldapAttrList;
-	}
-
-	/**
-	 * Filtering database LDAP attributes map to get only attributes needed for
-	 * completion.
-	 * 
-	 * @return
-	 */
-	private Map<String, LdapAttribute> getLdapDbAttributeForCompletion() {
-		Map<String, LdapAttribute> dbAttributes = domainPattern.getAttributes();
-		Predicate<LdapAttribute> completionFilter = new Predicate<LdapAttribute>() {
-			public boolean apply(LdapAttribute attr) {
-				if (attr.getEnable()) {
-					// Is attribute needed for completion ?
-					return attr.getCompletion();
-				}
-				return false;
-			}
-		};
-
-		Map<String, LdapAttribute> filterValues = Maps.filterValues(dbAttributes, completionFilter);
-		return filterValues;
-	}
-
-	/**
-	 * Filtering database LDAP attributes map to get only attributes needed for
-	 * build a user.
-	 * 
-	 * @return Map<String, LdapAttribute>
-	 */
-	private Map<String, LdapAttribute> getLdapDbAttribute() {
-		Map<String, LdapAttribute> dbAttributes = domainPattern.getAttributes();
-		Predicate<LdapAttribute> completionFilter = new Predicate<LdapAttribute>() {
-			public boolean apply(LdapAttribute attr) {
-				return attr.getEnable();
-			}
-		};
-
-		Map<String, LdapAttribute> filterValues = Maps.filterValues(dbAttributes, completionFilter);
-		return filterValues;
-	}
-
-	private boolean setUserAttribute(User user, String attr_key, String curValue) {
+	protected boolean setUserAttribute(Object user, String attr_key, String curValue) {
 		for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
 			Method userSetter = pd.getWriteMethod();
 			String method = UserLdapPattern.USER_METHOD_MAPPING.get(attr_key);
@@ -440,220 +239,5 @@ public class JScriptLdapQuery {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * This method allow to search a user from part of his mail or/and first
-	 * name or/and last name
-	 * 
-	 * @param mail
-	 * @param first_name
-	 * @param last_name
-	 * @return List<User>
-	 * @throws NamingException
-	 */
-	public List<User> searchUser(String mail, String first_name, String last_name) throws NamingException {
-
-		// Getting lql expression for completion
-		String command = domainPattern.getSearchUserCommand();
-		mail = addExpansionCharacters(mail);
-		first_name = addExpansionCharacters(first_name);
-		last_name = addExpansionCharacters(last_name);
-
-		// Setting lql query parameters
-		Map<String, Object> vars = lqlctx.getVariables();
-		vars.put("mail", mail);
-		vars.put("first_name", first_name);
-		vars.put("last_name", last_name);
-		if (logger.isDebugEnabled())
-			logLqlQuery(command, mail, first_name, last_name);
-
-		// searching ldap directory with pattern
-		List<String> dnResultList = this.evaluate(command);
-
-		return dnListToUsersList(dnResultList, false);
-	}
-
-	/**
-	 * This method allow to find a user from his mail (entire mail, not a
-	 * fragment).
-	 * 
-	 * @param mail
-	 * @return a user
-	 * @throws NamingException
-	 */
-	public User findUser(String mail) throws NamingException {
-
-		// Getting lql expression for completion
-		String command = domainPattern.getSearchUserCommand();
-		if (mail == null || mail.length() < 1) {
-			return null;
-		}
-		String first_name = "*";
-		String last_name = "*";
-
-		// Setting lql query parameters
-		Map<String, Object> vars = lqlctx.getVariables();
-		vars.put("mail", cleanLdapInputPattern(mail));
-		vars.put("first_name", first_name);
-		vars.put("last_name", last_name);
-		if (logger.isDebugEnabled())
-			logLqlQuery(command, mail, first_name, last_name);
-
-		// searching ldap directory with pattern
-		List<String> dnResultList = this.evaluate(command);
-
-		if (dnResultList.size() == 1) {
-			return dnToUser(dnResultList.get(0), false);
-		} else if (dnResultList.size() > 1) {
-			logger.error("mail must be unique ! " + mail);
-		}
-		return null;
-	}
-
-	/**
-	 * test if a user exists using his mail. (entire mail, not a fragment)
-	 * 
-	 * @param mail
-	 * @return Boolean
-	 * @throws NamingException
-	 */
-	public Boolean isUserExist(String mail) throws NamingException {
-
-		if (mail == null || mail.length() < 1) {
-			return false;
-		}
-		String first_name = "*";
-		String last_name = "*";
-
-		// Getting lql expression for completion
-		String command = domainPattern.getSearchUserCommand();
-
-		// Setting lql query parameters
-		Map<String, Object> vars = lqlctx.getVariables();
-		vars.put("mail", cleanLdapInputPattern(mail));
-		vars.put("first_name", first_name);
-		vars.put("last_name", last_name);
-		if (logger.isDebugEnabled())
-			logLqlQuery(command, mail, first_name, last_name);
-
-		// searching LDAP directory with pattern
-		List<String> dnResultList = this.evaluate(command);
-		if (dnResultList != null && !dnResultList.isEmpty()) {
-			if (dnResultList.size() == 1) {
-				return true;
-			}
-			logger.error("Multiple results found for mail : " + mail);
-		}
-		return false;
-	}
-
-	/**
-	 * Ldap Authentification method
-	 * 
-	 * @param login
-	 * @param userPasswd
-	 * @return User
-	 * @throws NamingException
-	 */
-	public User auth(LdapConnection ldapConnection, String login, String userPasswd) throws NamingException {
-
-		String command = domainPattern.getAuthCommand();
-		Map<String, Object> vars = lqlctx.getVariables();
-		vars.put("login", cleanLdapInputPattern(login));
-		if (logger.isDebugEnabled())
-			logLqlQuery(command, login);
-
-		// searching ldap directory with pattern
-		// InvalidSearchFilterException
-		List<String> dnResultList = this.evaluate(command);
-
-		if (dnResultList == null || dnResultList.size() < 1) {
-			throw new NameNotFoundException("No user found for login: " + login);
-		} else if (dnResultList.size() > 1) {
-			logger.error("The authentification query had returned more than one user !!!");
-			return null;
-		}
-
-		logger.debug("One ldap entry found, trying to make a bind to check user's password.");
-		LdapContextSource ldapContextSource = new LdapContextSource();
-		ldapContextSource.setUrl(ldapConnection.getProviderUrl());
-		String securityPrincipal = ldapConnection.getSecurityPrincipal();
-		if (securityPrincipal != null) {
-			ldapContextSource.setUserDn(securityPrincipal);
-		}
-		String securityCredentials = ldapConnection.getSecurityCredentials();
-		if (securityCredentials != null) {
-			ldapContextSource.setPassword(securityCredentials);
-		}
-		String userDn = dnResultList.get(0);
-		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDn, userPasswd);
-
-		BindAuthenticator authenticator = new BindAuthenticator(ldapContextSource);
-		String localBaseDn = userDn + "," + baseDn;
-		String searchFilter = "(objectClass=*)";
-		logger.debug("looking for ldap entry with dn : " + localBaseDn + " and ldap filter : " + searchFilter);
-		LdapUserSearch userSearch = new LinShareFilterBasedLdapUserSearch(localBaseDn, searchFilter, ldapContextSource);
-		authenticator.setUserSearch(userSearch);
-		try {
-			ldapContextSource.afterPropertiesSet();
-			authenticator.authenticate(authentication);
-		} catch (BadCredentialsException e) {
-			logger.debug("auth failed : BadCredentialsException(" + userDn + ")");
-			throw e;
-		} catch (Exception e) {
-			logger.error("auth failed for unexpected exception: " + e.getMessage(), e);
-			throw e;
-		}
-		return dnToUser(userDn, false);
-	}
-
-	/**
-	 * search an user for Ldap Authentification process.
-	 * 
-	 * @param ldapConnection
-	 * @param login
-	 * @return User
-	 * @throws NamingException
-	 */
-	public User searchForAuth(LdapConnection ldapConnection, String login) throws NamingException {
-
-		String command = domainPattern.getAuthCommand();
-		Map<String, Object> vars = lqlctx.getVariables();
-		vars.put("login", cleanLdapInputPattern(login));
-		if (logger.isDebugEnabled())
-			logLqlQuery(command, login);
-
-		// searching ldap directory with pattern
-		// InvalidSearchFilterException
-		List<String> dnResultList = this.evaluate(command);
-
-		if (dnResultList == null || dnResultList.size() < 1) {
-			return null;
-		} else if (dnResultList.size() > 1) {
-			logger.error("The authentification query had returned more than one user !!!");
-			return null;
-		}
-
-		String userDn = dnResultList.get(0);
-		return dnToUser(userDn, false);
-	}
-	
-	
-	/**
-	 * This method is designed to add expansion characters to the input string.
-	 * 
-	 * @param string
-	 *            : any string
-	 * @return String
-	 */
-	private String addExpansionCharacters(String string) {
-		if (string == null || string.length() < 1) {
-			string = "*";
-		} else {
-			string = cleanLdapInputPattern(string);
-			string = "*" + string.trim() + "*";
-		}
-		return string;
 	}
 }

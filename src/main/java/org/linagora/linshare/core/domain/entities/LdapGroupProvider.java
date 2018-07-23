@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,38 +31,72 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-
 package org.linagora.linshare.core.domain.entities;
 
-import org.linagora.linshare.core.domain.constants.UserProviderType;
-import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPUserProviderDto;
+public class LdapGroupProvider extends GroupProvider {
 
-public abstract class UserProvider extends Provider {
+	protected GroupLdapPattern groupPattern;
 
-	protected UserProviderType userProviderType;
+	protected GroupMemberLdapPattern groupMemberPattern;
 
-	public UserProviderType getUserProviderType() {
-		return userProviderType;
+	protected String baseDn;
+
+	protected LdapConnection ldapConnection;
+
+	protected Boolean automaticUserCreation;
+
+	protected Boolean ForceCreation;
+
+	public LdapGroupProvider() {
+		super();
 	}
 
-	@Override
-	public String toString() {
-		return "UserProvider [Type=" + userProviderType + ", uuid=" + uuid + "]";
+	public GroupLdapPattern getGroupPattern() {
+		return groupPattern;
 	}
 
-	/**
-	 * alias
-	 * @return UserProviderType
-	 */
-	public UserProviderType getType() {
-		return userProviderType;
+	public void setGroupPattern(GroupLdapPattern groupPattern) {
+		this.groupPattern = groupPattern;
 	}
 
-	protected void setUserProviderType(UserProviderType userProviderType) {
-		this.userProviderType = userProviderType;
+	public GroupMemberLdapPattern getGroupMemberPattern() {
+		return groupMemberPattern;
 	}
 
-	// TODO Just create and return an UserProviderDto
-	public abstract LDAPUserProviderDto toLDAPUserProviderDto();
+	public void setGroupMemberPattern(GroupMemberLdapPattern groupMemberPattern) {
+		this.groupMemberPattern = groupMemberPattern;
+	}
+
+	public String getBaseDn() {
+		return baseDn;
+	}
+
+	public void setBaseDn(String baseDn) {
+		this.baseDn = baseDn;
+	}
+
+	public LdapConnection getLdapConnection() {
+		return ldapConnection;
+	}
+
+	public void setLdapConnection(LdapConnection ldapConnection) {
+		this.ldapConnection = ldapConnection;
+	}
+
+	public Boolean getAutomaticUserCreation() {
+		return automaticUserCreation;
+	}
+
+	public void setAutomaticUserCreation(Boolean automaticUserCreation) {
+		this.automaticUserCreation = automaticUserCreation;
+	}
+
+	public Boolean getForceCreation() {
+		return ForceCreation;
+	}
+
+	public void setForceCreation(Boolean forceCreation) {
+		ForceCreation = forceCreation;
+	}
 
 }

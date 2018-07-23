@@ -56,7 +56,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DomainPatternRepository;
 import org.linagora.linshare.core.repository.LdapUserProviderRepository;
 import org.linagora.linshare.core.repository.UserProviderRepository;
-import org.linagora.linshare.core.service.LDAPQueryService;
+import org.linagora.linshare.core.service.LDAPUserQueryService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.mongo.entities.logs.DomainPatternAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.DomainPatternMto;
@@ -71,7 +71,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 
 	private final DomainPatternRepository domainPatternRepository;
 
-	private final LDAPQueryService ldapQueryService;
+	private final LDAPUserQueryService ldapQueryService;
 
 	private final UserProviderRepository userProviderRepository;
 
@@ -81,7 +81,7 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 
 	public UserProviderServiceImpl(
 			DomainPatternRepository domainPatternRepository,
-			LDAPQueryService ldapQueryService,
+			LDAPUserQueryService ldapQueryService,
 			LdapUserProviderRepository ldapUserProviderRepository,
 			UserProviderRepository userProviderRepository,
 			AuditAdminMongoRepository mongoRepository) {

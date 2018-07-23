@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,38 +31,32 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.ldap;
 
-package org.linagora.linshare.core.domain.entities;
+import java.io.IOException;
+import java.util.List;
 
-import org.linagora.linshare.core.domain.constants.UserProviderType;
-import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPUserProviderDto;
+import javax.naming.NamingException;
 
-public abstract class UserProvider extends Provider {
+import org.linagora.linshare.mongo.entities.mto.ThreadMto;
+import org.linid.dm.authorization.lql.LqlRequestCtx;
+import org.linid.dm.authorization.lql.dnlist.IDnList;
 
-	protected UserProviderType userProviderType;
+public class JScriptGroupLdapQuery extends JScriptLdapQuery<ThreadMto> {
 
-	public UserProviderType getUserProviderType() {
-		return userProviderType;
+	public JScriptGroupLdapQuery(LqlRequestCtx ctx, String baseDn, IDnList dnList, Class<?> clazz)
+			throws NamingException, IOException {
+		super(ctx, baseDn, dnList, clazz);
 	}
 
-	@Override
-	public String toString() {
-		return "UserProvider [Type=" + userProviderType + ", uuid=" + uuid + "]";
+	public List<String> searchGroups() throws NamingException {
+		String  command = "ldap.search(baseDn, \"(&(objectClass=posixGroup)(cn=workgroup-*))\");";
+		if (logger.isDebugEnabled()) {
+			logLqlQuery(command, "");
+		}
+		// searching ldap directory with pattern
+		List<String> dnResultList = this.evaluate(command);
+		return dnResultList;
 	}
-
-	/**
-	 * alias
-	 * @return UserProviderType
-	 */
-	public UserProviderType getType() {
-		return userProviderType;
-	}
-
-	protected void setUserProviderType(UserProviderType userProviderType) {
-		this.userProviderType = userProviderType;
-	}
-
-	// TODO Just create and return an UserProviderDto
-	public abstract LDAPUserProviderDto toLDAPUserProviderDto();
 
 }

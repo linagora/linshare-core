@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2018 to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -32,37 +32,24 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.domain.constants;
 
-import org.linagora.linshare.core.domain.constants.UserProviderType;
-import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPUserProviderDto;
+import org.apache.commons.lang.StringUtils;
+import org.linagora.linshare.core.exception.TechnicalErrorCode;
+import org.linagora.linshare.core.exception.TechnicalException;
 
-public abstract class UserProvider extends Provider {
+public enum GroupProviderType {
 
-	protected UserProviderType userProviderType;
+	LDAP_PROVIDER;
 
-	public UserProviderType getUserProviderType() {
-		return userProviderType;
+	public static GroupProviderType fromString(String s) {
+		try {
+			return GroupProviderType.valueOf(s.toUpperCase());
+		} catch (RuntimeException e) {
+			throw new TechnicalException(
+					TechnicalErrorCode.DATA_INCOHERENCE,
+					StringUtils.isEmpty(s) ? "null or empty" : s);
+		}
 	}
-
-	@Override
-	public String toString() {
-		return "UserProvider [Type=" + userProviderType + ", uuid=" + uuid + "]";
-	}
-
-	/**
-	 * alias
-	 * @return UserProviderType
-	 */
-	public UserProviderType getType() {
-		return userProviderType;
-	}
-
-	protected void setUserProviderType(UserProviderType userProviderType) {
-		this.userProviderType = userProviderType;
-	}
-
-	// TODO Just create and return an UserProviderDto
-	public abstract LDAPUserProviderDto toLDAPUserProviderDto();
 
 }

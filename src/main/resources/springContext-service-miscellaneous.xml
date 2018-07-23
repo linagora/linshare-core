@@ -82,7 +82,7 @@
 	<bean name="userProviderService"
 		class="org.linagora.linshare.core.service.impl.UserProviderServiceImpl">
 		<constructor-arg ref="domainPatternRepository" />
-		<constructor-arg ref="ldapQueryService" />
+		<constructor-arg ref="ldapUserQueryService" />
 		<constructor-arg ref="userProviderRepository" />
 		<constructor-arg ref="ldapUserProviderRepository" />
 		<constructor-arg ref="auditAdminMongoRepository" />

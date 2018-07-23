@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,38 +31,47 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.core.service.impl;
 
-package org.linagora.linshare.core.domain.entities;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.linagora.linshare.core.domain.constants.UserProviderType;
-import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPUserProviderDto;
+import javax.naming.NamingException;
+import javax.naming.ldap.LdapContext;
 
-public abstract class UserProvider extends Provider {
+import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
+import org.linagora.linshare.core.domain.entities.LdapConnection;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.service.LDAPGroupQueryService;
+import org.linagora.linshare.ldap.JScriptGroupLdapQuery;
+import org.linagora.linshare.ldap.LinShareDnList;
+import org.linagora.linshare.mongo.entities.mto.ThreadMto;
+import org.linid.dm.authorization.lql.LqlRequestCtx;
+import org.linid.dm.authorization.lql.dnlist.IDnList;
 
-	protected UserProviderType userProviderType;
-
-	public UserProviderType getUserProviderType() {
-		return userProviderType;
-	}
+public class LDAPGroupQueryServiceImpl extends LDAPQueryServiceImpl implements LDAPGroupQueryService {
 
 	@Override
-	public String toString() {
-		return "UserProvider [Type=" + userProviderType + ", uuid=" + uuid + "]";
-	}
+	public List<String> listGroups(LdapConnection ldapConnection, String baseDn, GroupLdapPattern pattern)
+			throws BusinessException, NamingException, IOException {
+		LdapContext ldapContext = (LdapContext) getLdapContext(ldapConnection, baseDn).getReadOnlyContext();
 
-	/**
-	 * alias
-	 * @return UserProviderType
-	 */
-	public UserProviderType getType() {
-		return userProviderType;
-	}
+		Map<String, Object> vars = new HashMap<String, Object>();
+		vars.put("baseDn", baseDn);
+		vars.put("logger", logger);
 
-	protected void setUserProviderType(UserProviderType userProviderType) {
-		this.userProviderType = userProviderType;
+		LqlRequestCtx lqlctx = new LqlRequestCtx(ldapContext, vars, true);
+		IDnList dnList = new LinShareDnList(100, 0);
+		List<String> list = null;
+		try {
+			JScriptGroupLdapQuery query = new JScriptGroupLdapQuery(lqlctx, baseDn, dnList, ThreadMto.class);
+			list = query.searchGroups();
+		} finally {
+			ldapContext.close();
+		}
+		return list;
 	}
-
-	// TODO Just create and return an UserProviderDto
-	public abstract LDAPUserProviderDto toLDAPUserProviderDto();
 
 }

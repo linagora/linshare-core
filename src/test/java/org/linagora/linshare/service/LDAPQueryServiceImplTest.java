@@ -51,7 +51,7 @@ import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.service.LDAPQueryService;
+import org.linagora.linshare.core.service.LDAPUserQueryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +75,7 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 	private String strPattern;
 
 	@Autowired
-	private LDAPQueryService ldapQueryService;
+	private LDAPUserQueryService ldapQueryService;
 
 	private LdapConnection ldapConn;
 

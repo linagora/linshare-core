@@ -47,7 +47,7 @@ public enum UserProviderType {
 			return UserProviderType.valueOf(s.toUpperCase());
 		} catch (RuntimeException e) {
 			throw new TechnicalException(
-					TechnicalErrorCode.NO_SUCH_UPLOAD_REQUEST_STATUS,
+					TechnicalErrorCode.DATA_INCOHERENCE,
 					StringUtils.isEmpty(s) ? "null or empty" : s);
 		}
 	}

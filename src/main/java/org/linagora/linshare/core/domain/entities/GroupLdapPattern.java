@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,32 +31,62 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.core.domain.entities;
 
-import java.io.IOException;
-import java.util.List;
+public class GroupLdapPattern extends LdapPattern {
 
-import javax.naming.NamingException;
+	// ldap: cn
+	public static final String GROUP_NAME = "group_name_attr";
+	// ldap: cn
+	public static final String GROUP_DN = "group_dn_attr";
+	// ldap: member
+	public static final String GROUP_MEMBER = "group_member_attr";
 
-import org.linagora.linshare.core.domain.entities.LdapConnection;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.entities.UserLdapPattern;
-import org.linagora.linshare.core.exception.BusinessException;
+	static {
+		USER_METHOD_MAPPING.put(GROUP_NAME, "setTODO");
+		USER_METHOD_MAPPING.put(GROUP_DN, "setTODO");
+		USER_METHOD_MAPPING.put(GROUP_MEMBER, "setTODO");
+	};
 
-public interface LDAPQueryService {
+	protected String searchAllGroupsQuery;
 
-	public User auth(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, String userLogin, String userPasswd) throws NamingException, IOException;
+	protected String searchGroupQuery;
 
-	public User searchForAuth(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, String userLogin) throws NamingException, IOException;
+	protected String groupPrefix;
 
-	public List<User> searchUser(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, String mail, String firstName, String lastName) throws BusinessException, NamingException,
-			IOException;
+	protected Integer searchPageSize;
 
-	public Boolean isUserExist(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, String mail) throws BusinessException, NamingException, IOException;
-	
-	public User getUser(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, String mail) throws BusinessException, NamingException,	IOException;
+	public GroupLdapPattern() {
+		super();
+	}
 
-	public List<User> completeUser(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, String pattern) throws BusinessException, NamingException, IOException;
+	public String getSearchAllGroupsQuery() {
+		return searchAllGroupsQuery;
+	}
 
-	public List<User> completeUser(LdapConnection ldapConnection, String baseDn, UserLdapPattern domainPattern, String firstName, String lastName) throws BusinessException, NamingException, IOException;
+	public void setSearchAllGroupsQuery(String searchAllGroupsQuery) {
+		this.searchAllGroupsQuery = searchAllGroupsQuery;
+	}
+
+	public String getSearchGroupQuery() {
+		return searchGroupQuery;
+	}
+
+	public void setSearchGroupQuery(String searchGroupQuery) {
+		this.searchGroupQuery = searchGroupQuery;
+	}
+
+	public Integer getSearchPageSize() {
+		return searchPageSize;
+	}
+
+	public void setSearchPageSize(Integer searchPageSize) {
+		this.searchPageSize = searchPageSize;
+	}
+
+	@Override
+	public String toString() {
+		return "GroupLdapPattern [label=" + label + ", uuid=" + uuid + "]";
+	}
+
 }
