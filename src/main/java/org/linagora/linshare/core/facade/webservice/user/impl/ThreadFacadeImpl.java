@@ -160,7 +160,7 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		threadService.addMember(authUser, authUser, workGroup, user, false, !readonly);
 		// TODO Retrieve the role from the restService once the front will pass the info
 		SharedSpaceNode foundSharedSpaceNode = ssNodeService.find(authUser, authUser, threadUuid);
-		SharedSpaceRole defaultRole = ssRoleService.findByName(authUser, authUser, "CONTRIBUTOR");
+		SharedSpaceRole defaultRole = ssRoleService.findByName(authUser, authUser, "READER");
 		ssMemberService.create(authUser, authUser,
 				new GenericLightEntity(foundSharedSpaceNode.getUuid(), foundSharedSpaceNode.getName()),
 				new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()),

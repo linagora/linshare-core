@@ -77,10 +77,8 @@
 
 	<bean name="workGroupNodeResourceAccessControl" class="org.linagora.linshare.core.rac.impl.WorkGroupNodeResourceAccessControlImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
-		<constructor-arg ref="threadMemberRepository" />
-		<constructor-arg ref="threadRepository" />
-		<constructor-arg ref="sharedSpaceNodeService" />
-		<constructor-arg ref="sharedSpaceMemberService" />
+		<constructor-arg ref="sharedSpacePermissionMongoRepository" />
+		<constructor-arg ref="sharedSpaceMemberMongoRepository" />
 	</bean>
 
 	<bean name="safeDetailResourceAccessControl" class="org.linagora.linshare.core.rac.impl.SafeDetailResourceAccessControlImpl">

@@ -109,10 +109,7 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		boolean canUpload = !dto.isReadonly();
 		WorkgroupMember createdWorkGroupMember = threadService.addMember(authUser, authUser, workGroup, user, admin, canUpload);
 		// TODO Retrieve the role from the restService once the front will pass the info
-		SharedSpaceRole defaultRole = ssRoleService.findByName(authUser, authUser, "READER");
-		if (dto.isAdmin()) {
-			defaultRole = ssRoleService.findByName(authUser, authUser, "ADMIN");
-		}
+		SharedSpaceRole defaultRole = getDefaultRole(authUser, admin);
 		SharedSpaceNode foundSharedSpaceNode = sharedSpaceNodeService.find(authUser, authUser, dto.getThreadUuid());
 		ssMemberService.create(authUser, authUser,
 				new GenericLightEntity(foundSharedSpaceNode.getUuid(), foundSharedSpaceNode.getName()),
@@ -131,14 +128,11 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		boolean readonly = dto.isReadonly();
 		WorkgroupMember updatedMember = threadService.updateMember(authUser, authUser, dto.getThreadUuid(), dto.getUserUuid(), admin, !readonly);
 		// New SharedSpaceNode architecture
-		SharedSpaceRole defaultRole = ssRoleService.findByName(authUser, authUser, "READER");
-		if (dto.isAdmin()) {
-			defaultRole = ssRoleService.findByName(authUser, authUser, "ADMIN");
-		}
+		SharedSpaceRole defaultRole = getDefaultRole(authUser, admin);
 		User user = userService.findByLsUuid(dto.getUserUuid());
-		SharedSpaceNode nodeOfMemberToDelete = new SharedSpaceNode();
-		nodeOfMemberToDelete.setUuid(dto.getThreadUuid());
-		SharedSpaceMember ssMemberToUpdate = ssMemberService.findMember(authUser, authUser, user, nodeOfMemberToDelete);
+		SharedSpaceNode nodeOfMemberToUpdate = new SharedSpaceNode();
+		nodeOfMemberToUpdate.setUuid(dto.getThreadUuid());
+		SharedSpaceMember ssMemberToUpdate = ssMemberService.findMember(authUser, authUser, user, nodeOfMemberToUpdate);
 		ssMemberService.updateRole(authUser, authUser, ssMemberToUpdate.getUuid(),
 				new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()));
 		return new WorkGroupMemberDto(updatedMember);
@@ -157,5 +151,12 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		SharedSpaceMember ssMemberToDelete = ssMemberService.findMember(authUser, authUser, user, nodeToDelete);
 		ssMemberService.delete(authUser, authUser, ssMemberToDelete);
 		return new WorkGroupMemberDto(member);
+	}
+
+	private SharedSpaceRole getDefaultRole(User authUser, boolean admin) {
+		if (admin) {
+			return ssRoleService.findByName(authUser, authUser, "ADMIN");
+		}
+		return ssRoleService.findByName(authUser, authUser, "READER");
 	}
 }

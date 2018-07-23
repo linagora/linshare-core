@@ -35,54 +35,32 @@ package org.linagora.linshare.core.rac.impl;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.PermissionType;
+import org.linagora.linshare.core.domain.constants.SharedSpaceActionType;
+import org.linagora.linshare.core.domain.constants.SharedSpaceResourceType;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.WorkGroupNodeResourceAccessControl;
-import org.linagora.linshare.core.repository.ThreadMemberRepository;
-import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
-import org.linagora.linshare.core.service.SharedSpaceMemberService;
-import org.linagora.linshare.core.service.SharedSpaceNodeService;
-import org.linagora.linshare.mongo.entities.SharedSpaceMember;
-import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
+import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
+import org.linagora.linshare.mongo.repository.SharedSpacePermissionMongoRepository;
 
 public class WorkGroupNodeResourceAccessControlImpl
-		extends AbstractResourceAccessControlImpl<Account, Account, WorkGroupNode> implements WorkGroupNodeResourceAccessControl<Account, WorkGroupNode> {
-
-	protected final ThreadRepository threadRepository;
-	
-	protected final ThreadMemberRepository threadMemberRepository;
-
-	protected final SharedSpaceNodeService sharedSpaceNodeService;
-
-	protected final SharedSpaceMemberService sharedSpaceMemberService;
+		extends AbstractSharedSpaceResourceAccessControlImpl<Account, WorkGroupNode> implements WorkGroupNodeResourceAccessControl<Account, WorkGroupNode> {
 
 	public WorkGroupNodeResourceAccessControlImpl(
 			FunctionalityReadOnlyService functionalityService,
-			ThreadRepository threadRepository,
-			ThreadMemberRepository threadMemberRepository,
-			SharedSpaceNodeService sharedSpaceNodeService,
-			SharedSpaceMemberService sharedSpaceMemberService) {
-		super(functionalityService);
-		this.threadRepository = threadRepository;
-		this.threadMemberRepository = threadMemberRepository;
-		this.sharedSpaceNodeService = sharedSpaceNodeService;
-		this.sharedSpaceMemberService = sharedSpaceMemberService;;
+			SharedSpaceMemberMongoRepository sharedSpaceMemberMongoRepository,
+			SharedSpacePermissionMongoRepository sharedSpacePermissionMongoRepository) {
+		super(functionalityService, sharedSpaceMemberMongoRepository, sharedSpacePermissionMongoRepository);
 	}
 
 	@Override
 	protected String getEntryRepresentation(WorkGroupNode entry) {
 		return entry.toString();
-	}
-
-	@Override
-	protected Account getOwner(WorkGroupNode entry, Object... opt) {
-		WorkGroup workGroup = threadRepository.findByLsUuid(entry.getWorkGroup());
-		return workGroup;
 	}
 
 	@Override
@@ -159,136 +137,60 @@ public class WorkGroupNodeResourceAccessControlImpl
 
 	@Override
 	protected boolean hasReadPermission(Account authUser, Account actor, WorkGroupNode entry, Object... opt) {
-		if (authUser.hasAllRights()) {
-			return true;
-		}
-		if (authUser.hasDelegationRole()) {
-			return hasPermission(authUser,
-					TechnicalAccountPermissionType.THREAD_ENTRIES_GET);
-		}
-		if (opt.length > 0 && opt[0] instanceof WorkGroup) {
-			WorkGroup workGroup = (WorkGroup) opt[0];
-			SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroup.getLsUuid());
-			return sharedSpaceMemberService.findMember(authUser, actor, authUser, sharedSpaceNode) != null;
-		}
-		return false;
+		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
+				TechnicalAccountPermissionType.THREAD_ENTRIES_GET, SharedSpaceActionType.READ);
 	}
 
 	@Override
 	protected boolean hasListPermission(Account authUser, Account actor, WorkGroupNode entry, Object... opt) {
-		if (authUser.hasAllRights()) {
-			return true;
-		}
-		if (authUser.hasDelegationRole()) {
-			return hasPermission(authUser,
-					TechnicalAccountPermissionType.THREAD_ENTRIES_LIST);
-		}
-		if (opt.length > 0 && opt[0] instanceof WorkGroup) {
-			WorkGroup workGroup = (WorkGroup) opt[0];
-			SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroup.getLsUuid());
-			return sharedSpaceMemberService.findMember(authUser, actor, authUser, sharedSpaceNode) != null;
-		}
-		return false;
+		WorkGroup workGroup = (WorkGroup)opt[0];
+		return defaultSharedSpacePermissionCheck(authUser, actor, workGroup.getLsUuid(),
+				TechnicalAccountPermissionType.THREAD_ENTRIES_LIST, SharedSpaceActionType.READ);
 	}
 
 	@Override
 	protected boolean hasDeletePermission(Account authUser, Account actor, WorkGroupNode entry, Object... opt) {
-		if (authUser.hasAllRights()) {
-			return true;
-		}
-		if (authUser.hasDelegationRole()) {
-			return hasPermission(authUser,
-					TechnicalAccountPermissionType.THREAD_ENTRIES_DELETE);
-		}
-		if (opt.length > 0 && opt[0] instanceof WorkGroup) {
-			WorkGroup workGroup = (WorkGroup) opt[0];
-			SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroup.getLsUuid());
-			SharedSpaceMember member= sharedSpaceMemberService.findMember(authUser, actor, authUser, sharedSpaceNode);
-			if (member != null && "ADMIN".equals(member.getRole().getName())) {
-				return true;
-			}
-		}
-		return false;
+		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
+				TechnicalAccountPermissionType.THREAD_ENTRIES_DELETE, SharedSpaceActionType.DELETE);
 	}
 
 	@Override
 	protected boolean hasCreatePermission(Account authUser, Account actor, WorkGroupNode entry, Object... opt) {
-		if (authUser.hasAllRights()) {
-			return true;
-		}
-		if (actor.hasSafeRole()) {
-			return true;
-		}
-		if (authUser.hasDelegationRole()) {
-			return hasPermission(authUser,
-					TechnicalAccountPermissionType.THREAD_ENTRIES_CREATE);
-		}
-		if (opt.length > 0 && opt[0] instanceof WorkGroup) {
-			WorkGroup workGroup = (WorkGroup) opt[0];
-			SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroup.getLsUuid());
-			SharedSpaceMember member= sharedSpaceMemberService.findMember(authUser, actor, authUser, sharedSpaceNode);
-			if (member != null && "ADMIN".equals(member.getRole().getName())) {
-				return true;
-			}
-		}
-		return false;
+		WorkGroup workGroup = (WorkGroup)opt[0];
+		return defaultSharedSpacePermissionCheck(authUser, actor, workGroup.getLsUuid(),
+				TechnicalAccountPermissionType.THREAD_ENTRIES_CREATE, SharedSpaceActionType.CREATE);
 	}
 
 	@Override
 	protected boolean hasUpdatePermission(Account authUser, Account actor, WorkGroupNode entry, Object... opt) {
-		if (authUser.hasAllRights()) {
-			return true;
-		}
-		if (authUser.hasDelegationRole()) {
-			return hasPermission(authUser,
-					TechnicalAccountPermissionType.THREAD_ENTRIES_UPDATE);
-		}
-		Account workGroup = getOwner(entry, opt);
-		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroup.getLsUuid());
-		SharedSpaceMember member= sharedSpaceMemberService.findMember(authUser, actor, authUser, sharedSpaceNode);
-		if (member != null && "ADMIN".equals(member.getRole().getName())) {
-			return true;
-		}
-		return false;
+		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
+				TechnicalAccountPermissionType.THREAD_ENTRIES_UPDATE, SharedSpaceActionType.UPDATE);
 	}
 
 	protected boolean hasDownloadPermission(Account authUser,
 			Account actor, WorkGroupNode entry, Object... opt) {
-		if (authUser.hasAllRights()) {
-			return true;
-		}
-		if (authUser.hasDelegationRole()) {
-			return hasPermission(authUser,
-					TechnicalAccountPermissionType.THREAD_ENTRIES_DOWNLOAD);
-		}
-		if (opt.length > 0 && opt[0] instanceof WorkGroup) {
-			WorkGroup workGroup = (WorkGroup) opt[0];
-			SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroup.getLsUuid());
-			SharedSpaceMember member= sharedSpaceMemberService.findMember(authUser, actor, authUser, sharedSpaceNode);
-			if (member != null && "ADMIN".equals(member.getRole().getName())) {
-				return true;
-			}
-		}
-		return false;
+		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
+				TechnicalAccountPermissionType.THREAD_ENTRIES_DOWNLOAD, SharedSpaceActionType.READ);
 	}
 
 	protected boolean hasDownloadTumbnailPermission(Account authUser,
 			Account actor, WorkGroupNode entry, Object... opt) {
-		if (authUser.hasAllRights()) {
-			return true;
-		}
-		if (authUser.hasDelegationRole()) {
-			return hasPermission(authUser,
-					TechnicalAccountPermissionType.THREAD_ENTRIES_DOWNLOAD_THUMBNAIL);
-		}
-		if (opt.length > 0 && opt[0] instanceof WorkGroup) {
-			WorkGroup workGroup = (WorkGroup) opt[0];
-			SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroup.getLsUuid());
-			SharedSpaceMember member= sharedSpaceMemberService.findMember(authUser, actor, authUser, sharedSpaceNode);
-			if (member != null && "ADMIN".equals(member.getRole().getName())) {
-				return true;
-			}
-		}
-		return false;
+		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
+				TechnicalAccountPermissionType.THREAD_ENTRIES_DOWNLOAD_THUMBNAIL, SharedSpaceActionType.READ);
+	}
+
+	@Override
+	protected SharedSpaceResourceType getSharedSpaceResourceType() {
+		return SharedSpaceResourceType.FOLDER;
+	}
+
+	@Override
+	protected String getSharedSpaceNodeUuid(WorkGroupNode entry) {
+		return entry.getWorkGroup();
+	}
+
+	@Override
+	protected Account getOwner(WorkGroupNode entry, Object... opt) {
+		return null;
 	}
 }
