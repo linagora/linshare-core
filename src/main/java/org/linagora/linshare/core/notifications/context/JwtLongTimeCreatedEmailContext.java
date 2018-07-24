@@ -36,25 +36,25 @@ package org.linagora.linshare.core.notifications.context;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.mongo.entities.JwtLongTime;
+import org.linagora.linshare.mongo.entities.PermanentToken;
 
 public class JwtLongTimeCreatedEmailContext extends AbstractJwtLongTimeEmailContext {
 
 	public JwtLongTimeCreatedEmailContext(Account creator,
 			Account actor,
-			JwtLongTime jwtLongTime) {
+			PermanentToken jwtLongTime) {
 		super(creator, actor, jwtLongTime);
 		this.language = actor.getExternalMailLocale();
 	}
 
 	@Override
 	public MailContentType getType() {
-		return MailContentType.ACCOUNT_OWNER_WARN_JWT_LONG_TIME_CREATED;
+		return MailContentType.ACCOUNT_OWNER_WARN_JWT_PERMANENT_TOKEN_CREATED;
 	}
 
 	@Override
 	public MailActivationType getActivation() {
-		return MailActivationType.ACCOUNT_OWNER_WARN_JWT_LONG_TIME_CREATED;
+		return MailActivationType.ACCOUNT_OWNER_WARN_JWT_PERMANENT_TOKEN_CREATED;
 	}
 
 }

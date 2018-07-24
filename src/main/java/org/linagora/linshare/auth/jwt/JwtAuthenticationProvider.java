@@ -48,7 +48,7 @@ import org.linagora.linshare.core.facade.auth.AuthentificationFacade;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.JwtService;
-import org.linagora.linshare.mongo.entities.JwtLongTime;
+import org.linagora.linshare.mongo.entities.PermanentToken;
 import org.linagora.linshare.mongo.repository.JwtLongTimeMongoRepository;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -131,10 +131,21 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 			throw new AuthenticationServiceException(msg);
 		}
 
+		Date issuedAt = claims.getIssuedAt();
+		if (issuedAt.after(new Date())) {
+			String msg = String.format("Issued date (iat) can not be in the futur for jwt token: %1$s", token);
+			throw new AuthenticationServiceException(msg);
+		}
+
 		if (claims.getExpiration() == null && claims.containsKey("uuid") && claims.get("uuid") != null) {
-			JwtLongTime jwtLongTime = jwtLongTimeMongoRepository.findByUuid(claims.get("uuid", String.class));
+			PermanentToken jwtLongTime = jwtLongTimeMongoRepository.findByUuid(claims.get("uuid", String.class));
 			if (jwtLongTime == null) {
 				String message = "No valid JWT permanent token found for this token : %1$s";
+				insertJwtLongTimeFailureLogEntry(claims, message);
+				String msg = String.format(message, token);
+				throw new AuthenticationServiceException(msg);
+			} else if (!jwtLongTime.getSubject().equals(claims.getSubject())) {
+				String message = "Wrong JWT permanent token found for this token : %1$s";
 				insertJwtLongTimeFailureLogEntry(claims, message);
 				String msg = String.format(message, token);
 				throw new AuthenticationServiceException(msg);
@@ -143,13 +154,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 			if (!functionality.getActivationPolicy().getStatus()) {
 				throw new AuthenticationServiceException("JWT permanent token Functionality is disabled.");
 			}
-		}
-		Date issuedAt = claims.getIssuedAt();
-		if (issuedAt.after(new Date())) {
-			String msg = String.format("Issued date (iat) can not be in the futur for jwt token: %1$s", token);
-			throw new AuthenticationServiceException(msg);
-		}
-		if (!jwtService.hasValidLiveTime(claims)) {
+		} else if (!jwtService.hasValidLiveTime(claims)) {
 			String msg = String.format("Token live time can not be more than 5 minutes for jwt token: %1$s", token);
 			throw new AuthenticationServiceException(msg);
 		}

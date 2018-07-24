@@ -38,17 +38,19 @@ import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.mongo.entities.JwtLongTime;
+import org.linagora.linshare.mongo.entities.PermanentToken;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface JwtLongTimeFacade {
 
-	JwtLongTime create(String label, String description) throws BusinessException;
+	PermanentToken create(String label, String description) throws BusinessException;
 
-	List<JwtLongTime> findAll() throws BusinessException;
+	List<PermanentToken> findAll() throws BusinessException;
 
-	JwtLongTime delete(JwtLongTime jwtLongTime, String uuid) throws BusinessException;
+	PermanentToken delete(PermanentToken jwtLongTime, String uuid) throws BusinessException;
 
 	Set<AuditLogEntryUser> findAllAudit(List<LogAction> actions) throws BusinessException;
+
+	PermanentToken update(PermanentToken permanentToken, String uuid) throws BusinessException;
 
 }

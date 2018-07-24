@@ -45,7 +45,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.JwtLongTimeDeletedEmailContext;
 import org.linagora.linshare.core.notifications.dto.MailContact;
-import org.linagora.linshare.mongo.entities.JwtLongTime;
+import org.linagora.linshare.mongo.entities.PermanentToken;
 import org.thymeleaf.context.Context;
 
 import com.google.common.collect.Lists;
@@ -54,7 +54,7 @@ public class JwtLongTimeDeletedEmailBuilder extends EmailBuilder {
 
 	@Override
 	public MailContentType getSupportedType() {
-		return MailContentType.ACCOUNT_OWNER_WARN_JWT_LONG_TIME_DELETED;
+		return MailContentType.ACCOUNT_OWNER_WARN_JWT_PERMANENT_TOKEN_DELETED;
 	}
 
 	@Override
@@ -62,7 +62,7 @@ public class JwtLongTimeDeletedEmailBuilder extends EmailBuilder {
 		JwtLongTimeDeletedEmailContext emailCtx = (JwtLongTimeDeletedEmailContext) context;
 		User owner = (User) emailCtx.getOwner();
 		User recipient = (User) emailCtx.getRecipient();
-		JwtLongTime token = emailCtx.getJwtLongTime();
+		PermanentToken token = emailCtx.getJwtLongTime();
 		MailConfig cfg = owner.getDomain().getCurrentMailConfiguration();
 		Context ctx = new Context(emailCtx.getLocale());
 		ctx.setVariable("label", token.getLabel());
@@ -79,7 +79,7 @@ public class JwtLongTimeDeletedEmailBuilder extends EmailBuilder {
 	protected List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
 		Context ctx = newFakeContext(language);
-		JwtLongTime token = new JwtLongTime();
+		PermanentToken token = new PermanentToken();
 		token.setLabel("Token label");
 		token.setDescription("Token description");
 		token.setCreationDate(new Date());

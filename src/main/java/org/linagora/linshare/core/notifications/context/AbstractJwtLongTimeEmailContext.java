@@ -33,17 +33,15 @@
  */
 package org.linagora.linshare.core.notifications.context;
 
-import java.util.Date;
-
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.mongo.entities.JwtLongTime;
+import org.linagora.linshare.mongo.entities.PermanentToken;
 
 public abstract class AbstractJwtLongTimeEmailContext extends EmailContext{
 
-	protected JwtLongTime jwtLongTime;
+	protected PermanentToken jwtLongTime;
 
 	protected Account recipient;
 
@@ -51,7 +49,7 @@ public abstract class AbstractJwtLongTimeEmailContext extends EmailContext{
 
 	public AbstractJwtLongTimeEmailContext(Account creator,
 			Account actor,
-			JwtLongTime jwtLongTime) {
+			PermanentToken jwtLongTime) {
 		super(actor.getDomain(), true);
 		this.jwtLongTime = jwtLongTime;
 		this.language = actor.getExternalMailLocale();
@@ -77,10 +75,10 @@ public abstract class AbstractJwtLongTimeEmailContext extends EmailContext{
 
 	@Override
 	public void validateRequiredField() {
-		Validate.notNull(jwtLongTime, "Missing jwtLongTime");
+		Validate.notNull(jwtLongTime, "Missing permanent token");
 	}
 
-	public JwtLongTime getJwtLongTime() {
+	public PermanentToken getJwtLongTime() {
 		return jwtLongTime;
 	}
 

@@ -38,29 +38,29 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.mongo.entities.JwtLongTime;
+import org.linagora.linshare.mongo.entities.PermanentToken;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 
 @XmlRootElement
 public class JwtLongTimeAuditLogEntry extends AuditLogEntryUser {
 
-	protected JwtLongTime resource;
+	protected PermanentToken resource;
 
 	public JwtLongTimeAuditLogEntry() {
 		super();
 	}
 
 	public JwtLongTimeAuditLogEntry(Account authUser, Account actor, LogAction action, AuditLogEntryType type,
-			JwtLongTime jwtLongTime) {
+			PermanentToken jwtLongTime) {
 		super(new AccountMto(authUser), new AccountMto(actor), action, type, jwtLongTime.getUuid());
-		this.resource = new JwtLongTime(jwtLongTime);
+		this.resource = new PermanentToken(jwtLongTime);
 	}
 
-	public JwtLongTime getResource() {
+	public PermanentToken getResource() {
 		return resource;
 	}
 
-	public void setResource(JwtLongTime resource) {
+	public void setResource(PermanentToken resource) {
 		this.resource = resource;
 	}
 }

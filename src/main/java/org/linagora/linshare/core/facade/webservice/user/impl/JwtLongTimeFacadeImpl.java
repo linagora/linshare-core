@@ -39,12 +39,11 @@ import java.util.Set;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.JwtLongTimeFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.JwtLongTimeService;
-import org.linagora.linshare.mongo.entities.JwtLongTime;
+import org.linagora.linshare.mongo.entities.PermanentToken;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 import com.google.common.base.Strings;
@@ -60,29 +59,21 @@ public class JwtLongTimeFacadeImpl extends UserGenericFacadeImp implements JwtLo
 	}
 
 	@Override
-	public JwtLongTime create(String label, String description) throws BusinessException {
+	public PermanentToken create(String label, String description) throws BusinessException {
 		Validate.notEmpty(label, "Missing Label");
 		User authUser = checkAuthentication();
 		return jwtLongTimeService.create(authUser, authUser, label, description);
 	}
 
 	@Override
-	public List<JwtLongTime> findAll() throws BusinessException {
+	public List<PermanentToken> findAll() throws BusinessException {
 		User authUser = checkAuthentication();
-		if (!authUser.isInternal()) {
-			String message = "You can not generate JWT permanent token for account which is not internal user.";
-			throw new BusinessException(BusinessErrorCode.METHOD_NOT_ALLOWED, message);
-		}
-		return jwtLongTimeService.findAllByActor(authUser);
+		return jwtLongTimeService.findAll(authUser, authUser);
 	}
 
 	@Override
-	public JwtLongTime delete(JwtLongTime jwtLongTime, String uuid) throws BusinessException {
+	public PermanentToken delete(PermanentToken jwtLongTime, String uuid) throws BusinessException {
 		User authUser = checkAuthentication();
-		if (!authUser.isInternal()) {
-			String message = "You can not delete JWT permanent token for account which is not internal user.";
-			throw new BusinessException(BusinessErrorCode.METHOD_NOT_ALLOWED, message);
-		}
 		if (!Strings.isNullOrEmpty(uuid)) {
 			jwtLongTime = jwtLongTimeService.find(authUser, authUser, uuid);
 		} else {
@@ -91,6 +82,18 @@ public class JwtLongTimeFacadeImpl extends UserGenericFacadeImp implements JwtLo
 			jwtLongTime = jwtLongTimeService.find(authUser, authUser, jwtLongTime.getUuid());
 		}
 		return jwtLongTimeService.delete(authUser, authUser, jwtLongTime);
+	}
+
+	@Override
+	public PermanentToken update(PermanentToken permanentToken, String uuid) {
+		Validate.notNull(permanentToken, "permanentToken object must be set");
+		if (!Strings.isNullOrEmpty(uuid)) {
+			permanentToken.setUuid(uuid);
+		}
+		Validate.notEmpty(permanentToken.getUuid(), "permanentToken uuid must be set");
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, null);
+		return jwtLongTimeService.update(authUser, actor, permanentToken.getUuid(), permanentToken);
 	}
 
 	@Override

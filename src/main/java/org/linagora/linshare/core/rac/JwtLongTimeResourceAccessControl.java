@@ -34,8 +34,8 @@
 package org.linagora.linshare.core.rac;
 
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.mongo.entities.JwtLongTime;
+import org.linagora.linshare.mongo.entities.PermanentToken;
 
-public interface JwtLongTimeResourceAccessControl extends AbstractResourceAccessControl<Account, Account, JwtLongTime> {
+public interface JwtLongTimeResourceAccessControl extends AbstractResourceAccessControl<Account, Account, PermanentToken> {
 
 }

@@ -76,7 +76,7 @@ import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.utils.HashUtils;
-import org.linagora.linshare.mongo.entities.JwtLongTime;
+import org.linagora.linshare.mongo.entities.PermanentToken;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.JwtLongTimeAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.UserAuditLogEntry;
@@ -340,12 +340,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private void deleteAllJwtLongTime(Account authUser, Account userToDelete) {
-		List<JwtLongTime> tokens = jwtLongTimeBusinessService.findAllByActor(userToDelete);
+		List<PermanentToken> tokens = jwtLongTimeBusinessService.findAllByActor(userToDelete);
 		if (tokens != null && !tokens.isEmpty()) {
-			for (JwtLongTime token : tokens) {
+			for (PermanentToken token : tokens) {
 				AuditLogEntryUser createLog = new JwtLongTimeAuditLogEntry(authUser, userToDelete, LogAction.DELETE,
-						AuditLogEntryType.JWT_LONG_TIME_TOKEN, token);
-				jwtLongTimeBusinessService.deleteToken(token);
+						AuditLogEntryType.JWT_PERMANENT_TOKEN, token);
+				jwtLongTimeBusinessService.delete(token);
 				logEntryService.insert(createLog);
 			}
 		}

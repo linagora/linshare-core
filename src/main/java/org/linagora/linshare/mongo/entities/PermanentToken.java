@@ -46,9 +46,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-@XmlRootElement(name = "JwtLongTime")
-@Document(collection = "jwt_longtime")
-public class JwtLongTime {
+@XmlRootElement(name = "PermanentToken")
+@Document(collection = "permanent_token")
+public class PermanentToken {
 
 	@JsonIgnore
 	@Id
@@ -83,11 +83,11 @@ public class JwtLongTime {
 	@Transient
 	protected JwtToken jwtToken;
 
-	public JwtLongTime() {
+	public PermanentToken() {
 		super();
 	}
 
-	public JwtLongTime(String tokenUuid,
+	public PermanentToken(String tokenUuid,
 			Date creationDate,
 			String issuer,
 			String label,
@@ -105,7 +105,7 @@ public class JwtLongTime {
 		this.domainUuid = domainUuid;
 	}
 
-	public JwtLongTime(JwtLongTime jwtLongTime) {
+	public PermanentToken(PermanentToken jwtLongTime) {
 		this.id = jwtLongTime.getId();
 		this.uuid = jwtLongTime.getUuid();
 		this.creationDate = jwtLongTime.getCreationDate();

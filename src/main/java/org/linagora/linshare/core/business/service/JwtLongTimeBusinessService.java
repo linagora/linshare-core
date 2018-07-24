@@ -36,17 +36,19 @@ package org.linagora.linshare.core.business.service;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.mongo.entities.JwtLongTime;
+import org.linagora.linshare.mongo.entities.PermanentToken;
 
 public interface JwtLongTimeBusinessService {
 
-	void create(JwtLongTime entity);
+	void create(PermanentToken entity);
 
-	List<JwtLongTime> findAllByActor(Account actor);
+	List<PermanentToken> findAllByActor(Account actor);
 
-	void deleteToken(JwtLongTime entity);
+	void delete(PermanentToken entity);
 
-	JwtLongTime find(String uuid);
+	PermanentToken find(String uuid);
 
-	List<JwtLongTime> findAllByDomain(String uuid);
+	List<PermanentToken> findAllByDomain(String uuid);
+
+	PermanentToken update(PermanentToken found);
 }

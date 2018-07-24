@@ -345,12 +345,12 @@ public class FunctionalityReadOnlyServiceImpl implements
 
 	@Override
 	public Functionality getJwtLongTimeFunctionalityForUser(AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.JWT_LONG_TIME_TOKEN__FOR_USER);
+		return _getFunctionality(domain, FunctionalityNames.JWT_PERMANENT_TOKEN__USER_MANAGEMENT);
 	}
 
 	@Override
 	public Functionality getJwtLongTimeFunctionality(AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.JWT_LONG_TIME_TOKEN);
+		return _getFunctionality(domain, FunctionalityNames.JWT_PERMANENT_TOKEN);
 	}
 
 	@Override

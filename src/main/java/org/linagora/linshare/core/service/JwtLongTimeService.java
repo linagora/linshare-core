@@ -39,25 +39,26 @@ import java.util.Set;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.mongo.entities.JwtLongTime;
+import org.linagora.linshare.mongo.entities.PermanentToken;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface JwtLongTimeService {
 
-	JwtLongTime create(Account authUser, Account actor, String label, String description) throws BusinessException;
+	PermanentToken create(Account authUser, Account actor, String label, String description) throws BusinessException;
 
-	JwtLongTime delete(Account authUser, Account actor, JwtLongTime jwtLongTime) throws BusinessException;
+	PermanentToken delete(Account authUser, Account actor, PermanentToken jwtLongTime) throws BusinessException;
 
-	JwtLongTime find(Account authUser, Account actor, String uuid) throws BusinessException;
+	PermanentToken find(Account authUser, Account actor, String uuid) throws BusinessException;
 
-	List<JwtLongTime> findAllByActor(Account actor) throws BusinessException;
+	List<PermanentToken> findAll(Account authUser, Account actor) throws BusinessException;
 
-	List<JwtLongTime> findAllByDomain(Account authUser, AbstractDomain domain) throws BusinessException;
-
-	JwtLongTime deleteByAdmin(Account authUser, JwtLongTime jwtLongTime) throws BusinessException;
+	List<PermanentToken> findAllByDomain(Account authUser, AbstractDomain domain) throws BusinessException;
 
 	Set<AuditLogEntryUser> findAllAudit(Account authUser, String domainUuid, List<LogAction> actions)
 			throws BusinessException;
+
+	PermanentToken update(User authUser, User actor, String uuid, PermanentToken permanentToken);
 
 }

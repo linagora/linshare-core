@@ -270,8 +270,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		emailBuilders.put(MailContentType.WORKGROUP_WARN_UPDATED_MEMBER, new WorkGroupWarnUpdatedMemberEmailBuilder());
 		emailBuilders.put(MailContentType.WORKGROUP_WARN_DELETED_MEMBER, new WorkGroupWarnDeletedMemberEmailBuilder());
 
-		emailBuilders.put(MailContentType.ACCOUNT_OWNER_WARN_JWT_LONG_TIME_CREATED, new JwtLongTimeCreatedEmailBuilder());
-		emailBuilders.put(MailContentType.ACCOUNT_OWNER_WARN_JWT_LONG_TIME_DELETED, new JwtLongTimeDeletedEmailBuilder());
+		emailBuilders.put(MailContentType.ACCOUNT_OWNER_WARN_JWT_PERMANENT_TOKEN_CREATED, new JwtLongTimeCreatedEmailBuilder());
+		emailBuilders.put(MailContentType.ACCOUNT_OWNER_WARN_JWT_PERMANENT_TOKEN_DELETED, new JwtLongTimeDeletedEmailBuilder());
 
 		initMailBuilders(insertLicenceTerm, domainBusinessService, functionalityReadOnlyService,
 				mailActivationBusinessService, urlTemplateForReceivedShares, urlTemplateForDocuments,

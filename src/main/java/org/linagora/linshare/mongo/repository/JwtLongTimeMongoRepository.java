@@ -36,15 +36,15 @@ package org.linagora.linshare.mongo.repository;
 
 import java.util.List;
 
-import org.linagora.linshare.mongo.entities.JwtLongTime;
+import org.linagora.linshare.mongo.entities.PermanentToken;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface JwtLongTimeMongoRepository extends MongoRepository<JwtLongTime, String> {
+public interface JwtLongTimeMongoRepository extends MongoRepository<PermanentToken, String> {
 
-	List<JwtLongTime> findAllByActorUuid(String actorUuid, Sort sort);
+	List<PermanentToken> findAllByActorUuid(String actorUuid, Sort sort);
 
-	JwtLongTime findByUuid(String uuid);
+	PermanentToken findByUuid(String uuid);
 
-	List<JwtLongTime> findAllByDomainUuid(String domainUuid);
+	List<PermanentToken> findAllByDomainUuid(String domainUuid);
 }

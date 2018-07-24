@@ -99,5 +99,8 @@
 	<bean name="jwtLongTimeResourceAccessControl" class="org.linagora.linshare.core.rac.impl.JwtLongTimeResourceAccessControlImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="domainPermissionBusinessService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="abstractDomainService" />
 	</bean>
 </beans>

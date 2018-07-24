@@ -37,19 +37,17 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.JwtLongTimeTokenFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.JwtLongTimeService;
-import org.linagora.linshare.mongo.entities.JwtLongTime;
+import org.linagora.linshare.mongo.entities.PermanentToken;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 import com.google.common.base.Strings;
@@ -58,36 +56,28 @@ public class JwtLongTimeTokenFacadeImpl extends AdminGenericFacadeImpl implement
 
 	private JwtLongTimeService jwtLongTimeService;
 
-	private final DomainPermissionBusinessService permissionService;
-
 	private final AbstractDomainService abstractDomainService;
 
 	public JwtLongTimeTokenFacadeImpl (final AccountService accountService,
 			JwtLongTimeService jwtLongTimeService,
-			DomainPermissionBusinessService permissionService,
 			AbstractDomainService abstractDomainService) {
 		super(accountService);
 		this.jwtLongTimeService = jwtLongTimeService;
-		this.permissionService = permissionService;
 		this.abstractDomainService = abstractDomainService;
 	}
 
 	@Override
-	public JwtLongTime create(String userUuid, String label, String description) throws BusinessException {
-		Validate.notEmpty(userUuid, "userUuid must be set");
+	public PermanentToken create(String actorUuid, String label, String description) throws BusinessException {
+		Validate.notEmpty(actorUuid, "userUuid must be set");
 		Validate.notEmpty(label, "label must be set");
 		Account authUser = checkAuthentication(Role.ADMIN);
-		Account actor = accountService.findByLsUuid(userUuid);
+		Account actor = getActor(authUser, actorUuid);
 		Validate.notNull(actor);
-		if (!permissionService.isAdminforThisDomain(authUser, actor.getDomain())) {
-			throw new BusinessException(BusinessErrorCode.JWT_LONG_TIME_CAN_NOT_CREATE,
-					"You are not allowed to use this domain");
-		}
 		return jwtLongTimeService.create(authUser, actor, label, description);
 	}
 
 	@Override
-	public List<JwtLongTime> findAll(String domainUuid) throws BusinessException {
+	public List<PermanentToken> findAll(String domainUuid) throws BusinessException {
 		Validate.notEmpty(domainUuid, "domainUuid must be set");
 		Account authUser = checkAuthentication(Role.ADMIN);
 		AbstractDomain domain = abstractDomainService.findById(domainUuid);
@@ -95,7 +85,15 @@ public class JwtLongTimeTokenFacadeImpl extends AdminGenericFacadeImpl implement
 	}
 
 	@Override
-	public JwtLongTime delete(JwtLongTime jwtLongTime, String uuid) throws BusinessException {
+	public List<PermanentToken> findAllByActor(String actorUuid) throws BusinessException {
+		Validate.notEmpty(actorUuid, "actorUuid must be set");
+		Account authUser = checkAuthentication(Role.ADMIN);
+		Account actor = getActor(authUser, actorUuid);
+		return jwtLongTimeService.findAll(authUser, actor);
+	}
+
+	@Override
+	public PermanentToken delete(PermanentToken jwtLongTime, String uuid) throws BusinessException {
 		Account authUser = checkAuthentication(Role.ADMIN);
 		if (!Strings.isNullOrEmpty(uuid)) {
 			jwtLongTime = jwtLongTimeService.find(authUser, authUser, uuid);
@@ -104,7 +102,21 @@ public class JwtLongTimeTokenFacadeImpl extends AdminGenericFacadeImpl implement
 			Validate.notEmpty(jwtLongTime.getUuid(), "jwtLongTime uuid must be set");
 			jwtLongTime = jwtLongTimeService.find(authUser, authUser, jwtLongTime.getUuid());
 		}
-		return jwtLongTimeService.deleteByAdmin(authUser, jwtLongTime);
+		Account actor = getActor(authUser, jwtLongTime.getActorUuid());
+		return jwtLongTimeService.delete(authUser, actor, jwtLongTime);
+	}
+
+	@Override
+	public PermanentToken update(PermanentToken permanentToken, String uuid) throws BusinessException {
+		Validate.notNull(permanentToken, "permanentToken object must be set");
+		if (!Strings.isNullOrEmpty(uuid)) {
+			permanentToken.setUuid(uuid);
+		}
+		Validate.notEmpty(permanentToken.getUuid(), "permanentToken uuid must be set");
+		Validate.notEmpty(permanentToken.getActorUuid(), "actor uuid must be set");
+		User authUser = checkAuthentication();
+		User actor = getActor(authUser, permanentToken.getActorUuid());
+		return jwtLongTimeService.update(authUser, actor, permanentToken.getUuid(), permanentToken);
 	}
 
 	@Override

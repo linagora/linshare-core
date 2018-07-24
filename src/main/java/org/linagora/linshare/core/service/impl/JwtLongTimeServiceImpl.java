@@ -39,15 +39,15 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.lang.Validate;
-import org.apache.jackrabbit.rmi.client.RemoteRuntimeException;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.JwtLongTimeBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.JwtToken;
@@ -64,14 +64,14 @@ import org.linagora.linshare.core.service.JwtLongTimeService;
 import org.linagora.linshare.core.service.JwtService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
-import org.linagora.linshare.mongo.entities.JwtLongTime;
+import org.linagora.linshare.mongo.entities.PermanentToken;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.JwtLongTimeAuditLogEntry;
 
 import io.jsonwebtoken.Clock;
 import io.jsonwebtoken.impl.DefaultClock;
 
-public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, JwtLongTime> implements JwtLongTimeService {
+public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, PermanentToken> implements JwtLongTimeService {
 
 	protected Clock clock = DefaultClock.INSTANCE;
 
@@ -125,23 +125,17 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, JwtLongT
 	}
 
 	@Override
-	public JwtLongTime create(Account authUser, Account actor, String label, String description) throws BusinessException {
+	public PermanentToken create(Account authUser, Account actor, String label, String description) throws BusinessException {
 		Validate.notNull(actor, "actor must be set");
-		if (!functionalityActivated(authUser, LogAction.CREATE)) {
-			throw new BusinessException(BusinessErrorCode.THREAD_FORBIDDEN, "Functionality forbidden.");
-		}
 		final Date creationDate = clock.now();
 		final String tokenUuid = UUID.randomUUID().toString();
-		if (!actor.isInternal()) {
-			String message = "You can not generate JWT permanent token for account which is not internal user.";
-			throw new BusinessException(BusinessErrorCode.METHOD_NOT_ALLOWED, message);
-		}
-		JwtLongTime jwtLongTime = new JwtLongTime(tokenUuid, creationDate, issuer, label, description, actor.getLsUuid(),
+		PermanentToken jwtLongTime = new PermanentToken(tokenUuid, creationDate, issuer, label, description, actor.getLsUuid(),
 				actor.getMail(), actor.getDomainId());
 		String token = jwtService.generateToken(actor, tokenUuid, creationDate);
+		checkCreatePermission(authUser, authUser, PermanentToken.class, BusinessErrorCode.JWT_PERMANENT_TOKEN_CAN_NOT_CREATE, jwtLongTime);
 		jwtLongTimeBusinessService.create(jwtLongTime);
 		AuditLogEntryUser createLog = new JwtLongTimeAuditLogEntry(authUser, actor, LogAction.CREATE,
-				AuditLogEntryType.JWT_LONG_TIME_TOKEN, jwtLongTime);
+				AuditLogEntryType.JWT_PERMANENT_TOKEN, jwtLongTime);
 		logEntryService.insert(createLog);
 		if (authUser.hasAdminRole() || authUser.hasSuperAdminRole()) {
 			EmailContext context = new JwtLongTimeCreatedEmailContext(authUser, actor, jwtLongTime);
@@ -153,85 +147,70 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, JwtLongT
 	}
 
 	@Override
-	public List<JwtLongTime> findAllByActor(Account actor) throws BusinessException {
-		Validate.notNull(actor);
-		if (!functionalityActivated(actor, LogAction.GET)) {
-			throw new BusinessException(BusinessErrorCode.THREAD_FORBIDDEN, "Functionality forbidden.");
-		}
-		List<JwtLongTime> tokens = jwtLongTimeBusinessService.findAllByActor(actor);
+	public List<PermanentToken> findAll(Account authUser, Account actor) throws BusinessException {
+		Validate.notNull(authUser);
+		checkListPermission(authUser, actor, null, BusinessErrorCode.JWT_PERMANENT_TOKEN_FORBIDDEN, null);
+		List<PermanentToken> tokens = jwtLongTimeBusinessService.findAllByActor(actor);
 		return tokens;
 	}
 
 	@Override
-	public JwtLongTime delete(Account authUser, Account actor, JwtLongTime jwtLongTime) throws BusinessException {
+	public PermanentToken delete(Account authUser, Account actor, PermanentToken jwtLongTime) throws BusinessException {
 		Validate.notNull(authUser, "AuthUser must be set.");
 		Validate.notNull(actor, "Actor must be set");
-		Validate.notNull(jwtLongTime, "Token uuid must be set");
-		if (!functionalityActivated(authUser, LogAction.DELETE)) {
-			throw new BusinessException(BusinessErrorCode.THREAD_FORBIDDEN, "Functionality forbidden.");
-		}
-		checkDeletePermission(authUser, actor, JwtLongTime.class, BusinessErrorCode.JWT_LONG_TIME_CAN_NOT_DELETE,
-				jwtLongTime);
+		Validate.notNull(jwtLongTime, "Token must be set");
+		PermanentToken permanentToken = find(authUser, authUser, jwtLongTime.getUuid());
+		checkDeletePermission(authUser, actor, PermanentToken.class, BusinessErrorCode.JWT_PERMANENT_TOKEN_CAN_NOT_DELETE,
+				permanentToken);
 		AuditLogEntryUser createLog = new JwtLongTimeAuditLogEntry(authUser, actor, LogAction.DELETE,
-				AuditLogEntryType.JWT_LONG_TIME_TOKEN, jwtLongTime);
-		jwtLongTimeBusinessService.deleteToken(jwtLongTime);
+				AuditLogEntryType.JWT_PERMANENT_TOKEN, permanentToken);
+		jwtLongTimeBusinessService.delete(jwtLongTime);
+		EmailContext context = new JwtLongTimeDeletedEmailContext(authUser, actor, permanentToken);
+		if (authUser.hasAdminRole() || authUser.hasSuperAdminRole()) {
+			MailContainerWithRecipient mail = mailBuildingService.build(context);
+			notifierService.sendNotification(mail);
+		}
 		logEntryService.insert(createLog);
-		return jwtLongTime;
+		return permanentToken;
 	}
 
 	@Override
-	public JwtLongTime find(Account authUser, Account actor, String uuid) throws BusinessException {
+	public PermanentToken find(Account authUser, Account actor, String uuid) throws BusinessException {
 		Validate.notNull(authUser, "AuthUser must be set.");
 		Validate.notNull(actor, "Actor must be set");
-		Validate.notEmpty(uuid, "Token uuid must be set");
-		if (!functionalityActivated(authUser, LogAction.GET)) {
-			throw new BusinessException(BusinessErrorCode.THREAD_FORBIDDEN, "Functionality forbidden.");
-		}
-		JwtLongTime found = jwtLongTimeBusinessService.find(uuid);
+		PermanentToken found = jwtLongTimeBusinessService.find(uuid);
 		if (found == null) {
 			String message = "The requested token has not been found.";
-			throw new BusinessException(BusinessErrorCode.JWT_LONG_TIME_NOT_FOUND, message);
+			throw new BusinessException(BusinessErrorCode.JWT_PERMANENT_TOKEN_NOT_FOUND, message);
 		}
-		checkReadPermission(authUser, actor, JwtLongTime.class, BusinessErrorCode.JWT_LONG_TIME_CAN_NOT_READ, found);
+		checkReadPermission(authUser, actor, PermanentToken.class, BusinessErrorCode.JWT_PERMANENT_TOKEN_CAN_NOT_READ, found);
 		return found;
 	}
 
 	@Override
-	public List<JwtLongTime> findAllByDomain(Account authUser, AbstractDomain domain) throws BusinessException {
+	public List<PermanentToken> findAllByDomain(Account authUser, AbstractDomain domain) throws BusinessException {
 		Validate.notNull(domain, "domain must be set");
-		if (!functionalityActivated(authUser, LogAction.GET)) {
+		Functionality functionality = functionalityReadOnlyService.getJwtLongTimeFunctionality(authUser.getDomain());
+		if (!functionality.getActivationPolicy().getStatus()) {
 			throw new BusinessException(BusinessErrorCode.THREAD_FORBIDDEN, "Functionality forbidden.");
 		}
 		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
-			throw new BusinessException(BusinessErrorCode.JWT_LONG_TIME_FORBIDDEN,
+			throw new BusinessException(BusinessErrorCode.JWT_PERMANENT_TOKEN_FORBIDDEN,
 					"You are not allowed to use this domain");
 		}
 		return jwtLongTimeBusinessService.findAllByDomain(domain.getUuid());
 	}
 
 	@Override
-	public JwtLongTime deleteByAdmin(Account authUser, JwtLongTime jwtLongTime) throws BusinessException {
-		Validate.notNull(jwtLongTime, "jwtLongTime must be set");
-		AbstractDomain domain = abstractDomainService.findById(jwtLongTime.getDomainUuid());
-		Functionality functionality = functionalityReadOnlyService.getJwtLongTimeFunctionality(authUser.getDomain());
-		if (!functionality.getActivationPolicy().getStatus()) {
-			throw new BusinessException(BusinessErrorCode.THREAD_FORBIDDEN, "Functionality forbidden.");
-		}
-		if (!permissionService.isAdminforThisDomain(authUser, domain)) {
-			throw new BusinessException(BusinessErrorCode.JWT_LONG_TIME_FORBIDDEN,
-					"You are not allowed to use this domain");
-		}
-		JwtLongTime jwtToken = find(authUser, authUser, jwtLongTime.getUuid());
-		Account actor = accountRepository.findByLsUuid(jwtToken.getActorUuid());
-		jwtLongTimeBusinessService.deleteToken(jwtLongTime);
-		AuditLogEntryUser createLog = new JwtLongTimeAuditLogEntry(authUser, actor, LogAction.DELETE,
-				AuditLogEntryType.JWT_LONG_TIME_TOKEN, jwtLongTime);
-		logEntryService.insert(createLog);
-		EmailContext context = new JwtLongTimeDeletedEmailContext(authUser, actor, jwtToken);
-		MailContainerWithRecipient mail = mailBuildingService.build(context);
-		jwtLongTimeBusinessService.deleteToken(jwtLongTime);
-		notifierService.sendNotification(mail);
-		return jwtToken;
+	public PermanentToken update(User authUser, User actor, String uuid, PermanentToken permanentToken) {
+		Validate.notEmpty(uuid, "uuid must be set");
+		Validate.notNull(permanentToken, "permanentToken must be set");
+		Validate.notNull(permanentToken.getLabel(), "Label must be set");
+		PermanentToken found = jwtLongTimeBusinessService.find(uuid);
+		checkUpdatePermission(authUser, actor, PermanentToken.class, BusinessErrorCode.JWT_PERMANENT_TOKEN_CAN_NOT_READ, found);
+		found.setLabel(permanentToken.getLabel());
+		found.setDescription(permanentToken.getDescription());
+		return jwtLongTimeBusinessService.update(found);
 	}
 
 	@Override
@@ -241,32 +220,11 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, JwtLongT
 			Validate.notNull(domainUuid, "domainUuid must be set");
 			AbstractDomain domain = abstractDomainService.findById(domainUuid);
 			if(!permissionService.isAdminforThisDomain(authUser, domain)) {
-				throw new BusinessException(BusinessErrorCode.JWT_LONG_TIME_FORBIDDEN,
+				throw new BusinessException(BusinessErrorCode.JWT_PERMANENT_TOKEN_FORBIDDEN,
 						"You are not allowed to use this domain");
 			}
 		}
 		return auditLogEntryService.findAllAudit(authUser, domainUuid, actions);
-	}
-
-	private boolean functionalityActivated(Account authUser, LogAction logAction) {
-		Functionality functionality = functionalityReadOnlyService.getJwtLongTimeFunctionality(authUser.getDomain());
-		Functionality userCreateFunctionality = functionalityReadOnlyService
-				.getJwtLongTimeFunctionalityForUser(authUser.getDomain());
-		if (authUser.hasAdminRole() || authUser.hasSuperAdminRole()) {
-			if (!functionality.getActivationPolicy().getStatus()
-					|| !functionality.getConfigurationPolicy().getStatus()) {
-				return false;
-			}
-		} else {
-			if (!functionality.getActivationPolicy().getStatus()
-					|| !userCreateFunctionality.getActivationPolicy().getStatus()) {
-				return false;
-			} else if (LogAction.CREATE.equals(logAction)
-					&& !userCreateFunctionality.getDelegationPolicy().getStatus()) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 }

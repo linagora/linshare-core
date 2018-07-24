@@ -37,7 +37,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.business.service.JwtLongTimeBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.mongo.entities.JwtLongTime;
+import org.linagora.linshare.mongo.entities.PermanentToken;
 import org.linagora.linshare.mongo.repository.JwtLongTimeMongoRepository;
 import org.springframework.data.domain.Sort;
 
@@ -53,30 +53,35 @@ public class JwtLongTimeBusinessServiceImpl implements JwtLongTimeBusinessServic
 	}
 
 	@Override
-	public void create(JwtLongTime entity) {
+	public void create(PermanentToken entity) {
 		jwtLongTimeMongoRepository.insert(entity);
 	}
 
 	@Override
-	public List<JwtLongTime> findAllByActor(Account actor) {
+	public List<PermanentToken> findAllByActor(Account actor) {
 		Sort sort = new Sort(Sort.Direction.DESC, CREATION_DATE);
-		List<JwtLongTime> tokens = jwtLongTimeMongoRepository.findAllByActorUuid(actor.getLsUuid(), sort);
+		List<PermanentToken> tokens = jwtLongTimeMongoRepository.findAllByActorUuid(actor.getLsUuid(), sort);
 		return tokens;
 	}
 
 	@Override
-	public void deleteToken(JwtLongTime entity) {
+	public void delete(PermanentToken entity) {
 		jwtLongTimeMongoRepository.delete(entity);
 	}
 
 	@Override
-	public JwtLongTime find(String uuid) {
+	public PermanentToken find(String uuid) {
 		return jwtLongTimeMongoRepository.findByUuid(uuid);
 	}
 
 	@Override
-	public List<JwtLongTime> findAllByDomain(String domainUuid) {
+	public List<PermanentToken> findAllByDomain(String domainUuid) {
 		return jwtLongTimeMongoRepository.findAllByDomainUuid(domainUuid);
+	}
+
+	@Override
+	public PermanentToken update(PermanentToken found) {
+		return jwtLongTimeMongoRepository.save(found);
 	}
 
 }

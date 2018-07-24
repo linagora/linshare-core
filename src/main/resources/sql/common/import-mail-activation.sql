@@ -309,7 +309,7 @@ INSERT INTO policy(id, status, default_status, policy, system)
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable) 
  	VALUES(32, false, 'GUEST_WARN_GUEST_ABOUT_HIS_PASSWORD_RESET', 276, 277, 278, 1, true);
 
--- MailActivation : ACCOUNT_OWNER_WARN_JWT_LONG_TIME_CREATED
+-- MailActivation : ACCOUNT_OWNER_WARN_JWT_PERMANENT_TOKEN_CREATED
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (284, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system)
@@ -317,9 +317,9 @@ INSERT INTO policy(id, status, default_status, policy, system)
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (286, false, false, 2, true);
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable) 
- 	VALUES(33, false, 'ACCOUNT_OWNER_WARN_JWT_LONG_TIME_CREATED', 284, 285, 286, 1, true);
+ 	VALUES(33, false, 'ACCOUNT_OWNER_WARN_JWT_PERMANENT_TOKEN_CREATED', 284, 285, 286, 1, true);
  
- 	-- MailActivation : ACCOUNT_OWNER_WARN_JWT_LONG_TIME_DELETED
+ 	-- MailActivation : ACCOUNT_OWNER_WARN_JWT_PERMANENT_TOKEN_DELETED
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (287, true, true, 0, true);
 INSERT INTO policy(id, status, default_status, policy, system)
@@ -327,4 +327,4 @@ INSERT INTO policy(id, status, default_status, policy, system)
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (289, false, false, 2, true);
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable) 
- 	VALUES(34, false, 'ACCOUNT_OWNER_WARN_JWT_LONG_TIME_DELETED', 287, 288, 289, 1, true);
+ 	VALUES(34, false, 'ACCOUNT_OWNER_WARN_JWT_PERMANENT_TOKEN_DELETED', 287, 288, 289, 1, true);

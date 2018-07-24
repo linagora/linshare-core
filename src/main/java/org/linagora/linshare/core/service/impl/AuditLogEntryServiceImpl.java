@@ -320,7 +320,7 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 			actions.add(LogAction.CREATE);
 			actions.add(LogAction.DELETE);
 		}
-		return userMongoRepository.findAll(authUser.getLsUuid(), domainUuid, actions, AuditLogEntryType.JWT_LONG_TIME_TOKEN,
+		return userMongoRepository.findAll(authUser.getLsUuid(), domainUuid, actions, AuditLogEntryType.JWT_PERMANENT_TOKEN,
 					new Sort(Sort.Direction.DESC, CREATION_DATE));
 	}
 }

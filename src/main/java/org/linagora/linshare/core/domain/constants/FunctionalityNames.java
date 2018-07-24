@@ -83,8 +83,8 @@ public enum FunctionalityNames {
 	CMIS,
 	CMIS_DOCUMENTS,
 	CMIS_THREADS,
-	JWT_LONG_TIME_TOKEN,
-	JWT_LONG_TIME_TOKEN__FOR_USER;
+	JWT_PERMANENT_TOKEN,
+	JWT_PERMANENT_TOKEN__USER_MANAGEMENT;
 
 	@Override
 	public String toString() {
