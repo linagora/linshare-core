@@ -161,7 +161,10 @@
 	<bean id="adminSharedSpacePermissionRestService" class="org.linagora.linshare.webservice.admin.impl.SharedSpacePermissionRestServiceImpl">
 		<constructor-arg ref="wsAdminSharedSpacePermissionFacade" />
 	</bean>
-	
+	<bean id="adminSharedSpaceRoleRestService" class="org.linagora.linshare.webservice.admin.impl.SharedSpaceRoleRestServiceImpl">
+		<constructor-arg ref="wsAdminSharedSpaceRoleFacade" />
+	</bean>
+		
 	<jaxrs:server id="restAdminContainer" address="/rest/admin">
 		<jaxrs:serviceBeans>
 			<ref bean="adminAuthenticationRestService" />
@@ -202,6 +205,7 @@
 			<ref bean="adminSharedSpaceMemberRestService"/>
 			<ref bean="adminSharedSpaceNodeRestService"/>
 			<ref bean="adminSharedSpacePermissionRestService"/>
+			<ref bean="adminSharedSpaceRoleRestService"/>
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />
