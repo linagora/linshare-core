@@ -33,33 +33,64 @@
  */
 package org.linagora.linshare.ldap;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+public class LdapGroupMemberObject {
 
-import javax.naming.NamingException;
+	protected String firstName;
 
-import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
-import org.linagora.linshare.core.domain.entities.LdapAttribute;
-import org.linid.dm.authorization.lql.LqlRequestCtx;
-import org.linid.dm.authorization.lql.dnlist.IDnList;
+	protected String lastName;
 
-public class JScriptGroupLdapQuery extends JScriptLdapQuery<LdapGroupObject> {
+	protected String email;
 
-	public JScriptGroupLdapQuery(LqlRequestCtx ctx, String baseDn, GroupLdapPattern ldapPattern, IDnList dnList, Class<?> clazz)
-			throws NamingException, IOException {
-		super(ctx, baseDn, dnList, ldapPattern, clazz);
+	protected String externalId;
+
+	public LdapGroupMemberObject() {
+		super();
 	}
 
-	public List<LdapGroupObject> searchAllGroups() throws NamingException {
-		String  command = ((GroupLdapPattern)ldapPattern).getSearchAllGroupsQuery();
-		if (logger.isDebugEnabled()) {
-			logLqlQuery(command, "");
-		}
-		// searching ldap directory with pattern
-		List<String> dnResultList = this.evaluate(command);
-		Map<String, LdapAttribute> ldapDbAttributes = filterAttrByPrefix("group_");
-		return dnListToObjectList(dnResultList, ldapDbAttributes);
+	public LdapGroupMemberObject(String firstName, String lastName, String email, String externalId) {
+		super();
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
+		this.externalId = externalId;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getExternalId() {
+		return externalId;
+	}
+
+	public void setExternalId(String externalId) {
+		this.externalId = externalId;
+	}
+
+	@Override
+	public String toString() {
+		return "LdapGroupMemberObject [firstName=" + firstName + ", lastName=" + lastName + ", email=" + email
+				+ ", externalId=" + externalId + "]";
 	}
 
 }

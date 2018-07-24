@@ -55,7 +55,7 @@ public class GroupLdapPattern extends LdapPattern {
 		METHOD_MAPPING.put(GROUP_MEMBER, "addMember");
 		METHOD_MAPPING.put(MEMBER_LAST_NAME, "setLastName");
 		METHOD_MAPPING.put(MEMBER_FIRST_NAME, "setFirstName");
-		METHOD_MAPPING.put(MEMBER_MAIL, "setMail");
+		METHOD_MAPPING.put(MEMBER_MAIL, "setEmail");
 	};
 
 	protected String searchAllGroupsQuery;

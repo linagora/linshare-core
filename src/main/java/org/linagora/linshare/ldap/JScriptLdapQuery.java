@@ -61,6 +61,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 
 public abstract class JScriptLdapQuery<T extends Object> {
@@ -156,6 +157,20 @@ public abstract class JScriptLdapQuery<T extends Object> {
 			}
 		}).values();
 		return ldapAttrList;
+	}
+
+	protected Map<String, LdapAttribute> filterAttrByPrefix(String prefix) {
+		Map<String, LdapAttribute> dbAttributes = ldapPattern.getAttributes();
+		Predicate<LdapAttribute> filter = new Predicate<LdapAttribute>() {
+			public boolean apply(LdapAttribute attr) {
+				if (attr.getEnable()) {
+					return attr.getField().startsWith(prefix);
+				}
+				return false;
+			}
+		};
+		Map<String, LdapAttribute> filterValues = Maps.filterValues(dbAttributes, filter);
+		return filterValues;
 	}
 
 	protected ControlContext initControlContext(Map<String, LdapAttribute> ldapDbAttributes) {

@@ -44,22 +44,16 @@ import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linid.dm.authorization.lql.LqlRequestCtx;
 import org.linid.dm.authorization.lql.dnlist.IDnList;
 
-public class JScriptGroupLdapQuery extends JScriptLdapQuery<LdapGroupObject> {
+public class JScriptGroupMemberLdapQuery extends JScriptLdapQuery<LdapGroupMemberObject> {
 
-	public JScriptGroupLdapQuery(LqlRequestCtx ctx, String baseDn, GroupLdapPattern ldapPattern, IDnList dnList, Class<?> clazz)
+	public JScriptGroupMemberLdapQuery(LqlRequestCtx ctx, String baseDn, GroupLdapPattern ldapPattern, IDnList dnList, Class<?> clazz)
 			throws NamingException, IOException {
 		super(ctx, baseDn, dnList, ldapPattern, clazz);
 	}
 
-	public List<LdapGroupObject> searchAllGroups() throws NamingException {
-		String  command = ((GroupLdapPattern)ldapPattern).getSearchAllGroupsQuery();
-		if (logger.isDebugEnabled()) {
-			logLqlQuery(command, "");
-		}
-		// searching ldap directory with pattern
-		List<String> dnResultList = this.evaluate(command);
-		Map<String, LdapAttribute> ldapDbAttributes = filterAttrByPrefix("group_");
-		return dnListToObjectList(dnResultList, ldapDbAttributes);
+	public List<LdapGroupMemberObject> searchAllGroupMember(LdapGroupObject group) throws NamingException {
+		Map<String, LdapAttribute> ldapDbAttributes = filterAttrByPrefix("member_");
+		return dnListToObjectList(group.getMembers(), ldapDbAttributes);
 	}
 
 }
