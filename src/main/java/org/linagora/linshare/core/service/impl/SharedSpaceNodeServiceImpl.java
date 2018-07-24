@@ -90,7 +90,8 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
 		SharedSpaceNode created = sharedSpaceNodeBusinessService.create(node);
 		SharedSpaceRole role = ssRoleService.getAdmin(authUser, actor);
-		sharedSpaceMemberService.create(authUser, authUser, new GenericLightEntity(node.getUuid(), node.getName()),
+		sharedSpaceMemberService.createWithoutCheckPermission(authUser, authUser,
+				new GenericLightEntity(node.getUuid(), node.getName()),
 				new GenericLightEntity(role.getUuid(), role.getName()),
 				new GenericLightEntity(actor.getLsUuid(), actor.getFullName()));
 		return created;
@@ -125,6 +126,24 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		preChecks(authUser, authUser);
 		checkListPermission(authUser, authUser, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
 		return sharedSpaceNodeBusinessService.findAll();
+	}
+
+	@Override
+	public List<SharedSpaceNode> findAllByAccount(Account authUser, Account actor) {
+		preChecks(authUser, actor);
+		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
+		List<SharedSpaceMember> actorMemberShips = sharedSpaceMemberService.findAllByAccount(authUser, actor,
+				actor.getLsUuid());
+		List<SharedSpaceNode> actorNodes = Lists.newArrayList();
+		for (SharedSpaceMember sharedSpaceMember : actorMemberShips) {
+			actorNodes.add(find(authUser, actor, sharedSpaceMember.getNode().getUuid()));
+		}
+		return actorNodes;
+	}
+
+	@Override
+	public List<SharedSpaceMember> findAllMembers(Account authUser, Account actor, String sharedSpaceNodeUuid){
+		return sharedSpaceMemberService.findAll(authUser, actor, sharedSpaceNodeUuid);
 	}
 
 	@Override

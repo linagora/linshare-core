@@ -39,7 +39,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 
 public interface WorkGroupNodeResourceAccessControl<R, E extends WorkGroupNode>
-		extends AbstractResourceAccessControl<Account, R, E> {
+		extends AbstractSharedSpaceResourceAccessControl<Account, R, E> {
 
 	void checkDownloadPermission(Account authUser, Account targetedAccount, Class<?> clazz, BusinessErrorCode errCode,
 			E entry, Object... opt) throws BusinessException;

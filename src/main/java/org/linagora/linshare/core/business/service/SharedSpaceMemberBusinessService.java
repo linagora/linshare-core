@@ -64,4 +64,6 @@ public interface SharedSpaceMemberBusinessService {
 	List<String> findMembersUuidBySharedSpaceNodeUuid(String shareSpaceNodeUuid) throws BusinessException;
 
 	List<SharedSpaceMember> findByMemberName(String name) throws BusinessException;
+
+	List<SharedSpaceMember> findAllByAccount(String accountUuid);
 }

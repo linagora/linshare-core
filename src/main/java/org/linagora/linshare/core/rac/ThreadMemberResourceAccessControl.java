@@ -37,6 +37,6 @@ package org.linagora.linshare.core.rac;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 
-public interface ThreadMemberResourceAccessControl extends
-		AbstractResourceAccessControl<Account, Account, WorkgroupMember> {
+public interface ThreadMemberResourceAccessControl
+		extends AbstractSharedSpaceResourceAccessControl<Account, Account, WorkgroupMember> {
 }

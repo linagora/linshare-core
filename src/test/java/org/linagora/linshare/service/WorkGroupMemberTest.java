@@ -39,12 +39,16 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.service.InitMongoService;
+import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +74,12 @@ public class WorkGroupMemberTest extends AbstractTransactionalJUnit4SpringContex
 
 	@Autowired
 	private ThreadService threadService;
+
+	@Autowired
+	private SharedSpaceNodeService sharedSpaceNodeService;
+
+	@Autowired
+	private InitMongoService init;
 
 	@Autowired
 	@Qualifier("userRepository")
@@ -102,7 +112,11 @@ public class WorkGroupMemberTest extends AbstractTransactionalJUnit4SpringContex
 		datas.loadUsers();
 		owner = datas.getUser1();
 		member = datas.getUser2();
+		init.init();
 		workGroup = threadService.create(owner, owner, "work_group_name_1");
+		SharedSpaceNode sharedSpaceNodeFromWorkGroup = new SharedSpaceNode(workGroup.getName(), null, NodeType.WORK_GROUP);
+		sharedSpaceNodeFromWorkGroup.setUuid(workGroup.getLsUuid());
+		sharedSpaceNodeService.create(owner, owner, sharedSpaceNodeFromWorkGroup);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 

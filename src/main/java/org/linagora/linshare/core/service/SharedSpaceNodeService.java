@@ -36,6 +36,7 @@ package org.linagora.linshare.core.service;
 import java.util.List;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 
 public interface SharedSpaceNodeService {
@@ -53,5 +54,9 @@ public interface SharedSpaceNodeService {
 	SharedSpaceNode findByName(Account authUser, Account actor, String name) throws BusinessException;
 
 	List<SharedSpaceNode> findAllNodesBySSMember(Account authUser, String memberName);
+
+	List<SharedSpaceMember> findAllMembers(Account authUser, Account actor, String sharedSpaceNodeUuid);
+
+	List<SharedSpaceNode> findAllByAccount(Account authUser, Account actor);
 
 }

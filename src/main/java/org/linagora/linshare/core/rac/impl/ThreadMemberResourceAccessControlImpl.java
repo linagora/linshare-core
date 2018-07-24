@@ -34,115 +34,58 @@
 
 package org.linagora.linshare.core.rac.impl;
 
+import org.linagora.linshare.core.domain.constants.SharedSpaceActionType;
+import org.linagora.linshare.core.domain.constants.SharedSpaceResourceType;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.rac.ThreadMemberResourceAccessControl;
-import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
+import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
+import org.linagora.linshare.mongo.repository.SharedSpacePermissionMongoRepository;
 
-public class ThreadMemberResourceAccessControlImpl extends
-		AbstractResourceAccessControlImpl<Account, Account, WorkgroupMember>
+public class ThreadMemberResourceAccessControlImpl extends AbstractSharedSpaceResourceAccessControlImpl<Account, WorkgroupMember>
 		implements ThreadMemberResourceAccessControl {
-
-	private final ThreadMemberRepository threadMemberRepository;
 
 	public ThreadMemberResourceAccessControlImpl(
 			final FunctionalityReadOnlyService functionalityService,
-			final ThreadMemberRepository threadMemberRepository) {
-		super(functionalityService);
-		this.threadMemberRepository = threadMemberRepository;
+			final SharedSpaceMemberMongoRepository sharedSpaceMemberMongoRepository,
+			final SharedSpacePermissionMongoRepository sharedSpacePermissionMongoRepository) {
+		super(functionalityService, sharedSpaceMemberMongoRepository, sharedSpacePermissionMongoRepository);
 	}
 
 	@Override
-	protected boolean hasReadPermission(Account authUser, Account actor,
-			WorkgroupMember entry, Object... opt) {
-		if (authUser.hasAllRights()) {
-			return true;
-		}
-		if (authUser.hasDelegationRole()) {
-			return hasPermission(authUser,
-					TechnicalAccountPermissionType.THREAD_MEMBERS_GET);
-		}
-		return threadMemberRepository.findUserThreadMember(entry.getThread(),
-				(User) actor) != null;
+	protected boolean hasReadPermission(Account authUser, Account actor, WorkgroupMember entry, Object... opt) {
+		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
+				TechnicalAccountPermissionType.THREAD_MEMBERS_GET, SharedSpaceActionType.READ);
 	}
 
 	@Override
-	protected boolean hasListPermission(Account authUser, Account actor,
-			WorkgroupMember entry, Object... opt) {
-		if (authUser.hasAllRights()) {
-			return true;
-		}
-		if (authUser.hasDelegationRole()) {
-			return hasPermission(authUser,
-					TechnicalAccountPermissionType.THREAD_MEMBERS_LIST);
-		}
-		if (opt.length > 0 && opt[0] instanceof WorkGroup) {
-			return threadMemberRepository.findUserThreadMember((WorkGroup) opt[0],
-					(User) actor) != null;
-		}
-		return false;
+	protected boolean hasListPermission(Account authUser, Account actor, WorkgroupMember entry, Object... opt) {
+		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.THREAD_MEMBERS_LIST, false);
 	}
 
 	@Override
 	protected boolean hasDeletePermission(Account authUser, Account actor,
 			WorkgroupMember entry, Object... opt) {
-		if (authUser.hasAllRights()) {
-			return true;
-		}
-		if (authUser.hasDelegationRole()) {
-			return hasPermission(authUser,
-					TechnicalAccountPermissionType.THREAD_MEMBERS_DELETE);
-		}
-		WorkgroupMember member = threadMemberRepository.findUserThreadMember(
-				entry.getThread(), (User) actor);
-		if (member != null) {
-			return member.getAdmin();
-		}
-		return false;
+		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
+				TechnicalAccountPermissionType.THREAD_MEMBERS_LIST, SharedSpaceActionType.DELETE);
 	}
 
 	@Override
 	protected boolean hasCreatePermission(Account authUser, Account actor,
 			WorkgroupMember entry, Object... opt) {
-		if (authUser.hasAllRights()) {
-			return true;
-		}
-		if (authUser.hasDelegationRole()) {
-			return hasPermission(authUser,
-					TechnicalAccountPermissionType.THREAD_MEMBERS_CREATE);
-		}
-		// entry is the object to be created. Can not be used to check if the
-		// current owner is admin.
-		if (opt.length > 0 && opt[0] instanceof WorkGroup) {
-			WorkgroupMember member = threadMemberRepository.findUserThreadMember(
-					(WorkGroup) opt[0], (User) actor);
-			if (member != null) {
-				return member.getAdmin();
-			}
-		}
-		return false;
+		WorkGroup workGroup = (WorkGroup) opt[0];
+		return defaultSharedSpacePermissionCheck(authUser, actor, workGroup.getLsUuid(),
+				TechnicalAccountPermissionType.THREAD_MEMBERS_CREATE, SharedSpaceActionType.CREATE);
 	}
 
 	@Override
 	protected boolean hasUpdatePermission(Account authUser, Account actor,
 			WorkgroupMember entry, Object... opt) {
-		if (authUser.hasAllRights()) {
-			return true;
-		}
-		if (authUser.hasDelegationRole()) {
-			return hasPermission(authUser,
-					TechnicalAccountPermissionType.THREAD_MEMBERS_UPDATE);
-		}
-		WorkgroupMember member = threadMemberRepository.findUserThreadMember(
-				entry.getThread(), (User) actor);
-		if (member != null) {
-			return member.getAdmin();
-		}
-		return false;
+		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
+				TechnicalAccountPermissionType.THREAD_MEMBERS_UPDATE, SharedSpaceActionType.UPDATE);
 	}
 
 	@Override
@@ -159,5 +102,15 @@ public class ThreadMemberResourceAccessControlImpl extends
 	@Override
 	protected Account getOwner(WorkgroupMember entry, Object... opt) {
 		return entry.getUser().getOwner();
+	}
+
+	@Override
+	protected SharedSpaceResourceType getSharedSpaceResourceType() {
+		return SharedSpaceResourceType.MEMBER;
+	}
+
+	@Override
+	protected String getSharedSpaceNodeUuid(WorkgroupMember entry) {
+		return entry.getThread().getLsUuid();
 	}
 }

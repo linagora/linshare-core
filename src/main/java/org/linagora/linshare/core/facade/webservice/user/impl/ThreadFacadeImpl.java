@@ -122,9 +122,9 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 	public List<WorkGroupDto> findAll() throws BusinessException {
 		User authUser = checkAuthentication();
 		List<WorkGroupDto> res = Lists.newArrayList();
-		for (SharedSpaceNode ssnode : ssNodeService.findAllNodesBySSMember(authUser, authUser.getFirstName())) {
+		for (SharedSpaceNode ssnode : ssNodeService.findAllByAccount(authUser, authUser)) {
 			WorkGroup workgroup = new WorkGroup(ssnode);
-			res.add(new WorkGroupDto(workgroup, ssnode));
+			res.add(new WorkGroupDto(workgroup));
 		}
 		// TODO : put ssres as return when the new architecture is applied.
 		return res;
@@ -139,7 +139,7 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		WorkGroupDto dto = null;
 		if (members) {
 			List<WorkgroupMember> workgroupMembers = threadService.findAllThreadMembers(authUser, authUser, workGroup);
-			ssNodeService.findAllNodesBySSMember(authUser, authUser.getFullName());
+			ssNodeService.findAllMembers(authUser, authUser, uuid);
 			dto = new WorkGroupDto(workGroup, workgroupMembers);
 		} else {
 			dto = new WorkGroupDto(workGroup, ssnode);

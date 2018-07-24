@@ -33,29 +33,30 @@
  */
 package org.linagora.linshare.core.rac.impl;
 
-import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
+import org.linagora.linshare.core.domain.constants.SharedSpaceActionType;
+import org.linagora.linshare.core.domain.constants.SharedSpaceResourceType;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.rac.SharedSpaceMemberResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
+import org.linagora.linshare.mongo.repository.SharedSpacePermissionMongoRepository;
 
 public class SharedSpaceMemberResourceAccessControlImpl
-		extends AbstractResourceAccessControlImpl<Account, Account, SharedSpaceMember>
+		extends AbstractSharedSpaceResourceAccessControlImpl<Account, SharedSpaceMember>
 		implements SharedSpaceMemberResourceAccessControl {
 
-	private final SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService;
-
 	public SharedSpaceMemberResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService,
-			SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService) {
-		super(functionalityService);
-		this.sharedSpaceMemberBusinessService = sharedSpaceMemberBusinessService;
+			SharedSpaceMemberMongoRepository sharedSpaceMemberMongoRepository,
+			SharedSpacePermissionMongoRepository sharedSpacePermissionMongoRepository) {
+		super(functionalityService, sharedSpaceMemberMongoRepository, sharedSpacePermissionMongoRepository);
 	}
 
 	@Override
 	protected boolean hasReadPermission(Account authUser, Account actor, SharedSpaceMember entry, Object... opt) {
-		return defaultPermissionCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_READ, false);
+		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
+				TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_READ, SharedSpaceActionType.READ);
 	}
 
 	@Override
@@ -66,28 +67,29 @@ public class SharedSpaceMemberResourceAccessControlImpl
 
 	@Override
 	protected boolean hasDeletePermission(Account authUser, Account actor, SharedSpaceMember entry, Object... opt) {
-		// TODO Auto-generated method stub
-		return defaultPermissionCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_DELETE, false);
+		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
+				TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_DELETE, SharedSpaceActionType.DELETE);
 	}
 
 	@Override
 	protected boolean hasCreatePermission(Account authUser, Account actor, SharedSpaceMember entry, Object... opt) {
-		if (!checkAccountNotInNode(entry.getAccount().getUuid(), entry.getNode().getUuid())) {
-			logger.error(
-					String.format("The account with the UUID : %s is already a member of the node with the uuid : %s",
-							entry.getAccount().getUuid(), entry.getNode().getUuid()));
-			return false;
+		if (defaultSharedSpacePermissionCheck(authUser, actor, entry,
+				TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_CREATE, SharedSpaceActionType.CREATE)) {
+			if (!checkAccountNotInNode(entry.getAccount().getUuid(), entry.getNode().getUuid())) {
+				logger.error(String.format(
+						"The account with the UUID : %s is already a member of the node with the uuid : %s",
+						entry.getAccount().getUuid(), entry.getNode().getUuid()));
+				return false;
+			}
+			return true;
 		}
-		return defaultPermissionCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_CREATE, false);
+		return false;
 	}
 
 	@Override
 	protected boolean hasUpdatePermission(Account authUser, Account actor, SharedSpaceMember entry, Object... opt) {
-		// TODO Auto-generated method stub
-		return defaultPermissionCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_UPDATE, false);
+		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
+				TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_UPDATE, SharedSpaceActionType.UPDATE);
 	}
 
 	@Override
@@ -106,6 +108,16 @@ public class SharedSpaceMemberResourceAccessControlImpl
 	}
 
 	private boolean checkAccountNotInNode(String possibleMemberUuid, String nodeUuid) {
-		return sharedSpaceMemberBusinessService.findByMemberAndSharedSpaceNode(possibleMemberUuid, nodeUuid) == null;
+		return sharedSpaceMemberMongoRepository.findByAccountAndNode(possibleMemberUuid, nodeUuid) == null;
+	}
+
+	@Override
+	protected SharedSpaceResourceType getSharedSpaceResourceType() {
+		return SharedSpaceResourceType.MEMBER;
+	}
+
+	@Override
+	protected String getSharedSpaceNodeUuid(SharedSpaceMember entry) {
+		return entry.getNode().getUuid();
 	}
 }
