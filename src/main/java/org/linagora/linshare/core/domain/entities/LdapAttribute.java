@@ -74,6 +74,16 @@ public class LdapAttribute {
 		this.completion = completion;
 	}
 
+	public LdapAttribute(String field, String attribute) {
+		super();
+		this.field = field;
+		this.attribute = attribute;
+		this.sync = false;
+		this.system = true;
+		this.enable = true;
+		this.completion = false;
+	}
+
 	public void setId(Long value) {
 		this.id = value;
 	}

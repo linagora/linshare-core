@@ -62,10 +62,10 @@ public class UserLdapPattern extends LdapPattern {
 	public static final String USER_UID = "user_uid";
 
 	static {
-		USER_METHOD_MAPPING.put(USER_LAST_NAME, "setLastName");
-		USER_METHOD_MAPPING.put(USER_FIRST_NAME, "setFirstName");
-		USER_METHOD_MAPPING.put(USER_MAIL, "setMail");
-		USER_METHOD_MAPPING.put(USER_UID, "setLdapUid");
+		METHOD_MAPPING.put(USER_LAST_NAME, "setLastName");
+		METHOD_MAPPING.put(USER_FIRST_NAME, "setFirstName");
+		METHOD_MAPPING.put(USER_MAIL, "setMail");
+		METHOD_MAPPING.put(USER_UID, "setLdapUid");
 	};
 
 	protected UserLdapPattern() {

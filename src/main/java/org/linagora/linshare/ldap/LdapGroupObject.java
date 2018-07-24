@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,49 +31,32 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.ldap;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.UUID;
 
-public abstract class LdapPattern {
+public class LdapGroupObject {
 
-	protected long id;
-
-	protected String label;
+	protected String name;
 
 	protected String uuid;
 
-	protected String description;
+	// dn
+	protected String externalId;
 
-	protected boolean system;
+//	protected List<String> members;
 
-	protected Date creationDate;
-
-	protected Date modificationDate;
-
-	protected Map<String, LdapAttribute> attributes;
-
-	public static final Map<String, String> METHOD_MAPPING = new HashMap<String, String>();
-
-	protected LdapPattern() {
+	public LdapGroupObject() {
+		super();
+		this.uuid = UUID.randomUUID().toString();
 	}
 
-	public long getId() {
-		return id;
+	public String getName() {
+		return name;
 	}
 
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getLabel() {
-		return label;
-	}
-
-	public void setLabel(String label) {
-		this.label = label;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getUuid() {
@@ -84,53 +67,33 @@ public abstract class LdapPattern {
 		this.uuid = uuid;
 	}
 
-	public String getDescription() {
-		return description;
+	public String getExternalId() {
+		return externalId;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public Map<String, LdapAttribute> getAttributes() {
-		return attributes;
-	}
-
-	public void setAttributes(Map<String, LdapAttribute> attributes) {
-		this.attributes = attributes;
-	}
-
-	public Boolean getSystem() {
-		return system;
-	}
-
-	public void setSystem(Boolean system) {
-		this.system = system;
-	}
-
-	public String getAttribute(String field) {
-		return attributes.get(field).getAttribute().trim().toLowerCase();
-	}
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	public Date getModificationDate() {
-		return modificationDate;
-	}
-
-	public void setModificationDate(Date modificationDate) {
-		this.modificationDate = modificationDate;
+	public void setExternalId(String externalId) {
+		this.externalId = externalId;
 	}
 
 	@Override
 	public String toString() {
-		return "LdapPattern [label=" + label + ", uuid=" + uuid + "]";
+		return "LdapGroupObject [name=" + name + ", uuid=" + uuid + ", externalId=" + externalId + "]";
 	}
+
+//	public List<String> getMembers() {
+//		return members;
+//	}
+//
+//	public List<String> addMember(String member) {
+//		if (members == null) {
+//			members = Lists.newArrayList();
+//		}
+//		members.add(member);
+//		return members;
+//	}
+//
+//	public void setMembers(List<String> members) {
+//		this.members = members;
+//	}
 
 }

@@ -41,6 +41,8 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -55,12 +57,15 @@ import javax.naming.ldap.Control;
 import javax.naming.ldap.HasControls;
 
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
-import org.linagora.linshare.core.domain.entities.UserLdapPattern;
+import org.linagora.linshare.core.domain.entities.LdapPattern;
 import org.linid.dm.authorization.lql.JScriptEvaluator;
 import org.linid.dm.authorization.lql.LqlRequestCtx;
 import org.linid.dm.authorization.lql.dnlist.IDnList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
 
 public abstract class JScriptLdapQuery<T extends Object> {
 
@@ -80,13 +85,16 @@ public abstract class JScriptLdapQuery<T extends Object> {
 
 	protected Class<?> clazz;
 
-	public JScriptLdapQuery(LqlRequestCtx ctx, String baseDn, IDnList dnList, Class<?> clazz) throws NamingException, IOException {
+	protected LdapPattern ldapPattern;
+
+	public JScriptLdapQuery(LqlRequestCtx ctx, String baseDn, IDnList dnList, LdapPattern ldapPattern, Class<?> clazz) throws NamingException, IOException {
 		super();
 		this.lqlctx = ctx;
 		this.evaluator = JScriptEvaluator.getInstance(ctx.getLdapCtx(), dnList);
 		this.cleaner = Pattern.compile("[;,!|*()&]");
 		this.clazz = clazz;
 		this.baseDn = baseDn;
+		this.ldapPattern = ldapPattern;
 		try {
 			this.beanInfo = Introspector.getBeanInfo(clazz);
 		} catch (IntrospectionException e) {
@@ -144,6 +152,76 @@ public abstract class JScriptLdapQuery<T extends Object> {
 			string = "*" + string.trim() + "*";
 		}
 		return string;
+	}
+
+	/**
+	 * Convert database LDAP attributes map to a attribute name list.
+	 * 
+	 * @param ldapDbAttributes
+	 *            : map of database LDAP attributes
+	 * @return List of attribute names.
+	 */
+	protected Collection<String> getLdapAttrList(Map<String, LdapAttribute> ldapDbAttributes) {
+		Collection<String> ldapAttrList = Maps.transformValues(ldapDbAttributes, new Function<LdapAttribute, String>() {
+			public String apply(LdapAttribute input) {
+				return input.getAttribute();
+			}
+		}).values();
+		return ldapAttrList;
+	}
+
+	protected ControlContext initControlContext(Map<String, LdapAttribute> ldapDbAttributes) {
+		// Initialization of bean introspection
+		if (beanInfo == null) {
+			logger.error("Introspection of Internal user class impossible. Bean inspector is not initialised.");
+			return null;
+		}
+
+		// String list of ldap attributes
+		Collection<String> ldapAttrList = getLdapAttrList(ldapDbAttributes);
+
+		// ldapContext ldapCtx, String base, String filter, int scope)
+		SearchControls scs = new SearchControls();
+		scs.setSearchScope(SearchControls.OBJECT_SCOPE);
+
+		// Attributes to retrieve from ldap.
+		logger.debug("ldap attributes to retrieve : " + ldapAttrList.toString());
+		scs.setReturningAttributes(ldapAttrList.toArray(new String[ldapAttrList.size()]));
+		return new ControlContext(ldapDbAttributes, scs);
+	}
+
+	/**
+	 * This function build user list from input dn list
+	 * @param dnResultList
+	 *            : // list of dn without baseDn used by the previous search.
+	 * @param completionMode
+	 *            : completion mode return a user object with only mail,
+	 *            first name, and last name set. Otherwise all defined attributes
+	 *            will be search and set (mail, firstname, lastname, uid, ...)
+	 * @return List<User> List of user
+	 */
+	protected List<T> dnListToObjectList(List<String> dnResultList, Map<String, LdapAttribute> ldapDbAttributes) {
+		ControlContext controlContext = initControlContext(ldapDbAttributes);
+
+		// converting resulting dn to User object
+		List<T> users = new ArrayList<T>();
+		for (String dn : dnResultList) {
+			logger.debug("current dn: " + dn);
+			Date date_before = new Date();
+			T obj = null;
+			try {
+				obj = dnToObject(dn, controlContext.getLdapDbAttributes(), controlContext.getSearchControls());
+			} catch (NamingException e) {
+				logger.error(e.getMessage());
+				logger.debug(e.toString());
+			}
+			Date date_after = new Date();
+			logger.debug("fin dnToObject: " + String.valueOf(date_after.getTime() - date_before.getTime()) + " milliseconds.");
+			if (obj != null) {
+				users.add(obj);
+			}
+		}
+		return users;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -226,7 +304,7 @@ public abstract class JScriptLdapQuery<T extends Object> {
 	protected boolean setUserAttribute(Object user, String attr_key, String curValue) {
 		for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
 			Method userSetter = pd.getWriteMethod();
-			String method = UserLdapPattern.USER_METHOD_MAPPING.get(attr_key);
+			String method = LdapPattern.METHOD_MAPPING.get(attr_key);
 			if (userSetter != null && method.equals(userSetter.getName())) {
 				try {
 					userSetter.invoke(user, curValue);

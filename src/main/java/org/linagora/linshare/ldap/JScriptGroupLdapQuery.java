@@ -35,28 +35,48 @@ package org.linagora.linshare.ldap;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import javax.naming.NamingException;
 
-import org.linagora.linshare.mongo.entities.mto.ThreadMto;
+import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
+import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linid.dm.authorization.lql.LqlRequestCtx;
 import org.linid.dm.authorization.lql.dnlist.IDnList;
 
-public class JScriptGroupLdapQuery extends JScriptLdapQuery<ThreadMto> {
+import com.google.common.base.Predicate;
+import com.google.common.collect.Maps;
 
-	public JScriptGroupLdapQuery(LqlRequestCtx ctx, String baseDn, IDnList dnList, Class<?> clazz)
+public class JScriptGroupLdapQuery extends JScriptLdapQuery<LdapGroupObject> {
+
+	public JScriptGroupLdapQuery(LqlRequestCtx ctx, String baseDn, GroupLdapPattern ldapPattern, IDnList dnList, Class<?> clazz)
 			throws NamingException, IOException {
-		super(ctx, baseDn, dnList, clazz);
+		super(ctx, baseDn, dnList, ldapPattern, clazz);
 	}
 
-	public List<String> searchGroups() throws NamingException {
-		String  command = "ldap.search(baseDn, \"(&(objectClass=posixGroup)(cn=workgroup-*))\");";
+	public List<LdapGroupObject> searchAllGroups() throws NamingException {
+		String  command = ((GroupLdapPattern)ldapPattern).getSearchAllGroupsQuery();
 		if (logger.isDebugEnabled()) {
 			logLqlQuery(command, "");
 		}
 		// searching ldap directory with pattern
 		List<String> dnResultList = this.evaluate(command);
-		return dnResultList;
+		Map<String, LdapAttribute> ldapDbAttributes = filterAttr("group_");
+		return dnListToObjectList(dnResultList, ldapDbAttributes);
+	}
+
+	protected Map<String, LdapAttribute> filterAttr(String prefix) {
+		Map<String, LdapAttribute> dbAttributes = ldapPattern.getAttributes();
+		Predicate<LdapAttribute> filter = new Predicate<LdapAttribute>() {
+			public boolean apply(LdapAttribute attr) {
+				if (attr.getEnable()) {
+					return attr.getField().startsWith(prefix);
+				}
+				return false;
+			}
+		};
+		Map<String, LdapAttribute> filterValues = Maps.filterValues(dbAttributes, filter);
+		return filterValues;
 	}
 
 }

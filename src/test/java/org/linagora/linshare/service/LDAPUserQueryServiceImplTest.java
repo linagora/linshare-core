@@ -64,9 +64,9 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 		"classpath:springContext-ldap.xml", 
 		"classpath:springContext-start-embedded-ldap.xml"
 })
-public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
+public class LDAPUserQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 
-	protected Logger logger = LoggerFactory.getLogger(LDAPQueryServiceImplTest.class);
+	protected Logger logger = LoggerFactory.getLogger(LDAPUserQueryServiceImplTest.class);
 
 	private String userMail1;
 

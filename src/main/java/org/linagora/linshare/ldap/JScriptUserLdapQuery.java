@@ -57,20 +57,16 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.security.ldap.search.LdapUserSearch;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 
 public class JScriptUserLdapQuery extends JScriptLdapQuery<User> {
 
-	private UserLdapPattern domainPattern;
-
 	public JScriptUserLdapQuery(LqlRequestCtx ctx, String baseDn, UserLdapPattern domainPattern, IDnList dnList) throws NamingException, IOException {
-		super(ctx, baseDn, dnList, Internal.class);
-		this.domainPattern = domainPattern;
+		super(ctx, baseDn, dnList, domainPattern, Internal.class);
 	}
 
-	private void logLqlQuery(String command, String mail, String first_name, String last_name) {
+	protected void logLqlQuery(String command, String mail, String first_name, String last_name) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("lql command " + command);
 			logger.debug("first_name: " + first_name);
@@ -84,7 +80,7 @@ public class JScriptUserLdapQuery extends JScriptLdapQuery<User> {
 		}
 	}
 
-	private void logLqlQuery(String command, String first_name, String last_name) {
+	protected void logLqlQuery(String command, String first_name, String last_name) {
 		logLqlQuery(command, null, first_name, last_name);
 	}
 
@@ -98,7 +94,7 @@ public class JScriptUserLdapQuery extends JScriptLdapQuery<User> {
 	public List<User> complete(String pattern) throws NamingException {
 
 		// Getting lql expression for completion
-		String command = domainPattern.getAutoCompleteCommandOnAllAttributes();
+		String command = ((UserLdapPattern)ldapPattern).getAutoCompleteCommandOnAllAttributes();
 		pattern = addExpansionCharacters(pattern);
 
 		// Setting lql query parameters
@@ -124,7 +120,7 @@ public class JScriptUserLdapQuery extends JScriptLdapQuery<User> {
 	public List<User> complete(String first_name, String last_name) throws NamingException {
 
 		// Getting lql expression for completion
-		String command = domainPattern.getAutoCompleteCommandOnFirstAndLastName();
+		String command = ((UserLdapPattern)ldapPattern).getAutoCompleteCommandOnFirstAndLastName();
 		first_name = addExpansionCharacters(first_name);
 		last_name = addExpansionCharacters(last_name);
 
@@ -217,29 +213,13 @@ public class JScriptUserLdapQuery extends JScriptLdapQuery<User> {
 	}
 
 	/**
-	 * Convert database LDAP attributes map to a attribute name list.
-	 * 
-	 * @param ldapDbAttributes
-	 *            : map of database LDAP attributes
-	 * @return List of attribute names.
-	 */
-	private Collection<String> getLdapAttrList(Map<String, LdapAttribute> ldapDbAttributes) {
-		Collection<String> ldapAttrList = Maps.transformValues(ldapDbAttributes, new Function<LdapAttribute, String>() {
-			public String apply(LdapAttribute input) {
-				return input.getAttribute();
-			}
-		}).values();
-		return ldapAttrList;
-	}
-
-	/**
 	 * Filtering database LDAP attributes map to get only attributes needed for
 	 * completion.
 	 * 
 	 * @return
 	 */
 	private Map<String, LdapAttribute> getLdapDbAttributeForCompletion() {
-		Map<String, LdapAttribute> dbAttributes = domainPattern.getAttributes();
+		Map<String, LdapAttribute> dbAttributes = ((UserLdapPattern)ldapPattern).getAttributes();
 		Predicate<LdapAttribute> completionFilter = new Predicate<LdapAttribute>() {
 			public boolean apply(LdapAttribute attr) {
 				if (attr.getEnable()) {
@@ -261,7 +241,7 @@ public class JScriptUserLdapQuery extends JScriptLdapQuery<User> {
 	 * @return Map<String, LdapAttribute>
 	 */
 	private Map<String, LdapAttribute> getLdapDbAttribute() {
-		Map<String, LdapAttribute> dbAttributes = domainPattern.getAttributes();
+		Map<String, LdapAttribute> dbAttributes = ((UserLdapPattern)ldapPattern).getAttributes();
 		Predicate<LdapAttribute> completionFilter = new Predicate<LdapAttribute>() {
 			public boolean apply(LdapAttribute attr) {
 				return attr.getEnable();
@@ -285,7 +265,7 @@ public class JScriptUserLdapQuery extends JScriptLdapQuery<User> {
 	public List<User> searchUser(String mail, String first_name, String last_name) throws NamingException {
 
 		// Getting lql expression for completion
-		String command = domainPattern.getSearchUserCommand();
+		String command = ((UserLdapPattern)ldapPattern).getSearchUserCommand();
 		mail = addExpansionCharacters(mail);
 		first_name = addExpansionCharacters(first_name);
 		last_name = addExpansionCharacters(last_name);
@@ -315,7 +295,7 @@ public class JScriptUserLdapQuery extends JScriptLdapQuery<User> {
 	public User findUser(String mail) throws NamingException {
 
 		// Getting lql expression for completion
-		String command = domainPattern.getSearchUserCommand();
+		String command = ((UserLdapPattern)ldapPattern).getSearchUserCommand();
 		if (mail == null || mail.length() < 1) {
 			return null;
 		}
@@ -357,7 +337,7 @@ public class JScriptUserLdapQuery extends JScriptLdapQuery<User> {
 		String last_name = "*";
 
 		// Getting lql expression for completion
-		String command = domainPattern.getSearchUserCommand();
+		String command = ((UserLdapPattern)ldapPattern).getSearchUserCommand();
 
 		// Setting lql query parameters
 		Map<String, Object> vars = lqlctx.getVariables();
@@ -388,7 +368,7 @@ public class JScriptUserLdapQuery extends JScriptLdapQuery<User> {
 	 */
 	public User auth(LdapConnection ldapConnection, String login, String userPasswd) throws NamingException {
 
-		String command = domainPattern.getAuthCommand();
+		String command = ((UserLdapPattern)ldapPattern).getAuthCommand();
 		Map<String, Object> vars = lqlctx.getVariables();
 		vars.put("login", cleanLdapInputPattern(login));
 		if (logger.isDebugEnabled())
@@ -448,7 +428,7 @@ public class JScriptUserLdapQuery extends JScriptLdapQuery<User> {
 	 */
 	public User searchForAuth(LdapConnection ldapConnection, String login) throws NamingException {
 
-		String command = domainPattern.getAuthCommand();
+		String command = ((UserLdapPattern)ldapPattern).getAuthCommand();
 		Map<String, Object> vars = lqlctx.getVariables();
 		vars.put("login", cleanLdapInputPattern(login));
 		if (logger.isDebugEnabled())

@@ -35,6 +35,7 @@ package org.linagora.linshare.service;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +51,7 @@ import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.LDAPGroupQueryService;
+import org.linagora.linshare.ldap.LdapGroupObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +79,21 @@ public class LDAPGroupQueryServiceImplTest extends AbstractJUnit4SpringContextTe
 
 	public LDAPGroupQueryServiceImplTest() {
 		super();
+		attributes = new HashMap<String, LdapAttribute>();
+		attributes.put(GroupLdapPattern.GROUP_NAME, new LdapAttribute(GroupLdapPattern.GROUP_NAME, "cn"));
+		attributes.put(GroupLdapPattern.GROUP_DN, new LdapAttribute(GroupLdapPattern.GROUP_DN, "cn"));
+		attributes.put(GroupLdapPattern.MEMBER_MAIL, new LdapAttribute(GroupLdapPattern.MEMBER_MAIL, "member_email"));
+		attributes.put(GroupLdapPattern.MEMBER_FIRST_NAME, new LdapAttribute(GroupLdapPattern.MEMBER_FIRST_NAME, "member_firstname"));
+		attributes.put(GroupLdapPattern.MEMBER_LAST_NAME, new LdapAttribute(GroupLdapPattern.MEMBER_LAST_NAME, "member_lastname"));
+
 		groupPattern = new GroupLdapPattern();
+		groupPattern.setAttributes(attributes);
+		groupPattern.setSearchAllGroupsQuery("ldap.search(baseDn, \"(&(objectClass=posixGroup)(cn=workgroup-*))\");");
+		groupPattern.setFindMemberQuery("");
+		groupPattern.setSearchGroupQuery("");
+		groupPattern.setSearchPageSize(100);
+		groupPattern.setGroupPrefix("workgroup-");
+
 		ldapConnection = new LdapConnection("testldap", "ldap://localhost:33389", "anonymous");
 		baseDn = "ou=Groups,dc=linshare,dc=org";
 	}
@@ -98,9 +114,11 @@ public class LDAPGroupQueryServiceImplTest extends AbstractJUnit4SpringContextTe
 	public void testGroups() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Date date_before = new Date();
-		List<String> listGroups = ldapGroupQueryService.listGroups(ldapConnection, baseDn, groupPattern);
-		for (String string : listGroups) {
-			logger.info(string);
+		List<LdapGroupObject> listGroups = ldapGroupQueryService.listGroups(ldapConnection, baseDn, groupPattern);
+		for (LdapGroupObject ldapGroup : listGroups) {
+			logger.info(ldapGroup.toString());
+			Assert.assertEquals("workgroup-wg-1", ldapGroup.getName());
+			Assert.assertEquals("workgroup-wg-1", ldapGroup.getExternalId());
 		}
 		Date date_after = new Date();
 		Assert.assertEquals(1, listGroups.size());

@@ -46,15 +46,15 @@ import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.LDAPGroupQueryService;
 import org.linagora.linshare.ldap.JScriptGroupLdapQuery;
+import org.linagora.linshare.ldap.LdapGroupObject;
 import org.linagora.linshare.ldap.LinShareDnList;
-import org.linagora.linshare.mongo.entities.mto.ThreadMto;
 import org.linid.dm.authorization.lql.LqlRequestCtx;
 import org.linid.dm.authorization.lql.dnlist.IDnList;
 
 public class LDAPGroupQueryServiceImpl extends LDAPQueryServiceImpl implements LDAPGroupQueryService {
 
 	@Override
-	public List<String> listGroups(LdapConnection ldapConnection, String baseDn, GroupLdapPattern pattern)
+	public List<LdapGroupObject> listGroups(LdapConnection ldapConnection, String baseDn, GroupLdapPattern pattern)
 			throws BusinessException, NamingException, IOException {
 		LdapContext ldapContext = (LdapContext) getLdapContext(ldapConnection, baseDn).getReadOnlyContext();
 
@@ -63,11 +63,11 @@ public class LDAPGroupQueryServiceImpl extends LDAPQueryServiceImpl implements L
 		vars.put("logger", logger);
 
 		LqlRequestCtx lqlctx = new LqlRequestCtx(ldapContext, vars, true);
-		IDnList dnList = new LinShareDnList(100, 0);
-		List<String> list = null;
+		IDnList dnList = new LinShareDnList(pattern.getSearchPageSize(), 0);
+		List<LdapGroupObject> list = null;
 		try {
-			JScriptGroupLdapQuery query = new JScriptGroupLdapQuery(lqlctx, baseDn, dnList, ThreadMto.class);
-			list = query.searchGroups();
+			JScriptGroupLdapQuery query = new JScriptGroupLdapQuery(lqlctx, baseDn, pattern, dnList, LdapGroupObject.class);
+			list = query.searchAllGroups();
 		} finally {
 			ldapContext.close();
 		}

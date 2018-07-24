@@ -50,12 +50,12 @@ public class GroupLdapPattern extends LdapPattern {
 	public static final String MEMBER_LAST_NAME = "member_lastname";
 
 	static {
-		USER_METHOD_MAPPING.put(GROUP_NAME, "setTODO");
-		USER_METHOD_MAPPING.put(GROUP_DN, "setTODO");
-		USER_METHOD_MAPPING.put(GROUP_MEMBER, "setTODO");
-		USER_METHOD_MAPPING.put(MEMBER_LAST_NAME, "setLastName");
-		USER_METHOD_MAPPING.put(MEMBER_FIRST_NAME, "setFirstName");
-		USER_METHOD_MAPPING.put(MEMBER_MAIL, "setMail");
+		METHOD_MAPPING.put(GROUP_NAME, "setName");
+		METHOD_MAPPING.put(GROUP_DN, "setExternalId");
+//		METHOD_MAPPING.put(GROUP_MEMBER, "setTODO");
+		METHOD_MAPPING.put(MEMBER_LAST_NAME, "setLastName");
+		METHOD_MAPPING.put(MEMBER_FIRST_NAME, "setFirstName");
+		METHOD_MAPPING.put(MEMBER_MAIL, "setMail");
 	};
 
 	protected String searchAllGroupsQuery;
