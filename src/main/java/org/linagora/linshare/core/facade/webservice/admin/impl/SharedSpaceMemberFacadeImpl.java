@@ -50,6 +50,8 @@ import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
+import com.google.common.base.Strings;
+
 public class SharedSpaceMemberFacadeImpl extends AdminGenericFacadeImpl implements SharedSpaceMemberFacade {
 
 	private final SharedSpaceMemberService sharedSpaceMemberService;
@@ -83,18 +85,23 @@ public class SharedSpaceMemberFacadeImpl extends AdminGenericFacadeImpl implemen
 		Validate.notNull(member.getAccount().getUuid(), "Account uuid must be set.");
 		Validate.notNull(member.getRole().getUuid(), "Role uuid must be set.");
 		Validate.notNull(member.getNode().getUuid(), "Node uuid must be set.");
-		SharedSpaceNode foundSharedSpaceNode = sharedSpaceNodeService.find(authUser, authUser, member.getNode().getUuid());
-		SharedSpaceRole foundSharedSpaceRole = sharedSpaceRoleService.find(authUser, authUser, member.getRole().getUuid());
+		SharedSpaceNode foundSharedSpaceNode = sharedSpaceNodeService.find(authUser, authUser,
+				member.getNode().getUuid());
+		SharedSpaceRole foundSharedSpaceRole = sharedSpaceRoleService.find(authUser, authUser,
+				member.getRole().getUuid());
 		User foundUser = userService.findByLsUuid(member.getAccount().getUuid());
 		Validate.notNull(foundUser, "Missing required user");
 		Validate.notNull(foundSharedSpaceRole, "Missing required role");
 		Validate.notNull(foundSharedSpaceNode, "Missing required node");
-		GenericLightEntity nodeToPersist = new GenericLightEntity(foundSharedSpaceNode.getUuid(), foundSharedSpaceNode.getName());
-		GenericLightEntity roleToPersist = new GenericLightEntity(foundSharedSpaceRole.getUuid(), foundSharedSpaceRole.getName());
+		GenericLightEntity nodeToPersist = new GenericLightEntity(foundSharedSpaceNode.getUuid(),
+				foundSharedSpaceNode.getName());
+		GenericLightEntity roleToPersist = new GenericLightEntity(foundSharedSpaceRole.getUuid(),
+				foundSharedSpaceRole.getName());
 		SharedSpaceAccount sharedSpaceAccount = new SharedSpaceAccount(foundUser);
 		GenericLightEntity accountLight = new GenericLightEntity(sharedSpaceAccount.getUuid(),
 				sharedSpaceAccount.getName());
-		SharedSpaceMember toAddMember = sharedSpaceMemberService.create(authUser, authUser, nodeToPersist, roleToPersist, accountLight);
+		SharedSpaceMember toAddMember = sharedSpaceMemberService.create(authUser, authUser, nodeToPersist,
+				roleToPersist, accountLight);
 		return toAddMember;
 	}
 
@@ -103,6 +110,30 @@ public class SharedSpaceMemberFacadeImpl extends AdminGenericFacadeImpl implemen
 		Validate.notEmpty(uuid, "Member must be set.");
 		Account authUser = checkAuthentication(Role.SUPERADMIN);
 		return sharedSpaceMemberService.find(authUser, authUser, uuid);
+	}
+
+	@Override
+	public SharedSpaceMember update(SharedSpaceMember ssMember, String uuid) throws BusinessException {
+		Account authUser = checkAuthentication(Role.SUPERADMIN);
+		Validate.notNull(ssMember, "Shared space member must be set.");
+		if (!Strings.isNullOrEmpty(uuid)) {
+			ssMember.setUuid(uuid);
+		} else {
+			Validate.notEmpty(ssMember.getUuid(), "The shared space member uuid to update must be set.");
+		}
+		return sharedSpaceMemberService.update(authUser, authUser, ssMember);
+	}
+
+	@Override
+	public SharedSpaceMember delete(SharedSpaceMember ssmember, String uuid) throws BusinessException {
+		Account authUser = checkAuthentication(Role.SUPERADMIN);
+		if (!Strings.isNullOrEmpty(uuid)) {
+			ssmember = sharedSpaceMemberService.find(authUser, authUser, uuid);
+		} else {
+			Validate.notNull(ssmember, "The shared space member to delete must be set.");
+			Validate.notEmpty(ssmember.getUuid(), "The shared space member uuid must be set.");
+		}
+		return sharedSpaceMemberService.delete(authUser, authUser, ssmember);
 	}
 
 }

@@ -37,8 +37,13 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 
 public interface SharedSpaceMemberFacade {
+
 	SharedSpaceMember create(SharedSpaceMember member) throws BusinessException;
 
 	SharedSpaceMember find(String uuid) throws BusinessException;
+
+	SharedSpaceMember update(SharedSpaceMember ssmember, String uuid) throws BusinessException;
+
+	SharedSpaceMember delete(SharedSpaceMember ssmember, String uuid) throws BusinessException;
 
 }

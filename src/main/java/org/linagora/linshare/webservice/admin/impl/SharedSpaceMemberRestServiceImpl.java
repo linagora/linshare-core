@@ -36,15 +36,17 @@ package org.linagora.linshare.webservice.admin.impl;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.SharedSpaceMemberFacade;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
-import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.webservice.admin.SharedSpaceMemberRestService;
+
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
@@ -67,7 +69,7 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 	@Path("/{uuid}")
 	@GET
 	@ApiOperation(value = "Find a shared space member.", response = SharedSpaceMember.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the required role."),
 			@ApiResponse(code = 404, message = "Not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
@@ -80,7 +82,7 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 	@Path("/")
 	@POST
 	@ApiOperation(value = "create a shared space member.", response = SharedSpaceMember.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the required role."),
 			@ApiResponse(code = 404, message = "Not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
@@ -89,6 +91,38 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 			@ApiParam(value = "shared space member to create") SharedSpaceMember sharedSpaceNodeMember)
 			throws BusinessException {
 		return sharedSpaceMemberFacade.create(sharedSpaceNodeMember);
+	}
+
+	@Path("/{uuid : .*}")
+	@PUT
+	@ApiOperation(value = "Update a shared space member.", response = SharedSpaceMember.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the required role."),
+			@ApiResponse(code = 404, message = "Not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public SharedSpaceMember update(
+			@ApiParam("The shared space memnber to update.") SharedSpaceMember ssMember,
+			@ApiParam("The shared space member to update.")
+				@PathParam("uuid") String uuid)
+			throws BusinessException {
+		return sharedSpaceMemberFacade.update(ssMember, uuid);
+	}
+
+	@Path("/{uuid : .*}")
+	@PUT
+	@ApiOperation(value = "Delete a shared space member.", response = SharedSpaceMember.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the required role."),
+			@ApiResponse(code = 404, message = "Not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public SharedSpaceMember delete(
+			@ApiParam("The shared space member to delete.") SharedSpaceMember ssMember,
+			@ApiParam("The shared space member to delete.")
+				@PathParam("uuid") String uuid)
+			throws BusinessException {
+		return sharedSpaceMemberFacade.delete(ssMember, uuid);
 	}
 
 }

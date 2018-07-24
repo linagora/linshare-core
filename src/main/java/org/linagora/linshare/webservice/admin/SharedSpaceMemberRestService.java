@@ -41,4 +41,8 @@ public interface SharedSpaceMemberRestService {
 	SharedSpaceMember find(String uuid) throws BusinessException;
 
 	SharedSpaceMember addMember(SharedSpaceMember member) throws BusinessException;
+
+	SharedSpaceMember update(SharedSpaceMember ssmember, String uuid) throws BusinessException;
+
+	SharedSpaceMember delete(SharedSpaceMember ssmember, String uuid) throws BusinessException;
 }
