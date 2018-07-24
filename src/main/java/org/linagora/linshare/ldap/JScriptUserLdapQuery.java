@@ -183,12 +183,6 @@ public class JScriptUserLdapQuery extends JScriptLdapQuery<User> {
 	}
 
 	private ControlContext initControlContext(boolean completionMode) {
-		// Initialization of bean introspection
-		if (beanInfo == null) {
-			logger.error("Introspection of Internal user class impossible. Bean inspector is not initialised.");
-			return null;
-		}
-
 		// Get only ldap attributes needed for completion
 		Map<String, LdapAttribute> ldapDbAttributes;
 		if (completionMode) {

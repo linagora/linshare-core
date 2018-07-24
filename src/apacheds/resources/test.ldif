@@ -125,7 +125,5 @@ mail: test2@linshare.org
 dn: cn=workgroup-wg-1,ou=Groups,dc=linshare,dc=org
 cn: workgroup-wg-1
 objectClass: posixGroup
-memberUid: user1
-memberUid: user2
 member: uid=user1,ou=People,dc=linshare,dc=org
 member: uid=user2,ou=People,dc=linshare,dc=org

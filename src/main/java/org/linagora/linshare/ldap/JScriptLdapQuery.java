@@ -33,10 +33,6 @@
  */
 package org.linagora.linshare.ldap;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -79,8 +75,6 @@ public abstract class JScriptLdapQuery<T extends Object> {
 
 	protected String baseDn;
 
-	protected BeanInfo beanInfo;
-
 	protected Pattern cleaner;
 
 	protected Class<?> clazz;
@@ -95,12 +89,6 @@ public abstract class JScriptLdapQuery<T extends Object> {
 		this.clazz = clazz;
 		this.baseDn = baseDn;
 		this.ldapPattern = ldapPattern;
-		try {
-			this.beanInfo = Introspector.getBeanInfo(clazz);
-		} catch (IntrospectionException e) {
-			logger.error("Introspection of Internal user class impossible.");
-			logger.debug("message : " + e.getMessage());
-		}
 	}
 
 	public String cleanLdapInputPattern(String pattern) {
@@ -171,12 +159,6 @@ public abstract class JScriptLdapQuery<T extends Object> {
 	}
 
 	protected ControlContext initControlContext(Map<String, LdapAttribute> ldapDbAttributes) {
-		// Initialization of bean introspection
-		if (beanInfo == null) {
-			logger.error("Introspection of Internal user class impossible. Bean inspector is not initialised.");
-			return null;
-		}
-
 		// String list of ldap attributes
 		Collection<String> ldapAttrList = getLdapAttrList(ldapDbAttributes);
 
@@ -224,6 +206,7 @@ public abstract class JScriptLdapQuery<T extends Object> {
 		return users;
 	}
 
+	// TODO whole refactoring needed to support multiple values per attribute
 	@SuppressWarnings("unchecked")
 	protected T dnToObject(String dn, Map<String, LdapAttribute> ldapDbAttributes, SearchControls scs) throws NamingException {
 		T user = null;
@@ -265,9 +248,11 @@ public abstract class JScriptLdapQuery<T extends Object> {
 					// NPE.
 					value = (String) ldapAttr.get();
 					if (logger.isDebugEnabled()) {
-						String size = null;
-						if(ldapAttr != null)	size = String.valueOf(ldapAttr.size());
-						logger.debug("count of attribute values for : '" + ldapAttrName + "' :" + size);
+						if (ldapAttr != null) {
+							String size = null;
+							size = String.valueOf(ldapAttr.size());
+							logger.debug("count of attribute values for : '" + ldapAttrName + "' :" + size);
+						}
 					}
 				} catch (NullPointerException e) {
 					isNull = true;
@@ -278,7 +263,7 @@ public abstract class JScriptLdapQuery<T extends Object> {
 
 				if (isNull) {
 					if (dbAttr.getSystem()) {
-						logger.error("Can not convert dn : '" + dn +"' to an user object.");
+						logger.error("Can not convert dn : '" + dn +"' to an object.");
 						logger.error("The field '" + dbAttrKey + "' (ldap attribute : '" + ldapAttrName + "') must exist in your ldap directory, it is required by the system.");
 						return null;
 					} else {
@@ -287,12 +272,20 @@ public abstract class JScriptLdapQuery<T extends Object> {
 						continue;
 					}
 				} else {
-					logger.debug("value : " + value);
-					// updating user property with current attribute value
-					if (!setUserAttribute(user, dbAttrKey, value)) {
-						logger.error("Can not convert dn : '" + dn +"' to an user object.");
-						logger.error("Can not set the field '" + dbAttrKey + "' (ldap attribute : '" + ldapAttrName + "') with value : " + value);
-						return null;
+					NamingEnumeration<?> all = ldapAttr.getAll();
+					while (all.hasMoreElements()) {
+						Object element = all.nextElement();
+						logger.debug("element : " + element);
+						// we are just skipping some attrute's values if they are null.
+						if (element != null) {
+							value = (String) element;
+							// updating user property with current attribute value
+							if (!setUserAttribute(user, dbAttrKey, value)) {
+								logger.error("Can not convert dn : '" + dn +"' to an user object.");
+								logger.error("Can not set the field '" + dbAttrKey + "' (ldap attribute : '" + ldapAttrName + "') with value : " + value);
+								return null;
+							}
+						}
 					}
 				}
 			}
@@ -302,19 +295,14 @@ public abstract class JScriptLdapQuery<T extends Object> {
 	}
 
 	protected boolean setUserAttribute(Object user, String attr_key, String curValue) {
-		for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
-			Method userSetter = pd.getWriteMethod();
-			String method = LdapPattern.METHOD_MAPPING.get(attr_key);
-			if (userSetter != null && method.equals(userSetter.getName())) {
-				try {
-					userSetter.invoke(user, curValue);
-					return true;
-				} catch (Exception e) {
-					logger.error("Introspection : can not call method '" + userSetter.getName() + "' on User object.");
-					logger.debug("message : " + e.getMessage());
-					break;
-				}
-			}
+		String method = LdapPattern.METHOD_MAPPING.get(attr_key);
+		try {
+			Method method2 = user.getClass().getMethod(method, String.class);
+			method2.invoke(user, curValue);
+			return true;
+		} catch (Exception e) {
+			logger.error("Introspection : can not call method '" + method + "' on current object.");
+			logger.error("message : " + e.getMessage());
 		}
 		return false;
 	}

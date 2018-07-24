@@ -33,18 +33,23 @@
  */
 package org.linagora.linshare.ldap;
 
+import java.util.List;
 import java.util.UUID;
+
+import com.google.common.collect.Lists;
 
 public class LdapGroupObject {
 
 	protected String name;
+
+	protected String prefix;
 
 	protected String uuid;
 
 	// dn
 	protected String externalId;
 
-//	protected List<String> members;
+	protected List<String> members;
 
 	public LdapGroupObject() {
 		super();
@@ -57,6 +62,14 @@ public class LdapGroupObject {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getPrefix() {
+		return prefix;
+	}
+
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
 	}
 
 	public String getUuid() {
@@ -80,20 +93,36 @@ public class LdapGroupObject {
 		return "LdapGroupObject [name=" + name + ", uuid=" + uuid + ", externalId=" + externalId + "]";
 	}
 
-//	public List<String> getMembers() {
-//		return members;
-//	}
-//
-//	public List<String> addMember(String member) {
-//		if (members == null) {
-//			members = Lists.newArrayList();
-//		}
-//		members.add(member);
-//		return members;
-//	}
-//
-//	public void setMembers(List<String> members) {
-//		this.members = members;
-//	}
+	public List<String> getMembers() {
+		return members;
+	}
+
+	public void setMembers(List<String> members) {
+		this.members = members;
+	}
+
+	/** Helpers **/
+
+	// do not remove it ! it is called using reflection.
+	public List<String> addMember(String member) {
+		if (members == null) {
+			members = Lists.newArrayList();
+		}
+		members.add(member);
+		return members;
+	}
+
+	public String getNameWithPrefix() {
+		return prefix + name;
+	}
+
+	public void removePrefix() {
+		if (prefix != null) {
+			String currPrefix = name.substring(0, prefix.length());
+			if (prefix.equals(currPrefix)) {
+				this.name = this.name.substring(prefix.length());
+			}
+		}
+	}
 
 }

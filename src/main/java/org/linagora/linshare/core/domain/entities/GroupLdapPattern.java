@@ -52,7 +52,7 @@ public class GroupLdapPattern extends LdapPattern {
 	static {
 		METHOD_MAPPING.put(GROUP_NAME, "setName");
 		METHOD_MAPPING.put(GROUP_DN, "setExternalId");
-//		METHOD_MAPPING.put(GROUP_MEMBER, "setTODO");
+		METHOD_MAPPING.put(GROUP_MEMBER, "addMember");
 		METHOD_MAPPING.put(MEMBER_LAST_NAME, "setLastName");
 		METHOD_MAPPING.put(MEMBER_FIRST_NAME, "setFirstName");
 		METHOD_MAPPING.put(MEMBER_MAIL, "setMail");
