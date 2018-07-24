@@ -56,6 +56,18 @@ public class UserLdapPattern extends LdapPattern {
 
 	private Integer completionSizeLimit;
 
+	public static final String USER_MAIL = "user_mail";
+	public static final String USER_FIRST_NAME = "user_firstname";
+	public static final String USER_LAST_NAME = "user_lastname";
+	public static final String USER_UID = "user_uid";
+
+	static {
+		USER_METHOD_MAPPING.put(USER_LAST_NAME, "setLastName");
+		USER_METHOD_MAPPING.put(USER_FIRST_NAME, "setFirstName");
+		USER_METHOD_MAPPING.put(USER_MAIL, "setMail");
+		USER_METHOD_MAPPING.put(USER_UID, "setLdapUid");
+	};
+
 	protected UserLdapPattern() {
 	}
 	/**

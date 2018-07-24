@@ -37,8 +37,6 @@ public class LdapGroupProvider extends GroupProvider {
 
 	protected GroupLdapPattern groupPattern;
 
-	protected GroupMemberLdapPattern groupMemberPattern;
-
 	protected String baseDn;
 
 	protected LdapConnection ldapConnection;
@@ -57,14 +55,6 @@ public class LdapGroupProvider extends GroupProvider {
 
 	public void setGroupPattern(GroupLdapPattern groupPattern) {
 		this.groupPattern = groupPattern;
-	}
-
-	public GroupMemberLdapPattern getGroupMemberPattern() {
-		return groupMemberPattern;
-	}
-
-	public void setGroupMemberPattern(GroupMemberLdapPattern groupMemberPattern) {
-		this.groupMemberPattern = groupMemberPattern;
 	}
 
 	public String getBaseDn() {

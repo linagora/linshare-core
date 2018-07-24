@@ -35,22 +35,30 @@ package org.linagora.linshare.core.domain.entities;
 
 public class GroupLdapPattern extends LdapPattern {
 
-	// ldap: cn
+	// ldap: group
 	public static final String GROUP_NAME = "group_name_attr";
-	// ldap: cn
 	public static final String GROUP_DN = "group_dn_attr";
-	// ldap: member
 	public static final String GROUP_MEMBER = "group_member_attr";
+
+	// ldap: group member
+	public static final String MEMBER_MAIL = "member_mail";
+	public static final String MEMBER_FIRST_NAME = "member_firstname";
+	public static final String MEMBER_LAST_NAME = "member_lastname";
 
 	static {
 		USER_METHOD_MAPPING.put(GROUP_NAME, "setTODO");
 		USER_METHOD_MAPPING.put(GROUP_DN, "setTODO");
 		USER_METHOD_MAPPING.put(GROUP_MEMBER, "setTODO");
+		USER_METHOD_MAPPING.put(MEMBER_LAST_NAME, "setLastName");
+		USER_METHOD_MAPPING.put(MEMBER_FIRST_NAME, "setFirstName");
+		USER_METHOD_MAPPING.put(MEMBER_MAIL, "setMail");
 	};
 
 	protected String searchAllGroupsQuery;
 
 	protected String searchGroupQuery;
+
+	protected String findMemberQuery;
 
 	protected String groupPrefix;
 
@@ -82,6 +90,14 @@ public class GroupLdapPattern extends LdapPattern {
 
 	public void setSearchPageSize(Integer searchPageSize) {
 		this.searchPageSize = searchPageSize;
+	}
+
+	public String getFindMemberQuery() {
+		return findMemberQuery;
+	}
+
+	public void setFindMemberQuery(String findMemberQuery) {
+		this.findMemberQuery = findMemberQuery;
 	}
 
 	@Override

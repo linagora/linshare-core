@@ -55,19 +55,7 @@ public abstract class LdapPattern {
 
 	protected Map<String, LdapAttribute> attributes;
 
-	public static final String USER_MAIL = "user_mail";
-	public static final String USER_FIRST_NAME = "user_firstname";
-	public static final String USER_LAST_NAME = "user_lastname";
-	public static final String USER_UID = "user_uid";
-
 	public static final Map<String, String> USER_METHOD_MAPPING = new HashMap<String, String>();
-
-	static {
-		USER_METHOD_MAPPING.put(LdapPattern.USER_LAST_NAME, "setLastName");
-		USER_METHOD_MAPPING.put(LdapPattern.USER_FIRST_NAME, "setFirstName");
-		USER_METHOD_MAPPING.put(LdapPattern.USER_MAIL, "setMail");
-		USER_METHOD_MAPPING.put(LdapPattern.USER_UID, "setLdapUid");
-	};
 
 	protected LdapPattern() {
 	}
