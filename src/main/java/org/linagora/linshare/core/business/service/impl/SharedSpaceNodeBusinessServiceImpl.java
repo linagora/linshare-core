@@ -83,7 +83,7 @@ public class SharedSpaceNodeBusinessServiceImpl implements SharedSpaceNodeBusine
 	}
 
 	@Override
-	public SharedSpaceNode findByName(String name) throws BusinessException {
+	public List <SharedSpaceNode> searchByName(String name) throws BusinessException {
 		return sharedSpaceNodeMongoRepository.findByName(name);
 	}
 

@@ -36,13 +36,15 @@ package org.linagora.linshare.mongo.repository;
 import java.util.List;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 
 public interface SharedSpaceNodeMongoRepository extends MongoRepository<SharedSpaceNode, String> {
 
 	SharedSpaceNode findByUuid(String uuid);
 
 	List<SharedSpaceNode> findByNameAndParentUuid(String name, String parentUuid);
-
-	SharedSpaceNode findByName(String name);
+	
+	@Query("{name: {'$regex':?0,'option':'i'}}")
+	List<SharedSpaceNode> findByName(String name);
 	
 }

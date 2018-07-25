@@ -99,12 +99,12 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements ThreadFa
 				workGroups.addAll(threadService.searchByMembers(authUser, memberName));
 			}
 			if (threadName != null) {
-				ssnodes.addAll(ssNodeService.findAllNodesBySSMember(authUser, memberName));
+				ssnodes.addAll(ssNodeService.searchByName(authUser, authUser, threadName));
 				workGroups.addAll(threadService.searchByName(authUser, threadName));
 			}
 			if (pattern != null) {
-				ssnodes.addAll(ssNodeService.findAllNodesBySSMember(authUser, memberName));
-				ssnodes.addAll(ssNodeService.findAllNodesBySSMember(authUser, memberName));
+				ssnodes.addAll(ssNodeService.searchByName(authUser, authUser, pattern));
+				ssnodes.addAll(ssNodeService.findAllNodesBySSMember(authUser, pattern));
 				workGroups.addAll(threadService.searchByName(authUser, pattern));
 				workGroups.addAll(threadService.searchByMembers(authUser, pattern));
 			}

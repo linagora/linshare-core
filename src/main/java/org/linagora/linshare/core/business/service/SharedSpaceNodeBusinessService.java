@@ -52,6 +52,6 @@ public interface SharedSpaceNodeBusinessService {
 
 	List<SharedSpaceNode> findAll() throws BusinessException;
 
-	SharedSpaceNode findByName(String name) throws BusinessException;
+	List<SharedSpaceNode> searchByName(String name) throws BusinessException;
 
 }

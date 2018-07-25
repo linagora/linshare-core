@@ -147,22 +147,21 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	}
 
 	@Override
-	public SharedSpaceNode findByName(Account authUser, Account actor, String name) throws BusinessException {
+	public List <SharedSpaceNode> searchByName(Account authUser, Account actor, String name) throws BusinessException {
 		preChecks(authUser, actor);
 		Validate.notEmpty(name, "Missing required shared space node name.");
-		SharedSpaceNode found = sharedSpaceNodeBusinessService.findByName(name);
-		if (found == null) {
-			throw new BusinessException(BusinessErrorCode.WORK_GROUP_NOT_FOUND,
-					"The shared space node with name: " + name + " is not found");
+		List<SharedSpaceNode> founds= sharedSpaceNodeBusinessService.searchByName(name);
+		if(founds.isEmpty()) {
+			findAll(authUser);
 		}
-		checkReadPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
-		return found;
+		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
+		return founds;
 	}
 
 	@Override
 	public List<SharedSpaceNode> findAllNodesBySSMember(Account authUser, String memberName) {
 		List<SharedSpaceMember> ssmembers = sharedSpaceMemberService.findByMemberName(authUser, authUser,
-				authUser.getFullName());
+				memberName);
 		List<SharedSpaceNode> nodes = Lists.newArrayList();
 		for (SharedSpaceMember member : ssmembers) {
 			nodes.add(find(authUser, authUser, member.getNode().getUuid()));
