@@ -20,20 +20,27 @@
 				class="org.linagora.linshare.core.domain.entities.LdapAttribute" />
 		</map>
 		<subclass name="org.linagora.linshare.core.domain.entities.UserLdapPattern" discriminator-value="USER_LDAP_PATTERN" lazy="true">
-			<property name="authCommand" column="auth_command" type="text" not-null="true" lazy="false"/>
-			<property name="searchUserCommand" column="search_user_command" type="text" not-null="true" lazy="false"/>
-			<property name="searchPageSize" column="search_page_size" type="integer" not-null="true" lazy="false"/>
-			<property name="searchSizeLimit" column="search_size_limit" type="integer" not-null="true" lazy="false"/>
-			<property name="autoCompleteCommandOnFirstAndLastName" column="auto_complete_command_on_first_and_last_name" type="text" not-null="true" lazy="false"/>
-			<property name="autoCompleteCommandOnAllAttributes" column="auto_complete_command_on_all_attributes" type="text" not-null="true" lazy="false"/>
-			<property name="completionPageSize" column="completion_page_size" type="integer" not-null="true" lazy="false"/>
-			<property name="completionSizeLimit" column="completion_size_limit" type="integer" not-null="true" lazy="false"/>
+			<property name="authCommand" column="auth_command" type="text" not-null="false" lazy="false"/>
+			<property name="searchUserCommand" column="search_user_command" type="text" not-null="false" lazy="false"/>
+			<property name="searchPageSize" column="search_page_size" type="integer" not-null="false" lazy="false"/>
+			<property name="searchSizeLimit" column="search_size_limit" type="integer" not-null="false" lazy="false"/>
+			<property name="autoCompleteCommandOnFirstAndLastName" column="auto_complete_command_on_first_and_last_name" type="text" not-null="false" lazy="false"/>
+			<property name="autoCompleteCommandOnAllAttributes" column="auto_complete_command_on_all_attributes" type="text" not-null="false" lazy="false"/>
+			<property name="completionPageSize" column="completion_page_size" type="integer" not-null="false" lazy="false"/>
+			<property name="completionSizeLimit" column="completion_size_limit" type="integer" not-null="false" lazy="false"/>
 		</subclass>
 		<subclass name="org.linagora.linshare.core.domain.entities.ContactLdapPattern" discriminator-value="CONTACT_LDAP_PATTERN" lazy="true">
 			<property name="autoCompleteCommandOnFirstAndLastName" column="auto_complete_command_on_first_and_last_name" type="text" not-null="true" lazy="false"/>
 			<property name="autoCompleteCommandOnAllAttributes" column="auto_complete_command_on_all_attributes" type="text" not-null="true" lazy="false"/>
 			<property name="pageSize" column="completion_page_size" type="integer" not-null="true" lazy="false"/>
 			<property name="sizeLimit" column="completion_size_limit" type="integer" not-null="true" lazy="false"/>
+		</subclass>
+		<subclass name="org.linagora.linshare.core.domain.entities.GroupLdapPattern" discriminator-value="GROUP_LDAP_PATTERN" lazy="true">
+			<property name="searchAllGroupsQuery" column="search_all_groups_query" type="text" not-null="false" lazy="false"/>
+			<property name="searchGroupQuery" column="search_group_query" type="text" not-null="false" lazy="false"/>
+			<property name="findMemberQuery" column="find_member_query" type="text" not-null="false" lazy="false"/>
+			<property name="groupPrefix" column="group_prefix" type="string" not-null="false" lazy="false"/>
+			<property name="searchPageSize" column="search_page_size" type="integer" not-null="true" lazy="false"/>
 		</subclass>
 	</class>
 </hibernate-mapping>

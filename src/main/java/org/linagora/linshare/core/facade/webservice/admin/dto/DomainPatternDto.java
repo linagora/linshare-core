@@ -37,8 +37,8 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
+import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -243,4 +243,5 @@ public class DomainPatternDto {
 			String autoCompleteCommandOnFirstAndLastName) {
 		this.autoCompleteCommandOnFirstAndLastName = autoCompleteCommandOnFirstAndLastName;
 	}
+
 }

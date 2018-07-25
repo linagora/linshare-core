@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,63 +31,24 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.repository.hibernate;
+package org.linagora.linshare.webservice.admin;
 
-import java.util.Date;
-import java.util.UUID;
+import java.util.Set;
 
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.linagora.linshare.core.domain.entities.LdapPattern;
-import org.linagora.linshare.core.domain.entities.UserProvider;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.UserProviderRepository;
-import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.orm.hibernate5.HibernateTemplate;
+import org.linagora.linshare.core.facade.webservice.admin.dto.GroupLdapPatternDto;
 
-public class UserProviderRepositoryImpl extends AbstractRepositoryImpl<UserProvider> implements UserProviderRepository {
+public interface GroupPatternRestService {
 
-	public UserProviderRepositoryImpl(HibernateTemplate hibernateTemplate) {
-		super(hibernateTemplate);
-	}
+	Set<GroupLdapPatternDto> findAll() throws BusinessException;
 
-	@Override
-	public UserProvider create(UserProvider entity)
-			throws BusinessException {
-		entity.setCreationDate(new Date());
-		entity.setModificationDate(new Date());
-		entity.setUuid(UUID.randomUUID().toString());
-		return super.create(entity);
-	}
+	GroupLdapPatternDto find(String uuid) throws BusinessException;
 
-	@Override
-	public UserProvider update(UserProvider entity)
-			throws BusinessException {
-		entity.setModificationDate(new Date());
-		return super.update(entity);
-	}
+	GroupLdapPatternDto update(GroupLdapPatternDto domainPattern, String uuid) throws BusinessException;
 
-	@Override
-	public UserProvider findByUuid(String uuid) {
-		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
-				"uuid", uuid)));
-	}
+	GroupLdapPatternDto create(GroupLdapPatternDto domainPattern) throws BusinessException;
 
-	@Override
-	protected DetachedCriteria getNaturalKeyCriteria(UserProvider entity) {
-		DetachedCriteria det = DetachedCriteria.forClass(UserProvider.class).add(
-				Restrictions.eq("id", entity.getId()));
-		return det;
-	}
+	GroupLdapPatternDto delete(GroupLdapPatternDto domainPattern, String uuid) throws BusinessException;
 
-	@Override
-	public boolean isUsed(LdapPattern pattern) {
-		DetachedCriteria det = DetachedCriteria
-				.forClass(UserProvider.class);
-		det.add(Restrictions.eq("pattern", pattern));
-		det.setProjection(Projections.rowCount());
-		long longResult = DataAccessUtils.longResult(findByCriteria(det));
-		return longResult > 0;
-	}
+	Set<GroupLdapPatternDto> findAllGroupPattern() throws BusinessException;
 }

@@ -119,4 +119,9 @@
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg value="${virusscanner.limit.filesize}" />
 	</bean>
+
+	<bean name="groupLdapPatternService"
+		class="org.linagora.linshare.core.service.impl.GroupLdapPatternServiceImpl">
+		<constructor-arg ref="groupPatternRepository" />
+	</bean>
 </beans>

@@ -660,6 +660,10 @@ CREATE TABLE ldap_pattern (
   auto_complete_command_on_all_attributes      text,
   completion_page_size                         int4,
   completion_size_limit                        int4,
+  search_all_groups_query                      text,
+  search_group_query                           text,
+  find_member_query                            text,
+  group_prefix                                 varchar(255),
   creation_date                                timestamp NOT NULL,
   modification_date                            timestamp NOT NULL,
   PRIMARY KEY (id));

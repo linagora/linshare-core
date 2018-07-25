@@ -229,8 +229,15 @@ UPDATE upload_request_entry
 ALTER TABLE upload_request_entry ALTER COLUMN document_id SET NOT NULL;
 ALTER TABLE upload_request_entry ALTER COLUMN ls_type SET NOT NULL;
 
+-- Update ldapt_pattern
+ALTER TABLE ldap_pattern ADD COLUMN search_all_groups_query text;
+ALTER TABLE ldap_pattern ADD COLUMN search_group_query text;
+ALTER TABLE ldap_pattern ADD COLUMN find_member_query text;
+ALTER TABLE ldap_pattern ADD COLUMN group_prefix varchar(255);
+
+
 -- Upgrade Task
-  -- TASK: UPGRADE_2_2_MIGRATE_HISTORY_TO_MONGO_AUDIT;
+-- TASK: UPGRADE_2_2_MIGRATE_HISTORY_TO_MONGO_AUDIT;
 INSERT INTO upgrade_task
   (id,
   uuid,

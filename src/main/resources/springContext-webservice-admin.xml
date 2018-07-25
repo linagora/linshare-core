@@ -175,6 +175,10 @@
 		<constructor-arg ref="sharedSpaceRoleFacade" />
 	</bean>
 		
+	<bean id="adminGroupPatternRestService" class="org.linagora.linshare.webservice.admin.impl.GroupPatternRestServiceImpl">
+		<constructor-arg ref="wsAdminGroupPatternFacade" />
+	</bean>
+
 	<jaxrs:server id="restAdminContainer" address="/rest/admin">
 		<jaxrs:serviceBeans>
 			<ref bean="adminAuthenticationRestService" />
@@ -218,6 +222,7 @@
 			<ref bean="adminBasicStatisticRestService" />
 			<ref bean="adminExceptionStatisticRestService" />
 			<ref bean="adminAdvancedStatisticRestService" />
+			<ref bean="adminGroupPatternRestService"/>
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

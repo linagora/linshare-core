@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -34,27 +34,33 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.linagora.linshare.core.domain.entities.LdapPattern;
-import org.linagora.linshare.core.domain.entities.UserProvider;
+import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.UserProviderRepository;
+import org.linagora.linshare.core.repository.GroupPatternRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 
-public class UserProviderRepositoryImpl extends AbstractRepositoryImpl<UserProvider> implements UserProviderRepository {
+public class GroupPatternRepositoryImpl extends AbstractRepositoryImpl<GroupLdapPattern>
+		implements GroupPatternRepository {
 
-	public UserProviderRepositoryImpl(HibernateTemplate hibernateTemplate) {
+	public GroupPatternRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
 	}
 
 	@Override
-	public UserProvider create(UserProvider entity)
-			throws BusinessException {
+	protected DetachedCriteria getNaturalKeyCriteria(GroupLdapPattern entity) {
+		DetachedCriteria det = DetachedCriteria.forClass(GroupLdapPattern.class)
+				.add(Restrictions.eq("uuid", entity.getUuid()));
+		return det;
+	}
+
+	@Override
+	public GroupLdapPattern create(GroupLdapPattern entity) throws BusinessException {
 		entity.setCreationDate(new Date());
 		entity.setModificationDate(new Date());
 		entity.setUuid(UUID.randomUUID().toString());
@@ -62,32 +68,19 @@ public class UserProviderRepositoryImpl extends AbstractRepositoryImpl<UserProvi
 	}
 
 	@Override
-	public UserProvider update(UserProvider entity)
+	public GroupLdapPattern find(String uuid) {
+		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq("uuid", uuid)));
+	}
+
+	@Override
+	public List<GroupLdapPattern> findAllGroupLdapPatterns() {
+		return findByCriteria(Restrictions.eq("system", false));
+	}
+
+	@Override
+	public GroupLdapPattern update(GroupLdapPattern entity)
 			throws BusinessException {
 		entity.setModificationDate(new Date());
 		return super.update(entity);
-	}
-
-	@Override
-	public UserProvider findByUuid(String uuid) {
-		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
-				"uuid", uuid)));
-	}
-
-	@Override
-	protected DetachedCriteria getNaturalKeyCriteria(UserProvider entity) {
-		DetachedCriteria det = DetachedCriteria.forClass(UserProvider.class).add(
-				Restrictions.eq("id", entity.getId()));
-		return det;
-	}
-
-	@Override
-	public boolean isUsed(LdapPattern pattern) {
-		DetachedCriteria det = DetachedCriteria
-				.forClass(UserProvider.class);
-		det.add(Restrictions.eq("pattern", pattern));
-		det.setProjection(Projections.rowCount());
-		long longResult = DataAccessUtils.longResult(findByCriteria(det));
-		return longResult > 0;
 	}
 }

@@ -291,4 +291,8 @@
 	<bean name="thumbnailRepository" class="org.linagora.linshare.core.repository.hibernate.ThumbnailRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
+
+	<bean name="groupPatternRepository" class="org.linagora.linshare.core.repository.hibernate.GroupPatternRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
 </beans>

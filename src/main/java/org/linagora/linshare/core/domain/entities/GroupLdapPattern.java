@@ -33,6 +33,10 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.HashMap;
+
+import org.linagora.linshare.core.facade.webservice.admin.dto.GroupLdapPatternDto;
+
 public class GroupLdapPattern extends LdapPattern {
 
 	// ldap: group
@@ -68,6 +72,49 @@ public class GroupLdapPattern extends LdapPattern {
 		super();
 	}
 
+	public GroupLdapPattern(GroupLdapPatternDto groupLdapPatternDto) {
+		this.uuid = groupLdapPatternDto.getUuid();
+		this.label = groupLdapPatternDto.getLabel();
+		this.description = groupLdapPatternDto.getDescription();
+		this.system = false;
+		this.searchPageSize = groupLdapPatternDto.getSearchPageSize();
+		this.searchAllGroupsQuery = groupLdapPatternDto.getSearchAllGroupsQuery();
+		this.searchGroupQuery = groupLdapPatternDto.getSearchGroupQuery();
+		this.findMemberQuery = groupLdapPatternDto.getFindMemberQuery();
+		this.groupPrefix = groupLdapPatternDto.getGroupPrefix();
+		this.attributes = new HashMap<String, LdapAttribute>();
+		this.attributes.put(GROUP_NAME, new LdapAttribute(GROUP_NAME, groupLdapPatternDto.getGroupName(), true));
+		this.attributes.put(GROUP_DN, new LdapAttribute(GROUP_DN, groupLdapPatternDto.getGroupDN(), true));
+		this.attributes.put(GROUP_MEMBER, new LdapAttribute(GROUP_MEMBER, groupLdapPatternDto.getGroupMember(), true));
+		this.attributes.put(MEMBER_LAST_NAME,
+				new LdapAttribute(MEMBER_LAST_NAME, groupLdapPatternDto.getMemberLastName(), false));
+		this.attributes.put(MEMBER_FIRST_NAME,
+				new LdapAttribute(MEMBER_FIRST_NAME, groupLdapPatternDto.getMemberFirstName(), false));
+		this.attributes.put(MEMBER_MAIL, new LdapAttribute(MEMBER_MAIL, groupLdapPatternDto.getMemberMail(), false));
+	}
+
+	/**
+	 * For tests only.
+	 */
+	public GroupLdapPattern(String label, String description, String searchAllGroupsQuery, String memberQuery,
+			String searchGroupQuery, String findMemberQuery, String groupPrefix) {
+		this.label = label;
+		this.description = description;
+		this.system = false;
+		this.searchAllGroupsQuery = searchAllGroupsQuery;
+		this.searchGroupQuery = searchGroupQuery;
+		this.findMemberQuery = memberQuery;
+		this.groupPrefix = groupPrefix;
+		this.searchPageSize = 0;
+		this.attributes = new HashMap<String, LdapAttribute>();
+		this.attributes.put(GROUP_NAME, new LdapAttribute(GROUP_NAME, "attribute", true));
+		this.attributes.put(GROUP_DN, new LdapAttribute(GROUP_DN, "attribute", true));
+		this.attributes.put(GROUP_MEMBER, new LdapAttribute(GROUP_MEMBER, "attribute", true));
+		this.attributes.put(MEMBER_LAST_NAME, new LdapAttribute(MEMBER_LAST_NAME, "attribute", false));
+		this.attributes.put(MEMBER_FIRST_NAME, new LdapAttribute(MEMBER_FIRST_NAME, "attribute", false));
+		this.attributes.put(MEMBER_MAIL, new LdapAttribute(MEMBER_MAIL, "attribute", false));
+	}
+
 	public String getSearchAllGroupsQuery() {
 		return searchAllGroupsQuery;
 	}
@@ -98,6 +145,14 @@ public class GroupLdapPattern extends LdapPattern {
 
 	public void setFindMemberQuery(String findMemberQuery) {
 		this.findMemberQuery = findMemberQuery;
+	}
+
+	public String getGroupPrefix() {
+		return groupPrefix;
+	}
+
+	public void setGroupPrefix(String groupPrefix) {
+		this.groupPrefix = groupPrefix;
 	}
 
 	@Override
