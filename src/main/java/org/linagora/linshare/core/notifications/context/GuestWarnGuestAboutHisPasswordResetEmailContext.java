@@ -46,6 +46,7 @@ public class GuestWarnGuestAboutHisPasswordResetEmailContext extends EmailContex
 	public GuestWarnGuestAboutHisPasswordResetEmailContext (Guest guest) {
 		super(guest.getDomain(), false);
 		this.guest = guest;
+		this.language = guest.getExternalMailLocale();
 	}
 
 	public Guest getGuest() {

@@ -49,6 +49,7 @@ public class WarnOwnerAboutGuestExpirationEmailContext extends EmailContext {
 		super(guest.getOwner().getDomain(), false);
 		this.guest = guest;
 		this.daysLeft = daysLeft;
+		this.language = guest.getOwner().getExternalMailLocale();
 	}
 
 	public Guest getGuest() {
