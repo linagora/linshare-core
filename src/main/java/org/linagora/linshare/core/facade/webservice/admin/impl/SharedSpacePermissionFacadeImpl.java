@@ -56,7 +56,7 @@ public class SharedSpacePermissionFacadeImpl extends AdminGenericFacadeImpl impl
 
 	@Override
 	public SharedSpacePermission find(String uuid) throws BusinessException {
-		Validate.notEmpty(uuid,"The shared space permission uuid must be set.");
+		Validate.notEmpty(uuid, "The shared space permission uuid must be set.");
 		Account authUser = checkAuthentication(Role.SUPERADMIN);
 		return ssPermissionService.findByUuid(authUser, authUser, uuid);
 	}

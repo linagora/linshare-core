@@ -73,7 +73,8 @@ public class SharedSpacePermissionBusinessServiceImpl implements SharedSpacePerm
 
 	@Override
 	public Boolean hasPermission(String roleUuid, SharedSpaceActionType action, SharedSpaceResourceType resourceType) {
-		return !sharedSpacePermissionMongoRepository.findByRoleAndActionAndResource(roleUuid, action, resourceType).isEmpty();
+		return !sharedSpacePermissionMongoRepository.findByRoleAndActionAndResource(roleUuid, action, resourceType)
+				.isEmpty();
 	}
 
 }

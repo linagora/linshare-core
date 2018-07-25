@@ -42,7 +42,7 @@ public interface SharedSpaceRoleBusinessService {
 	SharedSpaceRole find(String uuid) throws BusinessException;
 
 	SharedSpaceRole findByName(String name) throws BusinessException;
-	
+
 	List<SharedSpaceRole> findAll() throws BusinessException;
 
 }

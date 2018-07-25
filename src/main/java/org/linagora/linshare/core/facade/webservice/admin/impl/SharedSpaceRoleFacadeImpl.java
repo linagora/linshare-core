@@ -48,8 +48,7 @@ public class SharedSpaceRoleFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private final SharedSpaceRoleService ssRoleService;
 
-	public SharedSpaceRoleFacadeImpl(AccountService accountService,
-			SharedSpaceRoleService ssRoleService) {
+	public SharedSpaceRoleFacadeImpl(AccountService accountService, SharedSpaceRoleService ssRoleService) {
 		super(accountService);
 		this.ssRoleService = ssRoleService;
 	}

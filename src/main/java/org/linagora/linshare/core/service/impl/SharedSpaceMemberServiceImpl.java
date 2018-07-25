@@ -121,8 +121,9 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	}
 
 	@Override
-	public SharedSpaceMember createWithoutCheckPermission(Account authUser, Account actor, GenericLightEntity nodeToPersist,
-			GenericLightEntity roleToPersist, GenericLightEntity accountLight) throws BusinessException {
+	public SharedSpaceMember createWithoutCheckPermission(Account authUser, Account actor,
+			GenericLightEntity nodeToPersist, GenericLightEntity roleToPersist, GenericLightEntity accountLight)
+			throws BusinessException {
 		preChecks(authUser, actor);
 		Validate.notNull(accountLight, "Account uuid must be set.");
 		Validate.notNull(roleToPersist, "Role uuid must be set.");

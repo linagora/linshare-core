@@ -44,5 +44,5 @@ public interface SharedSpaceRoleFacade {
 	SharedSpaceRole findByName(String actorUuid, String name) throws BusinessException;
 
 	List<SharedSpaceRole> findAll(String actorUuid) throws BusinessException;
-	
+
 }

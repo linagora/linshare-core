@@ -39,6 +39,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpacePermission;
 
 public interface SharedSpacePermissionFacade {
+
 	SharedSpacePermission find(String uuid) throws BusinessException;
 
 	List<SharedSpacePermission> findAll() throws BusinessException;

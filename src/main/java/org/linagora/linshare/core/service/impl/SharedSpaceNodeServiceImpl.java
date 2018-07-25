@@ -142,7 +142,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	}
 
 	@Override
-	public List<SharedSpaceMember> findAllMembers(Account authUser, Account actor, String sharedSpaceNodeUuid){
+	public List<SharedSpaceMember> findAllMembers(Account authUser, Account actor, String sharedSpaceNodeUuid) {
 		return sharedSpaceMemberService.findAll(authUser, actor, sharedSpaceNodeUuid);
 	}
 

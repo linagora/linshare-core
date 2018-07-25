@@ -45,12 +45,10 @@ public class SharedSpaceRoleResourceAccessControlImpl
 
 	public SharedSpaceRoleResourceAccessControlImpl(FunctionalityReadOnlyService functionalityService) {
 		super(functionalityService);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	protected boolean hasReadPermission(Account authUser, Account account, SharedSpaceRole entry, Object... opt) {
-		// TODO Auto-generated method stub
 		return defaultPermissionCheck(authUser, authUser, entry, TechnicalAccountPermissionType.SHARED_SPACE_ROLE_READ,false);
 	}
 
@@ -61,37 +59,31 @@ public class SharedSpaceRoleResourceAccessControlImpl
 
 	@Override
 	protected boolean hasDeletePermission(Account authUser, Account account, SharedSpaceRole entry, Object... opt) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	protected boolean hasCreatePermission(Account authUser, Account account, SharedSpaceRole entry, Object... opt) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	protected boolean hasUpdatePermission(Account authUser, Account account, SharedSpaceRole entry, Object... opt) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	protected String getTargetedAccountRepresentation(Account actor) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	protected Account getOwner(SharedSpaceRole entry, Object... opt) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	protected String getEntryRepresentation(SharedSpaceRole entry) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

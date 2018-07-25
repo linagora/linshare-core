@@ -90,8 +90,10 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 		Validate.notNull(ssMember.getNode().getUuid(), "Node uuid must be set.");
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
-		SharedSpaceNode foundSharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, ssMember.getNode().getUuid());
-		SharedSpaceRole foundSharedSpaceRole = sharedSpaceRoleService.find(authUser, actor, ssMember.getRole().getUuid());
+		SharedSpaceNode foundSharedSpaceNode = sharedSpaceNodeService.find(authUser, actor,
+				ssMember.getNode().getUuid());
+		SharedSpaceRole foundSharedSpaceRole = sharedSpaceRoleService.find(authUser, actor,
+				ssMember.getRole().getUuid());
 		User foundUser = userService.findByLsUuid(ssMember.getAccount().getUuid());
 		Validate.notNull(foundUser, "Missing required user");
 		Validate.notNull(foundSharedSpaceRole, "Missing required role");
@@ -100,13 +102,6 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 				foundSharedSpaceNode.getName());
 		GenericLightEntity roleToPersist = new GenericLightEntity(foundSharedSpaceRole.getUuid(),
 				foundSharedSpaceRole.getName());
-		// if (!checkAccountNotInNode(authUser, actor, user, toFindNode)) {
-		// throw new
-		// BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_ALREADY_EXISTS, "The
-		// user with uuid : "
-		// + user.getLsUuid() + " is already member of the node with uuid" +
-		// toFindNode.getUuid());
-		// }
 		SharedSpaceAccount sharedSpaceAccount = new SharedSpaceAccount(foundUser);
 		GenericLightEntity accountLight = new GenericLightEntity(sharedSpaceAccount.getUuid(),
 				sharedSpaceAccount.getName());

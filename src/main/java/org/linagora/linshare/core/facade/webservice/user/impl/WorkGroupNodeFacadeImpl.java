@@ -112,8 +112,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 	@Override
 	protected User checkAuthentication() throws BusinessException {
 		User authUser = super.checkAuthentication();
-		Functionality functionality = functionalityService
-				.getWorkGroupFunctionality(authUser.getDomain());
+		Functionality functionality = functionalityService.getWorkGroupFunctionality(authUser.getDomain());
 		if (!functionality.getActivationPolicy().getStatus()) {
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
 					"You are not authorized to use this service");
@@ -122,7 +121,8 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 	}
 
 	@Override
-	public List<WorkGroupNode> findAll(String actorUuid, String workGroupUuid, String parentNodeUuid, Boolean flatDocumentMode, WorkGroupNodeType nodeType) throws BusinessException {
+	public List<WorkGroupNode> findAll(String actorUuid, String workGroupUuid, String parentNodeUuid,
+			Boolean flatDocumentMode, WorkGroupNodeType nodeType) throws BusinessException {
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
@@ -137,14 +137,15 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
 		Validate.notEmpty(workGroupNodeUuid, "Missing required workGroup folder uuid");
 		User authUser = checkAuthentication();
-		User actor = getActor(authUser, actorUuid);SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
+		User actor = getActor(authUser, actorUuid);
+		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
 		WorkGroup workGroup = new WorkGroup(sharedSpaceNode);
 		return service.find(authUser, actor, workGroup, workGroupNodeUuid, withTree);
 	}
 
 	@Override
-	public WorkGroupNode create(String actorUuid, String workGroupUuid, WorkGroupNode workGroupNode, Boolean strict, Boolean dryRun)
-			throws BusinessException {
+	public WorkGroupNode create(String actorUuid, String workGroupUuid, WorkGroupNode workGroupNode, Boolean strict,
+			Boolean dryRun) throws BusinessException {
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
 		Validate.notNull(workGroupNode.getName(), "Missing default name for the folder");
 		User authUser = checkAuthentication();
@@ -169,7 +170,8 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 	}
 
 	@Override
-	public List<WorkGroupNode> copy(String actorUuid, String workGroupUuid, String toParentNodeUuid, CopyDto copy, boolean deleteShare) {
+	public List<WorkGroupNode> copy(String actorUuid, String workGroupUuid, String toParentNodeUuid, CopyDto copy,
+			boolean deleteShare) {
 		Account authUser = checkAuthentication();
 		User actor = (User) getActor(authUser, actorUuid);
 		Validate.notNull(copy);
@@ -179,7 +181,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		Validate.notEmpty(fromResourceUuid, "Missing entry uuid to copy from");
 		Validate.notEmpty(workGroupUuid, "Missing workGroup uuid to copy into");
 		SharedSpaceNode toSharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
-		//The workgroup here is used for the OperationHistory
+		// The workgroup here is used for the OperationHistory
 		WorkGroup toWorkGroup = threadService.find(authUser, actor, workGroupUuid);
 		if (TargetKind.RECEIVED_SHARE.equals(resourceKind)) {
 			// if the current user do have enough space, there is side effect on audit.
@@ -193,7 +195,8 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 			}
 			return Lists.newArrayList(node);
 		} else if (TargetKind.PERSONAL_SPACE.equals(resourceKind)) {
-			DocumentEntry documentEntry = documentEntryService.findForDownloadOrCopyRight(authUser, actor, fromResourceUuid);
+			DocumentEntry documentEntry = documentEntryService.findForDownloadOrCopyRight(authUser, actor,
+					fromResourceUuid);
 			CopyResource cr = new CopyResource(resourceKind, documentEntry);
 			WorkGroupNode node = service.copy(authUser, actor, toWorkGroup, toParentNodeUuid, cr);
 			documentEntryService.markAsCopied(authUser, actor, documentEntry, new CopyMto(node, toWorkGroup));
@@ -201,13 +204,13 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		} else if (TargetKind.SHARED_SPACE.equals(resourceKind)) {
 			String fromWorkGroupUuid = service.findWorkGroupUuid(authUser, actor, fromResourceUuid);
 			SharedSpaceNode fromSharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, fromWorkGroupUuid);
-			//The workgroup here is used for the OperationHistory
+			// The workgroup here is used for the OperationHistory
 			WorkGroup fromWorkGroup = threadService.find(authUser, actor, fromWorkGroupUuid);
-			WorkGroupNode node = service.copy(authUser, actor, fromWorkGroup, fromResourceUuid, toWorkGroup, toParentNodeUuid);
+			WorkGroupNode node = service.copy(authUser, actor, fromWorkGroup, fromResourceUuid, toWorkGroup,
+					toParentNodeUuid);
 			return Lists.newArrayList(node);
 		}
-		throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
-				"This action is not supported.");
+		throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN, "This action is not supported.");
 	}
 
 	@Override
@@ -231,7 +234,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
-		//The workgroup here is used for the OperationHistory
+		// The workgroup here is used for the OperationHistory
 		WorkGroup workGroup = threadService.find(authUser, actor, workGroupUuid);
 		return service.delete(authUser, actor, workGroup, workGroupNodeUuid);
 	}
@@ -245,7 +248,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
-		//The workgroup here is used for the OperationHistory
+		// The workgroup here is used for the OperationHistory
 		WorkGroup workGroup = threadService.find(authUser, actor, workGroupUuid);
 		return service.delete(authUser, actor, workGroup, workGroupNode.getUuid());
 	}
@@ -265,8 +268,8 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 	}
 
 	@Override
-	public Response thumbnail(String actorUuid, String workGroupUuid, String workGroupNodeUuid, boolean base64, ThumbnailType thumbnailType)
-			throws BusinessException {
+	public Response thumbnail(String actorUuid, String workGroupUuid, String workGroupNodeUuid, boolean base64,
+			ThumbnailType thumbnailType) throws BusinessException {
 		if (thumbnailType == null) {
 			thumbnailType = ThumbnailType.MEDIUM;
 		}
@@ -277,8 +280,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
 		WorkGroup workGroup = new WorkGroup(sharedSpaceNode);
 		FileAndMetaData data = service.thumbnail(authUser, actor, workGroup, workGroupNodeUuid, thumbnailType);
-		ResponseBuilder builder = DocumentStreamReponseBuilder
-				.getThumbnailResponseBuilder(data, base64, thumbnailType);
+		ResponseBuilder builder = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(data, base64, thumbnailType);
 		return builder.build();
 	}
 

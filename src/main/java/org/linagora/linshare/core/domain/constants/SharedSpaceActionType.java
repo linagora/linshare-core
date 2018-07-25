@@ -34,12 +34,12 @@
 package org.linagora.linshare.core.domain.constants;
 
 public enum SharedSpaceActionType {
-	
+
 	READ,
 	UPDATE,
 	CREATE,
 	DELETE;
-	
+
 	public static SharedSpaceActionType fromString(String s) {
 		try {
 			return SharedSpaceActionType.valueOf(s.toUpperCase());

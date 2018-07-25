@@ -34,7 +34,7 @@
 package org.linagora.linshare.core.domain.constants;
 
 public enum SharedSpaceResourceType {
-	
+
 	FOLDER,
 	FILE,
 	WORKGROUP,

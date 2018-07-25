@@ -49,9 +49,9 @@ public interface SharedSpaceNodeBusinessService {
 	void delete(SharedSpaceNode node) throws BusinessException;
 
 	SharedSpaceNode update(SharedSpaceNode foundNodeToUpdate, SharedSpaceNode nodeToUpdate) throws BusinessException;
-	
+
 	List<SharedSpaceNode> findAll() throws BusinessException;
-	
+
 	SharedSpaceNode findByName(String name) throws BusinessException;
 
 }

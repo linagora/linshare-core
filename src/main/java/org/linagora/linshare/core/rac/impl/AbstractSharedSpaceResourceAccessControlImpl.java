@@ -104,7 +104,8 @@ public abstract class AbstractSharedSpaceResourceAccessControlImpl<R, E> extends
 	}
 
 	private Boolean hasPermission(String roleUuid, SharedSpaceActionType action, SharedSpaceResourceType resourceType) {
-		return !sharedSpacePermissionMongoRepository.findByRoleAndActionAndResource(roleUuid, action, resourceType).isEmpty();
+		return !sharedSpacePermissionMongoRepository.findByRoleAndActionAndResource(roleUuid, action, resourceType)
+				.isEmpty();
 	}
 
 }

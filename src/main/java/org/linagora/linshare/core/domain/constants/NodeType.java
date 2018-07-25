@@ -36,7 +36,6 @@ package org.linagora.linshare.core.domain.constants;
 public enum NodeType {
 
 	DRIVE,
-
 	WORK_GROUP;
 
 	public NodeType fromString(String s) {

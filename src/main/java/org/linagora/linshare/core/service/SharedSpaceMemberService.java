@@ -68,7 +68,7 @@ public interface SharedSpaceMemberService {
 
 	List<SharedSpaceMember> deleteAllMembers(Account authUser, Account actor, String sharedSpaceNodeUuid);
 
-	List<SharedSpaceMember> findByMemberName(Account authUser, Account actor,String name);
+	List<SharedSpaceMember> findByMemberName(Account authUser, Account actor, String name);
 
 	SharedSpaceMember createWithoutCheckPermission(Account authUser, Account actor, GenericLightEntity nodeToPersist,
 			GenericLightEntity roleToPersist, GenericLightEntity accountLight) throws BusinessException;

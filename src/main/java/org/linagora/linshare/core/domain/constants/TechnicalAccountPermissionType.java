@@ -154,19 +154,19 @@ public enum TechnicalAccountPermissionType {
 	DRIVE_UPDATE,
 	DRIVE_DELETE,
 	DRIVE_LIST,
-	
+
 	SHARED_SPACE_PERMISSION_CREATE,
 	SHARED_SPACE_PERMISSION_READ,
 	SHARED_SPACE_PERMISSION_UPDATE,
 	SHARED_SPACE_PERMISSION_DELETE,
 	SHARED_SPACE_PERMISSION_LIST,
-	
+
 	SHARED_SPACE_ROlE_CREATE,
 	SHARED_SPACE_ROLE_READ,
 	SHARED_SPACE_ROLE_UPDATE,
 	SHARED_SPACE_ROLE_DELETE,
 	SHARED_SPACE_ROLE_LIST,
-	
+
 	AUDIT_LIST,
 
 	// TODO FIXME Quota & Statistics
@@ -177,18 +177,18 @@ public enum TechnicalAccountPermissionType {
 
 	STATISTIC_LIST,
 	STATISTIC_GET,
-	
+
 	SAFE_DETAIL_CREATE,
 	SAFE_DETAIL_DELETE,
 	SAFE_DETAIL_GET,
 	SAFE_DETAIL_LIST;
-	
 
 	public static TechnicalAccountPermissionType fromString(String s) {
 		try {
 			return TechnicalAccountPermissionType.valueOf(s.toUpperCase());
 		} catch (RuntimeException e) {
-			throw new TechnicalException(TechnicalErrorCode.NO_SUCH_TECHNICAL_PERMISSION_TYPE, StringUtils.isEmpty(s) ? "null or empty" : s);
+			throw new TechnicalException(TechnicalErrorCode.NO_SUCH_TECHNICAL_PERMISSION_TYPE,
+					StringUtils.isEmpty(s) ? "null or empty" : s);
 		}
 	}
 }

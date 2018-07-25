@@ -97,17 +97,16 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		WorkGroup workGroup = threadService.find(authUser, authUser, dto.getThreadUuid());
 		User user = (User) accountService.findByLsUuid(dto.getUserUuid());
 		if (user == null) {
-			user = userService.findOrCreateUser(dto.getUserMail(),
-					dto.getUserDomainId());
+			user = userService.findOrCreateUser(dto.getUserMail(), dto.getUserDomainId());
 			if (user == null) {
 				throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
-						"Cannot find user with mail :" + dto.getUserMail()
-								+ " in domain :" + dto.getUserDomainId());
+						"Cannot find user with mail :" + dto.getUserMail() + " in domain :" + dto.getUserDomainId());
 			}
 		}
 		boolean admin = dto.isAdmin();
 		boolean canUpload = !dto.isReadonly();
-		WorkgroupMember createdWorkGroupMember = threadService.addMember(authUser, authUser, workGroup, user, admin, canUpload);
+		WorkgroupMember createdWorkGroupMember = threadService.addMember(authUser, authUser, workGroup, user, admin,
+				canUpload);
 		// TODO Retrieve the role from the restService once the front will pass the info
 		SharedSpaceRole defaultRole = getDefaultRole(authUser, admin);
 		SharedSpaceNode foundSharedSpaceNode = sharedSpaceNodeService.find(authUser, authUser, dto.getThreadUuid());
@@ -126,7 +125,8 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notNull(dto.getUserUuid(), "user uuid must be set.");
 		boolean admin = dto.isAdmin();
 		boolean readonly = dto.isReadonly();
-		WorkgroupMember updatedMember = threadService.updateMember(authUser, authUser, dto.getThreadUuid(), dto.getUserUuid(), admin, !readonly);
+		WorkgroupMember updatedMember = threadService.updateMember(authUser, authUser, dto.getThreadUuid(),
+				dto.getUserUuid(), admin, !readonly);
 		// New SharedSpaceNode architecture
 		SharedSpaceRole defaultRole = getDefaultRole(authUser, admin);
 		User user = userService.findByLsUuid(dto.getUserUuid());
@@ -144,7 +144,8 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notNull(dto, "thread member must be set.");
 		Validate.notNull(dto.getThreadUuid(), "thread uuid must be set.");
 		Validate.notNull(dto.getUserUuid(), "user uuid must be set.");
-		WorkgroupMember member = this.threadService.deleteMember(authUser, authUser, dto.getThreadUuid(), dto.getUserUuid());
+		WorkgroupMember member = this.threadService.deleteMember(authUser, authUser, dto.getThreadUuid(),
+				dto.getUserUuid());
 		User user = userService.findByLsUuid(dto.getUserUuid());
 		SharedSpaceNode nodeToDelete = new SharedSpaceNode();
 		nodeToDelete.setUuid(dto.getThreadUuid());

@@ -45,6 +45,7 @@ import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
 
 public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBusinessService {
+
 	private final SharedSpaceMemberMongoRepository sharedSpaceMemberMongoRepository;
 
 	public SharedSpaceMemberBusinessServiceImpl(SharedSpaceMemberMongoRepository sharedSpaceMemberMongoRepository) {

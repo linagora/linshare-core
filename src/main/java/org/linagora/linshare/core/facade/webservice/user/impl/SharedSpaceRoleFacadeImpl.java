@@ -47,8 +47,7 @@ public class SharedSpaceRoleFacadeImpl extends GenericFacadeImpl implements Shar
 
 	private final SharedSpaceRoleService sharedSpaceRoleService;
 
-	public SharedSpaceRoleFacadeImpl(AccountService accountService,
-			SharedSpaceRoleService sharedSpaceRoleService) {
+	public SharedSpaceRoleFacadeImpl(AccountService accountService, SharedSpaceRoleService sharedSpaceRoleService) {
 		super(accountService);
 		this.sharedSpaceRoleService = sharedSpaceRoleService;
 	}
@@ -70,7 +69,7 @@ public class SharedSpaceRoleFacadeImpl extends GenericFacadeImpl implements Shar
 	}
 
 	@Override
-	public List <SharedSpaceRole>findAll(String actorUuid) throws BusinessException {
+	public List<SharedSpaceRole> findAll(String actorUuid) throws BusinessException {
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
 		return sharedSpaceRoleService.findAll(authUser, actor);
