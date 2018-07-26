@@ -35,9 +35,12 @@ package org.linagora.linshare.mongo.entities;
 
 import java.util.Date;
 import java.util.UUID;
+
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -77,6 +80,7 @@ public class SharedSpaceMember {
 		this.modificationDate = new Date();
 	}
 
+	@XmlTransient
 	public String getId() {
 		return id;
 	}
@@ -139,4 +143,36 @@ public class SharedSpaceMember {
 				+ account + ", creationDate=" + creationDate + ", modificationDate=" + modificationDate + "]";
 	}
 
+	/**
+	 * Workaround to display roles in email notifications. DO NOT USE IT
+	 * 
+	 * @return
+	 */
+	@XmlTransient
+	@JsonIgnore
+	public boolean hasAdminRight() {
+		return this.getRole().getName().equals("ADMIN");
+	}
+
+	/**
+	 * Workaround to display roles in email notifications. DO NOT USE IT
+	 * 
+	 * @return
+	 */
+	@XmlTransient
+	@JsonIgnore
+	public boolean hasUploadRight() {
+		return this.getRole().getName().equals("WRITER") || this.getRole().getName().equals("CONTRIBUTOR");
+	}
+
+	/**
+	 * Workaround to display roles in email notifications. DO NOT USE IT
+	 * 
+	 * @return
+	 */
+	@XmlTransient
+	@JsonIgnore
+	public boolean hasReadOnlyRight() {
+		return this.getRole().getName().equals("READER");
+	}
 }

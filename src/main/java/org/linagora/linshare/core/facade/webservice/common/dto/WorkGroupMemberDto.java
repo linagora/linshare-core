@@ -36,7 +36,9 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.ThreadRoles;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkgroupMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -88,6 +90,20 @@ public class WorkGroupMemberDto {
 
 	public WorkGroupMemberDto() {
 		super();
+	}
+
+	public WorkGroupMemberDto(SharedSpaceMember create, User user) {
+		this.firstName = user.getFirstName();
+		this.lastName = user.getLastName();
+		this.admin = create.hasAdminRight();
+		this.readonly = create.hasReadOnlyRight();
+		this.role = (admin ? ThreadRoles.ADMIN
+				: readonly ? ThreadRoles.RESTRICTED : ThreadRoles.NORMAL)
+				.name().toLowerCase();
+		this.userUuid = create.getAccount().getUuid();
+		this.userMail = user.getMail();
+		this.userDomainId = user.getDomainId();
+		this.threadUuid = create.getNode().getUuid();
 	}
 
 	public String getRole() {

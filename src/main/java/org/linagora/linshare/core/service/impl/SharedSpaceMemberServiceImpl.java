@@ -38,12 +38,18 @@ import java.util.List;
 import org.jsoup.helper.Validate;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.context.WorkGroupWarnNewMemberEmailContext;
+import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.SharedSpaceMemberResourceAccessControl;
+import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
 public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, SharedSpaceMember>
@@ -51,10 +57,18 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 
 	private final SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService;
 
+	private final NotifierService notifierService;
+
+	private final MailBuildingService mailBuildingService;
+
 	public SharedSpaceMemberServiceImpl(SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService,
+			NotifierService notifierService,
+			MailBuildingService mailBuildingService,
 			SharedSpaceMemberResourceAccessControl rac) {
 		super(rac);
 		this.sharedSpaceMemberBusinessService = sharedSpaceMemberBusinessService;
+		this.notifierService = notifierService;
+		this.mailBuildingService = mailBuildingService;
 	}
 
 	@Override
@@ -82,6 +96,27 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		checkCreatePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
 				member);
 		SharedSpaceMember toAdd = sharedSpaceMemberBusinessService.create(member);
+		return toAdd;
+	}
+
+	@Override
+	public SharedSpaceMember create(Account authUser, Account actor, User newMember, SharedSpaceNode sharedSpaceNode,
+			SharedSpaceRole role) throws BusinessException {
+		GenericLightEntity nodeToPersist = new GenericLightEntity(sharedSpaceNode.getUuid(), sharedSpaceNode.getName());
+		GenericLightEntity roleToPersist = new GenericLightEntity(role.getUuid(), role.getName());
+		GenericLightEntity accountLight = new GenericLightEntity(newMember.getLsUuid(), newMember.getFullName());
+		SharedSpaceMember member = new SharedSpaceMember(nodeToPersist, roleToPersist, accountLight);
+		checkCreatePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
+				member);
+		SharedSpaceMember toAdd = sharedSpaceMemberBusinessService.create(member);
+		// TODO
+//		ThreadMemberAuditLogEntry log = new ThreadMemberAuditLogEntry(actor, owner, LogAction.CREATE,
+//				AuditLogEntryType.WORKGROUP_MEMBER, member);
+//		addMembersToLog(workGroup, log);
+//		logEntryService.insert(log);
+		WorkGroupWarnNewMemberEmailContext context = new WorkGroupWarnNewMemberEmailContext(member, actor, newMember);
+		MailContainerWithRecipient mail = mailBuildingService.build(context);
+		notifierService.sendNotification(mail, true);
 		return toAdd;
 	}
 

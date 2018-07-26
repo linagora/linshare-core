@@ -36,9 +36,11 @@ package org.linagora.linshare.core.service;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
 public interface SharedSpaceMemberService {
@@ -47,6 +49,9 @@ public interface SharedSpaceMemberService {
 
 	SharedSpaceMember create(Account authUser, Account actor, GenericLightEntity nodeToPersist,
 			GenericLightEntity roleToPersist, GenericLightEntity accountLight) throws BusinessException;
+
+	SharedSpaceMember create(Account authUser, Account actor, User newMember, SharedSpaceNode sharedSpaceNode,
+			SharedSpaceRole role) throws BusinessException;
 
 	SharedSpaceMember findMember(Account authUser, Account actor, Account possibleMember,
 			SharedSpaceNode sharedSpaceNode) throws BusinessException;

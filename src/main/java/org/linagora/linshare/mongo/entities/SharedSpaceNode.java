@@ -41,6 +41,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.linagora.linshare.core.domain.constants.NodeType;
@@ -82,6 +83,7 @@ public class SharedSpaceNode {
 		this.modificationDate = new Date();
 	}
 
+	@XmlTransient
 	public String getId() {
 		return id;
 	}
@@ -144,5 +146,4 @@ public class SharedSpaceNode {
 				+ ", nodeType=" + nodeType + ", creationDate=" + creationDate + ", modificationDate=" + modificationDate
 				+ "]";
 	}
-
 }

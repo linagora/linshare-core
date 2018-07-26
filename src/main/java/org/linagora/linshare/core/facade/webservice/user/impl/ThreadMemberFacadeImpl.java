@@ -113,18 +113,11 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notEmpty(domainId, "Missing required domain id");
 		Validate.notEmpty(userMail, "Missing required mail");
 		User authUser = checkAuthentication();
-		User user = userService.findOrCreateUser(userMail, domainId);
-		WorkGroup workGroup = threadService.find(authUser, authUser, threadUuid);
-		WorkgroupMember createdWorkGroupMember = threadService.addMember(authUser, authUser, workGroup, user, admin,
-				!readOnly);
-		// TODO Retrieve the role from the restService once the front will pass the info
+		User newMember = userService.findOrCreateUser(userMail, domainId);
 		SharedSpaceNode foundSharedSpaceNode = sharedSpaceNodeService.find(authUser, authUser, threadUuid);
 		SharedSpaceRole defaultRole = getDefaultRole(authUser, admin);
-		ssMemberService.create(authUser, authUser,
-				new GenericLightEntity(foundSharedSpaceNode.getUuid(), foundSharedSpaceNode.getName()),
-				new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()),
-				new GenericLightEntity(user.getLsUuid(), user.getFullName()));
-		return new WorkGroupMemberDto(createdWorkGroupMember);
+		SharedSpaceMember create = ssMemberService.create(authUser, authUser, newMember, foundSharedSpaceNode, defaultRole);
+		return new WorkGroupMemberDto(create, newMember);
 	}
 
 	@Override

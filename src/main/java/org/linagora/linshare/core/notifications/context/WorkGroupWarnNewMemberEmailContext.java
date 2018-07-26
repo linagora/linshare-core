@@ -38,26 +38,30 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.WorkgroupMember;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 
 public class WorkGroupWarnNewMemberEmailContext extends EmailContext {
 
-	protected WorkgroupMember workgroupMember;
+	protected SharedSpaceMember workgroupMember;
+
+	protected User newMember;
 
 	protected Account owner;
 
-	public WorkGroupWarnNewMemberEmailContext(WorkgroupMember workgroupMember, Account owner) {
-		super(workgroupMember.getUser().getDomain(), false);
+	public WorkGroupWarnNewMemberEmailContext(SharedSpaceMember workgroupMember, Account owner, User newMember) {
+		super(newMember.getDomain(), false);
 		this.workgroupMember = workgroupMember;
 		this.owner = owner;
-		this.language = workgroupMember.getUser().getExternalMailLocale();
+		this.language = newMember.getExternalMailLocale();
+		this.newMember = newMember;
 	}
 
-	public WorkgroupMember getWorkgroupMember() {
+	public SharedSpaceMember getWorkgroupMember() {
 		return workgroupMember;
 	}
 
-	public void setWorkgroupMember(WorkgroupMember workgroupMember) {
+	public void setWorkgroupMember(SharedSpaceMember workgroupMember) {
 		this.workgroupMember = workgroupMember;
 	}
 
@@ -81,12 +85,20 @@ public class WorkGroupWarnNewMemberEmailContext extends EmailContext {
 
 	@Override
 	public String getMailRcpt() {
-		return workgroupMember.getUser().getMail();
+		return newMember.getMail();
 	}
 
 	@Override
 	public String getMailReplyTo() {
 		return owner.getMail();
+	}
+
+	public User getNewMember() {
+		return newMember;
+	}
+
+	public void setNewMember(User newMember) {
+		this.newMember = newMember;
 	}
 
 	@Override

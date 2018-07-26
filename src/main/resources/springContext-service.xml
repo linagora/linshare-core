@@ -415,5 +415,7 @@
 	<bean id="sharedSpaceMemberService" class="org.linagora.linshare.core.service.impl.SharedSpaceMemberServiceImpl">
 		<constructor-arg ref="sharedSpaceMemberBusinessService" />
 		<constructor-arg ref="sharedSpaceMemberResourceAccessControl" />
+		<constructor-arg ref="notifierService" />
+		<constructor-arg ref="mailBuildingService" />
 	</bean>
 </beans>

@@ -17,13 +17,6 @@
 
 	<!-- SOAP -->
 	<!-- SOAP Beans -->
-	<bean id="soapService" class="org.linagora.linshare.webservice.legacy.impl.SoapServiceImpl">
-		<constructor-arg ref="wsDocumentFacade" />
-		<constructor-arg ref="wsShareFacade" />
-		<constructor-arg ref="wsThreadFacade" />
-		<constructor-arg ref="wsUserFacade" />
-	</bean>
-
     <bean id="MTOMUploadSoapService" class="org.linagora.linshare.webservice.legacy.impl.MTOMUploadSoapServiceImpl">
 		<constructor-arg ref="wsDocumentFacade" />
 	</bean>

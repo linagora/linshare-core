@@ -53,7 +53,6 @@ import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnDeletedMemberEmailContext;
-import org.linagora.linshare.core.notifications.context.WorkGroupWarnNewMemberEmailContext;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnUpdatedMemberEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.ThreadMemberResourceAccessControl;
@@ -252,6 +251,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 	public WorkgroupMember addMember(Account actor, Account owner, WorkGroup workGroup,
 			User user, boolean admin, boolean canUpload)
 			throws BusinessException {
+		// TODO : Remove me !
 		WorkgroupMember member = new WorkgroupMember(canUpload, admin, user, workGroup);
 		threadMemberAC.checkCreatePermission(actor, owner, WorkgroupMember.class,
 				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN, member, workGroup);
@@ -268,9 +268,9 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 				AuditLogEntryType.WORKGROUP_MEMBER, member);
 		addMembersToLog(workGroup, log);
 		logEntryService.insert(log);
-		WorkGroupWarnNewMemberEmailContext context = new WorkGroupWarnNewMemberEmailContext(member, owner);
-		MailContainerWithRecipient mail = mailBuildingService.build(context);
-		notifierService.sendNotification(mail, true);
+//		WorkGroupWarnNewMemberEmailContext context = new WorkGroupWarnNewMemberEmailContext(member, owner);
+//		MailContainerWithRecipient mail = mailBuildingService.build(context);
+//		notifierService.sendNotification(mail, true);
 		return member;
 	}
 

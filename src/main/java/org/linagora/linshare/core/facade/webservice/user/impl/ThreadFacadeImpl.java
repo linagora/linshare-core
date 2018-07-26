@@ -60,8 +60,6 @@ import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
-import org.linagora.linshare.mongo.entities.SharedSpaceRole;
-import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 import com.google.common.collect.Lists;
@@ -147,24 +145,6 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		AccountQuota quota = quotaService.findByRelatedAccount(workGroup);
 		dto.setQuotaUuid(quota.getUuid());
 		return dto;
-	}
-
-	@Override
-	public void addMember(String threadUuid, String domainId, String mail, boolean readonly) throws BusinessException {
-		Validate.notEmpty(threadUuid, "Missing required thread uuid");
-		Validate.notEmpty(domainId, "Missing required domain id");
-		Validate.notEmpty(mail, "Missing required mail");
-		User authUser = checkAuthentication();
-		WorkGroup workGroup = threadService.find(authUser, authUser, threadUuid);
-		User user = userService.findOrCreateUserWithDomainPolicies(mail, domainId, authUser.getDomainId());
-		threadService.addMember(authUser, authUser, workGroup, user, false, !readonly);
-		// TODO Retrieve the role from the restService once the front will pass the info
-		SharedSpaceNode foundSharedSpaceNode = ssNodeService.find(authUser, authUser, threadUuid);
-		SharedSpaceRole defaultRole = ssRoleService.findByName(authUser, authUser, "READER");
-		ssMemberService.create(authUser, authUser,
-				new GenericLightEntity(foundSharedSpaceNode.getUuid(), foundSharedSpaceNode.getName()),
-				new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()),
-				new GenericLightEntity(user.getLsUuid(), user.getFullName()));
 	}
 
 	@Override
