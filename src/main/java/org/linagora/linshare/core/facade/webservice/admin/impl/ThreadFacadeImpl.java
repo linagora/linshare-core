@@ -53,6 +53,7 @@ import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
 import com.google.common.collect.Sets;
 
@@ -145,6 +146,11 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements ThreadFa
 		SharedSpaceNode ssNodeFoundToUpdate = ssNodeService.find(authUser, authUser, workGroupDto.getUuid());
 		ssNodeFoundToUpdate.setName(threadDto.getName());
 		SharedSpaceNode ssnodeUpdated = ssNodeService.update(authUser, authUser, ssNodeFoundToUpdate);
+		List<SharedSpaceMember> ssmembers = ssMemberService.findByNode(authUser, authUser, ssnodeUpdated.getUuid());
+		for (SharedSpaceMember ssmember : ssmembers) {
+			ssMemberService.updateAllSsNodes(ssmember,
+					new GenericLightEntity(ssnodeUpdated.getUuid(), ssnodeUpdated.getName()));
+		}
 		return workGroupDto;
 	}
 

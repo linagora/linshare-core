@@ -66,4 +66,6 @@ public interface SharedSpaceMemberBusinessService {
 	List<SharedSpaceMember> findByMemberName(String name) throws BusinessException;
 
 	List<SharedSpaceMember> findAllByAccount(String accountUuid);
+
+	SharedSpaceMember updateAllSsNodes(SharedSpaceMember ssmemberToUpdate, GenericLightEntity nodeUuid);
 }

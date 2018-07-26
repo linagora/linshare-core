@@ -46,36 +46,36 @@ import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
 
 public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBusinessService {
 
-	private final SharedSpaceMemberMongoRepository sharedSpaceMemberMongoRepository;
+	private final SharedSpaceMemberMongoRepository repository;
 
 	public SharedSpaceMemberBusinessServiceImpl(SharedSpaceMemberMongoRepository sharedSpaceMemberMongoRepository) {
 		super();
-		this.sharedSpaceMemberMongoRepository = sharedSpaceMemberMongoRepository;
+		this.repository = sharedSpaceMemberMongoRepository;
 	}
 
 	@Override
 	public SharedSpaceMember find(String uuid) throws BusinessException {
-		return sharedSpaceMemberMongoRepository.findByUuid(uuid);
+		return repository.findByUuid(uuid);
 	}
 
 	@Override
 	public SharedSpaceMember create(SharedSpaceMember member) throws BusinessException {
-		return sharedSpaceMemberMongoRepository.insert(member);
+		return repository.insert(member);
 	}
 
 	@Override
 	public List<SharedSpaceMember> findAll() throws BusinessException {
-		return sharedSpaceMemberMongoRepository.findAll();
+		return repository.findAll();
 	}
 
 	@Override
 	public SharedSpaceMember findByMemberAndSharedSpaceNode(String accountUuid, String nodeUuid) {
-		return sharedSpaceMemberMongoRepository.findByAccountAndNode(accountUuid, nodeUuid);
+		return repository.findByAccountAndNode(accountUuid, nodeUuid);
 	}
 
 	@Override
 	public void delete(SharedSpaceMember memberToDelete) {
-		sharedSpaceMemberMongoRepository.delete(memberToDelete);
+		repository.delete(memberToDelete);
 	}
 
 	@Override
@@ -84,41 +84,47 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		foundMemberToUpdate.setNode(memberToUpdate.getNode());
 		foundMemberToUpdate.setRole(memberToUpdate.getRole());
 		foundMemberToUpdate.setModificationDate(new Date());
-		return sharedSpaceMemberMongoRepository.save(foundMemberToUpdate);
+		return repository.save(foundMemberToUpdate);
 	}
 
 	@Override
 	public SharedSpaceMember updateRole(SharedSpaceMember foundMemberToUpdate, GenericLightEntity newRole) {
 		foundMemberToUpdate.setRole(newRole);
 		foundMemberToUpdate.setModificationDate(new Date());
-		return sharedSpaceMemberMongoRepository.save(foundMemberToUpdate);
+		return repository.save(foundMemberToUpdate);
 	}
 
 	@Override
 	public List<SharedSpaceMember> findBySharedSpaceNodeUuid(String shareSpaceNodeUuid) {
-		return sharedSpaceMemberMongoRepository.findByShareSpaceNodeUuid(shareSpaceNodeUuid);
+		return repository.findByShareSpaceNodeUuid(shareSpaceNodeUuid);
 	}
 
 	@Override
 	public List<String> findMembersUuidBySharedSpaceNodeUuid(String shareSpaceNodeUuid) {
-		List<SharedSpaceMember> members = sharedSpaceMemberMongoRepository.findByShareSpaceNodeUuid(shareSpaceNodeUuid);
+		List<SharedSpaceMember> members = repository.findByShareSpaceNodeUuid(shareSpaceNodeUuid);
 		Stream<GenericLightEntity> accounts = members.stream().map(SharedSpaceMember::getAccount);
 		return accounts.map(GenericLightEntity::getUuid).collect(Collectors.toList());
 	}
 
 	@Override
 	public void deleteAll(List<SharedSpaceMember> foundMembersToDelete) {
-		sharedSpaceMemberMongoRepository.delete(foundMembersToDelete);
+		repository.delete(foundMembersToDelete);
 	}
 
 	@Override
 	public List<SharedSpaceMember> findByMemberName(String name) throws BusinessException {
-		return sharedSpaceMemberMongoRepository.findByMemberName(name);
+		return repository.findByMemberName(name);
 	}
 
 	@Override
 	public List<SharedSpaceMember> findAllByAccount(String accountUuid) {
-		return sharedSpaceMemberMongoRepository.findByAccountUuid(accountUuid);
+		return repository.findByAccountUuid(accountUuid);
+	}
+
+	@Override
+	public SharedSpaceMember updateAllSsNodes(SharedSpaceMember ssmember, GenericLightEntity ssnode) {
+		ssmember.setNode(ssnode);
+		return repository.save(ssmember);
 	}
 
 }

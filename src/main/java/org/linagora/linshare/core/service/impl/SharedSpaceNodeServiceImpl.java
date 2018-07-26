@@ -162,6 +162,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	public List<SharedSpaceNode> findAllNodesBySSMember(Account authUser, String memberName) {
 		List<SharedSpaceMember> ssmembers = sharedSpaceMemberService.findByMemberName(authUser, authUser,
 				memberName);
+		//TODO : to replace by query methods in mongoRepository for more performances.
 		List<SharedSpaceNode> nodes = Lists.newArrayList();
 		for (SharedSpaceMember member : ssmembers) {
 			nodes.add(find(authUser, authUser, member.getNode().getUuid()));

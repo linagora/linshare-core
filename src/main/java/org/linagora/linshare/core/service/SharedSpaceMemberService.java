@@ -56,6 +56,8 @@ public interface SharedSpaceMemberService {
 	SharedSpaceMember findMember(Account authUser, Account actor, Account possibleMember,
 			SharedSpaceNode sharedSpaceNode) throws BusinessException;
 
+	List<SharedSpaceMember> findByNode(Account authUser, Account actro, String ssnodeUuid);
+
 	SharedSpaceMember delete(Account authUser, Account actor, SharedSpaceMember memberToDelete);
 
 	SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate);
@@ -74,5 +76,8 @@ public interface SharedSpaceMemberService {
 			GenericLightEntity roleToPersist, GenericLightEntity accountLight) throws BusinessException;
 
 	List<SharedSpaceMember> findAllByAccount(Account authUser, Account actor, String accountUuid);
+
+	SharedSpaceMember updateAllSsNodes(SharedSpaceMember ssmemberToUpdate, GenericLightEntity ssnodeUuid)
+			throws BusinessException;
 
 }
