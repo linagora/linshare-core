@@ -41,6 +41,7 @@ import java.util.stream.Stream;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
 
@@ -122,9 +123,12 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	}
 
 	@Override
-	public SharedSpaceMember updateAllSsNodes(SharedSpaceMember ssmember, GenericLightEntity ssnode) {
-		ssmember.setNode(ssnode);
-		return repository.save(ssmember);
+	public void updateNestedNode(SharedSpaceNode node) throws BusinessException {
+		List<SharedSpaceMember> members = repository.findByShareSpaceNodeUuid(node.getUuid());
+		for (SharedSpaceMember member : members) {
+			member.getNode().setName(node.getName());
+		}
+		repository.save(members);
 	}
 
 }

@@ -222,14 +222,6 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	}
 
 	@Override
-	public SharedSpaceMember updateAllSsNodes(SharedSpaceMember ssmember, GenericLightEntity ssnode)
-			throws BusinessException {
-		Validate.notNull(ssmember);
-		Validate.notNull(ssnode);
-		return businessService.updateAllSsNodes(ssmember, ssnode);
-	}
-
-	@Override
 	public List<SharedSpaceMember> findByNode(Account authUser, Account actor, String ssnodeUuid) {
 		preChecks(authUser, actor);
 		Validate.notEmpty(ssnodeUuid, "The shared space node uuid must be set.");

@@ -36,6 +36,7 @@ package org.linagora.linshare.core.service.impl;
 import java.util.List;
 
 import org.jsoup.helper.Validate;
+import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -56,17 +57,21 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 
 	private final SharedSpaceNodeBusinessService sharedSpaceNodeBusinessService;
 
+	private final SharedSpaceMemberBusinessService memberBusinessService;
+
 	private final SharedSpaceMemberService sharedSpaceMemberService;
 
 	private final SharedSpaceRoleService ssRoleService;
 
 	public SharedSpaceNodeServiceImpl(SharedSpaceNodeBusinessService sharedSpaceNodeBusinessService,
 			SharedSpaceNodeResourceAccessControl sharedSpaceNodeResourceAccessControl,
+			SharedSpaceMemberBusinessService memberBusinessService,
 			SharedSpaceMemberService sharedSpaceMemberService, SharedSpaceRoleService ssRoleService) {
 		super(sharedSpaceNodeResourceAccessControl);
 		this.sharedSpaceNodeBusinessService = sharedSpaceNodeBusinessService;
 		this.sharedSpaceMemberService = sharedSpaceMemberService;
 		this.ssRoleService = ssRoleService;
+		this.memberBusinessService = memberBusinessService;
 	}
 
 	@Override
@@ -115,10 +120,12 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 			throws BusinessException {
 		Validate.notNull(nodeToUpdate, "nodeToUpdate must be set.");
 		Validate.notEmpty(nodeToUpdate.getUuid(), "shared space node uuid to update must be set.");
-		SharedSpaceNode foundNodeToUpdate = find(authUser, actor, nodeToUpdate.getUuid());
+		SharedSpaceNode node = find(authUser, actor, nodeToUpdate.getUuid());
 		checkUpdatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN,
 				nodeToUpdate);
-		return sharedSpaceNodeBusinessService.update(foundNodeToUpdate, nodeToUpdate);
+		node = sharedSpaceNodeBusinessService.update(node, nodeToUpdate);
+		memberBusinessService.updateNestedNode(node);
+		return node;
 	}
 
 	@Override

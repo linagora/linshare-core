@@ -399,6 +399,7 @@
 		<constructor-arg ref="sharedSpaceNodeResourceAccessControl" />
 		<constructor-arg ref="sharedSpaceMemberService" />
 		<constructor-arg ref="sharedSpaceRoleService" />
+		<constructor-arg ref="sharedSpaceMemberBusinessService" />
 	</bean>
 	<bean id="sharedSpaceRoleService" class="org.linagora.linshare.core.service.impl.SharedSpaceRoleServiceImpl">
 		<constructor-arg ref="sharedSpaceRoleBusinessService" />

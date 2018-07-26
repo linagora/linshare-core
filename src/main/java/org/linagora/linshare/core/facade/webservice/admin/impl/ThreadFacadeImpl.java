@@ -145,12 +145,7 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements ThreadFa
 				threadService.update(authUser, authUser, threadDto.getUuid(), threadDto.getName()));
 		SharedSpaceNode ssNodeFoundToUpdate = ssNodeService.find(authUser, authUser, workGroupDto.getUuid());
 		ssNodeFoundToUpdate.setName(threadDto.getName());
-		SharedSpaceNode ssnodeUpdated = ssNodeService.update(authUser, authUser, ssNodeFoundToUpdate);
-		List<SharedSpaceMember> ssmembers = ssMemberService.findByNode(authUser, authUser, ssnodeUpdated.getUuid());
-		for (SharedSpaceMember ssmember : ssmembers) {
-			ssMemberService.updateAllSsNodes(ssmember,
-					new GenericLightEntity(ssnodeUpdated.getUuid(), ssnodeUpdated.getName()));
-		}
+		ssNodeService.update(authUser, authUser, ssNodeFoundToUpdate);
 		return workGroupDto;
 	}
 

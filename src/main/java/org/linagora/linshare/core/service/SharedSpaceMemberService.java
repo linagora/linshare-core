@@ -77,7 +77,4 @@ public interface SharedSpaceMemberService {
 
 	List<SharedSpaceMember> findAllByAccount(Account authUser, Account actor, String accountUuid);
 
-	SharedSpaceMember updateAllSsNodes(SharedSpaceMember ssmemberToUpdate, GenericLightEntity ssnodeUuid)
-			throws BusinessException;
-
 }
