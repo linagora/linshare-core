@@ -13,7 +13,6 @@
 		<constructor-arg ref="threadMemberRepository" />
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="threadResourceAccessControl" />
-		<constructor-arg ref="threadMemberResourceAccessControl" />
 		<constructor-arg ref="userRepository" />
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="accountQuotaBusinessService"/>

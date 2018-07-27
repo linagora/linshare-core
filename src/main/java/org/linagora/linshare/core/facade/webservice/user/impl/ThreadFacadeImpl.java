@@ -45,10 +45,10 @@ import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
-import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupMemberDto;
 import org.linagora.linshare.core.facade.webservice.user.WorkGroupFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AuditLogEntryService;
@@ -59,11 +59,13 @@ import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		WorkGroupFacade {
@@ -136,9 +138,13 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		SharedSpaceNode ssnode = ssNodeService.find(authUser, authUser, uuid);
 		WorkGroupDto dto = null;
 		if (members) {
-			List<WorkgroupMember> workgroupMembers = threadService.findAllThreadMembers(authUser, authUser, workGroup);
-			ssNodeService.findAllMembers(authUser, authUser, uuid);
-			dto = new WorkGroupDto(workGroup, workgroupMembers);
+			List<SharedSpaceMember> ssMembers = ssNodeService.findAllMembers(authUser, authUser, uuid);
+			Set<WorkGroupMemberDto> memberDtos = Sets.newHashSet();
+			for (SharedSpaceMember ssMember : ssMembers) {
+				WorkGroupMemberDto memberDto = new WorkGroupMemberDto(ssMember, userService.findByLsUuid(ssMember.getAccount().getUuid()));
+				memberDtos.add(memberDto);
+			}
+			dto = new WorkGroupDto(workGroup, ssnode, memberDtos);
 		} else {
 			dto = new WorkGroupDto(workGroup, ssnode);
 		}
@@ -152,11 +158,11 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notNull(threadDto, "Missing required thread");
 		Validate.notEmpty(threadDto.getName(), "Missing required thread dto name");
 		User authUser = checkAuthentication();
-		WorkGroupDto toCreate = new WorkGroupDto(threadService.create(authUser, authUser, threadDto.getName()));
+		WorkGroup toCreate = threadService.create(authUser, authUser, threadDto.getName());
 		SharedSpaceNode node = new SharedSpaceNode(threadDto.getName(), null, NodeType.WORK_GROUP);
-		node.setUuid(toCreate.getUuid());
-		ssNodeService.create(authUser, authUser, node);
-		return toCreate;
+		node.setUuid(toCreate.getLsUuid());
+		node = ssNodeService.create(authUser, authUser, node);
+		return new WorkGroupDto(toCreate, node);
 	}
 
 	@Override
@@ -167,8 +173,8 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		WorkGroup workGroup = threadService.find(authUser, authUser, threadDto.getUuid());
 		threadService.deleteThread(authUser, authUser, workGroup);
 		SharedSpaceNode node = ssNodeService.find(authUser, authUser, threadDto.getUuid());
-		ssNodeService.delete(authUser, authUser, node);
-		return new WorkGroupDto(workGroup);
+		node = ssNodeService.delete(authUser, authUser, node);
+		return new WorkGroupDto(workGroup, node);
 	}
 
 	@Override
@@ -178,8 +184,8 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		WorkGroup workGroup = threadService.find(authUser, authUser, threadUuid);
 		threadService.deleteThread(authUser, authUser, workGroup);
 		SharedSpaceNode node = ssNodeService.find(authUser, authUser, threadUuid);
-		ssNodeService.delete(authUser, authUser, node);
-		return new WorkGroupDto(workGroup);
+		node = ssNodeService.delete(authUser, authUser, node);
+		return new WorkGroupDto(workGroup, node);
 	}
 
 	@Override
@@ -188,12 +194,11 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notNull(threadDto, "Missing required ThreadDto");
 		Validate.notEmpty(threadDto.getName(), "Missing required thread name");
 		User authUser = checkAuthentication();
-		WorkGroupDto workGroupDto = new WorkGroupDto(
-				threadService.update(authUser, authUser, threadUuid, threadDto.getName()));
-		SharedSpaceNode ssNodeFoundToUpdate = ssNodeService.find(authUser, authUser, threadUuid);
-		ssNodeFoundToUpdate.setName(threadDto.getName());
-		SharedSpaceNode ssnodeUpdated = ssNodeService.update(authUser, authUser, ssNodeFoundToUpdate);
-		return workGroupDto;
+		WorkGroup workGroup = threadService.update(authUser, authUser, threadUuid, threadDto.getName());
+		SharedSpaceNode node = ssNodeService.find(authUser, authUser, threadUuid);
+		node.setName(threadDto.getName());
+		node = ssNodeService.update(authUser, authUser, node);
+		return new WorkGroupDto(workGroup, node);
 	}
 
 	@Override

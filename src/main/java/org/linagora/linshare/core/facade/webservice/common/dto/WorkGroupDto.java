@@ -82,6 +82,12 @@ public class WorkGroupDto extends AccountDto {
 		}
 	}
 
+	public WorkGroupDto(WorkGroup workGroup, SharedSpaceNode node, Set<WorkGroupMemberDto> members) {
+		super(workGroup, true);
+		this.name = node.getName();
+		this.members = members;
+	}
+
 	public WorkGroupDto() {
 		super();
 	}

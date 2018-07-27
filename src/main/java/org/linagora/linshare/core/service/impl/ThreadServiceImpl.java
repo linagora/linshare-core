@@ -41,7 +41,6 @@ import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
@@ -82,8 +81,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 
 	private final LogEntryService logEntryService;
 
-	private final ThreadMemberResourceAccessControl threadMemberAC;
-
 	private final UserRepository<User> userRepository;
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
@@ -115,7 +112,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 		this.threadRepository = threadRepository;
 		this.threadMemberRepository = threadMemberRepository;
 		this.logEntryService = logEntryService;
-		this.threadMemberAC = threadMemberResourceAccessControl;
 		this.userRepository = userRepository;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
@@ -140,8 +136,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 			throw new BusinessException(
 					BusinessErrorCode.THREAD_NOT_FOUND, message);
 		}
-		checkReadPermission(actor, owner, WorkGroup.class,
-				BusinessErrorCode.THREAD_FORBIDDEN, workGroup, owner);
 		return workGroup;
 	}
 
@@ -156,8 +150,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 
 	@Override
 	public List<WorkGroup> findAll(Account actor, Account owner) {
-		checkListPermission(actor, owner, WorkGroup.class,
-				BusinessErrorCode.THREAD_FORBIDDEN, null);
 		return threadRepository.findAll();
 	}
 
@@ -169,8 +161,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 				|| !threadCreation.getActivationPolicy().getStatus()) {
 			throw new BusinessException(BusinessErrorCode.THREAD_FORBIDDEN, "Functionality forbideen.");
 		}
-		checkCreatePermission(actor, owner, WorkGroup.class,
-				BusinessErrorCode.THREAD_FORBIDDEN, null);
 		WorkGroup workGroup = null;
 		WorkgroupMember member = null;
 		logger.debug("User " + owner.getAccountRepresentation() + " trying to create new thread named " + name);
@@ -204,16 +194,12 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 	@Override
 	public List<WorkgroupMember> findAllThreadMembers(Account actor, User owner,
 			WorkGroup workGroup) throws BusinessException {
-		threadMemberAC.checkListPermission(actor, owner, WorkgroupMember.class,
-				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN, null, workGroup);
 		return threadMemberRepository.findAllThreadMembers(workGroup);
 	}
 
 	@Override
 	public List<WorkgroupMember> findAllInconsistentMembers(Account actor, User owner,
 			WorkGroup workGroup) throws BusinessException {
-		threadMemberAC.checkListPermission(actor, owner, WorkgroupMember.class,
-				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN, null, workGroup);
 		return threadMemberRepository.findAllInconsistentThreadMembers(workGroup);
 	}
 
@@ -237,10 +223,10 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 		return threadMemberRepository.isUserAdminOfAny(user);
 	}
 
-	@Override
-	public boolean isUserAdmin(User user, WorkGroup workGroup) {
-		return threadMemberRepository.isUserAdmin(user, workGroup);
-	}
+//	@Override
+//	public boolean isUserAdmin(User user, WorkGroup workGroup) {
+//		return threadMemberRepository.isUserAdmin(user, workGroup);
+//	}
 
 	@Override
 	public long countMembers(WorkGroup workGroup) {
@@ -253,8 +239,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 			throws BusinessException {
 		// TODO : Remove me !
 		WorkgroupMember member = new WorkgroupMember(canUpload, admin, user, workGroup);
-		threadMemberAC.checkCreatePermission(actor, owner, WorkgroupMember.class,
-				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN, member, workGroup);
 		if (getMemberFromUser(workGroup, user) != null) {
 			logger.warn("The current " + user.getAccountRepresentation()
 					+ " user is already member of the workgroup : "
@@ -281,8 +265,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 		WorkGroup workGroup = find(actor, owner, workGroupUuid);
 		User user = getUserMember(userUuid);
 		WorkgroupMember member = getMemberFromUser(workGroup, user);
-		threadMemberAC.checkUpdatePermission(actor, owner, WorkgroupMember.class,
-				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN, member);
 		ThreadMemberAuditLogEntry log = new ThreadMemberAuditLogEntry(actor, owner, LogAction.UPDATE,
 				AuditLogEntryType.WORKGROUP_MEMBER, member);
 		addMembersToLog(workGroup, log);
@@ -306,8 +288,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 		WorkGroup workGroup = find(actor, owner, threadUuid);
 		User user = getUserMember(userUuid);
 		WorkgroupMember member = getMemberFromUser(workGroup,	user);
-		threadMemberAC.checkDeletePermission(actor, owner, WorkgroupMember.class,
-				BusinessErrorCode.THREAD_MEMBER_FORBIDDEN, member);
 		workGroup.getMyMembers().remove(member);
 		threadRepository.update(workGroup);
 		threadMemberRepository.delete(member);
@@ -338,7 +318,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 	@Override
 	public void deleteAllMembers(Account actor, WorkGroup workGroup) throws BusinessException {
 		// permission check
-		checkUserIsAdmin(actor, workGroup);
+//		checkUserIsAdmin(actor, workGroup);
 		Object[] myMembers = workGroup.getMyMembers().toArray();
 		List<AuditLogEntryUser> audits = Lists.newArrayList();
 		for (Object threadMember : myMembers) {
@@ -367,8 +347,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 	@Override
 	public void deleteThread(User actor, Account owner, WorkGroup workGroup)
 			throws BusinessException {
-		checkDeletePermission(actor, owner, WorkGroup.class,
-				BusinessErrorCode.THREAD_FORBIDDEN, workGroup);
 		User owner2 = (User) owner;
 		ThreadAuditLogEntry threadAuditLog = new ThreadAuditLogEntry(actor, owner, LogAction.DELETE,
 				AuditLogEntryType.WORKGROUP, new ThreadMto(workGroup, true));
@@ -388,8 +366,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 	public WorkGroup update(User actor, Account owner, String threadUuid,
 			String threadName) throws BusinessException {
 		WorkGroup workGroup = find(actor, owner, threadUuid);
-		checkUpdatePermission(actor, owner, WorkGroup.class,
-				BusinessErrorCode.THREAD_FORBIDDEN, workGroup);
 		ThreadAuditLogEntry log = new ThreadAuditLogEntry(actor, owner, LogAction.UPDATE, AuditLogEntryType.WORKGROUP,
 				new ThreadMto(workGroup, true));
 		workGroup.setName(threadName);
@@ -443,19 +419,24 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 		log.addRelatedAccounts(members);
 	}
 
+	@Override
+	public boolean isUserAdmin(User user, WorkGroup workGroup) {
+		return false;
+	}
+
 	/**
 	 * Check if actor is admin of the thread and so has the right to perform any action.
 	 * Throw a BusinessException if the actor isn't authorized to modify the thread.
 	 */
-	private void checkUserIsAdmin(Account actor, WorkGroup workGroup) throws BusinessException {
-		if (actor.getRole().equals(Role.SUPERADMIN) || actor.getRole().equals(Role.SYSTEM)) {
-			return; // superadmin or system accounts have all rights
-		}
-		if (!isUserAdmin((User) actor, workGroup)) {
-			logger.error("Actor: " + actor.getAccountRepresentation() + " isn't admin of the Thread: "
-					+ workGroup.getAccountRepresentation());
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
-					"you are not authorized to perform this action on this thread.");
-		}
-	}
+//	private void checkUserIsAdmin(Account actor, WorkGroup workGroup) throws BusinessException {
+//		if (actor.getRole().equals(Role.SUPERADMIN) || actor.getRole().equals(Role.SYSTEM)) {
+//			return; // superadmin or system accounts have all rights
+//		}
+//		if (!isUserAdmin((User) actor, workGroup)) {
+//			logger.error("Actor: " + actor.getAccountRepresentation() + " isn't admin of the Thread: "
+//					+ workGroup.getAccountRepresentation());
+//			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
+//					"you are not authorized to perform this action on this thread.");
+//		}
+//	}
 }
