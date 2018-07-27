@@ -60,6 +60,7 @@ import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 import com.google.common.collect.Lists;
@@ -120,11 +121,10 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 	public List<WorkGroupDto> findAll() throws BusinessException {
 		User authUser = checkAuthentication();
 		List<WorkGroupDto> res = Lists.newArrayList();
-		for (SharedSpaceNode ssnode : ssNodeService.findAllByAccount(authUser, authUser)) {
-			WorkGroup workgroup = new WorkGroup(ssnode);
-			res.add(new WorkGroupDto(workgroup));
+		for (SharedSpaceNodeNested ssnode : ssNodeService.findAllByAccount(authUser, authUser)) {
+			WorkGroup workGroup = threadService.find(authUser, authUser, ssnode.getUuid());
+			res.add(new WorkGroupDto(workGroup));
 		}
-		// TODO : put ssres as return when the new architecture is applied.
 		return res;
 	}
 

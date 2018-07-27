@@ -40,6 +40,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
@@ -47,7 +48,7 @@ public interface SharedSpaceMemberService {
 
 	SharedSpaceMember find(Account authUser, Account actor, String uuid) throws BusinessException;
 
-	SharedSpaceMember create(Account authUser, Account actor, GenericLightEntity nodeToPersist,
+	SharedSpaceMember create(Account authUser, Account actor, SharedSpaceNode node,
 			GenericLightEntity roleToPersist, GenericLightEntity accountLight) throws BusinessException;
 
 	SharedSpaceMember create(Account authUser, Account actor, User newMember, SharedSpaceNode sharedSpaceNode,
@@ -72,10 +73,10 @@ public interface SharedSpaceMemberService {
 
 	List<SharedSpaceMember> findByMemberName(Account authUser, Account actor, String name);
 
-	SharedSpaceMember createWithoutCheckPermission(Account authUser, Account actor, GenericLightEntity nodeToPersist,
+	SharedSpaceMember createWithoutCheckPermission(Account authUser, Account actor, SharedSpaceNode node,
 			GenericLightEntity roleToPersist, GenericLightEntity accountLight) throws BusinessException;
 
-	List<SharedSpaceMember> findAllByAccount(Account authUser, Account actor, String accountUuid);
+	List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor, String accountUuid);
 
 	SharedSpaceMember findMemberByUuid(Account authUser, Account actor, String userUuid, String nodeUuid)
 			throws BusinessException;

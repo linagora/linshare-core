@@ -56,19 +56,11 @@ public class SharedSpaceMember {
 
 	protected String uuid;
 
-	protected GenericLightEntity node;
+	protected SharedSpaceNodeNested node;
 
 	protected GenericLightEntity role;
 
 	protected GenericLightEntity account;
-
-	@XmlTransient
-	@JsonIgnore
-	protected boolean canUpload;
-
-	@XmlTransient
-	@JsonIgnore
-	protected boolean admin;
 
 	protected Date creationDate;
 
@@ -78,7 +70,7 @@ public class SharedSpaceMember {
 		super();
 	}
 
-	public SharedSpaceMember(GenericLightEntity node, GenericLightEntity role, GenericLightEntity account) {
+	public SharedSpaceMember(SharedSpaceNodeNested node, GenericLightEntity role, GenericLightEntity account) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
 		this.node = node;
@@ -86,8 +78,6 @@ public class SharedSpaceMember {
 		this.account = account;
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
-		this.admin = hasAdminRight();
-		this.canUpload = hasUploadRight();
 	}
 
 	@XmlTransient
@@ -123,11 +113,11 @@ public class SharedSpaceMember {
 		this.modificationDate = modificationDate;
 	}
 
-	public GenericLightEntity getNode() {
+	public SharedSpaceNodeNested getNode() {
 		return node;
 	}
 
-	public void setNode(GenericLightEntity node) {
+	public void setNode(SharedSpaceNodeNested node) {
 		this.node = node;
 	}
 
@@ -160,12 +150,23 @@ public class SharedSpaceMember {
 	 */
 	@XmlTransient
 	@JsonIgnore
+	public boolean getAdmin() {
+		return this.getRole().getName().equals("ADMIN");
+	}
+	
+	/**
+	 * Workaround to display roles in WorkgroupMemberDto.
+	 * 
+	 * @return
+	 */
+	@XmlTransient
+	@JsonIgnore
 	public boolean hasAdminRight() {
 		return this.getRole().getName().equals("ADMIN");
 	}
 
 	/**
-	 * Workaround to display roles in email notifications. DO NOT USE IT
+	 * Workaround to display roles in WorkgroupMemberDto
 	 * 
 	 * @return
 	 */
@@ -178,6 +179,15 @@ public class SharedSpaceMember {
 	/**
 	 * Workaround to display roles in email notifications. DO NOT USE IT
 	 * 
+	 * @return
+	 */
+	@XmlTransient
+	@JsonIgnore
+	public boolean getCanUpload() {
+		return this.getRole().getName().equals("READER");
+	}
+	/**
+	 * Workaround to display roles in WorkgroupMemberDto
 	 * @return
 	 */
 	@XmlTransient

@@ -55,6 +55,7 @@ import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.slf4j.Logger;
@@ -97,6 +98,8 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 	private User jane;
 
 	private GenericLightEntity lightNodePersisted;
+	
+	private SharedSpaceNode node;
 
 	private LoadingServiceTestDatas datas;
 
@@ -128,14 +131,14 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 		adminRole = roleBusinessService.findByName("ADMIN");
 		lightAdminRoleToPersist = new GenericLightEntity(adminRole.getUuid(), adminRole.getName());
 		Validate.notNull(adminRole, "adminRole must be set");
-		SharedSpaceNode node0 = new SharedSpaceNode("nodeTest", "parentuuidTest", NodeType.DRIVE);
-		nodeBusinessService.create(node0);
-		lightNodePersisted = new GenericLightEntity(node0.getUuid(), node0.getUuid());
+		node = new SharedSpaceNode("nodeTest", "parentuuidTest", NodeType.DRIVE);
+		nodeBusinessService.create(node);
+		lightNodePersisted = new GenericLightEntity(node.getUuid(), node.getUuid());
 		SharedSpaceAccount account = new SharedSpaceAccount(jane);
 		lightJaneAccount = new GenericLightEntity(account.getUuid(), account.getName());
 		//John is considered as the admin-creator of the shared space node
 		GenericLightEntity johnLightAccount = new GenericLightEntity(john.getLsUuid(), john.getFullName());
-		SharedSpaceMember johnMemberShip = service.createWithoutCheckPermission(john, john, lightNodePersisted,
+		SharedSpaceMember johnMemberShip = service.createWithoutCheckPermission(john, john, node,
 				lightAdminRoleToPersist, johnLightAccount);
 		Assert.assertNotNull("John has not been added as a member of his shared space", johnMemberShip);
 		logger.debug(LinShareTestConstants.END_SETUP);
@@ -148,7 +151,7 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 	}
 
 	public void testFind() {
-		SharedSpaceMember toCreate = service.create(john, john, lightNodePersisted, lightAdminRoleToPersist, lightJaneAccount);
+		SharedSpaceMember toCreate = service.create(john, john, node, lightAdminRoleToPersist, lightJaneAccount);
 		SharedSpaceMember tofound = service.find(john, john, toCreate.getUuid());
 		Assert.assertEquals(toCreate.getUuid(), tofound.getUuid());
 	}
@@ -157,18 +160,18 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 	public void testCreate() {
 		GenericLightEntity janeLightAccount = new GenericLightEntity(jane.getLsUuid(), jane.getFullName());
 		//John add Jane as an admin of the shared space node
-		SharedSpaceMember janeMembership = service.create(john, john, lightNodePersisted, lightAdminRoleToPersist,
+		SharedSpaceMember janeMembership = service.create(john, john, node, lightAdminRoleToPersist,
 				janeLightAccount);
 		Assert.assertNotNull("Jane has not been added as a member of John's shared space", janeMembership);
 	}
 
 	@Test
 	public void testAvoidDuplicatesMembers() {
-		SharedSpaceMember memberToCreate = service.create(john, john, lightNodePersisted, lightAdminRoleToPersist, lightJaneAccount);
+		SharedSpaceMember memberToCreate = service.create(john, john, node, lightAdminRoleToPersist, lightJaneAccount);
 		Assert.assertEquals("The account referenced in this member is not john's",
 				memberToCreate.getAccount().getUuid(), jane.getLsUuid());
 		try {
-			service.create(john, john, lightNodePersisted, lightAdminRoleToPersist, lightJaneAccount);
+			service.create(john, john, node, lightAdminRoleToPersist, lightJaneAccount);
 			Assert.assertTrue(
 					"An exception should be thrown to prevent the creation of a member with same accountuuid and nodeuuid",
 					false);
@@ -180,7 +183,7 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 
 	@Test
 	public void testDelete() {
-		SharedSpaceMember memberToCreate = service.create(john, john, lightNodePersisted, lightAdminRoleToPersist, lightJaneAccount);
+		SharedSpaceMember memberToCreate = service.create(john, john, node, lightAdminRoleToPersist, lightJaneAccount);
 		Assert.assertEquals("The account referenced in this member is not john's",
 				memberToCreate.getAccount().getUuid(), jane.getLsUuid());
 		SharedSpaceMember deletedMember = service.delete(john, john, memberToCreate);
@@ -196,7 +199,7 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 
 	@Test
 	public void testDeleteAll() {
-		service.create(john, john, lightNodePersisted, lightAdminRoleToPersist, lightJaneAccount);
+		service.create(john, john, node, lightAdminRoleToPersist, lightJaneAccount);
 		List<SharedSpaceMember> foundMembers = service.findAll(root, root, lightNodePersisted.getUuid());
 		Assert.assertTrue("No members have been created", foundMembers.size() > 0);
 		service.deleteAllMembers(john, john, lightNodePersisted.getUuid());
@@ -206,13 +209,12 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 
 	@Test
 	public void testUpdate() {
-		new SharedSpaceMember(lightNodePersisted, lightAdminRoleToPersist, lightJaneAccount);
-		SharedSpaceMember createdMember = service.create(john, john, lightNodePersisted, lightAdminRoleToPersist, lightJaneAccount);
+		SharedSpaceMember createdMember = service.create(john, john, node, lightAdminRoleToPersist, lightJaneAccount);
 		Assert.assertEquals("The account referenced in this member is not john's",
 				createdMember.getAccount().getUuid(), jane.getLsUuid());
 		GenericLightEntity newAccount = new GenericLightEntity(lightJaneAccount.getUuid(),
 				lightJaneAccount.getName() + "DIRTY");
-		SharedSpaceMember memberToUpdate = new SharedSpaceMember(lightNodePersisted, lightAdminRoleToPersist, newAccount);
+		SharedSpaceMember memberToUpdate = new SharedSpaceMember(new SharedSpaceNodeNested(node), lightAdminRoleToPersist, newAccount);
 		memberToUpdate.setUuid(createdMember.getUuid());
 		SharedSpaceMember updatedMember = service.update(john, john, memberToUpdate);
 		Assert.assertNotEquals("The member has not been updated", lightJaneAccount.getName(),
@@ -223,7 +225,7 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 
 	@Test
 	public void testUpdateRole() {
-		SharedSpaceMember createdMember = service.create(john, john, lightNodePersisted, lightAdminRoleToPersist, lightJaneAccount);
+		SharedSpaceMember createdMember = service.create(john, john, node, lightAdminRoleToPersist, lightJaneAccount);
 		Assert.assertEquals("The account referenced in this member is not john's",
 				createdMember.getAccount().getUuid(), jane.getLsUuid());
 		SharedSpaceRole newRole = roleBusinessService.findByName("CONTRIBUTOR");

@@ -98,14 +98,12 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 		Validate.notNull(foundUser, "Missing required user");
 		Validate.notNull(foundSharedSpaceRole, "Missing required role");
 		Validate.notNull(foundSharedSpaceNode, "Missing required node");
-		GenericLightEntity nodeToPersist = new GenericLightEntity(foundSharedSpaceNode.getUuid(),
-				foundSharedSpaceNode.getName());
 		GenericLightEntity roleToPersist = new GenericLightEntity(foundSharedSpaceRole.getUuid(),
 				foundSharedSpaceRole.getName());
 		SharedSpaceAccount sharedSpaceAccount = new SharedSpaceAccount(foundUser);
 		GenericLightEntity accountLight = new GenericLightEntity(sharedSpaceAccount.getUuid(),
 				sharedSpaceAccount.getName());
-		SharedSpaceMember toAddMember = sharedSpaceMemberService.create(authUser, actor, nodeToPersist, roleToPersist,
+		SharedSpaceMember toAddMember = sharedSpaceMemberService.create(authUser, actor, foundSharedSpaceNode, roleToPersist,
 				accountLight);
 		return toAddMember;
 	}

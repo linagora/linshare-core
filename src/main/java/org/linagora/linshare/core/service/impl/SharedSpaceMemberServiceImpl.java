@@ -52,6 +52,7 @@ import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
@@ -97,19 +98,19 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	}
 
 	@Override
-	public SharedSpaceMember create(Account authUser, Account actor, GenericLightEntity nodeToPersist,
+	public SharedSpaceMember create(Account authUser, Account actor, SharedSpaceNode node,
 			GenericLightEntity roleToPersist, GenericLightEntity accountLight) throws BusinessException {
 		preChecks(authUser, actor);
 		Validate.notNull(accountLight, "Account uuid must be set.");
 		Validate.notNull(roleToPersist, "Role uuid must be set.");
-		Validate.notNull(nodeToPersist, "Node uuid must be set.");
-		SharedSpaceMember member = new SharedSpaceMember(nodeToPersist, roleToPersist, accountLight);
+		Validate.notNull(node, "Node uuid must be set.");
+		SharedSpaceMember member = new SharedSpaceMember(new SharedSpaceNodeNested(node), roleToPersist, accountLight);
 		checkCreatePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
 				member);
-		if (!checkAccountNotInNode(accountLight.getUuid(), nodeToPersist.getUuid())) {
+		if (!checkAccountNotInNode(accountLight.getUuid(), node.getUuid())) {
 			String message = String.format(
 					"The account with the UUID : %s is already a member of the node with the uuid : %s",
-					accountLight.getUuid(), nodeToPersist.getUuid());
+					accountLight.getUuid(), node.getUuid());
 			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_ALREADY_EXISTS, message);
 		}
 		SharedSpaceMember toAdd = businessService.create(member);
@@ -120,18 +121,17 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	}
 
 	@Override
-	public SharedSpaceMember create(Account authUser, Account actor, User newMember, SharedSpaceNode sharedSpaceNode,
+	public SharedSpaceMember create(Account authUser, Account actor, User newMember, SharedSpaceNode node,
 			SharedSpaceRole role) throws BusinessException {
-		GenericLightEntity nodeToPersist = new GenericLightEntity(sharedSpaceNode.getUuid(), sharedSpaceNode.getName());
 		GenericLightEntity roleToPersist = new GenericLightEntity(role.getUuid(), role.getName());
 		GenericLightEntity accountLight = new GenericLightEntity(newMember.getLsUuid(), newMember.getFullName());
-		SharedSpaceMember member = new SharedSpaceMember(nodeToPersist, roleToPersist, accountLight);
+		SharedSpaceMember member = new SharedSpaceMember(new SharedSpaceNodeNested(node), roleToPersist, accountLight);
 		checkCreatePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
 				member);
-		if (!checkAccountNotInNode(newMember.getLsUuid(), sharedSpaceNode.getUuid())) {
+		if (!checkAccountNotInNode(newMember.getLsUuid(), node.getUuid())) {
 			String message = String.format(
 					"The account with the UUID : %s is already a member of the node with the uuid : %s",
-					newMember.getLsUuid(), sharedSpaceNode.getUuid());
+					newMember.getLsUuid(), node.getUuid());
 			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_ALREADY_EXISTS, message);
 		}
 		SharedSpaceMember toAdd = businessService.create(member);
@@ -146,13 +146,13 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 
 	@Override
 	public SharedSpaceMember createWithoutCheckPermission(Account authUser, Account actor,
-			GenericLightEntity nodeToPersist, GenericLightEntity roleToPersist, GenericLightEntity accountLight)
+			SharedSpaceNode node, GenericLightEntity roleToPersist, GenericLightEntity accountLight)
 			throws BusinessException {
 		preChecks(authUser, actor);
 		Validate.notNull(accountLight, "Account uuid must be set.");
 		Validate.notNull(roleToPersist, "Role uuid must be set.");
-		Validate.notNull(nodeToPersist, "Node uuid must be set.");
-		SharedSpaceMember member = new SharedSpaceMember(nodeToPersist, roleToPersist, accountLight);
+		Validate.notNull(node, "Node uuid must be set.");
+		SharedSpaceMember member = new SharedSpaceMember(new SharedSpaceNodeNested(node), roleToPersist, accountLight);
 		SharedSpaceMember toAdd = businessService.create(member);
 		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.CREATE,
 				AuditLogEntryType.SHARED_SPACE_MEMBER, toAdd);
@@ -273,7 +273,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	}
 
 	@Override
-	public List<SharedSpaceMember> findAllByAccount(Account authUser, Account actor, String accountUuid) {
+	public List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor, String accountUuid) {
 		preChecks(authUser, actor);
 		Validate.notEmpty(accountUuid, "accountUuid must be set.");
 		return businessService.findAllByAccount(accountUuid);

@@ -50,7 +50,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @XmlRootElement(name = "SharedSpaceNode")
 @Document(collection = "shared_space_nodes")
 public class SharedSpaceNode {
-
+	
 	@JsonIgnore
 	@Id
 	@GeneratedValue
@@ -84,6 +84,7 @@ public class SharedSpaceNode {
 	}
 
 	@XmlTransient
+	@JsonIgnore
 	public String getId() {
 		return id;
 	}
@@ -142,7 +143,7 @@ public class SharedSpaceNode {
 
 	@Override
 	public String toString() {
-		return "SharedSpaceNode [id=" + id + ", uuid=" + uuid + ", name=" + name + ", parentUuid=" + parentUuid
+		return "SharedSpaceNode [uuid=" + uuid + ", name=" + name + ", parentUuid=" + parentUuid
 				+ ", nodeType=" + nodeType + ", creationDate=" + creationDate + ", modificationDate=" + modificationDate
 				+ "]";
 	}

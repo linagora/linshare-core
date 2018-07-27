@@ -104,8 +104,7 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		// TODO Retrieve the role from the restService once the front will pass the info
 		SharedSpaceRole defaultRole = getDefaultRole(authUser, admin);
 		SharedSpaceNode foundSharedSpaceNode = sharedSpaceNodeService.find(authUser, authUser, dto.getThreadUuid());
-		SharedSpaceMember created = ssMemberService.create(authUser, authUser,
-				new GenericLightEntity(foundSharedSpaceNode.getUuid(), foundSharedSpaceNode.getName()),
+		SharedSpaceMember created = ssMemberService.create(authUser, authUser, foundSharedSpaceNode,
 				new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()),
 				new GenericLightEntity(user.getLsUuid(), user.getFullName()));
 		return new WorkGroupMemberDto(created, user);

@@ -38,6 +38,7 @@ import java.util.List;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
 public interface SharedSpaceMemberBusinessService {
@@ -66,8 +67,7 @@ public interface SharedSpaceMemberBusinessService {
 
 	List<SharedSpaceMember> findByMemberName(String name) throws BusinessException;
 
-	List<SharedSpaceMember> findAllByAccount(String accountUuid);
+	List<SharedSpaceNodeNested> findAllByAccount(String accountUuid);
 
-	void updateNestedNode(SharedSpaceNode node)
-			throws BusinessException;
+	void updateNestedNode(SharedSpaceNode node) throws BusinessException;
 }

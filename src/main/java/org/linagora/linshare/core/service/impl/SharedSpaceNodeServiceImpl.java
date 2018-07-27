@@ -50,6 +50,7 @@ import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.mongo.entities.logs.SharedSpaceNodeAuditLogEntry;
@@ -59,7 +60,7 @@ import com.google.common.collect.Lists;
 public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, SharedSpaceNode>
 		implements SharedSpaceNodeService {
 
-	private final SharedSpaceNodeBusinessService sharedSpaceNodeBusinessService;
+	private final SharedSpaceNodeBusinessService businessService;
 
 	private final SharedSpaceMemberBusinessService memberBusinessService;
 
@@ -69,13 +70,13 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 
 	private final LogEntryService logEntryService;
 
-	public SharedSpaceNodeServiceImpl(SharedSpaceNodeBusinessService sharedSpaceNodeBusinessService,
+	public SharedSpaceNodeServiceImpl(SharedSpaceNodeBusinessService businessService,
 			SharedSpaceNodeResourceAccessControl sharedSpaceNodeResourceAccessControl,
 			SharedSpaceMemberBusinessService memberBusinessService,
 			SharedSpaceMemberService sharedSpaceMemberService, SharedSpaceRoleService ssRoleService,
 			LogEntryService logEntryService) {
 		super(sharedSpaceNodeResourceAccessControl);
-		this.sharedSpaceNodeBusinessService = sharedSpaceNodeBusinessService;
+		this.businessService = businessService;
 		this.sharedSpaceMemberService = sharedSpaceMemberService;
 		this.ssRoleService = ssRoleService;
 		this.memberBusinessService = memberBusinessService;
@@ -86,7 +87,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	public SharedSpaceNode find(Account authUser, Account actor, String uuid) throws BusinessException {
 		preChecks(authUser, actor);
 		Validate.notEmpty(uuid, "Missing required shared space node uuid.");
-		SharedSpaceNode found = sharedSpaceNodeBusinessService.find(uuid);
+		SharedSpaceNode found = businessService.find(uuid);
 		if (found == null) {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_NOT_FOUND,
 					"The shared space node with uuid: " + uuid + " is not found");
@@ -101,13 +102,13 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		Validate.notNull(node, "Missing required input shared space node.");
 		Validate.notNull(node.getNodeType(), "you must set the node type");
 		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
-		SharedSpaceNode created = sharedSpaceNodeBusinessService.create(node);
+		SharedSpaceNode created = businessService.create(node);
 		SharedSpaceRole role = ssRoleService.getAdmin(authUser, actor);
 		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.CREATE,
 				AuditLogEntryType.SHARED_SPACE_NODE, created);
 		logEntryService.insert(log);
 		sharedSpaceMemberService.createWithoutCheckPermission(authUser, authUser,
-				new GenericLightEntity(node.getUuid(), node.getName()),
+				node,
 				new GenericLightEntity(role.getUuid(), role.getName()),
 				new GenericLightEntity(actor.getLsUuid(), actor.getFullName()));
 		return created;
@@ -121,7 +122,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		SharedSpaceNode foundedNodeTodel = find(authUser, actor, node.getUuid());
 		checkDeletePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN,
 				foundedNodeTodel);
-		sharedSpaceNodeBusinessService.delete(foundedNodeTodel);
+		businessService.delete(foundedNodeTodel);
 		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.DELETE,
 				AuditLogEntryType.SHARED_SPACE_NODE, foundedNodeTodel);
 		logEntryService.insert(log);
@@ -137,7 +138,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		SharedSpaceNode node = find(authUser, actor, nodeToUpdate.getUuid());
 		checkUpdatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN,
 				nodeToUpdate);
-		SharedSpaceNode updated = sharedSpaceNodeBusinessService.update(node, nodeToUpdate);
+		SharedSpaceNode updated = businessService.update(node, nodeToUpdate);
 		memberBusinessService.updateNestedNode(updated);
 		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.UPDATE,
 				AuditLogEntryType.SHARED_SPACE_NODE, node);
@@ -147,23 +148,17 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	}
 
 	@Override
-	public List<SharedSpaceNode> findAll(Account authUser) {
-		preChecks(authUser, authUser);
-		checkListPermission(authUser, authUser, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
-		return sharedSpaceNodeBusinessService.findAll();
+	public List<SharedSpaceNode> findAll(Account authUser, Account actor) {
+		preChecks(authUser, actor);
+		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
+		return businessService.findAll();
 	}
 
 	@Override
-	public List<SharedSpaceNode> findAllByAccount(Account authUser, Account actor) {
+	public List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor) {
 		preChecks(authUser, actor);
 		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
-		List<SharedSpaceMember> actorMemberShips = sharedSpaceMemberService.findAllByAccount(authUser, actor,
-				actor.getLsUuid());
-		List<SharedSpaceNode> actorNodes = Lists.newArrayList();
-		for (SharedSpaceMember sharedSpaceMember : actorMemberShips) {
-			actorNodes.add(find(authUser, actor, sharedSpaceMember.getNode().getUuid()));
-		}
-		return actorNodes;
+		return sharedSpaceMemberService.findAllByAccount(authUser, actor, actor.getLsUuid());
 	}
 
 	@Override
@@ -175,10 +170,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	public List <SharedSpaceNode> searchByName(Account authUser, Account actor, String name) throws BusinessException {
 		preChecks(authUser, actor);
 		Validate.notEmpty(name, "Missing required shared space node name.");
-		List<SharedSpaceNode> founds= sharedSpaceNodeBusinessService.searchByName(name);
-		if(founds.isEmpty()) {
-			findAll(authUser);
-		}
+		List<SharedSpaceNode> founds = businessService.searchByName(name);
 		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
 		return founds;
 	}

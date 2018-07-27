@@ -42,8 +42,12 @@ import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessServ
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 
 public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBusinessService {
 
@@ -97,12 +101,12 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 
 	@Override
 	public List<SharedSpaceMember> findBySharedSpaceNodeUuid(String shareSpaceNodeUuid) {
-		return repository.findByShareSpaceNodeUuid(shareSpaceNodeUuid);
+		return repository.findByNodeUuid(shareSpaceNodeUuid);
 	}
 
 	@Override
 	public List<String> findMembersUuidBySharedSpaceNodeUuid(String shareSpaceNodeUuid) {
-		List<SharedSpaceMember> members = repository.findByShareSpaceNodeUuid(shareSpaceNodeUuid);
+		List<SharedSpaceMember> members = repository.findByNodeUuid(shareSpaceNodeUuid);
 		Stream<GenericLightEntity> accounts = members.stream().map(SharedSpaceMember::getAccount);
 		return accounts.map(GenericLightEntity::getUuid).collect(Collectors.toList());
 	}
@@ -118,15 +122,23 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	}
 
 	@Override
-	public List<SharedSpaceMember> findAllByAccount(String accountUuid) {
-		return repository.findByAccountUuid(accountUuid);
+	public List<SharedSpaceNodeNested> findAllByAccount(String accountUuid) {
+		// Ugly ! :( We should use mongo template to get nested object.
+		List<SharedSpaceMember> list = repository.findByAccountUuid(accountUuid);
+		return Lists.transform(list, new Function<SharedSpaceMember, SharedSpaceNodeNested>() {
+			@Override
+			public SharedSpaceNodeNested apply(SharedSpaceMember member) {
+				return member.getNode();
+			}
+		});
 	}
 
 	@Override
 	public void updateNestedNode(SharedSpaceNode node) throws BusinessException {
-		List<SharedSpaceMember> members = repository.findByShareSpaceNodeUuid(node.getUuid());
+		List<SharedSpaceMember> members = repository.findByNodeUuid(node.getUuid());
 		for (SharedSpaceMember member : members) {
 			member.getNode().setName(node.getName());
+			member.getNode().setModificationDate(node.getModificationDate());
 		}
 		repository.save(members);
 	}

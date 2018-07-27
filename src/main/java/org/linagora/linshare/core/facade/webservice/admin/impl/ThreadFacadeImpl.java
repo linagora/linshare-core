@@ -88,27 +88,29 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements ThreadFa
 
 	@Override
 	public Set<WorkGroupDto> findAll(String pattern, String threadName, String memberName) throws BusinessException {
-		User authUser = super.checkAuthentication(Role.ADMIN);
+		User authUser = super.checkAuthentication(Role.SUPERADMIN);
 		Set<WorkGroup> workGroups = Sets.newHashSet();
 		Set<SharedSpaceNode> ssnodes = Sets.newHashSet();
-		if (pattern == null && threadName == null && memberName == null) {
-			ssnodes.addAll(ssNodeService.findAll(authUser));
-			workGroups.addAll(threadService.findAll(authUser, authUser));
+		if (pattern == null) {
+			ssnodes.addAll(ssNodeService.findAll(authUser, authUser));
+//			workGroups.addAll(threadService.findAll(authUser, authUser));
 		} else {
-			if (memberName != null) {
-				ssnodes.addAll(ssNodeService.findAllNodesBySSMember(authUser, memberName));
-				workGroups.addAll(threadService.searchByMembers(authUser, memberName));
-			}
-			if (threadName != null) {
-				ssnodes.addAll(ssNodeService.searchByName(authUser, authUser, threadName));
-				workGroups.addAll(threadService.searchByName(authUser, threadName));
-			}
-			if (pattern != null) {
-				ssnodes.addAll(ssNodeService.searchByName(authUser, authUser, pattern));
-				ssnodes.addAll(ssNodeService.findAllNodesBySSMember(authUser, pattern));
-				workGroups.addAll(threadService.searchByName(authUser, pattern));
-				workGroups.addAll(threadService.searchByMembers(authUser, pattern));
-			}
+			ssnodes.addAll(ssNodeService.searchByName(authUser, authUser, pattern));
+			
+//			if (memberName != null) {
+//				ssnodes.addAll(ssNodeService.findAllNodesBySSMember(authUser, memberName));
+////				workGroups.addAll(threadService.searchByMembers(authUser, memberName));
+//			}
+//			if (threadName != null) {
+//				ssnodes.addAll(ssNodeService.searchByName(authUser, authUser, threadName));
+//				workGroups.addAll(threadService.searchByName(authUser, threadName));
+//			}
+//			if (pattern != null) {
+//				ssnodes.addAll(ssNodeService.searchByName(authUser, authUser, pattern));
+//				ssnodes.addAll(ssNodeService.findAllNodesBySSMember(authUser, pattern));
+//				workGroups.addAll(threadService.searchByName(authUser, pattern));
+//				workGroups.addAll(threadService.searchByMembers(authUser, pattern));
+//			}
 		}
 		Set<WorkGroupDto> ret = Sets.newHashSet();
 		for (WorkGroup workGroup : workGroups) {

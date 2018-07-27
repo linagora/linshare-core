@@ -192,10 +192,10 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 	@Test
 	public void findAll() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		List<SharedSpaceNode> foundNodes = service.findAll(root);
+		List<SharedSpaceNode> foundNodes = service.findAll(root, root);
 		SharedSpaceNode node = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
 		service.create(authUser, authUser, node);
-		Assert.assertEquals(foundNodes.size() + 1, service.findAll(root).size());
+		Assert.assertEquals(foundNodes.size() + 1, service.findAll(root, root).size());
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 

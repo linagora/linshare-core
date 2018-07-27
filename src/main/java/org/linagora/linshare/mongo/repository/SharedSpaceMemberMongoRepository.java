@@ -47,13 +47,11 @@ public interface SharedSpaceMemberMongoRepository extends MongoRepository<Shared
 	@Query("{ 'account.uuid' : ?0, 'node.uuid' : ?1 }")
 	SharedSpaceMember findByAccountAndNode(String accountUuid, String nodeUuid);
 
-	@Query("{ 'node.uuid' : ?0 }")
-	List<SharedSpaceMember> findByShareSpaceNodeUuid(String shareSpaceNodeUuid);
+	List<SharedSpaceMember> findByNodeUuid(String shareSpaceNodeUuid);
 
 	@Query("{'account.name': {$regex : ?0, '$option':'i'}}")
 	List<SharedSpaceMember> findByMemberName(String memberName);
 
-	@Query("{'account.uuid': ?0}")
 	List<SharedSpaceMember> findByAccountUuid(String accountUuid);
 
 }

@@ -31,21 +31,47 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.mongo.entities.light;
+package org.linagora.linshare.mongo.entities;
 
-public class GenericLightEntity {
+import java.util.Date;
+
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+
+import org.linagora.linshare.core.domain.constants.NodeType;
+
+public class SharedSpaceNodeNested {
 
 	protected String uuid;
+
 	protected String name;
 
-	public GenericLightEntity() {
-		super();
-	}
+	@Enumerated(EnumType.STRING)
+	protected NodeType nodeType;
 
-	public GenericLightEntity(String uuid, String name) {
+	protected Date creationDate;
+
+	protected Date modificationDate;
+
+	public SharedSpaceNodeNested(String uuid, String name, NodeType nodeType, Date creationDate,
+			Date modificationDate) {
 		super();
 		this.uuid = uuid;
 		this.name = name;
+		this.nodeType = nodeType;
+		this.creationDate = creationDate;
+		this.modificationDate = modificationDate;
+	}
+
+	public SharedSpaceNodeNested() {
+	}
+
+	public SharedSpaceNodeNested(SharedSpaceNode node) {
+		this.uuid = node.getUuid();
+		this.name = node.getName();
+		this.nodeType = node.getNodeType();
+		this.creationDate = node.getCreationDate();
+		this.modificationDate = node.getModificationDate();
 	}
 
 	public String getUuid() {
@@ -64,9 +90,33 @@ public class GenericLightEntity {
 		this.name = name;
 	}
 
-	@Override
-	public String toString() {
-		return "GenericLightEntity [uuid=" + uuid + ", name=" + name + "]";
+	public NodeType getNodeType() {
+		return nodeType;
 	}
 
+	public void setNodeType(NodeType nodeType) {
+		this.nodeType = nodeType;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+	}
+
+	@Override
+	public String toString() {
+		return "SharedSpaceNodeNested [uuid=" + uuid + ", name=" + name + ", nodeType=" + nodeType + ", creationDate="
+				+ creationDate + ", modificationDate=" + modificationDate + "]";
+	}
 }
