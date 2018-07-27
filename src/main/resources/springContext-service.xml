@@ -131,6 +131,7 @@
 		<constructor-arg ref="uploadPropositionBusinessService" />
 		<constructor-arg ref="mimeTypeService" />
 		<constructor-arg ref="mailLayoutBusinessService" />
+		<constructor-arg ref="groupProviderService"/>
 	</bean>
 
 	<bean name="userAndDomainMultiService" class="org.linagora.linshare.core.service.impl.UserAndDomainMultiServiceImpl">

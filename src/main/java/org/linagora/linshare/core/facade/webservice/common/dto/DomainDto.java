@@ -44,6 +44,7 @@ import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.facade.webservice.admin.dto.DomainPolicyDto;
+import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPGroupProviderDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPUserProviderDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.WelcomeMessagesDto;
 
@@ -85,6 +86,9 @@ public class DomainDto {
 
 	@ApiModelProperty(value = "Providers")
 	private List<LDAPUserProviderDto> providers = new ArrayList<LDAPUserProviderDto>();
+
+	@ApiModelProperty(value = "groupProviders")
+	private List<LDAPGroupProviderDto> groupProviders = new ArrayList<LDAPGroupProviderDto>();
 
 	@ApiModelProperty(value = "Children")
 	private List<DomainDto> children = new ArrayList<DomainDto>();
@@ -135,6 +139,9 @@ public class DomainDto {
 			}
 			if (domain.getParentDomain() != null) {
 				this.parent = domain.getParentDomain().getUuid();
+			}
+			if (domain.getGroupProvider() != null) {
+				this.groupProviders.add(domain.getGroupProvider().toLDAPGroupProviderDto());
 			}
 		}
 	}
@@ -284,5 +291,13 @@ public class DomainDto {
 
 	public void setQuota(String quota) {
 		this.quota = quota;
+	}
+
+	public List<LDAPGroupProviderDto> getGroupProviders() {
+		return groupProviders;
+	}
+
+	public void setGroupProviders(List<LDAPGroupProviderDto> groupProviders) {
+		this.groupProviders = groupProviders;
 	}
 }

@@ -31,27 +31,21 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.service;
 
-import org.linagora.linshare.core.domain.constants.GroupProviderType;
-import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPGroupProviderDto;
+import org.linagora.linshare.core.domain.entities.GroupProvider;
+import org.linagora.linshare.core.domain.entities.LdapGroupProvider;
+import org.linagora.linshare.core.exception.BusinessException;
 
-public abstract class GroupProvider extends Provider {
+public interface GroupProviderService {
 
-	protected GroupProviderType type;
+	LdapGroupProvider find(String uuid) throws BusinessException;
 
-	public GroupProviderType getType() {
-		return type;
-	}
+	LdapGroupProvider create(LdapGroupProvider ldapGroupProvider) throws BusinessException;
 
-	public void setType(GroupProviderType type) {
-		this.type = type;
-	}
+	boolean exists(String uuid);
 
-	@Override
-	public String toString() {
-		return "GroupProvider [Type=" + type + ", uuid=" + uuid + "]";
-	}
+	LdapGroupProvider update(LdapGroupProvider groupProvider) throws BusinessException;
 
-	public abstract LDAPGroupProviderDto toLDAPGroupProviderDto();
+	void delete(GroupProvider groupProvider) throws BusinessException;
 }

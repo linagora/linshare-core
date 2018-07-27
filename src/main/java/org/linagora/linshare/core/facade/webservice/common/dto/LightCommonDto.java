@@ -31,27 +31,50 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.facade.webservice.common.dto;
 
-import org.linagora.linshare.core.domain.constants.GroupProviderType;
-import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPGroupProviderDto;
+import javax.xml.bind.annotation.XmlRootElement;
 
-public abstract class GroupProvider extends Provider {
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
-	protected GroupProviderType type;
+@XmlRootElement(name = "LightCommon")
+@ApiModel(value = "LightCommon", description = "")
+public class LightCommonDto {
 
-	public GroupProviderType getType() {
-		return type;
+	@ApiModelProperty(value = "Label")
+	private String label;
+
+	@ApiModelProperty(value = "Uuid")
+	private String uuid;
+
+	public LightCommonDto() {
 	}
 
-	public void setType(GroupProviderType type) {
-		this.type = type;
+	public LightCommonDto(String label, String uuid) {
+		super();
+		this.label = label;
+		this.uuid = uuid;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	@Override
 	public String toString() {
-		return "GroupProvider [Type=" + type + ", uuid=" + uuid + "]";
+		return "LightCommonDto [label=" + label + ", uuid=" + uuid + "]";
 	}
-
-	public abstract LDAPGroupProviderDto toLDAPGroupProviderDto();
 }

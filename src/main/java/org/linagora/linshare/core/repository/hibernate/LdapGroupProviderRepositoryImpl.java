@@ -31,27 +31,54 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.repository.hibernate;
 
-import org.linagora.linshare.core.domain.constants.GroupProviderType;
-import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPGroupProviderDto;
+import java.util.Date;
+import java.util.UUID;
 
-public abstract class GroupProvider extends Provider {
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
+import org.linagora.linshare.core.domain.entities.LdapGroupProvider;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.LdapGroupProviderRepository;
+import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.orm.hibernate5.HibernateTemplate;
 
-	protected GroupProviderType type;
+public class LdapGroupProviderRepositoryImpl extends AbstractRepositoryImpl<LdapGroupProvider> implements LdapGroupProviderRepository {
 
-	public GroupProviderType getType() {
-		return type;
-	}
-
-	public void setType(GroupProviderType type) {
-		this.type = type;
+	public LdapGroupProviderRepositoryImpl(HibernateTemplate hibernateTemplate) {
+		super(hibernateTemplate);
 	}
 
 	@Override
-	public String toString() {
-		return "GroupProvider [Type=" + type + ", uuid=" + uuid + "]";
+	public LdapGroupProvider create(LdapGroupProvider entity) throws BusinessException {
+		entity.setCreationDate(new Date());
+		entity.setModificationDate(new Date());
+		entity.setUuid(UUID.randomUUID().toString());
+		return super.create(entity);
 	}
 
-	public abstract LDAPGroupProviderDto toLDAPGroupProviderDto();
+	@Override
+	public LdapGroupProvider findByUuid(String uuid) {
+		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq("uuid", uuid)));
+	}
+
+	@Override
+	public boolean isUsed(GroupLdapPattern pattern) {
+		DetachedCriteria det = DetachedCriteria.forClass(LdapGroupProvider.class);
+		det.add(Restrictions.eq("groupPattern", pattern));
+		det.setProjection(Projections.rowCount());
+		long longResult = DataAccessUtils.longResult(findByCriteria(det));
+		return longResult > 0;
+	}
+
+	@Override
+	protected DetachedCriteria getNaturalKeyCriteria(LdapGroupProvider entity) {
+		DetachedCriteria det = DetachedCriteria.forClass(LdapGroupProvider.class)
+				.add(Restrictions.eq("id", entity.getId()));
+		return det;
+	}
+
 }

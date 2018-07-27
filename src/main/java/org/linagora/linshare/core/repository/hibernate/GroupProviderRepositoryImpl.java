@@ -31,27 +31,43 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.repository.hibernate;
 
-import org.linagora.linshare.core.domain.constants.GroupProviderType;
-import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPGroupProviderDto;
+import java.util.Date;
+import java.util.UUID;
 
-public abstract class GroupProvider extends Provider {
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.GroupProvider;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.GroupProviderRepository;
+import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.orm.hibernate5.HibernateTemplate;
 
-	protected GroupProviderType type;
+public class GroupProviderRepositoryImpl extends AbstractRepositoryImpl<GroupProvider>
+		implements GroupProviderRepository {
 
-	public GroupProviderType getType() {
-		return type;
-	}
-
-	public void setType(GroupProviderType type) {
-		this.type = type;
+	public GroupProviderRepositoryImpl(HibernateTemplate hibernateTemplate) {
+		super(hibernateTemplate);
 	}
 
 	@Override
-	public String toString() {
-		return "GroupProvider [Type=" + type + ", uuid=" + uuid + "]";
+	public GroupProvider create(GroupProvider entity) throws BusinessException {
+		entity.setCreationDate(new Date());
+		entity.setModificationDate(new Date());
+		entity.setUuid(UUID.randomUUID().toString());
+		return super.create(entity);
 	}
 
-	public abstract LDAPGroupProviderDto toLDAPGroupProviderDto();
+	@Override
+	public GroupProvider findByUuid(String uuid) {
+		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq("uuid", uuid)));
+	}
+
+	@Override
+	protected DetachedCriteria getNaturalKeyCriteria(GroupProvider entity) {
+		DetachedCriteria det = DetachedCriteria.forClass(GroupProvider.class)
+				.add(Restrictions.eq("id", entity.getId()));
+		return det;
+	}
 }

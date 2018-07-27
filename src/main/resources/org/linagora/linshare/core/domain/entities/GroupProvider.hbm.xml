@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<typedef
+		class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="groupProviderType">
+		<param name="enumClass">org.linagora.linshare.core.domain.constants.GroupProviderType</param>
+		<param name="identifierMethod">name</param>
+		<param name="valueOfMethod">fromString</param>
+	</typedef>
+	<class name="org.linagora.linshare.core.domain.entities.GroupProvider" table="group_provider" lazy="true">
+		<id name="id" column="id" type="long" unsaved-value="0">
+			<generator class="native">
+			</generator>
+		</id>
+		<discriminator column="provider_type" type="string"/>
+		<property name="type" column="provider_type" unique="true" type="groupProviderType" not-null="true" lazy="false" insert="false" update="false"/>
+		<property name="uuid" column="uuid" unique="true" type="string" length="255" not-null="true" lazy="false"/>
+		<property name="creationDate" column="creation_date" type="timestamp" not-null="true" lazy="false"/>
+		<property name="modificationDate" column="modification_date" type="timestamp" not-null="true" lazy="false"/>
+		<subclass name="org.linagora.linshare.core.domain.entities.LdapGroupProvider" discriminator-value="LDAP_PROVIDER" lazy="true">
+			<property name="baseDn" column="base_dn" type="string" length="255" not-null="false" lazy="true" />
+			<many-to-one name="ldapConnection" column="ldap_connection_id" class="org.linagora.linshare.core.domain.entities.LdapConnection" not-null="true" lazy="proxy" >
+			</many-to-one>
+			<many-to-one name="groupPattern" column="ldap_pattern_id" class="org.linagora.linshare.core.domain.entities.GroupLdapPattern" not-null="true" lazy="proxy"  >
+			</many-to-one>
+			<property name="automaticUserCreation" column="automatic_user_creation" type="boolean" not-null="false" lazy="true" />
+			<property name="forceCreation" column="force_creation" type="boolean" not-null="false" lazy="true" />
+		</subclass>
+	</class>
+</hibernate-mapping>

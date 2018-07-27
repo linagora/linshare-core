@@ -32,6 +32,8 @@
 		<constructor-arg ref="domainPolicyService" />
 		<constructor-arg ref="welcomeMessagesService" />
 		<constructor-arg ref="quotaService" />
+		<constructor-arg ref="groupProviderService"/>
+		<constructor-arg ref="groupLdapPatternService"/>
 	</bean>
 	<bean id="wsAdminDomainPolicyFacade"
 		class="org.linagora.linshare.core.facade.webservice.admin.impl.DomainPolicyFacadeImpl">

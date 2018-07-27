@@ -123,5 +123,12 @@
 	<bean name="groupLdapPatternService"
 		class="org.linagora.linshare.core.service.impl.GroupLdapPatternServiceImpl">
 		<constructor-arg ref="groupPatternRepository" />
+		<constructor-arg ref="ldapGroupProviderRepository" />
+	</bean>
+
+	<bean name="groupProviderService"
+		class="org.linagora.linshare.core.service.impl.GroupProviderServiceImpl">
+		<constructor-arg ref="groupProviderRepository" />
+		<constructor-arg ref="ldapGroupProviderRepository" />
 	</bean>
 </beans>

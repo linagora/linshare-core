@@ -31,43 +31,75 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.facade.webservice.admin.dto;
 
-import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPGroupProviderDto;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.linagora.linshare.core.domain.entities.LdapGroupProvider;
 import org.linagora.linshare.core.facade.webservice.common.dto.LightCommonDto;
 
-public class LdapGroupProvider extends GroupProvider {
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
-	protected GroupLdapPattern groupPattern;
+@XmlRootElement(name = "LDAPGroupProvider")
+@ApiModel(value = "LDAPGroupProvider", description = "Used to provide groups from an LDAP directory")
+public class LDAPGroupProviderDto {
 
-	protected String baseDn;
+	@ApiModelProperty(value = "uuid")
+	private String uuid;
 
-	protected LdapConnection ldapConnection;
+	@ApiModelProperty(value = "LdapConnectionLight")
+	private LightCommonDto ldapConnectionLight;
 
-	protected Boolean automaticUserCreation;
+	@ApiModelProperty(value = "GroupLdapPatternLight")
+	private LightCommonDto groupLdapPatternLight;
 
-	protected Boolean forceCreation;
+	@ApiModelProperty(value = "BaseDn")
+	private String baseDn = "";
 
-	public LdapGroupProvider() {
+	@ApiModelProperty(value = "AutomaticUserCreation")
+	private Boolean AutomaticUserCreation;
+
+	@ApiModelProperty(value = "ForceCreation")
+	private Boolean forceCreation;
+
+	public LDAPGroupProviderDto() {
 		super();
 	}
 
-	public LdapGroupProvider(GroupLdapPattern groupPattern, String baseDn, LdapConnection ldapConnection,
-			Boolean automaticUserCreation, Boolean forceCreation) {
-		super();
-		this.groupPattern = groupPattern;
-		this.baseDn = baseDn;
-		this.ldapConnection = ldapConnection;
-		this.automaticUserCreation = automaticUserCreation;
-		this.forceCreation = forceCreation;
+	public LDAPGroupProviderDto(LdapGroupProvider groupProvider) {
+		this.uuid = groupProvider.getUuid();
+		this.ldapConnectionLight = new LightCommonDto(groupProvider.getLdapConnection().getLabel(),
+				groupProvider.getLdapConnection().getUuid());
+		this.groupLdapPatternLight = new LightCommonDto(groupProvider.getGroupPattern().getLabel(),
+				groupProvider.getGroupPattern().getUuid());
+		this.baseDn = groupProvider.getBaseDn();
+		this.AutomaticUserCreation = groupProvider.getAutomaticUserCreation();
+		this.forceCreation = groupProvider.getForceCreation();
 	}
 
-	public GroupLdapPattern getGroupPattern() {
-		return groupPattern;
+	public String getUuid() {
+		return uuid;
 	}
 
-	public void setGroupPattern(GroupLdapPattern groupPattern) {
-		this.groupPattern = groupPattern;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public LightCommonDto getLdapConnectionLight() {
+		return ldapConnectionLight;
+	}
+
+	public void setLdapConnectionLight(LightCommonDto ldapConnectionLight) {
+		this.ldapConnectionLight = ldapConnectionLight;
+	}
+
+	public LightCommonDto getGroupLdapPatternLight() {
+		return groupLdapPatternLight;
+	}
+
+	public void setGroupLdapPatternLight(LightCommonDto groupLdapPatternLight) {
+		this.groupLdapPatternLight = groupLdapPatternLight;
 	}
 
 	public String getBaseDn() {
@@ -78,20 +110,12 @@ public class LdapGroupProvider extends GroupProvider {
 		this.baseDn = baseDn;
 	}
 
-	public LdapConnection getLdapConnection() {
-		return ldapConnection;
-	}
-
-	public void setLdapConnection(LdapConnection ldapConnection) {
-		this.ldapConnection = ldapConnection;
-	}
-
 	public Boolean getAutomaticUserCreation() {
-		return automaticUserCreation;
+		return AutomaticUserCreation;
 	}
 
 	public void setAutomaticUserCreation(Boolean automaticUserCreation) {
-		this.automaticUserCreation = automaticUserCreation;
+		AutomaticUserCreation = automaticUserCreation;
 	}
 
 	public Boolean getForceCreation() {
@@ -102,17 +126,4 @@ public class LdapGroupProvider extends GroupProvider {
 		this.forceCreation = forceCreation;
 	}
 
-	@Override
-	public LDAPGroupProviderDto toLDAPGroupProviderDto() {
-		LDAPGroupProviderDto groupProvider = new LDAPGroupProviderDto();
-		groupProvider.setUuid(uuid);
-		groupProvider.setBaseDn(baseDn);
-		groupProvider.setGroupLdapPatternLight(
-				new LightCommonDto(this.groupPattern.getLabel(), this.groupPattern.getUuid()));
-		groupProvider.setLdapConnectionLight(
-				new LightCommonDto(this.ldapConnection.getLabel(), this.ldapConnection.getUuid()));
-		groupProvider.setAutomaticUserCreation(this.automaticUserCreation);
-		groupProvider.setForceCreation(this.forceCreation);
-		return groupProvider;
-	}
 }

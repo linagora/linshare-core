@@ -109,6 +109,10 @@
 		<many-to-one name="userProvider" column="user_provider_id" class="org.linagora.linshare.core.domain.entities.UserProvider"
 			unique="true" not-null="false" lazy="proxy">
 		</many-to-one>
+
+		<many-to-one name="groupProvider" column="group_provider_id" class="org.linagora.linshare.core.domain.entities.GroupProvider"
+			unique="true" not-null="false" lazy="proxy">
+		</many-to-one>
 		<!-- 
 		<many-to-one name="userProvider" class="org.linagora.linshare.core.domain.entities.LdapUserProvider" 
 			column="user_provider_id" unique="true" lazy="proxy" cascade="delete" />

@@ -295,4 +295,10 @@
 	<bean name="groupPatternRepository" class="org.linagora.linshare.core.repository.hibernate.GroupPatternRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
+	<bean name="groupProviderRepository" class="org.linagora.linshare.core.repository.hibernate.GroupProviderRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+	<bean name="ldapGroupProviderRepository" class="org.linagora.linshare.core.repository.hibernate.LdapGroupProviderRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
 </beans>

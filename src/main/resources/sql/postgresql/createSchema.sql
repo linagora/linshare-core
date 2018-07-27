@@ -101,6 +101,7 @@ CREATE TABLE domain_abstract (
   mime_policy_id      int8,
   mailconfig_id       int8,
   user_provider_id    int8,
+  group_provider_id   int8,
   welcome_messages_id int8,
   purge_step          varchar(255) DEFAULT 'IN_USE' NOT NULL,
   CONSTRAINT linshare_domain_abstract_pkey
@@ -645,6 +646,18 @@ CREATE TABLE user_provider (
   ldap_connection_id int8 NOT NULL,
   ldap_pattern_id    int8 NOT NULL,
   PRIMARY KEY (id));
+CREATE TABLE group_provider (
+  id                  int8 NOT NULL,
+  uuid               varchar(255) NOT NULL UNIQUE,
+  provider_type      varchar(255) NOT NULL,
+  base_dn            varchar(255),
+  creation_date      timestamp NOT NULL,
+  modification_date  timestamp NOT NULL,
+  ldap_connection_id int8 NOT NULL,
+  ldap_pattern_id    int8 NOT NULL,
+  automatic_user_creation bool DEFAULT 'false',
+  force_creation bool DEFAULT 'false',
+  PRIMARY KEY (id));
 CREATE TABLE ldap_pattern (
   id                                            int8 NOT NULL,
   uuid                                         varchar(255) NOT NULL UNIQUE,
@@ -994,6 +1007,7 @@ ALTER TABLE functionality_boolean ADD CONSTRAINT FKfunctional171577 FOREIGN KEY 
 ALTER TABLE contact_provider ADD CONSTRAINT FKcontact_pr166740 FOREIGN KEY (ldap_connection_id) REFERENCES ldap_connection (id);
 ALTER TABLE contact_provider ADD CONSTRAINT FKcontact_pr806790 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs163989 FOREIGN KEY (user_provider_id) REFERENCES user_provider (id);
+ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs253989 FOREIGN KEY (group_provider_id) REFERENCES group_provider (id);
 ALTER TABLE user_provider ADD CONSTRAINT FKuser_provi1640 FOREIGN KEY (ldap_connection_id) REFERENCES ldap_connection (id);
 ALTER TABLE contact_provider ADD CONSTRAINT FKcontact_pr355176 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
 ALTER TABLE ldap_attribute ADD CONSTRAINT FKldap_attri49928 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
@@ -1026,3 +1040,5 @@ ALTER TABLE mail_content_lang ADD CONSTRAINT FKmail_conte910199 FOREIGN KEY (mai
 ALTER TABLE mail_config ADD CONSTRAINT FKmail_confi688067 FOREIGN KEY (mail_layout_id) REFERENCES mail_layout (id);
 ALTER TABLE async_task ADD CONSTRAINT FKasync_task970702 FOREIGN KEY (upgrade_task_id) REFERENCES upgrade_task (id);
 ALTER TABLE thumbnail ADD CONSTRAINT FKthumbnail35163 FOREIGN KEY (document_id) REFERENCES document (id);
+ALTER TABLE group_provider ADD CONSTRAINT FKgroup_provi815203 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
+ALTER TABLE group_provider ADD CONSTRAINT FKgroup_provi1640 FOREIGN KEY (ldap_connection_id) REFERENCES ldap_connection (id);

@@ -31,27 +31,11 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.repository;
 
-import org.linagora.linshare.core.domain.constants.GroupProviderType;
-import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPGroupProviderDto;
+import org.linagora.linshare.core.domain.entities.GroupProvider;
 
-public abstract class GroupProvider extends Provider {
+public interface GroupProviderRepository extends AbstractRepository<GroupProvider> {
 
-	protected GroupProviderType type;
-
-	public GroupProviderType getType() {
-		return type;
-	}
-
-	public void setType(GroupProviderType type) {
-		this.type = type;
-	}
-
-	@Override
-	public String toString() {
-		return "GroupProvider [Type=" + type + ", uuid=" + uuid + "]";
-	}
-
-	public abstract LDAPGroupProviderDto toLDAPGroupProviderDto();
+	GroupProvider findByUuid(String uuid);
 }

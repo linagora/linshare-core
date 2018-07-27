@@ -108,6 +108,8 @@ public abstract class AbstractDomain {
 
 	protected Set<ContactProvider> contactProvider;
 
+	protected GroupProvider groupProvider;
+
 	protected WelcomeMessages currentWelcomeMessage;
 
 	protected Set<WelcomeMessages> welcomeMessages;
@@ -495,5 +497,13 @@ public abstract class AbstractDomain {
 
 	public void setWelcomeMessages(Set<WelcomeMessages> customisations) {
 		this.welcomeMessages = customisations;
+	}
+
+	public GroupProvider getGroupProvider() {
+		return groupProvider;
+	}
+
+	public void setGroupProvider(GroupProvider groupProvider) {
+		this.groupProvider = groupProvider;
 	}
 }

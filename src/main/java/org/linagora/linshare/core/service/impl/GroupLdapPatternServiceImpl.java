@@ -43,15 +43,19 @@ import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.GroupPatternRepository;
+import org.linagora.linshare.core.repository.LdapGroupProviderRepository;
 import org.linagora.linshare.core.service.GroupLdapPatternService;
 
 public class GroupLdapPatternServiceImpl extends GenericAdminServiceImpl implements GroupLdapPatternService {
 
 	protected GroupPatternRepository groupPatternRepository;
 
-	public GroupLdapPatternServiceImpl(
-			GroupPatternRepository groupPatternRepository) {
+	protected LdapGroupProviderRepository ldapGroupProviderRepository;
+
+	public GroupLdapPatternServiceImpl(GroupPatternRepository groupPatternRepository,
+			LdapGroupProviderRepository ldapGroupProviderRepository) {
 		this.groupPatternRepository = groupPatternRepository;
+		this.ldapGroupProviderRepository = ldapGroupProviderRepository;
 	}
 
 	@Override
@@ -137,7 +141,11 @@ public class GroupLdapPatternServiceImpl extends GenericAdminServiceImpl impleme
 			throws BusinessException {
 		Validate.notNull(groupLdapPattern, "GroupLdapPattern must be set");
 		GroupLdapPattern pattern = find(uuid);
-		// TODO check if is used before deleting it (GroupProvider)
+		if (ldapGroupProviderRepository.isUsed(pattern)) {
+			throw new BusinessException(
+					BusinessErrorCode.DOMAIN_PATTERN_STILL_IN_USE,
+					"Cannot delete this pattern because is still used by domains");
+		}
 		groupPatternRepository.delete(pattern);
 		return groupLdapPattern;
 	}

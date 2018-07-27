@@ -61,6 +61,7 @@ import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
 import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.GroupProvider;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MimePolicy;
@@ -78,6 +79,7 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.core.service.GroupProviderService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MimeTypeService;
 import org.linagora.linshare.core.service.UserProviderService;
@@ -117,6 +119,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	private final UploadPropositionBusinessService uploadPropositionBusinessService;
 	private final MimeTypeService mimeTypeService;
 	private final MailLayoutBusinessService mailLayoutBusinessService;
+	private final GroupProviderService groupProviderService;
 
 	public AbstractDomainServiceImpl(
 			final AbstractDomainRepository abstractDomainRepository,
@@ -140,7 +143,8 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			final UploadPropositionFilterBusinessService  uploadPropositionFilterBusinessService,
 			final UploadPropositionBusinessService uploadPropositionBusinessService,
 			final MimeTypeService mimeTypeService,
-			final MailLayoutBusinessService mailLayoutBusinessService) {
+			final MailLayoutBusinessService mailLayoutBusinessService,
+			final GroupProviderService groupProviderService) {
 		super();
 		this.abstractDomainRepository = abstractDomainRepository;
 		this.domainPolicyService = domainPolicyService;
@@ -164,7 +168,8 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		this.uploadPropositionBusinessService = uploadPropositionBusinessService;
 		this.mimeTypeService = mimeTypeService;
 		this.mailLayoutBusinessService = mailLayoutBusinessService;
-		}
+		this.groupProviderService = groupProviderService;
+	}
 
 	@Override
 	public AbstractDomain getUniqueRootDomain() throws BusinessException {
@@ -400,6 +405,16 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 					userProviderService.delete(currentProvider );
 					return update;
 				}
+			}
+			if (entity.getGroupProvider() == null) {
+				entity.setGroupProvider(domain.getGroupProvider());
+				return abstractDomainRepository.update(entity);
+			} else if (domain.getGroupProvider() == null) {
+				GroupProvider currentProvider = entity.getGroupProvider();
+				entity.setGroupProvider(null);
+				AbstractDomain update = abstractDomainRepository.update(entity);
+				groupProviderService.delete(currentProvider);
+				return update;
 			}
 		}
 		entity = abstractDomainRepository.update(entity);
@@ -885,6 +900,10 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 				if (domain.getUserProvider() != null) {
 					userProviderService.delete(domain.getUserProvider());
 					domain.setUserProvider(null);
+				}
+				if (domain.getGroupProvider() != null) {
+					groupProviderService.delete(domain.getGroupProvider());
+					domain.setGroupProvider(null);
 				}
 				if (domain.getWelcomeMessages() != null) {
 					domain.getWelcomeMessages().forEach(wm -> welcomeMessagesBusinessService.delete(wm));

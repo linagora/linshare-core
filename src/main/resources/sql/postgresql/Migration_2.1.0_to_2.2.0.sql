@@ -229,15 +229,35 @@ UPDATE upload_request_entry
 ALTER TABLE upload_request_entry ALTER COLUMN document_id SET NOT NULL;
 ALTER TABLE upload_request_entry ALTER COLUMN ls_type SET NOT NULL;
 
--- Update ldapt_pattern
+-- Update ldap_pattern
 ALTER TABLE ldap_pattern ADD COLUMN search_all_groups_query text;
 ALTER TABLE ldap_pattern ADD COLUMN search_group_query text;
 ALTER TABLE ldap_pattern ADD COLUMN find_member_query text;
 ALTER TABLE ldap_pattern ADD COLUMN group_prefix varchar(255);
 
-
 -- Upgrade Task
--- TASK: UPGRADE_2_2_MIGRATE_HISTORY_TO_MONGO_AUDIT;
+-- Update domain_abstract
+ALTER TABLE domain_abstract ADD COLUMN group_provider_id int8;
+ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs253989 FOREIGN KEY (group_provider_id) REFERENCES group_provider (id);
+
+-- New table  group_provider
+CREATE TABLE group_provider (
+  id                  int8 NOT NULL,
+  uuid               varchar(255) NOT NULL UNIQUE,
+  provider_type      varchar(255) NOT NULL,
+  base_dn            varchar(255),
+  creation_date      timestamp NOT NULL,
+  modification_date  timestamp NOT NULL,
+  ldap_connection_id int8 NOT NULL,
+  ldap_pattern_id    int8 NOT NULL,
+  automatic_user_creation bool DEFAULT 'false',
+  force_creation bool DEFAULT 'false',
+  PRIMARY KEY (id));
+
+ALTER TABLE group_provider ADD CONSTRAINT FKgroup_provi815203 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
+ALTER TABLE group_provider ADD CONSTRAINT FKgroup_provi1640 FOREIGN KEY (ldap_connection_id) REFERENCES ldap_connection (id);
+
+  -- TASK: UPGRADE_2_2_MIGRATE_HISTORY_TO_MONGO_AUDIT;
 INSERT INTO upgrade_task
   (id,
   uuid,

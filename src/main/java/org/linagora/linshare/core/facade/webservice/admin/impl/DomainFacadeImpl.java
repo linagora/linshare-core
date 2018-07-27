@@ -42,8 +42,10 @@ import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
+import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
+import org.linagora.linshare.core.domain.entities.LdapGroupProvider;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.MimePolicy;
@@ -55,11 +57,15 @@ import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.DomainFacade;
+import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPGroupProviderDto;
 import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPUserProviderDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.DomainDto;
+import org.linagora.linshare.core.facade.webservice.common.dto.LightCommonDto;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DomainPolicyService;
+import org.linagora.linshare.core.service.GroupLdapPatternService;
+import org.linagora.linshare.core.service.GroupProviderService;
 import org.linagora.linshare.core.service.LdapConnectionService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UserProviderService;
@@ -82,13 +88,19 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 
 	private final WelcomeMessagesService welcomeMessagesService;
 
+	private final GroupProviderService groupProviderService;
+
+	private final GroupLdapPatternService groupLdapPatternService;
+
 	public DomainFacadeImpl(final AccountService accountService,
 			final AbstractDomainService abstractDomainService,
 			final UserProviderService userProviderService,
 			final DomainPolicyService domainPolicyService,
 			final WelcomeMessagesService welcomeMessagesService,
 			final LdapConnectionService ldapConnectionService,
-			final QuotaService quotaService) {
+			final QuotaService quotaService,
+			final GroupProviderService groupProviderService,
+			final GroupLdapPatternService groupLdapPatternService) {
 		super(accountService);
 		this.abstractDomainService = abstractDomainService;
 		this.userProviderService = userProviderService;
@@ -96,6 +108,8 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		this.welcomeMessagesService = welcomeMessagesService;
 		this.quotaService = quotaService;
 		this.ldapConnectionService = ldapConnectionService;
+		this.groupProviderService = groupProviderService;
+		this.groupLdapPatternService = groupLdapPatternService;
 	}
 
 	@Override
@@ -169,11 +183,15 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		switch (domain.getDomainType()) {
 		case TOPDOMAIN:
 			LdapUserProvider ldapUserProvider = createLdapUserProviderIfNeeded(domainDto);
+			LdapGroupProvider ldapGroupProvider = createLdapGroupProviderIfNeeded(domainDto);
 			domain.setUserProvider(ldapUserProvider);
+			domain.setGroupProvider(ldapGroupProvider);
 			return DomainDto.getFull(abstractDomainService.createTopDomain(authUser, (TopDomain) domain));
 		case SUBDOMAIN:
 			LdapUserProvider ldapUserProvider2 = createLdapUserProviderIfNeeded(domainDto);
 			domain.setUserProvider(ldapUserProvider2);
+			LdapGroupProvider ldapGroupProvider2 = createLdapGroupProviderIfNeeded(domainDto);
+			domain.setGroupProvider(ldapGroupProvider2);
 			return DomainDto.getFull(abstractDomainService.createSubDomain(authUser, (SubDomain) domain));
 		case GUESTDOMAIN:
 			return DomainDto.getFull(abstractDomainService.createGuestDomain(authUser, (GuestDomain) domain));
@@ -229,6 +247,29 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		return ldapUserProvider;
 	}
 
+	private LdapGroupProvider createLdapGroupProviderIfNeeded(DomainDto domainDto) {
+		LdapGroupProvider ldapGroupProvider = null;
+		List<LDAPGroupProviderDto> providers = domainDto.getGroupProviders();
+		if (providers != null && !providers.isEmpty()) {
+			LDAPGroupProviderDto groupProviderDto = providers.get(0);
+			LightCommonDto groupPatternLight = groupProviderDto.getGroupLdapPatternLight();
+			LightCommonDto ldapConnectionLight = groupProviderDto.getLdapConnectionLight();
+			String baseDn = groupProviderDto.getBaseDn();
+			Boolean automaticUserCreation = groupProviderDto.getAutomaticUserCreation();
+			Boolean forceCreation = groupProviderDto.getForceCreation();
+			Validate.notNull(groupPatternLight, "groupPatternLight is mandatory for group provider creation");
+			Validate.notNull(ldapConnectionLight, "ldapConnectionLight is mandatory for group provider creation");
+			Validate.notEmpty(groupPatternLight.getUuid(), "group pattern uuid is mandatory for group provider creation");
+			Validate.notEmpty(ldapConnectionLight.getUuid(), "ldap connection Uuid is mandatory for group provider creation");
+			Validate.notEmpty(baseDn, "baseDn is mandatory for group provider creation");
+			LdapConnection ldapConnection = ldapConnectionService.find(ldapConnectionLight.getUuid());
+			GroupLdapPattern pattern = groupLdapPatternService.find(groupPatternLight.getUuid());
+			ldapGroupProvider = groupProviderService.create(
+					new LdapGroupProvider(pattern, baseDn, ldapConnection, automaticUserCreation, forceCreation));
+		}
+		return ldapGroupProvider;
+	}
+
 	@Override
 	public DomainDto update(DomainDto domainDto) throws BusinessException {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
@@ -237,7 +278,40 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		AbstractDomain domain = getDomain(domainDto);
 		LdapUserProvider ldapUserProvider = updateLdapUserProvider(domainDto);
 		domain.setUserProvider(ldapUserProvider);
+		LdapGroupProvider ldapGroupProvider = updateLdapGroupProvider(domainDto);
+		domain.setGroupProvider(ldapGroupProvider);
 		return DomainDto.getFull(abstractDomainService.updateDomain(authUser, domain));
+	}
+
+	private LdapGroupProvider updateLdapGroupProvider(DomainDto domainDto) {
+		LdapGroupProvider ldapGroupProvider = null;
+		List<LDAPGroupProviderDto> providers = domainDto.getGroupProviders();
+		if (providers != null && !providers.isEmpty()) {
+			LDAPGroupProviderDto groupProviderDto = providers.get(0);
+			LightCommonDto groupPatternLight = groupProviderDto.getGroupLdapPatternLight();
+			LightCommonDto ldapConnectionLight = groupProviderDto.getLdapConnectionLight();
+			String baseDn = groupProviderDto.getBaseDn();
+			Boolean automaticUserCreation = groupProviderDto.getAutomaticUserCreation();
+			Boolean forceCreation = groupProviderDto.getForceCreation();
+			Validate.notNull(groupPatternLight, "groupPatternLight is mandatory for group provider creation");
+			Validate.notNull(ldapConnectionLight, "ldapConnectionLight is mandatory for group provider creation");
+			Validate.notEmpty(groupPatternLight.getUuid(), "group pattern uuid is mandatory for group provider creation");
+			Validate.notEmpty(ldapConnectionLight.getUuid(), "ldap connection Uuid is mandatory for group provider creation");
+			Validate.notEmpty(baseDn, "baseDn is mandatory for group provider creation");
+			LdapConnection ldapConnection = ldapConnectionService.find(ldapConnectionLight.getUuid());
+			GroupLdapPattern pattern = groupLdapPatternService.find(groupPatternLight.getUuid());
+			if (groupProviderService.exists(groupProviderDto.getUuid())) {
+				LdapGroupProvider groupProvider = groupProviderService.find(groupProviderDto.getUuid());
+				groupProvider.setBaseDn(groupProviderDto.getBaseDn());
+				groupProvider.setLdapConnection(ldapConnection);
+				groupProvider.setGroupPattern(pattern);
+				ldapGroupProvider = groupProviderService.update(groupProvider);
+			} else {
+				ldapGroupProvider = groupProviderService.create(
+						new LdapGroupProvider(pattern, baseDn, ldapConnection, automaticUserCreation, forceCreation));
+			}
+		}
+		return ldapGroupProvider;
 	}
 
 	@Override
