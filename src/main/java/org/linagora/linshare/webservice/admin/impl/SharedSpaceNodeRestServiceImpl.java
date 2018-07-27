@@ -45,7 +45,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.SharedSpaceNodeFacade;
+import org.linagora.linshare.core.facade.webservice.user.SharedSpaceNodeFacade;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.webservice.admin.SharedSpaceNodeRestService;
 import com.wordnik.swagger.annotations.Api;
@@ -79,7 +79,7 @@ public class SharedSpaceNodeRestServiceImpl implements SharedSpaceNodeRestServic
 			@ApiParam(value = "shared space node's uuid.", required = true)
 				@PathParam("uuid") String uuid) 
 			throws BusinessException {
-		return ssNodeFacade.find(uuid);
+		return ssNodeFacade.find(null, uuid);
 	}
 
 	
@@ -96,7 +96,7 @@ public class SharedSpaceNodeRestServiceImpl implements SharedSpaceNodeRestServic
 			@ApiParam(value = "shared space node's uuid.", required = false)
 				@PathParam(value = "uuid") String uuid) 
 			throws BusinessException {
-		return ssNodeFacade.delete(node, uuid);
+		return ssNodeFacade.delete(null, node, uuid);
 	}
 	
 	@Path("/{uuid : .*}")
@@ -112,7 +112,7 @@ public class SharedSpaceNodeRestServiceImpl implements SharedSpaceNodeRestServic
 			@ApiParam("The shared space node.")
 				@PathParam("uuid") String uuid)
 			throws BusinessException {
-		return ssNodeFacade.update(node, uuid);
+		return ssNodeFacade.update(null, node, uuid);
 	}
 
 	@Path("/")

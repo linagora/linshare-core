@@ -43,7 +43,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.SharedSpacePermissionFacade;
+import org.linagora.linshare.core.facade.webservice.user.SharedSpacePermissionFacade;
 import org.linagora.linshare.mongo.entities.SharedSpacePermission;
 import org.linagora.linshare.webservice.admin.SharedSpacePermissionRestService;
 
@@ -79,7 +79,7 @@ public class SharedSpacePermissionRestServiceImpl implements SharedSpacePermissi
 			@ApiParam("The shared space permission uuid")
 				@PathParam("uuid")String uuid)
 			throws BusinessException {
-		return ssPermissionFacade.find(uuid);
+		return ssPermissionFacade.find(null, uuid);
 	}
 	
 	@Path("/")
@@ -91,7 +91,7 @@ public class SharedSpacePermissionRestServiceImpl implements SharedSpacePermissi
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public List<SharedSpacePermission> findAll() throws BusinessException {
-		return ssPermissionFacade.findAll();
+		return ssPermissionFacade.findAll(null);
 	}
 
 }

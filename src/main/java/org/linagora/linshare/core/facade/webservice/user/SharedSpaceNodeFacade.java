@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.core.facade.webservice.user;
 
+import java.util.List;
+
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 
@@ -45,5 +47,7 @@ public interface SharedSpaceNodeFacade {
 	SharedSpaceNode delete(String actorUuid, SharedSpaceNode node, String uuid) throws BusinessException;
 
 	SharedSpaceNode update(String actorUuid, SharedSpaceNode node, String uuid) throws BusinessException;
+
+	List<SharedSpaceNode> findAll();
 
 }

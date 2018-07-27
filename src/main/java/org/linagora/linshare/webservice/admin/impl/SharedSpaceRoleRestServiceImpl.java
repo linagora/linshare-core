@@ -43,7 +43,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.SharedSpaceRoleFacade;
+import org.linagora.linshare.core.facade.webservice.user.SharedSpaceRoleFacade;
 import org.linagora.linshare.mongo.entities.SharedSpacePermission;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.webservice.admin.SharedSpaceRoleRestService;
@@ -79,7 +79,7 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 			@ApiParam(value = "The shared space role uuid.")
 				@PathParam("uuid") String uuid)
 			throws BusinessException {
-		return ssRoleFacade.find(uuid);
+		return ssRoleFacade.find(null, uuid);
 	}
 
 	@Path("/")
@@ -91,7 +91,7 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public List<SharedSpaceRole> findAll() throws BusinessException {
-		return ssRoleFacade.findAll();
+		return ssRoleFacade.findAll(null);
 	}
 
 }
