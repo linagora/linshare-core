@@ -115,7 +115,7 @@ public class SharedSpaceRoleServiceImplTest extends AbstractTransactionalJUnit4S
 	@Test
 	public void findByUuidDefaultRoles() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		SharedSpaceRole toFindRole = service.find(authUser, authUser, "77a699fe-faca-46a5-97c0-1b46a0f5cd14");
+		SharedSpaceRole toFindRole = service.find(authUser, authUser, "234be74d-2966-41c1-9dee-e47c8c63c14e");
 		Assert.assertNotNull("Role has not been found.", toFindRole);
 		logger.info(LinShareTestConstants.END_TEST);
 	}

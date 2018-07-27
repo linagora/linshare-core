@@ -108,7 +108,7 @@ public class SharedSpacePermissionServiceImplTest extends AbstractTransactionalJ
 	public void testFind() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		SharedSpacePermission toFindPermission = service.findByUuid(authUser, authUser,
-				"77a699fe-faca-46a5-97c0-1b46a074dd05");
+				"31cb4d80-c939-40f1-a79e-4d77392e0e0b");
 		Assert.assertNotNull("Permission has not been found.", toFindPermission);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
