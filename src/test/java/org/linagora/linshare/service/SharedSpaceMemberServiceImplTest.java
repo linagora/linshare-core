@@ -174,7 +174,7 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 					false);
 		} catch (BusinessException e) {
 			Assert.assertEquals("The thrown error code is not the one of an already exist ShareSpaceMember",
-					BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN, e.getErrorCode());
+					BusinessErrorCode.SHARED_SPACE_MEMBER_ALREADY_EXISTS, e.getErrorCode());
 		}
 	}
 

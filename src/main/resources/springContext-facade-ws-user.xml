@@ -42,7 +42,6 @@
 		<constructor-arg ref="sharedSpaceRoleService" />
 	</bean>
 	<bean id="wsThreadMemberFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.ThreadMemberFacadeImpl">
-		<constructor-arg ref="threadService" />
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="sharedSpaceMemberService" />

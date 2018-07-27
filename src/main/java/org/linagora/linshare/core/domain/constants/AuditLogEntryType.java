@@ -64,7 +64,9 @@ public enum AuditLogEntryType {
 	RESET_PASSWORD,
 	SAFE_DETAIL,
 	PUBLIC_KEY,
-	JWT_PERMANENT_TOKEN;
+	JWT_PERMANENT_TOKEN,
+	SHARED_SPACE_NODE,
+	SHARED_SPACE_MEMBER;
 
 	public static AuditLogEntryType fromString(String s) {
 		try {

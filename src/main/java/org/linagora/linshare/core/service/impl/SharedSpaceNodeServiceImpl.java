@@ -38,10 +38,13 @@ import java.util.List;
 import org.jsoup.helper.Validate;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.SharedSpaceNodeResourceAccessControl;
+import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
@@ -49,6 +52,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
+import org.linagora.linshare.mongo.entities.logs.SharedSpaceNodeAuditLogEntry;
 
 import com.google.common.collect.Lists;
 
@@ -63,15 +67,19 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 
 	private final SharedSpaceRoleService ssRoleService;
 
+	private final LogEntryService logEntryService;
+
 	public SharedSpaceNodeServiceImpl(SharedSpaceNodeBusinessService sharedSpaceNodeBusinessService,
 			SharedSpaceNodeResourceAccessControl sharedSpaceNodeResourceAccessControl,
 			SharedSpaceMemberBusinessService memberBusinessService,
-			SharedSpaceMemberService sharedSpaceMemberService, SharedSpaceRoleService ssRoleService) {
+			SharedSpaceMemberService sharedSpaceMemberService, SharedSpaceRoleService ssRoleService,
+			LogEntryService logEntryService) {
 		super(sharedSpaceNodeResourceAccessControl);
 		this.sharedSpaceNodeBusinessService = sharedSpaceNodeBusinessService;
 		this.sharedSpaceMemberService = sharedSpaceMemberService;
 		this.ssRoleService = ssRoleService;
 		this.memberBusinessService = memberBusinessService;
+		this.logEntryService = logEntryService;
 	}
 
 	@Override
@@ -95,6 +103,9 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
 		SharedSpaceNode created = sharedSpaceNodeBusinessService.create(node);
 		SharedSpaceRole role = ssRoleService.getAdmin(authUser, actor);
+		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.CREATE,
+				AuditLogEntryType.SHARED_SPACE_NODE, created);
+		logEntryService.insert(log);
 		sharedSpaceMemberService.createWithoutCheckPermission(authUser, authUser,
 				new GenericLightEntity(node.getUuid(), node.getName()),
 				new GenericLightEntity(role.getUuid(), role.getName()),
@@ -111,6 +122,9 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		checkDeletePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN,
 				foundedNodeTodel);
 		sharedSpaceNodeBusinessService.delete(foundedNodeTodel);
+		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.DELETE,
+				AuditLogEntryType.SHARED_SPACE_NODE, foundedNodeTodel);
+		logEntryService.insert(log);
 		sharedSpaceMemberService.deleteAllMembers(authUser, actor, foundedNodeTodel.getUuid());
 		return foundedNodeTodel;
 	}
@@ -123,9 +137,13 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		SharedSpaceNode node = find(authUser, actor, nodeToUpdate.getUuid());
 		checkUpdatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN,
 				nodeToUpdate);
-		node = sharedSpaceNodeBusinessService.update(node, nodeToUpdate);
-		memberBusinessService.updateNestedNode(node);
-		return node;
+		SharedSpaceNode updated = sharedSpaceNodeBusinessService.update(node, nodeToUpdate);
+		memberBusinessService.updateNestedNode(updated);
+		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.UPDATE,
+				AuditLogEntryType.SHARED_SPACE_NODE, node);
+		log.setResourceUpdated(updated);
+		logEntryService.insert(log);
+		return updated;
 	}
 
 	@Override

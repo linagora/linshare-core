@@ -73,17 +73,8 @@ public class SharedSpaceMemberResourceAccessControlImpl
 
 	@Override
 	protected boolean hasCreatePermission(Account authUser, Account actor, SharedSpaceMember entry, Object... opt) {
-		if (defaultSharedSpacePermissionCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_CREATE, SharedSpaceActionType.CREATE)) {
-			if (!checkAccountNotInNode(entry.getAccount().getUuid(), entry.getNode().getUuid())) {
-				logger.error(String.format(
-						"The account with the UUID : %s is already a member of the node with the uuid : %s",
-						entry.getAccount().getUuid(), entry.getNode().getUuid()));
-				return false;
-			}
-			return true;
-		}
-		return false;
+		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
+				TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_CREATE, SharedSpaceActionType.CREATE);
 	}
 
 	@Override
@@ -105,10 +96,6 @@ public class SharedSpaceMemberResourceAccessControlImpl
 	@Override
 	protected String getEntryRepresentation(SharedSpaceMember entry) {
 		return entry.toString();
-	}
-
-	private boolean checkAccountNotInNode(String possibleMemberUuid, String nodeUuid) {
-		return sharedSpaceMemberMongoRepository.findByAccountAndNode(possibleMemberUuid, nodeUuid) == null;
 	}
 
 	@Override

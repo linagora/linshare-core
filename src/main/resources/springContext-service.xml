@@ -400,6 +400,7 @@
 		<constructor-arg ref="sharedSpaceMemberService" />
 		<constructor-arg ref="sharedSpaceRoleService" />
 		<constructor-arg ref="sharedSpaceMemberBusinessService" />
+		<constructor-arg ref="logEntryService" />
 	</bean>
 	<bean id="sharedSpaceRoleService" class="org.linagora.linshare.core.service.impl.SharedSpaceRoleServiceImpl">
 		<constructor-arg ref="sharedSpaceRoleBusinessService" />
@@ -418,5 +419,6 @@
 		<constructor-arg ref="sharedSpaceMemberResourceAccessControl" />
 		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="mailBuildingService" />
+		<constructor-arg ref="logEntryService" />
 	</bean>
 </beans>

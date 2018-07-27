@@ -33,7 +33,54 @@
  */
 package org.linagora.linshare.mongo.entities.logs;
 
-public class SharedSpaceNodeAuditLogEntry {
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.mto.AccountMto;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@XmlRootElement
+@Document(collection="auditLogEntry")
+public class SharedSpaceNodeAuditLogEntry extends AuditLogEntryUser {
+
+	protected SharedSpaceNode resource;
+
+	private SharedSpaceNode resourceUpdated;
+
+	public SharedSpaceNodeAuditLogEntry() {
+		super();
+	}
+
+	public SharedSpaceNodeAuditLogEntry(Account authUser, Account owner, LogAction action, AuditLogEntryType type,
+			SharedSpaceNode node) {
+		super(new AccountMto(authUser), new AccountMto(owner), action, type, node.getUuid());
+		this.resource = node;
+	}
+
+	public SharedSpaceNodeAuditLogEntry(SharedSpaceNode resource, SharedSpaceNode resourceUpdated) {
+		super();
+		this.resource = resource;
+		this.resourceUpdated = resourceUpdated;
+	}
+
+	public SharedSpaceNode getResource() {
+		return resource;
+	}
+
+	public void setResource(SharedSpaceNode resource) {
+		this.resource = resource;
+	}
+
+	public SharedSpaceNode getResourceUpdated() {
+		return resourceUpdated;
+	}
+
+	public void setResourceUpdated(SharedSpaceNode resourceUpdated) {
+		this.resourceUpdated = resourceUpdated;
+	}
 
 }
 

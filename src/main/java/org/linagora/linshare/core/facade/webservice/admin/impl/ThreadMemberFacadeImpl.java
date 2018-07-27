@@ -37,8 +37,6 @@ package org.linagora.linshare.core.facade.webservice.admin.impl;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.entities.WorkGroup;
-import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.ThreadMemberFacade;
@@ -94,7 +92,6 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notEmpty(dto.getThreadUuid(), "thread member thread id must be set.");
 		Validate.notEmpty(dto.getUserDomainId(), "thread member domain id must be set.");
 		Validate.notEmpty(dto.getUserMail(), "thread member mail must be set.");
-		WorkGroup workGroup = threadService.find(authUser, authUser, dto.getThreadUuid());
 		User user = (User) accountService.findByLsUuid(dto.getUserUuid());
 		if (user == null) {
 			user = userService.findOrCreateUser(dto.getUserMail(), dto.getUserDomainId());
@@ -104,17 +101,14 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 			}
 		}
 		boolean admin = dto.isAdmin();
-		boolean canUpload = !dto.isReadonly();
-		WorkgroupMember createdWorkGroupMember = threadService.addMember(authUser, authUser, workGroup, user, admin,
-				canUpload);
 		// TODO Retrieve the role from the restService once the front will pass the info
 		SharedSpaceRole defaultRole = getDefaultRole(authUser, admin);
 		SharedSpaceNode foundSharedSpaceNode = sharedSpaceNodeService.find(authUser, authUser, dto.getThreadUuid());
-		ssMemberService.create(authUser, authUser,
+		SharedSpaceMember created = ssMemberService.create(authUser, authUser,
 				new GenericLightEntity(foundSharedSpaceNode.getUuid(), foundSharedSpaceNode.getName()),
 				new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()),
 				new GenericLightEntity(user.getLsUuid(), user.getFullName()));
-		return new WorkGroupMemberDto(createdWorkGroupMember);
+		return new WorkGroupMemberDto(created, user);
 	}
 
 	@Override
@@ -124,18 +118,13 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notNull(dto.getThreadUuid(), "thread uuid must be set.");
 		Validate.notNull(dto.getUserUuid(), "user uuid must be set.");
 		boolean admin = dto.isAdmin();
-		boolean readonly = dto.isReadonly();
-		WorkgroupMember updatedMember = threadService.updateMember(authUser, authUser, dto.getThreadUuid(),
-				dto.getUserUuid(), admin, !readonly);
-		// New SharedSpaceNode architecture
 		SharedSpaceRole defaultRole = getDefaultRole(authUser, admin);
 		User user = userService.findByLsUuid(dto.getUserUuid());
-		SharedSpaceNode nodeOfMemberToUpdate = new SharedSpaceNode();
-		nodeOfMemberToUpdate.setUuid(dto.getThreadUuid());
-		SharedSpaceMember ssMemberToUpdate = ssMemberService.findMember(authUser, authUser, user, nodeOfMemberToUpdate);
-		ssMemberService.updateRole(authUser, authUser, ssMemberToUpdate.getUuid(),
+		SharedSpaceMember ssMemberToUpdate = ssMemberService.findMemberByUuid(authUser, authUser, dto.getUserUuid(),
+				dto.getThreadUuid());
+		SharedSpaceMember updated = ssMemberService.updateRole(authUser, authUser, ssMemberToUpdate.getUuid(),
 				new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()));
-		return new WorkGroupMemberDto(updatedMember);
+		return new WorkGroupMemberDto(updated, user);
 	}
 
 	@Override
@@ -144,14 +133,11 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		Validate.notNull(dto, "thread member must be set.");
 		Validate.notNull(dto.getThreadUuid(), "thread uuid must be set.");
 		Validate.notNull(dto.getUserUuid(), "user uuid must be set.");
-		WorkgroupMember member = this.threadService.deleteMember(authUser, authUser, dto.getThreadUuid(),
-				dto.getUserUuid());
 		User user = userService.findByLsUuid(dto.getUserUuid());
-		SharedSpaceNode nodeToDelete = new SharedSpaceNode();
-		nodeToDelete.setUuid(dto.getThreadUuid());
-		SharedSpaceMember ssMemberToDelete = ssMemberService.findMember(authUser, authUser, user, nodeToDelete);
-		ssMemberService.delete(authUser, authUser, ssMemberToDelete);
-		return new WorkGroupMemberDto(member);
+		SharedSpaceMember ssMemberToDelete = ssMemberService.findMemberByUuid(authUser, authUser, dto.getUserUuid(),
+				dto.getThreadUuid());
+		SharedSpaceMember deleted = ssMemberService.delete(authUser, authUser, ssMemberToDelete);
+		return new WorkGroupMemberDto(deleted, user);
 	}
 
 	private SharedSpaceRole getDefaultRole(User authUser, boolean admin) {

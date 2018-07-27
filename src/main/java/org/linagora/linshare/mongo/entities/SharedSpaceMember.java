@@ -62,6 +62,14 @@ public class SharedSpaceMember {
 
 	protected GenericLightEntity account;
 
+	@XmlTransient
+	@JsonIgnore
+	protected boolean canUpload;
+
+	@XmlTransient
+	@JsonIgnore
+	protected boolean admin;
+
 	protected Date creationDate;
 
 	protected Date modificationDate;
@@ -78,6 +86,8 @@ public class SharedSpaceMember {
 		this.account = account;
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
+		this.admin = hasAdminRight();
+		this.canUpload = hasUploadRight();
 	}
 
 	@XmlTransient
