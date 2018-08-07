@@ -8,6 +8,7 @@
 		class="org.linagora.linshare.core.dao.impl.JcloudObjectStorageFileDataStoreImpl"
 		init-method="afterPropertiesSet" destroy-method="destroy">
 		<constructor-arg value="${linshare.documents.storage.mode}" />
+		<constructor-arg value="${linshare.documents.storage.providers}" />
 		<property name="baseDirectory" value="${linshare.documents.storage.filesystem.directory}" />
 		<property name="identity" value="${linshare.documents.storage.swift.identity}" />
 		<property name="credential" value="${linshare.documents.storage.swift.credential}" />
