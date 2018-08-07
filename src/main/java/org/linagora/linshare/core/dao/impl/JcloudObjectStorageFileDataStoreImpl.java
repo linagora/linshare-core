@@ -52,6 +52,7 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.domain.Location;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
+import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.openstack.swift.v1.blobstore.RegionScopedBlobStoreContext;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
@@ -59,6 +60,9 @@ import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 public class JcloudObjectStorageFileDataStoreImpl implements FileDataStore {
 	protected static final Logger logger = LoggerFactory.getLogger(JcloudObjectStorageFileDataStoreImpl.class);
@@ -99,11 +103,12 @@ public class JcloudObjectStorageFileDataStoreImpl implements FileDataStore {
 		Properties properties = new Properties();
 		ContextBuilder contextBuilder = null;
 		BlobStore blobStore = null;
+		Iterable<Module> modules = ImmutableSet.<Module> of(new SLF4JLoggingModule());
 		if (provider.equals(FILESYSTEM)) {
 			properties.setProperty(org.jclouds.filesystem.reference.FilesystemConstants.PROPERTY_BASEDIR,
 					baseDirectory);
 			contextBuilder = ContextBuilder.newBuilder(FILESYSTEM);
-			contextBuilder.overrides(properties);
+			contextBuilder.overrides(properties).modules(modules);
 			context = contextBuilder.buildView(BlobStoreContext.class);
 			blobStore = context.getBlobStore();
 		} else {
@@ -112,6 +117,7 @@ public class JcloudObjectStorageFileDataStoreImpl implements FileDataStore {
 			contextBuilder = ContextBuilder.newBuilder(provider);
 			contextBuilder.endpoint(endpoint)
 							.credentials(identity, credential)
+							.modules(modules)
 							.overrides(properties);
 			if (provider.equals(OPENSTACK_SWIFT)) {
 				context = contextBuilder.buildView(RegionScopedBlobStoreContext.class);
@@ -234,6 +240,7 @@ public class JcloudObjectStorageFileDataStoreImpl implements FileDataStore {
 
 		// Upload the Blob
 		start = new Date();
+
 		String eTag = blobStore.putBlob(bucketIdentifier, blob);
 		logger.debug("etag : {}", eTag);
 		stats(start, "putBlob");
@@ -316,6 +323,13 @@ public class JcloudObjectStorageFileDataStoreImpl implements FileDataStore {
 
 	public void setRegionId(String regionId) {
 		this.regionId = regionId;
+	}
+
+	@Override
+	public String toString() {
+		return "JcloudObjectStorageFileDataStoreImpl [provider=" + provider + ", supportedProviders="
+				+ supportedProviders + ", baseDirectory=" + baseDirectory + ", endpoint=" + endpoint + ", regionId="
+				+ regionId + ", bucketIdentifier=" + bucketIdentifier + "]";
 	}
 
 }
