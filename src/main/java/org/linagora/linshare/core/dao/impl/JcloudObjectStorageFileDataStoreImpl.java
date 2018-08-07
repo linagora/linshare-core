@@ -38,7 +38,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
@@ -64,9 +66,11 @@ public class JcloudObjectStorageFileDataStoreImpl implements FileDataStore {
 	protected static String SWIFT_KEYSTONE = "swift-keystone";
 	// Do support object storage region
 	protected static String OPENSTACK_SWIFT = "openstack-swift";
+	protected static String S3 = "s3";
 	protected static String FILESYSTEM = "filesystem";
-
 	protected String provider;
+	protected List<String> supportedProviders;
+
 	protected BlobStoreContext context;
 	protected String baseDirectory;
 	protected String identity;
@@ -75,7 +79,7 @@ public class JcloudObjectStorageFileDataStoreImpl implements FileDataStore {
 	protected String regionId;
 	protected String bucketIdentifier;
 
-	public JcloudObjectStorageFileDataStoreImpl(String provider) {
+	public JcloudObjectStorageFileDataStoreImpl(String provider, String supportedProviders) {
 		super();
 		this.provider = provider;
 		this.context = null;
@@ -85,29 +89,17 @@ public class JcloudObjectStorageFileDataStoreImpl implements FileDataStore {
 		this.endpoint = null;
 		this.regionId = null;
 		this.bucketIdentifier = null;
+		this.supportedProviders = Arrays.asList(supportedProviders.split(","));
 	}
 
 	public void afterPropertiesSet() throws Exception {
+		if (!this.supportedProviders.contains(provider)) {
+			throw new IllegalArgumentException("Supported providers: " + this.supportedProviders.toString());
+		}
 		Properties properties = new Properties();
 		ContextBuilder contextBuilder = null;
 		BlobStore blobStore = null;
-		if (provider.equals(SWIFT_KEYSTONE) || provider.equals(OPENSTACK_SWIFT)) {
-			properties.setProperty(org.jclouds.Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-			properties.setProperty(org.jclouds.Constants.PROPERTY_LOGGER_WIRE_LOG_SENSITIVE_INFO, "true");
-			contextBuilder = ContextBuilder.newBuilder(provider);
-			contextBuilder.endpoint(endpoint)
-							.credentials(identity, credential)
-							.overrides(properties);
-			if (provider.equals(SWIFT_KEYSTONE)) {
-				// We force region to null because regionId is not supported yet by the default BlobStoreContext.
-				regionId = null;
-				context = contextBuilder.buildView(BlobStoreContext.class);
-				blobStore = context.getBlobStore();
-			} else {
-				context = contextBuilder.buildView(RegionScopedBlobStoreContext.class);
-				blobStore = ((RegionScopedBlobStoreContext) context).getBlobStore(regionId);
-			}
-		} else if (provider.equals(FILESYSTEM)) {
+		if (provider.equals(FILESYSTEM)) {
 			properties.setProperty(org.jclouds.filesystem.reference.FilesystemConstants.PROPERTY_BASEDIR,
 					baseDirectory);
 			contextBuilder = ContextBuilder.newBuilder(FILESYSTEM);
@@ -115,7 +107,21 @@ public class JcloudObjectStorageFileDataStoreImpl implements FileDataStore {
 			context = contextBuilder.buildView(BlobStoreContext.class);
 			blobStore = context.getBlobStore();
 		} else {
-			throw new IllegalArgumentException("Supported providers: " + SWIFT_KEYSTONE + " , " + OPENSTACK_SWIFT + " , " + FILESYSTEM);
+			properties.setProperty(org.jclouds.Constants.PROPERTY_TRUST_ALL_CERTS, "true");
+			properties.setProperty(org.jclouds.Constants.PROPERTY_LOGGER_WIRE_LOG_SENSITIVE_INFO, "true");
+			contextBuilder = ContextBuilder.newBuilder(provider);
+			contextBuilder.endpoint(endpoint)
+							.credentials(identity, credential)
+							.overrides(properties);
+			if (provider.equals(OPENSTACK_SWIFT)) {
+				context = contextBuilder.buildView(RegionScopedBlobStoreContext.class);
+				blobStore = ((RegionScopedBlobStoreContext) context).getBlobStore(regionId);
+			} else {
+				// We force region to null because regionId is not supported yet by the default BlobStoreContext.
+				regionId = null;
+				context = contextBuilder.buildView(BlobStoreContext.class);
+				blobStore = context.getBlobStore();
+			}
 		}
 		createContainerIfNotExist(blobStore);
 	}
@@ -222,7 +228,7 @@ public class JcloudObjectStorageFileDataStoreImpl implements FileDataStore {
 		}
 		metadata.setBucketUuid(bucketIdentifier);
 		blob = blobStore.blobBuilder(metadata.getUuid()).payload(payload)
-				// .contentLength(file.size())
+				.contentLength(metadata.getSize())
 				.build();
 		stats(start, "blob");
 
