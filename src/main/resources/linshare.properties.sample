@@ -104,12 +104,14 @@ linshare.documents.storage.filesystem.directory=/var/lib/linshare/filesystemstor
 # linshare.db.persistence_manager=org.apache.jackrabbit.core.persistence.pool.PostgreSQLPersistenceManager
 
 
-#### Swift storage options ####
-linshare.documents.storage.swift.identity=tenant_name:user_name
-linshare.documents.storage.swift.credential=password
-linshare.documents.storage.swift.endpoint=http://127.0.0.1:5000/v2.0
+#### Object storage options ####
+linshare.documents.storage.identity=identity
+# NB : For OpenStack Swift, format is diferent
+# linshare.documents.storage.identity=tenant_name:user_name
+linshare.documents.storage.credential=password
+linshare.documents.storage.endpoint=http://127.0.0.1:5000/v2.0
 # required if your are using using Swift with region (openstack-swift)
-# linshare.documents.storage.swift.regionId=
+# linshare.documents.storage.regionId=
 
 #### GridFS storage options ####
 linshare.mongo.host=127.0.0.1

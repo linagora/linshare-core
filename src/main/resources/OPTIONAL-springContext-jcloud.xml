@@ -10,10 +10,10 @@
 		<constructor-arg value="${linshare.documents.storage.mode}" />
 		<constructor-arg value="${linshare.documents.storage.providers}" />
 		<property name="baseDirectory" value="${linshare.documents.storage.filesystem.directory}" />
-		<property name="identity" value="${linshare.documents.storage.swift.identity}" />
-		<property name="credential" value="${linshare.documents.storage.swift.credential}" />
-		<property name="endpoint" value="${linshare.documents.storage.swift.endpoint}" />
-		<property name="regionId" value="${linshare.documents.storage.swift.regionId}" />
+		<property name="identity" value="${linshare.documents.storage.identity}" />
+		<property name="credential" value="${linshare.documents.storage.credential}" />
+		<property name="endpoint" value="${linshare.documents.storage.endpoint}" />
+		<property name="regionId" value="${linshare.documents.storage.regionId}" />
 		<property name="bucketIdentifier" value="${linshare.documents.storage.bucket}" />
 	</bean>
 
