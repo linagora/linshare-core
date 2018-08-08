@@ -1821,7 +1821,7 @@
 		<slf4j-release-version>1.7.16</slf4j-release-version>
 		<cxf.version>3.1.11</cxf.version>
 		<jackrabbit.version>2.11.2</jackrabbit.version>
-		<jclouds.version>1.9.2</jclouds.version>
+		<jclouds.version>2.1.0</jclouds.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.build.timestamp.format>yyyy.MM.dd-HH.mm.ss</maven.build.timestamp.format>
 		<sql.driver.postgresql>9.4.1208.jre7</sql.driver.postgresql>
