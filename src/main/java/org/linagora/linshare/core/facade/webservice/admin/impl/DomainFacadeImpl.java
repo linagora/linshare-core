@@ -252,13 +252,13 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		List<LDAPGroupProviderDto> providers = domainDto.getGroupProviders();
 		if (providers != null && !providers.isEmpty()) {
 			LDAPGroupProviderDto groupProviderDto = providers.get(0);
-			LightCommonDto groupPatternLight = groupProviderDto.getGroupLdapPatternLight();
-			LightCommonDto ldapConnectionLight = groupProviderDto.getLdapConnectionLight();
+			LightCommonDto groupPatternLight = groupProviderDto.getPattern();
+			LightCommonDto ldapConnectionLight = groupProviderDto.getConnection();
 			String baseDn = groupProviderDto.getBaseDn();
 			Boolean automaticUserCreation = groupProviderDto.getAutomaticUserCreation();
 			Boolean forceCreation = groupProviderDto.getForceCreation();
-			Validate.notNull(groupPatternLight, "groupPatternLight is mandatory for group provider creation");
-			Validate.notNull(ldapConnectionLight, "ldapConnectionLight is mandatory for group provider creation");
+			Validate.notNull(groupPatternLight, "groupPattern is mandatory for group provider creation");
+			Validate.notNull(ldapConnectionLight, "ldapConnection is mandatory for group provider creation");
 			Validate.notEmpty(groupPatternLight.getUuid(), "group pattern uuid is mandatory for group provider creation");
 			Validate.notEmpty(ldapConnectionLight.getUuid(), "ldap connection Uuid is mandatory for group provider creation");
 			Validate.notEmpty(baseDn, "baseDn is mandatory for group provider creation");
@@ -288,13 +288,13 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 		List<LDAPGroupProviderDto> providers = domainDto.getGroupProviders();
 		if (providers != null && !providers.isEmpty()) {
 			LDAPGroupProviderDto groupProviderDto = providers.get(0);
-			LightCommonDto groupPatternLight = groupProviderDto.getGroupLdapPatternLight();
-			LightCommonDto ldapConnectionLight = groupProviderDto.getLdapConnectionLight();
+			LightCommonDto groupPatternLight = groupProviderDto.getPattern();
+			LightCommonDto ldapConnectionLight = groupProviderDto.getConnection();
 			String baseDn = groupProviderDto.getBaseDn();
 			Boolean automaticUserCreation = groupProviderDto.getAutomaticUserCreation();
 			Boolean forceCreation = groupProviderDto.getForceCreation();
-			Validate.notNull(groupPatternLight, "groupPatternLight is mandatory for group provider creation");
-			Validate.notNull(ldapConnectionLight, "ldapConnectionLight is mandatory for group provider creation");
+			Validate.notNull(groupPatternLight, "groupPattern is mandatory for group provider creation");
+			Validate.notNull(ldapConnectionLight, "ldapConnection is mandatory for group provider creation");
 			Validate.notEmpty(groupPatternLight.getUuid(), "group pattern uuid is mandatory for group provider creation");
 			Validate.notEmpty(ldapConnectionLight.getUuid(), "ldap connection Uuid is mandatory for group provider creation");
 			Validate.notEmpty(baseDn, "baseDn is mandatory for group provider creation");

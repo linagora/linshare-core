@@ -38,8 +38,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-@XmlRootElement(name = "LightCommon")
-@ApiModel(value = "LightCommon", description = "")
+@XmlRootElement(name = "DTO")
+@ApiModel(value = "DTO", description = "")
 public class LightCommonDto {
 
 	@ApiModelProperty(value = "Label")
@@ -75,6 +75,6 @@ public class LightCommonDto {
 
 	@Override
 	public String toString() {
-		return "LightCommonDto [label=" + label + ", uuid=" + uuid + "]";
+		return "DTO [label=" + label + ", uuid=" + uuid + "]";
 	}
 }

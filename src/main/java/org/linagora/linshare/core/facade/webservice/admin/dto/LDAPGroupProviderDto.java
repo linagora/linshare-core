@@ -48,17 +48,17 @@ public class LDAPGroupProviderDto {
 	@ApiModelProperty(value = "uuid")
 	private String uuid;
 
-	@ApiModelProperty(value = "LdapConnectionLight")
-	private LightCommonDto ldapConnectionLight;
+	@ApiModelProperty(value = "LdapConnection")
+	private LightCommonDto connection;
 
-	@ApiModelProperty(value = "GroupLdapPatternLight")
-	private LightCommonDto groupLdapPatternLight;
+	@ApiModelProperty(value = "GroupLdapPattern")
+	private LightCommonDto pattern;
 
 	@ApiModelProperty(value = "BaseDn")
 	private String baseDn = "";
 
 	@ApiModelProperty(value = "AutomaticUserCreation")
-	private Boolean AutomaticUserCreation;
+	private Boolean automaticUserCreation;
 
 	@ApiModelProperty(value = "ForceCreation")
 	private Boolean forceCreation;
@@ -69,12 +69,12 @@ public class LDAPGroupProviderDto {
 
 	public LDAPGroupProviderDto(LdapGroupProvider groupProvider) {
 		this.uuid = groupProvider.getUuid();
-		this.ldapConnectionLight = new LightCommonDto(groupProvider.getLdapConnection().getLabel(),
+		this.connection = new LightCommonDto(groupProvider.getLdapConnection().getLabel(),
 				groupProvider.getLdapConnection().getUuid());
-		this.groupLdapPatternLight = new LightCommonDto(groupProvider.getGroupPattern().getLabel(),
+		this.pattern = new LightCommonDto(groupProvider.getGroupPattern().getLabel(),
 				groupProvider.getGroupPattern().getUuid());
 		this.baseDn = groupProvider.getBaseDn();
-		this.AutomaticUserCreation = groupProvider.getAutomaticUserCreation();
+		this.automaticUserCreation = groupProvider.getAutomaticUserCreation();
 		this.forceCreation = groupProvider.getForceCreation();
 	}
 
@@ -86,22 +86,6 @@ public class LDAPGroupProviderDto {
 		this.uuid = uuid;
 	}
 
-	public LightCommonDto getLdapConnectionLight() {
-		return ldapConnectionLight;
-	}
-
-	public void setLdapConnectionLight(LightCommonDto ldapConnectionLight) {
-		this.ldapConnectionLight = ldapConnectionLight;
-	}
-
-	public LightCommonDto getGroupLdapPatternLight() {
-		return groupLdapPatternLight;
-	}
-
-	public void setGroupLdapPatternLight(LightCommonDto groupLdapPatternLight) {
-		this.groupLdapPatternLight = groupLdapPatternLight;
-	}
-
 	public String getBaseDn() {
 		return baseDn;
 	}
@@ -110,20 +94,36 @@ public class LDAPGroupProviderDto {
 		this.baseDn = baseDn;
 	}
 
-	public Boolean getAutomaticUserCreation() {
-		return AutomaticUserCreation;
-	}
-
-	public void setAutomaticUserCreation(Boolean automaticUserCreation) {
-		AutomaticUserCreation = automaticUserCreation;
-	}
-
 	public Boolean getForceCreation() {
 		return forceCreation;
 	}
 
 	public void setForceCreation(Boolean forceCreation) {
 		this.forceCreation = forceCreation;
+	}
+
+	public LightCommonDto getConnection() {
+		return connection;
+	}
+
+	public void setConnection(LightCommonDto connection) {
+		this.connection = connection;
+	}
+
+	public LightCommonDto getPattern() {
+		return pattern;
+	}
+
+	public void setPattern(LightCommonDto pattern) {
+		this.pattern = pattern;
+	}
+
+	public Boolean getAutomaticUserCreation() {
+		return automaticUserCreation;
+	}
+
+	public void setAutomaticUserCreation(Boolean automaticUserCreation) {
+		this.automaticUserCreation = automaticUserCreation;
 	}
 
 }

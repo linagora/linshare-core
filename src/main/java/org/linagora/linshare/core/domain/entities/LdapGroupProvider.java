@@ -107,9 +107,9 @@ public class LdapGroupProvider extends GroupProvider {
 		LDAPGroupProviderDto groupProvider = new LDAPGroupProviderDto();
 		groupProvider.setUuid(uuid);
 		groupProvider.setBaseDn(baseDn);
-		groupProvider.setGroupLdapPatternLight(
+		groupProvider.setPattern(
 				new LightCommonDto(this.groupPattern.getLabel(), this.groupPattern.getUuid()));
-		groupProvider.setLdapConnectionLight(
+		groupProvider.setConnection(
 				new LightCommonDto(this.ldapConnection.getLabel(), this.ldapConnection.getUuid()));
 		groupProvider.setAutomaticUserCreation(this.automaticUserCreation);
 		groupProvider.setForceCreation(this.forceCreation);
