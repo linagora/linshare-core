@@ -238,7 +238,6 @@ ALTER TABLE ldap_pattern ADD COLUMN group_prefix varchar(255);
 -- Upgrade Task
 -- Update domain_abstract
 ALTER TABLE domain_abstract ADD COLUMN group_provider_id int8;
-ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs253989 FOREIGN KEY (group_provider_id) REFERENCES group_provider (id);
 
 -- New table  group_provider
 CREATE TABLE group_provider (
@@ -256,6 +255,7 @@ CREATE TABLE group_provider (
 
 ALTER TABLE group_provider ADD CONSTRAINT FKgroup_provi815203 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
 ALTER TABLE group_provider ADD CONSTRAINT FKgroup_provi1640 FOREIGN KEY (ldap_connection_id) REFERENCES ldap_connection (id);
+ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs253989 FOREIGN KEY (group_provider_id) REFERENCES group_provider (id);
 
   -- TASK: UPGRADE_2_2_MIGRATE_HISTORY_TO_MONGO_AUDIT;
 INSERT INTO upgrade_task
