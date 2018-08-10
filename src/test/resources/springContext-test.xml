@@ -21,9 +21,10 @@
 		<property name="locations">
 			<list>
 				<value>classpath:linshare-default.properties</value>
-				<value>classpath:linshare.properties</value>
+<!-- 				<value>classpath:linshare.properties</value> -->
 				<value>classpath:jackRabbit.properties</value>
 				<value>classpath:linshare-test.properties</value>
+				<value>classpath:linshare-test.extra.properties</value>
 				<value>classpath:CAS.bin.export</value>
 			</list>
 		</property>
@@ -34,7 +35,4 @@
 		<constructor-arg index="1" value="${linshare.test.mail.recipient}" />
 	</bean>
 
-	<bean name="thumbnailService" class="org.linagora.linshare.business.service.mock.ThumbnailServiceMockImpl"
-		init-method="start" destroy-method="stop">
-	</bean>
 </beans>

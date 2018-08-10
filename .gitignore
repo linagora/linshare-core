@@ -14,3 +14,4 @@
 /src/main/webapp/applet/jwsdecrypt.jar
 *.swp
 /src/main/webapp/applet/signature-client.jar
+src/test/resources/linshare-test.extra.properties

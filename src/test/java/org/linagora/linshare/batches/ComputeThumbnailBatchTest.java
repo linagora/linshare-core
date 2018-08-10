@@ -65,6 +65,7 @@ import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
 import com.beust.jcommander.internal.Sets;
@@ -84,7 +85,8 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-service.xml",
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml",
-		"classpath:springContext-test-business-thumbnail.xml", })
+		})
+@TestPropertySource("classpath:ThumbnailServiceConfiguration.properties")
 public class ComputeThumbnailBatchTest extends AbstractTransactionalJUnit4SpringContextTests{
 
 	@Autowired

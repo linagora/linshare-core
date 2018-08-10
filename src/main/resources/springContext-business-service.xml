@@ -278,8 +278,7 @@
 	</bean>
 	<bean name="thumbnailFactoryService" class="org.linagora.linshare.core.business.service.impl.ThumbnailGeneratorFactoryBusinessServiceImpl">
 	</bean>
-	<bean name="thumbnailGeneratorService" class="org.linagora.linshare.core.business.service.impl.ThumbnailGeneratorFactoryBusinessServiceImpl"
-		init-method="start" destroy-method="stop" factory-method="createInstance" factory-bean="thumbnailFactoryService">
+	<bean name="thumbnailGeneratorService" init-method="start" destroy-method="stop" factory-method="createInstance" factory-bean="thumbnailFactoryService">
 		<constructor-arg value="${linshare.linthumbnail.remote.mode}" />
 		<constructor-arg ref="fileDataStore" />
 		<constructor-arg value="${linshare.documents.thumbnail.enable}" />

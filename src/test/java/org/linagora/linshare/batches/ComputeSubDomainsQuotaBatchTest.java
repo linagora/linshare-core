@@ -68,7 +68,7 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-test.xml",
 		"classpath:springContext-scheduler.xml",
 		"classpath:springContext-batches-quota-and-statistics.xml",
-		"classpath:springContext-test-business-thumbnail.xml", })
+		})
 public class ComputeSubDomainsQuotaBatchTest extends AbstractTransactionalJUnit4SpringContextTests{
 
 	@Autowired

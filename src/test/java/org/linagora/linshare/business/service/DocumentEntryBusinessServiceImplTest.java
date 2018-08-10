@@ -75,6 +75,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
 import com.beust.jcommander.internal.Sets;
@@ -91,7 +92,8 @@ import com.beust.jcommander.internal.Sets;
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml",
-		"classpath:springContext-test-business-thumbnail.xml", })
+		})
+@TestPropertySource("classpath:ThumbnailServiceConfiguration.properties")
 public class DocumentEntryBusinessServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
 
 	private static Logger logger = LoggerFactory.getLogger(DocumentEntryBusinessServiceImplTest.class);
