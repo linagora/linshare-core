@@ -20,9 +20,9 @@ prepare:
     <<: *cache-tpl
     policy: pull-push
   script:
-    - mvn dependency:go-offline --batch-mode --offline
-    - mvn dependency:resolve --batch-mode --offline
-    - mvn dependency:resolve-plugins --batch-mode --offline
+    - mvn dependency:go-offline --batch-mode
+    - mvn dependency:resolve --batch-mode
+    - mvn dependency:resolve-plugins --batch-mode
 
 build:
   stage: build
