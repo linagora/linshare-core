@@ -1,19 +1,37 @@
 stages:
+  - prepare
   - build
 
-before_script:
-  - apt-get update
-  - apt-get -y install libreoffice
+variables:
+    MAVEN_OPTS: "-Djava.awt.headless=true -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+
+.cache-tpl: &cache-tpl
+  key: "$CI_COMMIT_REF_SLUG"
+  paths:
+    - $CI_PROJECT_DIR/.m2/repository
+  policy: pull
+
+prepare:
+  image: maven:3.5-jdk-8
+  stage: prepare
+  tags:
+    - docker
+  cache:
+    <<: *cache-tpl
+    policy: pull-push
+  script:
+    - mvn dependency:go-offline --batch-mode --offline
+    - mvn dependency:resolve --batch-mode --offline
+    - mvn dependency:resolve-plugins --batch-mode --offline
 
 build:
   stage: build
   tags:
     - docker
-  image: maven:3.3-jdk-8
+  image: maven:3.5-jdk-8
+  cache:
+    <<: *cache-tpl
   script:
-    - mvn clean test
-  artifacts:
-    paths:
-      - /root/.m2/
-    expire_in: 1 day
-
+    - apt-get update
+    - apt-get -y install libreoffice
+    - mvn -X clean test
