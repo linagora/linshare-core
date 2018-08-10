@@ -42,7 +42,7 @@ public interface JwtLongTimeBusinessService {
 
 	void create(PermanentToken entity);
 
-	List<PermanentToken> findAllByActor(Account actor);
+	List<PermanentToken> findAll(Account actor);
 
 	void delete(PermanentToken entity);
 

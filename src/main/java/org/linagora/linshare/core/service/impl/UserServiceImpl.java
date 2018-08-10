@@ -340,7 +340,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private void deleteAllJwtLongTime(Account authUser, Account userToDelete) {
-		List<PermanentToken> tokens = jwtLongTimeBusinessService.findAllByActor(userToDelete);
+		List<PermanentToken> tokens = jwtLongTimeBusinessService.findAll(userToDelete);
 		if (tokens != null && !tokens.isEmpty()) {
 			for (PermanentToken token : tokens) {
 				AuditLogEntryUser createLog = new JwtLongTimeAuditLogEntry(authUser, userToDelete, LogAction.DELETE,

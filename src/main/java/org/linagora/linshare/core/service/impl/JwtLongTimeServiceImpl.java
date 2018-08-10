@@ -150,7 +150,7 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, Permanen
 	public List<PermanentToken> findAll(Account authUser, Account actor) throws BusinessException {
 		Validate.notNull(authUser);
 		checkListPermission(authUser, actor, null, BusinessErrorCode.JWT_PERMANENT_TOKEN_FORBIDDEN, null);
-		List<PermanentToken> tokens = jwtLongTimeBusinessService.findAllByActor(actor);
+		List<PermanentToken> tokens = jwtLongTimeBusinessService.findAll(actor);
 		return tokens;
 	}
 
