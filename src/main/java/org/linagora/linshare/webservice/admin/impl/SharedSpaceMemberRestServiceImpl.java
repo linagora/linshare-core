@@ -43,7 +43,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.SharedSpaceMemberFacade;
+import org.linagora.linshare.core.facade.webservice.user.SharedSpaceMemberFacade;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.webservice.admin.SharedSpaceMemberRestService;
 
@@ -76,7 +76,7 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 	@Override
 	public SharedSpaceMember find(@ApiParam(value = "Shared space member uuid") @PathParam("uuid") String uuid)
 			throws BusinessException {
-		return sharedSpaceMemberFacade.find(uuid);
+		return sharedSpaceMemberFacade.find(null, uuid);
 	}
 
 	@Path("/")
@@ -90,7 +90,7 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 	public SharedSpaceMember addMember(
 			@ApiParam(value = "shared space member to create") SharedSpaceMember sharedSpaceNodeMember)
 			throws BusinessException {
-		return sharedSpaceMemberFacade.create(sharedSpaceNodeMember);
+		return sharedSpaceMemberFacade.create(null, sharedSpaceNodeMember);
 	}
 
 	@Path("/{uuid : .*}")
@@ -106,7 +106,7 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 			@ApiParam("The shared space member to update.")
 				@PathParam("uuid") String uuid)
 			throws BusinessException {
-		return sharedSpaceMemberFacade.update(ssMember, uuid);
+		return sharedSpaceMemberFacade.update(null, ssMember, uuid);
 	}
 
 	@Path("/{uuid : .*}")
@@ -122,7 +122,7 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 			@ApiParam("The shared space member to delete.")
 				@PathParam("uuid") String uuid)
 			throws BusinessException {
-		return sharedSpaceMemberFacade.delete(ssMember, uuid);
+		return sharedSpaceMemberFacade.delete(null, ssMember, uuid);
 	}
 
 }

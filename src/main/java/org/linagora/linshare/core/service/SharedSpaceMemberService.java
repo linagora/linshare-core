@@ -59,7 +59,7 @@ public interface SharedSpaceMemberService {
 
 	List<SharedSpaceMember> findByNode(Account authUser, Account actro, String ssnodeUuid);
 
-	SharedSpaceMember delete(Account authUser, Account actor, SharedSpaceMember memberToDelete);
+	SharedSpaceMember delete(Account authUser, Account actor, String uuid);
 
 	SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate);
 

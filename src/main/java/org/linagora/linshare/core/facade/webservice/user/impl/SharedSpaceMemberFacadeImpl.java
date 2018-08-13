@@ -80,21 +80,21 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 	}
 
 	@Override
-	public SharedSpaceMember create(String actorUuid, SharedSpaceMember ssMember) throws BusinessException {
-		Validate.notNull(ssMember, "Shared space member must be set.");
-		Validate.notNull(ssMember.getAccount(), "Account must be set.");
-		Validate.notNull(ssMember.getRole(), "Role must be set.");
-		Validate.notNull(ssMember.getNode(), "Node must be set.");
-		Validate.notNull(ssMember.getAccount().getUuid(), "Account uuid must be set.");
-		Validate.notNull(ssMember.getRole().getUuid(), "Role uuid must be set.");
-		Validate.notNull(ssMember.getNode().getUuid(), "Node uuid must be set.");
+	public SharedSpaceMember create(String actorUuid, SharedSpaceMember member) throws BusinessException {
+		Validate.notNull(member, "Shared space member must be set.");
+		Validate.notNull(member.getAccount(), "Account must be set.");
+		Validate.notNull(member.getRole(), "Role must be set.");
+		Validate.notNull(member.getNode(), "Node must be set.");
+		Validate.notNull(member.getAccount().getUuid(), "Account uuid must be set.");
+		Validate.notNull(member.getRole().getUuid(), "Role uuid must be set.");
+		Validate.notNull(member.getNode().getUuid(), "Node uuid must be set.");
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
 		SharedSpaceNode foundSharedSpaceNode = sharedSpaceNodeService.find(authUser, actor,
-				ssMember.getNode().getUuid());
+				member.getNode().getUuid());
 		SharedSpaceRole foundSharedSpaceRole = sharedSpaceRoleService.find(authUser, actor,
-				ssMember.getRole().getUuid());
-		User foundUser = userService.findByLsUuid(ssMember.getAccount().getUuid());
+				member.getRole().getUuid());
+		User foundUser = userService.findByLsUuid(member.getAccount().getUuid());
 		Validate.notNull(foundUser, "Missing required user");
 		Validate.notNull(foundSharedSpaceRole, "Missing required role");
 		Validate.notNull(foundSharedSpaceNode, "Missing required node");
@@ -109,30 +109,30 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 	}
 
 	@Override
-	public SharedSpaceMember update(String actorUuid, SharedSpaceMember ssMember, String uuid)
+	public SharedSpaceMember update(String actorUuid, SharedSpaceMember member, String uuid)
 			throws BusinessException {
 		Account authUser = checkAuthentication();
-		Account actor = getActor(actorUuid);
-		Validate.notNull(ssMember, "Shared space member must be set.");
+		Account actor = getActor(authUser, actorUuid);
+		Validate.notNull(member, "Shared space member must be set.");
 		if (!Strings.isNullOrEmpty(uuid)) {
-			ssMember.setUuid(uuid);
+			member.setUuid(uuid);
 		} else {
-			Validate.notEmpty(ssMember.getUuid(), "The shared space member uuid to update must be set.");
+			Validate.notEmpty(member.getUuid(), "The shared space member uuid to update must be set.");
 		}
-		return sharedSpaceMemberService.update(authUser, actor, ssMember);
+		return sharedSpaceMemberService.update(authUser, actor, member);
 	}
 
 	@Override
-	public SharedSpaceMember delete(String actorUuid, SharedSpaceMember ssMember, String uuid)
+	public SharedSpaceMember delete(String actorUuid, SharedSpaceMember member, String uuid)
 			throws BusinessException {
 		Account authUser = checkAuthentication();
-		Account actor = getActor(actorUuid);
+		Account actor = getActor(authUser, actorUuid);
 		if (!Strings.isNullOrEmpty(uuid)) {
-			ssMember = sharedSpaceMemberService.find(authUser, actor, uuid);
+			member = sharedSpaceMemberService.find(authUser, actor, uuid);
 		} else {
-			Validate.notNull(ssMember, "The shared space member to delete must be set.");
-			Validate.notEmpty(ssMember.getUuid(), "The shared space member uuid must be set.");
+			Validate.notNull(member, "The shared space member to delete must be set.");
+			Validate.notEmpty(member.getUuid(), "The shared space member uuid must be set.");
 		}
-		return sharedSpaceMemberService.delete(authUser, actor, ssMember);
+		return sharedSpaceMemberService.delete(authUser, actor, uuid);
 	}
 }

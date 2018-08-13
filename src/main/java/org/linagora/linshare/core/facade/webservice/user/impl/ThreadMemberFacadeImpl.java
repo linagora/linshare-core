@@ -136,7 +136,7 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		SharedSpaceNode nodeOfMemberToDelete = new SharedSpaceNode();
 		nodeOfMemberToDelete.setUuid(threadUuid);
 		SharedSpaceMember ssMemberToDelete = ssMemberService.findMemberByUuid(authUser, authUser, userUuid, threadUuid);
-		SharedSpaceMember deleted = ssMemberService.delete(authUser, authUser, ssMemberToDelete);
+		SharedSpaceMember deleted = ssMemberService.delete(authUser, authUser, ssMemberToDelete.getUuid());
 		return new WorkGroupMemberDto(deleted, user);
 	}
 

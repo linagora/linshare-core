@@ -135,7 +135,7 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		User user = userService.findByLsUuid(dto.getUserUuid());
 		SharedSpaceMember ssMemberToDelete = ssMemberService.findMemberByUuid(authUser, authUser, dto.getUserUuid(),
 				dto.getThreadUuid());
-		SharedSpaceMember deleted = ssMemberService.delete(authUser, authUser, ssMemberToDelete);
+		SharedSpaceMember deleted = ssMemberService.delete(authUser, authUser, ssMemberToDelete.getUuid());
 		return new WorkGroupMemberDto(deleted, user);
 	}
 

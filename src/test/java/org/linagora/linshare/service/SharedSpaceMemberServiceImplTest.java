@@ -186,7 +186,7 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 		SharedSpaceMember memberToCreate = service.create(john, john, node, lightAdminRoleToPersist, lightJaneAccount);
 		Assert.assertEquals("The account referenced in this member is not john's",
 				memberToCreate.getAccount().getUuid(), jane.getLsUuid());
-		SharedSpaceMember deletedMember = service.delete(john, john, memberToCreate);
+		SharedSpaceMember deletedMember = service.delete(john, john, memberToCreate.getUuid());
 		Assert.assertNotNull("No member deleted", deletedMember);
 		try {
 			service.find(john, john, memberToCreate.getUuid());

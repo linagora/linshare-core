@@ -148,7 +148,7 @@
 		<constructor-arg ref="wsAdminPublicKeyFacade" />
 	</bean>
 	<bean id="adminSharedSpaceMemberRestService" class="org.linagora.linshare.webservice.admin.impl.SharedSpaceMemberRestServiceImpl">
-		<constructor-arg ref="wsAdminSharedSpaceMemberFacade" />
+		<constructor-arg ref="sharedSpaceMemberFacade" />
 	</bean>
 	<bean id="adminSharedSpaceNodeRestService" class="org.linagora.linshare.webservice.admin.impl.SharedSpaceNodeRestServiceImpl">
 		<constructor-arg ref="sharedSpaceNodeFacade" />
