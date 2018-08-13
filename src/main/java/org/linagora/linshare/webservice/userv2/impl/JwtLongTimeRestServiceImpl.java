@@ -47,7 +47,6 @@ import javax.ws.rs.QueryParam;
 
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.JwtToken;
 import org.linagora.linshare.core.facade.webservice.user.JwtLongTimeFacade;
 import org.linagora.linshare.mongo.entities.PermanentToken;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
@@ -59,8 +58,8 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/jwtlongtime")
-@Api(value = "/rest/user/v2/jwtlongtime", basePath = "/rest/user/v2/", description = "JWT permanent token service", produces = "application/json,application/xml", consumes = "application/json,application/xml")
+@Path("/jwt")
+@Api(value = "/rest/user/v2/jwt", basePath = "/rest/user/v2/", description = "JWT permanent token service", produces = "application/json,application/xml", consumes = "application/json,application/xml")
 public class JwtLongTimeRestServiceImpl implements JwtLongTimeRestService {
 
 	private final JwtLongTimeFacade jwtLongTimeFacade;
@@ -73,7 +72,7 @@ public class JwtLongTimeRestServiceImpl implements JwtLongTimeRestService {
 	@Path("/")
 	@POST
 	@Override
-	@ApiOperation(value = "Create a JWT permanent token.", response = JwtToken.class)
+	@ApiOperation(value = "Create a JWT permanent token.", response = PermanentToken.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User is not allowed to use this endpoint"),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error.") })
@@ -106,11 +105,11 @@ public class JwtLongTimeRestServiceImpl implements JwtLongTimeRestService {
 					@ApiResponse(code = 404, message = "The requested token has not been found."),
 					@ApiResponse(code = 500, message = "Internal server error.") })
 	public PermanentToken delete(
-			@ApiParam(value = "JwtLongTime to delete.", required = true)
-					PermanentToken jwtLongTime,
+			@ApiParam(value = "Permanent token to delete.", required = true)
+					PermanentToken permanentToken,
 			@ApiParam(value = "token uuid, if null object is used", required = false)
 					@PathParam("uuid") String uuid) throws BusinessException {
-		return jwtLongTimeFacade.delete(jwtLongTime, uuid);
+		return jwtLongTimeFacade.delete(permanentToken, uuid);
 	}
 
 	@Path("/{uuid: .*}")
@@ -122,7 +121,7 @@ public class JwtLongTimeRestServiceImpl implements JwtLongTimeRestService {
 					@ApiResponse(code = 404, message = "The requested token has not been found."),
 					@ApiResponse(code = 500, message = "Internal server error.") })
 	public PermanentToken update(
-			@ApiParam(value = "Permanent token to delete.", required = true)
+			@ApiParam(value = "Permanent token to update.", required = true)
 					PermanentToken permanentToken,
 			@ApiParam(value = "token uuid, if null object is used", required = false)
 					@PathParam("uuid") String uuid) throws BusinessException {

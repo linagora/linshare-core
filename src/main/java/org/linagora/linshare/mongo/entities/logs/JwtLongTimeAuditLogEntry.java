@@ -41,7 +41,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.mongo.entities.PermanentToken;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 
-@XmlRootElement
+@XmlRootElement(name = "JwtAuditLogEntry")
 public class JwtLongTimeAuditLogEntry extends AuditLogEntryUser {
 
 	protected PermanentToken resource;

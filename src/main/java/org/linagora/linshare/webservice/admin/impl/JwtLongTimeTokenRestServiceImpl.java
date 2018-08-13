@@ -60,8 +60,8 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/jwtlongtime")
-@Api(value = "/rest/admin/jwtlongtime", description = "JWT permanent token service")
+@Path("/jwt")
+@Api(value = "/rest/admin/jwt", description = "JWT permanent token service")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class JwtLongTimeTokenRestServiceImpl implements JwtLongTimeTokenRestService {
@@ -126,7 +126,7 @@ public class JwtLongTimeTokenRestServiceImpl implements JwtLongTimeTokenRestServ
 					@ApiResponse(code = 404, message = "The requested token has not been found."),
 					@ApiResponse(code = 500, message = "Internal server error.") })
 	public PermanentToken delete(
-			@ApiParam(value = "JwtLongTime to delete.", required = true)
+			@ApiParam(value = "Permanent token to delete.", required = true)
 					PermanentToken jwtLongTime,
 			@ApiParam(value = "token uuid, if null object is used", required = false)
 					@PathParam("uuid") String uuid) throws BusinessException {
@@ -142,7 +142,7 @@ public class JwtLongTimeTokenRestServiceImpl implements JwtLongTimeTokenRestServ
 					@ApiResponse(code = 404, message = "The requested token has not been found."),
 					@ApiResponse(code = 500, message = "Internal server error.") })
 	public PermanentToken update(
-			@ApiParam(value = "Permanent token to delete.", required = true)
+			@ApiParam(value = "Permanent token to update.", required = true)
 					PermanentToken permanentToken,
 			@ApiParam(value = "token uuid, if null object is used", required = false)
 					@PathParam("uuid") String uuid) throws BusinessException {
