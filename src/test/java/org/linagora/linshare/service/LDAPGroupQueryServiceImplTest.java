@@ -118,10 +118,7 @@ public class LDAPGroupQueryServiceImplTest extends AbstractJUnit4SpringContextTe
 		Date date_before = new Date();
 		List<LdapGroupObject> listGroups = ldapGroupQueryService.listGroups(ldapConnection, baseDn, groupPattern);
 		for (LdapGroupObject ldapGroup : listGroups) {
-			logger.info(ldapGroup.toString());
-			ldapGroup.setPrefix(groupPattern.getGroupPrefix());
-			ldapGroup.removePrefix();
-			logger.info(ldapGroup.toString());
+			logger.info("GROUPS:" + ldapGroup.toString());
 			if (ldapGroup.getMembers() != null) logger.info(ldapGroup.getMembers().toString());
 			Assert.assertEquals("wg-1", ldapGroup.getName());
 			Assert.assertEquals("workgroup-wg-1", ldapGroup.getNameWithPrefix());
@@ -139,10 +136,7 @@ public class LDAPGroupQueryServiceImplTest extends AbstractJUnit4SpringContextTe
 		Date date_before = new Date();
 		List<LdapGroupObject> listGroups = ldapGroupQueryService.listGroups(ldapConnection, baseDn, groupPattern);
 		for (LdapGroupObject ldapGroup : listGroups) {
-			logger.info(ldapGroup.toString());
-			ldapGroup.setPrefix(groupPattern.getGroupPrefix());
-			ldapGroup.removePrefix();
-			logger.info(ldapGroup.toString());
+			logger.info("GROUPS:" + ldapGroup.toString());
 			if (ldapGroup.getMembers() != null) logger.info(ldapGroup.getMembers().toString());
 			Assert.assertEquals("wg-1", ldapGroup.getName());
 			Assert.assertEquals("workgroup-wg-1", ldapGroup.getNameWithPrefix());

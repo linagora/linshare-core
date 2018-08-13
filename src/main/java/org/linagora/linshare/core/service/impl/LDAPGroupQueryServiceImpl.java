@@ -53,6 +53,9 @@ import org.linagora.linshare.ldap.LinShareDnList;
 import org.linid.dm.authorization.lql.LqlRequestCtx;
 import org.linid.dm.authorization.lql.dnlist.IDnList;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+
 public class LDAPGroupQueryServiceImpl extends LDAPQueryServiceImpl implements LDAPGroupQueryService {
 
 	@Override
@@ -74,7 +77,15 @@ public class LDAPGroupQueryServiceImpl extends LDAPQueryServiceImpl implements L
 		} finally {
 			ldapContext.close();
 		}
-		return list;
+		// TODO: Maybe removePrefix function could be apply during object creation.
+		Function<LdapGroupObject, LdapGroupObject> convert = new Function<LdapGroupObject, LdapGroupObject>() {
+			@Override
+			public LdapGroupObject apply(LdapGroupObject lgo) {
+				lgo.setPrefix(pattern.getGroupPrefix());
+				return lgo.removePrefix();
+			}
+		};
+		return Lists.transform(list, convert);
 	}
 
 	@Override
