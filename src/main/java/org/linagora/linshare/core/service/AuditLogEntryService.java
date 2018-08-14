@@ -65,6 +65,4 @@ public interface AuditLogEntryService {
 			boolean entriesLogsOnly, List<LogAction> action, List<AuditLogEntryType> type);
 
 	Set<AuditLogEntryAdmin> findAll(Account actor, String domainUuid, List<LogAction> action);
-
-	Set<AuditLogEntryUser> findAllAudit(Account authUser, String domainUuid, List<LogAction> actions);
 }

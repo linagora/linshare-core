@@ -161,5 +161,6 @@
 	<bean id="wsJwtLongTimeFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.JwtLongTimeFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="jwtLongTimeService" />
+		<constructor-arg ref="auditLogEntryService" />
 	</bean>
 </beans>

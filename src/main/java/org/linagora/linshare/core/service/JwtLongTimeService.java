@@ -34,15 +34,12 @@
 package org.linagora.linshare.core.service;
 
 import java.util.List;
-import java.util.Set;
 
-import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.PermanentToken;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface JwtLongTimeService {
 
@@ -55,9 +52,6 @@ public interface JwtLongTimeService {
 	List<PermanentToken> findAll(Account authUser, Account actor) throws BusinessException;
 
 	List<PermanentToken> findAllByDomain(Account authUser, AbstractDomain domain) throws BusinessException;
-
-	Set<AuditLogEntryUser> findAllAudit(Account authUser, String domainUuid, List<LogAction> actions)
-			throws BusinessException;
 
 	PermanentToken update(User authUser, User actor, String uuid, PermanentToken permanentToken);
 

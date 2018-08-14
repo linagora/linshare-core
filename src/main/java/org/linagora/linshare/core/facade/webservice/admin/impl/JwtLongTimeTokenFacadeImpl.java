@@ -34,10 +34,8 @@
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -48,7 +46,6 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.JwtLongTimeService;
 import org.linagora.linshare.mongo.entities.PermanentToken;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 import com.google.common.base.Strings;
 
@@ -117,13 +114,6 @@ public class JwtLongTimeTokenFacadeImpl extends AdminGenericFacadeImpl implement
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, permanentToken.getActorUuid());
 		return jwtLongTimeService.update(authUser, actor, permanentToken.getUuid(), permanentToken);
-	}
-
-	@Override
-	public Set<AuditLogEntryUser> findAllAudit(String domainUuid, List<LogAction> actions) throws BusinessException {
-		Validate.notEmpty(domainUuid, "Domain uuid must be set");
-		User authUser = checkAuthentication(Role.ADMIN);
-		return jwtLongTimeService.findAllAudit(authUser, domainUuid, actions);
 	}
 
 }

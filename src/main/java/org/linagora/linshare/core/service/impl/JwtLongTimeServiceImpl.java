@@ -35,7 +35,6 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.lang.Validate;
@@ -211,20 +210,6 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, Permanen
 		found.setLabel(permanentToken.getLabel());
 		found.setDescription(permanentToken.getDescription());
 		return jwtLongTimeBusinessService.update(found);
-	}
-
-	@Override
-	public Set<AuditLogEntryUser> findAllAudit(Account authUser, String domainUuid, List<LogAction> actions)
-			throws BusinessException {
-		if (authUser.hasAdminRole()) {
-			Validate.notNull(domainUuid, "domainUuid must be set");
-			AbstractDomain domain = abstractDomainService.findById(domainUuid);
-			if(!permissionService.isAdminforThisDomain(authUser, domain)) {
-				throw new BusinessException(BusinessErrorCode.JWT_PERMANENT_TOKEN_FORBIDDEN,
-						"You are not allowed to use this domain");
-			}
-		}
-		return auditLogEntryService.findAllAudit(authUser, domainUuid, actions);
 	}
 
 }

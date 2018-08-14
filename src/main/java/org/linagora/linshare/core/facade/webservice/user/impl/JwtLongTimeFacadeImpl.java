@@ -37,25 +37,32 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.JwtLongTimeFacade;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.AuditLogEntryService;
 import org.linagora.linshare.core.service.JwtLongTimeService;
 import org.linagora.linshare.mongo.entities.PermanentToken;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 public class JwtLongTimeFacadeImpl extends UserGenericFacadeImp implements JwtLongTimeFacade {
 
 	JwtLongTimeService jwtLongTimeService;
 
+	AuditLogEntryService auditLogEntryService;
+
 	public JwtLongTimeFacadeImpl(AccountService accountService,
-			JwtLongTimeService jwtLongTimeService) {
+			JwtLongTimeService jwtLongTimeService,
+			AuditLogEntryService auditLogEntryService) {
 		super(accountService);
 		this.jwtLongTimeService = jwtLongTimeService;
+		this.auditLogEntryService = auditLogEntryService;
 	}
 
 	@Override
@@ -99,6 +106,12 @@ public class JwtLongTimeFacadeImpl extends UserGenericFacadeImp implements JwtLo
 	@Override
 	public Set<AuditLogEntryUser> findAllAudit(List<LogAction> actions) throws BusinessException {
 		User authUser = checkAuthentication();
-		return jwtLongTimeService.findAllAudit(authUser, null, actions);
+		if(actions.isEmpty()) {
+			actions.add(LogAction.CREATE);
+			actions.add(LogAction.DELETE);
+		}
+		List<AuditLogEntryType> type = Lists.newArrayList();
+		type.add(AuditLogEntryType.JWT_PERMANENT_TOKEN);
+		return auditLogEntryService.findAll(authUser, authUser, actions, type, true, null, null);
 	}
 }

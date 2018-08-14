@@ -314,13 +314,4 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 				new Sort(Sort.Direction.DESC, CREATION_DATE));
 	}
 
-	@Override
-	public Set<AuditLogEntryUser> findAllAudit(Account authUser, String domainUuid, List<LogAction> actions) {
-		if (actions.isEmpty()) {
-			actions.add(LogAction.CREATE);
-			actions.add(LogAction.DELETE);
-		}
-		return userMongoRepository.findAll(authUser.getLsUuid(), domainUuid, actions, AuditLogEntryType.JWT_PERMANENT_TOKEN,
-					new Sort(Sort.Direction.DESC, CREATION_DATE));
-	}
 }
