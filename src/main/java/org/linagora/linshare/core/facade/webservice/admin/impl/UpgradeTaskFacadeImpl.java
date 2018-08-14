@@ -46,6 +46,7 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.UpgradeTaskDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UpgradeTaskService;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 public class UpgradeTaskFacadeImpl extends AdminGenericFacadeImpl implements UpgradeTaskFacade {
@@ -67,13 +68,27 @@ public class UpgradeTaskFacadeImpl extends AdminGenericFacadeImpl implements Upg
 
 	@Override
 	public List<UpgradeTaskDto> findAll() throws BusinessException {
-		User authUser = checkAuthentication(Role.SUPERADMIN);
-		List<UpgradeTaskDto> res = Lists.newArrayList();
+		User authUser = checkAuthentication(Role.ADMIN);
 		List<UpgradeTask> all = service.findAll(authUser);
-		for (UpgradeTask task : all) {
-			res.add(new UpgradeTaskDto(task));
+		Function<UpgradeTask, UpgradeTaskDto> convert = null;
+		if (authUser.hasSuperAdminRole()) {
+			convert = new Function<UpgradeTask, UpgradeTaskDto>() {
+				@Override
+				public UpgradeTaskDto apply(UpgradeTask obj) {
+					return new UpgradeTaskDto(obj);
+				}
+			};
+		} else {
+			convert = new Function<UpgradeTask, UpgradeTaskDto>() {
+				@Override
+				public UpgradeTaskDto apply(UpgradeTask obj) {
+					UpgradeTaskDto dto = new UpgradeTaskDto();
+					dto.setStatus(obj.getStatus());
+					return dto;
+				}
+			};
 		}
-		return res;
+		return Lists.transform(all, convert);
 	}
 
 	@Override

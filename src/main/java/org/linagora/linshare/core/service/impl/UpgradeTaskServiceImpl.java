@@ -74,11 +74,4 @@ public class UpgradeTaskServiceImpl extends GenericAdminServiceImpl implements U
 		return businessService.update(upgradeTask);
 	}
 
-	@Override
-	protected void preChecks(Account actor) {
-		super.preChecks(actor);
-		if (!actor.isRoot()) {
-			throw new BusinessException(BusinessErrorCode.UPGRADE_TASK_FORBIDDEN, "You are not allowed to use this service");
-		}
-	}
 }
