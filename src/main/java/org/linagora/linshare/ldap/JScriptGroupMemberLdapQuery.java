@@ -51,9 +51,9 @@ public class JScriptGroupMemberLdapQuery extends JScriptLdapQuery<LdapGroupMembe
 		super(ctx, baseDn, dnList, ldapPattern, clazz);
 	}
 
-	public List<LdapGroupMemberObject> searchAllGroupMember(LdapGroupObject group) throws NamingException {
+	public List<LdapGroupMemberObject> searchAllGroupMember(List<String> members) throws NamingException {
 		Map<String, LdapAttribute> ldapDbAttributes = filterAttrByPrefix("member_");
-		return dnListToObjectList(group.getMembers(), ldapDbAttributes);
+		return dnListToObjectList(members, ldapDbAttributes);
 	}
 
 }

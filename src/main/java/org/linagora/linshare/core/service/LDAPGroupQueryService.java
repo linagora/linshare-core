@@ -16,6 +16,6 @@ public interface LDAPGroupQueryService {
 	public List<LdapGroupObject> listGroups(LdapConnection ldapConnection, String baseDn, GroupLdapPattern pattern)
 			throws BusinessException, NamingException, IOException;
 
-	public List<LdapGroupMemberObject> listMembers(LdapConnection ldapConnection, String baseDn, GroupLdapPattern pattern, LdapGroupObject group)
-			throws BusinessException, NamingException, IOException;
+	public List<LdapGroupMemberObject> listMembers(LdapConnection ldapConnection, String baseDn,
+			GroupLdapPattern pattern, LdapGroupObject group) throws BusinessException, NamingException, IOException;
 }

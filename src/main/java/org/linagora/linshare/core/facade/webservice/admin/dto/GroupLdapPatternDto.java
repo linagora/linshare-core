@@ -75,7 +75,7 @@ public class GroupLdapPatternDto {
 	private String groupName;
 
 	@ApiModelProperty(value = "groupDN")
-	private String groupDN;
+	private String groupDN="removeMe";
 
 	@ApiModelProperty(value = "groupMember")
 	private String groupMember;
@@ -96,7 +96,6 @@ public class GroupLdapPatternDto {
 		Map<String, LdapAttribute> attributes = groupLdapPattern.getAttributes();
 
 		this.groupName = attributes.get(GroupLdapPattern.GROUP_NAME).getAttribute();
-		this.groupDN = attributes.get(GroupLdapPattern.GROUP_DN).getAttribute();
 		this.groupMember = attributes.get(GroupLdapPattern.GROUP_MEMBER).getAttribute();
 		this.memberFirstName = attributes.get(GroupLdapPattern.MEMBER_FIRST_NAME).getAttribute();
 		this.memberLastName = attributes.get(GroupLdapPattern.MEMBER_LAST_NAME).getAttribute();

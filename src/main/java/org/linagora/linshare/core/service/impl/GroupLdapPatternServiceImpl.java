@@ -120,8 +120,6 @@ public class GroupLdapPatternServiceImpl extends GenericAdminServiceImpl impleme
 
 		pattern.getAttributes().get(GroupLdapPattern.GROUP_NAME)
 				.setAttribute(groupLdapPattern.getAttributes().get(GroupLdapPattern.GROUP_NAME).getAttribute());
-		pattern.getAttributes().get(GroupLdapPattern.GROUP_DN)
-				.setAttribute(groupLdapPattern.getAttributes().get(GroupLdapPattern.GROUP_DN).getAttribute());
 		pattern.getAttributes().get(GroupLdapPattern.GROUP_MEMBER)
 				.setAttribute(groupLdapPattern.getAttributes().get(GroupLdapPattern.GROUP_MEMBER).getAttribute());
 		pattern.getAttributes().get(GroupLdapPattern.MEMBER_LAST_NAME)

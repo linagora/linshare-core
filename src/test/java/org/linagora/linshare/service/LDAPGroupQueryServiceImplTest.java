@@ -82,7 +82,6 @@ public class LDAPGroupQueryServiceImplTest extends AbstractJUnit4SpringContextTe
 		super();
 		attributes = new HashMap<String, LdapAttribute>();
 		attributes.put(GroupLdapPattern.GROUP_NAME, new LdapAttribute(GroupLdapPattern.GROUP_NAME, "cn"));
-		attributes.put(GroupLdapPattern.GROUP_DN, new LdapAttribute(GroupLdapPattern.GROUP_DN, "cn"));
 		attributes.put(GroupLdapPattern.GROUP_MEMBER, new LdapAttribute(GroupLdapPattern.GROUP_MEMBER, "member"));
 		attributes.put(GroupLdapPattern.MEMBER_MAIL, new LdapAttribute(GroupLdapPattern.MEMBER_MAIL, "mail"));
 		attributes.put(GroupLdapPattern.MEMBER_FIRST_NAME, new LdapAttribute(GroupLdapPattern.MEMBER_FIRST_NAME, "givenName"));
@@ -119,10 +118,12 @@ public class LDAPGroupQueryServiceImplTest extends AbstractJUnit4SpringContextTe
 		List<LdapGroupObject> listGroups = ldapGroupQueryService.listGroups(ldapConnection, baseDn, groupPattern);
 		for (LdapGroupObject ldapGroup : listGroups) {
 			logger.info("GROUPS:" + ldapGroup.toString());
-			if (ldapGroup.getMembers() != null) logger.info(ldapGroup.getMembers().toString());
+			if (!ldapGroup.getMembers().isEmpty()) {
+				logger.info(ldapGroup.getMembers().toString());
+			}
 			Assert.assertEquals("wg-1", ldapGroup.getName());
 			Assert.assertEquals("workgroup-wg-1", ldapGroup.getNameWithPrefix());
-			Assert.assertEquals("workgroup-wg-1", ldapGroup.getExternalId());
+			Assert.assertEquals("cn=workgroup-wg-1,ou=Groups,dc=linshare,dc=org", ldapGroup.getExternalId());
 		}
 		Date date_after = new Date();
 		Assert.assertEquals(1, listGroups.size());
@@ -137,11 +138,6 @@ public class LDAPGroupQueryServiceImplTest extends AbstractJUnit4SpringContextTe
 		List<LdapGroupObject> listGroups = ldapGroupQueryService.listGroups(ldapConnection, baseDn, groupPattern);
 		for (LdapGroupObject ldapGroup : listGroups) {
 			logger.info("GROUPS:" + ldapGroup.toString());
-			if (ldapGroup.getMembers() != null) logger.info(ldapGroup.getMembers().toString());
-			Assert.assertEquals("wg-1", ldapGroup.getName());
-			Assert.assertEquals("workgroup-wg-1", ldapGroup.getNameWithPrefix());
-			Assert.assertEquals("workgroup-wg-1", ldapGroup.getExternalId());
-
 			List<LdapGroupMemberObject> listMembers = ldapGroupQueryService.listMembers(ldapConnection, baseDn, groupPattern, ldapGroup);
 			for (LdapGroupMemberObject ldapGroupMemberObject : listMembers) {
 				logger.info(ldapGroupMemberObject.toString());

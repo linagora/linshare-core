@@ -151,4 +151,10 @@ public class LdapAttribute {
 	public void setCompletion(Boolean completion) {
 		this.completion = completion;
 	}
+
+	@Override
+	public String toString() {
+		return "LdapAttribute [field=" + field + ", attribute=" + attribute + ", sync=" + sync + ", system=" + system
+				+ ", enable=" + enable + ", completion=" + completion + "]";
+	}
 }

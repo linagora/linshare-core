@@ -54,6 +54,7 @@ public class LdapGroupObject {
 	public LdapGroupObject() {
 		super();
 		this.uuid = UUID.randomUUID().toString();
+		this.members = Lists.newArrayList();
 	}
 
 	public String getName() {
@@ -118,9 +119,11 @@ public class LdapGroupObject {
 
 	public LdapGroupObject removePrefix() {
 		if (prefix != null) {
-			String currPrefix = name.substring(0, prefix.length());
-			if (prefix.equals(currPrefix)) {
-				this.name = this.name.substring(prefix.length());
+			if (name != null) {
+				String currPrefix = name.substring(0, prefix.length());
+				if (prefix.equals(currPrefix)) {
+					this.name = this.name.substring(prefix.length());
+				}
 			}
 		}
 		return this;

@@ -41,8 +41,7 @@ public class GroupLdapPattern extends LdapPattern {
 
 	// ldap: group
 	public static final String GROUP_NAME = "group_name_attr";
-	public static final String GROUP_DN = "group_dn_attr";
-	public static final String GROUP_MEMBER = "group_member_attr";
+	public static final String GROUP_MEMBER = "extended_group_member_attr";
 
 	// ldap: group member
 	public static final String MEMBER_MAIL = "member_mail";
@@ -50,8 +49,8 @@ public class GroupLdapPattern extends LdapPattern {
 	public static final String MEMBER_LAST_NAME = "member_lastname";
 
 	static {
+		METHOD_MAPPING.put(DN, "setExternalId");
 		METHOD_MAPPING.put(GROUP_NAME, "setName");
-		METHOD_MAPPING.put(GROUP_DN, "setExternalId");
 		METHOD_MAPPING.put(GROUP_MEMBER, "addMember");
 		METHOD_MAPPING.put(MEMBER_LAST_NAME, "setLastName");
 		METHOD_MAPPING.put(MEMBER_FIRST_NAME, "setFirstName");
@@ -84,8 +83,8 @@ public class GroupLdapPattern extends LdapPattern {
 		this.groupPrefix = groupLdapPatternDto.getGroupPrefix();
 		this.attributes = new HashMap<String, LdapAttribute>();
 		this.attributes.put(GROUP_NAME, new LdapAttribute(GROUP_NAME, groupLdapPatternDto.getGroupName(), true));
-		this.attributes.put(GROUP_DN, new LdapAttribute(GROUP_DN, groupLdapPatternDto.getGroupDN(), true));
 		this.attributes.put(GROUP_MEMBER, new LdapAttribute(GROUP_MEMBER, groupLdapPatternDto.getGroupMember(), true));
+
 		this.attributes.put(MEMBER_LAST_NAME,
 				new LdapAttribute(MEMBER_LAST_NAME, groupLdapPatternDto.getMemberLastName(), false));
 		this.attributes.put(MEMBER_FIRST_NAME,
@@ -108,7 +107,6 @@ public class GroupLdapPattern extends LdapPattern {
 		this.searchPageSize = 0;
 		this.attributes = new HashMap<String, LdapAttribute>();
 		this.attributes.put(GROUP_NAME, new LdapAttribute(GROUP_NAME, "attribute", true));
-		this.attributes.put(GROUP_DN, new LdapAttribute(GROUP_DN, "attribute", true));
 		this.attributes.put(GROUP_MEMBER, new LdapAttribute(GROUP_MEMBER, "attribute", true));
 		this.attributes.put(MEMBER_LAST_NAME, new LdapAttribute(MEMBER_LAST_NAME, "attribute", false));
 		this.attributes.put(MEMBER_FIRST_NAME, new LdapAttribute(MEMBER_FIRST_NAME, "attribute", false));

@@ -99,9 +99,12 @@ public class LDAPGroupQueryServiceImpl extends LDAPQueryServiceImpl implements L
 		LqlRequestCtx lqlctx = new LqlRequestCtx(ldapContext, vars, true);
 		IDnList dnList = new LinShareDnList(pattern.getSearchPageSize(), 0);
 		try {
-			JScriptGroupMemberLdapQuery query = new JScriptGroupMemberLdapQuery(lqlctx, baseDn, pattern, dnList,
+			JScriptGroupLdapQuery query = new JScriptGroupLdapQuery(lqlctx, baseDn, pattern, dnList,
+					LdapGroupObject.class);
+			LdapGroupObject lgo = query.loadMembers(group);
+			JScriptGroupMemberLdapQuery queryMember = new JScriptGroupMemberLdapQuery(lqlctx, baseDn, pattern, dnList,
 					LdapGroupMemberObject.class);
-			res = query.searchAllGroupMember(group);
+			res = queryMember.searchAllGroupMember(lgo.getMembers());
 		} finally {
 			ldapContext.close();
 		}

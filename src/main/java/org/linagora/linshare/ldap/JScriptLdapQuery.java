@@ -173,6 +173,20 @@ public abstract class JScriptLdapQuery<T extends Object> {
 		return filterValues;
 	}
 
+	protected Map<String, LdapAttribute> filterAttrByPartialString(String contain) {
+		Map<String, LdapAttribute> dbAttributes = ldapPattern.getAttributes();
+		Predicate<LdapAttribute> filter = new Predicate<LdapAttribute>() {
+			public boolean apply(LdapAttribute attr) {
+				if (attr.getEnable()) {
+					return attr.getField().contains(contain);
+				}
+				return false;
+			}
+		};
+		Map<String, LdapAttribute> filterValues = Maps.filterValues(dbAttributes, filter);
+		return filterValues;
+	}
+
 	protected ControlContext initControlContext(Map<String, LdapAttribute> ldapDbAttributes) {
 		// String list of ldap attributes
 		Collection<String> ldapAttrList = getLdapAttrList(ldapDbAttributes);
@@ -213,7 +227,7 @@ public abstract class JScriptLdapQuery<T extends Object> {
 				logger.debug(e.toString());
 			}
 			Date date_after = new Date();
-			logger.debug("fin dnToObject: " + String.valueOf(date_after.getTime() - date_before.getTime()) + " milliseconds.");
+			logger.trace("fin dnToObject: " + String.valueOf(date_after.getTime() - date_before.getTime()) + " milliseconds.");
 			if (obj != null) {
 				users.add(obj);
 			}
@@ -221,30 +235,44 @@ public abstract class JScriptLdapQuery<T extends Object> {
 		return users;
 	}
 
+	protected T dnToObject(String dn, Map<String, LdapAttribute> ldapDbAttributes) throws NamingException {
+		ControlContext controlContext = initControlContext(ldapDbAttributes);
+		T obj = null;
+		try {
+			obj = dnToObject(dn, controlContext.getLdapDbAttributes(), controlContext.getSearchControls());
+		} catch (NamingException e) {
+			logger.error(e.getMessage());
+			logger.debug(e.toString());
+		}
+		return obj;
+	}
 	// TODO whole refactoring needed to support multiple values per attribute
 	@SuppressWarnings("unchecked")
 	protected T dnToObject(String dn, Map<String, LdapAttribute> ldapDbAttributes, SearchControls scs) throws NamingException {
-		T user = null;
+		T obj = null;
 		try {
 			Constructor<?> ctor = clazz.getConstructor();
-			user = (T) ctor.newInstance();
-			logger.debug("newInstance : " + user.toString());
+			obj = (T) ctor.newInstance();
+			logger.trace("newInstance : " + obj.toString());
 		} catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException e) {
 			logger.error(e.getMessage(), e);
 			return null;
 		}
+		// If T contains a method name "LdapPattern.DN", the current full dn will be
+		// store into the current object.
+		setUserAttribute(obj, LdapPattern.DN, dn + "," + baseDn);
 		NamingEnumeration<SearchResult> results = lqlctx.getLdapCtx().search(dn, "(objectclass=*)", scs);
 		Integer cpt = new Integer(0);
 		while (results != null && results.hasMore()) {
 			cpt += 1;
 			SearchResult entry = (SearchResult) results.next();
-			logger.debug("processing result : " + cpt);
+			logger.trace("processing result : " + cpt);
 
 			// Handle the entry's response controls (if any)
 			if (entry instanceof HasControls) {
 				Control[] controls = ((HasControls) entry).getControls();
-				if (logger.isDebugEnabled()) {
-					logger.debug("entry name has controls " + controls.toString());
+				if (logger.isTraceEnabled()) {
+					logger.trace("entry name has controls " + controls.toString());
 				}
 			}
 
@@ -253,8 +281,8 @@ public abstract class JScriptLdapQuery<T extends Object> {
 				LdapAttribute dbAttr = ldapDbAttributes.get(dbAttrKey);
 				String ldapAttrName = dbAttr.getAttribute();
 				Attribute ldapAttr = entry.getAttributes().get(ldapAttrName);
-				if (logger.isDebugEnabled()) {
-					logger.debug("field = " + dbAttrKey + ", ldap attribute = " + ldapAttrName);
+				if (logger.isTraceEnabled()) {
+					logger.trace("field = " + dbAttrKey + ", ldap attribute = " + ldapAttrName);
 				}
 				boolean isNull = false;
 				String value = null;
@@ -262,11 +290,11 @@ public abstract class JScriptLdapQuery<T extends Object> {
 					// ldapAttr and value can be null. ldapAttr.get() can raise
 					// NPE.
 					value = (String) ldapAttr.get();
-					if (logger.isDebugEnabled()) {
+					if (logger.isTraceEnabled()) {
 						if (ldapAttr != null) {
 							String size = null;
 							size = String.valueOf(ldapAttr.size());
-							logger.debug("count of attribute values for : '" + ldapAttrName + "' :" + size);
+							logger.trace("count of attribute values for : '" + ldapAttrName + "' :" + size);
 						}
 					}
 				} catch (NullPointerException e) {
@@ -282,20 +310,20 @@ public abstract class JScriptLdapQuery<T extends Object> {
 						logger.error("The field '" + dbAttrKey + "' (ldap attribute : '" + ldapAttrName + "') must exist in your ldap directory, it is required by the system.");
 						return null;
 					} else {
-						if (logger.isDebugEnabled())
-							logger.debug("The field '" + dbAttrKey + "' (ldap attribute : '" + ldapAttrName + "') is null.");
+						if (logger.isTraceEnabled())
+							logger.trace("The field '" + dbAttrKey + "' (ldap attribute : '" + ldapAttrName + "') is null.");
 						continue;
 					}
 				} else {
 					NamingEnumeration<?> all = ldapAttr.getAll();
 					while (all.hasMoreElements()) {
 						Object element = all.nextElement();
-						logger.debug("element : " + element);
+						logger.trace("element : " + element);
 						// we are just skipping some attrute's values if they are null.
 						if (element != null) {
 							value = (String) element;
 							// updating user property with current attribute value
-							if (!setUserAttribute(user, dbAttrKey, value)) {
+							if (!setUserAttribute(obj, dbAttrKey, value)) {
 								logger.error("Can not convert dn : '" + dn +"' to an user object.");
 								logger.error("Can not set the field '" + dbAttrKey + "' (ldap attribute : '" + ldapAttrName + "') with value : " + value);
 								return null;
@@ -305,18 +333,22 @@ public abstract class JScriptLdapQuery<T extends Object> {
 				}
 			}
 		}
-		logger.debug("newInstance : " + user.toString());
-		return user;
+		logger.debug("newInstance : " + obj.toString());
+		return obj;
 	}
 
 	protected boolean setUserAttribute(Object user, String attr_key, String curValue) {
-		String method = LdapPattern.METHOD_MAPPING.get(attr_key);
+		String methodName = LdapPattern.METHOD_MAPPING.get(attr_key);
+		if (methodName == null) {
+			logger.trace("Skipped. Method not found for attr_key: " + attr_key);
+			return false;
+		}
 		try {
-			Method method2 = user.getClass().getMethod(method, String.class);
-			method2.invoke(user, curValue);
+			Method method = user.getClass().getMethod(methodName, String.class);
+			method.invoke(user, curValue);
 			return true;
 		} catch (Exception e) {
-			logger.error("Introspection : can not call method '" + method + "' on current object.");
+			logger.error("Introspection : can not call method '" + methodName + "' on current object.");
 			logger.error("message : " + e.getMessage());
 		}
 		return false;

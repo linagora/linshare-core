@@ -39,6 +39,8 @@ import java.util.Map;
 
 public abstract class LdapPattern {
 
+	public static final String DN = "dn_attr";
+
 	protected long id;
 
 	protected String label;
