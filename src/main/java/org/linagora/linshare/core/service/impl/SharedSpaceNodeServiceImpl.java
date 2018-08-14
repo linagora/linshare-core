@@ -41,6 +41,7 @@ import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessServic
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.SharedSpaceNodeResourceAccessControl;
@@ -52,7 +53,6 @@ import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
-import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.mongo.entities.logs.SharedSpaceNodeAuditLogEntry;
 
 import com.google.common.collect.Lists;
@@ -107,10 +107,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.CREATE,
 				AuditLogEntryType.SHARED_SPACE_NODE, created);
 		logEntryService.insert(log);
-		sharedSpaceMemberService.createWithoutCheckPermission(authUser, authUser,
-				node,
-				new GenericLightEntity(role.getUuid(), role.getName()),
-				new GenericLightEntity(actor.getLsUuid(), actor.getFullName()));
+		sharedSpaceMemberService.createWithoutCheckPermission(authUser, actor, created, role, (User)actor);
 		return created;
 	}
 

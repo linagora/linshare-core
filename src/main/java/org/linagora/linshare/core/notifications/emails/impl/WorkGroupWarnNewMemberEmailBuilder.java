@@ -40,7 +40,6 @@ import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
@@ -85,11 +84,11 @@ public class WorkGroupWarnNewMemberEmailBuilder extends EmailBuilder {
 	protected List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
 		Context ctx = newFakeContext(language);
-		WorkgroupMember workGroupMember = getNewFakeThreadMember("work_group_name-1");
-		ctx.setVariable("member", new MailContact(workGroupMember.getUser()));
+		SharedSpaceMember workGroupMember = getNewFakeSharedSpaceMember("work_group_name-1");
+		ctx.setVariable("member", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
 		ctx.setVariable("owner", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
 		ctx.setVariable("threadMember", workGroupMember);
-		ctx.setVariable("workGroupName", workGroupMember.getThread().getName());
+		ctx.setVariable("workGroupName", workGroupMember.getNode().getName());
 		ctx.setVariable("workGroupLink", getWorkGroupLink(fakeLinshareURL, "fake_uuid"));
 		res.add(ctx);
 		return res;

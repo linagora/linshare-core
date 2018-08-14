@@ -18,8 +18,6 @@
 		<constructor-arg ref="accountQuotaBusinessService"/>
 		<constructor-arg ref="containerQuotaBusinessService"/>
 		<constructor-arg ref="workGroupNodeService"/>
-		<constructor-arg ref="notifierService"/>
-		<constructor-arg ref="mailBuildingService" />
 	</bean>
 
 	<bean name="userService" class="org.linagora.linshare.core.service.impl.UserServiceImpl">
@@ -30,7 +28,6 @@
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="entryService" />
-		<constructor-arg ref="threadService" />
 		<constructor-arg ref="domainPermissionBusinessService" />
 		<constructor-arg ref="mailingListContactRepository" />
 		<constructor-arg ref="recipientFavouriteRepository" />
@@ -419,5 +416,6 @@
 		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="logEntryService" />
+		<constructor-arg ref="userRepository" />
 	</bean>
 </beans>

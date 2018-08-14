@@ -70,4 +70,6 @@ public interface SharedSpaceMemberBusinessService {
 	List<SharedSpaceNodeNested> findAllByAccount(String accountUuid);
 
 	void updateNestedNode(SharedSpaceNode node) throws BusinessException;
+
+	List<SharedSpaceMember> findAllUserMemberships(String userUuid);
 }

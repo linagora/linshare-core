@@ -73,7 +73,7 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.EntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
-import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.utils.HashUtils;
 import org.linagora.linshare.mongo.entities.PermanentToken;
@@ -110,7 +110,7 @@ public class UserServiceImpl implements UserService {
 
 	private final AllowedContactRepository allowedContactRepository;
 
-	private final ThreadService threadService;
+	private final SharedSpaceMemberService ssMemberService;
 
 	private final DomainPermissionBusinessService domainPermisionService;
 
@@ -132,13 +132,13 @@ public class UserServiceImpl implements UserService {
 			final FunctionalityReadOnlyService functionalityService,
 			final AbstractDomainService abstractDomainService,
 			final EntryService entryService,
-			final ThreadService threadService,
 			final DomainPermissionBusinessService domainPermissionBusinessService,
 			final MailingListContactRepository mailingListContactRepository,
 			final RecipientFavouriteRepository recipientFavouriteRepository,
 			final AccountQuotaBusinessService accountQuotaBusinessService,
 			final ContainerQuotaBusinessService containerQuotaBusinessService,
-			final JwtLongTimeBusinessService jwtLongTimeBusinessService) {
+			final JwtLongTimeBusinessService jwtLongTimeBusinessService,
+			final SharedSpaceMemberService ssMemberService) {
 		this.userRepository = userRepository;
 		this.logEntryService = logEntryService;
 		this.guestRepository = guestRepository;
@@ -146,13 +146,13 @@ public class UserServiceImpl implements UserService {
 		this.abstractDomainService = abstractDomainService;
 		this.functionalityReadOnlyService = functionalityService;
 		this.entryService = entryService;
-		this.threadService = threadService;
 		this.domainPermisionService = domainPermissionBusinessService;
 		this.mailingListContactRepository = mailingListContactRepository;
 		this.recipientFavouriteRepository = recipientFavouriteRepository;
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
 		this.containerQuotaBusinessService = containerQuotaBusinessService;
 		this.jwtLongTimeBusinessService = jwtLongTimeBusinessService;
+		this.ssMemberService = ssMemberService;
 	}
 
 	@Override
@@ -251,7 +251,7 @@ public class UserServiceImpl implements UserService {
 		try {
 			// clear all thread memberships
 			UserAuditLogEntry log = new UserAuditLogEntry(actor, actor, LogAction.DELETE, AuditLogEntryType.USER, userToDelete);
-			threadService.deleteAllUserMemberships(actor, userToDelete);
+			ssMemberService.deleteAllUserMemberships(actor, actor, userToDelete.getLsUuid());
 			userRepository.delete(userToDelete);
 			deleteAllJwtLongTime(actor, userToDelete);
 			logEntryService.insert(log);
@@ -311,8 +311,8 @@ public class UserServiceImpl implements UserService {
 			allowedContactRepository.deleteAllByUserBothSides(userToDelete);
 
 			// clear all thread memberships
-			threadService.deleteAllUserMemberships(actor, userToDelete);
-
+			//threadService.deleteAllUserMemberships(actor, userToDelete);
+			ssMemberService.deleteAllUserMemberships(actor, actor, lsUuid);
 			// // clearing all signatures
 			// Set<Signature> ownSignatures = userToDelete.getOwnSignatures();
 			// ownSignatures.clear();

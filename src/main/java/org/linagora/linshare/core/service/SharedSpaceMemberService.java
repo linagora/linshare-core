@@ -48,9 +48,6 @@ public interface SharedSpaceMemberService {
 
 	SharedSpaceMember find(Account authUser, Account actor, String uuid) throws BusinessException;
 
-	SharedSpaceMember create(Account authUser, Account actor, SharedSpaceNode node,
-			GenericLightEntity roleToPersist, GenericLightEntity accountLight) throws BusinessException;
-
 	SharedSpaceMember create(Account authUser, Account actor, User newMember, SharedSpaceNode sharedSpaceNode,
 			SharedSpaceRole role) throws BusinessException;
 
@@ -59,22 +56,24 @@ public interface SharedSpaceMemberService {
 
 	List<SharedSpaceMember> findByNode(Account authUser, Account actro, String ssnodeUuid);
 
-	SharedSpaceMember delete(Account authUser, Account actor, String uuid);
+	SharedSpaceMember delete(Account authUser, Account actor, String uuid, User userMember);
 
-	SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate);
+	SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate, User foundUser);
 
 	SharedSpaceMember updateRole(Account authUser, Account actor, String sharedSpaceMemberUuid,
-			GenericLightEntity newRole);
+			GenericLightEntity newRole, User foundUser);
 
 	List<SharedSpaceMember> findAll(Account authUser, Account actor, String shareSpaceNodeUuid)
 			throws BusinessException;
 
 	List<SharedSpaceMember> deleteAllMembers(Account authUser, Account actor, String sharedSpaceNodeUuid);
 
+	List<SharedSpaceMember> deleteAllUserMemberships(Account authUser, Account actor, String sharedSpaceNodeUuid);
+
 	List<SharedSpaceMember> findByMemberName(Account authUser, Account actor, String name);
 
 	SharedSpaceMember createWithoutCheckPermission(Account authUser, Account actor, SharedSpaceNode node,
-			GenericLightEntity roleToPersist, GenericLightEntity accountLight) throws BusinessException;
+			SharedSpaceRole role, User newMember) throws BusinessException;
 
 	List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor, String accountUuid);
 

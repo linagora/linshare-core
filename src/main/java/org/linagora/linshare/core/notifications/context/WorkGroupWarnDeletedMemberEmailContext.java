@@ -38,26 +38,30 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.WorkgroupMember;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 
 public class WorkGroupWarnDeletedMemberEmailContext extends EmailContext {
 
-	protected WorkgroupMember workgroupMember;
+	protected SharedSpaceMember workgroupMember;
+
+	protected User userMember;
 
 	protected Account owner;
 
-	public WorkGroupWarnDeletedMemberEmailContext(WorkgroupMember workgroupMember, Account owner) {
-		super(workgroupMember.getUser().getDomain(), false);
+	public WorkGroupWarnDeletedMemberEmailContext(SharedSpaceMember workgroupMember, Account owner, User userMember) {
+		super(userMember.getDomain(), false);
 		this.workgroupMember = workgroupMember;
 		this.owner = owner;
-		this.language = workgroupMember.getUser().getExternalMailLocale();
+		this.userMember = userMember;
+		this.language = userMember.getExternalMailLocale();
 	}
 
-	public WorkgroupMember getWorkgroupMember() {
+	public SharedSpaceMember getWorkgroupMember() {
 		return workgroupMember;
 	}
 
-	public void setWorkgroupMember(WorkgroupMember workgroupMember) {
+	public void setWorkgroupMember(SharedSpaceMember workgroupMember) {
 		this.workgroupMember = workgroupMember;
 	}
 
@@ -81,7 +85,7 @@ public class WorkGroupWarnDeletedMemberEmailContext extends EmailContext {
 
 	@Override
 	public String getMailRcpt() {
-		return workgroupMember.getUser().getMail();
+		return userMember.getMail();
 	}
 
 	@Override
@@ -93,6 +97,14 @@ public class WorkGroupWarnDeletedMemberEmailContext extends EmailContext {
 	public void validateRequiredField() {
 		Validate.notNull(workgroupMember, "Missing threadMember");
 		Validate.notNull(owner, "Missing owner");
+	}
+
+	public User getUserMember() {
+		return userMember;
+	}
+
+	public void setUserMember(User userMember) {
+		this.userMember = userMember;
 	}
 
 }

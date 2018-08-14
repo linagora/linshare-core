@@ -44,9 +44,12 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.context.WorkGroupWarnDeletedMemberEmailContext;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnNewMemberEmailContext;
+import org.linagora.linshare.core.notifications.context.WorkGroupWarnUpdatedMemberEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.SharedSpaceMemberResourceAccessControl;
+import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
@@ -71,16 +74,20 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 
 	private final LogEntryService logEntryService;
 
+	private final UserRepository<User> userRepository;
+
 	public SharedSpaceMemberServiceImpl(SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService,
 			NotifierService notifierService,
 			MailBuildingService mailBuildingService,
 			SharedSpaceMemberResourceAccessControl rac,
-			LogEntryService logEntryService) {
+			LogEntryService logEntryService,
+			UserRepository<User> userRepository) {
 		super(rac);
 		this.businessService = sharedSpaceMemberBusinessService;
 		this.notifierService = notifierService;
 		this.mailBuildingService = mailBuildingService;
 		this.logEntryService = logEntryService;
+		this.userRepository = userRepository;
 	}
 
 	@Override
@@ -98,61 +105,36 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	}
 
 	@Override
-	public SharedSpaceMember create(Account authUser, Account actor, SharedSpaceNode node,
-			GenericLightEntity roleToPersist, GenericLightEntity accountLight) throws BusinessException {
-		preChecks(authUser, actor);
-		Validate.notNull(accountLight, "Account uuid must be set.");
-		Validate.notNull(roleToPersist, "Role uuid must be set.");
-		Validate.notNull(node, "Node uuid must be set.");
-		SharedSpaceMember member = new SharedSpaceMember(new SharedSpaceNodeNested(node), roleToPersist, accountLight);
-		checkCreatePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
-				member);
-		if (!checkAccountNotInNode(accountLight.getUuid(), node.getUuid())) {
-			String message = String.format(
-					"The account with the UUID : %s is already a member of the node with the uuid : %s",
-					accountLight.getUuid(), node.getUuid());
-			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_ALREADY_EXISTS, message);
-		}
-		SharedSpaceMember toAdd = businessService.create(member);
-		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.CREATE,
-				AuditLogEntryType.SHARED_SPACE_MEMBER, toAdd);
-		logEntryService.insert(log);
-		return toAdd;
-	}
-
-	@Override
 	public SharedSpaceMember create(Account authUser, Account actor, User newMember, SharedSpaceNode node,
 			SharedSpaceRole role) throws BusinessException {
-		GenericLightEntity roleToPersist = new GenericLightEntity(role.getUuid(), role.getName());
-		GenericLightEntity accountLight = new GenericLightEntity(newMember.getLsUuid(), newMember.getFullName());
-		SharedSpaceMember member = new SharedSpaceMember(new SharedSpaceNodeNested(node), roleToPersist, accountLight);
+		Validate.notNull(newMember, "newMemeber uuid must be set.");
+		Validate.notNull(role, "Role must be set.");
+		Validate.notNull(node, "Node uuid must be set.");
 		checkCreatePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
-				member);
+				null, node);
 		if (!checkAccountNotInNode(newMember.getLsUuid(), node.getUuid())) {
 			String message = String.format(
 					"The account with the UUID : %s is already a member of the node with the uuid : %s",
 					newMember.getLsUuid(), node.getUuid());
 			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_ALREADY_EXISTS, message);
 		}
-		SharedSpaceMember toAdd = businessService.create(member);
-		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.CREATE,
-				AuditLogEntryType.SHARED_SPACE_MEMBER, toAdd);
-		logEntryService.insert(log);
+		SharedSpaceMember member = createWithoutCheckPermission(authUser, actor, node, role, newMember);
 		WorkGroupWarnNewMemberEmailContext context = new WorkGroupWarnNewMemberEmailContext(member, actor, newMember);
 		MailContainerWithRecipient mail = mailBuildingService.build(context);
 		notifierService.sendNotification(mail, true);
-		return toAdd;
+		return member;
 	}
 
 	@Override
-	public SharedSpaceMember createWithoutCheckPermission(Account authUser, Account actor,
-			SharedSpaceNode node, GenericLightEntity roleToPersist, GenericLightEntity accountLight)
-			throws BusinessException {
+	public SharedSpaceMember createWithoutCheckPermission(Account authUser, Account actor, SharedSpaceNode node,
+			SharedSpaceRole role, User newMember) throws BusinessException {
 		preChecks(authUser, actor);
-		Validate.notNull(accountLight, "Account uuid must be set.");
-		Validate.notNull(roleToPersist, "Role uuid must be set.");
-		Validate.notNull(node, "Node uuid must be set.");
-		SharedSpaceMember member = new SharedSpaceMember(new SharedSpaceNodeNested(node), roleToPersist, accountLight);
+		Validate.notNull(newMember, "newMemeber uuid must be set.");
+		Validate.notNull(role, "Role must be set.");
+		Validate.notNull(node, "Node must be set.");
+		SharedSpaceMember member = new SharedSpaceMember(new SharedSpaceNodeNested(node),
+				new GenericLightEntity(role.getUuid(), role.getName()),
+				new GenericLightEntity(newMember.getLsUuid(), newMember.getFullName()));
 		SharedSpaceMember toAdd = businessService.create(member);
 		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.CREATE,
 				AuditLogEntryType.SHARED_SPACE_MEMBER, toAdd);
@@ -186,7 +168,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	}
 
 	@Override
-	public SharedSpaceMember delete(Account authUser, Account actor, String uuid) {
+	public SharedSpaceMember delete(Account authUser, Account actor, String uuid, User userMember) {
 		preChecks(authUser, actor);
 		Validate.notNull(uuid, "Missing required member uuid to delete");
 		SharedSpaceMember foundMemberToDelete = find(authUser, actor, uuid);
@@ -196,11 +178,14 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.DELETE,
 				AuditLogEntryType.SHARED_SPACE_MEMBER, foundMemberToDelete);
 		logEntryService.insert(log);
+		WorkGroupWarnDeletedMemberEmailContext context = new WorkGroupWarnDeletedMemberEmailContext(foundMemberToDelete, actor, userMember);
+		MailContainerWithRecipient mail = mailBuildingService.build(context);
+		notifierService.sendNotification(mail, true);
 		return foundMemberToDelete;
 	}
 
 	@Override
-	public SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate) {
+	public SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate, User foundUser) {
 		preChecks(authUser, actor);
 		Validate.notNull(memberToUpdate, "Missing required member to update");
 		Validate.notNull(memberToUpdate.getUuid(), "Missing required member uuid to update");
@@ -212,12 +197,15 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 				AuditLogEntryType.SHARED_SPACE_MEMBER, foundMemberToUpdate);
 		log.setResourceUpdated(updated);
 		logEntryService.insert(log);
+		WorkGroupWarnUpdatedMemberEmailContext context = new WorkGroupWarnUpdatedMemberEmailContext(updated, foundUser, actor);
+		MailContainerWithRecipient mail = mailBuildingService.build(context);
+		notifierService.sendNotification(mail, true);
 		return updated;
 	}
 
 	@Override
 	public SharedSpaceMember updateRole(Account authUser, Account actor, String sharedSpaceMemberUuid,
-			GenericLightEntity newRole) {
+			GenericLightEntity newRole, User foundUser) {
 		preChecks(authUser, actor);
 		Validate.notNull(sharedSpaceMemberUuid, "Missing required sharedSpaceMemberUuid");
 		Validate.notNull(newRole, "Missing required newRole");
@@ -231,6 +219,9 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 				AuditLogEntryType.SHARED_SPACE_MEMBER, foundMemberToUpdate);
 		log.setResourceUpdated(updatedMember);
 		logEntryService.insert(log);
+		WorkGroupWarnUpdatedMemberEmailContext context = new WorkGroupWarnUpdatedMemberEmailContext(updatedMember, foundUser, actor);
+		MailContainerWithRecipient mail = mailBuildingService.build(context);
+		notifierService.sendNotification(mail, true);
 		return updatedMember;
 	}
 
@@ -257,7 +248,28 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 			logs.add(new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.DELETE,
 					AuditLogEntryType.SHARED_SPACE_MEMBER, member));
 		}
-		logEntryService.insert(logs);
+		if (logs != null && !logs.isEmpty()) {
+			logEntryService.insert(logs);
+		}
+		return foundMembersToDelete;
+	}
+
+	@Override
+	public List<SharedSpaceMember> deleteAllUserMemberships(Account authUser, Account actor, String userUuid) {
+		preChecks(authUser, actor);
+		Validate.notNull(userUuid, "Missing required sharedSpaceNodeUuid");
+		// TODO Check the user is admin to delete all Members
+		List<SharedSpaceMember> foundMembersToDelete = businessService.findAllUserMemberships(userUuid);
+		List<AuditLogEntryUser> logs = Lists.newArrayList();
+		for (SharedSpaceMember member : foundMembersToDelete) {
+			User userMember = userRepository.findByLsUuid(member.getAccount().getUuid());
+			delete(authUser, actor, member.getNode().getUuid(), userMember);
+			logs.add(new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.DELETE,
+					AuditLogEntryType.SHARED_SPACE_MEMBER, member));
+		}
+		if (logs != null && !logs.isEmpty()) {
+			logEntryService.insert(logs);
+		}
 		return foundMembersToDelete;
 	}
 

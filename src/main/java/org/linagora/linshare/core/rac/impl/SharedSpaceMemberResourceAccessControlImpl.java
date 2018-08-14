@@ -40,6 +40,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.rac.SharedSpaceMemberResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpacePermissionMongoRepository;
 
@@ -73,7 +74,8 @@ public class SharedSpaceMemberResourceAccessControlImpl
 
 	@Override
 	protected boolean hasCreatePermission(Account authUser, Account actor, SharedSpaceMember entry, Object... opt) {
-		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
+		SharedSpaceNode node = (SharedSpaceNode) opt[0];
+		return defaultSharedSpacePermissionCheck(authUser, actor, node.getUuid(),
 				TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_CREATE, SharedSpaceActionType.CREATE);
 	}
 

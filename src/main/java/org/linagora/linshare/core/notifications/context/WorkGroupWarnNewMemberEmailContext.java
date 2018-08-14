@@ -104,7 +104,7 @@ public class WorkGroupWarnNewMemberEmailContext extends EmailContext {
 	@Override
 	public void validateRequiredField() {
 		Validate.notNull(workgroupMember, "Missing threadMember");
-		Validate.notNull(owner, "Missing owner");
+		Validate.notNull(owner, "Missing actor");
 	}
 
 }

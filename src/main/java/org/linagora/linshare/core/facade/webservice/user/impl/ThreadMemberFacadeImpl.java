@@ -122,7 +122,7 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		User user = userService.findByLsUuid(threadMember.getUserUuid());
 		SharedSpaceMember ssMemberToUpdate = ssMemberService.findMemberByUuid(authUser, authUser, threadMember.getUserUuid(), threadUuid);
 		SharedSpaceMember updated = ssMemberService.updateRole(authUser, authUser, ssMemberToUpdate.getUuid(),
-				new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()));
+				new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()), user);
 		return new WorkGroupMemberDto(updated, user);
 	}
 
@@ -136,7 +136,7 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		SharedSpaceNode nodeOfMemberToDelete = new SharedSpaceNode();
 		nodeOfMemberToDelete.setUuid(threadUuid);
 		SharedSpaceMember ssMemberToDelete = ssMemberService.findMemberByUuid(authUser, authUser, userUuid, threadUuid);
-		SharedSpaceMember deleted = ssMemberService.delete(authUser, authUser, ssMemberToDelete.getUuid());
+		SharedSpaceMember deleted = ssMemberService.delete(authUser, authUser, ssMemberToDelete.getUuid(), user);
 		return new WorkGroupMemberDto(deleted, user);
 	}
 

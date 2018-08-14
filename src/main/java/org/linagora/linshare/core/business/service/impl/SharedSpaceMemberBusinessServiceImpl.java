@@ -143,4 +143,9 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		repository.save(members);
 	}
 
+	@Override
+	public List<SharedSpaceMember> findAllUserMemberships(String userUuid) {
+		return repository.findByAccountUuid(userUuid);
+	}
+
 }

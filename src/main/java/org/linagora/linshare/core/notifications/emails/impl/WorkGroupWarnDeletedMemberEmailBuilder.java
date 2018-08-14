@@ -39,13 +39,13 @@ import java.util.List;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.MailConfig;
-import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnDeletedMemberEmailContext;
 import org.linagora.linshare.core.notifications.dto.MailContact;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.thymeleaf.context.Context;
 
 import com.google.common.collect.Lists;
@@ -61,8 +61,8 @@ public class WorkGroupWarnDeletedMemberEmailBuilder extends EmailBuilder {
 	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
 		WorkGroupWarnDeletedMemberEmailContext emailCtx = (WorkGroupWarnDeletedMemberEmailContext) context;
 
-		WorkgroupMember workGroupMember = emailCtx.getWorkgroupMember();
-		User member = workGroupMember.getUser();
+		SharedSpaceMember workGroupMember = emailCtx.getWorkgroupMember();
+		User member = emailCtx.getUserMember();
 		User owner = (User) emailCtx.getOwner();
 		String linshareURL = getLinShareUrl(member);
 
@@ -70,7 +70,7 @@ public class WorkGroupWarnDeletedMemberEmailBuilder extends EmailBuilder {
 		Context ctx = new Context(emailCtx.getLocale());
 		ctx.setVariable("member", new MailContact(member));
 		ctx.setVariable("owner", new MailContact(owner));
-		ctx.setVariable("workGroupName", workGroupMember.getThread().getName());
+		ctx.setVariable("workGroupName", workGroupMember.getNode().getName());
 		ctx.setVariable(linshareURL, linshareURL);
 
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,

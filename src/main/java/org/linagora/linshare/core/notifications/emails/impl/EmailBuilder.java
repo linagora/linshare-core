@@ -44,6 +44,7 @@ import java.util.Formatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
@@ -54,6 +55,7 @@ import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.MailActivationBusinessService;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -61,8 +63,8 @@ import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.MailActivation;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
-import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -76,6 +78,10 @@ import org.linagora.linshare.core.notifications.dto.Share;
 import org.linagora.linshare.core.notifications.dto.Variable;
 import org.linagora.linshare.core.notifications.emails.IEmailBuilder;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
+import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.thymeleaf.TemplateEngine;
@@ -632,6 +638,15 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		org.linagora.linshare.core.domain.entities.WorkGroup workGroup = new org.linagora.linshare.core.domain.entities.WorkGroup(user.getDomain(), user, name);
 		WorkgroupMember workgroupdMember = new WorkgroupMember(true, false, user, workGroup);
 		return workgroupdMember;
+	}
+
+	protected SharedSpaceMember getNewFakeSharedSpaceMember(String name) {
+		User user = new Guest("Peter", "Wilson", "peter.wilson@linshare.org");
+		SharedSpaceNode node = new SharedSpaceNode(name, null, NodeType.WORK_GROUP);
+		SharedSpaceMember member = new SharedSpaceMember(new SharedSpaceNodeNested(node),
+				new GenericLightEntity(UUID.randomUUID().toString(), "ADMIN"),
+				new GenericLightEntity(user.getLsUuid(), user.getFullName()));
+		return member;
 	}
 
 	protected Date getFakeExpirationDate() {

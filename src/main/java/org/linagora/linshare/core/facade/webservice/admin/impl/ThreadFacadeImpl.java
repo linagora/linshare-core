@@ -40,9 +40,9 @@ import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.WorkgroupMember;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.ThreadFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
@@ -53,7 +53,6 @@ import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
-import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
 import com.google.common.collect.Sets;
 

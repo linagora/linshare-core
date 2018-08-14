@@ -39,13 +39,13 @@ import java.util.List;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.MailConfig;
-import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnUpdatedMemberEmailContext;
 import org.linagora.linshare.core.notifications.dto.MailContact;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.thymeleaf.context.Context;
 
 import com.google.common.collect.Lists;
@@ -61,8 +61,8 @@ public class WorkGroupWarnUpdatedMemberEmailBuilder extends EmailBuilder {
 	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
 		WorkGroupWarnUpdatedMemberEmailContext emailCtx = (WorkGroupWarnUpdatedMemberEmailContext) context;
 
-		WorkgroupMember workGroupMember = emailCtx.getWorkgroupMember();
-		User member = workGroupMember.getUser();
+		SharedSpaceMember workGroupMember = emailCtx.getWorkGroupMember();
+		User member = emailCtx.getUserMember();
 		User owner = (User) emailCtx.getOwner();
 		String linshareURL = getLinShareUrl(member);
 
@@ -71,8 +71,8 @@ public class WorkGroupWarnUpdatedMemberEmailBuilder extends EmailBuilder {
 		ctx.setVariable("member", new MailContact(member));
 		ctx.setVariable("owner", new MailContact(owner));
 		ctx.setVariable("threadMember", workGroupMember);
-		ctx.setVariable("workGroupName", workGroupMember.getThread().getName());
-		ctx.setVariable("workGroupLink", getWorkGroupLink(linshareURL, workGroupMember.getThread().getLsUuid()));
+		ctx.setVariable("workGroupName", workGroupMember.getNode().getName());
+		ctx.setVariable("workGroupLink", getWorkGroupLink(linshareURL, workGroupMember.getNode().getUuid()));
 		ctx.setVariable(linshareURL, linshareURL);
 
 		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
@@ -84,12 +84,11 @@ public class WorkGroupWarnUpdatedMemberEmailBuilder extends EmailBuilder {
 	protected List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
 		Context ctx = newFakeContext(language);
-		WorkgroupMember workGroupMember = getNewFakeThreadMember("work_group_name-1");
-		workGroupMember.setAdmin(true);
+		SharedSpaceMember workGroupMember = getNewFakeSharedSpaceMember("work_group_name-1");
 		ctx.setVariable("member", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
 		ctx.setVariable("owner", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
 		ctx.setVariable("threadMember", workGroupMember);
-		ctx.setVariable("workGroupName", workGroupMember.getThread().getName());
+		ctx.setVariable("workGroupName", workGroupMember.getNode().getName());
 		ctx.setVariable("workGroupLink", getWorkGroupLink(fakeLinshareURL, "fake_uuid"));
 		res.add(ctx);
 		return res;

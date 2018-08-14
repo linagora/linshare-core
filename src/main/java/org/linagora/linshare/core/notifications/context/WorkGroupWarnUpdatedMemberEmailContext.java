@@ -38,35 +38,40 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.WorkgroupMember;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 
 public class WorkGroupWarnUpdatedMemberEmailContext extends EmailContext{
 
-	protected WorkgroupMember workgroupMember;
+	protected SharedSpaceMember member;
 
-	protected Account owner;
+	protected User userMember;
 
-	public WorkGroupWarnUpdatedMemberEmailContext(WorkgroupMember workgroupMember, Account owner) {
-		super(workgroupMember.getUser().getDomain(), false);
-		this.workgroupMember = workgroupMember;
-		this.owner = owner;
-		this.language = workgroupMember.getUser().getExternalMailLocale();
+
+	protected Account actor;
+
+	public WorkGroupWarnUpdatedMemberEmailContext(SharedSpaceMember member, User userMember, Account actor) {
+		super(userMember.getDomain(), false);
+		this.member = member;
+		this.userMember = userMember;
+		this.actor = actor;
+		this.language = userMember.getExternalMailLocale();
 	}
 
-	public WorkgroupMember getWorkgroupMember() {
-		return workgroupMember;
+	public SharedSpaceMember getWorkGroupMember() {
+		return member;
 	}
 
-	public void setWorkgroupMember(WorkgroupMember workgroupMember) {
-		this.workgroupMember = workgroupMember;
+	public void setWorkGroupMember(SharedSpaceMember workgroupMember) {
+		this.member = workgroupMember;
 	}
 
 	public Account getOwner() {
-		return owner;
+		return actor;
 	}
 
 	public void setOwner(Account owner) {
-		this.owner = owner;
+		this.actor = owner;
 	}
 
 	@Override
@@ -81,18 +86,25 @@ public class WorkGroupWarnUpdatedMemberEmailContext extends EmailContext{
 
 	@Override
 	public String getMailRcpt() {
-		return workgroupMember.getUser().getMail();
+		return userMember.getMail();
 	}
 
 	@Override
 	public String getMailReplyTo() {
-		return owner.getMail();
+		return actor.getMail();
 	}
 
 	@Override
 	public void validateRequiredField() {
-		Validate.notNull(workgroupMember, "Missing threadMember");
-		Validate.notNull(owner, "Missing owner");
+		Validate.notNull(member, "Missing threadMember");
+		Validate.notNull(actor, "Missing actor");
 	}
 
+	public User getUserMember() {
+		return userMember;
+	}
+	
+	public void setUserMember(User userMember) {
+		this.userMember = userMember;
+	}
 }

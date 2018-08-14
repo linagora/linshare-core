@@ -43,11 +43,9 @@ import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.core.service.UserService;
-import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
-import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
 import com.google.common.base.Strings;
 
@@ -98,13 +96,8 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 		Validate.notNull(foundUser, "Missing required user");
 		Validate.notNull(foundSharedSpaceRole, "Missing required role");
 		Validate.notNull(foundSharedSpaceNode, "Missing required node");
-		GenericLightEntity roleToPersist = new GenericLightEntity(foundSharedSpaceRole.getUuid(),
-				foundSharedSpaceRole.getName());
-		SharedSpaceAccount sharedSpaceAccount = new SharedSpaceAccount(foundUser);
-		GenericLightEntity accountLight = new GenericLightEntity(sharedSpaceAccount.getUuid(),
-				sharedSpaceAccount.getName());
-		SharedSpaceMember toAddMember = sharedSpaceMemberService.create(authUser, actor, foundSharedSpaceNode, roleToPersist,
-				accountLight);
+		SharedSpaceMember toAddMember = sharedSpaceMemberService.create(authUser, actor, foundUser,
+				foundSharedSpaceNode, foundSharedSpaceRole);
 		return toAddMember;
 	}
 
@@ -112,14 +105,16 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 	public SharedSpaceMember update(String actorUuid, SharedSpaceMember member, String uuid)
 			throws BusinessException {
 		Account authUser = checkAuthentication();
-		Account actor = getActor(authUser, actorUuid);
+		Account actor = getActor(actorUuid);
 		Validate.notNull(member, "Shared space member must be set.");
+		Validate.notNull(member.getAccount(), "Shared space member account must be set.");
 		if (!Strings.isNullOrEmpty(uuid)) {
 			member.setUuid(uuid);
 		} else {
 			Validate.notEmpty(member.getUuid(), "The shared space member uuid to update must be set.");
 		}
-		return sharedSpaceMemberService.update(authUser, actor, member);
+		User foundUser = userService.findByLsUuid(member.getAccount().getUuid());
+		return sharedSpaceMemberService.update(authUser, actor, member, foundUser);
 	}
 
 	@Override
@@ -133,6 +128,7 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 			Validate.notNull(member, "The shared space member to delete must be set.");
 			Validate.notEmpty(member.getUuid(), "The shared space member uuid must be set.");
 		}
-		return sharedSpaceMemberService.delete(authUser, actor, uuid);
+		User foundUser = userService.findByLsUuid(member.getAccount().getUuid());
+		return sharedSpaceMemberService.delete(authUser, actor, uuid, foundUser);
 	}
 }
