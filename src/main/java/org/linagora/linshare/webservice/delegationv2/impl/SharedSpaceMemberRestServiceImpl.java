@@ -34,6 +34,7 @@
 package org.linagora.linshare.webservice.delegationv2.impl;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -117,7 +118,7 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 	}
 
 	@Path("/{uuid : .*}")
-	@PUT
+	@DELETE
 	@ApiOperation(value = "Delete a shared space member.", response = SharedSpaceMember.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the required role."),
 			@ApiResponse(code = 404, message = "Not found."),

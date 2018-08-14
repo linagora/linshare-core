@@ -34,6 +34,7 @@
 package org.linagora.linshare.webservice.admin.impl;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -74,7 +75,9 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public SharedSpaceMember find(@ApiParam(value = "Shared space member uuid") @PathParam("uuid") String uuid)
+	public SharedSpaceMember find(
+			@ApiParam(value = "Shared space member uuid", required = true)
+				@PathParam("uuid") String uuid)
 			throws BusinessException {
 		return sharedSpaceMemberFacade.find(null, uuid);
 	}
@@ -88,7 +91,7 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public SharedSpaceMember addMember(
-			@ApiParam(value = "shared space member to create") SharedSpaceMember sharedSpaceNodeMember)
+			@ApiParam(value = "shared space member to create", required = true) SharedSpaceMember sharedSpaceNodeMember)
 			throws BusinessException {
 		return sharedSpaceMemberFacade.create(null, sharedSpaceNodeMember);
 	}
@@ -102,7 +105,7 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public SharedSpaceMember update(
-			@ApiParam("The shared space memnber to update.") SharedSpaceMember ssMember,
+			@ApiParam(value = "The shared space memnber to update.", required = true) SharedSpaceMember ssMember,
 			@ApiParam("The shared space member to update.")
 				@PathParam("uuid") String uuid)
 			throws BusinessException {
@@ -110,7 +113,7 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 	}
 
 	@Path("/{uuid : .*}")
-	@PUT
+	@DELETE
 	@ApiOperation(value = "Delete a shared space member.", response = SharedSpaceMember.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the required role."),
 			@ApiResponse(code = 404, message = "Not found."),
@@ -118,7 +121,7 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public SharedSpaceMember delete(
-			@ApiParam("The shared space member to delete.") SharedSpaceMember ssMember,
+			@ApiParam(value = "The shared space member to delete.", required = true) SharedSpaceMember ssMember,
 			@ApiParam("The shared space member to delete.")
 				@PathParam("uuid") String uuid)
 			throws BusinessException {

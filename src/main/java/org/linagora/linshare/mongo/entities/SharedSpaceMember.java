@@ -148,18 +148,19 @@ public class SharedSpaceMember {
 	 * 
 	 * @return
 	 */
+
 	@XmlTransient
 	@JsonIgnore
 	public boolean getAdmin() {
 		return this.getRole().getName().equals("ADMIN");
 	}
-	
+
 	/**
 	 * Workaround to display roles in WorkgroupMemberDto.
 	 * 
 	 * @return
 	 */
-	@XmlTransient
+
 	@JsonIgnore
 	public boolean hasAdminRight() {
 		return this.getRole().getName().equals("ADMIN");
@@ -170,7 +171,7 @@ public class SharedSpaceMember {
 	 * 
 	 * @return
 	 */
-	@XmlTransient
+
 	@JsonIgnore
 	public boolean hasUploadRight() {
 		return this.getRole().getName().equals("WRITER") || this.getRole().getName().equals("CONTRIBUTOR");
@@ -186,11 +187,13 @@ public class SharedSpaceMember {
 	public boolean getCanUpload() {
 		return this.getRole().getName().equals("READER");
 	}
+
 	/**
 	 * Workaround to display roles in WorkgroupMemberDto
+	 * 
 	 * @return
 	 */
-	@XmlTransient
+
 	@JsonIgnore
 	public boolean hasReadOnlyRight() {
 		return this.getRole().getName().equals("READER");

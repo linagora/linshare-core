@@ -102,10 +102,9 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 	}
 
 	@Override
-	public SharedSpaceMember update(String actorUuid, SharedSpaceMember member, String uuid)
-			throws BusinessException {
+	public SharedSpaceMember update(String actorUuid, SharedSpaceMember member, String uuid) throws BusinessException {
 		Account authUser = checkAuthentication();
-		Account actor = getActor(actorUuid);
+		Account actor = getActor(authUser, actorUuid);
 		Validate.notNull(member, "Shared space member must be set.");
 		Validate.notNull(member.getAccount(), "Shared space member account must be set.");
 		if (!Strings.isNullOrEmpty(uuid)) {
@@ -118,8 +117,7 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 	}
 
 	@Override
-	public SharedSpaceMember delete(String actorUuid, SharedSpaceMember member, String uuid)
-			throws BusinessException {
+	public SharedSpaceMember delete(String actorUuid, SharedSpaceMember member, String uuid) throws BusinessException {
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
 		if (!Strings.isNullOrEmpty(uuid)) {
