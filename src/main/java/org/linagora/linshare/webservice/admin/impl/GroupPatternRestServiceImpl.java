@@ -83,7 +83,7 @@ public class GroupPatternRestServiceImpl extends WebserviceBase implements Group
 		return groupPatternFacade.findAll();
 	}
 
-	@Path("/")
+	@Path("/models")
 	@GET
 	@ApiOperation(value = "Find all groups pattern's  models.", response = DomainPatternDto.class, responseContainer = "Set")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
