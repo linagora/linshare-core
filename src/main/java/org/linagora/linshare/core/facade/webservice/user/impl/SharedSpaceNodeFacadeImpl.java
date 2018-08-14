@@ -36,12 +36,12 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceNodeFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 
 import com.google.common.base.Strings;
@@ -50,7 +50,8 @@ public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements Shar
 
 	protected SharedSpaceNodeService sharedSpaceNodeService;
 
-	public SharedSpaceNodeFacadeImpl(AccountService accountService, SharedSpaceNodeService sharedSpaceNodeService) {
+	public SharedSpaceNodeFacadeImpl(AccountService accountService,
+			SharedSpaceNodeService sharedSpaceNodeService) {
 		super(accountService);
 		this.sharedSpaceNodeService = sharedSpaceNodeService;
 	}
@@ -102,7 +103,13 @@ public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements Shar
 	public List<SharedSpaceNode> findAll() {
 		Account authUser = checkAuthentication();
 		return sharedSpaceNodeService.findAll(authUser, authUser);
+	}
 
+	@Override
+	public List<SharedSpaceMember> members(String actorUuid, String uuid) throws BusinessException {
+		Validate.notEmpty(uuid, "Missing required shared space node");
+		Account authUser = checkAuthentication();
+		return sharedSpaceNodeService.findAllMembers(authUser, authUser, uuid);
 	}
 
 }

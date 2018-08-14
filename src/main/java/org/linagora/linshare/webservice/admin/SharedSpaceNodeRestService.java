@@ -36,6 +36,7 @@ package org.linagora.linshare.webservice.admin;
 import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 
 public interface SharedSpaceNodeRestService {
@@ -45,6 +46,8 @@ public interface SharedSpaceNodeRestService {
 	SharedSpaceNode delete(SharedSpaceNode node, String uuid) throws BusinessException;
 
 	SharedSpaceNode update(SharedSpaceNode node, String uuid) throws BusinessException;
+
+	List<SharedSpaceMember> members(String uuid) throws BusinessException;
 
 	List<SharedSpaceNode> findAll() throws BusinessException;
 

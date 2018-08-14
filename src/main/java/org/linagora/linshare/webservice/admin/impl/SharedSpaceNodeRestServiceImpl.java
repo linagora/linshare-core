@@ -46,6 +46,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceNodeFacade;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.webservice.admin.SharedSpaceNodeRestService;
 import com.wordnik.swagger.annotations.Api;
@@ -55,7 +56,7 @@ import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/shared_space_nodes")
-@Api(value = "/rest/admin/shared_space_nodes", description = "sharedspacenode service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
+@Api(value = "/rest/admin/shared_space_nodes", description = "shared space node service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class SharedSpaceNodeRestServiceImpl implements SharedSpaceNodeRestService {
@@ -81,7 +82,6 @@ public class SharedSpaceNodeRestServiceImpl implements SharedSpaceNodeRestServic
 			throws BusinessException {
 		return ssNodeFacade.find(null, uuid);
 	}
-
 	
 	@Path("/{uuid : .*}")
 	@DELETE
@@ -126,5 +126,20 @@ public class SharedSpaceNodeRestServiceImpl implements SharedSpaceNodeRestServic
 	public List<SharedSpaceNode> findAll() throws BusinessException {
 		return ssNodeFacade.findAll();
 	}
-
+	
+	@Path("/{uuid}/members")
+	@GET
+	@ApiOperation(value = "Get all members for the shared space node.", response = SharedSpaceMember.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to list all members for this shared space node."),
+			@ApiResponse(code = 404, message = "Not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public List<SharedSpaceMember> members(
+			@ApiParam("The members node uuid.")
+				@PathParam("uuid")String uuid) 
+			throws BusinessException {
+		return ssNodeFacade.members(null, uuid);
+	}
+		
 }
