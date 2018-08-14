@@ -44,6 +44,7 @@ import javax.naming.NamingException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
@@ -114,7 +115,6 @@ public class LDAPGroupQueryServiceImplTest extends AbstractJUnit4SpringContextTe
 	@Test
 	public void testGroups() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Date date_before = new Date();
 		List<LdapGroupObject> listGroups = ldapGroupQueryService.listGroups(ldapConnection, baseDn, groupPattern);
 		for (LdapGroupObject ldapGroup : listGroups) {
 			logger.info("GROUPS:" + ldapGroup.toString());
@@ -125,28 +125,45 @@ public class LDAPGroupQueryServiceImplTest extends AbstractJUnit4SpringContextTe
 			Assert.assertEquals("workgroup-wg-1", ldapGroup.getNameWithPrefix());
 			Assert.assertEquals("cn=workgroup-wg-1,ou=Groups,dc=linshare,dc=org", ldapGroup.getExternalId());
 		}
-		Date date_after = new Date();
 		Assert.assertEquals(1, listGroups.size());
-		logger.info("fin test : " + String.valueOf(date_after.getTime() - date_before.getTime()));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
 	public void testMembers() throws BusinessException, NamingException, IOException {
+		String baseDn = "ou=Groups2,dc=linshare,dc=org";
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Date date_before = new Date();
 		List<LdapGroupObject> listGroups = ldapGroupQueryService.listGroups(ldapConnection, baseDn, groupPattern);
 		for (LdapGroupObject ldapGroup : listGroups) {
 			logger.info("GROUPS:" + ldapGroup.toString());
+			Assert.assertEquals("cn=workgroup-wg-2,ou=Groups2,dc=linshare,dc=org", ldapGroup.getExternalId());
 			List<LdapGroupMemberObject> listMembers = ldapGroupQueryService.listMembers(ldapConnection, baseDn, groupPattern, ldapGroup);
-			for (LdapGroupMemberObject ldapGroupMemberObject : listMembers) {
-				logger.info(ldapGroupMemberObject.toString());
+			for (LdapGroupMemberObject member : listMembers) {
+				logger.info(member.toString());
+				Assert.assertEquals("John", member.getFirstName());
+				Assert.assertEquals("Doe", member.getLastName());
+				Assert.assertEquals("user1@linshare.org", member.getEmail());
 			}
-			Assert.assertEquals(2, listMembers.size());
+			Assert.assertEquals(1, listMembers.size());
 		}
+		Assert.assertEquals(1, listGroups.size());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testNestedMembers() throws BusinessException, NamingException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		String baseDn = "ou=Groups3,dc=linshare,dc=org";
+		Date date_before = new Date();
+		List<LdapGroupObject> listGroups = ldapGroupQueryService.listGroups(ldapConnection, baseDn, groupPattern);
+		LdapGroupObject ldapGroup = listGroups.get(0);
+		Assert.assertEquals("cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org", ldapGroup.getExternalId());
+		List<LdapGroupMemberObject> listMembers = ldapGroupQueryService.listMembers(ldapConnection, baseDn, groupPattern, ldapGroup);
+		Assert.assertEquals(1, listMembers.size());
+
 		Date date_after = new Date();
 		Assert.assertEquals(1, listGroups.size());
-		logger.info("fin test : " + String.valueOf(date_after.getTime() - date_before.getTime()));
+		logger.info("End test : " + String.valueOf(date_after.getTime() - date_before.getTime()));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }

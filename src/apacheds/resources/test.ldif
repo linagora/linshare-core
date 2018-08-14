@@ -10,12 +10,6 @@ objectClass: organizationalUnit
 objectClass: top
 description: People subtree
 
-dn: ou=Groups,dc=linshare,dc=org
-ou: Groups
-objectClass: organizationalUnit
-objectClass: top
-description: Groups subtree
-
 dn: uid=user1,ou=People,dc=linshare,dc=org
 uid: user1
 objectClass: inetOrgPerson
@@ -122,8 +116,41 @@ cn: Test, Test2
 userPassword: password2
 mail: test2@linshare.org
 
+dn: ou=Groups,dc=linshare,dc=org
+ou: Groups
+objectClass: organizationalUnit
+objectClass: top
+description: Groups subtree
+
 dn: cn=workgroup-wg-1,ou=Groups,dc=linshare,dc=org
 cn: workgroup-wg-1
 objectClass: posixGroup
 member: uid=user1,ou=People,dc=linshare,dc=org
 member: uid=user2,ou=People,dc=linshare,dc=org
+
+dn: ou=Groups2,dc=linshare,dc=org
+ou: Groups2
+objectClass: organizationalUnit
+objectClass: top
+description: Groups2 subtree
+
+dn: cn=workgroup-wg-2,ou=Groups2,dc=linshare,dc=org
+cn: workgroup-wg-2
+objectClass: posixGroup
+member: uid=user1,ou=People,dc=linshare,dc=org
+
+dn: ou=Groups3,dc=linshare,dc=org
+ou: Groups3
+objectClass: organizationalUnit
+objectClass: top
+description: Groups3 subtree
+
+dn: cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org
+cn: workgroup-wg-3
+objectClass: posixGroup
+member: uid=user2,ou=People,dc=linshare,dc=org
+
+dn: cn=admin,cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org
+cn: admin
+objectClass: posixGroup
+member: uid=user1,ou=People,dc=linshare,dc=org

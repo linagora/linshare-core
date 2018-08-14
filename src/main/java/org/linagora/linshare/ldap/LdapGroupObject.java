@@ -34,7 +34,6 @@
 package org.linagora.linshare.ldap;
 
 import java.util.List;
-import java.util.UUID;
 
 import com.google.common.collect.Lists;
 
@@ -44,8 +43,6 @@ public class LdapGroupObject {
 
 	protected String prefix;
 
-	protected String uuid;
-
 	// dn
 	protected String externalId;
 
@@ -53,7 +50,6 @@ public class LdapGroupObject {
 
 	public LdapGroupObject() {
 		super();
-		this.uuid = UUID.randomUUID().toString();
 		this.members = Lists.newArrayList();
 	}
 
@@ -73,14 +69,6 @@ public class LdapGroupObject {
 		this.prefix = prefix;
 	}
 
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
 	public String getExternalId() {
 		return externalId;
 	}
@@ -91,7 +79,32 @@ public class LdapGroupObject {
 
 	@Override
 	public String toString() {
-		return "LdapGroupObject [name=" + name + ", uuid=" + uuid + ", externalId=" + externalId + "]";
+		return "LdapGroupObject [name=" + name + ", externalId=" + externalId + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((externalId == null) ? 0 : externalId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		LdapGroupObject other = (LdapGroupObject) obj;
+		if (externalId == null) {
+			if (other.externalId != null)
+				return false;
+		} else if (!externalId.equals(other.externalId))
+			return false;
+		return true;
 	}
 
 	public List<String> getMembers() {
