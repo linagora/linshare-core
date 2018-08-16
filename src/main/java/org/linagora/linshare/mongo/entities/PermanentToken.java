@@ -87,6 +87,12 @@ public class PermanentToken {
 		super();
 	}
 
+	// For Tests
+	public PermanentToken(String label, String description) {
+		this.label = label;
+		this.description = description;
+	}
+
 	public PermanentToken(String tokenUuid,
 			Date creationDate,
 			String issuer,

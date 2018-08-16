@@ -72,17 +72,15 @@ public class JwtLongTimeRestServiceImpl implements JwtLongTimeRestService {
 	@Path("/")
 	@POST
 	@Override
-	@ApiOperation(value = "Create a JWT permanent token.", response = PermanentToken.class)
+	@ApiOperation(value = "Create a JWT permanent token designing a mandatory label and an optional description.", response = PermanentToken.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User is not allowed to use this endpoint"),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error.") })
 	public PermanentToken create(
-			@ApiParam(value = "token label")
-					@QueryParam("label") String label,
-			@ApiParam(value = "token description")
-					@QueryParam("description") String description)
+			@ApiParam(value = "Permanent token to create from two fields : label (mandatory) and description (optional)", required = true)
+					PermanentToken permanentToken)
 			throws BusinessException {
-		return jwtLongTimeFacade.create(label, description);
+		return jwtLongTimeFacade.create(permanentToken);
 	}
 
 	@Path("/")

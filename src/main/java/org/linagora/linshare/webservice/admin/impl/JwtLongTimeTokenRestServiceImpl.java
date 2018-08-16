@@ -79,13 +79,11 @@ public class JwtLongTimeTokenRestServiceImpl implements JwtLongTimeTokenRestServ
 					@ApiResponse(code = 500, message = "Internal server error.") })
 	public PermanentToken create(
 			@ApiParam(value = "actor uuid", required = true)
-				@QueryParam("actor") String actorUuid,
-			@ApiParam(value = "token label", required = true)
-				@QueryParam("label") String label,
-			@ApiParam(value = "token description", required = false)
-				@QueryParam("description") String description)
+				@QueryParam("actorUuid") String actorUuid,
+			@ApiParam(value = "Permanent token to create from two fields : label (mandatory), description (optional)", required = true)
+				PermanentToken permanentToken)
 						throws BusinessException {
-		return jwtLongTimeTokenFacade.create(actorUuid, label, description);
+		return jwtLongTimeTokenFacade.create(actorUuid, permanentToken);
 	}
 
 	@Path("/")

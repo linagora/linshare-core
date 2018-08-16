@@ -66,10 +66,10 @@ public class JwtLongTimeFacadeImpl extends UserGenericFacadeImp implements JwtLo
 	}
 
 	@Override
-	public PermanentToken create(String label, String description) throws BusinessException {
-		Validate.notEmpty(label, "Missing Label");
+	public PermanentToken create(PermanentToken permanentToken) throws BusinessException {
+		Validate.notEmpty(permanentToken.getLabel(), "Missing Label");
 		User authUser = checkAuthentication();
-		return jwtLongTimeService.create(authUser, authUser, label, description);
+		return jwtLongTimeService.create(authUser, authUser, permanentToken);
 	}
 
 	@Override

@@ -124,12 +124,12 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, Permanen
 	}
 
 	@Override
-	public PermanentToken create(Account authUser, Account actor, String label, String description) throws BusinessException {
+	public PermanentToken create(Account authUser, Account actor, PermanentToken permanentToken) throws BusinessException {
 		Validate.notNull(actor, "actor must be set");
 		final Date creationDate = clock.now();
 		final String tokenUuid = UUID.randomUUID().toString();
-		PermanentToken jwtLongTime = new PermanentToken(tokenUuid, creationDate, issuer, label, description, actor.getLsUuid(),
-				actor.getMail(), actor.getDomainId());
+		PermanentToken jwtLongTime = new PermanentToken(tokenUuid, creationDate, issuer, permanentToken.getLabel(),
+				permanentToken.getDescription(), actor.getLsUuid(), actor.getMail(), actor.getDomainId());
 		String token = jwtService.generateToken(actor, tokenUuid, creationDate);
 		checkCreatePermission(authUser, authUser, PermanentToken.class, BusinessErrorCode.JWT_PERMANENT_TOKEN_CAN_NOT_CREATE, jwtLongTime);
 		jwtLongTimeBusinessService.create(jwtLongTime);

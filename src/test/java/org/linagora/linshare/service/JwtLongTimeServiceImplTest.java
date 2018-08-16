@@ -34,7 +34,6 @@
 package org.linagora.linshare.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 
@@ -69,6 +68,10 @@ import io.jsonwebtoken.Claims;
 		"classpath:springContext-test.xml",
 		"classpath:springContext-ldap.xml" })
 public class JwtLongTimeServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+
+	private final String TOKEN_LABEL = "token label";
+
+	private final String TOKEN_DESC = "token description";
 
 	@Autowired
 	private JwtServiceImpl jwtService;
@@ -118,25 +121,31 @@ public class JwtLongTimeServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	@Test
 	public void createTokenTest() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		PermanentToken token = jwtLongTimeService.create(john, john, "MyToken", "My description");
+		PermanentToken johnToken = new PermanentToken(TOKEN_LABEL, TOKEN_DESC);
+		PermanentToken token = jwtLongTimeService.create(john, john, johnToken);
 		Claims decode = jwtService.decode(token.getJwtToken().getToken());
 		logger.debug("Token:" + decode.toString());
 		assertEquals(john.getMail(), decode.getSubject());
 		assertEquals(null, decode.getExpiration());
+		assertEquals(token.getLabel(), TOKEN_LABEL);
+		assertEquals(token.getDescription(), TOKEN_DESC);
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
 	public void findAllByActorTest() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
+		PermanentToken janeToken = new PermanentToken(TOKEN_LABEL, null);
+		PermanentToken johnToken = new PermanentToken(TOKEN_LABEL, null);
 		for (int i = 0; i < 5; i++) {
-			jwtLongTimeService.create(jane, jane, "Jane's Token label", "Jane's Token description");
-			jwtLongTimeService.create(john, john, "John", "");
+			jwtLongTimeService.create(jane, jane, janeToken);
+			jwtLongTimeService.create(john, john, johnToken);
 		}
 		List<PermanentToken> mongoEntities = jwtLongTimeService.findAll(jane, jane);
 		assertEquals(5, mongoEntities.size());
 		for (PermanentToken entity : mongoEntities) {
 			assertEquals(jane.getMail(), entity.getSubject());
+			assertEquals(entity.getDescription(), null);
 		}
 		logger.info(LinShareTestConstants.END_TEST);
 	}
@@ -144,9 +153,10 @@ public class JwtLongTimeServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	@Test
 	public void findAllByDomainTest() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
+		PermanentToken johnToken = new PermanentToken(TOKEN_LABEL, TOKEN_DESC);
 		int  initSize = jwtLongTimeService.findAllByDomain(root, john.getDomain()).size();
 		for (int i = 0; i < 5; i++) {
-			jwtLongTimeService.create(john, john, "my token", "");
+			jwtLongTimeService.create(john, john, johnToken);
 		}
 		List<PermanentToken> mongoEntities = jwtLongTimeService.findAllByDomain(root, john.getDomain());
 		assertEquals(initSize + 5, mongoEntities.size());
@@ -154,25 +164,42 @@ public class JwtLongTimeServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	}
 
 	@Test
+	public void updateTokenTest() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		PermanentToken johnToken = new PermanentToken(TOKEN_LABEL, TOKEN_DESC);
+		PermanentToken token = jwtLongTimeService.create(john, john, johnToken);
+		assertEquals(token.getLabel(), TOKEN_LABEL);
+		assertEquals(token.getDescription(), TOKEN_DESC);
+		token.setLabel("New label");
+		token.setDescription("New description");
+		PermanentToken updated = jwtLongTimeService.update(john, john, token.getUuid(), token);
+		assertEquals(updated.getUuid(), token.getUuid());
+		assertEquals(updated.getLabel(), "New label");
+		assertEquals(updated.getDescription(), "New description");
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
 	public void deleteTokenTest() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		PermanentToken token = jwtLongTimeService.create(john, john, "MyToken", "My description");
-		Claims decode = jwtService.decode(token.getJwtToken().getToken());
-		String uuid = (String) decode.get("uuid");
-		logger.info("Token UUID: " + uuid);
-		PermanentToken found = jwtLongTimeService.find(john, john, uuid);
-		assertNotNull(found);
-		PermanentToken deleted = jwtLongTimeService.delete(john, john, found);
-		assertEquals(found.getUuid(), deleted.getUuid());
+		PermanentToken johnToken = new PermanentToken(TOKEN_LABEL, TOKEN_DESC);
+		PermanentToken token = jwtLongTimeService.create(john, john, johnToken);
+		PermanentToken deleted = jwtLongTimeService.delete(john, john, token);
+		assertEquals(token.getUuid(), deleted.getUuid());
+		assertEquals(token.getLabel(), deleted.getLabel());
+		assertEquals(deleted.getActorUuid(), john.getLsUuid());
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
 	public void deleteTokenByAdminTest() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		PermanentToken token = jwtLongTimeService.create(john, john, "MyToken", "My description");
+		PermanentToken johnToken = new PermanentToken(TOKEN_LABEL, null);
+		PermanentToken token = jwtLongTimeService.create(john, john, johnToken);
 		PermanentToken deleted = jwtLongTimeService.delete(root, john, token);
 		assertEquals(token.getUuid(), deleted.getUuid());
+		assertEquals(token.getLabel(), deleted.getLabel());
+		assertEquals(deleted.getActorUuid(), john.getLsUuid());
 		wiser.checkGeneratedMessages();
 		logger.info(LinShareTestConstants.END_TEST);
 	}
@@ -180,8 +207,10 @@ public class JwtLongTimeServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	@Test
 	public void sendMailOnCreateByAdminTest() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		jwtLongTimeService.create(root, john, "MyToken", "My description");
+		PermanentToken johnToken = new PermanentToken(TOKEN_LABEL, TOKEN_DESC);
+		jwtLongTimeService.create(root, john, johnToken);
 		wiser.checkGeneratedMessages();
 		logger.info(LinShareTestConstants.END_TEST);
 	}
+
 }

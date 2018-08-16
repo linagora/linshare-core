@@ -43,7 +43,7 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface JwtLongTimeFacade {
 
-	PermanentToken create(String label, String description) throws BusinessException;
+	PermanentToken create(PermanentToken permanentToken) throws BusinessException;
 
 	List<PermanentToken> findAll() throws BusinessException;
 

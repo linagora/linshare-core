@@ -40,7 +40,7 @@ import org.linagora.linshare.mongo.entities.PermanentToken;
 
 public interface JwtLongTimeTokenFacade {
 
-	PermanentToken create(String actorUuid, String label, String description) throws BusinessException;
+	PermanentToken create(String actorUuid, PermanentToken permanentToken) throws BusinessException;
 
 	List<PermanentToken> findAll(String domainUuid) throws BusinessException;
 

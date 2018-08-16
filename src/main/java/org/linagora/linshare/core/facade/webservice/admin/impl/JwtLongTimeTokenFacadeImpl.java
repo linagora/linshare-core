@@ -64,13 +64,13 @@ public class JwtLongTimeTokenFacadeImpl extends AdminGenericFacadeImpl implement
 	}
 
 	@Override
-	public PermanentToken create(String actorUuid, String label, String description) throws BusinessException {
-		Validate.notEmpty(actorUuid, "userUuid must be set");
-		Validate.notEmpty(label, "label must be set");
+	public PermanentToken create(String actorUuid, PermanentToken permanentToken) throws BusinessException {
+		Validate.notEmpty(actorUuid, "actorUuid must be set");
+		Validate.notEmpty(permanentToken.getLabel(), "label must be set");
 		Account authUser = checkAuthentication(Role.ADMIN);
 		Account actor = getActor(authUser, actorUuid);
 		Validate.notNull(actor);
-		return jwtLongTimeService.create(authUser, actor, label, description);
+		return jwtLongTimeService.create(authUser, actor, permanentToken);
 	}
 
 	@Override

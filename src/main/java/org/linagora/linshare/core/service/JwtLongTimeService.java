@@ -43,7 +43,7 @@ import org.linagora.linshare.mongo.entities.PermanentToken;
 
 public interface JwtLongTimeService {
 
-	PermanentToken create(Account authUser, Account actor, String label, String description) throws BusinessException;
+	PermanentToken create(Account authUser, Account actor, PermanentToken permanentToken) throws BusinessException;
 
 	PermanentToken delete(Account authUser, Account actor, PermanentToken jwtLongTime) throws BusinessException;
 
