@@ -36,15 +36,14 @@ package org.linagora.linshare.service;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.naming.NamingException;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
@@ -54,6 +53,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.LDAPGroupQueryService;
 import org.linagora.linshare.ldap.LdapGroupMemberObject;
 import org.linagora.linshare.ldap.LdapGroupObject;
+import org.linagora.linshare.ldap.Role;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,7 +115,7 @@ public class LDAPGroupQueryServiceImplTest extends AbstractJUnit4SpringContextTe
 	@Test
 	public void testGroups() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		List<LdapGroupObject> listGroups = ldapGroupQueryService.listGroups(ldapConnection, baseDn, groupPattern);
+		Set<LdapGroupObject> listGroups = ldapGroupQueryService.listGroups(ldapConnection, baseDn, groupPattern);
 		for (LdapGroupObject ldapGroup : listGroups) {
 			logger.info("GROUPS:" + ldapGroup.toString());
 			if (!ldapGroup.getMembers().isEmpty()) {
@@ -124,6 +124,7 @@ public class LDAPGroupQueryServiceImplTest extends AbstractJUnit4SpringContextTe
 			Assert.assertEquals("wg-1", ldapGroup.getName());
 			Assert.assertEquals("workgroup-wg-1", ldapGroup.getNameWithPrefix());
 			Assert.assertEquals("cn=workgroup-wg-1,ou=Groups,dc=linshare,dc=org", ldapGroup.getExternalId());
+			Assert.assertEquals(Role.READER, ldapGroup.getRole());
 		}
 		Assert.assertEquals(1, listGroups.size());
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -133,16 +134,17 @@ public class LDAPGroupQueryServiceImplTest extends AbstractJUnit4SpringContextTe
 	public void testMembers() throws BusinessException, NamingException, IOException {
 		String baseDn = "ou=Groups2,dc=linshare,dc=org";
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		List<LdapGroupObject> listGroups = ldapGroupQueryService.listGroups(ldapConnection, baseDn, groupPattern);
+		Set<LdapGroupObject> listGroups = ldapGroupQueryService.listGroups(ldapConnection, baseDn, groupPattern);
 		for (LdapGroupObject ldapGroup : listGroups) {
 			logger.info("GROUPS:" + ldapGroup.toString());
 			Assert.assertEquals("cn=workgroup-wg-2,ou=Groups2,dc=linshare,dc=org", ldapGroup.getExternalId());
-			List<LdapGroupMemberObject> listMembers = ldapGroupQueryService.listMembers(ldapConnection, baseDn, groupPattern, ldapGroup);
+			Set<LdapGroupMemberObject> listMembers = ldapGroupQueryService.listMembers(ldapConnection, baseDn, groupPattern, ldapGroup);
 			for (LdapGroupMemberObject member : listMembers) {
 				logger.info(member.toString());
 				Assert.assertEquals("John", member.getFirstName());
 				Assert.assertEquals("Doe", member.getLastName());
 				Assert.assertEquals("user1@linshare.org", member.getEmail());
+				Assert.assertEquals(Role.READER, member.getRole());
 			}
 			Assert.assertEquals(1, listMembers.size());
 		}
@@ -155,10 +157,10 @@ public class LDAPGroupQueryServiceImplTest extends AbstractJUnit4SpringContextTe
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		String baseDn = "ou=Groups3,dc=linshare,dc=org";
 		Date date_before = new Date();
-		List<LdapGroupObject> listGroups = ldapGroupQueryService.listGroups(ldapConnection, baseDn, groupPattern);
-		LdapGroupObject ldapGroup = listGroups.get(0);
+		Set<LdapGroupObject> listGroups = ldapGroupQueryService.listGroups(ldapConnection, baseDn, groupPattern);
+		LdapGroupObject ldapGroup = listGroups.iterator().next();
 		Assert.assertEquals("cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org", ldapGroup.getExternalId());
-		List<LdapGroupMemberObject> listMembers = ldapGroupQueryService.listMembers(ldapConnection, baseDn, groupPattern, ldapGroup);
+		Set<LdapGroupMemberObject> listMembers = ldapGroupQueryService.listMembers(ldapConnection, baseDn, groupPattern, ldapGroup);
 		Assert.assertEquals(1, listMembers.size());
 
 		Date date_after = new Date();

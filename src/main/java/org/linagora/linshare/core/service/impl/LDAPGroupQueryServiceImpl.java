@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.naming.NamingException;
 import javax.naming.ldap.LdapContext;
@@ -50,16 +51,18 @@ import org.linagora.linshare.ldap.JScriptGroupMemberLdapQuery;
 import org.linagora.linshare.ldap.LdapGroupMemberObject;
 import org.linagora.linshare.ldap.LdapGroupObject;
 import org.linagora.linshare.ldap.LinShareDnList;
+import org.linagora.linshare.ldap.Role;
 import org.linid.dm.authorization.lql.LqlRequestCtx;
 import org.linid.dm.authorization.lql.dnlist.IDnList;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class LDAPGroupQueryServiceImpl extends LDAPQueryServiceImpl implements LDAPGroupQueryService {
 
 	@Override
-	public List<LdapGroupObject> listGroups(LdapConnection ldapConnection, String baseDn, GroupLdapPattern pattern)
+	public Set<LdapGroupObject> listGroups(LdapConnection ldapConnection, String baseDn, GroupLdapPattern pattern)
 			throws BusinessException, NamingException, IOException {
 		LdapContext ldapContext = (LdapContext) getLdapContext(ldapConnection, baseDn).getReadOnlyContext();
 
@@ -77,19 +80,19 @@ public class LDAPGroupQueryServiceImpl extends LDAPQueryServiceImpl implements L
 		} finally {
 			ldapContext.close();
 		}
-		// TODO: Maybe removePrefix function could be apply during object creation.
 		Function<LdapGroupObject, LdapGroupObject> convert = new Function<LdapGroupObject, LdapGroupObject>() {
 			@Override
 			public LdapGroupObject apply(LdapGroupObject lgo) {
 				lgo.setPrefix(pattern.getGroupPrefix());
+				lgo.setRole(Role.READER);
 				return lgo.removePrefix();
 			}
 		};
-		return Lists.transform(list, convert);
+		return Sets.newHashSet(Lists.transform(list, convert));
 	}
 
 	@Override
-	public List<LdapGroupMemberObject> listMembers(LdapConnection ldapConnection, String baseDn,
+	public Set<LdapGroupMemberObject> listMembers(LdapConnection ldapConnection, String baseDn,
 			GroupLdapPattern pattern, LdapGroupObject group) throws BusinessException, NamingException, IOException {
 		LdapContext ldapContext = (LdapContext) getLdapContext(ldapConnection, null).getReadOnlyContext();
 		List<LdapGroupMemberObject> res = null;
@@ -108,7 +111,14 @@ public class LDAPGroupQueryServiceImpl extends LDAPQueryServiceImpl implements L
 		} finally {
 			ldapContext.close();
 		}
-		return res;
+		Function<LdapGroupMemberObject, LdapGroupMemberObject> convert = new Function<LdapGroupMemberObject, LdapGroupMemberObject>() {
+			@Override
+			public LdapGroupMemberObject apply(LdapGroupMemberObject lgm) {
+				lgm.setRole(group.getRole());
+				return lgm;
+			}
+		};
+		return Sets.newHashSet(Lists.transform(res, convert));
 	}
 
 }

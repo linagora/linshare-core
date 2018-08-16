@@ -48,6 +48,8 @@ public class LdapGroupObject {
 
 	protected List<String> members;
 
+	protected Role role;
+
 	public LdapGroupObject() {
 		super();
 		this.members = Lists.newArrayList();
@@ -75,6 +77,14 @@ public class LdapGroupObject {
 
 	public void setExternalId(String externalId) {
 		this.externalId = externalId;
+	}
+
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
 	}
 
 	@Override

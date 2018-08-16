@@ -1,7 +1,7 @@
 package org.linagora.linshare.core.service;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Set;
 
 import javax.naming.NamingException;
 
@@ -13,9 +13,9 @@ import org.linagora.linshare.ldap.LdapGroupObject;
 
 public interface LDAPGroupQueryService {
 
-	public List<LdapGroupObject> listGroups(LdapConnection ldapConnection, String baseDn, GroupLdapPattern pattern)
+	public Set<LdapGroupObject> listGroups(LdapConnection ldapConnection, String baseDn, GroupLdapPattern pattern)
 			throws BusinessException, NamingException, IOException;
 
-	public List<LdapGroupMemberObject> listMembers(LdapConnection ldapConnection, String baseDn,
+	public Set<LdapGroupMemberObject> listMembers(LdapConnection ldapConnection, String baseDn,
 			GroupLdapPattern pattern, LdapGroupObject group) throws BusinessException, NamingException, IOException;
 }
