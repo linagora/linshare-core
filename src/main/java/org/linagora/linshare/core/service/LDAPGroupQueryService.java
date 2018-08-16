@@ -13,9 +13,12 @@ import org.linagora.linshare.ldap.LdapGroupObject;
 
 public interface LDAPGroupQueryService {
 
-	public Set<LdapGroupObject> listGroups(LdapConnection ldapConnection, String baseDn, GroupLdapPattern pattern)
+	public Set<LdapGroupObject> listGroups(LdapConnection ldapConnection, String baseDn, GroupLdapPattern groupPattern)
+			throws BusinessException, NamingException, IOException;
+
+	public Set<LdapGroupObject> searchGroups(LdapConnection ldapConnection, String baseDn, GroupLdapPattern groupPattern, String pattern)
 			throws BusinessException, NamingException, IOException;
 
 	public Set<LdapGroupMemberObject> listMembers(LdapConnection ldapConnection, String baseDn,
-			GroupLdapPattern pattern, LdapGroupObject group) throws BusinessException, NamingException, IOException;
+			GroupLdapPattern groupPattern, LdapGroupObject group) throws BusinessException, NamingException, IOException;
 }

@@ -62,6 +62,19 @@ public class JScriptGroupLdapQuery extends JScriptLdapQuery<LdapGroupObject> {
 		return dnListToObjectList(dnResultList, ldapDbAttributes);
 	}
 
+	public List<LdapGroupObject> searchGroups(String pattern) throws NamingException {
+		String  command = ((GroupLdapPattern)ldapPattern).getSearchGroupQuery();
+		pattern = addExpansionCharacters(pattern);
+		lqlctx.getVariables().put("pattern", pattern);
+		if (logger.isDebugEnabled()) {
+			logLqlQuery(command, pattern);
+		}
+		// searching ldap directory with pattern
+		List<String> dnResultList = this.evaluate(command);
+		Map<String, LdapAttribute> ldapDbAttributes = filterAttrByPrefix("group_");
+		return dnListToObjectList(dnResultList, ldapDbAttributes);
+	}
+
 	public LdapGroupObject loadMembers(LdapGroupObject lgo) throws NamingException {
 		Map<String, LdapAttribute> ldapDbAttributes = filterAttrByPartialString("group_");
 		LdapGroupObject object = dnToObject(lgo.getExternalId(), ldapDbAttributes);

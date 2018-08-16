@@ -92,7 +92,7 @@ public class LDAPGroupQueryServiceImplTest extends AbstractJUnit4SpringContextTe
 		groupPattern.setAttributes(attributes);
 		groupPattern.setSearchAllGroupsQuery("ldap.search(baseDn, \"(&(objectClass=posixGroup)(cn=workgroup-*))\");");
 		groupPattern.setFindMemberQuery("");
-		groupPattern.setSearchGroupQuery("");
+		groupPattern.setSearchGroupQuery("ldap.search(baseDn, \"(&(objectClass=posixGroup)(cn=workgroup-\" + pattern + \"))\");");
 		groupPattern.setSearchPageSize(100);
 		groupPattern.setGroupPrefix("workgroup-");
 
@@ -113,7 +113,7 @@ public class LDAPGroupQueryServiceImplTest extends AbstractJUnit4SpringContextTe
 	}
 
 	@Test
-	public void testGroups() throws BusinessException, NamingException, IOException {
+	public void testSearchAllGroups() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Set<LdapGroupObject> listGroups = ldapGroupQueryService.listGroups(ldapConnection, baseDn, groupPattern);
 		for (LdapGroupObject ldapGroup : listGroups) {
@@ -124,6 +124,25 @@ public class LDAPGroupQueryServiceImplTest extends AbstractJUnit4SpringContextTe
 			Assert.assertEquals("wg-1", ldapGroup.getName());
 			Assert.assertEquals("workgroup-wg-1", ldapGroup.getNameWithPrefix());
 			Assert.assertEquals("cn=workgroup-wg-1,ou=Groups,dc=linshare,dc=org", ldapGroup.getExternalId());
+			Assert.assertEquals(Role.READER, ldapGroup.getRole());
+		}
+		Assert.assertEquals(1, listGroups.size());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testSearchGroups() throws BusinessException, NamingException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		baseDn = "dc=linshare,dc=org";
+		Set<LdapGroupObject> listGroups = ldapGroupQueryService.searchGroups(ldapConnection, baseDn, groupPattern, "3");
+		for (LdapGroupObject ldapGroup : listGroups) {
+			logger.info("GROUPS:" + ldapGroup.toString());
+			if (!ldapGroup.getMembers().isEmpty()) {
+				logger.info(ldapGroup.getMembers().toString());
+			}
+			Assert.assertEquals("wg-3", ldapGroup.getName());
+			Assert.assertEquals("workgroup-wg-3", ldapGroup.getNameWithPrefix());
+			Assert.assertEquals("cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org", ldapGroup.getExternalId());
 			Assert.assertEquals(Role.READER, ldapGroup.getRole());
 		}
 		Assert.assertEquals(1, listGroups.size());
