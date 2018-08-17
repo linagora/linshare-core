@@ -37,20 +37,23 @@ package org.linagora.linshare.webservice.userv2.impl;
 import java.util.List;
 import java.util.Set;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.JwtLongTimeFacade;
 import org.linagora.linshare.mongo.entities.PermanentToken;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
-import org.linagora.linshare.webservice.userv2.JwtLongTimeRestService;
+import org.linagora.linshare.webservice.userv2.JwtPermanentTokenRestService;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -59,12 +62,17 @@ import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/jwt")
-@Api(value = "/rest/user/v2/jwt", basePath = "/rest/user/v2/", description = "JWT permanent token service", produces = "application/json,application/xml", consumes = "application/json,application/xml")
-public class JwtLongTimeRestServiceImpl implements JwtLongTimeRestService {
+@Api(value = "/rest/user/v2/jwt", basePath = "/rest/user/v2/",
+	description = "JWT permanent token service",
+	produces = "application/json,application/xml",
+	consumes = "application/json,application/xml")
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+public class JwtPermanentTokenRestServiceImpl implements JwtPermanentTokenRestService {
 
 	private final JwtLongTimeFacade jwtLongTimeFacade;
 
-	public JwtLongTimeRestServiceImpl(JwtLongTimeFacade jwtLongTimeFacade) {
+	public JwtPermanentTokenRestServiceImpl(JwtLongTimeFacade jwtLongTimeFacade) {
 		super();
 		this.jwtLongTimeFacade = jwtLongTimeFacade;
 	}
@@ -126,8 +134,8 @@ public class JwtLongTimeRestServiceImpl implements JwtLongTimeRestService {
 		return jwtLongTimeFacade.update(permanentToken, uuid);
 	}
 
-	@GET
 	@Path("/audit")
+	@GET
 	@ApiOperation(value = "Get all traces for a JWT permanent token.", response = AuditLogEntryUser.class, responseContainer="Set")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
 		@ApiResponse(code = 404, message = "The requested token has not been found."),

@@ -38,7 +38,7 @@ import java.util.List;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.PermanentToken;
 
-public interface JwtLongTimeTokenRestService {
+public interface JwtPermanentTokenRestService {
 
 	PermanentToken create(String actorUuid, PermanentToken permanentToken) throws BusinessException;
 

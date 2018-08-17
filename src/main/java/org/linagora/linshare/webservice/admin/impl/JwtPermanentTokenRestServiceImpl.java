@@ -49,7 +49,7 @@ import javax.ws.rs.core.MediaType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.JwtLongTimeTokenFacade;
 import org.linagora.linshare.mongo.entities.PermanentToken;
-import org.linagora.linshare.webservice.admin.JwtLongTimeTokenRestService;
+import org.linagora.linshare.webservice.admin.JwtPermanentTokenRestService;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -61,11 +61,11 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Api(value = "/rest/admin/jwt", description = "JWT permanent token service")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class JwtLongTimeTokenRestServiceImpl implements JwtLongTimeTokenRestService {
+public class JwtPermanentTokenRestServiceImpl implements JwtPermanentTokenRestService {
 
 	private final JwtLongTimeTokenFacade jwtLongTimeTokenFacade ;
 
-	public JwtLongTimeTokenRestServiceImpl(JwtLongTimeTokenFacade jwtLongTimeTokenFacade) {
+	public JwtPermanentTokenRestServiceImpl(JwtLongTimeTokenFacade jwtLongTimeTokenFacade) {
 		super();
 		this.jwtLongTimeTokenFacade = jwtLongTimeTokenFacade;
 	}
