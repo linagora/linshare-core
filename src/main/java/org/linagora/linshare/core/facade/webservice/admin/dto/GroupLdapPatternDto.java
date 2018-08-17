@@ -74,9 +74,6 @@ public class GroupLdapPatternDto {
 	@ApiModelProperty(value = "groupName")
 	private String groupName;
 
-	@ApiModelProperty(value = "groupDN")
-	private String groupDN="removeMe";
-
 	@ApiModelProperty(value = "groupMember")
 	private String groupMember;
 
@@ -182,14 +179,6 @@ public class GroupLdapPatternDto {
 
 	public void setGroupName(String groupName) {
 		this.groupName = groupName;
-	}
-
-	public String getGroupDN() {
-		return groupDN;
-	}
-
-	public void setGroupDN(String groupDN) {
-		this.groupDN = groupDN;
 	}
 
 	public String getGroupMember() {
