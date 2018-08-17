@@ -72,7 +72,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 		@Type(value = LdapConnectionAuditLogEntry.class, name = "ldap_connection_audit"),
 		@Type(value = FunctionalityAuditLogEntry.class, name = "ldap_connection_audit"),
 		@Type(value = PublicKeyAuditLogEntry.class, name = "public_key_audit"),
-		@Type(value = JwtLongTimeAuditLogEntry.class, name = "jwt_longtime")
+		@Type(value = JwtLongTimeAuditLogEntry.class, name = "jwt_longtime"),
+		@Type(value = SharedSpaceNodeAuditLogEntry.class, name = "shared_space_node_audit"),
+		@Type(value = SharedSpaceMemberAuditLogEntry.class, name = "shared_space_member_audit")
 	})
 @XmlSeeAlso({ ShareEntryAuditLogEntry.class,
 	DocumentEntryAuditLogEntry.class,
@@ -93,7 +95,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 	LdapConnectionAuditLogEntry.class,
 	FunctionalityAuditLogEntry.class,
 	PublicKeyAuditLogEntry.class,
-	JwtLongTimeAuditLogEntry.class
+	JwtLongTimeAuditLogEntry.class,
+	SharedSpaceNodeAuditLogEntry.class,
+	SharedSpaceMemberAuditLogEntry.class
 	})
 @Document(collection="audit_log_entries")
 public class AuditLogEntry {

@@ -150,6 +150,12 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		Validate.notNull(sharedSpaceNode, "sharedSpaceNode must be set.");
 		SharedSpaceMember foundMember = businessService.findByMemberAndSharedSpaceNode(possibleMember.getLsUuid(),
 				sharedSpaceNode.getUuid());
+		if (foundMember == null) {
+			String message = String.format(
+					"The account with the UUID : %s is not a member of the node with the uuid : %s",
+					possibleMember.getLsUuid(), sharedSpaceNode.getUuid());
+			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, message);
+		}
 		checkReadPermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
 				foundMember);
 		return foundMember;
@@ -162,6 +168,12 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		Validate.notEmpty(nodeUuid, "nodeUuid must be set.");
 		SharedSpaceMember foundMember = businessService
 				.findByMemberAndSharedSpaceNode(userUuid, nodeUuid);
+		if (foundMember == null) {
+			String message = String.format(
+					"The account with the UUID : %s is not a member of the node with the uuid : %s",
+					userUuid, nodeUuid);
+			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, message);
+		}
 		checkReadPermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
 				foundMember);
 		return foundMember;
@@ -299,5 +311,10 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 
 	private boolean checkAccountNotInNode(String possibleMemberUuid, String nodeUuid) {
 		return businessService.findByMemberAndSharedSpaceNode(possibleMemberUuid, nodeUuid) == null;
+	}
+
+	@Override
+	public List<SharedSpaceMember> findAllByAccountAndRole(String accountUuid, String roleUuid) {
+		return businessService.findAllByAccountAndRole(accountUuid, roleUuid);
 	}
 }

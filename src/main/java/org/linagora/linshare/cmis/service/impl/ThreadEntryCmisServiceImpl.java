@@ -77,9 +77,13 @@ import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.service.SharedSpaceMemberService;
+import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.core.utils.FileAndMetaData;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 
@@ -89,17 +93,23 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 	private final ThreadService threadService;
 	private final CmisStrings cmisStrings;
 	private final CmisHelpers helpers;
+	private final SharedSpaceMemberService ssMemberService;
+	private final SharedSpaceRoleService ssRoleService;
 
 	public ThreadEntryCmisServiceImpl(WorkGroupNodeService workGroupNodeService,
 			CmisExceptionMappingService cmisExceptionMappingService,
 			ThreadService threadService, CmisStrings cmisStrings,
-			CmisHelpers cmisHelpers) {
+			CmisHelpers cmisHelpers,
+			SharedSpaceMemberService ssMemberService,
+			SharedSpaceRoleService ssRoleService) {
 		super();
 		this.workGroupNodeService = workGroupNodeService;
 		this.cmisExceptionMappingService = cmisExceptionMappingService;
 		this.threadService = threadService;
 		this.cmisStrings = cmisStrings;
 		this.helpers = cmisHelpers;
+		this.ssMemberService = ssMemberService;
+		this.ssRoleService = ssRoleService;
 	}
 
 	private String computeThreadName(Account actor, WorkGroup workGroup) {
@@ -179,11 +189,12 @@ public class ThreadEntryCmisServiceImpl extends EntryCmisServiceImpl {
 	private ObjectInFolderList getThreadList(Account actor) {
 		List<ObjectInFolderData> objDlist = new LinkedList<ObjectInFolderData>();
 		ObjectInFolderListImpl objList = new ObjectInFolderListImpl();
-		List<WorkGroup> workGroups = threadService.findAllWhereAdmin((User) actor);
-		for (WorkGroup workGroup : workGroups) {
+		SharedSpaceRole adminRole = ssRoleService.findByName(actor, actor, "ADMIN");
+		List<SharedSpaceMember> members = ssMemberService.findAllByAccountAndRole(actor.getLsUuid(), adminRole.getUuid());
+		for (SharedSpaceMember member : members) {
 			ObjectInFolderDataImpl objData = new ObjectInFolderDataImpl(
 					getObject(actor.getLsUuid(),
-							CmisConstants.tagThreadChildren + workGroup.getLsUuid(), null, null, null,
+							CmisConstants.tagThreadChildren + member.getNode().getUuid(), null, null, null,
 							null, null, null, null));
 			objDlist.add(objData);
 		}

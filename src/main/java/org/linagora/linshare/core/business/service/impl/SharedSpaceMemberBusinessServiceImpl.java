@@ -148,4 +148,9 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		return repository.findByAccountUuid(userUuid);
 	}
 
+	@Override
+	public List<SharedSpaceMember> findAllByAccountAndRole(String accountUuid, String roleUuid) {
+		return repository.findByAccountAndRole(accountUuid, roleUuid);
+	}
+
 }

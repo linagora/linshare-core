@@ -80,4 +80,6 @@ public interface SharedSpaceMemberService {
 	SharedSpaceMember findMemberByUuid(Account authUser, Account actor, String userUuid, String nodeUuid)
 			throws BusinessException;
 
+	List<SharedSpaceMember> findAllByAccountAndRole(String accountUuid, String roleUuid);
+
 }

@@ -44,8 +44,6 @@ import org.linagora.linshare.core.domain.constants.VisibilityType;
 import org.linagora.linshare.core.domain.entities.ContactList;
 import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.entities.WorkGroup;
-import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.UserDto;
@@ -57,8 +55,9 @@ import org.linagora.linshare.core.facade.webservice.user.dto.UserAutoCompleteRes
 import org.linagora.linshare.core.repository.RecipientFavouriteRepository;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ContactListService;
-import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -71,23 +70,23 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 
 	private final UserService userService;
 
-	private final ThreadService threadService;
-
 	private final ContactListService contactListService;
 
 	private final RecipientFavouriteRepository favourite;
 
+	private final SharedSpaceMemberService ssMemberService;
+
 	public AutoCompleteFacadeImpl(final AccountService accountService,
 			final UserService userService,
 			final ContactListService contactListService,
-			final ThreadService threadService,
-			RecipientFavouriteRepository favourite
+			RecipientFavouriteRepository favourite,
+			final SharedSpaceMemberService ssMemberService
 			) {
 		super(accountService);
 		this.userService = userService;
 		this.contactListService = contactListService;
-		this.threadService = threadService;
 		this.favourite = favourite;
+		this.ssMemberService = ssMemberService;
 	}
 
 	@Override
@@ -147,7 +146,6 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 				result.addAll(ImmutableList.copyOf(Lists.transform(Lists.newArrayList(userList), UserAutoCompleteResultDto.toDto())));
 			} else if (enumType.equals(SearchType.THREAD_MEMBERS)) {
 				Validate.notEmpty(threadUuid, "You must fill threadUuid query parameter.");
-				WorkGroup workGroup = threadService.find(authUser, authUser, threadUuid);
 				List<ContactList> mailingListsList = contactListService.searchListByVisibility(authUser.getLsUuid(), VisibilityType.All.name(), pattern);
 				int rangeContactList = (mailingListsList.size() < AUTO_COMPLETE_LIMIT ? mailingListsList.size() : AUTO_COMPLETE_LIMIT);
 				result.addAll(ImmutableList.copyOf(Lists.transform(mailingListsList.subList(0, rangeContactList), ListAutoCompleteResultDto.toDto())));
@@ -155,11 +153,17 @@ public class AutoCompleteFacadeImpl extends UserGenericFacadeImp implements Auto
 				int range = (users.size() < AUTO_COMPLETE_LIMIT ? users.size() : AUTO_COMPLETE_LIMIT);
 				for (User user : users.subList(0, range)) {
 					User account = userService.findOrCreateUser(user.getMail(), user.getDomainId());
-					WorkgroupMember member = threadService.getMemberFromUser(workGroup, account);
+					SharedSpaceMember member = null;
+					try {
+						member = ssMemberService.findMemberByUuid(authUser, authUser, account.getLsUuid(), threadUuid);
+					} catch (BusinessException e) {
+						logger.debug(String.format("No member found for this account %s and this node %s",
+								account.getAccountRepresentation(), threadUuid), e);
+					}
 					if (member == null) {
 						result.add(new ThreadMemberAutoCompleteResultDto(account));
 					} else {
-						result.add(new ThreadMemberAutoCompleteResultDto(member));
+						result.add(new ThreadMemberAutoCompleteResultDto(member, account));
 					}
 				}
 			} else if (enumType.equals(SearchType.UPLOAD_REQUESTS)) {

@@ -40,10 +40,8 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 @XmlRootElement
-@Document(collection="auditLogEntry")
 public class SharedSpaceMemberAuditLogEntry extends AuditLogEntryUser {
 
 	protected SharedSpaceMember resource;

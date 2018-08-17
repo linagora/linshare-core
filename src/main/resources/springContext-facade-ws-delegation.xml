@@ -34,6 +34,7 @@
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="threadService" />
 		<constructor-arg ref="quotaService" />
+		<constructor-arg ref="sharedSpaceNodeService" />
 	</bean>
 
 	<!--  deprecated bean -->
@@ -48,7 +49,8 @@
 	<bean id="wsDelegationThreadMemberFacade" class="org.linagora.linshare.core.facade.webservice.delegation.impl.WorkgroupMemberFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="userService" />
-		<constructor-arg ref="threadService" />
+		<constructor-arg ref="sharedSpaceRoleService" />
+		<constructor-arg ref="sharedSpaceMemberService" />
 	</bean>
 
 	<bean id="wsDelegationShareFacade" class="org.linagora.linshare.core.facade.webservice.delegation.impl.ShareFacadeImpl">

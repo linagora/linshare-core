@@ -72,4 +72,6 @@ public interface SharedSpaceMemberBusinessService {
 	void updateNestedNode(SharedSpaceNode node) throws BusinessException;
 
 	List<SharedSpaceMember> findAllUserMemberships(String userUuid);
+
+	List<SharedSpaceMember> findAllByAccountAndRole(String accountUuid, String roleUuid);
 }
