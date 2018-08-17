@@ -36,6 +36,7 @@ package org.linagora.linshare.ldap;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.naming.NamingException;
 
@@ -51,7 +52,7 @@ public class JScriptGroupLdapQuery extends JScriptLdapQuery<LdapGroupObject> {
 		super(ctx, baseDn, dnList, ldapPattern, clazz);
 	}
 
-	public List<LdapGroupObject> searchAllGroups() throws NamingException {
+	public Set<LdapGroupObject> searchAllGroups() throws NamingException {
 		String  command = ((GroupLdapPattern)ldapPattern).getSearchAllGroupsQuery();
 		if (logger.isDebugEnabled()) {
 			logLqlQuery(command, "");
@@ -62,7 +63,7 @@ public class JScriptGroupLdapQuery extends JScriptLdapQuery<LdapGroupObject> {
 		return dnListToObjectList(dnResultList, ldapDbAttributes);
 	}
 
-	public List<LdapGroupObject> searchGroups(String pattern) throws NamingException {
+	public Set<LdapGroupObject> searchGroups(String pattern) throws NamingException {
 		String  command = ((GroupLdapPattern)ldapPattern).getSearchGroupQuery();
 		pattern = addExpansionCharacters(pattern);
 		lqlctx.getVariables().put("pattern", pattern);

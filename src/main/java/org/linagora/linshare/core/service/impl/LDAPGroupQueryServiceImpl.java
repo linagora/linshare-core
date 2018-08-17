@@ -35,7 +35,6 @@ package org.linagora.linshare.core.service.impl;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -56,7 +55,7 @@ import org.linid.dm.authorization.lql.LqlRequestCtx;
 import org.linid.dm.authorization.lql.dnlist.IDnList;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Lists;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Sets;
 
 public class LDAPGroupQueryServiceImpl extends LDAPQueryServiceImpl implements LDAPGroupQueryService {
@@ -72,7 +71,7 @@ public class LDAPGroupQueryServiceImpl extends LDAPQueryServiceImpl implements L
 
 		LqlRequestCtx lqlctx = new LqlRequestCtx(ldapContext, vars, true);
 		IDnList dnList = new LinShareDnList(groupPattern.getSearchPageSize(), 0);
-		List<LdapGroupObject> list = null;
+		Set<LdapGroupObject> list = null;
 		try {
 			JScriptGroupLdapQuery query = groupQuery(baseDn, groupPattern, lqlctx, dnList);
 			list = query.searchAllGroups();
@@ -93,7 +92,7 @@ public class LDAPGroupQueryServiceImpl extends LDAPQueryServiceImpl implements L
 
 		LqlRequestCtx lqlctx = new LqlRequestCtx(ldapContext, vars, true);
 		IDnList dnList = new LinShareDnList(groupPattern.getSearchPageSize(), 0);
-		List<LdapGroupObject> list = null;
+		Set<LdapGroupObject> list = null;
 		try {
 			JScriptGroupLdapQuery query = groupQuery(baseDn, groupPattern, lqlctx, dnList);
 			list = query.searchGroups(pattern);
@@ -133,10 +132,10 @@ public class LDAPGroupQueryServiceImpl extends LDAPQueryServiceImpl implements L
 		return res;
 	}
 
-	private List<LdapGroupMemberObject> getMembers(String externalId, JScriptGroupLdapQuery groupQuery,
+	private Set<LdapGroupMemberObject> getMembers(String externalId, JScriptGroupLdapQuery groupQuery,
 			JScriptGroupMemberLdapQuery memberQuery) throws NamingException {
 		LdapGroupObject lgo = groupQuery.loadDnMembers(externalId);
-		List<LdapGroupMemberObject> list = memberQuery.searchAllGroupMember(lgo.getMembers());
+		Set<LdapGroupMemberObject> list = memberQuery.searchAllGroupMember(lgo.getMembers());
 		return list;
 	}
 
@@ -153,8 +152,7 @@ public class LDAPGroupQueryServiceImpl extends LDAPQueryServiceImpl implements L
 		return queryMember;
 	}
 
-	private Set<LdapGroupMemberObject> convert(Role role, List<LdapGroupMemberObject> list) {
-		Set<LdapGroupMemberObject> res;
+	private Set<LdapGroupMemberObject> convert(Role role, Set<LdapGroupMemberObject> list) {
 		Function<LdapGroupMemberObject, LdapGroupMemberObject> convert = new Function<LdapGroupMemberObject, LdapGroupMemberObject>() {
 			@Override
 			public LdapGroupMemberObject apply(LdapGroupMemberObject lgm) {
@@ -162,11 +160,11 @@ public class LDAPGroupQueryServiceImpl extends LDAPQueryServiceImpl implements L
 				return lgm;
 			}
 		};
-		res = Sets.newHashSet(Lists.transform(list, convert));
-		return res;
+		FluentIterable<LdapGroupMemberObject> transform = FluentIterable.from(list).transform(convert);
+		return transform.toSet();
 	}
 
-	private Set<LdapGroupObject> convert(GroupLdapPattern groupPattern, List<LdapGroupObject> list) {
+	private Set<LdapGroupObject> convert(GroupLdapPattern groupPattern, Set<LdapGroupObject> list) {
 		Function<LdapGroupObject, LdapGroupObject> convert = new Function<LdapGroupObject, LdapGroupObject>() {
 			@Override
 			public LdapGroupObject apply(LdapGroupObject lgo) {
@@ -175,6 +173,7 @@ public class LDAPGroupQueryServiceImpl extends LDAPQueryServiceImpl implements L
 				return lgo.removePrefix();
 			}
 		};
-		return Sets.newHashSet(Lists.transform(list, convert));
+		FluentIterable<LdapGroupObject> transform = FluentIterable.from(list).transform(convert);
+		return transform.toSet();
 	}
 }

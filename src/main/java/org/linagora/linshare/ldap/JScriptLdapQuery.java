@@ -37,11 +37,11 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.naming.NamingEnumeration;
@@ -63,6 +63,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 public abstract class JScriptLdapQuery<T extends Object> {
 
@@ -211,11 +212,11 @@ public abstract class JScriptLdapQuery<T extends Object> {
 	 *            will be search and set (mail, firstname, lastname, uid, ...)
 	 * @return List<User> List of user
 	 */
-	protected List<T> dnListToObjectList(List<String> dnResultList, Map<String, LdapAttribute> ldapDbAttributes) {
+	protected Set<T> dnListToObjectList(List<String> dnResultList, Map<String, LdapAttribute> ldapDbAttributes) {
 		ControlContext controlContext = initControlContext(ldapDbAttributes);
 
 		// converting resulting dn to User object
-		List<T> users = new ArrayList<T>();
+		Set<T> users = Sets.newHashSet();
 		for (String dn : dnResultList) {
 			logger.debug("current dn: " + dn);
 			Date date_before = new Date();

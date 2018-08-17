@@ -36,6 +36,7 @@ package org.linagora.linshare.ldap;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.naming.NamingException;
 
@@ -51,7 +52,7 @@ public class JScriptGroupMemberLdapQuery extends JScriptLdapQuery<LdapGroupMembe
 		super(ctx, baseDn, dnList, ldapPattern, clazz);
 	}
 
-	public List<LdapGroupMemberObject> searchAllGroupMember(List<String> members) throws NamingException {
+	public Set<LdapGroupMemberObject> searchAllGroupMember(List<String> members) throws NamingException {
 		Map<String, LdapAttribute> ldapDbAttributes = filterAttrByPrefix("member_");
 		return dnListToObjectList(members, ldapDbAttributes);
 	}
