@@ -150,7 +150,7 @@ public class GroupPatternRestServiceImpl extends WebserviceBase implements Group
 			GroupLdapPatternDto groupPattern,
 			@ApiParam(value = "group pattern uuid to delete (required if groupPattern is null)", required = false)
 				@PathParam("uuid") String uuid) throws BusinessException {
-		return groupPatternFacade.update(groupPattern, uuid);
+		return groupPatternFacade.delete(groupPattern, uuid);
 	}
 
 }
