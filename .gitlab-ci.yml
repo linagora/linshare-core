@@ -11,7 +11,20 @@ variables:
     - $CI_PROJECT_DIR/.m2/repository
   policy: pull
 
-prepare:
+.curl-tpl: &curl-tpl
+  variables:
+    GIT_STRATEGY: none
+  tags:
+    - curl
+
+build:
+  <<: *curl-tpl
+  stage: build
+  script:
+    - echo just to enable external pipeline.
+
+# deactivated.
+.prepare:
   image: maven:3.5-jdk-8
   stage: prepare
   tags:
@@ -24,7 +37,8 @@ prepare:
     - mvn dependency:resolve --batch-mode
     - mvn dependency:resolve-plugins --batch-mode
 
-build:
+# deactivated.
+.build:
   stage: build
   tags:
     - docker
