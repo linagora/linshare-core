@@ -82,7 +82,16 @@ public class SharedSpaceNode {
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
 	}
-
+	
+	public SharedSpaceNode(String name, String uuid, NodeType nodeType,Date creationDate,Date modificationDate) {
+		super();
+		this.uuid = uuid;
+		this.name = name;
+		this.nodeType = nodeType;
+		this.creationDate = creationDate;
+		this.modificationDate = modificationDate;
+	}
+	
 	@XmlTransient
 	@JsonIgnore
 	public String getId() {

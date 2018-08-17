@@ -313,6 +313,34 @@ VALUES
   now(),
   null);
 
+-- TASK: UPGRADE_2_2_MIGRATE_THREAD_TO_MONGO_DATABASE
+INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+  (22,
+  'UNDEFINED',
+  'UPGRADE_2_2_MIGRATE_THREAD_TO_MONGO_DATABASE',
+  'UPGRADE_2_2',
+  null,
+  null,
+  22,
+  'NEW',
+  'MANDATORY',
+  now(),
+  now(),
+  null);
+
 ALTER TABLE account ADD COLUMN first_name varchar(255);
 ALTER TABLE account ADD COLUMN last_name varchar(255);
 ALTER TABLE account ADD COLUMN encipherment_key_pass bytea;

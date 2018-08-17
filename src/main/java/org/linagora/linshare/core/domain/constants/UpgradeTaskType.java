@@ -133,7 +133,12 @@ public enum UpgradeTaskType {
 	/*
 	 * We migrate all uploadRequestHistory to uploadRequestAudit into the mongo database
 	 */
-	UPGRADE_2_2_MIGRATE_UPLOAD_REQUEST_HISTORY_TO_MONGO_AUDIT;
+	UPGRADE_2_2_MIGRATE_UPLOAD_REQUEST_HISTORY_TO_MONGO_AUDIT,
+	
+	/*
+	 * We migrate all thread member to shared space members into mongo database.
+	 */
+	UPGRADE_2_2_MIGRATE_THREAD_AND_THREAD_MEMBERS_TO_MONGO_DATABASE;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {
