@@ -74,21 +74,12 @@ public class LDAPGroupQueryServiceImpl extends LDAPQueryServiceImpl implements L
 		IDnList dnList = new LinShareDnList(groupPattern.getSearchPageSize(), 0);
 		List<LdapGroupObject> list = null;
 		try {
-			JScriptGroupLdapQuery query = new JScriptGroupLdapQuery(lqlctx, baseDn, groupPattern, dnList,
-					LdapGroupObject.class);
+			JScriptGroupLdapQuery query = groupQuery(baseDn, groupPattern, lqlctx, dnList);
 			list = query.searchAllGroups();
 		} finally {
 			ldapContext.close();
 		}
-		Function<LdapGroupObject, LdapGroupObject> convert = new Function<LdapGroupObject, LdapGroupObject>() {
-			@Override
-			public LdapGroupObject apply(LdapGroupObject lgo) {
-				lgo.setPrefix(groupPattern.getGroupPrefix());
-				lgo.setRole(Role.READER);
-				return lgo.removePrefix();
-			}
-		};
-		return Sets.newHashSet(Lists.transform(list, convert));
+		return convert(groupPattern, list);
 	}
 
 	@Override
@@ -104,12 +95,78 @@ public class LDAPGroupQueryServiceImpl extends LDAPQueryServiceImpl implements L
 		IDnList dnList = new LinShareDnList(groupPattern.getSearchPageSize(), 0);
 		List<LdapGroupObject> list = null;
 		try {
-			JScriptGroupLdapQuery query = new JScriptGroupLdapQuery(lqlctx, baseDn, groupPattern, dnList,
-					LdapGroupObject.class);
+			JScriptGroupLdapQuery query = groupQuery(baseDn, groupPattern, lqlctx, dnList);
 			list = query.searchGroups(pattern);
 		} finally {
 			ldapContext.close();
 		}
+		return convert(groupPattern, list);
+	}
+
+	@Override
+	public Set<LdapGroupMemberObject> listMembers(LdapConnection ldapConnection, String baseDn,
+			GroupLdapPattern groupPattern, LdapGroupObject group) throws BusinessException, NamingException, IOException {
+		LdapContext ldapContext = (LdapContext) getLdapContext(ldapConnection, null).getReadOnlyContext();
+		Map<String, Object> vars = new HashMap<String, Object>();
+		vars.put("baseDn", baseDn);
+		vars.put("logger", logger);
+		LqlRequestCtx lqlctx = new LqlRequestCtx(ldapContext, vars, true);
+		IDnList dnList = new LinShareDnList(groupPattern.getSearchPageSize(), 0);
+		Set<LdapGroupMemberObject> res = Sets.newHashSet();
+		try {
+			JScriptGroupLdapQuery groupQuery = groupQuery(baseDn, groupPattern, lqlctx, dnList);
+			JScriptGroupMemberLdapQuery memberQuery = memberQuery(baseDn, groupPattern, lqlctx, dnList);
+
+			// load read only members
+			res.addAll(convert(group.getRole(), getMembers(group.getExternalId(), groupQuery, memberQuery)));
+			// load contributor members
+			if(groupQuery.isDnExist(group.getContributorsDn())) {
+				res.addAll(convert(Role.CONTRIBUTOR, getMembers(group.getContributorsDn(), groupQuery, memberQuery)));
+			}
+			// load writer members
+			if(groupQuery.isDnExist(group.getWritersDn())) {
+				res.addAll(convert(Role.WRITER, getMembers(group.getWritersDn(), groupQuery, memberQuery)));
+			}
+		} finally {
+			ldapContext.close();
+		}
+		return res;
+	}
+
+	private List<LdapGroupMemberObject> getMembers(String externalId, JScriptGroupLdapQuery groupQuery,
+			JScriptGroupMemberLdapQuery memberQuery) throws NamingException {
+		LdapGroupObject lgo = groupQuery.loadDnMembers(externalId);
+		List<LdapGroupMemberObject> list = memberQuery.searchAllGroupMember(lgo.getMembers());
+		return list;
+	}
+
+	private JScriptGroupLdapQuery groupQuery(String baseDn, GroupLdapPattern groupPattern, LqlRequestCtx lqlctx,
+			IDnList dnList) throws NamingException, IOException {
+		JScriptGroupLdapQuery query = new JScriptGroupLdapQuery(lqlctx, baseDn, groupPattern, dnList, LdapGroupObject.class);
+		return query;
+	}
+
+	private JScriptGroupMemberLdapQuery memberQuery(String baseDn, GroupLdapPattern groupPattern, LqlRequestCtx lqlctx,
+			IDnList dnList) throws NamingException, IOException {
+		JScriptGroupMemberLdapQuery queryMember = new JScriptGroupMemberLdapQuery(lqlctx, baseDn, groupPattern, dnList,
+				LdapGroupMemberObject.class);
+		return queryMember;
+	}
+
+	private Set<LdapGroupMemberObject> convert(Role role, List<LdapGroupMemberObject> list) {
+		Set<LdapGroupMemberObject> res;
+		Function<LdapGroupMemberObject, LdapGroupMemberObject> convert = new Function<LdapGroupMemberObject, LdapGroupMemberObject>() {
+			@Override
+			public LdapGroupMemberObject apply(LdapGroupMemberObject lgm) {
+				lgm.setRole(role);
+				return lgm;
+			}
+		};
+		res = Sets.newHashSet(Lists.transform(list, convert));
+		return res;
+	}
+
+	private Set<LdapGroupObject> convert(GroupLdapPattern groupPattern, List<LdapGroupObject> list) {
 		Function<LdapGroupObject, LdapGroupObject> convert = new Function<LdapGroupObject, LdapGroupObject>() {
 			@Override
 			public LdapGroupObject apply(LdapGroupObject lgo) {
@@ -120,35 +177,4 @@ public class LDAPGroupQueryServiceImpl extends LDAPQueryServiceImpl implements L
 		};
 		return Sets.newHashSet(Lists.transform(list, convert));
 	}
-
-	@Override
-	public Set<LdapGroupMemberObject> listMembers(LdapConnection ldapConnection, String baseDn,
-			GroupLdapPattern groupPattern, LdapGroupObject group) throws BusinessException, NamingException, IOException {
-		LdapContext ldapContext = (LdapContext) getLdapContext(ldapConnection, null).getReadOnlyContext();
-		List<LdapGroupMemberObject> res = null;
-		Map<String, Object> vars = new HashMap<String, Object>();
-		vars.put("baseDn", baseDn);
-		vars.put("logger", logger);
-		LqlRequestCtx lqlctx = new LqlRequestCtx(ldapContext, vars, true);
-		IDnList dnList = new LinShareDnList(groupPattern.getSearchPageSize(), 0);
-		try {
-			JScriptGroupLdapQuery query = new JScriptGroupLdapQuery(lqlctx, baseDn, groupPattern, dnList,
-					LdapGroupObject.class);
-			LdapGroupObject lgo = query.loadMembers(group);
-			JScriptGroupMemberLdapQuery queryMember = new JScriptGroupMemberLdapQuery(lqlctx, baseDn, groupPattern, dnList,
-					LdapGroupMemberObject.class);
-			res = queryMember.searchAllGroupMember(lgo.getMembers());
-		} finally {
-			ldapContext.close();
-		}
-		Function<LdapGroupMemberObject, LdapGroupMemberObject> convert = new Function<LdapGroupMemberObject, LdapGroupMemberObject>() {
-			@Override
-			public LdapGroupMemberObject apply(LdapGroupMemberObject lgm) {
-				lgm.setRole(group.getRole());
-				return lgm;
-			}
-		};
-		return Sets.newHashSet(Lists.transform(res, convert));
-	}
-
 }

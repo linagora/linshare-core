@@ -75,9 +75,9 @@ public class JScriptGroupLdapQuery extends JScriptLdapQuery<LdapGroupObject> {
 		return dnListToObjectList(dnResultList, ldapDbAttributes);
 	}
 
-	public LdapGroupObject loadMembers(LdapGroupObject lgo) throws NamingException {
+	public LdapGroupObject loadDnMembers(String groupExternalId) throws NamingException {
 		Map<String, LdapAttribute> ldapDbAttributes = filterAttrByPartialString("group_");
-		LdapGroupObject object = dnToObject(lgo.getExternalId(), ldapDbAttributes);
+		LdapGroupObject object = dnToObject(groupExternalId, ldapDbAttributes);
 		return object;
 	}
 

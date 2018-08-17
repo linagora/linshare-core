@@ -100,7 +100,7 @@ public class LdapGroupMemberObject {
 	@Override
 	public String toString() {
 		return "LdapGroupMemberObject [firstName=" + firstName + ", lastName=" + lastName + ", email=" + email
-				+ ", externalId=" + externalId + "]";
+				+ ", role=" + role + ", externalId=" + externalId + "]";
 	}
 
 	@Override

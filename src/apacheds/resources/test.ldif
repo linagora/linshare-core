@@ -150,7 +150,12 @@ cn: workgroup-wg-3
 objectClass: posixGroup
 member: uid=user2,ou=People,dc=linshare,dc=org
 
-dn: cn=admin,cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org
-cn: admin
+dn: cn=contributors,cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org
+cn: contributors
 objectClass: posixGroup
 member: uid=user1,ou=People,dc=linshare,dc=org
+
+dn: cn=writers,cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org
+cn: writers
+objectClass: posixGroup
+member: uid=user3,ou=People,dc=linshare,dc=org

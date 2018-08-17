@@ -177,13 +177,15 @@ public class LDAPGroupQueryServiceImplTest extends AbstractJUnit4SpringContextTe
 		String baseDn = "ou=Groups3,dc=linshare,dc=org";
 		Date date_before = new Date();
 		Set<LdapGroupObject> listGroups = ldapGroupQueryService.listGroups(ldapConnection, baseDn, groupPattern);
+		Assert.assertEquals(1, listGroups.size());
 		LdapGroupObject ldapGroup = listGroups.iterator().next();
 		Assert.assertEquals("cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org", ldapGroup.getExternalId());
 		Set<LdapGroupMemberObject> listMembers = ldapGroupQueryService.listMembers(ldapConnection, baseDn, groupPattern, ldapGroup);
-		Assert.assertEquals(1, listMembers.size());
-
+		Assert.assertEquals(3, listMembers.size());
+		for (LdapGroupMemberObject member : listMembers) {
+			logger.info(member.toString());
+		}
 		Date date_after = new Date();
-		Assert.assertEquals(1, listGroups.size());
 		logger.info("End test : " + String.valueOf(date_after.getTime() - date_before.getTime()));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}

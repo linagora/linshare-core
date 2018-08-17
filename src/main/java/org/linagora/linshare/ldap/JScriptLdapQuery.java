@@ -353,4 +353,28 @@ public abstract class JScriptLdapQuery<T extends Object> {
 		}
 		return false;
 	}
+
+	public Boolean isDnExist(String dn) {
+		return isDnExist(dn, "*");
+	}
+
+	public Boolean isDnExist(String dn, String objectclass) {
+		String dnFragment = dn.split(",")[0];
+		dn = dn.substring(dnFragment.length() + 1);
+		SearchControls scs = new SearchControls();
+		scs.setSearchScope(SearchControls.ONELEVEL_SCOPE);
+		String[] attrs = { dnFragment.split("=")[0], };
+		scs.setReturningAttributes(attrs);
+		try {
+			String filter = "(&(objectclass=" + objectclass + ")(" + dnFragment + "))";
+			NamingEnumeration<SearchResult> results = lqlctx.getLdapCtx().search(dn, filter, scs);
+			boolean res = results.hasMoreElements();
+			return res;
+		} catch (NamingException e) {
+			logger.error(e.getMessage());
+			logger.debug(e.toString());
+		}
+		return false;
+	}
+
 }

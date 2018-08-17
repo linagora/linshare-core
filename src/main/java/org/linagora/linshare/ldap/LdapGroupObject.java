@@ -152,4 +152,11 @@ public class LdapGroupObject {
 		return this;
 	}
 
+	public String getContributorsDn() {
+		return "cn=contributors," + externalId;
+	}
+
+	public String getWritersDn() {
+		return "cn=writers," + externalId;
+	}
 }
