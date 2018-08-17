@@ -68,11 +68,6 @@ public class JwtLongTimeResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected boolean hasReadPermission(Account authUser, Account account, PermanentToken entry, Object... opt) {
-		return defaultPermissionCheck(authUser, account, entry, null, true);
-	}
-
-	@Override
 	protected boolean hasListPermission(Account authUser, Account account, PermanentToken entry, Object... opt) {
 		Functionality functionality = functionalityReadOnlyService.getJwtLongTimeFunctionality(authUser.getDomain());
 		Functionality userFunctionality = functionalityReadOnlyService
@@ -94,36 +89,34 @@ public class JwtLongTimeResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected boolean hasDeletePermission(Account authUser, Account account, PermanentToken entry, Object... opt) {
-		return defaultPermissionCheck(authUser, account, entry, null, true);
-	}
-
-	@Override
 	protected boolean hasCreatePermission(Account authUser, Account account, PermanentToken entry, Object... opt) {
-		Functionality functionality = functionalityReadOnlyService.getJwtLongTimeFunctionality(authUser.getDomain());
-		Functionality userCreateFunctionality = functionalityReadOnlyService
-				.getJwtLongTimeFunctionalityForUser(authUser.getDomain());
+		if (account.hasDelegationRole()) {
+			return false;
+		}
+		Functionality functionality = functionalityReadOnlyService.getJwtLongTimeFunctionality(account.getDomain());
 		if (!functionality.getActivationPolicy().getStatus()) {
 			return false;
 		}
-		if (authUser.hasAdminRole()
-				|| authUser.hasSuperAdminRole() && functionality.getConfigurationPolicy().getStatus()) {
+		if (account.hasSuperAdminRole()) {
+			return true;
+		}
+		if (account.hasAdminRole() && functionality.getConfigurationPolicy().getStatus()) {
 			AbstractDomain domain = abstractDomainService.findById(entry.getDomainUuid());
-			return permissionService.isAdminforThisDomain(authUser, domain);
-		} else if (userCreateFunctionality.getActivationPolicy().getStatus()
-				&& userCreateFunctionality.getDelegationPolicy().getStatus()) {
-			if (authUser.isInternal() || authUser.isGuest()) {
-				if (account != null && authUser.equals(account)) {
+			return permissionService.isAdminforThisDomain(account, domain);
+		}
+		Functionality userCreateFunctionality = functionalityReadOnlyService
+				.getJwtLongTimeFunctionalityForUser(account.getDomain());
+		boolean enabled = userCreateFunctionality.getActivationPolicy().getStatus();
+		// true if users have the right to create them self some tokens.
+		boolean create = userCreateFunctionality.getDelegationPolicy().getStatus();
+		if (enabled && create) {
+			if (account.isInternal()) {
+				if (account != null && account.equals(authUser)) {
 					return true;
 				}
 			}
 		}
 		return false;
-	}
-
-	@Override
-	protected boolean hasUpdatePermission(Account authUser, Account account, PermanentToken entry, Object... opt) {
-		return defaultPermissionCheck(authUser, account, entry, null, true);
 	}
 
 	@Override
@@ -142,22 +135,45 @@ public class JwtLongTimeResourceAccessControlImpl extends
 	}
 
 	@Override
-	protected boolean defaultPermissionCheck(Account authUser, Account actor, PermanentToken entry,
+	protected boolean hasReadPermission(Account authUser, Account account, PermanentToken entry, Object... opt) {
+		return defaultPermissionCheck(authUser, account, entry, null, true);
+	}
+
+	@Override
+	protected boolean hasUpdatePermission(Account authUser, Account account, PermanentToken entry, Object... opt) {
+		return defaultPermissionCheck(authUser, account, entry, null, true);
+	}
+
+	@Override
+	protected boolean hasDeletePermission(Account authUser, Account account, PermanentToken entry, Object... opt) {
+		return defaultPermissionCheck(authUser, account, entry, null, true);
+	}
+
+	@Override
+	protected boolean defaultPermissionCheck(Account authUser, Account account, PermanentToken entry,
 			TechnicalAccountPermissionType permission, boolean checkActorIsEntryOwner) {
-		Functionality functionality = functionalityReadOnlyService.getJwtLongTimeFunctionality(authUser.getDomain());
-		Functionality userFunctionality = functionalityReadOnlyService
-				.getJwtLongTimeFunctionalityForUser(authUser.getDomain());
+		if (account.hasDelegationRole()) {
+			return false;
+		}
+		Functionality functionality = functionalityReadOnlyService.getJwtLongTimeFunctionality(account.getDomain());
 		if (!functionality.getActivationPolicy().getStatus()) {
 			return false;
 		}
-		if (authUser.hasAdminRole() || authUser.hasSuperAdminRole()) {
+		if (account.hasSuperAdminRole()) {
+			return true;
+		}
+		if (account.hasAdminRole() && functionality.getConfigurationPolicy().getStatus()) {
 			AbstractDomain domain = abstractDomainService.findById(entry.getDomainUuid());
-			return permissionService.isAdminforThisDomain(authUser, domain);
-		} else if (userFunctionality.getActivationPolicy().getStatus()) {
-			if (authUser.isInternal() || authUser.isGuest()) {
-				if (actor != null && authUser.equals(actor)) {
+			return permissionService.isAdminforThisDomain(account, domain);
+		}
+		Functionality userCreateFunctionality = functionalityReadOnlyService
+				.getJwtLongTimeFunctionalityForUser(account.getDomain());
+		boolean enabled = userCreateFunctionality.getActivationPolicy().getStatus();
+		if (enabled) {
+			if (account.isInternal()) {
+				if (account != null && account.equals(authUser)) {
 					if (checkActorIsEntryOwner) {
-						return authUser.equals(getOwner(entry));
+						return account.equals(getOwner(entry));
 					}
 					return true;
 				}
