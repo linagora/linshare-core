@@ -183,12 +183,6 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 		return nodes;
 	}
 
-	private void deleteAllNodes() throws BusinessException {
-		for (Integer n = 0; n <sharedSpaceNodes.size(); n++) {
-			service.delete(authUser, authUser, sharedSpaceNodes.get(n));
-		}
-	}
-
 	@Test
 	public void findAll() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);

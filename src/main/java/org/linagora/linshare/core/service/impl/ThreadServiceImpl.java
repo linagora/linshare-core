@@ -50,7 +50,6 @@ import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.rac.ThreadMemberResourceAccessControl;
 import org.linagora.linshare.core.rac.ThreadResourceAccessControl;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.repository.ThreadRepository;
@@ -91,7 +90,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 			ThreadMemberRepository threadMemberRepository,
 			LogEntryService logEntryService,
 			ThreadResourceAccessControl rac,
-			ThreadMemberResourceAccessControl threadMemberResourceAccessControl,
 			UserRepository<User> userRepository,
 			FunctionalityReadOnlyService functionalityReadOnlyService,
 			AccountQuotaBusinessService accountQuotaBusinessService,

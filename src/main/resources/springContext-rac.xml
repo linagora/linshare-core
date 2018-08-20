@@ -28,11 +28,6 @@
 		<constructor-arg ref="threadMemberRepository" />
 	</bean>
 
-	<bean name="threadMemberResourceAccessControl" class="org.linagora.linshare.core.rac.impl.ThreadMemberResourceAccessControlImpl">
-		<constructor-arg ref="functionalityReadOnlyService" />
-		<constructor-arg ref="threadMemberRepository" />
-	</bean>
-
 	<bean name="guestResourceAccessControl" class="org.linagora.linshare.core.rac.impl.GuestResourceAccessControlImpl">
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="abstractDomainService" />
