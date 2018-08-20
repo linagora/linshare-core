@@ -170,9 +170,6 @@
 		<constructor-arg ref="wsAdminJwtLongTimeTokenFacade" />
 	</bean>
 
-	<bean id="adminSharedSpacePermissionRestService" class="org.linagora.linshare.webservice.admin.impl.SharedSpacePermissionRestServiceImpl">
-		<constructor-arg ref="sharedSpacePermissionFacade" />
-	</bean>
 	<bean id="adminSharedSpaceRoleRestService" class="org.linagora.linshare.webservice.admin.impl.SharedSpaceRoleRestServiceImpl">
 		<constructor-arg ref="sharedSpaceRoleFacade" />
 	</bean>
@@ -216,7 +213,6 @@
 			<ref bean="adminJwtPermanentTokenRestService"/>
 			<ref bean="adminSharedSpaceMemberRestService"/>
 			<ref bean="adminSharedSpaceNodeRestService"/>
-			<ref bean="adminSharedSpacePermissionRestService"/>
 			<ref bean="adminSharedSpaceRoleRestService"/>
 			<ref bean="adminBasicStatisticRestService" />
 			<ref bean="adminExceptionStatisticRestService" />
