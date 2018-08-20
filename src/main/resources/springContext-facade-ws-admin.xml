@@ -198,8 +198,4 @@
 		<constructor-arg ref="jwtLongTimeService" />
 		<constructor-arg ref="abstractDomainService" />
 	</bean>
-	<bean id="wsAdminSharedSpaceMemberFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.SharedSpaceMemberFacadeImpl">
-		<constructor-arg ref="accountService" />
-		<constructor-arg ref="sharedSpaceMemberService" />
-	</bean>
 </beans>
