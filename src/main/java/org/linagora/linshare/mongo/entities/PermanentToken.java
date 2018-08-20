@@ -47,7 +47,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 @XmlRootElement(name = "PermanentToken")
-@Document(collection = "permanent_token")
+@Document(collection = "permanent_tokens")
 public class PermanentToken {
 
 	@JsonIgnore
