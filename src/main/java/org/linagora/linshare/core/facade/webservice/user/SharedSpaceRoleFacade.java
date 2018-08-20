@@ -34,7 +34,9 @@
 package org.linagora.linshare.core.facade.webservice.user;
 
 import java.util.List;
+
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.mongo.entities.SharedSpacePermission;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 
 public interface SharedSpaceRoleFacade {
@@ -44,5 +46,7 @@ public interface SharedSpaceRoleFacade {
 	SharedSpaceRole findByName(String actorUuid, String name) throws BusinessException;
 
 	List<SharedSpaceRole> findAll(String actorUuid) throws BusinessException;
+
+	List<SharedSpacePermission> findAll(String actorUuid, String roleUuid) throws BusinessException;
 
 }

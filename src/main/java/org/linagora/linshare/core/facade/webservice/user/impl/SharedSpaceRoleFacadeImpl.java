@@ -40,16 +40,50 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceRoleFacade;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.SharedSpacePermissionService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
+import org.linagora.linshare.mongo.entities.SharedSpacePermission;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 
 public class SharedSpaceRoleFacadeImpl extends GenericFacadeImpl implements SharedSpaceRoleFacade {
 
-	private final SharedSpaceRoleService sharedSpaceRoleService;
+	private final SharedSpaceRoleService roleService;
 
-	public SharedSpaceRoleFacadeImpl(AccountService accountService, SharedSpaceRoleService sharedSpaceRoleService) {
+	private final SharedSpacePermissionService permissionService;
+
+	protected Function<SharedSpaceRole, SharedSpaceRole> convert = new Function<SharedSpaceRole, SharedSpaceRole>() {
+		@Override
+		public SharedSpaceRole apply(SharedSpaceRole arg0) {
+			SharedSpaceRole role = new SharedSpaceRole(arg0);
+			role.setSharedSpaceAuthor(null);
+			role.setSharedSpaceDomain(null);
+			role.setCreationDate(null);
+			role.setModificationDate(null);
+			return role;
+		}
+	};
+
+	protected Function<SharedSpacePermission, SharedSpacePermission> convertPermissions = new Function<SharedSpacePermission, SharedSpacePermission>() {
+		@Override
+		public SharedSpacePermission apply(SharedSpacePermission arg0) {
+			SharedSpacePermission perm = new SharedSpacePermission();
+			perm.setUuid(arg0.getUuid());
+			perm.setAction(arg0.getAction());
+			perm.setResource(arg0.getResource());
+			return perm;
+		}
+	};
+
+	public SharedSpaceRoleFacadeImpl(
+			AccountService accountService,
+			SharedSpaceRoleService roleService,
+			SharedSpacePermissionService permissionService) {
 		super(accountService);
-		this.sharedSpaceRoleService = sharedSpaceRoleService;
+		this.roleService = roleService;
+		this.permissionService = permissionService;
 	}
 
 	@Override
@@ -57,7 +91,7 @@ public class SharedSpaceRoleFacadeImpl extends GenericFacadeImpl implements Shar
 		Validate.notEmpty(uuid, "Missing required shared space role uuid.");
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
-		return sharedSpaceRoleService.find(authUser, actor, uuid);
+		return convert.apply(roleService.find(authUser, actor, uuid));
 	}
 
 	@Override
@@ -65,14 +99,25 @@ public class SharedSpaceRoleFacadeImpl extends GenericFacadeImpl implements Shar
 		Validate.notEmpty(name, "Missing required shared space role name.");
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
-		return sharedSpaceRoleService.findByName(authUser, actor, name);
+		return convert.apply(roleService.findByName(authUser, actor, name));
 	}
 
 	@Override
 	public List<SharedSpaceRole> findAll(String actorUuid) throws BusinessException {
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
-		return sharedSpaceRoleService.findAll(authUser, actor);
+		List<SharedSpaceRole> list = roleService.findAll(authUser, actor);
+		return Lists.transform(list, convert);
+	}
+
+	@Override
+	public List<SharedSpacePermission> findAll(String actorUuid, String roleUuid) throws BusinessException {
+		Validate.notEmpty(roleUuid, "Missing required shared space role uuid.");
+		Account authUser = checkAuthentication();
+		Account actor = getActor(authUser, actorUuid);
+		SharedSpaceRole role = roleService.find(authUser, actor, roleUuid);
+		List<SharedSpacePermission> list = permissionService.findByRole(authUser, actor, role.getName());
+		return Lists.transform(list, convertPermissions);
 	}
 
 }

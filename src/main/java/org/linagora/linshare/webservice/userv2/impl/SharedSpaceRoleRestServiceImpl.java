@@ -44,11 +44,10 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceRoleFacade;
+import org.linagora.linshare.mongo.entities.SharedSpacePermission;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.webservice.userv2.SharedSpaceRoleRestService;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
@@ -107,19 +106,21 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public List<SharedSpaceRole> findAll() throws BusinessException {
-		Function<SharedSpaceRole, SharedSpaceRole> convert = new Function<SharedSpaceRole, SharedSpaceRole>() {
-			@Override
-			public SharedSpaceRole apply(SharedSpaceRole arg0) {
-				SharedSpaceRole role = new SharedSpaceRole(arg0);
-				role.setSharedSpaceAuthor(null);
-				role.setSharedSpaceDomain(null);
-				role.setCreationDate(null);
-				role.setModificationDate(null);
-				return role;
-			}
-		};
-		List<SharedSpaceRole> list = sharedSpaceRoleFacade.findAll(null);
-		return Lists.transform(list, convert);
+		return sharedSpaceRoleFacade.findAll(null);
+	}
+
+	@Path("/{uuid}/permissions")
+	@GET
+	@ApiOperation(value = "Find a shared space role .", response = SharedSpaceRole.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 404, message = "Not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public List<SharedSpacePermission> findAll(
+			@ApiParam(value = "shared space role uuid.", required = true)
+				@PathParam(value = "uuid") String roleUuid) throws BusinessException {
+		return sharedSpaceRoleFacade.findAll(null, roleUuid);
 	}
 
 }

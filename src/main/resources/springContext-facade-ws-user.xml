@@ -175,6 +175,7 @@
 	<bean id="sharedSpaceRoleFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.SharedSpaceRoleFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="sharedSpaceRoleService" />
+		<constructor-arg ref="sharedSpacePermissionService" />
 	</bean>
 	<bean id="sharedSpacePermissionFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.SharedSpacePermissionFacadeImpl">
 		<constructor-arg ref="accountService" />
