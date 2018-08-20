@@ -34,16 +34,21 @@
 package org.linagora.linshare.webservice.userv2.impl;
 
 import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceRoleFacade;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.webservice.userv2.SharedSpaceRoleRestService;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
@@ -102,7 +107,19 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public List<SharedSpaceRole> findAll() throws BusinessException {
-		return sharedSpaceRoleFacade.findAll(null);
+		Function<SharedSpaceRole, SharedSpaceRole> convert = new Function<SharedSpaceRole, SharedSpaceRole>() {
+			@Override
+			public SharedSpaceRole apply(SharedSpaceRole arg0) {
+				SharedSpaceRole role = new SharedSpaceRole(arg0);
+				role.setSharedSpaceAuthor(null);
+				role.setSharedSpaceDomain(null);
+				role.setCreationDate(null);
+				role.setModificationDate(null);
+				return role;
+			}
+		};
+		List<SharedSpaceRole> list = sharedSpaceRoleFacade.findAll(null);
+		return Lists.transform(list, convert);
 	}
 
 }

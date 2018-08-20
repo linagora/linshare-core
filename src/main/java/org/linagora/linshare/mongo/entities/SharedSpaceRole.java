@@ -39,11 +39,13 @@ import java.util.UUID;
 import javax.persistence.GeneratedValue;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
+@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 @XmlRootElement(name = "SharedSpaceRole")
 @Document(collection = "shared_space_roles")
 public class SharedSpaceRole {
@@ -69,6 +71,16 @@ public class SharedSpaceRole {
 	protected Date modificationDate;
 
 	public SharedSpaceRole() {
+	}
+
+	public SharedSpaceRole(SharedSpaceRole role) {
+		this.uuid = role.getUuid();
+		this.name = role.getName();
+		this.enabled = role.isEnabled();
+		this.author = role.getSharedSpaceAuthor();
+		this.domain = role.getSharedSpaceDomain();
+		this.creationDate = role.getCreationDate();
+		this.modificationDate = role.getModificationDate();
 	}
 
 	public SharedSpaceRole(String name, Boolean enabled, GenericLightEntity domain, SharedSpaceAuthor author) {
