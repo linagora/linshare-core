@@ -38,25 +38,28 @@ import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.user.SharedSpaceMemberFacade;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceNodeFacade;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 
 import com.google.common.base.Strings;
 
 public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements SharedSpaceNodeFacade {
 
-	protected SharedSpaceNodeService sharedSpaceNodeService;
+	private final SharedSpaceNodeService nodeService;
 	
-	protected SharedSpaceMemberFacade memberFacade;
+	private final SharedSpaceMemberService memberService;
 
 	public SharedSpaceNodeFacadeImpl(AccountService accountService,
-			SharedSpaceNodeService sharedSpaceNodeService) {
+			SharedSpaceNodeService nodeService,
+			SharedSpaceMemberService memberService) {
 		super(accountService);
-		this.sharedSpaceNodeService = sharedSpaceNodeService;
+		this.nodeService = nodeService;
+		this.memberService = memberService;
 	}
 
 	@Override
@@ -64,7 +67,7 @@ public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements Shar
 		Validate.notEmpty(uuid, "Missing required shared space node uuid.");
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
-		return sharedSpaceNodeService.find(authUser, actor, uuid);
+		return nodeService.find(authUser, actor, uuid);
 	}
 
 	@Override
@@ -73,7 +76,7 @@ public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements Shar
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
 		SharedSpaceNode toCreate = new SharedSpaceNode(node.getName(), node.getParentUuid(), node.getNodeType());
-		return sharedSpaceNodeService.create(authUser, actor, toCreate);
+		return nodeService.create(authUser, actor, toCreate);
 	}
 
 	@Override
@@ -81,12 +84,12 @@ public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements Shar
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
 		if (!Strings.isNullOrEmpty(uuid)) {
-			node = sharedSpaceNodeService.find(authUser, actor, uuid);
+			node = nodeService.find(authUser, actor, uuid);
 		} else {
 			Validate.notNull(node, "node must be set");
 			Validate.notEmpty(node.getUuid(), "node uuid must be set.");
 		}
-		return sharedSpaceNodeService.delete(authUser, actor, node);
+		return nodeService.delete(authUser, actor, node);
 	}
 
 	@Override
@@ -99,20 +102,28 @@ public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements Shar
 		} else {
 			Validate.notEmpty(node.getUuid(), "node uuid must be set.");
 		}
-		return sharedSpaceNodeService.update(authUser, actor, node);
-	}
-
-	@Override
-	public List<SharedSpaceNode> findAll() {
-		Account authUser = checkAuthentication();
-		return sharedSpaceNodeService.findAll(authUser, authUser);
+		return nodeService.update(authUser, actor, node);
 	}
 
 	@Override
 	public List<SharedSpaceMember> members(String actorUuid, String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "Missing required shared space node");
 		Account authUser = checkAuthentication();
-		return sharedSpaceNodeService.findAllMembers(authUser, authUser, uuid);
+		return nodeService.findAllMembers(authUser, authUser, uuid);
+	}
+
+	@Override
+	public List<SharedSpaceNodeNested> findAllByMember(String actorUuid, String accountUuid) {
+		Account authUser = checkAuthentication();
+		Validate.notEmpty(accountUuid, "The account uuid must be set.");
+		Account actor = getActor(authUser, actorUuid);
+		return memberService.findAllByAccount(authUser, actor, accountUuid);
+	}
+
+	@Override
+	public List<SharedSpaceNode> findAll() {
+		Account authUser = checkAuthentication();
+		return nodeService.findAll(authUser, authUser);
 	}
 
 }

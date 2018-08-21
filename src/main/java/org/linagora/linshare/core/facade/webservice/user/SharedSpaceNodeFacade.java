@@ -38,8 +38,13 @@ import java.util.List;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 
 public interface SharedSpaceNodeFacade {
+
+	List<SharedSpaceNode> findAll();
+
+	List<SharedSpaceNodeNested> findAllByMember(String actorUuid, String accountUuid);
 
 	SharedSpaceNode find(String actorUuid, String uuid) throws BusinessException;
 
@@ -48,9 +53,7 @@ public interface SharedSpaceNodeFacade {
 	SharedSpaceNode delete(String actorUuid, SharedSpaceNode node, String uuid) throws BusinessException;
 
 	SharedSpaceNode update(String actorUuid, SharedSpaceNode node, String uuid) throws BusinessException;
-	
-	List<SharedSpaceMember> members(String actorUuid, String uuid) throws BusinessException;
 
-	List<SharedSpaceNode> findAll();
+	List<SharedSpaceMember> members(String actorUuid, String uuid) throws BusinessException;
 
 }

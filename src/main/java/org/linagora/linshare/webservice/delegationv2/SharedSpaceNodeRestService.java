@@ -33,11 +33,16 @@
  */
 package org.linagora.linshare.webservice.delegationv2;
 
+import java.util.List;
+
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 
 public interface SharedSpaceNodeRestService {
 
+	List<SharedSpaceNodeNested> findAll(String actorUuid, String accountUuid) throws BusinessException;
+	
 	SharedSpaceNode find(String actorUuid, String uuid) throws BusinessException;
 
 	SharedSpaceNode create(String actorUuid, SharedSpaceNode node) throws BusinessException;
@@ -45,4 +50,5 @@ public interface SharedSpaceNodeRestService {
 	SharedSpaceNode delete(String actorUuid, SharedSpaceNode node, String uuid) throws BusinessException;
 
 	SharedSpaceNode update(String actorUuid, SharedSpaceNode node, String uuid) throws BusinessException;
+
 }

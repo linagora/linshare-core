@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.webservice.userv2.impl;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -45,6 +47,7 @@ import javax.ws.rs.core.MediaType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceNodeFacade;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.webservice.userv2.SharedSpaceNodeRestService;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -58,13 +61,26 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class SharedSpaceNodeRestServiceImpl implements SharedSpaceNodeRestService {
 
-	private final SharedSpaceNodeFacade sharedSpaceNodeFacade;
+	private final SharedSpaceNodeFacade nodeFacade;
 
-	public SharedSpaceNodeRestServiceImpl(SharedSpaceNodeFacade sharedSpaceNodeFacade) {
+	public SharedSpaceNodeRestServiceImpl(SharedSpaceNodeFacade nodeFacade) {
 		super();
-		this.sharedSpaceNodeFacade = sharedSpaceNodeFacade;
+		this.nodeFacade = nodeFacade;
 	}
-
+	
+	@Path("/{uuid}/nodes")
+	@GET
+	@ApiOperation(value = "Get all shared space nodes.", response = SharedSpaceNodeNested.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
+			@ApiResponse(code = 404, message = "Not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public List<SharedSpaceNodeNested> findAll(
+				@PathParam("uuid") String accountUuid) throws BusinessException {
+		return nodeFacade.findAllByMember(null, accountUuid);
+	}
+	
 	@Path("/{uuid}")
 	@GET
 	@ApiOperation(value = "Find a shared space node.", response = SharedSpaceNode.class)
@@ -77,7 +93,7 @@ public class SharedSpaceNodeRestServiceImpl implements SharedSpaceNodeRestServic
 			@ApiParam(value = "shared space node's uuid.", required = true)
 				@PathParam("uuid") String uuid) 
 			throws BusinessException {
-		return sharedSpaceNodeFacade.find(null, uuid);
+		return nodeFacade.find(null, uuid);
 	}
 
 	@Path("/")
@@ -91,7 +107,7 @@ public class SharedSpaceNodeRestServiceImpl implements SharedSpaceNodeRestServic
 	public SharedSpaceNode create(
 			@ApiParam(value = "shared space node to create", required = true) SharedSpaceNode node)
 			throws BusinessException {
-		return sharedSpaceNodeFacade.create(null, node);
+		return nodeFacade.create(null, node);
 	}
 	
 	@Path("/{uuid : .*}")
@@ -107,7 +123,7 @@ public class SharedSpaceNodeRestServiceImpl implements SharedSpaceNodeRestServic
 			@ApiParam(value = "shared space node's uuid.", required = false)
 				@PathParam(value = "uuid") String uuid) 
 			throws BusinessException {
-		return sharedSpaceNodeFacade.delete(null, node, uuid);
+		return nodeFacade.delete(null, node, uuid);
 	}
 	
 	@Path("/{uuid : .*}")
@@ -123,7 +139,7 @@ public class SharedSpaceNodeRestServiceImpl implements SharedSpaceNodeRestServic
 			@ApiParam(value="Ths shared space node uuid to update.")
 				@PathParam("uuid") String uuid)
 			throws BusinessException {
-		return sharedSpaceNodeFacade.update(null, node, uuid);
+		return nodeFacade.update(null, node, uuid);
 	}
 
 }
