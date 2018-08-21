@@ -106,7 +106,7 @@ public class SharedSpaceRole {
 		return author;
 	}
 
-	public void setSharedSpaceAuthor(SharedSpaceAuthor author) {
+	public void setAuthor(SharedSpaceAuthor author) {
 		this.author = author;
 	}
 
@@ -130,7 +130,7 @@ public class SharedSpaceRole {
 		return domain;
 	}
 
-	public void setSharedSpaceDomain(GenericLightEntity domain) {
+	public void setDomain(GenericLightEntity domain) {
 		this.domain = domain;
 	}
 

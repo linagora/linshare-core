@@ -58,8 +58,8 @@ public class SharedSpaceRoleFacadeImpl extends GenericFacadeImpl implements Shar
 		@Override
 		public SharedSpaceRole apply(SharedSpaceRole arg0) {
 			SharedSpaceRole role = new SharedSpaceRole(arg0);
-			role.setSharedSpaceAuthor(null);
-			role.setSharedSpaceDomain(null);
+			role.setAuthor(null);
+			role.setDomain(null);
 			role.setCreationDate(null);
 			role.setModificationDate(null);
 			return role;

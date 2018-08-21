@@ -79,8 +79,8 @@ public class InitMongoServiceImpl implements InitMongoService {
 			role.setUuid(roleUuid);
 			role.setName(roleName);
 			role.setEnabled(true);
-			role.setSharedSpaceDomain(domain);
-			role.setSharedSpaceAuthor(author);
+			role.setDomain(domain);
+			role.setAuthor(author);
 			role.setModificationDate(new Date());
 			role.setCreationDate(new Date());
 			sharedSpaceRoleMongoRepository.insert(role);
