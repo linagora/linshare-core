@@ -117,7 +117,7 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public List<SharedSpacePermission> findAll(
+	public List<SharedSpacePermission> findAllPermissions(
 			@ApiParam(value = "shared space role uuid.", required = true)
 				@PathParam(value = "uuid") String roleUuid) throws BusinessException {
 		return sharedSpaceRoleFacade.findAll(null, roleUuid);

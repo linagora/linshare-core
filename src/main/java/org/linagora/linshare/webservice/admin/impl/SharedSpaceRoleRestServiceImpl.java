@@ -93,5 +93,20 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 	public List<SharedSpaceRole> findAll() throws BusinessException {
 		return ssRoleFacade.findAll(null);
 	}
+	
+	@Path("{uuid}/permissions")
+	@GET
+	@ApiOperation(value = "Get all shared space permissions of current role.", response = SharedSpacePermission.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required role."),
+			@ApiResponse(code = 404, message = "Not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public List<SharedSpacePermission> findAllPermissions(
+			@ApiParam("The role uuid")
+				@PathParam(value="uuid")String roleUuid)
+			throws BusinessException {
+		return ssRoleFacade.findAll(null, roleUuid);
+	}
 
 }

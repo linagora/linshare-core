@@ -46,6 +46,6 @@ public interface SharedSpaceRoleRestService {
 
 	List<SharedSpaceRole> findAll() throws BusinessException;
 
-	List<SharedSpacePermission> findAll(String roleUuid) throws BusinessException;
+	List<SharedSpacePermission> findAllPermissions(String roleUuid) throws BusinessException;
 }
 

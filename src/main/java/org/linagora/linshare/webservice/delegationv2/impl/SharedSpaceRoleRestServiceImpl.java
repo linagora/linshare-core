@@ -44,6 +44,7 @@ import javax.ws.rs.core.MediaType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceRoleFacade;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpacePermission;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.webservice.delegationv2.SharedSpaceRoleRestService;
 import com.wordnik.swagger.annotations.Api;
@@ -58,11 +59,11 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestService {
 
-	private final SharedSpaceRoleFacade sharedSpaceRoleFacade;
+	private final SharedSpaceRoleFacade roleFacade;
 
-	public SharedSpaceRoleRestServiceImpl(SharedSpaceRoleFacade sharedSpaceRoleFacade) {
+	public SharedSpaceRoleRestServiceImpl(SharedSpaceRoleFacade roleFacade) {
 		super();
-		this.sharedSpaceRoleFacade = sharedSpaceRoleFacade;
+		this.roleFacade = roleFacade;
 	}
 
 	@Path("/{uuid}")
@@ -79,7 +80,7 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 			@ApiParam(value = "The shared space role uuid", required = true)
 				@PathParam("uuid") String uuid)
 					throws BusinessException {
-		return sharedSpaceRoleFacade.find(actorUuid, uuid);
+		return roleFacade.find(actorUuid, uuid);
 	}
 
 	@Path("role/{name}")
@@ -96,7 +97,7 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 			@ApiParam(value="The shared space role name")
 				@PathParam(value="name")String name) 
 					throws BusinessException {
-		return sharedSpaceRoleFacade.findByName(actorUuid, name);
+		return roleFacade.findByName(actorUuid, name);
 	}
 	
 	@Path("/")
@@ -111,6 +112,23 @@ public class SharedSpaceRoleRestServiceImpl implements SharedSpaceRoleRestServic
 			@ApiParam(value="the actor uuid")
 				@PathParam(value="actorUuid")String actorUuid)
 						throws BusinessException {
-		return sharedSpaceRoleFacade.findAll(actorUuid);
+		return roleFacade.findAll(actorUuid);
+	}
+	
+	@Path("{uuid}/permissions")
+	@GET
+	@ApiOperation(value = "Get all shared space permissions of current role.", response = SharedSpacePermission.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required role."),
+			@ApiResponse(code = 404, message = "Not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public List<SharedSpacePermission> findAllPermissions(
+			@ApiParam(value="the actor uuid")
+				@PathParam(value="actorUuid")String actorUuuid,
+			@ApiParam("The role uuid")
+				@PathParam(value="uuid")String roleUuid)
+			throws BusinessException {
+		return roleFacade.findAll(actorUuuid, roleUuid);
 	}
 }

@@ -68,7 +68,6 @@ public class InitMongoServiceImpl implements InitMongoService {
 		this.userService = userService;
 		this.roleMongoRepository = roleMongoRepository;
 		this.permissionMongoRepository = permissionMongoRepository;
-
 	}
 
 	private SharedSpaceRole createInitRole(String roleUuid, String roleName, GenericLightEntity domain,
