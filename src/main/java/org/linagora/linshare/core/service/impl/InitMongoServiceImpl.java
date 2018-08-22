@@ -58,22 +58,22 @@ public class InitMongoServiceImpl implements InitMongoService {
 
 	protected final UserService userService;
 
-	protected final SharedSpaceRoleMongoRepository sharedSpaceRoleMongoRepository;
+	protected final SharedSpaceRoleMongoRepository roleMongoRepository;
 
-	protected final SharedSpacePermissionMongoRepository sharedSpacePermissionMongoRepository;
+	protected final SharedSpacePermissionMongoRepository permissionMongoRepository;
 
-	public InitMongoServiceImpl(UserService userService, SharedSpaceRoleMongoRepository sharedSpaceRoleMongoRepository,
-			SharedSpacePermissionMongoRepository sharedSpacePermissionMongoRepository) {
+	public InitMongoServiceImpl(UserService userService, SharedSpaceRoleMongoRepository roleMongoRepository,
+			SharedSpacePermissionMongoRepository permissionMongoRepository) {
 		super();
 		this.userService = userService;
-		this.sharedSpaceRoleMongoRepository = sharedSpaceRoleMongoRepository;
-		this.sharedSpacePermissionMongoRepository = sharedSpacePermissionMongoRepository;
+		this.roleMongoRepository = roleMongoRepository;
+		this.permissionMongoRepository = permissionMongoRepository;
 
 	}
 
 	private SharedSpaceRole createInitRole(String roleUuid, String roleName, GenericLightEntity domain,
 			SharedSpaceAuthor author) {
-		SharedSpaceRole role = sharedSpaceRoleMongoRepository.findByUuid(roleUuid);
+		SharedSpaceRole role = roleMongoRepository.findByUuid(roleUuid);
 		if (role == null) {
 			role = new SharedSpaceRole();
 			role.setUuid(roleUuid);
@@ -83,30 +83,30 @@ public class InitMongoServiceImpl implements InitMongoService {
 			role.setAuthor(author);
 			role.setModificationDate(new Date());
 			role.setCreationDate(new Date());
-			sharedSpaceRoleMongoRepository.insert(role);
+			roleMongoRepository.insert(role);
 		}
 		return role;
 	}
 
 	private GenericLightEntity createInitLightRole(String roleUuid, String roleName) {
-		SharedSpaceRole role = sharedSpaceRoleMongoRepository.findByUuid(roleUuid);
+		SharedSpaceRole role = roleMongoRepository.findByUuid(roleUuid);
 		GenericLightEntity roleLight = new GenericLightEntity(role.getUuid(), role.getName());
 		return roleLight;
 	}
 
 	private SharedSpacePermission createInitPermission(String permissionUuid, String permissionName,
 			SharedSpaceActionType actionType, SharedSpaceResourceType resourceType,
-			List<GenericLightEntity> sharedSpaceRoles) {
-		SharedSpacePermission permission = sharedSpacePermissionMongoRepository.findByUuid(permissionUuid);
+			List<GenericLightEntity> roles) {
+		SharedSpacePermission permission = permissionMongoRepository.findByUuid(permissionUuid);
 		if (permission == null) {
 			permission = new SharedSpacePermission();
 			permission.setUuid(permissionUuid);
 			permission.setAction(actionType);
 			permission.setResource(resourceType);
-			permission.setSharedSpaceRole(sharedSpaceRoles);
+			permission.setRoles(roles);
 			permission.setCreationDate(new Date());
 			permission.setModificationDate(new Date());
-			sharedSpacePermissionMongoRepository.insert(permission);
+			permissionMongoRepository.insert(permission);
 		}
 		return permission;
 	}

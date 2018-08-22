@@ -120,11 +120,11 @@ public class SharedSpacePermission {
 		this.resource = resourceType;
 	}
 
-	public List<GenericLightEntity> getSharedSpaceRole() {
+	public List<GenericLightEntity> getRoles() {
 		return roles;
 	}
 
-	public void setSharedSpaceRole(List<GenericLightEntity> roles) {
+	public void setRoles(List<GenericLightEntity> roles) {
 		this.roles = roles;
 
 	}

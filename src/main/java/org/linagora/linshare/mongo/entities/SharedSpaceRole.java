@@ -77,8 +77,8 @@ public class SharedSpaceRole {
 		this.uuid = role.getUuid();
 		this.name = role.getName();
 		this.enabled = role.isEnabled();
-		this.author = role.getSharedSpaceAuthor();
-		this.domain = role.getSharedSpaceDomain();
+		this.author = role.getAuthor();
+		this.domain = role.getDomain();
 		this.creationDate = role.getCreationDate();
 		this.modificationDate = role.getModificationDate();
 	}
@@ -102,7 +102,7 @@ public class SharedSpaceRole {
 		this.enabled = enable;
 	}
 
-	public SharedSpaceAuthor getSharedSpaceAuthor() {
+	public SharedSpaceAuthor getAuthor() {
 		return author;
 	}
 
@@ -126,7 +126,7 @@ public class SharedSpaceRole {
 		this.modificationDate = modificationDate;
 	}
 
-	public GenericLightEntity getSharedSpaceDomain() {
+	public GenericLightEntity getDomain() {
 		return domain;
 	}
 
