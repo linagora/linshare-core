@@ -164,6 +164,7 @@
 	</bean>
 	<bean id="adminSharedSpaceNodeRestService" class="org.linagora.linshare.webservice.admin.impl.SharedSpaceNodeRestServiceImpl">
 		<constructor-arg ref="sharedSpaceNodeFacade" />
+		<constructor-arg ref="sharedSpaceMemberFacade" />
 	</bean>
 
 	<bean id="adminJwtPermanentTokenRestService" class="org.linagora.linshare.webservice.admin.impl.JwtPermanentTokenRestServiceImpl">

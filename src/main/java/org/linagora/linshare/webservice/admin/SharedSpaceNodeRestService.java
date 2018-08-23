@@ -51,4 +51,12 @@ public interface SharedSpaceNodeRestService {
 
 	List<SharedSpaceNode> findAll() throws BusinessException;
 
+	SharedSpaceMember findMember(String memberUuid) throws BusinessException;
+
+	SharedSpaceMember addMember(SharedSpaceMember member) throws BusinessException;
+
+	SharedSpaceMember deleteMember(SharedSpaceMember member, String memberUuid) throws BusinessException;
+
+	SharedSpaceMember updateMember(SharedSpaceMember member, String memberUuid) throws BusinessException;
+
 }

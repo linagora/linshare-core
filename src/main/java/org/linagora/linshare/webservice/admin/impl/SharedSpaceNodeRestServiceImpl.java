@@ -38,6 +38,7 @@ import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -45,6 +46,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.user.SharedSpaceMemberFacade;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceNodeFacade;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
@@ -62,10 +64,14 @@ import com.wordnik.swagger.annotations.ApiResponses;
 public class SharedSpaceNodeRestServiceImpl implements SharedSpaceNodeRestService {
 
 	private final SharedSpaceNodeFacade ssNodeFacade;
+	
+	private final SharedSpaceMemberFacade ssMemberFacade;
 
-	public SharedSpaceNodeRestServiceImpl(SharedSpaceNodeFacade ssNodeFacade) {
+	public SharedSpaceNodeRestServiceImpl(SharedSpaceNodeFacade ssNodeFacade,
+			SharedSpaceMemberFacade ssMemberFacade) {
 		super();
 		this.ssNodeFacade = ssNodeFacade;
+		this.ssMemberFacade = ssMemberFacade;
 	}
 
 	@Path("/{uuid}")
@@ -140,6 +146,67 @@ public class SharedSpaceNodeRestServiceImpl implements SharedSpaceNodeRestServic
 				@PathParam("uuid")String uuid) 
 			throws BusinessException {
 		return ssNodeFacade.members(null, uuid);
+	}
+	
+	@Path("{uuid}/members")
+	@POST
+	@ApiOperation(value = "add a shared space member.", response = SharedSpaceMember.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the required role."),
+			@ApiResponse(code = 404, message = "Not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public SharedSpaceMember addMember(
+			@ApiParam("The shared space member to add")SharedSpaceMember member)
+					throws BusinessException {
+		return ssMemberFacade.create(null, member);
+	}
+	
+	@Path("{uuid}/members/{memberUuid : .*}")
+	@DELETE
+	@ApiOperation(value = "Delete a shared space member.", response = SharedSpaceMember.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the required role."),
+			@ApiResponse(code = 404, message = "Not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public SharedSpaceMember deleteMember(
+			@ApiParam("The shared space member to delete.")SharedSpaceMember member,
+			@ApiParam("The shared space member uuid")
+				@PathParam(value="memberUuid")String memberUuid)
+			throws BusinessException {
+		return ssMemberFacade.delete(null, member, memberUuid);
+	}
+	
+	@Path("{uuid}/members/{memberUuid : .*}")
+	@PUT
+	@ApiOperation(value = "Update a shared space member.", response = SharedSpaceMember.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the required role."),
+			@ApiResponse(code = 404, message = "Not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public SharedSpaceMember updateMember(
+			@ApiParam("The shared space member to update.")SharedSpaceMember member,
+			@ApiParam("The shared space member uuid")
+				@PathParam(value="memberUuid")String memberUuid)
+			throws BusinessException {
+		return ssMemberFacade.update(null, member, memberUuid);
+	}
+	
+	@Path("{uuid}/members/{memberUuid}")
+	@GET
+	@ApiOperation(value = "Get a shared space member.", response = SharedSpaceMember.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the required role."),
+			@ApiResponse(code = 404, message = "Not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public SharedSpaceMember findMember(
+			@ApiParam("The shared space member uuid")
+				@PathParam(value="memberUuid")String memberUuid)
+			throws BusinessException {
+		return ssMemberFacade.find(null, memberUuid);
 	}
 		
 }
