@@ -60,7 +60,7 @@ public class SharedSpaceMember {
 
 	protected GenericLightEntity role;
 
-	protected GenericLightEntity account;
+	protected SharedSpaceAccount account;
 
 	protected Date creationDate;
 
@@ -70,7 +70,7 @@ public class SharedSpaceMember {
 		super();
 	}
 
-	public SharedSpaceMember(SharedSpaceNodeNested node, GenericLightEntity role, GenericLightEntity account) {
+	public SharedSpaceMember(SharedSpaceNodeNested node, GenericLightEntity role, SharedSpaceAccount account) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
 		this.node = node;
@@ -129,11 +129,11 @@ public class SharedSpaceMember {
 		this.role = role;
 	}
 
-	public GenericLightEntity getAccount() {
+	public SharedSpaceAccount getAccount() {
 		return account;
 	}
 
-	public void setAccount(GenericLightEntity account) {
+	public void setAccount(SharedSpaceAccount account) {
 		this.account = account;
 	}
 

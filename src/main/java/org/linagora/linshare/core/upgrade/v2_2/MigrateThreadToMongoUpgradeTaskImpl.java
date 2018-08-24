@@ -51,6 +51,7 @@ import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
@@ -136,8 +137,7 @@ public class MigrateThreadToMongoUpgradeTaskImpl extends GenericUpgradeTaskImpl 
 
 	private void createSharedSpaceMember(WorkgroupMember threadMemberOld, SharedSpaceNode node) {
 		SharedSpaceNodeNested nodde = new SharedSpaceNodeNested(node);
-		GenericLightEntity account = new GenericLightEntity(threadMemberOld.getUser().getLsUuid(),
-				threadMemberOld.getUser().getFullName());
+		SharedSpaceAccount account = new SharedSpaceAccount(threadMemberOld.getUser());
 		GenericLightEntity role = new GenericLightEntity();
 		if (threadMemberOld.getAdmin()) {
 			SharedSpaceRole roleAdmin = roleMongoRepository.findByName("ADMIN");

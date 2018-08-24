@@ -33,8 +33,6 @@
  */
 package org.linagora.linshare.mongo.entities;
 
-import java.util.UUID;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.User;
@@ -54,15 +52,6 @@ public class SharedSpaceAccount {
 
 	public SharedSpaceAccount() {
 		super();
-	}
-
-	public SharedSpaceAccount(String name, String firstName, String lastName, String mail) {
-		super();
-		this.uuid = UUID.randomUUID().toString();
-		this.name = name;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.mail = mail;
 	}
 
 	public SharedSpaceAccount(User user) {

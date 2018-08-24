@@ -53,6 +53,7 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
+import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
@@ -134,7 +135,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		Validate.notNull(node, "Node must be set.");
 		SharedSpaceMember member = new SharedSpaceMember(new SharedSpaceNodeNested(node),
 				new GenericLightEntity(role.getUuid(), role.getName()),
-				new GenericLightEntity(newMember.getLsUuid(), newMember.getFullName()));
+				new SharedSpaceAccount(newMember));
 		SharedSpaceMember toAdd = businessService.create(member);
 		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.CREATE,
 				AuditLogEntryType.SHARED_SPACE_MEMBER, toAdd);

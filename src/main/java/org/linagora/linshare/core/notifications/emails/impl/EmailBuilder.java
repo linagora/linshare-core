@@ -78,6 +78,7 @@ import org.linagora.linshare.core.notifications.dto.Share;
 import org.linagora.linshare.core.notifications.dto.Variable;
 import org.linagora.linshare.core.notifications.emails.IEmailBuilder;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
+import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
@@ -645,7 +646,7 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		SharedSpaceNode node = new SharedSpaceNode(name, null, NodeType.WORK_GROUP);
 		SharedSpaceMember member = new SharedSpaceMember(new SharedSpaceNodeNested(node),
 				new GenericLightEntity(UUID.randomUUID().toString(), "ADMIN"),
-				new GenericLightEntity(user.getLsUuid(), user.getFullName()));
+				new SharedSpaceAccount(user));
 		return member;
 	}
 

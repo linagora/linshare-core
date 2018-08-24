@@ -121,12 +121,12 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
 		if (!Strings.isNullOrEmpty(uuid)) {
-			member = sharedSpaceMemberService.find(authUser, actor, uuid);
+			member.setUuid(uuid);
 		} else {
 			Validate.notNull(member, "The shared space member to delete must be set.");
 			Validate.notEmpty(member.getUuid(), "The shared space member uuid must be set.");
 		}
 		User foundUser = userService.findByLsUuid(member.getAccount().getUuid());
-		return sharedSpaceMemberService.delete(authUser, actor, uuid, foundUser);
+		return sharedSpaceMemberService.delete(authUser, actor, member.getUuid(), foundUser);
 	}
 }

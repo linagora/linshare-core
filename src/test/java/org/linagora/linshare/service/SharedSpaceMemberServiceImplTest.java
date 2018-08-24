@@ -52,10 +52,8 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.UserService;
-import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
-import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.utils.LinShareWiser;
@@ -82,15 +80,17 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 
 	@Autowired
 	@Qualifier("userService")
-	private UserService userServ;
+	private UserService userService;
 
 	@Autowired
 	@Qualifier("userRepository")
-	private UserRepository<User> userRepo;
+	private UserRepository<User> userRepository;
 
 	private SharedSpaceRole adminRole;
+	
+	private SharedSpaceRole readerRole;
 
-	private GenericLightEntity lightAdminRoleToPersist;
+	private GenericLightEntity lightReaderRoleToPersist;
 
 	private Account root;
 
@@ -106,8 +106,6 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 
 	@Autowired
 	private SharedSpaceRoleBusinessService roleBusinessService;
-
-	private GenericLightEntity lightJaneAccount;
 
 	@Autowired
 	private SharedSpaceNodeBusinessService nodeBusinessService;
@@ -131,21 +129,19 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 		wiser.start();
 		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
 		this.executeSqlScript("import-tests-quota-other.sql", false);
-		datas = new LoadingServiceTestDatas(userRepo);
+		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		root = datas.getRoot();
 		john = datas.getUser1();
 		jane = datas.getUser2();
 		initService.init();
 		adminRole = roleBusinessService.findByName("ADMIN");
-		lightAdminRoleToPersist = new GenericLightEntity(adminRole.getUuid(), adminRole.getName());
+		readerRole = roleBusinessService.findByName("READER");
+		lightReaderRoleToPersist = new GenericLightEntity(readerRole.getUuid(), readerRole.getName());
 		Validate.notNull(adminRole, "adminRole must be set");
 		node = new SharedSpaceNode("nodeTest", "parentuuidTest", NodeType.DRIVE);
 		nodeBusinessService.create(node);
 		lightNodePersisted = new GenericLightEntity(node.getUuid(), node.getUuid());
-		SharedSpaceAccount account = new SharedSpaceAccount(jane);
-		lightJaneAccount = new GenericLightEntity(account.getUuid(), account.getName());
-		//John is considered as the admin-creator of the shared space node
 		SharedSpaceMember johnMemberShip = service.createWithoutCheckPermission(john, john, node, adminRole, john);
 		Assert.assertNotNull("John has not been added as a member of his shared space", johnMemberShip);
 		logger.debug(LinShareTestConstants.END_SETUP);
@@ -216,29 +212,25 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 	@Test
 	public void testUpdate() {
 		SharedSpaceMember createdMember = service.create(john, john, jane, node, adminRole);
-		Assert.assertEquals("The account referenced in this member is not john's",
+		Assert.assertEquals("The account referenced in this shared space member is not jane",
 				createdMember.getAccount().getUuid(), jane.getLsUuid());
-		GenericLightEntity newAccount = new GenericLightEntity(lightJaneAccount.getUuid(),
-				lightJaneAccount.getName() + "DIRTY");
-		SharedSpaceMember memberToUpdate = new SharedSpaceMember(new SharedSpaceNodeNested(node), lightAdminRoleToPersist, newAccount);
-		memberToUpdate.setUuid(createdMember.getUuid());
-		SharedSpaceMember updatedMember = service.update(john, john, memberToUpdate, jane);
-		Assert.assertNotEquals("The member has not been updated", lightJaneAccount.getName(),
-				updatedMember.getAccount().getName());
-		Assert.assertEquals("The member has not been updated", memberToUpdate.getAccount().getName(),
-				updatedMember.getAccount().getName());
+		createdMember.setRole(lightReaderRoleToPersist);
+		SharedSpaceMember updatedMember = service.update(john, john, createdMember, jane);
+		Assert.assertEquals("The member has not been updated", createdMember.getRole(), updatedMember.getRole());
+		Assert.assertNotEquals("The member has not been updated", createdMember.getModificationDate(),
+				updatedMember.getModificationDate());
 	}
 
 	@Test
 	public void testUpdateRole() {
 		SharedSpaceMember createdMember = service.create(john, john, jane, node, adminRole);
-		Assert.assertEquals("The account referenced in this member is not john's",
-				createdMember.getAccount().getUuid(), jane.getLsUuid());
+		Assert.assertEquals("The account referenced in this member is not john's", createdMember.getAccount().getUuid(),
+				jane.getLsUuid());
 		SharedSpaceRole newRole = roleBusinessService.findByName("CONTRIBUTOR");
-		SharedSpaceMember updatedMember = service.updateRole(john, john, createdMember.getUuid(), new GenericLightEntity(newRole.getUuid(), newRole.getName()), jane);
+		SharedSpaceMember updatedMember = service.updateRole(john, john, createdMember.getUuid(),
+				new GenericLightEntity(newRole.getUuid(), newRole.getName()), jane);
 		Assert.assertNotEquals("The adminRole has not been updated", newRole.getUuid(),
 				createdMember.getRole().getUuid());
-		Assert.assertEquals("The adminRole has not been updated", newRole.getUuid(),
-				updatedMember.getRole().getUuid());
+		Assert.assertEquals("The adminRole has not been updated", newRole.getUuid(), updatedMember.getRole().getUuid());
 	}
 }
