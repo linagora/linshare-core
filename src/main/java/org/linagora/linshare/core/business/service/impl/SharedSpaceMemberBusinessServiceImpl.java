@@ -75,7 +75,7 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	}
 
 	@Override
-	public SharedSpaceMember findByMemberAndSharedSpaceNode(String accountUuid, String nodeUuid) {
+	public SharedSpaceMember findByAccountAndNode(String accountUuid, String nodeUuid) {
 		return repository.findByAccountAndNode(accountUuid, nodeUuid);
 	}
 

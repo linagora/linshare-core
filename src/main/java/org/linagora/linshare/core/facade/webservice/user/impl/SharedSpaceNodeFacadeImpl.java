@@ -38,6 +38,7 @@ import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.user.SharedSpaceMemberFacade;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceNodeFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
@@ -49,6 +50,8 @@ import com.google.common.base.Strings;
 public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements SharedSpaceNodeFacade {
 
 	protected SharedSpaceNodeService sharedSpaceNodeService;
+	
+	protected SharedSpaceMemberFacade memberFacade;
 
 	public SharedSpaceNodeFacadeImpl(AccountService accountService,
 			SharedSpaceNodeService sharedSpaceNodeService) {

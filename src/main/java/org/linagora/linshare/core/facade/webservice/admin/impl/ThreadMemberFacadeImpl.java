@@ -47,6 +47,7 @@ import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
@@ -104,7 +105,7 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		// TODO Retrieve the role from the restService once the front will pass the info
 		SharedSpaceRole defaultRole = getDefaultRole(authUser, admin);
 		SharedSpaceNode foundSharedSpaceNode = sharedSpaceNodeService.find(authUser, authUser, dto.getThreadUuid());
-		SharedSpaceMember created = ssMemberService.create(authUser, authUser, user, foundSharedSpaceNode, defaultRole);
+		SharedSpaceMember created = ssMemberService.create(authUser, authUser, foundSharedSpaceNode, defaultRole, new SharedSpaceAccount(user));
 		return new WorkGroupMemberDto(created, user);
 	}
 
@@ -120,7 +121,7 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		SharedSpaceMember ssMemberToUpdate = ssMemberService.findMemberByUuid(authUser, authUser, dto.getUserUuid(),
 				dto.getThreadUuid());
 		SharedSpaceMember updated = ssMemberService.updateRole(authUser, authUser, ssMemberToUpdate.getUuid(),
-				new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()), user);
+				new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()));
 		return new WorkGroupMemberDto(updated, user);
 	}
 
@@ -133,7 +134,7 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		User user = userService.findByLsUuid(dto.getUserUuid());
 		SharedSpaceMember ssMemberToDelete = ssMemberService.findMemberByUuid(authUser, authUser, dto.getUserUuid(),
 				dto.getThreadUuid());
-		SharedSpaceMember deleted = ssMemberService.delete(authUser, authUser, ssMemberToDelete.getUuid(), user);
+		SharedSpaceMember deleted = ssMemberService.delete(authUser, authUser, ssMemberToDelete.getUuid());
 		return new WorkGroupMemberDto(deleted, user);
 	}
 

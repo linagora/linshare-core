@@ -49,6 +49,7 @@ import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
+import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
@@ -64,20 +65,21 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 
 	private final SharedSpaceMemberBusinessService memberBusinessService;
 
-	private final SharedSpaceMemberService sharedSpaceMemberService;
+	private final SharedSpaceMemberService memberService;
 
 	private final SharedSpaceRoleService ssRoleService;
 
 	private final LogEntryService logEntryService;
 
 	public SharedSpaceNodeServiceImpl(SharedSpaceNodeBusinessService businessService,
-			SharedSpaceNodeResourceAccessControl sharedSpaceNodeResourceAccessControl,
+			SharedSpaceNodeResourceAccessControl rac,
 			SharedSpaceMemberBusinessService memberBusinessService,
-			SharedSpaceMemberService sharedSpaceMemberService, SharedSpaceRoleService ssRoleService,
+			SharedSpaceMemberService memberService,
+			SharedSpaceRoleService ssRoleService,
 			LogEntryService logEntryService) {
-		super(sharedSpaceNodeResourceAccessControl);
+		super(rac);
 		this.businessService = businessService;
-		this.sharedSpaceMemberService = sharedSpaceMemberService;
+		this.memberService = memberService;
 		this.ssRoleService = ssRoleService;
 		this.memberBusinessService = memberBusinessService;
 		this.logEntryService = logEntryService;
@@ -107,7 +109,8 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.CREATE,
 				AuditLogEntryType.SHARED_SPACE_NODE, created);
 		logEntryService.insert(log);
-		sharedSpaceMemberService.createWithoutCheckPermission(authUser, actor, created, role, (User)actor);
+		memberService.createWithoutCheckPermission(authUser, actor, created, role,
+				new SharedSpaceAccount((User) actor));
 		return created;
 	}
 
@@ -123,7 +126,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.DELETE,
 				AuditLogEntryType.SHARED_SPACE_NODE, foundedNodeTodel);
 		logEntryService.insert(log);
-		sharedSpaceMemberService.deleteAllMembers(authUser, actor, foundedNodeTodel.getUuid());
+		memberService.deleteAllMembers(authUser, actor, foundedNodeTodel.getUuid());
 		return foundedNodeTodel;
 	}
 
@@ -155,16 +158,16 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	public List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor) {
 		preChecks(authUser, actor);
 		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
-		return sharedSpaceMemberService.findAllByAccount(authUser, actor, actor.getLsUuid());
+		return memberService.findAllByAccount(authUser, actor, actor.getLsUuid());
 	}
 
 	@Override
 	public List<SharedSpaceMember> findAllMembers(Account authUser, Account actor, String sharedSpaceNodeUuid) {
-		return sharedSpaceMemberService.findAll(authUser, actor, sharedSpaceNodeUuid);
+		return memberService.findAll(authUser, actor, sharedSpaceNodeUuid);
 	}
 
 	@Override
-	public List <SharedSpaceNode> searchByName(Account authUser, Account actor, String name) throws BusinessException {
+	public List<SharedSpaceNode> searchByName(Account authUser, Account actor, String name) throws BusinessException {
 		preChecks(authUser, actor);
 		Validate.notEmpty(name, "Missing required shared space node name.");
 		List<SharedSpaceNode> founds = businessService.searchByName(name);
@@ -174,9 +177,8 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 
 	@Override
 	public List<SharedSpaceNode> findAllNodesBySSMember(Account authUser, String memberName) {
-		List<SharedSpaceMember> ssmembers = sharedSpaceMemberService.findByMemberName(authUser, authUser,
-				memberName);
-		//TODO : to replace by query methods in mongoRepository for more performances.
+		List<SharedSpaceMember> ssmembers = memberService.findByMemberName(authUser, authUser, memberName);
+		// TODO : to replace by query methods in mongoRepository for more performances.
 		List<SharedSpaceNode> nodes = Lists.newArrayList();
 		for (SharedSpaceMember member : ssmembers) {
 			nodes.add(find(authUser, authUser, member.getNode().getUuid()));

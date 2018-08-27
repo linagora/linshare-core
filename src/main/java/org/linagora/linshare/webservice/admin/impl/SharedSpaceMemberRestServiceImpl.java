@@ -121,7 +121,7 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public SharedSpaceMember delete(
-			@ApiParam(value = "The shared space member to delete.", required = false) SharedSpaceMember ssMember,
+			@ApiParam(value = "The shared space member to delete.", required = true) SharedSpaceMember ssMember,
 			@ApiParam("The shared space member to delete.")
 				@PathParam("uuid") String uuid)
 			throws BusinessException {

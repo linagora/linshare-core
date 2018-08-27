@@ -46,6 +46,7 @@ import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
@@ -104,7 +105,7 @@ public class WorkgroupMemberFacadeImpl extends DelegationGenericFacadeImpl
 		User user = userService.findOrCreateUser(mail, domainId);
 		SharedSpaceNode foundSharedSpaceNode = ssNodeService.find(authActor, actor, threadUuid);
 		SharedSpaceRole defaultRole = getDefaultRole(actor, admin);
-		SharedSpaceMember create = ssMemberService.create(authActor, actor, user, foundSharedSpaceNode, defaultRole);
+		SharedSpaceMember create = ssMemberService.create(authActor, actor, foundSharedSpaceNode, defaultRole, new SharedSpaceAccount(user));
 		return new WorkGroupMemberDto(create, user);
 	}
 
@@ -120,7 +121,7 @@ public class WorkgroupMemberFacadeImpl extends DelegationGenericFacadeImpl
 		User user = userService.findByLsUuid(threadMember.getUserUuid());
 		SharedSpaceMember ssMemberToUpdate = ssMemberService.findMemberByUuid(authActor, actor, threadMember.getUserUuid(), threadUuid);
 		SharedSpaceMember updated = ssMemberService.updateRole(authActor, actor, ssMemberToUpdate.getUuid(),
-				new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()), user);
+				new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()));
 		return new WorkGroupMemberDto(updated, user);
 	}
 
@@ -135,7 +136,7 @@ public class WorkgroupMemberFacadeImpl extends DelegationGenericFacadeImpl
 		SharedSpaceNode nodeOfMemberToDelete = new SharedSpaceNode();
 		nodeOfMemberToDelete.setUuid(threadUuid);
 		SharedSpaceMember ssMemberToDelete = ssMemberService.findMemberByUuid(authActor, actor, userUuid, threadUuid);
-		SharedSpaceMember deleted = ssMemberService.delete(authActor, actor, ssMemberToDelete.getUuid(), user);
+		SharedSpaceMember deleted = ssMemberService.delete(authActor, actor, ssMemberToDelete.getUuid());
 		return new WorkGroupMemberDto(deleted, user);
 	}
 

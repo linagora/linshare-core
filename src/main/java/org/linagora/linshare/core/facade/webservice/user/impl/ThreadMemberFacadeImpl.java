@@ -45,6 +45,7 @@ import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
@@ -74,10 +75,9 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		this.ssRoleService = ssRoleService;
 		this.sharedSpaceNodeService = sharedSpaceNodeService;
 	}
-
+	
 	@Override
-	public List<WorkGroupMemberDto> findAll(String threadUuid)
-			throws BusinessException {
+	public List<WorkGroupMemberDto> findAll(String threadUuid) throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		User authUser = checkAuthentication();
 		List<WorkGroupMemberDto> res = Lists.newArrayList();
@@ -88,11 +88,9 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public WorkGroupMemberDto find(String threadUuid, String userUuid)
-			throws BusinessException {
+	public WorkGroupMemberDto find(String threadUuid, String userUuid) throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
-		Validate.notEmpty(userUuid,
-				"Missing required user uuid");
+		Validate.notEmpty(userUuid, "Missing required user uuid");
 		User authUser = checkAuthentication();
 		SharedSpaceMember found = ssMemberService.findMemberByUuid(authUser, authUser, userUuid, threadUuid);
 		return new WorkGroupMemberDto(found, userService.findByLsUuid(userUuid));
@@ -108,27 +106,27 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		User newMember = userService.findOrCreateUser(userMail, domainId);
 		SharedSpaceNode foundSharedSpaceNode = sharedSpaceNodeService.find(authUser, authUser, threadUuid);
 		SharedSpaceRole defaultRole = getDefaultRole(authUser, admin);
-		SharedSpaceMember create = ssMemberService.create(authUser, authUser, newMember, foundSharedSpaceNode, defaultRole);
+		SharedSpaceMember create = ssMemberService.create(authUser, authUser, foundSharedSpaceNode, defaultRole,
+				new SharedSpaceAccount(newMember));
 		return new WorkGroupMemberDto(create, newMember);
 	}
 
 	@Override
-	public WorkGroupMemberDto update(String threadUuid,
-			WorkGroupMemberDto threadMember) throws BusinessException {
+	public WorkGroupMemberDto update(String threadUuid, WorkGroupMemberDto threadMember) throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notNull(threadMember, "Missing required thread member");
 		User authUser = checkAuthentication();
 		SharedSpaceRole defaultRole = getDefaultRole(authUser, threadMember.isAdmin());
 		User user = userService.findByLsUuid(threadMember.getUserUuid());
-		SharedSpaceMember ssMemberToUpdate = ssMemberService.findMemberByUuid(authUser, authUser, threadMember.getUserUuid(), threadUuid);
+		SharedSpaceMember ssMemberToUpdate = ssMemberService.findMemberByUuid(authUser, authUser,
+				threadMember.getUserUuid(), threadUuid);
 		SharedSpaceMember updated = ssMemberService.updateRole(authUser, authUser, ssMemberToUpdate.getUuid(),
-				new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()), user);
+				new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()));
 		return new WorkGroupMemberDto(updated, user);
 	}
 
 	@Override
-	public WorkGroupMemberDto delete(String threadUuid, String userUuid)
-			throws BusinessException {
+	public WorkGroupMemberDto delete(String threadUuid, String userUuid) throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notEmpty(userUuid, "Missing required user uuid");
 		User authUser = checkAuthentication();
@@ -136,7 +134,7 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		SharedSpaceNode nodeOfMemberToDelete = new SharedSpaceNode();
 		nodeOfMemberToDelete.setUuid(threadUuid);
 		SharedSpaceMember ssMemberToDelete = ssMemberService.findMemberByUuid(authUser, authUser, userUuid, threadUuid);
-		SharedSpaceMember deleted = ssMemberService.delete(authUser, authUser, ssMemberToDelete.getUuid(), user);
+		SharedSpaceMember deleted = ssMemberService.delete(authUser, authUser, ssMemberToDelete.getUuid());
 		return new WorkGroupMemberDto(deleted, user);
 	}
 

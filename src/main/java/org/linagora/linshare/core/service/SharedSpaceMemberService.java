@@ -36,8 +36,8 @@ package org.linagora.linshare.core.service;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
@@ -48,38 +48,35 @@ public interface SharedSpaceMemberService {
 
 	SharedSpaceMember find(Account authUser, Account actor, String uuid) throws BusinessException;
 
-	SharedSpaceMember create(Account authUser, Account actor, User newMember, SharedSpaceNode sharedSpaceNode,
-			SharedSpaceRole role) throws BusinessException;
+	SharedSpaceMember findMemberByUuid(Account authUser, Account actor, String userUuid, String nodeUuid)
+			throws BusinessException;
 
-	SharedSpaceMember findMember(Account authUser, Account actor, Account possibleMember,
-			SharedSpaceNode sharedSpaceNode) throws BusinessException;
+	List<SharedSpaceMember> findByNode(Account authUser, Account actor, String ssnodeUuid);
 
-	List<SharedSpaceMember> findByNode(Account authUser, Account actro, String ssnodeUuid);
-
-	SharedSpaceMember delete(Account authUser, Account actor, String uuid, User userMember);
-
-	SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate, User foundUser);
-
-	SharedSpaceMember updateRole(Account authUser, Account actor, String sharedSpaceMemberUuid,
-			GenericLightEntity newRole, User foundUser);
+	List<SharedSpaceMember> findByMemberName(Account authUser, Account actor, String name);
 
 	List<SharedSpaceMember> findAll(Account authUser, Account actor, String shareSpaceNodeUuid)
 			throws BusinessException;
 
+	List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor, String accountUuid);
+
+	List<SharedSpaceMember> findAllByAccountAndRole(String accountUuid, String roleUuid);
+
+	SharedSpaceMember create(Account authUser, Account actor, SharedSpaceNode sharedSpaceNode, SharedSpaceRole role,
+			SharedSpaceAccount account) throws BusinessException;
+
+	SharedSpaceMember createWithoutCheckPermission(Account authUser, Account actor, SharedSpaceNode node,
+			SharedSpaceRole role, SharedSpaceAccount account) throws BusinessException;
+
+	SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate);
+
+	SharedSpaceMember updateRole(Account authUser, Account actor, String sharedSpaceMemberUuid,
+			GenericLightEntity newRole);
+
+	SharedSpaceMember delete(Account authUser, Account actor, String uuid);
+
 	List<SharedSpaceMember> deleteAllMembers(Account authUser, Account actor, String sharedSpaceNodeUuid);
 
 	List<SharedSpaceMember> deleteAllUserMemberships(Account authUser, Account actor, String sharedSpaceNodeUuid);
-
-	List<SharedSpaceMember> findByMemberName(Account authUser, Account actor, String name);
-
-	SharedSpaceMember createWithoutCheckPermission(Account authUser, Account actor, SharedSpaceNode node,
-			SharedSpaceRole role, User newMember) throws BusinessException;
-
-	List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor, String accountUuid);
-
-	SharedSpaceMember findMemberByUuid(Account authUser, Account actor, String userUuid, String nodeUuid)
-			throws BusinessException;
-
-	List<SharedSpaceMember> findAllByAccountAndRole(String accountUuid, String roleUuid);
 
 }

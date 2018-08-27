@@ -49,7 +49,7 @@ public interface SharedSpaceMemberBusinessService {
 
 	SharedSpaceMember create(SharedSpaceMember sharedSpacemember) throws BusinessException;
 
-	SharedSpaceMember findByMemberAndSharedSpaceNode(String accountUuid, String nodeUuid) throws BusinessException;
+	SharedSpaceMember findByAccountAndNode(String accountUuid, String nodeUuid) throws BusinessException;
 
 	void delete(SharedSpaceMember memberToDelete) throws BusinessException;
 

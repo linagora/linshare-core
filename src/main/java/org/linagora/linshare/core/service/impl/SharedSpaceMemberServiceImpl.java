@@ -69,26 +69,26 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 
 	private final SharedSpaceMemberBusinessService businessService;
 
-	private final NotifierService notifierService;
-
-	private final MailBuildingService mailBuildingService;
-
 	private final LogEntryService logEntryService;
 
 	private final UserRepository<User> userRepository;
 
-	public SharedSpaceMemberServiceImpl(SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService,
+	private final NotifierService notifierService;
+
+	private final MailBuildingService mailBuildingService;
+	
+	public SharedSpaceMemberServiceImpl(SharedSpaceMemberBusinessService businessService,
 			NotifierService notifierService,
 			MailBuildingService mailBuildingService,
 			SharedSpaceMemberResourceAccessControl rac,
 			LogEntryService logEntryService,
 			UserRepository<User> userRepository) {
 		super(rac);
-		this.businessService = sharedSpaceMemberBusinessService;
-		this.notifierService = notifierService;
-		this.mailBuildingService = mailBuildingService;
+		this.businessService = businessService;
 		this.logEntryService = logEntryService;
 		this.userRepository = userRepository;
+		this.notifierService = notifierService;
+		this.mailBuildingService = mailBuildingService;
 	}
 
 	@Override
@@ -106,21 +106,79 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	}
 
 	@Override
-	public SharedSpaceMember create(Account authUser, Account actor, User newMember, SharedSpaceNode node,
-			SharedSpaceRole role) throws BusinessException {
-		Validate.notNull(newMember, "newMemeber uuid must be set.");
+	public SharedSpaceMember findMemberByUuid(Account authUser, Account actor, String userUuid, String nodeUuid)
+			throws BusinessException {
+		preChecks(authUser, actor);
+		Validate.notEmpty(userUuid, "userUuid must be set.");
+		Validate.notEmpty(nodeUuid, "nodeUuid must be set.");
+		SharedSpaceMember foundMember = businessService.findByAccountAndNode(userUuid, nodeUuid);
+		if (foundMember == null) {
+			String message = String.format(
+					"The account with the UUID : %s is not a member of the node with the uuid : %s", userUuid,
+					nodeUuid);
+			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, message);
+		}
+		checkReadPermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
+				foundMember);
+		return foundMember;
+	}
+
+	@Override
+	public List<SharedSpaceMember> findAll(Account authUser, Account actor, String shareSpaceNodeUuid)
+			throws BusinessException {
+		preChecks(authUser, actor);
+		Validate.notEmpty(shareSpaceNodeUuid, "Missing required shared space node uuid");
+		checkListPermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
+				null, shareSpaceNodeUuid);
+		List<SharedSpaceMember> foundMembers = businessService.findBySharedSpaceNodeUuid(shareSpaceNodeUuid);
+		return foundMembers;
+	}
+
+	@Override
+	public List<SharedSpaceMember> findAllByAccountAndRole(String accountUuid, String roleUuid) {
+		return businessService.findAllByAccountAndRole(accountUuid, roleUuid);
+	}
+
+	@Override
+	public List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor, String accountUuid) {
+		preChecks(authUser, actor);
+		Validate.notEmpty(accountUuid, "accountUuid must be set.");
+		return businessService.findAllByAccount(accountUuid);
+	}
+
+	@Override
+	public List<SharedSpaceMember> findByNode(Account authUser, Account actor, String ssnodeUuid) {
+		preChecks(authUser, actor);
+		Validate.notEmpty(ssnodeUuid, "The shared space node uuid must be set.");
+		return businessService.findBySharedSpaceNodeUuid(ssnodeUuid);
+	}
+
+	@Override
+	public List<SharedSpaceMember> findByMemberName(Account authUser, Account actor, String name) {
+		preChecks(authUser, actor);
+		Validate.notEmpty(name, "Shared space member account name must be set.");
+		List<SharedSpaceMember> foundMembers = businessService.findByMemberName(name);
+		checkListPermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
+				null);
+		return foundMembers;
+	}
+
+	@Override
+	public SharedSpaceMember create(Account authUser, Account actor, SharedSpaceNode node, SharedSpaceRole role,
+			SharedSpaceAccount account) throws BusinessException {
 		Validate.notNull(role, "Role must be set.");
 		Validate.notNull(node, "Node uuid must be set.");
 		checkCreatePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
 				null, node);
-		if (!checkAccountNotInNode(newMember.getLsUuid(), node.getUuid())) {
+		if (!checkMemberNotInNode(account.getUuid(), node.getUuid())) {
 			String message = String.format(
 					"The account with the UUID : %s is already a member of the node with the uuid : %s",
-					newMember.getLsUuid(), node.getUuid());
+					account.getUuid(), node.getUuid());
 			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_ALREADY_EXISTS, message);
 		}
-		SharedSpaceMember member = createWithoutCheckPermission(authUser, actor, node, role, newMember);
-		WorkGroupWarnNewMemberEmailContext context = new WorkGroupWarnNewMemberEmailContext(member, actor, newMember);
+		SharedSpaceMember member = createWithoutCheckPermission(authUser, actor, node, role, account);
+		User user = userRepository.findByLsUuid(account.getUuid());
+		WorkGroupWarnNewMemberEmailContext context = new WorkGroupWarnNewMemberEmailContext(member, actor, user);
 		MailContainerWithRecipient mail = mailBuildingService.build(context);
 		notifierService.sendNotification(mail, true);
 		return member;
@@ -128,14 +186,12 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 
 	@Override
 	public SharedSpaceMember createWithoutCheckPermission(Account authUser, Account actor, SharedSpaceNode node,
-			SharedSpaceRole role, User newMember) throws BusinessException {
+			SharedSpaceRole role, SharedSpaceAccount account) throws BusinessException {
 		preChecks(authUser, actor);
-		Validate.notNull(newMember, "newMemeber uuid must be set.");
 		Validate.notNull(role, "Role must be set.");
 		Validate.notNull(node, "Node must be set.");
 		SharedSpaceMember member = new SharedSpaceMember(new SharedSpaceNodeNested(node),
-				new GenericLightEntity(role.getUuid(), role.getName()),
-				new SharedSpaceAccount(newMember));
+				new GenericLightEntity(role.getUuid(), role.getName()), account);
 		SharedSpaceMember toAdd = businessService.create(member);
 		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.CREATE,
 				AuditLogEntryType.SHARED_SPACE_MEMBER, toAdd);
@@ -144,44 +200,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	}
 
 	@Override
-	public SharedSpaceMember findMember(Account authUser, Account actor, Account possibleMember,
-			SharedSpaceNode sharedSpaceNode) throws BusinessException {
-		preChecks(authUser, actor);
-		Validate.notNull(possibleMember, "possibleMember must be set.");
-		Validate.notNull(sharedSpaceNode, "sharedSpaceNode must be set.");
-		SharedSpaceMember foundMember = businessService.findByMemberAndSharedSpaceNode(possibleMember.getLsUuid(),
-				sharedSpaceNode.getUuid());
-		if (foundMember == null) {
-			String message = String.format(
-					"The account with the UUID : %s is not a member of the node with the uuid : %s",
-					possibleMember.getLsUuid(), sharedSpaceNode.getUuid());
-			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, message);
-		}
-		checkReadPermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
-				foundMember);
-		return foundMember;
-	}
-
-	@Override
-	public SharedSpaceMember findMemberByUuid(Account authUser, Account actor, String userUuid, String nodeUuid) throws BusinessException {
-		preChecks(authUser, actor);
-		Validate.notEmpty(userUuid, "userUuid must be set.");
-		Validate.notEmpty(nodeUuid, "nodeUuid must be set.");
-		SharedSpaceMember foundMember = businessService
-				.findByMemberAndSharedSpaceNode(userUuid, nodeUuid);
-		if (foundMember == null) {
-			String message = String.format(
-					"The account with the UUID : %s is not a member of the node with the uuid : %s",
-					userUuid, nodeUuid);
-			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, message);
-		}
-		checkReadPermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
-				foundMember);
-		return foundMember;
-	}
-
-	@Override
-	public SharedSpaceMember delete(Account authUser, Account actor, String uuid, User userMember) {
+	public SharedSpaceMember delete(Account authUser, Account actor, String uuid) {
 		preChecks(authUser, actor);
 		Validate.notNull(uuid, "Missing required member uuid to delete");
 		SharedSpaceMember foundMemberToDelete = find(authUser, actor, uuid);
@@ -191,14 +210,15 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.DELETE,
 				AuditLogEntryType.SHARED_SPACE_MEMBER, foundMemberToDelete);
 		logEntryService.insert(log);
-		WorkGroupWarnDeletedMemberEmailContext context = new WorkGroupWarnDeletedMemberEmailContext(foundMemberToDelete, actor, userMember);
+		User user = userRepository.findByLsUuid(foundMemberToDelete.getAccount().getUuid());
+		WorkGroupWarnDeletedMemberEmailContext context = new WorkGroupWarnDeletedMemberEmailContext(foundMemberToDelete, actor, user);
 		MailContainerWithRecipient mail = mailBuildingService.build(context);
 		notifierService.sendNotification(mail, true);
 		return foundMemberToDelete;
 	}
 
 	@Override
-	public SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate, User foundUser) {
+	public SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate) {
 		preChecks(authUser, actor);
 		Validate.notNull(memberToUpdate, "Missing required member to update");
 		Validate.notNull(memberToUpdate.getUuid(), "Missing required member uuid to update");
@@ -210,7 +230,9 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 				AuditLogEntryType.SHARED_SPACE_MEMBER, foundMemberToUpdate);
 		log.setResourceUpdated(updated);
 		logEntryService.insert(log);
-		WorkGroupWarnUpdatedMemberEmailContext context = new WorkGroupWarnUpdatedMemberEmailContext(updated, foundUser, actor);
+		User user = userRepository.findByLsUuid(foundMemberToUpdate.getAccount().getUuid());
+		WorkGroupWarnUpdatedMemberEmailContext context = new WorkGroupWarnUpdatedMemberEmailContext(updated, user,
+				actor);
 		MailContainerWithRecipient mail = mailBuildingService.build(context);
 		notifierService.sendNotification(mail, true);
 		return updated;
@@ -218,7 +240,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 
 	@Override
 	public SharedSpaceMember updateRole(Account authUser, Account actor, String sharedSpaceMemberUuid,
-			GenericLightEntity newRole, User foundUser) {
+			GenericLightEntity newRole) {
 		preChecks(authUser, actor);
 		Validate.notNull(sharedSpaceMemberUuid, "Missing required sharedSpaceMemberUuid");
 		Validate.notNull(newRole, "Missing required newRole");
@@ -232,21 +254,12 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 				AuditLogEntryType.SHARED_SPACE_MEMBER, foundMemberToUpdate);
 		log.setResourceUpdated(updatedMember);
 		logEntryService.insert(log);
-		WorkGroupWarnUpdatedMemberEmailContext context = new WorkGroupWarnUpdatedMemberEmailContext(updatedMember, foundUser, actor);
+		User user = userRepository.findByLsUuid(foundMemberToUpdate.getAccount().getUuid());
+		WorkGroupWarnUpdatedMemberEmailContext context = new WorkGroupWarnUpdatedMemberEmailContext(updatedMember,
+				user, actor);
 		MailContainerWithRecipient mail = mailBuildingService.build(context);
 		notifierService.sendNotification(mail, true);
 		return updatedMember;
-	}
-
-	@Override
-	public List<SharedSpaceMember> findAll(Account authUser, Account actor, String shareSpaceNodeUuid)
-			throws BusinessException {
-		preChecks(authUser, actor);
-		Validate.notEmpty(shareSpaceNodeUuid, "Missing required shared space node uuid");
-		checkListPermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
-				null, shareSpaceNodeUuid);
-		List<SharedSpaceMember> foundMembers = businessService.findBySharedSpaceNodeUuid(shareSpaceNodeUuid);
-		return foundMembers;
 	}
 
 	@Override
@@ -275,8 +288,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		List<SharedSpaceMember> foundMembersToDelete = businessService.findAllUserMemberships(userUuid);
 		List<AuditLogEntryUser> logs = Lists.newArrayList();
 		for (SharedSpaceMember member : foundMembersToDelete) {
-			User userMember = userRepository.findByLsUuid(member.getAccount().getUuid());
-			delete(authUser, actor, member.getNode().getUuid(), userMember);
+			delete(authUser, actor, member.getNode().getUuid());
 			logs.add(new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.DELETE,
 					AuditLogEntryType.SHARED_SPACE_MEMBER, member));
 		}
@@ -286,36 +298,8 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		return foundMembersToDelete;
 	}
 
-	@Override
-	public List<SharedSpaceMember> findByMemberName(Account authUser, Account actor, String name) {
-		preChecks(authUser, actor);
-		Validate.notEmpty(name, "Shared space member account name must be set.");
-		List<SharedSpaceMember> foundMembers = businessService.findByMemberName(name);
-		checkListPermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
-				null);
-		return foundMembers;
+	private boolean checkMemberNotInNode(String possibleMemberUuid, String nodeUuid) {
+		return businessService.findByAccountAndNode(possibleMemberUuid, nodeUuid) == null;
 	}
 
-	@Override
-	public List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor, String accountUuid) {
-		preChecks(authUser, actor);
-		Validate.notEmpty(accountUuid, "accountUuid must be set.");
-		return businessService.findAllByAccount(accountUuid);
-	}
-
-	@Override
-	public List<SharedSpaceMember> findByNode(Account authUser, Account actor, String ssnodeUuid) {
-		preChecks(authUser, actor);
-		Validate.notEmpty(ssnodeUuid, "The shared space node uuid must be set.");
-		return businessService.findBySharedSpaceNodeUuid(ssnodeUuid);
-	}
-
-	private boolean checkAccountNotInNode(String possibleMemberUuid, String nodeUuid) {
-		return businessService.findByMemberAndSharedSpaceNode(possibleMemberUuid, nodeUuid) == null;
-	}
-
-	@Override
-	public List<SharedSpaceMember> findAllByAccountAndRole(String accountUuid, String roleUuid) {
-		return businessService.findAllByAccountAndRole(accountUuid, roleUuid);
-	}
 }
