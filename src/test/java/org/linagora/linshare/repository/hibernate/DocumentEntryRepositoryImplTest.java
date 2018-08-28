@@ -34,7 +34,12 @@
 package org.linagora.linshare.repository.hibernate;
 
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Map;
+
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
@@ -131,6 +136,20 @@ public class DocumentEntryRepositoryImplTest  extends AbstractTransactionalJUnit
 		
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
+	@Test
+	public void testCreateAndFindGroupBy() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		DocumentEntry d = new DocumentEntry(user, "name", "comment", document);
+		documentEntryRepository.create(d);
+		Calendar bDate = Calendar.getInstance();
+		bDate.add(GregorianCalendar.DATE, -1);
+		Calendar eDate = Calendar.getInstance();
+		eDate.add(GregorianCalendar.DATE, +7);
+		Map<String, Long> mimetypeValue = documentEntryRepository.countAndGroupByMimeType(rootDomain, bDate, eDate);
+		Assert.assertEquals(1, mimetypeValue.entrySet().size());
+		documentEntryRepository.delete(d);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
 
 }

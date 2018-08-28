@@ -64,11 +64,11 @@ import com.mongodb.DBCollection;
 public class BasicStatisticDailyBatchImpl extends GenericBatchWithHistoryImpl {
 
 	private final AbstractDomainService abstractDomainService;
-	
+
 	private final BasicStatisticService basicStatisticService;
-	
+
 	private final DomainBusinessService domainBusinessService;
-	
+
 	private final MongoTemplate mongoTemplate;
 
 	public BasicStatisticDailyBatchImpl(

@@ -33,17 +33,25 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UploadRequestEntryRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate5.HibernateTemplate;
+
+import com.google.common.collect.Maps;
 
 public class UploadRequestEntryRepositoryImpl extends
 		AbstractRepositoryImpl<UploadRequestEntry> implements
@@ -86,5 +94,25 @@ public class UploadRequestEntryRepositoryImpl extends
 	public UploadRequestEntry findRelative(DocumentEntry entry) {
 		return DataAccessUtils.singleResult(findByCriteria(Restrictions.eq(
 				"documentEntry", entry)));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Map<String, Long> findByDomainsBetweenTwoDates(AbstractDomain domain, Calendar beginDate, Calendar endDate) {
+		Map<String, Long> results = Maps.newHashMap();
+		ProjectionList projections = Projections.projectionList()
+				.add(Projections.groupProperty("type"))
+				.add(Projections.rowCount());
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass())
+				.createAlias("uploadRequestUrl", "uploadRequestUrl")
+				.createAlias("uploadRequestUrl.uploadRequest", "uploadRequest")
+				.createAlias("uploadRequest.uploadRequestGroup", "uploadRequestGroup")
+				.setProjection(projections);
+		criteria.add(Restrictions.eq("uploadRequestGroup.abstractDomain", domain));
+		criteria.add(Restrictions.lt("creationDate", endDate));
+		criteria.add(Restrictions.gt("creationDate", beginDate));
+		List<Object[]> list = listByCriteria(criteria);
+		list.stream().forEach(e -> results.put((String) e[0], (Long) e[1]));
+		return results;
 	}
 }

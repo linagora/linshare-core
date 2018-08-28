@@ -49,6 +49,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.springframework.orm.hibernate5.HibernateTemplate;
+import org.springframework.util.Assert;
 
 public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<WorkGroup>
 		implements ThreadRepository {
@@ -209,6 +210,19 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<WorkGroup
 	public List<String> findAllThreadUuid() {
 		DetachedCriteria criteria = DetachedCriteria.forClass(WorkGroup.class);
 		criteria.setProjection(Projections.property("lsUuid"));
+		@SuppressWarnings("unchecked")
+		List<String> list = listByCriteria(criteria);
+		return list;
+	}
+
+	@Override
+	public List<String> findByDomainUuid(String domainUuid) {
+		Assert.notNull(domainUuid);
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.setProjection(Projections.property("lsUuid"));
+		criteria.createAlias("domain", "domain");
+		criteria.add(Restrictions.eq("domain.uuid",domainUuid));
+		criteria.add(Restrictions.eq("destroyed", 0L));
 		@SuppressWarnings("unchecked")
 		List<String> list = listByCriteria(criteria);
 		return list;

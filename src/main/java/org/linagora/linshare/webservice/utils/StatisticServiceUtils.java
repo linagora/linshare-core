@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,59 +31,55 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.repository;
+package org.linagora.linshare.webservice.utils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 
-import java.util.List;
+public class StatisticServiceUtils {
 
-import org.linagora.linshare.core.domain.entities.WorkGroup;
-import org.linagora.linshare.core.domain.entities.User;
+	public StatisticServiceUtils() {
+		
+	}
 
-public interface ThreadRepository extends AccountRepository<WorkGroup> {
+	protected Pair<Date, Date> checkDatesInitialization(String beginDate, String endDate) {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		Date bDate = null;
+		Date eDate = null;
+		try {
+			if (endDate == null) {
+				Calendar endCalendar = new GregorianCalendar();
+				endCalendar.set(Calendar.HOUR_OF_DAY, 23);
+				endCalendar.set(Calendar.MINUTE, 59);
+				endCalendar.set(Calendar.SECOND, 59);
+				endCalendar.add(Calendar.SECOND, 1);
+				eDate = endCalendar.getTime();
+			} else {
+				eDate = formatter.parse(endDate);
+			}
+			if (beginDate == null) {
+				Calendar cal = new GregorianCalendar();
+				cal.setTime(eDate);
+				cal.add(Calendar.YEAR, -1);
+				cal.set(Calendar.HOUR_OF_DAY, 0);
+				cal.set(Calendar.MINUTE, 0);
+				cal.set(Calendar.SECOND, 0);
+				bDate = cal.getTime();
+			} else {
+				bDate = formatter.parse(beginDate);
+			}
 
-	/**
-	 * Find all Thread where the actor is member
-	 * 
-	 * @param actor
-	 * @return the list of Thread where actor is member
-	 */
-	List<WorkGroup> findAllWhereMember(User actor);
-	
-	/**
-	 * Find all Thread where the actor is admin
-	 * 
-	 * @param actor
-	 * @return the list of Thread where actor is admin
-	 */
-	List<WorkGroup> findAllWhereAdmin(User actor);
-
-	/**
-	 * Find all Thread where the actor can upload
-	 * 
-	 * @param actor
-	 * @return the list of Thread where actor can upload
-	 */
-	List<WorkGroup> findAllWhereCanUpload(User actor);
-	
-	/**
-	 * Find all threads modified by the actor on last 15 days
-	 * @param actor
-	 * @param limit
-	 * @return List<Thread>
-	 */
-	List<WorkGroup> findLatestWhereMember(User actor, int limit);
-
-	public List<WorkGroup> searchByName(User actor, String pattern);
-
-	public List<WorkGroup> searchAmongMembers(User actor, String pattern);
-
-	List<String> findAllThreadToUpgrade();
-
-	WorkGroup setAsUpgraded(WorkGroup entity);
-
-	List<String> findAllThreadUuid();
-
-	List<String> findByDomainUuid(String domainUuid);
-
-} 
+		} catch (ParseException e) {
+			throw new BusinessException(BusinessErrorCode.STATISTIC_DATE_PARSING_ERROR, "Can not parse the dates.");
+		}
+		return new ImmutablePair<>(bDate, eDate);
+	}
+}

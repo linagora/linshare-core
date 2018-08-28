@@ -150,6 +150,8 @@
 						<ref bean="statisticMonthlyUserBatch" />
 						<ref bean="statisticMonthlyThreadBatch" />
 						<ref bean="statisticMonthlyDomainBatch" />
+						<ref bean="exceptionStatisticDailyBatch" />
+						<ref bean="advancedStatisticDailyBatch" />
 					</list>
 				</entry>
 				<entry key="batchRunner" value-ref="batchRunner" />

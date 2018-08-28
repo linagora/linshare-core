@@ -33,25 +33,19 @@
  */
 package org.linagora.linshare.webservice.admin.impl;
 
-
-import java.util.List;
 import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.linagora.linshare.core.domain.constants.ExceptionStatisticType;
-import org.linagora.linshare.core.domain.constants.ExceptionType;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.ExceptionStatisticAdminFacade;
-import org.linagora.linshare.mongo.entities.BasicStatistic;
-import org.linagora.linshare.mongo.entities.ExceptionStatistic;
-import org.linagora.linshare.webservice.admin.ExceptionStatisticRestService;
+import org.linagora.linshare.core.facade.webservice.admin.AdvancedStatisticsFacade;
+import org.linagora.linshare.mongo.entities.MimeTypeStatistic;
+import org.linagora.linshare.webservice.admin.AdvancedStatisticRestService;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -59,38 +53,37 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/exception_statistic")
-@Api(value = "/rest/admin/exception_statistic", description = "exceptionStatistic service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
+@Path("/advanced_statistic")
+@Api(value = "/rest/admin/advanced_statistic", description = "advancedStatistic service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-public class ExceptionStatisticRestServiceImpl implements ExceptionStatisticRestService {
+public class AdvancedStatisticRestServiceImpl implements AdvancedStatisticRestService {
 
-	private ExceptionStatisticAdminFacade exceptionStatisticFacade;
+	private AdvancedStatisticsFacade advancedStatisticFacade;
 
-	public ExceptionStatisticRestServiceImpl(ExceptionStatisticAdminFacade facade) {
+	public AdvancedStatisticRestServiceImpl(AdvancedStatisticsFacade facade) {
 		super();
-		this.exceptionStatisticFacade = facade;
+		this.advancedStatisticFacade = facade;
 	}
 
-	@Path("/{domainUuid}")
+	@Path("/")
 	@GET
-	@ApiOperation(value = "Get a Exception statistic Between two dates.", response = BasicStatistic.class)
+	@ApiOperation(value = "Get a Advanced statistic (MimeType) Between two dates.", response = MimeTypeStatistic.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "User has not Admin role"),
 			@ApiResponse(code = 404, message = "Statistic not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error.") })
-	public Set<ExceptionStatistic> findBetweenTwoDates(
+	public Set<MimeTypeStatistic> findBetweenTwoDates(
 			@ApiParam(value = "domain's uuid")
-				@PathParam("domainUuid") String domainUuid,
+				@QueryParam("domainUuid") String domainUuid,
 			@ApiParam(value = "statistic's  begin date")
 				@QueryParam("beginDate") String beginDate,
 			@ApiParam(value = "statistic's end date")
 				@QueryParam("endDate") String endDate, 
-			@ApiParam(value = "Exception types")
-				@QueryParam("exceptionTypes") List<ExceptionType> exceptionTypes,
-			@ApiParam(value = "exception statistic's type")
-				@QueryParam("type") ExceptionStatisticType type)
-			throws BusinessException {
-		return exceptionStatisticFacade.findBetweenTwoDates(domainUuid, beginDate, endDate, exceptionTypes, type);
+			@ApiParam(value = "MimeType")
+				@QueryParam("mimeType") String mimeType)
+						throws BusinessException {
+		return advancedStatisticFacade.findBetweenTwoDates(domainUuid, beginDate, endDate, mimeType);
 	}
+
 }

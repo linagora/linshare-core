@@ -33,15 +33,10 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jsoup.helper.Validate;
 import org.linagora.linshare.core.domain.constants.ExceptionStatisticType;
@@ -55,12 +50,13 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ExceptionStatisticService;
 import org.linagora.linshare.mongo.entities.ExceptionStatistic;
 import org.linagora.linshare.mongo.repository.ExceptionStatisticMongoRepository;
+import org.linagora.linshare.webservice.utils.StatisticServiceUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.google.common.collect.Lists;
 
-public class ExceptionStatisticServiceImpl implements ExceptionStatisticService {
+public class ExceptionStatisticServiceImpl extends StatisticServiceUtils implements ExceptionStatisticService {
 
 	protected ExceptionStatisticMongoRepository exceptionStatisticMongoRepository;
 
@@ -110,38 +106,6 @@ public class ExceptionStatisticServiceImpl implements ExceptionStatisticService 
 		}
 		return exceptionStatisticMongoRepository.findBetweenTwoDates(domainUuid, exceptionTypes, bDate, eDate,
 				type);
-	}
-
-	private Pair<Date, Date> checkDatesInitialization(String beginDate, String endDate) {
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-		Date bDate = null;
-		Date eDate = null;
-		try {
-			if (endDate == null) {
-				Calendar endCalendar = new GregorianCalendar();
-				endCalendar.set(Calendar.HOUR_OF_DAY, 23);
-				endCalendar.set(Calendar.MINUTE, 59);
-				endCalendar.set(Calendar.SECOND, 59);
-				endCalendar.add(Calendar.SECOND, 1);
-				eDate = endCalendar.getTime();
-			} else {
-				eDate = formatter.parse(endDate);
-			}
-			if (beginDate == null) {
-				Calendar cal = new GregorianCalendar();
-				cal.setTime(eDate);
-				cal.add(Calendar.YEAR, -1);
-				cal.set(Calendar.HOUR_OF_DAY, 0);
-				cal.set(Calendar.MINUTE, 0);
-				cal.set(Calendar.SECOND, 0);
-				bDate = cal.getTime();
-			} else {
-				bDate = formatter.parse(beginDate);
-			}
-		} catch (ParseException e) {
-			throw new BusinessException(BusinessErrorCode.STATISTIC_DATE_PARSING_ERROR, "Can not parse the dates.");
-		}
-		return new ImmutablePair<>(bDate, eDate);
 	}
 
 	protected User checkAuthentication() throws BusinessException {

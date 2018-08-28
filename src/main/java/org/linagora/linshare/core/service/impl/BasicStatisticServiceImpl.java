@@ -33,35 +33,29 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.Validate;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.BasicStatisticType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.BasicStatisticService;
 import org.linagora.linshare.mongo.entities.BasicStatistic;
 import org.linagora.linshare.mongo.repository.BasicStatisticMongoRepository;
+import org.linagora.linshare.webservice.utils.StatisticServiceUtils;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 
 import com.google.common.collect.Lists;
 
-public class BasicStatisticServiceImpl implements BasicStatisticService {
+public class BasicStatisticServiceImpl extends StatisticServiceUtils implements BasicStatisticService {
 
 	protected BasicStatisticMongoRepository basicStatisticMongoRepository;
 
@@ -126,39 +120,6 @@ public class BasicStatisticServiceImpl implements BasicStatisticService {
 						Aggregation.group().sum("value").as("value"));
 		BasicStatistic results = mongoTemplate.aggregate(aggregation, "basic_statistic", BasicStatistic.class).getUniqueMappedResult();
 		return results != null ? results.getValue() : 0L;
-	}
-
-	private Pair<Date, Date> checkDatesInitialization(String beginDate, String endDate) {
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-		Date bDate = null;
-		Date eDate = null;
-		try {
-			if (endDate == null) {
-				Calendar endCalendar = new GregorianCalendar();
-				endCalendar.set(Calendar.HOUR_OF_DAY, 23);
-				endCalendar.set(Calendar.MINUTE, 59);
-				endCalendar.set(Calendar.SECOND, 59);
-				endCalendar.add(Calendar.SECOND, 1);
-				eDate = endCalendar.getTime();
-			} else {
-				eDate = formatter.parse(endDate);
-			}
-			if (beginDate == null) {
-				Calendar cal = new GregorianCalendar();
-				cal.setTime(eDate);
-				cal.add(Calendar.YEAR, -1);
-				cal.set(Calendar.HOUR_OF_DAY, 0);
-				cal.set(Calendar.MINUTE, 0);
-				cal.set(Calendar.SECOND, 0);
-				bDate = cal.getTime();
-			} else {
-				bDate = formatter.parse(beginDate);
-			}
-
-		} catch (ParseException e) {
-			throw new BusinessException(BusinessErrorCode.STATISTIC_DATE_PARSING_ERROR, "Can not parse the dates.");
-		}
-		return new ImmutablePair<>(bDate, eDate);
 	}
 
 	@Override

@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,59 +31,14 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.repository;
+package org.linagora.linshare.webservice.admin;
 
+import java.util.Set;
 
+import org.linagora.linshare.mongo.entities.MimeTypeStatistic;
 
-import java.util.List;
+public interface AdvancedStatisticRestService {
 
-import org.linagora.linshare.core.domain.entities.WorkGroup;
-import org.linagora.linshare.core.domain.entities.User;
-
-public interface ThreadRepository extends AccountRepository<WorkGroup> {
-
-	/**
-	 * Find all Thread where the actor is member
-	 * 
-	 * @param actor
-	 * @return the list of Thread where actor is member
-	 */
-	List<WorkGroup> findAllWhereMember(User actor);
-	
-	/**
-	 * Find all Thread where the actor is admin
-	 * 
-	 * @param actor
-	 * @return the list of Thread where actor is admin
-	 */
-	List<WorkGroup> findAllWhereAdmin(User actor);
-
-	/**
-	 * Find all Thread where the actor can upload
-	 * 
-	 * @param actor
-	 * @return the list of Thread where actor can upload
-	 */
-	List<WorkGroup> findAllWhereCanUpload(User actor);
-	
-	/**
-	 * Find all threads modified by the actor on last 15 days
-	 * @param actor
-	 * @param limit
-	 * @return List<Thread>
-	 */
-	List<WorkGroup> findLatestWhereMember(User actor, int limit);
-
-	public List<WorkGroup> searchByName(User actor, String pattern);
-
-	public List<WorkGroup> searchAmongMembers(User actor, String pattern);
-
-	List<String> findAllThreadToUpgrade();
-
-	WorkGroup setAsUpgraded(WorkGroup entity);
-
-	List<String> findAllThreadUuid();
-
-	List<String> findByDomainUuid(String domainUuid);
-
-} 
+	public Set<MimeTypeStatistic> findBetweenTwoDates(String domainUuid, String beginDate, String endDate,
+			String mimeType);
+}

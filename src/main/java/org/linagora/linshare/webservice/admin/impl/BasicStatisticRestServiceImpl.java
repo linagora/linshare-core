@@ -61,8 +61,8 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/basicStatistic")
-@Api(value = "/rest/admin/basicStatistic", description = "basicStatistic service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
+@Path("/basic_statistic")
+@Api(value = "/rest/admin/basic_statistic", description = "basicStatistic service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public class BasicStatisticRestServiceImpl implements BasicStatisticRestService {

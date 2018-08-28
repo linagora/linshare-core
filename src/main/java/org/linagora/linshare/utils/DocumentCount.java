@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,59 +31,36 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.repository;
+package org.linagora.linshare.utils;
 
+public class DocumentCount {
 
+	protected String mimeType;
 
-import java.util.List;
+	protected long total;
 
-import org.linagora.linshare.core.domain.entities.WorkGroup;
-import org.linagora.linshare.core.domain.entities.User;
+	public DocumentCount() {
+	}
 
-public interface ThreadRepository extends AccountRepository<WorkGroup> {
+	public DocumentCount(String mimetype, long total) {
+		super();
+		this.mimeType = mimetype;
+		this.total = total;
+	}
 
-	/**
-	 * Find all Thread where the actor is member
-	 * 
-	 * @param actor
-	 * @return the list of Thread where actor is member
-	 */
-	List<WorkGroup> findAllWhereMember(User actor);
-	
-	/**
-	 * Find all Thread where the actor is admin
-	 * 
-	 * @param actor
-	 * @return the list of Thread where actor is admin
-	 */
-	List<WorkGroup> findAllWhereAdmin(User actor);
+	public String getMimetype() {
+		return mimeType;
+	}
 
-	/**
-	 * Find all Thread where the actor can upload
-	 * 
-	 * @param actor
-	 * @return the list of Thread where actor can upload
-	 */
-	List<WorkGroup> findAllWhereCanUpload(User actor);
-	
-	/**
-	 * Find all threads modified by the actor on last 15 days
-	 * @param actor
-	 * @param limit
-	 * @return List<Thread>
-	 */
-	List<WorkGroup> findLatestWhereMember(User actor, int limit);
+	public void setMimetype(String mimetype) {
+		this.mimeType = mimetype;
+	}
 
-	public List<WorkGroup> searchByName(User actor, String pattern);
+	public long getTotal() {
+		return total;
+	}
 
-	public List<WorkGroup> searchAmongMembers(User actor, String pattern);
-
-	List<String> findAllThreadToUpgrade();
-
-	WorkGroup setAsUpgraded(WorkGroup entity);
-
-	List<String> findAllThreadUuid();
-
-	List<String> findByDomainUuid(String domainUuid);
-
-} 
+	public void setTotal(long total) {
+		this.total = total;
+	}
+}

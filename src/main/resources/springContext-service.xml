@@ -370,13 +370,18 @@
 		<constructor-arg ref="basicStatisticMongoRepository" />
 		<constructor-arg ref="mongoTemplate" />
 	</bean>
-	
+
 	<bean id="exceptionStatisticService"
 		class="org.linagora.linshare.core.service.impl.ExceptionStatisticServiceImpl">
 		<constructor-arg ref="exceptionStatisticMongoRepository" />
 		<constructor-arg ref="accountService" />
 	</bean>
-	
+
+	<bean id="advancedStatisticService"
+		class="org.linagora.linshare.core.service.impl.AdvancedStatisticServiceImpl">
+		<constructor-arg ref="advancedStatisticMongoRepository" />
+	</bean>
+
 	<bean id="jwtService"
 		class="org.linagora.linshare.core.service.impl.JwtServiceImpl">
 		<constructor-arg value="${jwt.expiration}" />

@@ -77,16 +77,15 @@ public class StatisticRestServiceImpl extends WebserviceBase implements Statisti
 	@Override
 	public List<StatisticDto> findBetweenTwoDates(
 			@ApiParam(value = "actor uuid") 
-			    @PathParam("actorUuid") String actorUuid,
+				@PathParam("actorUuid") String actorUuid,
 			@ApiParam(value = "begin statistic creation date") 
-			    @QueryParam("beginDate") String beginDate,
+				@QueryParam("beginDate") String beginDate,
 			@ApiParam(value = "end statistic creation date") 
-			    @QueryParam("endDate") String endDate,
+				@QueryParam("endDate") String endDate,
 			@ApiParam(value = "statistic type") 
-                @QueryParam("statisticType") StatisticType statisticType)
+				@QueryParam("statisticType") StatisticType statisticType)
 			throws BusinessException {
 		return statisticFacade.findBetweenTwoDates(actorUuid, beginDate,
 				endDate, statisticType);
-
 	}
 }

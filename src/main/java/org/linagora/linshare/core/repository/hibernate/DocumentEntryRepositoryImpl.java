@@ -37,6 +37,7 @@ package org.linagora.linshare.core.repository.hibernate;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.hibernate.HibernateException;
@@ -46,6 +47,7 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -54,6 +56,8 @@ import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate5.HibernateCallback;
 import org.springframework.orm.hibernate5.HibernateTemplate;
+
+import com.google.common.collect.Maps;
 
 public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<DocumentEntry> implements DocumentEntryRepository {
 
@@ -188,5 +192,25 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 			}
 		};
 		getHibernateTemplate().execute(action);
+	}
+
+	@Override
+	public Map<String, Long> countAndGroupByMimeType(AbstractDomain domain, Calendar bDate, Calendar eDate) {
+		Map<String, Long> results = Maps.newHashMap();
+		ProjectionList projections = Projections.projectionList()
+				.add(Projections.groupProperty("type"))
+				.add(Projections.rowCount());
+		DetachedCriteria cri = DetachedCriteria.forClass(getPersistentClass())
+				.createAlias("entryOwner", "entryOwner")
+				.setProjection(projections)
+				.add(Restrictions.eq("entryOwner.domain", domain))
+				.add((Restrictions.lt("creationDate", eDate)))
+				.add(Restrictions.gt("creationDate", bDate));
+		@SuppressWarnings("unchecked")
+		List<Object[]> list = listByCriteria(cri);
+		for (Object[] element : list ) {
+			results.put((String)element[0], (Long)element[1]);
+		}
+		return results;
 	}
 }

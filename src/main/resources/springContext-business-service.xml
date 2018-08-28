@@ -318,4 +318,7 @@
 		<constructor-arg ref="sharedSpaceMemberMongoRepository" />
 		<constructor-arg ref="sharedSpaceRoleMongoRepository" />
 	</bean>
+	<bean name="workGroupNodeBusinessService" class="org.linagora.linshare.core.business.service.impl.WorkGroupNodeBusinessServiceImpl">
+		<constructor-arg ref="mongoTemplate" />
+	</bean>
 </beans>

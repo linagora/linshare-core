@@ -33,8 +33,11 @@
  */
 package org.linagora.linshare.core.repository;
 
+import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -67,4 +70,6 @@ public interface DocumentEntryRepository extends
 	long getUsedSpace(Account owner) throws BusinessException;
 
 	void syncUniqueDocument(Account owner, String fileName) throws BusinessException;
+
+	Map<String, Long> countAndGroupByMimeType(AbstractDomain domain, Calendar bDate, Calendar eDate);
 }

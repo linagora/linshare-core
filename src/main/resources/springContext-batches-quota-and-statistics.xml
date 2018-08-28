@@ -106,4 +106,15 @@
 		<constructor-arg ref="batchHistoryBusinessService" />
 		<constructor-arg ref="mongoTemplate" />
 	</bean>
+	<bean id="advancedStatisticDailyBatch"
+		class="org.linagora.linshare.core.batches.impl.AdvancedStatisticDailyBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="batchHistoryBusinessService" />
+		<constructor-arg ref="abstractDomainRepository" />
+		<constructor-arg ref="threadRepository" />
+		<constructor-arg ref="documentEntryRepository" />
+		<constructor-arg ref="advancedStatisticMongoRepository" />
+		<constructor-arg ref="uploadRequestEntryRepository" />
+		<constructor-arg ref="workGroupNodeBusinessService" />
+	</bean>
 </beans>

@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,59 +31,35 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.repository;
+package org.linagora.linshare.core.service.impl;
 
+import java.util.Date;
+import java.util.Set;
 
-
-import java.util.List;
-
-import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.tuple.Pair;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.service.AdvancedStatisticService;
+import org.linagora.linshare.mongo.entities.MimeTypeStatistic;
+import org.linagora.linshare.mongo.repository.AdvancedStatisticMongoRepository;
+import org.linagora.linshare.webservice.utils.StatisticServiceUtils;
 
-public interface ThreadRepository extends AccountRepository<WorkGroup> {
+public class AdvancedStatisticServiceImpl extends StatisticServiceUtils implements AdvancedStatisticService {
 
-	/**
-	 * Find all Thread where the actor is member
-	 * 
-	 * @param actor
-	 * @return the list of Thread where actor is member
-	 */
-	List<WorkGroup> findAllWhereMember(User actor);
-	
-	/**
-	 * Find all Thread where the actor is admin
-	 * 
-	 * @param actor
-	 * @return the list of Thread where actor is admin
-	 */
-	List<WorkGroup> findAllWhereAdmin(User actor);
+	protected AdvancedStatisticMongoRepository advancedStatisticMongoRepository;
 
-	/**
-	 * Find all Thread where the actor can upload
-	 * 
-	 * @param actor
-	 * @return the list of Thread where actor can upload
-	 */
-	List<WorkGroup> findAllWhereCanUpload(User actor);
-	
-	/**
-	 * Find all threads modified by the actor on last 15 days
-	 * @param actor
-	 * @param limit
-	 * @return List<Thread>
-	 */
-	List<WorkGroup> findLatestWhereMember(User actor, int limit);
+	public AdvancedStatisticServiceImpl(AdvancedStatisticMongoRepository advancedStatisticMongoRepository) {
+		this.advancedStatisticMongoRepository = advancedStatisticMongoRepository;
+	}
 
-	public List<WorkGroup> searchByName(User actor, String pattern);
+	@Override
+	public Set<MimeTypeStatistic> findBetweenTwoDates(User authUser, String domainUuid, String beginDate,
+			String endDate, String mimeType) {
+		Validate.notNull(authUser);
+		Pair<Date, Date> dates = checkDatesInitialization(beginDate, endDate);
+		Date bDate = dates.getLeft();
+		Date eDate = dates.getRight();
+		return advancedStatisticMongoRepository.findBetweenTwoDates(domainUuid, bDate, eDate, mimeType);
+	}
 
-	public List<WorkGroup> searchAmongMembers(User actor, String pattern);
-
-	List<String> findAllThreadToUpgrade();
-
-	WorkGroup setAsUpgraded(WorkGroup entity);
-
-	List<String> findAllThreadUuid();
-
-	List<String> findByDomainUuid(String domainUuid);
-
-} 
+}

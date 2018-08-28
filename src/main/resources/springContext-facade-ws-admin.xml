@@ -206,4 +206,18 @@
 		<constructor-arg ref="jwtLongTimeService" />
 		<constructor-arg ref="abstractDomainService" />
 	</bean>
+	<bean id="wsExceptionStatisticFacade"
+		class="org.linagora.linshare.core.facade.webservice.admin.impl.ExceptionStatisticAdminFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="exceptionStatisticService" />
+		<constructor-arg ref="domainPermissionBusinessService" />
+		<constructor-arg ref="abstractDomainService" />
+	</bean>
+	<bean id="wsAdvancedStatisticFacade"
+		class="org.linagora.linshare.core.facade.webservice.admin.impl.AdvancedStatisticsFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="advancedStatisticService" />
+		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg ref="domainPermissionBusinessService" />
+	</bean>
 </beans>
