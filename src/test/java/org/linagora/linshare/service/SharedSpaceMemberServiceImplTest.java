@@ -222,23 +222,26 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 		SharedSpaceMember createdMember = service.create(john, john, node, adminRole, accountJane);
 		Assert.assertEquals("The account referenced in this shared space member is not jane",
 				createdMember.getAccount().getUuid(), jane.getLsUuid());
-		createdMember.setRole(lightReaderRoleToPersist);
-		SharedSpaceMember updatedMember = service.update(john, john, createdMember);
-		Assert.assertEquals("The member has not been updated", createdMember.getRole(), updatedMember.getRole());
+		SharedSpaceMember memberToSendToUpdate = new SharedSpaceMember(createdMember);
+		memberToSendToUpdate.setRole(lightReaderRoleToPersist);
+		SharedSpaceMember updatedMember = service.update(john, john, memberToSendToUpdate);
+		Assert.assertNotEquals("The member has not been updated", createdMember.getRole(), updatedMember.getRole());
 		Assert.assertNotEquals("The member has not been updated", createdMember.getModificationDate(),
 				updatedMember.getModificationDate());
 	}
-
+	
 	@Test
-	public void testUpdateRole() {
+	public void testUpdateWithWrongRole() {
 		SharedSpaceMember createdMember = service.create(john, john, node, adminRole, accountJane);
-		Assert.assertEquals("The account referenced in this member is not john's", createdMember.getAccount().getUuid(),
-				jane.getLsUuid());
-		SharedSpaceRole newRole = roleBusinessService.findByName("CONTRIBUTOR");
-		SharedSpaceMember updatedMember = service.updateRole(john, john, createdMember.getUuid(),
-				new GenericLightEntity(newRole.getUuid(), newRole.getName()));
-		Assert.assertNotEquals("The adminRole has not been updated", newRole.getUuid(),
-				createdMember.getRole().getUuid());
-		Assert.assertEquals("The adminRole has not been updated", newRole.getUuid(), updatedMember.getRole().getUuid());
+		Assert.assertEquals("The account referenced in this shared space member is not jane",
+				createdMember.getAccount().getUuid(), jane.getLsUuid());
+		SharedSpaceMember memberToSendToUpdate = new SharedSpaceMember(createdMember);
+		try {
+			memberToSendToUpdate.setRole(new GenericLightEntity("wrongUuid", "READER"));
+			service.update(john, john, memberToSendToUpdate);
+		} catch (BusinessException e) {
+			Assert.assertEquals(e.getErrorCode(), BusinessErrorCode.SHARED_SPACE_ROLE_NOT_FOUND);
+		}
 	}
+
 }

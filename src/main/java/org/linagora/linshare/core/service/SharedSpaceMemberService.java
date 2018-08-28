@@ -42,7 +42,6 @@ import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
-import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
 public interface SharedSpaceMemberService {
 
@@ -69,9 +68,6 @@ public interface SharedSpaceMemberService {
 			SharedSpaceRole role, SharedSpaceAccount account) throws BusinessException;
 
 	SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate);
-
-	SharedSpaceMember updateRole(Account authUser, Account actor, String sharedSpaceMemberUuid,
-			GenericLightEntity newRole);
 
 	SharedSpaceMember delete(Account authUser, Account actor, String uuid);
 

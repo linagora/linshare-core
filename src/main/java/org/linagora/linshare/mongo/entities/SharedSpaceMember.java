@@ -79,7 +79,17 @@ public class SharedSpaceMember {
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
 	}
-
+	
+	public SharedSpaceMember(SharedSpaceMember member) {
+		super();
+		this.uuid = member.getUuid();
+		this.node = member.getNode();
+		this.role = member.getRole();
+		this.account = member.getAccount();
+		this.creationDate = member.getCreationDate();
+		this.modificationDate = member.getModificationDate();
+	}
+	
 	@XmlTransient
 	public String getId() {
 		return id;

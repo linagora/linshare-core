@@ -120,8 +120,8 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		User user = userService.findByLsUuid(threadMember.getUserUuid());
 		SharedSpaceMember ssMemberToUpdate = ssMemberService.findMemberByUuid(authUser, authUser,
 				threadMember.getUserUuid(), threadUuid);
-		SharedSpaceMember updated = ssMemberService.updateRole(authUser, authUser, ssMemberToUpdate.getUuid(),
-				new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()));
+		ssMemberToUpdate.setRole(new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()));
+		SharedSpaceMember updated = ssMemberService.update(authUser, authUser, ssMemberToUpdate);
 		return new WorkGroupMemberDto(updated, user);
 	}
 

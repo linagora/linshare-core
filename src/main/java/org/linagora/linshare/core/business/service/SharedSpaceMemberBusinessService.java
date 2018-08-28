@@ -39,7 +39,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
-import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
 public interface SharedSpaceMemberBusinessService {
 
@@ -53,10 +52,7 @@ public interface SharedSpaceMemberBusinessService {
 
 	void delete(SharedSpaceMember memberToDelete) throws BusinessException;
 
-	SharedSpaceMember update(SharedSpaceMember foundMemberToUpdate, SharedSpaceMember memberToUpdate)
-			throws BusinessException;
-
-	SharedSpaceMember updateRole(SharedSpaceMember foundMemberToUpdate, GenericLightEntity newRole)
+	SharedSpaceMember update(SharedSpaceMember foundMemberToUpdate, SharedSpaceMember member)
 			throws BusinessException;
 
 	List<SharedSpaceMember> findBySharedSpaceNodeUuid(String shareSpaceNodeUuid) throws BusinessException;

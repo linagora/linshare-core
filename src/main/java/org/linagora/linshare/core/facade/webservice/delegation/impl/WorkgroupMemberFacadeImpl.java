@@ -110,18 +110,18 @@ public class WorkgroupMemberFacadeImpl extends DelegationGenericFacadeImpl
 	}
 
 	@Override
-	public WorkGroupMemberDto update(String actorUuid, String threadUuid,
-			WorkGroupMemberDto threadMember) {
+	public WorkGroupMemberDto update(String actorUuid, String threadUuid, WorkGroupMemberDto threadMember) {
 		Validate.notEmpty(actorUuid, "Missing required actor uuid");
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		Validate.notNull(threadMember, "Missing required thread member");
 		User authActor = checkAuthentication();
 		User actor = getActor(actorUuid);
-		SharedSpaceRole defaultRole = getDefaultRole(authActor, threadMember.isAdmin());
 		User user = userService.findByLsUuid(threadMember.getUserUuid());
-		SharedSpaceMember ssMemberToUpdate = ssMemberService.findMemberByUuid(authActor, actor, threadMember.getUserUuid(), threadUuid);
-		SharedSpaceMember updated = ssMemberService.updateRole(authActor, actor, ssMemberToUpdate.getUuid(),
-				new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()));
+		SharedSpaceMember ssMemberToUpdate = ssMemberService.findMemberByUuid(authActor, actor,
+				threadMember.getUserUuid(), threadUuid);
+		SharedSpaceRole defaultRole = getDefaultRole(authActor, threadMember.isAdmin());
+		ssMemberToUpdate.setRole(new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()));
+		SharedSpaceMember updated = ssMemberService.update(authActor, actor, ssMemberToUpdate);
 		return new WorkGroupMemberDto(updated, user);
 	}
 

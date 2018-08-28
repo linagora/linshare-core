@@ -316,5 +316,6 @@
 	<bean name="sharedSpaceMemberBusinessService"
 		class="org.linagora.linshare.core.business.service.impl.SharedSpaceMemberBusinessServiceImpl">
 		<constructor-arg ref="sharedSpaceMemberMongoRepository" />
+		<constructor-arg ref="sharedSpaceRoleMongoRepository" />
 	</bean>
 </beans>

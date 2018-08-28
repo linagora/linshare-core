@@ -239,30 +239,6 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	}
 
 	@Override
-	public SharedSpaceMember updateRole(Account authUser, Account actor, String sharedSpaceMemberUuid,
-			GenericLightEntity newRole) {
-		preChecks(authUser, actor);
-		Validate.notNull(sharedSpaceMemberUuid, "Missing required sharedSpaceMemberUuid");
-		Validate.notNull(newRole, "Missing required newRole");
-		Validate.notNull(newRole.getName(), "Missing required roleName");
-		Validate.notNull(newRole.getUuid(), "Missing required roleUuid");
-		SharedSpaceMember foundMemberToUpdate = find(authUser, actor, sharedSpaceMemberUuid);
-		checkUpdatePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
-				foundMemberToUpdate);
-		SharedSpaceMember updatedMember = businessService.updateRole(foundMemberToUpdate, newRole);
-		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.CREATE,
-				AuditLogEntryType.SHARED_SPACE_MEMBER, foundMemberToUpdate);
-		log.setResourceUpdated(updatedMember);
-		logEntryService.insert(log);
-		User user = userRepository.findByLsUuid(foundMemberToUpdate.getAccount().getUuid());
-		WorkGroupWarnUpdatedMemberEmailContext context = new WorkGroupWarnUpdatedMemberEmailContext(updatedMember,
-				user, actor);
-		MailContainerWithRecipient mail = mailBuildingService.build(context);
-		notifierService.sendNotification(mail, true);
-		return updatedMember;
-	}
-
-	@Override
 	public List<SharedSpaceMember> deleteAllMembers(Account authUser, Account actor, String sharedSpaceNodeUuid) {
 		preChecks(authUser, actor);
 		Validate.notNull(sharedSpaceNodeUuid, "Missing required sharedSpaceNodeUuid");
