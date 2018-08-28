@@ -12,7 +12,8 @@ UPDATE mail_content SET subject='[( #{subject(${workGroupName})})]',body='<!DOCT
         <!--/* End of Greetings  */-->
         <!--/* Main email  message content*/-->
         <p>
-            <span data-th-utext="#{mainMsg(${owner.firstName},${owner.lastName})}"></span>
+            <span th:if="${owner.firstName} !=null AND ${owner.lastName} !=null" data-th-utext="#{mainMsg(${owner.firstName},${owner.lastName})}"></span>
+            <span th:if="${owner.firstName} ==null OR ${owner.lastName} ==null" data-th-utext="#{simpleMainMsg}"></span>
             <span>
               <a target="_blank" style="color:#1294dc;text-decoration:none;"  data-th-text="${workGroupName}" th:href="@{${workGroupLink}}" >
                link
@@ -25,14 +26,14 @@ UPDATE mail_content SET subject='[( #{subject(${workGroupName})})]',body='<!DOCT
   </section> <!--/* End of upper main-content*/-->
   <!--/* Secondary content for  bottom email section */-->
   <section id="secondary-content">
-    <th:block data-th-if="(${threadMember.hasAdminRight})">
+    <th:block data-th-if="(${threadMember.admin})">
        <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightAdminTitle})"/>
     </th:block>
-    <th:block data-th-if="(!${threadMember.hasAdminRight})">
-        <th:block data-th-if="(${threadMember.hasUploadRight})">
+    <th:block data-th-if="(!${threadMember.admin})">
+        <th:block data-th-if="(${threadMember.canUpload})">
              <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightWirteTitle})"/>
         </th:block>
-        <th:block data-th-if="(!${threadMember.hasUploadRight})">
+        <th:block data-th-if="(!${threadMember.canUpload})">
              <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightReadTitle})"/>
         </th:block>
     </th:block>
@@ -43,10 +44,12 @@ UPDATE mail_content SET subject='[( #{subject(${workGroupName})})]',body='<!DOCT
 </body>
 </html>',messages_french='workGroupCreationDateTitle = Date de création
 mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> vous a ajouté au groupe de travail <br>
+simpleMainMsg = Vous avez été ajouté au groupe de travail
 subject = Vous avez été ajouté au groupe de travail {0}
 workGroupRight = Droit par défaut 
 workGroupNameTitle = Nom du groupe de travail',messages_english='workGroupCreationDateTitle = Creation date
 mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> added you to the workgroup <br>
+simpleMainMsg = You have been added to the workgroup
 subject = You have been added to the workgroup {0}
 workGroupRight = Default right
 workGroupNameTitle = Workgroup Name' WHERE id=28;

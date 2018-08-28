@@ -17,7 +17,8 @@ UPDATE mail_content SET subject='[(#{subject(${workGroupName})})]',body='<!DOCTY
                <a target="_blank" style="color:#1294dc;text-decoration:none;"  data-th-text="${workGroupName}" th:href="@{${workGroupLink}}" >
                 link </a>
           </span>
-          <span data-th-utext="#{mainMsgNext(${owner.firstName},${owner.lastName})}"></span>
+          <span data-th-utext="#{mainMsgNext}"></span>
+          <span th:if="${owner.firstName} != null AND ${owner.firstName} != null" data-th-utext="#{mainMsgNextBy(${owner.firstName},${owner.lastName})}"></span>
 
              </p> <!--/* End of Main email  message content*/-->
       </div><!--/* End of section-content*/-->
@@ -43,12 +44,14 @@ UPDATE mail_content SET subject='[(#{subject(${workGroupName})})]',body='<!DOCTY
 </body>
 </html>',messages_french='workGroupUpdatedDateTitle = Date de la mise à jour
 mainMsg = Vos droits sur le groupe de travail
-mainMsgNext = ont été mis à jour par <b> {0} <span style="text-transform:uppercase">{1}</span> </b>.
+mainMsgNext = ont été mis à jour 
+mainMsgNextBy= par <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
 subject =  Vos droits sur le groupe de travail {0} ont été mis à jour
 workGroupRight =  Nouveau droit
 workGroupNameTitle = Nom du groupe de travail',messages_english='workGroupUpdatedDateTitle = Updated date
 mainMsg = Your rights on the workgroup 
-mainMsgNext= have been updated by  <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
+mainMsgNext= have been updated
+mainMsgNextBy= by <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
 subject =  Your rights on the workgroup {0} was updated.
 workGroupRight = Current right
 workGroupNameTitle = Workgroup Name' WHERE id=29;
