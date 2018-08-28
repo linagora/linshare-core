@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009-2018. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,38 +31,38 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.mongo.entities;
 
-import java.util.List;
+import java.util.Date;
 
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.mongo.entities.SharedSpaceMember;
-import org.linagora.linshare.mongo.entities.SharedSpaceNode;
-import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
+import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
-public interface SharedSpaceNodeService {
+public class SharedSpaceLDAPGroupMember extends SharedSpaceMember {
 
-	SharedSpaceNode find(Account authUser, Account actor, String uuid) throws BusinessException;
+	protected String externalId;
 
-	SharedSpaceNode create(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException;
+	protected Date syncDate;
 
-	SharedSpaceNode update(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException;
+	public SharedSpaceLDAPGroupMember(SharedSpaceNodeNested node, GenericLightEntity role, GenericLightEntity account,
+			String externalId, Date syncDate) {
+		super(node, role, account);
+		this.externalId = externalId;
+		this.syncDate = syncDate;
+	}
 
-	SharedSpaceNode delete(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException;
+	public String getExternalId() {
+		return externalId;
+	}
 
-	List<SharedSpaceNode> findAll(Account authUser, Account actor);
+	public void setExternalId(String externalId) {
+		this.externalId = externalId;
+	}
 
-	/** Search some SharedSpaceNode by their name
-	 **/
-	List<SharedSpaceNode> searchByName(Account authUser, Account actor, String name) throws BusinessException;
+	public Date getSyncDate() {
+		return syncDate;
+	}
 
-	List<SharedSpaceNode> findAllNodesBySSMember(Account authUser, String memberName);
-
-	List<SharedSpaceMember> findAllMembers(Account authUser, Account actor, String sharedSpaceNodeUuid);
-
-	List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor);
-
-	SharedSpaceNode createForBatch(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException;
-
+	public void setSyncDate(Date syncDate) {
+		this.syncDate = syncDate;
+	}
 }

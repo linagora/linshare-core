@@ -39,6 +39,7 @@ import java.util.List;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -63,13 +64,20 @@ public class WorkGroupWarnDeletedMemberEmailBuilder extends EmailBuilder {
 
 		SharedSpaceMember workGroupMember = emailCtx.getWorkgroupMember();
 		User member = emailCtx.getUserMember();
-		User owner = (User) emailCtx.getOwner();
+		MailContact owner = null;
+		if (emailCtx.getOwner() instanceof SystemAccount) {
+			owner = new MailContact(emailCtx.getOwner().getMail());
+			
+		}
+		else {
+			owner = new MailContact((User) emailCtx.getOwner());
+		}
 		String linshareURL = getLinShareUrl(member);
 
 		MailConfig cfg = member.getDomain().getCurrentMailConfiguration();
 		Context ctx = new Context(emailCtx.getLocale());
 		ctx.setVariable("member", new MailContact(member));
-		ctx.setVariable("owner", new MailContact(owner));
+		ctx.setVariable("owner", owner);
 		ctx.setVariable("workGroupName", workGroupMember.getNode().getName());
 		ctx.setVariable(linshareURL, linshareURL);
 

@@ -435,4 +435,13 @@
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="userRepository" />
 	</bean>
+
+	<bean id="ldapGroupSyncService" class="org.linagora.linshare.core.service.impl.LDAPGroupSyncServiceImpl">
+		<constructor-arg ref="sharedSpaceNodeService"/>
+		<constructor-arg ref="ldapGroupQueryService"/>
+		<constructor-arg ref="sharedSpaceRoleService"/>
+		<constructor-arg ref="sharedSpaceMemberService"/>
+		<constructor-arg ref="mongoTemplate"/>
+	</bean>
+
 </beans>

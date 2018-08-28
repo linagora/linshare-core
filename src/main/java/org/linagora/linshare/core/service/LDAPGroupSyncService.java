@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009-2018. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,58 +31,34 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.business.service.impl;
+package org.linagora.linshare.core.service;
 
+import java.io.IOException;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
-import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
+import javax.naming.NamingException;
+
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
+import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.mongo.entities.SharedSpaceNode;
-import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
+import org.linagora.linshare.ldap.LdapGroupMemberObject;
+import org.linagora.linshare.ldap.LdapGroupObject;
+import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroup;
+import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroupMember;
 
-public class SharedSpaceNodeBusinessServiceImpl implements SharedSpaceNodeBusinessService {
+public interface LDAPGroupSyncService {
 
-	private SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository;
+	SharedSpaceLDAPGroup createOrUpdateLDAPGroup(Account actor, LdapGroupObject group, Date syncDate);
 
-	public SharedSpaceNodeBusinessServiceImpl(SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository) {
-		this.sharedSpaceNodeMongoRepository = sharedSpaceNodeMongoRepository;
-	}
+	SharedSpaceLDAPGroupMember createOrUpdateLDAPGroupMember(Account actor, SharedSpaceLDAPGroup group,
+			LdapGroupMemberObject memberObject, Date syncDate);
 
-	@Override
-	public SharedSpaceNode find(String uuid) throws BusinessException {
-		return sharedSpaceNodeMongoRepository.findByUuid(uuid);
-	}
+	void applyTask(Account actor, LdapGroupObject ldapGroupObject, Set<LdapGroupMemberObject> memberObjects,
+			Date syncDate);
 
-	@Override
-	public SharedSpaceNode create(SharedSpaceNode node) throws BusinessException {
-		return sharedSpaceNodeMongoRepository.insert(node);
-	}
-
-	@Override
-	public List<SharedSpaceNode> findByNameAndParentUuid(String name, String parentUuid) throws BusinessException {
-		return sharedSpaceNodeMongoRepository.findByNameAndParentUuid(name, parentUuid);
-	}
-
-	@Override
-	public void delete(SharedSpaceNode node) throws BusinessException {
-		sharedSpaceNodeMongoRepository.delete(node);
-	}
-
-	@Override
-	public SharedSpaceNode update(SharedSpaceNode nodeToUpdate)
-			throws BusinessException {
-		nodeToUpdate.setModificationDate(new Date());
-		return sharedSpaceNodeMongoRepository.save(nodeToUpdate);
-	}
-
-	public List<SharedSpaceNode> findAll() throws BusinessException {
-		return sharedSpaceNodeMongoRepository.findAll();
-	}
-
-	@Override
-	public List <SharedSpaceNode> searchByName(String name) throws BusinessException {
-		return sharedSpaceNodeMongoRepository.findByName(name);
-	}
+	void executeBatch(Account actor, LdapConnection ldapConnection, String baseDn, GroupLdapPattern groupPattern)
+			throws BusinessException, NamingException, IOException;
 
 }

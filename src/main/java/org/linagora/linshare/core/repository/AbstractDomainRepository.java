@@ -108,4 +108,10 @@ public interface AbstractDomainRepository extends AbstractRepository<AbstractDom
 	List<AbstractDomain> getSubDomainsByDomain(String uuid);
 	
 	AbstractDomain getGuestSubDomainByDomain(String uuid);
+
+	/**
+	 * return all Domains with group provider
+	 * @return List<String>
+	 */
+	public List<String> findAllDomainIdentifiersWithGroupProviders();
 }

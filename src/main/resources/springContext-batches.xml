@@ -201,4 +201,12 @@
 		<constructor-arg ref="mailBuildingService" />
 	</bean>
 
+	<bean name="synchronizeLDAPGroupsInWorkgroupsBatch"
+		class="org.linagora.linshare.core.batches.impl.SynchronizeLDAPGroupsInWorkgroupsBatchImpl">
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="ldapConnectionService" />
+		<constructor-arg ref="groupLdapPatternService"/>
+		<constructor-arg ref="ldapGroupSyncService" />
+	</bean>
+
 </beans>

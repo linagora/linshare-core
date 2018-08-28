@@ -237,4 +237,15 @@ public class AbstractDomainRepositoryImpl extends
 		det.add(Restrictions.eq("purgeStep", DomainPurgeStepEnum.IN_USE));
 		return DataAccessUtils.singleResult(findByCriteria(det));
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> findAllDomainIdentifiersWithGroupProviders() {
+		DetachedCriteria crit = DetachedCriteria.forClass(getPersistentClass())
+				.setProjection(Projections.property("uuid"))
+				.addOrder(Order.asc("authShowOrder"));
+		crit.add(Restrictions.eq("purgeStep", DomainPurgeStepEnum.IN_USE));
+		crit.add(Restrictions.isNotNull("groupProvider"));
+		return listByCriteria(crit);
+	}
 }

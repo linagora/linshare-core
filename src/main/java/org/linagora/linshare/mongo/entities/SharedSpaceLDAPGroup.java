@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009-2018. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,58 +31,61 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.business.service.impl;
+package org.linagora.linshare.mongo.entities;
 
 import java.util.Date;
-import java.util.List;
 
-import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.mongo.entities.SharedSpaceNode;
-import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
+import org.linagora.linshare.core.domain.constants.NodeType;
 
-public class SharedSpaceNodeBusinessServiceImpl implements SharedSpaceNodeBusinessService {
+public class SharedSpaceLDAPGroup extends SharedSpaceNode {
 
-	private SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository;
+	protected String externalId;
 
-	public SharedSpaceNodeBusinessServiceImpl(SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository) {
-		this.sharedSpaceNodeMongoRepository = sharedSpaceNodeMongoRepository;
+	protected String prefix;
+
+	protected Date syncDate;
+
+	public SharedSpaceLDAPGroup() {
+		super();
 	}
 
-	@Override
-	public SharedSpaceNode find(String uuid) throws BusinessException {
-		return sharedSpaceNodeMongoRepository.findByUuid(uuid);
+	public SharedSpaceLDAPGroup(String externalId, String prefix, Date syncDate) {
+		super();
+		this.externalId = externalId;
+		this.prefix = prefix;
+		this.syncDate = syncDate;
 	}
 
-	@Override
-	public SharedSpaceNode create(SharedSpaceNode node) throws BusinessException {
-		return sharedSpaceNodeMongoRepository.insert(node);
+	public SharedSpaceLDAPGroup(String name, String parentUuid, NodeType nodeType, String externalId, String prefix,
+			Date syncDate) {
+		super(name, parentUuid, nodeType);
+		this.externalId = externalId;
+		this.prefix = prefix;
+		this.syncDate = syncDate;
 	}
 
-	@Override
-	public List<SharedSpaceNode> findByNameAndParentUuid(String name, String parentUuid) throws BusinessException {
-		return sharedSpaceNodeMongoRepository.findByNameAndParentUuid(name, parentUuid);
+	public String getExternalId() {
+		return externalId;
 	}
 
-	@Override
-	public void delete(SharedSpaceNode node) throws BusinessException {
-		sharedSpaceNodeMongoRepository.delete(node);
+	public void setExternalId(String externalId) {
+		this.externalId = externalId;
 	}
 
-	@Override
-	public SharedSpaceNode update(SharedSpaceNode nodeToUpdate)
-			throws BusinessException {
-		nodeToUpdate.setModificationDate(new Date());
-		return sharedSpaceNodeMongoRepository.save(nodeToUpdate);
+	public String getPrefix() {
+		return prefix;
 	}
 
-	public List<SharedSpaceNode> findAll() throws BusinessException {
-		return sharedSpaceNodeMongoRepository.findAll();
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
 	}
 
-	@Override
-	public List <SharedSpaceNode> searchByName(String name) throws BusinessException {
-		return sharedSpaceNodeMongoRepository.findByName(name);
+	public Date getSyncDate() {
+		return syncDate;
+	}
+
+	public void setSyncDate(Date syncDate) {
+		this.syncDate = syncDate;
 	}
 
 }
