@@ -47,13 +47,11 @@ import org.linagora.linshare.core.domain.entities.ContainerQuota;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
-import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.ThreadResourceAccessControl;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.repository.ThreadRepository;
-import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.ThreadService;
@@ -61,11 +59,7 @@ import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.ThreadAuditLogEntry;
-import org.linagora.linshare.mongo.entities.logs.ThreadMemberAuditLogEntry;
-import org.linagora.linshare.mongo.entities.mto.ThreadMemberMto;
 import org.linagora.linshare.mongo.entities.mto.ThreadMto;
-
-import com.google.common.collect.Lists;
 
 public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> implements ThreadService {
 
@@ -74,8 +68,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 	private final ThreadMemberRepository threadMemberRepository;
 
 	private final LogEntryService logEntryService;
-
-	private final UserRepository<User> userRepository;
 
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
@@ -90,7 +82,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 			ThreadMemberRepository threadMemberRepository,
 			LogEntryService logEntryService,
 			ThreadResourceAccessControl rac,
-			UserRepository<User> userRepository,
 			FunctionalityReadOnlyService functionalityReadOnlyService,
 			AccountQuotaBusinessService accountQuotaBusinessService,
 			ContainerQuotaBusinessService containerQuotaBusinessService,
@@ -99,7 +90,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 		this.threadRepository = threadRepository;
 		this.threadMemberRepository = threadMemberRepository;
 		this.logEntryService = logEntryService;
-		this.userRepository = userRepository;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
 		this.containerQuotaBusinessService = containerQuotaBusinessService;
@@ -134,11 +124,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 	}
 
 	@Override
-	public List<WorkGroup> findAll(Account actor, Account owner) {
-		return threadRepository.findAll();
-	}
-
-	@Override
 	public WorkGroup create(Account actor, Account owner, String name) throws BusinessException {
 		Functionality threadFunc = functionalityReadOnlyService.getWorkGroupFunctionality(owner.getDomain());
 		Functionality threadCreation = functionalityReadOnlyService.getWorkGroupCreationRight(owner.getDomain());
@@ -147,186 +132,16 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 			throw new BusinessException(BusinessErrorCode.THREAD_FORBIDDEN, "Functionality forbideen.");
 		}
 		WorkGroup workGroup = null;
-		WorkgroupMember member = null;
 		logger.debug("User " + owner.getAccountRepresentation() + " trying to create new thread named " + name);
 		workGroup = new WorkGroup(owner.getDomain(), owner, name);
 		threadRepository.create(workGroup);
 		createQuotaThread(workGroup);
-		member = new WorkgroupMember(true, true, (User) owner, workGroup);
-		workGroup.getMyMembers().add(member);
 		workGroup = threadRepository.update(workGroup);
 		// workgroup creation
 		ThreadAuditLogEntry log = new ThreadAuditLogEntry(actor, owner, LogAction.CREATE, AuditLogEntryType.WORKGROUP,
 				new ThreadMto(workGroup, false));
 		logEntryService.insert(log);
-		// first workgroup member
-		ThreadMemberAuditLogEntry log2 = new ThreadMemberAuditLogEntry(actor, owner, LogAction.CREATE,
-				AuditLogEntryType.WORKGROUP_MEMBER, member);
-		logEntryService.insert(log2);
 		return workGroup;
-	}
-
-	@Override
-	public WorkgroupMember getThreadMemberById(long id) throws BusinessException {
-		return threadMemberRepository.findById(id);
-	}
-
-	@Override
-	public WorkgroupMember getMemberFromUser(WorkGroup workGroup, User user) throws BusinessException {
-		return threadMemberRepository.findUserThreadMember(workGroup, user);
-	}
-
-	@Override
-	public List<WorkgroupMember> findAllThreadMembers(Account actor, User owner,
-			WorkGroup workGroup) throws BusinessException {
-		return threadMemberRepository.findAllThreadMembers(workGroup);
-	}
-
-	@Override
-	public List<WorkgroupMember> findAllInconsistentMembers(Account actor, User owner,
-			WorkGroup workGroup) throws BusinessException {
-		return threadMemberRepository.findAllInconsistentThreadMembers(workGroup);
-	}
-
-	@Override
-	public List<WorkGroup> findAllWhereMember(User user) {
-		return threadRepository.findAllWhereMember(user);
-	}
-
-	@Override
-	public List<WorkGroup> findAllWhereAdmin(User user) {
-		return threadRepository.findAllWhereAdmin(user);
-	}
-
-	@Override
-	public List<WorkGroup> findAllWhereCanUpload(User user) {
-		return threadRepository.findAllWhereCanUpload(user);
-	}
-
-	@Override
-	public boolean hasAnyWhereAdmin(User user) {
-		return threadMemberRepository.isUserAdminOfAny(user);
-	}
-
-//	@Override
-//	public boolean isUserAdmin(User user, WorkGroup workGroup) {
-//		return threadMemberRepository.isUserAdmin(user, workGroup);
-//	}
-
-	@Override
-	public long countMembers(WorkGroup workGroup) {
-		return threadMemberRepository.count(workGroup);
-	}
-
-	@Override
-	public WorkgroupMember addMember(Account actor, Account owner, WorkGroup workGroup,
-			User user, boolean admin, boolean canUpload)
-			throws BusinessException {
-		// TODO : Remove me !
-		WorkgroupMember member = new WorkgroupMember(canUpload, admin, user, workGroup);
-		if (getMemberFromUser(workGroup, user) != null) {
-			logger.warn("The current " + user.getAccountRepresentation()
-					+ " user is already member of the workgroup : "
-					+ workGroup.getAccountRepresentation());
-			throw new BusinessException(BusinessErrorCode.THREAD_MEMBER_ALREADY_EXISTS,
-					"You are not authorized to add member to this workgroup. Already exists.");
-		}
-		workGroup.getMyMembers().add(member);
-		threadRepository.update(workGroup);
-		ThreadMemberAuditLogEntry log = new ThreadMemberAuditLogEntry(actor, owner, LogAction.CREATE,
-				AuditLogEntryType.WORKGROUP_MEMBER, member);
-		addMembersToLog(workGroup, log);
-		logEntryService.insert(log);
-//		WorkGroupWarnNewMemberEmailContext context = new WorkGroupWarnNewMemberEmailContext(member, owner);
-//		MailContainerWithRecipient mail = mailBuildingService.build(context);
-//		notifierService.sendNotification(mail, true);
-		return member;
-	}
-
-	@Override
-	public WorkgroupMember updateMember(Account actor, Account owner, String workGroupUuid, String userUuid,
-			boolean admin, boolean canUpload)
-			throws BusinessException {
-		WorkGroup workGroup = find(actor, owner, workGroupUuid);
-		User user = getUserMember(userUuid);
-		WorkgroupMember member = getMemberFromUser(workGroup, user);
-		ThreadMemberAuditLogEntry log = new ThreadMemberAuditLogEntry(actor, owner, LogAction.UPDATE,
-				AuditLogEntryType.WORKGROUP_MEMBER, member);
-		addMembersToLog(workGroup, log);
-		member.setAdmin(admin);
-		member.setCanUpload(canUpload);
-		WorkgroupMember res = threadMemberRepository.update(member);
-		log.setResourceUpdated(new ThreadMemberMto(res));
-		logEntryService.insert(log);
-//		WorkGroupWarnUpdatedMemberEmailContext context = new WorkGroupWarnUpdatedMemberEmailContext(member, owner);
-//		MailContainerWithRecipient mail = mailBuildingService.build(context);
-//		notifierService.sendNotification(mail, true);
-		return res;
-	}
-
-	@Override
-	public WorkgroupMember deleteMember(Account actor, Account owner, String threadUuid,
-			String userUuid) throws BusinessException {
-		preChecks(actor, owner);
-		Validate.notEmpty(userUuid);
-		Validate.notEmpty(threadUuid);
-		WorkGroup workGroup = find(actor, owner, threadUuid);
-		User user = getUserMember(userUuid);
-		WorkgroupMember member = getMemberFromUser(workGroup,	user);
-		workGroup.getMyMembers().remove(member);
-		threadRepository.update(workGroup);
-		threadMemberRepository.delete(member);
-		ThreadMemberAuditLogEntry log = new ThreadMemberAuditLogEntry(actor, owner, LogAction.DELETE,
-				AuditLogEntryType.WORKGROUP_MEMBER, member);
-		addMembersToLog(workGroup, log);
-		logEntryService.insert(log);
-//		WorkGroupWarnDeletedMemberEmailContext context = new WorkGroupWarnDeletedMemberEmailContext(member, owner);
-//		MailContainerWithRecipient mail = mailBuildingService.build(context);
-//		notifierService.sendNotification(mail, true);
-		return member;
-	}
-
-	private User getUserMember(String userUuid) {
-		User user = userRepository.findByLsUuid(userUuid);
-		if (user == null) {
-			user = userRepository.findDeleted(userUuid);
-			if (user == null) {
-				throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Can not find user with uuid : " + userUuid);
-			} else {
-				logger.info("The member with uuid " + userUuid
-						+ " you are trying to delete is already deleted");
-			}
-		}
-		return user;
-	}
-
-	@Override
-	public void deleteAllMembers(Account actor, WorkGroup workGroup) throws BusinessException {
-		// permission check
-//		checkUserIsAdmin(actor, workGroup);
-		Object[] myMembers = workGroup.getMyMembers().toArray();
-		List<AuditLogEntryUser> audits = Lists.newArrayList();
-		for (Object threadMember : myMembers) {
-			workGroup.getMyMembers().remove(threadMember);
-			threadRepository.update(workGroup);
-			threadMemberRepository.delete((WorkgroupMember) threadMember);
-			ThreadMemberAuditLogEntry log = new ThreadMemberAuditLogEntry(actor, actor, LogAction.DELETE,
-					AuditLogEntryType.WORKGROUP_MEMBER, (WorkgroupMember) threadMember);
-			addMembersToLog(workGroup, log);
-			audits.add(log);
-		}
-		logEntryService.insert(audits);
-	}
-
-	@Override
-	public void deleteAllUserMemberships(Account actor, User user)
-			throws BusinessException {
-		List<WorkgroupMember> memberships = threadMemberRepository
-				.findAllUserMemberships(user);
-		for (WorkgroupMember threadMember : memberships) {
-			deleteMember(actor, actor, threadMember.getThread().getLsUuid(),
-					threadMember.getUser().getLsUuid());
-		}
 	}
 
 	@Override
@@ -340,9 +155,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 		workGroupNodeService.delete(actor, owner2, workGroup, rootFolder.getUuid());
 		workGroup.setEntries(null);
 		threadRepository.update(workGroup);
-		// Deleting members
-		this.deleteAllMembers(actor, workGroup);
-		// Deleting the thread
+		// TODO : workaround to use sharedspacenode services to delete. 
 		threadRepository.delete(workGroup);
 		logEntryService.insert(threadAuditLog);
 	}
@@ -363,21 +176,6 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 		log.setResourceUpdated(new ThreadMto(update, true));
 		logEntryService.insert(log);
 		return update;
-	}
-
-	@Override
-	public List<WorkGroup> findLatestWhereMember(User actor, int limit) {
-		return threadRepository.findLatestWhereMember(actor, limit);
-	}
-
-	@Override
-	public List<WorkGroup> searchByName(User actor, String pattern) {
-		return threadRepository.searchByName(actor, pattern);
-	}
-
-	@Override
-	public List<WorkGroup> searchByMembers(User actor, String pattern) {
-		return threadRepository.searchAmongMembers(actor, pattern);
 	}
 
 	private void createQuotaThread(WorkGroup workGroup) throws BusinessException {
@@ -404,24 +202,4 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 		log.addRelatedAccounts(members);
 	}
 
-	@Override
-	public boolean isUserAdmin(User user, WorkGroup workGroup) {
-		return false;
-	}
-
-	/**
-	 * Check if actor is admin of the thread and so has the right to perform any action.
-	 * Throw a BusinessException if the actor isn't authorized to modify the thread.
-	 */
-//	private void checkUserIsAdmin(Account actor, WorkGroup workGroup) throws BusinessException {
-//		if (actor.getRole().equals(Role.SUPERADMIN) || actor.getRole().equals(Role.SYSTEM)) {
-//			return; // superadmin or system accounts have all rights
-//		}
-//		if (!isUserAdmin((User) actor, workGroup)) {
-//			logger.error("Actor: " + actor.getAccountRepresentation() + " isn't admin of the Thread: "
-//					+ workGroup.getAccountRepresentation());
-//			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
-//					"you are not authorized to perform this action on this thread.");
-//		}
-//	}
 }

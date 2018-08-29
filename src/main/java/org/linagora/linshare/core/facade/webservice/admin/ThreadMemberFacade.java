@@ -38,12 +38,11 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupMemberDto;
 
 public interface ThreadMemberFacade extends AdminGenericFacade {
-	
-	WorkGroupMemberDto find(Long id) throws BusinessException;
 
 	WorkGroupMemberDto create(WorkGroupMemberDto member) throws BusinessException;
 
 	WorkGroupMemberDto update(WorkGroupMemberDto dto) throws BusinessException;
 
 	WorkGroupMemberDto delete(WorkGroupMemberDto dto) throws BusinessException;
+	
 }

@@ -45,6 +45,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.ThreadMemberFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupMemberDto;
@@ -72,23 +73,24 @@ public class ThreadMemberRestServiceImpl implements ThreadMemberRestService {
 	@Path("/{id}")
 	@GET
 	@ApiOperation(value = "Find a thread member.", response = WorkGroupMemberDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin."),
+			@ApiResponse(code = 405, message = "Method not allowed.") })
 	@Override
-	public WorkGroupMemberDto find(@PathParam("id") Long id)
-			throws BusinessException {
-		return threadMemberFacade.find(id);
+	public WorkGroupMemberDto find(@PathParam("id") Long id) throws BusinessException {
+		throw new BusinessException(BusinessErrorCode.API_REMOVED,
+				"This method is not allowed anymore. See new endpoint shared_space_members.");
 	}
 
 	@Path("/{id}")
 	@HEAD
 	@ApiOperation(value = "Find a thread member.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
+	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin."),
+			@ApiResponse(code = 405, message = "Method not allowed.") })
 	@Override
-	public void head(@PathParam("id") Long id)
-			throws BusinessException {
-		threadMemberFacade.find(id);
+	public void head(@PathParam("id") Long id) throws BusinessException {
+		throw new BusinessException(BusinessErrorCode.API_REMOVED,
+				"This method is not allowed anymore. See new endpoint shared_space_members.");
 	}
-
 
 	@Path("/")
 	@POST

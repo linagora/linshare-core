@@ -56,7 +56,6 @@ import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		ThreadMemberFacade {
 
-	private ThreadService threadService;
 	private UserService userService;
 
 	protected final SharedSpaceMemberService ssMemberService;
@@ -71,21 +70,12 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 			SharedSpaceRoleService ssRoleService,
 			SharedSpaceNodeService sharedSpaceNodeService) {
 		super(accountService);
-		this.threadService = threadService;
 		this.userService = userService;
 		this.ssMemberService = ssMemberService;
 		this.ssRoleService = ssRoleService;
 		this.sharedSpaceNodeService = sharedSpaceNodeService;
 	}
-
-	@Override
-	public WorkGroupMemberDto find(Long id) throws BusinessException {
-		@SuppressWarnings("unused")
-		User authUser = checkAuthentication(Role.SUPERADMIN);
-		Validate.notNull(id, "id must be set.");
-		return new WorkGroupMemberDto(threadService.getThreadMemberById(id));
-	}
-
+	
 	@Override
 	public WorkGroupMemberDto create(WorkGroupMemberDto dto) throws BusinessException {
 		User authUser = checkAuthentication(Role.SUPERADMIN);

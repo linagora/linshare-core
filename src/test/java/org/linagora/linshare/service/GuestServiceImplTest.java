@@ -394,26 +394,4 @@ public class GuestServiceImplTest extends
 		Assert.assertEquals(1, search.size());
 	}
 
-	@Test
-	public void createWorkgroupAsTechnicalAccount() {
-		technicalAccount = new TechnicalAccount();
-		technicalAccount.setMail("technicalAccount@linshare.org");
-		technicalAccount.setLastName("technicalAccount");
-		technicalAccount.setEnable(true);
-		technicalAccount.setRole(Role.SUPERADMIN);
-		technicalAccount.setPassword("secret");
-		technicalAccount.setLocale(SupportedLanguage.ENGLISH);
-		technicalAccount.setOwner(owner1);
-		technicalAccount = technicalAccountService.create(owner1, technicalAccount);
-		TechnicalAccount find = technicalAccountService.find(technicalAccount, technicalAccount.getLsUuid());
-		Assert.assertNotNull(find);
-
-		WorkGroup workGroup = threadService.create(technicalAccount, owner1, "FirstWorkGroup");
-		Set<WorkgroupMember> workgroupMembers = workGroup.getMyMembers();
-		Assert.assertNotNull(workgroupMembers);
-		WorkgroupMember workgroupMember = threadService.updateMember(technicalAccount, owner1, workGroup.getLsUuid(), owner1.getLsUuid(), false, false);
-		Assert.assertFalse(workgroupMember.getAdmin());
-		Assert.assertFalse(workgroupMember.getCanUpload());
-	}
-
 }
