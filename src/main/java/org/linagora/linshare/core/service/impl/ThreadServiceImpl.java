@@ -44,7 +44,6 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.ContainerQuota;
-import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -125,39 +124,22 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 
 	@Override
 	public WorkGroup create(Account actor, Account owner, String name) throws BusinessException {
-		Functionality threadFunc = functionalityReadOnlyService.getWorkGroupFunctionality(owner.getDomain());
-		Functionality threadCreation = functionalityReadOnlyService.getWorkGroupCreationRight(owner.getDomain());
-		if (!threadFunc.getActivationPolicy().getStatus()
-				|| !threadCreation.getActivationPolicy().getStatus()) {
-			throw new BusinessException(BusinessErrorCode.THREAD_FORBIDDEN, "Functionality forbideen.");
-		}
-		WorkGroup workGroup = null;
 		logger.debug("User " + owner.getAccountRepresentation() + " trying to create new thread named " + name);
-		workGroup = new WorkGroup(owner.getDomain(), owner, name);
+		WorkGroup workGroup = new WorkGroup(owner.getDomain(), owner, name);
 		threadRepository.create(workGroup);
 		createQuotaThread(workGroup);
 		workGroup = threadRepository.update(workGroup);
-		// workgroup creation
-		ThreadAuditLogEntry log = new ThreadAuditLogEntry(actor, owner, LogAction.CREATE, AuditLogEntryType.WORKGROUP,
-				new ThreadMto(workGroup, false));
-		logEntryService.insert(log);
 		return workGroup;
 	}
 
 	@Override
 	public void deleteThread(User actor, Account owner, WorkGroup workGroup)
 			throws BusinessException {
-		User owner2 = (User) owner;
-		ThreadAuditLogEntry threadAuditLog = new ThreadAuditLogEntry(actor, owner, LogAction.DELETE,
-				AuditLogEntryType.WORKGROUP, new ThreadMto(workGroup, true));
-		addMembersToLog(workGroup, threadAuditLog);
-		WorkGroupNode rootFolder = workGroupNodeService.getRootFolder(actor, owner2, workGroup);
-		workGroupNodeService.delete(actor, owner2, workGroup, rootFolder.getUuid());
+		WorkGroupNode rootFolder = workGroupNodeService.getRootFolder(actor, owner, workGroup);
+		workGroupNodeService.delete(actor, owner, workGroup, rootFolder.getUuid());
 		workGroup.setEntries(null);
 		threadRepository.update(workGroup);
-		// TODO : workaround to use sharedspacenode services to delete. 
 		threadRepository.delete(workGroup);
-		logEntryService.insert(threadAuditLog);
 	}
 
 	@Override

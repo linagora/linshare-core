@@ -48,6 +48,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
@@ -57,8 +58,8 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.LDAPGroupSyncService;
-import org.linagora.linshare.core.service.SharedSpaceMemberService;
-import org.linagora.linshare.core.service.SharedSpaceNodeService;
+import org.linagora.linshare.core.service.SharedSpaceLDAPGroupMemberService;
+import org.linagora.linshare.core.service.SharedSpaceLDAPGroupService;
 import org.linagora.linshare.core.service.impl.LDAPGroupSyncServiceImpl;
 import org.linagora.linshare.ldap.LdapGroupMemberObject;
 import org.linagora.linshare.ldap.LdapGroupObject;
@@ -100,10 +101,11 @@ public class LDAPGroupSyncServiceImplTest extends AbstractTransactionalJUnit4Spr
 	LDAPGroupSyncServiceImpl syncServiceImpl;
 
 	@Autowired
-	SharedSpaceNodeService nodeService;
+	@Qualifier("sharedSpaceLdapGroupService")
+	SharedSpaceLDAPGroupService nodeService;
 
 	@Autowired
-	SharedSpaceMemberService memberService;
+	SharedSpaceLDAPGroupMemberService memberService;
 
 	@Autowired
 	@Qualifier("userRepository")
@@ -126,6 +128,8 @@ public class LDAPGroupSyncServiceImplTest extends AbstractTransactionalJUnit4Spr
 
 	private SystemAccount systemAccount;
 
+	private AbstractDomain domain;
+
 	private static final Logger logger = LoggerFactory
 			.getLogger(LDAPGroupSyncServiceImpl.class);
 
@@ -142,6 +146,7 @@ public class LDAPGroupSyncServiceImplTest extends AbstractTransactionalJUnit4Spr
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
 		systemAccount = userRepository.getBatchSystemAccount();
+		domain = datas.getUser1().getDomain();
 		attributes = new HashMap<String, LdapAttribute>();
 		attributes.put(GroupLdapPattern.GROUP_NAME, new LdapAttribute(GroupLdapPattern.GROUP_NAME, "cn"));
 		attributes.put(GroupLdapPattern.GROUP_MEMBER, new LdapAttribute(GroupLdapPattern.GROUP_MEMBER, "member"));
@@ -204,7 +209,7 @@ public class LDAPGroupSyncServiceImplTest extends AbstractTransactionalJUnit4Spr
 		Assert.assertEquals("The externalId do not match", "cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org",
 				group.getExternalId());
 		Assert.assertEquals("The given syncDate is not the same as the found one", syncDate, group.getSyncDate());
-		SharedSpaceLDAPGroupMember member = syncService.createOrUpdateLDAPGroupMember(systemAccount, group,
+		SharedSpaceLDAPGroupMember member = syncService.createOrUpdateLDAPGroupMember(systemAccount, domain, group,
 				ldapGroupMemberObject, syncDate);
 		Assert.assertNotNull("The member has not been found", member);
 		Assert.assertEquals("The externalId do not match", "uid=user1,ou=People,dc=linshare,dc=org",
@@ -218,6 +223,8 @@ public class LDAPGroupSyncServiceImplTest extends AbstractTransactionalJUnit4Spr
 	@Test
 	public void testUpdateLDAPMemberFromLDAPGroupMember() {
 		Date syncDate = new Date();
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Year.now().getValue() + 1, 1, 1);
 		LdapGroupObject ldapGroupObject = new LdapGroupObject();
 		ldapGroupObject.setName("wg-3");
 		ldapGroupObject.setExternalId("cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org");
@@ -226,16 +233,15 @@ public class LDAPGroupSyncServiceImplTest extends AbstractTransactionalJUnit4Spr
 		LdapGroupMemberObject ldapGroupMemberObject = new LdapGroupMemberObject("John", "Doe", "user1@linshare.org",
 				"uid=user1,ou=People,dc=linshare,dc=org");
 		ldapGroupMemberObject.setRole(Role.CONTRIBUTOR);
+		// Create a group
 		SharedSpaceLDAPGroup group = syncService.createOrUpdateLDAPGroup(systemAccount, ldapGroupObject, syncDate);
-		Assert.assertNotNull("The group has not been found", group);
-		Assert.assertEquals("The externalId do not match", "cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org",
-				group.getExternalId());
-		Assert.assertEquals("The given syncDate is not the same as the found one", syncDate, group.getSyncDate());
-		syncService.createOrUpdateLDAPGroupMember(systemAccount, group, ldapGroupMemberObject, syncDate);
+		// Create a member
+		syncService.createOrUpdateLDAPGroupMember(systemAccount, domain, group, ldapGroupMemberObject, syncDate);
 		ldapGroupMemberObject.setRole(Role.ADMIN);
 		ldapGroupMemberObject.setFirstName("Bob");
-		syncDate = new Date();
-		SharedSpaceLDAPGroupMember updated = syncService.createOrUpdateLDAPGroupMember(systemAccount, group,
+		syncDate = calendar.getTime();
+		// Update a member
+		SharedSpaceLDAPGroupMember updated = syncService.createOrUpdateLDAPGroupMember(systemAccount, domain, group,
 				ldapGroupMemberObject, syncDate);
 		Assert.assertEquals(1, memberService.findByNode(systemAccount, systemAccount, group.getUuid()).size());
 		Assert.assertNotNull("The member has not been found", updated);
@@ -290,7 +296,7 @@ public class LDAPGroupSyncServiceImplTest extends AbstractTransactionalJUnit4Spr
 
 	@Test
 	public void testExecuteBatchWithDatas() throws BusinessException, IOException, NamingException {
-		syncService.executeBatch(systemAccount, ldapConnection, baseDn, groupPattern);
+		syncService.executeBatch(systemAccount, domain, ldapConnection, baseDn, groupPattern);
 		List<SharedSpaceNode> foundNodes = nodeService.findAll(systemAccount, systemAccount);
 		for (SharedSpaceNode sharedSpaceNode : foundNodes) {
 			List<SharedSpaceMember> foundMembers = memberService.findByNode(systemAccount, systemAccount,

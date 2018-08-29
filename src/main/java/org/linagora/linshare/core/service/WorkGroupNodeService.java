@@ -53,11 +53,11 @@ public interface WorkGroupNodeService {
 	List<WorkGroupNode> findAll(Account actor, User owner, WorkGroup workGroup) throws BusinessException;
 
 	@Deprecated
-	List<WorkGroupNode> findAll(Account actor, User owner, WorkGroup workGroup, String parentUuid, Boolean flatDocumentMode, WorkGroupNodeType nodeType)
+	List<WorkGroupNode> findAll(Account actor, Account owner, WorkGroup workGroup, String parentUuid, Boolean flatDocumentMode, WorkGroupNodeType nodeType)
 			throws BusinessException;
 
 	@Deprecated
-	WorkGroupNode find(Account actor, User owner, WorkGroup workGroup, String workGroupNodeUuid, boolean withTree) throws BusinessException;
+	WorkGroupNode find(Account actor, Account owner, WorkGroup workGroup, String workGroupNodeUuid, boolean withTree) throws BusinessException;
 
 	@Deprecated
 	WorkGroupNode findForDownloadOrCopyRight(Account actor, User owner, WorkGroup workGroup, String workGroupNodeUuid) throws BusinessException;
@@ -87,7 +87,7 @@ public interface WorkGroupNodeService {
 			throws BusinessException;
 
 	@Deprecated
-	WorkGroupNode delete(Account actor, User owner, WorkGroup workGroup, String workGroupNodeUuid)
+	WorkGroupNode delete(Account actor, Account owner, WorkGroup workGroup, String workGroupNodeUuid)
 			throws BusinessException;
 
 	@Deprecated
@@ -99,6 +99,6 @@ public interface WorkGroupNodeService {
 			throws BusinessException;
 
 	@Deprecated
-	WorkGroupNode getRootFolder(Account actor, User owner, WorkGroup workGroup);
+	WorkGroupNode getRootFolder(Account actor, Account owner, WorkGroup workGroup);
 
 }

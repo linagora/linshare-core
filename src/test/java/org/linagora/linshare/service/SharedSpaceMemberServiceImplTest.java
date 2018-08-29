@@ -113,12 +113,14 @@ public class SharedSpaceMemberServiceImplTest extends AbstractTransactionalJUnit
 	private SharedSpaceRoleBusinessService roleBusinessService;
 
 	@Autowired
+	@Qualifier("sharedSpaceNodeBusinessService")
 	private SharedSpaceNodeBusinessService nodeBusinessService;
 
 	@Autowired
 	InitMongoService initService;
 
 	@Autowired
+	@Qualifier("sharedSpaceMemberService")
 	private SharedSpaceMemberService service;
 
 	private LinShareWiser wiser;

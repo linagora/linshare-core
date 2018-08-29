@@ -44,6 +44,6 @@ public interface WorkGroupFolderService extends WorkGroupNodeAbstractService {
 	WorkGroupNode create(Account actor, User owner, WorkGroup workGroup, WorkGroupNode workGroupFolder,
 			WorkGroupNode nodeParent, Boolean strict, Boolean dryRun) throws BusinessException;
 
-	WorkGroupNode delete(Account actor, User owner, WorkGroup workGroup, WorkGroupNode workGroupNode)
+	WorkGroupNode delete(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode)
 			throws BusinessException;
 }

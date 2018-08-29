@@ -42,14 +42,17 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
 import org.linagora.linshare.core.rac.SharedSpaceNodeResourceAccessControl;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
+import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
@@ -71,18 +74,22 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 
 	private final LogEntryService logEntryService;
 
+	private final ThreadService threadService;
+
 	public SharedSpaceNodeServiceImpl(SharedSpaceNodeBusinessService businessService,
 			SharedSpaceNodeResourceAccessControl rac,
 			SharedSpaceMemberBusinessService memberBusinessService,
 			SharedSpaceMemberService memberService,
 			SharedSpaceRoleService ssRoleService,
-			LogEntryService logEntryService) {
+			LogEntryService logEntryService,
+			ThreadService threadService) {
 		super(rac);
 		this.businessService = businessService;
 		this.memberService = memberService;
 		this.ssRoleService = ssRoleService;
 		this.memberBusinessService = memberBusinessService;
 		this.logEntryService = logEntryService;
+		this.threadService = threadService;
 	}
 
 	@Override
@@ -104,14 +111,56 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		Validate.notNull(node, "Missing required input shared space node.");
 		Validate.notNull(node.getNodeType(), "you must set the node type");
 		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
-		SharedSpaceNode created = businessService.create(node);
+		//Hack to create thread into shared space node
+		SharedSpaceNode created = simpleCreate(authUser, actor, node);
 		SharedSpaceRole role = ssRoleService.getAdmin(authUser, actor);
-		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.CREATE,
-				AuditLogEntryType.SHARED_SPACE_NODE, created);
-		logEntryService.insert(log);
 		memberService.createWithoutCheckPermission(authUser, actor, created, role,
 				new SharedSpaceAccount((User) actor));
 		return created;
+	}
+
+	protected SharedSpaceNode simpleCreate(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException {
+		//Hack to create thread into shared space node
+		WorkGroup workGroup = threadService.create(authUser, actor, node.getName());
+		node.setUuid(workGroup.getLsUuid());
+		SharedSpaceNode created = businessService.create(node);
+		createLog(authUser, actor, LogAction.CREATE, created);
+		return created;
+	}
+
+	/**
+	 * Only use to compability with threadFacade
+	 *
+	 */
+	@Deprecated
+	public WorkGroupDto createWorkGroupDto(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException {
+		preChecks(authUser, actor);
+		Validate.notNull(node, "Missing required input shared space node.");
+		Validate.notNull(node.getNodeType(), "you must set the node type");
+		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
+		//Hack to create thread into shared space node
+		SharedSpaceNode created = simpleCreate(authUser, actor, node);
+		SharedSpaceRole role = ssRoleService.getAdmin(authUser, actor);
+		memberService.createWithoutCheckPermission(authUser, actor, created, role, new SharedSpaceAccount((User) actor));
+		WorkGroup workGroup = threadService.find(authUser, actor, created.getUuid());
+		return new WorkGroupDto(workGroup, created);
+	}
+
+	protected SharedSpaceNodeAuditLogEntry createLog(Account authUser, Account actor, LogAction action,
+			SharedSpaceNode resource) {
+		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, action,
+				AuditLogEntryType.WORKGROUP, resource);
+		logEntryService.insert(log);
+		return log;
+	}
+
+	protected SharedSpaceNodeAuditLogEntry updateLog(Account authUser, Account actor, SharedSpaceNode resource,
+			SharedSpaceNode resourceUpdated) {
+		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.UPDATE,
+				AuditLogEntryType.WORKGROUP, resource);
+		log.setResourceUpdated(resourceUpdated);
+		logEntryService.insert(log);
+		return log;
 	}
 
 	@Override
@@ -122,12 +171,35 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		SharedSpaceNode foundedNodeTodel = find(authUser, actor, node.getUuid());
 		checkDeletePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN,
 				foundedNodeTodel);
+		simpleDelete(authUser, actor, foundedNodeTodel);
+		return foundedNodeTodel;
+	}
+
+	/**
+	 * Only use to compability with threadFacade
+	 *
+	 */
+	@Override
+	public WorkGroupDto deleteWorkgroupDto(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException {
+		preChecks(authUser, actor);
+		Validate.notNull(node, "missing required node to delete.");
+		Validate.notEmpty(node.getUuid(), "missing required node uuid to delete");
+		SharedSpaceNode foundedNodeTodel = find(authUser, actor, node.getUuid());
+		checkDeletePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN,
+				foundedNodeTodel);
+		WorkGroup workGroup = simpleDelete(authUser, actor, foundedNodeTodel);
+		return new WorkGroupDto(workGroup, foundedNodeTodel);
+	}
+
+	private WorkGroup simpleDelete(Account authUser, Account actor, SharedSpaceNode foundedNodeTodel) throws BusinessException {
 		businessService.delete(foundedNodeTodel);
+		WorkGroup workGroup = threadService.find(authUser, authUser, foundedNodeTodel.getUuid());
+		threadService.deleteThread(authUser, authUser, workGroup);
 		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.DELETE,
 				AuditLogEntryType.SHARED_SPACE_NODE, foundedNodeTodel);
 		logEntryService.insert(log);
 		memberService.deleteAllMembers(authUser, actor, foundedNodeTodel.getUuid());
-		return foundedNodeTodel;
+		return workGroup;
 	}
 
 	@Override

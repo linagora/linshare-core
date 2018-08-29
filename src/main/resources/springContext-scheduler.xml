@@ -132,6 +132,27 @@
 			value="${job.shares.cron.expression}" />
 	</bean>
 
+	<bean id="synchronizingLdapGroupsJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass"
+			value="org.linagora.linshare.core.job.quartz.LinShareJobBean" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="batch">
+					<list value-type="org.linagora.linshare.core.job.quartz.LinShareJobBean">
+						<ref bean="synchronizeLDAPGroupsInWorkgroupsBatch" />
+					</list>
+				</entry>
+				<entry key="batchRunner" value-ref="batchRunner" />
+			</map>
+		</property>
+	</bean>
+
+	<bean id="synchronizingLdapGroupsJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="synchronizingLdapGroupsJob" />
+		<property name="cronExpression"
+			value="${job.ldapgroups.cron.expression}" />
+	</bean>
+
 	<bean id="dailyBatchJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
 		<property name="jobClass"
 			value="org.linagora.linshare.core.job.quartz.LinShareJobBean" />
@@ -174,6 +195,7 @@
                 <ref bean="computeDocumentMimeTypeBatchJobTrigger" />
                 <ref bean="cleaningShareEntriesJobTrigger"/>
                 <ref bean="dailyBatchJobTrigger"/>
+                <ref bean="synchronizingLdapGroupsJobTrigger"/>
             </list>
         </property>
     </bean>

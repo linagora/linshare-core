@@ -24,6 +24,7 @@
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="guestRepository" />
 		<constructor-arg ref="allowedContactRepository" />
+		<constructor-arg ref="sharedSpaceMemberService" />
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="entryService" />
@@ -414,6 +415,15 @@
 		<constructor-arg ref="sharedSpaceRoleService" />
 		<constructor-arg ref="sharedSpaceMemberBusinessService" />
 		<constructor-arg ref="logEntryService" />
+		<constructor-arg ref="threadService" />
+	</bean>
+	<bean id="sharedSpaceLdapGroupService" class="org.linagora.linshare.core.service.impl.SharedSpaceLDAPGroupServiceImpl">
+		<constructor-arg ref="sharedSpaceLdapGroupBusinessService" />
+		<constructor-arg ref="sharedSpaceNodeResourceAccessControl" />
+		<constructor-arg ref="sharedSpaceRoleService" />
+		<constructor-arg ref="sharedSpaceMemberBusinessService" />
+		<constructor-arg ref="logEntryService" />
+		<constructor-arg ref="threadService" />
 	</bean>
 	<bean id="sharedSpaceRoleService" class="org.linagora.linshare.core.service.impl.SharedSpaceRoleServiceImpl">
 		<constructor-arg ref="sharedSpaceRoleBusinessService" />
@@ -435,12 +445,20 @@
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="userRepository" />
 	</bean>
+	<bean id="sharedSpaceLdapGroupMemberService" class="org.linagora.linshare.core.service.impl.SharedSpaceLDAPGroupMemberServiceImpl">
+		<constructor-arg ref="sharedSpaceLdapGroupMemberBusinessService" />
+		<constructor-arg ref="sharedSpaceMemberResourceAccessControl" />
+		<constructor-arg ref="notifierService" />
+		<constructor-arg ref="mailBuildingService" />
+		<constructor-arg ref="logEntryService" />
+		<constructor-arg ref="userRepository" />
+	</bean>
 
 	<bean id="ldapGroupSyncService" class="org.linagora.linshare.core.service.impl.LDAPGroupSyncServiceImpl">
-		<constructor-arg ref="sharedSpaceNodeService"/>
+		<constructor-arg ref="sharedSpaceLdapGroupService"/>
 		<constructor-arg ref="ldapGroupQueryService"/>
 		<constructor-arg ref="sharedSpaceRoleService"/>
-		<constructor-arg ref="sharedSpaceMemberService"/>
+		<constructor-arg ref="sharedSpaceLdapGroupMemberService"/>
 		<constructor-arg ref="mongoTemplate"/>
 	</bean>
 

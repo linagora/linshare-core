@@ -305,6 +305,10 @@
 		class="org.linagora.linshare.core.business.service.impl.SharedSpaceNodeBusinessServiceImpl">
 		<constructor-arg ref="sharedSpaceNodeMongoRepository" />
 	</bean>
+	<bean name="sharedSpaceLdapGroupBusinessService"
+		class="org.linagora.linshare.core.business.service.impl.SharedSpaceLDAPGroupBusinessServiceImpl">
+		<constructor-arg ref="sharedSpaceNodeMongoRepository" />
+	</bean>
 	<bean name="sharedSpaceRoleBusinessService"
 		class="org.linagora.linshare.core.business.service.impl.SharedSpaceRoleBusinessServiceImpl">
 		<constructor-arg ref="sharedSpaceRoleMongoRepository" />
@@ -312,6 +316,10 @@
 	<bean name="sharedSpacePermissionBusinessService"
 		class="org.linagora.linshare.core.business.service.impl.SharedSpacePermissionBusinessServiceImpl">
 		<constructor-arg ref="sharedSpacePermissionMongoRepository" />
+	</bean>
+	<bean name="sharedSpaceLdapGroupMemberBusinessService"
+		class="org.linagora.linshare.core.business.service.impl.SharedSpaceLDAPGroupMemberBusinessServiceImpl">
+		<constructor-arg ref="sharedSpaceMemberMongoRepository" />
 	</bean>
 	<bean name="sharedSpaceMemberBusinessService"
 		class="org.linagora.linshare.core.business.service.impl.SharedSpaceMemberBusinessServiceImpl">

@@ -108,7 +108,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 	}
 
 	@Override
-	public List<WorkGroupNode> findAll(Account actor, User owner, WorkGroup workGroup, String parentUuid, Boolean flatDocumentMode, WorkGroupNodeType nodeType)
+	public List<WorkGroupNode> findAll(Account actor, Account owner, WorkGroup workGroup, String parentUuid, Boolean flatDocumentMode, WorkGroupNodeType nodeType)
 			throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notNull(workGroup, "Missing workGroup");
@@ -134,7 +134,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 	}
 
 	@Override
-	public WorkGroupNode find(Account actor, User owner, WorkGroup workGroup, String workGroupNodeUuid, boolean withTree)
+	public WorkGroupNode find(Account actor, Account owner, WorkGroup workGroup, String workGroupNodeUuid, boolean withTree)
 			throws BusinessException {
 		preChecks(actor, owner);
 		WorkGroupNode node = null;
@@ -338,7 +338,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 	}
 
 	@Override
-	public WorkGroupNode delete(Account actor, User owner, WorkGroup workGroup, String workGroupNodeUuid)
+	public WorkGroupNode delete(Account actor, Account owner, WorkGroup workGroup, String workGroupNodeUuid)
 			throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notEmpty(workGroupNodeUuid, "missing workGroupNodeUuid");
@@ -349,7 +349,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		return node;
 	}
 
-	private void deleteNode(Account actor, User owner, WorkGroup workGroup, WorkGroupNode workGroupNode) {
+	private void deleteNode(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode) {
 		if (isFolder(workGroupNode)) {
 			List<WorkGroupNode> findAll = findAll(actor, owner, workGroup, workGroupNode.getUuid(), false, null);
 			for (WorkGroupNode node : findAll) {
@@ -472,12 +472,12 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 	}
 
 	@Override
-	public WorkGroupNode getRootFolder(Account actor, User owner, WorkGroup workGroup) {
+	public WorkGroupNode getRootFolder(Account actor, Account owner, WorkGroup workGroup) {
 		checkListPermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, null, workGroup);
 		return getRootFolder(owner, workGroup);
 	}
 
-	protected WorkGroupNode getRootFolder(User owner, WorkGroup workGroup) {
+	protected WorkGroupNode getRootFolder(Account owner, WorkGroup workGroup) {
 		WorkGroupNode wgnParent = null;
 		String workGroupUuid = workGroup.getLsUuid();
 		List<WorkGroupNode> results = repository.findByWorkGroupAndParent(workGroupUuid, workGroupUuid);

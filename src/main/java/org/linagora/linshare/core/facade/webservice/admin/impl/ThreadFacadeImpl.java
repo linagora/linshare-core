@@ -154,8 +154,6 @@ public class ThreadFacadeImpl extends AdminGenericFacadeImpl implements ThreadFa
 		Validate.notEmpty(uuid, "uuid must be set.");
 		WorkGroup workGroup = threadService.find(authUser, authUser, uuid);
 		SharedSpaceNode node = ssNodeService.find(authUser, authUser, workGroup.getLsUuid());
-		ssNodeService.delete(authUser, workGroup, node);
-		threadService.deleteThread(authUser, authUser, workGroup);
-		return new WorkGroupDto(workGroup);
+		return ssNodeService.deleteWorkgroupDto(authUser, authUser, node);
 	}
 }

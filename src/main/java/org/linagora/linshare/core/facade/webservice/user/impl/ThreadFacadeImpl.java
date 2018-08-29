@@ -158,11 +158,8 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notNull(threadDto, "Missing required thread");
 		Validate.notEmpty(threadDto.getName(), "Missing required thread dto name");
 		User authUser = checkAuthentication();
-		WorkGroup toCreate = threadService.create(authUser, authUser, threadDto.getName());
 		SharedSpaceNode node = new SharedSpaceNode(threadDto.getName(), null, NodeType.WORK_GROUP);
-		node.setUuid(toCreate.getLsUuid());
-		node = ssNodeService.create(authUser, authUser, node);
-		return new WorkGroupDto(toCreate, node);
+		return ssNodeService.createWorkGroupDto(authUser, authUser, node);
 	}
 
 	@Override
@@ -170,22 +167,16 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		Validate.notNull(threadDto, "Missing required thread dto");
 		Validate.notEmpty(threadDto.getUuid(), "Missing required thread dto uuid");
 		User authUser = checkAuthentication();
-		WorkGroup workGroup = threadService.find(authUser, authUser, threadDto.getUuid());
-		threadService.deleteThread(authUser, authUser, workGroup);
 		SharedSpaceNode node = ssNodeService.find(authUser, authUser, threadDto.getUuid());
-		node = ssNodeService.delete(authUser, authUser, node);
-		return new WorkGroupDto(workGroup, node);
+		return ssNodeService.deleteWorkgroupDto(authUser, authUser, node);
 	}
 
 	@Override
 	public WorkGroupDto delete(String threadUuid) throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
 		User authUser = checkAuthentication();
-		WorkGroup workGroup = threadService.find(authUser, authUser, threadUuid);
-		threadService.deleteThread(authUser, authUser, workGroup);
 		SharedSpaceNode node = ssNodeService.find(authUser, authUser, threadUuid);
-		node = ssNodeService.delete(authUser, authUser, node);
-		return new WorkGroupDto(workGroup, node);
+		return ssNodeService.deleteWorkgroupDto(authUser, authUser, node);
 	}
 
 	@Override

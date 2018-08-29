@@ -44,6 +44,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnDeletedMemberEmailContext;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnNewMemberEmailContext;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnUpdatedMemberEmailContext;
@@ -67,11 +68,11 @@ import com.google.common.collect.Lists;
 public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, SharedSpaceMember>
 		implements SharedSpaceMemberService {
 
-	private final SharedSpaceMemberBusinessService businessService;
+	protected final SharedSpaceMemberBusinessService businessService;
 
 	private final LogEntryService logEntryService;
 
-	private final UserRepository<User> userRepository;
+	protected final UserRepository<User> userRepository;
 
 	private final NotifierService notifierService;
 
@@ -182,6 +183,26 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		MailContainerWithRecipient mail = mailBuildingService.build(context);
 		notifierService.sendNotification(mail, true);
 		return member;
+	}
+
+	protected void notify(EmailContext context) {
+		MailContainerWithRecipient mail = mailBuildingService.build(context);
+		notifierService.sendNotification(mail, true);
+	}
+
+	protected SharedSpaceMemberAuditLogEntry createLog(Account authUser, Account actor, SharedSpaceMember resource) {
+		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.CREATE,
+				AuditLogEntryType.SHARED_SPACE_MEMBER, resource);
+		logEntryService.insert(log);
+		return log;
+	}
+
+	protected SharedSpaceMemberAuditLogEntry updateLog(Account authUser, Account actor, SharedSpaceMember resource, SharedSpaceMember resourceUpdated) {
+		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.CREATE,
+				AuditLogEntryType.SHARED_SPACE_MEMBER, resource);
+		log.setResourceUpdated(resourceUpdated);
+		logEntryService.insert(log);
+		return log;
 	}
 
 	@Override

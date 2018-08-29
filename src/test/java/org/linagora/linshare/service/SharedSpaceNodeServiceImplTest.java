@@ -93,6 +93,7 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 	private InitMongoService init;
 
 	@Autowired
+	@Qualifier("sharedSpaceNodeService")
 	private SharedSpaceNodeService service;
 
 	@Before

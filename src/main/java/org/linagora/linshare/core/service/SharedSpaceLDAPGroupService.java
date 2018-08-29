@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009-2018. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -33,49 +33,13 @@
  */
 package org.linagora.linshare.core.service;
 
-import java.util.List;
-
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
-import org.linagora.linshare.mongo.entities.SharedSpaceMember;
-import org.linagora.linshare.mongo.entities.SharedSpaceNode;
-import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
+import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroup;
 
-public interface SharedSpaceNodeService {
+public interface SharedSpaceLDAPGroupService extends SharedSpaceNodeService {
 
-	SharedSpaceNode find(Account authUser, Account actor, String uuid) throws BusinessException;
+	SharedSpaceLDAPGroup create(Account actor, SharedSpaceLDAPGroup ldapGroup);
 
-	SharedSpaceNode create(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException;
-
-	SharedSpaceNode update(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException;
-
-	SharedSpaceNode delete(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException;
-
-	List<SharedSpaceNode> findAll(Account authUser, Account actor);
-
-	/** Search some SharedSpaceNode by their name
-	 **/
-	List<SharedSpaceNode> searchByName(Account authUser, Account actor, String name) throws BusinessException;
-
-	List<SharedSpaceNode> findAllNodesBySSMember(Account authUser, String memberName);
-
-	List<SharedSpaceMember> findAllMembers(Account authUser, Account actor, String sharedSpaceNodeUuid);
-
-	List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor);
-
-	@Deprecated
-	/**
-	 * Only use to compability with threadFacade
-	 *
-	 */
-	WorkGroupDto createWorkGroupDto(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException;
-
-	@Deprecated
-	/**
-	 * Only use to compability with threadFacade
-	 *
-	 */
-	WorkGroupDto deleteWorkgroupDto(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException;
+	SharedSpaceLDAPGroup update(Account actor, SharedSpaceLDAPGroup ldapGroup);
 
 }

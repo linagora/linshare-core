@@ -50,6 +50,7 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="sharedSpaceRoleService" />
+		<constructor-arg ref="sharedSpaceNodeService"/>
 		<constructor-arg ref="sharedSpaceMemberService" />
 	</bean>
 

@@ -110,11 +110,8 @@ public class WorkgroupFacadeImpl extends DelegationGenericFacadeImpl implements
 		Validate.notNull(threadDto, "Missing required thread dto");
 		User authUser = checkAuthentication();
 		User actor = getActor(actorUuid);
-		WorkGroup toCreate = threadService.create(authUser, actor, threadDto.getName());
 		SharedSpaceNode node = new SharedSpaceNode(threadDto.getName(), null, NodeType.WORK_GROUP);
-		node.setUuid(toCreate.getLsUuid());
-		node = ssNodeService.create(authUser, actor, node);
-		return new WorkGroupDto(toCreate, node);
+		return ssNodeService.createWorkGroupDto(authUser, actor, node);
 
 	}
 
@@ -126,11 +123,8 @@ public class WorkgroupFacadeImpl extends DelegationGenericFacadeImpl implements
 		Validate.notEmpty(threadDto.getUuid(), "Missing required thread dto uuid");
 		User authUser = checkAuthentication();
 		User actor = getActor(actorUuid);
-		WorkGroup workGroup = threadService.find(authUser, actor, threadDto.getUuid());
-		threadService.deleteThread(authUser, actor, workGroup);
 		SharedSpaceNode node = ssNodeService.find(authUser, actor, threadDto.getUuid());
-		node = ssNodeService.delete(authUser, authUser, node);
-		return new WorkGroupDto(workGroup, node);
+		return ssNodeService.deleteWorkgroupDto(authUser, authUser, node);
 	}
 
 	@Override

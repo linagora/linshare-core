@@ -33,7 +33,10 @@
  */
 package org.linagora.linshare.core.batches.impl;
 
+import java.io.IOException;
 import java.util.List;
+
+import javax.naming.NamingException;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -94,8 +97,14 @@ public class SynchronizeLDAPGroupsInWorkgroupsBatchImpl extends GenericBatchImpl
 			GroupLdapPattern groupPattern = patternService.find(dto.getPattern().getUuid());
 			String baseDn = dto.getBaseDn();
 			try {
-				syncService.executeBatch(systemAccount, ldapConnection, baseDn, groupPattern);
+				syncService.executeBatch(systemAccount, domain, ldapConnection, baseDn, groupPattern);
 				context.setProcessed(true);
+			} catch (NamingException e) {
+				logger.error("NamingException : Failure during the synchro of the domain with uuid" + identifier, e);
+				context.setProcessed(false);
+			} catch (IOException e) {
+				logger.error("IOException : Failure during the synchro of the domain with uuid" + identifier, e);
+				context.setProcessed(false);
 			} catch (Exception e) {
 				logger.error("Failure during the synchro of the domain with uuid" + identifier, e);
 				context.setProcessed(false);

@@ -39,6 +39,7 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
 import org.linagora.linshare.core.domain.entities.LdapConnection;
@@ -52,13 +53,12 @@ public interface LDAPGroupSyncService {
 
 	SharedSpaceLDAPGroup createOrUpdateLDAPGroup(Account actor, LdapGroupObject group, Date syncDate);
 
-	SharedSpaceLDAPGroupMember createOrUpdateLDAPGroupMember(Account actor, SharedSpaceLDAPGroup group,
-			LdapGroupMemberObject memberObject, Date syncDate);
+	SharedSpaceLDAPGroupMember createOrUpdateLDAPGroupMember(Account actor, AbstractDomain domain,
+			SharedSpaceLDAPGroup group, LdapGroupMemberObject memberObject, Date syncDate);
 
-	void applyTask(Account actor, LdapGroupObject ldapGroupObject, Set<LdapGroupMemberObject> memberObjects,
+	void applyTask(Account actor, AbstractDomain domain, LdapGroupObject ldapGroupObject, Set<LdapGroupMemberObject> memberObjects,
 			Date syncDate);
 
-	void executeBatch(Account actor, LdapConnection ldapConnection, String baseDn, GroupLdapPattern groupPattern)
-			throws BusinessException, NamingException, IOException;
+	void executeBatch(Account actor, AbstractDomain domain, LdapConnection ldapConnection, String baseDn, GroupLdapPattern groupPattern) throws BusinessException, NamingException, IOException;
 
 }
