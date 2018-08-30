@@ -45,14 +45,11 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ExceptionStatisticService;
 import org.linagora.linshare.mongo.entities.ExceptionStatistic;
 import org.linagora.linshare.mongo.repository.ExceptionStatisticMongoRepository;
 import org.linagora.linshare.webservice.utils.StatisticServiceUtils;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.google.common.collect.Lists;
 
@@ -70,12 +67,11 @@ public class ExceptionStatisticServiceImpl extends StatisticServiceUtils impleme
 
 	@Override
 	public ExceptionStatistic createExceptionStatistic(BusinessErrorCode errorCode, StackTraceElement[] stackTrace,
-			ExceptionType type) {
-		User authUser = checkAuthentication();
+			ExceptionType type, User authUser) {
 		Validate.notNull(type);
 		String domainUuid = authUser.getDomain().getUuid();
 		return exceptionStatisticMongoRepository
-				.insert(new ExceptionStatistic(1L, domainUuid, getParentDomainUuid(), errorCode, stackTrace,
+				.insert(new ExceptionStatistic(1L, domainUuid, getParentDomainUuid(authUser.getDomain()), errorCode, stackTrace,
 						type, ExceptionStatisticType.ONESHOT));
 	}
 
@@ -108,29 +104,9 @@ public class ExceptionStatisticServiceImpl extends StatisticServiceUtils impleme
 				type);
 	}
 
-	protected User checkAuthentication() throws BusinessException {
-		User authUser = getAuthentication();
-		if (authUser == null) {
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN,
-					"You are not authorized to use this service");
-		}
-		return authUser;
-	}
-
-	protected User getAuthentication() {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String name = (auth != null) ? auth.getName() : null;
-		if (name == null) {
-			return null;
-		}
-		User user = (User) accountService.findByLsUuid(name);
-		return user;
-	}
-
-	protected String getParentDomainUuid() {
+	protected String getParentDomainUuid(AbstractDomain domain) {
 		String parentDomainUuid = null;
-		User authUser = checkAuthentication();
-		AbstractDomain parentDomain = authUser.getDomain().getParentDomain();
+		AbstractDomain parentDomain = domain.getParentDomain();
 		if (parentDomain != null) {
 			parentDomainUuid = parentDomain.getUuid();
 		}

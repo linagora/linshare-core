@@ -38,9 +38,13 @@ import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.ExceptionStatisticType;
 import org.linagora.linshare.core.domain.constants.ExceptionType;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.mongo.entities.ExceptionStatistic;
 
 public interface ExceptionStatisticAdminFacade {
+
+	ExceptionStatistic createExceptionStatistic(BusinessErrorCode errorCode, StackTraceElement[] stackTrace,
+			ExceptionType type);
 
 	Set<ExceptionStatistic> findBetweenTwoDates(String domainUuid, String beginDate, String endDate,
 			List<ExceptionType> resourceTypes, ExceptionStatisticType type);

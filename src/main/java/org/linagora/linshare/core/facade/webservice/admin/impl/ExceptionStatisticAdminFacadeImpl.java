@@ -38,6 +38,13 @@ public class ExceptionStatisticAdminFacadeImpl extends AdminGenericFacadeImpl im
 	}
 
 	@Override
+	public ExceptionStatistic createExceptionStatistic(BusinessErrorCode errorCode, StackTraceElement[] stackTrace,
+			ExceptionType type) {
+		User authUser = checkAuthentication();
+		return statisticService.createExceptionStatistic(errorCode, stackTrace, type, authUser);
+	}
+
+	@Override
 	public Set<ExceptionStatistic> findBetweenTwoDates(String domainUuid, String beginDate, String endDate,
 			List<ExceptionType> exceptionTypes, ExceptionStatisticType type) {
 		User authUser = checkAuthentication(Role.ADMIN);

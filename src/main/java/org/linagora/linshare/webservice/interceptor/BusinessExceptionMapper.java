@@ -42,8 +42,8 @@ import javax.ws.rs.ext.ExceptionMapper;
 
 import org.linagora.linshare.core.domain.constants.ExceptionType;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.admin.ExceptionStatisticAdminFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.ErrorDto;
-import org.linagora.linshare.core.service.ExceptionStatisticService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +52,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class BusinessExceptionMapper implements ExceptionMapper<BusinessException> {
 
 	@Autowired
-	protected ExceptionStatisticService exceptionStatisticService;
+	protected ExceptionStatisticAdminFacade exceptionStatisticFacade;
 
 	private static final Logger logger = LoggerFactory.getLogger(BusinessExceptionMapper.class);
 
@@ -63,7 +63,7 @@ public class BusinessExceptionMapper implements ExceptionMapper<BusinessExceptio
 		logger.debug("Stacktrace: ", exception);
 		ErrorDto errorDto = new ErrorDto(exception.getErrorCode().getCode(), exception.getMessage());
 		ResponseBuilder response = Response.status(exception.getErrorCode().getStatus());
-		exceptionStatisticService.createExceptionStatistic(exception.getErrorCode(), exception.getStackTrace(),
+		exceptionStatisticFacade.createExceptionStatistic(exception.getErrorCode(), exception.getStackTrace(),
 				ExceptionType.BUSINESS_EXCEPTION);
 		response.entity(errorDto);
 		return response.build();

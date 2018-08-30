@@ -42,8 +42,8 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.codehaus.jackson.map.exc.UnrecognizedPropertyException;
 import org.linagora.linshare.core.domain.constants.ExceptionType;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.facade.webservice.admin.ExceptionStatisticAdminFacade;
 import org.linagora.linshare.core.facade.webservice.common.dto.ErrorDto;
-import org.linagora.linshare.core.service.ExceptionStatisticService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +51,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class UnrecognizedPropertyExceptionMapper implements ExceptionMapper<UnrecognizedPropertyException> {
 
 	@Autowired
-	protected ExceptionStatisticService exceptionStatisticService;
+	protected ExceptionStatisticAdminFacade exceptionStatisticFacade;
 	
 	private static final Logger logger = LoggerFactory.getLogger(UnrecognizedPropertyExceptionMapper.class);
 
@@ -63,7 +63,7 @@ public class UnrecognizedPropertyExceptionMapper implements ExceptionMapper<Unre
 				"You have an unrecognized field in your json : " + exception.getClass().toString() + " : "
 						+ exception.getMessage());
 		ResponseBuilder response = Response.status(HttpStatus.SC_BAD_REQUEST);
-		exceptionStatisticService.createExceptionStatistic(null, null, ExceptionType.UNRECOGNIZED_PROPERTY_EXCEPTION);
+		exceptionStatisticFacade.createExceptionStatistic(null, null, ExceptionType.UNRECOGNIZED_PROPERTY_EXCEPTION);
 		response.entity(errorDto);
 		return response.build();
 	}
