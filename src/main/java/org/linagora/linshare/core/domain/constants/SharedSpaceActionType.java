@@ -38,7 +38,9 @@ public enum SharedSpaceActionType {
 	READ,
 	UPDATE,
 	CREATE,
-	DELETE;
+	DELETE,
+	DOWNLOAD,
+	DOWNLOAD_THUMBNAIL;
 
 	public static SharedSpaceActionType fromString(String s) {
 		try {

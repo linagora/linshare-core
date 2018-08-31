@@ -82,11 +82,16 @@ public class SharedSpacePermissionNumberTest extends AbstractTransactionalJUnit4
 	}
 
 	@Test
-	public void testNumberofPermission() {
+	public void testNumberOfPermissions() {
 		Long resourceNumber = (long) SharedSpaceResourceType.values().length;
 		Long actionNumber = (long) SharedSpaceActionType.values().length;
-		Long actualPermissionNumber = resourceNumber * actionNumber;
+		Long actualPermissionNumber = resourceNumber * actionNumber - 7;
 		initMongo.init();
+		/*
+		 * The DOWNLOAD and DOWNLOAD_THUMBNAIL actions are not applicable to all
+		 * resources, DOWNLOAD ---> FOLDER + FILE and DOWNLOAD_THUMBNAIL ----> FILE, so
+		 * we substract 7 wich is the product of this new added perms.
+		 */
 		Long number = permissionRepo.count();
 		Assert.assertEquals(number, actualPermissionNumber);
 	}

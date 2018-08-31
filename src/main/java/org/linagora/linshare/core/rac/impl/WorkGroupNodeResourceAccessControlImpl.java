@@ -38,6 +38,7 @@ import org.linagora.linshare.core.domain.constants.PermissionType;
 import org.linagora.linshare.core.domain.constants.SharedSpaceActionType;
 import org.linagora.linshare.core.domain.constants.SharedSpaceResourceType;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
+import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -49,8 +50,11 @@ import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpacePermissionMongoRepository;
 
 public class WorkGroupNodeResourceAccessControlImpl
-		extends AbstractSharedSpaceResourceAccessControlImpl<Account, WorkGroupNode> implements WorkGroupNodeResourceAccessControl<Account, WorkGroupNode> {
-
+		extends AbstractSharedSpaceResourceAccessControlImpl<Account, WorkGroupNode>
+		implements WorkGroupNodeResourceAccessControl<Account, WorkGroupNode> {
+	
+	private SharedSpaceResourceType type = SharedSpaceResourceType.FOLDER;
+	
 	public WorkGroupNodeResourceAccessControlImpl(
 			FunctionalityReadOnlyService functionalityService,
 			SharedSpaceMemberMongoRepository sharedSpaceMemberMongoRepository,
@@ -74,8 +78,8 @@ public class WorkGroupNodeResourceAccessControlImpl
 	}
 
 	@Override
-	protected boolean isAuthorized(Account authUser, Account targetedAccount,
-			PermissionType permission, WorkGroupNode entry, Class<?> clazz, Object... opt) {
+	protected boolean isAuthorized(Account authUser, Account targetedAccount, PermissionType permission,
+			WorkGroupNode entry, Class<?> clazz, Object... opt) {
 		Validate.notNull(permission);
 		if (authUser.hasAllRights())
 			return true;
@@ -98,8 +102,7 @@ public class WorkGroupNodeResourceAccessControlImpl
 			if (hasDownloadPermission(authUser, targetedAccount, entry, opt))
 				return true;
 		} else if (permission.equals(PermissionType.DOWNLOAD_THUMBNAIL)) {
-			if (hasDownloadTumbnailPermission(authUser, targetedAccount, entry,
-					opt))
+			if (hasDownloadTumbnailPermission(authUser, targetedAccount, entry, opt))
 				return true;
 		}
 		if (clazz != null) {
@@ -115,23 +118,20 @@ public class WorkGroupNodeResourceAccessControlImpl
 	}
 
 	@Override
-	public void checkDownloadPermission(Account authUser, Account targetedAccount,
-			Class<?> clazz, BusinessErrorCode errCode, WorkGroupNode entry, Object... opt)
-			throws BusinessException {
+	public void checkDownloadPermission(Account authUser, Account targetedAccount, Class<?> clazz,
+			BusinessErrorCode errCode, WorkGroupNode entry, Object... opt) throws BusinessException {
 		String logMessage = " is not authorized to download the entry ";
 		String exceptionMessage = "You are not authorized to download this entry.";
-		checkPermission(authUser, targetedAccount, clazz, errCode, entry,
-				PermissionType.DOWNLOAD, logMessage, exceptionMessage, opt);
+		checkPermission(authUser, targetedAccount, clazz, errCode, entry, PermissionType.DOWNLOAD, logMessage,
+				exceptionMessage, opt);
 	}
 
 	@Override
-	public void checkThumbNailDownloadPermission(Account authUser,
-			Account targetedAccount, Class<?> clazz, BusinessErrorCode errCode,
-			WorkGroupNode entry, Object... opt) throws BusinessException {
+	public void checkThumbNailDownloadPermission(Account authUser, Account targetedAccount, Class<?> clazz,
+			BusinessErrorCode errCode, WorkGroupNode entry, Object... opt) throws BusinessException {
 		String logMessage = " is not authorized to get the thumbnail of the entry ";
 		String exceptionMessage = "You are not authorized to get the thumbnail of this entry.";
-		checkPermission(authUser, targetedAccount, clazz, errCode, entry,
-				PermissionType.DOWNLOAD_THUMBNAIL, logMessage,
+		checkPermission(authUser, targetedAccount, clazz, errCode, entry, PermissionType.DOWNLOAD_THUMBNAIL, logMessage,
 				exceptionMessage, opt);
 	}
 
@@ -143,7 +143,7 @@ public class WorkGroupNodeResourceAccessControlImpl
 
 	@Override
 	protected boolean hasListPermission(Account authUser, Account actor, WorkGroupNode entry, Object... opt) {
-		WorkGroup workGroup = (WorkGroup)opt[0];
+		WorkGroup workGroup = (WorkGroup) opt[0];
 		return defaultSharedSpacePermissionCheck(authUser, actor, workGroup.getLsUuid(),
 				TechnicalAccountPermissionType.THREAD_ENTRIES_LIST, SharedSpaceActionType.READ);
 	}
@@ -156,7 +156,7 @@ public class WorkGroupNodeResourceAccessControlImpl
 
 	@Override
 	protected boolean hasCreatePermission(Account authUser, Account actor, WorkGroupNode entry, Object... opt) {
-		WorkGroup workGroup = (WorkGroup)opt[0];
+		WorkGroup workGroup = (WorkGroup) opt[0];
 		return defaultSharedSpacePermissionCheck(authUser, actor, workGroup.getLsUuid(),
 				TechnicalAccountPermissionType.THREAD_ENTRIES_CREATE, SharedSpaceActionType.CREATE);
 	}
@@ -167,21 +167,32 @@ public class WorkGroupNodeResourceAccessControlImpl
 				TechnicalAccountPermissionType.THREAD_ENTRIES_UPDATE, SharedSpaceActionType.UPDATE);
 	}
 
-	protected boolean hasDownloadPermission(Account authUser,
-			Account actor, WorkGroupNode entry, Object... opt) {
+	protected boolean hasDownloadPermission(Account authUser, Account actor, WorkGroupNode entry, Object... opt) {
+		setType(entry);
 		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.THREAD_ENTRIES_DOWNLOAD, SharedSpaceActionType.READ);
+				TechnicalAccountPermissionType.THREAD_ENTRIES_DOWNLOAD, SharedSpaceActionType.DOWNLOAD);
 	}
 
-	protected boolean hasDownloadTumbnailPermission(Account authUser,
-			Account actor, WorkGroupNode entry, Object... opt) {
+	protected boolean hasDownloadTumbnailPermission(Account authUser, Account actor, WorkGroupNode entry,
+			Object... opt) {
+		setType(entry);
 		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.THREAD_ENTRIES_DOWNLOAD_THUMBNAIL, SharedSpaceActionType.READ);
+				TechnicalAccountPermissionType.THREAD_ENTRIES_DOWNLOAD_THUMBNAIL,
+				SharedSpaceActionType.DOWNLOAD_THUMBNAIL);
+	}
+
+	private SharedSpaceResourceType setType(WorkGroupNode entry) {
+		if (entry.getNodeType().equals(WorkGroupNodeType.ASYNC_TASK)
+				|| entry.getNodeType().equals(WorkGroupNodeType.ROOT_FOLDER)) {
+			type = SharedSpaceResourceType.FOLDER;
+			return type;
+		}
+		return SharedSpaceResourceType.FILE;
 	}
 
 	@Override
 	protected SharedSpaceResourceType getSharedSpaceResourceType() {
-		return SharedSpaceResourceType.FOLDER;
+		return type;
 	}
 
 	@Override
