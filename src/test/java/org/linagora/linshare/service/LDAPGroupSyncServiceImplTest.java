@@ -55,6 +55,7 @@ import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.job.quartz.LdapGroupsBatchResultContext;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.LDAPGroupSyncService;
@@ -296,7 +297,8 @@ public class LDAPGroupSyncServiceImplTest extends AbstractTransactionalJUnit4Spr
 
 	@Test
 	public void testExecuteBatchWithDatas() throws BusinessException, IOException, NamingException {
-		syncService.executeBatch(systemAccount, domain, ldapConnection, baseDn, groupPattern);
+		LdapGroupsBatchResultContext resultContext = new LdapGroupsBatchResultContext(domain);
+		syncService.executeBatch(systemAccount, domain, ldapConnection, baseDn, groupPattern, resultContext);
 		List<SharedSpaceNode> foundNodes = nodeService.findAll(systemAccount, systemAccount);
 		for (SharedSpaceNode sharedSpaceNode : foundNodes) {
 			List<SharedSpaceMember> foundMembers = memberService.findByNode(systemAccount, systemAccount,

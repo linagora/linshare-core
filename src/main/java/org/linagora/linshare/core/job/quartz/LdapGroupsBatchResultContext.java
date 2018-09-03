@@ -31,37 +31,74 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
-
-import java.io.IOException;
-import java.util.Date;
-import java.util.Set;
-
-import javax.naming.NamingException;
+package org.linagora.linshare.core.job.quartz;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
-import org.linagora.linshare.core.domain.entities.LdapConnection;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.job.quartz.LdapGroupsBatchResultContext;
-import org.linagora.linshare.ldap.LdapGroupMemberObject;
-import org.linagora.linshare.ldap.LdapGroupObject;
-import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroup;
-import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroupMember;
 
-public interface LDAPGroupSyncService {
+public class LdapGroupsBatchResultContext extends DomainBatchResultContext {
 
-	SharedSpaceLDAPGroup createOrUpdateLDAPGroup(Account actor, LdapGroupObject group, Date syncDate);
+	protected Integer nbUpdatedGroups = 0;
 
-	SharedSpaceLDAPGroupMember createOrUpdateLDAPGroupMember(Account actor, AbstractDomain domain,
-			SharedSpaceLDAPGroup group, LdapGroupMemberObject memberObject, Date syncDate);
+	protected Integer nbDeletedGroups = 0;
 
-	void applyTask(Account actor, AbstractDomain domain, LdapGroupObject ldapGroupObject, Set<LdapGroupMemberObject> memberObjects,
-			Date syncDate);
+	protected Integer nbCreatedGroups = 0;
 
-	void executeBatch(Account actor, AbstractDomain domain, LdapConnection ldapConnection, String baseDn,
-			GroupLdapPattern groupPattern, LdapGroupsBatchResultContext resultContext)
-			throws BusinessException, NamingException, IOException;
+	protected Integer nbUpdatedMembers = 0;
 
+	protected Integer nbDeletedMembers = 0;
+
+	protected Integer nbCreatedMembers = 0;
+
+	public LdapGroupsBatchResultContext(AbstractDomain resource) {
+		super(resource);
+		this.identifier = resource.getUuid();
+	}
+
+	public Integer getNbUpdatedGroups() {
+		return nbUpdatedGroups;
+	}
+
+	public void setNbUpdatedGroups(Integer nbUpdatedGroups) {
+		this.nbUpdatedGroups = nbUpdatedGroups;
+	}
+
+	public Integer getNbDeletedGroups() {
+		return nbDeletedGroups;
+	}
+
+	public void setNbDeletedGroups(Integer nbDeletedGroups) {
+		this.nbDeletedGroups = nbDeletedGroups;
+	}
+
+	public Integer getNbCreatedGroups() {
+		return nbCreatedGroups;
+	}
+
+	public void setNbCreatedGroups(Integer nbCreatedGroups) {
+		this.nbCreatedGroups = nbCreatedGroups;
+	}
+
+	public Integer getNbUpdatedMembers() {
+		return nbUpdatedMembers;
+	}
+
+	public void setNbUpdatedMembers(Integer nbUpdatedMembers) {
+		this.nbUpdatedMembers = nbUpdatedMembers;
+	}
+
+	public Integer getNbDeletedMembers() {
+		return nbDeletedMembers;
+	}
+
+	public void setNbDeletedMembers(Integer nbDeletedMembers) {
+		this.nbDeletedMembers = nbDeletedMembers;
+	}
+
+	public Integer getNbCreatedMembers() {
+		return nbCreatedMembers;
+	}
+
+	public void setNbCreatedMembers(Integer nbCreatedMembers) {
+		this.nbCreatedMembers = nbCreatedMembers;
+	}
 }

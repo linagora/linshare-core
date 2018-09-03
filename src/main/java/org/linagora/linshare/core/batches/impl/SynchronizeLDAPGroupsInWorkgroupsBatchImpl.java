@@ -48,7 +48,7 @@ import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.dto.LDAPGroupProviderDto;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
-import org.linagora.linshare.core.job.quartz.DomainBatchResultContext;
+import org.linagora.linshare.core.job.quartz.LdapGroupsBatchResultContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.AccountRepository;
@@ -87,9 +87,10 @@ public class SynchronizeLDAPGroupsInWorkgroupsBatchImpl extends GenericBatchImpl
 	@Override
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
+		logger.info("Synchronizing the LDAP groups for the domain with uuid " + identifier);
 		SystemAccount systemAccount = accountRepository.getBatchSystemAccount();
 		AbstractDomain domain = domainRepository.findById(identifier);
-		ResultContext context = new DomainBatchResultContext(domain);
+		LdapGroupsBatchResultContext context = new LdapGroupsBatchResultContext(domain);
 		GroupProvider groupProvider = domain.getGroupProvider();
 		if (null != groupProvider) {
 			LDAPGroupProviderDto dto = groupProvider.toLDAPGroupProviderDto();
@@ -97,7 +98,7 @@ public class SynchronizeLDAPGroupsInWorkgroupsBatchImpl extends GenericBatchImpl
 			GroupLdapPattern groupPattern = patternService.find(dto.getPattern().getUuid());
 			String baseDn = dto.getBaseDn();
 			try {
-				syncService.executeBatch(systemAccount, domain, ldapConnection, baseDn, groupPattern);
+				syncService.executeBatch(systemAccount, domain, ldapConnection, baseDn, groupPattern, context);
 				context.setProcessed(true);
 			} catch (NamingException e) {
 				logger.error("NamingException : Failure during the synchro of the domain with uuid" + identifier, e);
@@ -115,16 +116,22 @@ public class SynchronizeLDAPGroupsInWorkgroupsBatchImpl extends GenericBatchImpl
 
 	@Override
 	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
-		DomainBatchResultContext domainContext = (DomainBatchResultContext) context;
-		AbstractDomain domain = domainContext.getResource();
+		LdapGroupsBatchResultContext renameContext = (LdapGroupsBatchResultContext) context;
+		AbstractDomain domain = renameContext.getResource();
 		console.logInfo(batchRunContext, total, position,
 				"The LDAP groups of the domain " + domain.getUuid() + " have been synchronized");
+		console.logInfo(batchRunContext, total, position, renameContext.getNbCreatedGroups() + " Groups(s) created");
+		console.logInfo(batchRunContext, total, position, renameContext.getNbUpdatedGroups() + " Groups(s) updated");
+		console.logInfo(batchRunContext, total, position, renameContext.getNbDeletedGroups() + " Groups(s) deleted");
+		console.logInfo(batchRunContext, total, position, renameContext.getNbCreatedMembers() + " Member(s) created");
+		console.logInfo(batchRunContext, total, position, renameContext.getNbUpdatedMembers() + " Member(s) updated");
+		console.logInfo(batchRunContext, total, position, renameContext.getNbDeletedMembers() + " Member(s) deleted");
 	}
 
 	@Override
 	public void notifyError(BatchBusinessException exception, String identifier, long total, long position,
 			BatchRunContext batchRunContext) {
-		DomainBatchResultContext domainContext = (DomainBatchResultContext) exception.getContext();
+		LdapGroupsBatchResultContext domainContext = (LdapGroupsBatchResultContext) exception.getContext();
 		AbstractDomain domain = domainContext.getResource();
 		console.logError(batchRunContext, total, position,
 				"Failure of the synchronization of the domain " + domain.getUuid());

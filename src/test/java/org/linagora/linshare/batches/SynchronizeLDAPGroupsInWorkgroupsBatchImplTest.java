@@ -146,13 +146,16 @@ public class SynchronizeLDAPGroupsInWorkgroupsBatchImplTest extends AbstractTran
 		GroupLdapPattern groupPattern = groupPatternService.create(root, new GroupLdapPattern(groupPatternDto));
 		LdapConnection connection = ldapConnectionService
 				.create(new LdapConnection("Ldap Groups", "ldap://localhost:33389", "anonymous"));
-		LdapGroupProvider groupProvider = new LdapGroupProvider(groupPattern, "dc=linshare,dc=org", connection, true,
+		LdapGroupProvider groupProvider = new LdapGroupProvider(groupPattern, "ou=groups,dc=linshare,dc=org", connection, true,
 				true);
 		groupProvider.setType(GroupProviderType.LDAP_PROVIDER);
 		groupProvider = groupProviderService.create(groupProvider);
-		AbstractDomain topDomain = abstractDomainService.findById(LoadingServiceTestDatas.topDomainName);
-		topDomain.setGroupProvider(groupProvider);
-		topDomain = abstractDomainService.updateDomain(datas.getRoot(), topDomain);
+//		AbstractDomain topDomain = abstractDomainService.findById(LoadingServiceTestDatas.topDomainName);
+//		topDomain.setGroupProvider(groupProvider);
+//		topDomain = abstractDomainService.updateDomain(datas.getRoot(), topDomain);
+		AbstractDomain domain = abstractDomainService.findById(LoadingServiceTestDatas.sqlDomain);
+		domain.setGroupProvider(groupProvider);
+		domain = abstractDomainService.updateDomain(datas.getRoot(), domain);
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 	}
 
