@@ -101,4 +101,9 @@ public class SharedSpaceNodeResourceAccessControlImpl
 		return entry.getUuid();
 	}
 
+	@Override
+	protected Account getOwner(SharedSpaceNode entry, Object... opt) {
+		return null;
+	}
+
 }
