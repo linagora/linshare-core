@@ -870,7 +870,7 @@ public class UserServiceImpl implements UserService {
 			} else {
 				logger.error("Could not find the user " + mail
 						+ " in the database nor in the LDAP");
-				logger.debug("nb result : " + users.size());
+				logger.debug("nb result : " + (users != null ? users.size() : 0));
 				// this should really not happened
 				throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
 						"The user could not be found in the DB nor in the LDAP");

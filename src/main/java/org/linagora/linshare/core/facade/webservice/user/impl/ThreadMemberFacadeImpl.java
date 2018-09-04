@@ -97,15 +97,15 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 	}
 
 	@Override
-	public WorkGroupMemberDto create(String threadUuid, String domainId, String userMail, boolean readOnly,
-			boolean admin) throws BusinessException {
+	public WorkGroupMemberDto create(String threadUuid, WorkGroupMemberDto workGroupMember) throws BusinessException {
 		Validate.notEmpty(threadUuid, "Missing required thread uuid");
-		Validate.notEmpty(domainId, "Missing required domain id");
-		Validate.notEmpty(userMail, "Missing required mail");
+		Validate.notNull(workGroupMember, "WorkGroupMember must be set");
+		Validate.notEmpty(workGroupMember.getUserDomainId(), "Missing required domain id");
+		Validate.notEmpty(workGroupMember.getUserMail(), "Missing required mail");
 		User authUser = checkAuthentication();
-		User newMember = userService.findOrCreateUser(userMail, domainId);
+		User newMember = userService.findOrCreateUser(workGroupMember.getUserMail(), workGroupMember.getUserDomainId());
 		SharedSpaceNode foundSharedSpaceNode = sharedSpaceNodeService.find(authUser, authUser, threadUuid);
-		SharedSpaceRole defaultRole = getDefaultRole(authUser, admin);
+		SharedSpaceRole defaultRole = getDefaultRole(authUser, workGroupMember.isAdmin());
 		SharedSpaceMember create = ssMemberService.create(authUser, authUser, foundSharedSpaceNode, defaultRole,
 				new SharedSpaceAccount(newMember));
 		return new WorkGroupMemberDto(create, newMember);

@@ -86,7 +86,7 @@ public class ThreadMemberRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid,
 			@ApiParam(value = "The user domain identifier.", required = true) WorkGroupMemberDto threadMember)
 					throws BusinessException {
-		return threadMemberFacade.create(threadUuid, threadMember.getUserDomainId(), threadMember.getUserMail(), threadMember.isReadonly(), threadMember.isAdmin());
+		return threadMemberFacade.create(threadUuid, threadMember);
 	}
 
 	@Path("/")

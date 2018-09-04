@@ -86,7 +86,7 @@ public class WorkGroupMemberRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workGroupUuid") String workGroupUuid,
 			@ApiParam(value = "The user domain identifier.", required = true) WorkGroupMemberDto workGroupMember)
 					throws BusinessException {
-		return workGroupMemberFacade.create(workGroupUuid, workGroupMember.getUserDomainId(), workGroupMember.getUserMail(), workGroupMember.isReadonly(), workGroupMember.isAdmin());
+		return workGroupMemberFacade.create(workGroupUuid, workGroupMember);
 	}
 
 	@Path("/")

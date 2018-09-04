@@ -45,8 +45,7 @@ public interface WorkGroupMemberFacade extends GenericFacade {
 	WorkGroupMemberDto find(String threadUuid, String threadMemberUuid)
 			throws BusinessException;
 
-	WorkGroupMemberDto create(String threadUuid, String domainId, String userMail,
-			boolean readOnly, boolean admin) throws BusinessException;
+	WorkGroupMemberDto create(String threadUuid, WorkGroupMemberDto workGroupMember) throws BusinessException;
 
 	WorkGroupMemberDto update(String threadUuid, WorkGroupMemberDto threadMember)
 			throws BusinessException;

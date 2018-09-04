@@ -171,6 +171,12 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		Validate.notNull(node, "Node uuid must be set.");
 		checkCreatePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
 				null, node);
+		User newMember = userRepository.findByLsUuid(account.getUuid());
+		if (newMember == null) {
+			String message = String.format(
+					"The account with the UUID : %s is not existing", account.getUuid());
+			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, message);
+		}
 		if (!checkMemberNotInNode(account.getUuid(), node.getUuid())) {
 			String message = String.format(
 					"The account with the UUID : %s is already a member of the node with the uuid : %s",
@@ -178,8 +184,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_ALREADY_EXISTS, message);
 		}
 		SharedSpaceMember member = createWithoutCheckPermission(authUser, actor, node, role, account);
-		User user = userRepository.findByLsUuid(account.getUuid());
-		WorkGroupWarnNewMemberEmailContext context = new WorkGroupWarnNewMemberEmailContext(member, actor, user);
+		WorkGroupWarnNewMemberEmailContext context = new WorkGroupWarnNewMemberEmailContext(member, actor, newMember);
 		MailContainerWithRecipient mail = mailBuildingService.build(context);
 		notifierService.sendNotification(mail, true);
 		return member;
