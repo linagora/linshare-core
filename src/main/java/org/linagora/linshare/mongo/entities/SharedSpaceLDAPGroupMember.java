@@ -43,7 +43,7 @@ public class SharedSpaceLDAPGroupMember extends SharedSpaceMember {
 
 	protected Date syncDate;
 
-	public SharedSpaceLDAPGroupMember(SharedSpaceNodeNested node, GenericLightEntity role, GenericLightEntity account,
+	public SharedSpaceLDAPGroupMember(SharedSpaceNodeNested node, GenericLightEntity role, SharedSpaceAccount account,
 			String externalId, Date syncDate) {
 		super(node, role, account);
 		this.externalId = externalId;

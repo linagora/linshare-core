@@ -129,12 +129,14 @@ public class AdvancedStatisticBatchTest extends AbstractTransactionalJUnit4Sprin
 	private UploadRequestEntryService uploadRequestEntryService;
 
 	@Autowired
+	@Qualifier("sharedSpaceNodeBusinessService")
 	private SharedSpaceNodeBusinessService sharedSpaceNodeBusinessService;
 
 	@Autowired
 	private SharedSpaceRoleBusinessService roleBusinessService;
 
 	@Autowired
+	@Qualifier("sharedSpaceMemberService")
 	private SharedSpaceMemberService memberService;
 
 	@Autowired

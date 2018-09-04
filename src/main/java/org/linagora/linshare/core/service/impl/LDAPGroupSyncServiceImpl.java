@@ -58,6 +58,7 @@ import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.ldap.LdapGroupMemberObject;
 import org.linagora.linshare.ldap.LdapGroupObject;
 import org.linagora.linshare.ldap.Role;
+import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroup;
 import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroupMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
@@ -197,8 +198,7 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 			User user, String externalId, Date syncDate) {
 		SharedSpaceNodeNested node = new SharedSpaceNodeNested(group);
 		GenericLightEntity lightRole = new GenericLightEntity(role.getUuid(), role.getName());
-		GenericLightEntity account = new GenericLightEntity(user.getLsUuid(), user.getFullName());
-		return new SharedSpaceLDAPGroupMember(node, lightRole, account, externalId, syncDate);
+		return new SharedSpaceLDAPGroupMember(node, lightRole, new SharedSpaceAccount(user), externalId, syncDate);
 	}
 
 	private SharedSpaceLDAPGroup findGroupToUpdate(String externalId, Date syncDate) {
@@ -260,8 +260,7 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 		// Delete all outdated members
 		for (SharedSpaceLDAPGroupMember outDatedMember : outDatedMembers) {
 			computeStats(DELETED_MEMBERS);
-			memberService.delete(actor, actor, outDatedMember.getUuid(),
-					userService.findByLsUuid(outDatedMember.getAccount().getUuid()));
+			memberService.delete(actor, actor, outDatedMember.getUuid());
 		}
 	}
 

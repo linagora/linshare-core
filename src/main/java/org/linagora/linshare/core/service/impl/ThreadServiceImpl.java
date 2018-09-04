@@ -133,7 +133,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 	}
 
 	@Override
-	public void deleteThread(User actor, Account owner, WorkGroup workGroup)
+	public void deleteThread(Account actor, Account owner, WorkGroup workGroup)
 			throws BusinessException {
 		WorkGroupNode rootFolder = workGroupNodeService.getRootFolder(actor, owner, workGroup);
 		workGroupNodeService.delete(actor, owner, workGroup, rootFolder.getUuid());
@@ -143,7 +143,7 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 	}
 
 	@Override
-	public WorkGroup update(User actor, Account owner, String threadUuid,
+	public WorkGroup update(Account actor, Account owner, String threadUuid,
 			String threadName) throws BusinessException {
 		WorkGroup workGroup = find(actor, owner, threadUuid);
 		ThreadAuditLogEntry log = new ThreadAuditLogEntry(actor, owner, LogAction.UPDATE, AuditLogEntryType.WORKGROUP,

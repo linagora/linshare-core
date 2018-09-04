@@ -44,9 +44,9 @@ public interface ThreadService {
 
 	WorkGroup create(Account actor, Account owner, String name) throws BusinessException;
 
-	void deleteThread(User actor, Account owner, WorkGroup workGroup) throws BusinessException;
+	void deleteThread(Account actor, Account owner, WorkGroup workGroup) throws BusinessException;
 
-	WorkGroup update(User actor, Account owner, String threadUuid, String threadName) throws BusinessException;
+	WorkGroup update(Account actor, Account owner, String threadUuid, String threadName) throws BusinessException;
 
 	WorkGroup findByLsUuidUnprotected(String uuid);
 

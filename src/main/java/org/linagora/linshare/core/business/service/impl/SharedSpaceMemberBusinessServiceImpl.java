@@ -56,9 +56,9 @@ import com.google.common.collect.Lists;
 
 public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBusinessService {
 
-	private final SharedSpaceMemberMongoRepository repository;
-	
-	private final SharedSpaceRoleMongoRepository roleRepository;
+	protected final SharedSpaceMemberMongoRepository repository;
+
+	protected final SharedSpaceRoleMongoRepository roleRepository;
 
 	public SharedSpaceMemberBusinessServiceImpl(SharedSpaceMemberMongoRepository sharedSpaceMemberMongoRepository,
 			SharedSpaceRoleMongoRepository roleRepository) {

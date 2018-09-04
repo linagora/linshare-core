@@ -38,13 +38,15 @@ import java.util.Date;
 import org.linagora.linshare.core.business.service.SharedSpaceLDAPGroupMemberBusinessService;
 import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroupMember;
 import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
+import org.linagora.linshare.mongo.repository.SharedSpaceRoleMongoRepository;
 
 public class SharedSpaceLDAPGroupMemberBusinessServiceImpl extends SharedSpaceMemberBusinessServiceImpl
 		implements SharedSpaceLDAPGroupMemberBusinessService {
 
 	public SharedSpaceLDAPGroupMemberBusinessServiceImpl(
-			SharedSpaceMemberMongoRepository sharedSpaceMemberMongoRepository) {
-		super(sharedSpaceMemberMongoRepository);
+			SharedSpaceMemberMongoRepository repository,
+			SharedSpaceRoleMongoRepository roleRepository) {
+		super(repository, roleRepository);
 	}
 
 	@Override
@@ -54,7 +56,7 @@ public class SharedSpaceLDAPGroupMemberBusinessServiceImpl extends SharedSpaceMe
 
 	@Override
 	public SharedSpaceLDAPGroupMember update(SharedSpaceLDAPGroupMember member) {
-		SharedSpaceLDAPGroupMember found = (SharedSpaceLDAPGroupMember) findByMemberAndSharedSpaceNode(
+		SharedSpaceLDAPGroupMember found = (SharedSpaceLDAPGroupMember) findByAccountAndNode(
 				member.getAccount().getUuid(), member.getNode().getUuid());
 		found.setRole(member.getRole());
 		found.setSyncDate(member.getSyncDate());
