@@ -238,7 +238,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		preChecks(authUser, actor);
 		Validate.notNull(memberToUpdate, "Missing required member to update");
 		Validate.notNull(memberToUpdate.getUuid(), "Missing required member uuid to update");
-		SharedSpaceMember foundMemberToUpdate = find(authUser, actor, memberToUpdate.getUuid());
+		SharedSpaceMember foundMemberToUpdate = findMemberByUuid(authUser, actor, memberToUpdate.getAccount().getUuid(), memberToUpdate.getNode().getUuid());
 		checkUpdatePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
 				foundMemberToUpdate);
 		SharedSpaceMember updated = businessService.update(foundMemberToUpdate, memberToUpdate);

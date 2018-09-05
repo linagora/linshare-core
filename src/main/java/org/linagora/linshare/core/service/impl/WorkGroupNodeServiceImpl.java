@@ -244,7 +244,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 	}
 
 	@Override
-	public WorkGroupNode update(Account actor, User owner, WorkGroup workGroup, WorkGroupNode dto)
+	public WorkGroupNode update(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode dto)
 			throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notNull(dto);

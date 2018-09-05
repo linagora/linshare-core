@@ -151,10 +151,9 @@ public class ThreadServiceImpl extends GenericServiceImpl<Account, WorkGroup> im
 		workGroup.setName(threadName);
 		addMembersToLog(workGroup, log);
 		WorkGroup update = threadRepository.update(workGroup);
-		User owner2 = (User) owner;
-		WorkGroupNode rootFolder = workGroupNodeService.getRootFolder(actor, owner2, workGroup);
+		WorkGroupNode rootFolder = workGroupNodeService.getRootFolder(actor, owner, workGroup);
 		rootFolder.setName(threadName);
-		workGroupNodeService.update(actor, owner2, workGroup, rootFolder);
+		workGroupNodeService.update(actor, owner, workGroup, rootFolder);
 		log.setResourceUpdated(new ThreadMto(update, true));
 		logEntryService.insert(log);
 		return update;

@@ -83,7 +83,7 @@ public interface WorkGroupNodeService {
 			String parentNodeUuid, Boolean strict) throws BusinessException;
 
 	@Deprecated
-	WorkGroupNode update(Account actor, User owner, WorkGroup workGroup, WorkGroupNode workGroupNode)
+	WorkGroupNode update(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode)
 			throws BusinessException;
 
 	@Deprecated

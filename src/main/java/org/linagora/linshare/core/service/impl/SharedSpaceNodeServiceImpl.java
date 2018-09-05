@@ -72,7 +72,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 
 	private final LogEntryService logEntryService;
 
-	private final ThreadService threadService;
+	protected final ThreadService threadService;
 
 	public SharedSpaceNodeServiceImpl(SharedSpaceNodeBusinessService businessService,
 			SharedSpaceNodeResourceAccessControl rac,
@@ -210,6 +210,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 				nodeToUpdate);
 		SharedSpaceNode updated = businessService.update(node, nodeToUpdate);
 		memberBusinessService.updateNestedNode(updated);
+		threadService.update(authUser, actor, updated.getUuid(), updated.getName());
 		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.UPDATE,
 				AuditLogEntryType.WORKGROUP, node);
 		log.setResourceUpdated(updated);

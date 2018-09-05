@@ -80,6 +80,7 @@ public class SharedSpaceLDAPGroupServiceImpl extends SharedSpaceNodeServiceImpl 
 		Validate.notEmpty(ldapGroup.getExternalId(), "The external ID must be set");
 		checkUpdatePermission(actor, actor, SharedSpaceLDAPGroup.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, ldapGroup);
 		SharedSpaceLDAPGroup updated = businessService.update(ldapGroup);
+		threadService.update(actor, actor, updated.getUuid(), updated.getName());
 		updateLog(actor, actor, ldapGroup, updated);
 		return updated;
 	}
