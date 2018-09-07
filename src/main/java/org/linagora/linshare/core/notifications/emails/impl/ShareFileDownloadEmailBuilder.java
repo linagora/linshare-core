@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.notifications.emails.impl;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -71,7 +72,8 @@ public class ShareFileDownloadEmailBuilder extends EmailBuilder {
 		Share downloadedShare = emailCtx.getShare();
 		Document document = emailCtx.getDocument();
 		Date shareDate = emailCtx.getEntry().getCreationDate().getTime();
-		Date expiryDate = emailCtx.getEntry().getExpirationDate().getTime();
+		Calendar expirationDate = emailCtx.getEntry().getExpirationDate();
+		Date expiryDate = expirationDate != null ? expirationDate.getTime() : null;
 		document.setHref(getOwnerDocumentLink(linshareURL, document.getUuid()));
 
 		Context ctx = new Context(emailCtx.getLocale());

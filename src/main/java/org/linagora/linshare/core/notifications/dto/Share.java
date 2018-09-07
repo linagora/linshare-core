@@ -76,7 +76,7 @@ public class Share {
 		this.name = se.getName();
 		this.downloaded = se.getDownloaded() > 0;
 		this.creationDate = se.getCreationDate().getTime();
-		this.expirationDate = se.getExpirationDate().getTime();
+		this.expirationDate = se.getExpirationDate() != null ? se.getExpirationDate().getTime() : null;
 		this.isDownloading = false;
 	}
 
