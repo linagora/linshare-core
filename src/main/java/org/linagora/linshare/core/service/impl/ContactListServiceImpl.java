@@ -170,10 +170,10 @@ public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactL
 		Validate.notEmpty(listToUpdate.getUuid());
 
 		User actor = userService.findByLsUuid(actorUuid);
+		ContactList found = contactListBusinessService.findByUuid(listToUpdate.getUuid());
 		if (!actor.hasSuperAdminRole()) {
 			checkRights(actor, listToUpdate, "You are not authorized to update this list.");
-		}
-		if (actor.hasSuperAdminRole()) {
+		} else {
 			// only super admin is authorized to modify list owner.
 			User owner = listToUpdate.getOwner();
 			if (owner != null) {
@@ -181,8 +181,8 @@ public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactL
 			}
 		}
 		MailingListAuditLogEntry log = new MailingListAuditLogEntry(new AccountMto(actor),
-				new AccountMto(listToUpdate.getOwner()), LogAction.UPDATE, AuditLogEntryType.CONTACTS_LISTS,
-				listToUpdate);
+				new AccountMto(found.getOwner()), LogAction.UPDATE, AuditLogEntryType.CONTACTS_LISTS,
+				found);
 		ContactList res = contactListBusinessService.updateList(listToUpdate);
 		log.setResourceUpdated(new MailingListMto(res));
 		logEntryService.insert(log);

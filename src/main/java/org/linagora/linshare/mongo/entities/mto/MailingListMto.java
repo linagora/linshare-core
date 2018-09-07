@@ -57,6 +57,8 @@ public class MailingListMto {
 
 	protected List<MailingListContactMto> contacts;
 
+	protected boolean isPublic;
+
 	public MailingListMto() {
 	}
 
@@ -66,6 +68,7 @@ public class MailingListMto {
 		this.name = list.getIdentifier();
 		this.owner = new AccountMto(list.getOwner());
 		this.domain = new DomainMto(list.getDomain());
+		this.isPublic = list.isPublic();
 		this.contacts = Lists.newArrayList();
 		for (ContactListContact m : list.getMailingListContact()) {
 			contacts.add(new MailingListContactMto(m));
@@ -119,4 +122,13 @@ public class MailingListMto {
 	public void setContacts(List<MailingListContactMto> contacts) {
 		this.contacts = contacts;
 	}
+
+	public boolean isPublic() {
+		return isPublic;
+	}
+
+	public void setPublic(boolean isPublic) {
+		this.isPublic = isPublic;
+	}
+
 }

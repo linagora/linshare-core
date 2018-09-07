@@ -102,6 +102,7 @@ public class MailingListFacadeImpl extends AdminGenericFacadeImpl implements
 	public MailingListDto update(MailingListDto dto) throws BusinessException {
 		User authUser = checkAuthentication(Role.ADMIN);
 		Validate.notNull(dto.getUuid(), "uuid dto must be set.");
+		Validate.notNull(dto.getOwner(), "Owner of contact list must be set");
 		ContactList list = new ContactList(dto);
 		return new MailingListDto(contactListService.updateList(authUser.getLsUuid(), list));
 	}
