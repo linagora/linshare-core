@@ -58,8 +58,6 @@ public interface SharedSpaceNodeService {
 	 **/
 	List<SharedSpaceNode> searchByName(Account authUser, Account actor, String name) throws BusinessException;
 
-	List<SharedSpaceNode> findAllNodesBySSMember(Account authUser, String memberName);
-
 	List<SharedSpaceMember> findAllMembers(Account authUser, Account actor, String sharedSpaceNodeUuid);
 
 	List<SharedSpaceNodeNested> findAllByAccount(Account authUser, Account actor);

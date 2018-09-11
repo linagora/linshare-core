@@ -155,16 +155,6 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	}
 
 	@Override
-	public List<SharedSpaceMember> findByMemberName(Account authUser, Account actor, String name) {
-		preChecks(authUser, actor);
-		Validate.notEmpty(name, "Shared space member account name must be set.");
-		List<SharedSpaceMember> foundMembers = businessService.findByMemberName(name);
-		checkListPermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
-				null);
-		return foundMembers;
-	}
-
-	@Override
 	public SharedSpaceMember create(Account authUser, Account actor, SharedSpaceNode node, SharedSpaceRole role,
 			SharedSpaceAccount account) throws BusinessException {
 		Validate.notNull(role, "Role must be set.");

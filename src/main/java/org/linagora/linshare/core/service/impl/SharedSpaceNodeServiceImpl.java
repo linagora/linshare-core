@@ -51,15 +51,13 @@ import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
-import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.logs.SharedSpaceNodeAuditLogEntry;
-
-import com.google.common.collect.Lists;
 
 public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, SharedSpaceNode>
 		implements SharedSpaceNodeService {
@@ -245,16 +243,5 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		List<SharedSpaceNode> founds = businessService.searchByName(name);
 		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
 		return founds;
-	}
-
-	@Override
-	public List<SharedSpaceNode> findAllNodesBySSMember(Account authUser, String memberName) {
-		List<SharedSpaceMember> ssmembers = memberService.findByMemberName(authUser, authUser, memberName);
-		// TODO : to replace by query methods in mongoRepository for more performances.
-		List<SharedSpaceNode> nodes = Lists.newArrayList();
-		for (SharedSpaceMember member : ssmembers) {
-			nodes.add(find(authUser, authUser, member.getNode().getUuid()));
-		}
-		return nodes;
 	}
 }
