@@ -44,13 +44,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonTypeInfo;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @XmlRootElement(name = "SharedSpaceNode")
 @Document(collection = "shared_space_nodes")
 public class SharedSpaceNode {
