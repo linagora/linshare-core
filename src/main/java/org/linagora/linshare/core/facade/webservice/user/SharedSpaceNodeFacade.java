@@ -44,8 +44,6 @@ public interface SharedSpaceNodeFacade {
 
 	List<SharedSpaceNode> findAll();
 
-	List<SharedSpaceNodeNested> findAllByMember(String actorUuid, String accountUuid);
-
 	SharedSpaceNode find(String actorUuid, String uuid) throws BusinessException;
 
 	SharedSpaceNode create(String actorUuid, SharedSpaceNode node) throws BusinessException;
@@ -55,5 +53,7 @@ public interface SharedSpaceNodeFacade {
 	SharedSpaceNode update(String actorUuid, SharedSpaceNode node, String uuid) throws BusinessException;
 
 	List<SharedSpaceMember> members(String actorUuid, String uuid) throws BusinessException;
+
+	List<SharedSpaceNodeNested> findAllMyNodes(String actorUuid);
 
 }

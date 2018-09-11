@@ -161,6 +161,7 @@
 	<bean id="userSharedSpaceNodeRestService"
 		class="org.linagora.linshare.webservice.userv2.impl.SharedSpaceNodeRestServiceImpl">
 		<constructor-arg ref="sharedSpaceNodeFacade" />
+		<constructor-arg ref="sharedSpaceMemberFacade" />
 	</bean>	
 	<bean id="userSharedSpaceRoleRestService"
 		class="org.linagora.linshare.webservice.userv2.impl.SharedSpaceRoleRestServiceImpl">

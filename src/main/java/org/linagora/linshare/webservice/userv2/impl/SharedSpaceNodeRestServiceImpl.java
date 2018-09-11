@@ -45,7 +45,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.user.SharedSpaceMemberFacade;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceNodeFacade;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.webservice.userv2.SharedSpaceNodeRestService;
@@ -63,12 +65,16 @@ public class SharedSpaceNodeRestServiceImpl implements SharedSpaceNodeRestServic
 
 	private final SharedSpaceNodeFacade nodeFacade;
 
-	public SharedSpaceNodeRestServiceImpl(SharedSpaceNodeFacade nodeFacade) {
+	private final SharedSpaceMemberFacade memberFacade;
+
+	public SharedSpaceNodeRestServiceImpl(SharedSpaceNodeFacade nodeFacade,
+			SharedSpaceMemberFacade memberFacade) {
 		super();
 		this.nodeFacade = nodeFacade;
+		this.memberFacade = memberFacade;
 	}
-	
-	@Path("/{uuid}/nodes")
+
+	@Path("/")
 	@GET
 	@ApiOperation(value = "Get all shared space nodes.", response = SharedSpaceNodeNested.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
@@ -76,9 +82,8 @@ public class SharedSpaceNodeRestServiceImpl implements SharedSpaceNodeRestServic
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public List<SharedSpaceNodeNested> findAll(
-				@PathParam("uuid") String accountUuid) throws BusinessException {
-		return nodeFacade.findAllByMember(null, accountUuid);
+	public List<SharedSpaceNodeNested> findAll() throws BusinessException {
+		return nodeFacade.findAllMyNodes(null);
 	}
 	
 	@Path("/{uuid}")
@@ -142,4 +147,35 @@ public class SharedSpaceNodeRestServiceImpl implements SharedSpaceNodeRestServic
 		return nodeFacade.update(null, node, uuid);
 	}
 
+	@Path("/{uuid}/members")
+	@GET
+	@ApiOperation(value = "Get all members for the shared space node.", response = SharedSpaceMember.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to list all members for this shared space node."),
+			@ApiResponse(code = 404, message = "Not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public List<SharedSpaceMember> members(
+			@ApiParam("The members node uuid.")
+				@PathParam("uuid")String uuid) 
+			throws BusinessException {
+		return nodeFacade.members(null, uuid);
+	}
+
+	@Path("/{uuid}/members/{accountUuid}")
+	@GET
+	@ApiOperation(value = "Get member for the shared space node and an account.", response = SharedSpaceMember.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to list all members for this shared space node."),
+			@ApiResponse(code = 404, message = "Not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public SharedSpaceMember findMemberByAccountUuid(
+			@ApiParam("The members node uuid.")
+				@PathParam("uuid")String uuid,
+			@ApiParam("The uuid of an account within a node")
+				@PathParam("accountUuid")String accountUuid) 
+			throws BusinessException {
+		return memberFacade.findByNodeAndAccount(null, uuid, accountUuid);
+	}
 }

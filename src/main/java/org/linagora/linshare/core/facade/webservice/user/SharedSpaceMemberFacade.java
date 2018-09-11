@@ -45,4 +45,6 @@ public interface SharedSpaceMemberFacade {
 	SharedSpaceMember update(String actorUuid, SharedSpaceMember member, String uuid) throws BusinessException;
 
 	SharedSpaceMember delete(String actorUuid, SharedSpaceMember member, String uuid) throws BusinessException;
+
+	SharedSpaceMember findByNodeAndAccount(String actorUuid, String nodeUuid, String accountUuid);
 }

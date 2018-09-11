@@ -113,11 +113,10 @@ public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements Shar
 	}
 
 	@Override
-	public List<SharedSpaceNodeNested> findAllByMember(String actorUuid, String accountUuid) {
+	public List<SharedSpaceNodeNested> findAllMyNodes(String actorUuid) {
 		Account authUser = checkAuthentication();
-		Validate.notEmpty(accountUuid, "The account uuid must be set.");
 		Account actor = getActor(authUser, actorUuid);
-		return memberService.findAllByAccount(authUser, actor, accountUuid);
+		return memberService.findAllByAccount(authUser, actor, actor.getLsUuid());
 	}
 
 	@Override

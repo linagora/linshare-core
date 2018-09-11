@@ -68,7 +68,7 @@ public class SharedSpaceNodeRestServiceImpl implements SharedSpaceNodeRestServic
 		this.nodeFacade = nodeFacade;
 	}
 	
-	@Path("/{accountUuid}/nodes")
+	@Path("/")
 	@GET
 	@ApiOperation(value = "Get all shared space nodes.", response = SharedSpaceNodeNested.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
@@ -78,11 +78,9 @@ public class SharedSpaceNodeRestServiceImpl implements SharedSpaceNodeRestServic
 	@Override
 	public List<SharedSpaceNodeNested> findAll(
 			@ApiParam(value = "The actor uuid.", required = true)
-				@PathParam("actorUuid")String actorUuid,
-			@ApiParam(value = "The account uuid", required = true)	
-				@PathParam("accountUuid") String accountUuid)
+				@PathParam("actorUuid")String actorUuid)
 			throws BusinessException {
-		return nodeFacade.findAllByMember(actorUuid, accountUuid);
+		return nodeFacade.findAllMyNodes(actorUuid);
 	}
 	
 	@Path("/{uuid}")

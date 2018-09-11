@@ -37,9 +37,11 @@ import java.util.Date;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.constants.NodeType;
 
+@XmlRootElement(name = "SharedSpaceNodeNested")
 public class SharedSpaceNodeNested {
 
 	protected String uuid;
