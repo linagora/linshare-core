@@ -197,14 +197,14 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 
 	protected SharedSpaceMemberAuditLogEntry createLog(Account authUser, Account actor, SharedSpaceMember resource) {
 		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.CREATE,
-				AuditLogEntryType.SHARED_SPACE_MEMBER, resource);
+				AuditLogEntryType.WORKGROUP_MEMBER, resource);
 		logEntryService.insert(log);
 		return log;
 	}
 
 	protected SharedSpaceMemberAuditLogEntry updateLog(Account authUser, Account actor, SharedSpaceMember resource, SharedSpaceMember resourceUpdated) {
 		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.CREATE,
-				AuditLogEntryType.SHARED_SPACE_MEMBER, resource);
+				AuditLogEntryType.WORKGROUP_MEMBER, resource);
 		log.setResourceUpdated(resourceUpdated);
 		logEntryService.insert(log);
 		return log;
@@ -220,7 +220,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 				new GenericLightEntity(role.getUuid(), role.getName()), account);
 		SharedSpaceMember toAdd = businessService.create(member);
 		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.CREATE,
-				AuditLogEntryType.SHARED_SPACE_MEMBER, toAdd);
+				AuditLogEntryType.WORKGROUP_MEMBER, toAdd);
 		logEntryService.insert(log);
 		return toAdd;
 	}
@@ -234,7 +234,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 				foundMemberToDelete);
 		businessService.delete(foundMemberToDelete);
 		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.DELETE,
-				AuditLogEntryType.SHARED_SPACE_MEMBER, foundMemberToDelete);
+				AuditLogEntryType.WORKGROUP_MEMBER, foundMemberToDelete);
 		logEntryService.insert(log);
 		User user = userRepository.findByLsUuid(foundMemberToDelete.getAccount().getUuid());
 		WorkGroupWarnDeletedMemberEmailContext context = new WorkGroupWarnDeletedMemberEmailContext(foundMemberToDelete, actor, user);
@@ -253,7 +253,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 				foundMemberToUpdate);
 		SharedSpaceMember updated = businessService.update(foundMemberToUpdate, memberToUpdate);
 		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.UPDATE,
-				AuditLogEntryType.SHARED_SPACE_MEMBER, foundMemberToUpdate);
+				AuditLogEntryType.WORKGROUP_MEMBER, foundMemberToUpdate);
 		log.setResourceUpdated(updated);
 		logEntryService.insert(log);
 		User user = userRepository.findByLsUuid(foundMemberToUpdate.getAccount().getUuid());
@@ -274,7 +274,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		List<AuditLogEntryUser> logs = Lists.newArrayList();
 		for (SharedSpaceMember member : foundMembersToDelete) {
 			logs.add(new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.DELETE,
-					AuditLogEntryType.SHARED_SPACE_MEMBER, member));
+					AuditLogEntryType.WORKGROUP_MEMBER, member));
 		}
 		if (logs != null && !logs.isEmpty()) {
 			logEntryService.insert(logs);
@@ -292,7 +292,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		for (SharedSpaceMember member : foundMembersToDelete) {
 			delete(authUser, actor, member.getNode().getUuid());
 			logs.add(new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.DELETE,
-					AuditLogEntryType.SHARED_SPACE_MEMBER, member));
+					AuditLogEntryType.WORKGROUP_MEMBER, member));
 		}
 		if (logs != null && !logs.isEmpty()) {
 			logEntryService.insert(logs);

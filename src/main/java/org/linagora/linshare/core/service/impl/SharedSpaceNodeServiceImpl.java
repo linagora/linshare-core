@@ -196,7 +196,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		WorkGroup workGroup = threadService.find(authUser, authUser, foundedNodeTodel.getUuid());
 		threadService.deleteThread(authUser, authUser, workGroup);
 		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.DELETE,
-				AuditLogEntryType.SHARED_SPACE_NODE, foundedNodeTodel);
+				AuditLogEntryType.WORKGROUP, foundedNodeTodel);
 		logEntryService.insert(log);
 		memberService.deleteAllMembers(authUser, actor, foundedNodeTodel.getUuid());
 		return workGroup;
@@ -213,7 +213,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		SharedSpaceNode updated = businessService.update(node, nodeToUpdate);
 		memberBusinessService.updateNestedNode(updated);
 		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.UPDATE,
-				AuditLogEntryType.SHARED_SPACE_NODE, node);
+				AuditLogEntryType.WORKGROUP, node);
 		log.setResourceUpdated(updated);
 		logEntryService.insert(log);
 		return updated;
