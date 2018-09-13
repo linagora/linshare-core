@@ -228,8 +228,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		logEntryService.insert(log);
 		User user = userRepository.findByLsUuid(foundMemberToDelete.getAccount().getUuid());
 		WorkGroupWarnDeletedMemberEmailContext context = new WorkGroupWarnDeletedMemberEmailContext(foundMemberToDelete, actor, user);
-		MailContainerWithRecipient mail = mailBuildingService.build(context);
-		notifierService.sendNotification(mail, true);
+		notify(context);
 		return foundMemberToDelete;
 	}
 
@@ -263,6 +262,9 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		businessService.deleteAll(foundMembersToDelete);
 		List<AuditLogEntryUser> logs = Lists.newArrayList();
 		for (SharedSpaceMember member : foundMembersToDelete) {
+			User user = userRepository.findByLsUuid(member.getAccount().getUuid());
+			WorkGroupWarnDeletedMemberEmailContext context = new WorkGroupWarnDeletedMemberEmailContext(member, actor, user);
+			notify(context);
 			logs.add(new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.DELETE,
 					AuditLogEntryType.WORKGROUP_MEMBER, member));
 		}

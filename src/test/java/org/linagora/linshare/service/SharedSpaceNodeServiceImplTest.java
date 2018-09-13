@@ -50,6 +50,7 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,11 +97,19 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 	@Qualifier("sharedSpaceNodeService")
 	private SharedSpaceNodeService service;
 
+	private LinShareWiser wiser;
+
+	public SharedSpaceNodeServiceImplTest() {
+		super();
+		wiser = new LinShareWiser(2525);
+	}
+
 	@Before
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
 		this.executeSqlScript("import-tests-quota-other.sql", false);
+		wiser.start();
 		datas = new LoadingServiceTestDatas(userRepo);
 		datas.loadUsers();
 		init.init();
@@ -114,6 +123,7 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 	@After
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
+		wiser.stop();
 //		this.deleteAllNodes();
 	}
 

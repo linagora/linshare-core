@@ -190,13 +190,13 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	}
 
 	private WorkGroup simpleDelete(Account authUser, Account actor, SharedSpaceNode foundedNodeTodel) throws BusinessException {
-		businessService.delete(foundedNodeTodel);
 		WorkGroup workGroup = threadService.find(authUser, authUser, foundedNodeTodel.getUuid());
 		threadService.deleteThread(authUser, authUser, workGroup);
+		memberService.deleteAllMembers(authUser, actor, foundedNodeTodel.getUuid());
+		businessService.delete(foundedNodeTodel);
 		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.DELETE,
 				AuditLogEntryType.WORKGROUP, foundedNodeTodel);
 		logEntryService.insert(log);
-		memberService.deleteAllMembers(authUser, actor, foundedNodeTodel.getUuid());
 		return workGroup;
 	}
 
