@@ -280,7 +280,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		List<SharedSpaceMember> foundMembersToDelete = businessService.findAllUserMemberships(userUuid);
 		List<AuditLogEntryUser> logs = Lists.newArrayList();
 		for (SharedSpaceMember member : foundMembersToDelete) {
-			delete(authUser, actor, member.getNode().getUuid());
+			delete(authUser, actor, member.getUuid());
 			logs.add(new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.DELETE,
 					AuditLogEntryType.WORKGROUP_MEMBER, member));
 		}
