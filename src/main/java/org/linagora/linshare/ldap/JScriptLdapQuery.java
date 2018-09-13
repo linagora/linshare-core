@@ -349,8 +349,13 @@ public abstract class JScriptLdapQuery<T extends Object> {
 			method.invoke(user, curValue);
 			return true;
 		} catch (Exception e) {
-			logger.error("Introspection : can not call method '" + methodName + "' on current object.");
-			logger.error("message : " + e.getMessage());
+			if (LdapPattern.DN.equals(attr_key)) {
+				logger.trace("Method '" + methodName + "' is not callable on current object: ", e);
+			}
+			else {
+				logger.error("Introspection : can not call method '" + methodName + "' on current object.");
+				logger.error("message : " + e.getMessage());
+			}
 		}
 		return false;
 	}
