@@ -109,7 +109,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		Validate.notNull(node, "Missing required input shared space node.");
 		Validate.notNull(node.getNodeType(), "you must set the node type");
 		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
-		//Hack to create thread into shared space node
+		// Hack to create thread into shared space node
 		SharedSpaceNode created = simpleCreate(authUser, actor, node);
 		SharedSpaceRole role = ssRoleService.getAdmin(authUser, actor);
 		memberService.createWithoutCheckPermission(authUser, actor, created, role,
@@ -117,12 +117,13 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		return created;
 	}
 
-	protected SharedSpaceNode simpleCreate(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException {
-		//Hack to create thread into shared space node
+	protected SharedSpaceNode simpleCreate(Account authUser, Account actor, SharedSpaceNode node)
+			throws BusinessException {
+		// Hack to create thread into shared space node
 		WorkGroup workGroup = threadService.create(authUser, actor, node.getName());
 		node.setUuid(workGroup.getLsUuid());
 		SharedSpaceNode created = businessService.create(node);
-		createLog(authUser, actor, LogAction.CREATE, created);
+		saveLog(authUser, actor, LogAction.CREATE, created);
 		return created;
 	}
 
@@ -131,34 +132,19 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	 *
 	 */
 	@Deprecated
-	public WorkGroupDto createWorkGroupDto(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException {
+	public WorkGroupDto createWorkGroupDto(Account authUser, Account actor, SharedSpaceNode node)
+			throws BusinessException {
 		preChecks(authUser, actor);
 		Validate.notNull(node, "Missing required input shared space node.");
 		Validate.notNull(node.getNodeType(), "you must set the node type");
 		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
-		//Hack to create thread into shared space node
+		// Hack to create thread into shared space node
 		SharedSpaceNode created = simpleCreate(authUser, actor, node);
 		SharedSpaceRole role = ssRoleService.getAdmin(authUser, actor);
-		memberService.createWithoutCheckPermission(authUser, actor, created, role, new SharedSpaceAccount((User) actor));
+		memberService.createWithoutCheckPermission(authUser, actor, created, role,
+				new SharedSpaceAccount((User) actor));
 		WorkGroup workGroup = threadService.find(authUser, actor, created.getUuid());
 		return new WorkGroupDto(workGroup, created);
-	}
-
-	protected SharedSpaceNodeAuditLogEntry createLog(Account authUser, Account actor, LogAction action,
-			SharedSpaceNode resource) {
-		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, action,
-				AuditLogEntryType.WORKGROUP, resource);
-		logEntryService.insert(log);
-		return log;
-	}
-
-	protected SharedSpaceNodeAuditLogEntry updateLog(Account authUser, Account actor, SharedSpaceNode resource,
-			SharedSpaceNode resourceUpdated) {
-		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.UPDATE,
-				AuditLogEntryType.WORKGROUP, resource);
-		log.setResourceUpdated(resourceUpdated);
-		logEntryService.insert(log);
-		return log;
 	}
 
 	@Override
@@ -178,7 +164,8 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	 *
 	 */
 	@Override
-	public WorkGroupDto deleteWorkgroupDto(Account authUser, Account actor, SharedSpaceNode node) throws BusinessException {
+	public WorkGroupDto deleteWorkgroupDto(Account authUser, Account actor, SharedSpaceNode node)
+			throws BusinessException {
 		preChecks(authUser, actor);
 		Validate.notNull(node, "missing required node to delete.");
 		Validate.notEmpty(node.getUuid(), "missing required node uuid to delete");
@@ -189,14 +176,13 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		return new WorkGroupDto(workGroup, foundedNodeTodel);
 	}
 
-	private WorkGroup simpleDelete(Account authUser, Account actor, SharedSpaceNode foundedNodeTodel) throws BusinessException {
+	private WorkGroup simpleDelete(Account authUser, Account actor, SharedSpaceNode foundedNodeTodel)
+			throws BusinessException {
 		WorkGroup workGroup = threadService.find(authUser, authUser, foundedNodeTodel.getUuid());
 		threadService.deleteThread(authUser, authUser, workGroup);
 		memberService.deleteAllMembers(authUser, actor, foundedNodeTodel.getUuid());
 		businessService.delete(foundedNodeTodel);
-		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.DELETE,
-				AuditLogEntryType.WORKGROUP, foundedNodeTodel);
-		logEntryService.insert(log);
+		saveLog(authUser, actor, LogAction.DELETE, foundedNodeTodel);
 		return workGroup;
 	}
 
@@ -211,10 +197,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		SharedSpaceNode updated = businessService.update(node, nodeToUpdate);
 		memberBusinessService.updateNestedNode(updated);
 		threadService.update(authUser, actor, updated.getUuid(), updated.getName());
-		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.UPDATE,
-				AuditLogEntryType.WORKGROUP, node);
-		log.setResourceUpdated(updated);
-		logEntryService.insert(log);
+		saveUpdateLog(authUser, actor, node, updated);
 		return updated;
 	}
 
@@ -244,5 +227,22 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		List<SharedSpaceNode> founds = businessService.searchByName(name);
 		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
 		return founds;
+	}
+
+	protected SharedSpaceNodeAuditLogEntry saveLog(Account authUser, Account actor, LogAction action,
+			SharedSpaceNode resource) {
+		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, action,
+				AuditLogEntryType.WORKGROUP, resource);
+		logEntryService.insert(log);
+		return log;
+	}
+
+	protected SharedSpaceNodeAuditLogEntry saveUpdateLog(Account authUser, Account actor, SharedSpaceNode resource,
+			SharedSpaceNode resourceUpdated) {
+		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.UPDATE,
+				AuditLogEntryType.WORKGROUP, resource);
+		log.setResourceUpdated(resourceUpdated);
+		logEntryService.insert(log);
+		return log;
 	}
 }

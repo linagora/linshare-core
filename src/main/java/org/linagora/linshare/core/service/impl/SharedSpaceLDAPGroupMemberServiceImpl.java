@@ -35,6 +35,7 @@ package org.linagora.linshare.core.service.impl;
 
 import org.jsoup.helper.Validate;
 import org.linagora.linshare.core.business.service.SharedSpaceLDAPGroupMemberBusinessService;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnNewMemberEmailContext;
@@ -53,15 +54,17 @@ public class SharedSpaceLDAPGroupMemberServiceImpl extends SharedSpaceMemberServ
 	private final SharedSpaceLDAPGroupMemberBusinessService businessService;
 
 	public SharedSpaceLDAPGroupMemberServiceImpl(SharedSpaceLDAPGroupMemberBusinessService businessService,
-			NotifierService notifierService, MailBuildingService mailBuildingService,
-			SharedSpaceMemberResourceAccessControl rac, LogEntryService logEntryService,
+			NotifierService notifierService,
+			MailBuildingService mailBuildingService,
+			SharedSpaceMemberResourceAccessControl rac,
+			LogEntryService logEntryService,
 			UserRepository<User> userRepository) {
 		super(businessService, notifierService, mailBuildingService, rac, logEntryService, userRepository);
 		this.businessService = businessService;
 	}
 
 	@Override
-	public SharedSpaceLDAPGroupMember create (Account actor, SharedSpaceLDAPGroupMember member) {
+	public SharedSpaceLDAPGroupMember create(Account actor, SharedSpaceLDAPGroupMember member) {
 		Validate.notNull(actor, "The actor must be set");
 		Validate.notNull(member, "The member must be set");
 		Validate.notEmpty(member.getUuid(), "The uuid of the LDAP group member must be set");
@@ -73,13 +76,12 @@ public class SharedSpaceLDAPGroupMemberServiceImpl extends SharedSpaceMemberServ
 		SharedSpaceLDAPGroupMember created = businessService.create(member);
 		User newMember = userRepository.findByLsUuid(created.getAccount().getUuid());
 		notify(new WorkGroupWarnNewMemberEmailContext(member, actor, newMember));
-		createLog(actor, actor, created);
+		saveLog(actor, actor, LogAction.CREATE, created);
 		return created;
-		
 	}
 
 	@Override
-	public SharedSpaceLDAPGroupMember update (Account actor, SharedSpaceLDAPGroupMember member) {
+	public SharedSpaceLDAPGroupMember update(Account actor, SharedSpaceLDAPGroupMember member) {
 		Validate.notNull(actor, "The actor must be set");
 		Validate.notNull(member, "The member must be set");
 		Validate.notEmpty(member.getUuid(), "The uuid of the LDAP group member must be set");
@@ -91,7 +93,7 @@ public class SharedSpaceLDAPGroupMemberServiceImpl extends SharedSpaceMemberServ
 		SharedSpaceLDAPGroupMember updated = businessService.update(member);
 		User newMember = userRepository.findByLsUuid(updated.getAccount().getUuid());
 		notify(new WorkGroupWarnUpdatedMemberEmailContext(member, newMember, actor));
-		updateLog(actor, actor, member, updated);
+		saveUpdateLog(actor, actor, LogAction.UPDATE, member, updated);
 		return updated;
 	}
 

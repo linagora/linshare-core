@@ -163,8 +163,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 				null, node);
 		User newMember = userRepository.findByLsUuid(account.getUuid());
 		if (newMember == null) {
-			String message = String.format(
-					"The account with the UUID : %s is not existing", account.getUuid());
+			String message = String.format("The account with the UUID : %s is not existing", account.getUuid());
 			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, message);
 		}
 		if (!checkMemberNotInNode(account.getUuid(), node.getUuid())) {
@@ -174,30 +173,8 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_ALREADY_EXISTS, message);
 		}
 		SharedSpaceMember member = createWithoutCheckPermission(authUser, actor, node, role, account);
-		WorkGroupWarnNewMemberEmailContext context = new WorkGroupWarnNewMemberEmailContext(member, actor, newMember);
-		MailContainerWithRecipient mail = mailBuildingService.build(context);
-		notifierService.sendNotification(mail, true);
+		notify(new WorkGroupWarnNewMemberEmailContext(member, actor, newMember));
 		return member;
-	}
-
-	protected void notify(EmailContext context) {
-		MailContainerWithRecipient mail = mailBuildingService.build(context);
-		notifierService.sendNotification(mail, true);
-	}
-
-	protected SharedSpaceMemberAuditLogEntry createLog(Account authUser, Account actor, SharedSpaceMember resource) {
-		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.CREATE,
-				AuditLogEntryType.WORKGROUP_MEMBER, resource);
-		logEntryService.insert(log);
-		return log;
-	}
-
-	protected SharedSpaceMemberAuditLogEntry updateLog(Account authUser, Account actor, SharedSpaceMember resource, SharedSpaceMember resourceUpdated) {
-		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.CREATE,
-				AuditLogEntryType.WORKGROUP_MEMBER, resource);
-		log.setResourceUpdated(resourceUpdated);
-		logEntryService.insert(log);
-		return log;
 	}
 
 	@Override
@@ -209,9 +186,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		SharedSpaceMember member = new SharedSpaceMember(new SharedSpaceNodeNested(node),
 				new GenericLightEntity(role.getUuid(), role.getName()), account);
 		SharedSpaceMember toAdd = businessService.create(member);
-		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.CREATE,
-				AuditLogEntryType.WORKGROUP_MEMBER, toAdd);
-		logEntryService.insert(log);
+		saveLog(authUser, actor, LogAction.CREATE, toAdd);
 		return toAdd;
 	}
 
@@ -223,12 +198,9 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		checkDeletePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
 				foundMemberToDelete);
 		businessService.delete(foundMemberToDelete);
-		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.DELETE,
-				AuditLogEntryType.WORKGROUP_MEMBER, foundMemberToDelete);
-		logEntryService.insert(log);
+		saveLog(authUser, actor, LogAction.DELETE, foundMemberToDelete);
 		User user = userRepository.findByLsUuid(foundMemberToDelete.getAccount().getUuid());
-		WorkGroupWarnDeletedMemberEmailContext context = new WorkGroupWarnDeletedMemberEmailContext(foundMemberToDelete, actor, user);
-		notify(context);
+		notify(new WorkGroupWarnDeletedMemberEmailContext(foundMemberToDelete, actor, user));
 		return foundMemberToDelete;
 	}
 
@@ -237,7 +209,8 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		preChecks(authUser, actor);
 		Validate.notNull(memberToUpdate, "Missing required member to update");
 		Validate.notNull(memberToUpdate.getUuid(), "Missing required member uuid to update");
-		SharedSpaceMember foundMemberToUpdate = findMemberByUuid(authUser, actor, memberToUpdate.getAccount().getUuid(), memberToUpdate.getNode().getUuid());
+		SharedSpaceMember foundMemberToUpdate = findMemberByUuid(authUser, actor, memberToUpdate.getAccount().getUuid(),
+				memberToUpdate.getNode().getUuid());
 		checkUpdatePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
 				foundMemberToUpdate);
 		SharedSpaceMember updated = businessService.update(foundMemberToUpdate, memberToUpdate);
@@ -246,10 +219,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		log.setResourceUpdated(updated);
 		logEntryService.insert(log);
 		User user = userRepository.findByLsUuid(foundMemberToUpdate.getAccount().getUuid());
-		WorkGroupWarnUpdatedMemberEmailContext context = new WorkGroupWarnUpdatedMemberEmailContext(updated, user,
-				actor);
-		MailContainerWithRecipient mail = mailBuildingService.build(context);
-		notifierService.sendNotification(mail, true);
+		notify(new WorkGroupWarnUpdatedMemberEmailContext(updated, user, actor));
 		return updated;
 	}
 
@@ -257,14 +227,18 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	public List<SharedSpaceMember> deleteAllMembers(Account authUser, Account actor, String sharedSpaceNodeUuid) {
 		preChecks(authUser, actor);
 		Validate.notNull(sharedSpaceNodeUuid, "Missing required sharedSpaceNodeUuid");
-		// TODO Check the user is admin to delete all Members
 		List<SharedSpaceMember> foundMembersToDelete = findAll(authUser, actor, sharedSpaceNodeUuid);
+		if (foundMembersToDelete != null && !foundMembersToDelete.isEmpty()) {
+			// We check the user has the right to delete members of this node
+			// If he can delete one member, he can delete them all
+			checkDeletePermission(authUser, actor, SharedSpaceMember.class,
+					BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN, foundMembersToDelete.get(0));
+		}
 		businessService.deleteAll(foundMembersToDelete);
 		List<AuditLogEntryUser> logs = Lists.newArrayList();
 		for (SharedSpaceMember member : foundMembersToDelete) {
 			User user = userRepository.findByLsUuid(member.getAccount().getUuid());
-			WorkGroupWarnDeletedMemberEmailContext context = new WorkGroupWarnDeletedMemberEmailContext(member, actor, user);
-			notify(context);
+			notify(new WorkGroupWarnDeletedMemberEmailContext(member, actor, user));
 			logs.add(new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.DELETE,
 					AuditLogEntryType.WORKGROUP_MEMBER, member));
 		}
@@ -278,22 +252,37 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	public List<SharedSpaceMember> deleteAllUserMemberships(Account authUser, Account actor, String userUuid) {
 		preChecks(authUser, actor);
 		Validate.notNull(userUuid, "Missing required sharedSpaceNodeUuid");
-		// TODO Check the user is admin to delete all Members
 		List<SharedSpaceMember> foundMembersToDelete = businessService.findAllUserMemberships(userUuid);
-		List<AuditLogEntryUser> logs = Lists.newArrayList();
 		for (SharedSpaceMember member : foundMembersToDelete) {
 			delete(authUser, actor, member.getUuid());
-			logs.add(new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.DELETE,
-					AuditLogEntryType.WORKGROUP_MEMBER, member));
-		}
-		if (logs != null && !logs.isEmpty()) {
-			logEntryService.insert(logs);
 		}
 		return foundMembersToDelete;
 	}
 
 	private boolean checkMemberNotInNode(String possibleMemberUuid, String nodeUuid) {
 		return businessService.findByAccountAndNode(possibleMemberUuid, nodeUuid) == null;
+	}
+
+	protected void notify(EmailContext context) {
+		MailContainerWithRecipient mail = mailBuildingService.build(context);
+		notifierService.sendNotification(mail, true);
+	}
+
+	protected SharedSpaceMemberAuditLogEntry saveLog(Account authUser, Account actor, LogAction action,
+			SharedSpaceMember resource) {
+		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, action,
+				AuditLogEntryType.WORKGROUP_MEMBER, resource);
+		logEntryService.insert(log);
+		return log;
+	}
+
+	protected SharedSpaceMemberAuditLogEntry saveUpdateLog(Account authUser, Account actor, LogAction action,
+			SharedSpaceMember resource, SharedSpaceMember resourceUpdated) {
+		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, action,
+				AuditLogEntryType.WORKGROUP_MEMBER, resource);
+		log.setResourceUpdated(resourceUpdated);
+		logEntryService.insert(log);
+		return log;
 	}
 
 }
