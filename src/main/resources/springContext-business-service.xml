@@ -320,11 +320,16 @@
 	<bean name="sharedSpaceLdapGroupMemberBusinessService"
 		class="org.linagora.linshare.core.business.service.impl.SharedSpaceLDAPGroupMemberBusinessServiceImpl">
 		<constructor-arg ref="sharedSpaceMemberMongoRepository" />
+		<constructor-arg ref="sharedSpaceRoleMongoRepository" />
+		<constructor-arg ref="sharedSpaceNodeMongoRepository" />
+		<constructor-arg ref="userRepository" />
 	</bean>
 	<bean name="sharedSpaceMemberBusinessService"
 		class="org.linagora.linshare.core.business.service.impl.SharedSpaceMemberBusinessServiceImpl">
 		<constructor-arg ref="sharedSpaceMemberMongoRepository" />
 		<constructor-arg ref="sharedSpaceRoleMongoRepository" />
+		<constructor-arg ref="sharedSpaceNodeMongoRepository" />
+		<constructor-arg ref="userRepository" />
 	</bean>
 	<bean name="workGroupNodeBusinessService" class="org.linagora.linshare.core.business.service.impl.WorkGroupNodeBusinessServiceImpl">
 		<constructor-arg ref="mongoTemplate" />

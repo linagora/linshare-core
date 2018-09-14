@@ -40,8 +40,10 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
@@ -49,6 +51,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
+import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceRoleMongoRepository;
 
 import com.google.common.base.Function;
@@ -60,11 +63,19 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 
 	protected final SharedSpaceRoleMongoRepository roleRepository;
 
+	protected final SharedSpaceNodeMongoRepository nodeRepository;
+
+	protected final UserRepository<User> userRepository;
+
 	public SharedSpaceMemberBusinessServiceImpl(SharedSpaceMemberMongoRepository sharedSpaceMemberMongoRepository,
-			SharedSpaceRoleMongoRepository roleRepository) {
+			SharedSpaceRoleMongoRepository roleRepository,
+			SharedSpaceNodeMongoRepository nodeRepository,
+			UserRepository<User> userRepository) {
 		super();
 		this.repository = sharedSpaceMemberMongoRepository;
 		this.roleRepository = roleRepository;
+		this.nodeRepository = nodeRepository;
+		this.userRepository = userRepository;
 	}
 
 	@Override
@@ -74,7 +85,35 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 
 	@Override
 	public SharedSpaceMember create(SharedSpaceMember member) throws BusinessException {
+		member.setRole(new GenericLightEntity(checkRole(member.getRole().getUuid())));
+		member.setNode(new SharedSpaceNodeNested(checkNode(member.getNode().getUuid())));
+		member.setAccount(new SharedSpaceAccount(checkUser(member.getAccount().getUuid())));
 		return repository.insert(member);
+	}
+
+	private SharedSpaceRole checkRole(String roleUuid) {
+		SharedSpaceRole role = roleRepository.findByUuid(roleUuid);
+		if (role == null) {
+			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_ROLE_NOT_FOUND,
+					"The required role does not exist.");
+		}
+		return role;
+	}
+
+	private SharedSpaceNode checkNode(String nodeUuid) {
+		SharedSpaceNode node = nodeRepository.findByUuid(nodeUuid);
+		if (node == null) {
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_NOT_FOUND, "The required role does not exist.");
+		}
+		return node;
+	}
+
+	private User checkUser(String userUuid) {
+		User user = userRepository.findByLsUuid(userUuid);
+		if (user == null) {
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "The required role does not exist.");
+		}
+		return user;
 	}
 
 	@Override
@@ -95,12 +134,7 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	@Override
 	public SharedSpaceMember update(SharedSpaceMember foundMemberToUpdate, SharedSpaceMember memberToUpdate) {
 		Validate.notNull(memberToUpdate.getRole(),"The role must be set.");
-		SharedSpaceRole role = roleRepository.findByUuid(memberToUpdate.getRole().getUuid());
-		if (role == null) {
-			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_ROLE_NOT_FOUND,
-					"The required role does not exist.");
-		}
-		foundMemberToUpdate.setRole(new GenericLightEntity(role.getUuid(), role.getName()));
+		foundMemberToUpdate.setRole(new GenericLightEntity(checkRole(memberToUpdate.getRole().getUuid())));
 		foundMemberToUpdate.setModificationDate(new Date());
 		return repository.save(foundMemberToUpdate);
 	}

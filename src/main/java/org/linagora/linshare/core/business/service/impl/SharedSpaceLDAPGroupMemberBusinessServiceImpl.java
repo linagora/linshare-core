@@ -36,8 +36,11 @@ package org.linagora.linshare.core.business.service.impl;
 import java.util.Date;
 
 import org.linagora.linshare.core.business.service.SharedSpaceLDAPGroupMemberBusinessService;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroupMember;
 import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
+import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceRoleMongoRepository;
 
 public class SharedSpaceLDAPGroupMemberBusinessServiceImpl extends SharedSpaceMemberBusinessServiceImpl
@@ -45,8 +48,10 @@ public class SharedSpaceLDAPGroupMemberBusinessServiceImpl extends SharedSpaceMe
 
 	public SharedSpaceLDAPGroupMemberBusinessServiceImpl(
 			SharedSpaceMemberMongoRepository repository,
-			SharedSpaceRoleMongoRepository roleRepository) {
-		super(repository, roleRepository);
+			SharedSpaceRoleMongoRepository roleRepository,
+			SharedSpaceNodeMongoRepository nodeRepository,
+			UserRepository<User> userRepository) {
+		super(repository, roleRepository, nodeRepository, userRepository);
 	}
 
 	@Override

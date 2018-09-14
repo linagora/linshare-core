@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.mongo.entities.light;
 
+import org.linagora.linshare.mongo.entities.SharedSpaceRole;
+
 public class GenericLightEntity {
 
 	protected String uuid;
@@ -46,6 +48,12 @@ public class GenericLightEntity {
 		super();
 		this.uuid = uuid;
 		this.name = name;
+	}
+
+	public GenericLightEntity(SharedSpaceRole role) {
+		super();
+		this.uuid = role.getUuid();
+		this.name = role.getName();
 	}
 
 	public String getUuid() {
