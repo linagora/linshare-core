@@ -131,7 +131,7 @@ public class SharedSpaceNodeRestServiceImpl implements SharedSpaceNodeRestServic
 		return nodeFacade.delete(null, node, uuid);
 	}
 	
-	@Path("/{uuid : .*}")
+	@Path("/{uuid : [^/]*}")
 	@PUT
 	@ApiOperation(value = "Update a shared space node.", response = SharedSpaceNode.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
@@ -177,5 +177,51 @@ public class SharedSpaceNodeRestServiceImpl implements SharedSpaceNodeRestServic
 				@PathParam("accountUuid")String accountUuid) 
 			throws BusinessException {
 		return memberFacade.findByNodeAndAccount(null, uuid, accountUuid);
+	}
+
+	@Path("/{uuid}/members")
+	@POST
+	@ApiOperation(value = "Add a shared space member.", response = SharedSpaceMember.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the required role."),
+			@ApiResponse(code = 404, message = "Not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public SharedSpaceMember addMember(
+			@ApiParam("The shared space member to add")SharedSpaceMember member)
+					throws BusinessException {
+		return memberFacade.create(null, member);
+	}
+
+	@Path("{uuid}/members/{memberUuid : .*}")
+	@DELETE
+	@ApiOperation(value = "Delete a shared space member.", response = SharedSpaceMember.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the required role."),
+			@ApiResponse(code = 404, message = "Not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public SharedSpaceMember deleteMember(
+			@ApiParam("The shared space member to delete.")SharedSpaceMember member,
+			@ApiParam("The shared space member uuid")
+				@PathParam(value="memberUuid")String memberUuid)
+			throws BusinessException {
+		return memberFacade.delete(null, member, memberUuid);
+	}
+
+	@Path("{uuid}/members/{memberUuid : .*}")
+	@PUT
+	@ApiOperation(value = "Update a shared space member.", response = SharedSpaceMember.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the required role."),
+			@ApiResponse(code = 404, message = "Not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public SharedSpaceMember updateMember(
+			@ApiParam("The shared space member to update.")SharedSpaceMember member,
+			@ApiParam("The shared space member uuid")
+				@PathParam(value="memberUuid")String memberUuid)
+			throws BusinessException {
+		return memberFacade.update(null, member, memberUuid);
 	}
 }
