@@ -187,7 +187,8 @@ public class WorkGroupNodeResourceAccessControlImpl
 			type = SharedSpaceResourceType.FOLDER;
 			return type;
 		}
-		return SharedSpaceResourceType.FILE;
+		type = SharedSpaceResourceType.FILE;
+		return type;
 	}
 
 	@Override
