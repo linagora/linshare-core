@@ -78,7 +78,6 @@ public class SharedSpacePermission {
 
 	public SharedSpacePermission(SharedSpaceActionType action, SharedSpaceResourceType resource,
 			List<GenericLightEntity> roles) {
-
 		super();
 		this.uuid = UUID.randomUUID().toString();
 		this.action = action;
