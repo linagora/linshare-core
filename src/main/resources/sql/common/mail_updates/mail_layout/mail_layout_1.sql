@@ -222,9 +222,11 @@ border-top: 1px solid #e1e1e1;">
 </div>
 <!--/* Common date display  style */-->
 <div style="margin-bottom:17px;" data-th-fragment="infoDateArea(titleInfo,contentInfo)">
-     <span style="font-weight:bold;" data-th-text="${titleInfo}" >Shared the </span>
-    <br/>
- <span  th:with="df=#{date.format}" data-th-text="${#dates.format(contentInfo,df)}">7th of November, 2018</span>
+  <div data-th-if="${contentInfo != null}">
+      <span style="font-weight:bold;" data-th-text="${titleInfo}" >Shared the </span>
+      <br/>
+      <span  th:with="df=#{date.format}" data-th-text="${#dates.format(contentInfo,df)}">7th of November, 2018</span>
+  </div>
 </div>
 <!--/* Common lower info title style */-->
 <div style="margin-bottom:17px;" data-th-fragment="infoStandardArea(titleInfo,contentInfo)">
