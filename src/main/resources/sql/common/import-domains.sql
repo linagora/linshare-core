@@ -165,3 +165,68 @@ INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_patt
 	VALUES (11, 'user_lastname', 'sn', false, true, true, 3, true);
 INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
 	VALUES (12, 'user_uid', 'uid', false, true, true, 3, false);
+
+-- Group ldap pattern
+INSERT INTO ldap_pattern(
+	id,
+	uuid,
+	pattern_type,
+	label,
+	system,
+	description,
+	auth_command,
+	search_user_command,
+	search_page_size,
+	search_size_limit,
+	auto_complete_command_on_first_and_last_name,
+	auto_complete_command_on_all_attributes, completion_page_size,
+	completion_size_limit,
+	creation_date,
+	modification_date,
+	search_all_groups_query,
+	search_group_query,
+	find_member_query,
+	group_prefix)
+	VALUES(
+	4,
+	'dfaa3523-51b0-423f-bb6d-95d6ecbfcd4c',
+	'GROUP_LDAP_PATTERN',
+	'Ldap groups',
+	true,
+	'default-group-pattern',
+	NULL,
+	NULL,
+	100,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NOW(),
+	NOW(),
+	'ldap.search(baseDn, "(&(objectClass=posixGroup)(cn=workgroup-*))");',
+	'ldap.search(baseDn, "(&(objectClass=posixGroup)(cn=workgroup-" + pattern + "))");',
+	'(&(objectCategory=person)(objectclass=user)(memberOf=CN=" + pattern + ",OU=People,dc=linshare,dc=org)',
+	'workgroup-');
+
+
+-- ldap attributes
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+VALUES(1060, 'mail', 'member_mail', false, true, true, false, 4);
+
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+VALUES(1061, 'givenName', 'member_firstname', false, true, true, false, 4);
+
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+VALUES(1062, 'cn', 'group_name_attr', false, true, true, true, 4);
+
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+VALUES(1063, 'member', 'extended_group_member_attr', false, true, true, true, 4);
+
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+VALUES(1064, 'sn', 'member_lastname', false, true, true, false, 4);
