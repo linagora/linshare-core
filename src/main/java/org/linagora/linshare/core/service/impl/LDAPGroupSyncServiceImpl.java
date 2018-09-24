@@ -161,7 +161,14 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 	@Override
 	public SharedSpaceLDAPGroupMember createOrUpdateLDAPGroupMember(Account actor, AbstractDomain domain, SharedSpaceLDAPGroup group,
 			LdapGroupMemberObject memberObject, Date syncDate) {
-		User user = userService.findOrCreateUser(memberObject.getEmail(), domain.getUuid());
+		User user;
+		try {
+			user = userService.findOrCreateUser(memberObject.getEmail(), domain.getUuid());
+		} catch (BusinessException e) {
+			logger.warn("The user [email=" + memberObject.getEmail() + ", domainUuid=" + domain.getUuid()
+					+ "] has not been found", e);
+			return null;
+		}
 		SharedSpaceRole role = getRoleFrom(actor, memberObject.getRole());
 		SharedSpaceLDAPGroupMember member = findMemberToUpdate(group.getUuid(), memberObject.getExternalId(), syncDate);
 		if (member != null) {
@@ -216,9 +223,12 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 		query.addCriteria(Criteria.where("node.uuid").is(nodeUuid));
 		if (null != externalId) {
 			query.addCriteria(Criteria.where("externalId").is(externalId));
-		}
-		if (null != syncDate) {
-			query.addCriteria(Criteria.where("syncDate").lt(syncDate));
+			if (null != syncDate) {
+				query.addCriteria(Criteria.where("syncDate").lt(syncDate));
+			}
+		} else {
+			query.addCriteria(new Criteria().orOperator(Criteria.where("syncDate").lt(syncDate),
+					Criteria.where("syncDate").is(null)));
 		}
 		return query;
 	}
