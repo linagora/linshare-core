@@ -1,19 +1,54 @@
 stages:
+  - prepare
+  - check
   - build
 
-before_script:
-  - apt-get update
-  - apt-get -y install libreoffice
+variables:
+    MAVEN_OPTS: "-Djava.awt.headless=true -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
 
-build:
+.cache-tpl: &cache-tpl
+  key: "$CI_COMMIT_REF_SLUG"
+  paths:
+    - $CI_PROJECT_DIR/.m2/repository
+  policy: pull
+
+.curl-tpl: &curl-tpl
+  variables:
+    GIT_STRATEGY: none
+  tags:
+    - curl
+
+check:
+  image: docker-registry.linagora.com:5000/linshare-snapshots/linshare-build-helper:latest
+  stage: check
+  tags:
+      - docker
+  script:
+    - check_author.py check "${GITLAB_USER_EMAIL}" "${GITLAB_USER_NAME}" --no-accents
+
+# deactivated.
+.prepare:
+  image: maven:3.5-jdk-8
+  stage: prepare
+  tags:
+    - docker
+  cache:
+    <<: *cache-tpl
+    policy: pull-push
+  script:
+    - mvn dependency:go-offline --batch-mode
+    - mvn dependency:resolve --batch-mode
+    - mvn dependency:resolve-plugins --batch-mode
+
+# deactivated.
+.build:
   stage: build
   tags:
     - docker
-  image: maven:3.3-jdk-8
+  image: maven:3.5-jdk-8
+  cache:
+    <<: *cache-tpl
   script:
-    - mvn clean test
-  artifacts:
-    paths:
-      - /root/.m2/
-    expire_in: 1 day
-
+    - apt-get update
+    - apt-get -y install libreoffice
+    - mvn -X clean test
