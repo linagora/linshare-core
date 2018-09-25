@@ -38,6 +38,7 @@ import java.util.List;
 
 import javax.naming.NamingException;
 
+import org.linagora.linshare.core.domain.constants.LdapBatchMetaDataType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.GroupLdapPattern;
@@ -120,12 +121,12 @@ public class SynchronizeLDAPGroupsInWorkgroupsBatchImpl extends GenericBatchImpl
 		AbstractDomain domain = renameContext.getResource();
 		console.logInfo(batchRunContext, total, position,
 				"The LDAP groups of the domain " + domain.getUuid() + " have been synchronized");
-		console.logInfo(batchRunContext, total, position, renameContext.getNbCreatedGroups() + " Groups(s) created");
-		console.logInfo(batchRunContext, total, position, renameContext.getNbUpdatedGroups() + " Groups(s) updated");
-		console.logInfo(batchRunContext, total, position, renameContext.getNbDeletedGroups() + " Groups(s) deleted");
-		console.logInfo(batchRunContext, total, position, renameContext.getNbCreatedMembers() + " Member(s) created");
-		console.logInfo(batchRunContext, total, position, renameContext.getNbUpdatedMembers() + " Member(s) updated");
-		console.logInfo(batchRunContext, total, position, renameContext.getNbDeletedMembers() + " Member(s) deleted");
+		console.logInfo(batchRunContext, total, position, renameContext.getResultStats().get(LdapBatchMetaDataType.CREATED_GROUPS) + " Groups(s) created");
+		console.logInfo(batchRunContext, total, position, renameContext.getResultStats().get(LdapBatchMetaDataType.UPDATED_GROUPS) + " Groups(s) updated");
+		console.logInfo(batchRunContext, total, position, renameContext.getResultStats().get(LdapBatchMetaDataType.DELETED_GROUPS) + " Groups(s) deleted");
+		console.logInfo(batchRunContext, total, position, renameContext.getResultStats().get(LdapBatchMetaDataType.CREATED_MEMBERS) + " Member(s) created");
+		console.logInfo(batchRunContext, total, position, renameContext.getResultStats().get(LdapBatchMetaDataType.UPDATED_MEMBERS) + " Member(s) updated");
+		console.logInfo(batchRunContext, total, position, renameContext.getResultStats().get(LdapBatchMetaDataType.DELETED_MEMBERS) + " Member(s) deleted");
 	}
 
 	@Override

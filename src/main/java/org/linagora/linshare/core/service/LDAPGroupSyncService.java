@@ -52,13 +52,15 @@ import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroupMember;
 
 public interface LDAPGroupSyncService {
 
-	SharedSpaceLDAPGroup createOrUpdateLDAPGroup(Account actor, LdapGroupObject group, Date syncDate);
+	SharedSpaceLDAPGroup createOrUpdateLDAPGroup(Account actor, LdapGroupObject group, Date syncDate,
+			LdapGroupsBatchResultContext resultContext);
 
 	SharedSpaceLDAPGroupMember createOrUpdateLDAPGroupMember(Account actor, AbstractDomain domain,
-			SharedSpaceLDAPGroup group, LdapGroupMemberObject memberObject, Date syncDate);
+			SharedSpaceLDAPGroup group, LdapGroupMemberObject memberObject, Date syncDate,
+			LdapGroupsBatchResultContext resultContext);
 
-	void applyTask(Account actor, AbstractDomain domain, LdapGroupObject ldapGroupObject, Set<LdapGroupMemberObject> memberObjects,
-			Date syncDate);
+	void applyTask(Account actor, AbstractDomain domain, LdapGroupObject ldapGroupObject,
+			Set<LdapGroupMemberObject> memberObjects, Date syncDate, LdapGroupsBatchResultContext resultContext);
 
 	void executeBatch(Account actor, AbstractDomain domain, LdapConnection ldapConnection, String baseDn,
 			GroupLdapPattern groupPattern, LdapGroupsBatchResultContext resultContext)

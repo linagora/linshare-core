@@ -36,11 +36,11 @@ package org.linagora.linshare.core.service.impl;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.naming.NamingException;
 
+import org.linagora.linshare.core.domain.constants.LdapBatchMetaDataType;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -70,12 +70,9 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import com.google.common.collect.Maps;
-
 public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(LDAPGroupSyncServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(LDAPGroupSyncServiceImpl.class);
 
 	protected SharedSpaceLDAPGroupService groupService;
 
@@ -88,20 +85,6 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 	protected SharedSpaceLDAPGroupMemberService memberService;
 
 	protected final MongoTemplate mongoTemplate;
-
-	private Map<String, Integer> resultStats;
-
-	private final String DELETED_GROUPS = "deletedGroups";
-
-	private final String UPDATED_GROUPS = "updatedGroups";
-
-	private final String CREATED_GROUPS = "createdGroups";
-
-	private final String DELETED_MEMBERS = "deletedMembers";
-
-	private final String UPDATED_MEMBERS = "updatedMembers";
-
-	private final String CREATED_MEMBERS = "createdMembers";
 
 	public LDAPGroupSyncServiceImpl(SharedSpaceLDAPGroupService groupService,
 			LDAPGroupQueryService ldapGroupQueryService,
@@ -116,27 +99,16 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 		this.ssRoleService = ssRoleService;
 		this.mongoTemplate = mongoTemplate;
 		this.memberService = memberService;
-		initResultStats();
 	}
 
-	private void initResultStats() {
-		Map<String, Integer> resultStats = Maps.newHashMap();
-		resultStats.put(DELETED_GROUPS, 0);
-		resultStats.put(UPDATED_GROUPS, 0);
-		resultStats.put(CREATED_GROUPS, 0);
-		resultStats.put(DELETED_MEMBERS, 0);
-		resultStats.put(UPDATED_MEMBERS, 0);
-		resultStats.put(CREATED_MEMBERS, 0);
-		this.resultStats = resultStats;
-	}
-
-	private void computeStats(String identifier) {
+	private void computeStats(LdapGroupsBatchResultContext resultContext, LdapBatchMetaDataType metaDataType) {
 		// Increment the stats for the given identifier
-		this.resultStats.compute(identifier, (key, val) -> (val == null) ? 1 : val + 1);
+		resultContext.getResultStats().compute(metaDataType, (key, val) -> (val == null) ? 1 : val + 1);
 	}
 
 	@Override
-	public SharedSpaceLDAPGroup createOrUpdateLDAPGroup(Account actor, LdapGroupObject group, Date syncDate) {
+	public SharedSpaceLDAPGroup createOrUpdateLDAPGroup(Account actor, LdapGroupObject group, Date syncDate,
+			LdapGroupsBatchResultContext resultContext) {
 		SharedSpaceLDAPGroup node = convertLdapGroup(group, syncDate);
 		SharedSpaceLDAPGroup ldapGroup = findGroupToUpdate(node.getExternalId(), syncDate);
 		if (ldapGroup != null) {
@@ -150,17 +122,18 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 			}
 			ldapGroup.setName(node.getName());
 			// Complete update : The member is notified his access has been changed
-			computeStats(UPDATED_GROUPS);
+			computeStats(resultContext, LdapBatchMetaDataType.UPDATED_GROUPS);
 			return groupService.update(actor, ldapGroup);
 		}
 		logger.info(String.format("New Ldap group created : NAME -> %s", node.getName()));
-		computeStats(CREATED_GROUPS);
+		computeStats(resultContext, LdapBatchMetaDataType.CREATED_GROUPS);
 		return groupService.create(actor, node);
 	}
 
 	@Override
-	public SharedSpaceLDAPGroupMember createOrUpdateLDAPGroupMember(Account actor, AbstractDomain domain, SharedSpaceLDAPGroup group,
-			LdapGroupMemberObject memberObject, Date syncDate) {
+	public SharedSpaceLDAPGroupMember createOrUpdateLDAPGroupMember(Account actor, AbstractDomain domain,
+			SharedSpaceLDAPGroup group, LdapGroupMemberObject memberObject, Date syncDate,
+			LdapGroupsBatchResultContext resultContext) {
 		User user;
 		try {
 			user = userService.findOrCreateUser(memberObject.getEmail(), domain.getUuid());
@@ -182,13 +155,13 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 			}
 			member.setRole(new GenericLightEntity(role.getUuid(), role.getName()));
 			// Complete update : The member is notified his access has been changed
-			computeStats(UPDATED_MEMBERS);
+			computeStats(resultContext, LdapBatchMetaDataType.UPDATED_MEMBERS);
 			return memberService.update(actor, member);
 		}
 		SharedSpaceLDAPGroupMember newMember = convertLdapGroupMember(group, role, user, memberObject.getExternalId(),
 				syncDate);
 		logger.info(String.format("New Ldap group member created : NAME -> %s", newMember.getAccount().getName()));
-		computeStats(CREATED_MEMBERS);
+		computeStats(resultContext, LdapBatchMetaDataType.CREATED_MEMBERS);
 		return memberService.create(actor, newMember);
 	}
 
@@ -257,47 +230,41 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 	}
 
 	@Override
-	public void applyTask(Account actor, AbstractDomain domain, LdapGroupObject ldapGroupObject, Set<LdapGroupMemberObject> memberObjects,
-			Date syncDate) {
-		SharedSpaceLDAPGroup created = createOrUpdateLDAPGroup(actor, ldapGroupObject, syncDate);
+	public void applyTask(Account actor, AbstractDomain domain, LdapGroupObject ldapGroupObject,
+			Set<LdapGroupMemberObject> memberObjects, Date syncDate, LdapGroupsBatchResultContext resultContext) {
+		SharedSpaceLDAPGroup created = createOrUpdateLDAPGroup(actor, ldapGroupObject, syncDate, resultContext);
 		// TODO Create each member
 		for (LdapGroupMemberObject memberObject : memberObjects) {
-			createOrUpdateLDAPGroupMember(actor, domain, created, memberObject, syncDate);
+			createOrUpdateLDAPGroupMember(actor, domain, created, memberObject, syncDate, resultContext);
 		}
 		Query outdatedGroupMembersQuery = buildFindOutDatedLdapMembersQuery(created.getUuid(), syncDate);
 		List<SharedSpaceLDAPGroupMember> outDatedMembers = mongoTemplate.find(outdatedGroupMembersQuery,
 				SharedSpaceLDAPGroupMember.class);
 		// Delete all outdated members
 		for (SharedSpaceLDAPGroupMember outDatedMember : outDatedMembers) {
-			computeStats(DELETED_MEMBERS);
+			computeStats(resultContext, LdapBatchMetaDataType.DELETED_MEMBERS);
 			memberService.delete(actor, actor, outDatedMember.getUuid());
 		}
 	}
 
 	@Override
 	public void executeBatch(Account actor, AbstractDomain domain, LdapConnection ldapConnection, String baseDn,
-			GroupLdapPattern groupPattern, LdapGroupsBatchResultContext resultContext) throws BusinessException, NamingException, IOException {
+			GroupLdapPattern groupPattern, LdapGroupsBatchResultContext resultContext)
+			throws BusinessException, NamingException, IOException {
 		Date syncDate = new Date();
 		Set<LdapGroupObject> groupsObjects = ldapGroupQueryService.listGroups(ldapConnection, baseDn, groupPattern);
 		for (LdapGroupObject ldapGroupObject : groupsObjects) {
 			Set<LdapGroupMemberObject> members = ldapGroupQueryService.listMembers(ldapConnection, baseDn, groupPattern,
 					ldapGroupObject);
-			applyTask(actor, domain, ldapGroupObject, members, syncDate);
+			applyTask(actor, domain, ldapGroupObject, members, syncDate, resultContext);
 		}
 		// Delete all outdated groups
 		Query outdatedGroupsQuery = buildFindOutDatedLdapGroupsQuery(syncDate);
 		List<SharedSpaceLDAPGroup> groupsOutDated = mongoTemplate.find(outdatedGroupsQuery, SharedSpaceLDAPGroup.class);
 		for (SharedSpaceLDAPGroup ldapGroup : groupsOutDated) {
-			computeStats(DELETED_GROUPS);
+			computeStats(resultContext, LdapBatchMetaDataType.DELETED_GROUPS);
 			deleteLDAPGroup(actor, ldapGroup);
 		}
-		resultContext.setNbCreatedGroups(this.resultStats.get(CREATED_GROUPS));
-		resultContext.setNbUpdatedGroups(this.resultStats.get(UPDATED_GROUPS));
-		resultContext.setNbDeletedGroups(this.resultStats.get(DELETED_GROUPS));
-		resultContext.setNbCreatedMembers(this.resultStats.get(CREATED_MEMBERS));
-		resultContext.setNbUpdatedMembers(this.resultStats.get(UPDATED_MEMBERS));
-		resultContext.setNbDeletedMembers(this.resultStats.get(DELETED_MEMBERS));
-		initResultStats();
 	}
 
 }

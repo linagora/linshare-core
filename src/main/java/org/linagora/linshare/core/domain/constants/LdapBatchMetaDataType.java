@@ -31,32 +31,27 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.job.quartz;
+package org.linagora.linshare.core.domain.constants;
 
-import java.util.Map;
+import org.apache.commons.lang.StringUtils;
+import org.linagora.linshare.core.exception.TechnicalErrorCode;
+import org.linagora.linshare.core.exception.TechnicalException;
 
-import org.linagora.linshare.core.domain.constants.LdapBatchMetaDataType;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
+public enum LdapBatchMetaDataType {
 
-import com.google.common.collect.Maps;
+	DELETED_GROUPS,
+	UPDATED_GROUPS,
+	CREATED_GROUPS,
+	DELETED_MEMBERS,
+	UPDATED_MEMBERS,
+	CREATED_MEMBERS;
 
-public class LdapGroupsBatchResultContext extends DomainBatchResultContext {
-
-	private Map<LdapBatchMetaDataType, Integer> resultStats = Maps.newHashMap();
-
-	public LdapGroupsBatchResultContext(AbstractDomain resource) {
-		super(resource);
-		this.identifier = resource.getUuid();
-		for (LdapBatchMetaDataType metaDataType : LdapBatchMetaDataType.values()) {
-			resultStats.put(metaDataType, 0);
+	public static LdapBatchMetaDataType fromString(String s) {
+		try {
+			return LdapBatchMetaDataType.valueOf(s.toUpperCase());
+		} catch (RuntimeException e) {
+			throw new TechnicalException(TechnicalErrorCode.DATABASE_INCOHERENCE,
+					StringUtils.isEmpty(s) ? "null or empty" : s);
 		}
-	}
-
-	public Map<LdapBatchMetaDataType, Integer> getResultStats() {
-		return resultStats;
-	}
-
-	public void setResultStats(Map<LdapBatchMetaDataType, Integer> resultStats) {
-		this.resultStats = resultStats;
 	}
 }
