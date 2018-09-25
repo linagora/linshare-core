@@ -1,5 +1,6 @@
 stages:
   - prepare
+  - check
   - build
 
 variables:
@@ -17,11 +18,13 @@ variables:
   tags:
     - curl
 
-build:
-  <<: *curl-tpl
-  stage: build
+check:
+  image: docker-registry.linagora.com:5000/linshare-snapshots/linshare-build-helper:latest
+  stage: check
+  tags:
+      - docker
   script:
-    - echo just to enable external pipeline.
+    - check_author.py check "${GITLAB_USER_EMAIL}" "${GITLAB_USER_NAME}" --no-accents
 
 # deactivated.
 .prepare:
