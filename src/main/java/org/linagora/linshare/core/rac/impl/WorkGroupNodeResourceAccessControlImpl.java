@@ -38,13 +38,13 @@ import org.linagora.linshare.core.domain.constants.PermissionType;
 import org.linagora.linshare.core.domain.constants.SharedSpaceActionType;
 import org.linagora.linshare.core.domain.constants.SharedSpaceResourceType;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
-import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.WorkGroupNodeResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpacePermissionMongoRepository;
@@ -52,9 +52,7 @@ import org.linagora.linshare.mongo.repository.SharedSpacePermissionMongoReposito
 public class WorkGroupNodeResourceAccessControlImpl
 		extends AbstractSharedSpaceResourceAccessControlImpl<Account, WorkGroupNode>
 		implements WorkGroupNodeResourceAccessControl<Account, WorkGroupNode> {
-	
-	private SharedSpaceResourceType type = SharedSpaceResourceType.FOLDER;
-	
+
 	public WorkGroupNodeResourceAccessControlImpl(
 			FunctionalityReadOnlyService functionalityService,
 			SharedSpaceMemberMongoRepository sharedSpaceMemberMongoRepository,
@@ -168,32 +166,50 @@ public class WorkGroupNodeResourceAccessControlImpl
 	}
 
 	protected boolean hasDownloadPermission(Account authUser, Account actor, WorkGroupNode entry, Object... opt) {
-		setType(entry);
 		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
 				TechnicalAccountPermissionType.THREAD_ENTRIES_DOWNLOAD, SharedSpaceActionType.DOWNLOAD);
 	}
 
 	protected boolean hasDownloadTumbnailPermission(Account authUser, Account actor, WorkGroupNode entry,
 			Object... opt) {
-		setType(entry);
 		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
 				TechnicalAccountPermissionType.THREAD_ENTRIES_DOWNLOAD_THUMBNAIL,
 				SharedSpaceActionType.DOWNLOAD_THUMBNAIL);
 	}
 
-	private SharedSpaceResourceType setType(WorkGroupNode entry) {
-		if (entry.getNodeType().equals(WorkGroupNodeType.ASYNC_TASK)
-				|| entry.getNodeType().equals(WorkGroupNodeType.ROOT_FOLDER)) {
-			type = SharedSpaceResourceType.FOLDER;
-			return type;
+	protected SharedSpaceResourceType getSharedSpaceResourceType(WorkGroupNode entry) {
+		switch (entry.getNodeType()) {
+			case ROOT_FOLDER:
+			case FOLDER:	
+				return SharedSpaceResourceType.FOLDER;
+			case DOCUMENT:
+			case DOCUMENT_REVISION:
+				return SharedSpaceResourceType.FILE;
+			default:
+				throw new BusinessException(BusinessErrorCode.INVALID_WORK_GROUP_NODE_TYPE, "Bad workgroup node type mapping");
+			
 		}
-		type = SharedSpaceResourceType.FILE;
-		return type;
 	}
 
-	@Override
-	protected SharedSpaceResourceType getSharedSpaceResourceType() {
-		return type;
+	protected boolean defaultSharedSpacePermissionCheck(Account authUser, Account actor, WorkGroupNode entry,
+			TechnicalAccountPermissionType permission, SharedSpaceActionType action) {
+		if (authUser.hasSuperAdminRole()) {
+			return true;
+		}
+		if (authUser.hasDelegationRole()) {
+			return hasPermission(authUser, permission);
+		}
+		if (authUser.isInternal() || authUser.isGuest()) {
+			if (actor != null && authUser.equals(actor)) {
+				SharedSpaceMember foundMember = sharedSpaceMemberMongoRepository.findByAccountAndNode(actor.getLsUuid(),
+						entry.getWorkGroup());
+				if (foundMember == null) {
+					return false;
+				}
+				return hasPermission(foundMember.getRole().getUuid(), action, getSharedSpaceResourceType(entry));
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -204,5 +220,10 @@ public class WorkGroupNodeResourceAccessControlImpl
 	@Override
 	protected Account getOwner(WorkGroupNode entry, Object... opt) {
 		return null;
+	}
+
+	@Override
+	protected SharedSpaceResourceType getSharedSpaceResourceType() {
+		return SharedSpaceResourceType.FOLDER;
 	}
 }
