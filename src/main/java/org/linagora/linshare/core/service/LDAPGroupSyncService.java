@@ -52,8 +52,8 @@ import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroupMember;
 
 public interface LDAPGroupSyncService {
 
-	SharedSpaceLDAPGroup createOrUpdateLDAPGroup(Account actor, LdapGroupObject group, Date syncDate,
-			LdapGroupsBatchResultContext resultContext);
+	SharedSpaceLDAPGroup createOrUpdateLDAPGroup(Account actor, AbstractDomain domain, LdapGroupObject group,
+			Date syncDate, LdapGroupsBatchResultContext resultContext);
 
 	SharedSpaceLDAPGroupMember createOrUpdateLDAPGroupMember(Account actor, AbstractDomain domain,
 			SharedSpaceLDAPGroup group, LdapGroupMemberObject memberObject, Date syncDate,

@@ -107,9 +107,9 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 	}
 
 	@Override
-	public SharedSpaceLDAPGroup createOrUpdateLDAPGroup(Account actor, LdapGroupObject group, Date syncDate,
-			LdapGroupsBatchResultContext resultContext) {
-		SharedSpaceLDAPGroup node = convertLdapGroup(group, syncDate);
+	public SharedSpaceLDAPGroup createOrUpdateLDAPGroup(Account actor, AbstractDomain domain, LdapGroupObject group,
+			Date syncDate, LdapGroupsBatchResultContext resultContext) {
+		SharedSpaceLDAPGroup node = convertLdapGroup(group, syncDate, domain);
 		SharedSpaceLDAPGroup ldapGroup = findGroupToUpdate(node.getExternalId(), syncDate);
 		if (ldapGroup != null) {
 			ldapGroup.setModificationDate(new Date());
@@ -169,9 +169,9 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 		return ssRoleService.findByName(actor, actor, role.toString());
 	}
 
-	private SharedSpaceLDAPGroup convertLdapGroup(LdapGroupObject group, Date syncDate) {
+	private SharedSpaceLDAPGroup convertLdapGroup(LdapGroupObject group, Date syncDate, AbstractDomain domain) {
 		return new SharedSpaceLDAPGroup(group.getName(), null, NodeType.WORK_GROUP, group.getExternalId(),
-				group.getPrefix(), syncDate);
+				group.getPrefix(), syncDate, new GenericLightEntity(domain));
 	}
 
 	private SharedSpaceLDAPGroupMember convertLdapGroupMember(SharedSpaceLDAPGroup group, SharedSpaceRole role,
@@ -207,18 +207,25 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 	}
 
 	private Query buildFindLdapGroupQuery(String externalId, Date syncDate) {
+		return buildFindLdapGroupQuery(externalId, syncDate, null);
+	}
+
+	private Query buildFindLdapGroupQuery(String externalId, Date syncDate, String domainUuid) {
 		Query query = new Query();
-		if (null != syncDate) {
+		if (null != externalId) {
 			query.addCriteria(Criteria.where("externalId").is(externalId));
 		}
 		if (null != syncDate) {
 			query.addCriteria(Criteria.where("syncDate").lt(syncDate));
 		}
+		if (null != domainUuid) {
+			query.addCriteria(Criteria.where("domain.uuid").is(domainUuid));
+		}
 		return query;
 	}
 
-	private Query buildFindOutDatedLdapGroupsQuery(Date syncDate) {
-		return buildFindLdapGroupQuery(null, syncDate);
+	private Query buildFindOutDatedLdapGroupsQuery(Date syncDate, String domainUuid) {
+		return buildFindLdapGroupQuery(null, syncDate, domainUuid);
 	}
 
 	private Query buildFindOutDatedLdapMembersQuery(String nodeUuid, Date syncDate) {
@@ -229,15 +236,9 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 		groupService.delete(actor, actor, group);
 	}
 
-	@Override
-	public void applyTask(Account actor, AbstractDomain domain, LdapGroupObject ldapGroupObject,
-			Set<LdapGroupMemberObject> memberObjects, Date syncDate, LdapGroupsBatchResultContext resultContext) {
-		SharedSpaceLDAPGroup created = createOrUpdateLDAPGroup(actor, ldapGroupObject, syncDate, resultContext);
-		// TODO Create each member
-		for (LdapGroupMemberObject memberObject : memberObjects) {
-			createOrUpdateLDAPGroupMember(actor, domain, created, memberObject, syncDate, resultContext);
-		}
-		Query outdatedGroupMembersQuery = buildFindOutDatedLdapMembersQuery(created.getUuid(), syncDate);
+	private void deleteOutDatedMembers(Account actor, SharedSpaceLDAPGroup group, Date syncDate,
+			LdapGroupsBatchResultContext resultContext) {
+		Query outdatedGroupMembersQuery = buildFindOutDatedLdapMembersQuery(group.getUuid(), syncDate);
 		List<SharedSpaceLDAPGroupMember> outDatedMembers = mongoTemplate.find(outdatedGroupMembersQuery,
 				SharedSpaceLDAPGroupMember.class);
 		// Delete all outdated members
@@ -245,6 +246,17 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 			computeStats(resultContext, LdapBatchMetaDataType.DELETED_MEMBERS);
 			memberService.delete(actor, actor, outDatedMember.getUuid());
 		}
+	}
+
+	@Override
+	public void applyTask(Account actor, AbstractDomain domain, LdapGroupObject ldapGroupObject,
+			Set<LdapGroupMemberObject> memberObjects, Date syncDate, LdapGroupsBatchResultContext resultContext) {
+		SharedSpaceLDAPGroup created = createOrUpdateLDAPGroup(actor, domain, ldapGroupObject, syncDate, resultContext);
+		// Create each member
+		for (LdapGroupMemberObject memberObject : memberObjects) {
+			createOrUpdateLDAPGroupMember(actor, domain, created, memberObject, syncDate, resultContext);
+		}
+		deleteOutDatedMembers(actor, created, syncDate, resultContext);
 	}
 
 	@Override
@@ -258,12 +270,12 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 					ldapGroupObject);
 			applyTask(actor, domain, ldapGroupObject, members, syncDate, resultContext);
 		}
-		// Delete all outdated groups
-		Query outdatedGroupsQuery = buildFindOutDatedLdapGroupsQuery(syncDate);
+		// Delete all outdated groups by deleting all its outdated members
+		Query outdatedGroupsQuery = buildFindOutDatedLdapGroupsQuery(syncDate, domain.getUuid());
 		List<SharedSpaceLDAPGroup> groupsOutDated = mongoTemplate.find(outdatedGroupsQuery, SharedSpaceLDAPGroup.class);
 		for (SharedSpaceLDAPGroup ldapGroup : groupsOutDated) {
 			computeStats(resultContext, LdapBatchMetaDataType.DELETED_GROUPS);
-			deleteLDAPGroup(actor, ldapGroup);
+			deleteOutDatedMembers(actor, ldapGroup, syncDate, resultContext);
 		}
 	}
 

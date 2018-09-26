@@ -37,8 +37,9 @@ import java.util.Date;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.linagora.linshare.core.domain.constants.NodeType;
+import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
-@JsonIgnoreProperties({"externalId", "prefix", "syncDate"})
+@JsonIgnoreProperties({"externalId", "prefix", "syncDate", "domain"})
 public class SharedSpaceLDAPGroup extends SharedSpaceNode {
 
 	protected String externalId;
@@ -47,23 +48,27 @@ public class SharedSpaceLDAPGroup extends SharedSpaceNode {
 
 	protected Date syncDate;
 
+	protected GenericLightEntity domain;
+
 	public SharedSpaceLDAPGroup() {
 		super();
 	}
 
-	public SharedSpaceLDAPGroup(String externalId, String prefix, Date syncDate) {
+	public SharedSpaceLDAPGroup(String externalId, String prefix, Date syncDate, GenericLightEntity domain) {
 		super();
 		this.externalId = externalId;
 		this.prefix = prefix;
 		this.syncDate = syncDate;
+		this.domain = domain;
 	}
 
 	public SharedSpaceLDAPGroup(String name, String parentUuid, NodeType nodeType, String externalId, String prefix,
-			Date syncDate) {
+			Date syncDate, GenericLightEntity domain) {
 		super(name, parentUuid, nodeType);
 		this.externalId = externalId;
 		this.prefix = prefix;
 		this.syncDate = syncDate;
+		this.domain = domain;
 	}
 
 	public String getExternalId() {
