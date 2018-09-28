@@ -38,6 +38,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupLightDto;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 
@@ -48,6 +49,11 @@ public class SharedSpaceMemberAuditLogEntry extends AuditLogEntryUser {
 
 	private SharedSpaceMember resourceUpdated;
 
+	// WorkAround
+	// we have to duplicate workGroup information
+	// to avoid side effect on back and front-end
+	protected WorkGroupLightDto workGroup;
+
 	public SharedSpaceMemberAuditLogEntry() {
 		super();
 	}
@@ -55,12 +61,16 @@ public class SharedSpaceMemberAuditLogEntry extends AuditLogEntryUser {
 	public SharedSpaceMemberAuditLogEntry(SharedSpaceMember resource, SharedSpaceMember resourceUpdated) {
 		super();
 		this.resource = resource;
+		this.workGroup = new WorkGroupLightDto(resource.getNode());
+		resourceUpdated.setUser(resourceUpdated.getAccount());
 		this.resourceUpdated = resourceUpdated;
 	}
 
 	public SharedSpaceMemberAuditLogEntry(Account authUser, Account owner, LogAction action, AuditLogEntryType type,
 			SharedSpaceMember member) {
 		super(new AccountMto(authUser), new AccountMto(owner), action, type, member.getUuid());
+		member.setUser(member.getAccount());
+		this.workGroup = new WorkGroupLightDto(member.getNode());
 		this.resource = member;
 	}
 
@@ -78,6 +88,14 @@ public class SharedSpaceMemberAuditLogEntry extends AuditLogEntryUser {
 
 	public void setResourceUpdated(SharedSpaceMember resourceUpdated) {
 		this.resourceUpdated = resourceUpdated;
+	}
+
+	public WorkGroupLightDto getWorkGroup() {
+		return workGroup;
+	}
+
+	public void setWorkGroup(WorkGroupLightDto workGroup) {
+		this.workGroup = workGroup;
 	}
 
 }

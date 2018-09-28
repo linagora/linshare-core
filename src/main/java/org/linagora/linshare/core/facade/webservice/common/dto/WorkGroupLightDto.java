@@ -36,6 +36,7 @@ package org.linagora.linshare.core.facade.webservice.common.dto;
 import java.util.Date;
 
 import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -64,6 +65,13 @@ public class WorkGroupLightDto {
 		this.uuid = thread.getLsUuid();
 		this.name = thread.getName();
 		this.creationDate = thread.getCreationDate();
+	}
+
+	public WorkGroupLightDto(SharedSpaceNodeNested node) {
+		super();
+		this.uuid = node.getUuid();
+		this.name = node.getName();
+		this.creationDate = node.getCreationDate();
 	}
 
 	public String getUuid() {

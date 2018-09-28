@@ -66,6 +66,11 @@ public class SharedSpaceMember {
 
 	protected Date modificationDate;
 
+	// WorkAround
+	// we have to duplicate account information
+	// to avoid a side effect on front-end
+	protected SharedSpaceAccount user;
+
 	public SharedSpaceMember() {
 		super();
 	}
@@ -145,6 +150,14 @@ public class SharedSpaceMember {
 
 	public void setAccount(SharedSpaceAccount account) {
 		this.account = account;
+	}
+
+	public SharedSpaceAccount getUser() {
+		return user;
+	}
+
+	public void setUser(SharedSpaceAccount user) {
+		this.user = user;
 	}
 
 	@Override
