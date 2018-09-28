@@ -232,7 +232,7 @@ ALTER TABLE upload_request_entry ALTER COLUMN ls_type SET NOT NULL;
 -- Update ldap_pattern
 ALTER TABLE ldap_pattern ADD COLUMN search_all_groups_query text;
 ALTER TABLE ldap_pattern ADD COLUMN search_group_query text;
-ALTER TABLE ldap_pattern ADD COLUMN find_member_query text;
+ALTER TABLE ldap_pattern ADD COLUMN search_in_other_domains bool default FALSE;
 ALTER TABLE ldap_pattern ADD COLUMN group_prefix varchar(255);
 
 -- Upgrade Task

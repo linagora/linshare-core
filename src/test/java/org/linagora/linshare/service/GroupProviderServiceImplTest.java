@@ -92,8 +92,8 @@ public class GroupProviderServiceImplTest extends AbstractTransactionalJUnit4Spr
 		LdapAttribute attribute = new LdapAttribute("field", "attribute", false);
 		Map<String, LdapAttribute> attributeList = new HashMap<>();
 		attributeList.put("first", attribute);
-		groupPattern = new GroupLdapPattern("lable", "description", "searchAllGroupsQuery", "memberQuery",
-				"searchGroupQuery", "findMemberQuery", "groupPrefix");
+		groupPattern = new GroupLdapPattern("lable", "description", "searchAllGroupsQuery",
+				"searchGroupQuery", "groupPrefix", false);
 		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
 		groupPattern = groupLdapPatternService.create(actor, groupPattern);
 		Assert.assertNotNull(groupPattern);

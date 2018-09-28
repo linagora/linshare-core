@@ -130,8 +130,6 @@ public class SynchronizeLDAPGroupsInWorkgroupsBatchImplTest extends AbstractTran
 		GroupLdapPatternDto groupPatternDto = new GroupLdapPatternDto();
 		groupPatternDto.setDescription("description");
 		groupPatternDto.setLabel("New Pattern");
-		groupPatternDto.setFindMemberQuery(
-				"(&(objectCategory=person)(objectclass=user)(memberOf=CN=\" + pattern + \",OU=People,dc=linshare,dc=org)");
 		groupPatternDto.setGroupMember("member");
 		groupPatternDto.setGroupName("cn");
 		groupPatternDto.setGroupPrefix("workgroup-");

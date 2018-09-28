@@ -159,7 +159,6 @@ public class LDAPGroupSyncServiceImplTest extends AbstractTransactionalJUnit4Spr
 		groupPattern = new GroupLdapPattern();
 		groupPattern.setAttributes(attributes);
 		groupPattern.setSearchAllGroupsQuery("ldap.search(baseDn, \"(&(objectClass=posixGroup)(cn=workgroup-*))\");");
-		groupPattern.setFindMemberQuery("");
 		groupPattern.setSearchGroupQuery(
 				"ldap.search(baseDn, \"(&(objectClass=posixGroup)(cn=workgroup-\" + pattern + \"))\");");
 		groupPattern.setSearchPageSize(100);

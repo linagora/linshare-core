@@ -84,7 +84,6 @@ public class GroupLdapPatternServiceImpl extends GenericAdminServiceImpl impleme
 		Validate.notEmpty(groupLdapPattern.getLabel());
 		Validate.notEmpty(groupLdapPattern.getSearchAllGroupsQuery());
 		Validate.notEmpty(groupLdapPattern.getSearchGroupQuery());
-		Validate.notEmpty(groupLdapPattern.getFindMemberQuery());
 		Collection<LdapAttribute> collection = groupLdapPattern.getAttributes().values();
 		for (LdapAttribute e : collection) {
 			if (e.getAttribute() == null) {
@@ -110,14 +109,11 @@ public class GroupLdapPatternServiceImpl extends GenericAdminServiceImpl impleme
 		Validate.notNull(groupLdapPattern.getSearchPageSize(), "Pattern's search page size must be set.");
 		Validate.notNull(groupLdapPattern.getSearchAllGroupsQuery(), "Pattern's search all groups query must be set.");
 		Validate.notEmpty(groupLdapPattern.getSearchGroupQuery(), "Pattern's search group query must be set.");
-		Validate.notEmpty(groupLdapPattern.getFindMemberQuery(), "Patterns's find member group query must be set.");
-		Validate.notEmpty(groupLdapPattern.getGroupPrefix(), "Patterns's group  prefix must be set.");
 
 		pattern.setDescription(groupLdapPattern.getDescription());
 		pattern.setSearchPageSize(groupLdapPattern.getSearchPageSize());
 		pattern.setSearchAllGroupsQuery(groupLdapPattern.getSearchAllGroupsQuery());
 		pattern.setSearchGroupQuery(groupLdapPattern.getSearchGroupQuery());
-		pattern.setFindMemberQuery(groupLdapPattern.getFindMemberQuery());
 		pattern.setGroupPrefix(groupLdapPattern.getGroupPrefix());
 
 		pattern.getAttributes().get(GroupLdapPattern.GROUP_NAME)

@@ -185,7 +185,7 @@ INSERT INTO ldap_pattern(
 	modification_date,
 	search_all_groups_query,
 	search_group_query,
-	find_member_query,
+	search_in_other_domains,
 	group_prefix)
 	VALUES(
 	4,
@@ -206,7 +206,6 @@ INSERT INTO ldap_pattern(
 	NOW(),
 	'ldap.search(baseDn, "(&(objectClass=posixGroup)(cn=workgroup-*))");',
 	'ldap.search(baseDn, "(&(objectClass=posixGroup)(cn=workgroup-" + pattern + "))");',
-	'(&(objectCategory=person)(objectclass=user)(memberOf=CN=" + pattern + ",OU=People,dc=linshare,dc=org)',
 	'workgroup-');
 
 

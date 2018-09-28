@@ -83,7 +83,7 @@ public class GroupPatternServiceImplTest extends AbstractTransactionalJUnit4Spri
 	@Test
 	public void testCreateGroupPattern() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		GroupLdapPattern groupPattern = new GroupLdapPattern("lable", "description", "searchAllGroupsQuery", "memberQuery", "searchGroupQuery", "findMemberQuery", "groupPrefix");
+		GroupLdapPattern groupPattern = new GroupLdapPattern("lable", "description", "searchAllGroupsQuery", "searchGroupQuery", "groupPrefix", false);
 		try {
 			Account actor = accountService.findByLsUuid("root@localhost.localdomain");
 			groupLdapPatternService.create(actor, groupPattern);
@@ -98,7 +98,7 @@ public class GroupPatternServiceImplTest extends AbstractTransactionalJUnit4Spri
 	@Test
 	public void testCreateFindDomainPattern() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		GroupLdapPattern groupPattern = new GroupLdapPattern("label", "description", "searchAllGroupsQuery", "memberQuery", "searchGroupQuery", "findMemberQuery", "groupPrefix");
+		GroupLdapPattern groupPattern = new GroupLdapPattern("label", "description", "searchAllGroupsQuery", "searchGroupQuery", "groupPrefix", false);
 		try {
 			Account actor = accountService.findByLsUuid("root@localhost.localdomain");
 			groupPattern = groupLdapPatternService.create(actor, groupPattern);
@@ -115,7 +115,7 @@ public class GroupPatternServiceImplTest extends AbstractTransactionalJUnit4Spri
 	@Test
 	public void testCreateDeleteDomainPattern() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		GroupLdapPattern groupPattern = new GroupLdapPattern("label", "description", "searchAllGroupsQuery", "memberQuery", "searchGroupQuery", "findMemberQuery", "groupPrefix");
+		GroupLdapPattern groupPattern = new GroupLdapPattern("label", "description", "searchAllGroupsQuery", "searchGroupQuery", "groupPrefix", false);
 		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
 		try {
 			groupPattern = groupLdapPatternService.create(actor, groupPattern);
@@ -136,7 +136,7 @@ public class GroupPatternServiceImplTest extends AbstractTransactionalJUnit4Spri
 	@Test
 	public void testFindAllUpdateDomainPattern() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		GroupLdapPattern groupPattern = new GroupLdapPattern("label", "description", "searchAllGroupsQuery", "memberQuery", "searchGroupQuery", "findMemberQuery", "groupPrefix");
+		GroupLdapPattern groupPattern = new GroupLdapPattern("label", "description", "searchAllGroupsQuery", "searchGroupQuery", "groupPrefix", false);
 		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
 		try {
 			groupPattern = groupLdapPatternService.create(actor, groupPattern);

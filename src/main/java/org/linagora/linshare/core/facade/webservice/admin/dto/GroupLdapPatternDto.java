@@ -65,11 +65,11 @@ public class GroupLdapPatternDto {
 	@ApiModelProperty(value = "searchGroupQuery")
 	private String searchGroupQuery;
 
-	@ApiModelProperty(value = "findMemberQuery")
-	private String findMemberQuery;
-
 	@ApiModelProperty(value = "groupPrefix")
 	private String groupPrefix;
+
+	@ApiModelProperty(value = "searchInOtherDomains")
+	private Boolean searchInOtherDomains;
 
 	@ApiModelProperty(value = "groupName")
 	private String groupName;
@@ -101,8 +101,8 @@ public class GroupLdapPatternDto {
 		this.searchPageSize = groupLdapPattern.getSearchPageSize();
 		this.searchAllGroupsQuery = groupLdapPattern.getSearchAllGroupsQuery();
 		this.searchGroupQuery = groupLdapPattern.getSearchGroupQuery();
-		this.findMemberQuery = groupLdapPattern.getFindMemberQuery();
 		this.groupPrefix = groupLdapPattern.getGroupPrefix();
+		this.searchInOtherDomains = groupLdapPattern.getSearchInOtherDomains();
 	}
 
 	public GroupLdapPatternDto() {
@@ -157,14 +157,6 @@ public class GroupLdapPatternDto {
 		this.searchGroupQuery = searchGroupQuery;
 	}
 
-	public String getFindMemberQuery() {
-		return findMemberQuery;
-	}
-
-	public void setFindMemberQuery(String findMemberQuery) {
-		this.findMemberQuery = findMemberQuery;
-	}
-
 	public String getGroupPrefix() {
 		return groupPrefix;
 	}
@@ -211,6 +203,14 @@ public class GroupLdapPatternDto {
 
 	public void setMemberLastName(String memberLastName) {
 		this.memberLastName = memberLastName;
+	}
+
+	public Boolean getSearchInOtherDomains() {
+		return searchInOtherDomains;
+	}
+
+	public void setSearchInOtherDomains(Boolean searchInOtherDomains) {
+		this.searchInOtherDomains = searchInOtherDomains;
 	}
 
 }

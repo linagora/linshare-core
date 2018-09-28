@@ -675,7 +675,7 @@ CREATE TABLE ldap_pattern (
   completion_size_limit                        int4,
   search_all_groups_query                      text,
   search_group_query                           text,
-  find_member_query                            text,
+  search_in_other_domains                      bool DEFAULT FALSE,
   group_prefix                                 varchar(255),
   creation_date                                timestamp NOT NULL,
   modification_date                            timestamp NOT NULL,

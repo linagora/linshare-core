@@ -61,11 +61,11 @@ public class GroupLdapPattern extends LdapPattern {
 
 	protected String searchGroupQuery;
 
-	protected String findMemberQuery;
-
 	protected String groupPrefix;
 
 	protected Integer searchPageSize;
+
+	protected Boolean searchInOtherDomains;
 
 	public GroupLdapPattern() {
 		super();
@@ -79,7 +79,9 @@ public class GroupLdapPattern extends LdapPattern {
 		this.searchPageSize = groupLdapPatternDto.getSearchPageSize();
 		this.searchAllGroupsQuery = groupLdapPatternDto.getSearchAllGroupsQuery();
 		this.searchGroupQuery = groupLdapPatternDto.getSearchGroupQuery();
-		this.findMemberQuery = groupLdapPatternDto.getFindMemberQuery();
+		this.searchInOtherDomains = groupLdapPatternDto.getSearchInOtherDomains() != null
+				? groupLdapPatternDto.getSearchInOtherDomains()
+				: false;
 		this.groupPrefix = groupLdapPatternDto.getGroupPrefix();
 		this.attributes = new HashMap<String, LdapAttribute>();
 		this.attributes.put(GROUP_NAME, new LdapAttribute(GROUP_NAME, groupLdapPatternDto.getGroupName(), true));
@@ -95,14 +97,14 @@ public class GroupLdapPattern extends LdapPattern {
 	/**
 	 * For tests only.
 	 */
-	public GroupLdapPattern(String label, String description, String searchAllGroupsQuery, String memberQuery,
-			String searchGroupQuery, String findMemberQuery, String groupPrefix) {
+	public GroupLdapPattern(String label, String description, String searchAllGroupsQuery,
+			String searchGroupQuery, String groupPrefix, Boolean searchInOtherDomains) {
 		this.label = label;
 		this.description = description;
 		this.system = false;
 		this.searchAllGroupsQuery = searchAllGroupsQuery;
 		this.searchGroupQuery = searchGroupQuery;
-		this.findMemberQuery = memberQuery;
+		this.searchInOtherDomains = searchInOtherDomains != null ? searchInOtherDomains : false;
 		this.groupPrefix = groupPrefix;
 		this.searchPageSize = 0;
 		this.attributes = new HashMap<String, LdapAttribute>();
@@ -137,20 +139,20 @@ public class GroupLdapPattern extends LdapPattern {
 		this.searchPageSize = searchPageSize;
 	}
 
-	public String getFindMemberQuery() {
-		return findMemberQuery;
-	}
-
-	public void setFindMemberQuery(String findMemberQuery) {
-		this.findMemberQuery = findMemberQuery;
-	}
-
 	public String getGroupPrefix() {
 		return groupPrefix;
 	}
 
 	public void setGroupPrefix(String groupPrefix) {
 		this.groupPrefix = groupPrefix;
+	}
+
+	public Boolean getSearchInOtherDomains() {
+		return searchInOtherDomains;
+	}
+
+	public void setSearchInOtherDomains(Boolean searchInOtherDomains) {
+		this.searchInOtherDomains = searchInOtherDomains;
 	}
 
 	@Override
