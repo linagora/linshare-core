@@ -59,4 +59,9 @@ public class LdapGroupsBatchResultContext extends DomainBatchResultContext {
 	public void setResultStats(Map<LdapBatchMetaDataType, Integer> resultStats) {
 		this.resultStats = resultStats;
 	}
+
+	public void add(LdapBatchMetaDataType metaDataType) {
+		// Increment the stats for the given identifier
+		this.resultStats.compute(metaDataType, (key, val) -> (val == null) ? 1 : val + 1);
+	}
 }

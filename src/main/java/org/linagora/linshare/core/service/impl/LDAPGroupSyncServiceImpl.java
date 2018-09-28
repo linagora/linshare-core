@@ -101,11 +101,6 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 		this.memberService = memberService;
 	}
 
-	private void computeStats(LdapGroupsBatchResultContext resultContext, LdapBatchMetaDataType metaDataType) {
-		// Increment the stats for the given identifier
-		resultContext.getResultStats().compute(metaDataType, (key, val) -> (val == null) ? 1 : val + 1);
-	}
-
 	@Override
 	public SharedSpaceLDAPGroup createOrUpdateLDAPGroup(Account actor, AbstractDomain domain, LdapGroupObject group,
 			Date syncDate, LdapGroupsBatchResultContext resultContext) {
@@ -122,11 +117,11 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 			}
 			ldapGroup.setName(node.getName());
 			// Complete update : The member is notified his access has been changed
-			computeStats(resultContext, LdapBatchMetaDataType.UPDATED_GROUPS);
+			resultContext.add(LdapBatchMetaDataType.UPDATED_GROUPS);
 			return groupService.update(actor, ldapGroup);
 		}
 		logger.info(String.format("New Ldap group created : NAME -> %s", node.getName()));
-		computeStats(resultContext, LdapBatchMetaDataType.CREATED_GROUPS);
+		resultContext.add(LdapBatchMetaDataType.CREATED_GROUPS);
 		return groupService.create(actor, node);
 	}
 
@@ -155,13 +150,13 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 			}
 			member.setRole(new GenericLightEntity(role.getUuid(), role.getName()));
 			// Complete update : The member is notified his access has been changed
-			computeStats(resultContext, LdapBatchMetaDataType.UPDATED_MEMBERS);
+			resultContext.add(LdapBatchMetaDataType.UPDATED_MEMBERS);
 			return memberService.update(actor, member);
 		}
 		SharedSpaceLDAPGroupMember newMember = convertLdapGroupMember(group, role, user, memberObject.getExternalId(),
 				syncDate);
 		logger.info(String.format("New Ldap group member created : NAME -> %s", newMember.getAccount().getName()));
-		computeStats(resultContext, LdapBatchMetaDataType.CREATED_MEMBERS);
+		resultContext.add(LdapBatchMetaDataType.CREATED_MEMBERS);
 		return memberService.create(actor, newMember);
 	}
 
@@ -243,7 +238,7 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 				SharedSpaceLDAPGroupMember.class);
 		// Delete all outdated members
 		for (SharedSpaceLDAPGroupMember outDatedMember : outDatedMembers) {
-			computeStats(resultContext, LdapBatchMetaDataType.DELETED_MEMBERS);
+			resultContext.add(LdapBatchMetaDataType.DELETED_MEMBERS);
 			memberService.delete(actor, actor, outDatedMember.getUuid());
 		}
 	}
@@ -274,7 +269,7 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 		Query outdatedGroupsQuery = buildFindOutDatedLdapGroupsQuery(syncDate, domain.getUuid());
 		List<SharedSpaceLDAPGroup> groupsOutDated = mongoTemplate.find(outdatedGroupsQuery, SharedSpaceLDAPGroup.class);
 		for (SharedSpaceLDAPGroup ldapGroup : groupsOutDated) {
-			computeStats(resultContext, LdapBatchMetaDataType.DELETED_GROUPS);
+			resultContext.add(LdapBatchMetaDataType.DELETED_GROUPS);
 			deleteOutDatedMembers(actor, ldapGroup, syncDate, resultContext);
 		}
 	}
