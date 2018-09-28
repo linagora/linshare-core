@@ -83,7 +83,7 @@ public class SharedSpaceNode {
 		this.modificationDate = new Date();
 	}
 	
-	public SharedSpaceNode(String name, String uuid, NodeType nodeType,Date creationDate,Date modificationDate) {
+	public SharedSpaceNode(String name, String uuid, NodeType nodeType, Date creationDate, Date modificationDate) {
 		super();
 		this.uuid = uuid;
 		this.name = name;

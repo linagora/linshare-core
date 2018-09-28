@@ -151,8 +151,8 @@ public class AuditLogEntry {
 		return authUser;
 	}
 
-	public void setActor(AccountMto actor) {
-		this.authUser = actor;
+	public void setAuthUser(AccountMto authUser) {
+		this.authUser = authUser;
 	}
 
 	public String getResourceUuid() {

@@ -138,20 +138,15 @@ public class MigrateThreadToMongoUpgradeTaskImpl extends GenericUpgradeTaskImpl 
 	private void createSharedSpaceMember(WorkgroupMember threadMemberOld, SharedSpaceNode node) {
 		SharedSpaceNodeNested nodde = new SharedSpaceNodeNested(node);
 		SharedSpaceAccount account = new SharedSpaceAccount(threadMemberOld.getUser());
-		GenericLightEntity role = new GenericLightEntity();
+		SharedSpaceRole currentRole = new SharedSpaceRole();
 		if (threadMemberOld.getAdmin()) {
-			SharedSpaceRole roleAdmin = roleMongoRepository.findByName("ADMIN");
-			role.setName(roleAdmin.getName());
-			role.setUuid(roleAdmin.getUuid());
+			currentRole = roleMongoRepository.findByName("ADMIN");
 		} else if (threadMemberOld.getCanUpload()) {
-			SharedSpaceRole roleAdmin = roleMongoRepository.findByName("WRITER");
-			role.setName(roleAdmin.getName());
-			role.setUuid(roleAdmin.getUuid());
+			currentRole = roleMongoRepository.findByName("CONTRIBUTOR");
 		} else {
-			SharedSpaceRole roleAdmin = roleMongoRepository.findByName("READER");
-			role.setName(roleAdmin.getName());
-			role.setUuid(roleAdmin.getUuid());
+			currentRole = roleMongoRepository.findByName("READER");
 		}
+		GenericLightEntity role = new GenericLightEntity(currentRole);
 		SharedSpaceMember ssMember = new SharedSpaceMember(nodde, role, account);
 		ssMember.setCreationDate(threadMemberOld.getCreationDate());
 		ssMember.setModificationDate(threadMemberOld.getModificationDate());

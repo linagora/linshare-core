@@ -144,13 +144,13 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 		Date begin = getBeginDate(beginDate, end);
 		// TODO:workgroups: use limit (Pageable query).
 		if (workGroupNode != null) {
-			res = userMongoRepository.findWorgGroupNodeHistoryForUser(
+			res = userMongoRepository.findWorkGroupNodeHistoryForUser(
 					workGroup.getLsUuid(), workGroupNode.getUuid(),
 					actions, types,
 					begin, end,
 					new Sort(Sort.Direction.DESC, CREATION_DATE));
 		} else {
-			res = userMongoRepository.findWorgGroupHistoryForUser(
+			res = userMongoRepository.findWorkGroupHistoryForUser(
 					workGroup.getLsUuid(),
 					actions, types,
 					begin, end,

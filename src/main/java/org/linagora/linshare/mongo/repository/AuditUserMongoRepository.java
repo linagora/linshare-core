@@ -67,11 +67,11 @@ public interface AuditUserMongoRepository extends MongoRepository<AuditLogEntryU
 
 	// workgroups.
 	@Query("{  $or: [ {'resourceUuid' : ?0} , {'workGroup.uuid' : ?0} ], 'action' : {'$in' : ?1 }, 'type' : { '$in' : ?2 } , 'creationDate' : { '$gt' : '?3' , '$lt' : '?4'} }")
-	Set<AuditLogEntryUser> findWorgGroupHistoryForUser(String workGroupUuid, List<LogAction> actions,
+	Set<AuditLogEntryUser> findWorkGroupHistoryForUser(String workGroupUuid, List<LogAction> actions,
 			List<AuditLogEntryType> types, Date beginDate, Date endDate, Sort sort);
 
 	@Query("{ 'workGroup.uuid' : ?0, 'resourceUuid' : ?1, 'action' : {'$in' : ?2 }, 'type' : { '$in' : ?3 } , 'creationDate' : { '$gt' : '?4' , '$lt' : '?5'} }")
-	Set<AuditLogEntryUser> findWorgGroupNodeHistoryForUser(String workGroupUuid, String workGroupNodeUuid,
+	Set<AuditLogEntryUser> findWorkGroupNodeHistoryForUser(String workGroupUuid, String workGroupNodeUuid,
 			List<LogAction> actions, List<AuditLogEntryType> types, Date beginDate, Date endDate, Sort sort);
 
 	@Query("{ 'relatedAccounts': {'$elemMatch' : { '$eq' : ?0 }}, 'action' : {'$in' : ?2 }, 'type' : { '$in' : ?3 } , $or: [ {'resourceUuid' : ?1} , { 'relatedResources': {'$elemMatch' : { '$eq' : ?1 }} } ] }")
@@ -91,4 +91,5 @@ public interface AuditUserMongoRepository extends MongoRepository<AuditLogEntryU
 	// jwt LongTime
 	@Query("{ $or: [ {'resource.actorUuid' : ?0 } , {'resource.domainUuid' : ?1}], 'action' : { '$in' : ?2 }, 'type' :  ?3 }")
 	Set<AuditLogEntryUser> findAll(String actorUuid, String domainUuid, List<LogAction> action, AuditLogEntryType type, Sort sort);
+
 }

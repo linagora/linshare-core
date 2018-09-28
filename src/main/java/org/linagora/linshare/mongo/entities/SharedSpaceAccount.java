@@ -63,6 +63,15 @@ public class SharedSpaceAccount {
 		this.mail = user.getMail();
 	}
 
+	public SharedSpaceAccount(String uuid, String name, String firstName, String lastName, String mail) {
+		super();
+		this.uuid = uuid;
+		this.name = name;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.mail = mail;
+	}
+
 	public String getName() {
 		return name;
 	}

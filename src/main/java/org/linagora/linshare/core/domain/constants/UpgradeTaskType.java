@@ -145,7 +145,19 @@ public enum UpgradeTaskType {
 	 * calculate daily basic statistics
 	 * 
 	 */
-	UPGRADE_2_2_GENERATE_BASIC_STATISTICS_FROM_AUDIT_LOG_ENTRIES;
+	UPGRADE_2_2_GENERATE_BASIC_STATISTICS_FROM_AUDIT_LOG_ENTRIES,
+
+	/* 
+	 * Migrate all old WorkGroup audit to shared space audit
+	 * 
+	 */
+	UPGRADE_2_2_MIGRATE_WORKGROUP_AUDIT_TO_SHARED_SPACE_AUDIT,
+
+	/* 
+	 * Migrate all old WorkGroup Member audit to shared space Member audit
+	 * 
+	 */
+	UPGRADE_2_2_MIGRATE_WORKGROUP_MEMBER_AUDIT_TO_SHARED_SPACE_MEMBER_AUDIT;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {
