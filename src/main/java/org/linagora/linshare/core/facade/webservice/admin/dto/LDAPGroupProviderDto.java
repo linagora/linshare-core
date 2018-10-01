@@ -57,11 +57,8 @@ public class LDAPGroupProviderDto {
 	@ApiModelProperty(value = "BaseDn")
 	private String baseDn = "";
 
-	@ApiModelProperty(value = "AutomaticUserCreation")
-	private Boolean automaticUserCreation;
-
-	@ApiModelProperty(value = "ForceCreation")
-	private Boolean forceCreation;
+	@ApiModelProperty(value = "SearchInOtherDomains")
+	private Boolean searchInOtherDomains;
 
 	public LDAPGroupProviderDto() {
 		super();
@@ -74,8 +71,7 @@ public class LDAPGroupProviderDto {
 		this.pattern = new LightCommonDto(groupProvider.getGroupPattern().getLabel(),
 				groupProvider.getGroupPattern().getUuid());
 		this.baseDn = groupProvider.getBaseDn();
-		this.automaticUserCreation = groupProvider.getAutomaticUserCreation();
-		this.forceCreation = groupProvider.getForceCreation();
+		this.searchInOtherDomains = groupProvider.getSearchInOtherDomains();
 	}
 
 	public String getUuid() {
@@ -94,14 +90,6 @@ public class LDAPGroupProviderDto {
 		this.baseDn = baseDn;
 	}
 
-	public Boolean getForceCreation() {
-		return forceCreation;
-	}
-
-	public void setForceCreation(Boolean forceCreation) {
-		this.forceCreation = forceCreation;
-	}
-
 	public LightCommonDto getConnection() {
 		return connection;
 	}
@@ -118,12 +106,12 @@ public class LDAPGroupProviderDto {
 		this.pattern = pattern;
 	}
 
-	public Boolean getAutomaticUserCreation() {
-		return automaticUserCreation;
+	public Boolean getSearchInOtherDomains() {
+		return searchInOtherDomains;
 	}
 
-	public void setAutomaticUserCreation(Boolean automaticUserCreation) {
-		this.automaticUserCreation = automaticUserCreation;
+	public void setSearchInOtherDomains(Boolean searchInOtherDomains) {
+		this.searchInOtherDomains = searchInOtherDomains;
 	}
 
 }

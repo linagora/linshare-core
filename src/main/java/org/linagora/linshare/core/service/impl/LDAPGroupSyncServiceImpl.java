@@ -126,14 +126,18 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 	}
 
 	@Override
-	public SharedSpaceLDAPGroupMember createOrUpdateLDAPGroupMember(Account actor, AbstractDomain domain,
+	public SharedSpaceLDAPGroupMember createOrUpdateLDAPGroupMember(Account actor, String domainUuid,
 			SharedSpaceLDAPGroup group, LdapGroupMemberObject memberObject, Date syncDate,
-			LdapGroupsBatchResultContext resultContext) {
+			LdapGroupsBatchResultContext resultContext, Boolean searchInOtherDomains) {
 		User user;
 		try {
-			user = userService.findOrCreateUser(memberObject.getEmail(), domain.getUuid());
+			if (null == searchInOtherDomains || searchInOtherDomains) {
+				user = userService.findOrCreateUserWithDomainPolicies(memberObject.getEmail(), domainUuid);
+			} else {
+				user = userService.findOrCreateUser(memberObject.getEmail(), domainUuid);
+			}
 		} catch (BusinessException e) {
-			logger.warn("The user [email=" + memberObject.getEmail() + ", domainUuid=" + domain.getUuid()
+			logger.warn("The user [email=" + memberObject.getEmail() + ", domainUuid=" + domainUuid
 					+ "] has not been found", e);
 			return null;
 		}
@@ -253,7 +257,8 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 		SharedSpaceLDAPGroup created = createOrUpdateLDAPGroup(actor, domain, ldapGroupObject, syncDate, resultContext);
 		// Create each member
 		for (LdapGroupMemberObject memberObject : memberObjects) {
-			createOrUpdateLDAPGroupMember(actor, domain, created, memberObject, syncDate, resultContext);
+			createOrUpdateLDAPGroupMember(actor, domain.getUuid(), created, memberObject, syncDate, resultContext,
+					domain.getGroupProvider().getSearchInOtherDomains());
 		}
 		deleteOutDatedMembers(actor, created, syncDate, resultContext);
 	}

@@ -65,8 +65,6 @@ public class GroupLdapPattern extends LdapPattern {
 
 	protected Integer searchPageSize;
 
-	protected Boolean searchInOtherDomains;
-
 	public GroupLdapPattern() {
 		super();
 	}
@@ -79,9 +77,6 @@ public class GroupLdapPattern extends LdapPattern {
 		this.searchPageSize = groupLdapPatternDto.getSearchPageSize();
 		this.searchAllGroupsQuery = groupLdapPatternDto.getSearchAllGroupsQuery();
 		this.searchGroupQuery = groupLdapPatternDto.getSearchGroupQuery();
-		this.searchInOtherDomains = groupLdapPatternDto.getSearchInOtherDomains() != null
-				? groupLdapPatternDto.getSearchInOtherDomains()
-				: false;
 		this.groupPrefix = groupLdapPatternDto.getGroupPrefix();
 		this.attributes = new HashMap<String, LdapAttribute>();
 		this.attributes.put(GROUP_NAME, new LdapAttribute(GROUP_NAME, groupLdapPatternDto.getGroupName(), true));
@@ -104,7 +99,6 @@ public class GroupLdapPattern extends LdapPattern {
 		this.system = false;
 		this.searchAllGroupsQuery = searchAllGroupsQuery;
 		this.searchGroupQuery = searchGroupQuery;
-		this.searchInOtherDomains = searchInOtherDomains != null ? searchInOtherDomains : false;
 		this.groupPrefix = groupPrefix;
 		this.searchPageSize = 0;
 		this.attributes = new HashMap<String, LdapAttribute>();
@@ -145,14 +139,6 @@ public class GroupLdapPattern extends LdapPattern {
 
 	public void setGroupPrefix(String groupPrefix) {
 		this.groupPrefix = groupPrefix;
-	}
-
-	public Boolean getSearchInOtherDomains() {
-		return searchInOtherDomains;
-	}
-
-	public void setSearchInOtherDomains(Boolean searchInOtherDomains) {
-		this.searchInOtherDomains = searchInOtherDomains;
 	}
 
 	@Override

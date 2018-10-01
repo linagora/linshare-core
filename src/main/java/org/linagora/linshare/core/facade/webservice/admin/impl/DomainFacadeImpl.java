@@ -255,8 +255,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 			LightCommonDto groupPatternLight = groupProviderDto.getPattern();
 			LightCommonDto ldapConnectionLight = groupProviderDto.getConnection();
 			String baseDn = groupProviderDto.getBaseDn();
-			Boolean automaticUserCreation = groupProviderDto.getAutomaticUserCreation();
-			Boolean forceCreation = groupProviderDto.getForceCreation();
+			Boolean searchInOtherDomains = groupProviderDto.getSearchInOtherDomains();
 			Validate.notNull(groupPatternLight, "groupPattern is mandatory for group provider creation");
 			Validate.notNull(ldapConnectionLight, "ldapConnection is mandatory for group provider creation");
 			Validate.notEmpty(groupPatternLight.getUuid(), "group pattern uuid is mandatory for group provider creation");
@@ -265,7 +264,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 			LdapConnection ldapConnection = ldapConnectionService.find(ldapConnectionLight.getUuid());
 			GroupLdapPattern pattern = groupLdapPatternService.find(groupPatternLight.getUuid());
 			ldapGroupProvider = groupProviderService.create(
-					new LdapGroupProvider(pattern, baseDn, ldapConnection, automaticUserCreation, forceCreation));
+					new LdapGroupProvider(pattern, baseDn, ldapConnection, searchInOtherDomains));
 		}
 		return ldapGroupProvider;
 	}
@@ -291,8 +290,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 			LightCommonDto groupPatternLight = groupProviderDto.getPattern();
 			LightCommonDto ldapConnectionLight = groupProviderDto.getConnection();
 			String baseDn = groupProviderDto.getBaseDn();
-			Boolean automaticUserCreation = groupProviderDto.getAutomaticUserCreation();
-			Boolean forceCreation = groupProviderDto.getForceCreation();
+			Boolean searchInOtherDomains = groupProviderDto.getSearchInOtherDomains();
 			Validate.notNull(groupPatternLight, "groupPattern is mandatory for group provider creation");
 			Validate.notNull(ldapConnectionLight, "ldapConnection is mandatory for group provider creation");
 			Validate.notEmpty(groupPatternLight.getUuid(), "group pattern uuid is mandatory for group provider creation");
@@ -305,10 +303,11 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl implements
 				groupProvider.setBaseDn(groupProviderDto.getBaseDn());
 				groupProvider.setLdapConnection(ldapConnection);
 				groupProvider.setGroupPattern(pattern);
+				groupProvider.setSearchInOtherDomains(searchInOtherDomains);
 				ldapGroupProvider = groupProviderService.update(groupProvider);
 			} else {
 				ldapGroupProvider = groupProviderService.create(
-						new LdapGroupProvider(pattern, baseDn, ldapConnection, automaticUserCreation, forceCreation));
+						new LdapGroupProvider(pattern, baseDn, ldapConnection, searchInOtherDomains));
 			}
 		}
 		return ldapGroupProvider;

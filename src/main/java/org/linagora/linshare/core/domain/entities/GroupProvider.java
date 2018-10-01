@@ -54,4 +54,8 @@ public abstract class GroupProvider extends Provider {
 	}
 
 	public abstract LDAPGroupProviderDto toLDAPGroupProviderDto();
+
+	public Boolean getSearchInOtherDomains() {
+		return false;
+	}
 }

@@ -232,7 +232,6 @@ ALTER TABLE upload_request_entry ALTER COLUMN ls_type SET NOT NULL;
 -- Update ldap_pattern
 ALTER TABLE ldap_pattern ADD COLUMN search_all_groups_query text;
 ALTER TABLE ldap_pattern ADD COLUMN search_group_query text;
-ALTER TABLE ldap_pattern ADD COLUMN search_in_other_domains bool default FALSE;
 ALTER TABLE ldap_pattern ADD COLUMN group_prefix varchar(255);
 
 -- Update domain_abstract
@@ -248,8 +247,7 @@ CREATE TABLE group_provider (
   modification_date  timestamp NOT NULL,
   ldap_connection_id int8 NOT NULL,
   ldap_pattern_id    int8 NOT NULL,
-  automatic_user_creation bool DEFAULT 'false',
-  force_creation bool DEFAULT 'false',
+  search_in_other_domains bool DEFAULT 'true',
   PRIMARY KEY (id));
 
 ALTER TABLE group_provider ADD CONSTRAINT FKgroup_provi815203 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);

@@ -55,9 +55,9 @@ public interface LDAPGroupSyncService {
 	SharedSpaceLDAPGroup createOrUpdateLDAPGroup(Account actor, AbstractDomain domain, LdapGroupObject group,
 			Date syncDate, LdapGroupsBatchResultContext resultContext);
 
-	SharedSpaceLDAPGroupMember createOrUpdateLDAPGroupMember(Account actor, AbstractDomain domain,
+	SharedSpaceLDAPGroupMember createOrUpdateLDAPGroupMember(Account actor, String domainUuid,
 			SharedSpaceLDAPGroup group, LdapGroupMemberObject memberObject, Date syncDate,
-			LdapGroupsBatchResultContext resultContext);
+			LdapGroupsBatchResultContext resultContext, Boolean searchInOtherDomains);
 
 	void applyTask(Account actor, AbstractDomain domain, LdapGroupObject ldapGroupObject,
 			Set<LdapGroupMemberObject> memberObjects, Date syncDate, LdapGroupsBatchResultContext resultContext);

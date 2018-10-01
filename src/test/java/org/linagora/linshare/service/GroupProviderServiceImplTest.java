@@ -109,7 +109,7 @@ public class GroupProviderServiceImplTest extends AbstractTransactionalJUnit4Spr
 	@Test
 	public void testCreateGroupProvider () {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		LdapGroupProvider groupProvider = new LdapGroupProvider(groupPattern, "dc=nodomain,dc=com", ldapconnexion, false, false);
+		LdapGroupProvider groupProvider = new LdapGroupProvider(groupPattern, "dc=nodomain,dc=com", ldapconnexion, false);
 		groupProvider = groupProviderService.create(groupProvider);
 		Assert.assertNotNull(groupProvider);
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -118,7 +118,7 @@ public class GroupProviderServiceImplTest extends AbstractTransactionalJUnit4Spr
 	@Test
 	public void testCreateDeleteGroupProvider() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		LdapGroupProvider groupProvider = new LdapGroupProvider(groupPattern, "dc=nodomain,dc=com", ldapconnexion, false, false);
+		LdapGroupProvider groupProvider = new LdapGroupProvider(groupPattern, "dc=nodomain,dc=com", ldapconnexion, false);
 		groupProvider = groupProviderService.create(groupProvider);
 		Assert.assertNotNull(groupProvider);
 		groupProviderService.delete(groupProvider);

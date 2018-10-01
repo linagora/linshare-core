@@ -68,9 +68,6 @@ public class GroupLdapPatternDto {
 	@ApiModelProperty(value = "groupPrefix")
 	private String groupPrefix;
 
-	@ApiModelProperty(value = "searchInOtherDomains")
-	private Boolean searchInOtherDomains;
-
 	@ApiModelProperty(value = "groupName")
 	private String groupName;
 
@@ -102,7 +99,6 @@ public class GroupLdapPatternDto {
 		this.searchAllGroupsQuery = groupLdapPattern.getSearchAllGroupsQuery();
 		this.searchGroupQuery = groupLdapPattern.getSearchGroupQuery();
 		this.groupPrefix = groupLdapPattern.getGroupPrefix();
-		this.searchInOtherDomains = groupLdapPattern.getSearchInOtherDomains();
 	}
 
 	public GroupLdapPatternDto() {
@@ -203,14 +199,6 @@ public class GroupLdapPatternDto {
 
 	public void setMemberLastName(String memberLastName) {
 		this.memberLastName = memberLastName;
-	}
-
-	public Boolean getSearchInOtherDomains() {
-		return searchInOtherDomains;
-	}
-
-	public void setSearchInOtherDomains(Boolean searchInOtherDomains) {
-		this.searchInOtherDomains = searchInOtherDomains;
 	}
 
 }

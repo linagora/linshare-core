@@ -44,22 +44,19 @@ public class LdapGroupProvider extends GroupProvider {
 
 	protected LdapConnection ldapConnection;
 
-	protected Boolean automaticUserCreation;
-
-	protected Boolean forceCreation;
+	protected Boolean searchInOtherDomains;
 
 	public LdapGroupProvider() {
 		super();
 	}
 
 	public LdapGroupProvider(GroupLdapPattern groupPattern, String baseDn, LdapConnection ldapConnection,
-			Boolean automaticUserCreation, Boolean forceCreation) {
+			Boolean searchInOtherDomains) {
 		super();
 		this.groupPattern = groupPattern;
 		this.baseDn = baseDn;
 		this.ldapConnection = ldapConnection;
-		this.automaticUserCreation = automaticUserCreation;
-		this.forceCreation = forceCreation;
+		this.searchInOtherDomains = searchInOtherDomains != null ? searchInOtherDomains : true;
 	}
 
 	public GroupLdapPattern getGroupPattern() {
@@ -86,20 +83,13 @@ public class LdapGroupProvider extends GroupProvider {
 		this.ldapConnection = ldapConnection;
 	}
 
-	public Boolean getAutomaticUserCreation() {
-		return automaticUserCreation;
+	@Override
+	public Boolean getSearchInOtherDomains() {
+		return searchInOtherDomains;
 	}
 
-	public void setAutomaticUserCreation(Boolean automaticUserCreation) {
-		this.automaticUserCreation = automaticUserCreation;
-	}
-
-	public Boolean getForceCreation() {
-		return forceCreation;
-	}
-
-	public void setForceCreation(Boolean forceCreation) {
-		this.forceCreation = forceCreation;
+	public void setSearchInOtherDomains(Boolean searchInOtherDomains) {
+		this.searchInOtherDomains = searchInOtherDomains;
 	}
 
 	@Override
@@ -111,8 +101,7 @@ public class LdapGroupProvider extends GroupProvider {
 				new LightCommonDto(this.groupPattern.getLabel(), this.groupPattern.getUuid()));
 		groupProvider.setConnection(
 				new LightCommonDto(this.ldapConnection.getLabel(), this.ldapConnection.getUuid()));
-		groupProvider.setAutomaticUserCreation(this.automaticUserCreation);
-		groupProvider.setForceCreation(this.forceCreation);
+		groupProvider.setSearchInOtherDomains(this.searchInOtherDomains);
 		return groupProvider;
 	}
 }
