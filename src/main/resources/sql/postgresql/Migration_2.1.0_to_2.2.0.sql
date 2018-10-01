@@ -235,7 +235,6 @@ ALTER TABLE ldap_pattern ADD COLUMN search_group_query text;
 ALTER TABLE ldap_pattern ADD COLUMN search_in_other_domains bool default FALSE;
 ALTER TABLE ldap_pattern ADD COLUMN group_prefix varchar(255);
 
--- Upgrade Task
 -- Update domain_abstract
 ALTER TABLE domain_abstract ADD COLUMN group_provider_id int8;
 
@@ -256,6 +255,8 @@ CREATE TABLE group_provider (
 ALTER TABLE group_provider ADD CONSTRAINT FKgroup_provi815203 FOREIGN KEY (ldap_pattern_id) REFERENCES ldap_pattern (id);
 ALTER TABLE group_provider ADD CONSTRAINT FKgroup_provi1640 FOREIGN KEY (ldap_connection_id) REFERENCES ldap_connection (id);
 ALTER TABLE domain_abstract ADD CONSTRAINT FKdomain_abs253989 FOREIGN KEY (group_provider_id) REFERENCES group_provider (id);
+
+-- Upgrade Task
 
   -- TASK: UPGRADE_2_2_MIGRATE_HISTORY_TO_MONGO_AUDIT;
 INSERT INTO upgrade_task
@@ -393,6 +394,62 @@ VALUES
   23,
   'NEW',
   'MANDATORY',
+  now(),
+  now(),
+  null);
+
+-- TASK: UPGRADE_2_2_MIGRATE_WORKGROUP_AUDIT_TO_SHARED_SPACE_AUDIT
+INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+ (24,
+ 'UNDEFINED',
+ 'UPGRADE_2_2_MIGRATE_WORKGROUP_AUDIT_TO_SHARED_SPACE_AUDIT',
+ 'UPGRADE_2_2',
+  null,
+  null,
+  24,
+ 'NEW',
+ 'MANDATORY',
+  now(),
+  now(),
+  null);
+
+-- TASK: UPGRADE_2_2_MIGRATE_WORKGROUP_MEMBER_AUDIT_TO_SHARED_SPACE_MEMBER_AUDIT
+INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+ (25,
+ 'UNDEFINED',
+ 'UPGRADE_2_2_MIGRATE_WORKGROUP_MEMBER_AUDIT_TO_SHARED_SPACE_MEMBER_AUDIT',
+ 'UPGRADE_2_2',
+  null,
+  null,
+  25,
+ 'NEW',
+ 'MANDATORY',
   now(),
   now(),
   null);
