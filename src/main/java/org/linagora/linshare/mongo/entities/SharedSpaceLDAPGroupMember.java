@@ -65,4 +65,11 @@ public class SharedSpaceLDAPGroupMember extends SharedSpaceMember {
 	public void setSyncDate(Date syncDate) {
 		this.syncDate = syncDate;
 	}
+
+	@Override
+	public String toString() {
+		return "SharedSpaceLDAPGroupMember [externalId=" + externalId + ", syncDate=" + syncDate + ", uuid=" + uuid
+				+ ", node=" + node + ", role=" + role + ", account=" + account + ", creationDate=" + creationDate
+				+ ", modificationDate=" + modificationDate + ", user=" + user + "]";
+	}
 }

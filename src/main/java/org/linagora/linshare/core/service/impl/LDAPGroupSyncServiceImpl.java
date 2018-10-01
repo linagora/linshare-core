@@ -109,7 +109,7 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 		if (ldapGroup != null) {
 			ldapGroup.setModificationDate(new Date());
 			ldapGroup.setSyncDate(syncDate);
-			logger.info(String.format("Ldap group updated : NAME -> %s", ldapGroup.getName()));
+			logger.info(String.format("Ldap group updated : NAME : %s", ldapGroup.getName()));
 			if (node.getName().equals(ldapGroup.getName())) {
 				// Simple update : The member is not notified
 				mongoTemplate.save(ldapGroup);
@@ -120,7 +120,7 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 			resultContext.add(LdapBatchMetaDataType.UPDATED_GROUPS);
 			return groupService.update(actor, ldapGroup);
 		}
-		logger.info(String.format("New Ldap group created : NAME -> %s", node.getName()));
+		logger.info(String.format("New Ldap group created : NAME : %s", node.getName()));
 		resultContext.add(LdapBatchMetaDataType.CREATED_GROUPS);
 		return groupService.create(actor, node);
 	}
@@ -142,7 +142,7 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 		if (member != null) {
 			member.setModificationDate(new Date());
 			member.setSyncDate(syncDate);
-			logger.info(String.format("Ldap group member updated : NAME -> %s", member.getAccount().getName()));
+			logger.info(String.format("Ldap group member updated : NAME : %s", member.getAccount().getName()));
 			if (member.getRole().getUuid().equals(role.getUuid())) {
 				// Simple update : The member is not notified
 				mongoTemplate.save(member);
@@ -155,7 +155,7 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 		}
 		SharedSpaceLDAPGroupMember newMember = convertLdapGroupMember(group, role, user, memberObject.getExternalId(),
 				syncDate);
-		logger.info(String.format("New Ldap group member created : NAME -> %s", newMember.getAccount().getName()));
+		logger.info(String.format("New Ldap group member created : NAME : %s", newMember.getAccount().getName()));
 		resultContext.add(LdapBatchMetaDataType.CREATED_MEMBERS);
 		return memberService.create(actor, newMember);
 	}
@@ -237,9 +237,13 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 		List<SharedSpaceLDAPGroupMember> outDatedMembers = mongoTemplate.find(outdatedGroupMembersQuery,
 				SharedSpaceLDAPGroupMember.class);
 		// Delete all outdated members
+		logger.info(
+				String.format("Found %d outdated members in local group %s", outDatedMembers.size(), group.toString()));
 		for (SharedSpaceLDAPGroupMember outDatedMember : outDatedMembers) {
 			resultContext.add(LdapBatchMetaDataType.DELETED_MEMBERS);
 			memberService.delete(actor, actor, outDatedMember.getUuid());
+			logger.info(String.format("Member successfully removed from node with externalID '%s' : %s",
+					group.getExternalId(), outDatedMember.toString()));
 		}
 	}
 
@@ -260,6 +264,7 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 			throws BusinessException, NamingException, IOException {
 		Date syncDate = new Date();
 		Set<LdapGroupObject> groupsObjects = ldapGroupQueryService.listGroups(ldapConnection, baseDn, groupPattern);
+		logger.info(String.format("Starting sync at %tc : %d group(s) found remotely", syncDate, groupsObjects.size()));
 		for (LdapGroupObject ldapGroupObject : groupsObjects) {
 			Set<LdapGroupMemberObject> members = ldapGroupQueryService.listMembers(ldapConnection, baseDn, groupPattern,
 					ldapGroupObject);
@@ -268,6 +273,9 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 		// Delete all outdated groups by deleting all its outdated members
 		Query outdatedGroupsQuery = buildFindOutDatedLdapGroupsQuery(syncDate, domain.getUuid());
 		List<SharedSpaceLDAPGroup> groupsOutDated = mongoTemplate.find(outdatedGroupsQuery, SharedSpaceLDAPGroup.class);
+		logger.info(String.format(
+				"Found %d outdated group(s) in domain %s. All the members of these groups will be removed",
+				groupsOutDated.size(), domain.toString()));
 		for (SharedSpaceLDAPGroup ldapGroup : groupsOutDated) {
 			resultContext.add(LdapBatchMetaDataType.DELETED_GROUPS);
 			deleteOutDatedMembers(actor, ldapGroup, syncDate, resultContext);

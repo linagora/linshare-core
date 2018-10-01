@@ -95,4 +95,12 @@ public class SharedSpaceLDAPGroup extends SharedSpaceNode {
 		this.syncDate = syncDate;
 	}
 
+	@Override
+	public String toString() {
+		return "SharedSpaceLDAPGroup [externalId=" + externalId + ", prefix=" + prefix + ", syncDate=" + syncDate
+				+ ", domain=" + domain + ", uuid=" + uuid + ", name=" + name + ", parentUuid=" + parentUuid
+				+ ", nodeType=" + nodeType + ", creationDate=" + creationDate + ", modificationDate=" + modificationDate
+				+ "]";
+	}
+
 }

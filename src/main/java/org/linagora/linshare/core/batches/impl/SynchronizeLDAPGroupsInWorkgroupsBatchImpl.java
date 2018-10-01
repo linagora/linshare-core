@@ -88,9 +88,9 @@ public class SynchronizeLDAPGroupsInWorkgroupsBatchImpl extends GenericBatchImpl
 	@Override
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
-		logger.info("Synchronizing the LDAP groups for the domain with uuid " + identifier);
 		SystemAccount systemAccount = accountRepository.getBatchSystemAccount();
 		AbstractDomain domain = domainRepository.findById(identifier);
+		logger.info("Synchronizing the LDAP groups for the domain " + domain.toString());
 		LdapGroupsBatchResultContext context = new LdapGroupsBatchResultContext(domain);
 		GroupProvider groupProvider = domain.getGroupProvider();
 		if (null != groupProvider) {
