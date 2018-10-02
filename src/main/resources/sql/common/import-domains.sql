@@ -185,7 +185,6 @@ INSERT INTO ldap_pattern(
 	modification_date,
 	search_all_groups_query,
 	search_group_query,
-	search_in_other_domains,
 	group_prefix)
 	VALUES(
 	4,
