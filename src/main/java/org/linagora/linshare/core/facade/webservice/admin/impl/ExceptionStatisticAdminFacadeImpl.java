@@ -40,7 +40,10 @@ public class ExceptionStatisticAdminFacadeImpl extends AdminGenericFacadeImpl im
 	@Override
 	public ExceptionStatistic createExceptionStatistic(BusinessErrorCode errorCode, StackTraceElement[] stackTrace,
 			ExceptionType type) {
-		User authUser = checkAuthentication();
+		User authUser = getAuthentication();
+		if (authUser == null) {
+			return null;
+		}
 		return statisticService.createExceptionStatistic(errorCode, stackTrace, type, authUser);
 	}
 

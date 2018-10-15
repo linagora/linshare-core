@@ -212,6 +212,9 @@ public class LogEntryServiceImpl implements LogEntryService {
 
 	public BasicStatistic generateBasicStatistic(AuditLogEntry entity) {
 		String parentDomainUuid = null;
+		if (entity.getAuthUser() == null) {
+			return null;
+		}
 		AbstractDomain parentDomain = domainBusinessService.findById(
 				entity.getAuthUser().getDomain().getUuid()).getParentDomain();
 		if (parentDomain != null) {
