@@ -159,3 +159,23 @@ dn: cn=writers,cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org
 cn: writers
 objectClass: posixGroup
 member: uid=user3,ou=People,dc=linshare,dc=org
+
+dn: ou=Groups4,dc=linshare,dc=org
+ou: Groups4
+objectClass: organizationalUnit
+objectClass: top
+description: Groups4 subtree
+
+dn: cn=workgroup-wg-4,ou=Groups4,dc=linshare,dc=org
+cn: workgroup-wg-4
+objectClass: posixGroup
+
+dn: cn=contributors,cn=workgroup-wg-4,ou=Groups4,dc=linshare,dc=org
+cn: contributors
+objectClass: posixGroup
+member: uid=user1,ou=People,dc=linshare,dc=org
+
+dn: cn=writers,cn=workgroup-wg-4,ou=Groups4,dc=linshare,dc=org
+cn: writers
+objectClass: posixGroup
+member: uid=user3,ou=People,dc=linshare,dc=org

@@ -34,7 +34,6 @@
 package org.linagora.linshare.ldap;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -45,6 +44,8 @@ import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linid.dm.authorization.lql.LqlRequestCtx;
 import org.linid.dm.authorization.lql.dnlist.IDnList;
 
+import com.google.common.collect.Sets;
+
 public class JScriptGroupMemberLdapQuery extends JScriptLdapQuery<LdapGroupMemberObject> {
 
 	public JScriptGroupMemberLdapQuery(LqlRequestCtx ctx, String baseDn, GroupLdapPattern ldapPattern, IDnList dnList, Class<?> clazz)
@@ -52,9 +53,12 @@ public class JScriptGroupMemberLdapQuery extends JScriptLdapQuery<LdapGroupMembe
 		super(ctx, baseDn, dnList, ldapPattern, clazz);
 	}
 
-	public Set<LdapGroupMemberObject> searchAllGroupMember(List<String> members) throws NamingException {
+	public Set<LdapGroupMemberObject> searchAllGroupMember(LdapGroupObject lgo) throws NamingException {
 		Map<String, LdapAttribute> ldapDbAttributes = filterAttrByPrefix("member_");
-		return dnListToObjectList(members, ldapDbAttributes);
+		if (lgo == null || lgo.getMembers() == null) {
+			return Sets.newHashSet();
+		}
+		return dnListToObjectList(lgo.getMembers(), ldapDbAttributes);
 	}
 
 }

@@ -188,4 +188,24 @@ public class LDAPGroupQueryServiceImplTest extends AbstractJUnit4SpringContextTe
 		logger.info("End test : " + String.valueOf(date_after.getTime() - date_before.getTime()));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
+
+	@Test
+	public void testNoReaders() throws BusinessException, NamingException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		String baseDn = "ou=Groups4,dc=linshare,dc=org";
+		Date date_before = new Date();
+		Set<LdapGroupObject> listGroups = ldapGroupQueryService.listGroups(ldapConnection, baseDn, groupPattern);
+		Assert.assertEquals(1, listGroups.size());
+		LdapGroupObject ldapGroup = listGroups.iterator().next();
+		Assert.assertEquals("cn=workgroup-wg-4,ou=Groups4,dc=linshare,dc=org", ldapGroup.getExternalId());
+		Set<LdapGroupMemberObject> listMembers = ldapGroupQueryService.listMembers(ldapConnection, baseDn, groupPattern, ldapGroup);
+		Assert.assertEquals(2, listMembers.size());
+		for (LdapGroupMemberObject member : listMembers) {
+			logger.info(member.toString());
+			Assert.assertNotEquals(Role.READER, member.getRole());
+		}
+		Date date_after = new Date();
+		logger.info("End test : " + String.valueOf(date_after.getTime() - date_before.getTime()));
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
 }

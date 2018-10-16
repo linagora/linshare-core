@@ -135,7 +135,7 @@ public class LDAPGroupQueryServiceImpl extends LDAPQueryServiceImpl implements L
 	private Set<LdapGroupMemberObject> getMembers(String externalId, JScriptGroupLdapQuery groupQuery,
 			JScriptGroupMemberLdapQuery memberQuery) throws NamingException {
 		LdapGroupObject lgo = groupQuery.loadDnMembers(externalId);
-		Set<LdapGroupMemberObject> list = memberQuery.searchAllGroupMember(lgo.getMembers());
+		Set<LdapGroupMemberObject> list = memberQuery.searchAllGroupMember(lgo);
 		return list;
 	}
 
