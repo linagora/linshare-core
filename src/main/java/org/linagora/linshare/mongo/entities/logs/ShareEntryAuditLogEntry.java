@@ -43,6 +43,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.ShareEntryGroup;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.AnonymousShareEntryMto;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
@@ -76,7 +77,10 @@ public class ShareEntryAuditLogEntry extends AuditLogEntryUser {
 		this.recipientMail = entry.getRecipient().getMail();
 		this.recipientUuid = entry.getRecipient().getLsUuid();
 		this.resource = new ShareEntryMto(entry);
-		this.shareEntryGroup = new ShareEntryGroupMto(entry.getShareEntryGroup());
+		ShareEntryGroup entryGroup = entry.getShareEntryGroup();
+		if (null != entryGroup) {
+			this.shareEntryGroup = new ShareEntryGroupMto(entryGroup);
+		}
 		this.addRelatedResources(entry.getDocumentEntry().getUuid());
 		if (!actor.getLsUuid().equals(entry.getEntryOwner().getLsUuid())) {
 			this.addRelatedAccounts(entry.getEntryOwner().getLsUuid());
@@ -88,7 +92,10 @@ public class ShareEntryAuditLogEntry extends AuditLogEntryUser {
 		super(new AccountMto(authUser), new AccountMto(actor), action, type, entry.getUuid());
 		this.recipientMail = entry.getAnonymousUrl().getContact().getMail();
 		this.resource = new AnonymousShareEntryMto(entry);
-		this.shareEntryGroup = new ShareEntryGroupMto(entry.getShareEntryGroup());
+		ShareEntryGroup entryGroup = entry.getShareEntryGroup();
+		if (null != entryGroup) {
+			this.shareEntryGroup = new ShareEntryGroupMto(entryGroup);
+		}
 		this.addRelatedResources(entry.getDocumentEntry().getUuid());
 	}
 
@@ -97,7 +104,10 @@ public class ShareEntryAuditLogEntry extends AuditLogEntryUser {
 		super(new AccountMto(authUser), new AccountMto(actor), LogAction.DOWNLOAD, type, entry.getUuid());
 		this.recipientMail = entry.getAnonymousUrl().getContact().getMail();
 		this.resource = new AnonymousShareEntryMto(entry);
-		this.shareEntryGroup = new ShareEntryGroupMto(entry.getShareEntryGroup());
+		ShareEntryGroup entryGroup = entry.getShareEntryGroup();
+		if (null != entryGroup) {
+			this.shareEntryGroup = new ShareEntryGroupMto(entryGroup);
+		}
 		this.addRelatedResources(entry.getDocumentEntry().getUuid());
 		this.addRelatedAccounts(entry.getEntryOwner().getLsUuid());
 	}
