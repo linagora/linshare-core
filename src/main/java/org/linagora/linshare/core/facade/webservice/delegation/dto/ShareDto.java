@@ -100,7 +100,7 @@ public class ShareDto {
 		this.name = shareEntry.getName();
 		this.creationDate = shareEntry.getCreationDate().getTime();
 		this.modificationDate = shareEntry.getModificationDate().getTime();
-		this.expirationDate = shareEntry.getExpirationDate().getTime();
+		this.expirationDate = shareEntry.getExpirationDate() != null ? shareEntry.getExpirationDate().getTime() : null;
 		if (receivedShare) {
 			this.downloaded = shareEntry.getDownloaded();
 			this.description = shareEntry.getComment();
@@ -121,7 +121,7 @@ public class ShareDto {
 		this.name = entry.getName();
 		this.creationDate = entry.getCreationDate().getTime();
 		this.modificationDate = entry.getModificationDate().getTime();
-		this.expirationDate = entry.getExpirationDate().getTime();
+		this.expirationDate = entry.getExpirationDate() != null ? entry.getExpirationDate().getTime() : null;
 
 		EntryType entryType = entry.getEntryType();
 		if (entryType.equals(EntryType.SHARE)) {
