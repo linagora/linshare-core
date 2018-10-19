@@ -591,8 +591,9 @@ public class JScriptLdapQuery {
 			logger.debug("auth failed : BadCredentialsException(" + userDn + ")");
 			throw e;
 		} catch (Exception e) {
-			logger.error("auth failed for unexpected exception: " + e.getMessage());
-			return null;
+			String msg= "auth failed for " + userDn + " : unexpected exception: " + e.getMessage();
+			logger.error(msg);
+			throw new BadCredentialsException(e.getMessage());
 		}
 		return dnToUser(userDn, false);
 	}
