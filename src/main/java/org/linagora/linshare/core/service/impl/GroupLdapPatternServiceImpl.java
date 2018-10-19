@@ -74,11 +74,6 @@ public class GroupLdapPatternServiceImpl extends GenericAdminServiceImpl impleme
 	}
 
 	@Override
-	public List<GroupLdapPattern> findAllGroupPattern() throws BusinessException {
-		return groupPatternRepository.findAllGroupLdapPatterns();
-	}
-
-	@Override
 	public GroupLdapPattern create(Account authUser, GroupLdapPattern groupLdapPattern) throws BusinessException {
 		preChecks(authUser);
 		Validate.notEmpty(groupLdapPattern.getLabel());

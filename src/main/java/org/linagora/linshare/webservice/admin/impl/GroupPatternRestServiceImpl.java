@@ -92,7 +92,7 @@ public class GroupPatternRestServiceImpl extends WebserviceBase implements Group
 		@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public Set<GroupLdapPatternDto> findAllGroupPattern() throws BusinessException {
-		return groupPatternFacade.findAllGroupPattern();
+		return groupPatternFacade.findAll();
 	}
 
 	@Path("/{uuid}")

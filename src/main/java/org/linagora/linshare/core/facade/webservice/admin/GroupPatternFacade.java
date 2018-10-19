@@ -42,8 +42,6 @@ public interface GroupPatternFacade extends AdminGenericFacade {
 
 	Set<GroupLdapPatternDto> findAll() throws BusinessException;
 
-	Set<GroupLdapPatternDto> findAllGroupPattern() throws BusinessException;
-
 	GroupLdapPatternDto find(String uuid) throws BusinessException;
 
 	GroupLdapPatternDto update(GroupLdapPatternDto domainPattern, String uuid) throws BusinessException;

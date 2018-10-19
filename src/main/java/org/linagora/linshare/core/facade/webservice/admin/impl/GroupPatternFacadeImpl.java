@@ -71,17 +71,6 @@ public class GroupPatternFacadeImpl extends AdminGenericFacadeImpl implements Gr
 	}
 
 	@Override
-	public Set<GroupLdapPatternDto> findAllGroupPattern() throws BusinessException {
-		checkAuthentication(Role.SUPERADMIN);
-		List<GroupLdapPattern> groupPatterns = groupLdapPatternService.findAllGroupPattern();
-		Set<GroupLdapPatternDto> res = new HashSet<GroupLdapPatternDto>();
-		for (GroupLdapPattern groupPattern : groupPatterns) {
-			res.add(new GroupLdapPatternDto(groupPattern));
-		}
-		return res;
-	}
-
-	@Override
 	public GroupLdapPatternDto find(String uuid) throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
 		Validate.notEmpty(uuid, "group pattern uuid must be set.");
