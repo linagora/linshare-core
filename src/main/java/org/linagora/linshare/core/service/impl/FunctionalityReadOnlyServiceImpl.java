@@ -411,4 +411,9 @@ public class FunctionalityReadOnlyServiceImpl implements
 		AbstractDomain domain = domainBusinessService.findById(domainIdentifier);
 		return getAcknowledgement(domain);
 	}
+
+	@Override
+	public Functionality getDriveCreationRight(AbstractDomain domain) {
+		return _getFunctionality(domain, FunctionalityNames.DRIVE__CAN_CREATE);
+	}
 }
