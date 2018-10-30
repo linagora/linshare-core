@@ -128,14 +128,23 @@ public class InitMongoServiceImpl implements InitMongoService {
 		GenericLightEntity writer = createInitLightRole("8839654d-cb33-4633-bf3f-f9e805f97f84", "WRITER");
 		GenericLightEntity reader = createInitLightRole("4ccbed61-71da-42a0-a513-92211953ac95", "READER");
 
+		createInitRole("9e73e962-c233-4b4a-be1c-e8d9547acbdf", "Drive_ADMIN", rootDomain, rootAccount);
+		createInitRole("963025ca-8220-4915-b4fc-dba7b0b56100", "Drive_CREATOR", rootDomain, rootAccount);
+		createInitRole("556404b5-09b0-413e-a025-79ee40e043e4", "Drive_READER", rootDomain, rootAccount);
+
+		GenericLightEntity drive_admin = createInitLightRole("9e73e962-c233-4b4a-be1c-e8d9547acbdf", "DRIVE_ADMIN");
+		GenericLightEntity drive_creator = createInitLightRole("963025ca-8220-4915-b4fc-dba7b0b56100", "DRIVE_CREATOR");
+		GenericLightEntity drive_reader = createInitLightRole("556404b5-09b0-413e-a025-79ee40e043e4", "DRIVE_READER");
+
 		createInitPermission("31cb4d80-c939-40f1-a79e-4d77392e0e0b", "Create a drive ", SharedSpaceActionType.CREATE,
-				SharedSpaceResourceType.DRIVE, admin);
+				SharedSpaceResourceType.DRIVE, drive_admin);
 		createInitPermission("e432acbb-d72e-4e20-b255-6f1cb7329bbd", "read a drive", SharedSpaceActionType.READ,
-				SharedSpaceResourceType.DRIVE, admin, writer, contributor, reader);
+				SharedSpaceResourceType.DRIVE, drive_admin, drive_creator, drive_reader);
 		createInitPermission("5557fc26-ea2d-4e3b-81af-37a614d8014c", "Update  a drive", SharedSpaceActionType.UPDATE,
-				SharedSpaceResourceType.DRIVE, admin, writer, contributor);
+				SharedSpaceResourceType.DRIVE, drive_admin, drive_creator);
 		createInitPermission("70ecfe55-f388-4e37-91bc-958386e0a865", "Delete  a drive", SharedSpaceActionType.DELETE,
-				SharedSpaceResourceType.DRIVE, admin);
+				SharedSpaceResourceType.DRIVE, drive_admin);
+
 		createInitPermission("0457baaf-fd9e-4737-90d9-5a802caf9ff5", "Create a folder", SharedSpaceActionType.CREATE,
 				SharedSpaceResourceType.FOLDER, admin, writer, contributor);
 		createInitPermission("18a76d34-e19f-45d4-864c-4bb8cadda711", "Read a folder", SharedSpaceActionType.READ,
