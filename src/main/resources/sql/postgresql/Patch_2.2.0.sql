@@ -1,5 +1,3 @@
--- Postgresql migration script template
-
 BEGIN;
 
 SET statement_timeout = 0;
@@ -7,15 +5,10 @@ SET client_encoding = 'UTF8';
 SET client_min_messages = info;
 SET default_with_oids = false;
 
-CREATE OR REPLACE FUNCTION ls_version() RETURNS void AS $$
-BEGIN
-	INSERT INTO version (id, version, creation_date) VALUES ((SELECT nextVal('hibernate_sequence')),'2.3.0', now());
-END
-$$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION ls_prechecks() RETURNS void AS $$
 BEGIN
-	DECLARE version_to VARCHAR := '2.3.0';
+	DECLARE version_to VARCHAR := '2.2.0';
 	DECLARE version_from VARCHAR := '2.2.0';
 	DECLARE start VARCHAR := concat('You are about to upgrade from LinShare : ', version_from,  ' to ' , version_to);
 	DECLARE version_history_from VARCHAR := (SELECT version from version ORDER BY id DESC LIMIT 1);
@@ -46,6 +39,7 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
+
 CREATE OR REPLACE FUNCTION ls_check_user_connected() RETURNS void AS $$
 BEGIN
 	DECLARE database VARCHAR := (SELECT current_database());
@@ -63,27 +57,20 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
+COMMIT;
+
+BEGIN;
+
+
+SET statement_timeout = 0;
+SET client_encoding = 'UTF8';
+SET client_min_messages = info;
+SET default_with_oids = false;
 
 SELECT ls_check_user_connected();
 SELECT ls_prechecks();
 
-SET client_min_messages = warning;
-
-DROP VIEW IF EXISTS alias_users_list_all;
-DROP VIEW IF EXISTS alias_users_list_active;
-DROP VIEW IF EXISTS alias_users_list_destroyed;
-DROP VIEW IF EXISTS alias_threads_list_all;
-DROP VIEW IF EXISTS alias_threads_list_active;
-DROP VIEW IF EXISTS alias_threads_list_destroyed;
--- Here your request
-
--- Updates default values for LDAP synchronization
--- Group ldap pattern
-UPDATE ldap_pattern 
-SET search_all_groups_query = 'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=workgroup-*))");',
-search_group_query = 'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=workgroup-" + pattern + "))");'
-WHERE system = true ;
-
+-- Fixes of the patch
 
 -- Patch 1 : Prevent creation conflict with id > 1000
 DELETE FROM ldap_attribute WHERE id = 1060 AND system = TRUE;
@@ -94,28 +81,24 @@ DELETE FROM ldap_attribute WHERE id = 1064 AND system = TRUE;
 
 INSERT INTO ldap_attribute
 (id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
-VALUES(13, 'mail', 'member_mail', false, true, true, false, 4)
-	ON CONFLICT DO NOTHING;
+VALUES(13, 'mail', 'member_mail', false, true, true, false, 4);
 
 INSERT INTO ldap_attribute
 (id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
-VALUES(14, 'givenName', 'member_firstname', false, true, true, false, 4)
-	ON CONFLICT DO NOTHING;
+VALUES(14, 'givenName', 'member_firstname', false, true, true, false, 4);
 
 INSERT INTO ldap_attribute
 (id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
-VALUES(15, 'cn', 'group_name_attr', false, true, true, true, 4)
-	ON CONFLICT DO NOTHING;
+VALUES(15, 'cn', 'group_name_attr', false, true, true, true, 4);
 
 INSERT INTO ldap_attribute
 (id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
-VALUES(16, 'member', 'extended_group_member_attr', false, true, true, true, 4)
-	ON CONFLICT DO NOTHING;
+VALUES(16, 'member', 'extended_group_member_attr', false, true, true, true, 4);
 
 INSERT INTO ldap_attribute
 (id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
-VALUES(17, 'sn', 'member_lastname', false, true, true, false, 4)
-	ON CONFLICT DO NOTHING;
+VALUES(17, 'sn', 'member_lastname', false, true, true, false, 4);
+
 
 -- Patch 2 : New Demo ldap pattern.
 
@@ -153,44 +136,16 @@ VALUES (
     10,
     now(),
     now()
-)
-	ON CONFLICT DO NOTHING;
-
-
+);
 INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
-	VALUES (18, 'user_mail', 'mail', false, true, true, 5, true)
-	ON CONFLICT DO NOTHING;
+	VALUES (18, 'user_mail', 'mail', false, true, true, 5, true);
 INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
-	VALUES (19, 'user_firstname', 'givenName', false, true, true, 5, true)
-	ON CONFLICT DO NOTHING;
+	VALUES (19, 'user_firstname', 'givenName', false, true, true, 5, true);
 INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
-	VALUES (20, 'user_lastname', 'sn', false, true, true, 5, true)
-	ON CONFLICT DO NOTHING;
+	VALUES (20, 'user_lastname', 'sn', false, true, true, 5, true);
 INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
-	VALUES (21, 'user_uid', 'uid', false, true, true, 5, false)
-	ON CONFLICT DO NOTHING;
+	VALUES (21, 'user_uid', 'uid', false, true, true, 5, false);
 
--- End of your requests
+-- End fixes of the patch
 
--- LinShare version
-SELECT ls_version();
-
--- Alias for Users
--- All users
-CREATE VIEW alias_users_list_all AS
- SELECT id, first_name, last_name, mail, can_upload, restricted, expiration_date, ldap_uid, domain_id, ls_uuid, creation_date, modification_date, role_id, account_type from users as u join account as a on a.id=u.account_id;
--- All active users
-CREATE VIEW alias_users_list_active AS
- SELECT id, first_name, last_name, mail, can_upload, restricted, expiration_date, ldap_uid, domain_id, ls_uuid, creation_date, modification_date, role_id, account_type from users as u join account as a on a.id=u.account_id where a.destroyed = False;
--- All destroyed users
-CREATE VIEW alias_users_list_destroyed AS
- SELECT id, first_name, last_name, mail, can_upload, restricted, expiration_date, ldap_uid, domain_id, ls_uuid, creation_date, modification_date, role_id, account_type from users as u join account as a on a.id=u.account_id where a.destroyed = True;
-
--- Alias for threads
--- All threads
-CREATE VIEW alias_threads_list_all AS SELECT a.id, name, domain_id, ls_uuid, creation_date, modification_date, enable, destroyed from thread as u join account as a on a.id=u.account_id;
--- All active threads
-CREATE VIEW alias_threads_list_active AS SELECT a.id, name, domain_id, ls_uuid, creation_date, modification_date, enable, destroyed from thread as u join account as a on a.id=u.account_id where a.destroyed = False;
--- All destroyed threads
-CREATE VIEW alias_threads_list_destroyed AS SELECT a.id, name, domain_id, ls_uuid, creation_date, modification_date, enable, destroyed from thread as u join account as a on a.id=u.account_id where a.destroyed = True;
 COMMIT;
