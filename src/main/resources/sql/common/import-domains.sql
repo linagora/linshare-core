@@ -203,8 +203,8 @@ INSERT INTO ldap_pattern(
 	NULL,
 	NOW(),
 	NOW(),
-	'ldap.search(baseDn, "(&(objectClass=posixGroup)(cn=workgroup-*))");',
-	'ldap.search(baseDn, "(&(objectClass=posixGroup)(cn=workgroup-" + pattern + "))");',
+	'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=workgroup-*))");',
+	'ldap.search(baseDn, "(&(objectClass=groupOfNames)(cn=workgroup-" + pattern + "))");',
 	'workgroup-');
 
 

@@ -90,8 +90,8 @@ public class LDAPGroupQueryServiceImplTest extends AbstractJUnit4SpringContextTe
 
 		groupPattern = new GroupLdapPattern();
 		groupPattern.setAttributes(attributes);
-		groupPattern.setSearchAllGroupsQuery("ldap.search(baseDn, \"(&(objectClass=posixGroup)(cn=workgroup-*))\");");
-		groupPattern.setSearchGroupQuery("ldap.search(baseDn, \"(&(objectClass=posixGroup)(cn=workgroup-\" + pattern + \"))\");");
+		groupPattern.setSearchAllGroupsQuery("ldap.search(baseDn, \"(&(objectClass=groupOfNames)(cn=workgroup-*))\");");
+		groupPattern.setSearchGroupQuery("ldap.search(baseDn, \"(&(objectClass=groupOfNames)(cn=workgroup-\" + pattern + \"))\");");
 		groupPattern.setSearchPageSize(100);
 		groupPattern.setGroupPrefix("workgroup-");
 

@@ -137,9 +137,9 @@ public class SynchronizeLDAPGroupsInWorkgroupsBatchImplTest extends AbstractTran
 		groupPatternDto.setMemberLastName("sn");
 		groupPatternDto.setMemberMail("mail");
 		groupPatternDto
-				.setSearchAllGroupsQuery("ldap.search(baseDn, \"(&(objectClass=posixGroup)(cn=workgroup-*))\");");
+				.setSearchAllGroupsQuery("ldap.search(baseDn, \"(&(objectClass=groupOfNames)(cn=workgroup-*))\");");
 		groupPatternDto.setSearchGroupQuery(
-				"ldap.search(baseDn, \"(&(objectClass=posixGroup)(cn=workgroup-\" + pattern + \"))\");");
+				"ldap.search(baseDn, \"(&(objectClass=groupOfNames)(cn=workgroup-\" + pattern + \"))\");");
 		groupPatternDto.setSearchPageSize(100);
 		GroupLdapPattern groupPattern = groupPatternService.create(root, new GroupLdapPattern(groupPatternDto));
 		LdapConnection connection = ldapConnectionService

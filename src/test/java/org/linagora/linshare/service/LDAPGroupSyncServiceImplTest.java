@@ -179,9 +179,9 @@ public class LDAPGroupSyncServiceImplTest extends AbstractTransactionalJUnit4Spr
 		groupPattern.setLabel("LabelGroup pattern");
 		groupPattern.setDescription("description");
 		groupPattern.setAttributes(attributes);
-		groupPattern.setSearchAllGroupsQuery("ldap.search(baseDn, \"(&(objectClass=posixGroup)(cn=workgroup-*))\");");
+		groupPattern.setSearchAllGroupsQuery("ldap.search(baseDn, \"(&(objectClass=groupOfNames)(cn=workgroup-*))\");");
 		groupPattern.setSearchGroupQuery(
-				"ldap.search(baseDn, \"(&(objectClass=posixGroup)(cn=workgroup-\" + pattern + \"))\");");
+				"ldap.search(baseDn, \"(&(objectClass=groupOfNames)(cn=workgroup-\" + pattern + \"))\");");
 		groupPattern.setSearchPageSize(100);
 		groupPattern.setGroupPrefix("workgroup-");
 		Account root = datas.getRoot();

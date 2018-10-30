@@ -124,7 +124,7 @@ description: Groups subtree
 
 dn: cn=workgroup-wg-1,ou=Groups,dc=linshare,dc=org
 cn: workgroup-wg-1
-objectClass: posixGroup
+objectClass: groupOfNames
 member: uid=user1,ou=People,dc=linshare,dc=org
 member: uid=user2,ou=People,dc=linshare,dc=org
 
@@ -136,7 +136,7 @@ description: Groups2 subtree
 
 dn: cn=workgroup-wg-2,ou=Groups2,dc=linshare,dc=org
 cn: workgroup-wg-2
-objectClass: posixGroup
+objectClass: groupOfNames
 member: uid=user1,ou=People,dc=linshare,dc=org
 
 dn: ou=Groups3,dc=linshare,dc=org
@@ -147,17 +147,17 @@ description: Groups3 subtree
 
 dn: cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org
 cn: workgroup-wg-3
-objectClass: posixGroup
+objectClass: groupOfNames
 member: uid=user2,ou=People,dc=linshare,dc=org
 
 dn: cn=contributors,cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org
 cn: contributors
-objectClass: posixGroup
+objectClass: groupOfNames
 member: uid=user1,ou=People,dc=linshare,dc=org
 
 dn: cn=writers,cn=workgroup-wg-3,ou=Groups3,dc=linshare,dc=org
 cn: writers
-objectClass: posixGroup
+objectClass: groupofUniqueNames
 member: uid=user3,ou=People,dc=linshare,dc=org
 
 dn: ou=Groups4,dc=linshare,dc=org
@@ -168,14 +168,14 @@ description: Groups4 subtree
 
 dn: cn=workgroup-wg-4,ou=Groups4,dc=linshare,dc=org
 cn: workgroup-wg-4
-objectClass: posixGroup
+objectClass: groupOfNames
 
 dn: cn=contributors,cn=workgroup-wg-4,ou=Groups4,dc=linshare,dc=org
 cn: contributors
-objectClass: posixGroup
+objectClass: groupOfNames
 member: uid=user1,ou=People,dc=linshare,dc=org
 
 dn: cn=writers,cn=workgroup-wg-4,ou=Groups4,dc=linshare,dc=org
 cn: writers
-objectClass: posixGroup
+objectClass: groupOfNames
 member: uid=user3,ou=People,dc=linshare,dc=org
