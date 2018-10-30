@@ -90,10 +90,14 @@ public class StatisticWeeklyThreadBatchImpl extends GenericBatchImpl {
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		WorkGroup resource = threadService.findByLsUuidUnprotected(identifier);
+		if (resource == null) {
+			return null;
+		}
 		ResultContext context = new AccountBatchResultContext(resource);
 		try {
 			console.logInfo(batchRunContext, total, position, "processing thread : " + resource.getAccountRepresentation());
 			threadWeeklyStatBusinessService.create(resource, getFirstDayOfLastWeek(), getLastDayOfLastWeek());
+			context.setProcessed(true);
 		} catch (BusinessException businessException) {
 			GregorianCalendar calendar = new GregorianCalendar();
 			calendar.add(GregorianCalendar.DATE, -7);

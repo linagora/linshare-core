@@ -93,12 +93,16 @@ public class StatisticDailyThreadBatchImpl extends GenericBatchWithHistoryImpl {
 			throws BatchBusinessException, BusinessException {
 		Date yesterday = getYesterdayEnd();
 		WorkGroup resource = threadService.findByLsUuidUnprotected(identifier);
+		if (resource == null) {
+			return null;
+		}
 		ResultContext context = new AccountBatchResultContext(resource);
 		try {
 			console.logInfo(batchRunContext, total, position, "processing workgroup : " + resource.getAccountRepresentation());
 			AccountQuota quota = accountQuotaBusinessService.createOrUpdate(resource, yesterday);
 			threadDailyStatBusinessService.create(resource, quota.getCurrentValue(), yesterday);
 			operationHistoryBusinessService.deleteBeforeDateByAccount(yesterday, resource);
+			context.setProcessed(true);
 		} catch (BusinessException businessException) {
 			String batchClassName = this.getBatchClassName();
 			String msg = "Error occured while running batch : " + batchClassName; 
