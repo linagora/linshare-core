@@ -56,17 +56,17 @@ public interface AuditAdminMongoRepository extends MongoRepository<AuditLogEntry
 
 	List<AuditLogEntry> findByType(AuditLogEntryType type);
 
-	@Query("{'action' : {'$in' : ?0 }, 'type' : { '$in' : ?1 } , 'creationDate' : { '$gt' : '?2' , '$lt' : '?3'} }")
+	@Query("{'action' : {'$in' : ?0 }, 'type' : { '$in' : ?1 } , 'creationDate' : { '$gt' : ?2 , '$lt' : ?3} }")
 	Set<AuditLogEntry> findAll(List<LogAction> actions, List<AuditLogEntryType> types, Date beginDate,
 			Date endDate);
 
 	@Query("{ 'action' : {'$in' : ?0 }, 'type' : { '$in' : ?1 } }")
 	Set<AuditLogEntry> findAll(List<LogAction> actions, List<AuditLogEntryType> types);
 
-	@Query("{ 'authUser.domain.uuid' : ?0, 'creationDate' : { '$lt' : '?1'}}")
+	@Query("{ 'authUser.domain.uuid' : ?0, 'creationDate' : { '$lt' : ?1}}")
 	List<AuditLogEntry> findAllBeforeDateByDomainUuid(String domainUuid,Date date);
 
-	@Query("{ 'creationDate' : { '$gt' : '?0' , '$lt' : '?1'} }")
+	@Query("{ 'creationDate' : { '$gt' : ?0 , '$lt' : ?1} }")
 	List<AuditLogEntry> findAllBetweenTwoDates(Date beginDate, Date endDate);
 
 	@Query("{ 'resource.domainUuid' : ?0, 'action' : {'$in' : ?1 }, 'type' : ?2 }")

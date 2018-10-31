@@ -45,11 +45,11 @@ import org.springframework.data.mongodb.repository.Query;
 
 public interface ExceptionStatisticMongoRepository extends MongoRepository<ExceptionStatistic, String> {
 
-	@Query("{ 'domainUuid' : ?0 , 'exceptionType' : { '$in' : ?1 }  , 'creationDate' : { '$gt' : '?2' , '$lt' : '?3'},'type' : ?4 }")
+	@Query("{ 'domainUuid' : ?0 , 'exceptionType' : { '$in' : ?1 }  , 'creationDate' : { '$gt' : ?2 , '$lt' : ?3},'type' : ?4 }")
 	Set<ExceptionStatistic> findBetweenTwoDates(String domainUuid, List<ExceptionType> exceptionType, Date beginDate, Date endDate,
 			 ExceptionStatisticType type);
 
-	@Query(value = "{ 'domainUuid' : ?0 ,'exceptionType' : ?1 , 'creationDate' : { '$gt' : '?2' , '$lt' : '?3'}, 'type' : ?4 }}", count = true)
+	@Query(value = "{ 'domainUuid' : ?0 ,'exceptionType' : ?1 , 'creationDate' : { '$gt' : ?2 , '$lt' : ?3}, 'type' : ?4 }}", count = true)
 	Long countExceptionStatistic(String domainUuid, ExceptionType exceptionType, Date beginDate, Date endDate,
 			 ExceptionStatisticType type);
 }

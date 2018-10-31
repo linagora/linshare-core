@@ -42,7 +42,7 @@ import org.springframework.data.mongodb.repository.Query;
 
 public interface AdvancedStatisticMongoRepository extends MongoRepository<MimeTypeStatistic, String> {
 
-	@Query("{ 'domainUuid' : ?0 , 'creationDate' : { '$gt' : '?1' , '$lt' : '?2'}, 'mimeType' : ?3 }")
+	@Query("{ 'domainUuid' : ?0 , 'creationDate' : { '$gt' : ?1 , '$lt' : ?2}, 'mimeType' : ?3 }")
 	Set<MimeTypeStatistic> findBetweenTwoDates(String domainUuid, Date beginDate, Date endDate, String mimeType);
 
 }

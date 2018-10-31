@@ -46,15 +46,15 @@ import org.springframework.data.mongodb.repository.Query;
 
 public interface BasicStatisticMongoRepository extends MongoRepository<BasicStatistic, String> {
 
-	@Query("{ 'domainUuid' : ?0 ,'action' : {'$in' : ?1 }, 'creationDate' : { '$gt' : '?2' , '$lt' : '?3'}, 'resourceType' : { '$in' : ?4 } , 'type' : ?5 }")
+	@Query("{ 'domainUuid' : ?0 ,'action' : {'$in' : ?1 }, 'creationDate' : { '$gt' : ?2 , '$lt' : ?3}, 'resourceType' : { '$in' : ?4 } , 'type' : ?5 }")
 	Set<BasicStatistic> findBetweenTwoDates(String domainUuid, List<LogAction> actions, Date beginDate, Date endDate,
 			List<AuditLogEntryType> resourceType, BasicStatisticType type);
 
-	@Query(value = "{ 'domainUuid' : ?0 ,'action' : ?1 , 'creationDate' : { '$gt' : '?2' , '$lt' : '?3'}, 'resourceType' : ?4  , 'type' : ?5 }}", count = true)
+	@Query(value = "{ 'domainUuid' : ?0 ,'action' : ?1 , 'creationDate' : { '$gt' : ?2 , '$lt' : ?3}, 'resourceType' : ?4  , 'type' : ?5 }}", count = true)
 	Long countBasicStatistic(String domainUuid, LogAction action, Date beginDate, Date endDate,
 			AuditLogEntryType resourceType, BasicStatisticType type);
 
-	@Query(value = "{'creationDate' : { '$lt' : '?0'}}", count = true)
+	@Query(value = "{'creationDate' : { '$lt' : ?0}}", count = true)
 	Long countBeforeDate(Date endDate);
 
 	BasicStatistic findCreationDateByOrderByIdAsc();

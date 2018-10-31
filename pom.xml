@@ -1835,7 +1835,7 @@
 	<properties>
 		<spring-release-version>5.0.7.RELEASE</spring-release-version>
 		<spring-security-release-version>5.0.6.RELEASE</spring-security-release-version>
-		<spring-data.version>Gosling-SR6</spring-data.version>
+		<spring-data.version>Ingalls-SR16</spring-data.version>
 		<hibernate.version>5.0.12.Final</hibernate.version>
 		<h2.version>1.4.196</h2.version>
 		<guava.version>19.0</guava.version>

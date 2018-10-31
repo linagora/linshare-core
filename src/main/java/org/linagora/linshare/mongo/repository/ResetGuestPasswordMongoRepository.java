@@ -50,6 +50,6 @@ public interface ResetGuestPasswordMongoRepository extends MongoRepository<Reset
 	 */
 	ResetGuestPassword findByUuid(String uuid);
 	
-	@Query("{ 'alreadyUsed' : false, 'guestUuid' : ?0, 'expirationDate' : { '$gt' : '?1'}}")
+	@Query("{ 'alreadyUsed' : false, 'guestUuid' : ?0, 'expirationDate' : { '$gt' : ?1}}")
 	List<ResetGuestPassword> findByGuestNotUsed(String guestUuid, Date currentDate);
 }
