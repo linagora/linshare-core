@@ -155,19 +155,11 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		checkVersioningParameter(actor.getDomain(), node);
 		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, node);
 		checkCreatePermission(authUser, actor, SharedSpaceNode.class, getBusinessErrorCode(node.getNodeType()), node);
-		SharedSpaceNode created = new SharedSpaceNode();
 		SharedSpaceRole role = ssRoleService.getAdmin(authUser, actor);
 		// Hack to create thread into shared space node
-		if (node.getNodeType().equals(NodeType.WORK_GROUP)) {
-			created = simpleCreate(authUser, actor, node);
-			memberService.createWithoutCheckPermission(authUser, actor, created, role,
-					new SharedSpaceAccount((User) actor));
-		} else if (node.getNodeType().equals(NodeType.DRIVE)) {
-			created = businessService.create(node);
-			// TODO To override when we implement CRUD for DRIVE members
-			memberService.createWithoutCheckPermission(authUser, actor, created, role,
-					new SharedSpaceAccount((User) actor));
-		}
+		SharedSpaceNode created = simpleCreate(authUser, actor, node);
+		memberService.createWithoutCheckPermission(authUser, actor, created, role,
+				new SharedSpaceAccount((User) actor));
 		return created;
 	}
 
@@ -179,11 +171,13 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 
 	protected SharedSpaceNode simpleCreate(Account authUser, Account actor, SharedSpaceNode node)
 			throws BusinessException {
-		// Hack to create thread into shared space node
-		WorkGroup workGroup = threadService.create(authUser, actor, node.getName());
-		Quota workgroupQuota = 	accountQuotaBusinessService.find(workGroup);
-		node.setUuid(workGroup.getLsUuid());
-		node.setQuotaUuid(workgroupQuota.getUuid());
+		if (node.getNodeType().equals(NodeType.WORK_GROUP)) {
+			// Hack to create thread into shared space node
+			WorkGroup workGroup = threadService.create(authUser, actor, node.getName());
+			Quota workgroupQuota = 	accountQuotaBusinessService.find(workGroup);
+			node.setUuid(workGroup.getLsUuid());
+			node.setQuotaUuid(workgroupQuota.getUuid());
+		}
 		SharedSpaceNode created = businessService.create(node);
 		saveLog(authUser, actor, LogAction.CREATE, created);
 		return created;
@@ -216,14 +210,9 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		Validate.notNull(node, "missing required node to delete.");
 		Validate.notEmpty(node.getUuid(), "missing required node uuid to delete");
 		SharedSpaceNode foundedNodeTodel = find(authUser, actor, node.getUuid());
-		checkDeletePermission(authUser, actor, SharedSpaceNode.class, getBusinessErrorCode(foundedNodeTodel.getNodeType()),
-				foundedNodeTodel);
-		if (foundedNodeTodel.getNodeType().equals(NodeType.WORK_GROUP)) {
-			simpleDelete(authUser, actor, foundedNodeTodel);
-		} else if (foundedNodeTodel.getNodeType().equals(NodeType.DRIVE)) {
-			businessService.delete(foundedNodeTodel);
-			// TODO audit for drive delete
-		}
+		checkDeletePermission(authUser, actor, SharedSpaceNode.class,
+				getBusinessErrorCode(foundedNodeTodel.getNodeType()), foundedNodeTodel);
+		simpleDelete(authUser, actor, foundedNodeTodel);
 		return foundedNodeTodel;
 	}
 
@@ -246,9 +235,12 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 
 	private WorkGroup simpleDelete(Account authUser, Account actor, SharedSpaceNode foundedNodeTodel)
 			throws BusinessException {
-		WorkGroup workGroup = threadService.find(authUser, authUser, foundedNodeTodel.getUuid());
-		threadService.deleteThread(authUser, authUser, workGroup);
-		memberService.deleteAllMembers(authUser, actor, foundedNodeTodel.getUuid());
+		WorkGroup workGroup = new WorkGroup();
+		if (NodeType.WORK_GROUP.equals(foundedNodeTodel.getNodeType())) {
+			workGroup = threadService.find(authUser, authUser, foundedNodeTodel.getUuid());
+			threadService.deleteThread(authUser, authUser, workGroup);
+			memberService.deleteAllMembers(authUser, actor, foundedNodeTodel.getUuid());
+		}
 		businessService.delete(foundedNodeTodel);
 		saveLog(authUser, actor, LogAction.DELETE, foundedNodeTodel);
 		return workGroup;
@@ -352,7 +344,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	protected SharedSpaceNodeAuditLogEntry saveLog(Account authUser, Account actor, LogAction action,
 			SharedSpaceNode resource) {
 		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, action,
-				AuditLogEntryType.WORKGROUP, resource);
+				AuditLogEntryType.fromNodeType(resource.getNodeType().toString()) , resource);
 		logEntryService.insert(log);
 		return log;
 	}
@@ -360,7 +352,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	protected SharedSpaceNodeAuditLogEntry saveUpdateLog(Account authUser, Account actor, SharedSpaceNode resource,
 			SharedSpaceNode resourceUpdated) {
 		SharedSpaceNodeAuditLogEntry log = new SharedSpaceNodeAuditLogEntry(authUser, actor, LogAction.UPDATE,
-				AuditLogEntryType.WORKGROUP, resource);
+				AuditLogEntryType.fromNodeType(resource.getNodeType().toString()), resource);
 		log.setResourceUpdated(resourceUpdated);
 		logEntryService.insert(log);
 		return log;

@@ -43,6 +43,7 @@ public enum AuditLogEntryType {
 	SHARE_ENTRY,
 	DOCUMENT_ENTRY,
 	GUEST,
+	DRIVE,
 	WORKGROUP,
 	WORKGROUP_MEMBER,
 	WORKGROUP_FOLDER,
@@ -88,4 +89,8 @@ public enum AuditLogEntryType {
 		return auditType;
 	}
 
+	public static AuditLogEntryType fromNodeType(String nodeType) {
+		nodeType = nodeType.replace("_", "");
+		return fromString(nodeType);
+	}
 }
