@@ -52,7 +52,7 @@ public interface SharedSpaceMemberMongoRepository extends MongoRepository<Shared
 	@Query("{'account.name': {$regex : ?0, '$option':'i'}}")
 	List<SharedSpaceMember> findByMemberName(String memberName);
 
-	List<SharedSpaceMember> findByAccountUuid(String accountUuid);
+	List<SharedSpaceMember> findByAccountUuidAndNested(String accountUuid, boolean nested);
 
 	@Query("{ 'account.uuid' : ?0, 'role.uuid' : ?1 }")
 	List<SharedSpaceMember> findByAccountAndRole(String accountUuid, String roleUuid);

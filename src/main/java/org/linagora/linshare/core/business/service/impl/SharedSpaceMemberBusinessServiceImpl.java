@@ -170,7 +170,7 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	@Override
 	public List<SharedSpaceNodeNested> findAllNestedNodeByAccountUuid(String accountUuid, boolean withRole) {
 		if (withRole) {
-			List<SharedSpaceMember> members = repository.findByAccountUuid(accountUuid);
+			List<SharedSpaceMember> members = repository.findByAccountUuidAndNested(accountUuid, false);
 			return members.stream().map(member -> new SharedSpaceNodeNested(member)).collect(Collectors.toList());
 		}
 		Aggregation aggregation = Aggregation.newAggregation(
@@ -194,7 +194,7 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 
 	@Override
 	public List<SharedSpaceMember> findAllUserMemberships(String userUuid) {
-		return repository.findByAccountUuid(userUuid);
+		return repository.findByAccountUuidAndNested(userUuid, false);
 	}
 
 	@Override

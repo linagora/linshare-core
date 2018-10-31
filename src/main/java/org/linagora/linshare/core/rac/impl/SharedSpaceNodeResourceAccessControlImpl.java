@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.rac.impl;
 
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.constants.SharedSpaceActionType;
 import org.linagora.linshare.core.domain.constants.SharedSpaceResourceType;
 import org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType;
@@ -79,7 +80,16 @@ public class SharedSpaceNodeResourceAccessControlImpl
 
 	@Override
 	protected boolean hasCreatePermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
-		Functionality creation = functionalityService.getWorkGroupCreationRight(actor.getDomain());
+		Functionality creation = new Functionality();
+		if (NodeType.WORK_GROUP.equals(entry.getNodeType())) {
+			creation = functionalityService.getWorkGroupCreationRight(actor.getDomain());
+		} else if (NodeType.DRIVE.equals(entry.getNodeType())) {
+			creation = functionalityService.getDriveCreationRight(actor.getDomain());
+		} else {
+			String message = "Unsupported NodeType exception.";
+			logger.error(message);
+			return false;
+		}
 		if (!creation.getActivationPolicy().getStatus()) {
 			String message = "You can not create shared space, you are not authorized.";
 			logger.error(message);

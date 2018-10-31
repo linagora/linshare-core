@@ -132,8 +132,10 @@ public class ThreadFacadeImpl extends UserGenericFacadeImp implements
 		User authUser = checkAuthentication();
 		List<WorkGroupDto> res = Lists.newArrayList();
 		for (SharedSpaceNodeNested ssnode : ssNodeService.findAllByAccount(authUser, authUser)) {
-			WorkGroup workGroup = threadService.find(authUser, authUser, ssnode.getUuid());
-			res.add(new WorkGroupDto(workGroup));
+			if (ssnode.getNodeType().equals(NodeType.WORK_GROUP)) {
+				WorkGroup workGroup = threadService.find(authUser, authUser, ssnode.getUuid());
+				res.add(new WorkGroupDto(workGroup));
+			}
 		}
 		return res;
 	}

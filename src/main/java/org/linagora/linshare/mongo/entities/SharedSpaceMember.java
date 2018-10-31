@@ -67,6 +67,8 @@ public class SharedSpaceMember {
 
 	protected Date modificationDate;
 
+	protected boolean nested;
+
 	// WorkAround
 	// we have to duplicate account information
 	// to avoid a side effect on front-end
@@ -159,6 +161,14 @@ public class SharedSpaceMember {
 
 	public void setUser(SharedSpaceAccount user) {
 		this.user = user;
+	}
+
+	public boolean isNested() {
+		return nested;
+	}
+
+	public void setNested(boolean nested) {
+		this.nested = nested;
 	}
 
 	@Override

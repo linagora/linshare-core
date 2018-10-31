@@ -128,10 +128,10 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		Validate.notEmpty(uuid, "Missing required shared space node uuid.");
 		SharedSpaceNode found = businessService.find(uuid);
 		if (found == null) {
-			throw new BusinessException(BusinessErrorCode.WORK_GROUP_NOT_FOUND,
+			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_NODE_NOT_FOUND,
 					"The shared space node with uuid: " + uuid + " is not found");
 		}
-		checkReadPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, found);
+		checkReadPermission(authUser, actor, SharedSpaceNode.class, getBusinessErrorCode(found.getNodeType()), found);
 		return found;
 	}
 
@@ -154,11 +154,20 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		}
 		checkVersioningParameter(actor.getDomain(), node);
 		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, node);
-		// Hack to create thread into shared space node
-		SharedSpaceNode created = simpleCreate(authUser, actor, node);
+		checkCreatePermission(authUser, actor, SharedSpaceNode.class, getBusinessErrorCode(node.getNodeType()), node);
+		SharedSpaceNode created = new SharedSpaceNode();
 		SharedSpaceRole role = ssRoleService.getAdmin(authUser, actor);
-		memberService.createWithoutCheckPermission(authUser, actor, created, role,
-				new SharedSpaceAccount((User) actor));
+		// Hack to create thread into shared space node
+		if (node.getNodeType().equals(NodeType.WORK_GROUP)) {
+			created = simpleCreate(authUser, actor, node);
+			memberService.createWithoutCheckPermission(authUser, actor, created, role,
+					new SharedSpaceAccount((User) actor));
+		} else if (node.getNodeType().equals(NodeType.DRIVE)) {
+			created = businessService.create(node);
+			// TODO To override when we implement CRUD for DRIVE members
+			memberService.createWithoutCheckPermission(authUser, actor, created, role,
+					new SharedSpaceAccount((User) actor));
+		}
 		return created;
 	}
 
@@ -207,9 +216,14 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		Validate.notNull(node, "missing required node to delete.");
 		Validate.notEmpty(node.getUuid(), "missing required node uuid to delete");
 		SharedSpaceNode foundedNodeTodel = find(authUser, actor, node.getUuid());
-		checkDeletePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN,
+		checkDeletePermission(authUser, actor, SharedSpaceNode.class, getBusinessErrorCode(foundedNodeTodel.getNodeType()),
 				foundedNodeTodel);
-		simpleDelete(authUser, actor, foundedNodeTodel);
+		if (foundedNodeTodel.getNodeType().equals(NodeType.WORK_GROUP)) {
+			simpleDelete(authUser, actor, foundedNodeTodel);
+		} else if (foundedNodeTodel.getNodeType().equals(NodeType.DRIVE)) {
+			businessService.delete(foundedNodeTodel);
+			// TODO audit for drive delete
+		}
 		return foundedNodeTodel;
 	}
 
@@ -303,7 +317,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	@Override
 	public List<SharedSpaceNode> findAll(Account authUser, Account actor) {
 		preChecks(authUser, actor);
-		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
+		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN, null);
 		return businessService.findAll();
 	}
 
@@ -331,7 +345,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		preChecks(authUser, actor);
 		Validate.notEmpty(name, "Missing required shared space node name.");
 		List<SharedSpaceNode> founds = businessService.searchByName(name);
-		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
+		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN, null);
 		return founds;
 	}
 
@@ -350,5 +364,13 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		log.setResourceUpdated(resourceUpdated);
 		logEntryService.insert(log);
 		return log;
+	}
+
+	private BusinessErrorCode getBusinessErrorCode(NodeType nodeType) {
+		if (NodeType.DRIVE.equals(nodeType)) {
+			return BusinessErrorCode.DRIVE_FORBIDDEN;
+		} else {
+			return BusinessErrorCode.WORK_GROUP_FORBIDDEN;
+		}
 	}
 }

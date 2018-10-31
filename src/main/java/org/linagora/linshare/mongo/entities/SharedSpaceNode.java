@@ -85,6 +85,15 @@ public class SharedSpaceNode {
 		super();
 	}
 
+	public SharedSpaceNode(String name, NodeType nodeType) {
+		super();
+		this.uuid = UUID.randomUUID().toString();
+		this.name = name;
+		this.nodeType = nodeType;
+		this.creationDate = new Date();
+		this.modificationDate = new Date();
+	}
+
 	public SharedSpaceNode(String name, String parentUuid, NodeType nodeType) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
