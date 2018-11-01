@@ -37,6 +37,7 @@ package org.linagora.linshare.core.facade.webservice.delegation.impl;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupMemberDto;
@@ -105,7 +106,13 @@ public class WorkgroupMemberFacadeImpl extends DelegationGenericFacadeImpl
 		User user = userService.findOrCreateUser(mail, domainId);
 		SharedSpaceNode foundSharedSpaceNode = ssNodeService.find(authActor, actor, threadUuid);
 		SharedSpaceRole defaultRole = getDefaultRole(actor, admin);
-		SharedSpaceMember create = ssMemberService.create(authActor, actor, foundSharedSpaceNode, defaultRole, new SharedSpaceAccount(user));
+		SharedSpaceMember create = new SharedSpaceMember();
+		if (foundSharedSpaceNode.getNodeType().equals(NodeType.WORK_GROUP)) {
+		create = ssMemberService.create(authActor, actor, foundSharedSpaceNode, defaultRole, null, new SharedSpaceAccount(user));
+		}else if (foundSharedSpaceNode.getNodeType().equals(NodeType.DRIVE)) {
+			SharedSpaceRole defaultDriveRole = getDefaultDriveRole(actor, admin);
+			create = ssMemberService.create(authActor, actor, foundSharedSpaceNode, defaultRole, defaultDriveRole, new SharedSpaceAccount(user));
+		}
 		return new WorkGroupMemberDto(create, user);
 	}
 
@@ -145,5 +152,12 @@ public class WorkgroupMemberFacadeImpl extends DelegationGenericFacadeImpl
 			return ssRoleService.findByName(authUser, authUser, "ADMIN");
 		}
 		return ssRoleService.findByName(authUser, authUser, "READER");
+	}
+
+	private SharedSpaceRole getDefaultDriveRole(User authUser, boolean admin) {
+		if (admin) {
+			return ssRoleService.findByName(authUser, authUser, "DRIVE_ADMIN");
+		}
+		return ssRoleService.findByName(authUser, authUser, "Drive_READER");
 	}
 }

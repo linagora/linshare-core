@@ -170,7 +170,7 @@ public class SharedSpaceMemberServiceImplTest {
 		lightNodePersisted = new GenericLightEntity(node.getUuid(), node.getUuid());
 		accountJhon = new SharedSpaceAccount(john);
 		accountJane = new SharedSpaceAccount(jane);
-		SharedSpaceMember johnMemberShip = service.createWithoutCheckPermission(john, john, node, adminRole,
+		SharedSpaceMember johnMemberShip = service.createWithoutCheckPermission(john, john, node, adminRole, adminRole,
 				accountJhon);
 		Assertions.assertNotNull(johnMemberShip, "John has not been added as a member of his shared space");
 		logger.debug(LinShareTestConstants.END_SETUP);
@@ -184,7 +184,7 @@ public class SharedSpaceMemberServiceImplTest {
 	}
 
 	public void testFind() {
-		SharedSpaceMember toCreate = service.create(john, john, node, adminRole, accountJane);
+		SharedSpaceMember toCreate = service.create(john, john, node, adminRole, adminRole, accountJane);
 		SharedSpaceMember tofound = service.find(john, john, toCreate.getUuid());
 		Assertions.assertEquals(toCreate.getUuid(), tofound.getUuid());
 	}
@@ -248,7 +248,7 @@ public class SharedSpaceMemberServiceImplTest {
 
 	@Test
 	public void testDeleteAll() {
-		service.create(john, john, node, adminRole, accountJane);
+		service.create(john, john, node, adminRole, adminRole, accountJane);
 		List<SharedSpaceMember> foundMembers = service.findAll(root, root, lightNodePersisted.getUuid());
 		Assertions.assertTrue(foundMembers.size() > 0, "No members have been created");
 		service.deleteAllMembers(john, john, lightNodePersisted.getUuid());

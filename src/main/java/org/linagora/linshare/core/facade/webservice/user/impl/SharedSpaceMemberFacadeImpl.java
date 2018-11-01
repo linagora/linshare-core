@@ -36,6 +36,7 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceMemberFacade;
@@ -85,12 +86,17 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 		Validate.notNull(member.getNode().getUuid(), "Node uuid must be set.");
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
+		SharedSpaceRole foundDriveRole = new SharedSpaceRole();
 		SharedSpaceNode foundSharedSpaceNode = nodeService.find(authUser, actor, member.getNode().getUuid());
 		SharedSpaceRole foundSharedSpaceRole = roleService.find(authUser, actor, member.getRole().getUuid());
+		if (member.getNode().getNodeType().equals(NodeType.DRIVE)) {
+			foundDriveRole = getDefaultDriveRole(authUser, member.isDriveAdmin());
+			Validate.notNull(foundDriveRole);
+		}
 		Validate.notNull(foundSharedSpaceRole, "Missing required role");
 		Validate.notNull(foundSharedSpaceNode, "Missing required node");
 		SharedSpaceMember toAddMember = memberService.create(authUser, actor, foundSharedSpaceNode,
-				foundSharedSpaceRole, member.getAccount());
+				foundSharedSpaceRole, foundDriveRole, member.getAccount());
 		return toAddMember;
 	}
 
@@ -136,4 +142,10 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 		return memberService.findAllUserMemberships(authUser, actor);
 	}
 
+	private SharedSpaceRole getDefaultDriveRole(Account authUser, boolean driveAdmin) {
+		if (driveAdmin) {
+			return roleService.findByName(authUser, authUser, "DRIVE_ADMIN");
+		}
+		return roleService.findByName(authUser, authUser, "DRIVE_READER");
+	}
 }

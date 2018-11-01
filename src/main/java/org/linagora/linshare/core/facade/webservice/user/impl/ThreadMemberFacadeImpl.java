@@ -36,6 +36,7 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupMemberDto;
@@ -106,8 +107,15 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		User newMember = userService.findOrCreateUser(workGroupMember.getUserMail(), workGroupMember.getUserDomainId());
 		SharedSpaceNode foundSharedSpaceNode = sharedSpaceNodeService.find(authUser, authUser, threadUuid);
 		SharedSpaceRole defaultRole = getDefaultRole(authUser, workGroupMember.isAdmin());
-		SharedSpaceMember create = ssMemberService.create(authUser, authUser, foundSharedSpaceNode, defaultRole,
-				new SharedSpaceAccount(newMember));
+		SharedSpaceMember create = new SharedSpaceMember();
+		if (foundSharedSpaceNode.getNodeType().equals(NodeType.WORK_GROUP)) {
+			create = ssMemberService.create(authUser, authUser, foundSharedSpaceNode, defaultRole, null,
+					new SharedSpaceAccount(newMember));
+		} else if (foundSharedSpaceNode.getNodeType().equals(NodeType.DRIVE)) {
+			SharedSpaceRole defaultDriveRole = getDefaultDriveRole(authUser, workGroupMember.isAdmin());
+			create = ssMemberService.create(authUser, authUser, foundSharedSpaceNode, defaultRole, defaultDriveRole,
+					new SharedSpaceAccount(newMember));
+		}
 		return new WorkGroupMemberDto(create, newMember);
 	}
 
@@ -143,5 +151,12 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 			return ssRoleService.findByName(authUser, authUser, "ADMIN");
 		}
 		return ssRoleService.findByName(authUser, authUser, "READER");
+	}
+
+	private SharedSpaceRole getDefaultDriveRole(User authUser, boolean admin) {
+		if (admin) {
+			return ssRoleService.findByName(authUser, authUser, "DRIVE_ADMIN");
+		}
+		return ssRoleService.findByName(authUser, authUser, "Drive_READER");
 	}
 }

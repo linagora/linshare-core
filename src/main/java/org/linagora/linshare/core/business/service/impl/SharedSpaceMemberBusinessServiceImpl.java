@@ -40,6 +40,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -93,6 +94,10 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	public SharedSpaceMember create(SharedSpaceMember member) throws BusinessException {
 		member.setRole(new GenericLightEntity(checkRole(member.getRole().getUuid())));
 		member.setNode(new SharedSpaceNodeNested(checkNode(member.getNode().getUuid())));
+		if (member.getNode().getNodeType().equals(NodeType.DRIVE)) {
+			member.setDrive_role(new GenericLightEntity(checkRole(member.getDrive_role().getUuid())));
+			member.setNested(true);
+		}
 		member.setAccount(new SharedSpaceAccount(checkUser(member.getAccount().getUuid())));
 		return repository.insert(member);
 	}

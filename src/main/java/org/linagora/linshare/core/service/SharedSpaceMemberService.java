@@ -60,11 +60,6 @@ public interface SharedSpaceMemberService {
 
 	List<SharedSpaceMember> findAllByAccountAndRole(String accountUuid, String roleUuid);
 
-	SharedSpaceMember create(Account authUser, Account actor, SharedSpaceNode sharedSpaceNode, SharedSpaceRole role,
-			SharedSpaceAccount account) throws BusinessException;
-
-	SharedSpaceMember createWithoutCheckPermission(Account authUser, Account actor, SharedSpaceNode node,
-			SharedSpaceRole role, SharedSpaceAccount account) throws BusinessException;
 
 	SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate);
 
@@ -80,5 +75,11 @@ public interface SharedSpaceMemberService {
 			throws BusinessException;
 
 	void addMembersToLog(String uuid, AuditLogEntryUser log);
+
+	SharedSpaceMember create(Account authUser, Account actor, SharedSpaceNode node, SharedSpaceRole role,
+			SharedSpaceRole drive_role, SharedSpaceAccount account) throws BusinessException;
+
+	SharedSpaceMember createWithoutCheckPermission(Account authUser, Account actor, SharedSpaceNode node,
+			SharedSpaceRole role, SharedSpaceRole drive_role, SharedSpaceAccount account) throws BusinessException;
 
 }

@@ -215,7 +215,7 @@ public class AdvancedStatisticBatchTest extends LoggerParent {
 		SharedSpaceNode node = new SharedSpaceNode(label, null, NodeType.DRIVE);
 		node.setUuid(groupUuid);
 		sharedSpaceNodeBusinessService.create(node);
-		memberService.createWithoutCheckPermission(account, account, node, adminRole,
+		memberService.createWithoutCheckPermission(account, account, node, adminRole, adminRole,
 				new SharedSpaceAccount((User) account));
 	}
 

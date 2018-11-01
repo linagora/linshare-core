@@ -39,6 +39,7 @@ import org.jsoup.helper.Validate;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
@@ -178,7 +179,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	}
 
 	@Override
-	public SharedSpaceMember create(Account authUser, Account actor, SharedSpaceNode node, SharedSpaceRole role,
+	public SharedSpaceMember create(Account authUser, Account actor, SharedSpaceNode node, SharedSpaceRole role, SharedSpaceRole drive_role,
 			SharedSpaceAccount account) throws BusinessException {
 		Validate.notNull(role, "Role must be set.");
 		Validate.notNull(node, "Node uuid must be set.");
@@ -195,19 +196,26 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 					account.getUuid(), node.getUuid());
 			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_ALREADY_EXISTS, message);
 		}
-		SharedSpaceMember member = createWithoutCheckPermission(authUser, actor, node, role, account);
+		SharedSpaceMember member = createWithoutCheckPermission(authUser, actor, node, role, drive_role, account);
 		notify(new WorkGroupWarnNewMemberEmailContext(member, actor, newMember));
 		return member;
 	}
 
 	@Override
 	public SharedSpaceMember createWithoutCheckPermission(Account authUser, Account actor, SharedSpaceNode node,
-			SharedSpaceRole role, SharedSpaceAccount account) throws BusinessException {
+			SharedSpaceRole role, SharedSpaceRole drive_role,SharedSpaceAccount account) throws BusinessException {
 		preChecks(authUser, actor);
 		Validate.notNull(role, "Role must be set.");
 		Validate.notNull(node, "Node must be set.");
-		SharedSpaceMember member = new SharedSpaceMember(new SharedSpaceNodeNested(node),
-				new GenericLightEntity(role.getUuid(), role.getName()), account);
+		SharedSpaceMember member = new SharedSpaceMember();
+		if (node.getNodeType().equals(NodeType.WORK_GROUP)) {
+			member = new SharedSpaceMember(new SharedSpaceNodeNested(node),
+					new GenericLightEntity(role.getUuid(), role.getName()), account);
+		} else if (node.getNodeType().equals(NodeType.DRIVE)) {
+			member = new SharedSpaceMember(new SharedSpaceNodeNested(node),
+					new GenericLightEntity(role.getUuid(), role.getName()),
+					new GenericLightEntity(drive_role.getUuid(), drive_role.getName()), account);
+		}
 		SharedSpaceMember toAdd = businessService.create(member);
 		saveLog(authUser, actor, LogAction.CREATE, toAdd);
 		return toAdd;

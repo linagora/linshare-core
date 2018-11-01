@@ -155,11 +155,19 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		checkVersioningParameter(actor.getDomain(), node);
 		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, node);
 		checkCreatePermission(authUser, actor, SharedSpaceNode.class, getBusinessErrorCode(node.getNodeType()), node);
+		SharedSpaceNode created = new SharedSpaceNode();
 		SharedSpaceRole role = ssRoleService.getAdmin(authUser, actor);
 		// Hack to create thread into shared space node
-		SharedSpaceNode created = simpleCreate(authUser, actor, node);
-		memberService.createWithoutCheckPermission(authUser, actor, created, role,
-				new SharedSpaceAccount((User) actor));
+		if (node.getNodeType().equals(NodeType.WORK_GROUP)) {
+			created = simpleCreate(authUser, actor, node);
+			memberService.createWithoutCheckPermission(authUser, actor, created, role, null,
+					new SharedSpaceAccount((User) actor));
+		} else if (node.getNodeType().equals(NodeType.DRIVE)) {
+			created = businessService.create(node);
+			SharedSpaceRole driveRole = ssRoleService.getDriveAdmin(authUser, actor);
+			memberService.createWithoutCheckPermission(authUser, actor, created, role, driveRole,
+					new SharedSpaceAccount((User) actor));
+		}
 		return created;
 	}
 
@@ -198,8 +206,16 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		// Hack to create thread into shared space node
 		SharedSpaceNode created = simpleCreate(authUser, actor, node);
 		SharedSpaceRole role = ssRoleService.getAdmin(authUser, actor);
-		memberService.createWithoutCheckPermission(authUser, actor, created, role,
-				new SharedSpaceAccount((User) actor));
+		if (node.getNodeType().equals(NodeType.WORK_GROUP)) {
+			created = simpleCreate(authUser, actor, node);
+			memberService.createWithoutCheckPermission(authUser, actor, created, role, null,
+					new SharedSpaceAccount((User) actor));
+		} else if (node.getNodeType().equals(NodeType.DRIVE)) {
+			created = businessService.create(node);
+			SharedSpaceRole driveRole = ssRoleService.getDriveAdmin(authUser, actor);
+			memberService.createWithoutCheckPermission(authUser, actor, created, role, driveRole,
+					new SharedSpaceAccount((User) actor));
+		}
 		WorkGroup workGroup = threadService.find(authUser, actor, created.getUuid());
 		return new WorkGroupDto(workGroup, created);
 	}

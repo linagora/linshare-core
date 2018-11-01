@@ -35,6 +35,7 @@
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import org.apache.commons.lang3.Validate;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -95,7 +96,15 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 		// TODO Retrieve the role from the restService once the front will pass the info
 		SharedSpaceRole defaultRole = getDefaultRole(authUser, admin);
 		SharedSpaceNode foundSharedSpaceNode = sharedSpaceNodeService.find(authUser, authUser, dto.getThreadUuid());
-		SharedSpaceMember created = ssMemberService.create(authUser, authUser, foundSharedSpaceNode, defaultRole, new SharedSpaceAccount(user));
+		SharedSpaceMember created = new SharedSpaceMember();
+		if (foundSharedSpaceNode.getNodeType().equals(NodeType.WORK_GROUP)) {
+			created = ssMemberService.create(authUser, authUser, foundSharedSpaceNode, defaultRole, null,
+					new SharedSpaceAccount(user));
+		} else if (foundSharedSpaceNode.getNodeType().equals(NodeType.DRIVE)) {
+			SharedSpaceRole defaultDriveRole = getDefaultDriveRole(authUser, admin);
+			created = ssMemberService.create(authUser, authUser, foundSharedSpaceNode, defaultRole, defaultDriveRole,
+					new SharedSpaceAccount(user));
+		}
 		return new WorkGroupMemberDto(created, user);
 	}
 
@@ -133,5 +142,12 @@ public class ThreadMemberFacadeImpl extends AdminGenericFacadeImpl implements
 			return ssRoleService.findByName(authUser, authUser, "ADMIN");
 		}
 		return ssRoleService.findByName(authUser, authUser, "READER");
+	}
+
+	private SharedSpaceRole getDefaultDriveRole(User authUser, boolean admin) {
+		if (admin) {
+			return ssRoleService.findByName(authUser, authUser, "DRIVE_ADMIN");
+		}
+		return ssRoleService.findByName(authUser, authUser, "Drive_READER");
 	}
 }

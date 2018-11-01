@@ -49,5 +49,6 @@ public interface SharedSpaceRoleService {
 
 	SharedSpaceRole getAdmin(Account authUser, Account actor) throws BusinessException;
 
+	SharedSpaceRole getDriveAdmin(Account authUser, Account actor) throws BusinessException;
 }
 
