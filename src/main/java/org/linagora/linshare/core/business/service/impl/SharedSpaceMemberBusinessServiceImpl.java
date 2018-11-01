@@ -144,9 +144,14 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 
 	@Override
 	public SharedSpaceMember update(SharedSpaceMember foundMemberToUpdate, SharedSpaceMember memberToUpdate) {
-		Validate.notNull(memberToUpdate.getRole(),"The role must be set.");
+		Validate.notNull(memberToUpdate.getRole(), "The role must be set.");
 		foundMemberToUpdate.setRole(new GenericLightEntity(checkRole(memberToUpdate.getRole().getUuid())));
 		foundMemberToUpdate.setModificationDate(new Date());
+		if (foundMemberToUpdate.getNode().getNodeType().equals(NodeType.DRIVE)) {
+			Validate.notNull(memberToUpdate.getDrive_role(), "The drive role must be set.");
+			foundMemberToUpdate
+					.setDrive_role(new GenericLightEntity(checkRole(memberToUpdate.getDrive_role().getUuid())));
+		}
 		return repository.save(foundMemberToUpdate);
 	}
 
