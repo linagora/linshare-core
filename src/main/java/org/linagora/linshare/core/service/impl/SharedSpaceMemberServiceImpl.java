@@ -36,6 +36,7 @@ package org.linagora.linshare.core.service.impl;
 import java.util.List;
 
 import org.jsoup.helper.Validate;
+import org.linagora.linshare.core.business.service.DriveMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -55,6 +56,7 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
+import org.linagora.linshare.mongo.entities.DriveMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
@@ -85,18 +87,22 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 
 	private final MailBuildingService mailBuildingService;
 
+	private final DriveMemberBusinessService driveMemberBusinessService;
+
 	public SharedSpaceMemberServiceImpl(SharedSpaceMemberBusinessService businessService,
 			NotifierService notifierService,
 			MailBuildingService mailBuildingService,
 			SharedSpaceMemberResourceAccessControl rac,
 			LogEntryService logEntryService,
-			UserRepository<User> userRepository) {
+			UserRepository<User> userRepository,
+			DriveMemberBusinessService driveMemberBusinessService) {
 		super(rac);
 		this.businessService = businessService;
 		this.logEntryService = logEntryService;
 		this.userRepository = userRepository;
 		this.notifierService = notifierService;
 		this.mailBuildingService = mailBuildingService;
+		this.driveMemberBusinessService = driveMemberBusinessService;
 	}
 
 	@Override
@@ -179,7 +185,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	}
 
 	@Override
-	public SharedSpaceMember create(Account authUser, Account actor, SharedSpaceNode node, SharedSpaceRole role, SharedSpaceRole drive_role,
+	public SharedSpaceMember create(Account authUser, Account actor, SharedSpaceNode node, SharedSpaceRole role, SharedSpaceRole driveRole,
 			SharedSpaceAccount account) throws BusinessException {
 		Validate.notNull(role, "Role must be set.");
 		Validate.notNull(node, "Node uuid must be set.");
@@ -196,29 +202,41 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 					account.getUuid(), node.getUuid());
 			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_ALREADY_EXISTS, message);
 		}
-		SharedSpaceMember member = createWithoutCheckPermission(authUser, actor, node, role, drive_role, account);
+		SharedSpaceMember member = createWithoutCheckPermission(authUser, actor, node, role, driveRole, account);
 		notify(new WorkGroupWarnNewMemberEmailContext(member, actor, newMember));
 		return member;
 	}
 
 	@Override
 	public SharedSpaceMember createWithoutCheckPermission(Account authUser, Account actor, SharedSpaceNode node,
-			SharedSpaceRole role, SharedSpaceRole drive_role,SharedSpaceAccount account) throws BusinessException {
+			SharedSpaceRole role, SharedSpaceRole driveRole, SharedSpaceAccount account) throws BusinessException {
 		preChecks(authUser, actor);
 		Validate.notNull(role, "Role must be set.");
 		Validate.notNull(node, "Node must be set.");
-		SharedSpaceMember member = new SharedSpaceMember();
-		if (node.getNodeType().equals(NodeType.WORK_GROUP)) {
-			member = new SharedSpaceMember(new SharedSpaceNodeNested(node),
-					new GenericLightEntity(role.getUuid(), role.getName()), account);
-		} else if (node.getNodeType().equals(NodeType.DRIVE)) {
-			member = new SharedSpaceMember(new SharedSpaceNodeNested(node),
-					new GenericLightEntity(role.getUuid(), role.getName()),
-					new GenericLightEntity(drive_role.getUuid(), drive_role.getName()), account);
+		DriveMember driveMember = rightMember(node, role, driveRole, account);
+		SharedSpaceMember toAdd = new SharedSpaceMember();
+		if (NodeType.WORK_GROUP.equals(driveMember.getNode().getNodeType())) {
+			toAdd = businessService.create(driveMember);
+		} else if (NodeType.DRIVE.equals(driveMember.getNode().getNodeType())) {
+			toAdd = driveMemberBusinessService.create(driveMember);
 		}
-		SharedSpaceMember toAdd = businessService.create(member);
 		saveLog(authUser, actor, LogAction.CREATE, toAdd);
 		return toAdd;
+	}
+
+	private DriveMember rightMember(SharedSpaceNode node, SharedSpaceRole role, SharedSpaceRole driveRole,
+			SharedSpaceAccount account) {
+		DriveMember driveMember = new DriveMember();
+		if (NodeType.WORK_GROUP.equals(node.getNodeType())) {
+			driveMember = new DriveMember(new SharedSpaceNodeNested(node),
+					new GenericLightEntity(role.getUuid(), role.getName()), account);
+		} else if (NodeType.DRIVE.equals(node.getNodeType())) {
+			Validate.notNull(driveRole, "Drive role must be set.");
+			driveMember = new DriveMember(new SharedSpaceNodeNested(node),
+					new GenericLightEntity(role.getUuid(), role.getName()), account,
+					new GenericLightEntity(driveRole.getUuid(), driveRole.getName()));
+		}
+		return driveMember;
 	}
 
 	@Override
@@ -236,7 +254,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	}
 
 	@Override
-	public SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate) {
+	public SharedSpaceMember update(Account authUser, Account actor, DriveMember memberToUpdate) {
 		preChecks(authUser, actor);
 		Validate.notNull(memberToUpdate, "Missing required member to update");
 		SharedSpaceMember foundMemberToUpdate = null;

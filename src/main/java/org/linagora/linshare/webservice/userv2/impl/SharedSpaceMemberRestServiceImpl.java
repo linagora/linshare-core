@@ -47,7 +47,9 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceMemberFacade;
+import org.linagora.linshare.mongo.entities.DriveMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.webservice.userv2.SharedSpaceMemberRestService;
 
 import com.wordnik.swagger.annotations.Api;
@@ -103,7 +105,7 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public SharedSpaceMember addMember(
-			@ApiParam(value = "shared space member ") SharedSpaceMember member) 
+			@ApiParam(value = "shared space member ") DriveMember member)
 					throws BusinessException {
 		return sharedSpaceMemberFacade.create(null, member);
 	}
@@ -117,7 +119,7 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public SharedSpaceMember update(
-			@ApiParam("The shared space member to update.") SharedSpaceMember ssmember,
+			@ApiParam("The shared space member to update.") DriveMember ssmember,
 			@ApiParam("The shared space member uuid to update.")
 				@PathParam("uuid") String uuid)
 			throws BusinessException {
@@ -140,5 +142,20 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 				@PathParam("uuid") String uuid)
 			throws BusinessException {
 		return sharedSpaceMemberFacade.delete(null, ssmember, uuid);
+	}
+
+	@Path("/{uuid}/members")
+	@GET
+	@ApiOperation(value = "Get all shared space nodes.", response = SharedSpaceNodeNested.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
+			@ApiResponse(code = 404, message = "Not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public List<SharedSpaceMember> findAll(
+			@ApiParam("The sharedSpace node uuid.") 
+				@PathParam("uuid") String nodeUuid)
+			throws BusinessException {
+		return sharedSpaceMemberFacade.findAll(nodeUuid);
 	}
 }

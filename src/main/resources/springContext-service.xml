@@ -471,6 +471,7 @@
 		<constructor-arg ref="mailBuildingService" />
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="userRepository" />
+		<constructor-arg ref="driveMemberBusinessService" />
 	</bean>
 	<bean id="sharedSpaceLdapGroupMemberService" class="org.linagora.linshare.core.ldap.service.impl.SharedSpaceMemberServiceImpl">
 		<constructor-arg ref="sharedSpaceLdapGroupMemberBusinessService" />

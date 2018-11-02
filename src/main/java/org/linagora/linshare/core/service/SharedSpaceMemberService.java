@@ -37,6 +37,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.mongo.entities.DriveMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
@@ -60,8 +61,7 @@ public interface SharedSpaceMemberService {
 
 	List<SharedSpaceMember> findAllByAccountAndRole(String accountUuid, String roleUuid);
 
-
-	SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate);
+	SharedSpaceMember update(Account authUser, Account actor, DriveMember memberToUpdate);
 
 	SharedSpaceMember delete(Account authUser, Account actor, String uuid);
 
@@ -77,9 +77,9 @@ public interface SharedSpaceMemberService {
 	void addMembersToLog(String uuid, AuditLogEntryUser log);
 
 	SharedSpaceMember create(Account authUser, Account actor, SharedSpaceNode node, SharedSpaceRole role,
-			SharedSpaceRole drive_role, SharedSpaceAccount account) throws BusinessException;
+			SharedSpaceRole driveRole, SharedSpaceAccount account) throws BusinessException;
 
 	SharedSpaceMember createWithoutCheckPermission(Account authUser, Account actor, SharedSpaceNode node,
-			SharedSpaceRole role, SharedSpaceRole drive_role, SharedSpaceAccount account) throws BusinessException;
+			SharedSpaceRole role, SharedSpaceRole driveRole, SharedSpaceAccount account) throws BusinessException;
 
 }

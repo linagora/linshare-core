@@ -47,6 +47,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceMemberFacade;
+import org.linagora.linshare.mongo.entities.DriveMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.webservice.delegationv2.SharedSpaceMemberRestService;
 
@@ -110,7 +111,7 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 	public SharedSpaceMember addMember(
 			@ApiParam(value = "The actor uuid")
 				@PathParam("actorUuid") String actorUuid,
-			@ApiParam(value = "shared space member uuid") SharedSpaceMember member)
+			@ApiParam(value = "shared space member uuid") DriveMember member)
 					throws BusinessException {
 		return sharedSpaceMemberFacade.create(null, member);
 	}
@@ -126,7 +127,7 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 	public SharedSpaceMember update(
 			@ApiParam("The actor uuid")
 				@PathParam("actorUuid") String actorUuid,
-			@ApiParam("The shared space member to update.") SharedSpaceMember ssmember,
+			@ApiParam("The shared space member to update.") DriveMember ssmember,
 			@ApiParam("The shared space member uuid to update.")
 				@PathParam("uuid") String uuid)
 			throws BusinessException {

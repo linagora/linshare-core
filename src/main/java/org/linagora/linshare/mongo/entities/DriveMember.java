@@ -31,36 +31,33 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.admin;
+package org.linagora.linshare.mongo.entities;
 
-import java.util.List;
+import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
-import org.linagora.linshare.mongo.entities.DriveMember;
-import org.linagora.linshare.mongo.entities.SharedSpaceMember;
-import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+public class DriveMember extends SharedSpaceMember {
 
-public interface SharedSpaceRestService {
+	protected GenericLightEntity driveRole;
 
-	SharedSpaceNode find(String uuid) throws BusinessException;
+	public DriveMember() {
+		super();
+	}
 
-	SharedSpaceNode delete(SharedSpaceNode node, String uuid) throws BusinessException;
+	public DriveMember(SharedSpaceNodeNested node, GenericLightEntity role, SharedSpaceAccount account) {
+		super(node, role, account);
+	}
 
-	SharedSpaceNode update(SharedSpaceNode node, String uuid) throws BusinessException;
+	public DriveMember(SharedSpaceNodeNested node, GenericLightEntity role, SharedSpaceAccount account,
+			GenericLightEntity driveRole) {
+		super(node, role, account);
+		this.driveRole = driveRole;
+	}
 
-	List<SharedSpaceMember> members(String uuid, String accountUuid) throws BusinessException;
+	public GenericLightEntity getDriveRole() {
+		return driveRole;
+	}
 
-	List<SharedSpaceNode> findAll() throws BusinessException;
-
-	SharedSpaceMember findMember(String memberUuid) throws BusinessException;
-
-	SharedSpaceMember addMember(DriveMember member) throws BusinessException;
-
-	SharedSpaceMember deleteMember(SharedSpaceMember member, String memberUuid) throws BusinessException;
-
-	SharedSpaceMember updateMember(DriveMember member, String memberUuid) throws BusinessException;
-
-	SharedSpaceNode update(PatchDto patchNode, String uuid) throws BusinessException;
-
+	public void setDriveRole(GenericLightEntity driveRole) {
+		this.driveRole = driveRole;
+	}
 }

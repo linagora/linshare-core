@@ -45,6 +45,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.mongo.entities.DriveMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
@@ -94,10 +95,6 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	public SharedSpaceMember create(SharedSpaceMember member) throws BusinessException {
 		member.setRole(new GenericLightEntity(checkRole(member.getRole().getUuid())));
 		member.setNode(new SharedSpaceNodeNested(checkNode(member.getNode().getUuid())));
-		if (member.getNode().getNodeType().equals(NodeType.DRIVE)) {
-			member.setDrive_role(new GenericLightEntity(checkRole(member.getDrive_role().getUuid())));
-			member.setNested(true);
-		}
 		member.setAccount(new SharedSpaceAccount(checkUser(member.getAccount().getUuid())));
 		return repository.insert(member);
 	}
@@ -143,14 +140,14 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	}
 
 	@Override
-	public SharedSpaceMember update(SharedSpaceMember foundMemberToUpdate, SharedSpaceMember memberToUpdate) {
+	public SharedSpaceMember update(DriveMember foundMemberToUpdate, DriveMember memberToUpdate) {
 		Validate.notNull(memberToUpdate.getRole(), "The role must be set.");
 		foundMemberToUpdate.setRole(new GenericLightEntity(checkRole(memberToUpdate.getRole().getUuid())));
 		foundMemberToUpdate.setModificationDate(new Date());
-		if (foundMemberToUpdate.getNode().getNodeType().equals(NodeType.DRIVE)) {
-			Validate.notNull(memberToUpdate.getDrive_role(), "The drive role must be set.");
+		if (NodeType.DRIVE.equals(foundMemberToUpdate.getNode().getNodeType())) {
+			Validate.notNull(memberToUpdate.getDriveRole(), "The drive role must be set.");
 			foundMemberToUpdate
-					.setDrive_role(new GenericLightEntity(checkRole(memberToUpdate.getDrive_role().getUuid())));
+					.setDriveRole(new GenericLightEntity(checkRole(memberToUpdate.getDriveRole().getUuid())));
 		}
 		return repository.save(foundMemberToUpdate);
 	}

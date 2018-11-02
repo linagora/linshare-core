@@ -255,7 +255,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public SharedSpaceMember updateMember(
-			@ApiParam("The shared space member to update.")SharedSpaceMember member,
+			@ApiParam("The shared space member to update.")SharedSpaceMemberDrive member,
 			@ApiParam("The shared space member uuid")
 				@PathParam(value="memberUuid")String memberUuid)
 			throws BusinessException {

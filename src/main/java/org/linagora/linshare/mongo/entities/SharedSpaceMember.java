@@ -61,10 +61,6 @@ public class SharedSpaceMember {
 
 	protected GenericLightEntity role;
 
-	protected GenericLightEntity drive_role;
-
-	protected boolean isDriveAdmin;
-
 	protected SharedSpaceAccount account;
 
 	protected Date creationDate;
@@ -98,21 +94,8 @@ public class SharedSpaceMember {
 		this.node = member.getNode();
 		this.role = member.getRole();
 		this.account = member.getAccount();
-		this.isDriveAdmin = member.isDriveAdmin;
 		this.creationDate = member.getCreationDate();
 		this.modificationDate = member.getModificationDate();
-	}
-
-	public SharedSpaceMember(SharedSpaceNodeNested node, GenericLightEntity role, GenericLightEntity drive_role, SharedSpaceAccount account) {
-		super();
-		this.uuid = UUID.randomUUID().toString();
-		this.node = node;
-		this.role = role;
-		this.drive_role = drive_role;
-		this.isDriveAdmin = false;
-		this.account = account;
-		this.creationDate = new Date();
-		this.modificationDate = new Date();
 	}
 
 	@XmlTransient
@@ -186,24 +169,6 @@ public class SharedSpaceMember {
 
 	public void setNested(boolean nested) {
 		this.nested = nested;
-	}
-
-
-	public GenericLightEntity getDrive_role() {
-		return drive_role;
-	}
-
-	public void setDrive_role(GenericLightEntity drive_role) {
-		this.drive_role = drive_role;
-	}
-
-	
-	public boolean isDriveAdmin() {
-		return isDriveAdmin;
-	}
-
-	public void setDriveAdmin(boolean isDriveAdmin) {
-		this.isDriveAdmin = isDriveAdmin;
 	}
 
 	@Override

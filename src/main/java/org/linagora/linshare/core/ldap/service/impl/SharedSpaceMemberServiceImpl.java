@@ -33,7 +33,9 @@
  */
 package org.linagora.linshare.core.ldap.service.impl;
 
-import org.jsoup.helper.Validate;
+
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.DriveMemberBusinessService;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
@@ -58,8 +60,9 @@ public class SharedSpaceMemberServiceImpl extends org.linagora.linshare.core.ser
 			MailBuildingService mailBuildingService,
 			SharedSpaceMemberResourceAccessControl rac,
 			LogEntryService logEntryService,
-			UserRepository<User> userRepository) {
-		super(businessService, notifierService, mailBuildingService, rac, logEntryService, userRepository);
+			UserRepository<User> userRepository,
+			DriveMemberBusinessService memberBusinessService) {
+		super(businessService, notifierService, mailBuildingService, rac, logEntryService, userRepository, memberBusinessService);
 		this.businessService = businessService;
 	}
 

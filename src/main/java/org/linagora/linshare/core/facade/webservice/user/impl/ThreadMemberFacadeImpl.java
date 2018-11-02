@@ -46,6 +46,7 @@ import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.mongo.entities.DriveMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
@@ -107,15 +108,8 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		User newMember = userService.findOrCreateUser(workGroupMember.getUserMail(), workGroupMember.getUserDomainId());
 		SharedSpaceNode foundSharedSpaceNode = sharedSpaceNodeService.find(authUser, authUser, threadUuid);
 		SharedSpaceRole defaultRole = getDefaultRole(authUser, workGroupMember.isAdmin());
-		SharedSpaceMember create = new SharedSpaceMember();
-		if (foundSharedSpaceNode.getNodeType().equals(NodeType.WORK_GROUP)) {
-			create = ssMemberService.create(authUser, authUser, foundSharedSpaceNode, defaultRole, null,
-					new SharedSpaceAccount(newMember));
-		} else if (foundSharedSpaceNode.getNodeType().equals(NodeType.DRIVE)) {
-			SharedSpaceRole defaultDriveRole = getDefaultDriveRole(authUser, workGroupMember.isAdmin());
-			create = ssMemberService.create(authUser, authUser, foundSharedSpaceNode, defaultRole, defaultDriveRole,
-					new SharedSpaceAccount(newMember));
-		}
+		SharedSpaceMember create = ssMemberService.create(authUser, authUser, foundSharedSpaceNode, defaultRole, null,
+				new SharedSpaceAccount(newMember));
 		return new WorkGroupMemberDto(create, newMember);
 	}
 
@@ -126,7 +120,7 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		User authUser = checkAuthentication();
 		SharedSpaceRole defaultRole = getDefaultRole(authUser, threadMember.isAdmin());
 		User user = userService.findByLsUuid(threadMember.getUserUuid());
-		SharedSpaceMember ssMemberToUpdate = ssMemberService.findMemberByUuid(authUser, authUser,
+		DriveMember ssMemberToUpdate = (DriveMember) ssMemberService.findMemberByUuid(authUser, authUser,
 				threadMember.getUserUuid(), threadUuid);
 		ssMemberToUpdate.setRole(new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()));
 		SharedSpaceMember updated = ssMemberService.update(authUser, authUser, ssMemberToUpdate);
@@ -151,12 +145,5 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 			return ssRoleService.findByName(authUser, authUser, "ADMIN");
 		}
 		return ssRoleService.findByName(authUser, authUser, "READER");
-	}
-
-	private SharedSpaceRole getDefaultDriveRole(User authUser, boolean admin) {
-		if (admin) {
-			return ssRoleService.findByName(authUser, authUser, "DRIVE_ADMIN");
-		}
-		return ssRoleService.findByName(authUser, authUser, "Drive_READER");
 	}
 }

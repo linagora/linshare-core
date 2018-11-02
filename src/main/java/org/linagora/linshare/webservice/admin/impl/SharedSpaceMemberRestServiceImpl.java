@@ -45,6 +45,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceMemberFacade;
+import org.linagora.linshare.mongo.entities.DriveMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.webservice.admin.SharedSpaceMemberRestService;
 
@@ -91,7 +92,7 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public SharedSpaceMember addMember(
-			@ApiParam(value = "shared space member to create", required = true) SharedSpaceMember sharedSpaceNodeMember)
+			@ApiParam(value = "shared space member to create", required = true) DriveMember sharedSpaceNodeMember)
 			throws BusinessException {
 		return sharedSpaceMemberFacade.create(null, sharedSpaceNodeMember);
 	}
@@ -105,7 +106,7 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public SharedSpaceMember update(
-			@ApiParam(value = "The shared space memnber to update.", required = true) SharedSpaceMember ssMember,
+			@ApiParam(value = "The shared space memnber to update.", required = true) DriveMember ssMember,
 			@ApiParam("The shared space member to update.")
 				@PathParam("uuid") String uuid)
 			throws BusinessException {

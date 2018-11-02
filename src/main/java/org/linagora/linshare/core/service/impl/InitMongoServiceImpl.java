@@ -128,9 +128,9 @@ public class InitMongoServiceImpl implements InitMongoService {
 		GenericLightEntity writer = createInitLightRole("8839654d-cb33-4633-bf3f-f9e805f97f84", "WRITER");
 		GenericLightEntity reader = createInitLightRole("4ccbed61-71da-42a0-a513-92211953ac95", "READER");
 
-		createInitRole("9e73e962-c233-4b4a-be1c-e8d9547acbdf", "Drive_ADMIN", rootDomain, rootAccount);
-		createInitRole("963025ca-8220-4915-b4fc-dba7b0b56100", "Drive_CREATOR", rootDomain, rootAccount);
-		createInitRole("556404b5-09b0-413e-a025-79ee40e043e4", "Drive_READER", rootDomain, rootAccount);
+		createInitRole("9e73e962-c233-4b4a-be1c-e8d9547acbdf", "DRIVE_ADMIN", rootDomain, rootAccount);
+		createInitRole("963025ca-8220-4915-b4fc-dba7b0b56100", "DRIVE_CREATOR", rootDomain, rootAccount);
+		createInitRole("556404b5-09b0-413e-a025-79ee40e043e4", "DRIVE_READER", rootDomain, rootAccount);
 
 		GenericLightEntity drive_admin = createInitLightRole("9e73e962-c233-4b4a-be1c-e8d9547acbdf", "DRIVE_ADMIN");
 		GenericLightEntity drive_creator = createInitLightRole("963025ca-8220-4915-b4fc-dba7b0b56100", "DRIVE_CREATOR");
