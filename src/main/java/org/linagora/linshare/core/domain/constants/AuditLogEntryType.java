@@ -44,6 +44,7 @@ public enum AuditLogEntryType {
 	DOCUMENT_ENTRY,
 	GUEST,
 	DRIVE,
+	DRIVE_MEMBER,
 	WORKGROUP,
 	WORKGROUP_MEMBER,
 	WORKGROUP_FOLDER,
@@ -93,4 +94,5 @@ public enum AuditLogEntryType {
 		nodeType = nodeType.replace("_", "");
 		return fromString(nodeType);
 	}
+
 }

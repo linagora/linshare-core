@@ -70,6 +70,8 @@ import com.google.common.collect.Lists;
 public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, SharedSpaceMember>
 		implements SharedSpaceMemberService {
 
+	private static final String AUDIT_MEMBER = "_MEMBER";
+
 	protected final SharedSpaceMemberBusinessService businessService;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SharedSpaceMemberServiceImpl.class);
@@ -81,7 +83,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	private final NotifierService notifierService;
 
 	private final MailBuildingService mailBuildingService;
-	
+
 	public SharedSpaceMemberServiceImpl(SharedSpaceMemberBusinessService businessService,
 			NotifierService notifierService,
 			MailBuildingService mailBuildingService,
@@ -303,6 +305,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 
 	protected SharedSpaceMemberAuditLogEntry saveLog(Account authUser, Account actor, LogAction action,
 			SharedSpaceMember resource) {
+		AuditLogEntryType auditType = AuditLogEntryType.fromNodeType(resource.getNode().getNodeType().toString());
 		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, action,
 				AuditLogEntryType.WORKGROUP_MEMBER, resource);
 		addMembersToLog(resource.getNode().getUuid(), log);
@@ -312,8 +315,9 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 
 	protected SharedSpaceMemberAuditLogEntry saveUpdateLog(Account authUser, Account actor, LogAction action,
 			SharedSpaceMember resource, SharedSpaceMember resourceUpdated) {
+		AuditLogEntryType auditType = AuditLogEntryType.fromNodeType(resource.getNode().getNodeType().toString());
 		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, action,
-				AuditLogEntryType.WORKGROUP_MEMBER, resource);
+				AuditLogEntryType.fromString(auditType.toString().concat(AUDIT_MEMBER)), resource);
 		log.setResourceUpdated(resourceUpdated);
 		addMembersToLog(resource.getNode().getUuid(), log);
 		logEntryService.insert(log);
