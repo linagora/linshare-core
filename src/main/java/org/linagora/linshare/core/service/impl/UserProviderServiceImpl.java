@@ -145,6 +145,10 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 					BusinessErrorCode.DOMAIN_PATTERN_STILL_IN_USE,
 					"Cannot delete pattern because still used by domains");
 		}
+		if (pattern.getSystem()) {
+			throw new BusinessException(BusinessErrorCode.DOMAIN_PATTERN_CANNOT_BE_REMOVED,
+					"System domain patterns cannot be removed");
+		}
 		domainPatternRepository.delete(pattern);
 		DomainPatternAuditLogEntry log = new DomainPatternAuditLogEntry(actor, actor.getDomainId(),
 				LogAction.DELETE, AuditLogEntryType.DOMAIN_PATTERN, pattern);
@@ -203,6 +207,10 @@ public class UserProviderServiceImpl extends GenericAdminServiceImpl implements 
 			throw new BusinessException(
 					BusinessErrorCode.DOMAIN_PATTERN_NOT_FOUND,
 					"no such domain pattern");
+		}
+		if (pattern.getSystem()) {
+			throw new BusinessException(BusinessErrorCode.DOMAIN_PATTERN_CANNOT_BE_UPDATED,
+					"System domain patterns cannot be updated");
 		}
 		Validate.notEmpty(domainPattern.getDescription(), "Pattern's description must be set.");
 		Validate.notNull(domainPattern.getCompletionPageSize(), "Pattern's completion page size must be set.");

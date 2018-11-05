@@ -33,14 +33,14 @@
  */
 package org.linagora.linshare.webservice.admin;
 
-import java.util.Set;
+import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.dto.GroupLdapPatternDto;
 
 public interface GroupPatternRestService {
 
-	Set<GroupLdapPatternDto> findAll() throws BusinessException;
+	List<GroupLdapPatternDto> findAll() throws BusinessException;
 
 	GroupLdapPatternDto find(String uuid) throws BusinessException;
 
@@ -50,5 +50,5 @@ public interface GroupPatternRestService {
 
 	GroupLdapPatternDto delete(GroupLdapPatternDto domainPattern, String uuid) throws BusinessException;
 
-	Set<GroupLdapPatternDto> findAllGroupPattern() throws BusinessException;
+	List<GroupLdapPatternDto> findAllGroupPattern() throws BusinessException;
 }

@@ -73,8 +73,13 @@ public class GroupPatternRepositoryImpl extends AbstractRepositoryImpl<GroupLdap
 	}
 
 	@Override
-	public List<GroupLdapPattern> findAllGroupLdapPatterns() {
+	public List<GroupLdapPattern> findAllPublicGroupLdapPatterns() {
 		return findByCriteria(Restrictions.eq("system", false));
+	}
+
+	@Override
+	public List<GroupLdapPattern> findAllSystemGroupLdapPatterns() {
+		return findByCriteria(Restrictions.eq("system", true));
 	}
 
 	@Override

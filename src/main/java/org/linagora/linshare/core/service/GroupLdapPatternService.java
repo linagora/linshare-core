@@ -49,6 +49,7 @@ public interface GroupLdapPatternService {
 
 	GroupLdapPattern update(Account authUser, GroupLdapPattern groupLdapPattern) throws BusinessException;
 
-	GroupLdapPattern delete(Account authUser, GroupLdapPattern groupLdapPattern, String uuid) throws BusinessException;
+	GroupLdapPattern delete(Account authUser, GroupLdapPattern groupLdapPattern) throws BusinessException;
 
+	List<GroupLdapPattern> findAllPublicGroupPatterns();
 }

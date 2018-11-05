@@ -124,7 +124,7 @@ public class GroupPatternServiceImplTest extends AbstractTransactionalJUnit4Spri
 			Assert.fail("Can't create pattern.");
 		}
 		try {
-			groupLdapPatternService.delete(actor, groupPattern, groupPattern.getUuid());
+			groupLdapPatternService.delete(actor, groupPattern);
 		} catch (BusinessException e) {
 			logger.error(e.toString());
 			e.printStackTrace();
@@ -139,10 +139,11 @@ public class GroupPatternServiceImplTest extends AbstractTransactionalJUnit4Spri
 		GroupLdapPattern groupPattern = new GroupLdapPattern("label", "description", "searchAllGroupsQuery", "searchGroupQuery", "groupPrefix", false);
 		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
 		try {
+			List<GroupLdapPattern> list = groupLdapPatternService.findAll();
 			groupPattern = groupLdapPatternService.create(actor, groupPattern);
 			Assert.assertNotNull(groupPattern);
-			List<GroupLdapPattern> list = groupLdapPatternService.findAll();
-			groupPattern = list.get(0);
+			Assert.assertTrue(groupLdapPatternService.findAll().size() == list.size() + 1);
+			groupPattern = groupLdapPatternService.find(groupPattern.getUuid());
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assert.fail("Can't retrieve pattern.");

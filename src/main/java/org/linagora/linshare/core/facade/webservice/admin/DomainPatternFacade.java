@@ -33,18 +33,18 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin;
 
-import java.util.Set;
+import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.dto.DomainPatternDto;
 
 public interface DomainPatternFacade extends AdminGenericFacade {
 
-	Set<DomainPatternDto> findAll() throws BusinessException;
+	List<DomainPatternDto> findAll() throws BusinessException;
 
 	DomainPatternDto find(String uuid) throws BusinessException;
 
-	Set<DomainPatternDto> findAllModels() throws BusinessException;
+	List<DomainPatternDto> findAllModels() throws BusinessException;
 	
 	DomainPatternDto update(DomainPatternDto domainPatternDto) throws BusinessException;
 

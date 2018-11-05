@@ -41,6 +41,8 @@ public interface GroupPatternRepository extends AbstractRepository<GroupLdapPatt
 
 	GroupLdapPattern find(String uuid);
 
-	List<GroupLdapPattern> findAllGroupLdapPatterns();
+	List<GroupLdapPattern> findAllSystemGroupLdapPatterns();
+
+	List<GroupLdapPattern> findAllPublicGroupLdapPatterns();
 
 }

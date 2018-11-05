@@ -33,7 +33,7 @@
  */
 package org.linagora.linshare.webservice.admin.impl;
 
-import java.util.Set;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -73,10 +73,10 @@ public class DomainPatternRestServiceImpl extends WebserviceBase implements
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Find all domain patterns.", response = DomainPatternDto.class, responseContainer = "Set")
+	@ApiOperation(value = "Find all domain patterns.", response = DomainPatternDto.class, responseContainer = "List")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public Set<DomainPatternDto> findAll() throws BusinessException {
+	public List<DomainPatternDto> findAll() throws BusinessException {
 		return domainPatternFacade.findAll();
 	}
 
@@ -100,10 +100,10 @@ public class DomainPatternRestServiceImpl extends WebserviceBase implements
 
 	@Path("/models")
 	@GET
-	@ApiOperation(value = "Find all domain pattern's models.", response = DomainPatternDto.class, responseContainer = "Set")
+	@ApiOperation(value = "Find all domain pattern's models.", response = DomainPatternDto.class, responseContainer = "List")
 	@ApiResponses({ @ApiResponse(code = 403, message = "User isn't admin.") })
 	@Override
-	public Set<DomainPatternDto> findAllModels() throws BusinessException {
+	public List<DomainPatternDto> findAllModels() throws BusinessException {
 		return domainPatternFacade.findAllModels();
 	}
 

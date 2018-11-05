@@ -33,14 +33,14 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin;
 
-import java.util.Set;
+import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.dto.GroupLdapPatternDto;
 
 public interface GroupPatternFacade extends AdminGenericFacade {
 
-	Set<GroupLdapPatternDto> findAll() throws BusinessException;
+	List<GroupLdapPatternDto> findAll() throws BusinessException;
 
 	GroupLdapPatternDto find(String uuid) throws BusinessException;
 
@@ -49,5 +49,7 @@ public interface GroupPatternFacade extends AdminGenericFacade {
 	GroupLdapPatternDto create(GroupLdapPatternDto domainPatternDto) throws BusinessException;
 
 	GroupLdapPatternDto delete(GroupLdapPatternDto domainPatternDto, String uuid) throws BusinessException;
+
+	List<GroupLdapPatternDto> findAllPublicGroupPatterns();
 
 }

@@ -33,9 +33,7 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -47,9 +45,20 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.DomainPatternDto;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UserProviderService;
 
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+
 public class DomainPatternFacadeImpl extends AdminGenericFacadeImpl implements DomainPatternFacade {
 
 	private final UserProviderService userProviderService;
+
+	protected Function<UserLdapPattern, DomainPatternDto> convertUserPattern = new Function<UserLdapPattern, DomainPatternDto>() {
+		@Override
+		public DomainPatternDto apply(UserLdapPattern userPattern) {
+			return new DomainPatternDto(userPattern);
+		}
+	};
 
 	public DomainPatternFacadeImpl(final AccountService accountService, final UserProviderService userProviderService) {
 		super(accountService);
@@ -57,14 +66,10 @@ public class DomainPatternFacadeImpl extends AdminGenericFacadeImpl implements D
 	}
 
 	@Override
-	public Set<DomainPatternDto> findAll() throws BusinessException {
+	public List<DomainPatternDto> findAll() throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
 		List<UserLdapPattern> domainPatterns = userProviderService.findAllUserDomainPattern();
-		Set<DomainPatternDto> res = new HashSet<DomainPatternDto>();
-		for (UserLdapPattern domainPattern : domainPatterns) {
-			res.add(new DomainPatternDto(domainPattern));
-		}
-		return res;
+		return ImmutableList.copyOf(Lists.transform(domainPatterns, convertUserPattern));
 	}
 
 	@Override
@@ -75,14 +80,10 @@ public class DomainPatternFacadeImpl extends AdminGenericFacadeImpl implements D
 	}
 
 	@Override
-	public Set<DomainPatternDto> findAllModels() throws BusinessException {
+	public List<DomainPatternDto> findAllModels() throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
 		List<UserLdapPattern> domainPatterns = userProviderService.findAllDomainPattern();
-		Set<DomainPatternDto> res = new HashSet<DomainPatternDto>();
-		for (UserLdapPattern domainPattern : domainPatterns) {
-			res.add(new DomainPatternDto(domainPattern));
-		}
-		return res;
+		return ImmutableList.copyOf(Lists.transform(domainPatterns, convertUserPattern));
 	}
 
 	@Override

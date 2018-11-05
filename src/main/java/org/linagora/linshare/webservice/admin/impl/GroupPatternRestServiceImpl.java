@@ -33,7 +33,7 @@
  */
 package org.linagora.linshare.webservice.admin.impl;
 
-import java.util.Set;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -73,25 +73,25 @@ public class GroupPatternRestServiceImpl extends WebserviceBase implements Group
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Find all group patterns.", response = DomainPatternDto.class, responseContainer = "Set")
+	@ApiOperation(value = "Find all group patterns.", response = DomainPatternDto.class, responseContainer = "List")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
 		@ApiResponse(code = 404, message = "GroupPattern not found."),
 		@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 		@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public Set<GroupLdapPatternDto> findAll() throws BusinessException {
-		return groupPatternFacade.findAll();
+	public List<GroupLdapPatternDto> findAll() throws BusinessException {
+		return groupPatternFacade.findAllPublicGroupPatterns();
 	}
 
 	@Path("/models")
 	@GET
-	@ApiOperation(value = "Find all groups pattern's  models.", response = DomainPatternDto.class, responseContainer = "Set")
+	@ApiOperation(value = "Find all groups pattern's  models.", response = DomainPatternDto.class, responseContainer = "List")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
 		@ApiResponse(code = 404, message = "GroupPattern not found."),
 		@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 		@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
-	public Set<GroupLdapPatternDto> findAllGroupPattern() throws BusinessException {
+	public List<GroupLdapPatternDto> findAllGroupPattern() throws BusinessException {
 		return groupPatternFacade.findAll();
 	}
 

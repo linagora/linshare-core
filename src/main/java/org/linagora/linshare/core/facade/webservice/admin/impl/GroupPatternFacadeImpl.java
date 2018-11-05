@@ -33,9 +33,7 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -47,11 +45,21 @@ import org.linagora.linshare.core.facade.webservice.admin.dto.GroupLdapPatternDt
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.GroupLdapPatternService;
 
+import com.google.common.base.Function;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 public class GroupPatternFacadeImpl extends AdminGenericFacadeImpl implements GroupPatternFacade {
 
 	private final GroupLdapPatternService groupLdapPatternService;
+
+	protected Function<GroupLdapPattern, GroupLdapPatternDto> convertGroupPattern = new Function<GroupLdapPattern, GroupLdapPatternDto>() {
+		@Override
+		public GroupLdapPatternDto apply(GroupLdapPattern groupPattern) {
+			return new GroupLdapPatternDto(groupPattern);
+		}
+	};
 
 	public GroupPatternFacadeImpl(AccountService accountService,
 			final GroupLdapPatternService groupPatternService) {
@@ -60,14 +68,10 @@ public class GroupPatternFacadeImpl extends AdminGenericFacadeImpl implements Gr
 	}
 
 	@Override
-	public Set<GroupLdapPatternDto> findAll() throws BusinessException {
+	public List<GroupLdapPatternDto> findAll() throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
 		List<GroupLdapPattern> groupPatterns = groupLdapPatternService.findAll();
-		Set<GroupLdapPatternDto> res = new HashSet<GroupLdapPatternDto>();
-		for (GroupLdapPattern groupPattern : groupPatterns) {
-			res.add(new GroupLdapPatternDto(groupPattern));
-		}
-		return res;
+		return ImmutableList.copyOf(Lists.transform(groupPatterns, convertGroupPattern));
 	}
 
 	@Override
@@ -101,14 +105,21 @@ public class GroupPatternFacadeImpl extends AdminGenericFacadeImpl implements Gr
 		User authUser = checkAuthentication(Role.SUPERADMIN);
 		GroupLdapPattern found = new GroupLdapPattern();
 		if (!Strings.isNullOrEmpty(uuid)) {
-			found = groupLdapPatternService.find(uuid);
+			found.setUuid(uuid);
 		} else {
 			Validate.notEmpty(groupPatternDto.getUuid(), "uuid must be set");
-			found = groupLdapPatternService.find(groupPatternDto.getUuid());
+			found.setUuid(groupPatternDto.getUuid());
 		}
 		Validate.notNull(found, "No groupLdapPattern found to delete");
-		GroupLdapPattern pattern = groupLdapPatternService.delete(authUser, found, found.getUuid());
+		GroupLdapPattern pattern = groupLdapPatternService.delete(authUser, found);
 		return new GroupLdapPatternDto(pattern);
+	}
+
+	@Override
+	public List<GroupLdapPatternDto> findAllPublicGroupPatterns() {
+		checkAuthentication(Role.SUPERADMIN);
+		List<GroupLdapPattern> groupPatterns = groupLdapPatternService.findAllPublicGroupPatterns();
+		return ImmutableList.copyOf(Lists.transform(groupPatterns, convertGroupPattern));
 	}
 
 }

@@ -100,6 +100,10 @@ public class GroupLdapPatternServiceImpl extends GenericAdminServiceImpl impleme
 		if (pattern == null) {
 			throw new BusinessException(BusinessErrorCode.GROUP_LDAP_PATTERN_NOT_FOUND, "no such group pattern");
 		}
+		if (pattern.getSystem()) {
+			throw new BusinessException(BusinessErrorCode.GROUP_LDAP_PATTERN_CANNOT_BE_UPDATED,
+					"System group patterns cannot be updated");
+		}
 		Validate.notEmpty(groupLdapPattern.getDescription(), "Pattern's description must be set.");
 		Validate.notNull(groupLdapPattern.getSearchPageSize(), "Pattern's search page size must be set.");
 		Validate.notNull(groupLdapPattern.getSearchAllGroupsQuery(), "Pattern's search all groups query must be set.");
@@ -128,16 +132,25 @@ public class GroupLdapPatternServiceImpl extends GenericAdminServiceImpl impleme
 	}
 
 	@Override
-	public GroupLdapPattern delete(Account authUser, GroupLdapPattern groupLdapPattern, String uuid)
+	public GroupLdapPattern delete(Account authUser, GroupLdapPattern groupLdapPattern)
 			throws BusinessException {
 		Validate.notNull(groupLdapPattern, "GroupLdapPattern must be set");
-		GroupLdapPattern pattern = find(uuid);
+		GroupLdapPattern pattern = find(groupLdapPattern.getUuid());
 		if (ldapGroupProviderRepository.isUsed(pattern)) {
 			throw new BusinessException(
 					BusinessErrorCode.DOMAIN_PATTERN_STILL_IN_USE,
 					"Cannot delete this pattern because is still used by domains");
 		}
+		if (pattern.getSystem()) {
+			throw new BusinessException(BusinessErrorCode.GROUP_LDAP_PATTERN_CANNOT_BE_REMOVED,
+					"System group patterns cannot be removed");
+		}
 		groupPatternRepository.delete(pattern);
 		return groupLdapPattern;
+	}
+
+	@Override
+	public List<GroupLdapPattern> findAllPublicGroupPatterns() {
+		return groupPatternRepository.findAllPublicGroupLdapPatterns();
 	}
 }
