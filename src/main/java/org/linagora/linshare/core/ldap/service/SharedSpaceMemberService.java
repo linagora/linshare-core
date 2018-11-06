@@ -31,12 +31,12 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.core.ldap.service;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroupMember;
 
-public interface SharedSpaceLDAPGroupMemberService extends SharedSpaceMemberService {
+public interface SharedSpaceMemberService extends org.linagora.linshare.core.service.SharedSpaceMemberService {
 
 	SharedSpaceLDAPGroupMember create(Account actor, SharedSpaceLDAPGroupMember member);
 

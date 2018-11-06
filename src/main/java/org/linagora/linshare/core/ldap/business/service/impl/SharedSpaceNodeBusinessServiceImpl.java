@@ -31,18 +31,18 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.business.service.impl;
+package org.linagora.linshare.core.ldap.business.service.impl;
 
 import java.util.Date;
 
-import org.linagora.linshare.core.business.service.SharedSpaceLDAPGroupBusinessService;
+import org.linagora.linshare.core.ldap.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroup;
 import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 
-public class SharedSpaceLDAPGroupBusinessServiceImpl extends SharedSpaceNodeBusinessServiceImpl
-		implements SharedSpaceLDAPGroupBusinessService {
+public class SharedSpaceNodeBusinessServiceImpl extends org.linagora.linshare.core.business.service.impl.SharedSpaceNodeBusinessServiceImpl
+		implements SharedSpaceNodeBusinessService {
 
-	public SharedSpaceLDAPGroupBusinessServiceImpl(SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository) {
+	public SharedSpaceNodeBusinessServiceImpl(SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository) {
 		super(sharedSpaceNodeMongoRepository);
 	}
 

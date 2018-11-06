@@ -31,13 +31,14 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service.impl;
+package org.linagora.linshare.core.ldap.service.impl;
 
 import org.jsoup.helper.Validate;
-import org.linagora.linshare.core.business.service.SharedSpaceLDAPGroupMemberBusinessService;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.ldap.business.service.SharedSpaceMemberBusinessService;
+import org.linagora.linshare.core.ldap.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnNewMemberEmailContext;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnUpdatedMemberEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
@@ -45,15 +46,14 @@ import org.linagora.linshare.core.rac.SharedSpaceMemberResourceAccessControl;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
-import org.linagora.linshare.core.service.SharedSpaceLDAPGroupMemberService;
 import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroupMember;
 
-public class SharedSpaceLDAPGroupMemberServiceImpl extends SharedSpaceMemberServiceImpl
-		implements SharedSpaceLDAPGroupMemberService {
+public class SharedSpaceMemberServiceImpl extends org.linagora.linshare.core.service.impl.SharedSpaceMemberServiceImpl
+		implements SharedSpaceMemberService {
 
-	private final SharedSpaceLDAPGroupMemberBusinessService businessService;
+	private final SharedSpaceMemberBusinessService businessService;
 
-	public SharedSpaceLDAPGroupMemberServiceImpl(SharedSpaceLDAPGroupMemberBusinessService businessService,
+	public SharedSpaceMemberServiceImpl(SharedSpaceMemberBusinessService businessService,
 			NotifierService notifierService,
 			MailBuildingService mailBuildingService,
 			SharedSpaceMemberResourceAccessControl rac,

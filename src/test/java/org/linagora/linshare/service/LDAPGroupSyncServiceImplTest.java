@@ -59,6 +59,8 @@ import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.LdapGroupsBatchResultContext;
+import org.linagora.linshare.core.ldap.service.SharedSpaceMemberService;
+import org.linagora.linshare.core.ldap.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.GroupLdapPatternService;
@@ -66,8 +68,6 @@ import org.linagora.linshare.core.service.GroupProviderService;
 import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.LDAPGroupSyncService;
 import org.linagora.linshare.core.service.LdapConnectionService;
-import org.linagora.linshare.core.service.SharedSpaceLDAPGroupMemberService;
-import org.linagora.linshare.core.service.SharedSpaceLDAPGroupService;
 import org.linagora.linshare.core.service.impl.LDAPGroupSyncServiceImpl;
 import org.linagora.linshare.ldap.LdapGroupMemberObject;
 import org.linagora.linshare.ldap.LdapGroupObject;
@@ -110,10 +110,10 @@ public class LDAPGroupSyncServiceImplTest extends AbstractTransactionalJUnit4Spr
 
 	@Autowired
 	@Qualifier("sharedSpaceLdapGroupService")
-	SharedSpaceLDAPGroupService nodeService;
+	SharedSpaceNodeService nodeService;
 
 	@Autowired
-	SharedSpaceLDAPGroupMemberService memberService;
+	SharedSpaceMemberService memberService;
 
 	@Autowired
 	private GroupProviderService groupProviderService;

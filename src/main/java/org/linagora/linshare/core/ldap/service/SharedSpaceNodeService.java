@@ -31,42 +31,15 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.business.service.impl;
+package org.linagora.linshare.core.ldap.service;
 
-import java.util.Date;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroup;
 
-import org.linagora.linshare.core.business.service.SharedSpaceLDAPGroupMemberBusinessService;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroupMember;
-import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
-import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
-import org.linagora.linshare.mongo.repository.SharedSpaceRoleMongoRepository;
+public interface SharedSpaceNodeService extends org.linagora.linshare.core.service.SharedSpaceNodeService {
 
-public class SharedSpaceLDAPGroupMemberBusinessServiceImpl extends SharedSpaceMemberBusinessServiceImpl
-		implements SharedSpaceLDAPGroupMemberBusinessService {
+	SharedSpaceLDAPGroup create(Account actor, SharedSpaceLDAPGroup ldapGroup);
 
-	public SharedSpaceLDAPGroupMemberBusinessServiceImpl(
-			SharedSpaceMemberMongoRepository repository,
-			SharedSpaceRoleMongoRepository roleRepository,
-			SharedSpaceNodeMongoRepository nodeRepository,
-			UserRepository<User> userRepository) {
-		super(repository, roleRepository, nodeRepository, userRepository);
-	}
-
-	@Override
-	public SharedSpaceLDAPGroupMember create(SharedSpaceLDAPGroupMember member) {
-		return (SharedSpaceLDAPGroupMember) super.create(member);
-	}
-
-	@Override
-	public SharedSpaceLDAPGroupMember update(SharedSpaceLDAPGroupMember member) {
-		SharedSpaceLDAPGroupMember found = (SharedSpaceLDAPGroupMember) findByAccountAndNode(
-				member.getAccount().getUuid(), member.getNode().getUuid());
-		found.setRole(member.getRole());
-		found.setSyncDate(member.getSyncDate());
-		found.setModificationDate(new Date());
-		return (SharedSpaceLDAPGroupMember) repository.save(member);
-	}
+	SharedSpaceLDAPGroup update(Account actor, SharedSpaceLDAPGroup ldapGroup);
 
 }

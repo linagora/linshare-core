@@ -417,7 +417,7 @@
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="threadService" />
 	</bean>
-	<bean id="sharedSpaceLdapGroupService" class="org.linagora.linshare.core.service.impl.SharedSpaceLDAPGroupServiceImpl">
+	<bean id="sharedSpaceLdapGroupService" class="org.linagora.linshare.core.ldap.service.impl.SharedSpaceNodeServiceImpl">
 		<constructor-arg ref="sharedSpaceLdapGroupBusinessService" />
 		<constructor-arg ref="sharedSpaceNodeResourceAccessControl" />
 		<constructor-arg ref="sharedSpaceRoleService" />
@@ -445,7 +445,7 @@
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="userRepository" />
 	</bean>
-	<bean id="sharedSpaceLdapGroupMemberService" class="org.linagora.linshare.core.service.impl.SharedSpaceLDAPGroupMemberServiceImpl">
+	<bean id="sharedSpaceLdapGroupMemberService" class="org.linagora.linshare.core.ldap.service.impl.SharedSpaceMemberServiceImpl">
 		<constructor-arg ref="sharedSpaceLdapGroupMemberBusinessService" />
 		<constructor-arg ref="sharedSpaceMemberResourceAccessControl" />
 		<constructor-arg ref="notifierService" />

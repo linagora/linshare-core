@@ -31,29 +31,29 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service.impl;
+package org.linagora.linshare.core.ldap.service.impl;
 
 import org.jsoup.helper.Validate;
-import org.linagora.linshare.core.business.service.SharedSpaceLDAPGroupBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.ldap.business.service.SharedSpaceNodeBusinessService;
+import org.linagora.linshare.core.ldap.service.SharedSpaceMemberService;
+import org.linagora.linshare.core.ldap.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.rac.SharedSpaceNodeResourceAccessControl;
 import org.linagora.linshare.core.service.LogEntryService;
-import org.linagora.linshare.core.service.SharedSpaceLDAPGroupMemberService;
-import org.linagora.linshare.core.service.SharedSpaceLDAPGroupService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroup;
 
-public class SharedSpaceLDAPGroupServiceImpl extends SharedSpaceNodeServiceImpl implements SharedSpaceLDAPGroupService {
+public class SharedSpaceNodeServiceImpl extends org.linagora.linshare.core.service.impl.SharedSpaceNodeServiceImpl implements SharedSpaceNodeService {
 
-	SharedSpaceLDAPGroupBusinessService businessService;
+	SharedSpaceNodeBusinessService businessService;
 
-	public SharedSpaceLDAPGroupServiceImpl(SharedSpaceLDAPGroupBusinessService businessService,
+	public SharedSpaceNodeServiceImpl(SharedSpaceNodeBusinessService businessService,
 			SharedSpaceNodeResourceAccessControl sharedSpaceNodeResourceAccessControl,
 			SharedSpaceMemberBusinessService memberBusinessService,
-			SharedSpaceLDAPGroupMemberService sharedSpaceMemberService,
+			SharedSpaceMemberService sharedSpaceMemberService,
 			SharedSpaceRoleService ssRoleService,
 			LogEntryService logEntryService,
 			ThreadService threadService) {

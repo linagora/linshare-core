@@ -49,10 +49,10 @@ import org.linagora.linshare.core.domain.entities.LdapConnection;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.LdapGroupsBatchResultContext;
+import org.linagora.linshare.core.ldap.service.SharedSpaceMemberService;
+import org.linagora.linshare.core.ldap.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.LDAPGroupQueryService;
 import org.linagora.linshare.core.service.LDAPGroupSyncService;
-import org.linagora.linshare.core.service.SharedSpaceLDAPGroupMemberService;
-import org.linagora.linshare.core.service.SharedSpaceLDAPGroupService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.ldap.LdapGroupMemberObject;
@@ -74,7 +74,7 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 
 	private static final Logger logger = LoggerFactory.getLogger(LDAPGroupSyncServiceImpl.class);
 
-	protected SharedSpaceLDAPGroupService groupService;
+	protected SharedSpaceNodeService groupService;
 
 	protected LDAPGroupQueryService ldapGroupQueryService;
 
@@ -82,15 +82,15 @@ public class LDAPGroupSyncServiceImpl implements LDAPGroupSyncService {
 
 	protected SharedSpaceRoleService ssRoleService;
 
-	protected SharedSpaceLDAPGroupMemberService memberService;
+	protected SharedSpaceMemberService memberService;
 
 	protected final MongoTemplate mongoTemplate;
 
-	public LDAPGroupSyncServiceImpl(SharedSpaceLDAPGroupService groupService,
+	public LDAPGroupSyncServiceImpl(SharedSpaceNodeService groupService,
 			LDAPGroupQueryService ldapGroupQueryService,
 			UserService userService,
 			SharedSpaceRoleService ssRoleService,
-			SharedSpaceLDAPGroupMemberService memberService,
+			SharedSpaceMemberService memberService,
 			MongoTemplate mongoTemplate) {
 		super();
 		this.groupService = groupService;

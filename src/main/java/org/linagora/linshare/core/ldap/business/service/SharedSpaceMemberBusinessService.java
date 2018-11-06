@@ -31,12 +31,14 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.business.service;
+package org.linagora.linshare.core.ldap.business.service;
 
-import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroup;
+import org.linagora.linshare.mongo.entities.SharedSpaceLDAPGroupMember;
 
-public interface SharedSpaceLDAPGroupBusinessService extends SharedSpaceNodeBusinessService {
+public interface SharedSpaceMemberBusinessService extends org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService {
 
-	SharedSpaceLDAPGroup update(SharedSpaceLDAPGroup ldapGroup);
+	SharedSpaceLDAPGroupMember create(SharedSpaceLDAPGroupMember member);
+
+	SharedSpaceLDAPGroupMember update(SharedSpaceLDAPGroupMember member);
 
 }

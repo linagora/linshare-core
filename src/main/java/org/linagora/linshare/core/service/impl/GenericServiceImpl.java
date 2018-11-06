@@ -87,14 +87,14 @@ public class GenericServiceImpl<R, E> {
 				opt);
 	}
 
-	void checkCreatePermission(Account actor, Account targetedAccount,
+	protected void checkCreatePermission(Account actor, Account targetedAccount,
 			Class<?> clazz, BusinessErrorCode errCode, E entry, Object... opt)
 			throws BusinessException {
 		rac.checkCreatePermission(actor, targetedAccount, clazz, errCode,
 				entry, opt);
 	}
 
-	void checkUpdatePermission(Account actor, Account targetedAccount,
+	protected void checkUpdatePermission(Account actor, Account targetedAccount,
 			Class<?> clazz, BusinessErrorCode errCode, E entry, Object... opt)
 			throws BusinessException {
 		rac.checkUpdatePermission(actor, targetedAccount, clazz, errCode,
