@@ -85,10 +85,12 @@ public class PublicKeyFacadeImpl extends AdminGenericFacadeImpl implements Publi
 	}
 
 	@Override
-	public List<PublicKeyLs> findAll(String domainUuid) throws BusinessException{
+	public List<PublicKeyLs> findAll(String domainUuid) throws BusinessException {
 		User authUser = checkAuthentication(Role.SUPERADMIN);
-		Validate.notEmpty(domainUuid);
-		AbstractDomain domain = abstractDomainService.findById(domainUuid);
+		AbstractDomain domain = authUser.getDomain();
+		if (domainUuid != null) {
+			domain = abstractDomainService.findById(domainUuid);
+		}
 		return publicKeyService.findAll(authUser, domain);
 	}
 

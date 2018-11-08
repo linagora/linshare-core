@@ -104,7 +104,7 @@ public class PublicKeyRestServiceImpl extends WebserviceBase implements PublicKe
 	}
 
 	@GET
-	@Path("/domain/{domainUuid}")
+	@Path("/")
 	@ApiOperation(value = "Find a list of public keys by Domain uuid.", response = PublicKeyLs.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission.") ,
 					@ApiResponse(code = 404, message = "PublicKeys not found."),
@@ -114,7 +114,7 @@ public class PublicKeyRestServiceImpl extends WebserviceBase implements PublicKe
 	@Override
 	public List<PublicKeyLs> findAll(
 			@ApiParam(value = "Domain uuid", required = true)
-				@PathParam("domainUuid") String domainUuid) throws BusinessException {
+				@QueryParam("domainUuid") String domainUuid) throws BusinessException {
 		return publicKeyFacade.findAll(domainUuid);
 	}
 
