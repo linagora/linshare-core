@@ -127,7 +127,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
-		WorkGroup workGroup = new WorkGroup(sharedSpaceNode);
+		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceNode.getUuid());
 		return service.findAll(authUser, actor, workGroup, parentNodeUuid, flatDocumentMode, nodeType);
 	}
 
@@ -139,7 +139,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
-		WorkGroup workGroup = new WorkGroup(sharedSpaceNode);
+		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceNode.getUuid());
 		return service.find(authUser, actor, workGroup, workGroupNodeUuid, withTree);
 	}
 
@@ -151,7 +151,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
-		WorkGroup workGroup = new WorkGroup(sharedSpaceNode);
+		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceNode.getUuid());
 		return service.create(authUser, actor, workGroup, workGroupNode, strict, dryRun);
 	}
 
@@ -164,7 +164,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
-		WorkGroup workGroup = new WorkGroup(sharedSpaceNode);
+		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceNode.getUuid());
 		WorkGroupNode node = service.create(authUser, actor, workGroup, tempFile, fileName, parentNodeUuid, strict);
 		return node;
 	}
@@ -182,7 +182,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		Validate.notEmpty(workGroupUuid, "Missing workGroup uuid to copy into");
 		SharedSpaceNode toSharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
 		// The workgroup here is used for the OperationHistory
-		WorkGroup toWorkGroup = threadService.find(authUser, actor, workGroupUuid);
+		WorkGroup toWorkGroup = threadService.find(authUser, actor, toSharedSpaceNode.getUuid());
 		if (TargetKind.RECEIVED_SHARE.equals(resourceKind)) {
 			// if the current user do have enough space, there is side effect on audit.
 			// Some audit traces will be created before quota checks ! :s
@@ -223,7 +223,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
-		WorkGroup workGroup = new WorkGroup(sharedSpaceNode);
+		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceNode.getUuid());
 		return service.update(authUser, actor, workGroup, workGroupNode);
 	}
 
@@ -235,7 +235,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		User actor = getActor(authUser, actorUuid);
 		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
 		// The workgroup here is used for the OperationHistory
-		WorkGroup workGroup = threadService.find(authUser, actor, workGroupUuid);
+		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceNode.getUuid());
 		return service.delete(authUser, actor, workGroup, workGroupNodeUuid);
 	}
 
@@ -249,7 +249,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		User actor = getActor(authUser, actorUuid);
 		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
 		// The workgroup here is used for the OperationHistory
-		WorkGroup workGroup = threadService.find(authUser, actor, workGroupUuid);
+		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceNode.getUuid());
 		return service.delete(authUser, actor, workGroup, workGroupNode.getUuid());
 	}
 
@@ -261,7 +261,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
-		WorkGroup workGroup = new WorkGroup(sharedSpaceNode);
+		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceNode.getUuid());
 		FileAndMetaData data = service.download(authUser, actor, workGroup, workGroupNodeUuid);
 		ResponseBuilder builder = DocumentStreamReponseBuilder.getDocumentResponseBuilder(data);
 		return builder.build();
@@ -278,7 +278,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
-		WorkGroup workGroup = new WorkGroup(sharedSpaceNode);
+		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceNode.getUuid());
 		FileAndMetaData data = service.thumbnail(authUser, actor, workGroup, workGroupNodeUuid, thumbnailType);
 		ResponseBuilder builder = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(data, base64, thumbnailType);
 		return builder.build();
@@ -290,7 +290,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
-		WorkGroup workGroup = new WorkGroup(sharedSpaceNode);
+		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceNode.getUuid());
 		WorkGroupNode workGroupNode = service.find(authUser, actor, workGroup, workGroupNodeUuid, false);
 		return auditLogEntryService.findAll(authUser, actor, workGroup, workGroupNode, actions, types, beginDate,
 				endDate);
