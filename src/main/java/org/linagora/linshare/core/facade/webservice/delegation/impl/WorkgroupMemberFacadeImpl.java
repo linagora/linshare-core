@@ -47,7 +47,7 @@ import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.core.service.UserService;
-import org.linagora.linshare.mongo.entities.DriveMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
@@ -107,7 +107,7 @@ public class WorkgroupMemberFacadeImpl extends DelegationGenericFacadeImpl
 		User user = userService.findOrCreateUser(mail, domainId);
 		SharedSpaceNode foundSharedSpaceNode = ssNodeService.find(authActor, actor, threadUuid);
 		SharedSpaceRole defaultRole = getDefaultRole(actor, admin);
-		SharedSpaceMember create = ssMemberService.create(authActor, actor, foundSharedSpaceNode, defaultRole, null,
+		SharedSpaceMember create = ssMemberService.create(authActor, actor, foundSharedSpaceNode, defaultRole,
 				new SharedSpaceAccount(user));
 		return new WorkGroupMemberDto(create, user);
 	}
@@ -120,11 +120,11 @@ public class WorkgroupMemberFacadeImpl extends DelegationGenericFacadeImpl
 		User authActor = checkAuthentication();
 		User actor = getActor(actorUuid);
 		User user = userService.findByLsUuid(threadMember.getUserUuid());
-		DriveMember ssMemberToUpdate = (DriveMember) ssMemberService.findMemberByUuid(authActor, actor,
+		SharedSpaceMember ssMemberToUpdate = ssMemberService.findMemberByUuid(authActor, actor,
 				threadMember.getUserUuid(), threadUuid);
 		SharedSpaceRole defaultRole = getDefaultRole(authActor, threadMember.isAdmin());
 		ssMemberToUpdate.setRole(new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()));
-		SharedSpaceMember updated = ssMemberService.update(authActor, actor, ssMemberToUpdate);
+		SharedSpaceMember updated = ssMemberService.update(authActor, actor, (SharedSpaceMemberDrive) ssMemberToUpdate);
 		return new WorkGroupMemberDto(updated, user);
 	}
 

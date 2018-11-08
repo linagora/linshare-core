@@ -34,16 +34,16 @@
 package org.linagora.linshare.webservice.admin;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.mongo.entities.DriveMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 
 public interface SharedSpaceMemberRestService {
 
 	SharedSpaceMember find(String uuid) throws BusinessException;
 
-	SharedSpaceMember addMember(DriveMember member) throws BusinessException;
+	SharedSpaceMember addMember(SharedSpaceMemberDrive member) throws BusinessException;
 
-	SharedSpaceMember update(DriveMember ssmember, String uuid) throws BusinessException;
+	SharedSpaceMember update(SharedSpaceMemberDrive ssmember, String uuid) throws BusinessException;
 
 	SharedSpaceMember delete(SharedSpaceMember ssmember, String uuid) throws BusinessException;
 }

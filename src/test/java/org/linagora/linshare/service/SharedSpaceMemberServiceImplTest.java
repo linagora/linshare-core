@@ -61,6 +61,7 @@ import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
@@ -106,14 +107,6 @@ public class SharedSpaceMemberServiceImplTest {
 	private SharedSpaceRole readerRole;
 
 	private GenericLightEntity lightReaderRoleToPersist;
-
-	private SharedSpaceRole driveCreatorRole;
-
-	private SharedSpaceRole driveAdminRole;
-
-	private GenericLightEntity lightDriveCreatorRoleToPersist;
-
-	private GenericLightEntity lightDriveAdminRoleToPersist;
 
 	private Account root;
 
@@ -173,22 +166,12 @@ public class SharedSpaceMemberServiceImplTest {
 		readerRole = roleBusinessService.findByName("READER");
 		lightReaderRoleToPersist = new GenericLightEntity(readerRole.getUuid(), readerRole.getName());
 		Validate.notNull(adminRole, "adminRole must be set");
-
-		driveCreatorRole = roleBusinessService.findByName("DRIVE_CREATOR");
-		driveAdminRole = roleBusinessService.findByName("DRIVE_ADMIN");
-
-		lightDriveCreatorRoleToPersist = new GenericLightEntity(driveAdminRole.getUuid(), driveAdminRole.getName());
-		Validate.notNull(driveAdminRole, "driveAdminRole must be set");
-
-		lightDriveAdminRoleToPersist = new GenericLightEntity(driveCreatorRole.getUuid(), driveCreatorRole.getName());
-		Validate.notNull(driveCreatorRole, "driveReaderRole must be set");
-
-		node = new SharedSpaceNode("nodeTest", "parentuuidTest", NodeType.DRIVE);
+		node = new SharedSpaceNode("nodeTest", "parentuuidTest", NodeType.WORK_GROUP);
 		nodeBusinessService.create(node);
 		lightNodePersisted = new GenericLightEntity(node.getUuid(), node.getUuid());
 		accountJhon = new SharedSpaceAccount(john);
 		accountJane = new SharedSpaceAccount(jane);
-		SharedSpaceMember johnMemberShip = service.createWithoutCheckPermission(john, john, node, adminRole, driveCreatorRole,
+		SharedSpaceMember johnMemberShip = service.createWithoutCheckPermission(john, john, node, adminRole, null,
 				accountJhon);
 		Assertions.assertNotNull(johnMemberShip, "John has not been added as a member of his shared space");
 		logger.debug(LinShareTestConstants.END_SETUP);
@@ -202,7 +185,7 @@ public class SharedSpaceMemberServiceImplTest {
 	}
 
 	public void testFind() {
-		SharedSpaceMember toCreate = service.create(john, john, node, adminRole, driveCreatorRole, accountJane);
+		SharedSpaceMember toCreate = service.create(john, john, node, adminRole, accountJane);
 		SharedSpaceMember tofound = service.find(john, john, toCreate.getUuid());
 		Assertions.assertEquals(toCreate.getUuid(), tofound.getUuid());
 	}
@@ -266,7 +249,7 @@ public class SharedSpaceMemberServiceImplTest {
 
 	@Test
 	public void testDeleteAll() {
-		service.create(john, john, node, adminRole, driveCreatorRole, accountJane);
+		service.create(john, john, node, adminRole, accountJane);
 		List<SharedSpaceMember> foundMembers = service.findAll(root, root, lightNodePersisted.getUuid());
 		Assertions.assertTrue(foundMembers.size() > 0, "No members have been created");
 		service.deleteAllMembers(john, john, lightNodePersisted.getUuid());
@@ -286,7 +269,7 @@ public class SharedSpaceMemberServiceImplTest {
 		Assertions.assertNotEquals(createdMember.getModificationDate(),
 				updatedMember.getModificationDate(), "The member has not been updated");
 	}
-	
+
 	@Test
 	public void testUpdateWithWrongRole() {
 		SharedSpaceMember createdMember = service.create(john, john, node, adminRole, accountJane);
@@ -295,7 +278,7 @@ public class SharedSpaceMemberServiceImplTest {
 		SharedSpaceMember memberToSendToUpdate = new SharedSpaceMember(createdMember);
 		try {
 			memberToSendToUpdate.setRole(new GenericLightEntity("wrongUuid", "READER"));
-//			service.update(john, john, memberToSendToUpdate);
+			service.update(john, john, memberToSendToUpdate);
 		} catch (BusinessException e) {
 			Assertions.assertEquals(e.getErrorCode(), BusinessErrorCode.SHARED_SPACE_ROLE_NOT_FOUND);
 		}

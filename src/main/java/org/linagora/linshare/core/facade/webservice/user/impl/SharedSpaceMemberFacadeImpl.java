@@ -44,7 +44,7 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
-import org.linagora.linshare.mongo.entities.DriveMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
@@ -77,7 +77,7 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 	}
 
 	@Override
-	public SharedSpaceMember create(String actorUuid, DriveMember member) throws BusinessException {
+	public SharedSpaceMember create(String actorUuid, SharedSpaceMemberDrive member) throws BusinessException {
 		Validate.notNull(member, "Shared space member must be set.");
 		Validate.notNull(member.getAccount(), "Account must be set.");
 		Validate.notNull(member.getRole(), "Role must be set.");
@@ -92,8 +92,8 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 		SharedSpaceRole foundSharedSpaceRole = roleService.find(authUser, actor, member.getRole().getUuid());
 		Validate.notNull(foundSharedSpaceRole, "Missing required role");
 		SharedSpaceRole foundDriveRole = new SharedSpaceRole();
-		if(member.getDriveRole() != null) {
-			foundDriveRole = roleService.find(authUser, actor, member.getDriveRole().getUuid());
+		if(member.getNestedRole() != null) {
+			foundDriveRole = roleService.find(authUser, actor, member.getNestedRole().getUuid());
 			Validate.notNull(foundDriveRole, "missing drive role");
 		}
 		SharedSpaceMember toAddMember = memberService.create(authUser, actor, foundSharedSpaceNode, foundSharedSpaceRole, foundDriveRole, member.getAccount());
@@ -101,7 +101,7 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 	}
 
 	@Override
-	public SharedSpaceMember update(String actorUuid, DriveMember member, String uuid) throws BusinessException {
+	public SharedSpaceMember update(String actorUuid, SharedSpaceMemberDrive member, String uuid) throws BusinessException {
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
 		Validate.notNull(member, "Shared space member must be set.");
@@ -142,11 +142,4 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 		return memberService.findAllUserMemberships(authUser, actor);
 	}
 
-	@Override
-	public List<SharedSpaceMember> findAll(String nodeUuid) {
-		Validate.notEmpty(nodeUuid, "Missing required node uuid");
-		User authUser = checkAuthentication();
-		List<SharedSpaceMember> res = memberService.findAll(authUser, authUser, nodeUuid);
-		return res;
-	}
 }

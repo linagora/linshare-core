@@ -46,7 +46,7 @@ import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.core.service.UserService;
-import org.linagora.linshare.mongo.entities.DriveMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
@@ -108,7 +108,7 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		User newMember = userService.findOrCreateUser(workGroupMember.getUserMail(), workGroupMember.getUserDomainId());
 		SharedSpaceNode foundSharedSpaceNode = sharedSpaceNodeService.find(authUser, authUser, threadUuid);
 		SharedSpaceRole defaultRole = getDefaultRole(authUser, workGroupMember.isAdmin());
-		SharedSpaceMember create = ssMemberService.create(authUser, authUser, foundSharedSpaceNode, defaultRole, null,
+		SharedSpaceMember create = ssMemberService.create(authUser, authUser, foundSharedSpaceNode, defaultRole,
 				new SharedSpaceAccount(newMember));
 		return new WorkGroupMemberDto(create, newMember);
 	}
@@ -120,10 +120,10 @@ public class ThreadMemberFacadeImpl extends UserGenericFacadeImp implements
 		User authUser = checkAuthentication();
 		SharedSpaceRole defaultRole = getDefaultRole(authUser, threadMember.isAdmin());
 		User user = userService.findByLsUuid(threadMember.getUserUuid());
-		DriveMember ssMemberToUpdate = (DriveMember) ssMemberService.findMemberByUuid(authUser, authUser,
+		SharedSpaceMember ssMemberToUpdate = ssMemberService.findMemberByUuid(authUser, authUser,
 				threadMember.getUserUuid(), threadUuid);
 		ssMemberToUpdate.setRole(new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()));
-		SharedSpaceMember updated = ssMemberService.update(authUser, authUser, ssMemberToUpdate);
+		SharedSpaceMember updated = ssMemberService.update(authUser, authUser, (SharedSpaceMemberDrive) ssMemberToUpdate);
 		return new WorkGroupMemberDto(updated, user);
 	}
 

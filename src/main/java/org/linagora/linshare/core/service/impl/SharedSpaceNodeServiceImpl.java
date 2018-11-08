@@ -203,19 +203,14 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		Validate.notNull(node.getNodeType(), "you must set the node type");
 		checkVersioningParameter(actor.getDomain(), node);
 		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, node);
+		if (!node.getNodeType().equals(NodeType.WORK_GROUP)) {
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_FORBIDDEN, "Node type not supported");
+		}
 		// Hack to create thread into shared space node
 		SharedSpaceNode created = simpleCreate(authUser, actor, node);
 		SharedSpaceRole role = ssRoleService.getAdmin(authUser, actor);
-		if (node.getNodeType().equals(NodeType.WORK_GROUP)) {
-			created = simpleCreate(authUser, actor, node);
-			memberService.createWithoutCheckPermission(authUser, actor, created, role, null,
+		memberService.createWithoutCheckPermission(authUser, actor, created, role, null,
 					new SharedSpaceAccount((User) actor));
-		} else if (node.getNodeType().equals(NodeType.DRIVE)) {
-			created = businessService.create(node);
-			SharedSpaceRole driveRole = ssRoleService.getDriveAdmin(authUser, actor);
-			memberService.createWithoutCheckPermission(authUser, actor, created, role, driveRole,
-					new SharedSpaceAccount((User) actor));
-		}
 		WorkGroup workGroup = threadService.find(authUser, actor, created.getUuid());
 		return new WorkGroupDto(workGroup, created);
 	}

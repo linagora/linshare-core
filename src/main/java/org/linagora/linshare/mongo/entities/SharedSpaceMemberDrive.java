@@ -33,31 +33,34 @@
  */
 package org.linagora.linshare.mongo.entities;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
-public class DriveMember extends SharedSpaceMember {
+@XmlRootElement(name = "SharedSpaceMemberDrive")
+public class SharedSpaceMemberDrive extends SharedSpaceMember {
 
-	protected GenericLightEntity driveRole;
+	protected GenericLightEntity nestedRole;
 
-	public DriveMember() {
+	public SharedSpaceMemberDrive() {
 		super();
 	}
 
-	public DriveMember(SharedSpaceNodeNested node, GenericLightEntity role, SharedSpaceAccount account) {
+	public SharedSpaceMemberDrive(SharedSpaceNodeNested node, GenericLightEntity role, SharedSpaceAccount account,
+			GenericLightEntity nestedRole) {
 		super(node, role, account);
+		this.nestedRole = nestedRole;
 	}
 
-	public DriveMember(SharedSpaceNodeNested node, GenericLightEntity role, SharedSpaceAccount account,
-			GenericLightEntity driveRole) {
-		super(node, role, account);
-		this.driveRole = driveRole;
+	public SharedSpaceMemberDrive(SharedSpaceMember member) {
+		super(member.getNode(), member.getRole(), member.getAccount());
 	}
 
-	public GenericLightEntity getDriveRole() {
-		return driveRole;
+	public GenericLightEntity getNestedRole() {
+		return nestedRole;
 	}
 
-	public void setDriveRole(GenericLightEntity driveRole) {
-		this.driveRole = driveRole;
+	public void setNestedRole(GenericLightEntity nestedRole) {
+		this.nestedRole = nestedRole;
 	}
 }

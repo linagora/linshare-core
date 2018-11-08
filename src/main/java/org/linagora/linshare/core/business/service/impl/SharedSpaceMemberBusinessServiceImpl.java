@@ -40,12 +40,10 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
-import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.mongo.entities.DriveMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
@@ -99,7 +97,7 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		return repository.insert(member);
 	}
 
-	private SharedSpaceRole checkRole(String roleUuid) {
+	protected SharedSpaceRole checkRole(String roleUuid) {
 		SharedSpaceRole role = roleRepository.findByUuid(roleUuid);
 		if (role == null) {
 			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_ROLE_NOT_FOUND,
@@ -108,18 +106,18 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 		return role;
 	}
 
-	private SharedSpaceNode checkNode(String nodeUuid) {
+	protected SharedSpaceNode checkNode(String nodeUuid) {
 		SharedSpaceNode node = nodeRepository.findByUuid(nodeUuid);
 		if (node == null) {
-			throw new BusinessException(BusinessErrorCode.WORK_GROUP_NOT_FOUND, "The required role does not exist.");
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_NOT_FOUND, "The required node does not exist.");
 		}
 		return node;
 	}
 
-	private User checkUser(String userUuid) {
+	protected User checkUser(String userUuid) {
 		User user = userRepository.findByLsUuid(userUuid);
 		if (user == null) {
-			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "The required role does not exist.");
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "The required user does not exist.");
 		}
 		return user;
 	}
@@ -140,15 +138,10 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	}
 
 	@Override
-	public SharedSpaceMember update(DriveMember foundMemberToUpdate, DriveMember memberToUpdate) {
+	public SharedSpaceMember update(SharedSpaceMember foundMemberToUpdate, SharedSpaceMember memberToUpdate) {
 		Validate.notNull(memberToUpdate.getRole(), "The role must be set.");
 		foundMemberToUpdate.setRole(new GenericLightEntity(checkRole(memberToUpdate.getRole().getUuid())));
 		foundMemberToUpdate.setModificationDate(new Date());
-		if (NodeType.DRIVE.equals(foundMemberToUpdate.getNode().getNodeType())) {
-			Validate.notNull(memberToUpdate.getDriveRole(), "The drive role must be set.");
-			foundMemberToUpdate
-					.setDriveRole(new GenericLightEntity(checkRole(memberToUpdate.getDriveRole().getUuid())));
-		}
 		return repository.save(foundMemberToUpdate);
 	}
 

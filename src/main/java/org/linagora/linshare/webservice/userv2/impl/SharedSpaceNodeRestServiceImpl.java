@@ -414,27 +414,27 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Sh
 		return asyncTaskFacade.find(uuid);
 	}
 
-	@Path("/{sharedSpaceNodeUuid}/audit")
+	@Path("/{workGroupNodeUuid}/audit")
 	@GET
-	@ApiOperation(value = "Get all traces for a sharedSpace node.", response = AuditLogEntryUser.class, responseContainer="Set")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation.") ,
-					@ApiResponse(code = 404, message = "SharedSpace or folder not found."),
+	@ApiOperation(value = "Get all traces for a workgroup node.", response = AuditLogEntryUser.class, responseContainer="Set")
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
+					@ApiResponse(code = 404, message = "Workgroup or folder not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
 	public Set<AuditLogEntryUser> findAll(
-			@ApiParam(value = "The sharedSpaceNodeUuid.", required = true)
-				@PathParam("sharedSpaceUuid") String sharedSpaceUuid,
-			@ApiParam(value = "The sharedSpace node uuid.", required = true)
-				@PathParam("sharedSpaceNodeUuid") String sharedSpaceNodeUuid,
+			@ApiParam(value = "The workGroupNodeUuid.", required = true)
+				@PathParam("workGroupUuid") String workGroupUuid,
+			@ApiParam(value = "The workGroup node uuid.", required = true)
+				@PathParam("workGroupNodeUuid") String workGroupNodeUuid,
 			@ApiParam(value = "Filter by type of actions..", required = false)
 				@QueryParam("actions") List<LogAction> actions,
 			@ApiParam(value = "Filter by type of resource's types.", required = false)
 				@QueryParam("types") List<AuditLogEntryType> types,
 				@QueryParam("beginDate") String beginDate,
 				@QueryParam("endDate") String endDate) {
-		return sharedSpaceNodeFacade.findAll(null, sharedSpaceUuid, sharedSpaceNodeUuid, actions, types, beginDate, endDate);
+		return sharedSpaceNodeFacade.findAll(null, workGroupUuid, workGroupNodeUuid, actions, types, beginDate, endDate);
 	}
 
 	@Path("/url")

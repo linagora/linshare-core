@@ -57,6 +57,7 @@ import org.linagora.linshare.core.facade.webservice.user.SharedSpaceMemberFacade
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceNodeFacade;
 import org.linagora.linshare.core.facade.webservice.user.WorkGroupFacade;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
@@ -225,7 +226,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public SharedSpaceMember addMember(
-			@ApiParam("The shared space member to add")SharedSpaceMember member)
+			@ApiParam("The shared space member to add")SharedSpaceMemberDrive member)
 					throws BusinessException {
 		return memberFacade.create(null, member);
 	}
@@ -262,7 +263,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 		return memberFacade.update(null, member, memberUuid);
 	}
 
-	@Path("/{uuid}/audits")
+	@Path("/{uuid}/audit")
 	@GET
 	@ApiOperation(value = "Get all traces for a sharedSpace.", response = AuditLogEntryUser.class, responseContainer="Set")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,

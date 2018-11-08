@@ -36,7 +36,6 @@ package org.linagora.linshare.core.business.service;
 import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.mongo.entities.DriveMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
@@ -53,7 +52,7 @@ public interface SharedSpaceMemberBusinessService {
 
 	void delete(SharedSpaceMember memberToDelete) throws BusinessException;
 
-	SharedSpaceMember update(DriveMember foundMemberToUpdate, DriveMember member)
+	SharedSpaceMember update(SharedSpaceMember foundMemberToUpdate, SharedSpaceMember member)
 			throws BusinessException;
 
 	List<SharedSpaceMember> findBySharedSpaceNodeUuid(String shareSpaceNodeUuid) throws BusinessException;

@@ -41,6 +41,7 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
@@ -63,11 +64,11 @@ public interface SharedSpaceRestService {
 
 	SharedSpaceMember findMemberByNodeAndUuid(String uuid, String accountUuid) throws BusinessException;
 
-	SharedSpaceMember addMember(SharedSpaceMember member) throws BusinessException;
+	SharedSpaceMember addMember(SharedSpaceMemberDrive member) throws BusinessException;
 
 	SharedSpaceMember deleteMember(SharedSpaceMember member, String memberUuid) throws BusinessException;
 
-	SharedSpaceMember updateMember(SharedSpaceMember member, String memberUuid) throws BusinessException;
+	SharedSpaceMember updateMember(SharedSpaceMemberDrive member, String memberUuid) throws BusinessException;
 
 	Set<AuditLogEntryUser> findAll(String sharedSpaceUuid, List<LogAction> actions, List<AuditLogEntryType> types,
 			String beginDate, String endDate, String nodeUuid);

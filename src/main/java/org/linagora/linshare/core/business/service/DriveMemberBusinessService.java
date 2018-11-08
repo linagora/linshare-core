@@ -33,9 +33,11 @@
  */
 package org.linagora.linshare.core.business.service;
 
-import org.linagora.linshare.mongo.entities.DriveMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 
-public interface DriveMemberBusinessService extends SharedSpaceMemberBusinessService{
+public interface DriveMemberBusinessService extends SharedSpaceMemberBusinessService {
 
-	DriveMember create(DriveMember member);
+	SharedSpaceMemberDrive create(SharedSpaceMemberDrive member);
+
+	SharedSpaceMemberDrive update(SharedSpaceMemberDrive foundMemberToUpdate, SharedSpaceMemberDrive memberToUpdate);
 }

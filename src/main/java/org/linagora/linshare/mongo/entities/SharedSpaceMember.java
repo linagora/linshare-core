@@ -39,13 +39,23 @@ import java.util.UUID;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 
+import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@JsonSubTypes({ @Type(value = SharedSpaceMemberDrive.class, name = "SharedSpaceMemberDrive")
+		})
+@XmlSeeAlso({ SharedSpaceMemberDrive.class
+	})
 @XmlRootElement(name = "SharedSpaceMember")
 @Document(collection = "shared_space_members")
 public class SharedSpaceMember {
