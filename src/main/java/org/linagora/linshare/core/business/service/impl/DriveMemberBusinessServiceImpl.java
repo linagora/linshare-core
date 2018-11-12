@@ -48,21 +48,24 @@ public class DriveMemberBusinessServiceImpl extends SharedSpaceMemberBusinessSer
 		implements DriveMemberBusinessService {
 
 	public DriveMemberBusinessServiceImpl(SharedSpaceMemberMongoRepository sharedSpaceMemberMongoRepository,
-			SharedSpaceRoleMongoRepository roleRepository, SharedSpaceNodeMongoRepository nodeRepository,
+			SharedSpaceRoleMongoRepository roleRepository,
+			SharedSpaceNodeMongoRepository nodeRepository,
 			UserRepository<User> userRepository) {
 		super(sharedSpaceMemberMongoRepository, roleRepository, nodeRepository, userRepository);
 	}
 
 	@Override
 	public SharedSpaceMemberDrive create(SharedSpaceMemberDrive member) throws BusinessException {
-		member.setNestedRole(new GenericLightEntity(checkRole(member.getNestedRole().getUuid())));
+		GenericLightEntity nestedRole = new GenericLightEntity(checkRole(member.getNestedRole().getUuid()));
+		member.setNestedRole(nestedRole);
 		return (SharedSpaceMemberDrive) super.create(member);
 	}
 
 	@Override
 	public SharedSpaceMemberDrive update(SharedSpaceMemberDrive foundMemberToUpdate, SharedSpaceMemberDrive memberToUpdate) {
 		Validate.notNull(memberToUpdate.getNestedRole(), "The drive role must be set.");
-		foundMemberToUpdate.setNestedRole(new GenericLightEntity(checkRole(memberToUpdate.getNestedRole().getUuid())));
+		GenericLightEntity nestedRole = new GenericLightEntity(checkRole(memberToUpdate.getNestedRole().getUuid()));
+		foundMemberToUpdate.setNestedRole(nestedRole);
 		return (SharedSpaceMemberDrive) super.update(foundMemberToUpdate, memberToUpdate);
 	}
 

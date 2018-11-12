@@ -35,6 +35,7 @@ package org.linagora.linshare.mongo.entities;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
 @XmlRootElement(name = "SharedSpaceMemberDrive")
@@ -44,16 +45,19 @@ public class SharedSpaceMemberDrive extends SharedSpaceMember {
 
 	public SharedSpaceMemberDrive() {
 		super();
+		this.type = NodeType.DRIVE;
 	}
 
 	public SharedSpaceMemberDrive(SharedSpaceNodeNested node, GenericLightEntity role, SharedSpaceAccount account,
 			GenericLightEntity nestedRole) {
 		super(node, role, account);
 		this.nestedRole = nestedRole;
+		this.type = NodeType.DRIVE;
 	}
 
 	public SharedSpaceMemberDrive(SharedSpaceMember member) {
 		super(member.getNode(), member.getRole(), member.getAccount());
+		this.type = NodeType.DRIVE;
 	}
 
 	public GenericLightEntity getNestedRole() {

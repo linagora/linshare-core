@@ -56,9 +56,9 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
-import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
@@ -187,53 +187,47 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	@Override
 	public SharedSpaceMember create(Account authUser, Account actor, SharedSpaceNode node, SharedSpaceRole role,
 			SharedSpaceAccount account) throws BusinessException {
-		return create(authUser, actor, node, role, null, account);
+		SharedSpaceMemberContext context = new SharedSpaceMemberContext(role);
+		return create(authUser, actor, node, context, account);
 	}
 
 	@Override
-	public SharedSpaceMember create(Account authUser, Account actor, SharedSpaceNode node, SharedSpaceRole role, SharedSpaceRole driveRole,
-			SharedSpaceAccount account) throws BusinessException {
-		Validate.notNull(role, "Role must be set.");
-		Validate.notNull(node, "Node uuid must be set.");
-		checkCreatePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
-				null, node);
+	public SharedSpaceMember create(Account authUser, Account actor, SharedSpaceNode node,
+			SharedSpaceMemberContext context, SharedSpaceAccount account) throws BusinessException {
+		checkCreateMemberPermission(authUser, actor, node, context, account);
 		User newMember = userRepository.findByLsUuid(account.getUuid());
 		if (newMember == null) {
 			String message = String.format("The account with the UUID : %s is not existing", account.getUuid());
 			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, message);
 		}
+		SharedSpaceMember member = createWithoutCheckPermission(authUser, actor, node, context.getRole(), account);
+		notify(new WorkGroupWarnNewMemberEmailContext(member, actor, newMember));
+		return member;
+	}
+
+	protected void checkCreateMemberPermission(Account authUser, Account actor, SharedSpaceNode node,
+			SharedSpaceMemberContext context, SharedSpaceAccount account) throws BusinessException {
+		Validate.notNull(context.getRole(), "Role must be set.");
+		Validate.notNull(node, "Node uuid must be set.");
+		checkCreatePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
+				null, node);
 		if (!checkMemberNotInNode(account.getUuid(), node.getUuid())) {
 			String message = String.format(
 					"The account with the UUID : %s is already a member of the node with the uuid : %s",
 					account.getUuid(), node.getUuid());
 			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_ALREADY_EXISTS, message);
 		}
-		SharedSpaceMember member = createWithoutCheckPermission(authUser, actor, node, role, driveRole, account);
-		notify(new WorkGroupWarnNewMemberEmailContext(member, actor, newMember));
-		return member;
 	}
 
 	@Override
 	public SharedSpaceMember createWithoutCheckPermission(Account authUser, Account actor, SharedSpaceNode node,
-			SharedSpaceRole role, SharedSpaceRole nestedRole, SharedSpaceAccount account) throws BusinessException {
+			SharedSpaceRole role, SharedSpaceAccount account) throws BusinessException {
 		preChecks(authUser, actor);
 		Validate.notNull(role, "Role must be set.");
 		Validate.notNull(node, "Node must be set.");
-		SharedSpaceMember toAdd = new SharedSpaceMember();
-		if (NodeType.DRIVE.equals(node.getNodeType())) {
-			SharedSpaceMemberDrive member = new SharedSpaceMemberDrive(new SharedSpaceNodeNested(node),
-					new GenericLightEntity(role.getUuid(), role.getName()), account,
-					new GenericLightEntity(nestedRole.getUuid(), nestedRole.getName()));
-			Validate.notNull(nestedRole, "Drive role must be set.");
-			member.setNestedRole(new GenericLightEntity(nestedRole.getUuid(), nestedRole.getName()));
-			toAdd = driveMemberBusinessService.create(member);
-		} else if (NodeType.WORK_GROUP.equals(node.getNodeType())) {
-			SharedSpaceMember memberWg = new SharedSpaceMember(new SharedSpaceNodeNested(node),
-					new GenericLightEntity(role.getUuid(), role.getName()), account);
-			toAdd = businessService.create(memberWg);
-		} else {
-			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN, "Node type not supported");
-		}
+		SharedSpaceMember memberWg = new SharedSpaceMember(new SharedSpaceNodeNested(node),
+				new GenericLightEntity(role.getUuid(), role.getName()), account);
+		SharedSpaceMember toAdd = businessService.create(memberWg);
 		saveLog(authUser, actor, LogAction.CREATE, toAdd);
 		return toAdd;
 	}
@@ -253,7 +247,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	}
 
 	@Override
-	public SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMemberDrive memberToUpdate) {
+	public SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate) {
 		preChecks(authUser, actor);
 		Validate.notNull(memberToUpdate, "Missing required member to update");
 		SharedSpaceMember foundMemberToUpdate = null;
@@ -275,16 +269,6 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 				memberToUpdate.getNode().getUuid());
 		checkUpdatePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
 				foundMemberToUpdate);
-<<<<<<< HEAD
-		SharedSpaceMember updated = businessService.update(foundMemberToUpdate, memberToUpdate);
-		SharedSpaceMemberAuditLogEntry log = new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.UPDATE,
-				AuditLogEntryType.WORKGROUP_MEMBER, foundMemberToUpdate);
-		log.setResourceUpdated(updated);
-		addMembersToLog(memberToUpdate.getNode().getUuid(), log);
-		logEntryService.insert(log);
-		User user = userRepository.findByLsUuid(foundMemberToUpdate.getAccount().getUuid());
-		notify(new WorkGroupWarnUpdatedMemberEmailContext(updated, user, actor));
-=======
 		SharedSpaceMember updated = new SharedSpaceMember();
 		if (NodeType.DRIVE.equals(memberToUpdate.getNode().getNodeType())) {
 			foundMemberToUpdate = (SharedSpaceMemberDrive) foundMemberToUpdate;
@@ -296,8 +280,9 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		} else {
 			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN, "Node type not supported");
 		}
-		saveUpdateLog(authUser, actor, LogAction.UPDATE, foundMemberToUpdate, updated);
->>>>>>> improve drive member crud
+		SharedSpaceMember updated = businessService.update(foundMemberToUpdate, memberToUpdate);
+		User user = userRepository.findByLsUuid(foundMemberToUpdate.getAccount().getUuid());
+		notify(new WorkGroupWarnUpdatedMemberEmailContext(updated, user, actor));
 		return updated;
 	}
 

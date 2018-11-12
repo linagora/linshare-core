@@ -42,19 +42,20 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-@JsonSubTypes({ @Type(value = SharedSpaceMemberDrive.class, name = "SharedSpaceMemberDrive")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonSubTypes({ @JsonSubTypes.Type(value = SharedSpaceMemberDrive.class, name = "DRIVE"),
+	@JsonSubTypes.Type(value = SharedSpaceMemberWorkgroup.class, name = "WORK_GROUP")
 		})
-@XmlSeeAlso({ SharedSpaceMemberDrive.class
+@XmlSeeAlso({ SharedSpaceMemberDrive.class,
+	SharedSpaceMemberWorkgroup.class
 	})
 @XmlRootElement(name = "SharedSpaceMember")
 @Document(collection = "shared_space_members")
@@ -79,6 +80,8 @@ public class SharedSpaceMember {
 
 	protected boolean nested;
 
+	protected NodeType type;
+
 	// WorkAround
 	// we have to duplicate account information
 	// to avoid a side effect on front-end
@@ -97,7 +100,7 @@ public class SharedSpaceMember {
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
 	}
-	
+
 	public SharedSpaceMember(SharedSpaceMember member) {
 		super();
 		this.uuid = member.getUuid();
@@ -181,10 +184,19 @@ public class SharedSpaceMember {
 		this.nested = nested;
 	}
 
+	public NodeType getType() {
+		return type;
+	}
+
+	public void setType(NodeType type) {
+		this.type = type;
+	}
+
 	@Override
 	public String toString() {
 		return "SharedSpaceMember [id=" + id + ", uuid=" + uuid + ", node=" + node + ", role=" + role + ", account="
-				+ account + ", creationDate=" + creationDate + ", modificationDate=" + modificationDate + "]";
+				+ account + ", creationDate=" + creationDate + ", modificationDate=" + modificationDate + ", nested="
+				+ nested + ", type=" + type + ", user=" + user + "]";
 	}
 
 	/**

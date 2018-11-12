@@ -31,21 +31,43 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.userv2;
+package org.linagora.linshare.mongo.entities;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+public class SharedSpaceMemberContext {
 
-public interface SharedSpaceMemberRestService {
+	protected SharedSpaceRole role;
 
-	List<SharedSpaceMember> findAll() throws BusinessException;
+	protected SharedSpaceRole nestedRole;
 
-	SharedSpaceMember find(String uuid) throws BusinessException;
+	public SharedSpaceMemberContext() {
+		super();
+	}
 
-	SharedSpaceMember addMember(SharedSpaceMember ssMember) throws BusinessException;
+	public SharedSpaceMemberContext(SharedSpaceRole role) {
+		super();
+		this.role = role;
+	}
 
-	SharedSpaceMember update(SharedSpaceMember ssMember, String uuid) throws BusinessException;
+	public SharedSpaceMemberContext(SharedSpaceRole role, SharedSpaceRole nestedRole) {
+		super();
+		this.role = role;
+		this.nestedRole = nestedRole;
+	}
 
-	SharedSpaceMember delete(String actorUuid, SharedSpaceMember ssMember, String uuid) throws BusinessException;
+	public SharedSpaceRole getRole() {
+		return role;
+	}
+
+	public void setRole(SharedSpaceRole role) {
+		this.role = role;
+	}
+
+	public SharedSpaceRole getNestedRole() {
+		return nestedRole;
+	}
+
+	public void setNestedRole(SharedSpaceRole nestedRole) {
+		this.nestedRole = nestedRole;
+	}
 
 }

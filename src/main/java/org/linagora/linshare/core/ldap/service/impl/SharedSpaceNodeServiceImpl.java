@@ -47,6 +47,7 @@ import org.linagora.linshare.core.rac.SharedSpaceNodeResourceAccessControl;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
+import org.linagora.linshare.core.service.SharedSpaceMemberDriveService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
@@ -57,19 +58,21 @@ public class SharedSpaceNodeServiceImpl extends org.linagora.linshare.core.servi
 
 	SharedSpaceNodeBusinessService businessService;
 
-	public SharedSpaceNodeServiceImpl(SharedSpaceNodeBusinessService businessService,
-			SharedSpaceNodeResourceAccessControl sharedSpaceNodeResourceAccessControl,
+	public SharedSpaceNodeServiceImpl(
+			SharedSpaceNodeBusinessService businessService,
+			SharedSpaceNodeResourceAccessControl rac,
 			SharedSpaceMemberBusinessService memberBusinessService,
-			SharedSpaceMemberService sharedSpaceMemberService,
+			SharedSpaceMemberService memberService,
 			SharedSpaceRoleService ssRoleService,
 			LogEntryService logEntryService,
 			ThreadService threadService,
 			ThreadRepository threadRepository,
 			FunctionalityReadOnlyService functionalityService,
 			AccountQuotaBusinessService accountQuotaBusinessService,
-			WorkGroupNodeService workGroupNodeService) {
-		super(businessService, sharedSpaceNodeResourceAccessControl, memberBusinessService, sharedSpaceMemberService,
-				ssRoleService, logEntryService, threadService,threadRepository,functionalityService, accountQuotaBusinessService, workGroupNodeService);
+			WorkGroupNodeService workGroupNodeService,
+			SharedSpaceMemberDriveService memberDriveService) {
+		super(businessService, rac, memberBusinessService, memberService, ssRoleService, logEntryService, threadService,
+				threadRepository, functionalityService, accountQuotaBusinessService, workGroupNodeService, memberDriveService);
 		this.businessService = businessService;
 	}
 

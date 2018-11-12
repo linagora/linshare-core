@@ -212,13 +212,10 @@ public class AdvancedStatisticBatchTest extends LoggerParent {
 	private void createSharedSpaceNode(Account account, String label, String groupUuid) {
 		SharedSpaceRole adminRole = roleBusinessService.findByName("ADMIN");
 		Validate.notNull(adminRole, "adminRole must be set");
-		SharedSpaceRole driveCreatorRole = roleBusinessService.findByName("DRIVE_CREATOR");
-		Validate.notNull(driveCreatorRole, "driveCreatorRole must be set");
-
 		SharedSpaceNode node = new SharedSpaceNode(label, null, NodeType.DRIVE);
 		node.setUuid(groupUuid);
 		sharedSpaceNodeBusinessService.create(node);
-		memberService.createWithoutCheckPermission(account, account, node, adminRole, driveCreatorRole,
+		memberService.createWithoutCheckPermission(account, account, node, adminRole,
 				new SharedSpaceAccount((User) account));
 	}
 

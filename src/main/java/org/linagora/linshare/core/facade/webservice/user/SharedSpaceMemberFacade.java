@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.facade.webservice.user;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 
 public interface SharedSpaceMemberFacade {
@@ -43,9 +42,9 @@ public interface SharedSpaceMemberFacade {
 
 	SharedSpaceMember find(String actorUuid, String uuid) throws BusinessException;
 
-	SharedSpaceMember create(String actorUuid, SharedSpaceMemberDrive member) throws BusinessException;
+	SharedSpaceMember create(String actorUuid, SharedSpaceMember member) throws BusinessException;
 
-	SharedSpaceMember update(String actorUuid, SharedSpaceMemberDrive member, String uuid) throws BusinessException;
+	SharedSpaceMember update(String actorUuid, SharedSpaceMember member, String uuid) throws BusinessException;
 
 	SharedSpaceMember delete(String actorUuid, SharedSpaceMember member, String uuid) throws BusinessException;
 

@@ -36,18 +36,23 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
+import javax.ws.rs.NotSupportedException;
+
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceMemberFacade;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.SharedSpaceMemberDriveService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
+import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
 import com.google.common.base.Strings;
 
@@ -58,15 +63,19 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 	private final SharedSpaceNodeService nodeService;
 
 	private final SharedSpaceRoleService roleService;
-	
+
+	private final SharedSpaceMemberDriveService memberDriveService;
+
 	public SharedSpaceMemberFacadeImpl(SharedSpaceMemberService memberService,
 			AccountService accountService,
 			SharedSpaceNodeService nodeService,
-			SharedSpaceRoleService roleService) {
+			SharedSpaceRoleService roleService,
+			SharedSpaceMemberDriveService memberDriveService) {
 		super(accountService);
 		this.memberService = memberService;
 		this.nodeService = nodeService;
 		this.roleService = roleService;
+		this.memberDriveService = memberDriveService;
 	}
 
 	public SharedSpaceMember find(String actorUuid, String uuid) throws BusinessException {
@@ -77,7 +86,7 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 	}
 
 	@Override
-	public SharedSpaceMember create(String actorUuid, SharedSpaceMemberDrive member) throws BusinessException {
+	public SharedSpaceMember create(String actorUuid, SharedSpaceMember member) throws BusinessException {
 		Validate.notNull(member, "Shared space member must be set.");
 		Validate.notNull(member.getAccount(), "Account must be set.");
 		Validate.notNull(member.getRole(), "Role must be set.");
@@ -91,17 +100,23 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 		Validate.notNull(foundSharedSpaceNode, "Missing required node");
 		SharedSpaceRole foundSharedSpaceRole = roleService.find(authUser, actor, member.getRole().getUuid());
 		Validate.notNull(foundSharedSpaceRole, "Missing required role");
-		SharedSpaceRole foundDriveRole = new SharedSpaceRole();
-		if(member.getNestedRole() != null) {
-			foundDriveRole = roleService.find(authUser, actor, member.getNestedRole().getUuid());
-			Validate.notNull(foundDriveRole, "missing drive role");
+		SharedSpaceMemberContext context = new SharedSpaceMemberContext(foundSharedSpaceRole);
+		if (NodeType.DRIVE.equals(member.getNode().getNodeType())) {
+			GenericLightEntity nestedRole = ((SharedSpaceMemberDrive) member).getNestedRole();
+			Validate.notNull(nestedRole, "NestedRole must be set");
+			SharedSpaceRole foundDriveRole = roleService.find(authUser, actor, nestedRole.getUuid());
+			Validate.notNull(foundDriveRole, "missing nested role");
+			context.setNestedRole(foundDriveRole);
+			return memberDriveService.create(authUser, actor, foundSharedSpaceNode, context, member.getAccount());
+		} else if (NodeType.WORK_GROUP.equals(member.getNode().getNodeType())) {
+			return memberService.create(authUser, actor, foundSharedSpaceNode, context, member.getAccount());
+		} else {
+			throw new NotSupportedException("Node type not supported");
 		}
-		SharedSpaceMember toAddMember = memberService.create(authUser, actor, foundSharedSpaceNode, foundSharedSpaceRole, foundDriveRole, member.getAccount());
-		return toAddMember;
 	}
 
 	@Override
-	public SharedSpaceMember update(String actorUuid, SharedSpaceMemberDrive member, String uuid) throws BusinessException {
+	public SharedSpaceMember update(String actorUuid, SharedSpaceMember member, String uuid) throws BusinessException {
 		Account authUser = checkAuthentication();
 		Account actor = getActor(authUser, actorUuid);
 		Validate.notNull(member, "Shared space member must be set.");
@@ -110,7 +125,13 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 		} else {
 			Validate.notEmpty(member.getUuid(), "The shared space member uuid to update must be set.");
 		}
-		return memberService.update(authUser, actor, member);
+		if (NodeType.DRIVE.equals(member.getNode().getNodeType())) {
+			return memberDriveService.update(authUser, actor, member);
+		} else if (NodeType.WORK_GROUP.equals(member.getNode().getNodeType())) {
+			return memberService.update(authUser, actor, member);
+		} else {
+			throw new NotSupportedException("Node type not supported");
+		}
 	}
 
 	@Override

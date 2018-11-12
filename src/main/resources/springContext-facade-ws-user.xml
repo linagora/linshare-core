@@ -183,5 +183,6 @@
 		<constructor-arg ref="sharedSpaceMemberService" />
 		<constructor-arg ref="sharedSpaceNodeService" />
 		<constructor-arg ref="sharedSpaceRoleService" />
+		<constructor-arg ref="sharedSpaceMemberDriveService" />
 	</bean>	
 </beans>

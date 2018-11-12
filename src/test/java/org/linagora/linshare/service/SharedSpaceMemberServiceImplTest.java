@@ -61,7 +61,7 @@ import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
-import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberContext;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
@@ -171,7 +171,7 @@ public class SharedSpaceMemberServiceImplTest {
 		lightNodePersisted = new GenericLightEntity(node.getUuid(), node.getUuid());
 		accountJhon = new SharedSpaceAccount(john);
 		accountJane = new SharedSpaceAccount(jane);
-		SharedSpaceMember johnMemberShip = service.createWithoutCheckPermission(john, john, node, adminRole, null,
+		SharedSpaceMember johnMemberShip = service.createWithoutCheckPermission(john, john, node, adminRole,
 				accountJhon);
 		Assertions.assertNotNull(johnMemberShip, "John has not been added as a member of his shared space");
 		logger.debug(LinShareTestConstants.END_SETUP);

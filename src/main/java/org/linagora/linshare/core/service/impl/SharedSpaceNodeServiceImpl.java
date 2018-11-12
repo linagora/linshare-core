@@ -35,6 +35,8 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
 
+import javax.ws.rs.NotSupportedException;
+
 import org.jsoup.helper.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
@@ -57,6 +59,7 @@ import org.linagora.linshare.core.rac.SharedSpaceNodeResourceAccessControl;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
+import org.linagora.linshare.core.service.SharedSpaceMemberDriveService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
@@ -98,6 +101,8 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 	
 	protected final WorkGroupNodeService workGroupNodeService;
 
+	private final SharedSpaceMemberDriveService memberDriveService;
+
 	public SharedSpaceNodeServiceImpl(SharedSpaceNodeBusinessService businessService,
 			SharedSpaceNodeResourceAccessControl rac,
 			SharedSpaceMemberBusinessService memberBusinessService,
@@ -108,7 +113,8 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 			ThreadRepository threadRepository,
 			FunctionalityReadOnlyService functionalityService,
 			AccountQuotaBusinessService accountQuotaBusinessService,
-			WorkGroupNodeService workGroupNodeService) {
+			WorkGroupNodeService workGroupNodeService,
+			SharedSpaceMemberDriveService memberDriveService) {
 		super(rac);
 		this.businessService = businessService;
 		this.memberService = memberService;
@@ -120,6 +126,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
 		this.threadRepository = threadRepository;
 		this.workGroupNodeService = workGroupNodeService;
+		this.memberDriveService = memberDriveService;
 	}
 
 	@Override
@@ -157,16 +164,18 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		checkCreatePermission(authUser, actor, SharedSpaceNode.class, getBusinessErrorCode(node.getNodeType()), node);
 		SharedSpaceNode created = new SharedSpaceNode();
 		SharedSpaceRole role = ssRoleService.getAdmin(authUser, actor);
+		SharedSpaceRole nestedRole = null;
 		// Hack to create thread into shared space node
-		if (node.getNodeType().equals(NodeType.WORK_GROUP)) {
-			created = simpleCreate(authUser, actor, node);
-			memberService.createWithoutCheckPermission(authUser, actor, created, role, null,
+		created = simpleCreate(authUser, actor, node);
+		if (NodeType.DRIVE.equals(node.getNodeType())) {
+			nestedRole = ssRoleService.getDriveAdmin(authUser, actor);
+			memberDriveService.createWithoutCheckPermission(authUser, actor, created, role, nestedRole,
 					new SharedSpaceAccount((User) actor));
-		} else if (node.getNodeType().equals(NodeType.DRIVE)) {
-			created = businessService.create(node);
-			SharedSpaceRole driveRole = ssRoleService.getDriveAdmin(authUser, actor);
-			memberService.createWithoutCheckPermission(authUser, actor, created, role, driveRole,
+		} else if (NodeType.WORK_GROUP.equals(node.getNodeType())) {
+			memberService.createWithoutCheckPermission(authUser, actor, created, role,
 					new SharedSpaceAccount((User) actor));
+		} else {
+			throw new NotSupportedException("Node type not supported");
 		}
 		return created;
 	}
@@ -209,7 +218,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		// Hack to create thread into shared space node
 		SharedSpaceNode created = simpleCreate(authUser, actor, node);
 		SharedSpaceRole role = ssRoleService.getAdmin(authUser, actor);
-		memberService.createWithoutCheckPermission(authUser, actor, created, role, null,
+		memberService.createWithoutCheckPermission(authUser, actor, created, role,
 					new SharedSpaceAccount((User) actor));
 		WorkGroup workGroup = threadService.find(authUser, actor, created.getUuid());
 		return new WorkGroupDto(workGroup, created);
