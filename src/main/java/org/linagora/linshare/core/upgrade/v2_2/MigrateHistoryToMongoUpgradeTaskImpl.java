@@ -169,7 +169,6 @@ public class MigrateHistoryToMongoUpgradeTaskImpl extends GenericUpgradeTaskImpl
 		UploadRequestHistory resource = res.getResource();
 		console.logError(batchRunContext, total, position, "The upgrade task : " + resource + " failed.",
 				batchRunContext);
-		logger.error("Error occured while updating the UploadRequestHistory : " + resource + ". BatchBusinessException",
-				exception);
+		logger.error("Error occured while updating the UploadRequestHistory : " + resource, exception);
 	}
 }

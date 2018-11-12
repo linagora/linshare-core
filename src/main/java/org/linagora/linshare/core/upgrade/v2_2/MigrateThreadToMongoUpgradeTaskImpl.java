@@ -131,8 +131,7 @@ public class MigrateThreadToMongoUpgradeTaskImpl extends GenericUpgradeTaskImpl 
 		WorkGroup resource = res.getResource();
 		console.logError(batchRunContext, total, position, "The upgrade task : " + resource + " failed",
 				batchRunContext);
-		logger.error("Error occured while migrating the threadMember : " + resource + ". BatchBusinessException",
-				exception);
+		logger.error("Error occured while migrating the threadMember : " + resource, exception);
 	}
 
 	private void createSharedSpaceMember(WorkgroupMember threadMemberOld, SharedSpaceNode node) {

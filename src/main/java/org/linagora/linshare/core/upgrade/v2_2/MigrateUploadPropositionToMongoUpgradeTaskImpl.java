@@ -134,8 +134,7 @@ public class MigrateUploadPropositionToMongoUpgradeTaskImpl extends GenericUpgra
 		UploadPropositionOLD resource = res.getResource();
 		console.logError(batchRunContext, total, position, "The upgrade task : " + resource + " failed",
 				batchRunContext);
-		logger.error("Error occured while migrating the UploadProposition : " + resource + ". BatchBusinessException",
-				exception);
+		logger.error("Error occured while migrating the UploadProposition : " + resource, exception);
 	}
 
 	private void createNewUploadProposition(UploadPropositionOLD oldUploadProposition) {

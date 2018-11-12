@@ -138,8 +138,7 @@ public class MigrateWorkGroupAuditToSharedSpaceNodeUpgradeTaskImpl extends Gener
 		ThreadAuditLogEntry resource = res.getResource();
 		console.logError(batchRunContext, total, position, "The upgrade task : " + resource + " failed",
 				batchRunContext);
-		logger.error("Error occured while migrating the threadAudit : " + resource + ". BatchBusinessException",
-				exception);
+		logger.error("Error occured while migrating the threadAudit : " + resource, exception);
 	}
 
 	private List<String> findAllWorkGroupsAudit() {

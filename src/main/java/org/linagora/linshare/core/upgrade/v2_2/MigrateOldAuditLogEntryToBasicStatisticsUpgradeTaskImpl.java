@@ -159,8 +159,7 @@ public class MigrateOldAuditLogEntryToBasicStatisticsUpgradeTaskImpl extends Gen
 		AbstractDomain resource = res.getResource();
 		console.logError(batchRunContext, total, position, "The upgrade task : " + resource + " failed.",
 				batchRunContext);
-		logger.error("Error occured while creating basicStatistic: " + resource + ". BatchBusinessException",
-				exception);
+		logger.error("Error occured while creating basicStatistic: " + resource, exception);
 	}
 
 	protected Date decrementBeginDate(Date beginDate) {

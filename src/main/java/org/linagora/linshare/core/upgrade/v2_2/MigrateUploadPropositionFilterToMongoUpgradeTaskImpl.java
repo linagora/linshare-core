@@ -109,9 +109,7 @@ public class MigrateUploadPropositionFilterToMongoUpgradeTaskImpl extends Generi
 		UploadPropositionFilterOLD resource = res.getResource();
 		console.logError(batchRunContext, total, position, "The upgrade task : " + resource + "failed",
 				batchRunContext);
-		logger.error(
-				"Error occured while migrating the UploadPropositionFilter : " + resource + ". BatchBusinessException",
-				exception);
+		logger.error("Error occured while migrating the UploadPropositionFilter : " + resource, exception);
 	}
 
 	private void createNewUploadPropositionFilter(UploadPropositionFilterOLD oldFilter) {
