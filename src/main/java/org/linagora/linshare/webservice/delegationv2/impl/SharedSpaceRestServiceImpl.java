@@ -175,4 +175,20 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 	}
 
 
+	@Path("/{uuid}/workgroups")
+	@GET
+	@ApiOperation(value = "Get workgroups inside this node.", response = SharedSpaceNode.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to list all workgroups inside a shared space node."),
+			@ApiResponse(code = 404, message = "Not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public List<SharedSpaceNodeNested> findAllWorkGroupsInsideNode(
+			@ApiParam(value="The actor uuid.")
+				@PathParam(value="actorUuid")String actorUuid,
+			@ApiParam("The node uuid.")
+				@PathParam("uuid")String uuid) 
+			throws BusinessException {
+		return nodeFacade.findAllWorkGroupsInsideNode(actorUuid, uuid);
+	}
 }

@@ -57,7 +57,12 @@ public interface SharedSpaceMemberMongoRepository extends MongoRepository<Shared
 	@Query("{ 'account.uuid' : ?0, 'role.uuid' : ?1 }")
 	List<SharedSpaceMember> findByAccountAndRole(String accountUuid, String roleUuid);
 
+<<<<<<< HEAD
 	@Query("{ 'node.uuid' : ?0, 'uuid' : ?1 }")
 	SharedSpaceMember findByNodeUuidAndUuid(String nodeUuid, String uuid);
+=======
+	@Query("{ 'account.uuid' : ?0, 'node.parent' : ?1,  'nested' : ?2 }")
+	List<SharedSpaceMember> findByAccountUuidAndParentAndNested(String accountUuid, String parentUuid, boolean nested);
+>>>>>>> Issue #416 : Implementation CRUD workgroups inside drive
 
 }

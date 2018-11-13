@@ -67,6 +67,7 @@ import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
@@ -162,18 +163,33 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		checkVersioningParameter(actor.getDomain(), node);
 		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, node);
 		checkCreatePermission(authUser, actor, SharedSpaceNode.class, getBusinessErrorCode(node.getNodeType()), node);
-		SharedSpaceNode created = new SharedSpaceNode();
-		SharedSpaceRole role = ssRoleService.getAdmin(authUser, actor);
-		SharedSpaceRole nestedRole = null;
+		SharedSpaceNode parent = null;
+		if (node.getParentUuid() != null) {
+			parent = businessService.find(node.getParentUuid());
+		}
+		checkCreatePermission(authUser, actor, SharedSpaceNode.class, getBusinessErrorCode(node.getNodeType()), node, parent);
 		// Hack to create thread into shared space node
-		created = simpleCreate(authUser, actor, node);
+		SharedSpaceNode created = simpleCreate(authUser, actor, node);
+		SharedSpaceRole workGroupRole = ssRoleService.getAdmin(authUser, actor);
 		if (NodeType.DRIVE.equals(node.getNodeType())) {
-			nestedRole = ssRoleService.getDriveAdmin(authUser, actor);
-			memberDriveService.createWithoutCheckPermission(authUser, actor, created, role, nestedRole,
+			SharedSpaceRole driveRole = ssRoleService.getDriveAdmin(authUser, actor);
+			memberDriveService.createWithoutCheckPermission(authUser, actor, created, driveRole, workGroupRole,
 					new SharedSpaceAccount((User) actor));
 		} else if (NodeType.WORK_GROUP.equals(node.getNodeType())) {
-			memberService.createWithoutCheckPermission(authUser, actor, created, role,
+			SharedSpaceMember firstMember = memberService.createWithoutCheckPermission(authUser, actor, created, workGroupRole,
 					new SharedSpaceAccount((User) actor));
+			// Adding all drive members to the workgroup
+			if (parent != null && firstMember.isNested()) {
+				List<SharedSpaceMember> driveMembers = memberService.findAll(authUser, actor, parent.getUuid());
+				for (SharedSpaceMember sharedSpaceMember : driveMembers) {
+					if (sharedSpaceMember.getAccount().getUuid().equals(firstMember.getAccount().getUuid())) {
+						continue;
+					}
+					SharedSpaceMemberDrive driveMember = (SharedSpaceMemberDrive) sharedSpaceMember;
+					SharedSpaceRole nestedRole = ssRoleService.find(authUser, actor, driveMember.getNestedRole().getUuid());
+					memberService.create(authUser, actor, created, nestedRole, driveMember.getAccount());
+				}
+			}
 		} else {
 			throw new NotSupportedException("Node type not supported");
 		}
@@ -331,6 +347,19 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		preChecks(authUser, actor);
 		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN, null);
 		return businessService.findAll();
+	}
+
+	@Override
+	public List<SharedSpaceNodeNested> findAllWorkgroupsInNode(Account authUser, Account actor, SharedSpaceNode parent) {
+		preChecks(authUser, actor);
+		Validate.notNull(parent, "The parent must be set.");
+		if (!NodeType.DRIVE.equals(parent.getNodeType())) {
+			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN,
+					String.format("You can not list workgroups in this node with uuid {}", parent.getUuid()));
+		}
+		checkListPermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.SHARED_SPACE_NODE_FORBIDDEN, null,
+				parent);
+		return memberService.findAllWorkGroupsInNode(authUser, actor, parent.getUuid(), actor.getLsUuid());
 	}
 
 	@Override

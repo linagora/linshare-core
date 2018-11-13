@@ -52,6 +52,8 @@ public class SharedSpaceNodeNested {
 
 	protected String name;
 
+	protected String parent;
+
 	@Enumerated(EnumType.STRING)
 	protected NodeType nodeType;
 
@@ -63,11 +65,12 @@ public class SharedSpaceNodeNested {
 
 	protected Date modificationDate;
 
-	public SharedSpaceNodeNested(String uuid, String name, NodeType nodeType, Date creationDate,
+	public SharedSpaceNodeNested(String uuid, String name, String parent, NodeType nodeType, Date creationDate,
 			Date modificationDate) {
 		super();
 		this.uuid = uuid;
 		this.name = name;
+		this.parent = parent;
 		this.nodeType = nodeType;
 		this.creationDate = creationDate;
 		this.modificationDate = modificationDate;
@@ -79,6 +82,7 @@ public class SharedSpaceNodeNested {
 	public SharedSpaceNodeNested(SharedSpaceNode node) {
 		this.uuid = node.getUuid();
 		this.name = node.getName();
+		this.parent = node.getParentUuid();
 		this.nodeType = node.getNodeType();
 		this.creationDate = node.getCreationDate();
 		this.modificationDate = node.getModificationDate();
@@ -111,6 +115,14 @@ public class SharedSpaceNodeNested {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getParent() {
+		return parent;
+	}
+
+	public void setParent(String parent) {
+		this.parent = parent;
 	}
 
 	public NodeType getNodeType() {

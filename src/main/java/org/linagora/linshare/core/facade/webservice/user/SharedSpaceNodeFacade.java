@@ -59,4 +59,6 @@ public interface SharedSpaceNodeFacade {
 
 	List<SharedSpaceNodeNested> findAllMyNodes(String actorUuid, boolean withRole);
 
+	List<SharedSpaceNodeNested> findAllWorkGroupsInsideNode(String actorUuid, String uuid);
+
 }

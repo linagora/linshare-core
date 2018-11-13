@@ -189,7 +189,7 @@ public class MigrateWorkGroupMemberAuditToSharedSpaceMemberAuditUpgradeTaskImpl 
 	}
 
 	private SharedSpaceNodeNested getNode(WorkGroupLightDto groupLightDto) {
-		return new SharedSpaceNodeNested(groupLightDto.getUuid(), groupLightDto.getName(), NodeType.WORK_GROUP,
+		return new SharedSpaceNodeNested(groupLightDto.getUuid(), groupLightDto.getName(), null, NodeType.WORK_GROUP,
 				groupLightDto.getCreationDate(), null);
 	}
 

@@ -227,6 +227,9 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		Validate.notNull(node, "Node must be set.");
 		SharedSpaceMember memberWg = new SharedSpaceMember(new SharedSpaceNodeNested(node),
 				new GenericLightEntity(role.getUuid(), role.getName()), account);
+		String parentUuid = node.getParentUuid();
+		boolean isDriveMember = (parentUuid != null) && (!checkMemberNotInNode(account.getUuid(), parentUuid));
+		memberWg.setNested(isDriveMember);
 		SharedSpaceMember toAdd = businessService.create(memberWg);
 		saveLog(authUser, actor, LogAction.CREATE, toAdd);
 		return toAdd;
@@ -362,6 +365,14 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 	public void addMembersToLog(String workGroupUuid, AuditLogEntryUser log) {
 		List<String> members = businessService.findMembersUuidBySharedSpaceNodeUuid(workGroupUuid);
 		log.addRelatedAccounts(members);
+	}
+
+	@Override
+	public List<SharedSpaceNodeNested> findAllWorkGroupsInNode(Account authUser, Account actor, String parentUuid, String accountUuid){
+		preChecks(authUser, actor);
+		Validate.notEmpty(parentUuid, "ParentUuid must be set");
+		Validate.notEmpty(accountUuid, "AccountUuid must be set");
+		return businessService.findAllByParentAndAccount(parentUuid, accountUuid);
 	}
 
 }

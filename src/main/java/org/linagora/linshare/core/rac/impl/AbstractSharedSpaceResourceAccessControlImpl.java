@@ -84,6 +84,11 @@ public abstract class AbstractSharedSpaceResourceAccessControlImpl<R, E> extends
 
 	protected boolean defaultSharedSpacePermissionCheck(Account authUser, Account actor, String sharedSpaceNodeUuid,
 			TechnicalAccountPermissionType permission, SharedSpaceActionType action) {
+		return defaultSharedSpacePermissionCheck(authUser, actor, sharedSpaceNodeUuid, permission, action, getSharedSpaceResourceType());
+	}
+
+	protected boolean defaultSharedSpacePermissionCheck(Account authUser, Account actor, String sharedSpaceNodeUuid,
+			TechnicalAccountPermissionType permission, SharedSpaceActionType action, SharedSpaceResourceType resourceType) {
 		if (authUser.hasSuperAdminRole()) {
 			return true;
 		}
@@ -97,7 +102,7 @@ public abstract class AbstractSharedSpaceResourceAccessControlImpl<R, E> extends
 				if (foundMember == null) {
 					return false;
 				}
-				return hasPermission(foundMember.getRole().getUuid(), action, getSharedSpaceResourceType());
+				return hasPermission(foundMember.getRole().getUuid(), action, resourceType);
 			}
 		}
 		return false;

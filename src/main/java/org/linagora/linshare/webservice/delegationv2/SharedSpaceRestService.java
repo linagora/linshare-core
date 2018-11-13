@@ -54,4 +54,6 @@ public interface SharedSpaceRestService {
 
 	SharedSpaceNode update(PatchDto patchNode, String uuid) throws BusinessException;
 
+	List<SharedSpaceNodeNested> findAllWorkGroupsInsideNode(String actorUuid, String uuid) throws BusinessException;
+
 }

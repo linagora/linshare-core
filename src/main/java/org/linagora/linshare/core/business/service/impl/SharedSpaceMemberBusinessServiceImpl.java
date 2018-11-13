@@ -59,6 +59,9 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+
 public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBusinessService {
 
 	protected final SharedSpaceMemberMongoRepository repository;
@@ -70,6 +73,13 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	protected final UserRepository<User> userRepository;
 	
 	protected final MongoTemplate mongoTemplate;
+
+	protected final Function<SharedSpaceMember, SharedSpaceNodeNested> convertToSharedSpaceNode = new Function<SharedSpaceMember, SharedSpaceNodeNested>() {
+		@Override
+		public SharedSpaceNodeNested apply(SharedSpaceMember member) {
+			return member.getNode();
+		}
+	};
 
 	public SharedSpaceMemberBusinessServiceImpl(SharedSpaceMemberMongoRepository sharedSpaceMemberMongoRepository,
 			SharedSpaceRoleMongoRepository roleRepository,
@@ -205,6 +215,12 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	@Override
 	public SharedSpaceMember findByNodeAndUuid(String nodeUuid, String uuid) {
 		return repository.findByNodeUuidAndUuid(nodeUuid, uuid);
+	}
+
+	@Override
+	public List<SharedSpaceNodeNested> findAllByParentAndAccount(String parentUuid, String accountUuid) {
+		List<SharedSpaceMember> members = repository.findByAccountUuidAndParentAndNested(accountUuid, parentUuid, true);
+		return Lists.transform(members, convertToSharedSpaceNode);
 	}
 
 }

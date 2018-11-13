@@ -85,4 +85,7 @@ public interface SharedSpaceMemberService {
 	SharedSpaceMember createWithoutCheckPermission(Account authUser, Account actor, SharedSpaceNode node,
 			SharedSpaceRole role, SharedSpaceAccount account) throws BusinessException;
 
+	List<SharedSpaceNodeNested> findAllWorkGroupsInNode(Account authUser, Account actor, String parentUuid,
+			String accountUuid);
+
 }

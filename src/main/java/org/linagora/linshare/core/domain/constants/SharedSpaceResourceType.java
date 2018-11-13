@@ -48,4 +48,9 @@ public enum SharedSpaceResourceType {
 			throw new IllegalArgumentException("Doesn't match an existing resource type");
 		}
 	}
+
+	public static SharedSpaceResourceType fromNodeType(String nodeType) {
+		nodeType = nodeType.replace("_", "");
+		return fromString(nodeType);
+	}
 }

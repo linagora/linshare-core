@@ -72,4 +72,6 @@ public interface SharedSpaceMemberBusinessService {
 	List<SharedSpaceMember> findAllByAccountAndRole(String accountUuid, String roleUuid);
 
 	SharedSpaceMember findByNodeAndUuid(String nodeUuid, String uuid);
+
+	List<SharedSpaceNodeNested> findAllByParentAndAccount(String parentUuid, String accountUuid);
 }

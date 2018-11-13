@@ -141,4 +141,13 @@ public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements Shar
 		return nodeService.findAll(authUser, authUser);
 	}
 
+	@Override
+	public List<SharedSpaceNodeNested> findAllWorkGroupsInsideNode(String actorUuid, String uuid) {
+		Validate.notEmpty(uuid, "Missing required node uuid.");
+		Account authUser = checkAuthentication();
+		Account actor = getActor(authUser, actorUuid);
+		SharedSpaceNode parent = nodeService.find(authUser, actor, uuid);
+		return nodeService.findAllWorkgroupsInNode(authUser, actor, parent);
+	}
+
 }

@@ -62,24 +62,38 @@ public class SharedSpaceNodeResourceAccessControlImpl
 
 	@Override
 	protected boolean hasReadPermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
-		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.SHARED_SPACE_NODE_READ, SharedSpaceActionType.READ);
+		return defaultSharedSpacePermissionCheck(authUser, actor, entry.getUuid(),
+				TechnicalAccountPermissionType.SHARED_SPACE_NODE_READ, SharedSpaceActionType.READ, getSharedSpaceResourceType(entry));
 	}
 
 	@Override
 	protected boolean hasListPermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
+		if (opt.length > 0 && opt[0] != null) {
+			SharedSpaceNode parent = (SharedSpaceNode) opt[0];
+			boolean canListWorkGroupsInside = defaultSharedSpacePermissionCheck(authUser, actor, parent.getUuid(),
+					TechnicalAccountPermissionType.SHARED_SPACE_NODE_READ, SharedSpaceActionType.READ,
+					getSharedSpaceResourceType(parent));
+			if (!canListWorkGroupsInside) {
+				logger.error(String.format("You cannot list workgroups inside the node {}", parent.getUuid()));
+				return false;
+			}
+		}
 		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.SHARED_SPACE_NODE_LIST,
 				false);
 	}
 
 	@Override
 	protected boolean hasDeletePermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
-		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.SHARED_SPACE_NODE_DELETE, SharedSpaceActionType.DELETE);
+		return defaultSharedSpacePermissionCheck(authUser, actor, entry.getUuid(),
+				TechnicalAccountPermissionType.SHARED_SPACE_NODE_DELETE, SharedSpaceActionType.DELETE, getSharedSpaceResourceType(entry));
 	}
 
 	@Override
 	protected boolean hasCreatePermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
+		SharedSpaceNode parent = null;
+		if (opt.length > 0 && opt[0] != null) {
+			parent = (SharedSpaceNode) opt[0];
+		}
 		Functionality creation = new Functionality();
 		if (NodeType.WORK_GROUP.equals(entry.getNodeType())) {
 			creation = functionalityService.getWorkGroupCreationRight(actor.getDomain());
@@ -96,14 +110,23 @@ public class SharedSpaceNodeResourceAccessControlImpl
 			logger.error("The current domain does not allow you to create a shared space node.");
 			return false;
 		}
+		// Check the user can create workgroups inside this drive
+		if (parent != null && NodeType.DRIVE.equals(parent.getNodeType())) {
+			boolean canCreateWorkGroupsInside = defaultSharedSpacePermissionCheck(authUser, actor, parent,
+					TechnicalAccountPermissionType.SHARED_SPACE_NODE_CREATE, SharedSpaceActionType.CREATE);
+			if (!canCreateWorkGroupsInside) {
+				logger.error("You cannot create workgroups inside this node");
+				return false;
+			}
+		}
 		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.SHARED_SPACE_NODE_CREATE,
 				false);
 	}
 
 	@Override
 	protected boolean hasUpdatePermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
-		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.SHARED_SPACE_NODE_UPDATE, SharedSpaceActionType.UPDATE);
+		return defaultSharedSpacePermissionCheck(authUser, actor, entry.getUuid(),
+				TechnicalAccountPermissionType.SHARED_SPACE_NODE_UPDATE, SharedSpaceActionType.UPDATE, getSharedSpaceResourceType(entry));
 	}
 
 	@Override
@@ -114,6 +137,10 @@ public class SharedSpaceNodeResourceAccessControlImpl
 	@Override
 	protected Account getOwner(SharedSpaceNode entry, Object... opt) {
 		return null;
+	}
+
+	protected SharedSpaceResourceType getSharedSpaceResourceType(SharedSpaceNode entry) {
+		return SharedSpaceResourceType.fromNodeType(entry.getNodeType().toString());
 	}
 
 }
