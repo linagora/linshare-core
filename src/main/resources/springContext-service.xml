@@ -491,6 +491,7 @@
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="userRepository" />
 		<constructor-arg ref="driveMemberBusinessService" />
+		<constructor-arg ref="sharedSpaceNodeBusinessService" />
 	</bean>
 
 	<bean id="ldapGroupSyncService" class="org.linagora.linshare.core.service.impl.LDAPGroupSyncServiceImpl">

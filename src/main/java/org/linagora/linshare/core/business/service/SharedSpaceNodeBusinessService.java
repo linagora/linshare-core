@@ -54,4 +54,6 @@ public interface SharedSpaceNodeBusinessService {
 
 	List<SharedSpaceNode> searchByName(String name) throws BusinessException;
 
+	List<SharedSpaceNode> findByParentUuidAndType(String parentUuid) throws BusinessException;
+
 }

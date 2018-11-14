@@ -37,6 +37,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
@@ -62,6 +63,11 @@ public class SharedSpaceNodeBusinessServiceImpl implements SharedSpaceNodeBusine
 	@Override
 	public List<SharedSpaceNode> findByNameAndParentUuid(String name, String parentUuid) throws BusinessException {
 		return sharedSpaceNodeMongoRepository.findByNameAndParentUuid(name, parentUuid);
+	}
+
+	@Override
+	public List<SharedSpaceNode> findByParentUuidAndType(String parentUuid) throws BusinessException {
+		return sharedSpaceNodeMongoRepository.findByParentUuidAndNodeType(parentUuid, NodeType.WORK_GROUP);
 	}
 
 	@Override

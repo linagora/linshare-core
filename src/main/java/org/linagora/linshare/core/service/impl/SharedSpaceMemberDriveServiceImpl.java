@@ -33,14 +33,20 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.util.List;
+
 import org.jsoup.helper.Validate;
 import org.linagora.linshare.core.business.service.DriveMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
+import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.context.WorkGroupWarnDeletedMemberEmailContext;
+import org.linagora.linshare.core.notifications.context.WorkGroupWarnNewMemberEmailContext;
+import org.linagora.linshare.core.notifications.context.WorkGroupWarnUpdatedMemberEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.SharedSpaceMemberResourceAccessControl;
 import org.linagora.linshare.core.repository.UserRepository;
@@ -58,15 +64,19 @@ import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
 public class SharedSpaceMemberDriveServiceImpl extends SharedSpaceMemberServiceImpl implements SharedSpaceMemberDriveService {
 
+	private final SharedSpaceNodeBusinessService nodeBusinessService;
+
 	public SharedSpaceMemberDriveServiceImpl(SharedSpaceMemberBusinessService businessService,
 			NotifierService notifierService,
 			MailBuildingService mailBuildingService,
 			SharedSpaceMemberResourceAccessControl rac,
 			LogEntryService logEntryService,
 			UserRepository<User> userRepository,
-			DriveMemberBusinessService driveMemberBusinessService) {
+			DriveMemberBusinessService driveMemberBusinessService,
+			SharedSpaceNodeBusinessService nodeBusinessService) {
 		super(businessService, notifierService, mailBuildingService, rac, logEntryService, userRepository,
 				driveMemberBusinessService);
+		this.nodeBusinessService = nodeBusinessService;
 	}
 
 	@Override
@@ -83,11 +93,24 @@ public class SharedSpaceMemberDriveServiceImpl extends SharedSpaceMemberServiceI
 		Validate.notNull(role, "Role must be set.");
 		Validate.notNull(node, "Node must be set.");
 		Validate.notNull(nestedRole, "Drive role must be set.");
+		User newMember = userRepository.findByLsUuid(account.getUuid());
+		if (newMember == null) {
+			String message = String.format("The account with the UUID : %s is not existing", account.getUuid());
+			throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_NOT_FOUND, message);
+		}
 		SharedSpaceMemberDrive member = new SharedSpaceMemberDrive(new SharedSpaceNodeNested(node),
 				new GenericLightEntity(role.getUuid(), role.getName()), account,
 				new GenericLightEntity(nestedRole.getUuid(), nestedRole.getName()));
 		member.setNestedRole(new GenericLightEntity(nestedRole.getUuid(), nestedRole.getName()));
 		SharedSpaceMember toAdd = driveMemberBusinessService.create(member);
+		// Add the new member to all workgroups inside the drive
+		List<SharedSpaceNode> nestedWorkgroups = nodeBusinessService.findByParentUuidAndType(node.getUuid());
+		for (SharedSpaceNode wgNode : nestedWorkgroups) {
+			if (checkMemberNotInNode(account.getUuid(), wgNode.getUuid())) {
+				SharedSpaceMember wgMember = createWithoutCheckPermission(authUser, actor, wgNode, nestedRole, account);
+				notify(new WorkGroupWarnNewMemberEmailContext(wgMember, actor, newMember));
+			}
+		}
 		saveLog(authUser, actor, LogAction.CREATE, toAdd);
 		return toAdd;
 	}
@@ -97,15 +120,54 @@ public class SharedSpaceMemberDriveServiceImpl extends SharedSpaceMemberServiceI
 		preChecks(authUser, actor);
 		Validate.notNull(memberToUpdate, "Missing required member to update");
 		Validate.notNull(memberToUpdate.getUuid(), "Missing required member uuid to update");
-		Validate.notNull(((SharedSpaceMemberDrive) memberToUpdate).getNestedRole(), "The nested role must be set");
+		GenericLightEntity wgRole = ((SharedSpaceMemberDrive) memberToUpdate).getNestedRole();
+		Validate.notNull(wgRole, "The nested role must be set");
 		SharedSpaceMemberDrive foundMemberToUpdate = (SharedSpaceMemberDrive) findMemberByUuid(authUser, actor,
 				memberToUpdate.getAccount().getUuid(), memberToUpdate.getNode().getUuid());
 		checkUpdatePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
 				foundMemberToUpdate);
 		SharedSpaceMember updated = driveMemberBusinessService.update(foundMemberToUpdate,
 				(SharedSpaceMemberDrive) memberToUpdate);
+		if (!((SharedSpaceMemberDrive) updated).getNestedRole().equals(wgRole)) {
+			// Update the member on all workgroups inside the drive
+			List<SharedSpaceNode> nestedWorkgroups = nodeBusinessService
+					.findByParentUuidAndType(updated.getNode().getUuid());
+			for (SharedSpaceNode wgNode : nestedWorkgroups) {
+				SharedSpaceMember wgFoundMember = businessService
+						.findByAccountAndNode(memberToUpdate.getAccount().getUuid(), wgNode.getUuid());
+				SharedSpaceMember wgMemberToUpdate = new SharedSpaceMember(wgFoundMember);
+				wgMemberToUpdate.setRole(wgRole);
+				SharedSpaceMember updatedWgMember = businessService.update(wgFoundMember, wgMemberToUpdate);
+				User user = userRepository.findByLsUuid(wgFoundMember.getAccount().getUuid());
+				notify(new WorkGroupWarnUpdatedMemberEmailContext(updatedWgMember, user, actor));
+				saveUpdateLog(authUser, actor, LogAction.UPDATE, wgFoundMember, updatedWgMember);
+			}
+		}
 		saveUpdateLog(authUser, actor, LogAction.UPDATE, foundMemberToUpdate, updated);
 		return updated;
+	}
+
+	@Override
+	public SharedSpaceMember delete(Account authUser, Account actor, String uuid) {
+		preChecks(authUser, actor);
+		Validate.notNull(uuid, "Missing required member uuid to delete");
+		SharedSpaceMember foundMemberToDelete = find(authUser, actor, uuid);
+		checkDeletePermission(authUser, actor, SharedSpaceMember.class, BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
+				foundMemberToDelete);
+		businessService.delete(foundMemberToDelete);
+		saveLog(authUser, actor, LogAction.DELETE, foundMemberToDelete);
+		// Delete the member on all workgroups inside the drive
+		List<SharedSpaceNode> nestedWorkgroups = nodeBusinessService
+				.findByParentUuidAndType(foundMemberToDelete.getNode().getUuid());
+		for (SharedSpaceNode wgNode : nestedWorkgroups) {
+			SharedSpaceMember wgFoundMember = businessService
+					.findByAccountAndNode(foundMemberToDelete.getAccount().getUuid(), wgNode.getUuid());
+			businessService.delete(wgFoundMember);
+			saveLog(authUser, actor, LogAction.DELETE, wgFoundMember);
+			User user = userRepository.findByLsUuid(wgFoundMember.getAccount().getUuid());
+			notify(new WorkGroupWarnDeletedMemberEmailContext(wgFoundMember, actor, user));
+		}
+		return foundMemberToDelete;
 	}
 
 }

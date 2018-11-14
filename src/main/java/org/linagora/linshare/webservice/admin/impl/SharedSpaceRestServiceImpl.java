@@ -51,10 +51,12 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceMemberFacade;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceNodeFacade;
-import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.webservice.admin.SharedSpaceRestService;
+
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
@@ -229,5 +231,20 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 			throws BusinessException {
 		return ssMemberFacade.find(null, memberUuid);
 	}
-		
+
+	@Path("/{uuid}/workgroups")
+	@GET
+	@ApiOperation(value = "Get workgroups inside this node.", response = SharedSpaceNode.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to list all workgroups inside a shared space node."),
+			@ApiResponse(code = 404, message = "Not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public List<SharedSpaceNodeNested> findAllWorkGroupsInsideNode(
+			@ApiParam("The node uuid.")
+				@PathParam("uuid")String uuid) 
+			throws BusinessException {
+		return ssNodeFacade.findAllWorkGroupsInsideNode(null, uuid);
+	}
+
 }

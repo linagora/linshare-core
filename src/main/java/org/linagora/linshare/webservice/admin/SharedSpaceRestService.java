@@ -40,6 +40,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 
 public interface SharedSpaceRestService {
 
@@ -62,5 +63,7 @@ public interface SharedSpaceRestService {
 	SharedSpaceMember updateMember(SharedSpaceMemberDrive member, String memberUuid) throws BusinessException;
 
 	SharedSpaceNode update(PatchDto patchNode, String uuid) throws BusinessException;
+
+	List<SharedSpaceNodeNested> findAllWorkGroupsInsideNode(String uuid) throws BusinessException;
 
 }

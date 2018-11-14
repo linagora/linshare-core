@@ -143,8 +143,13 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 			Validate.notEmpty(member.getUuid(), "Missing required sharedSpace member uuid");
 			uuid = member.getUuid();
 		}
-		Validate.notEmpty(uuid, "Missing required sharedSpace member uuid");
-		return memberService.delete(authUser, actor, uuid);
+		if (NodeType.DRIVE.equals(member.getNode().getNodeType())) {
+			return memberDriveService.delete(authUser, actor, member.getUuid());
+		} else if (NodeType.WORK_GROUP.equals(member.getNode().getNodeType())) {
+			return memberService.delete(authUser, actor, member.getUuid());
+		} else {
+			throw new NotSupportedException("Node type not supported");
+		}
 	}
 
 	@Override
@@ -162,5 +167,4 @@ public class SharedSpaceMemberFacadeImpl extends GenericFacadeImpl implements Sh
 		Account actor = getActor(authUser, actorUuid);
 		return memberService.findAllUserMemberships(authUser, actor);
 	}
-
 }

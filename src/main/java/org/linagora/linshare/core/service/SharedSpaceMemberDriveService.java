@@ -18,4 +18,6 @@ public interface SharedSpaceMemberDriveService {
 
 	SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate);
 
+	SharedSpaceMember delete(Account authUser, Account actor, String uuid);
+
 }
