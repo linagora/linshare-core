@@ -130,9 +130,9 @@ public class SharedSpaceMemberDriveServiceImpl extends SharedSpaceMemberServiceI
 				(SharedSpaceMemberDrive) memberToUpdate);
 		if (!((SharedSpaceMemberDrive) updated).getNestedRole().equals(wgRole)) {
 			// Update the member on all workgroups inside the drive
-			List<SharedSpaceNode> nestedWorkgroups = nodeBusinessService
-					.findByParentUuidAndType(updated.getNode().getUuid());
-			for (SharedSpaceNode wgNode : nestedWorkgroups) {
+			List<SharedSpaceNodeNested> nestedWorkgroups = businessService
+					.findAllByParentAndAccount(updated.getNode().getUuid(), foundMemberToUpdate.getAccount().getUuid());
+			for (SharedSpaceNodeNested wgNode : nestedWorkgroups) {
 				SharedSpaceMember wgFoundMember = businessService
 						.findByAccountAndNode(memberToUpdate.getAccount().getUuid(), wgNode.getUuid());
 				SharedSpaceMember wgMemberToUpdate = new SharedSpaceMember(wgFoundMember);
@@ -157,9 +157,9 @@ public class SharedSpaceMemberDriveServiceImpl extends SharedSpaceMemberServiceI
 		businessService.delete(foundMemberToDelete);
 		saveLog(authUser, actor, LogAction.DELETE, foundMemberToDelete);
 		// Delete the member on all workgroups inside the drive
-		List<SharedSpaceNode> nestedWorkgroups = nodeBusinessService
-				.findByParentUuidAndType(foundMemberToDelete.getNode().getUuid());
-		for (SharedSpaceNode wgNode : nestedWorkgroups) {
+		List<SharedSpaceNodeNested> nestedWorkgroups = businessService.findAllByParentAndAccount(
+				foundMemberToDelete.getNode().getUuid(), foundMemberToDelete.getAccount().getUuid());
+		for (SharedSpaceNodeNested wgNode : nestedWorkgroups) {
 			SharedSpaceMember wgFoundMember = businessService
 					.findByAccountAndNode(foundMemberToDelete.getAccount().getUuid(), wgNode.getUuid());
 			businessService.delete(wgFoundMember);
