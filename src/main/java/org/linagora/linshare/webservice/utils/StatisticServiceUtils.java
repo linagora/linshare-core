@@ -68,7 +68,7 @@ public class StatisticServiceUtils {
 			if (beginDate == null) {
 				Calendar cal = new GregorianCalendar();
 				cal.setTime(eDate);
-				cal.add(Calendar.YEAR, -1);
+				cal.add(Calendar.MONTH, -1);
 				cal.set(Calendar.HOUR_OF_DAY, 0);
 				cal.set(Calendar.MINUTE, 0);
 				cal.set(Calendar.SECOND, 0);
@@ -76,7 +76,6 @@ public class StatisticServiceUtils {
 			} else {
 				bDate = formatter.parse(beginDate);
 			}
-
 		} catch (ParseException e) {
 			throw new BusinessException(BusinessErrorCode.STATISTIC_DATE_PARSING_ERROR, "Can not parse the dates.");
 		}

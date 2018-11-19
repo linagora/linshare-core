@@ -46,7 +46,7 @@ import org.linagora.linshare.mongo.entities.ExceptionStatistic;
 
 public interface ExceptionStatisticService {
 
-	ExceptionStatistic createExceptionStatistic(BusinessErrorCode errorCode, StackTraceElement[] stackTrace,ExceptionType type, User authUser);
+	ExceptionStatistic createExceptionStatistic(BusinessErrorCode errorCode, String stackTrace,ExceptionType type, User authUser);
 
 	Long countExceptionStatistic(String domainUuid, ExceptionType exceptionType, Date beginDate, Date endDate,
 			ExceptionStatisticType type);

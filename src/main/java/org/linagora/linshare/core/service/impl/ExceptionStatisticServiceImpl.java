@@ -66,7 +66,7 @@ public class ExceptionStatisticServiceImpl extends StatisticServiceUtils impleme
 	}
 
 	@Override
-	public ExceptionStatistic createExceptionStatistic(BusinessErrorCode errorCode, StackTraceElement[] stackTrace,
+	public ExceptionStatistic createExceptionStatistic(BusinessErrorCode errorCode, String stackTrace,
 			ExceptionType type, User authUser) {
 		Validate.notNull(type);
 		String domainUuid = authUser.getDomain().getUuid();

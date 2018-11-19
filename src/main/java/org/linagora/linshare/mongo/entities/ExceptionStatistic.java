@@ -69,7 +69,7 @@ public class ExceptionStatistic implements Cloneable {
 
 	protected ExceptionType exceptionType;
 
-	protected StackTraceElement[] stackTrace;
+	protected String stackTrace;
 
 	protected BusinessErrorCode errorCode;
 
@@ -78,7 +78,7 @@ public class ExceptionStatistic implements Cloneable {
 	}
 
 	public ExceptionStatistic(Long value, String domainUuid, String parentDomainUuid, BusinessErrorCode errorCode,
-			StackTraceElement[] stackTrace, ExceptionType exceptionType, ExceptionStatisticType type) {
+			String stackTrace, ExceptionType exceptionType, ExceptionStatisticType type) {
 		super();
 		this.value = value;
 		this.domainUuid = domainUuid;
@@ -155,11 +155,11 @@ public class ExceptionStatistic implements Cloneable {
 		this.exceptionType = exceptionType;
 	}
 
-	public StackTraceElement[] getStackTrace() {
+	public String getStackTrace() {
 		return stackTrace;
 	}
 
-	public void setStackTrace(StackTraceElement[] stackTrace) {
+	public void setStackTrace(String stackTrace) {
 		this.stackTrace = stackTrace;
 	}
 

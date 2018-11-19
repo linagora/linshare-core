@@ -1,5 +1,6 @@
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -44,7 +45,7 @@ public class ExceptionStatisticAdminFacadeImpl extends AdminGenericFacadeImpl im
 		if (authUser == null) {
 			return null;
 		}
-		return statisticService.createExceptionStatistic(errorCode, stackTrace, type, authUser);
+		return statisticService.createExceptionStatistic(errorCode, Arrays.toString(stackTrace), type, authUser);
 	}
 
 	@Override
