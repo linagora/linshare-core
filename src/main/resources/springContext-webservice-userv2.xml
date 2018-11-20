@@ -56,6 +56,10 @@
 		<constructor-arg value="${linshare.rest.files.size.validation}" />
 	</bean>
 
+	<bean id="userv2WorkGroupNodeLightRestService" class="org.linagora.linshare.webservice.userv2.impl.WorkGroupNodeLightRestServiceImpl">
+		<constructor-arg ref="wsWorkGroupNodeFacade" />
+	</bean>
+
 	<bean id="userv2UserPreferenceRestService" class="org.linagora.linshare.webservice.userv2.impl.UserPreferenceRestServiceImpl">
 		<constructor-arg ref="wsUserPreferenceFacade"/>
 	</bean>
@@ -179,6 +183,7 @@
 			<ref bean="userv2WorkGroupRestService" />
 			<ref bean="userv2WorkGroupMemberRestService" />
 			<ref bean="userv2WorkGroupNodeRestService" />
+			<ref bean="userv2WorkGroupNodeLightRestService" />
 			<ref bean="userv2GuestRestService" />
 			<ref bean="userv2ShareRestService" />
 			<ref bean="userv2RestService" />

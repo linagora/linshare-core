@@ -538,4 +538,9 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 	protected boolean isRevison(WorkGroupNode node) {
 		return node.getNodeType().equals(WorkGroupNodeType.DOCUMENT_REVISION);
 	}
+
+	@Override
+	public WorkGroupNode findByWorkGroupNodeUuid(String uuid) {
+		return repository.findByUuid(uuid);
+	}
 }

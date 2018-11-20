@@ -39,8 +39,8 @@ import java.util.List;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.utils.FileAndMetaData;
@@ -100,5 +100,7 @@ public interface WorkGroupNodeService {
 
 	@Deprecated
 	WorkGroupNode getRootFolder(Account actor, Account owner, WorkGroup workGroup);
+
+	WorkGroupNode findByWorkGroupNodeUuid(String uuid);
 
 }

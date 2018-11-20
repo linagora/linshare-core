@@ -296,4 +296,13 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 				endDate);
 	}
 
+	@Override
+	public String findByWorkGroupNodeUuid(String uuid) {
+		Validate.notEmpty(uuid, "Missing required workGroup node uuid");
+		checkAuthentication();
+		WorkGroupNode workGroupNode = service.findByWorkGroupNodeUuid(uuid);
+		Validate.notNull(workGroupNode, "Node not found");
+		return workGroupNode.getWorkGroup();
+	}
+
 }
