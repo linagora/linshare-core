@@ -38,11 +38,11 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
 import com.google.common.collect.Sets;
 import com.wordnik.swagger.annotations.ApiModel;
@@ -55,11 +55,11 @@ public class WorkGroupDto extends AccountDto {
 	@ApiModelProperty(value = "Name")
 	protected String name;
 
-	@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@ApiModelProperty(value = "Workgroup's quota uuid, only available in v2.")
 	protected String quotaUuid;
 
-	@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@ApiModelProperty(value = "Members")
 	protected Set<WorkGroupMemberDto> members;
 

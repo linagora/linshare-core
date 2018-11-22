@@ -34,17 +34,19 @@
 package org.linagora.linshare.mongo.entities;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
 import org.linagora.linshare.webservice.userv1.task.context.WorkGroupEntryTaskContext;
 import org.springframework.data.annotation.Transient;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 @XmlRootElement(name = "WorkGroupAsyncTask")
 public class WorkGroupAsyncTask extends WorkGroupNode {
 
 	@Transient
-	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected AsyncTaskDto async;
 
 	public WorkGroupAsyncTask() {

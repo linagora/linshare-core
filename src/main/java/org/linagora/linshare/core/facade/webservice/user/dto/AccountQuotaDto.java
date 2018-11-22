@@ -35,8 +35,7 @@ package org.linagora.linshare.core.facade.webservice.user.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -57,7 +56,7 @@ public class AccountQuotaDto {
 	protected Boolean maintenance;
 
 	@ApiModelProperty(value = "The domain used space")
-	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected Long domainUsedSpace;
 
 	public AccountQuotaDto() {

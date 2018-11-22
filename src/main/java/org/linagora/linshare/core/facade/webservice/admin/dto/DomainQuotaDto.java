@@ -37,9 +37,9 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.entities.DomainQuota;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.wordnik.swagger.annotations.ApiModel;
@@ -49,7 +49,7 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "DomainQuota", description = "A domain quota instance for a domain.")
 public class DomainQuotaDto extends QuotaDto {
 
-	@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@ApiModelProperty(value = "List of all quota containers.")
 	List<String> containerUuids;
 

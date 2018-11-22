@@ -36,7 +36,6 @@ package org.linagora.linshare.mongo.entities.logs;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -51,6 +50,8 @@ import org.linagora.linshare.mongo.entities.mto.EntryMto;
 import org.linagora.linshare.mongo.entities.mto.ShareEntryGroupMto;
 import org.linagora.linshare.mongo.entities.mto.ShareEntryMto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 @XmlRootElement
 public class ShareEntryAuditLogEntry extends AuditLogEntryUser {
 
@@ -64,7 +65,7 @@ public class ShareEntryAuditLogEntry extends AuditLogEntryUser {
 
 	protected ShareEntryGroupMto shareEntryGroup;
 
-	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected CopyMto copiedTo;
 
 	public ShareEntryAuditLogEntry() {

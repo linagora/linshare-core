@@ -35,10 +35,10 @@ package org.linagora.linshare.core.facade.webservice.admin.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.facade.webservice.common.dto.AccountDto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -50,7 +50,7 @@ public class AccountQuotaDto extends QuotaDto {
 	@ApiModelProperty(value = "The maximum file size accepted.")
 	protected Long maxFileSize;
 
-	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@ApiModelProperty(value = "The default maximum file size accepted.")
 	protected Long defaultMaxFileSize;
 

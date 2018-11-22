@@ -38,12 +38,12 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.webservice.userv1.task.context.WorkGroupEntryTaskContext;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -78,14 +78,14 @@ public class WorkGroupEntryDto extends EntryDto {
 	@ApiModelProperty(value = "hasThumbnail")
 	protected boolean hasThumbnail;
 
-	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected AsyncTaskDto async;
 
-	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@ApiModelProperty(value = "workGroup")
 	protected WorkGroupLightDto workGroup;
 
-	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@ApiModelProperty(value = "workGroupFolder")
 	protected WorkGroupNode workGroupFolder;
 

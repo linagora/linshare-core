@@ -38,7 +38,6 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
@@ -47,6 +46,7 @@ import org.linagora.linshare.core.facade.webservice.common.dto.ShareDto;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.webservice.userv1.task.context.DocumentTaskContext;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Function;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -88,10 +88,10 @@ public class DocumentDto extends EntryDto {
 	@ApiModelProperty(value = "Shared")
 	protected Long shared;
 
-	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected AsyncTaskDto async;
 
-	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	protected List<ShareDto> shares;
 
 	public DocumentDto(AsyncTaskDto asyncTask, DocumentTaskContext documentTaskContext) {

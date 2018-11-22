@@ -35,9 +35,10 @@ package org.linagora.linshare.mongo.entities;
 
 import java.util.Date;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties({"externalId", "prefix", "syncDate", "domain"})
 public class SharedSpaceLDAPGroup extends SharedSpaceNode {

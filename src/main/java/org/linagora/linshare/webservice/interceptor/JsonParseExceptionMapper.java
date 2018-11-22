@@ -41,7 +41,6 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.ext.ExceptionMapper;
 
 import org.apache.commons.httpclient.HttpStatus;
-import org.codehaus.jackson.JsonParseException;
 import org.linagora.linshare.core.domain.constants.ExceptionType;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.facade.webservice.admin.ExceptionStatisticAdminFacade;
@@ -49,6 +48,8 @@ import org.linagora.linshare.core.facade.webservice.common.dto.ErrorDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.fasterxml.jackson.core.JsonParseException;
 
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class JsonParseExceptionMapper implements ExceptionMapper<JsonParseException> {

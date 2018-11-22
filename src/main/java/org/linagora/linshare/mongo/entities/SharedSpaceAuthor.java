@@ -36,6 +36,7 @@ package org.linagora.linshare.mongo.entities;
 import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlRootElement;
+
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 @XmlRootElement(name = "Author")

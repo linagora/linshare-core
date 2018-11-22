@@ -35,7 +35,6 @@ package org.linagora.linshare.mongo.entities.logs;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -44,6 +43,10 @@ import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupLightDto
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 
 @XmlRootElement
 public class WorkGroupNodeAuditLogEntry extends AuditLogEntryUser {
@@ -54,10 +57,10 @@ public class WorkGroupNodeAuditLogEntry extends AuditLogEntryUser {
 
 	protected WorkGroupNode resourceUpdated;
 
-	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+	@JsonInclude(Include.NON_NULL)
 	protected CopyMto copiedTo;
 
-	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+	@JsonInclude(Include.NON_NULL)
 	protected CopyMto copiedFrom;
 
 	public WorkGroupNodeAuditLogEntry() {

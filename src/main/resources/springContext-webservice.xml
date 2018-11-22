@@ -46,7 +46,7 @@
 	<bean id="logOutbound" class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
 
 	<!-- enable json with jackson (not the default jettison) -->
-	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider" />
+	<bean id="jsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider" />
 
 	<!--  ExceptionMappers. -->
 	<bean id="businessExceptionMapper" class="org.linagora.linshare.webservice.interceptor.BusinessExceptionMapper" />
