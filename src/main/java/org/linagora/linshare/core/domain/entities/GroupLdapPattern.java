@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.domain.entities;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.linagora.linshare.core.facade.webservice.admin.dto.GroupLdapPatternDto;
 
@@ -47,15 +48,6 @@ public class GroupLdapPattern extends LdapPattern {
 	public static final String MEMBER_MAIL = "member_mail";
 	public static final String MEMBER_FIRST_NAME = "member_firstname";
 	public static final String MEMBER_LAST_NAME = "member_lastname";
-
-	static {
-		METHOD_MAPPING.put(DN, "setExternalId");
-		METHOD_MAPPING.put(GROUP_NAME, "setName");
-		METHOD_MAPPING.put(GROUP_MEMBER, "addMember");
-		METHOD_MAPPING.put(MEMBER_LAST_NAME, "setLastName");
-		METHOD_MAPPING.put(MEMBER_FIRST_NAME, "setFirstName");
-		METHOD_MAPPING.put(MEMBER_MAIL, "setEmail");
-	};
 
 	protected String searchAllGroupsQuery;
 
@@ -144,6 +136,18 @@ public class GroupLdapPattern extends LdapPattern {
 	@Override
 	public String toString() {
 		return "GroupLdapPattern [label=" + label + ", uuid=" + uuid + "]";
+	}
+
+	@Override
+	public Map<String, String> getMethodsMapping() {
+		Map<String, String> methodsMapping = super.getMethodsMapping();
+		methodsMapping.put(DN, "setExternalId");
+		methodsMapping.put(GROUP_NAME, "setName");
+		methodsMapping.put(GROUP_MEMBER, "addMember");
+		methodsMapping.put(MEMBER_LAST_NAME, "setLastName");
+		methodsMapping.put(MEMBER_FIRST_NAME, "setFirstName");
+		methodsMapping.put(MEMBER_MAIL, "setEmail");
+		return methodsMapping;
 	}
 
 }

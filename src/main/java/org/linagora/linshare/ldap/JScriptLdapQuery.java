@@ -213,8 +213,6 @@ public abstract class JScriptLdapQuery<T extends Object> {
 	 * @return List<User> List of user
 	 */
 	protected Set<T> dnListToObjectList(List<String> dnResultList, Map<String, LdapAttribute> ldapDbAttributes) {
-		ControlContext controlContext = initControlContext(ldapDbAttributes);
-
 		// converting resulting dn to User object
 		Set<T> users = Sets.newHashSet();
 		for (String dn : dnResultList) {
@@ -222,7 +220,7 @@ public abstract class JScriptLdapQuery<T extends Object> {
 			Date date_before = new Date();
 			T obj = null;
 			try {
-				obj = dnToObject(dn, controlContext.getLdapDbAttributes(), controlContext.getSearchControls());
+				obj = dnToObject(dn, ldapDbAttributes);
 			} catch (NamingException e) {
 				logger.error(e.getMessage());
 				logger.debug(e.toString());
@@ -339,7 +337,7 @@ public abstract class JScriptLdapQuery<T extends Object> {
 	}
 
 	protected boolean setUserAttribute(Object user, String attr_key, String curValue) {
-		String methodName = LdapPattern.METHOD_MAPPING.get(attr_key);
+		String methodName = ldapPattern.getMethodsMapping().get(attr_key);
 		if (methodName == null) {
 			logger.trace("Skipped. Method not found for attr_key: " + attr_key);
 			return false;
@@ -349,13 +347,8 @@ public abstract class JScriptLdapQuery<T extends Object> {
 			method.invoke(user, curValue);
 			return true;
 		} catch (Exception e) {
-			if (LdapPattern.DN.equals(attr_key)) {
-				logger.trace("Method '" + methodName + "' is not callable on current object: ", e);
-			}
-			else {
-				logger.error("Introspection : can not call method '" + methodName + "' on current object.");
-				logger.error("message : " + e.getMessage());
-			}
+			logger.error("Introspection : can not call method '" + methodName + "' on current object.");
+			logger.error("message : " + e.getMessage());
 		}
 		return false;
 	}

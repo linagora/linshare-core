@@ -34,8 +34,9 @@
 package org.linagora.linshare.core.domain.entities;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 public abstract class LdapPattern {
 
@@ -57,7 +58,10 @@ public abstract class LdapPattern {
 
 	protected Map<String, LdapAttribute> attributes;
 
-	public static final Map<String, String> METHOD_MAPPING = new HashMap<String, String>();
+	public static final String USER_MAIL = "user_mail";
+	public static final String USER_FIRST_NAME = "user_firstname";
+	public static final String USER_LAST_NAME = "user_lastname";
+	public static final String USER_UID = "user_uid";
 
 	protected LdapPattern() {
 	}
@@ -135,4 +139,12 @@ public abstract class LdapPattern {
 		return "LdapPattern [label=" + label + ", uuid=" + uuid + "]";
 	}
 
+	public Map<String, String> getMethodsMapping() {
+		Map<String, String> methodsMapping = Maps.newHashMap(); 
+		methodsMapping.put(USER_LAST_NAME, "setLastName");
+		methodsMapping.put(USER_FIRST_NAME, "setFirstName");
+		methodsMapping.put(USER_MAIL, "setMail");
+		methodsMapping.put(USER_UID, "setLdapUid");
+		return methodsMapping;
+	}
 }

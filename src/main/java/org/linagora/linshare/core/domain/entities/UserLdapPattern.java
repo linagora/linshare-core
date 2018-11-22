@@ -56,18 +56,6 @@ public class UserLdapPattern extends LdapPattern {
 
 	private Integer completionSizeLimit;
 
-	public static final String USER_MAIL = "user_mail";
-	public static final String USER_FIRST_NAME = "user_firstname";
-	public static final String USER_LAST_NAME = "user_lastname";
-	public static final String USER_UID = "user_uid";
-
-	static {
-		METHOD_MAPPING.put(USER_LAST_NAME, "setLastName");
-		METHOD_MAPPING.put(USER_FIRST_NAME, "setFirstName");
-		METHOD_MAPPING.put(USER_MAIL, "setMail");
-		METHOD_MAPPING.put(USER_UID, "setLdapUid");
-	};
-
 	protected UserLdapPattern() {
 	}
 	/**
@@ -239,4 +227,5 @@ public class UserLdapPattern extends LdapPattern {
 	public String getAttribute(String field) {
 		return attributes.get(field).getAttribute().trim().toLowerCase();
 	}
+
 }
