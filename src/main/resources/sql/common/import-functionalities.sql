@@ -241,6 +241,16 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 	VALUES (28, false, 'WORK_GROUP__CREATION_RIGHT', 57, 58, 1, 'WORK_GROUP', true, now(), now());
 -- INSERT INTO functionality_boolean(functionality_id, boolean_value) VALUES (28, true);
 
+	-- Functionality : WORKGROUP__FILE_EDITION
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (303, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (304, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) 
+	VALUES (305, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param, creation_date, modification_date)
+	VALUES (65, false, 'WORK_GROUP__FILE_EDITION', 303, 304, 305, 1, 'WORK_GROUP', true, now(), now());
+
 -- Functionality : CONTACTS_LIST
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (53, true, true, 1, false);

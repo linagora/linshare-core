@@ -418,4 +418,9 @@ public class FunctionalityReadOnlyServiceImpl implements
 		AbstractDomain domain = domainBusinessService.findById(domainIdentifier);
 		return getAcknowledgement(domain);
 	}
+
+	@Override
+	public Functionality getWorkGroupFileEdition(AbstractDomain domain) {
+		return _getFunctionality(domain, FunctionalityNames.WORK_GROUP__FILE_EDITION);
+	}
 }

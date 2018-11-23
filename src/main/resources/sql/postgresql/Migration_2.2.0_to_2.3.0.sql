@@ -170,6 +170,16 @@ INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_patt
 	VALUES (21, 'user_uid', 'uid', false, true, true, 5, false)
 	ON CONFLICT DO NOTHING;
 
+	-- Functionality : WORK_GROUP__FILE_EDITION
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (303, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (304, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) 
+	VALUES (305, true, true, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param, creation_date, modification_date)
+	VALUES (65, false, 'WORK_GROUP__FILE_EDITION', 303, 304, 305, 1, 'WORK_GROUP', true, now(), now());
+
 -- End of your requests
 
 -- LinShare version
