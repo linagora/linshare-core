@@ -218,7 +218,7 @@
 		<constructor-arg ref="uploadRequestEntryRessourceAccessControl" />
 		<constructor-arg ref="operationHistoryBusinessService" />
 		<constructor-arg ref="quotaService" />
-		<constructor-arg ref="documentGarbageCollecteurMongoRepository" />
+		<constructor-arg ref="documentGarbageCollectorMongoRepository" />
 		<constructor-arg ref="mailBuildingService"/>
 		<constructor-arg ref="notifierService"/>
 		<constructor-arg ref="documentEntryBusinessService" />
@@ -333,7 +333,7 @@
 
 	<bean id="workGroupDocumentService" class="org.linagora.linshare.core.service.impl.WorkGroupDocumentServiceImpl">
 		<constructor-arg ref="workGroupNodeMongoRepository" />
-		<constructor-arg ref="documentGarbageCollecteurMongoRepository" />
+		<constructor-arg ref="documentGarbageCollectorMongoRepository" />
 		<constructor-arg ref="threadMemberRepository" />
 		<constructor-arg ref="mongoTemplate" />
 		<constructor-arg ref="documentEntryBusinessService" />

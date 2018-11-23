@@ -75,12 +75,12 @@ import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.VirusScannerService;
-import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
+import org.linagora.linshare.mongo.entities.DocumentGarbageCollector;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.DocumentEntryAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.UploadRequestEntryAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
-import org.linagora.linshare.mongo.repository.DocumentGarbageCollecteurMongoRepository;
+import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
 
 public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Account, UploadRequestEntry>
 		implements UploadRequestEntryService {
@@ -107,7 +107,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 
 	private final NotifierService notifierService;
 
-	protected final DocumentGarbageCollecteurMongoRepository documentGarbageCollecteur;
+	protected final DocumentGarbageCollectorMongoRepository documentGarbageCollectorRepository;
 
 	private DocumentEntryBusinessService documentEntryBusinessService;
 
@@ -124,7 +124,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 			UploadRequestEntryRessourceAccessControl rac,
 			OperationHistoryBusinessService operationHistoryBusinessService,
 			QuotaService quotaService,
-			DocumentGarbageCollecteurMongoRepository documentGarbageCollecteur,
+			DocumentGarbageCollectorMongoRepository documentGarbageCollectorRepository,
 			MailBuildingService mailBuildingService,
 			NotifierService notifierService,
 			DocumentEntryBusinessService documentEntryBusinessService,
@@ -139,7 +139,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		this.antiSamyService = antiSamyService;
 		this.operationHistoryBusinessService = operationHistoryBusinessService;
 		this.quotaService = quotaService;
-		this.documentGarbageCollecteur = documentGarbageCollecteur;
+		this.documentGarbageCollectorRepository = documentGarbageCollectorRepository;
 		this.mailBuildingService = mailBuildingService;
 		this.notifierService = notifierService;
 		this.documentEntryBusinessService = documentEntryBusinessService;
@@ -278,7 +278,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		}
 		uploadRequestEntryBusinessService.delete(entry);
 		if (!entry.getCopied()) {
-			documentGarbageCollecteur.insert(new DocumentGarbageCollecteur(entry.getDocument().getUuid()));
+			documentGarbageCollectorRepository.insert(new DocumentGarbageCollector(entry.getDocument().getUuid()));
 		}
 		Account actor = uploadRequestUrl.getUploadRequest().getUploadRequestGroup().getOwner();
 		AuditLogEntryUser log = new UploadRequestEntryAuditLogEntry(new AccountMto(actor),
@@ -303,7 +303,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 					"Cannot delete file when upload request is not closed or archived");
 		}
 		if (!uploadRequestEntry.getCopied()) {
-			documentGarbageCollecteur.insert(new DocumentGarbageCollecteur(uploadRequestEntry.getDocument().getUuid()));
+			documentGarbageCollectorRepository.insert(new DocumentGarbageCollector(uploadRequestEntry.getDocument().getUuid()));
 		}
 		uploadRequestEntryBusinessService.delete(uploadRequestEntry);
 		if (uploadRequestEntry.getUploadRequestUrl().getUploadRequest().getEnableNotification()) {

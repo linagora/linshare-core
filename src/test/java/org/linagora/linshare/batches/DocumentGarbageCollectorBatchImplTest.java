@@ -55,8 +55,8 @@ import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.runner.BatchRunner;
-import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
-import org.linagora.linshare.mongo.repository.DocumentGarbageCollecteurMongoRepository;
+import org.linagora.linshare.mongo.entities.DocumentGarbageCollector;
+import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -77,18 +77,18 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-service.xml",
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml" })
-public class DocumentGarbageCollecteurBatchImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class DocumentGarbageCollectorBatchImplTest extends AbstractTransactionalJUnit4SpringContextTests {
 
 	@Autowired
 	@Qualifier("accountRepository")
 	private AccountRepository<Account> accountRepository;
 
 	@Autowired
-	@Qualifier("documentGarbageCollecteurBatch")
-	private GenericBatch documentGarbageCollecteurBatchImpl;
+	@Qualifier("documentGarbageCollectorBatch")
+	private GenericBatch documentGarbageCollectorBatchImpl;
 
 	@Autowired
-	private DocumentGarbageCollecteurMongoRepository documentGarbageRepository;
+	private DocumentGarbageCollectorMongoRepository documentGarbageRepository;
 
 	@Autowired
 	private DocumentEntryRepository documentEntryRepository;
@@ -145,19 +145,19 @@ public class DocumentGarbageCollecteurBatchImplTest extends AbstractTransactiona
 		DocumentEntry createDocumentEntry2 = documentEntryBusinessService.createDocumentEntry(john, tempFile2,
 				tempFile2.length(), "file2.txt", null, false, null, "text/plain", cal, false, null);
 		documentEntryBusinessService.deleteDocumentEntry(createDocumentEntry);
-		List<DocumentGarbageCollecteur> garbageCollecteurs = documentGarbageRepository.findAll();
-		Assert.assertEquals(1, garbageCollecteurs.size());
-		for (DocumentGarbageCollecteur documentGarbageCollecteur : garbageCollecteurs) {
+		List<DocumentGarbageCollector> garbageCollectors = documentGarbageRepository.findAll();
+		Assert.assertEquals(1, garbageCollectors.size());
+		for (DocumentGarbageCollector documentGarbageCollector : garbageCollectors) {
 			Integer hourInterval = 0 - cal.getMinimum(Calendar.HOUR_OF_DAY);
-			cal.setTime(documentGarbageCollecteur.getCreationDate());
+			cal.setTime(documentGarbageCollector.getCreationDate());
 			cal.add(Calendar.HOUR_OF_DAY, hourInterval);
-			documentGarbageCollecteur.setCreationDate(cal.getTime());
-			documentGarbageRepository.save(documentGarbageCollecteur);
+			documentGarbageCollector.setCreationDate(cal.getTime());
+			documentGarbageRepository.save(documentGarbageCollector);
 		}
 		documentEntryBusinessService.deleteDocumentEntry(createDocumentEntry2);
 		Assert.assertEquals(2, documentGarbageRepository.findAll().size());
 		List<GenericBatch> batches = Lists.newArrayList();
-		batches.add(documentGarbageCollecteurBatchImpl);
+		batches.add(documentGarbageCollectorBatchImpl);
 		Assert.assertTrue("At least one batch failed.", batchRunner.execute(batches));
 		Assert.assertEquals(0, documentEntryRepository.findAll().size());
 		// The garbage will not pick up this document because it's deleted in the same
@@ -177,19 +177,19 @@ public class DocumentGarbageCollecteurBatchImplTest extends AbstractTransactiona
 		DocumentEntry createDocumentEntry2 = documentEntryBusinessService.createDocumentEntry(john, tempFile2,
 				tempFile2.length(), "file2.txt", null, false, null, "text/plain", cal, false, null);
 		documentEntryBusinessService.deleteDocumentEntry(createDocumentEntry);
-		List<DocumentGarbageCollecteur> garbageCollecteurs = documentGarbageRepository.findAll();
-		Assert.assertEquals(1, garbageCollecteurs.size());
-		for (DocumentGarbageCollecteur documentGarbageCollecteur : garbageCollecteurs) {
+		List<DocumentGarbageCollector> garbageCollectors = documentGarbageRepository.findAll();
+		Assert.assertEquals(1, garbageCollectors.size());
+		for (DocumentGarbageCollector documentGarbageCollector : garbageCollectors) {
 			Integer hourInterval = 0 - cal.getMaximum(Calendar.HOUR_OF_DAY);
-			cal.setTime(documentGarbageCollecteur.getCreationDate());
+			cal.setTime(documentGarbageCollector.getCreationDate());
 			cal.add(Calendar.HOUR_OF_DAY, hourInterval);
-			documentGarbageCollecteur.setCreationDate(cal.getTime());
-			documentGarbageRepository.save(documentGarbageCollecteur);
+			documentGarbageCollector.setCreationDate(cal.getTime());
+			documentGarbageRepository.save(documentGarbageCollector);
 		}
 		documentEntryBusinessService.deleteDocumentEntry(createDocumentEntry2);
 		Assert.assertEquals(2, documentGarbageRepository.findAll().size());
 		List<GenericBatch> batches = Lists.newArrayList();
-		batches.add(documentGarbageCollecteurBatchImpl);
+		batches.add(documentGarbageCollectorBatchImpl);
 		Assert.assertTrue("At least one batch failed.", batchRunner.execute(batches));
 		Assert.assertEquals(0, documentEntryRepository.findAll().size());
 		// The garbage will pick up this document because it's deleted at the day before

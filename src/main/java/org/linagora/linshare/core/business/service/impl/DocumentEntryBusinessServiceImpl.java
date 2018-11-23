@@ -78,11 +78,11 @@ import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.ThumbnailRepository;
 import org.linagora.linshare.core.service.TimeStampingService;
 import org.linagora.linshare.core.utils.AESCrypt;
-import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
+import org.linagora.linshare.mongo.entities.DocumentGarbageCollector;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
-import org.linagora.linshare.mongo.repository.DocumentGarbageCollecteurMongoRepository;
+import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,7 +102,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	private final ThumbnailGeneratorBusinessService thumbnailGeneratorService;
 	private final boolean deduplication;
 	protected final WorkGroupNodeMongoRepository repository;
-	protected final DocumentGarbageCollecteurMongoRepository documentGarbageCollecteur;
+	protected final DocumentGarbageCollectorMongoRepository documentGarbageCollectorRepository;
 	protected final ThumbnailRepository thumbnailRepository;
 
 	public DocumentEntryBusinessServiceImpl(
@@ -115,7 +115,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			final ThumbnailGeneratorBusinessService thumbnailGeneratorService,
 			final boolean deduplication,
 			final WorkGroupNodeMongoRepository repository,
-			final DocumentGarbageCollecteurMongoRepository documentGarbageCollecteur,
+			final DocumentGarbageCollectorMongoRepository documentGarbageCollectorRepository,
 			final ThumbnailRepository thumbnailRepository) {
 		super();
 		this.fileDataStore = fileSystemDao;
@@ -127,7 +127,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		this.thumbnailGeneratorService = thumbnailGeneratorService;
 		this.deduplication = deduplication;
 		this.repository = repository;
-		this.documentGarbageCollecteur = documentGarbageCollecteur;
+		this.documentGarbageCollectorRepository = documentGarbageCollectorRepository;
 		this.thumbnailRepository = thumbnailRepository;
 	}
 
@@ -366,7 +366,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		logger.debug("Deleting document entry: " + documentEntry.getUuid());
 		Account owner = documentEntry.getEntryOwner();
 		owner.getEntries().remove(documentEntry);
-		documentGarbageCollecteur.insert(new DocumentGarbageCollecteur(documentEntry.getDocument().getUuid()));
+		documentGarbageCollectorRepository.insert(new DocumentGarbageCollector(documentEntry.getDocument().getUuid()));
 		documentEntryRepository.delete(documentEntry);
 	}
 
