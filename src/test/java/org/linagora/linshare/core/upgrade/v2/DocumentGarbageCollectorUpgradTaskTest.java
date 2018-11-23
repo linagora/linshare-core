@@ -54,6 +54,8 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.runner.BatchRunner;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.upgrade.v2_1.DocumentGarbageCollectorUpgradeTaskImpl;
+import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
+import org.linagora.linshare.mongo.repository.DocumentGarbageCollecteurMongoRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -103,6 +105,9 @@ public class DocumentGarbageCollectorUpgradTaskTest extends AbstractTransactiona
 	@Autowired
 	@Qualifier("documentEntryBusinessService")
 	private DocumentEntryBusinessService documentEntryBusinessService;
+	
+	@Autowired
+	private DocumentGarbageCollecteurMongoRepository documentGarbageCollectorMongoRepository;
 
 	@Autowired
 	private DocumentGarbageCollectorUpgradeTaskImpl documentGarbageCollectorUpgradeTask;
@@ -142,6 +147,12 @@ public class DocumentGarbageCollectorUpgradTaskTest extends AbstractTransactiona
 		documentEntryService.delete(owner, owner, documentEntry.getUuid());
 		Assert.assertEquals(documentRepository.findAll().size(), 1);
 		Assert.assertEquals(documentEntryRepository.getRelatedDocumentEntryCount(documentEntry.getDocument()), 0);
+		List<DocumentGarbageCollecteur> documentGarbageCollectors = documentGarbageCollectorMongoRepository.findAll();
+		for (DocumentGarbageCollecteur documentGarbageCollector : documentGarbageCollectors) {
+			documentEntryExpiration.add(Calendar.DATE, -1);
+			documentGarbageCollector.setCreationDate(documentEntryExpiration.getTime());
+			documentGarbageCollectorMongoRepository.save(documentGarbageCollector);
+		}
 		Assert.assertTrue("At least one batch failed.", batchRunner.execute(batches));
 		Assert.assertEquals(documentRepository.findAll().size(), 0);
 	}
