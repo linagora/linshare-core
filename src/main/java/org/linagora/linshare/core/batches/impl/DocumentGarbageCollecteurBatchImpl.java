@@ -94,10 +94,9 @@ public class DocumentGarbageCollecteurBatchImpl extends GenericBatchImpl {
 		logger.info(getClass().toString() + " job starting ...");
 		Query query = new Query();
 		Calendar midnight = Calendar.getInstance();
-		midnight.set(Calendar.HOUR, 0);
+		midnight.set(Calendar.HOUR_OF_DAY, 0);
 		midnight.set(Calendar.MINUTE, 0);
 		midnight.set(Calendar.SECOND, 0);
-		midnight.add(Calendar.DAY_OF_MONTH, 1);
 		logger.debug("midnight : " + midnight.getTime());
 		query.addCriteria(Criteria.where("creationDate").lt(midnight.getTime()));
 		query.fields().include("documentUuid");
