@@ -263,6 +263,11 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 		return memberFacade.update(null, member, memberUuid);
 	}
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> Issue #430 : Update default workgroup role on the drive
 	@Path("/{uuid}/audit")
 	@GET
 	@ApiOperation(value = "Get all traces for a sharedSpace.", response = AuditLogEntryUser.class, responseContainer="Set")
@@ -285,4 +290,26 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 				@QueryParam("nodeUuid") String nodeUuid) {
 		return workGroupFacade.findAll(sharedSpaceUuid, actions, types, beginDate, endDate, nodeUuid);
 	}
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> improve drive member crud
+=======
+	@Path("/{uuid}/workgroups")
+	@GET
+	@ApiOperation(value = "Get workgroups inside this node.", response = SharedSpaceNode.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "No permission to list all workgroups inside a shared space node."),
+			@ApiResponse(code = 404, message = "Not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public List<SharedSpaceNodeNested> findAllWorkGroupsInsideNode(
+			@ApiParam("The node uuid.")
+				@PathParam("uuid")String uuid) 
+			throws BusinessException {
+		return nodeFacade.findAllWorkGroupsInsideNode(null, uuid);
+	}
+
+>>>>>>> Issue #430 : Update default workgroup role on the drive
+>>>>>>> Issue #430 : Update default workgroup role on the drive
 }

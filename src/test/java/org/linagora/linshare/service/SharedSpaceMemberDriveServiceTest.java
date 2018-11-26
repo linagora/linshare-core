@@ -198,10 +198,10 @@ public class SharedSpaceMemberDriveServiceTest extends AbstractTransactionalJUni
 		memberToUpdate.setNestedRole(new GenericLightEntity(reader));
 		memberToUpdate.setRole(new GenericLightEntity(creatorDriveRole));
 		SharedSpaceMemberDrive updated = (SharedSpaceMemberDrive) ssMemberDriveService.update(john, john,
-				memberToUpdate);
+				memberToUpdate, true);
 		Assert.assertThat(updated.getRole().getUuid(), CoreMatchers.is(creatorDriveRole.getUuid()));
 		try {
-			ssMemberDriveService.create(jane, jane, node, context, new SharedSpaceAccount((User) john));
+			ssMemberDriveService.create(jane, jane, drive, context, new SharedSpaceAccount((User) john));
 		} catch (BusinessException ex) {
 			Assert.assertThat(ex.getErrorCode(), CoreMatchers.is(BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN));
 		}

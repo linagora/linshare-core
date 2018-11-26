@@ -62,6 +62,8 @@ import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 
+import com.google.common.collect.Lists;
+
 public class SharedSpaceMemberDriveServiceImpl extends SharedSpaceMemberServiceImpl implements SharedSpaceMemberDriveService {
 
 	private final SharedSpaceNodeBusinessService nodeBusinessService;
@@ -116,7 +118,7 @@ public class SharedSpaceMemberDriveServiceImpl extends SharedSpaceMemberServiceI
 	}
 
 	@Override
-	public SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate) {
+	public SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate, boolean force) {
 		preChecks(authUser, actor);
 		Validate.notNull(memberToUpdate, "Missing required member to update");
 		Validate.notNull(memberToUpdate.getUuid(), "Missing required member uuid to update");
@@ -128,13 +130,18 @@ public class SharedSpaceMemberDriveServiceImpl extends SharedSpaceMemberServiceI
 				foundMemberToUpdate);
 		SharedSpaceMember updated = driveMemberBusinessService.update(foundMemberToUpdate,
 				(SharedSpaceMemberDrive) memberToUpdate);
+		// No propagation if nested role is not updated
 		if (!((SharedSpaceMemberDrive) updated).getNestedRole().equals(wgRole)) {
 			// Update the member on all workgroups inside the drive
-			List<SharedSpaceNodeNested> nestedWorkgroups = businessService
-					.findAllByParentAndAccount(updated.getNode().getUuid(), foundMemberToUpdate.getAccount().getUuid());
-			for (SharedSpaceNodeNested wgNode : nestedWorkgroups) {
-				SharedSpaceMember wgFoundMember = businessService
-						.findByAccountAndNode(memberToUpdate.getAccount().getUuid(), wgNode.getUuid());
+			List<SharedSpaceMember> nestedMembers = Lists.newArrayList();
+			if (force) {
+				nestedMembers = businessService.findAllMembersByParentAndAccount(foundMemberToUpdate.getAccount().getUuid(),
+						updated.getNode().getUuid());
+			} else {
+				nestedMembers = businessService.findAllMembersWithNoConflictedRoles(foundMemberToUpdate.getAccount().getUuid(),
+						updated.getNode().getUuid(), wgRole.getUuid());
+			}
+			for (SharedSpaceMember wgFoundMember : nestedMembers) {
 				SharedSpaceMember wgMemberToUpdate = new SharedSpaceMember(wgFoundMember);
 				wgMemberToUpdate.setRole(wgRole);
 				SharedSpaceMember updatedWgMember = businessService.update(wgFoundMember, wgMemberToUpdate);
@@ -158,7 +165,7 @@ public class SharedSpaceMemberDriveServiceImpl extends SharedSpaceMemberServiceI
 		saveLog(authUser, actor, LogAction.DELETE, foundMemberToDelete);
 		// Delete the member on all workgroups inside the drive
 		List<SharedSpaceNodeNested> nestedWorkgroups = businessService.findAllByParentAndAccount(
-				foundMemberToDelete.getNode().getUuid(), foundMemberToDelete.getAccount().getUuid());
+				foundMemberToDelete.getAccount().getUuid(), foundMemberToDelete.getNode().getUuid());
 		for (SharedSpaceNodeNested wgNode : nestedWorkgroups) {
 			SharedSpaceMember wgFoundMember = businessService
 					.findByAccountAndNode(foundMemberToDelete.getAccount().getUuid(), wgNode.getUuid());

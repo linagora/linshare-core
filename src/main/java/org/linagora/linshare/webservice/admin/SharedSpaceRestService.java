@@ -60,7 +60,7 @@ public interface SharedSpaceRestService {
 
 	SharedSpaceMember deleteMember(SharedSpaceMember member, String memberUuid) throws BusinessException;
 
-	SharedSpaceMember updateMember(SharedSpaceMemberDrive member, String memberUuid) throws BusinessException;
+	SharedSpaceMember updateMember(SharedSpaceMemberDrive member, String memberUuid, boolean force) throws BusinessException;
 
 	SharedSpaceNode update(PatchDto patchNode, String uuid) throws BusinessException;
 

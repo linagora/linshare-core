@@ -213,6 +213,7 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	}
 
 	@Override
+<<<<<<< HEAD
 	public SharedSpaceMember findByNodeAndUuid(String nodeUuid, String uuid) {
 		return repository.findByNodeUuidAndUuid(nodeUuid, uuid);
 	}
@@ -220,7 +221,21 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 	@Override
 	public List<SharedSpaceNodeNested> findAllByParentAndAccount(String parentUuid, String accountUuid) {
 		List<SharedSpaceMember> members = repository.findByAccountUuidAndParentAndNested(accountUuid, parentUuid, true);
+=======
+	public List<SharedSpaceMember> findAllMembersByParentAndAccount(String accountUuid, String parentUuid) {
+		return repository.findByAccountUuidAndParentAndNested(accountUuid, parentUuid, true);
+	}
+
+	@Override
+	public List<SharedSpaceNodeNested> findAllByParentAndAccount(String accountUuid, String parentUuid) {
+		List<SharedSpaceMember> members = findAllMembersByParentAndAccount(accountUuid, parentUuid);
+>>>>>>> Issue #430 : Update default workgroup role on the drive
 		return Lists.transform(members, convertToSharedSpaceNode);
 	}
 
+	@Override
+	public List<SharedSpaceMember> findAllMembersWithNoConflictedRoles(String accountUuid, String parentUuid,
+			String roleUuid) {
+		return repository.findAllMembersWithNoConflictedRoles(accountUuid, parentUuid, true, roleUuid);
+	}
 }

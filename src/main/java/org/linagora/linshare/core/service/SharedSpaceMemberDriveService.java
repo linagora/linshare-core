@@ -16,8 +16,8 @@ public interface SharedSpaceMemberDriveService {
 	SharedSpaceMember createWithoutCheckPermission(Account authUser, Account actor, SharedSpaceNode node,
 			SharedSpaceRole role, SharedSpaceRole nestedRole, SharedSpaceAccount account) throws BusinessException;
 
-	SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate);
-
 	SharedSpaceMember delete(Account authUser, Account actor, String uuid);
+
+	SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate, boolean force);
 
 }

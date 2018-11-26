@@ -372,7 +372,7 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 		preChecks(authUser, actor);
 		Validate.notEmpty(parentUuid, "ParentUuid must be set");
 		Validate.notEmpty(accountUuid, "AccountUuid must be set");
-		return businessService.findAllByParentAndAccount(parentUuid, accountUuid);
+		return businessService.findAllByParentAndAccount(accountUuid, parentUuid);
 	}
 
 }

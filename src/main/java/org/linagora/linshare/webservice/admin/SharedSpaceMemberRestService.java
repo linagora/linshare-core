@@ -43,7 +43,7 @@ public interface SharedSpaceMemberRestService {
 
 	SharedSpaceMember addMember(SharedSpaceMemberDrive member) throws BusinessException;
 
-	SharedSpaceMember update(SharedSpaceMemberDrive ssmember, String uuid) throws BusinessException;
+	SharedSpaceMember update(SharedSpaceMemberDrive ssmember, String uuid, boolean force) throws BusinessException;
 
 	SharedSpaceMember delete(SharedSpaceMember ssmember, String uuid) throws BusinessException;
 }

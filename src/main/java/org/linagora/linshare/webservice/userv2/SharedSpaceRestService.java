@@ -72,4 +72,6 @@ public interface SharedSpaceRestService {
 
 	Set<AuditLogEntryUser> findAll(String sharedSpaceUuid, List<LogAction> actions, List<AuditLogEntryType> types,
 			String beginDate, String endDate, String nodeUuid);
+
+	List<SharedSpaceNodeNested> findAllWorkGroupsInsideNode(String uuid) throws BusinessException;
 }

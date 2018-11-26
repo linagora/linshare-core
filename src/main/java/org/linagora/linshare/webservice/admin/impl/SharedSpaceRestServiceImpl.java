@@ -37,6 +37,7 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.PATCH;
 import javax.ws.rs.POST;
@@ -212,9 +213,11 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 	public SharedSpaceMember updateMember(
 			@ApiParam("The shared space member to update.")SharedSpaceMemberDrive member,
 			@ApiParam("The shared space member uuid")
-				@PathParam(value="memberUuid")String memberUuid)
+				@PathParam(value="memberUuid")String memberUuid,
+			@ApiParam("Parameter to update all nested roles of a member inside the node")
+				@QueryParam("force") @DefaultValue("false") boolean force)
 			throws BusinessException {
-		return ssMemberFacade.update(null, member, memberUuid);
+		return ssMemberFacade.update(null, member, memberUuid, force);
 	}
 	
 	@Path("{uuid}/members/{memberUuid}")

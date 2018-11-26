@@ -47,7 +47,6 @@ import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.core.service.UserService;
-import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
@@ -124,7 +123,7 @@ public class WorkgroupMemberFacadeImpl extends DelegationGenericFacadeImpl
 				threadMember.getUserUuid(), threadUuid);
 		SharedSpaceRole defaultRole = getDefaultRole(authActor, threadMember.isAdmin());
 		ssMemberToUpdate.setRole(new GenericLightEntity(defaultRole.getUuid(), defaultRole.getName()));
-		SharedSpaceMember updated = ssMemberService.update(authActor, actor, (SharedSpaceMemberDrive) ssMemberToUpdate);
+		SharedSpaceMember updated = ssMemberService.update(authActor, actor, ssMemberToUpdate);
 		return new WorkGroupMemberDto(updated, user);
 	}
 

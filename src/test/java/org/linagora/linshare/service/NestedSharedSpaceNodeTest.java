@@ -59,6 +59,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
+import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.utils.LinShareWiser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -119,6 +120,8 @@ public class NestedSharedSpaceNodeTest extends AbstractTransactionalJUnit4Spring
 
 	private SharedSpaceRole adminWorkgroupRole;
 
+	private SharedSpaceRole contributor;
+
 	private SharedSpaceRole reader;
 
 	public NestedSharedSpaceNodeTest() {
@@ -144,9 +147,10 @@ public class NestedSharedSpaceNodeTest extends AbstractTransactionalJUnit4Spring
 		adminDriveRole = ssRoleService.getDriveAdmin(root, root);
 		creatorDriveRole = ssRoleService.findByName(root, root, "DRIVE_CREATOR");
 		readerDriveRole = ssRoleService.findByName(root, root, "DRIVE_READER");
+		contributor = ssRoleService.findByName(root, root, "CONTRIBUTOR");
 		reader = ssRoleService.findByName(root, root, "READER");
 		logger.debug(LinShareTestConstants.END_SETUP);
-	}
+	}  
 
 	@After
 	public void tearDown() {
@@ -310,4 +314,53 @@ public class NestedSharedSpaceNodeTest extends AbstractTransactionalJUnit4Spring
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
+	@Test
+	public void testSoftUpdateRoles() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		// Create a drive as John
+		SharedSpaceNode drive = ssNodeService.create(john, john, new SharedSpaceNode("DriveTest8", NodeType.DRIVE));
+		// Add Jane as member to the drive with READER role
+		SharedSpaceMemberDrive janeMember = (SharedSpaceMemberDrive) ssMemberDriveService.create(john, john, drive,
+				new SharedSpaceMemberContext(creatorDriveRole, reader), new SharedSpaceAccount((User) jane));
+		SharedSpaceNode workGroupInsideDrive = new SharedSpaceNode("Successful WorkGroup", drive.getUuid(),
+				NodeType.WORK_GROUP);
+		// Create a workgroup with Jane having the creator role
+		ssNodeService.create(john, john, workGroupInsideDrive);
+		janeMember.setNestedRole(new GenericLightEntity(contributor));
+		janeMember = (SharedSpaceMemberDrive)ssMemberDriveService.update(john, john, janeMember, false);
+		Assert.assertThat("ERROR : Jane's role should be updated", janeMember.getNestedRole().getUuid(),
+				CoreMatchers.is(contributor.getUuid()));
+		List<SharedSpaceNodeNested> workgroupsInsideDrive = ssMemberService.findAllWorkGroupsInNode(jane, jane, drive.getUuid(), jane.getLsUuid());
+		for (SharedSpaceNodeNested sharedSpaceNodeNested : workgroupsInsideDrive) {
+			SharedSpaceMember janeWorkGroupMember = ssMemberService.findMemberByUuid(jane, jane, jane.getLsUuid(), sharedSpaceNodeNested.getUuid());
+			Assert.assertThat("ERROR : Jane's role should be updated", janeWorkGroupMember.getRole().getUuid(),
+					CoreMatchers.is(reader.getUuid()));
+		}
+		logger.info(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testForceUpdateRoles() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		// Create a drive as John
+		SharedSpaceNode drive = ssNodeService.create(john, john, new SharedSpaceNode("DriveTest8", NodeType.DRIVE));
+		// Add Jane as member to the drive with READER role
+		SharedSpaceMemberDrive janeMember = (SharedSpaceMemberDrive) ssMemberDriveService.create(john, john, drive,
+				new SharedSpaceMemberContext(creatorDriveRole, reader), new SharedSpaceAccount((User) jane));
+		SharedSpaceNode workGroupInsideDrive = new SharedSpaceNode("Successful WorkGroup", drive.getUuid(),
+				NodeType.WORK_GROUP);
+		// Create a workgroup with Jane having the creator role
+		ssNodeService.create(jane, jane, workGroupInsideDrive);
+		janeMember.setNestedRole(new GenericLightEntity(contributor));
+		janeMember = (SharedSpaceMemberDrive)ssMemberDriveService.update(john, john, janeMember, true);
+		Assert.assertThat("ERROR : Jane's role should be updated", janeMember.getNestedRole().getUuid(),
+				CoreMatchers.is(contributor.getUuid()));
+		List<SharedSpaceNodeNested> workgroupsInsideDrive = ssMemberService.findAllWorkGroupsInNode(jane, jane, drive.getUuid(), jane.getLsUuid());
+		for (SharedSpaceNodeNested sharedSpaceNodeNested : workgroupsInsideDrive) {
+			SharedSpaceMember janeWorkGroupMember = ssMemberService.findMemberByUuid(jane, jane, jane.getLsUuid(), sharedSpaceNodeNested.getUuid());
+			Assert.assertThat("ERROR : Jane's role should be updated", janeWorkGroupMember.getRole().getUuid(),
+					CoreMatchers.is(contributor.getUuid()));
+		}
+		logger.info(LinShareTestConstants.END_TEST);
+	}
 }

@@ -40,6 +40,4 @@ public interface SharedSpaceNodeRestService extends WorkGroupNodeRestService {
 
 	NodeMetadataMto findMetaData(String sharedSpaceUuid, String sharedSpaceNodeUuid, Boolean storage) throws BusinessException;
 
-	List<SharedSpaceNodeNested> findAllWorkGroupsInsideNode(String uuid) throws BusinessException;
-
 }

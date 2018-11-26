@@ -35,12 +35,14 @@ package org.linagora.linshare.webservice.userv2.impl;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
@@ -117,9 +119,11 @@ public class SharedSpaceMemberRestServiceImpl implements SharedSpaceMemberRestSe
 	public SharedSpaceMember update(
 			@ApiParam("The shared space member to update.") SharedSpaceMember ssmember,
 			@ApiParam("The shared space member uuid to update.")
-				@PathParam("uuid") String uuid)
+				@PathParam("uuid") String uuid,
+			@ApiParam("Parameter to update all nested roles of a member inside the node")
+				@QueryParam("force") @DefaultValue("false") boolean force)
 			throws BusinessException {
-		return sharedSpaceMemberFacade.update(null, ssmember, uuid);
+		return sharedSpaceMemberFacade.update(null, ssmember, uuid, force);
 	}
 
 	@Path("/{uuid : .*}")
