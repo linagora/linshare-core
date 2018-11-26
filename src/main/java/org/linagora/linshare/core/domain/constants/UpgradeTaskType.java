@@ -157,7 +157,14 @@ public enum UpgradeTaskType {
 	 * Migrate all old WorkGroup Member audit to shared space Member audit
 	 * 
 	 */
-	UPGRADE_2_2_MIGRATE_WORKGROUP_MEMBER_AUDIT_TO_SHARED_SPACE_MEMBER_AUDIT;
+	UPGRADE_2_2_MIGRATE_WORKGROUP_MEMBER_AUDIT_TO_SHARED_SPACE_MEMBER_AUDIT,
+
+	/*
+	 * When we upgraded apache tika (1.19) we have new mimeType
+	 * We have to update our database
+	 *
+	 */
+	UPGRADE_2_3_ADD_ALL_NEW_MIME_TYPE;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {

@@ -78,7 +78,7 @@ public class MimeTypeMagicNumberTikaTest extends AbstractJUnit4SpringContextTest
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Set<MimeType> allSupportedMimeType = mimeTypeService.getAllMimeType();
 		logger.debug("allSupportedMimeType size : " + allSupportedMimeType.size());
-		Assert.assertEquals(1521, allSupportedMimeType.size());
+		Assert.assertEquals(1552, allSupportedMimeType.size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2017-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,25 +31,31 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
+package org.linagora.linshare.core.upgrade.v2_3;
 
-import org.apache.commons.lang.StringUtils;
-import org.linagora.linshare.core.exception.TechnicalErrorCode;
-import org.linagora.linshare.core.exception.TechnicalException;
+import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
+import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.repository.AccountRepository;
+import org.linagora.linshare.core.repository.MimePolicyRepository;
+import org.linagora.linshare.core.repository.MimeTypeRepository;
+import org.linagora.linshare.core.upgrade.v2_1.AddAllNewMimeTypeUpgradeTaskImpl;
+import org.linagora.linshare.mongo.repository.UpgradeTaskLogMongoRepository;
 
-public enum UpgradeTaskGroup {
+public class UpgradeApacheTikaAddAllNewMimeTypeUpgradeTaskImpl extends AddAllNewMimeTypeUpgradeTaskImpl{
 
-	UPGRADE_2_0,
-	UPGRADE_2_1,
-	UPGRADE_2_2,
-	UPGRADE_2_3;
-
-	public static UpgradeTaskGroup fromString(String s) {
-		try {
-			return UpgradeTaskGroup.valueOf(s.toUpperCase());
-		} catch (RuntimeException e) {
-			throw new TechnicalException(TechnicalErrorCode.DATABASE_INCOHERENCE,
-					StringUtils.isEmpty(s) ? "null or empty" : s);
-		}
+	public UpgradeApacheTikaAddAllNewMimeTypeUpgradeTaskImpl(AccountRepository<Account> accountRepository,
+			UpgradeTaskLogMongoRepository upgradeTaskLogMongoRepository,
+			MimePolicyRepository mimePolicyRepository,
+			MimeTypeMagicNumberDao mimeTypeMagicNumberDao,
+			MimeTypeRepository mimeTypeRepository) {
+		super(accountRepository, upgradeTaskLogMongoRepository, mimePolicyRepository, mimeTypeMagicNumberDao,
+				mimeTypeRepository);
 	}
+
+	@Override
+	public UpgradeTaskType getUpgradeTaskType() {
+		return UpgradeTaskType.UPGRADE_2_3_ADD_ALL_NEW_MIME_TYPE;
+	}
+
 }
