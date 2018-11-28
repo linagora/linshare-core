@@ -45,13 +45,14 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @XmlRootElement(name = "SharedSpaceNode")
 @Document(collection = "shared_space_nodes")
 public class SharedSpaceNode {
-	
+
 	@JsonIgnore
 	@Id
 	@GeneratedValue
@@ -70,6 +71,9 @@ public class SharedSpaceNode {
 
 	protected Date modificationDate;
 
+	@Field("workGroupVersioning")
+	protected WorkGroupVersioning workGroupVersioning;
+
 	public SharedSpaceNode() {
 		super();
 	}
@@ -83,7 +87,7 @@ public class SharedSpaceNode {
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
 	}
-	
+
 	public SharedSpaceNode(String name, String uuid, NodeType nodeType, Date creationDate, Date modificationDate) {
 		super();
 		this.uuid = uuid;
@@ -92,7 +96,7 @@ public class SharedSpaceNode {
 		this.creationDate = creationDate;
 		this.modificationDate = modificationDate;
 	}
-	
+
 	@XmlTransient
 	@JsonIgnore
 	public String getId() {
@@ -149,6 +153,14 @@ public class SharedSpaceNode {
 
 	public void setNodeType(NodeType nodeType) {
 		this.nodeType = nodeType;
+	}
+
+	public WorkGroupVersioning getWorkGroupVersioning() {
+		return workGroupVersioning;
+	}
+
+	public void setWorkGroupVersioning(WorkGroupVersioning workGroupVersioning) {
+		this.workGroupVersioning = workGroupVersioning;
 	}
 
 	@Override
