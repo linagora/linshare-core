@@ -44,8 +44,8 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.context.DriveWarnNewMemberEmailContext;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnDeletedMemberEmailContext;
-import org.linagora.linshare.core.notifications.context.WorkGroupWarnNewMemberEmailContext;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnUpdatedMemberEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.SharedSpaceMemberResourceAccessControl;
@@ -107,11 +107,15 @@ public class SharedSpaceMemberDriveServiceImpl extends SharedSpaceMemberServiceI
 		SharedSpaceMember toAdd = driveMemberBusinessService.create(member);
 		// Add the new member to all workgroups inside the drive
 		List<SharedSpaceNode> nestedWorkgroups = nodeBusinessService.findByParentUuidAndType(node.getUuid());
+		List<SharedSpaceMember> nestedMembers = Lists.newArrayList();
 		for (SharedSpaceNode wgNode : nestedWorkgroups) {
 			if (checkMemberNotInNode(account.getUuid(), wgNode.getUuid())) {
 				SharedSpaceMember wgMember = createWithoutCheckPermission(authUser, actor, wgNode, nestedRole, account);
-				notify(new WorkGroupWarnNewMemberEmailContext(wgMember, actor, newMember));
+				nestedMembers.add(wgMember);
 			}
+		}
+		if (!actor.getLsUuid().equals(account.getUuid())) {
+			notify(new DriveWarnNewMemberEmailContext(member, actor, newMember, nestedMembers));
 		}
 		saveLog(authUser, actor, LogAction.CREATE, toAdd);
 		return toAdd;

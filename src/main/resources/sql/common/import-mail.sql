@@ -1,13 +1,3 @@
-
-    BEGIN;
-UPDATE domain_abstract SET mailconfig_id = null where mailconfig_id = 1;
-DELETE FROM mail_content_lang WHERE id < 1000;
-DELETE FROM mail_footer_lang WHERE id < 1000;
-DELETE FROM mail_config WHERE id = 1;
-DELETE FROM mail_content WHERE id < 1000;
-DELETE FROM mail_footer WHERE id < 1000;
-DELETE FROM mail_layout WHERE id < 1000;
-
 SELECT pg_catalog.set_config('search_path', '', false);
 INSERT INTO public.mail_layout (id, domain_abstract_id, description, visible, layout, creation_date, modification_date, uuid, readonly, messages_french, messages_english) VALUES (1, 1, 'Default HTML layout', true, '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
@@ -2524,6 +2514,7 @@ productOfficialWebsite=http://www.linshare.org/', 'learnMoreAbout=Learn more abo
 productOfficialWebsite=http://www.linshare.org/');
 INSERT INTO public.mail_footer_lang (id, mail_config_id, mail_footer_id, language, uuid, readonly) VALUES (1, 1, 1, 0, 'bf87e580-fb25-49bb-8d63-579a31a8f81e', true);
 INSERT INTO public.mail_footer_lang (id, mail_config_id, mail_footer_id, language, uuid, readonly) VALUES (2, 1, 1, 1, 'a6c8ee84-b5a8-4c96-b148-43301fbccdd9', true);
+UPDATE domain_abstract SET mailconfig_id = 1;
 UPDATE mail_footer SET readonly = true;
 UPDATE mail_layout SET readonly = true;
 UPDATE mail_content SET readonly = true;
@@ -2531,5 +2522,3 @@ UPDATE mail_config SET readonly = true;
 UPDATE mail_content_lang SET readonly = true;
 UPDATE mail_footer_lang SET readonly = true;
 
-UPDATE domain_abstract SET mailconfig_id = 1 where mailconfig_id is null;
-COMMIT;

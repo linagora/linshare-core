@@ -85,6 +85,7 @@ import org.linagora.linshare.core.notifications.emails.IEmailBuilder;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
@@ -713,6 +714,16 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		SharedSpaceMember member = new SharedSpaceMember(new SharedSpaceNodeNested(node),
 				new GenericLightEntity(UUID.randomUUID().toString(), "ADMIN"),
 				new SharedSpaceAccount(user));
+		return member;
+	}
+
+	protected SharedSpaceMemberDrive getNewFakeSharedSpaceMemberDrive(String name) {
+		User user = new Guest("Peter", "Wilson", "peter.wilson@linshare.org");
+		SharedSpaceNode node = new SharedSpaceNode(name, null, NodeType.DRIVE);
+		SharedSpaceMemberDrive member = new SharedSpaceMemberDrive(new SharedSpaceNodeNested(node),
+				new GenericLightEntity(UUID.randomUUID().toString(), "DRIVE_ADMIN"),
+				new SharedSpaceAccount(user),
+				new GenericLightEntity(UUID.randomUUID().toString(), "ADMIN"));
 		return member;
 	}
 

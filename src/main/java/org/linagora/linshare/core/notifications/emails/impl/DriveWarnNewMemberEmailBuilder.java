@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2017-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009-2018. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,79 +31,76 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-
 package org.linagora.linshare.core.notifications.emails.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
-import org.linagora.linshare.core.domain.entities.MailConfig;
-import org.linagora.linshare.core.domain.entities.SystemAccount;
-import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.context.DriveWarnNewMemberEmailContext;
 import org.linagora.linshare.core.notifications.context.EmailContext;
-import org.linagora.linshare.core.notifications.context.WorkGroupWarnNewMemberEmailContext;
 import org.linagora.linshare.core.notifications.dto.MailContact;
+import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
+import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
+import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.thymeleaf.context.Context;
 
 import com.beust.jcommander.internal.Maps;
 import com.google.common.collect.Lists;
 
-public class WorkGroupWarnNewMemberEmailBuilder extends EmailBuilder {
+public class DriveWarnNewMemberEmailBuilder extends WorkGroupWarnNewMemberEmailBuilder {
 
 	@Override
 	public MailContentType getSupportedType() {
-		return MailContentType.WORKGROUP_WARN_NEW_MEMBER;
+		return MailContentType.DRIVE_WARN_NEW_MEMBER;
 	}
 
 	@Override
 	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		WorkGroupWarnNewMemberEmailContext emailCtx = (WorkGroupWarnNewMemberEmailContext) context;
-		return buildMailContainer(emailCtx, Maps.newHashMap());
+		DriveWarnNewMemberEmailContext emailCtx = (DriveWarnNewMemberEmailContext) context;
+		Map<String, Object> variables = Maps.newHashMap();
+		variables.put("childMembers", emailCtx.getChildMembers());
+		return buildMailContainer(emailCtx, variables);
 	}
 
 	@Override
 	protected List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
 		Context ctx = newFakeContext(language);
-		SharedSpaceMember workGroupMember = getNewFakeSharedSpaceMember("work_group_name-1");
+		SharedSpaceMemberDrive driveMember = getNewFakeSharedSpaceMemberDrive("drive_name-1");
+		List<SharedSpaceMember> childMembers = Lists.newArrayList();
+		childMembers.add(new SharedSpaceMember(
+				new SharedSpaceNodeNested(UUID.randomUUID().toString(), "workgroup_1", driveMember.getNode().getUuid(),
+						NodeType.WORK_GROUP, new Date(), new Date()),
+				new GenericLightEntity(UUID.randomUUID().toString(), "ADMIN"), new SharedSpaceAccount(
+						UUID.randomUUID().toString(), "Peter Wilson", "Peter", "Wilson", "peter.wilson@linshare.org")));
+		childMembers.add(new SharedSpaceMember(
+				new SharedSpaceNodeNested(UUID.randomUUID().toString(), "workgroup_2", driveMember.getNode().getUuid(),
+						NodeType.WORK_GROUP, new Date(), new Date()),
+				new GenericLightEntity(UUID.randomUUID().toString(), "CONTRIBUTOR"), new SharedSpaceAccount(
+						UUID.randomUUID().toString(), "Peter Wilson", "Peter", "Wilson", "peter.wilson@linshare.org")));
+		childMembers.add(new SharedSpaceMember(
+				new SharedSpaceNodeNested(UUID.randomUUID().toString(), "workgroup_3", driveMember.getNode().getUuid(),
+						NodeType.WORK_GROUP, new Date(), new Date()),
+				new GenericLightEntity(UUID.randomUUID().toString(), "READER"), new SharedSpaceAccount(
+						UUID.randomUUID().toString(), "Peter Wilson", "Peter", "Wilson", "peter.wilson@linshare.org")));
+		ctx.setVariable("childMembers", childMembers);
 		ctx.setVariable("member", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
 		ctx.setVariable("owner", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
-		ctx.setVariable("threadMember", workGroupMember);
-		ctx.setVariable("workGroupName", workGroupMember.getNode().getName());
+		ctx.setVariable("threadMember", driveMember);
+		ctx.setVariable("workGroupName", driveMember.getNode().getName());
 		ctx.setVariable("workGroupLink", getWorkGroupLink(fakeLinshareURL, "fake_uuid"));
 		ctx.setVariable("linshareURL", fakeLinshareURL);
 		res.add(ctx);
 		return res;
 	}
 
-	protected MailContainerWithRecipient buildMailContainer(WorkGroupWarnNewMemberEmailContext emailCtx,
-			Map<String, Object> variables) {
-		Context ctx = new Context(emailCtx.getLocale());
-		MailContact owner = null;
-		if (emailCtx.getOwner() instanceof SystemAccount) {
-			owner = new MailContact(emailCtx.getOwner().getMail());
-
-		} else {
-			owner = new MailContact((User) emailCtx.getOwner());
-		}
-		variables.put("owner", owner);
-		SharedSpaceMember workGroupMember = emailCtx.getWorkgroupMember();
-		User member = emailCtx.getNewMember();
-		String linshareURL = getLinShareUrl(member);
-		variables.put("member", new MailContact(member));
-		variables.put("linshareURL", linshareURL);
-		variables.put("threadMember", workGroupMember);
-		variables.put("workGroupName", workGroupMember.getNode().getName());
-		variables.put("workGroupLink", getWorkGroupLink(linshareURL, workGroupMember.getNode().getUuid()));
-		ctx.setVariables(variables);
-		MailConfig cfg = member.getDomain().getCurrentMailConfiguration();
-		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
-				emailCtx);
-		return buildMailContainer;
-	}
 }

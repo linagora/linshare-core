@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2015-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018 to
+ * and free version of LinShare™, powered by Linagora © 2009-2018. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,52 +31,44 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+package org.linagora.linshare.core.notifications.context;
 
-package org.linagora.linshare.core.domain.constants;
+import java.util.List;
 
-public enum MailActivationType {
+import org.linagora.linshare.core.domain.constants.MailActivationType;
+import org.linagora.linshare.core.domain.constants.MailContentType;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 
-	FILE_WARN_OWNER_BEFORE_FILE_EXPIRY,
+import com.beust.jcommander.internal.Lists;
 
-	SHARE_NEW_SHARE_FOR_RECIPIENT,
-	SHARE_NEW_SHARE_ACKNOWLEDGEMENT_FOR_SENDER,
-	SHARE_FILE_DOWNLOAD_ANONYMOUS,
-	SHARE_FILE_DOWNLOAD_USERS,
-	SHARE_FILE_SHARE_DELETED,
-	SHARE_WARN_RECIPIENT_BEFORE_EXPIRY,
-	SHARE_WARN_UNDOWNLOADED_FILESHARES,
-	SHARE_WARN_SENDER_ABOUT_SHARE_EXPIRATION_WITHOUT_DOWNLOAD,
-	SHARE_WARN_RECIPIENT_ABOUT_EXPIRED_SHARE,
+public class DriveWarnNewMemberEmailContext extends WorkGroupWarnNewMemberEmailContext {
 
-	GUEST_ACCOUNT_NEW_CREATION,
-	GUEST_ACCOUNT_RESET_PASSWORD_LINK,
-	GUEST_WARN_GUEST_ABOUT_HIS_PASSWORD_RESET,
-	GUEST_WARN_OWNER_ABOUT_GUEST_EXPIRATION,
+	protected List<SharedSpaceMember> childMembers = Lists.newArrayList();
 
-	UPLOAD_REQUEST_UPLOADED_FILE,
-	UPLOAD_REQUEST_UNAVAILABLE_SPACE,
-	UPLOAD_REQUEST_WARN_BEFORE_EXPIRY,
-	UPLOAD_REQUEST_WARN_EXPIRY,
-	UPLOAD_REQUEST_CLOSED_BY_RECIPIENT,
-	UPLOAD_REQUEST_FILE_DELETED_BY_RECIPIENT,
+	public DriveWarnNewMemberEmailContext(SharedSpaceMemberDrive driveMember, Account owner, User newMember,
+			List<SharedSpaceMember> childMembers) {
+		super(driveMember, owner, newMember);
+		this.childMembers = childMembers;
+	}
 
-	UPLOAD_REQUEST_ACTIVATED_FOR_RECIPIENT,
-	UPLOAD_REQUEST_ACTIVATED_FOR_OWNER,
-	UPLOAD_REQUEST_REMINDER,
-	UPLOAD_REQUEST_PASSWORD_RENEWAL,
-	UPLOAD_REQUEST_CREATED,
-	UPLOAD_REQUEST_CLOSED_BY_OWNER,
-	UPLOAD_REQUEST_RECIPIENT_REMOVED,
-	UPLOAD_REQUEST_UPDATED_SETTINGS,
-	UPLOAD_REQUEST_FILE_DELETED_BY_OWNER,
+	@Override
+	public MailContentType getType() {
+		return MailContentType.DRIVE_WARN_NEW_MEMBER;
+	}
 
-	WORKGROUP_WARN_NEW_MEMBER,
-	WORKGROUP_WARN_UPDATED_MEMBER,
-	WORKGROUP_WARN_DELETED_MEMBER,
+	@Override
+	public MailActivationType getActivation() {
+		return MailActivationType.DRIVE_WARN_NEW_MEMBER;
+	}
 
-	ACCOUNT_OWNER_WARN_JWT_PERMANENT_TOKEN_CREATED,
-	ACCOUNT_OWNER_WARN_JWT_PERMANENT_TOKEN_DELETED,
+	public List<SharedSpaceMember> getChildMembers() {
+		return childMembers;
+	}
 
-	DRIVE_WARN_NEW_MEMBER;
-
+	public void setChildMembers(List<SharedSpaceMember> childMembers) {
+		this.childMembers = childMembers;
+	}
 }

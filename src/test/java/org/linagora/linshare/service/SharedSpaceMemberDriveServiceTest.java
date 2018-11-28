@@ -168,7 +168,7 @@ public class SharedSpaceMemberDriveServiceTest extends AbstractTransactionalJUni
 		Assert.assertThat(expectedNode.getParentUuid(), CoreMatchers.is(drive.getUuid()));
 		// Add a member to the Drive
 		SharedSpaceMemberContext context = new SharedSpaceMemberContext(creatorDriveRole, reader);
-		SharedSpaceMemberDrive addedDriveMember = (SharedSpaceMemberDrive) ssMemberDriveService.create(john, john, node,
+		SharedSpaceMemberDrive addedDriveMember = (SharedSpaceMemberDrive) ssMemberDriveService.create(john, john, drive,
 				context, new SharedSpaceAccount((User) jane));
 		workgroupMember = ssMemberService.findMemberByUuid(jane, jane, jane.getLsUuid(),
 				expectedNode.getUuid());
@@ -229,7 +229,7 @@ public class SharedSpaceMemberDriveServiceTest extends AbstractTransactionalJUni
 		Assert.assertThat(expectedNode.getParentUuid(), CoreMatchers.is(drive.getUuid()));
 		// Add new member
 		SharedSpaceMemberContext context = new SharedSpaceMemberContext(adminDriveRole, adminWorkgroupRole);
-		SharedSpaceMemberDrive addedDriveMember = (SharedSpaceMemberDrive) ssMemberDriveService.create(john, john, node,
+		SharedSpaceMemberDrive addedDriveMember = (SharedSpaceMemberDrive) ssMemberDriveService.create(john, john, drive,
 				context, new SharedSpaceAccount((User) jane));
 		workgroupMember = ssMemberService.findMemberByUuid(jane, jane, jane.getLsUuid(), expectedNode.getUuid());
 		Assert.assertNotNull("Member not added to the drive", addedDriveMember);

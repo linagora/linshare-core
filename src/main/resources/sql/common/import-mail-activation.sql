@@ -328,3 +328,13 @@ INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (289, false, false, 2, true);
 INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable) 
  	VALUES(34, false, 'ACCOUNT_OWNER_WARN_JWT_PERMANENT_TOKEN_DELETED', 287, 288, 289, 1, true);
+
+	-- MailActivation : DRIVE_WARN_NEW_MEMBER
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (306, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (307, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system)
+	VALUES (308, false, false, 2, true);
+INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
+	VALUES(35, false, 'DRIVE_WARN_NEW_MEMBER', 306, 307, 308, 1, true);
