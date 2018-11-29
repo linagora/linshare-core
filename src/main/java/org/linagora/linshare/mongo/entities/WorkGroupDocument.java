@@ -82,11 +82,9 @@ public class WorkGroupDocument extends WorkGroupNode {
 		super(new AccountMto(author, true), name, nodeParent.getUuid(), workGroup.getLsUuid());
 		this.size = document.getSize();
 		this.mimeType = document.getType();
-		this.documentUuid = document.getUuid();
 		this.hasRevision = false;
 		this.lastRevision = 0L;
 		this.uploadDate = new Date();
-		this.sha256sum = document.getSha256sum();
 		this.ciphered = false;
 		this.hasThumbnail = document.getHasThumbnail();
 		this.nodeType = WorkGroupNodeType.DOCUMENT;
@@ -170,8 +168,9 @@ public class WorkGroupDocument extends WorkGroupNode {
 
 	@Override
 	public String toString() {
-		return "WorkGroupDocument [name=" + name + ", size=" + size + ", mimeType=" + mimeType + ", hasRevision=" + hasRevision
-				+ ", lastRevision=" + lastRevision + ", hasThumbnail=" + hasThumbnail + "]";
+		return "WorkGroupDocument [size=" + size + ", mimeType=" + mimeType + ", documentUuid=" + documentUuid
+				+ ", hasRevision=" + hasRevision + ", lastRevision=" + lastRevision + ", sha256sum=" + sha256sum
+				+ ", uploadDate=" + uploadDate + ", ciphered=" + ciphered + ", hasThumbnail=" + hasThumbnail + "]";
 	}
 
 }

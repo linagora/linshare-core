@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2017-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,23 +31,20 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.core.business.service;
+
+import java.io.File;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 
-public interface WorkGroupNodeAbstractService {
+public interface DocumentEntryRevisionBusinessService extends DocumentEntryBusinessService {
 
-	WorkGroupNode find(Account actor, User owner, WorkGroup workGroup, String workGroupNodeUuid)
-			throws BusinessException;
-
-	String getNewName(Account actor, User owner, WorkGroup workGroup, WorkGroupNode nodeParent, String currentName);
-
-	void checkUniqueName(WorkGroup workGroup, WorkGroupNode nodeParent, String name);
-
-	boolean isUniqueName(WorkGroup workGroup, WorkGroupNode nodeParent, String name);
+	WorkGroupDocumentRevision createWorkGroupDocumentRevision(Account actor, WorkGroup workGroup, File myFile,
+			Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType,
+			WorkGroupNode nodeParent) throws BusinessException;
 
 }

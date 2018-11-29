@@ -47,6 +47,7 @@ import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
+import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 
 public interface DocumentEntryBusinessService {

@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2017-2018 LINAGORA
+ * Copyright (C) 2016-2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,23 +31,39 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.mongo.entities;
 
+import java.util.Date;
+
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.mongo.entities.WorkGroupNode;
 
-public interface WorkGroupNodeAbstractService {
+@XmlRootElement(name = "WorkGroupDocumentRevision")
+public class WorkGroupDocumentRevision extends WorkGroupDocument {
 
-	WorkGroupNode find(Account actor, User owner, WorkGroup workGroup, String workGroupNodeUuid)
-			throws BusinessException;
+	public WorkGroupDocumentRevision() {
+		super();
+		this.nodeType = WorkGroupNodeType.DOCUMENT_REVISION;
+	}
 
-	String getNewName(Account actor, User owner, WorkGroup workGroup, WorkGroupNode nodeParent, String currentName);
+	public WorkGroupDocumentRevision(Account author, String name, Document document, WorkGroup workGroup,
+			WorkGroupNode nodeParent) {
+		super(author, name, document, workGroup, nodeParent);
+		this.size = document.getSize();
+		this.mimeType = document.getType();
+		this.documentUuid = document.getUuid();
+		this.uploadDate = new Date();
+		this.sha256sum = document.getSha256sum();
+		this.hasThumbnail = document.getHasThumbnail();
+		this.nodeType = WorkGroupNodeType.DOCUMENT_REVISION;
+	}
 
-	void checkUniqueName(WorkGroup workGroup, WorkGroupNode nodeParent, String name);
-
-	boolean isUniqueName(WorkGroup workGroup, WorkGroupNode nodeParent, String name);
-
+	@Override
+	public String toString() {
+		return "WorkGroupDocumentRevision -> [ " + super.toString() + "]";
+	}
 }

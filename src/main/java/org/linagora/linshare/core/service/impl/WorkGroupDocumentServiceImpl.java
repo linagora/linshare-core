@@ -53,7 +53,6 @@ import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.OperationHistory;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
@@ -78,19 +77,32 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 		implements WorkGroupDocumentService {
 
 	private final DocumentEntryBusinessService documentEntryBusinessService;
-	private final LogEntryService logEntryService;
-	private final FunctionalityReadOnlyService functionalityReadOnlyService;
-	private final MimeTypeService mimeTypeService;
-	private final VirusScannerService virusScannerService;
-	private final MimeTypeMagicNumberDao mimeTypeIdentifier;
-	private final OperationHistoryBusinessService operationHistoryBusinessService;
-	private final QuotaService quotaService;
+
+	protected final LogEntryService logEntryService;
+
+	protected final FunctionalityReadOnlyService functionalityReadOnlyService;
+
+	protected final MimeTypeService mimeTypeService;
+
+	protected final VirusScannerService virusScannerService;
+
+	protected final MimeTypeMagicNumberDao mimeTypeIdentifier;
+
+	protected final OperationHistoryBusinessService operationHistoryBusinessService;
+
+	protected final QuotaService quotaService;
+
 	protected final WorkGroupNodeMongoRepository repository;
+
 	protected final DocumentGarbageCollectorMongoRepository documentGarbageCollectorRepository;
 
+	protected final DocumentGarbageCollecteurMongoRepository documentGarbageCollecteur;
+
 	public WorkGroupDocumentServiceImpl(DocumentEntryBusinessService documentEntryBusinessService,
-			LogEntryService logEntryService, FunctionalityReadOnlyService functionalityReadOnlyService,
-			MimeTypeService mimeTypeService, VirusScannerService virusScannerService,
+			LogEntryService logEntryService,
+			FunctionalityReadOnlyService functionalityReadOnlyService,
+			MimeTypeService mimeTypeService,
+			VirusScannerService virusScannerService,
 			MimeTypeMagicNumberDao mimeTypeIdentifier,
 			AntiSamyService antiSamyService,
 			WorkGroupNodeMongoRepository workGroupNodeMongoRepository,
@@ -114,52 +126,44 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 	}
 
 	@Override
-	public WorkGroupNode create(Account actor, Account owner, WorkGroup workgroup, File tempFile, String fileName, WorkGroupNode nodeParent)
-			throws BusinessException {
+	public WorkGroupNode create(Account actor, Account owner, WorkGroup workgroup, File tempFile, String fileName,
+			WorkGroupNode nodeParent) throws BusinessException {
 		Validate.notNull(nodeParent);
-
 		Long size = tempFile.length();
 		WorkGroupDocument document = null;
-
-		try {
-			String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
-			AbstractDomain domain = owner.getDomain();
-			checkSpace(workgroup, size);
-
-			// check if the file MimeType is allowed
-			Functionality mimeFunctionality = functionalityReadOnlyService.getMimeTypeFunctionality(domain);
-			if (mimeFunctionality.getActivationPolicy().getStatus()) {
-				mimeTypeService.checkFileMimeType(owner, fileName, mimeType);
-			}
-
-			virusScannerService.checkVirus(fileName, owner, tempFile, size);
-
-			// want a timestamp on doc ?
-			String timeStampingUrl = null;
-			StringValueFunctionality timeStampingFunctionality = functionalityReadOnlyService
-					.getTimeStampingFunctionality(domain);
-			if (timeStampingFunctionality.getActivationPolicy().getStatus()) {
-				timeStampingUrl = timeStampingFunctionality.getValue();
-			}
-
-			Functionality enciphermentFunctionality = functionalityReadOnlyService.getEnciphermentFunctionality(domain);
-			Boolean checkIfIsCiphered = enciphermentFunctionality.getActivationPolicy().getStatus();
-			document = documentEntryBusinessService.createWorkGroupDocument(owner, workgroup, tempFile, size, fileName, checkIfIsCiphered, timeStampingUrl, mimeType, nodeParent);
-
-			WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
-					AuditLogEntryType.WORKGROUP_DOCUMENT, document, workgroup);
-			addMembersToLog(workgroup, log);
-			logEntryService.insert(log);
-			addToQuota(workgroup, size);
-		} finally {
-			try {
-				logger.debug("deleting temp file : " + tempFile.getName());
-				tempFile.delete(); // remove the temporary file
-			} catch (Exception e) {
-				logger.error("can not delete temp file : " + e.getMessage());
-			}
-		}
+		String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
+		AbstractDomain domain = owner.getDomain();
+		checkSpace(workgroup, size);
+		// want a timestamp on doc ?
+		String timeStampingUrl = getTimeStampingUrl(domain);
+		Boolean checkIfIsCiphered = checkFileProperties(owner, fileName, mimeType, tempFile, size, domain);
+		document = documentEntryBusinessService.createWorkGroupDocument(owner, workgroup, tempFile, size, fileName,
+				checkIfIsCiphered, timeStampingUrl, mimeType, nodeParent);
+		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
+				AuditLogEntryType.WORKGROUP_DOCUMENT, document, workgroup);
+		addMembersToLog(workgroup, log);
+		logEntryService.insert(log);
 		return document;
+	}
+
+	protected Boolean checkFileProperties(Account owner, String fileName, String mimeType, File tempFile, Long size, AbstractDomain domain) {
+		// check if the file MimeType is allowed
+		Functionality mimeFunctionality = functionalityReadOnlyService.getMimeTypeFunctionality(domain);
+		if (mimeFunctionality.getActivationPolicy().getStatus()) {
+			mimeTypeService.checkFileMimeType(owner, fileName, mimeType);
+		}
+		virusScannerService.checkVirus(fileName, owner, tempFile, size);
+		Functionality enciphermentFunctionality = functionalityReadOnlyService.getEnciphermentFunctionality(domain);
+		Boolean checkIfIsCiphered = enciphermentFunctionality.getActivationPolicy().getStatus();
+		return checkIfIsCiphered;
+	}
+
+	protected String getTimeStampingUrl(AbstractDomain domain) {
+		StringValueFunctionality timeStampingFunctionality = functionalityReadOnlyService.getTimeStampingFunctionality(domain);
+		if (timeStampingFunctionality.getActivationPolicy().getStatus()) {
+			return timeStampingFunctionality.getValue();
+		}
+		return null;
 	}
 
 	@Override

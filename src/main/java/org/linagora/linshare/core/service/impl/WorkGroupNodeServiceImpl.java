@@ -45,19 +45,23 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.impl.WorkGroupNodeResourceAccessControlImpl;
 import org.linagora.linshare.core.service.AntiSamyService;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
+import org.linagora.linshare.core.service.WorkGroupDocumentRevisionService;
 import org.linagora.linshare.core.service.WorkGroupDocumentService;
 import org.linagora.linshare.core.service.WorkGroupFolderService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
+import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupFolder;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
@@ -87,12 +91,18 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 
 	protected final MongoTemplate mongoTemplate;
 
+	protected final FunctionalityReadOnlyService functionalityReadOnlyService;
+
+	protected final WorkGroupDocumentRevisionService workGroupDocumentRevisionService;
+
 	public WorkGroupNodeServiceImpl(WorkGroupNodeMongoRepository repository, LogEntryService logEntryService,
 			WorkGroupDocumentService workGroupDocumentService,
 			WorkGroupFolderService workGroupFolderService,
 			WorkGroupNodeResourceAccessControlImpl rac,
 			AntiSamyService antiSamyService,
-			MongoTemplate mongoTemplate) {
+			MongoTemplate mongoTemplate,
+			FunctionalityReadOnlyService functionalityReadOnlyService,
+			WorkGroupDocumentRevisionService workGroupDocumentRevisionService) {
 		super(rac);
 		this.repository = repository;
 		this.workGroupDocumentService = workGroupDocumentService;
@@ -100,6 +110,8 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		this.logEntryService = logEntryService;
 		this.antiSamyService = antiSamyService;
 		this.mongoTemplate = mongoTemplate;
+		this.functionalityReadOnlyService = functionalityReadOnlyService;
+		this.workGroupDocumentRevisionService = workGroupDocumentRevisionService;
 	}
 
 	@Override
@@ -233,13 +245,29 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 				parentNodeUuid = null;
 			}
 		}
-		WorkGroupNode nodeParent = getParentNode(actor, owner, workGroup, parentNodeUuid);
+		WorkGroupNode parentNode = getParentNode(actor, owner, workGroup, parentNodeUuid);
+		Functionality versioningFunctionality = functionalityReadOnlyService.getWorkGroupFileVersioning(actor.getDomain());
+		boolean isRevisionOnly = false;
 		if (strict) {
-			workGroupDocumentService.checkUniqueName(workGroup, nodeParent, fileName);
+			workGroupDocumentService.checkUniqueName(workGroup, parentNode, fileName);
 		} else {
-			fileName = workGroupDocumentService.getNewName(actor, owner, workGroup, nodeParent, fileName);
+			if (!workGroupDocumentService.isUniqueName(workGroup, parentNode, fileName)) {
+				if (!versioningFunctionality.getActivationPolicy().getStatus()) {
+					fileName = workGroupDocumentService.getNewName(actor, owner, workGroup, parentNode, fileName);
+				} else {
+					isRevisionOnly = true;
+				}
+			}
 		}
-		WorkGroupNode dto = workGroupDocumentService.create(actor, owner, workGroup, tempFile, fileName, nodeParent);
+		WorkGroupNode dto = null;
+		if(!isRevisionOnly) {
+			dto = workGroupDocumentService.create(actor, owner, workGroup, tempFile, fileName, parentNode);
+			parentNode = dto;
+		}
+		WorkGroupDocumentRevision documentRevision = workGroupDocumentRevisionService.create(actor, owner, workGroup, tempFile, fileName, parentNode);
+		if(isRevisionOnly) {
+			dto = workGroupDocumentRevisionService.updateDocument(actor, (Account) owner, workGroup, documentRevision);
+		}
 		return dto;
 	}
 

@@ -39,7 +39,6 @@ import java.io.InputStream;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;

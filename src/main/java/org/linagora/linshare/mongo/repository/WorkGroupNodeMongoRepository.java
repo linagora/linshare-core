@@ -58,4 +58,6 @@ public interface WorkGroupNodeMongoRepository extends MongoRepository<WorkGroupN
 
 	List<WorkGroupDocument> findByDocumentUuid(String documentUuid);
 
+	Long countByWorkGroupAndParentAndNodeType(String workGroupUuid, String parentUuid, WorkGroupNodeType type);
+
 }

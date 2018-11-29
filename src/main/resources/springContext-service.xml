@@ -329,6 +329,8 @@
 		<constructor-arg ref="antiSamyService" />
 		<constructor-arg ref="mongoTemplate" />
 		<constructor-arg ref="workGroupNodeResourceAccessControl" />
+		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="workGroupDocumentRevisionService" />
 	</bean>
 
 	<bean id="workGroupDocumentService" class="org.linagora.linshare.core.service.impl.WorkGroupDocumentServiceImpl">
@@ -345,6 +347,40 @@
 		<constructor-arg ref="antiSamyService" />
 		<constructor-arg ref="operationHistoryBusinessService" />
 		<constructor-arg ref="quotaService"/>
+	</bean>
+
+	<bean id="workGroupDocumentRevisionService" class="org.linagora.linshare.core.service.impl.WorkGroupDocumentRevisionServiceImpl">
+		<constructor-arg ref="workGroupNodeMongoRepository" />
+		<constructor-arg ref="documentGarbageCollecteurMongoRepository" />
+		<constructor-arg ref="threadMemberRepository" />
+		<constructor-arg ref="mongoTemplate" />
+		<constructor-arg ref="documentEntryBusinessService" />
+		<constructor-arg ref="logEntryService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="mimeTypeService" />
+		<constructor-arg ref="virusScannerService" />
+		<constructor-arg ref="mimeTypeMagicNumberDao" />
+		<constructor-arg ref="antiSamyService" />
+		<constructor-arg ref="operationHistoryBusinessService" />
+		<constructor-arg ref="quotaService"/>
+		<constructor-arg ref="documentEntryRevisionBusinessService"/>
+	</bean>
+
+	<bean id="workGroupDocumentRevisionService" class="org.linagora.linshare.core.service.impl.WorkGroupDocumentRevisionServiceImpl">
+		<constructor-arg ref="workGroupNodeMongoRepository" />
+		<constructor-arg ref="documentGarbageCollecteurMongoRepository" />
+		<constructor-arg ref="threadMemberRepository" />
+		<constructor-arg ref="mongoTemplate" />
+		<constructor-arg ref="documentEntryBusinessService" />
+		<constructor-arg ref="logEntryService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="mimeTypeService" />
+		<constructor-arg ref="virusScannerService" />
+		<constructor-arg ref="mimeTypeMagicNumberDao" />
+		<constructor-arg ref="antiSamyService" />
+		<constructor-arg ref="operationHistoryBusinessService" />
+		<constructor-arg ref="quotaService"/>
+		<constructor-arg ref="documentEntryRevisionBusinessService"/>
 	</bean>
 
 	<bean id="upgradeTaskService" class="org.linagora.linshare.core.service.impl.UpgradeTaskServiceImpl">

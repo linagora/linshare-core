@@ -51,6 +51,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.Validate;
 import org.apache.cxf.helpers.IOUtils;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampResponse;
@@ -80,6 +81,7 @@ import org.linagora.linshare.core.service.TimeStampingService;
 import org.linagora.linshare.core.utils.AESCrypt;
 import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
+import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
@@ -369,22 +371,14 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	}
 
 	@Override
-	public WorkGroupDocument createWorkGroupDocument(Account actor, WorkGroup workGroup, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, WorkGroupNode nodeParent) throws BusinessException {
-		if (exists(workGroup, fileName, nodeParent)) {
+	public WorkGroupDocument createWorkGroupDocument(Account actor, WorkGroup workGroup, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, WorkGroupNode parentNode) throws BusinessException {
+		if (exists(workGroup, fileName, parentNode)) {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_ALREADY_EXISTS,
 					"Can not create a new document, it already exists.");
 		}
 		Document document = createDocument(workGroup, myFile, size, fileName, timeStampingUrl, mimeType);
-		WorkGroupDocument node = new WorkGroupDocument(actor, fileName, document, workGroup, nodeParent);
-		//aes encrypt ? check headers
-		if (checkIfIsCiphered) {
-			node.setCiphered(checkIfFileIsCiphered(fileName, myFile));
-		}
-		node.setCreationDate(new Date());
-		node.setModificationDate(new Date());
-		node.setUploadDate(new Date());
-		node.setPathFromParent(nodeParent);
-		node.setLastAuthor(new AccountMto(actor, true));
+		WorkGroupDocument node = new WorkGroupDocument(actor, fileName, document, workGroup, parentNode);
+		node = setDocumentProperties(actor, node, fileName, parentNode, myFile, checkIfIsCiphered);
 		try {
 			node = repository.insert(node);
 		} catch (org.springframework.dao.DuplicateKeyException e) {
@@ -392,6 +386,21 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 					"Can not create a new document, it already exists.");
 		}
 		return node;
+	}
+
+	protected WorkGroupDocument setDocumentProperties(Account actor, WorkGroupDocument documentNode, String fileName, WorkGroupNode parentNode, File myFile, Boolean checkIfIsCiphered) {
+		Validate.notNull(documentNode);
+		Validate.notNull(myFile);
+		// aes encrypt ? check headers
+		if (checkIfIsCiphered) {
+			documentNode.setCiphered(checkIfFileIsCiphered(fileName, myFile));
+		}
+		documentNode.setCreationDate(new Date());
+		documentNode.setModificationDate(new Date());
+		documentNode.setUploadDate(new Date());
+		documentNode.setPathFromParent(parentNode);
+		documentNode.setLastAuthor(new AccountMto(actor, true));
+		return documentNode;
 	}
 
 	@Override
@@ -459,7 +468,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		return null;
 	}
 
-	private Document createDocument(Account owner, File myFile, Long size, String fileName, String timeStampingUrl, String mimeType) throws BusinessException {
+	protected Document createDocument(Account owner, File myFile, Long size, String fileName, String timeStampingUrl, String mimeType) throws BusinessException {
 		String sha256sum = SHA256CheckSumFileStream(myFile);
 		List<Document> documents = documentRepository.findBySha256Sum(sha256sum);
 		Map<ThumbnailType, FileMetaData> fileMetadataThumbnail = Maps.newHashMap();
@@ -656,7 +665,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		}
 	}
 
-	private boolean checkIfFileIsCiphered(String fileName, File tempFile) throws BusinessException {
+	protected boolean checkIfFileIsCiphered(String fileName, File tempFile) throws BusinessException {
 		boolean testheaders = false;
 		if(fileName.endsWith(".aes")){
 			try {
@@ -838,4 +847,5 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		}
 		return entity;
 	}
+
 }

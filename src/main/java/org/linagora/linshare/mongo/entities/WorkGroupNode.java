@@ -57,11 +57,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({ @Type(value = WorkGroupFolder.class, name = "FOLDER"),
 		@Type(value = WorkGroupDocument.class, name = "DOCUMENT"),
-		@Type(value = WorkGroupAsyncTask.class, name = "ASYNC_TASK")
+		@Type(value = WorkGroupAsyncTask.class, name = "ASYNC_TASK"),
+		@Type(value = WorkGroupDocumentRevision.class, name = "REVISION")
 		})
 @XmlSeeAlso({ WorkGroupFolder.class,
 	WorkGroupDocument.class,
-	WorkGroupAsyncTask.class
+	WorkGroupAsyncTask.class,
+	WorkGroupDocumentRevision.class
 	})
 @XmlRootElement(name = "WorkGroupNode")
 @Document(collection = "work_group_nodes")

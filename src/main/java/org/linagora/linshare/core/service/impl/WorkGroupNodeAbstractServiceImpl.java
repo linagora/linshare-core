@@ -113,7 +113,8 @@ public abstract class WorkGroupNodeAbstractServiceImpl implements WorkGroupNodeA
 		}
 	}
 
-	protected boolean isUniqueName(WorkGroup workGroup, WorkGroupNode nodeParent, String name) {
+	@Override
+	public boolean isUniqueName(WorkGroup workGroup, WorkGroupNode nodeParent, String name) {
 		List<WorkGroupNode> nodes = repository.findByWorkGroupAndParentAndName(workGroup.getLsUuid(),
 				nodeParent.getUuid(), name);
 		if (nodes.isEmpty()) {
