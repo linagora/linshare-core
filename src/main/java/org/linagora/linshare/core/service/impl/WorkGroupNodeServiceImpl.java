@@ -139,6 +139,11 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 			parentUuid = root.getUuid();
 		}
 		Validate.notEmpty(parentUuid, "Missing workGroup parentUuid");
+		WorkGroupNode parentNode = getParentNode(actor, (User) owner, workGroup, parentUuid);
+		if(parentNode.getNodeType().equals(WorkGroupNodeType.DOCUMENT) || 
+				nodeType != null && nodeType.equals(WorkGroupNodeType.DOCUMENT_REVISION)) {
+			return workGroupDocumentRevisionService.findAll(actor, workGroup, parentUuid);
+		}
 		if (nodeType != null) {
 			return repository.findByWorkGroupAndParentAndNodeType(workGroup.getLsUuid(), parentUuid, nodeType);
 		}

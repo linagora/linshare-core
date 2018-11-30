@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.service;
 
 import java.io.File;
+import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
@@ -49,4 +50,6 @@ public interface WorkGroupDocumentRevisionService extends WorkGroupDocumentServi
 
 	WorkGroupDocument updateDocument(Account actor, Account owner, WorkGroup workGroup,
 			WorkGroupDocumentRevision documentRevision) throws BusinessException;
+
+	List<WorkGroupNode> findAll(Account actor, WorkGroup workGroup, String parentUuid);
 }

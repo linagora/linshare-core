@@ -34,7 +34,10 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.io.File;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
@@ -47,6 +50,7 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -58,11 +62,14 @@ import org.linagora.linshare.core.service.MimeTypeService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.VirusScannerService;
 import org.linagora.linshare.core.service.WorkGroupDocumentRevisionService;
+import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
+import org.linagora.linshare.mongo.entities.WorkGroupVersioning;
 import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
 import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
+import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
@@ -70,6 +77,8 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 		implements WorkGroupDocumentRevisionService {
 
 	protected final DocumentEntryRevisionBusinessService documentEntryRevisionBusinessService;
+
+	protected final SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository;
 
 	public WorkGroupDocumentRevisionServiceImpl(DocumentEntryBusinessService documentEntryBusinessService,
 			LogEntryService logEntryService,
@@ -85,12 +94,14 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 			OperationHistoryBusinessService operationHistoryBusinessService,
 			QuotaService quotaService,
 			SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService,
-			DocumentEntryRevisionBusinessService documentEntryRevisionBusinessService) {
+			DocumentEntryRevisionBusinessService documentEntryRevisionBusinessService,
+			SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository) {
 		super(documentEntryBusinessService, logEntryService, functionalityReadOnlyService, mimeTypeService,
 				virusScannerService, mimeTypeIdentifier, antiSamyService, workGroupNodeMongoRepository,
 				documentGarbageCollectorRepository, threadMemberRepository, mongoTemplate, operationHistoryBusinessService,
 				quotaService, sharedSpaceMemberBusinessService);
 		this.documentEntryRevisionBusinessService = documentEntryRevisionBusinessService;
+		this.sharedSpaceNodeMongoRepository = sharedSpaceNodeMongoRepository;
 	}
 
 	@Override
@@ -157,5 +168,30 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 				AuditLogEntryType.WORKGROUP_DOCUMENT, parentDocument, workGroup);
 		logEntryService.insert(log);
 		return parentDocument;
+	}
+
+	@Override
+	public List<WorkGroupNode> findAll(Account actor, WorkGroup workGroup, String parentUuid) {
+		Validate.notNull(actor);
+		Validate.notNull(workGroup);
+		Validate.notNull(parentUuid);
+		Functionality versioningFunctionality = functionalityReadOnlyService.getWorkGroupFileVersioning(actor.getDomain());
+		boolean isVersioningFunctionalityEnabled = versioningFunctionality.getActivationPolicy().getStatus();
+		List<WorkGroupNode> nodes = repository.findByWorkGroupAndParentAndNodeType(workGroup.getLsUuid(), parentUuid, WorkGroupNodeType.DOCUMENT_REVISION);
+		Stream<WorkGroupNode> nodeStream = nodes.stream()
+				.sorted(Comparator.comparing(WorkGroupNode::getCreationDate, Comparator.reverseOrder()));
+		if (!isVersioningFunctionalityEnabled || !isVersioningEnabledInWorkGroup(workGroup)) {
+			nodeStream = nodeStream.limit(0);
+		}
+		return nodeStream.collect(Collectors.toList());
+	}
+
+	private boolean isVersioningEnabledInWorkGroup(WorkGroup workGroup) {
+		SharedSpaceNode ssn = sharedSpaceNodeMongoRepository.findByUuid(workGroup.getLsUuid());
+		WorkGroupVersioning workGroupVersioning = ssn.getWorkGroupVersioning();
+		if (workGroupVersioning == null) {
+			return false;
+		}
+		return workGroupVersioning.isEnabled();
 	}
 }

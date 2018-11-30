@@ -364,6 +364,7 @@
 		<constructor-arg ref="operationHistoryBusinessService" />
 		<constructor-arg ref="quotaService"/>
 		<constructor-arg ref="documentEntryRevisionBusinessService"/>
+		<constructor-arg ref="sharedSpaceNodeMongoRepository"/>
 	</bean>
 
 	<bean id="upgradeTaskService" class="org.linagora.linshare.core.service.impl.UpgradeTaskServiceImpl">
