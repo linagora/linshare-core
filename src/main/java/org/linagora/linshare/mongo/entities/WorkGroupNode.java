@@ -58,7 +58,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonSubTypes({ @Type(value = WorkGroupFolder.class, name = "FOLDER"),
 		@Type(value = WorkGroupDocument.class, name = "DOCUMENT"),
 		@Type(value = WorkGroupAsyncTask.class, name = "ASYNC_TASK"),
-		@Type(value = WorkGroupDocumentRevision.class, name = "REVISION")
+		@Type(value = WorkGroupDocumentRevision.class, name = "DOCUMENT_REVISION")
 		})
 @XmlSeeAlso({ WorkGroupFolder.class,
 	WorkGroupDocument.class,
