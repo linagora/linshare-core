@@ -37,63 +37,62 @@ import org.linagora.linshare.core.domain.constants.TimeUnit;
 
 public class WorkGroupVersioning {
 
-		protected Boolean isEnabled;
+	protected Boolean isEnabled;
 
-		protected Boolean isRevisionExpirationEnabled;
+	protected Boolean isExpirationEnabled;
 
-		protected Integer revisionExpirationDelay;
+	protected Integer expirationDelay;
 
-		protected TimeUnit revisionExpirationType;
+	protected TimeUnit expirationUnit;
 
-		public WorkGroupVersioning() {
-			super();
-		}
+	public WorkGroupVersioning() {
+		super();
+	}
 
-		public WorkGroupVersioning(Boolean isEnabled, Boolean isRevisionExpirationEnabled,
-				Integer revisionExpirationDelay, TimeUnit revisionExpirationType) {
-			super();
-			this.isEnabled = isEnabled;
-			this.isRevisionExpirationEnabled = isRevisionExpirationEnabled;
-			this.revisionExpirationDelay = revisionExpirationDelay;
-			this.revisionExpirationType = revisionExpirationType;
-		}
+	public WorkGroupVersioning(Boolean isEnabled, Boolean isExpirationEnabled, Integer expirationDelay,
+			TimeUnit expirationUnit) {
+		super();
+		this.isEnabled = isEnabled;
+		this.isExpirationEnabled = isExpirationEnabled;
+		this.expirationDelay = expirationDelay;
+		this.expirationUnit = expirationUnit;
+	}
 
-		public Boolean isEnabled() {
-			return isEnabled;
-		}
+	public Boolean isEnabled() {
+		return isEnabled;
+	}
 
-		public void setEnabled(Boolean isEnabled) {
-			this.isEnabled = isEnabled;
-		}
+	public void setEnabled(Boolean isEnabled) {
+		this.isEnabled = isEnabled;
+	}
 
-		public Boolean isRevisionExpirationEnabled() {
-			return isRevisionExpirationEnabled;
-		}
+	public Boolean isExpirationEnabled() {
+		return isExpirationEnabled;
+	}
 
-		public void setRevisionExpirationEnabled(Boolean isRevisionExpirationEnabled) {
-			this.isRevisionExpirationEnabled = isRevisionExpirationEnabled;
-		}
+	public void setExpirationEnabled(Boolean isExpirationEnabled) {
+		this.isExpirationEnabled = isExpirationEnabled;
+	}
 
-		public Integer getRevisionExpirationDelay() {
-			return revisionExpirationDelay;
-		}
+	public Integer getExpirationDelay() {
+		return expirationDelay;
+	}
 
-		public void setRevisionExpirationDelay(Integer revisionExpirationDelay) {
-			this.revisionExpirationDelay = revisionExpirationDelay;
-		}
+	public void setExpirationDelay(Integer expirationDelay) {
+		this.expirationDelay = expirationDelay;
+	}
 
-		public TimeUnit getRevisionExpirationType() {
-			return revisionExpirationType;
-		}
+	public TimeUnit getExpirationUnit() {
+		return expirationUnit;
+	}
 
-		public void setRevisionExpirationType(TimeUnit revisionExpirationType) {
-			this.revisionExpirationType = revisionExpirationType;
-		}
+	public void setExpirationUnit(TimeUnit expirationUnit) {
+		this.expirationUnit = expirationUnit;
+	}
 
-		@Override
-		public String toString() {
-			return "WorkGroupVersioning [isEnabled=" + isEnabled + ", isRevisionExpirationEnabled="
-					+ isRevisionExpirationEnabled + ", revisionExpirationDelay=" + revisionExpirationDelay
-					+ ", revisionExpirationType=" + revisionExpirationType + "]";
-		}
+	@Override
+	public String toString() {
+		return "WorkGroupVersioning [isEnabled=" + isEnabled + ", isExpirationEnabled=" + isExpirationEnabled
+				+ ", expirationDelay=" + expirationDelay + ", expirationUnit=" + expirationUnit + "]";
+	}
 }
