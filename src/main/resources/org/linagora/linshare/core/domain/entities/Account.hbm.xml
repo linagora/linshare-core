@@ -1,29 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-	<typedef class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="roleEnumType">
-		<param name="enumClass">org.linagora.linshare.core.domain.constants.Role</param>
-		<param name="identifierMethod">toInt</param>
-		<param name="valueOfMethod">fromInt</param>
-	</typedef>
-	<typedef
-		class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="enumLanguage">
-		<param name="enumClass">org.linagora.linshare.core.domain.constants.Language</param>
-		<param name="identifierMethod">getTapestryLocale</param>
-		<param name="valueOfMethod">fromTapestryLocale</param>
-	</typedef>
-	<typedef
-		class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="supportedLanguageType">
-		<param name="enumClass">org.linagora.linshare.core.domain.constants.SupportedLanguage</param>
-		<param name="identifierMethod">getTapestryLocale</param>
-		<param name="valueOfMethod">fromTapestryLocale</param>
-	</typedef>
-	<typedef
-		class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="purgeStep">
-		<param name="enumClass">org.linagora.linshare.core.domain.constants.AccountPurgeStepEnum</param>
-		<param name="identifierMethod">name</param>
-		<param name="valueOfMethod">fromString</param>
-	</typedef>
 
 	<class name="org.linagora.linshare.core.domain.entities.Account" table="account" lazy="false" discriminator-value="0">
 		<id name="id" column="id" type="long" unsaved-value="0">

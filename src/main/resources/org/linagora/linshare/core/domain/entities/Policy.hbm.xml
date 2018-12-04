@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping default-access="field" package="org.linagora.linshare.core.domain.entities">
-  <typedef class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="policyEnumType">
-    <param name="enumClass">org.linagora.linshare.core.domain.constants.Policies</param>
-    <param name="identifierMethod">toInt</param>
-    <param name="valueOfMethod">fromInt</param>
-  </typedef>
+
   <class name="Policy" table="policy">
     <!--<cache usage="read-write" />-->
     <id name="persistenceId" type="long">

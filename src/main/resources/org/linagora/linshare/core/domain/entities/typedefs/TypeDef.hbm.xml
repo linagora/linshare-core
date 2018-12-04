@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping  default-access="field" package="org.linagora.linshare.core.domain.entities">
+
+		<typedef
+			class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="roleEnumType">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.Role</param>
+			<param name="identifierMethod">toInt</param>
+			<param name="valueOfMethod">fromInt</param>
+		</typedef>
+		<typedef
+			class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="domainLanguageType">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.Language</param>
+			<param name="identifierMethod">getTapestryLocale</param>
+			<param name="valueOfMethod">fromTapestryLocale</param>
+		</typedef>
+		<typedef
+			class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType"
+			name="domainPurgeStep">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.DomainPurgeStepEnum</param>
+			<param name="identifierMethod">name</param>
+			<param name="valueOfMethod">fromString</param>
+		</typedef>
+		<typedef
+			class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="supportedLanguageType">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.SupportedLanguage</param>
+			<param name="identifierMethod">getTapestryLocale</param>
+			<param name="valueOfMethod">fromTapestryLocale</param>
+		</typedef>
+		<typedef
+			class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="purgeStep">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.AccountPurgeStepEnum</param>
+			<param name="identifierMethod">name</param>
+			<param name="valueOfMethod">fromString</param>
+		</typedef>
+		<typedef
+			class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="technicalAccountPermissionType">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType</param>
+			<param name="identifierMethod">name</param>
+			<param name="valueOfMethod">fromString</param>
+		</typedef>
+		<typedef class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="asyncTaskStatusEnum">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.AsyncTaskStatus</param>
+			<param name="identifierMethod">name</param>
+			<param name="valueOfMethod">fromString</param>
+		</typedef>
+		<typedef class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="asyncTaskTypeEnum">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.AsyncTaskType</param>
+			<param name="identifierMethod">name</param>
+			<param name="valueOfMethod">fromString</param>
+		</typedef>
+		<typedef class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType"  name="batchType">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.BatchType</param>
+			<param name="valueOfMethod">fromString</param>
+		</typedef>
+		<typedef
+			class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="thumbnailType">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.ThumbnailType</param>
+			<param name="identifierMethod">name</param>
+			<param name="valueOfMethod">fromString</param>
+		</typedef>
+		<typedef
+			class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="enumLanguage">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.Language</param>
+			<param name="identifierMethod">getTapestryLocale</param>
+			<param name="valueOfMethod">fromTapestryLocale</param>
+		</typedef>
+		<typedef
+			class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="groupProviderType">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.GroupProviderType</param>
+			<param name="identifierMethod">name</param>
+			<param name="valueOfMethod">fromString</param>
+		</typedef>
+		<typedef class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="LogActionV1">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.LogActionV1</param>
+			<param name="identifierMethod">name</param>
+			<param name="valueOfMethod">fromString</param>
+		</typedef>
+		<typedef
+			class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="operationType">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.OperationHistoryTypeEnum</param>
+			<param name="identifierMethod">toInt</param>
+			<param name="valueOfMethod">fromInt</param>
+		</typedef>
+		<typedef
+			class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="containerQuotaType">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.ContainerQuotaType</param>
+			<param name="valueOfMethod">fromString</param>
+		</typedef>
+		<typedef class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="unitEnumType">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.UnitType</param>
+			<param name="identifierMethod">toInt</param>
+			<param name="valueOfMethod">fromInt</param>
+		</typedef>
+		
+		<typedef class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="fileSizeEnumType">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.FileSizeUnit</param>
+			<param name="identifierMethod">toInt</param>
+			<param name="valueOfMethod">fromInt</param>
+		</typedef>
+		<typedef class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="timeUnitEnumType">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.TimeUnit</param>
+			<param name="identifierMethod">toInt</param>
+			<param name="valueOfMethod">fromInt</param>
+		</typedef>
+		<typedef class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="policyEnumType">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.Policies</param>
+			<param name="identifierMethod">toInt</param>
+			<param name="valueOfMethod">fromInt</param>
+		</typedef>
+		<typedef name="containerQuotaType" class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.ContainerQuotaType</param>
+			<param name="valueOfMethod">fromString</param>
+		</typedef>
+		<typedef
+			class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="statisticType">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.StatisticType</param>
+			<param name="identifierMethod">name</param>
+			<param name="valueOfMethod">fromString</param>
+		</typedef>
+		<typedef name="upgradeTaskType" class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.UpgradeTaskType</param>
+			<param name="valueOfMethod">fromString</param>
+		</typedef>
+		<typedef name="upgradeTaskStatus" class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.UpgradeTaskStatus</param>
+			<param name="valueOfMethod">fromString</param>
+		</typedef>
+		<typedef name="upgradeTaskPriority" class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.UpgradeTaskPriority</param>
+			<param name="valueOfMethod">fromString</param>
+		</typedef>
+		<typedef name="upgradeTaskGroup" class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.UpgradeTaskGroup</param>
+			<param name="valueOfMethod">fromString</param>
+		</typedef>
+		<typedef class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="uploadPropositionStatus">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.UploadPropositionStatus</param>
+			<param name="identifierMethod">name</param>
+			<param name="valueOfMethod">fromString</param>
+		</typedef>
+		<typedef
+			class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="uploadPropositionActionType">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.UploadPropositionActionType</param>
+			<param name="identifierMethod">name</param>
+			<param name="valueOfMethod">fromString</param>
+		</typedef>
+		<typedef
+			class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="uploadPropositionMatchType">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.UploadPropositionMatchType</param>
+			<param name="identifierMethod">name</param>
+			<param name="valueOfMethod">fromString</param>
+		</typedef>
+		<typedef
+			class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="uploadPropositionRuleOperatorType">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.UploadPropositionRuleOperatorType</param>
+			<param name="identifierMethod">name</param>
+			<param name="valueOfMethod">fromString</param>
+		</typedef>
+		<typedef
+			class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="uploadPropositionRuleFieldType">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.UploadPropositionRuleFieldType</param>
+			<param name="identifierMethod">name</param>
+			<param name="valueOfMethod">fromString</param>
+		</typedef>
+		<typedef class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="uploadRequestStatus">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.UploadRequestStatus</param>
+			<param name="identifierMethod">name</param>
+			<param name="valueOfMethod">fromString</param>
+		</typedef>
+		<typedef class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="uploadRequestHistoryEventType">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.UploadRequestHistoryEventType</param>
+			<param name="identifierMethod">name</param>
+			<param name="valueOfMethod">fromString</param>
+		</typedef>
+		<typedef
+			class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="userProviderType">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.UserProviderType</param>
+			<param name="identifierMethod">name</param>
+			<param name="valueOfMethod">fromString</param>
+		</typedef>
+		<typedef
+			class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="languageType">
+			<param name="enumClass">org.linagora.linshare.core.domain.constants.SupportedLanguage</param>
+			<param name="identifierMethod">getTapestryLocale</param>
+			<param name="valueOfMethod">fromTapestryLocale</param>
+		</typedef>
+</hibernate-mapping>

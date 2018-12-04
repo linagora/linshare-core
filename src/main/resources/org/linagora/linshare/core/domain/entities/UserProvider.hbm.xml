@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-	<typedef
-		class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="userProviderType">
-		<param name="enumClass">org.linagora.linshare.core.domain.constants.UserProviderType</param>
-		<param name="identifierMethod">name</param>
-		<param name="valueOfMethod">fromString</param>
-	</typedef>
+
 	<class name="org.linagora.linshare.core.domain.entities.UserProvider" table="user_provider" lazy="true">
 		<id name="id" column="id" type="long" unsaved-value="0">
 			<generator class="native">

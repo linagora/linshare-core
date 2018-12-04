@@ -1,22 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping package="org.linagora.linshare.core.domain.entities">
-	<typedef name="upgradeTaskType" class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType">
-		<param name="enumClass">org.linagora.linshare.core.domain.constants.UpgradeTaskType</param>
-		<param name="valueOfMethod">fromString</param>
-	</typedef>
-	<typedef name="upgradeTaskStatus" class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType">
-		<param name="enumClass">org.linagora.linshare.core.domain.constants.UpgradeTaskStatus</param>
-		<param name="valueOfMethod">fromString</param>
-	</typedef>
-	<typedef name="upgradeTaskPriority" class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType">
-		<param name="enumClass">org.linagora.linshare.core.domain.constants.UpgradeTaskPriority</param>
-		<param name="valueOfMethod">fromString</param>
-	</typedef>
-	<typedef name="upgradeTaskGroup" class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType">
-		<param name="enumClass">org.linagora.linshare.core.domain.constants.UpgradeTaskGroup</param>
-		<param name="valueOfMethod">fromString</param>
-	</typedef>
+
 	<class name="UpgradeTask" table="upgrade_task" lazy="false">
 		<id name="id" column="id" type="long" unsaved-value="0">
 			<generator class="native">

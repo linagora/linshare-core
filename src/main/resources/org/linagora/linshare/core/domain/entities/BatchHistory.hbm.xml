@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-	<typedef name="batchType" class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType">
-		<param name="enumClass">org.linagora.linshare.core.domain.constants.BatchType</param>
-		<param name="valueOfMethod">fromString</param>
-	</typedef>
+	
 	<class name="org.linagora.linshare.core.domain.entities.BatchHistory"
 		table="batch_history" lazy="true" discriminator-value="0">
 		<id name="id" column="id" type="long" unsaved-value="0">

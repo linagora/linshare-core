@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping default-access="field" package="org.linagora.linshare.core.domain.entities">
-	<typedef
-		class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="technicalAccountPermissionType">
-		<param name="enumClass">org.linagora.linshare.core.domain.constants.TechnicalAccountPermissionType</param>
-		<param name="identifierMethod">name</param>
-		<param name="valueOfMethod">fromString</param>
-	</typedef>
+
 	<class name="org.linagora.linshare.core.domain.entities.AccountPermission"
 		table="account_permission" lazy="true">
 		<id name="id" column="id" type="long" unsaved-value="0">

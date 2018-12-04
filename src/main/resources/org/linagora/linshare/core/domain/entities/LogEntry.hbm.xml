@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-  <typedef class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="LogActionV1">
-    <param name="enumClass">org.linagora.linshare.core.domain.constants.LogActionV1</param>
-    <param name="identifierMethod">name</param>
-    <param name="valueOfMethod">fromString</param>
-  </typedef>
+
   <class discriminator-value="none" name="org.linagora.linshare.core.domain.entities.LogEntry" table="log_entry">
     <id name="persistenceId" type="long">
       <column name="id" not-null="true" index="index_log_entry_id"/>
