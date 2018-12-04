@@ -34,10 +34,12 @@
 package org.linagora.linshare.service;
 
 import java.util.List;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
@@ -52,8 +54,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml", 
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-dao.xml",
@@ -65,7 +68,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-fongo.xml",
 		"classpath:springContext-storage-jcloud.xml",
 		"classpath:springContext-test.xml" })
-public class SharedSpacePermissionServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class SharedSpacePermissionServiceImplTest{
 	private static Logger logger = LoggerFactory.getLogger(SharedSpacePermissionServiceImplTest.class);
 
 	@Autowired
@@ -86,11 +89,9 @@ public class SharedSpacePermissionServiceImplTest extends AbstractTransactionalJ
 
 	private LoadingServiceTestDatas datas;
 
-	@Before
+	@BeforeEach
 	public void init() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		this.executeSqlScript("import-tests-default-domain-quotas.sql", false);
-		this.executeSqlScript("import-tests-quota-other.sql", false);
 		initMongoService.init();
 		datas = new LoadingServiceTestDatas(userRepo);
 		datas.loadUsers();
@@ -98,7 +99,7 @@ public class SharedSpacePermissionServiceImplTest extends AbstractTransactionalJ
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
@@ -109,7 +110,7 @@ public class SharedSpacePermissionServiceImplTest extends AbstractTransactionalJ
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		SharedSpacePermission toFindPermission = service.findByUuid(authUser, authUser,
 				"31cb4d80-c939-40f1-a79e-4d77392e0e0b");
-		Assert.assertNotNull("Permission has not been found.", toFindPermission);
+		Assertions.assertNotNull(toFindPermission,"Permission has not been found.");
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -117,7 +118,7 @@ public class SharedSpacePermissionServiceImplTest extends AbstractTransactionalJ
 	public void testFindByRole() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		List<SharedSpacePermission> toFindPermission = service.findByRole(authUser, authUser, "ADMIN");
-		Assert.assertNotNull("Permission has not been found.", toFindPermission);
+		Assertions.assertNotNull(toFindPermission,"Permission has not been found.");
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -125,8 +126,7 @@ public class SharedSpacePermissionServiceImplTest extends AbstractTransactionalJ
 	public void testFindAll() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		List<SharedSpacePermission> toFindPermission = service.findAll(authUser, authUser);
-		Assert.assertNotNull("Permission has not been found.", toFindPermission);
+		Assertions.assertNotNull(toFindPermission,"Permission has not been found.");
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 }
-
