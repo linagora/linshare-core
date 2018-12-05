@@ -110,9 +110,9 @@ public class DomainQuotaBusinessServiceImpl extends GenericQuotaBusinessServiceI
 		entity.setMaintenance(dq.getMaintenance());
 
 		// default quota
-		Boolean defaultQuotaOverride = entity.getDefaultQuotaOverride();
+		Boolean defaultQuotaOverride = dq.getDefaultQuotaOverride();
 		if (defaultQuotaOverride != null) {
-			if (!defaultQuotaOverride.equals(dq.getDefaultQuotaOverride())) {
+			if (!defaultQuotaOverride.equals(entity.getDefaultQuotaOverride())) {
 				if (dq.getDefaultQuotaOverride()) {
 					// from false to true => need to cascade
 					repository.cascadeDefaultQuota(entity.getDomain(), dq.getDefaultQuota());
