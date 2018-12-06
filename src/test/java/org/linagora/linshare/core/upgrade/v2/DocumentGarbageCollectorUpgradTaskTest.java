@@ -54,7 +54,7 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.runner.BatchRunner;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.upgrade.v2_1.DocumentGarbageCollectorUpgradeTaskImpl;
-import org.linagora.linshare.mongo.entities.DocumentGarbageCollector;
+import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
 import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -147,8 +147,8 @@ public class DocumentGarbageCollectorUpgradTaskTest extends AbstractTransactiona
 		documentEntryService.delete(owner, owner, documentEntry.getUuid());
 		Assert.assertEquals(documentRepository.findAll().size(), 1);
 		Assert.assertEquals(documentEntryRepository.getRelatedDocumentEntryCount(documentEntry.getDocument()), 0);
-		List<DocumentGarbageCollector> documentGarbageCollectors = documentGarbageCollectorMongoRepository.findAll();
-		for (DocumentGarbageCollector documentGarbageCollector : documentGarbageCollectors) {
+		List<DocumentGarbageCollecteur> documentGarbageCollectors = documentGarbageCollectorMongoRepository.findAll();
+		for (DocumentGarbageCollecteur documentGarbageCollector : documentGarbageCollectors) {
 			documentEntryExpiration.add(Calendar.DATE, -1);
 			documentGarbageCollector.setCreationDate(documentEntryExpiration.getTime());
 			documentGarbageCollectorMongoRepository.save(documentGarbageCollector);

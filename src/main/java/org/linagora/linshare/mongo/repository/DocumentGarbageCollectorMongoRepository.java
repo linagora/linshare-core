@@ -33,9 +33,9 @@
  */
 package org.linagora.linshare.mongo.repository;
 
-import org.linagora.linshare.mongo.entities.DocumentGarbageCollector;
+import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface DocumentGarbageCollectorMongoRepository extends MongoRepository<DocumentGarbageCollector, String> {
+public interface DocumentGarbageCollectorMongoRepository extends MongoRepository<DocumentGarbageCollecteur, String> {
 
 }

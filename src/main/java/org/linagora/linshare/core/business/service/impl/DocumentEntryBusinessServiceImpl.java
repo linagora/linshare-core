@@ -78,7 +78,7 @@ import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.ThumbnailRepository;
 import org.linagora.linshare.core.service.TimeStampingService;
 import org.linagora.linshare.core.utils.AESCrypt;
-import org.linagora.linshare.mongo.entities.DocumentGarbageCollector;
+import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
@@ -366,7 +366,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		logger.debug("Deleting document entry: " + documentEntry.getUuid());
 		Account owner = documentEntry.getEntryOwner();
 		owner.getEntries().remove(documentEntry);
-		documentGarbageCollectorRepository.insert(new DocumentGarbageCollector(documentEntry.getDocument().getUuid()));
+		documentGarbageCollectorRepository.insert(new DocumentGarbageCollecteur(documentEntry.getDocument().getUuid()));
 		documentEntryRepository.delete(documentEntry);
 	}
 

@@ -55,7 +55,7 @@ import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.runner.BatchRunner;
-import org.linagora.linshare.mongo.entities.DocumentGarbageCollector;
+import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
 import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -145,9 +145,9 @@ public class DocumentGarbageCollectorBatchImplTest extends AbstractTransactional
 		DocumentEntry createDocumentEntry2 = documentEntryBusinessService.createDocumentEntry(john, tempFile2,
 				tempFile2.length(), "file2.txt", null, false, null, "text/plain", cal, false, null);
 		documentEntryBusinessService.deleteDocumentEntry(createDocumentEntry);
-		List<DocumentGarbageCollector> garbageCollectors = documentGarbageRepository.findAll();
+		List<DocumentGarbageCollecteur> garbageCollectors = documentGarbageRepository.findAll();
 		Assert.assertEquals(1, garbageCollectors.size());
-		for (DocumentGarbageCollector documentGarbageCollector : garbageCollectors) {
+		for (DocumentGarbageCollecteur documentGarbageCollector : garbageCollectors) {
 			Integer hourInterval = 0 - cal.getMinimum(Calendar.HOUR_OF_DAY);
 			cal.setTime(documentGarbageCollector.getCreationDate());
 			cal.add(Calendar.HOUR_OF_DAY, hourInterval);
@@ -177,9 +177,9 @@ public class DocumentGarbageCollectorBatchImplTest extends AbstractTransactional
 		DocumentEntry createDocumentEntry2 = documentEntryBusinessService.createDocumentEntry(john, tempFile2,
 				tempFile2.length(), "file2.txt", null, false, null, "text/plain", cal, false, null);
 		documentEntryBusinessService.deleteDocumentEntry(createDocumentEntry);
-		List<DocumentGarbageCollector> garbageCollectors = documentGarbageRepository.findAll();
+		List<DocumentGarbageCollecteur> garbageCollectors = documentGarbageRepository.findAll();
 		Assert.assertEquals(1, garbageCollectors.size());
-		for (DocumentGarbageCollector documentGarbageCollector : garbageCollectors) {
+		for (DocumentGarbageCollecteur documentGarbageCollector : garbageCollectors) {
 			Integer hourInterval = 0 - cal.getMaximum(Calendar.HOUR_OF_DAY);
 			cal.setTime(documentGarbageCollector.getCreationDate());
 			cal.add(Calendar.HOUR_OF_DAY, hourInterval);

@@ -46,7 +46,7 @@ import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
-import org.linagora.linshare.mongo.entities.DocumentGarbageCollector;
+import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
 import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
 import org.linagora.linshare.mongo.repository.UpgradeTaskLogMongoRepository;
 
@@ -81,8 +81,8 @@ public class DocumentGarbageCollectorUpgradeTaskImpl extends GenericUpgradeTaskI
 	@Override
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
-		DocumentGarbageCollector documentGarbageCollector = new DocumentGarbageCollector(identifier);
-		BatchResultContext<DocumentGarbageCollector> res = new BatchResultContext<DocumentGarbageCollector>(documentGarbageCollector);
+		DocumentGarbageCollecteur documentGarbageCollector = new DocumentGarbageCollecteur(identifier);
+		BatchResultContext<DocumentGarbageCollecteur> res = new BatchResultContext<DocumentGarbageCollecteur>(documentGarbageCollector);
 		console.logDebug(batchRunContext, total, position, "Processing documentGarbageCollector : " + documentGarbageCollector.toString());
 		documentGarbageCollectorRepository.insert(documentGarbageCollector);
 		console.logInfo(batchRunContext, "Document added successfully", identifier);
@@ -93,8 +93,8 @@ public class DocumentGarbageCollectorUpgradeTaskImpl extends GenericUpgradeTaskI
 	@Override
 	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		@SuppressWarnings("unchecked")
-		BatchResultContext<DocumentGarbageCollector> res = (BatchResultContext<DocumentGarbageCollector>) context;
-		DocumentGarbageCollector resource = res.getResource();
+		BatchResultContext<DocumentGarbageCollecteur> res = (BatchResultContext<DocumentGarbageCollecteur>) context;
+		DocumentGarbageCollecteur resource = res.getResource();
 		if (res.getProcessed()) {
 			logInfo(batchRunContext, total, position, resource + " has been updated.");
 		} else {

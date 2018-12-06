@@ -65,7 +65,7 @@ import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.VirusScannerService;
 import org.linagora.linshare.core.service.WorkGroupDocumentService;
 import org.linagora.linshare.core.utils.UniqueName;
-import org.linagora.linshare.mongo.entities.DocumentGarbageCollector;
+import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
@@ -193,7 +193,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 		WorkGroupDocument document = (WorkGroupDocument)workGroupNode;
 		delFromQuota(workGroup, document.getSize());
 		repository.delete(workGroupNode);
-		documentGarbageCollectorRepository.insert(new DocumentGarbageCollector(document.getDocumentUuid()));
+		documentGarbageCollectorRepository.insert(new DocumentGarbageCollecteur(document.getDocumentUuid()));
 		return workGroupNode;
 	}
 

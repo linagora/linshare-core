@@ -40,8 +40,9 @@ import javax.persistence.GeneratedValue;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "document_garbage_collector")
-public class DocumentGarbageCollector {
+//TODO : Plan a complete migration to pass from collecteur to collector
+@Document(collection = "document_garbage_collecteur")
+public class DocumentGarbageCollecteur {
 
 	@Id
 	@GeneratedValue
@@ -51,7 +52,7 @@ public class DocumentGarbageCollector {
 
 	protected Date creationDate;
 
-	public DocumentGarbageCollector(String documentUuid) {
+	public DocumentGarbageCollecteur(String documentUuid) {
 		super();
 		this.documentUuid = documentUuid;
 		this.creationDate = new Date();
@@ -83,7 +84,7 @@ public class DocumentGarbageCollector {
 
 	@Override
 	public String toString() {
-		return "DocumentGarbageCollector [id=" + id + ", documentUuid=" + documentUuid + ", creationDate="
+		return "DocumentGarbageCollecteur [id=" + id + ", documentUuid=" + documentUuid + ", creationDate="
 				+ creationDate + "]";
 	}
 

@@ -75,7 +75,7 @@ import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.UploadRequestEntryService;
 import org.linagora.linshare.core.service.VirusScannerService;
-import org.linagora.linshare.mongo.entities.DocumentGarbageCollector;
+import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.DocumentEntryAuditLogEntry;
 import org.linagora.linshare.mongo.entities.logs.UploadRequestEntryAuditLogEntry;
@@ -278,7 +278,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		}
 		uploadRequestEntryBusinessService.delete(entry);
 		if (!entry.getCopied()) {
-			documentGarbageCollectorRepository.insert(new DocumentGarbageCollector(entry.getDocument().getUuid()));
+			documentGarbageCollectorRepository.insert(new DocumentGarbageCollecteur(entry.getDocument().getUuid()));
 		}
 		Account actor = uploadRequestUrl.getUploadRequest().getUploadRequestGroup().getOwner();
 		AuditLogEntryUser log = new UploadRequestEntryAuditLogEntry(new AccountMto(actor),
@@ -303,7 +303,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 					"Cannot delete file when upload request is not closed or archived");
 		}
 		if (!uploadRequestEntry.getCopied()) {
-			documentGarbageCollectorRepository.insert(new DocumentGarbageCollector(uploadRequestEntry.getDocument().getUuid()));
+			documentGarbageCollectorRepository.insert(new DocumentGarbageCollecteur(uploadRequestEntry.getDocument().getUuid()));
 		}
 		uploadRequestEntryBusinessService.delete(uploadRequestEntry);
 		if (uploadRequestEntry.getUploadRequestUrl().getUploadRequest().getEnableNotification()) {

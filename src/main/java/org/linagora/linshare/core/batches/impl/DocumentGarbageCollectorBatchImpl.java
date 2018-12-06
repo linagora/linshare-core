@@ -48,7 +48,7 @@ import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
-import org.linagora.linshare.mongo.entities.DocumentGarbageCollector;
+import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
@@ -100,11 +100,11 @@ public class DocumentGarbageCollectorBatchImpl extends GenericBatchImpl {
 		logger.debug("midnight : " + midnight.getTime());
 		query.addCriteria(Criteria.where("creationDate").lt(midnight.getTime()));
 		query.fields().include("documentUuid");
-		List<DocumentGarbageCollector> entries = mongoTemplate.find(query, DocumentGarbageCollector.class);
+		List<DocumentGarbageCollecteur> entries = mongoTemplate.find(query, DocumentGarbageCollecteur.class);
 		logger.info(entries.size() + " document(s) have been found.");
-		return Lists.transform(entries, new Function<DocumentGarbageCollector, String>() {
+		return Lists.transform(entries, new Function<DocumentGarbageCollecteur, String>() {
 			@Override
-			public String apply(DocumentGarbageCollector dgc) {
+			public String apply(DocumentGarbageCollecteur dgc) {
 				return dgc.getId();
 			}
 		});
@@ -112,7 +112,7 @@ public class DocumentGarbageCollectorBatchImpl extends GenericBatchImpl {
 
 	@Override
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position) throws BatchBusinessException, BusinessException {
-		DocumentGarbageCollector dgc = documentGarbageCollectorRepository.findOne(identifier);
+		DocumentGarbageCollecteur dgc = documentGarbageCollectorRepository.findOne(identifier);
 		if (dgc == null) {
 			return null;
 		}
