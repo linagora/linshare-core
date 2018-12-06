@@ -390,6 +390,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 			}
 			workGroupFolderService.delete(actor, owner, workGroup, workGroupNode);
 		} else if (isDocument(workGroupNode)) {
+			workGroupDocumentRevisionService.deleteAll(actor, owner, workGroup, workGroupNode);
 			workGroupDocumentService.delete(actor, owner, workGroup, workGroupNode);
 		} else {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not delete this type of node, type not supported.");

@@ -62,6 +62,7 @@ import org.linagora.linshare.core.service.MimeTypeService;
 import org.linagora.linshare.core.service.QuotaService;
 import org.linagora.linshare.core.service.VirusScannerService;
 import org.linagora.linshare.core.service.WorkGroupDocumentRevisionService;
+import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
@@ -193,5 +194,28 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 			return false;
 		}
 		return workGroupVersioning.isEnabled();
+	}
+
+	@Override
+	public List<WorkGroupNode> deleteAll(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode)
+			throws BusinessException {
+		List<WorkGroupNode> revisions = repository.findByWorkGroupAndParentAndNodeType(workGroup.getLsUuid(),
+				workGroupNode.getUuid(), WorkGroupNodeType.DOCUMENT_REVISION);
+		for (WorkGroupNode rev : revisions) {
+			deleteRevision(actor, owner, workGroup, (WorkGroupDocumentRevision) rev);
+		}
+		return revisions;
+	}
+
+	private WorkGroupDocumentRevision deleteRevision(Account actor, Account owner, WorkGroup workGroup,
+			WorkGroupDocumentRevision revision) throws BusinessException {
+		delFromQuota(workGroup, revision.getSize());
+		repository.delete(revision);
+		documentGarbageCollectorRepository.insert(new DocumentGarbageCollecteur(revision.getDocumentUuid()));
+		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DELETE,
+				AuditLogEntryType.WORKGROUP_DOCUMENT_REVISION, revision, workGroup);
+		addMembersToLog(workGroup, log);
+		logEntryService.insert(log);
+		return revision;
 	}
 }
