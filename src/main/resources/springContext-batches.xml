@@ -137,14 +137,14 @@
 		<constructor-arg ref="abstractDomainService" />
 	</bean>
 
-	<bean name="documentGarbageCollecteurBatch"
-		class="org.linagora.linshare.core.batches.impl.DocumentGarbageCollecteurBatchImpl">
+	<bean name="documentGarbageCollectorBatch"
+		class="org.linagora.linshare.core.batches.impl.DocumentGarbageCollectorBatchImpl">
 		<constructor-arg ref="accountRepository" />
 		<constructor-arg ref="documentRepository" />
 		<constructor-arg ref="documentEntryRepository" />
 		<constructor-arg ref="documentEntryBusinessService" />
 		<constructor-arg ref="mongoTemplate" />
-		<constructor-arg ref="documentGarbageCollecteurMongoRepository" />
+		<constructor-arg ref="documentGarbageCollectorMongoRepository" />
 	</bean>
 
 	<bean name="computeThumbnailBatch"

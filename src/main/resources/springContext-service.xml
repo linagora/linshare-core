@@ -303,7 +303,7 @@
 
 	<bean id="workGroupDocumentService" class="org.linagora.linshare.core.service.impl.WorkGroupDocumentServiceImpl">
 		<constructor-arg ref="workGroupNodeMongoRepository" />
-		<constructor-arg ref="documentGarbageCollecteurMongoRepository" />
+		<constructor-arg ref="documentGarbageCollectorMongoRepository" />
 		<constructor-arg ref="threadMemberRepository" />
 		<constructor-arg ref="mongoTemplate" />
 		<constructor-arg ref="documentEntryBusinessService" />

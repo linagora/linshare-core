@@ -47,19 +47,19 @@ import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
-import org.linagora.linshare.mongo.repository.DocumentGarbageCollecteurMongoRepository;
+import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
 import org.linagora.linshare.mongo.repository.UpgradeTaskLogMongoRepository;
 
 public class DocumentGarbageCollectorUpgradeTaskImpl extends GenericUpgradeTaskImpl{
 
 	protected DocumentRepository documentRepository;
 
-	protected DocumentGarbageCollecteurMongoRepository documentGarbageCollectorRepository;
+	protected DocumentGarbageCollectorMongoRepository documentGarbageCollectorRepository;
 
 	public DocumentGarbageCollectorUpgradeTaskImpl(AccountRepository<Account> accountRepository,
 			UpgradeTaskLogMongoRepository upgradeTaskLogMongoRepository,
 			DocumentRepository documentRepository,
-			DocumentGarbageCollecteurMongoRepository documentGarbageCollectorRepository) {
+			DocumentGarbageCollectorMongoRepository documentGarbageCollectorRepository) {
 		super(accountRepository, upgradeTaskLogMongoRepository);
 		this.documentRepository = documentRepository;
 		this.documentGarbageCollectorRepository = documentGarbageCollectorRepository;

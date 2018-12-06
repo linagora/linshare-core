@@ -69,7 +69,7 @@ import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
-import org.linagora.linshare.mongo.repository.DocumentGarbageCollecteurMongoRepository;
+import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
@@ -85,7 +85,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 	private final OperationHistoryBusinessService operationHistoryBusinessService;
 	private final QuotaService quotaService;
 	protected final WorkGroupNodeMongoRepository repository;
-	protected final DocumentGarbageCollecteurMongoRepository documentGarbageCollecteur;
+	protected final DocumentGarbageCollectorMongoRepository documentGarbageCollector;
 
 	public WorkGroupDocumentServiceImpl(DocumentEntryBusinessService documentEntryBusinessService,
 			LogEntryService logEntryService, FunctionalityReadOnlyService functionalityReadOnlyService,
@@ -93,7 +93,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 			MimeTypeMagicNumberDao mimeTypeIdentifier,
 			AntiSamyService antiSamyService,
 			WorkGroupNodeMongoRepository workGroupNodeMongoRepository,
-			DocumentGarbageCollecteurMongoRepository documentGarbageCollecteur,
+			DocumentGarbageCollectorMongoRepository documentGarbageCollector,
 			ThreadMemberRepository threadMemberRepository,
 			MongoTemplate mongoTemplate,
 			OperationHistoryBusinessService operationHistoryBusinessService,
@@ -108,7 +108,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 		this.operationHistoryBusinessService = operationHistoryBusinessService;
 		this.quotaService = quotaService;
 		this.repository = workGroupNodeMongoRepository;
-		this.documentGarbageCollecteur = documentGarbageCollecteur;
+		this.documentGarbageCollector = documentGarbageCollector;
 	}
 
 	@Override
@@ -191,7 +191,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 		WorkGroupDocument document = (WorkGroupDocument)workGroupNode;
 		delFromQuota(workGroup, document.getSize());
 		repository.delete(workGroupNode);
-		documentGarbageCollecteur.insert(new DocumentGarbageCollecteur(document.getDocumentUuid()));
+		documentGarbageCollector.insert(new DocumentGarbageCollecteur(document.getDocumentUuid()));
 		return workGroupNode;
 	}
 

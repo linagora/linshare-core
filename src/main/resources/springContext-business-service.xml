@@ -23,7 +23,7 @@
 		<constructor-arg ref="thumbnailGeneratorService" />
 		<constructor-arg value="${linshare.documents.storage.deduplication}" />
 		<constructor-arg ref="workGroupNodeMongoRepository" />
-		<constructor-arg ref="documentGarbageCollecteurMongoRepository" />
+		<constructor-arg ref="documentGarbageCollectorMongoRepository" />
 		<constructor-arg ref="thumbnailRepository" />
 	</bean>
 

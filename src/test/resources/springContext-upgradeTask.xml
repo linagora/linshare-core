@@ -9,7 +9,7 @@
 		<constructor-arg ref="accountRepository" />
 		<constructor-arg ref="upgradeTaskLogMongoRepository" />
 		<constructor-arg ref="documentRepository" />
-		<constructor-arg ref="documentGarbageCollecteurMongoRepository" />
+		<constructor-arg ref="documentGarbageCollectorMongoRepository" />
 	</bean>
 
 	<bean id="removeAllThreadEntriesUpgradeTask"

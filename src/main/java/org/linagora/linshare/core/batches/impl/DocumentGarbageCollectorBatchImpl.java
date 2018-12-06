@@ -50,7 +50,7 @@ import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
-import org.linagora.linshare.mongo.repository.DocumentGarbageCollecteurMongoRepository;
+import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -59,7 +59,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
-public class DocumentGarbageCollecteurBatchImpl extends GenericBatchImpl {
+public class DocumentGarbageCollectorBatchImpl extends GenericBatchImpl {
 
 	protected DocumentRepository documentRepository;
 
@@ -71,21 +71,21 @@ public class DocumentGarbageCollecteurBatchImpl extends GenericBatchImpl {
 
 	protected MongoTemplate mongoTemplate;
 
-	protected DocumentGarbageCollecteurMongoRepository documentGarbageCollecteur;
+	protected DocumentGarbageCollectorMongoRepository documentGarbageCollector;
 
-	public DocumentGarbageCollecteurBatchImpl(
+	public DocumentGarbageCollectorBatchImpl(
 			AccountRepository<Account> accountRepository,
 			DocumentRepository documentRepository,
 			DocumentEntryRepository documentEntryRepository,
 			DocumentEntryBusinessService documentEntryBusinessService,
 			MongoTemplate mongoTemplate,
-			DocumentGarbageCollecteurMongoRepository documentGarbageCollecteur) {
+			DocumentGarbageCollectorMongoRepository documentGarbageCollector) {
 		super(accountRepository);
 		this.documentRepository = documentRepository;
 		this.documentEntryRepository = documentEntryRepository;
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.mongoTemplate = mongoTemplate;
-		this.documentGarbageCollecteur = documentGarbageCollecteur;
+		this.documentGarbageCollector = documentGarbageCollector;
 		this.operationKind = OperationKind.DELETED;
 	}
 
@@ -112,14 +112,14 @@ public class DocumentGarbageCollecteurBatchImpl extends GenericBatchImpl {
 
 	@Override
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position) throws BatchBusinessException, BusinessException {
-		DocumentGarbageCollecteur dgc = documentGarbageCollecteur.findOne(identifier);
+		DocumentGarbageCollecteur dgc = documentGarbageCollector.findOne(identifier);
 		if (dgc == null) {
 			return null;
 		}
 		Document document = documentRepository.findByUuid(dgc.getDocumentUuid());
 		if (document == null) {
 			// it does not exists anymore. skipped.
-			documentGarbageCollecteur.delete(dgc);
+			documentGarbageCollector.delete(dgc);
 			return null;
 		}
 		DocumentBatchResultContext context = new DocumentBatchResultContext(document);
@@ -132,7 +132,7 @@ public class DocumentGarbageCollecteurBatchImpl extends GenericBatchImpl {
 				documentEntryBusinessService.deleteDocument(document);
 			}
 		}
-		documentGarbageCollecteur.delete(dgc);
+		documentGarbageCollector.delete(dgc);
 		return context;
 	}
 

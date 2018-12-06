@@ -130,7 +130,7 @@
 						<ref bean="deleteExpiredAnonymousUrlBatch" />
 						<ref bean="deleteShareEntryGroupBatch" />
 						<ref bean="deleteExpiredDocumentEntryBatch" />
-						<ref bean="documentGarbageCollecteurBatch" />
+						<ref bean="documentGarbageCollectorBatch" />
 						<ref bean="computeThumbnailBatch" />
 <!-- 					<ref bean="deleteMissingDocumentsBatch" /> -->
 					</list>

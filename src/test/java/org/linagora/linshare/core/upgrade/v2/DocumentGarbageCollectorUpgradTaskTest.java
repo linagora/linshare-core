@@ -55,7 +55,7 @@ import org.linagora.linshare.core.runner.BatchRunner;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.upgrade.v2_1.DocumentGarbageCollectorUpgradeTaskImpl;
 import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
-import org.linagora.linshare.mongo.repository.DocumentGarbageCollecteurMongoRepository;
+import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -95,8 +95,8 @@ public class DocumentGarbageCollectorUpgradTaskTest extends AbstractTransactiona
 	private DocumentEntryRepository documentEntryRepository;
 
 	@Autowired
-	@Qualifier("documentGarbageCollecteurBatch")
-	private GenericBatch documentGarbageCollecteurBatchImpl;
+	@Qualifier("documentGarbageCollectorBatch")
+	private GenericBatch documentGarbageCollectorBatchImpl;
 
 	@Autowired
 	@Qualifier("documentEntryService")
@@ -107,7 +107,7 @@ public class DocumentGarbageCollectorUpgradTaskTest extends AbstractTransactiona
 	private DocumentEntryBusinessService documentEntryBusinessService;
 	
 	@Autowired
-	private DocumentGarbageCollecteurMongoRepository documentGarbageCollectorMongoRepository;
+	private DocumentGarbageCollectorMongoRepository documentGarbageCollectorMongoRepository;
 
 	@Autowired
 	private DocumentGarbageCollectorUpgradeTaskImpl documentGarbageCollectorUpgradeTask;
@@ -141,7 +141,7 @@ public class DocumentGarbageCollectorUpgradTaskTest extends AbstractTransactiona
 		Assert.assertEquals(documentEntryRepository.getRelatedDocumentEntryCount(documentEntry.getDocument()), 1);
 		List<GenericBatch> batches = Lists.newArrayList();
 		batches.add(documentGarbageCollectorUpgradeTask);
-		batches.add(documentGarbageCollecteurBatchImpl);
+		batches.add(documentGarbageCollectorBatchImpl);
 		Assert.assertTrue("At least one batch failed.", batchRunner.execute(batches));
 		// Delete related entries
 		documentEntryService.delete(owner, owner, documentEntry.getUuid());
