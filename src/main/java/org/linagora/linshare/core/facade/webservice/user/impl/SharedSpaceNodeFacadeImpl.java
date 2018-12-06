@@ -36,12 +36,16 @@ package org.linagora.linshare.core.facade.webservice.user.impl;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
+import javax.ws.rs.NotSupportedException;
+
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.PatchDto;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceNodeFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
+import org.linagora.linshare.core.service.SharedSpaceNodeDriveService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
@@ -55,12 +59,16 @@ public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements Shar
 	
 	private final SharedSpaceMemberService memberService;
 
+	private final SharedSpaceNodeDriveService nodeDriveService;
+
 	public SharedSpaceNodeFacadeImpl(AccountService accountService,
 			SharedSpaceNodeService nodeService,
-			SharedSpaceMemberService memberService) {
+			SharedSpaceMemberService memberService,
+			SharedSpaceNodeDriveService nodeDriveService) {
 		super(accountService);
 		this.nodeService = nodeService;
 		this.memberService = memberService;
+		this.nodeDriveService = nodeDriveService;
 	}
 
 	@Override
@@ -94,7 +102,13 @@ public class SharedSpaceNodeFacadeImpl extends GenericFacadeImpl implements Shar
 			Validate.notNull(node, "node must be set");
 			Validate.notEmpty(node.getUuid(), "node uuid must be set.");
 		}
-		return nodeService.delete(authUser, actor, node);
+		if (NodeType.DRIVE.equals(node.getNodeType())) {
+			return nodeDriveService.delete(authUser, actor, node);
+		} else if (NodeType.WORK_GROUP.equals(node.getNodeType())) {
+			return nodeService.delete(authUser, actor, node);
+		} else {
+			throw new NotSupportedException("Node type not supported");
+		}
 	}
 
 	@Override

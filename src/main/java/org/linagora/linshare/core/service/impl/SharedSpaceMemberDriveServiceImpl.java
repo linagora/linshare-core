@@ -177,4 +177,19 @@ public class SharedSpaceMemberDriveServiceImpl extends SharedSpaceMemberServiceI
 		return foundMemberToDelete;
 	}
 
+	@Override
+	public List<SharedSpaceMember> deleteAllDriveMembers(Account authUser, Account actor, String sharedSpaceNodeUuid) {
+		preChecks(authUser, actor);
+		Validate.notNull(sharedSpaceNodeUuid, "Missing required sharedSpaceNodeUuid");
+		List<SharedSpaceMember> foundMembersToDelete = businessService.findBySharedSpaceNodeUuid(sharedSpaceNodeUuid);
+		if (foundMembersToDelete != null && !foundMembersToDelete.isEmpty()) {
+			checkDeletePermission(authUser, actor, SharedSpaceMember.class,
+					BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN, foundMembersToDelete.get(0));
+		}
+		businessService.deleteAll(foundMembersToDelete);
+		for (SharedSpaceMember member : foundMembersToDelete) {
+			saveLog(authUser, actor, LogAction.DELETE, member);
+		}
+		return foundMembersToDelete;
+	}
 }

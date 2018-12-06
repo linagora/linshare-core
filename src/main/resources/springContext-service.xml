@@ -494,6 +494,16 @@
 		<constructor-arg ref="sharedSpaceNodeBusinessService" />
 	</bean>
 
+	<bean id="sharedSpaceNodeDriveService" class="org.linagora.linshare.core.service.impl.SharedSpaceNodeDriveServiceImpl">
+		<constructor-arg ref="sharedSpaceLdapGroupBusinessService" />
+		<constructor-arg ref="sharedSpaceNodeResourceAccessControl" />
+		<constructor-arg ref="sharedSpaceRoleService" />
+		<constructor-arg ref="sharedSpaceMemberBusinessService" />
+		<constructor-arg ref="logEntryService" />
+		<constructor-arg ref="threadService" />
+		<constructor-arg ref="sharedSpaceMemberDriveService" />
+	</bean>
+
 	<bean id="ldapGroupSyncService" class="org.linagora.linshare.core.service.impl.LDAPGroupSyncServiceImpl">
 		<constructor-arg ref="sharedSpaceLdapGroupService"/>
 		<constructor-arg ref="ldapGroupQueryService"/>

@@ -1,5 +1,7 @@
 package org.linagora.linshare.core.service;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.SharedSpaceAccount;
@@ -20,4 +22,5 @@ public interface SharedSpaceMemberDriveService {
 
 	SharedSpaceMember update(Account authUser, Account actor, SharedSpaceMember memberToUpdate, boolean force);
 
+	List<SharedSpaceMember> deleteAllDriveMembers(Account authUser, Account actor, String sharedSpaceNodeUuid);
 }

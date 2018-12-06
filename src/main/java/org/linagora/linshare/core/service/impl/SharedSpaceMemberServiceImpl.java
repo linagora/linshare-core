@@ -63,12 +63,9 @@ import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 import org.linagora.linshare.mongo.entities.SharedSpaceRole;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
-import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.logs.SharedSpaceMemberAuditLogEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, SharedSpaceMember>
 		implements SharedSpaceMemberService {
@@ -301,15 +298,12 @@ public class SharedSpaceMemberServiceImpl extends GenericServiceImpl<Account, Sh
 					BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN, foundMembersToDelete.get(0));
 		}
 		businessService.deleteAll(foundMembersToDelete);
-		List<AuditLogEntryUser> logs = Lists.newArrayList();
 		for (SharedSpaceMember member : foundMembersToDelete) {
 			User user = userRepository.findByLsUuid(member.getAccount().getUuid());
-			notify(new WorkGroupWarnDeletedMemberEmailContext(member, actor, user));
-			logs.add(new SharedSpaceMemberAuditLogEntry(authUser, actor, LogAction.DELETE,
-					AuditLogEntryType.WORKGROUP_MEMBER, member));
-		}
-		if (logs != null && !logs.isEmpty()) {
-			logEntryService.insert(logs);
+			if (NodeType.WORK_GROUP.equals(member.getNode().getNodeType())) {
+				notify(new WorkGroupWarnDeletedMemberEmailContext(member, actor, user));
+				saveLog(authUser, actor, LogAction.DELETE, member);
+			}
 		}
 		return foundMembersToDelete;
 	}

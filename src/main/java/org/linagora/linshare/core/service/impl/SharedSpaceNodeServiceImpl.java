@@ -82,15 +82,15 @@ import com.google.common.collect.Lists;
 public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, SharedSpaceNode>
 		implements SharedSpaceNodeService {
 
-	private final SharedSpaceNodeBusinessService businessService;
+	protected final SharedSpaceNodeBusinessService businessService;
 
-	private final SharedSpaceMemberBusinessService memberBusinessService;
+	protected final SharedSpaceMemberBusinessService memberBusinessService;
 
-	private final SharedSpaceMemberService memberService;
+	protected final SharedSpaceMemberService memberService;
 
-	private final SharedSpaceRoleService ssRoleService;
+	protected final SharedSpaceRoleService ssRoleService;
 
-	private final LogEntryService logEntryService;
+	protected final LogEntryService logEntryService;
 
 	protected final ThreadService threadService;
 
@@ -269,7 +269,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		return new WorkGroupDto(workGroup, foundedNodeTodel);
 	}
 
-	private WorkGroup simpleDelete(Account authUser, Account actor, SharedSpaceNode foundedNodeTodel)
+	protected WorkGroup simpleDelete(Account authUser, Account actor, SharedSpaceNode foundedNodeTodel)
 			throws BusinessException {
 		WorkGroup workGroup = new WorkGroup();
 		if (NodeType.WORK_GROUP.equals(foundedNodeTodel.getNodeType())) {
