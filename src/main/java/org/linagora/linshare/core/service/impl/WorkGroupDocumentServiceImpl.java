@@ -96,8 +96,6 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 
 	protected final DocumentGarbageCollectorMongoRepository documentGarbageCollectorRepository;
 
-	protected final DocumentGarbageCollecteurMongoRepository documentGarbageCollecteur;
-
 	public WorkGroupDocumentServiceImpl(DocumentEntryBusinessService documentEntryBusinessService,
 			LogEntryService logEntryService,
 			FunctionalityReadOnlyService functionalityReadOnlyService,

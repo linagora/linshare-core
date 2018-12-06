@@ -62,7 +62,7 @@ import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
-import org.linagora.linshare.mongo.repository.DocumentGarbageCollecteurMongoRepository;
+import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
@@ -79,7 +79,7 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 			MimeTypeMagicNumberDao mimeTypeIdentifier,
 			AntiSamyService antiSamyService,
 			WorkGroupNodeMongoRepository workGroupNodeMongoRepository,
-			DocumentGarbageCollecteurMongoRepository documentGarbageCollecteur,
+			DocumentGarbageCollectorMongoRepository documentGarbageCollectorRepository,
 			ThreadMemberRepository threadMemberRepository,
 			MongoTemplate mongoTemplate,
 			OperationHistoryBusinessService operationHistoryBusinessService,
@@ -88,7 +88,7 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 			DocumentEntryRevisionBusinessService documentEntryRevisionBusinessService) {
 		super(documentEntryBusinessService, logEntryService, functionalityReadOnlyService, mimeTypeService,
 				virusScannerService, mimeTypeIdentifier, antiSamyService, workGroupNodeMongoRepository,
-				documentGarbageCollecteur, threadMemberRepository, mongoTemplate, operationHistoryBusinessService,
+				documentGarbageCollectorRepository, threadMemberRepository, mongoTemplate, operationHistoryBusinessService,
 				quotaService, sharedSpaceMemberBusinessService);
 		this.documentEntryRevisionBusinessService = documentEntryRevisionBusinessService;
 	}

@@ -51,7 +51,7 @@ import org.linagora.linshare.core.repository.ThumbnailRepository;
 import org.linagora.linshare.core.service.TimeStampingService;
 import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
-import org.linagora.linshare.mongo.repository.DocumentGarbageCollecteurMongoRepository;
+import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,11 +71,11 @@ public class DocumentEntryRevisionBusinessServiceImpl extends DocumentEntryBusin
 			final ThumbnailGeneratorBusinessService thumbnailGeneratorService,
 			final boolean deduplication,
 			final WorkGroupNodeMongoRepository repository,
-			final DocumentGarbageCollecteurMongoRepository documentGarbageCollecteur,
+			final DocumentGarbageCollectorMongoRepository documentGarbageCollectorRepository,
 			final ThumbnailRepository thumbnailRepository) {
 		super(fileSystemDao, timeStampingService, documentEntryRepository, documentRepository, signatureBusinessService,
 				uploadRequestEntryBusinessService, thumbnailGeneratorService, deduplication, repository,
-				documentGarbageCollecteur, thumbnailRepository);
+				documentGarbageCollectorRepository, thumbnailRepository);
 	}
 
 	@Override
