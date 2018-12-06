@@ -139,7 +139,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 			parentUuid = root.getUuid();
 		}
 		Validate.notEmpty(parentUuid, "Missing workGroup parentUuid");
-		WorkGroupNode parentNode = getParentNode(actor, (User) owner, workGroup, parentUuid);
+		WorkGroupNode parentNode = getParentNode(actor, owner, workGroup, parentUuid);
 		if(parentNode.getNodeType().equals(WorkGroupNodeType.DOCUMENT) || 
 				nodeType != null && nodeType.equals(WorkGroupNodeType.DOCUMENT_REVISION)) {
 			return workGroupDocumentRevisionService.findAll(actor, workGroup, parentUuid);
@@ -527,7 +527,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		return wgnParent;
 	}
 
-	protected WorkGroupNode getParentNode(Account actor, User owner, WorkGroup workGroup, String parentNodeUuid) {
+	protected WorkGroupNode getParentNode(Account actor, Account owner, WorkGroup workGroup, String parentNodeUuid) {
 		WorkGroupNode nodeParent = null;
 		if (parentNodeUuid == null) {
 			nodeParent = getRootFolder(owner, workGroup);
