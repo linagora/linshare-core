@@ -34,6 +34,7 @@
 
 package org.linagora.linshare.webservice.admin.impl;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 
@@ -47,7 +48,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.PublicKeyFormat;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.PublicKeyFacade;
 import org.linagora.linshare.mongo.entities.PublicKeyLs;
@@ -103,8 +106,34 @@ public class PublicKeyRestServiceImpl extends WebserviceBase implements PublicKe
 		return publicKeyFacade.create(publicKeyLs);
 	}
 
-	@GET
 	@Path("/")
+	@POST
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Store a new public key from file.", response = PublicKeyLs.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
+			@ApiResponse(code = 404, message = "PublicKeys not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public PublicKeyLs create(
+			@ApiParam(value = "New temp file containing public key", required = true)
+			@Multipart(value = "file", required = true)
+				InputStream publicKeyInputS,
+			@ApiParam(value = "The name for Domain Uuid ", required = true)
+			@Multipart(value = "domainUuid", required = true)
+				String domainUuid,
+			@ApiParam(value = "The name of issuer", required = true)
+			@Multipart(value = "issuer", required = true)
+				String issuer,
+			@ApiParam(value = "Type of Format", required = true)
+			@Multipart(value = "formatType", required = true)
+				PublicKeyFormat format) throws BusinessException {
+		return publicKeyFacade.create(publicKeyInputS, domainUuid, issuer, format);
+	}
+
+	@Path("/")
+	@GET
 	@ApiOperation(value = "Find a list of public keys by Domain uuid.", response = PublicKeyLs.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission.") ,
 					@ApiResponse(code = 404, message = "PublicKeys not found."),
@@ -134,8 +163,8 @@ public class PublicKeyRestServiceImpl extends WebserviceBase implements PublicKe
 		return publicKeyFacade.delete(uuid, publicKeyLs);
 	}
 
-	@GET
 	@Path("/audit/{domainUuid}")
+	@GET
 	@ApiOperation(value = "Get all traces for a public keys.", response = AuditLogEntryUser.class, responseContainer="Set")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
 					@ApiResponse(code = 404, message = "PublicKeyLs not found."),

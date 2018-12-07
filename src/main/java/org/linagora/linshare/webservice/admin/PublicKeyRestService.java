@@ -34,10 +34,12 @@
 
 package org.linagora.linshare.webservice.admin;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.PublicKeyFormat;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.PublicKeyLs;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryAdmin;
@@ -53,4 +55,7 @@ public interface PublicKeyRestService {
 	PublicKeyLs delete(PublicKeyLs publicKeyLs, String uuid) throws BusinessException;
 
 	Set<AuditLogEntryAdmin> findAll(String domainUuid, List<LogAction> actions);
+
+	PublicKeyLs create(InputStream publicKeyInputS, String domainUuid, String issuer, PublicKeyFormat format)
+			throws BusinessException;
 }

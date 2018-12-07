@@ -34,14 +34,19 @@
 
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
+import org.apache.tika.io.IOUtils;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.PublicKeyFormat;
 import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.PublicKeyFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
@@ -82,6 +87,20 @@ public class PublicKeyFacadeImpl extends AdminGenericFacadeImpl implements Publi
 		Validate.notNull(publicKey.getFormat(), "Format must be set");
 		AbstractDomain domain = abstractDomainService.findById(publicKey.getDomainUuid());
 		return publicKeyService.create(authUser, publicKey, domain);
+	}
+
+	@Override
+	public PublicKeyLs create(InputStream publicKeyInputS, String domainUuid, String issuer, PublicKeyFormat format)
+			throws BusinessException {
+		Validate.notNull(publicKeyInputS, "File must be set");
+		PublicKeyLs publicKey = null;
+		try {
+			String pubKey = IOUtils.toString(publicKeyInputS);
+			publicKey = new PublicKeyLs(pubKey, domainUuid, issuer, format);
+		} catch (IOException e) {
+			throw new BusinessException(BusinessErrorCode.FILE_INVALID_INPUT_TEMP_FILE, "Invalid file content", e);
+		}
+		return create(publicKey);
 	}
 
 	@Override

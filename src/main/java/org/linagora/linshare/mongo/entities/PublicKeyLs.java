@@ -98,6 +98,17 @@ public class PublicKeyLs {
 		this.uuid = UUID.randomUUID().toString();
 	}
 
+	public PublicKeyLs(String pubKey, String domainUuid, String issuer, PublicKeyFormat format) {
+		this.publicKey = pubKey;
+		this.issuer = issuer;
+		this.domainUuid = domainUuid;
+		this.format = format;
+		this.uuid = UUID.randomUUID().toString();
+		this.creationDate = new Date();
+		this.destroyed = false;
+		this.usage = PublicKeyUsage.JWT;
+	}
+
 	public String getUuid() {
 		return uuid;
 	}
