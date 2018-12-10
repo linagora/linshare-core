@@ -1886,7 +1886,7 @@
 		<spring-data.version>Ingalls-SR16</spring-data.version>
 		<hibernate.version>5.0.12.Final</hibernate.version>
 		<h2.version>1.4.196</h2.version>
-		<guava.version>19.0</guava.version>
+		<guava.version>27.0-jre</guava.version>
 		<linid.authorization.version>2.1.2</linid.authorization.version>
 		<mozilla.rhino.version>1.7.10</mozilla.rhino.version>
 		<apache-directory-server.version>1.5.5</apache-directory-server.version>
