@@ -208,4 +208,30 @@ public class LDAPGroupQueryServiceImplTest extends AbstractJUnit4SpringContextTe
 		logger.info("End test : " + String.valueOf(date_after.getTime() - date_before.getTime()));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
+
+	@Test
+	public void testUserReaderAndWriter() throws BusinessException, NamingException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		String baseDn = "ou=Groups5,dc=linshare,dc=org";
+		Date date_before = new Date();
+		Set<LdapGroupObject> listGroups = ldapGroupQueryService.listGroups(ldapConnection, baseDn, groupPattern);
+		Assert.assertEquals(1, listGroups.size());
+		LdapGroupObject ldapGroup = listGroups.iterator().next();
+		Assert.assertEquals("cn=workgroup-wg-5,ou=Groups5,dc=linshare,dc=org", ldapGroup.getExternalId());
+		Set<LdapGroupMemberObject> listMembers = ldapGroupQueryService.listMembers(ldapConnection, baseDn, groupPattern, ldapGroup);
+		Assert.assertEquals(3, listMembers.size());
+		for (LdapGroupMemberObject member : listMembers) {
+			logger.info(member.toString());
+			Assert.assertNotEquals(Role.READER, member.getRole());
+			if ("user2@linshare.org".equals(member.getEmail())) {
+				Assert.assertEquals(Role.CONTRIBUTOR, member.getRole());
+			}
+			else{
+				Assert.assertEquals(Role.WRITER, member.getRole());
+			}
+		}
+		Date date_after = new Date();
+		logger.info("End test : " + String.valueOf(date_after.getTime() - date_before.getTime()));
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
 }

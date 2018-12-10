@@ -179,3 +179,28 @@ dn: cn=writers,cn=workgroup-wg-4,ou=Groups4,dc=linshare,dc=org
 cn: writers
 objectClass: groupOfNames
 member: uid=user3,ou=People,dc=linshare,dc=org
+
+dn: ou=Groups5,dc=linshare,dc=org
+ou: Groups5
+objectClass: organizationalUnit
+objectClass: top
+description: Groups5 subtree
+
+dn: cn=workgroup-wg-5,ou=Groups5,dc=linshare,dc=org
+cn: workgroup-wg-5
+objectClass: groupOfNames
+member: uid=user2,ou=People,dc=linshare,dc=org
+member: uid=user3,ou=People,dc=linshare,dc=org
+
+dn: cn=contributors,cn=workgroup-wg-5,ou=Groups5,dc=linshare,dc=org
+cn: contributors
+objectClass: groupOfNames
+member: uid=user1,ou=People,dc=linshare,dc=org
+member: uid=user2,ou=People,dc=linshare,dc=org
+
+dn: cn=writers,cn=workgroup-wg-5,ou=Groups5,dc=linshare,dc=org
+cn: writers
+objectClass: groupOfNames
+member: uid=user1,ou=People,dc=linshare,dc=org
+member: uid=user3,ou=People,dc=linshare,dc=org
+

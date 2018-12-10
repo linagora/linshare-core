@@ -104,7 +104,8 @@ public class LDAPGroupQueryServiceImpl extends LDAPQueryServiceImpl implements L
 
 	@Override
 	public Set<LdapGroupMemberObject> listMembers(LdapConnection ldapConnection, String baseDn,
-			GroupLdapPattern groupPattern, LdapGroupObject group) throws BusinessException, NamingException, IOException {
+			GroupLdapPattern groupPattern, LdapGroupObject group)
+			throws BusinessException, NamingException, IOException {
 		LdapContext ldapContext = (LdapContext) getLdapContext(ldapConnection, null).getReadOnlyContext();
 		Map<String, Object> vars = new HashMap<String, Object>();
 		vars.put("baseDn", baseDn);
@@ -115,17 +116,16 @@ public class LDAPGroupQueryServiceImpl extends LDAPQueryServiceImpl implements L
 		try {
 			JScriptGroupLdapQuery groupQuery = groupQuery(baseDn, groupPattern, lqlctx, dnList);
 			JScriptGroupMemberLdapQuery memberQuery = memberQuery(baseDn, groupPattern, lqlctx, dnList);
-
-			// load read only members
-			res.addAll(convert(group.getRole(), getMembers(group.getExternalId(), groupQuery, memberQuery)));
-			// load contributor members
-			if(groupQuery.isDnExist(group.getContributorsDn())) {
-				res.addAll(convert(Role.CONTRIBUTOR, getMembers(group.getContributorsDn(), groupQuery, memberQuery)));
-			}
 			// load writer members
-			if(groupQuery.isDnExist(group.getWritersDn())) {
+			if (groupQuery.isDnExist(group.getWritersDn())) {
 				res.addAll(convert(Role.WRITER, getMembers(group.getWritersDn(), groupQuery, memberQuery)));
 			}
+			// load contributor members
+			if (groupQuery.isDnExist(group.getContributorsDn())) {
+				res.addAll(convert(Role.CONTRIBUTOR, getMembers(group.getContributorsDn(), groupQuery, memberQuery)));
+			}
+			// load read only members
+			res.addAll(convert(group.getRole(), getMembers(group.getExternalId(), groupQuery, memberQuery)));
 		} finally {
 			ldapContext.close();
 		}
