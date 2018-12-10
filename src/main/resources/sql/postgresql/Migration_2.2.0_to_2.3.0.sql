@@ -92,33 +92,35 @@ DELETE FROM ldap_attribute WHERE id = 1062 AND system = TRUE;
 DELETE FROM ldap_attribute WHERE id = 1063 AND system = TRUE;
 DELETE FROM ldap_attribute WHERE id = 1064 AND system = TRUE;
 
-INSERT INTO ldap_attribute
-(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
-VALUES(13, 'mail', 'member_mail', false, true, true, false, 4)
-	ON CONFLICT DO NOTHING;
 
+WITH already_exists AS (UPDATE ldap_attribute SET id=id WHERE id=13 RETURNING *)
 INSERT INTO ldap_attribute
 (id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
-VALUES(14, 'givenName', 'member_firstname', false, true, true, false, 4)
-	ON CONFLICT DO NOTHING;
+SELECT 13, 'mail', 'member_mail', false, true, true, false, 4 WHERE NOT EXISTS (SELECT * FROM already_exists);
 
+WITH already_exists AS (UPDATE ldap_attribute SET id=id WHERE id=14 RETURNING *)
 INSERT INTO ldap_attribute
 (id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
-VALUES(15, 'cn', 'group_name_attr', false, true, true, true, 4)
-	ON CONFLICT DO NOTHING;
+SELECT 14, 'givenName', 'member_firstname', false, true, true, false, 4 WHERE NOT EXISTS (SELECT * FROM already_exists);
 
+WITH already_exists AS (UPDATE ldap_attribute SET id=id WHERE id=15 RETURNING *)
 INSERT INTO ldap_attribute
 (id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
-VALUES(16, 'member', 'extended_group_member_attr', false, true, true, true, 4)
-	ON CONFLICT DO NOTHING;
+SELECT 15, 'cn', 'group_name_attr', false, true, true, true, 4 WHERE NOT EXISTS (SELECT * FROM already_exists);
 
+WITH already_exists AS (UPDATE ldap_attribute SET id=id WHERE id=16 RETURNING *)
 INSERT INTO ldap_attribute
 (id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
-VALUES(17, 'sn', 'member_lastname', false, true, true, false, 4)
-	ON CONFLICT DO NOTHING;
+SELECT 16, 'member', 'extended_group_member_attr', false, true, true, true, 4 WHERE NOT EXISTS (SELECT * FROM already_exists);
+
+WITH already_exists AS (UPDATE ldap_attribute SET id=id WHERE id=17 RETURNING *)
+INSERT INTO ldap_attribute
+(id, attribute, field, sync, system, enable, completion, ldap_pattern_id)
+SELECT 17, 'sn', 'member_lastname', false, true, true, false, 4 WHERE NOT EXISTS (SELECT * FROM already_exists);
 
 -- Patch 2 : New Demo ldap pattern.
 
+WITH ldap_pattern_already_exists AS (UPDATE ldap_pattern SET id=id WHERE id=5 RETURNING *)
 INSERT INTO ldap_pattern(
     id,
     uuid,
@@ -136,8 +138,7 @@ INSERT INTO ldap_pattern(
     completion_size_limit,
     creation_date,
     modification_date)
-VALUES (
-    5,
+SELECT 5,
     'a4620dfc-dc46-11e8-a098-2355f9d6585a',
     'USER_LDAP_PATTERN',
     'default-pattern-demo',
@@ -152,23 +153,28 @@ VALUES (
     10,
     10,
     now(),
-    now()
-)
-	ON CONFLICT DO NOTHING;
+    now() WHERE NOT EXISTS (SELECT * FROM ldap_pattern_already_exists);
 
 
-INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
-	VALUES (18, 'user_mail', 'mail', false, true, true, 5, true)
-	ON CONFLICT DO NOTHING;
-INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
-	VALUES (19, 'user_firstname', 'givenName', false, true, true, 5, true)
-	ON CONFLICT DO NOTHING;
-INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
-	VALUES (20, 'user_lastname', 'sn', false, true, true, 5, true)
-	ON CONFLICT DO NOTHING;
-INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
-	VALUES (21, 'user_uid', 'uid', false, true, true, 5, false)
-	ON CONFLICT DO NOTHING;
+WITH already_exists AS (UPDATE ldap_attribute SET id=id WHERE id=18 RETURNING *)
+INSERT INTO ldap_attribute
+(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
+SELECT 18, 'user_mail', 'mail', false, true, true, 5, true WHERE NOT EXISTS (SELECT * FROM already_exists);
+
+WITH already_exists AS (UPDATE ldap_attribute SET id=id WHERE id=19 RETURNING *)
+INSERT INTO ldap_attribute
+(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
+SELECT 19, 'user_firstname', 'givenName', false, true, true, 5, true WHERE NOT EXISTS (SELECT * FROM already_exists);
+
+WITH already_exists AS (UPDATE ldap_attribute SET id=id WHERE id=12 RETURNING *)
+INSERT INTO ldap_attribute
+(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
+SELECT 20, 'user_lastname', 'sn', false, true, true, 5, true WHERE NOT EXISTS (SELECT * FROM already_exists);
+
+WITH already_exists AS (UPDATE ldap_attribute SET id=id WHERE id=21 RETURNING *)
+INSERT INTO ldap_attribute
+(id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
+SELECT 21, 'user_uid', 'uid', false, true, true, 5, false WHERE NOT EXISTS (SELECT * FROM already_exists);
 
 	-- Functionality : WORK_GROUP__FILE_EDITION
 INSERT INTO policy(id, status, default_status, policy, system)
@@ -215,22 +221,11 @@ VALUES
 -- LinShare version
 SELECT ls_version();
 
--- Alias for Users
--- All users
-CREATE VIEW alias_users_list_all AS
- SELECT id, first_name, last_name, mail, can_upload, restricted, expiration_date, ldap_uid, domain_id, ls_uuid, creation_date, modification_date, role_id, account_type from users as u join account as a on a.id=u.account_id;
--- All active users
-CREATE VIEW alias_users_list_active AS
- SELECT id, first_name, last_name, mail, can_upload, restricted, expiration_date, ldap_uid, domain_id, ls_uuid, creation_date, modification_date, role_id, account_type from users as u join account as a on a.id=u.account_id where a.destroyed = False;
--- All destroyed users
-CREATE VIEW alias_users_list_destroyed AS
- SELECT id, first_name, last_name, mail, can_upload, restricted, expiration_date, ldap_uid, domain_id, ls_uuid, creation_date, modification_date, role_id, account_type from users as u join account as a on a.id=u.account_id where a.destroyed = True;
-
 -- Alias for threads
 -- All threads
 CREATE VIEW alias_threads_list_all AS SELECT a.id, name, domain_id, ls_uuid, creation_date, modification_date, enable, destroyed from thread as u join account as a on a.id=u.account_id;
 -- All active threads
-CREATE VIEW alias_threads_list_active AS SELECT a.id, name, domain_id, ls_uuid, creation_date, modification_date, enable, destroyed from thread as u join account as a on a.id=u.account_id where a.destroyed = False;
+CREATE VIEW alias_threads_list_active AS SELECT a.id, name, domain_id, ls_uuid, creation_date, modification_date, enable, destroyed from thread as u join account as a on a.id=u.account_id where a.destroyed = 0;
 -- All destroyed threads
-CREATE VIEW alias_threads_list_destroyed AS SELECT a.id, name, domain_id, ls_uuid, creation_date, modification_date, enable, destroyed from thread as u join account as a on a.id=u.account_id where a.destroyed = True;
+CREATE VIEW alias_threads_list_destroyed AS SELECT a.id, name, domain_id, ls_uuid, creation_date, modification_date, enable, destroyed from thread as u join account as a on a.id=u.account_id where a.destroyed != 0;
 COMMIT;
