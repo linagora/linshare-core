@@ -1895,7 +1895,7 @@
 		<spring-release-version>5.0.7.RELEASE</spring-release-version>
 		<spring-security-release-version>5.0.6.RELEASE</spring-security-release-version>
 		<spring-data.version>Kay-SR12</spring-data.version>
-		<hibernate.version>5.0.12.Final</hibernate.version>
+		<hibernate.version>5.3.7.Final</hibernate.version>
 		<h2.version>1.4.196</h2.version>
 		<guava.version>27.0-jre</guava.version>
 		<linid.authorization.version>2.1.2</linid.authorization.version>

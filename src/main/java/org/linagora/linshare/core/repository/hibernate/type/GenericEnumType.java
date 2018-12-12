@@ -41,10 +41,10 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.type.AbstractSingleColumnStandardBasicType;
 import org.hibernate.type.AbstractStandardBasicType;
-import org.hibernate.type.TypeResolver;
+import org.hibernate.type.spi.TypeConfiguration;
 import org.hibernate.usertype.ParameterizedType;
 import org.hibernate.usertype.UserType;
 
@@ -129,7 +129,8 @@ public class GenericEnumType implements UserType, ParameterizedType {
 			throw new HibernateException("Failed to obtain identifier method", e);
 		}
 
-		type = (AbstractSingleColumnStandardBasicType<? extends Object>) new TypeResolver()
+		TypeConfiguration typeConfiguration = new TypeConfiguration();
+		type = (AbstractSingleColumnStandardBasicType<? extends Object>) typeConfiguration.getTypeResolver()
 				.heuristicType(identifierType.getName(), parameters);
 
 		if (type == null) {
@@ -184,7 +185,7 @@ public class GenericEnumType implements UserType, ParameterizedType {
     }
 
 	@Override
-	public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor sessionImplementor, Object arg3)
+	public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor sessionImplementor, Object arg3)
 			throws HibernateException, SQLException {
 		Object identifier = type.get(rs, names[0], sessionImplementor);
 		if (rs.wasNull()) {
@@ -200,7 +201,7 @@ public class GenericEnumType implements UserType, ParameterizedType {
 	}
 
 	@Override
-	public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor sessionImplementor)
+	public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor sessionImplementor)
 			throws HibernateException, SQLException {
 		try {
 			if (value == null) {
