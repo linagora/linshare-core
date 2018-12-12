@@ -224,11 +224,7 @@ INSERT INTO policy(id, status, default_status, policy, system)
 INSERT INTO policy(id, status, default_status, policy, system)
 	VALUES (296, true, true, 2, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param, creation_date, modification_date)
-<<<<<<< HEAD
 	VALUES (62, false, 'WORK_GROUP__DRIVE_CAN_CREATE', 295, 296, 1, 'WORK_GROUP', true, now(), now());
-=======
-	VALUES (62, false, 'DRIVE__CAN_CREATE', 295, 296, 1, 'WORK_GROUP', true, now(), now());
->>>>>>> Issue #473 : Add drive functionality to Migration script to 2.3
 
 	-- Functionality : WORK_GROUP__FILE_EDITION
 INSERT INTO policy(id, status, default_status, policy, system)
