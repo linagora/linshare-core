@@ -19,31 +19,33 @@ Afin d'exécuter ce script, vous aurez besoin de :
       sudo apt-get install python3-pip
 	```
   *  la libraire psycopg2-binary afin de se connecter à la base PostgreSQL
-  
-    ```
-    pip3 install psycopg2-binary
-    ```
-    
+  *  la librairie pypika pour la construction de requêtes SQL.
+
+-Pour installer ces deux librairies il suffit de les ajouter dans le fichier requirements.txt avec la version adéquate.
+  * pour les installer
+
+	```
+	pip3 install -r requirements.txt
+	```
 ##   <a name="config_module"></a> Configuration du module
 
 Maintenant que notre environnement Python est configuré, on va pouvoir configurer le module.
 Se rendre dans le dossier LINSHARE_WORKSPACE/utils/import_mails.
 Lancer la commande suivante :
 
-	
+
 	$ python3 app.py
-	
+
 Si vous obtenez au moins une erreur sur l'écran qui suit, vous devez suivre le reste de ce guide, et notamment l'édition de votre fichier de configuration :
 
-	
 	        Name             State     
 	------------------------------
 	Config Fields            OK
 	Get Mail Content Types   ERROR
 	Linshare Database        ERROR
 	------------------------------
-	
-	
+
+
 ### Fichier de configuration
 Il s'agit maintenant de configurer le module avec les paramètres de votre environnement LinShare:
 *  Créer et éditer le fichier config.json en surchargeant les paramètres nécessaires afin de convenir à votre configuration LinShare :
@@ -59,14 +61,12 @@ Il s'agit maintenant de configurer le module avec les paramètres de votre envir
 	}
 	```
 
-
 En exécutant cette commande,
 
 	 $ python3 app.py
 
 vous devrez obtenir le résultat suivant :
 
-	
 	-----Check configuration------
 	        Name             State     
 	------------------------------
@@ -74,8 +74,7 @@ vous devrez obtenir le résultat suivant :
 	Get Mail Content Types   OK
 	Linshare Database        OK
 	------------------------------
-	
-	
+
 ##  <a name="generated_files"></a> Fichiers d'exports générés
 
 Maintenant que le script s'est exécuté avec succès, vous devriez avoir généré dans le dossier `src/main/resources/sql/common` :
@@ -86,7 +85,6 @@ Maintenant que le script s'est exécuté avec succès, vous devriez avoir géné
 
 L'arborescence des fichiers créés est la suivante :
 
-	
 	...
 	|-- import_mail_structure.sql
 	|-- import-mail.sql
@@ -98,5 +96,3 @@ L'arborescence des fichiers créés est la suivante :
 		|-- mail_layout
 			|-- ...
 		|-- import_mail_update.sql
-	
-

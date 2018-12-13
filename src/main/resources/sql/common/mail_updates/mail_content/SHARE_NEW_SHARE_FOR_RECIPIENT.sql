@@ -103,7 +103,7 @@ UPDATE mail_content SET subject='[# th:if="${#strings.isEmpty(customSubject)}"]
 downloadLink = Lien de téléchargement
 helpMsgSingular =  pour visualiser le document partagé.
 helpMsgPlural =pour visualiser tous les documents du partage.
-helpPasswordMsgSingular = Cliquez sur le lien pour le télécharger et saisissez le mot de passe fourni ci.
+helpPasswordMsgSingular = Cliquez sur le lien pour le télécharger et saisissez le mot de passe fourni ici.
 helpPasswordMsgPlural = Cliquez sur le lien pour les télécharger et saisissez le mot de passe fourni.
 mainMsgPlural = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>a partagé {2} fichiers avec vous.
 mainMsgSingular = <b> {0} <span style="text-transform:uppercase">{1}</span> </b> a partagé {2} fichier  avec vous.

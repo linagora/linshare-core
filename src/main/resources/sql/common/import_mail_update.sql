@@ -223,9 +223,11 @@ border-top: 1px solid #e1e1e1;">
 </div>
 <!--/* Common date display  style */-->
 <div style="margin-bottom:17px;" data-th-fragment="infoDateArea(titleInfo,contentInfo)">
-     <span style="font-weight:bold;" data-th-text="${titleInfo}" >Shared the </span>
-    <br/>
- <span  th:with="df=#{date.format}" data-th-text="${#dates.format(contentInfo,df)}">7th of November, 2018</span>
+  <div data-th-if="${contentInfo != null}">
+      <span style="font-weight:bold;" data-th-text="${titleInfo}" >Shared the </span>
+      <br/>
+      <span  th:with="df=#{date.format}" data-th-text="${#dates.format(contentInfo,df)}">7th of November, 2018</span>
+  </div>
 </div>
 <!--/* Common lower info title style */-->
 <div style="margin-bottom:17px;" data-th-fragment="infoStandardArea(titleInfo,contentInfo)">
@@ -506,7 +508,7 @@ UPDATE mail_content SET subject='[# th:if="${#strings.isEmpty(customSubject)}"]
 downloadLink = Lien de téléchargement
 helpMsgSingular =  pour visualiser le document partagé.
 helpMsgPlural =pour visualiser tous les documents du partage.
-helpPasswordMsgSingular = Cliquez sur le lien pour le télécharger et saisissez le mot de passe fourni ci.
+helpPasswordMsgSingular = Cliquez sur le lien pour le télécharger et saisissez le mot de passe fourni ici.
 helpPasswordMsgPlural = Cliquez sur le lien pour les télécharger et saisissez le mot de passe fourni.
 mainMsgPlural = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>a partagé {2} fichiers avec vous.
 mainMsgSingular = <b> {0} <span style="text-transform:uppercase">{1}</span> </b> a partagé {2} fichier  avec vous.
