@@ -51,8 +51,8 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
-import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -65,6 +65,7 @@ import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.core.service.WorkGroupDocumentRevisionService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
@@ -91,6 +92,8 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 
 	protected final SharedSpaceNodeService sharedSpaceNodeService;
 
+	protected final WorkGroupDocumentRevisionService workGroupDocumentRevisionService;
+
 	public WorkGroupNodeFacadeImpl(AccountService accountService,
 			WorkGroupNodeService service,
 			ThreadService threadService,
@@ -98,7 +101,8 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 			DocumentEntryService documentEntryService,
 			ShareEntryService shareEntryService,
 			AuditLogEntryService auditLogEntryService,
-			SharedSpaceNodeService sharedSpaceNodeService) {
+			SharedSpaceNodeService sharedSpaceNodeService,
+			WorkGroupDocumentRevisionService workGroupDocumentRevisionService) {
 		super(accountService);
 		this.service = service;
 		this.threadService = threadService;
@@ -107,6 +111,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		this.functionalityService = functionalityService;
 		this.auditLogEntryService = auditLogEntryService;
 		this.sharedSpaceNodeService = sharedSpaceNodeService;
+		this.workGroupDocumentRevisionService = workGroupDocumentRevisionService;
 	}
 
 	@Override
@@ -297,12 +302,22 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 	}
 
 	@Override
-	public String findByWorkGroupNodeUuid(String uuid) {
+	public String findByWorkGroupNodeUuid(String uuid) throws BusinessException {
 		Validate.notEmpty(uuid, "Missing required workGroup node uuid");
 		checkAuthentication();
 		WorkGroupNode workGroupNode = service.findByWorkGroupNodeUuid(uuid);
 		Validate.notNull(workGroupNode, "Node not found");
 		return workGroupNode.getWorkGroup();
+	}
+
+	@Override
+	public WorkGroupNode restoreRevision(String actorUuid, String workGroupUuid, String revisionUuid) throws BusinessException {
+		Account authUser = checkAuthentication();
+		User actor = (User) getActor(authUser, actorUuid);
+		Validate.notEmpty(workGroupUuid, "Missing workGroup uuid to copy into");
+		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
+		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceNode.getUuid());
+		return workGroupDocumentRevisionService.restore(authUser, actor, workGroup, revisionUuid);
 	}
 
 }

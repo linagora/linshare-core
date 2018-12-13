@@ -132,6 +132,7 @@
 		<constructor-arg ref="workGroupNodeService"/>
 		<constructor-arg ref="functionalityReadOnlyService"/>
 		<constructor-arg ref="auditLogEntryService" />
+		<constructor-arg ref="workGroupDocumentRevisionService" />
 	</bean>
 
 	<bean id="wsAccountQuotaFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.AccountQuotaFacadeImpl">

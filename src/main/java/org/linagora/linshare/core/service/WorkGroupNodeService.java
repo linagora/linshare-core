@@ -101,6 +101,8 @@ public interface WorkGroupNodeService {
 	@Deprecated
 	WorkGroupNode getRootFolder(Account actor, Account owner, WorkGroup workGroup);
 
-	WorkGroupNode findByWorkGroupNodeUuid(String uuid);
+	WorkGroupNode findByWorkGroupNodeUuid(String uuid) throws BusinessException;
+
+	WorkGroupNode restoreRevision(Account actor, Account owner, WorkGroup workGroup, String revisionUuid) throws BusinessException;;
 
 }

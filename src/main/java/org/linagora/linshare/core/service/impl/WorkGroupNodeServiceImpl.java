@@ -511,6 +511,13 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		return getRootFolder(owner, workGroup);
 	}
 
+	@Override
+	public WorkGroupNode restoreRevision(Account actor, Account owner, WorkGroup workGroup, String revisionUuid) {
+		preChecks(actor, owner);
+		checkUpdatePermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, null, workGroup);
+		return workGroupDocumentRevisionService.restore(actor, owner, workGroup, revisionUuid);
+	}
+
 	protected WorkGroupNode getRootFolder(Account owner, WorkGroup workGroup) {
 		WorkGroupNode wgnParent = null;
 		String workGroupUuid = workGroup.getLsUuid();

@@ -35,9 +35,11 @@ package org.linagora.linshare.core.service.impl;
 
 import java.io.File;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.UUID;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
@@ -153,7 +155,7 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 		if (parentDocument == null) {
 			throw new BusinessException(BusinessErrorCode.DOCUMENT_ENTRY_NOT_FOUND, "The parent document has not been found for this revision.");
 		} 
-		parentDocument.setModificationDate(documentRevision.getCreationDate());
+		parentDocument.setModificationDate(new Date());
 		parentDocument.setMetaData(documentRevision.getMetaData());
 		parentDocument.setLastAuthor(documentRevision.getLastAuthor());
 		parentDocument.setSize(documentRevision.getSize());
@@ -169,6 +171,28 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 				AuditLogEntryType.WORKGROUP_DOCUMENT, parentDocument, workGroup);
 		logEntryService.insert(log);
 		return parentDocument;
+	}
+
+	@Override
+	public WorkGroupDocument restore(Account actor, Account owner, WorkGroup workGroup, String revisionUuid) throws BusinessException {
+		WorkGroupNode workGroupNode = repository.findByUuid(revisionUuid);
+		if(workGroupNode == null) {
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_REVISION_NOT_FOUND, "The node has not been found.");
+		}
+		if(!workGroupNode.getNodeType().equals(WorkGroupNodeType.DOCUMENT_REVISION)) {
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "The node type is not a revision.");
+		}
+		WorkGroupDocumentRevision newRevision = this.copy(actor, owner, workGroup, (WorkGroupDocumentRevision) workGroupNode); 
+		return updateDocument(actor, owner, workGroup, newRevision);
+	}
+
+	private WorkGroupDocumentRevision copy(Account actor, Account owner, WorkGroup workGroup, WorkGroupDocumentRevision documentRevision) {
+		documentRevision = (WorkGroupDocumentRevision) repository.findByUuid(documentRevision.getUuid());
+		documentRevision.setId(null);
+		documentRevision.setUuid(UUID.randomUUID().toString());
+		documentRevision.setModificationDate(new Date());
+		documentRevision.setCreationDate(new Date());
+		return repository.insert(documentRevision);
 	}
 
 	@Override

@@ -54,4 +54,6 @@ public interface WorkGroupDocumentRevisionService extends WorkGroupDocumentServi
 	List<WorkGroupNode> findAll(Account actor, WorkGroup workGroup, String parentUuid);
 
 	List<WorkGroupNode> deleteAll(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode) throws BusinessException;
+
+	WorkGroupDocument restore(Account actor, Account owner, WorkGroup workGroup, String revisionUuid) throws BusinessException;
 }

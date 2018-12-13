@@ -453,6 +453,24 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 		}
 	}
 
+	@Path("/{revisionUuid}/restore")
+	@PUT
+	@ApiOperation(value = "Restore a previous document revision", response = WorkGroupNode.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+					@ApiResponse(code = 404, message = "Workgroup node not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+					})
+	@Override
+	public WorkGroupNode restoreRevision(
+			@ApiParam(value = "The workgroup uuid.", required = true)
+				@PathParam("workGroupUuid") String workGroupUuid,
+			@ApiParam(value = "The document revision uuid to restore", required = true)
+				@PathParam("revisionUuid") String revisionUuid)
+			throws BusinessException {
+		return workGroupNodeFacade.restoreRevision(null, workGroupUuid, revisionUuid);
+	}
+
 	protected void logAsyncFailure(AsyncTaskDto asyncTask, Exception e) {
 		logger.error(e.getMessage());
 		logger.debug("Exception : ", e);

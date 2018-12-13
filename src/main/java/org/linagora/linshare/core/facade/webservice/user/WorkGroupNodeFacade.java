@@ -74,5 +74,7 @@ public interface WorkGroupNodeFacade extends GenericFacade {
 	Set<AuditLogEntryUser> findAll(String actorUuid, String workGroupUuid, String workGroupNodeUuid,
 			List<LogAction> actions, List<AuditLogEntryType> types, String beginDate, String endDate);
 
-	String findByWorkGroupNodeUuid(String workGroupNodeUuid);
+	String findByWorkGroupNodeUuid(String workGroupNodeUuid) throws BusinessException;
+
+	WorkGroupNode restoreRevision(String actorUuid, String workGroupUuid, String revisionUuid) throws BusinessException;
 }
