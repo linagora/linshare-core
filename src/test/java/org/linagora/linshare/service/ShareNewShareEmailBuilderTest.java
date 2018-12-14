@@ -38,9 +38,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -56,8 +58,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
+@ExtendWith(SpringExtension.class)
+@Transactional
+@Sql({ "/import-tests-document-entry-setup.sql" })
 @ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-ldap.xml",
@@ -70,7 +77,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-service.xml",
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml" })
-public class ShareNewShareEmailBuilderTest extends AbstractTransactionalJUnit4SpringContextTests{
+public class ShareNewShareEmailBuilderTest {
 
 	private static Logger logger = LoggerFactory.getLogger(ShareNewShareEmailBuilderTest.class);
 
@@ -105,10 +112,9 @@ public class ShareNewShareEmailBuilderTest extends AbstractTransactionalJUnit4Sp
 		wiser = new LinShareWiser(2525);
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		this.executeSqlScript("import-tests-document-entry-setup.sql", false);
 		wiser.start();
 		datas = new LoadingServiceTestDatas(userRepository);
 		datas.loadUsers();
@@ -118,7 +124,7 @@ public class ShareNewShareEmailBuilderTest extends AbstractTransactionalJUnit4Sp
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		wiser.stop();
@@ -133,7 +139,7 @@ public class ShareNewShareEmailBuilderTest extends AbstractTransactionalJUnit4Sp
 		ShareContainer shareContainer = new ShareContainer();
 		shareContainer.addShareRecipient(recipient);
 		shareContainer.addDocumentUuid(documents);
-		shareService.create(actor, owner, shareContainer);
+		Assertions.assertNotNull(shareService.create(actor, owner, shareContainer));
 		wiser.checkGeneratedMessages();
 	}
 }
