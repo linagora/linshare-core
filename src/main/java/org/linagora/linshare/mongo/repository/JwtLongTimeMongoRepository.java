@@ -39,12 +39,14 @@ import java.util.List;
 import org.linagora.linshare.mongo.entities.PermanentToken;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 
 public interface JwtLongTimeMongoRepository extends MongoRepository<PermanentToken, String> {
-
+	@Query("{'actor.uuid': ?0}")
 	List<PermanentToken> findAllByActorUuid(String actorUuid, Sort sort);
 
 	PermanentToken findByUuid(String uuid);
-
+	
+	@Query("{'domain.uuid' : ?0}")
 	List<PermanentToken> findAllByDomainUuid(String domainUuid);
 }

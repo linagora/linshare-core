@@ -99,7 +99,7 @@ public class JwtLongTimeTokenFacadeImpl extends AdminGenericFacadeImpl implement
 			Validate.notEmpty(jwtLongTime.getUuid(), "jwtLongTime uuid must be set");
 			jwtLongTime = jwtLongTimeService.find(authUser, authUser, jwtLongTime.getUuid());
 		}
-		Account actor = getActor(authUser, jwtLongTime.getActorUuid());
+		Account actor = getActor(authUser, jwtLongTime.getActor().getUuid());
 		return jwtLongTimeService.delete(authUser, actor, jwtLongTime);
 	}
 
@@ -110,9 +110,9 @@ public class JwtLongTimeTokenFacadeImpl extends AdminGenericFacadeImpl implement
 			permanentToken.setUuid(uuid);
 		}
 		Validate.notEmpty(permanentToken.getUuid(), "permanentToken uuid must be set");
-		Validate.notEmpty(permanentToken.getActorUuid(), "actor uuid must be set");
+		Validate.notEmpty(permanentToken.getActor().getUuid(), "actor uuid must be set");
 		User authUser = checkAuthentication();
-		User actor = getActor(authUser, permanentToken.getActorUuid());
+		User actor = getActor(authUser, permanentToken.getActor().getUuid());
 		return jwtLongTimeService.update(authUser, actor, permanentToken.getUuid(), permanentToken);
 	}
 

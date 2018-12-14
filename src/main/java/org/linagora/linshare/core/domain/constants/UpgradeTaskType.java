@@ -164,7 +164,13 @@ public enum UpgradeTaskType {
 	 * We have to update our database
 	 *
 	 */
-	UPGRADE_2_3_ADD_ALL_NEW_MIME_TYPE;
+	UPGRADE_2_3_ADD_ALL_NEW_MIME_TYPE,
+
+	/*
+	 *The old version of PermanentToken is more compatible with SQL databases 
+	 * we have to change the structure for compatibility with MongoDB 
+	 */
+	UPGRADE_2_3_MIGRATE_PERMANENT_TOKEN_ENTITY_TO_NEW_STRUCTURE;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {

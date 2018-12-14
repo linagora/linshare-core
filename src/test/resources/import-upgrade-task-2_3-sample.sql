@@ -25,3 +25,30 @@ VALUES
   now(),
   now(),
   null);
+
+INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+ (27,
+ 'UNDEFINED',
+ 'UPGRADE_2_3_MIGRATE_PERMANENT_TOKEN_ENTITY_TO_NEW_STRUCTURE',
+ 'UPGRADE_2_3',
+  null,
+  null,
+  27,
+ 'NEW',
+ 'MANDATORY',
+  now(),
+  now(),
+  null);

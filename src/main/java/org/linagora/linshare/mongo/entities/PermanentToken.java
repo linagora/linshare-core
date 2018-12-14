@@ -39,13 +39,16 @@ import javax.persistence.GeneratedValue;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.facade.webservice.common.dto.JwtToken;
+import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlRootElement(name = "PermanentToken")
 @Document(collection = "permanent_tokens")
 public class PermanentToken {
@@ -58,11 +61,11 @@ public class PermanentToken {
 	@ApiModelProperty(value = "uuid")
 	protected String uuid;
 
-	@ApiModelProperty(value = "domain uuid")
-	protected String domainUuid;
+	@ApiModelProperty(value = "domain", required = true, notes = "Light entity that contains only the name and uuid of the domain.")
+	protected GenericLightEntity domain;
 
-	@ApiModelProperty(value = "actor uuid")
-	protected String actorUuid;
+	@ApiModelProperty(value = "actor", required = true, notes = "Light entity that contains only the name and uuid of the actor.")
+	protected GenericLightEntity actor;
 
 	@ApiModelProperty(value = "issuer")
 	protected String issuer;
@@ -79,7 +82,7 @@ public class PermanentToken {
 	@ApiModelProperty(value = "owner email")
 	protected String subject;
 
-	@ApiModelProperty(value = "jwt token, non persisted")
+	@ApiModelProperty(value = "jwt token", notes = "not persisted")
 	@Transient
 	protected JwtToken jwtToken;
 
@@ -98,17 +101,17 @@ public class PermanentToken {
 			String issuer,
 			String label,
 			String description,
-			String actorUuid,
+			GenericLightEntity actor,
 			String subject,
-			String domainUuid) {
+			GenericLightEntity domain) {
 		this.uuid = tokenUuid;
 		this.creationDate = creationDate;
 		this.issuer = issuer;
 		this.subject = subject;
 		this.label = label;
 		this.description = description;
-		this.actorUuid = actorUuid;
-		this.domainUuid = domainUuid;
+		this.actor = actor;
+		this.domain = domain;
 	}
 
 	public PermanentToken(PermanentToken jwtLongTime) {
@@ -119,8 +122,8 @@ public class PermanentToken {
 		this.subject = jwtLongTime.getSubject();
 		this.label = jwtLongTime.getLabel();
 		this.description = jwtLongTime.getDescription();
-		this.actorUuid = jwtLongTime.getActorUuid();
-		this.domainUuid = jwtLongTime.getDomainUuid();
+		this.actor = jwtLongTime.getActor();
+		this.domain = jwtLongTime.getDomain();
 	}
 
 	public String getId() {
@@ -139,20 +142,20 @@ public class PermanentToken {
 		this.uuid = uuid;
 	}
 
-	public String getDomainUuid() {
-		return domainUuid;
+	public GenericLightEntity getDomain() {
+		return domain;
 	}
 
-	public void setDomainUuid(String domainUuid) {
-		this.domainUuid = domainUuid;
+	public void setDomain(GenericLightEntity domain) {
+		this.domain = domain;
 	}
 
-	public String getActorUuid() {
-		return actorUuid;
+	public GenericLightEntity getActor() {
+		return actor;
 	}
 
-	public void setActorUuid(String actorUuid) {
-		this.actorUuid = actorUuid;
+	public void setActor(GenericLightEntity actor) {
+		this.actor = actor;
 	}
 
 	public String getIssuer() {
@@ -205,9 +208,9 @@ public class PermanentToken {
 
 	@Override
 	public String toString() {
-		return "JwtLongTime [id=" + id + ", uuid=" + uuid + ", domainUuid=" + domainUuid + ", actorUuid=" + actorUuid
-				+ ", issuer=" + issuer + ", creationDate=" + creationDate + ", label=" + label + ", description="
-				+ description + ", subject=" + subject + "]";
+		return "PermanentToken [id=" + id + ", uuid=" + uuid + ", domain=" + domain + ", actor=" + actor + ", issuer="
+				+ issuer + ", creationDate=" + creationDate + ", label=" + label + ", description=" + description
+				+ ", subject=" + subject + ", jwtToken=" + jwtToken + "]";
 	}
 
 }

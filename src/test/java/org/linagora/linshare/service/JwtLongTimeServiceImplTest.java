@@ -187,7 +187,7 @@ public class JwtLongTimeServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		PermanentToken deleted = jwtLongTimeService.delete(john, john, token);
 		assertEquals(token.getUuid(), deleted.getUuid());
 		assertEquals(token.getLabel(), deleted.getLabel());
-		assertEquals(deleted.getActorUuid(), john.getLsUuid());
+		assertEquals(deleted.getActor().getUuid(), john.getLsUuid());
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
@@ -199,7 +199,7 @@ public class JwtLongTimeServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		PermanentToken deleted = jwtLongTimeService.delete(root, john, token);
 		assertEquals(token.getUuid(), deleted.getUuid());
 		assertEquals(token.getLabel(), deleted.getLabel());
-		assertEquals(deleted.getActorUuid(), john.getLsUuid());
+		assertEquals(deleted.getActor().getUuid(), john.getLsUuid());
 		wiser.checkGeneratedMessages();
 		logger.info(LinShareTestConstants.END_TEST);
 	}

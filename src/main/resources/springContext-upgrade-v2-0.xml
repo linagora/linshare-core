@@ -204,6 +204,14 @@
 					<constructor-arg ref="mimeTypeMagicNumberDao" />
 					<constructor-arg ref="mimeTypeRepository" />
 				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v2_3.NewPermanentTokenStructureUpgradeTaskImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="userRepository" />
+					<constructor-arg ref="jwtLongTimeMongoRepository" />
+					<constructor-arg ref="abstractDomainRepository" />
+
+				</bean>
 			</list>
 		</constructor-arg>
 	</bean>

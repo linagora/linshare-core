@@ -150,7 +150,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 				String msg = String.format(message, token);
 				throw new AuthenticationServiceException(msg);
 			}
-			Functionality functionality = functionalityReadOnlyService.getJwtLongTimeFunctionality(jwtLongTime.getDomainUuid());
+			Functionality functionality = functionalityReadOnlyService.getJwtLongTimeFunctionality(jwtLongTime.getDomain().getUuid());
 			if (!functionality.getActivationPolicy().getStatus()) {
 				throw new AuthenticationServiceException("JWT permanent token Functionality is disabled.");
 			}
