@@ -104,7 +104,7 @@ public class MailConfigServiceImplTest {
 
 	private static int NB_LANG = 3;
 
-	private static int NB_CONTENT = 34;
+	private static int NB_CONTENT = 35;
 
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;

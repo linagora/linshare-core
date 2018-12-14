@@ -45,6 +45,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.DriveWarnNewMemberEmailContext;
+import org.linagora.linshare.core.notifications.context.DriveWarnUpdatedMemberEmailContext;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnDeletedMemberEmailContext;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnUpdatedMemberEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
@@ -134,10 +135,10 @@ public class SharedSpaceMemberDriveServiceImpl extends SharedSpaceMemberServiceI
 				foundMemberToUpdate);
 		SharedSpaceMember updated = driveMemberBusinessService.update(foundMemberToUpdate,
 				(SharedSpaceMemberDrive) memberToUpdate);
+		List<SharedSpaceMember> nestedMembers = Lists.newArrayList();
 		// No propagation if nested role is not updated
 		if (!((SharedSpaceMemberDrive) updated).getNestedRole().equals(wgRole)) {
 			// Update the member on all workgroups inside the drive
-			List<SharedSpaceMember> nestedMembers = Lists.newArrayList();
 			if (force) {
 				nestedMembers = businessService.findAllMembersByParentAndAccount(foundMemberToUpdate.getAccount().getUuid(),
 						updated.getNode().getUuid());
@@ -153,6 +154,10 @@ public class SharedSpaceMemberDriveServiceImpl extends SharedSpaceMemberServiceI
 				notify(new WorkGroupWarnUpdatedMemberEmailContext(updatedWgMember, user, actor));
 				saveUpdateLog(authUser, actor, LogAction.UPDATE, wgFoundMember, updatedWgMember);
 			}
+		}
+		User member = userRepository.findByLsUuid(foundMemberToUpdate.getAccount().getUuid());
+		if (!actor.getLsUuid().equals(member.getLsUuid())) {
+			notify(new DriveWarnUpdatedMemberEmailContext(foundMemberToUpdate, member, actor, nestedMembers));
 		}
 		saveUpdateLog(authUser, actor, LogAction.UPDATE, foundMemberToUpdate, updated);
 		return updated;

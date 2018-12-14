@@ -62,6 +62,7 @@ import org.linagora.linshare.core.notifications.config.LinShareStringTemplateRes
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.dto.ContextMetadata;
 import org.linagora.linshare.core.notifications.emails.impl.DriveWarnNewMemberEmailBuilder;
+import org.linagora.linshare.core.notifications.emails.impl.DriveWarnUpdatedMemberEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.EmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.FileWarnOwnerBeforeExpiryEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.GuestAccountNewCreationEmailBuilder;
@@ -280,6 +281,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		emailBuilders.put(MailContentType.ACCOUNT_OWNER_WARN_JWT_PERMANENT_TOKEN_DELETED, new JwtPermanentDeletedEmailBuilder());
 
 		emailBuilders.put(MailContentType.DRIVE_WARN_NEW_MEMBER, new DriveWarnNewMemberEmailBuilder());
+		emailBuilders.put(MailContentType.DRIVE_WARN_UPDATED_MEMBER, new DriveWarnUpdatedMemberEmailBuilder());
 
 		initMailBuilders(insertLicenceTerm, domainBusinessService, functionalityReadOnlyService,
 				mailActivationBusinessService, fileDataStore, urlTemplateForReceivedShares, urlTemplateForDocuments,

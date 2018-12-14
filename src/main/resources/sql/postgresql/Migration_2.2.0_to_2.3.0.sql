@@ -21,12 +21,13 @@ BEGIN
 	DECLARE version_history_from VARCHAR := (SELECT version from version ORDER BY id DESC LIMIT 1);
 	DECLARE database_info VARCHAR = version();
 	DECLARE error VARCHAR := concat('Your database upgrade history indicates that you already upgraded to : ', version_to);
+	DECLARE nb_upgrade_tasks INT := (SELECT count(*)::int  FROM upgrade_task WHERE status != 'SUCCESS' AND status != 'SKIPPED');
 	DECLARE connection_id INT := pg_backend_pid();
 	DECLARE row record;
 	BEGIN
 		RAISE NOTICE '%', start;
 		RAISE NOTICE 'Your actual version is: %', version_history_from;
-		RAISE NOTICE 'Your databse history is :';
+		RAISE NOTICE 'Your database history is :';
 		FOR row IN (SELECT * FROM version ORDER BY id DESC) LOOP
 			RAISE INFO '%', row.version;
 		END LOOP;
@@ -36,6 +37,14 @@ BEGIN
 			IF EXISTS (SELECT * from version where version = version_to) THEN
 				RAISE WARNING '%', error;
 			END IF;
+			RAISE WARNING 'We are about to abort the migration script, all the following instructions will be aborted and transaction will rollback.';
+			RAISE INFO 'You should expect the following error : "query has no destination for result data".';
+	--		DIRTY: did it to stop the process cause there is no clean way to do it.
+	--		Expected error: query has no destination for result data.
+			select error;
+		END IF;
+		IF (nb_upgrade_tasks > 0) THEN
+			RAISE WARNING 'Can not upgrade LinShare if all upgrade tasks are not completed with success !!!!';
 			RAISE WARNING 'We are about to abort the migration script, all the following instructions will be aborted and transaction will rollback.';
 			RAISE INFO 'You should expect the following error : "query has no destination for result data".';
 	--		DIRTY: did it to stop the process cause there is no clean way to do it.
@@ -218,13 +227,17 @@ INSERT INTO ldap_attribute
 (id, field, attribute, sync, system, enable, ldap_pattern_id, completion)
 SELECT 21, 'user_uid', 'uid', false, true, true, 5, false WHERE NOT EXISTS (SELECT * FROM already_exists);
 
-	-- Functionality DRIVE
+	-- Functionality : WORK_GROUP__FILE_VERSIONING
 INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (295, true, true, 2, true);
+	VALUES (297, false, false, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (296, true, true, 2, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id, parent_identifier, param, creation_date, modification_date)
-	VALUES (62, false, 'WORK_GROUP__DRIVE_CAN_CREATE', 295, 296, 1, 'WORK_GROUP', true, now(), now());
+	VALUES (298, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) 
+	VALUES (299, false, false, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param, creation_date, modification_date)
+	VALUES (63, false, 'WORK_GROUP__FILE_VERSIONING', 297, 298, 299, 1, 'WORK_GROUP', true, now(), now());
+INSERT INTO functionality_boolean(functionality_id, boolean_value)
+	VALUES (63, true);
 
 	-- Functionality : WORK_GROUP__FILE_EDITION
 INSERT INTO policy(id, status, default_status, policy, system)
@@ -250,6 +263,28 @@ INSERT INTO unit(id, unit_type, unit_value)
 INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) 
 	VALUES (66, 900, 12);
 
+	--Welcome messages
+CREATE OR REPLACE FUNCTION update_wm() RETURNS void AS $$
+BEGIN
+	DECLARE welcmessage record;
+	DECLARE language VARCHAR := 'ru';
+	DECLARE j BIGINT;
+BEGIN
+		FOR welcmessage IN 
+		SELECT * FROM welcome_messages LOOP
+					IF language NOT IN (SELECT lang FROM welcome_messages_entry where welcome_messages_id = welcmessage.id) THEN
+					    BEGIN
+						j := (SELECT nextVal('hibernate_sequence'));
+						 INSERT INTO welcome_messages_entry(id, lang, value, welcome_messages_id)
+							VALUES (j, 'ru', '<h2>Добро пожаловать в LinShare</h2><p>Добро пожаловать в LinShare - открытое приложение для надежного обмена файлами.</p>', welcmessage.id);
+					    END;
+					END IF;
+		END LOOP;
+END;
+END
+$$ LANGUAGE plpgsql;
+
+UPDATE welcome_messages_entry SET value = '<h2>Chào mừng bạn đến với LinShare</h2><p>Chào mừng bạn đến với LinShare, phần mềm nguồn mở chia sẻ file bảo mật.</p>' WHERE id = 3;
 -- End of your requests
 
 -- Upgrade Task
@@ -275,6 +310,34 @@ VALUES
   null,
   null,
   26,
+ 'NEW',
+ 'MANDATORY',
+  now(),
+  now(),
+  null);
+
+    -- TASK: UPGRADE_2_3_UPGRADE_DOCUMENT_STRUCTURE_FOR_VERSIONING
+  INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+ (28,
+ 'UNDEFINED',
+ 'UPGRADE_2_3_UPDATE_DOCUMENT_STRUCTURE_FOR_VERSIONING',
+ 'UPGRADE_2_3',
+  null,
+  null,
+  28,
  'NEW',
  'MANDATORY',
   now(),
@@ -307,9 +370,85 @@ VALUES
   now(),
   now(),
   null);
+
+-- TASK: UPGRADE_2_3_UPDATE_SHARED_SPACE_NODE_STRUCTURE_FOR_VERSIONING
+   INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+ (29,
+ 'UNDEFINED',
+ 'UPGRADE_2_3_UPDATE_SHARED_SPACE_NODE_STRUCTURE_FOR_VERSIONING',
+ 'UPGRADE_2_3',
+  null,
+  null,
+  29,
+ 'NEW',
+ 'MANDATORY',
+  now(),
+  now(),
+  null);
+ 
+-- TASK: UPGRADE_2_3_ADD_QUOTA_UUID_TO_ALL_SHARED_SPACES
+  INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+ (30,
+ 'UNDEFINED',
+ 'UPGRADE_2_3_ADD_QUOTA_UUID_TO_ALL_SHARED_SPACES',
+ 'UPGRADE_2_3',
+  null,
+  null,
+  30,
+ 'NEW',
+ 'MANDATORY',
+  now(),
+  now(),
+  null);
+
 -- End Upgrade Task
 
--- Update mail layout 
+-- Mail content
+UPDATE mail_content SET messages_french='downloadBtn = Télécharger
+downloadLink = Lien de téléchargement
+helpMsgSingular =  pour visualiser le document partagé.
+helpMsgPlural =pour visualiser tous les documents du partage.
+helpPasswordMsgSingular = Cliquez sur le lien pour le télécharger et saisissez le mot de passe fourni ici.
+helpPasswordMsgPlural = Cliquez sur le lien pour les télécharger et saisissez le mot de passe fourni.
+mainMsgPlural = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>a partagé {2} fichiers avec vous.
+mainMsgSingular = <b> {0} <span style="text-transform:uppercase">{1}</span> </b> a partagé {2} fichier  avec vous.
+msgFrom = Vous avez un message de
+name = {0} {1}
+password = Mot de passe
+subjectCustomAlt =de {0} {1}
+subjectPlural =  {0} {1} vous a partagé des fichiers
+subjectSingular =  {0} {1} vous a partagé un fichier
+click = Cliquez sur ce
+link = lien' WHERE id=2;
+-- End mail content
+
+-- Mail layout
 UPDATE mail_layout SET messages_french='common.availableUntil = Expire le
 common.byYou= | Par vous
 common.download= Télécharger
@@ -319,10 +458,10 @@ common.titleSharedThe= Partagé le
 date.format=d MMMM, yyyy
 productCompagny=Linagora
 productName=LinShare
-workGroupRightAdminTitle = Administrateur
+workGroupRightAdminTitle = Administration
 workGroupRightWirteTitle = Écriture
+workGroupRightContributeTitle = Contribution
 workGroupRightReadTitle = Lecture
-workGroupRightContributorTitle = Contributeur
 welcomeMessage = Bonjour {0},',messages_english='common.availableUntil = Expiry date
 common.byYou= | By you
 common.download= Download
@@ -334,9 +473,9 @@ productCompagny=Linagora
 productName=LinShare
 workGroupRightAdminTitle = Administrator
 workGroupRightWirteTitle = Writer
+workGroupRightContributeTitle = Contributor
 workGroupRightReadTitle = Reader
-workGroupRightContributorTitle = Contributor
-welcomeMessage = Hello {0}',layout='<!DOCTYPE html>
+welcomeMessage = Hello {0},',layout='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 <!--/* Beginning of common base layout template*/-->
@@ -458,7 +597,7 @@ welcomeMessage = Hello {0}',layout='<!DOCTYPE html>
                                        style="text-decoration:none;color:#b2b2b2;"><strong>LinShare</strong>™</a>,
                                     powered by <a href="http://www.linshare.org/"
                                                   style="text-decoration:none;color:#b2b2b2;"><strong>Linagora</strong></a>
-                                    ©&nbsp;2009–2018. Contribute to
+                                    ©&nbsp;2009–2019. Contribute to
                                     Linshare R&amp;D by subscribing to an Enterprise offer.
                                   </p>
                                 </div>
@@ -678,20 +817,10 @@ test-file.jpg</span></a>
 </li>
    </ul>
 </div>' WHERE id=1;
--- End Update mail layout
+--end mail layout
 
--- New Mails
--- Drive notification :
--- DRIVE_WARN_NEW_MEMBER
-
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,34,34,'','',NOW(),true,'','16a7001a-ee6d-11e8-bb18-ef4f3a73c249',true);
-
-INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (34,0,1,34,34,true,'16a78382-ee6d-11e8-b388-13bb3e6feb85');
-
-INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (134,1,1,34,34,true,'16a7f1aa-ee6d-11e8-9dab-3b0fd56ae1eb');
-
-
-UPDATE mail_content SET subject='[( #{subject(${workGroupName})})]',body='<!DOCTYPE html>
+--Mail content
+UPDATE mail_content SET body='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head  data-th-replace="layout :: header"></head>
 <body>
@@ -719,59 +848,28 @@ UPDATE mail_content SET subject='[( #{subject(${workGroupName})})]',body='<!DOCT
   </section> <!--/* End of upper main-content*/-->
   <!--/* Secondary content for  bottom email section */-->
   <section id="secondary-content">
-       <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, ${threadMember.role.name})"/>
+    <th:block th:switch="(${threadMember.role.name})">
+       <p th:case="ADMIN">
+          <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightAdminTitle})"/>
+       </p>
+       <p th:case="WRITER">
+          <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightWirteTitle})"/>
+       </p>
+       <p th:case="CONTRIBUTOR">
+          <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightContributeTitle})"/>
+       </p>
+       <p th:case="READER">
+         <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightReadTitle})"/>
+       </p>
     </th:block>
     <th:block data-th-replace="layout :: infoStandardArea(#{workGroupNameTitle},${workGroupName})"/>
     <th:block data-th-replace="layout :: infoDateArea(#{workGroupCreationDateTitle},${threadMember.creationDate})"/>
-    <div th:if="${!childMembers.isEmpty()}">
-      <th:block data-th-utext="#{nestedWorkGroupsList}"/>
-      <ul style="padding: 5px 17px; margin: 0;list-style-type:disc;">
-        <li style="color:#787878;font-size:10px" th:each="member : ${childMembers}">
-            <span style="color:#787878;font-size:13px">
-              <th:block data-th-utext="#{displayDriveAndRole(${member.node.name},${member.role.name})}"/>
-          </li>
-      </ul>  
-    </div>
   </section>  <!--/* End of Secondary content for bottom email section */-->
 </div>
 </body>
-</html>',messages_french='workGroupCreationDateTitle = Date de création
-mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> vous a ajouté au drive <br>
-simpleMainMsg = Vous avez été ajouté au drive
-subject = Vous avez été ajouté au drive {0}
-workGroupRight = Droit par défaut 
-workGroupNameTitle = Nom du drive
-nestedWorkGroupsList=Vous avez automatiquement été ajouté aux groupes de travail suivants :
-displayDriveAndRole ={0} avec un rôle <span style="text-transform:uppercase">{1}</span>',messages_english='workGroupCreationDateTitle = Creation date
-mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> added you to the drive <br>
-simpleMainMsg = You have been added to the drive
-subject = You have been added to the drive {0}
-workGroupRight = Default right
-workGroupNameTitle = Drive Name
-nestedWorkGroupsList=You have been automatically added to the following workgroups:
-displayDriveAndRole ={0} with a <span style="text-transform:uppercase">{1}</span> role' WHERE id=34;
+</html>' WHERE id=28;
 
-
-	-- MailActivation : DRIVE_WARN_NEW_MEMBER
-INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (306, true, true, 0, true);
-INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (307, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (308, false, false, 2, true);
-INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, enable)
-	VALUES(35, false, 'DRIVE_WARN_NEW_MEMBER', 306, 307, 308, 1, true);
-
-
--- DRIVE_WARN_UPDATED_MEMBER
-
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,35,35,'','',NOW(),true,'','01acd058-fc92-11e8-b2b3-d7189fc47d83',true);
-
-INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (35,0,1,35,35,true,'01ad9c5e-fc92-11e8-9736-ef560a979e00');
-
-INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (135,1,1,35,35,true,'01ae8e66-fc92-11e8-9e2e-2b5cc9cf184f');
-
-UPDATE mail_content SET subject='[(#{subject(${workGroupName})})]',body='<!DOCTYPE html>
+UPDATE mail_content SET body='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head  data-th-replace="layout :: header"></head>
 <body>
@@ -799,31 +897,22 @@ UPDATE mail_content SET subject='[(#{subject(${workGroupName})})]',body='<!DOCTY
   </section> <!--/* End of upper main-content*/-->
   <!--/* Secondary content for  bottom email section */-->
   <section id="secondary-content">
-    <th:block th:switch="${threadMember.role.name}">
-      <p th:case="''DRIVE_ADMIN''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{workGroupRightAdminTitle})"/></p>  
-      <p th:case="''DRIVE_CREATOR''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{workGroupRightWirteTitle})"/></p>  
-      <p th:case="''DRIVE_READER''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{workGroupRightReadTitle})"/></p>  
-    </th:block>
-    <th:block th:switch="${threadMember.nestedRole.name}">
-      <p th:case="''ADMIN''"> <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightAdminTitle})"/></p>  
-      <p th:case="''CONTRIBUTOR''"> <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightWirteTitle})"/></p>  
-      <p th:case="''WRITER''"> <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightWirteTitle})"/></p>
-      <p th:case="''READER''"> <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightReadTitle})"/></p>  
+    <th:block th:switch="(${threadMember.role.name})">
+       <p th:case="ADMIN">
+          <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightAdminTitle})"/>
+       </p>
+       <p th:case="WRITER">
+          <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightWirteTitle})"/>
+       </p>
+       <p th:case="CONTRIBUTOR">
+          <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightContributeTitle})"/>
+       </p>
+       <p th:case="READER">
+         <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightReadTitle})"/>
+       </p>
     </th:block>
     <th:block data-th-replace="layout :: infoStandardArea(#{workGroupNameTitle},${workGroupName})"/>
-    <th:block data-th-replace="layout :: infoDateArea(#{workGroupUpdatedDateTitle},${threadMember.creationDate})"/>
-    <div th:if="${nbrWorkgroupsUpdated != 0}">
-    <th:block data-th-replace="layout :: infoStandardArea(#{nbrWorkgoups},${nbrWorkgroupsUpdated})"/>
-      <th:block data-th-utext="#{nestedWorkGroupsList}"/>
-      <ul>
-        <li  th:each="member : ${nestedMembers}">
-              <th:block data-th-utext="${member.node.name}"/>
-        </li>
-        <span th:if="${nbrWorkgroupsUpdated > 3}">
-             <li>...</li>
-        </span>
-      </ul>  
-    </div>
+    <th:block data-th-replace="layout :: infoDateArea(#{workGroupUpdatedDateTitle},${threadMember.modificationDate})"/>
   </section>  <!--/* End of Secondary content for bottom email section */-->
 </div>
 </body>
@@ -1432,7 +1521,36 @@ INSERT INTO mail_activation(id, system, identifier, policy_activation_id, policy
 	VALUES(37, false, 'DRIVE_WARN_DELETED_MEMBER', 312, 313, 314, 1, true);
 -- end drive notification
 >>>>>>> Issue #454 : Create new mail for new drive member
+<<<<<<< HEAD
 >>>>>>> Issue #454 : Create new mail for new drive member
+=======
+=======
+</html>' WHERE id = 29;
+--end mail content
+
+-- Add russian mail content
+ALTER TABLE mail_content ADD COLUMN messages_russian text;
+--To be deleted once we have russian translation
+UPDATE mail_content SET messages_russian = messages_english;
+ALTER TABLE mail_content ALTER COLUMN messages_russian SET NOT NULL;
+ALTER TABLE mail_content ALTER COLUMN messages_english SET NOT NULL;
+ALTER TABLE mail_content ALTER COLUMN messages_french SET NOT NULL;
+
+ALTER TABLE mail_footer ADD COLUMN messages_russian text;
+--To be deleted once we have russian translation
+UPDATE mail_footer SET messages_russian = messages_english;
+ALTER TABLE mail_footer ALTER COLUMN messages_russian SET NOT NULL;
+ALTER TABLE mail_footer ALTER COLUMN messages_english SET NOT NULL;
+ALTER TABLE mail_footer ALTER COLUMN messages_french SET NOT NULL;
+
+ALTER TABLE mail_layout ADD COLUMN messages_russian text;
+--To be deleted once we have russian translation
+UPDATE mail_layout SET messages_russian = messages_english;
+ALTER TABLE mail_layout ALTER COLUMN messages_russian SET NOT NULL;
+ALTER TABLE mail_layout ALTER COLUMN messages_english SET NOT NULL;
+ALTER TABLE mail_layout ALTER COLUMN messages_french SET NOT NULL;
+>>>>>>> Warn drive member when his role is updated
+>>>>>>> Warn drive member when his role is updated
 
 -- LinShare version
 SELECT ls_version();
@@ -1444,5 +1562,4 @@ CREATE VIEW alias_threads_list_all AS SELECT a.id, name, domain_id, ls_uuid, cre
 CREATE VIEW alias_threads_list_active AS SELECT a.id, name, domain_id, ls_uuid, creation_date, modification_date, enable, destroyed from thread as u join account as a on a.id=u.account_id where a.destroyed = 0;
 -- All destroyed threads
 CREATE VIEW alias_threads_list_destroyed AS SELECT a.id, name, domain_id, ls_uuid, creation_date, modification_date, enable, destroyed from thread as u join account as a on a.id=u.account_id where a.destroyed != 0;
-
 COMMIT;

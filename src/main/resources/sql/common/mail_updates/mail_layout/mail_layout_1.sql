@@ -11,6 +11,7 @@ workGroupRightAdminTitle = Administration
 workGroupRightWirteTitle = Écriture
 workGroupRightContributeTitle = Contribution
 workGroupRightReadTitle = Lecture
+workGroupRightContributorTitle = Contributeur
 welcomeMessage = Bonjour {0},',messages_english='common.availableUntil = Expiry date
 common.byYou= | By you
 common.download= Download
