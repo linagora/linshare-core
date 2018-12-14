@@ -209,15 +209,19 @@ border-top: 1px solid #e1e1e1;">
 </div>
 <!--/* Common date display  style */-->
 <div style="margin-bottom:17px;" data-th-fragment="infoDateArea(titleInfo,contentInfo)">
-     <span style="font-weight:bold;" data-th-text="${titleInfo}" >Shared the </span>
-    <br/>
- <span  th:with="df=#{date.format}" data-th-text="${#dates.format(contentInfo,df)}">7th of November, 2018</span>
+     <div data-th-if="${contentInfo != null}">
+      <span style="font-weight:bold;" data-th-text="${titleInfo}" >Shared the </span>
+      <br/>
+      <span  th:with="df=#{date.format}" data-th-text="${#dates.format(contentInfo,df)}">7th of November, 2018</span>
+   </div>
 </div>
 <!--/* Common lower info title style */-->
 <div style="margin-bottom:17px;" data-th-fragment="infoStandardArea(titleInfo,contentInfo)">
-     <span style="font-weight:bold;" ><th:block th:replace="${titleInfo}" /> </span>
-    <br/>
-      <th:block th:replace="${contentInfo}" />
+     <div data-th-if="${contentInfo != null}">
+	   <span style="font-weight:bold;" ><th:block th:replace="${titleInfo}" /> </span>
+       <br/>
+       <th:block th:replace="${contentInfo}" />
+	</div>
 </div>
 <!--/* Common button action style */-->
 <span   data-th-fragment="actionButtonLink(labelBtn,urlLink)">
@@ -358,6 +362,7 @@ productName=LinShare
 workGroupRightAdminTitle = Administrateur
 workGroupRightWirteTitle = Écriture
 workGroupRightReadTitle = Lecture
+workGroupRightContributorTitle = Contributeur
 welcomeMessage = Bonjour {0},', 'common.availableUntil = Expiry date
 common.byYou= | By you
 common.download= Download
@@ -368,9 +373,10 @@ date.format= MMMM d, yyyy
 productCompagny=Linagora
 productName=LinShare
 workGroupRightAdminTitle = Administrator
-workGroupRightWirteTitle = Write
-workGroupRightReadTitle = Read
-welcomeMessage = Hello {0},');
+workGroupRightWirteTitle = Writer
+workGroupRightReadTitle = Reader
+workGroupRightContributorTitle = Contributor
+welcomeMessage = Hello {0}');
 INSERT INTO public.mail_config (id, mail_layout_id, domain_abstract_id, name, visible, uuid, creation_date, modification_date, readonly) VALUES (1, 1, 1, 'Default mail config', true, '946b190d-4c95-485f-bfe6-d288a2de1edd', now(), now(), true);
 INSERT INTO public.mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (1, 1, NULL, true, 1, '[( #{subject(${document.name})})]', '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
@@ -2437,6 +2443,174 @@ mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> has del
 tokenCreationDate = Creation date
 tokenLabel = Name
 tokenDescription = Description');
+INSERT INTO public.mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (34, 1, '', true, 34, '[( #{subject(${workGroupName})})]', '<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head  data-th-replace="layout :: header"></head>
+<body>
+<div th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+  <!--/* Upper main-content*/-->
+  <section id="main-content">
+    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+      <div id="section-content">
+        <!--/* Greetings */-->
+        <th:block data-th-replace="layout :: greetings(${member.firstName})"/>
+        <!--/* End of Greetings  */-->
+        <!--/* Main email  message content*/-->
+        <p>
+            <span th:if="${owner.firstName} !=null AND ${owner.lastName} !=null" data-th-utext="#{mainMsg(${owner.firstName},${owner.lastName})}"></span>
+            <span th:if="${owner.firstName} ==null OR ${owner.lastName} ==null" data-th-utext="#{simpleMainMsg}"></span>
+            <span>
+              <a target="_blank" style="color:#1294dc;text-decoration:none;"  data-th-text="${workGroupName}" th:href="@{${workGroupLink}}" >
+               link
+             </a>
+            </span>
+          <!--/* Activation link for initialisation of the guest account */-->
+             </p> <!--/* End of Main email  message content*/-->
+      </div><!--/* End of section-content*/-->
+    </div><!--/* End of main-content container*/-->
+  </section> <!--/* End of upper main-content*/-->
+  <!--/* Secondary content for  bottom email section */-->
+  <section id="secondary-content">
+       <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, ${threadMember.role.name})"/>
+    </th:block>
+    <th:block data-th-replace="layout :: infoStandardArea(#{workGroupNameTitle},${workGroupName})"/>
+    <th:block data-th-replace="layout :: infoDateArea(#{workGroupCreationDateTitle},${threadMember.creationDate})"/>
+    <div th:if="${!childMembers.isEmpty()}">
+      <th:block data-th-utext="#{nestedWorkGroupsList}"/>
+      <ul style="padding: 5px 17px; margin: 0;list-style-type:disc;">
+        <li style="color:#787878;font-size:10px" th:each="member : ${childMembers}">
+            <span style="color:#787878;font-size:13px">
+              <th:block data-th-utext="#{displayDriveAndRole(${member.node.name},${member.role.name})}"/>
+          </li>
+      </ul>  
+    </div>
+  </section>  <!--/* End of Secondary content for bottom email section */-->
+</div>
+</body>
+</html>', '16a7001a-ee6d-11e8-bb18-ef4f3a73c249', now(), now(), true, 'workGroupCreationDateTitle = Date de création
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> vous a ajouté au drive <br>
+simpleMainMsg = Vous avez été ajouté au drive
+subject = Vous avez été ajouté au drive {0}
+workGroupRight = Droit par défaut 
+workGroupNameTitle = Nom du drive
+nestedWorkGroupsList=Vous avez automatiquement été ajouté aux groupes de travail suivants :
+displayDriveAndRole ={0} avec un rôle <span style="text-transform:uppercase">{1}</span>', 'workGroupCreationDateTitle = Creation date
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> added you to the drive <br>
+simpleMainMsg = You have been added to the drive
+subject = You have been added to the drive {0}
+workGroupRight = Default right
+workGroupNameTitle = Drive Name
+nestedWorkGroupsList=You have been automatically added to the following workgroups:
+displayDriveAndRole ={0} with a <span style="text-transform:uppercase">{1}</span> role');
+INSERT INTO public.mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (35, 1, '', true, 35, '[(#{subject(${workGroupName})})]', '<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head  data-th-replace="layout :: header"></head>
+<body>
+<div th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+  <!--/* Upper main-content*/-->
+  <section id="main-content">
+    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+      <div id="section-content">
+        <!--/* Greetings */-->
+        <th:block data-th-replace="layout :: greetings(${member.firstName})"/>
+        <!--/* End of Greetings  */-->
+        <!--/* Main email  message content*/-->
+        <p>
+          <span data-th-utext="#{mainMsg}"></span>
+          <span>
+               <a target="_blank" style="color:#1294dc;text-decoration:none;"  data-th-text="${workGroupName}" th:href="@{${workGroupLink}}" >
+                link </a>
+          </span>
+          <span data-th-utext="#{mainMsgNext}"></span>
+          <span th:if="${owner.firstName} != null AND ${owner.firstName} != null" data-th-utext="#{mainMsgNextBy(${owner.firstName},${owner.lastName})}"></span>
+             </p> <!--/* End of Main email  message content*/-->
+      </div><!--/* End of section-content*/-->
+    </div><!--/* End of main-content container*/-->
+  </section> <!--/* End of upper main-content*/-->
+  <!--/* Secondary content for  bottom email section */-->
+  <section id="secondary-content">
+    <th:block th:switch="${threadMember.role.name}">
+      <p th:case="''DRIVE_ADMIN''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{workGroupRightAdminTitle})"/></p>  
+      <p th:case="''DRIVE_CREATOR''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{workGroupRightWirteTitle})"/></p>  
+      <p th:case="''DRIVE_READER''"> <th:block data-th-replace="layout :: infoStandardArea(#{driveRight}, #{workGroupRightReadTitle})"/></p>  
+    </th:block>
+    <th:block th:switch="${threadMember.nestedRole.name}">
+      <p th:case="''ADMIN''"> <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightAdminTitle})"/></p>  
+      <p th:case="''CONTRIBUTOR''"> <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightWirteTitle})"/></p>  
+      <p th:case="''WRITER''"> <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightWirteTitle})"/></p>
+      <p th:case="''READER''"> <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightReadTitle})"/></p>  
+    </th:block>
+    <th:block data-th-replace="layout :: infoStandardArea(#{workGroupNameTitle},${workGroupName})"/>
+    <th:block data-th-replace="layout :: infoDateArea(#{workGroupUpdatedDateTitle},${threadMember.creationDate})"/>
+    <div th:if="${nbrWorkgroupsUpdated != 0}">
+    <th:block data-th-replace="layout :: infoStandardArea(#{nbrWorkgoups},${nbrWorkgroupsUpdated})"/>
+      <th:block data-th-utext="#{nestedWorkGroupsList}"/>
+      <ul>
+        <li  th:each="member : ${nestedMembers}">
+              <th:block data-th-utext="${member.node.name}"/>
+        </li>
+        <span th:if="${nbrWorkgroupsUpdated > 3}">
+             <li>...</li>
+        </span>
+      </ul>  
+    </div>
+  </section>  <!--/* End of Secondary content for bottom email section */-->
+</div>
+</body>
+</html>', '01acd058-fc92-11e8-b2b3-d7189fc47d83', now(), now(), true, 'workGroupUpdatedDateTitle = Date de la mise à jour
+mainMsg = Vos droits sur le DRIVE
+mainMsgNext = et dans ses WorkGroups contenus ont été mis à jour
+mainMsgNextBy= par <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
+subject =  Vos droits sur le DRIVE {0} ont été mis à jour
+driveRight = Droit sur le DRIVE
+workGroupRight =  Droit sur le groupe de travail
+workGroupNameTitle = Nom du DRIVE
+nestedWorkGroupsList = Liste des workgoups
+nbrWorkgoups = Nombre de groupe de travail mis à jours', 'workGroupUpdatedDateTitle = Updated date
+mainMsg = Your rights on the DRIVE 
+mainMsgNext= and workgroups inside it, have been updated
+mainMsgNextBy= by <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
+subject =  Your rights on the DRIVE {0} was updated.
+driveRight = Drive right
+workGroupRight = Workgroup right
+workGroupNameTitle = Drive Name
+nestedWorkGroupsList = Workgroups list
+nbrWorkgoups = Number of updated workGroups');
+INSERT INTO public.mail_content (id, domain_abstract_id, description, visible, mail_content_type, subject, body, uuid, creation_date, modification_date, readonly, messages_french, messages_english) VALUES (36, 1, '', true, 36, '[( #{subject(${workGroupName})})]', '<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head  data-th-replace="layout :: header"></head>
+<body>
+<div th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+  <!--/* Upper main-content*/-->
+  <section id="main-content">
+    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+      <div id="section-content">
+        <!--/* Greetings */-->
+        <th:block data-th-replace="layout :: greetings(${member.firstName})"/>
+        <!--/* End of Greetings  */-->
+        <!--/* Main email  message content*/-->
+        <p>
+          <span th:if="${owner.firstName} !=null AND ${owner.lastName} !=null" data-th-utext="#{mainMsg(${owner.firstName},${owner.lastName},${workGroupName})}"></span>
+          <span th:if="${owner.firstName} ==null OR ${owner.lastName} ==null" data-th-utext="#{simpleMsg(${workGroupName})}"></span>
+            
+          <!--/* Activation link for initialisation of the guest account */-->
+             </p> <!--/* End of Main email  message content*/-->
+      </div><!--/* End of section-content*/-->
+    </div><!--/* End of main-content container*/-->
+  </section> <!--/* End of upper main-content*/-->
+  <!--/* Secondary content for  bottom email section */-->
+  <section id="secondary-content">
+    <th:block data-th-replace="layout :: infoStandardArea(#{workGroupNameTitle},${workGroupName})"/>
+  </section>  <!--/* End of Secondary content for bottom email section */-->
+</div>
+</body>
+</html>', 'a9983e78-ffa9-11e8-b920-7b238822b4bb', now(), now(), true, 'subject = Les accès au drive {0} et à ses workgroups contenus vous ont été retirés.
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> vous a retiré du drive <b>{2}</b>
+simpleMsg = Les accès au drive <b>{0}</b> vous ont été retirés.
+workGroupNameTitle = Nom du Drive', 'subject = Your access to the drive {0}  and it''s workgroups was withdrawn
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> removed you from the drive  <b>{2}</b>
+simpleMsg =  Your access to the drive <b>{0}</b> was withdrawn.     
+workGroupNameTitle = Drive Name');
 INSERT INTO public.mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (1, 0, 1, 1, 1, '4f3c4723-531e-449b-a1ae-d304fd3d2387', true);
 INSERT INTO public.mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (2, 0, 2, 1, 2, '81041673-c699-4849-8be4-58eea4507305', true);
 INSERT INTO public.mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (3, 0, 3, 1, 3, '85538234-1fc1-47a2-850d-7f7b59f1640e', true);
@@ -2503,6 +2677,12 @@ INSERT INTO public.mail_content_lang (id, language, mail_content_id, mail_config
 INSERT INTO public.mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (131, 1, 31, 1, 31, 'd5c55f44-d6b5-11e7-b521-4f65da9d047d', true);
 INSERT INTO public.mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (132, 1, 32, 1, 32, 'dbf12958-8389-11e8-964e-6b7eef81da86', true);
 INSERT INTO public.mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (133, 1, 33, 1, 33, 'dbf23f1e-8389-11e8-b430-a3d498f96a4f', true);
+INSERT INTO public.mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (34, 0, 34, 1, 34, '16a78382-ee6d-11e8-b388-13bb3e6feb85', true);
+INSERT INTO public.mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (134, 1, 34, 1, 34, '16a7f1aa-ee6d-11e8-9dab-3b0fd56ae1eb', true);
+INSERT INTO public.mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (35, 0, 35, 1, 35, '01ad9c5e-fc92-11e8-9736-ef560a979e00', true);
+INSERT INTO public.mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (135, 1, 35, 1, 35, '01ae8e66-fc92-11e8-9e2e-2b5cc9cf184f', true);
+INSERT INTO public.mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (36, 0, 36, 1, 36, 'a9992e32-ffa9-11e8-bbfe-b32f26c4955b', true);
+INSERT INTO public.mail_content_lang (id, language, mail_content_id, mail_config_id, mail_content_type, uuid, readonly) VALUES (136, 1, 36, 1, 36, 'a99a4650-ffa9-11e8-b09e-83360a30f184', true);
 INSERT INTO public.mail_footer (id, domain_abstract_id, description, visible, footer, creation_date, modification_date, uuid, readonly, messages_french, messages_english) VALUES (1, 1, 'footer html', true, '<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
   <body>

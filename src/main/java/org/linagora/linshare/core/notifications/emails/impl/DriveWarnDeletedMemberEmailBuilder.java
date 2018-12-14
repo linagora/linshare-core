@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2017-2018 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -31,69 +31,50 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-
 package org.linagora.linshare.core.notifications.emails.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
-import org.linagora.linshare.core.domain.entities.MailConfig;
-import org.linagora.linshare.core.domain.entities.SystemAccount;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.context.DriveWarnDeletedMemberEmailContext;
 import org.linagora.linshare.core.notifications.context.EmailContext;
-import org.linagora.linshare.core.notifications.context.WorkGroupWarnDeletedMemberEmailContext;
 import org.linagora.linshare.core.notifications.dto.MailContact;
-import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceMemberDrive;
 import org.thymeleaf.context.Context;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
-public class WorkGroupWarnDeletedMemberEmailBuilder extends EmailBuilder {
+public class DriveWarnDeletedMemberEmailBuilder extends WorkGroupWarnDeletedMemberEmailBuilder {
 
 	@Override
 	public MailContentType getSupportedType() {
-		return MailContentType.WORKGROUP_WARN_DELETED_MEMBER;
+		return MailContentType.DRIVE_WARN_DELETED_MEMBER;
 	}
 
 	@Override
 	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		WorkGroupWarnDeletedMemberEmailContext emailCtx = (WorkGroupWarnDeletedMemberEmailContext) context;
+		DriveWarnDeletedMemberEmailContext emailCtx = (DriveWarnDeletedMemberEmailContext) context;
 		return buildMailContainer(emailCtx);
-	}
-
-	protected MailContainerWithRecipient buildMailContainer(WorkGroupWarnDeletedMemberEmailContext emailCtx)
-			throws BusinessException {
-		SharedSpaceMember workGroupMember = emailCtx.getWorkgroupMember();
-		User member = emailCtx.getUserMember();
-		MailContact owner = null;
-		Context ctx = new Context(emailCtx.getLocale());
-		if (emailCtx.getOwner() instanceof SystemAccount) {
-			owner = new MailContact(emailCtx.getOwner().getMail());
-		} else {
-			owner = new MailContact((User) emailCtx.getOwner());
-		}
-		String linshareURL = getLinShareUrl(member);
-		MailConfig cfg = member.getDomain().getCurrentMailConfiguration();
-		ctx.setVariable("member", new MailContact(member));
-		ctx.setVariable("owner", owner);
-		ctx.setVariable("workGroupName", workGroupMember.getNode().getName());
-		ctx.setVariable(linshareURL, linshareURL);
-		
-		MailContainerWithRecipient buildMailContainer = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx,
-				emailCtx);
-		return buildMailContainer;
 	}
 
 	@Override
 	protected List<Context> getContextForFakeBuild(Language language) {
 		List<Context> res = Lists.newArrayList();
 		Context ctx = newFakeContext(language);
-		ctx.setVariable("member", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
-		ctx.setVariable("owner", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
-		ctx.setVariable("workGroupName", "work_group_name-1");
+		SharedSpaceMemberDrive driveMember = getNewFakeSharedSpaceMemberDrive("drive_name_1");
+		Map<String, Object> variables = Maps.newHashMap();
+		variables.put("member", new MailContact("peter.wilson@linshare.org", "Peter", "Wilson"));
+		variables.put("owner", new MailContact("amy.wolsh@linshare.org", "Amy", "Wolsh"));
+		variables.put("threadMember", driveMember);
+		variables.put("workGroupName", driveMember.getNode().getName());
+		variables.put("workGroupLink", getWorkGroupLink(fakeLinshareURL, "fake_uuid"));
+		variables.put("linshareURL", fakeLinshareURL);
+		ctx.setVariables(variables);
 		res.add(ctx);
 		return res;
 	}

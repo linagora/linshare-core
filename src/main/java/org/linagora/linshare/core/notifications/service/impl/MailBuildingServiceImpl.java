@@ -61,6 +61,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.config.LinShareStringTemplateResolver;
 import org.linagora.linshare.core.notifications.context.EmailContext;
 import org.linagora.linshare.core.notifications.dto.ContextMetadata;
+import org.linagora.linshare.core.notifications.emails.impl.DriveWarnDeletedMemberEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.DriveWarnNewMemberEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.DriveWarnUpdatedMemberEmailBuilder;
 import org.linagora.linshare.core.notifications.emails.impl.EmailBuilder;
@@ -282,6 +283,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 
 		emailBuilders.put(MailContentType.DRIVE_WARN_NEW_MEMBER, new DriveWarnNewMemberEmailBuilder());
 		emailBuilders.put(MailContentType.DRIVE_WARN_UPDATED_MEMBER, new DriveWarnUpdatedMemberEmailBuilder());
+		emailBuilders.put(MailContentType.DRIVE_WARN_DELETED_MEMBER, new DriveWarnDeletedMemberEmailBuilder());
 
 		initMailBuilders(insertLicenceTerm, domainBusinessService, functionalityReadOnlyService,
 				mailActivationBusinessService, fileDataStore, urlTemplateForReceivedShares, urlTemplateForDocuments,

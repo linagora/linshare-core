@@ -44,9 +44,9 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.context.DriveWarnDeletedMemberEmailContext;
 import org.linagora.linshare.core.notifications.context.DriveWarnNewMemberEmailContext;
 import org.linagora.linshare.core.notifications.context.DriveWarnUpdatedMemberEmailContext;
-import org.linagora.linshare.core.notifications.context.WorkGroupWarnDeletedMemberEmailContext;
 import org.linagora.linshare.core.notifications.context.WorkGroupWarnUpdatedMemberEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.SharedSpaceMemberResourceAccessControl;
@@ -180,8 +180,10 @@ public class SharedSpaceMemberDriveServiceImpl extends SharedSpaceMemberServiceI
 					.findByAccountAndNode(foundMemberToDelete.getAccount().getUuid(), wgNode.getUuid());
 			businessService.delete(wgFoundMember);
 			saveLog(authUser, actor, LogAction.DELETE, wgFoundMember);
-			User user = userRepository.findByLsUuid(wgFoundMember.getAccount().getUuid());
-			notify(new WorkGroupWarnDeletedMemberEmailContext(wgFoundMember, actor, user));
+		}
+		User user = userRepository.findByLsUuid(foundMemberToDelete.getAccount().getUuid());
+		if (!actor.getLsUuid().equals(user.getLsUuid())) {
+			notify(new DriveWarnDeletedMemberEmailContext(foundMemberToDelete, (User) actor, user));
 		}
 		return foundMemberToDelete;
 	}
