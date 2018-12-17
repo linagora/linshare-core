@@ -392,6 +392,8 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		} else if (isDocument(workGroupNode)) {
 			workGroupDocumentRevisionService.deleteAll(actor, owner, workGroup, workGroupNode);
 			workGroupDocumentService.delete(actor, owner, workGroup, workGroupNode);
+		} else if (isRevision(workGroupNode)) {
+			workGroupDocumentRevisionService.delete(actor, owner, workGroup, workGroupNode);
 		} else {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not delete this type of node, type not supported.");
 		}
@@ -493,7 +495,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 			if (isFolder(toNode)) {
 				// TODO:FMA:workgroups manage folder and nested folders.
 			}
-		} else if (isRevison(fromNode)) {
+		} else if (isRevision(fromNode)) {
 			// TODO manage revisions.
 			if (isFolder(toNode)) {
 				// TODO create a new document from this revision
@@ -576,7 +578,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		return node.getNodeType().equals(WorkGroupNodeType.FOLDER) || node.getNodeType().equals(WorkGroupNodeType.ROOT_FOLDER);
 	}
 
-	protected boolean isRevison(WorkGroupNode node) {
+	protected boolean isRevision(WorkGroupNode node) {
 		return node.getNodeType().equals(WorkGroupNodeType.DOCUMENT_REVISION);
 	}
 

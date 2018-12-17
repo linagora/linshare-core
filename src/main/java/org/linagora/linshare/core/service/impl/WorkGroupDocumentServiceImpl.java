@@ -192,10 +192,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 				AuditLogEntryType.WORKGROUP_DOCUMENT, workGroupNode, workGroup);
 		addMembersToLog(workGroup, log);
 		logEntryService.insert(log);
-		WorkGroupDocument document = (WorkGroupDocument)workGroupNode;
-		delFromQuota(workGroup, document.getSize());
 		repository.delete(workGroupNode);
-		documentGarbageCollectorRepository.insert(new DocumentGarbageCollecteur(document.getDocumentUuid()));
 		return workGroupNode;
 	}
 

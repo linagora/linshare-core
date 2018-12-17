@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -75,6 +76,8 @@ import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepos
 import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
+
+import com.google.common.collect.Lists;
 
 public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServiceImpl
 		implements WorkGroupDocumentRevisionService {
@@ -202,13 +205,18 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 		Validate.notNull(parentUuid);
 		Functionality versioningFunctionality = functionalityReadOnlyService.getWorkGroupFileVersioning(actor.getDomain());
 		boolean isVersioningFunctionalityEnabled = versioningFunctionality.getActivationPolicy().getStatus();
-		List<WorkGroupNode> nodes = repository.findByWorkGroupAndParentAndNodeType(workGroup.getLsUuid(), parentUuid, WorkGroupNodeType.DOCUMENT_REVISION);
-		Stream<WorkGroupNode> nodeStream = nodes.stream()
-				.sorted(Comparator.comparing(WorkGroupNode::getCreationDate, Comparator.reverseOrder()));
-		if (!isVersioningFunctionalityEnabled || !isVersioningEnabledInWorkGroup(workGroup)) {
-			nodeStream = nodeStream.limit(0);
+		List<WorkGroupNode> nodes = Lists.newArrayList();
+		if (isVersioningFunctionalityEnabled && isVersioningEnabledInWorkGroup(workGroup)) {
+			nodes = repository.findByWorkGroupAndParentAndNodeType(workGroup.getLsUuid(), parentUuid, WorkGroupNodeType.DOCUMENT_REVISION);
+			nodes = nodes.stream()
+					.sorted(Comparator.comparing(WorkGroupNode::getCreationDate, Comparator.reverseOrder()))
+					.collect(Collectors.toList());
+			if(!nodes.isEmpty()) {
+				// The most recent revision is not considered as a regular revision, so we don't return it.
+				nodes.remove(0);
+			}
 		}
-		return nodeStream.collect(Collectors.toList());
+		return nodes;
 	}
 
 	private boolean isVersioningEnabledInWorkGroup(WorkGroup workGroup) {
@@ -221,8 +229,7 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 	}
 
 	@Override
-	public List<WorkGroupNode> deleteAll(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode)
-			throws BusinessException {
+	public List<WorkGroupNode> deleteAll(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode) throws BusinessException {
 		List<WorkGroupNode> revisions = repository.findByWorkGroupAndParentAndNodeType(workGroup.getLsUuid(),
 				workGroupNode.getUuid(), WorkGroupNodeType.DOCUMENT_REVISION);
 		for (WorkGroupNode rev : revisions) {
@@ -231,15 +238,38 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 		return revisions;
 	}
 
-	private WorkGroupDocumentRevision deleteRevision(Account actor, Account owner, WorkGroup workGroup,
-			WorkGroupDocumentRevision revision) throws BusinessException {
-		delFromQuota(workGroup, revision.getSize());
+	@Override
+	public WorkGroupNode delete(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode) throws BusinessException{
+		List<WorkGroupNode> revisions = findAll(actor, workGroup, workGroupNode.getParent());
+		WorkGroupNode revisionToDelete = repository.findByWorkGroupAndUuid(workGroup.getLsUuid(), workGroupNode.getUuid());
+		if(revisions.isEmpty()) {
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_REVISION_NOT_FOUND, "The revision has not been found");
+		}
+		if(!revisions.contains(revisionToDelete)) {
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_REVISION_DELETE_FORBIDDEN, "You can't delete the most recent revision, try to delete the whole document");
+		}
+		return deleteRevision(actor, owner, workGroup, (WorkGroupDocumentRevision) workGroupNode);
+	}
+
+	private WorkGroupDocumentRevision deleteRevision(Account actor, Account owner, WorkGroup workGroup, WorkGroupDocumentRevision revision) throws BusinessException {
+		Validate.notNull(workGroup, "workGroup must not be null");
+		Validate.notNull(revision, "revision must not be null");
 		repository.delete(revision);
-		documentGarbageCollectorRepository.insert(new DocumentGarbageCollecteur(revision.getDocumentUuid()));
-		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DELETE,
-				AuditLogEntryType.WORKGROUP_DOCUMENT_REVISION, revision, workGroup);
+		delFromQuota(workGroup, revision.getSize());
+		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.DELETE, AuditLogEntryType.WORKGROUP_DOCUMENT_REVISION, revision, workGroup);
 		addMembersToLog(workGroup, log);
 		logEntryService.insert(log);
+		if (isGarbageCollectorReady(revision.getDocumentUuid())) {
+			documentGarbageCollectorRepository.insert(new DocumentGarbageCollecteur(revision.getDocumentUuid()));
+		}
 		return revision;
+	}
+
+	private boolean isGarbageCollectorReady(String documentUuid) {
+		List<WorkGroupDocument> nodes = repository.findByDocumentUuid(documentUuid);
+		if(nodes.isEmpty()) {
+			return true;
+		}
+		return false;
 	}
 }

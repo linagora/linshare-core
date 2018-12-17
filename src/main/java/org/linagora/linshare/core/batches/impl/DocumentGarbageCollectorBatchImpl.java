@@ -50,6 +50,7 @@ import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
+import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -117,7 +118,8 @@ public class DocumentGarbageCollectorBatchImpl extends GenericBatchImpl {
 			return null;
 		}
 		Document document = documentRepository.findByUuid(dgc.getDocumentUuid());
-		if (document == null) {
+		List<WorkGroupDocument> mongoDocuments = workGroupNodeMongoRepository.findByDocumentUuid(dgc.getDocumentUuid());
+		if (document == null && mongoDocuments.isEmpty()) {
 			// it does not exists anymore. skipped.
 			documentGarbageCollectorRepository.delete(dgc);
 			return null;
@@ -126,7 +128,7 @@ public class DocumentGarbageCollectorBatchImpl extends GenericBatchImpl {
 		if (documentEntryRepository.getRelatedDocumentEntryCount(document) <= 0) {
 			Query query = new Query();
 			query.addCriteria((Criteria.where("documentUuid").is(document.getUuid())));
-			if (mongoTemplate.count(query, WorkGroupDocument.class) <= 0) {
+			if (mongoTemplate.count(query, WorkGroupDocumentRevision.class) <= 0) {
 				// document is not referenced now, we need to remove it.
 				context.setProcessed(true);
 				documentEntryBusinessService.deleteDocument(document);
