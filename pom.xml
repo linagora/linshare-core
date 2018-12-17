@@ -885,34 +885,33 @@
 				</configuration>
 				</plugin>
 				<plugin>
-					<groupId>org.zcore.maven</groupId>
-					<artifactId>merge-maven-plugin</artifactId>
-					<version>0.0.3</version>
+					<artifactId>maven-antrun-plugin</artifactId>
+					<version>1.8</version>
 					<executions>
 						<execution>
-							<id>merge</id>
-							<phase>generate-sources</phase>
+							<id>ant-merge-files</id>
 							<goals>
-								<goal>merge</goal>
+								<goal>run</goal>
 							</goals>
+							<phase>generate-sources</phase>
 							<configuration>
-								<mergers>
-									<merger>
-										<target>target/generated-sources/import-postgresql.sql</target>
-										<sources>
-											<source>src/main/resources/sql/common/import-header.sql</source>
-											<source>src/main/resources/sql/common/import-domains.sql</source>
-											<source>src/main/resources/sql/common/import-quota.sql</source>
-											<source>src/main/resources/sql/common/import-welcome-messages.sql</source>
-											<source>src/main/resources/sql/common/import-functionalities.sql</source>
-											<source>src/main/resources/sql/common/import-mail-activation.sql</source>
-											<source>src/main/resources/sql/common/import_mail_structure.sql</source>
-											<source>src/main/resources/sql/common/import_mail_update.sql</source>
-											<source>src/main/resources/sql/common/import-settings.sql</source>
-											<source>src/main/resources/sql/common/import-alias.sql</source>
-										</sources>
-									</merger>
-								</mergers>
+								<target>
+									<mkdir dir="target/generated-sources"/>
+									<concat destfile="target/generated-sources/import-postgresql.sql">
+										<fileset file="src/main/resources/sql/common/import-header.sql"/>
+										<fileset file="src/main/resources/sql/common/import-domains.sql"/>
+										<fileset file="src/main/resources/sql/common/import-quota.sql"/>
+										<fileset file="src/main/resources/sql/common/import-welcome-messages.sql"/>
+										<fileset file="src/main/resources/sql/common/import-functionalities.sql"/>
+										<fileset file="src/main/resources/sql/common/import-mail-activation.sql"/>
+										<fileset file="src/main/resources/sql/common/import_mail_structure.sql"/>
+										<fileset file="src/main/resources/sql/common/mail_updates/mail_layout/*.sql" />
+										<fileset file="src/main/resources/sql/common/mail_updates/mail_content/*.sql" />
+										<fileset file="src/main/resources/sql/common/mail_updates/mail_footer/*.sql" />
+										<fileset file="src/main/resources/sql/common/import-settings.sql"/>
+										<fileset file="src/main/resources/sql/common/import-alias.sql"/>
+									</concat>
+								</target>
 							</configuration>
 						</execution>
 					</executions>

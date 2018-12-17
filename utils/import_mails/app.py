@@ -43,6 +43,9 @@ tables_to_extract_content = ['mail_layout', 'mail_content', 'mail_footer']
 #Folders to copy in common
 folders_to_copy = [update_file_location]
 
+#Print the full update file
+mode_print_full_update_file=False
+
 
 if not os.path.exists(update_file_location):
 	os.makedirs(update_file_location)
@@ -112,28 +115,30 @@ def write_insert_scripts(structure_file_name, tables_to_export, database_to_expo
 		table_content = database_to_export[table_name]
 		content_to_write = table_content.export_to_sql(tables_to_extract_content, column_names)
 		structure_file.write(content_to_write)
-		structure_file.write("\n")
+		structure_file.write("\n\n")
+	structure_file.write("UPDATE domain_abstract SET mailconfig_id = 1;")
+	structure_file.write("\n")
 	structure_file.close()
 	print("File " + structure_file_name + " successfully generated")
 
 
-def write_update_scripts(update_file_name, full_imported_database, tables_content, column_names, updates_location, mail_types):
-	update_file = open(update_file_name, 'w')
+def write_update_scripts(update_file_name, full_imported_database, tables_content, column_names, updates_location, mail_types, print_full_update_file=mode_print_full_update_file):
+	
+	content_to_write = ""
 	for table_to_update_content in tables_content:
 		#Create the folder where the update scripts will be generated
 		tables_update_folder = updates_location + table_to_update_content
 		if not os.path.exists(tables_update_folder):
 			os.makedirs(tables_update_folder)
 		table_content = full_imported_database[table_to_update_content]
-		content_to_write = table_content.export_to_update_sql(column_names, tables_update_folder + separator, mail_types)
-		update_file.write("\n")
+		content_table = table_content.export_to_update_sql(column_names, tables_update_folder + separator, mail_types)
+		content_to_write = content_to_write + content_table + "\n\n" 
+	if print_full_update_file:
+		update_file = open(update_file_name, 'w')
 		update_file.write(content_to_write)
-	update_file.write("\n")
-	update_file.write("\n")
-	update_file.write("UPDATE domain_abstract SET mailconfig_id = 1;")
-	update_file.write("\n")
-	update_file.close()
-	print("File " + update_file_name + " successfully generated")
+		update_file.write("\n")
+		update_file.close()
+		print("File " + update_file_name + " successfully generated")
 	
 if __name__ == '__main__':
 	start_time = time()

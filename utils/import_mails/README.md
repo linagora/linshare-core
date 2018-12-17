@@ -91,12 +91,16 @@ Now we got successful execution, export files has been generated in the folder `
 *  `import_mail_structure.sql` : file inserting the the mail structures in the database
 * `mail_updates` folder with :
 	*  the folder `mail_updates` containing the UPDATE files of the mail contents
-	*  `import_mail_update.sql` : file of all updates from the previous folder
+	*  `import_mail_update.sql`(optional) : file of all updates from the previous folder
+		To enable this file,  change the config key in the file app.py:
+		```
+			#Print the full update file
+			mode_print_full_update_file=True
+		```
 
 
 	...
 	|-- import_mail_structure.sql
-	|-- import-mail.sql
 	|-- mail_updates
 		|-- mail_content
 			|-- ...
@@ -104,4 +108,3 @@ Now we got successful execution, export files has been generated in the folder `
 			|-- ...
 		|-- mail_layout
 			|-- ...
-		|-- import_mail_update.sql

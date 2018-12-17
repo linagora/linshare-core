@@ -80,14 +80,16 @@ vous devrez obtenir le résultat suivant :
 Maintenant que le script s'est exécuté avec succès, vous devriez avoir généré dans le dossier `src/main/resources/sql/common` :
 *  `import_mail_structure.sql` : fichier insérant la structure des différents emails dans la base de données.
 *  le dossier `mail_updates` comprenant les fichiers d'UPDATE du contenu des mails
-*  `import_mail_update.sql` : fichier contenant l'agrégat de tous les fichiers d'UPDATE du dossier précédent
-*  `import-mail.sql` : fichier résultant de l’agrégat des deux fichiers précédents  
+*  `import_mail_update.sql`(optionnel) : fichier contenant l'agrégat de tous les fichiers d'UPDATE du dossier précédent
+		Pour activer l'édition de ce fichier,  changez la clé de configuration dans le fichier app.py:
+		```
+			#Print the full update file
+			mode_print_full_update_file=True
+		```
 
-L'arborescence des fichiers créés est la suivante :
 
 	...
 	|-- import_mail_structure.sql
-	|-- import-mail.sql
 	|-- mail_updates
 		|-- mail_content
 			|-- ...
@@ -95,4 +97,3 @@ L'arborescence des fichiers créés est la suivante :
 			|-- ...
 		|-- mail_layout
 			|-- ...
-		|-- import_mail_update.sql
