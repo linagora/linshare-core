@@ -153,7 +153,7 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 
 	@Override
 	public void deleteAll(List<SharedSpaceMember> foundMembersToDelete) {
-		repository.delete(foundMembersToDelete);
+		repository.deleteAll(foundMembersToDelete);
 	}
 
 	@Override
@@ -180,7 +180,7 @@ public class SharedSpaceMemberBusinessServiceImpl implements SharedSpaceMemberBu
 			member.getNode().setName(node.getName());
 			member.getNode().setModificationDate(node.getModificationDate());
 		}
-		repository.save(members);
+		repository.saveAll(members);
 	}
 
 	@Override

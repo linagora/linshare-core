@@ -37,6 +37,7 @@ package org.linagora.linshare.core.batches.impl;
 import java.util.Date;
 import java.util.List;
 
+import org.bson.Document;
 import org.linagora.linshare.core.business.service.BatchHistoryBusinessService;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -47,9 +48,9 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.DomainBatchResultContext;
+import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.BasicStatisticService;
@@ -59,7 +60,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import com.google.common.collect.Lists;
-import com.mongodb.DBCollection;
+import com.mongodb.client.DistinctIterable;
+import com.mongodb.client.MongoCollection;
 
 public class BasicStatisticDailyBatchImpl extends GenericBatchWithHistoryImpl {
 
@@ -90,16 +92,15 @@ public class BasicStatisticDailyBatchImpl extends GenericBatchWithHistoryImpl {
 		return BatchType.DAILY_BASIC_STATISTIC_BATCH;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getAll(BatchRunContext batchRunContext) {
 		logger.info(getClass().toString() + " job starting ...");
 		Query query = new Query();
 		query.addCriteria(Criteria.where("creationDate").gte(getYesterdayBegin()).lt(getYesterdayEnd()));
 		query.addCriteria(Criteria.where("type").is("ONESHOT"));
-		query.fields().include("domainUuid");
-		DBCollection basicStatistic = mongoTemplate.getCollection("basic_statistic");
-		return basicStatistic.distinct("domainUuid", query.getQueryObject());
+		MongoCollection<Document> basicStatistic = mongoTemplate.getCollection("basic_statistic");
+		DistinctIterable<String> results = basicStatistic.distinct("domainUuid", query.getQueryObject(), String.class);
+		return Lists.newArrayList(results);
 	}
 
 	@Override

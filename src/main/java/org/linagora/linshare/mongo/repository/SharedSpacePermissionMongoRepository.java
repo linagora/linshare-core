@@ -46,15 +46,15 @@ public interface SharedSpacePermissionMongoRepository extends MongoRepository<Sh
 	
 	SharedSpacePermission findByUuid(String uuid) throws BusinessException;
 
-	@Query("{roles.name: ?0}")
+	@Query("{'roles.name': ?0}")
 	List<SharedSpacePermission> findBySharedSpaceRole(String roleName) throws BusinessException;
 
-	@Query("{roles.uuid: ?0}")
+	@Query("{'roles.uuid': ?0}")
 	List<SharedSpacePermission> findBySharedSpaceRoleUuid(String roleUuid) throws BusinessException;
 
 	List<SharedSpacePermission> findAll() throws BusinessException;
 
-	@Query("{roles.uuid: ?0, action: ?1, resource: ?2}")
+	@Query("{'roles.uuid': ?0, 'action': ?1, 'resource': ?2}")
 	List<SharedSpacePermission> findByRoleAndActionAndResource(String roleUuid, SharedSpaceActionType action, SharedSpaceResourceType resourceType);
 
 }

@@ -112,7 +112,7 @@ public class DocumentGarbageCollectorBatchImpl extends GenericBatchImpl {
 
 	@Override
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position) throws BatchBusinessException, BusinessException {
-		DocumentGarbageCollecteur dgc = documentGarbageCollectorRepository.findOne(identifier);
+		DocumentGarbageCollecteur dgc = mongoTemplate.findById(identifier, DocumentGarbageCollecteur.class);
 		if (dgc == null) {
 			return null;
 		}

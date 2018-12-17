@@ -38,7 +38,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.UUID;
 
 import org.linagora.linshare.core.dao.FileDataStore;
@@ -47,13 +46,21 @@ import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
+import org.springframework.data.mongodb.gridfs.GridFsResource;
 
+import com.google.common.collect.Iterators;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import com.mongodb.gridfs.GridFSDBFile;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.gridfs.GridFSBucket;
+import com.mongodb.client.gridfs.GridFSBuckets;
+import com.mongodb.client.gridfs.GridFSDownloadStream;
+import com.mongodb.client.gridfs.GridFSFindIterable;
+import com.mongodb.client.gridfs.model.GridFSFile;
 
 public class MongoFileDataStoreImpl implements FileDataStore {
 
@@ -61,16 +68,20 @@ public class MongoFileDataStoreImpl implements FileDataStore {
 
 	private GridFsOperations gridOperations;
 
-	public MongoFileDataStoreImpl(GridFsOperations gridOperations) {
+	private MongoDbFactory mongoDbFactory;
+
+	public MongoFileDataStoreImpl(GridFsOperations gridOperations,
+				MongoDbFactory mongoDbFactory) {
 		super();
 		this.gridOperations = gridOperations;
+		this.mongoDbFactory = mongoDbFactory;
 	}
 
 	@Override
 	public void remove(FileMetaData metadata) {
 		Query query = new Query().addCriteria(Criteria.where("metadata.uuid").is(metadata.getUuid()));
-		List<GridFSDBFile> find = gridOperations.find(query);
-		if (find == null || find.isEmpty()) {
+		GridFSFindIterable find = gridOperations.find(query);
+		if (find == null) {
 			logger.warn("Can not remove document '{}' in gridfs", metadata.getUuid());
 		} else {
 			checkNotTooMany(metadata, find);
@@ -109,19 +120,26 @@ public class MongoFileDataStoreImpl implements FileDataStore {
 	@Override
 	public InputStream get(FileMetaData metadata) {
 		Query query = new Query().addCriteria(Criteria.where("metadata.uuid").is(metadata.getUuid()));
-		List<GridFSDBFile> find = gridOperations.find(query);
-		if (find == null || find.isEmpty()) {
+		GridFSFindIterable find = gridOperations.find(query);
+		if (find == null) {
 			logger.error("Can not find document '{}' in gridfs", metadata.getUuid());
 			throw new TechnicalException(TechnicalErrorCode.GENERIC,
 					"Can not find document in gridfs : " + metadata.getUuid());
 		}
 		checkNotTooMany(metadata, find);
-		return find.get(0).getInputStream();
+		GridFSDownloadStream gridFSDownloadStream = getGridFs().openDownloadStream(find.first().getObjectId());
+		GridFsResource gridFsResource = new GridFsResource(find.first(), gridFSDownloadStream);
+		try {
+			return gridFsResource.getInputStream();
+		} catch (IOException e) {
+			throw new IllegalStateException("Can not get the document inputStream : " + metadata.getUuid());
+		}
 	}
 
-	private void checkNotTooMany(FileMetaData metadata, List<GridFSDBFile> find) {
-		if (find.size() >= 2) {
-			logger.error("Too many results found : {} for document '{}'.", find.size(), metadata.getUuid());
+	private void checkNotTooMany(FileMetaData metadata, GridFSFindIterable find) {
+		int size = Iterators.size(find.iterator());
+		if (size >= 2) {
+			logger.error("Too many results found : {} for document '{}'.", size, metadata.getUuid());
 			throw new TechnicalException(TechnicalErrorCode.GENERIC,
 					"Too many results found in gridfs : " + metadata.getUuid());
 		}
@@ -130,12 +148,15 @@ public class MongoFileDataStoreImpl implements FileDataStore {
 	@Override
 	public boolean exists(FileMetaData metadata) {
 		Query query = new Query().addCriteria(Criteria.where("metadata.uuid").is(metadata.getUuid()));
-		List<GridFSDBFile> find = gridOperations.find(query);
-		if (find == null || find.isEmpty()) {
+		GridFSFile find = gridOperations.findOne(query);
+		if (find == null) {
 			return false;
 		}
-		checkNotTooMany(metadata, find);
 		return true;
 	}
 
+	private GridFSBucket getGridFs() {
+		MongoDatabase db = mongoDbFactory.getDb();
+		return GridFSBuckets.create(db);
+	}
 }

@@ -215,12 +215,11 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		Map<ThumbnailType, Thumbnail> thumbnailMap = doc.getThumbnails();
 		if (thumbnailMap.containsKey(kind)) {
 			FileMetaData metadata = new FileMetaData(fileMetaDataKind, doc);
-			try (InputStream stream = fileDataStore.get(metadata)){
+			try {
+				InputStream stream = fileDataStore.get(metadata);
 				return stream;
 			} catch (TechnicalException ex) {
 				logger.debug(ex.getMessage(), ex);
-			} catch (IOException e) {
-				logger.debug(e.getMessage(), e);
 			}
 		}
 		return null;
@@ -233,12 +232,11 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		FileMetaDataKind fileMetaDataKind = ThumbnailType.toFileMetaDataKind(kind);
 		if (thumbnailMap.containsKey(kind)) {
 			FileMetaData metadata = new FileMetaData(fileMetaDataKind, doc);
-			try (InputStream stream = fileDataStore.get(metadata);) {
+			try {
+				InputStream stream = fileDataStore.get(metadata);
 				return stream;
 			} catch (TechnicalException ex) {
 				logger.debug(ex.getMessage(), ex);
-			} catch (IOException e) {
-				logger.debug(e.getMessage(), e);
 			}
 		}
 		return null;
@@ -778,7 +776,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 						document.setThumbnails(fileThumbnails);
 						documentEntries.stream().forEach(docEntry -> updateHasThumbnailDocumentEntry(docEntry, true));
 						wgDocuments.stream().forEach(wgDocument -> updateHasThumbnailWorkGroupDocument(wgDocument, true));
-						repository.save(wgDocuments);
+						repository.saveAll(wgDocuments);
 					}
 					document.setComputeThumbnail(false);
 					documentRepository.update(document);
@@ -797,7 +795,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			documentRepository.update(document);
 			documentEntries.stream().forEach(docEntry -> updateHasThumbnailDocumentEntry(docEntry, false));
 			wgDocuments.stream().forEach(wgDocument -> updateHasThumbnailWorkGroupDocument(wgDocument, false));
-			repository.save(wgDocuments);
+			repository.saveAll(wgDocuments);
 		}
 	}
 

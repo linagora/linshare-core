@@ -79,8 +79,7 @@ public class DocumentStreamReponseBuilder {
 		return response;
 	}
 
-	public static ResponseBuilder getDocumentResponseBuilder(
-			InputStream inputStream, String fileName, String mimeType,
+	public static ResponseBuilder getDocumentResponseBuilder(InputStream inputStream, String fileName, String mimeType,
 			Long fileSize) {
 		StreamingOutput stream = new StreamingOutput() {
 			@Override

@@ -315,7 +315,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 				if (logger.isTraceEnabled())
 					logger.trace("Node : " + n.getName() + " : " + n.getPath());
 			}
-			repository.save(allSubNodes);
+			repository.saveAll(allSubNodes);
 		}
 		return node;
 	}

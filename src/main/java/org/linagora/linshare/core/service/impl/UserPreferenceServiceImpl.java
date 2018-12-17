@@ -89,7 +89,7 @@ public class UserPreferenceServiceImpl extends GenericServiceImpl<Account, UserP
 	public UserPreference findByUuid(Account actor, Account owner, String uuid) {
 		preChecks(actor, owner);
 		Validate.notEmpty(uuid, "Missing uuid");
-		UserPreference entry = repository.findOne(uuid);
+		UserPreference entry = repository.findByUuid(uuid);
 		if (entry == null) {
 			logger.error("Current actor " + actor.getAccountRepresentation()
 					+ " is looking for a misssing user preference (" + uuid

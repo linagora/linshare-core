@@ -7,63 +7,49 @@
           "http://www.springframework.org/schema/context
           http://www.springframework.org/schema/context/spring-context.xsd
           http://www.springframework.org/schema/data/mongo
-          http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd
+          http://www.springframework.org/schema/data/mongo/spring-mongo-2.0.xsd
           http://www.springframework.org/schema/beans
-          http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+          http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 
-	<mongo:mongo id="mongo"
+	<mongo:mongo-client id="mongo"
 		host="${linshare.mongo.host}"
 		port="${linshare.mongo.port}"
-		replica-set="${linshare.mongo.replicatset}">
-
-		<mongo:options connections-per-host="8"
+		>
+		<mongo:client-options connections-per-host="8"
 			threads-allowed-to-block-for-connection-multiplier="4"
 			connect-timeout="${linshare.mongo.connect.timeout}"
 			max-wait-time="1500"
-			auto-connect-retry="true"
 			socket-keep-alive="true"
 			socket-timeout="${linshare.mongo.socket.timeout}"
-			slave-ok="true"
-			write-number="1"
-			write-timeout="0"
-			write-fsync="true" />
-	</mongo:mongo>
+			write-concern="${linshare.mongo.write.concern}"
+			 />
+	</mongo:mongo-client>
 
-	<mongo:mongo id="mongosmall"
+	<mongo:mongo-client id="mongosmall"
 		host="${linshare.mongo.gridfs.smallfiles.host}"
-		port="${linshare.mongo.gridfs.smallfiles.port}"
-		replica-set="${linshare.mongo.gridfs.smallfiles.replicatset}">
-
-		<mongo:options connections-per-host="8"
+		port="${linshare.mongo.gridfs.smallfiles.port}">
+		<mongo:client-options connections-per-host="8"
 			threads-allowed-to-block-for-connection-multiplier="4"
 			connect-timeout="${linshare.mongo.connect.timeout}"
 			max-wait-time="1500"
-			auto-connect-retry="true"
 			socket-keep-alive="true"
 			socket-timeout="${linshare.mongo.socket.timeout}"
-			slave-ok="true"
-			write-number="1"
-			write-timeout="0"
-			write-fsync="true" />
-	</mongo:mongo>
+			write-concern="${linshare.mongo.write.concern}"
+			 />
+	</mongo:mongo-client>
 
-	<mongo:mongo id="mongobig"
+	<mongo:mongo-client id="mongobig"
 		host="${linshare.mongo.gridfs.bigfiles.host}"
-		port="${linshare.mongo.gridfs.bigfiles.port}"
-		replica-set="${linshare.mongo.gridfs.bigfiles.replicatset}">
-
-		<mongo:options connections-per-host="8"
+		port="${linshare.mongo.gridfs.bigfiles.port}">
+		<mongo:client-options connections-per-host="8"
 			threads-allowed-to-block-for-connection-multiplier="4"
 			connect-timeout="${linshare.mongo.connect.timeout}"
 			max-wait-time="1500"
-			auto-connect-retry="true"
 			socket-keep-alive="true"
 			socket-timeout="${linshare.mongo.socket.timeout}"
-			slave-ok="true"
-			write-number="1"
-			write-timeout="0"
-			write-fsync="true" />
-	</mongo:mongo>
+			write-concern="${linshare.mongo.write.concern}"
+			 />
+	</mongo:mongo-client>
 
 	<mongo:repositories base-package="org.linagora.linshare.mongo" />
 

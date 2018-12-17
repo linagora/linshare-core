@@ -36,6 +36,7 @@ package org.linagora.linshare.core.batches.impl;
 
 import java.util.List;
 
+import org.bson.Document;
 import org.linagora.linshare.core.business.service.BatchHistoryBusinessService;
 import org.linagora.linshare.core.domain.constants.BatchType;
 import org.linagora.linshare.core.domain.constants.ExceptionStatisticType;
@@ -56,7 +57,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import com.google.common.collect.Lists;
-import com.mongodb.DBCollection;
+import com.mongodb.client.DistinctIterable;
+import com.mongodb.client.MongoCollection;
 
 public class ExceptionStatisticDailyBatchImpl extends GenericBatchWithHistoryImpl {
 
@@ -83,17 +85,15 @@ public class ExceptionStatisticDailyBatchImpl extends GenericBatchWithHistoryImp
 		return BatchType.DAILY_EXCEPTION_STATISTIC_BATCH;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getAll(BatchRunContext batchRunContext) {
 		logger.info(getClass().toString() + " job starting ...");
 		Query query = new Query();
 		query.addCriteria(Criteria.where("creationDate").gte(getYesterdayBegin()).lt(getYesterdayEnd()));
 		query.addCriteria(Criteria.where("type").is("ONESHOT"));
-		query.fields().include("domainUuid");
-		DBCollection exceptionStatistic = mongoTemplate.getCollection("exception_statistic");
-		List<String> list =  exceptionStatistic.distinct("domainUuid", query.getQueryObject());
-		return list;
+		MongoCollection<Document> exceptionStatistic = mongoTemplate.getCollection("exception_statistic");
+		DistinctIterable<String> results = exceptionStatistic.distinct("domainUuid", query.getQueryObject(), String.class);
+		return Lists.newArrayList(results);
 	}
 
 	@Override

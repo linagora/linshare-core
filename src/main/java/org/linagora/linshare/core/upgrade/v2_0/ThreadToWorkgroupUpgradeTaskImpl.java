@@ -143,7 +143,7 @@ public class ThreadToWorkgroupUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 				logDebug(batchRunContext, total2, position2, "New workgroup document: " + node.getName() + " : " + node.getUuid());
 			} catch (org.springframework.dao.DuplicateKeyException e) {
 				List<WorkGroupNode> entities = repository.findByWorkGroup(workGroup.getLsUuid());
-				repository.delete(entities);
+				repository.deleteAll(entities);
 				throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_ALREADY_EXISTS,
 						"Can not create a new document, it already exists.");
 			}

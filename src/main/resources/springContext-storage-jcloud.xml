@@ -13,6 +13,7 @@
 		<constructor-arg>
 			<bean class="org.linagora.linshare.core.dao.impl.MongoFileDataStoreImpl">
 				<constructor-arg ref="gridFsTemplateForSmallFiles" />
+				<constructor-arg ref="mongoDbFactoryForFiles" />
 			</bean>
 		</constructor-arg>
 	</bean>

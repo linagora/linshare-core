@@ -11,8 +11,6 @@
 # Or you can use environment variable : SPRING_PROFILES_ACTIVE or -Dspring.profiles.active property
 # to configure which profile you want to use.
 # You must enable at least one authentication profile among authentication profiles,
-# one profile among file data store profiles and one among mongodb profiles described below.
-
 
 
 # Available authentication profiles :
@@ -26,10 +24,6 @@
 #	* jackrabbit-to-jcloud : Using Jcloud as new file data store, jackrabbit as fallback file data store.
 #	* jackrabbit-to-gridfs : Using Jcloud as new file data store, jackrabbit as fallback file data store.
 #	Recommended profile for production is jcloud with Swift.
-
-# Available mongodb profiles :
-#	* mongo : mongo with authentication disable
-#	* mongo-auth : mongo with authentication enable
 
 # Additional profiles :
 #	* batches : if this profile is enable (by default it should be), it will enable all Quartz jobs (cron tasks).
@@ -118,12 +112,23 @@ linshare.mongo.host=127.0.0.1
 linshare.mongo.port=27017
 linshare.mongo.user=linshare
 linshare.mongo.password=linshare
+# Standard URI connection scheme
+# mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database][?options]]
+linshare.mongo.client.uri=mongodb://linshare:linshare@127.0.0.1:20017/linshare
 linshare.mongo.database=linshare
+
+#### Write concern
+# MAJORITY: waits on a majority of servers for the write operation. 
+# JOURNALED: Write operations wait for the server to group commit to the journal file on disk.
+# ACKNOWLEDGED: Write operations that use this write concern will wait for acknowledgement,
+#	 			using the default write concern configured on the server.
+linshare.mongo.write.concern=MAJORITY
 
 linshare.mongo.gridfs.smallfiles.host=127.0.0.1
 linshare.mongo.gridfs.smallfiles.port=27017
 linshare.mongo.gridfs.smallfiles.user=linshare
 linshare.mongo.gridfs.smallfiles.password=linshare
+linshare.mongo.gridfs.smallfiles.client.uri=mongodb://linshare:linshare@127.0.0.1:27017/linshare-files
 linshare.mongo.gridfs.smallfiles.database=linshare-files
 
 #### Extended GridFS storage options ####
@@ -132,6 +137,7 @@ linshare.mongo.gridfs.bigfiles.host=127.0.0.1
 linshare.mongo.gridfs.bigfiles.port=27017
 linshare.mongo.gridfs.bigfiles.user=linshare
 linshare.mongo.gridfs.bigfiles.password=linshare
+linshare.mongo.gridfs.bigfiles.client.uri=mongodb://linshare:linshare@127.0.0.1:27017/linshare-bigfiles
 linshare.mongo.gridfs.bigfiles.database=linshare-bigfiles
 
 ######## Storage options - end ########

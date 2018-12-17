@@ -144,7 +144,7 @@ public class SafeDetailRepositoryTest extends AbstractTransactionalJUnit4SpringC
 		SafeDetail safeDetail = new SafeDetail(internal.getLsUuid(), workGroup.getLsUuid(), DESCRIPTION);
 		safeDetail = safeDetailMongoRepository.insert(safeDetail);
 		Assert.assertEquals(safeDetail.getAccountUuid(), internal.getLsUuid());
-		safeDetailMongoRepository.delete(safeDetail.getUuid());
+		safeDetailMongoRepository.delete(safeDetail);
 	}
 
 	@Test
@@ -162,6 +162,6 @@ public class SafeDetailRepositoryTest extends AbstractTransactionalJUnit4SpringC
 		safeDetailMongoRepository.insert(safeDetail);
 		List<SafeDetail> exist = safeDetailMongoRepository.findByAccountUuid(internal.getLsUuid());
 		Assert.assertEquals(exist.iterator().next().getAccountUuid() , internal.getLsUuid());
-		safeDetailMongoRepository.delete(safeDetail.getUuid());
+		safeDetailMongoRepository.delete(safeDetail);
 	}
 }

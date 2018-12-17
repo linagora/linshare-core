@@ -38,4 +38,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface DocumentGarbageCollectorMongoRepository extends MongoRepository<DocumentGarbageCollecteur, String> {
 
+	DocumentGarbageCollecteur findByDocumentUuid(String uuid);
+
 }

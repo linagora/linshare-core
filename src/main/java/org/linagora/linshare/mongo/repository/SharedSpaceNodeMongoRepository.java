@@ -44,7 +44,7 @@ public interface SharedSpaceNodeMongoRepository extends MongoRepository<SharedSp
 
 	List<SharedSpaceNode> findByNameAndParentUuid(String name, String parentUuid);
 	
-	@Query("{name: {'$regex':?0,'option':'i'}}")
+	@Query("{'name': {'$regex':?0,'option':'i'}}")
 	List<SharedSpaceNode> findByName(String name);
 	
 }
