@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.service;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +59,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLdapPattern;
 import org.linagora.linshare.core.domain.entities.WelcomeMessages;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
@@ -110,9 +113,12 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 
 	@Autowired
 	private WelcomeMessagesService welcomeService;
-	
+
 	@Autowired
 	private DomainPolicyRepository domainPolicyRepository;
+
+	@Autowired
+	private AbstractDomainRepository abstractDomainRepository;
 
 	private LdapConnection ldapconnexion;
 
@@ -259,4 +265,23 @@ public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4Sp
 		Assert.assertEquals(initSize, abstractDomainService.findAll(actor).size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
+
+	@Test
+	public void testPurgeDomainWithFunctionalities() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		AbstractDomain subDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
+		Assert.assertNotNull(subDomain);
+		assertNotNull(subDomain.getFunctionalities());
+		Account actor = accountService.findByLsUuid("root@localhost.localdomain");
+		int initSize = abstractDomainService.findAll(actor).size();
+		try {
+			abstractDomainService.markToPurge(actor, subDomain.getUuid());
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail("Can't delete top domain.");
+		}
+		Assert.assertEquals(initSize - 1, abstractDomainService.findAll(actor).size());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
 }

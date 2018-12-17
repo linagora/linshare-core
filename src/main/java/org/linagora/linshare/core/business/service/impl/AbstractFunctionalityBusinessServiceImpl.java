@@ -405,8 +405,6 @@ public abstract class AbstractFunctionalityBusinessServiceImpl<T extends Abstrac
 			logger.debug("suppression of the functionality : " + domainId + " : " + functionalityId);
 			T rawFunc = repository.findByDomain(domain, functionalityId);
 			repository.delete(rawFunc);
-			domain.getFunctionalities().remove(rawFunc);
-			abstractDomainRepository.update(domain);
 		} else {
 			logger.warn("You are currently in the domain : " + domainId + ". The functionaliy : " + functionalityId + ", you are trying to delete, belongs to the domain : " + functionality.getDomain().getUuid() + ".");
 		}
