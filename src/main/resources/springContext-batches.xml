@@ -149,6 +149,7 @@
 		<constructor-arg ref="documentEntryBusinessService" />
 		<constructor-arg ref="mongoTemplate" />
 		<constructor-arg ref="documentGarbageCollectorMongoRepository" />
+		<constructor-arg ref="workGroupNodeMongoRepository" />
 	</bean>
 
 	<bean name="computeThumbnailBatch"

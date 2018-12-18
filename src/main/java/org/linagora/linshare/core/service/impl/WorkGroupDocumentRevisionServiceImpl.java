@@ -229,9 +229,10 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 	}
 
 	@Override
-	public List<WorkGroupNode> deleteAll(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode) throws BusinessException {
+	public List<WorkGroupNode> deleteAll(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode parentNode)
+			throws BusinessException {
 		List<WorkGroupNode> revisions = repository.findByWorkGroupAndParentAndNodeType(workGroup.getLsUuid(),
-				workGroupNode.getUuid(), WorkGroupNodeType.DOCUMENT_REVISION);
+				parentNode.getUuid(), WorkGroupNodeType.DOCUMENT_REVISION);
 		for (WorkGroupNode rev : revisions) {
 			deleteRevision(actor, owner, workGroup, (WorkGroupDocumentRevision) rev);
 		}

@@ -80,13 +80,15 @@ public class DocumentGarbageCollectorBatchImpl extends GenericBatchImpl {
 			DocumentEntryRepository documentEntryRepository,
 			DocumentEntryBusinessService documentEntryBusinessService,
 			MongoTemplate mongoTemplate,
-			DocumentGarbageCollectorMongoRepository documentGarbageCollectorRepository) {
+			DocumentGarbageCollectorMongoRepository documentGarbageCollectorRepository,
+			WorkGroupNodeMongoRepository workGroupNodeMongoRepository) {
 		super(accountRepository);
 		this.documentRepository = documentRepository;
 		this.documentEntryRepository = documentEntryRepository;
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.mongoTemplate = mongoTemplate;
 		this.documentGarbageCollectorRepository = documentGarbageCollectorRepository;
+		this.workGroupNodeMongoRepository = workGroupNodeMongoRepository;
 		this.operationKind = OperationKind.DELETED;
 	}
 
@@ -118,8 +120,8 @@ public class DocumentGarbageCollectorBatchImpl extends GenericBatchImpl {
 			return null;
 		}
 		Document document = documentRepository.findByUuid(dgc.getDocumentUuid());
-		List<WorkGroupDocument> mongoDocuments = workGroupNodeMongoRepository.findByDocumentUuid(dgc.getDocumentUuid());
-		if (document == null && mongoDocuments.isEmpty()) {
+		List<WorkGroupDocument> workgroupDocuments = workGroupNodeMongoRepository.findByDocumentUuid(dgc.getDocumentUuid());
+		if (document == null && workgroupDocuments.isEmpty()) {
 			// it does not exists anymore. skipped.
 			documentGarbageCollectorRepository.delete(dgc);
 			return null;
