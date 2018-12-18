@@ -212,9 +212,9 @@ public class FunctionalityServiceImpl extends AbstractFunctionalityServiceImpl<F
 		Functionality func = find(actor, domainId, functionalityId);
 		AbstractDomain domain = getDomain(actor, domainId);
 		checkDeleteRights(domain);
-		businessService.delete(domainId, functionalityId);
 		FunctionalityAuditLogEntry log = new FunctionalityAuditLogEntry(actor, LogAction.DELETE,
 				AuditLogEntryType.FUNCTIONALITY, func);
+		businessService.delete(domainId, functionalityId);
 		mongoRepository.insert(log);
 	}
 
