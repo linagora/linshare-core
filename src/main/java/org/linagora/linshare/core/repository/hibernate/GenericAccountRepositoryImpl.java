@@ -33,18 +33,17 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
 import org.hibernate.HibernateException;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.NativeQuery;
 import org.linagora.linshare.core.domain.constants.AccountPurgeStepEnum;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -246,7 +245,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 				sb.append(" WHERE destroyed = 0");
 				sb.append(" AND q.account_id is null");
 				sb.append(";");
-				final SQLQuery query = session.createSQLQuery(sb.toString());
+				final NativeQuery query = session.createSQLQuery(sb.toString());
 				@SuppressWarnings("unchecked")
 				List<String> res = query.list();
 				return res;

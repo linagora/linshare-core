@@ -36,12 +36,12 @@ package org.linagora.linshare.core.repository.hibernate;
 import java.util.List;
 
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.query.Query;
 import org.hibernate.type.LongType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.QuotaType;
@@ -254,12 +254,12 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 				}
 				sb.append(" AND child.default_max_file_size_override = false");
 				sb.append(";");
-				final SQLQuery query = session.createSQLQuery(sb.toString());
-				query.setLong("domainId", domain.getPersistenceId());
+				final NativeQuery query = session.createSQLQuery(sb.toString());
+				query.setParameter("domainId", domain.getPersistenceId());
 				query.addScalar("child_id", LongType.INSTANCE);
-				query.setString("domainType", type.name());
+				query.setParameter("domainType", type.name());
 				if (containerType != null) {
-					query.setString("containerType", containerType.name());
+					query.setParameter("containerType", containerType.name());
 				}
 				@SuppressWarnings("unchecked")
 				List<Long> res = query.list();
@@ -281,11 +281,11 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 				sb.append(" AND max_file_size_override = false");
 				sb.append(" AND domain_parent_id = :domainId ");
 				sb.append(";");
-				final SQLQuery query = session.createSQLQuery(sb.toString());
-				query.setLong("domainId", domain.getPersistenceId());
+				final NativeQuery query = session.createSQLQuery(sb.toString());
+				query.setParameter("domainId", domain.getPersistenceId());
 				query.addScalar("id", LongType.INSTANCE);
-				query.setString("domainType", type.name());
-				query.setString("containerType", containerType.name());
+				query.setParameter("domainType", type.name());
+				query.setParameter("containerType", containerType.name());
 				@SuppressWarnings("unchecked")
 				List<Long> res = query.list();
 				logger.debug("ids :"  + res);
@@ -305,7 +305,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 				StringBuilder sb = new StringBuilder();
 				sb.append("UPDATE Quota SET default_max_file_size = :maxFileSize WHERE id IN :list_quota_id ;");
 				final Query query = session.createSQLQuery(sb.toString());
-				query.setLong("maxFileSize", maxFileSize);
+				query.setParameter("maxFileSize", maxFileSize);
 				query.setParameterList("list_quota_id", quotaIdList);
 				return (long) query.executeUpdate();
 			}
@@ -335,12 +335,12 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 				}
 				sb.append(" AND child.max_file_size_override = false");
 				sb.append(";");
-				final SQLQuery query = session.createSQLQuery(sb.toString());
-				query.setLong("domainId", domain.getPersistenceId());
+				final NativeQuery query = session.createSQLQuery(sb.toString());
+				query.setParameter("domainId", domain.getPersistenceId());
 				query.addScalar("child_id", LongType.INSTANCE);
-				query.setString("domainType", type.name());
+				query.setParameter("domainType", type.name());
 				if (containerType != null) {
-					query.setString("containerType", containerType.name());
+					query.setParameter("containerType", containerType.name());
 				}
 				@SuppressWarnings("unchecked")
 				List<Long> res = query.list();
@@ -361,7 +361,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 				StringBuilder sb = new StringBuilder();
 				sb.append("UPDATE Quota SET max_file_size = :maxFileSize WHERE id IN :list_quota_id ;");
 				final Query query = session.createSQLQuery(sb.toString());
-				query.setLong("maxFileSize", maxFileSize);
+				query.setParameter("maxFileSize", maxFileSize);
 				query.setParameterList("list_quota_id", quotaIdList);
 				return (long) query.executeUpdate();
 			}
@@ -381,7 +381,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 				StringBuilder sb = new StringBuilder();
 				sb.append("UPDATE Quota SET max_file_size = :maxFileSize WHERE quota_container_id IN :list_quota_id AND max_file_size_override = false;");
 				final Query query = session.createSQLQuery(sb.toString());
-				query.setLong("maxFileSize", maxFileSize);
+				query.setParameter("maxFileSize", maxFileSize);
 				query.setParameterList("list_quota_id", quotaIdList);
 				return (long) query.executeUpdate();
 			}
@@ -442,11 +442,11 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 				sb.append(" AND account_quota_override = false");
 				sb.append(" AND domain_parent_id = :domainId ");
 				sb.append(";");
-				final SQLQuery query = session.createSQLQuery(sb.toString());
-				query.setLong("domainId", domain.getPersistenceId());
+				final NativeQuery query = session.createSQLQuery(sb.toString());
+				query.setParameter("domainId", domain.getPersistenceId());
 				query.addScalar("id", LongType.INSTANCE);
-				query.setString("domainType", type.name());
-				query.setString("containerType", containerType.name());
+				query.setParameter("domainType", type.name());
+				query.setParameter("containerType", containerType.name());
 				@SuppressWarnings("unchecked")
 				List<Long> res = query.list();
 				logger.debug("ids :"  + res);
@@ -489,12 +489,12 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 				}
 				sb.append(" AND child.account_quota_override = false");
 				sb.append(";");
-				final SQLQuery query = session.createSQLQuery(sb.toString());
-				query.setLong("domainId", domain.getPersistenceId());
+				final NativeQuery query = session.createSQLQuery(sb.toString());
+				query.setParameter("domainId", domain.getPersistenceId());
 				query.addScalar("child_id", LongType.INSTANCE);
-				query.setString("domainType", type.name());
+				query.setParameter("domainType", type.name());
 				if (containerType != null) {
-					query.setString("containerType", containerType.name());
+					query.setParameter("containerType", containerType.name());
 				}
 				@SuppressWarnings("unchecked")
 				List<Long> res = query.list();
@@ -515,7 +515,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 				StringBuilder sb = new StringBuilder();
 				sb.append("UPDATE Quota SET default_account_quota = :accountQuota WHERE id IN :list_quota_id ;");
 				final Query query = session.createSQLQuery(sb.toString());
-				query.setLong("accountQuota", accountQuota);
+				query.setParameter("accountQuota", accountQuota);
 				query.setParameterList("list_quota_id", quotaIdList);
 				return (long) query.executeUpdate();
 			}
@@ -535,7 +535,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 				StringBuilder sb = new StringBuilder();
 				sb.append("UPDATE Quota SET quota = :accountQuota WHERE quota_container_id IN :list_quota_id AND quota_override = false;");
 				final Query query = session.createSQLQuery(sb.toString());
-				query.setLong("accountQuota", accountQuota);
+				query.setParameter("accountQuota", accountQuota);
 				query.setParameterList("list_quota_id", quotaIdList);
 				return (long) query.executeUpdate();
 			}
@@ -565,12 +565,12 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 				}
 				sb.append(" AND child.account_quota_override = false");
 				sb.append(";");
-				final SQLQuery query = session.createSQLQuery(sb.toString());
-				query.setLong("domainId", domain.getPersistenceId());
+				final NativeQuery query = session.createSQLQuery(sb.toString());
+				query.setParameter("domainId", domain.getPersistenceId());
 				query.addScalar("child_id", LongType.INSTANCE);
-				query.setString("domainType", type.name());
+				query.setParameter("domainType", type.name());
 				if (containerType != null) {
-					query.setString("containerType", containerType.name());
+					query.setParameter("containerType", containerType.name());
 				}
 				@SuppressWarnings("unchecked")
 				List<Long> res = query.list();
@@ -591,7 +591,7 @@ public class ContainerQuotaRepositoryImpl extends GenericQuotaRepositoryImpl<Con
 				StringBuilder sb = new StringBuilder();
 				sb.append("UPDATE Quota SET account_quota = :accountQuota WHERE id IN :list_quota_id ;");
 				final Query query = session.createSQLQuery(sb.toString());
-				query.setLong("accountQuota", accountQuota);
+				query.setParameter("accountQuota", accountQuota);
 				query.setParameterList("list_quota_id", quotaIdList);
 				return (long) query.executeUpdate();
 			}

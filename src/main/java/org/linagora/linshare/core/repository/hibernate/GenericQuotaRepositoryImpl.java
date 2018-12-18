@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -41,11 +40,11 @@ import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.query.Query;
 import org.hibernate.type.LongType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.QuotaType;
@@ -135,12 +134,12 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 				}
 				sb.append(" AND child.default_quota_override = false");
 				sb.append(";");
-				final SQLQuery query = session.createSQLQuery(sb.toString());
-				query.setLong("domainId", domain.getPersistenceId());
+				final NativeQuery query = session.createSQLQuery(sb.toString());
+				query.setParameter("domainId", domain.getPersistenceId());
 				query.addScalar("child_id", LongType.INSTANCE);
-				query.setString("domainType", type.name());
+				query.setParameter("domainType", type.name());
 				if (containerType != null) {
-					query.setString("containerType", containerType.name());
+					query.setParameter("containerType", containerType.name());
 				}
 				@SuppressWarnings("unchecked")
 				List<Long> res = query.list();
@@ -161,7 +160,7 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 				StringBuilder sb = new StringBuilder();
 				sb.append("UPDATE Quota SET default_quota = :quota WHERE id IN :list_quota_id ;");
 				final Query query = session.createSQLQuery(sb.toString());
-				query.setLong("quota", quota);
+				query.setParameter("quota", quota);
 				query.setParameterList("list_quota_id", quotaIdList);
 				return (long) query.executeUpdate();
 			}
@@ -195,12 +194,12 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 				}
 				sb.append(" AND child.quota_override = false");
 				sb.append(";");
-				final SQLQuery query = session.createSQLQuery(sb.toString());
-				query.setLong("domainId", domain.getPersistenceId());
+				final NativeQuery query = session.createSQLQuery(sb.toString());
+				query.setParameter("domainId", domain.getPersistenceId());
 				query.addScalar("child_id", LongType.INSTANCE);
-				query.setString("domainType", type.name());
+				query.setParameter("domainType", type.name());
 				if (containerType != null) {
-					query.setString("containerType", containerType.name());
+					query.setParameter("containerType", containerType.name());
 				}
 				@SuppressWarnings("unchecked")
 				List<Long> res = query.list();
@@ -221,7 +220,7 @@ public abstract class GenericQuotaRepositoryImpl<T extends Quota> extends Abstra
 				StringBuilder sb = new StringBuilder();
 				sb.append("UPDATE Quota SET quota = :quota WHERE id IN :list_quota_id ;");
 				final Query query = session.createSQLQuery(sb.toString());
-				query.setLong("quota", quota);
+				query.setParameter("quota", quota);
 				query.setParameterList("list_quota_id", quotaIdList);
 				return (long) query.executeUpdate();
 			}
