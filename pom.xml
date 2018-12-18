@@ -1892,8 +1892,8 @@
 	</distributionManagement>
 
 	<properties>
-		<spring-release-version>5.0.7.RELEASE</spring-release-version>
-		<spring-security-release-version>5.0.6.RELEASE</spring-security-release-version>
+		<spring-release-version>5.1.2.RELEASE</spring-release-version>
+		<spring-security-release-version>5.1.2.RELEASE</spring-security-release-version>
 		<spring-data.version>Kay-SR12</spring-data.version>
 		<hibernate.version>5.3.7.Final</hibernate.version>
 		<h2.version>1.4.196</h2.version>
