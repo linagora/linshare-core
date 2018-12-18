@@ -90,17 +90,18 @@ public class JwtLongTimeTokenFacadeImpl extends AdminGenericFacadeImpl implement
 	}
 
 	@Override
-	public PermanentToken delete(PermanentToken jwtLongTime, String uuid) throws BusinessException {
+	public PermanentToken delete(PermanentToken permanentToken, String uuid) throws BusinessException {
 		Account authUser = checkAuthentication(Role.ADMIN);
 		if (!Strings.isNullOrEmpty(uuid)) {
-			jwtLongTime = jwtLongTimeService.find(authUser, authUser, uuid);
+			permanentToken = jwtLongTimeService.find(authUser, authUser, uuid);
 		} else {
-			Validate.notNull(jwtLongTime, "jwtLongTime object must be set");
-			Validate.notEmpty(jwtLongTime.getUuid(), "jwtLongTime uuid must be set");
-			jwtLongTime = jwtLongTimeService.find(authUser, authUser, jwtLongTime.getUuid());
+			Validate.notNull(permanentToken, "jwtLongTime object must be set");
+			Validate.notEmpty(permanentToken.getUuid(), "jwtLongTime uuid must be set");
+			permanentToken = jwtLongTimeService.find(authUser, authUser, permanentToken.getUuid());
 		}
-		Account actor = getActor(authUser, jwtLongTime.getActor().getUuid());
-		return jwtLongTimeService.delete(authUser, actor, jwtLongTime);
+		Validate.notNull(permanentToken.getActor(), "Actor must be set");
+		Account actor = getActor(authUser, permanentToken.getActor().getUuid());
+		return jwtLongTimeService.delete(authUser, actor, permanentToken);
 	}
 
 	@Override
@@ -110,6 +111,7 @@ public class JwtLongTimeTokenFacadeImpl extends AdminGenericFacadeImpl implement
 			permanentToken.setUuid(uuid);
 		}
 		Validate.notEmpty(permanentToken.getUuid(), "permanentToken uuid must be set");
+		Validate.notNull(permanentToken.getActor(), "Actor must be set");
 		Validate.notEmpty(permanentToken.getActor().getUuid(), "actor uuid must be set");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, permanentToken.getActor().getUuid());

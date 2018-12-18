@@ -210,7 +210,7 @@
 					<constructor-arg ref="userRepository" />
 					<constructor-arg ref="jwtLongTimeMongoRepository" />
 					<constructor-arg ref="abstractDomainRepository" />
-
+					<constructor-arg ref="mongoTemplate" />
 				</bean>
 			</list>
 		</constructor-arg>

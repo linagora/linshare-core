@@ -34,8 +34,8 @@
 package org.linagora.linshare.core.upgrade.v2_3;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
+import org.bson.Document;
 import org.linagora.linshare.core.batches.impl.GenericUpgradeTaskImpl;
 import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -52,22 +52,36 @@ import org.linagora.linshare.mongo.entities.PermanentToken;
 import org.linagora.linshare.mongo.entities.light.GenericLightEntity;
 import org.linagora.linshare.mongo.repository.JwtLongTimeMongoRepository;
 import org.linagora.linshare.mongo.repository.UpgradeTaskLogMongoRepository;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
+
+import com.google.common.collect.Lists;
+import com.mongodb.client.DistinctIterable;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Projections;
 
 public class NewPermanentTokenStructureUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 
 	protected JwtLongTimeMongoRepository jwtLongTimeMongoRepository;
+
 	protected UserRepository<User> actorRepository;
+
 	protected AbstractDomainRepository abstractDomainRepository;
+
+	protected MongoTemplate mongoTemplate;
 
 	public NewPermanentTokenStructureUpgradeTaskImpl(JwtLongTimeMongoRepository jwtLongTimeMongoRepository,
 			AccountRepository<Account> accountRepository,
 			UpgradeTaskLogMongoRepository upgradeTaskLogMongoRepository,
 			UserRepository<User> actorRepository,
-			AbstractDomainRepository abstractDomainRepository) {
+			AbstractDomainRepository abstractDomainRepository,
+			MongoTemplate mongoTemplate) {
 		super(accountRepository, upgradeTaskLogMongoRepository);
 		this.jwtLongTimeMongoRepository = jwtLongTimeMongoRepository;
 		this.actorRepository = actorRepository;
 		this.abstractDomainRepository = abstractDomainRepository;
+		this.mongoTemplate = mongoTemplate;
 	}
 
 	@Override
@@ -77,14 +91,18 @@ public class NewPermanentTokenStructureUpgradeTaskImpl extends GenericUpgradeTas
 
 	@Override
 	public List<String> getAll(BatchRunContext batchRunContext) {
-		List<PermanentToken> tokens = jwtLongTimeMongoRepository.findAll();
-		return tokens.stream().map(PermanentToken::getUuid).collect(Collectors.toList());
+		MongoCollection<Document> permanentTokens = mongoTemplate.getCollection("permanent_tokens");
+		DistinctIterable<String> results = permanentTokens.distinct("uuid", String.class);
+		return Lists.newArrayList(results);
 	}
 
 	@Override
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
 		PermanentToken permanentToken = jwtLongTimeMongoRepository.findByUuid(identifier);
+		if (permanentToken == null) {
+			return null;
+		}
 		BatchResultContext<PermanentToken> res = new BatchResultContext<PermanentToken>(permanentToken);
 		console.logDebug(batchRunContext, total, position, "Processing audit : " + permanentToken.toString());
 		Account actor = actorRepository.findByMail(permanentToken.getSubject());
