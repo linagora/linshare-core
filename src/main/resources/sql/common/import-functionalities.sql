@@ -253,7 +253,7 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 
 	-- Functionality : WORK_GROUP__FILE_VERSIONING_EXPIRATION
 INSERT INTO policy(id, status, default_status, policy, system)
-	VALUES (300, true, true, 1, false);
+	VALUES (300, false, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) 
 	VALUES (301, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) 
