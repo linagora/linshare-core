@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
@@ -854,8 +855,11 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			try {
 				logger.info("starting purging domain");
 				if (domain.getFunctionalities() != null) {
-					domain.getFunctionalities()
-							.forEach(f -> functionalityService.delete(actor, domain.getUuid(), f.getIdentifier()));
+					Iterator<Functionality> it = domain.getFunctionalities().iterator();
+					while (it.hasNext()) {
+						functionalityService.delete(actor, domain.getUuid(), it.next().getIdentifier());
+						it.remove();
+					}
 				}
 				if (domain.getDomainAccessRules() != null) {
 					domain.getDomainAccessRules().forEach(dar -> domainAccessPolicyBusinessService.delete(dar));
