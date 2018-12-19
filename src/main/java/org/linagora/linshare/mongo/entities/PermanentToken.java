@@ -61,28 +61,28 @@ public class PermanentToken {
 	@ApiModelProperty(value = "uuid")
 	protected String uuid;
 
-	@ApiModelProperty(value = "domain", required = true, notes = "Light entity that contains only the name and uuid of the domain.")
+	@ApiModelProperty(value = "Light entity that contains only the name and uuid of the domain.", required = true)
 	protected GenericLightEntity domain;
 
-	@ApiModelProperty(value = "actor", required = true, notes = "Light entity that contains only the name and uuid of the actor.")
+	@ApiModelProperty(value = "Light entity that contains only the name and uuid of the actor.", required = true)
 	protected GenericLightEntity actor;
 
-	@ApiModelProperty(value = "issuer")
+	@ApiModelProperty(value = "issuer", required = true)
 	protected String issuer;
 
 	@ApiModelProperty(value = "creation Date")
 	protected Date creationDate;
 
-	@ApiModelProperty(value = "token name")
+	@ApiModelProperty(value = "token name", required = true)
 	protected String label;
 
-	@ApiModelProperty(value = "description")
+	@ApiModelProperty(value = "description of the token")
 	protected String description;
 
-	@ApiModelProperty(value = "owner email")
+	@ApiModelProperty(value = "owner email", required = true)
 	protected String subject;
 
-	@ApiModelProperty(value = "jwt token", notes = "not persisted")
+	@ApiModelProperty(value = "jwt token, not persisted")
 	@Transient
 	protected JwtToken jwtToken;
 

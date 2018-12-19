@@ -78,12 +78,9 @@ public class JwtPermanentTokenRestServiceImpl implements JwtPermanentTokenRestSe
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error.") })
 	public PermanentToken create(
-			@ApiParam(value = "actor uuid", required = true)
-				@QueryParam("actorUuid") String actorUuid,
-			@ApiParam(value = "Permanent token to create from two fields : label (mandatory), description (optional)", required = true)
-				PermanentToken permanentToken)
-						throws BusinessException {
-		return jwtLongTimeTokenFacade.create(actorUuid, permanentToken);
+			@ApiParam(value = "Permanent token to create from two fields : label (mandatory), description (optional), actorUuid (mandatory)", required = true) PermanentToken permanentToken)
+			throws BusinessException {
+		return jwtLongTimeTokenFacade.create(permanentToken);
 	}
 
 	@Path("/")
@@ -94,12 +91,12 @@ public class JwtPermanentTokenRestServiceImpl implements JwtPermanentTokenRestSe
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error.") })
 	public List<PermanentToken> findAll(
-			@ApiParam(value = "domain uuid.", required = true)
+			@ApiParam(value = "domain uuid.", required = false)
 				@QueryParam("domainUuid") String domainUuid) throws BusinessException {
 		return jwtLongTimeTokenFacade.findAll(domainUuid);
 	}
 
-	@Path("/findbyactor")
+	@Path("/findbyactor/{actoruuid}")
 	@GET
 	@Override
 	@ApiOperation(value = "Find all JWT permanent tokens of admin domain.", response = PermanentToken.class, responseContainer = "List")
@@ -108,7 +105,7 @@ public class JwtPermanentTokenRestServiceImpl implements JwtPermanentTokenRestSe
 			@ApiResponse(code = 500, message = "Internal server error.") })
 	public List<PermanentToken> findAllByActor(
 			@ApiParam(value = "actor uuid.", required = true)
-				@QueryParam("actorUuid") String actorUuid) throws BusinessException {
+				@PathParam("actoruuid") String actorUuid) throws BusinessException {
 		return jwtLongTimeTokenFacade.findAllByActor(actorUuid);
 	}
 

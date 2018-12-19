@@ -134,7 +134,7 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, Permanen
 		PermanentToken jwtLongTime = new PermanentToken(tokenUuid, creationDate, issuer, permanentToken.getLabel(),
 				permanentToken.getDescription(), lightActor, actor.getMail(), lightDomain);
 		String token = jwtService.generateToken(actor, tokenUuid, creationDate);
-		checkCreatePermission(authUser, authUser, PermanentToken.class, BusinessErrorCode.JWT_PERMANENT_TOKEN_CAN_NOT_CREATE, jwtLongTime);
+		checkCreatePermission(authUser, actor, PermanentToken.class, BusinessErrorCode.JWT_PERMANENT_TOKEN_CAN_NOT_CREATE, jwtLongTime);
 		jwtLongTimeBusinessService.create(jwtLongTime);
 		AuditLogEntryUser createLog = new JwtLongTimeAuditLogEntry(authUser, actor, LogAction.CREATE,
 				AuditLogEntryType.JWT_PERMANENT_TOKEN, jwtLongTime);
