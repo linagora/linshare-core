@@ -135,6 +135,11 @@ public class PublicKeyServiceImpl implements PublicKeyService {
 			logger.error("Invalid public key ", publicKey.getIssuer());
 			throw new BusinessException(BusinessErrorCode.PUBLIC_KEY_INVALID_FORMAT, "Invalid public key.");
 		}
+		PublicKeyLs publicKeyDupli = findByIssuer(publicKey.getIssuer());
+		if (publicKeyDupli != null) {
+			throw new BusinessException(BusinessErrorCode.PUBLIC_KEY_ALREADY_EXIST,
+					"The public key you tried to insert already exist");
+		}
 		PublicKeyLs pubKey = new PublicKeyLs();
 		pubKey.setCreationDate(new Date());
 		pubKey.setDestroyed(false);
