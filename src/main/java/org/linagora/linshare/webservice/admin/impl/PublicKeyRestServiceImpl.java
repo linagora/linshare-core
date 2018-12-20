@@ -109,7 +109,6 @@ public class PublicKeyRestServiceImpl extends WebserviceBase implements PublicKe
 	@Path("/")
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Store a new public key from file.", response = PublicKeyLs.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have required permission."),
 			@ApiResponse(code = 404, message = "PublicKeys not found."),
