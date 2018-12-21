@@ -85,8 +85,7 @@ public class TechnicalAccountBusinessServiceImpl implements
 	public TechnicalAccount create(String domainId, TechnicalAccount account)
 			throws BusinessException {
 		AbstractDomain domain = abstractDomainRepository.findById(domainId);
-		account.setPassword(HashUtils.hashSha1withBase64(account.getPassword()
-				.getBytes()));
+		account.setPassword(HashUtils.hashBcrypt(account.getPassword()));
 		account.setCmisLocale(SupportedLanguage.toLanguage(domain.getDefaultTapestryLocale()).getTapestryLocale());
 		return this.create(domain, account);
 	}

@@ -35,7 +35,6 @@
 package org.linagora.linshare.service;
 
 import java.util.List;
-import java.util.Set;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -44,17 +43,13 @@ import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.Role;
-import org.linagora.linshare.core.domain.constants.SupportedLanguage;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.AccountQuota;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Internal;
-import org.linagora.linshare.core.domain.entities.TechnicalAccount;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.entities.WorkGroup;
-import org.linagora.linshare.core.domain.entities.WorkgroupMember;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.RootUserRepository;
@@ -62,8 +57,6 @@ import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.GuestService;
 import org.linagora.linshare.core.service.InconsistentUserService;
 import org.linagora.linshare.core.service.QuotaService;
-import org.linagora.linshare.core.service.TechnicalAccountService;
-import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.utils.HashUtils;
 import org.linagora.linshare.utils.LinShareWiser;
@@ -118,12 +111,6 @@ public class GuestServiceImplTest extends
 	private InconsistentUserService inconsistentUserService;
 
 	@Autowired
-	private TechnicalAccountService technicalAccountService;
-
-	@Autowired
-	private ThreadService threadService;
-
-	@Autowired
 	private QuotaService quotaService;
 
 	private User root;
@@ -135,8 +122,6 @@ public class GuestServiceImplTest extends
 	private User owner2;
 	
 	private User owner3;
-
-	private TechnicalAccount technicalAccount;
 
 	public GuestServiceImplTest() {
 		super();
@@ -259,19 +244,18 @@ public class GuestServiceImplTest extends
 		inconsistentUserService.updateDomain(owner1, guest.getLsUuid(), domain.getUuid());
 
 	}
-	
+
 	@Test
 	public void testResetPassword() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		// create guest
 		Guest guest = new Guest("Foo", "Bar", "user10@linshare.org");
 		String oldPassword = "password222";
-		guest.setPassword(HashUtils.hashSha1withBase64(oldPassword.getBytes()));
+		guest.setPassword(HashUtils.hashBcrypt(oldPassword));
 		guest.setCmisLocale("en");
 		guest = guestService.create(owner1, owner1, guest, null);
 		guestService.triggerResetPassword(guest.getLsUuid());
-		Assert.assertFalse(guest.getPassword().equals(
-				HashUtils.hashSha1withBase64(oldPassword.getBytes())));
+		Assert.assertFalse(HashUtils.matches(oldPassword, guest.getPassword()));
 		wiser.checkGeneratedMessages();
 		logger.debug(LinShareTestConstants.END_TEST);
 	}

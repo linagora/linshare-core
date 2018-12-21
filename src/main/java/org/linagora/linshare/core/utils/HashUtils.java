@@ -43,8 +43,12 @@ import java.security.SecureRandom;
 import java.util.Base64;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.linagora.linshare.auth.PasswordEncoderFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class HashUtils {
+
+	private static PasswordEncoder passwordEncoder = new PasswordEncoderFactory("SHA").getInstance();
 
 	private HashUtils() {
 	}
@@ -60,7 +64,15 @@ public class HashUtils {
 	public static String hashSshawithBase64(byte[] b,byte[] salt) {
 		return hashWithBase64(b,salt,"SHA1");
 	}
-	
+
+	public static String hashBcrypt(String rawString) {
+		return passwordEncoder.encode(rawString);
+	}
+
+	public static boolean matches(String rawPassword, String encodedPassword) {
+		return passwordEncoder.matches(rawPassword, encodedPassword);
+	}
+
 	/**
 	 * generate salt (32 bits/4 octets)
 	 * @return byte[]

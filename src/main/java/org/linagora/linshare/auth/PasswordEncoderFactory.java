@@ -64,7 +64,7 @@ public class PasswordEncoderFactory {
     }
 
     /** Returns an instance of password encoder.
-     * The password are encoded in base64.
+     * The password are encoded in using Bcryp encoding. DelegatingPasswordEncoder allows to decode MD5 and SHA-1 passwords.
      * @return a password encoder.
      */
     public PasswordEncoder getInstance() {

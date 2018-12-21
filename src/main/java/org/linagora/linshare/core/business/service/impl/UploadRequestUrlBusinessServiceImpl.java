@@ -83,7 +83,7 @@ public class UploadRequestUrlBusinessServiceImpl implements
 			String password = passwordService.generatePassword();
 			// We store it temporary in this object for mail notification.
 			url.setTemporaryPlainTextPassword(password);
-			url.setPassword(HashUtils.hashSha1withBase64(password.getBytes()));
+			url.setPassword(HashUtils.hashBcrypt((password)));
 		}
 		request.getUploadRequestURLs().add(url);
 		return uploadRequestUrlRepository.create(url);

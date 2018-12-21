@@ -689,13 +689,12 @@ public class UserServiceImpl implements UserService {
 					"Could not find a user with the login " + mail);
 		}
 
-		if (!user.getPassword().equals(
-				HashUtils.hashSha1withBase64(oldPassword.getBytes()))) {
+		if (!HashUtils.matches(oldPassword, user.getPassword())) {
 			throw new BusinessException(BusinessErrorCode.AUTHENTICATION_ERROR,
 					"The supplied password is invalid");
 		}
 
-		user.setPassword(HashUtils.hashSha1withBase64(newPassword.getBytes()));
+		user.setPassword(HashUtils.hashBcrypt(newPassword));
 		userRepository.update(user);
 	}
 

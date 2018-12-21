@@ -185,9 +185,7 @@ public class UploadRequestUrlServiceImpl extends GenericServiceImpl<Account, Upl
 		if (data.isProtectedByPassword()) {
 			if (password == null)
 				return false;
-			String hashedPassword = HashUtils.hashSha1withBase64(password
-					.getBytes());
-			return hashedPassword.equals(data.getPassword());
+			return HashUtils.matches(password, data.getPassword());
 		}
 		return true;
 	}

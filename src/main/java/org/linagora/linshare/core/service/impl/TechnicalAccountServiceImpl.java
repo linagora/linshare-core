@@ -133,12 +133,11 @@ public class TechnicalAccountServiceImpl implements TechnicalAccountService {
 					"Could not find a user with the uuid " + uuid);
 		}
 
-		if (!account.getPassword().equals(
-				HashUtils.hashSha1withBase64(oldPassword.getBytes()))) {
+		if (!HashUtils.matches(oldPassword, account.getPassword())) {
 			throw new BusinessException(BusinessErrorCode.AUTHENTICATION_ERROR,
 					"The supplied password is invalid");
 		}
-		account.setPassword(HashUtils.hashSha1withBase64(newPassword.getBytes()));
+		account.setPassword(HashUtils.hashBcrypt((newPassword)));
 		technicalAccountBusinessService.update(account);
 	}
 }

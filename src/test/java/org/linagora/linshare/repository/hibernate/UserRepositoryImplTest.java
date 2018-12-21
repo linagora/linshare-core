@@ -94,7 +94,7 @@ public class UserRepositoryImplTest extends AbstractTransactionalJUnit4SpringCon
 	public void setUp() throws Exception {
 		domain = abstractDomainRepository.findById(DOMAIN_IDENTIFIER);
 		
-		String encpassword = HashUtils.hashSha1withBase64(PASSWORD.getBytes());		
+		String encpassword = HashUtils.hashBcrypt(PASSWORD);
 		if (!flag) {
 			User u1=new Guest(FIRST_NAME2, LAST_NAME2, MAIL2,encpassword, true, "comment");
 			u1.setLocale(domain.getDefaultTapestryLocale());
@@ -116,7 +116,7 @@ public class UserRepositoryImplTest extends AbstractTransactionalJUnit4SpringCon
 	@Test
 	public void testExistUser() throws BusinessException{
 		
-		String encpassword = HashUtils.hashSha1withBase64(PASSWORD.getBytes());
+		String encpassword = HashUtils.hashBcrypt(PASSWORD);
 		
 		User u = new Guest( FIRST_NAME, LAST_NAME, MAIL, encpassword, true, "comment");
 		u.setLocale(domain.getDefaultTapestryLocale());

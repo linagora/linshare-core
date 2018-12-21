@@ -124,8 +124,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	public Guest create(Account owner, Guest guest,
 			AbstractDomain domain, List<User> allowedContacts) throws BusinessException {
 		String password = passwordService.generatePassword();
-		String hashedPassword = HashUtils.hashSha1withBase64(password
-				.getBytes());
+		String hashedPassword = HashUtils.hashBcrypt(password);
 		guest.setMail(guest.getMail().toLowerCase());
 		guest.setOwner(owner);
 		guest.setDomain(domain);
@@ -222,8 +221,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 	public GuestWithMetadata resetPassword(Guest guest)
 			throws BusinessException {
 		String password = passwordService.generatePassword();
-		String hashedPassword = HashUtils.hashSha1withBase64(password
-				.getBytes());
+		String hashedPassword = HashUtils.hashBcrypt(password);
 		guest.setPassword(hashedPassword);
 		Guest update = guestRepository.update(guest);
 		return new GuestWithMetadata(password, update);
@@ -231,7 +229,7 @@ public class GuestBusinessServiceImpl implements GuestBusinessService {
 
 	@Override
 	public Guest resetPassword(Guest guest, String password) throws BusinessException {
-		String hashedPassword = HashUtils.hashSha1withBase64(password.getBytes());
+		String hashedPassword = HashUtils.hashBcrypt(password);
 		guest.setPassword(hashedPassword);
 		Guest update = guestRepository.update(guest);
 		return update;

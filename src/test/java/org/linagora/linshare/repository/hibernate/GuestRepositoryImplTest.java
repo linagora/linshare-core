@@ -112,7 +112,7 @@ public class GuestRepositoryImplTest extends
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 
 		domain = abstractDomainRepository.findById(DOMAIN_IDENTIFIER);
-		String encpass = HashUtils.hashSha1withBase64(PASSWORD.getBytes());
+		String encpass = HashUtils.hashBcrypt(PASSWORD);
 		if (!flag) {
 			Guest u1 = new Guest(FIRST_NAME2, LAST_NAME2, MAIL2, encpass, true, "comment");
 			u1.setLocale(domain.getDefaultTapestryLocale());

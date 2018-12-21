@@ -84,7 +84,7 @@ public class AnonymousUrlBusinessServiceImpl implements AnonymousUrlBusinessServ
 			String password = passwordService.generatePassword();
 			// We store it temporary in this object for mail notification.
 			anonymousUrl.setTemporaryPlainTextPassword(password);
-			anonymousUrl.setPassword(HashUtils.hashSha1withBase64(password.getBytes()));
+			anonymousUrl.setPassword(HashUtils.hashBcrypt(password));
 		}
 		return anonymousUrlRepository.create(anonymousUrl);
 	}
@@ -102,8 +102,7 @@ public class AnonymousUrlBusinessServiceImpl implements AnonymousUrlBusinessServ
 		// Check password validity
 		if(anonymousUrl.isPasswordProtected()) {
 			if (password == null) return false;
-			String hashedPassword = HashUtils.hashSha1withBase64(password.getBytes());
-			return hashedPassword.equals(anonymousUrl.getPassword());
+			return HashUtils.matches(password, anonymousUrl.getPassword());
 		}
 		return true;
 	}
