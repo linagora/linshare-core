@@ -51,7 +51,7 @@ import org.linagora.linshare.core.facade.webservice.user.dto.DocumentURLDto;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
-public interface WorkGroupFolderRestService {
+public interface WorkGroupNodeRestService {
 
 	WorkGroupNode create(String workGroupUuid, WorkGroupNode workGroupNode, Boolean strict, Boolean dryRun) throws BusinessException;
 

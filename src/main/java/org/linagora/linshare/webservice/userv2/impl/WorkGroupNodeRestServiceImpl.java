@@ -81,7 +81,7 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.userv1.task.WorkGroupEntryUploadAsyncTask;
 import org.linagora.linshare.webservice.userv1.task.context.WorkGroupEntryTaskContext;
-import org.linagora.linshare.webservice.userv2.WorkGroupFolderRestService;
+import org.linagora.linshare.webservice.userv2.WorkGroupNodeRestService;
 import org.linagora.linshare.webservice.utils.WebServiceUtils;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -98,7 +98,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
-		WorkGroupFolderRestService {
+		WorkGroupNodeRestService {
 
 	protected final WorkGroupNodeFacade workGroupNodeFacade;
 
