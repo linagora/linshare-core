@@ -44,6 +44,7 @@ import org.apache.commons.lang3.Validate;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.LogActionCause;
+import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.constants.TargetKind;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
@@ -158,6 +159,10 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
+		if (!NodeType.WORK_GROUP.equals(sharedSpaceNode.getNodeType())) {
+			throw new BusinessException(BusinessErrorCode.INVALID_SHARED_SPACE_NODE_TYPE,
+					"You cannot create documents or folders outside a workGroup");
+		}
 		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceNode.getUuid());
 		return service.create(authUser, actor, workGroup, workGroupNode, strict, dryRun);
 	}
@@ -171,6 +176,10 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
+		if (!NodeType.WORK_GROUP.equals(sharedSpaceNode.getNodeType())) {
+			throw new BusinessException(BusinessErrorCode.INVALID_SHARED_SPACE_NODE_TYPE,
+					"You cannot create documents or folders outside a workGroup");
+		}
 		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceNode.getUuid());
 		return service.create(authUser, actor, workGroup, tempFile, fileName, parentNodeUuid, strict);
 	}
