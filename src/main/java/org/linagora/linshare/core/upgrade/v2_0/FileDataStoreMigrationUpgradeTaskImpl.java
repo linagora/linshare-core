@@ -152,13 +152,11 @@ public class FileDataStoreMigrationUpgradeTaskImpl extends GenericUpgradeTaskImp
 			String thmbUuid = ThumbnailType.getThmbUuid(fileMetaDataKind, document);
 			FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, document);
 			FileMetaData metadataTmb = new FileMetaData(fileMetaDataKind, document);
-			if (thmbUuid != null) {
+			if (thmbUuid != null && fileDataStore.exists(metadataTmb)) {
 				try (InputStream stream = fileDataStore.get(metadata);
 						InputStream streamTmb = fileDataStore.get(metadataTmb)) {
 					metadata = fileDataStore.add(stream, metadata);
-					if (!fileDataStore.exists(metadataTmb)) {
-						metadataTmb = fileDataStore.add(streamTmb, metadataTmb);
-					}
+					metadataTmb = fileDataStore.add(streamTmb, metadataTmb);
 					document.setBucketUuid(metadata.getBucketUuid());
 					document.setToUpgrade(false);
 					repository.update(document);
@@ -175,6 +173,8 @@ public class FileDataStoreMigrationUpgradeTaskImpl extends GenericUpgradeTaskImp
 					metadata = fileDataStore.add(stream, metadata);
 					document.setBucketUuid(metadata.getBucketUuid());
 					document.setToUpgrade(false);
+					// If thmbUuid is not null but does not exist in fileDataStore, we force it to null
+					document.setThmbUuid(null);
 					repository.update(document);
 					res.setProcessed(true);
 				} catch (IOException e) {

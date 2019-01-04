@@ -48,6 +48,7 @@ import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springmodules.jcr.JcrSystemException;
 
 public class JackRabbitFileDataStoreImpl implements FileDataStore {
 
@@ -116,6 +117,15 @@ public class JackRabbitFileDataStoreImpl implements FileDataStore {
 
 	@Override
 	public boolean exists(FileMetaData metadata) {
+		try {
+			return _exists(metadata);
+		} catch (JcrSystemException e1) {
+			logger.warn(e1.getMessage(), e1);
+		}
+		return false;
+	}
+
+	private boolean _exists(FileMetaData metadata) throws JcrSystemException {
 		try (InputStream is = dao.getFileContentByUUID(metadata.getUuid())) {
 			if (is != null) {
 				return true;
@@ -123,7 +133,7 @@ public class JackRabbitFileDataStoreImpl implements FileDataStore {
 		} catch (IOException e) {
 			logger.error(e.getMessage(), e);
 		}
-		return false;
+		return true;
 	}
 
 }
