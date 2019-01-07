@@ -51,11 +51,13 @@ public interface WorkGroupDocumentRevisionService extends WorkGroupDocumentServi
 	WorkGroupDocument updateDocument(Account actor, Account owner, WorkGroup workGroup,
 			WorkGroupDocumentRevision documentRevision) throws BusinessException;
 
-	List<WorkGroupNode> findAll(Account actor, WorkGroup workGroup, String parentUuid);
+	List<WorkGroupNode> findAll(Account actor, WorkGroup workGroup, String parentUuid)  throws BusinessException;
 
 	List<WorkGroupNode> deleteAll(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode) throws BusinessException;
 
 	WorkGroupNode delete(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode) throws BusinessException;
 
 	WorkGroupDocument restore(Account actor, Account owner, WorkGroup workGroup, String revisionUuid) throws BusinessException;
+
+	WorkGroupNode findMostRecent(WorkGroup workGroup, String parentUuid) throws BusinessException;
 }

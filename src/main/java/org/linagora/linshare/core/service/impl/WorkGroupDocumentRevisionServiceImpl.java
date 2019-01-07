@@ -34,13 +34,11 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
@@ -199,7 +197,7 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 	}
 
 	@Override
-	public List<WorkGroupNode> findAll(Account actor, WorkGroup workGroup, String parentUuid) {
+	public List<WorkGroupNode> findAll(Account actor, WorkGroup workGroup, String parentUuid) throws BusinessException {
 		Validate.notNull(actor);
 		Validate.notNull(workGroup);
 		Validate.notNull(parentUuid);
@@ -217,6 +215,23 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 			}
 		}
 		return nodes;
+	}
+
+	@Override
+	public WorkGroupNode findMostRecent(WorkGroup workGroup, String parentUuid) throws BusinessException {
+		Validate.notNull(workGroup);
+		Validate.notNull(parentUuid);
+		List<WorkGroupNode> nodes = Lists.newArrayList();
+		WorkGroupNode rev = new WorkGroupNode();
+		nodes = repository.findByWorkGroupAndParentAndNodeType(workGroup.getLsUuid(), parentUuid, WorkGroupNodeType.DOCUMENT_REVISION);
+		nodes = nodes.stream()
+				.sorted(Comparator.comparing(WorkGroupNode::getCreationDate, Comparator.reverseOrder()))
+				.limit(1)
+				.collect(Collectors.toList());
+		if(!nodes.isEmpty()) {
+			rev = nodes.get(0);
+		}
+		return rev;
 	}
 
 	private boolean isVersioningEnabledInWorkGroup(WorkGroup workGroup) {

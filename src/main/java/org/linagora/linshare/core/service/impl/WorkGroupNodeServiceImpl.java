@@ -418,7 +418,10 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		preChecks(actor, owner);
 		WorkGroupNode node = find(actor, owner, workGroup, workGroupNodeUuid, false);
 		checkDownloadPermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, node, workGroup);
-		if (isDocument(node)) {
+		if(isDocument(node)) {
+			node = workGroupDocumentRevisionService.findMostRecent(workGroup, node.getUuid());
+		}
+		if (isRevision(node)) {
 			InputStream stream = workGroupDocumentService.getDocumentStream(actor, owner, workGroup, (WorkGroupDocument) node);
 			return new FileAndMetaData((WorkGroupDocument)node, stream);
 		} else {
