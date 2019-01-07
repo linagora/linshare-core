@@ -60,4 +60,7 @@ public interface WorkGroupDocumentRevisionService extends WorkGroupDocumentServi
 			throws BusinessException;
 
 	WorkGroupNode findMostRecent(WorkGroup workGroup, String parentUuid) throws BusinessException;
+
+	WorkGroupNode createDocFromRevision(Account actor, Account owner, WorkGroup workGroup, String revisionUuid,
+			String parentUuid, Boolean strict) throws BusinessException;
 }

@@ -77,4 +77,7 @@ public interface WorkGroupNodeFacade extends GenericFacade {
 	String findByWorkGroupNodeUuid(String workGroupNodeUuid) throws BusinessException;
 
 	WorkGroupNode restoreRevision(String actorUuid, String workGroupUuid, String revisionUuid) throws BusinessException;
+
+	WorkGroupNode createDocFromRevision(String actorUuid, String workGroupUuid, String revisionUuid, String parentUuid,
+			Boolean strict) throws BusinessException;
 }

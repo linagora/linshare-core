@@ -48,7 +48,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.AsyncTaskDto;
 import org.linagora.linshare.core.facade.webservice.common.dto.CopyDto;
 import org.linagora.linshare.core.facade.webservice.user.dto.DocumentURLDto;
-import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
@@ -89,5 +88,8 @@ public interface WorkGroupNodeRestService {
 			Boolean async, Boolean strict) throws BusinessException;
 
 	WorkGroupNode restoreRevision(String workGroupUuid, String WorkGroupDocumentRevisionUuid) throws BusinessException;
+
+	WorkGroupNode createDocFromRevision(String workGroupUuid, String revisionUuid, String parentUuid, Boolean strict)
+			throws BusinessException;
 
 }

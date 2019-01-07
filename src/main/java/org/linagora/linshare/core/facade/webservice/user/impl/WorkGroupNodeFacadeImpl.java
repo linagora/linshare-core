@@ -320,4 +320,16 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		return workGroupDocumentRevisionService.restore(authUser, actor, workGroup, revisionUuid);
 	}
 
+	@Override
+	public WorkGroupNode createDocFromRevision(String actorUuid, String workGroupUuid, String revisionUuid,
+			String parentUuid, Boolean strict) throws BusinessException {
+		Account authUser = checkAuthentication();
+		Account actor = getActor(authUser, actorUuid);
+		Validate.notEmpty(workGroupUuid, "Missing workGroup uuid to copy into");
+		Validate.notEmpty(parentUuid, "Missing parentUuid uuid to copy from");
+		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
+		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceNode.getUuid());
+		return workGroupDocumentRevisionService.createDocFromRevision(authUser, actor, workGroup, revisionUuid,
+				parentUuid, strict);
+	}
 }

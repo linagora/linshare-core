@@ -48,13 +48,17 @@ import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessServ
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.TargetKind;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.service.AntiSamyService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
@@ -70,6 +74,7 @@ import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.VersioningParameters;
 import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
+import org.linagora.linshare.mongo.entities.mto.CopyMto;
 import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
@@ -83,6 +88,8 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 	protected final DocumentEntryRevisionBusinessService documentEntryRevisionBusinessService;
 
 	protected final SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository;
+
+	protected final DocumentRepository documentRepository;
 
 	public WorkGroupDocumentRevisionServiceImpl(DocumentEntryBusinessService documentEntryBusinessService,
 			LogEntryService logEntryService,
@@ -99,13 +106,15 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 			QuotaService quotaService,
 			SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService,
 			DocumentEntryRevisionBusinessService documentEntryRevisionBusinessService,
-			SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository) {
+			SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository,
+			DocumentRepository documentRepository) {
 		super(documentEntryBusinessService, logEntryService, functionalityReadOnlyService, mimeTypeService,
 				virusScannerService, mimeTypeIdentifier, antiSamyService, workGroupNodeMongoRepository,
 				documentGarbageCollectorRepository, threadMemberRepository, mongoTemplate, operationHistoryBusinessService,
 				quotaService, sharedSpaceMemberBusinessService);
 		this.documentEntryRevisionBusinessService = documentEntryRevisionBusinessService;
 		this.sharedSpaceNodeMongoRepository = sharedSpaceNodeMongoRepository;
+		this.documentRepository = documentRepository;
 	}
 
 	@Override
@@ -194,6 +203,45 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 		documentRevision.setModificationDate(new Date());
 		documentRevision.setCreationDate(new Date());
 		return repository.insert(documentRevision);
+	}
+
+
+	@Override
+	public WorkGroupNode createDocFromRevision(Account authUser, Account actor, WorkGroup workGroup,
+			String revisionUuid, String parentUuid, Boolean strict) throws BusinessException {
+		Validate.notEmpty(revisionUuid, "The revision Uuid must be set");
+		WorkGroupDocumentRevision node = (WorkGroupDocumentRevision) repository.findByUuid(revisionUuid);
+		if (node == null) {
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_REVISION_NOT_FOUND,
+					"The revision has not been found.");
+		}
+		if (!node.getNodeType().equals(WorkGroupNodeType.DOCUMENT_REVISION)) {
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED,
+					"The node type is not a revision.");
+		}
+		WorkGroupNode revisionParent = repository.findByUuid(node.getParent());
+		WorkGroupNode rootParent = repository.findByUuid(revisionParent.getParent());
+		CopyMto copyMto = new CopyMto(revisionUuid, node.getName(), TargetKind.SHARED_SPACE);
+		WorkGroupNode parent = repository.findByUuid(parentUuid);
+		Document doc = documentRepository.findByUuid(node.getDocumentUuid());
+		String fileName = null;
+		WorkGroupNode wgNode = new WorkGroupNode();
+		if (!parent.equals(rootParent)) {
+			wgNode = copy(authUser, actor, workGroup, node.getDocumentUuid(), node.getName(), parent,
+					node.getCiphered(), node.getSize(), revisionUuid, copyMto);
+		} else {
+			if (strict) {
+				checkUniqueName(workGroup, parent, node.getName());
+			} else {
+				fileName = getNewName(authUser, (User) actor, workGroup, parent, node.getName());
+			}
+			wgNode = copy(authUser, actor, workGroup, node.getDocumentUuid(), fileName, parent, node.getCiphered(),
+					node.getSize(), revisionUuid, copyMto);
+		}
+		WorkGroupDocumentRevision documentRevision = new WorkGroupDocumentRevision(actor, wgNode.getName(), doc,
+				workGroup, wgNode);
+		repository.insert(documentRevision);
+		return wgNode;
 	}
 
 	@Override
