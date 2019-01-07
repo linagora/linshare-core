@@ -872,7 +872,8 @@
 	</dependencies>
 	<build>
 		<finalName>linshare-core</finalName>
-		<plugins>
+		<pluginManagement>
+			<plugins>
 			<!-- maven-compiler-plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -1152,6 +1153,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		</pluginManagement>
 		<resources>
 			<resource>
 				<filtering>false</filtering>
@@ -1179,7 +1181,6 @@
 				<directory>src/fongo/resources</directory>
 			</testResource>
 		</testResources>
-		<pluginManagement>
 			<plugins>
 				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
 				<plugin>
@@ -1213,7 +1214,6 @@
 					</configuration>
 				</plugin>
 			</plugins>
-		</pluginManagement>
 	</build>
 
 	<pluginRepositories>
