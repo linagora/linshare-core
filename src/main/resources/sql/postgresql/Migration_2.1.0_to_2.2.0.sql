@@ -226,7 +226,13 @@ UPDATE upload_request_entry
 		sha256sum = document_entry.sha256sum
 	FROM document_entry
 	WHERE document_entry.entry_id = upload_request_entry.document_entry_entry_id;
-ALTER TABLE upload_request_entry ALTER COLUMN document_id SET NOT NULL;
+
+UPDATE upload_request_entry
+	SET ls_type = 'data',
+		ciphered = FALSE,
+		copied = TRUE,
+		sha256sum = NULL
+	WHERE ls_type is NULL;
 ALTER TABLE upload_request_entry ALTER COLUMN ls_type SET NOT NULL;
 
 -- Update ldap_pattern
