@@ -160,7 +160,7 @@ public enum UpgradeTaskType {
 	UPGRADE_2_2_MIGRATE_WORKGROUP_MEMBER_AUDIT_TO_SHARED_SPACE_MEMBER_AUDIT,
 
 	/*
-	 * When we upgraded apache tika (1.19) we have new mimeType
+	 * When we upgraded apache tika (1.20) we have new mimeType
 	 * We have to update our database
 	 *
 	 */
