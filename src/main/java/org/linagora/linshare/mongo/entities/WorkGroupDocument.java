@@ -85,6 +85,7 @@ public class WorkGroupDocument extends WorkGroupNode {
 		this.hasRevision = false;
 		this.lastRevision = 0L;
 		this.uploadDate = new Date();
+		this.sha256sum = document.getSha256sum();
 		this.ciphered = false;
 		this.hasThumbnail = document.getHasThumbnail();
 		this.nodeType = WorkGroupNodeType.DOCUMENT;

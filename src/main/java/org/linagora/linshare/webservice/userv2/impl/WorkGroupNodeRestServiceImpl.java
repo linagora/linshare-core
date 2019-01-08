@@ -127,7 +127,7 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 	@Path("/")
 	@POST
 	@ApiOperation(value = "Create a workgroup node.", response = WorkGroupNode.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation."),
 					@ApiResponse(code = 404, message = "Workgroup not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
@@ -147,7 +147,7 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 	@Path("/")
 	@GET
 	@ApiOperation(value = "Get all workgroup folders.", response = WorkGroupNode.class, responseContainer = "Set")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation.") ,
 					@ApiResponse(code = 404, message = "Workgroup or folder not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
@@ -166,7 +166,7 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 	@Path("/{workGroupNodeUuid}")
 	@GET
 	@ApiOperation(value = "Get a workgroup folder.", response = WorkGroupNode.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation.") ,
 					@ApiResponse(code = 404, message = "Workgroup or folder not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
@@ -183,7 +183,7 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 	@Path("/{workGroupNodeUuid}")
 	@PUT
 	@ApiOperation(value = "Update a workgroup folder (name or parent).", response = WorkGroupNode.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation.") ,
 					@ApiResponse(code = 404, message = "Workgroup or folder not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
@@ -200,7 +200,7 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 	@Path("/")
 	@DELETE
 	@ApiOperation(value = "Delete a workgroup folder.", response = WorkGroupNode.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation.") ,
 					@ApiResponse(code = 404, message = "Workgroup or workgroup folder not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
@@ -216,7 +216,7 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 	@Path("/{workGroupFolderUuid}")
 	@DELETE
 	@ApiOperation(value = "Delete a workgroup folder.", response = WorkGroupNode.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation.") ,
 					@ApiResponse(code = 404, message = "Workgroup or workgroup folder not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
@@ -233,7 +233,7 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@ApiOperation(value = "Create a workgroup document which will contain the uploaded file.", response = WorkGroupEntryDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation."),
 					@ApiResponse(code = 404, message = "Workgroup document not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
@@ -289,7 +289,7 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 	@POST
 	@ApiOperation(value = "Create a workgroup document from an existing document or received share.", response = DocumentDto.class)
 	@ApiResponses({
-			@ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation."),
 			@ApiResponse(code = 404, message = "Document not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
@@ -307,7 +307,7 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 	@Path("/{uuid}/copy")
 	@POST
 	@ApiOperation(value = "Create a threworkgroupry which will contain the uploaded file.", response = WorkGroupEntryDto.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation."),
 					@ApiResponse(code = 404, message = "Workgroup node not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
@@ -328,7 +328,7 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 	@Path("/{uuid}")
 	@HEAD
 	@ApiOperation(value = "Get a workgroup node.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation.") ,
 					@ApiResponse(code = 404, message = "Workgroup node not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
@@ -347,7 +347,7 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 	@Path("/{uuid}/download")
 	@GET
 	@ApiOperation(value = "Download a file.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation."),
 					@ApiResponse(code = 404, message = "Workgroup node not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
@@ -363,7 +363,7 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 	@Path("/{uuid}/thumbnail{kind:(small)?|(medium)?|(large)?|(pdf)?}")
 	@GET
 	@ApiOperation(value = "Download the thumbnail of a file.")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation."),
 					@ApiResponse(code = 404, message = "Workgroup node not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
@@ -391,7 +391,7 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 	@Path("/{workGroupNodeUuid}/audit")
 	@GET
 	@ApiOperation(value = "Get all traces for a workgroup node.", response = AuditLogEntryUser.class, responseContainer="Set")
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role.") ,
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation.") ,
 					@ApiResponse(code = 404, message = "Workgroup or folder not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
@@ -416,7 +416,7 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Create a workgroup document which will contain the uploaded file.", response = WorkGroupNode.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation."),
 			@ApiResponse(code = 404, message = "Workgroup document not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
@@ -456,7 +456,7 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 	@Path("/{revisionUuid}/restore")
 	@PUT
 	@ApiOperation(value = "Restore a previous document revision", response = WorkGroupNode.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation."),
 					@ApiResponse(code = 404, message = "Workgroup node not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),

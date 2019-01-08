@@ -140,8 +140,8 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		}
 		Validate.notEmpty(parentUuid, "Missing workGroup parentUuid");
 		WorkGroupNode parentNode = getParentNode(actor, owner, workGroup, parentUuid);
-		if(parentNode.getNodeType().equals(WorkGroupNodeType.DOCUMENT) || 
-				nodeType != null && nodeType.equals(WorkGroupNodeType.DOCUMENT_REVISION)) {
+		if (WorkGroupNodeType.DOCUMENT.equals(parentNode.getNodeType())
+				|| WorkGroupNodeType.DOCUMENT_REVISION.equals(nodeType)) {
 			return workGroupDocumentRevisionService.findAll(actor, workGroup, parentUuid);
 		}
 		if (nodeType != null) {
@@ -265,13 +265,13 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 			}
 		}
 		WorkGroupNode dto = null;
-		if(!isRevisionOnly) {
-			dto = workGroupDocumentService.create(actor, owner, workGroup, tempFile, fileName, parentNode);
-			parentNode = dto;
-		}
-		WorkGroupDocumentRevision documentRevision = workGroupDocumentRevisionService.create(actor, owner, workGroup, tempFile, fileName, parentNode);
-		if(isRevisionOnly) {
+		if (isRevisionOnly) {
+			WorkGroupDocumentRevision documentRevision = (WorkGroupDocumentRevision) workGroupDocumentRevisionService
+					.create(actor, owner, workGroup, tempFile, fileName, parentNode);
 			dto = workGroupDocumentRevisionService.updateDocument(actor, (Account) owner, workGroup, documentRevision);
+		} else {
+			dto = workGroupDocumentService.create(actor, owner, workGroup, tempFile, fileName, parentNode);
+			workGroupDocumentRevisionService.create(actor, owner, workGroup, tempFile, fileName, dto);
 		}
 		return dto;
 	}

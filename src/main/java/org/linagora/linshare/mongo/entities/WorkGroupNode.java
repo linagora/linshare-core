@@ -57,13 +57,13 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({ @Type(value = WorkGroupFolder.class, name = "FOLDER"),
 		@Type(value = WorkGroupDocument.class, name = "DOCUMENT"),
-		@Type(value = WorkGroupAsyncTask.class, name = "ASYNC_TASK"),
-		@Type(value = WorkGroupDocumentRevision.class, name = "DOCUMENT_REVISION")
+		@Type(value = WorkGroupDocumentRevision.class, name = "DOCUMENT_REVISION"),
+		@Type(value = WorkGroupAsyncTask.class, name = "ASYNC_TASK")
 		})
 @XmlSeeAlso({ WorkGroupFolder.class,
 	WorkGroupDocument.class,
-	WorkGroupAsyncTask.class,
-	WorkGroupDocumentRevision.class
+	WorkGroupDocumentRevision.class,
+	WorkGroupAsyncTask.class
 	})
 @XmlRootElement(name = "WorkGroupNode")
 @Document(collection = "work_group_nodes")
@@ -272,57 +272,4 @@ public class WorkGroupNode implements Cloneable {
 			this.path += parent.getUuid() + ",";
 		}
 	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((creationDate == null) ? 0 : creationDate.hashCode());
-		result = prime * result + ((nodeType == null) ? 0 : nodeType.hashCode());
-		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
-		result = prime * result + ((path == null) ? 0 : path.hashCode());
-		result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
-		result = prime * result + ((workGroup == null) ? 0 : workGroup.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		WorkGroupNode other = (WorkGroupNode) obj;
-		if (creationDate == null) {
-			if (other.creationDate != null)
-				return false;
-		} else if (!creationDate.equals(other.creationDate))
-			return false;
-		if (nodeType != other.nodeType)
-			return false;
-		if (parent == null) {
-			if (other.parent != null)
-				return false;
-		} else if (!parent.equals(other.parent))
-			return false;
-		if (path == null) {
-			if (other.path != null)
-				return false;
-		} else if (!path.equals(other.path))
-			return false;
-		if (uuid == null) {
-			if (other.uuid != null)
-				return false;
-		} else if (!uuid.equals(other.uuid))
-			return false;
-		if (workGroup == null) {
-			if (other.workGroup != null)
-				return false;
-		} else if (!workGroup.equals(other.workGroup))
-			return false;
-		return true;
-	}
-
 }

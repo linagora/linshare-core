@@ -249,11 +249,6 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
-	public TimeUnitValueFunctionality getWorkGroupFileVersionExpiration(AbstractDomain domain) {
-		return new TimeUnitValueFunctionality((UnitValueFunctionality)_getFunctionality(domain, FunctionalityNames.WORK_GROUP__FILE_VERSIONING_EXPIRATION));
-	}
-
-	@Override
 	public Functionality getContactsListFunctionality(AbstractDomain domain) {
 		return _getFunctionality(domain, FunctionalityNames.CONTACTS_LIST);
 	}

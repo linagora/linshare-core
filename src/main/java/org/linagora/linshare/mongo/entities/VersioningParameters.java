@@ -35,7 +35,7 @@ package org.linagora.linshare.mongo.entities;
 
 import org.linagora.linshare.core.domain.constants.TimeUnit;
 
-public class WorkGroupVersioning {
+public class VersioningParameters {
 
 	protected Boolean isEnabled;
 
@@ -45,11 +45,11 @@ public class WorkGroupVersioning {
 
 	protected TimeUnit expirationUnit;
 
-	public WorkGroupVersioning() {
+	public VersioningParameters() {
 		super();
 	}
 
-	public WorkGroupVersioning(Boolean isEnabled, Boolean isExpirationEnabled, Integer expirationDelay,
+	public VersioningParameters(Boolean isEnabled, Boolean isExpirationEnabled, Integer expirationDelay,
 			TimeUnit expirationUnit) {
 		super();
 		this.isEnabled = isEnabled;

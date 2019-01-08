@@ -81,7 +81,6 @@ import org.linagora.linshare.core.service.TimeStampingService;
 import org.linagora.linshare.core.utils.AESCrypt;
 import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
-import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
@@ -378,7 +377,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		}
 		Document document = createDocument(workGroup, myFile, size, fileName, timeStampingUrl, mimeType);
 		WorkGroupDocument node = new WorkGroupDocument(actor, fileName, document, workGroup, parentNode);
-		node = setDocumentProperties(actor, node, fileName, parentNode, myFile, checkIfIsCiphered);
+		setDocumentProperties(actor, node, fileName, parentNode, myFile, checkIfIsCiphered);
 		try {
 			node = repository.insert(node);
 		} catch (org.springframework.dao.DuplicateKeyException e) {
@@ -388,7 +387,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		return node;
 	}
 
-	protected WorkGroupDocument setDocumentProperties(Account actor, WorkGroupDocument documentNode, String fileName, WorkGroupNode parentNode, File myFile, Boolean checkIfIsCiphered) {
+	protected void setDocumentProperties(Account actor, WorkGroupDocument documentNode, String fileName, WorkGroupNode parentNode, File myFile, Boolean checkIfIsCiphered) {
 		Validate.notNull(documentNode);
 		Validate.notNull(myFile);
 		// aes encrypt ? check headers
@@ -400,7 +399,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		documentNode.setUploadDate(new Date());
 		documentNode.setPathFromParent(parentNode);
 		documentNode.setLastAuthor(new AccountMto(actor, true));
-		return documentNode;
 	}
 
 	@Override

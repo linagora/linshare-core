@@ -43,7 +43,6 @@ import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
@@ -59,6 +58,7 @@ import org.slf4j.LoggerFactory;
 public class DocumentEntryRevisionBusinessServiceImpl extends DocumentEntryBusinessServiceImpl
 		implements DocumentEntryRevisionBusinessService {
 
+	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory.getLogger(DocumentEntryRevisionBusinessServiceImpl.class);
 
 	public DocumentEntryRevisionBusinessServiceImpl(
@@ -84,12 +84,8 @@ public class DocumentEntryRevisionBusinessServiceImpl extends DocumentEntryBusin
 			WorkGroupNode parentNode) throws BusinessException {
 		Document document = createDocument(workGroup, myFile, size, fileName, timeStampingUrl, mimeType);
 		WorkGroupDocumentRevision node = new WorkGroupDocumentRevision(actor, fileName, document, workGroup, parentNode);
-		node = (WorkGroupDocumentRevision) setDocumentProperties(actor, node, fileName, parentNode, myFile, checkIfIsCiphered);
-		try {
-			node = repository.insert(node);
-		} catch (org.springframework.dao.DuplicateKeyException e) {
-			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_REVISION_ALREADY_EXISTS, "Can not create this new document revision, it already exists.");
-		}
+		setDocumentProperties(actor, node, fileName, parentNode, myFile, checkIfIsCiphered);
+		node = repository.insert(node);
 		return node;
 	}
 }

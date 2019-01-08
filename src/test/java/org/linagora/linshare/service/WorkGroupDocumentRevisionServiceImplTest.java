@@ -65,7 +65,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
-import org.linagora.linshare.mongo.entities.WorkGroupVersioning;
+import org.linagora.linshare.mongo.entities.VersioningParameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -158,7 +158,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	@Test
 	public void findAllTest() throws IOException {
 		SharedSpaceNode node = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
-		node.setWorkGroupVersioning(new WorkGroupVersioning(true, false, null, null));
+		node.setWorkGroupVersioning(new VersioningParameters(true, false, null, null));
 		SharedSpaceNode ssn = sharedSpaceNodeService.create(john, john, node);
 		WorkGroup workGroup = threadService.find(john, john, ssn.getUuid());
 		WorkGroupNode folder = workGroupNodeService.getRootFolder(john, john, workGroup);
@@ -189,7 +189,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	@Test
 	public void restoreRevisionTest() throws IOException {
 		SharedSpaceNode node = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
-		node.setWorkGroupVersioning(new WorkGroupVersioning(true, false, null, null));
+		node.setWorkGroupVersioning(new VersioningParameters(true, false, null, null));
 		SharedSpaceNode ssn = sharedSpaceNodeService.create(john, john, node);
 		WorkGroup workGroup = threadService.find(john, john, ssn.getUuid());
 		WorkGroupNode folder = workGroupNodeService.getRootFolder(john, john, workGroup);
@@ -220,7 +220,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	@Test
 	public void deleteRevisionTest() throws IOException {
 		SharedSpaceNode node = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
-		node.setWorkGroupVersioning(new WorkGroupVersioning(true, false, null, null));
+		node.setWorkGroupVersioning(new VersioningParameters(true, false, null, null));
 		SharedSpaceNode ssn = sharedSpaceNodeService.create(john, john, node);
 		WorkGroup workGroup = threadService.find(john, john, ssn.getUuid());
 		WorkGroupNode folder = workGroupNodeService.getRootFolder(john, john, workGroup);
@@ -255,7 +255,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	@Test
 	public void deleteAllTest() throws IOException {
 		SharedSpaceNode node = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
-		node.setWorkGroupVersioning(new WorkGroupVersioning(true, false, null, null));
+		node.setWorkGroupVersioning(new VersioningParameters(true, false, null, null));
 		SharedSpaceNode ssn = sharedSpaceNodeService.create(john, john, node);
 		WorkGroup workGroup = threadService.find(john, john, ssn.getUuid());
 		WorkGroupNode folder = workGroupNodeService.getRootFolder(john, john, workGroup);

@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.service;
 
-import java.io.File;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
@@ -45,19 +44,16 @@ import org.linagora.linshare.mongo.entities.WorkGroupNode;
 
 public interface WorkGroupDocumentRevisionService extends WorkGroupDocumentService {
 
-	WorkGroupDocumentRevision create(Account actor, Account owner, WorkGroup workGroup, File tempFile, String fileName,
-			WorkGroupNode nodeParent) throws BusinessException;
-
 	WorkGroupDocument updateDocument(Account actor, Account owner, WorkGroup workGroup,
 			WorkGroupDocumentRevision documentRevision) throws BusinessException;
 
-	List<WorkGroupNode> findAll(Account actor, WorkGroup workGroup, String parentUuid)  throws BusinessException;
+	List<WorkGroupNode> findAll(Account actor, WorkGroup workGroup, String parentUuid) throws BusinessException;
 
-	List<WorkGroupNode> deleteAll(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode) throws BusinessException;
+	List<WorkGroupNode> deleteAll(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode)
+			throws BusinessException;
 
-	WorkGroupNode delete(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode) throws BusinessException;
-
-	WorkGroupDocument restore(Account actor, Account owner, WorkGroup workGroup, String revisionUuid) throws BusinessException;
+	WorkGroupDocument restore(Account actor, Account owner, WorkGroup workGroup, String revisionUuid)
+			throws BusinessException;
 
 	WorkGroupNode findMostRecent(WorkGroup workGroup, String parentUuid) throws BusinessException;
 }

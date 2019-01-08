@@ -68,7 +68,7 @@ import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
-import org.linagora.linshare.mongo.entities.WorkGroupVersioning;
+import org.linagora.linshare.mongo.entities.VersioningParameters;
 import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
 import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
@@ -236,7 +236,7 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 
 	private boolean isVersioningEnabledInWorkGroup(WorkGroup workGroup) {
 		SharedSpaceNode ssn = sharedSpaceNodeMongoRepository.findByUuid(workGroup.getLsUuid());
-		WorkGroupVersioning workGroupVersioning = ssn.getWorkGroupVersioning();
+		VersioningParameters workGroupVersioning = ssn.getWorkGroupVersioning();
 		if (workGroupVersioning == null) {
 			return false;
 		}

@@ -128,22 +128,32 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 		Validate.notNull(nodeParent);
 		Long size = tempFile.length();
 		WorkGroupDocument document = null;
-		String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
-		AbstractDomain domain = owner.getDomain();
-		checkSpace(workgroup, size);
-		// want a timestamp on doc ?
-		String timeStampingUrl = getTimeStampingUrl(domain);
-		Boolean checkIfIsCiphered = checkFileProperties(owner, fileName, mimeType, tempFile, size, domain);
-		document = documentEntryBusinessService.createWorkGroupDocument(owner, workgroup, tempFile, size, fileName,
-				checkIfIsCiphered, timeStampingUrl, mimeType, nodeParent);
-		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
-				AuditLogEntryType.WORKGROUP_DOCUMENT, document, workgroup);
-		addMembersToLog(workgroup, log);
-		logEntryService.insert(log);
+		try {
+			String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
+			AbstractDomain domain = owner.getDomain();
+			checkSpace(workgroup, size);
+			// want a timestamp on doc ?
+			String timeStampingUrl = getTimeStampingUrl(domain);
+			Boolean checkIfIsCiphered = checkFileProperties(owner, fileName, mimeType, tempFile, size, domain);
+			document = documentEntryBusinessService.createWorkGroupDocument(owner, workgroup, tempFile, size, fileName,
+					checkIfIsCiphered, timeStampingUrl, mimeType, nodeParent);
+			WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
+					AuditLogEntryType.WORKGROUP_DOCUMENT, document, workgroup);
+			addMembersToLog(workgroup, log);
+			logEntryService.insert(log);
+		} finally {
+			try {
+				logger.debug("deleting temp file : " + tempFile.getName());
+				tempFile.delete(); // remove the temporary file
+			} catch (Exception e) {
+				logger.error("can not delete temp file : " + e.getMessage());
+			}
+		}
 		return document;
 	}
 
-	protected Boolean checkFileProperties(Account owner, String fileName, String mimeType, File tempFile, Long size, AbstractDomain domain) {
+	protected Boolean checkFileProperties(Account owner, String fileName, String mimeType, File tempFile, Long size,
+			AbstractDomain domain) {
 		// check if the file MimeType is allowed
 		Functionality mimeFunctionality = functionalityReadOnlyService.getMimeTypeFunctionality(domain);
 		if (mimeFunctionality.getActivationPolicy().getStatus()) {
