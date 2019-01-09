@@ -51,6 +51,7 @@ import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.DocumentBatchResultContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
@@ -115,7 +116,7 @@ public class Sha256SumUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 				threadEntryRepository.update(threadEntry);
 			}
 			context.setProcessed(true);
-		} catch (IOException e) {
+		} catch (TechnicalException | IOException e) {
 			logger.error(e.getMessage(), e);
 			throw new BatchBusinessException(context, e.getMessage());
 		};
