@@ -52,6 +52,14 @@ public class MigrationFileDataStoreImpl implements FileDataStore {
 		this.oldDataStore = oldDataStore;
 	}
 
+	public FileDataStore getNewDataStore() {
+		return newDataStore;
+	}
+
+	public FileDataStore getOldDataStore() {
+		return oldDataStore;
+	}
+
 	@Override
 	public void remove(FileMetaData metadata) {
 		if (newDataStore.exists(metadata)) {
