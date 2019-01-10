@@ -42,7 +42,6 @@ import org.linagora.linshare.core.batches.impl.GenericUpgradeTaskImpl;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.dao.impl.MigrationFileDataStoreImpl;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
-import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.constants.UpgradeTaskType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
@@ -60,6 +59,7 @@ import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.ThreadEntryRepository;
 import org.linagora.linshare.mongo.repository.UpgradeTaskLogMongoRepository;
+import org.springmodules.jcr.JcrSystemException;
 
 public class FileDataStoreMigrationUpgradeTaskImpl extends GenericUpgradeTaskImpl {
 
@@ -147,46 +147,28 @@ public class FileDataStoreMigrationUpgradeTaskImpl extends GenericUpgradeTaskImp
 	}
 
 	protected void upgrade(BatchRunContext batchRunContext, Document document, BatchResultContext<Document> res) {
-		for (ThumbnailType kind : ThumbnailType.values()) {
-			FileMetaDataKind fileMetaDataKind = ThumbnailType.toFileMetaDataKind(kind);
-			String thmbUuid = ThumbnailType.getThmbUuid(fileMetaDataKind, document);
-			FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, document);
-			FileMetaData metadataTmb = new FileMetaData(fileMetaDataKind, document);
-			if (thmbUuid != null && fileDataStore.exists(metadataTmb)) {
-				try (InputStream stream = fileDataStore.get(metadata);
-						InputStream streamTmb = fileDataStore.get(metadataTmb)) {
-					metadata = fileDataStore.add(stream, metadata);
-					metadataTmb = fileDataStore.add(streamTmb, metadataTmb);
-					document.setBucketUuid(metadata.getBucketUuid());
-					document.setToUpgrade(false);
-					repository.update(document);
-					res.setProcessed(true);
-				} catch (IOException e) {
-					String msg = String.format("Can not copy the current document to the new file data store : %1$s.",
-							document.toString());
-					console.logError(batchRunContext, msg);
-					logger.error(e.getMessage(), e);
-					throw new BatchBusinessException(res, msg);
-				}
-			} else {
-				try (InputStream stream = fileDataStore.get(metadata)) {
-					metadata = fileDataStore.add(stream, metadata);
-					document.setBucketUuid(metadata.getBucketUuid());
-					document.setToUpgrade(false);
-					// If thmbUuid is not null but does not exist in fileDataStore, we force it to null
-					document.setThmbUuid(null);
-					repository.update(document);
-					res.setProcessed(true);
-				} catch (IOException e) {
-					String msg = String.format("Can not copy the current document to the new file data store : %1$s.",
-							document.toString());
-					console.logError(batchRunContext, msg);
-					logger.error(e.getMessage(), e);
-					throw new BatchBusinessException(res, msg);
-				}
-			}
+		MigrationFileDataStoreImpl dataStore = (MigrationFileDataStoreImpl) this.fileDataStore;
+		FileDataStore newDataStore = dataStore.getNewDataStore();
+		FileDataStore oldDataStore = dataStore.getOldDataStore();
 
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, document);
+		try (InputStream stream = oldDataStore.get(metadata)) {
+			metadata = newDataStore.add(stream, metadata);
+			document.setBucketUuid(metadata.getBucketUuid());
+			document.setHasThumbnail(false);
+			document.setThmbUuid(null);
+			document.setComputeThumbnail(true);
+			document.getThumbnails().clear();
+			document.setToUpgrade(false);
+			repository.update(document);
+			res.setProcessed(true);
+		} catch (JcrSystemException | TechnicalException | IOException e) {
+			String msg = String.format("Can not copy the current document to the new file data store : %1$s.", document.toString());
+			console.logError(batchRunContext, msg);
+			logger.error(e.getMessage(), e);
+			throw new BatchBusinessException(res, msg);
 		}
+
 	}
 
 	@Override
