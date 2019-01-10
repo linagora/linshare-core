@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
@@ -95,6 +96,8 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 
 	protected final WorkGroupDocumentRevisionService workGroupDocumentRevisionService;
 
+	protected final MimeTypeMagicNumberDao mimeTypeIdentifier;
+
 	public WorkGroupNodeServiceImpl(WorkGroupNodeMongoRepository repository, LogEntryService logEntryService,
 			WorkGroupDocumentService workGroupDocumentService,
 			WorkGroupFolderService workGroupFolderService,
@@ -102,7 +105,8 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 			AntiSamyService antiSamyService,
 			MongoTemplate mongoTemplate,
 			FunctionalityReadOnlyService functionalityReadOnlyService,
-			WorkGroupDocumentRevisionService workGroupDocumentRevisionService) {
+			WorkGroupDocumentRevisionService workGroupDocumentRevisionService,
+			MimeTypeMagicNumberDao mimeTypeIdentifier) {
 		super(rac);
 		this.repository = repository;
 		this.workGroupDocumentService = workGroupDocumentService;
@@ -112,6 +116,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		this.mongoTemplate = mongoTemplate;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.workGroupDocumentRevisionService = workGroupDocumentRevisionService;
+		this.mimeTypeIdentifier = mimeTypeIdentifier;
 	}
 
 	@Override
@@ -264,13 +269,15 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 				}
 			}
 		}
+		Long size = tempFile.length();
+		String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
 		WorkGroupNode dto = null;
 		if (isRevisionOnly) {
 			WorkGroupDocumentRevision documentRevision = (WorkGroupDocumentRevision) workGroupDocumentRevisionService
 					.create(actor, owner, workGroup, tempFile, fileName, parentNode);
 			dto = workGroupDocumentRevisionService.updateDocument(actor, (Account) owner, workGroup, documentRevision);
 		} else {
-			dto = workGroupDocumentService.create(actor, owner, workGroup, tempFile, fileName, parentNode);
+			dto = workGroupDocumentService.create(actor, owner, workGroup, size, mimeType, fileName, parentNode);
 			workGroupDocumentRevisionService.create(actor, owner, workGroup, tempFile, fileName, dto);
 		}
 		return dto;

@@ -91,6 +91,18 @@ public class WorkGroupDocument extends WorkGroupNode {
 		this.nodeType = WorkGroupNodeType.DOCUMENT;
 	}
 
+	public WorkGroupDocument(Account author, String name, Long size, String mimeType, WorkGroup workGroup,
+			WorkGroupNode nodeParent) {
+		super(new AccountMto(author, true), name, nodeParent.getUuid(), workGroup.getLsUuid());
+		this.size = size;
+		this.mimeType = mimeType;
+		this.hasRevision = false;
+		this.lastRevision = 0L;
+		this.uploadDate = new Date();
+		this.ciphered = false;
+		this.nodeType = WorkGroupNodeType.DOCUMENT;
+	}
+
 	public Long getSize() {
 		return size;
 	}

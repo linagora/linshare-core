@@ -153,12 +153,12 @@ public class SharedSpaceNode {
 		this.nodeType = nodeType;
 	}
 
-	public VersioningParameters getWorkGroupVersioning() {
+	public VersioningParameters getVersioningParameters() {
 		return versioningParameters;
 	}
 
-	public void setWorkGroupVersioning(VersioningParameters workGroupVersioning) {
-		this.versioningParameters = workGroupVersioning;
+	public void setVersioningParameters(VersioningParameters versioningParameters) {
+		this.versioningParameters = versioningParameters;
 	}
 
 	@Override

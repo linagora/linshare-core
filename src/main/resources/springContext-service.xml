@@ -331,6 +331,7 @@
 		<constructor-arg ref="workGroupNodeResourceAccessControl" />
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="workGroupDocumentRevisionService" />
+		<constructor-arg ref="mimeTypeMagicNumberDao"/>
 	</bean>
 
 	<bean id="workGroupDocumentService" class="org.linagora.linshare.core.service.impl.WorkGroupDocumentServiceImpl">

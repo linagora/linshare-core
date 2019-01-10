@@ -62,10 +62,10 @@ import org.linagora.linshare.core.service.WorkGroupDocumentRevisionService;
 import org.linagora.linshare.core.service.WorkGroupDocumentService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.VersioningParameters;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
-import org.linagora.linshare.mongo.entities.VersioningParameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -146,7 +146,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
 		IOUtils.transferTo(stream1, tempFile1);
 
-		WorkGroupNode document = workGroupDocumentService.create(john, john, workGroup, tempFile1, tempFile1.getName(), folder);
+		WorkGroupNode document = workGroupDocumentService.create(john, john, workGroup, tempFile1.length(), "text/plain", tempFile1.getName(),folder);
 		WorkGroupNode revision = workGroupDocumentRevisionService.create(john, john, workGroup, tempFile1, tempFile1.getName(), document);
 
 		assertEquals(tempFile1.getName(), document.getName());
@@ -158,7 +158,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	@Test
 	public void findAllTest() throws IOException {
 		SharedSpaceNode node = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
-		node.setWorkGroupVersioning(new VersioningParameters(true, false, null, null));
+		node.setVersioningParameters(new VersioningParameters(true, false, null, null));
 		SharedSpaceNode ssn = sharedSpaceNodeService.create(john, john, node);
 		WorkGroup workGroup = threadService.find(john, john, ssn.getUuid());
 		WorkGroupNode folder = workGroupNodeService.getRootFolder(john, john, workGroup);
@@ -173,7 +173,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		File tempFile3 = File.createTempFile("linshare-test", ".tmp");
 		IOUtils.transferTo(stream3, tempFile3);
 
-		WorkGroupNode document = workGroupDocumentService.create(john, john, workGroup, tempFile1, tempFile1.getName(), folder);
+		WorkGroupNode document = workGroupDocumentService.create(john, john, workGroup, tempFile1.length(), "text/plain", tempFile1.getName(), folder);
 		workGroupDocumentRevisionService.create(john, john, workGroup, tempFile1, tempFile1.getName(), document);
 		workGroupDocumentRevisionService.create(john, john, workGroup, tempFile2, tempFile2.getName(), document);
 		workGroupDocumentRevisionService.create(john, john, workGroup, tempFile3, tempFile3.getName(), document);
@@ -189,7 +189,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	@Test
 	public void restoreRevisionTest() throws IOException {
 		SharedSpaceNode node = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
-		node.setWorkGroupVersioning(new VersioningParameters(true, false, null, null));
+		node.setVersioningParameters(new VersioningParameters(true, false, null, null));
 		SharedSpaceNode ssn = sharedSpaceNodeService.create(john, john, node);
 		WorkGroup workGroup = threadService.find(john, john, ssn.getUuid());
 		WorkGroupNode folder = workGroupNodeService.getRootFolder(john, john, workGroup);
@@ -204,7 +204,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		File tempFile3 = File.createTempFile("linshare-test", ".tmp");
 		IOUtils.transferTo(stream3, tempFile3);
 
-		WorkGroupNode document = workGroupDocumentService.create(john, john, workGroup, tempFile1, tempFile1.getName(), folder);
+		WorkGroupNode document = workGroupDocumentService.create(john, john, workGroup, tempFile1.length(), "text/plain", tempFile1.getName(), folder);
 		workGroupDocumentRevisionService.create(john, john, workGroup, tempFile1, tempFile1.getName(), document);
 		WorkGroupNode revision2 = workGroupDocumentRevisionService.create(john, john, workGroup, tempFile2, tempFile2.getName(), document);
 		WorkGroupNode revision3 = workGroupDocumentRevisionService.create(john, john, workGroup, tempFile3, tempFile3.getName(), document);
@@ -220,7 +220,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	@Test
 	public void deleteRevisionTest() throws IOException {
 		SharedSpaceNode node = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
-		node.setWorkGroupVersioning(new VersioningParameters(true, false, null, null));
+		node.setVersioningParameters(new VersioningParameters(true, false, null, null));
 		SharedSpaceNode ssn = sharedSpaceNodeService.create(john, john, node);
 		WorkGroup workGroup = threadService.find(john, john, ssn.getUuid());
 		WorkGroupNode folder = workGroupNodeService.getRootFolder(john, john, workGroup);
@@ -235,7 +235,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		File tempFile3 = File.createTempFile("linshare-test", ".tmp");
 		IOUtils.transferTo(stream3, tempFile3);
 
-		WorkGroupNode document = workGroupDocumentService.create(john, john, workGroup, tempFile1, tempFile1.getName(), folder);
+		WorkGroupNode document = workGroupDocumentService.create(john, john, workGroup, tempFile1.length(), "text/plain", tempFile1.getName(), folder);
 		workGroupDocumentRevisionService.create(john, john, workGroup, tempFile1, tempFile1.getName(), document);
 		WorkGroupNode revision2 = workGroupDocumentRevisionService.create(john, john, workGroup, tempFile2, tempFile2.getName(), document);
 		workGroupDocumentRevisionService.create(john, john, workGroup, tempFile3, tempFile3.getName(), document);
@@ -255,7 +255,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	@Test
 	public void deleteAllTest() throws IOException {
 		SharedSpaceNode node = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
-		node.setWorkGroupVersioning(new VersioningParameters(true, false, null, null));
+		node.setVersioningParameters(new VersioningParameters(true, false, null, null));
 		SharedSpaceNode ssn = sharedSpaceNodeService.create(john, john, node);
 		WorkGroup workGroup = threadService.find(john, john, ssn.getUuid());
 		WorkGroupNode folder = workGroupNodeService.getRootFolder(john, john, workGroup);
@@ -270,7 +270,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		File tempFile3 = File.createTempFile("linshare-test", ".tmp");
 		IOUtils.transferTo(stream3, tempFile3);
 
-		WorkGroupNode document = workGroupDocumentService.create(john, john, workGroup, tempFile1, tempFile1.getName(), folder);
+		WorkGroupNode document = workGroupDocumentService.create(john, john, workGroup, tempFile1.length(), "text/plain", tempFile1.getName(), folder);
 		workGroupDocumentRevisionService.create(john, john, workGroup, tempFile1, tempFile1.getName(), document);
 		workGroupDocumentRevisionService.create(john, john, workGroup, tempFile2, tempFile2.getName(), document);
 		workGroupDocumentRevisionService.create(john, john, workGroup, tempFile3, tempFile3.getName(), document);

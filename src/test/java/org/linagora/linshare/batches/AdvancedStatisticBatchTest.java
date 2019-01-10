@@ -200,7 +200,7 @@ public class AdvancedStatisticBatchTest extends AbstractTransactionalJUnit4Sprin
 		AccountMto author = new AccountMto(jane);
 		WorkGroupNode workGroupFolder = new WorkGroupFolder(author, "folder1", null, workGroup.getLsUuid());
 		workGroupNodeService.create(jane, jane, workGroup, workGroupFolder, false, false);
-		workGroupDocumentService.create(jane, jane, workGroup, tempFile, "tempFile", workGroupFolder);
+		workGroupNodeService.create(jane, jane, workGroup, tempFile, "tempFile", workGroupFolder.getUuid(), false);
 	}
 
 	private void createSharedSpaceNode(Account account, String label, String groupUuid) {

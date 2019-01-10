@@ -206,6 +206,7 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 		List<WorkGroupNode> nodes = Lists.newArrayList();
 		if (isVersioningFunctionalityEnabled && isVersioningEnabledInWorkGroup(workGroup)) {
 			nodes = repository.findByWorkGroupAndParentAndNodeType(workGroup.getLsUuid(), parentUuid, WorkGroupNodeType.DOCUMENT_REVISION);
+			// TODO : yse Create mongoTemplate query to find all revision and exclude the most recent
 			nodes = nodes.stream()
 					.sorted(Comparator.comparing(WorkGroupNode::getCreationDate, Comparator.reverseOrder()))
 					.collect(Collectors.toList());
@@ -236,11 +237,11 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 
 	private boolean isVersioningEnabledInWorkGroup(WorkGroup workGroup) {
 		SharedSpaceNode ssn = sharedSpaceNodeMongoRepository.findByUuid(workGroup.getLsUuid());
-		VersioningParameters workGroupVersioning = ssn.getWorkGroupVersioning();
-		if (workGroupVersioning == null) {
+		VersioningParameters versioningParameters = ssn.getVersioningParameters();
+		if (versioningParameters == null) {
 			return false;
 		}
-		return workGroupVersioning.isEnabled();
+		return versioningParameters.isEnabled();
 	}
 
 	@Override
@@ -261,10 +262,11 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 		if(revisions.isEmpty()) {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_REVISION_NOT_FOUND, "The revision has not been found");
 		}
-		if(!revisions.contains(revisionToDelete)) {
-			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_REVISION_DELETE_FORBIDDEN, "You can't delete the most recent revision, try to delete the whole document");
-		}
-		return deleteRevision(actor, owner, workGroup, (WorkGroupDocumentRevision) workGroupNode);
+		revisions.stream()
+		.filter(item -> item.getUuid().equals(revisionToDelete.getUuid()))
+		.findFirst()
+		.orElseThrow(() -> new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_REVISION_DELETE_FORBIDDEN, "You can't delete the most recent revision, try to delete the whole document"));
+		return deleteRevision(actor, owner, workGroup, (WorkGroupDocumentRevision) revisionToDelete);
 	}
 
 	private WorkGroupDocumentRevision deleteRevision(Account actor, Account owner, WorkGroup workGroup, WorkGroupDocumentRevision revision) throws BusinessException {

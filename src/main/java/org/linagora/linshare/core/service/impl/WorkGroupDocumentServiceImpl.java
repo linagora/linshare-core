@@ -123,42 +123,28 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 	}
 
 	@Override
-	public WorkGroupNode create(Account actor, Account owner, WorkGroup workgroup, File tempFile, String fileName,
+	public WorkGroupNode create(Account actor, Account owner, WorkGroup workgroup, Long size, String mimeType, String fileName,
 			WorkGroupNode nodeParent) throws BusinessException {
 		Validate.notNull(nodeParent);
-		Long size = tempFile.length();
-		WorkGroupDocument document = null;
-		try {
-			String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
-			AbstractDomain domain = owner.getDomain();
-			checkSpace(workgroup, size);
-			// want a timestamp on doc ?
-			String timeStampingUrl = getTimeStampingUrl(domain);
-			Boolean checkIfIsCiphered = checkFileProperties(owner, fileName, mimeType, tempFile, size, domain);
-			document = documentEntryBusinessService.createWorkGroupDocument(owner, workgroup, tempFile, size, fileName,
-					checkIfIsCiphered, timeStampingUrl, mimeType, nodeParent);
-			WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
-					AuditLogEntryType.WORKGROUP_DOCUMENT, document, workgroup);
-			addMembersToLog(workgroup, log);
-			logEntryService.insert(log);
-		} finally {
-			try {
-				logger.debug("deleting temp file : " + tempFile.getName());
-				tempFile.delete(); // remove the temporary file
-			} catch (Exception e) {
-				logger.error("can not delete temp file : " + e.getMessage());
-			}
-		}
-		return document;
-	}
-
-	protected Boolean checkFileProperties(Account owner, String fileName, String mimeType, File tempFile, Long size,
-			AbstractDomain domain) {
+		WorkGroupDocument document= null;
+		AbstractDomain domain = owner.getDomain();
+		checkSpace(workgroup, size);
 		// check if the file MimeType is allowed
 		Functionality mimeFunctionality = functionalityReadOnlyService.getMimeTypeFunctionality(domain);
 		if (mimeFunctionality.getActivationPolicy().getStatus()) {
 			mimeTypeService.checkFileMimeType(owner, fileName, mimeType);
 		}
+		document = new WorkGroupDocument(actor, fileName, size, mimeType, workgroup, nodeParent);
+		document = repository.insert(document);
+		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
+				AuditLogEntryType.WORKGROUP_DOCUMENT, document, workgroup);
+		addMembersToLog(workgroup, log);
+		logEntryService.insert(log);
+		return document;
+	}
+
+	protected Boolean checkFileProperties(Account owner, String fileName, String mimeType, File tempFile, Long size,
+			AbstractDomain domain) {
 		virusScannerService.checkVirus(fileName, owner, tempFile, size);
 		Functionality enciphermentFunctionality = functionalityReadOnlyService.getEnciphermentFunctionality(domain);
 		Boolean checkIfIsCiphered = enciphermentFunctionality.getActivationPolicy().getStatus();

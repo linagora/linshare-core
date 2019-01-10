@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.service;
 
-import java.io.File;
 import java.io.InputStream;
 
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
@@ -46,7 +45,7 @@ import org.linagora.linshare.mongo.entities.mto.CopyMto;
 
 public interface WorkGroupDocumentService extends WorkGroupNodeAbstractService {
 
-	WorkGroupNode create(Account actor, Account owner, WorkGroup workGroup, File tempFile, String fileName,
+	WorkGroupNode create(Account actor, Account owner, WorkGroup workGroup, Long size, String mimeType, String fileName,
 			WorkGroupNode nodeParent) throws BusinessException;
 
 	WorkGroupNode copy(Account actor, Account owner, WorkGroup toWorkGroup, String documentUuid, String fileName,
