@@ -145,38 +145,30 @@ public class FileDataStoreMigrationUpgradeTaskImpl extends GenericUpgradeTaskImp
 	}
 
 	protected void upgrade(BatchRunContext batchRunContext, Document document, BatchResultContext<Document> res) {
-		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, document);
 		FileMetaData metadataTmb = new FileMetaData(FileMetaDataKind.THUMBNAIL, document);
 		if (document.getThmbUuid() != null && fileDataStore.exists(metadataTmb)) {
-			try (InputStream stream = fileDataStore.get(metadata);
-					InputStream streamTmb = fileDataStore.get(metadataTmb)) {
-				metadata = fileDataStore.add(stream, metadata);
+			try (InputStream streamTmb = fileDataStore.get(metadataTmb)) {
 				metadataTmb = fileDataStore.add(streamTmb, metadataTmb);
-				document.setBucketUuid(metadata.getBucketUuid());
-				document.setToUpgrade(false);
-				repository.update(document);
-				res.setProcessed(true);
 			} catch (Exception e) {
-				String msg = String.format("Can not copy the current document to the new file data store : %1$s.", document.toString());
-				console.logError(batchRunContext, msg);
-				logger.error(e.getMessage(), e);
-				throw new BatchBusinessException(res, msg);
-			}
-		} else {
-			try (InputStream stream = fileDataStore.get(metadata)) {
-				metadata = fileDataStore.add(stream, metadata);
-				document.setBucketUuid(metadata.getBucketUuid());
-				document.setToUpgrade(false);
-				// If thmbUuid is not null but does not exist in fileDataStore, we force it to null
+				String msg = String.format("Can not copy the current  thumbnail document to the new file data store : %1$s. IGNORED", document.toString());
+				console.logWarn(batchRunContext, msg);
+				logger.warn(e.getMessage(), e);
 				document.setThmbUuid(null);
-				repository.update(document);
-				res.setProcessed(true);
-			} catch (Exception e) {
-				String msg = String.format("Can not copy the current document to the new file data store : %1$s.", document.toString());
-				console.logError(batchRunContext, msg);
-				logger.error(e.getMessage(), e);
-				throw new BatchBusinessException(res, msg);
 			}
+		}
+
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, document);
+		try (InputStream stream = fileDataStore.get(metadata)) {
+			metadata = fileDataStore.add(stream, metadata);
+			document.setBucketUuid(metadata.getBucketUuid());
+			document.setToUpgrade(false);
+			repository.update(document);
+			res.setProcessed(true);
+		} catch (Exception e) {
+			String msg = String.format("Can not copy the current document to the new file data store : %1$s.", document.toString());
+			console.logError(batchRunContext, msg);
+			logger.error(e.getMessage(), e);
+			throw new BatchBusinessException(res, msg);
 		}
 	}
 
