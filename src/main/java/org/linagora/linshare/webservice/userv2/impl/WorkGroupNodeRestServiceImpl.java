@@ -535,4 +535,23 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 					"Failure during asynchronous file upload in the asyncTask with UUID " + asyncTask.getUuid());
 		}
 	}
+
+	@Path("/{workGroupDocumentUuid}/create_revision")
+	@POST
+	@ApiOperation(value = "Restore a previous document revision", response = WorkGroupNode.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+					@ApiResponse(code = 404, message = "Workgroup node not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+					})
+	@Override
+	public WorkGroupNode createRevFromDoc(
+			@ApiParam(value = "The workgroup uuid.", required = true)
+				@PathParam("workGroupUuid") String workGroupUuid,
+			@ApiParam(value = "The document uuid to create a revision from", required = true)
+				@PathParam("workGroupDocumentUuid") String workGroupDocumentUuid,
+			@ApiParam(value = "The parent node uuid.", required = false)
+				@QueryParam("parentUuid") String parentUuid) throws BusinessException {
+		return workGroupNodeFacade.createRevFromDoc(null, workGroupUuid, workGroupDocumentUuid, parentUuid);
+	}
 }

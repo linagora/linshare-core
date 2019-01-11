@@ -348,4 +348,34 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 		newWGDocument = updateDocument(authUser, actor, toWorkGroup, copiedRevision);
 		return newWGDocument;
 	}
+
+	@Override
+	public WorkGroupDocumentRevision createRevFromDoc(Account authUser, Account actor, WorkGroup workGroup,
+			String workGroupDocumentUuid, String parentUuid) {
+		Validate.notNull(workGroupDocumentUuid);
+		WorkGroupDocument workGroupNode = (WorkGroupDocument) repository.findByUuid(workGroupDocumentUuid);
+		if (workGroupNode == null) {
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN,
+					"The node has not been found.");
+		}
+		if (!workGroupNode.getNodeType().equals(WorkGroupNodeType.DOCUMENT)) {
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED,
+					"The node type is not a Document.");
+		}
+		WorkGroupDocumentRevision mostRecent = (WorkGroupDocumentRevision) findMostRecent(workGroup,
+				workGroupNode.getUuid());
+		CopyMto copyMto = new CopyMto(mostRecent.getUuid(), mostRecent.getName(), TargetKind.SHARED_SPACE);
+		String fileName = getNewName(authUser, (User) actor, workGroup, workGroupNode, workGroupNode.getName());
+		WorkGroupDocumentRevision newRev = new WorkGroupDocumentRevision();
+		if (Strings.isNullOrEmpty(parentUuid)) {
+			newRev = (WorkGroupDocumentRevision) copy(authUser, actor, workGroup, mostRecent.getDocumentUuid(),
+					fileName, workGroupNode, mostRecent.getCiphered(), mostRecent.getSize(), workGroupNode.getUuid(),
+					copyMto);
+		}
+		WorkGroupNode nodeParent = repository.findByUuid(parentUuid);
+		newRev = (WorkGroupDocumentRevision) copy(authUser, actor, workGroup, mostRecent.getDocumentUuid(), fileName,
+				nodeParent, mostRecent.getCiphered(), mostRecent.getSize(), workGroupNode.getUuid(), copyMto);
+		updateDocument(authUser, actor, workGroup, newRev);
+		return newRev;
+	}
 }

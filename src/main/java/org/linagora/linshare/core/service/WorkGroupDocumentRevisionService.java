@@ -67,4 +67,7 @@ public interface WorkGroupDocumentRevisionService extends WorkGroupDocumentServi
 
 	WorkGroupNode createDocFromRevision(Account actor, Account owner, WorkGroup workGroup, String revisionUuid,
 			String parentUuid, Boolean strict) throws BusinessException;
+
+	WorkGroupDocumentRevision createRevFromDoc(Account authUser, Account actor, WorkGroup workGroup,
+			String workGroupDocumentUuid, String parentUuid);
 }
