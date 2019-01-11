@@ -162,7 +162,7 @@ public class UpgradeTaskRestServiceImpl implements UpgradeTaskRestService {
 		// Check if previous task was successful
 		if (taskDto.getParentIdentifier() != null) {
 			UpgradeTaskDto parentTaskDto = facade.find(taskDto.getParentIdentifier());
-			if (!parentTaskDto.getStatus().equals(UpgradeTaskStatus.SUCCESS)) {
+			if (!(parentTaskDto.getStatus().equals(UpgradeTaskStatus.SUCCESS)|| parentTaskDto.getStatus().equals(UpgradeTaskStatus.SKIPPED))) {
 				throw new BusinessException(BusinessErrorCode.FORBIDDEN,
 						"The current upgrade task can not be launch, parent task not complete : " + parentTaskDto.getIdentifier() + " : " +parentTaskDto.getStatus());
 			}
@@ -210,6 +210,8 @@ public class UpgradeTaskRestServiceImpl implements UpgradeTaskRestService {
 			if (parentIdentifier != null) {
 				UpgradeTaskDto parentTaskDto = facade.find(parentIdentifier);
 				if (parentTaskDto.getStatus().equals(UpgradeTaskStatus.SUCCESS)) {
+					result = true;
+				} else if (parentTaskDto.getStatus().equals(UpgradeTaskStatus.SKIPPED)) {
 					result = true;
 				}
 			}

@@ -42,6 +42,7 @@ public enum UpgradeTaskStatus {
 	PENDING,
 	PROCESSING,
 	SUCCESS,
+	SKIPPED,
 	FAILED;
 
 	public static UpgradeTaskStatus fromString(String s) {
