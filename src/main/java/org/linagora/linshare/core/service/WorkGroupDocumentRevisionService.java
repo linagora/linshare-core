@@ -42,11 +42,15 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
+import org.linagora.linshare.mongo.entities.mto.CopyMto;
 
 public interface WorkGroupDocumentRevisionService extends WorkGroupDocumentService {
 
 	WorkGroupDocumentRevision create(Account actor, Account owner, WorkGroup workGroup, File tempFile, String fileName,
 			WorkGroupNode nodeParent) throws BusinessException;
+
+	WorkGroupDocument copy(Account actor, Account owner, WorkGroup fromWorkGroup, WorkGroup toWorkGroup,
+			WorkGroupDocument document, WorkGroupNode nodeParent, String fileName, CopyMto copiedFrom) throws BusinessException;
 
 	WorkGroupDocument updateDocument(Account actor, Account owner, WorkGroup workGroup,
 			WorkGroupDocumentRevision documentRevision) throws BusinessException;

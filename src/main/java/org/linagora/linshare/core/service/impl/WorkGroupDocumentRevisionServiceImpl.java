@@ -69,10 +69,10 @@ import org.linagora.linshare.core.service.VirusScannerService;
 import org.linagora.linshare.core.service.WorkGroupDocumentRevisionService;
 import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.VersioningParameters;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
-import org.linagora.linshare.mongo.entities.VersioningParameters;
 import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
 import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
@@ -337,5 +337,24 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public WorkGroupDocument copy(Account authUser, Account actor, WorkGroup fromWorkGroup, WorkGroup toWorkGroup,
+			WorkGroupDocument document, WorkGroupNode toNodeParent, String fileName, CopyMto copiedFrom) throws BusinessException {
+		Validate.notNull(document, "Workgroupdocument is required");
+		Validate.notNull(toNodeParent, "nodeParent is required");
+		WorkGroupDocumentRevision revision = (WorkGroupDocumentRevision) findMostRecent(fromWorkGroup,
+				document.getUuid());
+		if (revision == null) {
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_REVISION_NOT_FOUND, "The document has not been found");
+		}
+		WorkGroupDocument newWGDocument = (WorkGroupDocument) super.create(authUser, actor, toWorkGroup,
+				document.getSize(), document.getMimeType(), fileName, toNodeParent);
+		WorkGroupDocumentRevision copiedRevision = (WorkGroupDocumentRevision) copy(authUser, actor, toWorkGroup,
+				revision.getDocumentUuid(), fileName, newWGDocument, document.getCiphered(),
+				document.getSize(), document.getUuid(), copiedFrom);
+		newWGDocument = updateDocument(authUser, actor, toWorkGroup, copiedRevision);
+		return newWGDocument;
 	}
 }

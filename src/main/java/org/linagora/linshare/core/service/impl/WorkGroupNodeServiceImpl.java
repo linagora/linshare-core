@@ -94,7 +94,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 
 	protected final FunctionalityReadOnlyService functionalityReadOnlyService;
 
-	protected final WorkGroupDocumentRevisionService workGroupDocumentRevisionService;
+	protected final WorkGroupDocumentRevisionService revisionService;
 
 	protected final MimeTypeMagicNumberDao mimeTypeIdentifier;
 
@@ -105,7 +105,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 			AntiSamyService antiSamyService,
 			MongoTemplate mongoTemplate,
 			FunctionalityReadOnlyService functionalityReadOnlyService,
-			WorkGroupDocumentRevisionService workGroupDocumentRevisionService,
+			WorkGroupDocumentRevisionService revisionService,
 			MimeTypeMagicNumberDao mimeTypeIdentifier) {
 		super(rac);
 		this.repository = repository;
@@ -115,7 +115,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		this.antiSamyService = antiSamyService;
 		this.mongoTemplate = mongoTemplate;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
-		this.workGroupDocumentRevisionService = workGroupDocumentRevisionService;
+		this.revisionService = revisionService;
 		this.mimeTypeIdentifier = mimeTypeIdentifier;
 	}
 
@@ -147,7 +147,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		WorkGroupNode parentNode = getParentNode(actor, owner, workGroup, parentUuid);
 		if (WorkGroupNodeType.DOCUMENT.equals(parentNode.getNodeType())
 				|| WorkGroupNodeType.DOCUMENT_REVISION.equals(nodeType)) {
-			return workGroupDocumentRevisionService.findAll(actor, workGroup, parentUuid);
+			return revisionService.findAll(actor, workGroup, parentUuid);
 		}
 		if (nodeType != null) {
 			return repository.findByWorkGroupAndParentAndNodeType(workGroup.getLsUuid(), parentUuid, nodeType);
@@ -273,12 +273,12 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
 		WorkGroupNode dto = null;
 		if (isRevisionOnly) {
-			WorkGroupDocumentRevision documentRevision = (WorkGroupDocumentRevision) workGroupDocumentRevisionService
+			WorkGroupDocumentRevision documentRevision = (WorkGroupDocumentRevision) revisionService
 					.create(actor, owner, workGroup, tempFile, fileName, parentNode);
-			dto = workGroupDocumentRevisionService.updateDocument(actor, (Account) owner, workGroup, documentRevision);
+			dto = revisionService.updateDocument(actor, (Account) owner, workGroup, documentRevision);
 		} else {
 			dto = workGroupDocumentService.create(actor, owner, workGroup, size, mimeType, fileName, parentNode);
-			workGroupDocumentRevisionService.create(actor, owner, workGroup, tempFile, fileName, dto);
+			revisionService.create(actor, owner, workGroup, tempFile, fileName, dto);
 		}
 		return dto;
 	}
@@ -397,10 +397,10 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 			}
 			workGroupFolderService.delete(actor, owner, workGroup, workGroupNode);
 		} else if (isDocument(workGroupNode)) {
-			workGroupDocumentRevisionService.deleteAll(actor, owner, workGroup, workGroupNode);
+			revisionService.deleteAll(actor, owner, workGroup, workGroupNode);
 			workGroupDocumentService.delete(actor, owner, workGroup, workGroupNode);
 		} else if (isRevision(workGroupNode)) {
-			workGroupDocumentRevisionService.delete(actor, owner, workGroup, workGroupNode);
+			revisionService.delete(actor, owner, workGroup, workGroupNode);
 		} else {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not delete this type of node, type not supported.");
 		}
@@ -426,7 +426,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		WorkGroupNode node = find(actor, owner, workGroup, workGroupNodeUuid, false);
 		checkDownloadPermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, node, workGroup);
 		if(isDocument(node)) {
-			node = workGroupDocumentRevisionService.findMostRecent(workGroup, node.getUuid());
+			node = revisionService.findMostRecent(workGroup, node.getUuid());
 		}
 		if (isRevision(node)) {
 			InputStream stream = workGroupDocumentService.getDocumentStream(actor, owner, workGroup, (WorkGroupDocument) node);
@@ -492,8 +492,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 				WorkGroupDocument doc = (WorkGroupDocument) fromNode;
 				String fileName = workGroupDocumentService.getNewName(actor, owner, toWorkGroup, toNode, fromNode.getName());
 				CopyMto copyFrom = new CopyMto(doc, fromWorkGroup);
-				WorkGroupNode copy = workGroupDocumentService.copy(actor, owner, toWorkGroup, doc.getDocumentUuid(), fileName,
-						toNode, doc.getCiphered(), doc.getSize(), fromNodeUuid, copyFrom);
+				WorkGroupNode copy = revisionService.copy(actor, owner,fromWorkGroup, toWorkGroup, doc, toNode, fileName, copyFrom);
 				CopyMto copiedTo = new CopyMto(copy, toWorkGroup);
 				workGroupDocumentService.markAsCopied(actor, owner, fromWorkGroup, fromNode, copiedTo);
 				return copy;
@@ -527,7 +526,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 	public WorkGroupNode restoreRevision(Account actor, Account owner, WorkGroup workGroup, String revisionUuid) {
 		preChecks(actor, owner);
 		checkUpdatePermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, null, workGroup);
-		return workGroupDocumentRevisionService.restore(actor, owner, workGroup, revisionUuid);
+		return revisionService.restore(actor, owner, workGroup, revisionUuid);
 	}
 
 	protected WorkGroupNode getRootFolder(Account owner, WorkGroup workGroup) {

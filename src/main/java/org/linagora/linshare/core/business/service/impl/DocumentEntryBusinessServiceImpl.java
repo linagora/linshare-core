@@ -81,6 +81,7 @@ import org.linagora.linshare.core.service.TimeStampingService;
 import org.linagora.linshare.core.utils.AESCrypt;
 import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
+import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
@@ -414,7 +415,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 					"Can not create a new document, missing underlying document.");
 		}
 		Document createDocument = createDocument(toWorkGroup, document, name);
-		WorkGroupDocument node = new WorkGroupDocument(actor, name, createDocument, toWorkGroup, nodeParent);
+		WorkGroupDocument node = new WorkGroupDocumentRevision(actor, name, createDocument, toWorkGroup, nodeParent);
 		node.setCreationDate(new Date());
 		node.setModificationDate(new Date());
 		node.setUploadDate(new Date());
