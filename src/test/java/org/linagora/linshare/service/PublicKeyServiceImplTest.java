@@ -208,6 +208,23 @@ public class PublicKeyServiceImplTest extends AbstractTransactionalJUnit4SpringC
 	}
 
 	@Test
+	public void testDuplicatePublicKey() throws BusinessException {
+		logger.debug(LinShareTestConstants.BEGIN_TEST);
+		PublicKeyLs pubKey = initSSHPublicKeys();
+		pubKey.setIssuer("app for key test duplication");
+		pubKey = publicKeyService.create(root, pubKey, domain);
+		try {
+			PublicKeyLs pubKey2 = initSSHPublicKeys();
+			pubKey2.setIssuer("app for key test duplication");
+			pubKey2 = publicKeyService.create(root, pubKey2, domain);
+			Assert.assertNotNull(pubKey2);
+		} catch (BusinessException ex) {
+			Assert.assertThat(ex.getErrorCode(), is(BusinessErrorCode.PUBLIC_KEY_ALREADY_EXIST));
+		}
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
 	public void testFindByIssuer() throws BusinessException {
 		logger.debug(LinShareTestConstants.BEGIN_TEST);
 		PublicKeyLs pubKey = initSSHPublicKeys();
