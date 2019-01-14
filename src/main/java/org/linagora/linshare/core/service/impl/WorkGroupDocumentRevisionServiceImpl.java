@@ -52,7 +52,6 @@ import org.linagora.linshare.core.domain.constants.TargetKind;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
@@ -80,6 +79,7 @@ import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServiceImpl
@@ -210,37 +210,30 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 	public WorkGroupNode createDocFromRevision(Account authUser, Account actor, WorkGroup workGroup,
 			String revisionUuid, String parentUuid, Boolean strict) throws BusinessException {
 		Validate.notEmpty(revisionUuid, "The revision Uuid must be set");
-		WorkGroupDocumentRevision node = (WorkGroupDocumentRevision) repository.findByUuid(revisionUuid);
-		if (node == null) {
+		WorkGroupDocumentRevision revision = (WorkGroupDocumentRevision) repository.findByUuid(revisionUuid);
+		if (revision == null) {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_REVISION_NOT_FOUND,
 					"The revision has not been found.");
 		}
-		if (!node.getNodeType().equals(WorkGroupNodeType.DOCUMENT_REVISION)) {
+		if (!revision.getNodeType().equals(WorkGroupNodeType.DOCUMENT_REVISION)) {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED,
 					"The node type is not a revision.");
 		}
-		WorkGroupNode revisionParent = repository.findByUuid(node.getParent());
-		WorkGroupNode rootParent = repository.findByUuid(revisionParent.getParent());
-		CopyMto copyMto = new CopyMto(revisionUuid, node.getName(), TargetKind.SHARED_SPACE);
-		WorkGroupNode parent = repository.findByUuid(parentUuid);
-		Document doc = documentRepository.findByUuid(node.getDocumentUuid());
-		String fileName = null;
-		WorkGroupNode wgNode = new WorkGroupNode();
-		if (!parent.equals(rootParent)) {
-			wgNode = copy(authUser, actor, workGroup, node.getDocumentUuid(), node.getName(), parent,
-					node.getCiphered(), node.getSize(), revisionUuid, copyMto);
-		} else {
-			if (strict) {
-				checkUniqueName(workGroup, parent, node.getName());
-			} else {
-				fileName = getNewName(authUser, (User) actor, workGroup, parent, node.getName());
-			}
-			wgNode = copy(authUser, actor, workGroup, node.getDocumentUuid(), fileName, parent, node.getCiphered(),
-					node.getSize(), revisionUuid, copyMto);
+		if (Strings.isNullOrEmpty(parentUuid)) {
+			WorkGroupNode nodeParent = repository.findByUuid(revision.getParent());
+			parentUuid = nodeParent.getParent();
 		}
-		WorkGroupDocumentRevision documentRevision = new WorkGroupDocumentRevision(actor, wgNode.getName(), doc,
-				workGroup, wgNode);
-		repository.insert(documentRevision);
+		CopyMto copyMto = new CopyMto(revisionUuid, revision.getName(), TargetKind.SHARED_SPACE);
+		WorkGroupNode parent = repository.findByUuid(parentUuid);
+		WorkGroupNode wgNode = new WorkGroupNode();
+		if (strict) {
+			checkUniqueName(workGroup, parent, revision.getName());
+		}
+		String fileName = getNewName(authUser, (User) actor, workGroup, parent, revision.getName());
+		WorkGroupDocument newWGDocument = (WorkGroupDocument) super.create(authUser, actor, workGroup,
+				revision.getSize(), revision.getMimeType(), fileName, parent);
+		wgNode = copy(authUser, actor, workGroup, revision.getDocumentUuid(), fileName, newWGDocument, revision.getCiphered(),
+				revision.getSize(), revisionUuid, copyMto);
 		return wgNode;
 	}
 
@@ -341,19 +334,17 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 
 	@Override
 	public WorkGroupDocument copy(Account authUser, Account actor, WorkGroup fromWorkGroup, WorkGroup toWorkGroup,
-			WorkGroupDocument document, WorkGroupNode toNodeParent, String fileName, CopyMto copiedFrom) throws BusinessException {
+			WorkGroupDocument document, WorkGroupNode toNodeParent, String fileName, CopyMto copiedFrom)
+			throws BusinessException {
 		Validate.notNull(document, "Workgroupdocument is required");
 		Validate.notNull(toNodeParent, "nodeParent is required");
 		WorkGroupDocumentRevision revision = (WorkGroupDocumentRevision) findMostRecent(fromWorkGroup,
 				document.getUuid());
-		if (revision == null) {
-			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_REVISION_NOT_FOUND, "The document has not been found");
-		}
 		WorkGroupDocument newWGDocument = (WorkGroupDocument) super.create(authUser, actor, toWorkGroup,
 				document.getSize(), document.getMimeType(), fileName, toNodeParent);
 		WorkGroupDocumentRevision copiedRevision = (WorkGroupDocumentRevision) copy(authUser, actor, toWorkGroup,
-				revision.getDocumentUuid(), fileName, newWGDocument, document.getCiphered(),
-				document.getSize(), document.getUuid(), copiedFrom);
+				revision.getDocumentUuid(), fileName, newWGDocument, document.getCiphered(), document.getSize(),
+				document.getUuid(), copiedFrom);
 		newWGDocument = updateDocument(authUser, actor, toWorkGroup, copiedRevision);
 		return newWGDocument;
 	}

@@ -471,7 +471,7 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 		return workGroupNodeFacade.restoreRevision(null, workGroupUuid, revisionUuid);
 	}
 
-	@Path("/{revisionUuid}/create_document/{parentUuid}")
+	@Path("/{revisionUuid}/create_document")
 	@POST
 	@ApiOperation(value = "Create document from a revision", response = WorkGroupNode.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation."),
@@ -485,8 +485,8 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 				@PathParam("workGroupUuid") String workGroupUuid,
 			@ApiParam(value = "The revision uuid to create a document from", required = true)
 				@PathParam("revisionUuid") String revisionUuid,
-			@ApiParam(value = "The parent node uuid.", required = true)
-				@PathParam("parentUuid")  String parentUuid,
+			@ApiParam(value = "The parent node uuid.", required = false)
+				@QueryParam("parentUuid")  String parentUuid,
 			@ApiParam(value = "Strict mode: Raise error if a node with same name already exists (default=false).", required = false)
 				@QueryParam("strict") @DefaultValue("false") Boolean strict)
 			throws BusinessException {
