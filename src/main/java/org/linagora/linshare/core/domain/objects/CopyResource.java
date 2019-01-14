@@ -64,6 +64,8 @@ public class CopyResource {
 
 	protected CopyMto copyFrom;
 
+	protected String mimeType;
+
 	public CopyResource(TargetKind kind, ShareEntry entry) {
 		super();
 		this.kind = kind;
@@ -75,6 +77,7 @@ public class CopyResource {
 		this.comment = entry.getComment();
 		this.metaData = entry.getMetaData();
 		this.copyFrom = new CopyMto(entry);
+		this.mimeType = entry.getType();
 	}
 
 	public CopyResource(TargetKind kind, DocumentEntry entry) {
@@ -88,6 +91,7 @@ public class CopyResource {
 		this.comment = entry.getComment();
 		this.metaData = entry.getMetaData();
 		this.copyFrom = new CopyMto(entry);
+		this.mimeType = entry.getType();
 	}
 
 	public CopyResource(TargetKind kind, WorkGroup workGroup, WorkGroupDocument entry) {
@@ -189,6 +193,14 @@ public class CopyResource {
 
 	public void setCopyFrom(CopyMto copyFrom) {
 		this.copyFrom = copyFrom;
+	}
+
+	public String getMimeType() {
+		return mimeType;
+	}
+
+	public void setMimeType(String mimeType) {
+		this.mimeType = mimeType;
 	}
 
 }

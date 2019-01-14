@@ -451,9 +451,11 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		}
 		WorkGroupNode nodeParent = getParentNode(actor, owner, toWorkGroup, toNodeUuid);
 		fileName = workGroupDocumentService.getNewName(actor, owner, toWorkGroup, nodeParent, fileName);
-		WorkGroupNode dto = workGroupDocumentService.copy(actor, owner, toWorkGroup, cr.getDocumentUuid(), fileName, nodeParent,
+		WorkGroupNode newWGDocument = workGroupDocumentService.create(actor, owner, toWorkGroup, cr.getSize(),
+				cr.getMimeType(), fileName, nodeParent);
+		workGroupDocumentService.copy(actor, owner, toWorkGroup, cr.getDocumentUuid(), fileName, newWGDocument,
 				cr.getCiphered(), cr.getSize(), cr.getResourceUuid(), cr.getCopyFrom());
-		return dto;
+		return newWGDocument;
 	}
 
 	@Override
