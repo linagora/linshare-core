@@ -178,9 +178,11 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 			String workGroupNodeUuid) throws BusinessException {
 		preChecks(actor, owner);
 		WorkGroupNode node = find(actor, owner, workGroup, workGroupNodeUuid, false);
-		checkDownloadPermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, node, workGroup);
-		if (!isDocument(node)) {
-			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not download this kind of node.");
+		checkDownloadPermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN,
+				node, workGroup);
+		if (!(isDocument(node) || (isRevision(node)))) {
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED,
+					"Can not download this kind of node.");
 		}
 		return node;
 	}
@@ -461,10 +463,11 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 	@Override
 	public void markAsCopied(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode wgNode, CopyMto copiedTo)
 			throws BusinessException {
-		if (isDocument(wgNode)) {
+		if ((isDocument(wgNode) || (isRevision(wgNode)))) {
 			workGroupDocumentService.markAsCopied(actor, owner, workGroup, wgNode, copiedTo);
 		} else {
-			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not copy this kind of node.");
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED,
+					"Can not copy this kind of node.");
 		}
 	}
 

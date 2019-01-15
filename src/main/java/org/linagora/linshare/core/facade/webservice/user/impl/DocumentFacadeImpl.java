@@ -77,8 +77,10 @@ import org.linagora.linshare.core.service.MimePolicyService;
 import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.SignatureService;
 import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.core.service.WorkGroupDocumentRevisionService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
+import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
@@ -103,7 +105,9 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 	protected final ThreadService threadService;
 
 	protected final WorkGroupNodeService workGroupNodeService;
-	
+
+	protected final WorkGroupDocumentRevisionService revisionService;
+
 	public DocumentFacadeImpl(final DocumentEntryService documentEntryService,
 			final AccountService accountService,
 			final MimePolicyService mimePolicyService,
@@ -112,7 +116,8 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 			final AuditLogEntryService auditLogEntryService,
 			final ThreadService threadService,
 			final WorkGroupNodeService workGroupNodeService,
-			final SignatureService signatureService) {
+			final SignatureService signatureService,
+			final WorkGroupDocumentRevisionService revisionService) {
 		super(accountService);
 		this.documentEntryService = documentEntryService;
 		this.mimePolicyService = mimePolicyService;
@@ -122,6 +127,7 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 		this.auditLogEntryService = auditLogEntryService;
 		this.threadService = threadService;
 		this.workGroupNodeService = workGroupNodeService;
+		this.revisionService = revisionService;
 	}
 
 	@Override
@@ -326,12 +332,24 @@ public class DocumentFacadeImpl extends UserGenericFacadeImp implements Document
 			String workgroupUuid = copy.getContextUuid();
 			Validate.notEmpty(workgroupUuid, "Missing workgroup uuid");
 			WorkGroup workGroup = threadService.find(authUser, actor, workgroupUuid);
-			WorkGroupNode node = workGroupNodeService.findForDownloadOrCopyRight(authUser, actor, workGroup, resourceUuid);
-			if (node.getNodeType().equals(WorkGroupNodeType.DOCUMENT)) {
+			WorkGroupNode node = workGroupNodeService.findForDownloadOrCopyRight(authUser, actor, workGroup,
+					resourceUuid);
+			if (WorkGroupNodeType.DOCUMENT.equals(node.getNodeType())) {
+				WorkGroupDocument wgDocument = (WorkGroupDocument) node;
+				WorkGroupDocumentRevision mostRecent = (WorkGroupDocumentRevision) revisionService
+						.findMostRecent(workGroup, node.getUuid());
+				CopyResource cr = new CopyResource(resourceKind, workGroup, mostRecent);
+				DocumentEntry newDocumentEntry = documentEntryService.copy(authUser, actor, cr);
+				workGroupNodeService.markAsCopied(authUser, actor, workGroup, wgDocument,
+						new CopyMto(newDocumentEntry));
+				return Lists.newArrayList(new DocumentDto(newDocumentEntry));
+			}
+			if (WorkGroupNodeType.DOCUMENT_REVISION.equals(node.getNodeType())) {
 				WorkGroupDocument wgDocument = (WorkGroupDocument) node;
 				CopyResource cr = new CopyResource(resourceKind, workGroup, wgDocument);
 				DocumentEntry newDocumentEntry = documentEntryService.copy(authUser, actor, cr);
-				workGroupNodeService.markAsCopied(authUser, actor, workGroup, wgDocument, new CopyMto(newDocumentEntry));
+				workGroupNodeService.markAsCopied(authUser, actor, workGroup, wgDocument,
+						new CopyMto(newDocumentEntry));
 				return Lists.newArrayList(new DocumentDto(newDocumentEntry));
 			}
 		} else if (TargetKind.PERSONAL_SPACE.equals(resourceKind)) {
