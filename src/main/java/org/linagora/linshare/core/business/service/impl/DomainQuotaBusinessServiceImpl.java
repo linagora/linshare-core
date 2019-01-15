@@ -110,9 +110,9 @@ public class DomainQuotaBusinessServiceImpl extends GenericQuotaBusinessServiceI
 		entity.setMaintenance(dq.getMaintenance());
 
 		// default quota
-		Boolean defaultQuotaOverride = dq.getDefaultQuotaOverride();
+		Boolean defaultQuotaOverride = entity.getDefaultQuotaOverride();
 		if (defaultQuotaOverride != null) {
-			if (!defaultQuotaOverride.equals(entity.getDefaultQuotaOverride())) {
+			if (!defaultQuotaOverride.equals(dq.getDefaultQuotaOverride())) {
 				if (dq.getDefaultQuotaOverride()) {
 					// from false to true => need to cascade
 					repository.cascadeDefaultQuota(entity.getDomain(), dq.getDefaultQuota());
@@ -130,6 +130,11 @@ public class DomainQuotaBusinessServiceImpl extends GenericQuotaBusinessServiceI
 			}
 			entity.setDefaultQuota(dq.getDefaultQuota());
 			entity.setDefaultQuotaOverride(dq.getDefaultQuotaOverride());
+		} else {
+			if (entity.getDefaultQuota() != null) {
+				entity.setDefaultQuota(dq.getDefaultQuota());
+				repository.cascadeDefaultQuota(entity.getDomain(), entity.getDefaultQuota());
+			}
 		}
 
 		// shared domain mode.
