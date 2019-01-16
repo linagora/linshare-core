@@ -69,7 +69,6 @@ import org.linagora.linshare.core.service.WorkGroupDocumentRevisionService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
-import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
@@ -321,27 +320,4 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		return workGroupDocumentRevisionService.restore(authUser, actor, workGroup, revisionUuid);
 	}
 
-	@Override
-	public WorkGroupNode createDocFromRevision(String actorUuid, String workGroupUuid, String revisionUuid,
-			String parentUuid, Boolean strict) throws BusinessException {
-		Account authUser = checkAuthentication();
-		Account actor = getActor(authUser, actorUuid);
-		Validate.notEmpty(workGroupUuid, "Missing workGroup uuid to copy into");
-		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
-		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceNode.getUuid());
-		return workGroupDocumentRevisionService.createDocFromRevision(authUser, actor, workGroup, revisionUuid,
-				parentUuid, strict);
-	}
-
-	@Override
-	public WorkGroupDocumentRevision createRevFromDoc(String actorUuid, String workGroupUuid,
-			String workGroupDocumentUuid, String parentUuid) throws BusinessException {
-		Account authUser = checkAuthentication();
-		User actor = getActor(authUser, actorUuid);
-		Validate.notEmpty(workGroupUuid, "Missing workGroup uuid to copy into");
-		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
-		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceNode.getUuid());
-		return workGroupDocumentRevisionService.createRevFromDoc(authUser, actor, workGroup, workGroupDocumentUuid,
-				parentUuid);
-	}
 }

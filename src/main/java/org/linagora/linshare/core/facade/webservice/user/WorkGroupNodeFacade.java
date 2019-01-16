@@ -45,7 +45,6 @@ import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.CopyDto;
-import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
@@ -79,9 +78,4 @@ public interface WorkGroupNodeFacade extends GenericFacade {
 
 	WorkGroupNode restoreRevision(String actorUuid, String workGroupUuid, String revisionUuid) throws BusinessException;
 
-	WorkGroupNode createDocFromRevision(String actorUuid, String workGroupUuid, String revisionUuid, String parentUuid,
-			Boolean strict) throws BusinessException;
-
-	WorkGroupDocumentRevision createRevFromDoc(String actorUuid, String workGroupUuid, String workGroupDocumentUuid,
-			String parentUuid);
 }

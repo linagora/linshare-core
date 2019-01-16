@@ -89,9 +89,4 @@ public interface WorkGroupNodeRestService {
 
 	WorkGroupNode restoreRevision(String workGroupUuid, String WorkGroupDocumentRevisionUuid) throws BusinessException;
 
-	WorkGroupNode createDocFromRevision(String workGroupUuid, String revisionUuid, String parentUuid, Boolean strict)
-			throws BusinessException;
-
-	WorkGroupNode createRevFromDoc(String workGroupUuid, String WorkGroupDocumentUuid, String parentUuid)
-			throws BusinessException;
 }

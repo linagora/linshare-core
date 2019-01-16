@@ -471,28 +471,6 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 		return workGroupNodeFacade.restoreRevision(null, workGroupUuid, revisionUuid);
 	}
 
-	@Path("/{revisionUuid}/create_document")
-	@POST
-	@ApiOperation(value = "Create document from a revision", response = WorkGroupNode.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation."),
-					@ApiResponse(code = 404, message = "Workgroup node not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
-	@Override
-	public WorkGroupNode createDocFromRevision(
-			@ApiParam(value = "The workgroup uuid.", required = true)
-				@PathParam("workGroupUuid") String workGroupUuid,
-			@ApiParam(value = "The revision uuid to create a document from", required = true)
-				@PathParam("revisionUuid") String revisionUuid,
-			@ApiParam(value = "The parent node uuid.", required = false)
-				@QueryParam("parentUuid")  String parentUuid,
-			@ApiParam(value = "Strict mode: Raise error if a node with same name already exists (default=false).", required = false)
-				@QueryParam("strict") @DefaultValue("false") Boolean strict)
-			throws BusinessException {
-		return workGroupNodeFacade.createDocFromRevision(null, workGroupUuid, revisionUuid, parentUuid, strict);
-	}
-
 	protected void logAsyncFailure(AsyncTaskDto asyncTask, Exception e) {
 		logger.error(e.getMessage());
 		logger.debug("Exception : ", e);
@@ -536,22 +514,4 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 		}
 	}
 
-	@Path("/{workGroupDocumentUuid}/create_revision")
-	@POST
-	@ApiOperation(value = "Restore a previous document revision", response = WorkGroupNode.class)
-	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
-					@ApiResponse(code = 404, message = "Workgroup node not found."),
-					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
-					@ApiResponse(code = 500, message = "Internal server error."),
-					})
-	@Override
-	public WorkGroupNode createRevFromDoc(
-			@ApiParam(value = "The workgroup uuid.", required = true)
-				@PathParam("workGroupUuid") String workGroupUuid,
-			@ApiParam(value = "The document uuid to create a revision from", required = true)
-				@PathParam("workGroupDocumentUuid") String workGroupDocumentUuid,
-			@ApiParam(value = "The parent node uuid.", required = false)
-				@QueryParam("parentUuid") String parentUuid) throws BusinessException {
-		return workGroupNodeFacade.createRevFromDoc(null, workGroupUuid, workGroupDocumentUuid, parentUuid);
-	}
 }

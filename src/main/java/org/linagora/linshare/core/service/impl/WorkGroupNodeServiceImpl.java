@@ -477,44 +477,69 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		// step 1 : check the source
 		WorkGroupNode fromNode = find(actor, owner, fromWorkGroup, fromNodeUuid, false);
 		checkDownloadPermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, fromNode, fromWorkGroup);
-		if (!isDocument(fromNode)) {
-			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not download this kind of node.");
-		}
-
 		// step 2 : check the destination
 		WorkGroupNode toNode = null;
-		// Check if we have the right to read and write in it ?? TODO
-		if (toNodeUuid == null ||toNodeUuid.isEmpty()) {
+		if (toNodeUuid == null || toNodeUuid.isEmpty()) {
 			// in the root folder
 			toNode = getRootFolder(owner, toWorkGroup);
 		} else {
 			toNode = find(actor, owner, toWorkGroup, toNodeUuid, false);
 		}
-		checkCreatePermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, null, toWorkGroup);
+		checkCreatePermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, toNode, toWorkGroup);
 		if (isDocument(fromNode)) {
+			WorkGroupDocumentRevision mostRecent = (WorkGroupDocumentRevision) revisionService.findMostRecent(fromWorkGroup,
+					fromNode.getUuid());
+			WorkGroupDocument doc = (WorkGroupDocument) fromNode;
+			CopyMto copyFrom = new CopyMto(doc, fromWorkGroup);
 			if (isFolder(toNode)) {
 				// members of the "recipient workgroup" do not need to know the name of the source workgroup.
-				WorkGroupDocument doc = (WorkGroupDocument) fromNode;
-				String fileName = workGroupDocumentService.getNewName(actor, owner, toWorkGroup, toNode, fromNode.getName());
-				CopyMto copyFrom = new CopyMto(doc, fromWorkGroup);
-				WorkGroupNode copy = revisionService.copy(actor, owner,fromWorkGroup, toWorkGroup, doc, toNode, fileName, copyFrom);
-				CopyMto copiedTo = new CopyMto(copy, toWorkGroup);
+				String fileName = workGroupDocumentService.getNewName(actor, owner, toWorkGroup, toNode,
+						fromNode.getName());
+				WorkGroupDocument newDocument = (WorkGroupDocument) workGroupDocumentService.create(actor, owner,
+						toWorkGroup, doc.getSize(), doc.getMimeType(), fileName, toNode);
+				// copy the most recent revision into the new document.
+				workGroupDocumentService.copy(actor, owner, toWorkGroup, mostRecent.getDocumentUuid(), fileName,
+						newDocument, doc.getCiphered(), doc.getSize(), doc.getUuid(), copyFrom);
+				CopyMto copiedTo = new CopyMto(newDocument, toWorkGroup);
 				workGroupDocumentService.markAsCopied(actor, owner, fromWorkGroup, fromNode, copiedTo);
-				return copy;
+				return newDocument;
 			} else if (isDocument(toNode)) {
-				// TODO new feature : create a new revision for this file.
-				throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not copy this kind of node.");
+				// copy the most recent revision into the document.
+				WorkGroupDocumentRevision revision = (WorkGroupDocumentRevision) workGroupDocumentService.copy(actor, owner, fromWorkGroup, mostRecent.getDocumentUuid(), doc.getName(),
+						toNode, doc.getCiphered(), doc.getSize(), doc.getUuid(), copyFrom);
+				toNode = revisionService.updateDocument(actor, owner, toWorkGroup, revision);
+				CopyMto copiedTo = new CopyMto(revision, toWorkGroup);
+				workGroupDocumentService.markAsCopied(actor, owner, fromWorkGroup, fromNode, copiedTo);
+				return toNode;
 			}
 		} else if (isFolder(fromNode)) {
 			if (isFolder(toNode)) {
 				// TODO:FMA:workgroups manage folder and nested folders.
 			}
 		} else if (isRevision(fromNode)) {
-			// TODO manage revisions.
+			WorkGroupDocumentRevision revision = (WorkGroupDocumentRevision) fromNode;
+			CopyMto copyFrom = new CopyMto(revision, fromWorkGroup);
 			if (isFolder(toNode)) {
-				// TODO create a new document from this revision
+				// Create a new document from this revision
+				String fileName = workGroupDocumentService.getNewName(actor, owner, toWorkGroup, toNode,
+						fromNode.getName());
+				WorkGroupDocument newDocument = (WorkGroupDocument) workGroupDocumentService.create(actor, owner,
+						toWorkGroup, revision.getSize(), revision.getMimeType(), fileName, toNode);
+				// copy the revision into the new document.
+				workGroupDocumentService.copy(actor, owner, toWorkGroup, revision.getDocumentUuid(), fileName,
+						newDocument, revision.getCiphered(), revision.getSize(), revision.getUuid(), copyFrom);
+				CopyMto copiedTo = new CopyMto(newDocument, toWorkGroup);
+				workGroupDocumentService.markAsCopied(actor, owner, fromWorkGroup, fromNode, copiedTo);
+				return newDocument;
 			} else 	if (isDocument(toNode)) {
-				// TODO restore current document with this revision
+				// Copy the revision into the document.
+				WorkGroupDocumentRevision newRevision = (WorkGroupDocumentRevision) workGroupDocumentService.copy(actor,
+						owner, fromWorkGroup, revision.getDocumentUuid(), revision.getName(), toNode,
+						revision.getCiphered(), revision.getSize(), revision.getUuid(), copyFrom);
+				toNode = revisionService.updateDocument(actor, owner, toWorkGroup, newRevision);
+				CopyMto copiedTo = new CopyMto(newRevision, toWorkGroup);
+				workGroupDocumentService.markAsCopied(actor, owner, fromWorkGroup, fromNode, copiedTo);
+				return toNode;
 			}
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not copy this kind of node.");
 		}
