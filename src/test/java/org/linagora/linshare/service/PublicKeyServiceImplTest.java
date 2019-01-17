@@ -34,14 +34,13 @@
 
 package org.linagora.linshare.service;
 
-import static org.hamcrest.CoreMatchers.is;
-
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.PublicKeyFormat;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -57,21 +56,24 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {
-		"classpath:springContext-datasource.xml",
-		"classpath:springContext-repository.xml",
-		"classpath:springContext-dao.xml",
-		"classpath:springContext-service.xml",
-		"classpath:springContext-business-service.xml",
-		"classpath:springContext-rac.xml",
-		"classpath:springContext-fongo.xml",
-		"classpath:springContext-storage-jcloud.xml",
-		"classpath:springContext-service-miscellaneous.xml",
-		"classpath:springContext-test.xml",
-		"classpath:springContext-ldap.xml" })
-public class PublicKeyServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+				"classpath:springContext-datasource.xml",
+				"classpath:springContext-repository.xml",
+				"classpath:springContext-dao.xml",
+				"classpath:springContext-service.xml",
+				"classpath:springContext-business-service.xml",
+				"classpath:springContext-rac.xml",
+				"classpath:springContext-fongo.xml",
+				"classpath:springContext-storage-jcloud.xml",
+				"classpath:springContext-service-miscellaneous.xml",
+				"classpath:springContext-test.xml",
+				"classpath:springContext-ldap.xml" })
+@Transactional
+public class PublicKeyServiceImplTest {
 
 	private static Logger logger = LoggerFactory.getLogger(PublicKeyServiceImplTest.class);
 
@@ -90,7 +92,7 @@ public class PublicKeyServiceImplTest extends AbstractTransactionalJUnit4SpringC
 
 	private AbstractDomain domain;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		datas = new LoadingServiceTestDatas(userRepository);
@@ -101,7 +103,7 @@ public class PublicKeyServiceImplTest extends AbstractTransactionalJUnit4SpringC
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
@@ -112,8 +114,8 @@ public class PublicKeyServiceImplTest extends AbstractTransactionalJUnit4SpringC
 		logger.debug(LinShareTestConstants.BEGIN_TEST);
 		PublicKeyLs pubKey = initSSHPublicKeys();
 		pubKey.setIssuer("New application");
-		pubKey = publicKeyService.create(root, pubKey , domain);
-		Assert.assertNotNull(pubKey);
+		pubKey = publicKeyService.create(root, pubKey, domain);
+		Assertions.assertNotNull(pubKey);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -122,11 +124,27 @@ public class PublicKeyServiceImplTest extends AbstractTransactionalJUnit4SpringC
 		logger.debug(LinShareTestConstants.BEGIN_TEST);
 		PublicKeyLs pubKey = initPEMPublicKeys();
 		pubKey.setIssuer("app with pem public key");
-		pubKey = publicKeyService.create(root, pubKey , domain);
-		Assert.assertNotNull(pubKey);
+		pubKey = publicKeyService.create(root, pubKey, domain);
+		Assertions.assertNotNull(pubKey);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
+	@Test
+	public void testDuplicatePublicKey() throws BusinessException {
+		logger.debug(LinShareTestConstants.BEGIN_TEST);
+		PublicKeyLs pubKey = initSSHPublicKeys();
+		pubKey.setIssuer("app for key test duplication");
+		pubKey = publicKeyService.create(root, pubKey, domain);
+		try {
+			PublicKeyLs pubKey2 = initSSHPublicKeys();
+			pubKey2.setIssuer("app for key test duplication");
+			pubKey2 = publicKeyService.create(root, pubKey2, domain);
+			Assertions.assertNotNull(pubKey2);
+		} catch (BusinessException ex) {
+			Assertions.assertTrue(ex.getErrorCode().equals(BusinessErrorCode.PUBLIC_KEY_ALREADY_EXIST));
+		}
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
 
 	@Test
 	public void testCreateWithInvalidPublicKey() {
@@ -135,10 +153,10 @@ public class PublicKeyServiceImplTest extends AbstractTransactionalJUnit4SpringC
 		pubKey.setIssuer("My app");
 		pubKey.setPublicKey("Invalid public key format");
 		try {
-			pubKey = publicKeyService.create(root, pubKey , domain);
-			Assert.assertNotNull(pubKey);
+			pubKey = publicKeyService.create(root, pubKey, domain);
+			Assertions.assertNotNull(pubKey);
 		} catch (BusinessException ex) {
-			Assert.assertThat(ex.getErrorCode(), is(BusinessErrorCode.PUBLIC_KEY_INVALID_FORMAT));
+			Assertions.assertTrue(ex.getErrorCode().equals(BusinessErrorCode.PUBLIC_KEY_INVALID_FORMAT));
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -148,11 +166,11 @@ public class PublicKeyServiceImplTest extends AbstractTransactionalJUnit4SpringC
 		logger.debug(LinShareTestConstants.BEGIN_TEST);
 		PublicKeyLs pubKey = initSSHPublicKeys();
 		pubKey.setIssuer("New Application");
-		pubKey = publicKeyService.create(root, pubKey , domain);
-		Assert.assertNotNull(pubKey);
+		pubKey = publicKeyService.create(root, pubKey, domain);
+		Assertions.assertNotNull(pubKey);
 		PublicKeyLs found = publicKeyService.find(root, pubKey.getUuid());
-		Assert.assertNotNull(found);
-		Assert.assertEquals(pubKey.getUuid(), found.getUuid());
+		Assertions.assertNotNull(found);
+		Assertions.assertEquals(pubKey.getUuid(), found.getUuid());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -162,11 +180,11 @@ public class PublicKeyServiceImplTest extends AbstractTransactionalJUnit4SpringC
 		try {
 			PublicKeyLs pubKey = initSSHPublicKeys();
 			pubKey.setIssuer("application test");
-			pubKey = publicKeyService.create(root, pubKey , domain);
-			Assert.assertNotNull(pubKey);
+			pubKey = publicKeyService.create(root, pubKey, domain);
+			Assertions.assertNotNull(pubKey);
 			publicKeyService.find(jane, pubKey.getUuid());
 		} catch (BusinessException ex) {
-			Assert.assertThat(ex.getErrorCode(), is(BusinessErrorCode.PUBLIC_KEY_FORBIDDEN));
+			Assertions.assertTrue(ex.getErrorCode().equals(BusinessErrorCode.PUBLIC_KEY_FORBIDDEN));
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -178,14 +196,14 @@ public class PublicKeyServiceImplTest extends AbstractTransactionalJUnit4SpringC
 		int oldSize = oldPublicKeys.size();
 		PublicKeyLs pubKey = initSSHPublicKeys();
 		pubKey.setIssuer("Application");
-		pubKey = publicKeyService.create(root, pubKey , domain);
+		pubKey = publicKeyService.create(root, pubKey, domain);
 		PublicKeyLs pubKey2 = initSSHPublicKeys();
 		pubKey2.setIssuer("General Application");
-		pubKey2 = publicKeyService.create(root, pubKey2 , domain);
-		Assert.assertNotNull(pubKey);
-		Assert.assertNotNull(pubKey2);
+		pubKey2 = publicKeyService.create(root, pubKey2, domain);
+		Assertions.assertNotNull(pubKey);
+		Assertions.assertNotNull(pubKey2);
 		List<PublicKeyLs> publicKeys = publicKeyService.findAll(root, domain);
-		Assert.assertEquals(oldSize + 2, publicKeys.size());
+		Assertions.assertEquals(oldSize + 2, publicKeys.size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -194,15 +212,15 @@ public class PublicKeyServiceImplTest extends AbstractTransactionalJUnit4SpringC
 		logger.debug(LinShareTestConstants.BEGIN_TEST);
 		PublicKeyLs pubKey = initSSHPublicKeys();
 		pubKey.setIssuer("linshare");
-		pubKey = publicKeyService.create(root, pubKey , domain);
-		Assert.assertNotNull(pubKey);
+		pubKey = publicKeyService.create(root, pubKey, domain);
+		Assertions.assertNotNull(pubKey);
 		PublicKeyLs found = publicKeyService.find(root, pubKey.getUuid());
-		Assert.assertNotNull(found);
+		Assertions.assertNotNull(found);
 		publicKeyService.delete(root, found);
 		try {
 			publicKeyService.find(root, found.getUuid());
 		} catch (BusinessException ex) {
-			Assert.assertThat(ex.getErrorCode(), is(BusinessErrorCode.PUBLIC_KEY_NOT_FOUND));
+			Assertions.assertTrue(ex.getErrorCode().equals(BusinessErrorCode.PUBLIC_KEY_NOT_FOUND));
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -212,11 +230,11 @@ public class PublicKeyServiceImplTest extends AbstractTransactionalJUnit4SpringC
 		logger.debug(LinShareTestConstants.BEGIN_TEST);
 		PublicKeyLs pubKey = initSSHPublicKeys();
 		pubKey.setIssuer("OpenPass");
-		pubKey = publicKeyService.create(root, pubKey , domain);
-		Assert.assertNotNull(pubKey);
+		pubKey = publicKeyService.create(root, pubKey, domain);
+		Assertions.assertNotNull(pubKey);
 		PublicKeyLs found = publicKeyService.findByIssuer("OpenPass");
-		Assert.assertNotNull(found);
-		Assert.assertEquals("OpenPass", found.getIssuer());
+		Assertions.assertNotNull(found);
+		Assertions.assertEquals("OpenPass", found.getIssuer());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
