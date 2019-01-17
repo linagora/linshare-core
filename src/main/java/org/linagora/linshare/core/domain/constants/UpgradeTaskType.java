@@ -170,7 +170,13 @@ public enum UpgradeTaskType {
 	 *The old version of PermanentToken is more compatible with SQL databases 
 	 * we have to change the structure for compatibility with MongoDB 
 	 */
-	UPGRADE_2_3_MIGRATE_PERMANENT_TOKEN_ENTITY_TO_NEW_STRUCTURE;
+	UPGRADE_2_3_MIGRATE_PERMANENT_TOKEN_ENTITY_TO_NEW_STRUCTURE,
+
+	/* 
+	 * 	Upgrade document structure for versioning
+	 * 
+	 */
+	UPGRADE_2_3_UPDATE_DOCUMENT_STRUCTURE_FOR_VERSIONING;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {
