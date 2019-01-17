@@ -34,6 +34,7 @@
 package org.linagora.linshare.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -75,8 +76,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @ExtendWith(SpringExtension.class)
 @Sql({"/import-tests-default-domain-quotas.sql",
-	"/import-tests-domain-quota-updates.sql",
-	"/import-tests-jwt-long-time-functionnality.sql"})
+	"/import-tests-domain-quota-updates.sql"})
 @Transactional
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
@@ -296,4 +296,114 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		assertEquals(0, expectedEmptyRevisions.size());
 	}
 
+	@Test
+	public void duplicateWGDocumentTest() throws IOException {
+		SharedSpaceNode ssnode = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
+		ssnode.setVersioningParameters(new VersioningParameters(true, false, null, null));
+		ssnode = sharedSpaceNodeService.create(john, john, ssnode);
+		WorkGroup workGroup = threadService.find(john, john, ssnode.getUuid());
+		InputStream stream1 = Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream("linshare-default.properties");
+		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
+		IOUtils.transferTo(stream1, tempFile1);
+		WorkGroupNode rootFolder = workGroupNodeService.getRootFolder(john, john, workGroup);
+		WorkGroupDocument document = (WorkGroupDocument) workGroupDocumentService.create(john, john, workGroup,
+				tempFile1.length(), "text/plain", tempFile1.getName(), rootFolder);
+		int initSize = workGroupNodeService.findAll(john, john, workGroup).size();
+		assertEquals(1, initSize);
+		workGroupDocumentRevisionService.create(john, john, workGroup, tempFile1, tempFile1.getName(), document);
+		// duplicate WGDocument
+		WorkGroupDocument duplicated = (WorkGroupDocument) workGroupNodeService.copy(john, john, workGroup,
+				document.getUuid(), workGroup, document.getParent());
+		assertNotNull(duplicated);
+		assertEquals(document.getSize(), duplicated.getSize());
+		int newSize = workGroupNodeService.findAll(john, john, workGroup).size();
+		assertEquals(initSize + 1, newSize);
+		
+	}
+
+	@Test
+	public void createDocumentFromRevisionTest() throws IOException {
+		SharedSpaceNode ssnode = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
+		SharedSpaceNode ssnode2 = new SharedSpaceNode("My second node", "My parent nodeUuid", NodeType.WORK_GROUP);
+		ssnode.setVersioningParameters(new VersioningParameters(true, false, null, null));
+		ssnode2.setVersioningParameters(new VersioningParameters(true, false, null, null));
+		ssnode = sharedSpaceNodeService.create(john, john, ssnode);
+		ssnode2 = sharedSpaceNodeService.create(john, john, ssnode2);
+		WorkGroup workGroup = threadService.find(john, john, ssnode.getUuid());
+		WorkGroup workGroup2 = threadService.find(john, john, ssnode2.getUuid());
+		InputStream stream1 = Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream("linshare-default.properties");
+		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
+		IOUtils.transferTo(stream1, tempFile1);
+		WorkGroupNode rootFolder = workGroupNodeService.getRootFolder(john, john, workGroup);
+		WorkGroupDocument document = (WorkGroupDocument) workGroupDocumentService.create(john, john, workGroup,
+				tempFile1.length(), "text/plain", tempFile1.getName(), rootFolder);
+		WorkGroupDocumentRevision revision = workGroupDocumentRevisionService.create(john, john, workGroup, tempFile1, tempFile1.getName(), document);
+		// copy the revision in the workgroup2 on the root folder
+		WorkGroupDocument fromRevision = (WorkGroupDocument) workGroupNodeService.copy(john, john, workGroup,
+				revision.getUuid(), workGroup2, null);
+		assertNotNull(fromRevision);
+		assertEquals(document.getSize(), fromRevision.getSize());
+		assertEquals(1, workGroupNodeService.findAll(john, john, workGroup2).size());
+	}
+
+	@Test
+	public void createRevisionFromDocumentTest() throws IOException {
+		SharedSpaceNode ssnode = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
+		ssnode.setVersioningParameters(new VersioningParameters(true, false, null, null));
+		ssnode = sharedSpaceNodeService.create(john, john, ssnode);
+		WorkGroup workGroup = threadService.find(john, john, ssnode.getUuid());
+		InputStream stream1 = Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream("linshare-default.properties");
+		InputStream stream2 = Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream("linshare-default.properties");
+		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
+		File tempFile2 = File.createTempFile("linshare-default.properties", ".tmp");
+		IOUtils.transferTo(stream1, tempFile1);
+		IOUtils.transferTo(stream2, tempFile2);
+		WorkGroupNode rootFolder = workGroupNodeService.getRootFolder(john, john, workGroup);
+		WorkGroupDocument document = (WorkGroupDocument) workGroupDocumentService.create(john, john, workGroup,
+				tempFile1.length(), "text/plain", tempFile1.getName(), rootFolder);
+		WorkGroupDocumentRevision revision =workGroupDocumentRevisionService.create(john, john, workGroup, tempFile1, tempFile1.getName(), document);
+		WorkGroupDocument document2 = (WorkGroupDocument) workGroupDocumentService.create(john, john, workGroup,
+				tempFile2.length(), "text/plain", tempFile2.getName(), rootFolder);
+		workGroupDocumentRevisionService.create(john, john, workGroup, tempFile2, tempFile2.getName(), document2);
+		assertFalse(document2.getHasRevision());
+		WorkGroupDocument fromRevision = (WorkGroupDocument) workGroupNodeService.copy(john, john, workGroup,
+				document.getUuid(), workGroup, document2.getUuid());
+		assertNotNull(fromRevision);
+		assertEquals(document.getSize(), fromRevision.getSize());
+		assertTrue(fromRevision.getHasRevision());
+	}
+
+	@Test
+	public void createRevisionFromRevisionTest() throws IOException {
+		SharedSpaceNode ssnode = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
+		ssnode.setVersioningParameters(new VersioningParameters(true, false, null, null));
+		ssnode = sharedSpaceNodeService.create(john, john, ssnode);
+		WorkGroup workGroup = threadService.find(john, john, ssnode.getUuid());
+		InputStream stream1 = Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream("linshare-default.properties");
+		InputStream stream2 = Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream("linshare-default.properties");
+		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
+		File tempFile2 = File.createTempFile("linshare-default.properties", ".tmp");
+		IOUtils.transferTo(stream1, tempFile1);
+		IOUtils.transferTo(stream2, tempFile2);
+		WorkGroupNode rootFolder = workGroupNodeService.getRootFolder(john, john, workGroup);
+		WorkGroupDocument document = (WorkGroupDocument) workGroupDocumentService.create(john, john, workGroup,
+				tempFile1.length(), "text/plain", tempFile1.getName(), rootFolder);
+		workGroupDocumentRevisionService.create(john, john, workGroup, tempFile1, tempFile1.getName(), document);
+		WorkGroupDocument document2 = (WorkGroupDocument) workGroupDocumentService.create(john, john, workGroup,
+				tempFile2.length(), "text/plain", tempFile2.getName(), rootFolder);
+		WorkGroupDocumentRevision revision = workGroupDocumentRevisionService.create(john, john, workGroup, tempFile2, tempFile2.getName(), document2);
+		assertFalse(document2.getHasRevision());
+		// create a new revision from the revision
+		WorkGroupDocument fromRevision = (WorkGroupDocument) workGroupNodeService.copy(john, john, workGroup,
+				revision.getUuid(), workGroup, document.getUuid());
+		assertNotNull(fromRevision);
+		assertEquals(document.getSize(), fromRevision.getSize());
+		assertTrue(fromRevision.getHasRevision());
+	}
 }
