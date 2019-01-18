@@ -334,7 +334,12 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
-	public void head(String workGroupUuid, String uuid) throws BusinessException {
+	public void head(
+			@ApiParam(value = "The workgroup uuid.", required = true)
+				@PathParam("workGroupUuid") String workGroupUuid,
+			@ApiParam(value = "The workgroup node uuid.", required = true)
+				@PathParam("uuid") String uuid)
+					throws BusinessException {
 		workGroupNodeFacade.find(null, workGroupUuid, uuid, false);
 	}
 
