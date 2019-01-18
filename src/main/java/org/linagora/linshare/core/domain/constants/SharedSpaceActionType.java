@@ -35,7 +35,7 @@ package org.linagora.linshare.core.domain.constants;
 
 public enum SharedSpaceActionType {
 
-	READ,
+	GET,
 	UPDATE,
 	CREATE,
 	DELETE,

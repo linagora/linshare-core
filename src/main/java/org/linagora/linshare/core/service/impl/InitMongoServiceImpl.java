@@ -94,9 +94,13 @@ public class InitMongoServiceImpl implements InitMongoService {
 	}
 
 	private SharedSpacePermission createInitPermission(String permissionUuid, String permissionName,
-			SharedSpaceActionType actionType, SharedSpaceResourceType resourceType,
-			GenericLightEntity... roles) {
-		SharedSpacePermission permission = permissionMongoRepository.findByUuid(permissionUuid);
+			SharedSpaceActionType actionType, SharedSpaceResourceType resourceType, GenericLightEntity... roles) {
+		SharedSpacePermission permission = null;
+		try {
+			permission = permissionMongoRepository.findByUuid(permissionUuid);
+		} catch (IllegalArgumentException ex) {
+			permissionMongoRepository.removeByUuid(permissionUuid);
+		}
 		if (permission == null) {
 			permission = new SharedSpacePermission();
 			permission.setUuid(permissionUuid);
@@ -138,7 +142,7 @@ public class InitMongoServiceImpl implements InitMongoService {
 
 		createInitPermission("31cb4d80-c939-40f1-a79e-4d77392e0e0b", "Create a drive ", SharedSpaceActionType.CREATE,
 				SharedSpaceResourceType.DRIVE, drive_admin);
-		createInitPermission("e432acbb-d72e-4e20-b255-6f1cb7329bbd", "read a drive", SharedSpaceActionType.READ,
+		createInitPermission("e432acbb-d72e-4e20-b255-6f1cb7329bbd", "read a drive", SharedSpaceActionType.GET,
 				SharedSpaceResourceType.DRIVE, drive_admin, drive_creator, drive_reader);
 		createInitPermission("5557fc26-ea2d-4e3b-81af-37a614d8014c", "Update  a drive", SharedSpaceActionType.UPDATE,
 				SharedSpaceResourceType.DRIVE, drive_admin, drive_creator);
@@ -147,7 +151,7 @@ public class InitMongoServiceImpl implements InitMongoService {
 
 		createInitPermission("0457baaf-fd9e-4737-90d9-5a802caf9ff5", "Create a folder", SharedSpaceActionType.CREATE,
 				SharedSpaceResourceType.FOLDER, admin, writer, contributor);
-		createInitPermission("18a76d34-e19f-45d4-864c-4bb8cadda711", "Read a folder", SharedSpaceActionType.READ,
+		createInitPermission("18a76d34-e19f-45d4-864c-4bb8cadda711", "Read a folder", SharedSpaceActionType.GET,
 				SharedSpaceResourceType.FOLDER, admin, writer, contributor, reader);
 		createInitPermission("9dedd90c-709b-4c72-a70f-17f8c65f4f2f", "Update a folder", SharedSpaceActionType.UPDATE,
 				SharedSpaceResourceType.FOLDER, admin, writer, contributor);
@@ -157,7 +161,7 @@ public class InitMongoServiceImpl implements InitMongoService {
 				SharedSpaceResourceType.FOLDER, admin, writer);
 		createInitPermission("3f92f534-44a1-4a78-9be0-368898d61473", "Create a file", SharedSpaceActionType.CREATE,
 				SharedSpaceResourceType.FILE, admin, writer, contributor);
-		createInitPermission("05e3372f-a78f-490c-9b48-d64dffd231b5", "Read a file", SharedSpaceActionType.READ,
+		createInitPermission("05e3372f-a78f-490c-9b48-d64dffd231b5", "Read a file", SharedSpaceActionType.GET,
 				SharedSpaceResourceType.FILE, admin, writer, contributor, reader);
 		createInitPermission("816b30ae-13ed-46a4-9284-fcaa65fc9e84", "Update a file", SharedSpaceActionType.UPDATE,
 				SharedSpaceResourceType.FILE, admin, writer, contributor);
@@ -169,7 +173,7 @@ public class InitMongoServiceImpl implements InitMongoService {
 				SharedSpaceResourceType.FILE, admin, writer, contributor, reader);
 		createInitPermission("f597e8f2-1c3b-4285-a909-62f47528de1e", "Create a member", SharedSpaceActionType.CREATE,
 				SharedSpaceResourceType.MEMBER, admin, drive_admin);
-		createInitPermission("6b3e52d5-5fa5-4a72-bf62-fc15896b1cfc", "Read a member", SharedSpaceActionType.READ,
+		createInitPermission("6b3e52d5-5fa5-4a72-bf62-fc15896b1cfc", "Read a member", SharedSpaceActionType.GET,
 				SharedSpaceResourceType.MEMBER, admin, writer, contributor, reader, drive_admin, drive_creator, drive_reader);
 		createInitPermission("0f1d6446-d37d-4bc6-a2ed-c391b6866527", "Update a member", SharedSpaceActionType.UPDATE,
 				SharedSpaceResourceType.MEMBER, admin, drive_admin);
@@ -177,7 +181,7 @@ public class InitMongoServiceImpl implements InitMongoService {
 				SharedSpaceResourceType.MEMBER, admin, drive_admin);
 		createInitPermission("08a77038-95d0-46be-93de-a602e0315d6e", "Create a workgroup", SharedSpaceActionType.CREATE,
 				SharedSpaceResourceType.WORKGROUP, admin, drive_admin, drive_creator);
-		createInitPermission("ce73fa89-04aa-41f2-a94f-cf09b46f810b", "Read a workgroup", SharedSpaceActionType.READ,
+		createInitPermission("ce73fa89-04aa-41f2-a94f-cf09b46f810b", "Read a workgroup", SharedSpaceActionType.GET,
 				SharedSpaceResourceType.WORKGROUP, admin, writer, contributor, reader);
 		createInitPermission("881dfa55-90c5-460a-9ac2-a38181fd2349", "Update a workgroup", SharedSpaceActionType.UPDATE,
 				SharedSpaceResourceType.WORKGROUP, admin);

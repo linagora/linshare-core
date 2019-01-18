@@ -57,14 +57,14 @@ public class SharedSpaceMemberResourceAccessControlImpl
 	@Override
 	protected boolean hasReadPermission(Account authUser, Account actor, SharedSpaceMember entry, Object... opt) {
 		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
-				TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_READ, SharedSpaceActionType.READ);
+				TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_GET, SharedSpaceActionType.GET);
 	}
 
 	@Override
 	protected boolean hasListPermission(Account authUser, Account actor, SharedSpaceMember entry, Object... opt) {
 		String nodeUuid = (String) opt[0];
 		return defaultSharedSpacePermissionCheck(authUser, actor, nodeUuid,
-				TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_LIST, SharedSpaceActionType.READ);
+				TechnicalAccountPermissionType.SHARED_SPACE_PERMISSION_LIST, SharedSpaceActionType.GET);
 	}
 
 	@Override

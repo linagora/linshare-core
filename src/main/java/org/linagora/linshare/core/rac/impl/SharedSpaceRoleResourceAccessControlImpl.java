@@ -49,7 +49,7 @@ public class SharedSpaceRoleResourceAccessControlImpl
 
 	@Override
 	protected boolean hasReadPermission(Account authUser, Account account, SharedSpaceRole entry, Object... opt) {
-		return defaultPermissionCheck(authUser, authUser, entry, TechnicalAccountPermissionType.SHARED_SPACE_ROLE_READ,false);
+		return defaultPermissionCheck(authUser, authUser, entry, TechnicalAccountPermissionType.SHARED_SPACE_ROLE_GET,false);
 	}
 
 	@Override

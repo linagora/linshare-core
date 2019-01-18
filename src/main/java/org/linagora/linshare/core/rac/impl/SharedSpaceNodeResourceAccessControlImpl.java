@@ -63,7 +63,7 @@ public class SharedSpaceNodeResourceAccessControlImpl
 	@Override
 	protected boolean hasReadPermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
 		return defaultSharedSpacePermissionCheck(authUser, actor, entry.getUuid(),
-				TechnicalAccountPermissionType.SHARED_SPACE_NODE_READ, SharedSpaceActionType.READ, getSharedSpaceResourceType(entry));
+				TechnicalAccountPermissionType.SHARED_SPACE_NODE_GET, SharedSpaceActionType.GET, getSharedSpaceResourceType(entry));
 	}
 
 	@Override
@@ -71,7 +71,7 @@ public class SharedSpaceNodeResourceAccessControlImpl
 		if (opt.length > 0 && opt[0] != null) {
 			SharedSpaceNode parent = (SharedSpaceNode) opt[0];
 			boolean canListWorkGroupsInside = defaultSharedSpacePermissionCheck(authUser, actor, parent.getUuid(),
-					TechnicalAccountPermissionType.SHARED_SPACE_NODE_READ, SharedSpaceActionType.READ,
+					TechnicalAccountPermissionType.SHARED_SPACE_NODE_GET, SharedSpaceActionType.GET,
 					getSharedSpaceResourceType(parent));
 			if (!canListWorkGroupsInside) {
 				logger.error(String.format("You cannot list workgroups inside the node {}", parent.getUuid()));

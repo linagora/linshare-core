@@ -46,6 +46,8 @@ public interface SharedSpacePermissionMongoRepository extends MongoRepository<Sh
 	
 	SharedSpacePermission findByUuid(String uuid) throws BusinessException;
 
+	Long removeByUuid(String uuid) throws BusinessException;
+
 	@Query("{'roles.name': ?0}")
 	List<SharedSpacePermission> findBySharedSpaceRole(String roleName) throws BusinessException;
 
