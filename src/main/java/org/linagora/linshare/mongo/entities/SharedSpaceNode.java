@@ -86,6 +86,18 @@ public class SharedSpaceNode {
 		this.modificationDate = new Date();
 	}
 
+	public SharedSpaceNode(String name, String parentUuid, NodeType nodeType,
+			VersioningParameters versioningParameters) {
+		super();
+		this.uuid = UUID.randomUUID().toString();
+		this.name = name;
+		this.parentUuid = parentUuid;
+		this.nodeType = nodeType;
+		this.versioningParameters = versioningParameters;
+		this.creationDate = new Date();
+		this.modificationDate = new Date();
+	}
+
 	public SharedSpaceNode(String name, String uuid, NodeType nodeType, Date creationDate, Date modificationDate) {
 		super();
 		this.uuid = uuid;

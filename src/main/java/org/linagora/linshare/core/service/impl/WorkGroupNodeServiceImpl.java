@@ -45,6 +45,7 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
@@ -61,6 +62,7 @@ import org.linagora.linshare.core.service.WorkGroupDocumentService;
 import org.linagora.linshare.core.service.WorkGroupFolderService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.core.utils.FileAndMetaData;
+import org.linagora.linshare.mongo.entities.VersioningParameters;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupFolder;
@@ -245,44 +247,53 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		workGroupNode.setName(fileName);
 		return workGroupFolderService.create(actor, owner, workGroup, workGroupNode, nodeParent, strict, dryRun);
 	}
-
 	@Override
 	public WorkGroupNode create(Account actor, User owner, WorkGroup workGroup, File tempFile, String fileName,
 			String parentNodeUuid, Boolean strict) throws BusinessException {
+		return create(actor, owner, workGroup, tempFile, fileName, parentNodeUuid, strict, null);
+	}
+
+	@Override
+	public WorkGroupNode create(Account actor, User owner, WorkGroup workGroup, File tempFile, String fileName,
+			String parentNodeUuid, Boolean strict, VersioningParameters parameters) throws BusinessException {
 		preChecks(actor, owner);
 		checkCreatePermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, null, workGroup);
 		fileName = sanitizeFileName(fileName);
-		if (parentNodeUuid != null) {
-			if (parentNodeUuid.isEmpty()) {
-				parentNodeUuid = null;
-			}
+		if (parentNodeUuid != null && parentNodeUuid.isEmpty()) {
+			parentNodeUuid = null;
 		}
 		WorkGroupNode parentNode = getParentNode(actor, owner, workGroup, parentNodeUuid);
-		Functionality versioningFunctionality = functionalityReadOnlyService.getWorkGroupFileVersioning(actor.getDomain());
 		boolean isRevisionOnly = false;
 		if (strict) {
 			workGroupDocumentService.checkUniqueName(workGroup, parentNode, fileName);
-		} else {
-			if (!workGroupDocumentService.isUniqueName(workGroup, parentNode, fileName)) {
-				if (!versioningFunctionality.getActivationPolicy().getStatus()) {
-					fileName = workGroupDocumentService.getNewName(actor, owner, workGroup, parentNode, fileName);
-				} else {
-					isRevisionOnly = true;
-				}
+		} else if (!workGroupDocumentService.isUniqueName(workGroup, parentNode, fileName)) {
+			isRevisionOnly = checkVersioningFunctionality(actor.getDomain(), parameters);
+			if (!isRevisionOnly) {
+				fileName = workGroupDocumentService.getNewName(actor, owner, workGroup, parentNode, fileName);
 			}
 		}
 		Long size = tempFile.length();
 		String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
 		WorkGroupNode dto = null;
 		if (isRevisionOnly) {
-			WorkGroupDocumentRevision documentRevision = (WorkGroupDocumentRevision) revisionService
-					.create(actor, owner, workGroup, tempFile, fileName, parentNode);
+			WorkGroupDocumentRevision documentRevision = revisionService.create(actor, owner, workGroup, tempFile, fileName, parentNode);
 			dto = revisionService.updateDocument(actor, (Account) owner, workGroup, documentRevision);
 		} else {
 			dto = workGroupDocumentService.create(actor, owner, workGroup, size, mimeType, fileName, parentNode);
 			revisionService.create(actor, owner, workGroup, tempFile, fileName, dto);
 		}
 		return dto;
+	}
+
+	private boolean checkVersioningFunctionality(AbstractDomain domain, VersioningParameters parameters) {
+		Functionality versioningFunctionality = functionalityReadOnlyService.getWorkGroupFileVersioning(domain);
+		if (versioningFunctionality != null && versioningFunctionality.getActivationPolicy().getStatus()) {
+			if (versioningFunctionality.getDelegationPolicy().getStatus() && parameters != null) {
+				return parameters.isEnabled();
+			}
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -446,10 +457,8 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		Validate.notEmpty(cr.getName(), "Missing fileName");
 		checkCreatePermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, null, toWorkGroup);
 		String fileName = sanitizeFileName(cr.getName());
-		if (toNodeUuid != null) {
-			if (toNodeUuid.isEmpty()) {
-				toNodeUuid = null;
-			}
+		if (toNodeUuid != null && toNodeUuid.isEmpty()) {
+			toNodeUuid = null;
 		}
 		WorkGroupNode nodeParent = getParentNode(actor, owner, toWorkGroup, toNodeUuid);
 		fileName = workGroupDocumentService.getNewName(actor, owner, toWorkGroup, nodeParent, fileName);
@@ -473,7 +482,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 
 	@Override
 	public WorkGroupNode copy(Account actor, User owner, WorkGroup fromWorkGroup, String fromNodeUuid,
-			WorkGroup toWorkGroup, String toNodeUuid) throws BusinessException {
+			WorkGroup toWorkGroup, String toNodeUuid, VersioningParameters parameters) throws BusinessException {
 		// step 1 : check the source
 		WorkGroupNode fromNode = find(actor, owner, fromWorkGroup, fromNodeUuid, false);
 		checkDownloadPermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, fromNode, fromWorkGroup);
@@ -504,6 +513,10 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 				workGroupDocumentService.markAsCopied(actor, owner, fromWorkGroup, fromNode, copiedTo);
 				return newDocument;
 			} else if (isDocument(toNode)) {
+				// Check versioning functionality
+				if (!checkVersioningFunctionality(toWorkGroup.getDomain(), parameters)) {
+					throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not copy to this kind of node.");
+				}
 				// copy the most recent revision into the document.
 				WorkGroupDocumentRevision revision = (WorkGroupDocumentRevision) workGroupDocumentService.copy(actor, owner, fromWorkGroup, mostRecent.getDocumentUuid(), doc.getName(),
 						toNode, doc.getCiphered(), doc.getSize(), doc.getUuid(), copyFrom);
@@ -532,6 +545,10 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 				workGroupDocumentService.markAsCopied(actor, owner, fromWorkGroup, fromNode, copiedTo);
 				return newDocument;
 			} else 	if (isDocument(toNode)) {
+				// Check versioning functionality
+				if (!checkVersioningFunctionality(toWorkGroup.getDomain(), parameters)) {
+					throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not copy to this kind of node.");
+				}
 				// Copy the revision into the document.
 				WorkGroupDocumentRevision newRevision = (WorkGroupDocumentRevision) workGroupDocumentService.copy(actor,
 						owner, fromWorkGroup, revision.getDocumentUuid(), revision.getName(), toNode,

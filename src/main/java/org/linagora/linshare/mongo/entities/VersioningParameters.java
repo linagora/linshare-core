@@ -33,66 +33,33 @@
  */
 package org.linagora.linshare.mongo.entities;
 
-import org.linagora.linshare.core.domain.constants.TimeUnit;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement(name = "VersioningParameters")
 public class VersioningParameters {
 
-	protected Boolean isEnabled;
-
-	protected Boolean isExpirationEnabled;
-
-	protected Integer expirationDelay;
-
-	protected TimeUnit expirationUnit;
+	protected Boolean enable;
 
 	public VersioningParameters() {
 		super();
 	}
 
-	public VersioningParameters(Boolean isEnabled, Boolean isExpirationEnabled, Integer expirationDelay,
-			TimeUnit expirationUnit) {
+	public VersioningParameters(Boolean enable) {
 		super();
-		this.isEnabled = isEnabled;
-		this.isExpirationEnabled = isExpirationEnabled;
-		this.expirationDelay = expirationDelay;
-		this.expirationUnit = expirationUnit;
+		this.enable = enable;
 	}
 
 	public Boolean isEnabled() {
-		return isEnabled;
+		return enable;
 	}
 
-	public void setEnabled(Boolean isEnabled) {
-		this.isEnabled = isEnabled;
-	}
-
-	public Boolean isExpirationEnabled() {
-		return isExpirationEnabled;
-	}
-
-	public void setExpirationEnabled(Boolean isExpirationEnabled) {
-		this.isExpirationEnabled = isExpirationEnabled;
-	}
-
-	public Integer getExpirationDelay() {
-		return expirationDelay;
-	}
-
-	public void setExpirationDelay(Integer expirationDelay) {
-		this.expirationDelay = expirationDelay;
-	}
-
-	public TimeUnit getExpirationUnit() {
-		return expirationUnit;
-	}
-
-	public void setExpirationUnit(TimeUnit expirationUnit) {
-		this.expirationUnit = expirationUnit;
+	public void setEnabled(Boolean enable) {
+		this.enable = enable;
 	}
 
 	@Override
 	public String toString() {
-		return "WorkGroupVersioning [isEnabled=" + isEnabled + ", isExpirationEnabled=" + isExpirationEnabled
-				+ ", expirationDelay=" + expirationDelay + ", expirationUnit=" + expirationUnit + "]";
+		return "VersioningParameters [enable=" + enable + "]";
 	}
+
 }

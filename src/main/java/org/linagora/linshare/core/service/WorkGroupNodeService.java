@@ -44,6 +44,8 @@ import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.utils.FileAndMetaData;
+import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.VersioningParameters;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
 
@@ -76,11 +78,14 @@ public interface WorkGroupNodeService {
 	WorkGroupNode copy(Account actor, User owner, WorkGroup toWorkGroup, String toNodeUuid, CopyResource cr) throws BusinessException;
 
 	WorkGroupNode copy(Account actor, User owner, WorkGroup fromWorkGroup, String fromNodeUuid, WorkGroup toWorkGroup,
-			String toNodeUuid) throws BusinessException;
+			String toNodeUuid, VersioningParameters parameters) throws BusinessException;
 
 	@Deprecated
 	WorkGroupNode create(Account actor, User owner, WorkGroup workGroup, File tempFile, String fileName,
 			String parentNodeUuid, Boolean strict) throws BusinessException;
+
+	WorkGroupNode create(Account actor, User owner, WorkGroup workGroup, File tempFile,
+			String fileName, String parentNodeUuid, Boolean strict, VersioningParameters parameters) throws BusinessException;
 
 	@Deprecated
 	WorkGroupNode update(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode)
@@ -103,6 +108,6 @@ public interface WorkGroupNodeService {
 
 	WorkGroupNode findByWorkGroupNodeUuid(String uuid) throws BusinessException;
 
-	WorkGroupNode restoreRevision(Account actor, Account owner, WorkGroup workGroup, String revisionUuid) throws BusinessException;;
+	WorkGroupNode restoreRevision(Account actor, Account owner, WorkGroup workGroup, String revisionUuid) throws BusinessException;
 
 }

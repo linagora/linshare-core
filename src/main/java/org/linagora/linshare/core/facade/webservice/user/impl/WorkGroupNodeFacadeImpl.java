@@ -170,8 +170,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		User actor = getActor(authUser, actorUuid);
 		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
 		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceNode.getUuid());
-		WorkGroupNode node = service.create(authUser, actor, workGroup, tempFile, fileName, parentNodeUuid, strict);
-		return node;
+		return service.create(authUser, actor, workGroup, tempFile, fileName, parentNodeUuid, strict, sharedSpaceNode.getVersioningParameters());
 	}
 
 	@Override
@@ -208,11 +207,10 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 			return Lists.newArrayList(node);
 		} else if (TargetKind.SHARED_SPACE.equals(resourceKind)) {
 			String fromWorkGroupUuid = service.findWorkGroupUuid(authUser, actor, fromResourceUuid);
-			SharedSpaceNode fromSharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, fromWorkGroupUuid);
 			// The workgroup here is used for the OperationHistory
 			WorkGroup fromWorkGroup = threadService.find(authUser, actor, fromWorkGroupUuid);
 			WorkGroupNode node = service.copy(authUser, actor, fromWorkGroup, fromResourceUuid, toWorkGroup,
-					toParentNodeUuid);
+					toParentNodeUuid, toSharedSpaceNode.getVersioningParameters());
 			return Lists.newArrayList(node);
 		}
 		throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN, "This action is not supported.");

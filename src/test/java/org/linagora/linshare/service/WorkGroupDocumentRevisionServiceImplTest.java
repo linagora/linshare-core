@@ -76,7 +76,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @ExtendWith(SpringExtension.class)
 @Sql({"/import-tests-default-domain-quotas.sql",
-	"/import-tests-domain-quota-updates.sql"})
+	"/import-tests-domain-quota-updates.sql",
+	"/import-tests-workgroup-file-versioning.sql"})
 @Transactional
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
@@ -158,7 +159,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	@Test
 	public void findAllTest() throws IOException {
 		SharedSpaceNode node = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
-		node.setVersioningParameters(new VersioningParameters(true, false, null, null));
+		node.setVersioningParameters(new VersioningParameters(true));
 		SharedSpaceNode ssn = sharedSpaceNodeService.create(john, john, node);
 		WorkGroup workGroup = threadService.find(john, john, ssn.getUuid());
 		WorkGroupNode folder = workGroupNodeService.getRootFolder(john, john, workGroup);
@@ -189,7 +190,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	@Test
 	public void restoreRevisionTest() throws IOException {
 		SharedSpaceNode node = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
-		node.setVersioningParameters(new VersioningParameters(true, false, null, null));
+		node.setVersioningParameters(new VersioningParameters(true));
 		SharedSpaceNode ssn = sharedSpaceNodeService.create(john, john, node);
 		WorkGroup workGroup = threadService.find(john, john, ssn.getUuid());
 		WorkGroupNode folder = workGroupNodeService.getRootFolder(john, john, workGroup);
@@ -220,7 +221,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	@Test
 	public void deleteRevisionTest() throws IOException {
 		SharedSpaceNode node = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
-		node.setVersioningParameters(new VersioningParameters(true, false, null, null));
+		node.setVersioningParameters(new VersioningParameters(true));
 		SharedSpaceNode ssn = sharedSpaceNodeService.create(john, john, node);
 		WorkGroup workGroup = threadService.find(john, john, ssn.getUuid());
 		WorkGroupNode folder = workGroupNodeService.getRootFolder(john, john, workGroup);
@@ -255,7 +256,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	@Test
 	public void deleteAllTest() throws IOException {
 		SharedSpaceNode node = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
-		node.setVersioningParameters(new VersioningParameters(true, false, null, null));
+		node.setVersioningParameters(new VersioningParameters(true));
 		SharedSpaceNode ssn = sharedSpaceNodeService.create(john, john, node);
 		WorkGroup workGroup = threadService.find(john, john, ssn.getUuid());
 		WorkGroupNode folder = workGroupNodeService.getRootFolder(john, john, workGroup);
@@ -299,7 +300,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	@Test
 	public void duplicateWGDocumentTest() throws IOException {
 		SharedSpaceNode ssnode = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
-		ssnode.setVersioningParameters(new VersioningParameters(true, false, null, null));
+		ssnode.setVersioningParameters(new VersioningParameters(true));
 		ssnode = sharedSpaceNodeService.create(john, john, ssnode);
 		WorkGroup workGroup = threadService.find(john, john, ssnode.getUuid());
 		InputStream stream1 = Thread.currentThread().getContextClassLoader()
@@ -314,7 +315,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		workGroupDocumentRevisionService.create(john, john, workGroup, tempFile1, tempFile1.getName(), document);
 		// duplicate WGDocument
 		WorkGroupDocument duplicated = (WorkGroupDocument) workGroupNodeService.copy(john, john, workGroup,
-				document.getUuid(), workGroup, document.getParent());
+				document.getUuid(), workGroup, document.getParent(), ssnode.getVersioningParameters());
 		assertNotNull(duplicated);
 		assertEquals(document.getSize(), duplicated.getSize());
 		int newSize = workGroupNodeService.findAll(john, john, workGroup).size();
@@ -326,8 +327,8 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	public void createDocumentFromRevisionTest() throws IOException {
 		SharedSpaceNode ssnode = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
 		SharedSpaceNode ssnode2 = new SharedSpaceNode("My second node", "My parent nodeUuid", NodeType.WORK_GROUP);
-		ssnode.setVersioningParameters(new VersioningParameters(true, false, null, null));
-		ssnode2.setVersioningParameters(new VersioningParameters(true, false, null, null));
+		ssnode.setVersioningParameters(new VersioningParameters(true));
+		ssnode2.setVersioningParameters(new VersioningParameters(true));
 		ssnode = sharedSpaceNodeService.create(john, john, ssnode);
 		ssnode2 = sharedSpaceNodeService.create(john, john, ssnode2);
 		WorkGroup workGroup = threadService.find(john, john, ssnode.getUuid());
@@ -342,7 +343,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		WorkGroupDocumentRevision revision = workGroupDocumentRevisionService.create(john, john, workGroup, tempFile1, tempFile1.getName(), document);
 		// copy the revision in the workgroup2 on the root folder
 		WorkGroupDocument fromRevision = (WorkGroupDocument) workGroupNodeService.copy(john, john, workGroup,
-				revision.getUuid(), workGroup2, null);
+				revision.getUuid(), workGroup2, null, ssnode.getVersioningParameters());
 		assertNotNull(fromRevision);
 		assertEquals(document.getSize(), fromRevision.getSize());
 		assertEquals(1, workGroupNodeService.findAll(john, john, workGroup2).size());
@@ -351,7 +352,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	@Test
 	public void createRevisionFromDocumentTest() throws IOException {
 		SharedSpaceNode ssnode = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
-		ssnode.setVersioningParameters(new VersioningParameters(true, false, null, null));
+		ssnode.setVersioningParameters(new VersioningParameters(true));
 		ssnode = sharedSpaceNodeService.create(john, john, ssnode);
 		WorkGroup workGroup = threadService.find(john, john, ssnode.getUuid());
 		InputStream stream1 = Thread.currentThread().getContextClassLoader()
@@ -371,7 +372,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		workGroupDocumentRevisionService.create(john, john, workGroup, tempFile2, tempFile2.getName(), document2);
 		assertFalse(document2.getHasRevision());
 		WorkGroupDocument fromRevision = (WorkGroupDocument) workGroupNodeService.copy(john, john, workGroup,
-				document.getUuid(), workGroup, document2.getUuid());
+				document.getUuid(), workGroup, document2.getUuid(), ssnode.getVersioningParameters());
 		assertNotNull(fromRevision);
 		assertEquals(document.getSize(), fromRevision.getSize());
 		assertTrue(fromRevision.getHasRevision());
@@ -380,7 +381,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 	@Test
 	public void createRevisionFromRevisionTest() throws IOException {
 		SharedSpaceNode ssnode = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
-		ssnode.setVersioningParameters(new VersioningParameters(true, false, null, null));
+		ssnode.setVersioningParameters(new VersioningParameters(true));
 		ssnode = sharedSpaceNodeService.create(john, john, ssnode);
 		WorkGroup workGroup = threadService.find(john, john, ssnode.getUuid());
 		InputStream stream1 = Thread.currentThread().getContextClassLoader()
@@ -401,7 +402,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		assertFalse(document2.getHasRevision());
 		// create a new revision from the revision
 		WorkGroupDocument fromRevision = (WorkGroupDocument) workGroupNodeService.copy(john, john, workGroup,
-				revision.getUuid(), workGroup, document.getUuid());
+				revision.getUuid(), workGroup, document.getUuid(), ssnode.getVersioningParameters());
 		assertNotNull(fromRevision);
 		assertEquals(document.getSize(), fromRevision.getSize());
 		assertTrue(fromRevision.getHasRevision());
