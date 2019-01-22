@@ -34,7 +34,7 @@ class TestFormat(unittest.TestCase):
 
     def test_pypika_format(self):
         mail_layout_table = self.imported_database["mail_layout"]
-        expected_layout = """INSERT INTO mail_layout (creation_date,description,domain_abstract_id,id,layout,messages_english,messages_french,modification_date,readonly,uuid,visible) VALUES (NOW(),'Default HTML layout',1,1,'<!DOCTYPE html>
+        expected_layout = """INSERT INTO "mail_layout" ("creation_date","description","domain_abstract_id","id","layout","messages_english","messages_french","modification_date","readonly","uuid","visible") VALUES (NOW(),'Default HTML layout',1,1,'<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 <!--/* Beginning of common base layout template*/-->
