@@ -210,7 +210,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 			// The workgroup here is used for the OperationHistory
 			WorkGroup fromWorkGroup = threadService.find(authUser, actor, fromWorkGroupUuid);
 			WorkGroupNode node = service.copy(authUser, actor, fromWorkGroup, fromResourceUuid, toWorkGroup,
-					toParentNodeUuid, toSharedSpaceNode.getVersioningParameters());
+					toParentNodeUuid);
 			return Lists.newArrayList(node);
 		}
 		throw new BusinessException(BusinessErrorCode.WEBSERVICE_FORBIDDEN, "This action is not supported.");

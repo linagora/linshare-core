@@ -74,7 +74,11 @@ import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
 import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 
 import com.google.common.collect.Lists;
 
@@ -206,19 +210,15 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 		Validate.notNull(actor);
 		Validate.notNull(workGroup);
 		Validate.notNull(parentUuid);
-		Functionality versioningFunctionality = functionalityReadOnlyService.getWorkGroupFileVersioning(actor.getDomain());
-		boolean isVersioningFunctionalityEnabled = versioningFunctionality.getActivationPolicy().getStatus();
 		List<WorkGroupNode> nodes = Lists.newArrayList();
-		if (isVersioningFunctionalityEnabled && isVersioningEnabledInWorkGroup(workGroup)) {
-			nodes = repository.findByWorkGroupAndParentAndNodeType(workGroup.getLsUuid(), parentUuid, WorkGroupNodeType.DOCUMENT_REVISION);
-			// TODO : yse Create mongoTemplate query to find all revision and exclude the most recent
-			nodes = nodes.stream()
-					.sorted(Comparator.comparing(WorkGroupNode::getCreationDate, Comparator.reverseOrder()))
-					.collect(Collectors.toList());
-			if(!nodes.isEmpty()) {
-				// The most recent revision is not considered as a regular revision, so we don't return it.
-				nodes.remove(0);
-			}
+		if (checkVersioningFunctionality(actor.getDomain(), workGroup)) {
+			Query query = new Query();
+			query.addCriteria(Criteria.where("workGroup").is(workGroup.getLsUuid()));
+			query.addCriteria(Criteria.where("parent").is(parentUuid));
+			query.addCriteria(Criteria.where("nodeType").is(WorkGroupNodeType.DOCUMENT_REVISION));
+			query.with(new Sort(Direction.DESC, "creationDate"));
+			query.skip(1);
+			nodes = mongoTemplate.find(query, WorkGroupNode.class);
 		}
 		return nodes;
 	}
@@ -240,13 +240,18 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 		return rev;
 	}
 
-	private boolean isVersioningEnabledInWorkGroup(WorkGroup workGroup) {
+	@Override
+	public boolean checkVersioningFunctionality(AbstractDomain domain, WorkGroup workGroup) {
 		SharedSpaceNode ssn = sharedSpaceNodeMongoRepository.findByUuid(workGroup.getLsUuid());
-		VersioningParameters versioningParameters = ssn.getVersioningParameters();
-		if (versioningParameters == null) {
-			return false;
+		VersioningParameters parameters = ssn.getVersioningParameters();
+		Functionality versioningFunctionality = functionalityReadOnlyService.getWorkGroupFileVersioning(domain);
+		if (versioningFunctionality != null && versioningFunctionality.getActivationPolicy().getStatus()) {
+			if (versioningFunctionality.getDelegationPolicy().getStatus() && parameters != null) {
+				return parameters.isEnabled();
+			}
+			return true;
 		}
-		return versioningParameters.isEnabled();
+		return false;
 	}
 
 	@Override

@@ -36,6 +36,7 @@ package org.linagora.linshare.core.service;
 import java.io.File;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -60,5 +61,7 @@ public interface WorkGroupDocumentRevisionService extends WorkGroupDocumentServi
 			throws BusinessException;
 
 	WorkGroupNode findMostRecent(WorkGroup workGroup, String parentUuid) throws BusinessException;
+
+	boolean checkVersioningFunctionality(AbstractDomain domain, WorkGroup workGroup);
 
 }

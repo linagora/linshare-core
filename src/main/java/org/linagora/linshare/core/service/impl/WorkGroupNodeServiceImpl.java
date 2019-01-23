@@ -45,9 +45,7 @@ import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.objects.CopyResource;
@@ -62,8 +60,6 @@ import org.linagora.linshare.core.service.WorkGroupDocumentService;
 import org.linagora.linshare.core.service.WorkGroupFolderService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.core.utils.FileAndMetaData;
-import org.linagora.linshare.mongo.entities.SharedSpaceNode;
-import org.linagora.linshare.mongo.entities.VersioningParameters;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupFolder;
@@ -72,7 +68,6 @@ import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
 import org.linagora.linshare.mongo.entities.mto.WorkGroupLightNode;
-import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -102,8 +97,6 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 
 	protected final MimeTypeMagicNumberDao mimeTypeIdentifier;
 
-	protected final SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository;
-
 	public WorkGroupNodeServiceImpl(WorkGroupNodeMongoRepository repository,
 			LogEntryService logEntryService,
 			WorkGroupDocumentService workGroupDocumentService,
@@ -113,8 +106,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 			MongoTemplate mongoTemplate,
 			FunctionalityReadOnlyService functionalityReadOnlyService,
 			WorkGroupDocumentRevisionService revisionService,
-			MimeTypeMagicNumberDao mimeTypeIdentifier,
-			SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository) {
+			MimeTypeMagicNumberDao mimeTypeIdentifier) {
 		super(rac);
 		this.repository = repository;
 		this.workGroupDocumentService = workGroupDocumentService;
@@ -125,7 +117,6 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.revisionService = revisionService;
 		this.mimeTypeIdentifier = mimeTypeIdentifier;
-		this.sharedSpaceNodeMongoRepository = sharedSpaceNodeMongoRepository;
 	}
 
 	@Override
@@ -264,13 +255,12 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		if (parentNodeUuid != null && parentNodeUuid.isEmpty()) {
 			parentNodeUuid = null;
 		}
-		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeMongoRepository.findByUuid(workGroup.getLsUuid());
 		WorkGroupNode parentNode = getParentNode(actor, owner, workGroup, parentNodeUuid);
 		boolean isRevisionOnly = false;
 		if (strict) {
 			workGroupDocumentService.checkUniqueName(workGroup, parentNode, fileName);
-		} else if (!workGroupDocumentService.isUniqueName(workGroup, parentNode, fileName) && sharedSpaceNode != null) {
-			isRevisionOnly = checkVersioningFunctionality(actor.getDomain(), sharedSpaceNode.getVersioningParameters());
+		} else if (!workGroupDocumentService.isUniqueName(workGroup, parentNode, fileName)) {
+			isRevisionOnly = revisionService.checkVersioningFunctionality(actor.getDomain(), workGroup);
 			if (!isRevisionOnly) {
 				fileName = workGroupDocumentService.getNewName(actor, owner, workGroup, parentNode, fileName);
 			}
@@ -286,17 +276,6 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 			revisionService.create(actor, owner, workGroup, tempFile, fileName, dto);
 		}
 		return dto;
-	}
-
-	private boolean checkVersioningFunctionality(AbstractDomain domain, VersioningParameters parameters) {
-		Functionality versioningFunctionality = functionalityReadOnlyService.getWorkGroupFileVersioning(domain);
-		if (versioningFunctionality != null && versioningFunctionality.getActivationPolicy().getStatus()) {
-			if (versioningFunctionality.getDelegationPolicy().getStatus() && parameters != null) {
-				return parameters.isEnabled();
-			}
-			return true;
-		}
-		return false;
 	}
 
 	@Override
@@ -485,7 +464,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 
 	@Override
 	public WorkGroupNode copy(Account actor, User owner, WorkGroup fromWorkGroup, String fromNodeUuid,
-			WorkGroup toWorkGroup, String toNodeUuid, VersioningParameters parameters) throws BusinessException {
+			WorkGroup toWorkGroup, String toNodeUuid) throws BusinessException {
 		// step 1 : check the source
 		WorkGroupNode fromNode = find(actor, owner, fromWorkGroup, fromNodeUuid, false);
 		checkDownloadPermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, fromNode, fromWorkGroup);
@@ -517,7 +496,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 				return newDocument;
 			} else if (isDocument(toNode)) {
 				// Check versioning functionality
-				if (!checkVersioningFunctionality(toWorkGroup.getDomain(), parameters)) {
+				if (!revisionService.checkVersioningFunctionality(actor.getDomain(), toWorkGroup)) {
 					throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not copy to this kind of node.");
 				}
 				// copy the most recent revision into the document.
@@ -549,7 +528,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 				return newDocument;
 			} else 	if (isDocument(toNode)) {
 				// Check versioning functionality
-				if (!checkVersioningFunctionality(toWorkGroup.getDomain(), parameters)) {
+				if (!revisionService.checkVersioningFunctionality(actor.getDomain(), toWorkGroup)) {
 					throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not copy to this kind of node.");
 				}
 				// Copy the revision into the document.

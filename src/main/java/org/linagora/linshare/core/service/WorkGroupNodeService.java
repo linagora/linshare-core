@@ -44,8 +44,6 @@ import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.utils.FileAndMetaData;
-import org.linagora.linshare.mongo.entities.SharedSpaceNode;
-import org.linagora.linshare.mongo.entities.VersioningParameters;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
 
@@ -78,7 +76,7 @@ public interface WorkGroupNodeService {
 	WorkGroupNode copy(Account actor, User owner, WorkGroup toWorkGroup, String toNodeUuid, CopyResource cr) throws BusinessException;
 
 	WorkGroupNode copy(Account actor, User owner, WorkGroup fromWorkGroup, String fromNodeUuid, WorkGroup toWorkGroup,
-			String toNodeUuid, VersioningParameters parameters) throws BusinessException;
+			String toNodeUuid) throws BusinessException;
 
 	@Deprecated
 	WorkGroupNode create(Account actor, User owner, WorkGroup workGroup, File tempFile, String fileName,

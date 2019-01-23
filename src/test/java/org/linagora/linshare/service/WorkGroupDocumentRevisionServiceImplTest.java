@@ -315,7 +315,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		workGroupDocumentRevisionService.create(john, john, workGroup, tempFile1, tempFile1.getName(), document);
 		// duplicate WGDocument
 		WorkGroupDocument duplicated = (WorkGroupDocument) workGroupNodeService.copy(john, john, workGroup,
-				document.getUuid(), workGroup, document.getParent(), ssnode.getVersioningParameters());
+				document.getUuid(), workGroup, document.getParent());
 		assertNotNull(duplicated);
 		assertEquals(document.getSize(), duplicated.getSize());
 		int newSize = workGroupNodeService.findAll(john, john, workGroup).size();
@@ -343,7 +343,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		WorkGroupDocumentRevision revision = workGroupDocumentRevisionService.create(john, john, workGroup, tempFile1, tempFile1.getName(), document);
 		// copy the revision in the workgroup2 on the root folder
 		WorkGroupDocument fromRevision = (WorkGroupDocument) workGroupNodeService.copy(john, john, workGroup,
-				revision.getUuid(), workGroup2, null, ssnode.getVersioningParameters());
+				revision.getUuid(), workGroup2, null);
 		assertNotNull(fromRevision);
 		assertEquals(document.getSize(), fromRevision.getSize());
 		assertEquals(1, workGroupNodeService.findAll(john, john, workGroup2).size());
@@ -372,7 +372,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		workGroupDocumentRevisionService.create(john, john, workGroup, tempFile2, tempFile2.getName(), document2);
 		assertFalse(document2.getHasRevision());
 		WorkGroupDocument fromRevision = (WorkGroupDocument) workGroupNodeService.copy(john, john, workGroup,
-				document.getUuid(), workGroup, document2.getUuid(), ssnode.getVersioningParameters());
+				document.getUuid(), workGroup, document2.getUuid());
 		assertNotNull(fromRevision);
 		assertEquals(document.getSize(), fromRevision.getSize());
 		assertTrue(fromRevision.getHasRevision());
@@ -402,7 +402,7 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		assertFalse(document2.getHasRevision());
 		// create a new revision from the revision
 		WorkGroupDocument fromRevision = (WorkGroupDocument) workGroupNodeService.copy(john, john, workGroup,
-				revision.getUuid(), workGroup, document.getUuid(), ssnode.getVersioningParameters());
+				revision.getUuid(), workGroup, document.getUuid());
 		assertNotNull(fromRevision);
 		assertEquals(document.getSize(), fromRevision.getSize());
 		assertTrue(fromRevision.getHasRevision());
