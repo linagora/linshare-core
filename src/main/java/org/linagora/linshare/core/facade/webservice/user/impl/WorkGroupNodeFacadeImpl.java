@@ -170,7 +170,7 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		User actor = getActor(authUser, actorUuid);
 		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
 		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceNode.getUuid());
-		return service.create(authUser, actor, workGroup, tempFile, fileName, parentNodeUuid, strict, sharedSpaceNode.getVersioningParameters());
+		return service.create(authUser, actor, workGroup, tempFile, fileName, parentNodeUuid, strict);
 	}
 
 	@Override

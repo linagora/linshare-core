@@ -70,10 +70,12 @@ public class SharedSpaceNodeBusinessServiceImpl implements SharedSpaceNodeBusine
 	}
 
 	@Override
-
 	public SharedSpaceNode update(SharedSpaceNode foundNodeToUpdate, SharedSpaceNode nodeToUpdate)
 			throws BusinessException {
 		foundNodeToUpdate.setName(nodeToUpdate.getName());
+		if (nodeToUpdate.getVersioningParameters() != null) {
+			foundNodeToUpdate.setVersioningParameters(nodeToUpdate.getVersioningParameters());
+		}
 		foundNodeToUpdate.setModificationDate(new Date());
 		return sharedSpaceNodeMongoRepository.save(foundNodeToUpdate);
 	}

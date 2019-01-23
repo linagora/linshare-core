@@ -84,9 +84,6 @@ public interface WorkGroupNodeService {
 	WorkGroupNode create(Account actor, User owner, WorkGroup workGroup, File tempFile, String fileName,
 			String parentNodeUuid, Boolean strict) throws BusinessException;
 
-	WorkGroupNode create(Account actor, User owner, WorkGroup workGroup, File tempFile,
-			String fileName, String parentNodeUuid, Boolean strict, VersioningParameters parameters) throws BusinessException;
-
 	@Deprecated
 	WorkGroupNode update(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode)
 			throws BusinessException;

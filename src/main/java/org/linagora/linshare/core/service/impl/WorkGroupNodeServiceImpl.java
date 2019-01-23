@@ -62,6 +62,7 @@ import org.linagora.linshare.core.service.WorkGroupDocumentService;
 import org.linagora.linshare.core.service.WorkGroupFolderService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.core.utils.FileAndMetaData;
+import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.VersioningParameters;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
@@ -71,6 +72,7 @@ import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
 import org.linagora.linshare.mongo.entities.mto.WorkGroupLightNode;
+import org.linagora.linshare.mongo.repository.SharedSpaceNodeMongoRepository;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -100,7 +102,10 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 
 	protected final MimeTypeMagicNumberDao mimeTypeIdentifier;
 
-	public WorkGroupNodeServiceImpl(WorkGroupNodeMongoRepository repository, LogEntryService logEntryService,
+	protected final SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository;
+
+	public WorkGroupNodeServiceImpl(WorkGroupNodeMongoRepository repository,
+			LogEntryService logEntryService,
 			WorkGroupDocumentService workGroupDocumentService,
 			WorkGroupFolderService workGroupFolderService,
 			WorkGroupNodeResourceAccessControlImpl rac,
@@ -108,7 +113,8 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 			MongoTemplate mongoTemplate,
 			FunctionalityReadOnlyService functionalityReadOnlyService,
 			WorkGroupDocumentRevisionService revisionService,
-			MimeTypeMagicNumberDao mimeTypeIdentifier) {
+			MimeTypeMagicNumberDao mimeTypeIdentifier,
+			SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository) {
 		super(rac);
 		this.repository = repository;
 		this.workGroupDocumentService = workGroupDocumentService;
@@ -119,6 +125,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.revisionService = revisionService;
 		this.mimeTypeIdentifier = mimeTypeIdentifier;
+		this.sharedSpaceNodeMongoRepository = sharedSpaceNodeMongoRepository;
 	}
 
 	@Override
@@ -247,27 +254,23 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		workGroupNode.setName(fileName);
 		return workGroupFolderService.create(actor, owner, workGroup, workGroupNode, nodeParent, strict, dryRun);
 	}
-	@Override
-	public WorkGroupNode create(Account actor, User owner, WorkGroup workGroup, File tempFile, String fileName,
-			String parentNodeUuid, Boolean strict) throws BusinessException {
-		return create(actor, owner, workGroup, tempFile, fileName, parentNodeUuid, strict, null);
-	}
 
 	@Override
 	public WorkGroupNode create(Account actor, User owner, WorkGroup workGroup, File tempFile, String fileName,
-			String parentNodeUuid, Boolean strict, VersioningParameters parameters) throws BusinessException {
+			String parentNodeUuid, Boolean strict) throws BusinessException {
 		preChecks(actor, owner);
 		checkCreatePermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, null, workGroup);
 		fileName = sanitizeFileName(fileName);
 		if (parentNodeUuid != null && parentNodeUuid.isEmpty()) {
 			parentNodeUuid = null;
 		}
+		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeMongoRepository.findByUuid(workGroup.getLsUuid());
 		WorkGroupNode parentNode = getParentNode(actor, owner, workGroup, parentNodeUuid);
 		boolean isRevisionOnly = false;
 		if (strict) {
 			workGroupDocumentService.checkUniqueName(workGroup, parentNode, fileName);
-		} else if (!workGroupDocumentService.isUniqueName(workGroup, parentNode, fileName)) {
-			isRevisionOnly = checkVersioningFunctionality(actor.getDomain(), parameters);
+		} else if (!workGroupDocumentService.isUniqueName(workGroup, parentNode, fileName) && sharedSpaceNode != null) {
+			isRevisionOnly = checkVersioningFunctionality(actor.getDomain(), sharedSpaceNode.getVersioningParameters());
 			if (!isRevisionOnly) {
 				fileName = workGroupDocumentService.getNewName(actor, owner, workGroup, parentNode, fileName);
 			}
