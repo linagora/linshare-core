@@ -7,8 +7,9 @@ common.titleSharedThe= Partagé le
 date.format=d MMMM, yyyy
 productCompagny=Linagora
 productName=LinShare
-workGroupRightAdminTitle = Administrateur
+workGroupRightAdminTitle = Administration
 workGroupRightWirteTitle = Écriture
+workGroupRightContributeTitle = Contribution
 workGroupRightReadTitle = Lecture
 welcomeMessage = Bonjour {0},',messages_english='common.availableUntil = Expiry date
 common.byYou= | By you
@@ -20,8 +21,9 @@ date.format= MMMM d, yyyy
 productCompagny=Linagora
 productName=LinShare
 workGroupRightAdminTitle = Administrator
-workGroupRightWirteTitle = Write
-workGroupRightReadTitle = Read
+workGroupRightWirteTitle = Writer
+workGroupRightContributeTitle = Contributor
+workGroupRightReadTitle = Reader
 welcomeMessage = Hello {0},',layout='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>

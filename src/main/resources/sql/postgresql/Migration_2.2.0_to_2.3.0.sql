@@ -265,7 +265,33 @@ link = lien' WHERE id=2;
 -- End mail content
 
 -- Mail layout
-UPDATE mail_layout SET layout='<!DOCTYPE html>
+UPDATE mail_layout SET messages_french='common.availableUntil = Expire le
+common.byYou= | Par vous
+common.download= Télécharger
+common.filesInShare=Fichiers joints
+common.recipients = Destinataires
+common.titleSharedThe= Partagé le
+date.format=d MMMM, yyyy
+productCompagny=Linagora
+productName=LinShare
+workGroupRightAdminTitle = Administration
+workGroupRightWirteTitle = Écriture
+workGroupRightContributeTitle = Contribution
+workGroupRightReadTitle = Lecture
+welcomeMessage = Bonjour {0},',messages_english='common.availableUntil = Expiry date
+common.byYou= | By you
+common.download= Download
+common.filesInShare = Attached files
+common.recipients = Recipients
+common.titleSharedThe= Creation date
+date.format= MMMM d, yyyy
+productCompagny=Linagora
+productName=LinShare
+workGroupRightAdminTitle = Administrator
+workGroupRightWirteTitle = Writer
+workGroupRightContributeTitle = Contributor
+workGroupRightReadTitle = Reader
+welcomeMessage = Hello {0},',layout='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 <!--/* Beginning of common base layout template*/-->
@@ -608,6 +634,106 @@ test-file.jpg</span></a>
    </ul>
 </div>' WHERE id=1;
 --end mail layout
+
+--Mail content
+UPDATE mail_content SET body='<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head  data-th-replace="layout :: header"></head>
+<body>
+<div th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+  <!--/* Upper main-content*/-->
+  <section id="main-content">
+    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+      <div id="section-content">
+        <!--/* Greetings */-->
+        <th:block data-th-replace="layout :: greetings(${member.firstName})"/>
+        <!--/* End of Greetings  */-->
+        <!--/* Main email  message content*/-->
+        <p>
+            <span th:if="${owner.firstName} !=null AND ${owner.lastName} !=null" data-th-utext="#{mainMsg(${owner.firstName},${owner.lastName})}"></span>
+            <span th:if="${owner.firstName} ==null OR ${owner.lastName} ==null" data-th-utext="#{simpleMainMsg}"></span>
+            <span>
+              <a target="_blank" style="color:#1294dc;text-decoration:none;"  data-th-text="${workGroupName}" th:href="@{${workGroupLink}}" >
+               link
+             </a>
+            </span>
+          <!--/* Activation link for initialisation of the guest account */-->
+             </p> <!--/* End of Main email  message content*/-->
+      </div><!--/* End of section-content*/-->
+    </div><!--/* End of main-content container*/-->
+  </section> <!--/* End of upper main-content*/-->
+  <!--/* Secondary content for  bottom email section */-->
+  <section id="secondary-content">
+    <th:block th:switch="(${threadMember.role.name})">
+       <p th:case="ADMIN">
+          <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightAdminTitle})"/>
+       </p>
+       <p th:case="WRITER">
+          <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightWirteTitle})"/>
+       </p>
+       <p th:case="CONTRIBUTOR">
+          <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightContributeTitle})"/>
+       </p>
+       <p th:case="READER">
+         <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightReadTitle})"/>
+       </p>
+    </th:block>
+    <th:block data-th-replace="layout :: infoStandardArea(#{workGroupNameTitle},${workGroupName})"/>
+    <th:block data-th-replace="layout :: infoDateArea(#{workGroupCreationDateTitle},${threadMember.creationDate})"/>
+  </section>  <!--/* End of Secondary content for bottom email section */-->
+</div>
+</body>
+</html>' WHERE id=28;
+
+UPDATE mail_content SET body='<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head  data-th-replace="layout :: header"></head>
+<body>
+<div th:replace="layout :: email_base(upperMainContentArea = ~{::#main-content},bottomSecondaryContentArea = ~{::#secondary-content})">
+  <!--/* Upper main-content*/-->
+  <section id="main-content">
+    <div th:replace="layout :: contentUpperSection( ~{::#section-content})">
+      <div id="section-content">
+        <!--/* Greetings */-->
+        <th:block data-th-replace="layout :: greetings(${member.firstName})"/>
+        <!--/* End of Greetings  */-->
+        <!--/* Main email  message content*/-->
+        <p>
+          <span data-th-utext="#{mainMsg}"></span>
+          <span>
+               <a target="_blank" style="color:#1294dc;text-decoration:none;"  data-th-text="${workGroupName}" th:href="@{${workGroupLink}}" >
+                link </a>
+          </span>
+          <span data-th-utext="#{mainMsgNext}"></span>
+          <span th:if="${owner.firstName} != null AND ${owner.firstName} != null" data-th-utext="#{mainMsgNextBy(${owner.firstName},${owner.lastName})}"></span>
+
+             </p> <!--/* End of Main email  message content*/-->
+      </div><!--/* End of section-content*/-->
+    </div><!--/* End of main-content container*/-->
+  </section> <!--/* End of upper main-content*/-->
+  <!--/* Secondary content for  bottom email section */-->
+  <section id="secondary-content">
+    <th:block th:switch="(${threadMember.role.name})">
+       <p th:case="ADMIN">
+          <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightAdminTitle})"/>
+       </p>
+       <p th:case="WRITER">
+          <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightWirteTitle})"/>
+       </p>
+       <p th:case="CONTRIBUTOR">
+          <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightContributeTitle})"/>
+       </p>
+       <p th:case="READER">
+         <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightReadTitle})"/>
+       </p>
+    </th:block>
+    <th:block data-th-replace="layout :: infoStandardArea(#{workGroupNameTitle},${workGroupName})"/>
+    <th:block data-th-replace="layout :: infoDateArea(#{workGroupUpdatedDateTitle},${threadMember.modificationDate})"/>
+  </section>  <!--/* End of Secondary content for bottom email section */-->
+</div>
+</body>
+</html>' WHERE id = 29;
+--end mail content
 
 -- LinShare version
 SELECT ls_version();

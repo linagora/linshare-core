@@ -26,16 +26,19 @@ UPDATE mail_content SET subject='[( #{subject(${workGroupName})})]',body='<!DOCT
   </section> <!--/* End of upper main-content*/-->
   <!--/* Secondary content for  bottom email section */-->
   <section id="secondary-content">
-    <th:block data-th-if="(${threadMember.admin})">
-       <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightAdminTitle})"/>
-    </th:block>
-    <th:block data-th-if="(!${threadMember.admin})">
-        <th:block data-th-if="(${threadMember.canUpload})">
-             <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightWirteTitle})"/>
-        </th:block>
-        <th:block data-th-if="(!${threadMember.canUpload})">
-             <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightReadTitle})"/>
-        </th:block>
+    <th:block th:switch="(${threadMember.role.name})">
+       <p th:case="ADMIN">
+          <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightAdminTitle})"/>
+       </p>
+       <p th:case="WRITER">
+          <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightWirteTitle})"/>
+       </p>
+       <p th:case="CONTRIBUTOR">
+          <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightContributeTitle})"/>
+       </p>
+       <p th:case="READER">
+         <th:block data-th-replace="layout :: infoStandardArea(#{workGroupRight}, #{workGroupRightReadTitle})"/>
+       </p>
     </th:block>
     <th:block data-th-replace="layout :: infoStandardArea(#{workGroupNameTitle},${workGroupName})"/>
     <th:block data-th-replace="layout :: infoDateArea(#{workGroupCreationDateTitle},${threadMember.creationDate})"/>
