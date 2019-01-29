@@ -406,15 +406,24 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 	}
 
 	@Override
-	public FileAndMetaData thumbnail(Account actor, User owner, WorkGroup workGroup, String workGroupNodeUuid, ThumbnailType kind) throws BusinessException {
+	public FileAndMetaData thumbnail(Account actor, User owner, WorkGroup workGroup, String workGroupNodeUuid,
+			ThumbnailType kind) throws BusinessException {
 		preChecks(actor, owner);
 		WorkGroupNode node = find(actor, owner, workGroup, workGroupNodeUuid, false);
-		checkThumbNailDownloadPermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, node, workGroup);
+		checkThumbNailDownloadPermission(actor, owner, WorkGroupNode.class,
+				BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, node, workGroup);
 		if (isDocument(node)) {
-			InputStream stream = workGroupDocumentService.getThumbnailStream(actor, owner, workGroup, (WorkGroupDocument) node, kind);
-			return new FileAndMetaData((WorkGroupDocument)node, stream);
+			node = revisionService.findMostRecent(workGroup, node.getUuid());
+			InputStream stream = workGroupDocumentService.getThumbnailStream(actor, owner, workGroup,
+					(WorkGroupDocument) node, kind);
+			return new FileAndMetaData((WorkGroupDocument) node, stream);
+		} else if (isRevision(node)) {
+			InputStream stream = workGroupDocumentService.getThumbnailStream(actor, owner, workGroup,
+					(WorkGroupDocument) node, kind);
+			return new FileAndMetaData((WorkGroupDocument) node, stream);
 		} else {
-			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not get thumbnail for this kind of node.");
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED,
+					"Can not get thumbnail for this kind of node.");
 		}
 	}
 
