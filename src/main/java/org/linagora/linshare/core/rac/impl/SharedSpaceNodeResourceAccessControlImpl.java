@@ -86,12 +86,6 @@ public class SharedSpaceNodeResourceAccessControlImpl
 			logger.error("The current domain does not allow you to create a shared space node.");
 			return false;
 		}
-		Functionality versioningFunctionality = functionalityService.getWorkGroupFileVersioning(actor.getDomain());
-		if (versioningFunctionality.getActivationPolicy().getStatus()) {
-			if (!versioningFunctionality.getDelegationPolicy().getStatus()) {
-				entry.getVersioningParameters().setEnabled(true);
-			}
-		}
 		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.SHARED_SPACE_NODE_CREATE,
 				false);
 	}

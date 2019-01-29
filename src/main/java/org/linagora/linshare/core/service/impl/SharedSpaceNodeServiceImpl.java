@@ -141,7 +141,10 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		preChecks(authUser, actor);
 		Validate.notNull(node, "Missing required input shared space node.");
 		Validate.notNull(node.getNodeType(), "you must set the node type");
-		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
+		if (node.getVersioningParameters() == null) {
+			node.setVersioningParameters(new VersioningParameters(false));
+		}
+		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, node);
 		// Hack to create thread into shared space node
 		SharedSpaceNode created = simpleCreate(authUser, actor, node);
 		SharedSpaceRole role = ssRoleService.getAdmin(authUser, actor);
