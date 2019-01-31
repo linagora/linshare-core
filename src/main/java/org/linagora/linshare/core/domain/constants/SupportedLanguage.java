@@ -39,7 +39,7 @@ import java.util.Locale;
  * Defines supported languages.
  */
 public enum SupportedLanguage {
-	ENGLISH(0, "en"), FRENCH(1, "fr"), VIETNAMESE(3, "vi");
+	ENGLISH(0, "en"), FRENCH(1, "fr"), VIETNAMESE(3, "vi"), RUSSIAN(4, "ru");
 
 	private int value;
 	private String tapestryLocale;
@@ -66,8 +66,12 @@ public enum SupportedLanguage {
 		if (Locale.FRENCH.equals(locale) || Locale.FRANCE.equals(locale)) {
 			return FRENCH;
 		}
-		if (locale.toString().equals("vi"))
+		if (locale.toString().equals("vi")) {
 			return VIETNAMESE;
+		}
+		if (locale.toString().equals("ru")) {
+			return RUSSIAN;
+		}
 		return ENGLISH;
 	}
 
@@ -77,8 +81,12 @@ public enum SupportedLanguage {
 		if (locale.equals("fr")) {
 			return FRENCH;
 		}
-		if (locale.equals("vi"))
+		if (locale.equals("vi")) {
 			return VIETNAMESE;
+		}
+		if (locale.equals("ru")) {
+			return RUSSIAN;
+		}
 		return ENGLISH;
 	}
 

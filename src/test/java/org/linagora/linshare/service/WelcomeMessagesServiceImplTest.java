@@ -154,7 +154,7 @@ public class WelcomeMessagesServiceImplTest extends
 					LoadingServiceTestDatas.rootDomainName);
 			logger.debug("Object created.");
 			Assert.assertNotNull(welcm_create);
-			Assert.assertEquals(3, welcm_create.getWelcomeMessagesEntries()
+			Assert.assertEquals(4, welcm_create.getWelcomeMessagesEntries()
 					.size());
 
 			logger.debug("Deleting the welcome message we just created.");

@@ -195,6 +195,28 @@ INSERT INTO policy(id, status, default_status, policy, system)
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, policy_delegation_id, domain_id, parent_identifier, param, creation_date, modification_date)
 	VALUES (65, false, 'WORK_GROUP__FILE_EDITION', 303, 304, 305, 1, 'WORK_GROUP', true, now(), now());
 
+	--Welcome messages
+CREATE OR REPLACE FUNCTION update_wm() RETURNS void AS $$
+BEGIN
+	DECLARE welcmessage record;
+	DECLARE language VARCHAR := 'ru';
+	DECLARE j BIGINT;
+BEGIN
+		FOR welcmessage IN 
+		SELECT * FROM welcome_messages LOOP
+					IF language NOT IN (SELECT lang FROM welcome_messages_entry where welcome_messages_id = welcmessage.id) THEN
+					    BEGIN
+						j := (SELECT nextVal('hibernate_sequence'));
+						 INSERT INTO welcome_messages_entry(id, lang, value, welcome_messages_id)
+							VALUES (j, 'ru', '<h2>Добро пожаловать в LinShare</h2><p>Добро пожаловать в LinShare - открытое приложение для надежного обмена файлами.</p>', welcmessage.id);
+					    END;
+					END IF;
+		END LOOP;
+END;
+END
+$$ LANGUAGE plpgsql;
+
+UPDATE welcome_messages_entry SET value = '<h2>Chào mừng bạn đến với LinShare</h2><p>Chào mừng bạn đến với LinShare, phần mềm nguồn mở chia sẻ file bảo mật.</p>' WHERE id = 3;
 -- End of your requests
 
 -- Upgrade Task
