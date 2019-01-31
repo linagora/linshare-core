@@ -104,11 +104,11 @@ public class InitMongoServiceImpl implements InitMongoService {
 			permission.setUuid(permissionUuid);
 			permission.setAction(actionType);
 			permission.setResource(resourceType);
-			permission.setRoles(Lists.newArrayList(roles));
 			permission.setCreationDate(new Date());
-			permission.setModificationDate(new Date());
-			permission = permissionMongoRepository.insert(permission);
 		}
+		permission.setRoles(Lists.newArrayList(roles));
+		permission.setModificationDate(new Date());
+		permission = permissionMongoRepository.save(permission);
 		return permission;
 	}
 
@@ -173,7 +173,7 @@ public class InitMongoServiceImpl implements InitMongoService {
 		createInitPermission("ce73fa89-04aa-41f2-a94f-cf09b46f810b", "Read a workgroup", SharedSpaceActionType.READ,
 				SharedSpaceResourceType.WORKGROUP, admin, writer, contributor, reader);
 		createInitPermission("881dfa55-90c5-460a-9ac2-a38181fd2349", "Update a workgroup", SharedSpaceActionType.UPDATE,
-				SharedSpaceResourceType.WORKGROUP, admin, writer, contributor);
+				SharedSpaceResourceType.WORKGROUP, admin);
 		createInitPermission("efd0d533-cb5b-4bf6-a717-81f28ae0a1fe", "Delete a workgroup", SharedSpaceActionType.DELETE,
 				SharedSpaceResourceType.WORKGROUP, admin);
 	}
