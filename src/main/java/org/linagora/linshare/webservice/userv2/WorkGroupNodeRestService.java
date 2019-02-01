@@ -87,6 +87,4 @@ public interface WorkGroupNodeRestService {
 	WorkGroupNode createFromURL(String workGroupUuid, String parentNodeUuid, DocumentURLDto documentURLDto,
 			Boolean async, Boolean strict) throws BusinessException;
 
-	WorkGroupNode restoreRevision(String workGroupUuid, String WorkGroupDocumentRevisionUuid) throws BusinessException;
-
 }

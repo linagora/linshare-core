@@ -49,12 +49,32 @@ public class VersioningParameters {
 		this.enable = enable;
 	}
 
-	public Boolean isEnabled() {
+	public Boolean getEnable() {
 		return enable;
 	}
 
-	public void setEnabled(Boolean enable) {
+	public void setEnable(Boolean enable) {
 		this.enable = enable;
+	}
+
+	@Override
+	public boolean equals(final Object object) {
+		if (!(object instanceof VersioningParameters)) {
+			 return false;
+		}
+		VersioningParameters parameter = (VersioningParameters) object;
+		if (this.enable != parameter.enable) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int prime = 31;
+		int result = 1;
+		result = prime * result + ((enable == null) ? 0 : enable.hashCode());
+		return result;
 	}
 
 	@Override

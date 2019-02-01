@@ -210,8 +210,8 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		WorkGroupNode revision3 = workGroupDocumentRevisionService.create(john, john, workGroup, tempFile3, tempFile3.getName(), document);
 
 		assertEquals(((WorkGroupDocument) document).getSize(), ((WorkGroupDocumentRevision) revision3).getSize());
-
-		workGroupDocumentRevisionService.restore(john, john, workGroup, revision2.getUuid());
+		// Restore a revision
+		workGroupNodeService.copy(john, john, workGroup, revision2.getUuid(), workGroup, revision2.getParent());
 		WorkGroupNode updatedDocument = workGroupDocumentService.find(john, john, workGroup, document.getUuid());
 
 		assertEquals(((WorkGroupDocument) updatedDocument).getSize(), ((WorkGroupDocumentRevision) revision2).getSize());
@@ -319,7 +319,6 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		assertEquals(document.getSize(), duplicated.getSize());
 		int newSize = workGroupNodeService.findAll(john, john, workGroup).size();
 		assertEquals(initSize + 1, newSize);
-		
 	}
 
 	@Test

@@ -103,6 +103,4 @@ public interface WorkGroupNodeService {
 
 	WorkGroupNode findByWorkGroupNodeUuid(String uuid) throws BusinessException;
 
-	WorkGroupNode restoreRevision(Account actor, Account owner, WorkGroup workGroup, String revisionUuid) throws BusinessException;
-
 }

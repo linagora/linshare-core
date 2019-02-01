@@ -74,6 +74,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl implements WorkGroupNodeService {
@@ -180,7 +181,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		WorkGroupNode node = find(actor, owner, workGroup, workGroupNodeUuid, false);
 		checkDownloadPermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN,
 				node, workGroup);
-		if (!(isDocument(node) || (isRevision(node)))) {
+		if (!isDocument(node) && !isRevision(node)) {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED,
 					"Can not download this kind of node.");
 		}
@@ -286,6 +287,9 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		Validate.notEmpty(dto.getUuid(), "Missing uuid");
 		Validate.notEmpty(dto.getName(), "Missing name");
 		WorkGroupNode node = find(actor, owner, workGroup, dto.getUuid(), false);
+		if (isRevision(node)) {
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not update a revision.");
+		}
 		checkUpdatePermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, node, workGroup);
 		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.UPDATE, getAuditLogEntryType(node.getNodeType()), node, workGroup);
 		// we add the full path of the current node to the audit trace.
@@ -470,11 +474,15 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		checkDownloadPermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, fromNode, fromWorkGroup);
 		// step 2 : check the destination
 		WorkGroupNode toNode = null;
-		if (toNodeUuid == null || toNodeUuid.isEmpty()) {
+		if (Strings.isNullOrEmpty(toNodeUuid)) {
 			// in the root folder
 			toNode = getRootFolder(owner, toWorkGroup);
 		} else {
 			toNode = find(actor, owner, toWorkGroup, toNodeUuid, false);
+			if (isRevision(toNode)) {
+				throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED,
+						"Can not copy to this kind of node.");
+			}
 		}
 		checkCreatePermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, toNode, toWorkGroup);
 		if (isDocument(fromNode)) {
@@ -549,13 +557,6 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 	public WorkGroupNode getRootFolder(Account actor, Account owner, WorkGroup workGroup) {
 		checkListPermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, null, workGroup);
 		return getRootFolder(owner, workGroup);
-	}
-
-	@Override
-	public WorkGroupNode restoreRevision(Account actor, Account owner, WorkGroup workGroup, String revisionUuid) {
-		preChecks(actor, owner);
-		checkUpdatePermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, null, workGroup);
-		return revisionService.restore(actor, owner, workGroup, revisionUuid);
 	}
 
 	protected WorkGroupNode getRootFolder(Account owner, WorkGroup workGroup) {

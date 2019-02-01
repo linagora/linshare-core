@@ -109,10 +109,10 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		preChecks(authUser, actor);
 		Validate.notNull(node, "Missing required input shared space node.");
 		Validate.notNull(node.getNodeType(), "you must set the node type");
-		if (node.getVersioningParameters() == null) {
-			node.setVersioningParameters(new VersioningParameters(false));
-		}
 		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, node);
+		if (node.getVersioningParameters() == null) {
+			node.setVersioningParameters(new VersioningParameters(true));
+		}
 		// Hack to create thread into shared space node
 		SharedSpaceNode created = simpleCreate(authUser, actor, node);
 		SharedSpaceRole role = ssRoleService.getAdmin(authUser, actor);
@@ -141,10 +141,10 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		preChecks(authUser, actor);
 		Validate.notNull(node, "Missing required input shared space node.");
 		Validate.notNull(node.getNodeType(), "you must set the node type");
-		if (node.getVersioningParameters() == null) {
-			node.setVersioningParameters(new VersioningParameters(false));
-		}
 		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, node);
+		if (node.getVersioningParameters() == null) {
+			node.setVersioningParameters(new VersioningParameters(true));
+		}
 		// Hack to create thread into shared space node
 		SharedSpaceNode created = simpleCreate(authUser, actor, node);
 		SharedSpaceRole role = ssRoleService.getAdmin(authUser, actor);
@@ -200,7 +200,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		Validate.notEmpty(nodeToUpdate.getUuid(), "shared space node uuid to update must be set.");
 		SharedSpaceNode node = find(authUser, actor, nodeToUpdate.getUuid());
 		checkUpdatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN,
-				nodeToUpdate);
+				nodeToUpdate, node.getVersioningParameters());
 		SharedSpaceNode updated = businessService.update(node, nodeToUpdate);
 		memberBusinessService.updateNestedNode(updated);
 		threadService.update(authUser, actor, updated.getUuid(), updated.getName());

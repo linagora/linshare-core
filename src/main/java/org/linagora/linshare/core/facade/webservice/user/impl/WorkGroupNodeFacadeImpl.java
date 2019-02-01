@@ -308,14 +308,4 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 		return workGroupNode.getWorkGroup();
 	}
 
-	@Override
-	public WorkGroupNode restoreRevision(String actorUuid, String workGroupUuid, String revisionUuid) throws BusinessException {
-		Account authUser = checkAuthentication();
-		User actor = (User) getActor(authUser, actorUuid);
-		Validate.notEmpty(workGroupUuid, "Missing workGroup uuid to copy into");
-		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
-		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceNode.getUuid());
-		return workGroupDocumentRevisionService.restore(authUser, actor, workGroup, revisionUuid);
-	}
-
 }

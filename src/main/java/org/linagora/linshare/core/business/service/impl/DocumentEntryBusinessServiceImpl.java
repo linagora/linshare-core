@@ -62,6 +62,7 @@ import org.linagora.linshare.core.business.service.UploadRequestEntryBusinessSer
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
+import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -405,7 +406,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	@Override
 	public WorkGroupDocument copy(Account actor, WorkGroup toWorkGroup, WorkGroupNode nodeParent, String documentUuid,
 			String name, boolean ciphered) throws BusinessException {
-		if (exists(toWorkGroup, name, nodeParent)) {
+		if (exists(toWorkGroup, name, nodeParent) && !WorkGroupNodeType.DOCUMENT.equals(nodeParent.getNodeType())) {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_ALREADY_EXISTS,
 					"Can not create a new document, it already exists.");
 		}
