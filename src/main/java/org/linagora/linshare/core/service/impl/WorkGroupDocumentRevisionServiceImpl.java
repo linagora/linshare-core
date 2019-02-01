@@ -136,6 +136,7 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 			Boolean checkIfIsCiphered = checkFileProperties(owner, fileName, mimeType, tempFile, size, domain);
 			documentRevision = documentEntryRevisionBusinessService.createWorkGroupDocumentRevision(owner, workGroup,
 					tempFile, size, fileName, checkIfIsCiphered, timeStampingUrl, mimeType, parentNode);
+			updateThumbnailOnDocument(workGroup, documentRevision);
 			WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
 					AuditLogEntryType.WORKGROUP_DOCUMENT_REVISION, parentNode, workGroup);
 			logEntryService.insert(log);
@@ -151,6 +152,13 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 		return documentRevision;
 	}
 
+	private void updateThumbnailOnDocument(WorkGroup workGroup, WorkGroupDocumentRevision documentRevision) {
+		WorkGroupDocument parentDocument = (WorkGroupDocument) repository.findByWorkGroupAndUuid(workGroup.getLsUuid(),
+				documentRevision.getParent());
+		parentDocument.setHasThumbnail(documentRevision.getHasThumbnail());
+		repository.save(parentDocument);
+	}
+
 	@Override
 	public WorkGroupDocument updateDocument(Account actor, Account owner, WorkGroup workGroup, WorkGroupDocumentRevision documentRevision) throws BusinessException {
 		Validate.notNull(documentRevision);
@@ -164,6 +172,7 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 		parentDocument.setMetaData(documentRevision.getMetaData());
 		parentDocument.setLastAuthor(documentRevision.getLastAuthor());
 		parentDocument.setSize(documentRevision.getSize());
+		parentDocument.setHasThumbnail(documentRevision.getHasThumbnail());
 		Long revisionsNumber = repository.countByWorkGroupAndParentAndNodeType(workGroup.getLsUuid(),
 				parentDocument.getUuid(), WorkGroupNodeType.DOCUMENT_REVISION);
 		if (revisionsNumber < 2) {
@@ -211,7 +220,7 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 		SharedSpaceNode ssn = sharedSpaceNodeMongoRepository.findByUuid(workGroup.getLsUuid());
 		VersioningParameters parameters = ssn.getVersioningParameters();
 		Functionality versioningFunctionality = functionalityReadOnlyService.getWorkGroupFileVersioning(domain);
-		if (versioningFunctionality != null && versioningFunctionality.getActivationPolicy().getStatus()) {
+		if (versioningFunctionality.getActivationPolicy().getStatus()) {
 			if (parameters != null) {
 				return parameters.getEnable();
 			}
