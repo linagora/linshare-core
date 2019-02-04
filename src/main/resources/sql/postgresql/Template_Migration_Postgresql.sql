@@ -22,12 +22,13 @@ BEGIN
 	DECLARE version_history_from VARCHAR := (SELECT version from version ORDER BY id DESC LIMIT 1);
 	DECLARE database_info VARCHAR = version();
 	DECLARE error VARCHAR := concat('Your database upgrade history indicates that you already upgraded to : ', version_to);
+	DECLARE nb_upgrade_tasks INT := (SELECT count(*)::int  FROM upgrade_task WHERE status != 'SUCCESS' OR status != 'SKIPPED');
 	DECLARE connection_id INT := pg_backend_pid();
 	DECLARE row record;
 	BEGIN
 		RAISE NOTICE '%', start;
 		RAISE NOTICE 'Your actual version is: %', version_history_from;
-		RAISE NOTICE 'Your databse history is :';
+		RAISE NOTICE 'Your database history is :';
 		FOR row IN (SELECT * FROM version ORDER BY id DESC) LOOP
 			RAISE INFO '%', row.version;
 		END LOOP;
@@ -37,6 +38,14 @@ BEGIN
 			IF EXISTS (SELECT * from version where version = version_to) THEN
 				RAISE WARNING '%', error;
 			END IF;
+			RAISE WARNING 'We are about to abort the migration script, all the following instructions will be aborted and transaction will rollback.';
+			RAISE INFO 'You should expect the following error : "query has no destination for result data".';
+	--		DIRTY: did it to stop the process cause there is no clean way to do it.
+	--		Expected error: query has no destination for result data.
+			select error;
+		END IF;
+		IF (nb_upgrade_tasks > 0) THEN
+			RAISE WARNING 'Can not upgrade LinShare if not upgrade tasks are all completed with success !!!!';
 			RAISE WARNING 'We are about to abort the migration script, all the following instructions will be aborted and transaction will rollback.';
 			RAISE INFO 'You should expect the following error : "query has no destination for result data".';
 	--		DIRTY: did it to stop the process cause there is no clean way to do it.
