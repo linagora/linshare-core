@@ -41,6 +41,7 @@ import org.linagora.linshare.core.ldap.business.service.SharedSpaceNodeBusinessS
 import org.linagora.linshare.core.ldap.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.ldap.service.SharedSpaceNodeService;
 import org.linagora.linshare.core.rac.SharedSpaceNodeResourceAccessControl;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.SharedSpaceRoleService;
 import org.linagora.linshare.core.service.ThreadService;
@@ -56,9 +57,10 @@ public class SharedSpaceNodeServiceImpl extends org.linagora.linshare.core.servi
 			SharedSpaceMemberService sharedSpaceMemberService,
 			SharedSpaceRoleService ssRoleService,
 			LogEntryService logEntryService,
-			ThreadService threadService) {
+			ThreadService threadService,
+			FunctionalityReadOnlyService functionalityService) {
 		super(businessService, sharedSpaceNodeResourceAccessControl, memberBusinessService, sharedSpaceMemberService,
-				ssRoleService, logEntryService, threadService);
+				ssRoleService, logEntryService, threadService, functionalityService);
 		this.businessService = businessService;
 	}
 
@@ -68,6 +70,7 @@ public class SharedSpaceNodeServiceImpl extends org.linagora.linshare.core.servi
 		Validate.notNull(ldapGroup, "The group must be set");
 		Validate.notEmpty(ldapGroup.getName(), "The name of the LDAP group must be set");
 		Validate.notEmpty(ldapGroup.getExternalId(), "The external ID must be set");
+		super.checkVersioningParameter(actor.getDomain(), ldapGroup);
 		checkCreatePermission(actor, actor, SharedSpaceLDAPGroup.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, null);
 		return (SharedSpaceLDAPGroup) super.simpleCreate(actor, actor, ldapGroup);
 	}

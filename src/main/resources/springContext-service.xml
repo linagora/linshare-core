@@ -437,6 +437,7 @@
 		<constructor-arg ref="sharedSpaceMemberBusinessService" />
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="threadService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 	<bean id="sharedSpaceLdapGroupService" class="org.linagora.linshare.core.ldap.service.impl.SharedSpaceNodeServiceImpl">
 		<constructor-arg ref="sharedSpaceLdapGroupBusinessService" />
@@ -445,6 +446,7 @@
 		<constructor-arg ref="sharedSpaceMemberBusinessService" />
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="threadService" />
+		<constructor-arg ref="functionalityReadOnlyService" />
 	</bean>
 	<bean id="sharedSpaceRoleService" class="org.linagora.linshare.core.service.impl.SharedSpaceRoleServiceImpl">
 		<constructor-arg ref="sharedSpaceRoleBusinessService" />

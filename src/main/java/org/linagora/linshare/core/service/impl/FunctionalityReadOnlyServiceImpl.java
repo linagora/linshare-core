@@ -244,8 +244,8 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
-	public Functionality getWorkGroupFileVersioning(AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.WORK_GROUP__FILE_VERSIONING);
+	public BooleanValueFunctionality getWorkGroupFileVersioning(AbstractDomain domain) {
+		return (BooleanValueFunctionality) _getFunctionality(domain, FunctionalityNames.WORK_GROUP__FILE_VERSIONING);
 	}
 
 	@Override

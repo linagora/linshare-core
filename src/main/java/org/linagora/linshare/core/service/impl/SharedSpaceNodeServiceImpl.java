@@ -40,13 +40,17 @@ import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessServ
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
+import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupDto;
 import org.linagora.linshare.core.rac.SharedSpaceNodeResourceAccessControl;
+import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.SharedSpaceMemberService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
@@ -75,13 +79,16 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 
 	protected final ThreadService threadService;
 
+	protected final FunctionalityReadOnlyService functionalityService;
+
 	public SharedSpaceNodeServiceImpl(SharedSpaceNodeBusinessService businessService,
 			SharedSpaceNodeResourceAccessControl rac,
 			SharedSpaceMemberBusinessService memberBusinessService,
 			SharedSpaceMemberService memberService,
 			SharedSpaceRoleService ssRoleService,
 			LogEntryService logEntryService,
-			ThreadService threadService) {
+			ThreadService threadService,
+			FunctionalityReadOnlyService functionalityService) {
 		super(rac);
 		this.businessService = businessService;
 		this.memberService = memberService;
@@ -89,6 +96,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		this.memberBusinessService = memberBusinessService;
 		this.logEntryService = logEntryService;
 		this.threadService = threadService;
+		this.functionalityService = functionalityService;
 	}
 
 	@Override
@@ -109,16 +117,20 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		preChecks(authUser, actor);
 		Validate.notNull(node, "Missing required input shared space node.");
 		Validate.notNull(node.getNodeType(), "you must set the node type");
+		checkVersioningParameter(actor.getDomain(), node);
 		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, node);
-		if (node.getVersioningParameters() == null) {
-			node.setVersioningParameters(new VersioningParameters(true));
-		}
 		// Hack to create thread into shared space node
 		SharedSpaceNode created = simpleCreate(authUser, actor, node);
 		SharedSpaceRole role = ssRoleService.getAdmin(authUser, actor);
 		memberService.createWithoutCheckPermission(authUser, actor, created, role,
 				new SharedSpaceAccount((User) actor));
 		return created;
+	}
+
+	protected void checkVersioningParameter(AbstractDomain domain, SharedSpaceNode node) {
+		BooleanValueFunctionality versioningFunctionality = functionalityService.getWorkGroupFileVersioning(domain);
+		Boolean userValue = node.getVersioningParameters() == null ? null : node.getVersioningParameters().getEnable();
+		node.setVersioningParameters(new VersioningParameters(versioningFunctionality.getFinalValue(userValue)));
 	}
 
 	protected SharedSpaceNode simpleCreate(Account authUser, Account actor, SharedSpaceNode node)
@@ -141,10 +153,8 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		preChecks(authUser, actor);
 		Validate.notNull(node, "Missing required input shared space node.");
 		Validate.notNull(node.getNodeType(), "you must set the node type");
+		checkVersioningParameter(actor.getDomain(), node);
 		checkCreatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN, node);
-		if (node.getVersioningParameters() == null) {
-			node.setVersioningParameters(new VersioningParameters(true));
-		}
 		// Hack to create thread into shared space node
 		SharedSpaceNode created = simpleCreate(authUser, actor, node);
 		SharedSpaceRole role = ssRoleService.getAdmin(authUser, actor);
@@ -200,12 +210,27 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		Validate.notEmpty(nodeToUpdate.getUuid(), "shared space node uuid to update must be set.");
 		SharedSpaceNode node = find(authUser, actor, nodeToUpdate.getUuid());
 		checkUpdatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN,
-				nodeToUpdate, node.getVersioningParameters());
+				nodeToUpdate);
+		checkUpdateVersioningParameters(nodeToUpdate.getVersioningParameters(), node.getVersioningParameters(),
+				actor.getDomain());
 		SharedSpaceNode updated = businessService.update(node, nodeToUpdate);
 		memberBusinessService.updateNestedNode(updated);
 		threadService.update(authUser, actor, updated.getUuid(), updated.getName());
 		saveUpdateLog(authUser, actor, node, updated);
 		return updated;
+	}
+
+	protected void checkUpdateVersioningParameters(VersioningParameters newParam, VersioningParameters parameter,
+			AbstractDomain domain) {
+		if (parameter != null && !parameter.equals(newParam)) {
+			Functionality versioning = functionalityService.getWorkGroupFileVersioning(domain);
+			if (!versioning.getDelegationPolicy().getStatus()) {
+				logger.error(
+						"The current domain does not allow you to update the versioning parameters on the shared space node.");
+				throw new BusinessException(BusinessErrorCode.SHARED_SPACE_MEMBER_FORBIDDEN,
+						"can not update shared space versioning parameters, you are not authorized.");
+			}
+		}
 	}
 
 	@Override

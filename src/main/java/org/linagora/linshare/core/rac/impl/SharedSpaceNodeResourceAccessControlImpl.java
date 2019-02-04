@@ -41,7 +41,6 @@ import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.rac.SharedSpaceNodeResourceAccessControl;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
-import org.linagora.linshare.mongo.entities.VersioningParameters;
 import org.linagora.linshare.mongo.repository.SharedSpaceMemberMongoRepository;
 import org.linagora.linshare.mongo.repository.SharedSpacePermissionMongoRepository;
 
@@ -87,29 +86,12 @@ public class SharedSpaceNodeResourceAccessControlImpl
 			logger.error("The current domain does not allow you to create a shared space node.");
 			return false;
 		}
-		if (entry.getVersioningParameters() != null && !entry.getVersioningParameters().getEnable()) {
-			Functionality versioning = functionalityService.getWorkGroupFileVersioning(actor.getDomain());
-			if (!versioning.getDelegationPolicy().getStatus()) {
-				return false;
-			}
-		}
 		return defaultPermissionCheck(authUser, actor, entry, TechnicalAccountPermissionType.SHARED_SPACE_NODE_CREATE,
 				false);
 	}
 
 	@Override
 	protected boolean hasUpdatePermission(Account authUser, Account actor, SharedSpaceNode entry, Object... opt) {
-		VersioningParameters parameters = (VersioningParameters) opt[0];
-		VersioningParameters entryParam = entry.getVersioningParameters();
-		if (parameters != null && !parameters.equals(entryParam)) {
-			Functionality versioning = functionalityService.getWorkGroupFileVersioning(actor.getDomain());
-			if (!versioning.getDelegationPolicy().getStatus()) {
-				logger.error("You can not update shared space parameters, you are not authorized.");
-				logger.error(
-						"The current domain does not allow you to update the versioning parameters on the shared space node.");
-				return false;
-			}
-		}
 		return defaultSharedSpacePermissionCheck(authUser, actor, entry,
 				TechnicalAccountPermissionType.SHARED_SPACE_NODE_UPDATE, SharedSpaceActionType.UPDATE);
 	}
