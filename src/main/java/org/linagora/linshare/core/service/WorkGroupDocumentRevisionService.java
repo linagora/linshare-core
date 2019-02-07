@@ -52,8 +52,6 @@ public interface WorkGroupDocumentRevisionService extends WorkGroupDocumentServi
 	WorkGroupDocument updateDocument(Account actor, Account owner, WorkGroup workGroup,
 			WorkGroupDocumentRevision documentRevision) throws BusinessException;
 
-	List<WorkGroupNode> findAll(Account actor, WorkGroup workGroup, String parentUuid) throws BusinessException;
-
 	List<WorkGroupNode> deleteAll(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode)
 			throws BusinessException;
 

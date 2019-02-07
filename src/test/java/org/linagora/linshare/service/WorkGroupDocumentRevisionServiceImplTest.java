@@ -52,6 +52,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.NodeType;
+import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -67,8 +68,11 @@ import org.linagora.linshare.mongo.entities.VersioningParameters;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
+import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -115,6 +119,9 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 
 	@Autowired
 	private InitMongoService initMongoService;
+
+	@Autowired
+	private WorkGroupNodeMongoRepository repository;
 
 	LoadingServiceTestDatas datas;
 
@@ -179,11 +186,12 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		workGroupDocumentRevisionService.create(john, john, workGroup, tempFile3, tempFile3.getName(), document);
 
 		WorkGroupNode createdDocument = workGroupDocumentService.find(john, john, workGroup, document.getUuid());
-		List<WorkGroupNode> createdRevisions = workGroupDocumentRevisionService.findAll(john, workGroup, createdDocument.getUuid());
+		Sort sort = new Sort(Direction.DESC, "creationDate");
+		List<WorkGroupNode> createdRevisions = repository.findByWorkGroupAndParentAndNodeType(
+				workGroup.getLsUuid(), createdDocument.getUuid(), WorkGroupNodeType.DOCUMENT_REVISION, sort);
 
 		assertNotNull(createdDocument);
-		// We expect the number of revision - 1  because the most recent one is not returned
-		assertEquals(2, createdRevisions.size());
+		assertEquals(3, createdRevisions.size());
 	}
 
 	@Test
@@ -241,15 +249,17 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		workGroupDocumentRevisionService.create(john, john, workGroup, tempFile3, tempFile3.getName(), document);
 
 		WorkGroupNode createdDocument = workGroupDocumentService.find(john, john, workGroup, document.getUuid());
-		List<WorkGroupNode> createdRevisions = workGroupDocumentRevisionService.findAll(john, workGroup, createdDocument.getUuid());
+		Sort sort = new Sort(Direction.DESC, "creationDate");
+		List<WorkGroupNode> createdRevisions = repository.findByWorkGroupAndParentAndNodeType(
+				workGroup.getLsUuid(), createdDocument.getUuid(), WorkGroupNodeType.DOCUMENT_REVISION, sort);
 
-		// We expect the number of revision - 1  because the most recent one is not returned
-		assertEquals(2, createdRevisions.size());
+		assertEquals(3, createdRevisions.size());
 
 		workGroupDocumentRevisionService.delete(john, john, workGroup, revision2);
 
-		List<WorkGroupNode> newRevisionList = workGroupDocumentRevisionService.findAll(john, workGroup, createdDocument.getUuid());
-		assertEquals(1, newRevisionList.size());
+		List<WorkGroupNode> newRevisionList = repository.findByWorkGroupAndParentAndNodeType(
+				workGroup.getLsUuid(), createdDocument.getUuid(), WorkGroupNodeType.DOCUMENT_REVISION, sort);
+		assertEquals(2, newRevisionList.size());
 	}
 
 	@Test
@@ -275,12 +285,15 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		workGroupDocumentRevisionService.create(john, john, workGroup, tempFile2, tempFile2.getName(), document);
 		workGroupDocumentRevisionService.create(john, john, workGroup, tempFile3, tempFile3.getName(), document);
 
+		WorkGroupNode revision = workGroupDocumentRevisionService.findMostRecent(workGroup, document.getUuid());
 		WorkGroupNode createdDocument = workGroupDocumentService.find(john, john, workGroup, document.getUuid());
-		List<WorkGroupNode> createdRevisions = workGroupDocumentRevisionService.findAll(john, workGroup, createdDocument.getUuid());
+
+		Sort sort = new Sort(Direction.DESC, "creationDate");
+		List<WorkGroupNode> createdRevisions = repository.findByWorkGroupAndParentAndNodeType(
+				workGroup.getLsUuid(), createdDocument.getUuid(), WorkGroupNodeType.DOCUMENT_REVISION, sort);
 
 		assertNotNull(createdDocument);
-		// We expect the number of revision - 1  because the most recent one is not returned
-		assertEquals(2, createdRevisions.size());
+		assertEquals(3, createdRevisions.size());
 
 		workGroupDocumentRevisionService.deleteAll(john, john, workGroup, document);
 		workGroupDocumentService.delete(john, john, workGroup, document);
@@ -292,7 +305,8 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 			// Test passes only if a BusinessException is thrown
 			assertTrue(true);
 		}
-		List<WorkGroupNode> expectedEmptyRevisions = workGroupDocumentRevisionService.findAll(john, workGroup, createdDocument.getUuid());
+		List<WorkGroupNode> expectedEmptyRevisions = repository.findByWorkGroupAndParentAndNodeType(
+				workGroup.getLsUuid(), createdDocument.getUuid(), WorkGroupNodeType.DOCUMENT_REVISION, sort);
 		assertEquals(0, expectedEmptyRevisions.size());
 	}
 

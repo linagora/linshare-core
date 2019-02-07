@@ -208,6 +208,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 			throws BusinessException {
 		Validate.notNull(nodeToUpdate, "nodeToUpdate must be set.");
 		Validate.notEmpty(nodeToUpdate.getUuid(), "shared space node uuid to update must be set.");
+		Validate.notNull(nodeToUpdate.getVersioningParameters());
 		SharedSpaceNode node = find(authUser, actor, nodeToUpdate.getUuid());
 		checkUpdatePermission(authUser, actor, SharedSpaceNode.class, BusinessErrorCode.WORK_GROUP_FORBIDDEN,
 				nodeToUpdate);
@@ -222,7 +223,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 
 	protected void checkUpdateVersioningParameters(VersioningParameters newParam, VersioningParameters parameter,
 			AbstractDomain domain) {
-		if (parameter != null && !parameter.equals(newParam)) {
+		if (!parameter.equals(newParam)) {
 			Functionality versioning = functionalityService.getWorkGroupFileVersioning(domain);
 			if (!versioning.getDelegationPolicy().getStatus()) {
 				logger.error(

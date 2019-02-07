@@ -50,6 +50,7 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.InitMongoService;
 import org.linagora.linshare.core.service.SharedSpaceNodeService;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.VersioningParameters;
 import org.linagora.linshare.utils.LinShareWiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -167,9 +168,10 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 	@Test
 	public void update() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		SharedSpaceNode nodeToUpdate = new SharedSpaceNode("nodeName ToUpdate", null, NodeType.WORK_GROUP);
+		VersioningParameters param = new VersioningParameters(false);
+		SharedSpaceNode nodeToUpdate = new SharedSpaceNode("nodeName ToUpdate", null, NodeType.WORK_GROUP, param);
 		SharedSpaceNode createdNodeToUpdate = service.create(authUser, authUser, nodeToUpdate);
-		SharedSpaceNode updatedNode = new SharedSpaceNode("nodeName Updated", null, NodeType.WORK_GROUP);
+		SharedSpaceNode updatedNode = new SharedSpaceNode("nodeName Updated", null, NodeType.WORK_GROUP, param);
 		updatedNode.setUuid(createdNodeToUpdate.getUuid());
 		service.update(authUser, authUser, updatedNode);
 		Assert.assertEquals("The shared space node is not updated.", updatedNode.getName(),

@@ -39,6 +39,7 @@ import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface WorkGroupNodeMongoRepository extends MongoRepository<WorkGroupNode, String> , WorkGroupNodeMongoRepositoryCustom {
@@ -54,6 +55,8 @@ public interface WorkGroupNodeMongoRepository extends MongoRepository<WorkGroupN
 	List<WorkGroupNode> findByWorkGroupAndParent(String workGroupUuid, String parentUuid);
 
 	List<WorkGroupNode> findByWorkGroupAndParentAndNodeType(String workGroupUuid, String parentUuid, WorkGroupNodeType type);
+
+	List<WorkGroupNode> findByWorkGroupAndParentAndNodeType(String workGroupUuid, String parentUuid, WorkGroupNodeType type, Sort sort);
 
 	List<WorkGroupNode> findByWorkGroupAndNodeType(String workGroupUuid, WorkGroupNodeType type);
 

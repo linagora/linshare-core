@@ -70,6 +70,8 @@ import org.linagora.linshare.mongo.entities.mto.CopyMto;
 import org.linagora.linshare.mongo.entities.mto.WorkGroupLightNode;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -148,7 +150,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		WorkGroupNode parentNode = getParentNode(actor, owner, workGroup, parentUuid);
 		if (WorkGroupNodeType.DOCUMENT.equals(parentNode.getNodeType())
 				|| WorkGroupNodeType.DOCUMENT_REVISION.equals(nodeType)) {
-			return revisionService.findAll(actor, workGroup, parentUuid);
+			return repository.findByWorkGroupAndParentAndNodeType(workGroup.getLsUuid(), parentUuid, WorkGroupNodeType.DOCUMENT_REVISION, new Sort(Direction.DESC, "creationDate"));
 		}
 		if (nodeType != null) {
 			return repository.findByWorkGroupAndParentAndNodeType(workGroup.getLsUuid(), parentUuid, nodeType);

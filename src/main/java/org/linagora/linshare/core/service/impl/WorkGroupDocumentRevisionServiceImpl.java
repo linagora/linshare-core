@@ -188,31 +188,16 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 	}
 
 	@Override
-	public List<WorkGroupNode> findAll(Account actor, WorkGroup workGroup, String parentUuid) throws BusinessException {
-		Validate.notNull(actor);
-		Validate.notNull(workGroup);
-		Validate.notNull(parentUuid);
-		Query query = getQuery(workGroup, parentUuid);
-		query.skip(1);
-		return mongoTemplate.find(query, WorkGroupNode.class);
-	}
-
-	@Override
 	public WorkGroupNode findMostRecent(WorkGroup workGroup, String parentUuid) throws BusinessException {
 		Validate.notNull(workGroup);
 		Validate.notNull(parentUuid);
-		Query query = getQuery(workGroup, parentUuid);
-		query.limit(1);
-		return mongoTemplate.findOne(query, WorkGroupNode.class);
-	}
-
-	private Query getQuery(WorkGroup workGroup, String parentUuid) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("workGroup").is(workGroup.getLsUuid()));
 		query.addCriteria(Criteria.where("parent").is(parentUuid));
 		query.addCriteria(Criteria.where("nodeType").is(WorkGroupNodeType.DOCUMENT_REVISION));
 		query.with(new Sort(Direction.DESC, "creationDate"));
-		return query;
+		query.limit(1);
+		return mongoTemplate.findOne(query, WorkGroupNode.class);
 	}
 
 	@Override
@@ -251,10 +236,11 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_REVISION_NOT_FOUND,
 					"The revision has not been found");
 		}
-		WorkGroupNode mostRecent = findMostRecent(workGroup, workGroupNode.getParent());
-		if (mostRecent.equals(revisionToDelete)) {
+		Long count = repository.countByWorkGroupAndParentAndNodeType(workGroup.getLsUuid(), workGroupNode.getParent(),
+				WorkGroupNodeType.DOCUMENT_REVISION);
+		if (count < 2) {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_REVISION_DELETE_FORBIDDEN,
-					"You can't delete the most recent revision, try to delete the whole document");
+					"You can't delete the last revision, try to delete the whole document");
 		}
 		return deleteRevision(actor, owner, workGroup, (WorkGroupDocumentRevision) revisionToDelete);
 	}
