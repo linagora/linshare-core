@@ -130,6 +130,11 @@ public class DomainQuotaBusinessServiceImpl extends GenericQuotaBusinessServiceI
 			}
 			entity.setDefaultQuota(dq.getDefaultQuota());
 			entity.setDefaultQuotaOverride(dq.getDefaultQuotaOverride());
+		} else {
+			if (entity.getDefaultQuota() != null) {
+				entity.setDefaultQuota(dq.getDefaultQuota());
+				repository.cascadeDefaultQuota(entity.getDomain(), entity.getDefaultQuota());
+			}
 		}
 		return repository.update(entity);
 	}
