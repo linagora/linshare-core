@@ -1,11 +1,11 @@
-UPDATE mail_content SET subject='[# th:if="${warnOwner}"] [( #{subjectForOwner})]
+UPDATE "mail_content" SET "subject"='[# th:if="${warnOwner}"] [( #{subjectForOwner})]
 [/]
 [# th:if="${!warnOwner}"]
 [( #{subjectForRecipient(${requestOwner.firstName},${requestOwner.lastName})})]
 [/]
 [# th:if="${!#strings.isEmpty(mailSubject)}"]
 [( #{formatMailSubject(${mailSubject})})]
-[/]',body='<!DOCTYPE html>
+[/]',"body"='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head  data-th-replace="layout :: header"></head>
 <body>
@@ -82,7 +82,7 @@ UPDATE mail_content SET subject='[# th:if="${warnOwner}"] [( #{subjectForOwner})
   </section>  <!--/* End of Secondary content for bottom email section */-->
 </div>
 </body>
-</html>',messages_french='beginningMainMsgForRecipient =   L''''invitation dépôt de <b> {0} <span style="text-transform:uppercase">{1}</span> </b> va expirer dans <b>{2} jours</b>
+</html>',"messages_french"='beginningMainMsgForRecipient =   L''''invitation dépôt de <b> {0} <span style="text-transform:uppercase">{1}</span> </b> va expirer dans <b>{2} jours</b>
 beginningMainMsgGrouped =   Votre invitation groupée sera clôturée dans  <b>{0} jours</b>.
 beginningMainMsgUnGrouped =   Votre invitation au dépôt sera clôturée dans  <b>{0} jours</b>.
 endingMainMsgPlural = et vous avez actuellement reçu <b>{0} fichiers</b>.
@@ -99,7 +99,7 @@ msgTitle = Message lié à l''''invitation :
 recipientsURequest = Destinataires
 subjectForOwner =  Votre invitation de dépôt sera bientôt clôturée
 subjectForRecipient = L''''invitation au dépôt de {0} {1} sera bientôt clôturée
-uploadFileBtn = Déposer un fichier',messages_english='beginningMainMsgForRecipient = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>''''s The Upload Request is about to reach it''''s end date in <b>{2} days</b>
+uploadFileBtn = Déposer un fichier',"messages_english"='beginningMainMsgForRecipient = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>''''s The Upload Request is about to reach it''''s end date in <b>{2} days</b>
 beginningMainMsgGrouped = Your invitation will be closed in  <b>{0} days</b>.
 beginningMainMsgUnGrouped =  Your invitation is about to be closed in <b>{0} days</b>.
 endingMainMsgPlural =  and you currently have received<b>{0} files</b>.
@@ -116,4 +116,21 @@ msgTitle =  Upload Request''''s  attached message :
 recipientsURequest = Recipients
 subjectForOwner =  Your invitation is about to be closed.
 subjectForRecipient =  {0} {1}''''s  invitation is about to be closed
-uploadFileBtn = Upload a file' WHERE id=12;
+uploadFileBtn = Upload a file',"messages_russian"='beginningMainMsgForRecipient = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>''''s The Upload Request is about to reach it''''s end date in <b>{2} days</b>
+beginningMainMsgGrouped = Your invitation will be closed in  <b>{0} days</b>.
+beginningMainMsgUnGrouped =  Your invitation is about to be closed in <b>{0} days</b>.
+endingMainMsgPlural =  and you currently have received<b>{0} files</b>.
+endingMainMsgPlural = There are a total of <b> {0} files </b> in the depot.
+endingMainMsgPluralForRecipient = and so far you have sent <b> {0} files </b> in the depot.
+endingMainMsgSingular =   and you currently have received<b>1 file</b>.
+endingMainMsgSingular = There is a total of <b>1 file </b> in the repository.
+endingMainMsgSingularForRecipient = and you currently have sent <b>1 file </b>in the repository.
+filesInURDepot = Files uploaded
+formatMailSubject = : {0}
+invitationClosureDate = Closure date
+invitationCreationDate = Activation date
+msgTitle =  Upload Request''''s  attached message :
+recipientsURequest = Recipients
+subjectForOwner =  Your invitation is about to be closed.
+subjectForRecipient =  {0} {1}''''s  invitation is about to be closed
+uploadFileBtn = Upload a file' WHERE "id"=12;

@@ -1,4 +1,4 @@
-UPDATE mail_content SET subject='[(#{subject(${requestOwner.firstName}, ${requestOwner.lastName})})]',body='<!DOCTYPE html>
+UPDATE "mail_content" SET "subject"='[(#{subject(${requestOwner.firstName}, ${requestOwner.lastName})})]',"body"='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
    <head data-th-replace="layout :: header"></head>
    <body>
@@ -63,7 +63,7 @@ UPDATE mail_content SET subject='[(#{subject(${requestOwner.firstName}, ${reques
          <!--/* End of Secondary content for bottom email section */-->
       </div>
    </body>
-</html>',messages_french='buttonMsg = Accès
+</html>',"messages_french"='buttonMsg = Accès
 closureDate = Date de clôture
 depotSize = Taille
 mainMsg = <b>{0} {1}</b> aimerais vous rappeller de déposer vos fichiers.
@@ -72,7 +72,7 @@ msgFrom =  Le message de
 msgUnProtected = Pour accéder au dépôt, suivez le lien ci-dessous.
 name = {0} {1}
 recipientsOfDepot = Destinataires
-subject = {0} {1} attend toujours des fichiers de votre part',messages_english='buttonMsg = Access
+subject = {0} {1} attend toujours des fichiers de votre part',"messages_english"='buttonMsg = Access
 closureDate = Closure date
 depotSize = Size
 mainMsg = <b>{0} {1}</b> kindly reminds you to upload your files.
@@ -81,4 +81,13 @@ msgFrom = Message from
 msgUnProtected = In order to upload your files, please follow the link below.
 name = {0} {1}
 recipientsOfDepot = Recipients
-subject = {0} {1} is still awaiting your files' WHERE id=18;
+subject = {0} {1} is still awaiting your files',"messages_russian"='buttonMsg = Access
+closureDate = Closure date
+depotSize = Size
+mainMsg = <b>{0} {1}</b> kindly reminds you to upload your files.
+mainMsgEnd =
+msgFrom = Message from
+msgUnProtected = In order to upload your files, please follow the link below.
+name = {0} {1}
+recipientsOfDepot = Recipients
+subject = {0} {1} is still awaiting your files' WHERE "id"=18;

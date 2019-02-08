@@ -1,4 +1,4 @@
-UPDATE mail_content SET subject='[( #{subject(${requestRecipient.mail},${subject})})]',body='<!DOCTYPE html>
+UPDATE "mail_content" SET "subject"='[( #{subject(${requestRecipient.mail},${subject})})]',"body"='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head data-th-replace="layout :: header"></head>
 <body>
@@ -54,7 +54,7 @@ UPDATE mail_content SET subject='[( #{subject(${requestRecipient.mail},${subject
   </section> <!--/* End of Secondary content for bottom email section */-->
 </div>
 </body>
-</html>',messages_french='endingMainMsgPlural =  Il y a <b> {0} fichiers </b> dans le dépôt.
+</html>',"messages_french"='endingMainMsgPlural =  Il y a <b> {0} fichiers </b> dans le dépôt.
 endingMainMsgSingular = Il y a  <b>1 fichier </b> dans le dépôt.
 filesInURDepot =  Fichiers déposés
 fileSize =  Taille
@@ -67,7 +67,7 @@ recipientsURequest = Destinataires
 subject = {0} a clôturé votre invitation de dépôt : {1}
 ungroupedBeginningMainMsg = <b>{0}</b> a clôturé votre Invitation de Dépôt.
 uploadedOverTotal = {0} / {1} fichiers
-totalUploaded = {0} files',messages_english='endingMainMsgPlural = There are a total of <b> {0} files </b> in the depot.
+totalUploaded = {0} files',"messages_english"='endingMainMsgPlural = There are a total of <b> {0} files </b> in the depot.
 endingMainMsgSingular =  There is a total <b>1 file </b> in the depot.
 filesInURDepot = Files uploaded
 fileSize =  Total filesize
@@ -80,4 +80,17 @@ recipientsURequest = Recipients
 subject =  {0}  has closed  your Upload Request depot : {1}
 ungroupedBeginningMainMsg  = <b>{0}</b> has closed your Upload Request depot.
 uploadedOverTotal = {0} / {1} files
-totalUploaded = {0} files' WHERE id=14;
+totalUploaded = {0} files',"messages_russian"='endingMainMsgPlural = There are a total of <b> {0} files </b> in the depot.
+endingMainMsgSingular =  There is a total <b>1 file </b> in the depot.
+filesInURDepot = Files uploaded
+fileSize =  Total filesize
+groupedBeginningMainMsg = <b>{0}</b> has closed your grouped Upload Request depot.
+invitationClosureDate = Closure date
+invitationCreationDate = Activation date
+msgTitle =  Upload request''s  attached message :
+numFilesInDepot = Total uploaded files
+recipientsURequest = Recipients
+subject =  {0}  has closed  your Upload Request depot : {1}
+ungroupedBeginningMainMsg  = <b>{0}</b> has closed your Upload Request depot.
+uploadedOverTotal = {0} / {1} files
+totalUploaded = {0} files' WHERE "id"=14;

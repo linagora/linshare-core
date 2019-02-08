@@ -1,4 +1,4 @@
-UPDATE mail_content SET subject='[( #{subject})]',body='<!DOCTYPE html>
+UPDATE "mail_content" SET "subject"='[( #{subject})]',"body"='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head  data-th-replace="layout :: header"></head>
 <body>
@@ -33,7 +33,7 @@ UPDATE mail_content SET subject='[( #{subject})]',body='<!DOCTYPE html>
   </section>  <!--/* End of Secondary content for bottom email section */-->
 </div>
 </body>
-</html>',messages_french='accessToLinshareBTn = Votre partage expire bientôt
+</html>',"messages_french"='accessToLinshareBTn = Votre partage expire bientôt
 shareRecipientTitle =  Destinataire
 shareFileTitle = Le fichier partagé
 shareCreationDateTitle = Date de création
@@ -43,7 +43,7 @@ beginningMainMsg = Le partage
 endingMainMsg =  expire dans {0} jours sans avoir été téléchargé par <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
 subject = Votre partage expire bientôt et n''''a pas encore été téléchargé
 name = {0} {1}
-fileNameEndOfLine = {0}',messages_english='accessToLinshareBTn = Your share will expire soon
+fileNameEndOfLine = {0}',"messages_english"='accessToLinshareBTn = Your share will expire soon
 shareRecipientTitle = Recipient
 shareFileTitle = The shared file
 shareCreationDateTitle = Creation date
@@ -53,4 +53,14 @@ beginningMainMsg =  The fileshare
 endingMainMsg =  will expire in {0} days and has not been downloaded by the recipient <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
 subject = Your share will expire soon and has not been downloaded
 name = {0} {1}
-fileNameEndOfLine = {0}' WHERE id=26;
+fileNameEndOfLine = {0}',"messages_russian"='accessToLinshareBTn = Your share will expire soon
+shareRecipientTitle = Recipient
+shareFileTitle = The shared file
+shareCreationDateTitle = Creation date
+shareExpiryDateTitle = Expiration date
+activationLinkTitle = Initialization link
+beginningMainMsg =  The fileshare
+endingMainMsg =  will expire in {0} days and has not been downloaded by the recipient <b> {1} <span style="text-transform:uppercase">{2}</span></b>.
+subject = Your share will expire soon and has not been downloaded
+name = {0} {1}
+fileNameEndOfLine = {0}' WHERE "id"=26;

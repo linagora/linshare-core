@@ -1,4 +1,4 @@
-UPDATE mail_content SET subject='[( #{subject(${requestRecipient.mail},${subject})})]',body='<!DOCTYPE html>
+UPDATE "mail_content" SET "subject"='[( #{subject(${requestRecipient.mail},${subject})})]',"body"='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head data-th-replace="layout :: header"></head>
 <body>
@@ -37,12 +37,16 @@ UPDATE mail_content SET subject='[( #{subject(${requestRecipient.mail},${subject
   </section> <!--/* End of Secondary content for bottom email section */-->
 </div>
 </body>
-</html>',messages_french='invitationClosureDate = Date d''''expiration
+</html>',"messages_french"='invitationClosureDate = Date d''''expiration
 invitationCreationDate = Date d''''activation
 mainMsg = <b>{0}</b> a supprimé le fichier <b> {1} </b>de votre Invitation de Dépôt.
 msgTitle = Message lié à l''''Invitation de Dépôt :
-subject =  {0} a supprimé un fichier de votre invitation de dépôt {1}',messages_english='invitationClosureDate = Closure date
+subject =  {0} a supprimé un fichier de votre invitation de dépôt {1}',"messages_english"='invitationClosureDate = Closure date
 invitationCreationDate = Activation date
 mainMsg = <b>{0}</b> has deleted the file <b> {1} </b>from your Upload Request depot.
 msgTitle = Upload request''''s  attached message :
-subject = {0} has deleted a file from the Upload Request depot {1}' WHERE id=15;
+subject = {0} has deleted a file from the Upload Request depot {1}',"messages_russian"='invitationClosureDate = Closure date
+invitationCreationDate = Activation date
+mainMsg = <b>{0}</b> has deleted the file <b> {1} </b>from your Upload Request depot.
+msgTitle = Upload request''''s  attached message :
+subject = {0} has deleted a file from the Upload Request depot {1}' WHERE "id"=15;

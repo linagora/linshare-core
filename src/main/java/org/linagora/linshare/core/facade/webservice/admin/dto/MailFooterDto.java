@@ -79,6 +79,9 @@ public class MailFooterDto {
 	@ApiModelProperty(value = "messagesEnglish")
 	private String messagesEnglish;
 
+	@ApiModelProperty(value = "messagesRussian")
+	private String messagesRussian;
+
 	public MailFooterDto() {
 	}
 
@@ -100,6 +103,7 @@ public class MailFooterDto {
 		}
 		this.messagesFrench = footer.getMessagesFrench();
 		this.messagesEnglish = footer.getMessagesEnglish();
+		this.messagesRussian = footer.getMessagesRussian();
 	}
 
 	public void setDescription(String value) {
@@ -188,5 +192,13 @@ public class MailFooterDto {
 
 	public void setMessagesEnglish(String messagesEnglish) {
 		this.messagesEnglish = messagesEnglish;
+	}
+
+	public String getMessagesRussian() {
+		return messagesRussian;
+	}
+
+	public void setMessagesRussian(String messagesRussian) {
+		this.messagesRussian = messagesRussian;
 	}
 }

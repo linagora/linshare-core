@@ -1,4 +1,4 @@
-UPDATE mail_content SET subject='[# th:if="${documentsCount} > 1"] 
+UPDATE "mail_content" SET "subject"='[# th:if="${documentsCount} > 1"] 
 [( #{subjectPlural})]
 [/]
 [# th:if="${documentsCount} ==  1"]
@@ -6,7 +6,7 @@ UPDATE mail_content SET subject='[# th:if="${documentsCount} > 1"]
 [/]
 [# th:if="${!#strings.isEmpty(customSubject)}"]
 [(${ ": " +customSubject})]
-[/]',body='<!DOCTYPE html>
+[/]',"body"='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head data-th-replace="layout :: header"></head>
 <body>
@@ -60,16 +60,22 @@ UPDATE mail_content SET subject='[# th:if="${documentsCount} > 1"]
   </section>  <!--/* End of Secondary content for bottom email section */-->
 </div>
 </body>
-</html>',messages_french='numFilesMsgPlural = Vous avez partagé <b>{0} fichiers</b>
+</html>',"messages_french"='numFilesMsgPlural = Vous avez partagé <b>{0} fichiers</b>
 numFilesMsgSingular = Vous avez partagé <b>{0} fichier</b>
 recipientCountMsgPlural = avec <b>{1} destinataires</b>. Ce partage expirera le <b>{0}</b>.
 recipientCountMsgSingular = avec <b>{1} destinataire</b>. Ce partage expirera le <b>{0}</b>.
 subjectPlural = Vous avez partagé des fichiers
 subjectSingular = Vous avez partagé un fichier
-msgFor = Votre message de partage',messages_english='numFilesMsgPlural = You have shared <b>{0} files</b>
+msgFor = Votre message de partage',"messages_english"='numFilesMsgPlural = You have shared <b>{0} files</b>
 numFilesMsgSingular = You have shared <b>{0} file</b>
 recipientCountMsgPlural =   to <b>{1} recipients</b>. The fileshare will expire on : {0}.
 recipientCountMsgSingular =   to <b>{1} recipient</b>. The fileshare will  expire on : {0}.
 subjectPlural =  You have shared some files 
 subjectSingular = You have shared a file
-msgFor = Your message of sharing' WHERE id=3;
+msgFor = Your message of sharing',"messages_russian"='numFilesMsgPlural = You have shared <b>{0} files</b>
+numFilesMsgSingular = You have shared <b>{0} file</b>
+recipientCountMsgPlural =   to <b>{1} recipients</b>. The fileshare will expire on : {0}.
+recipientCountMsgSingular =   to <b>{1} recipient</b>. The fileshare will  expire on : {0}.
+subjectPlural =  You have shared some files 
+subjectSingular = You have shared a file
+msgFor = Your message of sharing' WHERE "id"=3;

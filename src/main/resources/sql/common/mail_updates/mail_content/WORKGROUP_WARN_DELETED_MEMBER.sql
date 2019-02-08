@@ -1,4 +1,4 @@
-UPDATE mail_content SET subject='[( #{subject(${workGroupName})})]',body='<!DOCTYPE html>
+UPDATE "mail_content" SET "subject"='[( #{subject(${workGroupName})})]',"body"='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head  data-th-replace="layout :: header"></head>
 <body>
@@ -26,10 +26,13 @@ UPDATE mail_content SET subject='[( #{subject(${workGroupName})})]',body='<!DOCT
   </section>  <!--/* End of Secondary content for bottom email section */-->
 </div>
 </body>
-</html>',messages_french='subject = Les accès au groupe de travail {0} vous ont été retirés.
+</html>',"messages_french"='subject = Les accès au groupe de travail {0} vous ont été retirés.
 mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> vous a retiré du groupe de travail <b>{2}</b>
 simpleMsg = Les accès au groupe de travail <b>{0}</b> vous ont été retirés.
-workGroupNameTitle = Nom du groupe de travail',messages_english='subject = Your access to the workgroup {0} was withdrawn
+workGroupNameTitle = Nom du groupe de travail',"messages_english"='subject = Your access to the workgroup {0} was withdrawn
 mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> removed you from the workgroup  <b>{2}</b>
 simpleMsg =  Your access to the workgroup <b>{0}</b> was withdrawn.     
-workGroupNameTitle = Workgroup Name' WHERE id=30;
+workGroupNameTitle = Workgroup Name',"messages_russian"='subject = Your access to the workgroup {0} was withdrawn
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> removed you from the workgroup  <b>{2}</b>
+simpleMsg =  Your access to the workgroup <b>{0}</b> was withdrawn.     
+workGroupNameTitle = Workgroup Name' WHERE "id"=30;

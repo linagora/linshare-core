@@ -1,72 +1,72 @@
-INSERT INTO mail_layout (creation_date,description,domain_abstract_id,id,layout,messages_english,messages_french,modification_date,readonly,uuid,visible) VALUES (NOW(),'Default HTML layout',1,1,'','','',NOW(),true,'15044750-89d1-11e3-8d50-5404a683a462',true);
+INSERT INTO mail_layout (creation_date,description,domain_abstract_id,id,layout,messages_english,messages_french,messages_russian,modification_date,readonly,uuid,visible) VALUES (NOW(),'Default HTML layout',1,1,'','','','',NOW(),true,'15044750-89d1-11e3-8d50-5404a683a462',true);
 
 INSERT INTO mail_config (creation_date,domain_abstract_id,id,mail_layout_id,modification_date,name,readonly,uuid,visible) VALUES (NOW(),1,1,1,NOW(),'Default mail config',true,'946b190d-4c95-485f-bfe6-d288a2de1edd',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,1,1,'','',NOW(),true,'','1507e9c0-c1e1-4e0f-9efb-506f63cbba97',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,1,1,'','','',NOW(),true,'','1507e9c0-c1e1-4e0f-9efb-506f63cbba97',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,2,2,'','',NOW(),true,'','250e4572-7bb9-4735-84ff-6a8af93e3a42',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,2,2,'','','',NOW(),true,'','250e4572-7bb9-4735-84ff-6a8af93e3a42',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,3,3,'','',NOW(),true,'','01e0ac2e-f7ba-11e4-901b-08002722e7b1',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,3,3,'','','',NOW(),true,'','01e0ac2e-f7ba-11e4-901b-08002722e7b1',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,4,4,'','',NOW(),true,'','403e5d8b-bc38-443d-8b94-bab39a4460af',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,4,4,'','','',NOW(),true,'','403e5d8b-bc38-443d-8b94-bab39a4460af',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,5,5,'','',NOW(),true,'','554a3a2b-53b1-4ec8-9462-2d6053b80078',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,5,5,'','','',NOW(),true,'','554a3a2b-53b1-4ec8-9462-2d6053b80078',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,6,6,'','',NOW(),true,'','e7bf56c2-b015-4e64-9f07-3c7e2f3f9ca8',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,6,6,'','','',NOW(),true,'','e7bf56c2-b015-4e64-9f07-3c7e2f3f9ca8',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,7,7,'','',NOW(),true,'','eb291876-53fc-419b-831b-53a480399f7c',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,7,7,'','','',NOW(),true,'','eb291876-53fc-419b-831b-53a480399f7c',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,8,8,'','',NOW(),true,'','a1ca74a5-433d-444a-8e53-8daa08fa0ddb',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,8,8,'','','',NOW(),true,'','a1ca74a5-433d-444a-8e53-8daa08fa0ddb',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,9,9,'','',NOW(),true,'','753d57a8-4fcc-4346-ac92-f71828aca77c',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,9,9,'','','',NOW(),true,'','753d57a8-4fcc-4346-ac92-f71828aca77c',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,10,10,'','',NOW(),true,'','5ea27e5b-9260-4ce1-b1bd-27372c5b653d',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,10,10,'','','',NOW(),true,'','5ea27e5b-9260-4ce1-b1bd-27372c5b653d',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,11,11,'','',NOW(),true,'','48fee30b-b2d3-4f85-b9ee-22044f9dbb4d',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,11,11,'','','',NOW(),true,'','48fee30b-b2d3-4f85-b9ee-22044f9dbb4d',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,12,12,'','',NOW(),true,'','d43b22d6-d915-41cc-99e4-9c9db66c5aac',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,12,12,'','','',NOW(),true,'','d43b22d6-d915-41cc-99e4-9c9db66c5aac',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,13,13,'','',NOW(),true,'','0cd705f3-f1f5-450d-bfcd-f2f5a60c57f8',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,13,13,'','','',NOW(),true,'','0cd705f3-f1f5-450d-bfcd-f2f5a60c57f8',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,14,14,'','',NOW(),true,'','6c0c1214-0a77-46d0-92c5-c41d225bf9aa',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,14,14,'','','',NOW(),true,'','6c0c1214-0a77-46d0-92c5-c41d225bf9aa',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,15,15,'','',NOW(),true,'','88b90304-e9c9-11e4-b6b4-5404a6202d2c',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,15,15,'','','',NOW(),true,'','88b90304-e9c9-11e4-b6b4-5404a6202d2c',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,16,16,'','',NOW(),true,'','9f00708c-60e7-11e7-a8eb-0800271467bb',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),NULL,1,16,16,'','','',NOW(),true,'','9f00708c-60e7-11e7-a8eb-0800271467bb',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,17,17,'','',NOW(),true,'','9f03b0bc-60e7-11e7-a512-0800271467bb',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,17,17,'','','',NOW(),true,'','9f03b0bc-60e7-11e7-a512-0800271467bb',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,18,18,'','',NOW(),true,'','9f06f22c-60e7-11e7-a753-0800271467bb',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,18,18,'','','',NOW(),true,'','9f06f22c-60e7-11e7-a753-0800271467bb',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,19,19,'','',NOW(),true,'','9f0a2758-60e7-11e7-b1e9-0800271467bb',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,19,19,'','','',NOW(),true,'','9f0a2758-60e7-11e7-b1e9-0800271467bb',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,20,20,'','',NOW(),true,'','9f0d6ac6-60e7-11e7-b1b6-0800271467bb',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,20,20,'','','',NOW(),true,'','9f0d6ac6-60e7-11e7-b1b6-0800271467bb',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,21,21,'','',NOW(),true,'','9f10ba3c-60e7-11e7-9a73-0800271467bb',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,21,21,'','','',NOW(),true,'','9f10ba3c-60e7-11e7-9a73-0800271467bb',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,22,22,'','',NOW(),true,'','9f146074-60e7-11e7-94ba-0800271467bb',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,22,22,'','','',NOW(),true,'','9f146074-60e7-11e7-94ba-0800271467bb',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,23,23,'','',NOW(),true,'','9f17d614-60e7-11e7-94e3-0800271467bb',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,23,23,'','','',NOW(),true,'','9f17d614-60e7-11e7-94e3-0800271467bb',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,24,24,'','',NOW(),true,'','9f1aca72-60e7-11e7-a75f-0800271467bb',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,24,24,'','','',NOW(),true,'','9f1aca72-60e7-11e7-a75f-0800271467bb',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,25,25,'','',NOW(),true,'','82cd65c6-b968-11e7-aee9-eb159cedc719',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,25,25,'','','',NOW(),true,'','82cd65c6-b968-11e7-aee9-eb159cedc719',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,26,26,'','',NOW(),true,'','4375a5b6-c3ca-11e7-bd7c-47cacbfe09d9',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,26,26,'','','',NOW(),true,'','4375a5b6-c3ca-11e7-bd7c-47cacbfe09d9',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,27,27,'','',NOW(),true,'','935a0086-c53c-11e7-83d4-3fe6e27902d8',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,27,27,'','','',NOW(),true,'','935a0086-c53c-11e7-83d4-3fe6e27902d8',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,28,28,'','',NOW(),true,'','cd33405c-c617-11e7-be9c-c763a78e452c',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,28,28,'','','',NOW(),true,'','cd33405c-c617-11e7-be9c-c763a78e452c',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,29,29,'','',NOW(),true,'','a4ef5ac0-c619-11e7-886b-7bf95112b643',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,29,29,'','','',NOW(),true,'','a4ef5ac0-c619-11e7-886b-7bf95112b643',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,30,30,'','',NOW(),true,'','47404f3c-c61a-11e7-bc5e-27c80414733b',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,30,30,'','','',NOW(),true,'','47404f3c-c61a-11e7-bc5e-27c80414733b',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,31,31,'','',NOW(),true,'','d5c4e4ba-d6b5-11e7-9bac-0f07881b63bc',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,31,31,'','','',NOW(),true,'','d5c4e4ba-d6b5-11e7-9bac-0f07881b63bc',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,32,32,'','',NOW(),true,'','dbf022d8-8389-11e8-b804-d32666b16d41',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,32,32,'','','',NOW(),true,'','dbf022d8-8389-11e8-b804-d32666b16d41',true);
 
-INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,33,33,'','',NOW(),true,'','dbf1b49a-8389-11e8-a006-77d9edee84a4',true);
+INSERT INTO mail_content (body,creation_date,description,domain_abstract_id,id,mail_content_type,messages_english,messages_french,messages_russian,modification_date,readonly,subject,uuid,visible) VALUES ('',NOW(),'',1,33,33,'','','',NOW(),true,'','dbf1b49a-8389-11e8-a006-77d9edee84a4',true);
 
 INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (1,0,1,1,1,true,'4f3c4723-531e-449b-a1ae-d304fd3d2387');
 
@@ -200,10 +200,78 @@ INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_c
 
 INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (133,1,1,33,33,true,'dbf23f1e-8389-11e8-b430-a3d498f96a4f');
 
-INSERT INTO mail_footer (creation_date,description,domain_abstract_id,footer,id,messages_english,messages_french,modification_date,readonly,uuid,visible) VALUES (NOW(),'footer html',1,'',1,'','',NOW(),true,'e85f4a22-8cf2-11e3-8a7a-5404a683a462',true);
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (201,2,1,1,1,true,'28e5855a-c0e7-40fc-8401-9cf25eb53f30');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (202,2,1,2,2,true,'41d0f03d-57dd-420e-84b0-7908179c8392');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (203,2,1,3,3,true,'72c0fff4-4638-4e98-8223-df27f8f8eab8');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (204,2,1,4,4,true,'6fbabf1a-58c0-49b9-859e-d24b0af38c78');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (205,2,1,5,5,true,'b85fc62f-d9eb-454b-9289-fec5eab51a67');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (206,2,1,6,6,true,'25540d2d-b3b8-46a9-811b-0549ad300f0e');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (207,2,1,7,7,true,'6580009b-36fd-472d-9937-41d0097ead19');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (208,2,1,8,8,true,'86fdc43c-5fd7-4aba-b01a-90fccbfb5444');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (209,2,1,9,9,true,'f9455b1d-3582-4998-8675-bc0a8137fd25');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (210,2,1,10,10,true,'e5a9f689-c005-47c2-958f-b68071b1b666');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (211,2,1,11,11,true,'2daaea2a-1b13-48b4-89a6-032f7e034a3s');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (212,2,1,12,12,true,'8f579a8a-e352-11e4-99b3-08002722e5de');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (213,2,1,13,13,true,'fa7a23cb-f545-45b4-b9dc-c39586cb2ggg');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (214,2,1,14,14,true,'44bc0912-cf91-4fc0-b376-f0ebb82acmmm');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (215,2,1,15,15,true,'cccb263e-1c24-4eb9-bff7-298713cc3854');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (216,2,1,16,16,true,'9f02736e-60e7-11e7-bf58-080027146bb7');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (217,2,1,17,17,true,'9f05d3ec-60e7-11e7-98a3-080027146bb7');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (218,2,1,18,18,true,'9f08b468-60e7-11e7-87e7-080027146bb7');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (219,2,1,19,19,true,'9f0c0672-60e7-11e7-ba0a-080027146bb7');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (220,2,1,20,20,true,'9f0f3ea0-60e7-11e7-a25e-080027146rr8');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (221,2,1,21,21,true,'9f12e0f0-60e7-11e7-8c20-080027146rr8');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (222,2,1,22,22,true,'9f164a06-60e7-11e7-998e-080027146rr8');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (223,2,1,23,23,true,'9f199652-60e7-11e7-a9cf-080027146rr8');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (224,2,1,24,24,true,'9f1c879a-60e7-11e7-95d8-080027146rr8');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (225,2,1,25,25,true,'82ce572e-b968-11e7-9f2c-8b110ac9988y');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (226,2,1,26,26,true,'4376471e-c3ca-11e7-96f0-df378884dyur');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (227,2,1,27,27,true,'935a7b10-c53c-11e7-8ce9-17fe85e6bhji');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (228,2,1,28,28,true,'cd33d42c-c617-11e7-979a-6bf962f5cii9');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (229,2,1,29,29,true,'a4efd518-c619-11e7-8cdf-13a90ce64aaz');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (230,2,1,30,30,true,'4740d3f8-c61a-11e7-8d5a-3f431ce96zza');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (231,2,1,31,31,true,'d5c55f44-d6b5-11e7-b521-4f65da9d0zaz');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (232,2,1,32,32,true,'dbf12958-8389-11e8-964e-6b7eef81d99z');
+
+INSERT INTO mail_content_lang (id,language,mail_config_id,mail_content_id,mail_content_type,readonly,uuid) VALUES (233,2,1,33,33,true,'dbf23f1e-8389-11e8-b430-a3d498f96z88');
+
+INSERT INTO mail_footer (creation_date,description,domain_abstract_id,footer,id,messages_english,messages_french,messages_russian,modification_date,readonly,uuid,visible) VALUES (NOW(),'footer html',1,'',1,'','','',NOW(),true,'e85f4a22-8cf2-11e3-8a7a-5404a683a462',true);
 
 INSERT INTO mail_footer_lang (id,language,mail_config_id,mail_footer_id,readonly,uuid) VALUES (1,0,1,1,true,'bf87e580-fb25-49bb-8d63-579a31a8f81e');
 
 INSERT INTO mail_footer_lang (id,language,mail_config_id,mail_footer_id,readonly,uuid) VALUES (2,1,1,1,true,'a6c8ee84-b5a8-4c96-b148-43301fbccdd9');
+
+INSERT INTO mail_footer_lang (id,language,mail_config_id,mail_footer_id,readonly,uuid) VALUES (3,2,1,1,true,'a6c8ee84-b5a8-4c96-b148-43301fbccde8');
 
 UPDATE domain_abstract SET mailconfig_id = 1;

@@ -361,6 +361,7 @@ CREATE TABLE mail_layout (
   readonly           bool DEFAULT 'false' NOT NULL,
   messages_french    text,
   messages_english   text,
+  messages_russian   text,
   PRIMARY KEY (id));
 CREATE TABLE mail_footer (
   id                  int8 NOT NULL,
@@ -374,6 +375,7 @@ CREATE TABLE mail_footer (
   readonly           bool DEFAULT 'false' NOT NULL,
   messages_french    text,
   messages_english   text,
+  messages_russian   text,
   PRIMARY KEY (id));
 CREATE TABLE mail_footer_lang (
   id              int8 NOT NULL,
@@ -397,6 +399,7 @@ CREATE TABLE mail_content (
   readonly           bool DEFAULT 'false' NOT NULL,
   messages_french    text,
   messages_english   text,
+  messages_russian   text,
   PRIMARY KEY (id));
 CREATE TABLE mail_content_lang (
   id                 int8 NOT NULL,

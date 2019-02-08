@@ -76,6 +76,9 @@ public class MailLayoutDto {
 	@ApiModelProperty(value = "messagesEnglish")
 	private String messagesEnglish;
 
+	@ApiModelProperty(value = "messagesRussian")
+	private String messagesRussian;
+
 	public MailLayoutDto() {
 	}
 
@@ -97,6 +100,7 @@ public class MailLayoutDto {
 		}
 		this.messagesFrench = ml.getMessagesFrench();
 		this.messagesEnglish = ml.getMessagesEnglish();
+		this.messagesRussian = ml.getMessagesRussian();
 	}
 
 	public String getUuid() {
@@ -177,5 +181,13 @@ public class MailLayoutDto {
 
 	public void setMessagesEnglish(String messagesEnglish) {
 		this.messagesEnglish = messagesEnglish;
+	}
+
+	public String getMessagesRussian() {
+		return messagesRussian;
+	}
+
+	public void setMessagesRussian(String messagesRussian) {
+		this.messagesRussian = messagesRussian;
 	}
 }

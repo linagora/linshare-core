@@ -32,7 +32,7 @@ update_file_folder = update_file_location + separator
 structure_file_name = path_folder + "import_mail_structure.sql"
 #import_mails_file_name = path_folder + "import-mail.sql"
 update_file_name = path_folder + "import_mail_update.sql"
-columns_to_update = ["subject", "body", "messages_french", "messages_english", "layout", "footer"]
+columns_to_update = ["subject", "body", "messages_french", "messages_english", "messages_russian", "layout", "footer"]
 tables_to_export = ['mail_layout', 'mail_config', 'mail_content', 'mail_content_lang', 'mail_footer', 'mail_footer_lang']
 tables_to_extract_content = ['mail_layout', 'mail_content', 'mail_footer']
 
@@ -123,7 +123,6 @@ def write_insert_scripts(structure_file_name, tables_to_export, database_to_expo
 
 
 def write_update_scripts(update_file_name, full_imported_database, tables_content, column_names, updates_location, mail_types, print_full_update_file=mode_print_full_update_file):
-	
 	content_to_write = ""
 	for table_to_update_content in tables_content:
 		#Create the folder where the update scripts will be generated

@@ -100,7 +100,7 @@ public class MailConfigServiceImplTest extends AbstractTransactionalJUnit4Spring
 	@Autowired
 	private MailLayoutRepository mailLayoutRepository;
 
-	private static int NB_LANG = 2;
+	private static int NB_LANG = 3;
 
 	private static int NB_CONTENT = 33;
 

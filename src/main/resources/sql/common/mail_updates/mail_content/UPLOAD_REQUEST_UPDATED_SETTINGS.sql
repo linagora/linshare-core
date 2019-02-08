@@ -1,9 +1,9 @@
-UPDATE mail_content SET subject='[# th:if="${!subject.modified}"]
+UPDATE "mail_content" SET "subject"='[# th:if="${!subject.modified}"]
 [(#{subject(${subject.value})})]
 [/]
 [# th:if="${subject.modified}"]
 [(#{subject(${subject.oldValue})})]
-[/]',body='<!DOCTYPE html>
+[/]',"body"='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
    <head data-th-replace="layout :: header"></head>
    <body>
@@ -78,7 +78,7 @@ UPDATE mail_content SET subject='[# th:if="${!subject.modified}"]
          <!--/* End of Secondary content for bottom email section */-->
       </div>
    </body>
-</html>',messages_french='activationDate = Date d''activation
+</html>',"messages_french"='activationDate = Date d''activation
 closureRight = Droits de dépôt
 deletionRight = Droits de suppression
 depotSize = Taille du dépôt
@@ -92,7 +92,7 @@ msgFrom = Nouveau message de
 name = {0} {1}
 nameOfDepot: Nom du dépôt
 secondaryMsg = Les modifications sont listées ci-dessous.
-subject = Modification des paramètres du dépôt : {0}',messages_english='activationDate = Activation date
+subject = Modification des paramètres du dépôt : {0}',"messages_english"='activationDate = Activation date
 closureRight = Closure rights
 deletionRight = Deletion rights
 depotSize = Repository size
@@ -107,4 +107,19 @@ name = {0} {1}
 nameOfDepot: Name of the depot
 secondaryMsg = Updated settings are listed below.
 subject = Updated Settings for Upload Request : {0}
-' WHERE id=23;
+',"messages_russian"='activationDate = Activation date
+closureRight = Closure rights
+deletionRight = Deletion rights
+depotSize = Repository size
+expiryDate = Closure date
+local = Local
+enableNotification = Enable notifications
+mainMsg =   <b> {0} <span style="text-transform:uppercase">{1}</span> </b>  has updated some settings related to the Upload Request.
+maxFileNum = File number
+maxFileSize = File size
+msgFrom =  New message from
+name = {0} {1}
+nameOfDepot: Name of the depot
+secondaryMsg = Updated settings are listed below.
+subject = Updated Settings for Upload Request : {0}
+' WHERE "id"=23;

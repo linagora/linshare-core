@@ -835,6 +835,16 @@ UPDATE mail_content SET body='<!DOCTYPE html>
 </html>' WHERE id = 29;
 --end mail content
 
+-- Add russian mail content
+ALTER TABLE mail_content ADD COLUMN messages_russian text;
+ALTER TABLE mail_footer ADD COLUMN messages_russian text;
+ALTER TABLE mail_layout ADD COLUMN messages_russian text;
+
+-- to be deleted
+UPDATE mail_layout SET messages_russian = messages_english;
+UPDATE mail_content SET messages_russian = messages_english;
+UPDATE mail_footer SET messages_russian = messages_english;
+
 -- LinShare version
 SELECT ls_version();
 

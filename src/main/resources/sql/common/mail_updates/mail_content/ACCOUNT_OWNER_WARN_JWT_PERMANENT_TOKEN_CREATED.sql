@@ -1,4 +1,4 @@
-UPDATE mail_content SET subject='[(#{subject})]',body='<!DOCTYPE html>
+UPDATE "mail_content" SET "subject"='[(#{subject})]',"body"='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
    <head data-th-replace="layout :: header"></head>
    <body>
@@ -38,12 +38,16 @@ UPDATE mail_content SET subject='[(#{subject})]',body='<!DOCTYPE html>
          <!--/* End of Secondary content for bottom email section */-->
       </div>
    </body>
-</html>',messages_french='subject = Création d''''un jeton d''''accès permanent
+</html>',"messages_french"='subject = Création d''''un jeton d''''accès permanent
 mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> a créé un jeton d''''accès permanent pour votre compte.
 tokenCreationDate = Date de création
 tokenLabel = Nom
-tokenDescription = Description',messages_english='subject = Creation of a permanent authentication token
+tokenDescription = Description',"messages_english"='subject = Creation of a permanent authentication token
 mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> has created a permanent authentication token for your account.
 tokenCreationDate = Creation date
 tokenLabel = Name
-tokenDescription = Description' WHERE id=32;
+tokenDescription = Description',"messages_russian"='subject = Creation of a permanent authentication token
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> has created a permanent authentication token for your account.
+tokenCreationDate = Creation date
+tokenLabel = Name
+tokenDescription = Description' WHERE "id"=32;

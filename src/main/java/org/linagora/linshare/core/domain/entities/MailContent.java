@@ -66,6 +66,8 @@ public class MailContent implements Cloneable {
 
 	private String messagesEnglish;
 
+	private String messagesRussian;
+
 	public MailContent() {
 	}
 
@@ -173,6 +175,14 @@ public class MailContent implements Cloneable {
 		this.messagesEnglish = messagesEnglish;
 	}
 
+	public String getMessagesRussian() {
+		return messagesRussian;
+	}
+
+	public void setMessagesRussian(String messagesRussian) {
+		this.messagesRussian = messagesRussian;
+	}
+
 	@Override
 	public MailContent clone() {
 		MailContent p = null;
@@ -191,6 +201,8 @@ public class MailContent implements Cloneable {
 	public String getMessages(Language lang) {
 		if (lang.equals(Language.FRENCH)) {
 			return getMessagesFrench();
+		} else if (lang.equals(Language.RUSSIAN)) {
+			return getMessagesRussian();
 		} else {
 			return getMessagesEnglish();
 		}

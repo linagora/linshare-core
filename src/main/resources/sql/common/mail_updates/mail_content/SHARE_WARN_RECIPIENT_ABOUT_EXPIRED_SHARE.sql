@@ -1,4 +1,4 @@
-UPDATE mail_content SET subject='[( #{subject(${share.name})})]',body='<!DOCTYPE html>
+UPDATE "mail_content" SET "subject"='[( #{subject(${share.name})})]',"body"='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head  data-th-replace="layout :: header"></head>
 <body>
@@ -32,18 +32,25 @@ UPDATE mail_content SET subject='[( #{subject(${share.name})})]',body='<!DOCTYPE
   </section>  <!--/* End of Secondary content for bottom email section */-->
 </div>
 </body>
-</html>',messages_french='shareFileTitle = Le fichier partagé
+</html>',"messages_french"='shareFileTitle = Le fichier partagé
 shareCreationDateTitle = Date de création
 shareExpiryDateTitle = Date d''''expiration
 activationLinkTitle = Initialization link
 beginningMainMsg = Le partage
 endingMainMsg = émis par <b> {0} <span style="text-transform:uppercase">{1}</span></b> a expiré et a été supprimé par le <b>système</b>.
 subject = Le partage {0} a expiré
-fileNameEndOfLine = {0}',messages_english='shareFileTitle = The shared file
+fileNameEndOfLine = {0}',"messages_english"='shareFileTitle = The shared file
 shareCreationDateTitle = Creation date
 shareExpiryDateTitle = Expiration date
 activationLinkTitle = Initialization link
 beginningMainMsg =  The fileshare
 endingMainMsg = sent by <b> {0} <span style="text-transform:uppercase">{1}</span></b> has expired and been deleted by the <b>system</b>.
 subject = The fileshare {0} has expired
-fileNameEndOfLine = {0}' WHERE id=27;
+fileNameEndOfLine = {0}',"messages_russian"='shareFileTitle = The shared file
+shareCreationDateTitle = Creation date
+shareExpiryDateTitle = Expiration date
+activationLinkTitle = Initialization link
+beginningMainMsg =  The fileshare
+endingMainMsg = sent by <b> {0} <span style="text-transform:uppercase">{1}</span></b> has expired and been deleted by the <b>system</b>.
+subject = The fileshare {0} has expired
+fileNameEndOfLine = {0}' WHERE "id"=27;

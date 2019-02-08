@@ -1,4 +1,4 @@
-UPDATE mail_content SET subject='[( #{subject(${guest.firstName},${guest.lastName}, #{productName})})]',body='<!DOCTYPE html>
+UPDATE "mail_content" SET "subject"='[( #{subject(${guest.firstName},${guest.lastName}, #{productName})})]',"body"='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head  data-th-replace="layout :: header"></head>
 <body>
@@ -26,16 +26,22 @@ UPDATE mail_content SET subject='[( #{subject(${guest.firstName},${guest.lastNam
   </section>  <!--/* End of Secondary content for bottom email section */-->
 </div>
 </body>
-</html>',messages_french='accessToLinshareBTn = Le compte de votre invité expire
+</html>',"messages_french"='accessToLinshareBTn = Le compte de votre invité expire
 accountCreationDateTitle = Date de création
 accountExpiryDateTitle = Date d''''expiration
 activationLinkTitle = Initialization link
 mainMsg = Le compte invité de : <b> {0} <span style="text-transform:uppercase">{1}</span></b> expirera dans {2} jours. Pensez à prolonger la validité du compte si besoin.
 subject = Le compte invité de {0}  {1} expire bientôt
-userEmailTitle = Email',messages_english='accessToLinshareBTn = Expiration account
+userEmailTitle = Email',"messages_english"='accessToLinshareBTn = Expiration account
 accountCreationDateTitle = Account creation date
 accountExpiryDateTitle = Account expiry date
 activationLinkTitle = Initialization link
 mainMsg = The  <b> {0} <span style="text-transform:uppercase">{1}</span></b> guest account is about to expire in {2} days. If this account is still needed,  postpone its expiration date.
 subject = {0}  {1} guest account will expire soon.
-userEmailTitle = Email' WHERE id=25;
+userEmailTitle = Email',"messages_russian"='accessToLinshareBTn = Expiration account
+accountCreationDateTitle = Account creation date
+accountExpiryDateTitle = Account expiry date
+activationLinkTitle = Initialization link
+mainMsg = The  <b> {0} <span style="text-transform:uppercase">{1}</span></b> guest account is about to expire in {2} days. If this account is still needed,  postpone its expiration date.
+subject = {0}  {1} guest account will expire soon.
+userEmailTitle = Email' WHERE "id"=25;

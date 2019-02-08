@@ -1,9 +1,9 @@
-UPDATE mail_content SET subject='[# th:if="${!anonymous}"]
+UPDATE "mail_content" SET "subject"='[# th:if="${!anonymous}"]
 [( #{subject(${shareRecipient.firstName},${shareRecipient.lastName},${share.name})})]
 [/]
 [# th:if="${anonymous}"]
 [( #{subjectAnonymous(${shareRecipient.mail},${share.name})})]
-[/]',body='<!DOCTYPE html>
+[/]',"body"='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head  data-th-replace="layout :: header"></head>
 <body>
@@ -47,14 +47,19 @@ UPDATE mail_content SET subject='[# th:if="${!anonymous}"]
   </section>  <!--/* End of Secondary content for bottom email section */-->
 </div>
 </body>
-</html>',messages_french='downloadDate = Téléchargé le
+</html>',"messages_french"='downloadDate = Téléchargé le
 fileNameEndOfLine = {0}.
 mainMsgExt = Le destinataire externe <b>{0}</b> a téléchargé votre fichier
 mainMsgInt = <b> {0} <span style="text-transform:uppercase">{1}</span> </b> a téléchargé votre fichier 
 subject =  {0} {1} a téléchargé {2}
-subjectAnonymous = {0} a téléchargé {1}',messages_english='downloadDate = Download date
+subjectAnonymous = {0} a téléchargé {1}',"messages_english"='downloadDate = Download date
 fileNameEndOfLine = {0}.
 mainMsgExt = The external recipient <b>{0}</b> has downloaded your file
 mainMsgInt = <b> {0} <span style="text-transform:uppercase">{1}</span> </b> has downloaded your file
 subject = {0} {1} has downloaded {2}
-subjectAnonymous = {0} has downloaded {1}' WHERE id=4;
+subjectAnonymous = {0} has downloaded {1}',"messages_russian"='downloadDate = Download date
+fileNameEndOfLine = {0}.
+mainMsgExt = The external recipient <b>{0}</b> has downloaded your file
+mainMsgInt = <b> {0} <span style="text-transform:uppercase">{1}</span> </b> has downloaded your file
+subject = {0} {1} has downloaded {2}
+subjectAnonymous = {0} has downloaded {1}' WHERE "id"=4;

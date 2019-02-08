@@ -1,4 +1,4 @@
-UPDATE mail_content SET subject='[( #{subject(${shareOwner.firstName},${shareOwner.lastName},${share.name})})]',body='<!DOCTYPE html>
+UPDATE "mail_content" SET "subject"='[( #{subject(${shareOwner.firstName},${shareOwner.lastName},${share.name})})]',"body"='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head  data-th-replace="layout :: header"></head>
 <body>
@@ -29,8 +29,10 @@ UPDATE mail_content SET subject='[( #{subject(${shareOwner.firstName},${shareOwn
   </section>  <!--/* End of Secondary content for bottom email section */-->
 </div>
 </body>
-</html>',messages_french='deletedDate = Supprimé le
+</html>',"messages_french"='deletedDate = Supprimé le
 mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> a supprimé le partage
-subject = {0} {1} a supprimé le partage de {2}',messages_english='deletedDate = Deletion date
+subject = {0} {1} a supprimé le partage de {2}',"messages_english"='deletedDate = Deletion date
 mainMsg = <b>{0} <span style="text-transform:uppercase">{1}</span></b> has deleted the  fileshare
-subject = {0} {1} has deleted the fileshare {2}' WHERE id=5;
+subject = {0} {1} has deleted the fileshare {2}',"messages_russian"='deletedDate = Deletion date
+mainMsg = <b>{0} <span style="text-transform:uppercase">{1}</span></b> has deleted the  fileshare
+subject = {0} {1} has deleted the fileshare {2}' WHERE "id"=5;

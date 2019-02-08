@@ -1,4 +1,4 @@
-UPDATE mail_content SET subject='[( #{subject(${workGroupName})})]',body='<!DOCTYPE html>
+UPDATE "mail_content" SET "subject"='[( #{subject(${workGroupName})})]',"body"='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head  data-th-replace="layout :: header"></head>
 <body>
@@ -45,14 +45,19 @@ UPDATE mail_content SET subject='[( #{subject(${workGroupName})})]',body='<!DOCT
   </section>  <!--/* End of Secondary content for bottom email section */-->
 </div>
 </body>
-</html>',messages_french='workGroupCreationDateTitle = Date de création
+</html>',"messages_french"='workGroupCreationDateTitle = Date de création
 mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> vous a ajouté au groupe de travail <br>
 simpleMainMsg = Vous avez été ajouté au groupe de travail
 subject = Vous avez été ajouté au groupe de travail {0}
 workGroupRight = Droit par défaut 
-workGroupNameTitle = Nom du groupe de travail',messages_english='workGroupCreationDateTitle = Creation date
+workGroupNameTitle = Nom du groupe de travail',"messages_english"='workGroupCreationDateTitle = Creation date
 mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> added you to the workgroup <br>
 simpleMainMsg = You have been added to the workgroup
 subject = You have been added to the workgroup {0}
 workGroupRight = Default right
-workGroupNameTitle = Workgroup Name' WHERE id=28;
+workGroupNameTitle = Workgroup Name',"messages_russian"='workGroupCreationDateTitle = Creation date
+mainMsg = <b> {0} <span style="text-transform:uppercase">{1}</span></b> added you to the workgroup <br>
+simpleMainMsg = You have been added to the workgroup
+subject = You have been added to the workgroup {0}
+workGroupRight = Default right
+workGroupNameTitle = Workgroup Name' WHERE "id"=28;

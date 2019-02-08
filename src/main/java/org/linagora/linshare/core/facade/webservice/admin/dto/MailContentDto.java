@@ -83,6 +83,8 @@ public class MailContentDto {
 	@ApiModelProperty(value = "messagesEnglish")
 	private String messagesEnglish;
 
+	@ApiModelProperty(value = "messagesRussian")
+	private String messagesRussian;
 
 	public MailContentDto() {
 	}
@@ -108,6 +110,7 @@ public class MailContentDto {
 		}
 		this.messagesFrench = cont.getMessagesFrench();
 		this.messagesEnglish = cont.getMessagesEnglish();
+		this.messagesRussian = cont.getMessagesRussian();
 	}
 
 	public String getDescription() {
@@ -206,4 +209,11 @@ public class MailContentDto {
 		this.messagesEnglish = messagesEnglish;
 	}
 
+	public String getMessagesRussian() {
+		return messagesRussian;
+	}
+
+	public void setMessagesRussian(String messagesRussian) {
+		this.messagesRussian = messagesRussian;
+	}
 }

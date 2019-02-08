@@ -1,9 +1,9 @@
-UPDATE mail_content SET subject='[# th:if="${warnOwner}"] 
+UPDATE "mail_content" SET "subject"='[# th:if="${warnOwner}"] 
            [( #{subjectForOwner(${subject})})]
        [/]
         [# th:if="${!warnOwner}"]
            [( #{subjectForRecipient(${requestOwner.firstName},${requestOwner.lastName},${subject})})]
-       [/]',body='<!DOCTYPE html>
+       [/]',"body"='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head  data-th-replace="layout :: header"></head>
 <body>
@@ -79,7 +79,7 @@ UPDATE mail_content SET subject='[# th:if="${warnOwner}"]
   </section>  <!--/* End of Secondary content for bottom email section */-->
 </div>
 </body>
-</html>',messages_french='beginningMainMsgForRecipient = L''''invitation de Dépôt de <b> {0} <span style="text-transform:uppercase">{1}</span> </b> a expiré.
+</html>',"messages_french"='beginningMainMsgForRecipient = L''''invitation de Dépôt de <b> {0} <span style="text-transform:uppercase">{1}</span> </b> a expiré.
 beginningMainMsgGrouped = Votre Invitation de Dépôt groupée a expiré.
 beginningMainMsgUnGrouped = Votre Invitation de Dépôt a expiré.
 endingMainMsgPlural = et vous avez reçu un total  de <b>{0} fichiers</b>.
@@ -93,7 +93,7 @@ invitationCreationDate =  Date d''''activation
 msgTitle = Message lié à l''''Invitation de Dépôt :
 recipientsURequest = Destinataires
 subjectForOwner = Votre Invitation de Dépôt {0} est clôturée
-subjectForRecipient = L'''' Invitation de Dépôt de {0} {1} intitulée {2} est clôturée',messages_english='beginningMainMsgForRecipient = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>''''s Upload Request has expired
+subjectForRecipient = L'''' Invitation de Dépôt de {0} {1} intitulée {2} est clôturée',"messages_english"='beginningMainMsgForRecipient = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>''''s Upload Request has expired
 beginningMainMsgGrouped = Your grouped Upload Request has expired
 beginningMainMsgUnGrouped = Your Upload Request has expired
 endingMainMsgPlural = and you have received a total of <b>{0} files</b>.
@@ -107,4 +107,18 @@ invitationCreationDate = Activation date
 msgTitle = Upload Request''''s  attached message :
 recipientsURequest = Recipients
 subjectForOwner = Your invitation {0} is now closed
-subjectForRecipient =  {0} {1}''''s  invitation {2} is now closed' WHERE id=13;
+subjectForRecipient =  {0} {1}''''s  invitation {2} is now closed',"messages_russian"='beginningMainMsgForRecipient = <b> {0} <span style="text-transform:uppercase">{1}</span> </b>''''s Upload Request has expired
+beginningMainMsgGrouped = Your grouped Upload Request has expired
+beginningMainMsgUnGrouped = Your Upload Request has expired
+endingMainMsgPlural = and you have received a total of <b>{0} files</b>.
+endingMainMsgPluralForRecipient = and you currently have sent  <b> {0} files </b>.
+endingMainMsgSingular = and you have received a total of <b>1 file</b>.
+endingMainMsgSingularForRecipient = and you currently have uploaded <b>1 file </b> to the repository.
+filesInURDepot = Files uploaded
+formatMailSubject = : {0}
+invitationClosureDate = Closure date
+invitationCreationDate = Activation date
+msgTitle = Upload Request''''s  attached message :
+recipientsURequest = Recipients
+subjectForOwner = Your invitation {0} is now closed
+subjectForRecipient =  {0} {1}''''s  invitation {2} is now closed' WHERE "id"=13;
