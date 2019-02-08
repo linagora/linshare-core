@@ -34,6 +34,9 @@
 
 package org.linagora.linshare.core.facade.webservice.user.dto;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement(name="version")
 public class VersionDto {
     private String version;
 
