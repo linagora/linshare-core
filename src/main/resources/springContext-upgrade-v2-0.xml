@@ -221,6 +221,12 @@
 					<constructor-arg ref="workGroupDocumentRevisionService" />
 					<constructor-arg ref="mongoTemplate" />
 				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v2_3.UpdateSharedSpaceNodeStructureForVersioningUpgradeTaskImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="sharedSpaceNodeMongoRepository" />
+					<constructor-arg ref="mongoTemplate" />
+				</bean>
 			</list>
 		</constructor-arg>
 	</bean>

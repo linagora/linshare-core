@@ -176,7 +176,13 @@ public enum UpgradeTaskType {
 	 * 	Upgrade document structure for versioning
 	 * 
 	 */
-	UPGRADE_2_3_UPDATE_DOCUMENT_STRUCTURE_FOR_VERSIONING;
+	UPGRADE_2_3_UPDATE_DOCUMENT_STRUCTURE_FOR_VERSIONING,
+
+	/* 
+	 * 	Upgrade SharedSpaceNode structure for versioning
+	 * 
+	 */
+	UPGRADE_2_3_UPDATE_SHARED_SPACE_NODE_STRUCTURE_FOR_VERSIONING;
 
 	public static UpgradeTaskType fromString(String s) {
 		try {

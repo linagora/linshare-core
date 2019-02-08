@@ -281,7 +281,7 @@ VALUES
  'UPGRADE_2_3',
   null,
   null,
-  27,
+  28,
  'NEW',
  'MANDATORY',
   now(),
@@ -314,6 +314,35 @@ VALUES
   now(),
   now(),
   null);
+
+-- TASK: UPGRADE_2_3_UPDATE_SHARED_SPACE_NODE_STRUCTURE_FOR_VERSIONING
+   INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+ (29,
+ 'UNDEFINED',
+ 'UPGRADE_2_3_UPDATE_SHARED_SPACE_NODE_STRUCTURE_FOR_VERSIONING',
+ 'UPGRADE_2_3',
+  null,
+  null,
+  29,
+ 'NEW',
+ 'MANDATORY',
+  now(),
+  now(),
+  null);
+
 -- End Upgrade Task
 
 -- Mail content
