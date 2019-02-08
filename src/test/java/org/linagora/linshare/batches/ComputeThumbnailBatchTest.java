@@ -46,6 +46,7 @@ import org.apache.cxf.helpers.IOUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.linagora.linshare.core.batches.GenericBatch;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
@@ -65,7 +66,6 @@ import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
 import com.beust.jcommander.internal.Sets;
@@ -86,7 +86,6 @@ import com.google.common.collect.Lists;
 		"classpath:springContext-batches.xml",
 		"classpath:springContext-test.xml",
 		})
-@TestPropertySource("classpath:ThumbnailServiceConfiguration.properties")
 public class ComputeThumbnailBatchTest extends AbstractTransactionalJUnit4SpringContextTests{
 
 	@Autowired
@@ -135,6 +134,7 @@ public class ComputeThumbnailBatchTest extends AbstractTransactionalJUnit4Spring
 		Assert.assertTrue("At least one batch failed.", batchRunner.execute(batches));
 	}
 
+	@Ignore
 	@Test
 	public void testBatchExecution() throws BusinessException, JobExecutionException, IOException {
 		Document document = createDocument();

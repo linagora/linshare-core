@@ -86,7 +86,7 @@ public class UploadRequestEntryBusinessServiceImpl implements
 
 	private final boolean deduplication;
 
-	private final ThumbnailGeneratorBusinessService thumbnailGeneratorService;
+	private final ThumbnailGeneratorBusinessService thumbnailGeneratorBusinessService;
 
 	private final TimeStampingService timeStampingService;
 
@@ -95,14 +95,14 @@ public class UploadRequestEntryBusinessServiceImpl implements
 			final DocumentRepository documentRepository,
 			final boolean deduplication,
 			final FileDataStore fileDataStore,
-			final ThumbnailGeneratorBusinessService thumbnailGeneratorService,
+			final ThumbnailGeneratorBusinessService thumbnailGeneratorBusinessService,
 			final TimeStampingService timeStampingService) {
 		super();
 		this.uploadRequestEntryRepository = uploadRequestEntryRepository;
 		this.documentRepository = documentRepository;
 		this.deduplication = deduplication;
 		this.fileDataStore = fileDataStore;
-		this.thumbnailGeneratorService = thumbnailGeneratorService;
+		this.thumbnailGeneratorBusinessService = thumbnailGeneratorBusinessService;
 		this.timeStampingService = timeStampingService;
 	}
 
@@ -246,8 +246,8 @@ public class UploadRequestEntryBusinessServiceImpl implements
 			metadata = fileDataStore.add(myFile, metadata);
 
 			// Computing and storing thumbnail
-			if (thumbnailGeneratorService.isSupportedMimetype(mimeType)) {
-				fileMetadataThumbnail = thumbnailGeneratorService.getThumbnails(owner, myFile, metadata, mimeType);
+			if (thumbnailGeneratorBusinessService.isSupportedMimetype(mimeType)) {
+				fileMetadataThumbnail = thumbnailGeneratorBusinessService.getThumbnails(owner, myFile, metadata, mimeType);
 			}
 			try {
 				// want a timestamp on doc ?

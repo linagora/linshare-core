@@ -158,7 +158,7 @@
 		<constructor-arg ref="documentRepository" />
 		<constructor-arg ref="fileDataStore" />
 		<constructor-arg ref="documentEntryBusinessService"/>
-		<constructor-arg ref="thumbnailGeneratorService" />
+		<constructor-arg ref="thumbnailGeneratorBusinessService" />
 	</bean>
 
 	<bean name="batchRunner"

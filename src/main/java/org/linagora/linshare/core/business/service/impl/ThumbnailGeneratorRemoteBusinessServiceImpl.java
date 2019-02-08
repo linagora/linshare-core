@@ -75,8 +75,10 @@ public class ThumbnailGeneratorRemoteBusinessServiceImpl implements ThumbnailGen
 
 	protected final String thumbnailWebServiceUrl;
 
-	public ThumbnailGeneratorRemoteBusinessServiceImpl(FileDataStore fileDataStore, boolean thumbEnabled,
-			boolean pdfThumbEnabled, String thumbnailWebServiceUrl) {
+	public ThumbnailGeneratorRemoteBusinessServiceImpl(FileDataStore fileDataStore,
+			boolean thumbEnabled,
+			boolean pdfThumbEnabled,
+			String thumbnailWebServiceUrl) {
 		this.fileDataStore = fileDataStore;
 		this.thumbEnabled = thumbEnabled;
 		this.pdfThumbEnabled = pdfThumbEnabled;
@@ -86,8 +88,7 @@ public class ThumbnailGeneratorRemoteBusinessServiceImpl implements ThumbnailGen
 	@Override
 	public Map<ThumbnailType, FileMetaData> getThumbnails(Account owner, File myFile, FileMetaData metadata,
 			String mimeType) {
-		if (!isSupportedMimetype(mimeType) || !thumbEnabled
-				|| (!pdfThumbEnabled && metadata.getMimeType().contains("pdf"))) {
+		if (!isSupportedMimetype(mimeType) || (!pdfThumbEnabled && metadata.getMimeType().contains("pdf"))) {
 			logger.warn("Thumbnail generation is disabled.");
 			return Maps.newHashMap();
 		}

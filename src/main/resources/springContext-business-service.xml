@@ -20,7 +20,7 @@
 		<constructor-arg ref="documentRepository" />
 		<constructor-arg ref="signatureBusinessService" />
 		<constructor-arg ref="uploadRequestEntryBusinessService" />
-		<constructor-arg ref="thumbnailGeneratorService" />
+		<constructor-arg ref="thumbnailGeneratorBusinessService" />
 		<constructor-arg value="${linshare.documents.storage.deduplication}" />
 		<constructor-arg ref="workGroupNodeMongoRepository" />
 		<constructor-arg ref="documentGarbageCollectorMongoRepository" />
@@ -34,7 +34,7 @@
 		<constructor-arg ref="documentRepository" />
 		<constructor-arg ref="signatureBusinessService" />
 		<constructor-arg ref="uploadRequestEntryBusinessService" />
-		<constructor-arg ref="thumbnailGeneratorService" />
+		<constructor-arg ref="thumbnailGeneratorBusinessService" />
 		<constructor-arg value="${linshare.documents.storage.deduplication}" />
 		<constructor-arg ref="workGroupNodeMongoRepository" />
 		<constructor-arg ref="documentGarbageCollectorMongoRepository" />
@@ -156,7 +156,7 @@
 		<constructor-arg ref="documentRepository" />
 		<constructor-arg value="${linshare.documents.storage.deduplication}" />
 		<constructor-arg ref="fileDataStore" />
-		<constructor-arg ref="thumbnailGeneratorService" />
+		<constructor-arg ref="thumbnailGeneratorBusinessService" />
 		<constructor-arg ref="timeStampingService" />
 	</bean>	
 
@@ -288,11 +288,8 @@
 	</bean>
 	<bean id="upgradeTaskBusinessService" class="org.linagora.linshare.core.business.service.impl.UpgradeTaskBusinessServiceImpl">
 		<constructor-arg ref="upgradeTaskRepository" />
-	</bean>
-	<bean name="thumbnailFactoryService" class="org.linagora.linshare.core.business.service.impl.ThumbnailGeneratorFactoryBusinessServiceImpl">
-	</bean>
-	<bean name="thumbnailGeneratorService" init-method="start" destroy-method="stop" factory-method="createInstance" factory-bean="thumbnailFactoryService">
-		<constructor-arg value="${linshare.linthumbnail.remote.mode}" />
+	</bean>	
+	<bean name="thumbnailGeneratorBusinessService" class="org.linagora.linshare.core.business.service.impl.ThumbnailGeneratorRemoteBusinessServiceImpl">
 		<constructor-arg ref="fileDataStore" />
 		<constructor-arg value="${linshare.documents.thumbnail.enable}" />
 		<constructor-arg value="${linshare.documents.thumbnail.pdf.enable}" />

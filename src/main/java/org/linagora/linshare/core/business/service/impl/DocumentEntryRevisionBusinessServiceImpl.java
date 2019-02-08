@@ -68,13 +68,13 @@ public class DocumentEntryRevisionBusinessServiceImpl extends DocumentEntryBusin
 			final DocumentRepository documentRepository,
 			final SignatureBusinessService signatureBusinessService,
 			final UploadRequestEntryBusinessService uploadRequestEntryBusinessService,
-			final ThumbnailGeneratorBusinessService thumbnailGeneratorService,
+			final ThumbnailGeneratorBusinessService thumbnailGeneratorBusinessService,
 			final boolean deduplication,
 			final WorkGroupNodeMongoRepository repository,
 			final DocumentGarbageCollectorMongoRepository documentGarbageCollectorRepository,
 			final ThumbnailRepository thumbnailRepository) {
 		super(fileSystemDao, timeStampingService, documentEntryRepository, documentRepository, signatureBusinessService,
-				uploadRequestEntryBusinessService, thumbnailGeneratorService, deduplication, repository,
+				uploadRequestEntryBusinessService, thumbnailGeneratorBusinessService, deduplication, repository,
 				documentGarbageCollectorRepository, thumbnailRepository);
 	}
 

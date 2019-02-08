@@ -102,7 +102,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	private final DocumentRepository documentRepository;
 	private final SignatureBusinessService signatureBusinessService;
 	private final UploadRequestEntryBusinessService uploadRequestEntryBusinessService;
-	private final ThumbnailGeneratorBusinessService thumbnailGeneratorService;
+	private final ThumbnailGeneratorBusinessService thumbnailGeneratorBusinessService;
 	private final boolean deduplication;
 	protected final WorkGroupNodeMongoRepository repository;
 	protected final DocumentGarbageCollectorMongoRepository documentGarbageCollectorRepository;
@@ -115,7 +115,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			final DocumentRepository documentRepository,
 			final SignatureBusinessService signatureBusinessService,
 			final UploadRequestEntryBusinessService uploadRequestEntryBusinessService,
-			final ThumbnailGeneratorBusinessService thumbnailGeneratorService,
+			final ThumbnailGeneratorBusinessService thumbnailGeneratorBusinessService,
 			final boolean deduplication,
 			final WorkGroupNodeMongoRepository repository,
 			final DocumentGarbageCollectorMongoRepository documentGarbageCollectorRepository,
@@ -127,7 +127,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		this.documentRepository = documentRepository;
 		this.signatureBusinessService = signatureBusinessService;
 		this.uploadRequestEntryBusinessService = uploadRequestEntryBusinessService;
-		this.thumbnailGeneratorService = thumbnailGeneratorService;
+		this.thumbnailGeneratorBusinessService = thumbnailGeneratorBusinessService;
 		this.deduplication = deduplication;
 		this.repository = repository;
 		this.documentGarbageCollectorRepository = documentGarbageCollectorRepository;
@@ -303,8 +303,8 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 				metadata.setFileName(fileName);
 				metadata = fileDataStore.add(myFile, metadata);
 				// Computing and storing thumbnail
-				if (thumbnailGeneratorService.isSupportedMimetype(mimeType)) {
-					fileMetadataThumbnail = thumbnailGeneratorService.getThumbnails(owner, myFile, metadata, mimeType);
+				if (thumbnailGeneratorBusinessService.isSupportedMimetype(mimeType)) {
+					fileMetadataThumbnail = thumbnailGeneratorBusinessService.getThumbnails(owner, myFile, metadata, mimeType);
 				}
 				byte[] timestampToken = getTimeStamp(fileName, myFile, timeStampingUrl);
 				document = new Document(metadata);
@@ -478,8 +478,8 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			metadata = fileDataStore.add(myFile, metadata);
 
 			// Computing and storing thumbnail
-			if (thumbnailGeneratorService.isSupportedMimetype(mimeType)) {
-				fileMetadataThumbnail = thumbnailGeneratorService.getThumbnails(owner, myFile, metadata, mimeType);
+			if (thumbnailGeneratorBusinessService.isSupportedMimetype(mimeType)) {
+				fileMetadataThumbnail = thumbnailGeneratorBusinessService.getThumbnails(owner, myFile, metadata, mimeType);
 			}
 			try {
 				// want a timestamp on doc ?
@@ -762,7 +762,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		Map<ThumbnailType, FileMetaData> fileMetadataThumbnail = Maps.newHashMap();
 		Set<DocumentEntry> documentEntries = document.getDocumentEntries();
 		List<WorkGroupDocument> wgDocuments = repository.findByDocumentUuid(document.getUuid());
-		if (thumbnailGeneratorService.isSupportedMimetype(document.getType())) {
+		if (thumbnailGeneratorBusinessService.isSupportedMimetype(document.getType())) {
 			FileMetaData fileMetaData = new FileMetaData(FileMetaDataKind.DATA, document);
 			if (fileDataStore.exists(fileMetaData)) {
 				File myFile = null;
@@ -777,7 +777,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 					}
 					myFile = File.createTempFile("temp", "file");
 					FileUtils.copyInputStreamToFile(stream, myFile);
-					fileMetadataThumbnail = thumbnailGeneratorService.getThumbnails(account, myFile, fileMetaData,
+					fileMetadataThumbnail = thumbnailGeneratorBusinessService.getThumbnails(account, myFile, fileMetaData,
 							document.getType());
 					Map<ThumbnailType, Thumbnail> fileThumbnails = toFileThumbnail(document, fileMetadataThumbnail);
 					if (!fileThumbnails.isEmpty()) {

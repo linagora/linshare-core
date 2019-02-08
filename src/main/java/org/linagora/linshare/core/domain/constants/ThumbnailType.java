@@ -36,7 +36,6 @@ package org.linagora.linshare.core.domain.constants;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.sis.util.NullArgumentException;
-import org.linagora.LinThumbnail.utils.ThumbnailKind;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.Thumbnail;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
@@ -66,14 +65,6 @@ public enum ThumbnailType {
 			throw new IllegalArgumentException("Doesn't match an existing Thumbnailkind");
 		}
 		throw new NullArgumentException("there is not thumbnailUuid match");
-	}
-
-	public static ThumbnailType toThumbnailType(ThumbnailKind key) {
-		try {
-			return ThumbnailType.valueOf(key.toString());
-		} catch (RuntimeException e) {
-			throw new IllegalArgumentException("Doesn't match an existing ThumbnailType");
-		}
 	}
 
 	public static ThumbnailType fromString(String s) {

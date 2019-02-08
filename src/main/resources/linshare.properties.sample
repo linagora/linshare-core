@@ -200,7 +200,6 @@ linshare.multidomain.enable=false
 linshare.rest.files.size.validation=true
 
 #******** LinThumbnail configuration
-linshare.linthumbnail.remote.mode=false
 linshare.linthumbnail.dropwizard.server=http://0.0.0.0:8090/linthumbnail?mimeType=%1$s
 # key to disable thumbnail generation
 linshare.documents.thumbnail.pdf.enable=true
