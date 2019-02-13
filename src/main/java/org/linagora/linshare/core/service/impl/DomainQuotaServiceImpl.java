@@ -83,10 +83,15 @@ public class DomainQuotaServiceImpl extends GenericServiceImpl<Account, Quota> i
 	public DomainQuota update(Account actor, DomainQuota dq) {
 		Validate.notNull(actor, "Actor must be set.");
 		Validate.notNull(dq, "Entity must be set.");
+		Validate.notNull(dq.getQuota(), "Quota must be set");
 		// checkCreatePermission(actor, null, DomainQuota.class,
 		// BusinessErrorCode.QUOTA_UNAUTHORIZED, null, domain);
 		// TODO FMA Quota manage override and maintenance flags.
 		DomainQuota entity = find(actor, dq.getUuid());
+		if (dq.getDefaultQuota() != null) {
+			boolean validateDefaultQuota = dq.getDefaultQuota() <= dq.getQuota();
+			Validate.isTrue(validateDefaultQuota, "The default_quota filed can't be over quota in the same domain");
+		}
 		return business.update(entity, dq);
 	}
 
