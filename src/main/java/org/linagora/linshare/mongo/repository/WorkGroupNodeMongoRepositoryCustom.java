@@ -46,4 +46,5 @@ public interface WorkGroupNodeMongoRepositoryCustom {
 	List<WorkGroupDocument> findAllWorkGroupDocument(String workGroup, WorkGroupNodeType nodeType);
 
 	List<WorkGroupDocument> findByDocumentUuid(String documentUuid);
+
 }

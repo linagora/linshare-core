@@ -78,6 +78,21 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 	}
 
 	@Override
+	public U findActivateAndDestroyedByLsUuid(String lsUuid) {
+		Assert.notNull(lsUuid);
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("lsUuid", lsUuid).ignoreCase());
+		List<U> users = findByCriteria(criteria);
+		if (users == null || users.isEmpty()) {
+			return null;
+		} else if (users.size() == 1) {
+			return users.get(0);
+		} else {
+			throw new IllegalStateException("lsUuid must be unique");
+		}
+	}
+
+	@Override
 	public List<U> findByDomain(String domain) {
 		Assert.notNull(domain);
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
