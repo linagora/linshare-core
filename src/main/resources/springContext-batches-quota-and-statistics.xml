@@ -9,7 +9,6 @@
 	default-autowire="no">
 	<bean id="statisticDailyUserBatch"
 		class="org.linagora.linshare.core.batches.impl.StatisticDailyUserBatchImpl">
-		<constructor-arg ref="userService" />
 		<constructor-arg ref="operationHistoryBusinessService" />
 		<constructor-arg ref="accountQuotaBusinessService" />
 		<constructor-arg ref="userDailyStatBusinessService" />
