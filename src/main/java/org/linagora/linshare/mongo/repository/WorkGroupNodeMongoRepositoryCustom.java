@@ -44,4 +44,6 @@ public interface WorkGroupNodeMongoRepositoryCustom {
 
 	@Query("{ 'workGroup' : ?0 , 'nodeType' : ?1 }")
 	List<WorkGroupDocument> findAllWorkGroupDocument(String workGroup, WorkGroupNodeType nodeType);
+
+	List<WorkGroupDocument> findByDocumentUuid(String documentUuid);
 }
