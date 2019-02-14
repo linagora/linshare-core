@@ -49,10 +49,11 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BatchBusinessException;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.job.quartz.AccountBatchResultContext;
+import org.linagora.linshare.core.job.quartz.BatchResultContext;
 import org.linagora.linshare.core.job.quartz.BatchRunContext;
 import org.linagora.linshare.core.job.quartz.ResultContext;
 import org.linagora.linshare.core.repository.AccountRepository;
-import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.core.repository.UserRepository;
 
 /**
  * For each account with activity yesterday (uploading or deleting files) :
@@ -64,26 +65,26 @@ import org.linagora.linshare.core.service.UserService;
  */
 public class StatisticDailyUserBatchImpl extends GenericBatchWithHistoryImpl {
 
-	private final UserService userService;
-
 	private final OperationHistoryBusinessService operationHistoryBusinessService;
 
 	private final AccountQuotaBusinessService accountQuotaBusinessService;
 
 	private final UserDailyStatBusinessService userDailyStatBusinessService;
 
+	private final UserRepository<User> userRepository;
+
 	public StatisticDailyUserBatchImpl(
-			final UserService userService,
 			final OperationHistoryBusinessService operationHistoryBusinessService,
 			final AccountQuotaBusinessService accountQuotaBusinessService,
 			final UserDailyStatBusinessService userDailyStatBusinessService,
 			final AccountRepository<Account> accountRepository,
-			final BatchHistoryBusinessService batchHistoryBusinessService) {
+			final BatchHistoryBusinessService batchHistoryBusinessService,
+			final UserRepository<User> userRepository) {
 		super(accountRepository, batchHistoryBusinessService);
-		this.userService = userService;
 		this.operationHistoryBusinessService = operationHistoryBusinessService;
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
 		this.userDailyStatBusinessService = userDailyStatBusinessService;
+		this.userRepository = userRepository;
 	}
 
 	@Override
@@ -99,8 +100,13 @@ public class StatisticDailyUserBatchImpl extends GenericBatchWithHistoryImpl {
 	@Override
 	public ResultContext execute(BatchRunContext batchRunContext, String identifier, long total, long position)
 			throws BatchBusinessException, BusinessException {
-		User resource = userService.findByLsUuid(identifier);
-		ResultContext context = new AccountBatchResultContext(resource);
+		User resource = userRepository.findActivateAndDestroyedByLsUuid(identifier);
+		BatchResultContext<User> context = new BatchResultContext<>(resource);
+		context.setProcessed(false);
+		if (resource == null) {
+			context.setIdentifier(identifier);
+			return context;
+		}
 		try {
 			console.logInfo(batchRunContext, total, position, "processing user : " + resource.getAccountRepresentation());
 			// compute once, used three times
@@ -108,6 +114,7 @@ public class StatisticDailyUserBatchImpl extends GenericBatchWithHistoryImpl {
 			AccountQuota quota = accountQuotaBusinessService.createOrUpdate(resource, yesterday);
 			userDailyStatBusinessService.create(resource, quota.getCurrentValue(), yesterday);
 			operationHistoryBusinessService.deleteBeforeDateByAccount(yesterday, resource);
+			context.setProcessed(true);
 		} catch (BusinessException businessException) {
 			String batchClassName = this.getBatchClassName();
 			String msg = "Error occured while running batch : " + batchClassName;
@@ -122,9 +129,17 @@ public class StatisticDailyUserBatchImpl extends GenericBatchWithHistoryImpl {
 
 	@Override
 	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
-		AccountBatchResultContext userContext = (AccountBatchResultContext) context;
+		@SuppressWarnings("unchecked")
+		BatchResultContext<User> userContext = (BatchResultContext<User>) context;
 		Account user = userContext.getResource();
-		console.logInfo(batchRunContext, total, position, "DailyUserStatistic was created and AccountQuota updated for " + user.getAccountRepresentation());
+		if (userContext.getProcessed()) {
+			console.logInfo(batchRunContext, total, position,
+					"DailyUserStatistic was created and AccountQuota updated for " + user.getAccountRepresentation());
+		} else {
+			console.logInfo(batchRunContext, total, position,
+					"DailyUserStatistic was skiped because the user does not exist"
+							+ userContext.getIdentifier());
+		}
 	}
 
 	@Override
