@@ -513,7 +513,7 @@ welcomeMessage = Hello {0},',layout='<!DOCTYPE html>
                                        style="text-decoration:none;color:#b2b2b2;"><strong>LinShare</strong>™</a>,
                                     powered by <a href="http://www.linshare.org/"
                                                   style="text-decoration:none;color:#b2b2b2;"><strong>Linagora</strong></a>
-                                    ©&nbsp;2009–2018. Contribute to
+                                    ©&nbsp;2009–2019. Contribute to
                                     Linshare R&amp;D by subscribing to an Enterprise offer.
                                   </p>
                                 </div>
