@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping default-access="field" package="org.linagora.linshare.core.domain.entities">
+	<class name="MailAttachment" table="mail_attachment" lazy="true">
+		<id name="id" column="id" type="long" unsaved-value="0">
+			<generator class="native">
+			</generator>
+		</id>
+		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false"/>
+		<property name="enable" column="enable" type="boolean" not-null="true" lazy="false"/>
+		<property name="override" column="override" type="boolean" not-null="true" lazy="false"/>
+		<property name="language" column="language" type="integer" not-null="false" lazy="false"/>
+		<property name="description" column="description" type="text" not-null="false" />
+		<property name="name" column="name" type="string" length="255" not-null="true" lazy="false"/>
+		<many-to-one name="mailConfig" column="mail_config_id" class="org.linagora.linshare.core.domain.entities.MailConfig" not-null="true" lazy="false">
+		</many-to-one>
+		<many-to-one name="domain" column="domain_abstract_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" not-null="true" lazy="false">
+		</many-to-one>
+		<property name="cid" column="cid" type="string" length="255" lazy="false"/>
+		<property name="alt" column="alt" type="string" length="255" lazy="false"/>
+		<many-to-one name="document" column="document_id" class="org.linagora.linshare.core.domain.entities.Document" not-null="true" lazy="false">
+		</many-to-one>
+	</class>
+</hibernate-mapping>

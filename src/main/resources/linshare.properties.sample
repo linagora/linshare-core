@@ -228,6 +228,9 @@ linshare.multidomain.enable=false
 # enable file size validation on rest API (thread entries, documents and flow).
 linshare.rest.files.size.validation=true
 
+#mail attachment size limit
+mail.attchment.limit.size=393216
+
 #******** LinThumbnail configuration
 linshare.linthumbnail.dropwizard.server=http://0.0.0.0:8090/linthumbnail?mimeType=%1$s
 # key to disable thumbnail generation

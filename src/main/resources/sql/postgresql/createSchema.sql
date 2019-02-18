@@ -401,6 +401,20 @@ CREATE TABLE mail_content (
   messages_english   text NOT NULL,
   messages_russian   text NOT NULL,
   PRIMARY KEY (id));
+  CREATE TABLE mail_attachment (
+  id                  int8 NOT NULL,
+  uuid               varchar(255) NOT NULL,
+  enable           bool DEFAULT 'false' NOT NULL,
+  override           bool DEFAULT 'false' NOT NULL,
+  language          int4,
+  description        text,
+  name               varchar(255) NOT NULL,
+  mail_config_id    int8 NOT NULL,
+  domain_abstract_id int8 NOT NULL,
+  cid               varchar(255),
+  alt               varchar(255) NOT NULL,
+  document_id             int8 NOT NULL,
+  PRIMARY KEY (id));
 CREATE TABLE mail_content_lang (
   id                 int8 NOT NULL,
   language          int4 NOT NULL,

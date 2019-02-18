@@ -229,4 +229,10 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="groupLdapPatternService" />
 	</bean>
+	<bean id="wsMailAttachmentFacade"
+		class="org.linagora.linshare.core.facade.webservice.admin.impl.MailAttachmentFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="mailAttachmentService" />
+		<constructor-arg ref="documentEntryService" />
+	</bean>
 </beans>

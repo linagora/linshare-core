@@ -1284,6 +1284,22 @@ ALTER TABLE mail_layout ALTER COLUMN messages_french SET NOT NULL;
 ALTER TABLE mail_layout ALTER COLUMN messages_russian SET NOT NULL;
 --End
 
+--create mail_attachment
+  CREATE TABLE mail_attachment (
+  id                  int8 NOT NULL,
+  uuid               varchar(255) NOT NULL,
+  enable           bool DEFAULT 'false' NOT NULL,
+  override           bool DEFAULT 'false' NOT NULL,
+  language          int4,
+  description        text,
+  name               varchar(255) NOT NULL,
+  mail_config_id    int8 NOT NULL,
+  domain_abstract_id int8 NOT NULL,
+  cid               varchar(255),
+  alt               varchar(255) NOT NULL,
+  document_id             int8 NOT NULL,
+  PRIMARY KEY (id));
+
 -- LinShare version
 SELECT ls_version();
 

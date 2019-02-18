@@ -489,4 +489,9 @@
 		<constructor-arg ref="mongoTemplate"/>
 	</bean>
 
+	<bean id="mailAttachmentService" class="org.linagora.linshare.core.service.impl.MailAttachmentServiceImpl">
+		<constructor-arg ref="mailAttachmentBusinessService" />
+		<constructor-arg ref="mailConfigBusinessService" />
+	</bean>
+
 </beans>

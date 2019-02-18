@@ -80,6 +80,7 @@
 		<mapping resource="org/linagora/linshare/core/domain/entities/Quota.hbm.xml"/>
 		<mapping resource="org/linagora/linshare/core/domain/entities/Statistic.hbm.xml"/>
 		<mapping resource="org/linagora/linshare/core/domain/entities/BatchHistory.hbm.xml"/>
+		<mapping resource="org/linagora/linshare/core/domain/entities/MailAttachment.hbm.xml"/>
 
 		<mapping resource="org/linagora/linshare/core/domain/entities/UpgradeTask.hbm.xml"/>
 	</session-factory>

@@ -301,4 +301,8 @@
 	<bean name="ldapGroupProviderRepository" class="org.linagora.linshare.core.repository.hibernate.LdapGroupProviderRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
+
+	<bean name="mailAttachmentRepository" class="org.linagora.linshare.core.repository.hibernate.MailAttachmentRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
 </beans>

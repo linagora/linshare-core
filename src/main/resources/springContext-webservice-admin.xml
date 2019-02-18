@@ -183,6 +183,13 @@
 		<constructor-arg ref="wsAdminGroupPatternFacade" />
 	</bean>
 
+	<bean id="mailAttachmentRestService" class="org.linagora.linshare.webservice.admin.impl.MailAttachmentRestServiceImpl">
+		<constructor-arg ref="wsMailAttachmentFacade" />
+		<constructor-arg value="${linshare.rest.files.size.validation}" />
+		<constructor-arg ref="wsAccountQuotaFacade" />
+		<constructor-arg value="${mail.attchment.limit.size}" />
+	</bean>
+
 	<jaxrs:server id="restAdminContainer" address="/rest/admin">
 		<jaxrs:serviceBeans>
 			<ref bean="adminAuthenticationRestService" />
@@ -228,6 +235,7 @@
 			<ref bean="adminExceptionStatisticRestService" />
 			<ref bean="adminAdvancedStatisticRestService" />
 			<ref bean="adminGroupPatternRestService"/>
+			<ref bean="mailAttachmentRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

@@ -355,4 +355,8 @@
 		<constructor-arg ref="mongoTemplate" />
 		<constructor-arg value="${linshare.download.archive.maximum.size}" />
 	</bean>
+
+	<bean id="mailAttachmentBusinessService" class="org.linagora.linshare.core.business.service.impl.MailAttachmentBusinessServiceImpl">
+		<constructor-arg ref="mailAttachmentRepository" />
+	</bean>
 </beans>
