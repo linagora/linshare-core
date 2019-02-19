@@ -837,13 +837,25 @@ UPDATE mail_content SET body='<!DOCTYPE html>
 
 -- Add russian mail content
 ALTER TABLE mail_content ADD COLUMN messages_russian text;
-ALTER TABLE mail_footer ADD COLUMN messages_russian text;
-ALTER TABLE mail_layout ADD COLUMN messages_russian text;
-
--- to be deleted
-UPDATE mail_layout SET messages_russian = messages_english;
+--To be deleted once we have russian translation
 UPDATE mail_content SET messages_russian = messages_english;
+ALTER TABLE mail_content ALTER COLUMN messages_russian SET NOT NULL;
+ALTER TABLE mail_content ALTER COLUMN messages_english SET NOT NULL;
+ALTER TABLE mail_content ALTER COLUMN messages_french SET NOT NULL;
+
+ALTER TABLE mail_footer ADD COLUMN messages_russian text;
+--To be deleted once we have russian translation
 UPDATE mail_footer SET messages_russian = messages_english;
+ALTER TABLE mail_footer ALTER COLUMN messages_russian SET NOT NULL;
+ALTER TABLE mail_footer ALTER COLUMN messages_english SET NOT NULL;
+ALTER TABLE mail_footer ALTER COLUMN messages_french SET NOT NULL;
+
+ALTER TABLE mail_layout ADD COLUMN messages_russian text;
+--To be deleted once we have russian translation
+UPDATE mail_layout SET messages_russian = messages_english;
+ALTER TABLE mail_layout ALTER COLUMN messages_russian SET NOT NULL;
+ALTER TABLE mail_layout ALTER COLUMN messages_english SET NOT NULL;
+ALTER TABLE mail_layout ALTER COLUMN messages_french SET NOT NULL;
 
 -- LinShare version
 SELECT ls_version();

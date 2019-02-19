@@ -359,9 +359,9 @@ CREATE TABLE mail_layout (
   modification_date  timestamp(6) NOT NULL,
   uuid               varchar(255) NOT NULL,
   readonly           bool DEFAULT 'false' NOT NULL,
-  messages_french    text,
-  messages_english   text,
-  messages_russian   text,
+  messages_french    text NOT NULL,
+  messages_english   text NOT NULL,
+  messages_russian   text NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE mail_footer (
   id                  int8 NOT NULL,
@@ -373,9 +373,9 @@ CREATE TABLE mail_footer (
   modification_date  timestamp(6) NOT NULL,
   uuid               varchar(255) NOT NULL,
   readonly           bool DEFAULT 'false' NOT NULL,
-  messages_french    text,
-  messages_english   text,
-  messages_russian   text,
+  messages_french    text NOT NULL,
+  messages_english   text NOT NULL,
+  messages_russian   text NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE mail_footer_lang (
   id              int8 NOT NULL,
@@ -397,9 +397,9 @@ CREATE TABLE mail_content (
   creation_date      timestamp(6) NOT NULL,
   modification_date  timestamp(6) NOT NULL,
   readonly           bool DEFAULT 'false' NOT NULL,
-  messages_french    text,
-  messages_english   text,
-  messages_russian   text,
+  messages_french    text NOT NULL,
+  messages_english   text NOT NULL,
+  messages_russian   text NOT NULL,
   PRIMARY KEY (id));
 CREATE TABLE mail_content_lang (
   id                 int8 NOT NULL,
