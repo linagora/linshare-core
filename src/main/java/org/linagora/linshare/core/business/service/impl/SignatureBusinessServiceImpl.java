@@ -134,7 +134,7 @@ public class SignatureBusinessServiceImpl implements SignatureBusinessService {
 	public InputStream getDocumentStream(Signature signature) {
 		String UUID = signature.getUuid();
 		if (UUID!=null && UUID.length()>0) {
-			logger.debug("retrieve from jackrabbity : " + UUID);
+			logger.debug("retrieve from fileDataStore : " + UUID);
 			FileMetaData metadata = new FileMetaData(signature);
 			InputStream stream = fileDataStore.get(metadata);
 			return stream;

@@ -431,103 +431,6 @@
 			<version>1.8.14</version>
 		</dependency>
 
-		<!-- Jack Rabbit dependencies -->
-		<!-- jcr -->
-		<dependency>
-			<groupId>javax.jcr</groupId>
-			<artifactId>jcr</artifactId>
-			<version>2.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springmodules</groupId>
-			<artifactId>spring-modules-jcr</artifactId>
-			<version>0.8a</version>
-			<exclusions>
-				<exclusion>
-					<groupId>jeceira</groupId>
-					<artifactId>jeceira</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>jsr170</groupId>
-					<artifactId>jsr170</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>jsr170</groupId>
-					<artifactId>jcr</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>aparzev</groupId>
-					<artifactId>doka</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>aparzev</groupId>
-					<artifactId>commons</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>jug</groupId>
-					<artifactId>jug-asl</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<!-- jackrabbit -->
-		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-core</artifactId>
-			<version>${jackrabbit.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-jcr-rmi</artifactId>
-			<version>${jackrabbit.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-jcr-server</artifactId>
-			<version>${jackrabbit.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-fileupload</groupId>
-					<artifactId>commons-fileupload</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-webapp</artifactId>
-			<version>${jackrabbit.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>ch.qos.logback</groupId>
-					<artifactId>logback-classic</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-jca</artifactId>
-			<version>${jackrabbit.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>ch.qos.logback</groupId>
-					<artifactId>logback-classic</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-jcr-commons</artifactId>
-			<version>${jackrabbit.version}</version>
-		</dependency>
-
 		<dependency>
 			<groupId>org.apache.jclouds</groupId>
 			<artifactId>jclouds-allblobstore</artifactId>
@@ -1889,7 +1792,6 @@
 		<apache-directory-server.version>1.5.5</apache-directory-server.version>
 		<slf4j-release-version>1.7.25</slf4j-release-version>
 		<cxf.version>3.2.4</cxf.version>
-		<jackrabbit.version>2.17.3</jackrabbit.version>
 		<jclouds.version>2.1.0</jclouds.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.build.timestamp.format>yyyy.MM.dd-HH.mm.ss</maven.build.timestamp.format>

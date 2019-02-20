@@ -142,16 +142,11 @@ public class DeleteMissingDocumentsBatchImpl extends GenericBatchImpl {
 //							resource.getRepresentation());
 //				}
 //			}
-			try {
-				documentEntryBusinessService.deleteDocument(resource);
-			} catch (org.springmodules.jcr.JcrSystemException e) {
-				logger.error("Probably an invalid or missing uuid : ", e);
-				documentRepository.delete(resource);
-			}
-			console.logWarn(batchRunContext, total,
-					position,
-					"Removing a document unrelated to an entry  {} because of inconsistency",
-					batchRunContext, resource.getRepresentation());
+
+			documentEntryBusinessService.deleteDocument(resource);
+			console.logWarn(batchRunContext, total, position,
+					"Removing a document unrelated to an entry  {} because of inconsistency", batchRunContext,
+					resource.getRepresentation());
 		}
 		return context;
 	}

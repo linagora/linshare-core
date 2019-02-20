@@ -322,7 +322,7 @@ public class UploadRequestEntryBusinessServiceImpl implements
 	public InputStream download(UploadRequestEntry entry) {
 		String UUID = entry.getDocument().getUuid();
 		if (UUID != null && UUID.length() > 0) {
-			logger.debug("retrieve from jackrabbity : " + UUID);
+			logger.debug("retrieve from fileDataStore : " + UUID);
 			InputStream stream = null;
 			try {
 				FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, entry.getDocument());

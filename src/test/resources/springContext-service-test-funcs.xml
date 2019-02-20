@@ -9,8 +9,6 @@
 	default-autowire="no">
 
 
-<!-- 	<bean id="jackRabbitRepository" class="org.linagora.linshare.JackRabbitFileSystemMock"> -->
-<!-- 	</bean> -->
 
 	<bean id="domainBusinessService" class="org.linagora.linshare.core.business.service.impl.DomainBusinessServiceImpl">
 		<constructor-arg ref="abstractDomainRepository" />

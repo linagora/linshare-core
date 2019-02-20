@@ -460,7 +460,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		String UUID = entry.getDocumentUuid();
 		if (UUID!=null && UUID.length()>0) {
 			Document document = documentRepository.findByUuid(UUID);
-			logger.debug("retrieve from jackrabbit : " + UUID);
+			logger.debug("retrieve from fileDataStore : " + UUID);
 			FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, document);
 			InputStream stream = fileDataStore.get(metadata);
 			return stream;

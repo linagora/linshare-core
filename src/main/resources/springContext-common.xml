@@ -21,9 +21,7 @@
                 <value>classpath:version.properties</value>
                 <value>classpath:linshare-default.properties</value>
                 <value>classpath:linshare.properties</value>
-                <value>classpath:jackRabbit.properties</value>
                 <value>${linshare.config.path}/linshare.properties</value>
-                <value>${linshare.config.path}/jackRabbit.properties</value>
             </list>
         </property>
     </bean>

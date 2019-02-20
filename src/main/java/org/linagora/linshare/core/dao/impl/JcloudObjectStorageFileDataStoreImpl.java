@@ -270,7 +270,6 @@ public class JcloudObjectStorageFileDataStoreImpl implements FileDataStore {
 	public boolean exists(FileMetaData metadata) {
 		String containerName = metadata.getBucketUuid();
 		if (containerName == null) {
-			// document stored in jackrabbit does not have bucket_uuid. :)
 			return false;
 		}
 		BlobStore blobStore = getBlobStore(containerName);

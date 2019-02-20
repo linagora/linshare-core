@@ -42,7 +42,7 @@ package org.linagora.linshare.dao.searchDocument;
     "classpath:springContext-datasource.xml",
     "classpath:springContext-repository.xml",
     "classpath:springContext-facade.xml",
-    "classpath:springContext-jackRabbit.xml","classpath:springContext-test.xml"})
+    "classpath:springContext-test.xml"})
 public class TestSearch extends AbstractJUnit4SpringContextTests{
 
 	@Autowired
@@ -65,8 +65,6 @@ public class TestSearch extends AbstractJUnit4SpringContextTests{
 	
 	private String linUuid;
 	
-	private InputStream jackStream;
-	
 	private InputStream linStream;
 	
 	private User user;
@@ -74,8 +72,7 @@ public class TestSearch extends AbstractJUnit4SpringContextTests{
 	private UserVo userVo;
 	
 	private String login;
-	
-	private Document documentJack;
+
 	private Document documentLin;
 	
 	private List<String> documents;
@@ -85,33 +82,25 @@ public class TestSearch extends AbstractJUnit4SpringContextTests{
 	public void setUp() throws Exception {
 		documents=new ArrayList<String>();
 		login="root@localhost.localdomain";
-		jackStream=Thread.currentThread().getContextClassLoader().getResourceAsStream("jackRabbit.properties");
 		linStream=Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
-		jackUuid=fileRepository.insertFile(login, jackStream, 10000, "jackRabbit.properties", "text/plain");
 		linUuid=fileRepository.insertFile(login, linStream, 10000, "linshare-default.properties", "text/css");
 		user=userRepository.findByLogin(login);
 
 		userVo=new UserVo(user.getLogin(),user.getFirstName(),user.getLastName(),user.getMail(),user.getUserType());
 
-		FileInfo jackInfo=fileRepository.getFileInfoByUUID(jackUuid);
 		FileInfo linInfo=fileRepository.getFileInfoByUUID(linUuid);
-		
 
 		Calendar lastModified=jackInfo.getLastModified();
 		Calendar exp=jackInfo.getLastModified();
 		exp.add(Calendar.HOUR, 4);
 		//new Document
-		documentJack=new Document(jackUuid,jackInfo.getName(),jackInfo.getMimeType(),lastModified,exp,user,false,false,false,new Long(10000));
 		Calendar lastModifiedLin=linInfo.getLastModified();
 		Calendar expLin=linInfo.getLastModified();
 		exp.add(Calendar.HOUR, 4);
 		documentLin=new Document(linUuid,linInfo.getName(),linInfo.getMimeType(),lastModifiedLin,expLin,user,false,false,false,new Long(10000));
-		
-		documentRepository.create(documentJack);
+
 		documentRepository.create(documentLin);
-		documents.add(documentJack.getName());
 		documents.add(documentLin.getName());
-		
 		
 	}
 	
@@ -140,14 +129,9 @@ public class TestSearch extends AbstractJUnit4SpringContextTests{
 	
 	@After
 	public void tearDown() throws Exception{
-		
-			documentRepository.delete(documentJack);
 			documentRepository.delete(documentLin);
-			fileRepository.removeFileByUUID(documentJack.getIdentifier());
 			fileRepository.removeFileByUUID(documentLin.getIdentifier());
 	}
 	
-	
-
 }
 /**/

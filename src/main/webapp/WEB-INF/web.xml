@@ -67,9 +67,6 @@
 		Available file data store profiles :
 			* jcloud : Using jcloud as file data store : Amazon S3, Swift, Ceph, filesystem (test only).
 			* gridfs : Using gridfs (mongodb) as file data store.
-			* jackrabbit2 : Using jackrabbit as file data store.
-			* jackrabbit-to-jcloud : Using Jcloud as new file data store, jackrabbit as fallback file data store.
-			* jackrabbit-to-gridfs : Using Jcloud as new file data store, jackrabbit as fallback file data store.
 			Recommended profile for production is jcloud with Swift.
 			The default profile is jcloud with filesystem for tests purpose.
 		Available mongodb profiles :

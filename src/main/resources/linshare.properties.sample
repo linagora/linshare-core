@@ -20,9 +20,6 @@
 # Available file data store profiles :
 #	* jcloud : Using jcloud as file data store : Amazon S3, Swift, Ceph, filesystem.
 #	* gridfs : Using gridfs (mongodb) as file data store.
-#	* jackrabbit2 : Using jackrabbit as file data store. (deprecated)
-#	* jackrabbit-to-jcloud : Using Jcloud as new file data store, jackrabbit as fallback file data store.
-#	* jackrabbit-to-gridfs : Using Jcloud as new file data store, jackrabbit as fallback file data store.
 #	Recommended profile for production is jcloud with Swift.
 
 # Additional profiles :
@@ -43,10 +40,6 @@ mail.smtp.charset=UTF-8
 mail.smtp.starttls.enable=false
 # SSL Mode (If you enable SSL Mode it will override startTls mode)
 mail.smtp.ssl.enable=false
-
-#******************* DATASTORE
-#uncomment this line to encrypt the files
-#linshare.datastore.class=org.linagora.linshare.core.dao.EncDbDataStore
 
 #******************** DATABASE
 ### PostgreSQL
@@ -90,13 +83,6 @@ linshare.encipherment.tmp.dir=/var/lib/linshare/tmp
 linshare.documents.storage.filesystem.directory=/var/lib/linshare/filesystemstorage
 
 ######## Extended storage options ########
-
-#### JackRabbit storage options ####
-# JackRabbit is deprecated but is is still in LinShare for upgrade purpose from v1 to v2.
-# you have to uncomment and set the directory parameter according to your previous configuration file.
-# linshare.files.directory=${LINSHARE_HOME}/var/lib/linshare/repository
-# linshare.db.persistence_manager=org.apache.jackrabbit.core.persistence.pool.PostgreSQLPersistenceManager
-
 
 #### Object storage options ####
 linshare.documents.storage.identity=identity
