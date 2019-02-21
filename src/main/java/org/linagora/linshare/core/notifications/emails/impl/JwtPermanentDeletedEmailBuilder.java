@@ -43,14 +43,14 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
-import org.linagora.linshare.core.notifications.context.JwtLongTimeDeletedEmailContext;
+import org.linagora.linshare.core.notifications.context.JwtPermanentDeletedEmailContext;
 import org.linagora.linshare.core.notifications.dto.MailContact;
 import org.linagora.linshare.mongo.entities.PermanentToken;
 import org.thymeleaf.context.Context;
 
 import com.google.common.collect.Lists;
 
-public class JwtLongTimeDeletedEmailBuilder extends EmailBuilder {
+public class JwtPermanentDeletedEmailBuilder extends EmailBuilder {
 
 	@Override
 	public MailContentType getSupportedType() {
@@ -59,7 +59,7 @@ public class JwtLongTimeDeletedEmailBuilder extends EmailBuilder {
 
 	@Override
 	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		JwtLongTimeDeletedEmailContext emailCtx = (JwtLongTimeDeletedEmailContext) context;
+		JwtPermanentDeletedEmailContext emailCtx = (JwtPermanentDeletedEmailContext) context;
 		User owner = (User) emailCtx.getOwner();
 		User recipient = (User) emailCtx.getRecipient();
 		PermanentToken token = emailCtx.getJwtLongTime();

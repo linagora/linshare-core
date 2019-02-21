@@ -38,12 +38,12 @@ import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.mongo.entities.PermanentToken;
 
-public class JwtLongTimeCreatedEmailContext extends AbstractJwtLongTimeEmailContext {
+public class JwtPermanentCreatedEmailContext extends AbstractJwtLongTimeEmailContext {
 
-	public JwtLongTimeCreatedEmailContext(Account creator,
+	public JwtPermanentCreatedEmailContext(Account creator,
 			Account actor,
-			PermanentToken jwtLongTime) {
-		super(creator, actor, jwtLongTime);
+			PermanentToken jwtPermanentToken) {
+		super(creator, actor, jwtPermanentToken);
 		this.language = actor.getExternalMailLocale();
 	}
 

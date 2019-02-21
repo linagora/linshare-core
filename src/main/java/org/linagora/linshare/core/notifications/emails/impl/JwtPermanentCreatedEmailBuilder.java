@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2018 LINAGORA
+ * Copyright (C) 2019 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2019. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -43,14 +43,14 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.notifications.context.EmailContext;
-import org.linagora.linshare.core.notifications.context.JwtLongTimeCreatedEmailContext;
+import org.linagora.linshare.core.notifications.context.JwtPermanentCreatedEmailContext;
 import org.linagora.linshare.core.notifications.dto.MailContact;
 import org.linagora.linshare.mongo.entities.PermanentToken;
 import org.thymeleaf.context.Context;
 
 import com.google.common.collect.Lists;
 
-public class JwtLongTimeCreatedEmailBuilder extends EmailBuilder {
+public class JwtPermanentCreatedEmailBuilder extends EmailBuilder {
 
 	@Override
 	public MailContentType getSupportedType() {
@@ -59,7 +59,7 @@ public class JwtLongTimeCreatedEmailBuilder extends EmailBuilder {
 
 	@Override
 	protected MailContainerWithRecipient buildMailContainer(EmailContext context) throws BusinessException {
-		JwtLongTimeCreatedEmailContext emailCtx = (JwtLongTimeCreatedEmailContext) context;
+		JwtPermanentCreatedEmailContext emailCtx = (JwtPermanentCreatedEmailContext) context;
 		User owner = (User) emailCtx.getOwner();
 		User recipient = (User) emailCtx.getRecipient();
 		PermanentToken token = emailCtx.getJwtLongTime();

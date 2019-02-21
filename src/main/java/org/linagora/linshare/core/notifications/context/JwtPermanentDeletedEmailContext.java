@@ -38,12 +38,12 @@ import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.mongo.entities.PermanentToken;
 
-public class JwtLongTimeDeletedEmailContext extends AbstractJwtLongTimeEmailContext {
+public class JwtPermanentDeletedEmailContext extends AbstractJwtLongTimeEmailContext {
 
-	public JwtLongTimeDeletedEmailContext(Account creator,
+	public JwtPermanentDeletedEmailContext(Account creator,
 			Account actor,
-			PermanentToken jwtLongTime) {
-		super(creator, actor, jwtLongTime);
+			PermanentToken jwtPermanentToken) {
+		super(creator, actor, jwtPermanentToken);
 		this.language = actor.getExternalMailLocale();
 	}
 
@@ -56,5 +56,4 @@ public class JwtLongTimeDeletedEmailContext extends AbstractJwtLongTimeEmailCont
 	public MailActivationType getActivation() {
 		return MailActivationType.ACCOUNT_OWNER_WARN_JWT_PERMANENT_TOKEN_DELETED;
 	}
-
 }

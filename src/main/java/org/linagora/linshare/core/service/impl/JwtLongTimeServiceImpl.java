@@ -49,10 +49,9 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.common.dto.JwtToken;
 import org.linagora.linshare.core.notifications.context.EmailContext;
-import org.linagora.linshare.core.notifications.context.JwtLongTimeCreatedEmailContext;
-import org.linagora.linshare.core.notifications.context.JwtLongTimeDeletedEmailContext;
+import org.linagora.linshare.core.notifications.context.JwtPermanentCreatedEmailContext;
+import org.linagora.linshare.core.notifications.context.JwtPermanentDeletedEmailContext;
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.JwtLongTimeResourceAccessControl;
 import org.linagora.linshare.core.repository.AccountRepository;
@@ -140,7 +139,7 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, Permanen
 				AuditLogEntryType.JWT_PERMANENT_TOKEN, jwtLongTime);
 		logEntryService.insert(createLog);
 		if (authUser.hasAdminRole() || authUser.hasSuperAdminRole()) {
-			EmailContext context = new JwtLongTimeCreatedEmailContext(authUser, actor, jwtLongTime);
+			EmailContext context = new JwtPermanentCreatedEmailContext(authUser, actor, jwtLongTime);
 			MailContainerWithRecipient mail = mailBuildingService.build(context);
 			notifierService.sendNotification(mail);
 		}
@@ -167,7 +166,7 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, Permanen
 		AuditLogEntryUser createLog = new JwtLongTimeAuditLogEntry(authUser, actor, LogAction.DELETE,
 				AuditLogEntryType.JWT_PERMANENT_TOKEN, permanentToken);
 		jwtLongTimeBusinessService.delete(jwtLongTime);
-		EmailContext context = new JwtLongTimeDeletedEmailContext(authUser, actor, permanentToken);
+		EmailContext context = new JwtPermanentDeletedEmailContext(authUser, actor, permanentToken);
 		if (authUser.hasAdminRole() || authUser.hasSuperAdminRole()) {
 			MailContainerWithRecipient mail = mailBuildingService.build(context);
 			notifierService.sendNotification(mail);
