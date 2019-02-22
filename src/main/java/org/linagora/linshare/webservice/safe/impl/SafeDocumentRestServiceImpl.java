@@ -167,6 +167,7 @@ public class SafeDocumentRestServiceImpl extends WebserviceBase implements
 						AsyncTaskType.THREAD_ENTRY_UPLOAD);
 				WorkGroupEntryTaskContext workGroupEntryTaskContext = new WorkGroupEntryTaskContext(authUserDto, user.getLsUuid(),
 						workGroupUuid, tempFile, fileName, null, false);
+				// TODO use something like safeDocumentFacade  with async support to replace workGroupEntryAsyncFacade
 				WorkGroupEntryUploadAsyncTask task = new WorkGroupEntryUploadAsyncTask(workGroupEntryAsyncFacade,
 						workGroupEntryTaskContext, asyncTask);
 				taskExecutor.execute(task);
@@ -181,7 +182,7 @@ public class SafeDocumentRestServiceImpl extends WebserviceBase implements
 			// Synchronous mode
 			try {
 				logger.debug("Async mode is not used");
-				return workGroupEntryFacade.create(user.getLsUuid(), workGroupUuid, tempFile, fileName, false);
+				return safeDocumentFacade.create(user.getLsUuid(), workGroupUuid, tempFile, fileName, false);
 			} finally {
 				WebServiceUtils.deleteTempFile(tempFile);
 			}
