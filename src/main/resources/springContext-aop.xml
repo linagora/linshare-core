@@ -19,6 +19,7 @@
                               or execution(* org.linagora.linshare.core.facade.webservice.uploadrequest.*.*(..))
                               or execution(* org.linagora.linshare.core.facade.webservice.uploadproposition.*.*(..))
                               or execution(* org.linagora.linshare.core.facade.webservice.delegation.*.*(..))
+                              or execution(* org.linagora.linshare.core.facade.webservice.safe.*.*(..))
                               or execution(* org.linagora.linshare.core.facade.webservice.external.*.*(..))
                               or execution(* org.linagora.linshare.core.facade.auth.*.*(..))
                               or execution(* org.linagora.linshare.cmis.facade.impl.*.*(..))

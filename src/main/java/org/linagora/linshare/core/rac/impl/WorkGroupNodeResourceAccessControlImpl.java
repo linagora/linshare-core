@@ -155,6 +155,9 @@ public class WorkGroupNodeResourceAccessControlImpl
 	@Override
 	protected boolean hasCreatePermission(Account authUser, Account actor, WorkGroupNode entry, Object... opt) {
 		WorkGroup workGroup = (WorkGroup) opt[0];
+		if (authUser.hasSafeRole()) {
+			return true;
+		}
 		return defaultSharedSpacePermissionCheck(authUser, actor, workGroup.getLsUuid(),
 				TechnicalAccountPermissionType.THREAD_ENTRIES_CREATE, SharedSpaceActionType.CREATE);
 	}

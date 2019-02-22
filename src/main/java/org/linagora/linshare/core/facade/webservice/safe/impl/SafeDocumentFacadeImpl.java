@@ -33,24 +33,40 @@
  */
 package org.linagora.linshare.core.facade.webservice.safe.impl;
 
+import java.io.File;
+
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
 import org.linagora.linshare.core.facade.webservice.safe.SafeDocumentFacade;
 import org.linagora.linshare.core.facade.webservice.user.impl.GenericFacadeImpl;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.SafeDetailService;
+import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.mongo.entities.SafeDetail;
+import org.linagora.linshare.mongo.entities.WorkGroupDocument;
+import org.linagora.linshare.mongo.entities.WorkGroupNode;
 
 public class SafeDocumentFacadeImpl extends GenericFacadeImpl
 		implements SafeDocumentFacade {
 
 	private final SafeDetailService safeDetailService;
 
+	private final ThreadService threadService;
+
+	private final WorkGroupNodeService workGroupNodeService;
+
 	public SafeDocumentFacadeImpl(SafeDetailService safeDetailService,
+			ThreadService threadService,
+			WorkGroupNodeService workGroupNodeService,
 			final AccountService accountService) {
 		super(accountService);
+		this.threadService = threadService;
+		this.workGroupNodeService = workGroupNodeService;
 		this.safeDetailService = safeDetailService;
 	}
 
@@ -70,5 +86,22 @@ public class SafeDocumentFacadeImpl extends GenericFacadeImpl
 		User authUser = checkAuthentication();
 		Validate.notNull(authUser);
 		return authUser;
+	}
+
+	@Override
+	public WorkGroupEntryDto create(String actorUuid, String workgroupUuid,
+			File file, String fileName, Boolean strict) {
+		Validate.notEmpty(actorUuid, "Missing required actor uuid");
+		Validate.notEmpty(workgroupUuid, "Missing required thread uuid");
+		Validate.notNull(file, "Missing required file");
+		Validate.notNull(fileName, "Missing required fileName");
+		User authUser = checkAuthentication();
+		User actor = getActor(actorUuid);
+		WorkGroup workGroup = threadService.find(authUser, actor, workgroupUuid);
+		WorkGroupNode node = workGroupNodeService.create(authUser, actor, workGroup, file, fileName, null, strict);
+		WorkGroupEntryDto dto = new WorkGroupEntryDto((WorkGroupDocument)node);
+		// why ?
+//		dto.setWorkGroup(new WorkGroupLightDto(thread));
+		return dto;
 	}
 }
