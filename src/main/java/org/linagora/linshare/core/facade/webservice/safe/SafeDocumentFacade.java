@@ -34,8 +34,11 @@
 
 package org.linagora.linshare.core.facade.webservice.safe;
 
+import java.io.File;
+
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
 import org.linagora.linshare.mongo.entities.SafeDetail;
 
 public interface SafeDocumentFacade {
@@ -43,4 +46,8 @@ public interface SafeDocumentFacade {
 	SafeDetail findSafeDetail(String actorUuid, String safeUuid) throws BusinessException;
 
 	User findUser(String safeUuid) throws BusinessException;
+
+	WorkGroupEntryDto create(String actorUuid, String workgroupUuid,
+			File file, String fileName, Boolean strict) throws BusinessException;
+
 }
