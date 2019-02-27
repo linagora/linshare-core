@@ -34,6 +34,8 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
+
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -42,7 +44,6 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
-import org.linagora.linshare.core.service.AntiSamyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.WorkGroupNodeAbstractService;
 import org.linagora.linshare.core.utils.UniqueName;
@@ -67,14 +68,14 @@ public abstract class WorkGroupNodeAbstractServiceImpl implements WorkGroupNodeA
 
 	protected final LogEntryService logEntryService;
 
-	protected final AntiSamyService antiSamyService;
+	protected final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService;
 
 	protected final SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService;
 
 	public WorkGroupNodeAbstractServiceImpl(
 			WorkGroupNodeMongoRepository repository,
 			MongoTemplate mongoTemplate,
-			AntiSamyService antiSamyService,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			ThreadMemberRepository threadMemberRepository,
 			LogEntryService logEntryService,
 			SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService) {
@@ -82,7 +83,7 @@ public abstract class WorkGroupNodeAbstractServiceImpl implements WorkGroupNodeA
 		this.repository = repository;
 		this.mongoTemplate = mongoTemplate;
 		this.logEntryService = logEntryService;
-		this.antiSamyService = antiSamyService;
+		this.sanitizerInputHtmlBusinessService = sanitizerInputHtmlBusinessService;
 		this.threadMemberRepository = threadMemberRepository;
 		this.sharedSpaceMemberBusinessService = sharedSpaceMemberBusinessService;
 	}

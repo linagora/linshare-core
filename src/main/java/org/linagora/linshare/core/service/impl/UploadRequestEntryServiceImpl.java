@@ -39,6 +39,7 @@ import java.io.InputStream;
 import java.util.Calendar;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestEntryBusinessService;
@@ -67,7 +68,6 @@ import org.linagora.linshare.core.notifications.context.UploadRequestDeleteFileB
 import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.rac.UploadRequestEntryRessourceAccessControl;
 import org.linagora.linshare.core.service.AbstractDomainService;
-import org.linagora.linshare.core.service.AntiSamyService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MimeTypeService;
@@ -99,7 +99,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 
 	private final MimeTypeMagicNumberDao mimeTypeIdentifier;
 
-	private final AntiSamyService antiSamyService;
+	private final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService;
 
 	private final QuotaService quotaService;
 
@@ -120,7 +120,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 			MimeTypeService mimeTypeService,
 			VirusScannerService virusScannerService,
 			MimeTypeMagicNumberDao mimeTypeIdentifier,
-			AntiSamyService antiSamyService,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			UploadRequestEntryRessourceAccessControl rac,
 			OperationHistoryBusinessService operationHistoryBusinessService,
 			QuotaService quotaService,
@@ -136,7 +136,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		this.mimeTypeService = mimeTypeService;
 		this.virusScannerService = virusScannerService;
 		this.mimeTypeIdentifier = mimeTypeIdentifier;
-		this.antiSamyService = antiSamyService;
+		this.sanitizerInputHtmlBusinessService = sanitizerInputHtmlBusinessService;
 		this.operationHistoryBusinessService = operationHistoryBusinessService;
 		this.quotaService = quotaService;
 		this.documentGarbageCollectorRepository = documentGarbageCollectorRepository;
@@ -229,7 +229,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 	private String sanitizeFileName(String fileName) throws BusinessException {
 		fileName = fileName.replace("\\", "_");
 		fileName = fileName.replace(":", "_");
-		fileName = antiSamyService.clean(fileName);
+		fileName = sanitizerInputHtmlBusinessService.clean(fileName);
 		if (fileName.isEmpty()) {
 			throw new BusinessException(BusinessErrorCode.INVALID_FILENAME, "fileName is empty after the xss filter");
 		}

@@ -37,6 +37,7 @@ import java.io.File;
 import java.io.InputStream;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
@@ -56,7 +57,6 @@ import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
-import org.linagora.linshare.core.service.AntiSamyService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MimeTypeService;
@@ -101,7 +101,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 			MimeTypeService mimeTypeService,
 			VirusScannerService virusScannerService,
 			MimeTypeMagicNumberDao mimeTypeIdentifier,
-			AntiSamyService antiSamyService,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			WorkGroupNodeMongoRepository workGroupNodeMongoRepository,
 			DocumentGarbageCollectorMongoRepository documentGarbageCollectorRepository,
 			ThreadMemberRepository threadMemberRepository,
@@ -109,7 +109,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 			OperationHistoryBusinessService operationHistoryBusinessService,
 			QuotaService quotaService,
 			SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService) {
-		super(workGroupNodeMongoRepository, mongoTemplate, antiSamyService, threadMemberRepository, logEntryService, sharedSpaceMemberBusinessService);
+		super(workGroupNodeMongoRepository, mongoTemplate, sanitizerInputHtmlBusinessService, threadMemberRepository, logEntryService, sharedSpaceMemberBusinessService);
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;

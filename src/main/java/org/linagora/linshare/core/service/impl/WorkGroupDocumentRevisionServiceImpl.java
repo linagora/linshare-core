@@ -38,6 +38,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.DocumentEntryRevisionBusinessService;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
@@ -54,7 +55,6 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
-import org.linagora.linshare.core.service.AntiSamyService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MimeTypeService;
@@ -92,7 +92,7 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 			MimeTypeService mimeTypeService,
 			VirusScannerService virusScannerService,
 			MimeTypeMagicNumberDao mimeTypeIdentifier,
-			AntiSamyService antiSamyService,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			WorkGroupNodeMongoRepository workGroupNodeMongoRepository,
 			DocumentGarbageCollectorMongoRepository documentGarbageCollectorRepository,
 			ThreadMemberRepository threadMemberRepository,
@@ -104,7 +104,7 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 			SharedSpaceNodeMongoRepository sharedSpaceNodeMongoRepository,
 			DocumentRepository documentRepository) {
 		super(documentEntryBusinessService, logEntryService, functionalityReadOnlyService, mimeTypeService,
-				virusScannerService, mimeTypeIdentifier, antiSamyService, workGroupNodeMongoRepository,
+				virusScannerService, mimeTypeIdentifier, sanitizerInputHtmlBusinessService, workGroupNodeMongoRepository,
 				documentGarbageCollectorRepository, threadMemberRepository, mongoTemplate, operationHistoryBusinessService,
 				quotaService, sharedSpaceMemberBusinessService);
 		this.documentEntryRevisionBusinessService = documentEntryRevisionBusinessService;

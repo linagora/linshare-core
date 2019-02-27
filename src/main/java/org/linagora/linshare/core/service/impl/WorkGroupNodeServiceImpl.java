@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -52,7 +53,6 @@ import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.rac.impl.WorkGroupNodeResourceAccessControlImpl;
-import org.linagora.linshare.core.service.AntiSamyService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.WorkGroupDocumentRevisionService;
@@ -90,7 +90,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 
 	protected final LogEntryService logEntryService;
 
-	protected final AntiSamyService antiSamyService;
+	protected final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService;
 
 	protected final MongoTemplate mongoTemplate;
 
@@ -105,7 +105,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 			WorkGroupDocumentService workGroupDocumentService,
 			WorkGroupFolderService workGroupFolderService,
 			WorkGroupNodeResourceAccessControlImpl rac,
-			AntiSamyService antiSamyService,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			MongoTemplate mongoTemplate,
 			FunctionalityReadOnlyService functionalityReadOnlyService,
 			WorkGroupDocumentRevisionService revisionService,
@@ -115,7 +115,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		this.workGroupDocumentService = workGroupDocumentService;
 		this.workGroupFolderService = workGroupFolderService;
 		this.logEntryService = logEntryService;
-		this.antiSamyService = antiSamyService;
+		this.sanitizerInputHtmlBusinessService = sanitizerInputHtmlBusinessService;
 		this.mongoTemplate = mongoTemplate;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.revisionService = revisionService;
@@ -613,10 +613,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		fileName = fileName.replace("/", "_");
 		fileName = fileName.replace("\"", "_");
 		fileName = fileName.replace("|", "_");
-		fileName = antiSamyService.clean(fileName);
-		if (fileName.isEmpty()) {
-			throw new BusinessException(BusinessErrorCode.INVALID_FILENAME, "fileName is empty after the xss filter");
-		}
+		fileName = sanitizerInputHtmlBusinessService.clean(fileName);
 		return fileName;
 	}
 

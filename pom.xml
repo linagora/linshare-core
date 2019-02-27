@@ -646,11 +646,18 @@
 		</dependency>
 		<!-- Database related dependencies - begin -->
 
-		<!--  XSS filter -->
+		<!-- XSS filter -->
+		<!-- https://mvnrepository.com/artifact/com.googlecode.owasp-java-html-sanitizer/owasp-java-html-sanitizer -->
 		<dependency>
-			<groupId>org.owasp</groupId>
-			<artifactId>antisamy</artifactId>
-			<version>1.4</version>
+			<groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
+			<artifactId>owasp-java-html-sanitizer</artifactId>
+			<version>20181114.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+			<version>3.1</version>
 		</dependency>
 
 		<!-- ###### web services ####### -->
