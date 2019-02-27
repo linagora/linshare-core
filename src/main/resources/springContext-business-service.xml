@@ -359,6 +359,7 @@
 		<constructor-arg value="${linshare.documents.storage.deduplication}" />
 		<constructor-arg ref="mailAttachmentRepository" />
 		<constructor-arg ref="mimeTypeMagicNumberDao" />
+		<constructor-arg ref="documentGarbageCollectorMongoRepository" />
 	</bean>
 
 	<bean id="abstractDocumentBusinessService"

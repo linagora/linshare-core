@@ -33,7 +33,14 @@
  */
 package org.linagora.linshare.core.repository;
 
+import java.util.List;
+
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailAttachment;
 
 public interface MailAttachmentRepository extends AbstractRepository<MailAttachment> {
+
+	MailAttachment findByUuid(String uuid);
+
+	List<MailAttachment> findAllByDomainUuid(AbstractDomain domain);
 }

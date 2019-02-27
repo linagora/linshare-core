@@ -34,11 +34,14 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.io.File;
+import java.util.List;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.MailAttachmentBusinessService;
 import org.linagora.linshare.core.business.service.ThumbnailGeneratorBusinessService;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.MailAttachment;
@@ -47,12 +50,20 @@ import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.MailAttachmentRepository;
 import org.linagora.linshare.core.service.TimeStampingService;
 import org.linagora.linshare.core.service.impl.AbstractDocumentBusinessServiceImpl;
+import org.linagora.linshare.mongo.entities.DocumentGarbageCollecteur;
+import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
+
+import com.google.common.base.Strings;
 
 public class MailAttachmentBusinessServiceImpl extends AbstractDocumentBusinessServiceImpl implements MailAttachmentBusinessService{
 
 	protected final MailAttachmentRepository attachmentRepository;
 
 	private final MimeTypeMagicNumberDao mimeTypeIdentifier;
+
+	protected final DocumentGarbageCollectorMongoRepository documentGarbageCollectorRepository;
+
+	private final String defaultMailAttachmentCid = "logo.linshare@linshare.org";
 
 	public MailAttachmentBusinessServiceImpl(
 			FileDataStore fileDataStore,
@@ -61,11 +72,13 @@ public class MailAttachmentBusinessServiceImpl extends AbstractDocumentBusinessS
 			ThumbnailGeneratorBusinessService thumbnailGeneratorBusinessService,
 			boolean deduplication,
 			MailAttachmentRepository attachmentRepository,
-			MimeTypeMagicNumberDao mimeTypeIdentifier) {
+			MimeTypeMagicNumberDao mimeTypeIdentifier,
+			DocumentGarbageCollectorMongoRepository documentGarbageCollectorRepository) {
 		super(fileDataStore, timeStampingService, documentRepository,
 				thumbnailGeneratorBusinessService, deduplication);
 		this.attachmentRepository = attachmentRepository;
 		this.mimeTypeIdentifier = mimeTypeIdentifier;
+		this.documentGarbageCollectorRepository = documentGarbageCollectorRepository;
 	}
 
 	@Override
@@ -74,8 +87,34 @@ public class MailAttachmentBusinessServiceImpl extends AbstractDocumentBusinessS
 			String metaData) {
 		String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
 		Document document = createDocument(authUser, tempFile, tempFile.length(), fileName, null, mimeType);
+		if (Strings.isNullOrEmpty(cid)) {
+			cid = defaultMailAttachmentCid;
+		}
 		MailAttachment mailAttachment = new MailAttachment(enable, document, override, language, description, fileName,
 				mailConfig, authUser.getDomain(), cid, alt);
 		return attachmentRepository.create(mailAttachment);
+	}
+
+	@Override
+	public MailAttachment findByUuid(String uuid) {
+		return attachmentRepository.findByUuid(uuid);
+	}
+
+	@Override
+	public List<MailAttachment> findAllByDomain(AbstractDomain domain) {
+		return attachmentRepository.findAllByDomainUuid(domain);
+	}
+
+	@Override
+	public MailAttachment update(MailAttachment mailAttachment) {
+		return attachmentRepository.update(mailAttachment);
+	}
+
+	@Override
+	public void delete(MailAttachment mailAttachment) {
+		Validate.notNull(mailAttachment.getDocument(), "Missing related document to delete.");
+		documentGarbageCollectorRepository
+				.insert(new DocumentGarbageCollecteur(mailAttachment.getDocument().getUuid()));
+		attachmentRepository.delete(mailAttachment);
 	}
 }

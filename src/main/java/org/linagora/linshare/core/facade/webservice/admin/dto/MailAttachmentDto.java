@@ -37,6 +37,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.MailAttachment;
 
+import com.google.common.base.Function;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -105,6 +106,18 @@ public class MailAttachmentDto {
 		this.domain = attachment.getDomain().getUuid();
 		this.alt = attachment.getAlt();
 		this.cid = attachment.getCid();
+	}
+
+	public MailAttachment toObject() {
+		MailAttachment mattchment = new MailAttachment();
+		mattchment.setEnable(getEnable());
+		mattchment.setOverride(getOverride());
+		mattchment.setLanguage(getLanguage());
+		mattchment.setDescription(getDescription());
+		mattchment.setName(getName());
+		mattchment.setCid(getCid());
+		mattchment.setAlt(getAlt());
+		return mattchment;
 	}
 
 	public String getUuid() {
@@ -185,5 +198,12 @@ public class MailAttachmentDto {
 
 	public void setCid(String cid) {
 		this.cid = cid;
+	}
+
+	/*
+	 * Transformers
+	 */
+	public static Function<MailAttachment, MailAttachmentDto> toDto() {
+		return mailAttachment -> new MailAttachmentDto(mailAttachment);
 	}
 }

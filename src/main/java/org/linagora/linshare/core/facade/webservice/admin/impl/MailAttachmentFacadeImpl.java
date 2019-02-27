@@ -34,25 +34,37 @@
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import java.io.File;
+import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.Role;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MailAttachment;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.MailAttachmentFacade;
 import org.linagora.linshare.core.facade.webservice.admin.dto.MailAttachmentDto;
+import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MailAttachmentService;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 public class MailAttachmentFacadeImpl extends AdminGenericFacadeImpl implements MailAttachmentFacade {
 
 	protected final  MailAttachmentService attachmentService;
 
+	protected final AbstractDomainService abstractDomainService;
+
 	public MailAttachmentFacadeImpl(
 			AccountService accountService,
-			MailAttachmentService attachmentService) {
+			MailAttachmentService attachmentService,
+			AbstractDomainService abstractDomainService) {
 		super(accountService);
 		this.attachmentService = attachmentService;
+		this.abstractDomainService = abstractDomainService;
 	}
 
 	@Override
@@ -68,5 +80,55 @@ public class MailAttachmentFacadeImpl extends AdminGenericFacadeImpl implements 
 		MailAttachment attachment = attachmentService.create(authUser, enable, fileName, override, mailConfig,
 				description, alt, cid, language, tempFile, metaData);
 		return new MailAttachmentDto(attachment);
+	}
+
+	@Override
+	public MailAttachmentDto delete(String uuid, MailAttachmentDto attachment) {
+		Account authUser = checkAuthentication(Role.ADMIN);
+		MailAttachment mailAttachment = new MailAttachment();
+		if (!Strings.isNullOrEmpty(uuid)) {
+			mailAttachment = attachmentService.find(authUser, uuid);
+		} else {
+			Validate.notNull(attachment, "MailAttachment object must be set");
+			Validate.notEmpty(attachment.getUuid(), "MailAttachment uuid must be set");
+			mailAttachment = attachmentService.find(authUser, attachment.getUuid());
+		}
+		mailAttachment = attachmentService.delete(authUser, mailAttachment);
+		return new MailAttachmentDto(mailAttachment);
+	}
+
+	@Override
+	public MailAttachmentDto find(String uuid) {
+		Validate.notEmpty(uuid, "Missing required mail attachment uuid");
+		Account authUser = checkAuthentication(Role.ADMIN);
+		MailAttachment mailAttachment = attachmentService.find(authUser, uuid);
+		return new MailAttachmentDto(mailAttachment);
+	}
+
+	@Override
+	public List<MailAttachmentDto> findAll(String domainUuid) {
+		Account authUser = checkAuthentication(Role.ADMIN);
+		if (Strings.isNullOrEmpty(domainUuid)) {
+			domainUuid = authUser.getDomain().getUuid();
+		}
+		AbstractDomain domain = abstractDomainService.findById(domainUuid);
+		List<MailAttachment> attachments = attachmentService.findAllByDomain(authUser, domain);
+		return ImmutableList.copyOf(Lists.transform(attachments, MailAttachmentDto.toDto()));
+	}
+
+	@Override
+	public MailAttachmentDto update(MailAttachmentDto attachment, String uuid) throws BusinessException {
+		Account authUser = checkAuthentication(Role.ADMIN);
+		MailAttachment attachmentToUpdate = new MailAttachment();
+		if (!Strings.isNullOrEmpty(uuid)) {
+			attachmentToUpdate = attachmentService.find(authUser, uuid);
+		} else {
+			Validate.notNull(attachment, "MailAttachment object must be set");
+			Validate.notEmpty(attachment.getUuid(), "MailAttachment uuid must be set");
+			attachmentToUpdate = attachmentService.find(authUser, attachment.getUuid());
+		}
+		MailAttachment mailAttach = attachment.toObject();
+		attachmentService.update(authUser, attachmentToUpdate, mailAttach);
+		return new MailAttachmentDto(attachmentToUpdate);
 	}
 }

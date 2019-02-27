@@ -35,12 +35,19 @@ package org.linagora.linshare.webservice.admin.impl;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
@@ -67,7 +74,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 	produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class MailAttachmentRestServiceImpl extends WebserviceBase implements MailAttachmentRestService{
+public class MailAttachmentRestServiceImpl extends WebserviceBase implements MailAttachmentRestService {
 
 	protected final MailAttachmentFacade mailAttachmentFacade;
 
@@ -154,5 +161,65 @@ public class MailAttachmentRestServiceImpl extends WebserviceBase implements Mai
 					BusinessErrorCode.MODE_MAINTENANCE_ENABLED,
 					"Maintenance mode is enable, uploads are disabled.");
 		}
+	}
+
+	@Path("/{uuid: .*}")
+	@DELETE
+	@ApiOperation(value = "Delete a mail attachment.", response = Response.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right role."),
+			@ApiResponse(code = 404, message = "Mail attachment not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public MailAttachmentDto delete(
+			@ApiParam(value = "Mail attachment uuid to delete.", required = true)
+				@PathParam("uuid") String uuid,
+			@ApiParam(value = "Mail attachment to delete.", required = true)
+				MailAttachmentDto attachment) throws BusinessException {
+		return mailAttachmentFacade.delete(uuid, attachment);
+	}
+
+	@Path("/{uuid}")
+	@GET
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Get a mail attachment.", response = MailAttachmentDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the delegation role."),
+			@ApiResponse(code = 404, message = "Mail attachment not found."),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error."), })
+	@Override
+	public MailAttachmentDto find(
+			@ApiParam(value = "The mail attachment uuid.", required = true) 
+				@PathParam("uuid") String uuid) throws BusinessException {
+		return mailAttachmentFacade.find(uuid);
+	}
+
+	@Path("/")
+	@GET
+	@ApiOperation(value = "Find all mail attachment of a domain.", response = MailAttachmentDto.class, responseContainer = "List")
+	@ApiResponses({ @ApiResponse(code = 403, message = "User is not allowed to use this endpoint"),
+			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+			@ApiResponse(code = 500, message = "Internal server error.") })
+	@Override
+	public List<MailAttachmentDto> findAll(
+			@ApiParam(value = "domain uuid.", required = false)
+				@QueryParam("domainUuid") String domainUuid) throws BusinessException {
+		return mailAttachmentFacade.findAll(domainUuid);
+	}
+
+	@Path("/{uuid: .*}")
+	@PUT
+	@ApiOperation(value = "Update mail attachment by its uuid.", response = MailAttachmentDto.class)
+	@ApiResponses({ @ApiResponse(code = 403, message = "User is not allowed to use this endpoint"),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 404, message = "Mail attachment has not been found."),
+					@ApiResponse(code = 500, message = "Internal server error.") })
+	@Override
+	public MailAttachmentDto update(
+			@ApiParam(value = "Mail attachment uuid to delete.", required = true)
+				@PathParam("uuid") String uuid,
+			@ApiParam(value = "Mail attachment to delete.", required = true)
+				MailAttachmentDto attachment) throws BusinessException {
+		return mailAttachmentFacade.update(attachment, uuid);
 	}
 }

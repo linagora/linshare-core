@@ -34,6 +34,7 @@
 package org.linagora.linshare.webservice.admin;
 
 import java.io.InputStream;
+import java.util.List;
 
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -44,4 +45,12 @@ public interface MailAttachmentRestService {
 	MailAttachmentDto create(InputStream file, String description, String givenFileName, String metaData, Long fileSize,
 			boolean enable, boolean override, String confUuid, String alt, String cid, int language, MultipartBody body)
 			throws BusinessException;
+
+	MailAttachmentDto delete(String uuid, MailAttachmentDto attachment) throws BusinessException;
+
+	MailAttachmentDto find(String uuid) throws BusinessException;
+
+	List<MailAttachmentDto> findAll(String domainUuid) throws BusinessException;
+
+	MailAttachmentDto update(String uuid, MailAttachmentDto attachment) throws BusinessException;
 }

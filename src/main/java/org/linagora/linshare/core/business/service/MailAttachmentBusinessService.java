@@ -36,6 +36,9 @@ package org.linagora.linshare.core.business.service;
 import java.io.File;
 
 import org.linagora.linshare.core.domain.entities.Account;
+import java.util.List;
+
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailAttachment;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.service.AbstractDocumentBusinessService;
@@ -44,4 +47,12 @@ public interface MailAttachmentBusinessService extends AbstractDocumentBusinessS
 
 	MailAttachment create(Account authUser, boolean enable, String fileName, boolean override, MailConfig mailConfig,
 			String description, String alt, String cid, int language, File tempFile, String metaData);
+
+	MailAttachment findByUuid(String uuid);
+
+	void delete(MailAttachment mailAttachment);
+
+	List<MailAttachment> findAllByDomain(AbstractDomain domain);
+
+	MailAttachment update(MailAttachment mailAttachment);
 }

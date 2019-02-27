@@ -34,13 +34,22 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.io.File;
+import java.util.List;
 
+import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.MailAttachmentBusinessService;
 import org.linagora.linshare.core.business.service.MailConfigBusinessService;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MailAttachment;
 import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.MailAttachmentService;
+
+import com.google.common.base.Strings;
 
 public class MailAttachmentServiceImpl implements MailAttachmentService {
 
@@ -48,12 +57,20 @@ public class MailAttachmentServiceImpl implements MailAttachmentService {
 
 	protected final MailConfigBusinessService configService;
 
+	protected final DocumentEntryService documentEntryService;
+
+	private final DomainPermissionBusinessService domainPermissionService;
+
 	public MailAttachmentServiceImpl(
 			MailAttachmentBusinessService attachmentBusinessService,
-			MailConfigBusinessService configService) {
+			MailConfigBusinessService configService,
+			DocumentEntryService documentEntryService,
+			DomainPermissionBusinessService domainPermissionService) {
 		super();
 		this.attachmentBusinessService = attachmentBusinessService;
 		this.configService = configService;
+		this.documentEntryService = documentEntryService;
+		this.domainPermissionService = domainPermissionService;
 	}
 
 	@Override
@@ -63,5 +80,56 @@ public class MailAttachmentServiceImpl implements MailAttachmentService {
 		MailAttachment attachment = attachmentBusinessService.create(authUser, enable, fileName, override, config,
 				description, alt, cid, language, tempFile, metaData);
 		return attachment;
+	}
+
+	@Override
+	public MailAttachment find(Account authUser, String uuid) {
+		Validate.notNull(authUser, "AuthUser must be set.");
+		checkAdminFor(authUser, authUser.getDomain());
+		MailAttachment found = attachmentBusinessService.findByUuid(uuid);
+		if (found == null) {
+			String message = "The requested mail attachment has not been found.";
+			throw new BusinessException(BusinessErrorCode.MAIL_ATTACHMENT_NOT_FOUND, message);
+		}
+		return found;
+	}
+
+	private void checkAdminFor(Account actor, AbstractDomain domain) throws BusinessException {
+		if (!domainPermissionService.isAdminforThisDomain(actor, domain)) {
+			String msg = "The current actor " + actor.getAccountRepresentation()
+					+ " does not have the right to perform this operation.";
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
+		}
+	}
+
+	@Override
+	public List<MailAttachment> findAllByDomain(Account authUser, AbstractDomain domain) {
+		Validate.notNull(domain, "domain must be set");
+		checkAdminFor(authUser, domain);
+		return attachmentBusinessService.findAllByDomain(domain);
+	}
+
+	@Override
+	public MailAttachment delete(Account authUser, MailAttachment mailAttachment) {
+		Validate.notNull(mailAttachment, "Mail attachment must be set");
+		checkAdminFor(authUser, authUser.getDomain());
+		attachmentBusinessService.delete(mailAttachment);
+		return mailAttachment;
+	}
+
+	@Override
+	public MailAttachment update(Account authUser, MailAttachment attachmentToUpdate, MailAttachment mailAttach) {
+		Validate.notNull(attachmentToUpdate, "Mail attachment must be set");
+		checkAdminFor(authUser, authUser.getDomain());
+		attachmentToUpdate.setEnable(mailAttach.getEnable());
+		attachmentToUpdate.setOverride(mailAttach.getOverride());
+		attachmentToUpdate.setLanguage(mailAttach.getLanguage());
+		attachmentToUpdate.setDescription(mailAttach.getDescription());
+		if (Strings.isNullOrEmpty(mailAttach.getName())) {
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Name can not be null");
+		}
+		attachmentToUpdate.setName(mailAttach.getName());
+		attachmentToUpdate.setCid(mailAttach.getCid());
+		return attachmentBusinessService.update(attachmentToUpdate);
 	}
 }
