@@ -33,16 +33,16 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import org.apache.commons.lang.Validate;
+import java.io.File;
+
 import org.linagora.linshare.core.business.service.MailAttachmentBusinessService;
 import org.linagora.linshare.core.business.service.MailConfigBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.MailAttachment;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.service.MailAttachmentService;
 
-public class MailAttachmentServiceImpl implements MailAttachmentService{
+public class MailAttachmentServiceImpl implements MailAttachmentService {
 
 	protected final MailAttachmentBusinessService attachmentBusinessService;
 
@@ -57,14 +57,11 @@ public class MailAttachmentServiceImpl implements MailAttachmentService{
 	}
 
 	@Override
-	public MailAttachment create(Account authUser, boolean enable, String fileName, boolean override, String confUuid,
-			String description, String alt, Document document, String cid, int language) {
-		MailConfig config = configService.findByUuid(confUuid);
-		Validate.notNull(config);
-		Validate.notNull(authUser.getDomain());
-		MailAttachment mailAttachment = new MailAttachment(enable, document, override, language, description, fileName,
-				config, authUser.getDomain(), cid, alt);
-		MailAttachment attachment = attachmentBusinessService.create(mailAttachment);
+	public MailAttachment create(Account authUser, boolean enable, String fileName, boolean override, String mailConfig,
+			String description, String alt, String cid, int language, File tempFile, String metaData) {
+		MailConfig config = configService.findByUuid(mailConfig);
+		MailAttachment attachment = attachmentBusinessService.create(authUser, enable, fileName, override, config,
+				description, alt, cid, language, tempFile, metaData);
 		return attachment;
 	}
 }

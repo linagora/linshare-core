@@ -36,22 +36,18 @@ package org.linagora.linshare.core.business.service.impl;
 import java.io.File;
 
 import org.linagora.linshare.core.business.service.DocumentEntryRevisionBusinessService;
-import org.linagora.linshare.core.business.service.SignatureBusinessService;
 import org.linagora.linshare.core.business.service.ThumbnailGeneratorBusinessService;
-import org.linagora.linshare.core.business.service.UploadRequestEntryBusinessService;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
-import org.linagora.linshare.core.repository.ThumbnailRepository;
 import org.linagora.linshare.core.service.TimeStampingService;
+import org.linagora.linshare.core.service.impl.AbstractDocumentBusinessServiceImpl;
 import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
-import org.linagora.linshare.mongo.repository.DocumentGarbageCollectorMongoRepository;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +57,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-public class DocumentEntryRevisionBusinessServiceImpl extends DocumentEntryBusinessServiceImpl
+public class DocumentEntryRevisionBusinessServiceImpl extends AbstractDocumentBusinessServiceImpl
 		implements DocumentEntryRevisionBusinessService {
 
 	@SuppressWarnings("unused")
@@ -69,22 +65,19 @@ public class DocumentEntryRevisionBusinessServiceImpl extends DocumentEntryBusin
 
 	private final MongoTemplate mongoTemplate;
 
+	private final WorkGroupNodeMongoRepository repository;
+
 	public DocumentEntryRevisionBusinessServiceImpl(
-			final FileDataStore fileSystemDao,
-			final TimeStampingService timeStampingService,
-			final DocumentEntryRepository documentEntryRepository,
-			final DocumentRepository documentRepository,
-			final SignatureBusinessService signatureBusinessService,
-			final UploadRequestEntryBusinessService uploadRequestEntryBusinessService,
-			final ThumbnailGeneratorBusinessService thumbnailGeneratorBusinessService,
-			final boolean deduplication,
-			final WorkGroupNodeMongoRepository repository,
-			final DocumentGarbageCollectorMongoRepository documentGarbageCollectorRepository,
-			final ThumbnailRepository thumbnailRepository,
+			FileDataStore fileDataStore,
+			TimeStampingService timeStampingService,
+			DocumentRepository documentRepository,
+			ThumbnailGeneratorBusinessService thumbnailGeneratorBusinessService,
+			boolean deduplication,
+			WorkGroupNodeMongoRepository repository,
 			MongoTemplate mongoTemplate) {
-		super(fileSystemDao, timeStampingService, documentEntryRepository, documentRepository, signatureBusinessService,
-				uploadRequestEntryBusinessService, thumbnailGeneratorBusinessService, deduplication, repository,
-				documentGarbageCollectorRepository, thumbnailRepository);
+		super(fileDataStore, timeStampingService, documentRepository,
+				thumbnailGeneratorBusinessService, deduplication);
+		this.repository = repository;
 		this.mongoTemplate = mongoTemplate;
 	}
 

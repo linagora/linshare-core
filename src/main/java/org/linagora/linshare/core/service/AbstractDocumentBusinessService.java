@@ -31,42 +31,23 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade.webservice.admin.impl;
+package org.linagora.linshare.core.service;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
-import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.domain.constants.Role;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.MailAttachment;
-import org.linagora.linshare.core.facade.webservice.admin.MailAttachmentFacade;
-import org.linagora.linshare.core.facade.webservice.admin.dto.MailAttachmentDto;
-import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.MailAttachmentService;
+import org.linagora.linshare.core.domain.entities.Document;
+import org.linagora.linshare.core.exception.BusinessException;
 
-public class MailAttachmentFacadeImpl extends AdminGenericFacadeImpl implements MailAttachmentFacade {
+public interface AbstractDocumentBusinessService {
 
-	protected final  MailAttachmentService attachmentService;
+	Document createDocument(Account owner, File myFile, Long size, String fileName, String timeStampingUrl, String mimeType);
 
-	public MailAttachmentFacadeImpl(
-			AccountService accountService,
-			MailAttachmentService attachmentService) {
-		super(accountService);
-		this.attachmentService = attachmentService;
-	}
+	String SHA256CheckSumFileStream(File file);
 
-	@Override
-	public MailAttachmentDto create(File tempFile, String fileName, String description, String metaData, boolean enable,
-			boolean override, String mailConfig, String alt, String cid, int language) {
-		Account authUser = checkAuthentication(Role.ADMIN);
-		Validate.notNull(tempFile, "Missing required file (check parameter named file)");
-		Validate.notEmpty(fileName, "Missing required file name");
-		Validate.notNull(enable, "Missing information to enable mail attachment (enabled)");
-		Validate.notNull(override, "Missing information to override the mail attachment (override)");
-		Validate.notNull(mailConfig, "Missing mail config");
-		Validate.notNull(alt, "Missing mail attachment alternative");
-		MailAttachment attachment = attachmentService.create(authUser, enable, fileName, override, mailConfig,
-				description, alt, cid, language, tempFile, metaData);
-		return new MailAttachmentDto(attachment);
-	}
+	String SHA256CheckSumFileStream(InputStream fis) throws IOException;
+
+	byte[] getTimeStamp(String fileName, File tempFile, String timeStampingUrl) throws BusinessException;
 }

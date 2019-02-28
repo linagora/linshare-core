@@ -44,17 +44,17 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "MailAttachment", description = "")
 public class MailAttachmentDto {
 
+	@ApiModelProperty(value = "Uuid")
+	private String uuid;
+
 	@ApiModelProperty(value = "Enable")
 	private Boolean enable;
-
-	@ApiModelProperty(value = "Document")
-	private String document;
 
 	@ApiModelProperty(value = "Override")
 	private Boolean override;
 
 	@ApiModelProperty(value = "Language")
-	private int language;
+	private Integer language;
 
 	@ApiModelProperty(value = "Description")
 	private String description;
@@ -62,27 +62,27 @@ public class MailAttachmentDto {
 	@ApiModelProperty(value = "Name")
 	private String name;
 
-	@ApiModelProperty(value = "MailConfig")
+	@ApiModelProperty(value = "The uuid of the choosen mailConfig")
 	private String mailConfig;
 
-	@ApiModelProperty(value = "Domain")
+	@ApiModelProperty(value = "The uuid of the choosen domain")
 	private String domain;
 
-	@ApiModelProperty(value = "Alternative")
+	@ApiModelProperty(value = "Alternative text for the mail attachment")
 	private String alt;
 
-	@ApiModelProperty(value = "Cid")
+	@ApiModelProperty(value = "Content id of the mail attachment")
 	private String cid;
 
 	public MailAttachmentDto() {
 		super();
 	}
 
-	public MailAttachmentDto(Boolean enable, String document, Boolean override, int language,
+	public MailAttachmentDto(String uuid, Boolean enable, Boolean override, Integer language,
 			String description, String name, String mailConfig, String domain, String alt, String cid) {
 		super();
+		this.uuid = uuid;
 		this.enable = enable;
-		this.document = document;
 		this.override = override;
 		this.language = language;
 		this.description = description;
@@ -95,8 +95,8 @@ public class MailAttachmentDto {
 
 	public MailAttachmentDto(MailAttachment attachment) {
 		super();
+		this.uuid = attachment.getUuid();
 		this.enable = attachment.getEnable();
-		this.document = attachment.getDocument().getUuid();
 		this.override = attachment.getOverride();
 		this.language = attachment.getLanguage();
 		this.description = attachment.getDescription();
@@ -107,20 +107,20 @@ public class MailAttachmentDto {
 		this.cid = attachment.getCid();
 	}
 
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
 	public Boolean getEnable() {
 		return enable;
 	}
 
 	public void setEnable(Boolean enable) {
 		this.enable = enable;
-	}
-
-	public String getDocument() {
-		return document;
-	}
-
-	public void setDocument(String document) {
-		this.document = document;
 	}
 
 	public Boolean getOverride() {
@@ -131,11 +131,11 @@ public class MailAttachmentDto {
 		this.override = override;
 	}
 
-	public int getLanguage() {
+	public Integer getLanguage() {
 		return language;
 	}
 
-	public void setLanguage(int language) {
+	public void setLanguage(Integer language) {
 		this.language = language;
 	}
 

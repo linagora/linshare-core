@@ -20,12 +20,12 @@
 	<bean id="documentEntryBusinessService" class="org.linagora.linshare.core.business.service.impl.DocumentEntryBusinessServiceImpl">
 		<constructor-arg ref="fileDataStore" />
 		<constructor-arg ref="timeStampingService" />
-		<constructor-arg ref="documentEntryRepository" />
 		<constructor-arg ref="documentRepository" />
 		<constructor-arg ref="signatureBusinessService" />
-		<constructor-arg ref="uploadRequestEntryBusinessService" />
 		<constructor-arg ref="thumbnailGeneratorBusinessService" />
 		<constructor-arg value="${linshare.documents.storage.deduplication}" />
+		<constructor-arg ref="documentEntryRepository" />
+		<constructor-arg ref="uploadRequestEntryBusinessService" />	
 		<constructor-arg ref="workGroupNodeMongoRepository" />
 		<constructor-arg ref="documentGarbageCollectorMongoRepository" />
 		<constructor-arg ref="thumbnailRepository" />
@@ -34,15 +34,10 @@
 	<bean id="documentEntryRevisionBusinessService" class="org.linagora.linshare.core.business.service.impl.DocumentEntryRevisionBusinessServiceImpl">
 		<constructor-arg ref="fileDataStore" />
 		<constructor-arg ref="timeStampingService" />
-		<constructor-arg ref="documentEntryRepository" />
 		<constructor-arg ref="documentRepository" />
-		<constructor-arg ref="signatureBusinessService" />
-		<constructor-arg ref="uploadRequestEntryBusinessService" />
 		<constructor-arg ref="thumbnailGeneratorBusinessService" />
 		<constructor-arg value="${linshare.documents.storage.deduplication}" />
 		<constructor-arg ref="workGroupNodeMongoRepository" />
-		<constructor-arg ref="documentGarbageCollectorMongoRepository" />
-		<constructor-arg ref="thumbnailRepository" />
 		<constructor-arg ref="mongoTemplate" />
 	</bean>
 
@@ -357,6 +352,21 @@
 	</bean>
 
 	<bean id="mailAttachmentBusinessService" class="org.linagora.linshare.core.business.service.impl.MailAttachmentBusinessServiceImpl">
+		<constructor-arg ref="fileDataStore" />
+		<constructor-arg ref="timeStampingService" />
+		<constructor-arg ref="documentRepository" />
+		<constructor-arg ref="thumbnailGeneratorBusinessService" />
+		<constructor-arg value="${linshare.documents.storage.deduplication}" />
 		<constructor-arg ref="mailAttachmentRepository" />
+		<constructor-arg ref="mimeTypeMagicNumberDao" />
+	</bean>
+
+	<bean id="abstractDocumentBusinessService"
+		class="org.linagora.linshare.core.service.impl.AbstractDocumentBusinessServiceImpl">
+		<constructor-arg ref="fileDataStore" />
+		<constructor-arg ref="timeStampingService" />
+		<constructor-arg ref="documentRepository" />
+		<constructor-arg ref="thumbnailGeneratorBusinessService" />
+		<constructor-arg value="${linshare.documents.storage.deduplication}" />
 	</bean>
 </beans>

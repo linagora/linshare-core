@@ -38,10 +38,11 @@ import java.io.File;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.service.AbstractDocumentBusinessService;
 import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 
-public interface DocumentEntryRevisionBusinessService extends DocumentEntryBusinessService {
+public interface DocumentEntryRevisionBusinessService extends AbstractDocumentBusinessService {
 
 	WorkGroupDocumentRevision createWorkGroupDocumentRevision(Account actor, WorkGroup workGroup, File myFile,
 			Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType,

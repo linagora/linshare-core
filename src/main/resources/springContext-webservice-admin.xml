@@ -184,7 +184,7 @@
 	</bean>
 
 	<bean id="mailAttachmentRestService" class="org.linagora.linshare.webservice.admin.impl.MailAttachmentRestServiceImpl">
-		<constructor-arg ref="wsMailAttachmentFacade" />
+		<constructor-arg ref="wsAdminMailAttachmentFacade" />
 		<constructor-arg value="${linshare.rest.files.size.validation}" />
 		<constructor-arg ref="wsAccountQuotaFacade" />
 		<constructor-arg value="${mail.attchment.limit.size}" />

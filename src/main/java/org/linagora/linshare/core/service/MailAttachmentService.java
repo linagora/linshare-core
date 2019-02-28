@@ -33,12 +33,13 @@
  */
 package org.linagora.linshare.core.service;
 
+import java.io.File;
+
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.MailAttachment;
 
 public interface MailAttachmentService {
 
-	MailAttachment create(Account authUser, boolean enable, String fileName, boolean override, String confUuid,
-			String description, String alt, Document document, String cid, int language);
+	MailAttachment create(Account authUser, boolean enable, String fileName, boolean override, String mailConfig,
+			String description, String alt, String cid, int language, File tempFile, String metaData);
 }

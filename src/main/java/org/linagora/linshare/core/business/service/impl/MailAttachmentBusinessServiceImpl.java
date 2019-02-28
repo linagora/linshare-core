@@ -33,24 +33,49 @@
  */
 package org.linagora.linshare.core.business.service.impl;
 
-import org.apache.commons.lang.Validate;
-import org.linagora.linshare.core.business.service.MailAttachmentBusinessService;
-import org.linagora.linshare.core.domain.entities.MailAttachment;
-import org.linagora.linshare.core.repository.MailAttachmentRepository;
+import java.io.File;
 
-public class MailAttachmentBusinessServiceImpl implements MailAttachmentBusinessService{
+import org.linagora.linshare.core.business.service.MailAttachmentBusinessService;
+import org.linagora.linshare.core.business.service.ThumbnailGeneratorBusinessService;
+import org.linagora.linshare.core.dao.FileDataStore;
+import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Document;
+import org.linagora.linshare.core.domain.entities.MailAttachment;
+import org.linagora.linshare.core.domain.entities.MailConfig;
+import org.linagora.linshare.core.repository.DocumentRepository;
+import org.linagora.linshare.core.repository.MailAttachmentRepository;
+import org.linagora.linshare.core.service.TimeStampingService;
+import org.linagora.linshare.core.service.impl.AbstractDocumentBusinessServiceImpl;
+
+public class MailAttachmentBusinessServiceImpl extends AbstractDocumentBusinessServiceImpl implements MailAttachmentBusinessService{
 
 	protected final MailAttachmentRepository attachmentRepository;
 
+	private final MimeTypeMagicNumberDao mimeTypeIdentifier;
+
 	public MailAttachmentBusinessServiceImpl(
-		MailAttachmentRepository attachmentRepository) {
-		super();
+			FileDataStore fileDataStore,
+			TimeStampingService timeStampingService,
+			DocumentRepository documentRepository,
+			ThumbnailGeneratorBusinessService thumbnailGeneratorBusinessService,
+			boolean deduplication,
+			MailAttachmentRepository attachmentRepository,
+			MimeTypeMagicNumberDao mimeTypeIdentifier) {
+		super(fileDataStore, timeStampingService, documentRepository,
+				thumbnailGeneratorBusinessService, deduplication);
 		this.attachmentRepository = attachmentRepository;
+		this.mimeTypeIdentifier = mimeTypeIdentifier;
 	}
 
 	@Override
-	public MailAttachment create(MailAttachment mailAttachment) {
-		Validate.notNull(mailAttachment, "Missing mail attachment");
+	public MailAttachment create(Account authUser, boolean enable, String fileName, boolean override,
+			MailConfig mailConfig, String description, String alt, String cid, int language, File tempFile,
+			String metaData) {
+		String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
+		Document document = createDocument(authUser, tempFile, tempFile.length(), fileName, null, mimeType);
+		MailAttachment mailAttachment = new MailAttachment(enable, document, override, language, description, fileName,
+				mailConfig, authUser.getDomain(), cid, alt);
 		return attachmentRepository.create(mailAttachment);
 	}
 }

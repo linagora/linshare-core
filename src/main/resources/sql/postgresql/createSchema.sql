@@ -408,7 +408,7 @@ CREATE TABLE mail_content (
   override           bool DEFAULT 'false' NOT NULL,
   language          int4,
   description        text,
-  name               varchar(255) NOT NULL,
+  name               varchar(255),
   mail_config_id    int8 NOT NULL,
   domain_abstract_id int8 NOT NULL,
   cid               varchar(255),

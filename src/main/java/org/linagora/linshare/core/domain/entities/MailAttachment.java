@@ -47,7 +47,7 @@ public class MailAttachment {
 
 	private Boolean override;
 
-	private int language;
+	private Integer language;
 
 	private String description;
 
@@ -65,7 +65,7 @@ public class MailAttachment {
 		super();
 	}
 
-	public MailAttachment(Boolean enable, Document document, Boolean override, int language,
+	public MailAttachment(Boolean enable, Document document, Boolean override, Integer language,
 			String description, String name, MailConfig mailConfig, AbstractDomain domain, String cid, String alt) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
@@ -121,11 +121,11 @@ public class MailAttachment {
 		this.override = override;
 	}
 
-	public int getLanguage() {
+	public Integer getLanguage() {
 		return language;
 	}
 
-	public void setLanguage(int language) {
+	public void setLanguage(Integer language) {
 		this.language = language;
 	}
 

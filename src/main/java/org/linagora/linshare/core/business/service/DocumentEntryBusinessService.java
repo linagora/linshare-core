@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.business.service;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.List;
@@ -46,10 +45,11 @@ import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.service.AbstractDocumentBusinessService;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 
-public interface DocumentEntryBusinessService {
+public interface DocumentEntryBusinessService extends AbstractDocumentBusinessService {
 
 	DocumentEntry createDocumentEntry(Account owner, File myFile, Long size, String fileName, String comment,
 			Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate,
@@ -63,8 +63,6 @@ public interface DocumentEntryBusinessService {
 	public DocumentEntry updateDocumentEntry(Account owner, DocumentEntry docEntry, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate) throws BusinessException ;
 
 	public void deleteDocumentEntry(DocumentEntry documentEntry) throws BusinessException ;
-
-	public byte[] getTimeStamp(String fileName, File tempFile, String timeStampingUrl) throws BusinessException;
 
 	public InputStream getDocumentThumbnailStream(DocumentEntry entry, ThumbnailType kind) ;
 
@@ -99,11 +97,6 @@ public interface DocumentEntryBusinessService {
 
 	List<DocumentEntry> findAllMySyncEntries(Account owner) throws BusinessException;
 
-	String SHA256CheckSumFileStream(File file);
-
-	String SHA256CheckSumFileStream(InputStream fs) throws IOException;
-
-	
 	List<String> findAllExpiredEntries();
 
 	void deleteDocument(Document document)
