@@ -50,7 +50,7 @@
 		<constructor-arg ref="mimeTypeService" />
 		<constructor-arg ref="virusScannerService" />
 		<constructor-arg ref="mimeTypeMagicNumberDao" />
-		<constructor-arg ref="antiSamyService" />
+		<constructor-arg ref="sanitizerInputHtmlBusinessService" />
 		<constructor-arg ref="documentEntryResourceAccessControl" />
 		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="operationHistoryBusinessService" />
@@ -271,7 +271,7 @@
 		<constructor-arg ref="workGroupNodeMongoRepository" />
 		<constructor-arg ref="threadMemberRepository" />
 		<constructor-arg ref="mongoTemplate" />
-		<constructor-arg ref="antiSamyService" />
+		<constructor-arg ref="sanitizerInputHtmlBusinessService" />
 		<constructor-arg ref="logEntryService" />
 	</bean>
 
@@ -280,7 +280,7 @@
 		<constructor-arg ref="workGroupDocumentService" />
 		<constructor-arg ref="workGroupFolderService" />
 		<constructor-arg ref="logEntryService" />
-		<constructor-arg ref="antiSamyService" />
+		<constructor-arg ref="sanitizerInputHtmlBusinessService" />
 		<constructor-arg ref="mongoTemplate" />
 		<constructor-arg ref="workGroupNodeResourceAccessControl" />
 	</bean>
@@ -296,7 +296,7 @@
 		<constructor-arg ref="mimeTypeService" />
 		<constructor-arg ref="virusScannerService" />
 		<constructor-arg ref="mimeTypeMagicNumberDao" />
-		<constructor-arg ref="antiSamyService" />
+		<constructor-arg ref="sanitizerInputHtmlBusinessService" />
 		<constructor-arg ref="operationHistoryBusinessService" />
 		<constructor-arg ref="quotaService"/>
 	</bean>

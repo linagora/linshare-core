@@ -39,6 +39,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
@@ -66,7 +67,6 @@ import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.rac.DocumentEntryResourceAccessControl;
 import org.linagora.linshare.core.service.AbstractDomainService;
-import org.linagora.linshare.core.service.AntiSamyService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
@@ -103,7 +103,7 @@ public class DocumentEntryServiceImpl
 
 	private final MimeTypeMagicNumberDao mimeTypeIdentifier;
 
-	private final AntiSamyService antiSamyService;
+	private final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService;
 
 	private final NotifierService notifierService;
 
@@ -117,7 +117,7 @@ public class DocumentEntryServiceImpl
 			MimeTypeService mimeTypeService,
 			VirusScannerService virusScannerService,
 			MimeTypeMagicNumberDao mimeTypeIdentifier,
-			AntiSamyService antiSamyService,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			DocumentEntryResourceAccessControl rac,
 			NotifierService notifierService, 
 			OperationHistoryBusinessService operationHistoryBusinessService,
@@ -131,7 +131,7 @@ public class DocumentEntryServiceImpl
 		this.mimeTypeService = mimeTypeService;
 		this.virusScannerService = virusScannerService;
 		this.mimeTypeIdentifier = mimeTypeIdentifier;
-		this.antiSamyService = antiSamyService;
+		this.sanitizerInputHtmlBusinessService = sanitizerInputHtmlBusinessService;
 		this.notifierService = notifierService;
 		this.quotaService = quotaService;
 	}
@@ -323,7 +323,7 @@ public class DocumentEntryServiceImpl
 			// We need to set an expiration date in case of file cleaner
 			// activation.
 			documentEntry = documentEntryBusinessService.updateDocumentEntry(
-					owner, originalEntry, tempFile, newDocSize, fileName,
+					owner, originalEntry, tempFile, newDocSize, sanitizeFileName(fileName),
 					checkIfIsCiphered, timeStampingUrl, mimeType,
 					getDocumentExpirationDate(owner.getDomain()));
 			// add new resource to the log entry
@@ -518,7 +518,7 @@ public class DocumentEntryServiceImpl
 		checkUpdatePermission(actor, owner, DocumentEntry.class,
 				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, entry);
 		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, entry, LogAction.UPDATE);
-		DocumentEntry res = documentEntryBusinessService.renameDocumentEntry(entry, newName);
+		DocumentEntry res = documentEntryBusinessService.renameDocumentEntry(entry, sanitizeFileName(newName));
 		log.setResourceUpdated(new DocumentMto(res));
 		logEntryService.insert(log);
 	}
@@ -542,7 +542,7 @@ public class DocumentEntryServiceImpl
 		checkUpdatePermission(actor, owner, DocumentEntry.class,
 				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, entry);
 		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, entry, LogAction.UPDATE);
-		DocumentEntry res = documentEntryBusinessService.updateFileProperties(entry, newName, fileComment, meta);
+		DocumentEntry res = documentEntryBusinessService.updateFileProperties(entry, sanitizeFileName(newName), fileComment, meta);
 		log.setResourceUpdated(new DocumentMto(res));
 		logEntryService.insert(log);
 		return res;
@@ -560,6 +560,7 @@ public class DocumentEntryServiceImpl
 						"You are not authorized to update this document.");
 			}
 		}
+		newName = sanitizeFileName(newName);
 		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, actor, entry, LogAction.UPDATE);
 		if (!isFromCmisSync)
 			entry.setCmisSync(false);
@@ -576,7 +577,7 @@ public class DocumentEntryServiceImpl
 	private String sanitizeFileName(String fileName) throws BusinessException {
 		fileName = fileName.replace("\\", "_");
 		fileName = fileName.replace(":", "_");
-		fileName = antiSamyService.clean(fileName);
+		fileName = sanitizerInputHtmlBusinessService.clean(fileName);
 		if (fileName.isEmpty()) {
 			throw new BusinessException(BusinessErrorCode.INVALID_FILENAME,
 					"fileName is empty after the xss filter");

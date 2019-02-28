@@ -32,12 +32,29 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.core.business.service.impl;
 
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.owasp.html.HtmlPolicyBuilder;
+import org.owasp.html.PolicyFactory;
 
-public interface AntiSamyService {
+public class SanitizerInputHtmlBusinessServiceImpl implements SanitizerInputHtmlBusinessService {
 
-	String clean(String value) throws BusinessException;
+	private final PolicyFactory policyFactory;
 
+	public SanitizerInputHtmlBusinessServiceImpl() {
+		this.policyFactory = new HtmlPolicyBuilder().toFactory();
+	}
+
+	@Override
+	public String clean(String value) throws BusinessException {
+		if (value == null)
+			return null;
+		value = policyFactory.sanitize(value).trim();
+		if (value.isEmpty()) {
+			throw new IllegalArgumentException("fileName is empty after been sanitized");
+		}
+		return value;
+	}
 }

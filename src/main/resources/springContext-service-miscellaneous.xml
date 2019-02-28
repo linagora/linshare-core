@@ -25,11 +25,6 @@
 		<constructor-arg ref="accountRepository" />
 	</bean>
 
-	<bean id="antiSamyService"
-		class="org.linagora.linshare.core.service.impl.AntiSamyServiceImpl">
-		<constructor-arg ref="antiSamyPolicy" />
-	</bean>
-
 	<bean id="timeStampingService"
 		class="org.linagora.linshare.core.service.impl.TimeStampingServiceImpl">
 	</bean>
