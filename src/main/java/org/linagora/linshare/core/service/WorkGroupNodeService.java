@@ -53,7 +53,7 @@ public interface WorkGroupNodeService {
 	List<WorkGroupNode> findAll(Account actor, User owner, WorkGroup workGroup) throws BusinessException;
 
 	@Deprecated
-	List<WorkGroupNode> findAll(Account actor, Account owner, WorkGroup workGroup, String parentUuid, Boolean flatDocumentMode, WorkGroupNodeType nodeType)
+	List<WorkGroupNode> findAll(Account actor, Account owner, WorkGroup workGroup, String parentUuid, Boolean flat, List<WorkGroupNodeType> nodeTypes)
 			throws BusinessException;
 
 	@Deprecated
