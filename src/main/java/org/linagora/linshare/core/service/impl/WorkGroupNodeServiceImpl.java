@@ -45,8 +45,8 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -66,6 +66,7 @@ import org.linagora.linshare.mongo.entities.mto.CopyMto;
 import org.linagora.linshare.mongo.entities.mto.WorkGroupLightNode;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -87,6 +88,8 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 
 	protected final MongoTemplate mongoTemplate;
 
+	private static final String MODIFICATION_DATE = "modificationDate";
+
 	public WorkGroupNodeServiceImpl(WorkGroupNodeMongoRepository repository, LogEntryService logEntryService,
 			WorkGroupDocumentService workGroupDocumentService,
 			WorkGroupFolderService workGroupFolderService,
@@ -104,33 +107,49 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 
 	@Override
 	public List<WorkGroupNode> findAll(Account actor, User owner, WorkGroup workGroup) throws BusinessException {
-		return findAll(actor, owner, workGroup, null, true, null);
+		return findAll(actor, owner, workGroup, null, true, Lists.newArrayList(WorkGroupNodeType.DOCUMENT));
 	}
 
 	@Override
-	public List<WorkGroupNode> findAll(Account actor, Account owner, WorkGroup workGroup, String parentUuid, Boolean flatDocumentMode, WorkGroupNodeType nodeType)
+	public List<WorkGroupNode> findAll(Account actor, Account owner, WorkGroup workGroup, String parentUuid, Boolean flat, List<WorkGroupNodeType> nodeTypes)
 			throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notNull(workGroup, "Missing workGroup");
 		checkListPermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, null, workGroup);
-		if (flatDocumentMode == null)
-			flatDocumentMode = false;
-		if (flatDocumentMode) {
-			return repository.findByWorkGroupAndNodeType(workGroup.getLsUuid(), WorkGroupNodeType.DOCUMENT);
+		// code compliant with older line of codes.
+		if (flat == null) {
+			flat = false;
 		}
+		// code compliant with older line of codes.
+		if (nodeTypes == null) {
+			nodeTypes = Lists.newArrayList();
+		}
+		Sort defaultSort = new Sort(Sort.Direction.DESC, MODIFICATION_DATE);
+		if (flat) {
+			if (nodeTypes.isEmpty()) {
+				nodeTypes.add(WorkGroupNodeType.DOCUMENT);
+				nodeTypes.add(WorkGroupNodeType.FOLDER);
+			}
+			return repository.findByWorkGroupAndNodeTypes(workGroup.getLsUuid(), nodeTypes,
+					defaultSort);
+		}
+		// if parentUUid is null, it means we want to get the content of the root folder, so we need its uuid.
 		if (parentUuid == null) {
+			// looking for root the folder
 			List<WorkGroupNode> rootList = repository.findByWorkGroupAndParent(workGroup.getLsUuid(), workGroup.getLsUuid());
 			if (rootList.isEmpty()) {
+				// if there is no root folder, there is no content at all, no need to go further
 				return rootList;
+			} else {
+				// otherwise we retrieve the root folder uuid
+				WorkGroupNode root = rootList.get(0);
+				parentUuid = root.getUuid();
 			}
-			WorkGroupNode root = rootList.get(0);
-			parentUuid = root.getUuid();
 		}
-		Validate.notEmpty(parentUuid, "Missing workGroup parentUuid");
-		if (nodeType != null) {
-			return repository.findByWorkGroupAndParentAndNodeType(workGroup.getLsUuid(), parentUuid, nodeType);
+		if (nodeTypes.isEmpty()) {
+			return repository.findByWorkGroupAndParent(workGroup.getLsUuid(), parentUuid);
 		}
-		return repository.findByWorkGroupAndParent(workGroup.getLsUuid(), parentUuid);
+		return repository.findByWorkGroupAndParentAndNodeTypes(workGroup.getLsUuid(), parentUuid, nodeTypes, defaultSort);
 	}
 
 	@Override
@@ -351,7 +370,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 
 	private void deleteNode(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode) {
 		if (isFolder(workGroupNode)) {
-			List<WorkGroupNode> findAll = findAll(actor, owner, workGroup, workGroupNode.getUuid(), false, null);
+			List<WorkGroupNode> findAll = findAll(actor, owner, workGroup, workGroupNode.getUuid(), false, Lists.newArrayList());
 			for (WorkGroupNode node : findAll) {
 				deleteNode(actor, owner, workGroup, node);
 			}

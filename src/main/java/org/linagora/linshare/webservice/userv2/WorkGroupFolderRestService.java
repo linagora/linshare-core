@@ -63,7 +63,7 @@ public interface WorkGroupFolderRestService {
 
 	List<WorkGroupNode> copy(String workGroupUuid, String parentNodeUuid, CopyDto copy, boolean deleteShare) throws BusinessException;
 
-	List<WorkGroupNode> findAll(String workGroupUuid, String parentNodeUuid, Boolean flatDocumentMode, WorkGroupNodeType nodeType) throws BusinessException;
+	List<WorkGroupNode> findAll(String workGroupUuid, String parentNodeUuid, Boolean flat, List<WorkGroupNodeType> nodeTypes) throws BusinessException;
 
 	WorkGroupNode find(String workGroupUuid, String workGroupNodeUuid, Boolean withTree) throws BusinessException;
 

@@ -257,7 +257,7 @@ public class ThreadEntryRestServiceImpl extends WebserviceBase implements
 			@ApiParam(value = "The thread uuid.", required = true) @PathParam("threadUuid") String threadUuid)
 					throws BusinessException {
 		List<WorkGroupEntryDto> res = Lists.newArrayList();
-		List<WorkGroupNode> all = facade.findAll(null, threadUuid, null, true, null);
+		List<WorkGroupNode> all = facade.findAll(null, threadUuid, null, true, Lists.newArrayList(WorkGroupNodeType.DOCUMENT));
 		for (WorkGroupNode node : all) {
 			if (node.getNodeType().equals(WorkGroupNodeType.DOCUMENT)) {
 				res.add(new WorkGroupEntryDto((WorkGroupDocument) node));

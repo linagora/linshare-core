@@ -154,13 +154,17 @@ public class WorkGroupNodeRestServiceImpl extends WebserviceBase implements
 					})
 	@Override
 	public List<WorkGroupNode> findAll(
-			@ApiParam(value = "The workgroup uuid.", required = true) @PathParam("workGroupUuid") String workGroupUuid,
-			@ApiParam(value = "The parent uuid.", required = false) @QueryParam("parent") String parent,
-			@ApiParam(value = "True for enable flat document mode.", required = false) @QueryParam("flatDocumentMode") @DefaultValue("false") Boolean flatDocumentMode,
-			@ApiParam(value = "Filter by node type.", required = false) @QueryParam("type") WorkGroupNodeType nodeType
+			@ApiParam(value = "The workgroup uuid.", required = true)
+				@PathParam("workGroupUuid") String workGroupUuid,
+			@ApiParam(value = "The parent uuid.", required = false)
+				@QueryParam("parent") String parent,
+			@ApiParam(value = "True to enable flat document mode (DOCUMENT AND FOLDER only)", required = false)
+				@QueryParam("flat") @DefaultValue("false") Boolean flat,
+			@ApiParam(value = "Filter by node type.", required = false)
+				@QueryParam("type") List<WorkGroupNodeType> nodeTypes
 			)
 				throws BusinessException {
-		return workGroupNodeFacade.findAll(null, workGroupUuid, parent, flatDocumentMode, nodeType);
+		return workGroupNodeFacade.findAll(null, workGroupUuid, parent, flat, nodeTypes);
 	}
 
 	@Path("/{workGroupNodeUuid}")

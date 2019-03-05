@@ -36,17 +36,18 @@ package org.linagora.linshare.core.facade.webservice.delegation.impl;
 
 import java.io.File;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.TargetKind;
+import org.linagora.linshare.core.domain.constants.ThumbnailType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.constants.ThumbnailType;
-import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.objects.CopyResource;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.common.dto.WorkGroupEntryDto;
@@ -148,13 +149,10 @@ public class WorkGroupEntryFacadeImpl extends DelegationGenericFacadeImpl
 
 		// Check if we have the right to access to the specified thread
 		WorkGroup workGroup = threadService.find(authUser, actor, threadUuid);
-		List<WorkGroupNode> all = workGroupNodeService.findAll(authUser, actor, workGroup, null, true, null);
-		List<WorkGroupEntryDto> ret = Lists.newArrayList();
-		for (WorkGroupNode node : all) {
-			if (node.getNodeType().equals(WorkGroupNodeType.DOCUMENT)) {
-				ret.add(new WorkGroupEntryDto((WorkGroupDocument)node));
-			}
-		}
+		List<WorkGroupNode> all = workGroupNodeService.findAll(authUser, actor, workGroup, null, true, Lists.newArrayList(WorkGroupNodeType.DOCUMENT));
+		List<WorkGroupEntryDto> ret = all.stream()
+				.map(node -> new WorkGroupEntryDto((WorkGroupDocument) node))
+				.collect(Collectors.toList());
 		return ret;
 	}
 

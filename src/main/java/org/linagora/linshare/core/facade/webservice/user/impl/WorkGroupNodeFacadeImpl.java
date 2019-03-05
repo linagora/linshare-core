@@ -122,13 +122,13 @@ public class WorkGroupNodeFacadeImpl extends UserGenericFacadeImp implements Wor
 
 	@Override
 	public List<WorkGroupNode> findAll(String actorUuid, String workGroupUuid, String parentNodeUuid,
-			Boolean flatDocumentMode, WorkGroupNodeType nodeType) throws BusinessException {
+			Boolean flat, List<WorkGroupNodeType> nodeTypes) throws BusinessException {
 		Validate.notEmpty(workGroupUuid, "Missing required workGroup uuid");
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, actorUuid);
 		SharedSpaceNode sharedSpaceNode = sharedSpaceNodeService.find(authUser, actor, workGroupUuid);
 		WorkGroup workGroup = threadService.find(authUser, actor, sharedSpaceNode.getUuid());
-		return service.findAll(authUser, actor, workGroup, parentNodeUuid, flatDocumentMode, nodeType);
+		return service.findAll(authUser, actor, workGroup, parentNodeUuid, flat, nodeTypes);
 	}
 
 	@Override

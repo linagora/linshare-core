@@ -50,7 +50,7 @@ import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
 
 public interface WorkGroupNodeFacade extends GenericFacade {
 
-	List<WorkGroupNode> findAll(String actorUuid, String workGroupUuid, String parentNodeUuid, Boolean flatDocumentMode, WorkGroupNodeType nodeType) throws BusinessException;
+	List<WorkGroupNode> findAll(String actorUuid, String workGroupUuid, String parentNodeUuid, Boolean flatDocumentMode, List<WorkGroupNodeType> nodeTypes) throws BusinessException;
 
 	WorkGroupNode find(String actorUuid, String workGroupUuid, String workGroupNodeUuid, Boolean withTree) throws BusinessException;
 
