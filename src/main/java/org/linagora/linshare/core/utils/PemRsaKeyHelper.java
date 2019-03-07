@@ -117,7 +117,10 @@ public class PemRsaKeyHelper {
 				sb.append(str + '\n');
 			}
 			String pem = sb.toString();
-			logger.debug("loadPemKey : " + pem);
+			logger.debug("loadPemKey : " + pem.substring(0, 100));
+			if (logger.isTraceEnabled()) {
+				logger.trace("loadPemKey : " + pem);
+			}
 			return pem;
 		} catch (IOException e) {
 			logger.debug(e.getMessage(), e);
