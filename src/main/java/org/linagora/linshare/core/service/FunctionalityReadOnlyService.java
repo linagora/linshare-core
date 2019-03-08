@@ -127,6 +127,4 @@ public interface FunctionalityReadOnlyService {
 	Functionality getJwtLongTimeFunctionalityForUser(AbstractDomain domain);
 
 	Functionality getJwtLongTimeFunctionality(String domainuuid);
-
-	Functionality getMailAttachmentFucntionality(AbstractDomain domain);
 }

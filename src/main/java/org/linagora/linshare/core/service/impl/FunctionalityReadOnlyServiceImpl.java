@@ -428,9 +428,4 @@ public class FunctionalityReadOnlyServiceImpl implements
 	public Functionality getWorkGroupFileEdition(AbstractDomain domain) {
 		return _getFunctionality(domain, FunctionalityNames.WORK_GROUP__FILE_EDITION);
 	}
-
-	@Override
-	public Functionality getMailAttachmentFucntionality(AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.UPLOAD_MAIL_ATTACHMENT);
-	}
 }
