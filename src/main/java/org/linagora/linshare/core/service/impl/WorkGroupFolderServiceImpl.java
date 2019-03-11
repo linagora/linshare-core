@@ -37,6 +37,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -46,7 +47,6 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
-import org.linagora.linshare.core.service.AntiSamyService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.WorkGroupFolderService;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
@@ -61,10 +61,10 @@ public class WorkGroupFolderServiceImpl extends WorkGroupNodeAbstractServiceImpl
 			WorkGroupNodeMongoRepository repository,
 			ThreadMemberRepository threadMemberRepository,
 			MongoTemplate mongoTemplate,
-			AntiSamyService antiSamyService,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			LogEntryService logEntryService,
 			SharedSpaceMemberBusinessService sharedSpaceMemberBusinessService) {
-		super(repository, mongoTemplate, antiSamyService, threadMemberRepository, logEntryService, sharedSpaceMemberBusinessService);
+		super(repository, mongoTemplate, sanitizerInputHtmlBusinessService, threadMemberRepository, logEntryService, sharedSpaceMemberBusinessService);
 	}
 
 	@Override

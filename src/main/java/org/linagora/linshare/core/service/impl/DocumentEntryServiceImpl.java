@@ -39,6 +39,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
 import org.linagora.linshare.core.business.service.UploadRequestEntryBusinessService;
@@ -69,7 +70,6 @@ import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.rac.DocumentEntryResourceAccessControl;
 import org.linagora.linshare.core.service.AbstractDomainService;
-import org.linagora.linshare.core.service.AntiSamyService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityReadOnlyService;
 import org.linagora.linshare.core.service.LogEntryService;
@@ -106,7 +106,7 @@ public class DocumentEntryServiceImpl
 
 	private final MimeTypeMagicNumberDao mimeTypeIdentifier;
 
-	private final AntiSamyService antiSamyService;
+	private final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService;
 
 	private final NotifierService notifierService;
 
@@ -122,7 +122,7 @@ public class DocumentEntryServiceImpl
 			MimeTypeService mimeTypeService,
 			VirusScannerService virusScannerService,
 			MimeTypeMagicNumberDao mimeTypeIdentifier,
-			AntiSamyService antiSamyService,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService,
 			DocumentEntryResourceAccessControl rac,
 			NotifierService notifierService, 
 			OperationHistoryBusinessService operationHistoryBusinessService,
@@ -137,7 +137,7 @@ public class DocumentEntryServiceImpl
 		this.mimeTypeService = mimeTypeService;
 		this.virusScannerService = virusScannerService;
 		this.mimeTypeIdentifier = mimeTypeIdentifier;
-		this.antiSamyService = antiSamyService;
+		this.sanitizerInputHtmlBusinessService = sanitizerInputHtmlBusinessService;
 		this.notifierService = notifierService;
 		this.quotaService = quotaService;
 		this.uploadRequestEntryBusinessService = uploadRequestEntryBusinessService;
@@ -549,7 +549,7 @@ public class DocumentEntryServiceImpl
 		checkUpdatePermission(actor, owner, DocumentEntry.class,
 				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, entry);
 		DocumentEntryAuditLogEntry log = new DocumentEntryAuditLogEntry(actor, owner, entry, LogAction.UPDATE);
-		DocumentEntry res = documentEntryBusinessService.updateFileProperties(entry, newName, fileComment, meta);
+		DocumentEntry res = documentEntryBusinessService.updateFileProperties(entry, sanitizeFileName(newName), fileComment, meta);
 		log.setResourceUpdated(new DocumentMto(res));
 		logEntryService.insert(log);
 		return res;
@@ -571,6 +571,7 @@ public class DocumentEntryServiceImpl
 		if (!isFromCmisSync)
 			entry.setCmisSync(false);
 		else {
+			sanitizeFileName(newName);
 			documentEntryBusinessService.syncUniqueDocument(actor, newName);
 			entry.setCmisSync(true);
 		}
@@ -583,7 +584,7 @@ public class DocumentEntryServiceImpl
 	private String sanitizeFileName(String fileName) throws BusinessException {
 		fileName = fileName.replace("\\", "_");
 		fileName = fileName.replace(":", "_");
-		fileName = antiSamyService.clean(fileName);
+		fileName = sanitizerInputHtmlBusinessService.clean(fileName);
 		if (fileName.isEmpty()) {
 			throw new BusinessException(BusinessErrorCode.INVALID_FILENAME,
 					"fileName is empty after the xss filter");
