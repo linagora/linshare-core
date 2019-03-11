@@ -17,11 +17,6 @@
 		<constructor-arg ref="eventNotificationMongoRepository" />
 	</bean>
 
-	<bean id="antiSamyService"
-		class="org.linagora.linshare.core.service.impl.AntiSamyServiceImpl">
-		<constructor-arg ref="antiSamyPolicy" />
-	</bean>
-
 	<bean name="functionalityReadOnlyService"
 		class="org.linagora.linshare.core.service.impl.FunctionalityReadOnlyServiceImpl">
 		<constructor-arg ref="functionalityRepository" />

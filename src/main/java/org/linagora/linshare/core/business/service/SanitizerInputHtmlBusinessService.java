@@ -32,11 +32,11 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.core.business.service;
 
 import org.linagora.linshare.core.exception.BusinessException;
 
-public interface AntiSamyService {
+public interface SanitizerInputHtmlBusinessService {
 
 	String clean(String value) throws BusinessException;
 

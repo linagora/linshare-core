@@ -10,11 +10,7 @@
 	<!-- apache tika -->
 	<bean id="mimeTypeMagicNumberDao" class="org.linagora.linshare.core.dao.tika.MimeTypeMagicNumberTikaImpl">
 	</bean>
-	
-	<bean name="antiSamyPolicy" class="org.owasp.validator.html.Policy" factory-method="getInstance">
-		<!-- type needed because there is also a getInstance(String) method -->
-		<constructor-arg value="classpath:antisamy-strict.xml" type="java.io.InputStream" />
-	</bean>
+
 	<bean name="notifierService" class="org.linagora.linshare.core.service.impl.MailNotifierServiceImpl">
 		<constructor-arg index="0" value="${mail.smtp.host}" />
 		<constructor-arg index="1" value="${mail.smtp.port}" />

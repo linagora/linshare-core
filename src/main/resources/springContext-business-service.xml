@@ -13,6 +13,10 @@
 		<constructor-arg ref="abstractDomainRepository" />
 	</bean>
 
+	<bean id="sanitizerInputHtmlBusinessService"
+		class="org.linagora.linshare.core.business.service.impl.SanitizerInputHtmlBusinessServiceImpl">
+	</bean>
+	
 	<bean id="documentEntryBusinessService" class="org.linagora.linshare.core.business.service.impl.DocumentEntryBusinessServiceImpl">
 		<constructor-arg ref="fileDataStore" />
 		<constructor-arg ref="timeStampingService" />
