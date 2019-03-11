@@ -38,6 +38,10 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface SanitizerInputHtmlBusinessService {
 
-	String clean(String value) throws BusinessException;
+	String strictClean(String entry) throws IllegalArgumentException;
+
+	String sanitizeFileName(String fileName) throws BusinessException;
+	
+	void checkSpecialChars(String entry) throws IllegalArgumentException;
 
 }

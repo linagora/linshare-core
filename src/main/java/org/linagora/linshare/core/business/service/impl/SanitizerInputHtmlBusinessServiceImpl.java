@@ -34,6 +34,8 @@
 
 package org.linagora.linshare.core.business.service.impl;
 
+import java.util.regex.Pattern;
+
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -42,20 +44,67 @@ import org.owasp.html.PolicyFactory;
 
 public class SanitizerInputHtmlBusinessServiceImpl implements SanitizerInputHtmlBusinessService {
 
+	private final Pattern specialChars = Pattern.compile("[$&?@#+=\\|<>/'^*%!]");
+
 	private final PolicyFactory policyFactory;
 
 	public SanitizerInputHtmlBusinessServiceImpl() {
 		this.policyFactory = new HtmlPolicyBuilder().toFactory();
 	}
 
+	/**
+	 * This function clean all inputs that contains untrusted HTML and also check if
+	 * it contains predefined special characters.
+	 * 
+	 * @param String
+	 *            It can contains untrusted HTML elements.
+	 * @return String cleaned from all HTML and trimmed.
+	 * @throws IllegalArgumentException.
+	 */
 	@Override
-	public String clean(String value) throws BusinessException {
-		if (value == null)
-			return null;
-		value = policyFactory.sanitize(value).trim();
-		if (value.isEmpty()) {
-			throw new BusinessException(BusinessErrorCode.INVALID_FILENAME, "This entry is empty after sanitizerition");
+	public String strictClean(String entry) throws IllegalArgumentException {
+		entry = policyFactory.sanitize(entry).trim();
+		if (entry.isEmpty()) {
+			throw new IllegalArgumentException("This entry is empty after been sanitized");
 		}
-		return value;
+		if (specialChars.matcher(entry).find()) {
+			throw new IllegalArgumentException("This entry contain a special character.");
+		}
+		return entry;
 	}
+
+	/**
+	 * It can be used for control the uploaded or updated file names 
+	 * @param String 
+	 *            It can contains untrusted HTML elements.
+	 * @return String cleaned from all HTML and trimmed.
+	 * @throws IllegalArgumentException.
+	 */
+	@Override
+	public String sanitizeFileName(String fileName) throws BusinessException {
+		fileName = fileName.replace("\\", "_");
+		fileName = fileName.replace(":", "_");
+		fileName = fileName.replace("?", "_");
+		fileName = fileName.replace("^", "_");
+		fileName = fileName.replace(",", "_");
+		fileName = fileName.replace("<", "_");
+		fileName = fileName.replace(">", "_");
+		fileName = fileName.replace("*", "_");
+		fileName = fileName.replace("/", "_");
+		fileName = fileName.replace("\"", "_");
+		fileName = fileName.replace("|", "_");
+		fileName = strictClean(fileName);
+		if (fileName.isEmpty()) {
+			throw new BusinessException(BusinessErrorCode.INVALID_FILENAME, "fileName is empty after been sanitized");
+		}
+		return fileName;
+	}
+
+	@Override
+	public void checkSpecialChars(String entry) throws IllegalArgumentException {
+		if (specialChars.matcher(entry).find()) {
+			throw new IllegalArgumentException("This entry contain a special character.");
+		}
+	}
+
 }

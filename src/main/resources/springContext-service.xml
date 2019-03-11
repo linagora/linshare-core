@@ -149,6 +149,7 @@
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="mailingListResourceAccessControl" />
 		<constructor-arg ref="logEntryService" />
+		<constructor-arg ref="sanitizerInputHtmlBusinessService" />
 	</bean>
 
 	<bean name="uploadRequestService" class="org.linagora.linshare.core.service.impl.UploadRequestServiceImpl">
@@ -187,6 +188,7 @@
 		<constructor-arg ref="containerQuotaBusinessService"/>
 		<constructor-arg ref="resetGuestPasswordMongoRepository"/>
 		<constructor-arg ref="accountQuotaBusinessService"/>
+		<constructor-arg ref="sanitizerInputHtmlBusinessService"/>
 	</bean>
 
 	<bean name="technicalAccountService" class="org.linagora.linshare.core.service.impl.TechnicalAccountServiceImpl">

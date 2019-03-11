@@ -100,6 +100,7 @@ public class ContactListFacadeImpl extends GenericFacadeImpl implements ContactL
 	@Override
 	public ContactListDto create(String actorUuid, ContactListDto dto) throws BusinessException {
 		Validate.notNull(dto, "Mailing list must be set.");
+		Validate.notNull(dto.getName(),"The contact list name must be set.");
 		User authUser = checkAuthentication();
 		ContactList list = dto.toObject();
 		User actor = getActor(authUser, actorUuid);

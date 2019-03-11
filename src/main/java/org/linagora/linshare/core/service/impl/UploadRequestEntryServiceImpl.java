@@ -153,7 +153,7 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		Validate.notEmpty(fileName, "fileName is required.");
 		UploadRequestEntry upReqEntry = null;
 		try {
-			fileName = sanitizeFileName(fileName);
+			fileName = sanitizerInputHtmlBusinessService.sanitizeFileName(fileName);
 			Long size = tempFile.length();
 			checkSpace(actor, size);
 			// detect file's mime type.
@@ -224,16 +224,6 @@ public class UploadRequestEntryServiceImpl extends GenericEntryServiceImpl<Accou
 		log.setFromResourceUuid(uploadRequestEntry.getUuid());
 		logEntryService.insert(log);
 		return entity;
-	}
-
-	private String sanitizeFileName(String fileName) throws BusinessException {
-		fileName = fileName.replace("\\", "_");
-		fileName = fileName.replace(":", "_");
-		fileName = sanitizerInputHtmlBusinessService.clean(fileName);
-		if (fileName.isEmpty()) {
-			throw new BusinessException(BusinessErrorCode.INVALID_FILENAME, "fileName is empty after the xss filter");
-		}
-		return fileName;
 	}
 
 	protected void checkSpace(Account owner, long size) throws BusinessException {

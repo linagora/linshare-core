@@ -39,6 +39,7 @@ import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.MailingListBusinessService;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Role;
@@ -66,13 +67,19 @@ public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactL
 	private final UserService userService;
 
 	private final LogEntryService logEntryService;
+	
+	private final SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService;
 
-	public ContactListServiceImpl(MailingListBusinessService contactListBusinessService, UserService userService,
-			final LogEntryService logEntryService, MailingListResourceAccessControl rac) {
+	public ContactListServiceImpl(MailingListBusinessService contactListBusinessService,
+			UserService userService,
+			final LogEntryService logEntryService,
+			MailingListResourceAccessControl rac,
+			SanitizerInputHtmlBusinessService sanitizerInputHtmlBusinessService) {
 		super(rac);
 		this.contactListBusinessService = contactListBusinessService;
 		this.userService = userService;
 		this.logEntryService = logEntryService;
+		this.sanitizerInputHtmlBusinessService = sanitizerInputHtmlBusinessService;
 	}
 
 	/**
@@ -86,6 +93,7 @@ public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactL
 		Validate.notNull(list);
 		User actor = userService.findByLsUuid(actorUuid);
 		User owner = userService.findByLsUuid(ownerUuid);
+		sanitizerInputHtmlBusinessService.strictClean(list.getIdentifier());
 		if (actor.hasSuperAdminRole())
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to create a list.");
 		ContactList res = contactListBusinessService.createList(list, owner);
@@ -170,6 +178,7 @@ public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactL
 		Validate.notEmpty(listToUpdate.getUuid());
 
 		User actor = userService.findByLsUuid(actorUuid);
+		sanitizerInputHtmlBusinessService.strictClean(listToUpdate.getIdentifier());
 		ContactList found = contactListBusinessService.findByUuid(listToUpdate.getUuid());
 		if (!actor.hasSuperAdminRole()) {
 			checkRights(actor, listToUpdate, "You are not authorized to update this list.");
@@ -225,7 +234,8 @@ public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactL
 	public void updateContact(String actorUuid, ContactListContact contactToUpdate) throws BusinessException {
 		Validate.notNull(actorUuid);
 		Validate.notNull(contactToUpdate);
-
+		sanitizerInputHtmlBusinessService.strictClean(contactToUpdate.getFirstName());
+		sanitizerInputHtmlBusinessService.strictClean(contactToUpdate.getLastName());
 		ContactListContact contact = contactListBusinessService.findContact(contactToUpdate.getUuid());
 		ContactList list = contact.getMailingList();
 		User actor = userService.findByLsUuid(actorUuid);
@@ -286,7 +296,7 @@ public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactL
 	public ContactList create(Account actor, Account owner, ContactList list) throws BusinessException {
 		Validate.notNull(list, "Contact list must be set.");
 		preChecks(actor, owner);
-
+		sanitizerInputHtmlBusinessService.strictClean(list.getIdentifier());
 		checkCreatePermission(actor, owner, ContactList.class, BusinessErrorCode.FORBIDDEN, null);
 		ContactList listCreated = contactListBusinessService.createList(list, (User) owner);
 		MailingListAuditLogEntry log = new MailingListAuditLogEntry(new AccountMto(actor),
@@ -336,6 +346,7 @@ public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactL
 				listToUpdate.setNewOwner(listOwner);
 			}
 		}
+		sanitizerInputHtmlBusinessService.strictClean(list.getIdentifier());
 		listToUpdate = contactListBusinessService.update(listToUpdate, list);
 		log.setResourceUpdated(new MailingListMto(listToUpdate));
 		logEntryService.insert(log);
@@ -378,7 +389,8 @@ public class ContactListServiceImpl extends GenericServiceImpl<Account, ContactL
 		preChecks(actor, owner);
 		Validate.notNull(contact, "Contact must be set.");
 		Validate.notEmpty(contact.getUuid(), "Contact uuid must be set.");
-
+		sanitizerInputHtmlBusinessService.strictClean(contact.getFirstName());
+		sanitizerInputHtmlBusinessService.strictClean(contact.getLastName());
 		ContactListContact contactToUpdate = contactListBusinessService.findContact(contact.getUuid());
 		ContactList list = contactToUpdate.getMailingList();
 		MailingListContactAuditLogEntry log = new MailingListContactAuditLogEntry(new AccountMto(actor),

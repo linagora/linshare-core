@@ -42,6 +42,7 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.ContainerQuotaBusinessService;
 import org.linagora.linshare.core.business.service.GuestBusinessService;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.ContainerQuotaType;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -100,7 +101,9 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 
 	private final AccountQuotaBusinessService accountQuotaBusinessService;
 
-	protected final ResetGuestPasswordMongoRepository resetGuestPasswordMongoRepository;	
+	protected final ResetGuestPasswordMongoRepository resetGuestPasswordMongoRepository;
+	
+	protected final SanitizerInputHtmlBusinessService sanitizer;
 
 	public GuestServiceImpl(final GuestBusinessService guestBusinessService,
 			final AbstractDomainService abstractDomainService,
@@ -112,7 +115,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 			final GuestResourceAccessControl rac,
 			final ContainerQuotaBusinessService containerQuotaBusinessService,
 			final ResetGuestPasswordMongoRepository resetGuestPasswordMongoRepository,
-			final AccountQuotaBusinessService accountQuotaBusinessService) {
+			final AccountQuotaBusinessService accountQuotaBusinessService,
+			final SanitizerInputHtmlBusinessService sanitier) {
 		super(rac);
 		this.guestBusinessService = guestBusinessService;
 		this.abstractDomainService = abstractDomainService;
@@ -124,6 +128,7 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 		this.containerQuotaBusinessService = containerQuotaBusinessService;
 		this.accountQuotaBusinessService = accountQuotaBusinessService;
 		this.resetGuestPasswordMongoRepository = resetGuestPasswordMongoRepository;
+		this.sanitizer = sanitier;
 	}
 
 	@Override
@@ -194,6 +199,8 @@ public class GuestServiceImpl extends GenericServiceImpl<Account, Guest>
 			List<String> restrictedMails) throws BusinessException {
 		preChecks(actor, owner);
 		Validate.notNull(guest);
+		sanitizer.checkSpecialChars(guest.getFirstName());
+		sanitizer.checkSpecialChars(guest.getLastName());
 		if (guest.isRestricted()) {
 			Validate.notNull(restrictedMails,
 					"A restricted guest must have a restricted list of contacts (mails)");

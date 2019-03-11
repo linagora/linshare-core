@@ -251,7 +251,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED, "Can not create this kind of node with this method.");
 		}
 		WorkGroupNode nodeParent = getParentNode(actor, owner, workGroup, workGroupNode.getParent());
-		String fileName = sanitizeFileName(workGroupNode.getName());
+		String fileName = sanitizerInputHtmlBusinessService.sanitizeFileName(workGroupNode.getName());
 		if (strict) {
 			workGroupFolderService.checkUniqueName(workGroup, nodeParent, fileName);
 		} else {
@@ -266,7 +266,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 			String parentNodeUuid, Boolean strict) throws BusinessException {
 		preChecks(actor, owner);
 		checkCreatePermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, null, workGroup);
-		fileName = sanitizeFileName(fileName);
+		fileName = sanitizerInputHtmlBusinessService.sanitizeFileName(fileName);
 		if (parentNodeUuid != null && parentNodeUuid.isEmpty()) {
 			parentNodeUuid = null;
 		}
@@ -465,7 +465,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		Validate.notEmpty(cr.getDocumentUuid(), "Missing documentUuid");
 		Validate.notEmpty(cr.getName(), "Missing fileName");
 		checkCreatePermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, null, toWorkGroup);
-		String fileName = sanitizeFileName(cr.getName());
+		String fileName = sanitizerInputHtmlBusinessService.sanitizeFileName(cr.getName());
 		if (toNodeUuid != null && toNodeUuid.isEmpty()) {
 			toNodeUuid = null;
 		}
@@ -611,22 +611,6 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 			}
 		}
 		return nodeParent;
-	}
-
-	protected String sanitizeFileName(String fileName) throws BusinessException {
-		fileName = fileName.replace("\\", "_");
-		fileName = fileName.replace(":", "_");
-		fileName = fileName.replace("?", "_");
-		fileName = fileName.replace("^", "_");
-		fileName = fileName.replace(",", "_");
-		fileName = fileName.replace("<", "_");
-		fileName = fileName.replace(">", "_");
-		fileName = fileName.replace("*", "_");
-		fileName = fileName.replace("/", "_");
-		fileName = fileName.replace("\"", "_");
-		fileName = fileName.replace("|", "_");
-		fileName = sanitizerInputHtmlBusinessService.clean(fileName);
-		return fileName;
 	}
 
 	protected boolean isDocument(WorkGroupNode node) {
