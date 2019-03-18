@@ -565,7 +565,7 @@ public class DocumentEntryServiceImpl
 		if (!isFromCmisSync)
 			entry.setCmisSync(false);
 		else {
-			sanitizeFileName(newName);
+			newName = sanitizeFileName(newName);
 			documentEntryBusinessService.syncUniqueDocument(actor, newName);
 			entry.setCmisSync(true);
 		}
