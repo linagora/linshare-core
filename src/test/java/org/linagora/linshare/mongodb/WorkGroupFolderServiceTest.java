@@ -340,6 +340,12 @@ public class WorkGroupFolderServiceTest extends AbstractTransactionalJUnit4Sprin
 		Assert.assertEquals(",thread1,", service.find(jane, jane, workGroup, nodea1.getUuid(), tree).getPath());
 		Assert.assertEquals(",thread1,my.folder-a-1,my.folder-a-b-1,", service.find(jane, jane, workGroup, nodeabc1.getUuid(), tree).getPath());
 
+		// Update description
+		Assert.assertNull(nodea1.getDescription());
+		nodea1.setDescription("Test description");
+		service.update(jane, jane, workGroup, nodea1);
+		Assert.assertEquals(nodea1.getDescription(), "Test description");
+
 		// updating node moving folder abc1 from ab1 to a1.
 		nodeabc1.setParent(nodea1.getUuid());
 		nodeabc1.setName("coucou");

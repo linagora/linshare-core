@@ -137,6 +137,7 @@ public class WorkGroupNode implements Cloneable {
 		this.parent = wgf.getParent();
 		this.workGroup = wgf.getWorkGroup();
 		this.path = null;
+		this.description = wgf.getDescription();
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
 		this.lastAuthor = wgf.getLastAuthor();

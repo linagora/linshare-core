@@ -340,7 +340,9 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 				updatePath = true;
 			} else {
 				// Check if name is unique in the parent node (current)
-				checkUniqueName(workGroup, nodeParent, dto.getName(), node.getNodeType());
+				if (!node.getName().equals(originalName)) {
+					checkUniqueName(workGroup, nodeParent, dto.getName(), node.getNodeType());
+				}
 			}
 		} else {
 			nodeParent = find(actor, owner, workGroup, node.getParent(), false);
