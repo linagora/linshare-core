@@ -49,8 +49,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.MailAttachmentService;
 
-import com.google.common.base.Strings;
-
 public class MailAttachmentServiceImpl implements MailAttachmentService {
 
 	protected final MailAttachmentBusinessService attachmentBusinessService;
@@ -85,6 +83,7 @@ public class MailAttachmentServiceImpl implements MailAttachmentService {
 	@Override
 	public MailAttachment find(Account authUser, String uuid) {
 		Validate.notNull(authUser, "AuthUser must be set.");
+		Validate.notEmpty(uuid, "Mail attachment's Uuid must be set");
 		checkAdminFor(authUser, authUser.getDomain());
 		MailAttachment found = attachmentBusinessService.findByUuid(uuid);
 		if (found == null) {
@@ -120,14 +119,12 @@ public class MailAttachmentServiceImpl implements MailAttachmentService {
 	@Override
 	public MailAttachment update(Account authUser, MailAttachment attachmentToUpdate, MailAttachment mailAttach) {
 		Validate.notNull(attachmentToUpdate, "Mail attachment must be set");
+		Validate.notEmpty(mailAttach.getName(), "Name must be set");
 		checkAdminFor(authUser, authUser.getDomain());
 		attachmentToUpdate.setEnable(mailAttach.getEnable());
 		attachmentToUpdate.setOverride(mailAttach.getOverride());
 		attachmentToUpdate.setLanguage(mailAttach.getLanguage());
 		attachmentToUpdate.setDescription(mailAttach.getDescription());
-		if (Strings.isNullOrEmpty(mailAttach.getName())) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "Name can not be null");
-		}
 		attachmentToUpdate.setName(mailAttach.getName());
 		attachmentToUpdate.setCid(mailAttach.getCid());
 		return attachmentBusinessService.update(attachmentToUpdate);

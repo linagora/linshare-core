@@ -87,12 +87,13 @@ public class MailAttachmentFacadeImpl extends AdminGenericFacadeImpl implements 
 		Account authUser = checkAuthentication(Role.ADMIN);
 		MailAttachment mailAttachment = new MailAttachment();
 		if (!Strings.isNullOrEmpty(uuid)) {
-			mailAttachment = attachmentService.find(authUser, uuid);
+			mailAttachment.setUuid(uuid);
 		} else {
 			Validate.notNull(attachment, "MailAttachment object must be set");
 			Validate.notEmpty(attachment.getUuid(), "MailAttachment uuid must be set");
-			mailAttachment = attachmentService.find(authUser, attachment.getUuid());
+			mailAttachment.setUuid(attachment.getUuid());
 		}
+		mailAttachment = attachmentService.find(authUser, mailAttachment.getUuid());
 		mailAttachment = attachmentService.delete(authUser, mailAttachment);
 		return new MailAttachmentDto(mailAttachment);
 	}
@@ -121,12 +122,13 @@ public class MailAttachmentFacadeImpl extends AdminGenericFacadeImpl implements 
 		Account authUser = checkAuthentication(Role.ADMIN);
 		MailAttachment attachmentToUpdate = new MailAttachment();
 		if (!Strings.isNullOrEmpty(uuid)) {
-			attachmentToUpdate = attachmentService.find(authUser, uuid);
+			attachmentToUpdate.setUuid(uuid);
 		} else {
 			Validate.notNull(attachment, "MailAttachment object must be set");
 			Validate.notEmpty(attachment.getUuid(), "MailAttachment uuid must be set");
-			attachmentToUpdate = attachmentService.find(authUser, attachment.getUuid());
+			attachmentToUpdate.setUuid(attachment.getUuid());
 		}
+		attachmentToUpdate = attachmentService.find(authUser, attachmentToUpdate.getUuid());
 		MailAttachment mailAttach = attachment.toObject();
 		attachmentService.update(authUser, attachmentToUpdate, mailAttach);
 		return new MailAttachmentDto(attachmentToUpdate);
