@@ -40,6 +40,8 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainPermissionBusinessService;
 import org.linagora.linshare.core.business.service.MailAttachmentBusinessService;
 import org.linagora.linshare.core.business.service.MailConfigBusinessService;
+import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MailAttachment;
@@ -48,6 +50,8 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.MailAttachmentService;
+import org.linagora.linshare.mongo.entities.logs.MailAttachmentAuditLogEntry;
+import org.linagora.linshare.mongo.repository.AuditAdminMongoRepository;
 
 public class MailAttachmentServiceImpl implements MailAttachmentService {
 
@@ -59,16 +63,20 @@ public class MailAttachmentServiceImpl implements MailAttachmentService {
 
 	private final DomainPermissionBusinessService domainPermissionService;
 
+	private final AuditAdminMongoRepository mongoRepository;
+
 	public MailAttachmentServiceImpl(
 			MailAttachmentBusinessService attachmentBusinessService,
 			MailConfigBusinessService configService,
 			DocumentEntryService documentEntryService,
-			DomainPermissionBusinessService domainPermissionService) {
+			DomainPermissionBusinessService domainPermissionService,
+			AuditAdminMongoRepository mongoRepository) {
 		super();
 		this.attachmentBusinessService = attachmentBusinessService;
 		this.configService = configService;
 		this.documentEntryService = documentEntryService;
 		this.domainPermissionService = domainPermissionService;
+		this.mongoRepository = mongoRepository;
 	}
 
 	@Override
@@ -77,6 +85,7 @@ public class MailAttachmentServiceImpl implements MailAttachmentService {
 		MailConfig config = configService.findByUuid(mailConfig);
 		MailAttachment attachment = attachmentBusinessService.create(authUser, enable, fileName, override, config,
 				description, alt, cid, language, tempFile, metaData);
+		saveLog(authUser, LogAction.CREATE, attachment);
 		return attachment;
 	}
 
@@ -90,6 +99,7 @@ public class MailAttachmentServiceImpl implements MailAttachmentService {
 			String message = "The requested mail attachment has not been found.";
 			throw new BusinessException(BusinessErrorCode.MAIL_ATTACHMENT_NOT_FOUND, message);
 		}
+		saveLog(authUser, LogAction.GET, found);
 		return found;
 	}
 
@@ -113,6 +123,7 @@ public class MailAttachmentServiceImpl implements MailAttachmentService {
 		Validate.notNull(mailAttachment, "Mail attachment must be set");
 		checkAdminFor(authUser, authUser.getDomain());
 		attachmentBusinessService.delete(mailAttachment);
+		saveLog(authUser, LogAction.DELETE, mailAttachment);
 		return mailAttachment;
 	}
 
@@ -127,6 +138,15 @@ public class MailAttachmentServiceImpl implements MailAttachmentService {
 		attachmentToUpdate.setDescription(mailAttach.getDescription());
 		attachmentToUpdate.setName(mailAttach.getName());
 		attachmentToUpdate.setCid(mailAttach.getCid());
-		return attachmentBusinessService.update(attachmentToUpdate);
+		attachmentToUpdate = attachmentBusinessService.update(attachmentToUpdate);
+		saveLog(authUser, LogAction.UPDATE, attachmentToUpdate);
+		return attachmentToUpdate;
+	}
+
+	protected MailAttachmentAuditLogEntry saveLog(Account authUser, LogAction action, MailAttachment resource) {
+		MailAttachmentAuditLogEntry log = new MailAttachmentAuditLogEntry(authUser, action,
+				AuditLogEntryType.MAIL_ATTACHMENT, resource);
+		mongoRepository.insert(log);
+		return log;
 	}
 }
