@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2016-2018 LINAGORA
+ * Copyright (C) 2019 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2019. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -26,7 +26,7 @@
  * details.
  * 
  * You should have received a copy of the GNU Affero General Public License and
- * its applicable Additional Terms for LinShare along with this program. If not,
+ * its applicable Additional Tgirterms for LinShare along with this program. If not,
  * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
@@ -46,25 +46,24 @@ import org.linagora.linshare.core.facade.webservice.common.dto.ErrorDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 
-import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
-
-public class UnrecognizedPropertyExceptionMapper implements ExceptionMapper<UnrecognizedPropertyException> {
+public class DataIntegrityViolationExceptionMapper implements ExceptionMapper<DataIntegrityViolationException> {
 
 	@Autowired
 	protected ExceptionStatisticAdminFacade exceptionStatisticFacade;
 	
-	private static final Logger logger = LoggerFactory.getLogger(UnrecognizedPropertyExceptionMapper.class);
+	private static final Logger logger = LoggerFactory.getLogger(DataIntegrityViolationExceptionMapper.class);
 
 	@Override
-	public Response toResponse(UnrecognizedPropertyException exception) {
-		logger.error("An unrecognized field excpetion was caught : " + exception.getLocalizedMessage() + ". ",
+	public Response toResponse(DataIntegrityViolationException exception) {
+		logger.error("Bad data format : " + exception.getLocalizedMessage() + ". ",
 				exception);
-		ErrorDto errorDto = new ErrorDto(BusinessErrorCode.WEBSERVICE_BAD_REQUEST.getCode(),
-				"You have an unrecognized field in your json check the : " + exception.getPropertyName().toString()
+		ErrorDto errorDto = new ErrorDto(BusinessErrorCode.WEBSERVICE_BAD_DATA_FORMAT.getCode(),
+				"Bad data format : " + exception.getMostSpecificCause().toString()
 				+ ", " + exception.getClass().toString());
 		ResponseBuilder response = Response.status(HttpStatus.SC_BAD_REQUEST);
-		exceptionStatisticFacade.createExceptionStatistic(null, null, ExceptionType.UNRECOGNIZED_PROPERTY_EXCEPTION);
+		exceptionStatisticFacade.createExceptionStatistic(null, null, ExceptionType.DATA_INTEGRITY_VIOLATION_EXCEPTION);
 		response.entity(errorDto);
 		return response.build();
 	}

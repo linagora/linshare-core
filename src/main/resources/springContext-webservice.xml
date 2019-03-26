@@ -56,7 +56,8 @@
 		<property name="printStackTrace" value="false" />
 	</bean>
 	<bean id="jsonParseExceptionMapper" class="org.linagora.linshare.webservice.interceptor.JsonParseExceptionMapper" />
-	<bean id="unrecognizedPropertyExceptionMapper" class="org.linagora.linshare.webservice.interceptor.UnrecognizedPropertyExceptionMapper" />
+	<bean id="unrecognizedPropertyExceptionMapper"  class="org.linagora.linshare.webservice.interceptor.UnrecognizedPropertyExceptionMapper" />
+	<bean id="dataIntegrityViolationExceptionMapper"  class="org.linagora.linshare.webservice.interceptor.DataIntegrityViolationExceptionMapper" />
 	<!-- Timing interceptors.  -->
 	<bean id="timingInInterceptor" class="org.linagora.linshare.webservice.interceptor.TimingInInterceptor" />
 	<bean id="timingOutInterceptor" class="org.linagora.linshare.webservice.interceptor.TimingOutInterceptor" />

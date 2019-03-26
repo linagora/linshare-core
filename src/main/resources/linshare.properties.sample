@@ -190,3 +190,6 @@ linshare.linthumbnail.dropwizard.server=http://0.0.0.0:8090/linthumbnail?mimeTyp
 # key to disable thumbnail generation
 linshare.documents.thumbnail.pdf.enable=true
 linshare.documents.thumbnail.enable=false
+
+#******** Production Mode
+linshare.mode.production=true
