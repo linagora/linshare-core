@@ -25,6 +25,9 @@
 			<key column="mail_config_id" not-null="true"/>
 			<one-to-many class="org.linagora.linshare.core.domain.entities.MailContentLang"/>
 		</set>
-
+		<set name="mailAttachments" lazy="true" inverse="true">
+			<key column="mail_config_id" not-null="true"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.MailAttachment"/>
+		</set>
 	</class>
 </hibernate-mapping>

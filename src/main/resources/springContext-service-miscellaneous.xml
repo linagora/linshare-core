@@ -57,6 +57,7 @@
 		<constructor-arg ref="domainBusinessService" />
 		<constructor-arg ref="functionalityReadOnlyService" />
 		<constructor-arg ref="mailActivationBusinessService" />
+		<constructor-arg ref="fileDataStore" />
 		<constructor-arg value="${linshare.display.licenceTerm}" />
 		<constructor-arg value="${linshare.user.url.download.receivedshares}" />
 		<constructor-arg value="${linshare.user.url.download.documents}" />

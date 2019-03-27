@@ -38,33 +38,46 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.helpers.IOUtils;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.MailAttachment;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.FileMetaData;
+import org.linagora.linshare.core.domain.objects.MailContainer;
+import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.notifications.dto.ContextMetadata;
+import org.linagora.linshare.core.notifications.service.MailBuildingService;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.MailConfigRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.MailAttachmentService;
+import org.linagora.linshare.core.service.NotifierService;
+import org.linagora.linshare.utils.LinShareWiser;
+import org.linagora.linshare.utils.TestMailResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.collect.Lists;
 
 @ExtendWith(SpringExtension.class)
 @Sql({"/import-tests-default-domain-quotas.sql",
@@ -84,7 +97,7 @@ import org.springframework.transaction.annotation.Transactional;
 		"classpath:springContext-ldap.xml" })
 public class MailAttachmentServiceImplTest {
 
-	protected final Log logger = LogFactory.getLog(getClass());
+	private static Logger logger = LoggerFactory.getLogger(MailAttachmentServiceImplTest.class);
 
 	@Autowired
 	protected MailAttachmentService attachmentService;
@@ -102,12 +115,25 @@ public class MailAttachmentServiceImplTest {
 	@Autowired
 	private MailConfigRepository repository;
 
+	@Autowired
+	private DomainBusinessService domainBusinessService;
+
 	private Account admin;
 
 	private final InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
 
 	@Autowired
 	private DocumentRepository documentRepository;
+
+	@Autowired
+	private MailBuildingService buildingService;
+
+	@Autowired
+	private NotifierService notifierService;
+
+	private String recipientForSendMail = "felton.gumper@int6.linshare.dev";
+
+	private boolean sendMail = false;
 
 	@BeforeEach
 	public void setUp() {
@@ -203,5 +229,62 @@ public class MailAttachmentServiceImplTest {
 		attachmentService.delete(admin, attachmentToDelete);
 		Assert.assertEquals(list.size() - 1, attachmentService.findAllByDomain(admin, admin.getDomain()).size());
 		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testBuildOneMail() throws BusinessException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		MailConfig cfg = domainBusinessService.getUniqueRootDomain().getCurrentMailConfiguration();
+		File tempFile = File.createTempFile("linshare-test", ".tmp");
+		IOUtils.transferTo(stream, tempFile);
+		MailAttachment attachment = attachmentService.create(admin, true, "Logo", true,
+				cfg.getUuid(), "Test mail attachment", "Logo", "logo.mail.attachment.test", Language.FRENCH.toInt(),
+				tempFile, null);
+		Assert.assertTrue(!cfg.getMailAttachments().isEmpty());
+
+		MailContentType type = MailContentType.SHARE_WARN_UNDOWNLOADED_FILESHARES;
+		logger.info("Building mail {} ", type);
+		List<TestMailResult> findErrors = Lists.newArrayList();
+
+		List<ContextMetadata> contexts = buildingService.getAvailableVariables(type);
+		for (int flavor = 0; flavor < contexts.size(); flavor++) {
+			MailContainerWithRecipient build = buildingService.fakeBuild(type, cfg, Language.FRENCH, flavor);
+			findErrors.addAll(testMailGenerate(type, build));
+			String subject = type + " : CONTEXT=" + flavor + " : " + "LANG=" + Language.FRENCH + " : ";
+			build.setSubject(subject + build.getSubject());
+			sendMail(build);
+		}
+		if (!findErrors.isEmpty()) {
+			for (TestMailResult result : findErrors) {
+				logger.error(result.toString());
+				logger.error(result.toString());
+				if (logger.isTraceEnabled()) {
+					logger.trace("StrPattern : {}", result.getStrPattern());
+					logger.trace("Data : {}", result.getData());
+				}
+			}
+		}
+		Assert.assertTrue(findErrors.isEmpty());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	private void sendMail(MailContainerWithRecipient mail) {
+		if (sendMail) {
+			mail.setRecipient(recipientForSendMail);
+			mail.setFrom("linshare-noreply@linagora.com");
+			notifierService.sendNotification(mail);
+		}
+	}
+
+	public List<TestMailResult> testMailGenerate(MailContentType type, MailContainer mailContainer) {
+		Assert.assertNotNull(mailContainer);
+		logger.debug("Subject: {}", mailContainer.getSubject());
+		logger.debug("Content: {}", mailContainer.getContent());
+		Assert.assertNotNull(mailContainer.getSubject());
+		Assert.assertNotNull(mailContainer.getContent());
+		List<TestMailResult> findErrors = Lists.newArrayList();
+		findErrors.addAll(LinShareWiser.testMailGenerate(type, mailContainer.getSubject()));
+		findErrors.addAll(LinShareWiser.testMailGenerate(type, mailContainer.getContent()));
+		return findErrors;
 	}
 }

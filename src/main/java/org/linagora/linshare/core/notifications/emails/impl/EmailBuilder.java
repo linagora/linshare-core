@@ -51,8 +51,12 @@ import javax.activation.FileDataSource;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.Validate;
+import org.apache.cxf.jaxrs.ext.multipart.InputStreamDataSource;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.MailActivationBusinessService;
+import org.linagora.linshare.core.dao.FileDataStore;
+import org.linagora.linshare.core.domain.constants.FileMetaDataKind;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailContentType;
 import org.linagora.linshare.core.domain.constants.NodeType;
@@ -61,10 +65,12 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.MailActivation;
+import org.linagora.linshare.core.domain.entities.MailAttachment;
 import org.linagora.linshare.core.domain.entities.MailConfig;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkgroupMember;
+import org.linagora.linshare.core.domain.objects.FileMetaData;
 import org.linagora.linshare.core.domain.objects.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -115,6 +121,8 @@ public abstract class EmailBuilder implements IEmailBuilder {
 
 	protected DomainBusinessService domainBusinessService;
 
+	protected FileDataStore fileDataStore;
+
 	protected String urlTemplateForReceivedShares;
 
 	protected String urlTemplateForDocuments;
@@ -139,13 +147,16 @@ public abstract class EmailBuilder implements IEmailBuilder {
 
 	public EmailBuilder(TemplateEngine templateEngine, boolean insertLicenceTerm,
 			MailActivationBusinessService mailActivationBusinessService,
-			FunctionalityReadOnlyService functionalityReadOnlyService, DomainBusinessService domainBusinessService) {
+			FunctionalityReadOnlyService functionalityReadOnlyService,
+			DomainBusinessService domainBusinessService,
+			FileDataStore fileDataStore) {
 		super();
 		this.templateEngine = templateEngine;
 		this.insertLicenceTerm = insertLicenceTerm;
 		this.mailActivationBusinessService = mailActivationBusinessService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.domainBusinessService = domainBusinessService;
+		this.fileDataStore = fileDataStore;
 		initSupportedTypes();
 	}
 
@@ -192,6 +203,10 @@ public abstract class EmailBuilder implements IEmailBuilder {
 
 	public void setDomainBusinessService(DomainBusinessService domainBusinessService) {
 		this.domainBusinessService = domainBusinessService;
+	}
+
+	public void setFileDataStore(FileDataStore fileDataStore) {
+		this.fileDataStore = fileDataStore;
 	}
 
 	public void setUrlTemplateForReceivedShares(String urlTemplateForReceivedShares) {
@@ -270,21 +285,24 @@ public abstract class EmailBuilder implements IEmailBuilder {
 			ctx = contexts.get(flavor);
 		}
 		MailContainerWithRecipient container = buildMailContainerThymeleaf(cfg, getSupportedType(), ctx, emailContext);
+		encodetMailAttachment(container);
+		return container;
+	}
+
+	private void encodetMailAttachment(MailContainerWithRecipient container) {
 		Set<String> keySet = container.getAttachments().keySet();
 		for (String identifier : keySet) {
 			DataSource dataSource = container.getAttachments().get(identifier);
 			try (InputStream stream = dataSource.getInputStream()) {
 				String base64String = Base64.encodeBase64String(IOUtils.toByteArray(stream));
-				String content = container.getContent().replaceAll("cid:" + identifier, "data:image/png;base64, " + base64String);
+				String content = container.getContent().replaceAll("cid:" + identifier,
+						"data:image/png;base64, " + base64String);
 				container.setContent(content);
 			} catch (IOException e) {
 				logger.error(e.getMessage(), e);
-				throw new BusinessException(
-						BusinessErrorCode.BASE64_INPUTSTREAM_ENCODE_ERROR,
-						e.getMessage());
+				throw new BusinessException(BusinessErrorCode.BASE64_INPUTSTREAM_ENCODE_ERROR, e.getMessage());
 			}
 		}
-		return container;
 	}
 
 	protected void checkSupportedTemplateType(EmailContext context) {
@@ -349,7 +367,6 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		Map<String, Object> templateResolutionAttributes = Maps.newHashMap();
 		templateResolutionAttributes.put("mailConfig", cfg);
 		templateResolutionAttributes.put("lang", emailCtx.getLanguage());
-
 		try {
 			TemplateSpec subjectSpec = new TemplateSpec(type.toString() + ":subject", null, TemplateMode.TEXT,
 					templateResolutionAttributes);
@@ -382,15 +399,20 @@ public abstract class EmailBuilder implements IEmailBuilder {
 			container.setInReplyTo(emailCtx.getInReplyTo());
 			container.setReferences(emailCtx.getReferences());
 
-			// Add attachments
-			if (emailCtx.getLanguage().equals(Language.FRENCH)) {
-				addAttachment(container, "logo.linshare@linshare.org", "/org/linagora/linshare/core/service/email-logo-fr.png");
+			if (cfg.getMailAttachments().isEmpty()) {
+				addDefaultMailAttachment(emailCtx, container);
 			} else {
-				addAttachment(container, "logo.linshare@linshare.org", "/org/linagora/linshare/core/service/email-logo-en.png");
+				for (MailAttachment attachment : cfg.getMailAttachments()) {
+					if (attachment.getEnable()) {
+						if (attachment.getOverride()) {
+							addLogo(container, attachment.getCid(), attachment.getDocument());
+						} else if (emailCtx.getLanguage().equals(Language.fromInt(attachment.getLanguage()))) {
+							addLogo(container, attachment.getCid(), attachment.getDocument());
+						}
+					}
+				}
 			}
-			addAttachment(container, "logo.libre.and.free@linshare.org", "/org/linagora/linshare/core/service/email-libre-and-free.png");
-			addAttachment(container, "logo.arrow@linshare.org", "/org/linagora/linshare/core/service/email-arrow.png");
-
+			addArrow(container);
 			return container;
 		} catch (org.thymeleaf.exceptions.TemplateInputException e) {
 			String message = "[" + type.toString() + "]" + getCauseMsessage(e);
@@ -400,11 +422,36 @@ public abstract class EmailBuilder implements IEmailBuilder {
 		}
 	}
 
+	protected void addLogo(MailContainerWithRecipient container, String identifier,
+			org.linagora.linshare.core.domain.entities.Document document) {
+		Validate.notNull(document);
+		FileMetaData metadata = new FileMetaData(FileMetaDataKind.DATA, document);
+		InputStream inputStream = fileDataStore.get(metadata);
+		container.addAttachment(identifier, new InputStreamDataSource(inputStream, metadata.getMimeType()));
+	}
+
+	private void addDefaultMailAttachment(EmailContext emailCtx, MailContainerWithRecipient container) {
+		if (emailCtx.getLanguage().equals(Language.FRENCH)) {
+			addAttachment(container, "logo.linshare@linshare.org",
+					"/org/linagora/linshare/core/service/email-logo-fr.png");
+		} else {
+			addAttachment(container, "logo.linshare@linshare.org",
+					"/org/linagora/linshare/core/service/email-logo-en.png");
+		}
+	}
+
+	private void addArrow(MailContainerWithRecipient container) {
+		addAttachment(container, "logo.libre.and.free@linshare.org",
+				"/org/linagora/linshare/core/service/email-libre-and-free.png");
+		addAttachment(container, "logo.arrow@linshare.org", "/org/linagora/linshare/core/service/email-arrow.png");
+	}
+
 	protected void addAttachment(MailContainerWithRecipient container, String identifier, String path) {
-		URL resource  = getClass().getResource(path);
-		if(resource == null) {
+		URL resource = getClass().getResource(path);
+		if (resource == null) {
 			logger.error("Embedded logo was not found : " + identifier + " : " + path);
-			throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION, "Error sending notification : embedded logo was not found.");
+			throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION,
+					"Error sending notification : embedded logo was not found.");
 		}
 		if (container.getContent().contains(identifier)) {
 			container.addAttachment(identifier, new FileDataSource(resource.getFile()));

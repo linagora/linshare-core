@@ -69,6 +69,8 @@ public class MailConfig implements Cloneable {
 
 	private Set<MailContentLang> mailContentLangs = Sets.newHashSet();
 
+	private Set<MailAttachment> mailAttachments = Sets.newHashSet();
+
 	public MailConfig() {
 	}
 
@@ -158,6 +160,14 @@ public class MailConfig implements Cloneable {
 
 	public void setMailContentLangs(Set<MailContentLang> mailContents) {
 		this.mailContentLangs = mailContents;
+	}
+
+	public Set<MailAttachment> getMailAttachments() {
+		return mailAttachments;
+	}
+
+	public void setMailAttachments(Set<MailAttachment> mailAttachments) {
+		this.mailAttachments = mailAttachments;
 	}
 
 	@Override

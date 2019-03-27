@@ -44,6 +44,7 @@ import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.MailActivationBusinessService;
 import org.linagora.linshare.core.business.service.MailConfigBusinessService;
+import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailActivationType;
 import org.linagora.linshare.core.domain.constants.MailContentType;
@@ -118,6 +119,8 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 	private final FunctionalityReadOnlyService functionalityReadOnlyService;
 
 	private final MailActivationBusinessService mailActivationBusinessService;
+
+	private final FileDataStore fileDataStore;
 
 	private class ContactRepresentation {
 		private String mail;
@@ -202,6 +205,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			final DomainBusinessService domainBusinessService,
 			final FunctionalityReadOnlyService functionalityReadOnlyService,
 			final MailActivationBusinessService mailActivationBusinessService,
+			FileDataStore fileDataStore,
 			boolean insertLicenceTerm,
 			String urlTemplateForReceivedShares,
 			String urlTemplateForDocuments,
@@ -216,6 +220,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		this.domainBusinessService = domainBusinessService;
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.mailActivationBusinessService = mailActivationBusinessService;
+		this.fileDataStore = fileDataStore;
 		this.templateEngine = new TemplateEngine();
 		LinShareStringTemplateResolver templateResolver = new LinShareStringTemplateResolver(insertLicenceTerm, templatingSubjectPrefix);
 		if (templatingStrictMode) {
@@ -274,7 +279,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		emailBuilders.put(MailContentType.ACCOUNT_OWNER_WARN_JWT_PERMANENT_TOKEN_DELETED, new JwtPermanentDeletedEmailBuilder());
 
 		initMailBuilders(insertLicenceTerm, domainBusinessService, functionalityReadOnlyService,
-				mailActivationBusinessService, urlTemplateForReceivedShares, urlTemplateForDocuments,
+				mailActivationBusinessService, fileDataStore, urlTemplateForReceivedShares, urlTemplateForDocuments,
 				urlTemplateForAnonymousUrl, urlFragmentQueryParamFileUuid, urlTemplateForWorkgroup, urlTemplateForUploadRequestEntries);
 		Set<MailContentType> keySet = emailBuilders.keySet();
 		logger.debug("mail content loaded : size : {}", keySet.size());
@@ -288,6 +293,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 		DomainBusinessService domainBusinessService,
 		FunctionalityReadOnlyService functionalityReadOnlyService,
 		MailActivationBusinessService mailActivationBusinessService,
+		FileDataStore fileDataStore,
 		String urlTemplateForReceivedShares,
 		String urlTemplateForDocuments,
 		String urlTemplateForAnonymousUrl,
@@ -302,6 +308,7 @@ public class MailBuildingServiceImpl implements MailBuildingService {
 			emailBuilder.setMailActivationBusinessService(mailActivationBusinessService);
 			emailBuilder.setFunctionalityReadOnlyService(functionalityReadOnlyService);
 			emailBuilder.setDomainBusinessService(domainBusinessService);
+			emailBuilder.setFileDataStore(fileDataStore);
 			emailBuilder.setUrlTemplateForDocuments(urlTemplateForDocuments);
 			emailBuilder.setUrlTemplateForReceivedShares(urlTemplateForReceivedShares);
 			emailBuilder.setUrlTemplateForAnonymousUrl(urlTemplateForAnonymousUrl);

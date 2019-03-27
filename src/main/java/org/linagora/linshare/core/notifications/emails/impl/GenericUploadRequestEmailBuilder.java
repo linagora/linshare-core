@@ -39,6 +39,7 @@ import java.util.Set;
 
 import org.linagora.linshare.core.business.service.DomainBusinessService;
 import org.linagora.linshare.core.business.service.MailActivationBusinessService;
+import org.linagora.linshare.core.dao.FileDataStore;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.UploadRequest;
@@ -61,11 +62,15 @@ public abstract class GenericUploadRequestEmailBuilder extends EmailBuilder {
 		super();
 	}
 
-	public GenericUploadRequestEmailBuilder(TemplateEngine templateEngine, boolean insertLicenceTerm,
+	public GenericUploadRequestEmailBuilder(
+			TemplateEngine templateEngine,
+			boolean insertLicenceTerm,
 			MailActivationBusinessService mailActivationBusinessService,
-			FunctionalityReadOnlyService functionalityReadOnlyService, DomainBusinessService domainBusinessService) {
+			FunctionalityReadOnlyService functionalityReadOnlyService,
+			DomainBusinessService domainBusinessService,
+			FileDataStore fileDataStore) {
 		super(templateEngine, insertLicenceTerm, mailActivationBusinessService, functionalityReadOnlyService,
-				domainBusinessService);
+				domainBusinessService, fileDataStore);
 	}
 
 	protected List<MailContact> getRecipients(UploadRequest request) {

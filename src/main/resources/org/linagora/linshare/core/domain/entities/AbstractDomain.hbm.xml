@@ -99,6 +99,11 @@
 			<one-to-many class="org.linagora.linshare.core.domain.entities.ContactProvider"/>
 		</set>
 
+		<set name="mailAttachments" lazy="true" inverse="true">
+			<key column="domain_abstract_id" not-null="true"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.MailAttachment"/>
+		</set>
+
 		<many-to-one name="currentWelcomeMessage" cascade="lock" column="welcome_messages_id"
 			class="org.linagora.linshare.core.domain.entities.WelcomeMessages" not-null="false" lazy="proxy">
 		</many-to-one>
