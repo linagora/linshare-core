@@ -68,6 +68,9 @@ public class JwtLongTimeTokenFacadeImpl extends AdminGenericFacadeImpl implement
 		Validate.notEmpty(permanentToken.getLabel(), "label must be set");
 		Validate.notNull(permanentToken.getActor());
 		Validate.notEmpty(permanentToken.getActor().getUuid(), "actor uuid must be set");
+		if (Strings.isNullOrEmpty(permanentToken.getDescription())) {
+			permanentToken.setDescription("");
+		}
 		Account authUser = checkAuthentication(Role.ADMIN);
 		Account actor = getActor(authUser, permanentToken.getActor().getUuid());
 		return jwtLongTimeService.create(authUser, actor, permanentToken);
@@ -115,6 +118,9 @@ public class JwtLongTimeTokenFacadeImpl extends AdminGenericFacadeImpl implement
 		Validate.notEmpty(permanentToken.getUuid(), "permanentToken uuid must be set");
 		Validate.notNull(permanentToken.getActor(), "Actor must be set");
 		Validate.notEmpty(permanentToken.getActor().getUuid(), "actor uuid must be set");
+		if (Strings.isNullOrEmpty(permanentToken.getDescription())) {
+			permanentToken.setDescription("");
+		}
 		User authUser = checkAuthentication();
 		User actor = getActor(authUser, permanentToken.getActor().getUuid());
 		return jwtLongTimeService.update(authUser, actor, permanentToken.getUuid(), permanentToken);
