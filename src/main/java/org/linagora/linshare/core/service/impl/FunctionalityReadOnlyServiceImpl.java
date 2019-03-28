@@ -249,6 +249,11 @@ public class FunctionalityReadOnlyServiceImpl implements
 	}
 
 	@Override
+	public StringValueFunctionality getWorkGroupFileEdition(AbstractDomain domain) {
+		return (StringValueFunctionality)_getFunctionality(domain, FunctionalityNames.WORK_GROUP__FILE_EDITION);
+	}
+
+	@Override
 	public Functionality getContactsListFunctionality(AbstractDomain domain) {
 		return _getFunctionality(domain, FunctionalityNames.CONTACTS_LIST);
 	}
@@ -422,10 +427,5 @@ public class FunctionalityReadOnlyServiceImpl implements
 	public BooleanValueFunctionality getAcknowledgement(String domainIdentifier) {
 		AbstractDomain domain = domainBusinessService.findById(domainIdentifier);
 		return getAcknowledgement(domain);
-	}
-
-	@Override
-	public Functionality getWorkGroupFileEdition(AbstractDomain domain) {
-		return _getFunctionality(domain, FunctionalityNames.WORK_GROUP__FILE_EDITION);
 	}
 }

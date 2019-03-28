@@ -77,7 +77,7 @@ public interface FunctionalityReadOnlyService {
 	Functionality getRestrictedGuestFunctionality(AbstractDomain domain);
 	Functionality getWorkGroupCreationRight(AbstractDomain domain);
 	BooleanValueFunctionality getWorkGroupFileVersioning(AbstractDomain domain);
-	Functionality getWorkGroupFileEdition(AbstractDomain domain);
+	StringValueFunctionality getWorkGroupFileEdition(AbstractDomain domain);
 	Functionality getUserCanUploadFunctionality(AbstractDomain domain);
 	StringValueFunctionality getCustomNotificationUrlFunctionality(AbstractDomain domain);
 	StringValueFunctionality getCustomNotificationUrlForExternalsFunctionality(AbstractDomain domain);
