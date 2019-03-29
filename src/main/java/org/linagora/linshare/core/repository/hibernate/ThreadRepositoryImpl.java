@@ -44,8 +44,8 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
-import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.springframework.orm.hibernate5.HibernateTemplate;
@@ -210,6 +210,8 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<WorkGroup
 	public List<String> findAllThreadUuid() {
 		DetachedCriteria criteria = DetachedCriteria.forClass(WorkGroup.class);
 		criteria.setProjection(Projections.property("lsUuid"));
+		criteria.add(Restrictions.eq("destroyed", 0L));
+		criteria.add(Restrictions.eq("enable", true));
 		@SuppressWarnings("unchecked")
 		List<String> list = listByCriteria(criteria);
 		return list;
