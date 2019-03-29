@@ -141,7 +141,7 @@ public class JwtLongTimeServiceImpl extends GenericServiceImpl<Account, Permanen
 			MailContainerWithRecipient mail = mailBuildingService.build(context);
 			notifierService.sendNotification(mail);
 		}
-		jwtLongTime.setJwtToken(token);
+		jwtLongTime.setToken(token);
 		return jwtLongTime;
 	}
 
