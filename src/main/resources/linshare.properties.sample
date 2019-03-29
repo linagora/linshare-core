@@ -58,6 +58,13 @@ linshare.db.gen_stats=false
 # can be create, create-drop, update, validate, choose validate for production
 linshare.db.hbm2ddl.auto=validate
 
+# Pool
+# linshare.db.pool.maxidle=30
+# linshare.db.pool.maxactive=100
+# linshare.db.pool.maxwait=10000
+# the eviction thread runs every 30 minutes
+# linshare.db.pool.timebetweenevictionrunsmillis=180000
+
 
 #******************** GENERAL PROPERTIES
 
@@ -93,65 +100,40 @@ linshare.documents.storage.endpoint=http://127.0.0.1:5000/v2.0
 # required if your are using using Swift with region (openstack-swift)
 # linshare.documents.storage.regionId=
 
-#### GridFS storage options ####
-linshare.mongo.host=127.0.0.1
-linshare.mongo.port=27017
-linshare.mongo.user=linshare
-linshare.mongo.password=linshare
-# Standard URI connection scheme
-# mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database][?options]]
-linshare.mongo.client.uri=mongodb://linshare:linshare@127.0.0.1:20017/linshare
-linshare.mongo.database=linshare
+#### Mongo storage options ####
+
+# linshare.mongo.connect.timeout=30000
+# linshare.mongo.socket.timeout=30000
 
 #### Write concern
-# MAJORITY: waits on a majority of servers for the write operation. 
+# MAJORITY: waits on a majority of servers for the write operation.
 # JOURNALED: Write operations wait for the server to group commit to the journal file on disk.
 # ACKNOWLEDGED: Write operations that use this write concern will wait for acknowledgement,
 #	 			using the default write concern configured on the server.
 linshare.mongo.write.concern=MAJORITY
 
-linshare.mongo.gridfs.smallfiles.host=127.0.0.1
-linshare.mongo.gridfs.smallfiles.port=27017
-linshare.mongo.gridfs.smallfiles.user=linshare
-linshare.mongo.gridfs.smallfiles.password=linshare
-linshare.mongo.gridfs.smallfiles.client.uri=mongodb://linshare:linshare@127.0.0.1:27017/linshare-files
-linshare.mongo.gridfs.smallfiles.database=linshare-files
+# Standard URI connection scheme
+# mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database][?options]]
+# linshare.mongo.client.uri=mongodb://linshare:linshare@127.0.0.1:27017/linshare
+linshare.mongo.client.uri=mongodb://127.0.0.1:27017/linshare
+
+#### GridFS storage options ####
+#### Using MongoDb to store very small files (thumbnails, mail attachments, ...)
+
+# linshare.mongo.gridfs.smallfiles.client.uri=mongodb://linshare:linshare@127.0.0.1:27017/linshare-files
+linshare.mongo.gridfs.smallfiles.client.uri=mongodb://127.0.0.1:27017/linshare-files
 
 #### Extended GridFS storage options ####
 # Store all files in MongoDB GridFS. Not recommended.
-linshare.mongo.gridfs.bigfiles.host=127.0.0.1
-linshare.mongo.gridfs.bigfiles.port=27017
-linshare.mongo.gridfs.bigfiles.user=linshare
-linshare.mongo.gridfs.bigfiles.password=linshare
-linshare.mongo.gridfs.bigfiles.client.uri=mongodb://linshare:linshare@127.0.0.1:27017/linshare-bigfiles
-linshare.mongo.gridfs.bigfiles.database=linshare-bigfiles
+# linshare.mongo.gridfs.bigfiles.client.uri=mongodb://linshare:linshare@127.0.0.1:27017/linshare-bigfiles
+linshare.mongo.gridfs.bigfiles.client.uri=mongodb://127.0.0.1:27017/linshare-bigfiles
 
 ######## Storage options - end ########
 
 
 
-# webservice
-webservice.attachment-memory-threshold=4000000
-webservice.attachment-directory=/tmp/
-
-
-#******************** VIRUS SCANNER
-#uncomment those properties if you want to enable clamav virus scanner feature
-#virusscanner.clamav.host=localhost
-#virusscanner.clamav.port=3310
-# Every file which size is over than the value below (in bytes) will skip the virus scanner.
-# virusscanner.limit.filesize=50000000
-
-
-#******************** SSO 
-# LemonLDAP::NG / SiteMinder HTTP request authenticator
-sso.header.user=Auth-User
-# comma separated list of ip address to be trusted :  
-sso.header.allowfrom.enable=true
-sso.header.allowfrom=127.0.0.1
-
-
-#******************** Syntax for CRON
+#******************** BATCH AND CRON
+# Syntax :
 # 	 Field				Mandatory	Allowed Values			Allowed Special Characters
 # 1. Second				yes			0-59					, - * /	
 # 2. Minutes			yes			0-59					, - * /
@@ -164,11 +146,72 @@ sso.header.allowfrom=127.0.0.1
 # Legend : ? : no specific value
 #		 : L : last
 #		 : W : weekday
+#
 
-#******** Document cleaner
-job.document.cleaner.activation=false
-job.document.cleaner.cron.expression=0 0 0 1 1 ?
+# Batches are launched every days at 0a.m
+# This cron is responsible of :
+#   - deleting expired Guest and Internal Users
+# job.users.cron.expression=0 0 0 * * ?
 
+# Batches are launched every days at 6a.m
+# This cron is responsible for sending a notification for undownloaded
+# shared documents.
+# job.shares.undownloaded.notification.cron.expression=0 0 6 * * ?
+
+# This key is the number of days between the
+# expiration of a user and his destruction
+# job.users.delay.before.purge=7
+
+# Batches are launched every days at 0a.m
+# This cron is responsible of :
+#   - deleting expired ShareEntries
+#   - deleting expired AnonymousShareEntries
+#   - deleting expired AnonymousUrl
+#   - deleting "empty" ShareEntryGroup
+#   - deleting expired DocumentEntries if it is activated. See job.document.cleaner.activation.
+# job.shares.cron.expression=0 30 0 * * ?
+
+# Batches are launched every days at 0a.m
+# This cron is responsible of :
+#   - checking and update MIME type of Documents with check flag on
+# job.mimetype.cron.expression=0 30 0 * * ?
+
+# Activate job which deletes old documents (files)
+# This cron is responsible of :
+#	- deleting expired Files
+# job.document.cleaner.activation=false
+# job.document.cleaner.cron.expression=0 0 0 1 1 ?
+
+# Batches are launched every weeks at 0a.m
+# This cron is responsible of :
+#   - update dailyStatistics and quota
+# job.updateDailyStatQuota.cron.expression= 0 0 0 * * ?
+
+# Batches are launched every 4 hours
+# This cron is responsible of :
+#   - synchronizing LdapGroups with Workgroups
+# job.ldapgroups.cron.expression=0 0 0/4 * * ?
+
+
+# webservice
+# data exceeding the memory threshold will be written to the directory (in bytes)
+webservice.attachment-memory-threshold=4000000
+webservice.attachment-directory=/tmp/
+
+
+#******************** VIRUS SCANNER
+#uncomment those properties if you want to enable clamav virus scanner feature
+#virusscanner.clamav.host=localhost
+#virusscanner.clamav.port=3310
+# Every file which size is over than the value below (in bytes) will skip the virus scanner.
+# virusscanner.limit.filesize=50000000
+
+#******************** SSO
+# LemonLDAP::NG / SiteMinder HTTP request authenticator
+sso.header.user=Auth-User
+# comma separated list of ip address to be trusted :
+sso.header.allowfrom.enable=true
+sso.header.allowfrom=127.0.0.1
 
 #******** Domain
 # If true, we can search an user during authentication process using his uid or his mail (as a login).
@@ -179,8 +222,8 @@ linshare.multidomain.enable=false
 
 #****************** Async task management
 # ThreadPoolTaskExecutor for AsyncTask like uploads.
-#linshare.ThreadPoolTaskExecutor.corePoolSize=10
-#linshare.ThreadPoolTaskExecutor.maxPoolSize=30
+# linshare.ThreadPoolTaskExecutor.corePoolSize=50
+# linshare.ThreadPoolTaskExecutor.maxPoolSize=100
 
 # enable file size validation on rest API (thread entries, documents and flow).
 linshare.rest.files.size.validation=true
@@ -190,6 +233,16 @@ linshare.linthumbnail.dropwizard.server=http://0.0.0.0:8090/linthumbnail?mimeTyp
 # key to disable thumbnail generation
 linshare.documents.thumbnail.pdf.enable=true
 linshare.documents.thumbnail.enable=false
+
+linshare.warn.owner.about.guest.expiration.days.before=7
+# JWT support values
+# Default token validity in second : 300  (5 minutes)
+# jwt.expiration=300
+# jwt.issuer=LinShare
+# Ever token (generated by LinShare or others) won't last more than 5 minutes.
+# jwt.token.max.lifetime=300
+# jwt.global.key.private.path=/etc/linshare/id_rsa
+# jwt.global.key.public.path=/etc/linshare/id_rsa.pub
 
 #******** Production Mode
 linshare.mode.production=true
