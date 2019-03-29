@@ -135,6 +135,7 @@ public class WorkGroupDocumentServiceImpl extends WorkGroupNodeAbstractServiceIm
 			mimeTypeService.checkFileMimeType(owner, fileName, mimeType);
 		}
 		document = new WorkGroupDocument(actor, fileName, size, mimeType, workgroup, nodeParent);
+		document.setPathFromParent(nodeParent);
 		document = repository.insert(document);
 		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
 				AuditLogEntryType.WORKGROUP_DOCUMENT, document, workgroup);
