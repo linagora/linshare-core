@@ -22,7 +22,7 @@ BEGIN
 	DECLARE version_history_from VARCHAR := (SELECT version from version ORDER BY id DESC LIMIT 1);
 	DECLARE database_info VARCHAR = version();
 	DECLARE error VARCHAR := concat('Your database upgrade history indicates that you already upgraded to : ', version_to);
-	DECLARE nb_upgrade_tasks INT := (SELECT count(*)::int  FROM upgrade_task WHERE status != 'SUCCESS' OR status != 'SKIPPED');
+	DECLARE nb_upgrade_tasks INT := (SELECT count(*)::int  FROM upgrade_task WHERE status != 'SUCCESS' AND status != 'SKIPPED');
 	DECLARE connection_id INT := pg_backend_pid();
 	DECLARE row record;
 	BEGIN
