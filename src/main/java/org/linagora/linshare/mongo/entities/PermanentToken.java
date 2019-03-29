@@ -84,7 +84,7 @@ public class PermanentToken {
 
 	@ApiModelProperty(value = "jwt token, not persisted")
 	@Transient
-	protected JwtToken jwtToken;
+	protected String token;
 
 	public PermanentToken() {
 		super();
@@ -198,19 +198,19 @@ public class PermanentToken {
 		this.subject = subject;
 	}
 
-	public JwtToken getJwtToken() {
-		return jwtToken;
+	public String getToken() {
+		return token;
 	}
 
-	public void setJwtToken(JwtToken jwtToken) {
-		this.jwtToken = jwtToken;
+	public void setToken(String token) {
+		this.token = token;
 	}
 
 	@Override
 	public String toString() {
 		return "PermanentToken [id=" + id + ", uuid=" + uuid + ", domain=" + domain + ", actor=" + actor + ", issuer="
 				+ issuer + ", creationDate=" + creationDate + ", label=" + label + ", description=" + description
-				+ ", subject=" + subject + ", jwtToken=" + jwtToken + "]";
+				+ ", subject=" + subject + ", token=" + token + "]";
 	}
 
 }

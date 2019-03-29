@@ -123,7 +123,7 @@ public class JwtLongTimeServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		PermanentToken johnToken = new PermanentToken(TOKEN_LABEL, TOKEN_DESC);
 		PermanentToken token = jwtLongTimeService.create(john, john, johnToken);
-		Claims decode = jwtService.decode(token.getJwtToken().getToken());
+		Claims decode = jwtService.decode(token.getToken());
 		logger.debug("Token:" + decode.toString());
 		assertEquals(john.getMail(), decode.getSubject());
 		assertEquals(null, decode.getExpiration());
