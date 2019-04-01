@@ -73,4 +73,9 @@ public class WorkGroupLightNode {
 		this.name = name;
 	}
 
+	@Override
+	public String toString() {
+		return "WorkGroupLightNode [uuid=" + uuid + ", name=" + name + "]";
+	}
+
 }
