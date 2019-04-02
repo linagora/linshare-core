@@ -138,6 +138,7 @@ public class AuditLogEntryServiceImpl implements AuditLogEntryService {
 		supportedTypes.add(AuditLogEntryType.WORKGROUP_DOCUMENT);
 		supportedTypes.add(AuditLogEntryType.WORKGROUP_FOLDER);
 		supportedTypes.add(AuditLogEntryType.WORKGROUP_MEMBER);
+		supportedTypes.add(AuditLogEntryType.WORKGROUP_DOCUMENT_REVISION);
 		List<AuditLogEntryType> types = getEntryTypes(type, supportedTypes, true);
 		List<LogAction> actions = getActions(action);
 		Date end = getEndDate(endDate);
