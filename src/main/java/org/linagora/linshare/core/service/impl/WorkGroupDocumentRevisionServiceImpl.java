@@ -137,9 +137,11 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 			documentRevision = documentEntryRevisionBusinessService.createWorkGroupDocumentRevision(owner, workGroup,
 					tempFile, size, fileName, checkIfIsCiphered, timeStampingUrl, mimeType, parentNode);
 			updateThumbnailOnDocument(workGroup, documentRevision);
-			WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
-					AuditLogEntryType.WORKGROUP_DOCUMENT_REVISION, parentNode, workGroup);
-			logEntryService.insert(log);
+			if (checkHasRevision(workGroup.getLsUuid(), parentNode.getUuid())) {
+				WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
+						AuditLogEntryType.WORKGROUP_DOCUMENT_REVISION, parentNode, workGroup);
+				logEntryService.insert(log);
+			}
 			addToQuota(workGroup, size);
 		} finally {
 			try {
@@ -160,30 +162,25 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 	}
 
 	@Override
-	public WorkGroupDocument updateDocument(Account actor, Account owner, WorkGroup workGroup, WorkGroupDocumentRevision documentRevision) throws BusinessException {
+	public WorkGroupDocument updateDocument(Account actor, Account owner, WorkGroup workGroup,
+			WorkGroupDocumentRevision documentRevision) throws BusinessException {
 		Validate.notNull(documentRevision);
 		Validate.notEmpty(documentRevision.getUuid(), "Missing uuid");
 		Validate.notEmpty(documentRevision.getName(), "Missing name");
-		WorkGroupDocument parentDocument = (WorkGroupDocument) repository.findByWorkGroupAndUuid(workGroup.getLsUuid(), documentRevision.getParent());
+		WorkGroupDocument parentDocument = (WorkGroupDocument) repository.findByWorkGroupAndUuid(workGroup.getLsUuid(),
+				documentRevision.getParent());
 		if (parentDocument == null) {
-			throw new BusinessException(BusinessErrorCode.DOCUMENT_ENTRY_NOT_FOUND, "The parent document has not been found for this revision.");
-		} 
+			throw new BusinessException(BusinessErrorCode.DOCUMENT_ENTRY_NOT_FOUND,
+					"The parent document has not been found for this revision.");
+		}
 		parentDocument.setModificationDate(new Date());
 		parentDocument.setMetaData(documentRevision.getMetaData());
 		parentDocument.setLastAuthor(documentRevision.getLastAuthor());
 		parentDocument.setSize(documentRevision.getSize());
 		parentDocument.setHasThumbnail(documentRevision.getHasThumbnail());
-		Long revisionsNumber = repository.countByWorkGroupAndParentAndNodeType(workGroup.getLsUuid(),
-				parentDocument.getUuid(), WorkGroupNodeType.DOCUMENT_REVISION);
-		if (revisionsNumber < 2) {
-			parentDocument.setHasRevision(false);
-		} else {
-			parentDocument.setHasRevision(true);
-		}
+		boolean hasRevision = checkHasRevision(workGroup.getLsUuid(), parentDocument.getUuid());
+		parentDocument.setHasRevision(hasRevision);
 		parentDocument = repository.save(parentDocument);
-		WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.UPDATE,
-				AuditLogEntryType.WORKGROUP_DOCUMENT, parentDocument, workGroup);
-		logEntryService.insert(log);
 		return parentDocument;
 	}
 
@@ -263,6 +260,11 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 			return true;
 		}
 		return false;
+	}
+
+	private boolean checkHasRevision(String workgroupUuid, String parentDocumentUuid) {
+		return repository.countByWorkGroupAndParentAndNodeType(workgroupUuid, parentDocumentUuid,
+				WorkGroupNodeType.DOCUMENT_REVISION) > 1;
 	}
 
 }
