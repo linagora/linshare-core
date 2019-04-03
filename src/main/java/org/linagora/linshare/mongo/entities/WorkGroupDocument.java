@@ -52,7 +52,11 @@ public class WorkGroupDocument extends WorkGroupNode {
 
 	protected Long size;
 
+	protected Long revisionsSize;
+
 	protected String mimeType;
+
+	protected Long revisionsCount;
 
 	@JsonIgnore
 	protected String documentUuid;
@@ -179,11 +183,28 @@ public class WorkGroupDocument extends WorkGroupNode {
 		this.hasThumbnail = hasThumbnail;
 	}
 
+	public Long getRevisionsSize() {
+		return revisionsSize;
+	}
+
+	public void setRevisionsSize(Long revisionsSize) {
+		this.revisionsSize = revisionsSize;
+	}
+
+	public Long getRevisionsCount() {
+		return revisionsCount;
+	}
+
+	public void setRevisionsCount(Long revisionsCount) {
+		this.revisionsCount = revisionsCount;
+	}
+
 	@Override
 	public String toString() {
-		return "WorkGroupDocument [size=" + size + ", mimeType=" + mimeType + ", documentUuid=" + documentUuid
-				+ ", hasRevision=" + hasRevision + ", lastRevision=" + lastRevision + ", sha256sum=" + sha256sum
-				+ ", uploadDate=" + uploadDate + ", ciphered=" + ciphered + ", hasThumbnail=" + hasThumbnail + "]";
+		return "WorkGroupDocument [size=" + size + ", revisionsSize=" + revisionsSize + ", mimeType=" + mimeType
+				+ ", revisionsCount=" + revisionsCount + ", documentUuid=" + documentUuid + ", hasRevision="
+				+ hasRevision + ", lastRevision=" + lastRevision + ", sha256sum=" + sha256sum + ", uploadDate="
+				+ uploadDate + ", ciphered=" + ciphered + ", hasThumbnail=" + hasThumbnail + "]";
 	}
 
 }
