@@ -162,19 +162,28 @@
 		<constructor-arg ref="wsJwtLongTimeFacade" />
 	</bean>
 
-	<bean id="userSharedSpaceNodeRestService"
-		class="org.linagora.linshare.webservice.userv2.impl.SharedSpaceNodeRestServiceImpl">
+	<bean id="userv2SharedSpaceRestService"
+		class="org.linagora.linshare.webservice.userv2.impl.SharedSpaceRestServiceImpl">
 		<constructor-arg ref="sharedSpaceNodeFacade" />
 		<constructor-arg ref="sharedSpaceMemberFacade" />
 	</bean>	
-	<bean id="userSharedSpaceRoleRestService"
+
+	<bean id="userv2SharedSpaceLegacyNodeRestService"
+		class="org.linagora.linshare.webservice.userv2.impl.SharedSpaceNodeLegacyRestServiceImpl">
+		<constructor-arg ref="sharedSpaceNodeFacade" />
+		<constructor-arg ref="sharedSpaceMemberFacade" />
+	</bean>
+
+	<bean id="userv2SharedSpaceRoleRestService"
 		class="org.linagora.linshare.webservice.userv2.impl.SharedSpaceRoleRestServiceImpl">
 		<constructor-arg ref="sharedSpaceRoleFacade" />
 	</bean>
-	<bean id="userSharedSpaceMemberRestService"
+
+	<bean id="userv2SharedSpaceMemberRestService"
 		class="org.linagora.linshare.webservice.userv2.impl.SharedSpaceMemberRestServiceImpl">
 		<constructor-arg ref="sharedSpaceMemberFacade" />
 	</bean>
+
 	<jaxrs:server id="userRestContainer" address="/rest/user/v2">
 		<jaxrs:serviceBeans>
 			<ref bean="userv2EnumRestService" />
@@ -197,22 +206,20 @@
 			<ref bean="userv2AutoCompleteRestService" />
 			<ref bean="userv2UploadRequestRestService" />
 			<ref bean="userv2AuditLogEntryUserRestService" />
-<!-- 			Disable because it is fully tested. -->
- 			<ref bean="userv2StatisticRestService" /> 
+			<ref bean="userv2StatisticRestService" />
 			<ref bean="userv2AccountQuotaRestService" />
 			<ref bean="userv2WelcomeMessagesRestService" />
-			<ref bean="userv2UploadRequestGroupRestService" /> 
-			<ref bean="userv2UploadRequestEntryRestService" /> 
-			<ref bean="userv2UploadRequestUrlRestService" /> 
-			<ref bean="userv2SafeDetailRestService" /> 
+			<ref bean="userv2UploadRequestGroupRestService" />
+			<ref bean="userv2UploadRequestEntryRestService" />
+			<ref bean="userv2UploadRequestUrlRestService" />
+			<ref bean="userv2SafeDetailRestService" />
 			<ref bean="userv2UploadPropositionExceptionRuleRestService" />
 			<ref bean="userv2UploadPropositionRestService" />
 			<ref bean="userv2JwtPermanentTokenRestService" />
-			<!--
-			<ref bean="pluginCompatibilityRestServiceV2" />
--->			<ref bean="userSharedSpaceNodeRestService" />
-			<ref bean="userSharedSpaceRoleRestService" />
-			<ref bean="userSharedSpaceMemberRestService" />
+			<ref bean="userv2SharedSpaceRestService" />
+			<ref bean="userv2SharedSpaceLegacyNodeRestService" />
+			<ref bean="userv2SharedSpaceRoleRestService" />
+			<ref bean="userv2SharedSpaceMemberRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

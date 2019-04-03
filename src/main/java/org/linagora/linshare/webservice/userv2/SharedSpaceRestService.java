@@ -2,7 +2,7 @@
  * LinShare is an open source filesharing software, part of the LinPKI software
  * suite, developed by Linagora.
  * 
- * Copyright (C) 2019 LINAGORA
+ * Copyright (C) 2018 LINAGORA
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -12,7 +12,7 @@
  * Public License, subsections (b), (c), and (e), pursuant to which you must
  * notably (i) retain the display of the “LinShare™” trademark/logo at the top
  * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2019. Contribute to
+ * and free version of LinShare™, powered by Linagora © 2009–2018. Contribute to
  * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
  * e-mails sent with the Program, (ii) retain all hypertext links between
  * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
@@ -31,32 +31,35 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.userv2.impl;
+package org.linagora.linshare.webservice.userv2;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import java.util.List;
 
-import org.linagora.linshare.core.facade.webservice.user.AccountQuotaFacade;
-import org.linagora.linshare.core.facade.webservice.user.AsyncTaskFacade;
-import org.linagora.linshare.core.facade.webservice.user.WorkGroupEntryAsyncFacade;
-import org.linagora.linshare.core.facade.webservice.user.WorkGroupNodeFacade;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.mongo.entities.SharedSpaceMember;
+import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 
-import com.wordnik.swagger.annotations.Api;
+public interface SharedSpaceRestService {
 
-@Api(value = "/rest/user/v2/shared_spaces/{workGroupUuid}/nodes", description = "sharedspaces service.",
-	produces = "application/json,application/xml", consumes = "application/json,application/xml")
-@Path("/shared_spaces/{workGroupUuid}/nodes")
-@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class SharedSpaceNodeRestServiceImpl extends WorkGroupNodeRestServiceImpl {
+	List<SharedSpaceNodeNested> findAll() throws BusinessException;
 
-	public SharedSpaceNodeRestServiceImpl(WorkGroupNodeFacade workGroupNodeFacade,
-			WorkGroupEntryAsyncFacade workGroupEntryAsyncFacade, AsyncTaskFacade asyncTaskFacade,
-			ThreadPoolTaskExecutor taskExecutor, AccountQuotaFacade accountQuotaFacade, boolean sizeValidation) {
-		super(workGroupNodeFacade, workGroupEntryAsyncFacade, asyncTaskFacade, taskExecutor, accountQuotaFacade,
-				sizeValidation);
-	}
+	SharedSpaceNode find(String uuid) throws BusinessException;
+
+	SharedSpaceNode create(SharedSpaceNode node) throws BusinessException;
+
+	SharedSpaceNode delete(SharedSpaceNode node, String uuid) throws BusinessException;
+
+	SharedSpaceNode update(SharedSpaceNode node, String uuid) throws BusinessException;
+
+	List<SharedSpaceMember> members(String uuid) throws BusinessException;
+
+	SharedSpaceMember findMemberByAccountUuid(String uuid, String accountUuid) throws BusinessException;
+
+	SharedSpaceMember addMember(SharedSpaceMember member) throws BusinessException;
+
+	SharedSpaceMember deleteMember(SharedSpaceMember member, String memberUuid) throws BusinessException;
+
+	SharedSpaceMember updateMember(SharedSpaceMember member, String memberUuid) throws BusinessException;
+
 }
