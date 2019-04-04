@@ -91,6 +91,7 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
+@Deprecated
 @Path("/work_groups/{workGroupUuid}/nodes")
 @Api(value = "/rest/user/v2/work_groups/{workGroupUuid}/nodes", basePath = "/rest/user/v2/work_groups/{workGroupUuid}/nodes",
 	description = "work group nodes service. Deprecated see sharedspace nodes service",
