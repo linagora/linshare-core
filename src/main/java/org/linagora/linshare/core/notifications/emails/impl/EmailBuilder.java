@@ -406,7 +406,9 @@ public abstract class EmailBuilder implements IEmailBuilder {
 			logger.error("Embedded logo was not found : " + identifier + " : " + path);
 			throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION, "Error sending notification : embedded logo was not found.");
 		}
-		container.addAttachment(identifier, new FileDataSource(resource.getFile()));
+		if (container.getContent().contains(identifier)) {
+			container.addAttachment(identifier, new FileDataSource(resource.getFile()));
+		}
 	}
 
 	protected String getCauseMsessage(TemplateInputException e) {
