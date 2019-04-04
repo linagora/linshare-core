@@ -42,7 +42,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 
-@XmlRootElement(name = "WorkGroupDocumentRevision")
+@XmlRootElement(name = "SharedSpaceDocumentRevision")
 public class WorkGroupDocumentRevision extends WorkGroupDocument {
 
 	public WorkGroupDocumentRevision() {

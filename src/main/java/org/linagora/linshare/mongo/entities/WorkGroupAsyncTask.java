@@ -42,7 +42,7 @@ import org.springframework.data.annotation.Transient;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-@XmlRootElement(name = "WorkGroupAsyncTask")
+@XmlRootElement(name = "SharedSpaceAsyncTask")
 public class WorkGroupAsyncTask extends WorkGroupNode {
 
 	@Transient

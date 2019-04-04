@@ -46,8 +46,7 @@ import org.linagora.linshare.mongo.entities.mto.AccountMto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-
-@XmlRootElement(name = "WorkGroupDocument")
+@XmlRootElement(name = "SharedSpaceDocument")
 public class WorkGroupDocument extends WorkGroupNode {
 
 	protected Long size;

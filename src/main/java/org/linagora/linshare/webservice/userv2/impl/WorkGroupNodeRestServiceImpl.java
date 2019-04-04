@@ -93,7 +93,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/work_groups/{workGroupUuid}/nodes")
 @Api(value = "/rest/user/v2/work_groups/{workGroupUuid}/nodes", basePath = "/rest/user/v2/work_groups/{workGroupUuid}/nodes",
-	description = "work group nodes service.",
+	description = "work group nodes service. Deprecated see sharedspace nodes service",
 	produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })

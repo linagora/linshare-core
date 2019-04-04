@@ -38,7 +38,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 
-@XmlRootElement(name = "WorkGroupFolder")
+@XmlRootElement(name = "SharedSpaceFolder")
 public class WorkGroupFolder extends WorkGroupNode {
 
 	public WorkGroupFolder(AccountMto author, String name, String parent, String workGroup) {

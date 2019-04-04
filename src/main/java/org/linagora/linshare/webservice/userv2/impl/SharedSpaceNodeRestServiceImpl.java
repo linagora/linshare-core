@@ -46,9 +46,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.wordnik.swagger.annotations.Api;
 
+@Path("/shared_spaces/{workGroupUuid}/nodes")
 @Api(value = "/rest/user/v2/shared_spaces/{workGroupUuid}/nodes", description = "sharedspaces service.",
 	produces = "application/json,application/xml", consumes = "application/json,application/xml")
-@Path("/shared_spaces/{workGroupUuid}/nodes")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class SharedSpaceNodeRestServiceImpl extends WorkGroupNodeRestServiceImpl {

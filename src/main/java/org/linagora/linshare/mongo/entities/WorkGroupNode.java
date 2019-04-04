@@ -65,7 +65,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 	WorkGroupDocumentRevision.class,
 	WorkGroupAsyncTask.class
 	})
-@XmlRootElement(name = "WorkGroupNode")
+@XmlRootElement(name = "SharedSpaceNode")
 @Document(collection = "work_group_nodes")
 //@CompoundIndexes({ @CompoundIndex(name = "name", unique = true, sparse = true, def = "{'name': 1, 'parent': 1, 'workGroup': 1}") })
 public class WorkGroupNode implements Cloneable {

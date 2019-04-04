@@ -48,7 +48,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@XmlRootElement(name = "SharedSpaceNode")
+@XmlRootElement(name = "SharedSpace")
 @Document(collection = "shared_space_nodes")
 public class SharedSpaceNode {
 

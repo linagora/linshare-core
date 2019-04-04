@@ -184,6 +184,16 @@
 		<constructor-arg ref="sharedSpaceMemberFacade" />
 	</bean>
 
+	<bean id="userv2SharedSpaceNodeRestService" class="org.linagora.linshare.webservice.userv2.impl.SharedSpaceNodeRestServiceImpl">
+		<constructor-arg ref="wsWorkGroupNodeFacade" />
+		<constructor-arg ref="wsThreadEntryAsyncFacade" />
+		<constructor-arg ref="wsAsyncTaskFacade" />
+		<constructor-arg ref="taskExecutor" />
+		<constructor-arg ref="wsAccountQuotaFacade" />
+		<constructor-arg value="${linshare.rest.files.size.validation}" />
+	</bean>
+
+
 	<jaxrs:server id="userRestContainer" address="/rest/user/v2">
 		<jaxrs:serviceBeans>
 			<ref bean="userv2EnumRestService" />
@@ -220,6 +230,7 @@
 			<ref bean="userv2SharedSpaceLegacyNodeRestService" />
 			<ref bean="userv2SharedSpaceRoleRestService" />
 			<ref bean="userv2SharedSpaceMemberRestService" />
+			<ref bean="userv2SharedSpaceNodeRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />
