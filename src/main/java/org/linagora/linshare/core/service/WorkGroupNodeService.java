@@ -49,56 +49,46 @@ import org.linagora.linshare.mongo.entities.mto.CopyMto;
 
 public interface WorkGroupNodeService {
 
-	@Deprecated
 	List<WorkGroupNode> findAll(Account actor, User owner, WorkGroup workGroup) throws BusinessException;
 
-	@Deprecated
-	List<WorkGroupNode> findAll(Account actor, Account owner, WorkGroup workGroup, String parentUuid, Boolean flat, List<WorkGroupNodeType> nodeTypes)
+	List<WorkGroupNode> findAll(Account actor, Account owner, WorkGroup workGroup, String parentUuid, Boolean flat,
+			List<WorkGroupNodeType> nodeTypes) throws BusinessException;
+
+	WorkGroupNode find(Account actor, Account owner, WorkGroup workGroup, String workGroupNodeUuid, boolean withTree)
 			throws BusinessException;
 
-	@Deprecated
-	WorkGroupNode find(Account actor, Account owner, WorkGroup workGroup, String workGroupNodeUuid, boolean withTree) throws BusinessException;
+	WorkGroupNode findForDownloadOrCopyRight(Account actor, User owner, WorkGroup workGroup, String workGroupNodeUuid)
+			throws BusinessException;
 
-	@Deprecated
-	WorkGroupNode findForDownloadOrCopyRight(Account actor, User owner, WorkGroup workGroup, String workGroupNodeUuid) throws BusinessException;
+	void markAsCopied(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode wgNode, CopyMto copiedTo)
+			throws BusinessException;
 
-	@Deprecated
-	void markAsCopied(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode wgNode, CopyMto copiedTo) throws BusinessException; 
-
-	@Deprecated
 	String findWorkGroupUuid(Account actor, User owner, String workGroupNodeUuid) throws BusinessException;
 
-	@Deprecated
-	WorkGroupNode create(Account actor, User owner, WorkGroup workGroup, WorkGroupNode workGroupNode, Boolean strict, Boolean dryRun)
-			throws BusinessException;
+	WorkGroupNode create(Account actor, User owner, WorkGroup workGroup, WorkGroupNode workGroupNode, Boolean strict,
+			Boolean dryRun) throws BusinessException;
 
-	@Deprecated
-	WorkGroupNode copy(Account actor, User owner, WorkGroup toWorkGroup, String toNodeUuid, CopyResource cr) throws BusinessException;
+	WorkGroupNode copy(Account actor, User owner, WorkGroup toWorkGroup, String toNodeUuid, CopyResource cr)
+			throws BusinessException;
 
 	WorkGroupNode copy(Account actor, User owner, WorkGroup fromWorkGroup, String fromNodeUuid, WorkGroup toWorkGroup,
 			String toNodeUuid) throws BusinessException;
 
-	@Deprecated
 	WorkGroupNode create(Account actor, User owner, WorkGroup workGroup, File tempFile, String fileName,
 			String parentNodeUuid, Boolean strict) throws BusinessException;
 
-	@Deprecated
 	WorkGroupNode update(Account actor, Account owner, WorkGroup workGroup, WorkGroupNode workGroupNode)
 			throws BusinessException;
 
-	@Deprecated
 	WorkGroupNode delete(Account actor, Account owner, WorkGroup workGroup, String workGroupNodeUuid)
 			throws BusinessException;
 
-	@Deprecated
 	FileAndMetaData download(Account actor, User owner, WorkGroup workGroup, String workGroupNodeUuid)
 			throws BusinessException;
 
-	@Deprecated
-	FileAndMetaData thumbnail(Account actor, User owner, WorkGroup workGroup, String workGroupNodeUuid, ThumbnailType kind)
-			throws BusinessException;
+	FileAndMetaData thumbnail(Account actor, User owner, WorkGroup workGroup, String workGroupNodeUuid,
+			ThumbnailType kind) throws BusinessException;
 
-	@Deprecated
 	WorkGroupNode getRootFolder(Account actor, Account owner, WorkGroup workGroup);
 
 	WorkGroupNode findByWorkGroupNodeUuid(String uuid) throws BusinessException;
