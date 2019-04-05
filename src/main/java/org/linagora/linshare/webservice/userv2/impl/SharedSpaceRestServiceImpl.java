@@ -85,8 +85,8 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 	public List<SharedSpaceNodeNested> findAll() throws BusinessException {
 		return nodeFacade.findAllMyNodes(null);
 	}
-	
-	@Path("/{uuid}")
+
+	@Path("/{uuid : .*}")
 	@GET
 	@ApiOperation(value = "Find a shared space node.", response = SharedSpaceNode.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),

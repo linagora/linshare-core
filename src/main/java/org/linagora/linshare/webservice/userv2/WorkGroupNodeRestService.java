@@ -69,6 +69,7 @@ public interface WorkGroupNodeRestService {
 
 	WorkGroupNode update(String workGroupUuid, String workGroupNodeUuid, WorkGroupNode workGroupNode) throws BusinessException;
 
+	// TODO merge these two methods in one.
 	WorkGroupNode delete(String workGroupUuid, WorkGroupNode workGroupNode) throws BusinessException;
 
 	WorkGroupNode delete(String workGroupUuid, String uuid) throws BusinessException;

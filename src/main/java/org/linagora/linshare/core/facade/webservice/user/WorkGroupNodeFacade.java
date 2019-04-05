@@ -63,6 +63,7 @@ public interface WorkGroupNodeFacade extends GenericFacade {
 
 	WorkGroupNode update(String actorUuid, String workGroupUuid, WorkGroupNode workGroupNode) throws BusinessException;
 
+	// TODO merge these two methods in one.
 	WorkGroupNode delete(String actorUuid, String workGroupUuid, String workGroupNodeUuid) throws BusinessException;
 
 	WorkGroupNode delete(String actorUuid, String workGroupUuid, WorkGroupNode workGroupNode) throws BusinessException;

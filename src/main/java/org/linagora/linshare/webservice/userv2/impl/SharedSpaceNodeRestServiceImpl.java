@@ -90,16 +90,16 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/shared_spaces/{workGroupUuid}/nodes")
-@Api(value = "/rest/user/v2/shared_spaces/{workGroupUuid}/nodes", description = "sharedspaces service.",
+@Path("/shared_spaces/{sharedSpaceUuid}/nodes")
+@Api(value = "/rest/user/v2/shared_spaces/{sharedSpaceUuid}/nodes", description = "sharedspace node service.",
 	produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements WorkGroupNodeRestService {
 
-	protected final WorkGroupNodeFacade workGroupNodeFacade;
+	protected final WorkGroupNodeFacade sharedSpaceNodeFacade;
 
-	protected final WorkGroupEntryAsyncFacade workGroupEntryAsyncFacade ;
+	protected final WorkGroupEntryAsyncFacade sharedSpaceEntryAsyncFacade ;
 
 	protected final AsyncTaskFacade asyncTaskFacade;
 
@@ -109,12 +109,12 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Wo
 
 	protected boolean sizeValidation;
 
-	public SharedSpaceNodeRestServiceImpl(WorkGroupNodeFacade workGroupNodeFacade,
-			WorkGroupEntryAsyncFacade workGroupEntryAsyncFacade, AsyncTaskFacade asyncTaskFacade,
+	public SharedSpaceNodeRestServiceImpl(WorkGroupNodeFacade sharedSpaceNodeFacade,
+			WorkGroupEntryAsyncFacade sharedSpaceEntryAsyncFacade, AsyncTaskFacade asyncTaskFacade,
 			ThreadPoolTaskExecutor taskExecutor, AccountQuotaFacade accountQuotaFacade, boolean sizeValidation) {
 		super();
-		this.workGroupNodeFacade = workGroupNodeFacade;
-		this.workGroupEntryAsyncFacade = workGroupEntryAsyncFacade;
+		this.sharedSpaceNodeFacade = sharedSpaceNodeFacade;
+		this.sharedSpaceEntryAsyncFacade = sharedSpaceEntryAsyncFacade;
 		this.asyncTaskFacade = asyncTaskFacade;
 		this.taskExecutor = taskExecutor;
 		this.accountQuotaFacade = accountQuotaFacade;
@@ -123,139 +123,157 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Wo
 
 	@Path("/")
 	@POST
-	@ApiOperation(value = "Create a folder into a workGroup.", response = WorkGroupNode.class)
+	@ApiOperation(value = "Create a folder into a sharedSpace.", response = WorkGroupNode.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation."),
-					@ApiResponse(code = 404, message = "Workgroup not found."),
+					@ApiResponse(code = 404, message = "SharedSpace or folder not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
 	public WorkGroupNode create(
-			@ApiParam(value = "The workgroup uuid.", required = true)
-				@PathParam("workGroupUuid") String workGroupUuid,
-			@ApiParam(value = "Only the name and the parent of the new folder are required.", required = true) WorkGroupNode workGroupFolder,
+			@ApiParam(value = "The sharedSpace uuid.", required = true)
+				@PathParam("sharedSpaceUuid")
+					String sharedSpaceUuid,
+			@ApiParam(value = "Only the name and the parent of the new folder are required.", required = true)
+				WorkGroupNode sharedSpaceFolder,
 			@ApiParam(value = "Strict mode: Raise error if a folder with same name already exists (default=false).", required = false)
-				@QueryParam("strict") @DefaultValue("false") Boolean strict,
+				@QueryParam("strict") @DefaultValue("false")
+					Boolean strict,
 			@ApiParam(value = "Dry run mode . (default=false).", required = false)
-				@QueryParam("dryRun") @DefaultValue("false") Boolean dryRun)
+				@QueryParam("dryRun") @DefaultValue("false")
+					Boolean dryRun)
 				throws BusinessException {
-		return workGroupNodeFacade.create(null, workGroupUuid, workGroupFolder, strict, dryRun);
+		return sharedSpaceNodeFacade.create(null, sharedSpaceUuid, sharedSpaceFolder, strict, dryRun);
 	}
 
 	@Path("/")
 	@GET
-	@ApiOperation(value = "Get all workgroup folders.", response = WorkGroupNode.class, responseContainer = "Set")
+	@ApiOperation(value = "Get all sharedSpace node (folder, document, revision)..", response = WorkGroupNode.class, responseContainer = "List")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation.") ,
-					@ApiResponse(code = 404, message = "Workgroup or folder not found."),
+					@ApiResponse(code = 404, message = "SharedSpace or folder not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
 	public List<WorkGroupNode> findAll(
-			@ApiParam(value = "The workgroup uuid.", required = true)
-				@PathParam("workGroupUuid") String workGroupUuid,
+			@ApiParam(value = "The sharedSpace uuid.", required = true)
+				@PathParam("sharedSpaceUuid")
+					String sharedSpaceUuid,
 			@ApiParam(value = "The parent uuid.", required = false)
-				@QueryParam("parent") String parent,
+				@QueryParam("parent")
+					String parent,
 			@ApiParam(value = "True to enable flat document mode (DOCUMENT AND FOLDER only)", required = false)
-				@QueryParam("flat") @DefaultValue("false") Boolean flat,
+				@QueryParam("flat") @DefaultValue("false")
+					Boolean flat,
 			@ApiParam(value = "Filter by node type.", required = false)
-				@QueryParam("type") List<WorkGroupNodeType> nodeTypes
+				@QueryParam("type")
+					List<WorkGroupNodeType> nodeTypes
 			)
 				throws BusinessException {
-		return workGroupNodeFacade.findAll(null, workGroupUuid, parent, flat, nodeTypes);
+		return sharedSpaceNodeFacade.findAll(null, sharedSpaceUuid, parent, flat, nodeTypes);
 	}
 
-	@Path("/{workGroupNodeUuid}")
+	@Path("/{sharedSpaceNodeUuid}")
 	@GET
-	@ApiOperation(value = "Get a workgroup folder.", response = WorkGroupNode.class)
+	@ApiOperation(value = "Get a sharedSpace node (folder, document, revision).", response = WorkGroupNode.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation.") ,
-					@ApiResponse(code = 404, message = "Workgroup or folder not found."),
+					@ApiResponse(code = 404, message = "SharedSpace or folder not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
 	public WorkGroupNode find(
-			@ApiParam(value = "The workgroup uuid.", required = true)
-				@PathParam("workGroupUuid") String workGroupUuid,
-			@ApiParam(value = "The workgroup node uuid.", required = true)
-				@PathParam("workGroupNodeUuid") String workGroupNodeUuid,
-			@QueryParam("tree") @DefaultValue("false") Boolean withTree)
+			@ApiParam(value = "The sharedSpace uuid.", required = true)
+				@PathParam("sharedSpaceUuid")
+					String sharedSpaceUuid,
+			@ApiParam(value = "The sharedSpace node uuid.", required = true)
+				@PathParam("sharedSpaceNodeUuid")
+					String sharedSpaceNodeUuid,
+			@QueryParam("tree") @DefaultValue("false")
+					Boolean withTree)
 			throws BusinessException {
-		return workGroupNodeFacade.find(null, workGroupUuid, workGroupNodeUuid, withTree);
+		return sharedSpaceNodeFacade.find(null, sharedSpaceUuid, sharedSpaceNodeUuid, withTree);
 	}
 
-	@Path("/{workGroupNodeUuid}")
+	@Path("/{sharedSpaceNodeUuid}")
 	@PUT
-	@ApiOperation(value = "Update a workgroup folder (name or parent).", response = WorkGroupNode.class)
+	@ApiOperation(value = "Delete a sharedSpace node (folder, document, revision). Only name, parent or description can be updated.", response = WorkGroupNode.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation."),
-					@ApiResponse(code = 404, message = "Workgroup or folder not found."),
+					@ApiResponse(code = 404, message = "SharedSpace or folder not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
 	public WorkGroupNode update(
-			@ApiParam(value = "The workgroup uuid.", required = true)
-				@PathParam("workGroupUuid") String workGroupUuid,
-			@ApiParam(value = "The workgroup node uuid.", required = true)
-				@PathParam("workGroupNodeUuid") String workGroupNodeUuid,
-			@ApiParam(value = "The workgroup folder to update. Only name or parent can be updated, Uuid is required, others fields are useless.", required = true) WorkGroupNode workGroupFolder)
+			@ApiParam(value = "The sharedSpace uuid.", required = true)
+				@PathParam("sharedSpaceUuid")
+					String sharedSpaceUuid,
+			@ApiParam(value = "The sharedSpace node uuid.", required = true)
+				@PathParam("sharedSpaceNodeUuid")
+					String sharedSpaceNodeUuid,
+			@ApiParam(value = "The sharedSpace folder to update. Only name or parent can be updated, Uuid is required, others fields are useless.", required = true)
+				WorkGroupNode sharedSpaceNode)
 					throws BusinessException {
-		return workGroupNodeFacade.update(null, workGroupUuid, workGroupFolder);
+		return sharedSpaceNodeFacade.update(null, sharedSpaceUuid, sharedSpaceNode);
 	}
 
 	@Path("/")
 	@DELETE
-	@ApiOperation(value = "Delete a workgroup folder.", response = WorkGroupNode.class)
+	@ApiOperation(value = "Delete a sharedSpace node (folder, document, revision).", response = WorkGroupNode.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation.") ,
-					@ApiResponse(code = 404, message = "Workgroup or workgroup folder not found."),
+					@ApiResponse(code = 404, message = "SharedSpace or sharedSpace folder not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
 	public WorkGroupNode delete(
-			@ApiParam(value = "The workgroup uuid.", required = true)
-				@PathParam("workGroupUuid") String workGroupUuid,
-			@ApiParam(value = "The workgroup folder to delete. Only uuid is required", required = true) WorkGroupNode workGroupFolder)
+			@ApiParam(value = "The sharedSpace uuid.", required = true)
+				@PathParam("sharedSpaceUuid")
+					String sharedSpaceUuid,
+			@ApiParam(value = "The sharedSpace folder to delete. Only uuid is required", required = true)
+				WorkGroupNode sharedSpaceNode)
 					throws BusinessException {
-		return workGroupNodeFacade.delete(null, workGroupUuid, workGroupFolder.getUuid());
+		return sharedSpaceNodeFacade.delete(null, sharedSpaceUuid, sharedSpaceNode.getUuid());
 	}
 
-	@Path("/{workGroupFolderUuid}")
+	@Path("/{sharedSpaceNodeUuid}")
 	@DELETE
-	@ApiOperation(value = "Delete a workgroup folder.", response = WorkGroupNode.class)
+	@ApiOperation(value = "Delete a sharedSpace node (folder, document, revision).", response = WorkGroupNode.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation.") ,
-					@ApiResponse(code = 404, message = "Workgroup or workgroup folder not found."),
+					@ApiResponse(code = 404, message = "SharedSpace or sharedSpace folder not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
 	public WorkGroupNode delete(
-			@ApiParam(value = "The workgroup uuid.", required = true)
-				@PathParam("workGroupUuid") String workGroupUuid,
-			@ApiParam(value = "The workGroup folder uuid.", required = true)
-				@PathParam("workGroupFolderUuid") String workGroupFolderUuid)
+			@ApiParam(value = "The sharedSpace uuid.", required = true)
+				@PathParam("sharedSpaceUuid") String sharedSpaceUuid,
+			@ApiParam(value = "The sharedSpace folder uuid.", required = true)
+				@PathParam("sharedSpaceNodeUuid") String sharedSpaceNodeUuid)
 					throws BusinessException {
-		return workGroupNodeFacade.delete(null, workGroupUuid, workGroupFolderUuid);
+		return sharedSpaceNodeFacade.delete(null, sharedSpaceUuid, sharedSpaceNodeUuid);
 	}
 
 	@Path("/")
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@ApiOperation(value = "Create a workgroup document which will contain the uploaded file, if versionning is enabled and another workgroup document already exists with same name, it will be automatically a revision of the old one.", response = WorkGroupEntryDto.class)
+	@ApiOperation(value = "Create a sharedSpace document which will contain the uploaded file, if versionning is "
+			+ "enabled and another sharedSpace document already exists with same name, it will be automatically a "
+			+ "revision of the old one.", response = WorkGroupEntryDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation."),
-					@ApiResponse(code = 404, message = "Workgroup document not found."),
+					@ApiResponse(code = 404, message = "SharedSpace document not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
 	public WorkGroupNode create(
-			@ApiParam(value = "The workgroup uuid.", required = true)
-				@PathParam("workGroupUuid") String workGroupUuid,
+			@ApiParam(value = "The sharedSpace uuid.", required = true)
+				@PathParam("sharedSpaceUuid") String sharedSpaceUuid,
 			@ApiParam(value = "The parent node uuid.", required = false)
 				@QueryParam("parent") String parentNodeUuid,
 			@ApiParam(value = "File stream.", required = true)
 				@Multipart(value = "file", required = true) InputStream file,
-			@ApiParam(value = "An optional description of a workgroup document.")
+			@ApiParam(value = "An optional description of a sharedSpace document.")
 				@Multipart(value = "description", required = false) String description,
 			@ApiParam(value = "The given file name of the file to upload.", required = true)
 				@Multipart(value = "filename", required = false) String givenFileName,
@@ -287,13 +305,13 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Wo
 		if (async) {
 			logger.debug("Async mode is used");
 			// Asynchronous mode
-			return createWorkGroupAsycTask(fileName, tempFile, parentNodeUuid, workGroupUuid, transfertDuration, strict);
+			return createWorkGroupAsycTask(fileName, tempFile, parentNodeUuid, sharedSpaceUuid, transfertDuration, strict);
 		} else {
 			// TODO : manage transfertDuration
 			// Synchronous mode
 			try {
 				logger.debug("Async mode is not used");
-				WorkGroupNode create = workGroupNodeFacade.create(null, workGroupUuid, parentNodeUuid, tempFile, fileName, strict);
+				WorkGroupNode create = sharedSpaceNodeFacade.create(null, sharedSpaceUuid, parentNodeUuid, tempFile, fileName, strict);
 				return create;
 			} finally {
 				WebServiceUtils.deleteTempFile(tempFile);
@@ -303,7 +321,7 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Wo
 
 	@Path("/copy")
 	@POST
-	@ApiOperation(value = "Create a workgroup document from an existing document or received share.", response = DocumentDto.class)
+	@ApiOperation(value = "Create a sharedSpace document from an existing document or received share.", response = DocumentDto.class)
 	@ApiResponses({
 			@ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation."),
 			@ApiResponse(code = 404, message = "Document not found."),
@@ -311,18 +329,18 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Wo
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public List<WorkGroupNode> copy(
-			@ApiParam(value = "The workgroup uuid.", required = true)
-				@PathParam("workGroupUuid") String workGroupUuid,
+			@ApiParam(value = "The sharedSpace uuid.", required = true)
+				@PathParam("sharedSpaceUuid") String sharedSpaceUuid,
 			CopyDto  copy,
 			@ApiParam(value = "Delete the share at the end of the copy.", required = false)
 				@QueryParam("deleteShare") @DefaultValue("false") boolean deleteShare
 			) throws BusinessException {
-		return workGroupNodeFacade.copy(null, workGroupUuid, null, copy, deleteShare);
+		return sharedSpaceNodeFacade.copy(null, sharedSpaceUuid, null, copy, deleteShare);
 	}
 
 	@Path("/{uuid}/copy")
 	@POST
-	@ApiOperation(value = "Copy the workGroup document to another folder or to another workgroup, duplicate a workgroup document, or to restore a revision ", response = WorkGroupEntryDto.class)
+	@ApiOperation(value = "Copy the sharedSpace document to another folder or to another sharedSpace, duplicate a sharedSpace document, or to restore a revision ", response = WorkGroupEntryDto.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation."),
 					@ApiResponse(code = 404, message = "Workgroup node not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
@@ -330,20 +348,20 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Wo
 					})
 	@Override
 	public List<WorkGroupNode> copy(
-			@ApiParam(value = "The workgroup uuid.", required = true)
-				@PathParam("workGroupUuid") String workGroupUuid,
+			@ApiParam(value = "The sharedSpace uuid.", required = true)
+				@PathParam("sharedSpaceUuid") String sharedSpaceUuid,
 			@ApiParam(value = "The parent node uuid, which is the uuid of the node destination", required = true)
 				@PathParam("uuid")  String parentNodeUuid,
 			@ApiParam(value = "The object which contains the target kind and the uuid of the node to copy.", required = true) CopyDto copy,
 			@ApiParam(value = "Delete the share at the end of the copy.", required = false)
 				@QueryParam("deleteShare") @DefaultValue("false") boolean deleteShare)
 			throws BusinessException {
-		return workGroupNodeFacade.copy(null, workGroupUuid, parentNodeUuid, copy, deleteShare);
+		return sharedSpaceNodeFacade.copy(null, sharedSpaceUuid, parentNodeUuid, copy, deleteShare);
 	}
 
 	@Path("/{uuid}")
 	@HEAD
-	@ApiOperation(value = "Get a workgroup node.")
+	@ApiOperation(value = "Get a sharedSpace node.")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation.") ,
 					@ApiResponse(code = 404, message = "Workgroup node not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
@@ -351,12 +369,12 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Wo
 					})
 	@Override
 	public void head(
-			@ApiParam(value = "The workgroup uuid.", required = true)
-				@PathParam("workGroupUuid") String workGroupUuid,
-			@ApiParam(value = "The workgroup node uuid.", required = true)
+			@ApiParam(value = "The sharedSpace uuid.", required = true)
+				@PathParam("sharedSpaceUuid") String sharedSpaceUuid,
+			@ApiParam(value = "The sharedSpace node uuid.", required = true)
 				@PathParam("uuid") String uuid)
 					throws BusinessException {
-		workGroupNodeFacade.find(null, workGroupUuid, uuid, false);
+		sharedSpaceNodeFacade.find(null, sharedSpaceUuid, uuid, false);
 	}
 
 
@@ -370,12 +388,12 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Wo
 					})
 	@Override
 	public Response download(
-			@ApiParam(value = "The workgroup uuid.", required = true)
-				@PathParam("workGroupUuid") String workGroupUuid,
-			@ApiParam(value = "The workgroup node uuid.", required = true)
+			@ApiParam(value = "The sharedSpace uuid.", required = true)
+				@PathParam("sharedSpaceUuid") String sharedSpaceUuid,
+			@ApiParam(value = "The sharedSpace node uuid.", required = true)
 				@PathParam("uuid") String uuid)
 					throws BusinessException {
-		return workGroupNodeFacade.download(null, workGroupUuid, uuid);
+		return sharedSpaceNodeFacade.download(null, sharedSpaceUuid, uuid);
 	}
 
 	@Path("/{uuid}/thumbnail{kind:(small)?|(medium)?|(large)?|(pdf)?}")
@@ -388,8 +406,8 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Wo
 					})
 	@Override
 	public Response thumbnail(
-			@ApiParam(value = "The workgroup uuid.", required = true)
-				@PathParam("workGroupUuid") String workGroupUuid,
+			@ApiParam(value = "The sharedSpace uuid.", required = true)
+				@PathParam("sharedSpaceUuid") String sharedSpaceUuid,
 			@ApiParam(value = "The document uuid.", required = true)
 				@PathParam("uuid") String uuid,
 			@ApiParam(value = "This parameter allows you to choose which thumbnail you want : Small, Medium or Large. Default value is Medium", required = false)
@@ -397,7 +415,7 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Wo
 			@ApiParam(value = "True to get an encoded base 64 response", required = false)
 				@QueryParam("base64") @DefaultValue("false") boolean base64)
 					throws BusinessException {
-		return workGroupNodeFacade.thumbnail(null, workGroupUuid, uuid, base64, thumbnailType);
+		return sharedSpaceNodeFacade.thumbnail(null, sharedSpaceUuid, uuid, base64, thumbnailType);
 	}
 
 	@Path("/{uuid}/async")
@@ -410,43 +428,43 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Wo
 		return asyncTaskFacade.find(uuid);
 	}
 
-	@Path("/{workGroupNodeUuid}/audit")
+	@Path("/{sharedSpaceNodeUuid}/audit")
 	@GET
-	@ApiOperation(value = "Get all traces for a workgroup node.", response = AuditLogEntryUser.class, responseContainer="Set")
+	@ApiOperation(value = "Get all traces for a sharedSpace node.", response = AuditLogEntryUser.class, responseContainer="Set")
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation.") ,
-					@ApiResponse(code = 404, message = "Workgroup or folder not found."),
+					@ApiResponse(code = 404, message = "SharedSpace or folder not found."),
 					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 					@ApiResponse(code = 500, message = "Internal server error."),
 					})
 	@Override
 	public Set<AuditLogEntryUser> findAll(
-			@ApiParam(value = "The workGroupNodeUuid.", required = true)
-				@PathParam("workGroupUuid") String workGroupUuid,
-			@ApiParam(value = "The workGroup node uuid.", required = true)
-				@PathParam("workGroupNodeUuid") String workGroupNodeUuid,
+			@ApiParam(value = "The sharedSpaceNodeUuid.", required = true)
+				@PathParam("sharedSpaceUuid") String sharedSpaceUuid,
+			@ApiParam(value = "The sharedSpace node uuid.", required = true)
+				@PathParam("sharedSpaceNodeUuid") String sharedSpaceNodeUuid,
 			@ApiParam(value = "Filter by type of actions..", required = false)
 				@QueryParam("actions") List<LogAction> actions,
 			@ApiParam(value = "Filter by type of resource's types.", required = false)
 				@QueryParam("types") List<AuditLogEntryType> types,
 				@QueryParam("beginDate") String beginDate,
 				@QueryParam("endDate") String endDate) {
-		return workGroupNodeFacade.findAll(null, workGroupUuid, workGroupNodeUuid, actions, types, beginDate, endDate);
+		return sharedSpaceNodeFacade.findAll(null, sharedSpaceUuid, sharedSpaceNodeUuid, actions, types, beginDate, endDate);
 	}
 
 	@Path("/url")
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "Create a workgroup document which will contain the uploaded file.", response = WorkGroupNode.class)
+	@ApiOperation(value = "Create a sharedSpace document which will contain the uploaded file.", response = WorkGroupNode.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation."),
 			@ApiResponse(code = 404, message = "Workgroup document not found."),
 			@ApiResponse(code = 400, message = "Bad request : missing required fields."),
 			@ApiResponse(code = 500, message = "Internal server error."), })
 	@Override
 	public WorkGroupNode createFromURL(
-			@ApiParam(value = "The workgroup uuid.", required = true)
-				@PathParam("workGroupUuid") String workGroupUuid,
-			@ApiParam(value = "The parent workgroup node uuid.", required = false)
+			@ApiParam(value = "The sharedSpace uuid.", required = true)
+				@PathParam("sharedSpaceUuid") String sharedSpaceUuid,
+			@ApiParam(value = "The parent Space node uuid.", required = false)
 				@QueryParam("parent") String parentNodeUuid,
 			@ApiParam(value = "The document URL object.", required = true) DocumentURLDto documentURLDto,
 			@ApiParam(value = "True to enable asynchronous upload processing.", required = false) @DefaultValue("false")
@@ -464,13 +482,13 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Wo
 		if (async) {
 			logger.debug("Async mode is used");
 			// Asynchronous mode
-			return createWorkGroupAsycTask(fileName, tempFile, parentNodeUuid, workGroupUuid, transfertDuration, strict);
+			return createWorkGroupAsycTask(fileName, tempFile, parentNodeUuid, sharedSpaceUuid, transfertDuration, strict);
 		} else {
 			// TODO : manage transfertDuration
 			// Synchronous mode
 			try {
 				logger.debug("Async mode is not used");
-				WorkGroupNode create = workGroupNodeFacade.create(null, workGroupUuid, parentNodeUuid, tempFile,
+				WorkGroupNode create = sharedSpaceNodeFacade.create(null, sharedSpaceUuid, parentNodeUuid, tempFile,
 						fileName, strict);
 				return create;
 			} finally {
@@ -498,18 +516,18 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Wo
 	}
 
 	protected WorkGroupAsyncTask createWorkGroupAsycTask(String fileName, File tempFile, String parentNodeUuid,
-			String workGroupUuid, Long transfertDuration, Boolean strict) {
-		AccountDto authUserDto = workGroupNodeFacade.getAuthenticatedAccountDto();
+			String sharedSpaceUuid, Long transfertDuration, Boolean strict) {
+		AccountDto authUserDto = sharedSpaceNodeFacade.getAuthenticatedAccountDto();
 		AsyncTaskDto asyncTask = null;
 		try {
 			asyncTask = asyncTaskFacade.create(tempFile.length(), transfertDuration, fileName, null,
 					AsyncTaskType.THREAD_ENTRY_UPLOAD);
-			WorkGroupEntryTaskContext workGroupEntryTaskContext = new WorkGroupEntryTaskContext(authUserDto,
-					authUserDto.getUuid(), workGroupUuid, tempFile, fileName, parentNodeUuid, strict);
-			WorkGroupEntryUploadAsyncTask task = new WorkGroupEntryUploadAsyncTask(workGroupEntryAsyncFacade,
-					workGroupEntryTaskContext, asyncTask);
+			WorkGroupEntryTaskContext sharedSpaceEntryTaskContext = new WorkGroupEntryTaskContext(authUserDto,
+					authUserDto.getUuid(), sharedSpaceUuid, tempFile, fileName, parentNodeUuid, strict);
+			WorkGroupEntryUploadAsyncTask task = new WorkGroupEntryUploadAsyncTask(sharedSpaceEntryAsyncFacade,
+					sharedSpaceEntryTaskContext, asyncTask);
 			taskExecutor.execute(task);
-			return new WorkGroupAsyncTask(asyncTask, workGroupEntryTaskContext);
+			return new WorkGroupAsyncTask(asyncTask, sharedSpaceEntryTaskContext);
 		} catch (Exception e) {
 			logAsyncFailure(asyncTask, e);
 			WebServiceUtils.deleteTempFile(tempFile);
