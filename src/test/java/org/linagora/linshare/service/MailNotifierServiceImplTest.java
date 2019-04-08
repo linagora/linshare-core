@@ -83,6 +83,7 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
     @Before
     public void setUp() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
+		mailNotifierService.setHost("localhost");
 		wiser.start();
 		logger.debug(LinShareTestConstants.END_SETUP);
     }
