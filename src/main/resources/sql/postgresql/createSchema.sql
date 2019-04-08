@@ -405,7 +405,7 @@ CREATE TABLE mail_content (
   id                  int8 NOT NULL,
   uuid               varchar(255) NOT NULL,
   enable           bool DEFAULT 'false' NOT NULL,
-  override           bool DEFAULT 'false' NOT NULL,
+  enable_for_all           bool DEFAULT 'false' NOT NULL,
   language          int4,
   description        text,
   name               varchar(255),

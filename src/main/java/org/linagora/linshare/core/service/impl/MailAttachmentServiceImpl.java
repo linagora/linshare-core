@@ -80,10 +80,10 @@ public class MailAttachmentServiceImpl implements MailAttachmentService {
 	}
 
 	@Override
-	public MailAttachment create(Account authUser, boolean enable, String fileName, boolean override, String mailConfig,
+	public MailAttachment create(Account authUser, boolean enable, String fileName, boolean enableForAll, String mailConfig,
 			String description, String alt, String cid, int language, File tempFile, String metaData) {
 		MailConfig config = configService.findByUuid(mailConfig);
-		MailAttachment attachment = attachmentBusinessService.create(authUser, enable, fileName, override, config,
+		MailAttachment attachment = attachmentBusinessService.create(authUser, enable, fileName, enableForAll, config,
 				description, alt, cid, language, tempFile, metaData);
 		saveLog(authUser, LogAction.CREATE, attachment);
 		return attachment;
@@ -133,7 +133,7 @@ public class MailAttachmentServiceImpl implements MailAttachmentService {
 		Validate.notEmpty(mailAttach.getName(), "Name must be set");
 		checkAdminFor(authUser, authUser.getDomain());
 		attachmentToUpdate.setEnable(mailAttach.getEnable());
-		attachmentToUpdate.setOverride(mailAttach.getOverride());
+		attachmentToUpdate.setEnableForAll(mailAttach.getEnableForAll());
 		attachmentToUpdate.setLanguage(mailAttach.getLanguage());
 		attachmentToUpdate.setDescription(mailAttach.getDescription());
 		attachmentToUpdate.setName(mailAttach.getName());

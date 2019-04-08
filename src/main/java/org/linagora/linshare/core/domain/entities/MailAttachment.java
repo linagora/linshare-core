@@ -45,7 +45,7 @@ public class MailAttachment {
 
 	private Document document;
 
-	private Boolean override;
+	private Boolean enableForAll;
 
 	private Integer language;
 
@@ -65,12 +65,12 @@ public class MailAttachment {
 		super();
 	}
 
-	public MailAttachment(Boolean enable, Document document, Boolean override, Integer language,
+	public MailAttachment(Boolean enable, Document document, Boolean enableForAll, Integer language,
 			String description, String name, MailConfig mailConfig, AbstractDomain domain, String cid, String alt) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
 		this.enable = enable;
-		this.override = override;
+		this.enableForAll = enableForAll;
 		this.language = language;
 		this.description = description;
 		this.name = name;
@@ -113,12 +113,12 @@ public class MailAttachment {
 		this.document = document;
 	}
 
-	public Boolean getOverride() {
-		return override;
+	public Boolean getEnableForAll() {
+		return enableForAll;
 	}
 
-	public void setOverride(Boolean override) {
-		this.override = override;
+	public void setEnableForAll(Boolean enableForAll) {
+		this.enableForAll = enableForAll;
 	}
 
 	public Integer getLanguage() {
@@ -179,8 +179,8 @@ public class MailAttachment {
 
 	@Override
 	public String toString() {
-		return "MailAttachment [uuid=" + uuid + ", enable=" + enable + ", document=" + document + ", override="
-				+ override + ", language=" + language + ", description=" + description + ", name=" + name
+		return "MailAttachment [uuid=" + uuid + ", enable=" + enable + ", document=" + document + ", enableForAll="
+				+ enableForAll + ", language=" + language + ", description=" + description + ", name=" + name
 				+ ", mailConfig=" + mailConfig + ", domain=" + domain + ", alt=" + alt + ", cid=" + cid + "]";
 	}
 }

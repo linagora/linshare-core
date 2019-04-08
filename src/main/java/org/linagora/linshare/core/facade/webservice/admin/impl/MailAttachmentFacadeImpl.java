@@ -69,15 +69,15 @@ public class MailAttachmentFacadeImpl extends AdminGenericFacadeImpl implements 
 
 	@Override
 	public MailAttachmentDto create(File tempFile, String fileName, String description, String metaData, boolean enable,
-			boolean override, String mailConfig, String alt, String cid, int language) {
+			boolean enableForAll, String mailConfig, String alt, String cid, int language) {
 		Account authUser = checkAuthentication(Role.ADMIN);
 		Validate.notNull(tempFile, "Missing required file (check parameter named file)");
 		Validate.notEmpty(fileName, "Missing required file name");
 		Validate.notNull(enable, "Missing information to enable mail attachment (enabled)");
-		Validate.notNull(override, "Missing information to override the mail attachment (override)");
+		Validate.notNull(enableForAll, "Missing information to apply the mail attachment for all languages or not");
 		Validate.notNull(mailConfig, "Missing mail config");
 		Validate.notNull(alt, "Missing mail attachment alternative");
-		MailAttachment attachment = attachmentService.create(authUser, enable, fileName, override, mailConfig,
+		MailAttachment attachment = attachmentService.create(authUser, enable, fileName, enableForAll, mailConfig,
 				description, alt, cid, language, tempFile, metaData);
 		return new MailAttachmentDto(attachment);
 	}

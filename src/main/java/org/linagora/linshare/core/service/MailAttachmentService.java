@@ -43,7 +43,7 @@ import org.linagora.linshare.core.domain.entities.MailAttachment;
 
 public interface MailAttachmentService {
 
-	MailAttachment create(Account authUser, boolean enable, String fileName, boolean override, String mailConfig,
+	MailAttachment create(Account authUser, boolean enable, String fileName, boolean enableForAll, String mailConfig,
 			String description, String alt, String cid, int language, File tempFile, String metaData);
 
 	MailAttachment find(Account authUser, String uuid);

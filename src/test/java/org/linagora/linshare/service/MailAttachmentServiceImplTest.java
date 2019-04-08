@@ -195,7 +195,7 @@ public class MailAttachmentServiceImplTest {
 				"update", config, admin.getDomain(), "cid", "alt");
 		attachmentService.update(admin, attachment, mailAttach);
 		Assert.assertTrue(attachment.getEnable() == false);
-		Assert.assertTrue(attachment.getOverride() == false);
+		Assert.assertTrue(attachment.getEnableForAll() == false);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

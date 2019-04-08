@@ -51,8 +51,8 @@ public class MailAttachmentDto {
 	@ApiModelProperty(value = "Enable")
 	private Boolean enable;
 
-	@ApiModelProperty(value = "Override")
-	private Boolean override;
+	@ApiModelProperty(value = "The enableForAll gives the choice to apply this attachment for all languages or not")
+	private Boolean enableForAll;
 
 	@ApiModelProperty(value = "Language")
 	private Integer language;
@@ -79,12 +79,12 @@ public class MailAttachmentDto {
 		super();
 	}
 
-	public MailAttachmentDto(String uuid, Boolean enable, Boolean override, Integer language,
+	public MailAttachmentDto(String uuid, Boolean enable, Boolean enableForAll, Integer language,
 			String description, String name, String mailConfig, String domain, String alt, String cid) {
 		super();
 		this.uuid = uuid;
 		this.enable = enable;
-		this.override = override;
+		this.enableForAll = enableForAll;
 		this.language = language;
 		this.description = description;
 		this.name = name;
@@ -98,7 +98,7 @@ public class MailAttachmentDto {
 		super();
 		this.uuid = attachment.getUuid();
 		this.enable = attachment.getEnable();
-		this.override = attachment.getOverride();
+		this.enableForAll = attachment.getEnableForAll();
 		this.language = attachment.getLanguage();
 		this.description = attachment.getDescription();
 		this.name = attachment.getName();
@@ -111,7 +111,7 @@ public class MailAttachmentDto {
 	public MailAttachment toObject() {
 		MailAttachment mattchment = new MailAttachment();
 		mattchment.setEnable(getEnable());
-		mattchment.setOverride(getOverride());
+		mattchment.setEnableForAll(getEnableForAll());
 		mattchment.setLanguage(getLanguage());
 		mattchment.setDescription(getDescription());
 		mattchment.setName(getName());
@@ -136,12 +136,12 @@ public class MailAttachmentDto {
 		this.enable = enable;
 	}
 
-	public Boolean getOverride() {
-		return override;
+	public Boolean getEnableForAll() {
+		return enableForAll;
 	}
 
-	public void setOverride(Boolean override) {
-		this.override = override;
+	public void setEnableForAll(Boolean enableForAll) {
+		this.enableForAll = enableForAll;
 	}
 
 	public Integer getLanguage() {

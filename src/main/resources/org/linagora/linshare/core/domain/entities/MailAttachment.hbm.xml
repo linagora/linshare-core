@@ -8,7 +8,7 @@
 		</id>
 		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false"/>
 		<property name="enable" column="enable" type="boolean" not-null="true" lazy="false"/>
-		<property name="override" column="override" type="boolean" not-null="true" lazy="false"/>
+		<property name="enableForAll" column="enable_for_all" type="boolean" not-null="true" lazy="false"/>
 		<property name="language" column="language" type="integer" not-null="false" lazy="false"/>
 		<property name="description" column="description" type="text" not-null="false" />
 		<property name="name" column="name" type="string" length="255" not-null="true" lazy="false"/>

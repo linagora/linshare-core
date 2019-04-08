@@ -82,7 +82,7 @@ public class MailAttachmentBusinessServiceImpl extends AbstractDocumentBusinessS
 	}
 
 	@Override
-	public MailAttachment create(Account authUser, boolean enable, String fileName, boolean override,
+	public MailAttachment create(Account authUser, boolean enable, String fileName, boolean enableForAll,
 			MailConfig mailConfig, String description, String alt, String cid, int language, File tempFile,
 			String metaData) {
 		String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
@@ -90,7 +90,7 @@ public class MailAttachmentBusinessServiceImpl extends AbstractDocumentBusinessS
 		if (Strings.isNullOrEmpty(cid)) {
 			cid = defaultMailAttachmentCid;
 		}
-		MailAttachment mailAttachment = new MailAttachment(enable, document, override, language, description, fileName,
+		MailAttachment mailAttachment = new MailAttachment(enable, document, enableForAll, language, description, fileName,
 				mailConfig, authUser.getDomain(), cid, alt);
 		return attachmentRepository.create(mailAttachment);
 	}

@@ -404,7 +404,7 @@ public abstract class EmailBuilder implements IEmailBuilder {
 			} else {
 				for (MailAttachment attachment : cfg.getMailAttachments()) {
 					if (attachment.getEnable()) {
-						if (attachment.getOverride()) {
+						if (attachment.getEnableForAll()) {
 							addLogo(container, attachment.getCid(), attachment.getDocument());
 						} else if (emailCtx.getLanguage().equals(Language.fromInt(attachment.getLanguage()))) {
 							addLogo(container, attachment.getCid(), attachment.getDocument());

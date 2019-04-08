@@ -118,8 +118,8 @@ public class MailAttachmentRestServiceImpl extends WebserviceBase implements Mai
 					@Multipart(value = "filesize", required = true) Long fileSize,
 				@ApiParam(value = "True to enable the mail attachment.", required = false)
 					@Multipart(value = "enable", required = true) boolean enable,
-				@ApiParam(value = "True to override on all mails.", required = false)
-					@Multipart(value = "override", required = true) boolean override,
+				@ApiParam(value = "EnableForAll gives the choice to admin to apply the mail attachment for all languages.", required = false)
+					@Multipart(value = "enableForAll", required = true) boolean enableForAll,
 				@ApiParam(value = "The choosen mail config.", required = false)
 					@Multipart(value = "mail_config", required = true) String config,
 				@ApiParam(value = "True to enable asynchronous upload processing.", required = false)
@@ -146,7 +146,7 @@ public class MailAttachmentRestServiceImpl extends WebserviceBase implements Mai
 		}
 		try {
 			logger.debug("Async mode is not used");
-			MailAttachmentDto create = mailAttachmentFacade.create(tempFile, fileName, description, metaData, enable, override, config, alt, cid, language);
+			MailAttachmentDto create = mailAttachmentFacade.create(tempFile, fileName, description, metaData, enable, enableForAll, config, alt, cid, language);
 			return create;
 		} finally {
 			WebServiceUtils.deleteTempFile(tempFile);
