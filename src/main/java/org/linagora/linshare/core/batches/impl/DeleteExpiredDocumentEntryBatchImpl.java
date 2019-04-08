@@ -98,7 +98,7 @@ public class DeleteExpiredDocumentEntryBatchImpl extends GenericBatchImpl {
 		AbstractDomain domain = resource.getEntryOwner().getDomain();
 		ResultContext context = new EntryBatchResultContext(resource);
 		try {
-			if (resource.getShared() == 0) {
+			if (service.getRelatedEntriesCount(actor, actor, resource) == 0) {
 				TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityService
 						.getDefaultFileExpiryTimeFunctionality(domain);
 				if (fileExpirationTimeFunctionality.getActivationPolicy()
@@ -106,14 +106,15 @@ public class DeleteExpiredDocumentEntryBatchImpl extends GenericBatchImpl {
 					if (resource.getExpirationDate().before(
 							Calendar.getInstance())) {
 						service.deleteExpiredDocumentEntry(actor, resource);
+						context.setProcessed(true);
+						logger.info("Expired document entry was deleted : "
+								+ resource.getRepresentation());
 					}
 				}
 			} else {
 				logger.warn("expired document with shares found : "
 						+ resource.getRepresentation());
 			}
-			logger.info("Expired document entry was deleted : "
-					+ resource.getRepresentation());
 		} catch (BusinessException businessException) {
 			logError(total, position,
 					"Error while trying to delete expired document entry", batchRunContext);
@@ -132,9 +133,13 @@ public class DeleteExpiredDocumentEntryBatchImpl extends GenericBatchImpl {
 	public void notify(BatchRunContext batchRunContext, ResultContext context, long total, long position) {
 		EntryBatchResultContext shareContext = (EntryBatchResultContext) context;
 		Entry entry = shareContext.getResource();
-		logInfo(batchRunContext, total,
-				position, "The document entry " + entry.getRepresentation()
-						+ " has been successfully deleted.");
+		if (context.getProcessed()) {
+			console.logInfo(batchRunContext, total, position,
+					"The document entry " + entry.getRepresentation() + " has been successfully deleted.");
+		} else {
+			console.logInfo(batchRunContext, total, position,
+					"The document entry " + entry.getRepresentation() + " has been ignored.");
+		}
 	}
 
 	@Override
@@ -154,7 +159,9 @@ public class DeleteExpiredDocumentEntryBatchImpl extends GenericBatchImpl {
 	public void terminate(BatchRunContext batchRunContext, List<String> all, long errors,
 			long unhandled_errors, long total, long processed) {
 		long success = total - errors - unhandled_errors;
-		logger.info(success + " document entry(s) have been deleted.");
+		if (processed > 0) {
+			logger.info(success + " document entry(s) have been deleted.");
+		}
 		if (errors > 0) {
 			logger.error(errors + " document entry(s) failed to be deleted.");
 		}

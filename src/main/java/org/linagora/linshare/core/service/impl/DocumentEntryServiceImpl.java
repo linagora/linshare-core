@@ -332,7 +332,7 @@ public class DocumentEntryServiceImpl
 
 			addToQuota(owner, newDocSize, oldDocSize);
 
-			if(documentEntry.getShared() > 0) {
+			if(documentEntryBusinessService.getRelatedEntriesCount(documentEntry) > 0) {
 				// send email, file has been replaced ....
 				// When a shared file is updated, we need to log and notify recipients.
 				List<AuditLogEntryUser> logs = Lists.newArrayList();
@@ -421,8 +421,8 @@ public class DocumentEntryServiceImpl
 
 			if (documentEntryBusinessService
 					.getRelatedEntriesCount(documentEntry) > 0) {
-				throw new BusinessException(BusinessErrorCode.FORBIDDEN,
-						"You are not authorized to delete this document. It still exists shares.");
+				throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_EXPIRED_DOCUMENT_ENTRY,
+						"This document can't be deleted. It still exists shares for it.");
 			}
 
 			documentEntryBusinessService.deleteDocumentEntry(documentEntry);
@@ -455,7 +455,7 @@ public class DocumentEntryServiceImpl
 				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, documentEntry);
 		if (documentEntryBusinessService
 				.getRelatedEntriesCount(documentEntry) > 0) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
+			throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_DOCUMENT_ENTRY,
 					"You are not authorized to delete this document. There's still existing shares.");
 		}
 		documentEntryBusinessService.deleteDocumentEntry(documentEntry);
@@ -603,7 +603,7 @@ public class DocumentEntryServiceImpl
 	@Override
 	public void deleteOrComputeExpiryDate(SystemAccount actor,
 			AbstractDomain domain, DocumentEntry documentEntry) {
-			if (documentEntry.getShared() <= 0 ) {
+			if (documentEntryBusinessService.getRelatedEntriesCount(documentEntry) == 0 ) {
 				BooleanValueFunctionality deleteShareFunc= functionalityReadOnlyService.getDefaultShareExpiryTimeDeletionFunctionality(domain);
 				// Test if we have to remove the document now.
 				if (deleteShareFunc.getValue()) {
