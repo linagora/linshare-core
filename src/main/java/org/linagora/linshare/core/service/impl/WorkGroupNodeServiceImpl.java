@@ -265,18 +265,32 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 	public WorkGroupNode create(Account actor, User owner, WorkGroup workGroup, File tempFile, String fileName,
 			String parentNodeUuid, Boolean strict) throws BusinessException {
 		preChecks(actor, owner);
-		checkCreatePermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, null, workGroup);
+		checkCreatePermission(actor, owner, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, null,
+				workGroup);
 		fileName = sanitizerInputHtmlBusinessService.sanitizeFileName(fileName);
 		if (parentNodeUuid != null && parentNodeUuid.isEmpty()) {
 			parentNodeUuid = null;
 		}
 		WorkGroupNode parentNode = getParentNode(actor, owner, workGroup, parentNodeUuid);
+		if (WorkGroupNodeType.DOCUMENT_REVISION.equals(parentNode.getNodeType())) {
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN,
+					"Cannot have a Revision as parent node");
+		}
+		boolean isRevisionFunctionality = revisionService.checkVersioningFunctionality(actor.getDomain(), workGroup);
 		boolean isRevisionOnly = false;
-		if (strict) {
-			workGroupDocumentService.checkUniqueName(workGroup, parentNode, fileName);
-		} else if (!workGroupDocumentService.isUniqueName(workGroup, parentNode, fileName)) {
-			isRevisionOnly = revisionService.checkVersioningFunctionality(actor.getDomain(), workGroup);
+		if (WorkGroupNodeType.DOCUMENT.equals(parentNode.getNodeType())) {
+			isRevisionOnly = isRevisionFunctionality;
 			if (!isRevisionOnly) {
+				throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN,
+						"Cannot have a document as parent when revision functionality is disabled");
+			}
+		}
+		if (!workGroupDocumentService.isUniqueName(workGroup, parentNode, fileName)) {
+			isRevisionOnly = isRevisionFunctionality;
+			if (!isRevisionOnly) {
+				if (strict) {
+					workGroupDocumentService.checkUniqueName(workGroup, parentNode, fileName);
+				}
 				fileName = workGroupDocumentService.getNewName(actor, owner, workGroup, parentNode, fileName);
 			}
 		}
@@ -284,7 +298,8 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
 		WorkGroupNode dto = null;
 		if (isRevisionOnly) {
-			WorkGroupDocumentRevision documentRevision = revisionService.create(actor, owner, workGroup, tempFile, fileName, parentNode);
+			WorkGroupDocumentRevision documentRevision = revisionService.create(actor, owner, workGroup, tempFile,
+					fileName, parentNode);
 			dto = revisionService.updateDocument(actor, (Account) owner, workGroup, documentRevision);
 		} else {
 			dto = workGroupDocumentService.create(actor, owner, workGroup, size, mimeType, fileName, parentNode);

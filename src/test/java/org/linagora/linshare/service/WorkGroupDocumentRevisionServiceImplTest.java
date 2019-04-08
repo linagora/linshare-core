@@ -47,6 +47,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.helpers.IOUtils;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -55,6 +56,7 @@ import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.InitMongoService;
@@ -419,4 +421,60 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		assertEquals(document.getSize(), fromRevision.getSize());
 		assertTrue(fromRevision.getHasRevision());
 	}
+
+	@Test
+	public void createRevisionIntoDocumentTest() throws IOException {
+		SharedSpaceNode ssnode = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
+		ssnode.setVersioningParameters(new VersioningParameters(true));
+		ssnode = sharedSpaceNodeService.create(john, john, ssnode);
+		WorkGroup workGroup = threadService.find(john, john, ssnode.getUuid());
+		InputStream stream1 = Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream("linshare-default.properties");
+		InputStream stream2 = Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream("linshare-default.properties");
+		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
+		File tempFile2 = File.createTempFile("linshare-default.properties", ".tmp");
+		IOUtils.transferTo(stream1, tempFile1);
+		IOUtils.transferTo(stream2, tempFile2);
+		WorkGroupNode rootFolder = workGroupNodeService.getRootFolder(john, john, workGroup);
+		WorkGroupDocument document = (WorkGroupDocument) workGroupDocumentService.create(john, john, workGroup,
+				tempFile1.length(), "text/plain", tempFile1.getName(), rootFolder);
+		workGroupDocumentRevisionService.create(john, john, workGroup, tempFile1, tempFile1.getName(), document);
+		Assertions.assertFalse(document.getHasRevision());
+//		 add a document as revision of an existing one
+		document = (WorkGroupDocument) workGroupNodeService.create(john, john, workGroup, tempFile2,
+				tempFile2.getName(), document.getUuid(), false);
+		WorkGroupDocumentRevision revision = (WorkGroupDocumentRevision) workGroupDocumentRevisionService
+				.findMostRecent(workGroup, document.getUuid());
+		Assertions.assertEquals(document.getUuid(), revision.getParent());
+		Assertions.assertTrue(document.getHasRevision());
+	}
+
+	@Test
+	public void createRevisionIntoRevisionTest() throws IOException {
+		SharedSpaceNode ssnode = new SharedSpaceNode("My first node", "My parent nodeUuid", NodeType.WORK_GROUP);
+		ssnode.setVersioningParameters(new VersioningParameters(true));
+		ssnode = sharedSpaceNodeService.create(john, john, ssnode);
+		WorkGroup workGroup = threadService.find(john, john, ssnode.getUuid());
+		InputStream stream1 = Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream("linshare-default.properties");
+		InputStream stream2 = Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream("linshare-default.properties");
+		File tempFile1 = File.createTempFile("linshare-test", ".tmp");
+		File tempFile2 = File.createTempFile("linshare-default.properties", ".tmp");
+		IOUtils.transferTo(stream1, tempFile1);
+		IOUtils.transferTo(stream2, tempFile2);
+		WorkGroupNode rootFolder = workGroupNodeService.getRootFolder(john, john, workGroup);
+		WorkGroupDocument document = (WorkGroupDocument) workGroupDocumentService.create(john, john, workGroup,
+				tempFile1.length(), "text/plain", tempFile1.getName(), rootFolder);
+		WorkGroupDocumentRevision revision = workGroupDocumentRevisionService.create(john, john, workGroup, tempFile1,
+				tempFile1.getName(), document);
+		BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+			// An exception is thrown because we can't have a revision as parent.
+			workGroupNodeService.create(john, john, workGroup, tempFile2, tempFile2.getName(), revision.getUuid(),
+					false);
+		});
+		Assertions.assertEquals(BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, exception.getErrorCode());
+	}
+
 }
