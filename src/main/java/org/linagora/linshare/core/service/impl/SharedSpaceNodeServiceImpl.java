@@ -36,6 +36,7 @@ package org.linagora.linshare.core.service.impl;
 import java.util.List;
 
 import org.jsoup.helper.Validate;
+import org.linagora.linshare.core.business.service.AccountQuotaBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceNodeBusinessService;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -44,6 +45,7 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.BooleanValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.Quota;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -81,6 +83,8 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 
 	protected final FunctionalityReadOnlyService functionalityService;
 
+	protected final AccountQuotaBusinessService accountQuotaBusinessService;
+
 	public SharedSpaceNodeServiceImpl(SharedSpaceNodeBusinessService businessService,
 			SharedSpaceNodeResourceAccessControl rac,
 			SharedSpaceMemberBusinessService memberBusinessService,
@@ -88,7 +92,8 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 			SharedSpaceRoleService ssRoleService,
 			LogEntryService logEntryService,
 			ThreadService threadService,
-			FunctionalityReadOnlyService functionalityService) {
+			FunctionalityReadOnlyService functionalityService,
+			AccountQuotaBusinessService accountQuotaBusinessService) {
 		super(rac);
 		this.businessService = businessService;
 		this.memberService = memberService;
@@ -97,6 +102,7 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 		this.logEntryService = logEntryService;
 		this.threadService = threadService;
 		this.functionalityService = functionalityService;
+		this.accountQuotaBusinessService = accountQuotaBusinessService;
 	}
 
 	@Override
@@ -137,7 +143,9 @@ public class SharedSpaceNodeServiceImpl extends GenericServiceImpl<Account, Shar
 			throws BusinessException {
 		// Hack to create thread into shared space node
 		WorkGroup workGroup = threadService.create(authUser, actor, node.getName());
+		Quota workgroupQuota = 	accountQuotaBusinessService.find(workGroup);
 		node.setUuid(workGroup.getLsUuid());
+		node.setQuotaUuid(workgroupQuota.getUuid());
 		SharedSpaceNode created = businessService.create(node);
 		saveLog(authUser, actor, LogAction.CREATE, created);
 		return created;

@@ -40,6 +40,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.NodeType;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -136,6 +137,7 @@ public class SharedSpaceNodeServiceImplTest extends AbstractTransactionalJUnit4S
 		SharedSpaceNode expectedNode = service.create(authUser, authUser, node);
 		Assert.assertNotNull("node not created", expectedNode);
 		Assert.assertEquals(expectedNode.getUuid(), node.getUuid());
+		Assertions.assertNotNull(node.getQuotaUuid());
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 

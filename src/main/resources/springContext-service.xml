@@ -440,6 +440,7 @@
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="threadService" />
 		<constructor-arg ref="functionalityReadOnlyService" />
+		<constructor-arg ref="accountQuotaBusinessService" />
 	</bean>
 	<bean id="sharedSpaceLdapGroupService" class="org.linagora.linshare.core.ldap.service.impl.SharedSpaceNodeServiceImpl">
 		<constructor-arg ref="sharedSpaceLdapGroupBusinessService" />

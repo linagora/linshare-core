@@ -72,6 +72,8 @@ public class SharedSpaceNode {
 
 	protected VersioningParameters versioningParameters;
 
+	protected String quotaUuid;
+
 	public SharedSpaceNode() {
 		super();
 	}
@@ -173,10 +175,19 @@ public class SharedSpaceNode {
 		this.versioningParameters = versioningParameters;
 	}
 
+	public String getQuotaUuid() {
+		return quotaUuid;
+	}
+
+	public void setQuotaUuid(String quotaUuid) {
+		this.quotaUuid = quotaUuid;
+	}
+
 	@Override
 	public String toString() {
-		return "SharedSpaceNode [uuid=" + uuid + ", name=" + name + ", parentUuid=" + parentUuid
+		return "SharedSpaceNode [id=" + id + ", uuid=" + uuid + ", name=" + name + ", parentUuid=" + parentUuid
 				+ ", nodeType=" + nodeType + ", creationDate=" + creationDate + ", modificationDate=" + modificationDate
-				+ "]";
+				+ ", versioningParameters=" + versioningParameters + ", quotaUuid=" + quotaUuid + "]";
 	}
+
 }
