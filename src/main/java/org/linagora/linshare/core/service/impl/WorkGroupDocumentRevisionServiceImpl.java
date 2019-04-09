@@ -33,19 +33,15 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.group;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.match;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
-
 import java.io.File;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
+import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.DocumentEntryRevisionBusinessService;
 import org.linagora.linshare.core.business.service.OperationHistoryBusinessService;
-import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
 import org.linagora.linshare.core.business.service.SharedSpaceMemberBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
@@ -78,7 +74,6 @@ import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -142,7 +137,7 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 			documentRevision = documentEntryRevisionBusinessService.createWorkGroupDocumentRevision(owner, workGroup,
 					tempFile, size, fileName, checkIfIsCiphered, timeStampingUrl, mimeType, parentNode);
 			updateThumbnailOnDocument(workGroup, documentRevision);
-			if (countRevisions(workGroup.getLsUuid(), parentNode.getUuid()) > 1) {
+			if (checkHasRevision(workGroup.getLsUuid(), parentNode.getUuid())) {
 				WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
 						AuditLogEntryType.WORKGROUP_DOCUMENT_REVISION, parentNode, workGroup);
 				logEntryService.insert(log);
@@ -178,18 +173,13 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 			throw new BusinessException(BusinessErrorCode.DOCUMENT_ENTRY_NOT_FOUND,
 					"The parent document has not been found for this revision.");
 		}
-		Long count = countRevisions(workGroup.getLsUuid(), parentDocument.getUuid());
 		parentDocument.setModificationDate(new Date());
 		parentDocument.setMetaData(documentRevision.getMetaData());
 		parentDocument.setLastAuthor(documentRevision.getLastAuthor());
 		parentDocument.setSize(documentRevision.getSize());
 		parentDocument.setHasThumbnail(documentRevision.getHasThumbnail());
-		parentDocument.setRevisionsCount(count);
-		boolean hasRevision = count > 1;
+		boolean hasRevision = checkHasRevision(workGroup.getLsUuid(), parentDocument.getUuid());
 		parentDocument.setHasRevision(hasRevision);
-		Long revisionsSize = hasRevision ? computeRevisionsSize(workGroup.getLsUuid(), parentDocument.getUuid())
-				: documentRevision.getSize();
-		parentDocument.setRevisionsSize(revisionsSize);
 		parentDocument = repository.save(parentDocument);
 		return parentDocument;
 	}
@@ -243,15 +233,13 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_REVISION_NOT_FOUND,
 					"The revision has not been found");
 		}
-		if (countRevisions(workGroup.getLsUuid(), workGroupNode.getParent()) < 2) {
+		Long count = repository.countByWorkGroupAndParentAndNodeType(workGroup.getLsUuid(), workGroupNode.getParent(),
+				WorkGroupNodeType.DOCUMENT_REVISION);
+		if (count < 2) {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_REVISION_DELETE_FORBIDDEN,
 					"You can't delete the last revision, try to delete the whole document");
 		}
-		revisionToDelete = deleteRevision(actor, owner, workGroup, (WorkGroupDocumentRevision) revisionToDelete);
-		WorkGroupDocumentRevision mostRecentRevision = (WorkGroupDocumentRevision) findMostRecent(workGroup,
-				revisionToDelete.getParent());
-		updateDocument(actor, owner, workGroup, mostRecentRevision);
-		return revisionToDelete;
+		return deleteRevision(actor, owner, workGroup, (WorkGroupDocumentRevision) revisionToDelete);
 	}
 
 	private WorkGroupDocumentRevision deleteRevision(Account actor, Account owner, WorkGroup workGroup, WorkGroupDocumentRevision revision) throws BusinessException {
@@ -274,19 +262,9 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 		return false;
 	}
 
-	private Long countRevisions(String workgroupUuid, String parentDocumentUuid) {
+	private boolean checkHasRevision(String workgroupUuid, String parentDocumentUuid) {
 		return repository.countByWorkGroupAndParentAndNodeType(workgroupUuid, parentDocumentUuid,
-				WorkGroupNodeType.DOCUMENT_REVISION);
-	}
-
-	private Long computeRevisionsSize(String workgroupUuid, String parentUuid) {
-		Aggregation aggregation = newAggregation(match(Criteria.where("workGroup").is(workgroupUuid)
-				.and("parent").is(parentUuid)
-				.and("nodeType").is(WorkGroupNodeType.DOCUMENT_REVISION)),
-				group().sum("size").as("size"));
-		WorkGroupDocumentRevision result = mongoTemplate
-				.aggregate(aggregation, "work_group_nodes", WorkGroupDocumentRevision.class).getUniqueMappedResult();
-		return result.getSize();
+				WorkGroupNodeType.DOCUMENT_REVISION) > 1;
 	}
 
 }
