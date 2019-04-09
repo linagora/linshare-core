@@ -137,7 +137,7 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 			documentRevision = documentEntryRevisionBusinessService.createWorkGroupDocumentRevision(owner, workGroup,
 					tempFile, size, fileName, checkIfIsCiphered, timeStampingUrl, mimeType, parentNode);
 			updateThumbnailOnDocument(workGroup, documentRevision);
-			if (checkHasRevision(workGroup.getLsUuid(), parentNode.getUuid())) {
+			if (hasRevision(workGroup.getLsUuid(), parentNode.getUuid())) {
 				WorkGroupNodeAuditLogEntry log = new WorkGroupNodeAuditLogEntry(actor, owner, LogAction.CREATE,
 						AuditLogEntryType.WORKGROUP_DOCUMENT_REVISION, parentNode, workGroup);
 				logEntryService.insert(log);
@@ -178,7 +178,7 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 		parentDocument.setLastAuthor(documentRevision.getLastAuthor());
 		parentDocument.setSize(documentRevision.getSize());
 		parentDocument.setHasThumbnail(documentRevision.getHasThumbnail());
-		boolean hasRevision = checkHasRevision(workGroup.getLsUuid(), parentDocument.getUuid());
+		boolean hasRevision = hasRevision(workGroup.getLsUuid(), parentDocument.getUuid());
 		parentDocument.setHasRevision(hasRevision);
 		parentDocument = repository.save(parentDocument);
 		return parentDocument;
@@ -233,13 +233,15 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_REVISION_NOT_FOUND,
 					"The revision has not been found");
 		}
-		Long count = repository.countByWorkGroupAndParentAndNodeType(workGroup.getLsUuid(), workGroupNode.getParent(),
-				WorkGroupNodeType.DOCUMENT_REVISION);
-		if (count < 2) {
+		if (!hasRevision(workGroup.getLsUuid(), workGroupNode.getParent())) {
 			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_REVISION_DELETE_FORBIDDEN,
 					"You can't delete the last revision, try to delete the whole document");
 		}
-		return deleteRevision(actor, owner, workGroup, (WorkGroupDocumentRevision) revisionToDelete);
+		revisionToDelete = deleteRevision(actor, owner, workGroup, (WorkGroupDocumentRevision) revisionToDelete);
+		WorkGroupDocumentRevision mostRecentRevision = (WorkGroupDocumentRevision) findMostRecent(workGroup,
+				revisionToDelete.getParent());
+		updateDocument(actor, owner, workGroup, mostRecentRevision);
+		return revisionToDelete;
 	}
 
 	private WorkGroupDocumentRevision deleteRevision(Account actor, Account owner, WorkGroup workGroup, WorkGroupDocumentRevision revision) throws BusinessException {
@@ -262,7 +264,7 @@ public class WorkGroupDocumentRevisionServiceImpl extends WorkGroupDocumentServi
 		return false;
 	}
 
-	private boolean checkHasRevision(String workgroupUuid, String parentDocumentUuid) {
+	private boolean hasRevision(String workgroupUuid, String parentDocumentUuid) {
 		return repository.countByWorkGroupAndParentAndNodeType(workgroupUuid, parentDocumentUuid,
 				WorkGroupNodeType.DOCUMENT_REVISION) > 1;
 	}

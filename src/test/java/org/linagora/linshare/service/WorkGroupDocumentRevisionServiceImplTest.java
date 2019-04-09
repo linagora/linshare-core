@@ -245,11 +245,13 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		File tempFile3 = File.createTempFile("linshare-test", ".tmp");
 		IOUtils.transferTo(stream3, tempFile3);
 
-		WorkGroupNode document = workGroupDocumentService.create(john, john, workGroup, tempFile1.length(), "text/plain", tempFile1.getName(), folder);
+		WorkGroupDocument document = (WorkGroupDocument) workGroupDocumentService.create(john, john, workGroup,
+				tempFile1.length(), "text/plain", tempFile1.getName(), folder);
 		workGroupDocumentRevisionService.create(john, john, workGroup, tempFile1, tempFile1.getName(), document);
 		WorkGroupNode revision2 = workGroupDocumentRevisionService.create(john, john, workGroup, tempFile2, tempFile2.getName(), document);
-		workGroupDocumentRevisionService.create(john, john, workGroup, tempFile3, tempFile3.getName(), document);
+		WorkGroupNode revision3 = workGroupDocumentRevisionService.create(john, john, workGroup, tempFile3, tempFile3.getName(), document);
 
+		assertEquals(false, document.getHasRevision());
 		WorkGroupNode createdDocument = workGroupDocumentService.find(john, john, workGroup, document.getUuid());
 		Sort sort = new Sort(Direction.DESC, "creationDate");
 		List<WorkGroupNode> createdRevisions = repository.findByWorkGroupAndParentAndNodeType(
@@ -262,6 +264,9 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		List<WorkGroupNode> newRevisionList = repository.findByWorkGroupAndParentAndNodeType(
 				workGroup.getLsUuid(), createdDocument.getUuid(), WorkGroupNodeType.DOCUMENT_REVISION, sort);
 		assertEquals(2, newRevisionList.size());
+		// Delete the most recent revision
+		document = (WorkGroupDocument) workGroupDocumentRevisionService.delete(john, john, workGroup, revision3);
+		assertEquals(false, document.getHasRevision());
 	}
 
 	@Test
