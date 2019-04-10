@@ -108,3 +108,31 @@ VALUES
   now(),
   now(),
   null);
+ 
+    -- TASK: UPGRADE_2_3_ADD_QUOTA_UUID_TO_ALL_SHARED_SPACES
+INSERT INTO upgrade_task
+  (id,
+  uuid,
+  identifier,
+  task_group,
+  parent_uuid,
+  parent_identifier,
+  task_order,
+  status,
+  priority,
+  creation_date,
+  modification_date,
+  extras)
+VALUES
+ (30,
+ 'UNDEFINED',
+ 'UPGRADE_2_3_ADD_QUOTA_UUID_TO_ALL_SHARED_SPACES',
+ 'UPGRADE_2_3',
+  null,
+  null,
+  30,
+ 'NEW',
+ 'MANDATORY',
+  now(),
+  now(),
+  null);

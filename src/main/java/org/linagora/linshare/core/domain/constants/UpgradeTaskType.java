@@ -179,6 +179,12 @@ public enum UpgradeTaskType {
 	UPGRADE_2_3_UPDATE_DOCUMENT_STRUCTURE_FOR_VERSIONING,
 
 	/* 
+	 * 	Upgrade SharedSpace structure :  add quotaUuid to all existing sharedSpaces.
+	 * 
+	 */
+	UPGRADE_2_3_ADD_QUOTA_UUID_TO_ALL_SHARED_SPACES,
+
+	/* 
 	 * 	Upgrade SharedSpaceNode structure for versioning
 	 * 
 	 */

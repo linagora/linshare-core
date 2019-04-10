@@ -227,6 +227,14 @@
 					<constructor-arg ref="sharedSpaceNodeMongoRepository" />
 					<constructor-arg ref="mongoTemplate" />
 				</bean>
+				<bean class="org.linagora.linshare.core.upgrade.v2_3.AddQuotaUuidToAllWorkgroupsUpgradeTaskImpl">
+					<constructor-arg ref="accountRepository" />
+					<constructor-arg ref="upgradeTaskLogMongoRepository" />
+					<constructor-arg ref="sharedSpaceNodeMongoRepository" />
+					<constructor-arg ref="accountQuotaBusinessService" />
+					<constructor-arg ref="threadService" />
+					<constructor-arg ref="mongoTemplate" />
+				</bean>
 			</list>
 		</constructor-arg>
 	</bean>
