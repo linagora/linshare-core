@@ -97,7 +97,7 @@ public class DeleteExpiredDocumentEntryBatchImpl extends GenericBatchImpl {
 		AbstractDomain domain = resource.getEntryOwner().getDomain();
 		Context context = new EntryBatchResultContext(resource);
 		try {
-			if (resource.getShared() == 0) {
+			if (service.getRelatedEntriesCount(actor, actor, resource) == 0) {
 				TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityService
 						.getDefaultFileExpiryTimeFunctionality(domain);
 				if (fileExpirationTimeFunctionality.getActivationPolicy()
@@ -105,14 +105,15 @@ public class DeleteExpiredDocumentEntryBatchImpl extends GenericBatchImpl {
 					if (resource.getExpirationDate().before(
 							Calendar.getInstance())) {
 						service.deleteExpiredDocumentEntry(actor, resource);
+						context.setProcessed(true);
+						logger.info("Expired document entry was deleted : "
+								+ resource.getRepresentation());
 					}
 				}
 			} else {
 				logger.warn("expired document with shares found : "
 						+ resource.getRepresentation());
 			}
-			logger.info("Expired document entry was deleted : "
-					+ resource.getRepresentation());
 		} catch (BusinessException businessException) {
 			logError(total, position,
 					"Error while trying to delete expired document entry");
@@ -131,9 +132,13 @@ public class DeleteExpiredDocumentEntryBatchImpl extends GenericBatchImpl {
 	public void notify(Context context, long total, long position) {
 		EntryBatchResultContext shareContext = (EntryBatchResultContext) context;
 		Entry entry = shareContext.getResource();
-		logInfo(total, position,
-				"The document entry " + entry.getRepresentation()
-						+ " has been successfully deleted.");
+		if (context.getProcessed()) {
+			logInfo(total, position,
+					"The document entry " + entry.getRepresentation() + " has been successfully deleted.");
+		} else {
+			logInfo(total, position,
+					"The document entry " + entry.getRepresentation() + " has benn ignored.");
+		}
 	}
 
 	@Override

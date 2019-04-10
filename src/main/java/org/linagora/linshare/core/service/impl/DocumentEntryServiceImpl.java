@@ -341,9 +341,8 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 
 			removeDocSizeFromGlobalUsedQuota(oldDocSize, domain);
 			addDocSizeToGlobalUsedQuota(documentEntry.getDocument(), domain);
-
-			if(documentEntry.getShared() > 0) {
-				//send email, file has been replaced ....
+			if(documentEntryBusinessService.getRelatedEntriesCount(documentEntry) > 0) {
+				// send email, file has been replaced ....
 
 				List<MailContainerWithRecipient> mails = Lists.newArrayList();
 				for (AnonymousShareEntry anonymousShareEntry : documentEntry
@@ -403,9 +402,10 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, documentEntry);
 		Account owner = documentEntry.getEntryOwner();
 		try {
-
-			if (documentEntryBusinessService.getRelatedEntriesCount(documentEntry) > 0) {
-				throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to delete this document. It still exists shares.");
+			if (documentEntryBusinessService
+					.getRelatedEntriesCount(documentEntry) > 0) {
+				throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_EXPIRED_DOCUMENT_ENTRY,
+						"This document can't be deleted. It still exists shares for it.");
 			}
 
 			AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getIdentifier());
@@ -429,8 +429,10 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 		DocumentEntry documentEntry = find(actor, owner, documentUuid);
 		checkDeletePermission(actor, owner, DocumentEntry.class,
 				BusinessErrorCode.DOCUMENT_ENTRY_FORBIDDEN, documentEntry);
-		if (documentEntryBusinessService.getRelatedEntriesCount(documentEntry) > 0) {
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to delete this document. There's still existing shares.");
+		if (documentEntryBusinessService
+				.getRelatedEntriesCount(documentEntry) > 0) {
+			throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_DOCUMENT_ENTRY,
+					"You are not authorized to delete this document. There's still existing shares.");
 		}
 		AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getIdentifier());
 		removeDocSizeFromGlobalUsedQuota(documentEntry.getSize(), domain);
@@ -712,7 +714,7 @@ public class DocumentEntryServiceImpl extends GenericEntryServiceImpl<Account, D
 	@Override
 	public void deleteOrComputeExpiryDate(SystemAccount actor,
 			AbstractDomain domain, DocumentEntry documentEntry) {
-			if (documentEntry.getShared() <= 0 ) {
+			if (documentEntryBusinessService.getRelatedEntriesCount(documentEntry) == 0 ) {
 				BooleanValueFunctionality deleteShareFunc= functionalityReadOnlyService.getDefaultShareExpiryTimeDeletionFunctionality(domain);
 				// Test if we have to remove the document now.
 				if (deleteShareFunc.getValue()) {
