@@ -371,24 +371,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		documentEntryRepository.delete(documentEntry);
 	}
 
-	@Override
-	public WorkGroupDocument createWorkGroupDocument(Account actor, WorkGroup workGroup, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, WorkGroupNode parentNode) throws BusinessException {
-		if (exists(workGroup, fileName, parentNode)) {
-			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_ALREADY_EXISTS,
-					"Can not create a new document, it already exists.");
-		}
-		Document document = createDocument(workGroup, myFile, size, fileName, timeStampingUrl, mimeType);
-		WorkGroupDocument node = new WorkGroupDocument(actor, fileName, document, workGroup, parentNode);
-		setDocumentProperties(actor, node, fileName, parentNode, myFile, checkIfIsCiphered);
-		try {
-			node = repository.insert(node);
-		} catch (org.springframework.dao.DuplicateKeyException e) {
-			throw new BusinessException(BusinessErrorCode.WORK_GROUP_DOCUMENT_ALREADY_EXISTS,
-					"Can not create a new document, it already exists.");
-		}
-		return node;
-	}
-
 	protected void setDocumentProperties(Account actor, WorkGroupDocument documentNode, String fileName, WorkGroupNode parentNode, File myFile, Boolean checkIfIsCiphered) {
 		Validate.notNull(documentNode);
 		Validate.notNull(myFile);
@@ -820,10 +802,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	protected boolean exists(WorkGroup workGroup, String fileName, WorkGroupNode nodeParent) {
 		List<WorkGroupNode> nodes = repository.findByWorkGroupAndParentAndName(workGroup.getLsUuid(),
 				nodeParent.getUuid(), fileName);
-		if (nodes != null && !nodes.isEmpty()) {
-			return true;
-		}
-		return false;
+		return (nodes != null && !nodes.isEmpty()) ? true : false;
 	}
 
 	@Override

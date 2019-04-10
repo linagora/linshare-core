@@ -47,7 +47,6 @@ import org.linagora.linshare.core.domain.entities.UploadRequestEntry;
 import org.linagora.linshare.core.domain.entities.WorkGroup;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.mongo.entities.WorkGroupDocument;
-import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 
 public interface DocumentEntryBusinessService {
@@ -80,9 +79,6 @@ public interface DocumentEntryBusinessService {
 	public DocumentEntry updateFileProperties(DocumentEntry entry, String newName, String fileComment, String meta) throws BusinessException;
 
 	public long getRelatedEntriesCount(DocumentEntry documentEntry);
-
-	WorkGroupDocument createWorkGroupDocument(Account actor, WorkGroup workGroup, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl,
-			String mimeType, WorkGroupNode nodeParent) throws BusinessException;
 
 	WorkGroupDocument copy(Account actor, WorkGroup toWorkGroup, WorkGroupNode nodeParent,
 			String documentUuid, String name, boolean ciphered)
