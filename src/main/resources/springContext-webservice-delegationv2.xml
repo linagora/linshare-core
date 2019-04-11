@@ -16,7 +16,7 @@
 
 
 	<!-- REST -->
-	<bean id="delegationSafeDetailRestService"
+	<bean id="delegationV2SafeDetailRestService"
 		class="org.linagora.linshare.webservice.delegationv2.impl.SafeDetailRestServiceImpl">
 		<constructor-arg ref="wsSafeDetailFacade" />
 		<constructor-arg value="${safe.detail.country.code}" />
@@ -62,53 +62,58 @@
 		<constructor-arg ref="wsStatisticFacade" />
 	</bean>
 
-	<bean id="delegationUploadRequestRestService"
+	<bean id="delegationV2UploadRequestRestService"
 		class="org.linagora.linshare.webservice.delegationv2.impl.UploadRequestRestServiceImpl">
 		<constructor-arg ref="wsUploadRequestFacade" />
 	</bean>
 
-	<bean id="delegationUploadRequestGroupRestService"
+	<bean id="delegationV2UploadRequestGroupRestService"
 		class="org.linagora.linshare.webservice.delegationv2.impl.UploadRequestGroupRestServiceImpl">
 		<constructor-arg ref="wsUploadRequestGroupFacade" />
 	</bean>
 
-	<bean id="delegationUploadRequestEntryRestService"
+	<bean id="delegationV2UploadRequestEntryRestService"
 		class="org.linagora.linshare.webservice.delegationv2.impl.UploadRequestEntryRestServiceImpl">
 		<constructor-arg ref="wsUploadRequestEntryFacade" />
 	</bean>
 
-	<bean id="delegationUploadRequestUrlRestService"
+	<bean id="delegationV2UploadRequestUrlRestService"
 		class="org.linagora.linshare.webservice.delegationv2.impl.UploadRequestUrlRestServiceImpl">
 		<constructor-arg ref="wsUploadRequestUrlUserFacade" />
 	</bean>
-	<bean id="delegationSharedSpaceNodeRestService"
-		class="org.linagora.linshare.webservice.delegationv2.impl.SharedSpaceNodeRestServiceImpl">
+	<bean id="delegationV2SharedSpaceRestService"
+		class="org.linagora.linshare.webservice.delegationv2.impl.SharedSpaceRestServiceImpl">
 		<constructor-arg ref="sharedSpaceNodeFacade" />
 	</bean>
-	<bean id="delegationSharedSpaceRoleRestService"
+	<bean id="delegationV2SharedSpaceNodesLegacyRestService"
+		class="org.linagora.linshare.webservice.delegationv2.impl.SharedSpaceNodeLegacyRestServiceImpl">
+		<constructor-arg ref="sharedSpaceNodeFacade" />
+	</bean>
+	<bean id="delegationV2SharedSpaceRoleRestService"
 		class="org.linagora.linshare.webservice.delegationv2.impl.SharedSpaceRoleRestServiceImpl">
 		<constructor-arg ref="sharedSpaceRoleFacade" />
 	</bean>
-	<bean id="delegationSharedSpaceMemberRestService"
+	<bean id="delegationV2SharedSpaceMemberRestService"
 		class="org.linagora.linshare.webservice.delegationv2.impl.SharedSpaceMemberRestServiceImpl">
 		<constructor-arg ref="sharedSpaceMemberFacade" />
 	</bean>
 
 	<jaxrs:server id="restDelegation2Container" address="/rest/delegation/v2">
 		<jaxrs:serviceBeans>
-			<ref bean="delegationSafeDetailRestService" />
+			<ref bean="delegationV2SafeDetailRestService" />
 			<ref bean="delegationV2AuthenticationRestService" />
 			<ref bean="delegationV2WorkGroupRestService" />
 			<ref bean="delegationV2WorkGroupMemberRestService" />
 			<ref bean="delegationV2DocumentRestService" />
 			<ref bean="delegationV2WorkGroupEntryRestService" />	
-			<ref bean="delegationUploadRequestRestService" />	
-			<ref bean="delegationUploadRequestEntryRestService" />
-			<ref bean="delegationUploadRequestGroupRestService" />
-			<ref bean="delegationUploadRequestUrlRestService" />
-			<ref bean="delegationSharedSpaceNodeRestService" />
-			<ref bean="delegationSharedSpaceRoleRestService" />
-			<ref bean="delegationSharedSpaceMemberRestService"/>
+			<ref bean="delegationV2UploadRequestRestService" />	
+			<ref bean="delegationV2UploadRequestEntryRestService" />
+			<ref bean="delegationV2UploadRequestGroupRestService" />
+			<ref bean="delegationV2UploadRequestUrlRestService" />
+			<ref bean="delegationV2SharedSpaceRestService" />
+			<ref bean="delegationV2SharedSpaceNodesLegacyRestService" />
+			<ref bean="delegationV2SharedSpaceRoleRestService" />
+			<ref bean="delegationV2SharedSpaceMemberRestService"/>
 			<ref bean="delegationV2StatisticRestService" /> 
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>

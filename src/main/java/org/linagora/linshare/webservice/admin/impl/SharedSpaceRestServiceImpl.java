@@ -50,24 +50,24 @@ import org.linagora.linshare.core.facade.webservice.user.SharedSpaceMemberFacade
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceNodeFacade;
 import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
-import org.linagora.linshare.webservice.admin.SharedSpaceNodeRestService;
+import org.linagora.linshare.webservice.admin.SharedSpaceRestService;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/shared_space_nodes")
-@Api(value = "/rest/admin/shared_space_nodes", description = "shared space node service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
+@Path("/shared_spaces")
+@Api(value = "/rest/admin/shared_spaces", description = "shared spaces service.", produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class SharedSpaceNodeRestServiceImpl implements SharedSpaceNodeRestService {
+public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 
 	private final SharedSpaceNodeFacade ssNodeFacade;
 	
 	private final SharedSpaceMemberFacade ssMemberFacade;
 
-	public SharedSpaceNodeRestServiceImpl(SharedSpaceNodeFacade ssNodeFacade,
+	public SharedSpaceRestServiceImpl(SharedSpaceNodeFacade ssNodeFacade,
 			SharedSpaceMemberFacade ssMemberFacade) {
 		super();
 		this.ssNodeFacade = ssNodeFacade;

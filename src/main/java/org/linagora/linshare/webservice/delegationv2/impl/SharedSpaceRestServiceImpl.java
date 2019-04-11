@@ -48,22 +48,22 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.SharedSpaceNodeFacade;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
 import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
-import org.linagora.linshare.webservice.delegationv2.SharedSpaceNodeRestService;
+import org.linagora.linshare.webservice.delegationv2.SharedSpaceRestService;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path("/{actorUuid}/shared_space_nodes")
-@Api(value = "/rest/delegation/v2/{actorUuid}/shared_space_nodes", description = "requests API")
+@Path("/{actorUuid}/shared_spaces")
+@Api(value = "/rest/delegation/v2/{actorUuid}/shared_spaces", description = "shared spaces services")
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class SharedSpaceNodeRestServiceImpl implements SharedSpaceNodeRestService {
+public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 
 	private final SharedSpaceNodeFacade nodeFacade;
 
-	public SharedSpaceNodeRestServiceImpl(SharedSpaceNodeFacade nodeFacade) {
+	public SharedSpaceRestServiceImpl(SharedSpaceNodeFacade nodeFacade) {
 		super();
 		this.nodeFacade = nodeFacade;
 	}

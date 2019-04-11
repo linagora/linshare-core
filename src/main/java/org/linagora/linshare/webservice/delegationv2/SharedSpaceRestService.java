@@ -31,32 +31,24 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.admin;
+package org.linagora.linshare.webservice.delegationv2;
 
 import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.mongo.entities.SharedSpaceMember;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
+import org.linagora.linshare.mongo.entities.SharedSpaceNodeNested;
 
-public interface SharedSpaceNodeRestService {
+public interface SharedSpaceRestService {
 
-	SharedSpaceNode find(String uuid) throws BusinessException;
+	SharedSpaceNode find(String actorUuid, String uuid) throws BusinessException;
 
-	SharedSpaceNode delete(SharedSpaceNode node, String uuid) throws BusinessException;
+	SharedSpaceNode create(String actorUuid, SharedSpaceNode node) throws BusinessException;
 
-	SharedSpaceNode update(SharedSpaceNode node, String uuid) throws BusinessException;
+	SharedSpaceNode delete(String actorUuid, SharedSpaceNode node, String uuid) throws BusinessException;
 
-	List<SharedSpaceMember> members(String uuid) throws BusinessException;
+	SharedSpaceNode update(String actorUuid, SharedSpaceNode node, String uuid) throws BusinessException;
 
-	List<SharedSpaceNode> findAll() throws BusinessException;
-
-	SharedSpaceMember findMember(String memberUuid) throws BusinessException;
-
-	SharedSpaceMember addMember(SharedSpaceMember member) throws BusinessException;
-
-	SharedSpaceMember deleteMember(SharedSpaceMember member, String memberUuid) throws BusinessException;
-
-	SharedSpaceMember updateMember(SharedSpaceMember member, String memberUuid) throws BusinessException;
+	List<SharedSpaceNodeNested> findAll(String actorUuid) throws BusinessException;
 
 }

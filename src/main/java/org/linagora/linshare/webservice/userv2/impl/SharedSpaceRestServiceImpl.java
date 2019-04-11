@@ -86,7 +86,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 		return nodeFacade.findAllMyNodes(null);
 	}
 
-	@Path("/{uuid : .*}")
+	@Path("/{uuid}")
 	@GET
 	@ApiOperation(value = "Find a shared space node.", response = SharedSpaceNode.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),
@@ -131,7 +131,7 @@ public class SharedSpaceRestServiceImpl implements SharedSpaceRestService {
 		return nodeFacade.delete(null, node, uuid);
 	}
 	
-	@Path("/{uuid : [^/]*}")
+	@Path("/{uuid : .*}")
 	@PUT
 	@ApiOperation(value = "Update a shared space node. If versionning delegation functionality is enabled, the user will be able to update the versionning parameter into a workgroup", response = SharedSpaceNode.class)
 	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the rights."),

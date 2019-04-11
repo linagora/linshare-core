@@ -162,7 +162,11 @@
 	<bean id="adminSharedSpaceMemberRestService" class="org.linagora.linshare.webservice.admin.impl.SharedSpaceMemberRestServiceImpl">
 		<constructor-arg ref="sharedSpaceMemberFacade" />
 	</bean>
-	<bean id="adminSharedSpaceNodeRestService" class="org.linagora.linshare.webservice.admin.impl.SharedSpaceNodeRestServiceImpl">
+	<bean id="adminSharedSpaceRestService" class="org.linagora.linshare.webservice.admin.impl.SharedSpaceRestServiceImpl">
+		<constructor-arg ref="sharedSpaceNodeFacade" />
+		<constructor-arg ref="sharedSpaceMemberFacade" />
+	</bean>
+	<bean id="adminSharedSpaceNodesLegacyRestService" class="org.linagora.linshare.webservice.admin.impl.SharedSpaceNodesLegacyRestService">
 		<constructor-arg ref="sharedSpaceNodeFacade" />
 		<constructor-arg ref="sharedSpaceMemberFacade" />
 	</bean>
@@ -217,7 +221,8 @@
 			<ref bean="adminPublicKeyRestService"/>
 			<ref bean="adminJwtPermanentTokenRestService"/>
 			<ref bean="adminSharedSpaceMemberRestService"/>
-			<ref bean="adminSharedSpaceNodeRestService"/>
+			<ref bean="adminSharedSpaceRestService"/>
+			<ref bean="adminSharedSpaceNodesLegacyRestService"/>
 			<ref bean="adminSharedSpaceRoleRestService"/>
 			<ref bean="adminBasicStatisticRestService" />
 			<ref bean="adminExceptionStatisticRestService" />
