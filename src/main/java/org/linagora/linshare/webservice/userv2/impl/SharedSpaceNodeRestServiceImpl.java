@@ -77,10 +77,11 @@ import org.linagora.linshare.core.facade.webservice.user.dto.DocumentURLDto;
 import org.linagora.linshare.mongo.entities.WorkGroupAsyncTask;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.AuditLogEntryUser;
+import org.linagora.linshare.mongo.entities.mto.NodeDetailsMto;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.userv1.task.WorkGroupEntryUploadAsyncTask;
 import org.linagora.linshare.webservice.userv1.task.context.WorkGroupEntryTaskContext;
-import org.linagora.linshare.webservice.userv2.WorkGroupNodeRestService;
+import org.linagora.linshare.webservice.userv2.SharedSpaceNodeRestService;
 import org.linagora.linshare.webservice.utils.WebServiceUtils;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -95,7 +96,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 	produces = "application/json,application/xml", consumes = "application/json,application/xml")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements WorkGroupNodeRestService {
+public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements SharedSpaceNodeRestService {
 
 	protected final WorkGroupNodeFacade sharedSpaceNodeFacade;
 
@@ -495,6 +496,23 @@ public class SharedSpaceNodeRestServiceImpl extends WebserviceBase implements Wo
 				WebServiceUtils.deleteTempFile(tempFile);
 			}
 		}
+	}
+
+	@Path("/{sharedSpaceNodeUuid}/details")
+	@GET
+	@ApiOperation(value = "Get a details of a sharedSpace node.")
+	@ApiResponses({ @ApiResponse(code = 403, message = "Current logged in account does not have the right to perform this operation.") ,
+					@ApiResponse(code = 404, message = "SharedSpace node not found."),
+					@ApiResponse(code = 400, message = "Bad request : missing required fields."),
+					@ApiResponse(code = 500, message = "Internal server error."),
+					})
+	@Override
+	public NodeDetailsMto findDetails(
+			@ApiParam(value = "The sharedSpace uuid.", required = true)
+				@PathParam("sharedSpaceUuid") String sharedSpaceUuid,
+			@ApiParam(value = "The sharedSpace node (Folder or document) uuid.", required = true)
+				@PathParam("sharedSpaceNodeUuid") String sharedSpaceNodeUuid) throws BusinessException {
+		return sharedSpaceNodeFacade.findDetails(null, sharedSpaceUuid, sharedSpaceNodeUuid);
 	}
 
 	protected void logAsyncFailure(AsyncTaskDto asyncTask, Exception e) {

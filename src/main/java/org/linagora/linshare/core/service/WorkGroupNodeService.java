@@ -46,6 +46,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.utils.FileAndMetaData;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
+import org.linagora.linshare.mongo.entities.mto.NodeDetailsMto;
 
 public interface WorkGroupNodeService {
 
@@ -92,5 +93,7 @@ public interface WorkGroupNodeService {
 	WorkGroupNode getRootFolder(Account actor, Account owner, WorkGroup workGroup);
 
 	WorkGroupNode findByWorkGroupNodeUuid(String uuid) throws BusinessException;
+
+	NodeDetailsMto findDetails(User authUser, User actor, WorkGroup workGroup, WorkGroupNode node);
 
 }

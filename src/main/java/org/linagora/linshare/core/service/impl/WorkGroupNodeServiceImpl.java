@@ -41,6 +41,7 @@ import java.util.UUID;
 
 import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.SanitizerInputHtmlBusinessService;
+import org.linagora.linshare.core.business.service.WorkGroupNodeBusinessService;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.AuditLogEntryType;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -67,6 +68,7 @@ import org.linagora.linshare.mongo.entities.WorkGroupNode;
 import org.linagora.linshare.mongo.entities.logs.WorkGroupNodeAuditLogEntry;
 import org.linagora.linshare.mongo.entities.mto.AccountMto;
 import org.linagora.linshare.mongo.entities.mto.CopyMto;
+import org.linagora.linshare.mongo.entities.mto.NodeDetailsMto;
 import org.linagora.linshare.mongo.entities.mto.WorkGroupLightNode;
 import org.linagora.linshare.mongo.repository.WorkGroupNodeMongoRepository;
 import org.springframework.dao.support.DataAccessUtils;
@@ -100,7 +102,9 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 	protected final MimeTypeMagicNumberDao mimeTypeIdentifier;
 
 	private static final String MODIFICATION_DATE = "modificationDate";
-	
+
+	protected final WorkGroupNodeBusinessService workGroupNodeBusinessService; 
+
 	public WorkGroupNodeServiceImpl(WorkGroupNodeMongoRepository repository,
 			LogEntryService logEntryService,
 			WorkGroupDocumentService workGroupDocumentService,
@@ -110,7 +114,8 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 			MongoTemplate mongoTemplate,
 			FunctionalityReadOnlyService functionalityReadOnlyService,
 			WorkGroupDocumentRevisionService revisionService,
-			MimeTypeMagicNumberDao mimeTypeIdentifier) {
+			MimeTypeMagicNumberDao mimeTypeIdentifier,
+			WorkGroupNodeBusinessService workGroupNodeBusinessService) {
 		super(rac);
 		this.repository = repository;
 		this.workGroupDocumentService = workGroupDocumentService;
@@ -121,6 +126,7 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		this.functionalityReadOnlyService = functionalityReadOnlyService;
 		this.revisionService = revisionService;
 		this.mimeTypeIdentifier = mimeTypeIdentifier;
+		this.workGroupNodeBusinessService = workGroupNodeBusinessService;
 	}
 
 	@Override
@@ -599,6 +605,23 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		return getRootFolder(owner, workGroup);
 	}
 
+	@Override
+	public NodeDetailsMto findDetails(User authUser, User actor, WorkGroup workGroup, WorkGroupNode node) {
+		preChecks(authUser, actor);
+		checkListPermission(authUser, actor, WorkGroupNode.class, BusinessErrorCode.WORK_GROUP_DOCUMENT_FORBIDDEN, null,
+				workGroup);
+		if (isRevision(node)) {
+			throw new BusinessException(BusinessErrorCode.WORK_GROUP_OPERATION_UNSUPPORTED,
+					"Can not retrieve the details for this kind of node.");
+		}
+		String pattern = Strings.isNullOrEmpty(node.getPath()) ? "^," + node.getUuid()
+				: "^" + node.getPath() + node.getUuid();
+		Long size = workGroupNodeBusinessService.computeNodeSize(workGroup, pattern);
+		Long count = workGroupNodeBusinessService.computeNodeCount(workGroup, pattern, node);
+		NodeDetailsMto details = new NodeDetailsMto(node.getUuid(), node.getNodeType(), size, count);
+		return details;
+	}
+
 	protected WorkGroupNode getRootFolder(Account owner, WorkGroup workGroup) {
 		WorkGroupNode wgnParent = null;
 		String workGroupUuid = workGroup.getLsUuid();
@@ -646,4 +669,5 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 	public WorkGroupNode findByWorkGroupNodeUuid(String uuid) {
 		return repository.findByUuid(uuid);
 	}
+
 }

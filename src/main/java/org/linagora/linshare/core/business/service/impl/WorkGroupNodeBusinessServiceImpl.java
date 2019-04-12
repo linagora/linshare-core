@@ -38,10 +38,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.linagora.linshare.core.business.service.WorkGroupNodeBusinessService;
+import org.linagora.linshare.core.domain.constants.WorkGroupNodeType;
+import org.linagora.linshare.core.domain.entities.WorkGroup;
+import org.linagora.linshare.mongo.entities.WorkGroupNode;
+import org.linagora.linshare.mongo.entities.mto.NodeDetailsMto;
 import org.linagora.linshare.utils.DocumentCount;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 
 import com.google.common.collect.Maps;
 
@@ -72,4 +77,35 @@ public class WorkGroupNodeBusinessServiceImpl implements WorkGroupNodeBusinessSe
 		}
 		return map;
 	}
+
+	@Override
+	public Long computeNodeSize(WorkGroup workGroup, String pattern) {
+		Aggregation aggregation = Aggregation.newAggregation(Aggregation.match(
+				Criteria.where("workGroup").is(workGroup.getLsUuid())
+				.and("path").regex(pattern).and("nodeType").is("DOCUMENT_REVISION")),
+				Aggregation.group().sum("size").as("size"));
+		NodeDetailsMto result = mongoTemplate.aggregate(aggregation, "work_group_nodes", NodeDetailsMto.class)
+				.getUniqueMappedResult();
+		return result.getSize();
+	}
+
+	@Override
+	public Long computeNodeCount(WorkGroup workGroup, String pattern, WorkGroupNode node) {
+		Query query = new Query();
+		Criteria criteria = new Criteria();
+		query.addCriteria(Criteria.where("workGroup").is(workGroup.getLsUuid()));
+		if (WorkGroupNodeType.FOLDER.equals(node.getNodeType())
+				|| WorkGroupNodeType.ROOT_FOLDER.equals(node.getNodeType())) {
+			query.addCriteria(Criteria.where("path").regex(pattern));
+			query.addCriteria(criteria.orOperator(
+					Criteria.where("nodeType").is("DOCUMENT"),
+					Criteria.where("nodeType").is("FOLDER")));
+		} else {
+			query.addCriteria(Criteria.where("parent").is(node.getUuid())
+					.and("nodeType").is("DOCUMENT_REVISION"));
+		}
+		Long result = mongoTemplate.count(query, WorkGroupNode.class);
+		return result;
+	}
+
 }
