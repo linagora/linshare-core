@@ -302,16 +302,17 @@ public class WorkGroupNodeServiceImpl extends GenericWorkGroupNodeServiceImpl im
 		}
 		Long size = tempFile.length();
 		String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
-		WorkGroupNode dto = null;
 		if (isRevisionOnly) {
 			WorkGroupDocumentRevision documentRevision = revisionService.create(actor, owner, workGroup, tempFile,
 					fileName, parentNode);
-			dto = revisionService.updateDocument(actor, (Account) owner, workGroup, documentRevision);
+			revisionService.updateDocument(actor, (Account) owner, workGroup, documentRevision);
+			return documentRevision;
 		} else {
-			dto = workGroupDocumentService.create(actor, owner, workGroup, size, mimeType, fileName, parentNode);
+			WorkGroupNode dto = workGroupDocumentService.create(actor, owner, workGroup, size, mimeType, fileName,
+					parentNode);
 			revisionService.create(actor, owner, workGroup, tempFile, fileName, dto);
+			return dto;
 		}
-		return dto;
 	}
 
 	@Override

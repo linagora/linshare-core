@@ -62,7 +62,6 @@ import org.linagora.linshare.core.service.WorkGroupDocumentService;
 import org.linagora.linshare.core.service.WorkGroupFolderService;
 import org.linagora.linshare.core.service.WorkGroupNodeService;
 import org.linagora.linshare.mongo.entities.SharedSpaceNode;
-import org.linagora.linshare.mongo.entities.WorkGroupDocument;
 import org.linagora.linshare.mongo.entities.WorkGroupDocumentRevision;
 import org.linagora.linshare.mongo.entities.WorkGroupFolder;
 import org.linagora.linshare.mongo.entities.WorkGroupNode;

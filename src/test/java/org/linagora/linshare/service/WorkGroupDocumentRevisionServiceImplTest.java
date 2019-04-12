@@ -447,10 +447,11 @@ public class WorkGroupDocumentRevisionServiceImplTest {
 		workGroupDocumentRevisionService.create(john, john, workGroup, tempFile1, tempFile1.getName(), document);
 		Assertions.assertFalse(document.getHasRevision());
 //		 add a document as revision of an existing one
-		document = (WorkGroupDocument) workGroupNodeService.create(john, john, workGroup, tempFile2,
+		workGroupNodeService.create(john, john, workGroup, tempFile2,
 				tempFile2.getName(), document.getUuid(), false);
 		WorkGroupDocumentRevision revision = (WorkGroupDocumentRevision) workGroupDocumentRevisionService
 				.findMostRecent(workGroup, document.getUuid());
+		document = (WorkGroupDocument) workGroupDocumentService.find(john, john, workGroup, document.getUuid());
 		Assertions.assertEquals(document.getUuid(), revision.getParent());
 		Assertions.assertTrue(document.getHasRevision());
 	}
