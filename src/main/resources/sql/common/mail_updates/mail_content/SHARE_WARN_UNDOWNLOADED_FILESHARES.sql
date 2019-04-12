@@ -1,9 +1,9 @@
-UPDATE "mail_content" SET "subject"='[# th:if="${documentsCount} > 1"]
+UPDATE mail_content SET subject='[# th:if="${documentsCount} > 1"]
 [( #{subjectPlural(${documentsCount})})]
 [/]
         [# th:if="${documentsCount} ==  1"]
           [( #{subjectSingular(${documentsCount})})]
-       [/]',"body"='<!DOCTYPE html>
+       [/]',body='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head data-th-replace="layout :: header"></head>
 <body>
@@ -36,16 +36,16 @@ UPDATE "mail_content" SET "subject"='[# th:if="${documentsCount} > 1"]
   </section>  <!--/* End of Secondary content for bottom email section */-->
 </div>
 </body>
-</html>',"messages_french"='downloadStatesTile = Etat de téléchargement
+</html>',messages_french='downloadStatesTile = Etat de téléchargement
 mainMsgplural = Certains destinataires n''''ont pas téléchargés <b>{0} fichiers</b>. Vous trouverez ci-dessous le récapitulatif de téléchargement de vos destinataires.
 mainMsgSingular = Certains destinataires n''''ont pas téléchargés <b>{0} fichier</b>. Vous trouverez ci-dessous le récapitulatif de téléchargement de vos destinataires.
 subjectPlural = Rappel de non-téléchargement : {0} fichiers n''''ont pas été téléchargés.
-subjectSingular = Rappel de non-téléchargement :  {0} fichier n''''a pas été téléchargé.',"messages_english"='downloadStatesTile = Downloads states
+subjectSingular = Rappel de non-téléchargement :  {0} fichier n''''a pas été téléchargé.',messages_english='downloadStatesTile = Downloads states
 mainMsgplural = Some recipients have not downloaded <b>{0} files</b>. You may find further details of the recipients downloads below.
 mainMsgSingular = Some recipients have not downloaded <b>{0} file</b>. You may find further details of the recipients downloads below.
 subjectPlural = Undownloaded shared files alert : {0} files have not been downloaded yet.
-subjectSingular = Undownloaded shared files alert : {0} file have not been downloaded yet.',"messages_russian"='downloadStatesTile = Downloads states
-mainMsgplural = Some recipients have not downloaded <b>{0} files</b>. You may find further details of the recipients downloads below.
-mainMsgSingular = Some recipients have not downloaded <b>{0} file</b>. You may find further details of the recipients downloads below.
-subjectPlural = Undownloaded shared files alert : {0} files have not been downloaded yet.
-subjectSingular = Undownloaded shared files alert : {0} file have not been downloaded yet.' WHERE "id"=7;
+subjectSingular = Undownloaded shared files alert : {0} file have not been downloaded yet.',messages_russian='downloadStatesTile = Статус загрузки
+mainMsgplural = Некоторые получатели рассылки не скачали файлы <b>{0} files</b>. Вы можете найти детали о получателях рассылки ниже.
+mainMsgSingular = Некоторые получатели рассылки не скачали <b>{0} file</b>. Вы можете найти детали о получателях рассылки ниже.
+subjectPlural = Уведомдение о не скачанных файлах: {0} файлов были не скачанны.
+subjectSingular = Уведомдение о не скачанных файлах: {0} файлов были не скачанны.' WHERE id=7;

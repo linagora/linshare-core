@@ -1,7 +1,7 @@
-UPDATE "mail_footer" SET "messages_french"='learnMoreAbout=En savoir plus sur
-productOfficialWebsite=http://www.linshare.org/',"messages_english"='learnMoreAbout=Learn more about
-productOfficialWebsite=http://www.linshare.org/',"messages_russian"='learnMoreAbout=Learn more about
-productOfficialWebsite=http://www.linshare.org/',"footer"='<!DOCTYPE html>
+UPDATE mail_footer SET messages_french='learnMoreAbout=En savoir plus sur
+productOfficialWebsite=http://www.linshare.org/',messages_english='learnMoreAbout=Learn more about
+productOfficialWebsite=http://www.linshare.org/',messages_russian='learnMoreAbout=Узнать больше
+productOfficialWebsite=http://www.linshare.org/',footer='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
   <body>
     <div data-th-fragment="email_footer">
@@ -17,4 +17,4 @@ productOfficialWebsite=http://www.linshare.org/',"footer"='<!DOCTYPE html>
  </td>
    </div>
  </body>
- </html>' WHERE "id"=1;
+ </html>' WHERE id=1;

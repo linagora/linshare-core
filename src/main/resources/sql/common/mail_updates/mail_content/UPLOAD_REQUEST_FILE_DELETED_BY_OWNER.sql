@@ -1,4 +1,4 @@
-UPDATE "mail_content" SET "subject"='[(#{subject(${requestOwner.firstName}, ${requestOwner.lastName},${document.name})})]',"body"='<!DOCTYPE html>
+UPDATE mail_content SET subject='[(#{subject(${requestOwner.firstName}, ${requestOwner.lastName},${document.name})})]',body='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
    <head data-th-replace="layout :: header"></head>
    <body>
@@ -37,13 +37,13 @@ UPDATE "mail_content" SET "subject"='[(#{subject(${requestOwner.firstName}, ${re
          <!--/* End of Secondary content for bottom email section */-->
       </div>
    </body>
-</html>',"messages_french"='closureDate = Dépôt disponible jusqu''''au
+</html>',messages_french='closureDate = Dépôt disponible jusqu''''au
 deletionDate = Fichier supprimé le
 mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b>a supprimé le fichier  <b>{2} </b> de  l''''Invitation de Dépôt : {3}
-subject = {0} {1} a supprimé {2} du dépôt',"messages_english"='closureDate = Depot closure date
+subject = {0} {1} a supprimé {2} du dépôt',messages_english='closureDate = Дата закрытия загрузки
+deletionDate = Дата удаления файла
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> удалил файл <b>{2} </b> из загрузки {3}.
+subject = {0} {1} удалил {2} из загрузки',messages_russian='closureDate = Depot closure date
 deletionDate = File deletion date
 mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> has deleted the file <b>{2} </b>from the depot  : {3}.
-subject = {0} {1} has deleted {2} from the depot',"messages_russian"='closureDate = Depot closure date
-deletionDate = File deletion date
-mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> has deleted the file <b>{2} </b>from the depot  : {3}.
-subject = {0} {1} has deleted {2} from the depot' WHERE "id"=24;
+subject = {0} {1} has deleted {2} from the depot' WHERE id=24;

@@ -1,4 +1,4 @@
-UPDATE "mail_content" SET "subject"='[(#{subject(${requestOwner.firstName}, ${requestOwner.lastName},${subject})})]',"body"='<!DOCTYPE html>
+UPDATE mail_content SET subject='[(#{subject(${requestOwner.firstName}, ${requestOwner.lastName},${subject})})]',body='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
    <head data-th-replace="layout :: header"></head>
    <body>
@@ -73,7 +73,7 @@ UPDATE "mail_content" SET "subject"='[(#{subject(${requestOwner.firstName}, ${re
          <!--/* End of Secondary content for bottom email section */-->
       </div>
    </body>
-</html>',"messages_french"='buttonMsg = Accès
+</html>',messages_french='buttonMsg = Accès
 closureDate = Date de clôture
 depotSize = Taille
 mainMsg = <b>{0} {1}</b> vous invite à déposer des fichiers dans le dépôt : <b>{2}</b>.
@@ -84,7 +84,7 @@ msgUnProtected = Vous pouvez y accéder en suivant le lien ci-dessous.
 name = {0} {1}
 password = Mot de passe
 recipientsOfDepot = Destinataires
-subject = {0} {1} vous invite à déposer des fichiers dans le dépôt : {2}',"messages_english"='buttonMsg = Access
+subject = {0} {1} vous invite à déposer des fichiers dans le dépôt : {2}',messages_english='buttonMsg = Access
 closureDate = Closure date
 depotSize = Allowed size
 mainMsg = <b>{0} {1}</b> invited you to its upload request : <b>{2}</b>.
@@ -95,15 +95,15 @@ msgUnProtected = Access it by following the link below.
 name = {0} {1}
 password = Password
 recipientsOfDepot = Recipients
-subject = {0} {1} invited you to its upload request : {2}',"messages_russian"='buttonMsg = Access
-closureDate = Closure date
-depotSize = Allowed size
-mainMsg = <b>{0} {1}</b> invited you to its upload request : <b>{2}</b>.
-msgFrom = Message from
-msgAlt = The repository from {0} {1} is now active.
-msgProtected = Unlock it by following the link below and entering the password.
-msgUnProtected = Access it by following the link below.
+subject = {0} {1} invited you to its upload request : {2}',messages_russian='buttonMsg = Доступ
+closureDate = Дата закрытия
+depotSize = Допустимый размер
+mainMsg = <b>{0} {1}</b> пригласил вас в свой запрос загрузки <b>{2}</b>.
+msgFrom = Сообщение от
+msgAlt = Репозиторий {0} {1} активен.
+msgProtected = Разблокируйте его, перейдя по ссылке ниже и введя пароль.
+msgUnProtected = Получите доступ, перейдя по ссылке ниже. 
 name = {0} {1}
-password = Password
-recipientsOfDepot = Recipients
-subject = {0} {1} invited you to its upload request : {2}' WHERE "id"=16;
+password = Пароль
+recipientsOfDepot = Получатель
+subject = {0} {1}  пригласил вас в свой запрос загрузки {2}' WHERE id=16;

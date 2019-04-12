@@ -1,4 +1,4 @@
-UPDATE "mail_content" SET "subject"='[(#{subject(${workGroupName})})]',"body"='<!DOCTYPE html>
+UPDATE mail_content SET subject='[(#{subject(${workGroupName})})]',body='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head  data-th-replace="layout :: header"></head>
 <body>
@@ -45,22 +45,22 @@ UPDATE "mail_content" SET "subject"='[(#{subject(${workGroupName})})]',"body"='<
   </section>  <!--/* End of Secondary content for bottom email section */-->
 </div>
 </body>
-</html>',"messages_french"='workGroupUpdatedDateTitle = Date de la mise à jour
+</html>',messages_french='workGroupUpdatedDateTitle = Date de la mise à jour
 mainMsg = Vos droits sur le groupe de travail
 mainMsgNext = ont été mis à jour 
 mainMsgNextBy= par <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
 subject =  Vos droits sur le groupe de travail {0} ont été mis à jour
 workGroupRight =  Nouveau droit
-workGroupNameTitle = Nom du groupe de travail',"messages_english"='workGroupUpdatedDateTitle = Updated date
+workGroupNameTitle = Nom du groupe de travail',messages_english='workGroupUpdatedDateTitle = Updated date
 mainMsg = Your rights on the workgroup 
 mainMsgNext= have been updated
 mainMsgNextBy= by <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
 subject =  Your rights on the workgroup {0} was updated.
 workGroupRight = Current right
-workGroupNameTitle = Workgroup Name',"messages_russian"='workGroupUpdatedDateTitle = Updated date
-mainMsg = Your rights on the workgroup 
-mainMsgNext= have been updated
+workGroupNameTitle = Workgroup Name',messages_russian='workGroupUpdatedDateTitle = Дата обновления
+mainMsg = Ваш статус в рабочей группе
+mainMsgNext= был обновлен
 mainMsgNextBy= by <b> {0} <span style="text-transform:uppercase">{1}</span></b>.
-subject =  Your rights on the workgroup {0} was updated.
-workGroupRight = Current right
-workGroupNameTitle = Workgroup Name' WHERE "id"=29;
+subject =  Ваш статус в рабочей группе {0} был обновлен.
+workGroupRight = Действующий статус
+workGroupNameTitle = Название рабочей группы' WHERE id=29;

@@ -1,4 +1,4 @@
-UPDATE "mail_content" SET "subject"='[( #{subject})]',"body"='<!DOCTYPE html>
+UPDATE mail_content SET subject='[( #{subject})]',body='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head  data-th-replace="layout :: header"></head>
 <body>
@@ -25,13 +25,13 @@ UPDATE "mail_content" SET "subject"='[( #{subject})]',"body"='<!DOCTYPE html>
   </section>  <!--/* End of Secondary content for bottom email section */-->
 </div>
 </body>
-</html>',"messages_french"='accountCreationDateTitle = Date de création
+</html>',messages_french='accountCreationDateTitle = Date de création
 accountExpiryDateTitle = Date d''''expiration
 mainMsg = Le mot de passe du compte {0} <b>{1}</b> a été modifié.
-subject = Votre mot de passe a été modifié',"messages_english"='accountCreationDateTitle = Account creation date
+subject = Votre mot de passe a été modifié',messages_english='accountCreationDateTitle = Account creation date
 accountExpiryDateTitle = Account expiry date
 mainMsg = The password of the account {0} <b>{1}</b> was modified.
-subject = Your password has been modified',"messages_russian"='accountCreationDateTitle = Account creation date
-accountExpiryDateTitle = Account expiry date
-mainMsg = The password of the account {0} <b>{1}</b> was modified.
-subject = Your password has been modified' WHERE "id"=31;
+subject = Your password has been modified',messages_russian='accountCreationDateTitle = Дата создания аккаунта
+accountExpiryDateTitle = Дата окончания действия аккаунта
+mainMsg = Пароль аккаунта {0} <b>{1}</b> был изменен.
+subject = Ваш пароль был изменен' WHERE id=31;

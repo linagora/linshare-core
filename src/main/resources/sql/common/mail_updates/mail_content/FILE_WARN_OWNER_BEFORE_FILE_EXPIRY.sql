@@ -1,4 +1,4 @@
-UPDATE "mail_content" SET "subject"='[( #{subject(${document.name})})]',"body"='<!DOCTYPE html>
+UPDATE mail_content SET subject='[( #{subject(${document.name})})]',body='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
   <head  data-th-replace="layout :: header"></head>
   <body>
@@ -30,13 +30,13 @@ UPDATE "mail_content" SET "subject"='[( #{subject(${document.name})})]',"body"='
       <th:block data-th-replace="layout :: infoDateArea(#{common.availableUntil},${document.expirationDate})"/>
     </section>  <!--/* End of Secondary content for bottom email section */-->
   </body>
-</html>',"messages_french"='beginningMainMsgInt =  Votre fichier
+</html>',messages_french='beginningMainMsgInt =  Votre fichier
 endingMainMsgInt = sera automatiquement supprimé dans <b> {0} jours</b> de votre Espace Personnel.
 subject = Le fichier {0} va bientôt être supprimé
-uploadedThe = Déposé le',"messages_english"='beginningMainMsgInt = Your file
+uploadedThe = Déposé le',messages_english='beginningMainMsgInt = Your file
 endingMainMsgInt = will automatically be deleted in <b> {0} days</b> from your Personal Space.
 subject = The file {0} is about to be deleted
-uploadedThe = Upload date',"messages_russian"='beginningMainMsgInt = Your file
-endingMainMsgInt = will automatically be deleted in <b> {0} days</b> from your Personal Space.
-subject = The file {0} is about to be deleted
-uploadedThe = Upload date' WHERE "id"=1;
+uploadedThe = Upload date',messages_russian='beginningMainMsgInt = Ваш файл
+endingMainMsgInt = будет автоматически удален через <b> {0} days</b> из вашего личного пространства.
+subject = Файл {0} будет удален
+uploadedThe = Дата загрузки' WHERE id=1;

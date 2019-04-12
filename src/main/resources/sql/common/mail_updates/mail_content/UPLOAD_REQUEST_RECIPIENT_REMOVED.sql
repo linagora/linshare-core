@@ -1,4 +1,4 @@
-UPDATE "mail_content" SET "subject"='[(#{subject(${requestOwner.firstName}, ${requestOwner.lastName},${subject})})]',"body"='<!DOCTYPE html>
+UPDATE mail_content SET subject='[(#{subject(${requestOwner.firstName}, ${requestOwner.lastName},${subject})})]',body='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
    <head data-th-replace="layout :: header"></head>
    <body>
@@ -34,10 +34,10 @@ UPDATE "mail_content" SET "subject"='[(#{subject(${requestOwner.firstName}, ${re
          <!--/* End of Secondary content for bottom email section */-->
       </div>
    </body>
-</html>',"messages_french"='deletionDate = Accès au dépôt retiré le
+</html>',messages_french='deletionDate = Accès au dépôt retiré le
 mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b>  a retiré votre accès au dépôt de l''''invitation intitulée : {2}.
-subject = {0} {1} a supprimé votre accès au dépôt : {2}',"messages_english"='deletionDate = Deletion date
+subject = {0} {1} a supprimé votre accès au dépôt : {2}',messages_english='deletionDate = Deletion date
 mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> has removed your access to the depot : {2}.
-subject = {0} {1} has removed your access to the depot : {2}',"messages_russian"='deletionDate = Deletion date
-mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> has removed your access to the depot : {2}.
-subject = {0} {1} has removed your access to the depot : {2}' WHERE "id"=22;
+subject = {0} {1} has removed your access to the depot : {2}',messages_russian='deletionDate = Дата удаления
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span> </b> закрыл ваш доступ к загрузке {2}.
+subject = {0} {1} закрыл ваш доступ к загрузке {2}' WHERE id=22;

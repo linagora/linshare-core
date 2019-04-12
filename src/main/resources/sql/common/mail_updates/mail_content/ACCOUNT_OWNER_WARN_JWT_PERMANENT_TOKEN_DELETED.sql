@@ -1,4 +1,4 @@
-UPDATE "mail_content" SET "subject"='[(#{subject})]',"body"='<!DOCTYPE html>
+UPDATE mail_content SET subject='[(#{subject})]',body='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
    <head data-th-replace="layout :: header"></head>
    <body>
@@ -38,17 +38,17 @@ UPDATE "mail_content" SET "subject"='[(#{subject})]',"body"='<!DOCTYPE html>
          <!--/* End of Secondary content for bottom email section */-->
       </div>
    </body>
-</html>',"messages_french"='subject = Suppression d''''un jeton d''''accès permanent
+</html>',messages_french='subject = Suppression d''''un jeton d''''accès permanent
 mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> a supprimé un jeton d''''accès permanent pour votre compte.
 tokenCreationDate = Date de création
 tokenLabel = Nom
 tokenDescription = Description
-tokenIdentifier = Identifiant',"messages_english"='subject = Deletion of a permanent authentication token
+tokenIdentifier = Identifiant',messages_english='subject = Deletion of a permanent authentication token
 mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> has deleted a permanent authentication token for your account.
 tokenCreationDate = Creation date
 tokenLabel = Name
-tokenDescription = Description',"messages_russian"='subject = Deletion of a permanent authentication token
-mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> has deleted a permanent authentication token for your account.
-tokenCreationDate = Creation date
-tokenLabel = Name
-tokenDescription = Description' WHERE "id"=33;
+tokenDescription = Description',messages_russian='subject = Удаление постоянного токена аутентификации
+mainMsg =  <b> {0} <span style="text-transform:uppercase">{1}</span></b> удалил постоянный токен аутентификации для вашего аккаунта.
+tokenCreationDate = Дата создания
+tokenLabel = Имя
+tokenDescription = Описание' WHERE id=33;

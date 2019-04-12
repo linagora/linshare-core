@@ -1,4 +1,4 @@
-UPDATE "mail_layout" SET "messages_french"='common.availableUntil = Expire le
+UPDATE mail_layout SET messages_french='common.availableUntil = Expire le
 common.byYou= | Par vous
 common.download= Télécharger
 common.filesInShare=Fichiers joints
@@ -11,7 +11,7 @@ workGroupRightAdminTitle = Administration
 workGroupRightWirteTitle = Écriture
 workGroupRightContributeTitle = Contribution
 workGroupRightReadTitle = Lecture
-welcomeMessage = Bonjour {0},',"messages_english"='common.availableUntil = Expiry date
+welcomeMessage = Bonjour {0},',messages_english='common.availableUntil = Expiry date
 common.byYou= | By you
 common.download= Download
 common.filesInShare = Attached files
@@ -24,20 +24,20 @@ workGroupRightAdminTitle = Administrator
 workGroupRightWirteTitle = Writer
 workGroupRightContributeTitle = Contributor
 workGroupRightReadTitle = Reader
-welcomeMessage = Hello {0},',"messages_russian"='common.availableUntil = Expiry date
-common.byYou= | By you
-common.download= Download
-common.filesInShare = Attached files
-common.recipients = Recipients
-common.titleSharedThe= Creation date
-date.format= MMMM d, yyyy
-productCompagny=Linagora
+welcomeMessage = Hello {0},',messages_russian='common.availableUntil = Срок действия
+common.byYou= | Вами
+common.download= Загрузить
+common.filesInShare = Прикрепленные файлы
+common.recipients = Получатели
+common.titleSharedThe= Дата создания
+date.format= ММММ д, гггг
+productCompagny= Linagora
 productName=LinShare
-workGroupRightAdminTitle = Administrator
-workGroupRightWirteTitle = Writer
-workGroupRightContributeTitle = Contributor
-workGroupRightReadTitle = Reader
-welcomeMessage = Hello {0},',"layout"='<!DOCTYPE html>
+workGroupRightAdminTitle = Администратор
+workGroupRightWirteTitle = Автор
+workGroupRightContributeTitle = Редактор
+workGroupRightReadTitle = Читатель
+welcomeMessage = Здравствуйте, {0},',layout='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 <!--/* Beginning of common base layout template*/-->
@@ -378,4 +378,4 @@ test-file.jpg</span></a>
     </ul>
 </li>
    </ul>
-</div>' WHERE "id"=1;
+</div>' WHERE id=1;

@@ -1,4 +1,4 @@
-UPDATE "mail_content" SET "subject"='[# th:if="${#strings.isEmpty(customSubject)}"]
+UPDATE mail_content SET subject='[# th:if="${#strings.isEmpty(customSubject)}"]
 [# th:if="${sharesCount} > 1"]
 [( #{subjectPlural(${shareOwner.firstName},${ shareOwner.lastName})})]
 [/]
@@ -8,7 +8,7 @@ UPDATE "mail_content" SET "subject"='[# th:if="${#strings.isEmpty(customSubject)
 [/]
 [# th:if="${!#strings.isEmpty(customSubject)}"]
 [(${customSubject})]   [( #{subjectCustomAlt(${shareOwner.firstName },${shareOwner.lastName})})]
-[/]',"body"='<!DOCTYPE html>
+[/]',body='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head data-th-replace="layout :: header"></head>
 <body>
@@ -99,7 +99,7 @@ UPDATE "mail_content" SET "subject"='[# th:if="${#strings.isEmpty(customSubject)
   </section>  <!--/* End of Secondary content for bottom email section */-->
   </div>
 </body>
-</html>',"messages_french"='downloadBtn = Télécharger
+</html>',messages_french='downloadBtn = Télécharger
 downloadLink = Lien de téléchargement
 helpMsgSingular =  pour visualiser le document partagé.
 helpMsgPlural =pour visualiser tous les documents du partage.
@@ -114,7 +114,7 @@ subjectCustomAlt =de {0} {1}
 subjectPlural =  {0} {1} vous a partagé des fichiers
 subjectSingular =  {0} {1} vous a partagé un fichier
 click = Cliquez sur ce
-link = lien',"messages_english"='downloadBtn = Download
+link = lien',messages_english='downloadBtn = Download
 downloadLink = Download link
 helpMsgPlural = to access to all documents in this share.
 helpMsgSingular = to access to the document in this share.
@@ -129,19 +129,19 @@ subjectCustomAlt =by {0} {1}
 subjectPlural = {0} {1} has shared some files with you
 subjectSingular = {0} {1} has shared a file with you
 click = Follow this
-link = link',"messages_russian"='downloadBtn = Download
-downloadLink = Download link
-helpMsgPlural = to access to all documents in this share.
-helpMsgSingular = to access to the document in this share.
-helpPasswordMsgSingular = Click on the link below in order to download it and enter the provided password.
-helpPasswordMsgPlural = Click on the link below in order to download them and enter the provided password.
-mainMsgPlural = <b> {0} <span style="text-transform:uppercase">{1}</span> </b> has shared <b>{2} files</b> with you.
-mainMsgSingular = <b> {0} <span style="text-transform:uppercase">{1}</span> </b> has shared <b>{2} file</b> with you.
-msgFrom = You have a message from
+link = link',messages_russian='downloadBtn = Загрузить
+downloadLink = Загрузить по ссылке
+helpMsgPlural = , чтобы получить доступ ко всем документам рассылки.
+helpMsgSingular = , чтобы получить доступ ко всем документам рассылки.
+helpPasswordMsgSingular = Перейдите по ссылке ниже, чтобы загрузить файлы и ввести пароль.
+helpPasswordMsgPlural = Перейдите по ссылке ниже, чтобы загрузить файлы и ввести пароль.
+mainMsgPlural = <b> {0} <span style="text-transform:uppercase">{1}</span> </b> поделился с вами файлами <b>{2} files</b>.
+mainMsgSingular = <b> {0} <span style="text-transform:uppercase">{1}</span> </b> поделился с вами файлами <b>{2} file</b>.
+msgFrom = Вы получили сообщение от
 name = {0} {1}
-password = Password
+password = Пароль
 subjectCustomAlt =by {0} {1}
-subjectPlural = {0} {1} has shared some files with you
-subjectSingular = {0} {1} has shared a file with you
-click = Follow this
-link = link' WHERE "id"=2;
+subjectPlural = {0} {1} поделился с вами файлами
+subjectSingular = {0} {1} поделился с вами файлами
+click = Перейдите по
+link = ссылке' WHERE id=2;

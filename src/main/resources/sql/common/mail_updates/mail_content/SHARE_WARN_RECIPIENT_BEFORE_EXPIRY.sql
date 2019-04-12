@@ -1,4 +1,4 @@
-UPDATE "mail_content" SET "subject"='[( #{subject(${share.name})})]',"body"='<!DOCTYPE html>
+UPDATE mail_content SET subject='[( #{subject(${share.name})})]',body='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head data-th-replace="layout :: header"></head>
 <body>
@@ -50,19 +50,19 @@ UPDATE "mail_content" SET "subject"='[( #{subject(${share.name})})]',"body"='<!D
   </section>  <!--/* End of Secondary content for bottom email section */-->
 </div>
 </body>
-</html>',"messages_french"='beginningMainMsgInt = Le partage
+</html>',messages_french='beginningMainMsgInt = Le partage
 endingMainMsgInt = émis par <b> {0} <span style="text-transform:uppercase">{1}</span></b>, va expirer dans <b>{2} jours</b>.
 mainMsgExt = Le partage <b>{0}</b> émis par <b> {1} <span style="text-transform:uppercase">{2}</span></b>, va expirer dans <b>{3} jours</b>.
 name = {0} {1}
 sharedBy = Partagé par
-subject =  Le partage {0} va bientôt expirer',"messages_english"='beginningMainMsgInt = The fileshare
+subject =  Le partage {0} va bientôt expirer',messages_english='beginningMainMsgInt = The fileshare
 endingMainMsgInt = sent by <b> {0} <span style="text-transform:uppercase">{1}</span></b>,  will expire in <b>{2} days</b>.
 mainMsgExt = The fileshare <b>{0}</b> sent by <b> {1} <span style="text-transform:uppercase">{2}</span></b>,  will expire in <b>{3} days</b>.
 name = {0} {1}
 sharedBy = Shared by
-subject = The fileshare for {0} is about to expire',"messages_russian"='beginningMainMsgInt = The fileshare
-endingMainMsgInt = sent by <b> {0} <span style="text-transform:uppercase">{1}</span></b>,  will expire in <b>{2} days</b>.
-mainMsgExt = The fileshare <b>{0}</b> sent by <b> {1} <span style="text-transform:uppercase">{2}</span></b>,  will expire in <b>{3} days</b>.
+subject = The fileshare for {0} is about to expire',messages_russian='beginningMainMsgInt = Срок действия файла рассылки
+endingMainMsgInt = отправленного <b> {0} <span style="text-transform:uppercase">{1}</span></b>,  закончится через <b>{2} дней</b>.
+mainMsgExt = Срок действия файла рассылки <b>{0}</b> sent by <b> {1} <span style="text-transform:uppercase">{2}</span></b>,  закончится через <b>{3} дней</b>.
 name = {0} {1}
-sharedBy = Shared by
-subject = The fileshare for {0} is about to expire' WHERE "id"=6;
+sharedBy = Отправлено
+subject = Срок действия файла рассылки {0} заканчивается' WHERE id=6;

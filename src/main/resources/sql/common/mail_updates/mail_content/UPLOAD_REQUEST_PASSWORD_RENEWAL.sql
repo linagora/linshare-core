@@ -1,4 +1,4 @@
-UPDATE "mail_content" SET "subject"='[( #{subject(${requestOwner.firstName}, ${requestOwner.lastName},${subject})})]',"body"='<!DOCTYPE html>
+UPDATE mail_content SET subject='[( #{subject(${requestOwner.firstName}, ${requestOwner.lastName},${subject})})]',body='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
    <head data-th-replace="layout :: header"></head>
    <body>
@@ -40,19 +40,19 @@ UPDATE "mail_content" SET "subject"='[( #{subject(${requestOwner.firstName}, ${r
          <!--/* End of Secondary content for bottom email section */-->
       </div>
    </body>
-</html>',"messages_french"='buttonMsg = Accès au dépôt
+</html>',messages_french='buttonMsg = Accès au dépôt
 closureDate = Dépôt disponible jusqu''''au
 mainMsg = <b>{0} {1}</b> a modifié le mot de passe d''''accès à l''''Invitation de Dépôt : {2}.
 msgProtected = Vous trouverez ci-dessous le nouveau mot de passe ainsi que le lien d''''accès.
 password = Mot de passe
-subject = {0} {1} vous envoie le nouveau mot de passe du dépôt : {2}',"messages_english"='buttonMsg = Access to the depot
+subject = {0} {1} vous envoie le nouveau mot de passe du dépôt : {2}',messages_english='buttonMsg = Access to the depot
 closureDate = Depot closure date
 mainMsg = <b>{0} {1}</b> has changed the password of the Upload Request : {2}
 msgProtected = You may find the new password below as well as the access link.
 password = Password
-subject = {0} {1} sent you the new password for the depot: {2}',"messages_russian"='buttonMsg = Access to the depot
-closureDate = Depot closure date
-mainMsg = <b>{0} {1}</b> has changed the password of the Upload Request : {2}
-msgProtected = You may find the new password below as well as the access link.
-password = Password
-subject = {0} {1} sent you the new password for the depot: {2}' WHERE "id"=19;
+subject = {0} {1} sent you the new password for the depot: {2}',messages_russian='buttonMsg = Доступ к загрузке
+closureDate = Дата закрытия загрузки
+mainMsg = <b>{0} {1}</b> изменил пароль к загрузке {2}
+msgProtected = Новый пароль и доступ к загрузке доступны ниже.
+password = Пароль
+subject = {0} {1} отправил вам новый пароль к загрузке {2}' WHERE id=19;

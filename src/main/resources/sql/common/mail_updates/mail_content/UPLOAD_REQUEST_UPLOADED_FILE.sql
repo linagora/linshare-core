@@ -1,4 +1,4 @@
-UPDATE "mail_content" SET "subject"='[( #{subject(${requestRecipient.mail},${document.name},${subject})})]',"body"='<!DOCTYPE html>
+UPDATE mail_content SET subject='[( #{subject(${requestRecipient.mail},${document.name},${subject})})]',body='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head  data-th-replace="layout :: header"></head>
 <body>
@@ -41,7 +41,7 @@ UPDATE "mail_content" SET "subject"='[( #{subject(${requestRecipient.mail},${doc
   </section>  <!--/* End of Secondary content for bottom email section */-->
 </div>
 </body>
-</html>',"messages_french"='endingMainMsg = dans votre Invitation de Dépôt.
+</html>',messages_french='endingMainMsg = dans votre Invitation de Dépôt.
 fileSize =  Taille du fichier
 fileUploadedThe= Fichier déposé le
 invitationClosureDate = Date de clôture
@@ -50,7 +50,7 @@ beginningMainMsg = <b> {0} </b> vous a déposé le fichier
 numFilesInDepot = Nombre de fichiers déposés
 subject =  {0}  vous a déposé {1}  dans votre Invitation de Dépôt
 uploadedOverTotal = {0} / {1} fichiers
-totalUploaded = {0} fichiers',"messages_english"='endingMainMsg = in your Upload Request
+totalUploaded = {0} fichiers',messages_english='endingMainMsg = in your Upload Request
 fileSize =  File size
 fileUploadedThe = Upload date
 invitationClosureDate = Closure date
@@ -60,14 +60,14 @@ endingMainMsg = in your Upload Request.
 numFilesInDepot = Total uploaded files
 subject =  {0}  has uploaded {1}  in your Upload Request
 uploadedOverTotal = {0} / {1} files
-totalUploaded = {0} files',"messages_russian"='endingMainMsg = in your Upload Request
-fileSize =  File size
-fileUploadedThe = Upload date
-invitationClosureDate = Closure date
-invitationCreationDate = Activation date
-beginningMainMsg =  <b> {0} </b> has uploaded the file
-endingMainMsg = in your Upload Request.
-numFilesInDepot = Total uploaded files
-subject =  {0}  has uploaded {1}  in your Upload Request
-uploadedOverTotal = {0} / {1} files
-totalUploaded = {0} files' WHERE "id"=10;
+totalUploaded = {0} files',messages_russian='endingMainMsg = в вашем запросе загрузки
+fileSize = Размер файла
+fileUploadedThe = Дата загрузки
+invitationClosureDate = Дата закрытия
+invitationCreationDate = Дата активации
+beginningMainMsg =  <b> {0} </b> загрузил файл
+endingMainMsg = в ваш запрос загрузки.
+numFilesInDepot = Всего загруженных файлов
+subject =  {0}  загрузил {1}  в ваш запрос загрузки
+uploadedOverTotal = {0} / {1} файлы
+totalUploaded = {0} файлы' WHERE id=10;

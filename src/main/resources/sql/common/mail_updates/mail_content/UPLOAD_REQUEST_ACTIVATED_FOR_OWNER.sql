@@ -1,4 +1,4 @@
-UPDATE "mail_content" SET "subject"='[(#{subject(${subject})})]',"body"='<!DOCTYPE html>
+UPDATE mail_content SET subject='[(#{subject(${subject})})]',body='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
    <head data-th-replace="layout :: header"></head>
    <body>
@@ -44,22 +44,22 @@ UPDATE "mail_content" SET "subject"='[(#{subject(${subject})})]',"body"='<!DOCTY
          <!--/* End of Secondary content for bottom email section */-->
       </div>
    </body>
-</html>',"messages_french"='buttonMsg = Accès
+</html>',messages_french='buttonMsg = Accès
 closureDate = Date de clôture
 depotSize = Taille autorisée
 mainMsg = Votre dépôt intitulé <b>{0}</b> est désormais actif.
 msgLink = Vous pouvez y accéder en cliquant sur le lien ci-dessous.
 recipientsOfDepot = Destinataires
-subject = Votre invitation de dépôt {0} est désormais active',"messages_english"='buttonMsg = Access
+subject = Votre invitation de dépôt {0} est désormais active',messages_english='buttonMsg = Access
 closureDate = Closure date
 depotSize = Allowed size
 mainMsg = Your Upload Request labeled <b>{0}</b> is now active.
 msgLink = Access it by following the link below.
 recipientsOfDepot = Recipients
-subject = Your Upload Request : {0}, is now active',"messages_russian"='buttonMsg = Access
-closureDate = Closure date
-depotSize = Allowed size
-mainMsg = Your Upload Request labeled <b>{0}</b> is now active.
-msgLink = Access it by following the link below.
-recipientsOfDepot = Recipients
-subject = Your Upload Request : {0}, is now active' WHERE "id"=17;
+subject = Your Upload Request : {0}, is now active',messages_russian='buttonMsg = Доступ
+closureDate = Дата закрытия
+depotSize = Допустимый размер
+mainMsg = Ваш запрос загрузки <b>{0}</b> активен.
+msgLink = Получите доступ к нему, перейдя по ссылке ниже.
+recipientsOfDepot = Получатель
+subject = Ваш запрос загрузки {0} активен' WHERE id=17;

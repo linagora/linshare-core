@@ -1,4 +1,4 @@
-UPDATE "mail_content" SET "subject"='[(#{subject(${requestOwner.firstName}, ${requestOwner.lastName})})]',"body"='<!DOCTYPE html>
+UPDATE mail_content SET subject='[(#{subject(${requestOwner.firstName}, ${requestOwner.lastName})})]',body='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head data-th-replace="layout :: header"></head>
 <body>
@@ -56,7 +56,7 @@ UPDATE "mail_content" SET "subject"='[(#{subject(${requestOwner.firstName}, ${re
   </section>  <!--/* End of Secondary content for bottom email section */-->
   </div>
 </body>
-</html>',"messages_french"='activationDate = Ouverture du dépôt le
+</html>',messages_french='activationDate = Ouverture du dépôt le
 closureDate = Date de clôture
 customDate= d MMMM yyyy.
 depotSize = Taille autorisée
@@ -64,7 +64,7 @@ mainMsg = <b>{0} {1}</b> a créé une Invitation de dépôt, qui sera ouverte le
 msgFrom = Le message de
 name = {0} {1}
 recipientsOfDepot = Destinataires
-subject = {0} {1} vous a créé une Invitation de Dépôt',"messages_english"='activationDate = Activation date
+subject = {0} {1} vous a créé une Invitation de Dépôt',messages_english='activationDate = Activation date
 closureDate = Closure date
 customDate= MMMM d, yyyy.
 depotSize = Allowed size
@@ -72,12 +72,12 @@ mainMsg = <b>{0} {1}</b> has invited you to access to his Upload Request, sets t
 msgFrom = Message from
 name = {0} {1}
 recipientsOfDepot = Recipients
-subject = {0} {1} has sent an invitation to access to his Upload Request.',"messages_russian"='activationDate = Activation date
-closureDate = Closure date
-customDate= MMMM d, yyyy.
-depotSize = Allowed size
-mainMsg = <b>{0} {1}</b> has invited you to access to his Upload Request, sets to open
-msgFrom = Message from
+subject = {0} {1} has sent an invitation to access to his Upload Request.',messages_russian='activationDate = Дата активации
+closureDate = Дата закрытия
+customDate= дд, мм, гггг.
+depotSize = Допустимый размер
+mainMsg = <b>{0} {1}</b> открыл для вас доступ к его запросу загрузки, созданному
+msgFrom = Сообщение от
 name = {0} {1}
-recipientsOfDepot = Recipients
-subject = {0} {1} has sent an invitation to access to his Upload Request.' WHERE "id"=20;
+recipientsOfDepot = Получатели
+subject = {0} {1} открыл для вас доступ к его запросу загрузки.' WHERE id=20;

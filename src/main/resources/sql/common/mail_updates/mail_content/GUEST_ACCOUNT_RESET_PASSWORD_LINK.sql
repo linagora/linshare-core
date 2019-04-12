@@ -1,4 +1,4 @@
-UPDATE "mail_content" SET "subject"='[( #{subject})]',"body"='<!DOCTYPE html>
+UPDATE mail_content SET subject='[( #{subject})]',body='<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head  data-th-replace="layout :: header"></head>
 <body>
@@ -31,25 +31,25 @@ UPDATE "mail_content" SET "subject"='[( #{subject})]',"body"='<!DOCTYPE html>
   </section>  <!--/* End of Secondary content for bottom email section */-->
 </div>
 </body>
-</html>',"messages_french"='accountExpiryDateTitle = Date d''''expiration
+</html>',messages_french='accountExpiryDateTitle = Date d''''expiration
 beginingMainMsg =  Suivez le lien ci-dessous afin de réinitialiser le mot de passe de votre compte LinShare.
 changePasswordBtn = Réinitialiser
 endingMainMsg = Si vous n''''avez pas sollicité ce changement de mot de passe, merci d''''ignorer cet email. Votre mot de passe ne sera pas mis à jour tant que vous n''''en créé pas un nouveau, via le lien ci-dessus.
 mainTile = Vous avez oublié votre mot de Passe ?
 resetLinkTitle = Lien de réinitialisation
 subject =  LinShare instruction de réinitialisation de mot de passe
-userNameTitle = Identifiant',"messages_english"='accountExpiryDateTitle = Account expiry date
+userNameTitle = Identifiant',messages_english='accountExpiryDateTitle = Account expiry date
 beginingMainMsg =  Follow the link below to reset your LinShare password account.
 changePasswordBtn = Change password
 endingMainMsg = If you did not request a password reset, please ignore this email. Your password will not change until you create a new one via the link above.
 mainTile = Did you forget your password ?
 resetLinkTitle = LinShare reset password link
 subject =  LinShare reset password instructions
-userNameTitle = Username',"messages_russian"='accountExpiryDateTitle = Account expiry date
-beginingMainMsg =  Follow the link below to reset your LinShare password account.
-changePasswordBtn = Change password
-endingMainMsg = If you did not request a password reset, please ignore this email. Your password will not change until you create a new one via the link above.
-mainTile = Did you forget your password ?
-resetLinkTitle = LinShare reset password link
-subject =  LinShare reset password instructions
-userNameTitle = Username' WHERE "id"=9;
+userNameTitle = Username',messages_russian='accountExpiryDateTitle = Дата окончания действия аккаунта
+beginingMainMsg =  Используйте ссылку ниже для смены пароля к вашему аккаунту LinShare.
+changePasswordBtn = Изменить пароль
+endingMainMsg = Если вы не запрашивали смену пароля, пожалуйста, проигнорируйте это письмо. Ваш пароль не будет изменен пока вы не создадите новый, перейдя по ссылке.
+mainTile = Забыли пароль?
+resetLinkTitle = Ссылка на смену пароля LinShare
+subject =  Инструкция по смену пароля LinShare
+userNameTitle = Имя пользователя' WHERE id=9;
